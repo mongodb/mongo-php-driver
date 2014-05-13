@@ -1,12 +1,15 @@
 <?php
 
-$criteria = array("name" => "Hannes");
-$selector = array('fieldname' => 1, 'fieldname.two' => 1);
+// Corresponds to "query object" in http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
+$queryObj = array(
+    '$query' => array("name" => "Hannes"),
+    '$orderBy' => array('name' => 1),
+    '$comment' => 'More special stuff',
+);
 
-$query = new \MongoDB\Query($criteria, $selector);
+$query = new \MongoDB\Query($queryObj);
 $query
-    ->setOrderBy(array('name' => 1))
-    ->setComment('More special stuff')
+    ->setSelector(array('fieldname' => 1, 'fieldname.two' => 1))
     ->setLimit(-3) // Kill server cursor after 3 documents
     ->setSkip(0)   // Don't skip any documents
     ->setFlags(EXHAUST | NO_CURSOR_TIMEOUT);
