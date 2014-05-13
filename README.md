@@ -18,7 +18,9 @@ along with keeping the overall design fast and powerful.
 
 
 ## Examples:
-- [CRUD](docs/examples/crud.php)
+- [Models](docs/examples/model.php) (used for example data in other examples too)
+- [Query](docs/examples/query.php)
+- [Insert](docs/examples/insert.php)
 - Provide your own [BSON objects](docs/examples/changing-types.php)
 
 
