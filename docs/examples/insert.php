@@ -8,7 +8,7 @@ $insertBatch
     ->add($hayley);
 
 $w = 'majority';
-$w = 500;
+$wtimeout = 500;
 
 $writeConcern = new \MongoDB\WriteConcern($w, $wtimeout);
 
