@@ -2,9 +2,21 @@
 
 namespace MongoDB\Write;
 
-final class InsertBatch extends WriteBatch
+/**
+ * Aggregates a collection of insert operations, to be executed in batches.
+ */
+final class InsertBatch implements WriteBatch
 {
     private $documents;
+    private $writeOptions;
+
+    /**
+     * @param array $writeOptions Ordering and write concern options
+     */
+    public function __construct(array $writeOptions)
+    {
+        $this->writeOptions = $writeOptions;
+    }
 
     /**
      * @see WriteBatch::add()
@@ -20,13 +32,5 @@ final class InsertBatch extends WriteBatch
     public function count()
     {
         return count($this->documents);
-    }
-
-    /**
-     * @see WriteBatch::getDocuments()
-     */
-    public function getDocuments()
-    {
-        return $this->documents;
     }
 }

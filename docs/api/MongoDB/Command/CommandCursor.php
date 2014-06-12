@@ -2,8 +2,20 @@
 
 namespace MongoDB\Command;
 
-// Note: consider combining implementation with \MongoDB\Query\QueryCursor
-final class CommandCursor implements \MongoDB\Cursor
+use MongoDB\Cursor;
+use MongoDB\CursorId;
+
+/**
+ * Cursor implementation that may be constructed from values found in a
+ * CommandResult's response document.
+ *
+ * The iteration and internal logic is very similar to QueryCursor, so both
+ * classes should likely share code. The first batch is comparable to the
+ * documents found in the OP_REPLY message returned by a QueryCursor's original
+ * OP_QUERY, in that both may be available at the time the cursor is
+ * constructed.
+ */
+final class CommandCursor implements Cursor
 {
     private $server;
     private $batchSize;
@@ -11,21 +23,21 @@ final class CommandCursor implements \MongoDB\Cursor
     private $firstBatch;
 
     /**
-     * @param Server  $server
-     * @param integer $cursorId
-     * @param array   $firstBatch
+     * @param Server   $server
+     * @param CursorId $cursorId
+     * @param array    $firstBatch
      */
-    public function __construct(Server $server, $cursorId, array $firstBatch)
+    public function __construct(Server $server, CursorId $cursorId, array $firstBatch)
     {
         $this->server = $server;
-        $this->cursorId = (integer) $cursorId;
+        $this->cursorId = $cursorId;
         $this->firstBatch = $firstBatch;
     }
 
     // Iterator methods...
 
     /**
-     * @see \MongoDB\Cursor::getId()
+     * @return Cursor::getId()
      */
     public function getId()
     {
@@ -33,11 +45,19 @@ final class CommandCursor implements \MongoDB\Cursor
     }
 
     /**
-     * @see \MongoDB\ServerResult::getServer()
+     * @see Cursor::getServer()
      */
     public function getServer()
     {
         return $this->server;
+    }
+
+    /**
+     * @see Cursor::isDead()
+     */
+    public function isDead()
+    {
+        // Return whether the cursor is exhausted and has no more results
     }
 
     /**
@@ -46,13 +66,5 @@ final class CommandCursor implements \MongoDB\Cursor
     public function setBatchSize($batchSize)
     {
         $this->batchSize = (integer) $batchSize;
-    }
-
-    // Note: this expects consistent command response documents from the server
-    static public function createFromCommandResult(CommandResult $result)
-    {
-        // extract $cursorId and $firstBatch from $result->getResponse()
-
-        return new static($result->getServer(), $cursorId, $firstBatch);
     }
 }

@@ -2,27 +2,38 @@
 
 namespace MongoDB\Query;
 
-// Note: consider combining implementation with \MongoDB\Command\CommandCursor
-final class QueryCursor implements \MongoDB\Cursor
+use MongoDB\Cursor;
+use MongoDB\CursorId;
+
+/**
+ * Cursor implementation that is returned after executing a Query.
+ *
+ * The iteration and internal logic is very similar to CommandCursor, so both
+ * classes should likely share code. The documents in the OP_REPLY message
+ * returned by the original OP_QUERY is comparable to the first batch of a
+ * command cursor, in that both may be available at the time the cursor is
+ * constructed.
+ */
+final class QueryCursor implements Cursor
 {
     private $server;
     private $batchSize;
     private $cursorId;
 
     /**
-     * @param Server  $server
-     * @param integer $cursorId
+     * @param Server   $server
+     * @param CursorId $cursorId
      */
-    public function __construct(Server $server, $cursorId)
+    public function __construct(Server $server, CursorId $cursorId)
     {
         $this->server = $server;
-        $this->cursorId = (integer) $cursorId;
+        $this->cursorId = $cursorId;
     }
 
     // Iterator methods...
 
     /**
-     * @see \MongoDB\Cursor::getId()
+     * @see Cursor::getId()
      */
     public function getId()
     {
@@ -30,7 +41,7 @@ final class QueryCursor implements \MongoDB\Cursor
     }
 
     /**
-     * @see \MongoDB\ServerResult::getServer()
+     * @see Cursor::getServer()
      */
     public function getServer()
     {
@@ -38,7 +49,15 @@ final class QueryCursor implements \MongoDB\Cursor
     }
 
     /**
-     * @see \MongoDB\Cursor::setBatchSize()
+     * @see Cursor::isDead()
+     */
+    public function isDead()
+    {
+        // Return whether the cursor is exhausted and has no more results
+    }
+
+    /**
+     * @see Cursor::setBatchSize()
      */
     public function setBatchSize($batchSize)
     {
