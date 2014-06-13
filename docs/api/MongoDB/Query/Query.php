@@ -12,6 +12,15 @@ namespace MongoDB\Query;
  */
 final class Query
 {
+    // See: http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
+    const FLAG_TAILABLE_CURSOR   = 0x01;
+    const FLAG_SLAVE_OK          = 0x02;
+    const FLAG_OPLOG_REPLAY      = 0x03;
+    const FLAG_NO_CURSOR_TIMEOUT = 0x04;
+    const FLAG_AWAIT_DATA        = 0x05;
+    const FLAG_EXHAUST           = 0x06;
+    const FLAG_PARTIAL           = 0x07;
+
     private $query;
     private $selector;
     private $flags;
