@@ -94,14 +94,15 @@ final class Manager
     /**
      * @param string     $namespace
      * @param WriteBatch $batch
+     * @param array      $writeOptions Ordering and write concern options (default: {"ordered": true, "w": 1})
      * @return WriteResult
      */
-    public function executeWrite($namespace, WriteBatch $batch)
+    public function executeWrite($namespace, WriteBatch $batch, array $writeOptions = null)
     {
         /* Select writeable server and invoke Server::executeQuery().
          *
-         * Write options are not taken as an argument, since they are specified
-         * during WriteBatch construction.
+         * Write options are optional, and will be merged into the default,
+         * which is {"ordered": true, "w": 1}.
          *
          * On error, we should consider throwing:
          *
@@ -119,12 +120,16 @@ final class Manager
      *
      * @param string       $namespace
      * @param array|object $document     Document to insert
-     * @param array        $writeOptions Write concern options
+     * @param array        $writeOptions Write concern options (default: {"w": 1})
      * @return InsertResult
      */
     public function executeInsert($namespace, $document, array $writeOptions = null)
     {
-        // Construct and execute an InsertBatch
+        /* Construct and execute an InsertBatch
+         *
+         * Write options are optional, and will be merged into the default,
+         * which is {"w": 1}.
+         */
     }
 
     /**
@@ -134,12 +139,15 @@ final class Manager
      * @param array|object $query         Update criteria
      * @param array|object $newObj        Update modifier or replacement document
      * @param array        $updateOptions Update options (e.g. "upsert")
-     * @param array        $writeOptions  Write concern options
+     * @param array        $writeOptions  Write concern options (default: {"w": 1})
      * @return UpdateResult
      */
     public function executeUpdate($namespace, $query, $newObj, array $updateOptions = null, array $writeOptions = null)
     {
         /* Construct and execute an UpdateBatch
+         *
+         * Write options are optional, and will be merged into the default,
+         * which is {"w": 1}.
          *
          * What should be the default value for $options? No multi, no upsert?
          */
@@ -151,12 +159,15 @@ final class Manager
      * @param string       $namespace
      * @param array|object $query         Deletion criteria
      * @param array        $deleteOptions Deletion options (e.g. "limit")
-     * @param array        $writeOptions  Write concern options
+     * @param array        $writeOptions  Write concern options (default: {"w": 1})
      * @return DeleteResult
      */
     public function executeDelete($namespace, $query, array $deleteOptions = null, array $writeOptions = null)
     {
         /* Construct and execute an DeleteBatch
+         *
+         * Write options are optional, and will be merged into the default,
+         * which is {"w": 1}.
          *
          * What should be the default value for $options? No limit?
          */

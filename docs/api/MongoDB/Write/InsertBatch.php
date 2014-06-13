@@ -8,15 +8,6 @@ namespace MongoDB\Write;
 final class InsertBatch implements WriteBatch
 {
     private $documents;
-    private $writeOptions;
-
-    /**
-     * @param array $writeOptions Ordering and write concern options
-     */
-    public function __construct(array $writeOptions)
-    {
-        $this->writeOptions = $writeOptions;
-    }
 
     /**
      * @see WriteBatch::add()
