@@ -50,12 +50,12 @@ final class Manager
     }
 
     /**
-     * @param string         $namespace
+     * @param string         $db
      * @param Command        $command
      * @param ReadPreference $readPreference
      * @return CommandResult
      */
-    public function executeCommand($namespace, Command $command, ReadPreference $readPreference = null)
+    public function executeCommand($db, Command $command, ReadPreference $readPreference = null)
     {
         /* Select server based on (1) command requirements and (2) read
          * preference and invoke Server::executeCommand().

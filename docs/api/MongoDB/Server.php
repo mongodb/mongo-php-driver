@@ -59,11 +59,11 @@ final class Server
     }
 
     /**
-     * @param string  $namespace
+     * @param string  $db
      * @param Command $command
      * @return CommandResult
      */
-    public function executeCommand($namespace, Command $command)
+    public function executeCommand($db, Command $command)
     {
         /* This method does not take a ReadPreference. If connected to mongos,
          * it the user's responsibility to set a read preference on the command
