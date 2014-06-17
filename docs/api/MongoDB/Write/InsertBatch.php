@@ -10,7 +10,7 @@ final class InsertBatch implements WriteBatch
     private $documents;
 
     /**
-     * @see WriteBatch::add()
+     * @param array|object $document Operation/document to add to the batch
      */
     public function add($document)
     {

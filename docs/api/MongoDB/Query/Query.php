@@ -31,8 +31,8 @@ final class Query
      * @param array|object $query    Query document
      * @param array|object $selector Selector document
      * @param integer      $flags    Query flags
-     * @param integer      $limit    Limit
      * @param integer      $skip     Skip
+     * @param integer      $limit    Limit
      */
     public function __construct($query, $selector, $flags, $skip, $limit)
     {

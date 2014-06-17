@@ -4,6 +4,7 @@ namespace MongoDB\Command;
 
 use MongoDB\Cursor;
 use MongoDB\CursorId;
+use Mongodb\Server;
 
 /**
  * Cursor implementation that may be constructed from values found in a
@@ -34,10 +35,8 @@ final class CommandCursor implements Cursor
         $this->firstBatch = $firstBatch;
     }
 
-    // Iterator methods...
-
     /**
-     * @return Cursor::getId()
+     * @return CursorId
      */
     public function getId()
     {
@@ -45,7 +44,7 @@ final class CommandCursor implements Cursor
     }
 
     /**
-     * @see Cursor::getServer()
+     * @return Server Server from which the cursor originated
      */
     public function getServer()
     {
@@ -53,7 +52,7 @@ final class CommandCursor implements Cursor
     }
 
     /**
-     * @see Cursor::isDead()
+     * @return boolean Whether the cursor is exhausted and has no more results
      */
     public function isDead()
     {
@@ -61,10 +60,17 @@ final class CommandCursor implements Cursor
     }
 
     /**
-     * @see \MongoDB\Cursor::setBatchSize()
+     * @param integer $batchSize
      */
     public function setBatchSize($batchSize)
     {
         $this->batchSize = (integer) $batchSize;
     }
+
+    /* Cursor is an iterator */
+    public function current() {}
+    public function next() {}
+    public function key() {}
+    public function valid() {}
+    public function rewind() {}
 }

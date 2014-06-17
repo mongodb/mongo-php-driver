@@ -13,7 +13,7 @@ final class CursorId
     // $id is an internal uint64_t value instead of a class property
 
     /**
-     * @param integer|string $id
+     * @param string $id
      */
     public function __construct($id)
     {
