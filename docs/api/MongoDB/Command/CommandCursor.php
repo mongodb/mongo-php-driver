@@ -4,6 +4,7 @@ namespace MongoDB\Command;
 
 use MongoDB\Cursor;
 use MongoDB\CursorId;
+use Mongodb\Server;
 
 /**
  * Cursor implementation that may be constructed from values found in a
@@ -33,8 +34,6 @@ final class CommandCursor implements Cursor
         $this->cursorId = $cursorId;
         $this->firstBatch = $firstBatch;
     }
-
-    // Iterator methods...
 
     /**
      * @return Cursor::getId()
@@ -67,4 +66,11 @@ final class CommandCursor implements Cursor
     {
         $this->batchSize = (integer) $batchSize;
     }
+
+    /* Cursor is an iterator */
+    public function current() {}
+    public function next() {}
+    public function key() {}
+    public function valid() {}
+    public function rewind() {}
 }

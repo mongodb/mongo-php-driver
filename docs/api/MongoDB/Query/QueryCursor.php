@@ -4,6 +4,7 @@ namespace MongoDB\Query;
 
 use MongoDB\Cursor;
 use MongoDB\CursorId;
+use Mongodb\Server;
 
 /**
  * Cursor implementation that is returned after executing a Query.
@@ -29,8 +30,6 @@ final class QueryCursor implements Cursor
         $this->server = $server;
         $this->cursorId = $cursorId;
     }
-
-    // Iterator methods...
 
     /**
      * @see Cursor::getId()
@@ -63,4 +62,11 @@ final class QueryCursor implements Cursor
     {
         $this->batchSize = (integer) $batchSize;
     }
+
+    /* Cursor is an iterator */
+    public function current() {}
+    public function next() {}
+    public function key() {}
+    public function valid() {}
+    public function rewind() {}
 }
