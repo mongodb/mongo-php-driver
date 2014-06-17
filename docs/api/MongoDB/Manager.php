@@ -25,6 +25,8 @@ use MongoDB\Write\WriteResult;
 final class Manager
 {
     /**
+     * Constructs a new Manager
+     *
      * @param string $uri           Connection URI
      * @param array  $options       Connection options (e.g. auth, socket timeouts)
      * @param array  $driverOptions Driver options (e.g. stream contexts)
@@ -35,6 +37,8 @@ final class Manager
     }
 
     /**
+     * Creates new Manager from a list of servers
+     *
      * @param Server[] $servers
      * @return Manager
      */
@@ -50,6 +54,8 @@ final class Manager
     }
 
     /**
+     * Execute a command
+     *
      * @param string         $db
      * @param Command        $command
      * @param ReadPreference $readPreference
@@ -72,6 +78,8 @@ final class Manager
     }
 
     /**
+     * Execute a Query
+     *
      * @param string         $namespace
      * @param Query          $query
      * @param ReadPreference $readPreference
@@ -92,6 +100,8 @@ final class Manager
     }
 
     /**
+     * Executes a write operation batch (e.g. insert, update, delete)
+     *
      * @param string     $namespace
      * @param WriteBatch $batch
      * @param array      $writeOptions Ordering and write concern options (default: {"ordered": true, "w": 1})

@@ -44,7 +44,7 @@ final class CommandCursor implements Cursor
     }
 
     /**
-     * @see Cursor::getServer()
+     * @return Server Server from which the cursor originated
      */
     public function getServer()
     {
@@ -52,7 +52,7 @@ final class CommandCursor implements Cursor
     }
 
     /**
-     * @see Cursor::isDead()
+     * @return boolean Whether the cursor is exhausted and has no more results
      */
     public function isDead()
     {
@@ -60,7 +60,7 @@ final class CommandCursor implements Cursor
     }
 
     /**
-     * @see \MongoDB\Cursor::setBatchSize()
+     * @param integer $batchSize
      */
     public function setBatchSize($batchSize)
     {
