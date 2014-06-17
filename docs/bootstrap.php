@@ -1,0 +1,22 @@
+<?php
+include "api/MongoDB/Cursor.php";
+include "api/MongoDB/CursorId.php";
+include "api/MongoDB/Manager.php";
+include "api/MongoDB/ReadPreference.php";
+include "api/MongoDB/Server.php";
+include "api/MongoDB/Query/Query.php";
+include "api/MongoDB/Query/QueryCursor.php";
+include "api/MongoDB/Command/Command.php";
+include "api/MongoDB/Command/CommandCursor.php";
+include "api/MongoDB/Command/CommandResult.php";
+include "api/MongoDB/Write/WriteBatch.php";
+include "api/MongoDB/Write/WriteResult.php";
+include "api/MongoDB/Write/DeleteBatch.php";
+include "api/MongoDB/Write/DeleteResult.php";
+include "api/MongoDB/Write/GeneratedId.php";
+include "api/MongoDB/Write/InsertBatch.php";
+include "api/MongoDB/Write/InsertResult.php";
+include "api/MongoDB/Write/UpdateBatch.php";
+include "api/MongoDB/Write/UpdateResult.php";
+include "api/MongoDB/Write/WriteConcernError.php";
+include "api/MongoDB/Write/WriteError.php";
