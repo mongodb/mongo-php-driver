@@ -36,7 +36,7 @@ final class CommandCursor implements Cursor
     }
 
     /**
-     * @return Cursor::getId()
+     * @return CursorId
      */
     public function getId()
     {
