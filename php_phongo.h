@@ -167,9 +167,6 @@ PHP_MINIT_FUNCTION(WriteBatch);
 PHP_MINIT_FUNCTION(WriteConcernError);
 PHP_MINIT_FUNCTION(WriteError);
 PHP_MINIT_FUNCTION(WriteResult);
-PHP_FUNCTION(bson_encode);
-PHP_FUNCTION(bson_decode);
-PHP_FUNCTION(bson_to_json);
 #endif /* PHONGO_H */
 
 
