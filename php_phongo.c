@@ -34,6 +34,7 @@
 #include <php/ext/standard/info.h>
 #include "Zend/zend_interfaces.h"
 #include "ext/spl/spl_iterators.h"
+#include "ext/spl/spl_exceptions.h"
 /* Our Compatability header */
 #include "php_compat_53.h"
 
@@ -41,6 +42,15 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
+
+zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain)
+{
+	switch(domain)
+	{
+		case PHONGO_INVALID_ARGUMENT:
+			return spl_ce_InvalidArgumentException;
+	}
+}
 
 /* {{{ M[INIT|SHUTDOWN] R[INIT|SHUTDOWN] G[INIT|SHUTDOWN] MINFO INI */
 
