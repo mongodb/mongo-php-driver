@@ -15,11 +15,11 @@ final class Query
     // See: http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
     const FLAG_TAILABLE_CURSOR   = 0x01;
     const FLAG_SLAVE_OK          = 0x02;
-    const FLAG_OPLOG_REPLAY      = 0x03;
-    const FLAG_NO_CURSOR_TIMEOUT = 0x04;
-    const FLAG_AWAIT_DATA        = 0x05;
-    const FLAG_EXHAUST           = 0x06;
-    const FLAG_PARTIAL           = 0x07;
+    const FLAG_OPLOG_REPLAY      = 0x04;
+    const FLAG_NO_CURSOR_TIMEOUT = 0x08;
+    const FLAG_AWAIT_DATA        = 0x10;
+    const FLAG_EXHAUST           = 0x20;
+    const FLAG_PARTIAL           = 0x40;
 
     private $query;
     private $selector;
