@@ -12,21 +12,29 @@ namespace MongoDB\Write;
 final class UpdateResult implements WriteResult
 {
     /**
+     * Returns the number of documents matching the criteria
+     *
      * @return integer
      */
     public function getNumMatched() {}
 
     /**
+     * Returns the number of documents that got physically modified
+     *
      * @return integer
      */
     public function getNumModified() {}
 
     /**
+     * Returns the number of new documentes
+     *
      * @return integer
      */
     public function getNumUpserted() {}
 
     /**
+     * Returns the GeneratedIds of the upserted documents
+     *
      * @return GeneratedId[]
      */
     public function getUpserts()
@@ -37,22 +45,30 @@ final class UpdateResult implements WriteResult
     }
 
     /**
-     * @see WriteResult::getInfo()
+     * Returns metadata about the operation, see https://github.com/mongodb/specifications/blob/master/source/server_write_commands.rst#situational-fields
+     *
+     * @return array Additional metadata for the operation(s) (e.g. lastOp)
      */
     public function getInfo() {}
 
     /**
-     * @see WriteResult::getServer()
+     * Returns the Server object that this result originated
+     *
+     * @return Server Server from which the result originated
      */
     public function getServer() {}
 
     /**
-     * @see WriteResult::getWriteConcernErrors()
+     * Returns all WriteConcern Errors that occurred
+     *
+     * @return WriteConcernError[]
      */
     public function getWriteConcernErrors() {}
 
     /**
-     * @see WriteResult::getWriteErrors()
+     * Returns all Write Errors that occurred
+     *
+     * @return WriteError[]
      */
     public function getWriteErrors() {}
 }

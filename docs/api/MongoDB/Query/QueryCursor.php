@@ -34,6 +34,8 @@ final class QueryCursor implements Cursor
     }
 
     /**
+     * Returns the CursorId
+     *
      * @return CursorId
      */
     public function getId()
@@ -42,6 +44,8 @@ final class QueryCursor implements Cursor
     }
 
     /**
+     * Returns the Server Object that this cursor is attached to
+     *
      * @return Server Server from which the cursor originated
      */
     public function getServer()
@@ -50,6 +54,8 @@ final class QueryCursor implements Cursor
     }
 
     /**
+     * Checks if a cursor is still alive
+     *
      * @return boolean Whether the cursor is exhausted and has no more results
      */
     public function isDead()
@@ -58,7 +64,10 @@ final class QueryCursor implements Cursor
     }
 
     /**
+     * Sets a batchsize for the cursor
+     *
      * @param integer $batchSize
+     * @return boolean true on success, false on failure
      */
     public function setBatchSize($batchSize)
     {

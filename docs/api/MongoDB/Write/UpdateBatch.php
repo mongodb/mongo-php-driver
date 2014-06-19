@@ -10,7 +10,10 @@ final class UpdateBatch implements WriteBatch
     private $documents;
 
     /**
+     * Adds a new operation to be executed
+     *
      * @param array|object $document Operation/document to add to the batch
+     * @return UpdateBatch
      */
     public function add($document)
     {
@@ -18,7 +21,9 @@ final class UpdateBatch implements WriteBatch
     }
 
     /**
-     * @see Countable::count()
+     * Returns how many items have been added to this batch
+     *
+     * @return int How many operations are total in this batch object
      */
     public function count()
     {

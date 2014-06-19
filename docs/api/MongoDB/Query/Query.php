@@ -28,6 +28,8 @@ final class Query
     private $limit;
 
     /**
+     * Constructs a new Query
+     *
      * @param array|object $query    Query document
      * @param array|object $selector Selector document
      * @param integer      $flags    Query flags

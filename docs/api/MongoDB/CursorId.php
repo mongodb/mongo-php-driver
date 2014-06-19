@@ -13,6 +13,8 @@ final class CursorId
     // $id is an internal uint64_t value instead of a class property
 
     /**
+     * Construct a new CursorId
+     *
      * @param string $id
      */
     public function __construct($id)
@@ -21,6 +23,8 @@ final class CursorId
     }
 
     /**
+     * Returns the string representation of the CursorId
+     * 
      * @return string
      */
     public function __toString()

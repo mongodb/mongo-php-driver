@@ -17,6 +17,8 @@ final class ReadPreference
     private $tagSets;
 
     /**
+     * Constructs a new ReadPreference
+     *
      * @param string  $readPreference Read preference name
      * @param array[] $tagSets        Array of zero or more tag sets (i.e. tag criteria)
      */

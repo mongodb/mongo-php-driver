@@ -12,11 +12,15 @@ namespace MongoDB\Write;
 final class InsertResult implements WriteResult
 {
     /**
+     * Returns the Number of documents that where inserted
+     *
      * @return integer
      */
     public function getNumInserted() {}
 
     /**
+     * Returns all generated IDs
+     *
      * @return GeneratedId[]
      */
     public function getGeneratedIds()
@@ -29,22 +33,30 @@ final class InsertResult implements WriteResult
     }
 
     /**
-     * @see WriteResult::getInfo()
+     * Returns metadata about the operation, see https://github.com/mongodb/specifications/blob/master/source/server_write_commands.rst#situational-fields
+     *
+     * @return array Additional metadata for the operation(s) (e.g. lastOp)
      */
     public function getInfo() {}
 
     /**
-     * @see WriteResult::getServer()
+     * Returns the Server object that this result originated
+     *
+     * @return Server Server from which the result originated
      */
     public function getServer() {}
 
     /**
-     * @see WriteResult::getWriteConcernErrors()
+     * Returns all WriteConcern Errors that occurred
+     *
+     * @return WriteConcernError[]
      */
     public function getWriteConcernErrors() {}
 
     /**
-     * @see WriteResult::getWriteErrors()
+     * Returns all Write Errors that occurred
+     *
+     * @return WriteError[]
      */
     public function getWriteErrors() {}
 }

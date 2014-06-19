@@ -12,6 +12,8 @@ final class GeneratedId
     private $index;
 
     /**
+     * Constructs a new GeneratedId
+     *
      * @param mixed   $id    Document identifier
      * @param integer $index Batch index of the corresponding operation
      */
@@ -22,6 +24,8 @@ final class GeneratedId
     }
 
     /**
+     * Returns the GeneratedId
+     *
      * @return mixed Document identifier
      */
     public function getId()
@@ -30,6 +34,8 @@ final class GeneratedId
     }
 
     /**
+     * Returns the batch index
+     *
      * @return integer Batch index of the corresponding operation
      */
     public function getIndex()

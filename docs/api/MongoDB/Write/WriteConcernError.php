@@ -12,6 +12,8 @@ final class WriteConcernError
     private $info;
 
     /**
+     * Constructs a new WriteConcernError object
+     * 
      * @param string  $message Server error message
      * @param integer $code    Server error code
      * @param array   $info    Additional metadat for the error (e.g. {"wtimeout": true})
@@ -24,6 +26,8 @@ final class WriteConcernError
     }
 
     /**
+     * Returns the MongoDB error code
+     *
      * @return integer Server error code
      */
     public function getCode()
@@ -32,6 +36,8 @@ final class WriteConcernError
     }
 
     /**
+     * Returns additional metadata for the error
+     *
      * @return array Additional metadata for the error (e.g. {"wtimeout": true})
      */
     public function getInfo()
@@ -40,6 +46,8 @@ final class WriteConcernError
     }
 
     /**
+     * Returns the actual error message from the server
+     *
      * @return string Server error message
      */
     public function getMessage()

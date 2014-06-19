@@ -24,6 +24,8 @@ final class CommandCursor implements Cursor
     private $firstBatch;
 
     /**
+     * Constructs a new CommandCursor object
+     *
      * @param Server   $server
      * @param CursorId $cursorId
      * @param array    $firstBatch
@@ -36,6 +38,8 @@ final class CommandCursor implements Cursor
     }
 
     /**
+     * Returns the CursorId
+     *
      * @return CursorId
      */
     public function getId()
@@ -44,6 +48,8 @@ final class CommandCursor implements Cursor
     }
 
     /**
+     * Returns the Server Object that this cursor is attached to
+     *
      * @return Server Server from which the cursor originated
      */
     public function getServer()
@@ -52,6 +58,8 @@ final class CommandCursor implements Cursor
     }
 
     /**
+     * Checks if a cursor is still alive
+     *
      * @return boolean Whether the cursor is exhausted and has no more results
      */
     public function isDead()
@@ -60,7 +68,10 @@ final class CommandCursor implements Cursor
     }
 
     /**
+     * Sets a batchsize for the cursor
+     *
      * @param integer $batchSize
+     * @return boolean true on success, false on failure
      */
     public function setBatchSize($batchSize)
     {

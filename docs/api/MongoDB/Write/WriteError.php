@@ -13,6 +13,8 @@ final class WriteError
     private $operation;
 
     /**
+     * Constructs a new WriteError object
+     *
      * @param string       $message   Server error message
      * @param integer      $code      Server error code
      * @param integer      $index     Batch index of the error
@@ -27,6 +29,8 @@ final class WriteError
     }
 
     /**
+     * Returns the MongoDB error code
+     *
      * @return integer Server error code
      */
     public function getCode()
@@ -35,6 +39,8 @@ final class WriteError
     }
 
     /**
+     * Returns the Batch index where this WriteError occurred in
+     *
      * @return integer Batch index of the error
      */
     public function getIndex()
@@ -43,6 +49,8 @@ final class WriteError
     }
 
     /**
+     * Returns the actual error message from the server
+     *
      * @return string Server error message
      */
     public function getMessage()
@@ -51,6 +59,8 @@ final class WriteError
     }
 
     /**
+     * Returns the batch operation itself that caused the error
+     *
      * @return array|object Operation or document responsible for the error
      */
     public function getOperation()

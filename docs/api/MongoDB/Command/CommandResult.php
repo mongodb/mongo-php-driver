@@ -13,6 +13,8 @@ final class CommandResult
     private $responseDocument;
 
     /**
+     * Constructs a new CommandResult
+     *
      * @param Server       $server
      * @param array|object $responseDocument
      */
@@ -23,6 +25,8 @@ final class CommandResult
     }
 
     /**
+     * Returns the original response document from the server
+     *
      * @return array Original response document from the server
      */
     public function getResponseDocument()
@@ -31,6 +35,8 @@ final class CommandResult
     }
 
     /**
+     * Returns the Server Object that this cursor is attached to
+     *
      * @return Server Server from which the result originated
      */
     public function getServer()

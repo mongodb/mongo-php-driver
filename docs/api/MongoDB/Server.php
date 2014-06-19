@@ -36,6 +36,8 @@ final class Server
     private $driverOptions;
 
     /**
+     * Constructs a new Server
+     *
      * @param string  $host          Server host
      * @param integer $port          Server port
      * @param array   $options       Connection options (e.g. auth, socket timeouts)
@@ -59,6 +61,8 @@ final class Server
     }
 
     /**
+     * Executes a command on this server
+     *
      * @param string  $db
      * @param Command $command
      * @return CommandResult
@@ -72,6 +76,8 @@ final class Server
     }
 
     /**
+     * Executes a Query
+     *
      * @param string $namespace
      * @param Query  $query
      * @return QueryCursor
@@ -85,6 +91,8 @@ final class Server
     }
 
     /**
+     * Executes a write operation batch (e.g. insert, update, delete)
+     *
      * @param string     $namespace
      * @param WriteBatch $batch
      * @return WriteResult
@@ -107,6 +115,11 @@ final class Server
          */
     }
 
+    /**
+     * Returns the hostname used to connect to this Server
+     * 
+     * @return string
+     */
     public function getHost()
     {
         /* This does not return the host name from isMaster, since the "me"
@@ -118,6 +131,8 @@ final class Server
     }
 
     /**
+     * Returns the last isMaster() result document
+     *
      * @return array Connection metadata (e.g. min/maxWireVersion, RS hosts)
      */
     public function getInfo()
@@ -126,6 +141,8 @@ final class Server
     }
 
     /**
+     * Returns the last messured latency
+     *
      * @return integer Server latency in milliseconds
      */
     public function getLatency()
@@ -134,6 +151,8 @@ final class Server
     }
 
     /**
+     * Returns the port used to create this Server
+     *
      * @return integer
      */
     public function getPort()
@@ -142,12 +161,14 @@ final class Server
     }
 
     /**
-     * @see http://docs.mongodb.org/manual/reference/replica-states/
+     * Returns the current state of the node (maintenece/startup/...)
+     *
      * @return integer Replica set node state
      */
     public function getState()
     {
         /* Return the replica set node's state via replSetGetStatus
+         * http://docs.mongodb.org/manual/reference/replica-states/
          *
          * We may want to create class constants for documented states.
          *
@@ -156,6 +177,8 @@ final class Server
     }
 
     /**
+     * Returns the node type of this Server
+     *
      * @return integer Server type code
      */
     public function getType()
@@ -168,6 +191,11 @@ final class Server
          */
     }
 
+    /**
+     * Checks if this is a special "delayed" member of a RepilcaSet
+     *
+     * @return bool true if delayed node, false otherwise
+     */
     public function isDelayed()
     {
         /* Return whether the secondary is delayed.
@@ -179,6 +207,11 @@ final class Server
          */
     }
 
+    /**
+     * Checks if this is a special passive node member of a ReplicaSet
+     *
+     * @return bool true if this node is passive, false otherwise
+     */
     public function isPassive()
     {
         /* Return inferred value from isMaster data.
