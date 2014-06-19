@@ -44,7 +44,7 @@ final class QueryCursor implements Cursor
     }
 
     /**
-     * Returns the Server Object that this cursor is attached to
+     * Returns the Server object that this cursor is attached to
      *
      * @return Server Server from which the cursor originated
      */
@@ -64,7 +64,7 @@ final class QueryCursor implements Cursor
     }
 
     /**
-     * Sets a batchsize for the cursor
+     * Sets a batch size for the cursor
      *
      * @param integer $batchSize
      * @return boolean true on success, false on failure

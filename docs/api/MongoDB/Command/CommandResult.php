@@ -35,7 +35,7 @@ final class CommandResult
     }
 
     /**
-     * Returns the Server Object that this cursor is attached to
+     * Returns the Server object that this cursor is attached to
      *
      * @return Server Server from which the result originated
      */
