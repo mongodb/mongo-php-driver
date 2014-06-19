@@ -21,6 +21,10 @@
 #ifndef PHONGO_H
 #define PHONGO_H
 
+/* External libs */
+#include <bson.h>
+#include <mongoc.h>
+
 extern zend_module_entry phongo_module_entry;
 
 #define PHONGO_VERSION_S "3.0.0"
@@ -136,12 +140,9 @@ extern PHPAPI zend_class_entry *php_phongo_writeresult_ce;
 
 typedef enum {
 	PHONGO_INVALID_ARGUMENT = 1,
-	PHONGO_SOMETHING_ELSE,
 } php_phongo_error_domain_t;
 
-#if 0
 PHPAPI zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t domain);
-#endif
 PHPAPI zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
 
 PHP_MINIT_FUNCTION(bson);

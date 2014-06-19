@@ -45,10 +45,21 @@
 
 zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain)
 {
-	switch(domain)
-	{
+	switch (domain) {
 		case PHONGO_INVALID_ARGUMENT:
 			return spl_ce_InvalidArgumentException;
+	}
+}
+zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t domain)
+{
+	switch (domain) {
+		case MONGOC_ERROR_STREAM:
+			/* FIXME: We don't have the Exceptions mocked yet.. */
+#if 0
+			return phongo_ce_mongo_connection_exception;
+#endif
+		default:
+			return spl_ce_RuntimeException;
 	}
 }
 
