@@ -416,13 +416,13 @@ PHONGO_API void php_phongo_bson_encode_array(bson_t *bson, zval *data TSRMLS_DC)
 				}
 
 				if (hash_type == HASH_KEY_IS_STRING) {
-					php_phongo_bson_encode(bson, key, key_len-1, *entry);
+					php_phongo_bson_encode(bson, key, key_len-1, *entry TSRMLS_CC);
 				} else {
 					char *tmp_number;
 					int tmp_number_len;
 
 					tmp_number_len = spprintf(&tmp_number, 0, "%ld", index);
-					php_phongo_bson_encode(bson, tmp_number, tmp_number_len, *entry);
+					php_phongo_bson_encode(bson, tmp_number, tmp_number_len, *entry TSRMLS_CC);
 					efree(tmp_number);
 				}
 
