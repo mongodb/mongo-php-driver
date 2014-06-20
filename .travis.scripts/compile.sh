@@ -1,8 +1,14 @@
 #!/bin/bash
-sudo apt-get install gdb
+sudo apt-get install gdb 
+
+wget https://github.com/mongodb/mongo-c-driver/releases/download/0.96.2/mongo-c-driver-0.96.2.tar.gz
+tar zxvf mongo-c-driver*
+(cd mongo-c-driver* && ./configure && make all && sudo make install)
+
+
 phpize
 ./configure --enable-developer-flags --enable-coverage --quiet
-make all install
+make all && sudo make install
 
 if [ $? -ne 0 ]; then
 	exit 42
@@ -14,3 +20,5 @@ MONGO=`which mongo`
 mongod --version
 ls $MONGO*
 pwd
+
+
