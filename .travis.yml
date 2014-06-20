@@ -1,0 +1,28 @@
+language: php
+php:
+  - '5.6'
+  - '5.5'
+  - '5.4'
+  - '5.3'
+
+services:
+  - mongodb
+
+env:
+  global:
+    - TEST_PHP_ARGS="-q -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
+    - REPORT_EXIT_STATUS=1
+    - secure: uOPk40++5SqPwsvENvQXKy3sJmOYFoPxTSPpoafbus9teEqe3S0mXAv6leSUSH4K/vk1OoPFp2xjKRVkdBTeqTElna1DDWOuYlvli9PLSvyZ+b1bV+8Ap18BxqlYhd3tHrY7tIliOsh6dZplWF9GyUm9DWBZ/80uKUidh/Brg/Y=
+
+before_install:
+  - sudo pip install cpp-coveralls
+
+before_script:
+  - "./.travis.scripts/compile.sh"
+
+notifications:
+  email:
+  - bjori@mongodb.com
+
+script:
+  - make test coveralls
