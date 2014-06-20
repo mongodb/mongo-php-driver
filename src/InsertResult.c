@@ -31,9 +31,9 @@
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
-#include <php/ext/standard/info.h>
+#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <php/ext/spl/spl_iterators.h>
+#include <ext/spl/spl_iterators.h>
 /* Our Compatability header */
 #include "php_compat_53.h"
 
