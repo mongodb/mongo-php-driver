@@ -7,7 +7,7 @@ tar zxvf mongo-c-driver*
 
 
 phpize
-./configure --enable-developer-flags --enable-coverage --quiet
+./configure --enable-coverage --quiet
 make all && sudo make install
 
 if [ $? -ne 0 ]; then
