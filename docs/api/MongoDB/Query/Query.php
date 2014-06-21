@@ -28,20 +28,66 @@ final class Query
     private $limit;
 
     /**
-     * Constructs a new Query
+     * Sets the query criteria
      *
-     * @param array|object $query    Query document
-     * @param array|object $selector Selector document
-     * @param integer      $flags    Query flags
-     * @param integer      $skip     Skip
-     * @param integer      $limit    Limit
+     * @param array $query Query document
      */
-    public function __construct($query, $selector, $flags, $skip, $limit)
+    public function setQuery(array $query)
     {
         $this->query = $query;
+    }
+
+    /**
+     * Merges a query with the current one.
+     *
+     * @param array $criteria The query.
+     */
+    public function mergeQuery(array $query)
+    {
+        if (!$this->query) {
+            $this->query = $query;
+        } else {
+            $this->criteria = array_merge($this->query, $query);
+        }
+    }
+
+    /**
+     * Sets the query projection
+     *
+     * @param array $selector Selector document
+     */
+    public function setSelector(array $selector)
+    {
         $this->selector = $selector;
-        $this->flags = (integer) $flags;
-        $this->skip = (integer) $skip;
-        $this->limit = (integer) $limit;
+    }
+
+    /**
+     * Sets the query flags
+     *
+     * @param integer $flags Query flags
+     */
+    public function setFlags($flags)
+    {
+        $this->flags = (int) $flags;
+    }
+
+    /**
+     * Sets the skip param
+     *
+     * @param integer $skip Skip
+     */
+    public function setSkip($skip)
+    {
+        $this->skip = (int) $skip;
+    }
+
+    /**
+     * Sets the limit param
+     *
+     * @param integer $limit Limit
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = (int) $limit;
     }
 }
