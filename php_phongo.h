@@ -116,27 +116,27 @@ typedef struct {
 	zend_object std;
 } php_phongo_writeresult_t;
 
-extern PHPAPI zend_class_entry *php_phongo_command_ce;
-extern PHPAPI zend_class_entry *php_phongo_commandcursor_ce;
-extern PHPAPI zend_class_entry *php_phongo_commandresult_ce;
-extern PHPAPI zend_class_entry *php_phongo_cursor_ce;
-extern PHPAPI zend_class_entry *php_phongo_cursorid_ce;
-extern PHPAPI zend_class_entry *php_phongo_deletebatch_ce;
-extern PHPAPI zend_class_entry *php_phongo_deleteresult_ce;
-extern PHPAPI zend_class_entry *php_phongo_generatedid_ce;
-extern PHPAPI zend_class_entry *php_phongo_insertbatch_ce;
-extern PHPAPI zend_class_entry *php_phongo_insertresult_ce;
-extern PHPAPI zend_class_entry *php_phongo_manager_ce;
-extern PHPAPI zend_class_entry *php_phongo_query_ce;
-extern PHPAPI zend_class_entry *php_phongo_querycursor_ce;
-extern PHPAPI zend_class_entry *php_phongo_readpreference_ce;
-extern PHPAPI zend_class_entry *php_phongo_server_ce;
-extern PHPAPI zend_class_entry *php_phongo_updatebatch_ce;
-extern PHPAPI zend_class_entry *php_phongo_updateresult_ce;
-extern PHPAPI zend_class_entry *php_phongo_writebatch_ce;
-extern PHPAPI zend_class_entry *php_phongo_writeconcernerror_ce;
-extern PHPAPI zend_class_entry *php_phongo_writeerror_ce;
-extern PHPAPI zend_class_entry *php_phongo_writeresult_ce;
+extern PHONGO_API zend_class_entry *php_phongo_command_ce;
+extern PHONGO_API zend_class_entry *php_phongo_commandcursor_ce;
+extern PHONGO_API zend_class_entry *php_phongo_commandresult_ce;
+extern PHONGO_API zend_class_entry *php_phongo_cursor_ce;
+extern PHONGO_API zend_class_entry *php_phongo_cursorid_ce;
+extern PHONGO_API zend_class_entry *php_phongo_deletebatch_ce;
+extern PHONGO_API zend_class_entry *php_phongo_deleteresult_ce;
+extern PHONGO_API zend_class_entry *php_phongo_generatedid_ce;
+extern PHONGO_API zend_class_entry *php_phongo_insertbatch_ce;
+extern PHONGO_API zend_class_entry *php_phongo_insertresult_ce;
+extern PHONGO_API zend_class_entry *php_phongo_manager_ce;
+extern PHONGO_API zend_class_entry *php_phongo_query_ce;
+extern PHONGO_API zend_class_entry *php_phongo_querycursor_ce;
+extern PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
+extern PHONGO_API zend_class_entry *php_phongo_server_ce;
+extern PHONGO_API zend_class_entry *php_phongo_updatebatch_ce;
+extern PHONGO_API zend_class_entry *php_phongo_updateresult_ce;
+extern PHONGO_API zend_class_entry *php_phongo_writebatch_ce;
+extern PHONGO_API zend_class_entry *php_phongo_writeconcernerror_ce;
+extern PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
+extern PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
 typedef enum {
 	PHONGO_INVALID_ARGUMENT = 1,
