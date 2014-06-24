@@ -33,6 +33,7 @@
 #include <php_ini.h>
 #include <ext/standard/info.h>
 #include "Zend/zend_interfaces.h"
+#include "Zend/zend_exceptions.h"
 #include "ext/spl/spl_iterators.h"
 #include "ext/spl/spl_exceptions.h"
 /* Our Compatability header */
@@ -48,6 +49,8 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 	switch (domain) {
 		case PHONGO_INVALID_ARGUMENT:
 			return spl_ce_InvalidArgumentException;
+		case PHONGO_RUNETIME_ERROR:
+			return spl_ce_RuntimeException;
 	}
 }
 zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t domain)
@@ -62,6 +65,12 @@ zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t doma
 			return spl_ce_RuntimeException;
 	}
 }
+PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, char *message)
+{
+	zend_throw_exception(phongo_exception_from_phongo_domain(domain) TSRMLS_CC, message, 0);
+}
+/* }}} */
+
 
 /* {{{ M[INIT|SHUTDOWN] R[INIT|SHUTDOWN] G[INIT|SHUTDOWN] MINFO INI */
 

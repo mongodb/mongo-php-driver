@@ -140,10 +140,12 @@ extern PHPAPI zend_class_entry *php_phongo_writeresult_ce;
 
 typedef enum {
 	PHONGO_INVALID_ARGUMENT = 1,
+	PHONGO_RUNETIME_ERROR   = 2,
 } php_phongo_error_domain_t;
 
-PHPAPI zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t domain);
-PHPAPI zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
+PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t domain);
+PHONGO_API zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
+PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, char *message);
 
 PHP_MINIT_FUNCTION(bson);
 PHP_MINIT_FUNCTION(Command);
