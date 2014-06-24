@@ -42,7 +42,7 @@
 #include "php_bson.h"
 
 
-PHPAPI zend_class_entry *php_phongo_deleteresult_ce;
+PHONGO_API zend_class_entry *php_phongo_deleteresult_ce;
 
 /* {{{ proto integer DeleteResult::getNumRemoved()
    Returns the Number of documents that got removed */
@@ -177,6 +177,34 @@ static zend_function_entry php_phongo_deleteresult_me[] = {
 /* }}} */
 
 
+/* {{{ php_phongo_deleteresult_free_object && php_phongo_deleteresult_create_object */
+static void php_phongo_deleteresult_free_object(void *object TSRMLS_DC)
+{
+	php_phongo_deleteresult_t *intern = (php_phongo_deleteresult_t*)object;
+
+	zend_object_std_dtor(&intern->std TSRMLS_CC);
+
+	efree(intern);
+}
+
+zend_object_value php_phongo_deleteresult_create_object(zend_class_entry *class_type TSRMLS_DC)
+{
+	zend_object_value retval;
+	php_phongo_deleteresult_t *intern;
+
+	intern = (php_phongo_deleteresult_t *)emalloc(sizeof(php_phongo_deleteresult_t));
+	memset(intern, 0, sizeof(php_phongo_deleteresult_t));
+
+	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	object_properties_init(&intern->std, class_type);
+
+	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_deleteresult_free_object, NULL TSRMLS_CC);
+	retval.handlers = phongo_get_std_object_handlers();
+
+	return retval;
+}
+/* }}} */
+
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(DeleteResult)
 {
@@ -184,6 +212,7 @@ PHP_MINIT_FUNCTION(DeleteResult)
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Write", "DeleteResult", php_phongo_deleteresult_me);
+	ce.create_object = php_phongo_deleteresult_create_object;
 	php_phongo_deleteresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	zend_class_implements(php_phongo_deleteresult_ce TSRMLS_CC, 1, php_phongo_writeresult_ce);
 

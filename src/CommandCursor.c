@@ -42,7 +42,7 @@
 #include "php_bson.h"
 
 
-PHPAPI zend_class_entry *php_phongo_commandcursor_ce;
+PHONGO_API zend_class_entry *php_phongo_commandcursor_ce;
 
 /* {{{ proto MongoDB\Command\CommandCursor CommandCursor::__construct(MongoDB\Server $server, MongoDB\CursorId $cursorId, array $firstBatch)
    Constructs a new CommandCursor object */
@@ -144,7 +144,7 @@ PHP_METHOD(CommandCursor, setBatchSize)
 }
 /* }}} */
 /* {{{ proto void CommandCursor::current()
-    */
+	*/
 PHP_METHOD(CommandCursor, current)
 {
 	php_phongo_commandcursor_t *intern;
@@ -163,7 +163,7 @@ PHP_METHOD(CommandCursor, current)
 }
 /* }}} */
 /* {{{ proto void CommandCursor::next()
-    */
+	*/
 PHP_METHOD(CommandCursor, next)
 {
 	php_phongo_commandcursor_t *intern;
@@ -182,7 +182,7 @@ PHP_METHOD(CommandCursor, next)
 }
 /* }}} */
 /* {{{ proto void CommandCursor::key()
-    */
+	*/
 PHP_METHOD(CommandCursor, key)
 {
 	php_phongo_commandcursor_t *intern;
@@ -201,7 +201,7 @@ PHP_METHOD(CommandCursor, key)
 }
 /* }}} */
 /* {{{ proto void CommandCursor::valid()
-    */
+	*/
 PHP_METHOD(CommandCursor, valid)
 {
 	php_phongo_commandcursor_t *intern;
@@ -220,7 +220,7 @@ PHP_METHOD(CommandCursor, valid)
 }
 /* }}} */
 /* {{{ proto void CommandCursor::rewind()
-    */
+	*/
 PHP_METHOD(CommandCursor, rewind)
 {
 	php_phongo_commandcursor_t *intern;
@@ -303,6 +303,34 @@ static zend_function_entry php_phongo_commandcursor_me[] = {
 /* }}} */
 
 
+/* {{{ php_phongo_commandcursor_free_object && php_phongo_commandcursor_create_object */
+static void php_phongo_commandcursor_free_object(void *object TSRMLS_DC)
+{
+	php_phongo_commandcursor_t *intern = (php_phongo_commandcursor_t*)object;
+
+	zend_object_std_dtor(&intern->std TSRMLS_CC);
+
+	efree(intern);
+}
+
+zend_object_value php_phongo_commandcursor_create_object(zend_class_entry *class_type TSRMLS_DC)
+{
+	zend_object_value retval;
+	php_phongo_commandcursor_t *intern;
+
+	intern = (php_phongo_commandcursor_t *)emalloc(sizeof(php_phongo_commandcursor_t));
+	memset(intern, 0, sizeof(php_phongo_commandcursor_t));
+
+	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	object_properties_init(&intern->std, class_type);
+
+	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_commandcursor_free_object, NULL TSRMLS_CC);
+	retval.handlers = phongo_get_std_object_handlers();
+
+	return retval;
+}
+/* }}} */
+
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(CommandCursor)
 {
@@ -310,6 +338,7 @@ PHP_MINIT_FUNCTION(CommandCursor)
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Command", "CommandCursor", php_phongo_commandcursor_me);
+	ce.create_object = php_phongo_commandcursor_create_object;
 	php_phongo_commandcursor_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	zend_class_implements(php_phongo_commandcursor_ce TSRMLS_CC, 1, php_phongo_cursor_ce);
 

@@ -42,7 +42,7 @@
 #include "php_bson.h"
 
 
-PHPAPI zend_class_entry *php_phongo_server_ce;
+PHONGO_API zend_class_entry *php_phongo_server_ce;
 
 /* {{{ proto MongoDB\Server Server::__construct(string $host, integer $port[, array $options = array()[, array $driverOptions = array()]])
    Constructs a new Server */
@@ -368,6 +368,34 @@ static zend_function_entry php_phongo_server_me[] = {
 /* }}} */
 
 
+/* {{{ php_phongo_server_free_object && php_phongo_server_create_object */
+static void php_phongo_server_free_object(void *object TSRMLS_DC)
+{
+	php_phongo_server_t *intern = (php_phongo_server_t*)object;
+
+	zend_object_std_dtor(&intern->std TSRMLS_CC);
+
+	efree(intern);
+}
+
+zend_object_value php_phongo_server_create_object(zend_class_entry *class_type TSRMLS_DC)
+{
+	zend_object_value retval;
+	php_phongo_server_t *intern;
+
+	intern = (php_phongo_server_t *)emalloc(sizeof(php_phongo_server_t));
+	memset(intern, 0, sizeof(php_phongo_server_t));
+
+	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	object_properties_init(&intern->std, class_type);
+
+	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_server_free_object, NULL TSRMLS_CC);
+	retval.handlers = phongo_get_std_object_handlers();
+
+	return retval;
+}
+/* }}} */
+
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(Server)
 {
@@ -375,6 +403,7 @@ PHP_MINIT_FUNCTION(Server)
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "Server", php_phongo_server_me);
+	ce.create_object = php_phongo_server_create_object;
 	php_phongo_server_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_MONGOS"), 0x01 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_STANDALONE"), 0x02 TSRMLS_CC);

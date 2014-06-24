@@ -42,7 +42,7 @@
 #include "php_bson.h"
 
 
-PHPAPI zend_class_entry *php_phongo_cursorid_ce;
+PHONGO_API zend_class_entry *php_phongo_cursorid_ce;
 
 /* {{{ proto MongoDB\CursorId CursorId::__construct(string $id)
    Construct a new CursorId */
@@ -110,6 +110,34 @@ static zend_function_entry php_phongo_cursorid_me[] = {
 /* }}} */
 
 
+/* {{{ php_phongo_cursorid_free_object && php_phongo_cursorid_create_object */
+static void php_phongo_cursorid_free_object(void *object TSRMLS_DC)
+{
+	php_phongo_cursorid_t *intern = (php_phongo_cursorid_t*)object;
+
+	zend_object_std_dtor(&intern->std TSRMLS_CC);
+
+	efree(intern);
+}
+
+zend_object_value php_phongo_cursorid_create_object(zend_class_entry *class_type TSRMLS_DC)
+{
+	zend_object_value retval;
+	php_phongo_cursorid_t *intern;
+
+	intern = (php_phongo_cursorid_t *)emalloc(sizeof(php_phongo_cursorid_t));
+	memset(intern, 0, sizeof(php_phongo_cursorid_t));
+
+	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	object_properties_init(&intern->std, class_type);
+
+	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_cursorid_free_object, NULL TSRMLS_CC);
+	retval.handlers = phongo_get_std_object_handlers();
+
+	return retval;
+}
+/* }}} */
+
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(CursorId)
 {
@@ -117,6 +145,7 @@ PHP_MINIT_FUNCTION(CursorId)
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "CursorId", php_phongo_cursorid_me);
+	ce.create_object = php_phongo_cursorid_create_object;
 	php_phongo_cursorid_ce = zend_register_internal_class(&ce TSRMLS_CC);
 
 	return SUCCESS;
