@@ -147,6 +147,8 @@ PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_do
 PHONGO_API zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
 PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, char *message);
 
+PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
+
 PHP_MINIT_FUNCTION(bson);
 PHP_MINIT_FUNCTION(Command);
 PHP_MINIT_FUNCTION(CommandCursor);

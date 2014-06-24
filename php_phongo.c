@@ -43,7 +43,16 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
+/* {{{ phongo_std_object_handlers */
+zend_object_handlers phongo_std_object_handlers;
 
+PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void)
+{
+	return &phongo_std_object_handlers;
+}
+/* }}} */
+
+/* {{{ Error reporting */
 zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain)
 {
 	switch (domain) {
@@ -99,13 +108,11 @@ PHP_MINIT_FUNCTION(phongo)
 	mongoc_init();
 
 	/* Prep default object handlers to be used when we register the classes */
-	/*
-	memcpy(&phongo_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_object_handlers.clone_obj = NULL;
-	phongo_object_handlers.read_property = NULL;
-	phongo_object_handlers.write_property = NULL;
-	phongo_object_handlers.get_debug_info = NULL;
-	*/
+	memcpy(&phongo_std_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+	phongo_std_object_handlers.clone_obj = NULL;
+	phongo_std_object_handlers.read_property = NULL;
+	phongo_std_object_handlers.write_property = NULL;
+	phongo_std_object_handlers.get_debug_info = NULL;
 
 	PHP_MINIT(bson)(INIT_FUNC_ARGS_PASSTHRU);
 
