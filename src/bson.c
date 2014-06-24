@@ -34,10 +34,6 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
-/* PHP Core stuff */
-#include <php.h>
-/* Our Compatability header */
-#include "php_compat_53.h"
 
 #define BSON_APPEND_INT32(b,key,val) \
 	bson_append_int32 (b, key, (int) strlen (key), val)
