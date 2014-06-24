@@ -65,6 +65,13 @@ PHP_METHOD(Manager, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	intern->client = mongoc_client_new(uri);
+	if (!intern->client) {
+		phongo_throw_exception(PHONGO_RUNETIME_ERROR TSRMLS_CC, "Failed to parse MongoDB URI");
+		return;
+	}
 }
 /* }}} */
 /* {{{ proto MongoDB\Manager Manager::createFromServers(array $servers)

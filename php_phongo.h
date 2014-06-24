@@ -84,6 +84,7 @@ typedef struct {
 } php_phongo_insertresult_t;
 typedef struct {
 	zend_object std;
+	mongoc_client_t *client;
 } php_phongo_manager_t;
 typedef struct {
 	zend_object std;
