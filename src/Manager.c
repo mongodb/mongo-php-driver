@@ -54,6 +54,8 @@ PHP_METHOD(Manager, __construct)
 	int                    uri_len;
 	zval                  *options;
 	zval                  *driverOptions;
+	void                ***ctx = NULL;
+	TSRMLS_SET_CTX(ctx);
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -72,6 +74,7 @@ PHP_METHOD(Manager, __construct)
 		phongo_throw_exception(PHONGO_RUNETIME_ERROR TSRMLS_CC, "Failed to parse MongoDB URI");
 		return;
 	}
+	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);
 }
 /* }}} */
 /* {{{ proto MongoDB\Manager Manager::createFromServers(array $servers)
@@ -104,6 +107,7 @@ PHP_METHOD(Manager, executeCommand)
 	int                    db_len;
 	zval                  *command;
 	zval                  *readPreference;
+	php_phongo_command_t  *cmd;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -115,6 +119,9 @@ PHP_METHOD(Manager, executeCommand)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
+	phongo_execute_command(intern->client, mongoc_client_get_database(intern->client, db), cmd->bson, readPreference, return_value, return_value_used);
 }
 /* }}} */
 /* {{{ proto MongoDB\Query\QueryCursor Manager::executeQuery(string $namespace, MongoDB\Query\Query $query[, MongoDB\ReadPreference $readPreference = null])
@@ -150,6 +157,7 @@ PHP_METHOD(Manager, executeWrite)
 	int                    namespace_len;
 	zval                  *batch;
 	zval                  *writeOptions;
+	mongoc_collection_t *collection;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -161,6 +169,9 @@ PHP_METHOD(Manager, executeWrite)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	collection = phongo_get_collection_from_namespace(intern->client, namespace, namespace_len);
+	phongo_execute_write(intern->client, collection, batch, return_value, return_value_used);
 }
 /* }}} */
 /* {{{ proto MongoDB\Write\InsertResult Manager::executeInsert(string $namespace, array|object $document[, array $writeOptions = array()])

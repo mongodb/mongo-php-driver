@@ -496,6 +496,40 @@ PHONGO_API void php_phongo_bson_encode(bson_t *bson, char *key, int key_len, zva
 	return;
 }
 /* }}} */
+PHONGO_API int bson_to_zval(const unsigned char *data, int data_len, zval *retval)
+{
+	      bson_reader_t *reader;
+	      bson_iter_t    iter;
+	const bson_t        *b;
+	      bool           eof = false;
+
+
+	reader = bson_reader_new_from_data(data, data_len);
+
+	if (!(b = bson_reader_read(reader, &eof))) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Could not read document from reader");
+		return 0;
+	}
+
+	do {
+		if (!bson_iter_init(&iter, b)) {
+			bson_reader_destroy(reader);
+			return 0;
+		}
+
+		array_init(retval);
+		bson_iter_visit_all(&iter, &php_bson_visitors, &retval);
+	} while ((b = bson_reader_read(reader, &eof)));
+
+	bson_reader_destroy(reader);
+
+	if (!eof) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid BSON detected");
+		return 0;
+	}
+
+	return 1;
+}
 
 /* {{{ proto string bson_encode(mixed data)
    Returns the BSON representation of a value */
@@ -535,10 +569,6 @@ PHP_FUNCTION(bson_decode)
 {
 	      char          *data;
 	      int            data_len;
-	      bson_reader_t *reader;
-	      bson_iter_t    iter;
-	const bson_t        *b;
-	      bool           eof = false;
 
 	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
 
@@ -546,30 +576,9 @@ PHP_FUNCTION(bson_decode)
 		return;
 	}
 
-	reader = bson_reader_new_from_data((const unsigned char *)data, data_len);
-
-
-	if (!(b = bson_reader_read(reader, &eof))) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Could not read document from reader");
+	if (!bson_to_zval((const unsigned char *)data, data_len, return_value)) {
 		RETURN_NULL();
 	}
-
-	do {
-		if (!bson_iter_init(&iter, b)) {
-			bson_reader_destroy(reader);
-			RETURN_NULL();
-		}
-
-		array_init(return_value);
-		bson_iter_visit_all(&iter, &php_bson_visitors, &return_value);
-	} while ((b = bson_reader_read(reader, &eof)));
-
-	bson_reader_destroy(reader);
-
-	if (!eof) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid BSON detected");
-	}
-
 }
 /* }}} */
 

@@ -24,6 +24,9 @@
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
+#define MONGOC_INSIDE
+#include <src/libmongoc/src/mongoc/mongoc-stream-private.h>
+#undef MONGOC_INSIDE
 
 extern zend_module_entry phongo_module_entry;
 
@@ -43,7 +46,7 @@ extern zend_module_entry phongo_module_entry;
 #endif
 
 ZEND_BEGIN_MODULE_GLOBALS(phongo)
-	char *be_awesome;
+	char *debug_log;
 ZEND_END_MODULE_GLOBALS(phongo)
 
 #ifdef ZTS
@@ -54,6 +57,7 @@ ZEND_END_MODULE_GLOBALS(phongo)
 
 typedef struct {
 	zend_object std;
+	bson_t     *bson;
 } php_phongo_command_t;
 typedef struct {
 	zend_object std;
@@ -78,6 +82,7 @@ typedef struct {
 } php_phongo_generatedid_t;
 typedef struct {
 	zend_object std;
+	mongoc_bulk_operation_t *bulk;
 } php_phongo_insertbatch_t;
 typedef struct {
 	zend_object std;
@@ -144,11 +149,22 @@ typedef enum {
 	PHONGO_RUNETIME_ERROR   = 2,
 } php_phongo_error_domain_t;
 
+typedef struct
+{
+	mongoc_stream_t  vtable;
+	php_stream      *stream;
+} php_phongo_stream_socket;
+
 PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t domain);
 PHONGO_API zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
 PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, char *message);
 
 PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
+
+mongoc_collection_t* phongo_get_collection_from_namespace(mongoc_client_t *client, char *namespace, int namespace_len);
+int phongo_execute_write(mongoc_client_t *client, mongoc_collection_t *collection, zval *batch, zval *return_value, int return_value_used TSRMLS_DC);
+int phongo_execute_command(mongoc_client_t *client, mongoc_database_t *db, bson_t *command, zval *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
+mongoc_stream_t *phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error);
 
 PHP_MINIT_FUNCTION(bson);
 PHP_MINIT_FUNCTION(Command);

@@ -51,6 +51,7 @@ PHP_METHOD(Command, __construct)
 	php_phongo_command_t  *intern;
 	zend_error_handling	error_handling;
 	zval                  *document;
+	bson_t *bson = bson_new();
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -62,6 +63,9 @@ PHP_METHOD(Command, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	php_phongo_bson_encode_array(bson, document TSRMLS_DC);
+	intern->bson = bson;
 }
 /* }}} */
 
@@ -90,6 +94,9 @@ static void php_phongo_command_free_object(void *object TSRMLS_DC)
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	if (intern->bson) {
+		bson_free(intern->bson);
+	}
 	efree(intern);
 }
 
