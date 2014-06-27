@@ -116,9 +116,11 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 	case MONGOC_LOG_LEVEL_TRACE:
 		{
 			int fd = 0;
-			char *dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), time(NULL), 1 TSRMLS_CC);
+			char *dt = NULL;
 			TSRMLS_FETCH_FROM_CTX(user_data);
 
+			dt = php_format_date("Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), time(NULL), 0 TSRMLS_CC);
+			/*char *dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), time(NULL), 1 TSRMLS_CC);*/
 			if (strcasecmp(PHONGO_G(debug_log), "stderr") == 0) {
 				fprintf(stderr, "[%s - %8s] %s\n", dt, mongoc_log_level_str(log_level), message);
 			} else if (strcasecmp(PHONGO_G(debug_log), "stdout") == 0) {
@@ -247,9 +249,59 @@ int phongo_stream_close(mongoc_stream_t *stream)
 }
 ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, int32_t timeout_msec)
 {
+	ssize_t sent = 0;
+	size_t i = 0;
+
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
-	size_t retval = php_stream_write(base_stream->stream, iov->iov_base, iov->iov_len);
+
+	for (i = 0; i < iovcnt; i++) {
+		sent += php_stream_write(base_stream->stream, iov[i].iov_base, iov[i].iov_len);
+	}
+	return sent;
+#if 0
+	sent = php_stream_write(base_stream->stream, iov->iov_base, iov->iov_len);
+	//sent = php_stream_write(base_stream->stream, &iov [cur], iovcnt - cur);
+	{
+		ssize_t wrote;
+
+			_mongoc_socket_capture_errno (sock);
+#ifdef _WIN32
+			if (wrote == SOCKET_ERROR) {
+#else
+				if (wrote == -1) {
+#endif
+					if (!_mongoc_socket_errno_is_again (sock)) {
+						RETURN (-1);
+					}
+					RETURN (ret ? ret : -1);
+				}
+
+				ret += wrote;
+
+				>>      if (wrote != iov [i].iov_len) {
+					RETURN (ret);
+				}
+	}
+        while ((cur < iovcnt) && (sent >= (ssize_t)iov [cur].iov_len)) {
+           sent -= iov [cur++].iov_len;
+        }
+
+        /*
+         * Check if that made us finish all of the iovecs. If so, we are done
+         * sending data over the socket.
+         */
+        if (cur == iovcnt) {
+           break;
+        }
+
+        /*
+         * Increment the current iovec buffer to its proper offset and adjust
+         * the number of bytes to write.
+         */
+        iov [cur].iov_base = ((char *)iov [cur].iov_base) + sent;
+        iov [cur].iov_len -= sent;
 	return (ssize_t)retval;
+#endif
 }
 ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, size_t min_bytes, int32_t timeout_msec)
 {
@@ -276,6 +328,11 @@ int phongo_stream_setsockopt(mongoc_stream_t *stream, int level, int optname, vo
 mongoc_stream_t* phongo_stream_get_base_stream(mongoc_stream_t *stream)
 {
 	return NULL;
+}
+static int
+phongo_stream_socket_flush (mongoc_stream_t *stream)
+{
+	return 0;
 }
 mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error)
 {
@@ -318,14 +375,15 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	}
 
 	base_stream = ecalloc(1, sizeof(php_phongo_stream_socket *));
-	base_stream->stream = stream;
 	base_stream->vtable.type = 42;
-	base_stream->vtable.destroy = phongo_stream_destroy;
 	base_stream->vtable.close = phongo_stream_close;
-	base_stream->vtable.writev = phongo_stream_writev;
+	base_stream->vtable.destroy = phongo_stream_destroy;
+	base_stream->vtable.flush = phongo_stream_socket_flush;
 	base_stream->vtable.readv = phongo_stream_readv;
+	base_stream->vtable.writev = phongo_stream_writev;
 	base_stream->vtable.setsockopt = phongo_stream_setsockopt;
 	base_stream->vtable.get_base_stream = phongo_stream_get_base_stream;
+	base_stream->stream = stream;
 
 	return (mongoc_stream_t *) base_stream;
 }
