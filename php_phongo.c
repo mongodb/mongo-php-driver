@@ -155,10 +155,11 @@ mongoc_collection_t* phongo_get_collection_from_namespace(mongoc_client_t *clien
 }
 HashTable* phongo_batch_get_documents(zval *batch, zval *retval)
 {
+	int i;
 
 	array_init(retval);
 
-	for (int i=0; i<5;i++) {
+	for (i=0; i<5;i++) {
 		zval *entry;
 
 		MAKE_STD_ZVAL(entry);

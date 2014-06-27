@@ -83,7 +83,6 @@ if test "$PHONGO" != "no"; then
     dnl Make sure we don't optimize calls
     PHP_CHECK_GCC_ARG(-fno-optimize-sibling-calls,      _EXTRA_CFLAGS="$_EXTRA_CFLAGS -fno-optimize-sibling-calls")
     PHP_CHECK_GCC_ARG(-Wlogical-op-parentheses,         _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wlogical-op-parentheses")
-    PHP_CHECK_GCC_ARG(-Wno-gnu,                         _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wno-gnu")
     PHP_CHECK_GCC_ARG(-Wbool-conversion,                _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wbool-conversion")
     PHP_CHECK_GCC_ARG(-Wloop-analysis,                  _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wloop-analysis")
     PHP_CHECK_GCC_ARG(-Wsizeof-array-argument,          _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wsizeof-array-argument")
@@ -101,7 +100,7 @@ if test "$PHONGO" != "no"; then
     PHP_CHECK_GCC_ARG(-Wparentheses,                    _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wparentheses")
 
 
-    EXTRA_CFLAGS="-g -O0 -Wall -Wextra -Werror $_EXTRA_CFLAGS "
+    EXTRA_CFLAGS="-g -O0 -Wall -Wextra $_EXTRA_CFLAGS "
     dnl EXTRA_LDFLAGS="-Wl,--no-undefined"
   fi
 
