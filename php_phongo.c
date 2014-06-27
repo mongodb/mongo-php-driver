@@ -24,6 +24,8 @@
 #	include "config.h"
 #endif
 
+/* YCM */
+#include <strings.h>
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
@@ -183,7 +185,7 @@ int phongo_execute_write(mongoc_client_t *client, mongoc_collection_t *collectio
 	HashPosition pointer;
 	zval **entry;
 	char *key;
-	uint index_key_len;
+	zend_uint index_key_len;
 	ulong uindex;
 	zval *retval;
 	HashTable *hindex;
@@ -196,10 +198,9 @@ int phongo_execute_write(mongoc_client_t *client, mongoc_collection_t *collectio
 			zend_hash_get_current_data_ex(hindex, (void**)&entry, &pointer) == SUCCESS;
 			zend_hash_move_forward_ex(hindex, &pointer)
 		) {
-		uint key_type = zend_hash_get_current_key_ex(hindex, &key, &index_key_len, &uindex, 0, &pointer);
 		bson_t *bson = bson_new();
 
-		if (key_type != HASH_KEY_IS_LONG) {
+		if (zend_hash_get_current_key_ex(hindex, &key, &index_key_len, &uindex, 0, &pointer) != HASH_KEY_IS_LONG) {
 			continue;
 		}
 
@@ -375,7 +376,8 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		setsockopt(socket, IPPROTO_TCP,  TCP_NODELAY, (char *) &flag, sizeof(int));
 	}
 
-	base_stream = ecalloc(1, sizeof(php_phongo_stream_socket *));
+	base_stream = ecalloc(1, sizeof(php_phongo_stream_socket));
+	base_stream->stream = stream;
 	base_stream->vtable.type = 42;
 	base_stream->vtable.close = phongo_stream_close;
 	base_stream->vtable.destroy = phongo_stream_destroy;
@@ -384,7 +386,6 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	base_stream->vtable.writev = phongo_stream_writev;
 	base_stream->vtable.setsockopt = phongo_stream_setsockopt;
 	base_stream->vtable.get_base_stream = phongo_stream_get_base_stream;
-	base_stream->stream = stream;
 
 	return (mongoc_stream_t *) base_stream;
 }
