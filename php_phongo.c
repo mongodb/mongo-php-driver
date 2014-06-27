@@ -175,6 +175,28 @@ HashTable* phongo_batch_get_documents(zval *batch, zval *retval)
 
 	return Z_ARRVAL_P(retval);
 }
+int phongo_crud_insert(mongoc_client_t *client, mongoc_collection_t *collection, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC)
+{
+	bson_error_t error;
+	bson_t reply;
+	mongoc_bulk_operation_t *bulk = mongoc_collection_create_bulk_operation (collection, true, NULL);
+
+
+	mongoc_bulk_operation_insert(bulk, doc);
+
+	if (!mongoc_bulk_operation_execute(bulk, &reply, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		return false;
+	}
+
+
+	if (!return_value_used) {
+		return true;
+	}
+
+	bson_to_zval(bson_get_data(&reply), reply.len, return_value);
+	return true;
+}
 /* Throws exception from bson_error_t */
 int phongo_execute_write(mongoc_client_t *client, mongoc_collection_t *collection, zval *batch, zval *return_value, int return_value_used TSRMLS_DC)
 {
@@ -249,66 +271,8 @@ int phongo_stream_close(mongoc_stream_t *stream)
 {
 	return -1;
 }
-ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, int32_t timeout_msec)
+void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeout_msec)
 {
-	ssize_t sent = 0;
-	size_t i = 0;
-
-	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
-
-	for (i = 0; i < iovcnt; i++) {
-		sent += php_stream_write(base_stream->stream, iov[i].iov_base, iov[i].iov_len);
-	}
-	return sent;
-#if 0
-	sent = php_stream_write(base_stream->stream, iov->iov_base, iov->iov_len);
-	//sent = php_stream_write(base_stream->stream, &iov [cur], iovcnt - cur);
-	{
-		ssize_t wrote;
-
-			_mongoc_socket_capture_errno (sock);
-#ifdef _WIN32
-			if (wrote == SOCKET_ERROR) {
-#else
-				if (wrote == -1) {
-#endif
-					if (!_mongoc_socket_errno_is_again (sock)) {
-						RETURN (-1);
-					}
-					RETURN (ret ? ret : -1);
-				}
-
-				ret += wrote;
-
-				>>      if (wrote != iov [i].iov_len) {
-					RETURN (ret);
-				}
-	}
-        while ((cur < iovcnt) && (sent >= (ssize_t)iov [cur].iov_len)) {
-           sent -= iov [cur++].iov_len;
-        }
-
-        /*
-         * Check if that made us finish all of the iovecs. If so, we are done
-         * sending data over the socket.
-         */
-        if (cur == iovcnt) {
-           break;
-        }
-
-        /*
-         * Increment the current iovec buffer to its proper offset and adjust
-         * the number of bytes to write.
-         */
-        iov [cur].iov_base = ((char *)iov [cur].iov_base) + sent;
-        iov [cur].iov_len -= sent;
-	return (ssize_t)retval;
-#endif
-}
-ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, size_t min_bytes, int32_t timeout_msec)
-{
-	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
-
 	if (timeout_msec) {
 		struct timeval rtimeout = {0, 0};
 
@@ -318,6 +282,25 @@ ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t
 
 		php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &rtimeout);
 	}
+}
+ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, int32_t timeout_msec)
+{
+	size_t     i = 0;
+	ssize_t sent = 0;
+
+	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
+	php_phongo_set_timeout(base_stream, timeout_msec);
+
+	for (i = 0; i < iovcnt; i++) {
+		sent += php_stream_write(base_stream->stream, iov[i].iov_base, iov[i].iov_len);
+	}
+	return sent;
+}
+ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, size_t min_bytes, int32_t timeout_msec)
+{
+	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
+	php_phongo_set_timeout(base_stream, timeout_msec);
+
 	return php_stream_read(base_stream->stream, iov->iov_base, iov->iov_len);
 }
 int phongo_stream_setsockopt(mongoc_stream_t *stream, int level, int optname, void *optval, socklen_t optlen)

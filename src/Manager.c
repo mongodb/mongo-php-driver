@@ -152,12 +152,12 @@ PHP_METHOD(Manager, executeQuery)
 PHP_METHOD(Manager, executeWrite)
 {
 	php_phongo_manager_t  *intern;
-	zend_error_handling	error_handling;
+	zend_error_handling    error_handling;
 	char                  *namespace;
 	int                    namespace_len;
 	zval                  *batch;
 	zval                  *writeOptions;
-	mongoc_collection_t *collection;
+	mongoc_collection_t   *collection;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -179,11 +179,13 @@ PHP_METHOD(Manager, executeWrite)
 PHP_METHOD(Manager, executeInsert)
 {
 	php_phongo_manager_t  *intern;
-	zend_error_handling	error_handling;
+	zend_error_handling    error_handling;
 	char                  *namespace;
 	int                    namespace_len;
 	zval                  *document;
 	zval                  *writeOptions;
+	mongoc_collection_t   *collection;
+	bson_t                 *bson;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -195,6 +197,13 @@ PHP_METHOD(Manager, executeInsert)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	collection = phongo_get_collection_from_namespace(intern->client, namespace, namespace_len);
+
+	bson = bson_new();
+	php_phongo_bson_encode_array(bson, document TSRMLS_CC);
+	phongo_crud_insert(intern->client, collection, bson, return_value, return_value_used);
+	bson_destroy(bson);
 }
 /* }}} */
 /* {{{ proto MongoDB\Write\UpdateResult Manager::executeUpdate(string $namespace, array|object $query, array|object $newObj[, array $updateOptions = array()[, array $writeOptions = array()]])
