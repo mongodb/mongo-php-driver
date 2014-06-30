@@ -405,7 +405,7 @@ PHP_MINIT_FUNCTION(Server)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "Server", php_phongo_server_me);
 	ce.create_object = php_phongo_server_create_object;
 	php_phongo_server_ce = zend_register_internal_class(&ce TSRMLS_CC);
-	php_phongo_server_ce.ce_flags |= ZEND_ACC_FINAL_CLASS
+	php_phongo_server_ce.ce_flags |= ZEND_ACC_FINAL_CLASS;
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_MONGOS"), 0x01 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_STANDALONE"), 0x02 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_ARBITER"), 0x03 TSRMLS_CC);

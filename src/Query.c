@@ -136,7 +136,7 @@ PHP_MINIT_FUNCTION(Query)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Query", "Query", php_phongo_query_me);
 	ce.create_object = php_phongo_query_create_object;
 	php_phongo_query_ce = zend_register_internal_class(&ce TSRMLS_CC);
-	php_phongo_query_ce.ce_flags |= ZEND_ACC_FINAL_CLASS
+	php_phongo_query_ce.ce_flags |= ZEND_ACC_FINAL_CLASS;
 	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_TAILABLE_CURSOR"), 0x01 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_SLAVE_OK"), 0x02 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_OPLOG_REPLAY"), 0x04 TSRMLS_CC);

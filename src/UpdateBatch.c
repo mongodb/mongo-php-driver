@@ -143,7 +143,7 @@ PHP_MINIT_FUNCTION(UpdateBatch)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Write", "UpdateBatch", php_phongo_updatebatch_me);
 	ce.create_object = php_phongo_updatebatch_create_object;
 	php_phongo_updatebatch_ce = zend_register_internal_class(&ce TSRMLS_CC);
-	php_phongo_updatebatch_ce.ce_flags |= ZEND_ACC_FINAL_CLASS
+	php_phongo_updatebatch_ce.ce_flags |= ZEND_ACC_FINAL_CLASS;
 	zend_class_implements(php_phongo_updatebatch_ce TSRMLS_CC, 1, php_phongo_writebatch_ce);
 
 
