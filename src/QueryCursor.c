@@ -339,7 +339,7 @@ PHP_MINIT_FUNCTION(QueryCursor)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Query", "QueryCursor", php_phongo_querycursor_me);
 	ce.create_object = php_phongo_querycursor_create_object;
 	php_phongo_querycursor_ce = zend_register_internal_class(&ce TSRMLS_CC);
-	php_phongo_querycursor_ce.ce_flags |= ZEND_ACC_FINAL_CLASS;
+	php_phongo_querycursor_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 	zend_class_implements(php_phongo_querycursor_ce TSRMLS_CC, 1, php_phongo_cursor_ce);
 
 

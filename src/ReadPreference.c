@@ -123,7 +123,7 @@ PHP_MINIT_FUNCTION(ReadPreference)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "ReadPreference", php_phongo_readpreference_me);
 	ce.create_object = php_phongo_readpreference_create_object;
 	php_phongo_readpreference_ce = zend_register_internal_class(&ce TSRMLS_CC);
-	php_phongo_readpreference_ce.ce_flags |= ZEND_ACC_FINAL_CLASS;
+	php_phongo_readpreference_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_PRIMARY"), "primary" TSRMLS_DC);
 	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_PRIMARY_PREFERRED"), "primaryPreferred" TSRMLS_DC);
 	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_SECONDARY"), "secondary" TSRMLS_DC);
