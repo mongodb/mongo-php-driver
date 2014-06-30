@@ -1,5 +1,6 @@
 <?php
 include "api/MongoDB/Cursor.php";
+include "api/MongoDB/Result.php";
 include "api/MongoDB/CursorId.php";
 include "api/MongoDB/Manager.php";
 include "api/MongoDB/ReadPreference.php";
