@@ -334,12 +334,7 @@ int phongo_stream_setsockopt(mongoc_stream_t *stream, int level, int optname, vo
 }
 mongoc_stream_t* phongo_stream_get_base_stream(mongoc_stream_t *stream)
 {
-	return NULL;
-}
-static int
-phongo_stream_socket_flush (mongoc_stream_t *stream)
-{
-	return 0;
+	return (mongoc_stream_t *) stream;
 }
 mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error)
 {
@@ -386,7 +381,6 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	base_stream->vtable.type = 42;
 	base_stream->vtable.close = phongo_stream_close;
 	base_stream->vtable.destroy = phongo_stream_destroy;
-	base_stream->vtable.flush = phongo_stream_socket_flush;
 	base_stream->vtable.readv = phongo_stream_readv;
 	base_stream->vtable.writev = phongo_stream_writev;
 	base_stream->vtable.setsockopt = phongo_stream_setsockopt;
