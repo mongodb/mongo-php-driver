@@ -20,7 +20,7 @@ final class Result implements \IteratorAggregate
      * @param CursorId $cursorId
      * @param array    $firstBatch
      */
-    public function __construct(MongoDB\Server $server, MongoDB\CursorId $cursorId, array $firstBatch)
+    public function __construct(Server $server, CursorId $cursorId, array $firstBatch)
     {
         $this->server = $server;
         $this->cursorId = $cursorId;
@@ -30,9 +30,10 @@ final class Result implements \IteratorAggregate
     /**
      * Sets the classname of the iterator to use
      *
-     * @return QueryResult
+     * @param Cursor $classname
+     * @return Result
      */
-    public function setIteratorClass(MongoDB\Cursor $classname)
+    public function setIteratorClass(Cursor $classname)
     {
         $this->iterator = $classname;
         return $this;
@@ -41,7 +42,7 @@ final class Result implements \IteratorAggregate
     /**
      * Returns the Iteratable MongoDB\Cursor object
      *
-     * @return MongoDB\Cursor
+     * @return Cursor
      */
     public function getIterator()
     {
