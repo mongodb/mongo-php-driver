@@ -132,19 +132,27 @@ PHP_METHOD(Manager, executeQuery)
 	zend_error_handling	error_handling;
 	char                  *namespace;
 	int                    namespace_len;
-	zval                  *query;
+	zval                  *zquery;
 	zval                  *readPreference;
+	mongoc_collection_t   *collection;
+	mongoc_cursor_t       *cursor;
+	php_phongo_query_t    *query;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O", &namespace, &namespace_len, &query, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O", &namespace, &namespace_len, &zquery, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	query = (php_phongo_query_t *)zend_object_store_get_object(zquery TSRMLS_CC);
+	collection = phongo_get_collection_from_namespace(intern->client, namespace, namespace_len);
+	phongo_execute_query(intern->client, collection, query->bson, &cursor, return_value, return_value_used);
+	mongoc_collection_destroy(collection);
 }
 /* }}} */
 /* {{{ proto MongoDB\Write\WriteResult Manager::executeWrite(string $namespace, MongoDB\Write\WriteBatch $batch[, array $writeOptions = array()])
@@ -172,6 +180,7 @@ PHP_METHOD(Manager, executeWrite)
 
 	collection = phongo_get_collection_from_namespace(intern->client, namespace, namespace_len);
 	phongo_execute_write(intern->client, collection, batch, return_value, return_value_used);
+	mongoc_collection_destroy(collection);
 }
 /* }}} */
 /* {{{ proto MongoDB\Write\InsertResult Manager::executeInsert(string $namespace, array|object $document[, array $writeOptions = array()])
@@ -203,6 +212,7 @@ PHP_METHOD(Manager, executeInsert)
 	bson = bson_new();
 	php_phongo_bson_encode_array(bson, document TSRMLS_CC);
 	phongo_crud_insert(intern->client, collection, bson, return_value, return_value_used);
+	mongoc_collection_destroy(collection);
 	bson_destroy(bson);
 }
 /* }}} */

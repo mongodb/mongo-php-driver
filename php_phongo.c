@@ -197,6 +197,28 @@ int phongo_crud_insert(mongoc_client_t *client, mongoc_collection_t *collection,
 	bson_to_zval(bson_get_data(&reply), reply.len, return_value);
 	return true;
 }
+int phongo_execute_query(mongoc_client_t *client, mongoc_collection_t *collection, bson_t *query, mongoc_cursor_t **out_cursor, zval *return_value, int return_value_used TSRMLS_DC)
+{
+	bson_error_t error;
+    const bson_t *doc;
+
+
+
+	*out_cursor = mongoc_collection_find (collection, MONGOC_QUERY_NONE, 0, 0, 0, query, NULL, NULL);
+
+    if (!mongoc_cursor_next(*out_cursor, &doc)) {
+		mongoc_cursor_error(*out_cursor, &error);
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		return false;
+	}
+
+	if (!return_value_used) {
+		return true;
+	}
+
+	bson_to_zval(bson_get_data(doc), doc->len, return_value);
+	return true;
+}
 /* Throws exception from bson_error_t */
 int phongo_execute_write(mongoc_client_t *client, mongoc_collection_t *collection, zval *batch, zval *return_value, int return_value_used TSRMLS_DC)
 {

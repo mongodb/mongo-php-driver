@@ -66,6 +66,9 @@ PHP_METHOD(Query, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	intern->bson = bson_new();
+	php_phongo_bson_encode_array(intern->bson, query);
 }
 /* }}} */
 

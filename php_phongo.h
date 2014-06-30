@@ -93,6 +93,7 @@ typedef struct {
 } php_phongo_manager_t;
 typedef struct {
 	zend_object std;
+	bson_t     *bson;
 } php_phongo_query_t;
 typedef struct {
 	zend_object std;
@@ -165,6 +166,7 @@ mongoc_collection_t* phongo_get_collection_from_namespace(mongoc_client_t *clien
 int phongo_crud_insert(mongoc_client_t *client, mongoc_collection_t *collection, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC);
 int phongo_execute_write(mongoc_client_t *client, mongoc_collection_t *collection, zval *batch, zval *return_value, int return_value_used TSRMLS_DC);
 int phongo_execute_command(mongoc_client_t *client, mongoc_database_t *db, bson_t *command, zval *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
+int phongo_execute_query(mongoc_client_t *client, mongoc_collection_t *collection, bson_t *query, mongoc_cursor_t **out_cursor, zval *return_value, int return_value_used TSRMLS_DC);
 mongoc_stream_t *phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error);
 
 PHP_MINIT_FUNCTION(bson);
