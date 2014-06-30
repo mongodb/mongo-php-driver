@@ -26,11 +26,13 @@ final class QueryCursor implements Cursor
      *
      * @param Server   $server
      * @param CursorId $cursorId
+     * @param array    $firstBatch
      */
-    public function __construct(Server $server, CursorId $cursorId)
+    public function __construct(Server $server, CursorId $cursorId, array $firstBatch)
     {
         $this->server = $server;
         $this->cursorId = $cursorId;
+        $this->firstBatch = $firstBatch;
     }
 
     /**
