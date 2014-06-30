@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_querycursor_ce;
 
-/* {{{ proto MongoDB\Query\QueryCursor QueryCursor::__construct(MongoDB\Server $server, MongoDB\CursorId $cursorId)
+/* {{{ proto MongoDB\Query\QueryCursor QueryCursor::__construct(MongoDB\Server $server, MongoDB\CursorId $cursorId, array $firstBatch)
    Construct a new QueryCursor */
 PHP_METHOD(QueryCursor, __construct)
 {
@@ -52,13 +52,14 @@ PHP_METHOD(QueryCursor, __construct)
 	zend_error_handling	error_handling;
 	zval                  *server;
 	zval                  *cursorId;
+	zval                  *firstBatch;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_querycursor_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "OO", &server, php_phongo_server_ce, &cursorId, php_phongo_cursorid_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "OOa", &server, php_phongo_server_ce, &cursorId, php_phongo_cursorid_ce, &firstBatch) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -143,7 +144,7 @@ PHP_METHOD(QueryCursor, setBatchSize)
 }
 /* }}} */
 /* {{{ proto void QueryCursor::current()
-	*/
+    */
 PHP_METHOD(QueryCursor, current)
 {
 	php_phongo_querycursor_t *intern;
@@ -162,7 +163,7 @@ PHP_METHOD(QueryCursor, current)
 }
 /* }}} */
 /* {{{ proto void QueryCursor::next()
-	*/
+    */
 PHP_METHOD(QueryCursor, next)
 {
 	php_phongo_querycursor_t *intern;
@@ -181,7 +182,7 @@ PHP_METHOD(QueryCursor, next)
 }
 /* }}} */
 /* {{{ proto void QueryCursor::key()
-	*/
+    */
 PHP_METHOD(QueryCursor, key)
 {
 	php_phongo_querycursor_t *intern;
@@ -200,7 +201,7 @@ PHP_METHOD(QueryCursor, key)
 }
 /* }}} */
 /* {{{ proto void QueryCursor::valid()
-	*/
+    */
 PHP_METHOD(QueryCursor, valid)
 {
 	php_phongo_querycursor_t *intern;
@@ -219,7 +220,7 @@ PHP_METHOD(QueryCursor, valid)
 }
 /* }}} */
 /* {{{ proto void QueryCursor::rewind()
-	*/
+    */
 PHP_METHOD(QueryCursor, rewind)
 {
 	php_phongo_querycursor_t *intern;
@@ -249,9 +250,10 @@ PHP_METHOD(QueryCursor, rewind)
  */
 /* {{{ MongoDB\Query\QueryCursor */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_QueryCursor___construct, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(ai_QueryCursor___construct, 0, 0, 3)
 	ZEND_ARG_OBJ_INFO(0, server, MongoDB\\Server, 0)
 	ZEND_ARG_OBJ_INFO(0, cursorId, MongoDB\\CursorId, 0)
+	ZEND_ARG_ARRAY_INFO(0, firstBatch, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_QueryCursor_getId, 0, 0, 0)
@@ -337,6 +339,7 @@ PHP_MINIT_FUNCTION(QueryCursor)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Query", "QueryCursor", php_phongo_querycursor_me);
 	ce.create_object = php_phongo_querycursor_create_object;
 	php_phongo_querycursor_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_querycursor_ce.ce_flags |= ZEND_ACC_FINAL_CLASS
 	zend_class_implements(php_phongo_querycursor_ce TSRMLS_CC, 1, php_phongo_cursor_ce);
 
 

@@ -147,6 +147,7 @@ PHP_MINIT_FUNCTION(CursorId)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "CursorId", php_phongo_cursorid_me);
 	ce.create_object = php_phongo_cursorid_create_object;
 	php_phongo_cursorid_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_cursorid_ce.ce_flags |= ZEND_ACC_FINAL_CLASS
 
 	return SUCCESS;
 }
