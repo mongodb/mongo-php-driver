@@ -134,6 +134,7 @@ if test "$PHONGO" != "no"; then
       src/CommandCursor.c \
       src/CommandResult.c \
       src/CursorId.c \
+      src/Result.c \
       src/DeleteBatch.c \
       src/DeleteResult.c \
       src/GeneratedId.c \

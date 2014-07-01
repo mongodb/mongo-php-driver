@@ -135,7 +135,6 @@ PHP_METHOD(Manager, executeQuery)
 	zval                  *zquery;
 	zval                  *readPreference;
 	mongoc_collection_t   *collection;
-	mongoc_cursor_t       *cursor;
 	php_phongo_query_t    *query;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
@@ -151,7 +150,7 @@ PHP_METHOD(Manager, executeQuery)
 
 	query = (php_phongo_query_t *)zend_object_store_get_object(zquery TSRMLS_CC);
 	collection = phongo_get_collection_from_namespace(intern->client, namespace, namespace_len);
-	phongo_execute_query(intern->client, collection, query->bson, &cursor, return_value, return_value_used);
+	phongo_execute_query(intern->client, collection, query->bson, return_value, return_value_used);
 	mongoc_collection_destroy(collection);
 }
 /* }}} */

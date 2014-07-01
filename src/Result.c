@@ -79,11 +79,13 @@ PHP_METHOD(Result, setIteratorClass)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_result_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &classname, php_phongo_cursor_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &classname) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	intern->ce_get_iterator = Z_OBJCE_P(classname);
 }
 /* }}} */
 /* {{{ proto MongoDB\Cursor Result::getIterator()
@@ -103,6 +105,9 @@ PHP_METHOD(Result, getIterator)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	php_printf("This is the method now\n");
+	object_init_ex(return_value, intern->ce_get_iterator);
 }
 /* }}} */
 
@@ -121,7 +126,7 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Result___construct, 0, 0, 3)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Result_setIteratorClass, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, classname, MongoDB\\Cursor, 0)
+	ZEND_ARG_OBJ_INFO(0, classname, ArrayIterator, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Result_getIterator, 0, 0, 0)
@@ -155,6 +160,11 @@ zend_object_value php_phongo_result_create_object(zend_class_entry *class_type T
 
 	intern = (php_phongo_result_t *)emalloc(sizeof(php_phongo_result_t));
 	memset(intern, 0, sizeof(php_phongo_result_t));
+	intern->ce_get_iterator = NULL;
+	intern->cursor = NULL;
+	intern->current = NULL;
+	intern->firstBatch = NULL;
+
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
@@ -176,7 +186,8 @@ PHP_MINIT_FUNCTION(Result)
 	ce.create_object = php_phongo_result_create_object;
 	php_phongo_result_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_result_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
-	zend_class_implements(php_phongo_result_ce TSRMLS_CC, 1, php_phongo_teratoraggregate_ce);
+	php_phongo_result_ce->get_iterator = phongo_result_get_iterator;
+	zend_class_implements(php_phongo_result_ce TSRMLS_CC, 1, zend_ce_aggregate);
 
 
 	return SUCCESS;
