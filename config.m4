@@ -161,6 +161,7 @@ if test "$PHONGO" != "no"; then
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_CLASSES,            $EXTRA_CFLAGS, shared_objects_phongo, yes)
   fi
   PHP_NEW_EXTENSION(phongo,    $PHONGO_ROOT, $ext_shared,, $EXTRA_CFLAGS)
+  PHP_ADD_EXTENSION_DEP(phongo, spl)
 
 
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
