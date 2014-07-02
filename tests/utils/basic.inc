@@ -32,3 +32,80 @@ function hex_dump($data)
     }
 }
 
+function makeCollectionNameFromFilename($filename) {
+    $rp = realpath($filename);
+
+    $search = "tests". DIRECTORY_SEPARATOR;
+    // relative path from tests/
+    $base = substr($rp, strpos($rp, $search)+strlen($search));
+    $dir = dirname($base) . DIRECTORY_SEPARATOR;
+    // Its the root of tests/
+    if ($dir[0] == ".") {
+        $dir = "";
+    }
+
+    $basename = basename($filename);
+    /* SKIPIFs are named [basename].skip.php */
+    $base = strstr($basename, ".", true);
+
+    // directory/testname
+    $retval = $dir . $base;
+
+    // directory-testname
+    $retval = str_replace(DIRECTORY_SEPARATOR, "-", $retval);
+
+    return $retval;
+}
+
+function LOAD_FIXTURES() {
+    try {
+        $mc = new MongoDB\Manager(MONGODB_CLEANUP_URI);
+        $cmd = new MongoDB\Command\Command(array("drop" => COLLECTION_NAME));
+        $rp = new MongoDB\ReadPreference(MongoDB\ReadPreference::RP_PRIMARY);
+        $retval = $mc->executeInsert(NS, array("my" => "demo", array("document" => "with", "data")));
+    } catch(Exception $e) {
+        echo "skip " . $e->getCode(), ": ", $e->getMessage();
+    }
+}
+function CLEANUP() {
+    try {
+        $mc = new MongoDB\Manager(MONGODB_CLEANUP_URI);
+        $cmd = new MongoDB\Command\Command(array("drop" => COLLECTION_NAME));
+        $rp = new MongoDB\ReadPreference(MongoDB\ReadPreference::RP_PRIMARY);
+        $mc->executeCommand(DATABASE_NAME, $cmd, $rp);
+    } catch(Exception $e) {
+        echo "skip " . $e->getCode(), ": ", $e->getMessage();
+    }
+}
+
+function def($arr) {
+    foreach($arr as $const => $value) {
+        define($const, getenv("PHONGO_TEST_$const") ?: $value); 
+    }
+}
+$consts = array(
+    "MONGODB_URI"         => "mongodb://localhost:27017",
+    "MONGODB_CLEANUP_URI" => "mongodb://localhost:27017",
+    "DATABASE_NAME"       => "TESTS",
+    "COLLECTION_NAME"     => makeCollectionNameFromFilename($_SERVER["SCRIPT_FILENAME"]),
+    "DEBUG_DIR"           => sys_get_temp_dir() . "/PHONGO-TESTS/",
+);
+def($consts);
+
+// These use values from constants defined above
+$consts = array(
+    "NS"                  => DATABASE_NAME . "." . COLLECTION_NAME,
+    "DEBUG_FILENAME"      => DEBUG_DIR . DATABASE_NAME . "." . COLLECTION_NAME,
+);
+def($consts);
+
+
+
+if (!is_dir(DEBUG_DIR)) {
+    mkdir(DEBUG_DIR, 0777, true);
+}
+
+ini_set("phongo.debug_log", DEBUG_FILENAME);
+file_put_contents(DEBUG_FILENAME, sprintf("===> %s <=== %s\n", date(DATE_ISO8601), $_SERVER["SCRIPT_FILENAME"]), FILE_APPEND);
+
+
