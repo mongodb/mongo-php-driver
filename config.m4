@@ -151,9 +151,15 @@ if test "$PHONGO" != "no"; then
       src/WriteError.c \
   ";
 
-  PHP_ADD_SOURCES_X($builddir, $PHONGO_BSON,               $EXTRA_CFLAGS, shared_objects_phongo, yes)
-  PHP_ADD_SOURCES_X($builddir, $PHONGO_INTERFACES,         $EXTRA_CFLAGS, shared_objects_phongo, yes)
-  PHP_ADD_SOURCES_X($builddir, $PHONGO_CLASSES,            $EXTRA_CFLAGS, shared_objects_phongo, yes)
+  if test "$ext_shared" = "no"; then
+    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_INTERFACES)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_CLASSES)
+  else
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON,               $EXTRA_CFLAGS, shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_INTERFACES,         $EXTRA_CFLAGS, shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_CLASSES,            $EXTRA_CFLAGS, shared_objects_phongo, yes)
+  fi
   PHP_NEW_EXTENSION(phongo,    $PHONGO_ROOT, $ext_shared,, $EXTRA_CFLAGS)
 
 
