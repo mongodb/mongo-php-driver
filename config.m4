@@ -50,8 +50,9 @@ if test "$PHONGO" != "no"; then
     fi
   fi
 
-  AC_CONFIG_SUBDIRS([src/libmongoc])
-  sub_configure_args="--enable-debug --enable-debug-symbols=full"
+  dnl FIXME: we may need to statically link libmongoc....
+  dnl AC_CONFIG_SUBDIRS([src/libmongoc])
+  dnl sub_configure_args="--enable-debug --enable-debug-symbols=full"
   PHP_ADD_INCLUDE($LIBMONGOC_DIR/include/libmongoc-1.0)
   PHP_ADD_INCLUDE($LIBMONGOC_DIR/include/libbson-1.0)
 

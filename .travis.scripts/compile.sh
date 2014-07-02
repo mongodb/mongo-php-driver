@@ -17,6 +17,7 @@ popd
 phpize
 ./configure --enable-coverage --quiet
 make all && sudo make install
+rm -rf src/libmongoc # coveralls may pick it up and lie about our coverage
 
 if [ $? -ne 0 ]; then
 	exit 42
