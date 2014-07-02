@@ -2,7 +2,7 @@
 sudo apt-get install gdb 
 
 pushd src
-wget https://github.com/mongodb/mongo-c-driver/releases/download/0.96.2/mongo-c-driver-0.96.2.tar.gz
+wget https://github.com/mongodb/mongo-c-driver/releases/download/0.96.4/mongo-c-driver-0.96.4.tar.gz
 mkdir libmongoc
 tar zxf mongo-c-driver* -C libmongoc --strip-components=1
 (cd libmongoc && ./configure --quiet && make all >/dev/null && sudo make install)
