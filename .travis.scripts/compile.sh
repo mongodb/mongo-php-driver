@@ -1,5 +1,10 @@
 #!/bin/bash
-sudo apt-get install gdb lcov
+
+sudo apt-get install gdb
+wget http://downloads.sourceforge.net/ltp/lcov-1.11.tar.gz
+mkdir tmp-lcov
+tar zxf lcov* -C tmp-lcov --strip-components=1
+(cd tmp-lcov && sudo make install)
 
 pushd src
 wget https://github.com/mongodb/mongo-c-driver/releases/download/0.96.4/mongo-c-driver-0.96.4.tar.gz
