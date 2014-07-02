@@ -545,7 +545,7 @@ zend_object_iterator_funcs phongo_cursor_it_funcs = {
 	phongo_cursor_it_move_forward,
 	phongo_cursor_it_rewind
 };
-zend_object_iterator_funcs zend_interface_iterator_funcs_iterator = {
+zend_object_iterator_funcs zend_interface_iterator_funcs_iterator_default = {
     phongo_cursor_it_dtor,
     zend_user_it_valid,
     zend_user_it_get_current_data,
@@ -574,7 +574,7 @@ zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *obj
 
 		Z_ADDREF_P(object);
 		iterator->it.data = (void*)object;
-		iterator->it.funcs = &zend_interface_iterator_funcs_iterator;
+		iterator->it.funcs = &zend_interface_iterator_funcs_iterator_default;
 		iterator->ce = Z_OBJCE_P(object);
 		iterator->value = NULL;
 		return (zend_object_iterator*)iterator;
