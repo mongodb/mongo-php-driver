@@ -153,19 +153,37 @@ extern PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
 typedef enum {
-	PHONGO_INVALID_ARGUMENT = 1,
-	PHONGO_RUNETIME_ERROR   = 2,
+	PHONGO_ERROR_INVALID_ARGUMENT = 1,
+	PHONGO_ERROR_RUNETIME         = 2,
+	PHONGO_ERROR_MONGOC_FAILED    = 3
 } php_phongo_error_domain_t;
 
 typedef struct
 {
-	mongoc_stream_t  vtable;
-	php_stream      *stream;
+	void (*writer)(mongoc_stream_t *stream, int32_t timeout_msec, ssize_t sent, size_t iovcnt TSRMLS_DC);
+} php_phongo_stream_logger;
+
+typedef struct
+{
+	mongoc_stream_t     vtable;
+	php_stream         *stream;
+	const bson_t       *uri_options;
+	const mongoc_host_list_t *host;
+	php_phongo_stream_logger log;
+#if ZTS
+	void ***tsrm_ls;
+#endif
 } php_phongo_stream_socket;
 
-PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t domain);
+#if ZTS
+#  define PHONGO_STREAM_CTX(x) x
+#else
+#  define PHONGO_STREAM_CTX(x) NULL
+#endif
+
+PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
 PHONGO_API zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
-PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, char *message);
+PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *message);
 
 PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
 

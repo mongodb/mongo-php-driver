@@ -162,7 +162,6 @@ zend_object_value php_phongo_result_create_object(zend_class_entry *class_type T
 	memset(intern, 0, sizeof(php_phongo_result_t));
 	intern->ce_get_iterator = NULL;
 	intern->cursor = NULL;
-	intern->current = NULL;
 	intern->firstBatch = NULL;
 
 

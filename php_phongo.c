@@ -68,16 +68,61 @@ PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void)
 zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain)
 {
 	switch (domain) {
-		case PHONGO_INVALID_ARGUMENT:
+		case PHONGO_ERROR_INVALID_ARGUMENT:
 			return spl_ce_InvalidArgumentException;
-		case PHONGO_RUNETIME_ERROR:
+		case PHONGO_ERROR_RUNETIME:
+			return spl_ce_RuntimeException;
+		case PHONGO_ERROR_MONGOC_FAILED:
 			return spl_ce_RuntimeException;
 	}
 }
-zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t domain)
+zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code)
 {
+	switch(code) {
+		case MONGOC_ERROR_STREAM_INVALID_TYPE:
+		case MONGOC_ERROR_STREAM_INVALID_STATE:
+		case MONGOC_ERROR_STREAM_NAME_RESOLUTION:
+		case MONGOC_ERROR_STREAM_SOCKET:
+		case MONGOC_ERROR_STREAM_CONNECT:
+		case MONGOC_ERROR_STREAM_NOT_ESTABLISHED:
+		case MONGOC_ERROR_CLIENT_NOT_READY:
+		case MONGOC_ERROR_CLIENT_TOO_BIG:
+		case MONGOC_ERROR_CLIENT_TOO_SMALL:
+		case MONGOC_ERROR_CLIENT_GETNONCE:
+		case MONGOC_ERROR_CLIENT_AUTHENTICATE:
+		case MONGOC_ERROR_CLIENT_NO_ACCEPTABLE_PEER:
+		case MONGOC_ERROR_CLIENT_IN_EXHAUST:
+		case MONGOC_ERROR_PROTOCOL_INVALID_REPLY:
+		case MONGOC_ERROR_PROTOCOL_BAD_WIRE_VERSION:
+		case MONGOC_ERROR_CURSOR_INVALID_CURSOR:
+		case MONGOC_ERROR_QUERY_FAILURE:
+		/*case MONGOC_ERROR_PROTOCOL_ERROR:*/
+		case MONGOC_ERROR_BSON_INVALID:
+		case MONGOC_ERROR_MATCHER_INVALID:
+		case MONGOC_ERROR_NAMESPACE_INVALID:
+		case MONGOC_ERROR_COMMAND_INVALID_ARG:
+		case MONGOC_ERROR_COLLECTION_INSERT_FAILED:
+		case MONGOC_ERROR_GRIDFS_INVALID_FILENAME:
+		case MONGOC_ERROR_QUERY_COMMAND_NOT_FOUND:
+		case MONGOC_ERROR_QUERY_NOT_TAILABLE:
+
+		default:
+			return spl_ce_RuntimeException;
+	}
 	switch (domain) {
+		case MONGOC_ERROR_CLIENT:
 		case MONGOC_ERROR_STREAM:
+		case MONGOC_ERROR_PROTOCOL:
+		case MONGOC_ERROR_CURSOR:
+		case MONGOC_ERROR_QUERY:
+		case MONGOC_ERROR_INSERT:
+		case MONGOC_ERROR_SASL:
+		case MONGOC_ERROR_BSON:
+		case MONGOC_ERROR_MATCHER:
+		case MONGOC_ERROR_NAMESPACE:
+		case MONGOC_ERROR_COMMAND:
+		case MONGOC_ERROR_COLLECTION:
+		case MONGOC_ERROR_GRIDFS:
 			/* FIXME: We don't have the Exceptions mocked yet.. */
 #if 0
 			return phongo_ce_mongo_connection_exception;
@@ -86,31 +131,23 @@ zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t doma
 			return spl_ce_RuntimeException;
 	}
 }
-PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, char *message)
+PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *message)
 {
 	zend_throw_exception(phongo_exception_from_phongo_domain(domain) TSRMLS_CC, message, 0);
 }
 PHONGO_API void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC)
 {
-	zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain) TSRMLS_CC, error->message, error->code);
+	zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code) TSRMLS_CC, error->message, error->code);
 }
 static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain, const char *message, void *user_data)
 {
-	(void)log_domain;
-
-	if (!PHONGO_G(debug_log)) {
-		return;
-	}
-	if (strcasecmp(PHONGO_G(debug_log), "off") == 0) {
-		return;
-	}
-	if (strcasecmp(PHONGO_G(debug_log), "0") == 0) {
-		return;
-	}
+	TSRMLS_FETCH_FROM_CTX(user_data);
 
 	switch(log_level) {
 	case MONGOC_LOG_LEVEL_ERROR:
 	case MONGOC_LOG_LEVEL_CRITICAL:
+		return phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_DC, message);
+
 	case MONGOC_LOG_LEVEL_WARNING:
 	case MONGOC_LOG_LEVEL_MESSAGE:
 	case MONGOC_LOG_LEVEL_INFO:
@@ -119,19 +156,29 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 		{
 			int fd = 0;
 			char *dt = NULL;
-			TSRMLS_FETCH_FROM_CTX(user_data);
+
+			if (!PHONGO_G(debug_log)) {
+				return;
+			}
+			if (strcasecmp(PHONGO_G(debug_log), "off") == 0) {
+				return;
+			}
+			if (strcasecmp(PHONGO_G(debug_log), "0") == 0) {
+				return;
+			}
+
+#define PHONGO_DEBUG_LOG_FORMAT "[%s] %10s: %-8s> %s\n"
 
 			dt = php_format_date("Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), time(NULL), 0 TSRMLS_CC);
-			/*char *dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), time(NULL), 1 TSRMLS_CC);*/
 			if (strcasecmp(PHONGO_G(debug_log), "stderr") == 0) {
-				fprintf(stderr, "[%s - %8s] %s\n", dt, mongoc_log_level_str(log_level), message);
+				fprintf(stderr, PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
 			} else if (strcasecmp(PHONGO_G(debug_log), "stdout") == 0) {
-				php_printf("[%s - %8s] %s\n", dt, mongoc_log_level_str(log_level), message);
+				php_printf(PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
 			} else if ((fd = VCWD_OPEN_MODE(PHONGO_G(debug_log), O_CREAT | O_APPEND | O_WRONLY, 0644)) != -1) {
 				char *tmp;
 				int len;
 
-				len = spprintf(&tmp, 0, "[%s - %8s] %s\n", dt, mongoc_log_level_str(log_level), message);
+				len = spprintf(&tmp, 0, PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
 #ifdef PHP_WIN32
 				php_flock(fd, 2);
 #endif
@@ -142,6 +189,12 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 			efree(dt);
 		} break;
 	}
+}
+void phongo_log_writer(mongoc_stream_t *stream, int32_t timeout_msec, ssize_t sent, size_t iovcnt)
+{
+	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
+
+	mongoc_log(MONGOC_LOG_LEVEL_MESSAGE, "PHONGO", "Wrote %zd bytes to '%s:%d' in %zd iterations", sent, base_stream->host->host, base_stream->host->port, iovcnt);
 }
 /* }}} */
 
@@ -306,14 +359,15 @@ int phongo_stream_close(mongoc_stream_t *stream)
 }
 void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeout_msec)
 {
-	if (timeout_msec) {
+	if (timeout_msec > 0) {
 		struct timeval rtimeout = {0, 0};
 
 		rtimeout.tv_sec = timeout_msec / 1000;
 		rtimeout.tv_usec = (timeout_msec % 1000) * 1000;
-		rtimeout.tv_sec = 1;
 
 		php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &rtimeout);
+	} else if (timeout_msec == 0) {
+		php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, NULL);
 	}
 }
 ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, int32_t timeout_msec)
@@ -327,11 +381,17 @@ ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_
 	for (i = 0; i < iovcnt; i++) {
 		sent += php_stream_write(base_stream->stream, iov[i].iov_base, iov[i].iov_len);
 	}
+	if (base_stream->log.writer) {
+		base_stream->log.writer(stream, timeout_msec, sent, iovcnt);
+	}
+
 	return sent;
 }
 ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, size_t min_bytes, int32_t timeout_msec)
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
+	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+
 	php_phongo_set_timeout(base_stream, timeout_msec);
 
 	return php_stream_read(base_stream->stream, iov->iov_base, iov->iov_len);
@@ -347,6 +407,11 @@ mongoc_stream_t* phongo_stream_get_base_stream(mongoc_stream_t *stream)
 {
 	return (mongoc_stream_t *) stream;
 }
+
+php_phongo_stream_logger phongo_stream_logger = {
+	phongo_log_writer,
+};
+
 mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error)
 {
 	php_phongo_stream_socket *base_stream = NULL;
@@ -355,6 +420,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	int errcode;
 	char *dsn;
 	int dsn_len;
+	TSRMLS_FETCH_FROM_CTX(user_data);
 
 
 	switch (host->family) {
@@ -373,6 +439,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 			bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_INVALID_TYPE, "Invalid address family: 0x%02x", host->family);
 			return NULL;
 	}
+
 	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, (char *)"persistent id", /*options->connectTimeoutMS*/0, (php_stream_context *)NULL, &errmsg, &errcode);
 	efree(dsn);
 	if (!stream) {
@@ -389,6 +456,9 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 	base_stream = ecalloc(1, sizeof(php_phongo_stream_socket));
 	base_stream->stream = stream;
+	base_stream->uri_options = mongoc_uri_get_options(uri);
+	base_stream->host = host;
+	base_stream->log = phongo_stream_logger;
 	base_stream->vtable.type = 42;
 	base_stream->vtable.close = phongo_stream_close;
 	base_stream->vtable.destroy = phongo_stream_destroy;
