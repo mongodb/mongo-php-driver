@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt-get install gdb 
+sudo apt-get install gdb lcov
 
 pushd src
 wget https://github.com/mongodb/mongo-c-driver/releases/download/0.96.4/mongo-c-driver-0.96.4.tar.gz
