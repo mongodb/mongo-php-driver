@@ -1,9 +1,11 @@
 #!/bin/bash
 sudo apt-get install gdb 
 
+pushd src
 wget https://github.com/mongodb/mongo-c-driver/releases/download/0.96.2/mongo-c-driver-0.96.2.tar.gz
-tar zxvf mongo-c-driver*
-(cd mongo-c-driver* && ./configure && make all && sudo make install)
+tar zxf mongo-c-driver* -C libmongoc --strip-components=1
+(cd libmongoc && ./configure --quiet && make all >/dev/null && sudo make install)
+popd
 
 
 phpize
