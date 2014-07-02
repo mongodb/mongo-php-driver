@@ -124,11 +124,11 @@ PHP_MINIT_FUNCTION(ReadPreference)
 	ce.create_object = php_phongo_readpreference_create_object;
 	php_phongo_readpreference_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_readpreference_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
-	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_PRIMARY"), "primary" TSRMLS_DC);
-	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_PRIMARY_PREFERRED"), "primaryPreferred" TSRMLS_DC);
-	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_SECONDARY"), "secondary" TSRMLS_DC);
-	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_SECONDARY_PREFERRED"), "secondaryPreferred" TSRMLS_DC);
-	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_NEAREST"), "nearest" TSRMLS_DC);
+	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_PRIMARY"), "primary" TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_PRIMARY_PREFERRED"), "primaryPreferred" TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_SECONDARY"), "secondary" TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_SECONDARY_PREFERRED"), "secondaryPreferred" TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_NEAREST"), "nearest" TSRMLS_CC);
 
 	return SUCCESS;
 }

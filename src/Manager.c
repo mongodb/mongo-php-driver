@@ -71,7 +71,7 @@ PHP_METHOD(Manager, __construct)
 
 	intern->client = mongoc_client_new(uri);
 	if (!intern->client) {
-		phongo_throw_exception(PHONGO_ERROR_RUNETIME TSRMLS_CC, "Failed to parse MongoDB URI");
+		phongo_throw_exception(PHONGO_ERROR_RUNETIME, "Failed to parse MongoDB URI" TSRMLS_CC);
 		return;
 	}
 	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);
@@ -121,7 +121,7 @@ PHP_METHOD(Manager, executeCommand)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
-	phongo_execute_command(intern->client, mongoc_client_get_database(intern->client, db), cmd->bson, readPreference, return_value, return_value_used);
+	phongo_execute_command(intern->client, mongoc_client_get_database(intern->client, db), cmd->bson, readPreference, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Query\QueryCursor Manager::executeQuery(string $namespace, MongoDB\Query\Query $query[, MongoDB\ReadPreference $readPreference = null])
@@ -150,7 +150,7 @@ PHP_METHOD(Manager, executeQuery)
 
 	query = (php_phongo_query_t *)zend_object_store_get_object(zquery TSRMLS_CC);
 	collection = phongo_get_collection_from_namespace(intern->client, namespace, namespace_len);
-	phongo_execute_query(intern->client, collection, query->bson, return_value, return_value_used);
+	phongo_execute_query(intern->client, collection, query->bson, return_value, return_value_used TSRMLS_CC);
 	mongoc_collection_destroy(collection);
 }
 /* }}} */
@@ -178,7 +178,7 @@ PHP_METHOD(Manager, executeWrite)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	collection = phongo_get_collection_from_namespace(intern->client, namespace, namespace_len);
-	phongo_execute_write(intern->client, collection, batch, return_value, return_value_used);
+	phongo_execute_write(intern->client, collection, batch, return_value, return_value_used TSRMLS_CC);
 	mongoc_collection_destroy(collection);
 }
 /* }}} */
@@ -210,7 +210,7 @@ PHP_METHOD(Manager, executeInsert)
 
 	bson = bson_new();
 	php_phongo_bson_encode_array(bson, document TSRMLS_CC);
-	phongo_crud_insert(intern->client, collection, bson, return_value, return_value_used);
+	phongo_crud_insert(intern->client, collection, bson, return_value, return_value_used TSRMLS_CC);
 	mongoc_collection_destroy(collection);
 	bson_destroy(bson);
 }
