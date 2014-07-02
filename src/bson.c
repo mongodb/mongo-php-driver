@@ -81,6 +81,7 @@ void php_phongo_bson_visit_corrupt(const bson_iter_t *iter __attribute__((unused
 bool php_phongo_bson_visit_double(const bson_iter_t *iter __attribute__((unused)), const char *key, double v_double, void *data) /* {{{ */
 {
 	zval *retval = *(zval **)data;
+	TSRMLS_FETCH();
 
 	if (Z_TYPE_P(retval) == IS_ARRAY) {
 		add_assoc_double(retval, key, v_double);
@@ -93,6 +94,7 @@ bool php_phongo_bson_visit_double(const bson_iter_t *iter __attribute__((unused)
 bool php_phongo_bson_visit_utf8(const bson_iter_t *iter __attribute__((unused)), const char *key, size_t v_utf8_len, const char *v_utf8, void *data) /* {{{ */
 {
 	zval *retval = *(zval **)data;
+	TSRMLS_FETCH();
 
 	if (Z_TYPE_P(retval) == IS_ARRAY) {
 		add_assoc_stringl(retval, key, (char *)v_utf8, v_utf8_len, 1);
@@ -131,6 +133,7 @@ bool php_phongo_bson_visit_oid(const bson_iter_t *iter __attribute__((unused)), 
 bool php_phongo_bson_visit_bool(const bson_iter_t *iter __attribute__((unused)), const char *key, bool v_bool, void *data) /* {{{ */
 {
 	zval *retval = *(zval **)data;
+	TSRMLS_FETCH();
 
 	if (Z_TYPE_P(retval) == IS_ARRAY) {
 		add_assoc_bool(retval, key, v_bool);
@@ -155,6 +158,7 @@ bool php_phongo_bson_visit_date_time(const bson_iter_t *iter __attribute__((unus
 bool php_phongo_bson_visit_null(const bson_iter_t *iter __attribute__((unused)), const char *key, void *data) /* {{{ */
 {
 	zval *retval = *(zval **)data;
+	TSRMLS_FETCH();
 
 	if (Z_TYPE_P(retval) == IS_ARRAY) {
 		add_assoc_null(retval, key);
@@ -207,6 +211,7 @@ bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter __attribute__((unu
 bool php_phongo_bson_visit_int32(const bson_iter_t *iter __attribute__((unused)), const char *key, int32_t v_int32, void *data) /* {{{ */
 {
 	zval *retval = *(zval **)data;
+	TSRMLS_FETCH();
 
 	if (Z_TYPE_P(retval) == IS_ARRAY) {
 		add_assoc_long(retval, key, v_int32);
@@ -231,6 +236,7 @@ bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter __attribute__((unus
 bool php_phongo_bson_visit_int64(const bson_iter_t *iter __attribute__((unused)), const char *key, int64_t v_int64, void *data) /* {{{ */
 {
 	zval *retval = *(zval **)data;
+	TSRMLS_FETCH();
 
 	if (Z_TYPE_P(retval) == IS_ARRAY) {
 		add_assoc_long(retval, key, v_int64);
@@ -293,6 +299,7 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter __attribute__((unuse
 {
 	zval *retval = *(zval **)data;
 	bson_iter_t child;
+	TSRMLS_FETCH();
 
 	if (bson_iter_init(&child, v_document)) {
 		zval *zchild;
@@ -318,6 +325,7 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused))
 {
 	zval *retval = *(zval **)data;
 	bson_iter_t child;
+	TSRMLS_FETCH();
 
 	if (bson_iter_init(&child, v_array)) {
 		zval *zchild;
@@ -496,12 +504,13 @@ PHONGO_API void php_phongo_bson_encode(bson_t *bson, char *key, int key_len, zva
 	return;
 }
 /* }}} */
-PHONGO_API int bson_to_zval(const unsigned char *data, int data_len, zval *retval)
+int bson_to_zval(const unsigned char *data, int data_len, zval *retval)
 {
 	      bson_reader_t *reader;
 	      bson_iter_t    iter;
 	const bson_t        *b;
 	      bool           eof = false;
+		  TSRMLS_FETCH();
 
 
 	reader = bson_reader_new_from_data(data, data_len);

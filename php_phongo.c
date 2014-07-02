@@ -131,13 +131,13 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 			return spl_ce_RuntimeException;
 	}
 }
-PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *message)
+PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain, const char *message TSRMLS_DC)
 {
-	zend_throw_exception(phongo_exception_from_phongo_domain(domain) TSRMLS_CC, message, 0);
+	zend_throw_exception(phongo_exception_from_phongo_domain(domain), message, 0 TSRMLS_CC);
 }
 PHONGO_API void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC)
 {
-	zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code) TSRMLS_CC, error->message, error->code);
+	zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code), error->message, error->code TSRMLS_CC);
 }
 static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain, const char *message, void *user_data)
 {
@@ -146,7 +146,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 	switch(log_level) {
 	case MONGOC_LOG_LEVEL_ERROR:
 	case MONGOC_LOG_LEVEL_CRITICAL:
-		return phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_DC, message);
+		return phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED, message TSRMLS_CC);
 
 	case MONGOC_LOG_LEVEL_WARNING:
 	case MONGOC_LOG_LEVEL_MESSAGE:
@@ -250,7 +250,7 @@ int phongo_crud_insert(mongoc_client_t *client, mongoc_collection_t *collection,
 	bson_to_zval(bson_get_data(&reply), reply.len, return_value);
 	return true;
 }
-void phongo_result_init(zval *return_value, mongoc_cursor_t *cursor, const bson_t *bson)
+void phongo_result_init(zval *return_value, mongoc_cursor_t *cursor, const bson_t *bson TSRMLS_DC)
 {
 	php_phongo_result_t *result;
 
@@ -280,7 +280,7 @@ int phongo_execute_query(mongoc_client_t *client, mongoc_collection_t *collectio
 		return true;
 	}
 
-	phongo_result_init(return_value, cursor, doc);
+	phongo_result_init(return_value, cursor, doc TSRMLS_CC);
 	return true;
 }
 /* Throws exception from bson_error_t */
@@ -359,6 +359,8 @@ int phongo_stream_close(mongoc_stream_t *stream)
 }
 void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeout_msec)
 {
+	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+
 	if (timeout_msec > 0) {
 		struct timeval rtimeout = {0, 0};
 
@@ -374,8 +376,9 @@ ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_
 {
 	size_t     i = 0;
 	ssize_t sent = 0;
-
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
+	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+
 	php_phongo_set_timeout(base_stream, timeout_msec);
 
 	for (i = 0; i < iovcnt; i++) {

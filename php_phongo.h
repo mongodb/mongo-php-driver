@@ -161,7 +161,7 @@ typedef enum {
 
 typedef struct
 {
-	void (*writer)(mongoc_stream_t *stream, int32_t timeout_msec, ssize_t sent, size_t iovcnt TSRMLS_DC);
+	void (*writer)(mongoc_stream_t *stream, int32_t timeout_msec, ssize_t sent, size_t iovcnt);
 } php_phongo_stream_logger;
 
 typedef struct
@@ -184,7 +184,7 @@ typedef struct
 
 PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
 PHONGO_API zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
-PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *message);
+PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain, const char *message TSRMLS_DC);
 
 PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
 
