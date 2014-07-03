@@ -72,10 +72,33 @@ function CLEANUP() {
         $mc = new MongoDB\Manager(MONGODB_CLEANUP_URI);
         $cmd = new MongoDB\Command\Command(array("drop" => COLLECTION_NAME));
         $rp = new MongoDB\ReadPreference(MongoDB\ReadPreference::RP_PRIMARY);
-        $mc->executeCommand(DATABASE_NAME, $cmd, $rp);
+        try {
+            $mc->executeCommand(DATABASE_NAME, $cmd, $rp);
+        } catch(Exception $e) {
+            /* ns not found */
+            if ($e->getCode() == 59) {
+                continue;
+            }
+            throw $e;
+        }
     } catch(Exception $e) {
         echo "skip " . $e->getCode(), ": ", $e->getMessage();
     }
+}
+function getInsertCount($retval) {
+    return $retval["nInserted"];
+}
+function getModifiedCount($retval) {
+    return $retval["nModified"];
+}
+function getRemovedCount($retval) {
+    return $retval["nRemoved"];
+}
+function getUpsertedCount($retval) {
+    return $retval["nUpserted"];
+}
+function getWriteErrors($retval) {
+    return $retval["writeErrors"];
 }
 
 function def($arr) {
