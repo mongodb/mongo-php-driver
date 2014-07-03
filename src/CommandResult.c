@@ -111,7 +111,7 @@ PHP_METHOD(CommandResult, getServer)
 
 ZEND_BEGIN_ARG_INFO_EX(ai_CommandResult___construct, 0, 0, 2)
 	ZEND_ARG_OBJ_INFO(0, server, MongoDB\\Server, 0)
-	ZEND_ARG_INFO(0, responseDocument) 
+	ZEND_ARG_INFO(0, responseDocument)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_CommandResult_getResponseDocument, 0, 0, 0)

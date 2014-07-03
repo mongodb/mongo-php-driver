@@ -131,8 +131,8 @@ PHP_METHOD(WriteConcernError, getMessage)
 /* {{{ MongoDB\Write\WriteConcernError */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcernError___construct, 0, 0, 3)
-	ZEND_ARG_INFO(0, message) 
-	ZEND_ARG_INFO(0, code) 
+	ZEND_ARG_INFO(0, message)
+	ZEND_ARG_INFO(0, code)
 	ZEND_ARG_ARRAY_INFO(0, info, 0)
 ZEND_END_ARG_INFO();
 

@@ -73,7 +73,7 @@ PHP_METHOD(ReadPreference, __construct)
 /* {{{ MongoDB\ReadPreference */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, readPreference) 
+	ZEND_ARG_INFO(0, readPreference)
 	ZEND_ARG_ARRAY_INFO(0, tagSets, 1)
 ZEND_END_ARG_INFO();
 

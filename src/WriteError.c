@@ -151,10 +151,10 @@ PHP_METHOD(WriteError, getOperation)
 /* {{{ MongoDB\Write\WriteError */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteError___construct, 0, 0, 4)
-	ZEND_ARG_INFO(0, message) 
-	ZEND_ARG_INFO(0, code) 
-	ZEND_ARG_INFO(0, index) 
-	ZEND_ARG_INFO(0, operation) 
+	ZEND_ARG_INFO(0, message)
+	ZEND_ARG_INFO(0, code)
+	ZEND_ARG_INFO(0, index)
+	ZEND_ARG_INFO(0, operation)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getCode, 0, 0, 0)

@@ -94,7 +94,7 @@ PHP_METHOD(CursorId, __toString)
 /* {{{ MongoDB\CursorId */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, id) 
+	ZEND_ARG_INFO(0, id)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___toString, 0, 0, 0)

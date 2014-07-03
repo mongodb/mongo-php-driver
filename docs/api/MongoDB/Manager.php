@@ -6,7 +6,7 @@ use MongoDB\Command\Command;
 use MongoDB\Command\CommandResult;
 use MongoDB\Query\Query;
 use MongoDB\Query\QueryCursor;
-use MongoDB\Write\WriteBatch;
+use MongoDB\Write\Batch;
 use MongoDB\Write\WriteOptions;
 use MongoDB\Write\WriteResult;
 
@@ -107,7 +107,7 @@ final class Manager
      * @param array      $writeOptions Ordering and write concern options (default: {"ordered": true, "w": 1})
      * @return WriteResult
      */
-    public function executeWrite($namespace, WriteBatch $batch, array $writeOptions = null)
+    public function executeWrite($namespace, Batch $batch, array $writeOptions = null)
     {
         /* Select writeable server and invoke Server::executeQuery().
          *

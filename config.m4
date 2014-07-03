@@ -127,26 +127,23 @@ if test "$PHONGO" != "no"; then
   ";
   PHONGO_INTERFACES="\
       src/Cursor.c \
-      src/WriteBatch.c \
       src/WriteResult.c \
   ";
   PHONGO_CLASSES="\
+      src/Batch.c \
       src/Command.c \
       src/CommandCursor.c \
       src/CommandResult.c \
       src/CursorId.c \
       src/Result.c \
-      src/DeleteBatch.c \
       src/DeleteResult.c \
       src/GeneratedId.c \
-      src/InsertBatch.c \
       src/InsertResult.c \
       src/Manager.c \
       src/Query.c \
       src/QueryCursor.c \
       src/ReadPreference.c \
       src/Server.c \
-      src/UpdateBatch.c \
       src/UpdateResult.c \
       src/WriteConcernError.c \
       src/WriteError.c \

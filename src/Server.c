@@ -112,7 +112,7 @@ PHP_METHOD(Server, executeQuery)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Write\WriteResult Server::executeWrite(string $namespace, MongoDB\Write\WriteBatch $batch)
+/* {{{ proto MongoDB\Write\WriteResult Server::executeWrite(string $namespace, MongoDB\Write\Batch $batch)
    Executes a write operation batch (e.g. insert, update, delete) */
 PHP_METHOD(Server, executeWrite)
 {
@@ -127,7 +127,7 @@ PHP_METHOD(Server, executeWrite)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO", &namespace, &namespace_len, &batch, php_phongo_writebatch_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO", &namespace, &namespace_len, &batch, php_phongo_batch_ce) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -303,25 +303,25 @@ PHP_METHOD(Server, isPassive)
 /* {{{ MongoDB\Server */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server___construct, 0, 0, 2)
-	ZEND_ARG_INFO(0, host) 
-	ZEND_ARG_INFO(0, port) 
+	ZEND_ARG_INFO(0, host)
+	ZEND_ARG_INFO(0, port)
 	ZEND_ARG_ARRAY_INFO(0, options, 0)
 	ZEND_ARG_ARRAY_INFO(0, driverOptions, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeCommand, 0, 0, 2)
-	ZEND_ARG_INFO(0, db) 
+	ZEND_ARG_INFO(0, db)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Command\\Command, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeQuery, 0, 0, 2)
-	ZEND_ARG_INFO(0, namespace) 
+	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Query\\Query, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeWrite, 0, 0, 2)
-	ZEND_ARG_INFO(0, namespace) 
-	ZEND_ARG_OBJ_INFO(0, batch, MongoDB\\Write\\WriteBatch, 0)
+	ZEND_ARG_INFO(0, namespace)
+	ZEND_ARG_OBJ_INFO(0, batch, MongoDB\\Write\\Batch, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_getHost, 0, 0, 0)

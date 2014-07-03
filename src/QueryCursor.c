@@ -266,7 +266,7 @@ ZEND_BEGIN_ARG_INFO_EX(ai_QueryCursor_isDead, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_QueryCursor_setBatchSize, 0, 0, 1)
-	ZEND_ARG_INFO(0, batchSize) 
+	ZEND_ARG_INFO(0, batchSize)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_QueryCursor_current, 0, 0, 0)

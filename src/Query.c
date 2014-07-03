@@ -83,11 +83,11 @@ PHP_METHOD(Query, __construct)
 /* {{{ MongoDB\Query\Query */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Query___construct, 0, 0, 5)
-	ZEND_ARG_INFO(0, query) 
-	ZEND_ARG_INFO(0, selector) 
-	ZEND_ARG_INFO(0, flags) 
-	ZEND_ARG_INFO(0, skip) 
-	ZEND_ARG_INFO(0, limit) 
+	ZEND_ARG_INFO(0, query)
+	ZEND_ARG_INFO(0, selector)
+	ZEND_ARG_INFO(0, flags)
+	ZEND_ARG_INFO(0, skip)
+	ZEND_ARG_INFO(0, limit)
 ZEND_END_ARG_INFO();
 
 

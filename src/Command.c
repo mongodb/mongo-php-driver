@@ -75,7 +75,7 @@ PHP_METHOD(Command, __construct)
 /* {{{ MongoDB\Command\Command */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Command___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, document) 
+	ZEND_ARG_INFO(0, document)
 ZEND_END_ARG_INFO();
 
 

@@ -74,9 +74,6 @@ typedef struct {
 } php_phongo_cursorid_t;
 typedef struct {
 	zend_object std;
-} php_phongo_deletebatch_t;
-typedef struct {
-	zend_object std;
 } php_phongo_deleteresult_t;
 typedef struct {
 	zend_object std;
@@ -84,7 +81,7 @@ typedef struct {
 typedef struct {
 	zend_object std;
 	mongoc_bulk_operation_t *bulk;
-} php_phongo_insertbatch_t;
+} php_phongo_batch_t;
 typedef struct {
 	zend_object std;
 } php_phongo_insertresult_t;
@@ -113,13 +110,7 @@ typedef struct {
 } php_phongo_server_t;
 typedef struct {
 	zend_object std;
-} php_phongo_updatebatch_t;
-typedef struct {
-	zend_object std;
 } php_phongo_updateresult_t;
-typedef struct {
-	zend_object std;
-} php_phongo_writebatch_t;
 typedef struct {
 	zend_object std;
 } php_phongo_writeconcernerror_t;
@@ -135,10 +126,8 @@ extern PHONGO_API zend_class_entry *php_phongo_commandcursor_ce;
 extern PHONGO_API zend_class_entry *php_phongo_commandresult_ce;
 extern PHONGO_API zend_class_entry *php_phongo_cursor_ce;
 extern PHONGO_API zend_class_entry *php_phongo_cursorid_ce;
-extern PHONGO_API zend_class_entry *php_phongo_deletebatch_ce;
 extern PHONGO_API zend_class_entry *php_phongo_deleteresult_ce;
 extern PHONGO_API zend_class_entry *php_phongo_generatedid_ce;
-extern PHONGO_API zend_class_entry *php_phongo_insertbatch_ce;
 extern PHONGO_API zend_class_entry *php_phongo_insertresult_ce;
 extern PHONGO_API zend_class_entry *php_phongo_manager_ce;
 extern PHONGO_API zend_class_entry *php_phongo_query_ce;
@@ -146,9 +135,8 @@ extern PHONGO_API zend_class_entry *php_phongo_querycursor_ce;
 extern PHONGO_API zend_class_entry *php_phongo_result_ce;
 extern PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
 extern PHONGO_API zend_class_entry *php_phongo_server_ce;
-extern PHONGO_API zend_class_entry *php_phongo_updatebatch_ce;
 extern PHONGO_API zend_class_entry *php_phongo_updateresult_ce;
-extern PHONGO_API zend_class_entry *php_phongo_writebatch_ce;
+extern PHONGO_API zend_class_entry *php_phongo_batch_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeconcernerror_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
@@ -202,10 +190,9 @@ PHP_MINIT_FUNCTION(CommandCursor);
 PHP_MINIT_FUNCTION(CommandResult);
 PHP_MINIT_FUNCTION(Cursor);
 PHP_MINIT_FUNCTION(CursorId);
-PHP_MINIT_FUNCTION(DeleteBatch);
+PHP_MINIT_FUNCTION(Batch);
 PHP_MINIT_FUNCTION(DeleteResult);
 PHP_MINIT_FUNCTION(GeneratedId);
-PHP_MINIT_FUNCTION(InsertBatch);
 PHP_MINIT_FUNCTION(InsertResult);
 PHP_MINIT_FUNCTION(Manager);
 PHP_MINIT_FUNCTION(Query);
@@ -213,9 +200,7 @@ PHP_MINIT_FUNCTION(QueryCursor);
 PHP_MINIT_FUNCTION(ReadPreference);
 PHP_MINIT_FUNCTION(Result);
 PHP_MINIT_FUNCTION(Server);
-PHP_MINIT_FUNCTION(UpdateBatch);
 PHP_MINIT_FUNCTION(UpdateResult);
-PHP_MINIT_FUNCTION(WriteBatch);
 PHP_MINIT_FUNCTION(WriteConcernError);
 PHP_MINIT_FUNCTION(WriteError);
 PHP_MINIT_FUNCTION(WriteResult);

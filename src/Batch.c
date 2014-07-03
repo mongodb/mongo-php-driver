@@ -42,40 +42,83 @@
 #include "php_bson.h"
 
 
-PHONGO_API zend_class_entry *php_phongo_generatedid_ce;
+PHONGO_API zend_class_entry *php_phongo_batch_ce;
 
-/* {{{ proto MongoDB\Write\GeneratedId GeneratedId::__construct(mixed $id, integer $index)
-   Constructs a new GeneratedId */
-PHP_METHOD(GeneratedId, __construct)
+/* {{{ proto MongoDB\Write\Batch Batch::insert(array|object $document)
+   Adds a new document to be inserted */
+PHP_METHOD(Batch, insert)
 {
-	php_phongo_generatedid_t *intern;
+	php_phongo_batch_t    *intern;
 	zend_error_handling	error_handling;
-	zval                  *id;
-	long                   index;
+	zval                  *document;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_generatedid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = (php_phongo_batch_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zl", &id, &index) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &document) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto mixed GeneratedId::getId()
-   Returns the GeneratedId */
-PHP_METHOD(GeneratedId, getId)
+/* {{{ proto MongoDB\Write\Batch Batch::update(array|object $query, array|object $update, integer $limit, boolean $upsert)
+   Add a update operation to batch */
+PHP_METHOD(Batch, update)
 {
-	php_phongo_generatedid_t *intern;
+	php_phongo_batch_t    *intern;
+	zend_error_handling	error_handling;
+	zval                  *query;
+	zval                  *update;
+	long                   limit;
+	zend_bool             *upsert;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_batch_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "AAlb", &query, &update, &limit, &upsert) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+/* {{{ proto MongoDB\Write\Batch Batch::delete(array|object $query, boolean $limit)
+   Add a delete operation to batch */
+PHP_METHOD(Batch, delete)
+{
+	php_phongo_batch_t    *intern;
+	zend_error_handling	error_handling;
+	zval                  *query;
+	zend_bool             *limit;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_batch_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Ab", &query, &limit) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+/* {{{ proto integer Batch::count()
+   Counts how many operations are in the patch */
+PHP_METHOD(Batch, count)
+{
+	php_phongo_batch_t    *intern;
 	zend_error_handling	error_handling;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_generatedid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = (php_phongo_batch_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -84,76 +127,63 @@ PHP_METHOD(GeneratedId, getId)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto integer GeneratedId::getIndex()
-   Returns the batch index */
-PHP_METHOD(GeneratedId, getIndex)
-{
-	php_phongo_generatedid_t *intern;
-	zend_error_handling	error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_generatedid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+/* {{{ MongoDB\Write\Batch */
 
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
-		return;
-	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
-}
-/* }}} */
-
-/**
- * Value object for a document identifier that was generated by the driver or
- * server during an insert or upsert operation, respectively.
- */
-/* {{{ MongoDB\Write\GeneratedId */
-
-ZEND_BEGIN_ARG_INFO_EX(ai_GeneratedId___construct, 0, 0, 2)
-	ZEND_ARG_INFO(0, id)
-	ZEND_ARG_INFO(0, index)
+ZEND_BEGIN_ARG_INFO_EX(ai_Batch_insert, 0, 0, 1)
+	ZEND_ARG_INFO(0, document)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_GeneratedId_getId, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_Batch_update, 0, 0, 4)
+	ZEND_ARG_INFO(0, query)
+	ZEND_ARG_INFO(0, update)
+	ZEND_ARG_INFO(0, limit)
+	ZEND_ARG_INFO(0, upsert)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_GeneratedId_getIndex, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_Batch_delete, 0, 0, 2)
+	ZEND_ARG_INFO(0, query)
+	ZEND_ARG_INFO(0, limit)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Batch_count, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
 
-static zend_function_entry php_phongo_generatedid_me[] = {
-	PHP_ME(GeneratedId, __construct, ai_GeneratedId___construct, ZEND_ACC_PUBLIC)
-	PHP_ME(GeneratedId, getId, ai_GeneratedId_getId, ZEND_ACC_PUBLIC)
-	PHP_ME(GeneratedId, getIndex, ai_GeneratedId_getIndex, ZEND_ACC_PUBLIC)
+static zend_function_entry php_phongo_batch_me[] = {
+	PHP_ME(Batch, insert, ai_Batch_insert, ZEND_ACC_PUBLIC)
+	PHP_ME(Batch, update, ai_Batch_update, ZEND_ACC_PUBLIC)
+	PHP_ME(Batch, delete, ai_Batch_delete, ZEND_ACC_PUBLIC)
+	PHP_ME(Batch, count, ai_Batch_count, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
 /* }}} */
 
 
-/* {{{ php_phongo_generatedid_free_object && php_phongo_generatedid_create_object */
-static void php_phongo_generatedid_free_object(void *object TSRMLS_DC)
+/* {{{ php_phongo_batch_free_object && php_phongo_batch_create_object */
+static void php_phongo_batch_free_object(void *object TSRMLS_DC)
 {
-	php_phongo_generatedid_t *intern = (php_phongo_generatedid_t*)object;
+	php_phongo_batch_t *intern = (php_phongo_batch_t*)object;
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
 }
 
-zend_object_value php_phongo_generatedid_create_object(zend_class_entry *class_type TSRMLS_DC)
+zend_object_value php_phongo_batch_create_object(zend_class_entry *class_type TSRMLS_DC)
 {
 	zend_object_value retval;
-	php_phongo_generatedid_t *intern;
+	php_phongo_batch_t *intern;
 
-	intern = (php_phongo_generatedid_t *)emalloc(sizeof(php_phongo_generatedid_t));
-	memset(intern, 0, sizeof(php_phongo_generatedid_t));
+	intern = (php_phongo_batch_t *)emalloc(sizeof(php_phongo_batch_t));
+	memset(intern, 0, sizeof(php_phongo_batch_t));
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_generatedid_free_object, NULL TSRMLS_CC);
+	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_batch_free_object, NULL TSRMLS_CC);
 	retval.handlers = phongo_get_std_object_handlers();
 
 	return retval;
@@ -161,15 +191,16 @@ zend_object_value php_phongo_generatedid_create_object(zend_class_entry *class_t
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(GeneratedId)
+PHP_MINIT_FUNCTION(Batch)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Write", "GeneratedId", php_phongo_generatedid_me);
-	ce.create_object = php_phongo_generatedid_create_object;
-	php_phongo_generatedid_ce = zend_register_internal_class(&ce TSRMLS_CC);
-	php_phongo_generatedid_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Write", "Batch", php_phongo_batch_me);
+	ce.create_object = php_phongo_batch_create_object;
+	php_phongo_batch_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	zend_class_implements(php_phongo_batch_ce TSRMLS_CC, 1, spl_ce_Countable);
+
 
 	return SUCCESS;
 }

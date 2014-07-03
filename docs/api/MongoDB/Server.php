@@ -6,7 +6,7 @@ use MongoDB\Command\Command;
 use MongoDB\Command\CommandResult;
 use MongoDB\Query\Query;
 use MongoDB\Query\QueryCursor;
-use MongoDB\Write\WriteBatch;
+use MongoDB\Write\Batch;
 use MongoDB\Write\WriteResult;
 
 /**
@@ -94,13 +94,13 @@ final class Server
      * Executes a write operation batch (e.g. insert, update, delete)
      *
      * @param string     $namespace
-     * @param WriteBatch $batch
+     * @param Batch $batch
      * @return WriteResult
      */
-    public function executeWrite($namespace, WriteBatch $batch)
+    public function executeWrite($namespace, Batch $batch)
     {
         /* Write options are not taken as an argument, since they are specified
-         * during WriteBatch construction.
+         * during Batch construction.
          *
          * On error, we should consider throwing:
          *

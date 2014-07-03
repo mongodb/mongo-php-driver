@@ -154,7 +154,7 @@ PHP_METHOD(Manager, executeQuery)
 	mongoc_collection_destroy(collection);
 }
 /* }}} */
-/* {{{ proto MongoDB\Write\WriteResult Manager::executeWrite(string $namespace, MongoDB\Write\WriteBatch $batch[, array $writeOptions = array()])
+/* {{{ proto MongoDB\Write\WriteResult Manager::executeWrite(string $namespace, MongoDB\Write\Batch $batch[, array $writeOptions = array()])
    Executes a write operation batch (e.g. insert, update, delete) */
 PHP_METHOD(Manager, executeWrite)
 {
@@ -171,7 +171,7 @@ PHP_METHOD(Manager, executeWrite)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a", &namespace, &namespace_len, &batch, php_phongo_writebatch_ce, &writeOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a", &namespace, &namespace_len, &batch, php_phongo_batch_ce, &writeOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -280,7 +280,7 @@ PHP_METHOD(Manager, executeDelete)
 /* {{{ MongoDB\Manager */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, uri) 
+	ZEND_ARG_INFO(0, uri)
 	ZEND_ARG_ARRAY_INFO(0, options, 0)
 	ZEND_ARG_ARRAY_INFO(0, driverOptions, 0)
 ZEND_END_ARG_INFO();
@@ -290,40 +290,40 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_createFromServers, 0, 0, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeCommand, 0, 0, 2)
-	ZEND_ARG_INFO(0, db) 
+	ZEND_ARG_INFO(0, db)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Command\\Command, 0)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\ReadPreference, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeQuery, 0, 0, 2)
-	ZEND_ARG_INFO(0, namespace) 
+	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Query\\Query, 0)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\ReadPreference, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeWrite, 0, 0, 2)
-	ZEND_ARG_INFO(0, namespace) 
-	ZEND_ARG_OBJ_INFO(0, batch, MongoDB\\Write\\WriteBatch, 0)
+	ZEND_ARG_INFO(0, namespace)
+	ZEND_ARG_OBJ_INFO(0, batch, MongoDB\\Write\\Batch, 0)
 	ZEND_ARG_ARRAY_INFO(0, writeOptions, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeInsert, 0, 0, 2)
-	ZEND_ARG_INFO(0, namespace) 
-	ZEND_ARG_INFO(0, document) 
+	ZEND_ARG_INFO(0, namespace)
+	ZEND_ARG_INFO(0, document)
 	ZEND_ARG_ARRAY_INFO(0, writeOptions, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeUpdate, 0, 0, 3)
-	ZEND_ARG_INFO(0, namespace) 
-	ZEND_ARG_INFO(0, query) 
-	ZEND_ARG_INFO(0, newObj) 
+	ZEND_ARG_INFO(0, namespace)
+	ZEND_ARG_INFO(0, query)
+	ZEND_ARG_INFO(0, newObj)
 	ZEND_ARG_ARRAY_INFO(0, updateOptions, 1)
 	ZEND_ARG_ARRAY_INFO(0, writeOptions, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeDelete, 0, 0, 2)
-	ZEND_ARG_INFO(0, namespace) 
-	ZEND_ARG_INFO(0, query) 
+	ZEND_ARG_INFO(0, namespace)
+	ZEND_ARG_INFO(0, query)
 	ZEND_ARG_ARRAY_INFO(0, deleteOptions, 1)
 	ZEND_ARG_ARRAY_INFO(0, writeOptions, 1)
 ZEND_END_ARG_INFO();
