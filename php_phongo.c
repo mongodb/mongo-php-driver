@@ -246,26 +246,6 @@ bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batc
 	bson_to_zval(bson_get_data(&reply), reply.len, return_value);
 	return true;
 }
-HashTable* phongo_batch_get_documents(zval *batch, zval *retval)
-{
-	int i;
-
-	array_init(retval);
-
-	for (i=0; i<5;i++) {
-		zval *entry;
-
-		MAKE_STD_ZVAL(entry);
-		array_init(entry);
-		add_assoc_stringl(entry, "MyKey", "MyValue", sizeof("MyValue")-1, 1);
-		add_assoc_stringl(entry, "MyKey2", "MyValue2", sizeof("MyValue2")-1, 1);
-		add_assoc_stringl(entry, "MyKey3", "MyValue3", sizeof("MyValue3")-1, 1);
-
-		add_next_index_zval(retval, entry);
-	}
-
-	return Z_ARRVAL_P(retval);
-}
 int phongo_crud_insert(mongoc_client_t *client, mongoc_collection_t *collection, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC)
 {
 	bson_error_t error;
@@ -320,53 +300,6 @@ int phongo_execute_query(mongoc_client_t *client, mongoc_collection_t *collectio
 	}
 
 	phongo_result_init(return_value, cursor, doc TSRMLS_CC);
-	return true;
-}
-/* Throws exception from bson_error_t */
-int phongo_execute_write_legacy(mongoc_client_t *client, mongoc_collection_t *collection, zval *zbatch, zval *return_value, int return_value_used TSRMLS_DC)
-{
-	mongoc_bulk_operation_t *batch = mongoc_collection_create_bulk_operation (collection, true, NULL);
-	bson_error_t error;
-	bson_t reply;
-
-	HashPosition pointer;
-	zval **entry;
-	char *key;
-	zend_uint index_key_len;
-	ulong uindex;
-	zval *retval;
-	HashTable *hindex;
-	
-	MAKE_STD_ZVAL(retval);
-	hindex = phongo_batch_get_documents(zbatch, retval);
-
-	for (
-			zend_hash_internal_pointer_reset_ex(hindex, &pointer);
-			zend_hash_get_current_data_ex(hindex, (void**)&entry, &pointer) == SUCCESS;
-			zend_hash_move_forward_ex(hindex, &pointer)
-		) {
-		bson_t *bson = bson_new();
-
-		if (zend_hash_get_current_key_ex(hindex, &key, &index_key_len, &uindex, 0, &pointer) != HASH_KEY_IS_LONG) {
-			continue;
-		}
-
-		php_phongo_bson_encode_array(bson, *entry TSRMLS_CC);
-		mongoc_bulk_operation_insert(batch, bson);
-		bson_destroy(bson);
-	}
-
-	zval_ptr_dtor(&retval);
-	if (!mongoc_bulk_operation_execute(batch, &reply, &error)) {
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
-		return false;
-	}
-
-	if (!return_value_used) {
-		return true;
-	}
-
-	bson_to_zval(bson_get_data(&reply), reply.len, return_value);
 	return true;
 }
 int phongo_execute_command(mongoc_client_t *client, mongoc_database_t *db, bson_t *command, zval *read_preference, zval *return_value, int return_value_used TSRMLS_DC)
