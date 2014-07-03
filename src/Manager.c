@@ -162,24 +162,25 @@ PHP_METHOD(Manager, executeWrite)
 	zend_error_handling    error_handling;
 	char                  *namespace;
 	int                    namespace_len;
-	zval                  *batch;
+	zval                  *zbatch;
 	zval                  *writeOptions;
-	mongoc_collection_t   *collection;
+	php_phongo_batch_t    *batch;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a", &namespace, &namespace_len, &batch, php_phongo_batch_ce, &writeOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a", &namespace, &namespace_len, &zbatch, php_phongo_batch_ce, &writeOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	collection = phongo_get_collection_from_namespace(intern->client, namespace, namespace_len);
-	phongo_execute_write(intern->client, collection, batch, return_value, return_value_used TSRMLS_CC);
-	mongoc_collection_destroy(collection);
+
+	batch = (php_phongo_batch_t *)zend_object_store_get_object(zbatch TSRMLS_CC);
+
+	phongo_execute_write(intern->client, batch->batch, 0, namespace, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Write\InsertResult Manager::executeInsert(string $namespace, array|object $document[, array $writeOptions = array()])

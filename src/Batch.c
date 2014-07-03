@@ -61,6 +61,9 @@ PHP_METHOD(Batch, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	intern->batch = phongo_batch_init();
 }
 /* }}} */
 /* {{{ proto MongoDB\Write\Batch Batch::insert(array|object $document)
@@ -68,8 +71,9 @@ PHP_METHOD(Batch, __construct)
 PHP_METHOD(Batch, insert)
 {
 	php_phongo_batch_t    *intern;
-	zend_error_handling	error_handling;
+	zend_error_handling	   error_handling;
 	zval                  *document;
+	bson_t                *bson;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -81,6 +85,11 @@ PHP_METHOD(Batch, insert)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	bson = bson_new();
+	php_phongo_bson_encode_array(bson, document TSRMLS_CC);
+	mongoc_bulk_operation_insert(intern->batch, bson);
+	bson_destroy(bson);
 }
 /* }}} */
 /* {{{ proto MongoDB\Write\Batch Batch::update(array|object $query, array|object $update, integer $limit, boolean $upsert)
@@ -93,6 +102,8 @@ PHP_METHOD(Batch, update)
 	zval                  *update;
 	long                   limit;
 	zend_bool             *upsert;
+	bson_t                *bquery;
+	bson_t                *bupdate;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -104,6 +115,22 @@ PHP_METHOD(Batch, update)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	bquery = bson_new();
+	bupdate = bson_new();
+
+	php_phongo_bson_encode_array(bquery, query TSRMLS_CC);
+	php_phongo_bson_encode_array(bupdate, update TSRMLS_CC);
+
+	if (limit > 1) {
+		mongoc_bulk_operation_update(intern->batch, bquery, bupdate, upsert);
+	} else {
+		mongoc_bulk_operation_update_one(intern->batch, bquery, bupdate, upsert);
+	}
+
+	bson_destroy(bquery);
+	bson_destroy(bupdate);
 }
 /* }}} */
 /* {{{ proto MongoDB\Write\Batch Batch::delete(array|object $query, boolean $limit)
@@ -114,6 +141,7 @@ PHP_METHOD(Batch, delete)
 	zend_error_handling	error_handling;
 	zval                  *query;
 	zend_bool             *limit;
+	bson_t                *bson;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -125,6 +153,18 @@ PHP_METHOD(Batch, delete)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	bson = bson_new();
+
+	php_phongo_bson_encode_array(bson, query TSRMLS_CC);
+
+	if (limit) {
+		mongoc_bulk_operation_remove_one(intern->batch, bson);
+	} else {
+		mongoc_bulk_operation_remove(intern->batch, bson);
+	}
+
+	bson_destroy(bson);
 }
 /* }}} */
 /* {{{ proto integer Batch::count()

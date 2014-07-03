@@ -124,6 +124,7 @@ if test "$PHONGO" != "no"; then
   ";
   PHONGO_ROOT="\
       php_phongo.c \
+      pongoc.c \
   ";
   PHONGO_INTERFACES="\
       src/Cursor.c \

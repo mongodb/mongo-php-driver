@@ -29,9 +29,7 @@
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
-#define MONGOC_INSIDE
-#include <src/libmongoc/src/mongoc/mongoc-stream-private.h>
-#undef MONGOC_INSIDE
+
 
 /* PHP Core stuff */
 #include <php.h>
@@ -48,6 +46,8 @@
 #include <main/php_network.h>
 /* Our Compatability header */
 #include "php_compat_53.h"
+/* Workarounds for libmongoc */
+#include "pongoc.h"
 
 /* Our stuffz */
 #include "php_phongo.h"
@@ -208,6 +208,44 @@ mongoc_collection_t* phongo_get_collection_from_namespace(mongoc_client_t *clien
 	efree(collname);
 	return collection;
 }
+/* Splits a namespace name into the database and collection names, allocated with estrdup. */
+void phongo_split_namespace(char *namespace, char **dbname, char **cname)
+{
+    if (cname) {
+        *cname = estrdup(namespace + (strchr(namespace, '.') - namespace) + 1);
+    }
+    if (dbname) {
+        *dbname = estrndup(namespace, strchr(namespace, '.') - namespace);
+    }
+}
+/* }}} */
+mongoc_bulk_operation_t *phongo_batch_init() {
+	return _mongoc_bulk_operation_allocate();
+}
+bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batch, int server_id, char *namespace, zval *return_value, int return_value_used TSRMLS_DC)
+{
+	bson_error_t error;
+	bson_t reply;
+	char *database;
+	char *collection;
+	bool ordered = true;
+
+	phongo_split_namespace(namespace, &database, &collection);
+	_mongoc_bulk_operation_set(batch, client, database, collection, ordered, NULL);
+
+
+	if (!mongoc_bulk_operation_execute(batch, &reply, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		return false;
+	}
+
+	if (!return_value_used) {
+		return true;
+	}
+
+	bson_to_zval(bson_get_data(&reply), reply.len, return_value);
+	return true;
+}
 HashTable* phongo_batch_get_documents(zval *batch, zval *retval)
 {
 	int i;
@@ -232,12 +270,12 @@ int phongo_crud_insert(mongoc_client_t *client, mongoc_collection_t *collection,
 {
 	bson_error_t error;
 	bson_t reply;
-	mongoc_bulk_operation_t *bulk = mongoc_collection_create_bulk_operation (collection, true, NULL);
+	mongoc_bulk_operation_t *batch = mongoc_collection_create_bulk_operation (collection, true, NULL);
 
 
-	mongoc_bulk_operation_insert(bulk, doc);
+	mongoc_bulk_operation_insert(batch, doc);
 
-	if (!mongoc_bulk_operation_execute(bulk, &reply, &error)) {
+	if (!mongoc_bulk_operation_execute(batch, &reply, &error)) {
 		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 		return false;
 	}
@@ -271,8 +309,9 @@ int phongo_execute_query(mongoc_client_t *client, mongoc_collection_t *collectio
 	cursor = mongoc_collection_find (collection, MONGOC_QUERY_NONE, 0, 0, 0, query, NULL, NULL);
 
     if (!mongoc_cursor_next(cursor, &doc)) {
-		mongoc_cursor_error(cursor, &error);
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		if (mongoc_cursor_error(cursor, &error)) {
+			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		}
 		return false;
 	}
 
@@ -284,9 +323,9 @@ int phongo_execute_query(mongoc_client_t *client, mongoc_collection_t *collectio
 	return true;
 }
 /* Throws exception from bson_error_t */
-int phongo_execute_write(mongoc_client_t *client, mongoc_collection_t *collection, zval *batch, zval *return_value, int return_value_used TSRMLS_DC)
+int phongo_execute_write_legacy(mongoc_client_t *client, mongoc_collection_t *collection, zval *zbatch, zval *return_value, int return_value_used TSRMLS_DC)
 {
-	mongoc_bulk_operation_t *bulk = mongoc_collection_create_bulk_operation (collection, true, NULL);
+	mongoc_bulk_operation_t *batch = mongoc_collection_create_bulk_operation (collection, true, NULL);
 	bson_error_t error;
 	bson_t reply;
 
@@ -299,7 +338,7 @@ int phongo_execute_write(mongoc_client_t *client, mongoc_collection_t *collectio
 	HashTable *hindex;
 	
 	MAKE_STD_ZVAL(retval);
-	hindex = phongo_batch_get_documents(batch, retval);
+	hindex = phongo_batch_get_documents(zbatch, retval);
 
 	for (
 			zend_hash_internal_pointer_reset_ex(hindex, &pointer);
@@ -313,12 +352,12 @@ int phongo_execute_write(mongoc_client_t *client, mongoc_collection_t *collectio
 		}
 
 		php_phongo_bson_encode_array(bson, *entry TSRMLS_CC);
-		mongoc_bulk_operation_insert(bulk, bson);
+		mongoc_bulk_operation_insert(batch, bson);
 		bson_destroy(bson);
 	}
 
 	zval_ptr_dtor(&retval);
-	if (!mongoc_bulk_operation_execute(bulk, &reply, &error)) {
+	if (!mongoc_bulk_operation_execute(batch, &reply, &error)) {
 		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 		return false;
 	}

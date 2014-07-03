@@ -80,7 +80,7 @@ typedef struct {
 } php_phongo_generatedid_t;
 typedef struct {
 	zend_object std;
-	mongoc_bulk_operation_t *bulk;
+	mongoc_bulk_operation_t *batch;
 } php_phongo_batch_t;
 typedef struct {
 	zend_object std;
@@ -178,11 +178,13 @@ PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
 
 mongoc_collection_t* phongo_get_collection_from_namespace(mongoc_client_t *client, char *namespace, int namespace_len);
 int phongo_crud_insert(mongoc_client_t *client, mongoc_collection_t *collection, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC);
-int phongo_execute_write(mongoc_client_t *client, mongoc_collection_t *collection, zval *batch, zval *return_value, int return_value_used TSRMLS_DC);
+bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batch, int server_id, char *namespace, zval *return_value, int return_value_used TSRMLS_DC);
+int phongo_execute_write_legacy(mongoc_client_t *client, mongoc_collection_t *collection, zval *batch, zval *return_value, int return_value_used TSRMLS_DC);
 int phongo_execute_command(mongoc_client_t *client, mongoc_database_t *db, bson_t *command, zval *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
 int phongo_execute_query(mongoc_client_t *client, mongoc_collection_t *collection, bson_t *query, zval *return_value, int return_value_used TSRMLS_DC);
 mongoc_stream_t *phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error);
 zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
+mongoc_bulk_operation_t* phongo_batch_init();
 
 PHP_MINIT_FUNCTION(bson);
 PHP_MINIT_FUNCTION(Command);
