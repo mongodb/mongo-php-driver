@@ -4,6 +4,15 @@ namespace MongoDB\Write;
 
 class Batch implements \Countable
 {
+
+    /**
+     * Constructs a new CRUD Batch
+     *
+     * @return Batch
+     */
+    function __construct() {
+    }
+
     /**
      * Adds a new document to be inserted
      *

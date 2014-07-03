@@ -44,6 +44,25 @@
 
 PHONGO_API zend_class_entry *php_phongo_batch_ce;
 
+/* {{{ proto MongoDB\Write\Batch Batch::__construct()
+   Constructs a new CRUD Batch */
+PHP_METHOD(Batch, __construct)
+{
+	php_phongo_batch_t    *intern;
+	zend_error_handling	error_handling;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_batch_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
 /* {{{ proto MongoDB\Write\Batch Batch::insert(array|object $document)
    Adds a new document to be inserted */
 PHP_METHOD(Batch, insert)
@@ -131,6 +150,9 @@ PHP_METHOD(Batch, count)
 
 /* {{{ MongoDB\Write\Batch */
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Batch___construct, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Batch_insert, 0, 0, 1)
 	ZEND_ARG_INFO(0, document)
 ZEND_END_ARG_INFO();
@@ -152,6 +174,7 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_batch_me[] = {
+	PHP_ME(Batch, __construct, ai_Batch___construct, ZEND_ACC_PUBLIC)
 	PHP_ME(Batch, insert, ai_Batch_insert, ZEND_ACC_PUBLIC)
 	PHP_ME(Batch, update, ai_Batch_update, ZEND_ACC_PUBLIC)
 	PHP_ME(Batch, delete, ai_Batch_delete, ZEND_ACC_PUBLIC)
