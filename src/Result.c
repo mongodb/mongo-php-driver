@@ -126,7 +126,7 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Result___construct, 0, 0, 3)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Result_setIteratorClass, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, classname, ArrayIterator, 0)
+	ZEND_ARG_OBJ_INFO(0, classname, MongoDB\\Cursor, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Result_getIterator, 0, 0, 0)
