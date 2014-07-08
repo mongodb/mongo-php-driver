@@ -44,9 +44,244 @@
 
 PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
+/* {{{ proto GeneratedId[] WriteResult::getGeneratedIdsForInsert()
+   Returns the GeneratedIds for any inserted documents */
+PHP_METHOD(WriteResult, getGeneratedIdsForInsert)
+{
+	php_phongo_writeresult_t *intern;
+	zend_error_handling	error_handling;
 
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+/* {{{ proto GeneratedId[] WriteResult::getGeneratedIdsForUpsert()
+   Returns the GeneratedIds for any upserted documents */
+PHP_METHOD(WriteResult, getGeneratedIdsForUpsert)
+{
+	php_phongo_writeresult_t *intern;
+	zend_error_handling	error_handling;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+/* {{{ proto integer WriteResult::getNumInserted()
+   Returns the number of documents that were inserted */
+PHP_METHOD(WriteResult, getNumInserted)
+{
+	php_phongo_writeresult_t *intern;
+	zend_error_handling	error_handling;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+/* {{{ proto integer WriteResult::getNumMatched()
+   Returns the number of documents that matched the update criteria */
+PHP_METHOD(WriteResult, getNumMatched)
+{
+	php_phongo_writeresult_t *intern;
+	zend_error_handling	error_handling;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+/* {{{ proto integer WriteResult::getNumModified()
+   Returns the number of documents that were actually modified by an update */
+PHP_METHOD(WriteResult, getNumModified)
+{
+	php_phongo_writeresult_t *intern;
+	zend_error_handling	error_handling;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+/* {{{ proto integer WriteResult::getNumRemoved()
+   Returns the number of documents that were deleted */
+PHP_METHOD(WriteResult, getNumRemoved)
+{
+	php_phongo_writeresult_t *intern;
+	zend_error_handling	error_handling;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+/* {{{ proto integer WriteResult::getNumUpserted()
+   Returns the number of documents that were upserted */
+PHP_METHOD(WriteResult, getNumUpserted)
+{
+	php_phongo_writeresult_t *intern;
+	zend_error_handling	error_handling;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+/* {{{ proto array WriteResult::getInfo()
+   Returns metadata about the operation. */
+PHP_METHOD(WriteResult, getInfo)
+{
+	php_phongo_writeresult_t *intern;
+	zend_error_handling	error_handling;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+/* {{{ proto MongoDB\Server WriteResult::getServer()
+   Returns the Server from which the result originated */
+PHP_METHOD(WriteResult, getServer)
+{
+	php_phongo_writeresult_t *intern;
+	zend_error_handling	error_handling;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+/* {{{ proto WriteConcernError[] WriteResult::getWriteConcernErrors()
+   Return any write concern errors that occurred */
+PHP_METHOD(WriteResult, getWriteConcernErrors)
+{
+	php_phongo_writeresult_t *intern;
+	zend_error_handling	error_handling;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+/* {{{ proto WriteError[] WriteResult::getWriteErrors()
+   Returns any write errors that occurred */
+PHP_METHOD(WriteResult, getWriteErrors)
+{
+	php_phongo_writeresult_t *intern;
+	zend_error_handling	error_handling;
+
+	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+
+/**
+ * Result returned by Server and Manager executeWrite() methods.
+ *
+ * This class may be constructed internally if it will encapsulate a libmongoc
+ * data structure.
+ */
 /* {{{ MongoDB\Write\WriteResult */
+
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getGeneratedIdsForInsert, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getGeneratedIdsForUpsert, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getNumInserted, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getNumMatched, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getNumModified, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getNumRemoved, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getNumUpserted, 0, 0, 0)
+ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getInfo, 0, 0, 0)
 ZEND_END_ARG_INFO();
@@ -62,34 +297,17 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_writeresult_me[] = {
-	/**
-	 * Returns metadata about the operation, see https://github.com/mongodb/specifications/blob/master/source/server_write_commands.rst#situational-fields
-	 *
-	 * @return array Additional metadata for the operation(s) (e.g. lastOp)
-	 */
-	PHP_ABSTRACT_ME(WriteResult, getInfo, ai_WriteResult_getInfo)
-
-	/**
-	 * Returns the Server object that this result originated
-	 *
-	 * @return Server Server from which the result originated
-	 */
-	PHP_ABSTRACT_ME(WriteResult, getServer, ai_WriteResult_getServer)
-
-	/**
-	 * Returns all WriteConcern Errors that occurred
-	 *
-	 * @return WriteConcernError[]
-	 */
-	PHP_ABSTRACT_ME(WriteResult, getWriteConcernErrors, ai_WriteResult_getWriteConcernErrors)
-
-	/**
-	 * Returns all Write Errors that occurred
-	 *
-	 * @return WriteError[]
-	 */
-	PHP_ABSTRACT_ME(WriteResult, getWriteErrors, ai_WriteResult_getWriteErrors)
-
+	PHP_ME(WriteResult, getGeneratedIdsForInsert, ai_WriteResult_getGeneratedIdsForInsert, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteResult, getGeneratedIdsForUpsert, ai_WriteResult_getGeneratedIdsForUpsert, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteResult, getNumInserted, ai_WriteResult_getNumInserted, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteResult, getNumMatched, ai_WriteResult_getNumMatched, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteResult, getNumModified, ai_WriteResult_getNumModified, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteResult, getNumRemoved, ai_WriteResult_getNumRemoved, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteResult, getNumUpserted, ai_WriteResult_getNumUpserted, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteResult, getInfo, ai_WriteResult_getInfo, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteResult, getServer, ai_WriteResult_getServer, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteResult, getWriteConcernErrors, ai_WriteResult_getWriteConcernErrors, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_getWriteErrors, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
@@ -131,7 +349,9 @@ PHP_MINIT_FUNCTION(WriteResult)
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Write", "WriteResult", php_phongo_writeresult_me);
-	php_phongo_writeresult_ce = zend_register_internal_interface(&ce TSRMLS_CC);
+	ce.create_object = php_phongo_writeresult_create_object;
+	php_phongo_writeresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_writeresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
 	return SUCCESS;
 }

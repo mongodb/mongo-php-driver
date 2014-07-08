@@ -137,15 +137,12 @@ if test "$PHONGO" != "no"; then
       src/CommandResult.c \
       src/CursorId.c \
       src/Result.c \
-      src/DeleteResult.c \
       src/GeneratedId.c \
-      src/InsertResult.c \
       src/Manager.c \
       src/Query.c \
       src/QueryCursor.c \
       src/ReadPreference.c \
       src/Server.c \
-      src/UpdateResult.c \
       src/WriteConcernError.c \
       src/WriteError.c \
   ";
