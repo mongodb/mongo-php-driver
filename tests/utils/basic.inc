@@ -75,11 +75,13 @@ function CLEANUP() {
         try {
             $mc->executeCommand(DATABASE_NAME, $cmd, $rp);
         } catch(Exception $e) {
-            /* ns not found */
-            if ($e->getCode() == 59) {
-                continue;
-            }
-            throw $e;
+            do {
+                /* ns not found */
+                if ($e->getCode() == 59) {
+                    continue;
+                }
+                throw $e;
+            } while (0);
         }
     } catch(Exception $e) {
         echo "skip " . $e->getCode(), ": ", $e->getMessage();
