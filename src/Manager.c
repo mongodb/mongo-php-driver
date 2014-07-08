@@ -106,7 +106,7 @@ PHP_METHOD(Manager, executeCommand)
 	char                  *db;
 	int                    db_len;
 	zval                  *command;
-	zval                  *readPreference;
+	zval                  *readPreference = NULL;
 	php_phongo_command_t  *cmd;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
