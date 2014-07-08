@@ -273,11 +273,11 @@ int phongo_crud_insert(mongoc_client_t *client, char *namespace, bson_t *doc, zv
 	bson_to_zval(bson_get_data(&reply), reply.len, return_value);
 	return true;
 }
-void phongo_result_init(zval *return_value, mongoc_cursor_t *cursor, const bson_t *bson TSRMLS_DC)
+void phongo_result_init(zval *return_value, zend_class_entry *result_class, mongoc_cursor_t *cursor, const bson_t *bson TSRMLS_DC)
 {
 	php_phongo_result_t *result;
 
-	object_init_ex(return_value, php_phongo_result_ce);
+	object_init_ex(return_value, result_class);
 
 	result = (php_phongo_result_t *)zend_object_store_get_object(return_value TSRMLS_CC);
 	result->cursor = cursor;
@@ -309,7 +309,7 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 		return true;
 	}
 
-	phongo_result_init(return_value, cursor, doc TSRMLS_CC);
+	phongo_result_init(return_value, php_phongo_result_ce, cursor, doc TSRMLS_CC);
 	return true;
 }
 int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC)
@@ -333,7 +333,7 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 		return true;
 	}
 
-	phongo_result_init(return_value, cursor, doc TSRMLS_CC);
+	phongo_result_init(return_value, php_phongo_commandresult_ce, cursor, doc TSRMLS_CC);
 	return true;
 }
 

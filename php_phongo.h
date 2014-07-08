@@ -65,9 +65,6 @@ typedef struct {
 } php_phongo_commandcursor_t;
 typedef struct {
 	zend_object std;
-} php_phongo_commandresult_t;
-typedef struct {
-	zend_object std;
 } php_phongo_cursor_t;
 typedef struct {
 	zend_object std;
@@ -100,6 +97,18 @@ typedef struct {
 } php_phongo_result_t;
 typedef struct {
 	zend_object std;
+	zend_class_entry *ce_get_iterator;
+	mongoc_cursor_t *cursor;
+	bson_t          *firstBatch;
+} php_phongo_writeresult_t;
+typedef struct {
+	zend_object std;
+	zend_class_entry *ce_get_iterator;
+	mongoc_cursor_t *cursor;
+	bson_t          *firstBatch;
+} php_phongo_commandresult_t;
+typedef struct {
+	zend_object std;
 } php_phongo_querycursor_t;
 typedef struct {
 	zend_object std;
@@ -114,9 +123,6 @@ typedef struct {
 typedef struct {
 	zend_object std;
 } php_phongo_writeerror_t;
-typedef struct {
-	zend_object std;
-} php_phongo_writeresult_t;
 
 extern PHONGO_API zend_class_entry *php_phongo_command_ce;
 extern PHONGO_API zend_class_entry *php_phongo_commandcursor_ce;
