@@ -9,18 +9,12 @@ require_once "tests/utils/basic.inc";
 $manager = new MongoDB\Manager(MONGODB_URI);
 
 // load fixtures for test
-$manager->executeInsert(array('_id' => 1, 'x' => 1));
-$manager->executeInsert(array('_id' => 2, 'x' => 1));
+$manager->executeInsert(NS, array('_id' => 1, 'x' => 1));
+$manager->executeInsert(NS, array('_id' => 2, 'x' => 1));
 
 $result = $manager->executeDelete(NS, array('x' => 1), array('limit' => 0));
 
 var_dump($result instanceof MongoDB\Write\WriteResult);
-
-$server = $result->getServer();
-
-var_dump($server instanceof MongoDB\Server);
-var_dump($server->getHost());
-var_dump($server->getPort());
 
 printf("Inserted: %d\n", $result->getNumInserted());
 printf("Matched: %d\n", $result->getNumMatched());
@@ -35,14 +29,17 @@ $cursor = $manager->executeQuery(NS, $query);
 
 var_dump(iterator_to_array($cursor));
 
+$server = $result->getServer();
+
+var_dump($server instanceof MongoDB\Server);
+var_dump($server->getHost());
+var_dump($server->getPort());
+
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 bool(true)
-bool(true)
-string(9) "localhost"
-int(27017)
 Inserted: 0
 Matched: 0
 Modified: 0
@@ -52,4 +49,7 @@ Write concern errors: 0
 Write errors: 0
 array(0) {
 }
+bool(true)
+string(9) "localhost"
+int(27017)
 ===DONE===

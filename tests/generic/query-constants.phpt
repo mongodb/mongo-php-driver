@@ -18,11 +18,11 @@ var_dump(MongoDB\Query\Query::FLAG_PARTIAL);
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-int(1)
 int(2)
 int(4)
 int(8)
 int(16)
 int(32)
 int(64)
+int(128)
 ===DONE===
