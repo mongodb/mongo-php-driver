@@ -121,7 +121,7 @@ PHP_METHOD(Manager, executeCommand)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
-	phongo_execute_command(intern->client, mongoc_client_get_database(intern->client, db), cmd->bson, readPreference, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, db, cmd->bson, readPreference, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Query\QueryCursor Manager::executeQuery(string $namespace, MongoDB\Query\Query $query[, MongoDB\ReadPreference $readPreference = null])

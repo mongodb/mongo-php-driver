@@ -280,7 +280,6 @@ void phongo_result_init(zval *return_value, mongoc_cursor_t *cursor, const bson_
 }
 int phongo_execute_query(mongoc_client_t *client, mongoc_collection_t *collection, bson_t *query, zval *return_value, int return_value_used TSRMLS_DC)
 {
-	bson_error_t error;
     const bson_t *doc;
 	mongoc_cursor_t *cursor;
 
@@ -289,6 +288,8 @@ int phongo_execute_query(mongoc_client_t *client, mongoc_collection_t *collectio
 	cursor = mongoc_collection_find (collection, MONGOC_QUERY_NONE, 0, 0, 0, query, NULL, NULL);
 
     if (!mongoc_cursor_next(cursor, &doc)) {
+		bson_error_t error;
+
 		if (mongoc_cursor_error(cursor, &error)) {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 		}
@@ -302,13 +303,20 @@ int phongo_execute_query(mongoc_client_t *client, mongoc_collection_t *collectio
 	phongo_result_init(return_value, cursor, doc TSRMLS_CC);
 	return true;
 }
-int phongo_execute_command(mongoc_client_t *client, mongoc_database_t *db, bson_t *command, zval *read_preference, zval *return_value, int return_value_used TSRMLS_DC)
+int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, zval *read_preference, zval *return_value, int return_value_used TSRMLS_DC)
 {
-	bson_error_t error;
-	bson_t reply;
+	mongoc_cursor_t *cursor;
+    const bson_t *doc;
 
-	if (!mongoc_database_command_simple(db, command, NULL, &reply, &error)) {
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+
+	cursor = mongoc_client_command(client, db, MONGOC_QUERY_NONE, 0, 1, 0, command, NULL, NULL);
+
+	if (!mongoc_cursor_next(cursor, &doc)) {
+		bson_error_t error;
+
+		if (mongoc_cursor_error(cursor, &error)) {
+			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		}
 		return false;
 	}
 
@@ -316,7 +324,7 @@ int phongo_execute_command(mongoc_client_t *client, mongoc_database_t *db, bson_
 		return true;
 	}
 
-	bson_to_zval(bson_get_data(&reply), reply.len, return_value);
+	phongo_result_init(return_value, cursor, doc TSRMLS_CC);
 	return true;
 }
 
