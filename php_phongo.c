@@ -246,12 +246,18 @@ bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batc
 	bson_to_zval(bson_get_data(&reply), reply.len, return_value);
 	return true;
 }
-int phongo_crud_insert(mongoc_client_t *client, mongoc_collection_t *collection, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC)
+int phongo_crud_insert(mongoc_client_t *client, char *namespace, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC)
 {
 	bson_error_t error;
 	bson_t reply;
-	mongoc_bulk_operation_t *batch = mongoc_collection_create_bulk_operation (collection, true, NULL);
+	char *dbname;
+	char *collname;
+	mongoc_bulk_operation_t *batch;
+	mongoc_collection_t *collection;
 
+	phongo_split_namespace(namespace, &dbname, &collname);
+	collection = mongoc_client_get_collection(client, dbname, collname);
+	batch = mongoc_collection_create_bulk_operation(collection, true, NULL);
 
 	mongoc_bulk_operation_insert(batch, doc);
 
@@ -259,7 +265,6 @@ int phongo_crud_insert(mongoc_client_t *client, mongoc_collection_t *collection,
 		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 		return false;
 	}
-
 
 	if (!return_value_used) {
 		return true;
@@ -278,14 +283,18 @@ void phongo_result_init(zval *return_value, mongoc_cursor_t *cursor, const bson_
 	result->cursor = cursor;
 	result->firstBatch = (bson_t *)bson;
 }
-int phongo_execute_query(mongoc_client_t *client, mongoc_collection_t *collection, bson_t *query, zval *return_value, int return_value_used TSRMLS_DC)
+int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC)
 {
     const bson_t *doc;
 	mongoc_cursor_t *cursor;
+	char *dbname;
+	char *collname;
+	mongoc_collection_t *collection;
 
+	phongo_split_namespace(namespace, &dbname, &collname);
+	collection = mongoc_client_get_collection(client, dbname, collname);
 
-
-	cursor = mongoc_collection_find (collection, MONGOC_QUERY_NONE, 0, 0, 0, query, NULL, NULL);
+	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->bson, query->selector, read_preference);
 
     if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error;
@@ -303,13 +312,13 @@ int phongo_execute_query(mongoc_client_t *client, mongoc_collection_t *collectio
 	phongo_result_init(return_value, cursor, doc TSRMLS_CC);
 	return true;
 }
-int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, zval *read_preference, zval *return_value, int return_value_used TSRMLS_DC)
+int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC)
 {
 	mongoc_cursor_t *cursor;
     const bson_t *doc;
 
 
-	cursor = mongoc_client_command(client, db, MONGOC_QUERY_NONE, 0, 1, 0, command, NULL, NULL);
+	cursor = mongoc_client_command(client, db, MONGOC_QUERY_NONE, 0, 1, 0, command, NULL, read_preference);
 
 	if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error;
@@ -453,6 +462,39 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	return (mongoc_stream_t *) base_stream;
 }
 
+mongoc_read_prefs_t*     phongo_read_preference_from_zval(zval *zread_preference)
+{
+	if (zread_preference) {
+		php_phongo_readpreference_t *intern = (php_phongo_readpreference_t *)zend_object_store_get_object(zread_preference TSRMLS_CC);
+
+		if (intern) {
+			return intern->read_preference;
+		}
+	}
+
+	return NULL;
+}
+php_phongo_query_t* phongo_query_from_zval(zval *zquery)
+{
+	php_phongo_query_t *intern = (php_phongo_query_t *)zend_object_store_get_object(zquery TSRMLS_CC);
+
+	return intern;
+}
+php_phongo_query_t* php_phongo_query_init(php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit)
+{
+	query->bson = bson_new();
+	php_phongo_bson_encode_array(query->bson, zquery TSRMLS_CC);
+
+	if (selector) {
+		query->selector = bson_new();
+		php_phongo_bson_encode_array(query->selector, selector TSRMLS_CC);
+	}
+	query->flags = flags;
+	query->skip = skip;
+	query->limit = limit;
+
+	return query;
+}
 /* {{{ Iterator */
 typedef struct {
 	zend_object_iterator iterator;

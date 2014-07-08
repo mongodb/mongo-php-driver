@@ -61,14 +61,13 @@ PHP_METHOD(Query, __construct)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_query_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "AAlll", &query, &selector, &flags, &skip, &limit) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "AA!lll", &query, &selector, &flags, &skip, &limit) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	intern->bson = bson_new();
-	php_phongo_bson_encode_array(intern->bson, query TSRMLS_CC);
+	php_phongo_query_init(intern, query, selector, flags, skip, limit);
 }
 /* }}} */
 
@@ -137,13 +136,13 @@ PHP_MINIT_FUNCTION(Query)
 	ce.create_object = php_phongo_query_create_object;
 	php_phongo_query_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_query_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_TAILABLE_CURSOR"), 0x01 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_SLAVE_OK"), 0x02 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_OPLOG_REPLAY"), 0x04 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_NO_CURSOR_TIMEOUT"), 0x08 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_AWAIT_DATA"), 0x10 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_EXHAUST"), 0x20 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_PARTIAL"), 0x40 TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_TAILABLE_CURSOR"), MONGOC_QUERY_TAILABLE_CURSOR TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_SLAVE_OK"), MONGOC_QUERY_SLAVE_OK TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_OPLOG_REPLAY"), MONGOC_QUERY_OPLOG_REPLAY TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_NO_CURSOR_TIMEOUT"), MONGOC_QUERY_NO_CURSOR_TIMEOUT TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_AWAIT_DATA"), MONGOC_QUERY_AWAIT_DATA TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_EXHAUST"), MONGOC_QUERY_EXHAUST TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_PARTIAL"), MONGOC_QUERY_PARTIAL TSRMLS_CC);
 
 	return SUCCESS;
 }

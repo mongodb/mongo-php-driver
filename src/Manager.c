@@ -114,14 +114,14 @@ PHP_METHOD(Manager, executeCommand)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O", &db, &db_len, &command, php_phongo_command_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &db, &db_len, &command, php_phongo_command_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
-	phongo_execute_command(intern->client, db, cmd->bson, readPreference, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Query\QueryCursor Manager::executeQuery(string $namespace, MongoDB\Query\Query $query[, MongoDB\ReadPreference $readPreference = null])
@@ -134,24 +134,19 @@ PHP_METHOD(Manager, executeQuery)
 	int                    namespace_len;
 	zval                  *zquery;
 	zval                  *readPreference;
-	mongoc_collection_t   *collection;
-	php_phongo_query_t    *query;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O", &namespace, &namespace_len, &zquery, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zquery, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	query = (php_phongo_query_t *)zend_object_store_get_object(zquery TSRMLS_CC);
-	collection = phongo_get_collection_from_namespace(intern->client, namespace, namespace_len);
-	phongo_execute_query(intern->client, collection, query->bson, return_value, return_value_used TSRMLS_CC);
-	mongoc_collection_destroy(collection);
+	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery), phongo_read_preference_from_zval(readPreference), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Write\WriteResult Manager::executeWrite(string $namespace, MongoDB\Write\Batch $batch[, array $writeOptions = array()])
@@ -193,7 +188,6 @@ PHP_METHOD(Manager, executeInsert)
 	int                    namespace_len;
 	zval                  *document;
 	zval                  *writeOptions;
-	mongoc_collection_t   *collection;
 	bson_t                 *bson;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
@@ -207,12 +201,9 @@ PHP_METHOD(Manager, executeInsert)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	collection = phongo_get_collection_from_namespace(intern->client, namespace, namespace_len);
-
 	bson = bson_new();
 	php_phongo_bson_encode_array(bson, document TSRMLS_CC);
-	phongo_crud_insert(intern->client, collection, bson, return_value, return_value_used TSRMLS_CC);
-	mongoc_collection_destroy(collection);
+	phongo_crud_insert(intern->client, namespace, bson, return_value, return_value_used TSRMLS_CC);
 	bson_destroy(bson);
 }
 /* }}} */
