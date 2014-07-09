@@ -1,6 +1,6 @@
 <?php
 
-namespace MongoDB\Command;
+namespace MongoDB;
 
 /**
  * Value object for a database command document.
@@ -10,7 +10,7 @@ final class Command
     private $document;
 
     /**
-     * Constructs a new MongoDB Command
+     * Constructs a new Command
      *
      * @param array|object $document Command document
      */

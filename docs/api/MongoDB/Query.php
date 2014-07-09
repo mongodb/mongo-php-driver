@@ -1,6 +1,6 @@
 <?php
 
-namespace MongoDB\Query;
+namespace MongoDB;
 
 /**
  * Value object corresponding to a wire protocol OP_QUERY message.

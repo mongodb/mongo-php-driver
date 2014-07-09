@@ -2,13 +2,6 @@
 
 namespace MongoDB;
 
-use MongoDB\Command\Command;
-use MongoDB\Command\CommandResult;
-use MongoDB\Query\Query;
-use MongoDB\Query\QueryCursor;
-use MongoDB\Write\Batch;
-use MongoDB\Write\WriteResult;
-
 /**
  * Server abstracts a socket connection to a single MongoDB server. The server
  * itself may be a mongod (stand-alone or replica set node) or mongos process.
@@ -80,7 +73,7 @@ final class Server
      *
      * @param string $namespace
      * @param Query  $query
-     * @return QueryCursor
+     * @return QueryResult
      */
     public function executeQuery($namespace, Query $query)
     {
@@ -94,10 +87,10 @@ final class Server
      * Executes a write operation batch (e.g. insert, update, delete)
      *
      * @param string     $namespace
-     * @param Batch $batch
+     * @param WriteBatch $batch
      * @return WriteResult
      */
-    public function executeWrite($namespace, Batch $batch)
+    public function executeWrite($namespace, WriteBatch $batch)
     {
         /* Write options are not taken as an argument, since they are specified
          * during Batch construction.

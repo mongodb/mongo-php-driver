@@ -1,6 +1,6 @@
 <?php
 
-namespace MongoDB\Write;
+namespace MongoDB;
 
 /**
  * Value object for a write error (e.g. duplicate key).

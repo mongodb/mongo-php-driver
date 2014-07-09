@@ -2,14 +2,6 @@
 
 namespace MongoDB;
 
-use MongoDB\Command\Command;
-use MongoDB\Command\CommandResult;
-use MongoDB\Query\Query;
-use MongoDB\Query\QueryCursor;
-use MongoDB\Write\Batch;
-use MongoDB\Write\WriteOptions;
-use MongoDB\Write\WriteResult;
-
 /**
  * Manager abstracts a cluster of Server objects (i.e. socket connections).
  *
@@ -83,7 +75,7 @@ final class Manager
      * @param string         $namespace
      * @param Query          $query
      * @param ReadPreference $readPreference
-     * @return QueryCursor
+     * @return QueryResult
      */
     public function executeQuery($namespace, Query $query, ReadPreference $readPreference = null)
     {
@@ -107,7 +99,7 @@ final class Manager
      * @param array      $writeOptions Ordering and write concern options (default: {"ordered": true, "w": 1})
      * @return WriteResult
      */
-    public function executeWrite($namespace, Batch $batch, array $writeOptions = null)
+    public function executeWrite($namespace, WriteBatch $batch, array $writeOptions = null)
     {
         /* Select writeable server and invoke Server::executeQuery().
          *
@@ -131,11 +123,11 @@ final class Manager
      * @param string       $namespace
      * @param array|object $document     Document to insert
      * @param array        $writeOptions Write concern options (default: {"w": 1})
-     * @return InsertResult
+     * @return WriteResult
      */
     public function executeInsert($namespace, $document, array $writeOptions = null)
     {
-        /* Construct and execute an InsertBatch
+        /* Construct and execute a WriteBatch with a single insert operation.
          *
          * Write options are optional, and will be merged into the default,
          * which is {"w": 1}.
@@ -150,16 +142,19 @@ final class Manager
      * @param array|object $newObj        Update modifier or replacement document
      * @param array        $updateOptions Update options (e.g. "upsert")
      * @param array        $writeOptions  Write concern options (default: {"w": 1})
-     * @return UpdateResult
+     * @return WriteResult
      */
     public function executeUpdate($namespace, $query, $newObj, array $updateOptions = null, array $writeOptions = null)
     {
-        /* Construct and execute an UpdateBatch
+        $updateOptions = array_merge(
+            array('multi' => false, 'upsert' => false),
+            $updateOptions
+        );
+
+        /* Construct and execute a WriteBatch with a single update operation.
          *
          * Write options are optional, and will be merged into the default,
          * which is {"w": 1}.
-         *
-         * What should be the default value for $options? No multi, no upsert?
          */
     }
 
@@ -170,16 +165,25 @@ final class Manager
      * @param array|object $query         Deletion criteria
      * @param array        $deleteOptions Deletion options (e.g. "limit")
      * @param array        $writeOptions  Write concern options (default: {"w": 1})
-     * @return DeleteResult
+     * @return WriteResult
      */
     public function executeDelete($namespace, $query, array $deleteOptions = null, array $writeOptions = null)
     {
-        /* Construct and execute an DeleteBatch
+        /* TODO: Decide if we should default to 0 (i.e. "all"), as in 1.x, or if
+         * an explicit "limit" option must be required. Keeping $deleteOptions
+         * as an array, rather than a single integer option for "limit", seems
+         * wise; if the "delete" command ever takes additional options, we would
+         * not need to change our API.
+         */
+        $deleteOptions = array_merge(
+            array('limit' => 0),
+            $deleteOptions
+        );
+
+        /* Construct and execute a WriteBatch with a single delete operation.
          *
          * Write options are optional, and will be merged into the default,
          * which is {"w": 1}.
-         *
-         * What should be the default value for $options? No limit?
          */
     }
 }

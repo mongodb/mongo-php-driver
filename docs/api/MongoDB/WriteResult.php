@@ -1,6 +1,6 @@
 <?php
 
-namespace MongoDB\Write;
+namespace MongoDB;
 
 /**
  * Result returned by Server and Manager executeWrite() methods.
