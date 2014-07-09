@@ -46,8 +46,6 @@
 #include <main/php_network.h>
 /* Our Compatability header */
 #include "php_compat_53.h"
-/* Workarounds for libmongoc */
-#include "pongoc.h"
 
 /* Our stuffz */
 #include "php_phongo.h"
@@ -219,8 +217,10 @@ void phongo_split_namespace(char *namespace, char **dbname, char **cname)
     }
 }
 /* }}} */
-mongoc_bulk_operation_t *phongo_batch_init() {
-	return _mongoc_bulk_operation_allocate();
+mongoc_bulk_operation_t *phongo_batch_init(zend_bool ordered) {
+	return mongoc_bulk_operation_new(ordered);
+}
+
 }
 bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batch, int server_id, char *namespace, zval *return_value, int return_value_used TSRMLS_DC)
 {
@@ -228,10 +228,11 @@ bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batc
 	bson_t reply;
 	char *database;
 	char *collection;
-	bool ordered = true;
 
 	phongo_split_namespace(namespace, &database, &collection);
-	_mongoc_bulk_operation_set(batch, client, database, collection, ordered, NULL);
+	mongoc_bulk_operation_set_database(batch, database);
+	mongoc_bulk_operation_set_collection(batch, collection);
+	mongoc_bulk_operation_set_client(batch, client);
 
 
 	if (!mongoc_bulk_operation_execute(batch, &reply, &error)) {
