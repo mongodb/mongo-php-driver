@@ -41,6 +41,5 @@ tests/*/*.sh
 
 php.ini
 *.patch
-*.php
 *.swp
 .*
