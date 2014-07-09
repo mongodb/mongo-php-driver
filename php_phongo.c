@@ -452,11 +452,12 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	base_stream->uri_options = mongoc_uri_get_options(uri);
 	base_stream->host = host;
 	base_stream->log = phongo_stream_logger;
+	/* flush missing, doesn't seem to be used */
 	base_stream->vtable.type = 42;
-	base_stream->vtable.close = phongo_stream_close;
 	base_stream->vtable.destroy = phongo_stream_destroy;
-	base_stream->vtable.readv = phongo_stream_readv;
+	base_stream->vtable.close = phongo_stream_close;
 	base_stream->vtable.writev = phongo_stream_writev;
+	base_stream->vtable.readv = phongo_stream_readv;
 	base_stream->vtable.setsockopt = phongo_stream_setsockopt;
 	base_stream->vtable.get_base_stream = phongo_stream_get_base_stream;
 
@@ -615,6 +616,32 @@ zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *obj
 	}
 }
 /* }}} */
+/* {{{ Memory allocation wrappers */
+static void* php_phongo_malloc(size_t num_bytes)
+{
+   return emalloc(num_bytes);
+}
+
+
+static void* php_phongo_calloc(size_t num_members,
+                      size_t num_bytes)
+{
+   return ecalloc(num_members, num_bytes);
+}
+
+
+static void* php_phongo_realloc(void   *mem,
+                       size_t  num_bytes)
+{
+   return erealloc(mem, num_bytes);
+}
+
+
+static void php_phongo_free(void *mem)
+{
+   return efree(mem);
+}
+/* }}} */
 /* {{{ M[INIT|SHUTDOWN] R[INIT|SHUTDOWN] G[INIT|SHUTDOWN] MINFO INI */
 
 /* {{{ INI entries */
@@ -626,7 +653,15 @@ PHP_INI_END()
 /* {{{ PHP_GINIT_FUNCTION */
 PHP_GINIT_FUNCTION(phongo)
 {
+	bson_mem_vtable_t bsonMemVTable = {
+		php_phongo_malloc,
+		php_phongo_calloc,
+		php_phongo_realloc,
+		php_phongo_free,
+	};
 	phongo_globals->debug_log = NULL;
+	phongo_globals->bsonMemVTable = bsonMemVTable;
+
 }
 /* }}} */
 
@@ -636,9 +671,10 @@ PHP_MINIT_FUNCTION(phongo)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	void ***ctx = NULL;
 	TSRMLS_SET_CTX(ctx);
-
 	REGISTER_INI_ENTRIES();
 
+	/* Initialize libbson */
+	bson_mem_set_vtable(&PHONGO_G(bsonMemVTable));
 	/* Initialize libmongoc */
 	mongoc_init();
 	mongoc_log_set_handler(php_phongo_log, ctx);

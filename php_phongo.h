@@ -48,6 +48,7 @@ extern zend_module_entry phongo_module_entry;
 
 ZEND_BEGIN_MODULE_GLOBALS(phongo)
 	char *debug_log;
+	bson_mem_vtable_t bsonMemVTable;
 ZEND_END_MODULE_GLOBALS(phongo)
 
 #ifdef ZTS
