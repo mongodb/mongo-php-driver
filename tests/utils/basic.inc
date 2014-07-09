@@ -88,19 +88,19 @@ function CLEANUP() {
     }
 }
 function getInsertCount($retval) {
-    return $retval["nInserted"];
+    return $retval->getNumInserted();
 }
 function getModifiedCount($retval) {
-    return $retval["nModified"];
+    return $retval->getNumModified();
 }
 function getRemovedCount($retval) {
-    return $retval["nRemoved"];
+    return $retval->getNumRemoved();
 }
 function getUpsertedCount($retval) {
-    return $retval["nUpserted"];
+    return $retval->getNumUpserted();
 }
 function getWriteErrors($retval) {
-    return $retval["writeErrors"];
+    return (array)$retval->getWriteErrors();
 }
 
 function def($arr) {

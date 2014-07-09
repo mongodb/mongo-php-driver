@@ -73,6 +73,9 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 		case PHONGO_ERROR_MONGOC_FAILED:
 			return spl_ce_RuntimeException;
 	}
+
+	mongoc_log(MONGOC_LOG_LEVEL_ERROR, "PHONGO", "Resolving unknown exception domain!!!");
+	return spl_ce_RuntimeException;
 }
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code)
 {
@@ -220,7 +223,17 @@ void phongo_split_namespace(char *namespace, char **dbname, char **cname)
 mongoc_bulk_operation_t *phongo_batch_init(zend_bool ordered) {
 	return mongoc_bulk_operation_new(ordered);
 }
+void phongo_result_init(zval *return_value, zend_class_entry *result_class, mongoc_cursor_t *cursor, const bson_t *bson TSRMLS_DC)
+{
+	php_phongo_result_t *result;
 
+	object_init_ex(return_value, result_class);
+
+	result = (php_phongo_result_t *)zend_object_store_get_object(return_value TSRMLS_CC);
+	if (cursor) {
+		result->cursor = cursor;
+	}
+	result->firstBatch = (bson_t *)bson;
 }
 bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batch, int server_id, char *namespace, zval *return_value, int return_value_used TSRMLS_DC)
 {
@@ -244,7 +257,7 @@ bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batc
 		return true;
 	}
 
-	bson_to_zval(bson_get_data(&reply), reply.len, return_value);
+	phongo_result_init(return_value, php_phongo_writeresult_ce, NULL, &reply TSRMLS_CC);
 	return true;
 }
 int phongo_crud_insert(mongoc_client_t *client, char *namespace, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC)
@@ -273,16 +286,6 @@ int phongo_crud_insert(mongoc_client_t *client, char *namespace, bson_t *doc, zv
 
 	bson_to_zval(bson_get_data(&reply), reply.len, return_value);
 	return true;
-}
-void phongo_result_init(zval *return_value, zend_class_entry *result_class, mongoc_cursor_t *cursor, const bson_t *bson TSRMLS_DC)
-{
-	php_phongo_result_t *result;
-
-	object_init_ex(return_value, result_class);
-
-	result = (php_phongo_result_t *)zend_object_store_get_object(return_value TSRMLS_CC);
-	result->cursor = cursor;
-	result->firstBatch = (bson_t *)bson;
 }
 int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC)
 {
@@ -464,7 +467,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	return (mongoc_stream_t *) base_stream;
 }
 
-mongoc_read_prefs_t*     phongo_read_preference_from_zval(zval *zread_preference)
+mongoc_read_prefs_t*     phongo_read_preference_from_zval(zval *zread_preference TSRMLS_DC)
 {
 	if (zread_preference) {
 		php_phongo_readpreference_t *intern = (php_phongo_readpreference_t *)zend_object_store_get_object(zread_preference TSRMLS_CC);
@@ -532,7 +535,7 @@ static void phongo_cursor_it_get_current_data(zend_object_iterator *iter, zval *
 static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
 	phongo_cursor_it    *cursor_it = (phongo_cursor_it *)iter;
-	php_phongo_result_t *intern   = cursor_it->intern;
+	php_phongo_result_t *intern    = cursor_it->intern;
 	const bson_t *doc;
 
 	if (cursor_it->current) {
@@ -553,7 +556,7 @@ static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) 
 static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
 	phongo_cursor_it    *cursor_it = (phongo_cursor_it *)iter;
-	php_phongo_result_t *intern   = cursor_it->intern;
+	php_phongo_result_t *intern    = cursor_it->intern;
 
 	MAKE_STD_ZVAL(cursor_it->current);
 	bson_to_zval(bson_get_data(intern->firstBatch), intern->firstBatch->len, cursor_it->current);

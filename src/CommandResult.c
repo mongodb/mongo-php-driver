@@ -136,7 +136,7 @@ static void php_phongo_commandresult_free_object(void *object TSRMLS_DC)
 {
 	php_phongo_commandresult_t *intern = (php_phongo_commandresult_t*)object;
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->result.std TSRMLS_CC);
 
 	efree(intern);
 }
@@ -149,8 +149,8 @@ zend_object_value php_phongo_commandresult_create_object(zend_class_entry *class
 	intern = (php_phongo_commandresult_t *)emalloc(sizeof(php_phongo_commandresult_t));
 	memset(intern, 0, sizeof(php_phongo_commandresult_t));
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
-	object_properties_init(&intern->std, class_type);
+	zend_object_std_init(&intern->result.std, class_type TSRMLS_CC);
+	object_properties_init(&intern->result.std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_commandresult_free_object, NULL TSRMLS_CC);
 	retval.handlers = phongo_get_std_object_handlers();

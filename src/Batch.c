@@ -102,7 +102,7 @@ PHP_METHOD(Batch, update)
 	zval                  *query;
 	zval                  *update;
 	long                   limit;
-	zend_bool             *upsert;
+	zend_bool             upsert;
 	bson_t                *bquery;
 	bson_t                *bupdate;
 
@@ -141,7 +141,7 @@ PHP_METHOD(Batch, delete)
 	php_phongo_batch_t    *intern;
 	zend_error_handling	error_handling;
 	zval                  *query;
-	zend_bool             *limit;
+	zend_bool             limit;
 	bson_t                *bson;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */

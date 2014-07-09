@@ -121,7 +121,7 @@ PHP_METHOD(Manager, executeCommand)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
-	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference), return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Query\QueryCursor Manager::executeQuery(string $namespace, MongoDB\Query\Query $query[, MongoDB\ReadPreference $readPreference = null])
@@ -133,7 +133,7 @@ PHP_METHOD(Manager, executeQuery)
 	char                  *namespace;
 	int                    namespace_len;
 	zval                  *zquery;
-	zval                  *readPreference;
+	zval                  *readPreference = NULL;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -146,7 +146,7 @@ PHP_METHOD(Manager, executeQuery)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery), phongo_read_preference_from_zval(readPreference), return_value, return_value_used TSRMLS_CC);
+	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery), phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Write\WriteResult Manager::executeWrite(string $namespace, MongoDB\Write\Batch $batch[, array $writeOptions = array()])
