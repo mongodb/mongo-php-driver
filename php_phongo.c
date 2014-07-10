@@ -200,17 +200,8 @@ void phongo_log_writer(mongoc_stream_t *stream, int32_t timeout_msec, ssize_t se
 /* }}} */
 
 /* {{{ CRUD */
-mongoc_collection_t* phongo_get_collection_from_namespace(mongoc_client_t *client, char *namespace, int namespace_len)
-{
-	char *dbname = estrndup(namespace, strchr(namespace, '.') - namespace);
-	char *collname = estrdup(namespace + (strchr(namespace, '.') - namespace) + 1);
-	mongoc_collection_t *collection = mongoc_client_get_collection(client, dbname, collname);
-	efree(dbname);
-	efree(collname);
-	return collection;
-}
 /* Splits a namespace name into the database and collection names, allocated with estrdup. */
-void phongo_split_namespace(char *namespace, char **dbname, char **cname)
+void phongo_split_namespace(char *namespace, char **dbname, char **cname) /* {{{ */
 {
     if (cname) {
         *cname = estrdup(namespace + (strchr(namespace, '.') - namespace) + 1);
@@ -218,12 +209,13 @@ void phongo_split_namespace(char *namespace, char **dbname, char **cname)
     if (dbname) {
         *dbname = estrndup(namespace, strchr(namespace, '.') - namespace);
     }
-}
-/* }}} */
-mongoc_bulk_operation_t *phongo_batch_init(zend_bool ordered) {
+} /* }}} */
+
+mongoc_bulk_operation_t *phongo_batch_init(zend_bool ordered) { /* {{{ */
 	return mongoc_bulk_operation_new(ordered);
-}
-void phongo_result_init(zval *return_value, zend_class_entry *result_class, mongoc_cursor_t *cursor, const bson_t *bson TSRMLS_DC)
+} /* }}} */
+
+void phongo_result_init(zval *return_value, zend_class_entry *result_class, mongoc_cursor_t *cursor, const bson_t *bson TSRMLS_DC) /* {{{ */
 {
 	php_phongo_result_t *result;
 
@@ -308,8 +300,9 @@ bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batc
 	bson_destroy(&reply);
 
 	return true;
-}
-int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC)
+} /* }}} */
+
+int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
     const bson_t *doc;
 	mongoc_cursor_t *cursor;
@@ -337,8 +330,9 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 
 	phongo_result_init(return_value, php_phongo_result_ce, cursor, doc TSRMLS_CC);
 	return true;
-}
-int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC)
+} /* }}} */
+
+int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	mongoc_cursor_t *cursor;
     const bson_t *doc;
@@ -361,18 +355,21 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 
 	phongo_result_init(return_value, php_phongo_commandresult_ce, cursor, doc TSRMLS_CC);
 	return true;
-}
+} /* }}} */
 
 /* }}} */
 
-void phongo_stream_destroy(mongoc_stream_t *stream)
+/* {{{ Stream vtable */
+void phongo_stream_destroy(mongoc_stream_t *stream) /* {{{ */
 {
-}
-int phongo_stream_close(mongoc_stream_t *stream)
+} /* }}} */
+
+int phongo_stream_close(mongoc_stream_t *stream) /* {{{ */
 {
 	return -1;
-}
-void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeout_msec)
+} /* }}} */
+
+void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeout_msec) /* {{{ */
 {
 	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
@@ -386,8 +383,9 @@ void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeo
 	} else if (timeout_msec == 0) {
 		php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, NULL);
 	}
-}
-ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, int32_t timeout_msec)
+} /* }}} */
+
+ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, int32_t timeout_msec) /* {{{ */
 {
 	size_t     i = 0;
 	ssize_t sent = 0;
@@ -404,8 +402,9 @@ ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_
 	}
 
 	return sent;
-}
-ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, size_t min_bytes, int32_t timeout_msec)
+} /* }}} */
+
+ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, size_t min_bytes, int32_t timeout_msec) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
 	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
@@ -413,24 +412,26 @@ ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t
 	php_phongo_set_timeout(base_stream, timeout_msec);
 
 	return php_stream_read(base_stream->stream, iov->iov_base, iov->iov_len);
-}
-int phongo_stream_setsockopt(mongoc_stream_t *stream, int level, int optname, void *optval, socklen_t optlen)
+} /* }}} */
+
+int phongo_stream_setsockopt(mongoc_stream_t *stream, int level, int optname, void *optval, socklen_t optlen) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
 	int socket = ((php_netstream_data_t *)base_stream->stream->abstract)->socket;
 	int retval = setsockopt (socket, level, optname, optval, optlen);
 	return retval;
-}
-mongoc_stream_t* phongo_stream_get_base_stream(mongoc_stream_t *stream)
+} /* }}} */
+
+mongoc_stream_t* phongo_stream_get_base_stream(mongoc_stream_t *stream) /* {{{ */
 {
 	return (mongoc_stream_t *) stream;
-}
+} /* }}} */
 
 php_phongo_stream_logger phongo_stream_logger = {
 	phongo_log_writer,
 };
 
-mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error)
+mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = NULL;
 	php_stream *stream;
@@ -487,9 +488,11 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	base_stream->vtable.get_base_stream = phongo_stream_get_base_stream;
 
 	return (mongoc_stream_t *) base_stream;
-}
+} /* }}} */
 
-mongoc_read_prefs_t*     phongo_read_preference_from_zval(zval *zread_preference TSRMLS_DC)
+/* }}} */
+
+mongoc_read_prefs_t* phongo_read_preference_from_zval(zval *zread_preference TSRMLS_DC) /* {{{ */
 {
 	if (zread_preference) {
 		php_phongo_readpreference_t *intern = (php_phongo_readpreference_t *)zend_object_store_get_object(zread_preference TSRMLS_CC);
@@ -500,14 +503,16 @@ mongoc_read_prefs_t*     phongo_read_preference_from_zval(zval *zread_preference
 	}
 
 	return NULL;
-}
-php_phongo_query_t* phongo_query_from_zval(zval *zquery)
+} /* }}} */
+
+php_phongo_query_t* phongo_query_from_zval(zval *zquery) /* {{{ */
 {
 	php_phongo_query_t *intern = (php_phongo_query_t *)zend_object_store_get_object(zquery TSRMLS_CC);
 
 	return intern;
-}
-php_phongo_query_t* php_phongo_query_init(php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit)
+} /* }}} */
+
+php_phongo_query_t* php_phongo_query_init(php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit) /* {{{ */
 {
 	query->bson = bson_new();
 	php_phongo_bson_encode_array(query->bson, zquery TSRMLS_CC);
@@ -521,7 +526,8 @@ php_phongo_query_t* php_phongo_query_init(php_phongo_query_t *query, zval *zquer
 	query->limit = limit;
 
 	return query;
-}
+} /* }}} */
+
 /* {{{ Iterator */
 typedef struct {
 	zend_object_iterator iterator;
@@ -539,20 +545,17 @@ static void phongo_cursor_it_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ *
 
 	zval_ptr_dtor((zval**)&cursor_it->iterator.data);
 	efree(cursor_it);
-}
-/* }}} */
+} /* }}} */
 
 static int phongo_cursor_it_valid(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
 	return ((phongo_cursor_it *)iter)->current ? SUCCESS : FAILURE;
-}
-/* }}} */
+} /* }}} */
 
 static void phongo_cursor_it_get_current_data(zend_object_iterator *iter, zval ***data TSRMLS_DC) /* {{{ */
 {
 	*data = &((phongo_cursor_it *)iter)->current;
-}
-/* }}} */
+} /* }}} */
 
 static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
@@ -572,8 +575,7 @@ static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) 
 		cursor_it->current = NULL;
 	}
 
-}
-/* }}} */
+} /* }}} */
 
 static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
@@ -582,8 +584,7 @@ static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{
 
 	MAKE_STD_ZVAL(cursor_it->current);
 	bson_to_zval(bson_get_data(intern->firstBatch), intern->firstBatch->len, cursor_it->current);
-}
-/* }}} */
+} /* }}} */
 
 /* iterator handler table */
 zend_object_iterator_funcs phongo_cursor_it_funcs = {
@@ -604,7 +605,7 @@ zend_object_iterator_funcs zend_interface_iterator_funcs_iterator_default = {
     zend_user_it_invalidate_current
 };
 
-zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC)
+zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC) /* {{{ */
 {
 	php_phongo_result_t    *intern = (php_phongo_result_t *)zend_object_store_get_object(object TSRMLS_CC);
 
@@ -639,34 +640,33 @@ zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *obj
 
 		return (zend_object_iterator*)cursor_it;
 	}
-}
+} /* }}} */
 /* }}} */
+
+
 /* {{{ Memory allocation wrappers */
-static void* php_phongo_malloc(size_t num_bytes)
+static void* php_phongo_malloc(size_t num_bytes) /* {{{ */
 {
    return emalloc(num_bytes);
-}
+} /* }}} */
 
-
-static void* php_phongo_calloc(size_t num_members,
-                      size_t num_bytes)
+static void* php_phongo_calloc(size_t num_members, size_t num_bytes) /* {{{ */
 {
    return ecalloc(num_members, num_bytes);
-}
+} /* }}} */
 
-
-static void* php_phongo_realloc(void   *mem,
-                       size_t  num_bytes)
-{
+static void* php_phongo_realloc(void *mem, size_t num_bytes) { /* {{{ */
    return erealloc(mem, num_bytes);
-}
+} /* }}} */
 
-
-static void php_phongo_free(void *mem)
+static void php_phongo_free(void *mem) /* {{{ */
 {
    return efree(mem);
-}
+} /* }}} */
+
 /* }}} */
+
+
 /* {{{ M[INIT|SHUTDOWN] R[INIT|SHUTDOWN] G[INIT|SHUTDOWN] MINFO INI */
 
 /* {{{ INI entries */
@@ -797,6 +797,7 @@ PHP_MINFO_FUNCTION(phongo)
 /* }}} */
 /* }}} */
 
+
 /* {{{ phongo_functions[]
 */
 const zend_function_entry phongo_functions[] = {
@@ -806,6 +807,7 @@ const zend_function_entry phongo_functions[] = {
 	PHP_FE_END
 };
 /* }}} */
+
 /* {{{ phongo_module_entry
  */
 zend_module_entry phongo_module_entry = {
