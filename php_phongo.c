@@ -234,8 +234,51 @@ void phongo_result_init(zval *return_value, zend_class_entry *result_class, mong
 		result->cursor = cursor;
 	}
 	result->firstBatch = (bson_t *)bson;
-}
-bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batch, int server_id, char *namespace, zval *return_value, int return_value_used TSRMLS_DC)
+} /* }}} */
+
+int phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+{
+	bool retval = false;
+	mongoc_bulk_operation_t *batch;
+
+	batch = phongo_batch_init(true);
+	mongoc_bulk_operation_insert(batch, doc);
+
+	retval = phongo_execute_write(client, batch, 0, namespace, return_value, return_value_used TSRMLS_CC);
+	mongoc_bulk_operation_destroy(batch);
+
+	return retval;
+} /* }}} */
+
+int phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_t *query, bson_t *update, bool upsert, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+{
+	bool retval = false;
+	mongoc_bulk_operation_t *batch;
+
+	batch = phongo_batch_init(true);
+	mongoc_bulk_operation_update_one(batch, query, update, upsert);
+
+	retval = phongo_execute_write(client, batch, 0, namespace, return_value, return_value_used TSRMLS_CC);
+	mongoc_bulk_operation_destroy(batch);
+
+	return retval;
+} /* }}} */
+
+int phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_t *query, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+{
+	bool retval = false;
+	mongoc_bulk_operation_t *batch;
+
+	batch = phongo_batch_init(true);
+	mongoc_bulk_operation_remove_one(batch, query);
+
+	retval = phongo_execute_write(client, batch, 0, namespace, return_value, return_value_used TSRMLS_CC);
+	mongoc_bulk_operation_destroy(batch);
+
+	return retval;
+} /* }}} */
+
+bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batch, int server_id, char *namespace, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
 	bson_t reply;
@@ -246,6 +289,10 @@ bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batc
 	mongoc_bulk_operation_set_database(batch, database);
 	mongoc_bulk_operation_set_collection(batch, collection);
 	mongoc_bulk_operation_set_client(batch, client);
+
+	if (server_id) {
+		mongoc_bulk_operation_set_hint(batch, server_id);
+	}
 
 
 	if (!mongoc_bulk_operation_execute(batch, &reply, &error)) {
@@ -258,33 +305,8 @@ bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batc
 	}
 
 	phongo_result_init(return_value, php_phongo_writeresult_ce, NULL, &reply TSRMLS_CC);
-	return true;
-}
-int phongo_crud_insert(mongoc_client_t *client, char *namespace, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC)
-{
-	bson_error_t error;
-	bson_t reply;
-	char *dbname;
-	char *collname;
-	mongoc_bulk_operation_t *batch;
-	mongoc_collection_t *collection;
+	bson_destroy(&reply);
 
-	phongo_split_namespace(namespace, &dbname, &collname);
-	collection = mongoc_client_get_collection(client, dbname, collname);
-	batch = mongoc_collection_create_bulk_operation(collection, true, NULL);
-
-	mongoc_bulk_operation_insert(batch, doc);
-
-	if (!mongoc_bulk_operation_execute(batch, &reply, &error)) {
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
-		return false;
-	}
-
-	if (!return_value_used) {
-		return true;
-	}
-
-	bson_to_zval(bson_get_data(&reply), reply.len, return_value);
 	return true;
 }
 int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC)

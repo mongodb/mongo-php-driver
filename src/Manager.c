@@ -203,7 +203,7 @@ PHP_METHOD(Manager, executeInsert)
 
 	bson = bson_new();
 	php_phongo_bson_encode_array(bson, document TSRMLS_CC);
-	phongo_crud_insert(intern->client, namespace, bson, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_single_insert(intern->client, namespace, bson, return_value, return_value_used TSRMLS_CC);
 	bson_destroy(bson);
 }
 /* }}} */
@@ -215,21 +215,31 @@ PHP_METHOD(Manager, executeUpdate)
 	zend_error_handling	error_handling;
 	char                  *namespace;
 	int                    namespace_len;
-	zval                  *query;
+	zval                  *zquery;
 	zval                  *newObj;
 	zval                  *updateOptions;
 	zval                  *writeOptions;
+	bson_t                 *query;
+	bson_t                 *update;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sAA|aa", &namespace, &namespace_len, &query, &newObj, &updateOptions, &writeOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sAA|aa", &namespace, &namespace_len, &zquery, &newObj, &updateOptions, &writeOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	query = bson_new();
+	update = bson_new();
+	php_phongo_bson_encode_array(query, zquery TSRMLS_CC);
+	php_phongo_bson_encode_array(update, newObj TSRMLS_CC);
+	phongo_execute_single_update(intern->client, namespace, query, update, false, return_value, return_value_used TSRMLS_CC);
+	bson_destroy(query);
+	bson_destroy(update);
 }
 /* }}} */
 /* {{{ proto MongoDB\Write\DeleteResult Manager::executeDelete(string $namespace, array|object $query[, array $deleteOptions = array()[, array $writeOptions = array()]])
@@ -243,6 +253,7 @@ PHP_METHOD(Manager, executeDelete)
 	zval                  *query;
 	zval                  *deleteOptions;
 	zval                  *writeOptions;
+	bson_t                 *bson;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -254,6 +265,11 @@ PHP_METHOD(Manager, executeDelete)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	bson = bson_new();
+	php_phongo_bson_encode_array(bson, query TSRMLS_CC);
+	phongo_execute_single_delete(intern->client, namespace, bson, return_value, return_value_used TSRMLS_CC);
+	bson_destroy(bson);
 }
 /* }}} */
 
