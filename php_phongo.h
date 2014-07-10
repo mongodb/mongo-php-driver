@@ -183,9 +183,9 @@ zend_object_iterator*    phongo_result_get_iterator(zend_class_entry *ce, zval *
 mongoc_bulk_operation_t* phongo_batch_init(zend_bool ordered);
 mongoc_read_prefs_t*     phongo_read_preference_from_zval(zval *object TSRMLS_DC);
 
-php_phongo_query_t*      php_phongo_query_init(php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit);
+php_phongo_query_t*      php_phongo_query_init(php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit TSRMLS_DC);
 
-php_phongo_query_t* phongo_query_from_zval(zval *zquery);
+php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC);
 
 
 

@@ -146,7 +146,7 @@ PHP_METHOD(Manager, executeQuery)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery), phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
+	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Write\WriteResult Manager::executeWrite(string $namespace, MongoDB\Write\Batch $batch[, array $writeOptions = array()])
