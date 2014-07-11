@@ -25,4 +25,8 @@ notifications:
   - bjori@mongodb.com
 
 script:
-  - make test coveralls
+  - make test
+
+after_success:
+  - make coveralls
+
