@@ -48,11 +48,11 @@ Removed: 1
 Write concern errors: 0
 Write errors: 0
 array(1) {
-  [0] =>
+  [0]=>
   array(2) {
-    '_id' =>
+    ["_id"]=>
     int(2)
-    'x' =>
+    ["x"]=>
     int(1)
   }
 }
