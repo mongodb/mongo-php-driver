@@ -91,13 +91,20 @@ typedef struct {
 	uint32_t              batch_size;
 } php_phongo_query_t;
 typedef struct {
-	zend_object std;
-	zend_class_entry *ce_get_iterator;
-	mongoc_cursor_t *cursor;
-	bson_t          *firstBatch;
+	zend_object           std;
+	zend_class_entry     *ce_get_iterator;
+	mongoc_cursor_t      *cursor;
+	bson_t               *firstBatch;
+	int                   hint;
 } php_phongo_result_t;
 typedef struct {
 	php_phongo_result_t result;
+	zend_bool           initialized;
+	int                 nInserted;
+	int                 nMatched;
+	int                 nModified;
+	int                 nRemoved;
+	int                 nUpserted;
 } php_phongo_writeresult_t;
 typedef struct {
 	php_phongo_result_t result;
@@ -111,6 +118,8 @@ typedef struct {
 } php_phongo_readpreference_t;
 typedef struct {
 	zend_object std;
+	mongoc_host_list_t *host;
+	int hint;
 } php_phongo_server_t;
 typedef struct {
 	zend_object std;
@@ -184,6 +193,8 @@ mongoc_bulk_operation_t* phongo_batch_init(zend_bool ordered);
 mongoc_read_prefs_t*     phongo_read_preference_from_zval(zval *object TSRMLS_DC);
 
 php_phongo_query_t*      php_phongo_query_init(php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit TSRMLS_DC);
+
+void phongo_server_init(zval *return_value, int hint, mongoc_host_list_t *host TSRMLS_DC);
 
 php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC);
 

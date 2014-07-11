@@ -82,6 +82,8 @@ PHP_METHOD(CommandResult, getResponseDocument)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	bson_to_zval(bson_get_data(intern->result.firstBatch), intern->result.firstBatch->len, return_value);
 }
 /* }}} */
 /* {{{ proto MongoDB\Server CommandResult::getServer()
@@ -90,6 +92,7 @@ PHP_METHOD(CommandResult, getServer)
 {
 	php_phongo_commandresult_t *intern;
 	zend_error_handling	error_handling;
+	mongoc_host_list_t *host = NULL;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -101,6 +104,10 @@ PHP_METHOD(CommandResult, getServer)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	host = (mongoc_host_list_t *) emalloc(sizeof(mongoc_host_list_t));
+	mongoc_cursor_get_host(intern->result.cursor, host);
+	phongo_server_init(return_value, 0, host TSRMLS_CC);
 }
 /* }}} */
 

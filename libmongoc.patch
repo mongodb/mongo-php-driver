@@ -1,0 +1,59 @@
+diff --git a/src/mongoc/mongoc-bulk-operation.c b/src/mongoc/mongoc-bulk-operation.c
+index 5e48d71..e79729b 100644
+--- a/src/mongoc/mongoc-bulk-operation.c
++++ b/src/mongoc/mongoc-bulk-operation.c
+@@ -270,13 +270,12 @@ mongoc_bulk_operation_update_one (mongoc_bulk_operation_t *bulk,
+ }
+ 
+ 
+-bool
++int
+ mongoc_bulk_operation_execute (mongoc_bulk_operation_t *bulk,  /* IN */
+                                bson_t                  *reply, /* OUT */
+                                bson_error_t            *error) /* OUT */
+ {
+    mongoc_write_command_t *command;
+-   uint32_t hint = 0;
+    bool ret;
+    int i;
+ 
+@@ -335,11 +334,11 @@ mongoc_bulk_operation_execute (mongoc_bulk_operation_t *bulk,  /* IN */
+       command = &_mongoc_array_index (&bulk->commands,
+                                       mongoc_write_command_t, i);
+ 
+-      _mongoc_write_command_execute (command, bulk->client, hint,
++      _mongoc_write_command_execute (command, bulk->client, bulk->hint,
+                                      bulk->database, bulk->collection,
+                                      bulk->write_concern, &bulk->result);
+ 
+-      hint = command->hint;
++      bulk->hint = command->hint;
+ 
+       if (bulk->result.failed && bulk->ordered) {
+          GOTO (cleanup);
+@@ -349,7 +348,11 @@ mongoc_bulk_operation_execute (mongoc_bulk_operation_t *bulk,  /* IN */
+ cleanup:
+    ret = _mongoc_write_result_complete (&bulk->result, reply, error);
+ 
+-   RETURN (ret);
++   if (ret) {
++	   RETURN (bulk->hint);
++   }
++
++   RETURN (false);
+ }
+ 
+ void
+diff --git a/src/mongoc/mongoc-bulk-operation.h b/src/mongoc/mongoc-bulk-operation.h
+index c7da087..158a103 100644
+--- a/src/mongoc/mongoc-bulk-operation.h
++++ b/src/mongoc/mongoc-bulk-operation.h
+@@ -31,7 +31,7 @@ typedef struct _mongoc_bulk_operation_t mongoc_bulk_operation_t;
+ 
+ 
+ void mongoc_bulk_operation_destroy     (mongoc_bulk_operation_t       *bulk);
+-bool mongoc_bulk_operation_execute     (mongoc_bulk_operation_t       *bulk,
++int mongoc_bulk_operation_execute      (mongoc_bulk_operation_t       *bulk,
+                                         bson_t                        *reply,
+                                         bson_error_t                  *error);
+ void mongoc_bulk_operation_delete      (mongoc_bulk_operation_t       *bulk,

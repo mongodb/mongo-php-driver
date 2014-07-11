@@ -43,6 +43,7 @@
 
 
 PHONGO_API zend_class_entry *php_phongo_server_ce;
+inline int server_populate(php_phongo_server_t *server);
 
 /* {{{ proto MongoDB\Server Server::__construct(string $host, integer $port[, array $options = array()[, array $driverOptions = array()]])
    Constructs a new Server */
@@ -151,6 +152,10 @@ PHP_METHOD(Server, getHost)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	server_populate(intern);
+	RETURN_STRING(intern->host->host, 1);
 }
 /* }}} */
 /* {{{ proto array Server::getInfo()
@@ -208,6 +213,8 @@ PHP_METHOD(Server, getPort)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	RETURN_LONG(intern->host->port);
 }
 /* }}} */
 /* {{{ proto integer Server::getState()
@@ -367,6 +374,18 @@ static zend_function_entry php_phongo_server_me[] = {
 
 /* }}} */
 
+inline int server_populate(php_phongo_server_t *server)
+{
+	mongoc_host_list_t *host = NULL;
+	host = (mongoc_host_list_t *) emalloc(sizeof(mongoc_host_list_t));
+
+	strcpy(host->host, "localhost");
+	host->port = 27017;
+
+	server->host = host;
+
+	return true;
+}
 
 /* {{{ php_phongo_server_free_object && php_phongo_server_create_object */
 static void php_phongo_server_free_object(void *object TSRMLS_DC)
