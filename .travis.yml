@@ -10,7 +10,7 @@ services:
 
 env:
   global:
-    - TEST_PHP_ARGS="-q -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
+    - TEST_PHP_ARGS="-q -s output.txt -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
     - REPORT_EXIT_STATUS=1
     - secure: uOPk40++5SqPwsvENvQXKy3sJmOYFoPxTSPpoafbus9teEqe3S0mXAv6leSUSH4K/vk1OoPFp2xjKRVkdBTeqTElna1DDWOuYlvli9PLSvyZ+b1bV+8Ap18BxqlYhd3tHrY7tIliOsh6dZplWF9GyUm9DWBZ/80uKUidh/Brg/Y=
 
