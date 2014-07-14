@@ -15,7 +15,7 @@ $result = $manager->executeUpdate(
     array('multi' => false, 'upsert' => true)
 );
 
-var_dump($result instanceof MongoDB\Write\WriteResult);
+var_dump($result instanceof MongoDB\WriteResult);
 
 $server = $result->getServer();
 
@@ -31,7 +31,7 @@ printf("Removed: %d\n", $result->getNumRemoved());
 printf("Write concern errors: %d\n", count($result->getWriteConcernErrors()));
 printf("Write errors: %d\n", count($result->getWriteErrors()));
 
-$query = new MongoDB\Query\Query(array(), array(), null, 0, 0);
+$query = new MongoDB\Query(array(), array(), null, 0, 0);
 $cursor = $manager->executeQuery(NS, $query);
 
 var_dump(iterator_to_array($cursor));

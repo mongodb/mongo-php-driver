@@ -8,10 +8,10 @@ require_once "tests/utils/basic.inc";
 
 $server = new MongoDB\Server('localhost', 27017);
 
-$command = new MongoDB\Command\Command(array('isMaster' => 1));
+$command = new MongoDB\Command(array('isMaster' => 1));
 $result = $server->executeCommand(DATABASE_NAME, $command);
 
-var_dump($result instanceof MongoDB\Command\CommandResult);
+var_dump($result instanceof MongoDB\CommandResult);
 
 $responseDocument = $result->getResponseDocument();
 

@@ -8,7 +8,7 @@ require_once "tests/utils/basic.inc";
 
 $server = new MongoDB\Server('localhost', 27017);
 
-$batch = new MongoDB\Write\Batch();
+$batch = new MongoDB\WriteBatch();
 $batch->insert(array('_id' => 1, 'x' => 1));
 $batch->insert(array('_id' => 2, 'x' => 2));
 $batch->update(array('x' => 2), array('$set' => array('x' => 1)), 1, false);
@@ -17,7 +17,7 @@ $batch->delete(array('x' => 1), 1);
 
 $result = $server->executeWrite(NS, $batch);
 
-var_dump($result instanceof MongoDB\Write\WriteResult);
+var_dump($result instanceof MongoDB\WriteResult);
 var_dump($server === $result->getServer());
 
 printf("Inserted: %d\n", $result->getNumInserted());
@@ -28,7 +28,7 @@ printf("Removed: %d\n", $result->getNumRemoved());
 printf("Write concern errors: %d\n", count($result->getWriteConcernErrors()));
 printf("Write errors: %d\n", count($result->getWriteErrors()));
 
-$query = new MongoDB\Query\Query(array(), array(), null, 0, 0);
+$query = new MongoDB\Query(array(), array(), null, 0, 0);
 $cursor = $server->executeQuery(NS, $query);
 
 var_dump(iterator_to_array($cursor));

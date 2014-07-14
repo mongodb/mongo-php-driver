@@ -8,7 +8,7 @@ require_once "tests/utils/basic.inc";
 
 $mc = new MongoDB\Manager(MONGODB_URI);
 
-$batch = new MongoDB\Write\Batch;
+$batch = new MongoDB\WriteBatch;
 
 $batch->insert(array("my" => "value"));
 $batch->insert(array("my" => "value", "foo" => "bar"));

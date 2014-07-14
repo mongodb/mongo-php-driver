@@ -60,7 +60,7 @@ function makeCollectionNameFromFilename($filename) {
 function LOAD_FIXTURES() {
     try {
         $mc = new MongoDB\Manager(MONGODB_CLEANUP_URI);
-        $cmd = new MongoDB\Command\Command(array("drop" => COLLECTION_NAME));
+        $cmd = new MongoDB\Command(array("drop" => COLLECTION_NAME));
         $rp = new MongoDB\ReadPreference(MongoDB\ReadPreference::RP_PRIMARY);
         $retval = $mc->executeInsert(NS, array("my" => "demo", array("document" => "with", "data")));
     } catch(Exception $e) {
@@ -70,7 +70,7 @@ function LOAD_FIXTURES() {
 function CLEANUP() {
     try {
         $mc = new MongoDB\Manager(MONGODB_CLEANUP_URI);
-        $cmd = new MongoDB\Command\Command(array("drop" => COLLECTION_NAME));
+        $cmd = new MongoDB\Command(array("drop" => COLLECTION_NAME));
         $rp = new MongoDB\ReadPreference(MongoDB\ReadPreference::RP_PRIMARY);
         try {
             $mc->executeCommand(DATABASE_NAME, $cmd, $rp);
