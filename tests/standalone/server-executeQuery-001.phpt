@@ -9,9 +9,6 @@ require_once "tests/utils/basic.inc";
 $server = new MongoDB\Server('localhost', 27017);
 
 // load fixtures for test
-$command = new MongoDB\Command(array('drop' => COLLECTION_NAME));
-$server->executeCommand(DATABASE_NAME, $command);
-
 $batch = new \MongoDB\WriteBatch();
 $batch->insert(array('_id' => 1, 'x' => 2, 'y' => 3));
 $batch->insert(array('_id' => 2, 'x' => 3, 'y' => 4));

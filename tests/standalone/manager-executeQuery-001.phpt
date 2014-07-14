@@ -9,9 +9,6 @@ require_once "tests/utils/basic.inc";
 $manager = new MongoDB\Manager(MONGODB_URI);
 
 // load fixtures for test
-$command = new MongoDB\Command(array('drop' => COLLECTION_NAME));
-$manager->executeCommand(DATABASE_NAME, $command);
-
 $batch = new MongoDB\WriteBatch();
 $batch->insert(array('_id' => 1, 'x' => 2, 'y' => 3));
 $batch->insert(array('_id' => 2, 'x' => 3, 'y' => 4));
@@ -23,7 +20,7 @@ $cursor = $manager->executeQuery(NS, $query);
 
 var_dump($cursor instanceof MongoDB\QueryCursor);
 
-$server = $result->getServer();
+$server = $cursor->getServer();
 
 var_dump($server instanceof MongoDB\Server);
 var_dump($server->getHost());
