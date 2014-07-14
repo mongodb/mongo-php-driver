@@ -700,16 +700,14 @@ PHP_INI_END()
 /* {{{ PHP_GINIT_FUNCTION */
 PHP_GINIT_FUNCTION(phongo)
 {
-	/*
 	bson_mem_vtable_t bsonMemVTable = {
 		php_phongo_malloc,
 		php_phongo_calloc,
 		php_phongo_realloc,
 		php_phongo_free,
 	};
-	*/
 	phongo_globals->debug_log = NULL;
-	//phongo_globals->bsonMemVTable = bsonMemVTable;
+	phongo_globals->bsonMemVTable = bsonMemVTable;
 
 }
 /* }}} */
@@ -723,7 +721,7 @@ PHP_MINIT_FUNCTION(phongo)
 	REGISTER_INI_ENTRIES();
 
 	/* Initialize libbson */
-	//bson_mem_set_vtable(&PHONGO_G(bsonMemVTable));
+	bson_mem_set_vtable(&PHONGO_G(bsonMemVTable));
 	/* Initialize libmongoc */
 	mongoc_init();
 	mongoc_log_set_handler(php_phongo_log, ctx);
