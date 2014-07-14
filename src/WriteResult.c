@@ -43,6 +43,7 @@
 
 
 PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
+inline int writeresult_populate(php_phongo_writeresult_t *result, bson_t *document);
 
 /* {{{ proto GeneratedId[] WriteResult::getGeneratedIdsForInsert()
    Returns the GeneratedIds for any inserted documents */
@@ -99,6 +100,9 @@ PHP_METHOD(WriteResult, getNumInserted)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	writeresult_populate(intern, intern->result.firstBatch);
+	RETURN_LONG(intern->nInserted);
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getNumMatched()
@@ -118,6 +122,9 @@ PHP_METHOD(WriteResult, getNumMatched)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	writeresult_populate(intern, intern->result.firstBatch);
+	RETURN_LONG(intern->nMatched);
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getNumModified()
@@ -137,6 +144,10 @@ PHP_METHOD(WriteResult, getNumModified)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	writeresult_populate(intern, intern->result.firstBatch);
+	RETURN_LONG(intern->nModified);
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getNumRemoved()
@@ -156,6 +167,10 @@ PHP_METHOD(WriteResult, getNumRemoved)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	writeresult_populate(intern, intern->result.firstBatch);
+	RETURN_LONG(intern->nRemoved);
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getNumUpserted()
@@ -175,6 +190,10 @@ PHP_METHOD(WriteResult, getNumUpserted)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	writeresult_populate(intern, intern->result.firstBatch);
+	RETURN_LONG(intern->nUpserted);
 }
 /* }}} */
 /* {{{ proto array WriteResult::getInfo()
@@ -213,6 +232,9 @@ PHP_METHOD(WriteResult, getServer)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	phongo_server_init(return_value, intern->result.hint, NULL TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto WriteConcernError[] WriteResult::getWriteConcernErrors()
@@ -313,7 +335,34 @@ static zend_function_entry php_phongo_writeresult_me[] = {
 
 /* }}} */
 
+inline int writeresult_populate(php_phongo_writeresult_t *result, bson_t *document) 
+{
+	bson_iter_t iter;
 
+	if (result->initialized) {
+		return false;
+	}
+
+	if (bson_iter_init_find(&iter, document, "nUpserted") && BSON_ITER_HOLDS_INT32(&iter)) {
+		result->nUpserted = bson_iter_int32(&iter);
+	}
+	if (bson_iter_init_find(&iter, document, "nMatched") && BSON_ITER_HOLDS_INT32(&iter)) {
+		result->nMatched = bson_iter_int32(&iter);
+	}
+	if (bson_iter_init_find(&iter, document, "nRemoved") && BSON_ITER_HOLDS_INT32(&iter)) {
+		result->nRemoved = bson_iter_int32(&iter);
+	}
+	if (bson_iter_init_find(&iter, document, "nInserted") && BSON_ITER_HOLDS_INT32(&iter)) {
+		result->nInserted = bson_iter_int32(&iter);
+	}
+	if (bson_iter_init_find(&iter, document, "nModified") && BSON_ITER_HOLDS_INT32(&iter)) {
+		result->nModified = bson_iter_int32(&iter);
+	}
+
+	result->initialized = true;
+
+	return true;
+}
 /* {{{ php_phongo_writeresult_free_object && php_phongo_writeresult_create_object */
 static void php_phongo_writeresult_free_object(void *object TSRMLS_DC)
 {
