@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_writeconcernerror_ce;
 
-/* {{{ proto MongoDB\Write\WriteConcernError WriteConcernError::__construct(string $message, integer $code, array $info)
+/* {{{ proto MongoDB\WriteConcernError WriteConcernError::__construct(string $message, integer $code, array $info)
    Constructs a new WriteConcernError object */
 PHP_METHOD(WriteConcernError, __construct)
 {
@@ -128,7 +128,7 @@ PHP_METHOD(WriteConcernError, getMessage)
 /**
  * Value object for a write concern error.
  */
-/* {{{ MongoDB\Write\WriteConcernError */
+/* {{{ MongoDB\WriteConcernError */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcernError___construct, 0, 0, 3)
 	ZEND_ARG_INFO(0, message)
@@ -147,10 +147,10 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_writeconcernerror_me[] = {
-	PHP_ME(WriteConcernError, __construct, ai_WriteConcernError___construct, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteConcernError, getCode, ai_WriteConcernError_getCode, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteConcernError, getInfo, ai_WriteConcernError_getInfo, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteConcernError, getMessage, ai_WriteConcernError_getMessage, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteConcernError, __construct, ai_WriteConcernError___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcernError, getCode, ai_WriteConcernError_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcernError, getInfo, ai_WriteConcernError_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcernError, getMessage, ai_WriteConcernError_getMessage, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -191,7 +191,7 @@ PHP_MINIT_FUNCTION(WriteConcernError)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Write", "WriteConcernError", php_phongo_writeconcernerror_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteConcernError", php_phongo_writeconcernerror_me);
 	ce.create_object = php_phongo_writeconcernerror_create_object;
 	php_phongo_writeconcernerror_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeconcernerror_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

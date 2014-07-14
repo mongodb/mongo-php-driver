@@ -43,7 +43,6 @@
 
 
 PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
-inline int writeresult_populate(php_phongo_writeresult_t *result, bson_t *document);
 
 /* {{{ proto GeneratedId[] WriteResult::getGeneratedIdsForInsert()
    Returns the GeneratedIds for any inserted documents */
@@ -100,9 +99,6 @@ PHP_METHOD(WriteResult, getNumInserted)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-	writeresult_populate(intern, intern->result.firstBatch);
-	RETURN_LONG(intern->nInserted);
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getNumMatched()
@@ -122,9 +118,6 @@ PHP_METHOD(WriteResult, getNumMatched)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-	writeresult_populate(intern, intern->result.firstBatch);
-	RETURN_LONG(intern->nMatched);
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getNumModified()
@@ -144,10 +137,6 @@ PHP_METHOD(WriteResult, getNumModified)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-
-	writeresult_populate(intern, intern->result.firstBatch);
-	RETURN_LONG(intern->nModified);
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getNumRemoved()
@@ -167,10 +156,6 @@ PHP_METHOD(WriteResult, getNumRemoved)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-
-	writeresult_populate(intern, intern->result.firstBatch);
-	RETURN_LONG(intern->nRemoved);
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getNumUpserted()
@@ -190,10 +175,6 @@ PHP_METHOD(WriteResult, getNumUpserted)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-
-	writeresult_populate(intern, intern->result.firstBatch);
-	RETURN_LONG(intern->nUpserted);
 }
 /* }}} */
 /* {{{ proto array WriteResult::getInfo()
@@ -232,9 +213,6 @@ PHP_METHOD(WriteResult, getServer)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-
-	phongo_server_init(return_value, intern->result.hint, NULL TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto WriteConcernError[] WriteResult::getWriteConcernErrors()
@@ -282,7 +260,7 @@ PHP_METHOD(WriteResult, getWriteErrors)
  * This class may be constructed internally if it will encapsulate a libmongoc
  * data structure.
  */
-/* {{{ MongoDB\Write\WriteResult */
+/* {{{ MongoDB\WriteResult */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getGeneratedIdsForInsert, 0, 0, 0)
 ZEND_END_ARG_INFO();
@@ -319,56 +297,29 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_writeresult_me[] = {
-	PHP_ME(WriteResult, getGeneratedIdsForInsert, ai_WriteResult_getGeneratedIdsForInsert, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteResult, getGeneratedIdsForUpsert, ai_WriteResult_getGeneratedIdsForUpsert, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteResult, getNumInserted, ai_WriteResult_getNumInserted, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteResult, getNumMatched, ai_WriteResult_getNumMatched, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteResult, getNumModified, ai_WriteResult_getNumModified, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteResult, getNumRemoved, ai_WriteResult_getNumRemoved, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteResult, getNumUpserted, ai_WriteResult_getNumUpserted, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteResult, getInfo, ai_WriteResult_getInfo, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteResult, getServer, ai_WriteResult_getServer, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteResult, getWriteConcernErrors, ai_WriteResult_getWriteConcernErrors, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_getWriteErrors, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteResult, getGeneratedIdsForInsert, ai_WriteResult_getGeneratedIdsForInsert, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getGeneratedIdsForUpsert, ai_WriteResult_getGeneratedIdsForUpsert, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getNumInserted, ai_WriteResult_getNumInserted, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getNumMatched, ai_WriteResult_getNumMatched, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getNumModified, ai_WriteResult_getNumModified, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getNumRemoved, ai_WriteResult_getNumRemoved, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getNumUpserted, ai_WriteResult_getNumUpserted, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getInfo, ai_WriteResult_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getServer, ai_WriteResult_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getWriteConcernErrors, ai_WriteResult_getWriteConcernErrors, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_getWriteErrors, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
 /* }}} */
 
-inline int writeresult_populate(php_phongo_writeresult_t *result, bson_t *document) 
-{
-	bson_iter_t iter;
 
-	if (result->initialized) {
-		return false;
-	}
-
-	if (bson_iter_init_find(&iter, document, "nUpserted") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nUpserted = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, document, "nMatched") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nMatched = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, document, "nRemoved") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nRemoved = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, document, "nInserted") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nInserted = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, document, "nModified") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nModified = bson_iter_int32(&iter);
-	}
-
-	result->initialized = true;
-
-	return true;
-}
 /* {{{ php_phongo_writeresult_free_object && php_phongo_writeresult_create_object */
 static void php_phongo_writeresult_free_object(void *object TSRMLS_DC)
 {
 	php_phongo_writeresult_t *intern = (php_phongo_writeresult_t*)object;
 
-	zend_object_std_dtor(&intern->result.std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
 }
@@ -381,8 +332,8 @@ zend_object_value php_phongo_writeresult_create_object(zend_class_entry *class_t
 	intern = (php_phongo_writeresult_t *)emalloc(sizeof(php_phongo_writeresult_t));
 	memset(intern, 0, sizeof(php_phongo_writeresult_t));
 
-	zend_object_std_init(&intern->result.std, class_type TSRMLS_CC);
-	object_properties_init(&intern->result.std, class_type);
+	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeresult_free_object, NULL TSRMLS_CC);
 	retval.handlers = phongo_get_std_object_handlers();
@@ -397,7 +348,7 @@ PHP_MINIT_FUNCTION(WriteResult)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Write", "WriteResult", php_phongo_writeresult_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteResult", php_phongo_writeresult_me);
 	ce.create_object = php_phongo_writeresult_create_object;
 	php_phongo_writeresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

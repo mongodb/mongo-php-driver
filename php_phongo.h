@@ -44,11 +44,14 @@ extern zend_module_entry phongo_module_entry;
 
 #ifdef ZTS
 #	include "TSRM.h"
+#	define PHONGO_STREAM_CTX(x) x
+#else
+#	define PHONGO_STREAM_CTX(x) NULL
 #endif
 
 ZEND_BEGIN_MODULE_GLOBALS(phongo)
 	char *debug_log;
-	bson_mem_vtable_t bsonMemVTable;
+	//bson_mem_vtable_t bsonMemVTable;
 ZEND_END_MODULE_GLOBALS(phongo)
 
 #ifdef ZTS
@@ -57,93 +60,8 @@ ZEND_END_MODULE_GLOBALS(phongo)
 #	define PHONGO_G(v) (phongo_globals.v)
 #endif
 
-typedef struct {
-	zend_object std;
-	bson_t     *bson;
-} php_phongo_command_t;
-typedef struct {
-	zend_object std;
-} php_phongo_commandcursor_t;
-typedef struct {
-	zend_object std;
-} php_phongo_cursor_t;
-typedef struct {
-	zend_object std;
-} php_phongo_cursorid_t;
-typedef struct {
-	zend_object std;
-} php_phongo_generatedid_t;
-typedef struct {
-	zend_object std;
-	mongoc_bulk_operation_t *batch;
-} php_phongo_batch_t;
-typedef struct {
-	zend_object std;
-	mongoc_client_t *client;
-} php_phongo_manager_t;
-typedef struct {
-	zend_object           std;
-	bson_t               *bson;
-	bson_t               *selector;
-	mongoc_query_flags_t  flags;
-	uint32_t              skip;
-	uint32_t              limit;
-	uint32_t              batch_size;
-} php_phongo_query_t;
-typedef struct {
-	zend_object           std;
-	zend_class_entry     *ce_get_iterator;
-	mongoc_cursor_t      *cursor;
-	bson_t               *firstBatch;
-	int                   hint;
-} php_phongo_result_t;
-typedef struct {
-	php_phongo_result_t result;
-	zend_bool           initialized;
-	int                 nInserted;
-	int                 nMatched;
-	int                 nModified;
-	int                 nRemoved;
-	int                 nUpserted;
-} php_phongo_writeresult_t;
-typedef struct {
-	php_phongo_result_t result;
-} php_phongo_commandresult_t;
-typedef struct {
-	zend_object std;
-} php_phongo_querycursor_t;
-typedef struct {
-	zend_object std;
-	mongoc_read_prefs_t *read_preference;
-} php_phongo_readpreference_t;
-typedef struct {
-	zend_object std;
-	mongoc_host_list_t *host;
-	int hint;
-} php_phongo_server_t;
-typedef struct {
-	zend_object std;
-} php_phongo_writeconcernerror_t;
-typedef struct {
-	zend_object std;
-} php_phongo_writeerror_t;
+#include "php_phongo_classes.h"
 
-extern PHONGO_API zend_class_entry *php_phongo_command_ce;
-extern PHONGO_API zend_class_entry *php_phongo_commandcursor_ce;
-extern PHONGO_API zend_class_entry *php_phongo_commandresult_ce;
-extern PHONGO_API zend_class_entry *php_phongo_cursor_ce;
-extern PHONGO_API zend_class_entry *php_phongo_cursorid_ce;
-extern PHONGO_API zend_class_entry *php_phongo_generatedid_ce;
-extern PHONGO_API zend_class_entry *php_phongo_manager_ce;
-extern PHONGO_API zend_class_entry *php_phongo_query_ce;
-extern PHONGO_API zend_class_entry *php_phongo_querycursor_ce;
-extern PHONGO_API zend_class_entry *php_phongo_result_ce;
-extern PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
-extern PHONGO_API zend_class_entry *php_phongo_server_ce;
-extern PHONGO_API zend_class_entry *php_phongo_batch_ce;
-extern PHONGO_API zend_class_entry *php_phongo_writeconcernerror_ce;
-extern PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
-extern PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
 typedef enum {
 	PHONGO_ERROR_INVALID_ARGUMENT = 1,
@@ -168,11 +86,6 @@ typedef struct
 #endif
 } php_phongo_stream_socket;
 
-#if ZTS
-#  define PHONGO_STREAM_CTX(x) x
-#else
-#  define PHONGO_STREAM_CTX(x) NULL
-#endif
 
 PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
 PHONGO_API zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
@@ -189,7 +102,7 @@ int                      phongo_execute_command(mongoc_client_t *client, char *d
 int                      phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
 mongoc_stream_t*         phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error);
 zend_object_iterator*    phongo_result_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
-mongoc_bulk_operation_t* phongo_batch_init(zend_bool ordered);
+mongoc_bulk_operation_t* phongo_writebatch_init(zend_bool ordered);
 mongoc_read_prefs_t*     phongo_read_preference_from_zval(zval *object TSRMLS_DC);
 
 php_phongo_query_t*      php_phongo_query_init(php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit TSRMLS_DC);
@@ -201,22 +114,7 @@ php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC);
 
 
 PHP_MINIT_FUNCTION(bson);
-PHP_MINIT_FUNCTION(Command);
-PHP_MINIT_FUNCTION(CommandCursor);
-PHP_MINIT_FUNCTION(CommandResult);
-PHP_MINIT_FUNCTION(Cursor);
-PHP_MINIT_FUNCTION(CursorId);
-PHP_MINIT_FUNCTION(Batch);
-PHP_MINIT_FUNCTION(GeneratedId);
-PHP_MINIT_FUNCTION(Manager);
-PHP_MINIT_FUNCTION(Query);
-PHP_MINIT_FUNCTION(QueryCursor);
-PHP_MINIT_FUNCTION(ReadPreference);
-PHP_MINIT_FUNCTION(Result);
-PHP_MINIT_FUNCTION(Server);
-PHP_MINIT_FUNCTION(WriteConcernError);
-PHP_MINIT_FUNCTION(WriteError);
-PHP_MINIT_FUNCTION(WriteResult);
+
 #endif /* PHONGO_H */
 
 

@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
 
-/* {{{ proto MongoDB\Write\WriteError WriteError::__construct(string $message, integer $code, integer $index, array|object $operation)
+/* {{{ proto MongoDB\WriteError WriteError::__construct(string $message, integer $code, integer $index, array|object $operation)
    Constructs a new WriteError object */
 PHP_METHOD(WriteError, __construct)
 {
@@ -148,7 +148,7 @@ PHP_METHOD(WriteError, getOperation)
 /**
  * Value object for a write error (e.g. duplicate key).
  */
-/* {{{ MongoDB\Write\WriteError */
+/* {{{ MongoDB\WriteError */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteError___construct, 0, 0, 4)
 	ZEND_ARG_INFO(0, message)
@@ -171,11 +171,11 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_writeerror_me[] = {
-	PHP_ME(WriteError, __construct, ai_WriteError___construct, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteError, getCode, ai_WriteError_getCode, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteError, getIndex, ai_WriteError_getIndex, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteError, getMessage, ai_WriteError_getMessage, ZEND_ACC_PUBLIC)
-	PHP_ME(WriteError, getOperation, ai_WriteError_getOperation, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteError, __construct, ai_WriteError___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteError, getCode, ai_WriteError_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteError, getIndex, ai_WriteError_getIndex, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteError, getMessage, ai_WriteError_getMessage, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteError, getOperation, ai_WriteError_getOperation, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -216,7 +216,7 @@ PHP_MINIT_FUNCTION(WriteError)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Write", "WriteError", php_phongo_writeerror_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteError", php_phongo_writeerror_me);
 	ce.create_object = php_phongo_writeerror_create_object;
 	php_phongo_writeerror_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeerror_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

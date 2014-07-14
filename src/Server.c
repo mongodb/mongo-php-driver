@@ -69,7 +69,7 @@ PHP_METHOD(Server, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Command\CommandResult Server::executeCommand(string $db, MongoDB\Command\Command $command)
+/* {{{ proto MongoDB\CommandResult Server::executeCommand(string $db, MongoDB\Command $command)
    Executes a command on this server */
 PHP_METHOD(Server, executeCommand)
 {
@@ -91,7 +91,7 @@ PHP_METHOD(Server, executeCommand)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Query\QueryCursor Server::executeQuery(string $namespace, MongoDB\Query\Query $query)
+/* {{{ proto MongoDB\QueryResult Server::executeQuery(string $namespace, MongoDB\Query $query)
    Executes a Query */
 PHP_METHOD(Server, executeQuery)
 {
@@ -113,7 +113,7 @@ PHP_METHOD(Server, executeQuery)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Write\WriteResult Server::executeWrite(string $namespace, MongoDB\Write\Batch $batch)
+/* {{{ proto MongoDB\WriteResult Server::executeWrite(string $namespace, MongoDB\WriteBatch $batch)
    Executes a write operation batch (e.g. insert, update, delete) */
 PHP_METHOD(Server, executeWrite)
 {
@@ -128,7 +128,7 @@ PHP_METHOD(Server, executeWrite)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO", &namespace, &namespace_len, &batch, php_phongo_batch_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO", &namespace, &namespace_len, &batch, php_phongo_writebatch_ce) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -318,17 +318,17 @@ ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, db)
-	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Command\\Command, 0)
+	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Command, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Query\\Query, 0)
+	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Query, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeWrite, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, batch, MongoDB\\Write\\Batch, 0)
+	ZEND_ARG_OBJ_INFO(0, batch, MongoDB\\WriteBatch, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_getHost, 0, 0, 0)
@@ -357,18 +357,18 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_server_me[] = {
-	PHP_ME(Server, __construct, ai_Server___construct, ZEND_ACC_PUBLIC)
-	PHP_ME(Server, executeCommand, ai_Server_executeCommand, ZEND_ACC_PUBLIC)
-	PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC)
-	PHP_ME(Server, executeWrite, ai_Server_executeWrite, ZEND_ACC_PUBLIC)
-	PHP_ME(Server, getHost, ai_Server_getHost, ZEND_ACC_PUBLIC)
-	PHP_ME(Server, getInfo, ai_Server_getInfo, ZEND_ACC_PUBLIC)
-	PHP_ME(Server, getLatency, ai_Server_getLatency, ZEND_ACC_PUBLIC)
-	PHP_ME(Server, getPort, ai_Server_getPort, ZEND_ACC_PUBLIC)
-	PHP_ME(Server, getState, ai_Server_getState, ZEND_ACC_PUBLIC)
-	PHP_ME(Server, getType, ai_Server_getType, ZEND_ACC_PUBLIC)
-	PHP_ME(Server, isDelayed, ai_Server_isDelayed, ZEND_ACC_PUBLIC)
-	PHP_ME(Server, isPassive, ai_Server_isPassive, ZEND_ACC_PUBLIC)
+	PHP_ME(Server, __construct, ai_Server___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, executeCommand, ai_Server_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, executeWrite, ai_Server_executeWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, getHost, ai_Server_getHost, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, getInfo, ai_Server_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, getLatency, ai_Server_getLatency, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, getPort, ai_Server_getPort, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, getState, ai_Server_getState, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, getType, ai_Server_getType, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, isDelayed, ai_Server_isDelayed, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, isPassive, ai_Server_isPassive, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 

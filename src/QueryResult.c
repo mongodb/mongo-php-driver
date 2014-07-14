@@ -42,40 +42,41 @@
 #include "php_bson.h"
 
 
-PHONGO_API zend_class_entry *php_phongo_commandresult_ce;
+PHONGO_API zend_class_entry *php_phongo_queryresult_ce;
 
-/* {{{ proto MongoDB\CommandResult CommandResult::__construct(MongoDB\Server $server, array|object $responseDocument)
-   Constructs a new CommandResult */
-PHP_METHOD(CommandResult, __construct)
+/* {{{ proto MongoDB\QueryResult QueryResult::__construct(MongoDB\Server $server, MongoDB\CursorId $cursorId, array $firstBatch)
+   Construct a new QueryResult */
+PHP_METHOD(QueryResult, __construct)
 {
-	php_phongo_commandresult_t *intern;
+	php_phongo_queryresult_t *intern;
 	zend_error_handling	error_handling;
 	zval                  *server;
-	zval                  *responseDocument;
+	zval                  *cursorId;
+	zval                  *firstBatch;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_commandresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = (php_phongo_queryresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "OA", &server, php_phongo_server_ce, &responseDocument) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "OOa", &server, php_phongo_server_ce, &cursorId, php_phongo_cursorid_ce, &firstBatch) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Cursor CommandResult::getIterator()
+/* {{{ proto MongoDB\Cursor QueryResult::getIterator()
    Returns the Cursor iterator */
-PHP_METHOD(CommandResult, getIterator)
+PHP_METHOD(QueryResult, getIterator)
 {
-	php_phongo_commandresult_t *intern;
+	php_phongo_queryresult_t *intern;
 	zend_error_handling	error_handling;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_commandresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = (php_phongo_queryresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -84,11 +85,11 @@ PHP_METHOD(CommandResult, getIterator)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto self CommandResult::setIteratorClass(string $class)
+/* {{{ proto self QueryResult::setIteratorClass(string $class)
    Sets the class name of the Cursor implementation to be used */
-PHP_METHOD(CommandResult, setIteratorClass)
+PHP_METHOD(QueryResult, setIteratorClass)
 {
-	php_phongo_commandresult_t *intern;
+	php_phongo_queryresult_t *intern;
 	zend_error_handling	error_handling;
 	char                  *class;
 	int                    class_len;
@@ -96,7 +97,7 @@ PHP_METHOD(CommandResult, setIteratorClass)
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_commandresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = (php_phongo_queryresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &class, &class_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -105,18 +106,18 @@ PHP_METHOD(CommandResult, setIteratorClass)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto self CommandResult::setIteratorInitCallback(callable $callback)
+/* {{{ proto self QueryResult::setIteratorInitCallback(callable $callback)
    Sets a callback to invoke for initializing a custom Cursor */
-PHP_METHOD(CommandResult, setIteratorInitCallback)
+PHP_METHOD(QueryResult, setIteratorInitCallback)
 {
-	php_phongo_commandresult_t *intern;
+	php_phongo_queryresult_t *intern;
 	zend_error_handling	error_handling;
 	zval                  *callback;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_commandresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = (php_phongo_queryresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "o", &callback) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -125,36 +126,17 @@ PHP_METHOD(CommandResult, setIteratorInitCallback)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto array CommandResult::getResponseDocument()
-   Returns the original response document from the server */
-PHP_METHOD(CommandResult, getResponseDocument)
-{
-	php_phongo_commandresult_t *intern;
-	zend_error_handling	error_handling;
-
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_commandresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
-		return;
-	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
-}
-/* }}} */
-/* {{{ proto MongoDB\Server CommandResult::getServer()
+/* {{{ proto MongoDB\Server QueryResult::getServer()
    Returns the Server object that this cursor is attached to */
-PHP_METHOD(CommandResult, getServer)
+PHP_METHOD(QueryResult, getServer)
 {
-	php_phongo_commandresult_t *intern;
+	php_phongo_queryresult_t *intern;
 	zend_error_handling	error_handling;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_commandresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = (php_phongo_queryresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -165,75 +147,69 @@ PHP_METHOD(CommandResult, getServer)
 /* }}} */
 
 /**
- * Result returned by Server and Manager executeCommand() methods.
+ * Result returned by Server and Manager executeQuery() methods.
  *
- * This object wraps an OP_REPLY. It is constructed after a command is executed
- * on the server but before a Cursor is created in the driver (if applicable).
- * This allows the Cursor implementation to be customized.
- *
- * For commands that do not support cursors (i.e. most commands), getIterator()
- * should return a cursor consisting of a single document, the command result.
+ * This object wraps an OP_REPLY. It is constructed after a query is executed
+ * on the server but before a Cursor is created in the driver. This allows the
+ * Cursor implementation to be customized.
  */
-/* {{{ MongoDB\CommandResult */
+/* {{{ MongoDB\QueryResult */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_CommandResult___construct, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(ai_QueryResult___construct, 0, 0, 3)
 	ZEND_ARG_OBJ_INFO(0, server, MongoDB\\Server, 0)
-	ZEND_ARG_INFO(0, responseDocument)
+	ZEND_ARG_OBJ_INFO(0, cursorId, MongoDB\\CursorId, 0)
+	ZEND_ARG_ARRAY_INFO(0, firstBatch, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_CommandResult_getIterator, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_QueryResult_getIterator, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_CommandResult_setIteratorClass, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(ai_QueryResult_setIteratorClass, 0, 0, 1)
 	ZEND_ARG_INFO(0, class)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_CommandResult_setIteratorInitCallback, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(ai_QueryResult_setIteratorInitCallback, 0, 0, 1)
 	ZEND_ARG_INFO(0, callback) /* callable */
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_CommandResult_getResponseDocument, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_CommandResult_getServer, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_QueryResult_getServer, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
 
-static zend_function_entry php_phongo_commandresult_me[] = {
-	PHP_ME(CommandResult, __construct, ai_CommandResult___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(CommandResult, getIterator, ai_CommandResult_getIterator, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(CommandResult, setIteratorClass, ai_CommandResult_setIteratorClass, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(CommandResult, setIteratorInitCallback, ai_CommandResult_setIteratorInitCallback, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(CommandResult, getResponseDocument, ai_CommandResult_getResponseDocument, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(CommandResult, getServer, ai_CommandResult_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+static zend_function_entry php_phongo_queryresult_me[] = {
+	PHP_ME(QueryResult, __construct, ai_QueryResult___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(QueryResult, getIterator, ai_QueryResult_getIterator, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(QueryResult, setIteratorClass, ai_QueryResult_setIteratorClass, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(QueryResult, setIteratorInitCallback, ai_QueryResult_setIteratorInitCallback, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(QueryResult, getServer, ai_QueryResult_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
 /* }}} */
 
 
-/* {{{ php_phongo_commandresult_free_object && php_phongo_commandresult_create_object */
-static void php_phongo_commandresult_free_object(void *object TSRMLS_DC)
+/* {{{ php_phongo_queryresult_free_object && php_phongo_queryresult_create_object */
+static void php_phongo_queryresult_free_object(void *object TSRMLS_DC)
 {
-	php_phongo_commandresult_t *intern = (php_phongo_commandresult_t*)object;
+	php_phongo_queryresult_t *intern = (php_phongo_queryresult_t*)object;
 
-	zend_object_std_dtor(&intern->result.std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
 }
 
-zend_object_value php_phongo_commandresult_create_object(zend_class_entry *class_type TSRMLS_DC)
+zend_object_value php_phongo_queryresult_create_object(zend_class_entry *class_type TSRMLS_DC)
 {
 	zend_object_value retval;
-	php_phongo_commandresult_t *intern;
+	php_phongo_queryresult_t *intern;
 
-	intern = (php_phongo_commandresult_t *)emalloc(sizeof(php_phongo_commandresult_t));
-	memset(intern, 0, sizeof(php_phongo_commandresult_t));
+	intern = (php_phongo_queryresult_t *)emalloc(sizeof(php_phongo_queryresult_t));
+	memset(intern, 0, sizeof(php_phongo_queryresult_t));
 
-	zend_object_std_init(&intern->result.std, class_type TSRMLS_CC);
-	object_properties_init(&intern->result.std, class_type);
+	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	object_properties_init(&intern->std, class_type);
 
-	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_commandresult_free_object, NULL TSRMLS_CC);
+	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_queryresult_free_object, NULL TSRMLS_CC);
 	retval.handlers = phongo_get_std_object_handlers();
 
 	return retval;
@@ -241,16 +217,16 @@ zend_object_value php_phongo_commandresult_create_object(zend_class_entry *class
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(CommandResult)
+PHP_MINIT_FUNCTION(QueryResult)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "CommandResult", php_phongo_commandresult_me);
-	ce.create_object = php_phongo_commandresult_create_object;
-	php_phongo_commandresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
-	php_phongo_commandresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
-	zend_class_implements(php_phongo_commandresult_ce TSRMLS_CC, 1, zend_ce_aggregate);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "QueryResult", php_phongo_queryresult_me);
+	ce.create_object = php_phongo_queryresult_create_object;
+	php_phongo_queryresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_queryresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+	zend_class_implements(php_phongo_queryresult_ce TSRMLS_CC, 1, zend_ce_aggregate);
 
 
 	return SUCCESS;

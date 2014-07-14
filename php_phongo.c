@@ -238,7 +238,7 @@ void phongo_split_namespace(char *namespace, char **dbname, char **cname) /* {{{
     }
 } /* }}} */
 
-mongoc_bulk_operation_t *phongo_batch_init(zend_bool ordered) { /* {{{ */
+mongoc_bulk_operation_t *phongo_writebatch_init(zend_bool ordered) { /* {{{ */
 	return mongoc_bulk_operation_new(ordered);
 } /* }}} */
 
@@ -247,7 +247,7 @@ int phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_
 	bool retval = false;
 	mongoc_bulk_operation_t *batch;
 
-	batch = phongo_batch_init(true);
+	batch = phongo_writebatch_init(true);
 	mongoc_bulk_operation_insert(batch, doc);
 
 	retval = phongo_execute_write(client, batch, 0, namespace, return_value, return_value_used TSRMLS_CC);
@@ -261,7 +261,7 @@ int phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_
 	bool retval = false;
 	mongoc_bulk_operation_t *batch;
 
-	batch = phongo_batch_init(true);
+	batch = phongo_writebatch_init(true);
 	mongoc_bulk_operation_update_one(batch, query, update, upsert);
 
 	retval = phongo_execute_write(client, batch, 0, namespace, return_value, return_value_used TSRMLS_CC);
@@ -275,7 +275,7 @@ int phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_
 	bool retval = false;
 	mongoc_bulk_operation_t *batch;
 
-	batch = phongo_batch_init(true);
+	batch = phongo_writebatch_init(true);
 	if (flags & MONGOC_DELETE_SINGLE_REMOVE) {
 		mongoc_bulk_operation_remove_one(batch, query);
 	} else {
@@ -698,14 +698,16 @@ PHP_INI_END()
 /* {{{ PHP_GINIT_FUNCTION */
 PHP_GINIT_FUNCTION(phongo)
 {
+	/*
 	bson_mem_vtable_t bsonMemVTable = {
 		php_phongo_malloc,
 		php_phongo_calloc,
 		php_phongo_realloc,
 		php_phongo_free,
 	};
+	*/
 	phongo_globals->debug_log = NULL;
-	phongo_globals->bsonMemVTable = bsonMemVTable;
+	//phongo_globals->bsonMemVTable = bsonMemVTable;
 
 }
 /* }}} */
@@ -719,7 +721,7 @@ PHP_MINIT_FUNCTION(phongo)
 	REGISTER_INI_ENTRIES();
 
 	/* Initialize libbson */
-	bson_mem_set_vtable(&PHONGO_G(bsonMemVTable));
+	//bson_mem_set_vtable(&PHONGO_G(bsonMemVTable));
 	/* Initialize libmongoc */
 	mongoc_init();
 	mongoc_log_set_handler(php_phongo_log, ctx);
@@ -731,31 +733,21 @@ PHP_MINIT_FUNCTION(phongo)
 	phongo_std_object_handlers.write_property = NULL;
 	phongo_std_object_handlers.get_debug_info = NULL;
 
-	PHP_MINIT(bson)(INIT_FUNC_ARGS_PASSTHRU);
-
+	PHP_MINIT(Command)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(CommandResult)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(Cursor)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(CursorId)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(GeneratedId)(INIT_FUNC_ARGS_PASSTHRU);
-
-	PHP_MINIT(Cursor)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(CommandCursor)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(QueryCursor)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Result)(INIT_FUNC_ARGS_PASSTHRU);
-
-	PHP_MINIT(WriteResult)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(CommandResult)(INIT_FUNC_ARGS_PASSTHRU);
-
-	PHP_MINIT(Batch)(INIT_FUNC_ARGS_PASSTHRU);
-
 	PHP_MINIT(Manager)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Server)(INIT_FUNC_ARGS_PASSTHRU);
-
-	PHP_MINIT(Command)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Query)(INIT_FUNC_ARGS_PASSTHRU);
-
+	PHP_MINIT(QueryResult)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ReadPreference)(INIT_FUNC_ARGS_PASSTHRU);
-
+	PHP_MINIT(Result)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(Server)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(WriteBatch)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteConcernError)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteError)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(WriteResult)(INIT_FUNC_ARGS_PASSTHRU);
 
 	return SUCCESS;
 }

@@ -44,8 +44,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_command_ce;
 
-/* {{{ proto MongoDB\Command\Command Command::__construct(array|object $document)
-   Constructs a new MongoDB Command */
+/* {{{ proto MongoDB\Command Command::__construct(array|object $document)
+   Constructs a new Command */
 PHP_METHOD(Command, __construct)
 {
 	php_phongo_command_t  *intern;
@@ -72,7 +72,7 @@ PHP_METHOD(Command, __construct)
 /**
  * Value object for a database command document.
  */
-/* {{{ MongoDB\Command\Command */
+/* {{{ MongoDB\Command */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Command___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, document)
@@ -80,7 +80,7 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_command_me[] = {
-	PHP_ME(Command, __construct, ai_Command___construct, ZEND_ACC_PUBLIC)
+	PHP_ME(Command, __construct, ai_Command___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -124,7 +124,7 @@ PHP_MINIT_FUNCTION(Command)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Command", "Command", php_phongo_command_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "Command", php_phongo_command_me);
 	ce.create_object = php_phongo_command_create_object;
 	php_phongo_command_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_command_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

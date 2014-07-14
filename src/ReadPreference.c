@@ -79,7 +79,7 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_readpreference_me[] = {
-	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC)
+	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 

@@ -98,7 +98,7 @@ PHP_METHOD(Manager, createFromServers)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Command\CommandResult Manager::executeCommand(string $db, MongoDB\Command\Command $command[, MongoDB\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\CommandResult Manager::executeCommand(string $db, MongoDB\Command $command[, MongoDB\ReadPreference $readPreference = null])
    Execute a command */
 PHP_METHOD(Manager, executeCommand)
 {
@@ -125,7 +125,7 @@ PHP_METHOD(Manager, executeCommand)
 	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Query\QueryCursor Manager::executeQuery(string $namespace, MongoDB\Query\Query $query[, MongoDB\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\QueryResult Manager::executeQuery(string $namespace, MongoDB\Query $query[, MongoDB\ReadPreference $readPreference = null])
    Execute a Query */
 PHP_METHOD(Manager, executeQuery)
 {
@@ -150,7 +150,7 @@ PHP_METHOD(Manager, executeQuery)
 	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Write\WriteResult Manager::executeWrite(string $namespace, MongoDB\Write\Batch $batch[, array $writeOptions = array()])
+/* {{{ proto MongoDB\WriteResult Manager::executeWrite(string $namespace, MongoDB\WriteBatch $batch[, array $writeOptions = array()])
    Executes a write operation batch (e.g. insert, update, delete) */
 PHP_METHOD(Manager, executeWrite)
 {
@@ -160,26 +160,26 @@ PHP_METHOD(Manager, executeWrite)
 	int                    namespace_len;
 	zval                  *zbatch;
 	zval                  *writeOptions;
-	php_phongo_batch_t    *batch;
+	php_phongo_writebatch_t    *batch;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a", &namespace, &namespace_len, &zbatch, php_phongo_batch_ce, &writeOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a", &namespace, &namespace_len, &zbatch, php_phongo_writebatch_ce, &writeOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	batch = (php_phongo_batch_t *)zend_object_store_get_object(zbatch TSRMLS_CC);
+	batch = (php_phongo_writebatch_t *)zend_object_store_get_object(zbatch TSRMLS_CC);
 
 	phongo_execute_write(intern->client, batch->batch, 0, namespace, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Write\InsertResult Manager::executeInsert(string $namespace, array|object $document[, array $writeOptions = array()])
+/* {{{ proto MongoDB\WriteResult Manager::executeInsert(string $namespace, array|object $document[, array $writeOptions = array()])
    Convenience method for single insert operation. */
 PHP_METHOD(Manager, executeInsert)
 {
@@ -208,7 +208,7 @@ PHP_METHOD(Manager, executeInsert)
 	bson_destroy(bson);
 }
 /* }}} */
-/* {{{ proto MongoDB\Write\UpdateResult Manager::executeUpdate(string $namespace, array|object $query, array|object $newObj[, array $updateOptions = array()[, array $writeOptions = array()]])
+/* {{{ proto MongoDB\WriteResult Manager::executeUpdate(string $namespace, array|object $query, array|object $newObj[, array $updateOptions = array()[, array $writeOptions = array()]])
    Convenience method for single update operation. */
 PHP_METHOD(Manager, executeUpdate)
 {
@@ -243,7 +243,7 @@ PHP_METHOD(Manager, executeUpdate)
 	bson_destroy(update);
 }
 /* }}} */
-/* {{{ proto MongoDB\Write\DeleteResult Manager::executeDelete(string $namespace, array|object $query[, array $deleteOptions = array()[, array $writeOptions = array()]])
+/* {{{ proto MongoDB\WriteResult Manager::executeDelete(string $namespace, array|object $query[, array $deleteOptions = array()[, array $writeOptions = array()]])
    Convenience method for single delete operation. */
 PHP_METHOD(Manager, executeDelete)
 {
@@ -305,19 +305,19 @@ ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, db)
-	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Command\\Command, 0)
+	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Command, 0)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\ReadPreference, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Query\\Query, 0)
+	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Query, 0)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\ReadPreference, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeWrite, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, batch, MongoDB\\Write\\Batch, 0)
+	ZEND_ARG_OBJ_INFO(0, batch, MongoDB\\WriteBatch, 0)
 	ZEND_ARG_ARRAY_INFO(0, writeOptions, 1)
 ZEND_END_ARG_INFO();
 
@@ -344,14 +344,14 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_manager_me[] = {
-	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC)
-	PHP_ME(Manager, createFromServers, ai_Manager_createFromServers, ZEND_ACC_PUBLIC)
-	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC)
-	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC)
-	PHP_ME(Manager, executeWrite, ai_Manager_executeWrite, ZEND_ACC_PUBLIC)
-	PHP_ME(Manager, executeInsert, ai_Manager_executeInsert, ZEND_ACC_PUBLIC)
-	PHP_ME(Manager, executeUpdate, ai_Manager_executeUpdate, ZEND_ACC_PUBLIC)
-	PHP_ME(Manager, executeDelete, ai_Manager_executeDelete, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, createFromServers, ai_Manager_createFromServers, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeWrite, ai_Manager_executeWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeInsert, ai_Manager_executeInsert, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeUpdate, ai_Manager_executeUpdate, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeDelete, ai_Manager_executeDelete, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 

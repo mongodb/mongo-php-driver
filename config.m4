@@ -125,25 +125,22 @@ if test "$PHONGO" != "no"; then
   PHONGO_ROOT="\
       php_phongo.c \
   ";
-  PHONGO_INTERFACES="\
-      src/Cursor.c \
-      src/WriteResult.c \
-  ";
   PHONGO_CLASSES="\
-      src/Batch.c \
       src/Command.c \
-      src/CommandCursor.c \
       src/CommandResult.c \
+      src/Cursor.c \
       src/CursorId.c \
-      src/Result.c \
       src/GeneratedId.c \
       src/Manager.c \
       src/Query.c \
-      src/QueryCursor.c \
+      src/QueryResult.c \
       src/ReadPreference.c \
+      src/Result.c \
       src/Server.c \
+      src/WriteBatch.c \
       src/WriteConcernError.c \
       src/WriteError.c \
+      src/WriteResult.c \
   ";
 
   if test "$ext_shared" = "no"; then
