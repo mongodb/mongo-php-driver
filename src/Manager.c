@@ -36,6 +36,7 @@
 #include <ext/spl/spl_iterators.h>
 /* Our Compatability header */
 #include "php_compat_53.h"
+#include "php_array.h"
 
 /* Our stuffz */
 #include "php_phongo.h"
@@ -251,24 +252,29 @@ PHP_METHOD(Manager, executeDelete)
 	char                  *namespace;
 	int                    namespace_len;
 	zval                  *query;
-	zval                  *deleteOptions;
-	zval                  *writeOptions;
+	zval                  *deleteOptions = NULL;
+	zval                  *writeOptions = NULL;
 	bson_t                 *bson;
+	mongoc_delete_flags_t   flags = MONGOC_DELETE_NONE;
+
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sA|aa", &namespace, &namespace_len, &query, &deleteOptions, &writeOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sA|a!a!", &namespace, &namespace_len, &query, &deleteOptions, &writeOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	if (deleteOptions && php_array_fetch_bool(deleteOptions, "limit")) {
+		flags &= MONGOC_DELETE_SINGLE_REMOVE;
+	}
 	bson = bson_new();
 	php_phongo_bson_encode_array(bson, query TSRMLS_CC);
-	phongo_execute_single_delete(intern->client, namespace, bson, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_single_delete(intern->client, namespace, bson, flags, return_value, return_value_used TSRMLS_CC);
 	bson_destroy(bson);
 }
 /* }}} */

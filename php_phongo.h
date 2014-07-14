@@ -183,7 +183,7 @@ PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
 int                      phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_t *query, bson_t *update, bool upsert, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_t *query, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_t *query, mongoc_delete_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC);
 bool                     phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batch, int server_id, char *namespace, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);

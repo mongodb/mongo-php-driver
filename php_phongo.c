@@ -270,13 +270,17 @@ int phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_
 	return retval;
 } /* }}} */
 
-int phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_t *query, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_t *query, mongoc_delete_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bool retval = false;
 	mongoc_bulk_operation_t *batch;
 
 	batch = phongo_batch_init(true);
-	mongoc_bulk_operation_remove_one(batch, query);
+	if (flags & MONGOC_DELETE_SINGLE_REMOVE) {
+		mongoc_bulk_operation_remove_one(batch, query);
+	} else {
+		mongoc_bulk_operation_remove(batch, query);
+	}
 
 	retval = phongo_execute_write(client, batch, 0, namespace, return_value, return_value_used TSRMLS_CC);
 	mongoc_bulk_operation_destroy(batch);
