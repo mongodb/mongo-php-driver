@@ -23,7 +23,7 @@ class Cursor implements Iterator
     private $server;
 
     /**
-     * Construct a new QueryCursor
+     * Construct a new Cursor
      *
      * @param Server   $server
      * @param CursorId $cursorId
