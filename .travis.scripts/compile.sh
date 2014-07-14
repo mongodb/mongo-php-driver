@@ -57,7 +57,6 @@ pushd src
 		./autogen.sh --enable-debug --enable-debug-symbols=full --with-libbson=bundled --disable-ssl --enable-trace --quiet
 		abort_on_failure $?
 
-		patch -p1 < ../../libmongoc.patch
 		abort_on_failure $?
 
 		make -s -j2 all
