@@ -209,9 +209,11 @@ void phongo_result_init(zval *return_value, zend_class_entry *result_class, mong
 	result = (php_phongo_result_t *)zend_object_store_get_object(return_value TSRMLS_CC);
 	if (cursor) {
 		result->cursor = cursor;
+		result->hint = mongoc_cursor_get_hint(cursor);
+	} else {
+		result->hint = hint;
 	}
 	result->firstBatch = (bson_t *)bson;
-	result->hint = hint;
 } /* }}} */
 void phongo_server_init(zval *return_value, int hint, mongoc_host_list_t *host TSRMLS_DC) /* {{{ */
 {
