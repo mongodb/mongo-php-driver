@@ -85,6 +85,22 @@ final class QueryResult implements IteratorAggregate
     public function getServer()
     {
         return $this->server;
+        /*** CEF ***/
+/*
+	mongoc_host_list_t       *host;
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+	host = (mongoc_host_list_t *) emalloc(sizeof(mongoc_host_list_t));
+	mongoc_cursor_get_host(intern->result.cursor, host);
+	phongo_server_init(return_value, intern->result.hint, host TSRMLS_CC);
+*/
+        /*** CIMPL ***/
     }
 }
+
+
+$QueryResult["internwrapper"] = "result.";
+$QueryResult["ce"]["get_iterator"] = "phongo_result_get_iterator";
 

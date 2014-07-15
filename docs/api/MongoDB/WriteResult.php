@@ -41,35 +41,70 @@ final class WriteResult
      *
      * @return integer
      */
-    public function getNumInserted() {}
+    public function getNumInserted() {
+        /*** CIMPL ***/
+/*
+	writeresult_populate(intern, intern->result.firstBatch);
+	RETURN_LONG(intern->nInserted);
+*/
+        /*** CIMPL ***/
+    }
 
     /**
      * Returns the number of documents that matched the update criteria
      *
      * @return integer
      */
-    public function getNumMatched() {}
+    public function getNumMatched() {
+        /*** CIMPL ***/
+/*
+	writeresult_populate(intern, intern->result.firstBatch);
+	RETURN_LONG(intern->nMatched);
+*/
+        /*** CIMPL ***/
+    }
 
     /**
      * Returns the number of documents that were actually modified by an update
      *
      * @return integer
      */
-    public function getNumModified() {}
+    public function getNumModified() {
+        /*** CIMPL ***/
+/*
+	writeresult_populate(intern, intern->result.firstBatch);
+	RETURN_LONG(intern->nModified);
+*/
+        /*** CIMPL ***/
+    }
 
     /**
      * Returns the number of documents that were deleted
      *
      * @return integer
      */
-    public function getNumRemoved() {}
+    public function getNumRemoved() {
+        /*** CIMPL ***/
+/*
+	writeresult_populate(intern, intern->result.firstBatch);
+	RETURN_LONG(intern->nRemoved);
+*/
+        /*** CIMPL ***/
+    }
 
     /**
      * Returns the number of documents that were upserted
      *
      * @return integer
      */
-    public function getNumUpserted() {}
+    public function getNumUpserted() {
+        /*** CIMPL ***/
+/*
+	writeresult_populate(intern, intern->result.firstBatch);
+	RETURN_LONG(intern->nUpserted);
+*/
+        /*** CIMPL ***/
+    }
 
     /**
      * Returns metadata about the operation.
@@ -84,7 +119,13 @@ final class WriteResult
      *
      * @return Server
      */
-    public function getServer() {}
+    public function getServer() {
+        /*** CIMPL ***/
+/*
+	phongo_server_init(return_value, intern->result.hint, NULL TSRMLS_CC);
+*/
+        /*** CIMPL ***/
+    }
 
     /**
      * Return any write concern errors that occurred
@@ -100,3 +141,43 @@ final class WriteResult
      */
     public function getWriteErrors() {}
 }
+
+
+$WriteResult["internwrapper"] = "result.";
+$WriteResult["forward_declarations"] = <<< EOF
+inline int writeresult_populate(php_phongo_writeresult_t *result, bson_t *document);
+
+EOF;
+
+$WriteResult["funcs"] = <<< EOF
+inline int writeresult_populate(php_phongo_writeresult_t *result, bson_t *document) /* {{{ */
+{
+	bson_iter_t iter;
+
+	if (result->initialized) {
+		return false;
+	}
+
+	if (bson_iter_init_find(&iter, document, "nUpserted") && BSON_ITER_HOLDS_INT32(&iter)) {
+		result->nUpserted = bson_iter_int32(&iter);
+	}
+	if (bson_iter_init_find(&iter, document, "nMatched") && BSON_ITER_HOLDS_INT32(&iter)) {
+		result->nMatched = bson_iter_int32(&iter);
+	}
+	if (bson_iter_init_find(&iter, document, "nRemoved") && BSON_ITER_HOLDS_INT32(&iter)) {
+		result->nRemoved = bson_iter_int32(&iter);
+	}
+	if (bson_iter_init_find(&iter, document, "nInserted") && BSON_ITER_HOLDS_INT32(&iter)) {
+		result->nInserted = bson_iter_int32(&iter);
+	}
+	if (bson_iter_init_find(&iter, document, "nModified") && BSON_ITER_HOLDS_INT32(&iter)) {
+		result->nModified = bson_iter_int32(&iter);
+	}
+
+	result->initialized = true;
+
+	return true;
+} /* }}} */
+
+EOF;
+

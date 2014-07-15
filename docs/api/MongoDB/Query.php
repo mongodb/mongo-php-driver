@@ -13,6 +13,7 @@ namespace MongoDB;
 final class Query
 {
     // See: http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
+    const FLAG_NONE              = 0x00;
     const FLAG_TAILABLE_CURSOR   = 0x01;
     const FLAG_SLAVE_OK          = 0x02;
     const FLAG_OPLOG_REPLAY      = 0x04;
@@ -36,12 +37,17 @@ final class Query
      * @param integer      $skip     Skip
      * @param integer      $limit    Limit
      */
-    public function __construct($query, $selector, $flags, $skip, $limit)
+    public function __construct($query, $selector = array(), $flags = self::FLAG_NONE, $skip = 0, $limit = 0)
     {
         $this->query = $query;
         $this->selector = $selector;
         $this->flags = (integer) $flags;
         $this->skip = (integer) $skip;
         $this->limit = (integer) $limit;
+        /*** CIMPL ***/
+/*
+	phongo_query_init(intern, query, selector, flags, skip, limit TSRMLS_CC);
+*/
+        /*** CIMPL ***/
     }
 }

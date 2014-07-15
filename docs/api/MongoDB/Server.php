@@ -51,6 +51,26 @@ final class Server
          *
          * Actual socket connections should be created lazily.
          */
+        /*** CEF ***/
+/*
+	mongoc_uri_t             *uri;
+	void                   ***ctx = NULL;
+	TSRMLS_SET_CTX(ctx);
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+	uri = mongoc_uri_new_for_host_port(host, port);
+	intern->client = mongoc_client_new_from_uri(uri);
+	if (!intern->client) {
+		phongo_throw_exception(PHONGO_ERROR_RUNETIME, "Failed to parse MongoDB URI" TSRMLS_CC);
+		return;
+	}
+
+	intern->host = mongoc_uri_get_hosts(uri);
+	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);
+*/
+        /*** CIMPL ***/
     }
 
     /**
@@ -66,31 +86,47 @@ final class Server
          * it the user's responsibility to set a read preference on the command
          * document (if applicable).
          */
+        /*** CEF ***/
+/*
+	php_phongo_command_t     *cmd;
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
+	phongo_execute_command(intern->client, db, cmd->bson, NULL, return_value, return_value_used TSRMLS_CC);
+*/
+        /*** CIMPL ***/
     }
 
     /**
      * Executes a Query
      *
      * @param string $namespace
-     * @param Query  $query
+     * @param Query  $zquery
      * @return QueryResult
      */
-    public function executeQuery($namespace, Query $query)
+    public function executeQuery($namespace, Query $zquery)
     {
         /* This method does not take a ReadPreference. If connected to mongos,
          * it the user's responsibility to set a read preference on the command
          * document (if applicable).
          */
+        /*** CIMPL ***/
+/*
+	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), NULL, return_value, return_value_used TSRMLS_CC);
+*/
+        /*** CIMPL ***/
     }
 
     /**
      * Executes a write operation batch (e.g. insert, update, delete)
      *
      * @param string     $namespace
-     * @param WriteBatch $batch
+     * @param WriteBatch $zbatch
      * @return WriteResult
      */
-    public function executeWrite($namespace, WriteBatch $batch)
+    public function executeWrite($namespace, WriteBatch $zbatch)
     {
         /* Write options are not taken as an argument, since they are specified
          * during Batch construction.
@@ -106,6 +142,17 @@ final class Server
          * What exception is used for sending a write to a secondary? Would that
          * be a WriteException without a WriteResult attached?
          */
+        /*** CEF ***/
+/*
+	php_phongo_writebatch_t  *batch;
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+	batch = (php_phongo_writebatch_t *)zend_object_store_get_object(zbatch TSRMLS_CC);
+	phongo_execute_write(intern->client, namespace, batch->batch, intern->hint, return_value, return_value_used TSRMLS_CC);
+*/
+        /*** CIMPL ***/
     }
 
     /**
@@ -121,6 +168,13 @@ final class Server
          * identifies (vs. the host name used to connect to it).
          */
         return $this->host;
+        /*** CIMPL ***/
+/*
+    // FIXME: BUGBUG: this is a workaround as its not implemented yet :)
+	server_populate(intern);
+	RETURN_STRING(intern->host->host, 1);
+*/
+        /*** CIMPL ***/
     }
 
     /**
@@ -151,6 +205,11 @@ final class Server
     public function getPort()
     {
         return $this->port;
+        /*** CIMPL ***/
+/*
+	RETURN_LONG(intern->host->port);
+*/
+        /*** CIMPL ***/
     }
 
     /**
@@ -214,3 +273,56 @@ final class Server
          */
     }
 }
+
+$Server["funcs"] = <<< EOT
+inline int server_populate(php_phongo_server_t *server)
+{
+	mongoc_host_list_t *host = NULL;
+	host = (mongoc_host_list_t *) emalloc(sizeof(mongoc_host_list_t));
+
+	strcpy(host->host, "localhost");
+	host->port = 27017;
+
+	server->host = host;
+
+	return true;
+}
+
+zend_object_handlers* php_phongo_handlers_server() /* {{{ */
+{
+	return &php_phongo_handler_server;
+} /* }}} */
+static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
+{
+    php_phongo_server_t *intern1;
+    php_phongo_server_t *intern2;
+
+    intern1 = (php_phongo_server_t *)zend_object_store_get_object(o1 TSRMLS_CC);
+    intern2 = (php_phongo_server_t *)zend_object_store_get_object(o2 TSRMLS_CC);
+
+	/* FIXME: BUGBUG: We need a way to get mongoc_host from WriteResults */
+	if (intern1 && intern2) {
+		return 0;
+	}
+	if (!strcmp(intern1->host->host_and_port, intern2->host->host_and_port)) {
+		return 0;
+	}
+
+	return 1;
+} /* }}} */
+
+EOT;
+
+$Server["forward_declarations"] = <<< EOT
+
+inline int server_populate(php_phongo_server_t *server);
+zend_object_handlers php_phongo_handler_server;
+
+
+EOT;
+
+$Server["handlers_callback"] = "php_phongo_handlers_server";
+$Server["handlers_init"]     = "
+	memcpy(&php_phongo_handler_server, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_server.compare_objects = php_phongo_server_compare_objects;
+";

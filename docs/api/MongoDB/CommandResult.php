@@ -92,6 +92,11 @@ final class CommandResult implements IteratorAggregate
     public function getResponseDocument()
     {
         return $this->responseDocument;
+        /*** CIMPL ***/
+/*
+	bson_to_zval(bson_get_data(intern->result.firstBatch), intern->result.firstBatch->len, return_value);
+*/
+        /*** CIMPL ***/
     }
 
     /**
@@ -102,6 +107,21 @@ final class CommandResult implements IteratorAggregate
     public function getServer()
     {
         return $this->server;
+        /*** CEF ***/
+/*
+	mongoc_host_list_t        *host;
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+	host = (mongoc_host_list_t *) emalloc(sizeof(mongoc_host_list_t));
+	mongoc_cursor_get_host(intern->result.cursor, host);
+	phongo_server_init(return_value, intern->result.hint, host TSRMLS_CC);
+*/
+        /*** CIMPL ***/
     }
 }
+
+$CommandResult["internwrapper"] = "result.";
+$CommandResult["ce"]["get_iterator"] = "phongo_result_get_iterator";
 
