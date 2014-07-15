@@ -44,6 +44,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_server_ce;
 inline int server_populate(php_phongo_server_t *server);
+zend_object_handlers php_phongo_handler_server;
+
 
 /* {{{ proto MongoDB\Server Server::__construct(string $host, integer $port[, array $options = array()[, array $driverOptions = array()]])
    Constructs a new Server */
@@ -57,8 +59,7 @@ PHP_METHOD(Server, __construct)
 	zval                  *options;
 	zval                  *driverOptions;
 	void                ***ctx = NULL;
-	char                   *uri;
-	long                    uri_len;
+	mongoc_uri_t          *uri;
 	TSRMLS_SET_CTX(ctx);
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
@@ -73,12 +74,14 @@ PHP_METHOD(Server, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	uri_len = spprintf(&uri, 0, "mongodb://%s:%ld", host, port);
-	intern->client = mongoc_client_new(uri);
+	uri = mongoc_uri_new_for_host_port(host, port);
+	intern->client = mongoc_client_new_from_uri(uri);
 	if (!intern->client) {
 		phongo_throw_exception(PHONGO_ERROR_RUNETIME, "Failed to parse MongoDB URI" TSRMLS_CC);
 		return;
 	}
+
+	intern->host = mongoc_uri_get_hosts(uri);
 	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);
 }
 /* }}} */
@@ -414,17 +417,38 @@ inline int server_populate(php_phongo_server_t *server)
 	return true;
 }
 
-/* {{{ php_phongo_server_free_object && php_phongo_server_create_object */
-static void php_phongo_server_free_object(void *object TSRMLS_DC)
+/* {{{ handlers */
+zend_object_handlers* php_phongo_handlers_server() /* {{{ */
+{
+	return &php_phongo_handler_server;
+} /* }}} */
+static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
+{
+    php_phongo_server_t *intern1;
+    php_phongo_server_t *intern2;
+
+    intern1 = (php_phongo_server_t *)zend_object_store_get_object(o1 TSRMLS_CC);
+    intern2 = (php_phongo_server_t *)zend_object_store_get_object(o2 TSRMLS_CC);
+
+	/* FIXME: BUGBUG: We need a way to get mongoc_host from WriteResults */
+	if (intern1 && intern2) {
+		return 0;
+	}
+	if (!strcmp(intern1->host->host_and_port, intern2->host->host_and_port)) {
+		return 0;
+	}
+
+	return 1;
+} /* }}} */
+static void php_phongo_server_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_server_t *intern = (php_phongo_server_t*)object;
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
-}
-
-zend_object_value php_phongo_server_create_object(zend_class_entry *class_type TSRMLS_DC)
+} /* }}} */
+zend_object_value php_phongo_server_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
 	php_phongo_server_t *intern;
@@ -436,10 +460,10 @@ zend_object_value php_phongo_server_create_object(zend_class_entry *class_type T
 	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_server_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = php_phongo_handlers_server();
 
 	return retval;
-}
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -452,6 +476,10 @@ PHP_MINIT_FUNCTION(Server)
 	ce.create_object = php_phongo_server_create_object;
 	php_phongo_server_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_server_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+
+	memcpy(&php_phongo_handler_server, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_server.compare_objects = php_phongo_server_compare_objects;
+
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_MONGOS"), 0x01 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_STANDALONE"), 0x02 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_ARBITER"), 0x03 TSRMLS_CC);

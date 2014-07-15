@@ -313,6 +313,7 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 
 	reply = bson_new();
 	hint = mongoc_bulk_operation_execute(batch, reply, &error);
+
 	if (!hint) {
 		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 		return false;

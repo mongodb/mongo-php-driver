@@ -168,7 +168,7 @@ PHP_METHOD(CommandResult, getServer)
 
 	host = (mongoc_host_list_t *) emalloc(sizeof(mongoc_host_list_t));
 	mongoc_cursor_get_host(intern->result.cursor, host);
-	phongo_server_init(return_value, 0, host TSRMLS_CC);
+	phongo_server_init(return_value, intern->result.hint, host TSRMLS_CC);
 }
 /* }}} */
 

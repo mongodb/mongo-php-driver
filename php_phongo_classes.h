@@ -76,7 +76,7 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
-	mongoc_host_list_t      *host;
+	const mongoc_host_list_t *host;
 	mongoc_client_t         *client;
 	int                      hint;
 } php_phongo_server_t;
