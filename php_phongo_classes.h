@@ -66,7 +66,7 @@ typedef struct {
 } php_phongo_query_t;
 
 typedef struct {
-	zend_object              std;
+	php_phongo_result_t      result;
 } php_phongo_queryresult_t;
 
 typedef struct {

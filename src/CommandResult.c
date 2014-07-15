@@ -165,6 +165,7 @@ PHP_METHOD(CommandResult, getServer)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+
 	host = (mongoc_host_list_t *) emalloc(sizeof(mongoc_host_list_t));
 	mongoc_cursor_get_host(intern->result.cursor, host);
 	phongo_server_init(return_value, 0, host TSRMLS_CC);
@@ -257,6 +258,7 @@ PHP_MINIT_FUNCTION(CommandResult)
 	ce.create_object = php_phongo_commandresult_create_object;
 	php_phongo_commandresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_commandresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+	php_phongo_commandresult_ce->get_iterator = phongo_result_get_iterator;
 	zend_class_implements(php_phongo_commandresult_ce TSRMLS_CC, 1, zend_ce_aggregate);
 
 

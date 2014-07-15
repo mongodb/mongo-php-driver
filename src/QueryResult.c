@@ -143,6 +143,9 @@ PHP_METHOD(QueryResult, getServer)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	phongo_server_init(return_value, intern->result.hint, NULL TSRMLS_CC);
 }
 /* }}} */
 
@@ -193,7 +196,7 @@ static void php_phongo_queryresult_free_object(void *object TSRMLS_DC)
 {
 	php_phongo_queryresult_t *intern = (php_phongo_queryresult_t*)object;
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->result.std TSRMLS_CC);
 
 	efree(intern);
 }
@@ -206,8 +209,8 @@ zend_object_value php_phongo_queryresult_create_object(zend_class_entry *class_t
 	intern = (php_phongo_queryresult_t *)emalloc(sizeof(php_phongo_queryresult_t));
 	memset(intern, 0, sizeof(php_phongo_queryresult_t));
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
-	object_properties_init(&intern->std, class_type);
+	zend_object_std_init(&intern->result.std, class_type TSRMLS_CC);
+	object_properties_init(&intern->result.std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_queryresult_free_object, NULL TSRMLS_CC);
 	retval.handlers = phongo_get_std_object_handlers();
@@ -226,6 +229,7 @@ PHP_MINIT_FUNCTION(QueryResult)
 	ce.create_object = php_phongo_queryresult_create_object;
 	php_phongo_queryresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_queryresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+	php_phongo_queryresult_ce->get_iterator = phongo_result_get_iterator;
 	zend_class_implements(php_phongo_queryresult_ce TSRMLS_CC, 1, zend_ce_aggregate);
 
 

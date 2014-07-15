@@ -18,9 +18,9 @@ $server->executeWrite(NS, $batch);
 $query = new MongoDB\Query(array('x' => 3), array('y' => 1), null, 0, 0);
 $cursor = $server->executeQuery(NS, $query);
 
-var_dump($cursor instanceof MongoDB\QueryCursor);
-var_dump($server === $cursor->getServer());
-var_dump(iterator_to_array($server));
+var_dump($cursor instanceof MongoDB\QueryResult);
+var_dump($server == $cursor->getServer());
+var_dump(iterator_to_array($cursor));
 
 ?>
 ===DONE===
@@ -28,12 +28,12 @@ var_dump(iterator_to_array($server));
 --EXPECT--
 bool(true)
 bool(true)
-array(1)
-  [0] =>
+array(1) {
+  [0]=>
   array(2) {
-    '_id' =>
+    ["_id"]=>
     int(2)
-    'y' =>
+    ["y"]=>
     int(4)
   }
 }

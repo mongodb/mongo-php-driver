@@ -353,7 +353,7 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 		return true;
 	}
 
-	phongo_result_init(return_value, php_phongo_result_ce, cursor, doc, 0 TSRMLS_CC);
+	phongo_result_init(return_value, php_phongo_queryresult_ce, cursor, doc, 0 TSRMLS_CC);
 	return true;
 } /* }}} */
 
