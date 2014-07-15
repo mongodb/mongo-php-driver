@@ -424,10 +424,10 @@ PHONGO_API void php_phongo_bson_encode_array(bson_t *bson, zval *data TSRMLS_DC)
 				} else {
 					char *tmp_number;
 					int tmp_number_len;
+					char numbuf[32];
 
-					tmp_number_len = spprintf(&tmp_number, 0, "%ld", index);
+					tmp_number_len = bson_uint32_to_string(index, &tmp_number, numbuf, sizeof numbuf);
 					php_phongo_bson_encode(bson, tmp_number, tmp_number_len, *entry TSRMLS_CC);
-					efree(tmp_number);
 				}
 
 				if (tmp_ht) {
