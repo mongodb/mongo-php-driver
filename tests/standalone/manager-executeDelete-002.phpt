@@ -14,7 +14,7 @@ $manager->executeInsert(NS, array('_id' => 2, 'x' => 1));
 
 $result = $manager->executeDelete(NS, array('x' => 1), array('limit' => 0));
 
-var_dump($result instanceof MongoDB\Write\WriteResult);
+var_dump($result instanceof MongoDB\WriteResult);
 
 printf("Inserted: %d\n", $result->getNumInserted());
 printf("Matched: %d\n", $result->getNumMatched());

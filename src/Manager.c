@@ -222,6 +222,7 @@ PHP_METHOD(Manager, executeUpdate)
 	zval                  *writeOptions;
 	bson_t                 *query;
 	bson_t                 *update;
+	mongoc_update_flags_t   flags;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -238,7 +239,15 @@ PHP_METHOD(Manager, executeUpdate)
 	update = bson_new();
 	php_phongo_bson_encode_array(query, zquery TSRMLS_CC);
 	php_phongo_bson_encode_array(update, newObj TSRMLS_CC);
-	phongo_execute_single_update(intern->client, namespace, query, update, false, return_value, return_value_used TSRMLS_CC);
+
+	if (updateOptions && php_array_fetch_bool(updateOptions, "upsert")) {
+		flags |= MONGOC_UPDATE_UPSERT;
+	}
+	if (updateOptions && php_array_fetch_bool(updateOptions, "limit")) {
+		flags |= MONGOC_UPDATE_MULTI_UPDATE;
+	}
+
+	phongo_execute_single_update(intern->client, namespace, query, update, flags, return_value, return_value_used TSRMLS_CC);
 	bson_destroy(query);
 	bson_destroy(update);
 }
@@ -270,7 +279,7 @@ PHP_METHOD(Manager, executeDelete)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	if (deleteOptions && php_array_fetch_bool(deleteOptions, "limit")) {
-		flags &= MONGOC_DELETE_SINGLE_REMOVE;
+		flags |= MONGOC_DELETE_SINGLE_REMOVE;
 	}
 	bson = bson_new();
 	php_phongo_bson_encode_array(bson, query TSRMLS_CC);

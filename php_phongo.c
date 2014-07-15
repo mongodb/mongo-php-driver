@@ -258,14 +258,17 @@ int phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_
 	return retval;
 } /* }}} */
 
-int phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_t *query, bson_t *update, bool upsert, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_t *query, bson_t *update, mongoc_update_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bool retval = false;
 	mongoc_bulk_operation_t *batch;
 
 	batch = phongo_writebatch_init(true);
-	mongoc_bulk_operation_update_one(batch, query, update, upsert);
-
+	if (flags & MONGOC_UPDATE_MULTI_UPDATE) {
+		mongoc_bulk_operation_update_one(batch, query, update, !!(flags & MONGOC_UPDATE_UPSERT));
+	} else {
+		mongoc_bulk_operation_update(batch, query, update, !!(flags & MONGOC_UPDATE_UPSERT));
+	}
 	retval = phongo_execute_write(client, batch, 0, namespace, return_value, return_value_used TSRMLS_CC);
 	mongoc_bulk_operation_destroy(batch);
 
@@ -326,7 +329,7 @@ bool phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batc
 
 int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
-    const bson_t *doc;
+    const bson_t *doc = NULL;
 	mongoc_cursor_t *cursor;
 	char *dbname;
 	char *collname;
@@ -342,8 +345,8 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 
 		if (mongoc_cursor_error(cursor, &error)) {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			return false;
 		}
-		return false;
 	}
 
 	if (!return_value_used) {
@@ -604,8 +607,11 @@ static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{
 	phongo_cursor_it    *cursor_it = (phongo_cursor_it *)iter;
 	php_phongo_result_t *intern    = cursor_it->intern;
 
-	MAKE_STD_ZVAL(cursor_it->current);
-	bson_to_zval(bson_get_data(intern->firstBatch), intern->firstBatch->len, cursor_it->current);
+	/* firstBatch is empty when the query simply didn't return any results */
+	if (intern->firstBatch) {
+		MAKE_STD_ZVAL(cursor_it->current);
+		bson_to_zval(bson_get_data(intern->firstBatch), intern->firstBatch->len, cursor_it->current);
+	}
 } /* }}} */
 
 /* iterator handler table */
@@ -653,7 +659,7 @@ zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *obj
 	} else {
 		phongo_cursor_it       *cursor_it;
 
-		cursor_it = emalloc(sizeof(phongo_cursor_it));
+		cursor_it = ecalloc(1, sizeof(phongo_cursor_it));
 
 		Z_ADDREF_P(object);
 		cursor_it->iterator.data = (void*)object;

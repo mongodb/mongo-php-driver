@@ -11,9 +11,9 @@ $manager = new MongoDB\Manager(MONGODB_URI);
 $batch = new MongoDB\WriteBatch();
 $batch->insert(array('_id' => 1, 'x' => 1));
 $batch->insert(array('_id' => 2, 'x' => 2));
-$batch->update(array('x' => 2), array('$set' => array('x' => 1)), 1, false);
-$batch->update(array('_id' => 3), array('$set' => array('x' => 3)), 1, true);
-$batch->delete(array('x' => 1), 1);
+$batch->update(array('x' => 2), array('$set' => array('x' => 1)), array("limit" => 1, "upsert" => false));
+$batch->update(array('_id' => 3), array('$set' => array('x' => 3)), array("limit" => 1, "upsert" => true));
+$batch->delete(array('x' => 1), array("limit" => 1));
 
 $result = $manager->executeWrite(NS, $batch);
 

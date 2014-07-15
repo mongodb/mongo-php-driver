@@ -9,9 +9,9 @@ require_once "tests/utils/basic.inc";
 $manager = new MongoDB\Manager(MONGODB_URI);
 
 // load fixtures for test
-$manager->executeInsert(array('_id' => 1, 'x' => 1));
-$manager->executeInsert(array('_id' => 2, 'x' => 1));
-$manager->executeInsert(array('_id' => 3, 'x' => 3));
+$manager->executeInsert(NS, array('_id' => 1, 'x' => 1));
+$manager->executeInsert(NS, array('_id' => 2, 'x' => 1));
+$manager->executeInsert(NS, array('_id' => 3, 'x' => 3));
 
 $result = $manager->executeUpdate(
     NS,
@@ -57,25 +57,25 @@ Removed: 0
 Write concern errors: 0
 Write errors: 0
 array(3) {
-  [0] =>
+  [0]=>
   array(2) {
-    '_id' =>
+    ["_id"]=>
     int(1)
-    'x' =>
+    ["x"]=>
     int(2)
   }
-  [1] =>
+  [1]=>
   array(2) {
-    '_id' =>
+    ["_id"]=>
     int(2)
-    'x' =>
+    ["x"]=>
     int(2)
   }
-  [2] =>
+  [2]=>
   array(2) {
-    '_id' =>
+    ["_id"]=>
     int(3)
-    'x' =>
+    ["x"]=>
     int(3)
   }
 }

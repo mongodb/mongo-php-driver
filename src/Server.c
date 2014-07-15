@@ -56,6 +56,10 @@ PHP_METHOD(Server, __construct)
 	long                   port;
 	zval                  *options;
 	zval                  *driverOptions;
+	void                ***ctx = NULL;
+	char                   *uri;
+	long                    uri_len;
+	TSRMLS_SET_CTX(ctx);
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -67,6 +71,15 @@ PHP_METHOD(Server, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	uri_len = spprintf(&uri, 0, "mongodb://%s:%ld", host, port);
+	intern->client = mongoc_client_new(uri);
+	if (!intern->client) {
+		phongo_throw_exception(PHONGO_ERROR_RUNETIME, "Failed to parse MongoDB URI" TSRMLS_CC);
+		return;
+	}
+	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);
 }
 /* }}} */
 /* {{{ proto MongoDB\CommandResult Server::executeCommand(string $db, MongoDB\Command $command)
@@ -78,6 +91,7 @@ PHP_METHOD(Server, executeCommand)
 	char                  *db;
 	int                    db_len;
 	zval                  *command;
+	php_phongo_command_t  *cmd;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -89,6 +103,10 @@ PHP_METHOD(Server, executeCommand)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
+	phongo_execute_command(intern->client, db, cmd->bson, NULL, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\QueryResult Server::executeQuery(string $namespace, MongoDB\Query $query)
@@ -99,18 +117,21 @@ PHP_METHOD(Server, executeQuery)
 	zend_error_handling	error_handling;
 	char                  *namespace;
 	int                    namespace_len;
-	zval                  *query;
+	zval                  *zquery;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO", &namespace, &namespace_len, &query, php_phongo_query_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO", &namespace, &namespace_len, &zquery, php_phongo_query_ce) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), NULL, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\WriteResult Server::executeWrite(string $namespace, MongoDB\WriteBatch $batch)
@@ -121,18 +142,24 @@ PHP_METHOD(Server, executeWrite)
 	zend_error_handling	error_handling;
 	char                  *namespace;
 	int                    namespace_len;
-	zval                  *batch;
+	zval                  *zbatch;
+	php_phongo_writebatch_t    *batch;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO", &namespace, &namespace_len, &batch, php_phongo_writebatch_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO", &namespace, &namespace_len, &zbatch, php_phongo_writebatch_ce) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	batch = (php_phongo_writebatch_t *)zend_object_store_get_object(zbatch TSRMLS_CC);
+
+	phongo_execute_write(intern->client, batch->batch, intern->hint, namespace, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto string Server::getHost()

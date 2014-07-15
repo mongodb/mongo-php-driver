@@ -16,7 +16,7 @@ var_dump($result instanceof MongoDB\CommandResult);
 $responseDocument = $result->getResponseDocument();
 
 var_dump( ! empty($responseDocument['ok']));
-var_dump($server === $result->getServer());
+var_dump($server == $result->getServer());
 
 ?>
 ===DONE===
