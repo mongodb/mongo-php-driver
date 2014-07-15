@@ -71,7 +71,6 @@ PHP_METHOD(CommandResult, getIterator)
 {
 	php_phongo_commandresult_t *intern;
 	zend_error_handling	error_handling;
-	mongoc_host_list_t *host = NULL;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -132,7 +131,6 @@ PHP_METHOD(CommandResult, getResponseDocument)
 {
 	php_phongo_commandresult_t *intern;
 	zend_error_handling	error_handling;
-	mongoc_host_list_t *host = NULL;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
@@ -154,6 +152,7 @@ PHP_METHOD(CommandResult, getServer)
 {
 	php_phongo_commandresult_t *intern;
 	zend_error_handling	error_handling;
+	mongoc_host_list_t *host = NULL;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 

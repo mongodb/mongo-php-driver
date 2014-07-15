@@ -94,7 +94,7 @@ typedef struct {
 } php_phongo_writeerror_t;
 
 typedef struct {
-	zend_object              std;
+	php_phongo_result_t      result;
 	zend_bool                initialized;
 	int                      nInserted;
 	int                      nMatched;
