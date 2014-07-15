@@ -176,7 +176,7 @@ PHP_METHOD(Manager, executeWrite)
 
 	batch = (php_phongo_writebatch_t *)zend_object_store_get_object(zbatch TSRMLS_CC);
 
-	phongo_execute_write(intern->client, batch->batch, 0, namespace, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_write(intern->client, namespace, batch->batch, 0, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\WriteResult Manager::executeInsert(string $namespace, array|object $document[, array $writeOptions = array()])

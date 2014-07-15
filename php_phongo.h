@@ -73,9 +73,9 @@ typedef struct
 
 typedef struct
 {
-	mongoc_stream_t     vtable;
-	php_stream         *stream;
-	const bson_t       *uri_options;
+	mongoc_stream_t           vtable;
+	php_stream               *stream;
+	const bson_t             *uri_options;
 	const mongoc_host_list_t *host;
 	php_phongo_stream_logger log;
 #if ZTS
@@ -90,23 +90,20 @@ PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain, const c
 
 PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
 
-int                      phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC);
+void phongo_server_init                              (zval *return_value, int server_hint, mongoc_host_list_t *host TSRMLS_DC);
+php_phongo_query_t*      phongo_query_init           (php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit TSRMLS_DC);
+mongoc_bulk_operation_t* phongo_writebatch_init      (zend_bool ordered);
+bool                     phongo_execute_write        (mongoc_client_t *client, char *namespace, mongoc_bulk_operation_t *batch, int server_hint, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_command      (mongoc_client_t *client, char *db, bson_t *command, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_query        (mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_t *query, bson_t *update, mongoc_update_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_t *query, mongoc_delete_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC);
-bool                     phongo_execute_write(mongoc_client_t *client, mongoc_bulk_operation_t *batch, int server_id, char *namespace, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
-mongoc_stream_t*         phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error);
-zend_object_iterator*    phongo_result_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
-mongoc_bulk_operation_t* phongo_writebatch_init(zend_bool ordered);
+
+mongoc_stream_t*         phongo_stream_initiator     (const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error);
+zend_object_iterator*    phongo_result_get_iterator  (zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
 mongoc_read_prefs_t*     phongo_read_preference_from_zval(zval *object TSRMLS_DC);
-
-php_phongo_query_t*      php_phongo_query_init(php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit TSRMLS_DC);
-
-void phongo_server_init(zval *return_value, int hint, mongoc_host_list_t *host TSRMLS_DC);
-
-php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC);
+php_phongo_query_t*      phongo_query_from_zval(zval *zquery TSRMLS_DC);
 
 
 
