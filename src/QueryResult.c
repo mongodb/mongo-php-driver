@@ -49,12 +49,11 @@ PHONGO_API zend_class_entry *php_phongo_queryresult_ce;
 PHP_METHOD(QueryResult, __construct)
 {
 	php_phongo_queryresult_t *intern;
-	zend_error_handling	error_handling;
-	zval                  *server;
-	zval                  *cursorId;
-	zval                  *firstBatch;
+	zend_error_handling       error_handling;
+	zval                     *server;
+	zval                     *cursorId;
+	zval                     *firstBatch;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_queryresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -64,6 +63,7 @@ PHP_METHOD(QueryResult, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto MongoDB\Cursor QueryResult::getIterator()
@@ -71,9 +71,8 @@ PHP_METHOD(QueryResult, __construct)
 PHP_METHOD(QueryResult, getIterator)
 {
 	php_phongo_queryresult_t *intern;
-	zend_error_handling	error_handling;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_queryresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -83,6 +82,7 @@ PHP_METHOD(QueryResult, getIterator)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto self QueryResult::setIteratorClass(string $class)
@@ -90,11 +90,10 @@ PHP_METHOD(QueryResult, getIterator)
 PHP_METHOD(QueryResult, setIteratorClass)
 {
 	php_phongo_queryresult_t *intern;
-	zend_error_handling	error_handling;
-	char                  *class;
-	int                    class_len;
+	zend_error_handling       error_handling;
+	char                     *class;
+	int                       class_len;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_queryresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -104,6 +103,7 @@ PHP_METHOD(QueryResult, setIteratorClass)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto self QueryResult::setIteratorInitCallback(callable $callback)
@@ -111,10 +111,9 @@ PHP_METHOD(QueryResult, setIteratorClass)
 PHP_METHOD(QueryResult, setIteratorInitCallback)
 {
 	php_phongo_queryresult_t *intern;
-	zend_error_handling	error_handling;
-	zval                  *callback;
+	zend_error_handling       error_handling;
+	zval                     *callback;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_queryresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -124,6 +123,7 @@ PHP_METHOD(QueryResult, setIteratorInitCallback)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto MongoDB\Server QueryResult::getServer()
@@ -131,10 +131,9 @@ PHP_METHOD(QueryResult, setIteratorInitCallback)
 PHP_METHOD(QueryResult, getServer)
 {
 	php_phongo_queryresult_t *intern;
-	zend_error_handling	error_handling;
-	mongoc_host_list_t *host = NULL;
+	zend_error_handling       error_handling;
+	mongoc_host_list_t       *host;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_queryresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -194,17 +193,17 @@ static zend_function_entry php_phongo_queryresult_me[] = {
 /* }}} */
 
 
-/* {{{ php_phongo_queryresult_free_object && php_phongo_queryresult_create_object */
-static void php_phongo_queryresult_free_object(void *object TSRMLS_DC)
+/* {{{ php_phongo_queryresult_t object handlers */
+static void php_phongo_queryresult_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_queryresult_t *intern = (php_phongo_queryresult_t*)object;
 
 	zend_object_std_dtor(&intern->result.std TSRMLS_CC);
 
 	efree(intern);
-}
+} /* }}} */
 
-zend_object_value php_phongo_queryresult_create_object(zend_class_entry *class_type TSRMLS_DC)
+zend_object_value php_phongo_queryresult_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
 	php_phongo_queryresult_t *intern;
@@ -219,7 +218,7 @@ zend_object_value php_phongo_queryresult_create_object(zend_class_entry *class_t
 	retval.handlers = phongo_get_std_object_handlers();
 
 	return retval;
-}
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -233,6 +232,7 @@ PHP_MINIT_FUNCTION(QueryResult)
 	php_phongo_queryresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_queryresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 	php_phongo_queryresult_ce->get_iterator = phongo_result_get_iterator;
+
 	zend_class_implements(php_phongo_queryresult_ce TSRMLS_CC, 1, zend_ce_aggregate);
 
 

@@ -48,15 +48,14 @@ PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
    Constructs a new WriteError object */
 PHP_METHOD(WriteError, __construct)
 {
-	php_phongo_writeerror_t *intern;
-	zend_error_handling	error_handling;
-	char                  *message;
-	int                    message_len;
-	long                   code;
-	long                   index;
-	zval                  *operation;
+	php_phongo_writeerror_t  *intern;
+	zend_error_handling       error_handling;
+	char                     *message;
+	int                       message_len;
+	long                      code;
+	long                      index;
+	zval                     *operation;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -66,16 +65,16 @@ PHP_METHOD(WriteError, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto integer WriteError::getCode()
    Returns the MongoDB error code */
 PHP_METHOD(WriteError, getCode)
 {
-	php_phongo_writeerror_t *intern;
-	zend_error_handling	error_handling;
+	php_phongo_writeerror_t  *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -85,16 +84,16 @@ PHP_METHOD(WriteError, getCode)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto integer WriteError::getIndex()
    Returns the Batch index where this WriteError occurred in */
 PHP_METHOD(WriteError, getIndex)
 {
-	php_phongo_writeerror_t *intern;
-	zend_error_handling	error_handling;
+	php_phongo_writeerror_t  *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -104,16 +103,16 @@ PHP_METHOD(WriteError, getIndex)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto string WriteError::getMessage()
    Returns the actual error message from the server */
 PHP_METHOD(WriteError, getMessage)
 {
-	php_phongo_writeerror_t *intern;
-	zend_error_handling	error_handling;
+	php_phongo_writeerror_t  *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -123,16 +122,16 @@ PHP_METHOD(WriteError, getMessage)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto array|object WriteError::getOperation()
    Returns the batch operation itself that caused the error */
 PHP_METHOD(WriteError, getOperation)
 {
-	php_phongo_writeerror_t *intern;
-	zend_error_handling	error_handling;
+	php_phongo_writeerror_t  *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -142,6 +141,7 @@ PHP_METHOD(WriteError, getOperation)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 
@@ -182,17 +182,17 @@ static zend_function_entry php_phongo_writeerror_me[] = {
 /* }}} */
 
 
-/* {{{ php_phongo_writeerror_free_object && php_phongo_writeerror_create_object */
-static void php_phongo_writeerror_free_object(void *object TSRMLS_DC)
+/* {{{ php_phongo_writeerror_t object handlers */
+static void php_phongo_writeerror_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeerror_t *intern = (php_phongo_writeerror_t*)object;
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
-}
+} /* }}} */
 
-zend_object_value php_phongo_writeerror_create_object(zend_class_entry *class_type TSRMLS_DC)
+zend_object_value php_phongo_writeerror_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
 	php_phongo_writeerror_t *intern;
@@ -207,7 +207,7 @@ zend_object_value php_phongo_writeerror_create_object(zend_class_entry *class_ty
 	retval.handlers = phongo_get_std_object_handlers();
 
 	return retval;
-}
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -220,6 +220,7 @@ PHP_MINIT_FUNCTION(WriteError)
 	ce.create_object = php_phongo_writeerror_create_object;
 	php_phongo_writeerror_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeerror_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+
 
 	return SUCCESS;
 }

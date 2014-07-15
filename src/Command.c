@@ -48,12 +48,11 @@ PHONGO_API zend_class_entry *php_phongo_command_ce;
    Constructs a new Command */
 PHP_METHOD(Command, __construct)
 {
-	php_phongo_command_t  *intern;
-	zend_error_handling	error_handling;
-	zval                  *document;
-	bson_t *bson = bson_new();
+	php_phongo_command_t     *intern;
+	zend_error_handling       error_handling;
+	zval                     *document;
+	bson_t                   *bson = bson_new();
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_command_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -63,6 +62,7 @@ PHP_METHOD(Command, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 
 	php_phongo_bson_encode_array(bson, document TSRMLS_CC);
 	intern->bson = bson;
@@ -87,8 +87,8 @@ static zend_function_entry php_phongo_command_me[] = {
 /* }}} */
 
 
-/* {{{ php_phongo_command_free_object && php_phongo_command_create_object */
-static void php_phongo_command_free_object(void *object TSRMLS_DC)
+/* {{{ php_phongo_command_t object handlers */
+static void php_phongo_command_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_command_t *intern = (php_phongo_command_t*)object;
 
@@ -98,9 +98,9 @@ static void php_phongo_command_free_object(void *object TSRMLS_DC)
 		bson_free(intern->bson);
 	}
 	efree(intern);
-}
+} /* }}} */
 
-zend_object_value php_phongo_command_create_object(zend_class_entry *class_type TSRMLS_DC)
+zend_object_value php_phongo_command_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
 	php_phongo_command_t *intern;
@@ -115,7 +115,7 @@ zend_object_value php_phongo_command_create_object(zend_class_entry *class_type 
 	retval.handlers = phongo_get_std_object_handlers();
 
 	return retval;
-}
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -128,6 +128,7 @@ PHP_MINIT_FUNCTION(Command)
 	ce.create_object = php_phongo_command_create_object;
 	php_phongo_command_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_command_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+
 
 	return SUCCESS;
 }

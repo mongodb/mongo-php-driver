@@ -44,28 +44,28 @@
 
 PHONGO_API zend_class_entry *php_phongo_query_ce;
 
-/* {{{ proto MongoDB\Query Query::__construct(array|object $query, array|object $selector, integer $flags, integer $skip, integer $limit)
+/* {{{ proto MongoDB\Query Query::__construct(array|object $query[, array|object $selector[, integer $flags[, integer $skip[, integer $limit]]]])
    Constructs a new Query */
 PHP_METHOD(Query, __construct)
 {
-	php_phongo_query_t    *intern;
-	zend_error_handling	error_handling;
-	zval                  *query;
-	zval                  *selector;
-	long                   flags;
-	long                   skip;
-	long                   limit;
+	php_phongo_query_t       *intern;
+	zend_error_handling       error_handling;
+	zval                     *query;
+	zval                     *selector = NULL;
+	long                      flags = 0;
+	long                      skip = 0;
+	long                      limit = 0;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_query_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "AA!lll", &query, &selector, &flags, &skip, &limit) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|A!lll", &query, &selector, &flags, &skip, &limit) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 
 	phongo_query_init(intern, query, selector, flags, skip, limit TSRMLS_CC);
 }
@@ -81,7 +81,7 @@ PHP_METHOD(Query, __construct)
  */
 /* {{{ MongoDB\Query */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Query___construct, 0, 0, 5)
+ZEND_BEGIN_ARG_INFO_EX(ai_Query___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, query)
 	ZEND_ARG_INFO(0, selector)
 	ZEND_ARG_INFO(0, flags)
@@ -98,17 +98,17 @@ static zend_function_entry php_phongo_query_me[] = {
 /* }}} */
 
 
-/* {{{ php_phongo_query_free_object && php_phongo_query_create_object */
-static void php_phongo_query_free_object(void *object TSRMLS_DC)
+/* {{{ php_phongo_query_t object handlers */
+static void php_phongo_query_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_query_t *intern = (php_phongo_query_t*)object;
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
-}
+} /* }}} */
 
-zend_object_value php_phongo_query_create_object(zend_class_entry *class_type TSRMLS_DC)
+zend_object_value php_phongo_query_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
 	php_phongo_query_t *intern;
@@ -123,7 +123,7 @@ zend_object_value php_phongo_query_create_object(zend_class_entry *class_type TS
 	retval.handlers = phongo_get_std_object_handlers();
 
 	return retval;
-}
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -136,13 +136,15 @@ PHP_MINIT_FUNCTION(Query)
 	ce.create_object = php_phongo_query_create_object;
 	php_phongo_query_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_query_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_TAILABLE_CURSOR"), MONGOC_QUERY_TAILABLE_CURSOR TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_SLAVE_OK"), MONGOC_QUERY_SLAVE_OK TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_OPLOG_REPLAY"), MONGOC_QUERY_OPLOG_REPLAY TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_NO_CURSOR_TIMEOUT"), MONGOC_QUERY_NO_CURSOR_TIMEOUT TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_AWAIT_DATA"), MONGOC_QUERY_AWAIT_DATA TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_EXHAUST"), MONGOC_QUERY_EXHAUST TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_PARTIAL"), MONGOC_QUERY_PARTIAL TSRMLS_CC);
+
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_NONE"), 0x00 TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_TAILABLE_CURSOR"), 0x01 TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_SLAVE_OK"), 0x02 TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_OPLOG_REPLAY"), 0x04 TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_NO_CURSOR_TIMEOUT"), 0x08 TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_AWAIT_DATA"), 0x10 TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_EXHAUST"), 0x20 TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_PARTIAL"), 0x40 TSRMLS_CC);
 
 	return SUCCESS;
 }

@@ -49,21 +49,21 @@ PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
 PHP_METHOD(ReadPreference, __construct)
 {
 	php_phongo_readpreference_t *intern;
-	zend_error_handling	error_handling;
-	char                  *readPreference;
-	int                    readPreference_len;
-	zval                  *tagSets;
+	zend_error_handling       error_handling;
+	char                     *readPreference;
+	int                       readPreference_len;
+	zval                     *tagSets = NULL;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_readpreference_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a", &readPreference, &readPreference_len, &tagSets) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &readPreference, &readPreference_len, &tagSets) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 
@@ -86,17 +86,17 @@ static zend_function_entry php_phongo_readpreference_me[] = {
 /* }}} */
 
 
-/* {{{ php_phongo_readpreference_free_object && php_phongo_readpreference_create_object */
-static void php_phongo_readpreference_free_object(void *object TSRMLS_DC)
+/* {{{ php_phongo_readpreference_t object handlers */
+static void php_phongo_readpreference_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readpreference_t *intern = (php_phongo_readpreference_t*)object;
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
-}
+} /* }}} */
 
-zend_object_value php_phongo_readpreference_create_object(zend_class_entry *class_type TSRMLS_DC)
+zend_object_value php_phongo_readpreference_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
 	php_phongo_readpreference_t *intern;
@@ -111,7 +111,7 @@ zend_object_value php_phongo_readpreference_create_object(zend_class_entry *clas
 	retval.handlers = phongo_get_std_object_handlers();
 
 	return retval;
-}
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -124,6 +124,7 @@ PHP_MINIT_FUNCTION(ReadPreference)
 	ce.create_object = php_phongo_readpreference_create_object;
 	php_phongo_readpreference_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_readpreference_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+
 	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_PRIMARY"), "primary" TSRMLS_CC);
 	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_PRIMARY_PREFERRED"), "primaryPreferred" TSRMLS_CC);
 	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("RP_SECONDARY"), "secondary" TSRMLS_CC);

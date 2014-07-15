@@ -49,13 +49,12 @@ PHONGO_API zend_class_entry *php_phongo_writeconcernerror_ce;
 PHP_METHOD(WriteConcernError, __construct)
 {
 	php_phongo_writeconcernerror_t *intern;
-	zend_error_handling	error_handling;
-	char                  *message;
-	int                    message_len;
-	long                   code;
-	zval                  *info;
+	zend_error_handling       error_handling;
+	char                     *message;
+	int                       message_len;
+	long                      code;
+	zval                     *info;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeconcernerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -65,6 +64,7 @@ PHP_METHOD(WriteConcernError, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto integer WriteConcernError::getCode()
@@ -72,9 +72,8 @@ PHP_METHOD(WriteConcernError, __construct)
 PHP_METHOD(WriteConcernError, getCode)
 {
 	php_phongo_writeconcernerror_t *intern;
-	zend_error_handling	error_handling;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeconcernerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -84,6 +83,7 @@ PHP_METHOD(WriteConcernError, getCode)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto array WriteConcernError::getInfo()
@@ -91,9 +91,8 @@ PHP_METHOD(WriteConcernError, getCode)
 PHP_METHOD(WriteConcernError, getInfo)
 {
 	php_phongo_writeconcernerror_t *intern;
-	zend_error_handling	error_handling;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeconcernerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -103,6 +102,7 @@ PHP_METHOD(WriteConcernError, getInfo)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto string WriteConcernError::getMessage()
@@ -110,9 +110,8 @@ PHP_METHOD(WriteConcernError, getInfo)
 PHP_METHOD(WriteConcernError, getMessage)
 {
 	php_phongo_writeconcernerror_t *intern;
-	zend_error_handling	error_handling;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeconcernerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -122,6 +121,7 @@ PHP_METHOD(WriteConcernError, getMessage)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 
@@ -157,17 +157,17 @@ static zend_function_entry php_phongo_writeconcernerror_me[] = {
 /* }}} */
 
 
-/* {{{ php_phongo_writeconcernerror_free_object && php_phongo_writeconcernerror_create_object */
-static void php_phongo_writeconcernerror_free_object(void *object TSRMLS_DC)
+/* {{{ php_phongo_writeconcernerror_t object handlers */
+static void php_phongo_writeconcernerror_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeconcernerror_t *intern = (php_phongo_writeconcernerror_t*)object;
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
-}
+} /* }}} */
 
-zend_object_value php_phongo_writeconcernerror_create_object(zend_class_entry *class_type TSRMLS_DC)
+zend_object_value php_phongo_writeconcernerror_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
 	php_phongo_writeconcernerror_t *intern;
@@ -182,7 +182,7 @@ zend_object_value php_phongo_writeconcernerror_create_object(zend_class_entry *c
 	retval.handlers = phongo_get_std_object_handlers();
 
 	return retval;
-}
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -195,6 +195,7 @@ PHP_MINIT_FUNCTION(WriteConcernError)
 	ce.create_object = php_phongo_writeconcernerror_create_object;
 	php_phongo_writeconcernerror_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeconcernerror_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+
 
 	return SUCCESS;
 }

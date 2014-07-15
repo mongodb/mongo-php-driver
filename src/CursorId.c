@@ -48,12 +48,11 @@ PHONGO_API zend_class_entry *php_phongo_cursorid_ce;
    Construct a new CursorId */
 PHP_METHOD(CursorId, __construct)
 {
-	php_phongo_cursorid_t *intern;
-	zend_error_handling	error_handling;
-	char                  *id;
-	int                    id_len;
+	php_phongo_cursorid_t    *intern;
+	zend_error_handling       error_handling;
+	char                     *id;
+	int                       id_len;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_cursorid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -63,16 +62,16 @@ PHP_METHOD(CursorId, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto string CursorId::__toString()
    Returns the string representation of the CursorId */
 PHP_METHOD(CursorId, __toString)
 {
-	php_phongo_cursorid_t *intern;
-	zend_error_handling	error_handling;
+	php_phongo_cursorid_t    *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_cursorid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -82,6 +81,7 @@ PHP_METHOD(CursorId, __toString)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 
@@ -110,17 +110,17 @@ static zend_function_entry php_phongo_cursorid_me[] = {
 /* }}} */
 
 
-/* {{{ php_phongo_cursorid_free_object && php_phongo_cursorid_create_object */
-static void php_phongo_cursorid_free_object(void *object TSRMLS_DC)
+/* {{{ php_phongo_cursorid_t object handlers */
+static void php_phongo_cursorid_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursorid_t *intern = (php_phongo_cursorid_t*)object;
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
-}
+} /* }}} */
 
-zend_object_value php_phongo_cursorid_create_object(zend_class_entry *class_type TSRMLS_DC)
+zend_object_value php_phongo_cursorid_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
 	php_phongo_cursorid_t *intern;
@@ -135,7 +135,7 @@ zend_object_value php_phongo_cursorid_create_object(zend_class_entry *class_type
 	retval.handlers = phongo_get_std_object_handlers();
 
 	return retval;
-}
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -148,6 +148,7 @@ PHP_MINIT_FUNCTION(CursorId)
 	ce.create_object = php_phongo_cursorid_create_object;
 	php_phongo_cursorid_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_cursorid_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+
 
 	return SUCCESS;
 }

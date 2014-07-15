@@ -43,6 +43,7 @@
 
 
 PHONGO_API zend_class_entry *php_phongo_server_ce;
+
 inline int server_populate(php_phongo_server_t *server);
 zend_object_handlers php_phongo_handler_server;
 
@@ -51,23 +52,22 @@ zend_object_handlers php_phongo_handler_server;
    Constructs a new Server */
 PHP_METHOD(Server, __construct)
 {
-	php_phongo_server_t   *intern;
-	zend_error_handling	error_handling;
-	char                  *host;
-	int                    host_len;
-	long                   port;
-	zval                  *options;
-	zval                  *driverOptions;
-	void                ***ctx = NULL;
-	mongoc_uri_t          *uri;
+	php_phongo_server_t      *intern;
+	zend_error_handling       error_handling;
+	char                     *host;
+	int                       host_len;
+	long                      port;
+	zval                     *options = NULL;
+	zval                     *driverOptions = NULL;
+	mongoc_uri_t             *uri;
+	void                   ***ctx = NULL;
 	TSRMLS_SET_CTX(ctx);
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl|aa", &host, &host_len, &port, &options, &driverOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl|a!a!", &host, &host_len, &port, &options, &driverOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -89,14 +89,13 @@ PHP_METHOD(Server, __construct)
    Executes a command on this server */
 PHP_METHOD(Server, executeCommand)
 {
-	php_phongo_server_t   *intern;
-	zend_error_handling	error_handling;
-	char                  *db;
-	int                    db_len;
-	zval                  *command;
-	php_phongo_command_t  *cmd;
+	php_phongo_server_t      *intern;
+	zend_error_handling       error_handling;
+	char                     *db;
+	int                       db_len;
+	zval                     *command;
+	php_phongo_command_t     *cmd;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -112,17 +111,16 @@ PHP_METHOD(Server, executeCommand)
 	phongo_execute_command(intern->client, db, cmd->bson, NULL, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\QueryResult Server::executeQuery(string $namespace, MongoDB\Query $query)
+/* {{{ proto MongoDB\QueryResult Server::executeQuery(string $namespace, MongoDB\Query $zquery)
    Executes a Query */
 PHP_METHOD(Server, executeQuery)
 {
-	php_phongo_server_t   *intern;
-	zend_error_handling	error_handling;
-	char                  *namespace;
-	int                    namespace_len;
-	zval                  *zquery;
+	php_phongo_server_t      *intern;
+	zend_error_handling       error_handling;
+	char                     *namespace;
+	int                       namespace_len;
+	zval                     *zquery;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -137,18 +135,17 @@ PHP_METHOD(Server, executeQuery)
 	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), NULL, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\WriteResult Server::executeWrite(string $namespace, MongoDB\WriteBatch $batch)
+/* {{{ proto MongoDB\WriteResult Server::executeWrite(string $namespace, MongoDB\WriteBatch $zbatch)
    Executes a write operation batch (e.g. insert, update, delete) */
 PHP_METHOD(Server, executeWrite)
 {
-	php_phongo_server_t   *intern;
-	zend_error_handling	error_handling;
-	char                  *namespace;
-	int                    namespace_len;
-	zval                  *zbatch;
-	php_phongo_writebatch_t    *batch;
+	php_phongo_server_t      *intern;
+	zend_error_handling       error_handling;
+	char                     *namespace;
+	int                       namespace_len;
+	zval                     *zbatch;
+	php_phongo_writebatch_t  *batch;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -161,7 +158,6 @@ PHP_METHOD(Server, executeWrite)
 
 
 	batch = (php_phongo_writebatch_t *)zend_object_store_get_object(zbatch TSRMLS_CC);
-
 	phongo_execute_write(intern->client, namespace, batch->batch, intern->hint, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
@@ -169,10 +165,9 @@ PHP_METHOD(Server, executeWrite)
    Returns the hostname used to connect to this Server */
 PHP_METHOD(Server, getHost)
 {
-	php_phongo_server_t   *intern;
-	zend_error_handling	error_handling;
+	php_phongo_server_t      *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -184,6 +179,7 @@ PHP_METHOD(Server, getHost)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
+	// FIXME: BUGBUG: this is a workaround as its not implemented yet :)
 	server_populate(intern);
 	RETURN_STRING(intern->host->host, 1);
 }
@@ -192,10 +188,9 @@ PHP_METHOD(Server, getHost)
    Returns the last isMaster() result document */
 PHP_METHOD(Server, getInfo)
 {
-	php_phongo_server_t   *intern;
-	zend_error_handling	error_handling;
+	php_phongo_server_t      *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -205,16 +200,16 @@ PHP_METHOD(Server, getInfo)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto integer Server::getLatency()
    Returns the last messured latency */
 PHP_METHOD(Server, getLatency)
 {
-	php_phongo_server_t   *intern;
-	zend_error_handling	error_handling;
+	php_phongo_server_t      *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -224,16 +219,16 @@ PHP_METHOD(Server, getLatency)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto integer Server::getPort()
    Returns the port used to create this Server */
 PHP_METHOD(Server, getPort)
 {
-	php_phongo_server_t   *intern;
-	zend_error_handling	error_handling;
+	php_phongo_server_t      *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -243,6 +238,7 @@ PHP_METHOD(Server, getPort)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 
 	RETURN_LONG(intern->host->port);
 }
@@ -251,10 +247,9 @@ PHP_METHOD(Server, getPort)
    Returns the current state of the node (maintenece/startup/...) */
 PHP_METHOD(Server, getState)
 {
-	php_phongo_server_t   *intern;
-	zend_error_handling	error_handling;
+	php_phongo_server_t      *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -264,16 +259,16 @@ PHP_METHOD(Server, getState)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto integer Server::getType()
    Returns the node type of this Server */
 PHP_METHOD(Server, getType)
 {
-	php_phongo_server_t   *intern;
-	zend_error_handling	error_handling;
+	php_phongo_server_t      *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -283,16 +278,16 @@ PHP_METHOD(Server, getType)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto bool Server::isDelayed()
    Checks if this is a special "delayed" member of a RepilcaSet */
 PHP_METHOD(Server, isDelayed)
 {
-	php_phongo_server_t   *intern;
-	zend_error_handling	error_handling;
+	php_phongo_server_t      *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -302,16 +297,16 @@ PHP_METHOD(Server, isDelayed)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto bool Server::isPassive()
    Checks if this is a special passive node member of a ReplicaSet */
 PHP_METHOD(Server, isPassive)
 {
-	php_phongo_server_t   *intern;
-	zend_error_handling	error_handling;
+	php_phongo_server_t      *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -321,6 +316,7 @@ PHP_METHOD(Server, isPassive)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 
@@ -353,12 +349,12 @@ ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Query, 0)
+	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Query, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeWrite, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, batch, MongoDB\\WriteBatch, 0)
+	ZEND_ARG_OBJ_INFO(0, zbatch, MongoDB\\WriteBatch, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_getHost, 0, 0, 0)
@@ -404,6 +400,8 @@ static zend_function_entry php_phongo_server_me[] = {
 
 /* }}} */
 
+
+/* {{{ Other functions */
 inline int server_populate(php_phongo_server_t *server)
 {
 	mongoc_host_list_t *host = NULL;
@@ -417,7 +415,6 @@ inline int server_populate(php_phongo_server_t *server)
 	return true;
 }
 
-/* {{{ handlers */
 zend_object_handlers* php_phongo_handlers_server() /* {{{ */
 {
 	return &php_phongo_handler_server;
@@ -440,6 +437,8 @@ static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{
 
 	return 1;
 } /* }}} */
+/* }}} */
+/* {{{ php_phongo_server_t object handlers */
 static void php_phongo_server_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_server_t *intern = (php_phongo_server_t*)object;
@@ -448,6 +447,7 @@ static void php_phongo_server_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	efree(intern);
 } /* }}} */
+
 zend_object_value php_phongo_server_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
@@ -477,9 +477,9 @@ PHP_MINIT_FUNCTION(Server)
 	php_phongo_server_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_server_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
+
 	memcpy(&php_phongo_handler_server, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_server.compare_objects = php_phongo_server_compare_objects;
-
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_MONGOS"), 0x01 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_STANDALONE"), 0x02 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_ARBITER"), 0x03 TSRMLS_CC);

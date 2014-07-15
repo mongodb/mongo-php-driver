@@ -36,11 +36,11 @@
 #include <ext/spl/spl_iterators.h>
 /* Our Compatability header */
 #include "php_compat_53.h"
-#include "php_array.h"
 
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
+#include "php_array.h"
 
 
 PHONGO_API zend_class_entry *php_phongo_manager_ce;
@@ -49,21 +49,20 @@ PHONGO_API zend_class_entry *php_phongo_manager_ce;
    Constructs a new Manager */
 PHP_METHOD(Manager, __construct)
 {
-	php_phongo_manager_t  *intern;
-	zend_error_handling	error_handling;
-	char                  *uri;
-	int                    uri_len;
-	zval                  *options;
-	zval                  *driverOptions;
-	void                ***ctx = NULL;
+	php_phongo_manager_t     *intern;
+	zend_error_handling       error_handling;
+	char                     *uri;
+	int                       uri_len;
+	zval                     *options = NULL;
+	zval                     *driverOptions = NULL;
+	void                  ***ctx = NULL;
 	TSRMLS_SET_CTX(ctx);
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|aa", &uri, &uri_len, &options, &driverOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!a!", &uri, &uri_len, &options, &driverOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -82,11 +81,10 @@ PHP_METHOD(Manager, __construct)
    Creates new Manager from a list of servers */
 PHP_METHOD(Manager, createFromServers)
 {
-	php_phongo_manager_t  *intern;
-	zend_error_handling	error_handling;
-	zval                  *servers;
+	php_phongo_manager_t     *intern;
+	zend_error_handling       error_handling;
+	zval                     *servers;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -96,21 +94,21 @@ PHP_METHOD(Manager, createFromServers)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto MongoDB\CommandResult Manager::executeCommand(string $db, MongoDB\Command $command[, MongoDB\ReadPreference $readPreference = null])
    Execute a command */
 PHP_METHOD(Manager, executeCommand)
 {
-	php_phongo_manager_t  *intern;
-	zend_error_handling	error_handling;
-	char                  *db;
-	int                    db_len;
-	zval                  *command;
-	zval                  *readPreference = NULL;
-	php_phongo_command_t  *cmd;
+	php_phongo_manager_t     *intern;
+	zend_error_handling       error_handling;
+	char                     *db;
+	int                       db_len;
+	zval                     *command;
+	zval                     *readPreference = NULL;
+	php_phongo_command_t    *cmd;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -121,22 +119,22 @@ PHP_METHOD(Manager, executeCommand)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+
 	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
 	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\QueryResult Manager::executeQuery(string $namespace, MongoDB\Query $query[, MongoDB\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\QueryResult Manager::executeQuery(string $namespace, MongoDB\Query $zquery[, MongoDB\ReadPreference $readPreference = null])
    Execute a Query */
 PHP_METHOD(Manager, executeQuery)
 {
-	php_phongo_manager_t  *intern;
-	zend_error_handling	error_handling;
-	char                  *namespace;
-	int                    namespace_len;
-	zval                  *zquery;
-	zval                  *readPreference = NULL;
+	php_phongo_manager_t     *intern;
+	zend_error_handling       error_handling;
+	char                     *namespace;
+	int                       namespace_len;
+	zval                     *zquery;
+	zval                     *readPreference = NULL;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -147,27 +145,27 @@ PHP_METHOD(Manager, executeQuery)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+
 	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\WriteResult Manager::executeWrite(string $namespace, MongoDB\WriteBatch $batch[, array $writeOptions = array()])
+/* {{{ proto MongoDB\WriteResult Manager::executeWrite(string $namespace, MongoDB\WriteBatch $zbatch[, array $writeOptions = array()])
    Executes a write operation batch (e.g. insert, update, delete) */
 PHP_METHOD(Manager, executeWrite)
 {
-	php_phongo_manager_t  *intern;
-	zend_error_handling    error_handling;
-	char                  *namespace;
-	int                    namespace_len;
-	zval                  *zbatch;
-	zval                  *writeOptions;
-	php_phongo_writebatch_t    *batch;
+	php_phongo_manager_t     *intern;
+	zend_error_handling       error_handling;
+	char                     *namespace;
+	int                       namespace_len;
+	zval                     *zbatch;
+	zval                     *writeOptions = NULL;
+	php_phongo_writebatch_t   *batch;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a", &namespace, &namespace_len, &zbatch, php_phongo_writebatch_ce, &writeOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &namespace, &namespace_len, &zbatch, php_phongo_writebatch_ce, &writeOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -175,7 +173,6 @@ PHP_METHOD(Manager, executeWrite)
 
 
 	batch = (php_phongo_writebatch_t *)zend_object_store_get_object(zbatch TSRMLS_CC);
-
 	phongo_execute_write(intern->client, namespace, batch->batch, 0, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
@@ -183,24 +180,24 @@ PHP_METHOD(Manager, executeWrite)
    Convenience method for single insert operation. */
 PHP_METHOD(Manager, executeInsert)
 {
-	php_phongo_manager_t  *intern;
-	zend_error_handling    error_handling;
-	char                  *namespace;
-	int                    namespace_len;
-	zval                  *document;
-	zval                  *writeOptions;
-	bson_t                 *bson;
+	php_phongo_manager_t     *intern;
+	zend_error_handling       error_handling;
+	char                     *namespace;
+	int                       namespace_len;
+	zval                     *document;
+	zval                     *writeOptions = NULL;
+	bson_t                   *bson;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sA|a", &namespace, &namespace_len, &document, &writeOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sA|a!", &namespace, &namespace_len, &document, &writeOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 
 	bson = bson_new();
 	php_phongo_bson_encode_array(bson, document TSRMLS_CC);
@@ -208,32 +205,32 @@ PHP_METHOD(Manager, executeInsert)
 	bson_destroy(bson);
 }
 /* }}} */
-/* {{{ proto MongoDB\WriteResult Manager::executeUpdate(string $namespace, array|object $query, array|object $newObj[, array $updateOptions = array()[, array $writeOptions = array()]])
+/* {{{ proto MongoDB\WriteResult Manager::executeUpdate(string $namespace, array|object $zquery, array|object $newObj[, array $updateOptions = array()[, array $writeOptions = array()]])
    Convenience method for single update operation. */
 PHP_METHOD(Manager, executeUpdate)
 {
-	php_phongo_manager_t  *intern;
-	zend_error_handling	error_handling;
-	char                  *namespace;
-	int                    namespace_len;
-	zval                  *zquery;
-	zval                  *newObj;
-	zval                  *updateOptions;
-	zval                  *writeOptions;
-	bson_t                 *query;
-	bson_t                 *update;
-	mongoc_update_flags_t   flags;
+	php_phongo_manager_t     *intern;
+	zend_error_handling       error_handling;
+	char                     *namespace;
+	int                       namespace_len;
+	zval                     *zquery;
+	zval                     *newObj;
+	zval                     *updateOptions = NULL;
+	zval                     *writeOptions = NULL;
+	bson_t                   *query;
+	bson_t                   *update;
+	mongoc_update_flags_t     flags;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sAA|aa", &namespace, &namespace_len, &zquery, &newObj, &updateOptions, &writeOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sAA|a!a!", &namespace, &namespace_len, &zquery, &newObj, &updateOptions, &writeOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 
 	query = bson_new();
 	update = bson_new();
@@ -256,18 +253,16 @@ PHP_METHOD(Manager, executeUpdate)
    Convenience method for single delete operation. */
 PHP_METHOD(Manager, executeDelete)
 {
-	php_phongo_manager_t  *intern;
-	zend_error_handling	error_handling;
-	char                  *namespace;
-	int                    namespace_len;
-	zval                  *query;
-	zval                  *deleteOptions = NULL;
-	zval                  *writeOptions = NULL;
-	bson_t                 *bson;
-	mongoc_delete_flags_t   flags = MONGOC_DELETE_NONE;
+	php_phongo_manager_t     *intern;
+	zend_error_handling       error_handling;
+	char                     *namespace;
+	int                       namespace_len;
+	zval                     *query;
+	zval                     *deleteOptions = NULL;
+	zval                     *writeOptions = NULL;
+	bson_t                   *bson;
+	mongoc_delete_flags_t     flags = MONGOC_DELETE_NONE;
 
-
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -277,6 +272,7 @@ PHP_METHOD(Manager, executeDelete)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 
 	if (deleteOptions && php_array_fetch_bool(deleteOptions, "limit")) {
 		flags |= MONGOC_DELETE_SINGLE_REMOVE;
@@ -320,13 +316,13 @@ ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Query, 0)
+	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Query, 0)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\ReadPreference, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeWrite, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, batch, MongoDB\\WriteBatch, 0)
+	ZEND_ARG_OBJ_INFO(0, zbatch, MongoDB\\WriteBatch, 0)
 	ZEND_ARG_ARRAY_INFO(0, writeOptions, 1)
 ZEND_END_ARG_INFO();
 
@@ -338,7 +334,7 @@ ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeUpdate, 0, 0, 3)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_INFO(0, query)
+	ZEND_ARG_INFO(0, zquery)
 	ZEND_ARG_INFO(0, newObj)
 	ZEND_ARG_ARRAY_INFO(0, updateOptions, 1)
 	ZEND_ARG_ARRAY_INFO(0, writeOptions, 1)
@@ -367,19 +363,18 @@ static zend_function_entry php_phongo_manager_me[] = {
 /* }}} */
 
 
-/* {{{ php_phongo_manager_free_object && php_phongo_manager_create_object */
-static void php_phongo_manager_free_object(void *object TSRMLS_DC)
+/* {{{ php_phongo_manager_t object handlers */
+static void php_phongo_manager_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_manager_t *intern = (php_phongo_manager_t*)object;
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	mongoc_client_destroy(intern->client);
-
 	efree(intern);
-}
+} /* }}} */
 
-zend_object_value php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC)
+zend_object_value php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
 	php_phongo_manager_t *intern;
@@ -394,7 +389,7 @@ zend_object_value php_phongo_manager_create_object(zend_class_entry *class_type 
 	retval.handlers = phongo_get_std_object_handlers();
 
 	return retval;
-}
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -407,6 +402,7 @@ PHP_MINIT_FUNCTION(Manager)
 	ce.create_object = php_phongo_manager_create_object;
 	php_phongo_manager_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_manager_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+
 
 	return SUCCESS;
 }

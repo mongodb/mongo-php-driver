@@ -49,11 +49,10 @@ PHONGO_API zend_class_entry *php_phongo_generatedid_ce;
 PHP_METHOD(GeneratedId, __construct)
 {
 	php_phongo_generatedid_t *intern;
-	zend_error_handling	error_handling;
-	zval                  *id;
-	long                   index;
+	zend_error_handling       error_handling;
+	zval                     *id;
+	long                      index;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_generatedid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -63,6 +62,7 @@ PHP_METHOD(GeneratedId, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto mixed GeneratedId::getId()
@@ -70,9 +70,8 @@ PHP_METHOD(GeneratedId, __construct)
 PHP_METHOD(GeneratedId, getId)
 {
 	php_phongo_generatedid_t *intern;
-	zend_error_handling	error_handling;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_generatedid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -82,6 +81,7 @@ PHP_METHOD(GeneratedId, getId)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 /* {{{ proto integer GeneratedId::getIndex()
@@ -89,9 +89,8 @@ PHP_METHOD(GeneratedId, getId)
 PHP_METHOD(GeneratedId, getIndex)
 {
 	php_phongo_generatedid_t *intern;
-	zend_error_handling	error_handling;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_generatedid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -101,6 +100,7 @@ PHP_METHOD(GeneratedId, getIndex)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 
@@ -132,17 +132,17 @@ static zend_function_entry php_phongo_generatedid_me[] = {
 /* }}} */
 
 
-/* {{{ php_phongo_generatedid_free_object && php_phongo_generatedid_create_object */
-static void php_phongo_generatedid_free_object(void *object TSRMLS_DC)
+/* {{{ php_phongo_generatedid_t object handlers */
+static void php_phongo_generatedid_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_generatedid_t *intern = (php_phongo_generatedid_t*)object;
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
-}
+} /* }}} */
 
-zend_object_value php_phongo_generatedid_create_object(zend_class_entry *class_type TSRMLS_DC)
+zend_object_value php_phongo_generatedid_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
 	php_phongo_generatedid_t *intern;
@@ -157,7 +157,7 @@ zend_object_value php_phongo_generatedid_create_object(zend_class_entry *class_t
 	retval.handlers = phongo_get_std_object_handlers();
 
 	return retval;
-}
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -170,6 +170,7 @@ PHP_MINIT_FUNCTION(GeneratedId)
 	ce.create_object = php_phongo_generatedid_create_object;
 	php_phongo_generatedid_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_generatedid_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+
 
 	return SUCCESS;
 }

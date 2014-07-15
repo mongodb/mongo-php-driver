@@ -36,24 +36,23 @@
 #include <ext/spl/spl_iterators.h>
 /* Our Compatability header */
 #include "php_compat_53.h"
-#include "php_array.h"
 
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
+#include "php_array.h"
 
 
 PHONGO_API zend_class_entry *php_phongo_writebatch_ce;
 
-/* {{{ proto MongoDB\WriteBatch WriteBatch::__construct()
+/* {{{ proto MongoDB\WriteBatch WriteBatch::__construct(boolean $ordered)
    Constructs a new WriteBatch */
 PHP_METHOD(WriteBatch, __construct)
 {
-	php_phongo_writebatch_t *intern;
-	zend_error_handling	error_handling;
-	zend_bool             ordered = true;
+	php_phongo_writebatch_t  *intern;
+	zend_error_handling       error_handling;
+	zend_bool                 ordered = 1;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writebatch_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -72,12 +71,11 @@ PHP_METHOD(WriteBatch, __construct)
    Adds an insert operation to the batch */
 PHP_METHOD(WriteBatch, insert)
 {
-	php_phongo_writebatch_t *intern;
-	zend_error_handling	error_handling;
-	zval                  *document;
-	bson_t                *bson;
+	php_phongo_writebatch_t  *intern;
+	zend_error_handling       error_handling;
+	zval                     *document;
+	bson_t                   *bson;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writebatch_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -99,22 +97,21 @@ PHP_METHOD(WriteBatch, insert)
    Adds an update operation to batch */
 PHP_METHOD(WriteBatch, update)
 {
-	php_phongo_writebatch_t    *intern;
-	zend_error_handling	error_handling;
-	zval                  *query;
-	zval                  *newObj;
-	zval                  *updateOptions;
-	mongoc_update_flags_t  limit = 0;
-	zend_bool             upsert = 0;
-	bson_t                *bquery;
-	bson_t                *bupdate;
+	php_phongo_writebatch_t  *intern;
+	zend_error_handling       error_handling;
+	zval                     *query;
+	zval                     *newObj;
+	zval                     *updateOptions = NULL;
+	mongoc_update_flags_t     limit = 0;
+	zend_bool                 upsert = 0;
+	bson_t                   *bquery;
+	bson_t                   *bupdate;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writebatch_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "AA|a", &query, &newObj, &updateOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "AA|a!", &query, &newObj, &updateOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -146,18 +143,17 @@ PHP_METHOD(WriteBatch, update)
    Adds a delete operation to the batch */
 PHP_METHOD(WriteBatch, delete)
 {
-	php_phongo_writebatch_t *intern;
-	zend_error_handling	error_handling;
-	zval                  *query;
-	zval                  *deleteOptions;
-	bson_t                *bson;
+	php_phongo_writebatch_t  *intern;
+	zend_error_handling       error_handling;
+	zval                     *query;
+	zval                     *deleteOptions = NULL;
+	bson_t                   *bson;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writebatch_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a", &query, &deleteOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &query, &deleteOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -180,10 +176,9 @@ PHP_METHOD(WriteBatch, delete)
    Returns the number of operations that have been added to the batch */
 PHP_METHOD(WriteBatch, count)
 {
-	php_phongo_writebatch_t *intern;
-	zend_error_handling	error_handling;
+	php_phongo_writebatch_t  *intern;
+	zend_error_handling       error_handling;
 
-	(void)return_value; (void)return_value_ptr; (void)return_value_used; /* We don't use these */
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writebatch_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -193,6 +188,7 @@ PHP_METHOD(WriteBatch, count)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
 }
 /* }}} */
 
@@ -200,6 +196,7 @@ PHP_METHOD(WriteBatch, count)
 /* {{{ MongoDB\WriteBatch */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteBatch___construct, 0, 0, 0)
+	ZEND_ARG_INFO(0, ordered)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteBatch_insert, 0, 0, 1)
@@ -233,17 +230,17 @@ static zend_function_entry php_phongo_writebatch_me[] = {
 /* }}} */
 
 
-/* {{{ php_phongo_writebatch_free_object && php_phongo_writebatch_create_object */
-static void php_phongo_writebatch_free_object(void *object TSRMLS_DC)
+/* {{{ php_phongo_writebatch_t object handlers */
+static void php_phongo_writebatch_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writebatch_t *intern = (php_phongo_writebatch_t*)object;
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
-}
+} /* }}} */
 
-zend_object_value php_phongo_writebatch_create_object(zend_class_entry *class_type TSRMLS_DC)
+zend_object_value php_phongo_writebatch_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
 	php_phongo_writebatch_t *intern;
@@ -258,7 +255,7 @@ zend_object_value php_phongo_writebatch_create_object(zend_class_entry *class_ty
 	retval.handlers = phongo_get_std_object_handlers();
 
 	return retval;
-}
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -270,6 +267,7 @@ PHP_MINIT_FUNCTION(WriteBatch)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteBatch", php_phongo_writebatch_me);
 	ce.create_object = php_phongo_writebatch_create_object;
 	php_phongo_writebatch_ce = zend_register_internal_class(&ce TSRMLS_CC);
+
 	zend_class_implements(php_phongo_writebatch_ce TSRMLS_CC, 1, spl_ce_Countable);
 
 
