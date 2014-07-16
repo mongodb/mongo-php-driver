@@ -567,7 +567,7 @@ PHP_FUNCTION(bson_encode)
 			break;
 	}
 
-	RETURN_STRINGL((const char *) bson_get_data(bson), bson->len, 1);
+	RETVAL_STRINGL((const char *) bson_get_data(bson), bson->len, 1);
 	bson_destroy(bson);
 }
 /* }}} */
