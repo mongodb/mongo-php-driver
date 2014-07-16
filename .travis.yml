@@ -41,7 +41,7 @@ addons:
       name: "bjori/phongo"
       description: "New generation MongoDB driver for PHP"
     notification_email: bjori@mongodb.com
-    build_command_prepend: phpize && ./configure
+    build_command_prepend: make clean
     build_command: make
     branch_pattern: dry-run
 
