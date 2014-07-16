@@ -6,6 +6,7 @@ MongoDB\Query\Query constants
 <?php
 require_once "tests/utils/basic.inc";
 
+var_dump(MongoDB\Query::FLAG_NONE);
 var_dump(MongoDB\Query::FLAG_TAILABLE_CURSOR);
 var_dump(MongoDB\Query::FLAG_SLAVE_OK);
 var_dump(MongoDB\Query::FLAG_OPLOG_REPLAY);
@@ -18,6 +19,7 @@ var_dump(MongoDB\Query::FLAG_PARTIAL);
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+int(0)
 int(2)
 int(4)
 int(8)
