@@ -1,6 +1,7 @@
 # PHP MongoDB - PHongo
 [![Coverage Status](https://coveralls.io/repos/bjori/phongo/badge.png?branch=dry-run)](https://coveralls.io/r/bjori/phongo?branch=dry-run)
 [![Build Status](https://travis-ci.org/bjori/phongo.svg?branch=dry-run)](https://travis-ci.org/bjori/phongo)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/2600/badge.svg)](https://scan.coverity.com/projects/2600)
 
 
 This repo contains design documentation, examples, and (wip) proof of concept implementation,
