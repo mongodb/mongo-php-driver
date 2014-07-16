@@ -106,8 +106,6 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 		case MONGOC_ERROR_GRIDFS_INVALID_FILENAME:
 		case MONGOC_ERROR_QUERY_COMMAND_NOT_FOUND:
 		case MONGOC_ERROR_QUERY_NOT_TAILABLE:
-
-		default:
 			return spl_ce_RuntimeException;
 	}
 	switch (domain) {
