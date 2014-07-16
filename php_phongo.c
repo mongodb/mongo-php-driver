@@ -490,13 +490,6 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		return NULL;
 	}
 
-	if (host->family != AF_UNIX) {
-		int socket = ((php_netstream_data_t*)stream->abstract)->socket;
-		int flag = 1;
-
-		setsockopt(socket, IPPROTO_TCP,  TCP_NODELAY, (char *) &flag, sizeof(int));
-	}
-
 	base_stream = ecalloc(1, sizeof(php_phongo_stream_socket));
 	base_stream->stream = stream;
 	base_stream->uri_options = mongoc_uri_get_options(uri);
@@ -510,6 +503,11 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	base_stream->vtable.readv = phongo_stream_readv;
 	base_stream->vtable.setsockopt = phongo_stream_setsockopt;
 	base_stream->vtable.get_base_stream = phongo_stream_get_base_stream;
+
+	if (host->family != AF_UNIX) {
+		int flag = 1;
+		phongo_stream_setsockopt((mongoc_stream_t *)base_stream, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int));
+	}
 
 	return (mongoc_stream_t *) base_stream;
 } /* }}} */
