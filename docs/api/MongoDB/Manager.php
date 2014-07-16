@@ -216,7 +216,7 @@ final class Manager
 /*
 	bson_t                   *query;
 	bson_t                   *update;
-	mongoc_update_flags_t     flags;
+	mongoc_update_flags_t     flags = MONGOC_UPDATE_NONE;
 */
         /*** CEF ***/
         /*** CIMPL ***/
