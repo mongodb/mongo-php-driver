@@ -431,9 +431,11 @@ static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{
 	if (intern1 && intern2) {
 		return 0;
 	}
+    /*
 	if (!strcmp(intern1->host->host_and_port, intern2->host->host_and_port)) {
 		return 0;
 	}
+     */
 
 	return 1;
 } /* }}} */

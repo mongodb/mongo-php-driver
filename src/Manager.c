@@ -55,7 +55,7 @@ PHP_METHOD(Manager, __construct)
 	int                       uri_len;
 	zval                     *options = NULL;
 	zval                     *driverOptions = NULL;
-	void                  ***ctx = NULL;
+	void                   ***ctx = NULL;
 	TSRMLS_SET_CTX(ctx);
 
 
@@ -219,7 +219,7 @@ PHP_METHOD(Manager, executeUpdate)
 	zval                     *writeOptions = NULL;
 	bson_t                   *query;
 	bson_t                   *update;
-	mongoc_update_flags_t     flags;
+	mongoc_update_flags_t     flags = MONGOC_UPDATE_NONE;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
