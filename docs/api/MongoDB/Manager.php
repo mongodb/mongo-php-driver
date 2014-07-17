@@ -101,7 +101,7 @@ final class Manager
      *
      * @param string         $namespace
      * @param Query          $zquery
-     * @param ReadPreference $readPreference
+     * @param ReadPreference $readPreference Read preference options (default: "primary")
      * @return QueryResult
      */
     public function executeQuery($namespace, Query $zquery, ReadPreference $readPreference = null)
@@ -126,12 +126,12 @@ final class Manager
     /**
      * Executes a write operation batch (e.g. insert, update, delete)
      *
-     * @param string     $namespace
-     * @param WriteBatch $zbatch
-     * @param array      $writeOptions Ordering and write concern options (default: {"ordered": true, "w": 1})
+     * @param string       $namespace
+     * @param WriteBatch   $zbatch
+     * @param WriteConcern $writeConcern Write concern options (default: {"w": 1})
      * @return WriteResult
      */
-    public function executeWrite($namespace, WriteBatch $zbatch, array $writeOptions = null)
+    public function executeWrite($namespace, WriteBatch $zbatch, WriteConcern $writeConcern = null)
     {
         /* Select writeable server and invoke Server::executeQuery().
          *
@@ -165,10 +165,10 @@ final class Manager
      *
      * @param string       $namespace
      * @param array|object $document     Document to insert
-     * @param array        $writeOptions Write concern options (default: {"w": 1})
+     * @param WriteConcern $writeConcern Write concern options (default: {"w": 1})
      * @return WriteResult
      */
-    public function executeInsert($namespace, $document, array $writeOptions = null)
+    public function executeInsert($namespace, $document, WriteConcern $writeConcern = null)
     {
         /* Construct and execute a WriteBatch with a single insert operation.
          *
@@ -197,10 +197,10 @@ final class Manager
      * @param array|object $zquery         Update criteria
      * @param array|object $newObj        Update modifier or replacement document
      * @param array        $updateOptions Update options (e.g. "upsert")
-     * @param array        $writeOptions  Write concern options (default: {"w": 1})
+     * @param WriteConcern $writeConcern  Write concern options (default: {"w": 1})
      * @return WriteResult
      */
-    public function executeUpdate($namespace, $zquery, $newObj, array $updateOptions = null, array $writeOptions = null)
+    public function executeUpdate($namespace, $zquery, $newObj, array $updateOptions = null, WriteConcern $writeConcern = null)
     {
         $updateOptions = array_merge(
             array('multi' => false, 'upsert' => false),
@@ -246,10 +246,10 @@ final class Manager
      * @param string       $namespace
      * @param array|object $query         Deletion criteria
      * @param array        $deleteOptions Deletion options (e.g. "limit")
-     * @param array        $writeOptions  Write concern options (default: {"w": 1})
+     * @param WriteConcern $writeConcern Write concern options (default: {"w": 1})
      * @return WriteResult
      */
-    public function executeDelete($namespace, $query, array $deleteOptions = null, array $writeOptions = null)
+    public function executeDelete($namespace, $query, array $deleteOptions = null, WriteConcern $writeConcern = null)
     {
         /* TODO: Decide if we should default to 0 (i.e. "all"), as in 1.x, or if
          * an explicit "limit" option must be required. Keeping $deleteOptions
