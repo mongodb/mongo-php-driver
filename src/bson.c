@@ -422,7 +422,7 @@ PHONGO_API void php_phongo_bson_encode_array(bson_t *bson, zval *data TSRMLS_DC)
 				if (hash_type == HASH_KEY_IS_STRING) {
 					php_phongo_bson_encode(bson, key, key_len-1, *entry TSRMLS_CC);
 				} else {
-					char *tmp_number;
+					const char *tmp_number;
 					int tmp_number_len;
 					char numbuf[32];
 
@@ -440,7 +440,7 @@ PHONGO_API void php_phongo_bson_encode_array(bson_t *bson, zval *data TSRMLS_DC)
 }
 
 /* }}} */
-PHONGO_API void php_phongo_bson_encode(bson_t *bson, char *key, int key_len, zval *val TSRMLS_DC) /* {{{ */
+PHONGO_API void php_phongo_bson_encode(bson_t *bson, const char *key, int key_len, zval *val TSRMLS_DC) /* {{{ */
 {
 	switch (Z_TYPE_P(val))
 	{

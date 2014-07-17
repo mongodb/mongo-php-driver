@@ -31,7 +31,7 @@
 
 PHONGO_API int php_phongo_is_array_or_document(zval **val TSRMLS_DC);
 PHONGO_API void php_phongo_bson_encode_array(bson_t *bson, zval *data TSRMLS_DC);
-PHONGO_API void php_phongo_bson_encode(bson_t *bson, char *key, int key_len, zval *val TSRMLS_DC);
+PHONGO_API void php_phongo_bson_encode(bson_t *bson, const char *key, int key_len, zval *val TSRMLS_DC);
 PHONGO_API int bson_to_zval(const unsigned char *data, int data_len, zval *retval);
 
 PHP_FUNCTION(bson_encode);
