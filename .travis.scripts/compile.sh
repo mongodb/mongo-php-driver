@@ -11,7 +11,7 @@ LIBBSON_VERSION=master
 LCOV_VERSION=1.11
 
 
-sudo apt-get install gdb
+sudo apt-get install gdb valgrind
 mkdir tmp-lcov
 pushd tmp-lcov
 	wget -O lcov.tar.gz http://downloads.sourceforge.net/ltp/lcov-${LCOV_VERSION}.tar.gz
