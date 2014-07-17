@@ -19,5 +19,5 @@ coverage: mv-coverage lcov-local
 
 
 coveralls: mv-coverage lcov-coveralls
-	coveralls --exclude lib --exclude tests
+	coveralls --exclude lib --exclude tests --exclude src/php_array.h
 
