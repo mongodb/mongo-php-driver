@@ -157,9 +157,7 @@ if test "$PHONGO" != "no"; then
 
 
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
-  if test "$PHP_COVERAGE" = "yes"; then
-      PHP_ADD_MAKEFILE_FRAGMENT
-  fi
+  PHP_ADD_MAKEFILE_FRAGMENT
 
 fi
 

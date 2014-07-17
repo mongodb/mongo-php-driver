@@ -1,4 +1,4 @@
-.PHONY: coverage
+.PHONY: coverage testclean
 
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 
@@ -20,4 +20,9 @@ coverage: mv-coverage lcov-local
 
 coveralls: mv-coverage lcov-coveralls
 	coveralls --exclude lib --exclude tests --exclude src/php_array.h
+
+testclean:
+	@for group in generic standalone; do \
+		find $(top_srcdir)/tests/$$group -type f -name "*.diff" -o -name "*.exp" -o -name "*.log" -o -name "*.mem" -o -name "*.out" -o -name "*.php" -o -name "*.sh" | xargs rm -f; \
+	done;
 
