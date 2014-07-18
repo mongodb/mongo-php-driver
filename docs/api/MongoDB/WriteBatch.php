@@ -23,8 +23,11 @@ class WriteBatch implements Countable
     /**
      * Adds an insert operation to the batch
      *
+     * The document's "_id" will be returned (either from the provided document
+     * or a generated value from the driver).
+     *
      * @param array|object $document Operation/document to add to insert
-     * @return self
+     * @return mixed Document identifier
      */
     function insert($document) {
         /*** CEF ***/
@@ -48,7 +51,6 @@ class WriteBatch implements Countable
      * @param array|object $query         Update criteria
      * @param array|object $newObj        Update modifier or replacement document
      * @param array        $updateOptions Update options (e.g. "upsert")
-     * @return self
      */
     function update($query, $newObj, array $updateOptions = null)
     {
@@ -94,7 +96,6 @@ class WriteBatch implements Countable
      *
      * @param array|object $query         Deletion criteria
      * @param array        $deleteOptions Deletion options (e.g. "limit")
-     * @return self
      */
     function delete($query, array $deleteOptions = null)
     {
