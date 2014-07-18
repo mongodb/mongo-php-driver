@@ -122,35 +122,50 @@ if test "$PHONGO" != "no"; then
   PHONGO_BSON="\
       src/bson.c \
   ";
+  PHONGO_BSON_CLASSES="\
+    src/BSON/Binary.c \
+    src/BSON/DBRef.c \
+    src/BSON/Int32.c \
+    src/BSON/Int64.c \
+    src/BSON/Javascript.c \
+    src/BSON/Log.c \
+    src/BSON/MaxKey.c \
+    src/BSON/MinKey.c \
+    src/BSON/ObjectID.c \
+    src/BSON/Pool.c \
+    src/BSON/Regex.c \
+    src/BSON/Timestamp.c \
+    src/BSON/UTCDatetime.c \
+  ";
   PHONGO_ROOT="\
       php_phongo.c \
   ";
-  PHONGO_CLASSES="\
-      src/Command.c \
-      src/CommandResult.c \
-      src/Cursor.c \
-      src/CursorId.c \
-      src/GeneratedId.c \
-      src/Manager.c \
-      src/Query.c \
-      src/QueryResult.c \
-      src/ReadPreference.c \
-      src/Result.c \
-      src/Server.c \
-      src/WriteBatch.c \
-      src/WriteConcernError.c \
-      src/WriteError.c \
-      src/WriteResult.c \
+  PHONGO_MONGODB_CLASSES="\
+      src/MongoDB/Command.c \
+      src/MongoDB/CommandResult.c \
+      src/MongoDB/Cursor.c \
+      src/MongoDB/CursorId.c \
+      src/MongoDB/GeneratedId.c \
+      src/MongoDB/Manager.c \
+      src/MongoDB/Query.c \
+      src/MongoDB/QueryResult.c \
+      src/MongoDB/ReadPreference.c \
+      src/MongoDB/Result.c \
+      src/MongoDB/Server.c \
+      src/MongoDB/WriteBatch.c \
+      src/MongoDB/WriteConcernError.c \
+      src/MongoDB/WriteError.c \
+      src/MongoDB/WriteResult.c \
   ";
 
   if test "$ext_shared" = "no"; then
     PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_INTERFACES)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_CLASSES)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES)
   else
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON,               $EXTRA_CFLAGS, shared_objects_phongo, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_INTERFACES,         $EXTRA_CFLAGS, shared_objects_phongo, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_CLASSES,            $EXTRA_CFLAGS, shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES,       $EXTRA_CFLAGS, shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES,    $EXTRA_CFLAGS, shared_objects_phongo, yes)
   fi
   PHP_NEW_EXTENSION(phongo,    $PHONGO_ROOT, $ext_shared,, $EXTRA_CFLAGS)
   PHP_ADD_EXTENSION_DEP(phongo, spl)

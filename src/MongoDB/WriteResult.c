@@ -45,25 +45,6 @@
 PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 inline int writeresult_populate(php_phongo_writeresult_t *result, bson_t *document);
 
-/* {{{ proto GeneratedId[] WriteResult::getGeneratedIdsForInsert()
-   Returns the GeneratedIds for any inserted documents */
-PHP_METHOD(WriteResult, getGeneratedIdsForInsert)
-{
-	php_phongo_writeresult_t *intern;
-	zend_error_handling       error_handling;
-
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
-		return;
-	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-}
-/* }}} */
 /* {{{ proto GeneratedId[] WriteResult::getGeneratedIdsForUpsert()
    Returns the GeneratedIds for any upserted documents */
 PHP_METHOD(WriteResult, getGeneratedIdsForUpsert)
@@ -280,9 +261,6 @@ PHP_METHOD(WriteResult, getWriteErrors)
  */
 /* {{{ MongoDB\WriteResult */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getGeneratedIdsForInsert, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getGeneratedIdsForUpsert, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
@@ -315,7 +293,6 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_writeresult_me[] = {
-	PHP_ME(WriteResult, getGeneratedIdsForInsert, ai_WriteResult_getGeneratedIdsForInsert, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getGeneratedIdsForUpsert, ai_WriteResult_getGeneratedIdsForUpsert, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getNumInserted, ai_WriteResult_getNumInserted, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getNumMatched, ai_WriteResult_getNumMatched, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

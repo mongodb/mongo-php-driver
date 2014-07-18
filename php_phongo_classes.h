@@ -104,6 +104,46 @@ typedef struct {
 	int                      nUpserted;
 } php_phongo_writeresult_t;
 
+typedef struct {
+	zend_object              std;
+} php_phongo_binary_t;
+typedef struct {
+	zend_object              std;
+} php_phongo_dbref_t;
+typedef struct {
+	zend_object              std;
+} php_phongo_int32_t;
+typedef struct {
+	zend_object              std;
+} php_phongo_int64_t;
+typedef struct {
+	zend_object              std;
+} php_phongo_javascript_t;
+typedef struct {
+	zend_object              std;
+} php_phongo_log_t;
+typedef struct {
+	zend_object              std;
+} php_phongo_maxkey_t;
+typedef struct {
+	zend_object              std;
+} php_phongo_minkey_t;
+typedef struct {
+	zend_object              std;
+} php_phongo_objectid_t;
+typedef struct {
+	zend_object              std;
+} php_phongo_pool_t;
+typedef struct {
+	zend_object              std;
+} php_phongo_regex_t;
+typedef struct {
+	zend_object              std;
+} php_phongo_timestamp_t;
+typedef struct {
+	zend_object              std;
+} php_phongo_utcdatetime_t;
+
 extern PHONGO_API zend_class_entry *php_phongo_command_ce;
 extern PHONGO_API zend_class_entry *php_phongo_commandresult_ce;
 extern PHONGO_API zend_class_entry *php_phongo_cursor_ce;
@@ -120,6 +160,20 @@ extern PHONGO_API zend_class_entry *php_phongo_writeconcernerror_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
+extern PHONGO_API zend_class_entry *php_phongo_binary_ce;
+extern PHONGO_API zend_class_entry *php_phongo_dbref_ce;
+extern PHONGO_API zend_class_entry *php_phongo_int32_ce;
+extern PHONGO_API zend_class_entry *php_phongo_int64_ce;
+extern PHONGO_API zend_class_entry *php_phongo_javascript_ce;
+extern PHONGO_API zend_class_entry *php_phongo_log_ce;
+extern PHONGO_API zend_class_entry *php_phongo_maxkey_ce;
+extern PHONGO_API zend_class_entry *php_phongo_minkey_ce;
+extern PHONGO_API zend_class_entry *php_phongo_objectid_ce;
+extern PHONGO_API zend_class_entry *php_phongo_pool_ce;
+extern PHONGO_API zend_class_entry *php_phongo_regex_ce;
+extern PHONGO_API zend_class_entry *php_phongo_timestamp_ce;
+extern PHONGO_API zend_class_entry *php_phongo_utcdatetime_ce;
+
 PHP_MINIT_FUNCTION(Command);
 PHP_MINIT_FUNCTION(CommandResult);
 PHP_MINIT_FUNCTION(Cursor);
@@ -135,6 +189,21 @@ PHP_MINIT_FUNCTION(WriteBatch);
 PHP_MINIT_FUNCTION(WriteConcernError);
 PHP_MINIT_FUNCTION(WriteError);
 PHP_MINIT_FUNCTION(WriteResult);
+
+PHP_MINIT_FUNCTION(Binary);
+PHP_MINIT_FUNCTION(DBRef);
+PHP_MINIT_FUNCTION(Int32);
+PHP_MINIT_FUNCTION(Int64);
+PHP_MINIT_FUNCTION(Javascript);
+PHP_MINIT_FUNCTION(Log);
+PHP_MINIT_FUNCTION(MaxKey);
+PHP_MINIT_FUNCTION(MinKey);
+PHP_MINIT_FUNCTION(ObjectID);
+PHP_MINIT_FUNCTION(Pool);
+PHP_MINIT_FUNCTION(Regex);
+PHP_MINIT_FUNCTION(Timestamp);
+PHP_MINIT_FUNCTION(UTCDatetime);
+
 #endif /* PHONGO_H */
 
 

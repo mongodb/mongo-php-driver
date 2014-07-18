@@ -67,7 +67,7 @@ PHP_METHOD(WriteBatch, __construct)
 	intern->batch = phongo_writebatch_init(ordered);
 }
 /* }}} */
-/* {{{ proto self WriteBatch::insert(array|object $document)
+/* {{{ proto mixed WriteBatch::insert(array|object $document)
    Adds an insert operation to the batch */
 PHP_METHOD(WriteBatch, insert)
 {
@@ -93,7 +93,7 @@ PHP_METHOD(WriteBatch, insert)
 	bson_destroy(bson);
 }
 /* }}} */
-/* {{{ proto self WriteBatch::update(array|object $query, array|object $newObj[, array $updateOptions = array()])
+/* {{{ proto void WriteBatch::update(array|object $query, array|object $newObj[, array $updateOptions = array()])
    Adds an update operation to batch */
 PHP_METHOD(WriteBatch, update)
 {
@@ -139,7 +139,7 @@ PHP_METHOD(WriteBatch, update)
 	bson_destroy(bupdate);
 }
 /* }}} */
-/* {{{ proto self WriteBatch::delete(array|object $query[, array $deleteOptions = array()])
+/* {{{ proto void WriteBatch::delete(array|object $query[, array $deleteOptions = array()])
    Adds a delete operation to the batch */
 PHP_METHOD(WriteBatch, delete)
 {

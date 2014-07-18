@@ -1,6 +1,14 @@
 <?php
 
 namespace MongoDB;
+define("FLAG_NONE", "MONGOC_QUERY_NONE");
+define("FLAG_TAILABLE_CURSOR", MONGOC_QUERY_TAILABLE_CURSOR);
+define("FLAG_SLAVE_OK", MONGOC_QUERY_SLAVE_OK);
+define("FLAG_OPLOG_REPLAY", MONGOC_QUERY_OPLOG_REPLAY);
+define("FLAG_NO_CURSOR_TIMEOUT", MONGOC_QUERY_NO_CURSOR_TIMEOUT);
+define("FLAG_AWAIT_DATA", MONGOC_QUERY_AWAIT_DATA);
+define("FLAG_EXHAUST", MONGOC_QUERY_EXHAUST);
+define("FLAG_PARTIAL", MONGOC_QUERY_PARTIAL);
 
 /**
  * Value object corresponding to a wire protocol OP_QUERY message.
@@ -13,14 +21,14 @@ namespace MongoDB;
 final class Query
 {
     // See: http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
-    const FLAG_NONE              = 0x00;
-    const FLAG_TAILABLE_CURSOR   = 0x01;
-    const FLAG_SLAVE_OK          = 0x02;
-    const FLAG_OPLOG_REPLAY      = 0x04;
-    const FLAG_NO_CURSOR_TIMEOUT = 0x08;
-    const FLAG_AWAIT_DATA        = 0x10;
-    const FLAG_EXHAUST           = 0x20;
-    const FLAG_PARTIAL           = 0x40;
+    const FLAG_NONE              = FLAG_NONE;
+    const FLAG_TAILABLE_CURSOR   = FLAG_TAILABLE_CURSOR;
+    const FLAG_SLAVE_OK          = FLAG_SLAVE_OK;
+    const FLAG_OPLOG_REPLAY      = FLAG_OPLOG_REPLAY;
+    const FLAG_NO_CURSOR_TIMEOUT = FLAG_NO_CURSOR_TIMEOUT;
+    const FLAG_AWAIT_DATA        = FLAG_AWAIT_DATA;
+    const FLAG_EXHAUST           = FLAG_EXHAUST;
+    const FLAG_PARTIAL           = FLAG_PARTIAL;
 
     private $query;
     private $selector;
