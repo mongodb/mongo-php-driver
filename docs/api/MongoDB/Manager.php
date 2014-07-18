@@ -45,23 +45,6 @@ final class Manager
     }
 
     /**
-     * Creates new Manager from a list of servers
-     *
-     * @param Server[] $servers
-     * @return Manager
-     */
-    static public function createFromServers(array $servers)
-    {
-        /* Instantiate a new Manager instance with the provided Servers
-         *
-         * Should this method take $driverOptions as a second parameter? The
-         * Servers would already be constructed, so stream context options
-         * would not apply; however, we may want to take other options, such as
-         * event callbacks, down the line.
-         */
-    }
-
-    /**
      * Execute a command
      *
      * @param string         $db
@@ -285,6 +268,13 @@ final class Manager
 */
         /*** CIMPL ***/
     }
+
+    /**
+     * Returns the Servers associated with this Manager
+     *
+     * @return Server[]
+     */
+    public function getServers() {}
 }
 $Manager["free"] = <<< EOF
 	mongoc_client_destroy(intern->client);
