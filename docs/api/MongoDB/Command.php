@@ -24,7 +24,7 @@ final class Command
         /*** CEF ***/
         /*** CIMPL ***/
 /*
-	php_phongo_bson_encode_array(bson, document TSRMLS_CC);
+	zval_to_bson(document, PHONGO_BSON_NONE, bson TSRMLS_CC);
 	intern->bson = bson;
 */
         /*** CIMPL ***/

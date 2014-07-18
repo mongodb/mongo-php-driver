@@ -537,11 +537,11 @@ php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC) /* {{{ */
 php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit TSRMLS_DC) /* {{{ */
 {
 	query->bson = bson_new();
-	php_phongo_bson_encode_array(query->bson, zquery TSRMLS_CC);
+	zval_to_bson(zquery, PHONGO_BSON_NONE, query->bson TSRMLS_CC);
 
 	if (selector) {
 		query->selector = bson_new();
-		php_phongo_bson_encode_array(query->selector, selector TSRMLS_CC);
+		zval_to_bson(selector, PHONGO_BSON_NONE, query->selector TSRMLS_CC);
 	}
 	query->flags = flags;
 	query->skip = skip;

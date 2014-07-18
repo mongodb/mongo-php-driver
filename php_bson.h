@@ -29,9 +29,12 @@
 /* Our stuff */
 #include "php_phongo.h"
 
-PHONGO_API int php_phongo_is_array_or_document(zval **val TSRMLS_DC);
-PHONGO_API void php_phongo_bson_encode_array(bson_t *bson, zval *data TSRMLS_DC);
-PHONGO_API void php_phongo_bson_encode(bson_t *bson, const char *key, int key_len, zval *val TSRMLS_DC);
+typedef enum {
+	PHONGO_BSON_NONE   = 0x00,
+	PHONGO_BSON_ADD_ID = 0x01,
+} phongo_bson_flags_t;
+
+PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson TSRMLS_DC);
 PHONGO_API int bson_to_zval(const unsigned char *data, int data_len, zval *retval);
 
 PHP_FUNCTION(bson_encode);

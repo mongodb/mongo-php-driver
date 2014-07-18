@@ -88,7 +88,7 @@ PHP_METHOD(WriteBatch, insert)
 
 
 	bson = bson_new();
-	php_phongo_bson_encode_array(bson, document TSRMLS_CC);
+	zval_to_bson(document, PHONGO_BSON_NONE, bson TSRMLS_CC);
 	mongoc_bulk_operation_insert(intern->batch, bson);
 	bson_destroy(bson);
 }
@@ -121,8 +121,8 @@ PHP_METHOD(WriteBatch, update)
 	bquery = bson_new();
 	bupdate = bson_new();
 
-	php_phongo_bson_encode_array(bquery, query TSRMLS_CC);
-	php_phongo_bson_encode_array(bupdate, newObj TSRMLS_CC);
+	zval_to_bson(query, PHONGO_BSON_NONE, bquery TSRMLS_CC);
+	zval_to_bson(newObj, PHONGO_BSON_NONE, bupdate TSRMLS_CC);
 
 	if (updateOptions) {
 		limit = php_array_fetch_bool(updateOptions, "limit");
@@ -161,7 +161,7 @@ PHP_METHOD(WriteBatch, delete)
 
 
 	bson = bson_new();
-	php_phongo_bson_encode_array(bson, query TSRMLS_CC);
+	zval_to_bson(query, PHONGO_BSON_NONE, bson TSRMLS_CC);
 
 	if (deleteOptions && php_array_fetch_bool(deleteOptions, "limit")) {
 		mongoc_bulk_operation_remove_one(intern->batch, bson);

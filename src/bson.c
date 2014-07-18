@@ -122,14 +122,30 @@ bool php_phongo_bson_visit_undefined(const bson_iter_t *iter __attribute__((unus
 	return true;
 }
 /* }}} */
+#endif
 bool php_phongo_bson_visit_oid(const bson_iter_t *iter __attribute__((unused)), const char *key, const bson_oid_t *v_oid, void *data) /* {{{ */
 {
-	printf("Not Implemented\n");
+	zval *retval = *(zval **)data;
+	TSRMLS_FETCH();
+	zval *zchild;
+	char id[25];
 
-	return true;
+	MAKE_STD_ZVAL(zchild);
+	object_init(zchild);
+	bson_oid_to_string(v_oid, id);
+	add_property_stringl(zchild, key, id, 24, 1);
+
+	if (Z_TYPE_P(retval) == IS_ARRAY) {
+		add_assoc_zval(retval, key, zchild);
+	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
+		add_property_zval(retval, key, zchild);
+	} else {
+		return true;
+	}
+
+	return false;
 }
 /* }}} */
-#endif
 bool php_phongo_bson_visit_bool(const bson_iter_t *iter __attribute__((unused)), const char *key, bool v_bool, void *data) /* {{{ */
 {
 	zval *retval = *(zval **)data;
@@ -277,7 +293,7 @@ static const bson_visitor_t php_bson_visitors = {
    php_phongo_bson_visit_array,
    NULL /*php_phongo_bson_visit_binary*/,
    NULL /*php_phongo_bson_visit_undefined*/,
-   NULL /*php_phongo_bson_visit_oid*/,
+   php_phongo_bson_visit_oid,
    php_phongo_bson_visit_bool,
    NULL /*php_phongo_bson_visit_date_time*/,
    php_phongo_bson_visit_null,
@@ -346,7 +362,7 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused))
 }
 
 
-PHONGO_API int php_phongo_is_array_or_document(zval **val TSRMLS_DC) /* {{{ */
+int php_phongo_is_array_or_document(zval **val TSRMLS_DC) /* {{{ */
 {
 	HashTable *ht_data = HASH_OF(*val);
 	int        count;
@@ -358,10 +374,10 @@ PHONGO_API int php_phongo_is_array_or_document(zval **val TSRMLS_DC) /* {{{ */
 	count = ht_data ? zend_hash_num_elements(ht_data) : 0;
 	if (count > 0) {
 		char         *key;
-		uint          key_len;
-		ulong         index;
-		ulong         idx = 0;
-		int           hash_type;
+		unsigned int     key_len;
+		unsigned long         index = 0;
+		unsigned long         idx = 0;
+		int           hash_type = 0;
 		HashPosition  pos;
 
 		zend_hash_internal_pointer_reset_ex(ht_data, &pos);
@@ -387,122 +403,130 @@ PHONGO_API int php_phongo_is_array_or_document(zval **val TSRMLS_DC) /* {{{ */
 	return IS_ARRAY;
 }
 /* }}} */
-PHONGO_API void php_phongo_bson_encode_array(bson_t *bson, zval *data TSRMLS_DC) /* {{{ */
+void phongo_bson_append(bson_t *bson, const char *key, long key_len, int entry_type, zval *entry)
 {
-	HashTable *ht_data = HASH_OF(data);
-	int        count;
-
-	if (ht_data && ht_data->nApplyCount > 1) {
-		return;
-	}
-
-	count = ht_data ? zend_hash_num_elements(ht_data) : 0;
-
-	if (count > 0) {
-		char         *key;
-		uint          key_len;
-		ulong         index;
-		int           hash_type;
-		HashPosition  pos;
-		zval        **entry;
-
-		zend_hash_internal_pointer_reset_ex(ht_data, &pos);
-		for (;; zend_hash_move_forward_ex(ht_data, &pos)) {
-			hash_type = zend_hash_get_current_key_ex(ht_data, &key, &key_len, &index, 0, &pos);
-			if (hash_type == HASH_KEY_NON_EXISTENT) {
-				break;
-			}
-
-			if (zend_hash_get_current_data_ex(ht_data, (void **) &entry, &pos) == SUCCESS) {
-				HashTable *tmp_ht = HASH_OF(*entry);
-				if (tmp_ht) {
-					tmp_ht->nApplyCount++;
-				}
-
-				if (hash_type == HASH_KEY_IS_STRING) {
-					php_phongo_bson_encode(bson, key, key_len-1, *entry TSRMLS_CC);
-				} else {
-					const char *tmp_number;
-					int tmp_number_len;
-					char numbuf[32];
-
-					tmp_number_len = bson_uint32_to_string(index, &tmp_number, numbuf, sizeof numbuf);
-					php_phongo_bson_encode(bson, tmp_number, tmp_number_len, *entry TSRMLS_CC);
-				}
-
-				if (tmp_ht) {
-					tmp_ht->nApplyCount--;
-				}
-			}
-		}
-	}
-
-}
-
-/* }}} */
-PHONGO_API void php_phongo_bson_encode(bson_t *bson, const char *key, int key_len, zval *val TSRMLS_DC) /* {{{ */
-{
-	switch (Z_TYPE_P(val))
+	switch (entry_type)
 	{
 		case IS_NULL:
 			bson_append_null(bson, key, key_len);
 			break;
 
 		case IS_BOOL:
-			bson_append_bool(bson, key, key_len, Z_BVAL_P(val));
+			bson_append_bool(bson, key, key_len, Z_BVAL_P(entry));
 			break;
 
 		case IS_LONG:
-			BSON_APPEND_INT(bson, key, key_len, Z_LVAL_P(val));
+			BSON_APPEND_INT(bson, key, key_len, Z_LVAL_P(entry));
 			break;
 
 		case IS_DOUBLE:
-			bson_append_double(bson, key, key_len, Z_DVAL_P(val));
+			bson_append_double(bson, key, key_len, Z_DVAL_P(entry));
 			break;
 
 		case IS_STRING:
-			if (bson_utf8_validate(Z_STRVAL_P(val), Z_STRLEN_P(val), true)) {
-				bson_append_utf8(bson, key, key_len, Z_STRVAL_P(val), Z_STRLEN_P(val));
+			if (bson_utf8_validate(Z_STRVAL_P(entry), Z_STRLEN_P(entry), true)) {
+				bson_append_utf8(bson, key, key_len, Z_STRVAL_P(entry), Z_STRLEN_P(entry));
 			} else {
 				/* FIXME: Broken Broken Broken */
 				printf("BROKEN BROKEN BROKEN UTF8\n");
 			}
 			break;
 
-		case IS_OBJECT:
-			/*
-			if (instanceof_function(Z_OBJCE_P(val), php_bson_serializable_ce TSRMLS_CC)) {
-				bson_encode_serializable_object(buf, val, TSRMLS_CC);
+		case IS_ARRAY:
+			if (php_phongo_is_array_or_document(&entry TSRMLS_CC) == IS_ARRAY) {
+				bson_t     child;
+				HashTable *tmp_ht = HASH_OF(entry);
+
+				if (tmp_ht) {
+					tmp_ht->nApplyCount++;
+				}
+
+				bson_append_array_begin(bson, key, key_len, &child);
+				zval_to_bson(entry, PHONGO_BSON_NONE, &child TSRMLS_CC);
+				bson_append_array_end(bson, &child);
+
+				if (tmp_ht) {
+					tmp_ht->nApplyCount--;
+				}
 				break;
 			}
-			*/
-			/* fallthrough -- Non-serializable object */
+			/* break intentionally omitted */
+		case IS_OBJECT: {
+			bson_t child;
+
+			bson_append_document_begin(bson, key, key_len, &child);
+			zval_to_bson(entry, PHONGO_BSON_NONE, &child TSRMLS_CC);
+			bson_append_document_end(bson, &child);
+			} break;
+
+		default:
+			/* FIXME: Resource? */
+			printf("I DON'T SUPPORT THAT TYPE!\n");
+	}
+}
+
+PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson TSRMLS_DC) /* {{{ */
+{
+	HashPosition pos;
+	HashTable   *ht_data;
+
+	switch(Z_TYPE_P(data)) {
+		case IS_OBJECT:
 		case IS_ARRAY:
-			{
-				bson_t child;
-
-				switch(php_phongo_is_array_or_document(&val TSRMLS_CC)) {
-					case IS_OBJECT:
-						bson_append_document_begin(bson, key, key_len, &child);
-						php_phongo_bson_encode_array(&child, val TSRMLS_CC);
-						bson_append_document_end(bson, &child);
-						break;
-
-					case IS_ARRAY:
-						bson_append_array_begin(bson, key, key_len, &child);
-						php_phongo_bson_encode_array(&child, val TSRMLS_CC);
-						bson_append_array_end(bson, &child);
-						break;
-				}
-			}
+			ht_data = HASH_OF(data);
 			break;
 
 		default:
-			break;
+			return;
 	}
 
-	return;
+	if (ht_data && ht_data->nApplyCount > 1) {
+		return;
+	}
+
+	zend_hash_internal_pointer_reset_ex(ht_data, &pos);
+	for (;; zend_hash_move_forward_ex(ht_data, &pos)) {
+		unsigned int key_len = 0;
+		uint64_t     index = 0;
+		char        *key = NULL;
+		zval       **entry;
+		int          hash_type = HASH_KEY_NON_EXISTENT;
+
+		hash_type = zend_hash_get_current_key_ex(ht_data, &key, &key_len, &index, 0, &pos);
+
+		if (hash_type == HASH_KEY_NON_EXISTENT) {
+			break;
+		}
+
+		if (zend_hash_get_current_data_ex(ht_data, (void **) &entry, &pos) == FAILURE) {
+			break;
+		}
+
+		if (hash_type == HASH_KEY_IS_STRING) {
+			if (flags & PHONGO_BSON_ADD_ID) {
+				if (!strncmp(key, "_id", sizeof("_id")-1)) {
+					flags &= ~PHONGO_BSON_ADD_ID;
+				}
+			}
+			key_len -= 1;
+		} else {
+			char numbuf[32];
+
+			key_len = bson_uint32_to_string(index, (const char **)&key, numbuf, sizeof(numbuf));
+		}
+
+		phongo_bson_append(bson, key, key_len, Z_TYPE_PP(entry), *entry);
+
+	}
+
+	if (flags & PHONGO_BSON_ADD_ID) {
+		bson_oid_t oid;
+
+		bson_oid_init (&oid, NULL);
+		BSON_APPEND_OID (bson, "_id", &oid);
+	}
 }
+
 /* }}} */
 int bson_to_zval(const unsigned char *data, int data_len, zval *retval)
 {
@@ -558,7 +582,7 @@ PHP_FUNCTION(bson_encode)
 	switch(Z_TYPE_P(data)) {
 		case IS_OBJECT:
 		case IS_ARRAY:
-			php_phongo_bson_encode_array(bson, data TSRMLS_CC);
+			zval_to_bson(data, PHONGO_BSON_NONE, bson TSRMLS_CC);
 			break;
 
 		default:
