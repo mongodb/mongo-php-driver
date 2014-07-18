@@ -503,12 +503,21 @@ PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson
 		}
 
 		if (hash_type == HASH_KEY_IS_STRING) {
+			if (Z_TYPE_P(data) == IS_OBJECT) {
+				const char *class_name;
+
+				zend_unmangle_property_name(key, key_len-1, &class_name, (const char **)&key);
+				key_len = strlen(key);
+			} else {
+				/* Chop off the \0 from string lengths */
+				key_len -= 1;
+			}
+
 			if (flags & PHONGO_BSON_ADD_ID) {
 				if (!strncmp(key, "_id", sizeof("_id")-1)) {
 					flags &= ~PHONGO_BSON_ADD_ID;
 				}
 			}
-			key_len -= 1;
 		} else {
 			char numbuf[32];
 
@@ -516,7 +525,6 @@ PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson
 		}
 
 		phongo_bson_append(bson, key, key_len, Z_TYPE_PP(entry), *entry);
-
 	}
 
 	if (flags & PHONGO_BSON_ADD_ID) {
