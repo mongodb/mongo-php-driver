@@ -13,4 +13,5 @@ include "api/MongoDB/WriteBatch.php";
 include "api/MongoDB/Cursor.php";
 include "api/MongoDB/Server.php";
 include "api/MongoDB/GeneratedId.php";
+include "api/MongoDB/WriteConcern.php";
 include "api/MongoDB/WriteResult.php";
