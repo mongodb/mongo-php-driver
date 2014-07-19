@@ -44,12 +44,39 @@
 
 PHONGO_API zend_class_entry *php_phongo_objectid_ce;
 
+/* {{{ proto void ObjectID::__toString()
+    */
+PHP_METHOD(ObjectID, __toString)
+{
+	php_phongo_objectid_t    *intern;
+	zend_error_handling       error_handling;
+	char         id[25];
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_objectid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	bson_oid_to_string(intern->oid, id);
+	RETURN_STRINGL(id, 24, 1);
+}
+/* }}} */
 
 
 /* {{{ BSON\ObjectID */
 
+ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID___toString, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
 
 static zend_function_entry php_phongo_objectid_me[] = {
+	PHP_ME(ObjectID, __toString, ai_ObjectID___toString, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
@@ -74,7 +101,6 @@ zend_object_value php_phongo_objectid_create_object(zend_class_entry *class_type
 	intern = (php_phongo_objectid_t *)emalloc(sizeof(php_phongo_objectid_t));
 	memset(intern, 0, sizeof(php_phongo_objectid_t));
 
-	intern->oid = NULL;
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 

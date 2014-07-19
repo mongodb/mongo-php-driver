@@ -1,7 +1,21 @@
 <?php
 namespace BSON {
 
-    class ObjectID {}
+    class ObjectID {
+        function __toString() {
+        /*** CEF ***/
+/*
+	char         id[25];
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+	bson_oid_to_string(intern->oid, id);
+	RETURN_STRINGL(id, 24, 1);
+*/
+        /*** CIMPL ***/
+        }
+    }
     class Binary {
         const TYPE_GENERIC      = 0x00;
         const TYPE_FUNCTION     = 0x01;
@@ -30,5 +44,3 @@ namespace BSON {
     function decode($bson) {}
     function toJSON($bson, $extendedJSON = false) {}
 }
-
-
