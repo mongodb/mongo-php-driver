@@ -150,9 +150,9 @@ if test "$PHONGO" != "no"; then
       src/MongoDB/Query.c \
       src/MongoDB/QueryResult.c \
       src/MongoDB/ReadPreference.c \
-      src/MongoDB/Result.c \
       src/MongoDB/Server.c \
       src/MongoDB/WriteBatch.c \
+      src/MongoDB/WriteConcern.c \
       src/MongoDB/WriteConcernError.c \
       src/MongoDB/WriteError.c \
       src/MongoDB/WriteResult.c \

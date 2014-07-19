@@ -88,6 +88,10 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
+} php_phongo_writeconcern_t;
+
+typedef struct {
+	zend_object              std;
 } php_phongo_writeconcernerror_t;
 
 typedef struct {
@@ -153,9 +157,9 @@ extern PHONGO_API zend_class_entry *php_phongo_manager_ce;
 extern PHONGO_API zend_class_entry *php_phongo_query_ce;
 extern PHONGO_API zend_class_entry *php_phongo_queryresult_ce;
 extern PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
-extern PHONGO_API zend_class_entry *php_phongo_result_ce;
 extern PHONGO_API zend_class_entry *php_phongo_server_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writebatch_ce;
+extern PHONGO_API zend_class_entry *php_phongo_writeconcern_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeconcernerror_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
@@ -183,9 +187,9 @@ PHP_MINIT_FUNCTION(Manager);
 PHP_MINIT_FUNCTION(Query);
 PHP_MINIT_FUNCTION(QueryResult);
 PHP_MINIT_FUNCTION(ReadPreference);
-PHP_MINIT_FUNCTION(Result);
 PHP_MINIT_FUNCTION(Server);
 PHP_MINIT_FUNCTION(WriteBatch);
+PHP_MINIT_FUNCTION(WriteConcern);
 PHP_MINIT_FUNCTION(WriteConcernError);
 PHP_MINIT_FUNCTION(WriteError);
 PHP_MINIT_FUNCTION(WriteResult);
