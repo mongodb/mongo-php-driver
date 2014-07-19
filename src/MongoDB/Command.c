@@ -64,7 +64,7 @@ PHP_METHOD(Command, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	zval_to_bson(document, PHONGO_BSON_NONE, bson TSRMLS_CC);
+	zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 	intern->bson = bson;
 }
 /* }}} */

@@ -24,7 +24,7 @@ final class Command
         /*** CEF ***/
         /*** CIMPL ***/
 /*
-	zval_to_bson(document, PHONGO_BSON_NONE, bson TSRMLS_CC);
+	zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 	intern->bson = bson;
 */
         /*** CIMPL ***/

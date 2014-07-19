@@ -106,6 +106,7 @@ mongoc_read_prefs_t*     phongo_read_preference_from_zval(zval *object TSRMLS_DC
 php_phongo_query_t*      phongo_query_from_zval(zval *zquery TSRMLS_DC);
 
 
+void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid);
 
 PHP_MINIT_FUNCTION(bson);
 

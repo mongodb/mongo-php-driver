@@ -537,17 +537,27 @@ php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC) /* {{{ */
 php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit TSRMLS_DC) /* {{{ */
 {
 	query->bson = bson_new();
-	zval_to_bson(zquery, PHONGO_BSON_NONE, query->bson TSRMLS_CC);
+	zval_to_bson(zquery, PHONGO_BSON_NONE, query->bson, NULL TSRMLS_CC);
 
 	if (selector) {
 		query->selector = bson_new();
-		zval_to_bson(selector, PHONGO_BSON_NONE, query->selector TSRMLS_CC);
+		zval_to_bson(selector, PHONGO_BSON_NONE, query->selector, NULL TSRMLS_CC);
 	}
 	query->flags = flags;
 	query->skip = skip;
 	query->limit = limit;
 
 	return query;
+} /* }}} */
+
+void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid) /* {{{ */
+{
+	php_phongo_objectid_t     *intern;
+
+	object_init_ex(object, php_phongo_objectid_ce);
+
+	intern = (php_phongo_objectid_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern->oid = oid;
 } /* }}} */
 
 /* {{{ Iterator */

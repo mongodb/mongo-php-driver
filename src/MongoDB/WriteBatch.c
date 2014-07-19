@@ -75,6 +75,8 @@ PHP_METHOD(WriteBatch, insert)
 	zend_error_handling       error_handling;
 	zval                     *document;
 	bson_t                   *bson;
+	bson_t                   *bson_out = NULL;
+	int                       bson_flags = PHONGO_BSON_ADD_ID;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -87,10 +89,24 @@ PHP_METHOD(WriteBatch, insert)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
+	if (return_value_used) {
+		bson_flags |= PHONGO_BSON_RETURN_ID;
+	}
+
 	bson = bson_new();
-	zval_to_bson(document, PHONGO_BSON_NONE, bson TSRMLS_CC);
+	zval_to_bson(document, bson_flags, bson, &bson_out TSRMLS_CC);
 	mongoc_bulk_operation_insert(intern->batch, bson);
 	bson_destroy(bson);
+
+	if (bson_out) {
+		bson_iter_t iter;
+
+		if (bson_iter_init_find(&iter, bson_out, "_id")) {
+			php_phongo_objectid_new_from_oid(return_value, bson_iter_oid(&iter));
+			return;
+		}
+	}
+	RETURN_ZVAL(getThis(), 1, 0);
 }
 /* }}} */
 /* {{{ proto void WriteBatch::update(array|object $query, array|object $newObj[, array $updateOptions = array()])
@@ -121,8 +137,8 @@ PHP_METHOD(WriteBatch, update)
 	bquery = bson_new();
 	bupdate = bson_new();
 
-	zval_to_bson(query, PHONGO_BSON_NONE, bquery TSRMLS_CC);
-	zval_to_bson(newObj, PHONGO_BSON_NONE, bupdate TSRMLS_CC);
+	zval_to_bson(query, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
+	zval_to_bson(newObj, PHONGO_BSON_NONE, bupdate, NULL TSRMLS_CC);
 
 	if (updateOptions) {
 		limit = php_array_fetch_bool(updateOptions, "limit");
@@ -161,7 +177,7 @@ PHP_METHOD(WriteBatch, delete)
 
 
 	bson = bson_new();
-	zval_to_bson(query, PHONGO_BSON_NONE, bson TSRMLS_CC);
+	zval_to_bson(query, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 
 	if (deleteOptions && php_array_fetch_bool(deleteOptions, "limit")) {
 		mongoc_bulk_operation_remove_one(intern->batch, bson);

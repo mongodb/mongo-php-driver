@@ -32,9 +32,10 @@
 typedef enum {
 	PHONGO_BSON_NONE   = 0x00,
 	PHONGO_BSON_ADD_ID = 0x01,
+	PHONGO_BSON_RETURN_ID = 0x02,
 } phongo_bson_flags_t;
 
-PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson TSRMLS_DC);
+PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
 PHONGO_API int bson_to_zval(const unsigned char *data, int data_len, zval *retval);
 
 PHP_FUNCTION(bson_encode);

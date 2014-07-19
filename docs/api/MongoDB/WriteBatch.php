@@ -33,14 +33,30 @@ class WriteBatch implements Countable
         /*** CEF ***/
 /*
 	bson_t                   *bson;
+	bson_t                   *bson_out = NULL;
+	int                       bson_flags = PHONGO_BSON_ADD_ID;
 */
         /*** CEF ***/
         /*** CIMPL ***/
 /*
+	if (return_value_used) {
+		bson_flags |= PHONGO_BSON_RETURN_ID;
+	}
+
 	bson = bson_new();
-	zval_to_bson(document, PHONGO_BSON_NONE, bson TSRMLS_CC);
+	zval_to_bson(document, bson_flags, bson, &bson_out TSRMLS_CC);
 	mongoc_bulk_operation_insert(intern->batch, bson);
 	bson_destroy(bson);
+
+	if (bson_out) {
+		bson_iter_t iter;
+
+		if (bson_iter_init_find(&iter, bson_out, "_id")) {
+			php_phongo_objectid_new_from_oid(return_value, bson_iter_oid(&iter));
+			return;
+		}
+	}
+	RETURN_ZVAL(getThis(), 1, 0);
 */
         /*** CIMPL ***/
     }
@@ -71,8 +87,8 @@ class WriteBatch implements Countable
 	bquery = bson_new();
 	bupdate = bson_new();
 
-	zval_to_bson(query, PHONGO_BSON_NONE, bquery TSRMLS_CC);
-	zval_to_bson(newObj, PHONGO_BSON_NONE, bupdate TSRMLS_CC);
+	zval_to_bson(query, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
+	zval_to_bson(newObj, PHONGO_BSON_NONE, bupdate, NULL TSRMLS_CC);
 
 	if (updateOptions) {
 		limit = php_array_fetch_bool(updateOptions, "limit");
@@ -117,7 +133,7 @@ class WriteBatch implements Countable
         /*** CIMPL ***/
 /*
 	bson = bson_new();
-	zval_to_bson(query, PHONGO_BSON_NONE, bson TSRMLS_CC);
+	zval_to_bson(query, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 
 	if (deleteOptions && php_array_fetch_bool(deleteOptions, "limit")) {
 		mongoc_bulk_operation_remove_one(intern->batch, bson);

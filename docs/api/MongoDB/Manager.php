@@ -166,7 +166,7 @@ final class Manager
         /*** CIMPL ***/
 /*
 	bson = bson_new();
-	zval_to_bson(document, PHONGO_BSON_NONE, bson TSRMLS_CC);
+	zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 	phongo_execute_single_insert(intern->client, namespace, bson, return_value, return_value_used TSRMLS_CC);
 	bson_destroy(bson);
 */
@@ -206,8 +206,8 @@ final class Manager
 /*
 	query = bson_new();
 	update = bson_new();
-	zval_to_bson(zquery, PHONGO_BSON_NONE, query TSRMLS_CC);
-	zval_to_bson(newObj, PHONGO_BSON_NONE, update TSRMLS_CC);
+	zval_to_bson(zquery, PHONGO_BSON_NONE, query, NULL TSRMLS_CC);
+	zval_to_bson(newObj, PHONGO_BSON_NONE, update, NULL TSRMLS_CC);
 
 	if (updateOptions && php_array_fetch_bool(updateOptions, "upsert")) {
 		flags |= MONGOC_UPDATE_UPSERT;
@@ -262,7 +262,7 @@ final class Manager
 		flags |= MONGOC_DELETE_SINGLE_REMOVE;
 	}
 	bson = bson_new();
-	zval_to_bson(query, PHONGO_BSON_NONE, bson TSRMLS_CC);
+	zval_to_bson(query, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 	phongo_execute_single_delete(intern->client, namespace, bson, flags, return_value, return_value_used TSRMLS_CC);
 	bson_destroy(bson);
 */
