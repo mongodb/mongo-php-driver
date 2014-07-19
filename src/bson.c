@@ -123,7 +123,7 @@ bool php_phongo_bson_visit_undefined(const bson_iter_t *iter __attribute__((unus
 }
 /* }}} */
 #endif
-const bson_oid_t *php_phongo_objectid_get_id(zval *object)
+const bson_oid_t *php_phongo_objectid_get_id(zval *object TSRMLS_DC)
 {
 	php_phongo_objectid_t     *intern;
 
@@ -139,7 +139,7 @@ bool php_phongo_bson_visit_oid(const bson_iter_t *iter __attribute__((unused)), 
 	zval *zchild;
 
 	MAKE_STD_ZVAL(zchild);
-	php_phongo_objectid_new_from_oid(zchild, v_oid);
+	php_phongo_objectid_new_from_oid(zchild, v_oid TSRMLS_CC);
 
 	if (Z_TYPE_P(retval) == IS_ARRAY) {
 		add_assoc_zval(retval, key, zchild);
@@ -418,7 +418,7 @@ void object_to_bson(zval *object, bson_t *bson TSRMLS_DC)
 		return zval_to_bson(object, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 	}
 	if (instanceof_function(Z_OBJCE_P(object), php_phongo_objectid_ce TSRMLS_CC)) {
-		bson_append_oid(bson, "_id", strlen("_id"), php_phongo_objectid_get_id(object));
+		bson_append_oid(bson, "_id", strlen("_id"), php_phongo_objectid_get_id(object TSRMLS_CC));
 		return;
 	}
 }

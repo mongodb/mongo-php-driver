@@ -52,7 +52,7 @@ class WriteBatch implements Countable
 		bson_iter_t iter;
 
 		if (bson_iter_init_find(&iter, bson_out, "_id")) {
-			php_phongo_objectid_new_from_oid(return_value, bson_iter_oid(&iter));
+			php_phongo_objectid_new_from_oid(return_value, bson_iter_oid(&iter) TSRMLS_CC);
 			return;
 		}
 	}

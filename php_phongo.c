@@ -550,7 +550,7 @@ php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *zquery, z
 	return query;
 } /* }}} */
 
-void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid) /* {{{ */
+void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS_DC) /* {{{ */
 {
 	php_phongo_objectid_t     *intern;
 
