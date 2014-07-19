@@ -74,6 +74,7 @@ zend_object_value php_phongo_objectid_create_object(zend_class_entry *class_type
 	intern = (php_phongo_objectid_t *)emalloc(sizeof(php_phongo_objectid_t));
 	memset(intern, 0, sizeof(php_phongo_objectid_t));
 
+	intern->oid = NULL;
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 

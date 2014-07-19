@@ -134,6 +134,7 @@ typedef struct {
 } php_phongo_minkey_t;
 typedef struct {
 	zend_object              std;
+	const bson_oid_t        *oid;
 } php_phongo_objectid_t;
 typedef struct {
 	zend_object              std;
