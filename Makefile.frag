@@ -19,7 +19,7 @@ coverage: mv-coverage lcov-local
 
 
 coveralls: mv-coverage lcov-coveralls
-	coveralls --exclude lib --exclude tests --exclude src/php_array.h
+	coveralls --exclude lib --exclude tests --exclude src/MongoDB/php_array.h
 
 testclean:
 	@for group in generic standalone; do \
