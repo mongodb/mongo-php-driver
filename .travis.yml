@@ -21,9 +21,12 @@ before_install:
   - echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
   - sudo apt-get update
   - sudo apt-get install mongodb-org
+  - sudo apt-get install gdb valgrind
 
 before_script:
   - "./.travis.scripts/compile.sh"
+  - ulimit -a
+  - ulimit -c unlimited
 
 notifications:
   email:
@@ -31,9 +34,13 @@ notifications:
 
 script:
   - make test
+  - if [ -f output.txt ]; then (exit 1); fi
 
 after_success:
   - make coveralls
+
+after_failure:
+  - find . -name \*core\* -exec ./.travis.scripts/debug-core.sh {} \;
 
 addons:
   coverity_scan:
