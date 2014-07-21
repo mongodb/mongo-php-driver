@@ -73,10 +73,11 @@ PHP_METHOD(ReadPreference, __construct)
 			intern->read_preference = mongoc_read_prefs_new(readPreference);
 
 			if (tagSets) {
-				const bson_t tags;
+				const bson_t *tags = bson_new();
 
-				zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)&tags, NULL TSRMLS_CC);
-				mongoc_read_prefs_set_tags(intern->read_preference, &tags);
+				zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
+				mongoc_read_prefs_set_tags(intern->read_preference, tags);
+				bson_destroy(tags);
 				if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
 					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid tagSet" TSRMLS_CC);
 					return;
