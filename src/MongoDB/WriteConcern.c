@@ -45,7 +45,7 @@
 PHONGO_API zend_class_entry *php_phongo_writeconcern_ce;
 
 /* {{{ proto MongoDB\WriteConcern WriteConcern::__construct(integer|string $w[, integer $wtimeout[, array $options = array()]])
-   Constructs a new ReadPreference */
+   Constructs a new WriteConcern */
 PHP_METHOD(WriteConcern, __construct)
 {
 	php_phongo_writeconcern_t *intern;
