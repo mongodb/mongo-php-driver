@@ -28,18 +28,20 @@ missing
 mkinstalldirs
 modules
 run-tests.php
-
 # phpt leftovers
 *.diff
 *.exp
 *.log
 *.out
 *.mem
-tests/*/*.php
-!tests/utils/*.php
-tests/*/*.sh
-
+*.php
+*.sh
 php.ini
 *.patch
 *.swp
 .*
+src/libmongoc/
+!tests/utils/*.php
+!docs
+!.travis.yml
+!.travis.scripts/*
