@@ -88,6 +88,7 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
+	mongoc_write_concern_t  *write_concern;
 } php_phongo_writeconcern_t;
 
 typedef struct {

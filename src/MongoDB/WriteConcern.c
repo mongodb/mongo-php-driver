@@ -44,26 +44,55 @@
 
 PHONGO_API zend_class_entry *php_phongo_writeconcern_ce;
 
-/* {{{ proto MongoDB\WriteConcern WriteConcern::__construct(integer|string $w[, integer $wtimeout[, array $options = array()]])
+/* {{{ proto MongoDB\WriteConcern WriteConcern::__construct(string $wstring[, integer $wtimeout[, boolean $journal[, boolean $fsync]]])
    Constructs a new WriteConcern */
 PHP_METHOD(WriteConcern, __construct)
 {
 	php_phongo_writeconcern_t *intern;
 	zend_error_handling       error_handling;
-	zval                     *w;
+	char                     *wstring;
+	int                       wstring_len;
 	long                      wtimeout = 0;
-	zval                     *options = NULL;
+	zend_bool                 journal = 0;
+	zend_bool                 fsync = 0;
+	long                      w;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|la!", &w, &wtimeout, &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|lbb", &wstring, &wstring_len, &wtimeout, &journal, &fsync) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+
+	intern->write_concern = mongoc_write_concern_new();
+
+	if (IS_LONG == is_numeric_string(wstring, wstring_len, &w, NULL, 0)) {
+		// Majority is a integer(-3) constant
+		mongoc_write_concern_set_w(intern->write_concern, w);
+	} else {
+		mongoc_write_concern_set_wtag(intern->write_concern, wstring);
+	}
+
+	switch(ZEND_NUM_ARGS()) {
+		case 4:
+			if (fsync) {
+				mongoc_write_concern_set_fsync(intern->write_concern, true);
+			}
+			// fallthrough
+		case 3:
+			if (journal) {
+				mongoc_write_concern_set_journal(intern->write_concern, true);
+			}
+			// fallthrough
+		case 2:
+			if (wtimeout > 0) {
+				mongoc_write_concern_set_wtimeout(intern->write_concern, wtimeout);
+			}
+	}
 }
 /* }}} */
 
@@ -73,9 +102,10 @@ PHP_METHOD(WriteConcern, __construct)
 /* {{{ MongoDB\WriteConcern */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, w)
+	ZEND_ARG_INFO(0, wstring)
 	ZEND_ARG_INFO(0, wtimeout)
-	ZEND_ARG_ARRAY_INFO(0, options, 1)
+	ZEND_ARG_INFO(0, journal)
+	ZEND_ARG_INFO(0, fsync)
 ZEND_END_ARG_INFO();
 
 
@@ -126,6 +156,7 @@ PHP_MINIT_FUNCTION(WriteConcern)
 	php_phongo_writeconcern_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeconcern_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
+	zend_declare_class_constant_long(php_phongo_writeconcern_ce, ZEND_STRL("MAJORITY"), MONGOC_WRITE_CONCERN_W_MAJORITY TSRMLS_CC);
 
 	return SUCCESS;
 }
