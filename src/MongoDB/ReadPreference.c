@@ -44,26 +44,49 @@
 
 PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
 
-/* {{{ proto MongoDB\ReadPreference ReadPreference::__construct(string $readPreference[, array $tagSets = array()])
+/* {{{ proto MongoDB\ReadPreference ReadPreference::__construct(integer $readPreference[, array $tagSets = array()])
    Constructs a new ReadPreference */
 PHP_METHOD(ReadPreference, __construct)
 {
 	php_phongo_readpreference_t *intern;
 	zend_error_handling       error_handling;
-	char                     *readPreference;
-	int                       readPreference_len;
+	long                      readPreference;
 	zval                     *tagSets = NULL;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_readpreference_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &readPreference, &readPreference_len, &tagSets) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|a!", &readPreference, &tagSets) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+
+	switch(readPreference) {
+		case MONGOC_READ_PRIMARY:
+		case MONGOC_READ_SECONDARY:
+		case MONGOC_READ_PRIMARY_PREFERRED:
+		case MONGOC_READ_SECONDARY_PREFERRED:
+		case MONGOC_READ_NEAREST:
+			intern->read_preference = mongoc_read_prefs_new(readPreference);
+
+			if (tagSets) {
+				const bson_t tags;
+
+				zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)&tags, NULL TSRMLS_CC);
+				mongoc_read_prefs_set_tags(intern->read_preference, &tags);
+				if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid tagSet");
+					return;
+				}
+			}
+			break;
+		default:
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid ReadPreference");
+			return;
+	}
 }
 /* }}} */
 

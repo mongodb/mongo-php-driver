@@ -12,7 +12,7 @@ final class WriteConcern
     private $options;
 
     /**
-     * Constructs a new ReadPreference
+     * Constructs a new WriteConcern
      *
      * @see http://docs.mongodb.org/manual/reference/write-concern/
      * @param integer|string $w        Number of required acknowledgements or a tag set
