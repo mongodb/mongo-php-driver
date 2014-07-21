@@ -22,6 +22,7 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install mongodb-org
   - sudo apt-get install gdb valgrind
+  - sudo apt-get install cdbs debhelper build-essential python-lxml
 
 before_script:
   - "./.travis.scripts/compile.sh"

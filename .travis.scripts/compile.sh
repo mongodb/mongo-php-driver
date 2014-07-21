@@ -6,12 +6,31 @@ abort_on_failure () {
 	exit 42;
 }
 
+build_libmongoc_mci() {
+	if [ ! -d tmp ]; then
+		mkdir tmp
+	fi
+
+	pushd tmp
+
+		git clone https://github.com/mongodb/mongo-c-driver.git
+
+		pushd mongo-c-driver
+			./build/mci.sh  --notest
+		popd
+
+		sudo dpkg -i *.deb
+
+	popd
+}
+
+build_libmongoc_manually() {
+
 MONGOC_VERSION=master
 LIBBSON_VERSION=master
 LCOV_VERSION=1.11
 
 
-sudo apt-get install gdb valgrind
 mkdir tmp-lcov
 pushd tmp-lcov
 	wget -O lcov.tar.gz http://downloads.sourceforge.net/ltp/lcov-${LCOV_VERSION}.tar.gz
@@ -53,8 +72,11 @@ pushd src
 
 	popd # libmongoc
 popd # src
+}
 
 
+
+build_libmongoc_mci
 
 phpize
 ./configure --enable-coverage
@@ -64,7 +86,7 @@ sudo make install
 
 
 
-rm -rf tmp-lcov src/libmongoc # coveralls may pick it up and lie about our coverage
+rm -rf tmp-lcov tmp src/libmongoc # coveralls may pick it up and lie about our coverage
 
 echo "extension=phongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
