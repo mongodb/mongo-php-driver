@@ -47,13 +47,13 @@ final class ReadPreference
 				zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)&tags, NULL TSRMLS_CC);
 				mongoc_read_prefs_set_tags(intern->read_preference, &tags);
 				if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
-					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid tagSet");
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid tagSet" TSRMLS_CC);
 					return;
 				}
 			}
 			break;
 		default:
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid ReadPreference");
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid ReadPreference" TSRMLS_CC);
 			return;
 	}
 */
