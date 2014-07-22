@@ -35,7 +35,7 @@ notifications:
 
 script:
   - make test
-  - if [ -f output.txt ]; then (exit 1); fi
+  - if [ -s output.txt ]; then cat output.txt && (exit 1); fi
 
 after_success:
   - make coveralls
