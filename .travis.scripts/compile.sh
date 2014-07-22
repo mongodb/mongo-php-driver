@@ -82,7 +82,8 @@ phpize
 ./configure --enable-coverage
 make all
 sudo make install
-
+echo "Use the most-up-to-date run-tests.. old ones like 5.3 don't report failure exit codes"
+wget -O run-tests.php https://raw.githubusercontent.com/php/php-src/master/run-tests.php
 
 
 
