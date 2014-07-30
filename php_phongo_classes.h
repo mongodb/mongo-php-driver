@@ -166,6 +166,7 @@ extern PHONGO_API zend_class_entry *php_phongo_writeconcernerror_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
+extern PHONGO_API zend_class_entry *php_phongo_type_ce;
 extern PHONGO_API zend_class_entry *php_phongo_binary_ce;
 extern PHONGO_API zend_class_entry *php_phongo_dbref_ce;
 extern PHONGO_API zend_class_entry *php_phongo_int32_ce;
@@ -196,6 +197,7 @@ PHP_MINIT_FUNCTION(WriteConcernError);
 PHP_MINIT_FUNCTION(WriteError);
 PHP_MINIT_FUNCTION(WriteResult);
 
+PHP_MINIT_FUNCTION(Type);
 PHP_MINIT_FUNCTION(Binary);
 PHP_MINIT_FUNCTION(DBRef);
 PHP_MINIT_FUNCTION(Int32);

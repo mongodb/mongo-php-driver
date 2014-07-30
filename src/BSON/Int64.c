@@ -94,6 +94,8 @@ PHP_MINIT_FUNCTION(Int64)
 	ce.create_object = php_phongo_int64_create_object;
 	php_phongo_int64_ce = zend_register_internal_class(&ce TSRMLS_CC);
 
+	zend_class_implements(php_phongo_int64_ce TSRMLS_CC, 1, php_phongo_type_ce);
+
 
 	return SUCCESS;
 }

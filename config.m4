@@ -123,6 +123,7 @@ if test "$PHONGO" != "no"; then
       src/bson.c \
   ";
   PHONGO_BSON_CLASSES="\
+    src/BSON/Type.c \
     src/BSON/Binary.c \
     src/BSON/DBRef.c \
     src/BSON/Int32.c \

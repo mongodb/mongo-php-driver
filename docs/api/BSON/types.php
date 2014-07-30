@@ -1,7 +1,8 @@
 <?php
 namespace BSON {
+    interface Type {}
 
-    class ObjectID {
+    class ObjectID implements Type {
         function __toString() {
         /*** CEF ***/
 /*
@@ -16,7 +17,7 @@ namespace BSON {
         /*** CIMPL ***/
         }
     }
-    class Binary {
+    class Binary implements Type {
         const TYPE_GENERIC      = 0x00;
         const TYPE_FUNCTION     = 0x01;
         const TYPE_OLD_BINARY   = 0x02;
@@ -27,17 +28,17 @@ namespace BSON {
 
         function getSubType() {}
     }
-    class Javascript {}
-    class Regex {}
-    class UTCDatetime {}
-    class DBRef {}
-    class Timestamp {}
-    class Int32 {}
-    class Int64 {}
-    class Log {}
-    class Pool {}
-    class MaxKey {}
-    class MinKey {}
+    class Javascript implements Type {}
+    class Regex implements Type {}
+    class UTCDatetime implements Type {}
+    class DBRef implements Type {}
+    class Timestamp implements Type {}
+    class Int32 implements Type {}
+    class Int64 implements Type {}
+    class Log implements Type {}
+    class Pool implements Type {}
+    class MaxKey implements Type {}
+    class MinKey implements Type {}
 
 
     function encode($arrayOrObject) {}

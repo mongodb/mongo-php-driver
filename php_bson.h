@@ -41,6 +41,7 @@ PHONGO_API int bson_to_zval(const unsigned char *data, int data_len, zval *retva
 PHP_FUNCTION(bson_encode);
 PHP_FUNCTION(bson_decode);
 PHP_FUNCTION(bson_to_json);
+PHP_FUNCTION(json_to_bson);
 
 #endif	/* PHONGO_BSON_H */
 

@@ -94,6 +94,8 @@ PHP_MINIT_FUNCTION(Regex)
 	ce.create_object = php_phongo_regex_create_object;
 	php_phongo_regex_ce = zend_register_internal_class(&ce TSRMLS_CC);
 
+	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, php_phongo_type_ce);
+
 
 	return SUCCESS;
 }

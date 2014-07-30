@@ -117,6 +117,8 @@ PHP_MINIT_FUNCTION(Binary)
 	ce.create_object = php_phongo_binary_create_object;
 	php_phongo_binary_ce = zend_register_internal_class(&ce TSRMLS_CC);
 
+	zend_class_implements(php_phongo_binary_ce TSRMLS_CC, 1, php_phongo_type_ce);
+
 	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_GENERIC"), 0x00 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_FUNCTION"), 0x01 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_OLD_BINARY"), 0x02 TSRMLS_CC);
