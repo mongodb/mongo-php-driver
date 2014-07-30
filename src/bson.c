@@ -409,17 +409,24 @@ int php_phongo_is_array_or_document(zval **val TSRMLS_DC) /* {{{ */
 	return IS_ARRAY;
 }
 /* }}} */
-void object_to_bson(zval *object, bson_t *bson TSRMLS_DC)
+void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TSRMLS_DC)
 {
-	if (Z_TYPE_P(object) != IS_OBJECT) {
-		return zval_to_bson(object, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
-	}
-	if (instanceof_function(Z_OBJCE_P(object), zend_standard_class_def TSRMLS_CC)) {
-		return zval_to_bson(object, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
-	}
-	if (instanceof_function(Z_OBJCE_P(object), php_phongo_objectid_ce TSRMLS_CC)) {
-		bson_append_oid(bson, "_id", strlen("_id"), php_phongo_objectid_get_id(object TSRMLS_CC));
+	bson_t child;
+
+	if (Z_TYPE_P(object) != IS_OBJECT || instanceof_function(Z_OBJCE_P(object), zend_standard_class_def TSRMLS_CC)) {
+		mongoc_log(MONGOC_LOG_LEVEL_TRACE, "PHONGO-BSON", "encoding as-if was stdclass");
+		bson_append_document_begin(bson, key, key_len, &child);
+		zval_to_bson(object, PHONGO_BSON_NONE, &child, NULL TSRMLS_CC);
+		bson_append_document_end(bson, &child);
 		return;
+	}
+
+	if (instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce TSRMLS_CC)) {
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_objectid_ce TSRMLS_CC)) {
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, "PHONGO-BSON", "encoding _id");
+			bson_append_oid(bson, key, key_len, php_phongo_objectid_get_id(object TSRMLS_CC));
+			return;
+		}
 	}
 }
 void phongo_bson_append(bson_t *bson, const char *key, long key_len, int entry_type, zval *entry TSRMLS_DC)
@@ -470,13 +477,9 @@ void phongo_bson_append(bson_t *bson, const char *key, long key_len, int entry_t
 				break;
 			}
 			/* break intentionally omitted */
-		case IS_OBJECT: {
-			bson_t child;
-
-			bson_append_document_begin(bson, key, key_len, &child);
-			object_to_bson(entry, &child TSRMLS_CC);
-			bson_append_document_end(bson, &child);
-			} break;
+		case IS_OBJECT:
+			object_to_bson(entry, key, key_len, bson TSRMLS_CC);
+			break;
 
 		default:
 			/* FIXME: Resource? */
