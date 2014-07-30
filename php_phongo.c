@@ -431,11 +431,41 @@ ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_
 ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, size_t min_bytes, int32_t timeout_msec) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
+	ssize_t ret = 0;
+	ssize_t read;
+	size_t cur = 0;
 	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
-	php_phongo_set_timeout(base_stream, timeout_msec);
+	do {
+		read = php_stream_read(base_stream->stream, iov[cur].iov_base, iov[cur].iov_len);
+		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, "PHONGO", "Reading got: %ld wanted: %ld", read, min_bytes);
 
-	return php_stream_read(base_stream->stream, iov->iov_base, iov->iov_len);
+		if (read <= 0) {
+			if (ret >= (ssize_t)min_bytes) {
+				break;
+			}
+			return -1;
+		}
+
+		ret += read;
+
+		while ((cur < iovcnt) && (read >= (ssize_t)iov[cur].iov_len)) {
+			read -= iov[cur++].iov_len;
+		}
+
+		if (cur == iovcnt) {
+			break;
+		}
+
+		if (ret >= (ssize_t)min_bytes) {
+			break;
+		}
+
+		iov[cur].iov_base = ((char *)iov[cur].iov_base) + read;
+		iov[cur].iov_len -= read;
+	} while(1);
+
+	return ret;
 } /* }}} */
 
 int phongo_stream_setsockopt(mongoc_stream_t *stream, int level, int optname, void *optval, socklen_t optlen) /* {{{ */
