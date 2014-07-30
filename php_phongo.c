@@ -51,6 +51,10 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
+
+#undef MONGOC_LOG_DOMAIN
+#define MONGOC_LOG_DOMAIN "PHONGO"
+
 ZEND_DECLARE_MODULE_GLOBALS(phongo)
 
 /* {{{ phongo_std_object_handlers */
@@ -74,7 +78,7 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 			return spl_ce_RuntimeException;
 	}
 
-	mongoc_log(MONGOC_LOG_LEVEL_ERROR, "PHONGO", "Resolving unknown exception domain!!!");
+	mongoc_log(MONGOC_LOG_LEVEL_ERROR, MONGOC_LOG_DOMAIN, "Resolving unknown exception domain!!!");
 	return spl_ce_RuntimeException;
 }
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code)
@@ -193,7 +197,7 @@ void phongo_log_writer(mongoc_stream_t *stream, int32_t timeout_msec, ssize_t se
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
 
-	mongoc_log(MONGOC_LOG_LEVEL_MESSAGE, "PHONGO", "Wrote %zd bytes to '%s:%d' in %zd iterations", sent, base_stream->host->host, base_stream->host->port, iovcnt);
+	mongoc_log(MONGOC_LOG_LEVEL_MESSAGE, MONGOC_LOG_DOMAIN, "Wrote %zd bytes to '%s:%d' in %zd iterations", sent, base_stream->host->host, base_stream->host->port, iovcnt);
 }
 /* }}} */
 
@@ -404,9 +408,9 @@ void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeo
 		rtimeout.tv_usec = (timeout_msec % 1000) * 1000;
 
 		php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &rtimeout);
-		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, "PHONGO", "Setting timeout to: %d", timeout_msec);
+		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Setting timeout to: %d", timeout_msec);
 	} else if (timeout_msec == 0) {
-		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, "PHONGO", "Setting timeout to 0");
+		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Setting timeout to 0");
 		php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, NULL);
 	}
 } /* }}} */
@@ -440,7 +444,7 @@ ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t
 
 	do {
 		read = php_stream_read(base_stream->stream, iov[cur].iov_base, iov[cur].iov_len);
-		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, "PHONGO", "Reading got: %ld wanted: %ld", read, min_bytes);
+		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Reading got: %ld wanted: %ld", read, min_bytes);
 
 		if (read <= 0) {
 			if (ret >= (ssize_t)min_bytes) {

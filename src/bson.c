@@ -46,6 +46,10 @@
 	bson_append_int32(b, key, keylen, val);
 #endif
 
+#undef MONGOC_LOG_DOMAIN
+#define MONGOC_LOG_DOMAIN "PHONGO-BSON"
+
+
 PHP_MINIT_FUNCTION(bson)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
@@ -414,7 +418,7 @@ void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TS
 	bson_t child;
 
 	if (Z_TYPE_P(object) != IS_OBJECT || instanceof_function(Z_OBJCE_P(object), zend_standard_class_def TSRMLS_CC)) {
-		mongoc_log(MONGOC_LOG_LEVEL_TRACE, "PHONGO-BSON", "encoding as-if was stdclass");
+		mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding as-if was stdclass");
 		bson_append_document_begin(bson, key, key_len, &child);
 		zval_to_bson(object, PHONGO_BSON_NONE, &child, NULL TSRMLS_CC);
 		bson_append_document_end(bson, &child);
@@ -423,7 +427,7 @@ void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TS
 
 	if (instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce TSRMLS_CC)) {
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_objectid_ce TSRMLS_CC)) {
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, "PHONGO-BSON", "encoding _id");
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding _id");
 			bson_append_oid(bson, key, key_len, php_phongo_objectid_get_id(object TSRMLS_CC));
 			return;
 		}
@@ -554,7 +558,7 @@ PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson
 
 		bson_oid_init(&oid, NULL);
 		bson_append_oid(bson, "_id", strlen("_id"), &oid);
-		mongoc_log(MONGOC_LOG_LEVEL_TRACE, "PHONGO-BSON", "Added new _id");
+		mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "Added new _id");
 		if (flags & PHONGO_BSON_RETURN_ID) {
 			if (bson_out) {
 				*bson_out = bson_new();
