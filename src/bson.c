@@ -555,6 +555,7 @@ PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson
 
 		bson_oid_init(&oid, NULL);
 		bson_append_oid(bson, "_id", strlen("_id"), &oid);
+		mongoc_log(MONGOC_LOG_LEVEL_TRACE, "PHONGO-BSON", "Added new _id");
 		if (flags & PHONGO_BSON_RETURN_ID) {
 			bson_append_oid(*bson_out, "_id", strlen("_id"), &oid);
 		}
@@ -630,7 +631,7 @@ PHP_FUNCTION(bson_encode)
 }
 /* }}} */
 
-/* {{{ proto string bson_decode(mixed data)
+/* {{{ proto string bson_decode(string data)
    Returns the PHP representation of a BSON value */
 PHP_FUNCTION(bson_decode)
 {
@@ -649,7 +650,7 @@ PHP_FUNCTION(bson_decode)
 }
 /* }}} */
 
-/* {{{ proto string bson_to_json(mixed data)
+/* {{{ proto string bson_to_json(string data)
    Returns the JSON representation of a BSON value */
 PHP_FUNCTION(bson_to_json)
 {

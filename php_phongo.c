@@ -404,7 +404,9 @@ void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeo
 		rtimeout.tv_usec = (timeout_msec % 1000) * 1000;
 
 		php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &rtimeout);
+		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, "PHONGO", "Setting timeout to: %d", timeout_msec);
 	} else if (timeout_msec == 0) {
+		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, "PHONGO", "Setting timeout to 0");
 		php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, NULL);
 	}
 } /* }}} */
