@@ -478,8 +478,8 @@ int phongo_stream_setsockopt(mongoc_stream_t *stream, int level, int optname, vo
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
 	int socket = ((php_netstream_data_t *)base_stream->stream->abstract)->socket;
-	int retval = setsockopt (socket, level, optname, optval, optlen);
-	return retval;
+
+	return setsockopt (socket, level, optname, optval, optlen);
 } /* }}} */
 
 mongoc_stream_t* phongo_stream_get_base_stream(mongoc_stream_t *stream) /* {{{ */
@@ -542,7 +542,10 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 	if (host->family != AF_UNIX) {
 		int flag = 1;
-		phongo_stream_setsockopt((mongoc_stream_t *)base_stream, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int));
+
+		if (phongo_stream_setsockopt((mongoc_stream_t *)base_stream, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int))) {
+			mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "setsockopt TCP_NODELAY failed");
+		}
 	}
 
 	return (mongoc_stream_t *) base_stream;
