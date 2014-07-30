@@ -506,10 +506,6 @@ PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson
 		return;
 	}
 
-	if (bson_out) {
-		*bson_out = bson_new();
-	}
-
 	zend_hash_internal_pointer_reset_ex(ht_data, &pos);
 	for (;; zend_hash_move_forward_ex(ht_data, &pos)) {
 		unsigned int key_len = 0;
@@ -560,7 +556,10 @@ PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson
 		bson_append_oid(bson, "_id", strlen("_id"), &oid);
 		mongoc_log(MONGOC_LOG_LEVEL_TRACE, "PHONGO-BSON", "Added new _id");
 		if (flags & PHONGO_BSON_RETURN_ID) {
-			bson_append_oid(*bson_out, "_id", strlen("_id"), &oid);
+			if (bson_out) {
+				*bson_out = bson_new();
+				bson_append_oid(*bson_out, "_id", strlen("_id"), &oid);
+			}
 		}
 	}
 }
