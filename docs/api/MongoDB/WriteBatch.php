@@ -48,7 +48,7 @@ class WriteBatch implements Countable
 	mongoc_bulk_operation_insert(intern->batch, bson);
 	bson_destroy(bson);
 
-	if (bson_out) {
+	if (bson_out && return_value_used) {
 		bson_iter_t iter;
 
 		if (bson_iter_init_find(&iter, bson_out, "_id")) {
@@ -56,7 +56,6 @@ class WriteBatch implements Countable
 			return;
 		}
 	}
-	RETURN_ZVAL(getThis(), 1, 0);
 */
         /*** CIMPL ***/
     }

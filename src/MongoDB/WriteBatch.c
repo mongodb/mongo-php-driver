@@ -98,7 +98,7 @@ PHP_METHOD(WriteBatch, insert)
 	mongoc_bulk_operation_insert(intern->batch, bson);
 	bson_destroy(bson);
 
-	if (bson_out) {
+	if (bson_out && return_value_used) {
 		bson_iter_t iter;
 
 		if (bson_iter_init_find(&iter, bson_out, "_id")) {
@@ -106,7 +106,6 @@ PHP_METHOD(WriteBatch, insert)
 			return;
 		}
 	}
-	RETURN_ZVAL(getThis(), 1, 0);
 }
 /* }}} */
 /* {{{ proto void WriteBatch::update(array|object $query, array|object $newObj[, array $updateOptions = array()])
