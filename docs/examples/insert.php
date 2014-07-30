@@ -12,7 +12,7 @@ $mm = new \MongoDB\Manager("mongodb://localhost:27017");
 $w = 1;
 $wtimeout = 1000;
 $writeConcern = new \MongoDB\WriteConcern($w, $wtimeout);
-$result = $mm->executeWrite("db.collection", $insertBatch, $writeConcern);
+$result = $mm->executeWriteBatch("db.collection", $insertBatch, $writeConcern);
 
 assert($result instanceof \MongoDB\WriteResult);
 

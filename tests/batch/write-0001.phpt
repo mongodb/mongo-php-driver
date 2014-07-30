@@ -18,7 +18,7 @@ $batch->delete(array("my" => "value", "foo" => "bar"), array("limit" => 1));
 
 $batch->update(array("foo" => "bar"), array('$set' => array("foo" => "baz")), array("limit" => 1, "upsert" => 0));
 
-$retval = $mc->executeWrite(NS, $batch);
+$retval = $mc->executeWriteBatch(NS, $batch);
 
 printf("Inserted: %d\n", getInsertCount($retval));
 printf("Deleted: %d\n", getRemovedCount($retval));

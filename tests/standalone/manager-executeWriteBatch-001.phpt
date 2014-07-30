@@ -1,12 +1,12 @@
 --TEST--
-MongoDB\Server::executeWrite()
+MongoDB\Manager::executeWriteBatch()
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-$server = new MongoDB\Server('localhost', 27017);
+$manager = new MongoDB\Manager(MONGODB_URI);
 
 $batch = new MongoDB\WriteBatch();
 $batch->insert(array('_id' => 1, 'x' => 1));
@@ -15,10 +15,15 @@ $batch->update(array('x' => 2), array('$set' => array('x' => 1)), array("limit" 
 $batch->update(array('_id' => 3), array('$set' => array('x' => 3)), array("limit" => 1, "upsert" => true));
 $batch->delete(array('x' => 1), array("limit" => 1));
 
-$result = $server->executeWrite(NS, $batch);
+$result = $manager->executeWriteBatch(NS, $batch);
 
 var_dump($result instanceof MongoDB\WriteResult);
-var_dump($server == $result->getServer());
+
+$server = $result->getServer();
+
+var_dump($server instanceof MongoDB\Server);
+var_dump($server->getHost());
+var_dump($server->getPort());
 
 printf("Inserted: %d\n", $result->getNumInserted());
 printf("Matched: %d\n", $result->getNumMatched());
@@ -29,7 +34,7 @@ printf("Write concern errors: %d\n", count($result->getWriteConcernErrors()));
 printf("Write errors: %d\n", count($result->getWriteErrors()));
 
 $query = new MongoDB\Query(array(), array(), null, 0, 0);
-$cursor = $server->executeQuery(NS, $query);
+$cursor = $manager->executeQuery(NS, $query);
 
 var_dump(iterator_to_array($cursor));
 
@@ -39,6 +44,8 @@ var_dump(iterator_to_array($cursor));
 --EXPECT--
 bool(true)
 bool(true)
+string(9) "localhost"
+int(27017)
 Inserted: 2
 Matched: 1
 Modified: 1

@@ -254,7 +254,7 @@ PHP_METHOD(WriteResult, getWriteErrors)
 /* }}} */
 
 /**
- * Result returned by Server and Manager executeWrite() methods.
+ * Result returned by Server and Manager executeWriteBatch() methods.
  *
  * This class may be constructed internally if it will encapsulate a libmongoc
  * data structure.

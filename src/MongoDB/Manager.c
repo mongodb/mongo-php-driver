@@ -129,9 +129,9 @@ PHP_METHOD(Manager, executeQuery)
 	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\WriteResult Manager::executeWrite(string $namespace, MongoDB\WriteBatch $zbatch[, MongoDB\WriteConcern $writeConcern = null])
+/* {{{ proto MongoDB\WriteResult Manager::executeWriteBatch(string $namespace, MongoDB\WriteBatch $zbatch[, MongoDB\WriteConcern $writeConcern = null])
    Executes a write operation batch (e.g. insert, update, delete) */
-PHP_METHOD(Manager, executeWrite)
+PHP_METHOD(Manager, executeWriteBatch)
 {
 	php_phongo_manager_t     *intern;
 	zend_error_handling       error_handling;
@@ -315,7 +315,7 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeQuery, 0, 0, 2)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\ReadPreference, 1)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeWrite, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeWriteBatch, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zbatch, MongoDB\\WriteBatch, 0)
 	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\WriteConcern, 1)
@@ -350,7 +350,7 @@ static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeWrite, ai_Manager_executeWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeWriteBatch, ai_Manager_executeWriteBatch, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeInsert, ai_Manager_executeInsert, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeUpdate, ai_Manager_executeUpdate, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeDelete, ai_Manager_executeDelete, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

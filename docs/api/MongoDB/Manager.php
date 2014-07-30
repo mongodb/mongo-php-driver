@@ -114,7 +114,7 @@ final class Manager
      * @param WriteConcern $writeConcern Write concern options (default: {"w": 1})
      * @return WriteResult
      */
-    public function executeWrite($namespace, WriteBatch $zbatch, WriteConcern $writeConcern = null)
+    public function executeWriteBatch($namespace, WriteBatch $zbatch, WriteConcern $writeConcern = null)
     {
         /* Select writeable server and invoke Server::executeQuery().
          *

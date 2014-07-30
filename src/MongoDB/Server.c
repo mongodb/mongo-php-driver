@@ -135,9 +135,9 @@ PHP_METHOD(Server, executeQuery)
 	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), NULL, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\WriteResult Server::executeWrite(string $namespace, MongoDB\WriteBatch $zbatch)
+/* {{{ proto MongoDB\WriteResult Server::executeWriteBatch(string $namespace, MongoDB\WriteBatch $zbatch)
    Executes a write operation batch (e.g. insert, update, delete) */
-PHP_METHOD(Server, executeWrite)
+PHP_METHOD(Server, executeWriteBatch)
 {
 	php_phongo_server_t      *intern;
 	zend_error_handling       error_handling;
@@ -352,7 +352,7 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeQuery, 0, 0, 2)
 	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Query, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeWrite, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeWriteBatch, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zbatch, MongoDB\\WriteBatch, 0)
 ZEND_END_ARG_INFO();
@@ -386,7 +386,7 @@ static zend_function_entry php_phongo_server_me[] = {
 	PHP_ME(Server, __construct, ai_Server___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeCommand, ai_Server_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, executeWrite, ai_Server_executeWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, executeWriteBatch, ai_Server_executeWriteBatch, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, getHost, ai_Server_getHost, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, getInfo, ai_Server_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, getLatency, ai_Server_getLatency, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

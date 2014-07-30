@@ -126,7 +126,7 @@ final class Server
      * @param WriteBatch $zbatch
      * @return WriteResult
      */
-    public function executeWrite($namespace, WriteBatch $zbatch)
+    public function executeWriteBatch($namespace, WriteBatch $zbatch)
     {
         /* Write options are not taken as an argument, since they are specified
          * during Batch construction.
