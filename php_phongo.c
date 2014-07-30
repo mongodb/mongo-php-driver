@@ -875,6 +875,7 @@ const zend_function_entry phongo_functions[] = {
 	PHP_FE(bson_encode,     NULL)
 	PHP_FE(bson_decode,     NULL)
 	PHP_FE(bson_to_json,    NULL)
+	PHP_FE(json_to_bson,    NULL)
 	PHP_FE_END
 };
 /* }}} */

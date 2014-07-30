@@ -680,6 +680,29 @@ PHP_FUNCTION(bson_to_json)
 }
 /* }}} */
 
+/* {{{ proto string json_to_bson(string data)
+   Returns the BSON representation of a JSON value */
+PHP_FUNCTION(json_to_bson)
+{
+	char          *data;
+	int            data_len;
+	bson_t         b = BSON_INITIALIZER;
+	bson_error_t   error;
+
+	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &data, &data_len) == FAILURE) {
+		return;
+	}
+
+	if (bson_init_from_json(&b, (const char *)data, data_len, &error)) {
+		RETVAL_STRINGL((const char *) bson_get_data(&b), b.len, 1);
+	} else {
+		RETURN_NULL();
+	}
+}
+/* }}} */
+
 /*
  * Local variables:
  * tab-width: 4
