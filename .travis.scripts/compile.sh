@@ -1,11 +1,24 @@
 #!/bin/bash
 trap abort_on_failure ERR
 
+MONGOC_VERSION=master
+LIBBSON_VERSION=master
+LCOV_VERSION=1.11
+
+
 abort_on_failure () {
 	echo "Last command failed, exising"
 	exit 42;
 }
 
+build_lcov() {
+	mkdir tmp-lcov
+	pushd tmp-lcov
+		wget -O lcov.tar.gz http://downloads.sourceforge.net/ltp/lcov-${LCOV_VERSION}.tar.gz
+		tar zxf lcov.tar.gz --strip-components=1
+		sudo make install
+	popd
+}
 build_libmongoc_mci() {
 	if [ ! -d tmp ]; then
 		mkdir tmp
@@ -26,17 +39,6 @@ build_libmongoc_mci() {
 
 build_libmongoc_manually() {
 
-MONGOC_VERSION=master
-LIBBSON_VERSION=master
-LCOV_VERSION=1.11
-
-
-mkdir tmp-lcov
-pushd tmp-lcov
-	wget -O lcov.tar.gz http://downloads.sourceforge.net/ltp/lcov-${LCOV_VERSION}.tar.gz
-	tar zxf lcov.tar.gz --strip-components=1
-	sudo make install
-popd
 
 pushd src
 	if [ "$MONGOC_VERSION" = "master" ]; then
@@ -77,6 +79,7 @@ popd # src
 
 
 build_libmongoc_mci
+build_lcov
 
 phpize
 ./configure --enable-coverage
