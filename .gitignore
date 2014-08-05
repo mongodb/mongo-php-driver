@@ -45,3 +45,7 @@ src/libmongoc/
 !docs
 !.travis.yml
 !.travis.scripts/*
+
+# Composer (for testing)
+composer.lock
+vendor/
