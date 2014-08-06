@@ -159,7 +159,7 @@ function def($arr) {
 $consts = array(
     "MONGODB_URI"         => "mongodb://localhost:27017",
     "MONGODB_CLEANUP_URI" => "mongodb://localhost:27017",
-    "DATABASE_NAME"       => "TESTS",
+    "DATABASE_NAME"       => "phongo_test",
     "COLLECTION_NAME"     => makeCollectionNameFromFilename($_SERVER["SCRIPT_FILENAME"]),
     "DEBUG_DIR"           => sys_get_temp_dir() . "/PHONGO-TESTS/",
 );
