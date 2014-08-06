@@ -597,7 +597,7 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 
 	intern = (php_phongo_objectid_t *)zend_object_store_get_object(object TSRMLS_CC);
 	intern->oid = ecalloc(1, sizeof(bson_oid_t));
-	bson_oid_copy(oid, (bson_oid_t *)intern->oid);
+	bson_oid_copy(oid, intern->oid);
 } /* }}} */
 
 /* {{{ Iterator */
