@@ -32,29 +32,33 @@ function hex_dump($data, $width = 16)
     }
 }
 
-function makeCollectionNameFromFilename($filename) {
-    $rp = realpath($filename);
+/**
+ * Return a collection name to use for the test file.
+ *
+ * The filename will be stripped of the base path to the test suite (prefix) as
+ * well as the PHP file extension (suffix). Special characters (including hyphen
+ * for shell compatibility) will be replaced with underscores.
+ *
+ * @param string $filename
+ * @return string
+ */
+function makeCollectionNameFromFilename($filename)
+{
+    $filename = realpath($filename);
+    $prefix = realpath(dirname(__FILE__) . '/..') . DIRECTORY_SEPARATOR;
 
-    $search = "tests". DIRECTORY_SEPARATOR;
-    // relative path from tests/
-    $base = substr($rp, strpos($rp, $search)+strlen($search));
-    $dir = dirname($base) . DIRECTORY_SEPARATOR;
-    // Its the root of tests/
-    if ($dir[0] == ".") {
-        $dir = "";
-    }
+    $replacements = array(
+        // Strip test path prefix
+        sprintf('/^%s/', preg_quote($prefix, '/')) => '',
+        // Strip file extension suffix
+        '/\.php$/' => '',
+        // SKIPIFs add ".skip" between base name and extension
+        '/\.skip$/' => '',
+        // Replace special characters with underscores
+        sprintf('/[%s]/', preg_quote('-$/\\', '/')) => '_',
+    );
 
-    $basename = basename($filename);
-    /* SKIPIFs are named [basename].skip.php */
-    $base = strstr($basename, ".", true);
-
-    // directory/testname
-    $retval = $dir . $base;
-
-    // directory-testname
-    $retval = str_replace(DIRECTORY_SEPARATOR, "-", $retval);
-
-    return $retval;
+    return preg_replace(array_keys($replacements), array_values($replacements), $filename);
 }
 
 function LOAD_FIXTURES() {
