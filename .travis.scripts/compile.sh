@@ -62,12 +62,12 @@ pushd src
 			pushd libbson
 				tar zxf ../libbson.tar.gz --strip-components=1
 
-				./autogen.sh --enable-debug --enable-debug-symbols=full --disable-ssl --enable-trace --quiet
+				./autogen.sh --enable-debug --enable-tracing --enable-debug-symbols=full --disable-hardening --enable-examples=no --enable-man-pages=no --enable-sasl=no --enable-tests=no --enable-ssl=no --enable-silent-rules --quiet --with-libbson=bundled
 			popd
 
 		popd # src
 
-		./autogen.sh --enable-debug --enable-debug-symbols=full --with-libbson=bundled --disable-ssl --enable-trace --quiet
+		./autogen.sh --enable-debug --enable-tracing --enable-debug-symbols=full --disable-hardening --enable-examples=no --enable-man-pages=no --enable-sasl=no --enable-tests=no --enable-ssl=no --enable-silent-rules --quiet --with-libbson=bundled
 
 		make -s -j2 all
 		sudo make install
@@ -78,7 +78,7 @@ popd # src
 
 
 
-build_libmongoc_mci
+build_libmongoc_manually
 build_lcov
 
 phpize
