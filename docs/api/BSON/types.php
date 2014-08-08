@@ -17,7 +17,7 @@ namespace BSON {
 			intern->oid = ecalloc(1, sizeof(bson_oid_t));
 			bson_oid_init_from_string(intern->oid, id);
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid BSON ID provided");
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid BSON ID provided" TSRMLS_CC);
 		}
 	} else {
 		intern->oid = ecalloc(1, sizeof(bson_oid_t));
