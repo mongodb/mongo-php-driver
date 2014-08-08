@@ -8,22 +8,24 @@ PHP_ARG_WITH(libmongoc-dir, for libmongoc,
 
 
 
+MONGOC_SYMBOL_SUFFIX="priv"
+
 if test "$PHONGO" != "no"; then
   AC_MSG_CHECKING(for libmongoc support)
 
-  LIBMONGOC_DIR=""
-  dnl Uses the last one found, so stick the PHP_LIBMONGOC_DIR last
-  for i in /usr /usr/local $PHP_LIBMONGOC_DIR ; do
-    if test -r $i/include/libmongoc-1.0/mongoc.h; then
-      LIBMONGOC_DIR=$i
+  MONGOC_DIR=""
+  dnl Uses the last one found, so stick the PHP_MONGOC_DIR last
+  for i in /usr /usr/local $PHP_MONGOC_DIR ; do
+    if test -r $i/include/libmongoc-$MONGOC_SYMBOL_SUFFIX/mongoc.h; then
+      MONGOC_DIR=$i
     fi
   done
 
-  if test -r "$LIBMONGOC_DIR"; then
-    LIBMONGOC_INCLUDE="-I$PHP_LIBMONGOC_DIR/include/libmongoc-1.0 -I$PHP_LIBMONGOC_DIR/include/libbson-1.0"
-    LIBMONGOC_LFLAGS="-L$PHP_LIBMONGOC_DIR/$PHP_LIBDIR"
-    LIBMONGOC_LIBS="-lmongoc-1.0 -lbson-1.0"
-    AC_MSG_RESULT(found $LIBMONGOC_DIR)
+  if test -r "$MONGOC_DIR"; then
+    MONGOC_INCLUDE="-I$PHP_MONGOC_DIR/include/libmongoc-$MONGOC_SYMBOL_SUFFIX -I$PHP_MONGOC_DIR/include/libbson-1.0"
+    MONGOC_CFLAGS="-DMONGOC_I_AM_A_DRIVER"
+    MONGOC_LIBS="-lmongoc-$MONGOC_SYMBOL_SUFFIX -lbson-1.0"
+    AC_MSG_RESULT(found $MONGOC_DIR)
   else
     AC_MSG_RESULT([not found])
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
@@ -32,34 +34,40 @@ if test "$PHONGO" != "no"; then
     if test -x "$PKG_CONFIG"; then
       AC_MSG_CHECKING(for libmongoc using pkg-config)
 
-      export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH:/usr/local/$PHP_LIBDIR/pkgconfig:/usr/$PHP_LIBDIR/pkgconfig:/opt/$PHP_LIBDIR/pkgconfig:$PHP_LIBMONGOC_DIR"
-      if ! $PKG_CONFIG --exists libmongoc-1.0; then
+      export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH:/usr/local/$PHP_LIBDIR/pkgconfig:/usr/$PHP_LIBDIR/pkgconfig:/opt/$PHP_LIBDIR/pkgconfig:$PHP_MONGOC_DIR"
+      if ! $PKG_CONFIG --exists libmongoc-$MONGOC_SYMBOL_SUFFIX; then
+        if $PKG_CONFIG --exists libmongoc-1.0; then
+          export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH"
+          AC_MSG_ERROR([missing libmongoc symbols, please reinstall mongo-c-driver -priv object])
+        fi
         export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH"
         AC_MSG_ERROR([Can't find where libmongoc is installed])
       fi
 
-      LIBMONGOC_INCLUDE=`$PKG_CONFIG --cflags-only-I libmongoc-1.0`
-      LIBMONGOC_LFLAGS=`$PKG_CONFIG --libs-only-L libmongoc-1.0`
-      LIBMONGOC_LIBS=`$PKG_CONFIG --libs-only-l libmongoc-1.0`
-      PHP_LIMONGOC_DIR=`$PKG_CONFIG --variable=prefix libmongoc-1.0`
+      MONGOC_INCLUDE=`$PKG_CONFIG --cflags-only-I libmongoc-$MONGOC_SYMBOL_SUFFIX`
+      MONGOC_CFLAGS=`$PKG_CONFIG --cflags-only-other libmongoc-$MONGOC_SYMBOL_SUFFIX`
+      MONGOC_LIBS=`$PKG_CONFIG --libs libmongoc-$MONGOC_SYMBOL_SUFFIX`
+      MONGOC_DIR=`$PKG_CONFIG --variable=prefix libmongoc-$MONGOC_SYMBOL_SUFFIX`
       export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH"
 
       AC_MSG_RESULT([found using pkg-config])
     else
-      AC_MSG_ERROR([Can't find where libmongoc is installed])
+      export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH"
+      AC_MSG_ERROR([pkg-config not available and no path provided])
     fi
   fi
 
   dnl FIXME: we may need to statically link libmongoc....
   dnl AC_CONFIG_SUBDIRS([src/libmongoc])
   dnl sub_configure_args="--enable-debug --enable-debug-symbols=full"
-  PHP_ADD_INCLUDE($LIBMONGOC_DIR/include/libmongoc-1.0)
-  PHP_ADD_INCLUDE($LIBMONGOC_DIR/include/libbson-1.0)
-
-  PHP_ADD_LIBRARY_WITH_PATH(mongoc-1.0, $LIBMONGOC_DIR/$PHP_LIBDIR, PHONGO_SHARED_LIBADD)
+  dnl PHP_ADD_INCLUDE($MONGOC_DIR/include/libmongoc-$MONGOC_SYMBOL_SUFFIX)
+  dnl PHP_ADD_LIBRARY_WITH_PATH(mongoc-$MONGOC_SYMBOL_SUFFIX, $MONGOC_DIR/$PHP_LIBDIR, PHONGO_SHARED_LIBADD)
+  PHP_EVAL_LIBLINE($MONGOC_LIBS, PHONGO_SHARED_LIBADD)
   PHP_SUBST(PHONGO_SHARED_LIBADD)
-  AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
+  PHP_EVAL_INCLINE($MONGOC_INCLUDE)
 
+
+  AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
 
 
   PHP_ARG_ENABLE(developer-flags, whether to enable developer build flags,
@@ -116,9 +124,6 @@ if test "$PHONGO" != "no"; then
       EXTRA_LDFLAGS="$_EXTRA_FLAGS"
   fi
 
-
-  PHP_SUBST(EXTRA_LDFLAGS)
-
   PHONGO_BSON="\
       src/bson.c \
   ";
@@ -158,6 +163,8 @@ if test "$PHONGO" != "no"; then
       src/MongoDB/WriteError.c \
       src/MongoDB/WriteResult.c \
   ";
+
+  EXTRA_CFLAGS="$EXTRA_CFLAGS $MONGOC_CFLAGS"
 
   if test "$ext_shared" = "no"; then
     PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON)
