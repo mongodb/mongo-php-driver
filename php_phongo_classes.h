@@ -57,7 +57,7 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
-	bson_t                  *bson;
+	bson_t                  *query;
 	bson_t                  *selector;
 	mongoc_query_flags_t     flags;
 	uint32_t                 skip;

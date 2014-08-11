@@ -341,7 +341,7 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 	phongo_split_namespace(namespace, &dbname, &collname);
 	collection = mongoc_client_get_collection(client, dbname, collname);
 
-	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->bson, query->selector, read_preference);
+	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->query, query->selector, read_preference);
 
     if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error;
@@ -575,8 +575,8 @@ php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC) /* {{{ */
 
 php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit TSRMLS_DC) /* {{{ */
 {
-	query->bson = bson_new();
-	zval_to_bson(zquery, PHONGO_BSON_NONE, query->bson, NULL TSRMLS_CC);
+	query->query = bson_new();
+	zval_to_bson(zquery, PHONGO_BSON_NONE, query->query, NULL TSRMLS_CC);
 
 	if (selector) {
 		query->selector = bson_new();
