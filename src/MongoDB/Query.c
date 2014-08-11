@@ -44,30 +44,27 @@
 
 PHONGO_API zend_class_entry *php_phongo_query_ce;
 
-/* {{{ proto MongoDB\Query Query::__construct(array|object $query[, array|object $selector[, integer $flags[, integer $skip[, integer $limit]]]])
+/* {{{ proto MongoDB\Query Query::__construct(array|object $filter[, array $options = array()])
    Constructs a new Query */
 PHP_METHOD(Query, __construct)
 {
 	php_phongo_query_t       *intern;
 	zend_error_handling       error_handling;
-	zval                     *query;
-	zval                     *selector = NULL;
-	long                      flags = MONGOC_QUERY_NONE;
-	long                      skip = 0;
-	long                      limit = 0;
+	zval                     *filter;
+	zval                     *options = NULL;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_query_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|A!lll", &query, &selector, &flags, &skip, &limit) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &filter, &options) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	phongo_query_init(intern, query, selector, flags, skip, limit TSRMLS_CC);
+	phongo_query_init(intern, filter, options TSRMLS_CC);
 }
 /* }}} */
 
@@ -82,11 +79,8 @@ PHP_METHOD(Query, __construct)
 /* {{{ MongoDB\Query */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Query___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, query)
-	ZEND_ARG_INFO(0, selector)
-	ZEND_ARG_INFO(0, flags)
-	ZEND_ARG_INFO(0, skip)
-	ZEND_ARG_INFO(0, limit)
+	ZEND_ARG_INFO(0, filter)
+	ZEND_ARG_ARRAY_INFO(0, options, 0)
 ZEND_END_ARG_INFO();
 
 

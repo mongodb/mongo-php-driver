@@ -39,22 +39,23 @@ final class Query
     /**
      * Constructs a new Query
      *
-     * @param array|object $query    Query document
-     * @param array|object $selector Selector document
-     * @param integer      $flags    Query flags
-     * @param integer      $skip     Skip
-     * @param integer      $limit    Limit
+     * Optional arguments include:
+     *  - batchSize (integer): The number of documents to return per batch
+     *  - cursorFlags (integer): The cursor flags to use
+     *  - limit (integer): The maximum number of documents to return
+     *  - modifiers (array|object): Meta-operators modifying the output or behavior of a query
+     *  - projection (array|object): Limits the fields to return for all matching documents
+     *  - skip (integer): The number of documents to skip before returning
+     *  - sort (array|object): The order in which to return matching documents
+     *
+     * @param array|object $filter  Filter criteria (i.e. "$query" field in query document)
+     * @param array        $options Optional arguments
      */
-    public function __construct($query, $selector = array(), $flags = self::FLAG_NONE, $skip = 0, $limit = 0)
+    public function __construct($filter, array $options = array())
     {
-        $this->query = $query;
-        $this->selector = $selector;
-        $this->flags = (integer) $flags;
-        $this->skip = (integer) $skip;
-        $this->limit = (integer) $limit;
         /*** CIMPL ***/
 /*
-	phongo_query_init(intern, query, selector, flags, skip, limit TSRMLS_CC);
+	phongo_query_init(intern, filter, options TSRMLS_CC);
 */
         /*** CIMPL ***/
     }
