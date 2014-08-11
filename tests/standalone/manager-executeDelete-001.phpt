@@ -24,7 +24,7 @@ printf("Removed: %d\n", $result->getNumRemoved());
 printf("Write concern errors: %d\n", count($result->getWriteConcernErrors()));
 printf("Write errors: %d\n", count($result->getWriteErrors()));
 
-$query = new MongoDB\Query(array('$query' => array()), array(), null, 0, 0);
+$query = new MongoDB\Query(array());
 $cursor = $manager->executeQuery(NS, $query);
 
 var_dump(iterator_to_array($cursor));
