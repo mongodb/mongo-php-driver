@@ -28,5 +28,5 @@ testclean:
 
 phongodep:
 	(cd src/libbson && $(MAKE))
-	(cd src/libmongoc && $(MAKE))
+	(cd src/libmongoc && $(MAKE) BSON_LIBS=$(top_srcdir)/src/libbson/libbson-1.0.la)
 
