@@ -12,18 +12,22 @@ if test "$PHONGO" != "no"; then
   AC_MSG_CHECKING(configuring libmongoc)
   AC_MSG_RESULT(...)
 
-  dnl Run libmongoc and libbson configure scripts..
-  AC_CONFIG_SUBDIRS([src/libmongoc])
+  dnl Run libbson and mongo-c-driver configure scripts..
   AC_CONFIG_SUBDIRS([src/libbson])
-  PHP_ADD_INCLUDE(src/libmongoc/src/mongoc/)
+  AC_CONFIG_SUBDIRS([src/libmongoc])
   PHP_ADD_INCLUDE(src/libbson/src/bson/)
+  PHP_ADD_INCLUDE(src/libmongoc/src/mongoc/)
   dnl ...with hardcoded arguments
   ac_configure_args="--enable-debug --enable-tracing --enable-debug-symbols=full --disable-hardening --enable-examples=no --enable-man-pages=no --enable-sasl=no --enable-tests=no --enable-ssl=no --enable-silent-rules --quiet"
+  dnl Print out the config run right away so it doesn't show up after our stuff
   _AC_OUTPUT_SUBDIRS
+  dnl since we cheated.. add a guard to not execute it again
   no_recursion=yes
+
+
+  PHP_ADD_LIBRARY_WITH_PATH(bson-1.0, src/libbson/.libs, PHONGO_SHARED_LIBADD)
   PHP_ADD_LIBRARY_WITH_PATH(mongoc-priv, src/libmongoc/.libs, PHONGO_SHARED_LIBADD)
   PHP_SUBST(PHONGO_SHARED_LIBADD)
-
 
   AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
 

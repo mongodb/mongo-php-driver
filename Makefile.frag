@@ -27,6 +27,6 @@ testclean:
 	done;
 
 phongodep:
-	(cd src/libmongoc && $(MAKE))
 	(cd src/libbson && $(MAKE))
+	(cd src/libmongoc && $(MAKE))
 
