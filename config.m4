@@ -1,74 +1,31 @@
 dnl config.m4 for extension phongo
+syscmd("./autogen.sh")
 
 PHP_ARG_ENABLE(phongo, whether to enable phongo support,
 [  --enable-phongo           Enable phongo support])
-
-PHP_ARG_WITH(libmongoc-dir, for libmongoc,
-[  --with-libmongoc-dir[=DIR]   Set the path to libmongoc install prefix.], yes)
 
 
 
 MONGOC_SYMBOL_SUFFIX="priv"
 
 if test "$PHONGO" != "no"; then
-  AC_MSG_CHECKING(for libmongoc support)
+  AC_MSG_CHECKING(configuring libmongoc)
+  AC_MSG_RESULT(...)
 
-  MONGOC_DIR=""
-  dnl Uses the last one found, so stick the PHP_MONGOC_DIR last
-  for i in /usr /usr/local $PHP_MONGOC_DIR ; do
-    if test -r $i/include/libmongoc-$MONGOC_SYMBOL_SUFFIX/mongoc.h; then
-      MONGOC_DIR=$i
-    fi
-  done
-
-  if test -r "$MONGOC_DIR"; then
-    MONGOC_INCLUDE="-I$PHP_MONGOC_DIR/include/libmongoc-$MONGOC_SYMBOL_SUFFIX -I$PHP_MONGOC_DIR/include/libbson-1.0"
-    MONGOC_CFLAGS="-DMONGOC_I_AM_A_DRIVER"
-    MONGOC_LIBS="-lmongoc-$MONGOC_SYMBOL_SUFFIX -lbson-1.0"
-    AC_MSG_RESULT(found $MONGOC_DIR)
-  else
-    AC_MSG_RESULT([not found])
-    AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
-
-    export ORIG_PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
-    if test -x "$PKG_CONFIG"; then
-      AC_MSG_CHECKING(for libmongoc using pkg-config)
-
-      export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH:/usr/local/$PHP_LIBDIR/pkgconfig:/usr/$PHP_LIBDIR/pkgconfig:/opt/$PHP_LIBDIR/pkgconfig:$PHP_MONGOC_DIR"
-      if ! $PKG_CONFIG --exists libmongoc-$MONGOC_SYMBOL_SUFFIX; then
-        if $PKG_CONFIG --exists libmongoc-1.0; then
-          export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH"
-          AC_MSG_ERROR([missing libmongoc symbols, please reinstall mongo-c-driver -priv object])
-        fi
-        export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH"
-        AC_MSG_ERROR([Can't find where libmongoc is installed])
-      fi
-
-      MONGOC_INCLUDE=`$PKG_CONFIG --cflags-only-I libmongoc-$MONGOC_SYMBOL_SUFFIX`
-      MONGOC_CFLAGS=`$PKG_CONFIG --cflags-only-other libmongoc-$MONGOC_SYMBOL_SUFFIX`
-      MONGOC_LIBS=`$PKG_CONFIG --libs libmongoc-$MONGOC_SYMBOL_SUFFIX`
-      MONGOC_DIR=`$PKG_CONFIG --variable=prefix libmongoc-$MONGOC_SYMBOL_SUFFIX`
-      export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH"
-
-      AC_MSG_RESULT([found using pkg-config])
-    else
-      export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH"
-      AC_MSG_ERROR([pkg-config not available and no path provided])
-    fi
-  fi
-
-  dnl FIXME: we may need to statically link libmongoc....
-  dnl AC_CONFIG_SUBDIRS([src/libmongoc])
-  dnl sub_configure_args="--enable-debug --enable-debug-symbols=full"
-  dnl PHP_ADD_INCLUDE($MONGOC_DIR/include/libmongoc-$MONGOC_SYMBOL_SUFFIX)
-  dnl PHP_ADD_LIBRARY_WITH_PATH(mongoc-$MONGOC_SYMBOL_SUFFIX, $MONGOC_DIR/$PHP_LIBDIR, PHONGO_SHARED_LIBADD)
-  PHP_EVAL_LIBLINE($MONGOC_LIBS, PHONGO_SHARED_LIBADD)
+  dnl Run libmongoc and libbson configure scripts..
+  AC_CONFIG_SUBDIRS([src/libmongoc])
+  AC_CONFIG_SUBDIRS([src/libbson])
+  PHP_ADD_INCLUDE(src/libmongoc/src/mongoc/)
+  PHP_ADD_INCLUDE(src/libbson/src/bson/)
+  dnl ...with hardcoded arguments
+  ac_configure_args="--enable-debug --enable-tracing --enable-debug-symbols=full --disable-hardening --enable-examples=no --enable-man-pages=no --enable-sasl=no --enable-tests=no --enable-ssl=no --enable-silent-rules --quiet"
+  _AC_OUTPUT_SUBDIRS
+  no_recursion=yes
+  PHP_ADD_LIBRARY_WITH_PATH(mongoc-priv, src/libmongoc/.libs, PHONGO_SHARED_LIBADD)
   PHP_SUBST(PHONGO_SHARED_LIBADD)
-  PHP_EVAL_INCLINE($MONGOC_INCLUDE)
 
 
   AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
-
 
   PHP_ARG_ENABLE(developer-flags, whether to enable developer build flags,
   [  --enable-developer-flags   Enable developer flags],, no)
@@ -175,6 +132,10 @@ if test "$PHONGO" != "no"; then
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES,       $EXTRA_CFLAGS, shared_objects_phongo, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES,    $EXTRA_CFLAGS, shared_objects_phongo, yes)
   fi
+
+  PHONGO_SHARED_DEPENDENCIES="phongodep"
+  PHP_SUBST(PHONGO_SHARED_DEPENDENCIES)
+
   PHP_NEW_EXTENSION(phongo,    $PHONGO_ROOT, $ext_shared,, $EXTRA_CFLAGS)
   PHP_ADD_EXTENSION_DEP(phongo, spl)
 
@@ -182,6 +143,17 @@ if test "$PHONGO" != "no"; then
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
   PHP_ADD_MAKEFILE_FRAGMENT
 
+AC_CONFIG_COMMANDS_POST([echo "
+phongo was configured with the following options:
+
+Build configuration:
+  Enable developers flags (slow)                   : $_EXTRA_CFLAGS
+  CFLAGS                                           : $CFLAGS
+
+Submit bugreports at:
+  https://jira.mongodb.org/browse/PHP
+
+"])
 fi
 
 dnl: vim: et sw=2

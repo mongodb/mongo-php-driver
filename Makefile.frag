@@ -26,3 +26,7 @@ testclean:
 		find $(top_srcdir)/tests/$$group -type f -name "*.diff" -o -name "*.exp" -o -name "*.log" -o -name "*.mem" -o -name "*.out" -o -name "*.php" -o -name "*.sh" | xargs rm -f; \
 	done;
 
+phongodep:
+	(cd src/libmongoc && $(MAKE))
+	(cd src/libbson && $(MAKE))
+

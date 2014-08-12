@@ -40,7 +40,6 @@ php.ini
 *.patch
 *.swp
 .*
-src/libmongoc/
 !tests/utils/*.php
 !docs
 !.travis.yml
