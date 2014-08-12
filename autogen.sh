@@ -18,6 +18,8 @@ if [ -d .git ]; then
 
     cd src/libmongoc
     NOCONFIGURE=1 ./autogen.sh >/dev/null
+	# Remove empty dir so recursive make into it doesn't emit error
+    rmdir src/libbson
     cd ../../
 
     cd src/libbson
