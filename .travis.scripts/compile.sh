@@ -91,7 +91,7 @@ wget -O run-tests.php https://raw.githubusercontent.com/php/php-src/master/run-t
 
 
 
-rm -rf tmp-lcov tmp src/libmongoc src/libbson # coveralls may pick it up and lie about our coverage
+rm -rf tmp-lcov tmp # coveralls may pick it up and lie about our coverage
 
 echo "extension=phongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
