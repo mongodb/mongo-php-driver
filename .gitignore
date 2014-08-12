@@ -36,6 +36,7 @@ run-tests.php
 *.mem
 *.php
 *.sh
+!autogen.sh
 php.ini
 *.patch
 *.swp
