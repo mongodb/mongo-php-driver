@@ -18,11 +18,14 @@ if test "$PHONGO" != "no"; then
   PHP_ADD_INCLUDE(src/libbson/src/bson/)
   PHP_ADD_INCLUDE(src/libmongoc/src/mongoc/)
   dnl ...with hardcoded arguments
-  ac_configure_args="--enable-debug --enable-tracing --enable-debug-symbols=full --disable-hardening --enable-examples=no --enable-man-pages=no --enable-sasl=no --enable-tests=no --enable-ssl=no --enable-silent-rules --quiet"
+  cur_CFLAGS="$CFLAGS"
+  CFLAGS="-I$abs_srcdir/src/libbson/src/bson"
+  ac_configure_args="--enable-debug --enable-tracing --enable-debug-symbols=full --disable-hardening --enable-examples=no --enable-man-pages=no --enable-sasl=no --enable-tests=no --enable-ssl=no --enable-silent-rules --with-libbson=phongo --quiet CFLAGS='$CFLAGS'"
   dnl Print out the config run right away so it doesn't show up after our stuff
   _AC_OUTPUT_SUBDIRS
   dnl since we cheated.. add a guard to not execute it again
   no_recursion=yes
+  CFLAGS="$cur_CFLAGS"
 
 
   PHP_ADD_LIBRARY_WITH_PATH(bson-1.0, src/libbson/.libs, PHONGO_SHARED_LIBADD)
