@@ -605,9 +605,9 @@ int bson_to_zval(const unsigned char *data, int data_len, zval *retval)
 	return 1;
 }
 
-/* {{{ proto string bson_encode(mixed data)
+/* {{{ proto string BSON\fromArray(mixed data)
    Returns the BSON representation of a value */
-PHP_FUNCTION(bson_encode)
+PHP_FUNCTION(fromArray)
 {
 	zval   *data;
 	bson_t *bson;
@@ -637,9 +637,9 @@ PHP_FUNCTION(bson_encode)
 }
 /* }}} */
 
-/* {{{ proto string bson_decode(string data)
+/* {{{ proto string BSON\toArray(string data)
    Returns the PHP representation of a BSON value */
-PHP_FUNCTION(bson_decode)
+PHP_FUNCTION(toArray)
 {
 	      char          *data;
 	      int            data_len;
@@ -656,9 +656,9 @@ PHP_FUNCTION(bson_decode)
 }
 /* }}} */
 
-/* {{{ proto string bson_to_json(string data)
+/* {{{ proto BSON\toJSON BSON\toJSON(string data)
    Returns the JSON representation of a BSON value */
-PHP_FUNCTION(bson_to_json)
+PHP_FUNCTION(toJSON)
 {
 	      char          *data;
 	      int            data_len;
@@ -687,9 +687,9 @@ PHP_FUNCTION(bson_to_json)
 }
 /* }}} */
 
-/* {{{ proto string json_to_bson(string data)
+/* {{{ proto string BSON\fromJSON(string data)
    Returns the BSON representation of a JSON value */
-PHP_FUNCTION(json_to_bson)
+PHP_FUNCTION(fromJSON)
 {
 	char          *data;
 	int            data_len;

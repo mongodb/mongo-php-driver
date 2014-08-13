@@ -64,8 +64,8 @@ namespace BSON {
     class MinKey implements Type {}
 
 
-    function encode($arrayOrObject) {}
-    function decode($bson) {}
+    function fromArray($arrayOrObject) {}
+    function toArray($bson) {}
     function toJSON($bson, $extendedJSON = false) {}
     function fromJSON($json) {}
 

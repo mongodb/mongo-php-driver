@@ -40,9 +40,9 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = bson_encode($test);
-    echo "Test#{$n} ", bson_to_json($s), "\n";
-    $val = bson_decode($s);
+    $s = BSON\fromArray($test);
+    echo "Test#{$n} ", BSON\toJSON($s), "\n";
+    $val = BSON\toArray($s);
     if ($val == $test) {
         echo "OK\n";
     } else {

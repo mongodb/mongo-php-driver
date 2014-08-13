@@ -38,10 +38,10 @@ typedef enum {
 PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
 PHONGO_API int bson_to_zval(const unsigned char *data, int data_len, zval *retval);
 
-PHP_FUNCTION(bson_encode);
-PHP_FUNCTION(bson_decode);
-PHP_FUNCTION(bson_to_json);
-PHP_FUNCTION(json_to_bson);
+PHP_FUNCTION(toArray);
+PHP_FUNCTION(fromArray);
+PHP_FUNCTION(toJSON);
+PHP_FUNCTION(fromJSON);
 
 #endif	/* PHONGO_BSON_H */
 

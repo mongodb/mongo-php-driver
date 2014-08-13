@@ -881,10 +881,10 @@ PHP_MINFO_FUNCTION(phongo)
 /* {{{ phongo_functions[]
 */
 const zend_function_entry phongo_functions[] = {
-	PHP_FE(bson_encode,     NULL)
-	PHP_FE(bson_decode,     NULL)
-	PHP_FE(bson_to_json,    NULL)
-	PHP_FE(json_to_bson,    NULL)
+	ZEND_NS_FE("BSON", fromArray, NULL)
+	ZEND_NS_FE("BSON", toArray,   NULL)
+	ZEND_NS_FE("BSON", toJSON,    NULL)
+	ZEND_NS_FE("BSON", fromJSON,  NULL)
 	PHP_FE_END
 };
 /* }}} */

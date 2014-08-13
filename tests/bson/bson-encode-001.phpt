@@ -33,8 +33,8 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = bson_encode($test);
-    echo "Test#{$n} ", bson_to_json($s), "\n";
+    $s = BSON\fromArray($test);
+    echo "Test#{$n} ", BSON\toJSON($s), "\n";
     hex_dump($s);
 }
 ?>

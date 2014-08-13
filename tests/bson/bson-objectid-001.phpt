@@ -32,11 +32,11 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = bson_encode($test);
-    echo "Test#{$n} ", $json = bson_to_json($s), "\n";
-    $bson = json_to_bson($json);
-    $testagain = bson_decode($bson);
-    var_dump(bson_to_json(bson_encode($test)), bson_to_json(bson_encode($testagain)));
+    $s = BSON\fromArray($test);
+    echo "Test#{$n} ", $json = BSON\toJSON($s), "\n";
+    $bson = BSON\fromJSON($json);
+    $testagain = BSON\toArray($bson);
+    var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
 ?>
