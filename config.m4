@@ -20,7 +20,7 @@ if test "$PHONGO" != "no"; then
   dnl ...with hardcoded arguments
   cur_CFLAGS="$CFLAGS"
   CFLAGS="-I$abs_srcdir/src/libbson/src/bson"
-  ac_configure_args="--enable-debug --enable-tracing --enable-debug-symbols=full --disable-hardening --enable-examples=no --enable-man-pages=no --enable-sasl=no --enable-tests=no --enable-ssl=no --enable-silent-rules --with-libbson=bundled --quiet CFLAGS='$CFLAGS'"
+  ac_configure_args="--enable-debug --enable-tracing --enable-debug-symbols=full --disable-hardening --enable-examples=no --enable-man-pages=no --enable-sasl=no --enable-tests=no --enable-ssl=no --disable-silent-rules --with-libbson=bundled --quiet CFLAGS='$CFLAGS'"
   dnl Print out the config run right away so it doesn't show up after our stuff
   _AC_OUTPUT_SUBDIRS
   dnl since we cheated.. add a guard to not execute it again
