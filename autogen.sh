@@ -13,8 +13,8 @@ if [ ! -f README ]; then
 fi
 
 if [ -d .git ]; then
-    git submodule init
-    git submodule update
+    git submodule init >/dev/null
+    git submodule update >/dev/null
 
     cd src/libmongoc
     NOCONFIGURE=1 ./autogen.sh >/dev/null
