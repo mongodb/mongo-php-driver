@@ -631,7 +631,7 @@ php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *filter, z
 
 			else if (zend_binary_strcmp(key, key_len, "sort", strlen("sort") + 1) == 0) {
 				/* TODO: Throw exception if sort is not array/object? */
-				zend_hash_update(HASH_OF(zquery), "$orderby", strlen("$orderby") + 1, *data, sizeof(zval *), NULL);
+				zend_hash_update(HASH_OF(zquery), "$orderby", strlen("$orderby") + 1, (void *) data, sizeof(zval *), NULL);
 			}
 		}
 	}
@@ -639,7 +639,7 @@ php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *filter, z
 	if (zend_hash_num_elements(HASH_OF(zquery)) == 0) {
 		zend_hash_merge(HASH_OF(zquery), HASH_OF(filter), (void (*)(void*))zval_add_ref, NULL, sizeof(zval *), 1);
 	} else {
-		zend_hash_update(HASH_OF(zquery), "$query", strlen("$query") + 1, filter, sizeof(zval *), NULL);
+		zend_hash_update(HASH_OF(zquery), "$query", strlen("$query") + 1, (void *) &filter, sizeof(zval *), NULL);
 	}
 
 	query->query = bson_new();
