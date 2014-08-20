@@ -363,6 +363,7 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused))
 				add_assoc_zval(retval, key, zchild);
 			} else if (Z_TYPE_P(retval) == IS_OBJECT) {
 				add_property_zval(retval, key, zchild);
+			} else {
 				return true;
 			}
 		}
