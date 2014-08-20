@@ -232,14 +232,21 @@ void phongo_server_init(zval *return_value, int hint, mongoc_host_list_t *host T
 
 /* {{{ CRUD */
 /* Splits a namespace name into the database and collection names, allocated with estrdup. */
-void phongo_split_namespace(char *namespace, char **dbname, char **cname) /* {{{ */
+bool phongo_split_namespace(char *namespace, char **dbname, char **cname) /* {{{ */
 {
+	char *dot = strchr(namespace, '.');
+
+	if (!dot) {
+		return false;
+	}
     if (cname) {
-        *cname = estrdup(namespace + (strchr(namespace, '.') - namespace) + 1);
+        *cname = estrdup(namespace + (dot - namespace) + 1);
     }
     if (dbname) {
-        *dbname = estrndup(namespace, strchr(namespace, '.') - namespace);
+        *dbname = estrndup(namespace, dot - namespace);
     }
+
+	return true;
 } /* }}} */
 
 mongoc_bulk_operation_t *phongo_writebatch_init(zend_bool ordered) { /* {{{ */
@@ -303,7 +310,11 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 	char *collection;
 	int hint;
 
-	phongo_split_namespace(namespace, &database, &collection);
+	if (!phongo_split_namespace(namespace, &database, &collection)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid namespace provided" TSRMLS_CC);
+		return false;
+	}
+
 	mongoc_bulk_operation_set_database(batch, database);
 	mongoc_bulk_operation_set_collection(batch, collection);
 	mongoc_bulk_operation_set_client(batch, client);
@@ -338,7 +349,10 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 	char *collname;
 	mongoc_collection_t *collection;
 
-	phongo_split_namespace(namespace, &dbname, &collname);
+	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid namespace provided" TSRMLS_CC);
+		return false;
+	}
 	collection = mongoc_client_get_collection(client, dbname, collname);
 
 	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->bson, query->selector, read_preference);
