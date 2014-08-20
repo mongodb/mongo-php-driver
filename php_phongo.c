@@ -239,12 +239,13 @@ bool phongo_split_namespace(char *namespace, char **dbname, char **cname) /* {{{
 	if (!dot) {
 		return false;
 	}
-    if (cname) {
-        *cname = estrdup(namespace + (dot - namespace) + 1);
-    }
-    if (dbname) {
-        *dbname = estrndup(namespace, dot - namespace);
-    }
+
+	if (cname) {
+		*cname = estrdup(namespace + (dot - namespace) + 1);
+	}
+	if (dbname) {
+		*dbname = estrndup(namespace, dot - namespace);
+	}
 
 	return true;
 } /* }}} */
@@ -343,7 +344,7 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 
 int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
-    const bson_t *doc = NULL;
+	const bson_t *doc = NULL;
 	mongoc_cursor_t *cursor;
 	char *dbname;
 	char *collname;
@@ -357,7 +358,7 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 
 	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->bson, query->selector, read_preference);
 
-    if (!mongoc_cursor_next(cursor, &doc)) {
+	if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error;
 
 		if (mongoc_cursor_error(cursor, &error)) {
@@ -377,7 +378,7 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	mongoc_cursor_t *cursor;
-    const bson_t *doc;
+	const bson_t *doc;
 
 
 	cursor = mongoc_client_command(client, db, MONGOC_QUERY_NONE, 0, 1, 0, command, NULL, read_preference);
@@ -654,7 +655,7 @@ static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) 
 		cursor_it->current = NULL;
 	}
 
-    if (mongoc_cursor_next(intern->cursor, &doc)) {
+	if (mongoc_cursor_next(intern->cursor, &doc)) {
 		MAKE_STD_ZVAL(cursor_it->current);
 		bson_to_zval(bson_get_data(doc), doc->len, cursor_it->current);
 	} else {
@@ -685,13 +686,13 @@ zend_object_iterator_funcs phongo_cursor_it_funcs = {
 	phongo_cursor_it_rewind
 };
 zend_object_iterator_funcs zend_interface_iterator_funcs_iterator_default = {
-    phongo_cursor_it_dtor,
-    zend_user_it_valid,
-    zend_user_it_get_current_data,
-    zend_user_it_get_current_key,
-    zend_user_it_move_forward,
-    zend_user_it_rewind,
-    zend_user_it_invalidate_current
+	phongo_cursor_it_dtor,
+	zend_user_it_valid,
+	zend_user_it_get_current_data,
+	zend_user_it_get_current_key,
+	zend_user_it_move_forward,
+	zend_user_it_rewind,
+	zend_user_it_invalidate_current
 };
 
 zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC) /* {{{ */
@@ -736,21 +737,21 @@ zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *obj
 /* {{{ Memory allocation wrappers */
 static void* php_phongo_malloc(size_t num_bytes) /* {{{ */
 {
-   return emalloc(num_bytes);
+	return emalloc(num_bytes);
 } /* }}} */
 
 static void* php_phongo_calloc(size_t num_members, size_t num_bytes) /* {{{ */
 {
-   return ecalloc(num_members, num_bytes);
+	return ecalloc(num_members, num_bytes);
 } /* }}} */
 
 static void* php_phongo_realloc(void *mem, size_t num_bytes) { /* {{{ */
-   return erealloc(mem, num_bytes);
+	return erealloc(mem, num_bytes);
 } /* }}} */
 
 static void php_phongo_free(void *mem) /* {{{ */
 {
-   return efree(mem);
+	return efree(mem);
 } /* }}} */
 
 /* }}} */
@@ -760,7 +761,7 @@ static void php_phongo_free(void *mem) /* {{{ */
 
 /* {{{ INI entries */
 PHP_INI_BEGIN()
-    STD_PHP_INI_ENTRY("phongo.debug_log", (char *)"stderr", PHP_INI_ALL, OnUpdateString, debug_log, zend_phongo_globals, phongo_globals)
+	STD_PHP_INI_ENTRY("phongo.debug_log", (char *)"stderr", PHP_INI_ALL, OnUpdateString, debug_log, zend_phongo_globals, phongo_globals)
 PHP_INI_END()
 /* }}} */
 
