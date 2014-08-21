@@ -583,6 +583,11 @@ php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *filter, z
 	uint key_len;
 	ulong num_index;
 
+	if (filter && !(Z_TYPE_P(filter) == IS_ARRAY || Z_TYPE_P(filter) == IS_OBJECT)) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected filter to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(filter)));
+		return NULL;
+	}
+
 	MAKE_STD_ZVAL(zquery);
 	array_init(zquery);
 
