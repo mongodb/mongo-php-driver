@@ -635,11 +635,7 @@ php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *filter, z
 		}
 	}
 
-	if (php_array_count(zquery) == 0) {
-		zend_hash_merge(HASH_OF(zquery), HASH_OF(filter), (void (*)(void*))zval_add_ref, NULL, sizeof(zval *), 1);
-	} else {
-		add_assoc_zval_ex(zquery, ZEND_STRS("$query"), filter);
-	}
+	add_assoc_zval_ex(zquery, ZEND_STRS("$query"), filter);
 
 	query->query = bson_new();
 	zval_to_bson(zquery, PHONGO_BSON_NONE, query->query, NULL TSRMLS_CC);
