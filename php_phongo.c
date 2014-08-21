@@ -51,7 +51,7 @@
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
-
+#include "php_array.h"
 
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO"
@@ -576,12 +576,7 @@ php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC) /* {{{ */
 
 php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC) /* {{{ */
 {
-	HashPosition pos;
 	zval *zquery;
-	zval **data;
-	char *key;
-	uint key_len;
-	ulong num_index;
 
 	if (filter && !(Z_TYPE_P(filter) == IS_ARRAY || Z_TYPE_P(filter) == IS_OBJECT)) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected filter to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(filter)));
@@ -592,59 +587,58 @@ php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *filter, z
 	array_init(zquery);
 
 	if (options) {
-		for (
-			zend_hash_internal_pointer_reset_ex(Z_ARRVAL_P(options), &pos);
-			zend_hash_get_current_data_ex(Z_ARRVAL_P(options), (void **) &data, &pos) == SUCCESS;
-			zend_hash_move_forward_ex(Z_ARRVAL_P(options), &pos)
-		) {
-			uint key_type = zend_hash_get_current_key_ex(Z_ARRVAL_P(options), &key, &key_len, &num_index, 0, &pos);
+		/* TODO: Ensure batchSize, limit, and skip are 32-bit. Should we ensure
+		 * that cursorFlags is a valid mongoc_query_flags_t combination? */
+		query->batch_size = php_array_fetchc_long(options, "batchSize");
+		query->flags = php_array_fetchc_long(options, "cursorFlags");
+		query->limit = php_array_fetchc_long(options, "limit");
+		query->skip = php_array_fetchc_long(options, "skip");
 
-			if (key_type != HASH_KEY_IS_STRING) {
-				continue;
+		if (php_array_existsc(options, "modifiers")) {
+			zval *modifiers = php_array_fetchc(options, "modifiers");
+
+			if (modifiers && !(Z_TYPE_P(modifiers) == IS_ARRAY || Z_TYPE_P(modifiers) == IS_OBJECT)) {
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected modifiers to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(modifiers)));
+				zval_ptr_dtor(&zquery);
+				return NULL;
 			}
 
-			if (zend_binary_strcmp(key, key_len, ZEND_STRS("batchSize")) == 0) {
-				/* TODO: Ensure batchSize is only 32-bit */
-				query->batch_size = Z_LVAL_PP(data);
+			convert_to_array_ex(&modifiers);
+			zend_hash_merge(HASH_OF(zquery), HASH_OF(modifiers), (void (*)(void*))zval_add_ref, NULL, sizeof(zval *), 1);
+		}
+
+		if (php_array_existsc(options, "projection")) {
+			zval *projection = php_array_fetchc(options, "projection");
+
+			if (projection && !(Z_TYPE_P(projection) == IS_ARRAY || Z_TYPE_P(projection) == IS_OBJECT)) {
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected projection to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(projection)));
+				zval_ptr_dtor(&zquery);
+				return NULL;
 			}
 
-			else if (zend_binary_strcmp(key, key_len, ZEND_STRS("cursorFlags")) == 0) {
-				/* TODO: Limit cursorFlags to 32-bit or cast to mongoc_query_flags_t? */
-				query->flags = Z_LVAL_PP(data);
+			convert_to_array_ex(&projection);
+			query->selector = bson_new();
+			zval_to_bson(projection, PHONGO_BSON_NONE, query->selector, NULL TSRMLS_CC);
+		}
+
+		if (php_array_existsc(options, "sort")) {
+			zval *sort = php_array_fetchc(options, "sort");
+
+			if (sort && !(Z_TYPE_P(sort) == IS_ARRAY || Z_TYPE_P(sort) == IS_OBJECT)) {
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected sort to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(sort)));
+				zval_ptr_dtor(&zquery);
+				return NULL;
 			}
 
-			else if (zend_binary_strcmp(key, key_len, ZEND_STRS("limit")) == 0) {
-				/* TODO: Ensure limit is only 32-bit */
-				query->limit = Z_LVAL_PP(data);
-			}
-
-			else if (zend_binary_strcmp(key, key_len, ZEND_STRS("modifiers")) == 0) {
-				/* TODO: Throw exception if modifiers is not array/object? */
-				zend_hash_merge(HASH_OF(zquery), HASH_OF(*data), (void (*)(void*))zval_add_ref, NULL, sizeof(zval *), 1);
-			}
-
-			else if (zend_binary_strcmp(key, key_len, ZEND_STRS("projection")) == 0) {
-				/* TODO: Throw exception if projection is not array/object? */
-				query->selector = bson_new();
-				zval_to_bson(*data, PHONGO_BSON_NONE, query->selector, NULL TSRMLS_CC);
-			}
-
-			else if (zend_binary_strcmp(key, key_len, ZEND_STRS("skip")) == 0) {
-				/* TODO: Ensure skip is only 32-bit */
-				query->skip = Z_LVAL_PP(data);
-			}
-
-			else if (zend_binary_strcmp(key, key_len, ZEND_STRS("sort")) == 0) {
-				/* TODO: Throw exception if sort is not array/object? */
-				zend_hash_update(HASH_OF(zquery), "$orderby", sizeof("$orderby"), (void *) data, sizeof(zval *), NULL);
-			}
+			convert_to_array_ex(&sort);
+			add_assoc_zval_ex(zquery, ZEND_STRS("$orderby"), sort);
 		}
 	}
 
-	if (zend_hash_num_elements(HASH_OF(zquery)) == 0) {
+	if (php_array_count(zquery) == 0) {
 		zend_hash_merge(HASH_OF(zquery), HASH_OF(filter), (void (*)(void*))zval_add_ref, NULL, sizeof(zval *), 1);
 	} else {
-		zend_hash_update(HASH_OF(zquery), "$query", sizeof("$query"), (void *) &filter, sizeof(zval *), NULL);
+		add_assoc_zval_ex(zquery, ZEND_STRS("$query"), filter);
 	}
 
 	query->query = bson_new();
