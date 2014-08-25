@@ -35,6 +35,7 @@
 #include <php.h>
 #include <php_ini.h>
 #include <ext/standard/info.h>
+#include "Zend/zend_hash.h"
 #include "Zend/zend_interfaces.h"
 #include "Zend/zend_exceptions.h"
 #include "ext/spl/spl_iterators.h"
@@ -50,7 +51,7 @@
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
-
+#include "php_array.h"
 
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO"
@@ -356,7 +357,7 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 	}
 	collection = mongoc_client_get_collection(client, dbname, collname);
 
-	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->bson, query->selector, read_preference);
+	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->query, query->selector, read_preference);
 
 	if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error;
@@ -588,18 +589,72 @@ php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC) /* {{{ */
 	return intern;
 } /* }}} */
 
-php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *zquery, zval *selector, int flags, int skip, int limit TSRMLS_DC) /* {{{ */
+php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC) /* {{{ */
 {
-	query->bson = bson_new();
-	zval_to_bson(zquery, PHONGO_BSON_NONE, query->bson, NULL TSRMLS_CC);
+	zval *zquery;
 
-	if (selector) {
-		query->selector = bson_new();
-		zval_to_bson(selector, PHONGO_BSON_NONE, query->selector, NULL TSRMLS_CC);
+	if (filter && !(Z_TYPE_P(filter) == IS_ARRAY || Z_TYPE_P(filter) == IS_OBJECT)) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected filter to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(filter)));
+		return NULL;
 	}
-	query->flags = flags;
-	query->skip = skip;
-	query->limit = limit;
+
+	MAKE_STD_ZVAL(zquery);
+	array_init(zquery);
+
+	if (options) {
+		/* TODO: Ensure batchSize, limit, and skip are 32-bit. Should we ensure
+		 * that cursorFlags is a valid mongoc_query_flags_t combination? */
+		query->batch_size = php_array_fetchc_long(options, "batchSize");
+		query->flags = php_array_fetchc_long(options, "cursorFlags");
+		query->limit = php_array_fetchc_long(options, "limit");
+		query->skip = php_array_fetchc_long(options, "skip");
+
+		if (php_array_existsc(options, "modifiers")) {
+			zval *modifiers = php_array_fetchc(options, "modifiers");
+
+			if (modifiers && !(Z_TYPE_P(modifiers) == IS_ARRAY || Z_TYPE_P(modifiers) == IS_OBJECT)) {
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected modifiers to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(modifiers)));
+				zval_ptr_dtor(&zquery);
+				return NULL;
+			}
+
+			convert_to_array_ex(&modifiers);
+			zend_hash_merge(HASH_OF(zquery), HASH_OF(modifiers), (void (*)(void*))zval_add_ref, NULL, sizeof(zval *), 1);
+		}
+
+		if (php_array_existsc(options, "projection")) {
+			zval *projection = php_array_fetchc(options, "projection");
+
+			if (projection && !(Z_TYPE_P(projection) == IS_ARRAY || Z_TYPE_P(projection) == IS_OBJECT)) {
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected projection to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(projection)));
+				zval_ptr_dtor(&zquery);
+				return NULL;
+			}
+
+			convert_to_array_ex(&projection);
+			query->selector = bson_new();
+			zval_to_bson(projection, PHONGO_BSON_NONE, query->selector, NULL TSRMLS_CC);
+		}
+
+		if (php_array_existsc(options, "sort")) {
+			zval *sort = php_array_fetchc(options, "sort");
+
+			if (sort && !(Z_TYPE_P(sort) == IS_ARRAY || Z_TYPE_P(sort) == IS_OBJECT)) {
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected sort to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(sort)));
+				zval_ptr_dtor(&zquery);
+				return NULL;
+			}
+
+			convert_to_array_ex(&sort);
+			add_assoc_zval_ex(zquery, ZEND_STRS("$orderby"), sort);
+		}
+	}
+
+	add_assoc_zval_ex(zquery, ZEND_STRS("$query"), filter);
+
+	query->query = bson_new();
+	zval_to_bson(zquery, PHONGO_BSON_NONE, query->query, NULL TSRMLS_CC);
+	zval_ptr_dtor(&zquery);
 
 	return query;
 } /* }}} */
