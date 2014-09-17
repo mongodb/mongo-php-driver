@@ -7,24 +7,6 @@ namespace MongoDB;
  */
 final class WriteConcernError
 {
-    private $message;
-    private $code;
-    private $info;
-
-    /**
-     * Constructs a new WriteConcernError object
-     * 
-     * @param string  $message Server error message
-     * @param integer $code    Server error code
-     * @param array   $info    Additional metadat for the error (e.g. {"wtimeout": true})
-     */
-    public function __construct($message, $code, array $info)
-    {
-        $this->message = (string) $message;
-        $this->code = (integer) $code;
-        $this->info = $info;
-    }
-
     /**
      * Returns the MongoDB error code
      *
@@ -32,7 +14,11 @@ final class WriteConcernError
      */
     public function getCode()
     {
-        return $this->code;
+        /*** CIMPL ***/
+/*
+    RETURN_LONG(intern->code);
+*/
+        /*** CIMPL ***/
     }
 
     /**
@@ -42,7 +28,15 @@ final class WriteConcernError
      */
     public function getInfo()
     {
-        return $this->info;
+        /*** CIMPL ***/
+/*
+    if (intern->info && Z_TYPE_P(intern->info) == IS_ARRAY) {
+        RETURN_ZVAL(intern->info, 1, 0);
+    }
+
+    array_init(return_value);
+*/
+        /*** CIMPL ***/
     }
 
     /**
@@ -52,6 +46,61 @@ final class WriteConcernError
      */
     public function getMessage()
     {
-        return $this-message;
+/*
+    RETURN_STRING(intern->message, 1);
+*/
     }
 }
+
+$WriteConcernError["forward_declarations"] = <<< EOF
+inline int writeconcernerror_populate(php_phongo_writeconcernerror_t *intern, bson_t *document);
+
+EOF;
+
+$WriteConcernError["funcs"] = <<< EOF
+inline int writeconcernerror_populate(php_phongo_writeconcernerror_t *intern, bson_t *document) /* {{{ */
+{
+    bson_iter_t iter;
+
+    if (bson_iter_init_find(&iter, document, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
+        intern->code = bson_iter_int32(&iter);
+    }
+
+    if (bson_iter_init_find(&iter, document, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
+        intern->message = bson_iter_dup_utf8(&iter, NULL);
+    }
+
+    if (bson_iter_init_find(&iter, document, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+        uint32_t len;
+        const uint8_t *data;
+
+        MAKE_STD_ZVAL(intern->info);
+        bson_iter_document(&iter, &len, &data);
+
+        if (!data) {
+            return false;
+        }
+
+        if (!bson_to_zval(data, len, intern->info)) {
+            zval_ptr_dtor(&intern->info);
+            intern->info = NULL;
+
+            return false;
+        }
+    }
+
+    return true;
+} /* }}} */
+
+EOF;
+
+$WriteConcernError["free"] = <<< EOF
+    if (intern->message) {
+        efree(intern->message);
+    }
+
+    if (intern->info) {
+        zval_ptr_dtor(&intern->info);
+    }
+
+EOF;
