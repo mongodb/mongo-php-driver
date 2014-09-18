@@ -43,30 +43,8 @@
 
 
 PHONGO_API zend_class_entry *php_phongo_writeconcernerror_ce;
+inline int writeconcernerror_populate(php_phongo_writeconcernerror_t *intern, bson_t *document);
 
-/* {{{ proto MongoDB\WriteConcernError WriteConcernError::__construct(string $message, integer $code, array $info)
-   Constructs a new WriteConcernError object */
-PHP_METHOD(WriteConcernError, __construct)
-{
-	php_phongo_writeconcernerror_t *intern;
-	zend_error_handling       error_handling;
-	char                     *message;
-	int                       message_len;
-	long                      code;
-	zval                     *info;
-
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_writeconcernerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sla", &message, &message_len, &code, &info) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
-		return;
-	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-}
-/* }}} */
 /* {{{ proto integer WriteConcernError::getCode()
    Returns the MongoDB error code */
 PHP_METHOD(WriteConcernError, getCode)
@@ -84,6 +62,8 @@ PHP_METHOD(WriteConcernError, getCode)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+
+	RETURN_LONG(intern->code);
 }
 /* }}} */
 /* {{{ proto array WriteConcernError::getInfo()
@@ -103,6 +83,12 @@ PHP_METHOD(WriteConcernError, getInfo)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+
+	if (intern->info && Z_TYPE_P(intern->info) == IS_ARRAY) {
+		RETURN_ZVAL(intern->info, 1, 0);
+	}
+
+	array_init(return_value);
 }
 /* }}} */
 /* {{{ proto string WriteConcernError::getMessage()
@@ -130,12 +116,6 @@ PHP_METHOD(WriteConcernError, getMessage)
  */
 /* {{{ MongoDB\WriteConcernError */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcernError___construct, 0, 0, 3)
-	ZEND_ARG_INFO(0, message)
-	ZEND_ARG_INFO(0, code)
-	ZEND_ARG_ARRAY_INFO(0, info, 0)
-ZEND_END_ARG_INFO();
-
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcernError_getCode, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
@@ -147,7 +127,6 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_writeconcernerror_me[] = {
-	PHP_ME(WriteConcernError, __construct, ai_WriteConcernError___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcernError, getCode, ai_WriteConcernError_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcernError, getInfo, ai_WriteConcernError_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcernError, getMessage, ai_WriteConcernError_getMessage, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -157,6 +136,41 @@ static zend_function_entry php_phongo_writeconcernerror_me[] = {
 /* }}} */
 
 
+/* {{{ Other functions */
+inline int writeconcernerror_populate(php_phongo_writeconcernerror_t *intern, bson_t *document) /* {{{ */
+{
+    bson_iter_t iter;
+
+    if (bson_iter_init_find(&iter, document, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
+        intern->code = bson_iter_int32(&iter);
+    }
+
+    if (bson_iter_init_find(&iter, document, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
+        intern->message = bson_iter_dup_utf8(&iter, NULL);
+    }
+
+    if (bson_iter_init_find(&iter, document, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+        uint32_t len;
+        const uint8_t *data;
+
+        MAKE_STD_ZVAL(intern->info);
+        bson_iter_document(&iter, &len, &data);
+
+        if (!data) {
+            return false;
+        }
+
+        if (!bson_to_zval(data, len, intern->info)) {
+            zval_ptr_dtor(&intern->info);
+            intern->info = NULL;
+
+            return false;
+        }
+    }
+
+    return true;
+} /* }}} */
+/* }}} */
 /* {{{ php_phongo_writeconcernerror_t object handlers */
 static void php_phongo_writeconcernerror_free_object(void *object TSRMLS_DC) /* {{{ */
 {
@@ -164,6 +178,13 @@ static void php_phongo_writeconcernerror_free_object(void *object TSRMLS_DC) /* 
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+    if (intern->message) {
+        efree(intern->message);
+    }
+
+    if (intern->info) {
+        zval_ptr_dtor(&intern->info);
+    }
 	efree(intern);
 } /* }}} */
 
