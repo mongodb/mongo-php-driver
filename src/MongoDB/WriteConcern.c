@@ -124,6 +124,9 @@ static void php_phongo_writeconcern_free_object(void *object TSRMLS_DC) /* {{{ *
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	if (intern->write_concern) {
+		mongoc_write_concern_destroy(intern->write_concern);
+	}
 	efree(intern);
 } /* }}} */
 
