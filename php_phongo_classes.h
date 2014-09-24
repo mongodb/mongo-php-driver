@@ -118,6 +118,10 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
+} php_phongo_writeexception_t;
+
+typedef struct {
+	zend_object              std;
 } php_phongo_binary_t;
 typedef struct {
 	zend_object              std;
@@ -171,6 +175,7 @@ extern PHONGO_API zend_class_entry *php_phongo_writebatch_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeconcern_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeconcernerror_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
+extern PHONGO_API zend_class_entry *php_phongo_writeexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
 extern PHONGO_API zend_class_entry *php_phongo_type_ce;
@@ -202,6 +207,7 @@ PHP_MINIT_FUNCTION(WriteBatch);
 PHP_MINIT_FUNCTION(WriteConcern);
 PHP_MINIT_FUNCTION(WriteConcernError);
 PHP_MINIT_FUNCTION(WriteError);
+PHP_MINIT_FUNCTION(WriteException);
 PHP_MINIT_FUNCTION(WriteResult);
 
 PHP_MINIT_FUNCTION(Type);
