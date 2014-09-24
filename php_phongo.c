@@ -73,7 +73,7 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 	switch (domain) {
 		case PHONGO_ERROR_INVALID_ARGUMENT:
 			return spl_ce_InvalidArgumentException;
-		case PHONGO_ERROR_RUNETIME:
+		case PHONGO_ERROR_RUNTIME:
 			return spl_ce_RuntimeException;
 		case PHONGO_ERROR_MONGOC_FAILED:
 			return spl_ce_RuntimeException;
