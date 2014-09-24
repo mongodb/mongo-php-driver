@@ -15,3 +15,4 @@ include "api/MongoDB/Server.php";
 include "api/MongoDB/GeneratedId.php";
 include "api/MongoDB/WriteConcern.php";
 include "api/MongoDB/WriteResult.php";
+include "api/MongoDB/WriteException.php";
