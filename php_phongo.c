@@ -135,13 +135,13 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 			return spl_ce_RuntimeException;
 	}
 }
-PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain, const char *message TSRMLS_DC)
+PHONGO_API zval* phongo_throw_exception(php_phongo_error_domain_t domain, const char *message TSRMLS_DC)
 {
-	zend_throw_exception(phongo_exception_from_phongo_domain(domain), message, 0 TSRMLS_CC);
+	return zend_throw_exception(phongo_exception_from_phongo_domain(domain), message, 0 TSRMLS_CC);
 }
-PHONGO_API void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC)
+PHONGO_API zval* phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC)
 {
-	zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code), error->message, error->code TSRMLS_CC);
+	return zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code), error->message, error->code TSRMLS_CC);
 }
 static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain, const char *message, void *user_data)
 {
