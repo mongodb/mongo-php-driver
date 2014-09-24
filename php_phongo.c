@@ -77,6 +77,8 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 			return spl_ce_RuntimeException;
 		case PHONGO_ERROR_MONGOC_FAILED:
 			return spl_ce_RuntimeException;
+		case PHONGO_ERROR_WRITE_FAILED:
+			return php_phongo_writeexception_ce;
 	}
 
 	mongoc_log(MONGOC_LOG_LEVEL_ERROR, MONGOC_LOG_DOMAIN, "Resolving unknown exception domain!!!");
@@ -486,7 +488,15 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 	hint = mongoc_bulk_operation_execute(batch, reply, &error);
 
 	if (!hint) {
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		zval *e = phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED, error.message TSRMLS_CC);
+		/* zend_update_property_long(Z_OBJCE_P(e), e, ZEND_STRL("code"), error.code TSRMLS_CC) */
+
+		if (reply) {
+			phongo_writeresult_init(return_value, reply, hint TSRMLS_CC);
+			zend_update_property(Z_OBJCE_P(e), e, ZEND_STRL("writeResult"), return_value TSRMLS_CC);
+			bson_destroy(reply);
+		}
+
 		return false;
 	}
 
