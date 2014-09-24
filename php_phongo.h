@@ -63,7 +63,8 @@ ZEND_END_MODULE_GLOBALS(phongo)
 typedef enum {
 	PHONGO_ERROR_INVALID_ARGUMENT = 1,
 	PHONGO_ERROR_RUNTIME          = 2,
-	PHONGO_ERROR_MONGOC_FAILED    = 3
+	PHONGO_ERROR_MONGOC_FAILED    = 3,
+	PHONGO_ERROR_WRITE_FAILED     = 4
 } php_phongo_error_domain_t;
 
 typedef struct
