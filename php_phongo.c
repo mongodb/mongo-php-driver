@@ -230,6 +230,42 @@ void phongo_server_init(zval *return_value, int hint, mongoc_host_list_t *host T
 }
 /* }}} */
 
+int phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* {{{ */
+{
+	bson_iter_t iter;
+	php_phongo_writeconcernerror_t *writeconcernerror;
+
+	writeconcernerror = (php_phongo_writeconcernerror_t *)zend_object_store_get_object(return_value TSRMLS_CC);
+
+	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
+		writeconcernerror->code = bson_iter_int32(&iter);
+	}
+	if (bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
+		writeconcernerror->message = bson_iter_dup_utf8(&iter, NULL);
+	}
+	if (bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+		uint32_t len;
+		const uint8_t *data;
+
+		bson_iter_document(&iter, &len, &data);
+
+		if (!data) {
+			return false;
+		}
+
+		MAKE_STD_ZVAL(writeconcernerror->info);
+
+		if (!bson_to_zval(data, len, writeconcernerror->info)) {
+			zval_ptr_dtor(&writeconcernerror->info);
+			writeconcernerror->info = NULL;
+
+			return false;
+		}
+	}
+
+	return true;
+} /* }}} */
+
 int phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
