@@ -229,6 +229,26 @@ void phongo_server_init(zval *return_value, int hint, mongoc_host_list_t *host T
 	server->host = host;
 }
 /* }}} */
+
+int phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* {{{ */
+{
+	bson_iter_t iter;
+	php_phongo_writeerror_t *writeerror;
+
+	writeerror = (php_phongo_writeerror_t *)zend_object_store_get_object(return_value TSRMLS_CC);
+
+	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
+		writeerror->code = bson_iter_int32(&iter);
+	}
+	if (bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
+		writeerror->message = bson_iter_dup_utf8(&iter, NULL);
+	}
+	if (bson_iter_init_find(&iter, bson, "index") && BSON_ITER_HOLDS_INT32(&iter)) {
+		writeerror->index = bson_iter_int32(&iter);
+	}
+
+	return true;
+} /* }}} */
 /* }}} */
 
 /* {{{ CRUD */

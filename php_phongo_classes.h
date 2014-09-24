@@ -100,6 +100,9 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
+	int                      code;
+	char                    *message;
+	uint32_t                 index;
 } php_phongo_writeerror_t;
 
 typedef struct {
