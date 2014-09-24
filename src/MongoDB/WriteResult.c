@@ -43,7 +43,6 @@
 
 
 PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
-inline int writeresult_populate(php_phongo_writeresult_t *result, bson_t *document);
 
 /* {{{ proto GeneratedId[] WriteResult::getGeneratedIdsForUpsert()
    Returns the GeneratedIds for any upserted documents */
@@ -82,7 +81,6 @@ PHP_METHOD(WriteResult, getNumInserted)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	writeresult_populate(intern, intern->result.firstBatch);
 	RETURN_LONG(intern->nInserted);
 }
 /* }}} */
@@ -104,7 +102,6 @@ PHP_METHOD(WriteResult, getNumMatched)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	writeresult_populate(intern, intern->result.firstBatch);
 	RETURN_LONG(intern->nMatched);
 }
 /* }}} */
@@ -126,7 +123,6 @@ PHP_METHOD(WriteResult, getNumModified)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	writeresult_populate(intern, intern->result.firstBatch);
 	RETURN_LONG(intern->nModified);
 }
 /* }}} */
@@ -148,7 +144,6 @@ PHP_METHOD(WriteResult, getNumRemoved)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	writeresult_populate(intern, intern->result.firstBatch);
 	RETURN_LONG(intern->nRemoved);
 }
 /* }}} */
@@ -170,7 +165,6 @@ PHP_METHOD(WriteResult, getNumUpserted)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	writeresult_populate(intern, intern->result.firstBatch);
 	RETURN_LONG(intern->nUpserted);
 }
 /* }}} */
@@ -309,36 +303,6 @@ static zend_function_entry php_phongo_writeresult_me[] = {
 /* }}} */
 
 
-/* {{{ Other functions */
-inline int writeresult_populate(php_phongo_writeresult_t *result, bson_t *document) /* {{{ */
-{
-	bson_iter_t iter;
-
-	if (result->initialized) {
-		return false;
-	}
-
-	if (bson_iter_init_find(&iter, document, "nUpserted") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nUpserted = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, document, "nMatched") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nMatched = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, document, "nRemoved") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nRemoved = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, document, "nInserted") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nInserted = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, document, "nModified") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nModified = bson_iter_int32(&iter);
-	}
-
-	result->initialized = true;
-
-	return true;
-} /* }}} */
-/* }}} */
 /* {{{ php_phongo_writeresult_t object handlers */
 static void php_phongo_writeresult_free_object(void *object TSRMLS_DC) /* {{{ */
 {

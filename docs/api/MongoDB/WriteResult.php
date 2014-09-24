@@ -30,7 +30,6 @@ final class WriteResult
     public function getNumInserted() {
         /*** CIMPL ***/
 /*
-	writeresult_populate(intern, intern->result.firstBatch);
 	RETURN_LONG(intern->nInserted);
 */
         /*** CIMPL ***/
@@ -44,7 +43,6 @@ final class WriteResult
     public function getNumMatched() {
         /*** CIMPL ***/
 /*
-	writeresult_populate(intern, intern->result.firstBatch);
 	RETURN_LONG(intern->nMatched);
 */
         /*** CIMPL ***/
@@ -58,7 +56,6 @@ final class WriteResult
     public function getNumModified() {
         /*** CIMPL ***/
 /*
-	writeresult_populate(intern, intern->result.firstBatch);
 	RETURN_LONG(intern->nModified);
 */
         /*** CIMPL ***/
@@ -72,7 +69,6 @@ final class WriteResult
     public function getNumRemoved() {
         /*** CIMPL ***/
 /*
-	writeresult_populate(intern, intern->result.firstBatch);
 	RETURN_LONG(intern->nRemoved);
 */
         /*** CIMPL ***/
@@ -86,7 +82,6 @@ final class WriteResult
     public function getNumUpserted() {
         /*** CIMPL ***/
 /*
-	writeresult_populate(intern, intern->result.firstBatch);
 	RETURN_LONG(intern->nUpserted);
 */
         /*** CIMPL ***/
@@ -130,40 +125,3 @@ final class WriteResult
 
 
 $WriteResult["internwrapper"] = "result.";
-$WriteResult["forward_declarations"] = <<< EOF
-inline int writeresult_populate(php_phongo_writeresult_t *result, bson_t *document);
-
-EOF;
-
-$WriteResult["funcs"] = <<< EOF
-inline int writeresult_populate(php_phongo_writeresult_t *result, bson_t *document) /* {{{ */
-{
-	bson_iter_t iter;
-
-	if (result->initialized) {
-		return false;
-	}
-
-	if (bson_iter_init_find(&iter, document, "nUpserted") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nUpserted = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, document, "nMatched") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nMatched = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, document, "nRemoved") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nRemoved = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, document, "nInserted") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nInserted = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, document, "nModified") && BSON_ITER_HOLDS_INT32(&iter)) {
-		result->nModified = bson_iter_int32(&iter);
-	}
-
-	result->initialized = true;
-
-	return true;
-} /* }}} */
-
-EOF;
-

@@ -107,12 +107,13 @@ typedef struct {
 
 typedef struct {
 	php_phongo_result_t      result;
-	zend_bool                initialized;
 	int                      nInserted;
 	int                      nMatched;
 	int                      nModified;
 	int                      nRemoved;
 	int                      nUpserted;
+	zval                    *writeErrors;
+	zval                    *writeConcernErrors;
 } php_phongo_writeresult_t;
 
 typedef struct {
