@@ -93,7 +93,18 @@ final class WriteResult
      * @see https://github.com/mongodb/specifications/blob/master/source/server_write_commands.rst#situational-fields
      * @return array Additional metadata for the operation(s) (e.g. lastOp)
      */
-    public function getInfo() {}
+    public function getInfo()
+    {
+        /*** CIMPL ***/
+/*
+	if (intern->info && Z_TYPE_P(intern->info) == IS_ARRAY) {
+		RETURN_ZVAL(intern->info, 1, 0);
+	}
+
+	array_init(return_value);
+*/
+        /*** CIMPL ***/
+    }
 
     /**
      * Returns the Server from which the result originated
@@ -148,6 +159,10 @@ final class WriteResult
 $WriteResult["internwrapper"] = "result.";
 
 $WriteResult["free"] = <<< EOF
+	if (intern->info) {
+		zval_ptr_dtor(&intern->info);
+	}
+
 	if (intern->writeConcernErrors) {
 		zval_ptr_dtor(&intern->writeConcernErrors);
 	}

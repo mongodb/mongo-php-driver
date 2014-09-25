@@ -185,6 +185,12 @@ PHP_METHOD(WriteResult, getInfo)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+
+	if (intern->info && Z_TYPE_P(intern->info) == IS_ARRAY) {
+		RETURN_ZVAL(intern->info, 1, 0);
+	}
+
+	array_init(return_value);
 }
 /* }}} */
 /* {{{ proto MongoDB\Server WriteResult::getServer()
@@ -321,6 +327,10 @@ static void php_phongo_writeresult_free_object(void *object TSRMLS_DC) /* {{{ */
 	php_phongo_writeresult_t *intern = (php_phongo_writeresult_t*)object;
 
 	zend_object_std_dtor(&intern->result.std TSRMLS_CC);
+
+	if (intern->info) {
+		zval_ptr_dtor(&intern->info);
+	}
 
 	if (intern->writeConcernErrors) {
 		zval_ptr_dtor(&intern->writeConcernErrors);
