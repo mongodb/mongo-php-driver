@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Manager::executeQuery()
+MongoDB\Manager::executeQuery() one document
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--

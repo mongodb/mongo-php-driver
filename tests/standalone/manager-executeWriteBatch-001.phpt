@@ -17,42 +17,27 @@ $batch->delete(array('x' => 1), array("limit" => 1));
 
 $result = $manager->executeWriteBatch(NS, $batch);
 
-var_dump($result instanceof MongoDB\WriteResult);
+echo "\n===> WriteResult\n";
+printWriteResult($result);
 
-$server = $result->getServer();
-
-var_dump($server instanceof MongoDB\Server);
-var_dump($server->getHost());
-var_dump($server->getPort());
-
-printf("Inserted: %d\n", $result->getNumInserted());
-printf("Matched: %d\n", $result->getNumMatched());
-printf("Modified: %d\n", $result->getNumModified());
-printf("Upserted: %d\n", $result->getNumUpserted());
-printf("Removed: %d\n", $result->getNumRemoved());
-printf("Write concern errors: %d\n", count($result->getWriteConcernErrors()));
-printf("Write errors: %d\n", count($result->getWriteErrors()));
-
-$query = new MongoDB\Query(array());
-$cursor = $manager->executeQuery(NS, $query);
-
+echo "\n===> Collection\n";
+$cursor = $manager->executeQuery(NS, new MongoDB\Query(array()));
 var_dump(iterator_to_array($cursor));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-bool(true)
-bool(true)
-string(9) "localhost"
-int(27017)
-Inserted: 2
-Matched: 1
-Modified: 1
-Upserted: 1
-Removed: 1
-Write concern errors: 0
-Write errors: 0
+===> WriteResult
+server: localhost:27017
+numInserted: 2
+numMatched: 1
+numModified: 1
+numUpserted: 1
+numRemoved: 1
+upsertedId[3]: int(3)
+
+===> Collection
 array(2) {
   [0]=>
   array(2) {
