@@ -313,6 +313,46 @@ int phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_h
 		writeresult->nModified = bson_iter_int32(&iter);
 	}
 
+	if (bson_iter_init_find(&iter, bson, "upserted") &&
+		BSON_ITER_HOLDS_ARRAY(&iter) &&
+		bson_iter_recurse(&iter, &ar)) {
+
+		MAKE_STD_ZVAL(writeresult->upsertedIds);
+		array_init(writeresult->upsertedIds);
+
+		/* TODO: bson_to_zval requires an array or document, so we'll convert
+		 * the entire upsert document to a zval. Ideally, we would recurse
+		 * within the document, use bson_iter_value() to access the "_id" field,
+		 * and then convert that alone. The "index" field could be read directly
+		 * as an integer and used with add_index_zval(). */
+		while (bson_iter_next(&ar)) {
+			uint32_t index, len;
+			const uint8_t *data;
+			zval *upsert, *id;
+
+			if (!BSON_ITER_HOLDS_DOCUMENT(&ar)) {
+				continue;
+			}
+
+			bson_iter_document(&ar, &len, &data);
+
+			MAKE_STD_ZVAL(upsert);
+
+			if (!bson_to_zval(data, len, upsert)) {
+				zval_ptr_dtor(&upsert);
+				continue;
+			}
+
+			index = php_array_fetchc_long(upsert, "index");
+			id = php_array_fetchc(upsert, "_id");
+
+			add_index_zval(writeresult->upsertedIds, index, id);
+			zval_add_ref(&id);
+
+			zval_ptr_dtor(&upsert);
+		}
+	}
+
 	if (bson_iter_init_find(&iter, bson, "writeErrors") &&
 		BSON_ITER_HOLDS_ARRAY(&iter) &&
 		bson_iter_recurse(&iter, &ar)) {

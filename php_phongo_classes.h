@@ -113,6 +113,7 @@ typedef struct {
 	int                      nRemoved;
 	int                      nUpserted;
 	zval                    *info;
+	zval                    *upsertedIds;
 	zval                    *writeErrors;
 	zval                    *writeConcernErrors;
 } php_phongo_writeresult_t;
