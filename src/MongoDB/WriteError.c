@@ -140,9 +140,9 @@ static void php_phongo_writeerror_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
-    if (intern->message) {
-        efree(intern->message);
-    }
+	if (intern->message) {
+		efree(intern->message);
+	}
 	efree(intern);
 } /* }}} */
 

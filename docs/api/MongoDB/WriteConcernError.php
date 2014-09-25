@@ -16,7 +16,7 @@ final class WriteConcernError
     {
         /*** CIMPL ***/
 /*
-    RETURN_LONG(intern->code);
+	RETURN_LONG(intern->code);
 */
         /*** CIMPL ***/
     }
@@ -30,11 +30,11 @@ final class WriteConcernError
     {
         /*** CIMPL ***/
 /*
-    if (intern->info && Z_TYPE_P(intern->info) == IS_ARRAY) {
-        RETURN_ZVAL(intern->info, 1, 0);
-    }
+	if (intern->info && Z_TYPE_P(intern->info) == IS_ARRAY) {
+		RETURN_ZVAL(intern->info, 1, 0);
+	}
 
-    array_init(return_value);
+	array_init(return_value);
 */
         /*** CIMPL ***/
     }
@@ -47,18 +47,18 @@ final class WriteConcernError
     public function getMessage()
     {
 /*
-    RETURN_STRING(intern->message, 1);
+	RETURN_STRING(intern->message, 1);
 */
     }
 }
 
 $WriteConcernError["free"] = <<< EOF
-    if (intern->message) {
-        efree(intern->message);
-    }
+	if (intern->message) {
+		efree(intern->message);
+	}
 
-    if (intern->info) {
-        zval_ptr_dtor(&intern->info);
-    }
+	if (intern->info) {
+		zval_ptr_dtor(&intern->info);
+	}
 
 EOF;

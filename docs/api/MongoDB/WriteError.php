@@ -16,7 +16,7 @@ final class WriteError
     {
         /*** CIMPL ***/
 /*
-    RETURN_LONG(intern->code);
+	RETURN_LONG(intern->code);
 */
         /*** CIMPL ***/
     }
@@ -30,7 +30,7 @@ final class WriteError
     {
         /*** CIMPL ***/
 /*
-    RETURN_LONG(intern->index);
+	RETURN_LONG(intern->index);
 */
         /*** CIMPL ***/
     }
@@ -44,15 +44,15 @@ final class WriteError
     {
         /*** CIMPL ***/
 /*
-    RETURN_STRING(intern->message, 1);
+	RETURN_STRING(intern->message, 1);
 */
         /*** CIMPL ***/
     }
 }
 
 $WriteError["free"] = <<< EOF
-    if (intern->message) {
-        efree(intern->message);
-    }
+	if (intern->message) {
+		efree(intern->message);
+	}
 
 EOF;

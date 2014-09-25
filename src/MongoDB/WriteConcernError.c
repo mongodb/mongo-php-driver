@@ -142,13 +142,13 @@ static void php_phongo_writeconcernerror_free_object(void *object TSRMLS_DC) /* 
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
-    if (intern->message) {
-        efree(intern->message);
-    }
+	if (intern->message) {
+		efree(intern->message);
+	}
 
-    if (intern->info) {
-        zval_ptr_dtor(&intern->info);
-    }
+	if (intern->info) {
+		zval_ptr_dtor(&intern->info);
+	}
 	efree(intern);
 } /* }}} */
 
