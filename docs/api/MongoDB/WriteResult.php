@@ -113,15 +113,47 @@ final class WriteResult
      *
      * @return WriteConcernError[]
      */
-    public function getWriteConcernErrors() {}
+    public function getWriteConcernErrors()
+    {
+        /*** CIMPL ***/
+/*
+	if (intern->writeConcernErrors && Z_TYPE_P(intern->writeConcernErrors) == IS_ARRAY) {
+		RETURN_ZVAL(intern->writeConcernErrors, 1, 0);
+	}
+
+	array_init(return_value);
+*/
+        /*** CIMPL ***/
+    }
 
     /**
      * Returns any write errors that occurred
      *
      * @return WriteError[]
      */
-    public function getWriteErrors() {}
+    public function getWriteErrors()
+    {
+        /*** CIMPL ***/
+/*
+	if (intern->writeErrors && Z_TYPE_P(intern->writeErrors) == IS_ARRAY) {
+		RETURN_ZVAL(intern->writeErrors, 1, 0);
+	}
+
+	array_init(return_value);
+*/
+        /*** CIMPL ***/
+    }
 }
 
-
 $WriteResult["internwrapper"] = "result.";
+
+$WriteResult["free"] = <<< EOF
+	if (intern->writeConcernErrors) {
+		zval_ptr_dtor(&intern->writeConcernErrors);
+	}
+
+	if (intern->writeErrors) {
+		zval_ptr_dtor(&intern->writeErrors);
+	}
+
+EOF;

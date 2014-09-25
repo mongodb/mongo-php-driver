@@ -225,6 +225,12 @@ PHP_METHOD(WriteResult, getWriteConcernErrors)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+
+	if (intern->writeConcernErrors && Z_TYPE_P(intern->writeConcernErrors) == IS_ARRAY) {
+		RETURN_ZVAL(intern->writeConcernErrors, 1, 0);
+	}
+
+	array_init(return_value);
 }
 /* }}} */
 /* {{{ proto WriteError[] WriteResult::getWriteErrors()
@@ -244,6 +250,12 @@ PHP_METHOD(WriteResult, getWriteErrors)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+
+	if (intern->writeErrors && Z_TYPE_P(intern->writeErrors) == IS_ARRAY) {
+		RETURN_ZVAL(intern->writeErrors, 1, 0);
+	}
+
+	array_init(return_value);
 }
 /* }}} */
 
@@ -310,6 +322,13 @@ static void php_phongo_writeresult_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	zend_object_std_dtor(&intern->result.std TSRMLS_CC);
 
+	if (intern->writeConcernErrors) {
+		zval_ptr_dtor(&intern->writeConcernErrors);
+	}
+
+	if (intern->writeErrors) {
+		zval_ptr_dtor(&intern->writeErrors);
+	}
 	efree(intern);
 } /* }}} */
 
