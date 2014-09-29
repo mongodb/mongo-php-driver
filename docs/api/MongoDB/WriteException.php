@@ -19,19 +19,23 @@ final class WriteException extends \RuntimeException
      */
     public function getWriteResult()
     {
-        /*** CEF ***/
-/*
-	zval *writeresult;
-*/
-        /*** CEF ***/
         /*** CIMPL ***/
 /*
-	writeresult = zend_read_property(php_phongo_writeexception_ce, getThis(), ZEND_STRL("writeResult"), 0 TSRMLS_CC);
+	if (intern->writeResult && Z_TYPE_P(intern->writeResult) == IS_OBJECT && Z_OBJCE_P(intern->writeResult) == php_phongo_writeresult_ce) {
+		RETURN_ZVAL(intern->writeResult, 1, 0);
+	}
 
-	RETURN_ZVAL(writeresult, 1, 0);
+	RETURN_NULL();
 */
         /*** CIMPL ***/
     }
 }
 
 $WriteException["headers"][] = '<ext/spl/spl_exceptions.h>';
+
+$WriteException["free"] = <<< EOF
+	if (intern->writeResult) {
+		zval_ptr_dtor(&intern->writeResult);
+	}
+
+EOF;
