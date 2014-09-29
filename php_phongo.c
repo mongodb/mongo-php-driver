@@ -233,7 +233,7 @@ void phongo_server_init(zval *return_value, int hint, mongoc_host_list_t *host T
 }
 /* }}} */
 
-int phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* {{{ */
+zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
 	php_phongo_writeconcernerror_t *writeconcernerror;
@@ -269,7 +269,7 @@ int phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /*
 	return true;
 } /* }}} */
 
-int phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* {{{ */
+zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
 	php_phongo_writeerror_t *writeerror;
@@ -289,7 +289,7 @@ int phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* {{{ */
 	return true;
 } /* }}} */
 
-int phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_hint TSRMLS_DC) /* {{{ */
+void phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_hint TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter, ar;
 	php_phongo_writeresult_t *writeresult;
@@ -422,8 +422,6 @@ int phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_h
 			add_next_index_zval(writeresult->writeConcernErrors, writeconcernerror);
 		}
 	}
-
-	return true;
 } /* }}} */
 /* }}} */
 
