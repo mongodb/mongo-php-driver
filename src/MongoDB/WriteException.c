@@ -51,7 +51,6 @@ PHP_METHOD(WriteException, getWriteResult)
 {
 	php_phongo_writeexception_t *intern;
 	zend_error_handling       error_handling;
-	zval *writeresult;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -64,9 +63,11 @@ PHP_METHOD(WriteException, getWriteResult)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	writeresult = zend_read_property(php_phongo_writeexception_ce, getThis(), ZEND_STRL("writeResult"), 0 TSRMLS_CC);
+	if (intern->writeResult && Z_TYPE_P(intern->writeResult) == IS_OBJECT && Z_OBJCE_P(intern->writeResult) == php_phongo_writeresult_ce) {
+		RETURN_ZVAL(intern->writeResult, 1, 0);
+	}
 
-	RETURN_ZVAL(writeresult, 1, 0);
+	RETURN_NULL();
 }
 /* }}} */
 
@@ -94,6 +95,9 @@ static void php_phongo_writeexception_free_object(void *object TSRMLS_DC) /* {{{
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	if (intern->writeResult) {
+		zval_ptr_dtor(&intern->writeResult);
+	}
 	efree(intern);
 } /* }}} */
 

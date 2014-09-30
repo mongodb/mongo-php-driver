@@ -120,6 +120,7 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
+	zval                    *writeResult;
 } php_phongo_writeexception_t;
 
 typedef struct {
