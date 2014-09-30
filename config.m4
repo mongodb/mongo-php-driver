@@ -125,6 +125,7 @@ if test "$PHONGO" != "no"; then
       src/MongoDB/WriteConcern.c \
       src/MongoDB/WriteConcernError.c \
       src/MongoDB/WriteError.c \
+      src/MongoDB/WriteException.c \
       src/MongoDB/WriteResult.c \
   ";
 

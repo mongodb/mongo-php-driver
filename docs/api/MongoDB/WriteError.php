@@ -7,27 +7,6 @@ namespace MongoDB;
  */
 final class WriteError
 {
-    private $message;
-    private $code;
-    private $index;
-    private $operation;
-
-    /**
-     * Constructs a new WriteError object
-     *
-     * @param string       $message   Server error message
-     * @param integer      $code      Server error code
-     * @param integer      $index     Batch index of the error
-     * @param array|object $operation Operation or document responsible for the error
-     */
-    public function __construct($message, $code, $index, $operation)
-    {
-        $this->message = (string) $message;
-        $this->code = (integer) $code;
-        $this->index = (integer) $index;
-        $this->operation = $operation;
-    }
-
     /**
      * Returns the MongoDB error code
      *
@@ -35,7 +14,11 @@ final class WriteError
      */
     public function getCode()
     {
-        return $this->code;
+        /*** CIMPL ***/
+/*
+	RETURN_LONG(intern->code);
+*/
+        /*** CIMPL ***/
     }
 
     /**
@@ -45,7 +28,11 @@ final class WriteError
      */
     public function getIndex()
     {
-        return $this->index;
+        /*** CIMPL ***/
+/*
+	RETURN_LONG(intern->index);
+*/
+        /*** CIMPL ***/
     }
 
     /**
@@ -55,16 +42,17 @@ final class WriteError
      */
     public function getMessage()
     {
-        return $this-message;
-    }
-
-    /**
-     * Returns the batch operation itself that caused the error
-     *
-     * @return array|object Operation or document responsible for the error
-     */
-    public function getOperation()
-    {
-        return $this->operation;
+        /*** CIMPL ***/
+/*
+	RETURN_STRING(intern->message, 1);
+*/
+        /*** CIMPL ***/
     }
 }
+
+$WriteError["free"] = <<< EOF
+	if (intern->message) {
+		efree(intern->message);
+	}
+
+EOF;

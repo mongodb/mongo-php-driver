@@ -36,7 +36,7 @@ final class Manager
 /*
 	intern->client = mongoc_client_new(uri);
 	if (!intern->client) {
-		phongo_throw_exception(PHONGO_ERROR_RUNETIME, "Failed to parse MongoDB URI" TSRMLS_CC);
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to parse MongoDB URI" TSRMLS_CC);
 		return;
 	}
 	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);

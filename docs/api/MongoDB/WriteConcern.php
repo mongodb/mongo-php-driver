@@ -62,3 +62,10 @@ final class WriteConcern
         /*** CIMPL ***/
     }
 }
+
+$WriteConcern["free"] = <<< EOF
+	if (intern->write_concern) {
+		mongoc_write_concern_destroy(intern->write_concern);
+	}
+
+EOF;

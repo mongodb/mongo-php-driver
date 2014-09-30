@@ -154,3 +154,10 @@ class WriteBatch implements Countable
 }
 
 $WriteBatch["headers"][] = '"php_array.h"';
+
+$WriteBatch["free"] = <<< EOF
+	if (intern->batch) {
+		mongoc_bulk_operation_destroy(intern->batch);
+	}
+
+EOF;

@@ -87,6 +87,50 @@ function CLEANUP() {
         echo "skip " . $e->getCode(), ": ", $e->getMessage();
     }
 }
+
+function printServer(MongoDB\Server $server)
+{
+    printf("server: %s:%d\n", $server->getHost(), $server->getPort());
+}
+
+function printWriteResult(MongoDB\WriteResult $result)
+{
+    printServer($result->getServer());
+
+    printf("numInserted: %d\n", $result->getNumInserted());
+    printf("numMatched: %d\n", $result->getNumMatched());
+    printf("numModified: %d\n", $result->getNumModified());
+    printf("numUpserted: %d\n", $result->getNumUpserted());
+    printf("numRemoved: %d\n", $result->getNumRemoved());
+
+    foreach ($result->getUpsertedIds() as $index => $id) {
+        printf("upsertedId[%d]: ", $index);
+        var_dump($id);
+    }
+
+    foreach ($result->getWriteConcernErrors() as $writeConcernError) {
+        printWriteConcernError($writeConcernError);
+    }
+
+    foreach ($result->getWriteErrors() as $writeError) {
+        printWriteError($writeError);
+    }
+}
+
+function printWriteConcernError(MongoDB\WriteConcernError $error)
+{
+    printf("writeConcernError.message: %s\n", $error->getMessage());
+    printf("writeConcernError.code: %d\n", $error->getCode());
+    printf("writeConcernError.info: ");
+    var_dump($error->info());
+}
+
+function printWriteError(MongoDB\WriteError $error)
+{
+    printf("writeError[%d].message: %s\n", $error->getIndex(), $error->getMessage());
+    printf("writeError[%d].code: %d\n", $error->getIndex(), $error->getCode());
+}
+
 function getInsertCount($retval) {
     return $retval->getNumInserted();
 }

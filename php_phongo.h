@@ -62,8 +62,9 @@ ZEND_END_MODULE_GLOBALS(phongo)
 
 typedef enum {
 	PHONGO_ERROR_INVALID_ARGUMENT = 1,
-	PHONGO_ERROR_RUNETIME         = 2,
-	PHONGO_ERROR_MONGOC_FAILED    = 3
+	PHONGO_ERROR_RUNTIME          = 2,
+	PHONGO_ERROR_MONGOC_FAILED    = 3,
+	PHONGO_ERROR_WRITE_FAILED     = 4
 } php_phongo_error_domain_t;
 
 typedef struct
@@ -86,7 +87,7 @@ typedef struct
 
 PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
 PHONGO_API zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
-PHONGO_API void phongo_throw_exception(php_phongo_error_domain_t domain, const char *message TSRMLS_DC);
+PHONGO_API zval* phongo_throw_exception(php_phongo_error_domain_t domain, const char *message TSRMLS_DC);
 
 PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
 

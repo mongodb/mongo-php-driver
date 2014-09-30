@@ -252,6 +252,9 @@ static void php_phongo_writebatch_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	if (intern->batch) {
+		mongoc_bulk_operation_destroy(intern->batch);
+	}
 	efree(intern);
 } /* }}} */
 

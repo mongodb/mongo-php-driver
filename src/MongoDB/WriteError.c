@@ -44,30 +44,6 @@
 
 PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
 
-/* {{{ proto MongoDB\WriteError WriteError::__construct(string $message, integer $code, integer $index, array|object $operation)
-   Constructs a new WriteError object */
-PHP_METHOD(WriteError, __construct)
-{
-	php_phongo_writeerror_t  *intern;
-	zend_error_handling       error_handling;
-	char                     *message;
-	int                       message_len;
-	long                      code;
-	long                      index;
-	zval                     *operation;
-
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sllA", &message, &message_len, &code, &index, &operation) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
-		return;
-	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-}
-/* }}} */
 /* {{{ proto integer WriteError::getCode()
    Returns the MongoDB error code */
 PHP_METHOD(WriteError, getCode)
@@ -85,6 +61,8 @@ PHP_METHOD(WriteError, getCode)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+
+	RETURN_LONG(intern->code);
 }
 /* }}} */
 /* {{{ proto integer WriteError::getIndex()
@@ -104,6 +82,8 @@ PHP_METHOD(WriteError, getIndex)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+
+	RETURN_LONG(intern->index);
 }
 /* }}} */
 /* {{{ proto string WriteError::getMessage()
@@ -123,25 +103,8 @@ PHP_METHOD(WriteError, getMessage)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-}
-/* }}} */
-/* {{{ proto array|object WriteError::getOperation()
-   Returns the batch operation itself that caused the error */
-PHP_METHOD(WriteError, getOperation)
-{
-	php_phongo_writeerror_t  *intern;
-	zend_error_handling       error_handling;
 
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
-		return;
-	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
+	RETURN_STRING(intern->message, 1);
 }
 /* }}} */
 
@@ -149,13 +112,6 @@ PHP_METHOD(WriteError, getOperation)
  * Value object for a write error (e.g. duplicate key).
  */
 /* {{{ MongoDB\WriteError */
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteError___construct, 0, 0, 4)
-	ZEND_ARG_INFO(0, message)
-	ZEND_ARG_INFO(0, code)
-	ZEND_ARG_INFO(0, index)
-	ZEND_ARG_INFO(0, operation)
-ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getCode, 0, 0, 0)
 ZEND_END_ARG_INFO();
@@ -166,16 +122,11 @@ ZEND_END_ARG_INFO();
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getMessage, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getOperation, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
 
 static zend_function_entry php_phongo_writeerror_me[] = {
-	PHP_ME(WriteError, __construct, ai_WriteError___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteError, getCode, ai_WriteError_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteError, getIndex, ai_WriteError_getIndex, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteError, getMessage, ai_WriteError_getMessage, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteError, getOperation, ai_WriteError_getOperation, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -189,6 +140,9 @@ static void php_phongo_writeerror_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	if (intern->message) {
+		efree(intern->message);
+	}
 	efree(intern);
 } /* }}} */
 
