@@ -2,14 +2,6 @@
 
 namespace MongoDB;
 
-use MongoDB\Command\Command;
-use MongoDB\Command\CommandResult;
-use MongoDB\Query\Query;
-use MongoDB\Query\QueryCursor;
-use MongoDB\Write\WriteBatch;
-use MongoDB\Write\WriteOptions;
-use MongoDB\Write\WriteResult;
-
 /**
  * Manager abstracts a cluster of Server objects (i.e. socket connections).
  *
@@ -34,23 +26,22 @@ final class Manager
     public function __construct($uri, array $options = array(), array $driverOptions = array())
     {
         // Parse DSN and options and create Server objects
-    }
-
-    /**
-     * Creates new Manager from a list of servers
-     *
-     * @param Server[] $servers
-     * @return Manager
-     */
-    static public function createFromServers(array $servers)
-    {
-        /* Instantiate a new Manager instance with the provided Servers
-         *
-         * Should this method take $driverOptions as a second parameter? The
-         * Servers would already be constructed, so stream context options
-         * would not apply; however, we may want to take other options, such as
-         * event callbacks, down the line.
-         */
+        /*** CEF ***/
+/*
+	void                   ***ctx = NULL;
+	TSRMLS_SET_CTX(ctx);
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+	intern->client = mongoc_client_new(uri);
+	if (!intern->client) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to parse MongoDB URI" TSRMLS_CC);
+		return;
+	}
+	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);
+*/
+        /*** CIMPL ***/
     }
 
     /**
@@ -75,17 +66,28 @@ final class Manager
          * exception the command requirement and read preferences logically
          * conflict (e.g. mapReduce with output collection and secondary RP).
          */
+        /*** CEF ***/
+/*
+	php_phongo_command_t    *cmd;
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
+	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
+*/
+        /*** CIMPL ***/
     }
 
     /**
      * Execute a Query
      *
      * @param string         $namespace
-     * @param Query          $query
-     * @param ReadPreference $readPreference
-     * @return QueryCursor
+     * @param Query          $zquery
+     * @param ReadPreference $readPreference Read preference options (default: "primary")
+     * @return QueryResult
      */
-    public function executeQuery($namespace, Query $query, ReadPreference $readPreference = null)
+    public function executeQuery($namespace, Query $zquery, ReadPreference $readPreference = null)
     {
         /* Select server based on read preference and invoke
          * Server::executeQuery().
@@ -97,17 +99,22 @@ final class Manager
          *
          * Throw exception if no candidate server is found.
          */
+        /*** CIMPL ***/
+/*
+	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
+*/
+        /*** CIMPL ***/
     }
 
     /**
      * Executes a write operation batch (e.g. insert, update, delete)
      *
-     * @param string     $namespace
-     * @param WriteBatch $batch
-     * @param array      $writeOptions Ordering and write concern options (default: {"ordered": true, "w": 1})
+     * @param string       $namespace
+     * @param WriteBatch   $zbatch
+     * @param WriteConcern $writeConcern Write concern options (default: {"w": 1})
      * @return WriteResult
      */
-    public function executeWrite($namespace, WriteBatch $batch, array $writeOptions = null)
+    public function executeWriteBatch($namespace, WriteBatch $zbatch, WriteConcern $writeConcern = null)
     {
         /* Select writeable server and invoke Server::executeQuery().
          *
@@ -123,6 +130,17 @@ final class Manager
          * If a WriteException is thrown, its WriteResult may contain multiple
          * write errors and write concern errors.
          */
+        /*** CEF ***/
+/*
+	php_phongo_writebatch_t   *batch;
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+	batch = (php_phongo_writebatch_t *)zend_object_store_get_object(zbatch TSRMLS_CC);
+	phongo_execute_write(intern->client, namespace, batch->batch, 0, return_value, return_value_used TSRMLS_CC);
+*/
+        /*** CIMPL ***/
     }
 
     /**
@@ -130,37 +148,79 @@ final class Manager
      *
      * @param string       $namespace
      * @param array|object $document     Document to insert
-     * @param array        $writeOptions Write concern options (default: {"w": 1})
-     * @return InsertResult
+     * @param WriteConcern $writeConcern Write concern options (default: {"w": 1})
+     * @return WriteResult
      */
-    public function executeInsert($namespace, $document, array $writeOptions = null)
+    public function executeInsert($namespace, $document, WriteConcern $writeConcern = null)
     {
-        /* Construct and execute an InsertBatch
+        /* Construct and execute a WriteBatch with a single insert operation.
          *
          * Write options are optional, and will be merged into the default,
          * which is {"w": 1}.
          */
+        /*** CEF ***/
+/*
+	bson_t                   *bson;
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+	bson = bson_new();
+	zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
+	phongo_execute_single_insert(intern->client, namespace, bson, return_value, return_value_used TSRMLS_CC);
+	bson_destroy(bson);
+*/
+        /*** CIMPL ***/
     }
 
     /**
      * Convenience method for single update operation.
      *
      * @param string       $namespace
-     * @param array|object $query         Update criteria
+     * @param array|object $zquery         Update criteria
      * @param array|object $newObj        Update modifier or replacement document
      * @param array        $updateOptions Update options (e.g. "upsert")
-     * @param array        $writeOptions  Write concern options (default: {"w": 1})
-     * @return UpdateResult
+     * @param WriteConcern $writeConcern  Write concern options (default: {"w": 1})
+     * @return WriteResult
      */
-    public function executeUpdate($namespace, $query, $newObj, array $updateOptions = null, array $writeOptions = null)
+    public function executeUpdate($namespace, $zquery, $newObj, array $updateOptions = null, WriteConcern $writeConcern = null)
     {
-        /* Construct and execute an UpdateBatch
+        $updateOptions = array_merge(
+            array('multi' => false, 'upsert' => false),
+            $updateOptions
+        );
+
+        /* Construct and execute a WriteBatch with a single update operation.
          *
          * Write options are optional, and will be merged into the default,
          * which is {"w": 1}.
-         *
-         * What should be the default value for $options? No multi, no upsert?
          */
+        /*** CEF ***/
+/*
+	bson_t                   *query;
+	bson_t                   *update;
+	mongoc_update_flags_t     flags = MONGOC_UPDATE_NONE;
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+	query = bson_new();
+	update = bson_new();
+	zval_to_bson(zquery, PHONGO_BSON_NONE, query, NULL TSRMLS_CC);
+	zval_to_bson(newObj, PHONGO_BSON_NONE, update, NULL TSRMLS_CC);
+
+	if (updateOptions && php_array_fetch_bool(updateOptions, "upsert")) {
+		flags |= MONGOC_UPDATE_UPSERT;
+	}
+	if (updateOptions && php_array_fetch_bool(updateOptions, "limit")) {
+		flags |= MONGOC_UPDATE_MULTI_UPDATE;
+	}
+
+	phongo_execute_single_update(intern->client, namespace, query, update, flags, return_value, return_value_used TSRMLS_CC);
+	bson_destroy(query);
+	bson_destroy(update);
+*/
+        /*** CIMPL ***/
     }
 
     /**
@@ -169,17 +229,55 @@ final class Manager
      * @param string       $namespace
      * @param array|object $query         Deletion criteria
      * @param array        $deleteOptions Deletion options (e.g. "limit")
-     * @param array        $writeOptions  Write concern options (default: {"w": 1})
-     * @return DeleteResult
+     * @param WriteConcern $writeConcern Write concern options (default: {"w": 1})
+     * @return WriteResult
      */
-    public function executeDelete($namespace, $query, array $deleteOptions = null, array $writeOptions = null)
+    public function executeDelete($namespace, $query, array $deleteOptions = null, WriteConcern $writeConcern = null)
     {
-        /* Construct and execute an DeleteBatch
+        /* TODO: Decide if we should default to 0 (i.e. "all"), as in 1.x, or if
+         * an explicit "limit" option must be required. Keeping $deleteOptions
+         * as an array, rather than a single integer option for "limit", seems
+         * wise; if the "delete" command ever takes additional options, we would
+         * not need to change our API.
+         */
+        $deleteOptions = array_merge(
+            array('limit' => 0),
+            $deleteOptions
+        );
+
+        /* Construct and execute a WriteBatch with a single delete operation.
          *
          * Write options are optional, and will be merged into the default,
          * which is {"w": 1}.
-         *
-         * What should be the default value for $options? No limit?
          */
+        /*** CEF ***/
+/*
+	bson_t                   *bson;
+	mongoc_delete_flags_t     flags = MONGOC_DELETE_NONE;
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+	if (deleteOptions && php_array_fetch_bool(deleteOptions, "limit")) {
+		flags |= MONGOC_DELETE_SINGLE_REMOVE;
+	}
+	bson = bson_new();
+	zval_to_bson(query, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
+	phongo_execute_single_delete(intern->client, namespace, bson, flags, return_value, return_value_used TSRMLS_CC);
+	bson_destroy(bson);
+*/
+        /*** CIMPL ***/
     }
+
+    /**
+     * Returns the Servers associated with this Manager
+     *
+     * @return Server[]
+     */
+    public function getServers() {}
 }
+$Manager["free"] = <<< EOF
+	mongoc_client_destroy(intern->client);
+
+EOF;
+$Manager["headers"][] = '"php_array.h"';

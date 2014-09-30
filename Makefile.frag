@@ -1,4 +1,4 @@
-.PHONY: coverage
+.PHONY: coverage testclean
 
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 
@@ -19,5 +19,14 @@ coverage: mv-coverage lcov-local
 
 
 coveralls: mv-coverage lcov-coveralls
-	coveralls --exclude lib --exclude tests
+	coveralls --exclude lib --exclude tests --exclude src/MongoDB/php_array.h
+
+testclean:
+	@for group in generic standalone; do \
+		find $(top_srcdir)/tests/$$group -type f -name "*.diff" -o -name "*.exp" -o -name "*.log" -o -name "*.mem" -o -name "*.out" -o -name "*.php" -o -name "*.sh" | xargs rm -f; \
+	done;
+
+phongodep:
+	(cd src/libbson && $(MAKE))
+	(cd src/libmongoc && $(MAKE) BSON_LIBS=$(top_srcdir)/src/libbson/libbson-1.0.la)
 

@@ -1,4 +1,8 @@
 # PHP MongoDB - PHongo
+[![Coverage Status](https://coveralls.io/repos/bjori/phongo/badge.png?branch=dry-run)](https://coveralls.io/r/bjori/phongo?branch=dry-run)
+[![Build Status](https://travis-ci.org/bjori/phongo.svg?branch=dry-run)](https://travis-ci.org/bjori/phongo)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/2600/badge.svg)](https://scan.coverity.com/projects/2600)
+
 
 This repo contains design documentation, examples, and (wip) proof of concept implementation,
 of a new MongoDB driver for PHP, Phongo.
@@ -24,10 +28,24 @@ along with keeping the overall design fast and powerful.
 - Provide your own [BSON objects](docs/examples/changing-types.php)
 
 
-## API design:
-- [Connection Manager/Client](docs/api/MongoDB/Management.php)
-- [CRUD](docs/api/MongoDB/CRUD.php)
-- [BSON types](docs/api/BSON/types.php)
+## API:
+
+The API is developed using normal PHP userland syntax:
+
+- [Connection Manager](docs/api/MongoDB/Manager.php)
+- [ReadPreference](docs/api/MongoDB/ReadPreference.php)
+- [WriteBatch](docs/api/MongoDB/WriteBatch.php)
+- [WriteResult](docs/api/MongoDB/WriteResult.php)
+- [Query](docs/api/MongoDB/Query.php)
+- [QueryResult](docs/api/MongoDB/QueryResult.php)
+- [Command](docs/api/MongoDB/Command.php)
+- [CommandResult](docs/api/MongoDB/CommandResult.php)
+
+The implementation of these objects then use CIMPL (Simple) and CEF (Chef) inline code
+snippets which are then included in the generated C code.
+
+The goal is this PHP implementation can serve as the canonical implementation of the
+driver that can be used to generate extensions for other PHP implementations (i.e. HHVM).
 
 
 ## Installation

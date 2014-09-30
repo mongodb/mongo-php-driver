@@ -1,63 +1,38 @@
 dnl config.m4 for extension phongo
+syscmd("./autogen.sh")
 
 PHP_ARG_ENABLE(phongo, whether to enable phongo support,
 [  --enable-phongo           Enable phongo support])
 
-PHP_ARG_WITH(libmongoc-dir, for libmongoc,
-[  --with-libmongoc-dir[=DIR]   Set the path to libmongoc install prefix.], yes)
 
 
+MONGOC_SYMBOL_SUFFIX="priv"
 
 if test "$PHONGO" != "no"; then
-  AC_MSG_CHECKING(for libmongoc support)
+  AC_MSG_CHECKING(configuring libmongoc)
+  AC_MSG_RESULT(...)
 
-  LIBMONGOC_DIR=""
-  dnl Uses the last one found, so stick the PHP_LIBMONGOC_DIR last
-  for i in /usr /usr/local $PHP_LIBMONGOC_DIR ; do
-    if test -r $i/include/libmongoc-1.0/mongoc.h; then
-      LIBMONGOC_DIR=$i
-    fi
-  done
+  dnl Run libbson and mongo-c-driver configure scripts..
+  AC_CONFIG_SUBDIRS([src/libbson])
+  AC_CONFIG_SUBDIRS([src/libmongoc])
+  PHP_ADD_INCLUDE(src/libbson/src/bson/)
+  PHP_ADD_INCLUDE(src/libmongoc/src/mongoc/)
+  dnl ...with hardcoded arguments
+  cur_CFLAGS="$CFLAGS"
+  CFLAGS="-I$abs_srcdir/src/libbson/src/bson"
+  ac_configure_args="--enable-debug --enable-tracing --enable-debug-symbols=full --disable-hardening --enable-examples=no --enable-man-pages=no --enable-sasl=no --enable-tests=no --enable-ssl=no --disable-silent-rules --with-libbson=bundled --quiet CFLAGS='$CFLAGS'"
+  dnl Print out the config run right away so it doesn't show up after our stuff
+  _AC_OUTPUT_SUBDIRS
+  dnl since we cheated.. add a guard to not execute it again
+  no_recursion=yes
+  CFLAGS="$cur_CFLAGS"
 
-  if test -r "$LIBMONGOC_DIR"; then
-    LIBMONGOC_INCLUDE="-I$PHP_LIBMONGOC_DIR/include/libmongoc-1.0 -I$PHP_LIBMONGOC_DIR/include/libbson-1.0"
-    LIBMONGOC_LFLAGS="-L$PHP_LIBMONGOC_DIR/$PHP_LIBDIR"
-    LIBMONGOC_LIBS="-lmongoc-1.0 -lbson-1.0"
-    AC_MSG_RESULT(found $LIBMONGOC_DIR)
-  else
-    AC_MSG_RESULT([not found])
-    AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 
-    export ORIG_PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
-    if test -x "$PKG_CONFIG"; then
-      AC_MSG_CHECKING(for libmongoc using pkg-config)
-
-      export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH:/usr/local/$PHP_LIBDIR/pkgconfig:/usr/$PHP_LIBDIR/pkgconfig:/opt/$PHP_LIBDIR/pkgconfig:$PHP_LIBMONGOC_DIR"
-      if ! $PKG_CONFIG --exists libmongoc-1.0; then
-        export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH"
-        AC_MSG_ERROR([Can't find where libmongoc is installed])
-      fi
-
-      LIBMONGOC_INCLUDE=`$PKG_CONFIG --cflags-only-I libmongoc-1.0`
-      LIBMONGOC_LFLAGS=`$PKG_CONFIG --libs-only-L libmongoc-1.0`
-      LIBMONGOC_LIBS=`$PKG_CONFIG --libs-only-l libmongoc-1.0`
-      PHP_LIMONGOC_DIR=`$PKG_CONFIG --variable=prefix libmongoc-1.0`
-      export PKG_CONFIG_PATH="$ORIG_PKG_CONFIG_PATH"
-
-      AC_MSG_RESULT([found using pkg-config])
-    else
-      AC_MSG_ERROR([Can't find where libmongoc is installed])
-    fi
-  fi
-
-  PHP_ADD_INCLUDE($LIBMONGOC_DIR/include/libmongoc-1.0)
-  PHP_ADD_INCLUDE($LIBMONGOC_DIR/include/libbson-1.0)
-
-  PHP_ADD_LIBRARY_WITH_PATH(mongoc-1.0, $LIBMONGOC_DIR/$PHP_LIBDIR, PHONGO_SHARED_LIBADD)
+  PHP_ADD_LIBRARY_WITH_PATH(bson-1.0, src/libbson/.libs, PHONGO_SHARED_LIBADD)
+  PHP_ADD_LIBRARY_WITH_PATH(mongoc-priv, src/libmongoc/.libs, PHONGO_SHARED_LIBADD)
   PHP_SUBST(PHONGO_SHARED_LIBADD)
+
   AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
-
-
 
   PHP_ARG_ENABLE(developer-flags, whether to enable developer build flags,
   [  --enable-developer-flags   Enable developer flags],, no)
@@ -81,7 +56,6 @@ if test "$PHONGO" != "no"; then
     dnl Make sure we don't optimize calls
     PHP_CHECK_GCC_ARG(-fno-optimize-sibling-calls,      _EXTRA_CFLAGS="$_EXTRA_CFLAGS -fno-optimize-sibling-calls")
     PHP_CHECK_GCC_ARG(-Wlogical-op-parentheses,         _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wlogical-op-parentheses")
-    PHP_CHECK_GCC_ARG(-Wno-gnu,                         _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wno-gnu")
     PHP_CHECK_GCC_ARG(-Wbool-conversion,                _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wbool-conversion")
     PHP_CHECK_GCC_ARG(-Wloop-analysis,                  _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wloop-analysis")
     PHP_CHECK_GCC_ARG(-Wsizeof-array-argument,          _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wsizeof-array-argument")
@@ -99,7 +73,7 @@ if test "$PHONGO" != "no"; then
     PHP_CHECK_GCC_ARG(-Wparentheses,                    _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wparentheses")
 
 
-    EXTRA_CFLAGS="-g -O0 -Wall -Wextra -Werror $_EXTRA_CFLAGS "
+    EXTRA_CFLAGS="-g -O0 -Wall -Wextra $_EXTRA_CFLAGS "
     dnl EXTRA_LDFLAGS="-Wl,--no-undefined"
   fi
 
@@ -114,52 +88,80 @@ if test "$PHONGO" != "no"; then
       EXTRA_LDFLAGS="$_EXTRA_FLAGS"
   fi
 
-
-  PHP_SUBST(EXTRA_LDFLAGS)
-
   PHONGO_BSON="\
       src/bson.c \
+  ";
+  PHONGO_BSON_CLASSES="\
+    src/BSON/Type.c \
+    src/BSON/Binary.c \
+    src/BSON/DBRef.c \
+    src/BSON/Int32.c \
+    src/BSON/Int64.c \
+    src/BSON/Javascript.c \
+    src/BSON/Log.c \
+    src/BSON/MaxKey.c \
+    src/BSON/MinKey.c \
+    src/BSON/ObjectID.c \
+    src/BSON/Pool.c \
+    src/BSON/Regex.c \
+    src/BSON/Timestamp.c \
+    src/BSON/UTCDatetime.c \
   ";
   PHONGO_ROOT="\
       php_phongo.c \
   ";
-  PHONGO_INTERFACES="\
-      src/Cursor.c \
-      src/WriteBatch.c \
-      src/WriteResult.c \
-  ";
-  PHONGO_CLASSES="\
-      src/Command.c \
-      src/CommandCursor.c \
-      src/CommandResult.c \
-      src/CursorId.c \
-      src/DeleteBatch.c \
-      src/DeleteResult.c \
-      src/GeneratedId.c \
-      src/InsertBatch.c \
-      src/InsertResult.c \
-      src/Manager.c \
-      src/Query.c \
-      src/QueryCursor.c \
-      src/ReadPreference.c \
-      src/Server.c \
-      src/UpdateBatch.c \
-      src/UpdateResult.c \
-      src/WriteConcernError.c \
-      src/WriteError.c \
+  PHONGO_MONGODB_CLASSES="\
+      src/MongoDB/Command.c \
+      src/MongoDB/CommandResult.c \
+      src/MongoDB/Cursor.c \
+      src/MongoDB/CursorId.c \
+      src/MongoDB/GeneratedId.c \
+      src/MongoDB/Manager.c \
+      src/MongoDB/Query.c \
+      src/MongoDB/QueryResult.c \
+      src/MongoDB/ReadPreference.c \
+      src/MongoDB/Server.c \
+      src/MongoDB/WriteBatch.c \
+      src/MongoDB/WriteConcern.c \
+      src/MongoDB/WriteConcernError.c \
+      src/MongoDB/WriteError.c \
+      src/MongoDB/WriteException.c \
+      src/MongoDB/WriteResult.c \
   ";
 
-  dnl PHP_ADD_SOURCES_X($builddir, $PHONGO_BSON,               $EXTRA_CFLAGS, shared_objects_phongo, yes)
-  PHP_ADD_SOURCES_X($builddir, $PHONGO_INTERFACES,         $EXTRA_CFLAGS, shared_objects_phongo, yes)
-  PHP_ADD_SOURCES_X($builddir, $PHONGO_CLASSES,            $EXTRA_CFLAGS, shared_objects_phongo, yes)
+  EXTRA_CFLAGS="$EXTRA_CFLAGS $MONGOC_CFLAGS"
+
+  if test "$ext_shared" = "no"; then
+    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES)
+  else
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON,               $EXTRA_CFLAGS, shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES,       $EXTRA_CFLAGS, shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES,    $EXTRA_CFLAGS, shared_objects_phongo, yes)
+  fi
+
+  PHONGO_SHARED_DEPENDENCIES="phongodep"
+  PHP_SUBST(PHONGO_SHARED_DEPENDENCIES)
+
   PHP_NEW_EXTENSION(phongo,    $PHONGO_ROOT, $ext_shared,, $EXTRA_CFLAGS)
+  PHP_ADD_EXTENSION_DEP(phongo, spl)
 
 
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
-  if test "$PHP_COVERAGE" = "yes"; then
-      PHP_ADD_MAKEFILE_FRAGMENT
-  fi
+  PHP_ADD_MAKEFILE_FRAGMENT
 
+AC_CONFIG_COMMANDS_POST([echo "
+phongo was configured with the following options:
+
+Build configuration:
+  Enable developers flags (slow)                   : $_EXTRA_CFLAGS
+  CFLAGS                                           : $CFLAGS
+
+Submit bugreports at:
+  https://jira.mongodb.org/browse/PHP
+
+"])
 fi
 
 dnl: vim: et sw=2

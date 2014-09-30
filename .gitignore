@@ -28,14 +28,20 @@ missing
 mkinstalldirs
 modules
 run-tests.php
-tests/*/*.diff
-tests/*/*.out
-tests/*/*.php
-tests/*/*.exp
-tests/*/*.log
-tests/*/*.sh
+# phpt leftovers
+*.diff
+*.exp
+*.log
+*.out
+*.mem
+*.php
+*.sh
+!autogen.sh
 php.ini
 *.patch
-*.php
 *.swp
 .*
+!tests/utils/*.php
+!docs
+!.travis.yml
+!.travis.scripts/*
