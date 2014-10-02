@@ -49,13 +49,11 @@ PHONGO_API zend_class_entry *php_phongo_writeexception_ce;
    Returns the WriteResult from the failed write operation. */
 PHP_METHOD(WriteException, getWriteResult)
 {
-	php_phongo_writeexception_t *intern;
 	zend_error_handling       error_handling;
 	zval *writeresult;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_writeexception_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -87,34 +85,6 @@ static zend_function_entry php_phongo_writeexception_me[] = {
 /* }}} */
 
 
-/* {{{ php_phongo_writeexception_t object handlers */
-static void php_phongo_writeexception_free_object(void *object TSRMLS_DC) /* {{{ */
-{
-	php_phongo_writeexception_t *intern = (php_phongo_writeexception_t*)object;
-
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
-
-	efree(intern);
-} /* }}} */
-
-zend_object_value php_phongo_writeexception_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
-{
-	zend_object_value retval;
-	php_phongo_writeexception_t *intern;
-
-	intern = (php_phongo_writeexception_t *)emalloc(sizeof(php_phongo_writeexception_t));
-	memset(intern, 0, sizeof(php_phongo_writeexception_t));
-
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
-	object_properties_init(&intern->std, class_type);
-
-	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeexception_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
-
-	return retval;
-} /* }}} */
-/* }}} */
-
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(WriteException)
 {
@@ -122,10 +92,10 @@ PHP_MINIT_FUNCTION(WriteException)
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteException", php_phongo_writeexception_me);
-	ce.create_object = php_phongo_writeexception_create_object;
 	php_phongo_writeexception_ce = zend_register_internal_class_ex(&ce, spl_ce_RuntimeException, NULL TSRMLS_CC);
 	php_phongo_writeexception_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
+	zend_declare_property_null(php_phongo_writeexception_ce, ZEND_STRL("writeResult"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
 	return SUCCESS;
 }

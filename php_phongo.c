@@ -423,6 +423,15 @@ void phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_
 		}
 	}
 } /* }}} */
+
+void phongo_writeexception_init(zval *return_value, const bson_t *bson, int server_hint TSRMLS_DC) /* {{{ */
+{
+	zval *writeresult;
+
+	MAKE_STD_ZVAL(writeresult);
+	phongo_writeresult_init(writeresult, bson, server_hint TSRMLS_CC);
+	zend_update_property(Z_OBJCE_P(return_value), return_value, ZEND_STRL("writeResult"), writeresult TSRMLS_CC);
+} /* }}} */
 /* }}} */
 
 /* {{{ CRUD */
@@ -527,11 +536,9 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 
 	if (!hint) {
 		zval *e = phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED, error.message TSRMLS_CC);
-		/* zend_update_property_long(Z_OBJCE_P(e), e, ZEND_STRL("code"), error.code TSRMLS_CC) */
 
-		if (reply) {
-			phongo_writeresult_init(return_value, reply, hint TSRMLS_CC);
-			zend_update_property(Z_OBJCE_P(e), e, ZEND_STRL("writeResult"), return_value TSRMLS_CC);
+		if (reply && Z_OBJCE_P(e) == php_phongo_writeexception_ce) {
+			phongo_writeexception_init(e, reply, hint TSRMLS_CC);
 			bson_destroy(reply);
 		}
 
