@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\WriteConcern#001
+MongoDB\WriteConcern construction
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
