@@ -9,10 +9,6 @@ define("MONGOC_WRITE_CONCERN_W_MAJORITY", "MONGOC_WRITE_CONCERN_W_MAJORITY");
  */
 final class WriteConcern
 {
-    private $w;
-    private $wtimeout;
-    private $options;
-
     const MAJORITY = MONGOC_WRITE_CONCERN_W_MAJORITY;
 
     /**
