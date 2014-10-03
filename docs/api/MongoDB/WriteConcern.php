@@ -2,18 +2,14 @@
 
 namespace MongoDB;
 
-define("MONGOC_WRITE_CONCERN_W_MAJORITY", "MONGOC_WRITE_CONCERN_W_MAJORITY");
+define('PHONGO_WRITE_CONCERN_W_MAJORITY', 'PHONGO_WRITE_CONCERN_W_MAJORITY');
 
 /**
  * Value object for write concern used in issuing write operations.
  */
 final class WriteConcern
 {
-    private $w;
-    private $wtimeout;
-    private $options;
-
-    const MAJORITY = MONGOC_WRITE_CONCERN_W_MAJORITY;
+    const MAJORITY = PHONGO_WRITE_CONCERN_W_MAJORITY;
 
     /**
      * Constructs a new WriteConcern
@@ -36,10 +32,13 @@ final class WriteConcern
 	intern->write_concern = mongoc_write_concern_new();
 
 	if (IS_LONG == is_numeric_string(wstring, wstring_len, &w, NULL, 0)) {
-		// Majority is a integer(-3) constant
 		mongoc_write_concern_set_w(intern->write_concern, w);
 	} else {
-		mongoc_write_concern_set_wtag(intern->write_concern, wstring);
+		if (strcmp(wstring, PHONGO_WRITE_CONCERN_W_MAJORITY) == 0) {
+			mongoc_write_concern_set_w(intern->write_concern, MONGOC_WRITE_CONCERN_W_MAJORITY);
+		} else {
+			mongoc_write_concern_set_wtag(intern->write_concern, wstring);
+		}
 	}
 
 	switch(ZEND_NUM_ARGS()) {
@@ -62,6 +61,12 @@ final class WriteConcern
         /*** CIMPL ***/
     }
 }
+
+$WriteConcern["forward_declarations"] = <<< EOT
+
+#define PHONGO_WRITE_CONCERN_W_MAJORITY "majority"
+
+EOT;
 
 $WriteConcern["free"] = <<< EOF
 	if (intern->write_concern) {

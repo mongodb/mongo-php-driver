@@ -44,6 +44,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_writeconcern_ce;
 
+#define PHONGO_WRITE_CONCERN_W_MAJORITY "majority"
+
 /* {{{ proto MongoDB\WriteConcern WriteConcern::__construct(string $wstring[, integer $wtimeout[, boolean $journal[, boolean $fsync]]])
    Constructs a new WriteConcern */
 PHP_METHOD(WriteConcern, __construct)
@@ -71,10 +73,13 @@ PHP_METHOD(WriteConcern, __construct)
 	intern->write_concern = mongoc_write_concern_new();
 
 	if (IS_LONG == is_numeric_string(wstring, wstring_len, &w, NULL, 0)) {
-		// Majority is a integer(-3) constant
 		mongoc_write_concern_set_w(intern->write_concern, w);
 	} else {
-		mongoc_write_concern_set_wtag(intern->write_concern, wstring);
+		if (strcmp(wstring, PHONGO_WRITE_CONCERN_W_MAJORITY) == 0) {
+			mongoc_write_concern_set_w(intern->write_concern, MONGOC_WRITE_CONCERN_W_MAJORITY);
+		} else {
+			mongoc_write_concern_set_wtag(intern->write_concern, wstring);
+		}
 	}
 
 	switch(ZEND_NUM_ARGS()) {
@@ -159,7 +164,7 @@ PHP_MINIT_FUNCTION(WriteConcern)
 	php_phongo_writeconcern_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeconcern_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
-	zend_declare_class_constant_long(php_phongo_writeconcern_ce, ZEND_STRL("MAJORITY"), MONGOC_WRITE_CONCERN_W_MAJORITY TSRMLS_CC);
+	zend_declare_class_constant_stringl(php_phongo_writeconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(PHONGO_WRITE_CONCERN_W_MAJORITY) TSRMLS_CC);
 
 	return SUCCESS;
 }
