@@ -1,7 +1,11 @@
 <?php
 
-require_once __DIR__ . "/basic.inc";
-require_once __DIR__ . "/../../vendor/autoload.php";
+if ( ! is_readable(__DIR__ . '/../../vendor/autoload.php')) {
+    exit('skip composer dependencies not available');
+}
+
+require_once __DIR__ . '/basic.inc';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 $faker = Faker\Factory::create();
 $faker->seed(1234);

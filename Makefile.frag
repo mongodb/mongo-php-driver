@@ -21,6 +21,9 @@ coverage: mv-coverage lcov-local
 coveralls: mv-coverage lcov-coveralls
 	coveralls --exclude lib --exclude tests --exclude src/MongoDB/php_array.h
 
+composer:
+	composer install --dev --no-interaction --prefer-source
+
 testclean:
 	@for group in generic standalone; do \
 		find $(top_srcdir)/tests/$$group -type f -name "*.diff" -o -name "*.exp" -o -name "*.log" -o -name "*.mem" -o -name "*.out" -o -name "*.php" -o -name "*.sh" | xargs rm -f; \
