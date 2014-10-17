@@ -28,6 +28,7 @@ before_script:
   - "./.travis.scripts/compile.sh"
   - ulimit -a
   - ulimit -c unlimited
+  - make composer
 
 notifications:
   email:
