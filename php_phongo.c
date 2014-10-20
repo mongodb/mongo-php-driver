@@ -152,7 +152,8 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 	switch(log_level) {
 	case MONGOC_LOG_LEVEL_ERROR:
 	case MONGOC_LOG_LEVEL_CRITICAL:
-		return phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED, message TSRMLS_CC);
+		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED, message TSRMLS_CC);
+		return;
 
 	case MONGOC_LOG_LEVEL_WARNING:
 	case MONGOC_LOG_LEVEL_MESSAGE:
