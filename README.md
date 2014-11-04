@@ -22,7 +22,7 @@ necessary to build a fully-functional MongoDB driver.
 
 In the long run, we hope that userland packages will be built atop this driver
 to implement various APIs (e.g. a BC layer for the existing driver, new fluent
-interfaces), management utilities (for creating admit utilities and cluster
+interfaces), management utilities (for creating admin utilities and cluster
 management applications), and other interesting libraries.
 
 The goal is to encourage community contribution and involvement with these
