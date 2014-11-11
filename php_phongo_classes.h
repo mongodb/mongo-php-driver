@@ -151,6 +151,10 @@ typedef struct {
 } php_phongo_pool_t;
 typedef struct {
 	zend_object              std;
+	char                    *pattern;
+	int                     *pattern_len;
+	char                    *flags;
+	int                     *flags_len;
 } php_phongo_regex_t;
 typedef struct {
 	zend_object              std;

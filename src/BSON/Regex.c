@@ -44,12 +44,123 @@
 
 PHONGO_API zend_class_entry *php_phongo_regex_ce;
 
+/* {{{ proto BSON\Regex Regex::__construct(string $pattern, string $flags)
+   Constructs a new regular expression. */
+PHP_METHOD(Regex, __construct)
+{
+	php_phongo_regex_t       *intern;
+	zend_error_handling       error_handling;
+	char                     *pattern;
+	int                       pattern_len;
+	char                     *flags;
+	int                       flags_len;
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_regex_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &pattern, &pattern_len, &flags, &flags_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	intern->pattern = estrndup(pattern, pattern_len);
+	intern->pattern_len = pattern_len;
+	intern->flags = estrndup(flags, flags_len);
+	intern->flags_len = flags_len;
+}
+/* }}} */
+/* {{{ proto void Regex::getPattern()
+    */
+PHP_METHOD(Regex, getPattern)
+{
+	php_phongo_regex_t       *intern;
+	zend_error_handling       error_handling;
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_regex_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+		RETURN_STRINGL(intern->pattern, intern->pattern_len, 1);
+}
+/* }}} */
+/* {{{ proto void Regex::getFlags()
+    */
+PHP_METHOD(Regex, getFlags)
+{
+	php_phongo_regex_t       *intern;
+	zend_error_handling       error_handling;
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_regex_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+		RETURN_STRINGL(intern->flags, intern->flags_len, 1);
+}
+/* }}} */
+/* {{{ proto void Regex::__toString()
+    */
+PHP_METHOD(Regex, __toString)
+{
+	php_phongo_regex_t       *intern;
+	zend_error_handling       error_handling;
+	char *regex;
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_regex_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	spprintf(&regex, 0, "/%s/%s", intern->pattern, intern->flags);
+	RETVAL_STRING(regex, 0);
+}
+/* }}} */
 
 
 /* {{{ BSON\Regex */
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Regex___construct, 0, 0, 2)
+	ZEND_ARG_INFO(0, pattern)
+	ZEND_ARG_INFO(0, flags)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Regex_getPattern, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Regex_getFlags, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Regex___toString, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
 
 static zend_function_entry php_phongo_regex_me[] = {
+	PHP_ME(Regex, __construct, ai_Regex___construct, ZEND_ACC_PUBLIC)
+	PHP_ME(Regex, getPattern, ai_Regex_getPattern, ZEND_ACC_PUBLIC)
+	PHP_ME(Regex, getFlags, ai_Regex_getFlags, ZEND_ACC_PUBLIC)
+	PHP_ME(Regex, __toString, ai_Regex___toString, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
@@ -63,6 +174,13 @@ static void php_phongo_regex_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+    if (intern->pattern) {
+        efree(intern->pattern);
+    }
+
+    if (intern->flags) {
+        efree(intern->flags);
+    }
 	efree(intern);
 } /* }}} */
 
