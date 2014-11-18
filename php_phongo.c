@@ -1019,7 +1019,9 @@ static void* php_phongo_realloc(void *mem, size_t num_bytes) { /* {{{ */
 
 static void php_phongo_free(void *mem) /* {{{ */
 {
-	return efree(mem);
+	if (mem) {
+		return efree(mem);
+	}
 } /* }}} */
 
 /* }}} */
