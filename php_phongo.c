@@ -321,36 +321,35 @@ void phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_
 		MAKE_STD_ZVAL(writeresult->upsertedIds);
 		array_init(writeresult->upsertedIds);
 
-		/* TODO: bson_to_zval requires an array or document, so we'll convert
-		 * the entire upsert document to a zval. Ideally, we would recurse
-		 * within the document, use bson_iter_value() to access the "_id" field,
-		 * and then convert that alone. The "index" field could be read directly
-		 * as an integer and used with add_index_zval(). */
 		while (bson_iter_next(&ar)) {
-			uint32_t index, len;
-			const uint8_t *data;
-			zval *upsert, *id;
+			int32_t index;
+			bson_iter_t outer;
+			zval *zid;
 
-			if (!BSON_ITER_HOLDS_DOCUMENT(&ar)) {
+			if (!BSON_ITER_HOLDS_DOCUMENT(&ar) || !bson_iter_recurse(&ar, &outer)) {
 				continue;
 			}
 
-			bson_iter_document(&ar, &len, &data);
-
-			MAKE_STD_ZVAL(upsert);
-
-			if (!bson_to_zval(data, len, upsert)) {
-				zval_ptr_dtor(&upsert);
+			if (!bson_iter_find(&outer, "index") || !BSON_ITER_HOLDS_INT32(&outer)) {
 				continue;
 			}
 
-			index = php_array_fetchc_long(upsert, "index");
-			id = php_array_fetchc(upsert, "_id");
+			index = bson_iter_int32(&outer);
 
-			add_index_zval(writeresult->upsertedIds, index, id);
-			zval_add_ref(&id);
+			if (!bson_iter_find(&outer, "_id")) {
+				continue;
+			}
 
-			zval_ptr_dtor(&upsert);
+			if (BSON_ITER_HOLDS_OID(&outer)) {
+				MAKE_STD_ZVAL(zid);
+
+				php_phongo_objectid_new_from_oid(zid, bson_iter_oid(&outer) TSRMLS_CC);
+				add_index_zval(writeresult->upsertedIds, index, zid);
+			} else if (BSON_ITER_HOLDS_INT64(&outer)) {
+				int val = bson_iter_int64(&outer);
+
+				add_index_long(writeresult->upsertedIds, index, val);
+			}
 		}
 	}
 
