@@ -33,7 +33,7 @@ var_dump(iterator_to_array($cursor));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-WriteException.message: insertDocument :: caused by :: 11000 E11000 duplicate key error index: %s.%s.$_id_  dup key: { : 1 }
+WriteException.message: %s
 WriteException.code: 0
 
 ===> WriteResult
@@ -43,7 +43,7 @@ numMatched: 0
 numModified: 0
 numUpserted: 0
 numRemoved: 0
-writeError[1].message: insertDocument :: caused by :: 11000 E11000 duplicate key error index: %s.%s.$_id_  dup key: { : 1 }
+writeError[1].message: %s
 writeError[1].code: 11000
 
 ===> Collection
