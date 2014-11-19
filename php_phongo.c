@@ -524,6 +524,8 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 	mongoc_bulk_operation_set_database(batch, database);
 	mongoc_bulk_operation_set_collection(batch, collection);
 	mongoc_bulk_operation_set_client(batch, client);
+	efree(database);
+	efree(collection);
 
 	if (server_hint) {
 		mongoc_bulk_operation_set_hint(batch, server_hint);
