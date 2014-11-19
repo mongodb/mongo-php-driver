@@ -40,6 +40,9 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
+	mongoc_cursor_t         *cursor;
+	bson_t                  *firstBatch;
+	int                      hint;
 } php_phongo_cursor_t;
 
 typedef struct {

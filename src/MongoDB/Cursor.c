@@ -342,6 +342,7 @@ PHP_MINIT_FUNCTION(Cursor)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "Cursor", php_phongo_cursor_me);
 	ce.create_object = php_phongo_cursor_create_object;
 	php_phongo_cursor_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_cursor_ce->get_iterator = phongo_cursor_get_iterator;
 
 	zend_class_implements(php_phongo_cursor_ce TSRMLS_CC, 1, spl_ce_Iterator);
 

@@ -85,6 +85,12 @@ PHP_METHOD(QueryResult, getIterator)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	if (intern->result.ce_get_iterator) {
+		object_init_ex(return_value, intern->result.ce_get_iterator);
+	} else {
+		php_phongo_cursor_new_from_result(return_value, &intern->result TSRMLS_CC);
+	}
+
 }
 /* }}} */
 /* {{{ proto self QueryResult::setIteratorClass(string $class)
