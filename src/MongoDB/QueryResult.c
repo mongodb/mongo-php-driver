@@ -53,6 +53,7 @@ PHP_METHOD(QueryResult, __construct)
 	zval                     *server;
 	zval                     *cursorId;
 	zval                     *firstBatch;
+	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -72,6 +73,7 @@ PHP_METHOD(QueryResult, getIterator)
 {
 	php_phongo_queryresult_t *intern;
 	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -93,6 +95,7 @@ PHP_METHOD(QueryResult, setIteratorClass)
 	zend_error_handling       error_handling;
 	char                     *class;
 	int                       class_len;
+	(void)return_value_ptr; (void)return_value_used; (void)return_value;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -113,6 +116,7 @@ PHP_METHOD(QueryResult, setIteratorInitCallback)
 	php_phongo_queryresult_t *intern;
 	zend_error_handling       error_handling;
 	zval                     *callback;
+	(void)return_value_ptr; (void)return_value_used; (void)return_value;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -133,6 +137,7 @@ PHP_METHOD(QueryResult, getServer)
 	php_phongo_queryresult_t *intern;
 	zend_error_handling       error_handling;
 	mongoc_host_list_t       *host;
+	(void)return_value_ptr; (void)return_value_used; (void)return_value;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -225,6 +230,7 @@ zend_object_value php_phongo_queryresult_create_object(zend_class_entry *class_t
 PHP_MINIT_FUNCTION(QueryResult)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	(void)module_number; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "QueryResult", php_phongo_queryresult_me);
