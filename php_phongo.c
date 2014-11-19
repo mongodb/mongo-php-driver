@@ -752,10 +752,17 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, (char *)"persistent id", /*options->connectTimeoutMS*/0, (php_stream_context *)NULL, &errmsg, &errcode);
 	efree(dsn);
+
 	if (!stream) {
 		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, errmsg);
 		return NULL;
 	}
+
+	/* Avoid invalid leak warning in debug mode when freeing the stream */
+#if ZEND_DEBUG
+	stream->__exposed = 1;
+#endif
+
 
 	base_stream = ecalloc(1, sizeof(php_phongo_stream_socket));
 	base_stream->stream = stream;
