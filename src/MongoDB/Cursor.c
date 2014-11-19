@@ -124,6 +124,48 @@ PHP_METHOD(Cursor, isDead)
 	RETURN_BOOL(!mongoc_cursor_is_alive(intern->cursor));
 }
 /* }}} */
+/* {{{ proto void Cursor::kill()
+   Kills this cursor */
+PHP_METHOD(Cursor, kill)
+{
+	php_phongo_cursor_t      *intern;
+	zend_error_handling       error_handling;
+	int                       hint;
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_cursor_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	hint = mongoc_cursor_get_hint(intern->cursor);
+	/* FIXME: Resolve a hint to a client */
+	//mongoc_client_kill_cursor(php_phongo_client_from_hint(hint), mongoc_cursor_get_id(intern->cursor));
+}
+/* }}} */
+/* {{{ proto boolean Cursor::getCursorId()
+   Gets a batch size for the cursor */
+PHP_METHOD(Cursor, getCursorId)
+{
+	php_phongo_cursor_t      *intern;
+	zend_error_handling       error_handling;
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_cursor_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->cursor));
+}
+/* }}} */
 /* {{{ proto boolean Cursor::setBatchSize(integer $batchSize)
    Sets a batch size for the cursor */
 PHP_METHOD(Cursor, setBatchSize)
@@ -151,7 +193,6 @@ PHP_METHOD(Cursor, getBatchSize)
 {
 	php_phongo_cursor_t      *intern;
 	zend_error_handling       error_handling;
-	long                      batchSize;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -291,6 +332,12 @@ ZEND_END_ARG_INFO();
 ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_isDead, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_kill, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_getCursorId, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_getBatchSize, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
@@ -319,6 +366,8 @@ static zend_function_entry php_phongo_cursor_me[] = {
 	PHP_ME(Cursor, getId, ai_Cursor_getId, ZEND_ACC_PUBLIC)
 	PHP_ME(Cursor, getServer, ai_Cursor_getServer, ZEND_ACC_PUBLIC)
 	PHP_ME(Cursor, isDead, ai_Cursor_isDead, ZEND_ACC_PUBLIC)
+	PHP_ME(Cursor, kill, ai_Cursor_kill, ZEND_ACC_PUBLIC)
+	PHP_ME(Cursor, getCursorId, ai_Cursor_getCursorId, ZEND_ACC_PUBLIC)
 	PHP_ME(Cursor, getBatchSize, ai_Cursor_getBatchSize, ZEND_ACC_PUBLIC)
 	PHP_ME(Cursor, setBatchSize, ai_Cursor_setBatchSize, ZEND_ACC_PUBLIC)
 	PHP_ME(Cursor, current, ai_Cursor_current, ZEND_ACC_PUBLIC)

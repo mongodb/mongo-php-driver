@@ -47,6 +47,7 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
+	uint64_t                 id;
 } php_phongo_cursorid_t;
 
 typedef struct {

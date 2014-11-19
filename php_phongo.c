@@ -880,6 +880,16 @@ php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *filter, z
 	return query;
 } /* }}} */
 
+void php_phongo_cursor_id_new_from_id(zval *object, int64_t cursorid TSRMLS_DC) /* {{{ */
+{
+	php_phongo_cursorid_t     *intern;
+
+	object_init_ex(object, php_phongo_cursorid_ce);
+
+	intern = (php_phongo_cursorid_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern->id = cursorid;
+} /* }}} */
+
 void php_phongo_cursor_new_from_result(zval *object, php_phongo_result_t *result TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t     *intern;

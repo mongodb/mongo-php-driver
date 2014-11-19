@@ -62,7 +62,6 @@ PHP_METHOD(CursorId, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
 }
 /* }}} */
 /* {{{ proto string CursorId::__toString()
@@ -82,6 +81,8 @@ PHP_METHOD(CursorId, __toString)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	RETVAL_LONG(intern->id);
+	convert_to_string(return_value);
 }
 /* }}} */
 
