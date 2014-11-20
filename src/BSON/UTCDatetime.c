@@ -44,12 +44,87 @@
 
 PHONGO_API zend_class_entry *php_phongo_utcdatetime_ce;
 
+/* {{{ proto MongoDB\UTCDatetime UTCDatetime::__construct(string $milliseconds)
+   Construct a new UTCDatetime */
+PHP_METHOD(UTCDatetime, __construct)
+{
+	php_phongo_utcdatetime_t    *intern;
+	zend_error_handling       error_handling;
+	long                      milliseconds;
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &milliseconds) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	intern->milliseconds = milliseconds;
+}
+/* }}} */
+/* {{{ proto string UTCDatetime::__toString()
+   Returns the string representation of the UTCDatetime */
+PHP_METHOD(UTCDatetime, __toString)
+{
+	php_phongo_utcdatetime_t    *intern;
+	zend_error_handling       error_handling;
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	RETVAL_LONG(intern->milliseconds);
+	convert_to_string(return_value);
+}
+/* }}} */
+/* {{{ proto string UTCDatetime::toDateTime()
+   Returns DateTime object representing this UTCDateTime */
+PHP_METHOD(UTCDatetime, toDateTime)
+{
+	php_phongo_utcdatetime_t    *intern;
+	zend_error_handling          error_handling;
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	php_phongo_new_datetime_from_utcdatetime(return_value, intern->milliseconds);
+}
+/* }}} */
 
 
 /* {{{ BSON\UTCDatetime */
 
+ZEND_BEGIN_ARG_INFO_EX(ai_UTCDatetime___construct, 0, 0, 1)
+	ZEND_ARG_INFO(0, id)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_UTCDatetime___toString, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_UTCDatetime_toDateTime, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
 
 static zend_function_entry php_phongo_utcdatetime_me[] = {
+	PHP_ME(UTCDatetime, __construct, ai_UTCDatetime___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(UTCDatetime, __toString, ai_UTCDatetime___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(UTCDatetime, toDateTime, ai_UTCDatetime_toDateTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 

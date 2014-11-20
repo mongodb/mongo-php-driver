@@ -913,6 +913,35 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 	bson_oid_copy(oid, intern->oid);
 } /* }}} */
 
+void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_CC) /* {{{ */
+{
+	php_phongo_utcdatetime_t     *intern;
+
+	object_init_ex(object, php_phongo_utcdatetime_ce);
+
+	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern->milliseconds = msec_since_epoch;
+} /* }}} */
+void php_phongo_new_datetime_from_utcdatetime(zval *object, int64_t milliseconds TSRMLS_CC) /* {{{ */
+{
+	php_date_obj             *datetime_obj;
+	char                     *sec;
+	int                       sec_len;
+
+	object_init_ex(object, php_date_get_date_ce());
+
+#ifdef WIN32
+	sec_len = spprintf(&sec, 0, "@%I64d", (int64_t) milliseconds / 1000);
+#else
+	sec_len = spprintf(&sec, 0, "@%lld", (long long int) milliseconds / 1000);
+#endif
+
+	datetime_obj = zend_object_store_get_object(object TSRMLS_CC);
+	php_date_initialize(datetime_obj, sec, sec_len, NULL, NULL, 0 TSRMLS_CC);
+	efree(sec);
+	datetime_obj->time->f = milliseconds % 1000;
+} /* }}} */
+
 /* {{{ Iterator */
 typedef struct {
 	zend_object_iterator  iterator;

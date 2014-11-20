@@ -135,6 +135,14 @@ const bson_oid_t *php_phongo_objectid_get_id(zval *object TSRMLS_DC)
 
 	return intern->oid;
 }
+int64_t php_phongo_utcdatetime_get_milliseconds(zval *object TSRMLS_DC)
+{
+	php_phongo_utcdatetime_t     *intern;
+
+	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->milliseconds;
+}
 
 bool php_phongo_bson_visit_oid(const bson_iter_t *iter __attribute__((unused)), const char *key, const bson_oid_t *v_oid, void *data) /* {{{ */
 {
@@ -172,15 +180,26 @@ bool php_phongo_bson_visit_bool(const bson_iter_t *iter __attribute__((unused)),
 	return false;
 }
 /* }}} */
-#if 0
 bool php_phongo_bson_visit_date_time(const bson_iter_t *iter __attribute__((unused)), const char *key, int64_t msec_since_epoch, void *data) /* {{{ */
 {
-	printf("Not Implemented\n");
+	zval *retval = *(zval **)data;
+	TSRMLS_FETCH();
+	zval *zchild;
 
-	return true;
+	MAKE_STD_ZVAL(zchild);
+	php_phongo_new_utcdatetime_from_epoch(zchild, msec_since_epoch TSRMLS_CC);
+
+	if (Z_TYPE_P(retval) == IS_ARRAY) {
+		add_assoc_zval(retval, key, zchild);
+	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
+		add_property_zval(retval, key, zchild);
+	} else {
+		return true;
+	}
+
+	return false;
 }
 /* }}} */
-#endif
 bool php_phongo_bson_visit_null(const bson_iter_t *iter __attribute__((unused)), const char *key, void *data) /* {{{ */
 {
 	zval *retval = *(zval **)data;
@@ -305,7 +324,7 @@ static const bson_visitor_t php_bson_visitors = {
    NULL /*php_phongo_bson_visit_undefined*/,
    php_phongo_bson_visit_oid,
    php_phongo_bson_visit_bool,
-   NULL /*php_phongo_bson_visit_date_time*/,
+   php_phongo_bson_visit_date_time,
    php_phongo_bson_visit_null,
    NULL /*php_phongo_bson_visit_regex*/,
    NULL /*php_phongo_bson_visit_dbpointer*/,
@@ -430,6 +449,12 @@ void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TS
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_objectid_ce TSRMLS_CC)) {
 			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding _id");
 			bson_append_oid(bson, key, key_len, php_phongo_objectid_get_id(object TSRMLS_CC));
+			return;
+		}
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_utcdatetime_ce TSRMLS_CC)) {
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding UTCDatetime");
+			bson_append_date_time(bson, key, key_len, php_phongo_utcdatetime_get_milliseconds(object TSRMLS_CC));
+			//bson_append_value(bson, key, key_len, php_phongo_utcdatetime_get_milliseconds(object TSRMLS_CC));
 			return;
 		}
 	}

@@ -161,6 +161,7 @@ typedef struct {
 } php_phongo_timestamp_t;
 typedef struct {
 	zend_object              std;
+	int64_t                  milliseconds;
 } php_phongo_utcdatetime_t;
 
 extern PHONGO_API zend_class_entry *php_phongo_command_ce;
