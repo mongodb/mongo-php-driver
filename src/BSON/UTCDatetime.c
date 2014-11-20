@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_utcdatetime_ce;
 
-/* {{{ proto MongoDB\UTCDatetime UTCDatetime::__construct(string $milliseconds)
+/* {{{ proto MongoDB\UTCDatetime UTCDatetime::__construct(integer $milliseconds)
    Construct a new UTCDatetime */
 PHP_METHOD(UTCDatetime, __construct)
 {
@@ -111,7 +111,7 @@ PHP_METHOD(UTCDatetime, toDateTime)
 /* {{{ BSON\UTCDatetime */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_UTCDatetime___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, id)
+	ZEND_ARG_INFO(0, milliseconds)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_UTCDatetime___toString, 0, 0, 0)
