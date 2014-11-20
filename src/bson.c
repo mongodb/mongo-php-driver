@@ -184,7 +184,7 @@ bool php_phongo_bson_visit_date_time(const bson_iter_t *iter __attribute__((unus
 {
 	zval *retval = *(zval **)data;
 	TSRMLS_FETCH();
-	zval *zchild;
+	zval *zchild = NULL;
 
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_utcdatetime_from_epoch(zchild, msec_since_epoch TSRMLS_CC);
@@ -294,22 +294,44 @@ bool php_phongo_bson_visit_int64(const bson_iter_t *iter __attribute__((unused))
 	return false;
 }
 /* }}} */
-#if 0
 bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter __attribute__((unused)), const char *key, void *data) /* {{{ */
 {
-	printf("Not Implemented\n");
+	zval *retval = *(zval **)data;
+	zval *zchild = NULL;
+	TSRMLS_FETCH();
 
-	return true;
+	MAKE_STD_ZVAL(zchild);
+	object_init_ex(zchild, php_phongo_maxkey_ce);
+	if (Z_TYPE_P(retval) == IS_ARRAY) {
+		add_assoc_zval(retval, key, zchild);
+	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
+		add_property_zval(retval, key, zchild);
+	} else {
+		return true;
+	}
+
+	return false;
 }
 /* }}} */
 bool php_phongo_bson_visit_minkey(const bson_iter_t *iter __attribute__((unused)), const char *key, void *data) /* {{{ */
 {
-	printf("Not Implemented\n");
+	zval *retval = *(zval **)data;
+	zval *zchild = NULL;
+	TSRMLS_FETCH();
 
-	return true;
+	MAKE_STD_ZVAL(zchild);
+	object_init_ex(zchild, php_phongo_minkey_ce);
+	if (Z_TYPE_P(retval) == IS_ARRAY) {
+		add_assoc_zval(retval, key, zchild);
+	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
+		add_property_zval(retval, key, zchild);
+	} else {
+		return true;
+	}
+
+	return false;
 }
 /* }}} */
-#endif
 
 
 static const bson_visitor_t php_bson_visitors = {
@@ -334,8 +356,8 @@ static const bson_visitor_t php_bson_visitors = {
    php_phongo_bson_visit_int32,
    NULL /*php_phongo_bson_visit_timestamp*/,
    php_phongo_bson_visit_int64,
-   NULL /*php_phongo_bson_visit_maxkey*/,
-   NULL /*php_phongo_bson_visit_minkey*/,
+   php_phongo_bson_visit_maxkey,
+   php_phongo_bson_visit_minkey,
    { NULL }
 };
 
@@ -454,7 +476,16 @@ void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TS
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_utcdatetime_ce TSRMLS_CC)) {
 			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding UTCDatetime");
 			bson_append_date_time(bson, key, key_len, php_phongo_utcdatetime_get_milliseconds(object TSRMLS_CC));
-			//bson_append_value(bson, key, key_len, php_phongo_utcdatetime_get_milliseconds(object TSRMLS_CC));
+			return;
+		}
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_maxkey_ce TSRMLS_CC)) {
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding MaxKey");
+			bson_append_maxkey(bson, key, key_len);
+			return;
+		}
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_minkey_ce TSRMLS_CC)) {
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding MinKey");
+			bson_append_minkey(bson, key, key_len);
 			return;
 		}
 	}
