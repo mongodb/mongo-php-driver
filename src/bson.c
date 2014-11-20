@@ -143,6 +143,22 @@ int64_t php_phongo_utcdatetime_get_milliseconds(zval *object TSRMLS_DC)
 
 	return intern->milliseconds;
 }
+int32_t php_phongo_timestamp_get_increment(zval *object TSRMLS_DC)
+{
+	php_phongo_timestamp_t     *intern;
+
+	intern = (php_phongo_timestamp_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->increment;
+}
+int32_t php_phongo_timestamp_get_timestamp(zval *object TSRMLS_DC)
+{
+	php_phongo_timestamp_t     *intern;
+
+	intern = (php_phongo_timestamp_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->timestamp;
+}
 
 bool php_phongo_bson_visit_oid(const bson_iter_t *iter __attribute__((unused)), const char *key, const bson_oid_t *v_oid, void *data) /* {{{ */
 {
@@ -269,15 +285,26 @@ bool php_phongo_bson_visit_int32(const bson_iter_t *iter __attribute__((unused))
 	return false;
 }
 /* }}} */
-#if 0
 bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter __attribute__((unused)), const char *key, uint32_t v_timestamp, uint32_t v_increment, void *data) /* {{{ */
 {
-	printf("Not Implemented\n");
+	zval *retval = *(zval **)data;
+	TSRMLS_FETCH();
+	zval *zchild = NULL;
 
-	return true;
+	MAKE_STD_ZVAL(zchild);
+	php_phongo_new_timestamp_from_increment_and_timestamp(zchild, v_increment, v_timestamp TSRMLS_CC);
+
+	if (Z_TYPE_P(retval) == IS_ARRAY) {
+		add_assoc_zval(retval, key, zchild);
+	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
+		add_property_zval(retval, key, zchild);
+	} else {
+		return true;
+	}
+
+	return false;
 }
 /* }}} */
-#endif
 bool php_phongo_bson_visit_int64(const bson_iter_t *iter __attribute__((unused)), const char *key, int64_t v_int64, void *data) /* {{{ */
 {
 	zval *retval = *(zval **)data;
@@ -354,7 +381,7 @@ static const bson_visitor_t php_bson_visitors = {
    NULL /*php_phongo_bson_visit_symbol*/,
    NULL /*php_phongo_bson_visit_codewscope*/,
    php_phongo_bson_visit_int32,
-   NULL /*php_phongo_bson_visit_timestamp*/,
+   php_phongo_bson_visit_timestamp,
    php_phongo_bson_visit_int64,
    php_phongo_bson_visit_maxkey,
    php_phongo_bson_visit_minkey,
@@ -476,6 +503,17 @@ void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TS
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_utcdatetime_ce TSRMLS_CC)) {
 			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding UTCDatetime");
 			bson_append_date_time(bson, key, key_len, php_phongo_utcdatetime_get_milliseconds(object TSRMLS_CC));
+			return;
+		}
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_timestamp_ce TSRMLS_CC)) {
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Timestamp");
+			/*
+			 * WHOOPS! libbson swaps the increment/timestamp compared to BSON
+			 *
+			 * "Timestamp - Special internal type used by MongoDB replication and sharding.
+			 *  First 4 bytes are an increment, second 4 are a timestamp."
+			 */
+			bson_append_timestamp(bson, key, key_len, php_phongo_timestamp_get_timestamp(object TSRMLS_CC), php_phongo_timestamp_get_increment(object TSRMLS_CC));
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_maxkey_ce TSRMLS_CC)) {

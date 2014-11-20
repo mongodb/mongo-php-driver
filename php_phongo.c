@@ -941,6 +941,16 @@ void php_phongo_new_datetime_from_utcdatetime(zval *object, int64_t milliseconds
 	efree(sec);
 	datetime_obj->time->f = milliseconds % 1000;
 } /* }}} */
+void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, int32_t increment, int32_t timestamp TSRMLS_CC) /* {{{ */
+{
+	php_phongo_timestamp_t     *intern;
+
+	object_init_ex(object, php_phongo_timestamp_ce);
+
+	intern = (php_phongo_timestamp_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern->increment = increment;
+	intern->timestamp = timestamp;
+} /* }}} */
 
 /* {{{ Iterator */
 typedef struct {
