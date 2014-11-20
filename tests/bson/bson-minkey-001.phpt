@@ -27,3 +27,4 @@ Test#0 { "max" : { "$maxKey" : 1 } }
 string(29) "{ "max" : { "$maxKey" : 1 } }"
 string(29) "{ "max" : { "$maxKey" : 1 } }"
 bool(true)
+===DONE===
