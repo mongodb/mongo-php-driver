@@ -28,6 +28,11 @@
 #include <bson.h>
 #include <mongoc.h>
 
+/* We need to access the internal bulk structure to access the bulk op count */
+#define MONGOC_I_AM_A_DRIVER
+#include <mongoc-bulk-operation-private.h>
+#undef MONGOC_I_AM_A_DRIVER
+
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
@@ -204,6 +209,7 @@ PHP_METHOD(WriteBatch, count)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	RETURN_LONG(intern->batch->commands.len);
 }
 /* }}} */
 
