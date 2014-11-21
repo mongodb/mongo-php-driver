@@ -63,6 +63,63 @@ PHP_MINIT_FUNCTION(bson)
 bool php_phongo_bson_visit_document(const bson_iter_t *iter __attribute__((unused)), const char *key, const bson_t *v_document, void *data);
 bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused)), const char *key, const bson_t *v_document, void *data);
 
+/* {{{ Santa's Little Helper: Object getters */
+const bson_oid_t *php_phongo_objectid_get_id(zval *object TSRMLS_DC)
+{
+	php_phongo_objectid_t     *intern;
+
+	intern = (php_phongo_objectid_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->oid;
+}
+int64_t php_phongo_utcdatetime_get_milliseconds(zval *object TSRMLS_DC)
+{
+	php_phongo_utcdatetime_t     *intern;
+
+	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->milliseconds;
+}
+int32_t php_phongo_timestamp_get_increment(zval *object TSRMLS_DC)
+{
+	php_phongo_timestamp_t     *intern;
+
+	intern = (php_phongo_timestamp_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->increment;
+}
+int32_t php_phongo_timestamp_get_timestamp(zval *object TSRMLS_DC)
+{
+	php_phongo_timestamp_t     *intern;
+
+	intern = (php_phongo_timestamp_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->timestamp;
+}
+bool php_phongo_javascript_has_scope(zval *object TSRMLS_DC)
+{
+	php_phongo_javascript_t *intern;
+
+	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return !!intern->document;
+}
+char *php_phongo_javascript_get_javascript(zval *object TSRMLS_DC)
+{
+	php_phongo_javascript_t *intern;
+
+	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->javascript;
+}
+bson_t *php_phongo_javascript_get_scope(zval *object TSRMLS_DC)
+{
+	php_phongo_javascript_t *intern;
+
+	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->document;
+}
 #if 0
 bool php_phongo_bson_visit_before(const bson_iter_t *iter __attribute__((unused)), const char *key, void *data) /* {{{ */
 {
@@ -127,62 +184,6 @@ bool php_phongo_bson_visit_undefined(const bson_iter_t *iter __attribute__((unus
 }
 /* }}} */
 #endif
-const bson_oid_t *php_phongo_objectid_get_id(zval *object TSRMLS_DC)
-{
-	php_phongo_objectid_t     *intern;
-
-	intern = (php_phongo_objectid_t *)zend_object_store_get_object(object TSRMLS_CC);
-
-	return intern->oid;
-}
-int64_t php_phongo_utcdatetime_get_milliseconds(zval *object TSRMLS_DC)
-{
-	php_phongo_utcdatetime_t     *intern;
-
-	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(object TSRMLS_CC);
-
-	return intern->milliseconds;
-}
-int32_t php_phongo_timestamp_get_increment(zval *object TSRMLS_DC)
-{
-	php_phongo_timestamp_t     *intern;
-
-	intern = (php_phongo_timestamp_t *)zend_object_store_get_object(object TSRMLS_CC);
-
-	return intern->increment;
-}
-int32_t php_phongo_timestamp_get_timestamp(zval *object TSRMLS_DC)
-{
-	php_phongo_timestamp_t     *intern;
-
-	intern = (php_phongo_timestamp_t *)zend_object_store_get_object(object TSRMLS_CC);
-
-	return intern->timestamp;
-}
-bool php_phongo_javascript_has_scope(zval *object TSRMLS_DC)
-{
-	php_phongo_javascript_t *intern;
-
-	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
-
-	return !!intern->document;
-}
-char *php_phongo_javascript_get_javascript(zval *object TSRMLS_DC)
-{
-	php_phongo_javascript_t *intern;
-
-	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
-
-	return intern->javascript;
-}
-bson_t *php_phongo_javascript_get_scope(zval *object TSRMLS_DC)
-{
-	php_phongo_javascript_t *intern;
-
-	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
-
-	return intern->document;
-}
 
 bool php_phongo_bson_visit_oid(const bson_iter_t *iter __attribute__((unused)), const char *key, const bson_oid_t *v_oid, void *data) /* {{{ */
 {
