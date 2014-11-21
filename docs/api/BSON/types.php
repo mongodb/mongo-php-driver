@@ -52,7 +52,58 @@ namespace BSON {
         function getSubType() {}
     }
     class Javascript implements Type {}
-    class Regex implements Type {}
+
+    class Regex implements Type {
+        /**
+         * Constructs a new regular expression.
+         *
+         * @param string $pattern
+         * @param string $flags
+         */
+        function __construct($pattern, $flags) {
+        /*** CIMPL ***/
+/*
+    intern->pattern = estrndup(pattern, pattern_len);
+    intern->pattern_len = pattern_len;
+    intern->flags = estrndup(flags, flags_len);
+    intern->flags_len = flags_len;
+*/
+        /*** CIMPL ***/
+        }
+
+        public function getPattern()
+        {
+            /*** CIMPL ***/
+    /*
+        RETURN_STRINGL(intern->pattern, intern->pattern_len, 1);
+    */
+            /*** CIMPL ***/
+        }
+
+        public function getFlags()
+        {
+            /*** CIMPL ***/
+    /*
+        RETURN_STRINGL(intern->flags, intern->flags_len, 1);
+    */
+            /*** CIMPL ***/
+        }
+
+        function __toString() {
+        /*** CEF ***/
+/*
+    char *regex;
+*/
+        /*** CEF ***/
+        /*** CIMPL ***/
+/*
+    spprintf(&regex, 0, "/%s/%s", intern->pattern, intern->flags);
+    RETVAL_STRING(regex, 0);
+*/
+        /*** CIMPL ***/
+        }
+    }
+
     class UTCDatetime implements Type {}
     class DBRef implements Type {}
     class Timestamp implements Type {}
@@ -99,5 +150,16 @@ $ObjectID["handlers_init"]     = "
 	memcpy(&php_phongo_handler_objectid, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_objectid.compare_objects = php_phongo_objectid_compare_objects;
 ";
+
+$Regex["free"] = <<< EOF
+    if (intern->pattern) {
+        efree(intern->pattern);
+    }
+
+    if (intern->flags) {
+        efree(intern->flags);
+    }
+
+EOF;
 
 }
