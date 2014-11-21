@@ -45,11 +45,46 @@
 PHONGO_API zend_class_entry *php_phongo_javascript_ce;
 
 
+/* {{{ proto MongoDB\Javascript Javascript::__construct(string $javascript[, array|object $document])
+ * The string is JavaScript code. The document is a mapping from identifiers to values, representing the scope in which the string should be evaluated
+ * NOTE: eJSON does not support this type :( */
+PHP_METHOD(Javascript, __construct)
+{
+	php_phongo_javascript_t    *intern;
+	zend_error_handling       error_handling;
+	char                      *javascript;
+	int                        javascript_len;
+	zval                      *document = NULL;
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_javascript_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|A!", &javascript, &javascript_len, &document) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	intern->javascript = estrndup(javascript, javascript_len);
+
+	if (document) {
+		/* free()d in _free_object */
+		intern->document = bson_new();
+		zval_to_bson(document, PHONGO_BSON_NONE, intern->document, NULL TSRMLS_CC);
+	}
+}
+/* }}} */
 
 /* {{{ BSON\Javascript */
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Javascript___construct, 0, 0, 1)
+	ZEND_ARG_INFO(0, javascript)
+	ZEND_ARG_INFO(0, scope)
+ZEND_END_ARG_INFO();
 
 static zend_function_entry php_phongo_javascript_me[] = {
+	PHP_ME(Javascript, __construct, ai_Javascript___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -63,6 +98,13 @@ static void php_phongo_javascript_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	if (intern->javascript) {
+		efree(intern->javascript);
+	}
+	if (intern->document) {
+		bson_destroy(intern->document);
+		intern->document = NULL;
+	}
 	efree(intern);
 } /* }}} */
 

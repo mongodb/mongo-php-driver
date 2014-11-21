@@ -136,6 +136,9 @@ typedef struct {
 } php_phongo_int64_t;
 typedef struct {
 	zend_object              std;
+	char                    *javascript;
+	size_t                   javascript_len;
+	bson_t                  *document;
 } php_phongo_javascript_t;
 typedef struct {
 	zend_object              std;

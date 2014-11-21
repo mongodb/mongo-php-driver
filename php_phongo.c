@@ -951,6 +951,27 @@ void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, int32_t
 	intern->increment = increment;
 	intern->timestamp = timestamp;
 } /* }}} */
+void php_phongo_new_javascript_from_javascript(zval *object, char *code, size_t code_len TSRMLS_DC) /* {{{ */
+{
+	php_phongo_javascript_t     *intern;
+
+	object_init_ex(object, php_phongo_javascript_ce);
+
+	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern->javascript = estrndup(code, code_len);
+	intern->javascript_len = code_len;
+} /* }}} */
+void php_phongo_new_javascript_from_javascript_and_scope(zval *object, char *code, size_t code_len, bson_t *scope TSRMLS_DC) /* {{{ */
+{
+	php_phongo_javascript_t     *intern;
+
+	object_init_ex(object, php_phongo_javascript_ce);
+
+	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern->javascript = estrndup(code, code_len);
+	intern->javascript_len = code_len;
+	intern->document = bson_copy(scope);
+} /* }}} */
 
 /* {{{ Iterator */
 typedef struct {

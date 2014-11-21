@@ -159,6 +159,30 @@ int32_t php_phongo_timestamp_get_timestamp(zval *object TSRMLS_DC)
 
 	return intern->timestamp;
 }
+bool php_phongo_javascript_has_scope(zval *object TSRMLS_DC)
+{
+	php_phongo_javascript_t *intern;
+
+	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return !!intern->document;
+}
+char *php_phongo_javascript_get_javascript(zval *object TSRMLS_DC)
+{
+	php_phongo_javascript_t *intern;
+
+	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->javascript;
+}
+bson_t *php_phongo_javascript_get_scope(zval *object TSRMLS_DC)
+{
+	php_phongo_javascript_t *intern;
+
+	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->document;
+}
 
 bool php_phongo_bson_visit_oid(const bson_iter_t *iter __attribute__((unused)), const char *key, const bson_oid_t *v_oid, void *data) /* {{{ */
 {
@@ -247,13 +271,28 @@ bool php_phongo_bson_visit_dbpointer(const bson_iter_t *iter __attribute__((unus
 	return true;
 }
 /* }}} */
+#endif
 bool php_phongo_bson_visit_code(const bson_iter_t *iter __attribute__((unused)), const char *key, size_t v_code_len, const char *v_code, void *data) /* {{{ */
 {
-	printf("Not Implemented\n");
+	zval *retval = *(zval **)data;
+	TSRMLS_FETCH();
+	zval *zchild = NULL;
 
-	return true;
+	MAKE_STD_ZVAL(zchild);
+	php_phongo_new_javascript_from_javascript(zchild, v_code, v_code_len TSRMLS_CC);
+
+	if (Z_TYPE_P(retval) == IS_ARRAY) {
+		add_assoc_zval(retval, key, zchild);
+	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
+		add_property_zval(retval, key, zchild);
+	} else {
+		return true;
+	}
+
+	return false;
 }
 /* }}} */
+#if 0
 bool php_phongo_bson_visit_symbol(const bson_iter_t *iter __attribute__((unused)), const char *key, size_t v_symbol_len, const char *v_symbol, void *data) /* {{{ */
 {
 	printf("Not Implemented\n");
@@ -261,14 +300,27 @@ bool php_phongo_bson_visit_symbol(const bson_iter_t *iter __attribute__((unused)
 	return true;
 }
 /* }}} */
+#endif
 bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter __attribute__((unused)), const char *key, size_t v_code_len, const char *v_code, const bson_t *v_scope, void *data) /* {{{ */
 {
-	printf("Not Implemented\n");
+	zval *retval = *(zval **)data;
+	TSRMLS_FETCH();
+	zval *zchild = NULL;
 
-	return true;
+	MAKE_STD_ZVAL(zchild);
+	php_phongo_new_javascript_from_javascript_and_scope(zchild, v_code, v_code_len, v_scope TSRMLS_CC);
+
+	if (Z_TYPE_P(retval) == IS_ARRAY) {
+		add_assoc_zval(retval, key, zchild);
+	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
+		add_property_zval(retval, key, zchild);
+	} else {
+		return true;
+	}
+
+	return false;
 }
 /* }}} */
-#endif
 bool php_phongo_bson_visit_int32(const bson_iter_t *iter __attribute__((unused)), const char *key, int32_t v_int32, void *data) /* {{{ */
 {
 	zval *retval = *(zval **)data;
@@ -377,9 +429,9 @@ static const bson_visitor_t php_bson_visitors = {
    php_phongo_bson_visit_null,
    NULL /*php_phongo_bson_visit_regex*/,
    NULL /*php_phongo_bson_visit_dbpointer*/,
-   NULL /*php_phongo_bson_visit_code*/,
+   php_phongo_bson_visit_code,
    NULL /*php_phongo_bson_visit_symbol*/,
-   NULL /*php_phongo_bson_visit_codewscope*/,
+   php_phongo_bson_visit_codewscope,
    php_phongo_bson_visit_int32,
    php_phongo_bson_visit_timestamp,
    php_phongo_bson_visit_int64,
@@ -503,6 +555,16 @@ void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TS
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_utcdatetime_ce TSRMLS_CC)) {
 			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding UTCDatetime");
 			bson_append_date_time(bson, key, key_len, php_phongo_utcdatetime_get_milliseconds(object TSRMLS_CC));
+			return;
+		}
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_javascript_ce TSRMLS_CC)) {
+			if (php_phongo_javascript_has_scope(object TSRMLS_CC)) {
+				mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Javascript w/scope");
+				bson_append_code(bson, key, key_len, php_phongo_javascript_get_javascript(object TSRMLS_CC));
+			} else {
+				mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Javascript wo/scope");
+				bson_append_code_with_scope(bson, key, key_len, php_phongo_javascript_get_javascript(object TSRMLS_CC), php_phongo_javascript_get_scope(object TSRMLS_CC));
+			}
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_timestamp_ce TSRMLS_CC)) {

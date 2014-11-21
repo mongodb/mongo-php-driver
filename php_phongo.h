@@ -113,6 +113,8 @@ void php_phongo_cursor_new_from_result(zval *object, php_phongo_result_t *result
 void php_phongo_cursor_id_new_from_id(zval *object, int64_t cursorid TSRMLS_DC);
 void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC);
 void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, int32_t increment, int32_t timestamp TSRMLS_DC);
+void php_phongo_new_javascript_from_javascript(zval *object, char *code, size_t code_len TSRMLS_DC);
+void php_phongo_new_javascript_from_javascript_and_scope(zval *object, char *code, size_t code_len, bson_t *scope TSRMLS_DC);
 
 PHP_MINIT_FUNCTION(bson);
 
