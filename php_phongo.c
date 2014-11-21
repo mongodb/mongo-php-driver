@@ -984,6 +984,19 @@ void php_phongo_new_binary_from_binary_and_subtype(zval *object, const char *dat
 	intern->subtype = type;
 } /* }}} */
 
+void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC) /* {{{ */
+{
+	php_phongo_regex_t     *intern;
+
+	object_init_ex(object, php_phongo_regex_ce);
+
+	intern = (php_phongo_regex_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern->pattern_len = strlen(pattern);
+	intern->pattern = estrndup(pattern, intern->pattern_len);
+	intern->flags_len = strlen(flags);
+	intern->flags = estrndup(flags, intern->flags_len);
+} /* }}} */
+
 /* {{{ Iterator */
 typedef struct {
 	zend_object_iterator  iterator;

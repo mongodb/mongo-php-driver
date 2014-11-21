@@ -90,7 +90,7 @@ PHP_METHOD(Regex, getPattern)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-		RETURN_STRINGL(intern->pattern, intern->pattern_len, 1);
+	RETURN_STRINGL(intern->pattern, intern->pattern_len, 1);
 }
 /* }}} */
 /* {{{ proto void Regex::getFlags()
@@ -111,7 +111,7 @@ PHP_METHOD(Regex, getFlags)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-		RETURN_STRINGL(intern->flags, intern->flags_len, 1);
+	RETURN_STRINGL(intern->flags, intern->flags_len, 1);
 }
 /* }}} */
 /* {{{ proto void Regex::__toString()
@@ -120,7 +120,8 @@ PHP_METHOD(Regex, __toString)
 {
 	php_phongo_regex_t       *intern;
 	zend_error_handling       error_handling;
-	char *regex;
+	char                     *regex;
+	int                       regex_len;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -133,8 +134,8 @@ PHP_METHOD(Regex, __toString)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	spprintf(&regex, 0, "/%s/%s", intern->pattern, intern->flags);
-	RETVAL_STRING(regex, 0);
+	regex_len = spprintf(&regex, 0, "/%s/%s", intern->pattern, intern->flags);
+	RETVAL_STRINGL(regex, regex_len, 0);
 }
 /* }}} */
 

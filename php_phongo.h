@@ -117,6 +117,7 @@ void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, int32_t
 void php_phongo_new_javascript_from_javascript(zval *object, const char *code, size_t code_len TSRMLS_DC);
 void php_phongo_new_javascript_from_javascript_and_scope(zval *object, const char *code, size_t code_len, const bson_t *scope TSRMLS_DC);
 void php_phongo_new_binary_from_binary_and_subtype(zval *object, const char *data, size_t data_len, bson_subtype_t type TSRMLS_DC);
+void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC);
 
 PHP_MINIT_FUNCTION(bson);
 

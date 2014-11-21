@@ -137,6 +137,22 @@ int php_phongo_binary_get_subtype(zval *object TSRMLS_DC)
 
 	return intern->subtype;
 }
+char *php_phongo_regex_get_pattern(zval *object TSRMLS_DC)
+{
+	php_phongo_regex_t *intern;
+
+	intern = (php_phongo_regex_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->pattern;
+}
+char *php_phongo_regex_get_flags(zval *object TSRMLS_DC)
+{
+	php_phongo_regex_t *intern;
+
+	intern = (php_phongo_regex_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	return intern->flags;
+}
 /* }}} */
 #if 0
 bool php_phongo_bson_visit_before(const bson_iter_t *iter __attribute__((unused)), const char *key, void *data) /* {{{ */
@@ -288,14 +304,27 @@ bool php_phongo_bson_visit_null(const bson_iter_t *iter __attribute__((unused)),
 	return false;
 }
 /* }}} */
-#if 0
 bool php_phongo_bson_visit_regex(const bson_iter_t *iter __attribute__((unused)), const char *key, const char *v_regex, const char *v_options, void *data) /* {{{ */
 {
-	printf("Not Implemented\n");
+	zval *retval = *(zval **)data;
+	TSRMLS_FETCH();
+	zval *zchild = NULL;
 
-	return true;
+	MAKE_STD_ZVAL(zchild);
+	php_phongo_new_regex_from_regex_and_options(zchild, v_regex, v_options TSRMLS_CC);
+
+	if (Z_TYPE_P(retval) == IS_ARRAY) {
+		add_assoc_zval(retval, key, zchild);
+	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
+		add_property_zval(retval, key, zchild);
+	} else {
+		return true;
+	}
+
+	return false;
 }
 /* }}} */
+#if 0
 bool php_phongo_bson_visit_dbpointer(const bson_iter_t *iter __attribute__((unused)), const char *key, size_t v_collection_len, const char *v_collection, const bson_oid_t *v_oid, void *data) /* {{{ */
 {
 	printf("Not Implemented\n");
@@ -459,7 +488,7 @@ static const bson_visitor_t php_bson_visitors = {
    php_phongo_bson_visit_bool,
    php_phongo_bson_visit_date_time,
    php_phongo_bson_visit_null,
-   NULL /*php_phongo_bson_visit_regex*/,
+   php_phongo_bson_visit_regex,
    NULL /*php_phongo_bson_visit_dbpointer*/,
    php_phongo_bson_visit_code,
    NULL /*php_phongo_bson_visit_symbol*/,
@@ -597,6 +626,11 @@ void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TS
 
 			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Binary");
 			bson_append_binary(bson, key, key_len, php_phongo_binary_get_subtype(object TSRMLS_CC), data, data_len);
+			return;
+		}
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_regex_ce TSRMLS_CC)) {
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Regex");
+			bson_append_regex(bson, key, key_len, php_phongo_regex_get_pattern(object TSRMLS_CC), php_phongo_regex_get_flags(object TSRMLS_CC));
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_javascript_ce TSRMLS_CC)) {
