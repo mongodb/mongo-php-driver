@@ -972,7 +972,7 @@ void php_phongo_new_javascript_from_javascript_and_scope(zval *object, const cha
 	intern->javascript_len = code_len;
 	intern->document = bson_copy(scope);
 } /* }}} */
-void php_phongo_binary_from_binary_and_subtype(zval *object, const char *data, size_t data_len, bson_subtype_t type TSRMLS_DC) /* {{{ */
+void php_phongo_new_binary_from_binary_and_subtype(zval *object, const char *data, size_t data_len, bson_subtype_t type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_binary_t     *intern;
 
@@ -1050,9 +1050,10 @@ zend_object_iterator_funcs phongo_cursor_it_funcs = {
 	phongo_cursor_it_dtor,
 	phongo_cursor_it_valid,
 	phongo_cursor_it_get_current_data,
-	NULL /*phongo_cursor_it_get_current_key */,
+	NULL, /* void (*get_current_key)(zend_object_iterator *iter, zval *key TSRMLS_DC); */
 	phongo_cursor_it_move_forward,
-	phongo_cursor_it_rewind
+	phongo_cursor_it_rewind,
+	NULL /* void (*invalidate_current)(zend_object_iterator *iter TSRMLS_DC); */
 };
 zend_object_iterator_funcs zend_interface_iterator_funcs_iterator_default = {
 	phongo_cursor_it_dtor,

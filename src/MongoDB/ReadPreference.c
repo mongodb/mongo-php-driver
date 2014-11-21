@@ -73,7 +73,7 @@ PHP_METHOD(ReadPreference, __construct)
 			intern->read_preference = mongoc_read_prefs_new(readPreference);
 
 			if (tagSets) {
-				const bson_t *tags = bson_new();
+				bson_t *tags = bson_new();
 
 				zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
 				mongoc_read_prefs_set_tags(intern->read_preference, tags);

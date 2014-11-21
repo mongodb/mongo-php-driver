@@ -193,7 +193,7 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter __attribute__((unused)
 	zval *zchild = NULL;
 
 	MAKE_STD_ZVAL(zchild);
-	php_phongo_binary_from_binary_and_subtype(zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
+	php_phongo_new_binary_from_binary_and_subtype(zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
 
 	if (Z_TYPE_P(retval) == IS_ARRAY) {
 		add_assoc_zval(retval, key, zchild);
