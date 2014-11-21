@@ -913,7 +913,7 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 	bson_oid_copy(oid, intern->oid);
 } /* }}} */
 
-void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_CC) /* {{{ */
+void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC) /* {{{ */
 {
 	php_phongo_utcdatetime_t     *intern;
 
@@ -922,7 +922,7 @@ void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoc
 	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(object TSRMLS_CC);
 	intern->milliseconds = msec_since_epoch;
 } /* }}} */
-void php_phongo_new_datetime_from_utcdatetime(zval *object, int64_t milliseconds TSRMLS_CC) /* {{{ */
+void php_phongo_new_datetime_from_utcdatetime(zval *object, int64_t milliseconds TSRMLS_DC) /* {{{ */
 {
 	php_date_obj             *datetime_obj;
 	char                     *sec;
@@ -941,7 +941,7 @@ void php_phongo_new_datetime_from_utcdatetime(zval *object, int64_t milliseconds
 	efree(sec);
 	datetime_obj->time->f = milliseconds % 1000;
 } /* }}} */
-void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, int32_t increment, int32_t timestamp TSRMLS_CC) /* {{{ */
+void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, int32_t increment, int32_t timestamp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_timestamp_t     *intern;
 

@@ -111,8 +111,8 @@ php_phongo_query_t*      phongo_query_from_zval(zval *zquery TSRMLS_DC);
 void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS_DC);
 void php_phongo_cursor_new_from_result(zval *object, php_phongo_result_t *result TSRMLS_DC);
 void php_phongo_cursor_id_new_from_id(zval *object, int64_t cursorid TSRMLS_DC);
-void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_CC);
-void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, int32_t increment, int32_t timestamp TSRMLS_CC);
+void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC);
+void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, int32_t increment, int32_t timestamp TSRMLS_DC);
 
 PHP_MINIT_FUNCTION(bson);
 
