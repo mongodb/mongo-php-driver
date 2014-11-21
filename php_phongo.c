@@ -176,7 +176,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 
 #define PHONGO_DEBUG_LOG_FORMAT "[%s] %10s: %-8s> %s\n"
 
-			dt = php_format_date("Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), time(NULL), 0 TSRMLS_CC);
+			dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), time(NULL), 0 TSRMLS_CC);
 			if (strcasecmp(PHONGO_G(debug_log), "stderr") == 0) {
 				fprintf(stderr, PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
 			} else if (strcasecmp(PHONGO_G(debug_log), "stdout") == 0) {
@@ -951,7 +951,7 @@ void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, int32_t
 	intern->increment = increment;
 	intern->timestamp = timestamp;
 } /* }}} */
-void php_phongo_new_javascript_from_javascript(zval *object, char *code, size_t code_len TSRMLS_DC) /* {{{ */
+void php_phongo_new_javascript_from_javascript(zval *object, const char *code, size_t code_len TSRMLS_DC) /* {{{ */
 {
 	php_phongo_javascript_t     *intern;
 
@@ -961,7 +961,7 @@ void php_phongo_new_javascript_from_javascript(zval *object, char *code, size_t 
 	intern->javascript = estrndup(code, code_len);
 	intern->javascript_len = code_len;
 } /* }}} */
-void php_phongo_new_javascript_from_javascript_and_scope(zval *object, char *code, size_t code_len, bson_t *scope TSRMLS_DC) /* {{{ */
+void php_phongo_new_javascript_from_javascript_and_scope(zval *object, const char *code, size_t code_len, const bson_t *scope TSRMLS_DC) /* {{{ */
 {
 	php_phongo_javascript_t     *intern;
 
