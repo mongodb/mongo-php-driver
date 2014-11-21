@@ -972,6 +972,17 @@ void php_phongo_new_javascript_from_javascript_and_scope(zval *object, const cha
 	intern->javascript_len = code_len;
 	intern->document = bson_copy(scope);
 } /* }}} */
+void php_phongo_binary_from_binary_and_subtype(zval *object, const char *data, size_t data_len, bson_subtype_t type TSRMLS_DC) /* {{{ */
+{
+	php_phongo_binary_t     *intern;
+
+	object_init_ex(object, php_phongo_binary_ce);
+
+	intern = (php_phongo_binary_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern->data = estrndup(data, data_len);
+	intern->data_len = data_len;
+	intern->subtype = type;
+} /* }}} */
 
 /* {{{ Iterator */
 typedef struct {

@@ -44,6 +44,31 @@
 
 PHONGO_API zend_class_entry *php_phongo_binary_ce;
 
+/* {{{ proto MongoDB\Binary Binary::__construct(string $data, int $subtype)
+   Construct a new BSON Binary type */
+PHP_METHOD(Binary, __construct)
+{
+	php_phongo_binary_t    *intern;
+	zend_error_handling     error_handling;
+	char                   *data;
+	int                     data_len;
+	long                    subtype;
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_binary_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &data, &data_len, &subtype) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	intern->data = data;
+	intern->data_len = data_len;
+	intern->subtype = subtype;
+}
+/* }}} */
 /* {{{ proto void Binary::getSubType()
     */
 PHP_METHOD(Binary, getSubType)
@@ -61,17 +86,24 @@ PHP_METHOD(Binary, getSubType)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	RETURN_LONG(intern->subtype);
 }
 /* }}} */
 
 
 /* {{{ BSON\Binary */
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Binary___construct, 0, 0, 2)
+	ZEND_ARG_INFO(0, data)
+	ZEND_ARG_INFO(0, subtype)
+ZEND_END_ARG_INFO();
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary_getSubType, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_binary_me[] = {
+	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC)
 	PHP_ME(Binary, getSubType, ai_Binary_getSubType, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
@@ -119,13 +151,13 @@ PHP_MINIT_FUNCTION(Binary)
 
 	zend_class_implements(php_phongo_binary_ce TSRMLS_CC, 1, php_phongo_type_ce);
 
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_GENERIC"), 0x00 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_FUNCTION"), 0x01 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_OLD_BINARY"), 0x02 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_OLD_UUID"), 0x03 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_UUID"), 0x04 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_MD5"), 0x05 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_USER_DEFINED"), 0x80 TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_GENERIC"), BSON_SUBTYPE_BINARY TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_FUNCTION"), BSON_SUBTYPE_FUNCTION TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_OLD_BINARY"), BSON_SUBTYPE_BINARY_DEPRECATED TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_OLD_UUID"), BSON_SUBTYPE_UUID_DEPRECATED TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_UUID"), BSON_SUBTYPE_UUID TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_MD5"), BSON_SUBTYPE_MD5 TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_USER_DEFINED"), BSON_SUBTYPE_USER TSRMLS_CC);
 
 	return SUCCESS;
 }
