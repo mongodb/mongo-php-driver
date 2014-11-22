@@ -52,6 +52,7 @@ PHP_METHOD(ReadPreference, __construct)
 	zend_error_handling       error_handling;
 	long                      readPreference;
 	zval                     *tagSets = NULL;
+	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -117,13 +118,17 @@ static void php_phongo_readpreference_free_object(void *object TSRMLS_DC) /* {{{
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	if (intern->read_preference) {
+		mongoc_read_prefs_destroy(intern->read_preference);
+	}
+
 	efree(intern);
 } /* }}} */
 
 zend_object_value php_phongo_readpreference_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
-	php_phongo_readpreference_t *intern;
+	php_phongo_readpreference_t *intern = NULL;
 
 	intern = (php_phongo_readpreference_t *)emalloc(sizeof(php_phongo_readpreference_t));
 	memset(intern, 0, sizeof(php_phongo_readpreference_t));
@@ -142,6 +147,7 @@ zend_object_value php_phongo_readpreference_create_object(zend_class_entry *clas
 PHP_MINIT_FUNCTION(ReadPreference)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	(void)module_number; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "ReadPreference", php_phongo_readpreference_me);

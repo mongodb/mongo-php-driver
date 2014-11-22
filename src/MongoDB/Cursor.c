@@ -388,6 +388,14 @@ static void php_phongo_cursor_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	if (intern->firstBatch) {
+		/* FIXME: ? */
+		//bson_clear(&intern->firstBatch);
+	}
+	if (intern->cursor) {
+		//mongoc_cursor_destroy(intern->cursor);
+	}
+
 	efree(intern);
 } /* }}} */
 

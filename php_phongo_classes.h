@@ -80,7 +80,7 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
-	const mongoc_host_list_t *host;
+	mongoc_host_list_t      *host;
 	mongoc_client_t         *client;
 	int                      hint;
 } php_phongo_server_t;
@@ -154,7 +154,7 @@ typedef struct {
 } php_phongo_minkey_t;
 typedef struct {
 	zend_object              std;
-	bson_oid_t              *oid;
+	char                     oid[25];
 } php_phongo_objectid_t;
 typedef struct {
 	zend_object              std;

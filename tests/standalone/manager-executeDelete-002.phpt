@@ -19,7 +19,13 @@ printWriteResult($result);
 
 echo "\n===> Collection\n";
 $cursor = $manager->executeQuery(NS, new MongoDB\Query(array()));
-var_dump(iterator_to_array($cursor));
+
+/* FIXME: Returns NULL, not empty iterator when nothing matches */
+if ($cursor) {
+    var_dump(iterator_to_array($cursor));
+} else {
+    var_dump(array());
+}
 
 ?>
 ===DONE===

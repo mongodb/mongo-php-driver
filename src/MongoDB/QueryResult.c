@@ -142,7 +142,7 @@ PHP_METHOD(QueryResult, getServer)
 {
 	php_phongo_queryresult_t *intern;
 	zend_error_handling       error_handling;
-	mongoc_host_list_t       *host;
+	mongoc_host_list_t       host;
 	(void)return_value_ptr; (void)return_value_used; (void)return_value;
 
 
@@ -156,9 +156,8 @@ PHP_METHOD(QueryResult, getServer)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	host = (mongoc_host_list_t *) emalloc(sizeof(mongoc_host_list_t));
-	mongoc_cursor_get_host(intern->result.cursor, host);
-	phongo_server_init(return_value, intern->result.hint, host TSRMLS_CC);
+	mongoc_cursor_get_host(intern->result.cursor, &host);
+	phongo_server_init(return_value, intern->result.hint, &host TSRMLS_CC);
 }
 /* }}} */
 
@@ -211,13 +210,15 @@ static void php_phongo_queryresult_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	zend_object_std_dtor(&intern->result.std TSRMLS_CC);
 
+	php_phongo_result_free(&intern->result);
+
 	efree(intern);
 } /* }}} */
 
 zend_object_value php_phongo_queryresult_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
-	php_phongo_queryresult_t *intern;
+	php_phongo_queryresult_t *intern = NULL;
 
 	intern = (php_phongo_queryresult_t *)emalloc(sizeof(php_phongo_queryresult_t));
 	memset(intern, 0, sizeof(php_phongo_queryresult_t));

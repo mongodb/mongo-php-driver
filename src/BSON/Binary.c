@@ -64,7 +64,7 @@ PHP_METHOD(Binary, __construct)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	intern->data = data;
+	intern->data = estrndup(data, data_len);
 	intern->data_len = data_len;
 	intern->subtype = subtype;
 }
@@ -118,6 +118,9 @@ static void php_phongo_binary_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	if (intern->data) {
+		efree(intern->data);
+	}
 	efree(intern);
 } /* }}} */
 

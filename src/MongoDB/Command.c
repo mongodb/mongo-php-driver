@@ -95,8 +95,9 @@ static void php_phongo_command_free_object(void *object TSRMLS_DC) /* {{{ */
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	if (intern->bson) {
-		bson_free(intern->bson);
+		bson_clear(&intern->bson);
 	}
+
 	efree(intern);
 } /* }}} */
 

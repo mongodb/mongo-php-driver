@@ -182,7 +182,7 @@ PHP_METHOD(Manager, executeInsert)
 	bson = bson_new();
 	zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 	phongo_execute_single_insert(intern->client, namespace, bson, return_value, return_value_used TSRMLS_CC);
-	bson_destroy(bson);
+	bson_clear(&bson);
 }
 /* }}} */
 /* {{{ proto MongoDB\WriteResult Manager::executeUpdate(string $namespace, array|object $zquery, array|object $newObj[, array $updateOptions = array()[, MongoDB\WriteConcern $writeConcern = null]])
@@ -225,8 +225,8 @@ PHP_METHOD(Manager, executeUpdate)
 	}
 
 	phongo_execute_single_update(intern->client, namespace, query, update, flags, return_value, return_value_used TSRMLS_CC);
-	bson_destroy(query);
-	bson_destroy(update);
+	bson_clear(&query);
+	bson_clear(&update);
 }
 /* }}} */
 /* {{{ proto MongoDB\WriteResult Manager::executeDelete(string $namespace, array|object $query[, array $deleteOptions = array()[, MongoDB\WriteConcern $writeConcern = null]])
@@ -260,7 +260,7 @@ PHP_METHOD(Manager, executeDelete)
 	bson = bson_new();
 	zval_to_bson(query, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 	phongo_execute_single_delete(intern->client, namespace, bson, flags, return_value, return_value_used TSRMLS_CC);
-	bson_destroy(bson);
+	bson_clear(&bson);
 }
 /* }}} */
 /* {{{ proto Server[] Manager::getServers()
@@ -369,6 +369,7 @@ static void php_phongo_manager_free_object(void *object TSRMLS_DC) /* {{{ */
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	mongoc_client_destroy(intern->client);
+
 	efree(intern);
 } /* }}} */
 

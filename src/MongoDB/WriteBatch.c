@@ -57,6 +57,7 @@ PHP_METHOD(WriteBatch, __construct)
 	php_phongo_writebatch_t  *intern;
 	zend_error_handling       error_handling;
 	zend_bool                 ordered = 1;
+	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -82,6 +83,7 @@ PHP_METHOD(WriteBatch, insert)
 	bson_t                   *bson;
 	bson_t                   *bson_out = NULL;
 	int                       bson_flags = PHONGO_BSON_ADD_ID;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -101,7 +103,7 @@ PHP_METHOD(WriteBatch, insert)
 	bson = bson_new();
 	zval_to_bson(document, bson_flags, bson, &bson_out TSRMLS_CC);
 	mongoc_bulk_operation_insert(intern->batch, bson);
-	bson_destroy(bson);
+	bson_clear(&bson);
 
 	if (bson_out && return_value_used) {
 		bson_iter_t iter;
@@ -126,6 +128,7 @@ PHP_METHOD(WriteBatch, update)
 	zend_bool                 upsert = 0;
 	bson_t                   *bquery;
 	bson_t                   *bupdate;
+	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -155,8 +158,8 @@ PHP_METHOD(WriteBatch, update)
 		mongoc_bulk_operation_update(intern->batch, bquery, bupdate, upsert);
 	}
 
-	bson_destroy(bquery);
-	bson_destroy(bupdate);
+	bson_clear(&bquery);
+	bson_clear(&bupdate);
 }
 /* }}} */
 /* {{{ proto void WriteBatch::delete(array|object $query[, array $deleteOptions = array()])
@@ -168,6 +171,7 @@ PHP_METHOD(WriteBatch, delete)
 	zval                     *query;
 	zval                     *deleteOptions = NULL;
 	bson_t                   *bson;
+	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -189,7 +193,7 @@ PHP_METHOD(WriteBatch, delete)
 		mongoc_bulk_operation_remove(intern->batch, bson);
 	}
 
-	bson_destroy(bson);
+	bson_clear(&bson);
 }
 /* }}} */
 /* {{{ proto integer WriteBatch::count()
@@ -198,6 +202,7 @@ PHP_METHOD(WriteBatch, count)
 {
 	php_phongo_writebatch_t  *intern;
 	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -267,7 +272,7 @@ static void php_phongo_writebatch_free_object(void *object TSRMLS_DC) /* {{{ */
 zend_object_value php_phongo_writebatch_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
-	php_phongo_writebatch_t *intern;
+	php_phongo_writebatch_t *intern = NULL;
 
 	intern = (php_phongo_writebatch_t *)emalloc(sizeof(php_phongo_writebatch_t));
 	memset(intern, 0, sizeof(php_phongo_writebatch_t));
@@ -286,6 +291,7 @@ zend_object_value php_phongo_writebatch_create_object(zend_class_entry *class_ty
 PHP_MINIT_FUNCTION(WriteBatch)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	(void)module_number; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteBatch", php_phongo_writebatch_me);

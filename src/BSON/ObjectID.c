@@ -69,14 +69,18 @@ PHP_METHOD(ObjectID, __construct)
 
 	if (ZEND_NUM_ARGS()) {
 		if (bson_oid_is_valid(id, id_len)) {
-			intern->oid = ecalloc(1, sizeof(bson_oid_t));
-			bson_oid_init_from_string(intern->oid, id);
+			bson_oid_t oid;
+
+			bson_oid_init_from_string(&oid, id);
+			bson_oid_to_string(&oid, intern->oid);
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid BSON ID provided" TSRMLS_CC);
 		}
 	} else {
-		intern->oid = ecalloc(1, sizeof(bson_oid_t));
-		bson_oid_init(intern->oid, NULL);
+		bson_oid_t oid;
+
+		bson_oid_init(&oid, NULL);
+		bson_oid_to_string(&oid, intern->oid);
 	}
 }
 /* }}} */
@@ -86,7 +90,6 @@ PHP_METHOD(ObjectID, __toString)
 {
 	php_phongo_objectid_t    *intern;
 	zend_error_handling       error_handling;
-	char         id[25];
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -99,8 +102,7 @@ PHP_METHOD(ObjectID, __toString)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	bson_oid_to_string(intern->oid, id);
-	RETURN_STRINGL(id, 24, 1);
+	RETURN_STRINGL(intern->oid, 24, 1);
 }
 /* }}} */
 
@@ -137,7 +139,7 @@ static int php_phongo_objectid_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* 
 	intern1 = (php_phongo_objectid_t *)zend_object_store_get_object(o1 TSRMLS_CC);
 	intern2 = (php_phongo_objectid_t *)zend_object_store_get_object(o2 TSRMLS_CC);
 
-	return bson_oid_compare(intern1->oid, intern2->oid);
+	return strcmp(intern1->oid, intern2->oid);
 } /* }}} */
 /* }}} */
 /* {{{ php_phongo_objectid_t object handlers */
@@ -153,7 +155,7 @@ static void php_phongo_objectid_free_object(void *object TSRMLS_DC) /* {{{ */
 zend_object_value php_phongo_objectid_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
-	php_phongo_objectid_t *intern;
+	php_phongo_objectid_t *intern = NULL;
 
 	intern = (php_phongo_objectid_t *)emalloc(sizeof(php_phongo_objectid_t));
 	memset(intern, 0, sizeof(php_phongo_objectid_t));

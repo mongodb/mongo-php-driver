@@ -64,13 +64,13 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter __attribute__((unuse
 bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused)), const char *key, const bson_t *v_document, void *data);
 
 /* {{{ Santa's Little Helper: Object getters */
-const bson_oid_t *php_phongo_objectid_get_id(zval *object TSRMLS_DC)
+void php_phongo_objectid_get_id(zval *object, bson_oid_t *oid TSRMLS_DC)
 {
 	php_phongo_objectid_t     *intern;
 
 	intern = (php_phongo_objectid_t *)zend_object_store_get_object(object TSRMLS_CC);
 
-	return intern->oid;
+	bson_oid_init_from_string(oid, intern->oid);
 }
 int64_t php_phongo_utcdatetime_get_milliseconds(zval *object TSRMLS_DC)
 {
@@ -609,8 +609,11 @@ void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TS
 
 	if (instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce TSRMLS_CC)) {
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_objectid_ce TSRMLS_CC)) {
+			bson_oid_t oid;
+
 			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding _id");
-			bson_append_oid(bson, key, key_len, php_phongo_objectid_get_id(object TSRMLS_CC));
+			php_phongo_objectid_get_id(object, &oid TSRMLS_CC);
+			bson_append_oid(bson, key, key_len, &oid);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_utcdatetime_ce TSRMLS_CC)) {

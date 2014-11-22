@@ -50,6 +50,7 @@ PHP_METHOD(WriteResult, getNumInserted)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -71,6 +72,7 @@ PHP_METHOD(WriteResult, getNumMatched)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -92,6 +94,7 @@ PHP_METHOD(WriteResult, getNumModified)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -113,6 +116,7 @@ PHP_METHOD(WriteResult, getNumRemoved)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -134,6 +138,7 @@ PHP_METHOD(WriteResult, getNumUpserted)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -155,6 +160,7 @@ PHP_METHOD(WriteResult, getInfo)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -180,6 +186,7 @@ PHP_METHOD(WriteResult, getServer)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -201,6 +208,7 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -226,6 +234,7 @@ PHP_METHOD(WriteResult, getWriteConcernErrors)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -251,6 +260,7 @@ PHP_METHOD(WriteResult, getWriteErrors)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -334,6 +344,8 @@ static void php_phongo_writeresult_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	zend_object_std_dtor(&intern->result.std TSRMLS_CC);
 
+	php_phongo_result_free(&intern->result);
+
 	if (intern->info) {
 		zval_ptr_dtor(&intern->info);
 	}
@@ -355,7 +367,7 @@ static void php_phongo_writeresult_free_object(void *object TSRMLS_DC) /* {{{ */
 zend_object_value php_phongo_writeresult_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
-	php_phongo_writeresult_t *intern;
+	php_phongo_writeresult_t *intern = NULL;
 
 	intern = (php_phongo_writeresult_t *)emalloc(sizeof(php_phongo_writeresult_t));
 	memset(intern, 0, sizeof(php_phongo_writeresult_t));
@@ -374,6 +386,7 @@ zend_object_value php_phongo_writeresult_create_object(zend_class_entry *class_t
 PHP_MINIT_FUNCTION(WriteResult)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	(void)module_number; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteResult", php_phongo_writeresult_me);

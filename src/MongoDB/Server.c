@@ -44,7 +44,6 @@
 
 PHONGO_API zend_class_entry *php_phongo_server_ce;
 
-inline int server_populate(php_phongo_server_t *server);
 zend_object_handlers php_phongo_handler_server;
 
 
@@ -76,13 +75,14 @@ PHP_METHOD(Server, __construct)
 
 	uri = mongoc_uri_new_for_host_port(host, port);
 	intern->client = mongoc_client_new_from_uri(uri);
+
 	if (!intern->client) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to parse MongoDB URI" TSRMLS_CC);
 		return;
 	}
 
-	intern->host = mongoc_uri_get_hosts(uri);
 	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);
+	mongoc_uri_destroy(uri);
 }
 /* }}} */
 /* {{{ proto MongoDB\CommandResult Server::executeCommand(string $db, MongoDB\Command $command)
@@ -167,7 +167,7 @@ PHP_METHOD(Server, getHost)
 {
 	php_phongo_server_t      *intern;
 	zend_error_handling       error_handling;
-
+	const mongoc_host_list_t *hosts;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -178,10 +178,14 @@ PHP_METHOD(Server, getHost)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-
-	// FIXME: BUGBUG: this is a workaround as its not implemented yet :)
-	server_populate(intern);
-	RETURN_STRING(intern->host->host, 1);
+	/* FIXME: Not implemented */
+	if (intern->client) {
+		hosts = mongoc_uri_get_hosts(mongoc_client_get_uri(intern->client));
+		if (hosts) {
+			RETURN_STRING(hosts->host, 1);
+		}
+	}
+	RETURN_STRING("localhost", 1);
 }
 /* }}} */
 /* {{{ proto array Server::getInfo()
@@ -228,6 +232,7 @@ PHP_METHOD(Server, getPort)
 {
 	php_phongo_server_t      *intern;
 	zend_error_handling       error_handling;
+	const mongoc_host_list_t *hosts;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -240,7 +245,15 @@ PHP_METHOD(Server, getPort)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	RETURN_LONG(intern->host->port);
+	/* FIXME: Not implemented */
+	if (intern->client) {
+		hosts = mongoc_uri_get_hosts(mongoc_client_get_uri(intern->client));
+		if (hosts) {
+			RETURN_LONG(hosts->port);
+		}
+	}
+
+	RETURN_LONG(27017);
 }
 /* }}} */
 /* {{{ proto integer Server::getState()
@@ -402,19 +415,6 @@ static zend_function_entry php_phongo_server_me[] = {
 
 
 /* {{{ Other functions */
-inline int server_populate(php_phongo_server_t *server)
-{
-	mongoc_host_list_t *host = NULL;
-	host = (mongoc_host_list_t *) emalloc(sizeof(mongoc_host_list_t));
-
-	strcpy(host->host, "localhost");
-	host->port = 27017;
-
-	server->host = host;
-
-	return true;
-}
-
 zend_object_handlers* php_phongo_handlers_server() /* {{{ */
 {
 	return &php_phongo_handler_server;
@@ -445,6 +445,11 @@ static void php_phongo_server_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_server_t *intern = (php_phongo_server_t*)object;
 
+	mongoc_client_destroy(intern->client);
+
+	if (intern->host) {
+		//efree(intern->host);
+	}
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);

@@ -92,7 +92,7 @@ PHONGO_API zval* phongo_throw_exception(php_phongo_error_domain_t domain, const 
 PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
 
 void phongo_server_init                              (zval *return_value, int server_hint, mongoc_host_list_t *host TSRMLS_DC);
-php_phongo_query_t*      phongo_query_init           (php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC);
+bool                     phongo_query_init           (php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC);
 mongoc_bulk_operation_t* phongo_writebatch_init      (zend_bool ordered);
 bool                     phongo_execute_write        (mongoc_client_t *client, char *namespace, mongoc_bulk_operation_t *batch, int server_hint, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_command      (mongoc_client_t *client, char *db, bson_t *command, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
@@ -118,6 +118,8 @@ void php_phongo_new_javascript_from_javascript(zval *object, const char *code, s
 void php_phongo_new_javascript_from_javascript_and_scope(zval *object, const char *code, size_t code_len, const bson_t *scope TSRMLS_DC);
 void php_phongo_new_binary_from_binary_and_subtype(zval *object, const char *data, size_t data_len, bson_subtype_t type TSRMLS_DC);
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC);
+
+void php_phongo_result_free(php_phongo_result_t *result);
 
 PHP_MINIT_FUNCTION(bson);
 

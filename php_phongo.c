@@ -147,7 +147,7 @@ PHONGO_API zval* phongo_throw_exception_from_bson_error_t(bson_error_t *error TS
 }
 static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain, const char *message, void *user_data)
 {
-	TSRMLS_FETCH_FROM_CTX(user_data);
+	(void)user_data;TSRMLS_FETCH_FROM_CTX(user_data);
 
 	switch(log_level) {
 	case MONGOC_LOG_LEVEL_ERROR:
@@ -219,7 +219,8 @@ void phongo_result_init(zval *return_value, zend_class_entry *result_class, mong
 	} else {
 		result->hint = server_hint;
 	}
-	result->firstBatch = (bson_t *)bson;
+	/* FIXME: Support empty result cursor. eg. when there simply aren't any matches for a query */
+	result->firstBatch = bson_copy(bson);
 } /* }}} */
 
 void phongo_server_init(zval *return_value, int hint, mongoc_host_list_t *host TSRMLS_DC) /* {{{ */
@@ -324,7 +325,7 @@ void phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_
 		while (bson_iter_next(&ar)) {
 			int32_t index;
 			bson_iter_t outer;
-			zval *zid;
+			zval *zid = NULL;
 
 			if (!BSON_ITER_HOLDS_DOCUMENT(&ar) || !bson_iter_recurse(&ar, &outer)) {
 				continue;
@@ -364,7 +365,7 @@ void phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_
 			bson_t cbson;
 			uint32_t len;
 			const uint8_t *data;
-			zval *writeerror;
+			zval *writeerror = NULL;
 
 			if (!BSON_ITER_HOLDS_DOCUMENT(&ar)) {
 				continue;
@@ -399,7 +400,7 @@ void phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_
 			bson_t cbson;
 			uint32_t len;
 			const uint8_t *data;
-			zval *writeconcernerror;
+			zval *writeconcernerror = NULL;
 
 			if (!BSON_ITER_HOLDS_DOCUMENT(&ar)) {
 				continue;
@@ -426,11 +427,12 @@ void phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_
 
 void phongo_writeexception_init(zval *return_value, const bson_t *bson, int server_hint TSRMLS_DC) /* {{{ */
 {
-	zval *writeresult;
+	zval *writeresult = NULL;
 
 	MAKE_STD_ZVAL(writeresult);
 	phongo_writeresult_init(writeresult, bson, server_hint TSRMLS_CC);
 	zend_update_property(Z_OBJCE_P(return_value), return_value, ZEND_STRL("writeResult"), writeresult TSRMLS_CC);
+	zval_ptr_dtor(&writeresult);
 } /* }}} */
 /* }}} */
 
@@ -510,49 +512,48 @@ int phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_
 bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_operation_t *batch, int server_hint, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
-	bson_t *reply = NULL;
-	char *database;
-	char *collection;
+	bson_t reply;
+	char *dbname;
+	char *collname;
 	int hint;
 
-	if (!phongo_split_namespace(namespace, &database, &collection)) {
+	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid namespace provided" TSRMLS_CC);
 		return false;
 	}
 
-	mongoc_bulk_operation_set_database(batch, database);
-	mongoc_bulk_operation_set_collection(batch, collection);
+	mongoc_bulk_operation_set_database(batch, dbname);
+	mongoc_bulk_operation_set_collection(batch, collname);
 	mongoc_bulk_operation_set_client(batch, client);
-	efree(database);
-	efree(collection);
+	efree(dbname);
+	efree(collname);
 
 	if (server_hint) {
 		mongoc_bulk_operation_set_hint(batch, server_hint);
 	}
 
-	if (return_value_used) {
-		reply = bson_new();
-	}
-
-	hint = mongoc_bulk_operation_execute(batch, reply, &error);
+	hint = mongoc_bulk_operation_execute(batch, &reply, &error);
 
 	if (!hint) {
 		zval *e = phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED, error.message TSRMLS_CC);
 
-		if (reply && Z_OBJCE_P(e) == php_phongo_writeexception_ce) {
-			phongo_writeexception_init(e, reply, hint TSRMLS_CC);
-			bson_destroy(reply);
+		if (return_value_used) {
+			if (Z_OBJCE_P(e) == php_phongo_writeexception_ce) {
+				phongo_writeexception_init(e, &reply, hint TSRMLS_CC);
+			}
+			bson_destroy(&reply);
 		}
 
 		return false;
 	}
 
 	if (!return_value_used) {
+		bson_destroy(&reply);
 		return true;
 	}
 
-	phongo_writeresult_init(return_value, reply, hint TSRMLS_CC);
-	bson_destroy(reply);
+	phongo_writeresult_init(return_value, &reply, hint TSRMLS_CC);
+	bson_destroy(&reply);
 
 	return true;
 } /* }}} */
@@ -570,19 +571,27 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 		return false;
 	}
 	collection = mongoc_client_get_collection(client, dbname, collname);
+	efree(dbname);
+	efree(collname);
 
 	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->query, query->selector, read_preference);
+	mongoc_collection_destroy(collection);
 
 	if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error;
 
 		if (mongoc_cursor_error(cursor, &error)) {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			mongoc_cursor_destroy(cursor);
 			return false;
 		}
+
+		mongoc_cursor_destroy(cursor);
+		return false;
 	}
 
 	if (!return_value_used) {
+		mongoc_cursor_destroy(cursor);
 		return true;
 	}
 
@@ -602,12 +611,14 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 		bson_error_t error;
 
 		if (mongoc_cursor_error(cursor, &error)) {
+			mongoc_cursor_destroy(cursor);
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 			return false;
 		}
 	}
 
 	if (!return_value_used) {
+		mongoc_cursor_destroy(cursor);
 		return true;
 	}
 
@@ -618,8 +629,13 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 /* }}} */
 
 /* {{{ Stream vtable */
-void phongo_stream_destroy(mongoc_stream_t *stream) /* {{{ */
+void phongo_stream_destroy(mongoc_stream_t *stream_wrap) /* {{{ */
 {
+	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
+
+	php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
+
+	efree(base_stream);
 } /* }}} */
 
 int phongo_stream_close(mongoc_stream_t *stream) /* {{{ */
@@ -724,12 +740,12 @@ php_phongo_stream_logger phongo_stream_logger = {
 mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = NULL;
-	php_stream *stream;
-	char *errmsg;
+	php_stream *stream = NULL;
+	char *errmsg = NULL;
 	int errcode;
 	char *dsn;
 	int dsn_len;
-	TSRMLS_FETCH_FROM_CTX(user_data);
+	(void)user_data;TSRMLS_FETCH_FROM_CTX(user_data);
 
 
 	switch (host->family) {
@@ -810,13 +826,13 @@ php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC) /* {{{ */
 	return intern;
 } /* }}} */
 
-php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC) /* {{{ */
+bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC) /* {{{ */
 {
-	zval *zquery;
+	zval *zquery = NULL;
 
 	if (filter && !(Z_TYPE_P(filter) == IS_ARRAY || Z_TYPE_P(filter) == IS_OBJECT)) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected filter to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(filter)));
-		return NULL;
+		return false;
 	}
 
 	MAKE_STD_ZVAL(zquery);
@@ -836,7 +852,7 @@ php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *filter, z
 			if (modifiers && !(Z_TYPE_P(modifiers) == IS_ARRAY || Z_TYPE_P(modifiers) == IS_OBJECT)) {
 				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected modifiers to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(modifiers)));
 				zval_ptr_dtor(&zquery);
-				return NULL;
+				return false;
 			}
 
 			convert_to_array_ex(&modifiers);
@@ -849,7 +865,7 @@ php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *filter, z
 			if (projection && !(Z_TYPE_P(projection) == IS_ARRAY || Z_TYPE_P(projection) == IS_OBJECT)) {
 				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected projection to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(projection)));
 				zval_ptr_dtor(&zquery);
-				return NULL;
+				return false;
 			}
 
 			convert_to_array_ex(&projection);
@@ -863,21 +879,23 @@ php_phongo_query_t* phongo_query_init(php_phongo_query_t *query, zval *filter, z
 			if (sort && !(Z_TYPE_P(sort) == IS_ARRAY || Z_TYPE_P(sort) == IS_OBJECT)) {
 				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected sort to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(sort)));
 				zval_ptr_dtor(&zquery);
-				return NULL;
+				return false;
 			}
 
 			convert_to_array_ex(&sort);
+			Z_ADDREF_P(sort);
 			add_assoc_zval_ex(zquery, ZEND_STRS("$orderby"), sort);
 		}
 	}
 
+	Z_ADDREF_P(filter);
 	add_assoc_zval_ex(zquery, ZEND_STRS("$query"), filter);
 
 	query->query = bson_new();
 	zval_to_bson(zquery, PHONGO_BSON_NONE, query->query, NULL TSRMLS_CC);
 	zval_ptr_dtor(&zquery);
 
-	return query;
+	return true;
 } /* }}} */
 
 void php_phongo_cursor_id_new_from_id(zval *object, int64_t cursorid TSRMLS_DC) /* {{{ */
@@ -909,8 +927,7 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 	object_init_ex(object, php_phongo_objectid_ce);
 
 	intern = (php_phongo_objectid_t *)zend_object_store_get_object(object TSRMLS_CC);
-	intern->oid = ecalloc(1, sizeof(bson_oid_t));
-	bson_oid_copy(oid, intern->oid);
+	bson_oid_to_string(oid, intern->oid);
 } /* }}} */
 
 void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC) /* {{{ */
@@ -983,7 +1000,6 @@ void php_phongo_new_binary_from_binary_and_subtype(zval *object, const char *dat
 	intern->data_len = data_len;
 	intern->subtype = type;
 } /* }}} */
-
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC) /* {{{ */
 {
 	php_phongo_regex_t     *intern;
@@ -996,6 +1012,16 @@ void php_phongo_new_regex_from_regex_and_options(zval *object, const char *patte
 	intern->flags_len = strlen(flags);
 	intern->flags = estrndup(flags, intern->flags_len);
 } /* }}} */
+
+void php_phongo_result_free(php_phongo_result_t *result)
+{
+	if (result->firstBatch) {
+		bson_clear(&result->firstBatch);
+	}
+	if (result->cursor) {
+		mongoc_cursor_destroy(result->cursor);
+	}
+}
 
 /* {{{ Iterator */
 typedef struct {
@@ -1081,7 +1107,7 @@ zend_object_iterator_funcs zend_interface_iterator_funcs_iterator_default = {
 zend_object_iterator *phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t    *intern = (php_phongo_cursor_t *)zend_object_store_get_object(object TSRMLS_CC);
-	phongo_cursor_it       *cursor_it;
+	phongo_cursor_it       *cursor_it = NULL;
 
 	if (by_ref) {
 		zend_error(E_ERROR, "An iterator cannot be used with foreach by reference");
@@ -1109,7 +1135,7 @@ zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *obj
 
 	/* If we have a custom iterator */
 	if (intern->ce_get_iterator != NULL) {
-		zend_user_iterator *iterator;
+		zend_user_iterator *iterator = NULL;
 
 		zval_ptr_dtor(&object);
 		object_init_ex(object, intern->ce_get_iterator);
@@ -1123,7 +1149,7 @@ zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *obj
 		iterator->value = NULL;
 		return (zend_object_iterator*)iterator;
 	} else {
-		phongo_cursor_it       *cursor_it;
+		phongo_cursor_it       *cursor_it = NULL;
 
 		cursor_it = ecalloc(1, sizeof(phongo_cursor_it));
 
