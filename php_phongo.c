@@ -632,16 +632,20 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 void phongo_stream_destroy(mongoc_stream_t *stream_wrap) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
-	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
-	php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
+	if (base_stream->stream) {
+		TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+
+		php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
+		base_stream->stream = NULL;
+	}
 
 	efree(base_stream);
 } /* }}} */
 
 int phongo_stream_close(mongoc_stream_t *stream) /* {{{ */
 {
-	return -1;
+	return 0;
 } /* }}} */
 
 void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeout_msec) /* {{{ */
