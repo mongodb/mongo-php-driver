@@ -103,7 +103,7 @@ PHP_METHOD(UTCDatetime, toDateTime)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	php_phongo_new_datetime_from_utcdatetime(return_value, intern->milliseconds);
+	php_phongo_new_datetime_from_utcdatetime(return_value, intern->milliseconds TSRMLS_CC);
 }
 /* }}} */
 

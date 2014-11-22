@@ -632,6 +632,7 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 void phongo_stream_destroy(mongoc_stream_t *stream_wrap) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
+	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
 	php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
 

@@ -163,7 +163,7 @@ PHP_METHOD(Cursor, getCursorId)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
-	php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->cursor));
+	php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->cursor) TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto boolean Cursor::setBatchSize(integer $batchSize)
