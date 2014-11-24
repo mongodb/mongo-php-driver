@@ -25,9 +25,9 @@ before_install:
   - sudo apt-get install cdbs debhelper build-essential python-lxml
 
 before_script:
-  - "./.travis.scripts/compile.sh"
   - ulimit -a
   - ulimit -c unlimited
+  - "./.travis.scripts/compile.sh"
   - make composer
 
 notifications:
