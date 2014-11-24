@@ -750,6 +750,7 @@ PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson
 	for (;; zend_hash_move_forward_ex(ht_data, &pos)) {
 		unsigned int key_len = 0;
 		uint64_t     index = 0;
+		char         numbuf[32];
 		char        *key = NULL;
 		zval       **entry;
 		int          hash_type = HASH_KEY_NON_EXISTENT;
@@ -781,8 +782,6 @@ PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson
 				}
 			}
 		} else {
-			char numbuf[32];
-
 			key_len = bson_uint32_to_string(index, (const char **)&key, numbuf, sizeof(numbuf));
 		}
 
