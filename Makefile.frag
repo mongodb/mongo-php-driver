@@ -19,7 +19,7 @@ coverage: mv-coverage lcov-local
 
 
 coveralls: mv-coverage lcov-coveralls
-	coveralls --exclude lib --exclude tests --exclude src/MongoDB/php_array.h
+	coveralls --exclude src/libbson --exclude src/libmongoc --exclude lib --exclude tests --exclude src/MongoDB/php_array.h
 
 composer:
 	composer install --dev --no-interaction --prefer-source
