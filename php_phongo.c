@@ -789,6 +789,8 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	base_stream->uri_options = mongoc_uri_get_options(uri);
 	base_stream->host = host;
 	base_stream->log = phongo_stream_logger;
+	TSRMLS_SET_CTX(base_stream->tsrm_ls);
+
 	/* flush missing, doesn't seem to be used */
 	base_stream->vtable.type = 42;
 	base_stream->vtable.destroy = phongo_stream_destroy;
