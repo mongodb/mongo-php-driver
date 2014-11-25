@@ -60,6 +60,7 @@ function get_files() {
         "config.m4",
         "Makefile.frag",
         "README*",
+        "RELEASE*",
         "ChangeLog*",
         "src/*.{c,h}",
         "src/MongoDB/*.{c,h}",
@@ -170,7 +171,7 @@ if (strpos($argv[1], "-")) {
 
 verify_stability($STABILITY);
 verify_version($VERSION, $STABILITY);
-$changelog = __DIR__ . "/../ChangeLog-" . $VERSION;
+$changelog = __DIR__ . "/../ChangeLog";
 verify_changelog($changelog);
 
 

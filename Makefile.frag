@@ -1,6 +1,8 @@
 .PHONY: coverage testclean ChangeLog RELEASE package.xml
 
 DATE=`date +%Y-%m-%d--%H-%M-%S`
+PHONGO_VERSION=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_VERSION;'`
+PHONGO_STABILITY=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_STABILITY;'`
 
 mv-coverage:
 	@if test -e $(top_srcdir)/coverage; then \
@@ -50,10 +52,10 @@ patch:
 	fi 
 
 package.xml:
-	php bin/prep-release.php 0.1.0-devel
+	php bin/prep-release.php $(PHONGO_VERSION)-$(PHONGO_STABILITY)
 
 RELEASE:
-	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > RELEASE-X.Y.Z
+	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > RELEASE-$(PHONGO_VERSION)
 
 ChangeLog:
 	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > ChangeLog
