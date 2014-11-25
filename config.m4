@@ -1,36 +1,83 @@
 dnl config.m4 for extension phongo
-syscmd("./autogen.sh")
-
 PHP_ARG_ENABLE(phongo, whether to enable phongo support,
 [  --enable-phongo           Enable phongo support])
 
 
+AC_DEFUN([MONGOC_DEFINE_RESET],[
+  [echo "" > src/libmongoc/src/mongoc/mongoc-config.h]
+])
+AC_DEFUN([BSON_DEFINE_RESET],[
+  [echo "" > src/libbson/src/bson/bson-config.h]
+])
+dnl borrowed from PHP acinclude.m4
+AC_DEFUN([BSON_DEFINE],[
+  [echo "#define ]$1[]ifelse([$2],,[ 1],[ $2])[" >> src/libbson/src/bson/bson-config.h]
+])
+dnl borrowed from PHP acinclude.m4
+AC_DEFUN([PHP_BSON_BIGENDIAN],
+[AC_CACHE_CHECK([whether byte ordering is bigendian], ac_cv_c_bigendian_php,
+ [
+  ac_cv_c_bigendian_php=unknown
+  AC_TRY_RUN(
+  [
+int main(void)
+{
+  short one = 1;
+  char *cp = (char *)&one;
+
+  if (*cp == 0) {
+    return(0);
+  } else {
+    return(1);
+  }
+}
+  ], [ac_cv_c_bigendian_php=yes], [ac_cv_c_bigendian_php=no], [ac_cv_c_bigendian_php=unknown])
+ ])
+ if test $ac_cv_c_bigendian_php = yes; then
+    BSON_DEFINE([BSON_BYTE_ORDER], 4321)
+  else
+    BSON_DEFINE([BSON_BYTE_ORDER], 1234)
+ fi
+])
+dnl Borrowed from sapi/fpm/config.m4
+AC_DEFUN([PHP_BSON_CLOCK],
+[
+  have_clock_gettime=no
+
+  AC_MSG_CHECKING([for clock_gettime])
+
+  AC_TRY_LINK([ #include <time.h> ], [struct timespec ts; clock_gettime(CLOCK_MONOTONIC, &ts);], [
+    have_clock_gettime=yes
+    AC_MSG_RESULT([yes])
+  ], [
+    AC_MSG_RESULT([no])
+  ])
+
+  if test "$have_clock_gettime" = "no"; then
+    AC_MSG_CHECKING([for clock_gettime in -lrt])
+
+    SAVED_LIBS="$LIBS"
+    LIBS="$LIBS -lrt"
+
+    AC_TRY_LINK([ #include <time.h> ], [struct timespec ts; clock_gettime(CLOCK_MONOTONIC, &ts);], [
+      have_clock_gettime=yes
+      AC_MSG_RESULT([yes])
+    ], [
+      LIBS="$SAVED_LIBS"
+      AC_MSG_RESULT([no])
+    ])
+  fi
+
+  if test "$have_clock_gettime" = "yes"; then
+    BSON_DEFINE([BSON_HAVE_CLOCK_GETTIME], 1)
+  fi
+])
 
 MONGOC_SYMBOL_SUFFIX="priv"
 
 if test "$PHONGO" != "no"; then
   AC_MSG_CHECKING(configuring libmongoc)
   AC_MSG_RESULT(...)
-
-  dnl Run libbson and mongo-c-driver configure scripts..
-  AC_CONFIG_SUBDIRS([src/libbson])
-  AC_CONFIG_SUBDIRS([src/libmongoc])
-  PHP_ADD_INCLUDE(src/libbson/src/bson/)
-  PHP_ADD_INCLUDE(src/libmongoc/src/mongoc/)
-  dnl ...with hardcoded arguments
-  cur_CFLAGS="$CFLAGS"
-  CFLAGS="-I$abs_srcdir/src/libbson/src/bson"
-  ac_configure_args="--enable-debug --enable-tracing --enable-debug-symbols=full --disable-hardening --enable-examples=no --enable-man-pages=no --enable-sasl=no --enable-tests=no --enable-ssl=no --disable-silent-rules --with-libbson=bundled --quiet CFLAGS='$CFLAGS'"
-  dnl Print out the config run right away so it doesn't show up after our stuff
-  _AC_OUTPUT_SUBDIRS
-  dnl since we cheated.. add a guard to not execute it again
-  no_recursion=yes
-  CFLAGS="$cur_CFLAGS"
-
-
-  PHP_ADD_LIBRARY_WITH_PATH(bson-1.0, src/libbson/.libs, PHONGO_SHARED_LIBADD)
-  PHP_ADD_LIBRARY_WITH_PATH(mongoc-priv, src/libmongoc/.libs, PHONGO_SHARED_LIBADD)
-  PHP_SUBST(PHONGO_SHARED_LIBADD)
 
   AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
 
@@ -39,53 +86,54 @@ if test "$PHONGO" != "no"; then
 
   if test "$PHP_DEVELOPER_FLAGS" = "yes"; then
     dnl Warn about functions which might be candidates for format attributes
-    PHP_CHECK_GCC_ARG(-Wmissing-format-attribute,       _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wmissing-format-attribute")
+    PHP_CHECK_GCC_ARG(-Wmissing-format-attribute,       _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wmissing-format-attribute")
     dnl Avoid duplicating values for an enum
-    PHP_CHECK_GCC_ARG(-Wduplicate-enum,                 _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wduplicate-enum")
+    PHP_CHECK_GCC_ARG(-Wduplicate-enum,                 _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wduplicate-enum")
     dnl Warns on mismatches between #ifndef and #define header guards
-    PHP_CHECK_GCC_ARG(-Wheader-guard,                   _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wheader-guard")
+    PHP_CHECK_GCC_ARG(-Wheader-guard,                   _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wheader-guard")
     dnl logical not of a non-boolean expression
-    PHP_CHECK_GCC_ARG(-Wlogical-not-parentheses,        _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wlogical-not-parentheses")
+    PHP_CHECK_GCC_ARG(-Wlogical-not-parentheses,        _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wlogical-not-parentheses")
     dnl Warn about suspicious uses of logical operators in expressions
-    PHP_CHECK_GCC_ARG(-Wlogical-op,                     _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wlogical-op")
+    PHP_CHECK_GCC_ARG(-Wlogical-op,                     _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wlogical-op")
     dnl memory error detector.
     dnl FIXME: -fsanitize=address,undefined for clang. The PHP_CHECK_GCC_ARG macro isn't happy about that string :(
-    PHP_CHECK_GCC_ARG(-fsanitize-address,               _EXTRA_CFLAGS="$_EXTRA_CFLAGS -fsanitize-address")
+    PHP_CHECK_GCC_ARG(-fsanitize-address,               _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -fsanitize-address")
     dnl Enable frame debugging
-    PHP_CHECK_GCC_ARG(-fno-omit-frame-pointer,          _EXTRA_CFLAGS="$_EXTRA_CFLAGS -fno-omit-frame-pointer")
+    PHP_CHECK_GCC_ARG(-fno-omit-frame-pointer,          _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -fno-omit-frame-pointer")
     dnl Make sure we don't optimize calls
-    PHP_CHECK_GCC_ARG(-fno-optimize-sibling-calls,      _EXTRA_CFLAGS="$_EXTRA_CFLAGS -fno-optimize-sibling-calls")
-    PHP_CHECK_GCC_ARG(-Wlogical-op-parentheses,         _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wlogical-op-parentheses")
-    PHP_CHECK_GCC_ARG(-Wbool-conversion,                _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wbool-conversion")
-    PHP_CHECK_GCC_ARG(-Wloop-analysis,                  _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wloop-analysis")
-    PHP_CHECK_GCC_ARG(-Wsizeof-array-argument,          _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wsizeof-array-argument")
-    PHP_CHECK_GCC_ARG(-Wstring-conversion,              _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wstring-conversion")
-    PHP_CHECK_GCC_ARG(-Wno-variadic-macros,             _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wno-variadic-macros")
-    PHP_CHECK_GCC_ARG(-Wno-sign-compare,                _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wno-sign-compare")
-    PHP_CHECK_GCC_ARG(-fstack-protector,                _EXTRA_CFLAGS="$_EXTRA_CFLAGS -fstack-protector")
-    PHP_CHECK_GCC_ARG(-fno-exceptions,                  _EXTRA_CFLAGS="$_EXTRA_CFLAGS -fno-exceptions")
-    PHP_CHECK_GCC_ARG(-Wformat-security,                _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wformat-security")
-    PHP_CHECK_GCC_ARG(-Wformat-nonliteral,              _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wformat-nonliteral")
-    PHP_CHECK_GCC_ARG(-Winit-self,                      _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Winit-self")
-    PHP_CHECK_GCC_ARG(-Wwrite-strings,                  _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wwrite-strings")
-    PHP_CHECK_GCC_ARG(-Wenum-compare,                   _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wenum-compare")
-    PHP_CHECK_GCC_ARG(-Wempty-body,                     _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wempty-body")
-    PHP_CHECK_GCC_ARG(-Wparentheses,                    _EXTRA_CFLAGS="$_EXTRA_CFLAGS -Wparentheses")
+    PHP_CHECK_GCC_ARG(-fno-optimize-sibling-calls,      _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -fno-optimize-sibling-calls")
+    PHP_CHECK_GCC_ARG(-Wlogical-op-parentheses,         _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wlogical-op-parentheses")
+    PHP_CHECK_GCC_ARG(-Wbool-conversion,                _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wbool-conversion")
+    PHP_CHECK_GCC_ARG(-Wloop-analysis,                  _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wloop-analysis")
+    PHP_CHECK_GCC_ARG(-Wsizeof-array-argument,          _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wsizeof-array-argument")
+    PHP_CHECK_GCC_ARG(-Wstring-conversion,              _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wstring-conversion")
+    PHP_CHECK_GCC_ARG(-Wno-variadic-macros,             _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-variadic-macros")
+    PHP_CHECK_GCC_ARG(-Wno-sign-compare,                _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-sign-compare")
+    PHP_CHECK_GCC_ARG(-fstack-protector,                _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -fstack-protector")
+    PHP_CHECK_GCC_ARG(-fno-exceptions,                  _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -fno-exceptions")
+    PHP_CHECK_GCC_ARG(-Wformat-security,                _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wformat-security")
+    PHP_CHECK_GCC_ARG(-Wformat-nonliteral,              _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wformat-nonliteral")
+    PHP_CHECK_GCC_ARG(-Winit-self,                      _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Winit-self")
+    PHP_CHECK_GCC_ARG(-Wwrite-strings,                  _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wwrite-strings")
+    PHP_CHECK_GCC_ARG(-Wenum-compare,                   _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wenum-compare")
+    PHP_CHECK_GCC_ARG(-Wempty-body,                     _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wempty-body")
+    PHP_CHECK_GCC_ARG(-Wparentheses,                    _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wparentheses")
 
 
-    EXTRA_CFLAGS="-g -O0 -Wall -Wextra $_EXTRA_CFLAGS "
+    MAINTAINER_CFLAGS="-g -O0 -Wall -Wextra $_MAINTAINER_CFLAGS "
     dnl EXTRA_LDFLAGS="-Wl,--no-undefined"
   fi
+  MAINTAINER_CFLAGS="$MAINTAINER_CFLAGS -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-missing-field-initializers"
 
 
   PHP_ARG_ENABLE(coverage, whether to enable code coverage,
   [  --enable-coverage Enable developer code coverage information],, no)
 
   if test "$PHP_COVERAGE" = "yes"; then
-      PHP_CHECK_GCC_ARG(-fprofile-arcs,                     _EXTRA_FLAGS="$_EXTRA_FLAGS -fprofile-arcs")
-      PHP_CHECK_GCC_ARG(-ftest-coverage,                    _EXTRA_FLAGS="$_EXTRA_FLAGS -ftest-coverage")
-      EXTRA_CFLAGS="$EXTRA_CFLAGS $_EXTRA_FLAGS "
-      EXTRA_LDFLAGS="$_EXTRA_FLAGS"
+      PHP_CHECK_GCC_ARG(-fprofile-arcs,                     COVERAGE_CFLAGS="$COVERAGE_CFLAGS -fprofile-arcs")
+      PHP_CHECK_GCC_ARG(-ftest-coverage,                    COVERAGE_CFLAGS="$COVERAGE_CFLAGS -ftest-coverage")
+      dnl EXTRA_CFLAGS="$EXTRA_CFLAGS $_COVERAGE_CFLAGS "
+      dnl EXTRA_LDFLAGS="$_COVERAGE_CFLAGS"
   fi
 
   PHONGO_BSON="\
@@ -129,24 +177,160 @@ if test "$PHONGO" != "no"; then
       src/MongoDB/WriteResult.c \
   ";
 
-  EXTRA_CFLAGS="$EXTRA_CFLAGS $MONGOC_CFLAGS"
+  YAJL_SOURCES="\
+	yajl_version.c \
+	yajl.c \
+	yajl_encode.c \
+	yajl_lex.c \
+	yajl_parser.c \
+	yajl_buf.c \
+	yajl_tree.c \
+	yajl_alloc.c \
+	yajl_gen.c
+  ";
+
+  BSON_SOURCES="\
+	bcon.c \
+	bson.c \
+	bson-atomic.c \
+	bson-clock.c \
+	bson-context.c \
+	bson-error.c \
+	bson-iter.c \
+	bson-iso8601.c \
+	bson-json.c \
+	bson-keys.c \
+	bson-md5.c \
+	bson-memory.c \
+	bson-oid.c \
+	bson-reader.c \
+	bson-string.c \
+	bson-timegm.c \
+	bson-utf8.c \
+	bson-value.c \
+	bson-version.c \
+	bson-writer.c
+  ";
+  MONGOC_SOURCES="\
+	mongoc-array.c \
+	mongoc-buffer.c \
+	mongoc-bulk-operation.c \
+	mongoc-client.c \
+	mongoc-client-pool.c \
+	mongoc-cluster.c \
+	mongoc-collection.c \
+	mongoc-counters.c \
+	mongoc-cursor.c \
+	mongoc-cursor-array.c \
+	mongoc-cursor-cursorid.c \
+	mongoc-database.c \
+	mongoc-init.c \
+	mongoc-gridfs.c \
+	mongoc-gridfs-file.c \
+	mongoc-gridfs-file-page.c \
+	mongoc-gridfs-file-list.c \
+	mongoc-index.c \
+	mongoc-list.c \
+	mongoc-log.c \
+	mongoc-matcher-op.c \
+	mongoc-matcher.c \
+	mongoc-queue.c \
+	mongoc-read-prefs.c \
+	mongoc-rpc.c \
+	mongoc-socket.c \
+	mongoc-stream.c \
+	mongoc-stream-buffered.c \
+	mongoc-stream-file.c \
+	mongoc-stream-gridfs.c \
+	mongoc-stream-socket.c \
+	mongoc-uri.c \
+	mongoc-util.c \
+	mongoc-write-command.c \
+	mongoc-write-concern.c
+  ";
+
+MONGOC_SOURCES_SSL="\
+	mongoc-rand.c \
+	mongoc-scram.c \
+	mongoc-stream-tls.c \
+	mongoc-ssl.c
+  ";
+
+MONGOC_SOURCES_SASL=mongoc-sasl.c
+dnl if ENABLE_SSL
+dnl endif
+
+dnl if ENABLE_SASL
+dnl endif
 
   if test "$ext_shared" = "no"; then
     PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON)
     PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES)
     PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES)
   else
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON,               $EXTRA_CFLAGS, shared_objects_phongo, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES,       $EXTRA_CFLAGS, shared_objects_phongo, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES,    $EXTRA_CFLAGS, shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON,               [$EXTRA_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES,       [$EXTRA_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES,    [$EXTRA_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
   fi
 
-  PHONGO_SHARED_DEPENDENCIES="phongodep"
-  PHP_SUBST(PHONGO_SHARED_DEPENDENCIES)
+dnl libmongoc stuff {{{
+  PHP_ADD_INCLUDE(src/libbson/src/)
+  PHP_ADD_INCLUDE(src/libbson/src/yajl/)
+  PHP_ADD_INCLUDE(src/libbson/src/bson/)
+  PHP_ADD_INCLUDE(src/libmongoc/src/mongoc/)
+  CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
 
-  PHP_NEW_EXTENSION(phongo,    $PHONGO_ROOT, $ext_shared,, $EXTRA_CFLAGS)
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[/src/libbson/src/yajl], $YAJL_SOURCES,    [$EXTRA_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
+  dnl PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/yajl/])
+
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[/src/libbson/src/bson], $BSON_SOURCES,    [$EXTRA_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
+  dnl PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/bson/])
+
+  m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
+  AX_PTHREAD
+  m4_include(src/libbson/build/autotools/m4/ac_compile_check_sizeof.m4)
+  m4_include(src/libbson/build/autotools/m4/ac_create_stdint_h.m4)
+  AC_CREATE_STDINT_H([src/libbson/src/bson/bson-stdint.h])
+
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[/src/libmongoc/src/mongoc], $MONGOC_SOURCES,    [$EXTRA_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
+  dnl PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/mongoc/])
+
+  AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
+  ac_configure_args="--enable-debug --enable-tracing --enable-debug-symbols=full --disable-hardening --enable-examples=no --enable-man-pages=no --enable-sasl=no --enable-tests=no --enable-ssl=no --disable-silent-rules --with-libbson=bundled --quiet CFLAGS='$CFLAGS'"
+
+
+  dnl PHP_ADD_LIBRARY_WITH_PATH(bson-1.0, src/libbson/.libs, PHONGO_SHARED_LIBADD)
+  dnl PHP_ADD_LIBRARY_WITH_PATH(mongoc-priv, src/libmongoc/.libs, PHONGO_SHARED_LIBADD)
+  EXTRA_CFLAGS="$PTHREAD_CFLAGS"
+  PHP_SUBST(EXTRA_CFLAGS)
+  PHONGO_SHARED_LIBADD="$PTHREAD_LIBS -lrt"
+  PHP_SUBST(PHONGO_SHARED_LIBADD)
+
+dnl }}}
+
+  PHP_NEW_EXTENSION(phongo,    $PHONGO_ROOT, $ext_shared,, [$EXTRA_CFLAGS $COVERAGE_CFLAGS])
   PHP_ADD_EXTENSION_DEP(phongo, spl)
 
+  MONGOC_DEFINE_RESET
+  BSON_DEFINE_RESET
+  PHP_BSON_BIGENDIAN
+  AC_HEADER_STDBOOL
+  if test "$ac_cv_header_stdbool_h" = "yes"; then
+    BSON_DEFINE([BSON_HAVE_STDBOOL_H], 1)
+  else
+    BSON_DEFINE([BSON_HAVE_STDBOOL_H], 0)
+  fi
+
+  BSON_DEFINE([BSON_OS], 1)
+  PHP_BSON_CLOCK
+  AC_CHECK_FUNC(strnlen,ac_cv_func_strnlen=yes,ac_cv_func_strnlen=no)
+  if test "$ac_cv_func_strnlen" = "yes"; then
+    BSON_DEFINE([BSON_HAVE_STRNLEN], 1)
+  fi
+  AC_CHECK_FUNC(snprintf,ac_cv_func_snprintf=yes,ac_cv_func_snprintf=no)
+  if test "$ac_cv_func_snprintf" = "yes"; then
+    BSON_DEFINE([BSON_HAVE_SNPRINTF], 1)
+  fi
 
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
   PHP_ADD_MAKEFILE_FRAGMENT
@@ -155,7 +339,7 @@ AC_CONFIG_COMMANDS_POST([echo "
 phongo was configured with the following options:
 
 Build configuration:
-  Enable developers flags (slow)                   : $_EXTRA_CFLAGS
+  Enable developers flags (slow)                   : $MAINTAINER_CFLAGS $COVERAGE_CFLAGS
   CFLAGS                                           : $CFLAGS
 
 Submit bugreports at:
