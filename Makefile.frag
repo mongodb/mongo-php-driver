@@ -33,7 +33,7 @@ testclean:
 
 phongodep:
 
-release: ChangeLog RELEASE package.xml
+release: test ChangeLog RELEASE package.xml
 	pecl package package.xml
 
 patch:
