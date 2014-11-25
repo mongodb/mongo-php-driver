@@ -43,3 +43,7 @@ phongodep:
 		done; \
 		touch $(top_srcdir)/.patched; \
 	fi 
+
+ChangeLog:
+	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > ChangeLog-0.1.0
+
