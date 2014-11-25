@@ -1274,6 +1274,9 @@ PHP_MINIT_FUNCTION(phongo)
 	PHP_MINIT(Timestamp)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(UTCDatetime)(INIT_FUNC_ARGS_PASSTHRU);
 
+	REGISTER_STRING_CONSTANT("PHONGO_VERSION", PHONGO_VERSION_S, CONST_CS | CONST_PERSISTENT);
+	REGISTER_STRING_CONSTANT("PHONGO_STABILITY", PHONGO_STABILITY_S, CONST_CS | CONST_PERSISTENT);
+
 	return SUCCESS;
 }
 /* }}} */
@@ -1324,9 +1327,10 @@ PHP_MINFO_FUNCTION(phongo)
 {
 	php_info_print_table_start();
 	php_info_print_table_header(2, "phongo support", "enabled");
-	php_info_print_table_row(2, "phongo", PHONGO_VERSION_S);
-	php_info_print_table_row(2, "libmongoc", MONGOC_VERSION_S);
-	php_info_print_table_row(2, "libbson", BSON_VERSION_S);
+	php_info_print_table_row(2, "phongo version", PHONGO_VERSION_S);
+	php_info_print_table_row(2, "phongo stability", PHONGO_STABILITY_S);
+	php_info_print_table_row(2, "libmongoc version", MONGOC_VERSION_S);
+	php_info_print_table_row(2, "libbson version", BSON_VERSION_S);
 	php_info_print_table_end();
 
 	DISPLAY_INI_ENTRIES();
