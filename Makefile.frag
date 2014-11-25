@@ -1,4 +1,4 @@
-.PHONY: coverage testclean
+.PHONY: coverage testclean ChangeLog RELEASE package.xml
 
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 
@@ -31,6 +31,9 @@ testclean:
 
 phongodep:
 
+release: ChangeLog RELEASE package.xml
+	pecl package package.xml
+
 patch:
 	@if ! test -e $(top_srcdir)/.patched; then \
 		for file in `/bin/ls -1 $(top_srcdir)/patches/*.patch | sort -n`; do \
@@ -46,6 +49,12 @@ patch:
 		touch $(top_srcdir)/.patched; \
 	fi 
 
+package.xml:
+	php bin/prep-release.php 0.1.0-devel
+
+RELEASE:
+	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > RELEASE-X.Y.Z
+
 ChangeLog:
-	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > ChangeLog-0.1.0
+	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > ChangeLog
 
