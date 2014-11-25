@@ -30,6 +30,8 @@ testclean:
 	done;
 
 phongodep:
+
+patch:
 	@if ! test -e $(top_srcdir)/.patched; then \
 		for file in `/bin/ls -1 $(top_srcdir)/patches/*.patch | sort -n`; do \
 			patch -p0 --dry-run -f -s < $$file;\
