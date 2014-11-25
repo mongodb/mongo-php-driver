@@ -36,7 +36,6 @@ run-tests.php
 *.mem
 *.php
 *.sh
-!autogen.sh
 php.ini
 *.patch
 *.swp
@@ -45,6 +44,13 @@ php.ini
 !docs
 !.travis.yml
 !.travis.scripts/*
+!bin/*.php
+
+
+ChangeLog
+RELEASE-*
+package.xml
+phongo-*tgz
 
 # Composer (for testing)
 composer.lock
