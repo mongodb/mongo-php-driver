@@ -30,6 +30,16 @@ testclean:
 	done;
 
 phongodep:
-	(cd src/libbson && $(MAKE))
-	(cd src/libmongoc && $(MAKE) BSON_LIBS=$(top_srcdir)/src/libbson/libbson-1.0.la)
-
+	@if ! test -e $(top_srcdir)/.patched; then \
+		for file in `/bin/ls -1 $(top_srcdir)/patches/*.patch | sort -n`; do \
+			patch -p0 --dry-run -f -s < $$file;\
+			if test $$? -eq 0; then \
+				patch -p0 -f -s < $$file;\
+				echo "$$file patched"; \
+			else \
+				echo "$$file cannot be applied!"; \
+				exit 1; \
+			fi \
+		done; \
+		touch $(top_srcdir)/.patched; \
+	fi 
