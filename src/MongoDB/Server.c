@@ -158,7 +158,7 @@ PHP_METHOD(Server, executeWriteBatch)
 
 
 	batch = (php_phongo_writebatch_t *)zend_object_store_get_object(zbatch TSRMLS_CC);
-	phongo_execute_write(intern->client, namespace, batch->batch, intern->hint, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_write(intern->client, namespace, batch->batch, NULL, intern->hint, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto string Server::getHost()

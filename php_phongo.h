@@ -95,12 +95,12 @@ PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
 void phongo_server_init                              (zval *return_value, int server_hint, mongoc_host_list_t *host TSRMLS_DC);
 bool                     phongo_query_init           (php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC);
 mongoc_bulk_operation_t* phongo_writebatch_init      (zend_bool ordered);
-bool                     phongo_execute_write        (mongoc_client_t *client, char *namespace, mongoc_bulk_operation_t *batch, int server_hint, zval *return_value, int return_value_used TSRMLS_DC);
+bool                     phongo_execute_write        (mongoc_client_t *client, char *namespace, mongoc_bulk_operation_t *batch, mongoc_write_concern_t *write_concern, int server_hint, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_command      (mongoc_client_t *client, char *db, bson_t *command, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_query        (mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_t *doc, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_t *query, bson_t *update, mongoc_update_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_t *query, mongoc_delete_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_t *doc, mongoc_write_concern_t *write_concern, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_t *query, bson_t *update, mongoc_write_concern_t *write_concern, mongoc_update_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_t *query, mongoc_write_concern_t *write_concern, mongoc_delete_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC);
 
 mongoc_stream_t*         phongo_stream_initiator     (const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error);
 zend_object_iterator*    phongo_result_get_iterator  (zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
