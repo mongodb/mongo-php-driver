@@ -28,7 +28,7 @@
 #define phpext_phongo_ptr &phongo_module_entry
 extern zend_module_entry phongo_module_entry;
 
-#define PHONGO_VERSION_S "0.1.0"
+#define PHONGO_VERSION_S "0.1.1"
 #define PHONGO_STABILITY_S "devel"
 #define PHONGO_VERSION   PHONGO_VERSION_S
 
