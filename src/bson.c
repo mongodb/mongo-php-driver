@@ -870,8 +870,8 @@ PHP_FUNCTION(fromArray)
    Returns the PHP representation of a BSON value */
 PHP_FUNCTION(toArray)
 {
-	      char          *data;
-	      int            data_len;
+	char          *data;
+	int            data_len;
 
 	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
 
