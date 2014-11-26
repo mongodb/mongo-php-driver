@@ -219,8 +219,7 @@ void phongo_result_init(zval *return_value, zend_class_entry *result_class, mong
 	} else {
 		result->hint = server_hint;
 	}
-	/* FIXME: Support empty result cursor. eg. when there simply aren't any matches for a query */
-	result->firstBatch = bson_copy(bson);
+	result->firstBatch = bson ? bson_copy(bson) : NULL;
 } /* }}} */
 
 void phongo_server_init(zval *return_value, int hint, mongoc_host_list_t *host TSRMLS_DC) /* {{{ */
@@ -580,14 +579,13 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 	if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error;
 
+		/* Could simply be no docs, which is not an error */
 		if (mongoc_cursor_error(cursor, &error)) {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 			mongoc_cursor_destroy(cursor);
 			return false;
 		}
 
-		mongoc_cursor_destroy(cursor);
-		return false;
 	}
 
 	if (!return_value_used) {
