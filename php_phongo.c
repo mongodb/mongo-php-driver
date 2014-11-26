@@ -1341,11 +1341,27 @@ PHP_MINFO_FUNCTION(phongo)
 
 /* {{{ phongo_functions[]
 */
+ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromArray, 0, 0, 1)
+	ZEND_ARG_INFO(0, array)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_bson_toArray, 0, 0, 1)
+	ZEND_ARG_INFO(0, bson)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_bson_toJSON, 0, 0, 1)
+	ZEND_ARG_INFO(0, bson)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromJSON, 0, 0, 1)
+	ZEND_ARG_INFO(0, json)
+ZEND_END_ARG_INFO();
+
 const zend_function_entry phongo_functions[] = {
-	ZEND_NS_FE("BSON", fromArray, NULL)
-	ZEND_NS_FE("BSON", toArray,   NULL)
-	ZEND_NS_FE("BSON", toJSON,    NULL)
-	ZEND_NS_FE("BSON", fromJSON,  NULL)
+	ZEND_NS_FE("BSON", fromArray, ai_bson_fromArray)
+	ZEND_NS_FE("BSON", toArray,   ai_bson_toArray)
+	ZEND_NS_FE("BSON", toJSON,    ai_bson_toJSON)
+	ZEND_NS_FE("BSON", fromJSON,  ai_bson_fromJSON)
 	PHP_FE_END
 };
 /* }}} */
