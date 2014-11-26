@@ -845,7 +845,7 @@ int bson_to_zval(const unsigned char *data, int data_len, zval *retval)
 	return 1;
 }
 
-/* {{{ proto string BSON\fromArray(mixed data)
+/* {{{ proto string BSON\fromArray(array|object data)
    Returns the BSON representation of a value */
 PHP_FUNCTION(fromArray)
 {
@@ -854,23 +854,12 @@ PHP_FUNCTION(fromArray)
 
 	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &data) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &data) == FAILURE) {
 		return;
 	}
 
 	bson = bson_new();
-
-	switch(Z_TYPE_P(data)) {
-		case IS_OBJECT:
-		case IS_ARRAY:
-			zval_to_bson(data, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
-			break;
-
-		default:
-			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Cannot convert scalar value '%s' to BSON", zend_zval_type_name(data));
-			RETURN_NULL();
-			break;
-	}
+	zval_to_bson(data, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 
 	RETVAL_STRINGL((const char *) bson_get_data(bson), bson->len, 1);
 	bson_destroy(bson);
