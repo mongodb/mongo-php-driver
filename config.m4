@@ -120,10 +120,10 @@ if test "$PHONGO" != "no"; then
     PHP_CHECK_GCC_ARG(-Wparentheses,                    _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wparentheses")
 
 
-    MAINTAINER_CFLAGS="-g -O0 -Wall -Wextra $_MAINTAINER_CFLAGS "
+    MAINTAINER_CFLAGS="-Wextra $_MAINTAINER_CFLAGS  -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-missing-field-initializers"
+    STD_CFLAGS="-g -O0 -Wall"
     dnl EXTRA_LDFLAGS="-Wl,--no-undefined"
   fi
-  MAINTAINER_CFLAGS="$MAINTAINER_CFLAGS -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-missing-field-initializers"
 
 
   PHP_ARG_ENABLE(coverage, whether to enable code coverage,
@@ -132,8 +132,7 @@ if test "$PHONGO" != "no"; then
   if test "$PHP_COVERAGE" = "yes"; then
       PHP_CHECK_GCC_ARG(-fprofile-arcs,                     COVERAGE_CFLAGS="$COVERAGE_CFLAGS -fprofile-arcs")
       PHP_CHECK_GCC_ARG(-ftest-coverage,                    COVERAGE_CFLAGS="$COVERAGE_CFLAGS -ftest-coverage")
-      dnl EXTRA_CFLAGS="$EXTRA_CFLAGS $_COVERAGE_CFLAGS "
-      dnl EXTRA_LDFLAGS="$_COVERAGE_CFLAGS"
+      EXTRA_LDFLAGS="$COVERAGE_CFLAGS"
   fi
 
   PHONGO_BSON="\
@@ -268,17 +267,17 @@ dnl endif
     PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES)
     PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES)
   else
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON,               [$EXTRA_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES,       [$EXTRA_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES,    [$EXTRA_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON,               [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES,       [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES,    [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
   fi
 
 dnl libmongoc stuff {{{
   CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
 
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libbson/src/yajl], $YAJL_SOURCES,    [$EXTRA_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libbson/src/bson], $BSON_SOURCES,    [$EXTRA_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,    [$EXTRA_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libbson/src/yajl], $YAJL_SOURCES,    [$STD_CFLAGS], shared_objects_phongo, yes)
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libbson/src/bson], $BSON_SOURCES,    [$STD_CFLAGS], shared_objects_phongo, yes)
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,    [$STD_CFLAGS], shared_objects_phongo, yes)
 
 
 
@@ -289,13 +288,14 @@ dnl libmongoc stuff {{{
   dnl PHP_ADD_LIBRARY_WITH_PATH(mongoc-priv, src/libmongoc/.libs, PHONGO_SHARED_LIBADD)
   EXTRA_CFLAGS="$PTHREAD_CFLAGS"
   PHP_SUBST(EXTRA_CFLAGS)
+  PHP_SUBST(EXTRA_LDFLAGS)
 
   PHONGO_SHARED_LIBADD="$PTHREAD_LIBS -lrt"
   PHP_SUBST(PHONGO_SHARED_LIBADD)
 
 dnl }}}
 
-  PHP_NEW_EXTENSION(phongo,    $PHONGO_ROOT, $ext_shared,, [$EXTRA_CFLAGS $COVERAGE_CFLAGS])
+  PHP_NEW_EXTENSION(phongo,    $PHONGO_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
   PHP_ADD_EXTENSION_DEP(phongo, spl)
 
   m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
@@ -348,10 +348,14 @@ AC_CONFIG_COMMANDS_POST([echo "
 phongo was configured with the following options:
 
 Build configuration:
-  Enable developers flags (slow)                   : $MAINTAINER_CFLAGS $COVERAGE_CFLAGS
   CFLAGS                                           : $CFLAGS
+  Extra CFLAGS                                     : $STD_CFLAGS $EXTRA_CFLAGS
+  Developers flags (slow)                          : $MAINTAINER_CFLAGS
+  Code Coverage flags (extra slow)                 : $COVERAGE_CFLAGS
+  LDFLAGS                                          : $LDFLAGS
+  EXTRA_LDFLAGS                                    : $EXTRA_LDFLAGS
 
-Submit bugreports at:
+Please submit bugreports at:
   https://jira.mongodb.org/browse/PHP
 
 "])
