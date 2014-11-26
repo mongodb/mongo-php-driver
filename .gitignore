@@ -47,6 +47,8 @@ php.ini
 !bin/*.php
 
 
+tmp-php.ini
+
 ChangeLog
 RELEASE-*
 package.xml
