@@ -27,10 +27,7 @@ fast and powerful.
 
 ### Examples
 
- * [Model classes](docs/examples/model.php) (referenced in other examples)
- * [Querying](docs/examples/query.php)
- * [Inserting](docs/examples/insert.php)
- * Custom [BSON deserialization](docs/examples/changing-types.php)
+ * [List documents in collections & collections in database](docs/examples/list-documents-in-collections.php.php)
 
 ## Installation
 
