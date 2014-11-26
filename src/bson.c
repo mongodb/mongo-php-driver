@@ -170,6 +170,8 @@ void php_phongo_bson_visit_corrupt(const bson_iter_t *iter __attribute__((unused
 {
 	zval *retval = *(zval **)data;
 
+	mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "Corrupt BSON data detected!");
+
 	zval_ptr_dtor(&retval);
 }
 /* }}} */
@@ -477,7 +479,7 @@ bool php_phongo_bson_visit_minkey(const bson_iter_t *iter __attribute__((unused)
 static const bson_visitor_t php_bson_visitors = {
    NULL /* php_phongo_bson_visit_before*/,
    NULL /*php_phongo_bson_visit_after*/,
-   NULL /*php_phongo_bson_visit_corrupt*/,
+   php_phongo_bson_visit_corrupt,
    php_phongo_bson_visit_double,
    php_phongo_bson_visit_utf8,
    php_phongo_bson_visit_document,
