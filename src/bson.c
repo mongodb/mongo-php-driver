@@ -525,6 +525,7 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter __attribute__((unuse
 				return true;
 			}
 		}
+		Z_SET_REFCOUNT_P(zchild, 1);
 	}
 
 	return false;
@@ -551,6 +552,7 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused))
 				return true;
 			}
 		}
+		Z_SET_REFCOUNT_P(zchild, 1);
 	}
 
 	return false;
