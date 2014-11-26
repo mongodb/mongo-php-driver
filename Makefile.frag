@@ -56,7 +56,7 @@ package.xml:
 	php bin/prep-release.php $(PHONGO_VERSION)-$(PHONGO_STABILITY)
 
 RELEASE:
-	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > RELEASE-$(PHONGO_VERSION)
+	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short --since="$(git show -s --format=%ad `git rev-list --tags --max-count=1`)" > RELEASE-$(PHONGO_VERSION)
 
 ChangeLog:
 	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > ChangeLog
