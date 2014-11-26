@@ -542,7 +542,7 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused))
 		zval *zchild = NULL;
 
 		MAKE_STD_ZVAL(zchild);
-		object_init(zchild);
+		array_init(zchild);
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &zchild)) {
 			if (Z_TYPE_P(retval) == IS_ARRAY) {
 				add_assoc_zval(retval, key, zchild);
