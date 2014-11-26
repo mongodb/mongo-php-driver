@@ -1202,7 +1202,7 @@ static void php_phongo_free(void *mem) /* {{{ */
 
 /* {{{ INI entries */
 PHP_INI_BEGIN()
-	STD_PHP_INI_ENTRY("phongo.debug_log", (char *)"stderr", PHP_INI_ALL, OnUpdateString, debug_log, zend_phongo_globals, phongo_globals)
+	STD_PHP_INI_ENTRY("phongo.debug_log", (char *)"", PHP_INI_ALL, OnUpdateString, debug_log, zend_phongo_globals, phongo_globals)
 PHP_INI_END()
 /* }}} */
 
