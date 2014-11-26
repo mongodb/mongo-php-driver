@@ -10,12 +10,6 @@ Development progress is being tracked in the
 [pecl-prototype](https://jira.mongodb.org/browse/PHP/component/13249) component
 of the MongoDB PHP driver's JIRA project.
 
-This repo contains design documentation, examples, and a proof-of-concept
-implementation of a new MongoDB driver for PHP, Phongo. Unlike the
-[existing driver](https://github.com/mongodb/mongo-php-driver), this project
-utilizes [libmongoc](https://github.com/mongodb/mongo-c-driver) and
-[libbson](https://github.com/mongodb/libbson).
-
 The purpose of this driver is to provide exceptionally thin glue between MongoDB
 and PHP, implementing only fundemental and performance-critical components
 necessary to build a fully-functional MongoDB driver.
@@ -38,26 +32,6 @@ fast and powerful.
  * [Inserting](docs/examples/insert.php)
  * Custom [BSON deserialization](docs/examples/changing-types.php)
 
-## Development
-
-The API is developed using normal PHP userland syntax:
-
- * [Connection Manager](docs/api/MongoDB/Manager.php)
- * [ReadPreference](docs/api/MongoDB/ReadPreference.php)
- * [WriteBatch](docs/api/MongoDB/WriteBatch.php)
- * [WriteResult](docs/api/MongoDB/WriteResult.php)
- * [Query](docs/api/MongoDB/Query.php)
- * [QueryResult](docs/api/MongoDB/QueryResult.php)
- * [Command](docs/api/MongoDB/Command.php)
- * [CommandResult](docs/api/MongoDB/CommandResult.php)
-
-The implementation of these objects use CIMPL (Simple) and CEF (Chef) inline
-code snippets which are then included in the generated C code.
-
-The goal is that this PHP implementation can serve as the canonical
-implementation of the driver and then used to generate extensions for other PHP
-implementations (e.g. HHVM).
-
 ## Installation
 
 Ultimately, this extension is not intended to be explicitly installed. Users
@@ -68,18 +42,12 @@ support installing extension dependencies.
 This project is currently not published as a PECL extension and must be built
 and installed manually.
 
-To build the driver:
+To build and install the driver:
 
 ```
-$ phpize
-$ ./configure
-$ make
-```
-
-To install the driver:
-
-```
-$ make install
+$ wget https://github.com/bjori/phongo/releases/download/0.1.0/phongo-0.1.0.tgz
+$ pecl install phongo-0.1.0.tgz
+$ echo "extension=phongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```
 
 ## Testing
