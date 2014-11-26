@@ -110,8 +110,11 @@ PHP_METHOD(WriteBatch, insert)
 
 		if (bson_iter_init_find(&iter, bson_out, "_id")) {
 			php_phongo_objectid_new_from_oid(return_value, bson_iter_oid(&iter) TSRMLS_CC);
+			bson_clear(&bson_out);
 			return;
 		}
+
+		bson_clear(&bson_out);
 	}
 }
 /* }}} */
