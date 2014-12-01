@@ -105,8 +105,9 @@ int                      phongo_execute_single_delete(mongoc_client_t *client, c
 mongoc_stream_t*         phongo_stream_initiator     (const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error);
 zend_object_iterator*    phongo_result_get_iterator  (zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
 zend_object_iterator*    phongo_cursor_get_iterator  (zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
-mongoc_read_prefs_t*     phongo_read_preference_from_zval(zval *object TSRMLS_DC);
-php_phongo_query_t*      phongo_query_from_zval(zval *zquery TSRMLS_DC);
+mongoc_read_prefs_t*     phongo_read_preference_from_zval(zval *zread_preference TSRMLS_DC);
+mongoc_write_concern_t*  phongo_write_concern_from_zval  (zval *zwrite_concern TSRMLS_DC);
+php_phongo_query_t*      phongo_query_from_zval          (zval *zquery TSRMLS_DC);
 
 
 void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS_DC);

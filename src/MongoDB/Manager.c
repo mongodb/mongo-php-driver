@@ -140,7 +140,6 @@ PHP_METHOD(Manager, executeWriteBatch)
 	zval                      *zbatch;
 	zval                      *zwrite_concern = NULL;
 	php_phongo_writebatch_t   *batch;
-	php_phongo_writeconcern_t *write_concern;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -154,8 +153,7 @@ PHP_METHOD(Manager, executeWriteBatch)
 
 
 	batch = (php_phongo_writebatch_t *)zend_object_store_get_object(zbatch TSRMLS_CC);
-	write_concern = (php_phongo_writeconcern_t *)zend_object_store_get_object(zwrite_concern TSRMLS_CC);
-	phongo_execute_write(intern->client, namespace, batch->batch, write_concern->write_concern, 0, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_write(intern->client, namespace, batch->batch, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), 0, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\WriteResult Manager::executeInsert(string $namespace, array|object $document[, MongoDB\WriteConcern $writeConcern = null])
@@ -169,7 +167,6 @@ PHP_METHOD(Manager, executeInsert)
 	zval                     *document;
 	zval                     *zwrite_concern = NULL;
 	bson_t                   *bson;
-	php_phongo_writeconcern_t *write_concern;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -182,10 +179,9 @@ PHP_METHOD(Manager, executeInsert)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	write_concern = (php_phongo_writeconcern_t *)zend_object_store_get_object(zwrite_concern TSRMLS_CC);
 	bson = bson_new();
 	zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
-	phongo_execute_single_insert(intern->client, namespace, bson, write_concern->write_concern, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_single_insert(intern->client, namespace, bson, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
 	bson_clear(&bson);
 }
 /* }}} */
@@ -204,7 +200,6 @@ PHP_METHOD(Manager, executeUpdate)
 	bson_t                   *query;
 	bson_t                   *update;
 	mongoc_update_flags_t     flags = MONGOC_UPDATE_NONE;
-	php_phongo_writeconcern_t *write_concern;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -217,7 +212,6 @@ PHP_METHOD(Manager, executeUpdate)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	write_concern = (php_phongo_writeconcern_t *)zend_object_store_get_object(zwrite_concern TSRMLS_CC);
 	query = bson_new();
 	update = bson_new();
 	zval_to_bson(zquery, PHONGO_BSON_NONE, query, NULL TSRMLS_CC);
@@ -230,7 +224,7 @@ PHP_METHOD(Manager, executeUpdate)
 		flags |= MONGOC_UPDATE_MULTI_UPDATE;
 	}
 
-	phongo_execute_single_update(intern->client, namespace, query, update, write_concern->write_concern, flags, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_single_update(intern->client, namespace, query, update, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), flags, return_value, return_value_used TSRMLS_CC);
 	bson_clear(&query);
 	bson_clear(&update);
 }
@@ -248,7 +242,6 @@ PHP_METHOD(Manager, executeDelete)
 	zval                     *zwrite_concern = NULL;
 	bson_t                   *bson;
 	mongoc_delete_flags_t     flags = MONGOC_DELETE_NONE;
-	php_phongo_writeconcern_t *write_concern;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -261,13 +254,12 @@ PHP_METHOD(Manager, executeDelete)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	write_concern = (php_phongo_writeconcern_t *)zend_object_store_get_object(zwrite_concern TSRMLS_CC);
 	if (deleteOptions && php_array_fetch_bool(deleteOptions, "limit")) {
 		flags |= MONGOC_DELETE_SINGLE_REMOVE;
 	}
 	bson = bson_new();
 	zval_to_bson(query, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
-	phongo_execute_single_delete(intern->client, namespace, bson, write_concern->write_concern, flags, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_single_delete(intern->client, namespace, bson, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), flags, return_value, return_value_used TSRMLS_CC);
 	bson_clear(&bson);
 }
 /* }}} */
