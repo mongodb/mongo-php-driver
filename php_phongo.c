@@ -79,6 +79,9 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 			return spl_ce_RuntimeException;
 		case PHONGO_ERROR_WRITE_FAILED:
 			return php_phongo_writeexception_ce;
+		case PHONGO_ERROR_CONNECTION_FAILED:
+			/* FIXME: Add ConnectionException */
+			return php_phongo_writeexception_ce;
 	}
 
 	mongoc_log(MONGOC_LOG_LEVEL_ERROR, MONGOC_LOG_DOMAIN, "Resolving unknown exception domain!!!");
@@ -745,10 +748,13 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 {
 	php_phongo_stream_socket *base_stream = NULL;
 	php_stream *stream = NULL;
+	const bson_t *options;
+	bson_iter_t iter;
 	char *errmsg = NULL;
 	int errcode;
 	char *dsn;
 	int dsn_len;
+	int enable_ssl = 0;
 	(void)user_data;TSRMLS_FETCH_FROM_CTX(user_data);
 
 
@@ -769,13 +775,45 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 			return NULL;
 	}
 
-	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, (char *)"persistent id", /*options->connectTimeoutMS*/0, (php_stream_context *)NULL, &errmsg, &errcode);
-	efree(dsn);
-
-	if (!stream) {
-		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, errmsg);
-		return NULL;
+	options = mongoc_uri_get_options(uri);
+	if (bson_iter_init_find_case(&iter, options, "ssl") && BSON_ITER_HOLDS_INT32(&iter)) {
+		enable_ssl = bson_iter_int32 (&iter);
 	}
+
+	do {
+		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Connecting to '%s'", dsn);
+		stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, (char *)"persistent id", /*options->connectTimeoutMS*/0, (php_stream_context *)NULL, &errmsg, &errcode);
+		if (!stream) {
+			bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, errmsg);
+		}
+		if (enable_ssl) {
+			zend_error_handling       error_handling;
+			zend_replace_error_handling(EH_THROW, phongo_exception_from_mongoc_domain(MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_SOCKET), &error_handling TSRMLS_CC);
+
+			mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Enabling SSL");
+			if (php_stream_xport_crypto_setup(stream, STREAM_CRYPTO_METHOD_SSLv23_CLIENT, NULL TSRMLS_CC) < 0) {
+				zend_restore_error_handling(&error_handling TSRMLS_CC);
+				bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_INVALID_TYPE, "Failed to setup crypto, is the OpenSSL extension loaded?");
+				php_stream_free(stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
+				return NULL;
+			}
+			zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+			if (php_stream_xport_crypto_enable(stream, 1 TSRMLS_CC) < 0) {
+				php_stream_free(stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
+				if (enable_ssl == 2) {
+					enable_ssl = 0;
+					mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Server does not seem to support SSL");
+					continue;
+				}
+
+				bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_INVALID_TYPE, "Failed to setup crypto, is the server running with SSL?");
+				return NULL;
+			}
+		}
+		break;
+	} while(1);
+	efree(dsn);
 
 	/* Avoid invalid leak warning in debug mode when freeing the stream */
 #if ZEND_DEBUG
