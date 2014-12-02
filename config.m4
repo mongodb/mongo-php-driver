@@ -145,7 +145,6 @@ if test "$PHONGO" != "no"; then
     src/BSON/Int32.c \
     src/BSON/Int64.c \
     src/BSON/Javascript.c \
-    src/BSON/Log.c \
     src/BSON/MaxKey.c \
     src/BSON/MinKey.c \
     src/BSON/ObjectID.c \
