@@ -1,6 +1,8 @@
 dnl config.m4 for extension phongo
 PHP_ARG_ENABLE(phongo, whether to enable phongo support,
 [  --enable-phongo           Enable phongo support])
+PHP_ARG_WITH(openssl-dir, OpenSSL dir for phongo,
+[  --with-openssl-dir[=DIR]  openssl install prefix], yes, no)
 
 
 AC_DEFUN([MONGOC_DEFINE_RESET],[
@@ -12,6 +14,9 @@ AC_DEFUN([BSON_DEFINE_RESET],[
 dnl borrowed from PHP acinclude.m4
 AC_DEFUN([BSON_DEFINE],[
   [echo "#define ]$1[]ifelse([$2],,[ 1],[ $2])[" >> $srcdir/src/libbson/src/bson/bson-config.h]
+])
+AC_DEFUN([MONGOC_DEFINE],[
+  [echo "#define ]$1[]ifelse([$2],,[ 1],[ $2])[" >> $srcdir/src/libmongoc/src/mongoc/mongoc-config.h]
 ])
 dnl borrowed from PHP acinclude.m4
 AC_DEFUN([PHP_BSON_BIGENDIAN],
@@ -76,11 +81,6 @@ AC_DEFUN([PHP_BSON_CLOCK],
 MONGOC_SYMBOL_SUFFIX="priv"
 
 if test "$PHONGO" != "no"; then
-  AC_MSG_CHECKING(configuring libmongoc)
-  AC_MSG_RESULT(...)
-
-  AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
-
   PHP_ARG_ENABLE(developer-flags, whether to enable developer build flags,
   [  --enable-developer-flags   Enable developer flags],, no)
 
@@ -273,15 +273,18 @@ dnl endif
   fi
 
 dnl libmongoc stuff {{{
-  CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
-
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libbson/src/yajl], $YAJL_SOURCES,    [$STD_CFLAGS], shared_objects_phongo, yes)
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libbson/src/bson], $BSON_SOURCES,    [$STD_CFLAGS], shared_objects_phongo, yes)
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,    [$STD_CFLAGS], shared_objects_phongo, yes)
-
-
+  AC_MSG_CHECKING(configuring libmongoc)
+  AC_MSG_RESULT(...)
 
   AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
+
+  CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
+
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libbson/src/yajl], $YAJL_SOURCES,           [$STD_CFLAGS], shared_objects_phongo, yes)
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libbson/src/bson], $BSON_SOURCES,           [$STD_CFLAGS], shared_objects_phongo, yes)
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,     [$STD_CFLAGS], shared_objects_phongo, yes)
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL, [$STD_CFLAGS], shared_objects_phongo, yes)
+
 
 
   dnl PHP_ADD_LIBRARY_WITH_PATH(bson-1.0, src/libbson/.libs, PHONGO_SHARED_LIBADD)
@@ -321,9 +324,14 @@ dnl }}}
   dnl PHP_SUBST(PHONGO_SHARED_DEPENDENCIES)
 
   MONGOC_DEFINE_RESET
+  PHP_SETUP_OPENSSL(PHONGO_SHARED_LIBADD)
+  MONGOC_DEFINE([MONGOC_ENABLE_SSL], 1)
+
   BSON_DEFINE_RESET
+
   PHP_BSON_BIGENDIAN
   AC_HEADER_STDBOOL
+
   if test "$ac_cv_header_stdbool_h" = "yes"; then
     BSON_DEFINE([BSON_HAVE_STDBOOL_H], 1)
   else
@@ -331,6 +339,7 @@ dnl }}}
   fi
 
   BSON_DEFINE([BSON_OS], 1)
+
   PHP_BSON_CLOCK
   AC_CHECK_FUNC(strnlen,ac_cv_func_strnlen=yes,ac_cv_func_strnlen=no)
   if test "$ac_cv_func_strnlen" = "yes"; then
@@ -354,6 +363,7 @@ Build configuration:
   Code Coverage flags (extra slow)                 : $COVERAGE_CFLAGS
   LDFLAGS                                          : $LDFLAGS
   EXTRA_LDFLAGS                                    : $EXTRA_LDFLAGS
+  PHONGO_SHARED_LIBADD                             : $PHONGO_SHARED_LIBADD
 
 Please submit bugreports at:
   https://jira.mongodb.org/browse/PHP
