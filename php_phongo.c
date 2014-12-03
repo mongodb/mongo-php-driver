@@ -348,6 +348,10 @@ void phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_
 
 				php_phongo_objectid_new_from_oid(zid, bson_iter_oid(&outer) TSRMLS_CC);
 				add_index_zval(writeresult->upsertedIds, index, zid);
+			} else if (BSON_ITER_HOLDS_INT32(&outer)) {
+				int32_t val = bson_iter_int32(&outer);
+
+				add_index_long(writeresult->upsertedIds, index, val);
 			} else if (BSON_ITER_HOLDS_INT64(&outer)) {
 				int64_t val = bson_iter_int64(&outer);
 
