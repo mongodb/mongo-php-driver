@@ -349,8 +349,13 @@ void phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_
 				php_phongo_objectid_new_from_oid(zid, bson_iter_oid(&outer) TSRMLS_CC);
 				add_index_zval(writeresult->upsertedIds, index, zid);
 			} else if (BSON_ITER_HOLDS_INT64(&outer)) {
-				int val = bson_iter_int64(&outer);
+				int64_t val = bson_iter_int64(&outer);
 
+#if SIZEOF_LONG == 4
+				if (val > INT_MAX) {
+					add_index_long(writeresult->upsertedIds, index, (double)val);
+				} else
+#endif
 				add_index_long(writeresult->upsertedIds, index, val);
 			}
 		}

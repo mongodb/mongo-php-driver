@@ -40,7 +40,11 @@
 
 #if SIZEOF_LONG == 8
 #	define BSON_APPEND_INT(b, key, keylen, val) \
-	bson_append_int64(b, key, keylen, val);
+	if (val > INT_MAX || val < INT_MIN) { \
+		bson_append_int64(b, key, keylen, val); \
+	} else { \
+		bson_append_int32(b, key, keylen, val); \
+	}
 #elif SIZEOF_LONG == 4
 #	define BSON_APPEND_INT(b, key, keylen, val) \
 	bson_append_int32(b, key, keylen, val);
@@ -424,6 +428,13 @@ bool php_phongo_bson_visit_int64(const bson_iter_t *iter __attribute__((unused))
 {
 	zval *retval = *(zval **)data;
 	TSRMLS_FETCH();
+
+#if SIZEOF_LONG == 4
+	if (v_int64 > INT_MAX) {
+		mongoc_log(MONGOC_LOG_LEVEL_ERROR, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", v_int64);
+		return false
+	}
+#endif
 
 	if (Z_TYPE_P(retval) == IS_ARRAY) {
 		add_assoc_long(retval, key, v_int64);
