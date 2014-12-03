@@ -64,8 +64,6 @@ function makeCollectionNameFromFilename($filename)
 function LOAD_FIXTURES() {
     try {
         $mc = new MongoDB\Manager(MONGODB_CLEANUP_URI);
-        $cmd = new MongoDB\Command(array("drop" => COLLECTION_NAME));
-        $rp = new MongoDB\ReadPreference(MongoDB\ReadPreference::RP_PRIMARY);
         $retval = $mc->executeInsert(NS, array("my" => "demo", array("document" => "with", "data")));
     } catch(Exception $e) {
         echo "skip " . $e->getCode(), ": ", $e->getMessage();
