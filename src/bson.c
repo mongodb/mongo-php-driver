@@ -432,7 +432,7 @@ bool php_phongo_bson_visit_int64(const bson_iter_t *iter __attribute__((unused))
 #if SIZEOF_LONG == 4
 	if (v_int64 > INT_MAX) {
 		mongoc_log(MONGOC_LOG_LEVEL_ERROR, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", v_int64);
-		return false
+		return false;
 	}
 #endif
 
