@@ -1,0 +1,7 @@
+site_name: "PHongo: The MongoDB Driver for PHP"
+repo_url: https://github.com/bjori/phongo
+theme: spacelab
+pages:
+    - [index.md, Home]
+    - [crud.md, CRUD]
+    - [batch.md, Batch CRUD]

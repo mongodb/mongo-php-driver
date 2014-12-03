@@ -41,19 +41,26 @@ php.ini
 *.swp
 .*
 !tests/utils/*.php
-!docs
 !.travis.yml
 !.travis.scripts/*
-!bin/*.php
 
 
+# MKDocs
+!docs
+site
+
+# Run tests
 tmp-php.ini
 
+# Release files
+!bin/*.php
 ChangeLog
 RELEASE-*
 package.xml
 phongo-*tgz
 
 # Composer (for testing)
+composer.phar
 composer.lock
 vendor/
+
