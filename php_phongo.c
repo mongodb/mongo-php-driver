@@ -835,7 +835,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	TSRMLS_SET_CTX(base_stream->tsrm_ls);
 
 	/* flush missing, doesn't seem to be used */
-	base_stream->vtable.type = 42;
+	base_stream->vtable.type = 100 + enable_ssl;
 	base_stream->vtable.destroy = phongo_stream_destroy;
 	base_stream->vtable.close = phongo_stream_close;
 	base_stream->vtable.writev = phongo_stream_writev;
