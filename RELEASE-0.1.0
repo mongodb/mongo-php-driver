@@ -1,0 +1,959 @@
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* We haven't executed the test target yet!
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix coverage build
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Create the tag at the end of making the release ball
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Compiler warnings
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Running the tests is of course part of a release
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Ignore generated files
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Expose version constants and stability
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix version number
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Get the release number from the module
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Update travis for build system changes
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix building out of root
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Generate package.xml and release archive
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Don't Move this to a dedicated patch target
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Add CREDITS
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Add a target to generate a ChangeLog
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* Add a custom build target dependency
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* This seems to be the conventional wisdom setting ulimit on travis
+
+2014-11-25  Hannes Magnusson  <bjori@mongodb.com>
+	* PHP-1289: Automatically apply our required patches
+
+2014-11-24  Hannes Magnusson  <bjori@mongodb.com>
+	* No longer needed
+
+2014-11-24  Hannes Magnusson  <bjori@mongodb.com>
+	* PHP-1289: Revamp the build system to embed libmongoc, libbson and yajl
+
+2014-11-24  Hannes Magnusson  <bjori@mongodb.com>
+	* Set ulimit before our trap
+
+2014-11-24  Hannes Magnusson  <bjori@mongodb.com>
+	* Don't include libbson or libmongoc in the coverage report
+
+2014-11-24  Hannes Magnusson  <bjori@mongodb.com>
+	* Fixed CID-60852: Pointer to local outside scope
+
+2014-11-24  Hannes Magnusson  <bjori@mongodb.com>
+	* This is the master branch
+
+2014-11-24  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix ZTS - and all the segfaults
+
+2014-11-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Attempt to fix stream closing in zts
+
+2014-11-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix zts builds
+
+2014-11-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Use my libmongoc fork for now
+
+2014-11-21  Hannes Magnusson  <bjori@mongodb.com>
+	* bump libmongoc in my fork
+
+2014-11-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Fixed various memory leaks and compiler warnings
+
+2014-11-21  Hannes Magnusson  <bjori@mongodb.com>
+	* PHP-1189: Implement BSON regex type
+
+2014-11-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Fixed couple of constify, and renamed a functino to be consistent with'em all
+
+2014-11-11  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1189: BSON Regex type
+
+2014-11-21  Hannes Magnusson  <bjori@mongodb.com>
+	* PHP-1187: Implement BSON binary type
+
+2014-11-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Move the helpers up rather then in the middle of the vtable
+
+2014-11-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix some compiler warnings: (de-)constify
+
+2014-11-20  Hannes Magnusson  <bjori@mongodb.com>
+	* bump libbson
+
+2014-11-20  Hannes Magnusson  <bjori@mongodb.com>
+	* PHP-1188: Implement BSON code and code with scope types
+
+2014-11-20  Hannes Magnusson  <bjori@mongodb.com>
+	* Fixed zts macros
+
+2014-11-20  Hannes Magnusson  <bjori@mongodb.com>
+	* PHP-1191: Implement BSON timestamp type
+
+2014-11-20  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix arginfo and proto
+
+2014-11-20  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix test: Whoopsy. Missed the DONE section
+
+2014-11-20  Hannes Magnusson  <bjori@mongodb.com>
+	* PHP-1194: Implement BSON MaxKey and MinKey types
+
+2014-11-20  Hannes Magnusson  <bjori@mongodb.com>
+	* Bump libmongoc, and temporary switch to my fork with the needed patches
+
+2014-11-20  Hannes Magnusson  <bjori@mongodb.com>
+	* Fixed PHP-1174: Implement WriteBatch::count()
+
+2014-11-19  Hannes Magnusson  <bjori@mongodb.com>
+	* PHP-1190: Implement BSON\UTCDateTime
+
+2014-11-19  Hannes Magnusson  <bjori@mongodb.com>
+	* PHP-1185: Add more Cursor related methods
+
+2014-11-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Fixed PHP-1185: Implement Cursor class
+
+2014-11-19  Hannes Magnusson  <bjori@mongodb.com>
+	* PHP-1183: Implement default Iterator class for QueryResult & CommandResult
+
+2014-11-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Avoid compiler warnings
+
+2014-11-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Fixed PHP-1232: Implement the TODO
+
+2014-11-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Do not test the error messages from the server
+
+2014-11-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Tell PHP this is indeed an exposed stream that it doesn't have to worry about
+
+2014-11-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix memory leak when splitting a ns
+
+2014-11-18  Hannes Magnusson  <bjori@mongodb.com>
+	* Make sure we have something to free
+
+2014-11-04  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #22 from hannesvdvreken/patch-1
+
+2014-11-03  Hannes Van De Vreken  <vandevreken.hannes@gmail.com>
+	* Typo in readme? "admit" instead of "admin"
+
+2014-10-20  Hannes Magnusson  <bjori@10gen.com>
+	* Merge pull request #21 from christkv/master
+
+2014-10-20  Christian Kvalheim  <christkv@gmail.com>
+	* Fixed build for OSX and llvm
+
+2014-10-19  Jeremy Mikola  <jmikola@gmail.com>
+	* Rewrite README and document install/test process
+
+2014-10-17  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #18 from bjori/php1236-test-fixtures
+
+2014-10-16  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1180: Create make target to install Composer dependencies (for tests)
+
+2014-08-05  Jeremy Mikola  <jmikola@gmail.com>
+	* Functional tests for sorted queries
+
+2014-08-05  Jeremy Mikola  <jmikola@gmail.com>
+	* Use Faker to create user data fixtures
+
+2014-08-05  Jeremy Mikola  <jmikola@gmail.com>
+	* Use require_once in skip test includes
+
+2014-08-06  Jeremy Mikola  <jmikola@gmail.com>
+	* Use "phongo_test" as default test database
+
+2014-08-06  Jeremy Mikola  <jmikola@gmail.com>
+	* Use preg_replace() for generating collection name from test file
+
+2014-08-05  Jeremy Mikola  <jmikola@gmail.com>
+	* Clean up hex_dump() source and add citation
+
+2014-10-03  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #20
+
+2014-10-03  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1173: Use string "majority" for WriteConcern::MAJORITY
+
+2014-10-03  Jeremy Mikola  <jmikola@gmail.com>
+	* Remove unused class properties in WriteConcern
+
+2014-10-02  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #19 from bjori/php1230-take-two
+
+2014-10-02  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1230: Clean up WriteResult property storage on WriteException
+
+2014-09-30  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge branch 'dry-run'
+
+2014-09-30  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #16
+
+2014-09-29  Jeremy Mikola  <jmikola@gmail.com>
+	* Use correct return types for WriteResult-related init functions
+
+2014-09-25  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1142: Dump WriteResult object in write tests
+
+2014-09-25  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1142: Support upserted ids in WriteResult
+
+2014-09-25  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1142: Implement WriteResult getter for meta information
+
+2014-09-25  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1142: Memory cleanup and getters for WriteResult error zvals
+
+2014-09-25  Jeremy Mikola  <jmikola@gmail.com>
+	* Fix tab indentation for generated C code
+
+2014-09-24  Jeremy Mikola  <jmikola@gmail.com>
+	* Throw WriteException on failed write ops
+
+2014-09-24  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1230: Implement WriteException class
+
+2014-09-24  Jeremy Mikola  <jmikola@gmail.com>
+	* Return exceptions after throwing in case we need to modify them
+
+2014-09-24  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1142: Init WriteError and WriteConcernError arrays for WriteResult
+
+2014-09-24  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1171: Move WriteConcernError init function to php_phongo.c
+
+2014-09-24  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1172: Implement WriteError class
+
+2014-09-24  Jeremy Mikola  <jmikola@gmail.com>
+	* Fix typo in constant name
+
+2014-09-23  Jeremy Mikola  <jmikola@gmail.com>
+	* Ensure libmongoc structs get freed in WriteBatch and WriteConcern
+
+2014-09-18  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #14 from bjori/php-1171-writeconcernerror
+
+2014-09-17  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1171: Implement WriteConcernError class
+
+2014-09-05  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #13 from bjori/php-1068
+
+2014-09-05  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1068: Test that CommandResult is iterable
+
+2014-08-25  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #12
+
+2014-08-21  Jeremy Mikola  <jmikola@gmail.com>
+	* Always wrap query filter with $query modifier
+
+2014-08-21  Jeremy Mikola  <jmikola@gmail.com>
+	* Use array helpers instead of hash iteration in Query option parsing
+
+2014-08-21  Jeremy Mikola  <jmikola@gmail.com>
+	* Error if phongo_query_init() filter isn't array or object
+
+2014-08-14  Jeremy Mikola  <jmikola@gmail.com>
+	* Use ZEND_STRS() when passing string/size arguments
+
+2014-08-14  Jeremy Mikola  <jmikola@gmail.com>
+	* Fix setting of zvals with zend_hash_update() when constructing query
+
+2014-08-11  Jeremy Mikola  <jmikola@gmail.com>
+	* Update tests for revised Query constructor API
+
+2014-08-11  Jeremy Mikola  <jmikola@gmail.com>
+	* Change Query constructor args based on CRUD API spec
+
+2014-08-11  Jeremy Mikola  <jmikola@gmail.com>
+	* Rename query document field in query struct
+
+2014-08-22  Hannes Magnusson  <bjori@mongodb.com>
+	* bump submodules
+
+2014-08-20  Hannes Magnusson  <bjori@mongodb.com>
+	* WS
+
+2014-08-20  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix segfault when no namespace is passed
+
+2014-08-20  Hannes Magnusson  <bjori@mongodb.com>
+	* BSON: Fix serializing arrays inside of objects
+
+2014-08-13  Hannes Magnusson  <bjori@mongodb.com>
+	* Move BSON encode/decode stuff into BSON namespace
+
+2014-08-13  Hannes Magnusson  <bjori@mongodb.com>
+	* Enable a waterfall of compiler instructions for libbson and mongoc
+
+2014-08-13  Hannes Magnusson  <bjori@mongodb.com>
+	* Supress the initialization output
+
+2014-08-12  Hannes Magnusson  <bjori@mongodb.com>
+	* These dirs are required for all normal 'make' targets
+
+2014-08-12  Hannes Magnusson  <bjori@mongodb.com>
+	* Overwrite the path to libbson that should be linked against
+
+2014-08-12  Hannes Magnusson  <bjori@mongodb.com>
+	* debugging travis
+
+2014-08-12  Hannes Magnusson  <bjori@mongodb.com>
+	* Build against bundled.. just not mongoc bundled
+
+2014-08-12  Hannes Magnusson  <bjori@mongodb.com>
+	* Remove empty dir since there is nothing to make there
+
+2014-08-12  Hannes Magnusson  <bjori@mongodb.com>
+	* Hack around mongo-c-driver not allowing us specify libbson location
+
+2014-08-12  Hannes Magnusson  <bjori@mongodb.com>
+	* Link against libbson and make it available to mongo-c-driver
+
+2014-08-12  Hannes Magnusson  <bjori@mongodb.com>
+	* Missed a file
+
+2014-08-12  Hannes Magnusson  <bjori@mongodb.com>
+	* We submodule these now and automatically build it
+
+2014-08-12  Hannes Magnusson  <bjori@mongodb.com>
+	* submodule mongo-c-driver and libbson and build it into phongo
+
+2014-08-08  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix zts
+
+2014-08-08  Hannes Magnusson  <bjori@mongodb.com>
+	* Reduce mongoc stuff we compile and install
+
+2014-08-08  Hannes Magnusson  <bjori@mongodb.com>
+	* Link against libmongoc-priv so we can go into the gory details
+
+2014-08-06  Hannes Magnusson  <bjori@mongodb.com>
+	* Implement BSON\ObjectID properly
+
+2014-08-04  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix installing lcov
+
+2014-07-31  Hannes Magnusson  <bjori@mongodb.com>
+	* Only skip it on travis
+
+2014-07-30  Hannes Magnusson  <bjori@mongodb.com>
+	* CID-24876: Actually check for the return value and raise a warning now
+
+2014-07-30  Hannes Magnusson  <bjori@mongodb.com>
+	* Simplify logging domain
+
+2014-07-30  Hannes Magnusson  <bjori@mongodb.com>
+	* CID-39604: Fixed possible null dereferencing
+
+2014-07-30  Hannes Magnusson  <bjori@mongodb.com>
+	* s/executeWrite/executeWriteBatch/g as the class is called WriteBatch
+
+2014-07-30  Hannes Magnusson  <bjori@mongodb.com>
+	* Only collect and return the _id if requested - and never $this
+
+2014-07-30  Hannes Magnusson  <bjori@mongodb.com>
+	* optimize BSON class' and allow ObjectID to have other then _id key
+
+2014-07-30  Hannes Magnusson  <bjori@mongodb.com>
+	* Sprinkly tad bit more logging and fix coupleof protos
+
+2014-07-30  Hannes Magnusson  <bjori@mongodb.com>
+	* Add json_to_bson() function
+
+2014-07-30  Hannes Magnusson  <bjori@mongodb.com>
+	* Try properly to read as much data as requested
+
+2014-07-30  Hannes Magnusson  <bjori@mongodb.com>
+	* Copy the oid
+
+2014-07-30  Hannes Magnusson  <bjori@mongodb.com>
+	* Make BSON types implement BSON\Type interface
+
+2014-07-22  Hannes Magnusson  <bjori@mongodb.com>
+	* Remove dirty hack and add a more dirty hack to fetch usable run-tests
+
+2014-07-22  Hannes Magnusson  <bjori@mongodb.com>
+	* make sure a empty file doesn't break our build
+
+2014-07-22  Hannes Magnusson  <bjori@mongodb.com>
+	* Don't run tests under valgrind on travis... bug in valgrind+libmongoc
+
+2014-07-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Install libmongoc using mci generated packages
+
+2014-07-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix bson buffer
+
+2014-07-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Implement WriteConcern
+
+2014-07-21  Hannes Magnusson  <bjori@mongodb.com>
+	* new tests
+
+2014-07-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix zts
+
+2014-07-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix constant generator & regenerate
+
+2014-07-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Implement readPreferences
+
+2014-07-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Improve ignore paths
+
+2014-07-21  Hannes Magnusson  <bjori@mongodb.com>
+	* Travis CI fixes
+
+2014-07-19  Hannes Magnusson  <bjori@mongodb.com>
+	* fix path to ignore
+
+2014-07-19  Hannes Magnusson  <bjori@mongodb.com>
+	* fix zts
+
+2014-07-18  Hannes Magnusson  <bjori@mongodb.com>
+	* Add __toString() for ObjectID
+
+2014-07-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Returned generate _id when adding objects to batches
+
+2014-07-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Improve example
+
+2014-07-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Add ObjectID support
+
+2014-07-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Forgotten things for new classes
+
+2014-07-18  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix \0 in property names (private props, ...)
+
+2014-07-18  Hannes Magnusson  <bjori@mongodb.com>
+	* Add the ability to automatically generate _id
+
+2014-07-17  Hannes Magnusson  <bjori@mongodb.com>
+	* Better way to run the tests through valgrind
+
+2014-07-18  Hannes Magnusson  <bjori@mongodb.com>
+	* Missing new class
+
+2014-07-18  Hannes Magnusson  <bjori@mongodb.com>
+	* Add BSON objects and move generated classes into its own folders
+
+2014-07-18  Jeremy Mikola  <jmikola@gmail.com>
+	* Only use GeneratedId for upserts, not inserts
+
+2014-07-18  Jeremy Mikola  <jmikola@gmail.com>
+	* Replace createFromServers() factory method with getServers()
+
+2014-07-17  Jeremy Mikola  <jmikola@gmail.com>
+	* Create WriteConcern value object
+
+2014-07-17  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #10 from bjori/make-testclean
+
+2014-07-17  Jeremy Mikola  <jmikola@gmail.com>
+	* Replace clean-tests.sh with make target
+
+2014-07-17  Hannes Magnusson  <bjori@mongodb.com>
+	* Run the tests under valgrind on travis
+
+2014-07-17  Jeremy Mikola  <jmikola@gmail.com>
+	* Revise Manager::executeUpdate() error test
+
+2014-07-17  Jeremy Mikola  <jmikola@gmail.com>
+	* Fix warning for bson_uint32_to_string() string pointer arg
+
+2014-07-17  Jeremy Mikola  <jmikola@gmail.com>
+	* Shell script to clean up leftover test files
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix constants value
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Regenerate after coverity fixes
+
+2014-07-17  Hannes Magnusson  <bjori@mongodb.com>
+	*  Ignore the bundled zval array helper header
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* tralalalllala. It really needs to be dedicated branch
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* make clean first as it had already been built by compile.sh
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Get coverity to build the dry-run branch automatically
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* I just learned about trap
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* CID-24870: Unchecked return value from library
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* CID-24872: Comment out not-yet-implemented code
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* CID-24873: Unreachable code whoopsy!
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* CID-24875: Fix uninitialized variable
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Avoid a deadcode warning from coverity
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Coverity link
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Update API listing
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Who doesn't like badges
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* skip on travis..
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix constants value
+
+2014-07-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Add a new none flag
+
+2014-07-15  Hannes Magnusson  <bjori@mongodb.com>
+	* Generate all the C objects based on the PHP code
+
+2014-07-15  Hannes Magnusson  <bjori@mongodb.com>
+	* Add the actual implementation into the PHP API docs
+
+2014-07-15  Hannes Magnusson  <bjori@mongodb.com>
+	* Add a compare_objects handler for Server objects and always try to have a mongoc_host_t for it
+
+2014-07-15  Hannes Magnusson  <bjori@mongodb.com>
+	* CS
+
+2014-07-15  Hannes Magnusson  <bjori@mongodb.com>
+	* No need for this hack anymore
+
+2014-07-15  Hannes Magnusson  <bjori@mongodb.com>
+	* We want latest and greatest mongodb
+
+2014-07-15  Hannes Magnusson  <bjori@mongodb.com>
+	* Use bson_uint32_to_string() rather the spprintf()
+
+2014-07-15  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix the remaining tests
+
+2014-07-15  Hannes Magnusson  <bjori@mongodb.com>
+	* Get tests to pass
+
+2014-07-15  Hannes Magnusson  <bjori@mongodb.com>
+	* fix test
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* fix tests
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* whopsy
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* revert accidental removal
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* Revert accidental removal
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* Extract the hint from the cursor
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* No longer needed
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* api changes
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* Easier to maintain in a single file
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* Regenerated
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* Update bootsrapper
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix classname
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* Add a zval array helper
+
+2014-07-14  Hannes Magnusson  <bjori@mongodb.com>
+	* Add support for delete options
+
+2014-07-09  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP-1136: Allow custom cursor classes from command/query results
+
+2014-07-09  Jeremy Mikola  <jmikola@gmail.com>
+	* Remove *.php from gitignore
+
+2014-07-11  Hannes Magnusson  <bjori@mongodb.com>
+	* Initial Server implementation (as read-only object..)
+
+2014-07-11  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix test
+
+2014-07-11  Hannes Magnusson  <bjori@mongodb.com>
+	* We have to save the results so they don't get posted to qa.php.net
+
+2014-07-11  Hannes Magnusson  <bjori@mongodb.com>
+	* pretend object_properties_init() exists on PHP5.3
+
+2014-07-11  Hannes Magnusson  <bjori@mongodb.com>
+	* Only run coveralls on success
+
+2014-07-10  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix zts
+
+2014-07-10  Hannes Magnusson  <bjori@mongodb.com>
+	* Install libbson and libmongoc masters rather then releases
+
+2014-07-10  Hannes Magnusson  <bjori@mongodb.com>
+	* Cosmetics and remove dead function
+
+2014-07-10  Hannes Magnusson  <bjori@mongodb.com>
+	* Remove batch hacks & added single_[insert|update|delete]
+
+2014-07-09  Hannes Magnusson  <bjori@mongodb.com>
+	* Touch up WriteResult as return value
+
+2014-07-09  Hannes Magnusson  <bjori@mongodb.com>
+	* Fixed PHP-1138: Use Zend MM for libbson
+
+2014-07-09  Hannes Magnusson  <bjori@mongodb.com>
+	* Fixed PHP-1137: Removed ugly private API hacks
+
+2014-07-08  Hannes Magnusson  <bjori@mongodb.com>
+	* Return correct Result class
+
+2014-07-08  Hannes Magnusson  <bjori@mongodb.com>
+	* Initialize optional arg as NULL
+
+2014-07-08  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix tests and push getServer() info down
+
+2014-07-08  Hannes Magnusson  <bjori@mongodb.com>
+	* Remove no-longer valid classes
+
+2014-07-08  Hannes Magnusson  <bjori@mongodb.com>
+	* Add ReadPreferences and full Query support
+
+2014-07-08  Jeremy Mikola  <jmikola@gmail.com>
+	* Consolidate write result classes into WriteResult
+
+2014-07-07  Jeremy Mikola  <jmikola@gmail.com>
+	* Add phpt files to gitignore
+
+2014-07-07  Jeremy Mikola  <jmikola@gmail.com>
+	* Tests for constants and Server/Manager execute methods
+
+2014-07-08  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix calling continue in global scope
+
+2014-07-08  Hannes Magnusson  <bjori@mongodb.com>
+	* Return MongoDB\Result when executing commands too
+
+2014-07-03  Hannes Magnusson  <bjori@mongodb.com>
+	* print out our configure output
+
+2014-07-03  Hannes Magnusson  <bjori@mongodb.com>
+	* Batch test and fix skipping test during cleanup phase
+
+2014-07-03  Hannes Magnusson  <bjori@mongodb.com>
+	* Dead code
+
+2014-07-03  Hannes Magnusson  <bjori@mongodb.com>
+	* Imlement batch execution
+
+2014-07-03  Hannes Magnusson  <bjori@mongodb.com>
+	* FIXME: libmongoc workarounds...
+
+2014-07-03  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix type hint
+
+2014-07-03  Hannes Magnusson  <bjori@mongodb.com>
+	* Missing batch ctor
+
+2014-07-03  Hannes Magnusson  <bjori@mongodb.com>
+	* avoid bogus files showing up on coverage reports
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* Simplify Batch interface
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* See if this has any affect on coveralls..
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* we need newer lcov then howmany decades old the one in repo is
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* Missing lcov on travis for coverage
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* Bump to latest release
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	*  guess the directory needs to exist
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* Compile libmongoc from the src/ dir so we can steal the private header
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* Rename it to _default so we don't conflict the actual defaults
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* Make sure spl is loaded before we are in static builds
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* fix zts
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* Renamed error const
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* Some zts fixes
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix building as a static extension
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* ignore test files
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* Simplify testing
+
+2014-07-02  Hannes Magnusson  <bjori@mongodb.com>
+	* Better logging
+
+2014-07-01  Hannes Magnusson  <bjori@mongodb.com>
+	* Return a result object and implement an iterator for it
+
+2014-06-30  Hannes Magnusson  <bjori@mongodb.com>
+	* remove useless code
+
+2014-06-30  Hannes Magnusson  <bjori@mongodb.com>
+	* rly?
+
+2014-06-30  Hannes Magnusson  <bjori@mongodb.com>
+	* New class
+
+2014-06-30  Hannes Magnusson  <bjori@mongodb.com>
+	* semicolon
+
+2014-06-30  Hannes Magnusson  <bjori@mongodb.com>
+	* make it final and update to match the docs
+
+2014-06-30  Hannes Magnusson  <bjori@mongodb.com>
+	* fqd
+
+2014-06-30  Hannes Magnusson  <bjori@mongodb.com>
+	* wip query
+
+2014-06-27  Hannes Magnusson  <bjori@mongodb.com>
+	* wip
+
+2014-06-30  Hannes Magnusson  <bjori@mongodb.com>
+	* Add a generic result object that can be iterated over via iteratoraggregate
+
+2014-06-30  Hannes Magnusson  <bjori@mongodb.com>
+	* This cursor needs a firstBatch, just like the CommandCursor
+
+2014-06-27  Hannes Magnusson  <bjori@mongodb.com>
+	* fixed warnings and alloc
+
+2014-06-27  Hannes Magnusson  <bjori@mongodb.com>
+	* blah
+
+2014-06-27  Hannes Magnusson  <bjori@mongodb.com>
+	* wip
+
+2014-06-26  Hannes Magnusson  <bjori@mongodb.com>
+	* Added logging to files and command executing
+
+2014-06-24  Hannes Magnusson  <bjori@mongodb.com>
+	* Create a mongoc_client from URI
+
+2014-06-24  Hannes Magnusson  <bjori@mongodb.com>
+	* More cruft for objects
+
+2014-06-24  Hannes Magnusson  <bjori@mongodb.com>
+	* Remove duplicate include
+
+2014-06-24  Hannes Magnusson  <bjori@mongodb.com>
+	* phongo api...
+
+2014-06-24  Hannes Magnusson  <bjori@mongodb.com>
+	* Register default object handlers
+
+2014-06-24  Hannes Magnusson  <bjori@mongodb.com>
+	* Add runtime error domain enum - and a wrapper to get exception type
+
+2014-06-20  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix zts
+
+2014-06-20  Hannes Magnusson  <bjori@mongodb.com>
+	* Lets not enable developers flags on travis until we get a valid build first :)
+
+2014-06-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Add BSON tests
+
+2014-06-18  Hannes Magnusson  <bjori@mongodb.com>
+	* Initial BSON implementation
+
+2014-06-20  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix include path
+
+2014-06-20  Hannes Magnusson  <bjori@mongodb.com>
+	* Quick hack to install libmongoc on travis
+
+2014-06-20  Hannes Magnusson  <bjori@mongodb.com>
+	* Add travis and coveralls support
+
+2014-06-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Update description per review from Jeremy
+
+2014-06-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Implement basics of phongo_exception_from_mongoc_domain()
+
+2014-06-18  Hannes Magnusson  <bjori@mongodb.com>
+	* Implement the phongo_exception_from_phongo_domain() function
+
+2014-06-18  Hannes Magnusson  <bjori@mongodb.com>
+	* Isolate all PHP compatability stuff into its own file
+
+2014-06-18  Hannes Magnusson  <bjori@mongodb.com>
+	* PHP Extension CRUFT for phongo
+
+2014-06-17  Hannes Magnusson  <bjori@mongodb.com>
+	* Add config.m4
+
+2014-06-18  Hannes Magnusson  <bjori@mongodb.com>
+	* Skeleton implementation of the userland classes/methods
+
+2014-06-18  Hannes Magnusson  <bjori@mongodb.com>
+	* Add .gitignore
+
+2014-06-19  Hannes Magnusson  <bjori@mongodb.com>
+	* Add descriptions
+
+2014-06-19  Hannes Magnusson  <bjori@php.net>
+	* Merge pull request #5 from bjori/fix-query-flags
+
+2014-06-19  Jeremy Mikola  <jmikola@gmail.com>
+	* Fix bit values for query flags
+
+2014-06-17  Hannes Magnusson  <bjori@php.net>
+	* Merge pull request #3 from bjori/docblocks
+
+2014-06-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Change some @see into @param or @param and add some descriptions
+
+2014-06-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Lets not start out with complicated zpp...
+
+2014-06-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix return value
+
+2014-06-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Fix docblock param order
+
+2014-06-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Add a bootstrapping file that includes all other files
+
+2014-06-16  Hannes Magnusson  <bjori@mongodb.com>
+	* Pass through php -l
+
+2014-06-16  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #2 from bjori/split-classes
+
+2014-06-13  Jeremy Mikola  <jmikola@gmail.com>
+	* Specity write options in execute methods, not batch constructors
+
+2014-06-13  Jeremy Mikola  <jmikola@gmail.com>
+	* Command execution takes a database name, not a namespace
+
+2014-06-13  Jeremy Mikola  <jmikola@gmail.com>
+	* Add cursor flag constants
+
+2014-06-12  Jeremy Mikola  <jmikola@gmail.com>
+	* Implement review feedback
+
+2014-06-12  Jeremy Mikola  <jmikola@gmail.com>
+	* Split API classes and interfaces
+
+2014-05-14  Derick Rethans  <github@derickrethans.nl>
+	* Fixed unintialized variable
+
+2014-05-13  Hannes Magnusson  <bjori@php.net>
+	* The CRUD examples are now multiple separate files
+
+2014-05-13  Hannes Magnusson  <bjori@php.net>
+	* Merge pull request #1 from bjori/split-crud
+
+2014-05-13  Jeremy Mikola  <jmikola@gmail.com>
+	* Query constructor should take query object, not just criteria
+
+2014-05-13  Jeremy Mikola  <jmikola@gmail.com>
+	* Use value objects and make QueryResult IteratorAggregate
+
+2014-05-13  Jeremy Mikola  <jmikola@gmail.com>
+	* Split and modify CRUD examples
+
+2014-05-06  Hannes Magnusson  <bjori@mongodb.com>
+	* Add basic .gitignore
+
+2014-05-06  Hannes Magnusson  <bjori@mongodb.com>
+	* Initial draft of suggested API
+
+2014-05-06  Hannes Magnusson  <bjori@mongodb.com>
+	* Example of a wishful API
+
+2014-05-06  Hannes Magnusson  <bjori@mongodb.com>
+	* Initial commit

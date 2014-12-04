@@ -55,7 +55,6 @@ tmp-php.ini
 # Release files
 !bin/*.php
 ChangeLog
-RELEASE-*
 package.xml
 phongo-*tgz
 
