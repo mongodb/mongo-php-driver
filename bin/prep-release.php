@@ -171,7 +171,7 @@ if (strpos($argv[1], "-")) {
 
 verify_stability($STABILITY);
 verify_version($VERSION, $STABILITY);
-$changelog = __DIR__ . "/../ChangeLog";
+$changelog = __DIR__ . "/../RELEASE-".$VERSION;
 verify_changelog($changelog);
 
 
