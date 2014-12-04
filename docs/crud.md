@@ -24,15 +24,15 @@ $wc = new MongoDB\WriteConcern($w, $wtimeout, $journal, $fsync);
  * if we can't find any secondaries */
 $prefer = MongoDB\ReadPreference::RP_SECONDARY_PREFERRED;
 $tags = array(
-		/* Prefer the West Coast datacenter in Iceland */
-		array("country" => "iceland", "datacenter" => "west"),
+	/* Prefer the West Coast datacenter in Iceland */
+	array("country" => "iceland", "datacenter" => "west"),
 
-		/* Fallback to any datacenter in Iceland */
-		array("country" => "iceland"),
+	/* Fallback to any datacenter in Iceland */
+	array("country" => "iceland"),
 
-		/* If Iceland is offline, read from whatever is online! */
-		array(),
-		);
+	/* If Iceland is offline, read from whatever is online! */
+	array(),
+);
 
 /* Construct the ReadPreference object from our options */
 $rp = new MongoDB\ReadPreference($prefer, $tags);
