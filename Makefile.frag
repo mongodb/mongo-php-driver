@@ -35,7 +35,8 @@ phongodep:
 
 release: test ChangeLog RELEASE package.xml
 	pecl package package.xml
-	@git tag -a -m "Release $(PHONGO_VERSION)" $(PHONGO_VERSION)
+	@echo "Please run:"
+	@echo "		" git tag -a -m \"Release $(PHONGO_VERSION)\" $(PHONGO_VERSION)
 
 patch:
 	@if ! test -e $(top_srcdir)/.patched; then \
