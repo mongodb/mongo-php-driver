@@ -3,5 +3,8 @@ repo_url: https://github.com/bjori/phongo
 theme: spacelab
 pages:
     - [index.md, Home]
-    - [crud.md, CRUD]
-    - [batch.md, Batch CRUD]
+    - [crud.md, "CRUD", "Basic"]
+    - [batch.md, "CRUD", "Batches"]
+    - [commands.md, Commands]
+extra_javascript:
+    - pretty.js
