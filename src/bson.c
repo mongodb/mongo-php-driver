@@ -224,6 +224,7 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter __attribute__((unused)
 	} else {
 		return true;
 	}
+	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
 }
@@ -254,6 +255,7 @@ bool php_phongo_bson_visit_oid(const bson_iter_t *iter __attribute__((unused)), 
 	} else {
 		return true;
 	}
+	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
 }
@@ -290,6 +292,7 @@ bool php_phongo_bson_visit_date_time(const bson_iter_t *iter __attribute__((unus
 	} else {
 		return true;
 	}
+	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
 }
@@ -326,6 +329,7 @@ bool php_phongo_bson_visit_regex(const bson_iter_t *iter __attribute__((unused))
 	} else {
 		return true;
 	}
+	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
 }
@@ -355,6 +359,7 @@ bool php_phongo_bson_visit_code(const bson_iter_t *iter __attribute__((unused)),
 	} else {
 		return true;
 	}
+	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
 }
@@ -384,6 +389,7 @@ bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter __attribute__((unu
 	} else {
 		return true;
 	}
+	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
 }
@@ -420,6 +426,7 @@ bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter __attribute__((unus
 	} else {
 		return true;
 	}
+	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
 }
@@ -462,6 +469,7 @@ bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter __attribute__((unused)
 	} else {
 		return true;
 	}
+	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
 }
@@ -481,6 +489,7 @@ bool php_phongo_bson_visit_minkey(const bson_iter_t *iter __attribute__((unused)
 	} else {
 		return true;
 	}
+	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
 }
