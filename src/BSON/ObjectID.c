@@ -74,7 +74,7 @@ PHP_METHOD(ObjectID, __construct)
 			bson_oid_init_from_string(&oid, id);
 			bson_oid_to_string(&oid, intern->oid);
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid BSON ID provided" TSRMLS_CC);
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid BSON ID provided");
 		}
 	} else {
 		bson_oid_t oid;

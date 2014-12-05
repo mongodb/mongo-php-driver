@@ -80,13 +80,13 @@ PHP_METHOD(ReadPreference, __construct)
 				mongoc_read_prefs_set_tags(intern->read_preference, tags);
 				bson_destroy(tags);
 				if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
-					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid tagSet" TSRMLS_CC);
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid tagSet");
 					return;
 				}
 			}
 			break;
 		default:
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid ReadPreference" TSRMLS_CC);
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid ReadPreference");
 			return;
 	}
 }

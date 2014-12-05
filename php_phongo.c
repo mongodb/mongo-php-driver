@@ -140,9 +140,21 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 			return spl_ce_RuntimeException;
 	}
 }
-PHONGO_API zval* phongo_throw_exception(php_phongo_error_domain_t domain, const char *message TSRMLS_DC)
+PHONGO_API zval* phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *format, ...)
 {
-	return zend_throw_exception(phongo_exception_from_phongo_domain(domain), message, 0 TSRMLS_CC);
+	zval *return_value;
+	va_list args;
+	char *message;
+	int message_len;
+
+	va_start(args, format);
+	message_len = vspprintf(&message, 0, format, args);
+	return_value = zend_throw_exception(phongo_exception_from_phongo_domain(domain), message, 0 TSRMLS_CC);
+	efree(message);
+	va_end(args);
+
+
+	return return_value;
 }
 PHONGO_API zval* phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC)
 {
@@ -155,7 +167,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 	switch(log_level) {
 	case MONGOC_LOG_LEVEL_ERROR:
 	case MONGOC_LOG_LEVEL_CRITICAL:
-		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED, message TSRMLS_CC);
+		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "%s", message);
 		return;
 
 	case MONGOC_LOG_LEVEL_WARNING:
@@ -529,7 +541,7 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 	int hint;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid namespace provided" TSRMLS_CC);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid namespace provided");
 		return false;
 	}
 
@@ -547,7 +559,7 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 	hint = mongoc_bulk_operation_execute(batch, &reply, &error);
 
 	if (!hint) {
-		zval *e = phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED, error.message TSRMLS_CC);
+		zval *e = phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "%s", error.message);
 
 		if (return_value_used) {
 			if (Z_OBJCE_P(e) == php_phongo_writeexception_ce) {
@@ -579,7 +591,7 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 	mongoc_collection_t *collection;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid namespace provided" TSRMLS_CC);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid namespace provided");
 		return false;
 	}
 	collection = mongoc_client_get_collection(client, dbname, collname);
