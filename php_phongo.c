@@ -561,12 +561,10 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 	if (!hint) {
 		zval *e = phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "%s", error.message);
 
-		if (return_value_used) {
-			if (Z_OBJCE_P(e) == php_phongo_writeexception_ce) {
-				phongo_writeexception_init(e, &reply, hint TSRMLS_CC);
-			}
-			bson_destroy(&reply);
+		if (Z_OBJCE_P(e) == php_phongo_writeexception_ce) {
+			phongo_writeexception_init(e, &reply, hint TSRMLS_CC);
 		}
+		bson_destroy(&reply);
 
 		return false;
 	}
