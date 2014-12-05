@@ -601,6 +601,12 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->query, query->selector, read_preference);
 	mongoc_collection_destroy(collection);
 
+	/* mongoc issues a warning we need to catch somehow */
+	if (!cursor) {
+		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "%s", "FIXME: Couldn't create cursor...");
+		return false;
+	}
+
 	if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error;
 
@@ -910,7 +916,7 @@ bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TS
 	zval *zquery = NULL;
 
 	if (filter && !(Z_TYPE_P(filter) == IS_ARRAY || Z_TYPE_P(filter) == IS_OBJECT)) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected filter to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(filter)));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected filter to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(filter)));
 		return false;
 	}
 
@@ -929,7 +935,7 @@ bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TS
 			zval *modifiers = php_array_fetchc(options, "modifiers");
 
 			if (modifiers && !(Z_TYPE_P(modifiers) == IS_ARRAY || Z_TYPE_P(modifiers) == IS_OBJECT)) {
-				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected modifiers to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(modifiers)));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected modifiers to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(modifiers)));
 				zval_ptr_dtor(&zquery);
 				return false;
 			}
@@ -942,7 +948,7 @@ bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TS
 			zval *projection = php_array_fetchc(options, "projection");
 
 			if (projection && !(Z_TYPE_P(projection) == IS_ARRAY || Z_TYPE_P(projection) == IS_OBJECT)) {
-				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected projection to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(projection)));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected projection to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(projection)));
 				zval_ptr_dtor(&zquery);
 				return false;
 			}
@@ -956,7 +962,7 @@ bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TS
 			zval *sort = php_array_fetchc(options, "sort");
 
 			if (sort && !(Z_TYPE_P(sort) == IS_ARRAY || Z_TYPE_P(sort) == IS_OBJECT)) {
-				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expected sort to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(sort)));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected sort to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(sort)));
 				zval_ptr_dtor(&zquery);
 				return false;
 			}
