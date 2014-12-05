@@ -82,10 +82,10 @@ PHP_METHOD(CommandResult, getIterator)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	php_phongo_cursor_new_from_result(return_value, &intern->result TSRMLS_CC);
+
 	if (intern->result.ce_get_iterator) {
 		object_init_ex(return_value, intern->result.ce_get_iterator);
-	} else {
-		php_phongo_cursor_new_from_result(return_value, &intern->result TSRMLS_CC);
 	}
 
 }
@@ -149,7 +149,9 @@ PHP_METHOD(CommandResult, getResponseDocument)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	bson_to_zval(bson_get_data(intern->result.firstBatch), intern->result.firstBatch->len, return_value);
+	if (intern->result.firstBatch) {
+		bson_to_zval(bson_get_data(intern->result.firstBatch), intern->result.firstBatch->len, return_value);
+	}
 }
 /* }}} */
 /* {{{ proto MongoDB\Server CommandResult::getServer()

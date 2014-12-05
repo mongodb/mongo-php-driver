@@ -131,6 +131,12 @@ void php_phongo_new_regex_from_regex_and_options(zval *object, const char *patte
 
 void php_phongo_result_free(php_phongo_result_t *result);
 
+#ifdef PHP_DEBUG
+void _phongo_debug_bson(bson_t *bson);
+#else
+	#define _phongo_debug_bson(bson)
+#endif
+
 PHP_MINIT_FUNCTION(bson);
 
 #endif /* PHONGO_H */

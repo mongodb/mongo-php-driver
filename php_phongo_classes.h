@@ -32,6 +32,7 @@ typedef struct {
 	mongoc_cursor_t         *cursor;
 	bson_t                  *firstBatch;
 	int                      hint;
+	zend_bool                is_command_cursor;
 } php_phongo_result_t;
 
 typedef struct {
@@ -43,6 +44,7 @@ typedef struct {
 	mongoc_cursor_t         *cursor;
 	bson_t                  *firstBatch;
 	int                      hint;
+	zend_bool                is_command_cursor;
 } php_phongo_cursor_t;
 
 typedef struct {
