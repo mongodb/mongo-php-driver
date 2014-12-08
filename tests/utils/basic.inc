@@ -99,11 +99,11 @@ function printWriteResult(MongoDB\WriteResult $result)
 {
     printServer($result->getServer());
 
-    printf("numInserted: %d\n", $result->getInsertedCount());
-    printf("numMatched: %d\n", $result->getMatchedCount());
-    printf("numModified: %d\n", $result->getModifiedCount());
-    printf("numUpserted: %d\n", $result->getUpsertedCount());
-    printf("numRemoved: %d\n", $result->getDeletedCount());
+    printf("insertedCount: %d\n", $result->getInsertedCount());
+    printf("matchedCount: %d\n", $result->getMatchedCount());
+    printf("modifiedCount: %d\n", $result->getModifiedCount());
+    printf("upsertedCount: %d\n", $result->getUpsertedCount());
+    printf("deletedCount: %d\n", $result->getDeletedCount());
 
     foreach ($result->getUpsertedIds() as $index => $id) {
         printf("upsertedId[%d]: ", $index);
@@ -139,7 +139,7 @@ function getInsertCount($retval) {
 function getModifiedCount($retval) {
     return $retval->getModifiedCount();
 }
-function getRemovedCount($retval) {
+function getDeletedCount($retval) {
     return $retval->getDeletedCount();
 }
 function getUpsertedCount($retval) {

@@ -38,11 +38,11 @@ WriteException.code: 0
 
 ===> WriteResult
 server: localhost:27017
-numInserted: 2
-numMatched: 0
-numModified: 0
-numUpserted: 0
-numRemoved: 0
+insertedCount: 2
+matchedCount: 0
+modifiedCount: 0
+upsertedCount: 0
+deletedCount: 0
 writeError[1].message: %s
 writeError[1].code: 11000
 writeError[3].message: %s

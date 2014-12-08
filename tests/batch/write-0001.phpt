@@ -21,7 +21,7 @@ $batch->update(array("foo" => "bar"), array('$set' => array("foo" => "baz")), ar
 $retval = $mc->executeWriteBatch(NS, $batch);
 
 printf("Inserted: %d\n", getInsertCount($retval));
-printf("Deleted: %d\n", getRemovedCount($retval));
+printf("Deleted: %d\n", getDeletedCount($retval));
 printf("Updated: %d\n", getModifiedCount($retval));
 printf("Upserted: %d\n", getUpsertedCount($retval));
 foreach(getWriteErrors($retval) as $error) {

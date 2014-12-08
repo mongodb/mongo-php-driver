@@ -28,9 +28,9 @@ try {
 <?php exit(0); ?>
 --EXPECT--
 server: localhost:27017
-numInserted: 0
-numMatched: 0
-numModified: 0
-numUpserted: 0
-numRemoved: 0
+insertedCount: 0
+matchedCount: 0
+modifiedCount: 0
+upsertedCount: 0
+deletedCount: 0
 ===DONE===

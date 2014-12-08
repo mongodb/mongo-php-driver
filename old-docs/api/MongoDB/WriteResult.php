@@ -15,7 +15,7 @@ final class WriteResult
      *
      * @return integer
      */
-    public function getNumInserted() {
+    public function getInsertedCount() {
         /*** CIMPL ***/
 /*
 	RETURN_LONG(intern->nInserted);
@@ -28,7 +28,7 @@ final class WriteResult
      *
      * @return integer
      */
-    public function getNumMatched() {
+    public function getMatchedCount() {
         /*** CIMPL ***/
 /*
 	RETURN_LONG(intern->nMatched);
@@ -41,7 +41,7 @@ final class WriteResult
      *
      * @return integer
      */
-    public function getNumModified() {
+    public function getModifiedCount() {
         /*** CIMPL ***/
 /*
 	RETURN_LONG(intern->nModified);
@@ -54,7 +54,7 @@ final class WriteResult
      *
      * @return integer
      */
-    public function getNumRemoved() {
+    public function getDeletedCount() {
         /*** CIMPL ***/
 /*
 	RETURN_LONG(intern->nRemoved);
@@ -67,7 +67,7 @@ final class WriteResult
      *
      * @return integer
      */
-    public function getNumUpserted() {
+    public function getUpsertedCount() {
         /*** CIMPL ***/
 /*
 	RETURN_LONG(intern->nUpserted);

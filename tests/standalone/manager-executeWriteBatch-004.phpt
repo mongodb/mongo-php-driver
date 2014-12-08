@@ -28,11 +28,11 @@ var_dump(iterator_to_array($cursor));
 --EXPECTF--
 ===> WriteResult
 server: localhost:27017
-numInserted: 0
-numMatched: 1
-numModified: 1
-numUpserted: 2
-numRemoved: 0
+insertedCount: 0
+matchedCount: 1
+modifiedCount: 1
+upsertedCount: 2
+deletedCount: 0
 upsertedId[0]: object(BSON\ObjectID)#%d (0) {
 }
 upsertedId[1]: object(BSON\ObjectID)#%d (0) {

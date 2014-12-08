@@ -34,11 +34,11 @@ var_dump(iterator_to_array($cursor));
 --EXPECT--
 ===> WriteResult
 server: localhost:27017
-numInserted: 0
-numMatched: 2
-numModified: 2
-numUpserted: 0
-numRemoved: 0
+insertedCount: 0
+matchedCount: 2
+modifiedCount: 2
+upsertedCount: 0
+deletedCount: 0
 
 ===> Collection
 array(3) {
