@@ -156,7 +156,22 @@ PHP_METHOD(WriteBatch, update)
 	}
 
 	if (limit) {
-		mongoc_bulk_operation_update_one(intern->batch, bquery, bupdate, upsert);
+		bson_iter_t iter;
+		zend_bool   replaced = 0;
+
+		if (bson_iter_init(&iter, bupdate)) {
+			while (bson_iter_next (&iter)) {
+				if (!strchr (bson_iter_key (&iter), '$')) {
+					mongoc_bulk_operation_replace_one(intern->batch, bquery, bupdate, upsert);
+					replaced = 1;
+					break;
+				}
+			}
+		}
+
+		if (!replaced) {
+			mongoc_bulk_operation_update_one(intern->batch, bquery, bupdate, upsert);
+		}
 	} else {
 		mongoc_bulk_operation_update(intern->batch, bquery, bupdate, upsert);
 	}
