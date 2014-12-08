@@ -275,7 +275,7 @@ dnl libmongoc stuff {{{
 
   AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
 
-  CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
+  CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
   PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libbson/src/yajl], $YAJL_SOURCES,           [$STD_CFLAGS], shared_objects_phongo, yes)
   PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libbson/src/bson], $BSON_SOURCES,           [$STD_CFLAGS], shared_objects_phongo, yes)
