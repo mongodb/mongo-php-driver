@@ -656,7 +656,14 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 	/* Detect if its an command cursor */
 	if (bson_iter_init_find (&iter, doc, "cursor") && BSON_ITER_HOLDS_DOCUMENT (&iter) && bson_iter_recurse (&iter, &child)) {
 		while (bson_iter_next (&child)) {
-			if (BSON_ITER_IS_KEY (&child, "firstBatch")) {
+			if (BSON_ITER_IS_KEY (&child, "id")) {
+				cursor->rpc.reply.cursor_id = bson_iter_as_int64 (&child);
+			} else if (BSON_ITER_IS_KEY (&child, "ns")) {
+				const char *ns;
+
+				ns = bson_iter_utf8 (&child, &cursor->nslen);
+				strncpy (cursor->ns, ns, sizeof cursor->ns);
+			} else if (BSON_ITER_IS_KEY (&child, "firstBatch")) {
 				if (BSON_ITER_HOLDS_ARRAY (&child)) {
 					const uint8_t *data = NULL;
 					uint32_t data_len = 0;
@@ -664,8 +671,9 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 
 					bson_iter_array (&child, &data_len, &data);
 					if (bson_init_static (&first_batch, data, data_len)) {
-						_phongo_debug_bson(&first_batch);
 						_mongoc_cursor_cursorid_init(cursor);
+						cursor->limit = 0;
+						cursor->is_command = false;
 						phongo_result_init(return_value, php_phongo_commandresult_ce, cursor, &first_batch, mongoc_cursor_get_hint(cursor), 1 TSRMLS_CC);
 						return true;
 					}
