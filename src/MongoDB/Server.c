@@ -77,7 +77,7 @@ PHP_METHOD(Server, __construct)
 	intern->client = mongoc_client_new_from_uri(uri);
 
 	if (!intern->client) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s" "Failed to parse MongoDB URI");
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to parse MongoDB URI");
 		return;
 	}
 
