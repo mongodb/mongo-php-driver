@@ -108,11 +108,11 @@ $manager = new MongoDB\Manager("mongodb://localhost:27017");
 $wc      = new MongoDB\WriteConcern(MongoDB\WriteConcern::MAJORITY);
 $result  = $manager->executeWriteBatch("db.collection", $batch, $wc);
 
-printf("numInserted: %d\n", $result->getNumInserted());
-printf("numMatched: %d\n", $result->getNumMatched());
-printf("numModified: %d\n", $result->getNumModified());
-printf("numUpserted: %d\n", $result->getNumUpserted());
-printf("numRemoved: %d\n", $result->getNumRemoved());
+printf("numInserted: %d\n", $result->getInsertedCount());
+printf("numMatched: %d\n", $result->getMatchedCount());
+printf("numModified: %d\n", $result->getModifiedCount());
+printf("numUpserted: %d\n", $result->getUpsertedCount());
+printf("numRemoved: %d\n", $result->getDeletedCount());
 
 foreach ($result->getUpsertedIds() as $index => $id) {
 	printf("upsertedId: '%s', index: %d\n", $id, $index);

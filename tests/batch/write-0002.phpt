@@ -25,7 +25,7 @@ assert($result instanceof \MongoDB\WriteResult);
 
 printf(
     "Inserted %d documents to %s\n",
-    $result->getNumInserted(),
+    $result->getInsertedCount(),
     $result->getServer()->getHost()
 );
 printf("hannes: %s\nhayley: %s\n", $hannes_id, $hayley_id);

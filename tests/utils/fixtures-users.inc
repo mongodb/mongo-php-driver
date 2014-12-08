@@ -59,6 +59,6 @@ for ($i = 0; $i < 100; $i++) {
 
 $retval = $manager->executeWriteBatch(NS, $batch);
 
-if ($retval->getNumInserted() !== 100) {
-    exit(sprintf('skip Fixtures were not loaded (expected: %d, actual: %d)', 100, $retval->getNumInserted()));
+if ($retval->getInsertedCount() !== 100) {
+    exit(sprintf('skip Fixtures were not loaded (expected: %d, actual: %d)', 100, $retval->getInsertedCount()));
 }

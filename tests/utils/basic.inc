@@ -99,11 +99,11 @@ function printWriteResult(MongoDB\WriteResult $result)
 {
     printServer($result->getServer());
 
-    printf("numInserted: %d\n", $result->getNumInserted());
-    printf("numMatched: %d\n", $result->getNumMatched());
-    printf("numModified: %d\n", $result->getNumModified());
-    printf("numUpserted: %d\n", $result->getNumUpserted());
-    printf("numRemoved: %d\n", $result->getNumRemoved());
+    printf("numInserted: %d\n", $result->getInsertedCount());
+    printf("numMatched: %d\n", $result->getMatchedCount());
+    printf("numModified: %d\n", $result->getModifiedCount());
+    printf("numUpserted: %d\n", $result->getUpsertedCount());
+    printf("numRemoved: %d\n", $result->getDeletedCount());
 
     foreach ($result->getUpsertedIds() as $index => $id) {
         printf("upsertedId[%d]: ", $index);
@@ -134,16 +134,16 @@ function printWriteError(MongoDB\WriteError $error)
 }
 
 function getInsertCount($retval) {
-    return $retval->getNumInserted();
+    return $retval->getInsertedCount();
 }
 function getModifiedCount($retval) {
-    return $retval->getNumModified();
+    return $retval->getModifiedCount();
 }
 function getRemovedCount($retval) {
-    return $retval->getNumRemoved();
+    return $retval->getDeletedCount();
 }
 function getUpsertedCount($retval) {
-    return $retval->getNumUpserted();
+    return $retval->getUpsertedCount();
 }
 function getWriteErrors($retval) {
     return (array)$retval->getWriteErrors();

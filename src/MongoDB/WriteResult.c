@@ -44,9 +44,9 @@
 
 PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
-/* {{{ proto integer WriteResult::getNumInserted()
+/* {{{ proto integer WriteResult::getInsertedCount()
    Returns the number of documents that were inserted */
-PHP_METHOD(WriteResult, getNumInserted)
+PHP_METHOD(WriteResult, getInsertedCount)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
@@ -66,9 +66,9 @@ PHP_METHOD(WriteResult, getNumInserted)
 	RETURN_LONG(intern->nInserted);
 }
 /* }}} */
-/* {{{ proto integer WriteResult::getNumMatched()
+/* {{{ proto integer WriteResult::getMatchedCount()
    Returns the number of documents that matched the update criteria */
-PHP_METHOD(WriteResult, getNumMatched)
+PHP_METHOD(WriteResult, getMatchedCount)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
@@ -88,9 +88,9 @@ PHP_METHOD(WriteResult, getNumMatched)
 	RETURN_LONG(intern->nMatched);
 }
 /* }}} */
-/* {{{ proto integer WriteResult::getNumModified()
+/* {{{ proto integer WriteResult::getModifiedCount()
    Returns the number of documents that were actually modified by an update */
-PHP_METHOD(WriteResult, getNumModified)
+PHP_METHOD(WriteResult, getModifiedCount)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
@@ -110,9 +110,9 @@ PHP_METHOD(WriteResult, getNumModified)
 	RETURN_LONG(intern->nModified);
 }
 /* }}} */
-/* {{{ proto integer WriteResult::getNumRemoved()
+/* {{{ proto integer WriteResult::getDeletedCount()
    Returns the number of documents that were deleted */
-PHP_METHOD(WriteResult, getNumRemoved)
+PHP_METHOD(WriteResult, getDeletedCount)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
@@ -132,9 +132,9 @@ PHP_METHOD(WriteResult, getNumRemoved)
 	RETURN_LONG(intern->nRemoved);
 }
 /* }}} */
-/* {{{ proto integer WriteResult::getNumUpserted()
+/* {{{ proto integer WriteResult::getUpsertedCount()
    Returns the number of documents that were upserted */
-PHP_METHOD(WriteResult, getNumUpserted)
+PHP_METHOD(WriteResult, getUpsertedCount)
 {
 	php_phongo_writeresult_t *intern;
 	zend_error_handling       error_handling;
@@ -289,19 +289,19 @@ PHP_METHOD(WriteResult, getWriteErrors)
  */
 /* {{{ MongoDB\WriteResult */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getNumInserted, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getInsertedCount, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getNumMatched, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getMatchedCount, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getNumModified, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getModifiedCount, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getNumRemoved, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getDeletedCount, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getNumUpserted, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getUpsertedCount, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getInfo, 0, 0, 0)
@@ -321,11 +321,11 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_writeresult_me[] = {
-	PHP_ME(WriteResult, getNumInserted, ai_WriteResult_getNumInserted, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getNumMatched, ai_WriteResult_getNumMatched, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getNumModified, ai_WriteResult_getNumModified, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getNumRemoved, ai_WriteResult_getNumRemoved, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getNumUpserted, ai_WriteResult_getNumUpserted, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getInsertedCount, ai_WriteResult_getInsertedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getMatchedCount, ai_WriteResult_getMatchedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getModifiedCount, ai_WriteResult_getModifiedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getDeletedCount, ai_WriteResult_getDeletedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getUpsertedCount, ai_WriteResult_getUpsertedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getInfo, ai_WriteResult_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getServer, ai_WriteResult_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getUpsertedIds, ai_WriteResult_getUpsertedIds, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
