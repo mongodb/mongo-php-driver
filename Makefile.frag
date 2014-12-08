@@ -36,7 +36,10 @@ phongodep:
 release: test ChangeLog RELEASE package.xml
 	pecl package package.xml
 	@echo "Please run:"
+	@echo "		" git commit -m \"Add $(PHONGO_VERSION) release notes\" $(PHONGO_VERSION)
 	@echo "		" git tag -a -m \"Release $(PHONGO_VERSION)\" $(PHONGO_VERSION)
+	@echo "		" git push --tags
+	@echo "And don't forget to pump version in php_phongo.h"
 
 patch:
 	@if ! test -e $(top_srcdir)/.patched; then \
