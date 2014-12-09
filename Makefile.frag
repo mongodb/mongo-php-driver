@@ -3,6 +3,7 @@
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 PHONGO_VERSION=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_VERSION;'`
 PHONGO_STABILITY=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_STABILITY;'`
+COMPOSER_INSTALL_ARGS=install --dev --no-interaction --prefer-source
 
 mv-coverage:
 	@if test -e $(top_srcdir)/coverage; then \
@@ -24,7 +25,16 @@ coveralls: mv-coverage lcov-coveralls
 	coveralls --exclude src/libbson --exclude src/libmongoc --exclude lib --exclude tests --exclude src/MongoDB/php_array.h
 
 composer:
-	composer install --dev --no-interaction --prefer-source
+	command -v composer >/dev/null 2>&1; \
+	if test $$? -eq 0; then \
+		composer $(COMPOSER_INSTALL_ARGS) ;\
+	elif test -r composer.phar; then \
+		php composer.phar $(COMPOSER_INSTALL_ARGS); \
+	else \
+		echo "Cannot find composer :("; \
+		echo "Aborting."; \
+		exit 1; \
+	fi
 
 testclean:
 	@for group in generic standalone; do \
