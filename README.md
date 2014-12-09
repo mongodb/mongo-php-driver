@@ -23,11 +23,8 @@ The goal is to encourage community contribution and involvement with these
 components (with a lower barrier of entry) while also keeping the overall design
 fast and powerful.
 
-## API
-
-### Examples
-
- * [List documents in collections & collections in database](docs/examples/list-documents-in-collections.php.php)
+## Documentation
+- http://bjori.github.io/phongo/
 
 ## Installation
 
@@ -42,10 +39,14 @@ and installed manually.
 To build and install the driver:
 
 ```
-$ wget https://github.com/bjori/phongo/releases/download/0.1.0/phongo-0.1.0.tgz
-$ pecl install phongo-0.1.0.tgz
+$ wget https://github.com/bjori/phongo/releases/download/0.1.2/phongo-0.1.2.tgz
+$ pecl install phongo-0.1.2.tgz
 $ echo "extension=phongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Testing
 
