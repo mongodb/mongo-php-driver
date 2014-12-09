@@ -1,4 +1,4 @@
-.PHONY: coverage testclean ChangeLog RELEASE package.xml
+.PHONY: coverage testclean ChangeLog RELEASE package.xml docs
 
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 PHONGO_VERSION=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_VERSION;'`
@@ -39,7 +39,14 @@ release: test ChangeLog RELEASE package.xml
 	@echo "		" git commit -m \"Add $(PHONGO_VERSION) release notes\" $(PHONGO_VERSION)
 	@echo "		" git tag -a -m \"Release $(PHONGO_VERSION)\" $(PHONGO_VERSION)
 	@echo "		" git push --tags
+	@echo "		" make release-docs
 	@echo "And don't forget to pump version in php_phongo.h"
+
+docs:
+	mkdocs build --clean
+
+release-docs: docs
+	mkdocs gh-deploy --clean
 
 patch:
 	@if ! test -e $(top_srcdir)/.patched; then \
