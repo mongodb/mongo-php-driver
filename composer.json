@@ -1,5 +1,12 @@
 {
+    "repositories": [
+	    {
+		    "type": "vcs",
+		    "url": "https://github.com/bjori/phongo-crud"
+	    }
+    ],
     "require-dev": {
-        "fzaninotto/faker": "~1.0"
+        "fzaninotto/faker": "~1.0",
+        "bjori/phongo-crud": "dev-master"
     }
 }
