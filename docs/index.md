@@ -26,8 +26,8 @@ them using, for example, Composer.
 
 To build and install the driver:
 
-	$ wget https://github.com/bjori/phongo/releases/download/0.1.1/phongo-0.1.1.tgz
-	$ pecl install phongo-0.1.1.tgz
+	$ wget https://github.com/bjori/phongo/releases/download/0.1.2/phongo-0.1.2.tgz
+	$ pecl install phongo-0.1.2.tgz
 	$ echo "extension=phongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
 
