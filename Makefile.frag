@@ -4,6 +4,7 @@ DATE=`date +%Y-%m-%d--%H-%M-%S`
 PHONGO_VERSION=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_VERSION;'`
 PHONGO_STABILITY=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_STABILITY;'`
 COMPOSER_INSTALL_ARGS=install --dev --no-interaction --prefer-source
+PHPUNIT_RUN_ARGS=--verbose --color --process-isolation --bootstrap vendor/autoload.php vendor/bjori/phongo-crud/tests
 
 mv-coverage:
 	@if test -e $(top_srcdir)/coverage; then \
@@ -25,7 +26,7 @@ coveralls: mv-coverage lcov-coveralls
 	coveralls --exclude src/libbson --exclude src/libmongoc --exclude lib --exclude tests --exclude src/MongoDB/php_array.h
 
 composer:
-	command -v composer >/dev/null 2>&1; \
+	@command -v composer >/dev/null 2>&1; \
 	if test $$? -eq 0; then \
 		composer $(COMPOSER_INSTALL_ARGS) ;\
 	elif test -r composer.phar; then \
@@ -36,6 +37,21 @@ composer:
 		exit 1; \
 	fi
 
+testunit:
+	@command -v phpunit >/dev/null 2>&1; \
+	if test $$? -eq 0; then \
+		phpunit $(PHPUNIT_RUN_ARGS) ;\
+	elif test -r phpunit.phar; then \
+		php phpunit.phar $(PHPUNIT_RUN_ARGS); \
+	else \
+		echo "Cannot find phpunit :("; \
+		echo "Aborting."; \
+		exit 1; \
+	fi
+
+testall: test testunit
+
+
 testclean:
 	@for group in generic standalone; do \
 		find $(top_srcdir)/tests/$$group -type f -name "*.diff" -o -name "*.exp" -o -name "*.log" -o -name "*.mem" -o -name "*.out" -o -name "*.php" -o -name "*.sh" | xargs rm -f; \
@@ -43,7 +59,7 @@ testclean:
 
 phongodep:
 
-release: test ChangeLog RELEASE package.xml
+release: testall ChangeLog RELEASE package.xml
 	pecl package package.xml
 	@echo "Please run:"
 	@echo "		" git commit -m \"Add $(PHONGO_VERSION) release notes\" $(PHONGO_VERSION)

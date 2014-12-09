@@ -62,4 +62,5 @@ phongo-*tgz
 composer.phar
 composer.lock
 vendor/
+phpunit.phar
 
