@@ -4,7 +4,7 @@ DATE=`date +%Y-%m-%d--%H-%M-%S`
 PHONGO_VERSION=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_VERSION;'`
 PHONGO_STABILITY=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_STABILITY;'`
 COMPOSER_ARGS=update --no-interaction --prefer-source
-PHPUNIT_RUN_ARGS=--verbose --color --process-isolation --bootstrap vendor/autoload.php vendor/bjori/phongo-crud/tests
+PHPUNIT_ARGS=--process-isolation vendor/bjori/phongo-crud
 
 mv-coverage:
 	@if test -e $(top_srcdir)/coverage; then \
@@ -40,9 +40,9 @@ composer:
 testunit:
 	@command -v phpunit >/dev/null 2>&1; \
 	if test $$? -eq 0; then \
-		phpunit $(PHPUNIT_RUN_ARGS) ;\
+		phpunit $(PHPUNIT_ARGS) ;\
 	elif test -r phpunit.phar; then \
-		php phpunit.phar $(PHPUNIT_RUN_ARGS); \
+		php phpunit.phar $(PHPUNIT_ARGS); \
 	else \
 		echo "Cannot find phpunit :("; \
 		echo "Aborting."; \
