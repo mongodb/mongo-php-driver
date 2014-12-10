@@ -35,7 +35,7 @@ notifications:
   - bjori@mongodb.com
 
 script:
-  - make test
+  - make testall
 
 after_success:
   - make coveralls
