@@ -3,7 +3,7 @@
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 PHONGO_VERSION=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_VERSION;'`
 PHONGO_STABILITY=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_STABILITY;'`
-COMPOSER_INSTALL_ARGS=install --dev --no-interaction --prefer-source
+COMPOSER_ARGS=update --no-interaction --prefer-source
 PHPUNIT_RUN_ARGS=--verbose --color --process-isolation --bootstrap vendor/autoload.php vendor/bjori/phongo-crud/tests
 
 mv-coverage:
@@ -28,9 +28,9 @@ coveralls: mv-coverage lcov-coveralls
 composer:
 	@command -v composer >/dev/null 2>&1; \
 	if test $$? -eq 0; then \
-		composer $(COMPOSER_INSTALL_ARGS) ;\
+		composer $(COMPOSER_ARGS) ;\
 	elif test -r composer.phar; then \
-		php composer.phar $(COMPOSER_INSTALL_ARGS); \
+		php composer.phar $(COMPOSER_ARGS); \
 	else \
 		echo "Cannot find composer :("; \
 		echo "Aborting."; \
