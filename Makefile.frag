@@ -37,7 +37,7 @@ composer:
 		exit 1; \
 	fi
 
-testunit:
+testunit: composer
 	@command -v phpunit >/dev/null 2>&1; \
 	if test $$? -eq 0; then \
 		phpunit $(PHPUNIT_ARGS) ;\
@@ -49,7 +49,7 @@ testunit:
 		exit 1; \
 	fi
 
-testall: test testunit
+testall: composer test testunit
 
 
 testclean:
