@@ -8,5 +8,10 @@
     "require-dev": {
         "fzaninotto/faker": "~1.0",
         "bjori/phongo-crud": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "MongoDB\\": "vendor/bjori/phongo-crud/src/"
+        }
     }
 }
