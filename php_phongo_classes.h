@@ -160,9 +160,6 @@ typedef struct {
 } php_phongo_objectid_t;
 typedef struct {
 	zend_object              std;
-} php_phongo_pool_t;
-typedef struct {
-	zend_object              std;
 	char                    *pattern;
 	int                      pattern_len;
 	char                    *flags;
@@ -205,7 +202,6 @@ extern PHONGO_API zend_class_entry *php_phongo_log_ce;
 extern PHONGO_API zend_class_entry *php_phongo_maxkey_ce;
 extern PHONGO_API zend_class_entry *php_phongo_minkey_ce;
 extern PHONGO_API zend_class_entry *php_phongo_objectid_ce;
-extern PHONGO_API zend_class_entry *php_phongo_pool_ce;
 extern PHONGO_API zend_class_entry *php_phongo_regex_ce;
 extern PHONGO_API zend_class_entry *php_phongo_timestamp_ce;
 extern PHONGO_API zend_class_entry *php_phongo_utcdatetime_ce;
@@ -234,7 +230,6 @@ PHP_MINIT_FUNCTION(Javascript);
 PHP_MINIT_FUNCTION(MaxKey);
 PHP_MINIT_FUNCTION(MinKey);
 PHP_MINIT_FUNCTION(ObjectID);
-PHP_MINIT_FUNCTION(Pool);
 PHP_MINIT_FUNCTION(Regex);
 PHP_MINIT_FUNCTION(Timestamp);
 PHP_MINIT_FUNCTION(UTCDatetime);

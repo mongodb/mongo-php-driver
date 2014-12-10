@@ -146,7 +146,6 @@ if test "$PHONGO" != "no"; then
     src/BSON/MaxKey.c \
     src/BSON/MinKey.c \
     src/BSON/ObjectID.c \
-    src/BSON/Pool.c \
     src/BSON/Regex.c \
     src/BSON/Timestamp.c \
     src/BSON/UTCDatetime.c \

@@ -110,7 +110,6 @@ namespace BSON {
     class Int32 implements Type {}
     class Int64 implements Type {}
     class Log implements Type {}
-    class Pool implements Type {}
     class MaxKey implements Type {}
     class MinKey implements Type {}
 
