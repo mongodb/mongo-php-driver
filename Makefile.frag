@@ -62,11 +62,12 @@ phongodep:
 release: testall ChangeLog RELEASE package.xml
 	pecl package package.xml
 	@echo "Please run:"
-	@echo "		" git commit -m \"Add $(PHONGO_VERSION) release notes\" $(PHONGO_VERSION)
+	@echo "		" git add RELEASE-$(PHONGO_VERSION)
+	@echo "		" git commit -m \"Add $(PHONGO_VERSION) release notes\"
 	@echo "		" git tag -a -m \"Release $(PHONGO_VERSION)\" $(PHONGO_VERSION)
 	@echo "		" git push --tags
 	@echo "		" make release-docs
-	@echo "And don't forget to pump version in php_phongo.h"
+	@echo "And don't forget to bump version in php_phongo.h"
 
 docs:
 	mkdocs build --clean
