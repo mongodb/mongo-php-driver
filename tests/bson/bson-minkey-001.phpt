@@ -1,14 +1,14 @@
 --TEST--
-BSON BSON\MaxKey #001
+BSON BSON\MinKey #001
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php 
 require_once "tests/utils/basic.inc";
 
-$maxkey = new BSON\MaxKey;
+$minkey = new BSON\MinKey;
 $tests = array(
-    array("max" => $maxkey),
+    array("min" => $minkey),
 );
 
 foreach($tests as $n => $test) {
@@ -23,8 +23,8 @@ foreach($tests as $n => $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Test#0 { "max" : { "$maxKey" : 1 } }
-string(29) "{ "max" : { "$maxKey" : 1 } }"
-string(29) "{ "max" : { "$maxKey" : 1 } }"
+Test#0 { "min" : { "$minKey" : 1 } }
+string(29) "{ "min" : { "$minKey" : 1 } }"
+string(29) "{ "min" : { "$minKey" : 1 } }"
 bool(true)
 ===DONE===
