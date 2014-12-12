@@ -3,8 +3,9 @@
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 PHONGO_VERSION=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_VERSION;'`
 PHONGO_STABILITY=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_STABILITY;'`
+LIB_PATH=vendor/10gen-labs/mongo-php-library-prototype
 COMPOSER_ARGS=update --no-interaction --prefer-source
-PHPUNIT_ARGS=--process-isolation vendor/10gen-labs/mongo-php-library-prototype
+PHPUNIT_ARGS=--process-isolation
 
 mv-coverage:
 	@if test -e $(top_srcdir)/coverage; then \
@@ -29,8 +30,14 @@ composer:
 	@command -v composer >/dev/null 2>&1; \
 	if test $$? -eq 0; then \
 		composer $(COMPOSER_ARGS) ;\
+		if test -d $(LIB_PATH); then \
+			composer $(COMPOSER_ARGS) --working-dir $(LIB_PATH) ;\
+		fi \
 	elif test -r composer.phar; then \
 		php composer.phar $(COMPOSER_ARGS); \
+		if test -d $(LIB_PATH); then \
+			php composer.phar $(COMPOSER_ARGS) --working-dir $(LIB_PATH) ;\
+		fi \
 	else \
 		echo "Cannot find composer :("; \
 		echo "Aborting."; \
@@ -40,9 +47,13 @@ composer:
 testunit: composer
 	@command -v phpunit >/dev/null 2>&1; \
 	if test $$? -eq 0; then \
+		pushd $(LIB_PATH) ;\
 		phpunit $(PHPUNIT_ARGS) ;\
+		popd ;\
 	elif test -r phpunit.phar; then \
-		php phpunit.phar $(PHPUNIT_ARGS); \
+		pushd $(LIB_PATH) ;\
+		php phpunit.phar $(PHPUNIT_ARGS) ;\
+		popd ;\
 	else \
 		echo "Cannot find phpunit :("; \
 		echo "Aborting."; \
