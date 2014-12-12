@@ -18,7 +18,7 @@ $query = new MongoDB\Query(array(), array(
 
 $qr = $manager->executeQuery(NS, $query);
 $cursor = $qr->getIterator();
-$cursorid = $cursor->getCursorId();
+$cursorid = $cursor->getId();
 $s1 = (string)$cursorid;
 var_dump(
     $cursorid,
