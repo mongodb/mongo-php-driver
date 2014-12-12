@@ -252,11 +252,7 @@ MONGOC_SOURCES_SSL="\
   ";
 
 MONGOC_SOURCES_SASL=mongoc-sasl.c
-dnl if ENABLE_SSL
-dnl endif
 
-dnl if ENABLE_SASL
-dnl endif
 
   if test "$ext_shared" = "no"; then
     PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON)
@@ -283,13 +279,20 @@ dnl libmongoc stuff {{{
 
 
 
+  m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
+  AX_PTHREAD
+
+  AC_CHECK_FUNCS([shm_open], [SHM_LIB=], [AC_CHECK_LIB([rt], [shm_open], [SHM_LIB=-lrt], [SHM_LIB=])])
+  PHONGO_SHARED_LIBADD="$PHONGO_SHARED_LIBADD $SHM_LIB"
+
+
   dnl PHP_ADD_LIBRARY_WITH_PATH(bson-1.0, src/libbson/.libs, PHONGO_SHARED_LIBADD)
   dnl PHP_ADD_LIBRARY_WITH_PATH(mongoc-priv, src/libmongoc/.libs, PHONGO_SHARED_LIBADD)
   EXTRA_CFLAGS="$PTHREAD_CFLAGS"
   PHP_SUBST(EXTRA_CFLAGS)
   PHP_SUBST(EXTRA_LDFLAGS)
 
-  PHONGO_SHARED_LIBADD="$PTHREAD_LIBS"
+  PHONGO_SHARED_LIBADD="$PHONGO_SHARED_LIBADD $PTHREAD_LIBS"
   PHP_SUBST(PHONGO_SHARED_LIBADD)
 
 dnl }}}
@@ -297,8 +300,6 @@ dnl }}}
   PHP_NEW_EXTENSION(phongo,    $PHONGO_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
   PHP_ADD_EXTENSION_DEP(phongo, spl)
 
-  m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
-  AX_PTHREAD
   m4_include(src/libbson/build/autotools/m4/ac_compile_check_sizeof.m4)
   m4_include(src/libbson/build/autotools/m4/ac_create_stdint_h.m4)
   AC_CREATE_STDINT_H([$srcdir/src/libbson/src/bson/bson-stdint.h])
