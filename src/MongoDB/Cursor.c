@@ -27,6 +27,7 @@
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
+#include <mongoc-cursor-private.h>
 
 /* PHP Core stuff */
 #include <php.h>
@@ -144,8 +145,7 @@ PHP_METHOD(Cursor, kill)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	hint = mongoc_cursor_get_hint(intern->cursor);
-	/* FIXME: Resolve a hint to a client */
-	//mongoc_client_kill_cursor(php_phongo_client_from_hint(hint), mongoc_cursor_get_id(intern->cursor));
+	mongoc_client_kill_cursor(intern->cursor->client, mongoc_cursor_get_id(intern->cursor));
 }
 /* }}} */
 /* {{{ proto boolean Cursor::setBatchSize(integer $batchSize)
