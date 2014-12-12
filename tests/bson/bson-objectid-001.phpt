@@ -39,6 +39,27 @@ foreach($tests as $n => $test) {
     var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
+
+throws(function() {
+$id = new BSON\ObjectID("53e28b650640fd3162152de12");
+}, "InvalidArgumentException");
+throws(function() {
+$id = new BSON\ObjectID("53e28b650640fd3162152dg1");
+}, "InvalidArgumentException");
+throws(function() {
+$id = new BSON\ObjectID("-3e28b650640fd3162152da1");
+}, "InvalidArgumentException");
+throws(function() {
+$id = new BSON\ObjectID(" 3e28b650640fd3162152da1");
+}, "InvalidArgumentException");
+throws(function() {
+$id = new BSON\ObjectID(new stdclass);
+}, "InvalidArgumentException");
+throws(function() {
+$id = new BSON\ObjectID();
+echo $id->__toString("or somethign");
+}, "InvalidArgumentException");
+
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -63,4 +84,10 @@ Test#4 { "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }
 string(60) "{ "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }"
 string(60) "{ "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }"
 bool(true)
+OK: Got InvalidArgumentException
+OK: Got InvalidArgumentException
+OK: Got InvalidArgumentException
+OK: Got InvalidArgumentException
+OK: Got InvalidArgumentException
+OK: Got InvalidArgumentException
 ===DONE===
