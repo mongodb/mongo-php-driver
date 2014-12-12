@@ -1,17 +1,12 @@
 {
-    "repositories": [
-	    {
-		    "type": "vcs",
-		    "url": "https://github.com/10gen-labs/mongo-php-library-prototype"
-	    }
-    ],
     "require-dev": {
         "fzaninotto/faker": "~1.0",
         "10gen-labs/mongo-php-library-prototype": "dev-master"
     },
-    "autoload": {
-        "psr-4": {
-            "MongoDB\\": "vendor/10gen-labs/mongo-php-library-prototype/src/"
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/10gen-labs/mongo-php-library-prototype"
         }
-    }
+    ]
 }
