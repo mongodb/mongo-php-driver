@@ -13,6 +13,10 @@ $tests = array(
     array("jswscope" => $jswscope),
 );
 
+throws(function() {
+    $j = new BSON\Javascript;
+}, "InvalidArgumentException");
+
 foreach($tests as $n => $test) {
     echo "Test#{$n} ", "\n";
     $s = BSON\fromArray($test);
@@ -20,10 +24,12 @@ foreach($tests as $n => $test) {
     var_dump(current($test) instanceof BSON\Javascript);
     var_dump(current($testagain) instanceof BSON\Javascript);
 }
+
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+OK: Got InvalidArgumentException
 Test#0 
 bool(true)
 bool(true)

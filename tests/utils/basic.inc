@@ -90,6 +90,28 @@ function CLEANUP() {
     }
 }
 
+function throws(callable $function, $exceptionname, $infunction = null) {
+    try {
+        $function();
+    } catch(Exception $e) {
+        if ($e instanceof $exceptionname) {
+            if ($infunction) {
+                $function = $e->getTrace()[0]["function"];
+                if (strcasecmp($function, $infunction) == 0) {
+                    printf("OK: Got %s thrown from %s\n", $exceptionname, $infunction);
+                } else {
+                    printf("ALMOST: Got %s - but was thrown in %s, not %s\n", $exceptionname, $function, $infunction);
+                }
+                return;
+            }
+            printf("OK: Got %s\n", $exceptionname);
+        } else {
+            printf("ALMOST: Got %s - expected %s\n", get_class($e), $exceptionname);
+        }
+        return;
+    }
+    echo "FAILED: Expected $exceptionname thrown!\n";
+}
 function printServer(MongoDB\Server $server)
 {
     printf("server: %s:%d\n", $server->getHost(), $server->getPort());
