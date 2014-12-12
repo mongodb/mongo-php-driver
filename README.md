@@ -1,7 +1,7 @@
 # PHongo (PHP MongoDB driver)
 
 [![Coverage Status](https://coveralls.io/repos/bjori/phongo/badge.png?branch=master)](https://coveralls.io/r/bjori/phongo?branch=master)
-[![Build Status](https://travis-ci.org/bjori/phongo.svg?branch=master)](https://travis-ci.org/bjori/phongo)
+[![Build Status](https://travis-ci.org/10gen-labs/mongo-php-driver-prototype.svg?branch=master)](https://travis-ci.org/10gen-labs/mongo-php-driver-prototype)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/2600/badge.svg)](https://scan.coverity.com/projects/2600)
 
 > *Note*: This project is highly experimental and various parts are
@@ -24,7 +24,7 @@ components (with a lower barrier of entry) while also keeping the overall design
 fast and powerful.
 
 ## Documentation
-- http://bjori.github.io/phongo/
+- http://10gen-labs.github.io/mongo-php-driver-prototype
 
 ## Installation
 
@@ -39,7 +39,7 @@ and installed manually.
 To build and install the driver:
 
 ```
-$ wget https://github.com/bjori/phongo/releases/download/0.1.2/phongo-0.1.2.tgz
+$ wget https://github.com/10gen-labs/mongo-php-driver-prototype/releases/download/0.1.2/phongo-0.1.2.tgz
 $ pecl install phongo-0.1.2.tgz
 $ echo "extension=phongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```

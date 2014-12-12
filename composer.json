@@ -2,16 +2,16 @@
     "repositories": [
 	    {
 		    "type": "vcs",
-		    "url": "https://github.com/bjori/phongo-crud"
+		    "url": "https://github.com/10gen-labs/mongo-php-library-prototype"
 	    }
     ],
     "require-dev": {
         "fzaninotto/faker": "~1.0",
-        "bjori/phongo-crud": "dev-master"
+        "10gen-labs/mongo-php-library-prototype": "dev-master"
     },
     "autoload": {
         "psr-4": {
-            "MongoDB\\": "vendor/bjori/phongo-crud/src/"
+            "MongoDB\\": "vendor/10gen-labs/mongo-php-library-prototype/src/"
         }
     }
 }

@@ -1,6 +1,6 @@
 # What is PHongo?
 
-[Phongo](https://github.com/bjori/phongo) is an experimental MongoDB driver for PHP,
+[Phongo](https://github.com/10gen-labs/mongo-php-driver-prototype) is an experimental MongoDB driver for PHP,
 likely replacing the
 [mongodb/mongo-php-driver](https://github.com/mongodb/mongo-php-driver) driver in the
 near future.
@@ -26,7 +26,7 @@ them using, for example, Composer.
 
 To build and install the driver:
 
-	$ wget https://github.com/bjori/phongo/releases/download/0.1.2/phongo-0.1.2.tgz
+	$ wget https://github.com/10gen-labs/mongo-php-driver-prototype/releases/download/0.1.2/phongo-0.1.2.tgz
 	$ pecl install phongo-0.1.2.tgz
 	$ echo "extension=phongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 

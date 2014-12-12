@@ -4,7 +4,7 @@ DATE=`date +%Y-%m-%d--%H-%M-%S`
 PHONGO_VERSION=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_VERSION;'`
 PHONGO_STABILITY=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_STABILITY;'`
 COMPOSER_ARGS=update --no-interaction --prefer-source
-PHPUNIT_ARGS=--process-isolation vendor/bjori/phongo-crud
+PHPUNIT_ARGS=--process-isolation vendor/10gen-labs/mongo-php-library-prototype
 
 mv-coverage:
 	@if test -e $(top_srcdir)/coverage; then \
