@@ -1379,6 +1379,8 @@ PHP_MINIT_FUNCTION(phongo)
 	phongo_std_object_handlers.write_property = NULL;
 	phongo_std_object_handlers.get_debug_info = NULL;
 
+	PHP_MINIT(bson)(INIT_FUNC_ARGS_PASSTHRU);
+
 	PHP_MINIT(Command)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(CommandResult)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Cursor)(INIT_FUNC_ARGS_PASSTHRU);
