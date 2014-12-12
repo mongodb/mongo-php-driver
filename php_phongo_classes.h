@@ -132,9 +132,6 @@ typedef struct {
 } php_phongo_binary_t;
 typedef struct {
 	zend_object              std;
-} php_phongo_dbref_t;
-typedef struct {
-	zend_object              std;
 } php_phongo_int32_t;
 typedef struct {
 	zend_object              std;
@@ -194,7 +191,6 @@ extern PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
 extern PHONGO_API zend_class_entry *php_phongo_type_ce;
 extern PHONGO_API zend_class_entry *php_phongo_binary_ce;
-extern PHONGO_API zend_class_entry *php_phongo_dbref_ce;
 extern PHONGO_API zend_class_entry *php_phongo_int32_ce;
 extern PHONGO_API zend_class_entry *php_phongo_int64_ce;
 extern PHONGO_API zend_class_entry *php_phongo_javascript_ce;
@@ -225,7 +221,6 @@ PHP_MINIT_FUNCTION(WriteResult);
 
 PHP_MINIT_FUNCTION(Type);
 PHP_MINIT_FUNCTION(Binary);
-PHP_MINIT_FUNCTION(DBRef);
 PHP_MINIT_FUNCTION(Javascript);
 PHP_MINIT_FUNCTION(MaxKey);
 PHP_MINIT_FUNCTION(MinKey);
