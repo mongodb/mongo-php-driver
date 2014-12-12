@@ -19,7 +19,22 @@ $types = array(
 $tests = array();
 foreach($types as $type) {
     $binary = new BSON\Binary("random binary data", $type);
+    var_dump($binary->getSubType() == $type);
     $tests[] = array("binary" => $binary);
+}
+
+try {
+    $b = new BSON\Binary("random binary data without type", BSON\Binary::TYPE_USER_DEFINED);
+    $b->getSubType($b);
+} catch(InvalidArgumentException $e) {
+    echo "PASS BSON\Binary->getSubType() doesn't take arguments\n";
+}
+
+try {
+    $b = new BSON\Binary("random binary data without type");
+    echo "FAIL: Constructed BSON\Binary without type!\n";
+} catch(InvalidArgumentException $e) {
+    echo "PASS Cannot construct BSON\Binary without a type\n";
 }
 
 
@@ -36,6 +51,16 @@ foreach($tests as $n => $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+PASS BSON\Binary->getSubType() doesn't take arguments
+PASS Cannot construct BSON\Binary without a type
 Test#0 { "binary" : { "$type" : "00", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }
 string(73) "{ "binary" : { "$type" : "00", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
 string(73) "{ "binary" : { "$type" : "00", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
