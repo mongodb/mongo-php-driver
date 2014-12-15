@@ -11,7 +11,7 @@ Development progress is being tracked in the
 of the MongoDB PHP driver's JIRA project.
 
 The purpose of this driver is to provide exceptionally thin glue between MongoDB
-and PHP, implementing only fundemental and performance-critical components
+and PHP, implementing only fundamental and performance-critical components
 necessary to build a fully-functional MongoDB driver.
 
 In the long run, we hope that userland packages will be built atop this driver
