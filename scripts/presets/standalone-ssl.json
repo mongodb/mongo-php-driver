@@ -1,0 +1,23 @@
+{
+    "name": "mongod", 
+    "id" : "STANDALONE-SSL",
+    "auth_key": "secret",
+    "login": "root", 
+    "password": "toor", 
+    "procParams": {
+        "dbpath": "/tmp/standalone-ssl/",
+        "ipv6": true, 
+        "logappend": true, 
+        "logpath": "/tmp/standalone-ssl/m.log", 
+        "journal": true,
+        "port": 2100,
+        "setParameter": {"enableTestCommands": 1}
+    }, 
+    "sslParams": {
+        "sslCAFile": "/phongo/scripts/ssl/ca.pem", 
+        "sslOnNormalPorts": true, 
+        "sslPEMKeyFile": "/phongo/scripts/ssl/server.pem", 
+        "sslWeakCertificateValidation": true
+    }
+}
+

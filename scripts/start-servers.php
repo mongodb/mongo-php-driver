@@ -14,3 +14,6 @@ $orch->stopAll();
 $standalone = $orch->start("standalone.json");
 printf("Standalone server running on: %s\n", $standalone);
 
+$ssl = $orch->start("standalone-ssl.json");
+printf("Standalone SSL server running on: %s\n", $ssl);
+
