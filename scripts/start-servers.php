@@ -2,7 +2,7 @@
 require __DIR__ . "/" . "../tests/utils/orchestration.php";
 
 
-$host = "http://localhost:8889";
+$host = "http://192.168.112.10:8889";
 if ($_ENV && isset($_ENV["ORCHESTRATION"])) {
     $host = $_ENV["ORCHESTRATION"];
 }
