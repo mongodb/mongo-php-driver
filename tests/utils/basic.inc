@@ -1,14 +1,23 @@
 <?php
+require __DIR__ . "/" . "orchestration.php";
 require __DIR__ . "/" . "tools.php";
 
 
+$host = "http://localhost:8889";
+if ($_ENV && isset($_ENV["ORCHESTRATION"])) {
+    $host = $_ENV["ORCHESTRATION"];
 }
 
 
+$orch = new Mongo\Orchestration($host);
+if (!$orch->ping()) {
+    exit("skip Mongo Orchestration not running on {$host} - run 'make test-bootstrap'");
+}
+
 $consts = array(
-    "MONGODB_URI"         => "mongodb://localhost:27017",
-    "MONGODB_CLEANUP_URI" => "mongodb://localhost:27017",
-    "DATABASE_NAME"       => "phongo_test",
+    "MONGODB_URI"         => $orch->hasStandalone() ?: $orch->startStandalone(),
+    "MONGODB_CLEANUP_URI" => $orch->hasStandalone() ?: $orch->startStandalone(),
+    "DATABASE_NAME"       => "phongo",
     "COLLECTION_NAME"     => makeCollectionNameFromFilename($_SERVER["SCRIPT_FILENAME"]),
     "DEBUG_DIR"           => sys_get_temp_dir() . "/PHONGO-TESTS/",
 );

@@ -44,6 +44,9 @@ composer:
 		exit 1; \
 	fi
 
+test-bootstrap:
+	php scripts/start-servers.php
+
 testunit: composer
 	@command -v phpunit >/dev/null 2>&1; \
 	if test $$? -eq 0; then \
