@@ -39,7 +39,7 @@ echo 'set -o vi' | sudo tee /etc/profile.d/vishell.sh
 sudo apt-get install -y python python-dev python-pip
 
 # Latest MongoDB Enterprise
-sudo apt-get install mongodb-enterprise
+sudo apt-get install -y mongodb-enterprise
 
 # FIXME Replace the DELETE ME with this line when PR#153 has been merged
 # pip install mongo-orchestration
