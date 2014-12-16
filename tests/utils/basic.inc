@@ -15,8 +15,8 @@ if (!$orch->ping()) {
 }
 
 $consts = array(
-    "MONGODB_URI"         => $orch->hasStandalone() ?: $orch->startStandalone(),
-    "MONGODB_CLEANUP_URI" => $orch->hasStandalone() ?: $orch->startStandalone(),
+    "MONGODB_URI"         => $orch->getURI("standalone.json"),
+    "MONGODB_CLEANUP_URI" => $orch->getURI("standalone.json"),
     "DATABASE_NAME"       => "phongo",
     "COLLECTION_NAME"     => makeCollectionNameFromFilename($_SERVER["SCRIPT_FILENAME"]),
     "DEBUG_DIR"           => sys_get_temp_dir() . "/PHONGO-TESTS/",

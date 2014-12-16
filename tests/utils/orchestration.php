@@ -22,41 +22,38 @@ class Orchestration {
         return true;
     }
 
+
+
     function stopAll() {
         $servers = $this->get("servers");
         foreach($servers["servers"] as $server) {
-            $this->stopServer($server["id"]);
+            $this->stopId($server["id"]);
         }
     }
 
-    function hasStandalone() {
-        try {
-            $data = $this->get("servers/STANDALONE");
-        } catch(\Exception $e) {
-            return false;
-        }
-        return $data["mongodb_uri"];
-    }
 
-    function startStandalone() {
-        $retval = $this->post("servers", ["name" => "mongod", "id" => "STANDALONE"]);
-        if ($retval["procInfo"]["alive"]) {
-            return $retval["mongodb_uri"];
+
+    function start($preset) {
+        $relative = __DIR__ . "/../../";
+        $file = "scripts/presets/$preset";
+        if (!file_exists($relative.$file)) {
+            throw new \Exception("Cannot file $file in $relative");
         }
 
-        return false;
+        $retval = $this->post("servers", ["preset" => "/phongo/$file"]);
+        return $this->_returnURIIfAlive($retval);
     }
 
-    function stopStandalone() {
-        return $this->stopServer("STANDALONE");
+    function getURI($preset) {
+        $relative = __DIR__ . "/../../";
+        $file = "scripts/presets/$preset";
+        $content = file_get_contents($relative.$file);
+        $id = json_decode($content, true)["id"];
+        return $this->_returnURIIfOK($id);
     }
 
-    function getServerInfo($id) {
-        $data = $this->get("servers/" . $id);
-        return $data;
-    }
 
-    function stopServer($id) {
+    function stopId($id) {
         try {
             $retval = $this->delete("servers/$id");
             return true;
@@ -68,9 +65,12 @@ class Orchestration {
             return false;
         }
     }
+
     function getTimeout() {
         return $this->conf["timeout"];
     }
+
+
 
     function delete($target) {
         $opts = [
@@ -117,6 +117,29 @@ class Orchestration {
         ];
 
         return $this->_sendAndReceive($target, $opts);
+    }
+
+
+
+    protected function _returnURIIfOK($id) {
+        try {
+            $data = $this->get("servers/$id");
+        } catch(\Exception $e) {
+            return false;
+        }
+        return $data["mongodb_uri"];
+    }
+
+    protected function _returnURIIfAlive($info) {
+        if (!isset($info["procInfo"])) {
+            return false;
+        }
+
+        if ($info["procInfo"]["alive"]) {
+            return $info["mongodb_uri"];
+        }
+
+        return false;
     }
 
     protected function _sendAndReceive($target, $opts) {
