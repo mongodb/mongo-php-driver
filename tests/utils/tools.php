@@ -77,7 +77,8 @@ function CLEANUP() {
             } while (0);
         }
     } catch(Exception $e) {
-        echo "skip " . $e->getCode(), ": ", $e->getMessage();
+        echo "skip (cleanup)" . $e->getCode(), ": ", $e->getMessage();
+        exit(1);
     }
 }
 
