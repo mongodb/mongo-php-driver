@@ -10,9 +10,8 @@ Development progress is being tracked in the
 [pecl-prototype](https://jira.mongodb.org/browse/PHP/component/13249) component
 of the MongoDB PHP driver's JIRA project.
 
-The purpose of this driver is to provide exceptionally thin glue between MongoDB
+The purpose of this driver is to provide a thin glue between MongoDB
 and PHP, implementing only fundamental and performance-critical components
-necessary to build a fully-functional MongoDB driver.
 
 In the long run, we hope that userland packages will be built atop this driver
 to implement various APIs (e.g. a BC layer for the existing driver, new fluent
