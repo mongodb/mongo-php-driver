@@ -19,6 +19,7 @@ class Orchestration {
         } catch(\Exception $e) {
             return false;
         }
+        return true;
     }
 
     function stopAll() {
