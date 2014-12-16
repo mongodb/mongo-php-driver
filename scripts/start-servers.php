@@ -11,6 +11,6 @@ $orch = new Mongo\Orchestration($host);
 
 $orch->stopAll();
 
-$standalone = $orch->startStandalone();
+$standalone = $orch->start("standalone.json");
 printf("Standalone server running on: %s\n", $standalone);
 
