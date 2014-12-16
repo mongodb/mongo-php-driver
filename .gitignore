@@ -45,6 +45,8 @@ php.ini
 !.travis.scripts/*
 
 
+!scripts
+
 # MKDocs
 !docs
 site
