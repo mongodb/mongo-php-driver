@@ -27,7 +27,7 @@ var_dump(iterator_to_array($cursor));
 <?php exit(0); ?>
 --EXPECTF--
 ===> WriteResult
-server: localhost:27017
+server: %s:%d
 insertedCount: 0
 matchedCount: 1
 modifiedCount: 1

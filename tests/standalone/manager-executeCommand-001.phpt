@@ -28,7 +28,7 @@ var_dump($server->getPort());
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 bool(true)
 Dumping response document:
 array(1) {
@@ -44,6 +44,6 @@ array(1) {
   }
 }
 bool(true)
-string(9) "localhost"
-int(27017)
+string(%d) "%s"
+int(%d)
 ===DONE===

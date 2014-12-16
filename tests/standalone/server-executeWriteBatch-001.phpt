@@ -6,7 +6,8 @@ MongoDB\Server::executeWriteBatch()
 <?php
 require_once "tests/utils/basic.inc";
 
-$server = new MongoDB\Server('localhost', 27017);
+$parsed = parse_url(MONGODB_URI);
+$server = new MongoDB\Server($parsed["host"], $parsed["port"]);
 
 $batch = new MongoDB\WriteBatch();
 $batch->insert(array('_id' => 1, 'x' => 1));
@@ -29,11 +30,11 @@ var_dump(iterator_to_array($cursor));
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 WriteResult.server is the same: yes
 
 ===> WriteResult
-server: localhost:27017
+server: %s:%d
 insertedCount: 2
 matchedCount: 1
 modifiedCount: 1

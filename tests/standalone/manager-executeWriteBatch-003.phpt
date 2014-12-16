@@ -37,7 +37,7 @@ WriteException.message: %s
 WriteException.code: 0
 
 ===> WriteResult
-server: localhost:27017
+server: %s:%d
 insertedCount: 2
 matchedCount: 0
 modifiedCount: 0

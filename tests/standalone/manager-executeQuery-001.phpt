@@ -31,10 +31,10 @@ var_dump(iterator_to_array($cursor));
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 bool(true)
 bool(true)
-string(9) "localhost"
+string(%d) "%s"
 int(27017)
 array(1) {
   [0]=>

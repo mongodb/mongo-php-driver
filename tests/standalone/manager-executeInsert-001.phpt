@@ -20,9 +20,9 @@ var_dump(iterator_to_array($cursor));
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 ===> WriteResult
-server: localhost:27017
+server: %s:%d
 insertedCount: 1
 matchedCount: 0
 modifiedCount: 0

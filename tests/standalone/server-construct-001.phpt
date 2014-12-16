@@ -6,15 +6,16 @@ MongoDB\Server::__construct()
 <?php
 require_once "tests/utils/basic.inc";
 
-$server = new MongoDB\Server('localhost', 27017);
+$parsed = parse_url(MONGODB_URI);
+$server = new MongoDB\Server($parsed["host"], $parsed["port"]);
 
-var_dump($server->getHost());
-var_dump($server->getPort());
+var_dump($server->getHost() == $parsed["host"]);
+var_dump($server->getPort() == $parsed["port"]);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-string(9) "localhost"
-int(27017)
+--EXPECTF--
+bool(true)
+bool(true)
 ===DONE===

@@ -6,7 +6,8 @@ MongoDB\Server::executeCommand()
 <?php
 require_once "tests/utils/basic.inc";
 
-$server = new MongoDB\Server('localhost', 27017);
+$parsed = parse_url(MONGODB_URI);
+$server = new MongoDB\Server($parsed["host"], $parsed["port"]);
 
 $command = new MongoDB\Command(array('isMaster' => 1));
 $result = $server->executeCommand(DATABASE_NAME, $command);

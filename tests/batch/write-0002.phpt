@@ -33,7 +33,7 @@ printf("hannes: %s\nhayley: %s\n", $hannes_id, $hayley_id);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Inserted 2 documents to localhost
+Inserted 2 documents to %s
 hannes: %s
 hayley: %s
 ===DONE===

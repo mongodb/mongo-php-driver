@@ -6,7 +6,8 @@ MongoDB\Server::executeQuery() with modifiers and empty filter
 <?php
 require_once "tests/utils/basic.inc";
 
-$server = new MongoDB\Server('localhost', 27017);
+$parsed = parse_url(MONGODB_URI);
+$server = new MongoDB\Server($parsed["host"], $parsed["port"]);
 
 // load fixtures for test
 $batch = new \MongoDB\WriteBatch();

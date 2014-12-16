@@ -26,8 +26,8 @@ try {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-server: localhost:27017
+--EXPECTF--
+server: %s:%d
 insertedCount: 0
 matchedCount: 0
 modifiedCount: 0
