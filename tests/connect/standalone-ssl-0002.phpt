@@ -9,6 +9,19 @@ require_once "tests/utils/basic.inc";
 $dsn = sprintf("%s/?ssl=true", MONGODB_STANDALONE_SSL_URI);
 
 $SSL_DIR = realpath(__DIR__ . "/" . "./../../scripts/ssl/");
+function isValid(array $cert) {
+    $from = $cert["validFrom_time_t"];
+    $to   = $cert["validTo_time_t"];
+
+    $current = time();
+
+    if ($from > $current && $current < $to) {
+        return true;
+    }
+
+    return false;
+}
+
 $opts = array(
     "ssl" => array(
         "peer_name" => "MongoDB",
@@ -26,7 +39,7 @@ $opts = array(
         "capture_peer_cert_chain" => true,
         "SNI_enabled" => true,
         "disable_compression" => false,
-        "peer_fingerprint" => "",
+        "peer_fingerprint" => "0d6dbd95",
     ),
 );
 $context = stream_context_create($opts);
@@ -39,17 +52,29 @@ echo throws(function() use($mc) {
     $batch->insert(array("my" => "value"));
     $retval = $mc->executeWriteBatch(NS, $batch);
 }, "MongoDB\\SSLConnectionException", "executeWriteBatch"), "\n";
-/*
+
+
+echo "Changing to server\n";
+stream_context_set_option($context, "ssl", "CN_match", "server");
+$batch = new MongoDB\WriteBatch;
+$batch->insert(array("my" => "value"));
+$retval = $mc->executeWriteBatch(NS, $batch);
+printf("Inserted: %d\n", $retval->getInsertedCount());
+
+
 
 $opts = stream_context_get_params($context);
-var_dump($opts);
 $cert = openssl_x509_parse($opts["options"]["ssl"]["peer_certificate"]);
-var_dump($cert["name"]);
- */
+printf("Certificate name: %s\n", $cert["name"]);
+printf("Certificate valid (not expired): %s\n", isValid($cert) ? "OK" : "NO");
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\SSLConnectionException thrown from executeWriteBatch
 %s
+Changing to server
+Inserted: 1
+Certificate name: /CN=server/OU=Kernel/O=MongoDB/L=New York City/ST=New York/C=US
+Certificate valid (not expired): NO
 ===DONE===
