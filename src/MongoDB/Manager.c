@@ -32,6 +32,7 @@
 #include <php.h>
 #include <php_ini.h>
 #include <ext/standard/info.h>
+#include <ext/standard/file.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
 /* Our Compatability header */
@@ -73,6 +74,20 @@ PHP_METHOD(Manager, __construct)
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to parse MongoDB URI");
 		return;
 	}
+	if (driverOptions) {
+		zval **tmp;
+
+		if (zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
+			ctx = php_stream_context_from_zval(*tmp, PHP_FILE_NO_DEFAULT_CONTEXT);
+		}
+
+		if (zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
+			convert_to_string(*tmp);
+
+			zend_alter_ini_entry_ex(ZEND_STRS((char *)"phongo.debug_log"), Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
+		}
+	}
+
 	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);
 }
 /* }}} */
