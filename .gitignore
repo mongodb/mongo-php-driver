@@ -28,6 +28,9 @@ missing
 mkinstalldirs
 modules
 run-tests.php
+tags
+.lvimrc
+
 # phpt leftovers
 *.diff
 *.exp
