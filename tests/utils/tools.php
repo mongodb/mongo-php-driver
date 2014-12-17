@@ -94,13 +94,13 @@ function throws(callable $function, $exceptionname, $infunction = null) {
                 } else {
                     printf("ALMOST: Got %s - but was thrown in %s, not %s\n", $exceptionname, $function, $infunction);
                 }
-                return;
+                return $e->getMessage();
             }
             printf("OK: Got %s\n", $exceptionname);
         } else {
             printf("ALMOST: Got %s - expected %s\n", get_class($e), $exceptionname);
         }
-        return;
+        return $e->getMessage();
     }
     echo "FAILED: Expected $exceptionname thrown!\n";
 }
