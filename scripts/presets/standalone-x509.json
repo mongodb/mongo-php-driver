@@ -1,13 +1,16 @@
 {
     "name": "mongod", 
-    "id" : "STANDALONE-SSL",
+    "id" : "STANDALONE-X509",
+    "auth_key": "secret",
+    "login": "root", 
+    "password": "toor", 
     "procParams": {
-        "dbpath": "/tmp/standalone-ssl/",
+        "dbpath": "/tmp/standalone-x509/",
         "ipv6": true, 
         "logappend": true, 
-        "logpath": "/tmp/standalone-ssl/m.log", 
+        "logpath": "/tmp/standalone-x509/m.log", 
         "journal": true,
-        "port": 2100,
+        "port": 2300,
         "setParameter": {"enableTestCommands": 1}
     }, 
     "sslParams": {

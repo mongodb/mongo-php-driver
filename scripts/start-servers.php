@@ -20,3 +20,6 @@ printf("Standalone SSL server running on: %s\n", $ssl);
 $auth = $orch->start("standalone-auth.json");
 printf("Standalone Auth server running on: %s\n", $auth);
 
+$x509 = $orch->start("standalone-x509.json");
+printf("Standalone X509 Auth server running on: %s\n", $x509);
+
