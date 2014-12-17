@@ -814,7 +814,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	int errcode;
 	char *dsn;
 	int dsn_len;
-	(void)user_data;TSRMLS_FETCH_FROM_CTX(user_data);
+	TSRMLS_FETCH();
 
 
 	switch (host->family) {

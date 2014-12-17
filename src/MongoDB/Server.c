@@ -59,8 +59,7 @@ PHP_METHOD(Server, __construct)
 	zval                     *options = NULL;
 	zval                     *driverOptions = NULL;
 	mongoc_uri_t             *uri;
-	void                   ***ctx = NULL;
-	TSRMLS_SET_CTX(ctx);
+	php_stream_context       *ctx = NULL;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
