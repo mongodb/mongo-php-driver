@@ -81,8 +81,7 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 		case PHONGO_ERROR_WRITE_FAILED:
 			return php_phongo_writeexception_ce;
 		case PHONGO_ERROR_CONNECTION_FAILED:
-			/* FIXME: Add ConnectionException */
-			return php_phongo_writeexception_ce;
+			return php_phongo_connectionexception_ce;
 	}
 
 	mongoc_log(MONGOC_LOG_LEVEL_ERROR, MONGOC_LOG_DOMAIN, "Resolving unknown exception domain!!!");
@@ -97,6 +96,7 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 		case MONGOC_ERROR_STREAM_SOCKET:
 		case MONGOC_ERROR_STREAM_CONNECT:
 		case MONGOC_ERROR_STREAM_NOT_ESTABLISHED:
+			return php_phongo_connectionexception_ce;
 		case MONGOC_ERROR_CLIENT_NOT_READY:
 		case MONGOC_ERROR_CLIENT_TOO_BIG:
 		case MONGOC_ERROR_CLIENT_TOO_SMALL:
@@ -561,10 +561,13 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 	hint = mongoc_bulk_operation_execute(batch, &reply, &error);
 
 	if (!hint) {
-		zval *e = phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "%s", error.message);
+		/* If no exception has been thrown already, for example connection exception */
+		if (!EG(exception)) {
+			zval *e = phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "%s", error.message);
 
-		if (Z_OBJCE_P(e) == php_phongo_writeexception_ce) {
-			phongo_writeexception_init(e, &reply, hint TSRMLS_CC);
+			if (Z_OBJCE_P(e) == php_phongo_writeexception_ce) {
+				phongo_writeexception_init(e, &reply, hint TSRMLS_CC);
+			}
 		}
 		bson_destroy(&reply);
 
@@ -1399,6 +1402,7 @@ PHP_MINIT_FUNCTION(phongo)
 
 	PHP_MINIT(Exception)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(RuntimeException)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(ConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteException)(INIT_FUNC_ARGS_PASSTHRU);
 
 	PHP_MINIT(Type)(INIT_FUNC_ARGS_PASSTHRU);

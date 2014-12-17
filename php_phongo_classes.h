@@ -190,6 +190,7 @@ extern PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
 extern PHONGO_API zend_class_entry *php_phongo_exception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_runtimeexception_ce;
+extern PHONGO_API zend_class_entry *php_phongo_connectionexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeexception_ce;
 
 extern PHONGO_API zend_class_entry *php_phongo_type_ce;
@@ -223,6 +224,7 @@ PHP_MINIT_FUNCTION(WriteResult);
 
 PHP_MINIT_FUNCTION(Exception);
 PHP_MINIT_FUNCTION(RuntimeException);
+PHP_MINIT_FUNCTION(ConnectionException);
 PHP_MINIT_FUNCTION(WriteException);
 
 PHP_MINIT_FUNCTION(Type);
