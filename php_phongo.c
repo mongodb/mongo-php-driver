@@ -810,6 +810,8 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	php_phongo_stream_socket *base_stream = NULL;
 	php_stream *stream = NULL;
 	const bson_t *options;
+	bson_iter_t iter;
+	struct timeval *timeoutp = NULL;
 	char *errmsg = NULL;
 	int errcode;
 	char *dsn;
@@ -836,8 +838,23 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 	options = mongoc_uri_get_options(uri);
 
-	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Connecting to '%s'", dsn);
-	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, (char *)"persistent id", /*options->connectTimeoutMS*/0, (php_stream_context *)NULL, &errmsg, &errcode);
+	if (bson_iter_init_find (&iter, options, "connecttimeoutms") && BSON_ITER_HOLDS_INT32 (&iter)) {
+		struct timeval timeout = {0, 0};
+		int32_t connecttimeoutms = MONGOC_DEFAULT_CONNECTTIMEOUTMS;
+
+		if (!(connecttimeoutms = bson_iter_int32(&iter))) {
+			connecttimeoutms = MONGOC_DEFAULT_CONNECTTIMEOUTMS;
+		}
+
+		timeout.tv_sec = connecttimeoutms / 1000;
+		timeout.tv_usec = (connecttimeoutms % 1000) * 1000;
+
+		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Connecting to '%s' (%ld.%06ldms timeout)", dsn, timeout.tv_sec, timeout.tv_usec);
+		timeoutp = &timeout;
+	}
+
+	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, (char *)"persistent id", timeoutp, (php_stream_context *)user_data, &errmsg, &errcode);
+
 	if (!stream) {
 		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, errmsg);
 		return NULL;
