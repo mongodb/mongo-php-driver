@@ -167,8 +167,11 @@ if test "$PHONGO" != "no"; then
       src/MongoDB/WriteConcern.c \
       src/MongoDB/WriteConcernError.c \
       src/MongoDB/WriteError.c \
-      src/MongoDB/WriteException.c \
       src/MongoDB/WriteResult.c \
+  ";
+  PHONGO_MONGODB_EXCEPTIONS="\
+      src/MongoDB/Exception.c \
+      src/MongoDB/WriteException.c \
   ";
 
   YAJL_SOURCES="\
@@ -257,10 +260,12 @@ MONGOC_SOURCES_SASL=mongoc-sasl.c
     PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON)
     PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES)
     PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_EXCEPTIONS)
   else
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON,               [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES,       [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES,    [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_EXCEPTIONS, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
   fi
 
 dnl libmongoc stuff {{{
