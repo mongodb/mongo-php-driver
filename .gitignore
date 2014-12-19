@@ -38,7 +38,7 @@ tags
 *.out
 *.mem
 *.php
-*.sh
+tests/*/*.sh
 php.ini
 *.patch
 *.swp
