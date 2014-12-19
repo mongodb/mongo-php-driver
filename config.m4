@@ -286,7 +286,44 @@ dnl libmongoc stuff {{{
   PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL, [$STD_CFLAGS], shared_objects_phongo, yes)
 
 
+  MONGOC_DEFINE_RESET
+  PHP_SETUP_OPENSSL(PHONGO_SHARED_LIBADD)
+  MONGOC_DEFINE([MONGOC_ENABLE_SSL], 1)
 
+
+PHP_ARG_WITH(phongo-sasl, Build with Cyrus SASL support,
+[  --with-phongo-sasl[=DIR]     phongo: Include Cyrus SASL support], auto, yes)
+
+if test "$PHP_PHONGO_SASL" != "no"; then
+  AC_MSG_CHECKING(for SASL)
+  for i in $PHONGO_SASL /usr /usr/local; do
+    if test -f $i/include/sasl/sasl.h; then
+      PHONGO_SASL_DIR=$i
+      AC_MSG_RESULT(found in $i)
+      break
+    fi
+  done
+
+  if test -z "$PHONGO_SASL_DIR"; then
+    AC_MSG_RESULT(not found)
+    if test "$PHONGO_SASL" != "auto"; then
+      AC_MSG_ERROR([sasl.h not found!])
+    fi
+  fi
+
+  PHP_CHECK_LIBRARY(sasl2, sasl_version,
+  [
+    PHP_ADD_INCLUDE($PHONGO_SASL_DIR)
+    PHP_ADD_LIBRARY_WITH_PATH(sasl2, $PHONGO_SASL_DIR/$PHP_LIBDIR, PHONGO_SHARED_LIBADD)
+    MONGOC_DEFINE(MONGOC_ENABLE_SASL, 1, [MONGO SASL support])
+  ], [
+    if test "$PHONGO_SASL" != "auto"; then
+      AC_MSG_ERROR([MONGO SASL check failed. Please check config.log for more information.])
+    fi
+  ], [
+    -L$PHONGO_SASL_DIR/$PHP_LIBDIR
+  ])
+fi
   m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
   AX_PTHREAD
 
@@ -296,11 +333,11 @@ dnl libmongoc stuff {{{
 
   dnl PHP_ADD_LIBRARY_WITH_PATH(bson-1.0, src/libbson/.libs, PHONGO_SHARED_LIBADD)
   dnl PHP_ADD_LIBRARY_WITH_PATH(mongoc-priv, src/libmongoc/.libs, PHONGO_SHARED_LIBADD)
-  EXTRA_CFLAGS="$PTHREAD_CFLAGS"
+  EXTRA_CFLAGS="$PTHREAD_CFLAGS $SASL_CFLAGS"
   PHP_SUBST(EXTRA_CFLAGS)
   PHP_SUBST(EXTRA_LDFLAGS)
 
-  PHONGO_SHARED_LIBADD="$PHONGO_SHARED_LIBADD $PTHREAD_LIBS"
+  PHONGO_SHARED_LIBADD="$PHONGO_SHARED_LIBADD $PTHREAD_LIBS $SASL_LIBS"
   PHP_SUBST(PHONGO_SHARED_LIBADD)
 
 dnl }}}
@@ -327,10 +364,6 @@ dnl }}}
 
   dnl PHONGO_SHARED_DEPENDENCIES="phongodep"
   dnl PHP_SUBST(PHONGO_SHARED_DEPENDENCIES)
-
-  MONGOC_DEFINE_RESET
-  PHP_SETUP_OPENSSL(PHONGO_SHARED_LIBADD)
-  MONGOC_DEFINE([MONGOC_ENABLE_SSL], 1)
 
   BSON_DEFINE_RESET
 
