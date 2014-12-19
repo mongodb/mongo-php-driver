@@ -1,0 +1,17 @@
+{
+    "name": "mongod",
+    "id" : "STANDALONE-PLAIN",
+    "auth_key": "secret",
+    "login": "root",
+    "password": "toor",
+    "procParams": {
+        "dbpath": "/tmp/standalone-plain/",
+        "ipv6": true,
+        "logappend": true,
+        "logpath": "/tmp/standalone-plain/m.log",
+        "journal": true,
+        "port": 2400,
+        "setParameter": {"enableTestCommands": 1, "saslauthdPath": "/var/run/saslauthd/mux", "authenticationMechanisms": "MONGODB-CR,PLAIN"}
+    }
+}
+

@@ -21,6 +21,7 @@ Vagrant.configure(2) do |config|
 
     mo.vm.provision "shell", path: "scripts/ubuntu/essentials.sh"
     mo.vm.provision "shell", path: "scripts/ubuntu/mongo-orchestration.sh"
+    mo.vm.provision "shell", path: "scripts/ubuntu/ldap/install.sh"
   end
 
   config.vm.define "ldap", autostart: false do |ldap|
