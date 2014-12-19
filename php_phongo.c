@@ -814,6 +814,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	const bson_t *options;
 	bson_iter_t iter;
 	struct timeval *timeoutp = NULL;
+	char *uniqid;
 	char *errmsg = NULL;
 	int errcode;
 	char *dsn;
@@ -851,12 +852,23 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		timeout.tv_sec = connecttimeoutms / 1000;
 		timeout.tv_usec = (connecttimeoutms % 1000) * 1000;
 
-		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Connecting to '%s' (%ld.%06ldms timeout)", dsn, timeout.tv_sec, timeout.tv_usec);
 		timeoutp = &timeout;
 	}
 
-	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, (char *)"persistent id", timeoutp, (php_stream_context *)user_data, &errmsg, &errcode);
+	spprintf(&uniqid, 0, "mongodb://%s:%s@%s:%d/%s?authMechanism=%s&authMechanism=%s",
+		mongoc_uri_get_username(uri),
+		mongoc_uri_get_password(uri),
+		host->host,
+		host->port,
+		mongoc_uri_get_database(uri),
+		mongoc_uri_get_auth_mechanism(uri),
+		mongoc_uri_get_auth_source(uri)
+	);
 
+	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Connecting to '%s'", uniqid);
+	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, uniqid, timeoutp, (php_stream_context *)user_data, &errmsg, &errcode);
+
+	efree(uniqid);
 	if (!stream) {
 		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, errmsg);
 		efree(dsn);
