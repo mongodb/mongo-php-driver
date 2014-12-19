@@ -1,0 +1,5 @@
+dn: dc=10gen,dc=me
+objectClass: dcObject
+objectClass: organization
+dc: 10gen
+o : 10gen

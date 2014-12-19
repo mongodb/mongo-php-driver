@@ -1,0 +1,3 @@
+dn: ou=Users,dc=10gen,dc=me
+ou: Users
+objectClass: organizationalUnit

@@ -23,8 +23,18 @@ Vagrant.configure(2) do |config|
     mo.vm.provision "shell", path: "scripts/ubuntu/mongo-orchestration.sh"
   end
 
+  config.vm.define "ldap", autostart: false do |ldap|
+    ldap.vm.network "private_network", ip: "192.168.112.20"
 
+    ldap.vm.box = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210-nocm.box"
+    ldap.vm.provider "vmware_workstation" do |vmware, override|
+      override.vm.box_url = "https://dl.dropbox.com/u/5721940/vagrant-boxes/vagrant-centos-6.4-x86_64-vmware_fusion.box"
+    end
 
+    ldap.vm.provision "shell", path: "scripts/centos/essentials.sh"
+    #ldap.vm.provision "shell", path: "scripts/centos/mongo-orchestration.sh"
+    ldap.vm.provision "shell", path: "scripts/centos/ldap/install.sh"
+  end
 
 end
 

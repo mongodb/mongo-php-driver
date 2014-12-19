@@ -1,0 +1,10 @@
+dn: dc=10gen,dc=me
+objectclass: dcObject
+objectclass: organization
+o: MongoDB
+dc: 10gen
+
+dn: cn=Manager,dc=10gen,dc=me
+objectclass: organizationalRole
+cn: Manager
+
