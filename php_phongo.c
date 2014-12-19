@@ -92,6 +92,9 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 	switch(code) {
 		case 11000: /* Duplicate key */
 			return php_phongo_duplicatekeyexception_ce;
+		case MONGOC_ERROR_CLIENT_AUTHENTICATE:
+			return php_phongo_authenticationexception_ce;
+
 		case MONGOC_ERROR_STREAM_INVALID_TYPE:
 		case MONGOC_ERROR_STREAM_INVALID_STATE:
 		case MONGOC_ERROR_STREAM_NAME_RESOLUTION:
@@ -103,7 +106,6 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 		case MONGOC_ERROR_CLIENT_TOO_BIG:
 		case MONGOC_ERROR_CLIENT_TOO_SMALL:
 		case MONGOC_ERROR_CLIENT_GETNONCE:
-		case MONGOC_ERROR_CLIENT_AUTHENTICATE:
 		case MONGOC_ERROR_CLIENT_NO_ACCEPTABLE_PEER:
 		case MONGOC_ERROR_CLIENT_IN_EXHAUST:
 		case MONGOC_ERROR_PROTOCOL_INVALID_REPLY:
@@ -1438,6 +1440,7 @@ PHP_MINIT_FUNCTION(phongo)
 	PHP_MINIT(Exception)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(RuntimeException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(AuthenticationException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(SSLConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(DuplicateKeyException)(INIT_FUNC_ARGS_PASSTHRU);
