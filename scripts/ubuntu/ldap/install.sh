@@ -7,7 +7,6 @@ sudo cp /phongo/scripts/ubuntu/ldap/saslauthd.conf /etc/
 sudo service saslauthd restart
 
 testsaslauthd -u bugs -p password -s mongod -f /var/run/saslauthd/mux
-#Show your work!
-ldapsearch -x -LLL -b dc=10gen,dc=me
-ldapsearch -x -b '' -s base '(objectclass=*)' namingContexts
+#ldapsearch -x -LLL -b dc=10gen,dc=me -h 192.168.112.20
+#ldapsearch -x -b '' -s base '(objectclass=*)' namingContexts -h 192.168.112.20
 

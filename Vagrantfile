@@ -33,7 +33,6 @@ Vagrant.configure(2) do |config|
     end
 
     ldap.vm.provision "shell", path: "scripts/centos/essentials.sh"
-    #ldap.vm.provision "shell", path: "scripts/centos/mongo-orchestration.sh"
     ldap.vm.provision "shell", path: "scripts/centos/ldap/install.sh"
   end
 
