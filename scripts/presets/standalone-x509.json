@@ -14,8 +14,9 @@
         "setParameter": {"enableTestCommands": 1}
     }, 
     "sslParams": {
+	"clusterAuthMode": "x509",
+	"sslMode": "requireSSL",
         "sslCAFile": "/phongo/scripts/ssl/ca.pem", 
-        "sslOnNormalPorts": true, 
         "sslPEMKeyFile": "/phongo/scripts/ssl/server.pem", 
         "sslWeakCertificateValidation": true
     }
