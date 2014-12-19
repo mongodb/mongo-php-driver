@@ -1,7 +1,6 @@
 --TEST--
 MongoDB\Write\Batch: #001 Variety Batch
 --SKIPIF--
-<?php exit("skip FIXME: https://github.com/10gen/mongo-orchestration/issues/154"); ?>
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php 
@@ -13,7 +12,6 @@ $database = "admin";
 
 $parsed = parse_url(MONGODB_STANDALONE_AUTH_URI);
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s", $username, $password, $parsed["host"], $parsed["port"], $database);
-var_dump($dsn);
 $mc = new MongoDB\Manager($dsn);
 
 $batch = new MongoDB\WriteBatch;
