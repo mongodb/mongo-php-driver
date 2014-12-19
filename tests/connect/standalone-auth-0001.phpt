@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Write\Batch: #001 Variety Batch
+Connect to MongoDB with using default auth mechanism
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
