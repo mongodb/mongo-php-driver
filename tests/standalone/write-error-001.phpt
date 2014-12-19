@@ -17,20 +17,13 @@ $hannes_id = $insertBatch->insert($hannes);
 $w = 2;
 $wtimeout = 1000;
 $writeConcern = new \MongoDB\WriteConcern($w, $wtimeout);
-try {
+throws(function() use($insertBatch, $writeConcern, $manager) {
     $result = $manager->executeWriteBatch("db.collection", $insertBatch, $writeConcern);
-} catch(MongoDB\WriteException $e) {
-    printWriteResult($e->getWriteResult());
-}
+}, "MongoDB\ConnectionException");
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-server: %s:%d
-insertedCount: 0
-matchedCount: 0
-modifiedCount: 0
-upsertedCount: 0
-deletedCount: 0
+OK: Got MongoDB\ConnectionException
 ===DONE===

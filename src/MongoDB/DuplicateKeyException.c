@@ -43,42 +43,11 @@
 #include <ext/spl/spl_exceptions.h>
 
 
-PHONGO_API zend_class_entry *php_phongo_writeexception_ce;
+PHONGO_API zend_class_entry *php_phongo_duplicatekeyexception_ce;
 
-/* {{{ proto MongoDB\WriteResult WriteException::getWriteResult()
-   Returns the WriteResult from the failed write operation. */
-PHP_METHOD(WriteException, getWriteResult)
-{
-	zend_error_handling       error_handling;
-	zval *writeresult;
+/* {{{ MongoDB\DuplicateKeyException */
 
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
-		return;
-	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-
-	writeresult = zend_read_property(php_phongo_writeexception_ce, getThis(), ZEND_STRL("writeResult"), 0 TSRMLS_CC);
-
-	RETURN_ZVAL(writeresult, 1, 0);
-}
-/* }}} */
-
-/**
- * Value object for write concern used in issuing write operations.
- */
-/* {{{ MongoDB\WriteException */
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteException_getWriteResult, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-
-static zend_function_entry php_phongo_writeexception_me[] = {
-	PHP_ME(WriteException, getWriteResult, ai_WriteException_getWriteResult, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+static zend_function_entry php_phongo_duplicatekeyexception_me[] = {
 	PHP_FE_END
 };
 
@@ -86,15 +55,15 @@ static zend_function_entry php_phongo_writeexception_me[] = {
 
 
 /* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(WriteException)
+PHP_MINIT_FUNCTION(DuplicateKeyException)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	(void)type;
+	(void)module_number;
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteException", php_phongo_writeexception_me);
-	php_phongo_writeexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce, NULL TSRMLS_CC);
-
-	zend_declare_property_null(php_phongo_writeexception_ce, ZEND_STRL("writeResult"), ZEND_ACC_PROTECTED TSRMLS_CC);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "DuplicateKeyException", php_phongo_duplicatekeyexception_me);
+	php_phongo_duplicatekeyexception_ce = zend_register_internal_class_ex(&ce, php_phongo_writeexception_ce, NULL TSRMLS_CC);
+	php_phongo_duplicatekeyexception_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
 	return SUCCESS;
 }

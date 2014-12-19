@@ -174,6 +174,7 @@ if test "$PHONGO" != "no"; then
       src/MongoDB/RuntimeException.c \
       src/MongoDB/ConnectionException.c \
       src/MongoDB/SSLConnectionException.c \
+      src/MongoDB/DuplicateKeyException.c \
       src/MongoDB/WriteException.c \
   ";
 

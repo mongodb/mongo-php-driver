@@ -34,7 +34,7 @@ var_dump(iterator_to_array($cursor));
 <?php exit(0); ?>
 --EXPECTF--
 WriteException.message: %s
-WriteException.code: 0
+WriteException.code: 11000
 
 ===> WriteResult
 server: %s:%d

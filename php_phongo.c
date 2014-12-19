@@ -90,6 +90,8 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code)
 {
 	switch(code) {
+		case 11000: /* Duplicate key */
+			return php_phongo_duplicatekeyexception_ce;
 		case MONGOC_ERROR_STREAM_INVALID_TYPE:
 		case MONGOC_ERROR_STREAM_INVALID_STATE:
 		case MONGOC_ERROR_STREAM_NAME_RESOLUTION:
@@ -563,9 +565,9 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 	if (!hint) {
 		/* If no exception has been thrown already, for example connection exception */
 		if (!EG(exception)) {
-			zval *e = phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "%s", error.message);
+			zval *e = phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 
-			if (Z_OBJCE_P(e) == php_phongo_writeexception_ce) {
+			if (instanceof_function(Z_OBJCE_P(e), php_phongo_writeexception_ce TSRMLS_CC)) {
 				phongo_writeexception_init(e, &reply, hint TSRMLS_CC);
 			}
 		}
@@ -1426,6 +1428,7 @@ PHP_MINIT_FUNCTION(phongo)
 	PHP_MINIT(ConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(SSLConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteException)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(DuplicateKeyException)(INIT_FUNC_ARGS_PASSTHRU);
 
 	PHP_MINIT(Type)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Binary)(INIT_FUNC_ARGS_PASSTHRU);
