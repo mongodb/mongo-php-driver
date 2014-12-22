@@ -857,7 +857,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		timeoutp = &timeout;
 	}
 
-	spprintf(&uniqid, 0, "mongodb://%s:%s@%s:%d/%s?authMechanism=%s&authMechanism=%s",
+	spprintf(&uniqid, 0, "mongodb://%s:%s@%s:%d/%s?authMechanism=%s&authSource=%s",
 		mongoc_uri_get_username(uri),
 		mongoc_uri_get_password(uri),
 		host->host,
@@ -884,6 +884,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 	if (mongoc_uri_get_ssl(uri)) {
 		zend_error_handling       error_handling;
+
 		zend_replace_error_handling(EH_THROW, php_phongo_sslconnectionexception_ce, &error_handling TSRMLS_CC);
 
 		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Enabling SSL");
@@ -902,6 +903,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 			efree(dsn);
 			return NULL;
 		}
+
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 	}
 	efree(dsn);
