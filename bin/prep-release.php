@@ -197,8 +197,8 @@ $fullnotes = file($changelog, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
 $NOTES = array();
 foreach($fullnotes as $note) {
     $note = "    " . str_replace("&", "&amp;", trim($note));
-    /* PHP JIRA Project */
-    if (strstr($note, "PHP-") !== false) {
+    /* PHP phongo JIRA Project */
+    if (strstr($note, "PHPC-") !== false) {
         $NOTES[] = $note;
         continue;
     }
