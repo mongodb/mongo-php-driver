@@ -24,6 +24,8 @@
 #	include "config.h"
 #endif
 
+/* YCM */
+#include <strings.h>
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
@@ -78,7 +80,26 @@ PHP_METHOD(Manager, __construct)
 		zval **tmp;
 
 		if (zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
+			const mongoc_uri_t *muri = mongoc_client_get_uri(intern->client);
+			const char *mech = mongoc_uri_get_auth_mechanism(muri);
 			ctx = php_stream_context_from_zval(*tmp, PHP_FILE_NO_DEFAULT_CONTEXT);
+
+			/* Check if we are doing X509 auth, in which case extract the username (subject) from the cert if no username is provided */
+			if (mech && !strcasecmp(mech, "MONGODB-X509") && !mongoc_uri_get_username(muri)) {
+				zval **pem;
+
+				if (SUCCESS == php_stream_context_get_option(ctx, "ssl", "local_cert", &pem)) {
+					char filename[MAXPATHLEN];
+
+					convert_to_string_ex(pem);
+					if (VCWD_REALPATH(Z_STRVAL_PP(pem), filename)) {
+						mongoc_ssl_opt_t  ssl_options;
+
+						ssl_options.pem_file = filename;
+						mongoc_client_set_ssl_opts(intern->client, &ssl_options);
+					}
+				}
+			}
 		}
 
 		if (zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {

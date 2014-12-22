@@ -45,9 +45,8 @@ $cmd = array(
 );
 
 try {
-    echo "User Created\n";
     $command = new MongoDB\Command($cmd);
-    $result = $adminmanager->executeCommand(DATABASE_NAME, $command);
+    $result = $adminmanager->executeCommand('$external', $command);
     echo "User Created\n";
 } catch(Exception $e) {
     echo get_class($e), ": ", $e->getMessage(), "\n";
@@ -55,7 +54,7 @@ try {
 
 try {
     $parsed = parse_url(MONGODB_STANDALONE_X509_URI);
-    $dsn = sprintf("mongodb://%s@%s:%d/%s?ssl=true&authMechanism=MONGODB-X509", urlencode($certusername), $parsed["host"], $parsed["port"], DATABASE_NAME);
+    $dsn = sprintf("mongodb://%s@%s:%d/%s?ssl=true&authMechanism=MONGODB-X509", $certusername, $parsed["host"], $parsed["port"], DATABASE_NAME);
 
     $manager = new MongoDB\Manager($dsn, array(), array("context" => $context, "debug" => STDERR));
 
@@ -67,14 +66,15 @@ try {
     foreach($cursor as $document) {
         var_dump($document["very"]);
     }
+    $command = new MongoDB\Command(array("drop" => COLLECTION_NAME));
+    $result = $manager->executeCommand(DATABASE_NAME, $command);
 } catch(Exception $e) {
     echo get_class($e), ": ", $e->getMessage(), "\n";
 }
 
 try {
-    echo "User dropped\n";
-    $command = new MongoDB\Command(array("drop" => COLLECTION_NAME));
-    $result = $adminmanager->executeCommand(DATABASE_NAME, $command);
+    $command = new MongoDB\Command(array("dropUser" => $certusername));
+    $result = $adminmanager->executeCommand('$external', $command);
     echo "User dropped\n";
 } catch(Exception $e) {
     echo get_class($e), ": ", $e->getMessage(), "\n";
