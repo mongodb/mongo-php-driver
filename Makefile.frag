@@ -36,7 +36,7 @@ composer:
 	elif test -r composer.phar; then \
 		php composer.phar $(COMPOSER_ARGS); \
 		if test -d $(LIB_PATH); then \
-			php composer.phar $(COMPOSER_ARGS) --working-dir $(LIB_PATH) ;\
+			php $(top_srcdir)/composer.phar $(COMPOSER_ARGS) --working-dir $(LIB_PATH) ;\
 		fi \
 	else \
 		echo "Cannot find composer :("; \
@@ -59,7 +59,7 @@ testunit: composer
 		popd ;\
 	elif test -r phpunit.phar; then \
 		pushd $(LIB_PATH) ;\
-		php phpunit.phar $(PHPUNIT_ARGS) ;\
+		php $(top_srcdir)/phpunit.phar $(PHPUNIT_ARGS) ;\
 		popd ;\
 	else \
 		echo "Cannot find phpunit :("; \
