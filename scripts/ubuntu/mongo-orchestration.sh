@@ -15,8 +15,8 @@ sudo apt-get install -y mongodb-enterprise
 # Checkout orchestration from VCS and the latest pip doesn't support -b
 git clone https://github.com/10gen/mongo-orchestration.git
 pushd mongo-orchestration
-wget https://github.com/10gen/mongo-orchestration/pull/155.patch
-git am 155.patch
+wget https://github.com/10gen/mongo-orchestration/pull/161.patch
+git am 161.patch
 sudo python setup.py install
 popd
 ####### DELETE ME
