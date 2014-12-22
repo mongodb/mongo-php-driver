@@ -29,7 +29,7 @@
 extern zend_module_entry phongo_module_entry;
 
 /* FIXME: Its annoying to bump version. Move into phongo_version.h.in */
-#define PHONGO_VERSION_S "0.1.3"
+#define PHONGO_VERSION_S "0.1.4"
 #define PHONGO_STABILITY_S "devel"
 #define PHONGO_VERSION   PHONGO_VERSION_S
 
