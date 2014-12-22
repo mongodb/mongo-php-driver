@@ -3,7 +3,7 @@
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 PHONGO_VERSION=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_VERSION;'`
 PHONGO_STABILITY=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_STABILITY;'`
-LIB_PATH=vendor/10gen-labs/mongo-php-library-prototype
+LIB_PATH=vendor/mongodb/mongodb
 COMPOSER_ARGS=update --no-interaction --prefer-source
 PHPUNIT_ARGS=--process-isolation
 

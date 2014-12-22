@@ -1,12 +1,6 @@
 {
     "require-dev": {
         "fzaninotto/faker": "~1.0",
-        "10gen-labs/mongo-php-library-prototype": "dev-master"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/10gen-labs/mongo-php-library-prototype"
-        }
-    ]
+        "mongodb/mongodb": "dev-master"
+    }
 }
