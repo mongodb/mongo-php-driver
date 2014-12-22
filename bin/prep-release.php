@@ -59,12 +59,24 @@ function get_files() {
         "php_*.{h,c}",
         "config.m4",
         "Makefile.frag",
+        "Vagrantfile",
         "README*",
         "RELEASE*",
         "ChangeLog*",
+
+        "scripts/*/*.{sh}",
+        "scripts/*/ldap/*.{sh,conf,ldif}",
+        "scripts/centos/ldap/users",
+        "scripts/presets/*.{json}",
+        "scripts/ssl/*.pem",
+        "scripts/*.php",
+
+
         "src/*.{c,h}",
+
         "src/MongoDB/*.{c,h}",
         "src/BSON/*.{c,h}",
+
         "src/libbson/build/autotools/*.{m4}",
         "src/libbson/build/autotools/m4/*.{m4}",
         "src/libbson/src/bson/*.{c,h}",
@@ -72,6 +84,8 @@ function get_files() {
         "src/libmongoc/build/autotools/*.{m4}",
         "src/libmongoc/build/autotools/m4/*.{m4}",
         "src/libmongoc/src/mongoc/*.{c,h,def,defs}",
+
+        "tests/onnect/*.{phpt}",
         "tests/batch/*.{phpt}",
         "tests/bson/*.{phpt}",
         "tests/functional/*.{phpt}",
