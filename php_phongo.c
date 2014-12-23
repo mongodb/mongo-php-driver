@@ -217,6 +217,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 		} break;
 	}
 }
+
 void phongo_log_writer(mongoc_stream_t *stream, int32_t timeout_msec, ssize_t sent, size_t iovcnt)
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
@@ -785,6 +786,14 @@ int phongo_stream_setsockopt(mongoc_stream_t *stream, int level, int optname, vo
 	return setsockopt (socket, level, optname, optval, optlen);
 } /* }}} */
 
+bool phongo_stream_socket_check_closed(mongoc_stream_t *stream) /* {{{ */
+{
+	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
+	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+
+	return PHP_STREAM_OPTION_RETURN_OK == php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_CHECK_LIVENESS, 0, NULL);
+} /* }}} */
+
 mongoc_stream_t* phongo_stream_get_base_stream(mongoc_stream_t *stream) /* {{{ */
 {
 	return (mongoc_stream_t *) stream;
@@ -908,6 +917,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	base_stream->vtable.writev = phongo_stream_writev;
 	base_stream->vtable.readv = phongo_stream_readv;
 	base_stream->vtable.setsockopt = phongo_stream_setsockopt;
+	base_stream->vtable.check_closed = phongo_stream_socket_check_closed;
 	base_stream->vtable.get_base_stream = phongo_stream_get_base_stream;
 
 	if (host->family != AF_UNIX) {
