@@ -54,10 +54,6 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
-} php_phongo_generatedid_t;
-
-typedef struct {
-	zend_object              std;
 	mongoc_client_t         *client;
 } php_phongo_manager_t;
 
@@ -176,7 +172,6 @@ extern PHONGO_API zend_class_entry *php_phongo_command_ce;
 extern PHONGO_API zend_class_entry *php_phongo_commandresult_ce;
 extern PHONGO_API zend_class_entry *php_phongo_cursor_ce;
 extern PHONGO_API zend_class_entry *php_phongo_cursorid_ce;
-extern PHONGO_API zend_class_entry *php_phongo_generatedid_ce;
 extern PHONGO_API zend_class_entry *php_phongo_manager_ce;
 extern PHONGO_API zend_class_entry *php_phongo_query_ce;
 extern PHONGO_API zend_class_entry *php_phongo_queryresult_ce;
@@ -213,7 +208,6 @@ PHP_MINIT_FUNCTION(Command);
 PHP_MINIT_FUNCTION(CommandResult);
 PHP_MINIT_FUNCTION(Cursor);
 PHP_MINIT_FUNCTION(CursorId);
-PHP_MINIT_FUNCTION(GeneratedId);
 PHP_MINIT_FUNCTION(Manager);
 PHP_MINIT_FUNCTION(Query);
 PHP_MINIT_FUNCTION(QueryResult);

@@ -157,7 +157,6 @@ if test "$PHONGO" != "no"; then
       src/MongoDB/CommandResult.c \
       src/MongoDB/Cursor.c \
       src/MongoDB/CursorId.c \
-      src/MongoDB/GeneratedId.c \
       src/MongoDB/Manager.c \
       src/MongoDB/Query.c \
       src/MongoDB/QueryResult.c \
