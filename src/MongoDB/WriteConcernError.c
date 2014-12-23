@@ -107,6 +107,7 @@ PHP_METHOD(WriteConcernError, getMessage)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	RETURN_STRING(intern->message, 1);
 }
 /* }}} */
 
