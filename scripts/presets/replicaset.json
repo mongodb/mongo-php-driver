@@ -1,0 +1,69 @@
+{
+	"id": "REPLICASET",
+	"name": "mongod",
+	"members": [
+		{
+			"procParams": {
+				"dbpath": "/tmp/REPLICASET/3000/",
+				"ipv6": true,
+				"logappend": true,
+				"logpath": "/tmp/REPLICASET/3000/mongod.log",
+				"nohttpinterface": true,
+				"journal": true,
+				"noprealloc": true,
+				"nssize": 1,
+				"port": 3000,
+				"smallfiles": true,
+				"setParameter": {"enableTestCommands": 1}
+			},
+			"rsParams": {
+				"priority": 99,
+				"tags": {
+					"ordinal": "one",
+					"dc": "pa"
+				}
+			}
+		},
+		{
+			"procParams": {
+				"dbpath": "/tmp/REPLICASET/3001/",
+				"ipv6": true,
+				"logappend": true,
+				"logpath": "/tmp/REPLICASET/3001/mongod.log",
+				"nohttpinterface": true,
+				"journal": true,
+				"noprealloc": true,
+				"nssize": 1,
+				"port": 3001,
+				"smallfiles": true,
+				"setParameter": {"enableTestCommands": 1}
+			},
+			"rsParams": {
+				"priority": 1.1,
+				"tags": {
+					"ordinal": "two",
+					"dc": "nyc"
+				}
+			}
+		},
+		{
+			"procParams": {
+				"dbpath": "/tmp/REPLICASET/3002/",
+				"ipv6": true,
+				"logappend": true,
+				"logpath": "/tmp/REPLICASET/3002/mongod.log",
+				"nohttpinterface": true,
+				"journal": true,
+				"noprealloc": true,
+				"nssize": 1,
+				"port": 3002,
+				"smallfiles": true,
+				"setParameter": {"enableTestCommands": 1}
+			},
+			"rsParams": {
+				"arbiterOnly": true
+			}
+		}
+	]
+}
+

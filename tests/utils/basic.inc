@@ -22,6 +22,7 @@ $consts = array(
     "MONGODB_STANDALONE_SSL_URI"  => $orch->getURI("standalone-ssl.json"),
     "MONGODB_STANDALONE_PLAIN_URI"  => $orch->getURI("standalone-plain.json"),
     "MONGODB_STANDALONE_X509_URI"  => $orch->getURI("standalone-x509.json"),
+    "MONGODB_REPLICASET_URI"  => $orch->getURI("replicaset.json"),
     "DATABASE_NAME"       => "phongo",
     "COLLECTION_NAME"     => makeCollectionNameFromFilename($_SERVER["SCRIPT_FILENAME"]),
     "DEBUG_DIR"           => sys_get_temp_dir() . "/PHONGO-TESTS/",

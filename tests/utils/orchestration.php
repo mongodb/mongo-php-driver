@@ -9,7 +9,7 @@ class Orchestration {
     function __construct($baseuri) {
         $this->baseuri = $baseuri;
         $this->conf = array(
-            "timeout" => 35,
+            "timeout" => 60,
         );
     }
 
@@ -29,10 +29,24 @@ class Orchestration {
         foreach($servers["servers"] as $server) {
             $this->stopId($server["id"]);
         }
+        $servers = $this->get("replica_sets");
+        foreach($servers["replica_sets"] as $server) {
+            $this->stopReplicaSet($server["id"]);
+        }
     }
 
 
 
+    function startRS($preset) {
+        $relative = __DIR__ . "/../../";
+        $file = "scripts/presets/$preset";
+        if (!file_exists($relative.$file)) {
+            throw new \Exception("Cannot file $file in $relative");
+        }
+
+        $retval = $this->post("replica_sets", ["preset" => "/phongo/$file"]);
+        return $this->_returnURIIfAlive($retval);
+    }
     function start($preset) {
         $relative = __DIR__ . "/../../";
         $file = "scripts/presets/$preset";
@@ -53,6 +67,18 @@ class Orchestration {
     }
 
 
+    function stopReplicaSet($id) {
+        try {
+            $retval = $this->delete("replica_sets/$id");
+            return true;
+        } catch(\Exception $e) {
+            if ($e->getCode() == 204) {
+                return true;
+            }
+
+            return false;
+        }
+    }
     function stopId($id) {
         try {
             $retval = $this->delete("servers/$id");
@@ -124,21 +150,21 @@ class Orchestration {
     protected function _returnURIIfOK($id) {
         try {
             $data = $this->get("servers/$id");
+            return $data["mongodb_uri"];
+        } catch(\Exception $e) {
+        }
+        try {
+            $data = $this->get("replica_sets/$id");
+            return $data["mongodb_uri"];
         } catch(\Exception $e) {
             return false;
         }
-        return $data["mongodb_uri"];
     }
 
     protected function _returnURIIfAlive($info) {
-        if (!isset($info["procInfo"])) {
-            return false;
-        }
-
-        if ($info["procInfo"]["alive"]) {
+        if (!empty($info["mongodb_uri"])) {
             return $info["mongodb_uri"];
         }
-
         return false;
     }
 
