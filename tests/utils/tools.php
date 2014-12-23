@@ -125,7 +125,7 @@ function printWriteResult(MongoDB\WriteResult $result)
     }
 
     $writeConcernError = $result->getWriteConcernError();
-    printWriteConcernError($writeConcernError);
+    printWriteConcernError($writeConcernError ? $writeConcernError : null);
 
     foreach ($result->getWriteErrors() as $writeError) {
         printWriteError($writeError);
