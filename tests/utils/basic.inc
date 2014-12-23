@@ -42,7 +42,10 @@ if (!is_dir(DEBUG_DIR)) {
     mkdir(DEBUG_DIR, 0777, true);
 }
 
-ini_set("phongo.debug_log", DEBUG_FILENAME);
-file_put_contents(DEBUG_FILENAME, sprintf("===> %s <=== %s\n", date(DATE_ISO8601), $_SERVER["SCRIPT_FILENAME"]), FILE_APPEND);
+/* If we are running the .phpt directly, don't mess with the ini settings */
+if (substr($_SERVER["PHP_SELF"], -5) != ".phpt") {
+    ini_set("phongo.debug_log", DEBUG_FILENAME);
+    file_put_contents(DEBUG_FILENAME, sprintf("===> %s <=== %s\n", date(DATE_ISO8601), $_SERVER["SCRIPT_FILENAME"]), FILE_APPEND);
+}
 
 
