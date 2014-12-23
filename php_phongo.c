@@ -221,7 +221,8 @@ void phongo_log_writer(mongoc_stream_t *stream, int32_t timeout_msec, ssize_t se
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
 
-	mongoc_log(MONGOC_LOG_LEVEL_MESSAGE, MONGOC_LOG_DOMAIN, "Wrote %zd bytes to '%s:%d' in %zd iterations", sent, base_stream->host->host, base_stream->host->port, iovcnt);
+	/* FIXME: In a ReplicaSet, node->stream is not guranteed to be the wrapped stream, only the raw mongoc_stream_t */
+	/*mongoc_log(MONGOC_LOG_LEVEL_MESSAGE, MONGOC_LOG_DOMAIN, "Wrote %zd bytes to '%s:%d' in %zd iterations", sent, base_stream->host->host, base_stream->host->port, iovcnt);*/
 }
 /* }}} */
 
