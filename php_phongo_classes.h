@@ -121,7 +121,7 @@ typedef struct {
 	zval                    *info;
 	zval                    *upsertedIds;
 	zval                    *writeErrors;
-	zval                    *writeConcernErrors;
+	zval                    *writeConcernError;
 } php_phongo_writeresult_t;
 
 typedef struct {

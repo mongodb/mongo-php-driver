@@ -124,21 +124,22 @@ function printWriteResult(MongoDB\WriteResult $result)
         var_dump($id);
     }
 
-    foreach ($result->getWriteConcernErrors() as $writeConcernError) {
-        printWriteConcernError($writeConcernError);
-    }
+    $writeConcernError = $result->getWriteConcernError();
+    printWriteConcernError($writeConcernError);
 
     foreach ($result->getWriteErrors() as $writeError) {
         printWriteError($writeError);
     }
 }
 
-function printWriteConcernError(MongoDB\WriteConcernError $error)
+function printWriteConcernError(MongoDB\WriteConcernError $error = null)
 {
-    printf("writeConcernError.message: %s\n", $error->getMessage());
-    printf("writeConcernError.code: %d\n", $error->getCode());
-    printf("writeConcernError.info: ");
-    var_dump($error->info());
+    if ($error) {
+        printf("writeConcernError.message: %s\n", $error->getMessage());
+        printf("writeConcernError.code: %d\n", $error->getCode());
+        printf("writeConcernError.info: ");
+        var_dump($error->getInfo());
+    }
 }
 
 function printWriteError(MongoDB\WriteError $error)

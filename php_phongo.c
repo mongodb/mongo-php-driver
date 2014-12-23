@@ -419,38 +419,21 @@ void phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_
 		}
 	}
 
-	if (bson_iter_init_find(&iter, bson, "writeConcernErrors") &&
-		BSON_ITER_HOLDS_ARRAY(&iter) &&
-		bson_iter_recurse(&iter, &ar)) {
+	if (bson_iter_init_find(&iter, bson, "writeConcernError") &&
+		BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+		bson_t cbson;
+		uint32_t len;
+		const uint8_t *data;
 
-		MAKE_STD_ZVAL(writeresult->writeErrors);
-		array_init(writeresult->writeErrors);
+		bson_iter_document(&iter, &len, &data);
+		if (bson_init_static(&cbson, data, len)) {
+			MAKE_STD_ZVAL(writeresult->writeConcernError);
 
-		while (bson_iter_next(&ar)) {
-			bson_t cbson;
-			uint32_t len;
-			const uint8_t *data;
-			zval *writeconcernerror = NULL;
+			object_init_ex(writeresult->writeConcernError, php_phongo_writeconcernerror_ce);
 
-			if (!BSON_ITER_HOLDS_DOCUMENT(&ar)) {
-				continue;
+			if (!phongo_writeconcernerror_init(writeresult->writeConcernError, &cbson TSRMLS_CC)) {
+				zval_ptr_dtor(&writeresult->writeConcernError);
 			}
-
-			bson_iter_document(&ar, &len, &data);
-
-			if (!bson_init_static(&cbson, data, len)) {
-				continue;
-			}
-
-			MAKE_STD_ZVAL(writeconcernerror);
-			object_init_ex(writeconcernerror, php_phongo_writeconcernerror_ce);
-
-			if (!phongo_writeconcernerror_init(writeconcernerror, &cbson TSRMLS_CC)) {
-				zval_ptr_dtor(&writeconcernerror);
-				continue;
-			}
-
-			add_next_index_zval(writeresult->writeConcernErrors, writeconcernerror);
 		}
 	}
 } /* }}} */
@@ -565,7 +548,8 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 
 	hint = mongoc_bulk_operation_execute(batch, &reply, &error);
 
-	if (!hint) {
+	/* If there is no error then the command succeeded, but the write not */
+	if (!hint && (error.code || error.domain)) {
 		/* If no exception has been thrown already, for example connection exception */
 		if (!EG(exception)) {
 			zval *e = phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
