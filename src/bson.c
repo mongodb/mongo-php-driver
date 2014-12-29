@@ -184,11 +184,8 @@ bool php_phongo_bson_visit_double(const bson_iter_t *iter __attribute__((unused)
 	zval *retval = *(zval **)data;
 	TSRMLS_FETCH();
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_double(retval, key, v_double);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_double(retval, key, v_double);
-	}
+	add_assoc_double(retval, key, v_double);
+
 	return false;
 }
 /* }}} */
@@ -197,13 +194,7 @@ bool php_phongo_bson_visit_utf8(const bson_iter_t *iter __attribute__((unused)),
 	zval *retval = *(zval **)data;
 	TSRMLS_FETCH();
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_stringl(retval, key, (char *)v_utf8, v_utf8_len, 1);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_stringl(retval, key, v_utf8, v_utf8_len, 1);
-	} else {
-		return true;
-	}
+	add_assoc_stringl(retval, key, (char *)v_utf8, v_utf8_len, 1);
 
 	return false;
 }
@@ -217,13 +208,8 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter __attribute__((unused)
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_binary_from_binary_and_subtype(zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_zval(retval, key, zchild);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_zval(retval, key, zchild);
-	} else {
-		return true;
-	}
+	add_assoc_zval(retval, key, zchild);
+
 	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
@@ -248,13 +234,8 @@ bool php_phongo_bson_visit_oid(const bson_iter_t *iter __attribute__((unused)), 
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_objectid_new_from_oid(zchild, v_oid TSRMLS_CC);
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_zval(retval, key, zchild);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_zval(retval, key, zchild);
-	} else {
-		return true;
-	}
+	add_assoc_zval(retval, key, zchild);
+
 	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
@@ -265,13 +246,7 @@ bool php_phongo_bson_visit_bool(const bson_iter_t *iter __attribute__((unused)),
 	zval *retval = *(zval **)data;
 	TSRMLS_FETCH();
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_bool(retval, key, v_bool);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_bool(retval, key, v_bool);
-	} else {
-		return true;
-	}
+	add_assoc_bool(retval, key, v_bool);
 
 	return false;
 }
@@ -285,13 +260,8 @@ bool php_phongo_bson_visit_date_time(const bson_iter_t *iter __attribute__((unus
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_utcdatetime_from_epoch(zchild, msec_since_epoch TSRMLS_CC);
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_zval(retval, key, zchild);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_zval(retval, key, zchild);
-	} else {
-		return true;
-	}
+	add_assoc_zval(retval, key, zchild);
+
 	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
@@ -302,13 +272,7 @@ bool php_phongo_bson_visit_null(const bson_iter_t *iter __attribute__((unused)),
 	zval *retval = *(zval **)data;
 	TSRMLS_FETCH();
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_null(retval, key);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_null(retval, key);
-	} else {
-		return true;
-	}
+	add_assoc_null(retval, key);
 
 	return false;
 }
@@ -322,13 +286,8 @@ bool php_phongo_bson_visit_regex(const bson_iter_t *iter __attribute__((unused))
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_regex_from_regex_and_options(zchild, v_regex, v_options TSRMLS_CC);
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_zval(retval, key, zchild);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_zval(retval, key, zchild);
-	} else {
-		return true;
-	}
+	add_assoc_zval(retval, key, zchild);
+
 	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
@@ -352,13 +311,8 @@ bool php_phongo_bson_visit_code(const bson_iter_t *iter __attribute__((unused)),
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_javascript_from_javascript(zchild, v_code, v_code_len TSRMLS_CC);
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_zval(retval, key, zchild);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_zval(retval, key, zchild);
-	} else {
-		return true;
-	}
+	add_assoc_zval(retval, key, zchild);
+
 	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
@@ -382,13 +336,8 @@ bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter __attribute__((unu
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_javascript_from_javascript_and_scope(zchild, v_code, v_code_len, v_scope TSRMLS_CC);
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_zval(retval, key, zchild);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_zval(retval, key, zchild);
-	} else {
-		return true;
-	}
+	add_assoc_zval(retval, key, zchild);
+
 	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
@@ -399,13 +348,7 @@ bool php_phongo_bson_visit_int32(const bson_iter_t *iter __attribute__((unused))
 	zval *retval = *(zval **)data;
 	TSRMLS_FETCH();
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_long(retval, key, v_int32);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_long(retval, key, v_int32);
-	} else {
-		return true;
-	}
+	add_assoc_long(retval, key, v_int32);
 
 	return false;
 }
@@ -419,13 +362,8 @@ bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter __attribute__((unus
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_timestamp_from_increment_and_timestamp(zchild, v_increment, v_timestamp TSRMLS_CC);
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_zval(retval, key, zchild);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_zval(retval, key, zchild);
-	} else {
-		return true;
-	}
+	add_assoc_zval(retval, key, zchild);
+
 	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
@@ -443,13 +381,7 @@ bool php_phongo_bson_visit_int64(const bson_iter_t *iter __attribute__((unused))
 	}
 #endif
 
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_long(retval, key, v_int64);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_long(retval, key, v_int64);
-	} else {
-		return true;
-	}
+	add_assoc_long(retval, key, v_int64);
 
 	return false;
 }
@@ -462,13 +394,9 @@ bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter __attribute__((unused)
 
 	MAKE_STD_ZVAL(zchild);
 	object_init_ex(zchild, php_phongo_maxkey_ce);
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_zval(retval, key, zchild);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_zval(retval, key, zchild);
-	} else {
-		return true;
-	}
+
+	add_assoc_zval(retval, key, zchild);
+
 	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
@@ -482,13 +410,9 @@ bool php_phongo_bson_visit_minkey(const bson_iter_t *iter __attribute__((unused)
 
 	MAKE_STD_ZVAL(zchild);
 	object_init_ex(zchild, php_phongo_minkey_ce);
-	if (Z_TYPE_P(retval) == IS_ARRAY) {
-		add_assoc_zval(retval, key, zchild);
-	} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-		add_property_zval(retval, key, zchild);
-	} else {
-		return true;
-	}
+
+	add_assoc_zval(retval, key, zchild);
+
 	Z_SET_REFCOUNT_P(zchild, 1);
 
 	return false;
@@ -534,17 +458,13 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter __attribute__((unuse
 		zval *zchild = NULL;
 
 		MAKE_STD_ZVAL(zchild);
-		object_init(zchild);
+		array_init(zchild);
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &zchild)) {
-			if (Z_TYPE_P(retval) == IS_ARRAY) {
-				add_assoc_zval(retval, key, zchild);
-			} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-				add_property_zval(retval, key, zchild);
-			} else {
-				return true;
-			}
+			object_and_properties_init(zchild, zend_standard_class_def, Z_ARRVAL_P(zchild));
+			add_assoc_zval(retval, key, zchild);
 		}
+
 		Z_SET_REFCOUNT_P(zchild, 1);
 	}
 
@@ -563,15 +483,11 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused))
 
 		MAKE_STD_ZVAL(zchild);
 		array_init(zchild);
+
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &zchild)) {
-			if (Z_TYPE_P(retval) == IS_ARRAY) {
-				add_assoc_zval(retval, key, zchild);
-			} else if (Z_TYPE_P(retval) == IS_OBJECT) {
-				add_property_zval(retval, key, zchild);
-			} else {
-				return true;
-			}
+			add_assoc_zval(retval, key, zchild);
 		}
+
 		Z_SET_REFCOUNT_P(zchild, 1);
 	}
 
