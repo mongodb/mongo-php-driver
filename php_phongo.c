@@ -273,6 +273,7 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 	if (bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 		uint32_t len;
 		const uint8_t *data;
+		php_phongo_bson_state state = {NULL, NULL, 0};
 
 		bson_iter_document(&iter, &len, &data);
 
@@ -281,8 +282,9 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 		}
 
 		MAKE_STD_ZVAL(writeconcernerror->info);
+		state.zchild = writeconcernerror->info;
 
-		if (!bson_to_zval(data, len, writeconcernerror->info)) {
+		if (!bson_to_zval(data, len, &state)) {
 			zval_ptr_dtor(&writeconcernerror->info);
 			writeconcernerror->info = NULL;
 
@@ -1166,13 +1168,14 @@ void php_phongo_result_free(php_phongo_result_t *result)
 
 /* {{{ Iterator */
 typedef struct {
-	zend_object_iterator  iterator;
-	zval                 *current;
-	mongoc_cursor_t      *cursor;
-	bson_t               *firstBatch;
-	bson_iter_t           first_batch_iter;
-	int                   hint;
-	zend_bool             is_command_cursor;
+	zend_object_iterator   iterator;
+	zval                  *current;
+	mongoc_cursor_t       *cursor;
+	bson_t                *firstBatch;
+	bson_iter_t            first_batch_iter;
+	int                    hint;
+	zend_bool              is_command_cursor;
+	php_phongo_bson_state  visitor_data;
 } phongo_cursor_it;
 
 static void phongo_cursor_it_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
@@ -1199,8 +1202,9 @@ static void phongo_cursor_it_get_current_data(zend_object_iterator *iter, zval *
 
 static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	phongo_cursor_it    *cursor_it = (phongo_cursor_it *)iter;
-	const bson_t *doc;
+	php_phongo_bson_state  state = {NULL, NULL, 0};
+	phongo_cursor_it      *cursor_it = (phongo_cursor_it *)iter;
+	const bson_t          *doc;
 
 	if (cursor_it->current) {
 		zval_ptr_dtor(&cursor_it->current);
@@ -1213,14 +1217,17 @@ static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) 
 			uint32_t data_len = 0;
 
 			bson_iter_document(&cursor_it->first_batch_iter, &data_len, &data);
+
 			MAKE_STD_ZVAL(cursor_it->current);
-			bson_to_zval(data, data_len, cursor_it->current);
+			state.zchild = cursor_it->current;
+			bson_to_zval(data, data_len, &state);
 			return;
 		}
 	}
 	if (mongoc_cursor_next(cursor_it->cursor, &doc)) {
 		MAKE_STD_ZVAL(cursor_it->current);
-		bson_to_zval(bson_get_data(doc), doc->len, cursor_it->current);
+		state.zchild = cursor_it->current;
+		bson_to_zval(bson_get_data(doc), doc->len, &state);
 	} else {
 		cursor_it->current = NULL;
 	}
@@ -1229,7 +1236,8 @@ static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) 
 
 static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	phongo_cursor_it    *cursor_it = (phongo_cursor_it *)iter;
+	php_phongo_bson_state  state = {NULL, NULL, 0};
+	phongo_cursor_it      *cursor_it = (phongo_cursor_it *)iter;
 
 	/* firstBatch is empty when the query simply didn't return any results */
 	if (cursor_it->firstBatch) {
@@ -1242,12 +1250,14 @@ static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{
 
 					bson_iter_document(&cursor_it->first_batch_iter, &data_len, &data);
 					MAKE_STD_ZVAL(cursor_it->current);
-					bson_to_zval(data, data_len, cursor_it->current);
+					state.zchild = cursor_it->current;
+					bson_to_zval(data, data_len, &state);
 				}
 			}
 		} else {
 			MAKE_STD_ZVAL(cursor_it->current);
-			bson_to_zval(bson_get_data(cursor_it->firstBatch), cursor_it->firstBatch->len, cursor_it->current);
+			state.zchild = cursor_it->current;
+			bson_to_zval(bson_get_data(cursor_it->firstBatch), cursor_it->firstBatch->len, &state);
 		}
 	}
 } /* }}} */
@@ -1329,6 +1339,7 @@ zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *obj
 		cursor_it->firstBatch     = intern->firstBatch;
 		cursor_it->hint           = intern->hint;
 		cursor_it->is_command_cursor = intern->is_command_cursor;
+		cursor_it->visitor_data   = intern->visitor_data;
 
 		return (zend_object_iterator*)cursor_it;
 	}

@@ -21,10 +21,20 @@
 #ifndef PHONGO_CLASSES_H
 #define PHONGO_CLASSES_H
 
+/* PHP Core stuff */
+#include <php.h>
+
+
 typedef struct {
 	zend_object              std;
 	bson_t                  *bson;
 } php_phongo_command_t;
+
+typedef struct {
+	zval                    *zchild;
+	char                    *classname;
+	int                      classname_len;
+} php_phongo_bson_state;
 
 typedef struct {
 	zend_object              std;
@@ -33,6 +43,7 @@ typedef struct {
 	bson_t                  *firstBatch;
 	int                      hint;
 	zend_bool                is_command_cursor;
+	php_phongo_bson_state    visitor_data;
 } php_phongo_result_t;
 
 typedef struct {

@@ -344,8 +344,6 @@ static void php_phongo_writeresult_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	zend_object_std_dtor(&intern->result.std TSRMLS_CC);
 
-	php_phongo_result_free(&intern->result);
-
 	if (intern->info) {
 		zval_ptr_dtor(&intern->info);
 	}
@@ -361,6 +359,8 @@ static void php_phongo_writeresult_free_object(void *object TSRMLS_DC) /* {{{ */
 	if (intern->writeErrors) {
 		zval_ptr_dtor(&intern->writeErrors);
 	}
+
+	php_phongo_result_free(&intern->result);
 	efree(intern);
 } /* }}} */
 
