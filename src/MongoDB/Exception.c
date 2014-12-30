@@ -45,7 +45,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_exception_ce;
 
-/* {{{ MongoDB\Exception */
+/* {{{ MongoDB\Driver\Exception */
 
 static zend_function_entry php_phongo_exception_me[] = {
 	PHP_FE_END
@@ -61,7 +61,7 @@ PHP_MINIT_FUNCTION(Exception)
 	(void)module_number;
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "Exception", php_phongo_exception_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Exception", php_phongo_exception_me);
 	php_phongo_exception_ce = zend_register_internal_interface(&ce TSRMLS_CC);
 
 	return SUCCESS;

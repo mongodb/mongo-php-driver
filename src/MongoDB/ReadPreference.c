@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
 
-/* {{{ proto MongoDB\ReadPreference ReadPreference::__construct(integer $readPreference[, array $tagSets = array()])
+/* {{{ proto MongoDB\Driver\ReadPreference ReadPreference::__construct(integer $readPreference[, array $tagSets = array()])
    Constructs a new ReadPreference */
 PHP_METHOD(ReadPreference, __construct)
 {
@@ -95,7 +95,7 @@ PHP_METHOD(ReadPreference, __construct)
 /**
  * Value object for read preferences used in issuing commands and queries.
  */
-/* {{{ MongoDB\ReadPreference */
+/* {{{ MongoDB\Driver\ReadPreference */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, readPreference)
@@ -150,7 +150,7 @@ PHP_MINIT_FUNCTION(ReadPreference)
 	(void)module_number; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "ReadPreference", php_phongo_readpreference_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ReadPreference", php_phongo_readpreference_me);
 	ce.create_object = php_phongo_readpreference_create_object;
 	php_phongo_readpreference_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_readpreference_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

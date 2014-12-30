@@ -12,18 +12,18 @@ $database = "admin";
 
 $parsed = parse_url(MONGODB_STANDALONE_AUTH_URI);
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s", $username, $password, $parsed["host"], $parsed["port"], $database);
-$manager = new MongoDB\Manager($dsn);
+$manager = new MongoDB\Driver\Manager($dsn);
 
-$batch = new MongoDB\WriteBatch;
+$batch = new MongoDB\Driver\WriteBatch;
 
 $batch->insert(array("my" => "value"));
 throws(function() use($manager, $batch) {
     $retval = $manager->executeWriteBatch(NS, $batch);
-}, "MongoDB\AuthenticationException");
+}, "MongoDB\Driver\AuthenticationException");
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-OK: Got MongoDB\AuthenticationException
+OK: Got MongoDB\Driver\AuthenticationException
 ===DONE===

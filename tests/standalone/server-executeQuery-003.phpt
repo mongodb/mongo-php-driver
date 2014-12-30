@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Server::executeQuery() with modifiers and empty filter
+MongoDB\Driver\Server::executeQuery() with modifiers and empty filter
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
@@ -7,19 +7,19 @@ MongoDB\Server::executeQuery() with modifiers and empty filter
 require_once "tests/utils/basic.inc";
 
 $parsed = parse_url(MONGODB_URI);
-$server = new MongoDB\Server($parsed["host"], $parsed["port"]);
+$server = new MongoDB\Driver\Server($parsed["host"], $parsed["port"]);
 
 // load fixtures for test
-$batch = new \MongoDB\WriteBatch();
+$batch = new \MongoDB\Driver\WriteBatch();
 $batch->insert(array('_id' => 1, 'x' => 2, 'y' => 3));
 $batch->insert(array('_id' => 2, 'x' => 3, 'y' => 4));
 $batch->insert(array('_id' => 3, 'x' => 4, 'y' => 5));
 $server->executeWriteBatch(NS, $batch);
 
-$query = new MongoDB\Query(array(), array('modifiers' => array('$comment' => 'foo')));
+$query = new MongoDB\Driver\Query(array(), array('modifiers' => array('$comment' => 'foo')));
 $cursor = $server->executeQuery(NS, $query);
 
-var_dump($cursor instanceof MongoDB\QueryResult);
+var_dump($cursor instanceof MongoDB\Driver\QueryResult);
 var_dump($server == $cursor->getServer());
 var_dump(iterator_to_array($cursor));
 

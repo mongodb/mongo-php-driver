@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Server::executeWriteBatch()
+MongoDB\Driver\Server::executeWriteBatch()
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
@@ -7,9 +7,9 @@ MongoDB\Server::executeWriteBatch()
 require_once "tests/utils/basic.inc";
 
 $parsed = parse_url(MONGODB_URI);
-$server = new MongoDB\Server($parsed["host"], $parsed["port"]);
+$server = new MongoDB\Driver\Server($parsed["host"], $parsed["port"]);
 
-$batch = new MongoDB\WriteBatch();
+$batch = new MongoDB\Driver\WriteBatch();
 $batch->insert(array('_id' => 1, 'x' => 1));
 $batch->insert(array('_id' => 2, 'x' => 2));
 $batch->update(array('x' => 2), array('$set' => array('x' => 1)), array("limit" => 1, "upsert" => false));
@@ -24,7 +24,7 @@ echo "\n===> WriteResult\n";
 printWriteResult($result);
 
 echo "\n===> Collection\n";
-$cursor = $server->executeQuery(NS, new MongoDB\Query(array()));
+$cursor = $server->executeQuery(NS, new MongoDB\Driver\Query(array()));
 var_dump(iterator_to_array($cursor));
 
 ?>

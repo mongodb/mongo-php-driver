@@ -48,7 +48,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_manager_ce;
 
-/* {{{ proto MongoDB\Manager Manager::__construct(string $uri[, array $options = array()[, array $driverOptions = array()]])
+/* {{{ proto MongoDB\Driver\Manager Manager::__construct(string $uri[, array $options = array()[, array $driverOptions = array()]])
    Constructs a new Manager */
 PHP_METHOD(Manager, __construct)
 {
@@ -112,7 +112,7 @@ PHP_METHOD(Manager, __construct)
 	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);
 }
 /* }}} */
-/* {{{ proto MongoDB\CommandResult Manager::executeCommand(string $db, MongoDB\Command $command[, MongoDB\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\Driver\CommandResult Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a command */
 PHP_METHOD(Manager, executeCommand)
 {
@@ -139,7 +139,7 @@ PHP_METHOD(Manager, executeCommand)
 	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\QueryResult Manager::executeQuery(string $namespace, MongoDB\Query $zquery[, MongoDB\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\Driver\QueryResult Manager::executeQuery(string $namespace, MongoDB\Driver\Query $zquery[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a Query */
 PHP_METHOD(Manager, executeQuery)
 {
@@ -164,7 +164,7 @@ PHP_METHOD(Manager, executeQuery)
 	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\WriteResult Manager::executeWriteBatch(string $namespace, MongoDB\WriteBatch $zbatch[, MongoDB\WriteConcern $writeConcern = null])
+/* {{{ proto MongoDB\Driver\WriteResult Manager::executeWriteBatch(string $namespace, MongoDB\Driver\WriteBatch $zbatch[, MongoDB\Driver\WriteConcern $writeConcern = null])
    Executes a write operation batch (e.g. insert, update, delete) */
 PHP_METHOD(Manager, executeWriteBatch)
 {
@@ -191,7 +191,7 @@ PHP_METHOD(Manager, executeWriteBatch)
 	phongo_execute_write(intern->client, namespace, batch->batch, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), 0, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\WriteResult Manager::executeInsert(string $namespace, array|object $document[, MongoDB\WriteConcern $writeConcern = null])
+/* {{{ proto MongoDB\Driver\WriteResult Manager::executeInsert(string $namespace, array|object $document[, MongoDB\Driver\WriteConcern $writeConcern = null])
    Convenience method for single insert operation. */
 PHP_METHOD(Manager, executeInsert)
 {
@@ -220,7 +220,7 @@ PHP_METHOD(Manager, executeInsert)
 	bson_clear(&bson);
 }
 /* }}} */
-/* {{{ proto MongoDB\WriteResult Manager::executeUpdate(string $namespace, array|object $zquery, array|object $newObj[, array $updateOptions = array()[, MongoDB\WriteConcern $writeConcern = null]])
+/* {{{ proto MongoDB\Driver\WriteResult Manager::executeUpdate(string $namespace, array|object $zquery, array|object $newObj[, array $updateOptions = array()[, MongoDB\Driver\WriteConcern $writeConcern = null]])
    Convenience method for single update operation. */
 PHP_METHOD(Manager, executeUpdate)
 {
@@ -264,7 +264,7 @@ PHP_METHOD(Manager, executeUpdate)
 	bson_clear(&update);
 }
 /* }}} */
-/* {{{ proto MongoDB\WriteResult Manager::executeDelete(string $namespace, array|object $query[, array $deleteOptions = array()[, MongoDB\WriteConcern $writeConcern = null]])
+/* {{{ proto MongoDB\Driver\WriteResult Manager::executeDelete(string $namespace, array|object $query[, array $deleteOptions = array()[, MongoDB\Driver\WriteConcern $writeConcern = null]])
    Convenience method for single delete operation. */
 PHP_METHOD(Manager, executeDelete)
 {
@@ -330,7 +330,7 @@ PHP_METHOD(Manager, getServers)
  * Operation methods do not take socket-level options (e.g. socketTimeoutMS).
  * Those options should be specified during construction.
  */
-/* {{{ MongoDB\Manager */
+/* {{{ MongoDB\Driver\Manager */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, uri)
@@ -340,26 +340,26 @@ ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, db)
-	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Command, 0)
-	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\ReadPreference, 1)
+	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
+	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Query, 0)
-	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\ReadPreference, 1)
+	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Driver\\Query, 0)
+	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeWriteBatch, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, zbatch, MongoDB\\WriteBatch, 0)
-	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\WriteConcern, 1)
+	ZEND_ARG_OBJ_INFO(0, zbatch, MongoDB\\Driver\\WriteBatch, 0)
+	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeInsert, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_INFO(0, document)
-	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\WriteConcern, 1)
+	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeUpdate, 0, 0, 3)
@@ -367,14 +367,14 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeUpdate, 0, 0, 3)
 	ZEND_ARG_INFO(0, zquery)
 	ZEND_ARG_INFO(0, newObj)
 	ZEND_ARG_ARRAY_INFO(0, updateOptions, 1)
-	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\WriteConcern, 1)
+	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeDelete, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_INFO(0, query)
 	ZEND_ARG_ARRAY_INFO(0, deleteOptions, 1)
-	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\WriteConcern, 1)
+	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getServers, 0, 0, 0)
@@ -432,7 +432,7 @@ PHP_MINIT_FUNCTION(Manager)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "Manager", php_phongo_manager_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Manager", php_phongo_manager_me);
 	ce.create_object = php_phongo_manager_create_object;
 	php_phongo_manager_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_manager_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

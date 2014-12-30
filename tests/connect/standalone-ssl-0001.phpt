@@ -8,9 +8,9 @@ require_once "tests/utils/basic.inc";
 
 $dsn = sprintf("%s/?ssl=true", MONGODB_STANDALONE_SSL_URI);
 
-$mc = new MongoDB\Manager($dsn);
+$mc = new MongoDB\Driver\Manager($dsn);
 
-$batch = new MongoDB\WriteBatch;
+$batch = new MongoDB\Driver\WriteBatch;
 
 $batch->insert(array("my" => "value"));
 $batch->insert(array("my" => "value", "foo" => "bar"));

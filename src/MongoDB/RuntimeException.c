@@ -45,7 +45,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_runtimeexception_ce;
 
-/* {{{ MongoDB\RuntimeException */
+/* {{{ MongoDB\Driver\RuntimeException */
 
 static zend_function_entry php_phongo_runtimeexception_me[] = {
 	PHP_FE_END
@@ -61,7 +61,7 @@ PHP_MINIT_FUNCTION(RuntimeException)
 	(void)module_number;
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "RuntimeException", php_phongo_runtimeexception_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "RuntimeException", php_phongo_runtimeexception_me);
 	php_phongo_runtimeexception_ce = zend_register_internal_class_ex(&ce, spl_ce_RuntimeException, NULL TSRMLS_CC);
 	zend_class_implements(php_phongo_runtimeexception_ce TSRMLS_CC, 1, php_phongo_exception_ce);
 

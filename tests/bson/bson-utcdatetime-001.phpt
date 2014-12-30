@@ -6,11 +6,11 @@ BSON BSON\UTCDatetime #001
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
 $utcdatetime = new BSON\UTCDatetime(1416445411987);
 $result = $manager->executeInsert(NS, array('_id' => 1, 'x' => $utcdatetime));
-$query = new MongoDB\Query(array('_id' => 1));
+$query = new MongoDB\Driver\Query(array('_id' => 1));
 $cursor = $manager->executeQuery(NS, $query);
 $array = iterator_to_array($cursor);
 

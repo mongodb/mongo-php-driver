@@ -7,9 +7,9 @@ Sorting single field, descending
 <?php 
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
-$query = new MongoDB\Query(array(), array(
+$query = new MongoDB\Driver\Query(array(), array(
     'projection' => array('_id' => 0, 'username' => 1),
     'sort' => array('username' => -1),
 ));

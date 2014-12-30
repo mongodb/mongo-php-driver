@@ -50,7 +50,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_writebatch_ce;
 
-/* {{{ proto MongoDB\WriteBatch WriteBatch::__construct(boolean $ordered)
+/* {{{ proto MongoDB\Driver\WriteBatch WriteBatch::__construct(boolean $ordered)
    Constructs a new WriteBatch */
 PHP_METHOD(WriteBatch, __construct)
 {
@@ -237,7 +237,7 @@ PHP_METHOD(WriteBatch, count)
 /* }}} */
 
 
-/* {{{ MongoDB\WriteBatch */
+/* {{{ MongoDB\Driver\WriteBatch */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteBatch___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, ordered)
@@ -312,7 +312,7 @@ PHP_MINIT_FUNCTION(WriteBatch)
 	(void)module_number; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteBatch", php_phongo_writebatch_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteBatch", php_phongo_writebatch_me);
 	ce.create_object = php_phongo_writebatch_create_object;
 	php_phongo_writebatch_ce = zend_register_internal_class(&ce TSRMLS_CC);
 

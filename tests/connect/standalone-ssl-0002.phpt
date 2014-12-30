@@ -44,19 +44,19 @@ $opts = array(
 );
 $context = stream_context_create($opts);
 
-$mc = new MongoDB\Manager($dsn, array(), array("context" => $context, "debug" => STDERR));
+$mc = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context, "debug" => STDERR));
 
 
 echo throws(function() use($mc) {
-    $batch = new MongoDB\WriteBatch;
+    $batch = new MongoDB\Driver\WriteBatch;
     $batch->insert(array("my" => "value"));
     $retval = $mc->executeWriteBatch(NS, $batch);
-}, "MongoDB\\SSLConnectionException", "executeWriteBatch"), "\n";
+}, "MongoDB\\Driver\\SSLConnectionException", "executeWriteBatch"), "\n";
 
 
 echo "Changing to server\n";
 stream_context_set_option($context, "ssl", "CN_match", "server");
-$batch = new MongoDB\WriteBatch;
+$batch = new MongoDB\Driver\WriteBatch;
 $batch->insert(array("my" => "value"));
 $retval = $mc->executeWriteBatch(NS, $batch);
 printf("Inserted: %d\n", $retval->getInsertedCount());
@@ -71,7 +71,7 @@ printf("Certificate valid (not expired): %s\n", isValid($cert) ? "OK" : "NO");
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got MongoDB\SSLConnectionException thrown from executeWriteBatch
+OK: Got MongoDB\Driver\SSLConnectionException thrown from executeWriteBatch
 %s
 Changing to server
 Inserted: 1

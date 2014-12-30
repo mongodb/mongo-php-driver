@@ -45,7 +45,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_cursor_ce;
 
-/* {{{ proto MongoDB\Cursor Cursor::__construct(MongoDB\Server $server, MongoDB\CursorId $cursorId, array $firstBatch)
+/* {{{ proto MongoDB\Driver\Cursor Cursor::__construct(MongoDB\Driver\Server $server, MongoDB\Driver\CursorId $cursorId, array $firstBatch)
    Construct a new Cursor */
 PHP_METHOD(Cursor, __construct)
 {
@@ -67,7 +67,7 @@ PHP_METHOD(Cursor, __construct)
 
 }
 /* }}} */
-/* {{{ proto MongoDB\CursorId Cursor::getId()
+/* {{{ proto MongoDB\Driver\CursorId Cursor::getId()
    Returns the CursorId */
 PHP_METHOD(Cursor, getId)
 {
@@ -87,7 +87,7 @@ PHP_METHOD(Cursor, getId)
 	php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->cursor) TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Server Cursor::getServer()
+/* {{{ proto MongoDB\Driver\Server Cursor::getServer()
    Returns the Server object that this cursor is attached to */
 PHP_METHOD(Cursor, getServer)
 {
@@ -297,11 +297,11 @@ PHP_METHOD(Cursor, valid)
  * be extended to provide custom Cursor behaviors (e.g. return documents as
  * BSON, hydrated classes, stdClass objects).
  */
-/* {{{ MongoDB\Cursor */
+/* {{{ MongoDB\Driver\Cursor */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Cursor___construct, 0, 0, 3)
-	ZEND_ARG_OBJ_INFO(0, server, MongoDB\\Server, 0)
-	ZEND_ARG_OBJ_INFO(0, cursorId, MongoDB\\CursorId, 0)
+	ZEND_ARG_OBJ_INFO(0, server, MongoDB\\Driver\\Server, 0)
+	ZEND_ARG_OBJ_INFO(0, cursorId, MongoDB\\Driver\\CursorId, 0)
 	ZEND_ARG_ARRAY_INFO(0, firstBatch, 0)
 ZEND_END_ARG_INFO();
 
@@ -401,7 +401,7 @@ PHP_MINIT_FUNCTION(Cursor)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "Cursor", php_phongo_cursor_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Cursor", php_phongo_cursor_me);
 	ce.create_object = php_phongo_cursor_create_object;
 	php_phongo_cursor_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_cursor_ce->get_iterator = phongo_cursor_get_iterator;

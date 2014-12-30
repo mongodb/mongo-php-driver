@@ -34,7 +34,7 @@ $parsed = parse_url(MONGODB_STANDALONE_X509_URI);
 $adminuser = "root";
 $adminpass = "toor";
 $dsn = sprintf("mongodb://%s:%s@%s:%d/admin?ssl=true", $adminuser, $adminpass, $parsed["host"], $parsed["port"]);
-$adminmanager = new MongoDB\Manager($dsn, array(), array("context" => $context, "debug" => STDERR));
+$adminmanager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context, "debug" => STDERR));
 
 $certusername = "C=US,ST=New York,L=New York City,O=MongoDB,OU=KernelUser,CN=client";
 
@@ -45,7 +45,7 @@ $cmd = array(
 );
 
 try {
-    $command = new MongoDB\Command($cmd);
+    $command = new MongoDB\Driver\Command($cmd);
     $result = $adminmanager->executeCommand('$external', $command);
     echo "User Created\n";
 } catch(Exception $e) {
@@ -57,24 +57,24 @@ try {
     $parsed = parse_url(MONGODB_STANDALONE_X509_URI);
     $dsn = sprintf("mongodb://%s:%d/%s?ssl=true&authMechanism=MONGODB-X509", $parsed["host"], $parsed["port"], DATABASE_NAME);
 
-    $manager = new MongoDB\Manager($dsn, array(), array("context" => $context, "debug" => STDERR));
+    $manager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context, "debug" => STDERR));
 
-    $batch = new MongoDB\WriteBatch();
+    $batch = new MongoDB\Driver\WriteBatch();
     $batch->insert(array("very" => "important"));
     $manager->executeWriteBatch(NS, $batch);
-    $query = new MongoDB\Query(array("very" => "important"));
+    $query = new MongoDB\Driver\Query(array("very" => "important"));
     $cursor = $manager->executeQuery(NS, $query);
     foreach($cursor as $document) {
         var_dump($document["very"]);
     }
-    $command = new MongoDB\Command(array("drop" => COLLECTION_NAME));
+    $command = new MongoDB\Driver\Command(array("drop" => COLLECTION_NAME));
     $result = $manager->executeCommand(DATABASE_NAME, $command);
 } catch(Exception $e) {
     echo get_class($e), ": ", $e->getMessage(), "\n";
 }
 
 try {
-    $command = new MongoDB\Command(array("dropUser" => $certusername));
+    $command = new MongoDB\Driver\Command(array("dropUser" => $certusername));
     $result = $adminmanager->executeCommand('$external', $command);
     echo "User dropped\n";
 } catch(Exception $e) {

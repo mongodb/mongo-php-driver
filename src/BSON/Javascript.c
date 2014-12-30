@@ -45,7 +45,7 @@
 PHONGO_API zend_class_entry *php_phongo_javascript_ce;
 
 
-/* {{{ proto MongoDB\Javascript Javascript::__construct(string $javascript[, array|object $document])
+/* {{{ proto MongoDB\Driver\Javascript Javascript::__construct(string $javascript[, array|object $document])
  * The string is JavaScript code. The document is a mapping from identifiers to values, representing the scope in which the string should be evaluated
  * NOTE: eJSON does not support this type :( */
 PHP_METHOD(Javascript, __construct)

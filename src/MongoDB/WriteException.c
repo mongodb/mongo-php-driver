@@ -45,7 +45,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_writeexception_ce;
 
-/* {{{ proto MongoDB\WriteResult WriteException::getWriteResult()
+/* {{{ proto MongoDB\Driver\WriteResult WriteException::getWriteResult()
    Returns the WriteResult from the failed write operation. */
 PHP_METHOD(WriteException, getWriteResult)
 {
@@ -71,7 +71,7 @@ PHP_METHOD(WriteException, getWriteResult)
 /**
  * Value object for write concern used in issuing write operations.
  */
-/* {{{ MongoDB\WriteException */
+/* {{{ MongoDB\Driver\WriteException */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteException_getWriteResult, 0, 0, 0)
 ZEND_END_ARG_INFO();
@@ -91,7 +91,7 @@ PHP_MINIT_FUNCTION(WriteException)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteException", php_phongo_writeexception_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteException", php_phongo_writeexception_me);
 	php_phongo_writeexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce, NULL TSRMLS_CC);
 
 	zend_declare_property_null(php_phongo_writeexception_ce, ZEND_STRL("writeResult"), ZEND_ACC_PROTECTED TSRMLS_CC);

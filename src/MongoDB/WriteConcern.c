@@ -46,7 +46,7 @@ PHONGO_API zend_class_entry *php_phongo_writeconcern_ce;
 
 #define PHONGO_WRITE_CONCERN_W_MAJORITY "majority"
 
-/* {{{ proto MongoDB\WriteConcern WriteConcern::__construct(string $wstring[, integer $wtimeout[, boolean $journal[, boolean $fsync]]])
+/* {{{ proto MongoDB\Driver\WriteConcern WriteConcern::__construct(string $wstring[, integer $wtimeout[, boolean $journal[, boolean $fsync]]])
    Constructs a new WriteConcern */
 PHP_METHOD(WriteConcern, __construct)
 {
@@ -104,7 +104,7 @@ PHP_METHOD(WriteConcern, __construct)
 /**
  * Value object for write concern used in issuing write operations.
  */
-/* {{{ MongoDB\WriteConcern */
+/* {{{ MongoDB\Driver\WriteConcern */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, wstring)
@@ -159,7 +159,7 @@ PHP_MINIT_FUNCTION(WriteConcern)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteConcern", php_phongo_writeconcern_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcern", php_phongo_writeconcern_me);
 	ce.create_object = php_phongo_writeconcern_create_object;
 	php_phongo_writeconcern_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeconcern_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

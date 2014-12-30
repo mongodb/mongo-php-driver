@@ -7,9 +7,9 @@ Sorting single field, ascending, using the Cursor Iterator
 <?php 
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
-$query = new MongoDB\Query(array(), array(
+$query = new MongoDB\Driver\Query(array(), array(
     'projection' => array('_id' => 0, 'username' => 1),
     'sort' => array('username' => 1),
 ));
@@ -27,8 +27,8 @@ foreach ($cursor as $document) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-string(19) "MongoDB\QueryResult"
-string(14) "MongoDB\Cursor"
+string(26) "MongoDB\Driver\QueryResult"
+string(21) "MongoDB\Driver\Cursor"
 abernathy.audrey
 alda.murray
 andreanne.steuber

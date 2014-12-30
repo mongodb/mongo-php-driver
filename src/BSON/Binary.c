@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_binary_ce;
 
-/* {{{ proto MongoDB\Binary Binary::__construct(string $data, int $subtype)
+/* {{{ proto MongoDB\Driver\Binary Binary::__construct(string $data, int $subtype)
    Construct a new BSON Binary type */
 PHP_METHOD(Binary, __construct)
 {

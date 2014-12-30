@@ -12,9 +12,9 @@ $database = "admin";
 
 $parsed = parse_url(MONGODB_STANDALONE_AUTH_URI);
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s", $username, $password, $parsed["host"], $parsed["port"], $database);
-$mc = new MongoDB\Manager($dsn);
+$mc = new MongoDB\Driver\Manager($dsn);
 
-$batch = new MongoDB\WriteBatch;
+$batch = new MongoDB\Driver\WriteBatch;
 
 $batch->insert(array("my" => "value"));
 $batch->insert(array("my" => "value", "foo" => "bar"));

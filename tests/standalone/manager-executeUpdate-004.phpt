@@ -1,12 +1,12 @@
 --TEST--
-MongoDB\Manager::executeUpdate() multiple documents with upsert
+MongoDB\Driver\Manager::executeUpdate() multiple documents with upsert
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
 $result = $manager->executeUpdate(
     NS,
@@ -19,7 +19,7 @@ echo "\n===> WriteResult\n";
 printWriteResult($result);
 
 echo "\n===> Collection\n";
-$cursor = $manager->executeQuery(NS, new MongoDB\Query(array()));
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
 var_dump(iterator_to_array($cursor));
 
 ?>

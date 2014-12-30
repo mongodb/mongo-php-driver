@@ -12,13 +12,13 @@ $database = "admin";
 
 $parsed = parse_url(MONGODB_STANDALONE_PLAIN_URI);
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s", $username, $password, $parsed["host"], $parsed["port"], $database);
-$adminmanager = new MongoDB\Manager($dsn);
+$adminmanager = new MongoDB\Driver\Manager($dsn);
 
 $cmd = array(
     "createUser" => "bugs",
     "roles" => [["role" => "readWrite", "db" => DATABASE_NAME]],
 );
-$command = new MongoDB\Command($cmd);
+$command = new MongoDB\Driver\Command($cmd);
 try {
     $result = $adminmanager->executeCommand('$external', $command);
     echo "User Created\n";
@@ -33,18 +33,18 @@ $password = "password";
 $database = '$external';
 
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s?authMechanism=PLAIN", $username, $password, $parsed["host"], $parsed["port"], $database);
-$manager = new MongoDB\Manager($dsn);
+$manager = new MongoDB\Driver\Manager($dsn);
 
-$batch = new MongoDB\WriteBatch();
+$batch = new MongoDB\Driver\WriteBatch();
 $batch->insert(array("very" => "important"));
 try {
     $manager->executeWriteBatch(NS, $batch);
-    $query = new MongoDB\Query(array("very" => "important"));
+    $query = new MongoDB\Driver\Query(array("very" => "important"));
     $cursor = $manager->executeQuery(NS, $query);
     foreach($cursor as $document) {
         var_dump($document["very"]);
     }
-    $cmd = new MongoDB\Command(array("drop" => COLLECTION_NAME));
+    $cmd = new MongoDB\Driver\Command(array("drop" => COLLECTION_NAME));
     $result = $manager->executeCommand(DATABASE_NAME, $cmd);
 } catch(Exception $e) {
     printf("Caught %s: %s\n", get_class($e), $e->getMessage());
@@ -52,7 +52,7 @@ try {
 $cmd = array(
     "dropUser" => "bugs",
 );
-$command = new MongoDB\Command($cmd);
+$command = new MongoDB\Driver\Command($cmd);
 try {
     $result = $adminmanager->executeCommand('$external', $command);
     echo "User deleted\n";

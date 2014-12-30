@@ -1,14 +1,14 @@
 --TEST--
-MongoDB\Manager::executeWriteBatch() with upserted ids
+MongoDB\Driver\Manager::executeWriteBatch() with upserted ids
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
-$batch = new MongoDB\WriteBatch(false);
+$batch = new MongoDB\Driver\WriteBatch(false);
 $batch->update(array('x' => 'foo'), array('$set' => array('y' => 'foo')), array('upsert' => true));
 $batch->update(array('x' => 'bar'), array('$set' => array('y' => 'bar')), array('upsert' => true));
 $batch->update(array('x' => 'foo'), array('$set' => array('y' => 'bar')));
@@ -19,7 +19,7 @@ echo "\n===> WriteResult\n";
 printWriteResult($result);
 
 echo "\n===> Collection\n";
-$cursor = $manager->executeQuery(NS, new MongoDB\Query(array()));
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
 var_dump(iterator_to_array($cursor));
 
 ?>

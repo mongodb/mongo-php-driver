@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Manager::executeUpdate() multiple documents with no upsert
+MongoDB\Driver\Manager::executeUpdate() multiple documents with no upsert
 --SKIPIF--
 <?php if (getenv("TRAVIS")) exit("skip This oddly enough fails on travis and I cannot figureout why") ?>
 <?php require "tests/utils/basic-skipif.inc" ?>
@@ -7,7 +7,7 @@ MongoDB\Manager::executeUpdate() multiple documents with no upsert
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
 // load fixtures for test
 $manager->executeInsert(NS, array('_id' => 1, 'x' => 1));
@@ -25,7 +25,7 @@ echo "\n===> WriteResult\n";
 printWriteResult($result);
 
 echo "\n===> Collection\n";
-$cursor = $manager->executeQuery(NS, new MongoDB\Query(array()));
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
 var_dump(iterator_to_array($cursor));
 
 ?>

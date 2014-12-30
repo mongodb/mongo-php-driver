@@ -1,14 +1,14 @@
 --TEST--
-MongoDB\Write\Batch: #001 Variety Batch
+MongoDB\Driver\Write\Batch: #001 Variety Batch
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php 
 require_once "tests/utils/basic.inc";
 
-$mc = new MongoDB\Manager(MONGODB_URI);
+$mc = new MongoDB\Driver\Manager(MONGODB_URI);
 
-$batch = new MongoDB\WriteBatch;
+$batch = new MongoDB\Driver\WriteBatch;
 
 $batch->insert(array("my" => "value"));
 $batch->insert(array("my" => "value", "foo" => "bar"));

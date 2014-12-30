@@ -1,17 +1,17 @@
 --TEST--
-MongoDB\Manager::executeCommand()
+MongoDB\Driver\Manager::executeCommand()
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
-$command = new MongoDB\Command(array('ping' => 1));
+$command = new MongoDB\Driver\Command(array('ping' => 1));
 $result = $manager->executeCommand(DATABASE_NAME, $command);
 
-var_dump($result instanceof MongoDB\CommandResult);
+var_dump($result instanceof MongoDB\Driver\CommandResult);
 
 echo "Dumping response document:\n";
 var_dump($result->getResponseDocument());
@@ -21,7 +21,7 @@ var_dump(iterator_to_array($result));
 
 $server = $result->getServer();
 
-var_dump($server instanceof MongoDB\Server);
+var_dump($server instanceof MongoDB\Driver\Server);
 var_dump($server->getHost());
 var_dump($server->getPort());
 

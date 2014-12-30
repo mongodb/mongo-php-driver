@@ -7,7 +7,7 @@
 $document = array("hello" => "world");
 
 /* We want to gurantee all writes to the majority of our nodes */
-$w = MongoDB\WriteConcern::MAJORITY;
+$w = MongoDB\Driver\WriteConcern::MAJORITY;
 
 /* But don't be waiting on me fore more then 1000ms (1sec),
  * I have an application to run! */
@@ -17,12 +17,12 @@ $wtimeout = 1000;
 $journal = $fsync = false;
 
 /* Construct the WriteConcern object from our options */
-$wc = new MongoDB\WriteConcern($w, $wtimeout, $journal, $fsync);
+$wc = new MongoDB\Driver\WriteConcern($w, $wtimeout, $journal, $fsync);
 
 
 /* We prefer to read from the secondary, but are OK to read from the primary
  * if we can't find any secondaries */
-$prefer = MongoDB\ReadPreference::RP_SECONDARY_PREFERRED;
+$prefer = MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED;
 $tags = array(
 	/* Prefer the West Coast datacenter in Iceland */
 	array("country" => "iceland", "datacenter" => "west"),
@@ -35,11 +35,11 @@ $tags = array(
 );
 
 /* Construct the ReadPreference object from our options */
-$rp = new MongoDB\ReadPreference($prefer, $tags);
+$rp = new MongoDB\Driver\ReadPreference($prefer, $tags);
 
 
 /* Construct the MongoDB Manager */
-$manager = new MongoDB\Manager("mongodb://localhost:27017");
+$manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
 
 ?>
 ```
@@ -53,7 +53,7 @@ try {
 	/* Full namespace as the first argumnet (databasename.collectionname),
 	 * and the document to insert as the second.
 	 *
-	 * Returns MongoDB\WriteResult on success, throws exception on failure
+	 * Returns MongoDB\Driver\WriteResult on success, throws exception on failure
 	 */
 	$result = $manager->executeInsert("db.collection", $document, $wc);
 } catch(Exception $e) {
@@ -70,12 +70,12 @@ try {
 <?php
 
 /* Construct an empty find query ("select all") */
-$query = new MongoDB\Query(array());
+$query = new MongoDB\Driver\Query(array());
 
 try {
 	/* Full namespace as the first argument (dbname.collname), and the query object
 	 * to execute as the second.
-	 * Returns MongoDB\QueryResult on success, throws exception on failure
+	 * Returns MongoDB\Driver\QueryResult on success, throws exception on failure
 	 */
 	$cursor = $manager->executeQuery("db.collection", $query, $rp);
 
@@ -112,7 +112,7 @@ $options = array("limit" => 1, "upsert" => false);
 try {
 	/* Full namespace as the first argument (dbname.collname), the search criteria
 	 * second.
-	 * Returns MongoDB\WriteResult on success, throws exception on failure
+	 * Returns MongoDB\Driver\WriteResult on success, throws exception on failure
 	 */
 	$result = $manager->executeUpdate("db.collection", $where, $set, $options, $wc);
 	var_dump($result);
@@ -141,7 +141,7 @@ try {
 	/*
 	/* Full namespace as the first argument (dbname.collname), the search criteria
 	 * second.
-	 * Returns MongoDB\WriteResult on success, throws exception on failure
+	 * Returns MongoDB\Driver\WriteResult on success, throws exception on failure
 	 */
 	$result = $manager->executeDelete("db.collection", $where, $options, $wc);
 	var_dump($result);

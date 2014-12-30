@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_commandresult_ce;
 
-/* {{{ proto MongoDB\CommandResult CommandResult::__construct(MongoDB\Server $server, array|object $responseDocument)
+/* {{{ proto MongoDB\Driver\CommandResult CommandResult::__construct(MongoDB\Driver\Server $server, array|object $responseDocument)
    Constructs a new CommandResult */
 PHP_METHOD(CommandResult, __construct)
 {
@@ -65,7 +65,7 @@ PHP_METHOD(CommandResult, __construct)
 
 }
 /* }}} */
-/* {{{ proto MongoDB\Cursor CommandResult::getIterator()
+/* {{{ proto MongoDB\Driver\Cursor CommandResult::getIterator()
    Returns the Cursor iterator */
 PHP_METHOD(CommandResult, getIterator)
 {
@@ -157,7 +157,7 @@ PHP_METHOD(CommandResult, getResponseDocument)
 	}
 }
 /* }}} */
-/* {{{ proto MongoDB\Server CommandResult::getServer()
+/* {{{ proto MongoDB\Driver\Server CommandResult::getServer()
    Returns the Server object that this cursor is attached to */
 PHP_METHOD(CommandResult, getServer)
 {
@@ -191,10 +191,10 @@ PHP_METHOD(CommandResult, getServer)
  * For commands that do not support cursors (i.e. most commands), getIterator()
  * should return a cursor consisting of a single document, the command result.
  */
-/* {{{ MongoDB\CommandResult */
+/* {{{ MongoDB\Driver\CommandResult */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_CommandResult___construct, 0, 0, 2)
-	ZEND_ARG_OBJ_INFO(0, server, MongoDB\\Server, 0)
+	ZEND_ARG_OBJ_INFO(0, server, MongoDB\\Driver\\Server, 0)
 	ZEND_ARG_INFO(0, responseDocument)
 ZEND_END_ARG_INFO();
 
@@ -265,7 +265,7 @@ PHP_MINIT_FUNCTION(CommandResult)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "CommandResult", php_phongo_commandresult_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "CommandResult", php_phongo_commandresult_me);
 	ce.create_object = php_phongo_commandresult_create_object;
 	php_phongo_commandresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_commandresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

@@ -28,7 +28,7 @@ $jonpall = array(
  */
 $ordered = true;
 
-$batch = new MongoDB\WriteBatch($ordered);
+$batch = new MongoDB\Driver\WriteBatch($ordered);
 
 ?>
 ```
@@ -104,8 +104,8 @@ $batch->delete(array("_id" => $jonpall_id), array("limit" => 1));
 
 ```php
 <?php
-$manager = new MongoDB\Manager("mongodb://localhost:27017");
-$wc      = new MongoDB\WriteConcern(MongoDB\WriteConcern::MAJORITY);
+$manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
+$wc      = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY);
 $result  = $manager->executeWriteBatch("db.collection", $batch, $wc);
 
 printf("insertedCount: %d\n", $result->getInsertedCount());
@@ -118,7 +118,7 @@ foreach ($result->getUpsertedIds() as $index => $id) {
 	printf("upsertedId: '%s', index: %d\n", $id, $index);
 }
 
-$query  = new MongoDB\Query(array("viking" => false));
+$query  = new MongoDB\Driver\Query(array("viking" => false));
 $cursor = $manager->executeQuery("db.collection", $query);
 var_dump(iterator_to_array($cursor));
 

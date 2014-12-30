@@ -111,7 +111,7 @@ PHP_METHOD(WriteError, getMessage)
 /**
  * Value object for a write error (e.g. duplicate key).
  */
-/* {{{ MongoDB\WriteError */
+/* {{{ MongoDB\Driver\WriteError */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getCode, 0, 0, 0)
 ZEND_END_ARG_INFO();
@@ -170,7 +170,7 @@ PHP_MINIT_FUNCTION(WriteError)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteError", php_phongo_writeerror_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteError", php_phongo_writeerror_me);
 	ce.create_object = php_phongo_writeerror_create_object;
 	php_phongo_writeerror_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeerror_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

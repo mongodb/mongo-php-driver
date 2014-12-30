@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Server::executeCommand()
+MongoDB\Driver\Server::executeCommand()
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
@@ -7,12 +7,12 @@ MongoDB\Server::executeCommand()
 require_once "tests/utils/basic.inc";
 
 $parsed = parse_url(MONGODB_URI);
-$server = new MongoDB\Server($parsed["host"], $parsed["port"]);
+$server = new MongoDB\Driver\Server($parsed["host"], $parsed["port"]);
 
-$command = new MongoDB\Command(array('isMaster' => 1));
+$command = new MongoDB\Driver\Command(array('isMaster' => 1));
 $result = $server->executeCommand(DATABASE_NAME, $command);
 
-var_dump($result instanceof MongoDB\CommandResult);
+var_dump($result instanceof MongoDB\Driver\CommandResult);
 
 $responseDocument = $result->getResponseDocument();
 

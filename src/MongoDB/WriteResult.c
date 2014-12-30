@@ -180,7 +180,7 @@ PHP_METHOD(WriteResult, getInfo)
 	array_init(return_value);
 }
 /* }}} */
-/* {{{ proto MongoDB\Server WriteResult::getServer()
+/* {{{ proto MongoDB\Driver\Server WriteResult::getServer()
    Returns the Server from which the result originated */
 PHP_METHOD(WriteResult, getServer)
 {
@@ -287,7 +287,7 @@ PHP_METHOD(WriteResult, getWriteErrors)
  * This class may be constructed internally if it will encapsulate a libmongoc
  * data structure.
  */
-/* {{{ MongoDB\WriteResult */
+/* {{{ MongoDB\Driver\WriteResult */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getInsertedCount, 0, 0, 0)
 ZEND_END_ARG_INFO();
@@ -389,7 +389,7 @@ PHP_MINIT_FUNCTION(WriteResult)
 	(void)module_number; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteResult", php_phongo_writeresult_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteResult", php_phongo_writeresult_me);
 	ce.create_object = php_phongo_writeresult_create_object;
 	php_phongo_writeresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

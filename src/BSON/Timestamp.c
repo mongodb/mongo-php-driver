@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_timestamp_ce;
 
-/* {{{ proto MongoDB\Timestamp Timestamp::__construct(integer $increment, int $timestamp)
+/* {{{ proto MongoDB\Driver\Timestamp Timestamp::__construct(integer $increment, int $timestamp)
    Construct a new BSON Timestamp (4bytes increment, 4bytes timestamp) */
 PHP_METHOD(Timestamp, __construct)
 {

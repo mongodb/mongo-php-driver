@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_cursorid_ce;
 
-/* {{{ proto MongoDB\CursorId CursorId::__construct(string $id)
+/* {{{ proto MongoDB\Driver\CursorId CursorId::__construct(string $id)
    Construct a new CursorId */
 PHP_METHOD(CursorId, __construct)
 {
@@ -92,7 +92,7 @@ PHP_METHOD(CursorId, __toString)
  * This is useful for compatibility with 32-bit platforms, and also allows
  * Cursor constructors to type-hint against a class.
  */
-/* {{{ MongoDB\CursorId */
+/* {{{ MongoDB\Driver\CursorId */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, id)
@@ -145,7 +145,7 @@ PHP_MINIT_FUNCTION(CursorId)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "CursorId", php_phongo_cursorid_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "CursorId", php_phongo_cursorid_me);
 	ce.create_object = php_phongo_cursorid_create_object;
 	php_phongo_cursorid_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_cursorid_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

@@ -48,7 +48,7 @@ PHONGO_API zend_class_entry *php_phongo_server_ce;
 zend_object_handlers php_phongo_handler_server;
 
 
-/* {{{ proto MongoDB\Server Server::__construct(string $host, integer $port[, array $options = array()[, array $driverOptions = array()]])
+/* {{{ proto MongoDB\Driver\Server Server::__construct(string $host, integer $port[, array $options = array()[, array $driverOptions = array()]])
    Constructs a new Server */
 PHP_METHOD(Server, __construct)
 {
@@ -99,7 +99,7 @@ PHP_METHOD(Server, __construct)
 	mongoc_uri_destroy(uri);
 }
 /* }}} */
-/* {{{ proto MongoDB\CommandResult Server::executeCommand(string $db, MongoDB\Command $command)
+/* {{{ proto MongoDB\Driver\CommandResult Server::executeCommand(string $db, MongoDB\Driver\Command $command)
    Executes a command on this server */
 PHP_METHOD(Server, executeCommand)
 {
@@ -125,7 +125,7 @@ PHP_METHOD(Server, executeCommand)
 	phongo_execute_command(intern->client, db, cmd->bson, NULL, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\QueryResult Server::executeQuery(string $namespace, MongoDB\Query $zquery)
+/* {{{ proto MongoDB\Driver\QueryResult Server::executeQuery(string $namespace, MongoDB\Driver\Query $zquery)
    Executes a Query */
 PHP_METHOD(Server, executeQuery)
 {
@@ -149,7 +149,7 @@ PHP_METHOD(Server, executeQuery)
 	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), NULL, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\WriteResult Server::executeWriteBatch(string $namespace, MongoDB\WriteBatch $zbatch)
+/* {{{ proto MongoDB\Driver\WriteResult Server::executeWriteBatch(string $namespace, MongoDB\Driver\WriteBatch $zbatch)
    Executes a write operation batch (e.g. insert, update, delete) */
 PHP_METHOD(Server, executeWriteBatch)
 {
@@ -360,7 +360,7 @@ PHP_METHOD(Server, isPassive)
  * Operation methods do not take socket-level options (e.g. socketTimeoutMS).
  * Those options should be specified during construction.
  */
-/* {{{ MongoDB\Server */
+/* {{{ MongoDB\Driver\Server */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, host)
@@ -371,17 +371,17 @@ ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, db)
-	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Command, 0)
+	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Query, 0)
+	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Driver\\Query, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeWriteBatch, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, zbatch, MongoDB\\WriteBatch, 0)
+	ZEND_ARG_OBJ_INFO(0, zbatch, MongoDB\\Driver\\WriteBatch, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_getHost, 0, 0, 0)
@@ -493,7 +493,7 @@ PHP_MINIT_FUNCTION(Server)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "Server", php_phongo_server_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Server", php_phongo_server_me);
 	ce.create_object = php_phongo_server_create_object;
 	php_phongo_server_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_server_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

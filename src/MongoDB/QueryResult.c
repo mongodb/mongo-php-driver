@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_queryresult_ce;
 
-/* {{{ proto MongoDB\QueryResult QueryResult::__construct(MongoDB\Server $server, MongoDB\CursorId $cursorId, array $firstBatch)
+/* {{{ proto MongoDB\Driver\QueryResult QueryResult::__construct(MongoDB\Driver\Server $server, MongoDB\Driver\CursorId $cursorId, array $firstBatch)
    Construct a new QueryResult */
 PHP_METHOD(QueryResult, __construct)
 {
@@ -67,7 +67,7 @@ PHP_METHOD(QueryResult, __construct)
 
 }
 /* }}} */
-/* {{{ proto MongoDB\Cursor QueryResult::getIterator()
+/* {{{ proto MongoDB\Driver\Cursor QueryResult::getIterator()
    Returns the Cursor iterator */
 PHP_METHOD(QueryResult, getIterator)
 {
@@ -136,7 +136,7 @@ PHP_METHOD(QueryResult, setIteratorInitCallback)
 
 }
 /* }}} */
-/* {{{ proto MongoDB\Server QueryResult::getServer()
+/* {{{ proto MongoDB\Driver\Server QueryResult::getServer()
    Returns the Server object that this cursor is attached to */
 PHP_METHOD(QueryResult, getServer)
 {
@@ -168,11 +168,11 @@ PHP_METHOD(QueryResult, getServer)
  * on the server but before a Cursor is created in the driver. This allows the
  * Cursor implementation to be customized.
  */
-/* {{{ MongoDB\QueryResult */
+/* {{{ MongoDB\Driver\QueryResult */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_QueryResult___construct, 0, 0, 3)
-	ZEND_ARG_OBJ_INFO(0, server, MongoDB\\Server, 0)
-	ZEND_ARG_OBJ_INFO(0, cursorId, MongoDB\\CursorId, 0)
+	ZEND_ARG_OBJ_INFO(0, server, MongoDB\\Driver\\Server, 0)
+	ZEND_ARG_OBJ_INFO(0, cursorId, MongoDB\\Driver\\CursorId, 0)
 	ZEND_ARG_ARRAY_INFO(0, firstBatch, 0)
 ZEND_END_ARG_INFO();
 
@@ -240,7 +240,7 @@ PHP_MINIT_FUNCTION(QueryResult)
 	(void)module_number; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "QueryResult", php_phongo_queryresult_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "QueryResult", php_phongo_queryresult_me);
 	ce.create_object = php_phongo_queryresult_create_object;
 	php_phongo_queryresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_queryresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

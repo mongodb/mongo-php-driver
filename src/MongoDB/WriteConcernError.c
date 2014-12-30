@@ -114,7 +114,7 @@ PHP_METHOD(WriteConcernError, getMessage)
 /**
  * Value object for a write concern error.
  */
-/* {{{ MongoDB\WriteConcernError */
+/* {{{ MongoDB\Driver\WriteConcernError */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcernError_getCode, 0, 0, 0)
 ZEND_END_ARG_INFO();
@@ -177,7 +177,7 @@ PHP_MINIT_FUNCTION(WriteConcernError)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "WriteConcernError", php_phongo_writeconcernerror_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcernError", php_phongo_writeconcernerror_me);
 	ce.create_object = php_phongo_writeconcernerror_create_object;
 	php_phongo_writeconcernerror_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeconcernerror_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

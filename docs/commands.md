@@ -6,17 +6,17 @@
 <?php
 
 /* Construct the MongoDB Manager */
-$manager = new MongoDB\Manager("mongodb://localhost:27017");
+$manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
 
 
-$listdatabases = new MongoDB\Command(array("listDatabases" => 1));
+$listdatabases = new MongoDB\Driver\Command(array("listDatabases" => 1));
 $retval        = $manager->executeCommand("admin", $listdatabases);
 $databases     = $retval->getResponseDocument();
 
 foreach($databases["databases"] as $database) {
 	echo $database->name, "\n";
 
-	$listcollections = new MongoDB\Command(array("listCollections" => 1));
+	$listcollections = new MongoDB\Driver\Command(array("listCollections" => 1));
 	$retval          = $manager->executeCommand($database->name, $listcollections);
 	$collections     = $retval->getResponseDocument();
 	foreach($collections["collections"] as $collection) {
@@ -34,7 +34,7 @@ foreach($databases["databases"] as $database) {
 
 
 /* Construct the MongoDB Manager */
-$manager = new MongoDB\Manager("mongodb://localhost:27017");
+$manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
 
 
 $command = array(
@@ -48,7 +48,7 @@ $command = array(
 	),
 	"writeConcern" => array("w" => "majority"),
 );
-$createuser = new MongoDB\Command($command);
+$createuser = new MongoDB\Driver\Command($command);
 
 try {
 	$result     = $manager->executeCommand("admin", $createuser);
@@ -70,9 +70,9 @@ try {
 <?php
 
 /* Some commands, like count, dbStats, aggregate, ... can be executed on secondaries.
- * Just like with normal queries, an instance of MongoDB\ReadPreference needs to
+ * Just like with normal queries, an instance of MongoDB\Driver\ReadPreference needs to
  * be constructed to prefer certain servers over others */
-$prefer = MongoDB\ReadPreference::RP_SECONDARY_PREFERRED;
+$prefer = MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED;
 $tags = array(
 	/* Prefer the West Coast datacenter in Iceland */
 	array("country" => "iceland", "datacenter" => "west"),
@@ -85,13 +85,13 @@ $tags = array(
 );
 
 /* Construct the ReadPreference object from our options */
-$rp = new MongoDB\ReadPreference($prefer, $tags);
+$rp = new MongoDB\Driver\ReadPreference($prefer, $tags);
 
 /* Construct the MongoDB Manager */
-$manager = new MongoDB\Manager("mongodb://localhost:27017");
+$manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
 
 $query    = array("citizen" => "Iceland");
-$count    = new MongoDB\Command(array("count" => "collection", "query" => $query));
+$count    = new MongoDB\Driver\Command(array("count" => "collection", "query" => $query));
 $retval   = $manager->executeCommand("db", $count, $rp);
 $response = $retval->getResponseDocument();
 if ($response["ok"]) {

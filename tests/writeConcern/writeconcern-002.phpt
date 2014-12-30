@@ -1,12 +1,12 @@
 --TEST--
-MongoDB\WriteConcern::MAJORITY
+MongoDB\Driver\WriteConcern::MAJORITY
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php 
 require_once "tests/utils/basic.inc";
 
-var_dump(MongoDB\WriteConcern::MAJORITY);
+var_dump(MongoDB\Driver\WriteConcern::MAJORITY);
 
 ?>
 ===DONE===

@@ -1,19 +1,19 @@
 --TEST--
-MongoDB\Query\Query constants
+MongoDB\Driver\Query\Query constants
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-var_dump(MongoDB\Query::FLAG_NONE);
-var_dump(MongoDB\Query::FLAG_TAILABLE_CURSOR);
-var_dump(MongoDB\Query::FLAG_SLAVE_OK);
-var_dump(MongoDB\Query::FLAG_OPLOG_REPLAY);
-var_dump(MongoDB\Query::FLAG_NO_CURSOR_TIMEOUT);
-var_dump(MongoDB\Query::FLAG_AWAIT_DATA);
-var_dump(MongoDB\Query::FLAG_EXHAUST);
-var_dump(MongoDB\Query::FLAG_PARTIAL);
+var_dump(MongoDB\Driver\Query::FLAG_NONE);
+var_dump(MongoDB\Driver\Query::FLAG_TAILABLE_CURSOR);
+var_dump(MongoDB\Driver\Query::FLAG_SLAVE_OK);
+var_dump(MongoDB\Driver\Query::FLAG_OPLOG_REPLAY);
+var_dump(MongoDB\Driver\Query::FLAG_NO_CURSOR_TIMEOUT);
+var_dump(MongoDB\Driver\Query::FLAG_AWAIT_DATA);
+var_dump(MongoDB\Driver\Query::FLAG_EXHAUST);
+var_dump(MongoDB\Driver\Query::FLAG_PARTIAL);
 
 ?>
 ===DONE===

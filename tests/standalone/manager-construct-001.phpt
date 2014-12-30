@@ -1,12 +1,12 @@
 --TEST--
-MongoDB\Manager::__construct()
+MongoDB\Driver\Manager::__construct()
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
 ?>
 ===DONE===

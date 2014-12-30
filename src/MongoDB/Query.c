@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_query_ce;
 
-/* {{{ proto MongoDB\Query Query::__construct(array|object $filter[, array $options = array()])
+/* {{{ proto MongoDB\Driver\Query Query::__construct(array|object $filter[, array $options = array()])
    Constructs a new Query */
 PHP_METHOD(Query, __construct)
 {
@@ -77,7 +77,7 @@ PHP_METHOD(Query, __construct)
  * constructed from a single document, which includes the arguments below in a
  * similar fashion to findAndModify.
  */
-/* {{{ MongoDB\Query */
+/* {{{ MongoDB\Driver\Query */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Query___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, filter)
@@ -136,7 +136,7 @@ PHP_MINIT_FUNCTION(Query)
 	(void)module_number; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "Query", php_phongo_query_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Query", php_phongo_query_me);
 	ce.create_object = php_phongo_query_create_object;
 	php_phongo_query_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_query_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;

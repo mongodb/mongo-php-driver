@@ -1,16 +1,16 @@
 --TEST--
-MongoDB\Server constants
+MongoDB\Driver\Server constants
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-var_dump(MongoDB\Server::TYPE_MONGOS);
-var_dump(MongoDB\Server::TYPE_STANDALONE);
-var_dump(MongoDB\Server::TYPE_ARBITER);
-var_dump(MongoDB\Server::TYPE_SECONDARY);
-var_dump(MongoDB\Server::TYPE_PRIMARY);
+var_dump(MongoDB\Driver\Server::TYPE_MONGOS);
+var_dump(MongoDB\Driver\Server::TYPE_STANDALONE);
+var_dump(MongoDB\Driver\Server::TYPE_ARBITER);
+var_dump(MongoDB\Driver\Server::TYPE_SECONDARY);
+var_dump(MongoDB\Driver\Server::TYPE_PRIMARY);
 
 ?>
 ===DONE===

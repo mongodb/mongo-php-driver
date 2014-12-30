@@ -45,7 +45,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_authenticationexception_ce;
 
-/* {{{ MongoDB\AuthenticationException */
+/* {{{ MongoDB\Driver\AuthenticationException */
 
 static zend_function_entry php_phongo_authenticationexception_me[] = {
 	PHP_FE_END
@@ -61,7 +61,7 @@ PHP_MINIT_FUNCTION(AuthenticationException)
 	(void)module_number;
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "AuthenticationException", php_phongo_authenticationexception_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "AuthenticationException", php_phongo_authenticationexception_me);
 	php_phongo_authenticationexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce, NULL TSRMLS_CC);
 
 	return SUCCESS;

@@ -62,9 +62,9 @@ function makeCollectionNameFromFilename($filename)
 
 function CLEANUP() {
     try {
-        $mc = new MongoDB\Manager(MONGODB_CLEANUP_URI);
-        $cmd = new MongoDB\Command(array("drop" => COLLECTION_NAME));
-        $rp = new MongoDB\ReadPreference(MongoDB\ReadPreference::RP_PRIMARY);
+        $mc = new MongoDB\Driver\Manager(MONGODB_CLEANUP_URI);
+        $cmd = new MongoDB\Driver\Command(array("drop" => COLLECTION_NAME));
+        $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
         try {
             $mc->executeCommand(DATABASE_NAME, $cmd, $rp);
         } catch(Exception $e) {
@@ -104,12 +104,12 @@ function throws(callable $function, $exceptionname, $infunction = null) {
     }
     echo "FAILED: Expected $exceptionname thrown!\n";
 }
-function printServer(MongoDB\Server $server)
+function printServer(MongoDB\Driver\Server $server)
 {
     printf("server: %s:%d\n", $server->getHost(), $server->getPort());
 }
 
-function printWriteResult(MongoDB\WriteResult $result)
+function printWriteResult(MongoDB\Driver\WriteResult $result)
 {
     printServer($result->getServer());
 
@@ -132,7 +132,7 @@ function printWriteResult(MongoDB\WriteResult $result)
     }
 }
 
-function printWriteConcernError(MongoDB\WriteConcernError $error = null)
+function printWriteConcernError(MongoDB\Driver\WriteConcernError $error = null)
 {
     if ($error) {
         printf("writeConcernError.message: %s\n", $error->getMessage());
@@ -142,7 +142,7 @@ function printWriteConcernError(MongoDB\WriteConcernError $error = null)
     }
 }
 
-function printWriteError(MongoDB\WriteError $error)
+function printWriteError(MongoDB\Driver\WriteError $error)
 {
     printf("writeError[%d].message: %s\n", $error->getIndex(), $error->getMessage());
     printf("writeError[%d].code: %d\n", $error->getIndex(), $error->getCode());

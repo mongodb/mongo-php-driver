@@ -45,7 +45,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_duplicatekeyexception_ce;
 
-/* {{{ MongoDB\DuplicateKeyException */
+/* {{{ MongoDB\Driver\DuplicateKeyException */
 
 static zend_function_entry php_phongo_duplicatekeyexception_me[] = {
 	PHP_FE_END
@@ -61,7 +61,7 @@ PHP_MINIT_FUNCTION(DuplicateKeyException)
 	(void)module_number;
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB", "DuplicateKeyException", php_phongo_duplicatekeyexception_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "DuplicateKeyException", php_phongo_duplicatekeyexception_me);
 	php_phongo_duplicatekeyexception_ce = zend_register_internal_class_ex(&ce, php_phongo_writeexception_ce, NULL TSRMLS_CC);
 	php_phongo_duplicatekeyexception_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 

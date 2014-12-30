@@ -7,9 +7,9 @@ Sorting single field, ascending, using the Cursor Iterator
 <?php 
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
-$query = new MongoDB\Query(array(), array(
+$query = new MongoDB\Driver\Query(array(), array(
     'projection' => array('_id' => 0, 'username' => 1),
     'sort' => array('username' => 1),
     'batchSize' => 11,
@@ -31,7 +31,7 @@ $cursor->kill();
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\CursorId)#%d (0) {
+object(MongoDB\Driver\CursorId)#%d (0) {
 }
 string(%d) "%d"
 ===DONE===

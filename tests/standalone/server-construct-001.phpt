@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Server::__construct()
+MongoDB\Driver\Server::__construct()
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
@@ -7,7 +7,7 @@ MongoDB\Server::__construct()
 require_once "tests/utils/basic.inc";
 
 $parsed = parse_url(MONGODB_URI);
-$server = new MongoDB\Server($parsed["host"], $parsed["port"]);
+$server = new MongoDB\Driver\Server($parsed["host"], $parsed["port"]);
 
 var_dump($server->getHost() == $parsed["host"]);
 var_dump($server->getPort() == $parsed["port"]);
