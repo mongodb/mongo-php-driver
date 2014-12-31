@@ -18,7 +18,7 @@ $tests = array(
 foreach($tests as $n => $test) {
     $s = BSON\fromArray($test);
     echo "Test#{$n} ", BSON\toJSON($s), "\n";
-    $val = BSON\toArray($s, "ArrayObject");
+    $val = BSON\toArray($s, array("document"=> "ArrayObject", "array" => "ArrayObject"));
     var_dump($val);
 }
 ?>

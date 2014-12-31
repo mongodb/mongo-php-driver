@@ -36,6 +36,7 @@
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
+#include "php_array.h"
 
 
 #define BSON_APPEND_INT32(b,key,val) \
@@ -453,17 +454,16 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter __attribute__((unuse
 	TSRMLS_FETCH();
 
 	if (bson_iter_init(&child, v_document)) {
-		php_phongo_bson_state state = {NULL, NULL, 0};
+		php_phongo_bson_state state = {NULL, {{NULL, 0}, {NULL, 0}}};
 
-		state.classname = ((php_phongo_bson_state *)data)->classname;
-		state.classname_len = ((php_phongo_bson_state *)data)->classname_len;
+		state.map = ((php_phongo_bson_state *)data)->map;
 
 		MAKE_STD_ZVAL(state.zchild);
 		array_init(state.zchild);
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
-			if (state.classname_len) {
-				ce = zend_fetch_class(state.classname, state.classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
+			if (state.map.document.classname_len) {
+				ce = zend_fetch_class(state.map.document.classname, state.map.document.classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
 				if (ce->type == ZEND_INTERNAL_CLASS && ce->constructor) {
 					zval tmp_val = *state.zchild;
 
@@ -490,25 +490,23 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter __attribute__((unuse
 
 bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused)), const char *key, const bson_t *v_array, void *data)
 {
-	php_phongo_bson_state *parent_state = data;
-	zval *retval = parent_state->zchild;
+	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 	zend_class_entry *ce = zend_standard_class_def;
 	bson_iter_t child;
 	TSRMLS_FETCH();
 
 	if (bson_iter_init(&child, v_array)) {
-		php_phongo_bson_state state = {NULL, NULL, 0};
+		php_phongo_bson_state state = {NULL, {{NULL, 0}, {NULL, 0}}};
 
-		state.classname = parent_state->classname;
-		state.classname_len = parent_state->classname_len;
+		state.map = ((php_phongo_bson_state *)data)->map;
 
 		MAKE_STD_ZVAL(state.zchild);
 		array_init(state.zchild);
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
 
-			if (state.classname_len) {
-				ce = zend_fetch_class(state.classname, state.classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
+			if (state.map.array.classname_len) {
+				ce = zend_fetch_class(state.map.array.classname, state.map.array.classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
 				if (ce->type == ZEND_INTERNAL_CLASS && ce->constructor) {
 					zval tmp_val = *state.zchild;
 
@@ -840,25 +838,42 @@ PHP_FUNCTION(fromArray)
 }
 /* }}} */
 
-/* {{{ proto string BSON\toArray(string data)
-   Returns the PHP representation of a BSON value */
+/* {{{ proto string BSON\toArray(string data [, array $typemap = array()])
+   Returns the PHP representation of a BSON value, optionally converting them into custom types/classes */
 PHP_FUNCTION(toArray)
 {
-	char          *data, *classname = NULL;
-	int            data_len, classname_len = 0;
-	php_phongo_bson_state  state = {NULL, NULL, 0};
+	char                  *data, *document_classname, *array_classname;
+	int                    data_len, document_classname_len, array_classname_len;
+	zval                  *typemap = NULL;
+	zend_bool              document_classname_free = 0, array_classname_free = 0;
+	php_phongo_bson_state  state = {NULL, {{NULL, 0}, {NULL, 0}}};
 
 	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s!", &data, &data_len, &classname, &classname_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &data, &data_len, &typemap) == FAILURE) {
 		return;
 	}
 
-	state.classname_len = classname_len;
-	state.classname = classname;
+	if (typemap) {
+		array_classname = php_array_fetchl_string(typemap, "array", sizeof("array")-1, &array_classname_len, &array_classname_free);
+		if (array_classname_len) {
+			state.map.array.classname_len = array_classname_len;
+			state.map.array.classname = array_classname;
+		}
+
+		document_classname = php_array_fetchl_string(typemap, "document", sizeof("document")-1, &document_classname_len, &document_classname_free);
+		if (document_classname_len) {
+			state.map.document.classname_len = document_classname_len;
+			state.map.document.classname = document_classname;
+		}
+	}
 	state.zchild = return_value;
 	if (!bson_to_zval((const unsigned char *)data, data_len, &state)) {
 		RETURN_NULL();
+	}
+
+	if (document_classname_free) {
+		efree(document_classname);
 	}
 }
 /* }}} */

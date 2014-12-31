@@ -31,9 +31,19 @@ typedef struct {
 } php_phongo_command_t;
 
 typedef struct {
+	struct {
+		char                *classname;
+		int                  classname_len;
+	} document;
+	struct {
+		char                *classname;
+		int                  classname_len;
+	} array;
+} php_phongo_bson_typemap;
+
+typedef struct {
 	zval                    *zchild;
-	char                    *classname;
-	int                      classname_len;
+	php_phongo_bson_typemap  map;
 } php_phongo_bson_state;
 
 typedef struct {
