@@ -347,7 +347,7 @@ char *php_array_zval_to_string(zval *z, int *plen, zend_bool *pfree) {
  * zval *php_array_fetchz_array(zval *zarr, zval *key)
  */
 static inline zval *php_array_zval_to_array(zval *zarr) {
-	return (zarr && (Z_TYPE_P(zarr))) ? zarr : NULL;
+	return (zarr && (Z_TYPE_P(zarr) == IS_ARRAY)) ? zarr : NULL;
 }
 PHP_ARRAY_FETCH_TYPE_MAP(zval*, array)
 #define php_array_fetchc_array(zarr, litstr) \
