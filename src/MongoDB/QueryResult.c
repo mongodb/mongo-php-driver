@@ -67,6 +67,31 @@ PHP_METHOD(QueryResult, __construct)
 
 }
 /* }}} */
+/* {{{ proto void QueryResult::setTypemap(array $typemap)
+   Sets a typemap to use for BSON unserialization */
+PHP_METHOD(QueryResult, setTypemap)
+{
+	php_phongo_writeresult_t *intern;
+	zend_error_handling       error_handling;
+	(void)return_value_ptr; (void)return_value_used;
+	zval                  *typemap = NULL;
+	php_phongo_bson_state  state = {NULL, {NULL, NULL} };
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a!", &typemap) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	php_phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
+
+	intern->result.visitor_data = state;
+}
+/* }}} */
 /* {{{ proto MongoDB\Driver\Cursor QueryResult::getIterator()
    Returns the Cursor iterator */
 PHP_METHOD(QueryResult, getIterator)
@@ -170,6 +195,10 @@ PHP_METHOD(QueryResult, getServer)
  */
 /* {{{ MongoDB\Driver\QueryResult */
 
+ZEND_BEGIN_ARG_INFO_EX(ai_QueryResult_setTypemap, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, typemap, 0)
+ZEND_END_ARG_INFO();
+
 ZEND_BEGIN_ARG_INFO_EX(ai_QueryResult___construct, 0, 0, 3)
 	ZEND_ARG_OBJ_INFO(0, server, MongoDB\\Driver\\Server, 0)
 	ZEND_ARG_OBJ_INFO(0, cursorId, MongoDB\\Driver\\CursorId, 0)
@@ -192,6 +221,7 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_queryresult_me[] = {
+	PHP_ME(QueryResult, setTypemap, ai_QueryResult_setTypemap, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(QueryResult, __construct, ai_QueryResult___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(QueryResult, getIterator, ai_QueryResult_getIterator, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(QueryResult, setIteratorClass, ai_QueryResult_setIteratorClass, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

@@ -150,7 +150,7 @@ PHP_METHOD(CommandResult, getResponseDocument)
 
 
 	if (intern->result.firstBatch) {
-		php_phongo_bson_state  state = {NULL, {{NULL, 0}, {NULL, 0}}};
+		php_phongo_bson_state  state = {NULL, {NULL, NULL}};
 
 		state.zchild = return_value;
 		bson_to_zval(bson_get_data(intern->result.firstBatch), intern->result.firstBatch->len, &state);

@@ -822,29 +822,19 @@ PHP_FUNCTION(fromArray)
 }
 /* }}} */
 
-/* {{{ proto string BSON\toArray(string data [, array $typemap = array()])
-   Returns the PHP representation of a BSON value, optionally converting them into custom types/classes */
-PHP_FUNCTION(toArray)
+void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC)
 {
-	char                  *data, *classname;
-	int                    data_len, classname_len;
-	zval                  *typemap = NULL;
-	zend_bool              classname_free = 0;
-	zend_class_entry      *array_ce = NULL, *document_ce = NULL;
-	php_phongo_bson_state  state = {NULL, {NULL, NULL} };
-
-	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &data, &data_len, &typemap) == FAILURE) {
-		return;
-	}
-
 	if (typemap) {
+		char                  *classname;
+		int                    classname_len;
+		zend_bool              classname_free = 0;
+		zend_class_entry      *array_ce = NULL, *document_ce = NULL;
+
 		classname = php_array_fetchl_string(typemap, "array", sizeof("array")-1, &classname_len, &classname_free);
 		array_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
 
 		if (instanceof_function(array_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
-			state.map.array = array_ce;
+			map->array = array_ce;
 		}
 		if (classname_free) {
 			efree(classname);
@@ -853,12 +843,29 @@ PHP_FUNCTION(toArray)
 		classname = php_array_fetchl_string(typemap, "document", sizeof("document")-1, &classname_len, &classname_free);
 		document_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
 		if (instanceof_function(document_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
-			state.map.document = document_ce;
+			map->document = document_ce;
 		}
 		if (classname_free) {
 			efree(classname);
 		}
 	}
+}
+/* {{{ proto string BSON\toArray(string data [, array $typemap = array()])
+   Returns the PHP representation of a BSON value, optionally converting them into custom types/classes */
+PHP_FUNCTION(toArray)
+{
+	char                  *data;
+	int                    data_len;
+	zval                  *typemap = NULL;
+	php_phongo_bson_state  state = {NULL, {NULL, NULL} };
+
+	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &data, &data_len, &typemap) == FAILURE) {
+		return;
+	}
+
+	php_phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
 
 	state.zchild = return_value;
 	if (!bson_to_zval((const unsigned char *)data, data_len, &state)) {

@@ -1202,7 +1202,6 @@ static void phongo_cursor_it_get_current_data(zend_object_iterator *iter, zval *
 
 static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	php_phongo_bson_state  state = {NULL, {NULL, NULL} };
 	phongo_cursor_it      *cursor_it = (phongo_cursor_it *)iter;
 	const bson_t          *doc;
 
@@ -1219,15 +1218,15 @@ static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) 
 			bson_iter_document(&cursor_it->first_batch_iter, &data_len, &data);
 
 			MAKE_STD_ZVAL(cursor_it->current);
-			state.zchild = cursor_it->current;
-			bson_to_zval(data, data_len, &state);
+			cursor_it->visitor_data.zchild = cursor_it->current;
+			bson_to_zval(data, data_len, &cursor_it->visitor_data);
 			return;
 		}
 	}
 	if (mongoc_cursor_next(cursor_it->cursor, &doc)) {
 		MAKE_STD_ZVAL(cursor_it->current);
-		state.zchild = cursor_it->current;
-		bson_to_zval(bson_get_data(doc), doc->len, &state);
+		cursor_it->visitor_data.zchild = cursor_it->current;
+		bson_to_zval(bson_get_data(doc), doc->len, &cursor_it->visitor_data);
 	} else {
 		cursor_it->current = NULL;
 	}
@@ -1236,7 +1235,6 @@ static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) 
 
 static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	php_phongo_bson_state  state = {NULL, {NULL, NULL} };
 	phongo_cursor_it      *cursor_it = (phongo_cursor_it *)iter;
 
 	/* firstBatch is empty when the query simply didn't return any results */
@@ -1250,14 +1248,14 @@ static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{
 
 					bson_iter_document(&cursor_it->first_batch_iter, &data_len, &data);
 					MAKE_STD_ZVAL(cursor_it->current);
-					state.zchild = cursor_it->current;
-					bson_to_zval(data, data_len, &state);
+					cursor_it->visitor_data.zchild = cursor_it->current;
+					bson_to_zval(data, data_len, &cursor_it->visitor_data);
 				}
 			}
 		} else {
 			MAKE_STD_ZVAL(cursor_it->current);
-			state.zchild = cursor_it->current;
-			bson_to_zval(bson_get_data(cursor_it->firstBatch), cursor_it->firstBatch->len, &state);
+			cursor_it->visitor_data.zchild = cursor_it->current;
+			bson_to_zval(bson_get_data(cursor_it->firstBatch), cursor_it->firstBatch->len, &cursor_it->visitor_data);
 		}
 	}
 } /* }}} */
