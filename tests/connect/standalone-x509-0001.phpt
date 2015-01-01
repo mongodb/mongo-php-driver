@@ -1,5 +1,5 @@
 --TEST--
-Connect to MongoDB with using SSL and verify the stream
+Connect to MongoDB with using SSL and X.509 auth
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
