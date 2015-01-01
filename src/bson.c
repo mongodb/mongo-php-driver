@@ -450,11 +450,10 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter __attribute__((unuse
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 	bson_iter_t child;
-	zend_class_entry *ce = zend_standard_class_def;
 	TSRMLS_FETCH();
 
 	if (bson_iter_init(&child, v_document)) {
-		php_phongo_bson_state state = {NULL, {{NULL, 0}, {NULL, 0}}};
+		php_phongo_bson_state state = {NULL, {NULL, NULL} };
 
 		state.map = ((php_phongo_bson_state *)data)->map;
 
@@ -462,20 +461,14 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter __attribute__((unuse
 		array_init(state.zchild);
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
-			if (state.map.document.classname_len) {
-				ce = zend_fetch_class(state.map.document.classname, state.map.document.classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
-				if (ce->type == ZEND_INTERNAL_CLASS && ce->constructor) {
-					zval tmp_val = *state.zchild;
+			if (state.map.document) {
+				zval tmp_val = *state.zchild;
 
-					object_and_properties_init(state.zchild, ce, NULL);
-					zend_call_method_with_1_params(&state.zchild, ce, &ce->constructor, "__construct", NULL, &tmp_val);
-
-					zval_dtor(&tmp_val);
-				} else {
-					object_and_properties_init(state.zchild, ce, Z_ARRVAL_P(state.zchild));
-				}
+				object_and_properties_init(state.zchild, state.map.document, NULL);
+				zend_call_method_with_1_params(&state.zchild, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &tmp_val);
+				zval_dtor(&tmp_val);
 			} else {
-				object_and_properties_init(state.zchild, ce, Z_ARRVAL_P(state.zchild));
+				object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
 			}
 
 			add_assoc_zval(retval, key, state.zchild);
@@ -491,12 +484,11 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter __attribute__((unuse
 bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused)), const char *key, const bson_t *v_array, void *data)
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-	zend_class_entry *ce = zend_standard_class_def;
 	bson_iter_t child;
 	TSRMLS_FETCH();
 
 	if (bson_iter_init(&child, v_array)) {
-		php_phongo_bson_state state = {NULL, {{NULL, 0}, {NULL, 0}}};
+		php_phongo_bson_state state = {NULL, {NULL, NULL} };
 
 		state.map = ((php_phongo_bson_state *)data)->map;
 
@@ -505,20 +497,12 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused))
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
 
-			if (state.map.array.classname_len) {
-				ce = zend_fetch_class(state.map.array.classname, state.map.array.classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
-				if (ce->type == ZEND_INTERNAL_CLASS && ce->constructor) {
-					zval tmp_val = *state.zchild;
+			if (state.map.array) {
+				zval tmp_val = *state.zchild;
 
-					object_and_properties_init(state.zchild, ce, NULL);
-					zend_call_method_with_1_params(&state.zchild, ce, &ce->constructor, "__construct", NULL, &tmp_val);
-
-					zval_dtor(&tmp_val);
-				} else {
-					object_and_properties_init(state.zchild, ce, Z_ARRVAL_P(state.zchild));
-				}
-			} else {
-				object_and_properties_init(state.zchild, ce, Z_ARRVAL_P(state.zchild));
+				object_and_properties_init(state.zchild, state.map.array, NULL);
+				zend_call_method_with_1_params(&state.zchild, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &tmp_val);
+				zval_dtor(&tmp_val);
 			}
 
 			add_assoc_zval(retval, key, state.zchild);
@@ -842,11 +826,12 @@ PHP_FUNCTION(fromArray)
    Returns the PHP representation of a BSON value, optionally converting them into custom types/classes */
 PHP_FUNCTION(toArray)
 {
-	char                  *data, *document_classname, *array_classname;
-	int                    data_len, document_classname_len, array_classname_len;
+	char                  *data, *classname;
+	int                    data_len, classname_len;
 	zval                  *typemap = NULL;
-	zend_bool              document_classname_free = 0, array_classname_free = 0;
-	php_phongo_bson_state  state = {NULL, {{NULL, 0}, {NULL, 0}}};
+	zend_bool              classname_free = 0;
+	zend_class_entry      *array_ce = NULL, *document_ce = NULL;
+	php_phongo_bson_state  state = {NULL, {NULL, NULL} };
 
 	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
 
@@ -855,25 +840,29 @@ PHP_FUNCTION(toArray)
 	}
 
 	if (typemap) {
-		array_classname = php_array_fetchl_string(typemap, "array", sizeof("array")-1, &array_classname_len, &array_classname_free);
-		if (array_classname_len) {
-			state.map.array.classname_len = array_classname_len;
-			state.map.array.classname = array_classname;
+		classname = php_array_fetchl_string(typemap, "array", sizeof("array")-1, &classname_len, &classname_free);
+		array_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
+
+		if (instanceof_function(array_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
+			state.map.array = array_ce;
+		}
+		if (classname_free) {
+			efree(classname);
 		}
 
-		document_classname = php_array_fetchl_string(typemap, "document", sizeof("document")-1, &document_classname_len, &document_classname_free);
-		if (document_classname_len) {
-			state.map.document.classname_len = document_classname_len;
-			state.map.document.classname = document_classname;
+		classname = php_array_fetchl_string(typemap, "document", sizeof("document")-1, &classname_len, &classname_free);
+		document_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
+		if (instanceof_function(document_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
+			state.map.document = document_ce;
+		}
+		if (classname_free) {
+			efree(classname);
 		}
 	}
+
 	state.zchild = return_value;
 	if (!bson_to_zval((const unsigned char *)data, data_len, &state)) {
 		RETURN_NULL();
-	}
-
-	if (document_classname_free) {
-		efree(document_classname);
 	}
 }
 /* }}} */

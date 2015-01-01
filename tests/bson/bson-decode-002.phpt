@@ -6,6 +6,11 @@ BSON encoding: Encoding object/arrays data into user specificied classes
 <?php 
 require_once "tests/utils/basic.inc";
 
+class MyArrayObject extends ArrayObject implements BSON\Unserializable {
+    function bsonUnserialize(array $data) {
+        parent::__construct($data);
+    }
+}
 $tests = array(
     array(array("hello" => "world")),
     array((object)array("hello" => "world")),
@@ -18,7 +23,7 @@ $tests = array(
 foreach($tests as $n => $test) {
     $s = BSON\fromArray($test);
     echo "Test#{$n} ", BSON\toJSON($s), "\n";
-    $val = BSON\toArray($s, array("document"=> "ArrayObject", "array" => "ArrayObject"));
+    $val = BSON\toArray($s, array("document"=> "MyArrayObject", "array" => "MyArrayObject"));
     var_dump($val);
 }
 ?>
@@ -28,7 +33,7 @@ foreach($tests as $n => $test) {
 Test#%d { "0" : { "hello" : "world" } }
 array(1) {
   [0]=>
-  object(ArrayObject)#%d (1) {
+  object(MyArrayObject)#%d (1) {
     [%s]=>
     array(1) {
       ["hello"]=>
@@ -39,7 +44,7 @@ array(1) {
 Test#%d { "0" : { "hello" : "world" } }
 array(1) {
   [0]=>
-  object(ArrayObject)#%d (1) {
+  object(MyArrayObject)#%d (1) {
     [%s]=>
     array(1) {
       ["hello"]=>
@@ -50,7 +55,7 @@ array(1) {
 Test#%d { "my" : { "hello" : "world" } }
 array(1) {
   ["my"]=>
-  object(ArrayObject)#%d (1) {
+  object(MyArrayObject)#%d (1) {
     [%s]=>
     array(1) {
       ["hello"]=>
@@ -61,7 +66,7 @@ array(1) {
 Test#%d { "my" : { "hello" : "world" } }
 array(1) {
   ["my"]=>
-  object(ArrayObject)#%d (1) {
+  object(MyArrayObject)#%d (1) {
     [%s]=>
     array(1) {
       ["hello"]=>
@@ -72,11 +77,11 @@ array(1) {
 Test#%d { "my" : [ [ "hello", "world" ] ] }
 array(1) {
   ["my"]=>
-  object(ArrayObject)#%d (1) {
+  object(MyArrayObject)#%d (1) {
     [%s]=>
     array(1) {
       [0]=>
-      object(ArrayObject)#%d (1) {
+      object(MyArrayObject)#%d (1) {
         [%s]=>
         array(2) {
           [0]=>
@@ -91,11 +96,11 @@ array(1) {
 Test#%d { "my" : { "0" : [ "hello", "world" ] } }
 array(1) {
   ["my"]=>
-  object(ArrayObject)#%d (1) {
+  object(MyArrayObject)#%d (1) {
     [%s]=>
     array(1) {
       [0]=>
-      object(ArrayObject)#%d (1) {
+      object(MyArrayObject)#%d (1) {
         [%s]=>
         array(2) {
           [0]=>

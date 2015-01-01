@@ -24,6 +24,8 @@
 /* PHP Core stuff */
 #include <php.h>
 
+#define BSON_UNSERIALIZE_FUNC_NAME    "bsonUnserialize"
+#define BSON_SERIALIZE_FUNC_NAME      "bsonSerialize"
 
 typedef struct {
 	zend_object              std;
@@ -31,14 +33,8 @@ typedef struct {
 } php_phongo_command_t;
 
 typedef struct {
-	struct {
-		char                *classname;
-		int                  classname_len;
-	} document;
-	struct {
-		char                *classname;
-		int                  classname_len;
-	} array;
+	zend_class_entry *document;
+	zend_class_entry *array;
 } php_phongo_bson_typemap;
 
 typedef struct {
@@ -213,6 +209,8 @@ extern PHONGO_API zend_class_entry *php_phongo_duplicatekeyexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeexception_ce;
 
 extern PHONGO_API zend_class_entry *php_phongo_type_ce;
+extern PHONGO_API zend_class_entry *php_phongo_unserializable_ce;
+extern PHONGO_API zend_class_entry *php_phongo_serializable_ce;
 extern PHONGO_API zend_class_entry *php_phongo_binary_ce;
 extern PHONGO_API zend_class_entry *php_phongo_int32_ce;
 extern PHONGO_API zend_class_entry *php_phongo_int64_ce;
