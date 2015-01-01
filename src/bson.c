@@ -569,6 +569,33 @@ void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TS
 	}
 
 	if (instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce TSRMLS_CC)) {
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_serializable_ce TSRMLS_CC)) {
+			zval *retval = NULL;
+
+			zend_call_method_with_0_params(&object, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &retval);
+			if (retval) {
+				bson_t      child;
+				HashTable  *tmp_ht;
+
+				convert_to_array_ex(&retval);
+				tmp_ht = HASH_OF(retval);
+
+				if (tmp_ht) {
+					tmp_ht->nApplyCount++;
+				}
+
+				bson_append_array_begin(bson, key, key_len, &child);
+				zval_to_bson(retval, PHONGO_BSON_NONE, &child, NULL TSRMLS_CC);
+				bson_append_array_end(bson, &child);
+
+				if (tmp_ht) {
+					tmp_ht->nApplyCount--;
+				}
+				zval_ptr_dtor(&retval);
+			}
+			return;
+		}
+
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_objectid_ce TSRMLS_CC)) {
 			bson_oid_t oid;
 
@@ -831,22 +858,26 @@ void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *ma
 		zend_class_entry      *array_ce = NULL, *document_ce = NULL;
 
 		classname = php_array_fetchl_string(typemap, "array", sizeof("array")-1, &classname_len, &classname_free);
-		array_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
+		if (classname_len) {
+			array_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
 
-		if (instanceof_function(array_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
-			map->array = array_ce;
-		}
-		if (classname_free) {
-			efree(classname);
+			if (instanceof_function(array_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
+				map->array = array_ce;
+			}
+			if (classname_free) {
+				efree(classname);
+			}
 		}
 
 		classname = php_array_fetchl_string(typemap, "document", sizeof("document")-1, &classname_len, &classname_free);
-		document_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
-		if (instanceof_function(document_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
-			map->document = document_ce;
-		}
-		if (classname_free) {
-			efree(classname);
+		if (classname_len) {
+			document_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
+			if (instanceof_function(document_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
+				map->document = document_ce;
+			}
+			if (classname_free) {
+				efree(classname);
+			}
 		}
 	}
 }
