@@ -140,6 +140,8 @@ if test "$PHONGO" != "no"; then
   ";
   PHONGO_BSON_CLASSES="\
     src/BSON/Type.c \
+    src/BSON/Unserializable.c \
+    src/BSON/Serializable.c \
     src/BSON/Binary.c \
     src/BSON/Javascript.c \
     src/BSON/MaxKey.c \
