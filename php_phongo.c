@@ -273,7 +273,7 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 	if (bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 		uint32_t len;
 		const uint8_t *data;
-		php_phongo_bson_state  state = {NULL, {{NULL, 0}, {NULL, 0}}};
+		php_phongo_bson_state  state = {NULL, {NULL, NULL} };
 
 		bson_iter_document(&iter, &len, &data);
 
@@ -1202,7 +1202,7 @@ static void phongo_cursor_it_get_current_data(zend_object_iterator *iter, zval *
 
 static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	php_phongo_bson_state  state = {NULL, {{NULL, 0}, {NULL, 0}}};
+	php_phongo_bson_state  state = {NULL, {NULL, NULL} };
 	phongo_cursor_it      *cursor_it = (phongo_cursor_it *)iter;
 	const bson_t          *doc;
 
@@ -1236,7 +1236,7 @@ static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) 
 
 static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	php_phongo_bson_state  state = {NULL, {{NULL, 0}, {NULL, 0}}};
+	php_phongo_bson_state  state = {NULL, {NULL, NULL} };
 	phongo_cursor_it      *cursor_it = (phongo_cursor_it *)iter;
 
 	/* firstBatch is empty when the query simply didn't return any results */
