@@ -72,10 +72,10 @@ PHP_METHOD(QueryResult, __construct)
 PHP_METHOD(QueryResult, setTypemap)
 {
 	php_phongo_writeresult_t *intern;
+	php_phongo_bson_state     state = PHONGO_BSON_STATE_INITIALIZER;
 	zend_error_handling       error_handling;
+	zval                     *typemap = NULL;
 	(void)return_value_ptr; (void)return_value_used;
-	zval                  *typemap = NULL;
-	php_phongo_bson_state  state = {NULL, {NULL, NULL} };
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);

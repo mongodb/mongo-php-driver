@@ -207,6 +207,14 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter __attribute__((unused)
 	TSRMLS_FETCH();
 	zval *zchild = NULL;
 
+	if (v_subtype == 0x80) {
+		((php_phongo_bson_state *)data)->odm = zend_fetch_class((char *)v_binary, v_binary_len, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
+		if (((php_phongo_bson_state *)data)->odm) {
+			return false;
+		}
+		/* Couldn't resolve the classname, resolve the type as binary */
+	}
+
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_binary_from_binary_and_subtype(zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
 
@@ -453,7 +461,7 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter __attribute__((unuse
 	TSRMLS_FETCH();
 
 	if (bson_iter_init(&child, v_document)) {
-		php_phongo_bson_state state = {NULL, {NULL, NULL} };
+		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
 		state.map = ((php_phongo_bson_state *)data)->map;
 
@@ -461,20 +469,20 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter __attribute__((unuse
 		array_init(state.zchild);
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
-			if (state.map.document) {
-				zval tmp_val = *state.zchild;
+			if (state.map.document || state.odm) {
+				zval *obj = NULL;
 
-				object_and_properties_init(state.zchild, state.map.document, NULL);
-				zend_call_method_with_1_params(&state.zchild, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &tmp_val);
-				zval_dtor(&tmp_val);
+				MAKE_STD_ZVAL(obj);
+				object_init_ex(obj, state.odm ? state.odm : state.map.document);
+				zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
+				add_assoc_zval(retval, key, obj);
+				zval_ptr_dtor(&state.zchild);
 			} else {
 				object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
+				add_assoc_zval(retval, key, state.zchild);
+				Z_SET_REFCOUNT_P(state.zchild, 1);
 			}
-
-			add_assoc_zval(retval, key, state.zchild);
 		}
-
-		Z_SET_REFCOUNT_P(state.zchild, 1);
 	}
 
 	return false;
@@ -488,7 +496,7 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused))
 	TSRMLS_FETCH();
 
 	if (bson_iter_init(&child, v_array)) {
-		php_phongo_bson_state state = {NULL, {NULL, NULL} };
+		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
 		state.map = ((php_phongo_bson_state *)data)->map;
 
@@ -497,18 +505,20 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter __attribute__((unused))
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
 
-			if (state.map.array) {
-				zval tmp_val = *state.zchild;
+			if (state.map.array || state.odm) {
+				zval *obj = NULL;
 
-				object_and_properties_init(state.zchild, state.map.array, NULL);
-				zend_call_method_with_1_params(&state.zchild, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &tmp_val);
-				zval_dtor(&tmp_val);
+				MAKE_STD_ZVAL(obj);
+				object_init_ex(obj, state.odm ? state.odm : state.map.array);
+				zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
+				add_assoc_zval(retval, key, obj);
+				zval_ptr_dtor(&state.zchild);
+			} else {
+				add_assoc_zval(retval, key, state.zchild);
+				Z_SET_REFCOUNT_P(state.zchild, 1);
 			}
-
-			add_assoc_zval(retval, key, state.zchild);
 		}
 
-		Z_SET_REFCOUNT_P(state.zchild, 1);
 	}
 
 	return false;
@@ -585,6 +595,9 @@ void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TS
 				}
 
 				bson_append_array_begin(bson, key, key_len, &child);
+				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC)) {
+					bson_append_binary(&child, "__", -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
+				}
 				zval_to_bson(retval, PHONGO_BSON_NONE, &child, NULL TSRMLS_CC);
 				bson_append_array_end(bson, &child);
 
@@ -888,7 +901,7 @@ PHP_FUNCTION(toArray)
 	char                  *data;
 	int                    data_len;
 	zval                  *typemap = NULL;
-	php_phongo_bson_state  state = {NULL, {NULL, NULL} };
+	php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
 	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
 

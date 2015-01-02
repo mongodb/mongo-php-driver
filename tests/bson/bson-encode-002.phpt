@@ -6,7 +6,7 @@ BSON encoding: Encoding objects into BSON representation
 <?php 
 require_once "tests/utils/basic.inc";
 
-class MyClass implements BSON\Serializable, BSON\Unserializable, BSON\Type {
+class MyClass implements BSON\Serializable, BSON\Unserializable {
     function bsonSerialize() {
         return array(
             "random" => "class",
@@ -17,7 +17,7 @@ class MyClass implements BSON\Serializable, BSON\Unserializable, BSON\Type {
         var_dump(__METHOD__, $data);
     }
 }
-class MyClass2 implements BSON\Serializable, BSON\Unserializable, BSON\Type {
+class MyClass2 implements BSON\Serializable, BSON\Unserializable {
     function bsonSerialize() {
         return array(
             1, 2, 3,

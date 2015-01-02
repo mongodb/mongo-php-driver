@@ -271,9 +271,9 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 		writeconcernerror->message = bson_iter_dup_utf8(&iter, NULL);
 	}
 	if (bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
-		uint32_t len;
-		const uint8_t *data;
-		php_phongo_bson_state  state = {NULL, {NULL, NULL} };
+		uint32_t               len;
+		const uint8_t         *data;
+		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
 		bson_iter_document(&iter, &len, &data);
 
@@ -1453,6 +1453,7 @@ PHP_MINIT_FUNCTION(phongo)
 	PHP_MINIT(Type)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Serializable)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Unserializable)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(Persistable)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Binary)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Javascript)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(MaxKey)(INIT_FUNC_ARGS_PASSTHRU);

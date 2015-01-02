@@ -42,18 +42,14 @@
 #include "php_bson.h"
 
 
-PHONGO_API zend_class_entry *php_phongo_serializable_ce;
+PHONGO_API zend_class_entry *php_phongo_persistable_ce;
 
 
 
-/* {{{ BSON\Serializable */
-
-ZEND_BEGIN_ARG_INFO_EX(ai_serializable_bsonserialize, 0, 0, 0)
-ZEND_END_ARG_INFO();
+/* {{{ BSON\Persistable */
 
 
-static zend_function_entry php_phongo_serializable_me[] = {
-	ZEND_ABSTRACT_ME(Serializable, bsonSerialize, ai_serializable_bsonserialize)
+static zend_function_entry php_phongo_persistable_me[] = {
 	PHP_FE_END
 };
 
@@ -62,15 +58,15 @@ static zend_function_entry php_phongo_serializable_me[] = {
 
 
 /* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Serializable)
+PHP_MINIT_FUNCTION(Persistable)
 {
 	(void)type;
 	(void)module_number;
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "Serializable", php_phongo_serializable_me);
-	php_phongo_serializable_ce = zend_register_internal_interface(&ce TSRMLS_CC);
-	zend_class_implements(php_phongo_serializable_ce TSRMLS_CC, 1, php_phongo_type_ce);
+	INIT_NS_CLASS_ENTRY(ce, "BSON", "Persistable", php_phongo_persistable_me);
+	php_phongo_persistable_ce = zend_register_internal_interface(&ce TSRMLS_CC);
+	zend_class_implements(php_phongo_persistable_ce TSRMLS_CC, 2, php_phongo_unserializable_ce, php_phongo_serializable_ce);
 
 	return SUCCESS;
 }

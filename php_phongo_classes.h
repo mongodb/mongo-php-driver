@@ -27,6 +27,8 @@
 #define BSON_UNSERIALIZE_FUNC_NAME    "bsonUnserialize"
 #define BSON_SERIALIZE_FUNC_NAME      "bsonSerialize"
 
+#define PHONGO_BSON_STATE_INITIALIZER  {NULL, {NULL, NULL}, NULL}
+
 typedef struct {
 	zend_object              std;
 	bson_t                  *bson;
@@ -40,6 +42,7 @@ typedef struct {
 typedef struct {
 	zval                    *zchild;
 	php_phongo_bson_typemap  map;
+	zend_class_entry        *odm;
 } php_phongo_bson_state;
 
 typedef struct {
@@ -209,6 +212,7 @@ extern PHONGO_API zend_class_entry *php_phongo_duplicatekeyexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeexception_ce;
 
 extern PHONGO_API zend_class_entry *php_phongo_type_ce;
+extern PHONGO_API zend_class_entry *php_phongo_persistable_ce;
 extern PHONGO_API zend_class_entry *php_phongo_unserializable_ce;
 extern PHONGO_API zend_class_entry *php_phongo_serializable_ce;
 extern PHONGO_API zend_class_entry *php_phongo_binary_ce;
@@ -249,6 +253,7 @@ PHP_MINIT_FUNCTION(WriteException);
 PHP_MINIT_FUNCTION(Type);
 PHP_MINIT_FUNCTION(Unserializable);
 PHP_MINIT_FUNCTION(Serializable);
+PHP_MINIT_FUNCTION(Persistable);
 PHP_MINIT_FUNCTION(Binary);
 PHP_MINIT_FUNCTION(Javascript);
 PHP_MINIT_FUNCTION(MaxKey);
