@@ -811,6 +811,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	php_stream *stream = NULL;
 	const bson_t *options;
 	bson_iter_t iter;
+	struct timeval timeout = {0, 0};
 	struct timeval *timeoutp = NULL;
 	char *uniqid;
 	char *errmsg = NULL;
@@ -840,7 +841,6 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	options = mongoc_uri_get_options(uri);
 
 	if (bson_iter_init_find (&iter, options, "connecttimeoutms") && BSON_ITER_HOLDS_INT32 (&iter)) {
-		struct timeval timeout = {0, 0};
 		int32_t connecttimeoutms = MONGOC_DEFAULT_CONNECTTIMEOUTMS;
 
 		if (!(connecttimeoutms = bson_iter_int32(&iter))) {
