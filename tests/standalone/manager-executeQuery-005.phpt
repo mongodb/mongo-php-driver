@@ -31,45 +31,54 @@ foreach($qr as $obj) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-array(2) {
-  ["_id"]=>
-  int(1)
-  [0]=>
-  object(MyArrayObject)#%d (1) {
-    [%s]=>
-    array(2) {
-      ["x"]=>
-      int(2)
-      ["y"]=>
-      int(3)
+object(MyArrayObject)#%d (1) {
+  [%s]=>
+  array(2) {
+    ["_id"]=>
+    int(1)
+    [0]=>
+    object(MyArrayObject)#%d (1) {
+      [%s]=>
+      array(2) {
+        ["x"]=>
+        int(2)
+        ["y"]=>
+        int(3)
+      }
     }
   }
 }
-array(2) {
-  ["_id"]=>
-  int(2)
-  [0]=>
-  object(MyArrayObject)#%d (1) {
-    [%s]=>
-    array(2) {
-      ["x"]=>
-      int(3)
-      ["y"]=>
-      int(4)
+object(MyArrayObject)#%d (1) {
+  [%s]=>
+  array(2) {
+    ["_id"]=>
+    int(2)
+    [0]=>
+    object(MyArrayObject)#%d (1) {
+      [%s]=>
+      array(2) {
+        ["x"]=>
+        int(3)
+        ["y"]=>
+        int(4)
+      }
     }
   }
 }
-array(2) {
-  ["_id"]=>
-  int(3)
-  [0]=>
-  object(MyArrayObject)#%d (1) {
-    [%s]=>
-    array(2) {
-      ["x"]=>
-      int(4)
-      ["y"]=>
-      int(5)
+object(MyArrayObject)#%d (1) {
+  [%s]=>
+  array(2) {
+    ["_id"]=>
+    int(3)
+    [0]=>
+    object(MyArrayObject)#%d (1) {
+      [%s]=>
+      array(2) {
+        ["x"]=>
+        int(4)
+        ["y"]=>
+        int(5)
+      }
     }
   }
 }

@@ -31,82 +31,100 @@ foreach($tests as $n => $test) {
 <?php exit(0); ?>
 --EXPECTF--
 Test#%d { "0" : { "hello" : "world" } }
-array(1) {
-  [0]=>
-  object(MyArrayObject)#%d (1) {
-    [%s]=>
-    array(1) {
-      ["hello"]=>
-      string(5) "world"
+object(MyArrayObject)#%d (1) {
+  [%s]=>
+  array(1) {
+    [0]=>
+    object(MyArrayObject)#%d (1) {
+      [%s]=>
+      array(1) {
+        ["hello"]=>
+        string(5) "world"
+      }
     }
   }
 }
 Test#%d { "0" : { "hello" : "world" } }
-array(1) {
-  [0]=>
-  object(MyArrayObject)#%d (1) {
-    [%s]=>
-    array(1) {
-      ["hello"]=>
-      string(5) "world"
+object(MyArrayObject)#%d (1) {
+  [%s]=>
+  array(1) {
+    [0]=>
+    object(MyArrayObject)#%d (1) {
+      [%s]=>
+      array(1) {
+        ["hello"]=>
+        string(5) "world"
+      }
     }
   }
 }
 Test#%d { "my" : { "hello" : "world" } }
-array(1) {
-  ["my"]=>
-  object(MyArrayObject)#%d (1) {
-    [%s]=>
-    array(1) {
-      ["hello"]=>
-      string(5) "world"
+object(MyArrayObject)#%d (1) {
+  [%s]=>
+  array(1) {
+    ["my"]=>
+    object(MyArrayObject)#%d (1) {
+      [%s]=>
+      array(1) {
+        ["hello"]=>
+        string(5) "world"
+      }
     }
   }
 }
 Test#%d { "my" : { "hello" : "world" } }
-array(1) {
-  ["my"]=>
-  object(MyArrayObject)#%d (1) {
-    [%s]=>
-    array(1) {
-      ["hello"]=>
-      string(5) "world"
+object(MyArrayObject)#%d (1) {
+  [%s]=>
+  array(1) {
+    ["my"]=>
+    object(MyArrayObject)#%d (1) {
+      [%s]=>
+      array(1) {
+        ["hello"]=>
+        string(5) "world"
+      }
     }
   }
 }
 Test#%d { "my" : [ [ "hello", "world" ] ] }
-array(1) {
-  ["my"]=>
-  object(MyArrayObject)#%d (1) {
-    [%s]=>
-    array(1) {
-      [0]=>
-      object(MyArrayObject)#%d (1) {
-        [%s]=>
-        array(2) {
-          [0]=>
-          string(5) "hello"
-          [1]=>
-          string(5) "world"
+object(MyArrayObject)#%d (1) {
+  [%s]=>
+  array(1) {
+    ["my"]=>
+    object(MyArrayObject)#%d (1) {
+      [%s]=>
+      array(1) {
+        [0]=>
+        object(MyArrayObject)#%d (1) {
+          [%s]=>
+          array(2) {
+            [0]=>
+            string(5) "hello"
+            [1]=>
+            string(5) "world"
+          }
         }
       }
     }
   }
 }
 Test#%d { "my" : { "0" : [ "hello", "world" ] } }
-array(1) {
-  ["my"]=>
-  object(MyArrayObject)#%d (1) {
-    [%s]=>
-    array(1) {
-      [0]=>
-      object(MyArrayObject)#%d (1) {
-        [%s]=>
-        array(2) {
-          [0]=>
-          string(5) "hello"
-          [1]=>
-          string(5) "world"
+object(MyArrayObject)#%d (1) {
+  [%s]=>
+  array(1) {
+    ["my"]=>
+    object(MyArrayObject)#%d (1) {
+      [%s]=>
+      array(1) {
+        [0]=>
+        object(MyArrayObject)#%d (1) {
+          [%s]=>
+          array(2) {
+            [0]=>
+            string(5) "hello"
+            [1]=>
+            string(5) "world"
+          }
         }
       }
     }

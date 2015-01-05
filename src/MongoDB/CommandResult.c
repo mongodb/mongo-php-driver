@@ -152,8 +152,9 @@ PHP_METHOD(CommandResult, getResponseDocument)
 	if (intern->result.firstBatch) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-		state.zchild = return_value;
+		MAKE_STD_ZVAL(state.zchild);
 		bson_to_zval(bson_get_data(intern->result.firstBatch), intern->result.firstBatch->len, &state);
+		RETURN_ZVAL(state.zchild, 0, 1);
 	}
 }
 /* }}} */

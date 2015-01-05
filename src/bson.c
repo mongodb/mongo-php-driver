@@ -735,6 +735,18 @@ PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson
 
 	switch(Z_TYPE_P(data)) {
 		case IS_OBJECT:
+				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce TSRMLS_CC)) {
+					zval *retval;
+
+					bson_append_binary(bson, "__", -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
+
+					zend_call_method_with_0_params(&data, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &retval);
+					if(retval) {
+						ZVAL_ZVAL(data, retval, 0, 1);
+						convert_to_array(data);
+					}
+				}
+
 		case IS_ARRAY:
 			ht_data = HASH_OF(data);
 			break;
@@ -829,6 +841,15 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 
 		array_init(state->zchild);
 		bson_iter_visit_all(&iter, &php_bson_visitors, state);
+		if (state->map.array || state->odm) {
+			zval *obj = NULL;
+
+			MAKE_STD_ZVAL(obj);
+			object_init_ex(obj, state->odm ? state->odm : state->map.array);
+			zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
+			zval_dtor(state->zchild);
+			ZVAL_ZVAL(state->zchild, obj, 1, 1);
+		}
 	} while ((b = bson_reader_read(reader, &eof)));
 
 	bson_reader_destroy(reader);
@@ -911,10 +932,11 @@ PHP_FUNCTION(toArray)
 
 	php_phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
 
-	state.zchild = return_value;
+	MAKE_STD_ZVAL(state.zchild);
 	if (!bson_to_zval((const unsigned char *)data, data_len, &state)) {
 		RETURN_NULL();
 	}
+	RETURN_ZVAL(state.zchild, 0, 1);
 }
 /* }}} */
 

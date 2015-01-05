@@ -42,7 +42,7 @@ foreach($tests as $n => $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 Test#0 { "stuff" : [ "class", "data" ] }
      0 : 2f 00 00 00 04 73 74 75 66 66 00 23 00 00 00 02  [/....stuff.#....]
     10 : 72 61 6e 64 6f 6d 00 06 00 00 00 63 6c 61 73 73  [random.....class]
@@ -53,6 +53,12 @@ array(2) {
   string(5) "class"
   [0]=>
   string(4) "data"
+}
+string(24) "MyClass::bsonUnserialize"
+array(1) {
+  ["stuff"]=>
+  object(MyClass)#%d (0) {
+  }
 }
 Test#1 { "stuff" : [ 1, 2, 3 ] }
      0 : 26 00 00 00 04 73 74 75 66 66 00 1a 00 00 00 10  [&....stuff......]
@@ -66,5 +72,11 @@ array(3) {
   int(2)
   [2]=>
   int(3)
+}
+string(25) "MyClass2::bsonUnserialize"
+array(1) {
+  ["stuff"]=>
+  object(MyClass2)#%d (0) {
+  }
 }
 ===DONE===
