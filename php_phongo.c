@@ -1240,7 +1240,9 @@ static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{
 	/* firstBatch is empty when the query simply didn't return any results */
 	if (cursor_it->firstBatch) {
 		if (cursor_it->is_command_cursor) {
-			bson_iter_init(&cursor_it->first_batch_iter, cursor_it->firstBatch);
+			if (!bson_iter_init(&cursor_it->first_batch_iter, cursor_it->firstBatch)) {
+				return;
+			}
 			if (bson_iter_next (&cursor_it->first_batch_iter)) {
 				if (BSON_ITER_HOLDS_DOCUMENT (&cursor_it->first_batch_iter)) {
 					const uint8_t *data = NULL;
