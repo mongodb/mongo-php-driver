@@ -657,7 +657,7 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 				const char *ns;
 
 				ns = bson_iter_utf8 (&child, &cursor->nslen);
-				strncpy (cursor->ns, ns, sizeof cursor->ns);
+				bson_strncpy (cursor->ns, ns, sizeof cursor->ns);
 			} else if (BSON_ITER_IS_KEY (&child, "firstBatch")) {
 				if (BSON_ITER_HOLDS_ARRAY (&child)) {
 					const uint8_t *data = NULL;
