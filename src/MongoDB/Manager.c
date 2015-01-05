@@ -105,7 +105,7 @@ PHP_METHOD(Manager, __construct)
 		if (zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
 			convert_to_string(*tmp);
 
-			zend_alter_ini_entry_ex(ZEND_STRS((char *)"phongo.debug_log"), Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
+			zend_alter_ini_entry_ex((char *)"phongo.debug_log", sizeof("phongo.debug_log") , Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
 		}
 	}
 
