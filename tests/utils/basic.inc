@@ -3,29 +3,43 @@ require __DIR__ . "/" . "orchestration.php";
 require __DIR__ . "/" . "tools.php";
 
 
-$host = "http://192.168.112.10:8889";
-if ($_ENV && isset($_ENV["ORCHESTRATION"])) {
-    $host = $_ENV["ORCHESTRATION"];
+if (!($host = getenv("MONGODB_ORCHESTRATION"))) {
+    $host = "http://192.168.112.10:8889";
 }
-
 
 $orch = new Mongo\Orchestration($host);
-if (!$orch->ping()) {
-    exit("skip Mongo Orchestration not running on {$host} - run 'make test-bootstrap'");
+if ($orch->ping()) {
+    $consts = array(
+        "MONGODB_URI"                   => $orch->getURI("standalone.json"),
+        "MONGODB_CLEANUP_URI"           => $orch->getURI("standalone.json"),
+        "MONGODB_STANDALONE_URI"        => $orch->getURI("standalone.json"),
+        "MONGODB_STANDALONE_AUTH_URI"   => $orch->getURI("standalone-auth.json"),
+        "MONGODB_STANDALONE_SSL_URI"    => $orch->getURI("standalone-ssl.json"),
+        "MONGODB_STANDALONE_PLAIN_URI"  => $orch->getURI("standalone-plain.json"),
+        "MONGODB_STANDALONE_X509_URI"   => $orch->getURI("standalone-x509.json"),
+        "MONGODB_REPLICASET_URI"        => $orch->getURI("replicaset.json"),
+    );
+} else {
+    $consts = array(
+        "MONGODB_URI"                   => getenv("MONGODB_TEST_URI"),
+        "MONGODB_CLEANUP_URI"           => getenv("MONGODB_TEST_URI"),
+        "MONGODB_STANDALONE_URI"        => getenv("MONGODB_STANDALONE_URI"),
+        "MONGODB_STANDALONE_AUTH_URI"   => getenv("MONGODB_STANDALONE_AUTH_URI"),
+        "MONGODB_STANDALONE_SSL_URI"    => getenv("MONGODB_STANDALONE_SSL_URI"),
+        "MONGODB_STANDALONE_PLAIN_URI"  => getenv("MONGODB_STANDALONE_PLAIN_URI"),
+        "MONGODB_STANDALONE_X509_URI"   => getenv("MONGODB_STANDALONE_X509_URI"),
+        "MONGODB_REPLICASET_URI"        => getenv("MONGODB_REPLICASET_URI"),
+    );
+
 }
+def($consts);
+
+
 
 $consts = array(
-    "MONGODB_URI"         => $orch->getURI("standalone.json"),
-    "MONGODB_CLEANUP_URI" => $orch->getURI("standalone.json"),
-    "MONGODB_STANDALONE_URI"      => $orch->getURI("standalone.json"),
-    "MONGODB_STANDALONE_AUTH_URI" => $orch->getURI("standalone-auth.json"),
-    "MONGODB_STANDALONE_SSL_URI"  => $orch->getURI("standalone-ssl.json"),
-    "MONGODB_STANDALONE_PLAIN_URI"  => $orch->getURI("standalone-plain.json"),
-    "MONGODB_STANDALONE_X509_URI"  => $orch->getURI("standalone-x509.json"),
-    "MONGODB_REPLICASET_URI"  => $orch->getURI("replicaset.json"),
-    "DATABASE_NAME"       => "phongo",
-    "COLLECTION_NAME"     => makeCollectionNameFromFilename($_SERVER["SCRIPT_FILENAME"]),
-    "DEBUG_DIR"           => sys_get_temp_dir() . "/PHONGO-TESTS/",
+    "DATABASE_NAME"                 => "phongo",
+    "COLLECTION_NAME"               => makeCollectionNameFromFilename($_SERVER["SCRIPT_FILENAME"]),
+    "DEBUG_DIR"                     => sys_get_temp_dir() . "/PHONGO-TESTS/",
 );
 def($consts);
 
