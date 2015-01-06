@@ -1177,7 +1177,7 @@ typedef struct {
 	php_phongo_bson_state  visitor_data;
 } phongo_cursor_it;
 
-static void phongo_cursor_it_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
+static void phongo_cursor_it_invalidate_current(zend_object_iterator *iter TSRMLS_DC)
 {
 	phongo_cursor_it    *cursor_it = (phongo_cursor_it *)iter;
 
@@ -1185,6 +1185,12 @@ static void phongo_cursor_it_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ *
 		zval_ptr_dtor(&cursor_it->visitor_data.zchild);
 		cursor_it->visitor_data.zchild = NULL;
 	}
+}
+static void phongo_cursor_it_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
+{
+	phongo_cursor_it    *cursor_it = (phongo_cursor_it *)iter;
+
+	iter->funcs->invalidate_current(iter TSRMLS_CC);
 
 	zval_ptr_dtor((zval**)&cursor_it->iterator.data);
 	efree(cursor_it);
@@ -1205,11 +1211,9 @@ static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) 
 	phongo_cursor_it      *cursor_it = (phongo_cursor_it *)iter;
 	const bson_t          *doc;
 
-	if (cursor_it->visitor_data.zchild) {
-		zval_ptr_dtor(&cursor_it->visitor_data.zchild);
-		cursor_it->visitor_data.zchild = NULL;
-	}
+	iter->funcs->invalidate_current(iter TSRMLS_CC);
 
+	iter->index++;
 	if (bson_iter_next(&cursor_it->first_batch_iter)) {
 		if (BSON_ITER_HOLDS_DOCUMENT (&cursor_it->first_batch_iter)) {
 			const uint8_t *data = NULL;
@@ -1226,7 +1230,7 @@ static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) 
 		MAKE_STD_ZVAL(cursor_it->visitor_data.zchild);
 		bson_to_zval(bson_get_data(doc), doc->len, &cursor_it->visitor_data);
 	} else {
-		cursor_it->visitor_data.zchild = NULL;
+		iter->funcs->invalidate_current(iter TSRMLS_CC);
 	}
 
 } /* }}} */
@@ -1235,10 +1239,7 @@ static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{
 {
 	phongo_cursor_it      *cursor_it = (phongo_cursor_it *)iter;
 
-	if (cursor_it->visitor_data.zchild) {
-		zval_ptr_dtor(&cursor_it->visitor_data.zchild);
-		cursor_it->visitor_data.zchild = NULL;
-	}
+	iter->funcs->invalidate_current(iter TSRMLS_CC);
 
 	/* firstBatch is empty when the query simply didn't return any results */
 	if (cursor_it->firstBatch) {
@@ -1271,7 +1272,7 @@ zend_object_iterator_funcs phongo_cursor_it_funcs = {
 	NULL, /* void (*get_current_key)(zend_object_iterator *iter, zval *key TSRMLS_DC); */
 	phongo_cursor_it_move_forward,
 	phongo_cursor_it_rewind,
-	NULL /* void (*invalidate_current)(zend_object_iterator *iter TSRMLS_DC); */
+	phongo_cursor_it_invalidate_current
 };
 zend_object_iterator_funcs zend_interface_iterator_funcs_iterator_default = {
 	phongo_cursor_it_dtor,
