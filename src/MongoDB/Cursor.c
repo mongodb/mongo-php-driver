@@ -84,7 +84,7 @@ PHP_METHOD(Cursor, getId)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->cursor) TSRMLS_CC);
+	php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->result->cursor) TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\Server Cursor::getServer()
@@ -123,7 +123,7 @@ PHP_METHOD(Cursor, isDead)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	RETURN_BOOL(!mongoc_cursor_is_alive(intern->cursor));
+	RETURN_BOOL(!mongoc_cursor_is_alive(intern->result->cursor));
 }
 /* }}} */
 /* {{{ proto void Cursor::kill()
@@ -144,8 +144,8 @@ PHP_METHOD(Cursor, kill)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	hint = mongoc_cursor_get_hint(intern->cursor);
-	mongoc_client_kill_cursor(intern->cursor->client, mongoc_cursor_get_id(intern->cursor));
+	hint = mongoc_cursor_get_hint(intern->result->cursor);
+	mongoc_client_kill_cursor(intern->result->cursor->client, mongoc_cursor_get_id(intern->result->cursor));
 }
 /* }}} */
 /* {{{ proto boolean Cursor::setBatchSize(integer $batchSize)
@@ -166,7 +166,7 @@ PHP_METHOD(Cursor, setBatchSize)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	mongoc_cursor_set_batch_size(intern->cursor, batchSize);
+	mongoc_cursor_set_batch_size(intern->result->cursor, batchSize);
 }
 /* }}} */
 /* {{{ proto boolean Cursor::getBatchSize()
@@ -186,7 +186,7 @@ PHP_METHOD(Cursor, getBatchSize)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	RETURN_LONG(mongoc_cursor_get_batch_size(intern->cursor));
+	RETURN_LONG(mongoc_cursor_get_batch_size(intern->result->cursor));
 }
 /* }}} */
 /* {{{ proto mixed Cursor::current()
@@ -365,14 +365,6 @@ static void php_phongo_cursor_free_object(void *object TSRMLS_DC) /* {{{ */
 	php_phongo_cursor_t *intern = (php_phongo_cursor_t*)object;
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
-
-	if (intern->firstBatch) {
-		/* FIXME: ? */
-		//bson_clear(&intern->firstBatch);
-	}
-	if (intern->cursor) {
-		//mongoc_cursor_destroy(intern->cursor);
-	}
 
 	efree(intern);
 } /* }}} */
