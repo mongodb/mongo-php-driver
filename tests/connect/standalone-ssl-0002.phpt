@@ -44,7 +44,7 @@ $opts = array(
 );
 $context = stream_context_create($opts);
 
-$mc = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context, "debug" => STDERR));
+$mc = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context));
 
 
 echo throws(function() use($mc) {

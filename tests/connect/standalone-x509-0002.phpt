@@ -34,7 +34,7 @@ $parsed = parse_url(MONGODB_STANDALONE_X509_URI);
 $adminuser = "root";
 $adminpass = "toor";
 $dsn = sprintf("mongodb://%s:%s@%s:%d/admin?ssl=true", $adminuser, $adminpass, $parsed["host"], $parsed["port"]);
-$adminmanager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context, "debug" => "stderr"));
+$adminmanager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context));
 
 $certusername = "C=US,ST=New York,L=New York City,O=MongoDB,OU=KernelUser,CN=client";
 
@@ -57,7 +57,7 @@ try {
     $parsed = parse_url(MONGODB_STANDALONE_X509_URI);
     $dsn = sprintf("mongodb://%s:%d/%s?ssl=true&authMechanism=MONGODB-X509", $parsed["host"], $parsed["port"], DATABASE_NAME);
 
-    $manager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context, "debug" => "stderr"));
+    $manager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context));
 
     $batch = new MongoDB\Driver\WriteBatch();
     $batch->insert(array("very" => "important"));
