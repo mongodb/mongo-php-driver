@@ -9,7 +9,7 @@ env:
   global:
     - TEST_PHP_ARGS="-q -s output.txt -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
     - REPORT_EXIT_STATUS=1
-    - MONGODB_ORCHESTRATION="http://127.0.0.1:8889"
+    - MONGODB_ORCHESTRATION="http://localhost:8889"
     - MONGO_ORCHESTRATION_REPO="git+git://github.com/mongodb/mongo-orchestration@master"
     - secure: uOPk40++5SqPwsvENvQXKy3sJmOYFoPxTSPpoafbus9teEqe3S0mXAv6leSUSH4K/vk1OoPFp2xjKRVkdBTeqTElna1DDWOuYlvli9PLSvyZ+b1bV+8Ap18BxqlYhd3tHrY7tIliOsh6dZplWF9GyUm9DWBZ/80uKUidh/Brg/Y=
     - secure: "pfGVPucvgcgcefhtzAVeejlpOtn4TnAqJSTM8mJkBl36KdU9P7hMuD3czQ4drWgzZ373/VT5UVhLu/HNsdbW0YBTeqPKJ4YNjqVVLytI8xT7y2Lw9l+I7o93j98TMgAoo8nVRmp/E4D6yutbKK1eddrcmf899R1iJbw8v8d1Ht8="
