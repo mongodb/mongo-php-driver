@@ -11,9 +11,8 @@ function lap() {
     return $ret;
 }
 
-$host = "http://192.168.112.10:8889";
-if ($_ENV && isset($_ENV["ORCHESTRATION"])) {
-    $host = $_ENV["ORCHESTRATION"];
+if (!($host = getenv("MONGODB_ORCHESTRATION"))) {
+    $host = "http://192.168.112.10:8889";
 }
 
 $orch = new Mongo\Orchestration($host);
