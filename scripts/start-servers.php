@@ -15,7 +15,7 @@ if (!($host = getenv("MONGODB_ORCHESTRATION"))) {
     $host = "http://192.168.112.10:8889";
 }
 
-$orch = new Mongo\Orchestration($host);
+$orch = new Mongo\Orchestration($host, getenv("MONGODB_ORCHESTRATION_PRESETS_ROOT"));
 if (!$orch->ping()) {
     var_dump($host);
     system("pwd");
@@ -29,7 +29,12 @@ lap();
 $orch->stopAll();
 
 $res = $orch->start("standalone.json");
-printf("Standalone running on:\t\t\t(took: %.2f secs)\t%s\n", lap(), $res);
+if ($res) {
+    printf("Standalone running on:\t\t\t(took: %.2f secs)\t%s\n", lap(), $res);
+} else {
+    printf("Failed starting standalone.json after %.2f secs\n", lap());
+    exit(1);
+}
 
 if (getenv("TRAVIS")) {
     echo "Skipping special nodes on travis\n";

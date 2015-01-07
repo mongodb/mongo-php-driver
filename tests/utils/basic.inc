@@ -7,7 +7,7 @@ if (!($host = getenv("MONGODB_ORCHESTRATION"))) {
     $host = "http://192.168.112.10:8889";
 }
 
-$orch = new Mongo\Orchestration($host);
+$orch = new Mongo\Orchestration($host, getenv("MONGODB_ORCHESTRATION_PRESETS_ROOT"));
 if ($orch->ping()) {
     $consts = array(
         "MONGODB_URI"                   => $orch->getURI("standalone.json"),

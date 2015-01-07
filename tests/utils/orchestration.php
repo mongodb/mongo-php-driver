@@ -6,10 +6,11 @@ class Orchestration {
     protected $baseuri;
     protected $conf;
 
-    function __construct($baseuri) {
+    function __construct($baseuri, $prefix = NULL) {
         $this->baseuri = $baseuri;
         $this->conf = array(
             "timeout" => 60,
+            "prefix"  => $prefix ?: "/phongo/",
         );
     }
 
@@ -47,7 +48,7 @@ class Orchestration {
             throw new \Exception("Cannot file $file in $relative");
         }
 
-        $retval = $this->post("replica_sets", ["preset" => "/phongo/$file"]);
+        $retval = $this->post("replica_sets", ["preset" => $this->getPrefix() . "$file"]);
         return $this->_returnURIIfAlive($retval);
     }
     function start($preset) {
@@ -57,7 +58,7 @@ class Orchestration {
             throw new \Exception("Cannot file $file in $relative");
         }
 
-        $retval = $this->post("servers", ["preset" => "/phongo/$file"]);
+        $retval = $this->post("servers", ["preset" => $this->getPrefix() . "$file"]);
         return $this->_returnURIIfAlive($retval);
     }
 
@@ -102,6 +103,9 @@ class Orchestration {
     }
     function getTimeout() {
         return $this->conf["timeout"];
+    }
+    function getPrefix() {
+        return $this->conf["prefix"] . "/";
     }
 
 
