@@ -24,6 +24,10 @@ $orch->stopAll();
 $res = $orch->start("standalone.json");
 printf("Standalone running on:\t\t\t(took: %.2f secs)\t%s\n", lap(), $res);
 
+if (getenv("TRAVIS")) {
+    echo "Skipping special nodes on travis\n";
+    exit;
+}
 $res = $orch->start("standalone-ssl.json");
 printf("Standalone SSL running on:\t\t(took: %.2f secs)\t%s\n", lap(), $res);
 

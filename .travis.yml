@@ -30,7 +30,7 @@ before_script:
   - ulimit -a
   - ulimit -c unlimited || true
   - "./.travis.scripts/compile.sh"
-  - make composer
+  - make test-bootstrap composer
 
 notifications:
   email:
