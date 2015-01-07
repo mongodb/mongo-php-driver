@@ -21,7 +21,7 @@ before_install:
   - sudo apt-get install mongodb-org
   - sudo apt-get install gdb valgrind
   - sudo apt-get install cdbs debhelper build-essential python-lxml
-  - sudo service mongodb start
+  - sudo service mongod start
 
 before_script:
   - ulimit -a
