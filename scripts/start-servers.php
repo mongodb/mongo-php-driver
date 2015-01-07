@@ -17,6 +17,9 @@ if (!($host = getenv("MONGODB_ORCHESTRATION"))) {
 
 $orch = new Mongo\Orchestration($host);
 if (!$orch->ping()) {
+    var_dump($host);
+    system("pwd");
+    system("wget -O - $host");
     echo file_get_contents("server.log");
     echo "Failed starting MO\n";
     exit(3);
