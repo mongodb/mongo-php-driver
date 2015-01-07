@@ -8,3 +8,4 @@ pages:
     - [commands.md, Commands]
 extra_javascript:
     - pretty.js
+    - jira.js
