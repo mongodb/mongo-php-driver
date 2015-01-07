@@ -15,8 +15,11 @@ class Orchestration {
 
     function ping() {
         try {
+            $t = $this->setTimeout(1);
             $data = $this->get("");
+            $this->setTimeout($t);
         } catch(\Exception $e) {
+            $this->setTimeout($t);
             return false;
         }
         return true;
@@ -92,6 +95,11 @@ class Orchestration {
         }
     }
 
+    function setTimeout($t) {
+        $retval = $this->conf["timeout"];
+        $this->conf["timeout"] = $t;
+        return $retval;
+    }
     function getTimeout() {
         return $this->conf["timeout"];
     }
