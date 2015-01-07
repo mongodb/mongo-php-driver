@@ -60,8 +60,15 @@ typedef struct {
 } php_phongo_commandresult_t;
 
 typedef struct {
+	zend_object_iterator   iterator;
+	bson_iter_t            first_batch_iter;
+	long                   current;
+} phongo_cursor_it;
+
+typedef struct {
 	zend_object              std;
 	php_phongo_result_t      *result;
+	phongo_cursor_it         *it;
 } php_phongo_cursor_t;
 
 typedef struct {

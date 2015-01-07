@@ -1164,11 +1164,6 @@ void php_phongo_result_free(php_phongo_result_t *result)
 }
 
 /* {{{ Iterator */
-typedef struct {
-	zend_object_iterator   iterator;
-	bson_iter_t            first_batch_iter;
-} phongo_cursor_it;
-
 static void phongo_cursor_it_invalidate_current(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
 	php_phongo_result_t *result = NULL;
@@ -1182,11 +1177,9 @@ static void phongo_cursor_it_invalidate_current(zend_object_iterator *iter TSRML
 
 static void phongo_cursor_it_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	phongo_cursor_it    *cursor_it = (phongo_cursor_it *)iter;
-
 	iter->funcs->invalidate_current(iter TSRMLS_CC);
 
-	efree(cursor_it);
+	efree(iter);
 } /* }}} */
 
 static int phongo_cursor_it_valid(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
@@ -1202,6 +1195,11 @@ static int phongo_cursor_it_valid(zend_object_iterator *iter TSRMLS_DC) /* {{{ *
 	return FAILURE;
 } /* }}} */
 
+static void phongo_cursor_it_get_current_key(zend_object_iterator *iter, zval *key TSRMLS_DC) /* {{{ */
+{
+	ZVAL_LONG(key, ((phongo_cursor_it *)iter)->current);
+} /* }}} */
+
 static void phongo_cursor_it_get_current_data(zend_object_iterator *iter, zval ***data TSRMLS_DC) /* {{{ */
 {
 	php_phongo_result_t *result = NULL;
@@ -1213,14 +1211,14 @@ static void phongo_cursor_it_get_current_data(zend_object_iterator *iter, zval *
 
 static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	php_phongo_result_t *result = NULL;
+	php_phongo_result_t   *result = NULL;
 	phongo_cursor_it      *cursor_it = (phongo_cursor_it *)iter;
 	const bson_t          *doc;
 
 	result = ((phongo_cursor_it *)iter)->iterator.data;
 	iter->funcs->invalidate_current(iter TSRMLS_CC);
 
-	iter->index++;
+	((phongo_cursor_it *)iter)->current++;
 	if (bson_iter_next(&cursor_it->first_batch_iter)) {
 		if (BSON_ITER_HOLDS_DOCUMENT (&cursor_it->first_batch_iter)) {
 			const uint8_t *data = NULL;
@@ -1250,6 +1248,7 @@ static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{
 	result = ((phongo_cursor_it *)iter)->iterator.data;
 
 	iter->funcs->invalidate_current(iter TSRMLS_CC);
+	((phongo_cursor_it *)iter)->current = 0;
 
 	/* firstBatch is empty when the query simply didn't return any results */
 	if (result->firstBatch) {
@@ -1279,7 +1278,7 @@ zend_object_iterator_funcs phongo_cursor_it_funcs = {
 	phongo_cursor_it_dtor,
 	phongo_cursor_it_valid,
 	phongo_cursor_it_get_current_data,
-	NULL, /* void (*get_current_key)(zend_object_iterator *iter, zval *key TSRMLS_DC); */
+	phongo_cursor_it_get_current_key,
 	phongo_cursor_it_move_forward,
 	phongo_cursor_it_rewind,
 	phongo_cursor_it_invalidate_current

@@ -189,12 +189,14 @@ PHP_METHOD(Cursor, getBatchSize)
 	RETURN_LONG(mongoc_cursor_get_batch_size(intern->result->cursor));
 }
 /* }}} */
+
 /* {{{ proto mixed Cursor::current()
    Returns the current element */
 PHP_METHOD(Cursor, current)
 {
 	php_phongo_cursor_t      *intern;
 	zend_error_handling       error_handling;
+	zval                    **data = NULL;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -206,6 +208,17 @@ PHP_METHOD(Cursor, current)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	if (!intern->it) {
+		zend_class_entry *ce;
+
+		ce = Z_OBJCE_P(getThis());
+		intern->it = (phongo_cursor_it *)ce->get_iterator(ce, getThis(), 0 TSRMLS_CC);
+	}
+
+	intern->it->iterator.funcs->get_current_data(&intern->it->iterator, &data TSRMLS_CC);
+	if (data && *data) {
+		RETURN_ZVAL(*data, 1, 0);
+	}
 }
 /* }}} */
 /* {{{ proto mixed Cursor::key()
@@ -225,6 +238,18 @@ PHP_METHOD(Cursor, key)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	if (!intern->it) {
+		zend_class_entry *ce;
+
+		ce = Z_OBJCE_P(getThis());
+		intern->it = (phongo_cursor_it *)ce->get_iterator(ce, getThis(), 0 TSRMLS_CC);
+	}
+
+	if (intern->it->iterator.funcs->get_current_key) {
+		intern->it->iterator.funcs->get_current_key(&intern->it->iterator, return_value TSRMLS_CC);
+	} else {
+		RETURN_LONG(intern->it->current);
+	}
 }
 /* }}} */
 /* {{{ proto void Cursor::next()
@@ -244,6 +269,14 @@ PHP_METHOD(Cursor, next)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	if (!intern->it) {
+		zend_class_entry *ce;
+
+		ce = Z_OBJCE_P(getThis());
+		intern->it = (phongo_cursor_it *)ce->get_iterator(ce, getThis(), 0 TSRMLS_CC);
+	}
+
+	intern->it->iterator.funcs->move_forward(&intern->it->iterator TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto void Cursor::rewind()
@@ -263,6 +296,14 @@ PHP_METHOD(Cursor, rewind)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	if (!intern->it) {
+		zend_class_entry *ce;
+
+		ce = Z_OBJCE_P(getThis());
+		intern->it = (phongo_cursor_it *)ce->get_iterator(ce, getThis(), 0 TSRMLS_CC);
+	}
+
+	intern->it->iterator.funcs->rewind(&intern->it->iterator TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto boolean Cursor::valid()
@@ -282,6 +323,14 @@ PHP_METHOD(Cursor, valid)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	if (!intern->it) {
+		zend_class_entry *ce;
+
+		ce = Z_OBJCE_P(getThis());
+		intern->it = (phongo_cursor_it *)ce->get_iterator(ce, getThis(), 0 TSRMLS_CC);
+	}
+
+	RETURN_BOOL(intern->it->iterator.funcs->valid(&intern->it->iterator TSRMLS_CC) == SUCCESS);
 }
 /* }}} */
 
@@ -364,6 +413,10 @@ static void php_phongo_cursor_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t *intern = (php_phongo_cursor_t*)object;
 
+	if (intern->it) {
+		intern->it->iterator.funcs->dtor(&intern->it->iterator TSRMLS_CC);
+		intern->it = NULL;
+	}
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
