@@ -1,5 +1,4 @@
 site_name: "PHongo: The MongoDB Driver for PHP"
-site_dir: ../phongo-website/
 repo_url: https://github.com/10gen-labs/mongo-php-driver-prototype
 theme: spacelab
 pages:
