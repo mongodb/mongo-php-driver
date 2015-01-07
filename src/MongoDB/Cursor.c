@@ -246,7 +246,7 @@ PHP_METHOD(Cursor, key)
 	}
 
 	if (intern->it->iterator.funcs->get_current_key) {
-		intern->it->iterator.funcs->get_current_key(&intern->it->iterator, return_value TSRMLS_CC);
+		ITERATOR_GET_CURRENT_KEY(intern->it->iterator, return_value);
 	} else {
 		RETURN_LONG(intern->it->current);
 	}
