@@ -16,6 +16,11 @@ if (!($host = getenv("MONGODB_ORCHESTRATION"))) {
 }
 
 $orch = new Mongo\Orchestration($host);
+if (!$orch->ping()) {
+    echo file_get_contents("server.log");
+    echo "Failed starting MO\n";
+    exit(3);
+}
 
 lap();
 $orch->stopAll();
