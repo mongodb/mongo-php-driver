@@ -477,7 +477,11 @@ static void add_next_index_node(zval *array, mongoc_cluster_node_t *node)
 	add_assoc_long_ex(data, ZEND_STRS("min_wire_version"), node->min_wire_version);
 	add_assoc_long_ex(data, ZEND_STRS("max_wire_version"), node->max_wire_version);
 	add_assoc_long_ex(data, ZEND_STRS("max_write_batch_size"), node->max_write_batch_size);
-	add_assoc_string_ex(data, ZEND_STRS("replSet"), node->replSet, 0);
+	if (node->replSet) {
+		add_assoc_string_ex(data, ZEND_STRS("replSet"), node->replSet, 0);
+	} else {
+		add_assoc_null_ex(data, ZEND_STRS("replSet"));
+	}
 	add_assoc_long_ex(data, ZEND_STRS("last_read_msec"), node->last_read_msec);
 	bson_to_zval(bson_get_data(&node->tags), node->tags.len, &state);
 	add_assoc_zval_ex(data, ZEND_STRS("tags"), state.zchild);
@@ -514,7 +518,8 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 		add_assoc_long_ex(cluster, ZEND_STRS("last_reconnect"), intern->client->cluster.last_reconnect);
 		add_assoc_string_ex(cluster, ZEND_STRS("uri"), (char *)mongoc_uri_get_string(intern->client->cluster.uri), 0);
 		add_assoc_long_ex(cluster, ZEND_STRS("requires_auth"), intern->client->cluster.requires_auth);
-		{
+
+		if (intern->client->cluster.nodes_len) {
 			zval *nodes = NULL;
 			unsigned int i;
 
