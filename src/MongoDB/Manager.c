@@ -29,6 +29,8 @@
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
+#include <mongoc-client-private.h>
+#include <mongoc-host-list-private.h>
 
 /* PHP Core stuff */
 #include <php.h>
@@ -36,6 +38,7 @@
 #include <ext/standard/info.h>
 #include <ext/standard/file.h>
 #include <Zend/zend_interfaces.h>
+#include <Zend/zend_hash.h>
 #include <ext/spl/spl_iterators.h>
 /* Our Compatability header */
 #include "php_compat_53.h"
@@ -47,6 +50,8 @@
 
 
 PHONGO_API zend_class_entry *php_phongo_manager_ce;
+
+zend_object_handlers php_phongo_handler_manager;
 
 /* {{{ proto MongoDB\Driver\Manager Manager::__construct(string $uri[, array $options = array()[, array $driverOptions = array()]])
    Constructs a new Manager */
@@ -411,32 +416,158 @@ static void php_phongo_manager_free_object(void *object TSRMLS_DC) /* {{{ */
 zend_object_value php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
-	php_phongo_manager_t *intern;
+	php_phongo_manager_t *intern = NULL;
 
-	intern = (php_phongo_manager_t *)emalloc(sizeof(php_phongo_manager_t));
-	memset(intern, 0, sizeof(php_phongo_manager_t));
+	intern = (php_phongo_manager_t *)ecalloc(1, sizeof *intern);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_manager_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = &php_phongo_handler_manager;
 
 	return retval;
+} /* }}} */
+
+static const char *phongo_cluster_mode_tostring(mongoc_cluster_mode_t mode)
+{
+	switch (mode) {
+		case MONGOC_CLUSTER_DIRECT:
+			return "direct";
+		case MONGOC_CLUSTER_REPLICA_SET:
+			return "replicaset";
+		case MONGOC_CLUSTER_SHARDED_CLUSTER:
+			return "sharded";
+			break;
+	}
+
+	return "broken";
+}
+
+static const char *phongo_cluster_state_tostring(mongoc_cluster_state_t state)
+{
+	switch (state) {
+		case MONGOC_CLUSTER_STATE_BORN:
+			return "born";
+		case MONGOC_CLUSTER_STATE_HEALTHY:
+			return "healthy";
+		case MONGOC_CLUSTER_STATE_DEAD:
+			return "dead";
+		case MONGOC_CLUSTER_STATE_UNHEALTHY:
+			return "unhealthy";
+	}
+
+	return "broken";
+}
+
+static void add_next_index_node(zval *array, mongoc_cluster_node_t *node)
+{
+	php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+	MAKE_STD_ZVAL(state.zchild);
+	zval *data = NULL;
+
+	MAKE_STD_ZVAL(data);
+	array_init(data);
+	add_assoc_long_ex(data, ZEND_STRS("ping_avg_msec"), node->ping_avg_msec);
+	add_assoc_long_ex(data, ZEND_STRS("stamp"), node->stamp);
+	add_assoc_bool_ex(data, ZEND_STRS("primary"), node->primary);
+	add_assoc_bool_ex(data, ZEND_STRS("needs_auth"), node->needs_auth);
+	add_assoc_bool_ex(data, ZEND_STRS("isdbgrid"), node->needs_auth);
+	add_assoc_long_ex(data, ZEND_STRS("min_wire_version"), node->min_wire_version);
+	add_assoc_long_ex(data, ZEND_STRS("max_wire_version"), node->max_wire_version);
+	add_assoc_long_ex(data, ZEND_STRS("max_write_batch_size"), node->max_write_batch_size);
+	add_assoc_string_ex(data, ZEND_STRS("replSet"), node->replSet, 0);
+	add_assoc_long_ex(data, ZEND_STRS("last_read_msec"), node->last_read_msec);
+	bson_to_zval(bson_get_data(&node->tags), node->tags.len, &state);
+	add_assoc_zval_ex(data, ZEND_STRS("tags"), state.zchild);
+	add_assoc_string_ex(data, ZEND_STRS("host_and_port"), node->host.host_and_port, 0);
+	/* TODO: Should this contain the actual stream too? we have the mongoc_stream_t... */
+
+	add_next_index_zval(array, data);
+}
+
+HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	zval *retval = NULL;
+	php_phongo_manager_t  *intern;
+
+	*is_temp = 0;
+	intern = (php_phongo_manager_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+
+	MAKE_STD_ZVAL(retval);
+	array_init(retval);
+	add_assoc_string_ex(retval, ZEND_STRS("foobar"), (char *)"some other cool stuff", 0);
+
+	add_assoc_long_ex(retval, ZEND_STRS("request_id"), intern->client->request_id);
+	add_assoc_string_ex(retval, ZEND_STRS("uri"), (char *)mongoc_uri_get_string(intern->client->uri), 0);
+
+	{
+		zval *cluster = NULL;
+		MAKE_STD_ZVAL(cluster);
+		array_init(cluster);
+		add_assoc_string_ex(cluster, ZEND_STRS("mode"), (char *)phongo_cluster_mode_tostring(intern->client->cluster.mode), 0);
+		add_assoc_string_ex(cluster, ZEND_STRS("state"), (char *)phongo_cluster_state_tostring(intern->client->cluster.state), 0);
+		add_assoc_long_ex(cluster, ZEND_STRS("request_id"), intern->client->cluster.request_id);
+		add_assoc_long_ex(cluster, ZEND_STRS("sockettimeoutms"), intern->client->cluster.sockettimeoutms);
+		add_assoc_long_ex(cluster, ZEND_STRS("last_reconnect"), intern->client->cluster.last_reconnect);
+		add_assoc_string_ex(cluster, ZEND_STRS("uri"), (char *)mongoc_uri_get_string(intern->client->cluster.uri), 0);
+		add_assoc_long_ex(cluster, ZEND_STRS("requires_auth"), intern->client->cluster.requires_auth);
+		{
+			zval *nodes = NULL;
+			unsigned int i;
+
+			MAKE_STD_ZVAL(nodes);
+			array_init(nodes);
+			for (i = 0; i < intern->client->cluster.nodes_len; i++) {
+				add_next_index_node(nodes, &intern->client->cluster.nodes[i]);
+			}
+			add_assoc_zval_ex(cluster, ZEND_STRS("nodes"), nodes);
+		}
+		add_assoc_long_ex(cluster, ZEND_STRS("max_bson_size"), intern->client->cluster.max_bson_size);
+		add_assoc_long_ex(cluster, ZEND_STRS("max_msg_size"), intern->client->cluster.max_msg_size);
+		add_assoc_long_ex(cluster, ZEND_STRS("sec_latency_ms"), intern->client->cluster.sec_latency_ms);
+		{
+			mongoc_host_list_t host;
+			zval *peers = NULL;
+			mongoc_list_t *list;
+			mongoc_list_t *liter;
+
+			MAKE_STD_ZVAL(peers);
+			array_init(peers);
+
+			list = intern->client->cluster.peers;
+			for (liter = list; liter ; liter = liter->next) {
+
+				if (_mongoc_host_list_from_string(&host, liter->data)) {
+					add_next_index_string(peers, host.host_and_port, 1);
+				}
+			}
+			add_assoc_zval_ex(cluster, ZEND_STRS("peers"), peers);
+		}
+		add_assoc_string_ex(cluster, ZEND_STRS("replSet"), intern->client->cluster.replSet, 0);
+
+		add_assoc_zval_ex(retval, ZEND_STRS("cluster"), cluster);
+	}
+
+	return Z_ARRVAL_P(retval);
 } /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(Manager)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	(void)type;(void)module_number;
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Manager", php_phongo_manager_me);
-	ce.create_object = php_phongo_manager_create_object;
 	php_phongo_manager_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_manager_ce->create_object = php_phongo_manager_create_object;
 	php_phongo_manager_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
+	memcpy(&php_phongo_handler_manager, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_manager.get_debug_info = php_phongo_manager_get_debug_info;
 
 	return SUCCESS;
 }
