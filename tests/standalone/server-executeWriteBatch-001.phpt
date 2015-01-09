@@ -22,6 +22,7 @@ printf("WriteResult.server is the same: %s\n", $server == $result->getServer() ?
 
 echo "\n===> WriteResult\n";
 printWriteResult($result);
+var_dump($result);
 
 echo "\n===> Collection\n";
 $cursor = $server->executeQuery(NS, new MongoDB\Driver\Query(array()));
@@ -41,6 +42,30 @@ modifiedCount: 1
 upsertedCount: 1
 deletedCount: 1
 upsertedId[3]: int(3)
+object(MongoDB\Driver\WriteResult)#%d (9) {
+  ["nInserted"]=>
+  int(2)
+  ["nMatched"]=>
+  int(1)
+  ["nModified"]=>
+  int(1)
+  ["nRemoved"]=>
+  int(1)
+  ["nUpserted"]=>
+  int(1)
+  ["info"]=>
+  NULL
+  ["upsertedIds"]=>
+  array(1) {
+    [3]=>
+    int(3)
+  }
+  ["writeErrors"]=>
+  array(0) {
+  }
+  ["writeConcernError"]=>
+  NULL
+}
 
 ===> Collection
 array(2) {

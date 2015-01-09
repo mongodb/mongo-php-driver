@@ -44,6 +44,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
+zend_object_handlers php_phongo_handler_writeresult;
+
 /* {{{ proto integer WriteResult::getInsertedCount()
    Returns the number of documents that were inserted */
 PHP_METHOD(WriteResult, getInsertedCount)
@@ -369,16 +371,61 @@ zend_object_value php_phongo_writeresult_create_object(zend_class_entry *class_t
 	zend_object_value retval;
 	php_phongo_writeresult_t *intern = NULL;
 
-	intern = (php_phongo_writeresult_t *)emalloc(sizeof(php_phongo_writeresult_t));
-	memset(intern, 0, sizeof(php_phongo_writeresult_t));
+	intern = (php_phongo_writeresult_t *)ecalloc(1, sizeof *intern);
 
 	zend_object_std_init(&intern->result.std, class_type TSRMLS_CC);
 	object_properties_init(&intern->result.std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeresult_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = &php_phongo_handler_writeresult;
 
 	return retval;
+} /* }}} */
+
+HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	php_phongo_writeresult_t *intern;
+	zval                      retval = zval_used_for_init;
+
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(object TSRMLS_CC);
+	*is_temp = 1;
+	array_init_size(&retval, 9);
+
+	add_assoc_long_ex(&retval, ZEND_STRS("nInserted"), intern->nInserted);
+	add_assoc_long_ex(&retval, ZEND_STRS("nMatched"), intern->nMatched);
+	add_assoc_long_ex(&retval, ZEND_STRS("nModified"), intern->nModified);
+	add_assoc_long_ex(&retval, ZEND_STRS("nRemoved"), intern->nRemoved);
+	add_assoc_long_ex(&retval, ZEND_STRS("nUpserted"), intern->nUpserted);
+
+	if (intern->info) {
+		zval_add_ref(&intern->info);
+		add_assoc_zval_ex(&retval, ZEND_STRS("info"), intern->info);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("info"));
+	}
+
+	if (intern->upsertedIds) {
+		zval_add_ref(&intern->upsertedIds);
+		add_assoc_zval_ex(&retval, ZEND_STRS("upsertedIds"), intern->upsertedIds);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("upsertedIds"));
+	}
+
+	if (intern->writeErrors) {
+		zval_add_ref(&intern->writeErrors);
+		add_assoc_zval_ex(&retval, ZEND_STRS("writeErrors"), intern->writeErrors);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("writeErrors"));
+	}
+
+	if (intern->writeConcernError) {
+		zval_add_ref(&intern->writeConcernError);
+		add_assoc_zval_ex(&retval, ZEND_STRS("writeConcernError"), intern->writeConcernError);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("writeConcernError"));
+	}
+
+	return Z_ARRVAL(retval);
 } /* }}} */
 /* }}} */
 
@@ -390,10 +437,12 @@ PHP_MINIT_FUNCTION(WriteResult)
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteResult", php_phongo_writeresult_me);
-	ce.create_object = php_phongo_writeresult_create_object;
 	php_phongo_writeresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_writeresult_ce->create_object = php_phongo_writeresult_create_object;
 	php_phongo_writeresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
+	memcpy(&php_phongo_handler_writeresult, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_writeresult.get_debug_info = php_phongo_writeresult_get_debug_info;
 
 	return SUCCESS;
 }
