@@ -120,38 +120,44 @@ zend_object_value php_phongo_query_create_object(zend_class_entry *class_type TS
 
 	return retval;
 } /* }}} */
+
 HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_query_t    *intern;
-	zval                  *retval = NULL;
+	zval                   retval = zval_used_for_init;
 
 
-	*is_temp = 0;
+	*is_temp = 1;
 	intern = (php_phongo_query_t *)zend_object_store_get_object(object TSRMLS_CC);
 
-	MAKE_STD_ZVAL(retval);
-	array_init(retval);
+	array_init_size(&retval, 6);
 
 	if (intern->query) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
 		MAKE_STD_ZVAL(state.zchild);
 		bson_to_zval(bson_get_data(intern->query), intern->query->len, &state);
-		add_assoc_zval_ex(retval, ZEND_STRS("query"), state.zchild);
+		add_assoc_zval_ex(&retval, ZEND_STRS("query"), state.zchild);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("query"));
 	}
+
 	if (intern->selector) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
 		MAKE_STD_ZVAL(state.zchild);
 		bson_to_zval(bson_get_data(intern->selector), intern->selector->len, &state);
-		add_assoc_zval_ex(retval, ZEND_STRS("selector"), state.zchild);
+		add_assoc_zval_ex(&retval, ZEND_STRS("selector"), state.zchild);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("selector"));
 	}
-	add_assoc_long_ex(retval, ZEND_STRS("flags"), intern->flags);
-	add_assoc_long_ex(retval, ZEND_STRS("skip"), intern->skip);
-	add_assoc_long_ex(retval, ZEND_STRS("limit"), intern->limit);
-	add_assoc_long_ex(retval, ZEND_STRS("batch_size"), intern->batch_size);
 
-	return Z_ARRVAL_P(retval);
+	add_assoc_long_ex(&retval, ZEND_STRS("flags"), intern->flags);
+	add_assoc_long_ex(&retval, ZEND_STRS("skip"), intern->skip);
+	add_assoc_long_ex(&retval, ZEND_STRS("limit"), intern->limit);
+	add_assoc_long_ex(&retval, ZEND_STRS("batch_size"), intern->batch_size);
+
+	return Z_ARRVAL(retval);
 
 } /* }}} */
 /* }}} */

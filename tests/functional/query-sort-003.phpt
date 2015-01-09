@@ -15,6 +15,7 @@ $query = new MongoDB\Driver\Query(array(), array(
 ));
 
 $qr = $manager->executeQuery(NS, $query);
+var_dump($query);
 
 $cursor = $qr->getIterator();
 var_dump(get_class($qr), get_class($cursor));
@@ -26,7 +27,35 @@ foreach ($cursor as $document) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+object(MongoDB\Driver\Query)#%d (6) {
+  ["query"]=>
+  array(2) {
+    ["$orderby"]=>
+    object(stdClass)#%d (1) {
+      ["username"]=>
+      int(1)
+    }
+    ["$query"]=>
+    object(stdClass)#%d (0) {
+    }
+  }
+  ["selector"]=>
+  array(2) {
+    ["_id"]=>
+    int(0)
+    ["username"]=>
+    int(1)
+  }
+  ["flags"]=>
+  int(0)
+  ["skip"]=>
+  int(0)
+  ["limit"]=>
+  int(0)
+  ["batch_size"]=>
+  int(0)
+}
 string(26) "MongoDB\Driver\QueryResult"
 string(21) "MongoDB\Driver\Cursor"
 abernathy.audrey
