@@ -54,6 +54,7 @@ PHP_METHOD(Command, __construct)
 	zend_error_handling       error_handling;
 	zval                     *document;
 	bson_t                   *bson = bson_new();
+	(void)return_value; (void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -106,7 +107,7 @@ static void php_phongo_command_free_object(void *object TSRMLS_DC) /* {{{ */
 zend_object_value php_phongo_command_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
-	php_phongo_command_t *intern;
+	php_phongo_command_t *intern = NULL;
 
 	intern = (php_phongo_command_t *)ecalloc(1, sizeof *intern);
 
@@ -122,24 +123,25 @@ zend_object_value php_phongo_command_create_object(zend_class_entry *class_type 
 HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_command_t  *intern;
-	zval                  *retval = NULL;
+	zval                   retval = zval_used_for_init;
 
 
-	*is_temp = 0;
+	*is_temp = 1;
 	intern = (php_phongo_command_t *)zend_object_store_get_object(object TSRMLS_CC);
 
-	MAKE_STD_ZVAL(retval);
-	array_init(retval);
+	array_init_size(&retval, 1);
 
 	if (intern->bson) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
 		MAKE_STD_ZVAL(state.zchild);
 		bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &state);
-		add_assoc_zval_ex(retval, ZEND_STRS("command"), state.zchild);
+		add_assoc_zval_ex(&retval, ZEND_STRS("command"), state.zchild);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("command"));
 	}
 
-	return Z_ARRVAL_P(retval);
+	return Z_ARRVAL(retval);
 
 } /* }}} */
 
@@ -148,7 +150,7 @@ HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_D
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(Command)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	(void)type;(void)module_number;
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Command", php_phongo_command_me);

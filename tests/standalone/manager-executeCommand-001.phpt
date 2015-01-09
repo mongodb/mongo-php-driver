@@ -10,6 +10,7 @@ $manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
 $command = new MongoDB\Driver\Command(array('ping' => 1));
 $result = $manager->executeCommand(DATABASE_NAME, $command);
+var_dump($command);
 
 var_dump($result instanceof MongoDB\Driver\CommandResult);
 
@@ -29,6 +30,13 @@ var_dump($server->getPort());
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+object(MongoDB\Driver\Command)#%d (1) {
+  ["command"]=>
+  array(1) {
+    ["ping"]=>
+    int(1)
+  }
+}
 bool(true)
 Dumping response document:
 array(1) {
