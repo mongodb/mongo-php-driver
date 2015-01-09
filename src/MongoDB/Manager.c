@@ -462,10 +462,10 @@ static const char *phongo_cluster_state_tostring(mongoc_cluster_state_t state)
 
 static void add_next_index_node(zval *array, mongoc_cluster_node_t *node)
 {
+	zval                  *data = NULL;
 	php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
 	MAKE_STD_ZVAL(state.zchild);
-	zval *data = NULL;
 
 	MAKE_STD_ZVAL(data);
 	array_init(data);
@@ -502,7 +502,6 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 
 	MAKE_STD_ZVAL(retval);
 	array_init(retval);
-	add_assoc_string_ex(retval, ZEND_STRS("foobar"), (char *)"some other cool stuff", 0);
 
 	add_assoc_long_ex(retval, ZEND_STRS("request_id"), intern->client->request_id);
 	add_assoc_string_ex(retval, ZEND_STRS("uri"), (char *)mongoc_uri_get_string(intern->client->uri), 0);
@@ -551,7 +550,11 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 			}
 			add_assoc_zval_ex(cluster, ZEND_STRS("peers"), peers);
 		}
-		add_assoc_string_ex(cluster, ZEND_STRS("replSet"), intern->client->cluster.replSet, 0);
+		if (intern->client->cluster.replSet) {
+			add_assoc_string_ex(cluster, ZEND_STRS("replSet"), intern->client->cluster.replSet, 0);
+		} else {
+			add_assoc_null_ex(cluster, ZEND_STRS("replSet"));
+		}
 
 		add_assoc_zval_ex(retval, ZEND_STRS("cluster"), cluster);
 	}
