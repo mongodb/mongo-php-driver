@@ -44,6 +44,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_command_ce;
 
+zend_object_handlers php_phongo_handler_command;
+
 /* {{{ proto MongoDB\Driver\Command Command::__construct(array|object $document)
    Constructs a new Command */
 PHP_METHOD(Command, __construct)
@@ -106,17 +108,41 @@ zend_object_value php_phongo_command_create_object(zend_class_entry *class_type 
 	zend_object_value retval;
 	php_phongo_command_t *intern;
 
-	intern = (php_phongo_command_t *)emalloc(sizeof(php_phongo_command_t));
-	memset(intern, 0, sizeof(php_phongo_command_t));
+	intern = (php_phongo_command_t *)ecalloc(1, sizeof *intern);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_command_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = &php_phongo_handler_command;
 
 	return retval;
 } /* }}} */
+
+HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	php_phongo_command_t  *intern;
+	zval                  *retval = NULL;
+
+
+	*is_temp = 0;
+	intern = (php_phongo_command_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	MAKE_STD_ZVAL(retval);
+	array_init(retval);
+
+	if (intern->bson) {
+		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+		MAKE_STD_ZVAL(state.zchild);
+		bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &state);
+		add_assoc_zval_ex(retval, ZEND_STRS("command"), state.zchild);
+	}
+
+	return Z_ARRVAL_P(retval);
+
+} /* }}} */
+
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -126,9 +152,12 @@ PHP_MINIT_FUNCTION(Command)
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Command", php_phongo_command_me);
-	ce.create_object = php_phongo_command_create_object;
 	php_phongo_command_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_command_ce->create_object = php_phongo_command_create_object;
 	php_phongo_command_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+
+	memcpy(&php_phongo_handler_command, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_command.get_debug_info = php_phongo_command_get_debug_info;
 
 
 	return SUCCESS;
