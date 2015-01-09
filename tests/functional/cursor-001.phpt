@@ -40,7 +40,7 @@ var_dump(
 <?php exit(0); ?>
 --EXPECT--
 int(0)
-NULL
+int(0)
 int(15)
 bool(true)
 abernathy.audrey
@@ -144,7 +144,7 @@ ypredovic
 ywyman
 zstanton
 int(15)
-NULL
+int(15)
 int(15)
 bool(true)
 ===DONE===

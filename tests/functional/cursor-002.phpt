@@ -29,20 +29,24 @@ var_dump(
 for($j=0, $cursor->rewind(); $cursor->valid(); $cursor->next(), $j++) {
     $document = $cursor->current();
     echo $document['username'] . "\n";
+
+    if ($j == 10) {
+        var_dump($cursor);
+    }
 }
 
 var_dump(
     $cursor->getBatchSize(),
-    $cursor->setBatchSize(15),
+    $cursor->setBatchSize(25),
     $cursor->getBatchSize(),
     $cursor->isDead()
 );
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 int(0)
-NULL
+int(0)
 int(15)
 bool(true)
 abernathy.audrey
@@ -56,6 +60,86 @@ bartell.susie
 beahan.oleta
 bergnaum.roberto
 camilla20
+object(MongoDB\Driver\Cursor)#%d (%d) {
+  ["current_index"]=>
+  int(10)
+  ["result"]=>
+  array(4) {
+    ["cursor"]=>
+    array(19) {
+      ["stamp"]=>
+      int(0)
+      ["is_command"]=>
+      bool(false)
+      ["sent"]=>
+      bool(true)
+      ["done"]=>
+      bool(false)
+      ["failed"]=>
+      bool(false)
+      ["end_of_event"]=>
+      bool(false)
+      ["in_exhaust"]=>
+      bool(false)
+      ["redir_primary"]=>
+      bool(false)
+      ["has_fields"]=>
+      bool(true)
+      ["query"]=>
+      array(2) {
+        ["$orderby"]=>
+        object(stdClass)#%d (%d) {
+          ["username"]=>
+          int(1)
+        }
+        ["$query"]=>
+        object(stdClass)#%d (%d) {
+        }
+      }
+      ["fields"]=>
+      array(2) {
+        ["_id"]=>
+        int(0)
+        ["username"]=>
+        int(1)
+      }
+      ["read_preference"]=>
+      array(2) {
+        ["mode"]=>
+        int(1)
+        ["tags"]=>
+        array(0) {
+        }
+      }
+      ["flags"]=>
+      int(0)
+      ["skip"]=>
+      int(0)
+      ["limit"]=>
+      int(0)
+      ["count"]=>
+      int(11)
+      ["batch_size"]=>
+      int(15)
+      ["ns"]=>
+      string(28) "phongo.functional_cursor_002"
+      ["current_doc"]=>
+      array(1) {
+        ["username"]=>
+        string(9) "camilla20"
+      }
+    }
+    ["firstBatch"]=>
+    array(1) {
+      ["username"]=>
+      string(16) "abernathy.audrey"
+    }
+    ["hint"]=>
+    int(1)
+    ["is_command_cursor"]=>
+    bool(false)
+  }
+}
 cartwright.garland
 chance.conroy
 crona.jaclyn
@@ -146,7 +230,7 @@ ypredovic
 ywyman
 zstanton
 int(15)
-NULL
 int(15)
+int(25)
 bool(true)
 ===DONE===
