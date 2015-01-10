@@ -127,10 +127,6 @@ static zend_function_entry php_phongo_objectid_me[] = {
 
 
 /* {{{ Other functions */
-zend_object_handlers* php_phongo_handlers_objectid() /* {{{ */
-{
-	return &php_phongo_handler_objectid;
-} /* }}} */
 static int php_phongo_objectid_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
 {
 	php_phongo_objectid_t *intern1;
@@ -157,14 +153,13 @@ zend_object_value php_phongo_objectid_create_object(zend_class_entry *class_type
 	zend_object_value retval;
 	php_phongo_objectid_t *intern = NULL;
 
-	intern = (php_phongo_objectid_t *)emalloc(sizeof(php_phongo_objectid_t));
-	memset(intern, 0, sizeof(php_phongo_objectid_t));
+	intern = (php_phongo_objectid_t *)ecalloc(1, sizeof *intern);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_objectid_free_object, NULL TSRMLS_CC);
-	retval.handlers = php_phongo_handlers_objectid();
+	retval.handlers = &php_phongo_handler_objectid;
 
 	return retval;
 } /* }}} */
@@ -173,17 +168,17 @@ zend_object_value php_phongo_objectid_create_object(zend_class_entry *class_type
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(ObjectID)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	(void)type;(void)module_number;
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "BSON", "ObjectID", php_phongo_objectid_me);
-	ce.create_object = php_phongo_objectid_create_object;
 	php_phongo_objectid_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_objectid_ce->create_object = php_phongo_objectid_create_object;
 
+	zend_class_implements(php_phongo_objectid_ce TSRMLS_CC, 1, php_phongo_type_ce);
 
 	memcpy(&php_phongo_handler_objectid, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_objectid.compare_objects = php_phongo_objectid_compare_objects;
-	zend_class_implements(php_phongo_objectid_ce TSRMLS_CC, 1, php_phongo_type_ce);
 
 
 	return SUCCESS;

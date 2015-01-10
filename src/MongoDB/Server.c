@@ -429,10 +429,6 @@ static zend_function_entry php_phongo_server_me[] = {
 
 
 /* {{{ Other functions */
-zend_object_handlers* php_phongo_handlers_server() /* {{{ */
-{
-	return &php_phongo_handler_server;
-} /* }}} */
 static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
 {
     php_phongo_server_t *intern1;
@@ -461,9 +457,6 @@ static void php_phongo_server_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	mongoc_client_destroy(intern->client);
 
-	if (intern->host) {
-		//efree(intern->host);
-	}
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	efree(intern);
@@ -472,16 +465,15 @@ static void php_phongo_server_free_object(void *object TSRMLS_DC) /* {{{ */
 zend_object_value php_phongo_server_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
-	php_phongo_server_t *intern;
+	php_phongo_server_t *intern = NULL;
 
-	intern = (php_phongo_server_t *)emalloc(sizeof(php_phongo_server_t));
-	memset(intern, 0, sizeof(php_phongo_server_t));
+	intern = (php_phongo_server_t *)ecalloc(1, sizeof *intern);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_server_free_object, NULL TSRMLS_CC);
-	retval.handlers = php_phongo_handlers_server();
+	retval.handlers = &php_phongo_handler_server;
 
 	return retval;
 } /* }}} */
@@ -490,17 +482,17 @@ zend_object_value php_phongo_server_create_object(zend_class_entry *class_type T
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(Server)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	(void)type;(void)module_number;
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Server", php_phongo_server_me);
-	ce.create_object = php_phongo_server_create_object;
 	php_phongo_server_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_server_ce->create_object = php_phongo_server_create_object;
 	php_phongo_server_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
-
 
 	memcpy(&php_phongo_handler_server, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_server.compare_objects = php_phongo_server_compare_objects;
+
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_MONGOS"), 0x01 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_STANDALONE"), 0x02 TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_ARBITER"), 0x03 TSRMLS_CC);
