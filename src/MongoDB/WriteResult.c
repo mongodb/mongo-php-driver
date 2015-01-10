@@ -391,6 +391,14 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	*is_temp = 1;
 	array_init_size(&retval, 9);
 
+	{
+		zval *result = NULL;
+
+		MAKE_STD_ZVAL(result);
+		php_phongo_result_to_zval(result, &intern->result);
+		add_assoc_zval_ex(&retval, ZEND_STRS("result"), result);
+	}
+
 	add_assoc_long_ex(&retval, ZEND_STRS("nInserted"), intern->nInserted);
 	add_assoc_long_ex(&retval, ZEND_STRS("nMatched"), intern->nMatched);
 	add_assoc_long_ex(&retval, ZEND_STRS("nModified"), intern->nModified);
