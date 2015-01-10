@@ -30,6 +30,7 @@
 #include <bson.h>
 #include <mongoc.h>
 #include <mongoc-cursor-cursorid-private.h>
+#include <mongoc-read-prefs-private.h>
 
 
 /* PHP Core stuff */
@@ -1070,6 +1071,106 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 	bson_oid_to_string(oid, intern->oid);
 } /* }}} */
 
+
+void php_phongo_read_preference_to_zval(zval *retval, mongoc_read_prefs_t *read_prefs) /* {{{ */
+{
+
+	array_init_size(retval, 2);
+
+	add_assoc_long_ex(retval, ZEND_STRS("mode"), read_prefs->mode);
+	if (read_prefs->tags.len) {
+		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+		MAKE_STD_ZVAL(state.zchild);
+		bson_to_zval(bson_get_data(&read_prefs->tags), read_prefs->tags.len, &state);
+		add_assoc_zval_ex(retval, ZEND_STRS("tags"), state.zchild);
+	} else {
+		add_assoc_null_ex(retval, ZEND_STRS("tags"));
+	}
+} /* }}} */
+
+void php_phongo_result_to_zval(zval *retval, php_phongo_result_t *result) /* {{{ */
+{
+
+	array_init_size(retval, 4);
+
+	if (result->cursor) {
+		zval *cursor = NULL;
+
+		MAKE_STD_ZVAL(cursor);
+		array_init_size(cursor, 19);
+
+		add_assoc_long_ex(cursor, ZEND_STRS("stamp"), result->cursor->stamp);
+
+#define _ADD_BOOL(z, field) add_assoc_bool_ex(z, ZEND_STRS(#field), result->cursor->field)
+		_ADD_BOOL(cursor, is_command);
+		_ADD_BOOL(cursor, sent);
+		_ADD_BOOL(cursor, done);
+		_ADD_BOOL(cursor, failed);
+		_ADD_BOOL(cursor, end_of_event);
+		_ADD_BOOL(cursor, in_exhaust);
+		_ADD_BOOL(cursor, redir_primary);
+		_ADD_BOOL(cursor, has_fields);
+#undef _ADD_BOOL
+
+		{
+			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+			MAKE_STD_ZVAL(state.zchild);
+			bson_to_zval(bson_get_data(&result->cursor->query), result->cursor->query.len, &state);
+			add_assoc_zval_ex(cursor, ZEND_STRS("query"), state.zchild);
+		}
+		{
+			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+			MAKE_STD_ZVAL(state.zchild);
+			bson_to_zval(bson_get_data(&result->cursor->fields), result->cursor->fields.len, &state);
+			add_assoc_zval_ex(cursor, ZEND_STRS("fields"), state.zchild);
+		}
+		{
+			zval *read_preference = NULL;
+
+			MAKE_STD_ZVAL(read_preference);
+			php_phongo_read_preference_to_zval(read_preference, result->cursor->read_prefs);
+			add_assoc_zval_ex(cursor, ZEND_STRS("read_preference"), read_preference);
+		}
+
+#define _ADD_INT(z, field) add_assoc_long_ex(z, ZEND_STRS(#field), result->cursor->field)
+		_ADD_INT(cursor, flags);
+		_ADD_INT(cursor, skip);
+		_ADD_INT(cursor, limit);
+		_ADD_INT(cursor, count);
+		_ADD_INT(cursor, batch_size);
+#undef _ADD_INT
+
+		add_assoc_string_ex(cursor, ZEND_STRS("ns"), result->cursor->ns, 1);
+		{
+			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+			MAKE_STD_ZVAL(state.zchild);
+			bson_to_zval(bson_get_data(result->cursor->current), result->cursor->current->len, &state);
+			add_assoc_zval_ex(cursor, ZEND_STRS("current_doc"), state.zchild);
+		}
+		add_assoc_zval_ex(retval, ZEND_STRS("cursor"), cursor);
+	} else {
+		add_assoc_null_ex(retval, ZEND_STRS("cursor"));
+	}
+
+	if (result->firstBatch) {
+		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+		MAKE_STD_ZVAL(state.zchild);
+		bson_to_zval(bson_get_data(result->firstBatch), result->firstBatch->len, &state);
+		add_assoc_zval_ex(retval, ZEND_STRS("firstBatch"), state.zchild);
+	} else {
+		add_assoc_null_ex(retval, ZEND_STRS("firstBatch"));
+	}
+	add_assoc_long_ex(retval, ZEND_STRS("hint"), result->hint);
+	add_assoc_bool_ex(retval, ZEND_STRS("is_command_cursor"), result->is_command_cursor);
+
+} /* }}} */
+
+
 void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC) /* {{{ */
 {
 	php_phongo_utcdatetime_t     *intern;
@@ -1426,10 +1527,14 @@ PHP_MINIT_FUNCTION(phongo)
 
 	/* Prep default object handlers to be used when we register the classes */
 	memcpy(&phongo_std_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-	phongo_std_object_handlers.clone_obj = NULL;
-	phongo_std_object_handlers.read_property = NULL;
-	phongo_std_object_handlers.write_property = NULL;
-	phongo_std_object_handlers.get_debug_info = NULL;
+	phongo_std_object_handlers.clone_obj            = NULL;
+	/*
+	phongo_std_object_handlers.get_debug_info       = NULL;
+	phongo_std_object_handlers.compare_objects      = NULL;
+	phongo_std_object_handlers.cast_object          = NULL;
+	phongo_std_object_handlers.count_elements       = NULL;
+	phongo_std_object_handlers.get_closure          = NULL;
+	*/
 
 	PHP_MINIT(bson)(INIT_FUNC_ARGS_PASSTHRU);
 

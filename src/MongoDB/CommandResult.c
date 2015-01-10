@@ -44,6 +44,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_commandresult_ce;
 
+zend_object_handlers php_phongo_handler_commandresult;
+
 /* {{{ proto MongoDB\Driver\CommandResult CommandResult::__construct(MongoDB\Driver\Server $server, array|object $responseDocument)
    Constructs a new CommandResult */
 PHP_METHOD(CommandResult, __construct)
@@ -182,16 +184,6 @@ PHP_METHOD(CommandResult, getServer)
 }
 /* }}} */
 
-/**
- * Result returned by Server and Manager executeCommand() methods.
- *
- * This object wraps an OP_REPLY. It is constructed after a command is executed
- * on the server but before a Cursor is created in the driver (if applicable).
- * This allows the Cursor implementation to be customized.
- *
- * For commands that do not support cursors (i.e. most commands), getIterator()
- * should return a cursor consisting of a single document, the command result.
- */
 /* {{{ MongoDB\Driver\CommandResult */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_CommandResult___construct, 0, 0, 2)
@@ -244,33 +236,50 @@ static void php_phongo_commandresult_free_object(void *object TSRMLS_DC) /* {{{ 
 
 zend_object_value php_phongo_commandresult_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
-	zend_object_value retval;
+	zend_object_value           retval;
 	php_phongo_commandresult_t *intern = NULL;
 
-	intern = (php_phongo_commandresult_t *)emalloc(sizeof(php_phongo_commandresult_t));
-	memset(intern, 0, sizeof(php_phongo_commandresult_t));
+	intern = (php_phongo_commandresult_t *)ecalloc(1, sizeof *intern);
 
 	zend_object_std_init(&intern->result.std, class_type TSRMLS_CC);
 	object_properties_init(&intern->result.std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_commandresult_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = &php_phongo_handler_commandresult;
 
 	return retval;
+} /* }}} */
+
+HashTable *php_phongo_commandresult_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	php_phongo_commandresult_t    *intern;
+	zval                           retval = zval_used_for_init;
+
+
+	*is_temp = 1;
+	intern = (php_phongo_commandresult_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	php_phongo_result_to_zval(&retval, &intern->result);
+
+	return Z_ARRVAL(retval);
+
 } /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(CommandResult)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	(void)type; (void)module_number;
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "CommandResult", php_phongo_commandresult_me);
-	ce.create_object = php_phongo_commandresult_create_object;
 	php_phongo_commandresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_commandresult_ce->create_object = php_phongo_commandresult_create_object;
 	php_phongo_commandresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 	php_phongo_commandresult_ce->get_iterator = phongo_result_get_iterator;
+
+	memcpy(&php_phongo_handler_commandresult, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_commandresult.get_debug_info = php_phongo_commandresult_get_debug_info;
 
 	zend_class_implements(php_phongo_commandresult_ce TSRMLS_CC, 1, zend_ce_aggregate);
 

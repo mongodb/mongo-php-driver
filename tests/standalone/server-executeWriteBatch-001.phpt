@@ -42,7 +42,42 @@ modifiedCount: 1
 upsertedCount: 1
 deletedCount: 1
 upsertedId[3]: int(3)
-object(MongoDB\Driver\WriteResult)#%d (9) {
+object(MongoDB\Driver\WriteResult)#%d (%d) {
+  ["result"]=>
+  array(4) {
+    ["cursor"]=>
+    NULL
+    ["firstBatch"]=>
+    array(7) {
+      ["nInserted"]=>
+      int(2)
+      ["nMatched"]=>
+      int(1)
+      ["nModified"]=>
+      int(1)
+      ["nRemoved"]=>
+      int(1)
+      ["nUpserted"]=>
+      int(1)
+      ["upserted"]=>
+      array(1) {
+        [0]=>
+        object(stdClass)#%d (%d) {
+          ["index"]=>
+          int(3)
+          ["_id"]=>
+          int(3)
+        }
+      }
+      ["writeErrors"]=>
+      array(0) {
+      }
+    }
+    ["hint"]=>
+    int(1)
+    ["is_command_cursor"]=>
+    bool(false)
+  }
   ["nInserted"]=>
   int(2)
   ["nMatched"]=>

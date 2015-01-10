@@ -44,6 +44,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_queryresult_ce;
 
+zend_object_handlers php_phongo_handler_queryresult;
+
 /* {{{ proto MongoDB\Driver\QueryResult QueryResult::__construct(MongoDB\Driver\Server $server, MongoDB\Driver\CursorId $cursorId, array $firstBatch)
    Construct a new QueryResult */
 PHP_METHOD(QueryResult, __construct)
@@ -247,34 +249,50 @@ static void php_phongo_queryresult_free_object(void *object TSRMLS_DC) /* {{{ */
 
 zend_object_value php_phongo_queryresult_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
-	zend_object_value retval;
+	zend_object_value         retval;
 	php_phongo_queryresult_t *intern = NULL;
 
-	intern = (php_phongo_queryresult_t *)emalloc(sizeof(php_phongo_queryresult_t));
-	memset(intern, 0, sizeof(php_phongo_queryresult_t));
+	intern = (php_phongo_queryresult_t *)ecalloc(1, sizeof *intern);
 
 	zend_object_std_init(&intern->result.std, class_type TSRMLS_CC);
 	object_properties_init(&intern->result.std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_queryresult_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = &php_phongo_handler_queryresult;
 
 	return retval;
+} /* }}} */
+
+HashTable *php_phongo_queryresult_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	php_phongo_queryresult_t    *intern;
+	zval                         retval = zval_used_for_init;
+
+
+	*is_temp = 1;
+	intern = (php_phongo_queryresult_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	php_phongo_result_to_zval(&retval, &intern->result);
+
+	return Z_ARRVAL(retval);
+
 } /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(QueryResult)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
-	(void)module_number; /* We don't care if we are loaded via dl() or extension= */
+	(void)type; (void)module_number;
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "QueryResult", php_phongo_queryresult_me);
-	ce.create_object = php_phongo_queryresult_create_object;
 	php_phongo_queryresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_queryresult_ce->create_object = php_phongo_queryresult_create_object;
 	php_phongo_queryresult_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 	php_phongo_queryresult_ce->get_iterator = phongo_result_get_iterator;
+
+	memcpy(&php_phongo_handler_queryresult, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_queryresult.get_debug_info = php_phongo_queryresult_get_debug_info;
 
 	zend_class_implements(php_phongo_queryresult_ce TSRMLS_CC, 1, zend_ce_aggregate);
 
