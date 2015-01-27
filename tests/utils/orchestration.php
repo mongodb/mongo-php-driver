@@ -28,6 +28,24 @@ class Orchestration {
 
 
 
+    function getAll() {
+        $servers = $this->get("servers");
+        $retval = array();
+        foreach($servers["servers"] as $server) {
+            $id = $server["id"];
+            $data = $this->get("servers/$id");
+            $retval[$data["mongodb_uri"]] = $data;
+        }
+        $servers = $this->get("replica_sets");
+        foreach($servers["replica_sets"] as $server) {
+            $id = $server["id"];
+            $data = $this->get("replica_sets/$id");
+            $retval[$data["mongodb_uri"]] = $data;
+        }
+
+        return $retval;
+    }
+
     function stopAll() {
         $servers = $this->get("servers");
         foreach($servers["servers"] as $server) {

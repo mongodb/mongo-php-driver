@@ -48,6 +48,9 @@ vm:
 	@command -v vagrant >/dev/null 2>&1 || { echo >&2 "Vagrant needs to be installed to run vms"; exit 1; }
 	@vagrant up
 
+list-servers:
+	php scripts/list-servers.php
+
 test-bootstrap:
 	php scripts/start-servers.php
 
