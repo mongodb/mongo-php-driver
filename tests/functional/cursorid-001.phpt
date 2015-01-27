@@ -31,7 +31,9 @@ $cursor->kill();
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\CursorId)#%d (0) {
+object(MongoDB\Driver\CursorId)#%d (%d) {
+  ["id"]=>
+  %s(%d)
 }
 string(%d) "%d"
 ===DONE===
