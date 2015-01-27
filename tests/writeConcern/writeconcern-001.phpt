@@ -25,6 +25,7 @@ $w9 = new MongoDB\Driver\WriteConcern("string", 3000, true, false);
 $w10= new MongoDB\Driver\WriteConcern("string", 3000, false, true);
 
 
+var_dump($w, $w2, $w3, $w4, $w5, $w6, $w7, $w8, $w9, $w10);
 
 try {
     new MongoDB\Driver\WriteConcern("string", 3000, false, true, 1);
@@ -36,5 +37,121 @@ try {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["wmajority"]=>
+  bool(true)
+  ["wtimeout"]=>
+  int(0)
+  ["fsync"]=>
+  bool(false)
+  ["journal"]=>
+  bool(false)
+}
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["wmajority"]=>
+  bool(true)
+  ["wtimeout"]=>
+  int(1000)
+  ["fsync"]=>
+  bool(false)
+  ["journal"]=>
+  bool(false)
+}
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  int(2)
+  ["wmajority"]=>
+  bool(false)
+  ["wtimeout"]=>
+  int(0)
+  ["fsync"]=>
+  bool(false)
+  ["journal"]=>
+  bool(false)
+}
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  int(2)
+  ["wmajority"]=>
+  bool(false)
+  ["wtimeout"]=>
+  int(2000)
+  ["fsync"]=>
+  bool(false)
+  ["journal"]=>
+  bool(false)
+}
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  string(7) "tagname"
+  ["wmajority"]=>
+  bool(false)
+  ["wtimeout"]=>
+  int(0)
+  ["fsync"]=>
+  bool(false)
+  ["journal"]=>
+  bool(false)
+}
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  string(6) "string"
+  ["wmajority"]=>
+  bool(false)
+  ["wtimeout"]=>
+  int(3000)
+  ["fsync"]=>
+  bool(false)
+  ["journal"]=>
+  bool(false)
+}
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  string(6) "string"
+  ["wmajority"]=>
+  bool(false)
+  ["wtimeout"]=>
+  int(3000)
+  ["fsync"]=>
+  bool(false)
+  ["journal"]=>
+  bool(false)
+}
+object(MongoDB\Driver\WriteConcern)#10 (5) {
+  ["w"]=>
+  string(6) "string"
+  ["wmajority"]=>
+  bool(false)
+  ["wtimeout"]=>
+  int(3000)
+  ["fsync"]=>
+  bool(true)
+  ["journal"]=>
+  bool(true)
+}
+object(MongoDB\Driver\WriteConcern)#11 (5) {
+  ["w"]=>
+  string(6) "string"
+  ["wmajority"]=>
+  bool(false)
+  ["wtimeout"]=>
+  int(3000)
+  ["fsync"]=>
+  bool(false)
+  ["journal"]=>
+  bool(true)
+}
+object(MongoDB\Driver\WriteConcern)#12 (5) {
+  ["w"]=>
+  string(6) "string"
+  ["wmajority"]=>
+  bool(false)
+  ["wtimeout"]=>
+  int(3000)
+  ["fsync"]=>
+  bool(true)
+  ["journal"]=>
+  bool(false)
+}
 MongoDB\Driver\WriteConcern::__construct() expects at most 4 parameters, 5 given
 ===DONE===

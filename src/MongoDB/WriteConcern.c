@@ -44,6 +44,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_writeconcern_ce;
 
+zend_object_handlers php_phongo_handler_writeconcern;
+
 #define PHONGO_WRITE_CONCERN_W_MAJORITY "majority"
 
 /* {{{ proto MongoDB\Driver\WriteConcern WriteConcern::__construct(string $wstring[, integer $wtimeout[, boolean $journal[, boolean $fsync]]])
@@ -58,6 +60,7 @@ PHP_METHOD(WriteConcern, __construct)
 	zend_bool                 journal = 0;
 	zend_bool                 fsync = 0;
 	long                      w;
+	(void)return_value; (void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -87,12 +90,12 @@ PHP_METHOD(WriteConcern, __construct)
 			if (fsync) {
 				mongoc_write_concern_set_fsync(intern->write_concern, true);
 			}
-			// fallthrough
+			/* fallthrough */
 		case 3:
 			if (journal) {
 				mongoc_write_concern_set_journal(intern->write_concern, true);
 			}
-			// fallthrough
+			/* fallthrough */
 		case 2:
 			if (wtimeout > 0) {
 				mongoc_write_concern_set_wtimeout(intern->write_concern, wtimeout);
@@ -138,31 +141,60 @@ static void php_phongo_writeconcern_free_object(void *object TSRMLS_DC) /* {{{ *
 zend_object_value php_phongo_writeconcern_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
-	php_phongo_writeconcern_t *intern;
+	php_phongo_writeconcern_t *intern = NULL;
 
-	intern = (php_phongo_writeconcern_t *)emalloc(sizeof(php_phongo_writeconcern_t));
-	memset(intern, 0, sizeof(php_phongo_writeconcern_t));
+	intern = (php_phongo_writeconcern_t *)ecalloc(1, sizeof *intern);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeconcern_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = &php_phongo_handler_writeconcern;
 
 	return retval;
+} /* }}} */
+
+HashTable *php_phongo_writeconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	zval                    retval = zval_used_for_init;
+	mongoc_write_concern_t *write_concern = phongo_write_concern_from_zval(object TSRMLS_CC);
+	char                   *wtag;
+
+
+	*is_temp = 1;
+	array_init(&retval);
+
+	wtag = (char *)mongoc_write_concern_get_wtag(write_concern);
+	if (wtag) {
+		add_assoc_string_ex(&retval, ZEND_STRS("w"), wtag, 1);
+	} else {
+		if (!mongoc_write_concern_get_wmajority(write_concern)) {
+			add_assoc_long_ex(&retval, ZEND_STRS("w"), mongoc_write_concern_get_w(write_concern));
+		}
+	}
+	add_assoc_bool_ex(&retval, ZEND_STRS("wmajority"), mongoc_write_concern_get_wmajority(write_concern));
+	add_assoc_long_ex(&retval, ZEND_STRS("wtimeout"), mongoc_write_concern_get_wtimeout(write_concern));
+	add_assoc_bool_ex(&retval, ZEND_STRS("fsync"), mongoc_write_concern_get_fsync(write_concern));
+	add_assoc_bool_ex(&retval, ZEND_STRS("journal"), mongoc_write_concern_get_journal(write_concern));
+
+
+	return Z_ARRVAL(retval);
 } /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(WriteConcern)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	(void)type; (void)module_number;
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcern", php_phongo_writeconcern_me);
-	ce.create_object = php_phongo_writeconcern_create_object;
 	php_phongo_writeconcern_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_writeconcern_ce->create_object = php_phongo_writeconcern_create_object;
 	php_phongo_writeconcern_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+
+	memcpy(&php_phongo_handler_writeconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_writeconcern.get_debug_info = php_phongo_writeconcern_get_debug_info;
 
 	zend_declare_class_constant_stringl(php_phongo_writeconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(PHONGO_WRITE_CONCERN_W_MAJORITY) TSRMLS_CC);
 
