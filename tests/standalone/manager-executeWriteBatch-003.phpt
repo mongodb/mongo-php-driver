@@ -43,8 +43,24 @@ matchedCount: 0
 modifiedCount: 0
 upsertedCount: 0
 deletedCount: 0
+object(MongoDB\Driver\WriteError)#%d (%d) {
+  ["message"]=>
+  string(%d) "%s"
+  ["code"]=>
+  int(11000)
+  ["index"]=>
+  int(1)
+}
 writeError[1].message: %s
 writeError[1].code: 11000
+object(MongoDB\Driver\WriteError)#%d (%d) {
+  ["message"]=>
+  string(%d) "%s"
+  ["code"]=>
+  int(11000)
+  ["index"]=>
+  int(3)
+}
 writeError[3].message: %s
 writeError[3].code: 11000
 

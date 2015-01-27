@@ -138,6 +138,7 @@ function printWriteResult(MongoDB\Driver\WriteResult $result)
 function printWriteConcernError(MongoDB\Driver\WriteConcernError $error = null)
 {
     if ($error) {
+        var_dump($error);
         printf("writeConcernError.message: %s\n", $error->getMessage());
         printf("writeConcernError.code: %d\n", $error->getCode());
         printf("writeConcernError.info: ");
@@ -147,6 +148,7 @@ function printWriteConcernError(MongoDB\Driver\WriteConcernError $error = null)
 
 function printWriteError(MongoDB\Driver\WriteError $error)
 {
+    var_dump($error);
     printf("writeError[%d].message: %s\n", $error->getIndex(), $error->getMessage());
     printf("writeError[%d].code: %d\n", $error->getIndex(), $error->getCode());
 }
