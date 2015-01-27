@@ -19,7 +19,9 @@ $hayley_id = $insertBatch->insert($hayley);
 $w = 1;
 $wtimeout = 1000;
 $writeConcern = new \MongoDB\Driver\WriteConcern($w, $wtimeout);
+var_dump($insertBatch);
 $result = $mm->executeWriteBatch("db.collection", $insertBatch, $writeConcern);
+var_dump($insertBatch);
 
 assert($result instanceof \MongoDB\Driver\WriteResult);
 
@@ -33,6 +35,45 @@ printf("hannes: %s\nhayley: %s\n", $hannes_id, $hayley_id);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+object(MongoDB\Driver\WriteBatch)#%d (%d) {
+  ["database"]=>
+  NULL
+  ["collection"]=>
+  NULL
+  ["ordered"]=>
+  bool(true)
+  ["executed"]=>
+  bool(false)
+  ["hint"]=>
+  int(0)
+  ["write_concern"]=>
+  NULL
+}
+object(MongoDB\Driver\WriteBatch)#%d (%d) {
+  ["database"]=>
+  string(2) "db"
+  ["collection"]=>
+  string(10) "collection"
+  ["ordered"]=>
+  bool(true)
+  ["executed"]=>
+  bool(true)
+  ["hint"]=>
+  int(0)
+  ["write_concern"]=>
+  array(5) {
+    ["w"]=>
+    int(1)
+    ["wmajority"]=>
+    bool(false)
+    ["wtimeout"]=>
+    int(1000)
+    ["fsync"]=>
+    bool(false)
+    ["journal"]=>
+    bool(false)
+  }
+}
 Inserted 2 documents to %s
 hannes: %s
 hayley: %s

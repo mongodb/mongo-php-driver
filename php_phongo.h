@@ -118,6 +118,7 @@ mongoc_write_concern_t*  phongo_write_concern_from_zval  (zval *zwrite_concern T
 php_phongo_query_t*      phongo_query_from_zval          (zval *zquery TSRMLS_DC);
 
 void php_phongo_read_preference_to_zval(zval *retval, mongoc_read_prefs_t *read_prefs);
+void php_phongo_write_concern_to_zval(zval *retval, mongoc_write_concern_t *write_concern);
 void php_phongo_result_to_zval(zval *retval, php_phongo_result_t *result);
 
 void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS_DC);

@@ -158,25 +158,10 @@ HashTable *php_phongo_writeconcern_get_debug_info(zval *object, int *is_temp TSR
 {
 	zval                    retval = zval_used_for_init;
 	mongoc_write_concern_t *write_concern = phongo_write_concern_from_zval(object TSRMLS_CC);
-	char                   *wtag;
 
 
 	*is_temp = 1;
-	array_init(&retval);
-
-	wtag = (char *)mongoc_write_concern_get_wtag(write_concern);
-	if (wtag) {
-		add_assoc_string_ex(&retval, ZEND_STRS("w"), wtag, 1);
-	} else {
-		if (!mongoc_write_concern_get_wmajority(write_concern)) {
-			add_assoc_long_ex(&retval, ZEND_STRS("w"), mongoc_write_concern_get_w(write_concern));
-		}
-	}
-	add_assoc_bool_ex(&retval, ZEND_STRS("wmajority"), mongoc_write_concern_get_wmajority(write_concern));
-	add_assoc_long_ex(&retval, ZEND_STRS("wtimeout"), mongoc_write_concern_get_wtimeout(write_concern));
-	add_assoc_bool_ex(&retval, ZEND_STRS("fsync"), mongoc_write_concern_get_fsync(write_concern));
-	add_assoc_bool_ex(&retval, ZEND_STRS("journal"), mongoc_write_concern_get_journal(write_concern));
-
+	php_phongo_write_concern_to_zval(&retval, write_concern);
 
 	return Z_ARRVAL(retval);
 } /* }}} */

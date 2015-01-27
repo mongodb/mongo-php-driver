@@ -50,6 +50,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_writebatch_ce;
 
+zend_object_handlers php_phongo_handler_writebatch;
+
 /* {{{ proto MongoDB\Driver\WriteBatch WriteBatch::__construct(boolean $ordered)
    Constructs a new WriteBatch */
 PHP_METHOD(WriteBatch, __construct)
@@ -292,29 +294,72 @@ zend_object_value php_phongo_writebatch_create_object(zend_class_entry *class_ty
 	zend_object_value retval;
 	php_phongo_writebatch_t *intern = NULL;
 
-	intern = (php_phongo_writebatch_t *)emalloc(sizeof(php_phongo_writebatch_t));
-	memset(intern, 0, sizeof(php_phongo_writebatch_t));
+	intern = (php_phongo_writebatch_t *)ecalloc(1, sizeof *intern);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writebatch_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = &php_phongo_handler_writebatch;
 
 	return retval;
+} /* }}} */
+
+HashTable *php_phongo_writebatch_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	zval                     retval = zval_used_for_init;
+	php_phongo_writebatch_t *intern = NULL;
+
+
+	*is_temp = 1;
+	intern = (php_phongo_writebatch_t *)zend_object_store_get_object(object TSRMLS_CC);
+	array_init(&retval);
+
+	if (intern->batch->database) {
+		add_assoc_string_ex(&retval, ZEND_STRS("database"), intern->batch->database, 1);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("database"));
+	}
+
+	if (intern->batch->collection) {
+		add_assoc_string_ex(&retval, ZEND_STRS("collection"), intern->batch->collection, 1);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("collection"));
+	}
+
+	add_assoc_bool_ex(&retval, ZEND_STRS("ordered"), intern->batch->ordered);
+	add_assoc_bool_ex(&retval, ZEND_STRS("executed"), intern->batch->executed);
+	add_assoc_long_ex(&retval, ZEND_STRS("hint"), intern->batch->hint);
+
+	if (intern->batch->write_concern) {
+		zval *write_concern = NULL;
+		MAKE_STD_ZVAL(write_concern);
+
+		php_phongo_write_concern_to_zval(write_concern, intern->batch->write_concern);
+		add_assoc_zval_ex(&retval, ZEND_STRS("write_concern"), write_concern);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("write_concern"));
+	}
+
+
+
+	return Z_ARRVAL(retval);
 } /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(WriteBatch)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
-	(void)module_number; /* We don't care if we are loaded via dl() or extension= */
+	(void)type; (void)module_number;
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteBatch", php_phongo_writebatch_me);
-	ce.create_object = php_phongo_writebatch_create_object;
 	php_phongo_writebatch_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_writebatch_ce->create_object = php_phongo_writebatch_create_object;
+	php_phongo_writebatch_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+
+	memcpy(&php_phongo_handler_writebatch, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_writebatch.get_debug_info = php_phongo_writebatch_get_debug_info;
 
 	zend_class_implements(php_phongo_writebatch_ce TSRMLS_CC, 1, spl_ce_Countable);
 
