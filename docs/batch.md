@@ -120,6 +120,9 @@ foreach ($result->getUpsertedIds() as $index => $id) {
 
 $query  = new MongoDB\Driver\Query(array("viking" => false));
 $cursor = $manager->executeQuery("db.collection", $query);
+/* Note that var_dump()ing the $cursor will print out all sorts of debug information
+ * about the cursor, such as ReadPreferences used, the query executed, namespace,
+ * query flags, and the current batch information */
 var_dump(iterator_to_array($cursor));
 
 ?>
