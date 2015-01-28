@@ -71,7 +71,7 @@ $batch->update(
 );
 $batch->update(
 	array("citizen" => "Iceland"),
-	array("$set" => array("viking" => true)),
+	array('$set' => array("viking" => true)),
 	array("limit" => 0, "upsert" => false)
 );
 $batch->update(
