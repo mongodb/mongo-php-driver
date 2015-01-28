@@ -39,7 +39,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
-  int(5)
+  int(2)
   ["tags"]=>
   array(1) {
     ["tag"]=>
