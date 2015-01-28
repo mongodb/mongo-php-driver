@@ -1,7 +1,7 @@
 --TEST--
 Connect to MongoDB with using SSL and X.509 auth
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc"?>
+<?php require "tests/utils/auth-x509-skipif.inc"?>
 --FILE--
 <?php 
 require_once "tests/utils/basic.inc";
