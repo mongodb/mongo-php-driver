@@ -854,12 +854,13 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		timeoutp = &timeout;
 	}
 
-	spprintf(&uniqid, 0, "mongodb://%s:%s@%s:%d/%s?authMechanism=%s&authSource=%s",
+	spprintf(&uniqid, 0, "mongodb://%s:%s@%s:%d/%s?ssl=%d&authMechanism=%s&authSource=%s",
 		mongoc_uri_get_username(uri),
 		mongoc_uri_get_password(uri),
 		host->host,
 		host->port,
 		mongoc_uri_get_database(uri),
+		mongoc_uri_get_ssl(uri) ? 1 : 0,
 		mongoc_uri_get_auth_mechanism(uri),
 		mongoc_uri_get_auth_source(uri)
 	);
