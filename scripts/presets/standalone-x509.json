@@ -1,9 +1,8 @@
 {
     "name": "mongod", 
     "id" : "STANDALONE-X509",
-    "auth_key": "secret",
-    "login": "root", 
-    "password": "toor", 
+    "authSource": "$external",
+    "login": "C=US,ST=California,L=Palo Alto,O=MongoDB,OU=phongo,CN=localhost",
     "procParams": {
         "dbpath": "/tmp/standalone-x509/",
         "ipv6": true, 
@@ -11,10 +10,9 @@
         "logpath": "/tmp/standalone-x509/m.log", 
         "journal": true,
         "port": 2300,
-        "setParameter": {"enableTestCommands": 1}
+        "setParameter": {"enableTestCommands": 1, "authenticationMechanisms": "MONGODB-X509"}
     }, 
     "sslParams": {
-	"clusterAuthMode": "x509",
 	"sslMode": "requireSSL",
         "sslCAFile": "/phongo/scripts/ssl/ca.pem", 
         "sslPEMKeyFile": "/phongo/scripts/ssl/server.pem", 

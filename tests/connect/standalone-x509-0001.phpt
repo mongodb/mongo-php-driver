@@ -17,7 +17,7 @@ $opts = array(
         "cafile" => $SSL_DIR . "/ca.pem", /* Defaults to openssl.cafile */
         "capath" => $SSL_DIR, /* Defaults to openssl.capath */
         "local_cert" => $SSL_DIR . "/client.pem",
-        "passphrase" => "Very secretive client.pem passphrase",
+        "passphrase" => "qwerty",
         "CN_match" => "server",
         "verify_depth" => 5,
         "ciphers" => "HIGH:!EXPORT:!aNULL@STRENGTH",
@@ -30,27 +30,8 @@ $opts = array(
 );
 $context = stream_context_create($opts);
 
-$parsed = parse_url(MONGODB_STANDALONE_X509_URI);
-$adminuser = "root";
-$adminpass = "toor";
-$dsn = sprintf("mongodb://%s:%s@%s:%d/admin?ssl=true", $adminuser, $adminpass, $parsed["host"], $parsed["port"]);
-$adminmanager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context));
-
 $certusername = "C=US,ST=New York,L=New York City,O=MongoDB,OU=KernelUser,CN=client";
 
-
-$cmd = array(
-    "createUser" => $certusername,
-    "roles" => [["role" => "readWrite", "db" => DATABASE_NAME]],
-);
-
-try {
-    $command = new MongoDB\Driver\Command($cmd);
-    $result = $adminmanager->executeCommand('$external', $command);
-    echo "User Created\n";
-} catch(Exception $e) {
-    echo get_class($e), ": ", $e->getMessage(), "\n";
-}
 
 try {
     $parsed = parse_url(MONGODB_STANDALONE_X509_URI);
@@ -72,20 +53,10 @@ try {
     echo get_class($e), ": ", $e->getMessage(), "\n";
 }
 
-try {
-    $command = new MongoDB\Driver\Command(array("dropUser" => $certusername));
-    $result = $adminmanager->executeCommand('$external', $command);
-    echo "User dropped\n";
-} catch(Exception $e) {
-    echo get_class($e), ": ", $e->getMessage(), "\n";
-}
-
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-User Created
 string(9) "important"
-User dropped
 ===DONE===
