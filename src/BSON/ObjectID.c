@@ -126,18 +126,6 @@ static zend_function_entry php_phongo_objectid_me[] = {
 /* }}} */
 
 
-/* {{{ Other functions */
-static int php_phongo_objectid_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
-{
-	php_phongo_objectid_t *intern1;
-	php_phongo_objectid_t *intern2;
-
-	intern1 = (php_phongo_objectid_t *)zend_object_store_get_object(o1 TSRMLS_CC);
-	intern2 = (php_phongo_objectid_t *)zend_object_store_get_object(o2 TSRMLS_CC);
-
-	return strcmp(intern1->oid, intern2->oid);
-} /* }}} */
-/* }}} */
 /* {{{ php_phongo_objectid_t object handlers */
 static void php_phongo_objectid_free_object(void *object TSRMLS_DC) /* {{{ */
 {
@@ -163,6 +151,34 @@ zend_object_value php_phongo_objectid_create_object(zend_class_entry *class_type
 
 	return retval;
 } /* }}} */
+
+static int php_phongo_objectid_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
+{
+	php_phongo_objectid_t *intern1;
+	php_phongo_objectid_t *intern2;
+
+	intern1 = (php_phongo_objectid_t *)zend_object_store_get_object(o1 TSRMLS_CC);
+	intern2 = (php_phongo_objectid_t *)zend_object_store_get_object(o2 TSRMLS_CC);
+
+	return strcmp(intern1->oid, intern2->oid);
+} /* }}} */
+
+HashTable *php_phongo_objectid_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	php_phongo_objectid_t    *intern;
+	zval                   retval = zval_used_for_init;
+
+
+	*is_temp = 1;
+	intern = (php_phongo_objectid_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	array_init_size(&retval, 6);
+
+	add_assoc_stringl_ex(&retval, ZEND_STRS("oid"), intern->oid, 24, 1);
+
+	return Z_ARRVAL(retval);
+
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -179,6 +195,7 @@ PHP_MINIT_FUNCTION(ObjectID)
 
 	memcpy(&php_phongo_handler_objectid, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_objectid.compare_objects = php_phongo_objectid_compare_objects;
+	php_phongo_handler_objectid.get_debug_info = php_phongo_objectid_get_debug_info;
 
 
 	return SUCCESS;

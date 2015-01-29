@@ -33,9 +33,13 @@ matchedCount: 1
 modifiedCount: 1
 upsertedCount: 2
 deletedCount: 0
-upsertedId[0]: object(BSON\ObjectID)#%d (0) {
+upsertedId[0]: object(BSON\ObjectID)#%d (%d) {
+  ["oid"]=>
+  string(24) "%s"
 }
-upsertedId[1]: object(BSON\ObjectID)#%d (0) {
+upsertedId[1]: object(BSON\ObjectID)#%d (%d) {
+  ["oid"]=>
+  string(24) "%s"
 }
 
 ===> Collection
@@ -43,7 +47,9 @@ array(2) {
   [0]=>
   array(3) {
     ["_id"]=>
-    object(BSON\ObjectID)#%d (0) {
+    object(BSON\ObjectID)#%d (%d) {
+      ["oid"]=>
+      string(24) "%s"
     }
     ["x"]=>
     string(3) "foo"
@@ -53,7 +59,9 @@ array(2) {
   [1]=>
   array(3) {
     ["_id"]=>
-    object(BSON\ObjectID)#%d (0) {
+    object(BSON\ObjectID)#%d (%d) {
+      ["oid"]=>
+      string(24) "%s"
     }
     ["x"]=>
     string(3) "bar"
