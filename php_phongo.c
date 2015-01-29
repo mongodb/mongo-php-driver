@@ -1171,7 +1171,7 @@ void php_phongo_result_to_zval(zval *retval, php_phongo_result_t *result) /* {{{
 #undef _ADD_INT
 
 		add_assoc_string_ex(cursor, ZEND_STRS("ns"), result->cursor->ns, 1);
-		{
+		if (result->cursor->current) {
 			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
 			MAKE_STD_ZVAL(state.zchild);
