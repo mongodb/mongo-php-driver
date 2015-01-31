@@ -1286,9 +1286,11 @@ void php_phongo_result_free(php_phongo_result_t *result)
 {
 	if (result->firstBatch) {
 		bson_clear(&result->firstBatch);
+		result->firstBatch = NULL;
 	}
 	if (result->cursor) {
 		mongoc_cursor_destroy(result->cursor);
+		result->cursor = NULL;
 	}
 }
 
