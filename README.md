@@ -38,8 +38,8 @@ and installed manually.
 To build and install the driver:
 
 ```
-$ wget https://github.com/10gen-labs/mongo-php-driver-prototype/releases/download/0.1.2/phongo-0.1.2.tgz
-$ pecl install phongo-0.1.2.tgz
+$ wget https://github.com/10gen-labs/mongo-php-driver-prototype/releases/download/0.1.3/phongo-0.1.3.tgz
+$ pecl install phongo-0.1.3.tgz
 $ echo "extension=phongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```
 
