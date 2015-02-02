@@ -1299,7 +1299,7 @@ void php_phongo_result_free(php_phongo_result_t *result)
 }
 
 /* {{{ Iterator */
-static void phongo_cursor_it_invalidate_current(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
+static void phongo_result_iterator_invalidate_current(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
 	php_phongo_result_t *result = NULL;
 
@@ -1310,12 +1310,12 @@ static void phongo_cursor_it_invalidate_current(zend_object_iterator *iter TSRML
 	}
 } /* }}} */
 
-static void phongo_cursor_it_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
+static void phongo_result_iterator_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
 	efree(iter);
 } /* }}} */
 
-static int phongo_cursor_it_valid(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
+static int phongo_result_iterator_valid(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
 	php_phongo_result_t *result = NULL;
 
@@ -1328,12 +1328,12 @@ static int phongo_cursor_it_valid(zend_object_iterator *iter TSRMLS_DC) /* {{{ *
 	return FAILURE;
 } /* }}} */
 
-static void phongo_cursor_it_get_current_key(zend_object_iterator *iter, zval *key TSRMLS_DC) /* {{{ */
+static void phongo_result_iterator_get_current_key(zend_object_iterator *iter, zval *key TSRMLS_DC) /* {{{ */
 {
 	ZVAL_LONG(key, ((phongo_cursor_it *)iter)->current);
 } /* }}} */
 
-static void phongo_cursor_it_get_current_data(zend_object_iterator *iter, zval ***data TSRMLS_DC) /* {{{ */
+static void phongo_result_iterator_get_current_data(zend_object_iterator *iter, zval ***data TSRMLS_DC) /* {{{ */
 {
 	php_phongo_result_t *result = NULL;
 
@@ -1342,7 +1342,7 @@ static void phongo_cursor_it_get_current_data(zend_object_iterator *iter, zval *
 	*data = &result->visitor_data.zchild;
 } /* }}} */
 
-static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
+static void phongo_result_iterator_move_forward(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
 	php_phongo_result_t   *result = NULL;
 	phongo_cursor_it      *cursor_it = (phongo_cursor_it *)iter;
@@ -1373,7 +1373,7 @@ static void phongo_cursor_it_move_forward(zend_object_iterator *iter TSRMLS_DC) 
 
 } /* }}} */
 
-static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
+static void phongo_result_iterator_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
 	php_phongo_result_t *result = NULL;
 	phongo_cursor_it    *cursor_it = (phongo_cursor_it *)iter;
@@ -1407,17 +1407,17 @@ static void phongo_cursor_it_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{
 } /* }}} */
 
 /* iterator handler table */
-zend_object_iterator_funcs phongo_cursor_it_funcs = {
-	phongo_cursor_it_dtor,
-	phongo_cursor_it_valid,
-	phongo_cursor_it_get_current_data,
-	phongo_cursor_it_get_current_key,
-	phongo_cursor_it_move_forward,
-	phongo_cursor_it_rewind,
-	phongo_cursor_it_invalidate_current
+zend_object_iterator_funcs phongo_result_iterator_funcs = {
+	phongo_result_iterator_dtor,
+	phongo_result_iterator_valid,
+	phongo_result_iterator_get_current_data,
+	phongo_result_iterator_get_current_key,
+	phongo_result_iterator_move_forward,
+	phongo_result_iterator_rewind,
+	phongo_result_iterator_invalidate_current
 };
 zend_object_iterator_funcs zend_interface_iterator_funcs_iterator_default = {
-	phongo_cursor_it_dtor,
+	phongo_result_iterator_dtor,
 	zend_user_it_valid,
 	zend_user_it_get_current_data,
 	zend_user_it_get_current_key,
@@ -1439,7 +1439,7 @@ zend_object_iterator *phongo_cursor_get_iterator(zend_class_entry *ce, zval *obj
 	cursor_it = ecalloc(1, sizeof(phongo_cursor_it));
 
 	cursor_it->iterator.data  = intern->result;
-	cursor_it->iterator.funcs = &phongo_cursor_it_funcs;
+	cursor_it->iterator.funcs = &phongo_result_iterator_funcs;
 
 	return (zend_object_iterator*)cursor_it;
 } /* }}} */
@@ -1476,7 +1476,7 @@ zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *obj
 			result->visitor_data.zchild = NULL;
 		}
 		cursor_it->iterator.data  = (void*)result;
-		cursor_it->iterator.funcs = &phongo_cursor_it_funcs;
+		cursor_it->iterator.funcs = &phongo_result_iterator_funcs;
 
 		return (zend_object_iterator*)cursor_it;
 	}
