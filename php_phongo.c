@@ -1292,6 +1292,10 @@ void php_phongo_result_free(php_phongo_result_t *result)
 		mongoc_cursor_destroy(result->cursor);
 		result->cursor = NULL;
 	}
+	if (result->visitor_data.zchild) {
+		zval_ptr_dtor(&result->visitor_data.zchild);
+		result->visitor_data.zchild = NULL;
+	}
 }
 
 /* {{{ Iterator */
@@ -1308,8 +1312,6 @@ static void phongo_cursor_it_invalidate_current(zend_object_iterator *iter TSRML
 
 static void phongo_cursor_it_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	iter->funcs->invalidate_current(iter TSRMLS_CC);
-
 	efree(iter);
 } /* }}} */
 
