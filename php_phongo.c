@@ -984,9 +984,9 @@ bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TS
 
 	if (options) {
 		/* TODO: Ensure batchSize, limit, and skip are 32-bit. Should we ensure
-		 * that cursorFlags is a valid mongoc_query_flags_t combination? */
+		 * that queryFlags is a valid mongoc_query_flags_t combination? */
 		query->batch_size = php_array_fetchc_long(options, "batchSize");
-		query->flags = php_array_fetchc_long(options, "cursorFlags");
+		query->flags = php_array_fetchc_long(options, "queryFlags");
 		query->limit = php_array_fetchc_long(options, "limit");
 		query->skip = php_array_fetchc_long(options, "skip");
 
