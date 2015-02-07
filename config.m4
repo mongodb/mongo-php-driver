@@ -190,6 +190,7 @@ if test "$PHONGO" != "no"; then
   PHONGO_MONGODB_EXCEPTIONS="\
       src/MongoDB/Exception.c \
       src/MongoDB/RuntimeException.c \
+      src/MongoDB/InvalidArgumentException.c \
       src/MongoDB/ConnectionException.c \
       src/MongoDB/AuthenticationException.c \
       src/MongoDB/SSLConnectionException.c \
