@@ -157,6 +157,7 @@ PHP_METHOD(WriteResult, getUpsertedCount)
 }
 /* }}} */
 /* {{{ proto array WriteResult::getInfo()
+   FIXME: See PHPC-72 & CDRIVER-428
    Returns metadata about the operation. */
 PHP_METHOD(WriteResult, getInfo)
 {
