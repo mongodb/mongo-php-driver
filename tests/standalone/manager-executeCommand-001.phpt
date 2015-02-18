@@ -12,7 +12,7 @@ $command = new MongoDB\Driver\Command(array('ping' => 1));
 $result = $manager->executeCommand(DATABASE_NAME, $command);
 var_dump($command);
 
-var_dump($result instanceof MongoDB\Driver\CommandResult);
+var_dump($result instanceof MongoDB\Driver\Result);
 var_dump($result);
 
 echo "Dumping response document:\n";
@@ -39,7 +39,7 @@ object(MongoDB\Driver\Command)#%d (1) {
   }
 }
 bool(true)
-object(MongoDB\Driver\CommandResult)#%d (%d) {
+object(MongoDB\Driver\Result)#%d (%d) {
   ["cursor"]=>
   array(19) {
     ["stamp"]=>

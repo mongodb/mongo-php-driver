@@ -25,7 +25,7 @@ foreach($rps as $r) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\QueryResult)#%d (%d) {
+object(MongoDB\Driver\Result)#%d (%d) {
   ["cursor"]=>
   array(18) {
     ["stamp"]=>
@@ -85,7 +85,7 @@ object(MongoDB\Driver\QueryResult)#%d (%d) {
   ["is_command_cursor"]=>
   bool(false)
 }
-object(MongoDB\Driver\QueryResult)#%d (%d) {
+object(MongoDB\Driver\Result)#%d (%d) {
   ["cursor"]=>
   array(18) {
     ["stamp"]=>
@@ -153,7 +153,7 @@ object(MongoDB\Driver\QueryResult)#%d (%d) {
   ["is_command_cursor"]=>
   bool(false)
 }
-object(MongoDB\Driver\QueryResult)#%d (%d) {
+object(MongoDB\Driver\Result)#%d (%d) {
   ["cursor"]=>
   array(18) {
     ["stamp"]=>
@@ -221,7 +221,7 @@ object(MongoDB\Driver\QueryResult)#%d (%d) {
   ["is_command_cursor"]=>
   bool(false)
 }
-object(MongoDB\Driver\QueryResult)#%d (%d) {
+object(MongoDB\Driver\Result)#%d (%d) {
   ["cursor"]=>
   array(18) {
     ["stamp"]=>
@@ -289,7 +289,7 @@ object(MongoDB\Driver\QueryResult)#%d (%d) {
   ["is_command_cursor"]=>
   bool(false)
 }
-object(MongoDB\Driver\QueryResult)#%d (%d) {
+object(MongoDB\Driver\Result)#%d (%d) {
   ["cursor"]=>
   array(18) {
     ["stamp"]=>

@@ -19,7 +19,7 @@ $server->executeWriteBatch(NS, $batch);
 $query = new MongoDB\Driver\Query(array(), array('modifiers' => array('$comment' => 'foo')));
 $cursor = $server->executeQuery(NS, $query);
 
-var_dump($cursor instanceof MongoDB\Driver\QueryResult);
+var_dump($cursor instanceof MongoDB\Driver\Result);
 var_dump($server == $cursor->getServer());
 var_dump(iterator_to_array($cursor));
 

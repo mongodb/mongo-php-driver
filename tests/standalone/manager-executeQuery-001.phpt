@@ -18,7 +18,7 @@ $manager->executeWriteBatch(NS, $batch);
 $query = new MongoDB\Driver\Query(array('x' => 3), array('projection' => array('y' => 1)));
 $qr = $manager->executeQuery(NS, $query);
 
-var_dump($qr instanceof MongoDB\Driver\QueryResult);
+var_dump($qr instanceof MongoDB\Driver\Result);
 var_dump($qr);
 
 $server = $qr->getServer();
@@ -34,7 +34,7 @@ var_dump(iterator_to_array($qr));
 <?php exit(0); ?>
 --EXPECTF--
 bool(true)
-object(MongoDB\Driver\QueryResult)#%d (%d) {
+object(MongoDB\Driver\Result)#%d (%d) {
   ["cursor"]=>
   array(19) {
     ["stamp"]=>

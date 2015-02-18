@@ -12,7 +12,7 @@ $server = new MongoDB\Driver\Server($parsed["host"], $parsed["port"]);
 $command = new MongoDB\Driver\Command(array('isMaster' => 1));
 $result = $server->executeCommand(DATABASE_NAME, $command);
 
-var_dump($result instanceof MongoDB\Driver\CommandResult);
+var_dump($result instanceof MongoDB\Driver\Result);
 
 $responseDocument = $result->toArray();
 
