@@ -888,6 +888,9 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	if (!stream) {
 		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, errmsg);
 		efree(dsn);
+		if (errmsg) {
+			efree(errmsg);
+		}
 		return NULL;
 	}
 
