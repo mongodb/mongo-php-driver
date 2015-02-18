@@ -50,6 +50,8 @@ object(MongoDB\Driver\WriteError)#%d (%d) {
   int(11000)
   ["index"]=>
   int(1)
+  ["info"]=>
+  NULL
 }
 writeError[1].message: %s
 writeError[1].code: 11000
@@ -60,6 +62,8 @@ object(MongoDB\Driver\WriteError)#%d (%d) {
   int(11000)
   ["index"]=>
   int(3)
+  ["info"]=>
+  NULL
 }
 writeError[3].message: %s
 writeError[3].code: 11000

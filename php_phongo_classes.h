@@ -128,6 +128,7 @@ typedef struct {
 	zend_object              std;
 	int                      code;
 	char                    *message;
+	zval                    *info;
 	uint32_t                 index;
 } php_phongo_writeerror_t;
 

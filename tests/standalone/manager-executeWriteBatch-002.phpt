@@ -50,6 +50,8 @@ object(MongoDB\Driver\WriteError)#%d (%d) {
   int(11000)
   ["index"]=>
   int(1)
+  ["info"]=>
+  NULL
 }
 writeError[1].message: %s
 writeError[1].code: 11000

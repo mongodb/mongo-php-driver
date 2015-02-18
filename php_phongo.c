@@ -309,6 +309,22 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 	if (bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
 		writeerror->message = bson_iter_dup_utf8(&iter, NULL);
 	}
+	if (bson_iter_init_find(&iter, bson, "errInfo")) {
+		bson_t                 info;
+		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+		MAKE_STD_ZVAL(writeerror->info);
+		state.zchild = writeerror->info;
+
+		bson_init(&info);
+		bson_append_iter(&info, NULL, 0, &iter);
+
+		if (!bson_to_zval(bson_get_data(&info), info.len, &state)) {
+			zval_ptr_dtor(&writeerror->info);
+			writeerror->info = NULL;
+			return false;
+		}
+	}
 	if (bson_iter_init_find(&iter, bson, "index") && BSON_ITER_HOLDS_INT32(&iter)) {
 		writeerror->index = bson_iter_int32(&iter);
 	}

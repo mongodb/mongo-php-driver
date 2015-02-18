@@ -109,6 +109,29 @@ PHP_METHOD(WriteError, getMessage)
 	RETURN_STRING(intern->message, 1);
 }
 /* }}} */
+/* {{{ proto mixed WriteError::getInfo()
+   Returns additional metadata for the error */
+PHP_METHOD(WriteError, getInfo)
+{
+	php_phongo_writeerror_t *intern;
+	zend_error_handling             error_handling;
+
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+
+	if (intern->info) {
+		RETURN_ZVAL(intern->info, 1, 0);
+	}
+}
+/* }}} */
 
 /**
  * Value object for a write error (e.g. duplicate key).
@@ -121,6 +144,9 @@ ZEND_END_ARG_INFO();
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getIndex, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getInfo, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getMessage, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
@@ -129,6 +155,7 @@ static zend_function_entry php_phongo_writeerror_me[] = {
 	PHP_ME(WriteError, getCode, ai_WriteError_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteError, getIndex, ai_WriteError_getIndex, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteError, getMessage, ai_WriteError_getMessage, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteError, getInfo, ai_WriteError_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -177,6 +204,12 @@ HashTable *php_phongo_writeerror_get_debug_info(zval *object, int *is_temp TSRML
 	add_assoc_string_ex(&retval, ZEND_STRS("message"), intern->message, 1);
 	add_assoc_long_ex(&retval, ZEND_STRS("code"), intern->code);
 	add_assoc_long_ex(&retval, ZEND_STRS("index"), intern->index);
+	if (intern->info) {
+		Z_ADDREF_P(intern->info);
+		add_assoc_zval_ex(&retval, ZEND_STRS("info"), intern->info);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("info"));
+	}
 
 	return Z_ARRVAL(retval);
 } /* }}} */
