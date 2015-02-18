@@ -173,13 +173,12 @@ if test "$PHONGO" != "no"; then
   ";
   PHONGO_MONGODB_CLASSES="\
       src/MongoDB/Command.c \
-      src/MongoDB/CommandResult.c \
       src/MongoDB/Cursor.c \
       src/MongoDB/CursorId.c \
       src/MongoDB/Manager.c \
       src/MongoDB/Query.c \
-      src/MongoDB/QueryResult.c \
       src/MongoDB/ReadPreference.c \
+      src/MongoDB/Result.c \
       src/MongoDB/Server.c \
       src/MongoDB/WriteBatch.c \
       src/MongoDB/WriteConcern.c \

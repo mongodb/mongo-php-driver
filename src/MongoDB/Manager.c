@@ -117,7 +117,7 @@ PHP_METHOD(Manager, __construct)
 	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);
 }
 /* }}} */
-/* {{{ proto MongoDB\Driver\CommandResult Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\Driver\Result Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a command */
 PHP_METHOD(Manager, executeCommand)
 {
@@ -144,7 +144,7 @@ PHP_METHOD(Manager, executeCommand)
 	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Driver\QueryResult Manager::executeQuery(string $namespace, MongoDB\Driver\Query $zquery[, MongoDB\Driver\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\Driver\Result Manager::executeQuery(string $namespace, MongoDB\Driver\Query $zquery[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a Query */
 PHP_METHOD(Manager, executeQuery)
 {

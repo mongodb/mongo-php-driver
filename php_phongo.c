@@ -636,7 +636,7 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 		return true;
 	}
 
-	phongo_result_init(return_value, php_phongo_queryresult_ce, cursor, doc, 0, 0 TSRMLS_CC);
+	phongo_result_init(return_value, php_phongo_result_ce, cursor, doc, 0, 0 TSRMLS_CC);
 	return true;
 } /* }}} */
 
@@ -686,7 +686,7 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 						_mongoc_cursor_cursorid_init(cursor);
 						cursor->limit = 0;
 						cursor->is_command = false;
-						phongo_result_init(return_value, php_phongo_commandresult_ce, cursor, &first_batch, mongoc_cursor_get_hint(cursor), 1 TSRMLS_CC);
+						phongo_result_init(return_value, php_phongo_result_ce, cursor, &first_batch, mongoc_cursor_get_hint(cursor), 1 TSRMLS_CC);
 						return true;
 					}
 				}
@@ -694,7 +694,7 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 		}
 	}
 
-	phongo_result_init(return_value, php_phongo_commandresult_ce, cursor, doc, mongoc_cursor_get_hint(cursor), 0 TSRMLS_CC);
+	phongo_result_init(return_value, php_phongo_result_ce, cursor, doc, mongoc_cursor_get_hint(cursor), 0 TSRMLS_CC);
 	return true;
 } /* }}} */
 
@@ -1587,13 +1587,12 @@ PHP_MINIT_FUNCTION(phongo)
 	PHP_MINIT(bson)(INIT_FUNC_ARGS_PASSTHRU);
 
 	PHP_MINIT(Command)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(CommandResult)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Cursor)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(CursorId)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Manager)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Query)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(QueryResult)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ReadPreference)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(Result)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Server)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteBatch)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteConcern)(INIT_FUNC_ARGS_PASSTHRU);

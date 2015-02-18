@@ -99,7 +99,7 @@ PHP_METHOD(Server, __construct)
 	mongoc_uri_destroy(uri);
 }
 /* }}} */
-/* {{{ proto MongoDB\Driver\CommandResult Server::executeCommand(string $db, MongoDB\Driver\Command $command)
+/* {{{ proto MongoDB\Driver\Result Server::executeCommand(string $db, MongoDB\Driver\Command $command)
    Executes a command on this server */
 PHP_METHOD(Server, executeCommand)
 {
@@ -125,7 +125,7 @@ PHP_METHOD(Server, executeCommand)
 	phongo_execute_command(intern->client, db, cmd->bson, NULL, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Driver\QueryResult Server::executeQuery(string $namespace, MongoDB\Driver\Query $zquery)
+/* {{{ proto MongoDB\Driver\Result Server::executeQuery(string $namespace, MongoDB\Driver\Query $zquery)
    Executes a Query */
 PHP_METHOD(Server, executeQuery)
 {

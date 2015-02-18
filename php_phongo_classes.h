@@ -56,10 +56,6 @@ typedef struct {
 } php_phongo_result_t;
 
 typedef struct {
-	php_phongo_result_t      result;
-} php_phongo_commandresult_t;
-
-typedef struct {
 	zend_object_iterator   iterator;
 	bson_iter_t            first_batch_iter;
 	long                   current;
@@ -90,10 +86,6 @@ typedef struct {
 	uint32_t                 limit;
 	uint32_t                 batch_size;
 } php_phongo_query_t;
-
-typedef struct {
-	php_phongo_result_t      result;
-} php_phongo_queryresult_t;
 
 typedef struct {
 	zend_object              std;
@@ -194,13 +186,12 @@ typedef struct {
 } php_phongo_utcdatetime_t;
 
 extern PHONGO_API zend_class_entry *php_phongo_command_ce;
-extern PHONGO_API zend_class_entry *php_phongo_commandresult_ce;
 extern PHONGO_API zend_class_entry *php_phongo_cursor_ce;
 extern PHONGO_API zend_class_entry *php_phongo_cursorid_ce;
 extern PHONGO_API zend_class_entry *php_phongo_manager_ce;
 extern PHONGO_API zend_class_entry *php_phongo_query_ce;
-extern PHONGO_API zend_class_entry *php_phongo_queryresult_ce;
 extern PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
+extern PHONGO_API zend_class_entry *php_phongo_result_ce;
 extern PHONGO_API zend_class_entry *php_phongo_server_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writebatch_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeconcern_ce;
@@ -234,13 +225,12 @@ extern PHONGO_API zend_class_entry *php_phongo_timestamp_ce;
 extern PHONGO_API zend_class_entry *php_phongo_utcdatetime_ce;
 
 PHP_MINIT_FUNCTION(Command);
-PHP_MINIT_FUNCTION(CommandResult);
 PHP_MINIT_FUNCTION(Cursor);
 PHP_MINIT_FUNCTION(CursorId);
 PHP_MINIT_FUNCTION(Manager);
 PHP_MINIT_FUNCTION(Query);
-PHP_MINIT_FUNCTION(QueryResult);
 PHP_MINIT_FUNCTION(ReadPreference);
+PHP_MINIT_FUNCTION(Result);
 PHP_MINIT_FUNCTION(Server);
 PHP_MINIT_FUNCTION(WriteBatch);
 PHP_MINIT_FUNCTION(WriteConcern);
