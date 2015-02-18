@@ -176,15 +176,6 @@ PHP_MINIT_FUNCTION(Query)
 	memcpy(&php_phongo_handler_query, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_query.get_debug_info = php_phongo_query_get_debug_info;
 
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_NONE"), MONGOC_QUERY_NONE TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_TAILABLE_CURSOR"), MONGOC_QUERY_TAILABLE_CURSOR TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_SLAVE_OK"), MONGOC_QUERY_SLAVE_OK TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_OPLOG_REPLAY"), MONGOC_QUERY_OPLOG_REPLAY TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_NO_CURSOR_TIMEOUT"), MONGOC_QUERY_NO_CURSOR_TIMEOUT TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_AWAIT_DATA"), MONGOC_QUERY_AWAIT_DATA TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_EXHAUST"), MONGOC_QUERY_EXHAUST TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_query_ce, ZEND_STRL("FLAG_PARTIAL"), MONGOC_QUERY_PARTIAL TSRMLS_CC);
-
 	return SUCCESS;
 }
 /* }}} */
