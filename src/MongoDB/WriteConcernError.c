@@ -67,12 +67,12 @@ PHP_METHOD(WriteConcernError, getCode)
 	RETURN_LONG(intern->code);
 }
 /* }}} */
-/* {{{ proto array WriteConcernError::getInfo()
+/* {{{ proto mixed WriteConcernError::getInfo()
    Returns additional metadata for the error */
 PHP_METHOD(WriteConcernError, getInfo)
 {
 	php_phongo_writeconcernerror_t *intern;
-	zend_error_handling       error_handling;
+	zend_error_handling             error_handling;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -85,11 +85,9 @@ PHP_METHOD(WriteConcernError, getInfo)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	if (intern->info && Z_TYPE_P(intern->info) == IS_ARRAY) {
+	if (intern->info) {
 		RETURN_ZVAL(intern->info, 1, 0);
 	}
-
-	array_init(return_value);
 }
 /* }}} */
 /* {{{ proto string WriteConcernError::getMessage()
@@ -183,8 +181,12 @@ HashTable *php_phongo_writeconcernerror_get_debug_info(zval *object, int *is_tem
 	array_init_size(&retval, 3);
 	add_assoc_string_ex(&retval, ZEND_STRS("message"), intern->message, 1);
 	add_assoc_long_ex(&retval, ZEND_STRS("code"), intern->code);
-	Z_ADDREF_P(intern->info);
-	add_assoc_zval_ex(&retval, ZEND_STRS("info"), intern->info);
+	if (intern->info) {
+		Z_ADDREF_P(intern->info);
+		add_assoc_zval_ex(&retval, ZEND_STRS("info"), intern->info);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("info"));
+	}
 
 	return Z_ARRVAL(retval);
 } /* }}} */
