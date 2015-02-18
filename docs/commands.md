@@ -11,14 +11,14 @@ $manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
 
 $listdatabases = new MongoDB\Driver\Command(array("listDatabases" => 1));
 $retval        = $manager->executeCommand("admin", $listdatabases);
-$databases     = $retval->getResponseDocument();
+$databases     = $retval->toArray();
 
 foreach($databases["databases"] as $database) {
 	echo $database->name, "\n";
 
 	$listcollections = new MongoDB\Driver\Command(array("listCollections" => 1));
 	$retval          = $manager->executeCommand($database->name, $listcollections);
-	$collections     = $retval->getResponseDocument();
+	$collections     = $retval->toArray();
 	foreach($collections["collections"] as $collection) {
 		echo "\t- ", $collection->name, "\n";
 	}
@@ -52,7 +52,7 @@ $createuser = new MongoDB\Driver\Command($command);
 
 try {
 	$result     = $manager->executeCommand("admin", $createuser);
-	$response   = $result->getResponseDocument();
+	$response   = $result->toArray();
 	if ($reponse["ok"]) {
 		echo "User created\n";
 	}
@@ -93,7 +93,7 @@ $manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
 $query    = array("citizen" => "Iceland");
 $count    = new MongoDB\Driver\Command(array("count" => "collection", "query" => $query));
 $retval   = $manager->executeCommand("db", $count, $rp);
-$response = $retval->getResponseDocument();
+$response = $retval->toArray();
 if ($response["ok"]) {
 	printf("db.collection has %d documents matching: %s\n",
 		$response["n"],

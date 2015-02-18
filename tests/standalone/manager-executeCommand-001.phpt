@@ -16,7 +16,7 @@ var_dump($result instanceof MongoDB\Driver\CommandResult);
 var_dump($result);
 
 echo "Dumping response document:\n";
-var_dump($result->getResponseDocument());
+var_dump($result->toArray());
 
 echo "Dumping iterated result:\n";
 var_dump(iterator_to_array($result));

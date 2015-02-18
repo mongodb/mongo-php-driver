@@ -14,7 +14,7 @@ $result = $server->executeCommand(DATABASE_NAME, $command);
 
 var_dump($result instanceof MongoDB\Driver\CommandResult);
 
-$responseDocument = $result->getResponseDocument();
+$responseDocument = $result->toArray();
 
 var_dump( ! empty($responseDocument['ok']));
 var_dump($server == $result->getServer());
