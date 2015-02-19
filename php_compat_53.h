@@ -30,5 +30,5 @@
 		default: \
 			RETURN_NULL(); \
 	} \
-} 
+}
 #endif

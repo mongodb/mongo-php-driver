@@ -171,7 +171,7 @@ function getWriteErrors($retval) {
 
 function def($arr) {
     foreach($arr as $const => $value) {
-        define($const, getenv("PHONGO_TEST_$const") ?: $value); 
+        define($const, getenv("PHONGO_TEST_$const") ?: $value);
     }
 }
 

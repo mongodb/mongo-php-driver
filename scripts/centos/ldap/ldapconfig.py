@@ -32,7 +32,7 @@ def main():
 			print "adding ", uname
 			dn= 'uid=' + uname.lower() + ',ou=Users,dc=10gen,dc=me'
 	
-			ldif = configUser(uname.rstrip('\r\n')) 
+			ldif = configUser(uname.rstrip('\r\n'))
 
 			# Do the actual synchronous add-operation to the ldapserver
 			l.add_s(dn,ldif)

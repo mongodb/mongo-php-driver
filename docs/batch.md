@@ -4,7 +4,7 @@
 <?php
 
 $hannes = array(
-	"name"    => "Hannes", 
+	"name"    => "Hannes",
 	"nick"    => "bjori",
 	"citizen" => "Iceland",
 );

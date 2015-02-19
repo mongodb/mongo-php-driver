@@ -1,11 +1,11 @@
 {
-    "name": "mongod", 
+    "name": "mongod",
     "id" : "STANDALONE",
     "procParams": {
         "dbpath": "/tmp/standalone/",
-        "ipv6": true, 
-        "logappend": true, 
-        "logpath": "/tmp/standalone/mongod.log", 
+        "ipv6": true,
+        "logappend": true,
+        "logpath": "/tmp/standalone/mongod.log",
         "journal": true,
         "port": 2000,
         "setParameter": {"enableTestCommands": 1}

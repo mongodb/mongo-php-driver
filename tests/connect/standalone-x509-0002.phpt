@@ -3,7 +3,7 @@ Connect to MongoDB with using X509 retrieving username from certificate #002
 --SKIPIF--
 <?php require "tests/utils/auth-x509-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $SSL_DIR = realpath(__DIR__ . "/" . "./../../scripts/ssl/");

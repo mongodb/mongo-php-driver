@@ -4,7 +4,7 @@ Sorting single field, descending
 <?php require "tests/utils/basic-skipif.inc" ?>
 <?php require "tests/utils/fixtures-users.inc" ?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(MONGODB_URI);

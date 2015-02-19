@@ -3,7 +3,7 @@ BSON encoding: Encoding objects into BSON representation
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 class MyClass implements BSON\Persistable {

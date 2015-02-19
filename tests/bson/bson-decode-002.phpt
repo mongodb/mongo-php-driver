@@ -3,7 +3,7 @@ BSON encoding: Encoding object/arrays data into user specificied classes
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 class MyArrayObject extends ArrayObject implements BSON\Unserializable {

@@ -180,7 +180,7 @@ This will result in the following document to be stored (as shown by mongo shell
                                 ]
                         ],
                         {
-                                
+
                         }
                 ]
         ]

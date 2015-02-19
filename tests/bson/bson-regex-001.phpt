@@ -3,7 +3,7 @@ BSON BSON\Regex #001
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $regexp = new BSON\Regex("regexp", "i");

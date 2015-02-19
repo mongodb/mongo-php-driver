@@ -3,7 +3,7 @@ BSON BSON\Timestamp #001
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $timestamp = new BSON\Timestamp(1234, 5678);

@@ -3,7 +3,7 @@ MongoDB\Driver\Write\Batch: #002 Get the generated ID
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $mm = new MongoDB\Driver\Manager(MONGODB_URI);

@@ -3,7 +3,7 @@ MongoDB\Driver\Write\Batch: #001 Variety Batch
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $mc = new MongoDB\Driver\Manager(MONGODB_URI);

@@ -3,7 +3,7 @@ BSON BSON\ObjectID #001
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $sameid = new BSON\ObjectID("53e2a1c40640fd72175d4603");

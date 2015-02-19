@@ -3,7 +3,7 @@ Connect to MongoDB with using default auth mechanism
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $username = "root";

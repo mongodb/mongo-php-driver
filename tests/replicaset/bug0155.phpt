@@ -3,14 +3,14 @@ MongoDB\Driver\WriteConcern construction
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(MONGODB_REPLICASET_URI);
 
 
 $wc = new MongoDB\Driver\WriteConcern("MultipleDC", 500);
- 
+
 $doc = array("example" => "document");
 try {
     $result = $manager->executeInsert("databaseName.collectionName", $doc, $wc);

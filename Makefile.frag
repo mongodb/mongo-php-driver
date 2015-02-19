@@ -109,7 +109,7 @@ patch:
 			fi \
 		done; \
 		touch $(top_srcdir)/.patched; \
-	fi 
+	fi
 
 package.xml:
 	php bin/prep-release.php $(PHONGO_VERSION)-$(PHONGO_STABILITY)

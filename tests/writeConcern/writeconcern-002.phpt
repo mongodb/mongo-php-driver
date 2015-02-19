@@ -3,7 +3,7 @@ MongoDB\Driver\WriteConcern::MAJORITY
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 var_dump(MongoDB\Driver\WriteConcern::MAJORITY);

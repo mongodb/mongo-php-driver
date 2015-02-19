@@ -3,7 +3,7 @@ BSON BSON\MinKey #001
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $minkey = new BSON\MinKey;

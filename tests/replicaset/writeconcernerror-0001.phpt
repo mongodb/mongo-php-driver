@@ -3,7 +3,7 @@ WriteConcernError: Access write counts and WriteConcern reason
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $mc = new MongoDB\Driver\Manager(MONGODB_REPLICASET_URI);

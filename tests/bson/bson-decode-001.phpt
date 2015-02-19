@@ -3,7 +3,7 @@ BSON encoding: Encoding data into BSON representation, and BSON into Extended JS
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $tests = array(

@@ -3,7 +3,7 @@ Connect to MongoDB with using SSL and verify the stream
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $dsn = sprintf("%s/?ssl=true", MONGODB_STANDALONE_SSL_URI);

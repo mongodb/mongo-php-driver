@@ -80,7 +80,7 @@ zend_bool php_array_existsl_safe(zval *zarr, const char *key, int key_len) {
 	return ret;
 }
 #define php_array_existsn(zarr, idx) \
-	zend_hash_index_exists(Z_ARRVAL_P(zarr), idx) 
+	zend_hash_index_exists(Z_ARRVAL_P(zarr), idx)
 static inline
 zend_bool php_array_existsz(zval *zarr, zval *key) {
 	switch (Z_TYPE_P(key)) {

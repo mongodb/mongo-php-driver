@@ -3,7 +3,7 @@ BSON BSON\Javascript #001
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 
 $js = new BSON\Javascript("function foo(bar) {var baz = bar; var bar = foo; return bar; }");
@@ -30,10 +30,10 @@ foreach($tests as $n => $test) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got InvalidArgumentException
-Test#0 
+Test#0
 bool(true)
 bool(true)
-Test#1 
+Test#1
 bool(true)
 bool(true)
 ===DONE===

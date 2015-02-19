@@ -3,7 +3,7 @@ BSON encoding: Object Document Mapper
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
-<?php 
+<?php
 require_once "tests/utils/basic.inc";
 require_once "tests/utils/classes.inc";
 
