@@ -93,6 +93,8 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 	switch(code) {
 		case 50: /* ExceededTimeLimit */
 			return php_phongo_executiontimeoutexception_ce;
+		case MONGOC_ERROR_STREAM_SOCKET:
+			return php_phongo_connectiontimeoutexception_ce;
 		case 11000: /* DuplicateKey */
 			return php_phongo_duplicatekeyexception_ce;
 		case MONGOC_ERROR_CLIENT_AUTHENTICATE:
@@ -101,7 +103,6 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 		case MONGOC_ERROR_STREAM_INVALID_TYPE:
 		case MONGOC_ERROR_STREAM_INVALID_STATE:
 		case MONGOC_ERROR_STREAM_NAME_RESOLUTION:
-		case MONGOC_ERROR_STREAM_SOCKET:
 		case MONGOC_ERROR_STREAM_CONNECT:
 		case MONGOC_ERROR_STREAM_NOT_ESTABLISHED:
 			return php_phongo_connectionexception_ce;
@@ -747,8 +748,6 @@ ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
 	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
-	php_phongo_set_timeout(base_stream, timeout_msec);
-
 	for (i = 0; i < iovcnt; i++) {
 		sent += php_stream_write(base_stream->stream, iov[i].iov_base, iov[i].iov_len);
 	}
@@ -766,6 +765,8 @@ ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t
 	ssize_t read;
 	size_t cur = 0;
 	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+
+	php_phongo_set_timeout(base_stream, timeout_msec);
 
 	do {
 		read = php_stream_read(base_stream->stream, iov[cur].iov_base, iov[cur].iov_len);
@@ -1622,6 +1623,7 @@ PHP_MINIT_FUNCTION(phongo)
 	PHP_MINIT(WriteException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(DuplicateKeyException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ExecutionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(ConnectionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
 
 	PHP_MINIT(Type)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Serializable)(INIT_FUNC_ARGS_PASSTHRU);

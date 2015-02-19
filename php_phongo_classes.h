@@ -207,6 +207,7 @@ extern PHONGO_API zend_class_entry *php_phongo_authenticationexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_sslconnectionexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_duplicatekeyexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_executiontimeoutexception_ce;
+extern PHONGO_API zend_class_entry *php_phongo_connectiontimeoutexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeexception_ce;
 
 extern PHONGO_API zend_class_entry *php_phongo_type_ce;
@@ -247,6 +248,7 @@ PHP_MINIT_FUNCTION(AuthenticationException);
 PHP_MINIT_FUNCTION(SSLConnectionException);
 PHP_MINIT_FUNCTION(DuplicateKeyException);
 PHP_MINIT_FUNCTION(ExecutionTimeoutException);
+PHP_MINIT_FUNCTION(ConnectionTimeoutException);
 PHP_MINIT_FUNCTION(WriteException);
 
 PHP_MINIT_FUNCTION(Type);
