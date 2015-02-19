@@ -44,13 +44,13 @@ $opts = array(
 );
 $context = stream_context_create($opts);
 
-$mc = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context));
+$manager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context));
 
 
-echo throws(function() use($mc) {
+echo throws(function() use($manager) {
     $batch = new MongoDB\Driver\WriteBatch;
     $batch->insert(array("my" => "value"));
-    $retval = $mc->executeWriteBatch(NS, $batch);
+    $retval = $manager->executeWriteBatch(NS, $batch);
 }, "MongoDB\\Driver\\SSLConnectionException", "executeWriteBatch"), "\n";
 
 
@@ -58,7 +58,7 @@ echo "Changing to server\n";
 stream_context_set_option($context, "ssl", "CN_match", "server");
 $batch = new MongoDB\Driver\WriteBatch;
 $batch->insert(array("my" => "value"));
-$retval = $mc->executeWriteBatch(NS, $batch);
+$retval = $manager->executeWriteBatch(NS, $batch);
 printf("Inserted: %d\n", $retval->getInsertedCount());
 
 

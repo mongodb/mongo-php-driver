@@ -6,7 +6,7 @@ MongoDB\Driver\ReadPreference#001
 <?php
 require_once "tests/utils/basic.inc";
 
-$mc = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
 
 $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);

@@ -6,7 +6,7 @@ MongoDB\Driver\WriteConcern construction
 <?php
 require_once "tests/utils/basic.inc";
 
-$mc = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
 
 $w = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY);

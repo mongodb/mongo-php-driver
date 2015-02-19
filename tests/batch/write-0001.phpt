@@ -6,7 +6,7 @@ MongoDB\Driver\Write\Batch: #001 Variety Batch
 <?php
 require_once "tests/utils/basic.inc";
 
-$mc = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
 $batch = new MongoDB\Driver\WriteBatch;
 var_dump($batch);
@@ -23,7 +23,7 @@ $batch->update(array("foo" => "bar"), array('$set' => array("foo" => "baz")), ar
 
 var_dump($batch);
 
-$retval = $mc->executeWriteBatch(NS, $batch);
+$retval = $manager->executeWriteBatch(NS, $batch);
 
 var_dump($batch);
 

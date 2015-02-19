@@ -6,7 +6,7 @@ WriteConcernError: Access write counts and WriteConcern reason
 <?php
 require_once "tests/utils/basic.inc";
 
-$mc = new MongoDB\Driver\Manager(MONGODB_REPLICASET_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_REPLICASET_URI);
 
 $batch = new MongoDB\Driver\WriteBatch;
 
@@ -19,7 +19,7 @@ $batch->delete(array("my" => "value", "foo" => "bar"), array("limit" => 1));
 $batch->update(array("foo" => "bar"), array('$set' => array("foo" => "baz")), array("limit" => 1, "upsert" => 0));
 
 $w = new MongoDB\Driver\WriteConcern(30, 100);
-$retval = $mc->executeWriteBatch(NS, $batch, $w);
+$retval = $manager->executeWriteBatch(NS, $batch, $w);
 
 printWriteResult($retval);
 ?>

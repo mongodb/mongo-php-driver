@@ -6,7 +6,7 @@ MongoDB\Driver\Write\Batch: #002 Get the generated ID
 <?php
 require_once "tests/utils/basic.inc";
 
-$mm = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
 $hannes = array("name" => "Hannes", "country" => "USA", "gender" => "male");
 $hayley = array("name" => "Hayley", "country" => "USA", "gender" => "female");
@@ -20,7 +20,7 @@ $w = 1;
 $wtimeout = 1000;
 $writeConcern = new \MongoDB\Driver\WriteConcern($w, $wtimeout);
 var_dump($insertBatch);
-$result = $mm->executeWriteBatch("db.collection", $insertBatch, $writeConcern);
+$result = $manager->executeWriteBatch("db.collection", $insertBatch, $writeConcern);
 var_dump($insertBatch);
 
 assert($result instanceof \MongoDB\Driver\WriteResult);

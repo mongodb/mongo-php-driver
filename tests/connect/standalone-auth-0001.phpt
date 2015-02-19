@@ -12,7 +12,7 @@ $database = "admin";
 
 $parsed = parse_url(MONGODB_STANDALONE_AUTH_URI);
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s", $username, $password, $parsed["host"], $parsed["port"], $database);
-$mc = new MongoDB\Driver\Manager($dsn);
+$manager = new MongoDB\Driver\Manager($dsn);
 
 $batch = new MongoDB\Driver\WriteBatch;
 
@@ -24,7 +24,7 @@ $batch->delete(array("my" => "value", "foo" => "bar"), array("limit" => 1));
 
 $batch->update(array("foo" => "bar"), array('$set' => array("foo" => "baz")), array("limit" => 1, "upsert" => 0));
 
-$retval = $mc->executeWriteBatch(NS, $batch);
+$retval = $manager->executeWriteBatch(NS, $batch);
 
 printf("Inserted: %d\n", getInsertCount($retval));
 printf("Deleted: %d\n", getDeletedCount($retval));

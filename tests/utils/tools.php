@@ -65,11 +65,11 @@ function CLEANUP() {
         return;
     }
     try {
-        $mc = new MongoDB\Driver\Manager(MONGODB_CLEANUP_URI);
+        $manager = new MongoDB\Driver\Manager(MONGODB_CLEANUP_URI);
         $cmd = new MongoDB\Driver\Command(array("drop" => COLLECTION_NAME));
         $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
         try {
-            $mc->executeCommand(DATABASE_NAME, $cmd, $rp);
+            $manager->executeCommand(DATABASE_NAME, $cmd, $rp);
         } catch(Exception $e) {
             do {
                 /* ns not found */

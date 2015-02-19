@@ -6,14 +6,14 @@ WriteConcernError: Populate WriteConcernError on WriteConcern errors
 <?php
 require_once "tests/utils/basic.inc";
 
-$mc = new MongoDB\Driver\Manager(MONGODB_REPLICASET_URI);
+$manager = new MongoDB\Driver\Manager(MONGODB_REPLICASET_URI);
 
 $batch = new MongoDB\Driver\WriteBatch;
 
 $batch->insert(array("my" => "value"));
 
 $w = new MongoDB\Driver\WriteConcern(30, 100);
-$retval = $mc->executeWriteBatch(NS, $batch, $w);
+$retval = $manager->executeWriteBatch(NS, $batch, $w);
 
 printWriteResult($retval);
 ?>

@@ -6,8 +6,8 @@ MongoDB\Driver\ReadPreference#002: PHPC-146
 <?php
 require_once "tests/utils/basic.inc";
 
-$mc = new MongoDB\Driver\Manager(MONGODB_URI);
-$mc->executeInsert(NS, array("my" => "document"));
+$manager = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager->executeInsert(NS, array("my" => "document"));
 $rps = array(
     MongoDB\Driver\ReadPreference::RP_PRIMARY,
     MongoDB\Driver\ReadPreference::RP_PRIMARY_PREFERRED,
@@ -17,7 +17,7 @@ $rps = array(
 );
 foreach($rps as $r) {
     $rp = new MongoDB\Driver\ReadPreference($r);
-    $cursor = $mc->executeQuery(NS, new MongoDB\Driver\Query(array("my" => "query")), $rp);
+    $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array("my" => "query")), $rp);
     var_dump($cursor);
 }
 
