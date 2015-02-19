@@ -91,7 +91,9 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code)
 {
 	switch(code) {
-		case 11000: /* Duplicate key */
+		case 50: /* ExceededTimeLimit */
+			return php_phongo_executiontimeoutexception_ce;
+		case 11000: /* DuplicateKey */
 			return php_phongo_duplicatekeyexception_ce;
 		case MONGOC_ERROR_CLIENT_AUTHENTICATE:
 			return php_phongo_authenticationexception_ce;
@@ -1619,6 +1621,7 @@ PHP_MINIT_FUNCTION(phongo)
 	PHP_MINIT(SSLConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(DuplicateKeyException)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(ExecutionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
 
 	PHP_MINIT(Type)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Serializable)(INIT_FUNC_ARGS_PASSTHRU);

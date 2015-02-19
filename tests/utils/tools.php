@@ -175,3 +175,26 @@ function def($arr) {
     }
 }
 
+function configureFailPoint(MongoDB\Driver\Manager $manager, $failPoint, $mode, $data = array()) {
+
+    $doc = array(
+        "configureFailPoint" => $failPoint,
+        "mode"               => $mode,
+    );
+    if ($data) {
+        $doc["data"] = $data;
+    }
+
+    $cmd = new MongoDB\Driver\Command($doc);
+    $result = $manager->executeCommand("admin", $cmd);
+    if (empty($result->toArray()["ok"])) {
+        var_dump($result);
+        throw new RuntimeException("Failpoint failed");
+    }
+    return true;
+}
+
+function failMaxTimeMS(MongoDB\Driver\Manager $manager) {
+    return configureFailPoint($manager, "maxTimeAlwaysTimeOut", array("times" => 1));
+}
+
