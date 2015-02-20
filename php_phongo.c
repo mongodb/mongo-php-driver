@@ -492,20 +492,20 @@ bool phongo_split_namespace(char *namespace, char **dbname, char **cname) /* {{{
 	return true;
 } /* }}} */
 
-mongoc_bulk_operation_t *phongo_writebatch_init(zend_bool ordered) { /* {{{ */
+mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
 	return mongoc_bulk_operation_new(ordered);
 } /* }}} */
 
 int phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_t *doc, mongoc_write_concern_t *write_concern, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bool retval = false;
-	mongoc_bulk_operation_t *batch;
+	mongoc_bulk_operation_t *bulk;
 
-	batch = phongo_writebatch_init(true);
-	mongoc_bulk_operation_insert(batch, doc);
+	bulk = phongo_bulkwrite_init(true);
+	mongoc_bulk_operation_insert(bulk, doc);
 
-	retval = phongo_execute_write(client, namespace, batch, write_concern, 0, return_value, return_value_used TSRMLS_CC);
-	mongoc_bulk_operation_destroy(batch);
+	retval = phongo_execute_write(client, namespace, bulk, write_concern, 0, return_value, return_value_used TSRMLS_CC);
+	mongoc_bulk_operation_destroy(bulk);
 
 	return retval;
 } /* }}} */
@@ -513,16 +513,16 @@ int phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_
 int phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_t *query, bson_t *update, mongoc_write_concern_t *write_concern, mongoc_update_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bool retval = false;
-	mongoc_bulk_operation_t *batch;
+	mongoc_bulk_operation_t *bulk;
 
-	batch = phongo_writebatch_init(true);
+	bulk = phongo_bulkwrite_init(true);
 	if (flags & MONGOC_UPDATE_MULTI_UPDATE) {
-		mongoc_bulk_operation_update_one(batch, query, update, !!(flags & MONGOC_UPDATE_UPSERT));
+		mongoc_bulk_operation_update_one(bulk, query, update, !!(flags & MONGOC_UPDATE_UPSERT));
 	} else {
-		mongoc_bulk_operation_update(batch, query, update, !!(flags & MONGOC_UPDATE_UPSERT));
+		mongoc_bulk_operation_update(bulk, query, update, !!(flags & MONGOC_UPDATE_UPSERT));
 	}
-	retval = phongo_execute_write(client, namespace, batch, write_concern, 0, return_value, return_value_used TSRMLS_CC);
-	mongoc_bulk_operation_destroy(batch);
+	retval = phongo_execute_write(client, namespace, bulk, write_concern, 0, return_value, return_value_used TSRMLS_CC);
+	mongoc_bulk_operation_destroy(bulk);
 
 	return retval;
 } /* }}} */
@@ -530,22 +530,22 @@ int phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_
 int phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_t *query, mongoc_write_concern_t *write_concern, mongoc_delete_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bool retval = false;
-	mongoc_bulk_operation_t *batch;
+	mongoc_bulk_operation_t *bulk;
 
-	batch = phongo_writebatch_init(true);
+	bulk = phongo_bulkwrite_init(true);
 	if (flags & MONGOC_DELETE_SINGLE_REMOVE) {
-		mongoc_bulk_operation_remove_one(batch, query);
+		mongoc_bulk_operation_remove_one(bulk, query);
 	} else {
-		mongoc_bulk_operation_remove(batch, query);
+		mongoc_bulk_operation_remove(bulk, query);
 	}
 
-	retval = phongo_execute_write(client, namespace, batch, write_concern, 0, return_value, return_value_used TSRMLS_CC);
-	mongoc_bulk_operation_destroy(batch);
+	retval = phongo_execute_write(client, namespace, bulk, write_concern, 0, return_value, return_value_used TSRMLS_CC);
+	mongoc_bulk_operation_destroy(bulk);
 
 	return retval;
 } /* }}} */
 
-bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_operation_t *batch, mongoc_write_concern_t *write_concern, int server_hint, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_operation_t *bulk, mongoc_write_concern_t *write_concern, int server_hint, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
 	bson_t reply;
@@ -558,18 +558,18 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 		return false;
 	}
 
-	mongoc_bulk_operation_set_database(batch, dbname);
-	mongoc_bulk_operation_set_collection(batch, collname);
-	mongoc_bulk_operation_set_client(batch, client);
-	mongoc_bulk_operation_set_write_concern (batch, write_concern);
+	mongoc_bulk_operation_set_database(bulk, dbname);
+	mongoc_bulk_operation_set_collection(bulk, collname);
+	mongoc_bulk_operation_set_client(bulk, client);
+	mongoc_bulk_operation_set_write_concern (bulk, write_concern);
 	efree(dbname);
 	efree(collname);
 
 	if (server_hint) {
-		mongoc_bulk_operation_set_hint(batch, server_hint);
+		mongoc_bulk_operation_set_hint(bulk, server_hint);
 	}
 
-	hint = mongoc_bulk_operation_execute(batch, &reply, &error);
+	hint = mongoc_bulk_operation_execute(bulk, &reply, &error);
 
 	/* If there is no error then the command succeeded, but the write not */
 	if (!hint && (error.code || error.domain)) {
@@ -1608,7 +1608,7 @@ PHP_MINIT_FUNCTION(phongo)
 	PHP_MINIT(ReadPreference)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Result)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Server)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteBatch)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(BulkWrite)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteConcern)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteConcernError)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteError)(INIT_FUNC_ARGS_PASSTHRU);

@@ -35,10 +35,10 @@ $database = '$external';
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s?authMechanism=PLAIN", $username, $password, $parsed["host"], $parsed["port"], $database);
 $manager = new MongoDB\Driver\Manager($dsn);
 
-$batch = new MongoDB\Driver\WriteBatch();
-$batch->insert(array("very" => "important"));
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array("very" => "important"));
 try {
-    $manager->executeWriteBatch(NS, $batch);
+    $manager->executeBulkWrite(NS, $bulk);
     $query = new MongoDB\Driver\Query(array("very" => "important"));
     $cursor = $manager->executeQuery(NS, $query);
     foreach($cursor as $document) {

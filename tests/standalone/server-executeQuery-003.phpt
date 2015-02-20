@@ -10,11 +10,11 @@ $parsed = parse_url(MONGODB_URI);
 $server = new MongoDB\Driver\Server($parsed["host"], $parsed["port"]);
 
 // load fixtures for test
-$batch = new \MongoDB\Driver\WriteBatch();
-$batch->insert(array('_id' => 1, 'x' => 2, 'y' => 3));
-$batch->insert(array('_id' => 2, 'x' => 3, 'y' => 4));
-$batch->insert(array('_id' => 3, 'x' => 4, 'y' => 5));
-$server->executeWriteBatch(NS, $batch);
+$bulk = new \MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, 'x' => 2, 'y' => 3));
+$bulk->insert(array('_id' => 2, 'x' => 3, 'y' => 4));
+$bulk->insert(array('_id' => 3, 'x' => 4, 'y' => 5));
+$server->executeBulkWrite(NS, $bulk);
 
 $query = new MongoDB\Driver\Query(array(), array('modifiers' => array('$comment' => 'foo')));
 $cursor = $server->executeQuery(NS, $query);

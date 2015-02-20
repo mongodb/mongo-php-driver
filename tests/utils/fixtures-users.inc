@@ -11,7 +11,7 @@ $faker = Faker\Factory::create();
 $faker->seed(1234);
 
 $manager = new MongoDB\Driver\Manager(MONGODB_URI);
-$batch = new MongoDB\Driver\WriteBatch;
+$bulk = new MongoDB\Driver\BulkWrite;
 
 function createUser($faker)
 {
@@ -54,10 +54,10 @@ function createGeoJsonPoint($faker)
 }
 
 for ($i = 0; $i < 100; $i++) {
-    $batch->insert(createUser($faker));
+    $bulk->insert(createUser($faker));
 }
 
-$retval = $manager->executeWriteBatch(NS, $batch);
+$retval = $manager->executeBulkWrite(NS, $bulk);
 
 if ($retval->getInsertedCount() !== 100) {
     exit(sprintf('skip Fixtures were not loaded (expected: %d, actual: %d)', 100, $retval->getInsertedCount()));

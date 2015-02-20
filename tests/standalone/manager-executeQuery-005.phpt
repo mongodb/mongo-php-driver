@@ -13,11 +13,11 @@ class MyArrayObject extends ArrayObject implements BSON\Unserializable {
 }
 $manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
-$batch = new \MongoDB\Driver\WriteBatch();
-$batch->insert(array('_id' => 1, array('x' => 2, 'y' => 3)));
-$batch->insert(array('_id' => 2, array('x' => 3, 'y' => 4)));
-$batch->insert(array('_id' => 3, array('x' => 4, 'y' => 5)));
-$manager->executeWriteBatch(NS, $batch);
+$bulk = new \MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, array('x' => 2, 'y' => 3)));
+$bulk->insert(array('_id' => 2, array('x' => 3, 'y' => 4)));
+$bulk->insert(array('_id' => 3, array('x' => 4, 'y' => 5)));
+$manager->executeBulkWrite(NS, $bulk);
 
 $query = new MongoDB\Driver\Query(array());
 $qr = $manager->executeQuery(NS, $query);

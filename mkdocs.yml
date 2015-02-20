@@ -4,7 +4,7 @@ theme: spacelab
 pages:
     - [index.md, Home]
     - [crud.md, "CRUD", "Basic"]
-    - [batch.md, "CRUD", "Batches"]
+    - [bulk.md, "CRUD", "Bulks"]
     - [commands.md, Commands]
     - [ods.md, Object Document Serialization]
 extra_javascript:

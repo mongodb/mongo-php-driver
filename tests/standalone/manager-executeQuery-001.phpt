@@ -9,11 +9,11 @@ require_once "tests/utils/basic.inc";
 $manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
 // load fixtures for test
-$batch = new MongoDB\Driver\WriteBatch();
-$batch->insert(array('_id' => 1, 'x' => 2, 'y' => 3));
-$batch->insert(array('_id' => 2, 'x' => 3, 'y' => 4));
-$batch->insert(array('_id' => 3, 'x' => 4, 'y' => 5));
-$manager->executeWriteBatch(NS, $batch);
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, 'x' => 2, 'y' => 3));
+$bulk->insert(array('_id' => 2, 'x' => 3, 'y' => 4));
+$bulk->insert(array('_id' => 3, 'x' => 4, 'y' => 5));
+$manager->executeBulkWrite(NS, $bulk);
 
 $query = new MongoDB\Driver\Query(array('x' => 3), array('projection' => array('y' => 1)));
 $qr = $manager->executeQuery(NS, $query);

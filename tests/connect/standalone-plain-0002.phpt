@@ -35,10 +35,10 @@ $database = '$external';
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s?authMechanism=PLAIN", $username, $password, $parsed["host"], $parsed["port"], $database);
 $manager = new MongoDB\Driver\Manager($dsn);
 
-$batch = new MongoDB\Driver\WriteBatch();
-$batch->insert(array("very" => "important"));
-throws(function() use($manager, $batch) {
-    $manager->executeWriteBatch(NS, $batch);
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array("very" => "important"));
+throws(function() use($manager, $bulk) {
+    $manager->executeBulkWrite(NS, $bulk);
 }, "MongoDB\Driver\AuthenticationException");
 
 $cmd = array(

@@ -18,7 +18,7 @@ throws(function() {
 }, "InvalidArgumentException");
 
 foreach($tests as $n => $test) {
-    echo "Test#{$n} ", "\n";
+    echo "Test#{$n}", "\n";
     $s = BSON\fromArray($test);
     $testagain = BSON\toArray($s);
     var_dump(current($test) instanceof BSON\Javascript);

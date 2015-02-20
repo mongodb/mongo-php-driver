@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeWriteBatch()
+MongoDB\Driver\Manager::executeBulkWrite()
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
@@ -8,14 +8,14 @@ require_once "tests/utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
-$batch = new MongoDB\Driver\WriteBatch();
-$batch->insert(array('_id' => 1, 'x' => 1));
-$batch->insert(array('_id' => 2, 'x' => 2));
-$batch->update(array('x' => 2), array('$set' => array('x' => 1)), array("limit" => 1, "upsert" => false));
-$batch->update(array('_id' => 3), array('$set' => array('x' => 3)), array("limit" => 1, "upsert" => true));
-$batch->delete(array('x' => 1), array("limit" => 1));
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, 'x' => 1));
+$bulk->insert(array('_id' => 2, 'x' => 2));
+$bulk->update(array('x' => 2), array('$set' => array('x' => 1)), array("limit" => 1, "upsert" => false));
+$bulk->update(array('_id' => 3), array('$set' => array('x' => 3)), array("limit" => 1, "upsert" => true));
+$bulk->delete(array('x' => 1), array("limit" => 1));
 
-$result = $manager->executeWriteBatch(NS, $batch);
+$result = $manager->executeBulkWrite(NS, $bulk);
 
 echo "\n===> WriteResult\n";
 printWriteResult($result);

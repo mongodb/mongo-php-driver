@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeWriteBatch() with duplicate key errors (unordered)
+MongoDB\Driver\Manager::executeBulkWrite() with duplicate key errors (unordered)
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
@@ -8,14 +8,14 @@ require_once "tests/utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
-$batch = new MongoDB\Driver\WriteBatch(false);
-$batch->insert(array('_id' => 1));
-$batch->insert(array('_id' => 1));
-$batch->insert(array('_id' => 2));
-$batch->insert(array('_id' => 2));
+$bulk = new MongoDB\Driver\BulkWrite(false);
+$bulk->insert(array('_id' => 1));
+$bulk->insert(array('_id' => 1));
+$bulk->insert(array('_id' => 2));
+$bulk->insert(array('_id' => 2));
 
 try {
-    $result = $manager->executeWriteBatch(NS, $batch);
+    $result = $manager->executeBulkWrite(NS, $bulk);
     echo "FAILED\n";
 } catch (MongoDB\Driver\WriteException $e) {
     printf("WriteException.message: %s\n", $e->getMessage());

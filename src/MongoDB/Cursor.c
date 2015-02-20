@@ -160,7 +160,7 @@ PHP_METHOD(Cursor, kill)
 }
 /* }}} */
 /* {{{ proto integer Cursor::setBatchSize(integer $batchSize)
-   Sets a batch size for the cursor, returning the previous size */
+   Sets a bulk size for the cursor, returning the previous size */
 PHP_METHOD(Cursor, setBatchSize)
 {
 	php_phongo_cursor_t      *intern;
@@ -183,7 +183,7 @@ PHP_METHOD(Cursor, setBatchSize)
 }
 /* }}} */
 /* {{{ proto boolean Cursor::getBatchSize()
-   Gets a batch size for the cursor */
+   Gets a bulk size for the cursor */
 PHP_METHOD(Cursor, getBatchSize)
 {
 	php_phongo_cursor_t      *intern;

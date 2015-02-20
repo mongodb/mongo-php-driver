@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeWriteBatch() with upserted ids
+MongoDB\Driver\Manager::executeBulkWrite() with upserted ids
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
@@ -8,12 +8,12 @@ require_once "tests/utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(MONGODB_URI);
 
-$batch = new MongoDB\Driver\WriteBatch(false);
-$batch->update(array('x' => 'foo'), array('$set' => array('y' => 'foo')), array('upsert' => true));
-$batch->update(array('x' => 'bar'), array('$set' => array('y' => 'bar')), array('upsert' => true));
-$batch->update(array('x' => 'foo'), array('$set' => array('y' => 'bar')));
+$bulk = new MongoDB\Driver\BulkWrite(false);
+$bulk->update(array('x' => 'foo'), array('$set' => array('y' => 'foo')), array('upsert' => true));
+$bulk->update(array('x' => 'bar'), array('$set' => array('y' => 'bar')), array('upsert' => true));
+$bulk->update(array('x' => 'foo'), array('$set' => array('y' => 'bar')));
 
-$result = $manager->executeWriteBatch(NS, $batch);
+$result = $manager->executeBulkWrite(NS, $bulk);
 
 echo "\n===> WriteResult\n";
 printWriteResult($result);

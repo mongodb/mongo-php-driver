@@ -68,7 +68,7 @@ PHP_METHOD(WriteError, getCode)
 }
 /* }}} */
 /* {{{ proto integer WriteError::getIndex()
-   Returns the Batch index where this WriteError occurred in */
+   Returns the Bulk index where this WriteError occurred in */
 PHP_METHOD(WriteError, getIndex)
 {
 	php_phongo_writeerror_t  *intern;

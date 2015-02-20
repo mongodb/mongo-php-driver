@@ -8,12 +8,12 @@ require_once "tests/utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(MONGODB_REPLICASET_URI);
 
-$batch = new MongoDB\Driver\WriteBatch;
+$bulk = new MongoDB\Driver\BulkWrite;
 
-$batch->insert(array("my" => "value"));
+$bulk->insert(array("my" => "value"));
 
 $w = new MongoDB\Driver\WriteConcern(30, 100);
-$retval = $manager->executeWriteBatch(NS, $batch, $w);
+$retval = $manager->executeBulkWrite(NS, $bulk, $w);
 
 printWriteResult($retval);
 ?>

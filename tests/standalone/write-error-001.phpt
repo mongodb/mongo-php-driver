@@ -11,14 +11,14 @@ $manager = new MongoDB\Driver\Manager(MONGODB_URI);
 $hannes = array("name" => "Hannes", "country" => "USA", "gender" => "male");
 $ordered = true;
 
-$insertBatch = new \MongoDB\Driver\WriteBatch($ordered);
-$hannes_id = $insertBatch->insert($hannes);
+$bulk = new \MongoDB\Driver\BulkWrite($ordered);
+$hannes_id = $bulk->insert($hannes);
 
 $w = 2;
 $wtimeout = 1000;
 $writeConcern = new \MongoDB\Driver\WriteConcern($w, $wtimeout);
-throws(function() use($insertBatch, $writeConcern, $manager) {
-    $result = $manager->executeWriteBatch("db.collection", $insertBatch, $writeConcern);
+throws(function() use($bulk, $writeConcern, $manager) {
+    $result = $manager->executeBulkWrite("db.collection", $bulk, $writeConcern);
 }, "MongoDB\Driver\ConnectionException");
 
 ?>

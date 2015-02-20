@@ -19,16 +19,16 @@ $jonpall = array(
 	"citizen" => "Iceland",
 );
 
-/* Ordered batch is executed in the same order as we add the operations to it.
+/* Ordered bulk is executed in the same order as we add the operations to it.
  * If operation fails the execution stops and no further operations executed.
- * For unordered batch, the operations can be executed in any order by the database
+ * For unordered bulk, the operations can be executed in any order by the database
  * in an attempt to optimize its workload. An operation failure will not stop
  * the exection of the rest of the operations.
  * Default: true
  */
 $ordered = true;
 
-$batch = new MongoDB\Driver\WriteBatch($ordered);
+$bulk = new MongoDB\Driver\BulkWrite($ordered);
 
 ?>
 ```
@@ -41,9 +41,9 @@ $batch = new MongoDB\Driver\WriteBatch($ordered);
 /* Argument#1 The document (array/object) to insert.
  * Returns the generated BSON\ObjectID if no _id was provided
  */
-$hannes_id  = $batch->insert($hannes);
-$hayley_id  = $batch->insert($hayley);
-$jonpall_id = $batch->insert($jonpall);
+$hannes_id  = $bulk->insert($hannes);
+$hayley_id  = $bulk->insert($hayley);
+$jonpall_id = $bulk->insert($jonpall);
 
 ?>
 ```
@@ -64,17 +64,17 @@ $jonpall_id = $batch->insert($jonpall);
  *					true: Insert new document matching the criteria
  *					false: Do not insert new document if no matches are found
  */
-$batch->update(
+$bulk->update(
 	array("_id" => $hayley_id),
 	array('$set' => array("citizen" => "Iceland")),
 	array("limit" => 1, "upsert" => false)
 );
-$batch->update(
+$bulk->update(
 	array("citizen" => "Iceland"),
 	array('$set' => array("viking" => true)),
 	array("limit" => 0, "upsert" => false)
 );
-$batch->update(
+$bulk->update(
 	array("name" => "Chuck Norris"),
 	array('$set' => array("viking" => false)),
 	array("limit" => 1, "upsert" => true)
@@ -95,7 +95,7 @@ $batch->update(
  *					0: Delete all matching documents
  *					1: Only delete the first matching document
  */
-$batch->delete(array("_id" => $jonpall_id), array("limit" => 1));
+$bulk->delete(array("_id" => $jonpall_id), array("limit" => 1));
 
 ?>
 ```
@@ -106,7 +106,7 @@ $batch->delete(array("_id" => $jonpall_id), array("limit" => 1));
 <?php
 $manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
 $wc      = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY);
-$result  = $manager->executeWriteBatch("db.collection", $batch, $wc);
+$result  = $manager->executeBulkWrite("db.collection", $bulk, $wc);
 
 printf("insertedCount: %d\n", $result->getInsertedCount());
 printf("matchedCount: %d\n", $result->getMatchedCount());
@@ -122,7 +122,7 @@ $query  = new MongoDB\Driver\Query(array("viking" => false));
 $cursor = $manager->executeQuery("db.collection", $query);
 /* Note that var_dump()ing the $cursor will print out all sorts of debug information
  * about the cursor, such as ReadPreferences used, the query executed, namespace,
- * query flags, and the current batch information */
+ * query flags, and the current bulk information */
 var_dump(iterator_to_array($cursor));
 
 ?>

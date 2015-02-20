@@ -10,17 +10,17 @@ $dsn = sprintf("%s/?ssl=true", MONGODB_STANDALONE_SSL_URI);
 
 $manager = new MongoDB\Driver\Manager($dsn);
 
-$batch = new MongoDB\Driver\WriteBatch;
+$bulk = new MongoDB\Driver\BulkWrite;
 
-$batch->insert(array("my" => "value"));
-$batch->insert(array("my" => "value", "foo" => "bar"));
-$batch->insert(array("my" => "value", "foo" => "bar"));
+$bulk->insert(array("my" => "value"));
+$bulk->insert(array("my" => "value", "foo" => "bar"));
+$bulk->insert(array("my" => "value", "foo" => "bar"));
 
-$batch->delete(array("my" => "value", "foo" => "bar"), array("limit" => 1));
+$bulk->delete(array("my" => "value", "foo" => "bar"), array("limit" => 1));
 
-$batch->update(array("foo" => "bar"), array('$set' => array("foo" => "baz")), array("limit" => 1, "upsert" => 0));
+$bulk->update(array("foo" => "bar"), array('$set' => array("foo" => "baz")), array("limit" => 1, "upsert" => 0));
 
-$retval = $manager->executeWriteBatch(NS, $batch);
+$retval = $manager->executeBulkWrite(NS, $bulk);
 
 printf("Inserted: %d\n", getInsertCount($retval));
 printf("Deleted: %d\n", getDeletedCount($retval));

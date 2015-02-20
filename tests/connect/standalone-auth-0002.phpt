@@ -14,11 +14,11 @@ $parsed = parse_url(MONGODB_STANDALONE_AUTH_URI);
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s", $username, $password, $parsed["host"], $parsed["port"], $database);
 $manager = new MongoDB\Driver\Manager($dsn);
 
-$batch = new MongoDB\Driver\WriteBatch;
+$bulk = new MongoDB\Driver\BulkWrite;
 
-$batch->insert(array("my" => "value"));
-throws(function() use($manager, $batch) {
-    $retval = $manager->executeWriteBatch(NS, $batch);
+$bulk->insert(array("my" => "value"));
+throws(function() use($manager, $bulk) {
+    $retval = $manager->executeBulkWrite(NS, $bulk);
 }, "MongoDB\Driver\AuthenticationException");
 
 ?>

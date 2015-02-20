@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Server::executeWriteBatch()
+MongoDB\Driver\Server::executeBulkWrite()
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
@@ -9,14 +9,14 @@ require_once "tests/utils/basic.inc";
 $parsed = parse_url(MONGODB_URI);
 $server = new MongoDB\Driver\Server($parsed["host"], $parsed["port"]);
 
-$batch = new MongoDB\Driver\WriteBatch();
-$batch->insert(array('_id' => 1, 'x' => 1));
-$batch->insert(array('_id' => 2, 'x' => 2));
-$batch->update(array('x' => 2), array('$set' => array('x' => 1)), array("limit" => 1, "upsert" => false));
-$batch->update(array('_id' => 3), array('$set' => array('x' => 3)), array("limit" => 1, "upsert" => true));
-$batch->delete(array('x' => 1), array("limit" => 1));
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, 'x' => 1));
+$bulk->insert(array('_id' => 2, 'x' => 2));
+$bulk->update(array('x' => 2), array('$set' => array('x' => 1)), array("limit" => 1, "upsert" => false));
+$bulk->update(array('_id' => 3), array('$set' => array('x' => 3)), array("limit" => 1, "upsert" => true));
+$bulk->delete(array('x' => 1), array("limit" => 1));
 
-$result = $server->executeWriteBatch(NS, $batch);
+$result = $server->executeBulkWrite(NS, $bulk);
 
 printf("WriteResult.server is the same: %s\n", $server == $result->getServer() ? 'yes' : 'no');
 

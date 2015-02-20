@@ -39,9 +39,9 @@ try {
 
     $manager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context));
 
-    $batch = new MongoDB\Driver\WriteBatch();
-    $batch->insert(array("very" => "important"));
-    $manager->executeWriteBatch(NS, $batch);
+    $bulk = new MongoDB\Driver\BulkWrite();
+    $bulk->insert(array("very" => "important"));
+    $manager->executeBulkWrite(NS, $bulk);
     $query = new MongoDB\Driver\Query(array("very" => "important"));
     $cursor = $manager->executeQuery(NS, $query);
     foreach($cursor as $document) {

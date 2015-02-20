@@ -149,30 +149,30 @@ PHP_METHOD(Server, executeQuery)
 	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), NULL, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Driver\WriteResult Server::executeWriteBatch(string $namespace, MongoDB\Driver\WriteBatch $zbatch)
-   Executes a write operation batch (e.g. insert, update, delete) */
-PHP_METHOD(Server, executeWriteBatch)
+/* {{{ proto MongoDB\Driver\WriteResult Server::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk)
+   Executes a write operation bulk (e.g. insert, update, delete) */
+PHP_METHOD(Server, executeBulkWrite)
 {
 	php_phongo_server_t      *intern;
 	zend_error_handling       error_handling;
 	char                     *namespace;
 	int                       namespace_len;
-	zval                     *zbatch;
-	php_phongo_writebatch_t  *batch;
+	zval                     *zbulk;
+	php_phongo_bulkwrite_t  *bulk;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO", &namespace, &namespace_len, &zbatch, php_phongo_writebatch_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	batch = (php_phongo_writebatch_t *)zend_object_store_get_object(zbatch TSRMLS_CC);
-	phongo_execute_write(intern->client, namespace, batch->batch, NULL, intern->hint, return_value, return_value_used TSRMLS_CC);
+	bulk = (php_phongo_bulkwrite_t *)zend_object_store_get_object(zbulk TSRMLS_CC);
+	phongo_execute_write(intern->client, namespace, bulk->bulk, NULL, intern->hint, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto string Server::getHost()
@@ -379,9 +379,9 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeQuery, 0, 0, 2)
 	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Driver\\Query, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeWriteBatch, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeBulkWrite, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, zbatch, MongoDB\\Driver\\WriteBatch, 0)
+	ZEND_ARG_OBJ_INFO(0, zbulk, MongoDB\\Driver\\BulkWrite, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_getHost, 0, 0, 0)
@@ -413,7 +413,7 @@ static zend_function_entry php_phongo_server_me[] = {
 	PHP_ME(Server, __construct, ai_Server___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeCommand, ai_Server_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, executeWriteBatch, ai_Server_executeWriteBatch, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, executeBulkWrite, ai_Server_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, getHost, ai_Server_getHost, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, getInfo, ai_Server_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, getLatency, ai_Server_getLatency, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

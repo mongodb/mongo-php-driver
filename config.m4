@@ -180,7 +180,7 @@ if test "$PHONGO" != "no"; then
       src/MongoDB/ReadPreference.c \
       src/MongoDB/Result.c \
       src/MongoDB/Server.c \
-      src/MongoDB/WriteBatch.c \
+      src/MongoDB/BulkWrite.c \
       src/MongoDB/WriteConcern.c \
       src/MongoDB/WriteConcernError.c \
       src/MongoDB/WriteError.c \

@@ -102,8 +102,8 @@ PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
 
 void phongo_server_init                              (zval *return_value, int server_hint, mongoc_host_list_t *host TSRMLS_DC);
 bool                     phongo_query_init           (php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC);
-mongoc_bulk_operation_t* phongo_writebatch_init      (zend_bool ordered);
-bool                     phongo_execute_write        (mongoc_client_t *client, char *namespace, mongoc_bulk_operation_t *batch, mongoc_write_concern_t *write_concern, int server_hint, zval *return_value, int return_value_used TSRMLS_DC);
+mongoc_bulk_operation_t* phongo_bulkwrite_init      (zend_bool ordered);
+bool                     phongo_execute_write        (mongoc_client_t *client, char *namespace, mongoc_bulk_operation_t *bulk, mongoc_write_concern_t *write_concern, int server_hint, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_command      (mongoc_client_t *client, char *db, bson_t *command, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_query        (mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_t *doc, mongoc_write_concern_t *write_concern, zval *return_value, int return_value_used TSRMLS_DC);
