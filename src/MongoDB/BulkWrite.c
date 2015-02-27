@@ -356,7 +356,7 @@ PHP_MINIT_FUNCTION(BulkWrite)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "BulkWrite", php_phongo_bulkwrite_me);
 	php_phongo_bulkwrite_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_bulkwrite_ce->create_object = php_phongo_bulkwrite_create_object;
-	php_phongo_bulkwrite_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+	PHONGO_CE_INIT(php_phongo_bulkwrite_ce);
 
 	memcpy(&php_phongo_handler_bulkwrite, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_bulkwrite.get_debug_info = php_phongo_bulkwrite_get_debug_info;

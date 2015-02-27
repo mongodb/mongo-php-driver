@@ -311,7 +311,7 @@ PHP_MINIT_FUNCTION(Result)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Result", php_phongo_result_me);
 	php_phongo_result_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_result_ce->create_object = php_phongo_result_create_object;
-	php_phongo_result_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+	PHONGO_CE_INIT(php_phongo_result_ce);
 	php_phongo_result_ce->get_iterator = phongo_result_get_iterator;
 
 	memcpy(&php_phongo_handler_result, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

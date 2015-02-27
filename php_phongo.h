@@ -134,6 +134,13 @@ void php_phongo_new_regex_from_regex_and_options(zval *object, const char *patte
 
 void php_phongo_result_free(php_phongo_result_t *result);
 
+#define PHONGO_CE_INIT(ce) do {                     \
+	ce->ce_flags    |= ZEND_ACC_FINAL_CLASS;        \
+	ce->serialize    = zend_class_serialize_deny;   \
+	ce->unserialize  = zend_class_unserialize_deny; \
+} while(0);
+
+
 #ifdef PHP_DEBUG
 void _phongo_debug_bson(bson_t *bson);
 #else

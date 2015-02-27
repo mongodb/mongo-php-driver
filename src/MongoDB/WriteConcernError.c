@@ -201,7 +201,7 @@ PHP_MINIT_FUNCTION(WriteConcernError)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcernError", php_phongo_writeconcernerror_me);
 	php_phongo_writeconcernerror_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeconcernerror_ce->create_object = php_phongo_writeconcernerror_create_object;
-	php_phongo_writeconcernerror_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+	PHONGO_CE_INIT(php_phongo_writeconcernerror_ce);
 
 	memcpy(&php_phongo_handler_writeconcernerror, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeconcernerror.get_debug_info = php_phongo_writeconcernerror_get_debug_info;

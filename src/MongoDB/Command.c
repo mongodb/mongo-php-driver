@@ -156,7 +156,7 @@ PHP_MINIT_FUNCTION(Command)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Command", php_phongo_command_me);
 	php_phongo_command_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_command_ce->create_object = php_phongo_command_create_object;
-	php_phongo_command_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+	PHONGO_CE_INIT(php_phongo_command_ce);
 
 	memcpy(&php_phongo_handler_command, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_command.get_debug_info = php_phongo_command_get_debug_info;
