@@ -49,17 +49,13 @@ PHONGO_API zend_class_entry *php_phongo_writeexception_ce;
    Returns the WriteResult from the failed write operation. */
 PHP_METHOD(WriteException, getWriteResult)
 {
-	zend_error_handling       error_handling;
 	zval *writeresult;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	writeresult = zend_read_property(php_phongo_writeexception_ce, getThis(), ZEND_STRL("writeResult"), 0 TSRMLS_CC);

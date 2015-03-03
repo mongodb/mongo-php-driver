@@ -51,17 +51,13 @@ zend_object_handlers php_phongo_handler_writeerror;
 PHP_METHOD(WriteError, getCode)
 {
 	php_phongo_writeerror_t  *intern;
-	zend_error_handling       error_handling;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	RETURN_LONG(intern->code);
@@ -72,17 +68,13 @@ PHP_METHOD(WriteError, getCode)
 PHP_METHOD(WriteError, getIndex)
 {
 	php_phongo_writeerror_t  *intern;
-	zend_error_handling       error_handling;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	RETURN_LONG(intern->index);
@@ -93,17 +85,13 @@ PHP_METHOD(WriteError, getIndex)
 PHP_METHOD(WriteError, getMessage)
 {
 	php_phongo_writeerror_t  *intern;
-	zend_error_handling       error_handling;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	RETURN_STRING(intern->message, 1);
@@ -114,17 +102,13 @@ PHP_METHOD(WriteError, getMessage)
 PHP_METHOD(WriteError, getInfo)
 {
 	php_phongo_writeerror_t *intern;
-	zend_error_handling             error_handling;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	if (intern->info) {

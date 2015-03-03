@@ -72,18 +72,14 @@ PHP_METHOD(CursorId, __construct)
 PHP_METHOD(CursorId, __toString)
 {
 	php_phongo_cursorid_t    *intern;
-	zend_error_handling       error_handling;
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_cursorid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	RETVAL_LONG(intern->id);
 	convert_to_string(return_value);

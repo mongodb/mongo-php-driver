@@ -51,18 +51,14 @@ zend_object_handlers php_phongo_handler_writeresult;
 PHP_METHOD(WriteResult, getInsertedCount)
 {
 	php_phongo_writeresult_t *intern;
-	zend_error_handling       error_handling;
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	RETURN_LONG(intern->write_result.nInserted);
@@ -73,18 +69,14 @@ PHP_METHOD(WriteResult, getInsertedCount)
 PHP_METHOD(WriteResult, getMatchedCount)
 {
 	php_phongo_writeresult_t *intern;
-	zend_error_handling       error_handling;
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	RETURN_LONG(intern->write_result.nMatched);
@@ -95,18 +87,14 @@ PHP_METHOD(WriteResult, getMatchedCount)
 PHP_METHOD(WriteResult, getModifiedCount)
 {
 	php_phongo_writeresult_t *intern;
-	zend_error_handling       error_handling;
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	RETURN_LONG(intern->write_result.nModified);
@@ -117,18 +105,14 @@ PHP_METHOD(WriteResult, getModifiedCount)
 PHP_METHOD(WriteResult, getDeletedCount)
 {
 	php_phongo_writeresult_t *intern;
-	zend_error_handling       error_handling;
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	RETURN_LONG(intern->write_result.nRemoved);
@@ -139,18 +123,14 @@ PHP_METHOD(WriteResult, getDeletedCount)
 PHP_METHOD(WriteResult, getUpsertedCount)
 {
 	php_phongo_writeresult_t *intern;
-	zend_error_handling       error_handling;
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	RETURN_LONG(intern->write_result.nUpserted);
@@ -162,18 +142,14 @@ PHP_METHOD(WriteResult, getUpsertedCount)
 PHP_METHOD(WriteResult, getInfo)
 {
 	php_phongo_writeresult_t *intern;
-	zend_error_handling       error_handling;
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	array_init(return_value);
@@ -184,18 +160,14 @@ PHP_METHOD(WriteResult, getInfo)
 PHP_METHOD(WriteResult, getServer)
 {
 	php_phongo_writeresult_t *intern;
-	zend_error_handling       error_handling;
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	phongo_server_init(return_value, intern->hint, NULL TSRMLS_CC);
@@ -206,18 +178,14 @@ PHP_METHOD(WriteResult, getServer)
 PHP_METHOD(WriteResult, getUpsertedIds)
 {
 	php_phongo_writeresult_t *intern;
-	zend_error_handling       error_handling;
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	array_init(return_value);
@@ -273,18 +241,14 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 PHP_METHOD(WriteResult, getwriteConcernError)
 {
 	php_phongo_writeresult_t *intern;
-	zend_error_handling       error_handling;
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	if (!bson_empty0(&intern->write_result.writeConcernError)) {
@@ -300,18 +264,14 @@ PHP_METHOD(WriteResult, getwriteConcernError)
 PHP_METHOD(WriteResult, getWriteErrors)
 {
 	php_phongo_writeresult_t *intern;
-	zend_error_handling       error_handling;
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	array_init(return_value);

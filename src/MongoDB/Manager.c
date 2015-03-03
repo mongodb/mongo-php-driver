@@ -122,7 +122,6 @@ PHP_METHOD(Manager, __construct)
 PHP_METHOD(Manager, executeCommand)
 {
 	php_phongo_manager_t     *intern;
-	zend_error_handling       error_handling;
 	char                     *db;
 	int                       db_len;
 	zval                     *command;
@@ -130,14 +129,11 @@ PHP_METHOD(Manager, executeCommand)
 	php_phongo_command_t    *cmd;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &db, &db_len, &command, php_phongo_command_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
@@ -149,21 +145,17 @@ PHP_METHOD(Manager, executeCommand)
 PHP_METHOD(Manager, executeQuery)
 {
 	php_phongo_manager_t     *intern;
-	zend_error_handling       error_handling;
 	char                     *namespace;
 	int                       namespace_len;
 	zval                     *zquery;
 	zval                     *readPreference = NULL;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zquery, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
@@ -174,7 +166,6 @@ PHP_METHOD(Manager, executeQuery)
 PHP_METHOD(Manager, executeBulkWrite)
 {
 	php_phongo_manager_t      *intern;
-	zend_error_handling        error_handling;
 	char                      *namespace;
 	int                        namespace_len;
 	zval                      *zbulk;
@@ -182,14 +173,11 @@ PHP_METHOD(Manager, executeBulkWrite)
 	php_phongo_bulkwrite_t   *bulk;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	bulk = (php_phongo_bulkwrite_t *)zend_object_store_get_object(zbulk TSRMLS_CC);
@@ -201,7 +189,6 @@ PHP_METHOD(Manager, executeBulkWrite)
 PHP_METHOD(Manager, executeInsert)
 {
 	php_phongo_manager_t     *intern;
-	zend_error_handling       error_handling;
 	char                     *namespace;
 	int                       namespace_len;
 	zval                     *document;
@@ -209,14 +196,11 @@ PHP_METHOD(Manager, executeInsert)
 	bson_t                   *bson;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sA|O!", &namespace, &namespace_len, &document, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	bson = bson_new();
@@ -230,7 +214,6 @@ PHP_METHOD(Manager, executeInsert)
 PHP_METHOD(Manager, executeUpdate)
 {
 	php_phongo_manager_t     *intern;
-	zend_error_handling       error_handling;
 	char                     *namespace;
 	int                       namespace_len;
 	zval                     *zquery;
@@ -242,14 +225,11 @@ PHP_METHOD(Manager, executeUpdate)
 	mongoc_update_flags_t     flags = MONGOC_UPDATE_NONE;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sAA|a!O!", &namespace, &namespace_len, &zquery, &newObj, &updateOptions, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	query = bson_new();
@@ -274,7 +254,6 @@ PHP_METHOD(Manager, executeUpdate)
 PHP_METHOD(Manager, executeDelete)
 {
 	php_phongo_manager_t     *intern;
-	zend_error_handling       error_handling;
 	char                     *namespace;
 	int                       namespace_len;
 	zval                     *query;
@@ -284,14 +263,11 @@ PHP_METHOD(Manager, executeDelete)
 	mongoc_delete_flags_t     flags = MONGOC_DELETE_NONE;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sA|a!O!", &namespace, &namespace_len, &query, &deleteOptions, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	if (deleteOptions && php_array_fetch_bool(deleteOptions, "limit")) {
@@ -308,17 +284,13 @@ PHP_METHOD(Manager, executeDelete)
 PHP_METHOD(Manager, getServers)
 {
 	php_phongo_manager_t     *intern;
-	zend_error_handling       error_handling;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 }
 /* }}} */

@@ -80,7 +80,6 @@ PHP_METHOD(BulkWrite, __construct)
 PHP_METHOD(BulkWrite, insert)
 {
 	php_phongo_bulkwrite_t  *intern;
-	zend_error_handling       error_handling;
 	zval                     *document;
 	bson_t                   *bson;
 	bson_t                   *bson_out = NULL;
@@ -88,14 +87,11 @@ PHP_METHOD(BulkWrite, insert)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_bulkwrite_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &document) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	if (return_value_used) {
@@ -125,7 +121,6 @@ PHP_METHOD(BulkWrite, insert)
 PHP_METHOD(BulkWrite, update)
 {
 	php_phongo_bulkwrite_t  *intern;
-	zend_error_handling       error_handling;
 	zval                     *query;
 	zval                     *newObj;
 	zval                     *updateOptions = NULL;
@@ -136,14 +131,11 @@ PHP_METHOD(BulkWrite, update)
 	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_bulkwrite_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "AA|a!", &query, &newObj, &updateOptions) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	bquery = bson_new();
@@ -187,21 +179,17 @@ PHP_METHOD(BulkWrite, update)
 PHP_METHOD(BulkWrite, delete)
 {
 	php_phongo_bulkwrite_t  *intern;
-	zend_error_handling       error_handling;
 	zval                     *query;
 	zval                     *deleteOptions = NULL;
 	bson_t                   *bson;
 	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_bulkwrite_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &query, &deleteOptions) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
 	bson = bson_new();
@@ -221,18 +209,14 @@ PHP_METHOD(BulkWrite, delete)
 PHP_METHOD(BulkWrite, count)
 {
 	php_phongo_bulkwrite_t  *intern;
-	zend_error_handling       error_handling;
 	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_bulkwrite_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	RETURN_LONG(intern->bulk->commands.len);
 }

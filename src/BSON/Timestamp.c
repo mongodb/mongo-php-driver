@@ -72,19 +72,15 @@ PHP_METHOD(Timestamp, __construct)
 PHP_METHOD(Timestamp, __toString)
 {
 	php_phongo_timestamp_t    *intern;
-	zend_error_handling        error_handling;
 	char                      *retval;
 	int                        retval_len;
 
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_timestamp_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	retval_len = spprintf(&retval, 0, "[%d:%d]", intern->increment, intern->timestamp);
 	RETVAL_STRINGL(retval, retval_len, 0);
