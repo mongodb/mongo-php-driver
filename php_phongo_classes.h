@@ -23,6 +23,7 @@
 
 /* PHP Core stuff */
 #include <php.h>
+#include <mongoc-bulk-operation-private.h>
 
 #define BSON_UNSERIALIZE_FUNC_NAME    "bsonUnserialize"
 #define BSON_SERIALIZE_FUNC_NAME      "bsonSerialize"
@@ -125,16 +126,9 @@ typedef struct {
 } php_phongo_writeerror_t;
 
 typedef struct {
-	php_phongo_result_t      result;
-	int                      nInserted;
-	int                      nMatched;
-	int                      nModified;
-	int                      nRemoved;
-	int                      nUpserted;
-	zval                    *info;
-	zval                    *upsertedIds;
-	zval                    *writeErrors;
-	zval                    *writeConcernError;
+	zend_object              std;
+	mongoc_write_result_t   write_result;
+	int                      hint;
 } php_phongo_writeresult_t;
 
 typedef struct {
@@ -209,6 +203,8 @@ extern PHONGO_API zend_class_entry *php_phongo_duplicatekeyexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_executiontimeoutexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_connectiontimeoutexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeexception_ce;
+extern PHONGO_API zend_class_entry *php_phongo_writeconcernexception_ce;
+extern PHONGO_API zend_class_entry *php_phongo_bulkwriteexception_ce;
 
 extern PHONGO_API zend_class_entry *php_phongo_type_ce;
 extern PHONGO_API zend_class_entry *php_phongo_persistable_ce;
@@ -250,6 +246,8 @@ PHP_MINIT_FUNCTION(DuplicateKeyException);
 PHP_MINIT_FUNCTION(ExecutionTimeoutException);
 PHP_MINIT_FUNCTION(ConnectionTimeoutException);
 PHP_MINIT_FUNCTION(WriteException);
+PHP_MINIT_FUNCTION(WriteConcernException);
+PHP_MINIT_FUNCTION(BulkWriteException);
 
 PHP_MINIT_FUNCTION(Type);
 PHP_MINIT_FUNCTION(Unserializable);

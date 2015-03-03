@@ -13,9 +13,11 @@ $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(array("my" => "value"));
 
 $w = new MongoDB\Driver\WriteConcern(30, 100);
-$retval = $manager->executeBulkWrite(NS, $bulk, $w);
-
-printWriteResult($retval);
+try {
+    $retval = $manager->executeBulkWrite(NS, $bulk, $w);
+} catch(MongoDB\Driver\BulkWriteException $e) {
+    printWriteResult($e->getWriteResult());
+}
 ?>
 ===DONE===
 <?php exit(0); ?>

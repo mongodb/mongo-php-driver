@@ -65,7 +65,7 @@ PHP_METHOD(WriteResult, getInsertedCount)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	RETURN_LONG(intern->nInserted);
+	RETURN_LONG(intern->write_result.nInserted);
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getMatchedCount()
@@ -87,7 +87,7 @@ PHP_METHOD(WriteResult, getMatchedCount)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	RETURN_LONG(intern->nMatched);
+	RETURN_LONG(intern->write_result.nMatched);
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getModifiedCount()
@@ -109,7 +109,7 @@ PHP_METHOD(WriteResult, getModifiedCount)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	RETURN_LONG(intern->nModified);
+	RETURN_LONG(intern->write_result.nModified);
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getDeletedCount()
@@ -131,7 +131,7 @@ PHP_METHOD(WriteResult, getDeletedCount)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	RETURN_LONG(intern->nRemoved);
+	RETURN_LONG(intern->write_result.nRemoved);
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getUpsertedCount()
@@ -153,7 +153,7 @@ PHP_METHOD(WriteResult, getUpsertedCount)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	RETURN_LONG(intern->nUpserted);
+	RETURN_LONG(intern->write_result.nUpserted);
 }
 /* }}} */
 /* {{{ proto array WriteResult::getInfo()
@@ -175,10 +175,6 @@ PHP_METHOD(WriteResult, getInfo)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-
-	if (intern->info && Z_TYPE_P(intern->info) == IS_ARRAY) {
-		RETURN_ZVAL(intern->info, 1, 0);
-	}
 
 	array_init(return_value);
 }
@@ -202,7 +198,7 @@ PHP_METHOD(WriteResult, getServer)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	phongo_server_init(return_value, intern->result.hint, NULL TSRMLS_CC);
+	phongo_server_init(return_value, intern->hint, NULL TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto array WriteResult::getUpsertedIds()
@@ -224,11 +220,52 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	if (intern->upsertedIds && Z_TYPE_P(intern->upsertedIds) == IS_ARRAY) {
-		RETURN_ZVAL(intern->upsertedIds, 1, 0);
-	}
-
 	array_init(return_value);
+
+	if (!bson_empty0(&intern->write_result.upserted)) {
+		bson_iter_t iter;
+
+		bson_iter_init(&iter, &intern->write_result.upserted);
+
+		while (bson_iter_next(&iter)) {
+			int32_t index;
+			bson_iter_t outer;
+			zval *zid = NULL;
+
+			if (!BSON_ITER_HOLDS_DOCUMENT(&iter) || !bson_iter_recurse(&iter, &outer)) {
+				continue;
+			}
+			if (!bson_iter_find(&outer, "index") || !BSON_ITER_HOLDS_INT32(&outer)) {
+				continue;
+			}
+
+			index = bson_iter_int32(&outer);
+
+			if (!bson_iter_find(&outer, "_id")) {
+				continue;
+			}
+
+			if (BSON_ITER_HOLDS_OID(&outer)) {
+				MAKE_STD_ZVAL(zid);
+
+				php_phongo_objectid_new_from_oid(zid, bson_iter_oid(&outer) TSRMLS_CC);
+				add_index_zval(return_value, index, zid);
+			} else if (BSON_ITER_HOLDS_INT32(&outer)) {
+				int32_t val = bson_iter_int32(&outer);
+
+				add_index_long(return_value, index, val);
+			} else if (BSON_ITER_HOLDS_INT64(&outer)) {
+				int64_t val = bson_iter_int64(&outer);
+
+#if SIZEOF_LONG == 4
+				if (val > INT_MAX) {
+					add_index_long(writeresult->upsertedIds, index, (double)val);
+				} else
+#endif
+					add_index_long(return_value, index, val);
+			}
+		}
+	}
 }
 /* }}} */
 /* {{{ proto WriteConcernError[] WriteResult::getwriteConcernError()
@@ -250,11 +287,12 @@ PHP_METHOD(WriteResult, getwriteConcernError)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	if (intern->writeConcernError && Z_TYPE_P(intern->writeConcernError) == IS_OBJECT) {
-		RETURN_ZVAL(intern->writeConcernError, 1, 0);
+	if (!bson_empty0(&intern->write_result.writeConcernError)) {
+		object_init_ex(return_value, php_phongo_writeconcernerror_ce);
+		if (!phongo_writeconcernerror_init(return_value, &intern->write_result.writeConcernError TSRMLS_CC)) {
+			zval_ptr_dtor(&return_value);
+		}
 	}
-
-	RETURN_FALSE;
 }
 /* }}} */
 /* {{{ proto WriteError[] WriteResult::getWriteErrors()
@@ -276,11 +314,40 @@ PHP_METHOD(WriteResult, getWriteErrors)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	if (intern->writeErrors && Z_TYPE_P(intern->writeErrors) == IS_ARRAY) {
-		RETURN_ZVAL(intern->writeErrors, 1, 0);
-	}
-
 	array_init(return_value);
+
+	if (!bson_empty0(&intern->write_result.writeErrors)) {
+		bson_iter_t iter;
+
+		bson_iter_init(&iter, &intern->write_result.writeErrors);
+
+		while (bson_iter_next(&iter)) {
+			bson_t cbson;
+			uint32_t len;
+			const uint8_t *data;
+			zval *writeerror = NULL;
+
+			if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+				continue;
+			}
+
+			bson_iter_document(&iter, &len, &data);
+
+			if (!bson_init_static(&cbson, data, len)) {
+				continue;
+			}
+
+			MAKE_STD_ZVAL(writeerror);
+			object_init_ex(writeerror, php_phongo_writeerror_ce);
+
+			if (!phongo_writeerror_init(writeerror, &cbson TSRMLS_CC)) {
+				zval_ptr_dtor(&writeerror);
+				continue;
+			}
+
+			add_next_index_zval(return_value, writeerror);
+		}
+	}
 }
 /* }}} */
 
@@ -345,25 +412,10 @@ static void php_phongo_writeresult_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeresult_t *intern = (php_phongo_writeresult_t*)object;
 
-	zend_object_std_dtor(&intern->result.std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
-	if (intern->info) {
-		zval_ptr_dtor(&intern->info);
-	}
+	_mongoc_write_result_destroy(&intern->write_result);
 
-	if (intern->upsertedIds) {
-		zval_ptr_dtor(&intern->upsertedIds);
-	}
-
-	if (intern->writeConcernError) {
-		zval_ptr_dtor(&intern->writeConcernError);
-	}
-
-	if (intern->writeErrors) {
-		zval_ptr_dtor(&intern->writeErrors);
-	}
-
-	php_phongo_result_free(&intern->result);
 	efree(intern);
 } /* }}} */
 
@@ -374,8 +426,10 @@ zend_object_value php_phongo_writeresult_create_object(zend_class_entry *class_t
 
 	intern = (php_phongo_writeresult_t *)ecalloc(1, sizeof *intern);
 
-	zend_object_std_init(&intern->result.std, class_type TSRMLS_CC);
-	object_properties_init(&intern->result.std, class_type);
+	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	object_properties_init(&intern->std, class_type);
+
+	_mongoc_write_result_init(&intern->write_result);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeresult_free_object, NULL TSRMLS_CC);
 	retval.handlers = &php_phongo_handler_writeresult;
@@ -387,52 +441,30 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 {
 	php_phongo_writeresult_t *intern;
 	zval                      retval = zval_used_for_init;
+	php_phongo_bson_state     state = PHONGO_BSON_STATE_INITIALIZER;
 
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(object TSRMLS_CC);
 	*is_temp = 1;
-	array_init_size(&retval, 9);
+	array_init_size(&retval, 8);
 
-	{
-		zval *result = NULL;
+	add_assoc_long_ex(&retval, ZEND_STRS("nInserted"), intern->write_result.nInserted);
+	add_assoc_long_ex(&retval, ZEND_STRS("nMatched"), intern->write_result.nMatched);
+	add_assoc_long_ex(&retval, ZEND_STRS("nModified"), intern->write_result.nModified);
+	add_assoc_long_ex(&retval, ZEND_STRS("nRemoved"), intern->write_result.nRemoved);
+	add_assoc_long_ex(&retval, ZEND_STRS("nUpserted"), intern->write_result.nUpserted);
 
-		MAKE_STD_ZVAL(result);
-		php_phongo_result_to_zval(result, &intern->result);
-		add_assoc_zval_ex(&retval, ZEND_STRS("result"), result);
-	}
+	MAKE_STD_ZVAL(state.zchild);
+	bson_to_zval(bson_get_data(&intern->write_result.upserted), intern->write_result.upserted.len, &state);
+	add_assoc_zval_ex(&retval, ZEND_STRS("upsertedIds"), state.zchild);
 
-	add_assoc_long_ex(&retval, ZEND_STRS("nInserted"), intern->nInserted);
-	add_assoc_long_ex(&retval, ZEND_STRS("nMatched"), intern->nMatched);
-	add_assoc_long_ex(&retval, ZEND_STRS("nModified"), intern->nModified);
-	add_assoc_long_ex(&retval, ZEND_STRS("nRemoved"), intern->nRemoved);
-	add_assoc_long_ex(&retval, ZEND_STRS("nUpserted"), intern->nUpserted);
+	MAKE_STD_ZVAL(state.zchild);
+	bson_to_zval(bson_get_data(&intern->write_result.writeErrors), intern->write_result.writeErrors.len, &state);
+	add_assoc_zval_ex(&retval, ZEND_STRS("writeErrors"), state.zchild);
 
-	if (intern->info) {
-		zval_add_ref(&intern->info);
-		add_assoc_zval_ex(&retval, ZEND_STRS("info"), intern->info);
-	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("info"));
-	}
 
-	if (intern->upsertedIds) {
-		zval_add_ref(&intern->upsertedIds);
-		add_assoc_zval_ex(&retval, ZEND_STRS("upsertedIds"), intern->upsertedIds);
-	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("upsertedIds"));
-	}
-
-	if (intern->writeErrors) {
-		zval_add_ref(&intern->writeErrors);
-		add_assoc_zval_ex(&retval, ZEND_STRS("writeErrors"), intern->writeErrors);
-	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("writeErrors"));
-	}
-
-	if (intern->writeConcernError) {
-		zval_add_ref(&intern->writeConcernError);
-		add_assoc_zval_ex(&retval, ZEND_STRS("writeConcernError"), intern->writeConcernError);
-	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("writeConcernError"));
-	}
+	MAKE_STD_ZVAL(state.zchild);
+	bson_to_zval(bson_get_data(&intern->write_result.writeConcernError), intern->write_result.writeConcernError.len, &state);
+	add_assoc_zval_ex(&retval, ZEND_STRS("writeConcernError"), state.zchild);
 
 	return Z_ARRVAL(retval);
 } /* }}} */

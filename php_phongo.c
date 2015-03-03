@@ -31,6 +31,7 @@
 #include <mongoc.h>
 #include <mongoc-cursor-cursorid-private.h>
 #include <mongoc-read-prefs-private.h>
+#include <mongoc-bulk-operation-private.h>
 
 
 /* PHP Core stuff */
@@ -80,7 +81,11 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 		case PHONGO_ERROR_MONGOC_FAILED:
 			return php_phongo_runtimeexception_ce;
 		case PHONGO_ERROR_WRITE_FAILED:
+			return php_phongo_bulkwriteexception_ce;
+		case PHONGO_ERROR_WRITE_SINGLE_FAILED:
 			return php_phongo_writeexception_ce;
+		case PHONGO_ERROR_WRITECONCERN_FAILED:
+			return php_phongo_writeconcernexception_ce;
 		case PHONGO_ERROR_CONNECTION_FAILED:
 			return php_phongo_connectionexception_ce;
 	}
@@ -232,11 +237,11 @@ void phongo_log_writer(mongoc_stream_t *stream, int32_t timeout_msec, ssize_t se
 /* }}} */
 
 /* {{{ Init objects */
-void phongo_result_init(zval *return_value, zend_class_entry *result_class, mongoc_cursor_t *cursor, const bson_t *bson, int server_hint, zend_bool is_command_cursor TSRMLS_DC) /* {{{ */
+void phongo_result_init(zval *return_value, mongoc_cursor_t *cursor, const bson_t *bson, int server_hint, zend_bool is_command_cursor TSRMLS_DC) /* {{{ */
 {
 	php_phongo_result_t *result;
 
-	object_init_ex(return_value, result_class);
+	object_init_ex(return_value, php_phongo_result_ce);
 
 	result = (php_phongo_result_t *)zend_object_store_get_object(return_value TSRMLS_CC);
 	if (cursor) {
@@ -335,141 +340,36 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 	return true;
 } /* }}} */
 
-void phongo_writeresult_init(zval *return_value, const bson_t *bson, int server_hint TSRMLS_DC) /* {{{ */
+php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, mongoc_write_result_t *write_result, int server_hint TSRMLS_DC) /* {{{ */
 {
-	bson_iter_t iter, ar;
 	php_phongo_writeresult_t *writeresult;
 
-	phongo_result_init(return_value, php_phongo_writeresult_ce, NULL, bson, server_hint, 0 TSRMLS_CC);
+	object_init_ex(return_value, php_phongo_writeresult_ce);
+
 	writeresult = (php_phongo_writeresult_t *)zend_object_store_get_object(return_value TSRMLS_CC);
+	writeresult->hint = server_hint;
 
-	if (bson_iter_init_find(&iter, bson, "nUpserted") && BSON_ITER_HOLDS_INT32(&iter)) {
-		writeresult->nUpserted = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, bson, "nMatched") && BSON_ITER_HOLDS_INT32(&iter)) {
-		writeresult->nMatched = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, bson, "nRemoved") && BSON_ITER_HOLDS_INT32(&iter)) {
-		writeresult->nRemoved = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, bson, "nInserted") && BSON_ITER_HOLDS_INT32(&iter)) {
-		writeresult->nInserted = bson_iter_int32(&iter);
-	}
-	if (bson_iter_init_find(&iter, bson, "nModified") && BSON_ITER_HOLDS_INT32(&iter)) {
-		writeresult->nModified = bson_iter_int32(&iter);
-	}
+	/* Copy write_results or else it'll get destroyed with the bulk destruction */
+#define SCP(field) writeresult->write_result.field = write_result->field
+	SCP(omit_nModified);
+	SCP(nInserted);
+	SCP(nMatched);
+	SCP(nModified);
+	SCP(nRemoved);
+	SCP(nUpserted);
+	SCP(offset);
+	SCP(n_commands);
 
-	if (bson_iter_init_find(&iter, bson, "upserted") &&
-		BSON_ITER_HOLDS_ARRAY(&iter) &&
-		bson_iter_recurse(&iter, &ar)) {
+	bson_copy_to(&write_result->upserted,          &writeresult->write_result.upserted);
+	bson_copy_to(&write_result->writeConcernError, &writeresult->write_result.writeConcernError);
+	bson_copy_to(&write_result->writeErrors,       &writeresult->write_result.writeErrors);
+	SCP(upsert_append_count);
+#undef SCP
 
-		MAKE_STD_ZVAL(writeresult->upsertedIds);
-		array_init(writeresult->upsertedIds);
+	return writeresult;
 
-		while (bson_iter_next(&ar)) {
-			int32_t index;
-			bson_iter_t outer;
-			zval *zid = NULL;
-
-			if (!BSON_ITER_HOLDS_DOCUMENT(&ar) || !bson_iter_recurse(&ar, &outer)) {
-				continue;
-			}
-
-			if (!bson_iter_find(&outer, "index") || !BSON_ITER_HOLDS_INT32(&outer)) {
-				continue;
-			}
-
-			index = bson_iter_int32(&outer);
-
-			if (!bson_iter_find(&outer, "_id")) {
-				continue;
-			}
-
-			if (BSON_ITER_HOLDS_OID(&outer)) {
-				MAKE_STD_ZVAL(zid);
-
-				php_phongo_objectid_new_from_oid(zid, bson_iter_oid(&outer) TSRMLS_CC);
-				add_index_zval(writeresult->upsertedIds, index, zid);
-			} else if (BSON_ITER_HOLDS_INT32(&outer)) {
-				int32_t val = bson_iter_int32(&outer);
-
-				add_index_long(writeresult->upsertedIds, index, val);
-			} else if (BSON_ITER_HOLDS_INT64(&outer)) {
-				int64_t val = bson_iter_int64(&outer);
-
-#if SIZEOF_LONG == 4
-				if (val > INT_MAX) {
-					add_index_long(writeresult->upsertedIds, index, (double)val);
-				} else
-#endif
-				add_index_long(writeresult->upsertedIds, index, val);
-			}
-		}
-	}
-
-	if (bson_iter_init_find(&iter, bson, "writeErrors") &&
-		BSON_ITER_HOLDS_ARRAY(&iter) &&
-		bson_iter_recurse(&iter, &ar)) {
-
-		MAKE_STD_ZVAL(writeresult->writeErrors);
-		array_init(writeresult->writeErrors);
-
-		while (bson_iter_next(&ar)) {
-			bson_t cbson;
-			uint32_t len;
-			const uint8_t *data;
-			zval *writeerror = NULL;
-
-			if (!BSON_ITER_HOLDS_DOCUMENT(&ar)) {
-				continue;
-			}
-
-			bson_iter_document(&ar, &len, &data);
-
-			if (!bson_init_static(&cbson, data, len)) {
-				continue;
-			}
-
-			MAKE_STD_ZVAL(writeerror);
-			object_init_ex(writeerror, php_phongo_writeerror_ce);
-
-			if (!phongo_writeerror_init(writeerror, &cbson TSRMLS_CC)) {
-				zval_ptr_dtor(&writeerror);
-				continue;
-			}
-
-			add_next_index_zval(writeresult->writeErrors, writeerror);
-		}
-	}
-
-	if (bson_iter_init_find(&iter, bson, "writeConcernError") &&
-		BSON_ITER_HOLDS_DOCUMENT(&iter)) {
-		bson_t cbson;
-		uint32_t len;
-		const uint8_t *data;
-
-		bson_iter_document(&iter, &len, &data);
-		if (bson_init_static(&cbson, data, len)) {
-			MAKE_STD_ZVAL(writeresult->writeConcernError);
-
-			object_init_ex(writeresult->writeConcernError, php_phongo_writeconcernerror_ce);
-
-			if (!phongo_writeconcernerror_init(writeresult->writeConcernError, &cbson TSRMLS_CC)) {
-				zval_ptr_dtor(&writeresult->writeConcernError);
-			}
-		}
-	}
 } /* }}} */
 
-void phongo_writeexception_init(zval *return_value, const bson_t *bson, int server_hint TSRMLS_DC) /* {{{ */
-{
-	zval *writeresult = NULL;
-
-	MAKE_STD_ZVAL(writeresult);
-	phongo_writeresult_init(writeresult, bson, server_hint TSRMLS_CC);
-	zend_update_property(Z_OBJCE_P(return_value), return_value, ZEND_STRL("writeResult"), writeresult TSRMLS_CC);
-	zval_ptr_dtor(&writeresult);
-} /* }}} */
 /* }}} */
 
 /* {{{ CRUD */
@@ -496,6 +396,26 @@ mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
 	return mongoc_bulk_operation_new(ordered);
 } /* }}} */
 
+phongo_unwrap_exception(bool retval, zval *return_value TSRMLS_DC)
+{
+	if (!retval) {
+		if (instanceof_function(Z_OBJCE_P(EG(exception)), php_phongo_bulkwriteexception_ce TSRMLS_CC)) {
+			php_phongo_writeresult_t *wr = php_phongo_writeresult_get_from_bulkwriteexception(EG(exception) TSRMLS_CC);
+
+			/* Clear the BulkWriteException */
+			zend_clear_exception(TSRMLS_C);
+
+			/* Throw WriteError and/or WriteConcernErrors */
+			php_phongo_throw_write_errors(wr TSRMLS_CC);
+			php_phongo_throw_write_concern_error(wr TSRMLS_CC);
+
+			if (instanceof_function(Z_OBJCE_P(EG(exception)), php_phongo_writeexception_ce TSRMLS_CC)) {
+				zend_update_property(Z_OBJCE_P(EG(exception)), EG(exception), ZEND_STRL("writeResult"), return_value TSRMLS_CC);
+			}
+		}
+	}
+}
+
 int phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_t *doc, mongoc_write_concern_t *write_concern, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bool retval = false;
@@ -507,6 +427,7 @@ int phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_
 	retval = phongo_execute_write(client, namespace, bulk, write_concern, 0, return_value, return_value_used TSRMLS_CC);
 	mongoc_bulk_operation_destroy(bulk);
 
+	phongo_unwrap_exception(retval, return_value TSRMLS_CC);
 	return retval;
 } /* }}} */
 
@@ -524,6 +445,7 @@ int phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_
 	retval = phongo_execute_write(client, namespace, bulk, write_concern, 0, return_value, return_value_used TSRMLS_CC);
 	mongoc_bulk_operation_destroy(bulk);
 
+	phongo_unwrap_exception(retval, return_value TSRMLS_CC);
 	return retval;
 } /* }}} */
 
@@ -542,16 +464,17 @@ int phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_
 	retval = phongo_execute_write(client, namespace, bulk, write_concern, 0, return_value, return_value_used TSRMLS_CC);
 	mongoc_bulk_operation_destroy(bulk);
 
+	phongo_unwrap_exception(retval, return_value TSRMLS_CC);
 	return retval;
 } /* }}} */
 
 bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_operation_t *bulk, mongoc_write_concern_t *write_concern, int server_hint, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
-	bson_t reply;
 	char *dbname;
 	char *collname;
 	int hint;
+	php_phongo_writeresult_t *writeresult;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid namespace provided");
@@ -569,31 +492,36 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 		mongoc_bulk_operation_set_hint(bulk, server_hint);
 	}
 
-	hint = mongoc_bulk_operation_execute(bulk, &reply, &error);
+	hint = mongoc_bulk_operation_execute(bulk, NULL, &error);
 
-	/* If there is no error then the command succeeded, but the write not */
-	if (!hint && (error.code || error.domain)) {
-		/* If no exception has been thrown already, for example connection exception */
-		if (!EG(exception)) {
-			zval *e = phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
-
-			if (instanceof_function(Z_OBJCE_P(e), php_phongo_writeexception_ce TSRMLS_CC)) {
-				phongo_writeexception_init(e, &reply, hint TSRMLS_CC);
-			}
-		}
-		bson_destroy(&reply);
-
-		return false;
-	}
-
-	if (!return_value_used) {
-		bson_destroy(&reply);
+	/* Write succeeded and the user doesn't care for the results */
+	if (hint && !return_value_used) {
 		return true;
 	}
 
-	phongo_writeresult_init(return_value, &reply, hint TSRMLS_CC);
-	bson_destroy(&reply);
+	/* Check for connection related exceptions */
+	if (EG(exception)) {
+		return false;
+	}
 
+	writeresult = phongo_writeresult_init(return_value, &bulk->result, server_hint TSRMLS_CC);
+
+	/* The Write failed */
+	if (!hint) {
+		/* The Command itself failed */
+		if (
+				bson_empty0(&writeresult->write_result.writeErrors)
+				&& bson_empty0(&writeresult->write_result.writeConcernError)
+			) {
+			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		} else {
+			zval *ex;
+
+			ex = phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "BulkWrite error");
+			zend_update_property(Z_OBJCE_P(ex), ex, ZEND_STRL("writeResult"), return_value TSRMLS_CC);
+		}
+		return false;
+	}
 	return true;
 } /* }}} */
 
@@ -639,7 +567,7 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 		return true;
 	}
 
-	phongo_result_init(return_value, php_phongo_result_ce, cursor, doc, 0, 0 TSRMLS_CC);
+	phongo_result_init(return_value, cursor, doc, 0, 0 TSRMLS_CC);
 	return true;
 } /* }}} */
 
@@ -689,7 +617,7 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 						_mongoc_cursor_cursorid_init(cursor);
 						cursor->limit = 0;
 						cursor->is_command = false;
-						phongo_result_init(return_value, php_phongo_result_ce, cursor, &first_batch, mongoc_cursor_get_hint(cursor), 1 TSRMLS_CC);
+						phongo_result_init(return_value, cursor, &first_batch, mongoc_cursor_get_hint(cursor), 1 TSRMLS_CC);
 						return true;
 					}
 				}
@@ -697,7 +625,7 @@ int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, m
 		}
 	}
 
-	phongo_result_init(return_value, php_phongo_result_ce, cursor, doc, mongoc_cursor_get_hint(cursor), 0 TSRMLS_CC);
+	phongo_result_init(return_value, cursor, doc, mongoc_cursor_get_hint(cursor), 0 TSRMLS_CC);
 	return true;
 } /* }}} */
 
@@ -1312,6 +1240,77 @@ void php_phongo_new_regex_from_regex_and_options(zval *object, const char *patte
 	intern->flags = estrndup(flags, intern->flags_len);
 } /* }}} */
 
+bool php_phongo_writeresult_get_write_errors(php_phongo_writeresult_t *writeresult, bson_error_t *error)
+{
+	const char *err = NULL;
+	uint32_t code = 0;
+
+	bson_iter_t iter;
+	bson_iter_t citer;
+	if (!bson_empty0 (&writeresult->write_result.writeErrors) &&
+			bson_iter_init (&iter, &writeresult->write_result.writeErrors) &&
+			bson_iter_next (&iter) &&
+			BSON_ITER_HOLDS_DOCUMENT (&iter) &&
+			bson_iter_recurse (&iter, &citer)) {
+		while (bson_iter_next (&citer)) {
+			if (BSON_ITER_IS_KEY (&citer, "errmsg")) {
+				err = bson_iter_utf8 (&citer, NULL);
+			} else if (BSON_ITER_IS_KEY (&citer, "code")) {
+				code = bson_iter_int32 (&citer);
+			}
+		}
+
+		bson_set_error(error, PHONGO_ERROR_WRITE_SINGLE_FAILED, code, "%s", err);
+		return true;
+	}
+	return false;
+}
+bool php_phongo_writeresult_get_writeconcern_error(php_phongo_writeresult_t *writeresult, bson_error_t *error)
+{
+	const char *err = NULL;
+	uint32_t code = 0;
+
+	if (!bson_empty0(&writeresult->write_result.writeConcernError)) {
+		bson_iter_t iter;
+
+		if (bson_iter_init_find(&iter, &writeresult->write_result.writeConcernError, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
+			code = bson_iter_int32(&iter);
+		}
+		if (bson_iter_init_find(&iter, &writeresult->write_result.writeConcernError, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
+			err = bson_iter_utf8(&iter, NULL);
+		}
+
+		bson_set_error(error, PHONGO_ERROR_WRITECONCERN_FAILED, code, "%s", err);
+		return true;
+	}
+
+	return false;
+}
+zval* php_phongo_throw_write_errors(php_phongo_writeresult_t *wr TSRMLS_DC)
+{
+	bson_error_t error;
+
+	if (php_phongo_writeresult_get_write_errors(wr, &error)) {
+		return phongo_throw_exception(PHONGO_ERROR_WRITE_SINGLE_FAILED TSRMLS_CC, "%s", error.message);
+	}
+	return NULL;
+}
+zval* php_phongo_throw_write_concern_error(php_phongo_writeresult_t *wr TSRMLS_DC)
+{
+	bson_error_t error;
+
+	if (php_phongo_writeresult_get_writeconcern_error(wr, &error)) {
+		return phongo_throw_exception(PHONGO_ERROR_WRITECONCERN_FAILED TSRMLS_CC, "%s", error.message);
+	}
+	return NULL;
+}
+php_phongo_writeresult_t *php_phongo_writeresult_get_from_bulkwriteexception(zval *ex TSRMLS_DC)
+{
+	zval *wr = zend_read_property(php_phongo_bulkwriteexception_ce, ex, ZEND_STRL("writeResult"), 0 TSRMLS_CC);
+
+	return (php_phongo_writeresult_t *)zend_object_store_get_object(wr TSRMLS_CC);
+}
+
 void php_phongo_result_free(php_phongo_result_t *result)
 {
 	if (result->firstBatch) {
@@ -1621,6 +1620,8 @@ PHP_MINIT_FUNCTION(phongo)
 	PHP_MINIT(AuthenticationException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(SSLConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteException)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(WriteConcernException)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(BulkWriteException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(DuplicateKeyException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ExecutionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ConnectionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);

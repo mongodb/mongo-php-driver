@@ -33,8 +33,8 @@ var_dump(iterator_to_array($cursor));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-WriteException.message: %s
-WriteException.code: 11000
+WriteException.message: BulkWrite error
+WriteException.code: 0
 
 ===> WriteResult
 server: %s:%d

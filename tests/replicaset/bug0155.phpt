@@ -14,10 +14,9 @@ $wc = new MongoDB\Driver\WriteConcern("MultipleDC", 500);
 $doc = array("example" => "document");
 try {
     $result = $manager->executeInsert("databaseName.collectionName", $doc, $wc);
-} catch(MongoDB\Driver\Exception $e) {
-    var_dump(get_class($e), $e->getMessage());
+} catch(MongoDB\Driver\WriteConcernException $e) {
+    var_dump($e->getWriteResult()->getWriteConcernError());
 }
-var_dump($result->getWriteConcernError());
 ?>
 ===DONE===
 <?php exit(0); ?>

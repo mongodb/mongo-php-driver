@@ -197,6 +197,8 @@ if test "$PHONGO" != "no"; then
       src/MongoDB/ExecutionTimeoutException.c \
       src/MongoDB/ConnectionTimeoutException.c \
       src/MongoDB/WriteException.c \
+      src/MongoDB/WriteConcernException.c \
+      src/MongoDB/BulkWriteException.c \
   ";
 
   YAJL_SOURCES="\

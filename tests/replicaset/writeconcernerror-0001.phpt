@@ -19,9 +19,11 @@ $bulk->delete(array("my" => "value", "foo" => "bar"), array("limit" => 1));
 $bulk->update(array("foo" => "bar"), array('$set' => array("foo" => "baz")), array("limit" => 1, "upsert" => 0));
 
 $w = new MongoDB\Driver\WriteConcern(30, 100);
-$retval = $manager->executeBulkWrite(NS, $bulk, $w);
-
-printWriteResult($retval);
+try {
+    $retval = $manager->executeBulkWrite(NS, $bulk, $w);
+} catch(MongoDB\Driver\BulkWriteException $e) {
+    printWriteResult($e->getWriteResult());
+}
 ?>
 ===DONE===
 <?php exit(0); ?>

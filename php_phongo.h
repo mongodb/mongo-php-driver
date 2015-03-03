@@ -63,11 +63,13 @@ ZEND_END_MODULE_GLOBALS(phongo)
 
 
 typedef enum {
-	PHONGO_ERROR_INVALID_ARGUMENT   = 1,
-	PHONGO_ERROR_RUNTIME            = 2,
-	PHONGO_ERROR_MONGOC_FAILED      = 3,
-	PHONGO_ERROR_WRITE_FAILED       = 4,
-	PHONGO_ERROR_CONNECTION_FAILED  = 5
+	PHONGO_ERROR_INVALID_ARGUMENT    = 1,
+	PHONGO_ERROR_RUNTIME             = 2,
+	PHONGO_ERROR_MONGOC_FAILED       = 3,
+	PHONGO_ERROR_WRITE_SINGLE_FAILED = 4,
+	PHONGO_ERROR_WRITE_FAILED        = 5,
+	PHONGO_ERROR_WRITECONCERN_FAILED = 6,
+	PHONGO_ERROR_CONNECTION_FAILED   = 7
 } php_phongo_error_domain_t;
 
 typedef struct
@@ -131,6 +133,12 @@ void php_phongo_new_javascript_from_javascript(zval *object, const char *code, s
 void php_phongo_new_javascript_from_javascript_and_scope(zval *object, const char *code, size_t code_len, const bson_t *scope TSRMLS_DC);
 void php_phongo_new_binary_from_binary_and_subtype(zval *object, const char *data, size_t data_len, bson_subtype_t type TSRMLS_DC);
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC);
+
+php_phongo_writeresult_t *php_phongo_writeresult_get_from_bulkwriteexception(zval *ex TSRMLS_DC);
+zval* php_phongo_throw_write_errors(php_phongo_writeresult_t *wr TSRMLS_DC);
+zval* php_phongo_throw_write_concern_error(php_phongo_writeresult_t *wr TSRMLS_DC);
+zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
+zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
 
 void php_phongo_result_free(php_phongo_result_t *result);
 
