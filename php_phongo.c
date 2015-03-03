@@ -513,6 +513,7 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 				bson_empty0(&writeresult->write_result.writeErrors)
 				&& bson_empty0(&writeresult->write_result.writeConcernError)
 			) {
+			/* FIXME: Maybe we can look at write_result.error and not pass error at all? */
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 		} else {
 			zval *ex;
