@@ -16,7 +16,7 @@ $w = new MongoDB\Driver\WriteConcern(30, 100);
 try {
     $retval = $manager->executeBulkWrite(NS, $bulk, $w);
 } catch(MongoDB\Driver\BulkWriteException $e) {
-    printWriteResult($e->getWriteResult());
+    printWriteResult($e->getWriteResult(), false);
 }
 ?>
 ===DONE===
@@ -28,21 +28,5 @@ matchedCount: 0
 modifiedCount: 0
 upsertedCount: 0
 deletedCount: 0
-object(MongoDB\Driver\WriteConcernError)#%d (%d) {
-  ["message"]=>
-  string(33) "waiting for replication timed out"
-  ["code"]=>
-  int(64)
-  ["info"]=>
-  array(1) {
-    ["wtimeout"]=>
-    bool(true)
-  }
-}
-writeConcernError.message: waiting for replication timed out
-writeConcernError.code: 64
-writeConcernError.info: array(1) {
-  ["wtimeout"]=>
-  bool(true)
-}
+writeConcernError: %s (%d)
 ===DONE===
