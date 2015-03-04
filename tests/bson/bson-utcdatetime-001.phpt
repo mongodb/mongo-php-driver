@@ -18,14 +18,7 @@ $array = iterator_to_array($cursor);
 $date = $utcdatetime->toDateTime();
 var_dump($date->format(DATE_RSS));
 
-throws(function() use ($utcdatetime) {
-    echo $utcdatetime, "\n";
-    $utcdatetime->__toString(1);
-}, "InvalidArgumentException");
-
-throws(function() use ($utcdatetime) {
-    $utcdatetime->toDateTime(DATE_RSS);
-}, "InvalidArgumentException");
+echo $utcdatetime, "\n";
 
 throws(function() {
     $d = new BSON\UTCDatetime;
@@ -51,8 +44,6 @@ foreach($tests as $n => $test) {
 --EXPECTF--
 string(31) "Thu, 20 Nov 2014 01:03:31 +0000"
 1416445411987
-OK: Got InvalidArgumentException
-OK: Got InvalidArgumentException
 OK: Got InvalidArgumentException
 Test#0 { "0" : { "$date" : 1416445411987 } }
 string(37) "{ "0" : { "$date" : 1416445411987 } }"

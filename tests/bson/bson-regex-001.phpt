@@ -18,19 +18,6 @@ $tests = array(
 throws(function() {
     $regexp = new BSON\Regex;
 }, "InvalidArgumentException");
-throws(function() {
-    $regexp = new BSON\Regex("regexp", "i");
-    $regexp->getPattern(1);
-}, "InvalidArgumentException", "getPattern");
-throws(function() {
-    $regexp = new BSON\Regex("regexp", "i");
-    $regexp->getFlags(1);
-}, "InvalidArgumentException", "getFlags");
-
-throws(function() {
-    $regexp = new BSON\Regex("regexp", "i");
-    $regexp->__toString(1);
-}, "InvalidArgumentException", "__toString");
 
 
 foreach($tests as $n => $test) {
@@ -49,9 +36,6 @@ Pattern: regexp
 Flags: i
 String representation: /regexp/i
 OK: Got InvalidArgumentException
-OK: Got InvalidArgumentException thrown from getPattern
-OK: Got InvalidArgumentException thrown from getFlags
-OK: Got InvalidArgumentException thrown from __toString
 Test#0 { "regex" : { "$regex" : "regexp", "$options" : "i" } }
 string(55) "{ "regex" : { "$regex" : "regexp", "$options" : "i" } }"
 string(55) "{ "regex" : { "$regex" : "regexp", "$options" : "i" } }"

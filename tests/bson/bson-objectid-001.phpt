@@ -55,10 +55,6 @@ $id = new BSON\ObjectID(" 3e28b650640fd3162152da1");
 throws(function() {
 $id = new BSON\ObjectID(new stdclass);
 }, "InvalidArgumentException");
-throws(function() {
-$id = new BSON\ObjectID();
-echo $id->__toString("or somethign");
-}, "InvalidArgumentException");
 
 ?>
 ===DONE===
@@ -84,7 +80,6 @@ Test#4 { "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }
 string(60) "{ "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }"
 string(60) "{ "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }"
 bool(true)
-OK: Got InvalidArgumentException
 OK: Got InvalidArgumentException
 OK: Got InvalidArgumentException
 OK: Got InvalidArgumentException

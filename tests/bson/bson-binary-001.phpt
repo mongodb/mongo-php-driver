@@ -24,11 +24,6 @@ foreach($types as $type) {
 }
 
 throws(function() {
-    $b = new BSON\Binary("random binary data without type", BSON\Binary::TYPE_USER_DEFINED);
-    $b->getSubType($b);
-}, "InvalidArgumentException", "getSubType");
-
-throws(function() {
     $b = new BSON\Binary("random binary data without type");
     echo "FAIL: Constructed BSON\Binary without type!\n";
 }, "InvalidArgumentException");
@@ -55,7 +50,6 @@ bool(true)
 bool(true)
 bool(true)
 bool(true)
-OK: Got InvalidArgumentException thrown from getSubType
 OK: Got InvalidArgumentException
 Test#0 { "binary" : { "$type" : "00", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }
 string(73) "{ "binary" : { "$type" : "00", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
