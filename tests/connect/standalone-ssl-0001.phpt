@@ -1,14 +1,24 @@
 --TEST--
-Connect to MongoDB with using SSL
+Connect to MongoDB with using SSL without verifying anything
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
+$SSL_DIR = realpath(__DIR__ . "/" . "./../../scripts/ssl/");
+$opts = array(
+    "ssl" => array(
+        "verify_peer" => false,
+        "verify_peer_name" => false,
+        "allow_self_signed" => true,
+    ),
+);
+$context = stream_context_create($opts);
+
 $dsn = sprintf("%s/?ssl=true", MONGODB_STANDALONE_SSL_URI);
 
-$manager = new MongoDB\Driver\Manager($dsn);
+$manager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context));
 
 $bulk = new MongoDB\Driver\BulkWrite;
 

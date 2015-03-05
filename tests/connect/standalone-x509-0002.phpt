@@ -10,7 +10,7 @@ $SSL_DIR = realpath(__DIR__ . "/" . "./../../scripts/ssl/");
 
 $opts = array(
     "ssl" => array(
-        "peer_name" => "MongoDB",
+        "peer_name" => "server",
         "verify_peer" => true,
         "verify_peer_name" => true,
         "allow_self_signed" => false,
@@ -18,14 +18,13 @@ $opts = array(
         "capath" => $SSL_DIR, /* Defaults to openssl.capath */
         "local_cert" => $SSL_DIR . "/client.pem",
         "passphrase" => "qwerty",
-        "CN_match" => "server",
         "verify_depth" => 5,
         "ciphers" => "HIGH:!EXPORT:!aNULL@STRENGTH",
         "capture_peer_cert" => true,
         "capture_peer_cert_chain" => true,
         "SNI_enabled" => true,
         "disable_compression" => false,
-        "peer_fingerprint" => "0d6dbd95",
+        "peer_fingerprint" => strtolower("FC16D0861C31D29E90A8A5C832469AB10EE7F4DD"),
     ),
 );
 $context = stream_context_create($opts);
