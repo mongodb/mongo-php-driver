@@ -32,3 +32,12 @@
 	} \
 }
 #endif
+
+/* There was a very bad bug in 5.6.0 through 5.6.6 downgrading
+ * METHOD_SSLv23 to SSLv2 and SSLv3 exclusively */
+#if PHP_VERSION_ID >= 50600 && PHP_VERSION_ID < 50607
+# define PHONGO_CRYPTO_METHOD STREAM_CRYPTO_METHOD_ANY_CLIENT
+#else
+# define PHONGO_CRYPTO_METHOD STREAM_CRYPTO_METHOD_SSLv23_CLIENT
+#endif
+
