@@ -1,4 +1,4 @@
-# Batch CRUD
+# Bulk CRUD
 
 ```php
 <?php
