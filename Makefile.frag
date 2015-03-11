@@ -7,6 +7,33 @@ LIB_PATH=vendor/mongodb/mongodb
 COMPOSER_ARGS=update --no-interaction --prefer-source
 PHPUNIT_ARGS=--process-isolation
 
+help:
+	@echo -e "\t$$ make vm"
+	@echo -e "\t       - Launches VMs for running multiple MongoDB variations"
+	@echo -e "\t$$ make list-servers"
+	@echo -e "\t       - Lists running servers, and their URIs"
+	@echo -e "\t$$ make test-bootstrap"
+	@echo -e "\t       - Starts up MongoDB through mongo-orchestration"
+
+	@echo ""
+	@echo -e "\t$$ make coveralls"
+	@echo -e "\t       - Creates code coverage report using coveralls"
+	@echo -e "\t$$ make coverage"
+	@echo -e "\t       - Creates code coverage report using gcov"
+
+	@echo ""
+	@echo -e "\t$$ make composer"
+	@echo -e "\t       - Installs test dependencies using composer"
+
+	@echo ""
+	@echo -e "\t$$ make patch"
+	@echo -e "\t       - When building phongo from VCS, you must run this once"
+
+	@echo ""
+	@echo -e "\t$$ make release"
+	@echo -e "\t       - Runs the tests and creates the pecl archive on success"
+
+
 mv-coverage:
 	@if test -e $(top_srcdir)/coverage; then \
 		echo "Moving previous coverage run to coverage-$(DATE)"; \
@@ -46,7 +73,7 @@ composer:
 
 vm:
 	@command -v vagrant >/dev/null 2>&1 || { echo >&2 "Vagrant needs to be installed to run vms"; exit 1; }
-	@vagrant up
+	@vagrant up ldap mo
 
 list-servers:
 	php scripts/list-servers.php
