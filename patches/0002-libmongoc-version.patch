@@ -59,7 +59,7 @@ index 0000000..1bad062
 + *
 + * MONGOC version.
 + */
-+#define MONGOC_VERSION (1.1.0)
++#define MONGOC_VERSION (1.1.2)
 +
 +
 +/**
@@ -68,7 +68,7 @@ index 0000000..1bad062
 + * MONGOC version, encoded as a string, useful for printing and
 + * concatenation.
 + */
-+#define MONGOC_VERSION_S "1.1.0"
++#define MONGOC_VERSION_S "1.1.2"
 +
 +
 +/**

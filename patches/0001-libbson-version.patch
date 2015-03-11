@@ -59,7 +59,7 @@ index 0000000..3d2f954
 + *
 + * BSON version.
 + */
-+#define BSON_VERSION (1.1.0)
++#define BSON_VERSION (1.1.2)
 +
 +
 +/**
@@ -68,7 +68,7 @@ index 0000000..3d2f954
 + * BSON version, encoded as a string, useful for printing and
 + * concatenation.
 + */
-+#define BSON_VERSION_S "1.1.0"
++#define BSON_VERSION_S "1.1.2"
 +
 +
 +/**
