@@ -2,7 +2,7 @@
     "name": "mongod",
     "id" : "STANDALONE-X509",
     "authSource": "$external",
-    "login": "C=US,ST=California,L=Palo Alto,O=MongoDB,OU=phongo,CN=localhost",
+    "login": "C=US,ST=New York,L=New York City,O=MongoDB,OU=KernelUser,CN=client",
     "procParams": {
         "dbpath": "/tmp/standalone-x509/",
         "ipv6": true,
