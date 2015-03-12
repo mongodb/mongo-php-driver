@@ -396,7 +396,7 @@ mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
 	return mongoc_bulk_operation_new(ordered);
 } /* }}} */
 
-phongo_unwrap_exception(bool retval, zval *return_value TSRMLS_DC)
+void phongo_unwrap_exception(bool retval, zval *return_value TSRMLS_DC)
 {
 	if (!retval) {
 		if (instanceof_function(Z_OBJCE_P(EG(exception)), php_phongo_bulkwriteexception_ce TSRMLS_CC)) {
