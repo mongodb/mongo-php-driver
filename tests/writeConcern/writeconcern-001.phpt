@@ -34,6 +34,8 @@ try {
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  string(8) "majority"
   ["wmajority"]=>
   bool(true)
   ["wtimeout"]=>
@@ -44,6 +46,8 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  string(8) "majority"
   ["wmajority"]=>
   bool(true)
   ["wtimeout"]=>

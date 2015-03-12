@@ -1051,21 +1051,17 @@ void php_phongo_read_preference_to_zval(zval *retval, mongoc_read_prefs_t *read_
 
 void php_phongo_write_concern_to_zval(zval *retval, mongoc_write_concern_t *write_concern) /* {{{ */
 {
-	char                   *wtag;
+	const char *wtag = mongoc_write_concern_get_wtag(write_concern);
+	const int32_t w = mongoc_write_concern_get_w(write_concern);
 
 	array_init_size(retval, 5);
 
-	if (mongoc_write_concern_get_w(write_concern) == MONGOC_WRITE_CONCERN_W_DEFAULT) {
-		return;
-	}
-
-	wtag = (char *)mongoc_write_concern_get_wtag(write_concern);
 	if (wtag) {
 		add_assoc_string_ex(retval, ZEND_STRS("w"), wtag, 1);
-	} else {
-		if (!mongoc_write_concern_get_wmajority(write_concern)) {
-			add_assoc_long_ex(retval, ZEND_STRS("w"), mongoc_write_concern_get_w(write_concern));
-		}
+	} else if (mongoc_write_concern_get_wmajority(write_concern)) {
+		add_assoc_string_ex(retval, ZEND_STRS("w"), "majority", 1);
+	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
+		add_assoc_long_ex(retval, ZEND_STRS("w"), w);
 	}
 
 	add_assoc_bool_ex(retval, ZEND_STRS("wmajority"), mongoc_write_concern_get_wmajority(write_concern));
