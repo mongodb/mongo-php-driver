@@ -486,9 +486,11 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 	mongoc_bulk_operation_set_client(bulk, client);
 
 	/* If a write concern was not specified, libmongoc will use the client's
-	 * write concern. */
+	 * write concern; however, we should still fetch it for the write result. */
 	if (write_concern) {
 		mongoc_bulk_operation_set_write_concern(bulk, write_concern);
+	} else {
+		write_concern = mongoc_client_get_write_concern(client);
 	}
 
 	efree(dbname);
@@ -511,6 +513,7 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 	}
 
 	writeresult = phongo_writeresult_init(return_value, &bulk->result, server_hint TSRMLS_CC);
+	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
 
 	/* The Write failed */
 	if (!hint) {

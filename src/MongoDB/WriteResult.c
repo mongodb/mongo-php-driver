@@ -27,6 +27,7 @@
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
+#include <mongoc-write-concern-private.h>
 
 /* PHP Core stuff */
 #include <php.h>
@@ -310,6 +311,24 @@ PHP_METHOD(WriteResult, getWriteErrors)
 	}
 }
 /* }}} */
+/* {{{ proto boolean WriteResult::isAcknowledged()
+   Returns the number of documents that were upserted */
+PHP_METHOD(WriteResult, isAcknowledged)
+{
+	php_phongo_writeresult_t *intern;
+	(void)return_value_ptr; (void)return_value_used;
+
+
+	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+
+	RETURN_BOOL(_mongoc_write_concern_needs_gle(intern->write_concern));
+}
+/* }}} */
 
 /**
  * Result returned by Server and Manager executeBulkWrite() methods.
@@ -349,6 +368,9 @@ ZEND_END_ARG_INFO();
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getWriteErrors, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_isAcknowledged, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
 
 static zend_function_entry php_phongo_writeresult_me[] = {
 	PHP_ME(WriteResult, getInsertedCount, ai_WriteResult_getInsertedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -361,6 +383,7 @@ static zend_function_entry php_phongo_writeresult_me[] = {
 	PHP_ME(WriteResult, getUpsertedIds, ai_WriteResult_getUpsertedIds, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getwriteConcernError, ai_WriteResult_getwriteConcernError, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_getWriteErrors, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, isAcknowledged, ai_WriteResult_isAcknowledged, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -375,6 +398,10 @@ static void php_phongo_writeresult_free_object(void *object TSRMLS_DC) /* {{{ */
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	_mongoc_write_result_destroy(&intern->write_result);
+
+	if (intern->write_concern) {
+		mongoc_write_concern_destroy(intern->write_concern);
+	}
 
 	efree(intern);
 } /* }}} */
@@ -405,7 +432,7 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(object TSRMLS_CC);
 	*is_temp = 1;
-	array_init_size(&retval, 8);
+	array_init_size(&retval, 9);
 
 	add_assoc_long_ex(&retval, ZEND_STRS("nInserted"), intern->write_result.nInserted);
 	add_assoc_long_ex(&retval, ZEND_STRS("nMatched"), intern->write_result.nMatched);
@@ -425,6 +452,15 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	MAKE_STD_ZVAL(state.zchild);
 	bson_to_zval(bson_get_data(&intern->write_result.writeConcernError), intern->write_result.writeConcernError.len, &state);
 	add_assoc_zval_ex(&retval, ZEND_STRS("writeConcernError"), state.zchild);
+
+	if (intern->write_concern) {
+		zval *write_concern = NULL;
+		MAKE_STD_ZVAL(write_concern);
+		php_phongo_write_concern_to_zval(write_concern, intern->write_concern);
+		add_assoc_zval_ex(&retval, ZEND_STRS("writeConcern"), write_concern);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("writeConcern"));
+	}
 
 	return Z_ARRVAL(retval);
 } /* }}} */

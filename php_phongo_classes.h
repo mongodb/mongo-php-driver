@@ -129,6 +129,7 @@ typedef struct {
 	zend_object              std;
 	mongoc_write_result_t   write_result;
 	int                      hint;
+	mongoc_write_concern_t  *write_concern;
 } php_phongo_writeresult_t;
 
 typedef struct {

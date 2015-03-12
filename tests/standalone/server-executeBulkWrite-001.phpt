@@ -69,6 +69,17 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["writeConcernError"]=>
   array(0) {
   }
+  ["writeConcern"]=>
+  array(4) {
+    ["wmajority"]=>
+    bool(false)
+    ["wtimeout"]=>
+    int(0)
+    ["fsync"]=>
+    bool(false)
+    ["journal"]=>
+    bool(false)
+  }
 }
 
 ===> Collection
