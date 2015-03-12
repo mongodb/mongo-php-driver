@@ -484,7 +484,13 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 	mongoc_bulk_operation_set_database(bulk, dbname);
 	mongoc_bulk_operation_set_collection(bulk, collname);
 	mongoc_bulk_operation_set_client(bulk, client);
-	mongoc_bulk_operation_set_write_concern (bulk, write_concern);
+
+	/* If a write concern was not specified, libmongoc will use the client's
+	 * write concern. */
+	if (write_concern) {
+		mongoc_bulk_operation_set_write_concern(bulk, write_concern);
+	}
+
 	efree(dbname);
 	efree(collname);
 
