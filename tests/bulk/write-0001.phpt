@@ -106,8 +106,7 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   ["hint"]=>
   int(0)
   ["write_concern"]=>
-  array(0) {
-  }
+  NULL
 }
 Inserted: 3
 Deleted: 1

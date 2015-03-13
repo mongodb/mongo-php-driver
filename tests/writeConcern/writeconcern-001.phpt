@@ -6,9 +6,6 @@ MongoDB\Driver\WriteConcern construction
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(MONGODB_URI);
-
-
 $w = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY);
 $w2 = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
 
@@ -24,7 +21,6 @@ $w8 = new MongoDB\Driver\WriteConcern("string", 3000, true, true);
 $w9 = new MongoDB\Driver\WriteConcern("string", 3000, true, false);
 $w10= new MongoDB\Driver\WriteConcern("string", 3000, false, true);
 
-
 var_dump($w, $w2, $w3, $w4, $w5, $w6, $w7, $w8, $w9, $w10);
 
 try {
@@ -38,6 +34,8 @@ try {
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  string(8) "majority"
   ["wmajority"]=>
   bool(true)
   ["wtimeout"]=>
@@ -48,6 +46,8 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  string(8) "majority"
   ["wmajority"]=>
   bool(true)
   ["wtimeout"]=>
@@ -117,7 +117,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["journal"]=>
   bool(false)
 }
-object(MongoDB\Driver\WriteConcern)#10 (5) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(6) "string"
   ["wmajority"]=>
@@ -129,7 +129,7 @@ object(MongoDB\Driver\WriteConcern)#10 (5) {
   ["journal"]=>
   bool(true)
 }
-object(MongoDB\Driver\WriteConcern)#11 (5) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(6) "string"
   ["wmajority"]=>
@@ -141,7 +141,7 @@ object(MongoDB\Driver\WriteConcern)#11 (5) {
   ["journal"]=>
   bool(true)
 }
-object(MongoDB\Driver\WriteConcern)#12 (5) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(6) "string"
   ["wmajority"]=>
