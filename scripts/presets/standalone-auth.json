@@ -1,6 +1,6 @@
 {
     "name": "mongod",
-    "id" : "STANDALONE-AUTH",
+    "id" : "STANDALONE_AUTH",
     "auth_key": "secret",
     "login": "root",
     "password": "toor",

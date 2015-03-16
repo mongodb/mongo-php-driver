@@ -1,6 +1,6 @@
 {
     "name": "mongod",
-    "id" : "STANDALONE-X509",
+    "id" : "STANDALONE_X509",
     "authSource": "$external",
     "login": "C=US,ST=New York,L=New York City,O=MongoDB,OU=KernelUser,CN=client",
     "procParams": {

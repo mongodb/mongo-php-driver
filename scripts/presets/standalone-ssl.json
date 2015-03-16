@@ -1,6 +1,6 @@
 {
     "name": "mongod",
-    "id" : "STANDALONE-SSL",
+    "id" : "STANDALONE_SSL",
     "procParams": {
         "dbpath": "/tmp/standalone-ssl/",
         "ipv6": true,
