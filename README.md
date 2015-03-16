@@ -1,15 +1,5 @@
 # PHongo (PHP MongoDB driver)
 
-[![Coverage Status](https://coveralls.io/repos/bjori/phongo/badge.png?branch=master)](https://coveralls.io/r/bjori/phongo?branch=master)
-[![Build Status](https://travis-ci.org/10gen-labs/mongo-php-driver-prototype.svg?branch=master)](https://travis-ci.org/10gen-labs/mongo-php-driver-prototype)
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/2600/badge.svg)](https://scan.coverity.com/projects/2600)
-
-> *Note*: This project is highly experimental and various parts are
-non-functional. Please do not even think about using this in production.
-Development progress is being tracked in the
-[pecl-prototype](https://jira.mongodb.org/browse/PHP/component/13249) component
-of the MongoDB PHP driver's JIRA project.
-
 The purpose of this driver is to provide a thin glue between MongoDB
 and PHP, implementing only fundamental and performance-critical components
 
@@ -52,7 +42,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md)
 To execute the driver's test suite:
 
 ```
-$ make test
+$ make vm # requires vagrant (www.vagrantup.com)
+$ make test-bootstrap # Spins up mongod's in the virtual machines
+$ make test # Executes the test suite against the virtual machines
 ```
 
 Some tests depend on userland PHP libraries (e.g. creating data fixtures) and
