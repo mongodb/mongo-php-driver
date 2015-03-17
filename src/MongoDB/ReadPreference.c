@@ -147,7 +147,7 @@ zend_object_value php_phongo_readpreference_create_object(zend_class_entry *clas
 HashTable *php_phongo_readpreference_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	zval                 retval = zval_used_for_init;
-	mongoc_read_prefs_t *read_prefs = phongo_read_preference_from_zval(object TSRMLS_CC);
+	const mongoc_read_prefs_t *read_prefs = phongo_read_preference_from_zval(object TSRMLS_CC);
 
 
 	*is_temp = 1;
