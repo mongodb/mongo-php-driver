@@ -4,7 +4,7 @@ if ( ! is_readable(__DIR__ . '/../../vendor/autoload.php')) {
     exit('skip composer dependencies not available');
 }
 
-$LIMIT = isset($LIMIT) ? (int)$LIMIT : 8192;
+$LIMIT = isset($LIMIT) ? (int)$LIMIT : 1024;
 
 require_once __DIR__ . '/basic.inc';
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -55,7 +55,7 @@ $manager = new MongoDB\Driver\Manager(STANDALONE);
 $bulk = new MongoDB\Driver\BulkWrite;
 
 
-if (file_exists($CACHE) && filemtime($CACHE) < filemtime(__FILE__)) {
+if (file_exists($CACHE) && filemtime($CACHE) > filemtime(__FILE__)) {
     $data = file_get_contents($CACHE);
     $users = json_decode($data, true);
 } else {
@@ -73,14 +73,14 @@ if (file_exists($CACHE) && filemtime($CACHE) < filemtime(__FILE__)) {
 foreach($users as $n => $user) {
     $bulk->insert($user);
 
-    if ($n >= $LIMIT) {
+    if ($n >= $LIMIT-1) {
         break;
     }
 }
 $retval = $manager->executeBulkWrite(NS, $bulk);
 
-if ($retval->getInsertedCount() !== 1024) {
-    exit(sprintf('skip Fixtures were not loaded (expected: %d, actual: %d)', 1024, $retval->getInsertedCount()));
+if ($retval->getInsertedCount() !== $LIMIT) {
+    exit(sprintf('skip Fixtures were not loaded (expected: %d, actual: %d)', $LIMIT, $retval->getInsertedCount()));
 }
 
 
