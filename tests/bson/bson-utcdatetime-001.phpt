@@ -1,5 +1,7 @@
 --TEST--
 BSON BSON\UTCDatetime #001
+--INI--
+date.timezone=America/Los_Angeles
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
