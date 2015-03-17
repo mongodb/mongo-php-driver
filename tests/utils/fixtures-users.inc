@@ -4,14 +4,10 @@ if ( ! is_readable(__DIR__ . '/../../vendor/autoload.php')) {
     exit('skip composer dependencies not available');
 }
 
+$LIMIT = isset($LIMIT) ? (int)$LIMIT : 8192;
+
 require_once __DIR__ . '/basic.inc';
 require_once __DIR__ . '/../../vendor/autoload.php';
-
-$faker = Faker\Factory::create();
-$faker->seed(1234);
-
-$manager = new MongoDB\Driver\Manager(STANDALONE);
-$bulk = new MongoDB\Driver\BulkWrite;
 
 function createUser($faker)
 {
@@ -53,12 +49,51 @@ function createGeoJsonPoint($faker)
     );
 }
 
-for ($i = 0; $i < 100; $i++) {
-    $bulk->insert(createUser($faker));
+$CACHE =  sys_get_temp_dir() . "/PHONGO-FIXTURES.json";
+
+$manager = new MongoDB\Driver\Manager(STANDALONE);
+$bulk = new MongoDB\Driver\BulkWrite;
+
+
+if (file_exists($CACHE) && filemtime($CACHE) < filemtime(__FILE__)) {
+    $data = file_get_contents($CACHE);
+    $users = json_decode($data, true);
+} else {
+    $faker = Faker\Factory::create();
+    $faker->seed(1234);
+
+    $users = array();
+    for ($i = 0; $i < 1024; $i++) {
+        $users[] = $user = createUser($faker);
+    }
+
+    file_put_contents($CACHE, json_encode($users));
 }
 
+foreach($users as $n => $user) {
+    $bulk->insert($user);
+
+    if ($n >= $LIMIT) {
+        break;
+    }
+}
 $retval = $manager->executeBulkWrite(NS, $bulk);
 
-if ($retval->getInsertedCount() !== 100) {
-    exit(sprintf('skip Fixtures were not loaded (expected: %d, actual: %d)', 100, $retval->getInsertedCount()));
+if ($retval->getInsertedCount() !== 1024) {
+    exit(sprintf('skip Fixtures were not loaded (expected: %d, actual: %d)', 1024, $retval->getInsertedCount()));
 }
+
+
+$cmd = array(
+    "createIndexes" => COLLECTION_NAME,
+    "indexes" => array(
+        array(
+            "key" => array("_id" => 1, "username" => 1),
+            "name" => "cursorid_test",
+            "unique" => true,
+        ),
+    ),
+);
+$index = new MongoDB\Driver\Command($cmd);
+$retval = $manager->executeCommand(DATABASE_NAME, $index);
+
