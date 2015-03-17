@@ -1,12 +1,12 @@
 --TEST--
 MongoDB\Driver\Manager::executeCommand()
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc" ?>
+<?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $command = new MongoDB\Driver\Command(array('ping' => 1));
 $result = $manager->executeCommand(DATABASE_NAME, $command);

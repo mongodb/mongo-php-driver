@@ -1,12 +1,12 @@
 --TEST--
 MongoDB\Driver\Server::executeBulkWrite()
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc" ?>
+<?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-$parsed = parse_url(MONGODB_URI);
+$parsed = parse_url(STANDALONE);
 $server = new MongoDB\Driver\Server($parsed["host"], $parsed["port"]);
 
 $bulk = new MongoDB\Driver\BulkWrite();

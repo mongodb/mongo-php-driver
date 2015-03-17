@@ -1,7 +1,7 @@
 --TEST--
 Disable serialization of objects
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc"?>
+<?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE)?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";

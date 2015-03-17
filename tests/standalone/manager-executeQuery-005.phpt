@@ -1,7 +1,7 @@
 --TEST--
 MongoDB\Driver\Server::executeQuery() with filter and projection
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc" ?>
+<?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
@@ -11,7 +11,7 @@ class MyArrayObject extends ArrayObject implements BSON\Unserializable {
         parent::__construct($data);
     }
 }
-$manager = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $bulk = new \MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1, array('x' => 2, 'y' => 3)));

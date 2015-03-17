@@ -6,7 +6,7 @@ MongoDB\Driver\BulkWrite: #001 Variety Bulk
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $bulk = new MongoDB\Driver\BulkWrite;
 var_dump($bulk);

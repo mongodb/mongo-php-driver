@@ -16,7 +16,7 @@ $opts = array(
 );
 $context = stream_context_create($opts);
 
-$dsn = sprintf("%s/?ssl=true", MONGODB_STANDALONE_SSL_URI);
+$dsn = sprintf("%s/?ssl=true", STANDALONE_SSL);
 
 $manager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context));
 

@@ -60,12 +60,9 @@ function makeCollectionNameFromFilename($filename)
     return preg_replace(array_keys($replacements), array_values($replacements), $filename);
 }
 
-function CLEANUP() {
-    if (!MONGODB_CLEANUP_URI) {
-        return;
-    }
+function CLEANUP($uri) {
     try {
-        $manager = new MongoDB\Driver\Manager(MONGODB_CLEANUP_URI);
+        $manager = new MongoDB\Driver\Manager($uri);
         $cmd = new MongoDB\Driver\Command(array("drop" => COLLECTION_NAME));
         $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
         try {

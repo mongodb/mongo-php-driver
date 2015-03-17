@@ -1,14 +1,14 @@
 --TEST--
 MongoDB\Driver\WriteResult::isAcknowledged() with inherited WriteConcern
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc" ?>
+<?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
 /* We use w:0 here because libmongoc detects w:1 as the server's default and
  */
-$manager = new MongoDB\Driver\Manager(MONGODB_URI . "/?w=0");
+$manager = new MongoDB\Driver\Manager(STANDALONE . "/?w=0");
 
 $result = $manager->executeInsert(NS, array('x' => 1));
 

@@ -1,12 +1,12 @@
 --TEST--
 ExecutionTimeoutException: exceeding $maxTimeMS (queries)
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc" ?>
+<?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $query = new MongoDB\Driver\Query(array("company" => "Smith, Carter and Buckridge"), array(
     'projection' => array('_id' => 0, 'username' => 1),

@@ -6,7 +6,7 @@ WriteConcernError: Populate WriteConcernError on WriteConcern errors
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(MONGODB_REPLICASET_URI);
+$manager = new MongoDB\Driver\Manager(REPLICASET);
 
 $bulk = new MongoDB\Driver\BulkWrite;
 

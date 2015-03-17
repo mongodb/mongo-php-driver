@@ -1,12 +1,12 @@
 --TEST--
 MongoDB\Driver\Manager::executeDelete() multiple documents
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc" ?>
+<?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $manager->executeInsert(NS, array('_id' => 1, 'x' => 1));
 $manager->executeInsert(NS, array('_id' => 2, 'x' => 1));

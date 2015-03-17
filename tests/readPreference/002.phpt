@@ -6,7 +6,7 @@ MongoDB\Driver\ReadPreference#002: PHPC-146
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 $manager->executeInsert(NS, array("my" => "document"));
 $rps = array(
     MongoDB\Driver\ReadPreference::RP_PRIMARY,

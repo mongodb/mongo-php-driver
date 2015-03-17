@@ -6,7 +6,7 @@ MongoDB\Driver\WriteConcern construction
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(MONGODB_REPLICASET_URI);
+$manager = new MongoDB\Driver\Manager(REPLICASET);
 
 
 $wc = new MongoDB\Driver\WriteConcern("MultipleDC", 500);

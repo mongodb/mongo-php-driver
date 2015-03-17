@@ -1,12 +1,12 @@
 --TEST--
 MongoDB\Driver\WriteResult::isAcknowledged() with custom WriteConcern
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc" ?>
+<?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $result = $manager->executeInsert(NS, array('x' => 2), new MongoDB\Driver\WriteConcern(0));
 

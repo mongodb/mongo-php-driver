@@ -1,12 +1,12 @@
 --TEST--
 MongoDB\Driver\Manager::executeBulkWrite() with duplicate key errors (unordered)
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc" ?>
+<?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $bulk = new MongoDB\Driver\BulkWrite(false);
 $bulk->insert(array('_id' => 1));

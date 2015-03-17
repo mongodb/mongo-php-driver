@@ -1,7 +1,7 @@
 --TEST--
 Connect to MongoDB with using PLAIN auth mechanism
 --SKIPIF--
-<?php require "tests/utils/auth-plain-skipif.inc"?>
+<?php require "tests/utils/auth-plain-skipif.inc"; CLEANUP(STANDALONE_PLAIN) ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
@@ -10,7 +10,7 @@ $username = "root";
 $password = "toor";
 $database = "admin";
 
-$parsed = parse_url(MONGODB_STANDALONE_PLAIN_URI);
+$parsed = parse_url(STANDALONE_PLAIN);
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s", $username, $password, $parsed["host"], $parsed["port"], $database);
 $adminmanager = new MongoDB\Driver\Manager($dsn);
 

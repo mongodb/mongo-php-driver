@@ -6,7 +6,7 @@ Connect to MongoDB with using SSL and verify the stream
 <?php
 require_once "tests/utils/basic.inc";
 
-$dsn = sprintf("%s/?ssl=true", MONGODB_STANDALONE_SSL_URI);
+$dsn = sprintf("%s/?ssl=true", STANDALONE_SSL);
 
 $SSL_DIR = realpath(__DIR__ . "/" . "./../../scripts/ssl/");
 function isValid(array $cert) {

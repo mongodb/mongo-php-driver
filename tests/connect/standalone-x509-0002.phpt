@@ -29,12 +29,9 @@ $opts = array(
 );
 $context = stream_context_create($opts);
 
-$certusername = "C=US,ST=New York,L=New York City,O=MongoDB,OU=KernelUser,CN=client";
-
-
 try {
     /* mongoc will pull the username of the certificate */
-    $parsed = parse_url(MONGODB_STANDALONE_X509_URI);
+    $parsed = parse_url(STANDALONE_X509);
     $dsn = sprintf("mongodb://%s:%d/%s?ssl=true&authMechanism=MONGODB-X509", $parsed["host"], $parsed["port"], DATABASE_NAME);
 
     $manager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context));

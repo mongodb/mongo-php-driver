@@ -1,13 +1,13 @@
 --TEST--
 Sorting single field, ascending
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc" ?>
+<?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 <?php require "tests/utils/fixtures-users.inc" ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $query = new MongoDB\Driver\Query(array(), array(
     'projection' => array('_id' => 0, 'username' => 1),
