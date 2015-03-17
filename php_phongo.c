@@ -1066,9 +1066,9 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 	array_init_size(retval, 5);
 
 	if (wtag) {
-		add_assoc_string_ex(retval, ZEND_STRS("w"), wtag, 1);
+		add_assoc_string_ex(retval, ZEND_STRS("w"), (char *)wtag, 1);
 	} else if (mongoc_write_concern_get_wmajority(write_concern)) {
-		add_assoc_string_ex(retval, ZEND_STRS("w"), "majority", 1);
+		add_assoc_string_ex(retval, ZEND_STRS("w"), (char *)"majority", 1);
 	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
 		add_assoc_long_ex(retval, ZEND_STRS("w"), w);
 	}
@@ -1559,7 +1559,7 @@ void _phongo_debug_bson(bson_t *bson)
 
 /* {{{ INI entries */
 PHP_INI_BEGIN()
-	STD_PHP_INI_ENTRY("phongo.debug_log", (char *)"", PHP_INI_ALL, OnUpdateString, debug_log, zend_phongo_globals, phongo_globals)
+	STD_PHP_INI_ENTRY((char *)"phongo.debug_log", (char *)"", PHP_INI_ALL, OnUpdateString, debug_log, zend_phongo_globals, phongo_globals)
 PHP_INI_END()
 /* }}} */
 
