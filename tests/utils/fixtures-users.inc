@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 $faker = Faker\Factory::create();
 $faker->seed(1234);
 
-$manager = new MongoDB\Driver\Manager(MONGODB_URI);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 $bulk = new MongoDB\Driver\BulkWrite;
 
 function createUser($faker)

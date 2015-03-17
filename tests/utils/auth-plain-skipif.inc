@@ -1,9 +1,9 @@
 <?php
 
 require __DIR__ . "/" . "basic-skipif.inc";
-$parsed = parse_url(MONGODB_STANDALONE_PLAIN_URI);
+$parsed = parse_url(STANDALONE_PLAIN);
 
 if (!isset($parsed["host"])) {
-    exit("skip cannot parse uri: '" . MONGODB_STANDALONE_PLAIN_URI. "' maybe PLAIN server not available?");
+    exit("skip cannot parse uri: '" . STANDALONE_PLAIN. "' maybe PLAIN server not available?");
 }
 

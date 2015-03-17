@@ -1,18 +1,10 @@
 <?php
-require __DIR__ . "/" . "../tests/utils/orchestration.php";
+$FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
 
-if (!($host = getenv("MONGODB_ORCHESTRATION"))) {
-    $host = "http://192.168.112.10:8889";
-}
-
-$orch = new Mongo\Orchestration($host, getenv("MONGODB_ORCHESTRATION_PRESETS_ROOT"));
-if (!$orch->ping()) {
-    echo "Failed connecting to MO\n";
-    exit(3);
-}
-
-foreach($orch->getAll() as $uri => $server) {
-    printf("%s:%s%s\n", $server["id"], str_repeat(" ", 40-strlen($server["id"])), $server["mongodb_uri"]);
+$json = file_get_contents($FILENAME);
+$servers = json_decode($json);
+foreach($servers as $serverid => $uri) {
+    printf("%-20s \t %s\n", $serverid, $uri);
 }
 
 
