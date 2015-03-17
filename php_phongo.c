@@ -897,7 +897,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 /* }}} */
 
-mongoc_write_concern_t* phongo_write_concern_from_zval(zval *zwrite_concern TSRMLS_DC) /* {{{ */
+const mongoc_write_concern_t* phongo_write_concern_from_zval(zval *zwrite_concern TSRMLS_DC) /* {{{ */
 {
 	if (zwrite_concern) {
 		php_phongo_writeconcern_t *intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(zwrite_concern TSRMLS_CC);
@@ -910,7 +910,7 @@ mongoc_write_concern_t* phongo_write_concern_from_zval(zval *zwrite_concern TSRM
 	return NULL;
 } /* }}} */
 
-mongoc_read_prefs_t* phongo_read_preference_from_zval(zval *zread_preference TSRMLS_DC) /* {{{ */
+const mongoc_read_prefs_t* phongo_read_preference_from_zval(zval *zread_preference TSRMLS_DC) /* {{{ */
 {
 	if (zread_preference) {
 		php_phongo_readpreference_t *intern = (php_phongo_readpreference_t *)zend_object_store_get_object(zread_preference TSRMLS_CC);
@@ -923,7 +923,7 @@ mongoc_read_prefs_t* phongo_read_preference_from_zval(zval *zread_preference TSR
 	return NULL;
 } /* }}} */
 
-php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC) /* {{{ */
+const php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC) /* {{{ */
 {
 	php_phongo_query_t *intern = (php_phongo_query_t *)zend_object_store_get_object(zquery TSRMLS_CC);
 

@@ -157,7 +157,7 @@ zend_object_value php_phongo_writeconcern_create_object(zend_class_entry *class_
 HashTable *php_phongo_writeconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	zval                    retval = zval_used_for_init;
-	mongoc_write_concern_t *write_concern = phongo_write_concern_from_zval(object TSRMLS_CC);
+	const mongoc_write_concern_t *write_concern = phongo_write_concern_from_zval(object TSRMLS_CC);
 
 
 	*is_temp = 1;
