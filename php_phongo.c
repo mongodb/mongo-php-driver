@@ -374,7 +374,7 @@ php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, mongoc_wri
 
 /* {{{ CRUD */
 /* Splits a namespace name into the database and collection names, allocated with estrdup. */
-bool phongo_split_namespace(char *namespace, char **dbname, char **cname) /* {{{ */
+bool phongo_split_namespace(const char *namespace, char **dbname, char **cname) /* {{{ */
 {
 	char *dot = strchr(namespace, '.');
 
@@ -416,7 +416,7 @@ void phongo_unwrap_exception(bool retval, zval *return_value TSRMLS_DC)
 	}
 }
 
-int phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_t *doc, mongoc_write_concern_t *write_concern, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_single_insert(mongoc_client_t *client, const char *namespace, const bson_t *doc, const mongoc_write_concern_t *write_concern, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bool retval = false;
 	mongoc_bulk_operation_t *bulk;
@@ -431,7 +431,7 @@ int phongo_execute_single_insert(mongoc_client_t *client, char *namespace, bson_
 	return retval;
 } /* }}} */
 
-int phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_t *query, bson_t *update, mongoc_write_concern_t *write_concern, mongoc_update_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_single_update(mongoc_client_t *client, const char *namespace, const bson_t *query, const bson_t *update, const mongoc_write_concern_t *write_concern, mongoc_update_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bool retval = false;
 	mongoc_bulk_operation_t *bulk;
@@ -449,7 +449,7 @@ int phongo_execute_single_update(mongoc_client_t *client, char *namespace, bson_
 	return retval;
 } /* }}} */
 
-int phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_t *query, mongoc_write_concern_t *write_concern, mongoc_delete_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_single_delete(mongoc_client_t *client, const char *namespace, const bson_t *query, const mongoc_write_concern_t *write_concern, mongoc_delete_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bool retval = false;
 	mongoc_bulk_operation_t *bulk;
@@ -468,7 +468,7 @@ int phongo_execute_single_delete(mongoc_client_t *client, char *namespace, bson_
 	return retval;
 } /* }}} */
 
-bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_operation_t *bulk, mongoc_write_concern_t *write_concern, int server_hint, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc_bulk_operation_t *bulk, const mongoc_write_concern_t *write_concern, int server_hint, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
 	char *dbname;
@@ -535,7 +535,7 @@ bool phongo_execute_write(mongoc_client_t *client, char *namespace, mongoc_bulk_
 	return true;
 } /* }}} */
 
-int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_query_t *query, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_query(mongoc_client_t *client, const char *namespace, const php_phongo_query_t *query, const mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	const bson_t *doc = NULL;
 	mongoc_cursor_t *cursor;
@@ -581,7 +581,7 @@ int phongo_execute_query(mongoc_client_t *client, char *namespace, php_phongo_qu
 	return true;
 } /* }}} */
 
-int phongo_execute_command(mongoc_client_t *client, char *db, bson_t *command, mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t *command, const mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	mongoc_cursor_t *cursor;
 	const bson_t *doc;
@@ -1041,7 +1041,7 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 } /* }}} */
 
 
-void php_phongo_read_preference_to_zval(zval *retval, mongoc_read_prefs_t *read_prefs) /* {{{ */
+void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t *read_prefs) /* {{{ */
 {
 
 	array_init_size(retval, 2);
@@ -1058,7 +1058,7 @@ void php_phongo_read_preference_to_zval(zval *retval, mongoc_read_prefs_t *read_
 	}
 } /* }}} */
 
-void php_phongo_write_concern_to_zval(zval *retval, mongoc_write_concern_t *write_concern) /* {{{ */
+void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t *write_concern) /* {{{ */
 {
 	const char *wtag = mongoc_write_concern_get_wtag(write_concern);
 	const int32_t w = mongoc_write_concern_get_w(write_concern);
