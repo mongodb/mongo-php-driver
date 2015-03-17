@@ -2,7 +2,7 @@
 Sorting single field, descending
 --SKIPIF--
 <?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
-<?php require "tests/utils/fixtures-users.inc" ?>
+<?php $LIMIT = 100; require "tests/utils/fixtures-users.inc" ?>
 --FILE--
 <?php
 require_once "tests/utils/basic.inc";
