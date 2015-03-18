@@ -81,7 +81,7 @@ typedef struct
 {
 	mongoc_stream_t           vtable;
 	php_stream               *stream;
-	const bson_t             *uri_options;
+	const mongoc_uri_t       *uri;
 	const mongoc_host_list_t *host;
 	php_phongo_stream_logger log;
 #if ZTS

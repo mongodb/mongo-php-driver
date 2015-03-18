@@ -869,7 +869,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 	base_stream = ecalloc(1, sizeof(php_phongo_stream_socket));
 	base_stream->stream = stream;
-	base_stream->uri_options = options;
+	base_stream->uri = uri;
 	base_stream->host = host;
 	base_stream->log = phongo_stream_logger;
 	TSRMLS_SET_CTX(base_stream->tsrm_ls);
