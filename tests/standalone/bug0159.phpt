@@ -8,7 +8,9 @@ require_once "tests/utils/basic.inc";
 
 $uri = parse_url(STANDALONE);
 $manager = new MongoDB\Driver\Manager("mongodb:///tmp/mongodb-27018.sock,{$uri["host"]}:{$uri["port"]}");
-$manager->executeQuery("foo.bar", new MongoDB\Driver\Query([]));
+try {
+    $manager->executeQuery("foo.bar", new MongoDB\Driver\Query([]));
+} catch(Exception $e) {}
 
 ?>
 ===DONE===
