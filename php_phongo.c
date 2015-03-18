@@ -32,6 +32,7 @@
 #include <mongoc-cursor-cursorid-private.h>
 #include <mongoc-read-prefs-private.h>
 #include <mongoc-bulk-operation-private.h>
+#include <mongoc-trace.h>
 
 
 /* PHP Core stuff */
@@ -776,6 +777,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	int dsn_len;
 	TSRMLS_FETCH();
 
+	ENTRY;
 
 	switch (host->family) {
 #if defined(AF_INET6)
@@ -791,7 +793,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 		default:
 			bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_INVALID_TYPE, "Invalid address family: 0x%02x", host->family);
-			return NULL;
+			RETURN(NULL);
 	}
 
 	options = mongoc_uri_get_options(uri);
@@ -830,7 +832,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		if (errmsg) {
 			efree(errmsg);
 		}
-		return NULL;
+		RETURN(NULL);
 	}
 
 	/* Avoid invalid leak warning in debug mode when freeing the stream */
@@ -890,7 +892,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		}
 	}
 
-	return (mongoc_stream_t *) base_stream;
+	RETURN((mongoc_stream_t *)base_stream);
 } /* }}} */
 
 /* }}} */
