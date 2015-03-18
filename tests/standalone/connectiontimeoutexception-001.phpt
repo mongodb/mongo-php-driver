@@ -17,6 +17,7 @@ $command = new MongoDB\Driver\Command($cmd);
 
 throws(function() use ($manager, $command) {
     $result = $manager->executeCommand("admin", $command);
+    var_dump($result->toArray());
 }, "MongoDB\Driver\ConnectionTimeoutException");
 
 ?>
