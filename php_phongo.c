@@ -669,19 +669,15 @@ int phongo_stream_close(mongoc_stream_t *stream) /* {{{ */
 void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeout_msec) /* {{{ */
 {
 	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+	struct timeval rtimeout = {0, 0};
 
 	if (timeout_msec > 0) {
-		struct timeval rtimeout = {0, 0};
-
 		rtimeout.tv_sec = timeout_msec / 1000;
 		rtimeout.tv_usec = (timeout_msec % 1000) * 1000;
-
-		php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &rtimeout);
-		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Setting timeout to: %d", timeout_msec);
-	} else if (timeout_msec == 0) {
-		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Setting timeout to 0");
-		php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, NULL);
 	}
+
+	php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &rtimeout);
+	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Setting timeout to: %d", timeout_msec);
 } /* }}} */
 
 ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, int32_t timeout_msec) /* {{{ */
