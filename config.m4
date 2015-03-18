@@ -237,6 +237,8 @@ if test "$PHONGO" != "no"; then
   ";
   MONGOC_SOURCES="\
 	mongoc-array.c \
+        mongoc-async.c \
+        mongoc-async-cmd.c \
 	mongoc-buffer.c \
 	mongoc-bulk-operation.c \
 	mongoc-b64.c \
@@ -259,15 +261,21 @@ if test "$PHONGO" != "no"; then
 	mongoc-log.c \
 	mongoc-matcher-op.c \
 	mongoc-matcher.c \
+        mongoc-opcode.c \
 	mongoc-queue.c \
 	mongoc-read-prefs.c \
 	mongoc-rpc.c \
+        mongoc-set.c \
+        mongoc-server-description.c \
 	mongoc-socket.c \
 	mongoc-stream.c \
 	mongoc-stream-buffered.c \
 	mongoc-stream-file.c \
 	mongoc-stream-gridfs.c \
 	mongoc-stream-socket.c \
+        mongoc-topology.c \
+        mongoc-topology-scanner.c \
+        mongoc-topology-description.c \
 	mongoc-uri.c \
 	mongoc-util.c \
 	mongoc-write-command.c \
