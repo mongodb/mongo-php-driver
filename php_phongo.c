@@ -687,6 +687,7 @@ ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
 	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
+	php_phongo_set_timeout(base_stream, timeout_msec);
 	for (i = 0; i < iovcnt; i++) {
 		sent += php_stream_write(base_stream->stream, iov[i].iov_base, iov[i].iov_len);
 	}
