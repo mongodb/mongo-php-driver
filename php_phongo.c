@@ -762,6 +762,37 @@ mongoc_stream_t* phongo_stream_get_base_stream(mongoc_stream_t *stream) /* {{{ *
 	return (mongoc_stream_t *) stream;
 } /* }}} */
 
+ssize_t
+phongo_stream_poll (mongoc_stream_poll_t *streams, size_t nstreams, int32_t timeout)
+{
+	php_pollfd *fds = NULL;
+	size_t i;
+	ssize_t rval = -1;
+
+	fds = emalloc(sizeof(*fds) * nstreams);
+	for (i = 0; i < nstreams; i++) {
+		php_socket_t this_fd;
+
+		if (php_stream_cast(((php_phongo_stream_socket *)streams[i].stream)->stream, PHP_STREAM_AS_FD_FOR_SELECT | PHP_STREAM_CAST_INTERNAL, (void*)&this_fd, 0) == SUCCESS && this_fd >= 0) {
+			fds[i].fd = this_fd;
+			fds[i].events = streams[i].events;
+			fds[i].revents = 0;
+		}
+	}
+
+	rval = php_poll2(fds, nstreams, timeout);
+
+	if (rval > 0) {
+		for (i = 0; i < nstreams; i++) {
+			streams[i].revents = fds[i].revents;
+		}
+	}
+
+	efree(fds);
+
+	return rval;
+}
+
 mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = NULL;
@@ -883,6 +914,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	base_stream->vtable.setsockopt = phongo_stream_setsockopt;
 	base_stream->vtable.check_closed = phongo_stream_socket_check_closed;
 	base_stream->vtable.get_base_stream = phongo_stream_get_base_stream;
+	base_stream->vtable.poll = phongo_stream_poll;
 
 	if (host->family != AF_UNIX) {
 		int flag = 1;
