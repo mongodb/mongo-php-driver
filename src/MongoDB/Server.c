@@ -514,8 +514,8 @@ zend_object_value php_phongo_server_create_object(zend_class_entry *class_type T
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(Server)
 {
-	(void)type;(void)module_number;
 	zend_class_entry ce;
+	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Server", php_phongo_server_me);
 	php_phongo_server_ce = zend_register_internal_class(&ce TSRMLS_CC);

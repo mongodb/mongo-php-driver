@@ -60,8 +60,8 @@ static zend_function_entry php_phongo_type_me[] = {
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(Type)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
+	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "BSON", "Type", php_phongo_type_me);
 	php_phongo_type_ce = zend_register_internal_interface(&ce TSRMLS_CC);

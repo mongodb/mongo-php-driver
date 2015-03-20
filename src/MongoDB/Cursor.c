@@ -437,8 +437,8 @@ HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(Cursor)
 {
-	(void)type; (void)module_number;
 	zend_class_entry ce;
+	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Cursor", php_phongo_cursor_me);
 	php_phongo_cursor_ce = zend_register_internal_class(&ce TSRMLS_CC);

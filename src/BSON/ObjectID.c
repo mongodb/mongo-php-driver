@@ -180,8 +180,8 @@ HashTable *php_phongo_objectid_get_debug_info(zval *object, int *is_temp TSRMLS_
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(ObjectID)
 {
-	(void)type;(void)module_number;
 	zend_class_entry ce;
+	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "BSON", "ObjectID", php_phongo_objectid_me);
 	php_phongo_objectid_ce = zend_register_internal_class(&ce TSRMLS_CC);

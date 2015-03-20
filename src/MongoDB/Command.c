@@ -150,8 +150,8 @@ HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_D
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(Command)
 {
-	(void)type;(void)module_number;
 	zend_class_entry ce;
+	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Command", php_phongo_command_me);
 	php_phongo_command_ce = zend_register_internal_class(&ce TSRMLS_CC);

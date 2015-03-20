@@ -469,9 +469,8 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(WriteResult)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
-	(void)module_number; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
+	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteResult", php_phongo_writeresult_me);
 	php_phongo_writeresult_ce = zend_register_internal_class(&ce TSRMLS_CC);

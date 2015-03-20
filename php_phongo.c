@@ -674,8 +674,8 @@ int phongo_stream_close(mongoc_stream_t *stream) /* {{{ */
 
 void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeout_msec) /* {{{ */
 {
-	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 	struct timeval rtimeout = {0, 0};
+	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
 	if (timeout_msec > 0) {
 		rtimeout.tv_sec = timeout_msec / 1000;
@@ -1665,9 +1665,11 @@ PHP_GINIT_FUNCTION(phongo)
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(phongo)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	void ***ctx = NULL;
 	TSRMLS_SET_CTX(ctx);
+	(void)type; /* We don't care if we are loaded via dl() or extension= */
+
+
 	REGISTER_INI_ENTRIES();
 
 	/* Initialize libbson */

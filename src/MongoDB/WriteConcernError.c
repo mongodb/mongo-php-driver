@@ -183,8 +183,8 @@ HashTable *php_phongo_writeconcernerror_get_debug_info(zval *object, int *is_tem
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(WriteConcernError)
 {
-	(void)type; (void)module_number;
 	zend_class_entry ce;
+	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcernError", php_phongo_writeconcernerror_me);
 	php_phongo_writeconcernerror_ce = zend_register_internal_class(&ce TSRMLS_CC);

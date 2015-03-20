@@ -57,8 +57,8 @@ static zend_function_entry php_phongo_writeconcernexception_me[] = {
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(WriteConcernException)
 {
-	(void)type; (void)module_number;
 	zend_class_entry ce;
+	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcernException", php_phongo_writeconcernexception_me);
 	php_phongo_writeconcernexception_ce = zend_register_internal_class_ex(&ce, php_phongo_writeexception_ce, NULL TSRMLS_CC);

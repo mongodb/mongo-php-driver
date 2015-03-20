@@ -202,8 +202,8 @@ HashTable *php_phongo_writeerror_get_debug_info(zval *object, int *is_temp TSRML
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(WriteError)
 {
-	(void)type; (void)module_number;
 	zend_class_entry ce;
+	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteError", php_phongo_writeerror_me);
 	php_phongo_writeerror_ce = zend_register_internal_class(&ce TSRMLS_CC);

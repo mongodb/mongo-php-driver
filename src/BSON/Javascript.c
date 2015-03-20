@@ -129,8 +129,9 @@ zend_object_value php_phongo_javascript_create_object(zend_class_entry *class_ty
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(Javascript)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	zend_class_entry ce;
+	(void)type;(void)module_number;
+
 
 	INIT_NS_CLASS_ENTRY(ce, "BSON", "Javascript", php_phongo_javascript_me);
 	ce.create_object = php_phongo_javascript_create_object;
