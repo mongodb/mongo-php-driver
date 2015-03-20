@@ -255,7 +255,10 @@ PHP_METHOD(Manager, executeDelete)
    Returns the Servers associated with this Manager */
 PHP_METHOD(Manager, getServers)
 {
-	php_phongo_manager_t     *intern;
+	php_phongo_manager_t         *intern;
+	mongoc_set_t                 *set;
+	size_t                        i;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -264,6 +267,16 @@ PHP_METHOD(Manager, getServers)
 		return;
 	}
 
+	array_init(return_value);
+	set = intern->client->topology->description.servers;
+	for(i=0; i<set->items_len; i++) {
+		zval *obj = NULL;
+
+		MAKE_STD_ZVAL(obj);
+
+		phongo_server_init(obj, intern->client, ((mongoc_server_description_t *)set->items[i].item)->id);
+		add_next_index_zval(return_value, obj);
+	}
 }
 /* }}} */
 
