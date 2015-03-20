@@ -132,8 +132,8 @@ PHP_METHOD(Server, executeBulkWrite)
 PHP_METHOD(Server, getHost)
 {
 	php_phongo_server_t      *intern;
-	const mongoc_host_list_t *hosts;
-	(void)return_value_ptr;
+	mongoc_server_description_t *sd;
+	(void)return_value_ptr; (void)return_value_used;
 
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
@@ -141,10 +141,38 @@ PHP_METHOD(Server, getHost)
 		return;
 	}
 
-	hosts = mongoc_uri_get_hosts(mongoc_client_get_uri(intern->client));
-	if (hosts) {
-		RETURN_STRING(hosts->host, 1);
+	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
+		RETURN_STRING(sd->host.host, 1);
 	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
+}
+/* }}} */
+/* {{{ proto array Server::getTags()
+   Returns the currently configured tags for this node */
+PHP_METHOD(Server, getTags)
+{
+	php_phongo_server_t      *intern;
+	mongoc_server_description_t *sd;
+	(void)return_value_ptr; (void)return_value_used;
+
+
+	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+
+	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
+		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+		MAKE_STD_ZVAL(state.zchild);
+		bson_to_zval(bson_get_data(&sd->tags), sd->tags.len, &state);
+		RETURN_ZVAL(state.zchild, 0, 1);
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
 }
 /* }}} */
 /* {{{ proto array Server::getInfo()
@@ -152,6 +180,8 @@ PHP_METHOD(Server, getHost)
 PHP_METHOD(Server, getInfo)
 {
 	php_phongo_server_t      *intern;
+	mongoc_server_description_t *sd;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -160,6 +190,16 @@ PHP_METHOD(Server, getInfo)
 		return;
 	}
 
+
+	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
+		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+		MAKE_STD_ZVAL(state.zchild);
+		bson_to_zval(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
+		RETURN_ZVAL(state.zchild, 0, 1);
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
 }
 /* }}} */
 /* {{{ proto integer Server::getLatency()
@@ -167,6 +207,8 @@ PHP_METHOD(Server, getInfo)
 PHP_METHOD(Server, getLatency)
 {
 	php_phongo_server_t      *intern;
+	mongoc_server_description_t *sd;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -175,6 +217,11 @@ PHP_METHOD(Server, getLatency)
 		return;
 	}
 
+	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
+		RETURN_LONG(sd->round_trip_time);
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
 }
 /* }}} */
 /* {{{ proto integer Server::getPort()
@@ -183,6 +230,7 @@ PHP_METHOD(Server, getPort)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -198,26 +246,13 @@ PHP_METHOD(Server, getPort)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
 }
 /* }}} */
-/* {{{ proto integer Server::getState()
-   Returns the current state of the node (maintenece/startup/...) */
-PHP_METHOD(Server, getState)
-{
-	php_phongo_server_t      *intern;
-
-
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-}
-/* }}} */
 /* {{{ proto integer Server::getType()
    Returns the node type of this Server */
 PHP_METHOD(Server, getType)
 {
 	php_phongo_server_t      *intern;
+	mongoc_server_description_t *sd;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -226,13 +261,20 @@ PHP_METHOD(Server, getType)
 		return;
 	}
 
+	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
+		RETURN_LONG(sd->type);
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
 }
 /* }}} */
-/* {{{ proto bool Server::isDelayed()
-   Checks if this is a special "delayed" member of a RepilcaSet */
-PHP_METHOD(Server, isDelayed)
+/* {{{ proto bool Server::isPrimary()
+   Checks if this is a special "Primary" member of a RepilcaSet */
+PHP_METHOD(Server, isPrimary)
 {
 	php_phongo_server_t      *intern;
+	mongoc_server_description_t *sd;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -241,13 +283,88 @@ PHP_METHOD(Server, isDelayed)
 		return;
 	}
 
+	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
+		RETURN_BOOL(sd->type == MONGOC_SERVER_RS_PRIMARY);
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
+}
+/* }}} */
+/* {{{ proto bool Server::isSecondary()
+   Checks if this is a special "Secondary" member of a RepilcaSet */
+PHP_METHOD(Server, isSecondary)
+{
+	php_phongo_server_t      *intern;
+	mongoc_server_description_t *sd;
+	(void)return_value_ptr; (void)return_value_used;
+
+
+	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
+		RETURN_BOOL(sd->type == MONGOC_SERVER_RS_SECONDARY);
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
+}
+/* }}} */
+/* {{{ proto bool Server::isArbiter()
+   Checks if this is a special "Arbiter" member of a RepilcaSet */
+PHP_METHOD(Server, isArbiter)
+{
+	php_phongo_server_t      *intern;
+	mongoc_server_description_t *sd;
+	(void)return_value_ptr; (void)return_value_used;
+
+
+	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
+		RETURN_BOOL(sd->type == MONGOC_SERVER_RS_ARBITER);
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
+}
+/* }}} */
+/* {{{ proto bool Server::isHidden()
+   Checks if this is a special "hidden" member of a RepilcaSet */
+PHP_METHOD(Server, isHidden)
+{
+	php_phongo_server_t      *intern;
+	mongoc_server_description_t *sd;
+	(void)return_value_ptr; (void)return_value_used;
+
+
+	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
+		bson_iter_t iter;
+
+		RETURN_BOOL(bson_iter_init_find_case(&iter, &sd->last_is_master, "hidden") && bson_iter_as_bool(&iter));
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
 }
 /* }}} */
 /* {{{ proto bool Server::isPassive()
    Checks if this is a special passive node member of a ReplicaSet */
 PHP_METHOD(Server, isPassive)
 {
-	php_phongo_server_t      *intern;
+	php_phongo_server_t         *intern;
+	mongoc_server_description_t *sd;
+	(void)return_value_ptr; (void)return_value_used;
 
 
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -256,6 +373,13 @@ PHP_METHOD(Server, isPassive)
 		return;
 	}
 
+	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
+		bson_iter_t iter;
+
+		RETURN_BOOL(bson_iter_init_find_case(&iter, &sd->last_is_master, "passive") && bson_iter_as_bool(&iter));
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
 }
 /* }}} */
 
@@ -286,6 +410,9 @@ ZEND_END_ARG_INFO();
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_getHost, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Server_getTags, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_getInfo, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
@@ -295,13 +422,19 @@ ZEND_END_ARG_INFO();
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_getPort, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_getState, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_getType, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_isDelayed, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_Server_isPrimary, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Server_isSecondary, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Server_isArbiter, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Server_isHidden, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_isPassive, 0, 0, 0)
@@ -314,12 +447,15 @@ static zend_function_entry php_phongo_server_me[] = {
 	PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeBulkWrite, ai_Server_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, getHost, ai_Server_getHost, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, getTags, ai_Server_getTags, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, getInfo, ai_Server_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, getLatency, ai_Server_getLatency, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, getPort, ai_Server_getPort, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getState, ai_Server_getState, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, getType, ai_Server_getType, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, isDelayed, ai_Server_isDelayed, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, isPrimary, ai_Server_isPrimary, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, isSecondary, ai_Server_isSecondary, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, isArbiter, ai_Server_isArbiter, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, isHidden, ai_Server_isHidden, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, isPassive, ai_Server_isPassive, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
@@ -389,11 +525,16 @@ PHP_MINIT_FUNCTION(Server)
 	memcpy(&php_phongo_handler_server, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_server.compare_objects = php_phongo_server_compare_objects;
 
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_MONGOS"), 0x01 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_STANDALONE"), 0x02 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_ARBITER"), 0x03 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_SECONDARY"), 0x04 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_PRIMARY"), 0x05 TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_UNKNOWN"), MONGOC_SERVER_UNKNOWN TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_STANDALONE"), MONGOC_SERVER_STANDALONE TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_MONGOS"), MONGOC_SERVER_MONGOS TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_POSSIBLE_PRIMARY"), MONGOC_SERVER_POSSIBLE_PRIMARY TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_PRIMARY"), MONGOC_SERVER_RS_PRIMARY TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_SECONDARY"), MONGOC_SERVER_RS_SECONDARY TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_ARBITER"), MONGOC_SERVER_RS_ARBITER TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_OTHER"), MONGOC_SERVER_RS_OTHER TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_GHOST"), MONGOC_SERVER_RS_GHOST TSRMLS_CC);
+
 
 	return SUCCESS;
 }
