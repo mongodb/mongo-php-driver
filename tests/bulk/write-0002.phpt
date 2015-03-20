@@ -44,7 +44,7 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   bool(true)
   ["executed"]=>
   bool(false)
-  ["hint"]=>
+  ["server_id"]=>
   int(0)
   ["write_concern"]=>
   NULL
@@ -58,8 +58,8 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   bool(true)
   ["executed"]=>
   bool(true)
-  ["hint"]=>
-  int(0)
+  ["server_id"]=>
+  int(1)
   ["write_concern"]=>
   array(5) {
     ["w"]=>

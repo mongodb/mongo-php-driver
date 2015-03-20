@@ -313,7 +313,7 @@ HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS
 
 	add_assoc_bool_ex(&retval, ZEND_STRS("ordered"), intern->bulk->ordered);
 	add_assoc_bool_ex(&retval, ZEND_STRS("executed"), intern->bulk->executed);
-	add_assoc_long_ex(&retval, ZEND_STRS("hint"), intern->bulk->hint);
+	add_assoc_long_ex(&retval, ZEND_STRS("server_id"), intern->bulk->hint);
 
 	if (intern->bulk->write_concern) {
 		zval *write_concern = NULL;

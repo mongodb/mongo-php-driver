@@ -134,7 +134,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
       ["username"]=>
       string(16) "abernathy.audrey"
     }
-    ["hint"]=>
+    ["server_id"]=>
     int(1)
     ["is_command_cursor"]=>
     bool(false)

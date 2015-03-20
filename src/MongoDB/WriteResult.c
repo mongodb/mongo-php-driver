@@ -171,7 +171,7 @@ PHP_METHOD(WriteResult, getServer)
 	}
 
 
-	phongo_server_init(return_value, intern->hint, NULL TSRMLS_CC);
+	phongo_server_init(return_value, intern->client, intern->server_id TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto array WriteResult::getUpsertedIds()

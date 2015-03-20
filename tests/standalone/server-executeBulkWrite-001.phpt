@@ -6,8 +6,8 @@ MongoDB\Driver\Server::executeBulkWrite()
 <?php
 require_once "tests/utils/basic.inc";
 
-$parsed = parse_url(STANDALONE);
-$server = new MongoDB\Driver\Server($parsed["host"], $parsed["port"]);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
+$server = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()))->getServer();
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1, 'x' => 1));

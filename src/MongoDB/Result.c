@@ -27,6 +27,8 @@
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
+#include <mongoc-cursor-private.h>
+#include <mongoc-bulk-operation-private.h>
 
 /* PHP Core stuff */
 #include <php.h>
@@ -175,7 +177,6 @@ PHP_METHOD(Result, toArray)
 PHP_METHOD(Result, getServer)
 {
 	php_phongo_result_t *intern;
-	mongoc_host_list_t        host;
 	(void)return_value_ptr; (void)return_value_used;
 
 
@@ -186,8 +187,7 @@ PHP_METHOD(Result, getServer)
 	}
 
 
-	mongoc_cursor_get_host(intern->cursor, &host);
-	phongo_server_init(return_value, intern->hint, &host TSRMLS_CC);
+	phongo_server_init(return_value, intern->cursor->client, intern->server_id TSRMLS_CC);
 }
 /* }}} */
 

@@ -7,11 +7,11 @@ MongoDB\Driver\Server::__construct()
 require_once "tests/utils/basic.inc";
 
 $parsed = parse_url(STANDALONE);
-$server = new MongoDB\Driver\Server($parsed["host"], $parsed["port"]);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
+$server = $manager->executeInsert(NS, array("foo" => "bar"))->getServer();
 
 var_dump($server->getHost() == $parsed["host"]);
 var_dump($server->getPort() == $parsed["port"]);
-
 ?>
 ===DONE===
 <?php exit(0); ?>

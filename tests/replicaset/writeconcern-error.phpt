@@ -16,6 +16,8 @@ $w = new MongoDB\Driver\WriteConcern(30, 100);
 try {
     $retval = $manager->executeBulkWrite(NS, $bulk, $w);
 } catch(MongoDB\Driver\BulkWriteException $e) {
+    $server = $e->getWriteResult()->getServer();
+    $server->getPort();
     printWriteResult($e->getWriteResult(), false);
 }
 ?>

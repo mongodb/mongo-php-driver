@@ -63,7 +63,7 @@ PHP_METHOD(Manager, __construct)
 	int                       uri_len;
 	zval                     *options = NULL;
 	zval                     *driverOptions = NULL;
-	php_stream_context       *ctx = NULL;
+	(void)return_value; (void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -76,45 +76,11 @@ PHP_METHOD(Manager, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	intern->client = mongoc_client_new(uri);
+	intern->client = php_phongo_make_mongo_client(uri, driverOptions);
 	if (!intern->client) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to parse MongoDB URI");
 		return;
 	}
-	if (driverOptions) {
-		zval **tmp;
-
-		if (zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
-			const mongoc_uri_t *muri = mongoc_client_get_uri(intern->client);
-			const char *mech = mongoc_uri_get_auth_mechanism(muri);
-			ctx = php_stream_context_from_zval(*tmp, PHP_FILE_NO_DEFAULT_CONTEXT);
-
-			/* Check if we are doing X509 auth, in which case extract the username (subject) from the cert if no username is provided */
-			if (mech && !strcasecmp(mech, "MONGODB-X509") && !mongoc_uri_get_username(muri)) {
-				zval **pem;
-
-				if (SUCCESS == php_stream_context_get_option(ctx, "ssl", "local_cert", &pem)) {
-					char filename[MAXPATHLEN];
-
-					convert_to_string_ex(pem);
-					if (VCWD_REALPATH(Z_STRVAL_PP(pem), filename)) {
-						mongoc_ssl_opt_t  ssl_options;
-
-						ssl_options.pem_file = filename;
-						mongoc_client_set_ssl_opts(intern->client, &ssl_options);
-					}
-				}
-			}
-		}
-
-		if (zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
-			convert_to_string(*tmp);
-
-			zend_alter_ini_entry_ex((char *)"phongo.debug_log", sizeof("phongo.debug_log") , Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
-		}
-	}
-
-	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\Result Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
@@ -127,6 +93,7 @@ PHP_METHOD(Manager, executeCommand)
 	zval                     *command;
 	zval                     *readPreference = NULL;
 	php_phongo_command_t    *cmd;
+	(void)return_value_ptr;
 
 
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -137,7 +104,7 @@ PHP_METHOD(Manager, executeCommand)
 
 
 	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
-	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\Result Manager::executeQuery(string $namespace, MongoDB\Driver\Query $zquery[, MongoDB\Driver\ReadPreference $readPreference = null])
@@ -149,6 +116,7 @@ PHP_METHOD(Manager, executeQuery)
 	int                       namespace_len;
 	zval                     *zquery;
 	zval                     *readPreference = NULL;
+	(void)return_value_ptr;
 
 
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -158,7 +126,7 @@ PHP_METHOD(Manager, executeQuery)
 	}
 
 
-	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
+	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\WriteResult Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
@@ -171,6 +139,7 @@ PHP_METHOD(Manager, executeBulkWrite)
 	zval                      *zbulk;
 	zval                      *zwrite_concern = NULL;
 	php_phongo_bulkwrite_t   *bulk;
+	(void)return_value_ptr;
 
 
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -181,7 +150,7 @@ PHP_METHOD(Manager, executeBulkWrite)
 
 
 	bulk = (php_phongo_bulkwrite_t *)zend_object_store_get_object(zbulk TSRMLS_CC);
-	phongo_execute_write(intern->client, namespace, bulk->bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), 0, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_write(intern->client, namespace, bulk->bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\WriteResult Manager::executeInsert(string $namespace, array|object $document[, MongoDB\Driver\WriteConcern $writeConcern = null])
@@ -194,6 +163,7 @@ PHP_METHOD(Manager, executeInsert)
 	zval                     *document;
 	zval                     *zwrite_concern = NULL;
 	bson_t                   *bson;
+	(void)return_value_ptr;
 
 
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -205,7 +175,7 @@ PHP_METHOD(Manager, executeInsert)
 
 	bson = bson_new();
 	zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
-	phongo_execute_single_insert(intern->client, namespace, bson, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), return_value, return_value_used TSRMLS_CC);
+	phongo_execute_single_insert(intern->client, namespace, bson, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 	bson_clear(&bson);
 }
 /* }}} */
@@ -223,6 +193,7 @@ PHP_METHOD(Manager, executeUpdate)
 	bson_t                   *query;
 	bson_t                   *update;
 	mongoc_update_flags_t     flags = MONGOC_UPDATE_NONE;
+	(void)return_value_ptr;
 
 
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -244,7 +215,7 @@ PHP_METHOD(Manager, executeUpdate)
 		flags |= MONGOC_UPDATE_MULTI_UPDATE;
 	}
 
-	phongo_execute_single_update(intern->client, namespace, query, update, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), flags, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_single_update(intern->client, namespace, query, update, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, flags, return_value, return_value_used TSRMLS_CC);
 	bson_clear(&query);
 	bson_clear(&update);
 }
@@ -261,6 +232,7 @@ PHP_METHOD(Manager, executeDelete)
 	zval                     *zwrite_concern = NULL;
 	bson_t                   *bson;
 	mongoc_delete_flags_t     flags = MONGOC_DELETE_NONE;
+	(void)return_value_ptr;
 
 
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -275,7 +247,7 @@ PHP_METHOD(Manager, executeDelete)
 	}
 	bson = bson_new();
 	zval_to_bson(query, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
-	phongo_execute_single_delete(intern->client, namespace, bson, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), flags, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_single_delete(intern->client, namespace, bson, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, flags, return_value, return_value_used TSRMLS_CC);
 	bson_clear(&bson);
 }
 /* }}} */

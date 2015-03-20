@@ -24,6 +24,8 @@
 #	include "config.h"
 #endif
 
+#include <strings.h>
+
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
@@ -53,51 +55,9 @@ zend_object_handlers php_phongo_handler_server;
    Constructs a new Server */
 PHP_METHOD(Server, __construct)
 {
-	php_phongo_server_t      *intern;
-	zend_error_handling       error_handling;
-	char                     *host;
-	int                       host_len;
-	long                      port;
-	zval                     *options = NULL;
-	zval                     *driverOptions = NULL;
-	mongoc_uri_t             *uri;
-	php_stream_context       *ctx = NULL;
+	(void)return_value; (void)return_value_used; (void)return_value_ptr; (void)ZEND_NUM_ARGS(); (void)getThis();
 
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl|a!a!", &host, &host_len, &port, &options, &driverOptions) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
-		return;
-	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-
-	uri = mongoc_uri_new_for_host_port(host, port);
-	intern->client = mongoc_client_new_from_uri(uri);
-
-	if (!intern->client) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to parse MongoDB URI");
-		return;
-	}
-
-	if (driverOptions) {
-		zval **tmp;
-
-		if (zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
-			ctx = php_stream_context_from_zval(*tmp, PHP_FILE_NO_DEFAULT_CONTEXT);
-		}
-
-		if (zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
-			convert_to_string(*tmp);
-
-			zend_alter_ini_entry_ex((char *)"phongo.debug_log", sizeof("phongo.debug_log") , Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
-		}
-	}
-
-	mongoc_client_set_stream_initiator(intern->client, phongo_stream_initiator, ctx);
-	mongoc_uri_destroy(uri);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Accessing private constructor");
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\Result Server::executeCommand(string $db, MongoDB\Driver\Command $command)
@@ -109,6 +69,7 @@ PHP_METHOD(Server, executeCommand)
 	int                       db_len;
 	zval                     *command;
 	php_phongo_command_t     *cmd;
+	(void)return_value_ptr;
 
 
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -119,7 +80,7 @@ PHP_METHOD(Server, executeCommand)
 
 
 	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
-	phongo_execute_command(intern->client, db, cmd->bson, NULL, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, db, cmd->bson, NULL, intern->server_id, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\Result Server::executeQuery(string $namespace, MongoDB\Driver\Query $zquery)
@@ -130,6 +91,7 @@ PHP_METHOD(Server, executeQuery)
 	char                     *namespace;
 	int                       namespace_len;
 	zval                     *zquery;
+	(void)return_value_ptr;
 
 
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -139,7 +101,7 @@ PHP_METHOD(Server, executeQuery)
 	}
 
 
-	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), NULL, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), NULL, intern->server_id, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\WriteResult Server::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk)
@@ -151,6 +113,7 @@ PHP_METHOD(Server, executeBulkWrite)
 	int                       namespace_len;
 	zval                     *zbulk;
 	php_phongo_bulkwrite_t  *bulk;
+	(void)return_value_ptr;
 
 
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -161,7 +124,7 @@ PHP_METHOD(Server, executeBulkWrite)
 
 
 	bulk = (php_phongo_bulkwrite_t *)zend_object_store_get_object(zbulk TSRMLS_CC);
-	phongo_execute_write(intern->client, namespace, bulk->bulk, NULL, intern->hint, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_write(intern->client, namespace, bulk->bulk, NULL, intern->server_id, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto string Server::getHost()
@@ -170,6 +133,7 @@ PHP_METHOD(Server, getHost)
 {
 	php_phongo_server_t      *intern;
 	const mongoc_host_list_t *hosts;
+	(void)return_value_ptr;
 
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
@@ -177,14 +141,10 @@ PHP_METHOD(Server, getHost)
 		return;
 	}
 
-	/* FIXME: Not implemented */
-	if (intern->client) {
-		hosts = mongoc_uri_get_hosts(mongoc_client_get_uri(intern->client));
-		if (hosts) {
-			RETURN_STRING(hosts->host, 1);
-		}
+	hosts = mongoc_uri_get_hosts(mongoc_client_get_uri(intern->client));
+	if (hosts) {
+		RETURN_STRING(hosts->host, 1);
 	}
-	RETURN_STRING("localhost", 1);
 }
 /* }}} */
 /* {{{ proto array Server::getInfo()
@@ -221,8 +181,8 @@ PHP_METHOD(Server, getLatency)
    Returns the port used to create this Server */
 PHP_METHOD(Server, getPort)
 {
-	php_phongo_server_t      *intern;
-	const mongoc_host_list_t *hosts;
+	php_phongo_server_t         *intern;
+	mongoc_server_description_t *sd;
 
 
 	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -231,16 +191,11 @@ PHP_METHOD(Server, getPort)
 		return;
 	}
 
-
-	/* FIXME: Not implemented */
-	if (intern->client) {
-		hosts = mongoc_uri_get_hosts(mongoc_client_get_uri(intern->client));
-		if (hosts) {
-			RETURN_LONG(hosts->port);
-		}
+	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
+		RETURN_LONG(sd->host.port);
 	}
 
-	RETURN_LONG(27017);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
 }
 /* }}} */
 /* {{{ proto integer Server::getState()
@@ -304,19 +259,6 @@ PHP_METHOD(Server, isPassive)
 }
 /* }}} */
 
-/**
- * Server abstracts a socket connection to a single MongoDB server. The server
- * itself may be a mongod (stand-alone or replica set node) or mongos process.
- *
- * Users will typically not construct this class directly. The common use case
- * will be connection to a cluster of servers via a URI with the Manager class.
- *
- * This class does not utilize read preferences, since there is only a single
- * single socket on which to send a command, query, or write.
- *
- * Operation methods do not take socket-level options (e.g. socketTimeoutMS).
- * Those options should be specified during construction.
- */
 /* {{{ MongoDB\Driver\Server */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server___construct, 0, 0, 2)
@@ -367,7 +309,7 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_server_me[] = {
-	PHP_ME(Server, __construct, ai_Server___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, __construct, ai_Server___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(Server, executeCommand, ai_Server_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeBulkWrite, ai_Server_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -390,29 +332,26 @@ static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{
 {
     php_phongo_server_t *intern1;
     php_phongo_server_t *intern2;
+	mongoc_server_description_t *sd1, *sd2;
 
     intern1 = (php_phongo_server_t *)zend_object_store_get_object(o1 TSRMLS_CC);
     intern2 = (php_phongo_server_t *)zend_object_store_get_object(o2 TSRMLS_CC);
 
-	/* FIXME: BUGBUG: We need a way to get mongoc_host from WriteResults */
-	if (intern1 && intern2) {
-		return 0;
-	}
-    /*
-	if (!strcmp(intern1->host->host_and_port, intern2->host->host_and_port)) {
-		return 0;
-	}
-     */
+	sd1 = mongoc_topology_description_server_by_id(&intern1->client->topology->description, intern1->server_id);
+	sd2 = mongoc_topology_description_server_by_id(&intern2->client->topology->description, intern2->server_id);
 
-	return 1;
+	if (!sd1 || !sd2) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
+		return 0;
+	}
+
+	return strcasecmp(sd1->host.host_and_port, sd2->host.host_and_port);
 } /* }}} */
 /* }}} */
 /* {{{ php_phongo_server_t object handlers */
 static void php_phongo_server_free_object(void *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_server_t *intern = (php_phongo_server_t*)object;
-
-	mongoc_client_destroy(intern->client);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 

@@ -80,7 +80,7 @@ object(MongoDB\Driver\Result)#%d (%d) {
   }
   ["firstBatch"]=>
   NULL
-  ["hint"]=>
+  ["server_id"]=>
   int(1)
   ["is_command_cursor"]=>
   bool(false)
@@ -148,7 +148,7 @@ object(MongoDB\Driver\Result)#%d (%d) {
   }
   ["firstBatch"]=>
   NULL
-  ["hint"]=>
+  ["server_id"]=>
   int(1)
   ["is_command_cursor"]=>
   bool(false)
@@ -216,7 +216,7 @@ object(MongoDB\Driver\Result)#%d (%d) {
   }
   ["firstBatch"]=>
   NULL
-  ["hint"]=>
+  ["server_id"]=>
   int(1)
   ["is_command_cursor"]=>
   bool(false)
@@ -284,7 +284,7 @@ object(MongoDB\Driver\Result)#%d (%d) {
   }
   ["firstBatch"]=>
   NULL
-  ["hint"]=>
+  ["server_id"]=>
   int(1)
   ["is_command_cursor"]=>
   bool(false)
@@ -352,7 +352,7 @@ object(MongoDB\Driver\Result)#%d (%d) {
   }
   ["firstBatch"]=>
   NULL
-  ["hint"]=>
+  ["server_id"]=>
   int(1)
   ["is_command_cursor"]=>
   bool(false)

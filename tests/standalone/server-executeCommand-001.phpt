@@ -6,8 +6,8 @@ MongoDB\Driver\Server::executeCommand()
 <?php
 require_once "tests/utils/basic.inc";
 
-$parsed = parse_url(STANDALONE);
-$server = new MongoDB\Driver\Server($parsed["host"], $parsed["port"]);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
+$server = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()))->getServer();
 
 $command = new MongoDB\Driver\Command(array('isMaster' => 1));
 $result = $server->executeCommand(DATABASE_NAME, $command);

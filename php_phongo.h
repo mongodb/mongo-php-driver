@@ -102,15 +102,15 @@ PHONGO_API zval* phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_
 
 PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
 
-void phongo_server_init                              (zval *return_value, int server_hint, mongoc_host_list_t *host TSRMLS_DC);
+void phongo_server_init                              (zval *return_value, mongoc_client_t *client, int server_id TSRMLS_DC);
 bool                     phongo_query_init           (php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC);
 mongoc_bulk_operation_t* phongo_bulkwrite_init      (zend_bool ordered);
-bool                     phongo_execute_write        (mongoc_client_t *client, const char *namespace, mongoc_bulk_operation_t *bulk, const mongoc_write_concern_t *write_concern, int server_hint, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_command      (mongoc_client_t *client, const char *db, const bson_t *command, const mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_query        (mongoc_client_t *client, const char *namespace, const php_phongo_query_t *query, const mongoc_read_prefs_t *read_preference, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_single_insert(mongoc_client_t *client, const char *namespace, const bson_t *doc, const mongoc_write_concern_t *write_concern, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_single_update(mongoc_client_t *client, const char *namespace, const bson_t *query, const bson_t *update, const mongoc_write_concern_t *write_concern, mongoc_update_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_single_delete(mongoc_client_t *client, const char *namespace, const bson_t *query, const mongoc_write_concern_t *write_concern, mongoc_delete_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC);
+bool                     phongo_execute_write        (mongoc_client_t *client, const char *namespace, mongoc_bulk_operation_t *bulk, const mongoc_write_concern_t *write_concern, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_command      (mongoc_client_t *client, const char *db,        const bson_t *command,           const mongoc_read_prefs_t *read_preference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_query        (mongoc_client_t *client, const char *namespace, const php_phongo_query_t *query, const mongoc_read_prefs_t *read_preference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_single_insert(mongoc_client_t *client, const char *namespace, const bson_t *doc, const mongoc_write_concern_t *write_concern, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_single_update(mongoc_client_t *client, const char *namespace, const bson_t *query, const bson_t *update, const mongoc_write_concern_t *write_concern, int server_id, mongoc_update_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_single_delete(mongoc_client_t *client, const char *namespace, const bson_t *query, const mongoc_write_concern_t *write_concern, int server_id, mongoc_delete_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC);
 
 mongoc_stream_t*         phongo_stream_initiator     (const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error);
 zend_object_iterator*    phongo_result_get_iterator  (zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
@@ -123,6 +123,7 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t *write_concern);
 void php_phongo_result_to_zval(zval *retval, php_phongo_result_t *result);
 
+mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptions);
 void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS_DC);
 void php_phongo_cursor_new_from_result(zval *object, php_phongo_result_t *result TSRMLS_DC);
 void php_phongo_cursor_id_new_from_id(zval *object, int64_t cursorid TSRMLS_DC);

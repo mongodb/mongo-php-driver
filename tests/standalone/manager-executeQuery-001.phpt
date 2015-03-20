@@ -103,14 +103,14 @@ object(MongoDB\Driver\Result)#%d (%d) {
     ["y"]=>
     int(4)
   }
-  ["hint"]=>
+  ["server_id"]=>
   int(1)
   ["is_command_cursor"]=>
   bool(false)
 }
 bool(true)
 string(%d) "%s"
-int(27017)
+int(2000)
 array(1) {
   [0]=>
   array(2) {

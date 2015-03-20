@@ -99,7 +99,7 @@ object(MongoDB\Driver\Result)#%d (%d) {
     ["ok"]=>
     float(1)
   }
-  ["hint"]=>
+  ["server_id"]=>
   int(1)
   ["is_command_cursor"]=>
   bool(false)
