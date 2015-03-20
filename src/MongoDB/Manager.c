@@ -76,7 +76,7 @@ PHP_METHOD(Manager, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	intern->client = php_phongo_make_mongo_client(uri, driverOptions);
+	intern->client = php_phongo_make_mongo_client(uri, driverOptions TSRMLS_CC);
 	if (!intern->client) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to parse MongoDB URI");
 		return;
@@ -274,7 +274,7 @@ PHP_METHOD(Manager, getServers)
 
 		MAKE_STD_ZVAL(obj);
 
-		phongo_server_init(obj, intern->client, ((mongoc_server_description_t *)set->items[i].item)->id);
+		phongo_server_init(obj, intern->client, ((mongoc_server_description_t *)set->items[i].item)->id TSRMLS_CC);
 		add_next_index_zval(return_value, obj);
 	}
 }

@@ -123,7 +123,7 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t *write_concern);
 void php_phongo_result_to_zval(zval *retval, php_phongo_result_t *result);
 
-mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptions);
+mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptions TSRMLS_DC);
 void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS_DC);
 void php_phongo_cursor_new_from_result(zval *object, php_phongo_result_t *result TSRMLS_DC);
 void php_phongo_cursor_id_new_from_id(zval *object, int64_t cursorid TSRMLS_DC);

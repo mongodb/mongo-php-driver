@@ -178,7 +178,8 @@ PHONGO_API zval* phongo_throw_exception_from_bson_error_t(bson_error_t *error TS
 }
 static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain, const char *message, void *user_data)
 {
-	(void)user_data;TSRMLS_FETCH_FROM_CTX(user_data);
+	TSRMLS_FETCH_FROM_CTX(user_data);
+	(void)user_data;
 
 	switch(log_level) {
 	case MONGOC_LOG_LEVEL_ERROR:
@@ -772,6 +773,7 @@ ssize_t phongo_stream_poll (mongoc_stream_poll_t *streams, size_t nstreams, int3
 	php_pollfd *fds = NULL;
 	size_t i;
 	ssize_t rval = -1;
+	TSRMLS_FETCH();
 
 	fds = emalloc(sizeof(*fds) * nstreams);
 	for (i = 0; i < nstreams; i++) {
@@ -1198,7 +1200,7 @@ void php_phongo_result_to_zval(zval *retval, php_phongo_result_t *result) /* {{{
 } /* }}} */
 
 
-mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptions) /* {{{ */
+mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
 {
 	php_stream_context       *ctx = NULL;
 	mongoc_client_t *client = mongoc_client_new(uri);
