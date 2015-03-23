@@ -353,6 +353,8 @@ dnl }}}
   PHP_NEW_EXTENSION(phongo,    $PHONGO_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
   PHP_ADD_EXTENSION_DEP(phongo, spl)
 
+  m4_include(src/libbson/build/autotools/CheckAtomics.m4)
+  m4_include(src/libbson/build/autotools/FindDependencies.m4)
   m4_include(src/libbson/build/autotools/m4/ac_compile_check_sizeof.m4)
   m4_include(src/libbson/build/autotools/m4/ac_create_stdint_h.m4)
   AC_CREATE_STDINT_H([$srcdir/src/libbson/src/bson/bson-stdint.h])
@@ -381,7 +383,7 @@ dnl }}}
   else
     BSON_HAVE_STDBOOL_H=0
   fi
-  AC_SUBST(HAVE_STDBOOL_H)
+  AC_SUBST(BSON_HAVE_STDBOOL_H)
 
   BSON_OS=1
   AC_SUBST(BSON_OS)
