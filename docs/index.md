@@ -1,11 +1,11 @@
-# What is PHongo?
+# What is pecl/mongodb?
 
-[Phongo](https://github.com/10gen-labs/mongo-php-driver-prototype) is an experimental MongoDB driver for PHP,
-likely replacing the
+[pecl/mongodb](https://github.com/10gen-labs/mongo-php-driver-prototype) is an
+experimental MongoDB driver for PHP, likely replacing the
 [mongodb/mongo-php-driver](https://github.com/mongodb/mongo-php-driver) driver in the
 near future.
 
-Phongo is written ontop of [libmongoc](https://github.com/mongodb/mongo-c-driver) and
+pecl/mongodb is written ontop of [libmongoc](https://github.com/mongodb/mongo-c-driver) and
 [libbson](https://github.com/mongodb/libbson), and is meant to be as basic as possible.
 Core MongoDB concepts are implemented, but everything else is left for other toolkits
 to come in and provide pretty and flexible bindings that make sense for their ecosystem.
@@ -26,8 +26,8 @@ them using, for example, Composer.
 
 To build and install the driver:
 
-	$ wget https://github.com/10gen-labs/mongo-php-driver-prototype/releases/download/0.1.5/phongo-0.1.5.tgz
-	$ pecl install phongo-0.1.5.tgz
-	$ echo "extension=phongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+	$ wget https://github.com/10gen-labs/mongo-php-driver-prototype/releases/download/0.2.0/mongodb-0.2.0.tgz
+	$ pecl install mongodb-0.2.0.tgz
+	$ echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
 

@@ -1,4 +1,4 @@
-# PHongo (PHP MongoDB driver)
+# pecl/mongodb (MongoDB driver for PHP)
 
 The purpose of this driver is to provide a thin glue between MongoDB
 and PHP, implementing only fundamental and performance-critical components
@@ -28,9 +28,9 @@ and installed manually.
 To build and install the driver:
 
 ```
-$ wget https://github.com/10gen-labs/mongo-php-driver-prototype/releases/download/0.1.5/phongo-0.1.5.tgz
-$ pecl install phongo-0.1.5.tgz
-$ echo "extension=phongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+$ wget https://github.com/10gen-labs/mongo-php-driver-prototype/releases/download/0.2.0/mongodb-0.2.0.tgz
+$ pecl install mongodb-0.2.0.tgz
+$ echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```
 
 ## Contributing

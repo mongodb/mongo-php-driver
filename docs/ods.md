@@ -1,6 +1,6 @@
 # Object serialization
 
-PHongo exports 4 public interfaces to facilitate serializing PHP classes to and from BSON.
+pecl/mongodb exports 4 public interfaces to facilitate serializing PHP classes to and from BSON.
 
 - BSON\Type
     * (no methods)
