@@ -41,6 +41,7 @@ function get_role($file) {
     case "def":
     case "m4":
     case "c":
+    case "in":
     case "h":
         return "src";
 
@@ -81,9 +82,11 @@ function get_files() {
         "src/libbson/build/autotools/m4/*.{m4}",
         "src/libbson/src/bson/*.{c,h}",
         "src/libbson/src/yajl/*.{c,h}",
+        "src/libbson/src/bson/*.h.{in}",
         "src/libmongoc/build/autotools/*.{m4}",
         "src/libmongoc/build/autotools/m4/*.{m4}",
         "src/libmongoc/src/mongoc/*.{c,h,def,defs}",
+        "src/libmongoc/src/mongoc/*.h.{in}",
 
         "tests/onnect/*.{phpt}",
         "tests/bulk/*.{phpt}",
