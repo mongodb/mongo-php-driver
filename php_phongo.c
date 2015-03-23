@@ -1645,7 +1645,7 @@ void _phongo_debug_bson(bson_t *bson)
 
 /* {{{ INI entries */
 PHP_INI_BEGIN()
-	STD_PHP_INI_ENTRY((char *)"phongo.debug_log", (char *)"", PHP_INI_ALL, OnUpdateString, debug_log, zend_phongo_globals, phongo_globals)
+	STD_PHP_INI_ENTRY("phongo.debug_log", "", PHP_INI_ALL, OnUpdateString, debug_log, zend_phongo_globals, phongo_globals)
 PHP_INI_END()
 /* }}} */
 
