@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package version="2.1" xmlns="http://pear.php.net/dtd/package-2.1" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0     http://pear.php.net/dtd/tasks-1.0.xsd     http://pear.php.net/dtd/package-2.1     http://pear.php.net/dtd/package-2.1.xsd">
- <name>phongo</name>
+ <name>mongodb</name>
  <channel>pecl.php.net</channel>
- <summary>PHongo (PHP MongoDB driver)</summary>
+ <summary>MongoDB driver for PHP</summary>
  <description>
 The purpose of this driver is to provide exceptionally thin glue between MongoDB
 and PHP, implementing only fundemental and performance-critical components
@@ -47,6 +47,6 @@ necessary to build a fully-functional MongoDB driver.
    </pearinstaller>
   </required>
  </dependencies>
- <providesextension>phongo</providesextension>
+ <providesextension>mongodb</providesextension>
  <extsrcrelease/>
 </package>
