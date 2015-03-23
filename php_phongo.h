@@ -25,13 +25,13 @@
 #include <bson.h>
 #include <mongoc.h>
 
-#define phpext_phongo_ptr &phongo_module_entry
-extern zend_module_entry phongo_module_entry;
+#define phpext_mongodb_ptr &mongodb_module_entry
+extern zend_module_entry mongodb_module_entry;
 
 /* FIXME: Its annoying to bump version. Move into phongo_version.h.in */
-#define PHONGO_VERSION_S "0.2.0"
-#define PHONGO_STABILITY_S "alpha"
-#define PHONGO_VERSION   PHONGO_VERSION_S
+#define MONGODB_VERSION_S "0.2.0"
+#define MONGODB_STABILITY_S "alpha"
+#define MONGODB_VERSION   MONGODB_VERSION_S
 
 #ifdef PHP_WIN32
 #	define PHONGO_API __declspec(dllexport)
@@ -48,15 +48,15 @@ extern zend_module_entry phongo_module_entry;
 #	define PHONGO_STREAM_CTX(x) NULL
 #endif
 
-ZEND_BEGIN_MODULE_GLOBALS(phongo)
+ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char *debug_log;
 	bson_mem_vtable_t bsonMemVTable;
-ZEND_END_MODULE_GLOBALS(phongo)
+ZEND_END_MODULE_GLOBALS(mongodb)
 
 #ifdef ZTS
-#	define PHONGO_G(v) TSRMG(phongo_globals_id, zend_phongo_globals *, v)
+#	define MONGODB_G(v) TSRMG(mongodb_globals_id, zend_mongodb_globals *, v)
 #else
-#	define PHONGO_G(v) (phongo_globals.v)
+#	define MONGODB_G(v) (mongodb_globals.v)
 #endif
 
 #include "php_phongo_classes.h"

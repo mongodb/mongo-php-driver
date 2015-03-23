@@ -1,8 +1,8 @@
 .PHONY: coverage testclean ChangeLog RELEASE package.xml docs
 
 DATE=`date +%Y-%m-%d--%H-%M-%S`
-PHONGO_VERSION=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_VERSION;'`
-PHONGO_STABILITY=`php -n -dextension=modules/phongo.so -r 'echo PHONGO_STABILITY;'`
+MONGODB_VERSION=`php -n -dextension=modules/mongodb.so -r 'echo MONGODB_VERSION;'`
+MONGODB_STABILITY=`php -n -dextension=modules/mongodb.so -r 'echo MONGODB_STABILITY;'`
 LIB_PATH=vendor/mongodb/mongodb
 COMPOSER_ARGS=update --no-interaction --prefer-source
 PHPUNIT_ARGS=--process-isolation
@@ -43,7 +43,7 @@ lcov-local:
 	lcov --gcov-tool $(top_srcdir)/.llvm-cov.sh --capture --derive-func-data --directory . --output-file .coverage.lcov --no-external
 
 coverage: mv-coverage lcov-local
-	genhtml .coverage.lcov --legend --title "phongo code coverage" --output-directory coverage
+	genhtml .coverage.lcov --legend --title "mongodb code coverage" --output-directory coverage
 
 
 coveralls: mv-coverage lcov-coveralls
@@ -101,14 +101,14 @@ testclean:
 		find $(top_srcdir)/tests/$$group -type f -name "*.diff" -o -name "*.exp" -o -name "*.log" -o -name "*.mem" -o -name "*.out" -o -name "*.php" -o -name "*.sh" | xargs rm -f; \
 	done;
 
-phongodep:
+mongodbdep:
 
 release: test ChangeLog RELEASE package.xml
 	pecl package package.xml
 	@echo "Please run:"
-	@echo "		" git add RELEASE-$(PHONGO_VERSION)
-	@echo "		" git commit -m \"Add $(PHONGO_VERSION) release notes\"
-	@echo "		" git tag -a -m \"Release $(PHONGO_VERSION)\" $(PHONGO_VERSION)
+	@echo "		" git add RELEASE-$(MONGODB_VERSION)
+	@echo "		" git commit -m \"Add $(MONGODB_VERSION) release notes\"
+	@echo "		" git tag -a -m \"Release $(MONGODB_VERSION)\" $(MONGODB_VERSION)
 	@echo "		" git push --tags
 	@echo "		" make release-docs
 	@echo "And don't forget to bump version in php_phongo.h"
@@ -120,10 +120,10 @@ release-docs: docs
 	mkdocs gh-deploy --clean
 
 package.xml:
-	php bin/prep-release.php $(PHONGO_VERSION)-$(PHONGO_STABILITY)
+	php bin/prep-release.php $(MONGODB_VERSION)-$(MONGODB_STABILITY)
 
 RELEASE:
-	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short --since="$$(git show -s --format=%ad `git rev-list --tags --max-count=1`)" > RELEASE-$(PHONGO_VERSION)
+	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short --since="$$(git show -s --format=%ad `git rev-list --tags --max-count=1`)" > RELEASE-$(MONGODB_VERSION)
 
 ChangeLog:
 	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > ChangeLog

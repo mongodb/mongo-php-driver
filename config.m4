@@ -70,7 +70,7 @@ AC_DEFUN([PHP_BSON_CLOCK],
 
 MONGOC_SYMBOL_SUFFIX="priv"
 
-if test "$PHONGO" != "no"; then
+if test "$MONGODB" != "no"; then
   PHP_ARG_ENABLE(developer-flags, whether to enable developer build flags,
   [  --enable-developer-flags   Enable developer flags],, no)
 
@@ -126,10 +126,10 @@ if test "$PHONGO" != "no"; then
       EXTRA_LDFLAGS="$COVERAGE_CFLAGS"
   fi
 
-  PHONGO_BSON="\
+  MONGODB_BSON="\
       src/bson.c \
   ";
-  PHONGO_BSON_CLASSES="\
+  MONGODB_BSON_CLASSES="\
     src/BSON/Type.c \
     src/BSON/Unserializable.c \
     src/BSON/Serializable.c \
@@ -143,10 +143,10 @@ if test "$PHONGO" != "no"; then
     src/BSON/Timestamp.c \
     src/BSON/UTCDatetime.c \
   ";
-  PHONGO_ROOT="\
+  MONGODB_ROOT="\
       php_phongo.c \
   ";
-  PHONGO_MONGODB_CLASSES="\
+  MONGODB_MONGODB_CLASSES="\
       src/MongoDB/Command.c \
       src/MongoDB/Cursor.c \
       src/MongoDB/CursorId.c \
@@ -161,7 +161,7 @@ if test "$PHONGO" != "no"; then
       src/MongoDB/WriteError.c \
       src/MongoDB/WriteResult.c \
   ";
-  PHONGO_MONGODB_EXCEPTIONS="\
+  MONGODB_MONGODB_EXCEPTIONS="\
       src/MongoDB/Exception.c \
       src/MongoDB/RuntimeException.c \
       src/MongoDB/InvalidArgumentException.c \
@@ -268,15 +268,15 @@ MONGOC_SOURCES_SASL=mongoc-sasl.c
 
 
   if test "$ext_shared" = "no"; then
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $PHONGO_BSON)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $PHONGO_BSON_CLASSES)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $PHONGO_MONGODB_CLASSES)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $PHONGO_MONGODB_EXCEPTIONS)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_BSON)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_BSON_CLASSES)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_CLASSES)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_EXCEPTIONS)
   else
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $PHONGO_BSON,               [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $PHONGO_BSON_CLASSES,       [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $PHONGO_MONGODB_CLASSES,    [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $PHONGO_MONGODB_EXCEPTIONS, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_BSON,               [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_BSON_CLASSES,       [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_CLASSES,    [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_EXCEPTIONS, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
   fi
 
 dnl libmongoc stuff {{{
@@ -293,7 +293,7 @@ dnl libmongoc stuff {{{
   PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL, [$STD_CFLAGS], shared_objects_mongodb, yes)
 
 
-  PHP_SETUP_OPENSSL(PHONGO_SHARED_LIBADD)
+  PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD)
   MONGOC_ENABLE_SSL=1
   AC_SUBST(MONGOC_ENABLE_SSL)
 
@@ -301,56 +301,56 @@ dnl libmongoc stuff {{{
 PHP_ARG_WITH(mongodb-sasl, Build with Cyrus SASL support,
 [  --with-mongodb-sasl[=DIR]     mongodb: Include Cyrus SASL support], auto, yes)
 
-if test "$PHP_PHONGO_SASL" != "no"; then
+if test "$PHP_MONGODB_SASL" != "no"; then
   AC_MSG_CHECKING(for SASL)
-  for i in $PHONGO_SASL /usr /usr/local; do
+  for i in $MONGODB_SASL /usr /usr/local; do
     if test -f $i/include/sasl/sasl.h; then
-      PHONGO_SASL_DIR=$i
+      MONGODB_SASL_DIR=$i
       AC_MSG_RESULT(found in $i)
       break
     fi
   done
 
-  if test -z "$PHONGO_SASL_DIR"; then
+  if test -z "$MONGODB_SASL_DIR"; then
     AC_MSG_RESULT(not found)
-    if test "$PHONGO_SASL" != "auto"; then
+    if test "$MONGODB_SASL" != "auto"; then
       AC_MSG_ERROR([sasl.h not found!])
     fi
   fi
 
   PHP_CHECK_LIBRARY(sasl2, sasl_version,
   [
-    PHP_ADD_INCLUDE($PHONGO_SASL_DIR)
-    PHP_ADD_LIBRARY_WITH_PATH(sasl2, $PHONGO_SASL_DIR/$PHP_LIBDIR, PHONGO_SHARED_LIBADD)
+    PHP_ADD_INCLUDE($MONGODB_SASL_DIR)
+    PHP_ADD_LIBRARY_WITH_PATH(sasl2, $MONGODB_SASL_DIR/$PHP_LIBDIR, MONGODB_SHARED_LIBADD)
     MONGOC_ENABLE_SASL=1
     AC_SUBST(MONGOC_ENABLE_SASL)
   ], [
-    if test "$PHONGO_SASL" != "auto"; then
+    if test "$MONGODB_SASL" != "auto"; then
       AC_MSG_ERROR([MONGO SASL check failed. Please check config.log for more information.])
     fi
   ], [
-    -L$PHONGO_SASL_DIR/$PHP_LIBDIR
+    -L$MONGODB_SASL_DIR/$PHP_LIBDIR
   ])
 fi
   m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
   AX_PTHREAD
 
   AC_CHECK_FUNCS([shm_open], [SHM_LIB=], [AC_CHECK_LIB([rt], [shm_open], [SHM_LIB=-lrt], [SHM_LIB=])])
-  PHONGO_SHARED_LIBADD="$PHONGO_SHARED_LIBADD $SHM_LIB"
+  MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $SHM_LIB"
 
 
-  dnl PHP_ADD_LIBRARY_WITH_PATH(bson-1.0, src/libbson/.libs, PHONGO_SHARED_LIBADD)
-  dnl PHP_ADD_LIBRARY_WITH_PATH(mongoc-priv, src/libmongoc/.libs, PHONGO_SHARED_LIBADD)
+  dnl PHP_ADD_LIBRARY_WITH_PATH(bson-1.0, src/libbson/.libs, MONGODB_SHARED_LIBADD)
+  dnl PHP_ADD_LIBRARY_WITH_PATH(mongoc-priv, src/libmongoc/.libs, MONGODB_SHARED_LIBADD)
   EXTRA_CFLAGS="$PTHREAD_CFLAGS $SASL_CFLAGS"
   PHP_SUBST(EXTRA_CFLAGS)
   PHP_SUBST(EXTRA_LDFLAGS)
 
-  PHONGO_SHARED_LIBADD="$PHONGO_SHARED_LIBADD $PTHREAD_LIBS $SASL_LIBS"
-  PHP_SUBST(PHONGO_SHARED_LIBADD)
+  MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $PTHREAD_LIBS $SASL_LIBS"
+  PHP_SUBST(MONGODB_SHARED_LIBADD)
 
 dnl }}}
 
-  PHP_NEW_EXTENSION(mongodb,    $PHONGO_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
+  PHP_NEW_EXTENSION(mongodb,    $MONGODB_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
   PHP_ADD_EXTENSION_DEP(mongodb, spl)
 
   m4_include(src/libbson/build/autotools/CheckAtomics.m4)
@@ -372,8 +372,8 @@ dnl }}}
   PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/bson/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/mongoc/])
 
-  dnl PHONGO_SHARED_DEPENDENCIES="mongodbdep"
-  dnl PHP_SUBST(PHONGO_SHARED_DEPENDENCIES)
+  dnl MONGODB_SHARED_DEPENDENCIES="mongodbdep"
+  dnl PHP_SUBST(MONGODB_SHARED_DEPENDENCIES)
 
   PHP_BSON_BIGENDIAN
   AC_HEADER_STDBOOL
@@ -440,7 +440,7 @@ Build configuration:
   Code Coverage flags (extra slow)                 : $COVERAGE_CFLAGS
   LDFLAGS                                          : $LDFLAGS
   EXTRA_LDFLAGS                                    : $EXTRA_LDFLAGS
-  PHONGO_SHARED_LIBADD                             : $PHONGO_SHARED_LIBADD
+  MONGODB_SHARED_LIBADD                             : $MONGODB_SHARED_LIBADD
 
 Please submit bugreports at:
   https://jira.mongodb.org/browse/PHP

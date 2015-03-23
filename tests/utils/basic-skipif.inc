@@ -1,7 +1,7 @@
 <?php
 
-if ( ! extension_loaded("phongo")) {
-    exit("skip phongo not loaded");
+if ( ! extension_loaded("mongodb")) {
+    exit("skip mongodb not loaded");
 }
 
 require __DIR__ . "/" . "basic.inc";

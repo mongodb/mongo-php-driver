@@ -61,7 +61,7 @@
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO"
 
-ZEND_DECLARE_MODULE_GLOBALS(phongo)
+ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 
 /* {{{ phongo_std_object_handlers */
 zend_object_handlers phongo_std_object_handlers;
@@ -196,24 +196,24 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 			int fd = 0;
 			char *dt = NULL;
 
-			if (!PHONGO_G(debug_log)) {
+			if (!MONGODB_G(debug_log)) {
 				return;
 			}
-			if (strcasecmp(PHONGO_G(debug_log), "off") == 0) {
+			if (strcasecmp(MONGODB_G(debug_log), "off") == 0) {
 				return;
 			}
-			if (strcasecmp(PHONGO_G(debug_log), "0") == 0) {
+			if (strcasecmp(MONGODB_G(debug_log), "0") == 0) {
 				return;
 			}
 
 #define PHONGO_DEBUG_LOG_FORMAT "[%s] %10s: %-8s> %s\n"
 
 			dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), time(NULL), 0 TSRMLS_CC);
-			if (strcasecmp(PHONGO_G(debug_log), "stderr") == 0) {
+			if (strcasecmp(MONGODB_G(debug_log), "stderr") == 0) {
 				fprintf(stderr, PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
-			} else if (strcasecmp(PHONGO_G(debug_log), "stdout") == 0) {
+			} else if (strcasecmp(MONGODB_G(debug_log), "stdout") == 0) {
 				php_printf(PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
-			} else if ((fd = VCWD_OPEN_MODE(PHONGO_G(debug_log), O_CREAT | O_APPEND | O_WRONLY, 0644)) != -1) {
+			} else if ((fd = VCWD_OPEN_MODE(MONGODB_G(debug_log), O_CREAT | O_APPEND | O_WRONLY, 0644)) != -1) {
 				char *tmp;
 				int len;
 
@@ -1645,12 +1645,12 @@ void _phongo_debug_bson(bson_t *bson)
 
 /* {{{ INI entries */
 PHP_INI_BEGIN()
-	STD_PHP_INI_ENTRY("phongo.debug_log", "", PHP_INI_ALL, OnUpdateString, debug_log, zend_phongo_globals, phongo_globals)
+	STD_PHP_INI_ENTRY("mongodb.debug_log", "", PHP_INI_ALL, OnUpdateString, debug_log, zend_mongodb_globals, mongodb_globals)
 PHP_INI_END()
 /* }}} */
 
 /* {{{ PHP_GINIT_FUNCTION */
-PHP_GINIT_FUNCTION(phongo)
+PHP_GINIT_FUNCTION(mongodb)
 {
 	bson_mem_vtable_t bsonMemVTable = {
 		php_phongo_malloc,
@@ -1658,14 +1658,14 @@ PHP_GINIT_FUNCTION(phongo)
 		php_phongo_realloc,
 		php_phongo_free,
 	};
-	phongo_globals->debug_log = NULL;
-	phongo_globals->bsonMemVTable = bsonMemVTable;
+	mongodb_globals->debug_log = NULL;
+	mongodb_globals->bsonMemVTable = bsonMemVTable;
 
 }
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(phongo)
+PHP_MINIT_FUNCTION(mongodb)
 {
 	void ***ctx = NULL;
 	TSRMLS_SET_CTX(ctx);
@@ -1675,7 +1675,7 @@ PHP_MINIT_FUNCTION(phongo)
 	REGISTER_INI_ENTRIES();
 
 	/* Initialize libbson */
-	bson_mem_set_vtable(&PHONGO_G(bsonMemVTable));
+	bson_mem_set_vtable(&MONGODB_G(bsonMemVTable));
 	/* Initialize libmongoc */
 	mongoc_init();
 	mongoc_log_set_handler(php_phongo_log, ctx);
@@ -1733,15 +1733,15 @@ PHP_MINIT_FUNCTION(phongo)
 	PHP_MINIT(Timestamp)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(UTCDatetime)(INIT_FUNC_ARGS_PASSTHRU);
 
-	REGISTER_STRING_CONSTANT("PHONGO_VERSION", (char *)PHONGO_VERSION_S, CONST_CS | CONST_PERSISTENT);
-	REGISTER_STRING_CONSTANT("PHONGO_STABILITY", (char *)PHONGO_STABILITY_S, CONST_CS | CONST_PERSISTENT);
+	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char *)MONGODB_VERSION_S, CONST_CS | CONST_PERSISTENT);
+	REGISTER_STRING_CONSTANT("MONGODB_STABILITY", (char *)MONGODB_STABILITY_S, CONST_CS | CONST_PERSISTENT);
 
 	return SUCCESS;
 }
 /* }}} */
 
 /* {{{ PHP_RINIT_FUNCTION */
-PHP_RINIT_FUNCTION(phongo)
+PHP_RINIT_FUNCTION(mongodb)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	(void)module_number; /* Really doesn't matter which module number we are */
@@ -1751,7 +1751,7 @@ PHP_RINIT_FUNCTION(phongo)
 /* }}} */
 
 /* {{{ PHP_RSHUTDOWN_FUNCTION */
-PHP_RSHUTDOWN_FUNCTION(phongo)
+PHP_RSHUTDOWN_FUNCTION(mongodb)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 	(void)module_number; /* Really doesn't matter which module number we are */
@@ -1761,7 +1761,7 @@ PHP_RSHUTDOWN_FUNCTION(phongo)
 /* }}} */
 
 /* {{{ PHP_MSHUTDOWN_FUNCTION */
-PHP_MSHUTDOWN_FUNCTION(phongo)
+PHP_MSHUTDOWN_FUNCTION(mongodb)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 
@@ -1775,19 +1775,19 @@ PHP_MSHUTDOWN_FUNCTION(phongo)
 /* }}} */
 
 /* {{{ PHP_GSHUTDOWN_FUNCTION */
-PHP_GSHUTDOWN_FUNCTION(phongo)
+PHP_GSHUTDOWN_FUNCTION(mongodb)
 {
-	phongo_globals->debug_log = NULL;
+	mongodb_globals->debug_log = NULL;
 }
 /* }}} */
 
 /* {{{ PHP_MINFO_FUNCTION */
-PHP_MINFO_FUNCTION(phongo)
+PHP_MINFO_FUNCTION(mongodb)
 {
 	php_info_print_table_start();
-	php_info_print_table_header(2, "phongo support", "enabled");
-	php_info_print_table_row(2, "phongo version", PHONGO_VERSION_S);
-	php_info_print_table_row(2, "phongo stability", PHONGO_STABILITY_S);
+	php_info_print_table_header(2, "mongodb support", "enabled");
+	php_info_print_table_row(2, "mongodb version", MONGODB_VERSION_S);
+	php_info_print_table_row(2, "mongodb stability", MONGODB_STABILITY_S);
 	php_info_print_table_row(2, "libmongoc version", MONGOC_VERSION_S);
 	php_info_print_table_row(2, "libbson version", BSON_VERSION_S);
 	php_info_print_table_end();
@@ -1798,7 +1798,7 @@ PHP_MINFO_FUNCTION(phongo)
 /* }}} */
 
 
-/* {{{ phongo_functions[]
+/* {{{ mongodb_functions[]
 */
 ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromArray, 0, 0, 1)
 	ZEND_ARG_INFO(0, array)
@@ -1816,7 +1816,7 @@ ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromJSON, 0, 0, 1)
 	ZEND_ARG_INFO(0, json)
 ZEND_END_ARG_INFO();
 
-const zend_function_entry phongo_functions[] = {
+const zend_function_entry mongodb_functions[] = {
 	ZEND_NS_FE("BSON", fromArray, ai_bson_fromArray)
 	ZEND_NS_FE("BSON", toArray,   ai_bson_toArray)
 	ZEND_NS_FE("BSON", toJSON,    ai_bson_toJSON)
@@ -1825,28 +1825,28 @@ const zend_function_entry phongo_functions[] = {
 };
 /* }}} */
 
-/* {{{ phongo_module_entry
+/* {{{ mongodb_module_entry
  */
-zend_module_entry phongo_module_entry = {
+zend_module_entry mongodb_module_entry = {
 	STANDARD_MODULE_HEADER,
-	"phongo",
-	phongo_functions,
-	PHP_MINIT(phongo),
-	PHP_MSHUTDOWN(phongo),
-	PHP_RINIT(phongo),
-	PHP_RSHUTDOWN(phongo),
-	PHP_MINFO(phongo),
-	PHONGO_VERSION,
-	PHP_MODULE_GLOBALS(phongo),
-	PHP_GINIT(phongo),
-	PHP_GSHUTDOWN(phongo),
+	"mongodb",
+	mongodb_functions,
+	PHP_MINIT(mongodb),
+	PHP_MSHUTDOWN(mongodb),
+	PHP_RINIT(mongodb),
+	PHP_RSHUTDOWN(mongodb),
+	PHP_MINFO(mongodb),
+	MONGODB_VERSION,
+	PHP_MODULE_GLOBALS(mongodb),
+	PHP_GINIT(mongodb),
+	PHP_GSHUTDOWN(mongodb),
 	NULL,
 	STANDARD_MODULE_PROPERTIES_EX
 };
 /* }}} */
 
-#ifdef COMPILE_DL_PHONGO
-ZEND_GET_MODULE(phongo)
+#ifdef COMPILE_DL_MONGODB
+ZEND_GET_MODULE(mongodb)
 #endif
 
 /*
