@@ -1,7 +1,7 @@
-dnl config.m4 for extension phongo
-PHP_ARG_ENABLE(phongo, whether to enable phongo support,
-[  --enable-phongo           Enable phongo support])
-PHP_ARG_WITH(openssl-dir, OpenSSL dir for phongo,
+dnl config.m4 for extension mongodb
+PHP_ARG_ENABLE(mongodb, whether to enable mongodb support,
+[  --enable-mongodb           Enable mongodb support])
+PHP_ARG_WITH(openssl-dir, OpenSSL dir for mongodb,
 [  --with-openssl-dir[=DIR]  openssl install prefix], yes, no)
 
 
@@ -268,15 +268,15 @@ MONGOC_SOURCES_SASL=mongoc-sasl.c
 
 
   if test "$ext_shared" = "no"; then
-    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_EXCEPTIONS)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $PHONGO_BSON)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $PHONGO_BSON_CLASSES)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $PHONGO_MONGODB_CLASSES)
+    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $PHONGO_MONGODB_EXCEPTIONS)
   else
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON,               [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_BSON_CLASSES,       [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_CLASSES,    [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo), $PHONGO_MONGODB_EXCEPTIONS, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_phongo, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $PHONGO_BSON,               [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $PHONGO_BSON_CLASSES,       [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $PHONGO_MONGODB_CLASSES,    [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $PHONGO_MONGODB_EXCEPTIONS, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
   fi
 
 dnl libmongoc stuff {{{
@@ -287,10 +287,10 @@ dnl libmongoc stuff {{{
 
   CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libbson/src/yajl], $YAJL_SOURCES,           [$STD_CFLAGS], shared_objects_phongo, yes)
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libbson/src/bson], $BSON_SOURCES,           [$STD_CFLAGS], shared_objects_phongo, yes)
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,     [$STD_CFLAGS], shared_objects_phongo, yes)
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(phongo)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL, [$STD_CFLAGS], shared_objects_phongo, yes)
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES,           [$STD_CFLAGS], shared_objects_mongodb, yes)
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES,           [$STD_CFLAGS], shared_objects_mongodb, yes)
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,     [$STD_CFLAGS], shared_objects_mongodb, yes)
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL, [$STD_CFLAGS], shared_objects_mongodb, yes)
 
 
   PHP_SETUP_OPENSSL(PHONGO_SHARED_LIBADD)
@@ -298,8 +298,8 @@ dnl libmongoc stuff {{{
   AC_SUBST(MONGOC_ENABLE_SSL)
 
 
-PHP_ARG_WITH(phongo-sasl, Build with Cyrus SASL support,
-[  --with-phongo-sasl[=DIR]     phongo: Include Cyrus SASL support], auto, yes)
+PHP_ARG_WITH(mongodb-sasl, Build with Cyrus SASL support,
+[  --with-mongodb-sasl[=DIR]     mongodb: Include Cyrus SASL support], auto, yes)
 
 if test "$PHP_PHONGO_SASL" != "no"; then
   AC_MSG_CHECKING(for SASL)
@@ -350,8 +350,8 @@ fi
 
 dnl }}}
 
-  PHP_NEW_EXTENSION(phongo,    $PHONGO_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
-  PHP_ADD_EXTENSION_DEP(phongo, spl)
+  PHP_NEW_EXTENSION(mongodb,    $PHONGO_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
+  PHP_ADD_EXTENSION_DEP(mongodb, spl)
 
   m4_include(src/libbson/build/autotools/CheckAtomics.m4)
   m4_include(src/libbson/build/autotools/FindDependencies.m4)
@@ -372,7 +372,7 @@ dnl }}}
   PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/bson/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/mongoc/])
 
-  dnl PHONGO_SHARED_DEPENDENCIES="phongodep"
+  dnl PHONGO_SHARED_DEPENDENCIES="mongodbdep"
   dnl PHP_SUBST(PHONGO_SHARED_DEPENDENCIES)
 
   PHP_BSON_BIGENDIAN
@@ -431,7 +431,7 @@ AC_SUBST(BSON_VERSION)
   PHP_ADD_MAKEFILE_FRAGMENT
 
 AC_CONFIG_COMMANDS_POST([echo "
-phongo was configured with the following options:
+mongodb was configured with the following options:
 
 Build configuration:
   CFLAGS                                           : $CFLAGS
