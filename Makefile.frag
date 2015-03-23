@@ -26,10 +26,6 @@ help:
 	@echo -e "\t       - Installs test dependencies using composer"
 
 	@echo ""
-	@echo -e "\t$$ make patch"
-	@echo -e "\t       - When building phongo from VCS, you must run this once"
-
-	@echo ""
 	@echo -e "\t$$ make release"
 	@echo -e "\t       - Runs the tests and creates the pecl archive on success"
 
@@ -122,21 +118,6 @@ docs:
 
 release-docs: docs
 	mkdocs gh-deploy --clean
-
-patch:
-	@if ! test -e $(top_srcdir)/.patched; then \
-		for file in `/bin/ls -1 $(top_srcdir)/patches/*.patch | sort -n`; do \
-			patch -p0 --dry-run -f -s < $$file;\
-			if test $$? -eq 0; then \
-				patch -p0 -f -s < $$file;\
-				echo "$$file patched"; \
-			else \
-				echo "$$file cannot be applied!"; \
-				exit 1; \
-			fi \
-		done; \
-		touch $(top_srcdir)/.patched; \
-	fi
 
 package.xml:
 	php bin/prep-release.php $(PHONGO_VERSION)-$(PHONGO_STABILITY)
