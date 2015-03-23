@@ -29,8 +29,8 @@
 extern zend_module_entry phongo_module_entry;
 
 /* FIXME: Its annoying to bump version. Move into phongo_version.h.in */
-#define PHONGO_VERSION_S "0.1.6"
-#define PHONGO_STABILITY_S "devel"
+#define PHONGO_VERSION_S "0.2.0"
+#define PHONGO_STABILITY_S "alpha"
 #define PHONGO_VERSION   PHONGO_VERSION_S
 
 #ifdef PHP_WIN32
