@@ -103,7 +103,7 @@ testclean:
 
 phongodep:
 
-release: testall ChangeLog RELEASE package.xml
+release: test ChangeLog RELEASE package.xml
 	pecl package package.xml
 	@echo "Please run:"
 	@echo "		" git add RELEASE-$(PHONGO_VERSION)
