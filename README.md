@@ -28,8 +28,7 @@ and installed manually.
 To build and install the driver:
 
 ```
-$ wget https://github.com/10gen-labs/mongo-php-driver-prototype/releases/download/0.2.0/mongodb-0.2.0.tgz
-$ pecl install mongodb-0.2.0.tgz
+$ pecl install mongodb-alpha
 $ echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```
 
