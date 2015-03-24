@@ -162,13 +162,13 @@ static int php_phongo_objectid_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* 
 HashTable *php_phongo_objectid_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_objectid_t    *intern;
-	zval                   retval = zval_used_for_init;
+	zval                      retval = zval_used_for_init;
 
 
 	*is_temp = 1;
 	intern = (php_phongo_objectid_t *)zend_object_store_get_object(object TSRMLS_CC);
 
-	array_init_size(&retval, 6);
+	array_init(&retval);
 
 	add_assoc_stringl_ex(&retval, ZEND_STRS("oid"), intern->oid, 24, 1);
 
