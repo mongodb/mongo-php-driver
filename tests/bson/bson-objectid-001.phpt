@@ -56,6 +56,11 @@ throws(function() {
 $id = new BSON\ObjectID(new stdclass);
 }, "InvalidArgumentException");
 
+
+
+raises(function() use($pregenerated) {
+    $pregenerated->__toString(1);
+}, E_WARNING);
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -85,4 +90,5 @@ OK: Got InvalidArgumentException
 OK: Got InvalidArgumentException
 OK: Got InvalidArgumentException
 OK: Got InvalidArgumentException
+OK: Got E_WARNING
 ===DONE===
