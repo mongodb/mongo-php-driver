@@ -82,6 +82,45 @@ function CLEANUP($uri) {
     }
 }
 
+function severityToString($type) {
+    switch($type) {
+    case E_WARNING:
+        return "E_WARNING";
+    default:
+        return "Some other #_$type";
+    }
+}
+function raises(callable $function, $type, $infunction = null) {
+    $errhandler = function($severity, $message, $file, $line, $errcontext) {
+        throw new ErrorException($message, 0, $severity, $file, $line);
+    };
+
+    set_error_handler($errhandler, $type);
+    try {
+        $function();
+    } catch(Exception $e) {
+        if ($e instanceof ErrorException && $e->getSeverity() & $type) {
+            if ($infunction) {
+                $function = $e->getTrace()[0]["function"];
+                if (strcasecmp($function, $infunction) == 0) {
+                    printf("OK: Got %s thrown from %s\n", $exceptionname, $infunction);
+                } else {
+                    printf("ALMOST: Got %s - but was thrown in %s, not %s\n", $exceptionname, $function, $infunction);
+                }
+                restore_error_handler();
+                return $e->getMessage();
+            }
+            printf("OK: Got %s\n", severityToString($type));
+        } else {
+            printf("ALMOST: Got %s - expected %s\n", get_class($e), $exceptionname);
+        }
+        restore_error_handler();
+        return $e->getMessage();
+    }
+
+    echo "FAILED: Expected $exceptionname thrown!\n";
+    restore_error_handler();
+}
 function throws(callable $function, $exceptionname, $infunction = null) {
     try {
         $function();
