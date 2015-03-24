@@ -245,19 +245,15 @@ php_phongo_stream_logger phongo_stream_logger = {
 /* }}} */
 
 /* {{{ Init objects */
-void phongo_result_init(zval *return_value, mongoc_cursor_t *cursor, const bson_t *bson, mongoc_client_t *client, int server_id, zend_bool is_command_cursor TSRMLS_DC) /* {{{ */
+void phongo_result_init(zval *return_value, mongoc_cursor_t *cursor, const bson_t *bson, mongoc_client_t *client, zend_bool is_command_cursor TSRMLS_DC) /* {{{ */
 {
 	php_phongo_result_t *result;
 
 	object_init_ex(return_value, php_phongo_result_ce);
 
 	result = (php_phongo_result_t *)zend_object_store_get_object(return_value TSRMLS_CC);
-	if (cursor) {
-		result->cursor = cursor;
-		result->server_id = mongoc_cursor_get_hint(cursor);
-	} else {
-		result->server_id = server_id;
-	}
+	result->cursor = cursor;
+	result->server_id = mongoc_cursor_get_hint(cursor);
 	result->client = client;
 	result->is_command_cursor = is_command_cursor;
 	result->firstBatch = bson ? bson_copy(bson) : NULL;
@@ -588,7 +584,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 		return true;
 	}
 
-	phongo_result_init(return_value, cursor, doc, client, server_id, 0 TSRMLS_CC);
+	phongo_result_init(return_value, cursor, doc, client, 0 TSRMLS_CC);
 	return true;
 } /* }}} */
 
@@ -639,7 +635,7 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 						_mongoc_cursor_cursorid_init(cursor);
 						cursor->limit = 0;
 						cursor->is_command = false;
-						phongo_result_init(return_value, cursor, &first_batch, client, mongoc_cursor_get_hint(cursor), 1 TSRMLS_CC);
+						phongo_result_init(return_value, cursor, &first_batch, client, 1 TSRMLS_CC);
 						return true;
 					}
 				}
@@ -647,7 +643,7 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 		}
 	}
 
-	phongo_result_init(return_value, cursor, doc, client, mongoc_cursor_get_hint(cursor), 0 TSRMLS_CC);
+	phongo_result_init(return_value, cursor, doc, client, 0 TSRMLS_CC);
 	return true;
 } /* }}} */
 
