@@ -62,6 +62,7 @@ function get_files() {
         "Makefile.frag",
         "Vagrantfile",
         "README*",
+        "LICENSE",
         "RELEASE*",
         "ChangeLog*",
 
