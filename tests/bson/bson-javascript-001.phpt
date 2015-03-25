@@ -4,7 +4,7 @@ BSON BSON\Javascript #001
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 $js = new BSON\Javascript("function foo(bar) {var baz = bar; var bar = foo; return bar; }");
 $jswscope = new BSON\Javascript("function foo(bar) {var baz = bar; var bar = foo; return bar; }", array("foo" => 42));

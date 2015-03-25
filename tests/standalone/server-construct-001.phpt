@@ -4,7 +4,7 @@ MongoDB\Driver\Server::__construct()
 <?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 $parsed = parse_url(STANDALONE);
 $manager = new MongoDB\Driver\Manager(STANDALONE);

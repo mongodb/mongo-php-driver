@@ -4,7 +4,7 @@ MongoDB\Driver\Server: Manager->getServer() returning correct server
 <?php require "tests/utils/basic-skipif.inc"; CLEANUP(REPLICASET); ?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(REPLICASET);
 

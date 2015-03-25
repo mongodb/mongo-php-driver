@@ -4,7 +4,7 @@ BSON BSON\Regex #001
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 $regexp = new BSON\Regex("regexp", "i");
 printf("Pattern: %s\n", $regexp->getPattern());

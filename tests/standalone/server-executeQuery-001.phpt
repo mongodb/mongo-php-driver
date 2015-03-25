@@ -4,7 +4,7 @@ MongoDB\Driver\Server::executeQuery() with filter and projection
 <?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE); CLEANUP(STANDALONE); ?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 $server = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()))->getServer();

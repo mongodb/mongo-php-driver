@@ -4,7 +4,7 @@ Connect to MongoDB with using PLAIN auth mechanism
 <?php require "tests/utils/auth-plain-skipif.inc"; CLEANUP(STANDALONE_PLAIN) ?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 $username = "root";
 $password = "toor";

@@ -4,7 +4,7 @@ MongoDB\Driver\WriteConcern debug output should include all fields for w default
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 /* -2 is libmongoc's constant for relying on the server's default value for "w".
  * Although "w" will be omitted from the write concern sent to the server, we

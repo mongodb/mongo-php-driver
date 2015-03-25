@@ -4,7 +4,7 @@ BSON encoding: Encoding object/arrays data into user specificied classes
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 class MyArrayObject extends ArrayObject implements BSON\Unserializable {
     function bsonUnserialize(array $data) {

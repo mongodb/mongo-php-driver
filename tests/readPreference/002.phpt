@@ -4,7 +4,7 @@ MongoDB\Driver\ReadPreference#002: PHPC-146
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 $manager->executeInsert(NS, array("my" => "document"));

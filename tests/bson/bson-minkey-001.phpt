@@ -4,7 +4,7 @@ BSON BSON\MinKey #001
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 $minkey = new BSON\MinKey;
 $tests = array(

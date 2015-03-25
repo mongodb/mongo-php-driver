@@ -4,8 +4,8 @@ BSON encoding: Object Document Mapper
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
-require_once "tests/utils/classes.inc";
+require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . "/../utils/classes.inc";
 
 $hannes = new Person("Hannes", 42);
 $sunnyvale = new Address(94086, "USA");

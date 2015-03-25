@@ -4,7 +4,7 @@ MongoDB\Driver\WriteResult::isAcknowledged() with inherited WriteConcern
 <?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 /* We use w:0 here because libmongoc detects w:1 as the server's default and
  */

@@ -5,7 +5,7 @@ Sorting single field, ascending
 <?php $LIMIT = 100; require "tests/utils/fixtures-users.inc" ?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 

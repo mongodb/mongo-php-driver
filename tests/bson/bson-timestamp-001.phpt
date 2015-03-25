@@ -4,7 +4,7 @@ BSON BSON\Timestamp #001
 <?php require "tests/utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 $timestamp = new BSON\Timestamp(1234, 5678);
 $tests = array(

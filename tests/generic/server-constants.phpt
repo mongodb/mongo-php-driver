@@ -4,7 +4,7 @@ MongoDB\Driver\Server constants
 <?php require "tests/utils/basic-skipif.inc" ?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 var_dump(MongoDB\Driver\Server::TYPE_UNKNOWN);
 var_dump(MongoDB\Driver\Server::TYPE_STANDALONE);
