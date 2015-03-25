@@ -1,7 +1,7 @@
 --TEST--
 Connect to MongoDB with using PLAIN auth mechanism
 --SKIPIF--
-<?php require "tests/utils/auth-plain-skipif.inc"; CLEANUP(STANDALONE_PLAIN) ?>
+<?php require __DIR__ . "/../utils/auth-plain-skipif.inc"; CLEANUP(STANDALONE_PLAIN) ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

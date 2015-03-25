@@ -1,7 +1,7 @@
 --TEST--
 BSON encoding: Encoding data into BSON representation, and BSON into Extended JSON
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc"?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

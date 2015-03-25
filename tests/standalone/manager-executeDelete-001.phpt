@@ -1,7 +1,7 @@
 --TEST--
 MongoDB\Driver\Manager::executeDelete() one document
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
