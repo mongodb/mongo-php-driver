@@ -10,7 +10,7 @@
 /*
  * Define to 1 if you have stdbool.h
  */
-#define BSON_HAVE_STDBOOL_H 1
+#define BSON_HAVE_STDBOOL_H 0
 #if BSON_HAVE_STDBOOL_H != 1
 # undef BSON_HAVE_STDBOOL_H
 #endif
@@ -19,7 +19,7 @@
 /*
  * Define to 1 for POSIX-like systems, 2 for Windows.
  */
-#define BSON_OS 1
+#define BSON_OS 2
 
 
 /*
