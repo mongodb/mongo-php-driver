@@ -1201,6 +1201,10 @@ mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptio
 	php_stream_context       *ctx = NULL;
 	mongoc_client_t *client = mongoc_client_new(uri);
 
+	if (!client) {
+		return false;
+	}
+
 	if (driverOptions) {
 		zval **tmp;
 
