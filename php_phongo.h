@@ -22,8 +22,8 @@
 #define PHONGO_H
 
 /* External libs */
-#include <bson.h>
-#include <mongoc.h>
+#include "bson.h"
+#include "mongoc.h"
 
 #define phpext_mongodb_ptr &mongodb_module_entry
 extern zend_module_entry mongodb_module_entry;

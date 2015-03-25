@@ -24,15 +24,13 @@
 #	include "config.h"
 #endif
 
-/* YCM */
-#include <strings.h>
 /* External libs */
-#include <bson.h>
-#include <mongoc.h>
-#include <mongoc-cursor-cursorid-private.h>
-#include <mongoc-read-prefs-private.h>
-#include <mongoc-bulk-operation-private.h>
-#include <mongoc-trace.h>
+#include "bson.h"
+#include "mongoc.h"
+#include "mongoc-cursor-cursorid-private.h"
+#include "mongoc-read-prefs-private.h"
+#include "mongoc-bulk-operation-private.h"
+#include "mongoc-trace.h"
 
 
 /* PHP Core stuff */

@@ -24,8 +24,6 @@
 #	include "config.h"
 #endif
 
-#include <strings.h>
-
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
