@@ -228,10 +228,12 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 
 #if SIZEOF_LONG == 4
 				if (val > INT_MAX) {
-					add_index_long(writeresult->upsertedIds, index, (double)val);
+					add_index_long(return_value, index, (double)val);
 				} else
 #endif
+				{
 					add_index_long(return_value, index, val);
+				}
 			}
 		}
 	}
