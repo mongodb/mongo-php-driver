@@ -70,9 +70,9 @@ PHP_METHOD(Result, __construct)
 
 }
 /* }}} */
-/* {{{ proto void Result::setTypemap(array $typemap)
+/* {{{ proto void Result::setTypeMap(array $typemap)
    Sets a typemap to use for BSON unserialization */
-PHP_METHOD(Result, setTypemap)
+PHP_METHOD(Result, setTypeMap)
 {
 	php_phongo_result_t *intern;
 	php_phongo_bson_state     state = PHONGO_BSON_STATE_INITIALIZER;
@@ -198,7 +198,7 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Result___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, responseDocument)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Result_setTypemap, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(ai_Result_setTypeMap, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, typemap, 0)
 ZEND_END_ARG_INFO();
 
@@ -222,7 +222,7 @@ ZEND_END_ARG_INFO();
 
 static zend_function_entry php_phongo_result_me[] = {
 	PHP_ME(Result, __construct, ai_Result___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Result, setTypemap, ai_Result_setTypemap, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Result, setTypeMap, ai_Result_setTypeMap, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Result, getIterator, ai_Result_getIterator, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Result, setIteratorClass, ai_Result_setIteratorClass, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Result, setIteratorInitCallback, ai_Result_setIteratorInitCallback, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
