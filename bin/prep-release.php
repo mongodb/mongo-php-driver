@@ -40,6 +40,7 @@ function get_role($file) {
     case "defs":
     case "def":
     case "m4":
+    case "w32":
     case "c":
     case "in":
     case "h":
@@ -58,7 +59,7 @@ function get_role($file) {
 function get_files() {
     $dirs = array(
         "php_*.{h,c}",
-        "config.m4",
+        "config.{m4,w32}",
         "Makefile.frag",
         "Vagrantfile",
         "README*",
