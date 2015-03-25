@@ -14,6 +14,7 @@ fast and powerful.
 
 ## Documentation
 - http://10gen-labs.github.io/mongo-php-driver-prototype
+- http://docs.php.net/set.mongodb
 
 ## Installation
 
