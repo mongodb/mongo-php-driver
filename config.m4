@@ -224,6 +224,7 @@ if test "$MONGODB" != "no"; then
 	mongoc-counters.c \
 	mongoc-cursor.c \
 	mongoc-cursor-array.c \
+	mongoc-cursor-transform.c \
 	mongoc-cursor-cursorid.c \
 	mongoc-database.c \
 	mongoc-init.c \
