@@ -99,6 +99,8 @@ function get_files() {
         "tests/standalone/*.{phpt}",
         "tests/utils/*.{inc,php}",
         "tests/writeConcern/*.{phpt}",
+
+        "win32/*.h",
     );
     $files = array();
     foreach($dirs as $pattern) {
