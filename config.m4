@@ -292,6 +292,7 @@ dnl libmongoc stuff {{{
   PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES,           [$STD_CFLAGS], shared_objects_mongodb, yes)
   PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,     [$STD_CFLAGS], shared_objects_mongodb, yes)
   PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL, [$STD_CFLAGS], shared_objects_mongodb, yes)
+  PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL, [$STD_CFLAGS], shared_objects_mongodb, yes)
 
 
   PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD)
