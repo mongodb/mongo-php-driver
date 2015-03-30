@@ -101,7 +101,8 @@ function raises(callable $function, $type, $infunction = null) {
     } catch(Exception $e) {
         if ($e instanceof ErrorException && $e->getSeverity() & $type) {
             if ($infunction) {
-                $function = $e->getTrace()[0]["function"];
+                $trace = $e->getTrace();
+                $function = $trace[0]["function"];
                 if (strcasecmp($function, $infunction) == 0) {
                     printf("OK: Got %s thrown from %s\n", $exceptionname, $infunction);
                 } else {
@@ -121,13 +122,14 @@ function raises(callable $function, $type, $infunction = null) {
     echo "FAILED: Expected $exceptionname thrown!\n";
     restore_error_handler();
 }
-function throws(callable $function, $exceptionname, $infunction = null) {
+function throws($function, $exceptionname, $infunction = null) {
     try {
         $function();
     } catch(Exception $e) {
         if ($e instanceof $exceptionname) {
             if ($infunction) {
-                $function = $e->getTrace()[0]["function"];
+                $trace = $e->getTrace();
+                $function = $trace[0]["function"];
                 if (strcasecmp($function, $infunction) == 0) {
                     printf("OK: Got %s thrown from %s\n", $exceptionname, $infunction);
                 } else {
@@ -228,7 +230,8 @@ function configureFailPoint(MongoDB\Driver\Manager $manager, $failPoint, $mode, 
 
     $cmd = new MongoDB\Driver\Command($doc);
     $result = $manager->executeCommand("admin", $cmd);
-    if (empty($result->toArray()["ok"])) {
+    $arr = $result->toArray();
+    if (empty($arr["ok"])) {
         var_dump($result);
         throw new RuntimeException("Failpoint failed");
     }
