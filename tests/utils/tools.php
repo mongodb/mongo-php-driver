@@ -90,7 +90,7 @@ function severityToString($type) {
         return "Some other #_$type";
     }
 }
-function raises(callable $function, $type, $infunction = null) {
+function raises($function, $type, $infunction = null) {
     $errhandler = function($severity, $message, $file, $line, $errcontext) {
         throw new ErrorException($message, 0, $severity, $file, $line);
     };
