@@ -8,7 +8,7 @@ Vagrant.configure(2) do |config|
   config.vm.provider "vmware_workstation" do |vmware, override|
     vmware.vmx["memsize"] = "8192"
     vmware.vmx["numvcpus"] = "2"
-    override.vm.provision "shell", path: "scripts/vmware/kernel.sh"
+    override.vm.provision "shell", path: "scripts/vmware/kernel.sh", privileged: true
   end
 
   config.vm.define "mo", primary: true do |mo|
@@ -19,9 +19,9 @@ Vagrant.configure(2) do |config|
       override.vm.box_url = 'http://files.vagrantup.com/precise64_vmware.box'
     end
 
-    mo.vm.provision "shell", path: "scripts/ubuntu/essentials.sh"
-    mo.vm.provision "shell", path: "scripts/ubuntu/mongo-orchestration.sh"
-    mo.vm.provision "shell", path: "scripts/ubuntu/ldap/install.sh"
+    mo.vm.provision "shell", path: "scripts/ubuntu/essentials.sh", privileged: true
+    mo.vm.provision "shell", path: "scripts/ubuntu/mongo-orchestration.sh", privileged: true
+    mo.vm.provision "shell", path: "scripts/ubuntu/ldap/install.sh", privileged: true
   end
 
   config.vm.define "ldap", autostart: false do |ldap|
@@ -32,8 +32,8 @@ Vagrant.configure(2) do |config|
       override.vm.box_url = "https://dl.dropbox.com/u/5721940/vagrant-boxes/vagrant-centos-6.4-x86_64-vmware_fusion.box"
     end
 
-    ldap.vm.provision "shell", path: "scripts/centos/essentials.sh"
-    ldap.vm.provision "shell", path: "scripts/centos/ldap/install.sh"
+    ldap.vm.provision "shell", path: "scripts/centos/essentials.sh", privileged: true
+    ldap.vm.provision "shell", path: "scripts/centos/ldap/install.sh", privileged: true
   end
 
 end
