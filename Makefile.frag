@@ -1,4 +1,4 @@
-.PHONY: coverage testclean ChangeLog RELEASE package.xml docs
+.PHONY: coverage testclean ChangeLog RELEASE package package.xml docs
 
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 MONGODB_VERSION=`php -n -dextension=modules/mongodb.so -r 'echo MONGODB_VERSION;'`
@@ -103,8 +103,7 @@ testclean:
 
 mongodbdep:
 
-release: test ChangeLog RELEASE package.xml
-	pecl package package.xml
+release: test package
 	@echo "Please run:"
 	@echo "		" git add RELEASE-$(MONGODB_VERSION)
 	@echo "		" git commit -m \"Add $(MONGODB_VERSION) release notes\"
@@ -112,6 +111,9 @@ release: test ChangeLog RELEASE package.xml
 	@echo "		" git push --tags
 	@echo "		" make release-docs
 	@echo "And don't forget to bump version in php_phongo.h"
+
+package: ChangeLog RELEASE package.xml
+	pecl package package.xml
 
 docs:
 	mkdocs build --clean
