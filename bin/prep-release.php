@@ -90,7 +90,7 @@ function get_files() {
         "src/libmongoc/src/mongoc/*.{c,h,def,defs}",
         "src/libmongoc/src/mongoc/*.h.{in}",
 
-        "tests/onnect/*.{phpt}",
+        "tests/connect/*.{phpt}",
         "tests/bulk/*.{phpt}",
         "tests/bson/*.{phpt}",
         "tests/functional/*.{phpt}",
