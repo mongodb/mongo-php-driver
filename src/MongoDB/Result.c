@@ -105,47 +105,7 @@ PHP_METHOD(Result, getIterator)
 		return;
 	}
 
-	if (intern->ce_get_iterator) {
-		object_init_ex(return_value, intern->ce_get_iterator);
-	} else {
-		php_phongo_cursor_new_from_result(return_value, intern TSRMLS_CC);
-	}
-
-}
-/* }}} */
-/* {{{ proto self Result::setIteratorClass(string $class)
-   Sets the class name of the Cursor implementation to be used */
-PHP_METHOD(Result, setIteratorClass)
-{
-	php_phongo_result_t *intern;
-	char                     *class;
-	int                       class_len;
-	(void)return_value; (void)return_value_ptr; (void)return_value_used;
-
-
-	intern = (php_phongo_result_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &class, &class_len) == FAILURE) {
-		return;
-	}
-
-}
-/* }}} */
-/* {{{ proto self Result::setIteratorInitCallback(callable $callback)
-   Sets a callback to invoke for initializing a custom Cursor */
-PHP_METHOD(Result, setIteratorInitCallback)
-{
-	php_phongo_result_t *intern;
-	zval                     *callback;
-	(void)return_value; (void)return_value_ptr; (void)return_value_used;
-
-
-	intern = (php_phongo_result_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "o", &callback) == FAILURE) {
-		return;
-	}
-
+	php_phongo_cursor_new_from_result(return_value, intern TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto array Result::toArray()
@@ -205,14 +165,6 @@ ZEND_END_ARG_INFO();
 ZEND_BEGIN_ARG_INFO_EX(ai_Result_getIterator, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Result_setIteratorClass, 0, 0, 1)
-	ZEND_ARG_INFO(0, class)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Result_setIteratorInitCallback, 0, 0, 1)
-	ZEND_ARG_INFO(0, callback) /* callable */
-ZEND_END_ARG_INFO();
-
 ZEND_BEGIN_ARG_INFO_EX(ai_Result_toArray, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
@@ -224,8 +176,6 @@ static zend_function_entry php_phongo_result_me[] = {
 	PHP_ME(Result, __construct, ai_Result___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Result, setTypeMap, ai_Result_setTypeMap, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Result, getIterator, ai_Result_getIterator, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Result, setIteratorClass, ai_Result_setIteratorClass, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Result, setIteratorInitCallback, ai_Result_setIteratorInitCallback, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Result, toArray, ai_Result_toArray, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Result, getServer, ai_Result_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END

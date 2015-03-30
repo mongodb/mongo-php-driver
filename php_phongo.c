@@ -1545,15 +1545,6 @@ zend_object_iterator_funcs phongo_result_iterator_funcs = {
 	phongo_result_iterator_rewind,
 	phongo_result_iterator_invalidate_current
 };
-zend_object_iterator_funcs zend_interface_iterator_funcs_iterator_default = {
-	phongo_result_iterator_dtor,
-	zend_user_it_valid,
-	zend_user_it_get_current_data,
-	zend_user_it_get_current_key,
-	zend_user_it_move_forward,
-	zend_user_it_rewind,
-	zend_user_it_invalidate_current
-};
 
 zend_object_iterator *phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC) /* {{{ */
 {
@@ -1572,43 +1563,27 @@ zend_object_iterator *phongo_cursor_get_iterator(zend_class_entry *ce, zval *obj
 
 	return (zend_object_iterator*)cursor_it;
 } /* }}} */
+
 zend_object_iterator *phongo_result_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC) /* {{{ */
 {
 	php_phongo_result_t    *result = (php_phongo_result_t *)zend_object_store_get_object(object TSRMLS_CC);
+	phongo_cursor_it       *cursor_it = NULL;
 
 	if (by_ref) {
 		zend_error(E_ERROR, "An iterator cannot be used with foreach by reference");
 	}
 
-	/* If we have a custom iterator */
-	if (result->ce_get_iterator != NULL) {
-		zend_user_iterator *iterator = NULL;
+	cursor_it = ecalloc(1, sizeof(phongo_cursor_it));
 
-		zval_ptr_dtor(&object);
-		object_init_ex(object, result->ce_get_iterator);
-
-		iterator = emalloc(sizeof(zend_user_iterator));
-
-		Z_ADDREF_P(object);
-		iterator->it.data = (void*)object;
-		iterator->it.funcs = &zend_interface_iterator_funcs_iterator_default;
-		iterator->ce = Z_OBJCE_P(object);
-		iterator->value = NULL;
-		return (zend_object_iterator*)iterator;
-	} else {
-		phongo_cursor_it       *cursor_it = NULL;
-
-		cursor_it = ecalloc(1, sizeof(phongo_cursor_it));
-
-		if (result->visitor_data.zchild) {
-			zval_ptr_dtor(&result->visitor_data.zchild);
-			result->visitor_data.zchild = NULL;
-		}
-		cursor_it->iterator.data  = (void*)result;
-		cursor_it->iterator.funcs = &phongo_result_iterator_funcs;
-
-		return (zend_object_iterator*)cursor_it;
+	if (result->visitor_data.zchild) {
+		zval_ptr_dtor(&result->visitor_data.zchild);
+		result->visitor_data.zchild = NULL;
 	}
+
+	cursor_it->iterator.data  = result;
+	cursor_it->iterator.funcs = &phongo_result_iterator_funcs;
+
+	return (zend_object_iterator*)cursor_it;
 } /* }}} */
 /* }}} */
 
