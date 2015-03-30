@@ -36,5 +36,18 @@ Vagrant.configure(2) do |config|
     ldap.vm.provision "shell", path: "scripts/centos/ldap/install.sh", privileged: true
   end
 
+  config.vm.define "ubuntu" do |linux|
+    linux.vm.network "private_network", ip: "192.168.112.40"
+
+    linux.vm.box = "http://files.vagrantup.com/precise64.box"
+    linux.vm.provider "vmware_workstation" do |vmware, override|
+      override.vm.box_url = 'http://files.vagrantup.com/precise64_vmware.box'
+    end
+
+    linux.vm.provision "shell", path: "scripts/ubuntu/essentials.sh", privileged: true
+    linux.vm.provision "file", source: "/tmp/PHONGO-SERVERS.json", destination: "/tmp/PHONGO-SERVERS.json"
+    linux.vm.provision "shell", path: "scripts/ubuntu/phongo.sh", privileged: true
+  end
+
 end
 
