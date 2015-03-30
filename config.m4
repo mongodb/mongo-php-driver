@@ -380,6 +380,9 @@ dnl }}}
   PHP_BSON_BIGENDIAN
   AC_HEADER_STDBOOL
 
+  BSON_EXTRA_ALIGN=0
+  AC_SUBST(BSON_EXTRA_ALIGN)
+
   if test "$ac_cv_header_stdbool_h" = "yes"; then
     BSON_HAVE_STDBOOL_H=1
   else
@@ -442,7 +445,7 @@ Build configuration:
   Code Coverage flags (extra slow)                 : $COVERAGE_CFLAGS
   LDFLAGS                                          : $LDFLAGS
   EXTRA_LDFLAGS                                    : $EXTRA_LDFLAGS
-  MONGODB_SHARED_LIBADD                             : $MONGODB_SHARED_LIBADD
+  MONGODB_SHARED_LIBADD                            : $MONGODB_SHARED_LIBADD
 
 Please submit bugreports at:
   https://jira.mongodb.org/browse/PHP
