@@ -15,11 +15,8 @@ var_dump($command);
 var_dump($result instanceof MongoDB\Driver\Result);
 var_dump($result);
 
-echo "Dumping response document:\n";
-var_dump($result->toArray());
-
-echo "Dumping iterated result:\n";
-var_dump(iterator_to_array($result));
+echo "\nDumping response document:\n";
+var_dump(current($result->toArray()));
 
 $server = $result->getServer();
 
@@ -104,18 +101,11 @@ object(MongoDB\Driver\Result)#%d (%d) {
   ["is_command_cursor"]=>
   bool(false)
 }
+
 Dumping response document:
 array(1) {
   ["ok"]=>
   float(1)
-}
-Dumping iterated result:
-array(1) {
-  [0]=>
-  array(1) {
-    ["ok"]=>
-    float(1)
-  }
 }
 bool(true)
 string(%d) "%s"
