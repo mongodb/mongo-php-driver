@@ -46,6 +46,7 @@ function get_role($file) {
     case "h":
         return "src";
 
+    case "pem":
     case "phpt":
     case "php":
     case "inc":
