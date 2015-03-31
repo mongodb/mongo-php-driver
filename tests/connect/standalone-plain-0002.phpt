@@ -16,7 +16,7 @@ $adminmanager = new MongoDB\Driver\Manager($dsn);
 
 $cmd = array(
     "createUser" => "bugs",
-    "roles" => [["role" => "readWrite", "db" => DATABASE_NAME]],
+    "roles" => array(array("role" => "readWrite", "db" => DATABASE_NAME)),
 );
 $command = new MongoDB\Driver\Command($cmd);
 try {
