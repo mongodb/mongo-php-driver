@@ -36,6 +36,15 @@ Vagrant.configure(2) do |config|
     ldap.vm.provision "shell", path: "scripts/centos/ldap/install.sh", privileged: true
   end
 
+  config.vm.define "freebsd", autostart: false do |bsd|
+    bsd.vm.network "private_network", ip: "192.168.112.30"
+
+    bsd.vm.box = "geoffgarside/freebsd-10.0"
+
+    bsd.vm.provision "shell", path: "scripts/freebsd/essentials.sh", privileged: true
+    bsd.vm.synced_folder ".", "/phongo", :nfs => true, id: "vagrant-root"
+  end
+
   config.vm.define "ubuntu" do |linux|
     linux.vm.network "private_network", ip: "192.168.112.40"
 
