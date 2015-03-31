@@ -1554,8 +1554,10 @@ zend_object_iterator *phongo_cursor_get_iterator(zend_class_entry *ce, zval *obj
 
 	cursor_it = ecalloc(1, sizeof(phongo_cursor_it));
 
+	Z_ADDREF_P(object);
 	cursor_it->iterator.data  = intern->result;
 	cursor_it->iterator.funcs = &phongo_result_iterator_funcs;
+	cursor_it->zresult = object;
 
 	return (zend_object_iterator*)cursor_it;
 } /* }}} */

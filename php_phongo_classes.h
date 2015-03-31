@@ -60,6 +60,7 @@ typedef struct {
 	zend_object_iterator   iterator;
 	bson_iter_t            first_batch_iter;
 	long                   current;
+	zval                  *zresult;
 } phongo_cursor_it;
 
 typedef struct {
