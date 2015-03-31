@@ -108,27 +108,39 @@ PHP_METHOD(Result, getIterator)
 	php_phongo_cursor_new_from_result(return_value, intern TSRMLS_CC);
 }
 /* }}} */
+
+static int php_phongo_result_to_array_apply(zend_object_iterator *iter, void *puser TSRMLS_DC) /* {{{ */
+{
+	zval **data, *return_value = (zval*)puser;
+
+	iter->funcs->get_current_data(iter, &data TSRMLS_CC);
+	if (EG(exception)) {
+		return ZEND_HASH_APPLY_STOP;
+	}
+	if (data == NULL || *data == NULL) {
+		return ZEND_HASH_APPLY_STOP;
+	}
+	Z_ADDREF_PP(data);
+	add_next_index_zval(return_value, *data);
+	return ZEND_HASH_APPLY_KEEP;
+}
+/* }}} */
+
 /* {{{ proto array Result::toArray()
    Returns the original response document from the server */
 PHP_METHOD(Result, toArray)
 {
-	php_phongo_result_t *intern;
 	(void)return_value_ptr; (void)return_value_used;
-
-
-	intern = (php_phongo_result_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
+	array_init(return_value);
 
-	if (intern->firstBatch) {
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-
-		MAKE_STD_ZVAL(state.zchild);
-		bson_to_zval(bson_get_data(intern->firstBatch), intern->firstBatch->len, &state);
-		RETURN_ZVAL(state.zchild, 0, 1);
+	if (spl_iterator_apply(getThis(), php_phongo_result_to_array_apply, (void*)return_value TSRMLS_CC) != SUCCESS) {
+		zval_dtor(return_value);
+		RETURN_NULL();
 	}
 }
 /* }}} */
