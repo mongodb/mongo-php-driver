@@ -53,7 +53,6 @@ typedef struct {
 	mongoc_client_t         *client;
 	int                      server_id;
 	zend_bool                is_command_cursor;
-	zend_class_entry        *ce_get_iterator;
 	php_phongo_bson_state    visitor_data;
 } php_phongo_result_t;
 
