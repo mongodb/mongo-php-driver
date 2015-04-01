@@ -711,7 +711,7 @@ ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t
 
 	do {
 		read = php_stream_read(base_stream->stream, iov[cur].iov_base, iov[cur].iov_len);
-		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Reading got: %ld wanted: %ld", read, min_bytes);
+		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Reading got: %zd wanted: %zd", read, min_bytes);
 
 		if (read <= 0) {
 			if (ret >= (ssize_t)min_bytes) {
