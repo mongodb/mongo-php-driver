@@ -45,7 +45,7 @@ Vagrant.configure(2) do |config|
     bsd.vm.synced_folder ".", "/phongo", :nfs => true, id: "vagrant-root"
   end
 
-  config.vm.define "ubuntu" do |linux|
+  config.vm.define "precise64" do |linux|
     linux.vm.network "private_network", ip: "192.168.112.40"
 
     linux.vm.box = "http://files.vagrantup.com/precise64.box"
