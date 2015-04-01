@@ -317,7 +317,7 @@ bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const char *
 	TSRMLS_FETCH();
 
 	MAKE_STD_ZVAL(zchild);
-	php_phongo_new_javascript_from_javascript(zchild, v_code, v_code_len TSRMLS_CC);
+	php_phongo_new_javascript_from_javascript(1, zchild, v_code, v_code_len TSRMLS_CC);
 
 	add_assoc_zval(retval, key, zchild);
 
@@ -342,7 +342,7 @@ bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter ARG_UNUSED, const 
 	TSRMLS_FETCH();
 
 	MAKE_STD_ZVAL(zchild);
-	php_phongo_new_javascript_from_javascript_and_scope(zchild, v_code, v_code_len, v_scope TSRMLS_CC);
+	php_phongo_new_javascript_from_javascript_and_scope(1, zchild, v_code, v_code_len, v_scope TSRMLS_CC);
 
 	add_assoc_zval(retval, key, zchild);
 

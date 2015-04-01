@@ -50,11 +50,12 @@ PHONGO_API zend_class_entry *php_phongo_javascript_ce;
  * NOTE: eJSON does not support this type :( */
 PHP_METHOD(Javascript, __construct)
 {
-	php_phongo_javascript_t    *intern;
-	zend_error_handling       error_handling;
+	php_phongo_javascript_t   *intern;
+	zend_error_handling        error_handling;
 	char                      *javascript;
 	int                        javascript_len;
 	zval                      *document = NULL;
+	bson_t                     scope = BSON_INITIALIZER;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -66,13 +67,11 @@ PHP_METHOD(Javascript, __construct)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	intern->javascript = estrndup(javascript, javascript_len);
-
 	if (document) {
-		/* free()d in _free_object */
-		intern->document = bson_new();
-		zval_to_bson(document, PHONGO_BSON_NONE, intern->document, NULL TSRMLS_CC);
+		zval_to_bson(document, PHONGO_BSON_NONE, &scope, NULL TSRMLS_CC);
 	}
+
+	php_phongo_new_javascript_from_javascript_and_scope(0, getThis(), javascript, javascript_len, &scope TSRMLS_CC);
 }
 /* }}} */
 
@@ -121,6 +120,8 @@ zend_object_value php_phongo_javascript_create_object(zend_class_entry *class_ty
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_javascript_free_object, NULL TSRMLS_CC);
 	retval.handlers = phongo_get_std_object_handlers();
+
+	intern->document = NULL;
 
 	return retval;
 } /* }}} */
