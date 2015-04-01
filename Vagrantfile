@@ -58,5 +58,18 @@ Vagrant.configure(2) do |config|
     linux.vm.provision "shell", path: "scripts/ubuntu/phongo.sh", privileged: true
   end
 
+  config.vm.define "precise32" do |linux|
+    linux.vm.network "private_network", ip: "192.168.112.50"
+
+    linux.vm.box = "bjori/precise32"
+    linux.vm.provider "vmware_workstation" do |vmware, override|
+      override.vm.box_url = "bjori/precise32"
+    end
+
+    linux.vm.provision "shell", path: "scripts/ubuntu/essentials.sh", privileged: true
+    linux.vm.provision "file", source: "/tmp/PHONGO-SERVERS.json", destination: "/tmp/PHONGO-SERVERS.json"
+    linux.vm.provision "shell", path: "scripts/ubuntu/phongo.sh", privileged: true
+  end
+
 end
 
