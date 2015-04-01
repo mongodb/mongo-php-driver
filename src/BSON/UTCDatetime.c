@@ -51,6 +51,10 @@ PHP_METHOD(UTCDatetime, __construct)
 	php_phongo_utcdatetime_t    *intern;
 	zend_error_handling       error_handling;
 	long                      milliseconds;
+#if SIZEOF_LONG == 4
+	char                        *s_milliseconds;
+	int 	                     s_milliseconds_len;
+#endif
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -60,9 +64,19 @@ PHP_METHOD(UTCDatetime, __construct)
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
+#if SIZEOF_LONG == 4
+	if (zend_parse_parameters_ex(ZEND_PARSE_PARAMS_QUIET, ZEND_NUM_ARGS() TSRMLS_CC, "s", &s_milliseconds, &s_milliseconds_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+
+	intern->milliseconds = strtoll(s_milliseconds, NULL, 10);
+#else
+	intern->milliseconds = milliseconds;
+#endif
+
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	intern->milliseconds = milliseconds;
 }
 /* }}} */
 /* {{{ proto string UTCDatetime::__toString()
@@ -70,6 +84,8 @@ PHP_METHOD(UTCDatetime, __construct)
 PHP_METHOD(UTCDatetime, __toString)
 {
 	php_phongo_utcdatetime_t    *intern;
+	char *tmp;
+	int tmp_len;
 
 
 	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -78,8 +94,8 @@ PHP_METHOD(UTCDatetime, __toString)
 		return;
 	}
 
-	RETVAL_LONG(intern->milliseconds);
-	convert_to_string(return_value);
+	tmp_len = spprintf(&tmp, 0, "%lld", intern->milliseconds);
+	RETVAL_STRINGL(tmp, tmp_len, 0);
 }
 /* }}} */
 /* {{{ proto string UTCDatetime::toDateTime()

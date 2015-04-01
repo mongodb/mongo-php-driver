@@ -10,7 +10,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$utcdatetime = new BSON\UTCDatetime(1416445411987);
+$utcdatetime = new BSON\UTCDatetime("1416445411987");
 $result = $manager->executeInsert(NS, array('_id' => 1, 'x' => $utcdatetime));
 $query = new MongoDB\Driver\Query(array('_id' => 1));
 $cursor = $manager->executeQuery(NS, $query);
