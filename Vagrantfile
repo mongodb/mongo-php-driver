@@ -55,6 +55,7 @@ Vagrant.configure(2) do |config|
 
     linux.vm.provision "shell", path: "scripts/ubuntu/essentials.sh", privileged: true
     linux.vm.provision "file", source: "/tmp/PHONGO-SERVERS.json", destination: "/tmp/PHONGO-SERVERS.json"
+    linux.vm.provision "file", source: "scripts/configs/.gdbinit", destination: "/home/vagrant/.gdbinit"
     linux.vm.provision "shell", path: "scripts/ubuntu/phongo.sh", privileged: true
   end
 
@@ -68,6 +69,7 @@ Vagrant.configure(2) do |config|
 
     linux.vm.provision "shell", path: "scripts/ubuntu/essentials.sh", privileged: true
     linux.vm.provision "file", source: "/tmp/PHONGO-SERVERS.json", destination: "/tmp/PHONGO-SERVERS.json"
+    linux.vm.provision "file", source: "scripts/configs/.gdbinit", destination: "/home/vagrant/.gdbinit"
     linux.vm.provision "shell", path: "scripts/ubuntu/phongo.sh", privileged: true
   end
 
