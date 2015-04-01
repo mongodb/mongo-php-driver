@@ -154,6 +154,8 @@ zend_object_value php_phongo_writeconcernerror_create_object(zend_class_entry *c
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeconcernerror_free_object, NULL TSRMLS_CC);
 	retval.handlers = &php_phongo_handler_writeconcernerror;
 
+	intern->info = NULL;
+
 	return retval;
 } /* }}} */
 

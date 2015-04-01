@@ -156,6 +156,11 @@ static void php_phongo_writeerror_free_object(void *object TSRMLS_DC) /* {{{ */
 	if (intern->message) {
 		efree(intern->message);
 	}
+
+	if (intern->info) {
+		zval_ptr_dtor(&intern->info);
+	}
+
 	efree(intern);
 } /* }}} */
 
@@ -171,6 +176,8 @@ zend_object_value php_phongo_writeerror_create_object(zend_class_entry *class_ty
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeerror_free_object, NULL TSRMLS_CC);
 	retval.handlers = &php_phongo_handler_writeerror;
+
+	intern->info = NULL;
 
 	return retval;
 } /* }}} */
