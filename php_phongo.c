@@ -59,6 +59,9 @@
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO"
 
+#define PHONGO_DEBUG_INI "mongodb.debug_log"
+#define PHONGO_DEBUG_INI_DEFAULT ""
+
 ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 
 /* {{{ phongo_std_object_handlers */
@@ -1237,7 +1240,7 @@ mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptio
 		if (zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
 			convert_to_string(*tmp);
 
-			zend_alter_ini_entry_ex((char *)"phongo.debug_log", sizeof("phongo.debug_log") , Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
+			zend_alter_ini_entry_ex((char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
 		}
 	}
 
@@ -1624,7 +1627,7 @@ void _phongo_debug_bson(bson_t *bson)
 
 /* {{{ INI entries */
 PHP_INI_BEGIN()
-	STD_PHP_INI_ENTRY("mongodb.debug_log", "", PHP_INI_ALL, OnUpdateString, debug_log, zend_mongodb_globals, mongodb_globals)
+	STD_PHP_INI_ENTRY(PHONGO_DEBUG_INI, PHONGO_DEBUG_INI_DEFAULT, PHP_INI_ALL, OnUpdateString, debug_log, zend_mongodb_globals, mongodb_globals)
 PHP_INI_END()
 /* }}} */
 
