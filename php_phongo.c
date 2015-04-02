@@ -1199,49 +1199,90 @@ void php_phongo_result_to_zval(zval *retval, php_phongo_result_t *result) /* {{{
 
 mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
 {
-	php_stream_context       *ctx = NULL;
-	mongoc_client_t *client = mongoc_client_new(uri);
+	zval                     **tmp;
+	php_stream_context        *ctx;
+	const char                *mech;
+	const mongoc_uri_t        *muri;
+	mongoc_client_t *client =  mongoc_client_new(uri);
+
 
 	if (!client) {
 		return false;
 	}
 
-	if (driverOptions) {
-		zval **tmp;
+	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
+		ctx = php_stream_context_from_zval(*tmp, 0);
+	} else {
+		ctx = FG(default_context) ? FG(default_context) : php_stream_context_alloc(TSRMLS_C);
+	}
+	muri = mongoc_client_get_uri(client);
 
-		if (zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
-			ctx = php_stream_context_from_zval(*tmp, PHP_FILE_NO_DEFAULT_CONTEXT);
-		} else if (FG(default_context)) {
-			ctx = FG(default_context);
+	if (driverOptions && mongoc_uri_get_ssl(muri)) {
+
+#define SET_STRING_CTX(name) \
+		if (php_array_exists(driverOptions, name)) { \
+			zval ztmp; \
+			zend_bool ctmp_free; \
+			int ctmp_len; \
+			char *ctmp; \
+			ctmp = php_array_fetchl_string(driverOptions, name, sizeof(name)-1, &ctmp_len, &ctmp_free); \
+			ZVAL_STRING(&ztmp, ctmp, ctmp_free); \
+			php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
 		}
 
-		if (ctx) {
-			const mongoc_uri_t *muri = mongoc_client_get_uri(client);
-			const char *mech = mongoc_uri_get_auth_mechanism(muri);
+#define SET_BOOL_CTX(name, defaultvalue) \
+		{ \
+			zval ztmp; \
+			if (php_array_exists(driverOptions, name)) { \
+				ZVAL_BOOL(&ztmp, php_array_fetchl_bool(driverOptions, ZEND_STRL(name))); \
+				php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
+			} \
+			else if (php_stream_context_get_option(ctx, "ssl", name, &tmp) == FAILURE) { \
+				ZVAL_BOOL(&ztmp, defaultvalue); \
+				php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
+			} \
+		}
 
-			/* Check if we are doing X509 auth, in which case extract the username (subject) from the cert if no username is provided */
-			if (mech && !strcasecmp(mech, "MONGODB-X509") && !mongoc_uri_get_username(muri)) {
-				zval **pem;
+		SET_BOOL_CTX("verify_peer", 1);
+		SET_BOOL_CTX("verify_peer_name", 1);
+		SET_BOOL_CTX("verify_hostname", 1);
+		SET_BOOL_CTX("verify_expiry", 1);
+		SET_BOOL_CTX("allow_self_signed", 0);
 
-				if (SUCCESS == php_stream_context_get_option(ctx, "ssl", "local_cert", &pem)) {
-					char filename[MAXPATHLEN];
+		SET_STRING_CTX("peer_name");
+		SET_STRING_CTX("local_pk");
+		SET_STRING_CTX("local_cert");
+		SET_STRING_CTX("cafile");
+		SET_STRING_CTX("capath");
+		SET_STRING_CTX("passphrase");
+		SET_STRING_CTX("ciphers");
+#undef SET_BOOL_CTX
+#undef SET_STRING_CTX
+	}
 
-					convert_to_string_ex(pem);
-					if (VCWD_REALPATH(Z_STRVAL_PP(pem), filename)) {
-						mongoc_ssl_opt_t  ssl_options;
+	mech = mongoc_uri_get_auth_mechanism(muri);
 
-						ssl_options.pem_file = filename;
-						mongoc_client_set_ssl_opts(client, &ssl_options);
-					}
-				}
+	/* Check if we are doing X509 auth, in which case extract the username (subject) from the cert if no username is provided */
+	if (mech && !strcasecmp(mech, "MONGODB-X509") && !mongoc_uri_get_username(muri)) {
+		zval **pem;
+
+		if (SUCCESS == php_stream_context_get_option(ctx, "ssl", "local_cert", &pem)) {
+			char filename[MAXPATHLEN];
+
+			convert_to_string_ex(pem);
+			if (VCWD_REALPATH(Z_STRVAL_PP(pem), filename)) {
+				mongoc_ssl_opt_t  ssl_options;
+
+				ssl_options.pem_file = filename;
+				mongoc_client_set_ssl_opts(client, &ssl_options);
 			}
 		}
+	}
 
-		if (zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
-			convert_to_string(*tmp);
+	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
+		convert_to_string(*tmp);
 
-			zend_alter_ini_entry_ex((char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
-		}
+		zend_alter_ini_entry_ex((char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
 	}
 
 	mongoc_client_set_stream_initiator(client, phongo_stream_initiator, ctx);
