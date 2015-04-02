@@ -60,13 +60,13 @@ function makeCollectionNameFromFilename($filename)
     return preg_replace(array_keys($replacements), array_values($replacements), $filename);
 }
 
-function CLEANUP($uri) {
+function CLEANUP($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME) {
     try {
         $manager = new MongoDB\Driver\Manager($uri);
-        $cmd = new MongoDB\Driver\Command(array("drop" => COLLECTION_NAME));
+        $cmd = new MongoDB\Driver\Command(array("drop" => $collname));
         $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
         try {
-            $manager->executeCommand(DATABASE_NAME, $cmd, $rp);
+            $manager->executeCommand($dbname, $cmd, $rp);
         } catch(Exception $e) {
             do {
                 /* ns not found */
