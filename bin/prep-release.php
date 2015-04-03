@@ -80,6 +80,7 @@ function get_files() {
 
         "src/MongoDB/*.{c,h}",
         "src/BSON/*.{c,h}",
+        "src/contrib/*.{c,h}",
 
         "src/libbson/build/autotools/*.{m4}",
         "src/libbson/build/autotools/m4/*.{m4}",

@@ -55,6 +55,7 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 #include "php_array.h"
+#include "src/contrib/php-ssl.h"
 
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO"
@@ -796,6 +797,97 @@ ssize_t phongo_stream_poll (mongoc_stream_poll_t *streams, size_t nstreams, int3
 	return rval;
 } /* }}} */
 
+#if PHP_VERSION_ID < 50600
+int php_mongo_verify_hostname(const char *hostname, X509 *cert TSRMLS_DC)
+{
+	if (php_mongo_matches_san_list(cert, hostname) == SUCCESS) {
+		return SUCCESS;
+	}
+
+	if (php_mongo_matches_common_name(cert, hostname TSRMLS_CC) == SUCCESS) {
+		return SUCCESS;
+	}
+
+	return FAILURE;
+}
+
+int php_phongo_peer_verify(php_stream *stream, X509 *cert, const char *hostname, bson_error_t *error TSRMLS_DC)
+{
+	zval **verify_peer_name;
+
+	/* This option is available since PHP 5.6.0 */
+	if (php_stream_context_get_option(stream->context, "ssl", "verify_peer_name", &verify_peer_name) == SUCCESS && zend_is_true(*verify_peer_name)) {
+		zval **zhost = NULL;
+		const char *peer;
+
+		if (php_stream_context_get_option(stream->context, "ssl", "peer_name", &zhost) == SUCCESS) {
+			convert_to_string_ex(zhost);
+			peer = Z_STRVAL_PP(zhost);
+		} else {
+			peer = hostname;
+		}
+
+		if (php_mongo_verify_hostname(peer, cert TSRMLS_CC) == FAILURE) {
+			bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Remote certificate SubjectAltName or CN does not match '%s'", hostname);
+			return false;
+		}
+	}
+
+	return true;
+}
+#endif
+
+bool php_phongo_ssl_verify(php_stream *stream, const char *hostname, bson_error_t *error TSRMLS_DC)
+{
+	zval **zcert;
+	zval **verify_expiry;
+	int resource_type;
+	X509 *cert;
+	int type;
+
+	if (!stream->context) {
+		return true;
+	}
+
+	if (!(php_stream_context_get_option(stream->context, "ssl", "peer_certificate", &zcert) == SUCCESS && Z_TYPE_PP(zcert) == IS_RESOURCE)) {
+		bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Could not capture certificate of %s", hostname);
+		return false;
+	}
+
+
+
+	zend_list_find(Z_LVAL_PP(zcert), &resource_type);
+	cert = (X509 *)zend_fetch_resource(zcert TSRMLS_CC, -1, "OpenSSL X.509", &type, 1, resource_type);
+
+	if (!cert) {
+		bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Could not get certificate of %s", hostname);
+		return false;
+	}
+
+#if PHP_VERSION_ID < 50600
+	if (!php_phongo_peer_verify(stream, cert, hostname, error TSRMLS_CC)) {
+		return false;
+	}
+#endif
+
+	if (php_stream_context_get_option(stream->context, "ssl", "verify_expiry", &verify_expiry) == SUCCESS && zend_is_true(*verify_expiry)) {
+		time_t current     = time(NULL);
+		time_t valid_from  = php_mongo_asn1_time_to_time_t(X509_get_notBefore(cert) TSRMLS_CC);
+		time_t valid_until = php_mongo_asn1_time_to_time_t(X509_get_notAfter(cert) TSRMLS_CC);
+
+		if (valid_from > current) {
+			bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Certificate is not valid yet on %s", hostname);
+			return false;
+		}
+		if (current > valid_until) {
+			bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Certificate has expired on %s", hostname);
+			return false;
+		}
+	}
+
+	return true;
+}
+
 mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = NULL;
@@ -880,6 +972,14 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		zend_replace_error_handling(EH_THROW, php_phongo_sslconnectionexception_ce, &error_handling TSRMLS_CC);
 
 		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Enabling SSL");
+
+		/* Capture the server certificate so we can do further verification */
+		if (stream->context) {
+			zval capture;
+			ZVAL_BOOL(&capture, 1);
+			php_stream_context_set_option(stream->context, "ssl", "capture_peer_cert", &capture);
+		}
+
 		if (php_stream_xport_crypto_setup(stream, PHONGO_CRYPTO_METHOD, NULL TSRMLS_CC) < 0) {
 			zend_restore_error_handling(&error_handling TSRMLS_CC);
 			php_stream_free(stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
@@ -896,10 +996,20 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 			return NULL;
 		}
 
+		if (!php_phongo_ssl_verify(stream, host->host, error TSRMLS_CC)) {
+			zend_restore_error_handling(&error_handling TSRMLS_CC);
+			php_stream_pclose(stream);
+			efree(dsn);
+			return NULL;
+		}
+
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 	}
 	efree(dsn);
 
+
+	/* We only need the context really for SSL initialization, safe to remove now */
+	php_stream_context_set(stream, NULL);
 
 	base_stream = ecalloc(1, sizeof(php_phongo_stream_socket));
 	base_stream->stream = stream;
