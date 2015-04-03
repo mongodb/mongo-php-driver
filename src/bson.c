@@ -470,7 +470,7 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 		array_init(state.zchild);
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
-			if (state.map.document || state.odm) {
+			if ((state.map.document || state.odm) && instanceof_function(state.odm ? state.odm : state.map.document, php_phongo_unserializable_ce TSRMLS_CC)) {
 				zval *obj = NULL;
 
 				MAKE_STD_ZVAL(obj);
@@ -506,11 +506,11 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
 
-			if (state.map.array || state.odm) {
+			if (state.map.array && instanceof_function(state.map.array, php_phongo_unserializable_ce TSRMLS_CC)) {
 				zval *obj = NULL;
 
 				MAKE_STD_ZVAL(obj);
-				object_init_ex(obj, state.odm ? state.odm : state.map.array);
+				object_init_ex(obj, state.map.array);
 				zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
 				add_assoc_zval(retval, key, obj);
 				zval_ptr_dtor(&state.zchild);
@@ -595,12 +595,12 @@ void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TS
 					tmp_ht->nApplyCount++;
 				}
 
-				bson_append_array_begin(bson, key, key_len, &child);
+				bson_append_document_begin(bson, key, key_len, &child);
 				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC)) {
 					bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
 				}
 				zval_to_bson(retval, PHONGO_BSON_NONE, &child, NULL TSRMLS_CC);
-				bson_append_array_end(bson, &child);
+				bson_append_document_end(bson, &child);
 
 				if (tmp_ht) {
 					tmp_ht->nApplyCount--;
@@ -842,7 +842,7 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 
 		array_init(state->zchild);
 		bson_iter_visit_all(&iter, &php_bson_visitors, state);
-		if (state->map.array || state->odm) {
+		if ((state->map.array || state->odm) && instanceof_function(state->odm ? state->odm : state->map.array, php_phongo_unserializable_ce TSRMLS_CC)) {
 			zval *obj = NULL;
 
 			MAKE_STD_ZVAL(obj);

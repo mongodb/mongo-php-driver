@@ -37,14 +37,15 @@ foreach($tests as $n => $test) {
     $s = BSON\fromArray($test);
     echo "Test#{$n} ", BSON\toJSON($s), "\n";
     hex_dump($s);
-    BSON\toArray($s, array("array" => get_class($test["stuff"])));
+    $obj = BSON\toArray($s, array("document" => get_class($test["stuff"])));
+    var_dump($obj);
 }
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Test#0 { "stuff" : [ "class", "data" ] }
-     0 : 2f 00 00 00 04 73 74 75 66 66 00 23 00 00 00 02  [/....stuff.#....]
+Test#0 { "stuff" : { "random" : "class", "0" : "data" } }
+     0 : 2f 00 00 00 03 73 74 75 66 66 00 23 00 00 00 02  [/....stuff.#....]
     10 : 72 61 6e 64 6f 6d 00 06 00 00 00 63 6c 61 73 73  [random.....class]
     20 : 00 02 30 00 05 00 00 00 64 61 74 61 00 00 00     [..0.....data...]
 string(24) "MyClass::bsonUnserialize"
@@ -54,14 +55,13 @@ array(2) {
   [0]=>
   string(4) "data"
 }
-string(24) "MyClass::bsonUnserialize"
 array(1) {
   ["stuff"]=>
   object(MyClass)#%d (0) {
   }
 }
-Test#1 { "stuff" : [ 1, 2, 3 ] }
-     0 : 26 00 00 00 04 73 74 75 66 66 00 1a 00 00 00 10  [&....stuff......]
+Test#1 { "stuff" : { "0" : 1, "1" : 2, "2" : 3 } }
+     0 : 26 00 00 00 03 73 74 75 66 66 00 1a 00 00 00 10  [&....stuff......]
     10 : 30 00 01 00 00 00 10 31 00 02 00 00 00 10 32 00  [0......1......2.]
     20 : 03 00 00 00 00 00                                [......]
 string(25) "MyClass2::bsonUnserialize"
@@ -73,7 +73,6 @@ array(3) {
   [2]=>
   int(3)
 }
-string(25) "MyClass2::bsonUnserialize"
 array(1) {
   ["stuff"]=>
   object(MyClass2)#%d (0) {
