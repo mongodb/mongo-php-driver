@@ -386,6 +386,7 @@ static zend_function_entry php_phongo_writeresult_me[] = {
 	PHP_ME(WriteResult, getwriteConcernError, ai_WriteResult_getwriteConcernError, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_getWriteErrors, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, isAcknowledged, ai_WriteResult_isAcknowledged, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

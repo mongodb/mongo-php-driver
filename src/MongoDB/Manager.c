@@ -277,6 +277,19 @@ PHP_METHOD(Manager, getServers)
 	}
 }
 /* }}} */
+/* {{{ proto void MongoDB\Driver\Manager::__wakeUp()
+ * Throws MongoDB\Driver\RuntimeException as it cannot be serialized */
+PHP_METHOD(Manager, __wakeUp)
+{
+	(void)return_value_ptr; (void)return_value_used; (void)return_value; (void)this_ptr;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "MongoDB\\Driver objects cannot be serialized");
+}
+/* }}} */
 
 /**
  * Manager abstracts a cluster of Server objects (i.e. socket connections).
@@ -350,6 +363,7 @@ static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, executeUpdate, ai_Manager_executeUpdate, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeDelete, ai_Manager_executeDelete, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, getServers, ai_Manager_getServers, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

@@ -223,6 +223,9 @@ extern PHONGO_API zend_class_entry *php_phongo_regex_ce;
 extern PHONGO_API zend_class_entry *php_phongo_timestamp_ce;
 extern PHONGO_API zend_class_entry *php_phongo_utcdatetime_ce;
 
+/* Shared accross all MongoDB\Driver objects to disable unserialize() */
+PHP_METHOD(Manager, __wakeUp);
+
 PHP_MINIT_FUNCTION(Command);
 PHP_MINIT_FUNCTION(Cursor);
 PHP_MINIT_FUNCTION(CursorId);

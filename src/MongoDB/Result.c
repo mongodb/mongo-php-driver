@@ -190,6 +190,7 @@ static zend_function_entry php_phongo_result_me[] = {
 	PHP_ME(Result, getIterator, ai_Result_getIterator, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Result, toArray, ai_Result_toArray, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Result, getServer, ai_Result_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
