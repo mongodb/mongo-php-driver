@@ -150,40 +150,40 @@ This will result in the following document to be stored (as shown by mongo shell
 
 ```
 {
-        "_id" : ObjectId("54c9664fbd21b9416f2e0501"),
-        "__" : BinData(128,"UGVyc29u"),
-        "name" : "Hannes",
-        "age" : 31,
-        "address" : [
-                [
-                        BinData(128,"QWRkcmVzcw=="),
-                        94086,
-                        "USA"
-                ],
-                [
-                        BinData(128,"QWRkcmVzcw=="),
-                        200,
-                        "Iceland"
-                ]
-        ],
-        "friends" : [
-                [
-                        BinData(128,"UGVyc29u"),
-                        ObjectId("54c9664fbd21b9416f2e0502"),
-                        "Jeremy",
-                        21,
-                        [
-                                [
-                                        BinData(128,"QWRkcmVzcw=="),
-                                        48169,
-                                        "USA"
-                                ]
-                        ],
-                        {
-
-                        }
-                ]
-        ]
+	"_id" : ObjectId("551f2004bd21b959de3c15b1"),
+	"__pclass" : BinData(128,"UGVyc29u"),
+	"name" : "Hannes",
+	"age" : 31,
+	"address" : [
+		{
+			"__pclass" : BinData(128,"QWRkcmVzcw=="),
+			"zip" : 94086,
+			"country" : "USA"
+		},
+		{
+			"__pclass" : BinData(128,"QWRkcmVzcw=="),
+			"zip" : 200,
+			"country" : "Iceland"
+		}
+	],
+	"friends" : [
+		{
+			"__pclass" : BinData(128,"UGVyc29u"),
+			"_id" : ObjectId("551f2004bd21b959de3c15b2"),
+			"name" : "Jeremy",
+			"age" : 21,
+			"address" : [
+				{
+					"__pclass" : BinData(128,"QWRkcmVzcw=="),
+					"zip" : 48169,
+					"country" : "USA"
+				}
+			],
+			"friends" : {
+				
+			}
+		}
+	]
 }
 ```
 
