@@ -19,7 +19,7 @@ foreach($databases["databases"] as $database) {
 	$listcollections = new MongoDB\Driver\Command(array("listCollections" => 1));
 	$retval          = $manager->executeCommand($database->name, $listcollections);
 	$collections     = $retval->toArray();
-	foreach($collections["collections"] as $collection) {
+	foreach($collections as $collection) {
 		echo "\t- ", $collection->name, "\n";
 	}
 }
@@ -53,7 +53,7 @@ $createuser = new MongoDB\Driver\Command($command);
 try {
 	$result     = $manager->executeCommand("admin", $createuser);
 	$response   = $result->toArray();
-	if ($reponse["ok"]) {
+	if ($response["ok"]) {
 		echo "User created\n";
 	}
 } catch(Exception $e) {
