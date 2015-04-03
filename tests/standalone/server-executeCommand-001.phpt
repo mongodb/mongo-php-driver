@@ -12,7 +12,7 @@ $server = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()))->getServ
 $command = new MongoDB\Driver\Command(array('ping' => 1));
 $result = $server->executeCommand(DATABASE_NAME, $command);
 
-var_dump($result instanceof MongoDB\Driver\Result);
+var_dump($result instanceof MongoDB\Driver\Cursor);
 var_dump($result);
 
 echo "\nDumping response document:\n";
@@ -25,7 +25,7 @@ var_dump($server == $result->getServer());
 <?php exit(0); ?>
 --EXPECTF--
 bool(true)
-object(MongoDB\Driver\Result)#%d (%d) {
+object(MongoDB\Driver\Cursor)#%d (%d) {
   ["cursor"]=>
   array(19) {
     ["stamp"]=>

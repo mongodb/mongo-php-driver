@@ -9,7 +9,7 @@ if (PHP_MONGODB != "no") {
   EXTENSION("mongodb", "php_phongo.c");
   ADD_SOURCES(configure_module_dirname + "/src", "bson.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/BSON", "Type.c Unserializable.c Serializable.c Persistable.c Binary.c Javascript.c MaxKey.c MinKey.c ObjectID.c Regex.c Timestamp.c UTCDatetime.c", "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/MongoDB", "Command.c CursorId.c Manager.c Query.c ReadPreference.c Result.c Server.c BulkWrite.c WriteConcern.c WriteConcernError.c WriteError.c WriteResult.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/MongoDB", "Command.c Cursor.c CursorId.c Manager.c Query.c ReadPreference.c Server.c BulkWrite.c WriteConcern.c WriteConcernError.c WriteError.c WriteResult.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/MongoDB", "Exception.c RuntimeException.c InvalidArgumentException.c ConnectionException.c AuthenticationException.c SSLConnectionException.c DuplicateKeyException.c ExecutionTimeoutException.c ConnectionTimeoutException.c WriteException.c WriteConcernException.c BulkWriteException.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/contrib/", "php-ssl.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libbson/src/yajl", "yajl_version.c yajl.c yajl_encode.c yajl_lex.c yajl_parser.c yajl_buf.c yajl_tree.c yajl_alloc.c yajl_gen.c", "mongodb");

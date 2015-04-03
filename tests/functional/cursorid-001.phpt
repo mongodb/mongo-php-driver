@@ -16,16 +16,14 @@ $query = new MongoDB\Driver\Query(array(), array(
     'limit' => 110,
 ));
 
-$qr = $manager->executeQuery(NS, $query);
-$cursor = $qr->getIterator();
+$cursor = $manager->executeQuery(NS, $query);
+
 $cursorid = $cursor->getId();
 $s1 = (string)$cursorid;
 var_dump(
     $cursorid,
     $s1
 );
-$cursor->kill();
-
 
 ?>
 ===DONE===

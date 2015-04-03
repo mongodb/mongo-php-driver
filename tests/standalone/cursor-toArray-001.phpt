@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Result::toArray()
+MongoDB\Driver\Cursor::toArray()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -11,22 +11,22 @@ $manager = new MongoDB\Driver\Manager(STANDALONE);
 $manager->executeInsert(NS, array('_id' => 1, 'x' => 1));
 $manager->executeInsert(NS, array('_id' => 2, 'x' => 1));
 
-$result = $manager->executeQuery(NS, new MongoDB\Driver\Query(array("x" => 1)));
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array("x" => 1)));
 
-echo "Dumping Result::toArray():\n";
-var_dump($result->toArray());
+echo "Dumping Cursor::toArray():\n";
+var_dump($cursor->toArray());
 
 // Execute the query a second time, since we cannot iterate twice
-$result = $manager->executeQuery(NS, new MongoDB\Driver\Query(array("x" => 1)));
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array("x" => 1)));
 
-echo "\nDumping iterated Result:\n";
-var_dump(iterator_to_array($result));
+echo "\nDumping iterated Cursor:\n";
+var_dump(iterator_to_array($cursor));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-Dumping Result::toArray():
+Dumping Cursor::toArray():
 array(2) {
   [0]=>
   array(2) {
@@ -44,7 +44,7 @@ array(2) {
   }
 }
 
-Dumping iterated Result:
+Dumping iterated Cursor:
 array(2) {
   [0]=>
   array(2) {

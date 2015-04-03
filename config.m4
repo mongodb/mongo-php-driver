@@ -151,11 +151,11 @@ if test "$MONGODB" != "no"; then
   ";
   MONGODB_MONGODB_CLASSES="\
       src/MongoDB/Command.c \
+      src/MongoDB/Cursor.c \
       src/MongoDB/CursorId.c \
       src/MongoDB/Manager.c \
       src/MongoDB/Query.c \
       src/MongoDB/ReadPreference.c \
-      src/MongoDB/Result.c \
       src/MongoDB/Server.c \
       src/MongoDB/BulkWrite.c \
       src/MongoDB/WriteConcern.c \

@@ -14,11 +14,11 @@ $query = new MongoDB\Driver\Query(array(), array(
     'sort' => array('username' => 1),
 ));
 
-$qr = $manager->executeQuery(NS, $query);
 var_dump($query);
 
-$cursor = $qr->getIterator();
-var_dump(get_class($qr), get_class($cursor));
+$cursor = $manager->executeQuery(NS, $query);
+
+var_dump(get_class($cursor));
 
 foreach ($cursor as $document) {
     echo $document['username'] . "\n";
@@ -56,7 +56,6 @@ object(MongoDB\Driver\Query)#%d (6) {
   ["batch_size"]=>
   int(0)
 }
-string(21) "MongoDB\Driver\Result"
 string(21) "MongoDB\Driver\Cursor"
 aaliyah.kertzmann
 aaron89

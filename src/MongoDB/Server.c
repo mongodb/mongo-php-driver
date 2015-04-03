@@ -58,7 +58,7 @@ PHP_METHOD(Server, __construct)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Accessing private constructor");
 }
 /* }}} */
-/* {{{ proto MongoDB\Driver\Result Server::executeCommand(string $db, MongoDB\Driver\Command $command)
+/* {{{ proto MongoDB\Driver\Cursor Server::executeCommand(string $db, MongoDB\Driver\Command $command)
    Executes a command on this server */
 PHP_METHOD(Server, executeCommand)
 {
@@ -81,7 +81,7 @@ PHP_METHOD(Server, executeCommand)
 	phongo_execute_command(intern->client, db, cmd->bson, NULL, intern->server_id, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Driver\Result Server::executeQuery(string $namespace, MongoDB\Driver\Query $zquery)
+/* {{{ proto MongoDB\Driver\Cursor Server::executeQuery(string $namespace, MongoDB\Driver\Query $zquery)
    Executes a Query */
 PHP_METHOD(Server, executeQuery)
 {

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Result::toArray() respects type map
+MongoDB\Driver\Cursor::toArray() respects type map
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -19,10 +19,10 @@ $manager = new MongoDB\Driver\Manager(STANDALONE);
 $manager->executeInsert(NS, array('_id' => 1, 'x' => array(1, 2, 3)));
 $manager->executeInsert(NS, array('_id' => 2, 'x' => array(4, 5, 6)));
 
-$result = $manager->executeQuery(NS, new MongoDB\Driver\Query(array('x' => 1)));
-$result->setTypeMap(array("array" => "MyArrayObject"));
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array('x' => 1)));
+$cursor->setTypeMap(array("array" => "MyArrayObject"));
 
-$documents = $result->toArray();
+$documents = $cursor->toArray();
 
 var_dump($documents[0]['x'] instanceof MyArrayObject);
 
