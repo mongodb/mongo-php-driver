@@ -57,6 +57,7 @@
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO-BSON"
 
+#define PHONGO_ODM_FIELD_NAME "__pclass"
 
 PHP_MINIT_FUNCTION(bson)
 {
@@ -207,7 +208,7 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
 
-	if (v_subtype == 0x80) {
+	if (v_subtype == 0x80 && strcmp(key, PHONGO_ODM_FIELD_NAME) ==0) {
 		((php_phongo_bson_state *)data)->odm = zend_fetch_class((char *)v_binary, v_binary_len, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
 		if (((php_phongo_bson_state *)data)->odm) {
 			return false;
@@ -596,7 +597,7 @@ void object_to_bson(zval *object, const char *key, long key_len, bson_t *bson TS
 
 				bson_append_array_begin(bson, key, key_len, &child);
 				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC)) {
-					bson_append_binary(&child, "__", -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
+					bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
 				}
 				zval_to_bson(retval, PHONGO_BSON_NONE, &child, NULL TSRMLS_CC);
 				bson_append_array_end(bson, &child);
@@ -738,7 +739,7 @@ PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson
 				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce TSRMLS_CC)) {
 					zval *retval;
 
-					bson_append_binary(bson, "__", -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
+					bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
 
 					zend_call_method_with_0_params(&data, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &retval);
 					if(retval) {
