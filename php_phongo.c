@@ -1632,9 +1632,6 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator *iter T
 	if (mongoc_cursor_next(cursor->cursor, &doc)) {
 		MAKE_STD_ZVAL(cursor->visitor_data.zchild);
 		bson_to_zval(bson_get_data(doc), doc->len, &cursor->visitor_data);
-	} else {
-		/* TODO: is this really necessary? */
-		php_phongo_cursor_free_current(cursor);
 	}
 } /* }}} */
 
