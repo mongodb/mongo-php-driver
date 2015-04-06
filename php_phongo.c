@@ -1557,28 +1557,32 @@ void php_phongo_cursor_free(php_phongo_cursor_t *cursor)
 	}
 }
 
-/* {{{ Iterator */
-static void phongo_cursor_iterator_invalidate_current(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
+static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ */
 {
-	php_phongo_cursor_t *cursor = NULL;
-
-	cursor = ((phongo_cursor_it *)iter)->iterator.data;
 	if (cursor->visitor_data.zchild) {
 		zval_ptr_dtor(&cursor->visitor_data.zchild);
 		cursor->visitor_data.zchild = NULL;
 	}
 } /* }}} */
 
-static void phongo_cursor_iterator_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
+/* {{{ Iterator */
+static void php_phongo_cursor_iterator_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	efree(iter);
+	php_phongo_cursor_iterator *cursor_it = (php_phongo_cursor_iterator *)iter;
+
+	if (cursor_it->intern.data) {
+		zval_ptr_dtor((zval**)&cursor_it->intern.data);
+		cursor_it->intern.data = NULL;
+	}
+
+	php_phongo_cursor_free_current(cursor_it->cursor);
+
+	efree(cursor_it);
 } /* }}} */
 
-static int phongo_cursor_iterator_valid(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
+static int php_phongo_cursor_iterator_valid(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	php_phongo_cursor_t *cursor = NULL;
-
-	cursor = ((phongo_cursor_it *)iter)->iterator.data;
+	php_phongo_cursor_t *cursor = ((php_phongo_cursor_iterator *)iter)->cursor;
 
 	if (cursor->visitor_data.zchild) {
 		return SUCCESS;
@@ -1588,37 +1592,34 @@ static int phongo_cursor_iterator_valid(zend_object_iterator *iter TSRMLS_DC) /*
 } /* }}} */
 
 #if PHP_VERSION_ID < 50500
-static int phongo_cursor_iterator_get_current_key(zend_object_iterator *iter, char **str_key, uint *str_key_len, ulong *int_key TSRMLS_DC) /* {{{ */
+static int php_phongo_cursor_iterator_get_current_key(zend_object_iterator *iter, char **str_key, uint *str_key_len, ulong *int_key TSRMLS_DC) /* {{{ */
 {
-	*int_key = (ulong) ((phongo_cursor_it *)iter)->current;
+	*int_key = (ulong) ((php_phongo_cursor_iterator *)iter)->current;
 	return HASH_KEY_IS_LONG;
 } /* }}} */
 #else
-static void phongo_cursor_iterator_get_current_key(zend_object_iterator *iter, zval *key TSRMLS_DC) /* {{{ */
+static void php_phongo_cursor_iterator_get_current_key(zend_object_iterator *iter, zval *key TSRMLS_DC) /* {{{ */
 {
-	ZVAL_LONG(key, ((phongo_cursor_it *)iter)->current);
+	ZVAL_LONG(key, ((php_phongo_cursor_iterator *)iter)->current);
 } /* }}} */
 #endif
 
-static void phongo_cursor_iterator_get_current_data(zend_object_iterator *iter, zval ***data TSRMLS_DC) /* {{{ */
+static void php_phongo_cursor_iterator_get_current_data(zend_object_iterator *iter, zval ***data TSRMLS_DC) /* {{{ */
 {
-	php_phongo_cursor_t *cursor = NULL;
-
-	cursor = ((phongo_cursor_it *)iter)->iterator.data;
+	php_phongo_cursor_t *cursor = ((php_phongo_cursor_iterator *)iter)->cursor;
 
 	*data = &cursor->visitor_data.zchild;
 } /* }}} */
 
-static void phongo_cursor_iterator_move_forward(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
+static void php_phongo_cursor_iterator_move_forward(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	php_phongo_cursor_t   *cursor = NULL;
-	phongo_cursor_it      *cursor_it = (phongo_cursor_it *)iter;
-	const bson_t          *doc;
+	php_phongo_cursor_iterator *cursor_it = (php_phongo_cursor_iterator *)iter;
+	php_phongo_cursor_t        *cursor = cursor_it->cursor;
+	const bson_t               *doc;
 
-	cursor = ((phongo_cursor_it *)iter)->iterator.data;
-	iter->funcs->invalidate_current(iter TSRMLS_CC);
+	php_phongo_cursor_free_current(cursor);
+	cursor_it->current++;
 
-	((phongo_cursor_it *)iter)->current++;
 	if (bson_iter_next(&cursor_it->first_batch_iter)) {
 		if (BSON_ITER_HOLDS_DOCUMENT (&cursor_it->first_batch_iter)) {
 			const uint8_t *data = NULL;
@@ -1635,20 +1636,18 @@ static void phongo_cursor_iterator_move_forward(zend_object_iterator *iter TSRML
 		MAKE_STD_ZVAL(cursor->visitor_data.zchild);
 		bson_to_zval(bson_get_data(doc), doc->len, &cursor->visitor_data);
 	} else {
-		iter->funcs->invalidate_current(iter TSRMLS_CC);
+		/* TODO: is this really necessary? */
+		php_phongo_cursor_free_current(cursor);
 	}
-
 } /* }}} */
 
-static void phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
+static void php_phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
-	php_phongo_cursor_t *cursor = NULL;
-	phongo_cursor_it    *cursor_it = (phongo_cursor_it *)iter;
+	php_phongo_cursor_iterator *cursor_it = (php_phongo_cursor_iterator *)iter;
+	php_phongo_cursor_t        *cursor = cursor_it->cursor;
 
-	cursor = ((phongo_cursor_it *)iter)->iterator.data;
-
-	iter->funcs->invalidate_current(iter TSRMLS_CC);
-	((phongo_cursor_it *)iter)->current = 0;
+	php_phongo_cursor_free_current(cursor);
+	cursor_it->current = 0;
 
 	/* firstBatch is empty when the query simply didn't return any results */
 	if (cursor->firstBatch) {
@@ -1674,34 +1673,33 @@ static void phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_DC) 
 } /* }}} */
 
 /* iterator handler table */
-zend_object_iterator_funcs phongo_cursor_iterator_funcs = {
-	phongo_cursor_iterator_dtor,
-	phongo_cursor_iterator_valid,
-	phongo_cursor_iterator_get_current_data,
-	phongo_cursor_iterator_get_current_key,
-	phongo_cursor_iterator_move_forward,
-	phongo_cursor_iterator_rewind,
-	phongo_cursor_iterator_invalidate_current
+zend_object_iterator_funcs php_phongo_cursor_iterator_funcs = {
+	php_phongo_cursor_iterator_dtor,
+	php_phongo_cursor_iterator_valid,
+	php_phongo_cursor_iterator_get_current_data,
+	php_phongo_cursor_iterator_get_current_key,
+	php_phongo_cursor_iterator_move_forward,
+	php_phongo_cursor_iterator_rewind,
+	NULL /* invalidate_current is not used */
 };
 
-zend_object_iterator *phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC) /* {{{ */
+zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC) /* {{{ */
 {
-	php_phongo_cursor_t    *cursor = (php_phongo_cursor_t *)zend_object_store_get_object(object TSRMLS_CC);
-	phongo_cursor_it       *cursor_it = NULL;
+	php_phongo_cursor_iterator *cursor_it = NULL;
 
 	if (by_ref) {
 		zend_error(E_ERROR, "An iterator cannot be used with foreach by reference");
 	}
 
-	cursor_it = ecalloc(1, sizeof(phongo_cursor_it));
+	cursor_it = ecalloc(1, sizeof(php_phongo_cursor_iterator));
 
-	if (cursor->visitor_data.zchild) {
-		zval_ptr_dtor(&cursor->visitor_data.zchild);
-		cursor->visitor_data.zchild = NULL;
-	}
+	Z_ADDREF_P(object);
+	cursor_it->intern.data  = (void*)object;
+	cursor_it->intern.funcs = &php_phongo_cursor_iterator_funcs;
+	cursor_it->cursor = (php_phongo_cursor_t *)zend_object_store_get_object(object TSRMLS_CC);
+	/* cursor_it->current should already be allocated to zero */
 
-	cursor_it->iterator.data  = cursor;
-	cursor_it->iterator.funcs = &phongo_cursor_iterator_funcs;
+	php_phongo_cursor_free_current(cursor_it->cursor);
 
 	return (zend_object_iterator*)cursor_it;
 } /* }}} */

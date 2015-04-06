@@ -276,7 +276,7 @@ PHP_MINIT_FUNCTION(Cursor)
 	php_phongo_cursor_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_cursor_ce->create_object = php_phongo_cursor_create_object;
 	PHONGO_CE_INIT(php_phongo_cursor_ce);
-	php_phongo_cursor_ce->get_iterator = phongo_cursor_get_iterator;
+	php_phongo_cursor_ce->get_iterator = php_phongo_cursor_get_iterator;
 
 	memcpy(&php_phongo_handler_cursor, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_cursor.get_debug_info = php_phongo_cursor_get_debug_info;

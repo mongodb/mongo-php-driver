@@ -115,7 +115,6 @@ int                      phongo_execute_single_update(mongoc_client_t *client, c
 int                      phongo_execute_single_delete(mongoc_client_t *client, const char *namespace, const bson_t *query, const mongoc_write_concern_t *write_concern, int server_id, mongoc_delete_flags_t flags, zval *return_value, int return_value_used TSRMLS_DC);
 
 mongoc_stream_t*         phongo_stream_initiator     (const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error);
-zend_object_iterator*    phongo_cursor_get_iterator  (zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
 const mongoc_read_prefs_t*    phongo_read_preference_from_zval(zval *zread_preference TSRMLS_DC);
 const mongoc_write_concern_t* phongo_write_concern_from_zval  (zval *zwrite_concern TSRMLS_DC);
 const php_phongo_query_t*     phongo_query_from_zval          (zval *zquery TSRMLS_DC);
@@ -142,6 +141,7 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
 zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
 
 void php_phongo_cursor_free(php_phongo_cursor_t *cursor);
+zend_object_iterator* php_phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
 
 #define PHONGO_CE_INIT(ce) do {                     \
 	ce->ce_flags    |= ZEND_ACC_FINAL_CLASS;        \
