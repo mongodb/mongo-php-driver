@@ -1541,6 +1541,14 @@ php_phongo_writeresult_t *php_phongo_writeresult_get_from_bulkwriteexception(zva
 	return (php_phongo_writeresult_t *)zend_object_store_get_object(wr TSRMLS_CC);
 }
 
+static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ */
+{
+	if (cursor->visitor_data.zchild) {
+		zval_ptr_dtor(&cursor->visitor_data.zchild);
+		cursor->visitor_data.zchild = NULL;
+	}
+} /* }}} */
+
 void php_phongo_cursor_free(php_phongo_cursor_t *cursor)
 {
 	if (cursor->firstBatch) {
@@ -1551,19 +1559,8 @@ void php_phongo_cursor_free(php_phongo_cursor_t *cursor)
 		mongoc_cursor_destroy(cursor->cursor);
 		cursor->cursor = NULL;
 	}
-	if (cursor->visitor_data.zchild) {
-		zval_ptr_dtor(&cursor->visitor_data.zchild);
-		cursor->visitor_data.zchild = NULL;
-	}
+	php_phongo_cursor_free_current(cursor);
 }
-
-static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ */
-{
-	if (cursor->visitor_data.zchild) {
-		zval_ptr_dtor(&cursor->visitor_data.zchild);
-		cursor->visitor_data.zchild = NULL;
-	}
-} /* }}} */
 
 /* {{{ Iterator */
 static void php_phongo_cursor_iterator_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
