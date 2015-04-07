@@ -656,7 +656,22 @@ void phongo_stream_destroy(mongoc_stream_t *stream_wrap) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
 
+	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Not destroying RSRC#%d", base_stream->stream->rsrc_id);
+	/*
+	 * DON'T DO ANYTHING TO THE INTERNAL base_stream->stream
+	 * The stream should not be closed during normal dtor -- as we want it to
+	 * survive until next request.
+	 * We only clean it up on failure and (implicitly) MSHUTDOWN
+	 */
+
+	efree(base_stream);
+} /* }}} */
+void phongo_stream_failed(mongoc_stream_t *stream_wrap) /* {{{ */
+{
+	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
+
 	if (base_stream->stream) {
+		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Destroying RSRC#%d", base_stream->stream->rsrc_id);
 		TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
 		php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
@@ -666,8 +681,12 @@ void phongo_stream_destroy(mongoc_stream_t *stream_wrap) /* {{{ */
 	efree(base_stream);
 } /* }}} */
 
-int phongo_stream_close(mongoc_stream_t *stream) /* {{{ */
+int phongo_stream_close(mongoc_stream_t *stream_wrap) /* {{{ */
 {
+	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
+
+	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Closing RSRC#%d", base_stream->stream->rsrc_id);
+	phongo_stream_destroy(stream_wrap);
 	return 0;
 } /* }}} */
 
@@ -938,28 +957,30 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	}
 
 	spprintf(&uniqid, 0, "mongodb://%s:%s@%s:%d/%s?ssl=%d&authMechanism=%s&authSource=%s",
-		mongoc_uri_get_username(uri),
-		mongoc_uri_get_password(uri),
+		mongoc_uri_get_username(uri) ?: "",
+		mongoc_uri_get_password(uri) ?: "",
 		host->host,
 		host->port,
-		mongoc_uri_get_database(uri),
+		mongoc_uri_get_database(uri) ?: "",
 		mongoc_uri_get_ssl(uri) ? 1 : 0,
-		mongoc_uri_get_auth_mechanism(uri),
-		mongoc_uri_get_auth_source(uri)
+		mongoc_uri_get_auth_mechanism(uri) ?: "",
+		mongoc_uri_get_auth_source(uri) ?: ""
 	);
 
 	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Connecting to '%s'", uniqid);
 	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT | STREAM_XPORT_CONNECT_ASYNC, uniqid, timeoutp, (php_stream_context *)user_data, &errmsg, &errcode);
 
-	efree(uniqid);
 	if (!stream) {
 		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, errmsg);
 		efree(dsn);
+		efree(uniqid);
 		if (errmsg) {
 			efree(errmsg);
 		}
 		RETURN(NULL);
 	}
+	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Created: RSRC#%d as '%s'", stream->rsrc_id, uniqid);
+	efree(uniqid);
 
 	/* Avoid invalid leak warning in debug mode when freeing the stream */
 #if ZEND_DEBUG
@@ -1021,6 +1042,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	/* flush missing, doesn't seem to be used */
 	base_stream->vtable.type = 100;
 	base_stream->vtable.destroy = phongo_stream_destroy;
+	base_stream->vtable.failed  = phongo_stream_failed;
 	base_stream->vtable.close = phongo_stream_close;
 	base_stream->vtable.writev = phongo_stream_writev;
 	base_stream->vtable.readv = phongo_stream_readv;
