@@ -239,9 +239,9 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 	}
 }
 /* }}} */
-/* {{{ proto WriteConcernError[] WriteResult::getwriteConcernError()
+/* {{{ proto WriteConcernError[] WriteResult::getWriteConcernError()
    Return any write concern error that occurred */
-PHP_METHOD(WriteResult, getwriteConcernError)
+PHP_METHOD(WriteResult, getWriteConcernError)
 {
 	php_phongo_writeresult_t *intern;
 	(void)return_value_ptr; (void)return_value_used;
@@ -364,7 +364,7 @@ ZEND_END_ARG_INFO();
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getUpsertedIds, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getwriteConcernError, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getWriteConcernError, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getWriteErrors, 0, 0, 0)
@@ -383,7 +383,7 @@ static zend_function_entry php_phongo_writeresult_me[] = {
 	PHP_ME(WriteResult, getInfo, ai_WriteResult_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getServer, ai_WriteResult_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getUpsertedIds, ai_WriteResult_getUpsertedIds, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getwriteConcernError, ai_WriteResult_getwriteConcernError, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getWriteConcernError, ai_WriteResult_getWriteConcernError, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_getWriteErrors, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, isAcknowledged, ai_WriteResult_isAcknowledged, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
