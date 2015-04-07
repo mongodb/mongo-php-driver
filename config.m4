@@ -156,7 +156,6 @@ if test "$MONGODB" != "no"; then
       src/MongoDB/Manager.c \
       src/MongoDB/Query.c \
       src/MongoDB/ReadPreference.c \
-      src/MongoDB/Result.c \
       src/MongoDB/Server.c \
       src/MongoDB/BulkWrite.c \
       src/MongoDB/WriteConcern.c \

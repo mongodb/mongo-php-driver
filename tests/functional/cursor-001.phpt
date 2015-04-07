@@ -14,35 +14,16 @@ $query = new MongoDB\Driver\Query(array(), array(
     'sort' => array('username' => 1),
 ));
 
-$qr = $manager->executeQuery(NS, $query);
-$cursor = $qr->getIterator();
-
-var_dump(
-    $cursor->getBatchSize(),
-    $cursor->setBatchSize(15),
-    $cursor->getBatchSize(),
-    $cursor->isDead()
-);
-
+$cursor = $manager->executeQuery(NS, $query);
 
 foreach ($cursor as $document) {
     echo $document['username'] . "\n";
 }
 
-var_dump(
-    $cursor->getBatchSize(),
-    $cursor->setBatchSize(15),
-    $cursor->getBatchSize(),
-    $cursor->isDead()
-);
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-int(0)
-int(0)
-int(15)
-bool(true)
 abernathy.audrey
 alda.murray
 andreanne.steuber
@@ -143,8 +124,4 @@ yost.magali
 ypredovic
 ywyman
 zstanton
-int(15)
-int(15)
-int(15)
-bool(true)
 ===DONE===

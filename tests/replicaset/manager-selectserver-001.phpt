@@ -22,14 +22,14 @@ $server->executeBulkWrite(NS, $bulk);
 $query = new MongoDB\Driver\Query(array('x' => 3), array('projection' => array('y' => 1)));
 $cursor = $server->executeQuery(NS, $query);
 
-var_dump($cursor instanceof MongoDB\Driver\Result);
+var_dump($cursor instanceof MongoDB\Driver\Cursor);
 var_dump($server == $cursor->getServer());
 var_dump(iterator_to_array($cursor));
 
 $query = new MongoDB\Driver\Query(array('x' => 3), array('projection' => array('y' => 1)));
 $cursor = $server2->executeQuery(NS, $query);
 
-var_dump($cursor instanceof MongoDB\Driver\Result);
+var_dump($cursor instanceof MongoDB\Driver\Cursor);
 var_dump($server2 == $cursor->getServer());
 var_dump(iterator_to_array($cursor));
 

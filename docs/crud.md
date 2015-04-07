@@ -75,7 +75,7 @@ $query = new MongoDB\Driver\Query(array());
 try {
 	/* Full namespace as the first argument (dbname.collname), and the query object
 	 * to execute as the second.
-	 * Returns MongoDB\Driver\Result on success, throws exception on failure
+	 * Returns MongoDB\Driver\Cursor on success, throws exception on failure
 	 */
 	$cursor = $manager->executeQuery("db.collection", $query, $rp);
 
