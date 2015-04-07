@@ -83,7 +83,6 @@ typedef struct
 	php_stream               *stream;
 	const mongoc_uri_t       *uri;
 	const mongoc_host_list_t *host;
-	php_phongo_stream_logger log;
 #if ZTS
 	void ***tsrm_ls;
 #endif

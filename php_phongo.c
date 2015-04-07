@@ -232,18 +232,6 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 	}
 }
 
-void phongo_log_writer(mongoc_stream_t *stream, int32_t timeout_msec, ssize_t sent, size_t iovcnt)
-{
-	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
-
-	/* FIXME: In a ReplicaSet, node->stream is not guranteed to be the wrapped stream, only the raw mongoc_stream_t */
-	/*mongoc_log(MONGOC_LOG_LEVEL_MESSAGE, MONGOC_LOG_DOMAIN, "Wrote %zd bytes to '%s:%d' in %zd iterations", sent, base_stream->host->host, base_stream->host->port, iovcnt);*/
-}
-
-php_phongo_stream_logger phongo_stream_logger = {
-	phongo_log_writer,
-};
-
 /* }}} */
 
 /* {{{ Init objects */
@@ -715,9 +703,6 @@ ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_
 	for (i = 0; i < iovcnt; i++) {
 		sent += php_stream_write(base_stream->stream, iov[i].iov_base, iov[i].iov_len);
 	}
-	if (base_stream->log.writer) {
-		base_stream->log.writer(stream, timeout_msec, sent, iovcnt);
-	}
 
 	return sent;
 } /* }}} */
@@ -1036,7 +1021,6 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	base_stream->stream = stream;
 	base_stream->uri = uri;
 	base_stream->host = host;
-	base_stream->log = phongo_stream_logger;
 	TSRMLS_SET_CTX(base_stream->tsrm_ls);
 
 	/* flush missing, doesn't seem to be used */
