@@ -7,7 +7,7 @@ PHPC-159: Memleak on failed path resolving
 require_once __DIR__ . "/../utils/basic.inc";
 
 $uri = parse_url(STANDALONE);
-$manager = new MongoDB\Driver\Manager("mongodb:///tmp/mongodb-27018.sock,{$uri["host"]}:{$uri["port"]}");
+$manager = new MongoDB\Driver\Manager("mongodb:///tmp/mongodb-27018.sock,{$uri["host"]}:{$uri["port"]}/?serverselectiontimeoutms=500");
 try {
     $manager->executeQuery("foo.bar", new MongoDB\Driver\Query(array()));
 } catch(Exception $e) {}
