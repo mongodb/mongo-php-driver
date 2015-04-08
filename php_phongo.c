@@ -659,9 +659,9 @@ void phongo_stream_failed(mongoc_stream_t *stream_wrap) /* {{{ */
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
 
 	if (base_stream->stream) {
-		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Destroying RSRC#%d", base_stream->stream->rsrc_id);
 		TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
+		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Destroying RSRC#%d", base_stream->stream->rsrc_id);
 		php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
 		base_stream->stream = NULL;
 	}
