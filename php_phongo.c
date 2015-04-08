@@ -964,13 +964,10 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		}
 		RETURN(NULL);
 	}
+	php_stream_auto_cleanup(stream);
+
 	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Created: RSRC#%d as '%s'", stream->rsrc_id, uniqid);
 	efree(uniqid);
-
-	/* Avoid invalid leak warning in debug mode when freeing the stream */
-#if ZEND_DEBUG
-	stream->__exposed = 1;
-#endif
 
 	if (mongoc_uri_get_ssl(uri)) {
 		zend_error_handling       error_handling;
