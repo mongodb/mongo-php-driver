@@ -1,10 +1,10 @@
 --TEST--
 MongoDB\Driver\Cursor command result iteration through IteratorIterator
 --SKIPIF--
-<?php require "tests/utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
-require_once "tests/utils/basic.inc";
+require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
