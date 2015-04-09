@@ -26,8 +26,17 @@ help:
 	@echo -e "\t       - Installs test dependencies using composer"
 
 	@echo ""
+	@echo -e "\t$$ make distcheck"
+	@echo -e "\t       - Builds the archive, runs the virtual tests"
+	@echo ""
 	@echo -e "\t$$ make release"
-	@echo -e "\t       - Runs the tests and creates the pecl archive on success"
+	@echo -e "\t       - Packages the archive, runs the tests locally and virtual"
+
+	@echo ""
+	@echo -e "\t$$ make package"
+	@echo -e "\t       - Creates the pecl archive to use for provisioning"
+	@echo -e "\t$$ make test-virtual"
+	@echo -e "\t       - Provisions some VMs, installs the pecl archive and executes the tests"
 
 
 mv-coverage:
@@ -77,6 +86,12 @@ list-servers:
 test-bootstrap:
 	php scripts/start-servers.php
 
+distcheck: package test-virtual
+
+test-virtual: package
+	sh ./scripts/run-tests-on.sh precise32
+	sh ./scripts/run-tests-on.sh precise64
+
 testunit: composer
 	@command -v phpunit >/dev/null 2>&1; \
 	if test $$? -eq 0; then \
@@ -103,7 +118,7 @@ testclean:
 
 mongodbdep:
 
-release: test package
+release: test distcheck
 	@echo "Please run:"
 	@echo "		" git add RELEASE-$(MONGODB_VERSION)
 	@echo "		" git commit -m \"Add $(MONGODB_VERSION) release notes\"
