@@ -368,6 +368,7 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_writeresult_me[] = {
+	PHP_ME(Server, __construct, NULL, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(WriteResult, getInsertedCount, ai_WriteResult_getInsertedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getMatchedCount, ai_WriteResult_getMatchedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getModifiedCount, ai_WriteResult_getModifiedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

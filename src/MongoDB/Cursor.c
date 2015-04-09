@@ -48,29 +48,6 @@ PHONGO_API zend_class_entry *php_phongo_cursor_ce;
 
 zend_object_handlers php_phongo_handler_cursor;
 
-/* {{{ proto MongoDB\Driver\Cursor Cursor::__construct(MongoDB\Driver\Server $server, array|object $responseDocument)
-   Constructs a new Cursor */
-PHP_METHOD(Cursor, __construct)
-{
-	php_phongo_cursor_t *intern;
-	zend_error_handling       error_handling;
-	zval                     *server;
-	zval                     *responseDocument;
-	(void)return_value; (void)return_value_ptr; (void)return_value_used;
-
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_cursor_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "OA", &server, php_phongo_server_ce, &responseDocument) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
-		return;
-	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-}
-/* }}} */
-
 /* {{{ proto void Cursor::setTypeMap(array $typemap)
    Sets a type map to use for BSON unserialization */
 PHP_METHOD(Cursor, setTypeMap)
@@ -186,11 +163,6 @@ PHP_METHOD(Cursor, isDead)
 
 /* {{{ MongoDB\Driver\Cursor */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Cursor___construct, 0, 0, 2)
-	ZEND_ARG_OBJ_INFO(0, server, MongoDB\\Driver\\Server, 0)
-	ZEND_ARG_INFO(0, responseDocument)
-ZEND_END_ARG_INFO();
-
 ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_setTypeMap, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, typemap, 0)
 ZEND_END_ARG_INFO();
@@ -209,7 +181,7 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_cursor_me[] = {
-	PHP_ME(Cursor, __construct, ai_Cursor___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, __construct, NULL, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(Cursor, setTypeMap, ai_Cursor_setTypeMap, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Cursor, toArray, ai_Cursor_toArray, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Cursor, getId, ai_Cursor_getId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

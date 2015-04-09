@@ -115,6 +115,7 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_writeconcernerror_me[] = {
+	PHP_ME(Server, __construct, NULL, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(WriteConcernError, getCode, ai_WriteConcernError_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcernError, getInfo, ai_WriteConcernError_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcernError, getMessage, ai_WriteConcernError_getMessage, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

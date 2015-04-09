@@ -49,8 +49,8 @@ PHONGO_API zend_class_entry *php_phongo_server_ce;
 zend_object_handlers php_phongo_handler_server;
 
 
-/* {{{ proto MongoDB\Driver\Server Server::__construct(string $host, integer $port[, array $options = array()[, array $driverOptions = array()]])
-   Constructs a new Server */
+/* {{{ proto MongoDB\Driver\Server Server::__construct()
+   Throws exception -- can only be created internally */
 PHP_METHOD(Server, __construct)
 {
 	(void)return_value; (void)return_value_used; (void)return_value_ptr; (void)ZEND_NUM_ARGS(); (void)getThis();
@@ -383,13 +383,6 @@ PHP_METHOD(Server, isPassive)
 
 /* {{{ MongoDB\Driver\Server */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Server___construct, 0, 0, 2)
-	ZEND_ARG_INFO(0, host)
-	ZEND_ARG_INFO(0, port)
-	ZEND_ARG_ARRAY_INFO(0, options, 0)
-	ZEND_ARG_ARRAY_INFO(0, driverOptions, 0)
-ZEND_END_ARG_INFO();
-
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, db)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
@@ -440,7 +433,7 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_server_me[] = {
-	PHP_ME(Server, __construct, ai_Server___construct, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
+	PHP_ME(Server, __construct, NULL, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(Server, executeCommand, ai_Server_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeBulkWrite, ai_Server_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

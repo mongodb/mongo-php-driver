@@ -46,27 +46,6 @@ PHONGO_API zend_class_entry *php_phongo_cursorid_ce;
 
 zend_object_handlers php_phongo_handler_cursorid;
 
-/* {{{ proto MongoDB\Driver\CursorId CursorId::__construct(string $id)
-   Construct a new CursorId */
-PHP_METHOD(CursorId, __construct)
-{
-	php_phongo_cursorid_t    *intern;
-	zend_error_handling       error_handling;
-	char                     *id;
-	int                       id_len;
-	(void)return_value; (void)return_value_ptr; (void)return_value_used;
-
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_cursorid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &id, &id_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
-		return;
-	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
-}
-/* }}} */
 /* {{{ proto string CursorId::__toString()
    Returns the string representation of the CursorId */
 PHP_METHOD(CursorId, __toString)
@@ -86,24 +65,14 @@ PHP_METHOD(CursorId, __toString)
 }
 /* }}} */
 
-/**
- * Value object for the 64-bit cursor identifier.
- *
- * This is useful for compatibility with 32-bit platforms, and also allows
- * Cursor constructors to type-hint against a class.
- */
 /* {{{ MongoDB\Driver\CursorId */
-
-ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, id)
-ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___toString, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_cursorid_me[] = {
-	PHP_ME(CursorId, __construct, ai_CursorId___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, __construct, NULL, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(CursorId, __toString, ai_CursorId___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
 	PHP_FE_END
