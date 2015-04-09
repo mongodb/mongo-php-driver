@@ -35,6 +35,7 @@ extern zend_module_entry mongodb_module_entry;
 
 #ifdef PHP_WIN32
 #	define PHONGO_API __declspec(dllexport)
+#	include "ext/standard/flock_compat.h"
 #elif defined(__GNUC__) && __GNUC__ >= 4
 #	define PHONGO_API __attribute__ ((visibility("default")))
 #else
