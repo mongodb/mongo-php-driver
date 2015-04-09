@@ -381,19 +381,8 @@ bool php_phongo_bson_visit_int64(const bson_iter_t *iter ARG_UNUSED, const char 
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 
-#if SIZEOF_LONG == 4
-	if (v_int64 > LONG_MAX || v_int64 < LONG_MIN) {
-		char *tmp;
-		int tmp_len;
 
-		mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", v_int64);
-		tmp_len = spprintf(&tmp, 0, "%lld", v_int64);
-		add_assoc_stringl(retval, key, tmp, tmp_len, 0);
-		return false;
-	}
-#endif
-
-	add_assoc_long(retval, key, v_int64);
+	ADD_ASSOC_INT64(retval, key, v_int64);
 
 	return false;
 }

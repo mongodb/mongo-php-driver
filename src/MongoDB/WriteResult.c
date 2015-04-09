@@ -226,14 +226,7 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 			} else if (BSON_ITER_HOLDS_INT64(&outer)) {
 				int64_t val = bson_iter_int64(&outer);
 
-#if SIZEOF_LONG == 4
-				if (val > INT_MAX) {
-					add_index_long(return_value, index, (double)val);
-				} else
-#endif
-				{
-					add_index_long(return_value, index, val);
-				}
+				ADD_INDEX_INT64(return_value, index, val);
 			}
 		}
 	}

@@ -46,3 +46,29 @@
 #else
 #  define ARG_UNUSED
 #endif
+
+#if SIZEOF_LONG == 4
+# define ADD_INDEX_INT64(zval, index, value) \
+	if (value > LONG_MAX || value < LONG_MIN) { \
+		char *tmp; \
+		int tmp_len; \
+		mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
+		tmp_len = spprintf(&tmp, 0, "%lld", value); \
+		add_index_stringl(zval, index, tmp, tmp_len, 0); \
+	} else { \
+		add_index_long(zval, index, val); \
+	}
+# define ADD_ASSOC_INT64(zval, key, value) \
+	if (value > LONG_MAX || value < LONG_MIN) { \
+		char *tmp; \
+		int tmp_len; \
+		mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
+		tmp_len = spprintf(&tmp, 0, "%lld", value); \
+		add_assoc_stringl(zval, key, tmp, tmp_len, 0); \
+	} else { \
+		add_assoc_long(zval, key, value); \
+	}
+#else
+# define ADD_INDEX_INT64(zval, index, value) add_index_long(zval, index, value)
+# define ADD_ASSOC_INT64(zval, key, value) add_assoc_long(zval, key, value);
+#endif
