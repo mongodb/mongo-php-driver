@@ -294,7 +294,7 @@ PHP_METHOD(Manager, selectServer)
 		return;
 	}
 
-	readPreference = phongo_read_preference_from_zval(zreadPreference);
+	readPreference = phongo_read_preference_from_zval(zreadPreference TSRMLS_CC);
 	server_id = mongoc_cluster_preselect(&intern->client->cluster, MONGOC_OPCODE_QUERY, readPreference, NULL);
 	phongo_server_init(return_value, intern->client, server_id TSRMLS_CC);
 }

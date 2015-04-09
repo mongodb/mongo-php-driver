@@ -1434,7 +1434,7 @@ void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, int32_t
 } /* }}} */
 void php_phongo_new_javascript_from_javascript(int init, zval *object, const char *code, size_t code_len TSRMLS_DC) /* {{{ */
 {
-	php_phongo_new_javascript_from_javascript_and_scope(init, object, code, code_len, NULL);
+	php_phongo_new_javascript_from_javascript_and_scope(init, object, code, code_len, NULL TSRMLS_CC);
 } /* }}} */
 void php_phongo_new_javascript_from_javascript_and_scope(int init, zval *object, const char *code, size_t code_len, const bson_t *scope TSRMLS_DC) /* {{{ */
 {
