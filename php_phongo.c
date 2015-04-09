@@ -1721,7 +1721,7 @@ static void* php_phongo_realloc(void *mem, size_t num_bytes) { /* {{{ */
 static void php_phongo_free(void *mem) /* {{{ */
 {
 	if (mem) {
-		return efree(mem);
+		efree(mem);
 	}
 } /* }}} */
 
