@@ -1,3 +1,9 @@
+#ifdef PHP_WIN32
+# include "config.w32.h"
+#else
+# include <php_config.h>
+#endif
+
 #ifndef PHP_FE_END
 # define PHP_FE_END { NULL, NULL, NULL }
 #endif
@@ -72,3 +78,14 @@
 # define ADD_INDEX_INT64(zval, index, value) add_index_long(zval, index, value)
 # define ADD_ASSOC_INT64(zval, key, value) add_assoc_long(zval, key, value);
 #endif
+
+#ifdef HAVE_ATOLL
+# define STRTOLL(s) atoll(s)
+#else
+# if defined(PHP_WIN32)
+#  define STRTOLL(s) _atoi64(s)
+# else
+#  define STRTOLL(s) strtoll(s, NULL, 10)
+# endif
+#endif
+

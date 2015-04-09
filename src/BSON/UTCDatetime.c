@@ -70,7 +70,7 @@ PHP_METHOD(UTCDatetime, __construct)
 		return;
 	}
 
-	intern->milliseconds = strtoll(s_milliseconds, NULL, 10);
+	intern->milliseconds = STRTOLL(s_milliseconds);
 #else
 	intern->milliseconds = milliseconds;
 #endif
@@ -94,7 +94,7 @@ PHP_METHOD(UTCDatetime, __toString)
 		return;
 	}
 
-	tmp_len = spprintf(&tmp, 0, "%lld", intern->milliseconds);
+	tmp_len = spprintf(&tmp, 0, "%" PRId64, intern->milliseconds);
 	RETVAL_STRINGL(tmp, tmp_len, 0);
 }
 /* }}} */
