@@ -31,7 +31,7 @@
 #include <Zend/zend_interfaces.h>
 
 /* Our Compatability header */
-#include "php_compat_53.h"
+#include "phongo_compat.h"
 
 /* Our stuffz */
 #include "php_phongo.h"

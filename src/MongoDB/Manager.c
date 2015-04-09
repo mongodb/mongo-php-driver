@@ -39,7 +39,7 @@
 #include <Zend/zend_hash.h>
 #include <ext/spl/spl_iterators.h>
 /* Our Compatability header */
-#include "php_compat_53.h"
+#include "phongo_compat.h"
 
 /* Our stuffz */
 #include "php_phongo.h"
