@@ -9,6 +9,10 @@ apt-get install -y python python-dev python-pip
 # Latest MongoDB Enterprise
 apt-get install -y mongodb-enterprise
 
+# mongo-orchestration doesn't play well with pymongo3
+# https://github.com/10gen/mongo-orchestration/issues/188
+pip install pymongo==2.8
+
 pip install --upgrade 'git+https://github.com/10gen/mongo-orchestration.git#egg=mongo_orchestration'
 
 # Launch mongo-orchestration
