@@ -304,6 +304,26 @@ dnl libmongoc stuff {{{
   AC_SUBST(MONGOC_ENABLE_SSL)
 
 
+PHP_ARG_WITH(pcre-dir, pcre-dir install prefix
+[  --with-pcre-dir[=DIR]     mongodb: pcre install prefix], auto, yes)
+
+if test "$PHP_PCRE_DIR" != "no"; then
+  AC_MSG_CHECKING(for pcre)
+  for i in $PHP_PCRE_DIR /usr /usr/local; do
+    if test -f $i/include/pcre.h; then
+      MONGODB_PCRE_DIR=$i/include
+      AC_MSG_RESULT(found in $i)
+      break
+    fi
+  done
+
+  if test -z "$MONGODB_PCRE_DIR"; then
+    AC_MSG_RESULT(not found)
+  else
+    PHP_ADD_INCLUDE($MONGODB_PCRE_DIR)
+  fi
+fi
+
 PHP_ARG_WITH(mongodb-sasl, Build with Cyrus SASL support,
 [  --with-mongodb-sasl[=DIR]     mongodb: Include Cyrus SASL support], auto, yes)
 
@@ -367,12 +387,14 @@ dnl }}}
 
   PHP_ADD_INCLUDE([$ext_srcdir/src/BSON/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/])
+  PHP_ADD_INCLUDE([$ext_srcdir/src/contrib/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/yajl/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/bson/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/libmongoc/src/mongoc/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/BSON/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/])
+  PHP_ADD_BUILD_DIR([$ext_builddir/src/contrib/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/yajl/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/bson/])

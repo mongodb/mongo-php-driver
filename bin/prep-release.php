@@ -60,6 +60,7 @@ function get_role($file) {
 function get_files() {
     $dirs = array(
         "php_*.{h,c}",
+        "phongo_*.{h,c}",
         "config.{m4,w32}",
         "Makefile.frag",
         "Vagrantfile",
