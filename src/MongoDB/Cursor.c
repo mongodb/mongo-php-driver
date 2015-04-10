@@ -125,7 +125,7 @@ PHP_METHOD(Cursor, getId)
 /* }}} */
 
 /* {{{ proto MongoDB\Driver\Server Cursor::getServer()
-   Returns the Server object that this cursor is attached to */
+   Returns the Server object to which this cursor is attached */
 PHP_METHOD(Cursor, getServer)
 {
 	php_phongo_cursor_t *intern;
