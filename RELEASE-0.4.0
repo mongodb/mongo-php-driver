@@ -1,0 +1,260 @@
+2015-04-10  Hannes Magnusson  <bjori@php.net>
+	* Install ext/zlib so we can pecl install .tgz
+
+2015-04-10  Hannes Magnusson  <bjori@php.net>
+	* mo will automatically upgrade pymongo -- we need to downgrade
+
+2015-04-10  Hannes Magnusson  <bjori@php.net>
+	* mongo-orchestration isn't happy about the recent pymongo3.0 release
+
+2015-04-10  Jeremy Mikola  <jmikola@gmail.com>
+	* Update description for Cursor::getServer()
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* PHPC-234: Run test suite automatically on FreeBSD 10.1
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* PHPC-235: Fix out-of-src builds on FreeBSD
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* Initial script to provision on FreeBSD
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* Initial script to provision on Windows
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* Fix windows build
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* Simplify hash and fix windows build
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* Rename the compat header - its much more then PHP5.3 issues now
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* Fix build on windows -- no strtoll()
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* Fix warning, return in noreturn function
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* Fix zts build
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* Fix php_flock() warning on windows
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* PHPC-213: Disable extra bson type alignment
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* Bumpidy bump
+
+2015-04-09  Hannes Magnusson  <bjori@php.net>
+	* PHPC-233: Mark the ctor as private for internally created value objects
+
+2015-04-08  Hannes Magnusson  <bjori@php.net>
+	* PHPC-80: Create distcheck target
+
+2015-04-08  Hannes Magnusson  <bjori@php.net>
+	* Convert int64 that overflow 32bit long to strings
+
+2015-04-08  Hannes Magnusson  <bjori@php.net>
+	* Convert overflown int64 to strings and print a warning
+
+2015-04-08  Hannes Magnusson  <bjori@php.net>
+	* Fix path to tests when executed through pecl run-tests
+
+2015-04-08  Hannes Magnusson  <bjori@php.net>
+	* Ignore untracked files in these repos
+
+2015-04-08  Hannes Magnusson  <bjori@php.net>
+	* libbson & mongoc seem to have fixed a lot of warnings -- enable all of ours
+
+2015-04-08  Hannes Magnusson  <bjori@php.net>
+	* Workaround CDRIVER-610
+
+2015-04-08  Hannes Magnusson  <bjori@php.net>
+	* Apparently there is a function for this!
+
+2015-04-08  Hannes Magnusson  <bjori@php.net>
+	* Fix zts build.. TSRMLS_FETCH_FROM_CTX declares variables and therefore must come first
+
+2015-04-07  Hannes Magnusson  <bjori@php.net>
+	* Remove noop log handler
+
+2015-04-07  Hannes Magnusson  <bjori@php.net>
+	* PHPC-231: Manager instances should not free streams that are still in use
+
+2015-04-07  Hannes Magnusson  <bjori@php.net>
+	* bump dependencies for PHPC-231 & PHPC-213
+
+2015-04-07  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-232: Fix capitalization for WriteResult::getWriteConcern()
+
+2015-04-07  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-231: Regression test for Manager destruct stream freeing
+
+2015-04-06  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #33
+
+2015-04-06  Jeremy Mikola  <jmikola@gmail.com>
+	* Remove unnecessary php_phongo_cursor_free_current() call
+
+2015-04-06  Jeremy Mikola  <jmikola@gmail.com>
+	* Re-use cursor_free_current() in cursor_free()
+
+2015-04-06  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-215: Fix Cursor iteration through IteratorIterator
+
+2015-04-03  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-225: Test Cursor::isDead() and kill on destruct
+
+2015-04-03  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-224: Consolidate Result and Cursor classes into one
+
+2015-04-03  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-224: Remove Cursor class, which implements Iterator
+
+2015-04-03  Hannes Magnusson  <bjori@php.net>
+	* PHPC-207: Correct serialized data examples for ODS documentation
+
+2015-04-03  Hannes Magnusson  <bjori@php.net>
+	* PHPC-210 & PHPC-209 & PHPC-207 Fix BSON ODM/ODS
+
+2015-04-03  Hannes Magnusson  <bjori@php.net>
+	* PHPC-208: Restrict ODS to "__pclass" fieldnames
+
+2015-04-03  Hannes Magnusson  <bjori@php.net>
+	* PHPC-194: Implement Manager::selectServer() method to wrap SDAM server selection
+
+2015-04-03  Hannes Magnusson  <bjori@php.net>
+	* In PHP5.3 we hit the __wakeUp() which has slightly different exception
+
+2015-04-03  Hannes Magnusson  <bjori@10gen.com>
+	* Merge pull request #34 from serebro/patch-1
+
+2015-04-03  Sergey  <sergilyin@gmail.com>
+	* Docs small fix
+
+2015-04-03  Hannes Magnusson  <bjori@php.net>
+	* PHPC-190: Provide __wakeUp() to disable unserialize()
+
+2015-04-03  Hannes Magnusson  <bjori@php.net>
+	* This apt-get update is slow -- no need to execute it all the time
+
+2015-04-03  Hannes Magnusson  <bjori@php.net>
+	* PHPC-191 && PHPC-192: Add verify_expiry && verify_peer_name certificate verify options
+
+2015-04-02  Hannes Magnusson  <bjori@php.net>
+	* PHPC-223: Use explicit SSL options rather then stream context
+
+2015-04-02  Hannes Magnusson  <bjori@php.net>
+	* Fix setting debug logging as part of the driverOptions
+
+2015-04-02  Hannes Magnusson  <bjori@php.net>
+	* Private Public doesn't exists... This is supposed to be private :D
+
+2015-04-02  Hannes Magnusson  <bjori@php.net>
+	* Cleanup after test
+
+2015-04-02  Hannes Magnusson  <bjori@php.net>
+	* Make it possible to cleanup other db and collections used
+
+2015-04-01  Hannes Magnusson  <bjori@php.net>
+	* Fix tests when executed outside of srcroot
+
+2015-04-01  Hannes Magnusson  <bjori@php.net>
+	* PHPC-222: WriteConcernError can cause segfaults on Ubuntu Precise 32bit
+
+2015-04-01  Hannes Magnusson  <bjori@php.net>
+	* PHPC-220: BSON\UTCDatetime broken on 32bit
+
+2015-04-01  Hannes Magnusson  <bjori@php.net>
+	* Fix compile warning on 32bit
+
+2015-04-01  Hannes Magnusson  <bjori@php.net>
+	* Fix incompatible pointer type in PHP 5.3
+
+2015-04-01  Hannes Magnusson  <bjori@php.net>
+	* Include usable gdbinit
+
+2015-04-01  Hannes Magnusson  <bjori@php.net>
+	* PHPC-221: Add Ubuntu Precise (12.04.5) 32bit image
+
+2015-04-01  Hannes Magnusson  <bjori@php.net>
+	* PHPC-219 - BSON\Javascript segfaults on Ubuntu Precise 32bit
+
+2015-04-01  Hannes Magnusson  <bjori@php.net>
+	* PHPC-221: Rename the identifier to precise64 as we'll be adding 32bit soon
+
+2015-03-31  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #32
+
+2015-03-31  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-204: Result::toArray() should respect type map configuration
+
+2015-03-31  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-203: Result::toArray() should proxy iterator_to_array($this)
+
+2015-03-31  Hannes Magnusson  <bjori@php.net>
+	* Make sure we install the latest package in case of multiple rebuilds of same name
+
+2015-03-31  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #31
+
+2015-03-30  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-214: Result does not need custom iterator classes
+
+2015-03-30  Hannes Magnusson  <bjori@php.net>
+	* Forcefully install the new archive, even though it exists
+
+2015-03-30  Hannes Magnusson  <bjori@php.net>
+	* PHPC-216: PHP5.5 change the prototype of get_current_key leading to
+
+2015-03-30  Hannes Magnusson  <bjori@php.net>
+	* PHPC-216: Include our pem files in the pecl archive
+
+2015-03-30  Hannes Magnusson  <bjori@php.net>
+	* PHPC-216: Use array(), not [], for PHP5.3 compatibility
+
+2015-03-30  Hannes Magnusson  <bjori@php.net>
+	* Split release target into release and packaging
+
+2015-03-30  Hannes Magnusson  <bjori@php.net>
+	* PHPC-218: Provision ubuntu image and install & run the test suite
+
+2015-03-30  Hannes Magnusson  <bjori@php.net>
+	* No need to sudo, run the scripts as priveleged
+
+2015-03-30  Hannes Magnusson  <bjori@php.net>
+	* PHPC-216: PHP5.3 test suite fixes
+
+2015-03-30  Hannes Magnusson  <bjori@php.net>
+	* PHPC-217: Include the connection tests in pecl package
+
+2015-03-30  Hannes Magnusson  <bjori@php.net>
+	* PHPC-213: Memory alignment issues on FreeBSD
+
+2015-03-30  Hannes Magnusson  <bjori@php.net>
+	* Fix stability name according to pecl rules
+
+2015-03-30  Hannes Magnusson  <bjori@php.net>
+	* PHPC-216: PHP5.3 test suite fixes
+
+2015-03-27  Hannes Magnusson  <bjori@php.net>
+	* Re align
+
+2015-03-27  Hannes Magnusson  <bjori@php.net>
+	* PHPC-212: undefined symbol: _mongoc_sasl_set_service_host - patch by remi@php.net
+
+2015-03-26  Hannes Magnusson  <bjori@php.net>
+	* Ignore coverage files
+
+2015-03-25  Hannes Magnusson  <bjori@php.net>
+	* bump version
+
+2015-03-25  Hannes Magnusson  <bjori@10gen.com>
+	* Merge pull request #28 from jmikola/phpc-201
+
+2015-03-25  Hannes Magnusson  <bjori@php.net>
+	* Add 0.3.1 release notes
