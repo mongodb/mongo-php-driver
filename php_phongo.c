@@ -1307,7 +1307,7 @@ mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptio
 	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
 		ctx = php_stream_context_from_zval(*tmp, 0);
 	} else {
-		ctx = FG(default_context) ? FG(default_context) : php_stream_context_alloc(TSRMLS_C);
+		GET_DEFAULT_CONTEXT();
 	}
 	muri = mongoc_client_get_uri(client);
 

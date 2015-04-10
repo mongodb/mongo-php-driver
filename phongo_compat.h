@@ -89,3 +89,11 @@
 # endif
 #endif
 
+#if PHP_VERSION_ID < 50400
+# define GET_DEFAULT_CONTEXT() \
+	ctx = FG(default_context) ? FG(default_context) : php_stream_context_alloc()
+#else
+# define GET_DEFAULT_CONTEXT() \
+	ctx = FG(default_context) ? FG(default_context) : php_stream_context_alloc(TSRMLS_C)
+#endif
+
