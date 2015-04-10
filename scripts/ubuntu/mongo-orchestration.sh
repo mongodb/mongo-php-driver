@@ -15,6 +15,10 @@ pip install pymongo==2.8
 
 pip install --upgrade 'git+https://github.com/10gen/mongo-orchestration.git#egg=mongo_orchestration'
 
+# mongo-orchestration doesn't play well with pymongo3
+# https://github.com/10gen/mongo-orchestration/issues/188
+pip uninstall -y pymongo && pip install pymongo==2.8
+
 # Launch mongo-orchestration
 mongo-orchestration -b 192.168.112.10 start
 
