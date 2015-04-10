@@ -89,6 +89,7 @@ test-bootstrap:
 distcheck: package test-virtual
 
 test-virtual: package
+	sh ./scripts/run-tests-on.sh freebsd
 	sh ./scripts/run-tests-on.sh precise32
 	sh ./scripts/run-tests-on.sh precise64
 

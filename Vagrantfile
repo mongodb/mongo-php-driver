@@ -8,7 +8,6 @@ Vagrant.configure(2) do |config|
   config.vm.provider "vmware_workstation" do |vmware, override|
     vmware.vmx["memsize"] = "8192"
     vmware.vmx["numvcpus"] = "2"
-    override.vm.provision "shell", path: "scripts/vmware/kernel.sh", privileged: true
   end
 
   config.vm.define "mo", primary: true do |mo|
@@ -17,6 +16,7 @@ Vagrant.configure(2) do |config|
     mo.vm.box = "http://files.vagrantup.com/precise64.box"
     mo.vm.provider "vmware_workstation" do |vmware, override|
       override.vm.box_url = 'http://files.vagrantup.com/precise64_vmware.box'
+      override.vm.provision "shell", path: "scripts/vmware/kernel.sh", privileged: true
     end
 
     mo.vm.provision "shell", path: "scripts/ubuntu/essentials.sh", privileged: true
@@ -30,6 +30,7 @@ Vagrant.configure(2) do |config|
     ldap.vm.box = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210-nocm.box"
     ldap.vm.provider "vmware_workstation" do |vmware, override|
       override.vm.box_url = "https://dl.dropbox.com/u/5721940/vagrant-boxes/vagrant-centos-6.4-x86_64-vmware_fusion.box"
+      override.vm.provision "shell", path: "scripts/vmware/kernel.sh", privileged: true
     end
 
     ldap.vm.provision "shell", path: "scripts/centos/essentials.sh", privileged: true
@@ -42,6 +43,9 @@ Vagrant.configure(2) do |config|
     bsd.vm.box = "geoffgarside/freebsd-10.0"
 
     bsd.vm.provision "shell", path: "scripts/freebsd/essentials.sh", privileged: true
+    bsd.vm.provision "file", source: "/tmp/PHONGO-SERVERS.json", destination: "/tmp/PHONGO-SERVERS.json"
+    bsd.vm.provision "file", source: "scripts/configs/.gdbinit", destination: "/home/vagrant/.gdbinit"
+    bsd.vm.provision "shell", path: "scripts/freebsd/phongo.sh", privileged: true
     bsd.vm.synced_folder ".", "/phongo", :nfs => true, id: "vagrant-root"
   end
 
@@ -51,6 +55,7 @@ Vagrant.configure(2) do |config|
     linux.vm.box = "http://files.vagrantup.com/precise64.box"
     linux.vm.provider "vmware_workstation" do |vmware, override|
       override.vm.box_url = 'http://files.vagrantup.com/precise64_vmware.box'
+      override.vm.provision "shell", path: "scripts/vmware/kernel.sh", privileged: true
     end
 
     linux.vm.provision "shell", path: "scripts/ubuntu/essentials.sh", privileged: true
@@ -65,6 +70,7 @@ Vagrant.configure(2) do |config|
     linux.vm.box = "bjori/precise32"
     linux.vm.provider "vmware_workstation" do |vmware, override|
       override.vm.box_url = "bjori/precise32"
+      override.vm.provision "shell", path: "scripts/vmware/kernel.sh", privileged: true
     end
 
     linux.vm.provision "shell", path: "scripts/ubuntu/essentials.sh", privileged: true

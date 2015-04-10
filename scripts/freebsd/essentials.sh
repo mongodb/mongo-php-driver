@@ -1,13 +1,13 @@
 # Update ports
-sudo portsnap fetch extract
+sudo portsnap fetch extract update
 
 # Minimum required PHP install + pecl
-sudo pkg install pcre php56 php56-openssl php56-json pear autoconf cyrus-sasl
+sudo pkg install -y pcre php56 php56-openssl php56-json pear autoconf pkgconf cyrus-sasl
 
 # We need vim. git requires curl. mongoc requires libtool and automake 
-sudo pkg install vim git curl libtool automake
+sudo pkg install -y vim git curl libtool automake
 
 # I can't stand emacs
-echo 'set -o vi' | sudo tee /etc/profile.d/vishell.sh
+echo 'set -o vi' | sudo tee -a /etc/profile
 
 
