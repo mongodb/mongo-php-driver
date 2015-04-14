@@ -124,8 +124,7 @@ PHP_METHOD(BulkWrite, update)
 	zval                     *query;
 	zval                     *newObj;
 	zval                     *updateOptions = NULL;
-	mongoc_update_flags_t     limit = 0;
-	zend_bool                 upsert = 0;
+	mongoc_update_flags_t     flags = MONGOC_UPDATE_NONE;
 	bson_t                   *bquery;
 	bson_t                   *bupdate;
 	(void)return_value_ptr; (void)return_value; (void)return_value_used;
@@ -145,18 +144,20 @@ PHP_METHOD(BulkWrite, update)
 	zval_to_bson(newObj, PHONGO_BSON_NONE, bupdate, NULL TSRMLS_CC);
 
 	if (updateOptions) {
-		limit = php_array_fetch_bool(updateOptions, "limit");
-		upsert = php_array_fetch_bool(updateOptions, "upsert");
+		flags |= php_array_fetch_bool(updateOptions, "multi") ?  MONGOC_UPDATE_MULTI_UPDATE : 0;
+		flags |= php_array_fetch_bool(updateOptions, "upsert") ? MONGOC_UPDATE_UPSERT : 0;
 	}
 
-	if (limit) {
+	if (flags & MONGOC_UPDATE_MULTI_UPDATE) {
+		mongoc_bulk_operation_update(intern->bulk, bquery, bupdate, !!(flags & MONGOC_UPDATE_UPSERT));
+	} else {
 		bson_iter_t iter;
 		zend_bool   replaced = 0;
 
 		if (bson_iter_init(&iter, bupdate)) {
 			while (bson_iter_next (&iter)) {
 				if (!strchr (bson_iter_key (&iter), '$')) {
-					mongoc_bulk_operation_replace_one(intern->bulk, bquery, bupdate, upsert);
+					mongoc_bulk_operation_replace_one(intern->bulk, bquery, bupdate, !!(flags & MONGOC_UPDATE_UPSERT));
 					replaced = 1;
 					break;
 				}
@@ -164,10 +165,8 @@ PHP_METHOD(BulkWrite, update)
 		}
 
 		if (!replaced) {
-			mongoc_bulk_operation_update_one(intern->bulk, bquery, bupdate, upsert);
+			mongoc_bulk_operation_update_one(intern->bulk, bquery, bupdate, !!(flags & MONGOC_UPDATE_UPSERT));
 		}
-	} else {
-		mongoc_bulk_operation_update(intern->bulk, bquery, bupdate, upsert);
 	}
 
 	bson_clear(&bquery);

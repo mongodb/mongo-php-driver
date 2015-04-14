@@ -1,0 +1,264 @@
+--TEST--
+PHPC-243: Manager::executeUpdate() & Bulk->update() w/o multi
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
+--FILE--
+<?php
+require_once __DIR__ . "/../utils/basic.inc";
+
+$manager = new MongoDB\Driver\Manager(STANDALONE);
+
+// load fixtures for test
+$manager->executeInsert(NS, array('_id' => 1, 'x' => 1));
+$manager->executeInsert(NS, array('_id' => 2, 'x' => 2));
+$manager->executeInsert(NS, array('_id' => 3, 'x' => 2));
+$manager->executeInsert(NS, array('_id' => 4, 'x' => 2));
+$manager->executeInsert(NS, array('_id' => 5, 'x' => 1));
+$manager->executeInsert(NS, array('_id' => 6, 'x' => 1));
+
+$result = $manager->executeUpdate(
+    NS,
+    array('x' => 1),
+    array('$set' => array('x' => 3)),
+    array('multi' => false, 'upsert' => false)
+);
+
+printf("Changed %d out of expected 1 (_id=1)\n", $result->getModifiedCount());
+
+
+$result = $manager->executeUpdate(
+    NS,
+    array('x' => 1),
+    array('$set' => array('x' => 2)),
+    array('multi' => true, 'upsert' => false)
+);
+
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
+var_dump(iterator_to_array($cursor));
+printf("Changed %d out of expected 2, (_id=5, _id=6)\n", $result->getModifiedCount());
+
+$bulk = new MongoDB\Driver\BulkWrite;
+$bulk->update(
+    array('x' => 2),
+    array('$set' => array('x' => 4)),
+    array('multi' => false, 'upsert' => false)
+);
+
+$result = $manager->executeBulkWrite(NS, $bulk);
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
+var_dump(iterator_to_array($cursor));
+printf("Changed %d out of expected 1, (_id=2)\n", $result->getModifiedCount());
+
+
+
+$bulk = new MongoDB\Driver\BulkWrite;
+$bulk->update(
+    array('x' => 2),
+    array('$set' => array('x' => 41)),
+    array('multi' => false, 'upsert' => false)
+);
+
+$result = $manager->executeBulkWrite(NS, $bulk);
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
+var_dump(iterator_to_array($cursor));
+printf("Changed %d out of expected 1 (id_=3)\n", $result->getModifiedCount());
+
+
+
+$bulk = new MongoDB\Driver\BulkWrite;
+$bulk->update(
+    array('x' => 2),
+    array('$set' => array('x' => 42)),
+    array('multi' => true, 'upsert' => false)
+);
+
+$result = $manager->executeBulkWrite(NS, $bulk);
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
+var_dump(iterator_to_array($cursor));
+printf("Changed %d out of expected 3 (_id=4, _id=5, _id=6)\n", $result->getModifiedCount());
+?>
+===DONE===
+<?php exit(0); ?>
+--EXPECT--
+Changed 1 out of expected 1 (_id=1)
+array(6) {
+  [0]=>
+  array(2) {
+    ["_id"]=>
+    int(1)
+    ["x"]=>
+    int(3)
+  }
+  [1]=>
+  array(2) {
+    ["_id"]=>
+    int(2)
+    ["x"]=>
+    int(2)
+  }
+  [2]=>
+  array(2) {
+    ["_id"]=>
+    int(3)
+    ["x"]=>
+    int(2)
+  }
+  [3]=>
+  array(2) {
+    ["_id"]=>
+    int(4)
+    ["x"]=>
+    int(2)
+  }
+  [4]=>
+  array(2) {
+    ["_id"]=>
+    int(5)
+    ["x"]=>
+    int(2)
+  }
+  [5]=>
+  array(2) {
+    ["_id"]=>
+    int(6)
+    ["x"]=>
+    int(2)
+  }
+}
+Changed 2 out of expected 2, (_id=5, _id=6)
+array(6) {
+  [0]=>
+  array(2) {
+    ["_id"]=>
+    int(1)
+    ["x"]=>
+    int(3)
+  }
+  [1]=>
+  array(2) {
+    ["_id"]=>
+    int(2)
+    ["x"]=>
+    int(4)
+  }
+  [2]=>
+  array(2) {
+    ["_id"]=>
+    int(3)
+    ["x"]=>
+    int(2)
+  }
+  [3]=>
+  array(2) {
+    ["_id"]=>
+    int(4)
+    ["x"]=>
+    int(2)
+  }
+  [4]=>
+  array(2) {
+    ["_id"]=>
+    int(5)
+    ["x"]=>
+    int(2)
+  }
+  [5]=>
+  array(2) {
+    ["_id"]=>
+    int(6)
+    ["x"]=>
+    int(2)
+  }
+}
+Changed 1 out of expected 1, (_id=2)
+array(6) {
+  [0]=>
+  array(2) {
+    ["_id"]=>
+    int(1)
+    ["x"]=>
+    int(3)
+  }
+  [1]=>
+  array(2) {
+    ["_id"]=>
+    int(2)
+    ["x"]=>
+    int(4)
+  }
+  [2]=>
+  array(2) {
+    ["_id"]=>
+    int(3)
+    ["x"]=>
+    int(41)
+  }
+  [3]=>
+  array(2) {
+    ["_id"]=>
+    int(4)
+    ["x"]=>
+    int(2)
+  }
+  [4]=>
+  array(2) {
+    ["_id"]=>
+    int(5)
+    ["x"]=>
+    int(2)
+  }
+  [5]=>
+  array(2) {
+    ["_id"]=>
+    int(6)
+    ["x"]=>
+    int(2)
+  }
+}
+Changed 1 out of expected 1 (id_=3)
+array(6) {
+  [0]=>
+  array(2) {
+    ["_id"]=>
+    int(1)
+    ["x"]=>
+    int(3)
+  }
+  [1]=>
+  array(2) {
+    ["_id"]=>
+    int(2)
+    ["x"]=>
+    int(4)
+  }
+  [2]=>
+  array(2) {
+    ["_id"]=>
+    int(3)
+    ["x"]=>
+    int(41)
+  }
+  [3]=>
+  array(2) {
+    ["_id"]=>
+    int(4)
+    ["x"]=>
+    int(42)
+  }
+  [4]=>
+  array(2) {
+    ["_id"]=>
+    int(5)
+    ["x"]=>
+    int(42)
+  }
+  [5]=>
+  array(2) {
+    ["_id"]=>
+    int(6)
+    ["x"]=>
+    int(42)
+  }
+}
+Changed 3 out of expected 3 (_id=4, _id=5, _id=6)
+===DONE===

@@ -206,11 +206,9 @@ PHP_METHOD(Manager, executeUpdate)
 	zval_to_bson(zquery, PHONGO_BSON_NONE, query, NULL TSRMLS_CC);
 	zval_to_bson(newObj, PHONGO_BSON_NONE, update, NULL TSRMLS_CC);
 
-	if (updateOptions && php_array_fetch_bool(updateOptions, "upsert")) {
-		flags |= MONGOC_UPDATE_UPSERT;
-	}
-	if (updateOptions && php_array_fetch_bool(updateOptions, "limit")) {
-		flags |= MONGOC_UPDATE_MULTI_UPDATE;
+	if (updateOptions) {
+		flags |= php_array_fetch_bool(updateOptions, "multi") ? MONGOC_UPDATE_MULTI_UPDATE : 0 ;
+		flags |= php_array_fetch_bool(updateOptions, "upsert") ? MONGOC_UPDATE_UPSERT : 0;
 	}
 
 	phongo_execute_single_update(intern->client, namespace, query, update, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, flags, return_value, return_value_used TSRMLS_CC);

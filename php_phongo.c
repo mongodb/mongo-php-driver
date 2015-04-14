@@ -434,9 +434,24 @@ int phongo_execute_single_update(mongoc_client_t *client, const char *namespace,
 
 	bulk = phongo_bulkwrite_init(true);
 	if (flags & MONGOC_UPDATE_MULTI_UPDATE) {
-		mongoc_bulk_operation_update_one(bulk, query, update, !!(flags & MONGOC_UPDATE_UPSERT));
-	} else {
 		mongoc_bulk_operation_update(bulk, query, update, !!(flags & MONGOC_UPDATE_UPSERT));
+	} else {
+		bson_iter_t iter;
+		zend_bool   replaced = 0;
+
+		if (bson_iter_init(&iter, update)) {
+			while (bson_iter_next (&iter)) {
+				if (!strchr (bson_iter_key (&iter), '$')) {
+					mongoc_bulk_operation_replace_one(bulk, query, update, !!(flags & MONGOC_UPDATE_UPSERT));
+					replaced = 1;
+					break;
+				}
+			}
+		}
+
+		if (!replaced) {
+			mongoc_bulk_operation_update_one(bulk, query, update, !!(flags & MONGOC_UPDATE_UPSERT));
+		}
 	}
 	retval = phongo_execute_write(client, namespace, bulk, write_concern, server_id, return_value, return_value_used TSRMLS_CC);
 	mongoc_bulk_operation_destroy(bulk);
