@@ -730,17 +730,18 @@ PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson
 
 	switch(Z_TYPE_P(data)) {
 		case IS_OBJECT:
-				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce TSRMLS_CC)) {
-					zval *retval;
+			if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce TSRMLS_CC)) {
+				zval *retval;
 
-					bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
+				bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
 
-					zend_call_method_with_0_params(&data, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &retval);
-					if(retval) {
-						ZVAL_ZVAL(data, retval, 0, 1);
-						convert_to_array(data);
-					}
+				zend_call_method_with_0_params(&data, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &retval);
+				if(retval) {
+					ZVAL_ZVAL(data, retval, 0, 1);
+					convert_to_array(data);
 				}
+			}
+			/* break intentionally omitted */
 
 		case IS_ARRAY:
 			ht_data = HASH_OF(data);
