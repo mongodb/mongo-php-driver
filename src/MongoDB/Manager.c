@@ -172,7 +172,7 @@ PHP_METHOD(Manager, executeInsert)
 
 
 	bson = bson_new();
-	zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
+	zval_to_bson(document, PHONGO_BSON_ADD_ODS, bson, NULL TSRMLS_CC);
 	phongo_execute_single_insert(intern->client, namespace, bson, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 	bson_clear(&bson);
 }

@@ -81,6 +81,7 @@ class Person implements BSON\Persistable {
                 $updated['$set'] = array($k => $v);
             }
         }
+        return $updated;
     }
  
     function getName() {
