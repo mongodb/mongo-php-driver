@@ -843,6 +843,7 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 			MAKE_STD_ZVAL(obj);
 			object_init_ex(obj, state->odm ? state->odm : state->map.array);
 			zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
+			SEPARATE_ZVAL(&state->zchild);
 			zval_dtor(state->zchild);
 			ZVAL_ZVAL(state->zchild, obj, 1, 1);
 		}
