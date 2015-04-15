@@ -91,15 +91,8 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
       float(1)
     }
   }
-  ["firstBatch"]=>
-  array(1) {
-    ["ok"]=>
-    float(1)
-  }
   ["server_id"]=>
   int(1)
-  ["is_command_cursor"]=>
-  bool(false)
 }
 
 Dumping response document:

@@ -235,7 +235,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 /* }}} */
 
 /* {{{ Init objects */
-void phongo_cursor_init(zval *return_value, mongoc_cursor_t *cursor, const bson_t *bson, mongoc_client_t *client, zend_bool is_command_cursor TSRMLS_DC) /* {{{ */
+void phongo_cursor_init(zval *return_value, mongoc_cursor_t *cursor, mongoc_client_t *client TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t *intern;
 
@@ -245,8 +245,6 @@ void phongo_cursor_init(zval *return_value, mongoc_cursor_t *cursor, const bson_
 	intern->cursor = cursor;
 	intern->server_id = mongoc_cursor_get_hint(cursor);
 	intern->client = client;
-	intern->is_command_cursor = is_command_cursor;
-	intern->firstBatch = bson ? bson_copy(bson) : NULL;
 } /* }}} */
 
 void phongo_server_init(zval *return_value, mongoc_client_t *client, int server_id TSRMLS_DC) /* {{{ */
@@ -589,7 +587,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 		return true;
 	}
 
-	phongo_cursor_init(return_value, cursor, doc, client, 0 TSRMLS_CC);
+	phongo_cursor_init(return_value, cursor, client TSRMLS_CC);
 	return true;
 } /* }}} */
 
@@ -619,36 +617,43 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 		return true;
 	}
 
-	/* Detect if its an command cursor */
-	if (bson_iter_init_find (&iter, doc, "cursor") && BSON_ITER_HOLDS_DOCUMENT (&iter) && bson_iter_recurse (&iter, &child)) {
-		while (bson_iter_next (&child)) {
-			if (BSON_ITER_IS_KEY (&child, "id")) {
-				cursor->rpc.reply.cursor_id = bson_iter_as_int64 (&child);
-			} else if (BSON_ITER_IS_KEY (&child, "ns")) {
+	/* This code is adapated from _mongoc_cursor_cursorid_prime(), but we avoid
+	 * advancing the cursor, since we are already positioned at the first result
+	 * after the error checking above. */
+	if (bson_iter_init_find(&iter, doc, "cursor") && BSON_ITER_HOLDS_DOCUMENT(&iter) && bson_iter_recurse(&iter, &child)) {
+		mongoc_cursor_cursorid_t *cid;
+
+		_mongoc_cursor_cursorid_init(cursor);
+		cursor->limit = 0;
+
+		cid = cursor->iface_data;
+		cid->has_cursor = true;
+
+		while (bson_iter_next(&child)) {
+			if (BSON_ITER_IS_KEY(&child, "id")) {
+				cursor->rpc.reply.cursor_id = bson_iter_as_int64(&child);
+			} else if (BSON_ITER_IS_KEY(&child, "ns")) {
 				const char *ns;
 
-				ns = bson_iter_utf8 (&child, &cursor->nslen);
-				bson_strncpy (cursor->ns, ns, sizeof cursor->ns);
-			} else if (BSON_ITER_IS_KEY (&child, "firstBatch")) {
-				if (BSON_ITER_HOLDS_ARRAY (&child)) {
-					const uint8_t *data = NULL;
-					uint32_t data_len = 0;
-					bson_t first_batch;
-
-					bson_iter_array (&child, &data_len, &data);
-					if (bson_init_static (&first_batch, data, data_len)) {
-						_mongoc_cursor_cursorid_init(cursor);
-						cursor->limit = 0;
-						cursor->is_command = false;
-						phongo_cursor_init(return_value, cursor, &first_batch, client, 1 TSRMLS_CC);
-						return true;
-					}
+				ns = bson_iter_utf8(&child, &cursor->nslen);
+				bson_strncpy(cursor->ns, ns, sizeof cursor->ns);
+			} else if (BSON_ITER_IS_KEY(&child, "firstBatch")) {
+				if (BSON_ITER_HOLDS_ARRAY(&child) && bson_iter_recurse(&child, &cid->first_batch_iter)) {
+					cid->in_first_batch = true;
 				}
 			}
 		}
+
+		cursor->is_command = false;
+
+		/* The cursor's current element is the command's response document.
+		 * Advance once so that the cursor is positioned at the first document
+		 * within the command cursor's result set.
+		 */
+		mongoc_cursor_next(cursor, &doc);
 	}
 
-	phongo_cursor_init(return_value, cursor, doc, client, 0 TSRMLS_CC);
+	phongo_cursor_init(return_value, cursor, client TSRMLS_CC);
 	return true;
 } /* }}} */
 
@@ -1291,17 +1296,7 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{
 		add_assoc_null_ex(retval, ZEND_STRS("cursor"));
 	}
 
-	if (cursor->firstBatch) {
-		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
-
-		MAKE_STD_ZVAL(state.zchild);
-		bson_to_zval(bson_get_data(cursor->firstBatch), cursor->firstBatch->len, &state);
-		add_assoc_zval_ex(retval, ZEND_STRS("firstBatch"), state.zchild);
-	} else {
-		add_assoc_null_ex(retval, ZEND_STRS("firstBatch"));
-	}
 	add_assoc_long_ex(retval, ZEND_STRS("server_id"), cursor->server_id);
-	add_assoc_bool_ex(retval, ZEND_STRS("is_command_cursor"), cursor->is_command_cursor);
 
 } /* }}} */
 
@@ -1560,14 +1555,11 @@ static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ *
 
 void php_phongo_cursor_free(php_phongo_cursor_t *cursor)
 {
-	if (cursor->firstBatch) {
-		bson_clear(&cursor->firstBatch);
-		cursor->firstBatch = NULL;
-	}
 	if (cursor->cursor) {
 		mongoc_cursor_destroy(cursor->cursor);
 		cursor->cursor = NULL;
 	}
+
 	php_phongo_cursor_free_current(cursor);
 }
 
@@ -1575,11 +1567,6 @@ void php_phongo_cursor_free(php_phongo_cursor_t *cursor)
 static void php_phongo_cursor_iterator_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_iterator *cursor_it = (php_phongo_cursor_iterator *)iter;
-
-	if (cursor_it->cursor->firstBatch) {
-		bson_clear(&cursor_it->cursor->firstBatch);
-		cursor_it->cursor->firstBatch = NULL;
-	}
 
 	php_phongo_cursor_free_current(cursor_it->cursor);
 
@@ -1631,18 +1618,6 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator *iter T
 	php_phongo_cursor_free_current(cursor);
 	cursor_it->current++;
 
-	if (bson_iter_next(&cursor_it->first_batch_iter)) {
-		if (BSON_ITER_HOLDS_DOCUMENT (&cursor_it->first_batch_iter)) {
-			const uint8_t *data = NULL;
-			uint32_t data_len = 0;
-
-			bson_iter_document(&cursor_it->first_batch_iter, &data_len, &data);
-
-			MAKE_STD_ZVAL(cursor->visitor_data.zchild);
-			bson_to_zval(data, data_len, &cursor->visitor_data);
-			return;
-		}
-	}
 	if (mongoc_cursor_next(cursor->cursor, &doc)) {
 		MAKE_STD_ZVAL(cursor->visitor_data.zchild);
 		bson_to_zval(bson_get_data(doc), doc->len, &cursor->visitor_data);
@@ -1653,30 +1628,16 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_
 {
 	php_phongo_cursor_iterator *cursor_it = (php_phongo_cursor_iterator *)iter;
 	php_phongo_cursor_t        *cursor = cursor_it->cursor;
+	const bson_t               *doc;
 
 	php_phongo_cursor_free_current(cursor);
 	cursor_it->current = 0;
 
-	/* firstBatch is empty when the query simply didn't return any results */
-	if (cursor->firstBatch) {
-		if (cursor->is_command_cursor) {
-			if (!bson_iter_init(&cursor_it->first_batch_iter, cursor->firstBatch)) {
-				return;
-			}
-			if (bson_iter_next (&cursor_it->first_batch_iter)) {
-				if (BSON_ITER_HOLDS_DOCUMENT (&cursor_it->first_batch_iter)) {
-					const uint8_t *data = NULL;
-					uint32_t data_len = 0;
+	doc = mongoc_cursor_current(cursor->cursor);
 
-					bson_iter_document(&cursor_it->first_batch_iter, &data_len, &data);
-					MAKE_STD_ZVAL(cursor->visitor_data.zchild);
-					bson_to_zval(data, data_len, &cursor->visitor_data);
-				}
-			}
-		} else {
-			MAKE_STD_ZVAL(cursor->visitor_data.zchild);
-			bson_to_zval(bson_get_data(cursor->firstBatch), cursor->firstBatch->len, &cursor->visitor_data);
-		}
+	if (doc) {
+		MAKE_STD_ZVAL(cursor->visitor_data.zchild);
+		bson_to_zval(bson_get_data(doc), doc->len, &cursor->visitor_data);
 	}
 } /* }}} */
 
