@@ -591,7 +591,7 @@ void object_to_bson(zval *object, phongo_bson_flags_t flags, const char *key, lo
 
 				bson_append_document_begin(bson, key, key_len, &child);
 				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC)) {
-					if (flags & PHONGO_BSON_ADD_ODS) {
+					if (flags & PHONGO_BSON_ADD_CHILD_ODS) {
 						bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
 					}
 				}
@@ -889,7 +889,7 @@ PHP_FUNCTION(fromArray)
 	}
 
 	bson = bson_new();
-	zval_to_bson(data, PHONGO_BSON_ADD_ODS, bson, NULL TSRMLS_CC);
+	zval_to_bson(data, PHONGO_BSON_ADD_ODS|PHONGO_BSON_ADD_CHILD_ODS, bson, NULL TSRMLS_CC);
 
 	RETVAL_STRINGL((const char *) bson_get_data(bson), bson->len, 1);
 	bson_destroy(bson);

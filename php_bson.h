@@ -34,6 +34,7 @@ typedef enum {
 	PHONGO_BSON_ADD_ID    = 0x01,
 	PHONGO_BSON_RETURN_ID = 0x02,
 	PHONGO_BSON_ADD_ODS   = 0x04,
+	PHONGO_BSON_ADD_CHILD_ODS = 0x08
 } phongo_bson_flags_t;
 
 PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
