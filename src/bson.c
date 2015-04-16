@@ -464,18 +464,32 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 		array_init(state.zchild);
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
-			if ((state.map.document || state.odm) && instanceof_function(state.odm ? state.odm : state.map.document, php_phongo_unserializable_ce TSRMLS_CC)) {
-				zval *obj = NULL;
+			if (state.odm) {
+				state.map.document_type = PHONGO_TYPEMAP_CLASS;
+			}
+			switch(state.map.document_type) {
+				case PHONGO_TYPEMAP_NATIVE_ARRAY:
+					add_assoc_zval(retval, key, state.zchild);
+					Z_SET_REFCOUNT_P(state.zchild, 1);
+					break;
 
-				MAKE_STD_ZVAL(obj);
-				object_init_ex(obj, state.odm ? state.odm : state.map.document);
-				zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
-				add_assoc_zval(retval, key, obj);
-				zval_ptr_dtor(&state.zchild);
-			} else {
-				object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
-				add_assoc_zval(retval, key, state.zchild);
-				Z_SET_REFCOUNT_P(state.zchild, 1);
+				case PHONGO_TYPEMAP_CLASS:
+					if (instanceof_function(state.odm ? state.odm : state.map.document, php_phongo_unserializable_ce TSRMLS_CC)) {
+						zval *obj = NULL;
+
+						MAKE_STD_ZVAL(obj);
+						object_init_ex(obj, state.odm ? state.odm : state.map.document);
+						zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
+						add_assoc_zval(retval, key, obj);
+						zval_ptr_dtor(&state.zchild);
+						break;
+					}
+
+				case PHONGO_TYPEMAP_NATIVE_STDCLASS:
+				default:
+					object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
+					add_assoc_zval(retval, key, state.zchild);
+					Z_SET_REFCOUNT_P(state.zchild, 1);
 			}
 		}
 	}
@@ -500,17 +514,35 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
 
-			if (state.map.array && instanceof_function(state.map.array, php_phongo_unserializable_ce TSRMLS_CC)) {
-				zval *obj = NULL;
+			switch(state.map.array_type) {
+				case PHONGO_TYPEMAP_CLASS:
+					if (instanceof_function(state.map.array, php_phongo_unserializable_ce TSRMLS_CC)) {
+						zval *obj = NULL;
 
-				MAKE_STD_ZVAL(obj);
-				object_init_ex(obj, state.map.array);
-				zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
-				add_assoc_zval(retval, key, obj);
-				zval_ptr_dtor(&state.zchild);
-			} else {
-				add_assoc_zval(retval, key, state.zchild);
-				Z_SET_REFCOUNT_P(state.zchild, 1);
+						MAKE_STD_ZVAL(obj);
+						object_init_ex(obj, state.map.array);
+						zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
+						add_assoc_zval(retval, key, obj);
+						zval_ptr_dtor(&state.zchild);
+						break;
+					}
+					/* If the object someehow doesn't implement php_phongo_unserializable_ce then use stdclass.
+					 * This is needed as we need to know how to pass the state.zchild to the class to populate it.
+					 * Not all classes have ctor that accepts first parameter array of values.
+					 */
+
+				/* break intentionally omitted */
+				case PHONGO_TYPEMAP_NATIVE_STDCLASS:
+					object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
+					add_assoc_zval(retval, key, state.zchild);
+					Z_SET_REFCOUNT_P(state.zchild, 1);
+					break;
+
+				case PHONGO_TYPEMAP_NATIVE_ARRAY:
+				default:
+					add_assoc_zval(retval, key, state.zchild);
+					Z_SET_REFCOUNT_P(state.zchild, 1);
+					break;
 			}
 		}
 
@@ -561,7 +593,7 @@ int php_phongo_is_array_or_document(zval **val TSRMLS_DC) /* {{{ */
 	return IS_ARRAY;
 }
 /* }}} */
-void object_to_bson(zval *object, phongo_bson_flags_t flags, const char *key, long key_len, bson_t *bson TSRMLS_DC)
+void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key, long key_len, bson_t *bson TSRMLS_DC)
 {
 	bson_t child;
 
@@ -667,7 +699,7 @@ void object_to_bson(zval *object, phongo_bson_flags_t flags, const char *key, lo
 		}
 	}
 }
-void phongo_bson_append(bson_t *bson, phongo_bson_flags_t flags, const char *key, long key_len, int entry_type, zval *entry TSRMLS_DC)
+void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char *key, long key_len, int entry_type, zval *entry TSRMLS_DC)
 {
 	switch (entry_type)
 	{
@@ -725,7 +757,7 @@ void phongo_bson_append(bson_t *bson, phongo_bson_flags_t flags, const char *key
 	}
 }
 
-PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC) /* {{{ */
+PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC) /* {{{ */
 {
 	HashPosition pos;
 	HashTable   *ht_data;
@@ -906,10 +938,17 @@ void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *ma
 
 		classname = php_array_fetchl_string(typemap, "array", sizeof("array")-1, &classname_len, &classname_free);
 		if (classname_len) {
-			array_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
+			if (!strcasecmp(classname, "array")) {
+				map->array_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+			} else if (!strcasecmp(classname, "stdclass")) {
+				map->array_type = PHONGO_TYPEMAP_NATIVE_STDCLASS;
+			} else {
+				map->array_type = PHONGO_TYPEMAP_CLASS;
+				array_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
 
-			if (instanceof_function(array_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
-				map->array = array_ce;
+				if (instanceof_function(array_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
+					map->array = array_ce;
+				}
 			}
 			if (classname_free) {
 				efree(classname);
@@ -918,9 +957,17 @@ void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *ma
 
 		classname = php_array_fetchl_string(typemap, "document", sizeof("document")-1, &classname_len, &classname_free);
 		if (classname_len) {
-			document_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
-			if (instanceof_function(document_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
-				map->document = document_ce;
+			if (!strcasecmp(classname, "array")) {
+				map->document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+			} else if (!strcasecmp(classname, "stdclass")) {
+				map->document_type = PHONGO_TYPEMAP_NATIVE_STDCLASS;
+			} else {
+				map->document_type = PHONGO_TYPEMAP_CLASS;
+				document_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
+
+				if (instanceof_function(document_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
+					map->document = document_ce;
+				}
 			}
 			if (classname_free) {
 				efree(classname);

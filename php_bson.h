@@ -26,8 +26,9 @@
 /* PHP Core stuff */
 #include <php.h>
 
-/* Our stuff */
-#include "php_phongo.h"
+
+#define BSON_UNSERIALIZE_FUNC_NAME    "bsonUnserialize"
+#define BSON_SERIALIZE_FUNC_NAME      "bsonSerialize"
 
 typedef enum {
 	PHONGO_BSON_NONE      = 0x00,
@@ -35,9 +36,31 @@ typedef enum {
 	PHONGO_BSON_RETURN_ID = 0x02,
 	PHONGO_BSON_ADD_ODS   = 0x04,
 	PHONGO_BSON_ADD_CHILD_ODS = 0x08
-} phongo_bson_flags_t;
+} php_phongo_bson_flags_t;
 
-PHONGO_API void zval_to_bson(zval *data, phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
+typedef enum {
+	PHONGO_TYPEMAP_NONE,
+	PHONGO_TYPEMAP_NATIVE_ARRAY,
+	PHONGO_TYPEMAP_NATIVE_STDCLASS,
+	PHONGO_TYPEMAP_CLASS
+} php_phongo_bson_typemap_types;
+
+typedef struct {
+	php_phongo_bson_typemap_types  document_type;
+	zend_class_entry              *document;
+	php_phongo_bson_typemap_types  array_type;
+	zend_class_entry              *array;
+} php_phongo_bson_typemap;
+
+typedef struct {
+	zval                    *zchild;
+	php_phongo_bson_typemap  map;
+	zend_class_entry        *odm;
+} php_phongo_bson_state;
+
+#define PHONGO_BSON_STATE_INITIALIZER  {NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL}, NULL}
+
+PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
 PHONGO_API int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state *state);
 PHONGO_API void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC);
 

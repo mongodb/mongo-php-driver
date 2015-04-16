@@ -25,26 +25,14 @@
 #include <php.h>
 #include <mongoc-bulk-operation-private.h>
 
-#define BSON_UNSERIALIZE_FUNC_NAME    "bsonUnserialize"
-#define BSON_SERIALIZE_FUNC_NAME      "bsonSerialize"
+/* Our stuffz */
+#include "php_bson.h"
 
-#define PHONGO_BSON_STATE_INITIALIZER  {NULL, {NULL, NULL}, NULL}
 
 typedef struct {
 	zend_object              std;
 	bson_t                  *bson;
 } php_phongo_command_t;
-
-typedef struct {
-	zend_class_entry *document;
-	zend_class_entry *array;
-} php_phongo_bson_typemap;
-
-typedef struct {
-	zval                    *zchild;
-	php_phongo_bson_typemap  map;
-	zend_class_entry        *odm;
-} php_phongo_bson_state;
 
 typedef struct {
 	zend_object              std;
