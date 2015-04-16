@@ -75,10 +75,10 @@ object(Person)#%d (5) {
       ["age":protected]=>
       int(21)
       ["address":protected]=>
-      object(stdClass)#%d (0) {
+      array(0) {
       }
       ["friends":protected]=>
-      object(stdClass)#%d (0) {
+      array(0) {
       }
       ["secret":protected]=>
       string(4) "none"

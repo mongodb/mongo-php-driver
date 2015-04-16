@@ -587,7 +587,7 @@ int php_phongo_is_array_or_document(zval **val TSRMLS_DC) /* {{{ */
 			idx++;
 		}
 	} else {
-		return IS_OBJECT;
+		return Z_TYPE_PP(val);
 	}
 
 	return IS_ARRAY;
