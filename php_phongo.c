@@ -1631,7 +1631,6 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_
 	const bson_t               *doc;
 
 	php_phongo_cursor_free_current(cursor);
-	cursor_it->current = 0;
 
 	doc = mongoc_cursor_current(cursor->cursor);
 
