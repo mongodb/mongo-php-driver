@@ -1568,8 +1568,6 @@ static void php_phongo_cursor_iterator_dtor(zend_object_iterator *iter TSRMLS_DC
 {
 	php_phongo_cursor_iterator *cursor_it = (php_phongo_cursor_iterator *)iter;
 
-	php_phongo_cursor_free_current(cursor_it->cursor);
-
 	if (cursor_it->intern.data) {
 		zval_ptr_dtor((zval**)&cursor_it->intern.data);
 		cursor_it->intern.data = NULL;
