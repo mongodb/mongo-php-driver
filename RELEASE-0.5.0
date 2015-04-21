@@ -1,0 +1,89 @@
+2015-04-21  Hannes Magnusson  <bjori@php.net>
+	* Bump stability
+
+2015-04-21  Hannes Magnusson  <bjori@php.net>
+	* Add 0.5.0 release notes
+
+2015-04-21  Hannes Magnusson  <bjori@php.net>
+	* Fix tests on 5.3 -- and use consistent db/collection
+
+2015-04-21  Hannes Magnusson  <bjori@php.net>
+	* Fix test - set my favorite ini option: date.timezone
+
+2015-04-21  Hannes Magnusson  <bjori@php.net>
+	* Fix tests
+
+2015-04-21  Hannes Magnusson  <bjori@php.net>
+	* PHPC-241: Include lib versions and uri in the logs
+
+2015-04-21  Hannes Magnusson  <bjori@php.net>
+	* Use the pretty MONGOC macros
+
+2015-04-21  Hannes Magnusson  <bjori@php.net>
+	* Remove dead code
+
+2015-04-21  Hannes Magnusson  <bjori@php.net>
+	* Move the init function to where all the others are and add folding markers
+
+2015-04-21  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #37
+
+2015-04-17  Jeremy Mikola  <jmikola@gmail.com>
+	* Current element is already freed in php_phongo_cursor_free()
+
+2015-04-16  Jeremy Mikola  <jmikola@gmail.com>
+	* Test Cursor iteration handlers and ensure rewind doesn't reset position
+
+2015-04-16  Jeremy Mikola  <jmikola@gmail.com>
+	* Tests for multiple iterators sharing the same Cursor
+
+2015-04-15  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-240: Rely on libmongoc for command cursor iteration
+
+2015-04-14  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-240: Regression tests for command cursor getmore
+
+2015-04-21  Hannes Magnusson  <bjori@php.net>
+	* PHPC-254: Remove unused RINIT and RSHUTDOWN handlers
+
+2015-04-21  Hannes Magnusson  <bjori@php.net>
+	* PHPC-253: bump mongoc after CDRIVER-611 fix
+
+2015-04-16  Hannes Magnusson  <bjori@php.net>
+	* PHPC-249: empty array should be serialized as array
+
+2015-04-16  Hannes Magnusson  <bjori@php.net>
+	* PHPC-248: Allow ->setTypeMap() to set 'array' and 'stdclass'
+
+2015-04-15  Hannes Magnusson  <bjori@php.net>
+	* PHPC-245: Allow embedding objects in updates
+
+2015-04-15  Hannes Magnusson  <bjori@php.net>
+	* PHPC-245: executeUpdate() converts objects to arrays
+
+2015-04-14  Hannes Magnusson  <bjori@php.net>
+	* PHPC-244: Cannot use object of type Person as array
+
+2015-04-14  Hannes Magnusson  <bjori@php.net>
+	* PHPC-243: Manager->executeUpdate() option is supposed to be 'multi'
+
+2015-04-14  Hannes Magnusson  <bjori@10gen.com>
+	* Merge pull request #35 from bjori/PHPc-239
+
+2015-04-14  Hannes Magnusson  <bjori@php.net>
+	* PHPC-239: Cursor refcount issues
+
+2015-04-14  Hannes Magnusson  <bjori@10gen.com>
+	* Merge pull request #36 from derickr/align-and-missing-break-comment
+
+2015-04-14  Derick Rethans  <github@derickrethans.nl>
+	* Align code and added the "break intentionally ommitted" comment
+
+2015-04-13  Hannes Magnusson  <bjori@php.net>
+	* PHPC-237: Update PHP version requirement in package.xml
+
+2015-04-10  Hannes Magnusson  <bjori@php.net>
+	* post-release pump
+
+2015-04-10  Hannes Magnusson  <bjori@php.net>
+	* Add 0.4.1 release notes
