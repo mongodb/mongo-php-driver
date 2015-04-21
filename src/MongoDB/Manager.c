@@ -422,72 +422,6 @@ zend_object_value php_phongo_manager_create_object(zend_class_entry *class_type 
 	return retval;
 } /* }}} */
 
-/* 
-static const char *phongo_cluster_mode_tostring(mongoc_cluster_mode_t mode)
-{
-	switch (mode) {
-		case MONGOC_CLUSTER_DIRECT:
-			return "direct";
-		case MONGOC_CLUSTER_REPLICA_SET:
-			return "replicaset";
-		case MONGOC_CLUSTER_SHARDED_CLUSTER:
-			return "sharded";
-			break;
-	}
-
-	return "broken";
-}
-
-static const char *phongo_cluster_state_tostring(mongoc_cluster_state_t state)
-{
-	switch (state) {
-		case MONGOC_CLUSTER_STATE_BORN:
-			return "born";
-		case MONGOC_CLUSTER_STATE_HEALTHY:
-			return "healthy";
-		case MONGOC_CLUSTER_STATE_DEAD:
-			return "dead";
-		case MONGOC_CLUSTER_STATE_UNHEALTHY:
-			return "unhealthy";
-	}
-
-	return "broken";
-}
-*/
-
-static void add_next_index_node(zval *array, mongoc_cluster_node_t *node)
-{
-	zval                  *data = NULL;
-	php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
-
-	MAKE_STD_ZVAL(state.zchild);
-
-	MAKE_STD_ZVAL(data);
-	array_init(data);
-	/*FIXME: What data to dump ?
-	add_assoc_long_ex(data, ZEND_STRS("ping_avg_msec"), node->ping_avg_msec);
-	add_assoc_long_ex(data, ZEND_STRS("stamp"), node->stamp);
-	add_assoc_bool_ex(data, ZEND_STRS("primary"), node->primary);
-	add_assoc_bool_ex(data, ZEND_STRS("needs_auth"), node->needs_auth);
-	add_assoc_bool_ex(data, ZEND_STRS("isdbgrid"), node->needs_auth);
-	add_assoc_long_ex(data, ZEND_STRS("min_wire_version"), node->min_wire_version);
-	add_assoc_long_ex(data, ZEND_STRS("max_wire_version"), node->max_wire_version);
-	add_assoc_long_ex(data, ZEND_STRS("max_write_batch_size"), node->max_write_batch_size);
-	if (node->replSet) {
-		add_assoc_string_ex(data, ZEND_STRS("replSet"), node->replSet, 0);
-	} else {
-		add_assoc_null_ex(data, ZEND_STRS("replSet"));
-	}
-	add_assoc_long_ex(data, ZEND_STRS("last_read_msec"), node->last_read_msec);
-	bson_to_zval(bson_get_data(&node->tags), node->tags.len, &state);
-	add_assoc_zval_ex(data, ZEND_STRS("tags"), state.zchild);
-	add_assoc_string_ex(data, ZEND_STRS("host_and_port"), node->host.host_and_port, 0);
-	*/
-	/* TODO: Should this contain the actual stream too? we have the mongoc_stream_t... */
-
-	add_next_index_zval(array, data);
-}
-
 HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	zval *retval = NULL;
@@ -507,53 +441,6 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 		zval *cluster = NULL;
 		MAKE_STD_ZVAL(cluster);
 		array_init(cluster);
-		/* FIXME: What data to dump ?
-		add_assoc_string_ex(cluster, ZEND_STRS("mode"), (char *)phongo_cluster_mode_tostring(intern->client->cluster.mode), 0);
-		add_assoc_string_ex(cluster, ZEND_STRS("state"), (char *)phongo_cluster_state_tostring(intern->client->cluster.state), 0);
-		add_assoc_long_ex(cluster, ZEND_STRS("request_id"), intern->client->cluster.request_id);
-		add_assoc_long_ex(cluster, ZEND_STRS("sockettimeoutms"), intern->client->cluster.sockettimeoutms);
-		add_assoc_long_ex(cluster, ZEND_STRS("last_reconnect"), intern->client->cluster.last_reconnect);
-		add_assoc_string_ex(cluster, ZEND_STRS("uri"), (char *)mongoc_uri_get_string(intern->client->cluster.uri), 0);
-		add_assoc_long_ex(cluster, ZEND_STRS("requires_auth"), intern->client->cluster.requires_auth);
-
-		if (intern->client->cluster.nodes_len) {
-			zval *nodes = NULL;
-			unsigned int i;
-
-			MAKE_STD_ZVAL(nodes);
-			array_init(nodes);
-			for (i = 0; i < intern->client->cluster.nodes_len; i++) {
-				add_next_index_node(nodes, &intern->client->cluster.nodes[i]);
-			}
-			add_assoc_zval_ex(cluster, ZEND_STRS("nodes"), nodes);
-		}
-		add_assoc_long_ex(cluster, ZEND_STRS("max_bson_size"), intern->client->cluster.max_bson_size);
-		add_assoc_long_ex(cluster, ZEND_STRS("max_msg_size"), intern->client->cluster.max_msg_size);
-		add_assoc_long_ex(cluster, ZEND_STRS("sec_latency_ms"), intern->client->cluster.sec_latency_ms);
-		{
-			mongoc_host_list_t host;
-			zval *peers = NULL;
-			mongoc_list_t *list;
-			mongoc_list_t *liter;
-
-			MAKE_STD_ZVAL(peers);
-			array_init(peers);
-
-			list = intern->client->cluster.peers;
-			for (liter = list; liter ; liter = liter->next) {
-
-				if (_mongoc_host_list_from_string(&host, liter->data)) {
-					add_next_index_string(peers, host.host_and_port, 1);
-				}
-			}
-			add_assoc_zval_ex(cluster, ZEND_STRS("peers"), peers);
-		}
-		if (intern->client->cluster.replSet) {
-			add_assoc_string_ex(cluster, ZEND_STRS("replSet"), intern->client->cluster.replSet, 0);
-		} else {
-			add_assoc_null_ex(cluster, ZEND_STRS("replSet"));
-		}
-		*/
 
 		add_assoc_zval_ex(retval, ZEND_STRS("cluster"), cluster);
 	}
