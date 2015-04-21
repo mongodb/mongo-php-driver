@@ -94,7 +94,7 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 			return php_phongo_connectionexception_ce;
 	}
 
-	mongoc_log(MONGOC_LOG_LEVEL_ERROR, MONGOC_LOG_DOMAIN, "Resolving unknown exception domain!!!");
+	MONGOC_ERROR("Resolving unknown exception domain!!!");
 	return spl_ce_RuntimeException;
 }
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code)
@@ -743,7 +743,7 @@ void phongo_stream_destroy(mongoc_stream_t *stream_wrap) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
 
-	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Not destroying RSRC#%d", base_stream->stream->rsrc_id);
+	MONGOC_DEBUG("Not destroying RSRC#%d", base_stream->stream->rsrc_id);
 	/*
 	 * DON'T DO ANYTHING TO THE INTERNAL base_stream->stream
 	 * The stream should not be closed during normal dtor -- as we want it to
@@ -760,7 +760,7 @@ void phongo_stream_failed(mongoc_stream_t *stream_wrap) /* {{{ */
 	if (base_stream->stream) {
 		TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
-		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Destroying RSRC#%d", base_stream->stream->rsrc_id);
+		MONGOC_DEBUG("Destroying RSRC#%d", base_stream->stream->rsrc_id);
 		php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
 		base_stream->stream = NULL;
 	}
@@ -772,7 +772,7 @@ int phongo_stream_close(mongoc_stream_t *stream_wrap) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
 
-	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Closing RSRC#%d", base_stream->stream->rsrc_id);
+	MONGOC_DEBUG("Closing RSRC#%d", base_stream->stream->rsrc_id);
 	phongo_stream_destroy(stream_wrap);
 	return 0;
 } /* }}} */
@@ -788,7 +788,7 @@ void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeo
 	}
 
 	php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &rtimeout);
-	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Setting timeout to: %d", timeout_msec);
+	MONGOC_DEBUG("Setting timeout to: %d", timeout_msec);
 } /* }}} */
 
 ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, int32_t timeout_msec) /* {{{ */
@@ -818,7 +818,7 @@ ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t
 
 	do {
 		read = php_stream_read(base_stream->stream, iov[cur].iov_base, iov[cur].iov_len);
-		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Reading got: %zd wanted: %zd", read, min_bytes);
+		MONGOC_DEBUG("Reading got: %zd wanted: %zd", read, min_bytes);
 
 		if (read <= 0) {
 			if (ret >= (ssize_t)min_bytes) {
@@ -1042,7 +1042,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 	spprintf(&uniqid, 0, "%s:%d[%s]", host->host, host->port, mongoc_uri_get_string(uri));
 
-	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Connecting to '%s'", uniqid);
+	MONGOC_DEBUG("Connecting to '%s'", uniqid);
 	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT | STREAM_XPORT_CONNECT_ASYNC, uniqid, timeoutp, (php_stream_context *)user_data, &errmsg, &errcode);
 
 	if (!stream) {
@@ -1056,7 +1056,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	}
 	php_stream_auto_cleanup(stream);
 
-	mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Created: RSRC#%d as '%s'", stream->rsrc_id, uniqid);
+	MONGOC_DEBUG("Created: RSRC#%d as '%s'", stream->rsrc_id, uniqid);
 	efree(uniqid);
 
 	if (mongoc_uri_get_ssl(uri)) {
@@ -1064,7 +1064,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 		zend_replace_error_handling(EH_THROW, php_phongo_sslconnectionexception_ce, &error_handling TSRMLS_CC);
 
-		mongoc_log(MONGOC_LOG_LEVEL_DEBUG, MONGOC_LOG_DOMAIN, "Enabling SSL");
+		MONGOC_DEBUG("Enabling SSL");
 
 		/* Capture the server certificate so we can do further verification */
 		if (stream->context) {
@@ -1126,7 +1126,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		int flag = 1;
 
 		if (phongo_stream_setsockopt((mongoc_stream_t *)base_stream, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int))) {
-			mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "setsockopt TCP_NODELAY failed");
+			MONGOC_WARNING("setsockopt TCP_NODELAY failed");
 		}
 	}
 
@@ -1308,11 +1308,14 @@ mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptio
 	php_stream_context        *ctx;
 	const char                *mech;
 	const mongoc_uri_t        *muri;
-	mongoc_client_t *client =  mongoc_client_new(uri);
+	mongoc_client_t           *client =  mongoc_client_new(uri);
+
+
+	ENTRY;
 
 
 	if (!client) {
-		return false;
+		RETURN(false);
 	}
 
 	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
@@ -1392,7 +1395,7 @@ mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptio
 
 	mongoc_client_set_stream_initiator(client, phongo_stream_initiator, ctx);
 
-	return client;
+	RETURN(client);
 } /* }}} */
 
 void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC) /* {{{ */
