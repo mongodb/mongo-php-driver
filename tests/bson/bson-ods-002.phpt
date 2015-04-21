@@ -1,5 +1,7 @@
 --TEST--
 BSON encoding: Encoding data into BSON representation, and BSON into Extended JSON
+--INI--
+date.timezone=America/Los_Angeles
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
