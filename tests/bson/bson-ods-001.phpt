@@ -145,7 +145,8 @@ foreach($m->executeQuery(NS, $query) as $person) {
  
 echo "-----\n";
  
-$hartmann = $m->executeQuery(NS, $queryHartmann)->toArray()[0];
+$array = $m->executeQuery(NS, $queryHartmann)->toArray();
+$hartmann = $array[0];
 var_dump($hartmann->getName());
 $hartmann->setName("Dr. " . $hartmann->getName());
  

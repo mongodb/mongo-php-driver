@@ -133,8 +133,8 @@ $m = new MongoDB\Driver\Manager(STANDALONE);
 
 try {
     /* Drop the collection between runs */
-    $dropcoll = new MongoDB\Driver\Command(array("drop" => "people"));
-    $m->executeCommand("examples", $dropcoll);
+    $dropcoll = new MongoDB\Driver\Command(array("drop" => COLLECTION_NAME));
+    $m->executeCommand(DATABASE_NAME, $dropcoll);
 } catch(Exception $e) {}
 
 $bulk = new MongoDB\Driver\BulkWrite;
@@ -179,7 +179,7 @@ $bulk->insert($lockman);
 
 
 /* Insert our fixtures in one bulk write operation */
-$m->executeBulkWrite("examples.people", $bulk);
+$m->executeBulkWrite(NS, $bulk);
 
 
 
@@ -188,7 +188,7 @@ $m->executeBulkWrite("examples.people", $bulk);
  * converting them back into Person objects -- and the nested Address object!
  */
 $query = new MongoDB\Driver\Query(array());
-foreach($m->executeQuery("examples.people", $query) as $person) {
+foreach($m->executeQuery(NS, $query) as $person) {
     echo $person->getName(), " has the following address(es):\n";
     foreach($person->getAddresses() as $address) {
         echo "\t", $address->getStreetAddress(), "\n";
@@ -201,17 +201,19 @@ echo "-----\n";
 /* Hartmann graduated with a doctorate and deserves a Dr. prefix */
 $hartmannFilter = array("username" => "hartmann");
 $queryHartmann = new MongoDB\Driver\Query($hartmannFilter);
-$hartmann = $m->executeQuery("examples.people", $queryHartmann)->toArray()[0];
+$array = $m->executeQuery(NS, $queryHartmann)->toArray();
+$hartmann = $array[0];
 $hartmann->setName("Dr. " . $hartmann->getName());
 
-$retval = $m->executeUpdate("examples.people", $hartmannFilter, $hartmann);
+$retval = $m->executeUpdate(NS, $hartmannFilter, $hartmann);
 printf("Updated %d person (%s)\n", $retval->getModifiedCount(), $hartmann->getName());
 
 $queryAll = new MongoDB\Driver\Query(array());
-$all = $m->executeQuery("examples.people", $queryAll)->toArray();
+$all = $m->executeQuery(NS, $queryAll)->toArray();
 foreach($all as $person) {
     if ($person->getName() == "Dr. Hartmann Dedrick") {
-        var_dump($person->toArray()["username"]);
+        $array = $person->toArray();
+        var_dump($array["username"]);
         var_dump($person->getCreatedDateTime()->format(DATE_RSS));
         var_dump($person->getLastModifiedDateTime()->format(DATE_RSS));
     }
