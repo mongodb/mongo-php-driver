@@ -259,6 +259,86 @@ void phongo_server_init(zval *return_value, mongoc_client_t *client, int server_
 }
 /* }}} */
 
+bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC) /* {{{ */
+{
+	zval *zquery = NULL;
+
+	if (filter && !(Z_TYPE_P(filter) == IS_ARRAY || Z_TYPE_P(filter) == IS_OBJECT)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected filter to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(filter)));
+		return false;
+	}
+
+	MAKE_STD_ZVAL(zquery);
+	array_init(zquery);
+
+	if (options) {
+		/* TODO: Ensure batchSize, limit, and skip are 32-bit  */
+		query->batch_size = php_array_fetchc_long(options, "batchSize");
+		query->limit = php_array_fetchc_long(options, "limit");
+		query->skip = php_array_fetchc_long(options, "skip");
+
+		query->flags = 0;
+		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("tailable"))        ? MONGOC_QUERY_TAILABLE_CURSOR   : 0;
+		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("slaveOk"))         ? MONGOC_QUERY_SLAVE_OK          : 0;
+		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("oplogReplay"))     ? MONGOC_QUERY_OPLOG_REPLAY      : 0;
+		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("noCursorTimeout")) ? MONGOC_QUERY_NO_CURSOR_TIMEOUT : 0;
+		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("awaitData"))       ? MONGOC_QUERY_AWAIT_DATA        : 0;
+		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("exhaust"))         ? MONGOC_QUERY_EXHAUST           : 0;
+		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("partial"))         ? MONGOC_QUERY_PARTIAL           : 0;
+
+
+		if (php_array_existsc(options, "modifiers")) {
+			zval *modifiers = php_array_fetchc(options, "modifiers");
+
+			if (modifiers && !(Z_TYPE_P(modifiers) == IS_ARRAY || Z_TYPE_P(modifiers) == IS_OBJECT)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected modifiers to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(modifiers)));
+				zval_ptr_dtor(&zquery);
+				return false;
+			}
+
+			convert_to_array_ex(&modifiers);
+			zend_hash_merge(HASH_OF(zquery), HASH_OF(modifiers), (void (*)(void*))zval_add_ref, NULL, sizeof(zval *), 1);
+		}
+
+		if (php_array_existsc(options, "projection")) {
+			zval *projection = php_array_fetchc(options, "projection");
+
+			if (projection && !(Z_TYPE_P(projection) == IS_ARRAY || Z_TYPE_P(projection) == IS_OBJECT)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected projection to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(projection)));
+				zval_ptr_dtor(&zquery);
+				return false;
+			}
+
+			convert_to_array_ex(&projection);
+			query->selector = bson_new();
+			zval_to_bson(projection, PHONGO_BSON_NONE, query->selector, NULL TSRMLS_CC);
+		}
+
+		if (php_array_existsc(options, "sort")) {
+			zval *sort = php_array_fetchc(options, "sort");
+
+			if (sort && !(Z_TYPE_P(sort) == IS_ARRAY || Z_TYPE_P(sort) == IS_OBJECT)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected sort to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(sort)));
+				zval_ptr_dtor(&zquery);
+				return false;
+			}
+
+			convert_to_array_ex(&sort);
+			Z_ADDREF_P(sort);
+			add_assoc_zval_ex(zquery, ZEND_STRS("$orderby"), sort);
+		}
+	}
+
+	Z_ADDREF_P(filter);
+	add_assoc_zval_ex(zquery, ZEND_STRS("$query"), filter);
+
+	query->query = bson_new();
+	zval_to_bson(zquery, PHONGO_BSON_NONE, query->query, NULL TSRMLS_CC);
+	zval_ptr_dtor(&zquery);
+
+	return true;
+} /* }}} */
+
 zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
@@ -363,7 +443,6 @@ php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, mongoc_wri
 	return writeresult;
 
 } /* }}} */
-
 /* }}} */
 
 /* {{{ CRUD */
@@ -1056,6 +1135,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 /* }}} */
 
+/* {{{ mongoc types from from_zval */
 const mongoc_write_concern_t* phongo_write_concern_from_zval(zval *zwrite_concern TSRMLS_DC) /* {{{ */
 {
 	if (zwrite_concern) {
@@ -1088,87 +1168,9 @@ const php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC) /* {{{ 
 
 	return intern;
 } /* }}} */
+/* }}} */
 
-bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC) /* {{{ */
-{
-	zval *zquery = NULL;
-
-	if (filter && !(Z_TYPE_P(filter) == IS_ARRAY || Z_TYPE_P(filter) == IS_OBJECT)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected filter to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(filter)));
-		return false;
-	}
-
-	MAKE_STD_ZVAL(zquery);
-	array_init(zquery);
-
-	if (options) {
-		/* TODO: Ensure batchSize, limit, and skip are 32-bit  */
-		query->batch_size = php_array_fetchc_long(options, "batchSize");
-		query->limit = php_array_fetchc_long(options, "limit");
-		query->skip = php_array_fetchc_long(options, "skip");
-
-		query->flags = 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("tailable"))        ? MONGOC_QUERY_TAILABLE_CURSOR   : 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("slaveOk"))         ? MONGOC_QUERY_SLAVE_OK          : 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("oplogReplay"))     ? MONGOC_QUERY_OPLOG_REPLAY      : 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("noCursorTimeout")) ? MONGOC_QUERY_NO_CURSOR_TIMEOUT : 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("awaitData"))       ? MONGOC_QUERY_AWAIT_DATA        : 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("exhaust"))         ? MONGOC_QUERY_EXHAUST           : 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("partial"))         ? MONGOC_QUERY_PARTIAL           : 0;
-
-
-		if (php_array_existsc(options, "modifiers")) {
-			zval *modifiers = php_array_fetchc(options, "modifiers");
-
-			if (modifiers && !(Z_TYPE_P(modifiers) == IS_ARRAY || Z_TYPE_P(modifiers) == IS_OBJECT)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected modifiers to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(modifiers)));
-				zval_ptr_dtor(&zquery);
-				return false;
-			}
-
-			convert_to_array_ex(&modifiers);
-			zend_hash_merge(HASH_OF(zquery), HASH_OF(modifiers), (void (*)(void*))zval_add_ref, NULL, sizeof(zval *), 1);
-		}
-
-		if (php_array_existsc(options, "projection")) {
-			zval *projection = php_array_fetchc(options, "projection");
-
-			if (projection && !(Z_TYPE_P(projection) == IS_ARRAY || Z_TYPE_P(projection) == IS_OBJECT)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected projection to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(projection)));
-				zval_ptr_dtor(&zquery);
-				return false;
-			}
-
-			convert_to_array_ex(&projection);
-			query->selector = bson_new();
-			zval_to_bson(projection, PHONGO_BSON_NONE, query->selector, NULL TSRMLS_CC);
-		}
-
-		if (php_array_existsc(options, "sort")) {
-			zval *sort = php_array_fetchc(options, "sort");
-
-			if (sort && !(Z_TYPE_P(sort) == IS_ARRAY || Z_TYPE_P(sort) == IS_OBJECT)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected sort to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(sort)));
-				zval_ptr_dtor(&zquery);
-				return false;
-			}
-
-			convert_to_array_ex(&sort);
-			Z_ADDREF_P(sort);
-			add_assoc_zval_ex(zquery, ZEND_STRS("$orderby"), sort);
-		}
-	}
-
-	Z_ADDREF_P(filter);
-	add_assoc_zval_ex(zquery, ZEND_STRS("$query"), filter);
-
-	query->query = bson_new();
-	zval_to_bson(zquery, PHONGO_BSON_NONE, query->query, NULL TSRMLS_CC);
-	zval_ptr_dtor(&zquery);
-
-	return true;
-} /* }}} */
-
+/* {{{ phongo zval from mongoc types */
 void php_phongo_cursor_id_new_from_id(zval *object, int64_t cursorid TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursorid_t     *intern;
@@ -1188,7 +1190,6 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 	intern = (php_phongo_objectid_t *)zend_object_store_get_object(object TSRMLS_CC);
 	bson_oid_to_string(oid, intern->oid);
 } /* }}} */
-
 
 void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t *read_prefs) /* {{{ */
 {
@@ -1227,7 +1228,6 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 	add_assoc_bool_ex(retval, ZEND_STRS("fsync"), mongoc_write_concern_get_fsync(write_concern));
 	add_assoc_bool_ex(retval, ZEND_STRS("journal"), mongoc_write_concern_get_journal(write_concern));
 } /* }}} */
-
 
 void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{ */
 {
@@ -1299,6 +1299,7 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{
 	add_assoc_long_ex(retval, ZEND_STRS("server_id"), cursor->server_id);
 
 } /* }}} */
+/* }}} */
 
 
 mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
@@ -1474,7 +1475,7 @@ void php_phongo_new_regex_from_regex_and_options(zval *object, const char *patte
 	intern->flags = estrndup(flags, intern->flags_len);
 } /* }}} */
 
-bool php_phongo_writeresult_get_write_errors(php_phongo_writeresult_t *writeresult, bson_error_t *error)
+bool php_phongo_writeresult_get_write_errors(php_phongo_writeresult_t *writeresult, bson_error_t *error) /* {{{ */
 {
 	const char *err = NULL;
 	uint32_t code = 0;
@@ -1498,8 +1499,8 @@ bool php_phongo_writeresult_get_write_errors(php_phongo_writeresult_t *writeresu
 		return true;
 	}
 	return false;
-}
-bool php_phongo_writeresult_get_writeconcern_error(php_phongo_writeresult_t *writeresult, bson_error_t *error)
+} /* }}} */
+bool php_phongo_writeresult_get_writeconcern_error(php_phongo_writeresult_t *writeresult, bson_error_t *error) /* {{{ */
 {
 	const char *err = NULL;
 	uint32_t code = 0;
@@ -1519,8 +1520,8 @@ bool php_phongo_writeresult_get_writeconcern_error(php_phongo_writeresult_t *wri
 	}
 
 	return false;
-}
-zval* php_phongo_throw_write_errors(php_phongo_writeresult_t *wr TSRMLS_DC)
+} /* }}} */
+zval* php_phongo_throw_write_errors(php_phongo_writeresult_t *wr TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
 
@@ -1528,8 +1529,8 @@ zval* php_phongo_throw_write_errors(php_phongo_writeresult_t *wr TSRMLS_DC)
 		return phongo_throw_exception(PHONGO_ERROR_WRITE_SINGLE_FAILED TSRMLS_CC, "%s", error.message);
 	}
 	return NULL;
-}
-zval* php_phongo_throw_write_concern_error(php_phongo_writeresult_t *wr TSRMLS_DC)
+} /* }}} */
+zval* php_phongo_throw_write_concern_error(php_phongo_writeresult_t *wr TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
 
@@ -1537,13 +1538,13 @@ zval* php_phongo_throw_write_concern_error(php_phongo_writeresult_t *wr TSRMLS_D
 		return phongo_throw_exception(PHONGO_ERROR_WRITECONCERN_FAILED TSRMLS_CC, "%s", error.message);
 	}
 	return NULL;
-}
-php_phongo_writeresult_t *php_phongo_writeresult_get_from_bulkwriteexception(zval *ex TSRMLS_DC)
+} /* }}} */
+php_phongo_writeresult_t *php_phongo_writeresult_get_from_bulkwriteexception(zval *ex TSRMLS_DC) /* {{{ */
 {
 	zval *wr = zend_read_property(php_phongo_bulkwriteexception_ce, ex, ZEND_STRL("writeResult"), 0 TSRMLS_CC);
 
 	return (php_phongo_writeresult_t *)zend_object_store_get_object(wr TSRMLS_CC);
-}
+} /* }}} */
 
 static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ */
 {
@@ -1553,7 +1554,7 @@ static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ *
 	}
 } /* }}} */
 
-void php_phongo_cursor_free(php_phongo_cursor_t *cursor)
+void php_phongo_cursor_free(php_phongo_cursor_t *cursor) /* {{{ */
 {
 	if (cursor->cursor) {
 		mongoc_cursor_destroy(cursor->cursor);
@@ -1561,7 +1562,7 @@ void php_phongo_cursor_free(php_phongo_cursor_t *cursor)
 	}
 
 	php_phongo_cursor_free_current(cursor);
-}
+} /* }}} */
 
 /* {{{ Iterator */
 static void php_phongo_cursor_iterator_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
