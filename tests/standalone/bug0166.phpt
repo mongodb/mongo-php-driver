@@ -17,7 +17,7 @@ try {
     var_dump(false);
 }
 
-$manager = new MongoDB\Driver\Manager("mongodb://localhost");
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 throws(function() use ($manager) {
     serialize($manager);
 }, "Exception");

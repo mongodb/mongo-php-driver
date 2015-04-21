@@ -127,7 +127,7 @@ class Person implements BSON\Persistable {
 }
 
 
-$m = new MongoDB\Driver\Manager("mongodb://localhost");
+$m = new MongoDB\Driver\Manager(STANDALONE);
 
 try {
     /* Drop the collection between runs */
