@@ -1848,26 +1848,6 @@ PHP_MINIT_FUNCTION(mongodb)
 }
 /* }}} */
 
-/* {{{ PHP_RINIT_FUNCTION */
-PHP_RINIT_FUNCTION(mongodb)
-{
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
-	(void)module_number; /* Really doesn't matter which module number we are */
-
-	return SUCCESS;
-}
-/* }}} */
-
-/* {{{ PHP_RSHUTDOWN_FUNCTION */
-PHP_RSHUTDOWN_FUNCTION(mongodb)
-{
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
-	(void)module_number; /* Really doesn't matter which module number we are */
-
-	return SUCCESS;
-}
-/* }}} */
-
 /* {{{ PHP_MSHUTDOWN_FUNCTION */
 PHP_MSHUTDOWN_FUNCTION(mongodb)
 {
@@ -1942,8 +1922,8 @@ zend_module_entry mongodb_module_entry = {
 	mongodb_functions,
 	PHP_MINIT(mongodb),
 	PHP_MSHUTDOWN(mongodb),
-	PHP_RINIT(mongodb),
-	PHP_RSHUTDOWN(mongodb),
+	NULL /* PHP_RINIT(mongodb)*/,
+	NULL /* PHP_RSHUTDOWN(mongodb)*/,
 	PHP_MINFO(mongodb),
 	MONGODB_VERSION,
 	PHP_MODULE_GLOBALS(mongodb),
