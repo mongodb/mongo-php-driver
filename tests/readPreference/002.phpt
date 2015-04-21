@@ -78,12 +78,8 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["ns"]=>
     string(25) "phongo.readPreference_002"
   }
-  ["firstBatch"]=>
-  NULL
   ["server_id"]=>
   int(1)
-  ["is_command_cursor"]=>
-  bool(false)
 }
 object(MongoDB\Driver\Cursor)#%d (%d) {
   ["cursor"]=>
@@ -146,12 +142,8 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["ns"]=>
     string(25) "phongo.readPreference_002"
   }
-  ["firstBatch"]=>
-  NULL
   ["server_id"]=>
   int(1)
-  ["is_command_cursor"]=>
-  bool(false)
 }
 object(MongoDB\Driver\Cursor)#%d (%d) {
   ["cursor"]=>
@@ -214,12 +206,8 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["ns"]=>
     string(25) "phongo.readPreference_002"
   }
-  ["firstBatch"]=>
-  NULL
   ["server_id"]=>
   int(1)
-  ["is_command_cursor"]=>
-  bool(false)
 }
 object(MongoDB\Driver\Cursor)#%d (%d) {
   ["cursor"]=>
@@ -282,12 +270,8 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["ns"]=>
     string(25) "phongo.readPreference_002"
   }
-  ["firstBatch"]=>
-  NULL
   ["server_id"]=>
   int(1)
-  ["is_command_cursor"]=>
-  bool(false)
 }
 object(MongoDB\Driver\Cursor)#%d (%d) {
   ["cursor"]=>
@@ -350,11 +334,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["ns"]=>
     string(25) "phongo.readPreference_002"
   }
-  ["firstBatch"]=>
-  NULL
   ["server_id"]=>
   int(1)
-  ["is_command_cursor"]=>
-  bool(false)
 }
 ===DONE===

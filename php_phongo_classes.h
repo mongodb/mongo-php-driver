@@ -37,16 +37,13 @@ typedef struct {
 typedef struct {
 	zend_object              std;
 	mongoc_cursor_t         *cursor;
-	bson_t                  *firstBatch;
 	mongoc_client_t         *client;
 	int                      server_id;
-	zend_bool                is_command_cursor;
 	php_phongo_bson_state    visitor_data;
 } php_phongo_cursor_t;
 
 typedef struct {
 	zend_object_iterator   intern;
-	bson_iter_t            first_batch_iter;
 	php_phongo_cursor_t   *cursor;
 	long                   current;
 } php_phongo_cursor_iterator;
