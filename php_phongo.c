@@ -1313,6 +1313,14 @@ mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptio
 
 	ENTRY;
 
+	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
+		convert_to_string(*tmp);
+
+		zend_alter_ini_entry_ex((char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
+	}
+
+	MONGOC_DEBUG("Creating Manager, phongo-%s[%s] - mongoc-%s, libbson-%s", MONGODB_VERSION_S, MONGODB_STABILITY_S, MONGOC_VERSION_S, BSON_VERSION_S);
+	MONGOC_DEBUG("Connecting to '%s'", uri);
 
 	if (!client) {
 		RETURN(false);
@@ -1385,12 +1393,6 @@ mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptio
 				mongoc_client_set_ssl_opts(client, &ssl_options);
 			}
 		}
-	}
-
-	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
-		convert_to_string(*tmp);
-
-		zend_alter_ini_entry_ex((char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
 	}
 
 	mongoc_client_set_stream_initiator(client, phongo_stream_initiator, ctx);
