@@ -284,6 +284,31 @@ MONGOC_SOURCES_SASL=mongoc-sasl.c
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_CONTRIB,            [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
   fi
 
+PHP_ARG_WITH(libbson, Use system libbson,
+[  --with-libbson             Use system libbson], no, no)
+
+  if test "$PHP_LIBBSON" != "no"; then
+    AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+    AC_MSG_CHECKING(for libbson)
+    if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
+      if $PKG_CONFIG libbson-1.0 --atleast-version 1.2.0; then
+        LIBBSON_INC=`$PKG_CONFIG libbson-1.0 --cflags`
+        LIBBSON_LIB=`$PKG_CONFIG libbson-1.0 --libs`
+        LIBBSON_VER=`$PKG_CONFIG libbson-1.0 --modversion`
+        AC_MSG_RESULT(version $LIBBSON_VER found)
+      else
+        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.2.0-beta)
+      fi
+    else
+      AC_MSG_ERROR(pkgconfig and libbson must be installed)
+    fi
+    PHP_EVAL_INCLINE($LIBBSON_INC)
+    PHP_EVAL_LIBLINE($LIBBSON_LIB, MONGODB_SHARED_LIBADD)
+  else
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES,            [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES,            [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
+  fi
+
 dnl libmongoc stuff {{{
   AC_MSG_CHECKING(configuring libmongoc)
   AC_MSG_RESULT(...)
@@ -292,8 +317,6 @@ dnl libmongoc stuff {{{
 
   CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES,            [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES,            [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
   PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,      [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
   PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,  [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
   PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL, [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
@@ -379,26 +402,27 @@ dnl }}}
   PHP_NEW_EXTENSION(mongodb,    $MONGODB_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
   PHP_ADD_EXTENSION_DEP(mongodb, spl)
 
-  m4_include(src/libbson/build/autotools/CheckAtomics.m4)
-  m4_include(src/libbson/build/autotools/FindDependencies.m4)
-  m4_include(src/libbson/build/autotools/m4/ac_compile_check_sizeof.m4)
-  m4_include(src/libbson/build/autotools/m4/ac_create_stdint_h.m4)
-  AC_CREATE_STDINT_H([$srcdir/src/libbson/src/bson/bson-stdint.h])
-
   PHP_ADD_INCLUDE([$ext_srcdir/src/BSON/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/contrib/])
-  PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/])
-  PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/yajl/])
-  PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/bson/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/libmongoc/src/mongoc/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/BSON/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/contrib/])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/yajl/])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/bson/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/mongoc/])
+  if test "$PHP_LIBBSON" == "no"; then
+    m4_include(src/libbson/build/autotools/CheckAtomics.m4)
+    m4_include(src/libbson/build/autotools/FindDependencies.m4)
+    m4_include(src/libbson/build/autotools/m4/ac_compile_check_sizeof.m4)
+    m4_include(src/libbson/build/autotools/m4/ac_create_stdint_h.m4)
+    AC_CREATE_STDINT_H([$srcdir/src/libbson/src/bson/bson-stdint.h])
+    PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/])
+    PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/yajl/])
+    PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/bson/])
+    PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/])
+    PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/yajl/])
+    PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/bson/])
+  fi
 
   dnl MONGODB_SHARED_DEPENDENCIES="mongodbdep"
   dnl PHP_SUBST(MONGODB_SHARED_DEPENDENCIES)
@@ -432,7 +456,6 @@ dnl }}}
   AC_SUBST(BSON_HAVE_SNPRINTF)
 
   m4_include(src/libmongoc/build/autotools/Versions.m4)
-  m4_include(src/libbson/build/autotools/Versions.m4)
 MONGOC_MAJOR_VERSION=mongoc_major_version
 MONGOC_MINOR_VERSION=mongoc_minor_version
 MONGOC_MICRO_VERSION=mongoc_micro_version
@@ -443,20 +466,24 @@ AC_SUBST(MONGOC_MINOR_VERSION)
 AC_SUBST(MONGOC_MICRO_VERSION)
 AC_SUBST(MONGOC_API_VERSION)
 AC_SUBST(MONGOC_VERSION)
-BSON_MAJOR_VERSION=bson_major_version
-BSON_MINOR_VERSION=bson_minor_version
-BSON_MICRO_VERSION=bson_micro_version
-BSON_API_VERSION=1.0
-BSON_VERSION=bson_version
-AC_SUBST(BSON_MAJOR_VERSION)
-AC_SUBST(BSON_MINOR_VERSION)
-AC_SUBST(BSON_MICRO_VERSION)
-AC_SUBST(BSON_API_VERSION)
-AC_SUBST(BSON_VERSION)
   AC_OUTPUT($srcdir/src/libmongoc/src/mongoc/mongoc-config.h)
   AC_OUTPUT($srcdir/src/libmongoc/src/mongoc/mongoc-version.h)
-  AC_OUTPUT($srcdir/src/libbson/src/bson/bson-config.h)
-  AC_OUTPUT($srcdir/src/libbson/src/bson/bson-version.h)
+
+  if test "$PHP_LIBBSON" == "no"; then
+    m4_include(src/libbson/build/autotools/Versions.m4)
+    BSON_MAJOR_VERSION=bson_major_version
+    BSON_MINOR_VERSION=bson_minor_version
+    BSON_MICRO_VERSION=bson_micro_version
+    BSON_API_VERSION=1.0
+    BSON_VERSION=bson_version
+    AC_SUBST(BSON_MAJOR_VERSION)
+    AC_SUBST(BSON_MINOR_VERSION)
+    AC_SUBST(BSON_MICRO_VERSION)
+    AC_SUBST(BSON_API_VERSION)
+    AC_SUBST(BSON_VERSION)
+    AC_OUTPUT($srcdir/src/libbson/src/bson/bson-config.h)
+    AC_OUTPUT($srcdir/src/libbson/src/bson/bson-version.h)
+  fi
 
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
   PHP_ADD_MAKEFILE_FRAGMENT
@@ -469,6 +496,7 @@ Build configuration:
   Extra CFLAGS                                     : $STD_CFLAGS $EXTRA_CFLAGS
   Developers flags (slow)                          : $MAINTAINER_CFLAGS
   Code Coverage flags (extra slow)                 : $COVERAGE_CFLAGS
+  System libbson                                   : $PHP_LIBBSON
   LDFLAGS                                          : $LDFLAGS
   EXTRA_LDFLAGS                                    : $EXTRA_LDFLAGS
   MONGODB_SHARED_LIBADD                            : $MONGODB_SHARED_LIBADD
