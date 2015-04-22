@@ -38,6 +38,8 @@ foreach($tests as $n => $test) {
     var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
+
+$binary->getSubType(2);
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -83,4 +85,6 @@ Test#7 { "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }
 string(73) "{ "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
 string(73) "{ "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
 bool(true)
+
+Warning: BSON\Binary::getSubType() expects exactly 0 parameters, 1 given in %s on line %d
 ===DONE===

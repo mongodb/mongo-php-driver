@@ -28,6 +28,9 @@ foreach($tests as $n => $test) {
     var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
+
+$regexp->getPattern(true);
+$regexp->getFlags(true);
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -40,4 +43,8 @@ Test#0 { "regex" : { "$regex" : "regexp", "$options" : "i" } }
 string(55) "{ "regex" : { "$regex" : "regexp", "$options" : "i" } }"
 string(55) "{ "regex" : { "$regex" : "regexp", "$options" : "i" } }"
 bool(true)
+
+Warning: BSON\Regex::getPattern() expects exactly 0 parameters, 1 given in %s on line %d
+
+Warning: BSON\Regex::getFlags() expects exactly 0 parameters, 1 given in %s on line %d
 ===DONE===
