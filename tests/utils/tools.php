@@ -60,6 +60,30 @@ function makeCollectionNameFromFilename($filename)
     return preg_replace(array_keys($replacements), array_values($replacements), $filename);
 }
 
+function LOAD($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME, $filename = null) {
+    if (!$filename) {
+        $filename = "compress.zlib://" . __DIR__ . "/" . "PHONGO-FIXTURES.json.gz";
+    }
+
+    $manager = new MongoDB\Driver\Manager($uri);
+    $bulk = new MongoDB\Driver\BulkWrite(false);
+
+    $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
+
+    $data = file_get_contents($filename);
+    $array = json_decode($data);
+
+    foreach($array as $document) {
+        $bulk->insert($document);
+    }
+
+    $retval = $server->executeBulkWrite("$dbname.$collname", $bulk);
+
+    if ($retval->getInsertedCount() !== count($array)) {
+        exit(sprintf('skip Fixtures were not loaded (expected: %d, actual: %d)', $total, $retval->getInsertedCount()));
+    }
+}
+
 function CLEANUP($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME) {
     try {
         $manager = new MongoDB\Driver\Manager($uri);
