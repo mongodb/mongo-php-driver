@@ -1,8 +1,8 @@
 --TEST--
 Sorting single field, ascending, using the Cursor Iterator
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
-<?php require __DIR__ . "/../utils/fixtures-users.inc" ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php CLEANUP(STANDALONE); LOAD(STANDALONE); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -28,7 +28,7 @@ foreach ($cursor as $document) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\Query)#%d (6) {
+object(MongoDB\Driver\Query)#%d (%d) {
   ["query"]=>
   array(2) {
     ["$orderby"]=>
@@ -158,6 +158,7 @@ bethel20
 betty09
 bins.aliyah
 bins.laisha
+bjori
 blanda.danielle
 blanda.irving
 blanda.ruthe
