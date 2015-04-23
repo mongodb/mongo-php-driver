@@ -5,7 +5,20 @@ require __DIR__ . "/" . "tools.php";
 $FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
 
 $json = file_get_contents($FILENAME);
-$servers = json_decode($json);
+$config = json_decode($json, true);
+if (!$config) {
+    exit("skip Couldn't json_decode(file_get_contents($FILENAME));");
+}
+
+$servers = array(
+    "STANDALONE"      => "",
+    "STANDALONE_SSL"  => "",
+    "STANDALONE_AUTH" => "",
+    "STANDALONE_X509" => "",
+    "STANDALONE_PLAIN" => "",
+    "REPLICASET"       => "",
+);
+$servers = array_merge($servers, $config);
 def($servers);
 
 $consts = array(
