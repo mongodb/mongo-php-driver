@@ -837,7 +837,7 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 			key_len = bson_uint32_to_string(index, (const char **)&key, numbuf, sizeof(numbuf));
 		}
 
-		phongo_bson_append(bson, flags, key, key_len, Z_TYPE_PP(entry), *entry TSRMLS_CC);
+		phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, key, key_len, Z_TYPE_PP(entry), *entry TSRMLS_CC);
 	}
 
 	if (flags & PHONGO_BSON_ADD_ID) {
