@@ -723,8 +723,7 @@ void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char 
 			if (bson_utf8_validate(Z_STRVAL_P(entry), Z_STRLEN_P(entry), true)) {
 				bson_append_utf8(bson, key, key_len, Z_STRVAL_P(entry), Z_STRLEN_P(entry));
 			} else {
-				/* FIXME: Broken Broken Broken */
-				printf("BROKEN BROKEN BROKEN UTF8\n");
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Got invalid UTF-8 value serializing '%s'", Z_STRVAL_P(entry));
 			}
 			break;
 
@@ -752,8 +751,7 @@ void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char 
 			break;
 
 		default:
-			/* FIXME: Resource? */
-			printf("I DON'T SUPPORT THAT TYPE!\n");
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Got unsupported type '%s'", zend_get_type_by_const(entry_type));
 	}
 }
 
