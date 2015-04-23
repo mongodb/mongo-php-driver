@@ -485,7 +485,7 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 						break;
 					}
 
-				case PHONGO_TYPEMAP_NATIVE_STDCLASS:
+				case PHONGO_TYPEMAP_NATIVE_OBJECT:
 				default:
 					object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
 					add_assoc_zval(retval, key, state.zchild);
@@ -532,7 +532,7 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 					 */
 
 				/* break intentionally omitted */
-				case PHONGO_TYPEMAP_NATIVE_STDCLASS:
+				case PHONGO_TYPEMAP_NATIVE_OBJECT:
 					object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
 					add_assoc_zval(retval, key, state.zchild);
 					Z_SET_REFCOUNT_P(state.zchild, 1);
@@ -938,8 +938,8 @@ void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *ma
 		if (classname_len) {
 			if (!strcasecmp(classname, "array")) {
 				map->array_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-			} else if (!strcasecmp(classname, "stdclass")) {
-				map->array_type = PHONGO_TYPEMAP_NATIVE_STDCLASS;
+			} else if (!strcasecmp(classname, "stdclass") || !strcasecmp(classname, "object")) {
+				map->array_type = PHONGO_TYPEMAP_NATIVE_OBJECT;
 			} else {
 				map->array_type = PHONGO_TYPEMAP_CLASS;
 				array_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
@@ -957,8 +957,8 @@ void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *ma
 		if (classname_len) {
 			if (!strcasecmp(classname, "array")) {
 				map->document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-			} else if (!strcasecmp(classname, "stdclass")) {
-				map->document_type = PHONGO_TYPEMAP_NATIVE_STDCLASS;
+			} else if (!strcasecmp(classname, "stdclass") || !strcasecmp(classname, "object")) {
+				map->document_type = PHONGO_TYPEMAP_NATIVE_OBJECT;
 			} else {
 				map->document_type = PHONGO_TYPEMAP_CLASS;
 				document_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO TSRMLS_CC);
