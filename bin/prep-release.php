@@ -35,47 +35,14 @@ function verify_changelog($filename) {
         usage();
     }
 }
-function get_role($file) {
-    switch(pathinfo($file, PATHINFO_EXTENSION)) {
-    case "defs":
-    case "def":
-    case "m4":
-    case "w32":
-    case "c":
-    case "in":
-    case "h":
-        return "src";
-
-    case "pem":
-    case "phpt":
-    case "php":
-    case "inc":
-        return "test";
-
-    default:
-        return "doc";
-    }
-}
 
 function get_files() {
     $dirs = array(
+      'src' => array(
         "php_*.{h,c}",
         "phongo_*.{h,c}",
         "config.{m4,w32}",
         "Makefile.frag",
-        "Vagrantfile",
-        "README*",
-        "LICENSE",
-        "RELEASE*",
-        "ChangeLog*",
-
-        "scripts/*/*.{sh}",
-        "scripts/*/ldap/*.{sh,conf,ldif}",
-        "scripts/centos/ldap/users",
-        "scripts/presets/*.{json}",
-        "scripts/ssl/*.pem",
-        "scripts/*.php",
-
 
         "src/*.{c,h}",
 
@@ -93,6 +60,18 @@ function get_files() {
         "src/libmongoc/src/mongoc/*.{c,h,def,defs}",
         "src/libmongoc/src/mongoc/*.h.{in}",
 
+        "win32/*.h",
+      ),
+      'test' => array(
+        "Vagrantfile",
+
+        "scripts/*/*.{sh}",
+        "scripts/*/ldap/*.{sh,conf,ldif}",
+        "scripts/centos/ldap/users",
+        "scripts/presets/*.{json}",
+        "scripts/ssl/*.pem",
+        "scripts/*.php",
+
         "tests/connect/*.{phpt}",
         "tests/bulk/*.{phpt}",
         "tests/bson/*.{phpt}",
@@ -102,14 +81,23 @@ function get_files() {
         "tests/standalone/*.{phpt}",
         "tests/utils/*.{inc,php}",
         "tests/writeConcern/*.{phpt}",
-
-        "win32/*.h",
+        ),
+      'doc' => array(
+        "README*",
+        "LICENSE",
+        "RELEASE*",
+        "ChangeLog*",
+      )
     );
     $files = array();
-    foreach($dirs as $pattern) {
-        $files += array_merge($files, glob($pattern, GLOB_BRACE));
+    foreach($dirs as $role => $patterns) {
+        foreach ($patterns as $pattern) {
+            foreach (glob($pattern, GLOB_BRACE) as $file) {
+                $files[$file] = $role;
+            }
+        }
     }
-    sort($files);
+    ksort($files);
     return $files;
 }
 
@@ -119,8 +107,8 @@ function format_open_dir($dir, $tab) {
 function format_close_dir($tab) {
     return sprintf("%s</dir>", str_repeat(" ", $tab));
 }
-function format_file($filename, $tab) {
-    return sprintf('%s<file role="%s" name="%s"/>', str_repeat(" ", $tab+1), get_role($filename), $filename);
+function format_file($filename, $tab, $role) {
+    return sprintf('%s<file role="%s" name="%s"/>', str_repeat(" ", $tab+1), $role, $filename);
 }
 function make_tree($files) {
     $retval = array();
@@ -128,7 +116,7 @@ function make_tree($files) {
     $tab = 2;
 
     $retval[] = format_open_dir("/", $tab);
-    foreach($files as $file) {
+    foreach($files as $file => $role) {
         $dir = dirname($file);
         $filename = basename($file);
         if ($dir != $lastdir) {
@@ -151,7 +139,7 @@ function make_tree($files) {
                 $retval[] = format_open_dir($open, ++$tab);
             }
         }
-        $retval[] = format_file($filename, $tab);
+        $retval[] = format_file($filename, $tab, $role);
         $lastdir = $dir;
     }
     foreach(array_reverse(explode("/", $lastdir)) as $close) {
