@@ -82,6 +82,8 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 			return php_phongo_invalidargumentexception_ce;
 		case PHONGO_ERROR_RUNTIME:
 			return php_phongo_runtimeexception_ce;
+		case PHONGO_ERROR_UNEXPECTED_VALUE:
+			return php_phongo_unexpectedvalueexception_ce;
 		case PHONGO_ERROR_MONGOC_FAILED:
 			return php_phongo_runtimeexception_ce;
 		case PHONGO_ERROR_WRITE_FAILED:
@@ -1781,6 +1783,7 @@ PHP_MINIT_FUNCTION(mongodb)
 
 	PHP_MINIT(Exception)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(RuntimeException)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(UnexpectedValueException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(InvalidArgumentException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(AuthenticationException)(INIT_FUNC_ARGS_PASSTHRU);
