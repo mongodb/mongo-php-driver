@@ -71,6 +71,7 @@ function get_files() {
         "scripts/presets/*.{json}",
         "scripts/ssl/*.pem",
         "scripts/*.php",
+        "tests/utils/*.json.gz",
 
         "tests/connect/*.{phpt}",
         "tests/bulk/*.{phpt}",
