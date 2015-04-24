@@ -13,8 +13,8 @@ components (with a lower barrier of entry) while also keeping the overall design
 fast and powerful.
 
 ## Documentation
-- http://10gen-labs.github.io/mongo-php-driver-prototype
 - http://docs.php.net/set.mongodb
+- http://10gen-labs.github.io/mongo-php-driver-prototype
 
 ## Installation
 
@@ -39,18 +39,47 @@ See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Testing
 
-To execute the driver's test suite:
+The test suites expects to find `PHONGO-SERVERS.json` in the system temp directory (typically `/tmp`).
+This file should contain JSON object with MONGODB URIs, similar to the following template
+
+```
+{
+    "STANDALONE": "mongodb:\/\/192.168.112.10:2000",
+    "STANDALONE_SSL": "mongodb:\/\/192.168.112.10:2100",
+    "STANDALONE_AUTH": "mongodb:\/\/root:toor@192.168.112.10:2200\/?authSource=admin",
+    "STANDALONE_X509": "mongodb:\/\/C=US,ST=New York,L=New York City,O=MongoDB,OU=KernelUser,CN=client@192.168.112.10:2300\/?authSource=$external&authMechanism=MONGODB-X509",
+    "STANDALONE_PLAIN": "mongodb:\/\/root:toor@192.168.112.10:2400\/?authSource=admin",
+    "REPLICASET": "mongodb:\/\/192.168.112.10:3000,192.168.112.10:3001,192.168.112.10:3002\/?replicaSet=REPLICASET"
+}
+```
+
+Alternatively, we provide, and use, [Vagrant](https://www.vagrantup.com/) to spin up couple of VMs
+where we setup and configure MongoDB according to our needs.
+
 
 ```
 $ make vm # requires vagrant (www.vagrantup.com)
 $ make test-bootstrap # Spins up mongod's in the virtual machines
+```
+
+The `test-bootstrap` make target will then generate the required `PHONGO-SERVERS.json`.
+
+
+To execute the test suite:
+
+```
 $ make test # Executes the test suite against the virtual machines
 ```
 
-Some tests depend on userland PHP libraries (e.g. creating data fixtures) and
-may be skipped if those dependencies are not available. Those libraries may be
-installed with via Composer:
+The bundled [Vagrantfile](Vagrantfile) also contains few other (growing) list of VMs
+that can be provisioned to execute the test suite on various platforms.
 
-```
-$ make composer
-```
+These are automatically executed by the `make distcheck`, which will package a new PECL archive,
+spin up the various operating systems, install the newly packaged archive, and execute
+the test suite.
+
+
+## Related projects
+- [Official high-level library](https://github.com/10gen-labs/mongo-php-library-prototype)
+- [MongoDB Transistor](https://github.com/bjori/mongo-php-transistor) Lightweight ODM using the [Persistable](http://php.net/bson\\persistable) interface
+
