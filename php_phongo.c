@@ -212,7 +212,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 
 #define PHONGO_DEBUG_LOG_FORMAT "[%s] %10s: %-8s> %s\n"
 
-			dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), time(NULL), 0 TSRMLS_CC);
+			dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), time(NULL), 1 TSRMLS_CC);
 			if (strcasecmp(MONGODB_G(debug_log), "stderr") == 0) {
 				fprintf(stderr, PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
 			} else if (strcasecmp(MONGODB_G(debug_log), "stdout") == 0) {
@@ -225,7 +225,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 #ifdef PHP_WIN32
 				php_flock(fd, 2);
 #endif
-				write(fd, tmp, len);
+				php_ignore_value(write(fd, tmp, len));
 				efree(tmp);
 				close(fd);
 			}

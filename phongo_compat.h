@@ -97,3 +97,12 @@
 	ctx = FG(default_context) ? FG(default_context) : php_stream_context_alloc(TSRMLS_C)
 #endif
 
+
+#ifndef php_ignore_value
+# if defined(__GNUC__) && __GNUC__ >= 4
+#  define php_ignore_value(x) (({ __typeof__ (x) __x = (x); (void) __x; }))
+# else
+#  define php_ignore_value(x) ((void) (x))
+# endif
+#endif
+
