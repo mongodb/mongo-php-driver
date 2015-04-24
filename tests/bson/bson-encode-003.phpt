@@ -44,7 +44,7 @@ foreach($tests as $n => $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 Test#0 { "stuff" : { "__pclass" : { "$type" : "80", "$binary" : "TXlDbGFzcw==" }, "random" : "class", "0" : "data" } }
      0 : 45 00 00 00 03 73 74 75 66 66 00 39 00 00 00 05  [E....stuff.9....]
     10 : 5f 5f 70 63 6c 61 73 73 00 07 00 00 00 80 4d 79  [__pclass......My]
@@ -53,7 +53,7 @@ Test#0 { "stuff" : { "__pclass" : { "$type" : "80", "$binary" : "TXlDbGFzcw==" }
     40 : 74 61 00 00 00                                   [ta...]
 array(1) {
   ["stuff"]=>
-  object(MyClass)#6 (1) {
+  object(MyClass)#%d (1) {
     ["props"]=>
     array(2) {
       ["random"]=>
@@ -70,7 +70,7 @@ Test#1 { "stuff" : { "__pclass" : { "$type" : "80", "$binary" : "TXlDbGFzczI=" }
     30 : 02 00 00 00 10 32 00 03 00 00 00 00 00           [.....2.......]
 array(1) {
   ["stuff"]=>
-  object(MyClass2)#7 (1) {
+  object(MyClass2)#%d (1) {
     ["props"]=>
     array(3) {
       [0]=>
@@ -96,7 +96,7 @@ array(1) {
   ["stuff"]=>
   array(2) {
     [0]=>
-    object(MyClass)#6 (1) {
+    object(MyClass)#%d (1) {
       ["props"]=>
       array(2) {
         ["random"]=>
@@ -106,7 +106,7 @@ array(1) {
       }
     }
     [1]=>
-    object(MyClass2)#8 (1) {
+    object(MyClass2)#%d (1) {
       ["props"]=>
       array(3) {
         [0]=>

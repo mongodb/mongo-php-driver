@@ -29,7 +29,7 @@ array(2) {
   array(0) {
   }
   ["emptyclass"]=>
-  object(stdClass)#3 (0) {
+  object(stdClass)#%d (0) {
   }
 }
 ===DONE===
