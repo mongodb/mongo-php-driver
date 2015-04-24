@@ -1,4 +1,4 @@
-# Contributing to PHongo
+# Contributing to pecl/MongoDB
 
 
 ## Building from VCS
@@ -11,7 +11,7 @@ $ git clone https://github.com/10gen-labs/mongo-php-driver-prototype.git phongo
 $ cd phongo
 $ git submodule update --init
 $ phpize
-$ ./configure
+$ ./configure --enable-developer-flags
 $ make -j8 all
 ```
 
