@@ -2,9 +2,10 @@
 ConnectionTimeoutException: exceeding sockettimeoutms
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
+<?php TESTCOMMANDS(STANDALONE) ?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . "/" . "../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE . "/?sockettimeoutms=504");
 

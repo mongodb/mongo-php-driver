@@ -101,7 +101,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
 }
 bool(true)
 string(%d) "%s"
-int(2000)
+int(%d)
 array(1) {
   [0]=>
   array(2) {
