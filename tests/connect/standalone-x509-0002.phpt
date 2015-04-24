@@ -1,7 +1,7 @@
 --TEST--
 Connect to MongoDB with using X509 retrieving username from certificate #002
 --SKIPIF--
-<?php require __DIR__ . "/../utils/auth-x509-skipif.inc"?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("STANDALONE_X509"); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

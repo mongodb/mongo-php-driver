@@ -1,10 +1,10 @@
 --TEST--
 Connect to MongoDB with using SSL without verifying anything
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("STANDALONE_SSL"); ?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . "/" . "../utils/basic.inc";
 
 $SSL_DIR = realpath(__DIR__ . "/" . "./../../scripts/ssl/");
 $opts = array(

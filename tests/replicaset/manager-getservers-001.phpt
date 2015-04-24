@@ -1,7 +1,7 @@
 --TEST--
 MongoDB\Driver\Manager: getServers()
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("REPLICASET"); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -27,13 +27,13 @@ foreach($servers as $server) {
 --EXPECTF--
 array(3) {
   [0]=>
-  object(MongoDB\Driver\Server)#5 (0) {
+  object(MongoDB\Driver\Server)#%d (0) {
   }
   [1]=>
-  object(MongoDB\Driver\Server)#6 (0) {
+  object(MongoDB\Driver\Server)#%d (0) {
   }
   [2]=>
-  object(MongoDB\Driver\Server)#7 (0) {
+  object(MongoDB\Driver\Server)#%d (0) {
   }
 }
 192.168.112.10:3000 - primary: 1, secondary: 0, arbiter: 0

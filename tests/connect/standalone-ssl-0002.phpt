@@ -1,7 +1,7 @@
 --TEST--
 Connect to MongoDB with using SSL and verify the stream
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("STANDALONE_SSL"); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

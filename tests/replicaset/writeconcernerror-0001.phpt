@@ -1,7 +1,7 @@
 --TEST--
 WriteConcernError: Access write counts and WriteConcern reason
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("REPLICASET"); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
