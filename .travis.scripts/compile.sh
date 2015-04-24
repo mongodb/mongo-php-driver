@@ -21,8 +21,7 @@ build_lcov
 
 phpize
 ./configure --enable-developer-flags --enable-coverage
-make patch
-make all
+make all -j4
 sudo make install
 echo "Use the most-up-to-date run-tests.. old ones like 5.3 don't report failure exit codes"
 wget -O run-tests.php https://raw.githubusercontent.com/php/php-src/master/run-tests.php
@@ -39,3 +38,5 @@ ls $MONGO*
 pwd
 
 
+# Predefine the test server
+echo '{"STANDALONE": "mongodb:\/\/127.0.0.1:27017"}' > /tmp/PHONGO-SERVERS.json

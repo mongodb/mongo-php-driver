@@ -24,14 +24,12 @@ before_install:
   - sudo apt-get install mongodb-org
   - sudo apt-get install gdb valgrind
   - sudo apt-get install cdbs debhelper build-essential python-lxml
-  - sudo service mongod stop
-  - sudo mongo-orchestration start
 
 before_script:
   - ulimit -a
   - ulimit -c unlimited || true
   - "./.travis.scripts/compile.sh"
-  - make test-bootstrap composer
+  - mongo --eval 'tojson(db.runCommand({buildInfo:1}))'
 
 notifications:
   email:
