@@ -60,6 +60,22 @@ function makeCollectionNameFromFilename($filename)
     return preg_replace(array_keys($replacements), array_values($replacements), $filename);
 }
 
+function TESTCOMMANDS($uri) {
+    $cmd = array(
+        "configureFailPoint" => 1,
+    );
+    $command = new MongoDB\Driver\Command($cmd);
+
+    $manager = new MongoDB\Driver\Manager($uri);
+    try {
+        $result = $manager->executeCommand("test", $command);
+    } catch(Exception $e) {
+        /* command not found */
+        if ($e->getCode() == 59) {
+            die("skip this test requires mongod with enableTestCommands");
+        }
+    }
+}
 function NEEDS($uri) {
     if (!constant($uri)) {
         exit("skip -- need '$uri' defined");
