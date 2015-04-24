@@ -216,7 +216,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 #define PHONGO_DEBUG_LOG_FORMAT "[%s] %10s: %-8s> %s\n"
 
 			time(&t);
-			dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), t, 1 TSRMLS_CC);
+			dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), t, 0 TSRMLS_CC);
 
 			if (strcasecmp(MONGODB_G(debug), "stderr") == 0) {
 				fprintf(stderr, PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
