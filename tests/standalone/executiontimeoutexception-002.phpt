@@ -19,11 +19,11 @@ $command = new MongoDB\Driver\Command($cmd);
 failMaxTimeMS($manager);
 throws(function() use ($manager, $command) {
     $result = $manager->executeCommand(DATABASE_NAME, $command);
-}, "MongoDB\Driver\ExecutionTimeoutException");
+}, "MongoDB\Driver\Exception\ExecutionTimeoutException");
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-OK: Got MongoDB\Driver\ExecutionTimeoutException
+OK: Got MongoDB\Driver\Exception\ExecutionTimeoutException
 ===DONE===

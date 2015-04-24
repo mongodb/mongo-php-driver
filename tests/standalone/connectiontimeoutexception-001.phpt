@@ -19,11 +19,11 @@ $command = new MongoDB\Driver\Command($cmd);
 throws(function() use ($manager, $command) {
     $result = $manager->executeCommand("admin", $command);
     var_dump($result->toArray());
-}, "MongoDB\Driver\ConnectionTimeoutException");
+}, "MongoDB\Driver\Exception\\ConnectionTimeoutException");
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-OK: Got MongoDB\Driver\ConnectionTimeoutException
+OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
 ===DONE===

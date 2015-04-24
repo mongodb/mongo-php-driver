@@ -21,7 +21,7 @@ $bulk->update(array("foo" => "bar"), array('$set' => array("foo" => "baz")), arr
 $w = new MongoDB\Driver\WriteConcern(30);
 try {
     $retval = $manager->executeBulkWrite(NS, $bulk, $w);
-} catch(MongoDB\Driver\BulkWriteException $e) {
+} catch(MongoDB\Driver\Exception\BulkWriteException $e) {
     printWriteResult($e->getWriteResult(), false);
 }
 ?>

@@ -39,7 +39,7 @@ $bulk->insert(array('_id' => 2, 'x' => 3, 'y' => 4));
 $bulk->insert(array('_id' => 3, 'x' => 4, 'y' => 5));
 throws(function() use($server2, $bulk) {
     $server2->executeBulkWrite(NS, $bulk);
-}, "MongoDB\Driver\BulkWriteException");
+}, "MongoDB\Driver\Exception\BulkWriteException");
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -66,5 +66,5 @@ array(1) {
     int(4)
   }
 }
-OK: Got MongoDB\Driver\BulkWriteException
+OK: Got MongoDB\Driver\Exception\BulkWriteException
 ===DONE===

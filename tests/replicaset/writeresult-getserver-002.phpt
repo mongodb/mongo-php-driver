@@ -49,7 +49,7 @@ $server3->executeCommand("local", $cmd);
 
 throws(function() use ($server3, $bulk) {
     $result = $server3->executeBulkWrite(NS, $bulk);
-}, "MongoDB\\Driver\\RuntimeException");
+}, "MongoDB\\Driver\\Exception\\RuntimeException");
 
 ?>
 ===DONE===
@@ -102,5 +102,5 @@ array(2) {
   ["example"]=>
   string(8) "document"
 }
-OK: Got MongoDB\Driver\RuntimeException
+OK: Got MongoDB\Driver\Exception\RuntimeException
 ===DONE===

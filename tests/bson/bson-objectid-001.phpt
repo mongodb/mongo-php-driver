@@ -42,19 +42,19 @@ foreach($tests as $n => $test) {
 
 throws(function() {
 $id = new BSON\ObjectID("53e28b650640fd3162152de12");
-}, "InvalidArgumentException");
+}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 throws(function() {
 $id = new BSON\ObjectID("53e28b650640fd3162152dg1");
-}, "InvalidArgumentException");
+}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 throws(function() {
 $id = new BSON\ObjectID("-3e28b650640fd3162152da1");
-}, "InvalidArgumentException");
+}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 throws(function() {
 $id = new BSON\ObjectID(" 3e28b650640fd3162152da1");
-}, "InvalidArgumentException");
+}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 throws(function() {
 $id = new BSON\ObjectID(new stdclass);
-}, "InvalidArgumentException");
+}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 
 
@@ -85,10 +85,10 @@ Test#4 { "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }
 string(60) "{ "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }"
 string(60) "{ "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }"
 bool(true)
-OK: Got InvalidArgumentException
-OK: Got InvalidArgumentException
-OK: Got InvalidArgumentException
-OK: Got InvalidArgumentException
-OK: Got InvalidArgumentException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 OK: Got E_WARNING
 ===DONE===

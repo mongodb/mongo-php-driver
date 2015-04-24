@@ -26,7 +26,7 @@ foreach($types as $type) {
 throws(function() {
     $b = new BSON\Binary("random binary data without type");
     echo "FAIL: Constructed BSON\Binary without type!\n";
-}, "InvalidArgumentException");
+}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 
 
@@ -52,7 +52,7 @@ bool(true)
 bool(true)
 bool(true)
 bool(true)
-OK: Got InvalidArgumentException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Test#0 { "binary" : { "$type" : "00", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }
 string(73) "{ "binary" : { "$type" : "00", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
 string(73) "{ "binary" : { "$type" : "00", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"

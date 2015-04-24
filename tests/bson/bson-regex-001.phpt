@@ -17,7 +17,7 @@ $tests = array(
 
 throws(function() {
     $regexp = new BSON\Regex;
-}, "InvalidArgumentException");
+}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 
 foreach($tests as $n => $test) {
@@ -38,7 +38,7 @@ $regexp->getFlags(true);
 Pattern: regexp
 Flags: i
 String representation: /regexp/i
-OK: Got InvalidArgumentException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Test#0 { "regex" : { "$regex" : "regexp", "$options" : "i" } }
 string(55) "{ "regex" : { "$regex" : "regexp", "$options" : "i" } }"
 string(55) "{ "regex" : { "$regex" : "regexp", "$options" : "i" } }"

@@ -17,7 +17,7 @@ $bulk->insert(array('_id' => 2));
 try {
     $result = $manager->executeBulkWrite(NS, $bulk);
     echo "FAILED\n";
-} catch (MongoDB\Driver\WriteException $e) {
+} catch (MongoDB\Driver\Exception\WriteException $e) {
     printf("WriteException.message: %s\n", $e->getMessage());
     printf("WriteException.code: %d\n", $e->getCode());
 

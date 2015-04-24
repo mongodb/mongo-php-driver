@@ -43,11 +43,11 @@
 #include <ext/spl/spl_exceptions.h>
 
 
-PHONGO_API zend_class_entry *php_phongo_invalidargumentexception_ce;
+PHONGO_API zend_class_entry *php_phongo_sslconnectionexception_ce;
 
-/* {{{ MongoDB\Driver\InvalidArgumentException */
+/* {{{ MongoDB\Driver\SSLConnectionException */
 
-static zend_function_entry php_phongo_invalidargumentexception_me[] = {
+static zend_function_entry php_phongo_sslconnectionexception_me[] = {
 	PHP_FE_END
 };
 
@@ -55,14 +55,14 @@ static zend_function_entry php_phongo_invalidargumentexception_me[] = {
 
 
 /* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(InvalidArgumentException)
+PHP_MINIT_FUNCTION(SSLConnectionException)
 {
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "InvalidArgumentException", php_phongo_invalidargumentexception_me);
-	php_phongo_invalidargumentexception_ce = zend_register_internal_class_ex(&ce, spl_ce_InvalidArgumentException, NULL TSRMLS_CC);
-	zend_class_implements(php_phongo_invalidargumentexception_ce TSRMLS_CC, 1, php_phongo_exception_ce);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "SSLConnectionException", php_phongo_sslconnectionexception_me);
+	php_phongo_sslconnectionexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce, NULL TSRMLS_CC);
+	PHONGO_CE_INIT(php_phongo_sslconnectionexception_ce);
 
 	return SUCCESS;
 }

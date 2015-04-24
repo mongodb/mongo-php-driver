@@ -24,7 +24,7 @@ echo $utcdatetime, "\n";
 
 throws(function() {
     $d = new BSON\UTCDatetime;
-}, "InvalidArgumentException");
+}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 $tests = array(
     array($utcdatetime),
@@ -46,7 +46,7 @@ foreach($tests as $n => $test) {
 --EXPECTF--
 string(31) "Thu, 20 Nov 2014 01:03:31 +0000"
 1416445411987
-OK: Got InvalidArgumentException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Test#0 { "0" : { "$date" : 1416445411987 } }
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 string(37) "{ "0" : { "$date" : 1416445411987 } }"

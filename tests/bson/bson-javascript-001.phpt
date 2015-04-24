@@ -15,7 +15,7 @@ $tests = array(
 
 throws(function() {
     $j = new BSON\Javascript;
-}, "InvalidArgumentException");
+}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 foreach($tests as $n => $test) {
     echo "Test#{$n}", "\n";
@@ -29,7 +29,7 @@ foreach($tests as $n => $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got InvalidArgumentException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Test#0
 bool(true)
 bool(true)

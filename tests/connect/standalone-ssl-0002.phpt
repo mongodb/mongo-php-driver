@@ -50,7 +50,7 @@ echo throws(function() use($manager) {
     $bulk = new MongoDB\Driver\BulkWrite;
     $bulk->insert(array("my" => "value"));
     $retval = $manager->executeBulkWrite(NS, $bulk);
-}, "MongoDB\\Driver\\SSLConnectionException", "executeBulkWrite"), "\n";
+}, "MongoDB\\Driver\\Exception\\SSLConnectionException", "executeBulkWrite"), "\n";
 
 
 echo "Changing to server\n";
@@ -70,7 +70,7 @@ printf("Certificate valid (not expired): %s\n", isValid($cert) ? "OK" : "NO");
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got MongoDB\Driver\SSLConnectionException thrown from executeBulkWrite
+OK: Got MongoDB\Driver\Exception\SSLConnectionException thrown from executeBulkWrite
 %s
 Changing to server
 Inserted: 1

@@ -43,11 +43,11 @@
 #include <ext/spl/spl_exceptions.h>
 
 
-PHONGO_API zend_class_entry *php_phongo_writeconcernexception_ce;
+PHONGO_API zend_class_entry *php_phongo_runtimeexception_ce;
 
-/* {{{ MongoDB\Driver\WriteConcernException */
+/* {{{ MongoDB\Driver\RuntimeException */
 
-static zend_function_entry php_phongo_writeconcernexception_me[] = {
+static zend_function_entry php_phongo_runtimeexception_me[] = {
 	PHP_FE_END
 };
 
@@ -55,13 +55,14 @@ static zend_function_entry php_phongo_writeconcernexception_me[] = {
 
 
 /* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(WriteConcernException)
+PHP_MINIT_FUNCTION(RuntimeException)
 {
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcernException", php_phongo_writeconcernexception_me);
-	php_phongo_writeconcernexception_ce = zend_register_internal_class_ex(&ce, php_phongo_writeexception_ce, NULL TSRMLS_CC);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "RuntimeException", php_phongo_runtimeexception_me);
+	php_phongo_runtimeexception_ce = zend_register_internal_class_ex(&ce, spl_ce_RuntimeException, NULL TSRMLS_CC);
+	zend_class_implements(php_phongo_runtimeexception_ce TSRMLS_CC, 1, php_phongo_exception_ce);
 
 	return SUCCESS;
 }

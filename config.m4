@@ -164,19 +164,19 @@ if test "$MONGODB" != "no"; then
       src/MongoDB/WriteResult.c \
   ";
   MONGODB_MONGODB_EXCEPTIONS="\
-      src/MongoDB/Exception.c \
-      src/MongoDB/RuntimeException.c \
-      src/MongoDB/UnexpectedValueException.c \
-      src/MongoDB/InvalidArgumentException.c \
-      src/MongoDB/ConnectionException.c \
-      src/MongoDB/AuthenticationException.c \
-      src/MongoDB/SSLConnectionException.c \
-      src/MongoDB/DuplicateKeyException.c \
-      src/MongoDB/ExecutionTimeoutException.c \
-      src/MongoDB/ConnectionTimeoutException.c \
-      src/MongoDB/WriteException.c \
-      src/MongoDB/WriteConcernException.c \
-      src/MongoDB/BulkWriteException.c \
+      src/MongoDB/Exception/Exception.c \
+      src/MongoDB/Exception/RuntimeException.c \
+      src/MongoDB/Exception/UnexpectedValueException.c \
+      src/MongoDB/Exception/InvalidArgumentException.c \
+      src/MongoDB/Exception/ConnectionException.c \
+      src/MongoDB/Exception/AuthenticationException.c \
+      src/MongoDB/Exception/SSLConnectionException.c \
+      src/MongoDB/Exception/DuplicateKeyException.c \
+      src/MongoDB/Exception/ExecutionTimeoutException.c \
+      src/MongoDB/Exception/ConnectionTimeoutException.c \
+      src/MongoDB/Exception/WriteException.c \
+      src/MongoDB/Exception/WriteConcernException.c \
+      src/MongoDB/Exception/BulkWriteException.c \
   ";
 
   YAJL_SOURCES="\

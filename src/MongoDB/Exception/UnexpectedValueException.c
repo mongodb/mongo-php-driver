@@ -43,11 +43,11 @@
 #include <ext/spl/spl_exceptions.h>
 
 
-PHONGO_API zend_class_entry *php_phongo_executiontimeoutexception_ce;
+PHONGO_API zend_class_entry *php_phongo_unexpectedvalueexception_ce;
 
-/* {{{ MongoDB\Driver\ExecutionTimeoutException */
+/* {{{ MongoDB\Driver\UnexpectedValueException */
 
-static zend_function_entry php_phongo_executiontimeoutexception_me[] = {
+static zend_function_entry php_phongo_unexpectedvalueexception_me[] = {
 	PHP_FE_END
 };
 
@@ -55,14 +55,14 @@ static zend_function_entry php_phongo_executiontimeoutexception_me[] = {
 
 
 /* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(ExecutionTimeoutException)
+PHP_MINIT_FUNCTION(UnexpectedValueException)
 {
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ExecutionTimeoutException", php_phongo_executiontimeoutexception_me);
-	php_phongo_executiontimeoutexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce, NULL TSRMLS_CC);
-	PHONGO_CE_INIT(php_phongo_executiontimeoutexception_ce);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "UnexpectedValueException", php_phongo_unexpectedvalueexception_me);
+	php_phongo_unexpectedvalueexception_ce = zend_register_internal_class_ex(&ce, spl_ce_UnexpectedValueException, NULL TSRMLS_CC);
+	zend_class_implements(php_phongo_unexpectedvalueexception_ce TSRMLS_CC, 1, php_phongo_exception_ce);
 
 	return SUCCESS;
 }

@@ -19,11 +19,11 @@ $wtimeout = 1000;
 $writeConcern = new \MongoDB\Driver\WriteConcern($w, $wtimeout);
 throws(function() use($bulk, $writeConcern, $manager) {
     $result = $manager->executeBulkWrite("db.collection", $bulk, $writeConcern);
-}, "MongoDB\Driver\ConnectionException");
+}, "MongoDB\Driver\Exception\ConnectionException");
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got MongoDB\Driver\ConnectionException
+OK: Got MongoDB\Driver\Exception\ConnectionException
 ===DONE===

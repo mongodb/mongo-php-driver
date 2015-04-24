@@ -39,7 +39,7 @@ $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array("very" => "important"));
 throws(function() use($manager, $bulk) {
     $manager->executeBulkWrite(NS, $bulk);
-}, "MongoDB\Driver\AuthenticationException");
+}, "MongoDB\Driver\Exception\AuthenticationException");
 
 $cmd = array(
     "dropUser" => "bugs",
@@ -56,6 +56,6 @@ try {
 <?php exit(0); ?>
 --EXPECT--
 User Created
-OK: Got MongoDB\Driver\AuthenticationException
+OK: Got MongoDB\Driver\Exception\AuthenticationException
 User deleted
 ===DONE===

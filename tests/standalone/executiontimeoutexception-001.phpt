@@ -20,11 +20,11 @@ $query = new MongoDB\Driver\Query(array("company" => "Smith, Carter and Buckridg
 failMaxTimeMS($manager);
 throws(function() use ($manager, $query) {
     $result = $manager->executeQuery(NS, $query);
-}, "MongoDB\Driver\ExecutionTimeoutException");
+}, "MongoDB\Driver\Exception\ExecutionTimeoutException");
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-OK: Got MongoDB\Driver\ExecutionTimeoutException
+OK: Got MongoDB\Driver\Exception\ExecutionTimeoutException
 ===DONE===

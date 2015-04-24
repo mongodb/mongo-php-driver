@@ -43,11 +43,11 @@
 #include <ext/spl/spl_exceptions.h>
 
 
-PHONGO_API zend_class_entry *php_phongo_bulkwriteexception_ce;
+PHONGO_API zend_class_entry *php_phongo_connectiontimeoutexception_ce;
 
-/* {{{ MongoDB\Driver\BulkWriteException */
+/* {{{ MongoDB\Driver\ConnectionTimeoutException */
 
-static zend_function_entry php_phongo_bulkwriteexception_me[] = {
+static zend_function_entry php_phongo_connectiontimeoutexception_me[] = {
 	PHP_FE_END
 };
 
@@ -55,13 +55,14 @@ static zend_function_entry php_phongo_bulkwriteexception_me[] = {
 
 
 /* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(BulkWriteException)
+PHP_MINIT_FUNCTION(ConnectionTimeoutException)
 {
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "BulkWriteException", php_phongo_bulkwriteexception_me);
-	php_phongo_bulkwriteexception_ce = zend_register_internal_class_ex(&ce, php_phongo_writeexception_ce, NULL TSRMLS_CC);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "ConnectionTimeoutException", php_phongo_connectiontimeoutexception_me);
+	php_phongo_connectiontimeoutexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce, NULL TSRMLS_CC);
+	PHONGO_CE_INIT(php_phongo_connectiontimeoutexception_ce);
 
 	return SUCCESS;
 }

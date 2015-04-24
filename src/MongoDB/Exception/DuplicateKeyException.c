@@ -43,11 +43,11 @@
 #include <ext/spl/spl_exceptions.h>
 
 
-PHONGO_API zend_class_entry *php_phongo_sslconnectionexception_ce;
+PHONGO_API zend_class_entry *php_phongo_duplicatekeyexception_ce;
 
-/* {{{ MongoDB\Driver\SSLConnectionException */
+/* {{{ MongoDB\Driver\DuplicateKeyException */
 
-static zend_function_entry php_phongo_sslconnectionexception_me[] = {
+static zend_function_entry php_phongo_duplicatekeyexception_me[] = {
 	PHP_FE_END
 };
 
@@ -55,14 +55,14 @@ static zend_function_entry php_phongo_sslconnectionexception_me[] = {
 
 
 /* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(SSLConnectionException)
+PHP_MINIT_FUNCTION(DuplicateKeyException)
 {
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "SSLConnectionException", php_phongo_sslconnectionexception_me);
-	php_phongo_sslconnectionexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce, NULL TSRMLS_CC);
-	PHONGO_CE_INIT(php_phongo_sslconnectionexception_ce);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "DuplicateKeyException", php_phongo_duplicatekeyexception_me);
+	php_phongo_duplicatekeyexception_ce = zend_register_internal_class_ex(&ce, php_phongo_writeexception_ce, NULL TSRMLS_CC);
+	PHONGO_CE_INIT(php_phongo_duplicatekeyexception_ce);
 
 	return SUCCESS;
 }

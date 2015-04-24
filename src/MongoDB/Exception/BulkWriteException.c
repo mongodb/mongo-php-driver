@@ -43,11 +43,11 @@
 #include <ext/spl/spl_exceptions.h>
 
 
-PHONGO_API zend_class_entry *php_phongo_duplicatekeyexception_ce;
+PHONGO_API zend_class_entry *php_phongo_bulkwriteexception_ce;
 
-/* {{{ MongoDB\Driver\DuplicateKeyException */
+/* {{{ MongoDB\Driver\BulkWriteException */
 
-static zend_function_entry php_phongo_duplicatekeyexception_me[] = {
+static zend_function_entry php_phongo_bulkwriteexception_me[] = {
 	PHP_FE_END
 };
 
@@ -55,14 +55,13 @@ static zend_function_entry php_phongo_duplicatekeyexception_me[] = {
 
 
 /* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(DuplicateKeyException)
+PHP_MINIT_FUNCTION(BulkWriteException)
 {
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "DuplicateKeyException", php_phongo_duplicatekeyexception_me);
-	php_phongo_duplicatekeyexception_ce = zend_register_internal_class_ex(&ce, php_phongo_writeexception_ce, NULL TSRMLS_CC);
-	PHONGO_CE_INIT(php_phongo_duplicatekeyexception_ce);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "BulkWriteException", php_phongo_bulkwriteexception_me);
+	php_phongo_bulkwriteexception_ce = zend_register_internal_class_ex(&ce, php_phongo_writeexception_ce, NULL TSRMLS_CC);
 
 	return SUCCESS;
 }

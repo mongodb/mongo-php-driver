@@ -20,11 +20,11 @@ $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(array("my" => "value"));
 throws(function() use($manager, $bulk) {
     $retval = $manager->executeBulkWrite(NS, $bulk);
-}, "MongoDB\Driver\AuthenticationException");
+}, "MongoDB\Driver\Exception\AuthenticationException");
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-OK: Got MongoDB\Driver\AuthenticationException
+OK: Got MongoDB\Driver\Exception\AuthenticationException
 ===DONE===

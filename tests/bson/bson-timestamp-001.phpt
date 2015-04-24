@@ -13,7 +13,7 @@ $tests = array(
 
 throws(function() {
     $s = new BSON\Timestamp;
-}, "InvalidArgumentException");
+}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 $s = new BSON\Timestamp(1234, 5678);
 echo $s, "\n";
@@ -30,7 +30,7 @@ foreach($tests as $n => $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got InvalidArgumentException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 [1234:5678]
 Test#0 { "timestamp" : { "$timestamp" : { "t" : 5678, "i" : 1234 } } }
 string(63) "{ "timestamp" : { "$timestamp" : { "t" : 5678, "i" : 1234 } } }"

@@ -15,7 +15,7 @@ $bulk->insert(array("my" => "value"));
 $w = new MongoDB\Driver\WriteConcern(30, 100);
 try {
     $retval = $manager->executeBulkWrite(NS, $bulk, $w);
-} catch(MongoDB\Driver\BulkWriteException $e) {
+} catch(MongoDB\Driver\Exception\BulkWriteException $e) {
     $server = $e->getWriteResult()->getServer();
     $server->getPort();
     printWriteResult($e->getWriteResult(), false);
