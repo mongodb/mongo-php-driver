@@ -48,6 +48,8 @@
 /* Stream wrapper */
 #include <main/php_streams.h>
 #include <main/php_network.h>
+/* Debug log writing */
+#include <main/php_open_temporary_file.h>
 /* Our Compatability header */
 #include "phongo_compat.h"
 
@@ -60,7 +62,7 @@
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO"
 
-#define PHONGO_DEBUG_INI "mongodb.debug_log"
+#define PHONGO_DEBUG_INI "mongodb.debug"
 #define PHONGO_DEBUG_INI_DEFAULT ""
 
 ZEND_DECLARE_MODULE_GLOBALS(mongodb)
@@ -197,27 +199,51 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 	case MONGOC_LOG_LEVEL_DEBUG:
 	case MONGOC_LOG_LEVEL_TRACE:
 		{
-			int fd = 0;
+			int fd = -1;
+			time_t t;
 			char *dt = NULL;
 
-			if (!MONGODB_G(debug_log)) {
+			if (!MONGODB_G(debug)) {
 				return;
 			}
-			if (strcasecmp(MONGODB_G(debug_log), "off") == 0) {
+			if (strcasecmp(MONGODB_G(debug), "off") == 0) {
 				return;
 			}
-			if (strcasecmp(MONGODB_G(debug_log), "0") == 0) {
+			if (strcasecmp(MONGODB_G(debug), "0") == 0) {
 				return;
 			}
 
 #define PHONGO_DEBUG_LOG_FORMAT "[%s] %10s: %-8s> %s\n"
 
-			dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), time(NULL), 1 TSRMLS_CC);
-			if (strcasecmp(MONGODB_G(debug_log), "stderr") == 0) {
+			time(&t);
+			dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), t, 1 TSRMLS_CC);
+
+			if (strcasecmp(MONGODB_G(debug), "stderr") == 0) {
 				fprintf(stderr, PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
-			} else if (strcasecmp(MONGODB_G(debug_log), "stdout") == 0) {
+			} else if (strcasecmp(MONGODB_G(debug), "stdout") == 0) {
 				php_printf(PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
-			} else if ((fd = VCWD_OPEN_MODE(MONGODB_G(debug_log), O_CREAT | O_APPEND | O_WRONLY, 0644)) != -1) {
+			} else if (MONGODB_G(debug_filename)) {
+				fd = VCWD_OPEN_MODE(MONGODB_G(debug_filename), O_CREAT | O_APPEND | O_WRONLY, 0644);
+			} else {
+				char *prefix;
+				int len;
+				char *filename;
+
+				len = spprintf(&prefix, 0, "PHONGO-%ld", t);
+
+				if (strcasecmp(MONGODB_G(debug), "on") == 0 || strcasecmp(MONGODB_G(debug), "1") == 0) {
+					fd = php_open_temporary_fd(NULL, prefix, &filename TSRMLS_CC);
+				} else {
+					fd = php_open_temporary_fd(MONGODB_G(debug), prefix, &filename TSRMLS_CC);
+				}
+				if (fd != -1) {
+					MONGODB_G(debug_filename) = pestrdup(filename, 1);
+					efree(filename);
+				}
+				efree(prefix);
+			}
+
+			if (fd != -1) {
 				char *tmp;
 				int len;
 
@@ -1720,7 +1746,7 @@ void _phongo_debug_bson(bson_t *bson)
 
 /* {{{ INI entries */
 PHP_INI_BEGIN()
-	STD_PHP_INI_ENTRY(PHONGO_DEBUG_INI, PHONGO_DEBUG_INI_DEFAULT, PHP_INI_ALL, OnUpdateString, debug_log, zend_mongodb_globals, mongodb_globals)
+	STD_PHP_INI_ENTRY(PHONGO_DEBUG_INI, PHONGO_DEBUG_INI_DEFAULT, PHP_INI_ALL, OnUpdateString, debug, zend_mongodb_globals, mongodb_globals)
 PHP_INI_END()
 /* }}} */
 
@@ -1733,7 +1759,8 @@ PHP_GINIT_FUNCTION(mongodb)
 		php_phongo_realloc,
 		php_phongo_free,
 	};
-	mongodb_globals->debug_log = NULL;
+	mongodb_globals->debug = NULL;
+	mongodb_globals->debug_filename = NULL;
 	mongodb_globals->bsonMemVTable = bsonMemVTable;
 
 }
@@ -1833,7 +1860,11 @@ PHP_MSHUTDOWN_FUNCTION(mongodb)
 /* {{{ PHP_GSHUTDOWN_FUNCTION */
 PHP_GSHUTDOWN_FUNCTION(mongodb)
 {
-	mongodb_globals->debug_log = NULL;
+	mongodb_globals->debug = NULL;
+	if (mongodb_globals->debug_filename) {
+		pefree(mongodb_globals->debug_filename, 1);
+		mongodb_globals->debug_filename = NULL;
+	}
 }
 /* }}} */
 

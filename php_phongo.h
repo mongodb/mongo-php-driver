@@ -50,7 +50,8 @@ extern zend_module_entry mongodb_module_entry;
 #endif
 
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
-	char *debug_log;
+	char *debug;
+	char *debug_filename;
 	bson_mem_vtable_t bsonMemVTable;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
