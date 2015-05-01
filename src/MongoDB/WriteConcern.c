@@ -87,14 +87,10 @@ PHP_METHOD(WriteConcern, __construct)
 
 	switch(ZEND_NUM_ARGS()) {
 		case 4:
-			if (fsync) {
-				mongoc_write_concern_set_fsync(intern->write_concern, true);
-			}
+			mongoc_write_concern_set_fsync(intern->write_concern, fsync);
 			/* fallthrough */
 		case 3:
-			if (journal) {
-				mongoc_write_concern_set_journal(intern->write_concern, true);
-			}
+			mongoc_write_concern_set_journal(intern->write_concern, journal);
 			/* fallthrough */
 		case 2:
 			if (wtimeout > 0) {
