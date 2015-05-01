@@ -6,25 +6,26 @@ MongoDB\Driver\WriteConcern construction
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$w = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY);
-$w2 = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000);
+var_dump(new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY));
+var_dump(new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000));
 
-$w3 = new MongoDB\Driver\WriteConcern(2);
-$w4 = new MongoDB\Driver\WriteConcern(2, 2000);
+var_dump(new MongoDB\Driver\WriteConcern(2));
+var_dump(new MongoDB\Driver\WriteConcern(2, 2000));
 
-$w5 = new MongoDB\Driver\WriteConcern("tagname");
-$w6 = new MongoDB\Driver\WriteConcern("string", 3000);
+var_dump(new MongoDB\Driver\WriteConcern("tagname"));
+var_dump(new MongoDB\Driver\WriteConcern("string", 3000));
 
-$w7 = new MongoDB\Driver\WriteConcern("string", 3000, false, false);
-$w8 = new MongoDB\Driver\WriteConcern("string", 3000, true, true);
+var_dump(new MongoDB\Driver\WriteConcern("string", 4000, true));
+var_dump(new MongoDB\Driver\WriteConcern("string", 5000, false));
 
-$w9 = new MongoDB\Driver\WriteConcern("string", 3000, true, false);
-$w10= new MongoDB\Driver\WriteConcern("string", 3000, false, true);
+var_dump(new MongoDB\Driver\WriteConcern("string", 6000, false, false));
+var_dump(new MongoDB\Driver\WriteConcern("string", 7000, true, true));
 
-var_dump($w, $w2, $w3, $w4, $w5, $w6, $w7, $w8, $w9, $w10);
+var_dump(new MongoDB\Driver\WriteConcern("string", 8000, true, false));
+var_dump(new MongoDB\Driver\WriteConcern("string", 9000, false, true));
 
 try {
-    new MongoDB\Driver\WriteConcern("string", 3000, false, true, 1);
+    new MongoDB\Driver\WriteConcern("string", 10000, false, true, 1);
 } catch(InvalidArgumentException $e) {
     echo $e->getMessage(), "\n";
 }
@@ -41,9 +42,9 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(0)
   ["fsync"]=>
-  bool(false)
+  NULL
   ["journal"]=>
-  bool(false)
+  NULL
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
@@ -53,9 +54,9 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(1000)
   ["fsync"]=>
-  bool(false)
+  NULL
   ["journal"]=>
-  bool(false)
+  NULL
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
@@ -65,9 +66,9 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(0)
   ["fsync"]=>
-  bool(false)
+  NULL
   ["journal"]=>
-  bool(false)
+  NULL
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
@@ -77,9 +78,9 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(2000)
   ["fsync"]=>
-  bool(false)
+  NULL
   ["journal"]=>
-  bool(false)
+  NULL
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
@@ -89,7 +90,43 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(0)
   ["fsync"]=>
+  NULL
+  ["journal"]=>
+  NULL
+}
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  string(6) "string"
+  ["wmajority"]=>
   bool(false)
+  ["wtimeout"]=>
+  int(3000)
+  ["fsync"]=>
+  NULL
+  ["journal"]=>
+  NULL
+}
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  string(6) "string"
+  ["wmajority"]=>
+  bool(false)
+  ["wtimeout"]=>
+  int(4000)
+  ["fsync"]=>
+  NULL
+  ["journal"]=>
+  bool(true)
+}
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  string(6) "string"
+  ["wmajority"]=>
+  bool(false)
+  ["wtimeout"]=>
+  int(5000)
+  ["fsync"]=>
+  NULL
   ["journal"]=>
   bool(false)
 }
@@ -99,7 +136,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wmajority"]=>
   bool(false)
   ["wtimeout"]=>
-  int(3000)
+  int(6000)
   ["fsync"]=>
   bool(false)
   ["journal"]=>
@@ -111,19 +148,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wmajority"]=>
   bool(false)
   ["wtimeout"]=>
-  int(3000)
-  ["fsync"]=>
-  bool(false)
-  ["journal"]=>
-  bool(false)
-}
-object(MongoDB\Driver\WriteConcern)#%d (%d) {
-  ["w"]=>
-  string(6) "string"
-  ["wmajority"]=>
-  bool(false)
-  ["wtimeout"]=>
-  int(3000)
+  int(7000)
   ["fsync"]=>
   bool(true)
   ["journal"]=>
@@ -135,7 +160,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wmajority"]=>
   bool(false)
   ["wtimeout"]=>
-  int(3000)
+  int(8000)
   ["fsync"]=>
   bool(false)
   ["journal"]=>
@@ -147,7 +172,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wmajority"]=>
   bool(false)
   ["wtimeout"]=>
-  int(3000)
+  int(9000)
   ["fsync"]=>
   bool(true)
   ["journal"]=>

@@ -47,9 +47,9 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
     ["wtimeout"]=>
     int(0)
     ["fsync"]=>
-    bool(false)
+    NULL
     ["journal"]=>
-    bool(false)
+    NULL
   }
 }
 ===DONE===
