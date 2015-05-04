@@ -1673,6 +1673,11 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_
 	php_phongo_cursor_t        *cursor = cursor_it->cursor;
 	const bson_t               *doc;
 
+	if (cursor_it->current > 0) {
+		phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Cursors cannot rewind after starting iteration");
+		return;
+	}
+
 	php_phongo_cursor_free_current(cursor);
 
 	doc = mongoc_cursor_current(cursor->cursor);
