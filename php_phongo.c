@@ -83,6 +83,8 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 	switch (domain) {
 		case PHONGO_ERROR_INVALID_ARGUMENT:
 			return php_phongo_invalidargumentexception_ce;
+		case PHONGO_ERROR_LOGIC:
+			return php_phongo_logicexception_ce;
 		case PHONGO_ERROR_RUNTIME:
 			return php_phongo_runtimeexception_ce;
 		case PHONGO_ERROR_UNEXPECTED_VALUE:
@@ -1671,6 +1673,11 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_
 	php_phongo_cursor_t        *cursor = cursor_it->cursor;
 	const bson_t               *doc;
 
+	if (cursor_it->current > 0) {
+		phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Cursors cannot rewind after starting iteration");
+		return;
+	}
+
 	php_phongo_cursor_free_current(cursor);
 
 	doc = mongoc_cursor_current(cursor->cursor);
@@ -1694,18 +1701,26 @@ zend_object_iterator_funcs php_phongo_cursor_iterator_funcs = {
 
 zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC) /* {{{ */
 {
+	php_phongo_cursor_t *cursor = zend_object_store_get_object(object TSRMLS_CC);
 	php_phongo_cursor_iterator *cursor_it = NULL;
 
 	if (by_ref) {
 		zend_error(E_ERROR, "An iterator cannot be used with foreach by reference");
 	}
 
+	if (cursor->got_iterator) {
+		phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Cursors cannot yield multiple iterators");
+		return NULL;
+	}
+
+	cursor->got_iterator = 1;
+
 	cursor_it = ecalloc(1, sizeof(php_phongo_cursor_iterator));
 
 	Z_ADDREF_P(object);
 	cursor_it->intern.data  = (void*)object;
 	cursor_it->intern.funcs = &php_phongo_cursor_iterator_funcs;
-	cursor_it->cursor = (php_phongo_cursor_t *)zend_object_store_get_object(object TSRMLS_CC);
+	cursor_it->cursor = cursor;
 	/* cursor_it->current should already be allocated to zero */
 
 	php_phongo_cursor_free_current(cursor_it->cursor);
@@ -1818,6 +1833,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	PHP_MINIT(WriteResult)(INIT_FUNC_ARGS_PASSTHRU);
 
 	PHP_MINIT(Exception)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(LogicException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(RuntimeException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(UnexpectedValueException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(InvalidArgumentException)(INIT_FUNC_ARGS_PASSTHRU);
