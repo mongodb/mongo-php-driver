@@ -619,7 +619,7 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			}
 
 			if (Z_TYPE_P(obj_data) != IS_ARRAY) {
-				phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Expected %s() to return an array, %s given", BSON_SERIALIZE_FUNC_NAME, zend_get_type_by_const(Z_TYPE_P(obj_data)));
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Expected %s() to return an array, %s given", BSON_SERIALIZE_FUNC_NAME, zend_get_type_by_const(Z_TYPE_P(obj_data)));
 				zval_ptr_dtor(&obj_data);
 
 				return;
@@ -781,7 +781,7 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 				}
 
 				if (Z_TYPE_P(obj_data) != IS_ARRAY) {
-					phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Expected %s() to return an array, %s given", BSON_SERIALIZE_FUNC_NAME, zend_get_type_by_const(Z_TYPE_P(obj_data)));
+					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Expected %s() to return an array, %s given", BSON_SERIALIZE_FUNC_NAME, zend_get_type_by_const(Z_TYPE_P(obj_data)));
 					zval_ptr_dtor(&obj_data);
 
 					return;
