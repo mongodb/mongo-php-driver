@@ -40,6 +40,7 @@ typedef struct {
 	mongoc_client_t         *client;
 	int                      server_id;
 	php_phongo_bson_state    visitor_data;
+	int                      got_iterator;
 } php_phongo_cursor_t;
 
 typedef struct {

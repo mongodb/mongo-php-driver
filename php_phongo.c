@@ -1696,18 +1696,26 @@ zend_object_iterator_funcs php_phongo_cursor_iterator_funcs = {
 
 zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC) /* {{{ */
 {
+	php_phongo_cursor_t *cursor = zend_object_store_get_object(object TSRMLS_CC);
 	php_phongo_cursor_iterator *cursor_it = NULL;
 
 	if (by_ref) {
 		zend_error(E_ERROR, "An iterator cannot be used with foreach by reference");
 	}
 
+	if (cursor->got_iterator) {
+		phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Cursors cannot yield multiple iterators");
+		return NULL;
+	}
+
+	cursor->got_iterator = 1;
+
 	cursor_it = ecalloc(1, sizeof(php_phongo_cursor_iterator));
 
 	Z_ADDREF_P(object);
 	cursor_it->intern.data  = (void*)object;
 	cursor_it->intern.funcs = &php_phongo_cursor_iterator_funcs;
-	cursor_it->cursor = (php_phongo_cursor_t *)zend_object_store_get_object(object TSRMLS_CC);
+	cursor_it->cursor = cursor;
 	/* cursor_it->current should already be allocated to zero */
 
 	php_phongo_cursor_free_current(cursor_it->cursor);
