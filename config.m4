@@ -165,6 +165,7 @@ if test "$MONGODB" != "no"; then
   ";
   MONGODB_MONGODB_EXCEPTIONS="\
       src/MongoDB/Exception/Exception.c \
+      src/MongoDB/Exception/LogicException.c \
       src/MongoDB/Exception/RuntimeException.c \
       src/MongoDB/Exception/UnexpectedValueException.c \
       src/MongoDB/Exception/InvalidArgumentException.c \

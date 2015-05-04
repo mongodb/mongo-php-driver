@@ -175,6 +175,7 @@ extern PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
 extern PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
 extern PHONGO_API zend_class_entry *php_phongo_exception_ce;
+extern PHONGO_API zend_class_entry *php_phongo_logicexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_runtimeexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_unexpectedvalueexception_ce;
 extern PHONGO_API zend_class_entry *php_phongo_invalidargumentexception_ce;
