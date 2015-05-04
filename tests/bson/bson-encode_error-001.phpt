@@ -26,7 +26,7 @@ $invalidValues = array(new stdClass, 'foo', 1, true);
 foreach ($invalidValues as $invalidValue) {
     try {
         BSON\fromArray(new MyClass($invalidValue));
-    } catch (MongoDB\Driver\Exception\RuntimeException $e) {
+    } catch (MongoDB\Driver\Exception\UnexpectedValueException $e) {
         echo $e->getMessage(), "\n";
     }
 }
