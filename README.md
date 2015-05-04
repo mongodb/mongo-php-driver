@@ -1,6 +1,7 @@
 # pecl/mongodb (MongoDB driver for PHP)
 
 [![Build Status](https://api.travis-ci.org/10gen-labs/mongo-php-driver-prototype.png?branch=master)](https://travis-ci.org/10gen-labs/mongo-php-driver-prototype)
+[![Coverage Status](https://coveralls.io/repos/10gen-labs/mongo-php-driver-prototype/badge.svg?branch=master)](https://coveralls.io/r/10gen-labs/mongo-php-driver-prototype?branch=master)
 
 The purpose of this driver is to provide a thin glue between MongoDB
 and PHP, implementing only fundamental and performance-critical components
