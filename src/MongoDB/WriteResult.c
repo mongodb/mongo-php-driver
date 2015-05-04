@@ -83,7 +83,7 @@ PHP_METHOD(WriteResult, getMatchedCount)
 	RETURN_LONG(intern->write_result.nMatched);
 }
 /* }}} */
-/* {{{ proto integer WriteResult::getModifiedCount()
+/* {{{ proto integer|null WriteResult::getModifiedCount()
    Returns the number of documents that were actually modified by an update */
 PHP_METHOD(WriteResult, getModifiedCount)
 {
@@ -97,6 +97,9 @@ PHP_METHOD(WriteResult, getModifiedCount)
 		return;
 	}
 
+	if (intern->write_result.omit_nModified) {
+		RETURN_NULL();
+	}
 
 	RETURN_LONG(intern->write_result.nModified);
 }
@@ -433,7 +436,11 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 
 	add_assoc_long_ex(&retval, ZEND_STRS("nInserted"), intern->write_result.nInserted);
 	add_assoc_long_ex(&retval, ZEND_STRS("nMatched"), intern->write_result.nMatched);
-	add_assoc_long_ex(&retval, ZEND_STRS("nModified"), intern->write_result.nModified);
+	if (intern->write_result.omit_nModified) {
+		add_assoc_null_ex(&retval, ZEND_STRS("nModified"));
+	} else {
+		add_assoc_long_ex(&retval, ZEND_STRS("nModified"), intern->write_result.nModified);
+	}
 	add_assoc_long_ex(&retval, ZEND_STRS("nRemoved"), intern->write_result.nRemoved);
 	add_assoc_long_ex(&retval, ZEND_STRS("nUpserted"), intern->write_result.nUpserted);
 
