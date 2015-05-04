@@ -607,34 +607,43 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 
 	if (instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce TSRMLS_CC)) {
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_serializable_ce TSRMLS_CC)) {
-			zval *retval = NULL;
+			zval *obj_data = NULL;
+			bson_t child;
+			HashTable *tmp_ht;
 
-			zend_call_method_with_0_params(&object, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &retval);
-			if (retval) {
-				bson_t      child;
-				HashTable  *tmp_ht;
+			zend_call_method_with_0_params(&object, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
 
-				convert_to_array_ex(&retval);
-				tmp_ht = HASH_OF(retval);
-
-				if (tmp_ht) {
-					tmp_ht->nApplyCount++;
-				}
-
-				bson_append_document_begin(bson, key, key_len, &child);
-				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC)) {
-					if (flags & PHONGO_BSON_ADD_CHILD_ODS) {
-						bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
-					}
-				}
-				zval_to_bson(retval, flags, &child, NULL TSRMLS_CC);
-				bson_append_document_end(bson, &child);
-
-				if (tmp_ht) {
-					tmp_ht->nApplyCount--;
-				}
-				zval_ptr_dtor(&retval);
+			if (!obj_data) {
+				/* zend_call_method() failed */
+				return;
 			}
+
+			if (Z_TYPE_P(obj_data) != IS_ARRAY) {
+				phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Expected %s() to return an array, %s given", BSON_SERIALIZE_FUNC_NAME, zend_get_type_by_const(Z_TYPE_P(obj_data)));
+				zval_ptr_dtor(&obj_data);
+
+				return;
+			}
+
+			tmp_ht = HASH_OF(obj_data);
+
+			if (tmp_ht) {
+				tmp_ht->nApplyCount++;
+			}
+
+			bson_append_document_begin(bson, key, key_len, &child);
+			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC)) {
+				if (flags & PHONGO_BSON_ADD_CHILD_ODS) {
+					bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
+				}
+			}
+			zval_to_bson(obj_data, flags, &child, NULL TSRMLS_CC);
+			bson_append_document_end(bson, &child);
+
+			if (tmp_ht) {
+				tmp_ht->nApplyCount--;
+			}
+			zval_ptr_dtor(&obj_data);
 			return;
 		}
 
@@ -763,23 +772,30 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 
 	switch(Z_TYPE_P(data)) {
 		case IS_OBJECT:
-			if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce TSRMLS_CC)) {
-
-				if (flags & PHONGO_BSON_ADD_ODS) {
-					bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
-				}
-
+			if (instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce TSRMLS_CC)) {
 				zend_call_method_with_0_params(&data, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
-				if(obj_data) {
-					if (Z_TYPE_P(obj_data) == IS_ARRAY) {
-						ht_data = HASH_OF(obj_data);
-					} else {
-						phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Return value expected to be array");
-						zval_ptr_dtor(&obj_data);
-					}
 
-					break;
+				if (!obj_data) {
+					/* zend_call_method() failed */
+					return;
 				}
+
+				if (Z_TYPE_P(obj_data) != IS_ARRAY) {
+					phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Expected %s() to return an array, %s given", BSON_SERIALIZE_FUNC_NAME, zend_get_type_by_const(Z_TYPE_P(obj_data)));
+					zval_ptr_dtor(&obj_data);
+
+					return;
+				}
+
+				ht_data = HASH_OF(obj_data);
+
+				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce TSRMLS_CC)) {
+					if (flags & PHONGO_BSON_ADD_ODS) {
+						bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
+					}
+				}
+
+				break;
 			}
 			/* break intentionally omitted */
 
