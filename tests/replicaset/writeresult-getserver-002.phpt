@@ -86,9 +86,9 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
     ["wtimeout"]=>
     int(0)
     ["fsync"]=>
-    bool(false)
+    NULL
     ["journal"]=>
-    bool(false)
+    NULL
   }
 }
 string(14) "192.168.112.10"

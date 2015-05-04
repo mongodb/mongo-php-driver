@@ -48,7 +48,7 @@ zend_object_handlers php_phongo_handler_writeconcern;
 
 #define PHONGO_WRITE_CONCERN_W_MAJORITY "majority"
 
-/* {{{ proto MongoDB\Driver\WriteConcern WriteConcern::__construct(string $wstring[, integer $wtimeout[, boolean $journal[, boolean $fsync]]])
+/* {{{ proto MongoDB\Driver\WriteConcern WriteConcern::__construct(integer|string $w[, integer $wtimeout[, boolean $journal[, boolean $fsync]]])
    Constructs a new WriteConcern */
 PHP_METHOD(WriteConcern, __construct)
 {
@@ -87,14 +87,10 @@ PHP_METHOD(WriteConcern, __construct)
 
 	switch(ZEND_NUM_ARGS()) {
 		case 4:
-			if (fsync) {
-				mongoc_write_concern_set_fsync(intern->write_concern, true);
-			}
+			mongoc_write_concern_set_fsync(intern->write_concern, fsync);
 			/* fallthrough */
 		case 3:
-			if (journal) {
-				mongoc_write_concern_set_journal(intern->write_concern, true);
-			}
+			mongoc_write_concern_set_journal(intern->write_concern, journal);
 			/* fallthrough */
 		case 2:
 			if (wtimeout > 0) {

@@ -30,6 +30,7 @@
 #include "mongoc-cursor-cursorid-private.h"
 #include "mongoc-read-prefs-private.h"
 #include "mongoc-bulk-operation-private.h"
+#include "mongoc-write-concern-private.h"
 #include "mongoc-trace.h"
 
 
@@ -1253,8 +1254,16 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 
 	add_assoc_bool_ex(retval, ZEND_STRS("wmajority"), mongoc_write_concern_get_wmajority(write_concern));
 	add_assoc_long_ex(retval, ZEND_STRS("wtimeout"), mongoc_write_concern_get_wtimeout(write_concern));
-	add_assoc_bool_ex(retval, ZEND_STRS("fsync"), mongoc_write_concern_get_fsync(write_concern));
-	add_assoc_bool_ex(retval, ZEND_STRS("journal"), mongoc_write_concern_get_journal(write_concern));
+	if (write_concern->fsync_ != MONGOC_WRITE_CONCERN_FSYNC_DEFAULT) {
+		add_assoc_bool_ex(retval, ZEND_STRS("fsync"), mongoc_write_concern_get_fsync(write_concern));
+	} else {
+		add_assoc_null_ex(retval, ZEND_STRS("fsync"));
+	}
+	if (write_concern->journal != MONGOC_WRITE_CONCERN_JOURNAL_DEFAULT) {
+		add_assoc_bool_ex(retval, ZEND_STRS("journal"), mongoc_write_concern_get_journal(write_concern));
+	} else {
+		add_assoc_null_ex(retval, ZEND_STRS("journal"));
+	}
 } /* }}} */
 
 void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{ */

@@ -69,9 +69,9 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
     ["wtimeout"]=>
     int(1000)
     ["fsync"]=>
-    bool(false)
+    NULL
     ["journal"]=>
-    bool(false)
+    NULL
   }
 }
 Inserted 2 documents to %s
