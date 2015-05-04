@@ -767,7 +767,7 @@ void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char 
 PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC) /* {{{ */
 {
 	HashPosition pos;
-	HashTable   *ht_data;
+	HashTable   *ht_data = NULL;
 	zval        *obj_data = NULL;
 
 	switch(Z_TYPE_P(data)) {
@@ -777,14 +777,13 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 
 				if (!obj_data) {
 					/* zend_call_method() failed */
-					return;
+					break;
 				}
 
 				if (Z_TYPE_P(obj_data) != IS_ARRAY) {
 					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Expected %s() to return an array, %s given", BSON_SERIALIZE_FUNC_NAME, zend_get_type_by_const(Z_TYPE_P(obj_data)));
-					zval_ptr_dtor(&obj_data);
 
-					return;
+					break;
 				}
 
 				ht_data = HASH_OF(obj_data);
@@ -807,7 +806,7 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 			return;
 	}
 
-	if (ht_data && ht_data->nApplyCount > 1) {
+	if (!ht_data || ht_data->nApplyCount > 1) {
 		if (obj_data) {
 			zval_ptr_dtor(&obj_data);
 		}
