@@ -1,0 +1,83 @@
+2015-05-04  Hannes Magnusson  <bjori@php.net>
+	* Bump stability
+
+2015-05-04  Hannes Magnusson  <bjori@php.net>
+	* Exceptions live in their own folder now
+
+2015-05-04  Hannes Magnusson  <bjori@php.net>
+	* Add coveralls badger
+
+2015-05-04  Hannes Magnusson  <bjori@php.net>
+	* Use the coveralls token for 10gen-labs/mongo-php-driver-prototype not my personal one
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #45 from jmikola/multiple-toArray
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-282: Test for multiple Cursor::toArray() calls
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #44 from jmikola/phpc-255
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-255: Cursors cannot rewind after starting iteration
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-282: Remove tests for multiple iterators on the same Cursor
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-282: Cursor should not yield multiple iterators
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-284: Create MongoDB\Driver\Exception\LogicException class
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #43 from jmikola/phpc-283
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* Use common return for zval_to_bson() bsonSerialize() error path
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-283: UnexpectedValueException for invalid bsonSerialize() return value
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #42 from jmikola/phpc-179
+
+2015-05-01  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-280: WriteConcern should always set journal/fsync boolean args
+
+2015-05-01  Jeremy Mikola  <jmikola@gmail.com>
+	* Document WriteConcern $w param as integer|string
+
+2015-05-01  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-179: Show unset journal/fsync as null in WriteConcern debug handler
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #40 from jmikola/phpc-274
+
+2015-04-26  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-274: Regression test for root BSON\Serializable encoding
+
+2015-04-26  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-275: object_to_bson() handling for invalid bsonSerialize() retval
+
+2015-04-24  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-274: Fix zval_to_bson() encoding of BSON\Serializable objects
+
+2015-05-04  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #41 from jmikola/phpc-278
+
+2015-04-30  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-278: nModified may be null for legacy writes
+
+2015-04-27  Hannes Magnusson  <bjori@php.net>
+	* PHPC-269: Travis mojo again
+
+2015-04-24  Hannes Magnusson  <bjori@php.net>
+	* PHPC-272: Move exceptions into MongoDB\Driver\Exception namespace
+
+2015-04-24  Hannes Magnusson  <bjori@php.net>
+	* Post-release-bump-version
+
+2015-04-24  Hannes Magnusson  <bjori@php.net>
+	* Add 0.5.1 release notes
