@@ -406,12 +406,12 @@ dnl }}}
 
   PHP_ADD_INCLUDE([$ext_srcdir/src/BSON/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/])
-  PHP_ADD_INCLUDE([$ext_srcdir/src/Exception/])
+  PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/Exception/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/contrib/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/libmongoc/src/mongoc/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/BSON/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/Exception/])
+  PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/Exception/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/contrib/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/mongoc/])
   if test "$PHP_LIBBSON" == "no"; then
