@@ -64,7 +64,7 @@
 #define MONGOC_LOG_DOMAIN "PHONGO"
 
 #define PHONGO_DEBUG_INI "mongodb.debug"
-#define PHONGO_DEBUG_INI_DEFAULT ""
+#define PHONGO_DEBUG_INI_DEFAULT "off"
 
 ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 
@@ -206,7 +206,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 			time_t t;
 			char *dt = NULL;
 
-			if (!MONGODB_G(debug)) {
+			if (!MONGODB_G(debug) || !strlen(MONGODB_G(debug))) {
 				return;
 			}
 			if (strcasecmp(MONGODB_G(debug), "off") == 0) {
