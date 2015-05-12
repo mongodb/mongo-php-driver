@@ -1,0 +1,15 @@
+{
+    "name": "mongod",
+    "id" : "STANDALONE-30",
+    "procParams": {
+        "dbpath": "/tmp/standalone-30/",
+        "ipv6": true,
+        "logappend": true,
+        "logpath": "/tmp/standalone-30/mongod.log",
+        "journal": true,
+        "port": 2500,
+        "setParameter": {"enableTestCommands": 1}
+    },
+    "version": "30-release"
+}
+

@@ -20,6 +20,7 @@ Vagrant.configure(2) do |config|
     end
 
     mo.vm.provision "shell", path: "scripts/ubuntu/essentials.sh", privileged: true
+    mo.vm.provision "file", source: "scripts/ubuntu/mongo-orchestration-config.json", destination: "mongo-orchestration-config.json"
     mo.vm.provision "shell", path: "scripts/ubuntu/mongo-orchestration.sh", privileged: true
     mo.vm.provision "shell", path: "scripts/ubuntu/ldap/install.sh", privileged: true
   end
