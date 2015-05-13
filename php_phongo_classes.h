@@ -226,6 +226,7 @@ PHP_MINIT_FUNCTION(WriteError);
 PHP_MINIT_FUNCTION(WriteResult);
 
 PHP_MINIT_FUNCTION(Exception);
+PHP_MINIT_FUNCTION(LogicException);
 PHP_MINIT_FUNCTION(RuntimeException);
 PHP_MINIT_FUNCTION(UnexpectedValueException);
 PHP_MINIT_FUNCTION(InvalidArgumentException);
