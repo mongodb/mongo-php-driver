@@ -57,8 +57,10 @@ ZEND_END_MODULE_GLOBALS(mongodb)
 
 #ifdef ZTS
 #	define MONGODB_G(v) TSRMG(mongodb_globals_id, zend_mongodb_globals *, v)
+#	define mglo mongodb_globals_id
 #else
 #	define MONGODB_G(v) (mongodb_globals.v)
+#	define mglo mongodb_globals
 #endif
 
 #include "php_phongo_classes.h"
