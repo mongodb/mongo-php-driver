@@ -295,10 +295,11 @@ bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TS
 {
 	zval *zquery = NULL;
 
-	if (filter && !(Z_TYPE_P(filter) == IS_ARRAY || Z_TYPE_P(filter) == IS_OBJECT)) {
+	if (!(Z_TYPE_P(filter) == IS_ARRAY || Z_TYPE_P(filter) == IS_OBJECT)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected filter to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(filter)));
 		return false;
 	}
+	convert_to_object(filter);
 
 	MAKE_STD_ZVAL(zquery);
 	array_init(zquery);

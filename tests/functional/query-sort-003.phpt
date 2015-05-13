@@ -37,7 +37,7 @@ object(MongoDB\Driver\Query)#%d (%d) {
       int(1)
     }
     ["$query"]=>
-    array(0) {
+    object(stdClass)#%d (%d) {
     }
   }
   ["selector"]=>
