@@ -65,6 +65,7 @@
 
 #define PHONGO_DEBUG_INI "mongodb.debug"
 #define PHONGO_DEBUG_INI_DEFAULT "off"
+#define PHONGO_STREAM_BUFFER_SIZE 4096
 
 ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 
@@ -822,19 +823,121 @@ void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeo
 	MONGOC_DEBUG("Setting timeout to: %d", timeout_msec);
 } /* }}} */
 
+/* This is blatantr copy of _mongoc_stream_tls_writev
+ * https://github.com/mongodb/mongo-c-driver/blob/4ebba3d84286df3867bad89358eb6ae956e62a59/src/mongoc/mongoc-stream-tls.c#L500
+ */
 ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, int32_t timeout_msec) /* {{{ */
 {
-	size_t     i = 0;
-	ssize_t sent = 0;
+	char buf[PHONGO_STREAM_BUFFER_SIZE];
+
+	ssize_t ret = 0;
+	ssize_t child_ret;
+	size_t i;
+	size_t iov_pos = 0;
+
+	/* There's a bit of a dance to coalesce vectorized writes into
+	 * PHONGO_STREAM_BUFFER_SIZE'd writes to avoid lots of small tls
+	 * packets.
+	 *
+	 * The basic idea is that we want to combine writes in the buffer if they're
+	 * smaller than the buffer, flushing as it gets full.  For larger writes, or
+	 * the last write in the iovec array, we want to ignore the buffer and just
+	 * write immediately.  We take care of doing buffer writes by re-invoking
+	 * ourself with a single iovec_t, pointing at our stack buffer.
+	 */
+	char *buf_head = buf;
+	char *buf_tail = buf;
+	char *buf_end = buf + PHONGO_STREAM_BUFFER_SIZE;
+	size_t bytes;
+
+	char *to_write = NULL;
+	size_t to_write_len;
+
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
 	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
+
 	php_phongo_set_timeout(base_stream, timeout_msec);
+
+
+	BSON_ASSERT (iov);
+	BSON_ASSERT (iovcnt);
+
 	for (i = 0; i < iovcnt; i++) {
-		sent += php_stream_write(base_stream->stream, iov[i].iov_base, iov[i].iov_len);
+		iov_pos = 0;
+
+		while (iov_pos < iov[i].iov_len) {
+			if (buf_head != buf_tail ||
+					((i + 1 < iovcnt) &&
+					 ((buf_end - buf_tail) > (iov[i].iov_len - iov_pos)))) {
+				/* If we have either of:
+				 *   - buffered bytes already
+				 *   - another iovec to send after this one and we don't have more
+				 *     bytes to send than the size of the buffer.
+				 *
+				 * copy into the buffer */
+
+				bytes = BSON_MIN (iov[i].iov_len - iov_pos, buf_end - buf_tail);
+
+				memcpy (buf_tail, iov[i].iov_base + iov_pos, bytes);
+				buf_tail += bytes;
+				iov_pos += bytes;
+
+				if (buf_tail == buf_end) {
+					/* If we're full, request send */
+
+					to_write = buf_head;
+					to_write_len = buf_tail - buf_head;
+
+					buf_tail = buf_head = buf;
+				}
+			} else {
+				/* Didn't buffer, so just write it through */
+
+				to_write = (char *)iov[i].iov_base + iov_pos;
+				to_write_len = iov[i].iov_len - iov_pos;
+
+				iov_pos += to_write_len;
+			}
+
+			if (to_write) {
+				/* We get here if we buffered some bytes and filled the buffer, or
+				 * if we didn't buffer and have to send out of the iovec */
+
+				child_ret = php_stream_write(base_stream->stream, to_write, to_write_len);
+
+				if (child_ret < 0) {
+					/* Buffer write failed, just return the error */
+					return child_ret;
+				}
+
+				ret += child_ret;
+
+				if (child_ret < to_write_len) {
+					/* we timed out, so send back what we could send */
+
+					return ret;
+				}
+
+				to_write = NULL;
+			}
+		}
 	}
 
-	return sent;
+	if (buf_head != buf_tail) {
+		/* If we have any bytes buffered, send */
+
+		child_ret = php_stream_write(base_stream->stream, buf_head, buf_tail - buf_head);
+
+		if (child_ret < 0) {
+			return child_ret;
+		}
+
+		ret += child_ret;
+	}
+
+
+	return ret;
 } /* }}} */
 
 ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, size_t min_bytes, int32_t timeout_msec) /* {{{ */
