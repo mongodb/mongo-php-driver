@@ -24,7 +24,7 @@ function isValid(array $cert) {
 
 $opts = array(
     "ssl" => array(
-        "peer_name" => "WRONG PEER NAME",
+        "peer_name" => "server",
         "verify_peer" => true,
         "verify_peer_name" => true,
         "allow_self_signed" => false,
@@ -46,17 +46,23 @@ $context = stream_context_create($opts);
 $manager = new MongoDB\Driver\Manager($dsn, array(), array("context" => $context));
 
 
-echo throws(function() use($manager) {
-    $bulk = new MongoDB\Driver\BulkWrite;
-    $bulk->insert(array("my" => "value"));
-    $retval = $manager->executeBulkWrite(NS, $bulk);
-}, "MongoDB\\Driver\\Exception\\SSLConnectionException", "executeBulkWrite"), "\n";
+$bulk = new MongoDB\Driver\BulkWrite;
+$bulk->insert(array("my" => "value"));
+$retval = $manager->executeBulkWrite(NS, $bulk);
+printf("Inserted: %d\n", $retval->getInsertedCount());
 
 
+
+$opts = stream_context_get_params($context);
+$cert = openssl_x509_parse($opts["options"]["ssl"]["peer_certificate"]);
+printf("Certificate name: %s\n", $cert["name"]);
+printf("Certificate valid (not expired): %s\n", isValid($cert) ? "OK" : "NO");
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got MongoDB\Driver\Exception\SSLConnectionException thrown from executeBulkWrite
-%s
+Inserted: 1
+Certificate name: /CN=server/OU=Kernel/O=MongoDB/L=New York City/ST=New York/C=US
+Certificate valid (not expired): NO
 ===DONE===
+
