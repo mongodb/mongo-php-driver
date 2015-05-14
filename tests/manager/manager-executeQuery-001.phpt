@@ -87,7 +87,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["batch_size"]=>
     int(0)
     ["ns"]=>
-    string(42) "phongo.standalone_manager_executeQuery_001"
+    string(39) "phongo.manager_manager_executeQuery_001"
     ["current_doc"]=>
     array(2) {
       ["_id"]=>
