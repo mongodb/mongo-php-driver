@@ -501,6 +501,27 @@ zend_object_value php_phongo_server_create_object(zend_class_entry *class_type T
 
 	return retval;
 } /* }}} */
+
+HashTable *php_phongo_server_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	php_phongo_server_t         *intern = NULL;
+	zval                         retval = zval_used_for_init;
+	mongoc_server_description_t *sd;
+
+
+	*is_temp = 1;
+	intern = (php_phongo_server_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+
+	if (!(sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
+		return NULL;
+	}
+
+	php_phongo_server_to_zval(&retval, sd);
+
+	return Z_ARRVAL(retval);
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -516,6 +537,7 @@ PHP_MINIT_FUNCTION(Server)
 
 	memcpy(&php_phongo_handler_server, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_server.compare_objects = php_phongo_server_compare_objects;
+	php_phongo_handler_server.get_debug_info = php_phongo_server_get_debug_info;
 
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_UNKNOWN"), MONGOC_SERVER_UNKNOWN TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_STANDALONE"), MONGOC_SERVER_STANDALONE TSRMLS_CC);

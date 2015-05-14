@@ -24,6 +24,7 @@
 /* External libs */
 #include "bson.h"
 #include "mongoc.h"
+#include "mongoc-topology-description-private.h"
 
 #define phpext_mongodb_ptr &mongodb_module_entry
 extern zend_module_entry mongodb_module_entry;
@@ -124,6 +125,7 @@ const mongoc_read_prefs_t*    phongo_read_preference_from_zval(zval *zread_prefe
 const mongoc_write_concern_t* phongo_write_concern_from_zval  (zval *zwrite_concern TSRMLS_DC);
 const php_phongo_query_t*     phongo_query_from_zval          (zval *zquery TSRMLS_DC);
 
+void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *sd);
 void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t *read_prefs);
 void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t *write_concern);
 void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor);

@@ -81,6 +81,7 @@ function get_files() {
         "tests/generic/*.{phpt}",
         "tests/readPreference/*.{phpt}",
         "tests/manager/*.{phpt}",
+        "tests/server/*.{phpt}",
         "tests/standalone/*.{phpt}",
         "tests/utils/*.{inc,php}",
         "tests/writeConcern/*.{phpt}",

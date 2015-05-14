@@ -1326,6 +1326,46 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 	bson_oid_to_string(oid, intern->oid);
 } /* }}} */
 
+void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *sd) /* {{{ */
+{
+	array_init(retval);
+
+	add_assoc_string_ex(retval, ZEND_STRS("host"), (char *)sd->host.host, 1);
+	add_assoc_long_ex(retval, ZEND_STRS("port"), sd->host.port);
+	add_assoc_long_ex(retval, ZEND_STRS("type"), sd->type);
+	add_assoc_bool_ex(retval, ZEND_STRS("is_primary"), sd->type == MONGOC_SERVER_RS_PRIMARY);
+	add_assoc_bool_ex(retval, ZEND_STRS("is_secondary"), sd->type == MONGOC_SERVER_RS_SECONDARY);
+	add_assoc_bool_ex(retval, ZEND_STRS("is_arbiter"), sd->type == MONGOC_SERVER_RS_ARBITER);
+	{
+		bson_iter_t iter;
+		zend_bool b = bson_iter_init_find_case(&iter, &sd->last_is_master, "hidden") && bson_iter_as_bool(&iter);
+
+		add_assoc_bool_ex(retval, ZEND_STRS("is_hidden"), b);
+	}
+	{
+		bson_iter_t iter;
+		zend_bool b = bson_iter_init_find_case(&iter, &sd->last_is_master, "passive") && bson_iter_as_bool(&iter);
+
+		add_assoc_bool_ex(retval, ZEND_STRS("is_passive"), b);
+	}
+	if (sd->tags.len) {
+		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+		MAKE_STD_ZVAL(state.zchild);
+		bson_to_zval(bson_get_data(&sd->tags), sd->tags.len, &state);
+		add_assoc_zval_ex(retval, ZEND_STRS("tags"), state.zchild);
+	}
+	{
+		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+		MAKE_STD_ZVAL(state.zchild);
+		bson_to_zval(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
+		add_assoc_zval_ex(retval, ZEND_STRS("last_is_master"), state.zchild);
+	}
+	add_assoc_long_ex(retval, ZEND_STRS("round_trip_time"), sd->round_trip_time);
+
+} /* }}} */
+
 void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t *read_prefs) /* {{{ */
 {
 
