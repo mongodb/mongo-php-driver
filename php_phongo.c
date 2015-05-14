@@ -63,8 +63,8 @@
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO"
 
-#define PHONGO_DEBUG_INI (char *)"mongodb.debug"
-#define PHONGO_DEBUG_INI_DEFAULT (char *)"off"
+#define PHONGO_DEBUG_INI "mongodb.debug"
+#define PHONGO_DEBUG_INI_DEFAULT ""
 #define PHONGO_STREAM_BUFFER_SIZE 4096
 
 ZEND_DECLARE_MODULE_GLOBALS(mongodb)
@@ -1916,7 +1916,7 @@ void _phongo_debug_bson(bson_t *bson)
 
 /* {{{ INI entries */
 PHP_INI_BEGIN()
-	{ 0, PHP_INI_ALL, (char *)"mongodb.debug", sizeof("mongodb.debug"), OnUpdateString, (void *) XtOffsetOf(zend_mongodb_globals, debug), (void *) &mglo, NULL, (char *)"", sizeof("")-1, NULL, 0, 0, 0, NULL },
+	{ 0, PHP_INI_ALL, (char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), OnUpdateString, (void *) XtOffsetOf(zend_mongodb_globals, debug), (void *) &mglo, NULL, (char *)PHONGO_DEBUG_INI_DEFAULT, sizeof(PHONGO_DEBUG_INI_DEFAULT)-1, NULL, 0, 0, 0, NULL },
 PHP_INI_END()
 /* }}} */
 
