@@ -18,6 +18,8 @@
 #ifndef PHP_ARRAY_API_H
 #define PHP_ARRAY_API_H
 
+/* LCOV_EXCL_START */
+
 #include "zend_execute.h"
 #include "zend_API.h"
 #include "zend_operators.h"
@@ -473,5 +475,6 @@ static inline void php_array_unsetz(zval *zarr, zval *key) {
 			zend_hash_del(Z_ARRVAL_P(zarr), Z_STRVAL_P(key), Z_STRLEN_P(key) + 1);
 	}
 }
+/* LCOV_EXCL_STOP */
 
 #endif /* PHP_ARRAY_API_H */

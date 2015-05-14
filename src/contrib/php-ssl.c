@@ -26,6 +26,8 @@
 #endif
 
 #ifdef HAVE_OPENSSL_EXT
+
+/* LCOV_EXCL_START */
 #include "php-ssl.h"
 
 int php_mongo_matches_wildcard_name(const char *subjectname, const char *certname) /* {{{ */
@@ -233,5 +235,6 @@ time_t php_mongo_asn1_time_to_time_t(ASN1_UTCTIME * timestr TSRMLS_DC) /* {{{ */
 }
 /* }}} */
 
+/* LCOV_EXCL_STOP */
 #endif /* HAVE_OPENSSL_EXT */
 

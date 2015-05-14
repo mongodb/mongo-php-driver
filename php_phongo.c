@@ -1899,6 +1899,7 @@ static void php_phongo_free(void *mem) /* {{{ */
 /* }}} */
 
 #ifdef PHP_DEBUG
+/* LCOV_EXCL_START */
 void _phongo_debug_bson(bson_t *bson)
 {
 	char   *str;
@@ -1908,6 +1909,7 @@ void _phongo_debug_bson(bson_t *bson)
 
 	php_printf("JSON: %s\n", str);
 }
+/* LCOV_EXCL_STOP */
 #endif
 
 /* {{{ M[INIT|SHUTDOWN] R[INIT|SHUTDOWN] G[INIT|SHUTDOWN] MINFO INI */
