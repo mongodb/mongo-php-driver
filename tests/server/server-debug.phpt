@@ -46,7 +46,7 @@ object(MongoDB\Driver\Server)#%d (%d) {
     object(BSON\UTCDatetime)#%d (%d) {
     }
     ["maxWireVersion"]=>
-    int(3)
+    int(%d)
     ["minWireVersion"]=>
     int(0)
     ["ok"]=>
