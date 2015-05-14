@@ -422,30 +422,47 @@ zend_object_value php_phongo_manager_create_object(zend_class_entry *class_type 
 	return retval;
 } /* }}} */
 
+bool phongo_add_server_debug(void *item, void *ctx)
+{
+	mongoc_server_description_t *server = item;
+	zval                        *retval = ctx;
+	zval *entry = NULL;
+
+	MAKE_STD_ZVAL(entry);
+
+	php_phongo_server_to_zval(entry, server);
+
+	add_next_index_zval(retval, entry);
+
+	return true;
+}
+
 HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
-	zval *retval = NULL;
 	php_phongo_manager_t  *intern;
+	zval                   retval = zval_used_for_init;
 
-	*is_temp = 0;
+
+	*is_temp = 1;
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(object TSRMLS_CC);
 
 
-	MAKE_STD_ZVAL(retval);
-	array_init(retval);
+	array_init(&retval);
 
-	add_assoc_long_ex(retval, ZEND_STRS("request_id"), intern->client->request_id);
-	add_assoc_string_ex(retval, ZEND_STRS("uri"), (char *)mongoc_uri_get_string(intern->client->uri), 0);
+	add_assoc_long_ex(&retval, ZEND_STRS("request_id"), intern->client->request_id);
+	add_assoc_string_ex(&retval, ZEND_STRS("uri"), (char *)mongoc_uri_get_string(intern->client->uri), 1);
+
 
 	{
 		zval *cluster = NULL;
 		MAKE_STD_ZVAL(cluster);
 		array_init(cluster);
 
-		add_assoc_zval_ex(retval, ZEND_STRS("cluster"), cluster);
+		mongoc_set_for_each(intern->client->topology->description.servers, phongo_add_server_debug, cluster);
+		add_assoc_zval_ex(&retval, ZEND_STRS("cluster"), cluster);
 	}
 
-	return Z_ARRVAL_P(retval);
+	return Z_ARRVAL(retval);
 } /* }}} */
 /* }}} */
 
