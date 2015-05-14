@@ -78,7 +78,6 @@ function get_files() {
         "tests/bulk/*.{phpt}",
         "tests/bson/*.{phpt}",
         "tests/functional/*.{phpt}",
-        "tests/generic/*.{phpt}",
         "tests/readPreference/*.{phpt}",
         "tests/manager/*.{phpt}",
         "tests/server/*.{phpt}",
