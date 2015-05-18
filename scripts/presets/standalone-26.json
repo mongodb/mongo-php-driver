@@ -1,6 +1,6 @@
 {
     "name": "mongod",
-    "id" : "STANDALONE-26",
+    "id" : "STANDALONE_26",
     "procParams": {
         "dbpath": "/tmp/standalone-26/",
         "ipv6": true,
