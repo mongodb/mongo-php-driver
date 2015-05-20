@@ -315,18 +315,42 @@ dnl libmongoc stuff {{{
   AC_MSG_CHECKING(configuring libmongoc)
   AC_MSG_RESULT(...)
 
+PHP_ARG_WITH(libmongoc, Use system libmongoc,
+[  --with-libmongoc           Use system libmongoc], no, no)
+
   AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
 
-  CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
+  if test "$PHP_LIBMONGOC" != "no"; then
+    AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+    AC_MSG_CHECKING(for libmongoc)
+    if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0 && $PKG_CONFIG --exists libmongoc-priv; then
+      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.1.5; then
+        LIBMONGOC_INC=`$PKG_CONFIG libmongoc-priv --cflags`
+        LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-priv --libs`
+        LIBMONGOC_VER=`$PKG_CONFIG libmongoc-priv --modversion`
+        AC_MSG_RESULT(version $LIBMONGOC_VER found)
+        CFLAGS="$CFLAGS -DMONGOC_I_AM_A_DRIVER"
 
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,      [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,  [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
-  PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL, [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
+      else
+        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.1.6)
+      fi
+    else
+      AC_MSG_ERROR(pkgconfig and mongoc must be installed)
+    fi
+    PHP_EVAL_INCLINE($LIBMONGOC_INC)
+    PHP_EVAL_LIBLINE($LIBMONGOC_LIB, MONGODB_SHARED_LIBADD)
+  else
+    CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
+
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,      [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,  [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL, [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
 
 
-  PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD)
-  MONGOC_ENABLE_SSL=1
-  AC_SUBST(MONGOC_ENABLE_SSL)
+    PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD)
+    MONGOC_ENABLE_SSL=1
+    AC_SUBST(MONGOC_ENABLE_SSL)
+  fi
 
 
 PHP_ARG_WITH(pcre-dir, pcre-dir install prefix
@@ -408,12 +432,14 @@ dnl }}}
   PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/Exception/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/contrib/])
-  PHP_ADD_INCLUDE([$ext_srcdir/src/libmongoc/src/mongoc/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/BSON/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/Exception/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/contrib/])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/mongoc/])
+  if test "$PHP_LIBMONGOC" == "no"; then
+    PHP_ADD_INCLUDE([$ext_srcdir/src/libmongoc/src/mongoc/])
+    PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/mongoc/])
+  fi
   if test "$PHP_LIBBSON" == "no"; then
     m4_include(src/libbson/build/autotools/CheckAtomics.m4)
     m4_include(src/libbson/build/autotools/FindDependencies.m4)
@@ -459,20 +485,21 @@ dnl }}}
   fi
   AC_SUBST(BSON_HAVE_SNPRINTF)
 
-  m4_include(src/libmongoc/build/autotools/Versions.m4)
-MONGOC_MAJOR_VERSION=mongoc_major_version
-MONGOC_MINOR_VERSION=mongoc_minor_version
-MONGOC_MICRO_VERSION=mongoc_micro_version
-MONGOC_API_VERSION=1.0
-MONGOC_VERSION=mongoc_version
-AC_SUBST(MONGOC_MAJOR_VERSION)
-AC_SUBST(MONGOC_MINOR_VERSION)
-AC_SUBST(MONGOC_MICRO_VERSION)
-AC_SUBST(MONGOC_API_VERSION)
-AC_SUBST(MONGOC_VERSION)
-  AC_OUTPUT($srcdir/src/libmongoc/src/mongoc/mongoc-config.h)
-  AC_OUTPUT($srcdir/src/libmongoc/src/mongoc/mongoc-version.h)
-
+  if test "$PHP_LIBBSON" == "no"; then
+    m4_include(src/libmongoc/build/autotools/Versions.m4)
+    MONGOC_MAJOR_VERSION=mongoc_major_version
+    MONGOC_MINOR_VERSION=mongoc_minor_version
+    MONGOC_MICRO_VERSION=mongoc_micro_version
+    MONGOC_API_VERSION=1.0
+    MONGOC_VERSION=mongoc_version
+    AC_SUBST(MONGOC_MAJOR_VERSION)
+    AC_SUBST(MONGOC_MINOR_VERSION)
+    AC_SUBST(MONGOC_MICRO_VERSION)
+    AC_SUBST(MONGOC_API_VERSION)
+    AC_SUBST(MONGOC_VERSION)
+    AC_OUTPUT($srcdir/src/libmongoc/src/mongoc/mongoc-config.h)
+    AC_OUTPUT($srcdir/src/libmongoc/src/mongoc/mongoc-version.h)
+  fi
   if test "$PHP_LIBBSON" == "no"; then
     m4_include(src/libbson/build/autotools/Versions.m4)
     BSON_MAJOR_VERSION=bson_major_version
