@@ -87,7 +87,7 @@ array(3) {
       ["electionId"]=>
       object(BSON\ObjectID)#8 (1) {
         ["oid"]=>
-        string(24) "5553cb3963c2acdfcb4f20b2"
+        string(24) "%s"
       }
       ["maxBsonObjectSize"]=>
       int(16777216)
