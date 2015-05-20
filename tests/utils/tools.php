@@ -296,6 +296,28 @@ function failMaxTimeMS(MongoDB\Driver\Manager $manager) {
     return configureFailPoint($manager, "maxTimeAlwaysTimeOut", array("times" => 1));
 }
 
+function getMOUri() {
+    if (!($HOST = getenv("MONGODB_ORCHESTRATION_HOST"))) {
+        $HOST = "192.168.112.10";
+    }
+
+    if (!($PORT = getenv("MONGODB_ORCHESTRATION_PORT"))) {
+        $PORT = "8889";
+    }
+    $MO = "http://$HOST:$PORT";
+
+    return $MO;
+}
+
+function getMOPresetBase() {
+    if (!($BASE = getenv("mongodb_orchestration_base"))) {
+        $BASE = "/phongo/";
+    }
+
+    return $BASE;
+}
+
+
 
 
 /* NOTE: Using this function will take down mongod ! */

@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . "/" . "../tests/utils/tools.php";
 $SERVERS = array();
 $FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
 
@@ -12,20 +13,6 @@ function lap() {
     return $ret;
 }
 
-
-if (!($HOST = getenv("MONGODB_ORCHESTRATION_HOST"))) {
-    $HOST = "192.168.112.10";
-}
-
-if (!($PORT = getenv("MONGODB_ORCHESTRATION_PORT"))) {
-    $PORT = "8889";
-}
-
-if (!($BASE = getenv("mongodb_orchestration_base"))) {
-    $BASE = "/phongo/";
-}
-
-$MO = "http://$HOST:$PORT";
 
 $PRESETS = [
     "standalone" => [
@@ -68,20 +55,20 @@ function failed($result) {
 printf("Cleaning out previous processes, if any ");
 lap();
 /* Remove all pre-existing ReplicaSets */
-$replicasets = file_get_contents($MO . "/replica_sets", false, make_ctx($BASE, "GET"));
+$replicasets = file_get_contents(getMOUri() . "/replica_sets", false, make_ctx(getMOPresetBase(), "GET"));
 $replicasets = json_decode($replicasets, true);
 foreach($replicasets["replica_sets"] as $replicaset) {
-    $uri = $MO . "/replica_sets/" . $replicaset["id"];
-    file_get_contents($uri, false, make_ctx($BASE, "DELETE"));
+    $uri = getMOUri() . "/replica_sets/" . $replicaset["id"];
+    file_get_contents($uri, false, make_ctx(getMOPresetBase(), "DELETE"));
     echo ".";
 }
 echo " ";
 /* Remove all pre-existing servers */
-$servers = file_get_contents($MO . "/servers", false, make_ctx($BASE, "GET"));
+$servers = file_get_contents(getMOUri() . "/servers", false, make_ctx(getMOPresetBase(), "GET"));
 $servers = json_decode($servers, true);
 foreach($servers["servers"] as $server) {
-    $uri = $MO . "/servers/" . $server["id"];
-    file_get_contents($uri, false, make_ctx($BASE, "DELETE"));
+    $uri = getMOUri() . "/servers/" . $server["id"];
+    file_get_contents($uri, false, make_ctx(getMOPresetBase(), "DELETE"));
     echo ".";
 }
 printf("\t(took: %.2f secs)\n", lap());
@@ -91,7 +78,7 @@ foreach($PRESETS["standalone"] as $preset) {
     $json = json_decode(file_get_contents($preset), true);
     printf("Starting %-20s ...  ", $json["id"]);
 
-    $result = file_get_contents($MO . "/servers", false, make_ctx($BASE . $preset));
+    $result = file_get_contents(getMOUri() . "/servers", false, make_ctx(getMOPresetBase() . $preset));
     $decode = json_decode($result, true);
     if (!isset($decode["id"])) {
         failed($decode);
@@ -107,7 +94,7 @@ foreach($PRESETS["replicasets"] as $preset) {
     $json = json_decode(file_get_contents($preset), true);
     printf("Starting %-20s ...  ", $json["id"]);
 
-    $result = file_get_contents($MO . "/replica_sets", false, make_ctx($BASE . $preset));
+    $result = file_get_contents(getMOUri() . "/replica_sets", false, make_ctx(getMOPresetBase() . $preset));
     $decode = json_decode($result, true);
     if (!isset($decode["id"])) {
         failed($decode);
