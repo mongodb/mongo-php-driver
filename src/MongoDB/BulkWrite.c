@@ -29,9 +29,7 @@
 #include <mongoc.h>
 
 /* We need to access the internal bulk structure to access the bulk op count */
-#define MONGOC_I_AM_A_DRIVER
 #include <mongoc-bulk-operation-private.h>
-#undef MONGOC_I_AM_A_DRIVER
 
 /* PHP Core stuff */
 #include <php.h>
