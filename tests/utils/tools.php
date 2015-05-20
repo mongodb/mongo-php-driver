@@ -296,3 +296,10 @@ function failMaxTimeMS(MongoDB\Driver\Manager $manager) {
     return configureFailPoint($manager, "maxTimeAlwaysTimeOut", array("times" => 1));
 }
 
+
+
+/* NOTE: Using this function will take down mongod ! */
+function failGetMore(MongoDB\Driver\Manager $manager) {
+    return configureFailPoint($manager, "failReceivedGetmore", "alwaysOn");
+}
+
