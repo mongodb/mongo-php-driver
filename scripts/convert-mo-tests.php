@@ -4,7 +4,7 @@ $template = <<< 'TEMPLATE'
 --TEST--
 %DESCRIPTION%
 --SKIPIF--
-<?php require strstr(__DIR__, "tests/", true) . "tests/utils/slow-mo-skipif.inc"; ?>
+<?php require strstr(__DIR__, "tests/", true) . "tests/utils/basic-skipif.inc"; SLOW(); ?>
 --FILE--
 <?php
 require_once strstr(__DIR__, "tests/", true) . "tests/utils/basic.inc";

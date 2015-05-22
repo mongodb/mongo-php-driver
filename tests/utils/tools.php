@@ -90,6 +90,11 @@ function PREDICTABLE() {
         }
     }
 }
+function SLOW() {
+    if (getenv("SKIP_SLOW_TESTS")) {
+        exit("skip SKIP_SLOW_TESTS");
+    }
+}
 function LOAD($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME, $filename = null) {
     if (!$filename) {
         $filename = "compress.zlib://" . __DIR__ . "/" . "PHONGO-FIXTURES.json.gz";
