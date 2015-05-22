@@ -7,7 +7,7 @@ ConnectionTimeoutException: exceeding sockettimeoutms
 <?php
 require_once __DIR__ . "/" . "../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE . "/?sockettimeoutms=504");
+$manager = new MongoDB\Driver\Manager(STANDALONE . "/?sockettimeoutms=9");
 
 $cmd = array(
     "sleep" => 1,
