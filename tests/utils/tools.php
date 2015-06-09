@@ -141,6 +141,42 @@ function CLEANUP($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME) {
     }
 }
 
+function START($id, array $options = array()) {
+    $options += array("name" => "mongod", "id" => $id);
+    $opts = [
+        "http" => [
+            "timeout" => 30,
+            "method"  => "PUT",
+            "header"  => "Accept: application/json\r\n" .
+                         "Content-type: application/x-www-form-urlencoded",
+            "content" => json_encode($options),
+            "ignore_errors" => true,
+        ],
+    ];
+    $ctx = stream_context_create($opts);
+    $json = file_get_contents(getMOUri() . "/servers/$id", false, $ctx);
+    $result = json_decode($json, true);
+
+    /* Failed -- or was already started */
+    if (!isset($result["mongodb_uri"])) {
+        DELETE($id);
+        define($id, false);
+    } else {
+        define($id, $result["mongodb_uri"]);
+    }
+}
+function DELETE($id) {
+    $opts = [
+        "http" => [
+            "timeout" => 30,
+            "method"  => "DELETE",
+            "header"  => "Accept: application/json\r\n",
+            "ignore_errors" => true,
+        ],
+    ];
+    $ctx = stream_context_create($opts);
+    $json = file_get_contents(getMOUri() . "/servers/$id", false, $ctx);
+}
 function severityToString($type) {
     switch($type) {
     case E_WARNING:
