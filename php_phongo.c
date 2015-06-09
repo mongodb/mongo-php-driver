@@ -464,8 +464,6 @@ php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, mongoc_wri
 	SCP(nModified);
 	SCP(nRemoved);
 	SCP(nUpserted);
-	SCP(offset);
-	SCP(n_commands);
 
 	bson_copy_to(&write_result->upserted,          &writeresult->write_result.upserted);
 	bson_copy_to(&write_result->writeConcernError, &writeresult->write_result.writeConcernError);
