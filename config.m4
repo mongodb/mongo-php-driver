@@ -406,7 +406,18 @@ if test "$PHP_MONGODB_SASL" != "no"; then
   ], [
     -L$MONGODB_SASL_DIR/$PHP_LIBDIR
   ])
+
+  PHP_CHECK_LIBRARY(sasl2, sasl_client_done,
+  [
+    AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 1)
+  ], [
+    AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
+  ])
+else
+  AC_SUBST(MONGOC_ENABLE_SASL, 0)
+  AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
 fi
+
   m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
   AX_PTHREAD
 
