@@ -46,7 +46,7 @@ PHONGO_API zend_class_entry *php_phongo_unserializable_ce;
 
 
 
-/* {{{ BSON\Unserializable */
+/* {{{ MongoDB\BSON\Unserializable */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_unserializable_bsonunserialize, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, data, 0)
@@ -68,7 +68,7 @@ PHP_MINIT_FUNCTION(Unserializable)
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "Unserializable", php_phongo_unserializable_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Unserializable", php_phongo_unserializable_me);
 	php_phongo_unserializable_ce = zend_register_internal_interface(&ce TSRMLS_CC);
 
 	return SUCCESS;

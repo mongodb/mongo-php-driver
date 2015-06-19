@@ -33,11 +33,11 @@ matchedCount: 1
 modifiedCount: 1
 upsertedCount: 2
 deletedCount: 0
-upsertedId[0]: object(BSON\ObjectID)#%d (%d) {
+upsertedId[0]: object(MongoDB\BSON\ObjectID)#%d (%d) {
   ["oid"]=>
   string(24) "%s"
 }
-upsertedId[1]: object(BSON\ObjectID)#%d (%d) {
+upsertedId[1]: object(MongoDB\BSON\ObjectID)#%d (%d) {
   ["oid"]=>
   string(24) "%s"
 }
@@ -47,7 +47,7 @@ array(2) {
   [0]=>
   array(3) {
     ["_id"]=>
-    object(BSON\ObjectID)#%d (%d) {
+    object(MongoDB\BSON\ObjectID)#%d (%d) {
       ["oid"]=>
       string(24) "%s"
     }
@@ -59,7 +59,7 @@ array(2) {
   [1]=>
   array(3) {
     ["_id"]=>
-    object(BSON\ObjectID)#%d (%d) {
+    object(MongoDB\BSON\ObjectID)#%d (%d) {
       ["oid"]=>
       string(24) "%s"
     }

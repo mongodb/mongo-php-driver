@@ -8,7 +8,7 @@ date.timezone=America/Los_Angeles
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-class Address implements BSON\Persistable {
+class Address implements MongoDB\BSON\Persistable {
     protected $streetAddress;
     protected $city;
     protected $postalCode;
@@ -36,7 +36,7 @@ class Address implements BSON\Persistable {
     }
 }
 
-class Person implements BSON\Persistable {
+class Person implements MongoDB\BSON\Persistable {
     protected $_id;
     protected $username;
     protected $email;
@@ -51,7 +51,7 @@ class Person implements BSON\Persistable {
         $this->setName($name);
 
         /* Pregenerate our ObjectID */
-        $this->_id     = new BSON\ObjectID();
+        $this->_id     = new MongoDB\BSON\ObjectID();
     }
     function addAddress(Address $address) {
         $this->addresses[] = $address;
@@ -74,7 +74,7 @@ class Person implements BSON\Persistable {
         /* If __original doesn't exist, this is a fresh object that needs to be inserted */
         if (empty($this->__original)) {
             /* Generate the `_created` timestamp */
-            $props["_created"] = new BSON\UTCDatetime(microtime(true) * 1000);
+            $props["_created"] = new MongoDB\BSON\UTCDatetime(microtime(true) * 1000);
             return $props;
         }
 

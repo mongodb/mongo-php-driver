@@ -1,27 +1,27 @@
 --TEST--
-BSON BSON\ObjectID #001
+BSON MongoDB\BSON\ObjectID #001
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$sameid = new BSON\ObjectID("53e2a1c40640fd72175d4603");
+$sameid = new MongoDB\BSON\ObjectID("53e2a1c40640fd72175d4603");
 $samestd = new stdClass;
 $samestd->my = $sameid;
 $samearr = array("my" => $sameid);
 
 
 $std = new stdclass;
-$std->_id = new BSON\ObjectID;
+$std->_id = new MongoDB\BSON\ObjectID;
 
 $array = array(
-    "_id" => new BSON\ObjectID,
-    "id" => new BSON\ObjectID,
-    "d" => new BSON\ObjectID,
+    "_id" => new MongoDB\BSON\ObjectID,
+    "id" => new MongoDB\BSON\ObjectID,
+    "d" => new MongoDB\BSON\ObjectID,
 );
 
-$pregenerated = new BSON\ObjectID("53e28b650640fd3162152de1");
+$pregenerated = new MongoDB\BSON\ObjectID("53e28b650640fd3162152de1");
 
 $tests = array(
     $array,
@@ -32,28 +32,28 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", $json = BSON\toJSON($s), "\n";
-    $bson = BSON\fromJSON($json);
-    $testagain = BSON\toArray($bson);
-    var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
+    $s = MongoDB\BSON\fromArray($test);
+    echo "Test#{$n} ", $json = MongoDB\BSON\toJSON($s), "\n";
+    $bson = MongoDB\BSON\fromJSON($json);
+    $testagain = MongoDB\BSON\toArray($bson);
+    var_dump(MongoDB\BSON\toJSON(MongoDB\BSON\fromArray($test)), MongoDB\BSON\toJSON(MongoDB\BSON\fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
 
 throws(function() {
-$id = new BSON\ObjectID("53e28b650640fd3162152de12");
+$id = new MongoDB\BSON\ObjectID("53e28b650640fd3162152de12");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 throws(function() {
-$id = new BSON\ObjectID("53e28b650640fd3162152dg1");
+$id = new MongoDB\BSON\ObjectID("53e28b650640fd3162152dg1");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 throws(function() {
-$id = new BSON\ObjectID("-3e28b650640fd3162152da1");
+$id = new MongoDB\BSON\ObjectID("-3e28b650640fd3162152da1");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 throws(function() {
-$id = new BSON\ObjectID(" 3e28b650640fd3162152da1");
+$id = new MongoDB\BSON\ObjectID(" 3e28b650640fd3162152da1");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 throws(function() {
-$id = new BSON\ObjectID(new stdclass);
+$id = new MongoDB\BSON\ObjectID(new stdclass);
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 

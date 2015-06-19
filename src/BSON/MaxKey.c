@@ -46,7 +46,7 @@ PHONGO_API zend_class_entry *php_phongo_maxkey_ce;
 
 
 
-/* {{{ BSON\MaxKey */
+/* {{{ MongoDB\BSON\MaxKey */
 
 
 static zend_function_entry php_phongo_maxkey_me[] = {
@@ -91,7 +91,7 @@ PHP_MINIT_FUNCTION(MaxKey)
 	(void)type;(void)module_number;
 
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "MaxKey", php_phongo_maxkey_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MaxKey", php_phongo_maxkey_me);
 	ce.create_object = php_phongo_maxkey_create_object;
 	php_phongo_maxkey_ce = zend_register_internal_class(&ce TSRMLS_CC);
 

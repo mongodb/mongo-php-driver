@@ -1,22 +1,22 @@
 --TEST--
-BSON BSON\MaxKey #001
+BSON MongoDB\BSON\MaxKey #001
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$maxkey = new BSON\MaxKey;
+$maxkey = new MongoDB\BSON\MaxKey;
 $tests = array(
     array("max" => $maxkey),
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", $json = BSON\toJSON($s), "\n";
-    $bson = BSON\fromJSON($json);
-    $testagain = BSON\toArray($bson);
-    var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
+    $s = MongoDB\BSON\fromArray($test);
+    echo "Test#{$n} ", $json = MongoDB\BSON\toJSON($s), "\n";
+    $bson = MongoDB\BSON\fromJSON($json);
+    $testagain = MongoDB\BSON\toArray($bson);
+    var_dump(MongoDB\BSON\toJSON(MongoDB\BSON\fromArray($test)), MongoDB\BSON\toJSON(MongoDB\BSON\fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
 ?>

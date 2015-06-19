@@ -6,7 +6,7 @@ BSON encoding error when bsonSerialize() for embedded document does not return a
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-class MyClass implements BSON\Serializable
+class MyClass implements MongoDB\BSON\Serializable
 {
     private $value;
 
@@ -25,7 +25,7 @@ $invalidValues = array(new stdClass, 'foo', 1, true);
 
 foreach ($invalidValues as $invalidValue) {
     try {
-        $bson = BSON\fromArray(array('embed' => new MyClass($invalidValue)));
+        $bson = MongoDB\BSON\fromArray(array('embed' => new MyClass($invalidValue)));
     } catch (MongoDB\Driver\Exception\UnexpectedValueException $e) {
         echo $e->getMessage(), "\n";
     }

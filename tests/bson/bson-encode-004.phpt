@@ -20,10 +20,10 @@ $hannes->addFriend($mikola);
 
 var_dump($hannes);
 
-$s = BSON\fromArray(array($hannes));
-echo "Test ", BSON\toJSON($s), "\n";
+$s = MongoDB\BSON\fromArray(array($hannes));
+echo "Test ", MongoDB\BSON\toJSON($s), "\n";
 hex_dump($s);
-$ret = BSON\toArray($s);
+$ret = MongoDB\BSON\toArray($s);
 var_dump($ret);
 ?>
 ===DONE===

@@ -11,10 +11,10 @@ $data = array(
     "emptyclass" => new stdclass,
 );
 
-$s = BSON\fromArray($data);
-echo "Test ", BSON\toJSON($s), "\n";
+$s = MongoDB\BSON\fromArray($data);
+echo "Test ", MongoDB\BSON\toJSON($s), "\n";
 hex_dump($s);
-$ret = BSON\toArray($s);
+$ret = MongoDB\BSON\toArray($s);
 var_dump($ret);
 ?>
 ===DONE===
