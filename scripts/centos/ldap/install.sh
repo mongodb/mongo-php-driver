@@ -1,7 +1,5 @@
 yum -y update
-# python-pip is in epel..
-yum -y install epel-release
-yum -y install openldap-servers openldap-clients openldap-devel python-devel gcc cyrus-sasl-plain xfsprogs net-snmp ps-misc wget python-pip python-ldap
+yum -y install openldap-servers openldap-clients openldap-devel python-devel gcc cyrus-sasl-plain xfsprogs net-snmp ps-misc wget python-ldap
 
 service slapd stop
 service slapd start
