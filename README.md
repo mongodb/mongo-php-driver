@@ -21,20 +21,17 @@ fast and powerful.
 
 ## Installation
 
-Ultimately, this extension is not intended to be explicitly installed. Users
-should choose one (or more) userland PHP libraries that depend on this driver,
-and install them using Composer. At some point in the future, Composer may
-support installing extension dependencies.
-
-This project is currently not published as a PECL extension and must be built
-and installed manually.
-
 To build and install the driver:
 
 ```
 $ pecl install mongodb-alpha
 $ echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```
+
+We recommend using this extension in conjunction with our
+[userland library](https://github.com/10gen-labs/mongo-php-library-prototype),
+which is distributed as
+[mongodb/mongodb](https://packagist.org/packages/mongodb/mongodb) for Composer.
 
 ## Contributing
 
