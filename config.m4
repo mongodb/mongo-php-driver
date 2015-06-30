@@ -485,7 +485,7 @@ dnl }}}
   fi
   AC_SUBST(BSON_HAVE_SNPRINTF)
 
-  if test "$PHP_LIBBSON" == "no"; then
+  if test "$PHP_LIBMONGOC" == "no"; then
     m4_include(src/libmongoc/build/autotools/Versions.m4)
     MONGOC_MAJOR_VERSION=mongoc_major_version
     MONGOC_MINOR_VERSION=mongoc_minor_version
@@ -527,6 +527,7 @@ Build configuration:
   Extra CFLAGS                                     : $STD_CFLAGS $EXTRA_CFLAGS
   Developers flags (slow)                          : $MAINTAINER_CFLAGS
   Code Coverage flags (extra slow)                 : $COVERAGE_CFLAGS
+  System mongoc                                    : $PHP_LIBMONGOC
   System libbson                                   : $PHP_LIBBSON
   LDFLAGS                                          : $LDFLAGS
   EXTRA_LDFLAGS                                    : $EXTRA_LDFLAGS
