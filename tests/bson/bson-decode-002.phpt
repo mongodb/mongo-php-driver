@@ -4,6 +4,8 @@ BSON encoding: Encoding object/arrays data into user specificied classes
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
+use MongoDB\BSON as BSON;
+
 require_once __DIR__ . "/../utils/basic.inc";
 
 class MyArrayObject extends ArrayObject implements BSON\Unserializable {

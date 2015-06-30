@@ -1,4 +1,6 @@
 <?php
+use MongoDB\BSON as BSON;
+
 class Person implements BSON\Persistable {
     protected $name;
     protected $age;

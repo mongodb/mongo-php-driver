@@ -95,7 +95,7 @@ string(14) "192.168.112.10"
 int(3001)
 array(2) {
   ["_id"]=>
-  object(BSON\ObjectID)#%d (1) {
+  object(%s\ObjectID)#%d (1) {
     ["oid"]=>
     string(24) "%s"
   }

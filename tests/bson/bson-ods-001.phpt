@@ -4,6 +4,8 @@ BSON encoding: Encoding data into BSON representation, and BSON into Extended JS
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
+use MongoDB\BSON as BSON;
+
 require_once __DIR__ . "/../utils/basic.inc";
 
 class Address implements BSON\Persistable {

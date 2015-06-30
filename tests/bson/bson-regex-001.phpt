@@ -6,7 +6,9 @@ BSON BSON\Regex #001
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$regexp = new BSON\Regex("regexp", "i");
+
+$classname = BSON_NAMESPACE . "\\Regex";
+$regexp = new $classname("regexp", "i");
 printf("Pattern: %s\n", $regexp->getPattern());
 printf("Flags: %s\n", $regexp->getFlags());
 printf("String representation: %s\n", $regexp);
@@ -15,17 +17,17 @@ $tests = array(
     array("regex" => $regexp),
 );
 
-throws(function() {
-    $regexp = new BSON\Regex;
+throws(function() use($classname) {
+    $regexp = new $classname;
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", $json = BSON\toJSON($s), "\n";
-    $bson = BSON\fromJSON($json);
-    $testagain = BSON\toArray($bson);
-    var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
+    $s = fromArray($test);
+    echo "Test#{$n} ", $json = toJSON($s), "\n";
+    $bson = fromJSON($json);
+    $testagain = toArray($bson);
+    var_dump(toJSON(fromArray($test)), toJSON(fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
 
@@ -44,7 +46,7 @@ string(55) "{ "regex" : { "$regex" : "regexp", "$options" : "i" } }"
 string(55) "{ "regex" : { "$regex" : "regexp", "$options" : "i" } }"
 bool(true)
 
-Warning: BSON\Regex::getPattern() expects exactly 0 parameters, 1 given in %s on line %d
+Warning: %s\Regex::getPattern() expects exactly 0 parameters, 1 given in %s on line %d
 
-Warning: BSON\Regex::getFlags() expects exactly 0 parameters, 1 given in %s on line %d
+Warning: %s\Regex::getFlags() expects exactly 0 parameters, 1 given in %s on line %d
 ===DONE===

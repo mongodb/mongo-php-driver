@@ -6,17 +6,18 @@ BSON BSON\MinKey #001
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$minkey = new BSON\MinKey;
+$classname = BSON_NAMESPACE . "\\MinKey";
+$minkey = new $classname;
 $tests = array(
     array("min" => $minkey),
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", $json = BSON\toJSON($s), "\n";
-    $bson = BSON\fromJSON($json);
-    $testagain = BSON\toArray($bson);
-    var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
+    $s = fromArray($test);
+    echo "Test#{$n} ", $json = toJSON($s), "\n";
+    $bson = fromJSON($json);
+    $testagain = toArray($bson);
+    var_dump(toJSON(fromArray($test)), toJSON(fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
 ?>

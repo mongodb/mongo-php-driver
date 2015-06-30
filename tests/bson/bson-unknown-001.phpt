@@ -4,18 +4,20 @@ BSON Serializing a PHP resource should throw exception
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
+use MongoDB\BSON as BSON;
+
 require_once __DIR__ . "/../utils/basic.inc";
 
 throws(function() {
     $a = array("stderr" => STDERR);
 
-    $b = BSON\fromArray($a);
+    $b = fromArray($a);
 }, "MongoDB\Driver\Exception\UnexpectedValueException");
 
 throws(function() {
     $a = array("stderr" => STDERR, "stdout" => STDOUT);
 
-    $b = BSON\fromArray($a);
+    $b = fromArray($a);
 }, "MongoDB\Driver\Exception\UnexpectedValueException");
 
 

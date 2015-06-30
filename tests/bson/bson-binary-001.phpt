@@ -6,36 +6,38 @@ BSON BSON\Binary #001
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
+$classname = BSON_NAMESPACE . "\\Binary";
+
 $types = array(
-    BSON\Binary::TYPE_GENERIC,
-    BSON\Binary::TYPE_FUNCTION,
-    BSON\Binary::TYPE_OLD_BINARY,
-    BSON\Binary::TYPE_OLD_UUID,
-    BSON\Binary::TYPE_UUID,
-    BSON\Binary::TYPE_MD5,
-    BSON\Binary::TYPE_USER_DEFINED,
-    BSON\Binary::TYPE_USER_DEFINED+5,
+    $classname::TYPE_GENERIC,
+    $classname::TYPE_FUNCTION,
+    $classname::TYPE_OLD_BINARY,
+    $classname::TYPE_OLD_UUID,
+    $classname::TYPE_UUID,
+    $classname::TYPE_MD5,
+    $classname::TYPE_USER_DEFINED,
+    $classname::TYPE_USER_DEFINED+5,
 );
 $tests = array();
 foreach($types as $type) {
-    $binary = new BSON\Binary("random binary data", $type);
+    $binary = new $classname("random binary data", $type);
     var_dump($binary->getSubType() == $type);
     $tests[] = array("binary" => $binary);
 }
 
-throws(function() {
-    $b = new BSON\Binary("random binary data without type");
+throws(function() use($classname) {
+    $b = new $classname("random binary data without type");
     echo "FAIL: Constructed BSON\Binary without type!\n";
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", $json = BSON\toJSON($s), "\n";
-    $bson = BSON\fromJSON($json);
-    $testagain = BSON\toArray($bson);
-    var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
+    $s = fromArray($test);
+    echo "Test#{$n} ", $json = toJSON($s), "\n";
+    $bson = fromJSON($json);
+    $testagain = toArray($bson);
+    var_dump(toJSON(fromArray($test)), toJSON(fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
 
@@ -86,5 +88,5 @@ string(73) "{ "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh
 string(73) "{ "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
 bool(true)
 
-Warning: BSON\Binary::getSubType() expects exactly 0 parameters, 1 given in %s on line %d
+Warning: %s\Binary::getSubType() expects exactly 0 parameters, 1 given in %s on line %d
 ===DONE===

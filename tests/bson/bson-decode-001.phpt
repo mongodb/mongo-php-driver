@@ -4,6 +4,7 @@ BSON encoding: Encoding data into BSON representation, and BSON into Extended JS
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
+
 require_once __DIR__ . "/../utils/basic.inc";
 
 $tests = array(
@@ -40,9 +41,9 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", BSON\toJSON($s), "\n";
-    $val = BSON\toArray($s);
+    $s = fromArray($test);
+    echo "Test#{$n} ", toJSON($s), "\n";
+    $val = toArray($s);
     if ($val == $test) {
         echo "OK\n";
     } else {

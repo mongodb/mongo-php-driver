@@ -4,6 +4,7 @@ BSON encoding: Encoding objects into BSON representation
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
+use MongoDB\BSON as BSON;
 require_once __DIR__ . "/../utils/basic.inc";
 
 class AssociativeArray implements BSON\Serializable, BSON\Unserializable

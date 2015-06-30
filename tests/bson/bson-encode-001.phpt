@@ -4,6 +4,8 @@ BSON encoding: Encoding data into BSON representation, and BSON into Extended JS
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
+use MongoDB\BSON as BSON;
+
 require_once __DIR__ . "/../utils/basic.inc";
 
 $tests = array(
@@ -33,8 +35,8 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", BSON\toJSON($s), "\n";
+    $s = fromArray($test);
+    echo "Test#{$n} ", toJSON($s), "\n";
     hex_dump($s);
 }
 ?>

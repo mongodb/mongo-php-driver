@@ -4,6 +4,8 @@ BSON encoding error when bsonSerialize() for root document does not return an ar
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
+use MongoDB\BSON as BSON;
+
 require_once __DIR__ . "/../utils/basic.inc";
 
 class MyClass implements BSON\Serializable
@@ -25,7 +27,7 @@ $invalidValues = array(new stdClass, 'foo', 1, true);
 
 foreach ($invalidValues as $invalidValue) {
     try {
-        BSON\fromArray(new MyClass($invalidValue));
+        fromArray(new MyClass($invalidValue));
     } catch (MongoDB\Driver\Exception\UnexpectedValueException $e) {
         echo $e->getMessage(), "\n";
     }

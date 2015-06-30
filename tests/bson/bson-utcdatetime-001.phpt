@@ -10,7 +10,8 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$utcdatetime = new BSON\UTCDatetime("1416445411987");
+$classname = BSON_NAMESPACE . "\\UTCDatetime";
+$utcdatetime = new $classname("1416445411987");
 $result = $manager->executeInsert(NS, array('_id' => 1, 'x' => $utcdatetime));
 $query = new MongoDB\Driver\Query(array('_id' => 1));
 $cursor = $manager->executeQuery(NS, $query);
@@ -22,8 +23,8 @@ var_dump($date->format(DATE_RSS));
 
 echo $utcdatetime, "\n";
 
-throws(function() {
-    $d = new BSON\UTCDatetime;
+throws(function() use($classname) {
+    $d = new $classname;
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 $tests = array(
@@ -33,11 +34,11 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", $json = BSON\toJSON($s), "\n";
-    $bson = BSON\fromJSON($json);
-    $testagain = BSON\toArray($bson);
-    var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
+    $s = fromArray($test);
+    echo "Test#{$n} ", $json = toJSON($s), "\n";
+    $bson = fromJSON($json);
+    $testagain = toArray($bson);
+    var_dump(toJSON(fromArray($test)), toJSON(fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
 ?>

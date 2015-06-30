@@ -6,22 +6,23 @@ BSON BSON\ObjectID #001
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$sameid = new BSON\ObjectID("53e2a1c40640fd72175d4603");
+$classname = BSON_NAMESPACE . "\\ObjectID";
+$sameid = new $classname("53e2a1c40640fd72175d4603");
 $samestd = new stdClass;
 $samestd->my = $sameid;
 $samearr = array("my" => $sameid);
 
 
 $std = new stdclass;
-$std->_id = new BSON\ObjectID;
+$std->_id = new $classname;
 
 $array = array(
-    "_id" => new BSON\ObjectID,
-    "id" => new BSON\ObjectID,
-    "d" => new BSON\ObjectID,
+    "_id" => new $classname,
+    "id" => new $classname,
+    "d" => new $classname,
 );
 
-$pregenerated = new BSON\ObjectID("53e28b650640fd3162152de1");
+$pregenerated = new $classname("53e28b650640fd3162152de1");
 
 $tests = array(
     $array,
@@ -32,28 +33,28 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", $json = BSON\toJSON($s), "\n";
-    $bson = BSON\fromJSON($json);
-    $testagain = BSON\toArray($bson);
-    var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
+    $s = fromArray($test);
+    echo "Test#{$n} ", $json = toJSON($s), "\n";
+    $bson = fromJSON($json);
+    $testagain = toArray($bson);
+    var_dump(toJSON(fromArray($test)), toJSON(fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
 
-throws(function() {
-$id = new BSON\ObjectID("53e28b650640fd3162152de12");
+throws(function() use($classname) {
+$id = new $classname("53e28b650640fd3162152de12");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
-throws(function() {
-$id = new BSON\ObjectID("53e28b650640fd3162152dg1");
+throws(function() use($classname) {
+$id = new $classname("53e28b650640fd3162152dg1");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
-throws(function() {
-$id = new BSON\ObjectID("-3e28b650640fd3162152da1");
+throws(function() use ($classname) {
+$id = new $classname("-3e28b650640fd3162152da1");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
-throws(function() {
-$id = new BSON\ObjectID(" 3e28b650640fd3162152da1");
+throws(function() use($classname) {
+$id = new $classname(" 3e28b650640fd3162152da1");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
-throws(function() {
-$id = new BSON\ObjectID(new stdclass);
+throws(function() use($classname) {
+$id = new $classname(new stdclass);
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 

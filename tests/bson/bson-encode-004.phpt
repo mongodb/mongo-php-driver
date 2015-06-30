@@ -4,6 +4,8 @@ BSON encoding: Object Document Mapper
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
+use MongoDB\BSON as BSON;
+
 require_once __DIR__ . "/../utils/basic.inc";
 require_once __DIR__ . "/../utils/classes.inc";
 
@@ -20,10 +22,10 @@ $hannes->addFriend($mikola);
 
 var_dump($hannes);
 
-$s = BSON\fromArray(array($hannes));
-echo "Test ", BSON\toJSON($s), "\n";
+$s = fromArray(array($hannes));
+echo "Test ", toJSON($s), "\n";
 hex_dump($s);
-$ret = BSON\toArray($s);
+$ret = toArray($s);
 var_dump($ret);
 ?>
 ===DONE===

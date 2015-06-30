@@ -4,6 +4,8 @@ MongoDB\Driver\Cursor::setTypeMap(): Setting typemaps
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
+use MongoDB\BSON as BSON;
+
 require_once __DIR__ . "/../utils/basic.inc";
 
 class MyArrayObject extends ArrayObject implements BSON\Unserializable
