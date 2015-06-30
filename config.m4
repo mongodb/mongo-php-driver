@@ -533,7 +533,7 @@ Build configuration:
   MONGODB_SHARED_LIBADD                            : $MONGODB_SHARED_LIBADD
 
 Please submit bugreports at:
-  https://jira.mongodb.org/browse/PHP
+  https://jira.mongodb.org/browse/PHPC
 
 "])
 fi
