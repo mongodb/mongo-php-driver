@@ -65,7 +65,7 @@ class Person implements BSON\Persistable {
  
         /* If __original doesn't exist, this is a fresh object that needs to be inserted */
         if (empty($this->__original)) {
-            $props["_created"] = new BSON\UTCDatetime(microtime(true) * 1000);
+            $props["_created"] = new BSON\UTCDateTime(microtime(true) * 1000);
             return $props;
         }
  

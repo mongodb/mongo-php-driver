@@ -96,7 +96,7 @@ array(3) {
       ["maxWriteBatchSize"]=>
       int(1000)
       ["localTime"]=>
-      object(%s\UTCDatetime)#%d (%d) {
+      object(%s\UTCDateTime)#%d (%d) {
       }
       ["maxWireVersion"]=>
       int(3)
@@ -173,7 +173,7 @@ array(3) {
       ["maxWriteBatchSize"]=>
       int(1000)
       ["localTime"]=>
-      object(%s\UTCDatetime)#%d (%d) {
+      object(%s\UTCDateTime)#%d (%d) {
       }
       ["maxWireVersion"]=>
       int(3)
@@ -238,7 +238,7 @@ array(3) {
       ["maxWriteBatchSize"]=>
       int(1000)
       ["localTime"]=>
-      object(%s\UTCDatetime)#8 (0) {
+      object(%s\UTCDateTime)#8 (0) {
       }
       ["maxWireVersion"]=>
       int(3)
