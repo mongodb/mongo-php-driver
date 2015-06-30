@@ -26,6 +26,12 @@
 /* PHP Core stuff */
 #include <php.h>
 
+/* Check if we are part of pecl/mongodb or standalone (pecl/bson) */
+#ifdef HAVE_MONGOC
+#define BSON_NAMESPACE "MongoDB\\BSON"
+#else
+#define BSON_NAMESPACE "BSON"
+#endif
 
 #define BSON_UNSERIALIZE_FUNC_NAME    "bsonUnserialize"
 #define BSON_SERIALIZE_FUNC_NAME      "bsonSerialize"

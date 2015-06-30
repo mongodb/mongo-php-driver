@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_timestamp_ce;
 
-/* {{{ proto MongoDB\Driver\Timestamp Timestamp::__construct(integer $increment, int $timestamp)
+/* {{{ proto BSON\Timestamp Timestamp::__construct(integer $increment, int $timestamp)
    Construct a new BSON Timestamp (4bytes increment, 4bytes timestamp) */
 PHP_METHOD(Timestamp, __construct)
 {
@@ -141,7 +141,7 @@ PHP_MINIT_FUNCTION(Timestamp)
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "Timestamp", php_phongo_timestamp_me);
+	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "Timestamp", php_phongo_timestamp_me);
 	ce.create_object = php_phongo_timestamp_create_object;
 	php_phongo_timestamp_ce = zend_register_internal_class(&ce TSRMLS_CC);
 

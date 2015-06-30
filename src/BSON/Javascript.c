@@ -45,7 +45,7 @@
 PHONGO_API zend_class_entry *php_phongo_javascript_ce;
 
 
-/* {{{ proto MongoDB\Driver\Javascript Javascript::__construct(string $javascript[, array|object $document])
+/* {{{ proto BSON\Javascript Javascript::__construct(string $javascript[, array|object $document])
  * The string is JavaScript code. The document is a mapping from identifiers to values, representing the scope in which the string should be evaluated
  * NOTE: eJSON does not support this type :( */
 PHP_METHOD(Javascript, __construct)
@@ -134,7 +134,7 @@ PHP_MINIT_FUNCTION(Javascript)
 	(void)type;(void)module_number;
 
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "Javascript", php_phongo_javascript_me);
+	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "Javascript", php_phongo_javascript_me);
 	ce.create_object = php_phongo_javascript_create_object;
 	php_phongo_javascript_ce = zend_register_internal_class(&ce TSRMLS_CC);
 

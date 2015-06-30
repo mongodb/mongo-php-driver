@@ -183,7 +183,7 @@ PHP_MINIT_FUNCTION(ObjectID)
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "ObjectID", php_phongo_objectid_me);
+	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "ObjectID", php_phongo_objectid_me);
 	php_phongo_objectid_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_objectid_ce->create_object = php_phongo_objectid_create_object;
 

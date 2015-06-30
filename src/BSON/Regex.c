@@ -197,7 +197,7 @@ PHP_MINIT_FUNCTION(Regex)
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "Regex", php_phongo_regex_me);
+	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "Regex", php_phongo_regex_me);
 	ce.create_object = php_phongo_regex_create_object;
 	php_phongo_regex_ce = zend_register_internal_class(&ce TSRMLS_CC);
 

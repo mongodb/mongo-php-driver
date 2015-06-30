@@ -63,7 +63,7 @@ PHP_MINIT_FUNCTION(Type)
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "Type", php_phongo_type_me);
+	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "Type", php_phongo_type_me);
 	php_phongo_type_ce = zend_register_internal_interface(&ce TSRMLS_CC);
 
 	return SUCCESS;

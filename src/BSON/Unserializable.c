@@ -68,7 +68,7 @@ PHP_MINIT_FUNCTION(Unserializable)
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "Unserializable", php_phongo_unserializable_me);
+	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "Unserializable", php_phongo_unserializable_me);
 	php_phongo_unserializable_ce = zend_register_internal_interface(&ce TSRMLS_CC);
 
 	return SUCCESS;
