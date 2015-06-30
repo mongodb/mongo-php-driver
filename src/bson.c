@@ -656,7 +656,7 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_utcdatetime_ce TSRMLS_CC)) {
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding UTCDatetime");
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding UTCDateTime");
 			bson_append_date_time(bson, key, key_len, php_phongo_utcdatetime_get_milliseconds(object TSRMLS_CC));
 			return;
 		}
@@ -920,7 +920,7 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 	return 1;
 }
 
-/* {{{ proto string BSON\fromArray(array|object data)
+/* {{{ proto string MongoDB\BSON\fromArray(array|object data)
    Returns the BSON representation of a value */
 PHP_FUNCTION(fromArray)
 {
@@ -988,7 +988,7 @@ void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *ma
 		}
 	}
 }
-/* {{{ proto string BSON\toArray(string data [, array $typemap = array()])
+/* {{{ proto string MongoDB\BSON\toArray(string data [, array $typemap = array()])
    Returns the PHP representation of a BSON value, optionally converting them into custom types/classes */
 PHP_FUNCTION(toArray)
 {
@@ -1013,7 +1013,7 @@ PHP_FUNCTION(toArray)
 }
 /* }}} */
 
-/* {{{ proto BSON\toJSON BSON\toJSON(string data)
+/* {{{ proto string MongoDB\BSON\toJSON(string data)
    Returns the JSON representation of a BSON value */
 PHP_FUNCTION(toJSON)
 {
@@ -1044,7 +1044,7 @@ PHP_FUNCTION(toJSON)
 }
 /* }}} */
 
-/* {{{ proto string BSON\fromJSON(string data)
+/* {{{ proto string MongoDB\BSON\fromJSON(string data)
    Returns the BSON representation of a JSON value */
 PHP_FUNCTION(fromJSON)
 {

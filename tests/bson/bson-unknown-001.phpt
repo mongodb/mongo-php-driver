@@ -9,13 +9,13 @@ require_once __DIR__ . "/../utils/basic.inc";
 throws(function() {
     $a = array("stderr" => STDERR);
 
-    $b = BSON\fromArray($a);
+    $b = MongoDB\BSON\fromArray($a);
 }, "MongoDB\Driver\Exception\UnexpectedValueException");
 
 throws(function() {
     $a = array("stderr" => STDERR, "stdout" => STDOUT);
 
-    $b = BSON\fromArray($a);
+    $b = MongoDB\BSON\fromArray($a);
 }, "MongoDB\Driver\Exception\UnexpectedValueException");
 
 

@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_regex_ce;
 
-/* {{{ proto BSON\Regex Regex::__construct(string $pattern, string $flags)
+/* {{{ proto MongoDB\BSON\Regex Regex::__construct(string $pattern, string $flags)
    Constructs a new regular expression. */
 PHP_METHOD(Regex, __construct)
 {
@@ -128,7 +128,7 @@ PHP_METHOD(Regex, __toString)
 /* }}} */
 
 
-/* {{{ BSON\Regex */
+/* {{{ MongoDB\BSON\Regex */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Regex___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, pattern)
@@ -197,7 +197,7 @@ PHP_MINIT_FUNCTION(Regex)
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "Regex", php_phongo_regex_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Regex", php_phongo_regex_me);
 	ce.create_object = php_phongo_regex_create_object;
 	php_phongo_regex_ce = zend_register_internal_class(&ce TSRMLS_CC);
 

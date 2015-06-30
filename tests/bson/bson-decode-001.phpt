@@ -40,9 +40,9 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", BSON\toJSON($s), "\n";
-    $val = BSON\toArray($s);
+    $s = MongoDB\BSON\fromArray($test);
+    echo "Test#{$n} ", MongoDB\BSON\toJSON($s), "\n";
+    $val = MongoDB\BSON\toArray($s);
     if ($val == $test) {
         echo "OK\n";
     } else {

@@ -48,7 +48,7 @@ array(3) {
     string(8) "New York"
   }
   ["_id"]=>
-  object(BSON\ObjectID)#%d (%d) {
+  object(MongoDB\BSON\ObjectID)#%d (%d) {
     ["oid"]=>
     string(24) "%s"
   }
@@ -57,7 +57,7 @@ array(3) {
 Dumping fetched user document:
 array(3) {
   ["_id"]=>
-  object(BSON\ObjectID)#%d (%d) {
+  object(MongoDB\BSON\ObjectID)#%d (%d) {
     ["oid"]=>
     string(24) "%s"
   }

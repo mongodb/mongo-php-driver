@@ -7,35 +7,35 @@ BSON BSON\Binary #001
 require_once __DIR__ . "/../utils/basic.inc";
 
 $types = array(
-    BSON\Binary::TYPE_GENERIC,
-    BSON\Binary::TYPE_FUNCTION,
-    BSON\Binary::TYPE_OLD_BINARY,
-    BSON\Binary::TYPE_OLD_UUID,
-    BSON\Binary::TYPE_UUID,
-    BSON\Binary::TYPE_MD5,
-    BSON\Binary::TYPE_USER_DEFINED,
-    BSON\Binary::TYPE_USER_DEFINED+5,
+    MongoDB\BSON\Binary::TYPE_GENERIC,
+    MongoDB\BSON\Binary::TYPE_FUNCTION,
+    MongoDB\BSON\Binary::TYPE_OLD_BINARY,
+    MongoDB\BSON\Binary::TYPE_OLD_UUID,
+    MongoDB\BSON\Binary::TYPE_UUID,
+    MongoDB\BSON\Binary::TYPE_MD5,
+    MongoDB\BSON\Binary::TYPE_USER_DEFINED,
+    MongoDB\BSON\Binary::TYPE_USER_DEFINED+5,
 );
 $tests = array();
 foreach($types as $type) {
-    $binary = new BSON\Binary("random binary data", $type);
+    $binary = new MongoDB\BSON\Binary("random binary data", $type);
     var_dump($binary->getSubType() == $type);
     $tests[] = array("binary" => $binary);
 }
 
 throws(function() {
-    $b = new BSON\Binary("random binary data without type");
-    echo "FAIL: Constructed BSON\Binary without type!\n";
+    $b = new MongoDB\BSON\Binary("random binary data without type");
+    echo "FAIL: Constructed MongoDB\BSON\Binary without type!\n";
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", $json = BSON\toJSON($s), "\n";
-    $bson = BSON\fromJSON($json);
-    $testagain = BSON\toArray($bson);
-    var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
+    $s = MongoDB\BSON\fromArray($test);
+    echo "Test#{$n} ", $json = MongoDB\BSON\toJSON($s), "\n";
+    $bson = MongoDB\BSON\fromJSON($json);
+    $testagain = MongoDB\BSON\toArray($bson);
+    var_dump(MongoDB\BSON\toJSON(MongoDB\BSON\fromArray($test)), MongoDB\BSON\toJSON(MongoDB\BSON\fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
 
@@ -86,5 +86,5 @@ string(73) "{ "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh
 string(73) "{ "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
 bool(true)
 
-Warning: BSON\Binary::getSubType() expects exactly 0 parameters, 1 given in %s on line %d
+Warning: MongoDB\BSON\Binary::getSubType() expects exactly 0 parameters, 1 given in %s on line %d
 ===DONE===

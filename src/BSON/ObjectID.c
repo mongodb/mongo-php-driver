@@ -47,7 +47,7 @@ PHONGO_API zend_class_entry *php_phongo_objectid_ce;
 zend_object_handlers php_phongo_handler_objectid;
 
 
-/* {{{ proto BSON\ObjectID ObjectID::__construct(string $id)
+/* {{{ proto MongoDB\BSON\ObjectID ObjectID::__construct(string $id)
    Constructs a new Object ID, optionally from a string */
 PHP_METHOD(ObjectID, __construct)
 {
@@ -103,7 +103,7 @@ PHP_METHOD(ObjectID, __toString)
 /* }}} */
 
 
-/* {{{ BSON\ObjectID */
+/* {{{ MongoDB\BSON\ObjectID */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, id)
@@ -183,7 +183,7 @@ PHP_MINIT_FUNCTION(ObjectID)
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "ObjectID", php_phongo_objectid_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "ObjectID", php_phongo_objectid_me);
 	php_phongo_objectid_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_objectid_ce->create_object = php_phongo_objectid_create_object;
 

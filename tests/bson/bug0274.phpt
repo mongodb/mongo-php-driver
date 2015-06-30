@@ -1,12 +1,12 @@
 --TEST--
-Test for PHPC-274: zval_to_bson() should process BSON\Serializable instances
+Test for PHPC-274: zval_to_bson() should process MongoDB\BSON\Serializable instances
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-class AssociativeArray implements BSON\Serializable
+class AssociativeArray implements MongoDB\BSON\Serializable
 {
     public function bsonSerialize()
     {
@@ -14,7 +14,7 @@ class AssociativeArray implements BSON\Serializable
     }
 }
 
-class NumericArray implements BSON\Serializable
+class NumericArray implements MongoDB\BSON\Serializable
 {
     public function bsonSerialize()
     {
@@ -23,14 +23,14 @@ class NumericArray implements BSON\Serializable
 }
 
 echo "Testing top-level AssociativeArray:\n";
-$bson = BSON\fromArray(new AssociativeArray);
-echo BSON\toJSON($bson), "\n";
+$bson = MongoDB\BSON\fromArray(new AssociativeArray);
+echo MongoDB\BSON\toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
 
 echo "\nTesting top-level NumericArray:\n";
-$bson = BSON\fromArray(new NumericArray);
-echo BSON\toJSON($bson), "\n";
+$bson = MongoDB\BSON\fromArray(new NumericArray);
+echo MongoDB\BSON\toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
 

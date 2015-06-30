@@ -2010,7 +2010,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	PHP_MINIT(ObjectID)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Regex)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Timestamp)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(UTCDatetime)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(UTCDateTime)(INIT_FUNC_ARGS_PASSTHRU);
 
 	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char *)MONGODB_VERSION_S, CONST_CS | CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("MONGODB_STABILITY", (char *)MONGODB_STABILITY_S, CONST_CS | CONST_PERSISTENT);
@@ -2081,10 +2081,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromJSON, 0, 0, 1)
 ZEND_END_ARG_INFO();
 
 const zend_function_entry mongodb_functions[] = {
-	ZEND_NS_FE("BSON", fromArray, ai_bson_fromArray)
-	ZEND_NS_FE("BSON", toArray,   ai_bson_toArray)
-	ZEND_NS_FE("BSON", toJSON,    ai_bson_toJSON)
-	ZEND_NS_FE("BSON", fromJSON,  ai_bson_fromJSON)
+	ZEND_NS_FE("MongoDB\\BSON", fromArray, ai_bson_fromArray)
+	ZEND_NS_FE("MongoDB\\BSON", toArray,   ai_bson_toArray)
+	ZEND_NS_FE("MongoDB\\BSON", toJSON,    ai_bson_toJSON)
+	ZEND_NS_FE("MongoDB\\BSON", fromJSON,  ai_bson_fromJSON)
 	PHP_FE_END
 };
 /* }}} */

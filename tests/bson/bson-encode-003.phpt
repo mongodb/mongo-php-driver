@@ -6,7 +6,7 @@ BSON encoding: Encoding objects into BSON representation
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-class MyClass implements BSON\Persistable {
+class MyClass implements MongoDB\BSON\Persistable {
     function bsonSerialize() {
         return array(
             "random" => "class",
@@ -17,7 +17,7 @@ class MyClass implements BSON\Persistable {
         $this->props = $data;
     }
 }
-class MyClass2 implements BSON\Persistable {
+class MyClass2 implements MongoDB\BSON\Persistable {
     function bsonSerialize() {
         return array(
             1, 2, 3,
@@ -35,10 +35,10 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", BSON\toJSON($s), "\n";
+    $s = MongoDB\BSON\fromArray($test);
+    echo "Test#{$n} ", MongoDB\BSON\toJSON($s), "\n";
     hex_dump($s);
-    $ret = BSON\toArray($s);
+    $ret = MongoDB\BSON\toArray($s);
     var_dump($ret);
 }
 ?>

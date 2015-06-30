@@ -44,9 +44,9 @@
 
 PHONGO_API zend_class_entry *php_phongo_utcdatetime_ce;
 
-/* {{{ proto MongoDB\Driver\UTCDatetime UTCDatetime::__construct(integer $milliseconds)
-   Construct a new UTCDatetime */
-PHP_METHOD(UTCDatetime, __construct)
+/* {{{ proto MongoDB\BSON\UTCDateTime UTCDateTime::__construct(integer $milliseconds)
+   Construct a new UTCDateTime */
+PHP_METHOD(UTCDateTime, __construct)
 {
 	php_phongo_utcdatetime_t    *intern;
 	zend_error_handling       error_handling;
@@ -79,9 +79,9 @@ PHP_METHOD(UTCDatetime, __construct)
 
 }
 /* }}} */
-/* {{{ proto string UTCDatetime::__toString()
-   Returns the string representation of the UTCDatetime */
-PHP_METHOD(UTCDatetime, __toString)
+/* {{{ proto string UTCDateTime::__toString()
+   Returns the string representation of the UTCDateTime */
+PHP_METHOD(UTCDateTime, __toString)
 {
 	php_phongo_utcdatetime_t    *intern;
 	char *tmp;
@@ -98,9 +98,9 @@ PHP_METHOD(UTCDatetime, __toString)
 	RETVAL_STRINGL(tmp, tmp_len, 0);
 }
 /* }}} */
-/* {{{ proto string UTCDatetime::toDateTime()
+/* {{{ proto string UTCDateTime::toDateTime()
    Returns DateTime object representing this UTCDateTime */
-PHP_METHOD(UTCDatetime, toDateTime)
+PHP_METHOD(UTCDateTime, toDateTime)
 {
 	php_phongo_utcdatetime_t    *intern;
 
@@ -116,23 +116,23 @@ PHP_METHOD(UTCDatetime, toDateTime)
 /* }}} */
 
 
-/* {{{ BSON\UTCDatetime */
+/* {{{ MongoDB\BSON\UTCDateTime */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_UTCDatetime___construct, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, milliseconds)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_UTCDatetime___toString, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime___toString, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_UTCDatetime_toDateTime, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime_toDateTime, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_utcdatetime_me[] = {
-	PHP_ME(UTCDatetime, __construct, ai_UTCDatetime___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(UTCDatetime, __toString, ai_UTCDatetime___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(UTCDatetime, toDateTime, ai_UTCDatetime_toDateTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(UTCDateTime, __construct, ai_UTCDateTime___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(UTCDateTime, __toString, ai_UTCDateTime___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(UTCDateTime, toDateTime, ai_UTCDateTime_toDateTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -168,12 +168,12 @@ zend_object_value php_phongo_utcdatetime_create_object(zend_class_entry *class_t
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(UTCDatetime)
+PHP_MINIT_FUNCTION(UTCDateTime)
 {
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "UTCDatetime", php_phongo_utcdatetime_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "UTCDateTime", php_phongo_utcdatetime_me);
 	ce.create_object = php_phongo_utcdatetime_create_object;
 	php_phongo_utcdatetime_ce = zend_register_internal_class(&ce TSRMLS_CC);
 

@@ -1,5 +1,5 @@
 <?php
-class Person implements BSON\Persistable {
+class Person implements MongoDB\BSON\Persistable {
     protected $name;
     protected $age;
     protected $address = array();
@@ -33,7 +33,7 @@ class Person implements BSON\Persistable {
         $this->friends = $data["friends"];
     }
 }
-class Address implements BSON\Persistable {
+class Address implements MongoDB\BSON\Persistable {
     protected $zip;
     protected $country;
 

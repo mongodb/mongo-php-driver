@@ -6,7 +6,7 @@ MongoDB\Driver\Cursor::setTypeMap(): Setting typemaps
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-class MyArrayObject extends ArrayObject implements BSON\Unserializable
+class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
 {
     function bsonUnserialize(array $data)
     {

@@ -141,7 +141,7 @@ if test "$MONGODB" != "no"; then
     src/BSON/ObjectID.c \
     src/BSON/Regex.c \
     src/BSON/Timestamp.c \
-    src/BSON/UTCDatetime.c \
+    src/BSON/UTCDateTime.c \
   ";
   MONGODB_ROOT="\
       php_phongo.c \

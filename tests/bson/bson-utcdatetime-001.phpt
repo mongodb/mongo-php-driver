@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDatetime #001
+BSON MongoDB\BSON\UTCDateTime #001
 --INI--
 date.timezone=America/Los_Angeles
 --SKIPIF--
@@ -10,7 +10,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$utcdatetime = new BSON\UTCDatetime("1416445411987");
+$utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
 $result = $manager->executeInsert(NS, array('_id' => 1, 'x' => $utcdatetime));
 $query = new MongoDB\Driver\Query(array('_id' => 1));
 $cursor = $manager->executeQuery(NS, $query);
@@ -23,21 +23,21 @@ var_dump($date->format(DATE_RSS));
 echo $utcdatetime, "\n";
 
 throws(function() {
-    $d = new BSON\UTCDatetime;
+    $d = new MongoDB\BSON\UTCDateTime;
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 $tests = array(
     array($utcdatetime),
-    array($array[0]["x"]),
+    array($array[0]->x),
     array($date),
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", $json = BSON\toJSON($s), "\n";
-    $bson = BSON\fromJSON($json);
-    $testagain = BSON\toArray($bson);
-    var_dump(BSON\toJSON(BSON\fromArray($test)), BSON\toJSON(BSON\fromArray($testagain)));
+    $s = MongoDB\BSON\fromArray($test);
+    echo "Test#{$n} ", $json = MongoDB\BSON\toJSON($s), "\n";
+    $bson = MongoDB\BSON\fromJSON($json);
+    $testagain = MongoDB\BSON\toArray($bson);
+    var_dump(MongoDB\BSON\toJSON(MongoDB\BSON\fromArray($test)), MongoDB\BSON\toJSON(MongoDB\BSON\fromArray($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
 ?>
@@ -55,8 +55,8 @@ Test#1 { "0" : { "$date" : 1416445411987 } }
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 bool(true)
-Test#2 { }
-string(3) "{ }"
-string(3) "{ }"
+Test#2 {%s}
+string(%d) "{%s}"
+string(%d) "{%s}"
 bool(false)
 ===DONE===

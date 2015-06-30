@@ -33,8 +33,8 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", BSON\toJSON($s), "\n";
+    $s = MongoDB\BSON\fromArray($test);
+    echo "Test#{$n} ", MongoDB\BSON\toJSON($s), "\n";
     hex_dump($s);
 }
 ?>
