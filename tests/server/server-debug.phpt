@@ -43,7 +43,7 @@ object(MongoDB\Driver\Server)#%d (%d) {
     ["maxWriteBatchSize"]=>
     int(1000)
     ["localTime"]=>
-    object(BSON\UTCDatetime)#%d (%d) {
+    object(MongoDB\BSON\UTCDatetime)#%d (%d) {
     }
     ["maxWireVersion"]=>
     int(%d)

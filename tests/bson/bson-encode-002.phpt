@@ -6,7 +6,7 @@ BSON encoding: Encoding objects into BSON representation
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-class AssociativeArray implements BSON\Serializable, BSON\Unserializable
+class AssociativeArray implements MongoDB\BSON\Serializable, MongoDB\BSON\Unserializable
 {
     public function bsonSerialize()
     {
@@ -20,7 +20,7 @@ class AssociativeArray implements BSON\Serializable, BSON\Unserializable
     }
 }
 
-class NumericArray implements BSON\Serializable, BSON\Unserializable
+class NumericArray implements MongoDB\BSON\Serializable, MongoDB\BSON\Unserializable
 {
     public function bsonSerialize()
     {
@@ -35,38 +35,38 @@ class NumericArray implements BSON\Serializable, BSON\Unserializable
 }
 
 echo "Testing top-level AssociativeArray:\n";
-$bson = BSON\fromArray(new AssociativeArray);
-echo BSON\toJSON($bson), "\n";
+$bson = MongoDB\BSON\fromArray(new AssociativeArray);
+echo MongoDB\BSON\toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("document" => 'AssociativeArray'));
+$value = MongoDB\BSON\toArray($bson, array("document" => 'AssociativeArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
 echo "\nTesting embedded AssociativeArray:\n";
-$bson = BSON\fromArray(array('embed' => new AssociativeArray));
-echo BSON\toJSON($bson), "\n";
+$bson = MongoDB\BSON\fromArray(array('embed' => new AssociativeArray));
+echo MongoDB\BSON\toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("document" => 'AssociativeArray'));
+$value = MongoDB\BSON\toArray($bson, array("document" => 'AssociativeArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
 echo "\nTesting top-level NumericArray:\n";
-$bson = BSON\fromArray(new NumericArray);
-echo BSON\toJSON($bson), "\n";
+$bson = MongoDB\BSON\fromArray(new NumericArray);
+echo MongoDB\BSON\toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("document" => 'NumericArray'));
+$value = MongoDB\BSON\toArray($bson, array("document" => 'NumericArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
 echo "\nTesting embedded NumericArray:\n";
-$bson = BSON\fromArray(array('embed' => new NumericArray));
-echo BSON\toJSON($bson), "\n";
+$bson = MongoDB\BSON\fromArray(array('embed' => new NumericArray));
+echo MongoDB\BSON\toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("document" => 'NumericArray'));
+$value = MongoDB\BSON\toArray($bson, array("document" => 'NumericArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 

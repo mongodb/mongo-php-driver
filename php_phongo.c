@@ -2081,10 +2081,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromJSON, 0, 0, 1)
 ZEND_END_ARG_INFO();
 
 const zend_function_entry mongodb_functions[] = {
-	ZEND_NS_FE("BSON", fromArray, ai_bson_fromArray)
-	ZEND_NS_FE("BSON", toArray,   ai_bson_toArray)
-	ZEND_NS_FE("BSON", toJSON,    ai_bson_toJSON)
-	ZEND_NS_FE("BSON", fromJSON,  ai_bson_fromJSON)
+	ZEND_NS_FE("MongoDB\\BSON", fromArray, ai_bson_fromArray)
+	ZEND_NS_FE("MongoDB\\BSON", toArray,   ai_bson_toArray)
+	ZEND_NS_FE("MongoDB\\BSON", toJSON,    ai_bson_toJSON)
+	ZEND_NS_FE("MongoDB\\BSON", fromJSON,  ai_bson_fromJSON)
 	PHP_FE_END
 };
 /* }}} */

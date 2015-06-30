@@ -44,7 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_binary_ce;
 
-/* {{{ proto MongoDB\Driver\Binary Binary::__construct(string $data, int $subtype)
+/* {{{ proto MongoDB\BSON\Binary Binary::__construct(string $data, int $subtype)
    Construct a new BSON Binary type */
 PHP_METHOD(Binary, __construct)
 {
@@ -87,7 +87,7 @@ PHP_METHOD(Binary, getSubType)
 /* }}} */
 
 
-/* {{{ BSON\Binary */
+/* {{{ MongoDB\BSON\Binary */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, data)
@@ -144,7 +144,7 @@ PHP_MINIT_FUNCTION(Binary)
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "Binary", php_phongo_binary_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Binary", php_phongo_binary_me);
 	ce.create_object = php_phongo_binary_create_object;
 	php_phongo_binary_ce = zend_register_internal_class(&ce TSRMLS_CC);
 

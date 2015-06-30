@@ -46,7 +46,7 @@ PHONGO_API zend_class_entry *php_phongo_serializable_ce;
 
 
 
-/* {{{ BSON\Serializable */
+/* {{{ MongoDB\BSON\Serializable */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_serializable_bsonserialize, 0, 0, 0)
 ZEND_END_ARG_INFO();
@@ -67,7 +67,7 @@ PHP_MINIT_FUNCTION(Serializable)
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, "BSON", "Serializable", php_phongo_serializable_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Serializable", php_phongo_serializable_me);
 	php_phongo_serializable_ce = zend_register_internal_interface(&ce TSRMLS_CC);
 	zend_class_implements(php_phongo_serializable_ce TSRMLS_CC, 1, php_phongo_type_ce);
 

@@ -6,7 +6,7 @@ BSON encoding: Encoding object/arrays data into user specificied classes
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-class MyArrayObject extends ArrayObject implements BSON\Unserializable {
+class MyArrayObject extends ArrayObject implements MongoDb\BSON\Unserializable {
     function bsonUnserialize(array $data) {
         parent::__construct($data);
     }
@@ -21,9 +21,9 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", BSON\toJSON($s), "\n";
-    $val = BSON\toArray($s, array("document"=> "MyArrayObject", "array" => "MyArrayObject"));
+    $s = MongoDb\BSON\fromArray($test);
+    echo "Test#{$n} ", MongoDb\BSON\toJSON($s), "\n";
+    $val = MongoDb\BSON\toArray($s, array("document"=> "MyArrayObject", "array" => "MyArrayObject"));
     var_dump($val);
 }
 ?>
