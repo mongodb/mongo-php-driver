@@ -1,5 +1,5 @@
 --TEST--
-BSON MongoDB\BSON\UTCDatetime #001
+BSON MongoDB\BSON\UTCDateTime #001
 --INI--
 date.timezone=America/Los_Angeles
 --SKIPIF--
@@ -10,7 +10,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$utcdatetime = new MongoDB\BSON\UTCDatetime("1416445411987");
+$utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
 $result = $manager->executeInsert(NS, array('_id' => 1, 'x' => $utcdatetime));
 $query = new MongoDB\Driver\Query(array('_id' => 1));
 $cursor = $manager->executeQuery(NS, $query);
@@ -23,12 +23,12 @@ var_dump($date->format(DATE_RSS));
 echo $utcdatetime, "\n";
 
 throws(function() {
-    $d = new MongoDB\BSON\UTCDatetime;
+    $d = new MongoDB\BSON\UTCDateTime;
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 $tests = array(
     array($utcdatetime),
-    array($array[0]["x"]),
+    array($array[0]->x),
     array($date),
 );
 
@@ -55,8 +55,8 @@ Test#1 { "0" : { "$date" : 1416445411987 } }
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 bool(true)
-Test#2 { }
-string(3) "{ }"
-string(3) "{ }"
+Test#2 {%s}
+string(%d) "{%s}"
+string(%d) "{%s}"
 bool(false)
 ===DONE===

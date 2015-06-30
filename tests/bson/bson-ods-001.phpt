@@ -63,7 +63,7 @@ class Person implements MongoDB\BSON\Persistable {
  
         /* If __original doesn't exist, this is a fresh object that needs to be inserted */
         if (empty($this->__original)) {
-            $props["_created"] = new MongoDB\BSON\UTCDatetime(microtime(true) * 1000);
+            $props["_created"] = new MongoDB\BSON\UTCDateTime(microtime(true) * 1000);
             return $props;
         }
  

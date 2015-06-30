@@ -167,7 +167,7 @@
 	* PHPC-222: WriteConcernError can cause segfaults on Ubuntu Precise 32bit
 
 2015-04-01  Hannes Magnusson  <bjori@php.net>
-	* PHPC-220: BSON\UTCDatetime broken on 32bit
+	* PHPC-220: BSON\UTCDateTime broken on 32bit
 
 2015-04-01  Hannes Magnusson  <bjori@php.net>
 	* Fix compile warning on 32bit

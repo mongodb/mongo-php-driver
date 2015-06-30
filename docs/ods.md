@@ -14,7 +14,7 @@ pecl/mongodb exports 4 public interfaces to facilitate serializing PHP classes t
 
 Objects that implement the BSON\Type interface get very special treatment by the BSON serializer. In
 general, these objects represent a BSON type that cannot be natively represented in PHP - such as
-BSON\UTCDatetime and BSON\ObjectID - and are specifically checked for and handled.
+BSON\UTCDateTime and BSON\ObjectID - and are specifically checked for and handled.
 Note that implmenting BSON\Type and or BSON\Unserializable standalone does not do anything for
 userland classes.
 
