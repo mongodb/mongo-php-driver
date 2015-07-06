@@ -885,37 +885,37 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 
 	reader = bson_reader_new_from_data(data, data_len);
 
-	if (!(b = bson_reader_read(reader, &eof))) {
+	if (!(b = bson_reader_read(reader, NULL))) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Could not read document from reader");
 		return 0;
 	}
 
-	do {
-		if (!bson_iter_init(&iter, b)) {
-			bson_reader_destroy(reader);
-			return 0;
-		}
-
-		array_init(state->zchild);
-		bson_iter_visit_all(&iter, &php_bson_visitors, state);
-		if ((state->map.array || state->odm) && instanceof_function(state->odm ? state->odm : state->map.array, php_phongo_unserializable_ce TSRMLS_CC)) {
-			zval *obj = NULL;
-
-			MAKE_STD_ZVAL(obj);
-			object_init_ex(obj, state->odm ? state->odm : state->map.array);
-			zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
-			SEPARATE_ZVAL(&state->zchild);
-			zval_dtor(state->zchild);
-			ZVAL_ZVAL(state->zchild, obj, 1, 1);
-		}
-	} while ((b = bson_reader_read(reader, &eof)));
-
-	bson_reader_destroy(reader);
-
-	if (!eof) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid BSON detected");
+	if (!bson_iter_init(&iter, b)) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Could not initialize BSON iterator");
+		bson_reader_destroy(reader);
 		return 0;
 	}
+
+	array_init(state->zchild);
+	bson_iter_visit_all(&iter, &php_bson_visitors, state);
+	if ((state->map.array || state->odm) && instanceof_function(state->odm ? state->odm : state->map.array, php_phongo_unserializable_ce TSRMLS_CC)) {
+		zval *obj = NULL;
+
+		MAKE_STD_ZVAL(obj);
+		object_init_ex(obj, state->odm ? state->odm : state->map.array);
+		zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
+		SEPARATE_ZVAL(&state->zchild);
+		zval_dtor(state->zchild);
+		ZVAL_ZVAL(state->zchild, obj, 1, 1);
+	}
+
+	if (bson_reader_read(reader, &eof) || !eof) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Reading document did not exhaust input buffer");
+		bson_reader_destroy(reader);
+		return 0;
+	}
+
+	bson_reader_destroy(reader);
 
 	return 1;
 }
@@ -1007,6 +1007,7 @@ PHP_FUNCTION(toArray)
 
 	MAKE_STD_ZVAL(state.zchild);
 	if (!bson_to_zval((const unsigned char *)data, data_len, &state)) {
+		zval_ptr_dtor(&state.zchild);
 		RETURN_NULL();
 	}
 	RETURN_ZVAL(state.zchild, 0, 1);
