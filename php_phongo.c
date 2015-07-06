@@ -329,7 +329,6 @@ bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TS
 				return false;
 			}
 
-			convert_to_array_ex(&modifiers);
 			zend_hash_merge(HASH_OF(zquery), HASH_OF(modifiers), (void (*)(void*))zval_add_ref, NULL, sizeof(zval *), 1);
 		}
 
@@ -342,7 +341,6 @@ bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TS
 				return false;
 			}
 
-			convert_to_array_ex(&projection);
 			query->selector = bson_new();
 			zval_to_bson(projection, PHONGO_BSON_NONE, query->selector, NULL TSRMLS_CC);
 		}
@@ -356,7 +354,7 @@ bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TS
 				return false;
 			}
 
-			convert_to_array_ex(&sort);
+			convert_to_object_ex(&sort);
 			Z_ADDREF_P(sort);
 			add_assoc_zval_ex(zquery, ZEND_STRS("$orderby"), sort);
 		}
