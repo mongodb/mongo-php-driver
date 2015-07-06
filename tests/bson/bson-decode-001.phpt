@@ -62,7 +62,7 @@ Test#2 { "0" : null }
 OK
 Test#3 { "0" : 123 }
 OK
-Test#4 { "0" : 4.230000 }
+Test#4 { "0" : 4.23 }
 OK
 Test#5 { "0" : true }
 OK
