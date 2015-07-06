@@ -356,7 +356,7 @@ bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TS
 				return false;
 			}
 
-			convert_to_array_ex(&sort);
+			convert_to_object_ex(&sort);
 			Z_ADDREF_P(sort);
 			add_assoc_zval_ex(zquery, ZEND_STRS("$orderby"), sort);
 		}
