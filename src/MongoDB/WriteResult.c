@@ -235,7 +235,7 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 	}
 }
 /* }}} */
-/* {{{ proto WriteConcernError[] WriteResult::getWriteConcernError()
+/* {{{ proto WriteConcernError WriteResult::getWriteConcernError()
    Return any write concern error that occurred */
 PHP_METHOD(WriteResult, getWriteConcernError)
 {
