@@ -32,7 +32,7 @@ deletedCount: 0
 ===> Collection
 array(1) {
   [0]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(1)
     ["x"]=>

@@ -21,7 +21,7 @@ class MyIteratorIterator extends IteratorIterator
         $key = parent::key();
         $current = parent::current();
         $position = is_int($key) ? (string) $key : 'null';
-        $document = is_array($current) ? sprintf("{_id: %d}", $current['_id']) : 'null';
+        $document = is_object($current) ? sprintf("{_id: %d}", $current->_id) : 'null';
         printf("%s: %s => %s\n", $this->name, $position, $document);
     }
 }

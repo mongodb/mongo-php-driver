@@ -31,7 +31,7 @@ try {
     $query = new MongoDB\Driver\Query(array("very" => "important"));
     $cursor = $manager->executeQuery(NS, $query);
     foreach($cursor as $document) {
-        var_dump($document["very"]);
+        var_dump($document->very);
     }
     $command = new MongoDB\Driver\Command(array("drop" => COLLECTION_NAME));
     $result = $manager->executeCommand(DATABASE_NAME, $command);

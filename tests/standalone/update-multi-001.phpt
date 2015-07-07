@@ -79,46 +79,46 @@ printf("Changed %d out of expected 3 (_id=4, _id=5, _id=6)\n", $result->getModif
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 Changed 1 out of expected 1 (_id=1)
 array(6) {
   [0]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(1)
     ["x"]=>
     int(3)
   }
   [1]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(2)
     ["x"]=>
     int(2)
   }
   [2]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(3)
     ["x"]=>
     int(2)
   }
   [3]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(4)
     ["x"]=>
     int(2)
   }
   [4]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(5)
     ["x"]=>
     int(2)
   }
   [5]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(6)
     ["x"]=>
@@ -128,42 +128,42 @@ array(6) {
 Changed 2 out of expected 2, (_id=5, _id=6)
 array(6) {
   [0]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(1)
     ["x"]=>
     int(3)
   }
   [1]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(2)
     ["x"]=>
     int(4)
   }
   [2]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(3)
     ["x"]=>
     int(2)
   }
   [3]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(4)
     ["x"]=>
     int(2)
   }
   [4]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(5)
     ["x"]=>
     int(2)
   }
   [5]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(6)
     ["x"]=>
@@ -173,42 +173,42 @@ array(6) {
 Changed 1 out of expected 1, (_id=2)
 array(6) {
   [0]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(1)
     ["x"]=>
     int(3)
   }
   [1]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(2)
     ["x"]=>
     int(4)
   }
   [2]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(3)
     ["x"]=>
     int(41)
   }
   [3]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(4)
     ["x"]=>
     int(2)
   }
   [4]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(5)
     ["x"]=>
     int(2)
   }
   [5]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(6)
     ["x"]=>
@@ -218,42 +218,42 @@ array(6) {
 Changed 1 out of expected 1 (id_=3)
 array(6) {
   [0]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(1)
     ["x"]=>
     int(3)
   }
   [1]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(2)
     ["x"]=>
     int(4)
   }
   [2]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(3)
     ["x"]=>
     int(41)
   }
   [3]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(4)
     ["x"]=>
     int(42)
   }
   [4]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(5)
     ["x"]=>
     int(42)
   }
   [5]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(6)
     ["x"]=>

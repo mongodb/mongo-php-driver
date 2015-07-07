@@ -26,7 +26,7 @@ $cursor->setTypeMap(array("array" => "MyArrayObject"));
 
 $documents = $cursor->toArray();
 
-var_dump($documents[0]['x'] instanceof MyArrayObject);
+var_dump($documents[0]->x instanceof MyArrayObject);
 
 ?>
 ===DONE===

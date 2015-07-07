@@ -26,12 +26,12 @@ var_dump(iterator_to_array($cursor));
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 bool(true)
 bool(true)
 array(3) {
   [0]=>
-  array(3) {
+  object(stdClass)#%d (3) {
     ["_id"]=>
     int(3)
     ["x"]=>
@@ -40,7 +40,7 @@ array(3) {
     int(5)
   }
   [1]=>
-  array(3) {
+  object(stdClass)#%d (3) {
     ["_id"]=>
     int(2)
     ["x"]=>
@@ -49,7 +49,7 @@ array(3) {
     int(4)
   }
   [2]=>
-  array(3) {
+  object(stdClass)#%d (3) {
     ["_id"]=>
     int(1)
     ["x"]=>

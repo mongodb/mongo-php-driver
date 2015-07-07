@@ -19,7 +19,7 @@ $cursor = $manager->executeQuery(NS, $query);
 failGetMore($manager);
 throws(function() use ($cursor) {
     foreach ($cursor as $document) {
-        echo $document['username'] . "\n";
+        echo $document->username . "\n";
     }
 }, "MongoDB\Driver\Exception\ConnectionException");
 

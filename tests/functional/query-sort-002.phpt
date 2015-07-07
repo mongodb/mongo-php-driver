@@ -18,7 +18,7 @@ $query = new MongoDB\Driver\Query(array(), array(
 $cursor = $manager->executeQuery(NS, $query);
 
 foreach ($cursor as $document) {
-    echo $document['username'] . "\n";
+    echo $document->username . "\n";
 }
 
 ?>

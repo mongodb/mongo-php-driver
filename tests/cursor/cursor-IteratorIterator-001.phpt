@@ -20,14 +20,14 @@ foreach (new IteratorIterator($cursor) as $document) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-array(2) {
+--EXPECTF--
+object(stdClass)#%d (2) {
   ["_id"]=>
   int(1)
   ["x"]=>
   int(1)
 }
-array(2) {
+object(stdClass)#%d (2) {
   ["_id"]=>
   int(2)
   ["x"]=>

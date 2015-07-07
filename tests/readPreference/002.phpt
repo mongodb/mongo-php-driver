@@ -47,7 +47,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["has_fields"]=>
     bool(false)
     ["query"]=>
-    array(1) {
+    object(stdClass)#%d (1) {
       ["$query"]=>
       object(stdClass)#%d (%d) {
         ["my"]=>
@@ -55,7 +55,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
       }
     }
     ["fields"]=>
-    array(0) {
+    object(stdClass)#%d (0) {
     }
     ["read_preference"]=>
     array(2) {
@@ -103,7 +103,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["has_fields"]=>
     bool(false)
     ["query"]=>
-    array(2) {
+    object(stdClass)#%d (2) {
       ["$query"]=>
       object(stdClass)#%d (%d) {
         ["my"]=>
@@ -119,7 +119,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
       }
     }
     ["fields"]=>
-    array(0) {
+    object(stdClass)#%d (0) {
     }
     ["read_preference"]=>
     array(2) {
@@ -167,7 +167,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["has_fields"]=>
     bool(false)
     ["query"]=>
-    array(2) {
+    object(stdClass)#%d (2) {
       ["$query"]=>
       object(stdClass)#%d (%d) {
         ["my"]=>
@@ -183,7 +183,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
       }
     }
     ["fields"]=>
-    array(0) {
+    object(stdClass)#%d (0) {
     }
     ["read_preference"]=>
     array(2) {
@@ -231,7 +231,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["has_fields"]=>
     bool(false)
     ["query"]=>
-    array(2) {
+    object(stdClass)#%d (2) {
       ["$query"]=>
       object(stdClass)#%d (%d) {
         ["my"]=>
@@ -247,7 +247,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
       }
     }
     ["fields"]=>
-    array(0) {
+    object(stdClass)#%d (0) {
     }
     ["read_preference"]=>
     array(2) {
@@ -295,7 +295,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["has_fields"]=>
     bool(false)
     ["query"]=>
-    array(2) {
+    object(stdClass)#%d (2) {
       ["$query"]=>
       object(stdClass)#%d (%d) {
         ["my"]=>
@@ -311,7 +311,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
       }
     }
     ["fields"]=>
-    array(0) {
+    object(stdClass)#%d (0) {
     }
     ["read_preference"]=>
     array(2) {

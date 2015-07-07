@@ -1346,6 +1346,8 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 	}
 	if (sd->tags.len) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+		/* Use native arrays for debugging output */
+		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		MAKE_STD_ZVAL(state.zchild);
 		bson_to_zval(bson_get_data(&sd->tags), sd->tags.len, &state);
@@ -1353,6 +1355,8 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 	}
 	{
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+		/* Use native arrays for debugging output */
+		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		MAKE_STD_ZVAL(state.zchild);
 		bson_to_zval(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
@@ -1370,6 +1374,8 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 	add_assoc_long_ex(retval, ZEND_STRS("mode"), read_prefs->mode);
 	if (read_prefs->tags.len) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+		/* Use native arrays for debugging output */
+		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		MAKE_STD_ZVAL(state.zchild);
 		bson_to_zval(bson_get_data(&read_prefs->tags), read_prefs->tags.len, &state);
@@ -1432,6 +1438,9 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{
 		_ADD_BOOL(zcursor, has_fields);
 #undef _ADD_BOOL
 
+		/* Avoid using PHONGO_TYPEMAP_NATIVE_ARRAY for decoding query, selector,
+		 * and current documents so that users can differentiate BSON arrays
+		 * and documents. */
 		{
 			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 

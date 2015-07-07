@@ -10,7 +10,7 @@ function getNumOpenCursors(MongoDB\Driver\Manager $manager)
 {
     $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(array('serverStatus' => 1)));
     $result = current($cursor->toArray());
-    return $result['cursors']->totalOpen;
+    return $result->cursors->totalOpen;
 }
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);

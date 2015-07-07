@@ -34,14 +34,14 @@ function fetch($manager, $typemap = array()) {
 
 /* Default */
 $documents = fetch($manager);
-var_dump(is_array($documents[0]['bson_array']));
-var_dump(is_object($documents[0]['bson_object']));
+var_dump(is_array($documents[0]->bson_array));
+var_dump(is_object($documents[0]->bson_object));
 
 
 /* Setting to MyArrayObject */
 $documents = fetch($manager, array("array" => "MyArrayObject"));
-var_dump($documents[0]['bson_array'] instanceof MyArrayObject);
-var_dump(is_object($documents[0]['bson_object']));
+var_dump($documents[0]->bson_array instanceof MyArrayObject);
+var_dump(is_object($documents[0]->bson_object));
 
 /* Setting to MyArrayObject & MyArrayObject */
 $documents = fetch($manager, array("array" => "MyArrayObject", "document" => "MyArrayObject"));
@@ -55,7 +55,7 @@ var_dump(is_array($documents[0]['bson_array']));
 var_dump(is_array($documents[0]['bson_object']));
 
 
-/* Setting to stdlcass & array */
+/* Setting to stdclass & array */
 $documents = fetch($manager, array("array" => "stdclass", "document" => "array"));
 var_dump(is_object($documents[0]['bson_array']));
 var_dump(is_array($documents[0]['bson_object']));
@@ -63,14 +63,14 @@ var_dump(is_array($documents[0]['bson_object']));
 
 /* Setting to array & stdclass */
 $documents = fetch($manager, array("array" => "array", "document" => "stdclass"));
-var_dump(is_array($documents[0]['bson_array']));
-var_dump(is_object($documents[0]['bson_object']));
+var_dump(is_array($documents[0]->bson_array));
+var_dump(is_object($documents[0]->bson_object));
 
 
 /* Setting to stdclass */
 $documents = fetch($manager, array("array" => "stdclass", "document" => "stdclass"));
-var_dump(is_object($documents[0]['bson_array']));
-var_dump(is_object($documents[0]['bson_object']));
+var_dump(is_object($documents[0]->bson_array));
+var_dump(is_object($documents[0]->bson_object));
 ?>
 ===DONE===
 <?php exit(0); ?>

@@ -896,17 +896,40 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 		return 0;
 	}
 
+	/* We initialize an array because it will either be returned as-is (native
+	 * array in type map), passed to bsonUnserialize() (ODM class), or used to
+	 * initialize a stdClass object (native object in type map). */
 	array_init(state->zchild);
 	bson_iter_visit_all(&iter, &php_bson_visitors, state);
-	if ((state->map.array || state->odm) && instanceof_function(state->odm ? state->odm : state->map.array, php_phongo_unserializable_ce TSRMLS_CC)) {
-		zval *obj = NULL;
 
-		MAKE_STD_ZVAL(obj);
-		object_init_ex(obj, state->odm ? state->odm : state->map.array);
-		zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
-		SEPARATE_ZVAL(&state->zchild);
-		zval_dtor(state->zchild);
-		ZVAL_ZVAL(state->zchild, obj, 1, 1);
+	/* If php_phongo_bson_visit_binary() finds an ODM class, it supersedes our
+	 * document type. */
+	if (state->odm) {
+		state->map.document_type = PHONGO_TYPEMAP_CLASS;
+	}
+
+	switch (state->map.document_type) {
+		case PHONGO_TYPEMAP_NATIVE_ARRAY:
+			/* Nothing to do here */
+			break;
+
+		case PHONGO_TYPEMAP_CLASS:
+			/* If the class implements Unserializable, initialize the object
+			 * from our array data; otherwise, fall through to native object. */
+			if (instanceof_function(state->odm ? state->odm : state->map.document, php_phongo_unserializable_ce TSRMLS_CC)) {
+				zval *obj = NULL;
+
+				MAKE_STD_ZVAL(obj);
+				object_init_ex(obj, state->odm ? state->odm : state->map.document);
+				zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
+				zval_ptr_dtor(&state->zchild);
+				state->zchild = obj;
+				break;
+			}
+
+		case PHONGO_TYPEMAP_NATIVE_OBJECT:
+		default:
+			object_and_properties_init(state->zchild, zend_standard_class_def, Z_ARRVAL_P(state->zchild));
 	}
 
 	if (bson_reader_read(reader, &eof) || !eof) {

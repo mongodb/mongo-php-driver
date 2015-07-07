@@ -342,7 +342,7 @@ function configureFailPoint(MongoDB\Driver\Manager $manager, $failPoint, $mode, 
     $cmd = new MongoDB\Driver\Command($doc);
     $result = $manager->executeCommand("admin", $cmd);
     $arr = current($result->toArray());
-    if (empty($arr["ok"])) {
+    if (empty($arr->ok)) {
         var_dump($result);
         throw new RuntimeException("Failpoint failed");
     }

@@ -44,7 +44,7 @@ foreach($tests as $n => $test) {
     $s = fromArray($test);
     echo "Test#{$n} ", toJSON($s), "\n";
     $val = toArray($s);
-    if ($val == $test) {
+    if ($val == (object) $test) {
         echo "OK\n";
     } else {
         var_dump($val, $test);

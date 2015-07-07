@@ -45,7 +45,7 @@ upsertedId[1]: object(%s\ObjectID)#%d (%d) {
 ===> Collection
 array(2) {
   [0]=>
-  array(3) {
+  object(stdClass)#%d (3) {
     ["_id"]=>
     object(%s\ObjectID)#%d (%d) {
       ["oid"]=>
@@ -57,7 +57,7 @@ array(2) {
     string(3) "bar"
   }
   [1]=>
-  array(3) {
+  object(stdClass)#%d (3) {
     ["_id"]=>
     object(%s\ObjectID)#%d (%d) {
       ["oid"]=>

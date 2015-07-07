@@ -25,18 +25,18 @@ var_dump(iterator_to_array($cursor));
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 Dumping Cursor::toArray():
 array(2) {
   [0]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(1)
     ["x"]=>
     int(1)
   }
   [1]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(2)
     ["x"]=>
@@ -47,14 +47,14 @@ array(2) {
 Dumping iterated Cursor:
 array(2) {
   [0]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(1)
     ["x"]=>
     int(1)
   }
   [1]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(2)
     ["x"]=>

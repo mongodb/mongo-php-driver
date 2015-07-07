@@ -56,7 +56,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["has_fields"]=>
     bool(true)
     ["query"]=>
-    array(1) {
+    object(stdClass)#%d (1) {
       ["$query"]=>
       object(stdClass)#%d (%d) {
         ["x"]=>
@@ -64,7 +64,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
       }
     }
     ["fields"]=>
-    array(1) {
+    object(stdClass)#%d (1) {
       ["y"]=>
       int(1)
     }
@@ -89,7 +89,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["ns"]=>
     string(39) "phongo.manager_manager_executeQuery_001"
     ["current_doc"]=>
-    array(2) {
+    object(stdClass)#%d (2) {
       ["_id"]=>
       int(2)
       ["y"]=>
@@ -104,7 +104,7 @@ string(%d) "%s"
 int(%d)
 array(1) {
   [0]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(2)
     ["y"]=>

@@ -26,6 +26,11 @@ var_dump($query);
 
 $cursor = $manager->executeQuery(NS, $query);
 
+/* Numeric keys of stdClass instances cannot be directly accessed, so ensure the
+ * document is decoded as a PHP array.
+ */
+$cursor->setTypeMap(array('document' => 'array'));
+
 foreach ($cursor as $document) {
     echo $document['0'] . "\n";
 }
@@ -37,7 +42,7 @@ foreach ($cursor as $document) {
 Inserted: 5
 object(MongoDB\Driver\Query)#%d (6) {
   ["query"]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["$orderby"]=>
     object(stdClass)#%d (1) {
       [0]=>

@@ -56,7 +56,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["upsertedIds"]=>
   array(1) {
     [0]=>
-    object(stdClass)#%d (%d) {
+    array(%d) {
       ["index"]=>
       int(3)
       ["_id"]=>
@@ -85,14 +85,14 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
 ===> Collection
 array(2) {
   [0]=>
-  array(2) {
+  object(stdClass)#%d (%d) {
     ["_id"]=>
     int(2)
     ["x"]=>
     int(1)
   }
   [1]=>
-  array(2) {
+  object(stdClass)#%d (%d) {
     ["_id"]=>
     int(3)
     ["x"]=>

@@ -43,21 +43,21 @@ deletedCount: 0
 ===> Collection
 array(3) {
   [0]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(1)
     ["x"]=>
     int(2)
   }
   [1]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(2)
     ["x"]=>
     int(2)
   }
   [2]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(3)
     ["x"]=>

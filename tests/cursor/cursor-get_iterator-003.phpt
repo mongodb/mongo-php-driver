@@ -40,17 +40,17 @@ Inserted: 3
 First Cursor::toArray():
 array(3) {
   [0]=>
-  array(1) {
+  object(stdClass)#%d (1) {
     ["_id"]=>
     int(0)
   }
   [1]=>
-  array(1) {
+  object(stdClass)#%d (1) {
     ["_id"]=>
     int(1)
   }
   [2]=>
-  array(1) {
+  object(stdClass)#%d (1) {
     ["_id"]=>
     int(2)
   }

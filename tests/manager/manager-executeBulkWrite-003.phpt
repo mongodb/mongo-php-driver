@@ -71,12 +71,12 @@ writeError[3].code: 11000
 ===> Collection
 array(2) {
   [0]=>
-  array(1) {
+  object(stdClass)#%d (1) {
     ["_id"]=>
     int(1)
   }
   [1]=>
-  array(1) {
+  object(stdClass)#%d (1) {
     ["_id"]=>
     int(2)
   }

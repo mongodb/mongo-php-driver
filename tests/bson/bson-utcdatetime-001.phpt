@@ -29,7 +29,7 @@ throws(function() use($classname) {
 
 $tests = array(
     array($utcdatetime),
-    array($array[0]["x"]),
+    array($array[0]->x),
     array($date),
 );
 

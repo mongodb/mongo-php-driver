@@ -94,7 +94,7 @@ Test { "0" : { "__pclass" : { "$type" : "80", "$binary" : "UGVyc29u" }, "name" :
    100 : 00 04 61 64 64 72 65 73 73 65 73 00 05 00 00 00  [..addresses.....]
    110 : 00 04 66 72 69 65 6e 64 73 00 05 00 00 00 00 00  [..friends.......]
    120 : 00 00 00                                         [...]
-array(1) {
+object(stdClass)#%d (1) {
   [0]=>
   object(Person)#%d (5) {
     ["name":protected]=>

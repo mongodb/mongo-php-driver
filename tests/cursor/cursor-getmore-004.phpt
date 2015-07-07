@@ -28,7 +28,7 @@ $command = new MongoDB\Driver\Command(array(
 $cursor = $manager->executeCommand(DATABASE_NAME, $command);
 
 foreach ($cursor as $i => $document) {
-    printf("%d => {_id: %d}\n", $i, $document['_id']);
+    printf("%d => {_id: %d}\n", $i, $document->_id);
 }
 
 ?>

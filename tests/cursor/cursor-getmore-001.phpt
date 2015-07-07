@@ -20,7 +20,7 @@ printf("Inserted: %d\n", $writeResult->getInsertedCount());
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array(), array('batchSize' => 2)));
 
 foreach ($cursor as $i => $document) {
-    printf("%d => {_id: %d}\n", $i, $document['_id']);
+    printf("%d => {_id: %d}\n", $i, $document->_id);
 }
 
 ?>

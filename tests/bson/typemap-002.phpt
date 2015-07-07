@@ -41,14 +41,14 @@ var_dump(is_array($documents[0]['bson_object']));
 
 /* Setting to array & object */
 $documents = fetch($manager, array("array" => "array", "document" => "object"));
-var_dump(is_array($documents[0]['bson_array']));
-var_dump(is_object($documents[0]['bson_object']));
+var_dump(is_array($documents[0]->bson_array));
+var_dump(is_object($documents[0]->bson_object));
 
 
 /* Setting to object */
 $documents = fetch($manager, array("array" => "object", "document" => "object"));
-var_dump(is_object($documents[0]['bson_array']));
-var_dump(is_object($documents[0]['bson_object']));
+var_dump(is_object($documents[0]->bson_array));
+var_dump(is_object($documents[0]->bson_object));
 ?>
 ===DONE===
 <?php exit(0); ?>
