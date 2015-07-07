@@ -142,6 +142,10 @@ function CLEANUP($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME) {
 }
 
 function START($id, array $options = array()) {
+    if (getenv("TRAVIS")) {
+        exit("skip Cannot start/stop server ondemand on travis");
+    }
+
     $options += array("name" => "mongod", "id" => $id);
     $opts = [
         "http" => [
