@@ -136,7 +136,7 @@ function CLEANUP($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME) {
             } while (0);
         }
     } catch(Exception $e) {
-        echo "skip (cleanup)" . $e->getCode(), ": ", $e->getMessage();
+        echo "skip (cleanup); $uri" . $e->getCode(), ": ", $e->getMessage();
         exit(1);
     }
 }
@@ -163,6 +163,12 @@ function START($id, array $options = array()) {
         define($id, false);
     } else {
         define($id, $result["mongodb_uri"]);
+        $FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
+
+        $json = file_get_contents($FILENAME);
+        $config = json_decode($json, true);
+        $config[$id] = constant($id);
+        file_put_contents($FILENAME, json_encode($config, JSON_PRETTY_PRINT));
     }
 }
 function DELETE($id) {
@@ -176,6 +182,12 @@ function DELETE($id) {
     ];
     $ctx = stream_context_create($opts);
     $json = file_get_contents(getMOUri() . "/servers/$id", false, $ctx);
+        $FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
+
+        $json = file_get_contents($FILENAME);
+        $config = json_decode($json, true);
+        unset($config[$id]);
+        file_put_contents($FILENAME, json_encode($config, JSON_PRETTY_PRINT));
 }
 function severityToString($type) {
     switch($type) {
