@@ -49,7 +49,7 @@ object(Person)#%d (5) {
   string(6) "Hannes"
   ["age":protected]=>
   int(42)
-  ["address":protected]=>
+  ["addresses":protected]=>
   array(2) {
     [0]=>
     object(Address)#%d (2) {
@@ -74,7 +74,7 @@ object(Person)#%d (5) {
       string(6) "Jeremy"
       ["age":protected]=>
       int(21)
-      ["address":protected]=>
+      ["addresses":protected]=>
       array(0) {
       }
       ["friends":protected]=>

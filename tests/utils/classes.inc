@@ -4,18 +4,18 @@ use MongoDB\BSON as BSON;
 class Person implements BSON\Persistable {
     protected $name;
     protected $age;
-    protected $address = array();
+    protected $addresses = array();
     protected $friends = array();
     protected $secret = "none";
 
     function __construct($name, $age) {
         $this->name = $name;
         $this->age  = $age;
-        $this->address = array();
+        $this->addresses = array();
         $this->secret = "$name confidential info";
     }
     function addAddress(Address $address) {
-        $this->address[] = $address;
+        $this->addresses[] = $address;
     }
     function addFriend(Person $friend) {
         $this->friends[] = $friend;
@@ -24,14 +24,14 @@ class Person implements BSON\Persistable {
         return array(
             "name"    => $this->name,
             "age"     => $this->age,
-            "address" => $this->address,
+            "addresses" => $this->addresses,
             "friends" => $this->friends,
         );
     }
     function bsonUnserialize(array $data) {
         $this->name    = $data["name"];
         $this->age     = $data["age"];
-        $this->address = $data["address"];
+        $this->addresses = $data["addresses"];
         $this->friends = $data["friends"];
     }
 }
