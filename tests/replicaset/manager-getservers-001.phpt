@@ -85,7 +85,7 @@ array(3) {
       ["me"]=>
       string(19) "192.168.112.10:3000"
       ["electionId"]=>
-      object(%s\ObjectID)#8 (1) {
+      object(%s\ObjectID)#%d (1) {
         ["oid"]=>
         string(24) "%s"
       }
