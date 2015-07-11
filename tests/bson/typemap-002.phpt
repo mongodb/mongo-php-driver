@@ -32,30 +32,40 @@ function fetch($manager, $typemap = array()) {
 }
 
 
-
-/* Setting to stdlcass & array */
-$documents = fetch($manager, array("array" => "object", "document" => "array"));
-var_dump(is_object($documents[0]['bson_array']));
+echo "Setting to 'object' for arrays and 'array' for embedded and root documents\n";
+$documents = fetch($manager, array("array" => "object", "document" => "array", "root" => "array"));
+var_dump(is_array($documents[0]));
+var_dump($documents[0]['bson_array'] instanceof stdClass);
 var_dump(is_array($documents[0]['bson_object']));
 
 
-/* Setting to array & object */
-$documents = fetch($manager, array("array" => "array", "document" => "object"));
+echo "\nSetting to 'array' for arrays and 'object' for embedded and root documents\n";
+$documents = fetch($manager, array("array" => "array", "document" => "object", "root" => "object"));
+var_dump($documents[0] instanceof stdClass);
 var_dump(is_array($documents[0]->bson_array));
-var_dump(is_object($documents[0]->bson_object));
+var_dump($documents[0]->bson_object instanceof stdClass);
 
 
-/* Setting to object */
-$documents = fetch($manager, array("array" => "object", "document" => "object"));
-var_dump(is_object($documents[0]->bson_array));
-var_dump(is_object($documents[0]->bson_object));
+echo "\nSetting to 'object' for arrays, embedded, and root documents\n";
+$documents = fetch($manager, array("array" => "object", "document" => "object", "root" => "object"));
+var_dump($documents[0] instanceof stdClass);
+var_dump($documents[0]->bson_array instanceof stdClass);
+var_dump($documents[0]->bson_object instanceof stdClass);
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+Setting to 'object' for arrays and 'array' for embedded and root documents
 bool(true)
 bool(true)
 bool(true)
+
+Setting to 'array' for arrays and 'object' for embedded and root documents
+bool(true)
+bool(true)
+bool(true)
+
+Setting to 'object' for arrays, embedded, and root documents
 bool(true)
 bool(true)
 bool(true)

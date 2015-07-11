@@ -29,7 +29,7 @@ $cursor = $manager->executeQuery(NS, $query);
 /* Numeric keys of stdClass instances cannot be directly accessed, so ensure the
  * document is decoded as a PHP array.
  */
-$cursor->setTypeMap(array('document' => 'array'));
+$cursor->setTypeMap(array('root' => 'array'));
 
 foreach ($cursor as $document) {
     echo $document['0'] . "\n";

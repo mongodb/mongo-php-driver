@@ -23,7 +23,7 @@ $manager->executeBulkWrite(NS, $bulk);
 
 $query = new MongoDB\Driver\Query(array());
 $qr = $manager->executeQuery(NS, $query);
-$qr->setTypeMap(array("document"=> "MyArrayObject", "array" => "MyArrayObject"));
+$qr->setTypeMap(array("root"=> "MyArrayObject", "document"=> "MyArrayObject", "array" => "MyArrayObject"));
 
 foreach($qr as $obj) {
     var_dump($obj);

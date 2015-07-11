@@ -40,7 +40,7 @@ $bson = BSON\fromArray(new AssociativeArray);
 echo BSON\toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("document" => 'AssociativeArray'));
+$value = BSON\toArray($bson, array("root" => 'AssociativeArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
@@ -58,7 +58,7 @@ $bson = BSON\fromArray(new NumericArray);
 echo BSON\toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("document" => 'NumericArray'));
+$value = BSON\toArray($bson, array("root" => 'NumericArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
@@ -105,14 +105,11 @@ array(2) {
   [0]=>
   string(4) "data"
 }
-AssociativeArray::bsonUnserialize() was called with data:
-array(1) {
+Decoded BSON:
+object(stdClass)#%d (1) {
   ["embed"]=>
   object(AssociativeArray)#%d (0) {
   }
-}
-Decoded BSON:
-object(AssociativeArray)#%d (0) {
 }
 
 Testing top-level NumericArray:
@@ -148,13 +145,10 @@ array(3) {
   [2]=>
   int(3)
 }
-NumericArray::bsonUnserialize() was called with data:
-array(1) {
+Decoded BSON:
+object(stdClass)#%d (1) {
   ["embed"]=>
   object(NumericArray)#%d (0) {
   }
-}
-Decoded BSON:
-object(NumericArray)#%d (0) {
 }
 ===DONE===

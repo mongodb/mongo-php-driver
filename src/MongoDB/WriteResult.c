@@ -445,6 +445,7 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	add_assoc_long_ex(&retval, ZEND_STRS("nUpserted"), intern->write_result.nUpserted);
 
 	/* Use native arrays for debugging output */
+	state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 	state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 	MAKE_STD_ZVAL(state.zchild);

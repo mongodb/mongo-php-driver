@@ -164,6 +164,7 @@ PHP_METHOD(Server, getTags)
 
 	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		MAKE_STD_ZVAL(state.zchild);
@@ -192,6 +193,7 @@ PHP_METHOD(Server, getInfo)
 
 	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id))) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		MAKE_STD_ZVAL(state.zchild);

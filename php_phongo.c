@@ -1347,6 +1347,7 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 	if (sd->tags.len) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 		/* Use native arrays for debugging output */
+		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		MAKE_STD_ZVAL(state.zchild);
@@ -1356,6 +1357,7 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 	{
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 		/* Use native arrays for debugging output */
+		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		MAKE_STD_ZVAL(state.zchild);
@@ -1375,6 +1377,7 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 	if (read_prefs->tags.len) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 		/* Use native arrays for debugging output */
+		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		MAKE_STD_ZVAL(state.zchild);
