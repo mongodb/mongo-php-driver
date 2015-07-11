@@ -1055,7 +1055,7 @@ PHP_FUNCTION(toPHP)
 }
 /* }}} */
 
-/* {{{ proto BSON\toJSON BSON\toJSON(string data)
+/* {{{ proto string BSON\toJSON(string $bson)
    Returns the JSON representation of a BSON value */
 PHP_FUNCTION(toJSON)
 {
@@ -1086,7 +1086,7 @@ PHP_FUNCTION(toJSON)
 }
 /* }}} */
 
-/* {{{ proto string BSON\fromJSON(string data)
+/* {{{ proto string BSON\fromJSON(string $json)
    Returns the BSON representation of a JSON value */
 PHP_FUNCTION(fromJSON)
 {
