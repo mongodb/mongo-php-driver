@@ -2075,11 +2075,11 @@ PHP_MINFO_FUNCTION(mongodb)
 
 /* {{{ mongodb_functions[]
 */
-ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromArray, 0, 0, 1)
-	ZEND_ARG_INFO(0, array)
+ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromPHP, 0, 0, 1)
+	ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_bson_toArray, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(ai_bson_toPHP, 0, 0, 1)
 	ZEND_ARG_INFO(0, bson)
 ZEND_END_ARG_INFO();
 
@@ -2092,8 +2092,8 @@ ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromJSON, 0, 0, 1)
 ZEND_END_ARG_INFO();
 
 const zend_function_entry mongodb_functions[] = {
-	ZEND_NS_FE(BSON_NAMESPACE, fromArray, ai_bson_fromArray)
-	ZEND_NS_FE(BSON_NAMESPACE, toArray,   ai_bson_toArray)
+	ZEND_NS_FE(BSON_NAMESPACE, fromPHP, ai_bson_fromPHP)
+	ZEND_NS_FE(BSON_NAMESPACE, toPHP,   ai_bson_toPHP)
 	ZEND_NS_FE(BSON_NAMESPACE, toJSON,    ai_bson_toJSON)
 	ZEND_NS_FE(BSON_NAMESPACE, fromJSON,  ai_bson_fromJSON)
 	PHP_FE_END

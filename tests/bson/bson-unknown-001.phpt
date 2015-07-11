@@ -11,13 +11,13 @@ require_once __DIR__ . "/../utils/basic.inc";
 throws(function() {
     $a = array("stderr" => STDERR);
 
-    $b = fromArray($a);
+    $b = fromPHP($a);
 }, "MongoDB\Driver\Exception\UnexpectedValueException");
 
 throws(function() {
     $a = array("stderr" => STDERR, "stdout" => STDOUT);
 
-    $b = fromArray($a);
+    $b = fromPHP($a);
 }, "MongoDB\Driver\Exception\UnexpectedValueException");
 
 

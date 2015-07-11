@@ -374,11 +374,11 @@ function getMOPresetBase() {
     return $BASE;
 }
 
-function toArray($var, $typemap = array()) {
+function toPHP($var, $typemap = array()) {
     $func = BSON_NAMESPACE . "\\" . __FUNCTION__;
     return $func($var, $typemap);
 }
-function fromArray($var) {
+function fromPHP($var) {
     $func = BSON_NAMESPACE . "\\" . __FUNCTION__;
     return $func($var);
 }

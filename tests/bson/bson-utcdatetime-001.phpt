@@ -34,11 +34,11 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = fromArray($test);
+    $s = fromPHP($test);
     echo "Test#{$n} ", $json = toJSON($s), "\n";
     $bson = fromJSON($json);
-    $testagain = toArray($bson);
-    var_dump(toJSON(fromArray($test)), toJSON(fromArray($testagain)));
+    $testagain = toPHP($bson);
+    var_dump(toJSON(fromPHP($test)), toJSON(fromPHP($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
 ?>

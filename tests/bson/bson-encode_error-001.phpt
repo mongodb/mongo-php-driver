@@ -27,7 +27,7 @@ $invalidValues = array(new stdClass, 'foo', 1, true);
 
 foreach ($invalidValues as $invalidValue) {
     try {
-        fromArray(new MyClass($invalidValue));
+        fromPHP(new MyClass($invalidValue));
     } catch (MongoDB\Driver\Exception\UnexpectedValueException $e) {
         echo $e->getMessage(), "\n";
     }

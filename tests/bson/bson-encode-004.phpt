@@ -22,10 +22,10 @@ $hannes->addFriend($mikola);
 
 var_dump($hannes);
 
-$s = fromArray(array($hannes));
+$s = fromPHP(array($hannes));
 echo "Test ", toJSON($s), "\n";
 hex_dump($s);
-$ret = toArray($s);
+$ret = toPHP($s);
 var_dump($ret);
 ?>
 ===DONE===

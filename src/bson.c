@@ -943,9 +943,9 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 	return 1;
 }
 
-/* {{{ proto string BSON\fromArray(array|object data)
-   Returns the BSON representation of a value */
-PHP_FUNCTION(fromArray)
+/* {{{ proto string BSON\fromPHP(array|object $value)
+   Returns the BSON representation of a PHP value */
+PHP_FUNCTION(fromPHP)
 {
 	zval   *data;
 	bson_t *bson;
@@ -1029,9 +1029,9 @@ void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *ma
 		}
 	}
 }
-/* {{{ proto string BSON\toArray(string data [, array $typemap = array()])
-   Returns the PHP representation of a BSON value, optionally converting them into custom types/classes */
-PHP_FUNCTION(toArray)
+/* {{{ proto array|object BSON\toPHP(string $bson [, array $typemap = array()])
+   Returns the PHP representation of a BSON value, optionally converting it into a custom class */
+PHP_FUNCTION(toPHP)
 {
 	char                  *data;
 	int                    data_len;

@@ -13,10 +13,10 @@ $data = array(
     "emptyclass" => new stdclass,
 );
 
-$s = fromArray($data);
+$s = fromPHP($data);
 echo "Test ", toJSON($s), "\n";
 hex_dump($s);
-$ret = toArray($s);
+$ret = toPHP($s);
 var_dump($ret);
 ?>
 ===DONE===

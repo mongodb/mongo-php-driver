@@ -36,38 +36,38 @@ class NumericArray implements BSON\Serializable, BSON\Unserializable
 }
 
 echo "Testing top-level AssociativeArray:\n";
-$bson = BSON\fromArray(new AssociativeArray);
+$bson = BSON\fromPHP(new AssociativeArray);
 echo BSON\toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("root" => 'AssociativeArray'));
+$value = BSON\toPHP($bson, array("root" => 'AssociativeArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
 echo "\nTesting embedded AssociativeArray:\n";
-$bson = BSON\fromArray(array('embed' => new AssociativeArray));
+$bson = BSON\fromPHP(array('embed' => new AssociativeArray));
 echo BSON\toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("document" => 'AssociativeArray'));
+$value = BSON\toPHP($bson, array("document" => 'AssociativeArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
 echo "\nTesting top-level NumericArray:\n";
-$bson = BSON\fromArray(new NumericArray);
+$bson = BSON\fromPHP(new NumericArray);
 echo BSON\toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("root" => 'NumericArray'));
+$value = BSON\toPHP($bson, array("root" => 'NumericArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
 echo "\nTesting embedded NumericArray:\n";
-$bson = BSON\fromArray(array('embed' => new NumericArray));
+$bson = BSON\fromPHP(array('embed' => new NumericArray));
 echo BSON\toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("document" => 'NumericArray'));
+$value = BSON\toPHP($bson, array("document" => 'NumericArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
