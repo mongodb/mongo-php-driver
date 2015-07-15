@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager: Constructing invalid manager
+MongoDB\Driver\Manager: Writing debug log files
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -19,14 +19,17 @@ unlink($file);
 rmdir($name);
 
 echo $content[0];
-echo $content[1];
-echo $content[2];
+foreach($content as $line) {
+    if (strpos($line, "mongoc_bulk_operation_execute")) {
+        echo $line;
+    }
+}
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
 [%s]     PHONGO: DEBUG   > Creating Manager, phongo-0.%d.%d[%s] - mongoc-1.%s, libbson-1.%s
-[%s]     PHONGO: DEBUG   > Connecting to 'mongodb://%s'
-[%s]     client: DEBUG   > Using custom stream initiator.
+[%s]     mongoc: TRACE   > ENTRY: mongoc_bulk_operation_execute():%d
+[%s]     mongoc: TRACE   >  EXIT: mongoc_bulk_operation_execute():%d
 ===DONE===
