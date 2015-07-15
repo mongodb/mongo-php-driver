@@ -51,13 +51,15 @@
 #include <main/php_network.h>
 /* Debug log writing */
 #include <main/php_open_temporary_file.h>
+/* PHP array helpers */
+#include "src/contrib/php_array_api.h"
+
 /* Our Compatability header */
 #include "phongo_compat.h"
 
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
-#include "php_array.h"
 #include "src/contrib/php-ssl.h"
 
 #undef MONGOC_LOG_DOMAIN

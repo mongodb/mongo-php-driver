@@ -30,13 +30,15 @@
 #include <ext/spl/spl_array.h>
 #include <Zend/zend_interfaces.h>
 
+/* PHP array helpers */
+#include "src/contrib/php_array_api.h"
+
 /* Our Compatability header */
 #include "phongo_compat.h"
 
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
-#include "php_array.h"
 
 
 #define BSON_APPEND_INT32(b,key,val) \

@@ -56,7 +56,7 @@ coverage: mv-coverage lcov-local
 
 
 coveralls: mv-coverage lcov-coveralls
-	coveralls --exclude src/libbson --exclude src/libmongoc --exclude src/contrib --exclude lib --exclude tests --exclude src/MongoDB/php_array.h --exclude src/php_array.h
+	coveralls --exclude src/libbson --exclude src/libmongoc --exclude src/contrib --exclude lib --exclude tests
 
 composer:
 	@command -v composer >/dev/null 2>&1; \

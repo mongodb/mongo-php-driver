@@ -38,13 +38,14 @@
 #include <Zend/zend_interfaces.h>
 #include <Zend/zend_hash.h>
 #include <ext/spl/spl_iterators.h>
+/* PHP array helpers */
+#include "src/contrib/php_array_api.h"
 /* Our Compatability header */
 #include "phongo_compat.h"
 
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
-#include "php_array.h"
 
 
 PHONGO_API zend_class_entry *php_phongo_manager_ce;
