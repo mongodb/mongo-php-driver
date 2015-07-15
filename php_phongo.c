@@ -31,6 +31,7 @@
 #include "mongoc-read-prefs-private.h"
 #include "mongoc-bulk-operation-private.h"
 #include "mongoc-write-concern-private.h"
+#include "mongoc-uri-private.h"
 #include "mongoc-trace.h"
 
 
@@ -1495,41 +1496,62 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{
 /* }}} */
 
 
-mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
+mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options TSRMLS_DC) /* {{{ */
+{
+	bson_iter_t   iter;
+	mongoc_uri_t *uri;
+
+	uri = mongoc_uri_new(uri_string);
+	MONGOC_DEBUG("Connection string: '%s'", uri_string);
+
+	if (options && bson_iter_init(&iter, options)) {
+		while (bson_iter_next (&iter)) {
+			const char *key = bson_iter_key(&iter);
+
+			if (mongoc_uri_option_is_bool(key)) {
+				mongoc_uri_set_option_as_bool (uri, key, bson_iter_as_bool(&iter));
+			}
+			else if (mongoc_uri_option_is_int32(key) && BSON_ITER_HOLDS_INT32(&iter)) {
+				mongoc_uri_set_option_as_int32 (uri, key, bson_iter_int32 (&iter));
+			}
+			else if (mongoc_uri_option_is_utf8(key) && BSON_ITER_HOLDS_UTF8(&iter)) {
+				mongoc_uri_set_option_as_utf8(uri, key, bson_iter_utf8 (&iter, NULL));
+			}
+			else if (BSON_ITER_HOLDS_ARRAY(&iter) && !strcasecmp(key, "hosts")) {
+				bson_iter_t sub;
+
+				bson_iter_recurse(&iter, &sub);
+				while (bson_iter_next (&sub)) {
+					if (BSON_ITER_HOLDS_UTF8(&sub)) {
+						mongoc_uri_parse_host(uri, bson_iter_utf8(&sub, NULL));
+					}
+				}
+			}
+			else if (BSON_ITER_HOLDS_UTF8(&iter)) {
+				const char *value = bson_iter_utf8 (&iter, NULL);
+
+				if (!strcasecmp(key, "username")) {
+					mongoc_uri_set_username(uri, value);
+				} else if (!strcasecmp(key, "password")) {
+					mongoc_uri_set_password(uri, value);
+				} else if (!strcasecmp(key, "database")) {
+					mongoc_uri_set_database(uri, value);
+				} else if (!strcasecmp(key, "authsource")) {
+					mongoc_uri_set_auth_source(uri, value);
+				}
+			}
+		}
+	}
+
+	return uri;
+} /* }}} */
+
+void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOptions) /* {{{ */
 {
 	zval                     **tmp;
-	php_stream_context        *ctx;
-	const char                *mech;
-	const mongoc_uri_t        *muri;
-	mongoc_client_t           *client =  mongoc_client_new(uri);
-
-
-	ENTRY;
-
-	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
-		convert_to_string(*tmp);
-
-		zend_alter_ini_entry_ex((char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
-	}
-
-	MONGOC_DEBUG("Creating Manager, phongo-%s[%s] - mongoc-%s, libbson-%s", MONGODB_VERSION_S, MONGODB_STABILITY_S, MONGOC_VERSION_S, BSON_VERSION_S);
-	MONGOC_DEBUG("Connecting to '%s'", uri);
-
-	if (!client) {
-		RETURN(false);
-	}
-
-	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
-		ctx = php_stream_context_from_zval(*tmp, 0);
-	} else {
-		GET_DEFAULT_CONTEXT();
-	}
-	muri = mongoc_client_get_uri(client);
-
-	if (driverOptions && mongoc_uri_get_ssl(muri)) {
 
 #define SET_STRING_CTX(name) \
-		if (php_array_exists(driverOptions, name)) { \
+		if (driverOptions && php_array_exists(driverOptions, name)) { \
 			zval ztmp; \
 			zend_bool ctmp_free; \
 			int ctmp_len; \
@@ -1542,7 +1564,7 @@ mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptio
 #define SET_BOOL_CTX(name, defaultvalue) \
 		{ \
 			zval ztmp; \
-			if (php_array_exists(driverOptions, name)) { \
+			if (driverOptions && php_array_exists(driverOptions, name)) { \
 				ZVAL_BOOL(&ztmp, php_array_fetchl_bool(driverOptions, ZEND_STRL(name))); \
 				php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
 			} \
@@ -1567,12 +1589,46 @@ mongoc_client_t *php_phongo_make_mongo_client(const char *uri, zval *driverOptio
 		SET_STRING_CTX("ciphers");
 #undef SET_BOOL_CTX
 #undef SET_STRING_CTX
+} /* }}} */
+
+mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
+{
+	zval                     **tmp;
+	php_stream_context        *ctx;
+	const char                *mech;
+	mongoc_client_t           *client;
+
+	ENTRY;
+
+
+	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
+		convert_to_string(*tmp);
+
+		zend_alter_ini_entry_ex((char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
 	}
 
-	mech = mongoc_uri_get_auth_mechanism(muri);
+	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
+		ctx = php_stream_context_from_zval(*tmp, 0);
+	} else {
+		GET_DEFAULT_CONTEXT();
+	}
+
+	if (mongoc_uri_get_ssl(uri)) {
+		php_phongo_populate_default_ssl_ctx(ctx, driverOptions);
+	}
+
+	MONGOC_DEBUG("Creating Manager, phongo-%s[%s] - mongoc-%s, libbson-%s", MONGODB_VERSION_S, MONGODB_STABILITY_S, MONGOC_VERSION_S, BSON_VERSION_S);
+	client = mongoc_client_new_from_uri(uri);
+
+	if (!client) {
+		RETURN(false);
+	}
+
+
+	mech = mongoc_uri_get_auth_mechanism(uri);
 
 	/* Check if we are doing X509 auth, in which case extract the username (subject) from the cert if no username is provided */
-	if (mech && !strcasecmp(mech, "MONGODB-X509") && !mongoc_uri_get_username(muri)) {
+	if (mech && !strcasecmp(mech, "MONGODB-X509") && !mongoc_uri_get_username(uri)) {
 		zval **pem;
 
 		if (SUCCESS == php_stream_context_get_option(ctx, "ssl", "local_cert", &pem)) {

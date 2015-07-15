@@ -58,9 +58,11 @@ PHP_METHOD(Manager, __construct)
 {
 	php_phongo_manager_t     *intern;
 	zend_error_handling       error_handling;
-	char                     *uri;
-	int                       uri_len;
+	mongoc_uri_t             *uri;
+	char                     *uri_string;
+	int                       uri_string_len;
 	zval                     *options = NULL;
+	bson_t                    bson_options = BSON_INITIALIZER;
 	zval                     *driverOptions = NULL;
 	(void)return_value; (void)return_value_ptr; (void)return_value_used;
 
@@ -68,18 +70,28 @@ PHP_METHOD(Manager, __construct)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!a!", &uri, &uri_len, &options, &driverOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!a!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	intern->client = php_phongo_make_mongo_client(uri, driverOptions TSRMLS_CC);
-	if (!intern->client) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to parse MongoDB URI");
-		return;
+	if (options) {
+		zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
 	}
+
+	uri = php_phongo_make_uri (uri_string, &bson_options TSRMLS_CC);
+	if (uri) {
+		intern->client = php_phongo_make_mongo_client(uri, driverOptions TSRMLS_CC);
+		mongoc_uri_destroy(uri);
+	} else {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to parse MongoDB URI");
+	}
+	if (!intern->client) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to create Manager from URI");
+	}
+
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\Cursor Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
