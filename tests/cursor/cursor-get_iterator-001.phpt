@@ -38,19 +38,19 @@ try {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 Inserted: 3
 
 First foreach statement:
-array(1) {
+object(stdClass)#%d (1) {
   ["_id"]=>
   int(0)
 }
-array(1) {
+object(stdClass)#%d (1) {
   ["_id"]=>
   int(1)
 }
-array(1) {
+object(stdClass)#%d (1) {
   ["_id"]=>
   int(2)
 }

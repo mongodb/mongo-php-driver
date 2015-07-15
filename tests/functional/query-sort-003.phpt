@@ -21,7 +21,7 @@ $cursor = $manager->executeQuery(NS, $query);
 var_dump(get_class($cursor));
 
 foreach ($cursor as $document) {
-    echo $document['username'] . "\n";
+    echo $document->username . "\n";
 }
 
 ?>
@@ -30,7 +30,7 @@ foreach ($cursor as $document) {
 --EXPECTF--
 object(MongoDB\Driver\Query)#%d (%d) {
   ["query"]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["$orderby"]=>
     object(stdClass)#%d (1) {
       ["username"]=>
@@ -41,7 +41,7 @@ object(MongoDB\Driver\Query)#%d (%d) {
     }
   }
   ["selector"]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(0)
     ["username"]=>

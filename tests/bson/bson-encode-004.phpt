@@ -22,10 +22,10 @@ $hannes->addFriend($mikola);
 
 var_dump($hannes);
 
-$s = fromArray(array($hannes));
+$s = fromPHP(array($hannes));
 echo "Test ", toJSON($s), "\n";
 hex_dump($s);
-$ret = toArray($s);
+$ret = toPHP($s);
 var_dump($ret);
 ?>
 ===DONE===
@@ -36,7 +36,7 @@ object(Person)#%d (5) {
   string(6) "Hannes"
   ["age":protected]=>
   int(42)
-  ["address":protected]=>
+  ["addresses":protected]=>
   array(2) {
     [0]=>
     object(Address)#%d (2) {
@@ -61,7 +61,7 @@ object(Person)#%d (5) {
       string(6) "Jeremy"
       ["age":protected]=>
       int(21)
-      ["address":protected]=>
+      ["addresses":protected]=>
       array(0) {
       }
       ["friends":protected]=>
@@ -74,33 +74,34 @@ object(Person)#%d (5) {
   ["secret":protected]=>
   string(24) "Hannes confidential info"
 }
-Test { "0" : { "__pclass" : { "$type" : "80", "$binary" : "UGVyc29u" }, "name" : "Hannes", "age" : 42, "address" : [ { "__pclass" : { "$type" : "80", "$binary" : "QWRkcmVzcw==" }, "zip" : 94086, "country" : "USA" }, { "__pclass" : { "$type" : "80", "$binary" : "QWRkcmVzcw==" }, "zip" : 200, "country" : "Iceland" } ], "friends" : [ { "__pclass" : { "$type" : "80", "$binary" : "UGVyc29u" }, "name" : "Jeremy", "age" : 21, "address" : [  ], "friends" : [  ] } ] } }
-     0 : 1f 01 00 00 03 30 00 17 01 00 00 05 5f 5f 70 63  [.....0......__pc]
+Test { "0" : { "__pclass" : { "$type" : "80", "$binary" : "UGVyc29u" }, "name" : "Hannes", "age" : 42, "addresses" : [ { "__pclass" : { "$type" : "80", "$binary" : "QWRkcmVzcw==" }, "zip" : 94086, "country" : "USA" }, { "__pclass" : { "$type" : "80", "$binary" : "QWRkcmVzcw==" }, "zip" : 200, "country" : "Iceland" } ], "friends" : [ { "__pclass" : { "$type" : "80", "$binary" : "UGVyc29u" }, "name" : "Jeremy", "age" : 21, "addresses" : [  ], "friends" : [  ] } ] } }
+     0 : 23 01 00 00 03 30 00 1b 01 00 00 05 5f 5f 70 63  [#....0......__pc]
     10 : 6c 61 73 73 00 06 00 00 00 80 50 65 72 73 6f 6e  [lass......Person]
     20 : 02 6e 61 6d 65 00 07 00 00 00 48 61 6e 6e 65 73  [.name.....Hannes]
     30 : 00 10 61 67 65 00 2a 00 00 00 04 61 64 64 72 65  [..age.*....addre]
-    40 : 73 73 00 79 00 00 00 03 30 00 35 00 00 00 05 5f  [ss.y....0.5...._]
-    50 : 5f 70 63 6c 61 73 73 00 07 00 00 00 80 41 64 64  [_pclass......Add]
-    60 : 72 65 73 73 10 7a 69 70 00 86 6f 01 00 02 63 6f  [ress.zip..o...co]
-    70 : 75 6e 74 72 79 00 04 00 00 00 55 53 41 00 00 03  [untry.....USA...]
-    80 : 31 00 39 00 00 00 05 5f 5f 70 63 6c 61 73 73 00  [1.9....__pclass.]
-    90 : 07 00 00 00 80 41 64 64 72 65 73 73 10 7a 69 70  [.....Address.zip]
-    A0 : 00 c8 00 00 00 02 63 6f 75 6e 74 72 79 00 08 00  [......country...]
-    B0 : 00 00 49 63 65 6c 61 6e 64 00 00 00 04 66 72 69  [..Iceland....fri]
-    C0 : 65 6e 64 73 00 58 00 00 00 03 30 00 50 00 00 00  [ends.X....0.P...]
-    D0 : 05 5f 5f 70 63 6c 61 73 73 00 06 00 00 00 80 50  [.__pclass......P]
-    E0 : 65 72 73 6f 6e 02 6e 61 6d 65 00 07 00 00 00 4a  [erson.name.....J]
-    F0 : 65 72 65 6d 79 00 10 61 67 65 00 15 00 00 00 04  [eremy..age......]
-   100 : 61 64 64 72 65 73 73 00 05 00 00 00 00 04 66 72  [address.......fr]
-   110 : 69 65 6e 64 73 00 05 00 00 00 00 00 00 00 00     [iends..........]
-array(1) {
+    40 : 73 73 65 73 00 79 00 00 00 03 30 00 35 00 00 00  [sses.y....0.5...]
+    50 : 05 5f 5f 70 63 6c 61 73 73 00 07 00 00 00 80 41  [.__pclass......A]
+    60 : 64 64 72 65 73 73 10 7a 69 70 00 86 6f 01 00 02  [ddress.zip..o...]
+    70 : 63 6f 75 6e 74 72 79 00 04 00 00 00 55 53 41 00  [country.....USA.]
+    80 : 00 03 31 00 39 00 00 00 05 5f 5f 70 63 6c 61 73  [..1.9....__pclas]
+    90 : 73 00 07 00 00 00 80 41 64 64 72 65 73 73 10 7a  [s......Address.z]
+    A0 : 69 70 00 c8 00 00 00 02 63 6f 75 6e 74 72 79 00  [ip......country.]
+    B0 : 08 00 00 00 49 63 65 6c 61 6e 64 00 00 00 04 66  [....Iceland....f]
+    C0 : 72 69 65 6e 64 73 00 5a 00 00 00 03 30 00 52 00  [riends.Z....0.R.]
+    D0 : 00 00 05 5f 5f 70 63 6c 61 73 73 00 06 00 00 00  [...__pclass.....]
+    E0 : 80 50 65 72 73 6f 6e 02 6e 61 6d 65 00 07 00 00  [.Person.name....]
+    F0 : 00 4a 65 72 65 6d 79 00 10 61 67 65 00 15 00 00  [.Jeremy..age....]
+   100 : 00 04 61 64 64 72 65 73 73 65 73 00 05 00 00 00  [..addresses.....]
+   110 : 00 04 66 72 69 65 6e 64 73 00 05 00 00 00 00 00  [..friends.......]
+   120 : 00 00 00                                         [...]
+object(stdClass)#%d (1) {
   [0]=>
   object(Person)#%d (5) {
     ["name":protected]=>
     string(6) "Hannes"
     ["age":protected]=>
     int(42)
-    ["address":protected]=>
+    ["addresses":protected]=>
     array(2) {
       [0]=>
       object(Address)#%d (2) {
@@ -125,7 +126,7 @@ array(1) {
         string(6) "Jeremy"
         ["age":protected]=>
         int(21)
-        ["address":protected]=>
+        ["addresses":protected]=>
         array(0) {
         }
         ["friends":protected]=>

@@ -133,6 +133,8 @@ HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 
 	array_init_size(&retval, 6);
 
+	/* Avoid using PHONGO_TYPEMAP_NATIVE_ARRAY for decoding query and selector
+	 * documents so that users can differentiate BSON arrays and documents. */
 	if (intern->query) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 

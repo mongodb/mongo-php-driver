@@ -13,10 +13,10 @@ $data = array(
     "emptyclass" => new stdclass,
 );
 
-$s = fromArray($data);
+$s = fromPHP($data);
 echo "Test ", toJSON($s), "\n";
 hex_dump($s);
-$ret = toArray($s);
+$ret = toPHP($s);
 var_dump($ret);
 ?>
 ===DONE===
@@ -26,7 +26,7 @@ Test { "emptyarray" : [  ], "emptyclass" : {  } }
      0 : 27 00 00 00 04 65 6d 70 74 79 61 72 72 61 79 00  ['....emptyarray.]
     10 : 05 00 00 00 00 03 65 6d 70 74 79 63 6c 61 73 73  [......emptyclass]
     20 : 00 05 00 00 00 00 00                             [.......]
-array(2) {
+object(stdClass)#%d (2) {
   ["emptyarray"]=>
   array(0) {
   }

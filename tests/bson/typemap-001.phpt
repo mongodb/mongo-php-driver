@@ -32,60 +32,87 @@ function fetch($manager, $typemap = array()) {
 }
 
 
-/* Default */
+echo "Default\n";
 $documents = fetch($manager);
-var_dump(is_array($documents[0]['bson_array']));
-var_dump(is_object($documents[0]['bson_object']));
+var_dump($documents[0] instanceof stdClass);
+var_dump(is_array($documents[0]->bson_array));
+var_dump($documents[0]->bson_object instanceof stdClass);
 
 
-/* Setting to MyArrayObject */
+echo "\nSetting to 'MyArrayObject' for arrays\n";
 $documents = fetch($manager, array("array" => "MyArrayObject"));
-var_dump($documents[0]['bson_array'] instanceof MyArrayObject);
-var_dump(is_object($documents[0]['bson_object']));
+var_dump($documents[0] instanceof stdClass);
+var_dump($documents[0]->bson_array instanceof MyArrayObject);
+var_dump($documents[0]->bson_object instanceof stdClass);
 
-/* Setting to MyArrayObject & MyArrayObject */
-$documents = fetch($manager, array("array" => "MyArrayObject", "document" => "MyArrayObject"));
+echo "\nSetting to 'MyArrayObject' for arrays, embedded, and root documents\n";
+$documents = fetch($manager, array("array" => "MyArrayObject", "document" => "MyArrayObject", "root" => "MyArrayObject"));
+var_dump($documents[0] instanceof MyArrayObject);
 var_dump($documents[0]['bson_array'] instanceof MyArrayObject);
 var_dump($documents[0]['bson_object'] instanceof MyArrayObject);
 
 
-/* Setting to array */
-$documents = fetch($manager, array("array" => "array", "document" => "array"));
+echo "\nSetting to 'array' for arrays, embedded, and root documents\n";
+$documents = fetch($manager, array("array" => "array", "document" => "array", "root" => "array"));
+var_dump(is_array($documents[0]));
 var_dump(is_array($documents[0]['bson_array']));
 var_dump(is_array($documents[0]['bson_object']));
 
 
-/* Setting to stdlcass & array */
-$documents = fetch($manager, array("array" => "stdclass", "document" => "array"));
-var_dump(is_object($documents[0]['bson_array']));
+echo "\nSetting to 'stdclass' for arrays and 'array' for embedded and root documents\n";
+$documents = fetch($manager, array("array" => "stdclass", "document" => "array", "root" => "array"));
+var_dump(is_array($documents[0]));
+var_dump($documents[0]['bson_array'] instanceof stdClass);
 var_dump(is_array($documents[0]['bson_object']));
 
 
-/* Setting to array & stdclass */
-$documents = fetch($manager, array("array" => "array", "document" => "stdclass"));
+echo "\nSetting to 'array' for arrays, 'stdclass' for embedded document, and 'MyArrayObject' for root document\n";
+$documents = fetch($manager, array("array" => "array", "document" => "stdclass", "root" => "MyArrayObject"));
+var_dump($documents[0] instanceof MyArrayObject);
 var_dump(is_array($documents[0]['bson_array']));
-var_dump(is_object($documents[0]['bson_object']));
+var_dump($documents[0]['bson_object'] instanceof stdClass);
 
 
-/* Setting to stdclass */
-$documents = fetch($manager, array("array" => "stdclass", "document" => "stdclass"));
-var_dump(is_object($documents[0]['bson_array']));
-var_dump(is_object($documents[0]['bson_object']));
+echo "\nSetting to 'stdclass' for arrays, embedded, and root documents\n";
+$documents = fetch($manager, array("array" => "stdclass", "document" => "stdclass", "root" => "stdclass"));
+var_dump($documents[0] instanceof stdClass);
+var_dump($documents[0]->bson_array instanceof stdClass);
+var_dump($documents[0]->bson_object instanceof stdClass);
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+Default
 bool(true)
 bool(true)
 bool(true)
+
+Setting to 'MyArrayObject' for arrays
 bool(true)
 bool(true)
 bool(true)
+
+Setting to 'MyArrayObject' for arrays, embedded, and root documents
 bool(true)
 bool(true)
 bool(true)
+
+Setting to 'array' for arrays, embedded, and root documents
 bool(true)
 bool(true)
+bool(true)
+
+Setting to 'stdclass' for arrays and 'array' for embedded and root documents
+bool(true)
+bool(true)
+bool(true)
+
+Setting to 'array' for arrays, 'stdclass' for embedded document, and 'MyArrayObject' for root document
+bool(true)
+bool(true)
+bool(true)
+
+Setting to 'stdclass' for arrays, embedded, and root documents
 bool(true)
 bool(true)
 bool(true)

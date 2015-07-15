@@ -1346,6 +1346,9 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 	}
 	if (sd->tags.len) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+		/* Use native arrays for debugging output */
+		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		MAKE_STD_ZVAL(state.zchild);
 		bson_to_zval(bson_get_data(&sd->tags), sd->tags.len, &state);
@@ -1353,6 +1356,9 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 	}
 	{
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+		/* Use native arrays for debugging output */
+		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		MAKE_STD_ZVAL(state.zchild);
 		bson_to_zval(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
@@ -1370,6 +1376,9 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 	add_assoc_long_ex(retval, ZEND_STRS("mode"), read_prefs->mode);
 	if (read_prefs->tags.len) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+		/* Use native arrays for debugging output */
+		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		MAKE_STD_ZVAL(state.zchild);
 		bson_to_zval(bson_get_data(&read_prefs->tags), read_prefs->tags.len, &state);
@@ -1432,6 +1441,9 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{
 		_ADD_BOOL(zcursor, has_fields);
 #undef _ADD_BOOL
 
+		/* Avoid using PHONGO_TYPEMAP_NATIVE_ARRAY for decoding query, selector,
+		 * and current documents so that users can differentiate BSON arrays
+		 * and documents. */
 		{
 			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
@@ -2063,11 +2075,11 @@ PHP_MINFO_FUNCTION(mongodb)
 
 /* {{{ mongodb_functions[]
 */
-ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromArray, 0, 0, 1)
-	ZEND_ARG_INFO(0, array)
+ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromPHP, 0, 0, 1)
+	ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_bson_toArray, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(ai_bson_toPHP, 0, 0, 1)
 	ZEND_ARG_INFO(0, bson)
 ZEND_END_ARG_INFO();
 
@@ -2080,8 +2092,8 @@ ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromJSON, 0, 0, 1)
 ZEND_END_ARG_INFO();
 
 const zend_function_entry mongodb_functions[] = {
-	ZEND_NS_FE(BSON_NAMESPACE, fromArray, ai_bson_fromArray)
-	ZEND_NS_FE(BSON_NAMESPACE, toArray,   ai_bson_toArray)
+	ZEND_NS_FE(BSON_NAMESPACE, fromPHP, ai_bson_fromPHP)
+	ZEND_NS_FE(BSON_NAMESPACE, toPHP,   ai_bson_toPHP)
 	ZEND_NS_FE(BSON_NAMESPACE, toJSON,    ai_bson_toJSON)
 	ZEND_NS_FE(BSON_NAMESPACE, fromJSON,  ai_bson_fromJSON)
 	PHP_FE_END

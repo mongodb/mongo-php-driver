@@ -21,8 +21,8 @@ throws(function() use($classname) {
 
 foreach($tests as $n => $test) {
     echo "Test#{$n}", "\n";
-    $s = fromArray($test);
-    $testagain = toArray($s);
+    $s = fromPHP($test);
+    $testagain = toPHP($s);
     var_dump(current($test) instanceof $classname);
     var_dump(current($testagain) instanceof $classname);
 }

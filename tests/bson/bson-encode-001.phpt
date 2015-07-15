@@ -35,7 +35,7 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = fromArray($test);
+    $s = fromPHP($test);
     echo "Test#{$n} ", toJSON($s), "\n";
     hex_dump($s);
 }

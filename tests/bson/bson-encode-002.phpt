@@ -36,38 +36,38 @@ class NumericArray implements BSON\Serializable, BSON\Unserializable
 }
 
 echo "Testing top-level AssociativeArray:\n";
-$bson = BSON\fromArray(new AssociativeArray);
-echo BSON\toJSON($bson), "\n";
+$bson = fromPHP(new AssociativeArray);
+echo toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("document" => 'AssociativeArray'));
+$value = toPHP($bson, array("root" => 'AssociativeArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
 echo "\nTesting embedded AssociativeArray:\n";
-$bson = BSON\fromArray(array('embed' => new AssociativeArray));
-echo BSON\toJSON($bson), "\n";
+$bson = fromPHP(array('embed' => new AssociativeArray));
+echo toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("document" => 'AssociativeArray'));
+$value = toPHP($bson, array("document" => 'AssociativeArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
 echo "\nTesting top-level NumericArray:\n";
-$bson = BSON\fromArray(new NumericArray);
-echo BSON\toJSON($bson), "\n";
+$bson = fromPHP(new NumericArray);
+echo toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("document" => 'NumericArray'));
+$value = toPHP($bson, array("root" => 'NumericArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
 echo "\nTesting embedded NumericArray:\n";
-$bson = BSON\fromArray(array('embed' => new NumericArray));
-echo BSON\toJSON($bson), "\n";
+$bson = fromPHP(array('embed' => new NumericArray));
+echo toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = BSON\toArray($bson, array("document" => 'NumericArray'));
+$value = toPHP($bson, array("document" => 'NumericArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
@@ -81,12 +81,15 @@ Encoded BSON:
      0 : 23 00 00 00 02 72 61 6e 64 6f 6d 00 06 00 00 00  [#....random.....]
     10 : 63 6c 61 73 73 00 02 30 00 05 00 00 00 64 61 74  [class..0.....dat]
     20 : 61 00 00                                         [a..]
-Decoded BSON:
+AssociativeArray::bsonUnserialize() was called with data:
 array(2) {
   ["random"]=>
   string(5) "class"
   [0]=>
   string(4) "data"
+}
+Decoded BSON:
+object(AssociativeArray)#%d (0) {
 }
 
 Testing embedded AssociativeArray:
@@ -103,7 +106,7 @@ array(2) {
   string(4) "data"
 }
 Decoded BSON:
-array(1) {
+object(stdClass)#%d (1) {
   ["embed"]=>
   object(AssociativeArray)#%d (0) {
   }
@@ -114,7 +117,7 @@ Testing top-level NumericArray:
 Encoded BSON:
      0 : 1a 00 00 00 10 30 00 01 00 00 00 10 31 00 02 00  [.....0......1...]
     10 : 00 00 10 32 00 03 00 00 00 00                    [...2......]
-Decoded BSON:
+NumericArray::bsonUnserialize() was called with data:
 array(3) {
   [0]=>
   int(1)
@@ -122,6 +125,9 @@ array(3) {
   int(2)
   [2]=>
   int(3)
+}
+Decoded BSON:
+object(NumericArray)#%d (0) {
 }
 
 Testing embedded NumericArray:
@@ -140,7 +146,7 @@ array(3) {
   int(3)
 }
 Decoded BSON:
-array(1) {
+object(stdClass)#%d (1) {
   ["embed"]=>
   object(NumericArray)#%d (0) {
   }

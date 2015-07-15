@@ -23,9 +23,9 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = BSON\fromArray($test);
-    echo "Test#{$n} ", BSON\toJSON($s), "\n";
-    $val = BSON\toArray($s, array("document"=> "MyArrayObject", "array" => "MyArrayObject"));
+    $s = fromPHP($test);
+    echo "Test#{$n} ", toJSON($s), "\n";
+    $val = toPHP($s, array("root"=> "MyArrayObject", "document"=> "MyArrayObject", "array" => "MyArrayObject"));
     var_dump($val);
 }
 ?>

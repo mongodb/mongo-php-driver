@@ -40,14 +40,14 @@ upsertedId[3]: int(3)
 ===> Collection
 array(2) {
   [0]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(2)
     ["x"]=>
     int(1)
   }
   [1]=>
-  array(2) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(3)
     ["x"]=>

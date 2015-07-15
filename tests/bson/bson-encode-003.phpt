@@ -37,10 +37,10 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = fromArray($test);
+    $s = fromPHP($test);
     echo "Test#{$n} ", toJSON($s), "\n";
     hex_dump($s);
-    $ret = toArray($s);
+    $ret = toPHP($s);
     var_dump($ret);
 }
 ?>
@@ -53,7 +53,7 @@ Test#0 { "stuff" : { "__pclass" : { "$type" : "80", "$binary" : "TXlDbGFzcw==" }
     20 : 43 6c 61 73 73 02 72 61 6e 64 6f 6d 00 06 00 00  [Class.random....]
     30 : 00 63 6c 61 73 73 00 02 30 00 05 00 00 00 64 61  [.class..0.....da]
     40 : 74 61 00 00 00                                   [ta...]
-array(1) {
+object(stdClass)#%d (1) {
   ["stuff"]=>
   object(MyClass)#%d (1) {
     ["props"]=>
@@ -70,7 +70,7 @@ Test#1 { "stuff" : { "__pclass" : { "$type" : "80", "$binary" : "TXlDbGFzczI=" }
     10 : 5f 5f 70 63 6c 61 73 73 00 08 00 00 00 80 4d 79  [__pclass......My]
     20 : 43 6c 61 73 73 32 10 30 00 01 00 00 00 10 31 00  [Class2.0......1.]
     30 : 02 00 00 00 10 32 00 03 00 00 00 00 00           [.....2.......]
-array(1) {
+object(stdClass)#%d (1) {
   ["stuff"]=>
   object(MyClass2)#%d (1) {
     ["props"]=>
@@ -94,7 +94,7 @@ Test#2 { "stuff" : [ { "__pclass" : { "$type" : "80", "$binary" : "TXlDbGFzcw=="
     60 : 80 4d 79 43 6c 61 73 73 32 10 30 00 01 00 00 00  [.MyClass2.0.....]
     70 : 10 31 00 02 00 00 00 10 32 00 03 00 00 00 00 00  [.1......2.......]
     80 : 00                                               [.]
-array(1) {
+object(stdClass)#%d (1) {
   ["stuff"]=>
   array(2) {
     [0]=>

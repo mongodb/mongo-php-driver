@@ -41,10 +41,10 @@ $tests = array(
 );
 
 foreach($tests as $n => $test) {
-    $s = fromArray($test);
+    $s = fromPHP($test);
     echo "Test#{$n} ", toJSON($s), "\n";
-    $val = toArray($s);
-    if ($val == $test) {
+    $val = toPHP($s);
+    if ($val == (object) $test) {
         echo "OK\n";
     } else {
         var_dump($val, $test);

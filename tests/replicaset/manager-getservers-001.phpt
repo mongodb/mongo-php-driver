@@ -45,7 +45,7 @@ array(3) {
     ["is_passive"]=>
     bool(false)
     ["tags"]=>
-    array(2) {
+    array(%d) {
       ["dc"]=>
       string(2) "pa"
       ["ordinal"]=>
@@ -76,7 +76,7 @@ array(3) {
       ["primary"]=>
       string(19) "192.168.112.10:3000"
       ["tags"]=>
-      object(stdClass)#%d (%d) {
+      array(%d) {
         ["dc"]=>
         string(2) "pa"
         ["ordinal"]=>
@@ -85,7 +85,7 @@ array(3) {
       ["me"]=>
       string(19) "192.168.112.10:3000"
       ["electionId"]=>
-      object(%s\ObjectID)#8 (1) {
+      object(%s\ObjectID)#%d (1) {
         ["oid"]=>
         string(24) "%s"
       }
@@ -127,7 +127,7 @@ array(3) {
     ["is_passive"]=>
     bool(false)
     ["tags"]=>
-    array(2) {
+    array(%d) {
       ["dc"]=>
       string(3) "nyc"
       ["ordinal"]=>
@@ -158,7 +158,7 @@ array(3) {
       ["primary"]=>
       string(19) "192.168.112.10:3000"
       ["tags"]=>
-      object(stdClass)#%d (%d) {
+      array(%d) {
         ["dc"]=>
         string(3) "nyc"
         ["ordinal"]=>

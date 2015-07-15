@@ -25,13 +25,13 @@ class NumericArray implements BSON\Serializable
 }
 
 echo "Testing top-level AssociativeArray:\n";
-$bson = fromArray(new AssociativeArray);
+$bson = fromPHP(new AssociativeArray);
 echo toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
 
 echo "\nTesting top-level NumericArray:\n";
-$bson = fromArray(new NumericArray);
+$bson = fromPHP(new NumericArray);
 echo toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);

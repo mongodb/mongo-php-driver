@@ -55,7 +55,7 @@ array(3) {
 }
 
 Dumping fetched user document:
-array(3) {
+object(stdClass)#%d (3) {
   ["_id"]=>
   object(%s\ObjectID)#%d (%d) {
     ["oid"]=>

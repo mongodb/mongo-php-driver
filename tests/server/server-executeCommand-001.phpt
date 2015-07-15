@@ -47,12 +47,12 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["has_fields"]=>
     bool(false)
     ["query"]=>
-    array(1) {
+    object(stdClass)#%d (1) {
       ["ping"]=>
       int(1)
     }
     ["fields"]=>
-    array(0) {
+    object(stdClass)#%d (0) {
     }
     ["read_preference"]=>
     array(2) {
@@ -75,7 +75,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["ns"]=>
     string(11) "phongo.$cmd"
     ["current_doc"]=>
-    array(1) {
+    object(stdClass)#%d (1) {
       ["ok"]=>
       float(1)
     }
@@ -85,7 +85,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
 }
 
 Dumping response document:
-array(1) {
+object(stdClass)#%d (1) {
   ["ok"]=>
   float(1)
 }

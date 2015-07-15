@@ -342,7 +342,7 @@ function configureFailPoint(MongoDB\Driver\Manager $manager, $failPoint, $mode, 
     $cmd = new MongoDB\Driver\Command($doc);
     $result = $manager->executeCommand("admin", $cmd);
     $arr = current($result->toArray());
-    if (empty($arr["ok"])) {
+    if (empty($arr->ok)) {
         var_dump($result);
         throw new RuntimeException("Failpoint failed");
     }
@@ -374,11 +374,11 @@ function getMOPresetBase() {
     return $BASE;
 }
 
-function toArray($var, $typemap = array()) {
+function toPHP($var, $typemap = array()) {
     $func = BSON_NAMESPACE . "\\" . __FUNCTION__;
     return $func($var, $typemap);
 }
-function fromArray($var) {
+function fromPHP($var) {
     $func = BSON_NAMESPACE . "\\" . __FUNCTION__;
     return $func($var);
 }

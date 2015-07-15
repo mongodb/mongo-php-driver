@@ -235,7 +235,7 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 	}
 }
 /* }}} */
-/* {{{ proto WriteConcernError[] WriteResult::getWriteConcernError()
+/* {{{ proto WriteConcernError WriteResult::getWriteConcernError()
    Return any write concern error that occurred */
 PHP_METHOD(WriteResult, getWriteConcernError)
 {
@@ -443,6 +443,10 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	}
 	add_assoc_long_ex(&retval, ZEND_STRS("nRemoved"), intern->write_result.nRemoved);
 	add_assoc_long_ex(&retval, ZEND_STRS("nUpserted"), intern->write_result.nUpserted);
+
+	/* Use native arrays for debugging output */
+	state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+	state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 	MAKE_STD_ZVAL(state.zchild);
 	bson_to_zval(bson_get_data(&intern->write_result.upserted), intern->write_result.upserted.len, &state);
