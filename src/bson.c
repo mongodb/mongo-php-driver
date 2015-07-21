@@ -212,10 +212,6 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char
 
 	if (v_subtype == 0x80 && strcmp(key, PHONGO_ODM_FIELD_NAME) ==0) {
 		((php_phongo_bson_state *)data)->odm = zend_fetch_class((char *)v_binary, v_binary_len, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
-		if (((php_phongo_bson_state *)data)->odm) {
-			return false;
-		}
-		/* Couldn't resolve the classname, resolve the type as binary */
 	}
 
 	MAKE_STD_ZVAL(zchild);
