@@ -28,6 +28,7 @@
 /* PHP Core stuff */
 #include <php.h>
 #include <ext/spl/spl_array.h>
+#include <Zend/zend_hash.h>
 #include <Zend/zend_interfaces.h>
 
 /* PHP array helpers */
@@ -789,6 +790,7 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce TSRMLS_CC)) {
 					if (flags & PHONGO_BSON_ADD_ODS) {
 						bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
+						zend_hash_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME));
 					}
 				}
 
