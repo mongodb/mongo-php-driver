@@ -21,6 +21,7 @@ $types = array(
 $tests = array();
 foreach($types as $type) {
     $binary = new $classname("random binary data", $type);
+    var_dump($binary->getData() == "random binary data");
     var_dump($binary->getSubType() == $type);
     $tests[] = array("binary" => $binary);
 }
@@ -41,11 +42,20 @@ foreach($tests as $n => $test) {
     var_dump((object)$test == (object)$testagain);
 }
 
+$binary->getData(2);
 $binary->getSubType(2);
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+bool(true)
 bool(true)
 bool(true)
 bool(true)
@@ -87,6 +97,8 @@ Test#7 { "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }
 string(73) "{ "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
 string(73) "{ "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
 bool(true)
+
+Warning: %s\Binary::getData() expects exactly 0 parameters, 1 given in %s on line %d
 
 Warning: %s\Binary::getSubType() expects exactly 0 parameters, 1 given in %s on line %d
 ===DONE===
