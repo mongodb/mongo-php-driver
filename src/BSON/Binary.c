@@ -69,7 +69,7 @@ PHP_METHOD(Binary, __construct)
 	intern->subtype = subtype;
 }
 /* }}} */
-/* {{{ proto void Binary::getSubType()
+/* {{{ proto integer Binary::getSubType()
     */
 PHP_METHOD(Binary, getSubType)
 {
