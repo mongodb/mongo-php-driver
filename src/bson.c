@@ -1103,6 +1103,7 @@ PHP_FUNCTION(fromJSON)
 
 	if (bson_init_from_json(&b, (const char *)data, data_len, &error)) {
 		RETVAL_STRINGL((const char *) bson_get_data(&b), b.len, 1);
+		bson_destroy(&b);
 	} else {
 		RETURN_NULL();
 	}
