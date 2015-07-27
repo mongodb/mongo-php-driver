@@ -634,14 +634,22 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 				tmp_ht->nApplyCount++;
 			}
 
-			bson_append_document_begin(bson, key, key_len, &child);
-			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC)) {
-				if (flags & PHONGO_BSON_ADD_CHILD_ODS) {
-					bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
+			/* Persistable objects must always be serialized as BSON documents;
+			 * otherwise, infer based on bsonSerialize()'s return value. */
+			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC) || php_phongo_is_array_or_document(&obj_data TSRMLS_CC) == IS_OBJECT) {
+				bson_append_document_begin(bson, key, key_len, &child);
+				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC)) {
+					if (flags & PHONGO_BSON_ADD_CHILD_ODS) {
+						bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
+					}
 				}
+				zval_to_bson(obj_data, flags, &child, NULL TSRMLS_CC);
+				bson_append_document_end(bson, &child);
+			} else {
+				bson_append_array_begin(bson, key, key_len, &child);
+				zval_to_bson(obj_data, flags, &child, NULL TSRMLS_CC);
+				bson_append_array_end(bson, &child);
 			}
-			zval_to_bson(obj_data, flags, &child, NULL TSRMLS_CC);
-			bson_append_document_end(bson, &child);
 
 			if (tmp_ht) {
 				tmp_ht->nApplyCount--;
