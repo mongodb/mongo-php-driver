@@ -215,8 +215,12 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
 
-	if (v_subtype == 0x80 && strcmp(key, PHONGO_ODM_FIELD_NAME) ==0) {
-		((php_phongo_bson_state *)data)->odm = zend_fetch_class((char *)v_binary, v_binary_len, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
+	if (v_subtype == 0x80 && strcmp(key, PHONGO_ODM_FIELD_NAME) == 0) {
+		zend_class_entry *found_ce = zend_fetch_class((char *)v_binary, v_binary_len, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
+
+		if (found_ce && PHONGO_IS_CLASS_INSTANTIATABLE(found_ce) && instanceof_function(found_ce, php_phongo_persistable_ce TSRMLS_CC)) {
+			((php_phongo_bson_state *)data)->odm = found_ce;
+		}
 	}
 
 	MAKE_STD_ZVAL(zchild);
