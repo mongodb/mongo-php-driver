@@ -471,26 +471,28 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 		array_init(state.zchild);
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
-			if (state.odm) {
+			/* If php_phongo_bson_visit_binary() finds an ODM class, it should
+			 * supersede a default type map and named document class. */
+			if (state.odm && state.map.document_type == PHONGO_TYPEMAP_NONE) {
 				state.map.document_type = PHONGO_TYPEMAP_CLASS;
 			}
+
 			switch(state.map.document_type) {
 				case PHONGO_TYPEMAP_NATIVE_ARRAY:
 					add_assoc_zval(retval, key, state.zchild);
 					Z_SET_REFCOUNT_P(state.zchild, 1);
 					break;
 
-				case PHONGO_TYPEMAP_CLASS:
-					if (instanceof_function(state.odm ? state.odm : state.map.document, php_phongo_unserializable_ce TSRMLS_CC)) {
-						zval *obj = NULL;
+				case PHONGO_TYPEMAP_CLASS: {
+					zval *obj = NULL;
 
-						MAKE_STD_ZVAL(obj);
-						object_init_ex(obj, state.odm ? state.odm : state.map.document);
-						zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
-						add_assoc_zval(retval, key, obj);
-						zval_ptr_dtor(&state.zchild);
-						break;
-					}
+					MAKE_STD_ZVAL(obj);
+					object_init_ex(obj, state.odm ? state.odm : state.map.document);
+					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
+					add_assoc_zval(retval, key, obj);
+					zval_ptr_dtor(&state.zchild);
+					break;
+				}
 
 				case PHONGO_TYPEMAP_NATIVE_OBJECT:
 				default:
@@ -522,23 +524,17 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
 
 			switch(state.map.array_type) {
-				case PHONGO_TYPEMAP_CLASS:
-					if (instanceof_function(state.map.array, php_phongo_unserializable_ce TSRMLS_CC)) {
-						zval *obj = NULL;
+				case PHONGO_TYPEMAP_CLASS: {
+					zval *obj = NULL;
 
-						MAKE_STD_ZVAL(obj);
-						object_init_ex(obj, state.map.array);
-						zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
-						add_assoc_zval(retval, key, obj);
-						zval_ptr_dtor(&state.zchild);
-						break;
-					}
-					/* If the object someehow doesn't implement php_phongo_unserializable_ce then use stdclass.
-					 * This is needed as we need to know how to pass the state.zchild to the class to populate it.
-					 * Not all classes have ctor that accepts first parameter array of values.
-					 */
+					MAKE_STD_ZVAL(obj);
+					object_init_ex(obj, state.map.array);
+					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
+					add_assoc_zval(retval, key, obj);
+					zval_ptr_dtor(&state.zchild);
+					break;
+				}
 
-				/* break intentionally omitted */
 				case PHONGO_TYPEMAP_NATIVE_OBJECT:
 					object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
 					add_assoc_zval(retval, key, state.zchild);
@@ -910,9 +906,9 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 	array_init(state->zchild);
 	bson_iter_visit_all(&iter, &php_bson_visitors, state);
 
-	/* If php_phongo_bson_visit_binary() finds an ODM class, it supersedes our
-	 * document type. */
-	if (state->odm) {
+	/* If php_phongo_bson_visit_binary() finds an ODM class, it should supersede
+	 * a default type map and named root class. */
+	if (state->odm && state->map.root_type == PHONGO_TYPEMAP_NONE) {
 		state->map.root_type = PHONGO_TYPEMAP_CLASS;
 	}
 
@@ -921,19 +917,16 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 			/* Nothing to do here */
 			break;
 
-		case PHONGO_TYPEMAP_CLASS:
-			/* If the class implements Unserializable, initialize the object
-			 * from our array data; otherwise, fall through to native object. */
-			if (instanceof_function(state->odm ? state->odm : state->map.root, php_phongo_unserializable_ce TSRMLS_CC)) {
-				zval *obj = NULL;
+		case PHONGO_TYPEMAP_CLASS: {
+			zval *obj = NULL;
 
-				MAKE_STD_ZVAL(obj);
-				object_init_ex(obj, state->odm ? state->odm : state->map.root);
-				zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
-				zval_ptr_dtor(&state->zchild);
-				state->zchild = obj;
-				break;
-			}
+			MAKE_STD_ZVAL(obj);
+			object_init_ex(obj, state->odm ? state->odm : state->map.root);
+			zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
+			zval_ptr_dtor(&state->zchild);
+			state->zchild = obj;
+			break;
+		}
 
 		case PHONGO_TYPEMAP_NATIVE_OBJECT:
 		default:
