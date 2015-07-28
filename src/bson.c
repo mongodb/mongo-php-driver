@@ -30,7 +30,6 @@
 #include <ext/spl/spl_array.h>
 #include <Zend/zend_hash.h>
 #include <Zend/zend_interfaces.h>
-#include <Zend/zend_string.h>
 
 /* PHP array helpers */
 #include "src/contrib/php_array_api.h"
