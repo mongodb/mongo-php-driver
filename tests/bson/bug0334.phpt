@@ -19,13 +19,11 @@ class MyClass implements BSON\Persistable {
     }
 }
 
-hex_dump(fromPHP(new MyClass));
+$bson = fromPHP(new MyClass);
+$php = toPHP($bson, array('root' => 'array'));
+
+var_dump($php['__pclass']->getData());
 
 ?>
-===DONE===
-<?php exit(0); ?>
 --EXPECT--
-     0 : 28 00 00 00 05 5f 5f 70 63 6c 61 73 73 00 07 00  [(....__pclass...]
-    10 : 00 00 80 4d 79 43 6c 61 73 73 02 66 6f 6f 00 04  [...MyClass.foo..]
-    20 : 00 00 00 62 61 72 00 00                          [...bar..]
-===DONE===
+string(7) "MyClass"

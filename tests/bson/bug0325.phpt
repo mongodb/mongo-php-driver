@@ -16,6 +16,6 @@ var_dump($value);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Warning: %s\toPHP(): Reading document did not exhaust input buffer in %s on line %d
+Warning:%sReading document did not exhaust input buffer in %s on line %d%a
 NULL
 ===DONE===
