@@ -147,16 +147,16 @@ function START($id, array $options = array()) {
     }
 
     $options += array("name" => "mongod", "id" => $id);
-    $opts = [
-        "http" => [
+    $opts = array(
+        "http" => array(
             "timeout" => 30,
             "method"  => "PUT",
             "header"  => "Accept: application/json\r\n" .
                          "Content-type: application/x-www-form-urlencoded",
             "content" => json_encode($options),
             "ignore_errors" => true,
-        ],
-    ];
+        ),
+    );
     $ctx = stream_context_create($opts);
     $json = file_get_contents(getMOUri() . "/servers/$id", false, $ctx);
     $result = json_decode($json, true);
@@ -176,14 +176,14 @@ function START($id, array $options = array()) {
     }
 }
 function DELETE($id) {
-    $opts = [
-        "http" => [
+    $opts = array(
+        "http" => array(
             "timeout" => 30,
             "method"  => "DELETE",
             "header"  => "Accept: application/json\r\n",
             "ignore_errors" => true,
-        ],
-    ];
+        ),
+    );
     $ctx = stream_context_create($opts);
     $json = file_get_contents(getMOUri() . "/servers/$id", false, $ctx);
         $FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
