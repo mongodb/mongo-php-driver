@@ -11,8 +11,8 @@ require_once __DIR__ . "/../utils/basic.inc";
 class MyClass implements BSON\Persistable {
     function bsonSerialize() {
         return array(
-            "foo" => "bar",
             "__pclass" => "baz",
+            "foo" => "bar",
         );
     }
     function bsonUnserialize(array $data) {
@@ -25,5 +25,8 @@ $php = toPHP($bson, array('root' => 'array'));
 var_dump($php['__pclass']->getData());
 
 ?>
+===DONE===
+<?php exit(0); ?>
 --EXPECT--
 string(7) "MyClass"
+===DONE===
