@@ -8,14 +8,15 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $bson1 = fromJSON('{"x": "y"}');
 $bson2 = fromJSON('{"a": "b"}');
-$value = toPHP($bson1 . $bson2);
-
-var_dump($value);
+try {
+    var_dump(toPHP($bson1 . $bson2));
+} catch (MongoDB\Driver\Exception\UnexpectedValueException $e) {
+    echo $e->getMessage(), "\n";
+}
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Warning:%sReading document did not exhaust input buffer in %s on line %d%a
-NULL
+Reading document did not exhaust input buffer
 ===DONE===

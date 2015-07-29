@@ -897,12 +897,12 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 	reader = bson_reader_new_from_data(data, data_len);
 
 	if (!(b = bson_reader_read(reader, NULL))) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Could not read document from reader");
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not read document from BSON reader");
 		return 0;
 	}
 
 	if (!bson_iter_init(&iter, b)) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Could not initialize BSON iterator");
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not initialize BSON iterator");
 		bson_reader_destroy(reader);
 		return 0;
 	}
@@ -941,7 +941,7 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 	}
 
 	if (bson_reader_read(reader, &eof) || !eof) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Reading document did not exhaust input buffer");
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Reading document did not exhaust input buffer");
 		bson_reader_destroy(reader);
 		return 0;
 	}
