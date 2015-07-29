@@ -898,6 +898,7 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 
 	if (!(b = bson_reader_read(reader, NULL))) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not read document from BSON reader");
+		bson_reader_destroy(reader);
 		return 0;
 	}
 
