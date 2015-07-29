@@ -67,7 +67,7 @@ $bson = fromPHP(array('embed' => new NumericArray));
 echo toJSON($bson), "\n";
 echo "Encoded BSON:\n";
 hex_dump($bson);
-$value = toPHP($bson, array("document" => 'NumericArray'));
+$value = toPHP($bson, array("array" => 'NumericArray'));
 echo "Decoded BSON:\n";
 var_dump($value);
 
@@ -131,9 +131,9 @@ object(NumericArray)#%d (0) {
 }
 
 Testing embedded NumericArray:
-{ "embed" : { "0" : 1, "1" : 2, "2" : 3 } }
+{ "embed" : [ 1, 2, 3 ] }
 Encoded BSON:
-     0 : 26 00 00 00 03 65 6d 62 65 64 00 1a 00 00 00 10  [&....embed......]
+     0 : 26 00 00 00 04 65 6d 62 65 64 00 1a 00 00 00 10  [&....embed......]
     10 : 30 00 01 00 00 00 10 31 00 02 00 00 00 10 32 00  [0......1......2.]
     20 : 03 00 00 00 00 00                                [......]
 NumericArray::bsonUnserialize() was called with data:

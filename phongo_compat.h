@@ -17,6 +17,12 @@
 		zend_hash_copy(*_std.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *));
 #endif
 
+#if PHP_VERSION_ID < 50400
+# define str_efree(s) efree((char*)s)
+#else
+# include <Zend/zend_string.h>
+#endif
+
 #if PHP_VERSION_ID >= 50500
 #define ITERATOR_GET_CURRENT_KEY(it, z) \
 		(it).funcs->get_current_key(&(it), z TSRMLS_CC);

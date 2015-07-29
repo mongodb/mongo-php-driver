@@ -44,6 +44,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_binary_ce;
 
+zend_object_handlers php_phongo_handler_binary;
+
 /* {{{ proto BSON\Binary Binary::__construct(string $data, int $subtype)
    Construct a new BSON Binary type */
 PHP_METHOD(Binary, __construct)
@@ -152,9 +154,24 @@ zend_object_value php_phongo_binary_create_object(zend_class_entry *class_type T
 	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_binary_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = &php_phongo_handler_binary;
 
 	return retval;
+} /* }}} */
+
+HashTable *php_phongo_binary_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	php_phongo_binary_t *intern;
+	zval                 retval = zval_used_for_init;
+
+	intern = (php_phongo_binary_t *)zend_object_store_get_object(object TSRMLS_CC);
+	*is_temp = 1;
+	array_init_size(&retval, 2);
+
+	add_assoc_stringl_ex(&retval, ZEND_STRS("data"), intern->data, intern->data_len, 1);
+	add_assoc_long_ex(&retval, ZEND_STRS("subtype"), intern->subtype);
+
+	return Z_ARRVAL(retval);
 } /* }}} */
 /* }}} */
 
@@ -169,6 +186,9 @@ PHP_MINIT_FUNCTION(Binary)
 	php_phongo_binary_ce = zend_register_internal_class(&ce TSRMLS_CC);
 
 	zend_class_implements(php_phongo_binary_ce TSRMLS_CC, 1, php_phongo_type_ce);
+
+	memcpy(&php_phongo_handler_binary, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_binary.get_debug_info = php_phongo_binary_get_debug_info;
 
 	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_GENERIC"), BSON_SUBTYPE_BINARY TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_FUNCTION"), BSON_SUBTYPE_FUNCTION TSRMLS_CC);

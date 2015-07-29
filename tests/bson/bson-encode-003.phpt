@@ -59,7 +59,11 @@ object(stdClass)#%d (1) {
     ["props"]=>
     array(3) {
       ["__pclass"]=>
-      object(%sBSON\Binary)#%d (0) {
+      object(%sBSON\Binary)#%d (2) {
+        ["data"]=>
+        string(7) "MyClass"
+        ["subtype"]=>
+        int(128)
       }
       ["random"]=>
       string(5) "class"
@@ -79,7 +83,11 @@ object(stdClass)#%d (1) {
     ["props"]=>
     array(4) {
       ["__pclass"]=>
-      object(%sBSON\Binary)#%d (0) {
+      object(%sBSON\Binary)#%d (2) {
+        ["data"]=>
+        string(8) "MyClass2"
+        ["subtype"]=>
+        int(128)
       }
       [0]=>
       int(1)
@@ -108,7 +116,11 @@ object(stdClass)#%d (1) {
       ["props"]=>
       array(3) {
         ["__pclass"]=>
-        object(%sBSON\Binary)#%d (0) {
+        object(%sBSON\Binary)#%d (2) {
+          ["data"]=>
+          string(7) "MyClass"
+          ["subtype"]=>
+          int(128)
         }
         ["random"]=>
         string(5) "class"
@@ -121,7 +133,11 @@ object(stdClass)#%d (1) {
       ["props"]=>
       array(4) {
         ["__pclass"]=>
-        object(%sBSON\Binary)#%d (0) {
+        object(%sBSON\Binary)#%d (2) {
+          ["data"]=>
+          string(8) "MyClass2"
+          ["subtype"]=>
+          int(128)
         }
         [0]=>
         int(1)
