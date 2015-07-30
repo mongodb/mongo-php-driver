@@ -893,6 +893,9 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 	      bool           eof = false;
 		  TSRMLS_FETCH();
 
+	/* Ensure that state->zchild has a type, since the calling code may want to
+	 * zval_ptr_dtor() it if we throw an exception. */
+	ZVAL_NULL(state->zchild);
 
 	reader = bson_reader_new_from_data(data, data_len);
 
