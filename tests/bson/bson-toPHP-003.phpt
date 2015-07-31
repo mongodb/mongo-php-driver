@@ -205,7 +205,7 @@ object(stdClass)#%d (2) {
   object(%SBSON\Binary)#%d (2) {
     ["data"]=>
     string(7) "MyClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
 }
@@ -218,7 +218,7 @@ object(stdClass)#%d (2) {
   object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(9) "YourClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
 }
@@ -231,7 +231,7 @@ object(OurClass)#%d (3) {
   object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(8) "OurClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
   ["unserialized"]=>
@@ -246,7 +246,7 @@ object(stdClass)#%d (2) {
   object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(9) "YourClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(68)
   }
 }
@@ -280,7 +280,7 @@ object(YourClass)#%d (3) {
   object(%SBSON\Binary)#%d (2) {
     ["data"]=>
     string(27) "%SBSON\Unserializable"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
   ["unserialized"]=>
@@ -298,7 +298,7 @@ object(YourClass)#%d (3) {
   object(%SBSON\Binary)#%d (2) {
     ["data"]=>
     string(7) "MyClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
   ["unserialized"]=>
@@ -313,7 +313,7 @@ object(OurClass)#%d (3) {
   object(%SBSON\Binary)#%d (2) {
     ["data"]=>
     string(8) "OurClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
   ["unserialized"]=>
@@ -328,7 +328,7 @@ object(TheirClass)#%d (3) {
   object(%SBSON\Binary)#%d (2) {
     ["data"]=>
     string(10) "TheirClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
   ["unserialized"]=>
@@ -343,7 +343,7 @@ object(YourClass)#%d (3) {
   object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(9) "YourClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
   ["unserialized"]=>
@@ -361,7 +361,7 @@ object(TheirClass)#%d (3) {
   object(%SBSON\Binary)#%d (2) {
     ["data"]=>
     string(10) "TheirClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
   ["unserialized"]=>
@@ -419,7 +419,7 @@ array(2) {
   object(%SBSON\Binary)#%d (2) {
     ["data"]=>
     string(7) "MyClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
 }
@@ -432,7 +432,7 @@ array(2) {
   object(%SBSON\Binary)#%d (2) {
     ["data"]=>
     string(8) "OurClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
 }
@@ -448,7 +448,7 @@ object(stdClass)#%d (2) {
   object(%SBSON\Binary)#%d (2) {
     ["data"]=>
     string(7) "MyClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
 }
@@ -461,7 +461,7 @@ object(stdClass)#%d (2) {
   object(%SBSON\Binary)#%d (2) {
     ["data"]=>
     string(8) "OurClass"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
 }
