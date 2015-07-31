@@ -51,7 +51,7 @@ object(stdClass)#%d (2) {
   object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(18) "MyAbstractDocument"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
 }
@@ -64,7 +64,7 @@ object(stdClass)#%d (2) {
   object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(10) "MyDocument"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
 }
@@ -77,7 +77,7 @@ object(stdClass)#%d (2) {
   object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(27) "MongoDB\BSON\Unserializable"
-    ["subtype"]=>
+    ["subType"]=>
     int(128)
   }
 }
@@ -90,7 +90,7 @@ object(stdClass)#%d (2) {
   object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(24) "MongoDB\BSON\Persistable"
-    ["subtype"]=>
+    ["subType"]=>
     int(68)
   }
 }
