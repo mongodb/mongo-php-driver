@@ -1982,6 +1982,7 @@ void _phongo_debug_bson(bson_t *bson)
 	str = bson_as_json(bson, &str_len);
 
 	php_printf("JSON: %s\n", str);
+	bson_free(str);
 }
 /* LCOV_EXCL_STOP */
 #endif
