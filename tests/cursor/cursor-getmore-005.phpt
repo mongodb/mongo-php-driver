@@ -1,7 +1,7 @@
 --TEST--
 MongoDB\Driver\Cursor command result iteration with batchSize requiring getmore with non-full batches
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php require __DIR__ . "/" ."../utils/basic-skipif.inc"; ?>
 <?php START("THROWAWAY"); CLEANUP(THROWAWAY); LOAD(THROWAWAY); ?>
 --FILE--
 <?php
