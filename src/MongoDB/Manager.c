@@ -275,6 +275,24 @@ PHP_METHOD(Manager, executeDelete)
 	bson_clear(&bson);
 }
 /* }}} */
+/* {{{ proto MongoDB\Driver\ReadPreference Manager::getReadPreference()
+   Returns the ReadPreference associated with this Manager */
+PHP_METHOD(Manager, getReadPreference)
+{
+	php_phongo_manager_t *intern;
+	(void)return_value_ptr;
+
+	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if (return_value_used) {
+		php_phongo_read_preference_to_zval(return_value, mongoc_client_get_read_prefs(intern->client));
+	}
+}
+/* }}} */
 /* {{{ proto MongoDB\Driver\Server[] Manager::getServers()
    Returns the Servers associated with this Manager */
 PHP_METHOD(Manager, getServers)
@@ -300,6 +318,24 @@ PHP_METHOD(Manager, getServers)
 
 		phongo_server_init(obj, intern->client, ((mongoc_server_description_t *)set->items[i].item)->id TSRMLS_CC);
 		add_next_index_zval(return_value, obj);
+	}
+}
+/* }}} */
+/* {{{ proto MongoDB\Driver\WriteConcern Manager::getWriteConcern()
+   Returns the WriteConcern associated with this Manager */
+PHP_METHOD(Manager, getWriteConcern)
+{
+	php_phongo_manager_t *intern;
+	(void)return_value_ptr;
+
+	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if (return_value_used) {
+		php_phongo_write_concern_to_zval(return_value, mongoc_client_get_write_concern(intern->client));
 	}
 }
 /* }}} */
@@ -398,7 +434,13 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeDelete, 0, 0, 2)
 	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getReadPreference, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getServers, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getWriteConcern, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_selectServer, 0, 0, 1)
@@ -413,7 +455,9 @@ static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, executeInsert, ai_Manager_executeInsert, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeUpdate, ai_Manager_executeUpdate, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeDelete, ai_Manager_executeDelete, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, getReadPreference, ai_Manager_getReadPreference, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, getServers, ai_Manager_getServers, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, getWriteConcern, ai_Manager_getWriteConcern, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, selectServer, ai_Manager_selectServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
 	PHP_FE_END
