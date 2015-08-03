@@ -144,13 +144,13 @@ int php_phongo_binary_get_data(zval *object, char **data TSRMLS_DC)
 	*data = intern->data;
 	return intern->data_len;
 }
-int php_phongo_binary_get_subtype(zval *object TSRMLS_DC)
+int php_phongo_binary_get_type(zval *object TSRMLS_DC)
 {
 	php_phongo_binary_t *intern;
 
 	intern = (php_phongo_binary_t *)zend_object_store_get_object(object TSRMLS_CC);
 
-	return intern->subtype;
+	return intern->type;
 }
 char *php_phongo_regex_get_pattern(zval *object TSRMLS_DC)
 {
@@ -223,7 +223,7 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char
 	}
 
 	MAKE_STD_ZVAL(zchild);
-	php_phongo_new_binary_from_binary_and_subtype(zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
+	php_phongo_new_binary_from_binary_and_type(zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
 
 	add_assoc_zval(retval, key, zchild);
 
@@ -677,7 +677,7 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			data_len = php_phongo_binary_get_data(object, (char **)&data TSRMLS_CC);
 
 			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Binary");
-			bson_append_binary(bson, key, key_len, php_phongo_binary_get_subtype(object TSRMLS_CC), data, data_len);
+			bson_append_binary(bson, key, key_len, php_phongo_binary_get_type(object TSRMLS_CC), data, data_len);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_regex_ce TSRMLS_CC)) {

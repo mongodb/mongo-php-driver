@@ -46,7 +46,7 @@ PHONGO_API zend_class_entry *php_phongo_binary_ce;
 
 zend_object_handlers php_phongo_handler_binary;
 
-/* {{{ proto BSON\Binary Binary::__construct(string $data, int $subtype)
+/* {{{ proto BSON\Binary Binary::__construct(string $data, int $type)
    Construct a new BSON Binary type */
 PHP_METHOD(Binary, __construct)
 {
@@ -54,13 +54,13 @@ PHP_METHOD(Binary, __construct)
 	zend_error_handling     error_handling;
 	char                   *data;
 	int                     data_len;
-	long                    subtype;
+	long                    type;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_binary_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &data, &data_len, &subtype) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &data, &data_len, &type) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -68,7 +68,7 @@ PHP_METHOD(Binary, __construct)
 
 	intern->data = estrndup(data, data_len);
 	intern->data_len = data_len;
-	intern->subtype = subtype;
+	intern->type = type;
 }
 /* }}} */
 /* {{{ proto string Binary::getData()
@@ -87,9 +87,9 @@ PHP_METHOD(Binary, getData)
 	RETURN_STRINGL(intern->data, intern->data_len, 1);
 }
 /* }}} */
-/* {{{ proto integer Binary::getSubType()
+/* {{{ proto integer Binary::getType()
     */
-PHP_METHOD(Binary, getSubType)
+PHP_METHOD(Binary, getType)
 {
 	php_phongo_binary_t      *intern;
 
@@ -100,7 +100,7 @@ PHP_METHOD(Binary, getSubType)
 		return;
 	}
 
-	RETURN_LONG(intern->subtype);
+	RETURN_LONG(intern->type);
 }
 /* }}} */
 
@@ -109,20 +109,20 @@ PHP_METHOD(Binary, getSubType)
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, data)
-	ZEND_ARG_INFO(0, subtype)
+	ZEND_ARG_INFO(0, type)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary_getData, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Binary_getSubType, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_Binary_getType, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_binary_me[] = {
 	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC)
 	PHP_ME(Binary, getData, ai_Binary_getData, ZEND_ACC_PUBLIC)
-	PHP_ME(Binary, getSubType, ai_Binary_getSubType, ZEND_ACC_PUBLIC)
+	PHP_ME(Binary, getType, ai_Binary_getType, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
@@ -169,7 +169,7 @@ HashTable *php_phongo_binary_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	array_init_size(&retval, 2);
 
 	add_assoc_stringl_ex(&retval, ZEND_STRS("data"), intern->data, intern->data_len, 1);
-	add_assoc_long_ex(&retval, ZEND_STRS("subtype"), intern->subtype);
+	add_assoc_long_ex(&retval, ZEND_STRS("type"), intern->type);
 
 	return Z_ARRVAL(retval);
 } /* }}} */

@@ -117,7 +117,7 @@ typedef struct {
 	zend_object              std;
 	char                    *data;
 	int                      data_len;
-	int                      subtype;
+	int                      type;
 } php_phongo_binary_t;
 typedef struct {
 	zend_object              std;

@@ -1705,7 +1705,7 @@ void php_phongo_new_javascript_from_javascript_and_scope(int init, zval *object,
 	intern->javascript_len = code_len;
 	intern->document = scope ? bson_copy(scope) : NULL;
 } /* }}} */
-void php_phongo_new_binary_from_binary_and_subtype(zval *object, const char *data, size_t data_len, bson_subtype_t type TSRMLS_DC) /* {{{ */
+void php_phongo_new_binary_from_binary_and_type(zval *object, const char *data, size_t data_len, bson_subtype_t type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_binary_t     *intern;
 
@@ -1714,7 +1714,7 @@ void php_phongo_new_binary_from_binary_and_subtype(zval *object, const char *dat
 	intern = (php_phongo_binary_t *)zend_object_store_get_object(object TSRMLS_CC);
 	intern->data = estrndup(data, data_len);
 	intern->data_len = data_len;
-	intern->subtype = type;
+	intern->type = type;
 } /* }}} */
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC) /* {{{ */
 {

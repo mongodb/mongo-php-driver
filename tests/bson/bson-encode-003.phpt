@@ -62,7 +62,7 @@ object(stdClass)#%d (1) {
       object(%sBSON\Binary)#%d (2) {
         ["data"]=>
         string(7) "MyClass"
-        ["subtype"]=>
+        ["type"]=>
         int(128)
       }
       ["random"]=>
@@ -86,7 +86,7 @@ object(stdClass)#%d (1) {
       object(%sBSON\Binary)#%d (2) {
         ["data"]=>
         string(8) "MyClass2"
-        ["subtype"]=>
+        ["type"]=>
         int(128)
       }
       [0]=>
@@ -119,7 +119,7 @@ object(stdClass)#%d (1) {
         object(%sBSON\Binary)#%d (2) {
           ["data"]=>
           string(7) "MyClass"
-          ["subtype"]=>
+          ["type"]=>
           int(128)
         }
         ["random"]=>
@@ -136,7 +136,7 @@ object(stdClass)#%d (1) {
         object(%sBSON\Binary)#%d (2) {
           ["data"]=>
           string(8) "MyClass2"
-          ["subtype"]=>
+          ["type"]=>
           int(128)
         }
         [0]=>
