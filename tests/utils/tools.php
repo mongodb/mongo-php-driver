@@ -142,9 +142,8 @@ function CLEANUP($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME) {
 }
 
 function START($id, array $options = array()) {
-    if (getenv("TRAVIS")) {
-        exit("skip Cannot start/stop server ondemand on travis");
-    }
+    /* starting/stopping servers only works using the Vagrant setup */
+    PREDICTABLE();
 
     $options += array("name" => "mongod", "id" => $id);
     $opts = array(
