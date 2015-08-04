@@ -597,7 +597,7 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc
 	php_phongo_writeresult_t *writeresult;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid namespace provided");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s: %s", "Invalid namespace provided", namespace);
 		return false;
 	}
 
@@ -664,7 +664,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 	mongoc_collection_t *collection;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid namespace provided");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s: %s", "Invalid namespace provided", namespace);
 		return false;
 	}
 	collection = mongoc_client_get_collection(client, dbname, collname);
