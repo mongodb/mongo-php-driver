@@ -24,12 +24,6 @@ var_dump(new MongoDB\Driver\WriteConcern("string", 7000, true, true));
 var_dump(new MongoDB\Driver\WriteConcern("string", 8000, true, false));
 var_dump(new MongoDB\Driver\WriteConcern("string", 9000, false, true));
 
-try {
-    new MongoDB\Driver\WriteConcern("string", 10000, false, true, 1);
-} catch(InvalidArgumentException $e) {
-    echo $e->getMessage(), "\n";
-}
-
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -178,5 +172,4 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["journal"]=>
   bool(false)
 }
-MongoDB\Driver\WriteConcern::__construct() expects at most 4 parameters, 5 given
 ===DONE===
