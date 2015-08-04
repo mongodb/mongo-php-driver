@@ -22,7 +22,7 @@ $tests = array();
 foreach($types as $type) {
     $binary = new $classname("random binary data", $type);
     var_dump($binary->getData() == "random binary data");
-    var_dump($binary->getSubType() == $type);
+    var_dump($binary->getType() == $type);
     $tests[] = array("binary" => $binary);
 }
 
@@ -43,7 +43,7 @@ foreach($tests as $n => $test) {
 }
 
 $binary->getData(2);
-$binary->getSubType(2);
+$binary->getType(2);
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -100,5 +100,5 @@ bool(true)
 
 Warning: %s\Binary::getData() expects exactly 0 parameters, 1 given in %s on line %d
 
-Warning: %s\Binary::getSubType() expects exactly 0 parameters, 1 given in %s on line %d
+Warning: %s\Binary::getType() expects exactly 0 parameters, 1 given in %s on line %d
 ===DONE===
