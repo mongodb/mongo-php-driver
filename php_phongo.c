@@ -1619,6 +1619,17 @@ bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_t *opti
 		return false;
 	}
 
+	/* Return early if there are no options to apply */
+	if (bson_empty0(options)) {
+		return true;
+	}
+
+	if (!bson_iter_init_find_case(&iter, options, "slaveok") &&
+	    !bson_iter_init_find_case(&iter, options, "readpreference") &&
+	    !bson_iter_init_find_case(&iter, options, "readpreferencetags")) {
+		return true;
+	}
+
 	new_rp = mongoc_read_prefs_copy(old_rp);
 
 	if (bson_iter_init_find_case(&iter, options, "slaveok") && BSON_ITER_HOLDS_BOOL(&iter)) {
@@ -1692,6 +1703,18 @@ bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_t *opti
 		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "Client does not have a write concern");
 
 		return false;
+	}
+
+	/* Return early if there are no options to apply */
+	if (bson_empty0(options)) {
+		return true;
+	}
+
+	if (!bson_iter_init_find_case(&iter, options, "journal") &&
+	    !bson_iter_init_find_case(&iter, options, "safe") &&
+	    !bson_iter_init_find_case(&iter, options, "w") &&
+	    !bson_iter_init_find_case(&iter, options, "wtimeoutms")) {
+		return true;
 	}
 
 	wtimeoutms = mongoc_write_concern_get_wtimeout(old_wc);
