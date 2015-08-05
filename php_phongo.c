@@ -1504,6 +1504,10 @@ mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options TSRMLS
 	uri = mongoc_uri_new(uri_string);
 	MONGOC_DEBUG("Connection string: '%s'", uri_string);
 
+	if (!uri) {
+		return NULL;
+	}
+
 	if (options && bson_iter_init(&iter, options)) {
 		while (bson_iter_next (&iter)) {
 			const char *key = bson_iter_key(&iter);
@@ -1621,7 +1625,7 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 	client = mongoc_client_new_from_uri(uri);
 
 	if (!client) {
-		RETURN(false);
+		RETURN(NULL);
 	}
 
 
