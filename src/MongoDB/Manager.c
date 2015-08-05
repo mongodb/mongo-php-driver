@@ -473,7 +473,9 @@ static void php_phongo_manager_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
-	mongoc_client_destroy(intern->client);
+	if (intern->client) {
+		mongoc_client_destroy(intern->client);
+	}
 
 	efree(intern);
 } /* }}} */
