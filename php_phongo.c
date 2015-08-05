@@ -1512,6 +1512,18 @@ mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options TSRMLS
 		while (bson_iter_next (&iter)) {
 			const char *key = bson_iter_key(&iter);
 
+			/* Skip read preference and write concern options, as those must be
+			 * processed after the mongoc_client_t is constructed. */
+			if (!strcasecmp(key, "journal") ||
+			    !strcasecmp(key, "readpreference") ||
+			    !strcasecmp(key, "readpreferencetags") ||
+			    !strcasecmp(key, "safe") ||
+			    !strcasecmp(key, "slaveok") ||
+			    !strcasecmp(key, "w") ||
+			    !strcasecmp(key, "wtimeoutms")) {
+				continue;
+			}
+
 			if (mongoc_uri_option_is_bool(key)) {
 				mongoc_uri_set_option_as_bool (uri, key, bson_iter_as_bool(&iter));
 			}
@@ -1593,6 +1605,176 @@ void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOp
 		SET_STRING_CTX("ciphers");
 #undef SET_BOOL_CTX
 #undef SET_STRING_CTX
+} /* }}} */
+
+bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
+{
+	bson_iter_t iter;
+	mongoc_read_prefs_t *new_rp;
+	const mongoc_read_prefs_t *old_rp;
+
+	if (!(old_rp = mongoc_client_get_read_prefs(client))) {
+		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "Client does not have a read preference");
+
+		return false;
+	}
+
+	new_rp = mongoc_read_prefs_copy(old_rp);
+
+	if (bson_iter_init_find_case(&iter, options, "slaveok") && BSON_ITER_HOLDS_BOOL(&iter)) {
+		mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
+	}
+
+	if (bson_iter_init_find_case(&iter, options, "readpreference") && BSON_ITER_HOLDS_UTF8(&iter)) {
+		const char *str = bson_iter_utf8(&iter, NULL);
+
+		if (0 == strcasecmp("primary", str)) {
+			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_PRIMARY);
+		} else if (0 == strcasecmp("primarypreferred", str)) {
+			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_PRIMARY_PREFERRED);
+		} else if (0 == strcasecmp("secondary", str)) {
+			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY);
+		} else if (0 == strcasecmp("secondarypreferred", str)) {
+			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
+		} else if (0 == strcasecmp("nearest", str)) {
+			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_NEAREST);
+		} else {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Unsupported readPreference value: '%s'", str);
+			mongoc_read_prefs_destroy(new_rp);
+
+			return false;
+		}
+	}
+
+	if (bson_iter_init_find_case(&iter, options, "readpreferencetags") && BSON_ITER_HOLDS_ARRAY(&iter)) {
+		bson_t tags;
+		uint32_t len;
+		const uint8_t *data;
+
+		bson_iter_array(&iter, &len, &data);
+
+		if (bson_init_static(&tags, data, len)) {
+			mongoc_read_prefs_set_tags(new_rp, &tags);
+		}
+	}
+
+	if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY &&
+	    !bson_empty(mongoc_read_prefs_get_tags(new_rp))) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Primary read preference mode conflicts with tags");
+		mongoc_read_prefs_destroy(new_rp);
+
+		return false;
+	}
+
+	/* This may be redundant in light of the last check (primary with tags), but
+	 * we'll check anyway in case additional validation is implemented. */
+	if (!mongoc_read_prefs_is_valid(new_rp)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Read preference is not valid");
+		mongoc_read_prefs_destroy(new_rp);
+
+		return false;
+	}
+
+	mongoc_client_set_read_prefs(client, new_rp);
+	mongoc_read_prefs_destroy(new_rp);
+
+	return true;
+} /* }}} */
+
+bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
+{
+	bson_iter_t iter;
+	int32_t wtimeoutms;
+	mongoc_write_concern_t *new_wc;
+	const mongoc_write_concern_t *old_wc;
+
+	if (!(old_wc = mongoc_client_get_write_concern(client))) {
+		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "Client does not have a write concern");
+
+		return false;
+	}
+
+	wtimeoutms = mongoc_write_concern_get_wtimeout(old_wc);
+
+	new_wc = mongoc_write_concern_copy(old_wc);
+
+	if (bson_iter_init_find_case(&iter, options, "safe") && BSON_ITER_HOLDS_BOOL(&iter)) {
+		mongoc_write_concern_set_w(new_wc, bson_iter_bool(&iter) ? 1 : MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED);
+	}
+
+	if (bson_iter_init_find_case(&iter, options, "wtimeoutms") && BSON_ITER_HOLDS_INT32(&iter)) {
+		wtimeoutms = bson_iter_int32(&iter);
+	}
+
+	if (bson_iter_init_find_case(&iter, options, "journal") && BSON_ITER_HOLDS_BOOL(&iter)) {
+		mongoc_write_concern_set_journal(new_wc, bson_iter_bool(&iter));
+	}
+
+	if (bson_iter_init_find_case(&iter, options, "w")) {
+		if (BSON_ITER_HOLDS_INT32(&iter)) {
+			int32_t value = bson_iter_int32(&iter);
+
+			switch (value) {
+				case MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED:
+				case MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED:
+					mongoc_write_concern_set_w(new_wc, value);
+					break;
+
+				default:
+					if (value > 0) {
+						mongoc_write_concern_set_w(new_wc, value);
+						break;
+					}
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Unsupported w value: %d", value);
+					mongoc_write_concern_destroy(new_wc);
+
+					return false;
+			}
+		} else if (BSON_ITER_HOLDS_UTF8(&iter)) {
+			const char *str = bson_iter_utf8(&iter, NULL);
+
+			if (0 == strcasecmp("majority", str)) {
+				mongoc_write_concern_set_wmajority(new_wc, wtimeoutms);
+			} else {
+				mongoc_write_concern_set_wtag(new_wc, str);
+			}
+		}
+	}
+
+	/* Only set wtimeout if it's still applicable; otherwise, clear it. */
+	if (mongoc_write_concern_get_w(new_wc) > 1 ||
+		mongoc_write_concern_get_wmajority(new_wc) ||
+		mongoc_write_concern_get_wtag(new_wc)) {
+		mongoc_write_concern_set_wtimeout(new_wc, wtimeoutms);
+	} else {
+		mongoc_write_concern_set_wtimeout(new_wc, 0);
+	}
+
+	if (mongoc_write_concern_get_journal(new_wc)) {
+		int32_t w = mongoc_write_concern_get_w(new_wc);
+
+		if (w == MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED || w == MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Journal conflicts with w value: %d", w);
+			mongoc_write_concern_destroy(new_wc);
+
+			return false;
+		}
+	}
+
+	/* This may be redundant in light of the last check (unacknowledged w with
+	   journal), but we'll check anyway in case additional validation is
+	   implemented. */
+	if (!_mongoc_write_concern_is_valid(new_wc)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Write concern is not valid");
+		mongoc_write_concern_destroy(new_wc);
+
+		return false;
+	}
+
+	mongoc_client_set_write_concern(client, new_wc);
+	mongoc_write_concern_destroy(new_wc);
+
+	return true;
 } /* }}} */
 
 mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */

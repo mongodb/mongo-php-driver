@@ -98,6 +98,14 @@ PHP_METHOD(Manager, __construct)
 		return;
 	}
 
+	if (!php_phongo_apply_rp_options_to_client(intern->client, &bson_options TSRMLS_CC) ||
+	    !php_phongo_apply_wc_options_to_client(intern->client, &bson_options TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		bson_destroy(&bson_options);
+
+		return;
+	}
+
 	bson_destroy(&bson_options);
 }
 /* }}} */
