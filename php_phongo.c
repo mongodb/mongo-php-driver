@@ -53,7 +53,7 @@
 /* Debug log writing */
 #include <main/php_open_temporary_file.h>
 /* PHP array helpers */
-#include "src/contrib/php_array_api.h"
+#include "php_array_api.h"
 
 /* Our Compatability header */
 #include "phongo_compat.h"
@@ -61,7 +61,7 @@
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
-#include "src/contrib/php-ssl.h"
+#include "php-ssl.h"
 
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO"
