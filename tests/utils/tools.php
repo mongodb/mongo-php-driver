@@ -243,13 +243,13 @@ function throws($function, $exceptionname, $infunction = null) {
                 if (strcasecmp($function, $infunction) == 0) {
                     printf("OK: Got %s thrown from %s\n", $exceptionname, $infunction);
                 } else {
-                    printf("ALMOST: Got %s - but was thrown in %s, not %s\n", $exceptionname, $function, $infunction);
+                    printf("ALMOST: Got %s - but was thrown in %s, not %s (%s)\n", $exceptionname, $function, $infunction, $e->getMessage());
                 }
                 return $e->getMessage();
             }
             printf("OK: Got %s\n", $exceptionname);
         } else {
-            printf("ALMOST: Got %s - expected %s\n", get_class($e), $exceptionname);
+            printf("ALMOST: Got %s - expected %s: %s\n", get_class($e), $exceptionname, $e->getMessage());
         }
         return $e->getMessage();
     }
