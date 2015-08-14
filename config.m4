@@ -109,13 +109,12 @@ if test "$MONGODB" != "no"; then
     PHP_CHECK_GCC_ARG(-Wempty-body,                     _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wempty-body")
     PHP_CHECK_GCC_ARG(-Wparentheses,                    _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wparentheses")
     PHP_CHECK_GCC_ARG(-Wdeclaration-after-statement,    _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wdeclaration-after-statement")
-    dnl PHP_CHECK_GCC_ARG(-Werror,                          _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Werror")
 
     PHP_MONGODB_FOUND_VERSION=`${PHP_CONFIG} --version`
     PHP_MONGODB_FOUND_VERNUM=`echo "${PHP_MONGODB_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
 
     if test "$PHP_MONGODB_FOUND_VERNUM" -ge "50400"; then
-      PHP_CHECK_GCC_ARG(-Wno-cast-qual,                 _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-cast-qual")
+      PHP_CHECK_GCC_ARG(-Werror,                        _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Werror")
     fi
 
     MAINTAINER_CFLAGS="-Wextra $_MAINTAINER_CFLAGS  -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-missing-field-initializers"
@@ -188,92 +187,93 @@ if test "$MONGODB" != "no"; then
   ";
 
   YAJL_SOURCES="\
-	yajl_version.c \
-	yajl.c \
-	yajl_encode.c \
-	yajl_lex.c \
-	yajl_parser.c \
-	yajl_buf.c \
-	yajl_tree.c \
-	yajl_alloc.c \
-	yajl_gen.c
+    yajl_version.c \
+    yajl.c \
+    yajl_encode.c \
+    yajl_lex.c \
+    yajl_parser.c \
+    yajl_buf.c \
+    yajl_tree.c \
+    yajl_alloc.c \
+    yajl_gen.c
   ";
 
   BSON_SOURCES="\
-	bcon.c \
-	bson.c \
-	bson-atomic.c \
-	bson-clock.c \
-	bson-context.c \
-	bson-error.c \
-	bson-iter.c \
-	bson-iso8601.c \
-	bson-json.c \
-	bson-keys.c \
-	bson-md5.c \
-	bson-memory.c \
-	bson-oid.c \
-	bson-reader.c \
-	bson-string.c \
-	bson-timegm.c \
-	bson-utf8.c \
-	bson-value.c \
-	bson-version.c \
-	bson-writer.c
+    bcon.c \
+    bson.c \
+    bson-atomic.c \
+    bson-clock.c \
+    bson-context.c \
+    bson-error.c \
+    bson-iter.c \
+    bson-iso8601.c \
+    bson-json.c \
+    bson-keys.c \
+    bson-md5.c \
+    bson-memory.c \
+    bson-oid.c \
+    bson-reader.c \
+    bson-string.c \
+    bson-timegm.c \
+    bson-utf8.c \
+    bson-value.c \
+    bson-version.c \
+    bson-writer.c
   ";
   MONGOC_SOURCES="\
-	mongoc-array.c \
-        mongoc-async.c \
-        mongoc-async-cmd.c \
-	mongoc-buffer.c \
-	mongoc-bulk-operation.c \
-	mongoc-b64.c \
-	mongoc-client.c \
-	mongoc-client-pool.c \
-	mongoc-cluster.c \
-	mongoc-collection.c \
-	mongoc-counters.c \
-	mongoc-cursor.c \
-	mongoc-cursor-array.c \
-	mongoc-cursor-transform.c \
-	mongoc-cursor-cursorid.c \
-	mongoc-database.c \
-	mongoc-init.c \
-	mongoc-gridfs.c \
-	mongoc-gridfs-file.c \
-	mongoc-gridfs-file-page.c \
-	mongoc-gridfs-file-list.c \
-	mongoc-index.c \
-	mongoc-list.c \
-	mongoc-log.c \
-	mongoc-matcher-op.c \
-	mongoc-matcher.c \
-        mongoc-opcode.c \
-	mongoc-queue.c \
-	mongoc-read-prefs.c \
-	mongoc-rpc.c \
-        mongoc-set.c \
-        mongoc-server-description.c \
-	mongoc-socket.c \
-	mongoc-stream.c \
-	mongoc-stream-buffered.c \
-	mongoc-stream-file.c \
-	mongoc-stream-gridfs.c \
-	mongoc-stream-socket.c \
-        mongoc-topology.c \
-        mongoc-topology-scanner.c \
-        mongoc-topology-description.c \
-	mongoc-uri.c \
-	mongoc-util.c \
-	mongoc-write-command.c \
-	mongoc-write-concern.c
+    mongoc-array.c \
+    mongoc-async.c \
+    mongoc-async-cmd.c \
+    mongoc-buffer.c \
+    mongoc-bulk-operation.c \
+    mongoc-b64.c \
+    mongoc-client.c \
+    mongoc-client-pool.c \
+    mongoc-cluster.c \
+    mongoc-collection.c \
+    mongoc-counters.c \
+    mongoc-cursor.c \
+    mongoc-cursor-array.c \
+    mongoc-cursor-transform.c \
+    mongoc-cursor-cursorid.c \
+    mongoc-database.c \
+    mongoc-init.c \
+    mongoc-gridfs.c \
+    mongoc-gridfs-file.c \
+    mongoc-gridfs-file-page.c \
+    mongoc-gridfs-file-list.c \
+    mongoc-host-list.c \
+    mongoc-index.c \
+    mongoc-list.c \
+    mongoc-log.c \
+    mongoc-matcher-op.c \
+    mongoc-matcher.c \
+    mongoc-opcode.c \
+    mongoc-queue.c \
+    mongoc-read-prefs.c \
+    mongoc-rpc.c \
+    mongoc-set.c \
+    mongoc-server-description.c \
+    mongoc-socket.c \
+    mongoc-stream.c \
+    mongoc-stream-buffered.c \
+    mongoc-stream-file.c \
+    mongoc-stream-gridfs.c \
+    mongoc-stream-socket.c \
+    mongoc-topology.c \
+    mongoc-topology-scanner.c \
+    mongoc-topology-description.c \
+    mongoc-uri.c \
+    mongoc-util.c \
+    mongoc-write-command.c \
+    mongoc-write-concern.c
   ";
 
 MONGOC_SOURCES_SSL="\
-	mongoc-rand.c \
-	mongoc-scram.c \
-	mongoc-stream-tls.c \
-	mongoc-ssl.c
+    mongoc-rand.c \
+    mongoc-scram.c \
+    mongoc-stream-tls.c \
+    mongoc-ssl.c
   ";
 
 MONGOC_SOURCES_SASL=mongoc-sasl.c
