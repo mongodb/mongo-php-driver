@@ -29,6 +29,7 @@
 #include <mongoc.h>
 #include <mongoc-client-private.h>
 #include <mongoc-host-list-private.h>
+#include <mongoc-server-description-private.h>
 
 /* PHP Core stuff */
 #include <php.h>
@@ -312,11 +313,16 @@ PHP_METHOD(Manager, getServers)
 	array_init(return_value);
 	set = intern->client->topology->description.servers;
 	for(i=0; i<set->items_len; i++) {
+		mongoc_server_description_t *sd = (mongoc_server_description_t *) set->items[i].item;
 		zval *obj = NULL;
+
+		if (sd->type == MONGOC_SERVER_UNKNOWN) {
+			continue;
+		}
 
 		MAKE_STD_ZVAL(obj);
 
-		phongo_server_init(obj, intern->client, ((mongoc_server_description_t *)set->items[i].item)->id TSRMLS_CC);
+		phongo_server_init(obj, intern->client, sd->id TSRMLS_CC);
 		add_next_index_zval(return_value, obj);
 	}
 }

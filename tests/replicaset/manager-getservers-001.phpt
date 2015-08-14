@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager: getServers()
+MongoDB\Driver\Manager::getServers()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("REPLICASET"); ?>
 --FILE--
