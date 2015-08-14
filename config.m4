@@ -242,6 +242,7 @@ if test "$MONGODB" != "no"; then
     mongoc-gridfs-file.c \
     mongoc-gridfs-file-page.c \
     mongoc-gridfs-file-list.c \
+    mongoc-host-list.c \
     mongoc-index.c \
     mongoc-list.c \
     mongoc-log.c \
