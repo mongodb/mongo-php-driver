@@ -17,13 +17,13 @@ necessary to build a fully-functional MongoDB driver.
  <lead>
   <name>Jeremy Mikola</name>
   <user>jmikola</user>
-  <email>jmikola@mongodb.com</email>
+  <email>jmikola@php.net</email>
   <active>yes</active>
  </lead>
  <lead>
   <name>Derick Rethans</name>
   <user>derick</user>
-  <email>derick@mongodb.com</email>
+  <email>derick@php.net</email>
   <active>yes</active>
  </lead>
  <date>%RELEASE_DATE%</date>
