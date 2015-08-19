@@ -1,8 +1,11 @@
 <?php
 require __DIR__ . "/" . "tools.php";
 
-
-$FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
+if (file_exists("{$_SERVER['HOME']}/PHONGO-SERVERS.json")) {
+	$FILENAME = "{$_SERVER['HOME']}/PHONGO-SERVERS.json";
+} else {
+	$FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
+}
 
 $json = file_get_contents($FILENAME);
 $config = json_decode($json, true);

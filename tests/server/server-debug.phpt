@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Server::executeQuery() with sort and empty filter
+MongoDB\Driver\Server debugInfo
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
