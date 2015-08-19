@@ -167,7 +167,7 @@ function MOOperation($phase, &$output) {
         return 'mo_post("' . $phase["uri"] . '", ' . var_export($phase["payload"], true) . ');';
 
     default:
-        throw UnexpectedValueException("Don't know the method $method");
+        throw new UnexpectedValueException("Don't know the method $method");
     }
 }
 
