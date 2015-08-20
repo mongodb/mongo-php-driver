@@ -38,6 +38,7 @@ which is distributed as
 See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Related projects
+- [HHVM Implementation of this driver](https://github.com/10gen-labs/mongo-hhvm-driver-prototype)
 - [Official high-level library](https://github.com/10gen-labs/mongo-php-library-prototype)
 - [MongoDB Transistor](https://github.com/bjori/mongo-php-transistor) Lightweight ODM using the [Persistable](http://php.net/bson\\persistable) interface
 
