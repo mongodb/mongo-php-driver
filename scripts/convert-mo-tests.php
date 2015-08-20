@@ -166,6 +166,9 @@ function MOOperation($phase, &$output) {
     case "post":
         return 'mo_post("' . $phase["uri"] . '", ' . var_export($phase["payload"], true) . ');';
 
+    case "delete":
+        return 'mo_delete("' . $phase["uri"] . '");';
+
     default:
         throw new UnexpectedValueException("Don't know the method $method");
     }
