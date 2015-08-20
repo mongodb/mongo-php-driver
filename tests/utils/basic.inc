@@ -1,9 +1,7 @@
 <?php
 require __DIR__ . "/" . "tools.php";
 
-if (file_exists("{$_SERVER['HOME']}/PHONGO-SERVERS.json")) {
-	$FILENAME = "{$_SERVER['HOME']}/PHONGO-SERVERS.json";
-} else {
+if (($FILENAME = getenv("PHONGO_SERVERS")) === false) {
 	$FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
 }
 
