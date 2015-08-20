@@ -201,7 +201,7 @@ CODE;
         return $retval;
         break;
 
-    case "findOne":
+    case "find":
         $output = $phase["outcome"];
         if (!$output["ok"]) {
             $output["errmsg"] = "%s";
