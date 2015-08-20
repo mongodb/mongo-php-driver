@@ -52,9 +52,12 @@ This file should contain JSON object with MONGODB URIs, similar to the following
     "REPLICASET": "mongodb:\/\/192.168.112.10:3000,192.168.112.10:3001,192.168.112.10:3002\/?replicaSet=REPLICASET"
 }
 ```
+The location of this PHONGO-SERVERS.json file can be configured by exporting
+`PHONGO_SERVERS` environment variable with a absolute path to the json configuration file.
 
-Alternatively, we provide, and use, [Vagrant](https://www.vagrantup.com/) to spin up couple of VMs
+Alternatively, we provide, and use, [Vagrant](https://www.vagrantup.com/) to spin up handful of VMs
 where we setup and configure MongoDB according to our needs.
+This is the preferred way of creating PHONGO-SERVERS.json and running the test suite.
 
 
 ```
