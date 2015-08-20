@@ -151,6 +151,9 @@ function phase($phase, &$output) {
     if (isset($phase["MOOperation"])) {
         return MOOperation($phase["MOOperation"], $output);
     }
+    if (isset($phase["clientHosts"])) {
+        return clientHosts($phase["clientHosts"], $output);
+    }
     if (isset($phase["clientOperation"])) {
         return clientOperation($phase["clientOperation"], $output);
     }
@@ -172,6 +175,54 @@ function MOOperation($phase, &$output) {
     default:
         throw new UnexpectedValueException("Don't know the method $method");
     }
+}
+
+function clientHosts($hosts, &$output) {
+    $output = array();
+
+    $retval = <<< CODE
+\$clientHosts = array();
+
+CODE;
+
+    if (!empty($hosts['primary'])) {
+        $primary = var_export($hosts['primary'], true);
+
+        $retval .= <<< CODE
+\$found = array_filter(\$manager->getServers(), function(\$server) {
+    return \$server->getHost() == $primary && \$server->getType() == MongoDB\\Driver\\SERVERTYPE_RS_PRIMARY;
+});
+if (count(\$found) == 1) {
+    \$clientHosts['primary'] = $primary;
+}
+
+CODE;
+        $output['primary'] = $hosts['primary'];
+    }
+
+    if (!empty($hosts['secondaries'])) {
+        foreach ($hosts['secondaries'] as $secondaryHost) {
+            $secondary = var_export($secondaryHost, true);
+
+            $retval .= <<< CODE
+
+\$found = array_filter(\$manager->getServers(), function(\$server) {
+    return \$server->getHost() == $secondary && \$server->getType() == MongoDB\\Driver\\SERVERTYPE_RS_SECONDARY;
+});
+if (count(\$found) == 1) {
+    \$clientHosts['secondaries'][] = $secondary;
+}
+
+CODE;
+            $output['secondaries'][] = $secondaryHost;
+        }
+    }
+
+    $retval .= <<< CODE
+var_dump(\$clientHosts);
+CODE;
+
+    return $retval;
 }
 
 function clientOperation($phase, &$output) {
