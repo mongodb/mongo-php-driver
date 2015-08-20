@@ -15,7 +15,7 @@ $ ./configure --enable-developer-flags
 $ make -j8 all
 ```
 
-Be aware that we are submoduling the `master` branch of libmongoc and libbson as
+Be aware that we are submoduling the `1.2-dev` branch of libmongoc and libbson as
 during the development of phongo there are occasional things we require that simply
 are not yet in a release (or even finished) :)
 
