@@ -19,7 +19,7 @@ ini_set("mongodb.debug", "off");
 <?php exit(0); ?>
 --EXPECTF--
 %a
-[%s]     PHONGO: DEBUG   > Creating Manager, phongo-0.%d.%d[%s] - mongoc-1.%s, libbson-1.%s
+[%s]     PHONGO: DEBUG   > Creating Manager, phongo-1.%d.%d%S[%s] - mongoc-1.%s, libbson-1.%s
 %a
 [%s]     PHONGO: DEBUG   > Connecting to '%s:%d[mongodb://%s:%d]'
 %a

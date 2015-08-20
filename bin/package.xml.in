@@ -17,13 +17,13 @@ necessary to build a fully-functional MongoDB driver.
  <lead>
   <name>Jeremy Mikola</name>
   <user>jmikola</user>
-  <email>jmikola@mongodb.com</email>
+  <email>jmikola@php.net</email>
   <active>yes</active>
  </lead>
  <lead>
   <name>Derick Rethans</name>
   <user>derick</user>
-  <email>derick@mongodb.com</email>
+  <email>derick@php.net</email>
   <active>yes</active>
  </lead>
  <date>%RELEASE_DATE%</date>
@@ -46,7 +46,7 @@ necessary to build a fully-functional MongoDB driver.
  <dependencies>
   <required>
    <php>
-    <min>5.3.0</min>
+    <min>5.4.0</min>
     <max>5.99.99</max>
    </php>
    <pearinstaller>

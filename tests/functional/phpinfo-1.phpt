@@ -16,7 +16,7 @@ phpinfo();
 mongodb
 
 mongodb support => enabled
-mongodb version => 0.%d.%d
+mongodb version => 1.%d.%d%S
 mongodb stability => %s
 libmongoc version => 1.%s
 libbson version => 1.%s

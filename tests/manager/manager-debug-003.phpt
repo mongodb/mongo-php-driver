@@ -20,6 +20,6 @@ ini_set("mongodb.debug", "off");
 --EXPECTF--
 %a
 [%s]     PHONGO: TRACE   > ENTRY: php_phongo_make_mongo_client():%d
-[%s]     PHONGO: DEBUG   > Creating Manager, phongo-0.%d.%d[%s] - mongoc-1.%s, libbson-1.%s
+[%s]     PHONGO: DEBUG   > Creating Manager, phongo-1.%d.%d%S[%s] - mongoc-1.%s, libbson-1.%s
 %a
 ===DONE===
