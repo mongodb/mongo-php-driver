@@ -264,11 +264,7 @@ CODE;
 try {
     \$query = new MongoDB\\Driver\\Query(array());
     \$result = \$manager->executeQuery("databaseName.collectionName", \$query)->toArray();
-    if (\$result) {
-        var_dump(array("ok" => 1));
-    } else {
-        var_dump(array("ok" => 0, "errmsg" => "Empty result"));
-    }
+    var_dump(array("ok" => 1));
 } catch(Exception \$e) {
     var_dump(array("ok" => 0, "errmsg" => get_class(\$e) . ": " . \$e->getMessage()));
 }
