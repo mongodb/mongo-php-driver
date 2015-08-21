@@ -130,10 +130,10 @@ release: test distcheck
 	@echo "And don't forget to bump version in php_phongo.h"
 
 package: ChangeLog package.xml
-	git checkout RELEASE-$(MONGODB_MINOR)
+	@git checkout RELEASE-$(MONGODB_MINOR)
 	pecl package package.xml
-	cat RELEASE-$(MONGODB_MINOR) >> RELEASE-$(MONGODB_VERSION)
-	mv RELEASE-$(MONGODB_VERSION) RELEASE-$(MONGODB_MINOR)
+	@cat RELEASE-$(MONGODB_MINOR) >> RELEASE-$(MONGODB_VERSION)
+	@mv RELEASE-$(MONGODB_VERSION) RELEASE-$(MONGODB_MINOR)
 
 docs:
 	mkdocs build --clean
@@ -145,8 +145,8 @@ package.xml: RELEASE
 	php bin/prep-release.php $(MONGODB_VERSION)-$(MONGODB_STABILITY)
 
 RELEASE:
-	echo "RELEASE $(MONGODB_VERSION)" >> RELEASE-$(MONGODB_VERSION)
-	echo "-------------" >> RELEASE-$(MONGODB_VERSION)
+	@echo "RELEASE $(MONGODB_VERSION)" >> RELEASE-$(MONGODB_VERSION)
+	@echo "-------------" >> RELEASE-$(MONGODB_VERSION)
 	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short --since="$$(git show -s --format=%ad `git rev-list --tags --max-count=1`)" >> RELEASE-$(MONGODB_VERSION)
 
 ChangeLog:
