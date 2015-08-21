@@ -1,8 +1,9 @@
 .PHONY: coverage testclean ChangeLog RELEASE package package.xml docs
 
 DATE=`date +%Y-%m-%d--%H-%M-%S`
-MONGODB_VERSION=`php -n -dextension=modules/mongodb.so -r 'echo MONGODB_VERSION;'`
-MONGODB_STABILITY=`php -n -dextension=modules/mongodb.so -r 'echo MONGODB_STABILITY;'`
+MONGODB_VERSION=$(shell php -n -dextension=modules/mongodb.so -r 'echo MONGODB_VERSION;')
+MONGODB_MINOR=$(shell echo $(MONGODB_VERSION) | cut -d. -f1,2)
+MONGODB_STABILITY=$(shell php -n -dextension=modules/mongodb.so -r 'echo MONGODB_STABILITY;')
 LIB_PATH=vendor/mongodb/mongodb
 COMPOSER_ARGS=update --no-interaction --prefer-source
 PHPUNIT_ARGS=--process-isolation
@@ -128,8 +129,11 @@ release: test distcheck
 	@echo "		" make release-docs
 	@echo "And don't forget to bump version in php_phongo.h"
 
-package: ChangeLog RELEASE package.xml
+package: ChangeLog package.xml
+	@git checkout RELEASE-$(MONGODB_MINOR)
 	pecl package package.xml
+	@cat RELEASE-$(MONGODB_MINOR) >> RELEASE-$(MONGODB_VERSION)
+	@mv RELEASE-$(MONGODB_VERSION) RELEASE-$(MONGODB_MINOR)
 
 docs:
 	mkdocs build --clean
@@ -137,11 +141,13 @@ docs:
 release-docs: docs
 	mkdocs gh-deploy --clean
 
-package.xml:
+package.xml: RELEASE
 	php bin/prep-release.php $(MONGODB_VERSION)-$(MONGODB_STABILITY)
 
 RELEASE:
-	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short --since="$$(git show -s --format=%ad `git rev-list --tags --max-count=1`)" > RELEASE-$(MONGODB_VERSION)
+	@echo "RELEASE $(MONGODB_VERSION)" >> RELEASE-$(MONGODB_VERSION)
+	@echo "-------------" >> RELEASE-$(MONGODB_VERSION)
+	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short --since="$$(git show -s --format=%ad `git rev-list --tags --max-count=1`)" >> RELEASE-$(MONGODB_VERSION)
 
 ChangeLog:
 	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > ChangeLog
