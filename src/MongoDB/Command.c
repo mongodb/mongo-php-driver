@@ -58,7 +58,7 @@ PHP_METHOD(Command, __construct)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_command_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_COMMAND_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &document) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -128,7 +128,7 @@ HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_D
 
 
 	*is_temp = 1;
-	intern = (php_phongo_command_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_COMMAND_OBJ_P(object);
 
 	array_init_size(&retval, 1);
 

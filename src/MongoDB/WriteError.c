@@ -53,7 +53,7 @@ PHP_METHOD(WriteError, getCode)
 	php_phongo_writeerror_t  *intern;
 
 
-	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITEERROR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -70,7 +70,7 @@ PHP_METHOD(WriteError, getIndex)
 	php_phongo_writeerror_t  *intern;
 
 
-	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITEERROR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -87,7 +87,7 @@ PHP_METHOD(WriteError, getMessage)
 	php_phongo_writeerror_t  *intern;
 
 
-	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITEERROR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -104,7 +104,7 @@ PHP_METHOD(WriteError, getInfo)
 	php_phongo_writeerror_t *intern;
 
 
-	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITEERROR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -191,7 +191,7 @@ HashTable *php_phongo_writeerror_get_debug_info(zval *object, int *is_temp TSRML
 
 
 	*is_temp = 1;
-	intern = (php_phongo_writeerror_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_WRITEERROR_OBJ_P(object);
 
 	array_init_size(&retval, 3);
 	add_assoc_string_ex(&retval, ZEND_STRS("message"), intern->message, 1);

@@ -58,7 +58,7 @@ PHP_METHOD(UTCDateTime, __construct)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &milliseconds) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -88,7 +88,7 @@ PHP_METHOD(UTCDateTime, __toString)
 	int tmp_len;
 
 
-	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -105,7 +105,7 @@ PHP_METHOD(UTCDateTime, toDateTime)
 	php_phongo_utcdatetime_t    *intern;
 
 
-	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;

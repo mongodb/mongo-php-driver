@@ -58,7 +58,7 @@ PHP_METHOD(Cursor, setTypeMap)
 	(void)return_value; (void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_cursor_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_CURSOR_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a!", &typemap) == FAILURE) {
 		return;
@@ -114,7 +114,7 @@ PHP_METHOD(Cursor, getId)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_cursor_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_CURSOR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -132,7 +132,7 @@ PHP_METHOD(Cursor, getServer)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_cursor_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_CURSOR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -151,7 +151,7 @@ PHP_METHOD(Cursor, isDead)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_cursor_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_CURSOR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -229,7 +229,7 @@ HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 
 
 	*is_temp = 1;
-	intern = (php_phongo_cursor_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_CURSOR_OBJ_P(object);
 
 	php_phongo_cursor_to_zval(&retval, intern);
 
