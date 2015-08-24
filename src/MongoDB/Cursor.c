@@ -55,7 +55,7 @@ PHP_METHOD(Cursor, setTypeMap)
 	php_phongo_cursor_t *intern;
 	php_phongo_bson_state     state = PHONGO_BSON_STATE_INITIALIZER;
 	zval                     *typemap = NULL;
-	(void)return_value; (void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_CURSOR_OBJ_P(getThis());
@@ -91,7 +91,7 @@ static int php_phongo_cursor_to_array_apply(zend_object_iterator *iter, void *pu
    Returns an array of all result documents for this cursor */
 PHP_METHOD(Cursor, toArray)
 {
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -111,7 +111,7 @@ PHP_METHOD(Cursor, toArray)
 PHP_METHOD(Cursor, getId)
 {
 	php_phongo_cursor_t      *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_CURSOR_OBJ_P(getThis());
@@ -129,7 +129,7 @@ PHP_METHOD(Cursor, getId)
 PHP_METHOD(Cursor, getServer)
 {
 	php_phongo_cursor_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_CURSOR_OBJ_P(getThis());
@@ -148,7 +148,7 @@ PHP_METHOD(Cursor, getServer)
 PHP_METHOD(Cursor, isDead)
 {
 	php_phongo_cursor_t      *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_CURSOR_OBJ_P(getThis());

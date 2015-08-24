@@ -112,3 +112,8 @@
 # endif
 #endif
 
+#if PHP_VERSION_ID >= 70000
+# define SUPPRESS_UNUSED_WARNING(x)
+#else
+# define SUPPRESS_UNUSED_WARNING(x) (void)x;
+#endif

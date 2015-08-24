@@ -55,8 +55,7 @@ PHP_METHOD(WriteConcern, __construct)
 	zend_error_handling       error_handling;
 	zval                     *w, *journal;
 	long                      wtimeout = 0;
-
-	(void)return_value; (void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);

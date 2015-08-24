@@ -66,7 +66,7 @@ PHP_METHOD(Manager, __construct)
 	zval                     *options = NULL;
 	bson_t                    bson_options = BSON_INITIALIZER;
 	zval                     *driverOptions = NULL;
-	(void)return_value; (void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -96,7 +96,7 @@ PHP_METHOD(Manager, executeCommand)
 	zval                     *command;
 	zval                     *readPreference = NULL;
 	php_phongo_command_t    *cmd;
-	(void)return_value_ptr;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
 	intern = Z_MANAGER_OBJ_P(getThis());
@@ -119,7 +119,7 @@ PHP_METHOD(Manager, executeQuery)
 	int                       namespace_len;
 	zval                     *zquery;
 	zval                     *readPreference = NULL;
-	(void)return_value_ptr;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
 	intern = Z_MANAGER_OBJ_P(getThis());
@@ -142,7 +142,7 @@ PHP_METHOD(Manager, executeBulkWrite)
 	zval                      *zbulk;
 	zval                      *zwrite_concern = NULL;
 	php_phongo_bulkwrite_t   *bulk;
-	(void)return_value_ptr;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
 	intern = Z_MANAGER_OBJ_P(getThis());
@@ -181,7 +181,7 @@ PHP_METHOD(Manager, getReadConcern)
 PHP_METHOD(Manager, getReadPreference)
 {
 	php_phongo_manager_t *intern;
-	(void)return_value_ptr;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -201,7 +201,7 @@ PHP_METHOD(Manager, getServers)
 	php_phongo_manager_t         *intern;
 	mongoc_set_t                 *set;
 	size_t                        i;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_MANAGER_OBJ_P(getThis());
@@ -232,7 +232,7 @@ PHP_METHOD(Manager, getServers)
 PHP_METHOD(Manager, getWriteConcern)
 {
 	php_phongo_manager_t *intern;
-	(void)return_value_ptr;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -253,8 +253,8 @@ PHP_METHOD(Manager, selectServer)
 	zval                         *zreadPreference = NULL;
 	const mongoc_read_prefs_t    *readPreference;
 	bson_error_t                  error;
-	mongoc_server_description_t *selected_server = NULL;
-	(void)return_value_ptr; (void)return_value_used;
+	mongoc_server_description_t  *selected_server = NULL;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_MANAGER_OBJ_P(getThis());
@@ -277,7 +277,7 @@ PHP_METHOD(Manager, selectServer)
  * Throws MongoDB\Driver\RuntimeException as it cannot be serialized */
 PHP_METHOD(Manager, __wakeUp)
 {
-	(void)return_value_ptr; (void)return_value_used; (void)return_value; (void)this_ptr;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(this_ptr)
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
