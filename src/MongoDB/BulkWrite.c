@@ -87,7 +87,8 @@ PHP_METHOD(BulkWrite, insert)
 	bson_t                   *bson;
 	bson_t                   *bson_out = NULL;
 	int                       bson_flags = PHONGO_BSON_ADD_ID;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());

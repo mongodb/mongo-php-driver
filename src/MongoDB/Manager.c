@@ -93,7 +93,8 @@ PHP_METHOD(Manager, executeCommand)
 	int                       db_len;
 	zval                     *command;
 	zval                     *readPreference = NULL;
-	php_phongo_command_t    *cmd;
+	php_phongo_command_t     *cmd;
+	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
@@ -117,6 +118,7 @@ PHP_METHOD(Manager, executeQuery)
 	int                       namespace_len;
 	zval                     *zquery;
 	zval                     *readPreference = NULL;
+	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
@@ -139,7 +141,8 @@ PHP_METHOD(Manager, executeBulkWrite)
 	int                        namespace_len;
 	zval                      *zbulk;
 	zval                      *zwrite_concern = NULL;
-	php_phongo_bulkwrite_t   *bulk;
+	php_phongo_bulkwrite_t    *bulk;
+	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
@@ -160,6 +163,7 @@ PHP_METHOD(Manager, executeBulkWrite)
 PHP_METHOD(Manager, getReadPreference)
 {
 	php_phongo_manager_t *intern;
+	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
@@ -211,6 +215,7 @@ PHP_METHOD(Manager, getServers)
 PHP_METHOD(Manager, getWriteConcern)
 {
 	php_phongo_manager_t *intern;
+	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_MANAGER_OBJ_P(getThis());

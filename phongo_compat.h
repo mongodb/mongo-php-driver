@@ -114,6 +114,8 @@
 
 #if PHP_VERSION_ID >= 70000
 # define SUPPRESS_UNUSED_WARNING(x)
+# define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
 #else
 # define SUPPRESS_UNUSED_WARNING(x) (void)x;
+# define DECLARE_RETURN_VALUE_USED
 #endif
