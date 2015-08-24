@@ -1078,9 +1078,7 @@ bool php_phongo_ssl_verify(php_stream *stream, const char *hostname, bson_error_
 {
 	zval **zcert;
 	zval **verify_expiry;
-	int resource_type;
 	X509 *cert;
-	int type;
 
 	if (!stream->context) {
 		return true;
@@ -1091,11 +1089,7 @@ bool php_phongo_ssl_verify(php_stream *stream, const char *hostname, bson_error_
 		return false;
 	}
 
-
-
-	zend_list_find(Z_LVAL_PP(zcert), &resource_type);
-	cert = (X509 *)zend_fetch_resource(zcert TSRMLS_CC, -1, "OpenSSL X.509", &type, 1, resource_type);
-
+	cert = (X509 *)x509_from_zval(*zcert TSRMLS_CC);
 	if (!cert) {
 		bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Could not get certificate of %s", hostname);
 		return false;
