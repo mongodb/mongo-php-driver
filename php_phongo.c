@@ -1415,7 +1415,7 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{
 /* }}} */
 
 
-mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options) /* {{{ */
+static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options) /* {{{ */
 {
 	bson_iter_t   iter;
 	mongoc_uri_t *uri;
@@ -1526,7 +1526,7 @@ void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOp
 #undef SET_STRING_CTX
 } /* }}} */
 
-bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
+static bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
 	mongoc_read_prefs_t *new_rp;
@@ -1611,7 +1611,7 @@ bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_t *opti
 	return true;
 } /* }}} */
 
-bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
+static bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
 	int32_t wtimeoutms;
@@ -1719,7 +1719,7 @@ bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_t *opti
 	return true;
 } /* }}} */
 
-mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
+static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
 {
 	zval                     **tmp;
 	php_stream_context        *ctx;
@@ -1795,6 +1795,32 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 	mongoc_client_set_stream_initiator(client, phongo_stream_initiator, ctx);
 
 	RETURN(client);
+} /* }}} */
+
+bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, bson_t *bson_options, zval *driverOptions TSRMLS_DC) /* {{{ */
+{
+	mongoc_uri_t             *uri;
+
+	if (!(uri = php_phongo_make_uri(uri_string, bson_options))) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse MongoDB URI: '%s'", uri_string);
+		return false;
+	}
+
+	manager->client = php_phongo_make_mongo_client(uri, driverOptions TSRMLS_CC);
+	mongoc_uri_destroy(uri);
+
+	if (!manager->client) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to create Manager from URI: '%s'", uri_string);
+		return false;
+	}
+
+	if (!php_phongo_apply_rp_options_to_client(manager->client, bson_options TSRMLS_CC) ||
+	    !php_phongo_apply_wc_options_to_client(manager->client, bson_options TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return false;
+	}
+
+	return true;
 } /* }}} */
 
 void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC) /* {{{ */
