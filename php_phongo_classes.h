@@ -16,32 +16,61 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 #ifndef PHONGO_CLASSES_H
 #define PHONGO_CLASSES_H
 
-/* PHP Core stuff */
-#include <php.h>
-#include <mongoc-bulk-operation-private.h>
+#if PHP_VERSION_ID >= 70000
+# include "php_phongo_structs-7.h"
+# define Z_COMMAND_OBJ_P(zv)           php_command_fetch_object(Z_OBJ_P(zv));
+# define Z_CURSOR_OBJ_P(zv)            php_cursor_fetch_object(Z_OBJ_P(zv));
+# define Z_CURSORID_OBJ_P(zv)          php_cursorid_fetch_object(Z_OBJ_P(zv));
+# define Z_MANAGER_OBJ_P(zv)           php_manager_fetch_object(Z_OBJ_P(zv));
+# define Z_QUERY_OBJ_P(zv)             php_query_fetch_object(Z_OBJ_P(zv));
+# define Z_READPREFERENCE_OBJ_P(zv)    php_readpreference_fetch_object(Z_OBJ_P(zv));
+# define Z_SERVER_OBJ_P(zv)            php_server_fetch_object(Z_OBJ_P(zv));
+# define Z_BULKWRITE_OBJ_P(zv)         php_bulkwrite_fetch_object(Z_OBJ_P(zv));
+# define Z_WRITECONCERN_OBJ_P(zv)      php_writeconcern_fetch_object(Z_OBJ_P(zv));
+# define Z_WRITECONCERNERROR_OBJ_P(zv) php_writeconcernerror_fetch_object(Z_OBJ_P(zv));
+# define Z_WRITEERROR_OBJ_P(zv)        php_writeerror_fetch_object(Z_OBJ_P(zv));
+# define Z_WRITERESULT_OBJ_P(zv)       php_writeresult_fetch_object(Z_OBJ_P(zv));
+# define Z_BINARY_OBJ_P(zv)            php_binary_fetch_object(Z_OBJ_P(zv));
+# define Z_INT32_OBJ_P(zv)             php_int32_fetch_object(Z_OBJ_P(zv));
+# define Z_INT64_OBJ_P(zv)             php_int64_fetch_object(Z_OBJ_P(zv));
+# define Z_JAVASCRIPT_OBJ_P(zv)        php_javascript_fetch_object(Z_OBJ_P(zv));
+# define Z_LOG_OBJ_P(zv)               php_log_fetch_object(Z_OBJ_P(zv));
+# define Z_MAXKEY_OBJ_P(zv)            php_maxkey_fetch_object(Z_OBJ_P(zv));
+# define Z_MINKEY_OBJ_P(zv)            php_minkey_fetch_object(Z_OBJ_P(zv));
+# define Z_OBJECTID_OBJ_P(zv)          php_objectid_fetch_object(Z_OBJ_P(zv));
+# define Z_REGEX_OBJ_P(zv)             php_regex_fetch_object(Z_OBJ_P(zv));
+# define Z_TIMESTAMP_OBJ_P(zv)         php_timestamp_fetch_object(Z_OBJ_P(zv));
+# define Z_UTCDATETIME_OBJ_P(zv)       php_utcdatetime_fetch_object(Z_OBJ_P(zv));
+#else
+# include "php_phongo_structs-5.h"
+# define Z_COMMAND_OBJ_P(zv)           (php_phongo_command_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_CURSOR_OBJ_P(zv)            (php_phongo_cursor_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_CURSORID_OBJ_P(zv)          (php_phongo_cursorid_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_MANAGER_OBJ_P(zv)           (php_phongo_manager_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_QUERY_OBJ_P(zv)             (php_phongo_query_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_READPREFERENCE_OBJ_P(zv)    (php_phongo_readpreference_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_SERVER_OBJ_P(zv)            (php_phongo_server_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_BULKWRITE_OBJ_P(zv)         (php_phongo_bulkwrite_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_WRITECONCERN_OBJ_P(zv)      (php_phongo_writeconcern_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_WRITECONCERNERROR_OBJ_P(zv) (php_phongo_writeconcernerror_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_WRITEERROR_OBJ_P(zv)        (php_phongo_writeerror_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_WRITERESULT_OBJ_P(zv)       (php_phongo_writeresult_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_BINARY_OBJ_P(zv)            (php_phongo_binary_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_INT32_OBJ_P(zv)             (php_phongo_int32_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_INT64_OBJ_P(zv)             (php_phongo_int64_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_JAVASCRIPT_OBJ_P(zv)        (php_phongo_javascript_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_LOG_OBJ_P(zv)               (php_phongo_log_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_MAXKEY_OBJ_P(zv)            (php_phongo_maxkey_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_MINKEY_OBJ_P(zv)            (php_phongo_minkey_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_OBJECTID_OBJ_P(zv)          (php_phongo_objectid_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_REGEX_OBJ_P(zv)             (php_phongo_regex_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_TIMESTAMP_OBJ_P(zv)         (php_phongo_timestamp_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_UTCDATETIME_OBJ_P(zv)       (php_phongo_utcdatetime_t *)zend_object_store_get_object(zv TSRMLS_CC);
 
-/* Our stuffz */
-#include "php_bson.h"
-
-
-typedef struct {
-	zend_object              std;
-	bson_t                  *bson;
-} php_phongo_command_t;
-
-typedef struct {
-	zend_object              std;
-	mongoc_cursor_t         *cursor;
-	mongoc_client_t         *client;
-	int                      server_id;
-	php_phongo_bson_state    visitor_data;
-	int                      got_iterator;
-} php_phongo_cursor_t;
+#endif
 
 typedef struct {
 	zend_object_iterator   intern;
@@ -49,123 +78,6 @@ typedef struct {
 	long                   current;
 } php_phongo_cursor_iterator;
 
-typedef struct {
-	zend_object              std;
-	uint64_t                 id;
-} php_phongo_cursorid_t;
-
-typedef struct {
-	zend_object              std;
-	mongoc_client_t         *client;
-} php_phongo_manager_t;
-
-typedef struct {
-	zend_object              std;
-	bson_t                  *query;
-	bson_t                  *selector;
-	mongoc_query_flags_t     flags;
-	uint32_t                 skip;
-	uint32_t                 limit;
-	uint32_t                 batch_size;
-	mongoc_read_concern_t   *read_concern;
-} php_phongo_query_t;
-
-typedef struct {
-	zend_object              std;
-	mongoc_read_concern_t   *read_concern;
-} php_phongo_readconcern_t;
-
-typedef struct {
-	zend_object              std;
-	mongoc_read_prefs_t     *read_preference;
-} php_phongo_readpreference_t;
-
-typedef struct {
-	zend_object              std;
-	mongoc_client_t         *client;
-	int                      server_id;
-} php_phongo_server_t;
-
-typedef struct {
-	zend_object              std;
-	mongoc_bulk_operation_t *bulk;
-} php_phongo_bulkwrite_t;
-
-typedef struct {
-	zend_object              std;
-	mongoc_write_concern_t  *write_concern;
-} php_phongo_writeconcern_t;
-
-typedef struct {
-	zend_object              std;
-	int                      code;
-	char                    *message;
-	zval                    *info;
-} php_phongo_writeconcernerror_t;
-
-typedef struct {
-	zend_object              std;
-	int                      code;
-	char                    *message;
-	zval                    *info;
-	uint32_t                 index;
-} php_phongo_writeerror_t;
-
-typedef struct {
-	zend_object              std;
-	mongoc_write_concern_t  *write_concern;
-	mongoc_write_result_t    write_result;
-	mongoc_client_t         *client;
-	int                      server_id;
-} php_phongo_writeresult_t;
-
-typedef struct {
-	zend_object              std;
-	char                    *data;
-	int                      data_len;
-	int                      type;
-} php_phongo_binary_t;
-typedef struct {
-	zend_object              std;
-} php_phongo_int32_t;
-typedef struct {
-	zend_object              std;
-} php_phongo_int64_t;
-typedef struct {
-	zend_object              std;
-	char                    *javascript;
-	size_t                   javascript_len;
-	bson_t                  *document;
-} php_phongo_javascript_t;
-typedef struct {
-	zend_object              std;
-} php_phongo_log_t;
-typedef struct {
-	zend_object              std;
-} php_phongo_maxkey_t;
-typedef struct {
-	zend_object              std;
-} php_phongo_minkey_t;
-typedef struct {
-	zend_object              std;
-	char                     oid[25];
-} php_phongo_objectid_t;
-typedef struct {
-	zend_object              std;
-	char                    *pattern;
-	int                      pattern_len;
-	char                    *flags;
-	int                      flags_len;
-} php_phongo_regex_t;
-typedef struct {
-	zend_object              std;
-	int32_t                  increment;
-	int32_t                  timestamp;
-} php_phongo_timestamp_t;
-typedef struct {
-	zend_object              std;
-	int64_t                  milliseconds;
-} php_phongo_utcdatetime_t;
 
 extern PHONGO_API zend_class_entry *php_phongo_command_ce;
 extern PHONGO_API zend_class_entry *php_phongo_cursor_ce;
@@ -257,7 +169,7 @@ PHP_MINIT_FUNCTION(Regex);
 PHP_MINIT_FUNCTION(Timestamp);
 PHP_MINIT_FUNCTION(UTCDateTime);
 
-#endif /* PHONGO_H */
+#endif /* PHONGO_CLASSES_H */
 
 
 /*
