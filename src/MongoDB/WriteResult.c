@@ -52,7 +52,7 @@ zend_object_handlers php_phongo_handler_writeresult;
 PHP_METHOD(WriteResult, getInsertedCount)
 {
 	php_phongo_writeresult_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
@@ -70,7 +70,7 @@ PHP_METHOD(WriteResult, getInsertedCount)
 PHP_METHOD(WriteResult, getMatchedCount)
 {
 	php_phongo_writeresult_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
@@ -88,7 +88,7 @@ PHP_METHOD(WriteResult, getMatchedCount)
 PHP_METHOD(WriteResult, getModifiedCount)
 {
 	php_phongo_writeresult_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
@@ -109,7 +109,7 @@ PHP_METHOD(WriteResult, getModifiedCount)
 PHP_METHOD(WriteResult, getDeletedCount)
 {
 	php_phongo_writeresult_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
@@ -127,7 +127,7 @@ PHP_METHOD(WriteResult, getDeletedCount)
 PHP_METHOD(WriteResult, getUpsertedCount)
 {
 	php_phongo_writeresult_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
@@ -146,7 +146,7 @@ PHP_METHOD(WriteResult, getUpsertedCount)
 PHP_METHOD(WriteResult, getInfo)
 {
 	php_phongo_writeresult_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
@@ -164,7 +164,7 @@ PHP_METHOD(WriteResult, getInfo)
 PHP_METHOD(WriteResult, getServer)
 {
 	php_phongo_writeresult_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
@@ -182,7 +182,7 @@ PHP_METHOD(WriteResult, getServer)
 PHP_METHOD(WriteResult, getUpsertedIds)
 {
 	php_phongo_writeresult_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
@@ -240,7 +240,7 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 PHP_METHOD(WriteResult, getWriteConcernError)
 {
 	php_phongo_writeresult_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
@@ -263,7 +263,7 @@ PHP_METHOD(WriteResult, getWriteConcernError)
 PHP_METHOD(WriteResult, getWriteErrors)
 {
 	php_phongo_writeresult_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
@@ -314,7 +314,7 @@ PHP_METHOD(WriteResult, getWriteErrors)
 PHP_METHOD(WriteResult, isAcknowledged)
 {
 	php_phongo_writeresult_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());

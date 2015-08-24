@@ -962,7 +962,7 @@ PHP_FUNCTION(fromPHP)
 	zval   *data;
 	bson_t *bson;
 
-	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &data) == FAILURE) {
 		return;
@@ -1042,7 +1042,7 @@ PHP_FUNCTION(toPHP)
 	zval                  *typemap = NULL;
 	php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
-	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &data, &data_len, &typemap) == FAILURE) {
 		return;
@@ -1068,7 +1068,7 @@ PHP_FUNCTION(toJSON)
 	const bson_t        *b;
 	      bson_reader_t *reader;
 
-	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &data, &data_len) == FAILURE) {
 		return;
@@ -1099,7 +1099,7 @@ PHP_FUNCTION(fromJSON)
 	bson_t         b = BSON_INITIALIZER;
 	bson_error_t   error;
 
-	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &data, &data_len) == FAILURE) {
 		return;
