@@ -53,7 +53,7 @@ zend_object_handlers php_phongo_handler_server;
    Throws exception -- can only be created internally */
 PHP_METHOD(Server, __construct)
 {
-	(void)return_value; (void)return_value_used; (void)return_value_ptr; (void)ZEND_NUM_ARGS(); (void)getThis();
+	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used) SUPPRESS_UNUSED_WARNING(return_value_ptr) (void)ZEND_NUM_ARGS(); (void)getThis();
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Accessing private constructor");
 }
@@ -68,7 +68,7 @@ PHP_METHOD(Server, executeCommand)
 	zval                     *command;
 	zval                     *readPreference = NULL;
 	php_phongo_command_t     *cmd;
-	(void)return_value_ptr;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());
@@ -91,7 +91,7 @@ PHP_METHOD(Server, executeQuery)
 	int                       namespace_len;
 	zval                     *zquery;
 	zval                     *readPreference = NULL;
-	(void)return_value_ptr;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());
@@ -114,7 +114,7 @@ PHP_METHOD(Server, executeBulkWrite)
 	zval                     *zbulk;
 	zval                     *zwrite_concern = NULL;
 	php_phongo_bulkwrite_t  *bulk;
-	(void)return_value_ptr;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());
@@ -134,7 +134,7 @@ PHP_METHOD(Server, getHost)
 {
 	php_phongo_server_t      *intern;
 	mongoc_server_description_t *sd;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -155,7 +155,7 @@ PHP_METHOD(Server, getTags)
 {
 	php_phongo_server_t      *intern;
 	mongoc_server_description_t *sd;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());
@@ -184,7 +184,7 @@ PHP_METHOD(Server, getInfo)
 {
 	php_phongo_server_t      *intern;
 	mongoc_server_description_t *sd;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());
@@ -213,7 +213,7 @@ PHP_METHOD(Server, getLatency)
 {
 	php_phongo_server_t      *intern;
 	mongoc_server_description_t *sd;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());
@@ -235,7 +235,7 @@ PHP_METHOD(Server, getPort)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());
@@ -257,7 +257,7 @@ PHP_METHOD(Server, getType)
 {
 	php_phongo_server_t      *intern;
 	mongoc_server_description_t *sd;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());
@@ -279,7 +279,7 @@ PHP_METHOD(Server, isPrimary)
 {
 	php_phongo_server_t      *intern;
 	mongoc_server_description_t *sd;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());
@@ -301,7 +301,7 @@ PHP_METHOD(Server, isSecondary)
 {
 	php_phongo_server_t      *intern;
 	mongoc_server_description_t *sd;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());
@@ -323,7 +323,7 @@ PHP_METHOD(Server, isArbiter)
 {
 	php_phongo_server_t      *intern;
 	mongoc_server_description_t *sd;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());
@@ -345,7 +345,7 @@ PHP_METHOD(Server, isHidden)
 {
 	php_phongo_server_t      *intern;
 	mongoc_server_description_t *sd;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());
@@ -369,7 +369,7 @@ PHP_METHOD(Server, isPassive)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_SERVER_OBJ_P(getThis());

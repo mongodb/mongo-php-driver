@@ -51,7 +51,7 @@ zend_object_handlers php_phongo_handler_cursorid;
 PHP_METHOD(CursorId, __toString)
 {
 	php_phongo_cursorid_t    *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_CURSORID_OBJ_P(getThis());

@@ -56,7 +56,7 @@ PHP_METHOD(Query, __construct)
 	zval                     *zoptions = NULL;
 	bson_t                    bfilter;
 	bson_t                    boptions = BSON_INITIALIZER;
-	(void)return_value_ptr; (void)return_value; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
