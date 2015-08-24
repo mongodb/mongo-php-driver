@@ -359,7 +359,7 @@ char *php_array_zval_to_string(zval *z, int *plen, zend_bool *pfree) {
 	switch (Z_TYPE_P(z)) {
 		case IS_NULL:
 			*pfree = 0;
-			return "";
+			return (char *)"";
 		case IS_STRING:
 			*pfree = 0;
 			*plen = Z_STRLEN_P(z);
