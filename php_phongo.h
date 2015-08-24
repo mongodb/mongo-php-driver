@@ -131,10 +131,7 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t *write_concern);
 void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor);
 
-bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC);
-bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC);
-mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options);
-mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC);
+bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, bson_t *bson_options, zval *driverOptions TSRMLS_DC);
 void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS_DC);
 void php_phongo_cursor_id_new_from_id(zval *object, int64_t cursorid TSRMLS_DC);
 void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC);
