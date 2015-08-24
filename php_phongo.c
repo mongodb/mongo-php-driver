@@ -1858,6 +1858,32 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 	RETURN(client);
 } /* }}} */
 
+bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, bson_t *bson_options, zval *driverOptions TSRMLS_DC) /* {{{ */
+{
+	mongoc_uri_t             *uri;
+
+	if (!(uri = php_phongo_make_uri(uri_string, bson_options TSRMLS_CC))) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse MongoDB URI: '%s'", uri_string);
+		return false;
+	}
+
+	manager->client = php_phongo_make_mongo_client(uri, driverOptions TSRMLS_CC);
+	mongoc_uri_destroy(uri);
+
+	if (!manager->client) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to create Manager from URI: '%s'", uri_string);
+		return false;
+	}
+
+	if (!php_phongo_apply_rp_options_to_client(manager->client, bson_options TSRMLS_CC) ||
+	    !php_phongo_apply_wc_options_to_client(manager->client, bson_options TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return false;
+	}
+
+	return true;
+} /* }}} */
+
 void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC) /* {{{ */
 {
 	php_phongo_utcdatetime_t     *intern;

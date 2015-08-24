@@ -58,7 +58,6 @@ PHP_METHOD(Manager, __construct)
 {
 	php_phongo_manager_t     *intern;
 	zend_error_handling       error_handling;
-	mongoc_uri_t             *uri;
 	char                     *uri_string;
 	int                       uri_string_len;
 	zval                     *options = NULL;
@@ -76,36 +75,11 @@ PHP_METHOD(Manager, __construct)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-
 	if (options) {
 		zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
 	}
 
-	if (!(uri = php_phongo_make_uri(uri_string, &bson_options TSRMLS_CC))) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse MongoDB URI: '%s'", uri_string);
-		bson_destroy(&bson_options);
-
-		return;
-	}
-
-	intern->client = php_phongo_make_mongo_client(uri, driverOptions TSRMLS_CC);
-	mongoc_uri_destroy(uri);
-
-	if (!intern->client) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to create Manager from URI: '%s'", uri_string);
-		bson_destroy(&bson_options);
-
-		return;
-	}
-
-	if (!php_phongo_apply_rp_options_to_client(intern->client, &bson_options TSRMLS_CC) ||
-	    !php_phongo_apply_wc_options_to_client(intern->client, &bson_options TSRMLS_CC)) {
-		/* Exception should already have been thrown */
-		bson_destroy(&bson_options);
-
-		return;
-	}
-
+	phongo_manager_init(intern, uri_string, &bson_options, driverOptions TSRMLS_CC);
 	bson_destroy(&bson_options);
 }
 /* }}} */
