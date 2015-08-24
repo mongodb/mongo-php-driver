@@ -58,17 +58,16 @@ PHP_METHOD(Manager, __construct)
 {
 	php_phongo_manager_t     *intern;
 	zend_error_handling       error_handling;
-	mongoc_uri_t             *uri;
 	char                     *uri_string;
 	int                       uri_string_len;
 	zval                     *options = NULL;
 	bson_t                    bson_options = BSON_INITIALIZER;
 	zval                     *driverOptions = NULL;
-	(void)return_value; (void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!a!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -76,36 +75,11 @@ PHP_METHOD(Manager, __construct)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-
 	if (options) {
 		zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
 	}
 
-	if (!(uri = php_phongo_make_uri(uri_string, &bson_options TSRMLS_CC))) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse MongoDB URI: '%s'", uri_string);
-		bson_destroy(&bson_options);
-
-		return;
-	}
-
-	intern->client = php_phongo_make_mongo_client(uri, driverOptions TSRMLS_CC);
-	mongoc_uri_destroy(uri);
-
-	if (!intern->client) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to create Manager from URI: '%s'", uri_string);
-		bson_destroy(&bson_options);
-
-		return;
-	}
-
-	if (!php_phongo_apply_rp_options_to_client(intern->client, &bson_options TSRMLS_CC) ||
-	    !php_phongo_apply_wc_options_to_client(intern->client, &bson_options TSRMLS_CC)) {
-		/* Exception should already have been thrown */
-		bson_destroy(&bson_options);
-
-		return;
-	}
-
+	phongo_manager_init(intern, uri_string, &bson_options, driverOptions TSRMLS_CC);
 	bson_destroy(&bson_options);
 }
 /* }}} */
@@ -118,18 +92,19 @@ PHP_METHOD(Manager, executeCommand)
 	int                       db_len;
 	zval                     *command;
 	zval                     *readPreference = NULL;
-	php_phongo_command_t    *cmd;
-	(void)return_value_ptr;
+	php_phongo_command_t     *cmd;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &db, &db_len, &command, php_phongo_command_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
 	}
 
 
-	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
+	cmd = Z_COMMAND_OBJ_P(command);
 	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
@@ -142,10 +117,11 @@ PHP_METHOD(Manager, executeQuery)
 	int                       namespace_len;
 	zval                     *zquery;
 	zval                     *readPreference = NULL;
-	(void)return_value_ptr;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zquery, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
@@ -164,18 +140,19 @@ PHP_METHOD(Manager, executeBulkWrite)
 	int                        namespace_len;
 	zval                      *zbulk;
 	zval                      *zwrite_concern = NULL;
-	php_phongo_bulkwrite_t   *bulk;
-	(void)return_value_ptr;
+	php_phongo_bulkwrite_t    *bulk;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
 		return;
 	}
 
 
-	bulk = (php_phongo_bulkwrite_t *)zend_object_store_get_object(zbulk TSRMLS_CC);
+	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 	phongo_execute_write(intern->client, namespace, bulk->bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
@@ -189,10 +166,11 @@ PHP_METHOD(Manager, executeInsert)
 	zval                     *document;
 	zval                     *zwrite_concern = NULL;
 	bson_t                   *bson;
-	(void)return_value_ptr;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sA|O!", &namespace, &namespace_len, &document, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
 		return;
@@ -219,10 +197,11 @@ PHP_METHOD(Manager, executeUpdate)
 	bson_t                   *query;
 	bson_t                   *update;
 	mongoc_update_flags_t     flags = MONGOC_UPDATE_NONE;
-	(void)return_value_ptr;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sAA|a!O!", &namespace, &namespace_len, &zquery, &newObj, &updateOptions, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
 		return;
@@ -256,10 +235,11 @@ PHP_METHOD(Manager, executeDelete)
 	zval                     *zwrite_concern = NULL;
 	bson_t                   *bson;
 	mongoc_delete_flags_t     flags = MONGOC_DELETE_NONE;
-	(void)return_value_ptr;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sA|a!O!", &namespace, &namespace_len, &query, &deleteOptions, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
 		return;
@@ -280,9 +260,10 @@ PHP_METHOD(Manager, executeDelete)
 PHP_METHOD(Manager, getReadPreference)
 {
 	php_phongo_manager_t *intern;
-	(void)return_value_ptr;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -300,10 +281,10 @@ PHP_METHOD(Manager, getServers)
 	php_phongo_manager_t         *intern;
 	mongoc_set_t                 *set;
 	size_t                        i;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -326,9 +307,10 @@ PHP_METHOD(Manager, getServers)
 PHP_METHOD(Manager, getWriteConcern)
 {
 	php_phongo_manager_t *intern;
-	(void)return_value_ptr;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -347,10 +329,10 @@ PHP_METHOD(Manager, selectServer)
 	zval                         *zreadPreference = NULL;
 	const mongoc_read_prefs_t    *readPreference;
 	uint32_t                      server_id;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zreadPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
@@ -365,7 +347,7 @@ PHP_METHOD(Manager, selectServer)
  * Throws MongoDB\Driver\RuntimeException as it cannot be serialized */
 PHP_METHOD(Manager, __wakeUp)
 {
-	(void)return_value_ptr; (void)return_value_used; (void)return_value; (void)this_ptr;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(this_ptr)
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -518,7 +500,7 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 
 
 	*is_temp = 1;
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(object);
 
 
 	array_init(&retval);

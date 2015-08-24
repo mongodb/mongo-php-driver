@@ -1,3 +1,5 @@
+#include <php.h>
+
 #ifdef PHP_WIN32
 # include "config.w32.h"
 #else
@@ -112,3 +114,20 @@
 # endif
 #endif
 
+#if PHP_VERSION_ID >= 70000
+# define SUPPRESS_UNUSED_WARNING(x)
+static inline void *x509_from_zval(zval *zval) {
+	return Z_RES_P(zval)->ptr;
+}
+#define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
+#else
+# define SUPPRESS_UNUSED_WARNING(x) (void)x;
+# define DECLARE_RETURN_VALUE_USED
+static inline void *x509_from_zval(zval *zval TSRMLS_DC) {
+	int resource_type;
+	int type;
+
+	zend_list_find(Z_LVAL_P(zval), &resource_type);
+	return zend_fetch_resource(&zval TSRMLS_CC, -1, "OpenSSL X.509", &type, 1, resource_type);
+}
+#endif

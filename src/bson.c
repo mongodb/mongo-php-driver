@@ -83,7 +83,7 @@ void php_phongo_objectid_get_id(zval *object, bson_oid_t *oid TSRMLS_DC)
 {
 	php_phongo_objectid_t     *intern;
 
-	intern = (php_phongo_objectid_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_OBJECTID_OBJ_P(object);
 
 	bson_oid_init_from_string(oid, intern->oid);
 }
@@ -91,7 +91,7 @@ int64_t php_phongo_utcdatetime_get_milliseconds(zval *object TSRMLS_DC)
 {
 	php_phongo_utcdatetime_t     *intern;
 
-	intern = (php_phongo_utcdatetime_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_UTCDATETIME_OBJ_P(object);
 
 	return intern->milliseconds;
 }
@@ -99,7 +99,7 @@ int32_t php_phongo_timestamp_get_increment(zval *object TSRMLS_DC)
 {
 	php_phongo_timestamp_t     *intern;
 
-	intern = (php_phongo_timestamp_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_TIMESTAMP_OBJ_P(object);
 
 	return intern->increment;
 }
@@ -107,7 +107,7 @@ int32_t php_phongo_timestamp_get_timestamp(zval *object TSRMLS_DC)
 {
 	php_phongo_timestamp_t     *intern;
 
-	intern = (php_phongo_timestamp_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_TIMESTAMP_OBJ_P(object);
 
 	return intern->timestamp;
 }
@@ -115,7 +115,7 @@ bool php_phongo_javascript_has_scope(zval *object TSRMLS_DC)
 {
 	php_phongo_javascript_t *intern;
 
-	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_JAVASCRIPT_OBJ_P(object);
 
 	return !!intern->document;
 }
@@ -123,7 +123,7 @@ char *php_phongo_javascript_get_javascript(zval *object TSRMLS_DC)
 {
 	php_phongo_javascript_t *intern;
 
-	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_JAVASCRIPT_OBJ_P(object);
 
 	return intern->javascript;
 }
@@ -131,7 +131,7 @@ bson_t *php_phongo_javascript_get_scope(zval *object TSRMLS_DC)
 {
 	php_phongo_javascript_t *intern;
 
-	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_JAVASCRIPT_OBJ_P(object);
 
 	return intern->document;
 }
@@ -139,7 +139,7 @@ int php_phongo_binary_get_data(zval *object, char **data TSRMLS_DC)
 {
 	php_phongo_binary_t *intern;
 
-	intern = (php_phongo_binary_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_BINARY_OBJ_P(object);
 
 	*data = intern->data;
 	return intern->data_len;
@@ -148,7 +148,7 @@ int php_phongo_binary_get_type(zval *object TSRMLS_DC)
 {
 	php_phongo_binary_t *intern;
 
-	intern = (php_phongo_binary_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_BINARY_OBJ_P(object);
 
 	return intern->type;
 }
@@ -156,7 +156,7 @@ char *php_phongo_regex_get_pattern(zval *object TSRMLS_DC)
 {
 	php_phongo_regex_t *intern;
 
-	intern = (php_phongo_regex_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_REGEX_OBJ_P(object);
 
 	return intern->pattern;
 }
@@ -164,7 +164,7 @@ char *php_phongo_regex_get_flags(zval *object TSRMLS_DC)
 {
 	php_phongo_regex_t *intern;
 
-	intern = (php_phongo_regex_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_REGEX_OBJ_P(object);
 
 	return intern->flags;
 }
@@ -962,7 +962,7 @@ PHP_FUNCTION(fromPHP)
 	zval   *data;
 	bson_t *bson;
 
-	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &data) == FAILURE) {
 		return;
@@ -1042,7 +1042,7 @@ PHP_FUNCTION(toPHP)
 	zval                  *typemap = NULL;
 	php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
-	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &data, &data_len, &typemap) == FAILURE) {
 		return;
@@ -1068,7 +1068,7 @@ PHP_FUNCTION(toJSON)
 	const bson_t        *b;
 	      bson_reader_t *reader;
 
-	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &data, &data_len) == FAILURE) {
 		return;
@@ -1099,7 +1099,7 @@ PHP_FUNCTION(fromJSON)
 	bson_t         b = BSON_INITIALIZER;
 	bson_error_t   error;
 
-	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &data, &data_len) == FAILURE) {
 		return;

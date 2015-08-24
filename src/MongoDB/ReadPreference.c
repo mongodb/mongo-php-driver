@@ -55,11 +55,11 @@ PHP_METHOD(ReadPreference, __construct)
 	zend_error_handling       error_handling;
 	long                      readPreference;
 	zval                     *tagSets = NULL;
-	(void)return_value_ptr; (void)return_value; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_readpreference_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|a!", &readPreference, &tagSets) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);

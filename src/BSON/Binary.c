@@ -58,7 +58,7 @@ PHP_METHOD(Binary, __construct)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_binary_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_BINARY_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &data, &data_len, &type) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -78,7 +78,7 @@ PHP_METHOD(Binary, getData)
 	php_phongo_binary_t      *intern;
 
 
-	intern = (php_phongo_binary_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_BINARY_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -94,7 +94,7 @@ PHP_METHOD(Binary, getType)
 	php_phongo_binary_t      *intern;
 
 
-	intern = (php_phongo_binary_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_BINARY_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -164,7 +164,7 @@ HashTable *php_phongo_binary_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	php_phongo_binary_t *intern;
 	zval                 retval = zval_used_for_init;
 
-	intern = (php_phongo_binary_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_BINARY_OBJ_P(object);
 	*is_temp = 1;
 	array_init_size(&retval, 2);
 

@@ -51,10 +51,10 @@ zend_object_handlers php_phongo_handler_cursorid;
 PHP_METHOD(CursorId, __toString)
 {
 	php_phongo_cursorid_t    *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
-	intern = (php_phongo_cursorid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_CURSORID_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -114,7 +114,7 @@ HashTable *php_phongo_cursorid_get_debug_info(zval *object, int *is_temp TSRMLS_
 
 
 	*is_temp = 1;
-	intern = (php_phongo_cursorid_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_CURSORID_OBJ_P(object);
 
 	array_init(&retval);
 

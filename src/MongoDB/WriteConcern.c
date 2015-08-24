@@ -60,11 +60,11 @@ PHP_METHOD(WriteConcern, __construct)
 	zend_bool                 journal = 0;
 	zend_bool                 fsync = 0;
 	long                      w;
-	(void)return_value; (void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|lbb", &wstring, &wstring_len, &wtimeout, &journal, &fsync) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);

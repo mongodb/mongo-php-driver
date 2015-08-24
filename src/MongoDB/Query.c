@@ -54,11 +54,11 @@ PHP_METHOD(Query, __construct)
 	zend_error_handling       error_handling;
 	zval                     *filter;
 	zval                     *options = NULL;
-	(void)return_value_ptr; (void)return_value; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_query_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_QUERY_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &filter, &options) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -129,7 +129,7 @@ HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 
 
 	*is_temp = 1;
-	intern = (php_phongo_query_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_QUERY_OBJ_P(object);
 
 	array_init_size(&retval, 6);
 
