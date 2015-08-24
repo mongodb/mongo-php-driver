@@ -68,6 +68,7 @@ PHP_METHOD(Server, executeCommand)
 	zval                     *command;
 	zval                     *readPreference = NULL;
 	php_phongo_command_t     *cmd;
+	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
@@ -91,6 +92,7 @@ PHP_METHOD(Server, executeQuery)
 	int                       namespace_len;
 	zval                     *zquery;
 	zval                     *readPreference = NULL;
+	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
@@ -113,7 +115,8 @@ PHP_METHOD(Server, executeBulkWrite)
 	int                       namespace_len;
 	zval                     *zbulk;
 	zval                     *zwrite_concern = NULL;
-	php_phongo_bulkwrite_t  *bulk;
+	php_phongo_bulkwrite_t   *bulk;
+	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
