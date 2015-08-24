@@ -71,14 +71,14 @@ PHP_METHOD(Server, executeCommand)
 	(void)return_value_ptr;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &db, &db_len, &command, php_phongo_command_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
 	}
 
 
-	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
+	cmd = Z_COMMAND_OBJ_P(command);
 	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), intern->server_id, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
@@ -94,7 +94,7 @@ PHP_METHOD(Server, executeQuery)
 	(void)return_value_ptr;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zquery, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
@@ -117,14 +117,14 @@ PHP_METHOD(Server, executeBulkWrite)
 	(void)return_value_ptr;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
 		return;
 	}
 
 
-	bulk = (php_phongo_bulkwrite_t *)zend_object_store_get_object(zbulk TSRMLS_CC);
+	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 	phongo_execute_write(intern->client, namespace, bulk->bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), intern->server_id, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
@@ -137,7 +137,7 @@ PHP_METHOD(Server, getHost)
 	bson_error_t                 error;
 	(void)return_value_ptr; (void)return_value_used;
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -160,7 +160,7 @@ PHP_METHOD(Server, getTags)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -190,7 +190,7 @@ PHP_METHOD(Server, getInfo)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -220,7 +220,7 @@ PHP_METHOD(Server, getLatency)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -243,7 +243,7 @@ PHP_METHOD(Server, getPort)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -266,7 +266,7 @@ PHP_METHOD(Server, getType)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -289,7 +289,7 @@ PHP_METHOD(Server, isPrimary)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -312,7 +312,7 @@ PHP_METHOD(Server, isSecondary)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -335,7 +335,7 @@ PHP_METHOD(Server, isArbiter)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -358,7 +358,7 @@ PHP_METHOD(Server, isHidden)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -383,7 +383,7 @@ PHP_METHOD(Server, isPassive)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_server_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -485,8 +485,8 @@ static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{
 	bson_error_t error2;
 	mongoc_server_description_t *sd1, *sd2;
 
-    intern1 = (php_phongo_server_t *)zend_object_store_get_object(o1 TSRMLS_CC);
-    intern2 = (php_phongo_server_t *)zend_object_store_get_object(o2 TSRMLS_CC);
+    intern1 = Z_SERVER_OBJ_P(o1);
+    intern2 = Z_SERVER_OBJ_P(o2);
 
 	sd1 = mongoc_topology_description_server_by_id(&intern1->client->topology->description, intern1->server_id, &error1);
 	sd2 = mongoc_topology_description_server_by_id(&intern2->client->topology->description, intern2->server_id, &error2);
@@ -539,7 +539,7 @@ HashTable *php_phongo_server_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	bson_error_t                 error;
 
 	*is_temp = 1;
-	intern = (php_phongo_server_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_SERVER_OBJ_P(object);
 
 
 	if (!(sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id, &error))) {

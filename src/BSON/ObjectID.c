@@ -58,7 +58,7 @@ PHP_METHOD(ObjectID, __construct)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_objectid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_OBJECTID_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s!", &id, &id_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -91,7 +91,7 @@ PHP_METHOD(ObjectID, __toString)
 	php_phongo_objectid_t    *intern;
 
 
-	intern = (php_phongo_objectid_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_OBJECTID_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -154,8 +154,8 @@ static int php_phongo_objectid_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* 
 	php_phongo_objectid_t *intern1;
 	php_phongo_objectid_t *intern2;
 
-	intern1 = (php_phongo_objectid_t *)zend_object_store_get_object(o1 TSRMLS_CC);
-	intern2 = (php_phongo_objectid_t *)zend_object_store_get_object(o2 TSRMLS_CC);
+	intern1 = Z_OBJECTID_OBJ_P(o1);
+	intern2 = Z_OBJECTID_OBJ_P(o2);
 
 	return strcmp(intern1->oid, intern2->oid);
 } /* }}} */
@@ -167,7 +167,7 @@ HashTable *php_phongo_objectid_get_debug_info(zval *object, int *is_temp TSRMLS_
 
 
 	*is_temp = 1;
-	intern = (php_phongo_objectid_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_OBJECTID_OBJ_P(object);
 
 	array_init(&retval);
 
