@@ -68,7 +68,7 @@ PHP_METHOD(Manager, __construct)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!a!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -97,14 +97,14 @@ PHP_METHOD(Manager, executeCommand)
 	(void)return_value_ptr;
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &db, &db_len, &command, php_phongo_command_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
 	}
 
 
-	cmd = (php_phongo_command_t *)zend_object_store_get_object(command TSRMLS_CC);
+	cmd = Z_COMMAND_OBJ_P(command);
 	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
@@ -120,7 +120,7 @@ PHP_METHOD(Manager, executeQuery)
 	(void)return_value_ptr;
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zquery, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
@@ -143,17 +143,18 @@ PHP_METHOD(Manager, executeBulkWrite)
 	(void)return_value_ptr;
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
 		return;
 	}
 
 
-	bulk = (php_phongo_bulkwrite_t *)zend_object_store_get_object(zbulk TSRMLS_CC);
+	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 	phongo_execute_write(intern->client, namespace, bulk->bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\ReadPreference Manager::getReadPreference()
    Returns the ReadPreference associated with this Manager */
 PHP_METHOD(Manager, getReadPreference)
@@ -161,7 +162,7 @@ PHP_METHOD(Manager, getReadPreference)
 	php_phongo_manager_t *intern;
 	(void)return_value_ptr;
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -182,7 +183,7 @@ PHP_METHOD(Manager, getServers)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -212,7 +213,7 @@ PHP_METHOD(Manager, getWriteConcern)
 	php_phongo_manager_t *intern;
 	(void)return_value_ptr;
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -234,7 +235,7 @@ PHP_METHOD(Manager, selectServer)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zreadPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
@@ -378,7 +379,7 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 
 
 	*is_temp = 1;
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(object);
 
 
 	array_init(&retval);

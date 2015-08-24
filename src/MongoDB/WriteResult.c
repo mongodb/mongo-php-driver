@@ -55,7 +55,7 @@ PHP_METHOD(WriteResult, getInsertedCount)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -73,7 +73,7 @@ PHP_METHOD(WriteResult, getMatchedCount)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -91,7 +91,7 @@ PHP_METHOD(WriteResult, getModifiedCount)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -112,7 +112,7 @@ PHP_METHOD(WriteResult, getDeletedCount)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -130,7 +130,7 @@ PHP_METHOD(WriteResult, getUpsertedCount)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -148,7 +148,7 @@ PHP_METHOD(WriteResult, getServer)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -166,7 +166,7 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -224,7 +224,7 @@ PHP_METHOD(WriteResult, getWriteConcernError)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -270,7 +270,7 @@ PHP_METHOD(WriteResult, getWriteErrors)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -321,7 +321,7 @@ PHP_METHOD(WriteResult, isAcknowledged)
 	(void)return_value_ptr; (void)return_value_used;
 
 
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -431,7 +431,7 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	php_phongo_bson_state     state = PHONGO_BSON_STATE_INITIALIZER;
 	bson_iter_t iter;
 
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_WRITERESULT_OBJ_P(object);
 	*is_temp = 1;
 	array_init_size(&retval, 9);
 
