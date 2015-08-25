@@ -169,25 +169,21 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 			return spl_ce_RuntimeException;
 	}
 }
-PHONGO_API zval* phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *format, ...)
+void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *format, ...)
 {
-	zval *return_value;
 	va_list args;
 	char *message;
 	int message_len;
 
 	va_start(args, format);
 	message_len = vspprintf(&message, 0, format, args);
-	return_value = zend_throw_exception(phongo_exception_from_phongo_domain(domain), message, 0 TSRMLS_CC);
+	zend_throw_exception(phongo_exception_from_phongo_domain(domain), message, 0 TSRMLS_CC);
 	efree(message);
 	va_end(args);
-
-
-	return return_value;
 }
-PHONGO_API zval* phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC)
+void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC)
 {
-	return zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code), error->message, error->code TSRMLS_CC);
+	zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code), error->message, error->code TSRMLS_CC);
 }
 static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain, const char *message, void *user_data)
 {
@@ -645,10 +641,8 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc
 			/* FIXME: Maybe we can look at write_result.error and not pass error at all? */
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 		} else {
-			zval *ex;
-
-			ex = phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "BulkWrite error");
-			zend_update_property(Z_OBJCE_P(ex), ex, ZEND_STRL("writeResult"), return_value TSRMLS_CC);
+			phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "BulkWrite error");
+			phongo_add_exception_prop(ZEND_STRL("writeResult"), return_value TSRMLS_CC);
 		}
 		return false;
 	}
@@ -2004,23 +1998,21 @@ bool php_phongo_writeresult_get_writeconcern_error(php_phongo_writeresult_t *wri
 
 	return false;
 } /* }}} */
-zval* php_phongo_throw_write_errors(php_phongo_writeresult_t *wr TSRMLS_DC) /* {{{ */
+void php_phongo_throw_write_errors(php_phongo_writeresult_t *wr TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
 
 	if (php_phongo_writeresult_get_write_errors(wr, &error)) {
-		return phongo_throw_exception(PHONGO_ERROR_WRITE_SINGLE_FAILED TSRMLS_CC, "%s", error.message);
+		phongo_throw_exception(PHONGO_ERROR_WRITE_SINGLE_FAILED TSRMLS_CC, "%s", error.message);
 	}
-	return NULL;
 } /* }}} */
-zval* php_phongo_throw_write_concern_error(php_phongo_writeresult_t *wr TSRMLS_DC) /* {{{ */
+void php_phongo_throw_write_concern_error(php_phongo_writeresult_t *wr TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
 
 	if (php_phongo_writeresult_get_writeconcern_error(wr, &error)) {
-		return phongo_throw_exception(PHONGO_ERROR_WRITECONCERN_FAILED TSRMLS_CC, "%s", error.message);
+		phongo_throw_exception(PHONGO_ERROR_WRITECONCERN_FAILED TSRMLS_CC, "%s", error.message);
 	}
-	return NULL;
 } /* }}} */
 php_phongo_writeresult_t *php_phongo_writeresult_get_from_bulkwriteexception(zval *ex TSRMLS_DC) /* {{{ */
 {

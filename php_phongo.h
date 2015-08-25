@@ -16,8 +16,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 #ifndef PHONGO_H
 #define PHONGO_H
 
@@ -98,13 +96,15 @@ typedef struct
 
 PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
 PHONGO_API zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
-PHONGO_API zval* phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *format, ...)
-#ifndef PHP_WIN32
-#ifdef ZTS
+void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *format, ...)
+#if PHP_VERSION_ID < 70000
+# ifndef PHP_WIN32
+#  ifdef ZTS
 	 __attribute__ ((format(printf, 3, 4)))
-#else
+#  else
 	 __attribute__ ((format(printf, 2, 3)))
-#endif
+#  endif
+# endif
 #endif
 ;
 
@@ -142,8 +142,8 @@ void php_phongo_new_binary_from_binary_and_type(zval *object, const char *data, 
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC);
 
 php_phongo_writeresult_t *php_phongo_writeresult_get_from_bulkwriteexception(zval *ex TSRMLS_DC);
-zval* php_phongo_throw_write_errors(php_phongo_writeresult_t *wr TSRMLS_DC);
-zval* php_phongo_throw_write_concern_error(php_phongo_writeresult_t *wr TSRMLS_DC);
+void php_phongo_throw_write_errors(php_phongo_writeresult_t *wr TSRMLS_DC);
+void php_phongo_throw_write_concern_error(php_phongo_writeresult_t *wr TSRMLS_DC);
 zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
 zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
 
