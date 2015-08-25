@@ -1,19 +1,12 @@
 # pecl/mongodb (MongoDB driver for PHP)
 
-[![Build Status](https://api.travis-ci.org/10gen-labs/mongo-php-driver-prototype.png?branch=master)](https://travis-ci.org/10gen-labs/mongo-php-driver-prototype)
-[![Coverage Status](https://coveralls.io/repos/10gen-labs/mongo-php-driver-prototype/badge.svg?branch=master)](https://coveralls.io/r/10gen-labs/mongo-php-driver-prototype?branch=master)
+[![Build Status](https://api.travis-ci.org/10gen-labs/mongo-php-driver-prototype.png?branch=PHP7)](https://travis-ci.org/10gen-labs/mongo-php-driver-prototype)
+[![Coverage Status](https://coveralls.io/repos/10gen-labs/mongo-php-driver-prototype/badge.svg?branch=PHP7)](https://coveralls.io/r/10gen-labs/mongo-php-driver-prototype?branch=PHP7)
 
-The purpose of this driver is to provide a thin glue between MongoDB
-and PHP, implementing only fundamental and performance-critical components
-
-In the long run, we hope that userland packages will be built atop this driver
-to implement various APIs (e.g. a BC layer for the existing driver, new fluent
-interfaces), management utilities (for creating admin utilities and cluster
-management applications), and other interesting libraries.
-
-The goal is to encourage community contribution and involvement with these
-components (with a lower barrier of entry) while also keeping the overall design
-fast and powerful.
+This is branch is for the development of the PHP7 version of phongo.
+It is under active development but is not expected to work just yet, or even compile.
+If you are interested in bleeeeeding edge, and are comfortable with doing lot of work yourself
+to get this working the feel free to give it a shot!
 
 ## Documentation
 - http://docs.php.net/set.mongodb
@@ -24,7 +17,13 @@ fast and powerful.
 To build and install the driver:
 
 ```
-$ pecl install mongodb-alpha
+$ git clone -b PHP7 https://github.com/10gen-labs/mongo-php-driver-prototype.git
+$ cd mongo-php-driver-prototype
+$ git submodule update --init
+$ phpize
+$ ./configure
+$ make -j6 all
+$ make install
 $ echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```
 
