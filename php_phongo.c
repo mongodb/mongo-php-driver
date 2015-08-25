@@ -45,13 +45,15 @@
 #include <Zend/zend_exceptions.h>
 #include <ext/spl/spl_iterators.h>
 #include <ext/spl/spl_exceptions.h>
-/* For formating timestamp in the log */
-#include <ext/date/php_date.h>
 /* Stream wrapper */
 #include <main/php_streams.h>
 #include <main/php_network.h>
 /* Debug log writing */
 #include <main/php_open_temporary_file.h>
+/* For formating timestamp in the log */
+#include <ext/date/php_date.h>
+/* String manipulation */
+#include <Zend/zend_string.h>
 /* PHP array helpers */
 #include "php_array_api.h"
 
@@ -200,12 +202,12 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 	case MONGOC_LOG_LEVEL_TRACE:
 		{
 			time_t t;
-			char *dt = NULL;
+			phongo_char *dt;
 
 			time(&t);
 			dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), t, 0 TSRMLS_CC);
 
-			fprintf(MONGODB_G(debug_fd), "[%s] %10s: %-8s> %s\n", dt, log_domain, mongoc_log_level_str(log_level), message);
+			fprintf(MONGODB_G(debug_fd), "[%s] %10s: %-8s> %s\n", phongo_str(dt), log_domain, mongoc_log_level_str(log_level), message);
 			fflush(MONGODB_G(debug_fd));
 			efree(dt);
 		} break;

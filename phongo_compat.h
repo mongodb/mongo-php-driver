@@ -24,6 +24,10 @@
 #define PHONGO_COMPAT_H
 
 #include <php.h>
+#include <Zend/zend_string.h>
+#if PHP_VERSION_ID >= 70000
+#include <Zend/zend_portability.h>
+#endif
 
 #ifdef PHP_WIN32
 # include "config.w32.h"
@@ -140,10 +144,18 @@
 #endif
 
 #if PHP_VERSION_ID >= 70000
+# define phongo_char zend_string
+# define phongo_char_pdup(str) zend_string_copy(filename)->val
+# define phongo_char_free(str) zend_string_release(str)
+# define phongo_str(str) str->val
 # define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data)
 # define SUPPRESS_UNUSED_WARNING(x)
-#define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
+# define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
 #else
+# define phongo_char char
+# define phongo_char_pdup(str) pestrdup(filename, 1)
+# define phongo_char_free(str) _efree(str ZEND_FILE_LINE_CC ZEND_FILE_LINE_CC)
+# define phongo_str(str) str
 # define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data) TSRMLS_FETCH_FROM_CTX(user_data)
 # define SUPPRESS_UNUSED_WARNING(x) (void)x;
 # define DECLARE_RETURN_VALUE_USED
