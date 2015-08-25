@@ -67,7 +67,10 @@ PHP_METHOD(Query, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	phongo_query_init(intern, filter, options TSRMLS_CC);
+	intern->query = bson_new();
+	if (!phongo_query_init(intern, filter, options TSRMLS_CC)) {
+		bson_clear(&intern->query);
+	}
 }
 /* }}} */
 
