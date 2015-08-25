@@ -151,21 +151,19 @@ HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 	/* Avoid using PHONGO_TYPEMAP_NATIVE_ARRAY for decoding query and selector
 	 * documents so that users can differentiate BSON arrays and documents. */
 	if (intern->query) {
-		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+		zval *zv;
 
-		MAKE_STD_ZVAL(state.zchild);
-		bson_to_zval(bson_get_data(intern->query), intern->query->len, &state);
-		add_assoc_zval_ex(&retval, ZEND_STRS("query"), state.zchild);
+		bson_to_zval(bson_get_data(intern->query), intern->query->len, &zv);
+		add_assoc_zval_ex(&retval, ZEND_STRS("query"), zv);
 	} else {
 		add_assoc_null_ex(&retval, ZEND_STRS("query"));
 	}
 
 	if (intern->selector) {
-		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+		zval *zv;
 
-		MAKE_STD_ZVAL(state.zchild);
-		bson_to_zval(bson_get_data(intern->selector), intern->selector->len, &state);
-		add_assoc_zval_ex(&retval, ZEND_STRS("selector"), state.zchild);
+		bson_to_zval(bson_get_data(intern->selector), intern->selector->len, &zv);
+		add_assoc_zval_ex(&retval, ZEND_STRS("selector"), zv);
 	} else {
 		add_assoc_null_ex(&retval, ZEND_STRS("selector"));
 	}

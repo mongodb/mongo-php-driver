@@ -133,11 +133,10 @@ HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_D
 	array_init_size(&retval, 1);
 
 	if (intern->bson) {
-		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+		zval *zv;
 
-		MAKE_STD_ZVAL(state.zchild);
-		bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &state);
-		add_assoc_zval_ex(&retval, ZEND_STRS("command"), state.zchild);
+		bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &zv);
+		add_assoc_zval_ex(&retval, ZEND_STRS("command"), zv);
 	} else {
 		add_assoc_null_ex(&retval, ZEND_STRS("command"));
 	}
