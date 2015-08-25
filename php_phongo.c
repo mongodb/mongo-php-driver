@@ -402,7 +402,6 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 	if (bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 		uint32_t               len;
 		const uint8_t         *data;
-		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
 		bson_iter_document(&iter, &len, &data);
 
@@ -410,10 +409,7 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 			return false;
 		}
 
-		MAKE_STD_ZVAL(writeconcernerror->info);
-		state.zchild = writeconcernerror->info;
-
-		if (!bson_to_zval(data, len, &state)) {
+		if (!bson_to_zval(data, len, &writeconcernerror->info)) {
 			zval_ptr_dtor(&writeconcernerror->info);
 			writeconcernerror->info = NULL;
 
@@ -439,15 +435,11 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 	}
 	if (bson_iter_init_find(&iter, bson, "errInfo")) {
 		bson_t                 info;
-		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
-
-		MAKE_STD_ZVAL(writeerror->info);
-		state.zchild = writeerror->info;
 
 		bson_init(&info);
 		bson_append_iter(&info, NULL, 0, &iter);
 
-		if (!bson_to_zval(bson_get_data(&info), info.len, &state)) {
+		if (!bson_to_zval(bson_get_data(&info), info.len, &writeerror->info)) {
 			zval_ptr_dtor(&writeerror->info);
 			writeerror->info = NULL;
 			return false;
@@ -1299,8 +1291,7 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		MAKE_STD_ZVAL(state.zchild);
-		bson_to_zval(bson_get_data(&sd->tags), sd->tags.len, &state);
+		bson_to_zval_ex(bson_get_data(&sd->tags), sd->tags.len, &state);
 		add_assoc_zval_ex(retval, ZEND_STRS("tags"), state.zchild);
 	}
 	{
@@ -1309,8 +1300,7 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		MAKE_STD_ZVAL(state.zchild);
-		bson_to_zval(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
+		bson_to_zval_ex(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
 		add_assoc_zval_ex(retval, ZEND_STRS("last_is_master"), state.zchild);
 	}
 	add_assoc_long_ex(retval, ZEND_STRS("round_trip_time"), sd->round_trip_time);
@@ -1342,8 +1332,7 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		MAKE_STD_ZVAL(state.zchild);
-		bson_to_zval(bson_get_data(&read_prefs->tags), read_prefs->tags.len, &state);
+		bson_to_zval_ex(bson_get_data(&read_prefs->tags), read_prefs->tags.len, &state);
 		add_assoc_zval_ex(retval, ZEND_STRS("tags"), state.zchild);
 	} else {
 		add_assoc_null_ex(retval, ZEND_STRS("tags"));
@@ -1403,18 +1392,16 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{
 		 * and current documents so that users can differentiate BSON arrays
 		 * and documents. */
 		{
-			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+			zval *zv;
 
-			MAKE_STD_ZVAL(state.zchild);
-			bson_to_zval(bson_get_data(&cursor->cursor->query), cursor->cursor->query.len, &state);
-			add_assoc_zval_ex(zcursor, ZEND_STRS("query"), state.zchild);
+			bson_to_zval(bson_get_data(&cursor->cursor->query), cursor->cursor->query.len, &zv);
+			add_assoc_zval_ex(zcursor, ZEND_STRS("query"), zv);
 		}
 		{
-			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+			zval *zv;
 
-			MAKE_STD_ZVAL(state.zchild);
-			bson_to_zval(bson_get_data(&cursor->cursor->fields), cursor->cursor->fields.len, &state);
-			add_assoc_zval_ex(zcursor, ZEND_STRS("fields"), state.zchild);
+			bson_to_zval(bson_get_data(&cursor->cursor->fields), cursor->cursor->fields.len, &zv);
+			add_assoc_zval_ex(zcursor, ZEND_STRS("fields"), zv);
 		}
 		{
 			zval *read_preference = NULL;
@@ -1434,11 +1421,10 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{
 
 		add_assoc_string_ex(zcursor, ZEND_STRS("ns"), cursor->cursor->ns, 1);
 		if (cursor->cursor->current) {
-			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+			zval *zv;
 
-			MAKE_STD_ZVAL(state.zchild);
-			bson_to_zval(bson_get_data(cursor->cursor->current), cursor->cursor->current->len, &state);
-			add_assoc_zval_ex(zcursor, ZEND_STRS("current_doc"), state.zchild);
+			bson_to_zval(bson_get_data(cursor->cursor->current), cursor->cursor->current->len, &zv);
+			add_assoc_zval_ex(zcursor, ZEND_STRS("current_doc"), zv);
 		}
 		add_assoc_zval_ex(retval, ZEND_STRS("cursor"), zcursor);
 	} else {
@@ -2011,8 +1997,7 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator *iter T
 	cursor_it->current++;
 
 	if (mongoc_cursor_next(cursor->cursor, &doc)) {
-		MAKE_STD_ZVAL(cursor->visitor_data.zchild);
-		bson_to_zval(bson_get_data(doc), doc->len, &cursor->visitor_data);
+		bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
 	} else {
 		bson_error_t error;
 
@@ -2040,8 +2025,7 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_
 	doc = mongoc_cursor_current(cursor->cursor);
 
 	if (doc) {
-		MAKE_STD_ZVAL(cursor->visitor_data.zchild);
-		bson_to_zval(bson_get_data(doc), doc->len, &cursor->visitor_data);
+		bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
 	}
 } /* }}} */
 
