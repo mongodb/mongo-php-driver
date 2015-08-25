@@ -69,7 +69,8 @@ typedef struct {
 #define PHONGO_BSON_STATE_INITIALIZER  {NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL}, NULL}
 
 PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
-PHONGO_API int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state *state);
+PHONGO_API int bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state);
+PHONGO_API int bson_to_zval(const unsigned char *data, int data_len, zval **out);
 PHONGO_API void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC);
 
 PHP_FUNCTION(toPHP);

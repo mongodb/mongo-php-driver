@@ -448,17 +448,14 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 	state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-	MAKE_STD_ZVAL(state.zchild);
-	bson_to_zval(bson_get_data(&intern->write_result.upserted), intern->write_result.upserted.len, &state);
+	bson_to_zval_ex(bson_get_data(&intern->write_result.upserted), intern->write_result.upserted.len, &state);
 	add_assoc_zval_ex(&retval, ZEND_STRS("upsertedIds"), state.zchild);
 
-	MAKE_STD_ZVAL(state.zchild);
-	bson_to_zval(bson_get_data(&intern->write_result.writeErrors), intern->write_result.writeErrors.len, &state);
+	bson_to_zval_ex(bson_get_data(&intern->write_result.writeErrors), intern->write_result.writeErrors.len, &state);
 	add_assoc_zval_ex(&retval, ZEND_STRS("writeErrors"), state.zchild);
 
 
-	MAKE_STD_ZVAL(state.zchild);
-	bson_to_zval(bson_get_data(&intern->write_result.writeConcernError), intern->write_result.writeConcernError.len, &state);
+	bson_to_zval_ex(bson_get_data(&intern->write_result.writeConcernError), intern->write_result.writeConcernError.len, &state);
 	add_assoc_zval_ex(&retval, ZEND_STRS("writeConcernError"), state.zchild);
 
 	if (intern->write_concern) {

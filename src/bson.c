@@ -885,7 +885,17 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 }
 
 /* }}} */
-int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state *state)
+int bson_to_zval(const unsigned char *data, int data_len, zval **zv)
+{
+	int retval = 0;
+	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+
+	retval = bson_to_zval_ex(data, data_len, &state);
+	*zv = state.zchild;
+
+	return retval;
+}
+int bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state)
 {
 	      bson_reader_t *reader;
 	      bson_iter_t    iter;
@@ -893,6 +903,7 @@ int bson_to_zval(const unsigned char *data, int data_len, php_phongo_bson_state 
 	      bool           eof = false;
 		  TSRMLS_FETCH();
 
+	MAKE_STD_ZVAL(state->zchild);
 	/* Ensure that state->zchild has a type, since the calling code may want to
 	 * zval_ptr_dtor() it if we throw an exception. */
 	ZVAL_NULL(state->zchild);
@@ -1050,8 +1061,7 @@ PHP_FUNCTION(toPHP)
 
 	php_phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
 
-	MAKE_STD_ZVAL(state.zchild);
-	if (!bson_to_zval((const unsigned char *)data, data_len, &state)) {
+	if (!bson_to_zval_ex((const unsigned char *)data, data_len, &state)) {
 		zval_ptr_dtor(&state.zchild);
 		RETURN_NULL();
 	}
