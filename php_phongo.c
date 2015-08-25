@@ -185,7 +185,7 @@ void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC)
 }
 static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain, const char *message, void *user_data)
 {
-	TSRMLS_FETCH_FROM_CTX(user_data);
+	PHONGO_TSRMLS_FETCH_FROM_CTX(user_data);
 	(void)user_data;
 
 	switch(log_level) {
@@ -724,7 +724,7 @@ void phongo_stream_failed(mongoc_stream_t *stream_wrap) /* {{{ */
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
 
 	if (base_stream->stream) {
-		TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+		PHONGO_TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
 		MONGOC_DEBUG("Destroying RSRC#%d", base_stream->stream->rsrc_id);
 		php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
@@ -753,7 +753,7 @@ int phongo_stream_close(mongoc_stream_t *stream_wrap) /* {{{ */
 void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeout_msec) /* {{{ */
 {
 	struct timeval rtimeout = {0, 0};
-	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+	PHONGO_TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
 	if (timeout_msec > 0) {
 		rtimeout.tv_sec = timeout_msec / 1000;
@@ -795,7 +795,7 @@ ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_
 	size_t to_write_len;
 
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
-	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+	PHONGO_TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
 
 	php_phongo_set_timeout(base_stream, timeout_msec);
@@ -887,7 +887,7 @@ ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t
 	ssize_t ret = 0;
 	ssize_t read;
 	size_t cur = 0;
-	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+	PHONGO_TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
 	php_phongo_set_timeout(base_stream, timeout_msec);
 
@@ -934,7 +934,7 @@ int phongo_stream_setsockopt(mongoc_stream_t *stream, int level, int optname, vo
 bool phongo_stream_socket_check_closed(mongoc_stream_t *stream) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
-	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+	PHONGO_TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
 	return PHP_STREAM_OPTION_RETURN_OK != php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_CHECK_LIVENESS, 0, NULL);
 } /* }}} */
