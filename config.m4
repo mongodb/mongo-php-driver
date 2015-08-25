@@ -139,6 +139,7 @@ if test "$PHP_FOUND_VERNUM" -ge "70000"; then
   MONGODB_BSON_CLASSES=""
   MONGODB_ROOT="\
       php_phongo.c \
+      phongo_compat.c \
   ";
   MONGODB_CONTRIB=""
   MONGODB_MONGODB_CLASSES="\
@@ -165,6 +166,7 @@ else
   ";
   MONGODB_ROOT="\
       php_phongo.c \
+      phongo_compat.c \
   ";
   MONGODB_CONTRIB="\
       src/contrib/php-ssl.c \
