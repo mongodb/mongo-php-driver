@@ -45,13 +45,15 @@
 #include <Zend/zend_exceptions.h>
 #include <ext/spl/spl_iterators.h>
 #include <ext/spl/spl_exceptions.h>
-/* For formating timestamp in the log */
-#include <ext/date/php_date.h>
 /* Stream wrapper */
 #include <main/php_streams.h>
 #include <main/php_network.h>
 /* Debug log writing */
 #include <main/php_open_temporary_file.h>
+/* For formating timestamp in the log */
+#include <ext/date/php_date.h>
+/* String manipulation */
+#include <Zend/zend_string.h>
 /* PHP array helpers */
 #include "php_array_api.h"
 
@@ -204,7 +206,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 		{
 			int fd = -1;
 			time_t t;
-			char *dt = NULL;
+			phongo_char *dt;
 
 			if (!MONGODB_G(debug) || !strlen(MONGODB_G(debug))) {
 				return;
@@ -222,15 +224,15 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 			dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), t, 0 TSRMLS_CC);
 
 			if (strcasecmp(MONGODB_G(debug), "stderr") == 0) {
-				fprintf(stderr, PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
+				fprintf(stderr, PHONGO_DEBUG_LOG_FORMAT, phongo_str(dt), log_domain, mongoc_log_level_str(log_level), message);
 			} else if (strcasecmp(MONGODB_G(debug), "stdout") == 0) {
-				php_printf(PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
+				php_printf(PHONGO_DEBUG_LOG_FORMAT, phongo_str(dt), log_domain, mongoc_log_level_str(log_level), message);
 			} else if (MONGODB_G(debug_filename)) {
 				fd = VCWD_OPEN_MODE(MONGODB_G(debug_filename), O_CREAT | O_APPEND | O_WRONLY, 0644);
 			} else {
 				char *prefix;
 				int len;
-				char *filename;
+				phongo_char *filename;
 
 				len = spprintf(&prefix, 0, "PHONGO-%ld", t);
 
@@ -240,8 +242,8 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 					fd = php_open_temporary_fd(MONGODB_G(debug), prefix, &filename TSRMLS_CC);
 				}
 				if (fd != -1) {
-					MONGODB_G(debug_filename) = pestrdup(filename, 1);
-					efree(filename);
+					MONGODB_G(debug_filename) = phongo_char_pdup(filename);
+					phongo_char_free(filename);
 				}
 				efree(prefix);
 			}
@@ -250,7 +252,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 				char *tmp;
 				int len;
 
-				len = spprintf(&tmp, 0, PHONGO_DEBUG_LOG_FORMAT, dt, log_domain, mongoc_log_level_str(log_level), message);
+				len = spprintf(&tmp, 0, PHONGO_DEBUG_LOG_FORMAT, phongo_str(dt), log_domain, mongoc_log_level_str(log_level), message);
 #ifdef PHP_WIN32
 				php_flock(fd, 2);
 #endif
@@ -258,7 +260,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 				efree(tmp);
 				close(fd);
 			}
-			efree(dt);
+			phongo_char_free(dt);
 		} break;
 	}
 }
