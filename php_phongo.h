@@ -16,8 +16,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 #ifndef PHONGO_H
 #define PHONGO_H
 
@@ -97,13 +95,15 @@ typedef struct
 
 PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
 PHONGO_API zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
-PHONGO_API zval* phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *format, ...)
-#ifndef PHP_WIN32
-#ifdef ZTS
+void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *format, ...)
+#if PHP_VERSION_ID < 70000
+# ifndef PHP_WIN32
+#  ifdef ZTS
 	 __attribute__ ((format(printf, 3, 4)))
-#else
+#  else
 	 __attribute__ ((format(printf, 2, 3)))
-#endif
+#  endif
+# endif
 #endif
 ;
 
