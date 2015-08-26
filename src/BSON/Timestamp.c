@@ -44,6 +44,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_timestamp_ce;
 
+zend_object_handlers php_phongo_handler_timestamp;
+
 /* {{{ proto BSON\Timestamp Timestamp::__construct(integer $increment, int $timestamp)
    Construct a new BSON Timestamp (4bytes increment, 4bytes timestamp) */
 PHP_METHOD(Timestamp, __construct)
@@ -129,9 +131,26 @@ zend_object_value php_phongo_timestamp_create_object(zend_class_entry *class_typ
 	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_timestamp_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = &php_phongo_handler_timestamp;
 
 	return retval;
+} /* }}} */
+
+HashTable *php_phongo_timestamp_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	php_phongo_timestamp_t *intern;
+	zval                    retval = zval_used_for_init;
+
+
+	*is_temp = 1;
+	intern = (php_phongo_timestamp_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	array_init(&retval);
+
+	add_assoc_long_ex(&retval, ZEND_STRS("increment"), intern->increment);
+	add_assoc_long_ex(&retval, ZEND_STRS("timestamp"), intern->timestamp);
+
+	return Z_ARRVAL(retval);
 } /* }}} */
 /* }}} */
 
@@ -146,6 +165,9 @@ PHP_MINIT_FUNCTION(Timestamp)
 	php_phongo_timestamp_ce = zend_register_internal_class(&ce TSRMLS_CC);
 
 	zend_class_implements(php_phongo_timestamp_ce TSRMLS_CC, 1, php_phongo_type_ce);
+
+	memcpy(&php_phongo_handler_timestamp, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_timestamp.get_debug_info = php_phongo_timestamp_get_debug_info;
 
 
 	return SUCCESS;
