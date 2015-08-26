@@ -44,6 +44,7 @@
 
 PHONGO_API zend_class_entry *php_phongo_javascript_ce;
 
+zend_object_handlers php_phongo_handler_javascript;
 
 /* {{{ proto BSON\Javascript Javascript::__construct(string $javascript[, array|object $document])
  * The string is JavaScript code. The document is a mapping from identifiers to values, representing the scope in which the string should be evaluated
@@ -119,11 +120,42 @@ zend_object_value php_phongo_javascript_create_object(zend_class_entry *class_ty
 	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_javascript_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = &php_phongo_handler_javascript;
 
 	intern->document = NULL;
 
 	return retval;
+} /* }}} */
+
+HashTable *php_phongo_javascript_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	php_phongo_javascript_t *intern;
+	zval                     retval = zval_used_for_init;
+
+
+	*is_temp = 1;
+	intern = (php_phongo_javascript_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	array_init(&retval);
+
+	add_assoc_stringl_ex(&retval, ZEND_STRS("javascript"), intern->javascript, intern->javascript_len, 1);
+
+	if (intern->document) {
+		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+
+		MAKE_STD_ZVAL(state.zchild);
+
+		if (bson_to_zval(bson_get_data(intern->document), intern->document->len, &state)) {
+			Z_ADDREF_P(state.zchild);
+			add_assoc_zval_ex(&retval, ZEND_STRS("scope"), state.zchild);
+		} else {
+			add_assoc_null_ex(&retval, ZEND_STRS("scope"));
+		}
+
+		zval_ptr_dtor(&state.zchild);
+	}
+
+	return Z_ARRVAL(retval);
 } /* }}} */
 /* }}} */
 
@@ -140,6 +172,8 @@ PHP_MINIT_FUNCTION(Javascript)
 
 	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, php_phongo_type_ce);
 
+	memcpy(&php_phongo_handler_javascript, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_javascript.get_debug_info = php_phongo_javascript_get_debug_info;
 
 	return SUCCESS;
 }
