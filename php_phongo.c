@@ -1366,26 +1366,20 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 	}
 } /* }}} */
 
-void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{ */
+void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor) /* {{{ */
 {
 
-	array_init_size(retval, 4);
+	array_init_size(retval, 19);
 
-	if (cursor->cursor) {
-		zval *zcursor = NULL;
+		add_assoc_long_ex(retval, ZEND_STRS("stamp"), cursor->stamp);
 
-		MAKE_STD_ZVAL(zcursor);
-		array_init_size(zcursor, 19);
-
-		add_assoc_long_ex(zcursor, ZEND_STRS("stamp"), cursor->cursor->stamp);
-
-#define _ADD_BOOL(z, field) add_assoc_bool_ex(z, ZEND_STRS(#field), cursor->cursor->field)
-		_ADD_BOOL(zcursor, is_command);
-		_ADD_BOOL(zcursor, sent);
-		_ADD_BOOL(zcursor, done);
-		_ADD_BOOL(zcursor, end_of_event);
-		_ADD_BOOL(zcursor, in_exhaust);
-		_ADD_BOOL(zcursor, has_fields);
+#define _ADD_BOOL(z, field) add_assoc_bool_ex(z, ZEND_STRS(#field), cursor->field)
+		_ADD_BOOL(retval, is_command);
+		_ADD_BOOL(retval, sent);
+		_ADD_BOOL(retval, done);
+		_ADD_BOOL(retval, end_of_event);
+		_ADD_BOOL(retval, in_exhaust);
+		_ADD_BOOL(retval, has_fields);
 #undef _ADD_BOOL
 
 		/* Avoid using PHONGO_TYPEMAP_NATIVE_ARRAY for decoding query, selector,
@@ -1394,44 +1388,38 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{
 		{
 			zval *zv;
 
-			bson_to_zval(bson_get_data(&cursor->cursor->query), cursor->cursor->query.len, &zv);
-			add_assoc_zval_ex(zcursor, ZEND_STRS("query"), zv);
+			bson_to_zval(bson_get_data(&cursor->query), cursor->query.len, &zv);
+			add_assoc_zval_ex(retval, ZEND_STRS("query"), zv);
 		}
 		{
 			zval *zv;
 
-			bson_to_zval(bson_get_data(&cursor->cursor->fields), cursor->cursor->fields.len, &zv);
-			add_assoc_zval_ex(zcursor, ZEND_STRS("fields"), zv);
+			bson_to_zval(bson_get_data(&cursor->fields), cursor->fields.len, &zv);
+			add_assoc_zval_ex(retval, ZEND_STRS("fields"), zv);
 		}
 		{
 			zval *read_preference = NULL;
 
 			MAKE_STD_ZVAL(read_preference);
-			php_phongo_read_preference_to_zval(read_preference, cursor->cursor->read_prefs);
-			add_assoc_zval_ex(zcursor, ZEND_STRS("read_preference"), read_preference);
+			php_phongo_read_preference_to_zval(read_preference, cursor->read_prefs);
+			add_assoc_zval_ex(retval, ZEND_STRS("read_preference"), read_preference);
 		}
 
-#define _ADD_INT(z, field) add_assoc_long_ex(z, ZEND_STRS(#field), cursor->cursor->field)
-		_ADD_INT(zcursor, flags);
-		_ADD_INT(zcursor, skip);
-		_ADD_INT(zcursor, limit);
-		_ADD_INT(zcursor, count);
-		_ADD_INT(zcursor, batch_size);
+#define _ADD_INT(z, field) add_assoc_long_ex(z, ZEND_STRS(#field), cursor->field)
+		_ADD_INT(retval, flags);
+		_ADD_INT(retval, skip);
+		_ADD_INT(retval, limit);
+		_ADD_INT(retval, count);
+		_ADD_INT(retval, batch_size);
 #undef _ADD_INT
 
-		add_assoc_string_ex(zcursor, ZEND_STRS("ns"), cursor->cursor->ns, 1);
-		if (cursor->cursor->current) {
+		add_assoc_string_ex(retval, ZEND_STRS("ns"), (char *)cursor->ns, 1);
+		if (cursor->current) {
 			zval *zv;
 
-			bson_to_zval(bson_get_data(cursor->cursor->current), cursor->cursor->current->len, &zv);
-			add_assoc_zval_ex(zcursor, ZEND_STRS("current_doc"), zv);
+			bson_to_zval(bson_get_data(cursor->current), cursor->current->len, &zv);
+			add_assoc_zval_ex(retval, ZEND_STRS("current_doc"), zv);
 		}
-		add_assoc_zval_ex(retval, ZEND_STRS("cursor"), zcursor);
-	} else {
-		add_assoc_null_ex(retval, ZEND_STRS("cursor"));
-	}
-
-	add_assoc_long_ex(retval, ZEND_STRS("server_id"), cursor->server_id);
 
 } /* }}} */
 /* }}} */

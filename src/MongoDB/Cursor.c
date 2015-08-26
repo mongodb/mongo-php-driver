@@ -231,7 +231,19 @@ HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	*is_temp = 1;
 	intern = Z_CURSOR_OBJ_P(object);
 
-	php_phongo_cursor_to_zval(&retval, intern);
+	array_init_size(&retval, 2);
+	if (intern->cursor) {
+		zval *zcursor = NULL;
+
+		MAKE_STD_ZVAL(zcursor);
+
+		php_phongo_cursor_to_zval(zcursor, intern->cursor);
+		add_assoc_zval_ex(&retval, ZEND_STRS("cursor"), zcursor);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("cursor"));
+	}
+
+	add_assoc_long_ex(&retval, ZEND_STRS("server_id"), intern->server_id);
 
 	return Z_ARRVAL(retval);
 
