@@ -128,7 +128,7 @@ const php_phongo_query_t*     phongo_query_from_zval          (zval *zquery TSRM
 void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *sd);
 void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t *read_prefs);
 void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t *write_concern);
-void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor);
+void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor);
 
 bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, bson_t *bson_options, zval *driverOptions TSRMLS_DC);
 void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS_DC);
