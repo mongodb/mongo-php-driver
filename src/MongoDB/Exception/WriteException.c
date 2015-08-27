@@ -50,15 +50,20 @@ PHONGO_API zend_class_entry *php_phongo_writeexception_ce;
 PHP_METHOD(WriteException, getWriteResult)
 {
 	zval *writeresult;
-
+#if PHP_VERSION_ID >= 70000
+	zval  rv;
+#endif
 
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-
+#if PHP_VERSION_ID >= 70000
+	writeresult = zend_read_property(php_phongo_writeexception_ce, getThis(), ZEND_STRL("writeResult"), 0, &rv TSRMLS_CC);
+#else
 	writeresult = zend_read_property(php_phongo_writeexception_ce, getThis(), ZEND_STRL("writeResult"), 0 TSRMLS_CC);
+#endif
 
 	RETURN_ZVAL(writeresult, 1, 0);
 }
