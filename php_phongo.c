@@ -1279,7 +1279,7 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 {
 	array_init(retval);
 
-	ADD_ASSOC_STRING(retval, ("host"), (char *)sd->host.host);
+	ADD_ASSOC_STRING(retval, "host", (char *)sd->host.host);
 	add_assoc_long_ex(retval, ZEND_STRS("port"), sd->host.port);
 	add_assoc_long_ex(retval, ZEND_STRS("type"), sd->type);
 	add_assoc_bool_ex(retval, ZEND_STRS("is_primary"), sd->type == MONGOC_SERVER_RS_PRIMARY);
