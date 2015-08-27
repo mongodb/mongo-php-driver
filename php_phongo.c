@@ -1066,7 +1066,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	struct timeval timeout = {0, 0};
 	struct timeval *timeoutp = NULL;
 	char *uniqid;
-	char *errmsg = NULL;
+	phongo_char *errmsg = NULL;
 	int errcode;
 	char *dsn;
 	int dsn_len;
@@ -1114,11 +1114,11 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, uniqid, timeoutp, (php_stream_context *)user_data, &errmsg, &errcode);
 
 	if (!stream) {
-		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, errmsg);
+		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, phongo_str(errmsg));
 		efree(dsn);
 		efree(uniqid);
 		if (errmsg) {
-			efree(errmsg);
+			phongo_char_free(errmsg);
 		}
 		RETURN(NULL);
 	}
