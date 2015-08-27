@@ -83,7 +83,11 @@ PHP_METHOD(Timestamp, __toString)
 	}
 
 	retval_len = spprintf(&retval, 0, "[%d:%d]", intern->increment, intern->timestamp);
+#if PHP_VERSION_ID >= 70000
+        RETVAL_STRINGL(retval, retval_len);
+#else
 	RETVAL_STRINGL(retval, retval_len, 0);
+#endif
 }
 /* }}} */
 
@@ -117,6 +121,21 @@ static void php_phongo_timestamp_free_object(void *object TSRMLS_DC) /* {{{ */
 	efree(intern);
 } /* }}} */
 
+#if PHP_VERSION_ID >= 70000
+zend_object* php_phongo_timestamp_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+{
+        php_phongo_timestamp_t *intern;
+
+        intern = (php_phongo_timestamp_t *)ecalloc(1, sizeof(php_phongo_timestamp_t)+zend_object_properties_size(class_type));
+
+        zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+        object_properties_init(&intern->std, class_type);
+
+        intern->std.handlers = phongo_get_std_object_handlers();
+
+        return &intern->std;
+} /* }}} */
+#else
 zend_object_value php_phongo_timestamp_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
@@ -133,6 +152,7 @@ zend_object_value php_phongo_timestamp_create_object(zend_class_entry *class_typ
 
 	return retval;
 } /* }}} */
+#endif
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
