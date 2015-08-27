@@ -152,6 +152,7 @@
 # define SUPPRESS_UNUSED_WARNING(x)
 # define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
 # define EXCEPTION_P(_ex, _zp) ZVAL_OBJ(_zp, _ex)
+# define PHONGO_STREAM_ID(stream) stream->res->handle
 #else
 # define phongo_char char
 # define phongo_char_pdup(str) pestrdup(filename, 1)
@@ -161,6 +162,7 @@
 # define SUPPRESS_UNUSED_WARNING(x) (void)x;
 # define DECLARE_RETURN_VALUE_USED
 # define EXCEPTION_P(_ex, _zp) _zp = _ex
+# define PHONGO_STREAM_ID(stream) stream->rsrc_id
 #endif
 
 
