@@ -44,6 +44,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_javascript_ce;
 
+zend_object_handlers php_phongo_handler_javascript;
+
 
 /* {{{ proto BSON\Javascript Javascript::__construct(string $javascript[, array|object $document])
  * The string is JavaScript code. The document is a mapping from identifiers to values, representing the scope in which the string should be evaluated
@@ -93,7 +95,7 @@ static zend_function_entry php_phongo_javascript_me[] = {
 /* {{{ php_phongo_javascript_t object handlers */
 static void php_phongo_javascript_free_object(void *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_javascript_t *intern = (php_phongo_javascript_t*)object;
+        php_phongo_javascript_t *intern = Z_JAVASCRIPT_OBJ(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -107,6 +109,21 @@ static void php_phongo_javascript_free_object(void *object TSRMLS_DC) /* {{{ */
 	efree(intern);
 } /* }}} */
 
+#if PHP_VERSION_ID >= 70000
+zend_object* php_phongo_javascript_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+{
+        php_phongo_javascript_t *intern;
+
+        intern = (php_phongo_javascript_t *)ecalloc(1, sizeof(php_phongo_javascript_t)+zend_object_properties_size(class_type));
+
+        zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+        object_properties_init(&intern->std, class_type);
+
+        intern->std.handlers = &php_phongo_handler_javascript;
+
+        return &intern->std;
+} /* }}} */
+#else
 zend_object_value php_phongo_javascript_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
@@ -119,12 +136,13 @@ zend_object_value php_phongo_javascript_create_object(zend_class_entry *class_ty
 	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_javascript_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = &php_phongo_handler_javascript;
 
 	intern->document = NULL;
 
 	return retval;
 } /* }}} */
+#endif
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -139,6 +157,12 @@ PHP_MINIT_FUNCTION(Javascript)
 	php_phongo_javascript_ce = zend_register_internal_class(&ce TSRMLS_CC);
 
 	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, php_phongo_type_ce);
+
+        memcpy(&php_phongo_handler_javascript, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+#if PHP_VERSION_ID >= 70000
+        php_phongo_handler_javascript.free_obj = php_phongo_javascript_free_object;
+        php_phongo_handler_javascript.offset = XtOffsetOf(php_phongo_javascript_t, std);
+#endif
 
 
 	return SUCCESS;

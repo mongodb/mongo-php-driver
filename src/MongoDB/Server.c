@@ -493,6 +493,21 @@ static void php_phongo_server_free_object(void *object TSRMLS_DC) /* {{{ */
 	efree(intern);
 } /* }}} */
 
+#if PHP_VERSION_ID >= 70000
+zend_object* php_phongo_server_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+{
+        php_phongo_server_t *intern;
+
+        intern = (php_phongo_server_t *)ecalloc(1, sizeof(php_phongo_server_t)+zend_object_properties_size(class_type));
+
+        zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+        object_properties_init(&intern->std, class_type);
+
+        intern->std.handlers = &php_phongo_handler_server;
+
+        return &intern->std;
+}
+#else
 zend_object_value php_phongo_server_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
@@ -508,6 +523,7 @@ zend_object_value php_phongo_server_create_object(zend_class_entry *class_type T
 
 	return retval;
 } /* }}} */
+#endif
 
 HashTable *php_phongo_server_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
