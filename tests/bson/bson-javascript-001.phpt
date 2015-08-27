@@ -12,15 +12,15 @@ $js = new $classname("function foo(bar) {var baz = bar; var bar = foo; return ba
 $jswscope = new $classname("function foo(bar) {var baz = bar; var bar = foo; return bar; }", array("foo" => 42));
 $tests = array(
     array("js" => $js),
-    array("jswscope" => $jswscope),
+    array("js" => $jswscope),
 );
 
 foreach($tests as $n => $test) {
     echo "Test#{$n}", "\n";
     $s = fromPHP($test);
     $testagain = toPHP($s);
-    var_dump(current($test) instanceof $classname);
-    var_dump(current($testagain) instanceof $classname);
+    var_dump($test['js'] instanceof $classname);
+    var_dump($testagain->js instanceof $classname);
 }
 
 ?>
