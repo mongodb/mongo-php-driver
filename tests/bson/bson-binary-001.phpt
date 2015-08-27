@@ -26,13 +26,6 @@ foreach($types as $type) {
     $tests[] = array("binary" => $binary);
 }
 
-throws(function() use($classname) {
-    $b = new $classname("random binary data without type");
-    echo "FAIL: Constructed BSON\Binary without type!\n";
-}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
-
-
-
 foreach($tests as $n => $test) {
     $s = fromPHP($test);
     echo "Test#{$n} ", $json = toJSON($s), "\n";
@@ -41,9 +34,6 @@ foreach($tests as $n => $test) {
     var_dump(toJSON(fromPHP($test)), toJSON(fromPHP($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
-
-$binary->getData(2);
-$binary->getType(2);
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -64,7 +54,6 @@ bool(true)
 bool(true)
 bool(true)
 bool(true)
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Test#0 { "binary" : { "$type" : "00", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }
 string(73) "{ "binary" : { "$type" : "00", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
 string(73) "{ "binary" : { "$type" : "00", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
@@ -97,8 +86,4 @@ Test#7 { "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }
 string(73) "{ "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
 string(73) "{ "binary" : { "$type" : "85", "$binary" : "cmFuZG9tIGJpbmFyeSBkYXRh" } }"
 bool(true)
-
-Warning: %s\Binary::getData() expects exactly 0 parameters, 1 given in %s on line %d
-
-Warning: %s\Binary::getType() expects exactly 0 parameters, 1 given in %s on line %d
 ===DONE===

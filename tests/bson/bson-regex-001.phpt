@@ -17,11 +17,6 @@ $tests = array(
     array("regex" => $regexp),
 );
 
-throws(function() use($classname) {
-    $regexp = new $classname;
-}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
-
-
 foreach($tests as $n => $test) {
     $s = fromPHP($test);
     echo "Test#{$n} ", $json = toJSON($s), "\n";
@@ -30,9 +25,6 @@ foreach($tests as $n => $test) {
     var_dump(toJSON(fromPHP($test)), toJSON(fromPHP($testagain)));
     var_dump((object)$test == (object)$testagain);
 }
-
-$regexp->getPattern(true);
-$regexp->getFlags(true);
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -40,13 +32,8 @@ $regexp->getFlags(true);
 Pattern: regexp
 Flags: i
 String representation: /regexp/i
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Test#0 { "regex" : { "$regex" : "regexp", "$options" : "i" } }
 string(55) "{ "regex" : { "$regex" : "regexp", "$options" : "i" } }"
 string(55) "{ "regex" : { "$regex" : "regexp", "$options" : "i" } }"
 bool(true)
-
-Warning: %s\Regex::getPattern() expects exactly 0 parameters, 1 given in %s on line %d
-
-Warning: %s\Regex::getFlags() expects exactly 0 parameters, 1 given in %s on line %d
 ===DONE===

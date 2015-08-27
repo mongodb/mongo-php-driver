@@ -1,6 +1,7 @@
 --TEST--
-BSON BSON\Javascript #001
+BSON BSON\Javascript #001 error
 --SKIPIF--
+<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM handles parameter parsing differently"); ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
@@ -15,22 +16,12 @@ $tests = array(
     array("jswscope" => $jswscope),
 );
 
-foreach($tests as $n => $test) {
-    echo "Test#{$n}", "\n";
-    $s = fromPHP($test);
-    $testagain = toPHP($s);
-    var_dump(current($test) instanceof $classname);
-    var_dump(current($testagain) instanceof $classname);
-}
-
+throws(function() use($classname) {
+    $j = new $classname;
+}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Test#0
-bool(true)
-bool(true)
-Test#1
-bool(true)
-bool(true)
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 ===DONE===
