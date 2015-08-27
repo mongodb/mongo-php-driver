@@ -508,17 +508,15 @@ zend_object_value php_phongo_manager_create_object(zend_class_entry *class_type 
 
 bool phongo_add_server_debug(void *item, void *ctx)
 {
-#if PHP_VERSION_ID >= 70000
         mongoc_server_description_t *server = item;
         zval                        *retval = ctx;
+#if PHP_VERSION_ID >= 70000
         zval entry;
 
         php_phongo_server_to_zval(&entry, server);
 
         add_next_index_zval(retval, &entry);
 #else
-	mongoc_server_description_t *server = item;
-	zval                        *retval = ctx;
 	zval *entry = NULL;
 
         MAKE_STD_ZVAL(entry);
