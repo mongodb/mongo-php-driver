@@ -2028,9 +2028,14 @@ void php_phongo_throw_write_concern_error(php_phongo_writeresult_t *wr TSRMLS_DC
 } /* }}} */
 php_phongo_writeresult_t *php_phongo_writeresult_get_from_bulkwriteexception(zval *ex TSRMLS_DC) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval  rv;
+	zval *wr = zend_read_property(php_phongo_bulkwriteexception_ce, ex, ZEND_STRL("writeResult"), 0, &rv);
+#else
 	zval *wr = zend_read_property(php_phongo_bulkwriteexception_ce, ex, ZEND_STRL("writeResult"), 0 TSRMLS_CC);
+#endif
 
-	return (php_phongo_writeresult_t *)zend_object_store_get_object(wr TSRMLS_CC);
+	return Z_WRITERESULT_OBJ_P(wr);
 } /* }}} */
 
 static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ */
