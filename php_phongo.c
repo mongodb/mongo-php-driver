@@ -1916,7 +1916,11 @@ void php_phongo_new_regex_from_regex_and_options(zval *object, const char *patte
 static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ */
 {
 	if (cursor->visitor_data.zchild) {
+#if PHP_VERSION_ID >= 70000
+		zval_ptr_dtor(cursor->visitor_data.zchild);
+#else
 		zval_ptr_dtor(&cursor->visitor_data.zchild);
+#endif
 		cursor->visitor_data.zchild = NULL;
 	}
 } /* }}} */
@@ -1936,9 +1940,13 @@ static void php_phongo_cursor_iterator_dtor(zend_object_iterator *iter TSRMLS_DC
 {
 	php_phongo_cursor_iterator *cursor_it = (php_phongo_cursor_iterator *)iter;
 
-	if (cursor_it->intern.data) {
+	if (!Z_ISUNDEF(cursor_it->intern.data)) {
+#if PHP_VERSION_ID >= 70000
+		zval_ptr_dtor(&cursor_it->intern.data);
+#else
 		zval_ptr_dtor((zval**)&cursor_it->intern.data);
 		cursor_it->intern.data = NULL;
+#endif
 	}
 
 	efree(cursor_it);
@@ -1968,12 +1976,21 @@ static void php_phongo_cursor_iterator_get_current_key(zend_object_iterator *ite
 } /* }}} */
 #endif
 
+#if PHP_VERSION_ID < 70000
 static void php_phongo_cursor_iterator_get_current_data(zend_object_iterator *iter, zval ***data TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t *cursor = ((php_phongo_cursor_iterator *)iter)->cursor;
 
 	*data = &cursor->visitor_data.zchild;
 } /* }}} */
+#else
+static zval* php_phongo_cursor_iterator_get_current_data(zend_object_iterator *iter) /* {{{ */
+{
+	php_phongo_cursor_t *cursor = ((php_phongo_cursor_iterator *)iter)->cursor;
+
+	return cursor->visitor_data.zchild;
+} /* }}} */
+#endif
 
 static void php_phongo_cursor_iterator_move_forward(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
@@ -2030,8 +2047,8 @@ zend_object_iterator_funcs php_phongo_cursor_iterator_funcs = {
 
 zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC) /* {{{ */
 {
-	php_phongo_cursor_t *cursor = zend_object_store_get_object(object TSRMLS_CC);
 	php_phongo_cursor_iterator *cursor_it = NULL;
+	php_phongo_cursor_t *cursor = Z_CURSOR_OBJ_P(object);
 
 	if (by_ref) {
 		zend_error(E_ERROR, "An iterator cannot be used with foreach by reference");
@@ -2047,7 +2064,11 @@ zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce, zval 
 	cursor_it = ecalloc(1, sizeof(php_phongo_cursor_iterator));
 
 	Z_ADDREF_P(object);
+#if PHP_VERSION_ID >= 70000
+	ZVAL_COPY(&cursor_it->intern.data, object);
+#else
 	cursor_it->intern.data  = (void*)object;
+#endif
 	cursor_it->intern.funcs = &php_phongo_cursor_iterator_funcs;
 	cursor_it->cursor = cursor;
 	/* cursor_it->current should already be allocated to zero */
