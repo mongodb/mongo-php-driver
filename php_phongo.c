@@ -1098,6 +1098,7 @@ int php_phongo_peer_verify(php_stream *stream, X509 *cert, const char *hostname,
 }
 #endif
 
+#ifdef PHONGO_TODO_SSL
 bool php_phongo_ssl_verify(php_stream *stream, const char *hostname, bson_error_t *error TSRMLS_DC)
 {
 	zval **zcert;
@@ -1142,6 +1143,7 @@ bool php_phongo_ssl_verify(php_stream *stream, const char *hostname, bson_error_
 
 	return true;
 }
+#endif
 
 mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error) /* {{{ */
 {
@@ -1212,6 +1214,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	efree(uniqid);
 
 	if (mongoc_uri_get_ssl(uri)) {
+#ifdef PHONGO_TODO_SSL
 		zend_error_handling       error_handling;
 
 		zend_replace_error_handling(EH_THROW, php_phongo_sslconnectionexception_ce, &error_handling TSRMLS_CC);
@@ -1249,6 +1252,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		}
 
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
+#endif
 	}
 	efree(dsn);
 
@@ -1469,11 +1473,13 @@ void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor) /* {
 			add_assoc_zval_ex(retval, ZEND_STRS("fields"), zv);
 		}
 		{
+#ifdef PHONGO_TODO_MAKE_STD_ZVAL
 			zval *read_preference = NULL;
 
 			MAKE_STD_ZVAL(read_preference);
 			php_phongo_read_preference_to_zval(read_preference, cursor->read_prefs);
 			add_assoc_zval_ex(retval, ZEND_STRS("read_preference"), read_preference);
+#endif
 		}
 
 #define _ADD_INT(z, field) add_assoc_long_ex(z, ZEND_STRS(#field), cursor->field)
@@ -1562,6 +1568,7 @@ mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options TSRMLS
 	return uri;
 } /* }}} */
 
+#ifdef PHONGO_TODO_SSL
 void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOptions) /* {{{ */
 {
 	zval                     **tmp;
@@ -1606,6 +1613,7 @@ void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOp
 #undef SET_BOOL_CTX
 #undef SET_STRING_CTX
 } /* }}} */
+#endif
 
 bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
 {
@@ -1802,29 +1810,41 @@ bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_t *opti
 
 mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
 {
+#ifdef PHONGO_TODO_INI
 	zval                     **tmp;
-	php_stream_context        *ctx;
+#endif
+	php_stream_context        *ctx = NULL;
 	const char                *mech;
 	mongoc_client_t           *client;
 
 	ENTRY;
 
+#ifndef PHONGO_TODO_INI
+	(void)driverOptions;
+#endif
 
+
+#ifdef PHONGO_TODO_INI
 	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
 		convert_to_string(*tmp);
 
 		zend_alter_ini_entry_ex((char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
 	}
+#endif
 
+#ifdef PHONGO_TODO_STREAM
 	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
 		ctx = php_stream_context_from_zval(*tmp, 0);
 	} else {
 		GET_DEFAULT_CONTEXT();
 	}
+#endif
 
+#ifdef PHONGO_TODO_SSL
 	if (mongoc_uri_get_ssl(uri)) {
 		php_phongo_populate_default_ssl_ctx(ctx, driverOptions);
 	}
+#endif
 
 	MONGOC_DEBUG("Creating Manager, phongo-%s[%s] - mongoc-%s, libbson-%s", MONGODB_VERSION_S, MONGODB_STABILITY_S, MONGOC_VERSION_S, BSON_VERSION_S);
 	client = mongoc_client_new_from_uri(uri);
@@ -1837,6 +1857,7 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 	mech = mongoc_uri_get_auth_mechanism(uri);
 
 	/* Check if we are doing X509 auth, in which case extract the username (subject) from the cert if no username is provided */
+#ifdef PHONGO_TODO_SSL
 	if (mech && !strcasecmp(mech, "MONGODB-X509") && !mongoc_uri_get_username(uri)) {
 		zval **pem;
 
@@ -1852,6 +1873,7 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 			}
 		}
 	}
+#endif
 
 	mongoc_client_set_stream_initiator(client, phongo_stream_initiator, ctx);
 
@@ -2247,9 +2269,11 @@ void _phongo_debug_bson(bson_t *bson)
 /* {{{ M[INIT|SHUTDOWN] R[INIT|SHUTDOWN] G[INIT|SHUTDOWN] MINFO INI */
 
 /* {{{ INI entries */
+#ifdef PHONGO_TODO_INI
 PHP_INI_BEGIN()
 	{ 0, PHP_INI_ALL, (char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), OnUpdateString, (void *) XtOffsetOf(zend_mongodb_globals, debug), (void *) &mglo, NULL, (char *)PHONGO_DEBUG_INI_DEFAULT, sizeof(PHONGO_DEBUG_INI_DEFAULT)-1, NULL, 0, 0, 0, NULL },
 PHP_INI_END()
+#endif
 /* }}} */
 
 /* {{{ PHP_GINIT_FUNCTION */
@@ -2276,7 +2300,9 @@ PHP_MINIT_FUNCTION(mongodb)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 
 
+#ifdef PHONGO_TODO_INI
 	REGISTER_INI_ENTRIES();
+#endif
 
 	/* Initialize libmongoc */
 	mongoc_init();
@@ -2355,7 +2381,9 @@ PHP_MSHUTDOWN_FUNCTION(mongodb)
 	/* Cleanup after libmongoc */
 	mongoc_cleanup();
 
+#ifdef PHONGO_TODO_INI
 	UNREGISTER_INI_ENTRIES();
+#endif
 
 	return SUCCESS;
 }
