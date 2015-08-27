@@ -1900,7 +1900,7 @@ void php_phongo_new_datetime_from_utcdatetime(zval *object, int64_t milliseconds
 	sec_len = spprintf(&sec, 0, "@%lld", (long long int) milliseconds / 1000);
 #endif
 
-	datetime_obj = zend_object_store_get_object(object TSRMLS_CC);
+	datetime_obj = Z_PHPDATE_P(object);
 	php_date_initialize(datetime_obj, sec, sec_len, NULL, NULL, 0 TSRMLS_CC);
 	efree(sec);
 	datetime_obj->time->f = milliseconds % 1000;
