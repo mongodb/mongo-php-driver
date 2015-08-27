@@ -410,8 +410,12 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 		}
 
 		if (!bson_to_zval(data, len, &writeconcernerror->info)) {
+#if PHP_VERSION_ID >= 70000
+			zval_ptr_dtor(writeconcernerror->info);
+#else
 			zval_ptr_dtor(&writeconcernerror->info);
 			writeconcernerror->info = NULL;
+#endif
 
 			return false;
 		}
@@ -440,8 +444,12 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 		bson_append_iter(&info, NULL, 0, &iter);
 
 		if (!bson_to_zval(bson_get_data(&info), info.len, &writeerror->info)) {
+#if PHP_VERSION_ID >= 70000
+			zval_ptr_dtor(writeerror->info);
+#else
 			zval_ptr_dtor(&writeerror->info);
 			writeerror->info = NULL;
+#endif
 			return false;
 		}
 	}
