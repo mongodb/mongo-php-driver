@@ -1267,7 +1267,7 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 {
 	array_init(retval);
 
-	add_assoc_string_ex(retval, ZEND_STRS("host"), (char *)sd->host.host, 1);
+	ADD_ASSOC_STRING(retval, ("host"), (char *)sd->host.host);
 	add_assoc_long_ex(retval, ZEND_STRS("port"), sd->host.port);
 	add_assoc_long_ex(retval, ZEND_STRS("type"), sd->type);
 	add_assoc_bool_ex(retval, ZEND_STRS("is_primary"), sd->type == MONGOC_SERVER_RS_PRIMARY);
@@ -1347,9 +1347,9 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 	array_init_size(retval, 4);
 
 	if (wtag) {
-		add_assoc_string_ex(retval, ZEND_STRS("w"), (char *)wtag, 1);
+		ADD_ASSOC_STRING(retval, "w", (char *)wtag);
 	} else if (mongoc_write_concern_get_wmajority(write_concern)) {
-		add_assoc_string_ex(retval, ZEND_STRS("w"), (char *)PHONGO_WRITE_CONCERN_W_MAJORITY, 1);
+		ADD_ASSOC_STRING(retval, "w", (char *)PHONGO_WRITE_CONCERN_W_MAJORITY);
 	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
 		add_assoc_long_ex(retval, ZEND_STRS("w"), w);
 	} else {
@@ -1413,7 +1413,7 @@ void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor) /* {
 		_ADD_INT(retval, batch_size);
 #undef _ADD_INT
 
-		add_assoc_string_ex(retval, ZEND_STRS("ns"), (char *)cursor->ns, 1);
+		ADD_ASSOC_STRING(retval, "ns", (char *)cursor->ns);
 		if (cursor->current) {
 			zval *zv;
 

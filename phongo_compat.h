@@ -153,6 +153,7 @@
 # define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
 # define EXCEPTION_P(_ex, _zp) ZVAL_OBJ(_zp, _ex)
 # define PHONGO_STREAM_ID(stream) stream->res->handle
+# define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), _value);
 #else
 # define phongo_char char
 # define phongo_char_pdup(str) pestrdup(filename, 1)
@@ -163,6 +164,7 @@
 # define DECLARE_RETURN_VALUE_USED
 # define EXCEPTION_P(_ex, _zp) _zp = _ex
 # define PHONGO_STREAM_ID(stream) stream->rsrc_id
+# define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), _value, 1);
 #endif
 
 
