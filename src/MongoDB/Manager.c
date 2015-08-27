@@ -58,8 +58,12 @@ PHP_METHOD(Manager, __construct)
 {
 	php_phongo_manager_t     *intern;
 	zend_error_handling       error_handling;
+#if PHP_VERSION_ID >= 70000
+        zend_string              *uri_string;
+#else
 	char                     *uri_string;
 	int                       uri_string_len;
+#endif
 	zval                     *options = NULL;
 	bson_t                    bson_options = BSON_INITIALIZER;
 	zval                     *driverOptions = NULL;
@@ -69,7 +73,11 @@ PHP_METHOD(Manager, __construct)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_MANAGER_OBJ_P(getThis());
 
+#if PHP_VERSION_ID >= 70000
+        if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S|a!a!", &uri_string, &options, &driverOptions) == FAILURE) {
+#else
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!a!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
+#endif
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -79,7 +87,11 @@ PHP_METHOD(Manager, __construct)
 		zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
 	}
 
+#if PHP_VERSION_ID >= 70000
+        phongo_manager_init(intern, ZSTR_VAL(uri_string), &bson_options, driverOptions TSRMLS_CC);
+#else
 	phongo_manager_init(intern, uri_string, &bson_options, driverOptions TSRMLS_CC);
+#endif
 	bson_destroy(&bson_options);
 }
 /* }}} */
@@ -462,6 +474,21 @@ static void php_phongo_manager_free_object(void *object TSRMLS_DC) /* {{{ */
 	efree(intern);
 } /* }}} */
 
+#if PHP_VERSION_ID >= 70000
+zend_object* php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+{
+        php_phongo_manager_t *intern;
+
+        intern = (php_phongo_manager_t *)ecalloc(1, sizeof(php_phongo_manager_t)+zend_object_properties_size(class_type));
+
+        zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+        object_properties_init(&intern->std, class_type);
+
+        intern->std.handlers = &php_phongo_handler_manager;
+
+        return &intern->std;
+}
+#else
 zend_object_value php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
@@ -477,19 +504,29 @@ zend_object_value php_phongo_manager_create_object(zend_class_entry *class_type 
 
 	return retval;
 } /* }}} */
+#endif
 
 bool phongo_add_server_debug(void *item, void *ctx)
 {
+#if PHP_VERSION_ID >= 70000
+        mongoc_server_description_t *server = item;
+        zval                        *retval = ctx;
+        zval entry;
+
+        php_phongo_server_to_zval(&entry, server);
+
+        add_next_index_zval(retval, &entry);
+#else
 	mongoc_server_description_t *server = item;
 	zval                        *retval = ctx;
 	zval *entry = NULL;
 
-	MAKE_STD_ZVAL(entry);
+        MAKE_STD_ZVAL(entry);
 
 	php_phongo_server_to_zval(entry, server);
 
 	add_next_index_zval(retval, entry);
-
+#endif
 	return true;
 }
 
@@ -506,16 +543,28 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 	array_init(&retval);
 
 	add_assoc_long_ex(&retval, ZEND_STRS("request_id"), intern->client->request_id);
+#if PHP_VERSION_ID >= 70000
+        add_assoc_string_ex(&retval, ZEND_STRS("uri"), (char *)mongoc_uri_get_string(intern->client->uri));
+#else
 	add_assoc_string_ex(&retval, ZEND_STRS("uri"), (char *)mongoc_uri_get_string(intern->client->uri), 1);
+#endif
 
 
 	{
+#if PHP_VERSION_ID >= 70000
+                zval cluster;
+                array_init(&cluster);
+
+                mongoc_set_for_each(intern->client->topology->description.servers, phongo_add_server_debug, &cluster);
+                add_assoc_zval_ex(&retval, ZEND_STRS("cluster"), &cluster);
+#else
 		zval *cluster = NULL;
 		MAKE_STD_ZVAL(cluster);
 		array_init(cluster);
 
 		mongoc_set_for_each(intern->client->topology->description.servers, phongo_add_server_debug, cluster);
 		add_assoc_zval_ex(&retval, ZEND_STRS("cluster"), cluster);
+#endif
 	}
 
 	return Z_ARRVAL(retval);

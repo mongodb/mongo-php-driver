@@ -61,7 +61,11 @@ PHP_MINIT_FUNCTION(AuthenticationException)
 	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "AuthenticationException", php_phongo_authenticationexception_me);
+#if PHP_VERSION_ID >= 70000
+        php_phongo_authenticationexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce);
+#else
 	php_phongo_authenticationexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce, NULL TSRMLS_CC);
+#endif
 
 	return SUCCESS;
 }
