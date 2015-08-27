@@ -518,8 +518,11 @@ mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
 void phongo_unwrap_exception(bool retval, zval *return_value TSRMLS_DC)
 {
 	if (!retval) {
-		if (instanceof_function(Z_OBJCE_P(EG(exception)), php_phongo_bulkwriteexception_ce TSRMLS_CC)) {
-			php_phongo_writeresult_t *wr = php_phongo_writeresult_get_from_bulkwriteexception(EG(exception) TSRMLS_CC);
+		zval *ex = NULL;
+
+		EXCEPTION_P(EG(exception), ex);
+		if (instanceof_function(Z_OBJCE_P(ex), php_phongo_bulkwriteexception_ce TSRMLS_CC)) {
+			php_phongo_writeresult_t *wr = php_phongo_writeresult_get_from_bulkwriteexception(ex TSRMLS_CC);
 
 			/* Clear the BulkWriteException */
 			zend_clear_exception(TSRMLS_C);
@@ -528,8 +531,8 @@ void phongo_unwrap_exception(bool retval, zval *return_value TSRMLS_DC)
 			php_phongo_throw_write_errors(wr TSRMLS_CC);
 			php_phongo_throw_write_concern_error(wr TSRMLS_CC);
 
-			if (instanceof_function(Z_OBJCE_P(EG(exception)), php_phongo_writeexception_ce TSRMLS_CC)) {
-				zend_update_property(Z_OBJCE_P(EG(exception)), EG(exception), ZEND_STRL("writeResult"), return_value TSRMLS_CC);
+			if (instanceof_function(Z_OBJCE_P(ex), php_phongo_writeexception_ce TSRMLS_CC)) {
+				zend_update_property(Z_OBJCE_P(ex), ex, ZEND_STRL("writeResult"), return_value TSRMLS_CC);
 			}
 		}
 	}
