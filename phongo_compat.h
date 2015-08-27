@@ -151,6 +151,7 @@
 # define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data)
 # define SUPPRESS_UNUSED_WARNING(x)
 # define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
+# define EXCEPTION_P(_ex, _zp) ZVAL_OBJ(_zp, _ex)
 #else
 # define phongo_char char
 # define phongo_char_pdup(str) pestrdup(filename, 1)
@@ -159,6 +160,7 @@
 # define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data) TSRMLS_FETCH_FROM_CTX(user_data)
 # define SUPPRESS_UNUSED_WARNING(x) (void)x;
 # define DECLARE_RETURN_VALUE_USED
+# define EXCEPTION_P(_ex, _zp) _zp = _ex
 #endif
 
 
