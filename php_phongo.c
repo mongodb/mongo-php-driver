@@ -700,7 +700,7 @@ void phongo_stream_destroy(mongoc_stream_t *stream_wrap) /* {{{ */
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
 
 	if (base_stream->stream) {
-		MONGOC_DEBUG("Not destroying RSRC#%d", base_stream->stream->rsrc_id);
+		MONGOC_DEBUG("Not destroying RSRC#%d", PHONGO_STREAM_ID(base_stream->stream));
 	} else {
 		MONGOC_DEBUG("Wrapped stream already destroyed");
 	}
@@ -720,7 +720,7 @@ void phongo_stream_failed(mongoc_stream_t *stream_wrap) /* {{{ */
 	if (base_stream->stream) {
 		PHONGO_TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
-		MONGOC_DEBUG("Destroying RSRC#%d", base_stream->stream->rsrc_id);
+		MONGOC_DEBUG("Destroying RSRC#%d", PHONGO_STREAM_ID(base_stream->stream));
 		php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
 		base_stream->stream = NULL;
 	}
@@ -732,11 +732,11 @@ int phongo_stream_close(mongoc_stream_t *stream_wrap) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
 
-	MONGOC_DEBUG("Closing RSRC#%d", base_stream->stream->rsrc_id);
+	MONGOC_DEBUG("Closing RSRC#%d", PHONGO_STREAM_ID(base_stream->stream));
 	if (base_stream->stream) {
 		TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
-		MONGOC_DEBUG("Destroying RSRC#%d", base_stream->stream->rsrc_id);
+		MONGOC_DEBUG("Destroying RSRC#%d", PHONGO_STREAM_ID(base_stream->stream));
 		php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
 		base_stream->stream = NULL;
 	}
@@ -1116,7 +1116,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	}
 	php_stream_auto_cleanup(stream);
 
-	MONGOC_DEBUG("Created: RSRC#%d as '%s'", stream->rsrc_id, uniqid);
+	MONGOC_DEBUG("Created: RSRC#%d as '%s'", PHONGO_STREAM_ID(stream), uniqid);
 	efree(uniqid);
 
 	if (mongoc_uri_get_ssl(uri)) {
