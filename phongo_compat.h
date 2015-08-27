@@ -166,6 +166,7 @@
 # define PHONGO_STREAM_ID(stream) stream->rsrc_id
 # define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), _value, 1);
 # define Z_PHPDATE_P(object) zend_object_store_get_object(object TSRMLS_CC)
+# define Z_ISUNDEF(x) !x
 #endif
 
 
