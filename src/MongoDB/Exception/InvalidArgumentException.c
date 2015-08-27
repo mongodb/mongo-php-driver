@@ -61,7 +61,11 @@ PHP_MINIT_FUNCTION(InvalidArgumentException)
 	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "InvalidArgumentException", php_phongo_invalidargumentexception_me);
+#if PHP_VERSION_ID >= 70000
+        php_phongo_invalidargumentexception_ce = zend_register_internal_class_ex(&ce, spl_ce_InvalidArgumentException);
+#else
 	php_phongo_invalidargumentexception_ce = zend_register_internal_class_ex(&ce, spl_ce_InvalidArgumentException, NULL TSRMLS_CC);
+#endif
 	zend_class_implements(php_phongo_invalidargumentexception_ce TSRMLS_CC, 1, php_phongo_exception_ce);
 
 	return SUCCESS;
