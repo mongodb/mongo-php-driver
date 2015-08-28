@@ -2105,7 +2105,6 @@ static void php_phongo_cursor_iterator_dtor(zend_object_iterator *iter TSRMLS_DC
 		cursor_it->intern.data = NULL;
 #endif
 	}
-#endif
 
 	efree(cursor_it);
 } /* }}} */
