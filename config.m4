@@ -146,6 +146,10 @@ if test "$PHP_FOUND_VERNUM" -ge "70000"; then
   ";
   MONGODB_MONGODB_EXCEPTIONS=""
 else
+  AC_DEFINE(PHONGO_TODO_SSL, 1, [Worksfine in PHP5])
+  AC_DEFINE(PHONGO_TODO_MAKE_STD_ZVAL, 1, [Worksfine in PHP5])
+  AC_DEFINE(PHONGO_TODO_INI, 1, [Worksfine in PHP5])
+  AC_DEFINE(PHONGO_TODO_STREAM, 1, [Worksfine in PHP5])
   MONGODB_BSON="\
       src/bson.c \
   ";
