@@ -186,8 +186,11 @@ void php_phongo_bson_visit_corrupt(const bson_iter_t *iter ARG_UNUSED, void *dat
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 
 	mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "Corrupt BSON data detected!");
-
+#if PHP_VERSION_ID >= 70000
+	zval_ptr_dtor(retval);
+#else
 	zval_ptr_dtor(&retval);
+#endif
 }
 /* }}} */
 bool php_phongo_bson_visit_double(const bson_iter_t *iter ARG_UNUSED, const char *key, double v_double, void *data) /* {{{ */
@@ -902,8 +905,9 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 #endif
 		int          hash_type = HASH_KEY_NON_EXISTENT;
 #if PHP_VERSION_ID >= 70000
+		hash_type = zend_hash_get_current_key_ex(ht_data, &zs_key, &index, &pos);
 #else
-		hash_type = zend_hash_get_current_key_ex(ht_data, &zs_key, &index, 0, &pos);
+		hash_type = zend_hash_get_current_key_ex(ht_data, &key, &key_len, &index, 0, &pos);
 #endif
 
 		if (hash_type == HASH_KEY_NON_EXISTENT) {
