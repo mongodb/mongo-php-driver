@@ -92,7 +92,7 @@ static int php_phongo_cursor_to_array_apply(zend_object_iterator *iter, void *pu
 		return ZEND_HASH_APPLY_STOP;
 	}
 #if PHP_VERSION_ID >= 70000
-        Z_ADDREF_P(data);
+        Z_TRY_ADDREF_P(data);
         add_next_index_zval(return_value, data);
 #else
 	Z_ADDREF_PP(data);

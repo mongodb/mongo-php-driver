@@ -1859,13 +1859,23 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 	/* Check if we are doing X509 auth, in which case extract the username (subject) from the cert if no username is provided */
 #ifdef PHONGO_TODO_SSL
 	if (mech && !strcasecmp(mech, "MONGODB-X509") && !mongoc_uri_get_username(uri)) {
+#if PHP_VERSION_ID >= 70000
+		zval *pem;
+
+		if (NULL != (pem = php_stream_context_get_option(ctx, "ssl", "local_cert"))) {
+#else
 		zval **pem;
 
 		if (SUCCESS == php_stream_context_get_option(ctx, "ssl", "local_cert", &pem)) {
+#endif
 			char filename[MAXPATHLEN];
 
 			convert_to_string_ex(pem);
+#if PHP_VERSION_ID >= 70000
+			if (VCWD_REALPATH(Z_STRVAL_P(pem), filename)) {
+#else
 			if (VCWD_REALPATH(Z_STRVAL_PP(pem), filename)) {
+#endif
 				mongoc_ssl_opt_t  ssl_options;
 
 				ssl_options.pem_file = filename;
@@ -2095,6 +2105,7 @@ static void php_phongo_cursor_iterator_dtor(zend_object_iterator *iter TSRMLS_DC
 		cursor_it->intern.data = NULL;
 #endif
 	}
+#endif
 
 	efree(cursor_it);
 } /* }}} */

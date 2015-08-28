@@ -57,19 +57,20 @@ static zend_function_entry php_phongo_maxkey_me[] = {
 
 
 /* {{{ php_phongo_maxkey_t object handlers */
-static void php_phongo_maxkey_free_object(void *object TSRMLS_DC) /* {{{ */
+static void php_phongo_maxkey_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_maxkey_t *intern = (php_phongo_maxkey_t*)object;
+	php_phongo_maxkey_t *intern = Z_MAXKEY_OBJ(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
-
+#if PHP_VERSION_ID < 70000
 	efree(intern);
+#endif
 } /* }}} */
 
 #if PHP_VERSION_ID >= 70000
 zend_object* php_phongo_maxkey_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
-        php_phongo_regex_t *intern;
+        php_phongo_maxkey_t *intern;
 
         intern = (php_phongo_maxkey_t *)ecalloc(1, sizeof(php_phongo_maxkey_t)+zend_object_properties_size(class_type));
 
@@ -115,6 +116,7 @@ PHP_MINIT_FUNCTION(MaxKey)
         memcpy(&php_phongo_handler_maxkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 #if PHP_VERSION_ID >= 70000
         php_phongo_handler_maxkey.free_obj = php_phongo_maxkey_free_object;
+	php_phongo_handler_maxkey.offset = XtOffsetOf(php_phongo_maxkey_t, std);
 #endif
 
 	return SUCCESS;

@@ -126,13 +126,15 @@ static zend_function_entry php_phongo_objectid_me[] = {
 
 
 /* {{{ php_phongo_objectid_t object handlers */
-static void php_phongo_objectid_free_object(void *object TSRMLS_DC) /* {{{ */
+static void php_phongo_objectid_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_objectid_t *intern = (php_phongo_objectid_t*)object;
+	php_phongo_objectid_t *intern = Z_OBJECTID_OBJ(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+#if PHP_VERSION_ID < 70000
 	efree(intern);
+#endif
 } /* }}} */
 
 #if PHP_VERSION_ID >= 70000
@@ -189,11 +191,7 @@ HashTable *php_phongo_objectid_get_debug_info(zval *object, int *is_temp TSRMLS_
 
 	array_init(&retval);
 
-#if PHP_VERSION_ID >= 70000
-        add_assoc_stringl_ex(&retval, ZEND_STRS("oid"), intern->oid, 24);
-#else
-	add_assoc_stringl_ex(&retval, ZEND_STRS("oid"), intern->oid, 24, 1);
-#endif
+	ADD_ASSOC_STRING(&retval, ZEND_STRS("oid"), intern->oid, 24);
 
 	return Z_ARRVAL(retval);
 

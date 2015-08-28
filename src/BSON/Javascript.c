@@ -95,7 +95,7 @@ static zend_function_entry php_phongo_javascript_me[] = {
 /* {{{ php_phongo_javascript_t object handlers */
 static void php_phongo_javascript_free_object(void *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_javascript_t *intern = (php_phongo_javascript_t*)object;
+        php_phongo_javascript_t *intern = Z_JAVASCRIPT_OBJ(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -161,6 +161,7 @@ PHP_MINIT_FUNCTION(Javascript)
         memcpy(&php_phongo_handler_javascript, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 #if PHP_VERSION_ID >= 70000
         php_phongo_handler_javascript.free_obj = php_phongo_javascript_free_object;
+        php_phongo_handler_javascript.offset = XtOffsetOf(php_phongo_javascript_t, std);
 #endif
 
 

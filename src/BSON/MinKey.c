@@ -57,13 +57,15 @@ static zend_function_entry php_phongo_minkey_me[] = {
 
 
 /* {{{ php_phongo_minkey_t object handlers */
-static void php_phongo_minkey_free_object(void *object TSRMLS_DC) /* {{{ */
+static void php_phongo_minkey_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_minkey_t *intern = (php_phongo_minkey_t*)object;
+	php_phongo_minkey_t *intern = Z_MINKEY_OBJ(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+#if PHP_VERSION_ID < 70000
 	efree(intern);
+#endif
 } /* }}} */
 
 #if PHP_VERSION_ID >= 70000
@@ -115,6 +117,7 @@ PHP_MINIT_FUNCTION(MinKey)
         memcpy(&php_phongo_handler_minkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 #if PHP_VERSION_ID >= 70000
         php_phongo_handler_minkey.free_obj = php_phongo_minkey_free_object;
+	php_phongo_handler_minkey.offset = XtOffsetOf(php_phongo_minkey_t, std);
 #endif
 
 

@@ -177,26 +177,6 @@
 void *x509_from_zval(zval *zval TSRMLS_DC);
 void phongo_add_exception_prop(const char *prop, int prop_len, zval *value TSRMLS_DC);
 
-#if PHP_VERSION_ID >= 70000
-#define ALLOC_ZVAL(z) 									\
-	do {												\
-		(z) = (zval*)ecalloc(1, sizeof(zval));		\
-	} while (0)
-
-#define INIT_PZVAL(z)		\
-        Z_SET_REFCOUNT_P(z, 1)
-
-#define INIT_ZVAL(z) z = zval_used_for_init;
-
-#define ALLOC_INIT_ZVAL(zp)						\
-	ALLOC_ZVAL(zp);		\
-	INIT_ZVAL(*zp);
-
-#define MAKE_STD_ZVAL(zv)				 \
-	ALLOC_ZVAL(zv); \
-	INIT_PZVAL(zv);
-#endif
-
 #endif /* PHONGO_COMPAT_H */
 
 
