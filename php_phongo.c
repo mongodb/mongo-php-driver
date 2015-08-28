@@ -2271,7 +2271,11 @@ void _phongo_debug_bson(bson_t *bson)
 /* {{{ INI entries */
 #ifdef PHONGO_TODO_INI
 PHP_INI_BEGIN()
+#if PHP_VERSION_ID >= 70000
+	STD_PHP_INI_ENTRY(PHONGO_DEBUG_INI, PHONGO_DEBUG_INI_DEFAULT, PHP_INI_ALL, OnUpdateString, debug, zend_mongodb_globals, mglo)
+#else
 	{ 0, PHP_INI_ALL, (char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), OnUpdateString, (void *) XtOffsetOf(zend_mongodb_globals, debug), (void *) &mglo, NULL, (char *)PHONGO_DEBUG_INI_DEFAULT, sizeof(PHONGO_DEBUG_INI_DEFAULT)-1, NULL, 0, 0, 0, NULL },
+#endif
 PHP_INI_END()
 #endif
 /* }}} */
