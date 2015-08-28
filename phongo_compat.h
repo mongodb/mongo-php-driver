@@ -171,6 +171,9 @@
 # define Z_PHPDATE_P(object) zend_object_store_get_object(object TSRMLS_CC)
 # define Z_ISUNDEF(x) !x
 # define phongo_free_object_arg void
+# define ZEND_HASH_INC_APPLY_COUNT(ht) (ht)->nApplyCount++
+# define ZEND_HASH_DEC_APPLY_COUNT(ht) (ht)->nApplyCount--
+# define ZEND_HASH_GET_APPLY_COUNT(ht) (ht)->nApplyCount
 #endif
 
 
