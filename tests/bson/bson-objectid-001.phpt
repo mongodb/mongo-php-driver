@@ -53,9 +53,6 @@ $id = new $classname("-3e28b650640fd3162152da1");
 throws(function() use($classname) {
 $id = new $classname(" 3e28b650640fd3162152da1");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
-throws(function() use($classname) {
-$id = new $classname(new stdclass);
-}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 
 
@@ -86,7 +83,6 @@ Test#4 { "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }
 string(60) "{ "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }"
 string(60) "{ "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }"
 bool(true)
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
