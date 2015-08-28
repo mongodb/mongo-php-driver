@@ -191,7 +191,7 @@ HashTable *php_phongo_objectid_get_debug_info(zval *object, int *is_temp TSRMLS_
 
 	array_init(&retval);
 
-	ADD_ASSOC_STRING(&retval, ZEND_STRS("oid"), intern->oid, 24);
+	ADD_ASSOC_STRING(&retval, "oid", intern->oid);
 
 	return Z_ARRVAL(retval);
 
@@ -214,7 +214,8 @@ PHP_MINIT_FUNCTION(ObjectID)
 	php_phongo_handler_objectid.compare_objects = php_phongo_objectid_compare_objects;
 	php_phongo_handler_objectid.get_debug_info = php_phongo_objectid_get_debug_info;
 #if PHP_VERSION_ID >= 70000
-        php_phongo_handler_objectid.free_obj = php_phongo_objectid_free_object;
+	php_phongo_handler_objectid.free_obj = php_phongo_objectid_free_object;
+	php_phongo_handler_objectid.offset = XtOffsetOf(php_phongo_objectid_t, std); 
 #endif
 
 
