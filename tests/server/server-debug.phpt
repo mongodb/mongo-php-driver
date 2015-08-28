@@ -44,6 +44,8 @@ object(MongoDB\Driver\Server)#%d (%d) {
     int(1000)
     ["localTime"]=>
     object(%s\UTCDateTime)#%d (%d) {
+      ["milliseconds"]=>
+      %r(int\(\d+\)|string\(\d+\) "\d+")%r
     }
     ["maxWireVersion"]=>
     int(%d)

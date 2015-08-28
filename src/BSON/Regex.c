@@ -44,6 +44,8 @@
 
 PHONGO_API zend_class_entry *php_phongo_regex_ce;
 
+zend_object_handlers php_phongo_handler_regex;
+
 /* {{{ proto BSON\Regex Regex::__construct(string $pattern, string $flags)
    Constructs a new regular expression. */
 PHP_METHOD(Regex, __construct)
@@ -185,9 +187,26 @@ zend_object_value php_phongo_regex_create_object(zend_class_entry *class_type TS
 	object_properties_init(&intern->std, class_type);
 
 	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_regex_free_object, NULL TSRMLS_CC);
-	retval.handlers = phongo_get_std_object_handlers();
+	retval.handlers = &php_phongo_handler_regex;
 
 	return retval;
+} /* }}} */
+
+HashTable *php_phongo_regex_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	php_phongo_regex_t *intern;
+	zval                retval = zval_used_for_init;
+
+
+	*is_temp = 1;
+	intern = (php_phongo_regex_t *)zend_object_store_get_object(object TSRMLS_CC);
+
+	array_init(&retval);
+
+	add_assoc_stringl_ex(&retval, ZEND_STRS("pattern"), intern->pattern, intern->pattern_len, 1);
+	add_assoc_stringl_ex(&retval, ZEND_STRS("flags"), intern->flags, intern->flags_len, 1);
+
+	return Z_ARRVAL(retval);
 } /* }}} */
 /* }}} */
 
@@ -203,6 +222,8 @@ PHP_MINIT_FUNCTION(Regex)
 
 	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, php_phongo_type_ce);
 
+	memcpy(&php_phongo_handler_regex, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_regex.get_debug_info = php_phongo_regex_get_debug_info;
 
 	return SUCCESS;
 }
