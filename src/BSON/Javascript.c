@@ -95,7 +95,7 @@ static zend_function_entry php_phongo_javascript_me[] = {
 /* {{{ php_phongo_javascript_t object handlers */
 static void php_phongo_javascript_free_object(void *object TSRMLS_DC) /* {{{ */
 {
-        php_phongo_javascript_t *intern = Z_JAVASCRIPT_OBJ(object);
+	php_phongo_javascript_t *intern = Z_OBJ_JAVASCRIPT(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -106,43 +106,36 @@ static void php_phongo_javascript_free_object(void *object TSRMLS_DC) /* {{{ */
 		bson_destroy(intern->document);
 		intern->document = NULL;
 	}
+
+#if PHP_VERSION_ID < 70000
 	efree(intern);
+#endif
 } /* }}} */
 
-#if PHP_VERSION_ID >= 70000
-zend_object* php_phongo_javascript_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+phongo_create_object_retval php_phongo_javascript_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
-        php_phongo_javascript_t *intern;
+	php_phongo_javascript_t *intern = NULL;
 
-        intern = (php_phongo_javascript_t *)ecalloc(1, sizeof(php_phongo_javascript_t)+zend_object_properties_size(class_type));
-
-        zend_object_std_init(&intern->std, class_type TSRMLS_CC);
-        object_properties_init(&intern->std, class_type);
-
-        intern->std.handlers = &php_phongo_handler_javascript;
-
-        return &intern->std;
-} /* }}} */
-#else
-zend_object_value php_phongo_javascript_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
-{
-	zend_object_value retval;
-	php_phongo_javascript_t *intern;
-
-	intern = (php_phongo_javascript_t *)emalloc(sizeof(php_phongo_javascript_t));
-	memset(intern, 0, sizeof(php_phongo_javascript_t));
-
+	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_javascript_t, class_type);
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_javascript_free_object, NULL TSRMLS_CC);
-	retval.handlers = &php_phongo_handler_javascript;
-
 	intern->document = NULL;
 
-	return retval;
-} /* }}} */
+#if PHP_VERSION_ID >= 70000
+	intern->std.handlers = &php_phongo_handler_javascript;
+
+	return &intern->std;
+#else
+	{
+		zend_object_value retval;
+		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_javascript_free_object, NULL TSRMLS_CC);
+		retval.handlers = &php_phongo_handler_javascript;
+
+		return retval;
+	}
 #endif
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -158,10 +151,10 @@ PHP_MINIT_FUNCTION(Javascript)
 
 	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, php_phongo_type_ce);
 
-        memcpy(&php_phongo_handler_javascript, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	memcpy(&php_phongo_handler_javascript, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 #if PHP_VERSION_ID >= 70000
-        php_phongo_handler_javascript.free_obj = php_phongo_javascript_free_object;
-        php_phongo_handler_javascript.offset = XtOffsetOf(php_phongo_javascript_t, std);
+	php_phongo_handler_javascript.free_obj = php_phongo_javascript_free_object;
+	php_phongo_handler_javascript.offset = XtOffsetOf(php_phongo_javascript_t, std);
 #endif
 
 
