@@ -161,6 +161,7 @@
 # define ZEND_HASH_APPLY_COUNT(ht) (ht)->u.v.nApplyCount
 # define PHONGO_RETVAL_STRINGL(s, slen) RETVAL_STRINGL(s, slen)
 # define PHONGO_RETURN_STRINGL(s, slen) RETVAL_STRINGL(s, slen)
+# define PHONGO_RETURN_STRING(s) RETVAL_STRING(s)
 #else
 # define phongo_char char
 # define phongo_char_pdup(str) pestrdup(filename, 1)
@@ -181,6 +182,7 @@
 # define ZEND_HASH_APPLY_COUNT(ht) (ht)->nApplyCount
 # define PHONGO_RETVAL_STRINGL(s, slen) RETVAL_STRINGL(s, slen, 1)
 # define PHONGO_RETURN_STRINGL(s, slen) RETVAL_STRINGL(s, slen, 1)
+# define PHONGO_RETURN_STRING(s) RETVAL_STRING(s, 1)
 #endif
 
 

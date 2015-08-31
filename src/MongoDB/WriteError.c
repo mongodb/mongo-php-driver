@@ -94,7 +94,7 @@ PHP_METHOD(WriteError, getMessage)
 	}
 
 
-	RETURN_STRING(intern->message, 1);
+	PHONGO_RETURN_STRING(intern->message);
 }
 /* }}} */
 /* {{{ proto mixed WriteError::getInfo()
