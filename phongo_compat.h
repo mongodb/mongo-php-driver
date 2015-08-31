@@ -48,7 +48,9 @@
 		zend_hash_copy(*_std.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *));
 #endif
 
-#if PHP_VERSION_ID < 50400
+#if PHP_VERSION_ID >= 70000
+# define str_efree(s) efree((char*)s)
+#elif PHP_VERSION_ID < 50400
 # define str_efree(s) efree((char*)s)
 #else
 # include <Zend/zend_string.h>
@@ -154,6 +156,7 @@
 # define EXCEPTION_P(_ex, _zp) ZVAL_OBJ(_zp, _ex)
 # define PHONGO_STREAM_ID(stream) stream->res->handle
 # define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), _value);
+# define phongo_free_object_arg zend_object
 #else
 # define phongo_char char
 # define phongo_char_pdup(str) pestrdup(filename, 1)
@@ -167,12 +170,15 @@
 # define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), _value, 1);
 # define Z_PHPDATE_P(object) zend_object_store_get_object(object TSRMLS_CC)
 # define Z_ISUNDEF(x) !x
+# define phongo_free_object_arg void
+# define ZEND_HASH_INC_APPLY_COUNT(ht) (ht)->nApplyCount++
+# define ZEND_HASH_DEC_APPLY_COUNT(ht) (ht)->nApplyCount--
+# define ZEND_HASH_GET_APPLY_COUNT(ht) (ht)->nApplyCount
 #endif
 
 
 void *x509_from_zval(zval *zval TSRMLS_DC);
 void phongo_add_exception_prop(const char *prop, int prop_len, zval *value TSRMLS_DC);
-
 
 #endif /* PHONGO_COMPAT_H */
 

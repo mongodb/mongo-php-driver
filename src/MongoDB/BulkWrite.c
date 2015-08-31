@@ -274,6 +274,21 @@ static void php_phongo_bulkwrite_free_object(void *object TSRMLS_DC) /* {{{ */
 	efree(intern);
 } /* }}} */
 
+#if PHP_VERSION_ID >= 70000
+zend_object* php_phongo_bulkwrite_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+{
+        php_phongo_bulkwrite_t *intern;
+
+        intern = (php_phongo_bulkwrite_t *)ecalloc(1, sizeof(php_phongo_bulkwrite_t)+zend_object_properties_size(class_type));
+
+        zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+        object_properties_init(&intern->std, class_type);
+
+        intern->std.handlers = &php_phongo_handler_bulkwrite;
+
+        return &intern->std;
+}
+#else
 zend_object_value php_phongo_bulkwrite_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	zend_object_value retval;
@@ -289,6 +304,7 @@ zend_object_value php_phongo_bulkwrite_create_object(zend_class_entry *class_typ
 
 	return retval;
 } /* }}} */
+#endif
 
 HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
@@ -301,13 +317,21 @@ HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS
 	array_init(&retval);
 
 	if (intern->bulk->database) {
+#if PHP_VERSION_ID >= 70000
+                add_assoc_string_ex(&retval, ZEND_STRS("database"), intern->bulk->database);
+#else
 		add_assoc_string_ex(&retval, ZEND_STRS("database"), intern->bulk->database, 1);
+#endif
 	} else {
 		add_assoc_null_ex(&retval, ZEND_STRS("database"));
 	}
 
 	if (intern->bulk->collection) {
+#if PHP_VERSION_ID >= 70000
+                add_assoc_string_ex(&retval, ZEND_STRS("collection"), intern->bulk->collection);
+#else
 		add_assoc_string_ex(&retval, ZEND_STRS("collection"), intern->bulk->collection, 1);
+#endif
 	} else {
 		add_assoc_null_ex(&retval, ZEND_STRS("collection"));
 	}

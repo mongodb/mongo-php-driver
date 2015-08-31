@@ -1859,13 +1859,23 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 	/* Check if we are doing X509 auth, in which case extract the username (subject) from the cert if no username is provided */
 #ifdef PHONGO_TODO_SSL
 	if (mech && !strcasecmp(mech, "MONGODB-X509") && !mongoc_uri_get_username(uri)) {
+#if PHP_VERSION_ID >= 70000
+		zval *pem;
+
+		if (NULL != (pem = php_stream_context_get_option(ctx, "ssl", "local_cert"))) {
+#else
 		zval **pem;
 
 		if (SUCCESS == php_stream_context_get_option(ctx, "ssl", "local_cert", &pem)) {
+#endif
 			char filename[MAXPATHLEN];
 
 			convert_to_string_ex(pem);
+#if PHP_VERSION_ID >= 70000
+			if (VCWD_REALPATH(Z_STRVAL_P(pem), filename)) {
+#else
 			if (VCWD_REALPATH(Z_STRVAL_PP(pem), filename)) {
+#endif
 				mongoc_ssl_opt_t  ssl_options;
 
 				ssl_options.pem_file = filename;
@@ -2271,7 +2281,11 @@ void _phongo_debug_bson(bson_t *bson)
 /* {{{ INI entries */
 #ifdef PHONGO_TODO_INI
 PHP_INI_BEGIN()
+#if PHP_VERSION_ID >= 70000
+	STD_PHP_INI_ENTRY(PHONGO_DEBUG_INI, PHONGO_DEBUG_INI_DEFAULT, PHP_INI_ALL, OnUpdateString, debug, zend_mongodb_globals, mglo)
+#else
 	{ 0, PHP_INI_ALL, (char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), OnUpdateString, (void *) XtOffsetOf(zend_mongodb_globals, debug), (void *) &mglo, NULL, (char *)PHONGO_DEBUG_INI_DEFAULT, sizeof(PHONGO_DEBUG_INI_DEFAULT)-1, NULL, 0, 0, 0, NULL },
+#endif
 PHP_INI_END()
 #endif
 /* }}} */

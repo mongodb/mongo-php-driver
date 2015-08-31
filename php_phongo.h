@@ -150,11 +150,18 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 void php_phongo_cursor_free(php_phongo_cursor_t *cursor);
 zend_object_iterator* php_phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
 
+#if PHP_VERSION_ID >= 70000
+#define PHONGO_CE_INIT(ce) do {                     \
+        ce->serialize    = zend_class_serialize_deny;   \
+        ce->unserialize  = zend_class_unserialize_deny; \
+} while(0);
+#else
 #define PHONGO_CE_INIT(ce) do {                     \
 	ce->ce_flags    |= ZEND_ACC_FINAL_CLASS;        \
 	ce->serialize    = zend_class_serialize_deny;   \
 	ce->unserialize  = zend_class_unserialize_deny; \
 } while(0);
+#endif
 
 
 #ifdef PHP_DEBUG
