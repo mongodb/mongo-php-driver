@@ -316,13 +316,13 @@ HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS
 	array_init(&retval);
 
 	if (intern->bulk->database) {
-		add_assoc_string_ex(&retval, ZEND_STRS("database"), intern->bulk->database, 1);
+		ADD_ASSOC_STRING(&retval, "database", intern->bulk->database);
 	} else {
 		add_assoc_null_ex(&retval, ZEND_STRS("database"));
 	}
 
 	if (intern->bulk->collection) {
-		add_assoc_string_ex(&retval, ZEND_STRS("collection"), intern->bulk->collection, 1);
+		ADD_ASSOC_STRING(&retval, "collection", intern->bulk->collection);
 	} else {
 		add_assoc_null_ex(&retval, ZEND_STRS("collection"));
 	}
