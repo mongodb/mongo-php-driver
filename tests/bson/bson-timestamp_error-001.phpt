@@ -7,11 +7,11 @@ BSON BSON\Timestamp #001 error
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$classname = BSON_NAMESPACE . "\\Timestamp";
-
-throws(function() use($classname) {
-    $s = new $classname;
+throws(function() {
+    $classname = BSON_NAMESPACE . "\\Timestamp";
+    new $classname;
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
+
 ?>
 ===DONE===
 <?php exit(0); ?>

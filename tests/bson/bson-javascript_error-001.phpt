@@ -7,18 +7,11 @@ BSON BSON\Javascript #001 error
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$classname = BSON_NAMESPACE . "\\Javascript";
-
-$js = new $classname("function foo(bar) {var baz = bar; var bar = foo; return bar; }");
-$jswscope = new $classname("function foo(bar) {var baz = bar; var bar = foo; return bar; }", array("foo" => 42));
-$tests = array(
-    array("js" => $js),
-    array("jswscope" => $jswscope),
-);
-
-throws(function() use($classname) {
-    $j = new $classname;
+throws(function() {
+    $classname = BSON_NAMESPACE . "\\Javascript";
+    new $classname;
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
+
 ?>
 ===DONE===
 <?php exit(0); ?>

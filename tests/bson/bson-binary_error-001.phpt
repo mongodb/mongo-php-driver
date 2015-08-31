@@ -10,22 +10,20 @@ require_once __DIR__ . "/../utils/basic.inc";
 $classname = BSON_NAMESPACE . "\\Binary";
 
 $binary = new $classname("random binary data", $classname::TYPE_GENERIC);
-
-throws(function() use($classname) {
-    $b = new $classname("random binary data without type");
-    echo "FAIL: Constructed BSON\Binary without type!\n";
-}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
-
 $binary->getData(2);
 $binary->getType(2);
+
+throws(function() use($classname) {
+    new $classname("random binary data without type");
+}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
+
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-
 Warning: %s\Binary::getData() expects exactly 0 parameters, 1 given in %s on line %d
 
 Warning: %s\Binary::getType() expects exactly 0 parameters, 1 given in %s on line %d
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 ===DONE===
 
