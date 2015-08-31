@@ -147,7 +147,7 @@ PHP_METHOD(Server, getHost)
 	}
 
 	if ((sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id, &error))) {
-		RETURN_STRING(sd->host.host, 1);
+		PHONGO_RETURN_STRING(sd->host.host);
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
