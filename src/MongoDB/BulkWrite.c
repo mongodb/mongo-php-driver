@@ -328,11 +328,18 @@ HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS
 	add_assoc_long_ex(&retval, ZEND_STRS("server_id"), intern->bulk->hint);
 
 	if (intern->bulk->write_concern) {
+#if PHP_VERSION_ID >= 70000
+		zval write_concern;
+
+		php_phongo_write_concern_to_zval(&write_concern, intern->bulk->write_concern);
+		add_assoc_zval_ex(&retval, ZEND_STRS("write_concern"), &write_concern);
+#else
 		zval *write_concern = NULL;
 		MAKE_STD_ZVAL(write_concern);
 
 		php_phongo_write_concern_to_zval(write_concern, intern->bulk->write_concern);
 		add_assoc_zval_ex(&retval, ZEND_STRS("write_concern"), write_concern);
+#endif
 	} else {
 		add_assoc_null_ex(&retval, ZEND_STRS("write_concern"));
 	}
