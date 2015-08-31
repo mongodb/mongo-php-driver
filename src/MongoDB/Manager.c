@@ -431,7 +431,7 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 	array_init(&retval);
 
 	add_assoc_long_ex(&retval, ZEND_STRS("request_id"), intern->client->request_id);
-	add_assoc_string_ex(&retval, ZEND_STRS("uri"), (char *)mongoc_uri_get_string(intern->client->uri), 1);
+	ADD_ASSOC_STRING(&retval, "uri", (char *)mongoc_uri_get_string(intern->client->uri));
 
 
 	{
