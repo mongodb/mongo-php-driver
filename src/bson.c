@@ -630,7 +630,7 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			tmp_ht = HASH_OF(obj_data);
 
 			if (tmp_ht) {
-				tmp_ht->nApplyCount++;
+				ZEND_HASH_APPLY_COUNT(tmp_ht)++;
 			}
 
 			/* Persistable objects must always be serialized as BSON documents;
@@ -651,7 +651,7 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			}
 
 			if (tmp_ht) {
-				tmp_ht->nApplyCount--;
+				ZEND_HASH_APPLY_COUNT(tmp_ht)--;
 			}
 			zval_ptr_dtor(&obj_data);
 			return;
@@ -752,7 +752,7 @@ void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char 
 				HashTable *tmp_ht = HASH_OF(entry);
 
 				if (tmp_ht) {
-					tmp_ht->nApplyCount++;
+					ZEND_HASH_APPLY_COUNT(tmp_ht)++;
 				}
 
 				bson_append_array_begin(bson, key, key_len, &child);
@@ -760,7 +760,7 @@ void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char 
 				bson_append_array_end(bson, &child);
 
 				if (tmp_ht) {
-					tmp_ht->nApplyCount--;
+					ZEND_HASH_APPLY_COUNT(tmp_ht)--;
 				}
 				break;
 			}
@@ -817,7 +817,7 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 			return;
 	}
 
-	if (!ht_data || ht_data->nApplyCount > 1) {
+	if (!ht_data || ZEND_HASH_APPLY_COUNT(ht_data) > 1) {
 		if (obj_data) {
 			zval_ptr_dtor(&obj_data);
 		}
