@@ -21,6 +21,7 @@
 
 #if PHP_VERSION_ID >= 70000
 # include "php_phongo_structs-7.h"
+
 # define Z_COMMAND_OBJ_P(zv)           php_command_fetch_object(Z_OBJ_P(zv));
 # define Z_CURSOR_OBJ_P(zv)            php_cursor_fetch_object(Z_OBJ_P(zv));
 # define Z_CURSORID_OBJ_P(zv)          php_cursorid_fetch_object(Z_OBJ_P(zv));
@@ -45,31 +46,34 @@
 # define Z_TIMESTAMP_OBJ_P(zv)         php_timestamp_fetch_object(Z_OBJ_P(zv));
 # define Z_UTCDATETIME_OBJ_P(zv)       php_utcdatetime_fetch_object(Z_OBJ_P(zv));
 
-# define Z_COMMAND_OBJ(zo)           php_command_fetch_object((zo));
-# define Z_CURSOR_OBJ(zo)            php_cursor_fetch_object((zo));
-# define Z_CURSORID_OBJ(zo)          php_cursorid_fetch_object((zo));
-# define Z_MANAGER_OBJ(zo)           php_manager_fetch_object((zo));
-# define Z_QUERY_OBJ(zo)             php_query_fetch_object((zo));
-# define Z_READPREFERENCE_OBJ(zo)    php_readpreference_fetch_object((zo));
-# define Z_SERVER_OBJ(zo)            php_server_fetch_object((zo));
-# define Z_BULKWRITE_OBJ(zo)         php_bulkwrite_fetch_object((zo));
-# define Z_WRITECONCERN_OBJ(zo)      php_writeconcern_fetch_object((zo));
-# define Z_WRITECONCERNERROR_OBJ(zo) php_writeconcernerror_fetch_object((zo));
-# define Z_WRITEERROR_OBJ(zo)        php_writeerror_fetch_object((zo));
-# define Z_WRITERESULT_OBJ(zo)       php_writeresult_fetch_object((zo));
-# define Z_BINARY_OBJ(zo)            php_binary_fetch_object((zo));
-# define Z_INT32_OBJ(zo)             php_int32_fetch_object((zo));
-# define Z_INT64_OBJ(zo)             php_int64_fetch_object((zo));
-# define Z_JAVASCRIPT_OBJ(zo)        php_javascript_fetch_object((zo));
-# define Z_LOG_OBJ(zo)               php_log_fetch_object((zo));
-# define Z_MAXKEY_OBJ(zo)            php_maxkey_fetch_object((zo));
-# define Z_MINKEY_OBJ(zo)            php_minkey_fetch_object((zo));
-# define Z_OBJECTID_OBJ(zo)          php_objectid_fetch_object((zo));
-# define Z_REGEX_OBJ(zo)             php_regex_fetch_object((zo));
-# define Z_TIMESTAMP_OBJ(zo)         php_timestamp_fetch_object((zo));
-# define Z_UTCDATETIME_OBJ(zo)       php_utcdatetime_fetch_object((zo));
+# define Z_OBJ_COMMAND(zo)             php_command_fetch_object(zo);
+# define Z_OBJ_CURSOR(zo)              php_cursor_fetch_object(zo);
+# define Z_OBJ_CURSORID(zo)            php_cursorid_fetch_object(zo);
+# define Z_OBJ_MANAGER(zo)             php_manager_fetch_object(zo);
+# define Z_OBJ_QUERY(zo)               php_query_fetch_object(zo);
+# define Z_OBJ_READPREFERENCE(zo)      php_readpreference_fetch_object(zo);
+# define Z_OBJ_SERVER(zo)              php_server_fetch_object(zo);
+# define Z_OBJ_BULKWRITE(zo)           php_bulkwrite_fetch_object(zo);
+# define Z_OBJ_WRITECONCERN(zo)        php_writeconcern_fetch_object(zo);
+# define Z_OBJ_WRITECONCERNERROR(zo)   php_writeconcernerror_fetch_object(zo);
+# define Z_OBJ_WRITEERROR(zo)          php_writeerror_fetch_object(zo);
+# define Z_OBJ_WRITERESULT(zo)         php_writeresult_fetch_object(zo);
+# define Z_OBJ_BINARY(zo)              php_binary_fetch_object(zo);
+# define Z_OBJ_INT32(zo)               php_int32_fetch_object(zo);
+# define Z_OBJ_INT64(zo)               php_int64_fetch_object(zo);
+# define Z_OBJ_JAVASCRIPT(zo)          php_javascript_fetch_object(zo);
+# define Z_OBJ_LOG(zo)                 php_log_fetch_object(zo);
+# define Z_OBJ_MAXKEY(zo)              php_maxkey_fetch_object(zo);
+# define Z_OBJ_MINKEY(zo)              php_minkey_fetch_object(zo);
+# define Z_OBJ_OBJECTID(zo)            php_objectid_fetch_object(zo);
+# define Z_OBJ_REGEX(zo)               php_regex_fetch_object(zo);
+# define Z_OBJ_TIMESTAMP(zo)           php_timestamp_fetch_object(zo);
+# define Z_OBJ_UTCDATETIME(zo)         php_utcdatetime_fetch_object(zo);
+
 #else
+
 # include "php_phongo_structs-5.h"
+
 # define Z_COMMAND_OBJ_P(zv)           (php_phongo_command_t *)zend_object_store_get_object(zv TSRMLS_CC);
 # define Z_CURSOR_OBJ_P(zv)            (php_phongo_cursor_t *)zend_object_store_get_object(zv TSRMLS_CC);
 # define Z_CURSORID_OBJ_P(zv)          (php_phongo_cursorid_t *)zend_object_store_get_object(zv TSRMLS_CC);
@@ -94,29 +98,29 @@
 # define Z_TIMESTAMP_OBJ_P(zv)         (php_phongo_timestamp_t *)zend_object_store_get_object(zv TSRMLS_CC);
 # define Z_UTCDATETIME_OBJ_P(zv)       (php_phongo_utcdatetime_t *)zend_object_store_get_object(zv TSRMLS_CC);
 
-# define Z_COMMAND_OBJ(zo)           (php_phongo_command_t *)(zo);
-# define Z_CURSOR_OBJ(zo)            (php_phongo_cursor_t *)(zo);
-# define Z_CURSORID_OBJ(zo)          (php_phongo_cursorid_t *)(zo);
-# define Z_MANAGER_OBJ(zo)           (php_phongo_manager_t *)(zo);
-# define Z_QUERY_OBJ(zo)             (php_phongo_query_t *)(zo);
-# define Z_READPREFERENCE_OBJ(zo)    (php_phongo_readpreference_t *)(zo);
-# define Z_SERVER_OBJ(zo)            (php_phongo_server_t *)(zo);
-# define Z_BULKWRITE_OBJ(zo)         (php_phongo_bulkwrite_t *)(zo);
-# define Z_WRITECONCERN_OBJ(zo)      (php_phongo_writeconcern_t *)(zo);
-# define Z_WRITECONCERNERROR_OBJ(zo) (php_phongo_writeconcernerror_t *)(zo);
-# define Z_WRITEERROR_OBJ(zo)        (php_phongo_writeerror_t *)(zo);
-# define Z_WRITERESULT_OBJ(zo)       (php_phongo_writeresult_t *)(zo);
-# define Z_BINARY_OBJ(zo)            (php_phongo_binary_t *)(zo);
-# define Z_INT32_OBJ(zo)             (php_phongo_int32_t *)(zo);
-# define Z_INT64_OBJ(zo)             (php_phongo_int64_t *)(zo);
-# define Z_JAVASCRIPT_OBJ(zo)        (php_phongo_javascript_t *)(zo);
-# define Z_LOG_OBJ(zo)               (php_phongo_log_t *)(zo);
-# define Z_MAXKEY_OBJ(zo)            (php_phongo_maxkey_t *)(zo);
-# define Z_MINKEY_OBJ(zo)            (php_phongo_minkey_t *)(zo);
-# define Z_OBJECTID_OBJ(zo)          (php_phongo_objectid_t *)(zo);
-# define Z_REGEX_OBJ(zo)             (php_phongo_regex_t *)(zo);
-# define Z_TIMESTAMP_OBJ(zo)         (php_phongo_timestamp_t *)(zo);
-# define Z_UTCDATETIME_OBJ(zo)       (php_phongo_utcdatetime_t *)(zo);
+# define Z_OBJ_COMMAND(zo)             (php_phongo_command_t *)zo;
+# define Z_OBJ_CURSOR(zo)              (php_phongo_cursor_t *)zo;
+# define Z_OBJ_CURSORID(zo)            (php_phongo_cursorid_t *)zo;
+# define Z_OBJ_MANAGER(zo)             (php_phongo_manager_t *)zo;
+# define Z_OBJ_QUERY(zo)               (php_phongo_query_t *)zo;
+# define Z_OBJ_READPREFERENCE(zo)      (php_phongo_readpreference_t *)zo;
+# define Z_OBJ_SERVER(zo)              (php_phongo_server_t *)zo;
+# define Z_OBJ_BULKWRITE(zo)           (php_phongo_bulkwrite_t *)zo;
+# define Z_OBJ_WRITECONCERN(zo)        (php_phongo_writeconcern_t *)zo;
+# define Z_OBJ_WRITECONCERNERROR(zo)   (php_phongo_writeconcernerror_t *)zo;
+# define Z_OBJ_WRITEERROR(zo)          (php_phongo_writeerror_t *)zo;
+# define Z_OBJ_WRITERESULT(zo)         (php_phongo_writeresult_t *)zo;
+# define Z_OBJ_BINARY(zo)              (php_phongo_binary_t *)zo;
+# define Z_OBJ_INT32(zo)               (php_phongo_int32_t *)zo;
+# define Z_OBJ_INT64(zo)               (php_phongo_int64_t *)zo;
+# define Z_OBJ_JAVASCRIPT(zo)          (php_phongo_javascript_t *)zo;
+# define Z_OBJ_LOG(zo)                 (php_phongo_log_t *)zo;
+# define Z_OBJ_MAXKEY(zo)              (php_phongo_maxkey_t *)zo;
+# define Z_OBJ_MINKEY(zo)              (php_phongo_minkey_t *)zo;
+# define Z_OBJ_OBJECTID(zo)            (php_phongo_objectid_t *)zo;
+# define Z_OBJ_REGEX(zo)               (php_phongo_regex_t *)zo;
+# define Z_OBJ_TIMESTAMP(zo)           (php_phongo_timestamp_t *)zo;
+# define Z_OBJ_UTCDATETIME(zo)         (php_phongo_utcdatetime_t *)zo;
 #endif
 
 typedef struct {
