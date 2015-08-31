@@ -222,7 +222,7 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char
 
 	if (v_subtype == 0x80 && strcmp(key, PHONGO_ODM_FIELD_NAME) == 0) {
 #if PHP_VERSION_ID >= 70000
-                zend_string *zs_classname = zend_string_init((char *)v_binary, v_binary_len, 0);
+                zend_string *zs_classname = zend_string_init((const char *)v_binary, v_binary_len, 0);
                 zend_class_entry *found_ce = zend_fetch_class(zs_classname, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
                 zend_string_free(zs_classname);
 #else
@@ -877,10 +877,8 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce TSRMLS_CC)) {
 					if (flags & PHONGO_BSON_ADD_ODS) {
 #if PHP_VERSION_ID >= 70000
-						zend_string* field_name = zend_string_init(PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME)-1, 0);
 						bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)ZSTR_VAL(Z_OBJCE_P(data)->name), ZSTR_LEN(Z_OBJCE_P(data)->name));
-                                                zend_hash_del(ht_data, field_name);
-						zend_string_free(field_name);
+                                                zend_hash_str_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME)-1);
 #else
 						bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
 						zend_hash_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME));
