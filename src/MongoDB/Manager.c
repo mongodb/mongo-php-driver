@@ -217,17 +217,27 @@ PHP_METHOD(Manager, getServers)
 	array_init(return_value);
 	set = intern->client->topology->description.servers;
 	for(i=0; i<set->items_len; i++) {
-		mongoc_server_description_t *sd = (mongoc_server_description_t *) set->items[i].item;
+#if PHP_VERSION_ID >= 70000
+		zval obj;
+#else
 		zval *obj = NULL;
+#endif
+
+		mongoc_server_description_t *sd = (mongoc_server_description_t *) set->items[i].item;
 
 		if (sd->type == MONGOC_SERVER_UNKNOWN) {
 			continue;
 		}
 
+#if PHP_VERSION_ID >= 70000
+		phongo_server_init(&obj, intern->client, ((mongoc_server_description_t *)set->items[i].item)->id TSRMLS_CC);
+		add_next_index_zval(return_value, &obj);
+#else
 		MAKE_STD_ZVAL(obj);
 
 		phongo_server_init(obj, intern->client, sd->id TSRMLS_CC);
 		add_next_index_zval(return_value, obj);
+#endif
 	}
 }
 /* }}} */
@@ -407,13 +417,18 @@ bool phongo_add_server_debug(void *item, void *ctx) /* {{{ */
 {
 	mongoc_server_description_t *server = item;
 	zval                        *retval = ctx;
-	zval *entry = NULL;
+#if PHP_VERSION_ID >= 70000
+	zval                         entry;
+
+	php_phongo_server_to_zval(&entry, server);
+	add_next_index_zval(retval, &entry);
+#else
+	zval                        *entry = NULL;
 
 	MAKE_STD_ZVAL(entry);
-
 	php_phongo_server_to_zval(entry, server);
-
 	add_next_index_zval(retval, entry);
+#endif
 
 	return true;
 } /* }}} */
@@ -435,12 +450,20 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 
 
 	{
+#if PHP_VERSION_ID >= 70000
+		zval cluster;
+
+		array_init(&cluster);
+		mongoc_set_for_each(intern->client->topology->description.servers, phongo_add_server_debug, &cluster);
+		add_assoc_zval_ex(&retval, ZEND_STRS("cluster"), &cluster);
+#else
 		zval *cluster = NULL;
+
 		MAKE_STD_ZVAL(cluster);
 		array_init(cluster);
-
 		mongoc_set_for_each(intern->client->topology->description.servers, phongo_add_server_debug, cluster);
 		add_assoc_zval_ex(&retval, ZEND_STRS("cluster"), cluster);
+#endif
 	}
 
 	return Z_ARRVAL(retval);
