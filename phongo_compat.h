@@ -148,6 +148,8 @@
 # define phongo_char_pdup(str) zend_string_copy(filename)->val
 # define phongo_char_free(str) zend_string_release(str)
 # define phongo_str(str) str->val
+# define phongo_create_object_retval zend_object*
+# define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t *)ecalloc(1, sizeof(_obj_t)+zend_object_properties_size(_class_type))
 # define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data)
 # define SUPPRESS_UNUSED_WARNING(x)
 # define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
@@ -160,6 +162,8 @@
 # define phongo_char_pdup(str) pestrdup(filename, 1)
 # define phongo_char_free(str) _efree(str ZEND_FILE_LINE_CC ZEND_FILE_LINE_CC)
 # define phongo_str(str) str
+# define phongo_create_object_retval zend_object_value
+# define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t *)ecalloc(1, sizeof(_obj_t))
 # define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data) TSRMLS_FETCH_FROM_CTX(user_data)
 # define SUPPRESS_UNUSED_WARNING(x) (void)x;
 # define DECLARE_RETURN_VALUE_USED

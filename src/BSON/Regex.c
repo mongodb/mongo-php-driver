@@ -162,7 +162,7 @@ static zend_function_entry php_phongo_regex_me[] = {
 /* {{{ php_phongo_regex_t object handlers */
 static void php_phongo_regex_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_regex_t *intern = Z_REGEX_OBJ(object);
+	php_phongo_regex_t *intern = Z_OBJ_REGEX(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -173,43 +173,35 @@ static void php_phongo_regex_free_object(phongo_free_object_arg *object TSRMLS_D
 	if (intern->flags) {
 		efree(intern->flags);
 	}
+
 #if PHP_VERSION_ID < 70000
 	efree(intern);
 #endif
 } /* }}} */
 
-#if PHP_VERSION_ID >= 70000
-zend_object* php_phongo_regex_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+phongo_create_object_retval php_phongo_regex_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
-        php_phongo_regex_t *intern;
+	php_phongo_regex_t *intern = NULL;
 
-        intern = (php_phongo_regex_t *)ecalloc(1, sizeof(php_phongo_regex_t)+zend_object_properties_size(class_type));
-
-        zend_object_std_init(&intern->std, class_type TSRMLS_CC);
-        object_properties_init(&intern->std, class_type);
-
-        intern->std.handlers = &php_phongo_handler_regex;
-
-        return &intern->std;
-} /* }}} */
-#else
-zend_object_value php_phongo_regex_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
-{
-	zend_object_value retval;
-	php_phongo_regex_t *intern;
-
-	intern = (php_phongo_regex_t *)emalloc(sizeof(php_phongo_regex_t));
-	memset(intern, 0, sizeof(php_phongo_regex_t));
+	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_regex_t, class_type);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_regex_free_object, NULL TSRMLS_CC);
-	retval.handlers = &php_phongo_handler_regex;
+#if PHP_VERSION_ID >= 70000
+	intern->std.handlers = &php_phongo_handler_regex;
 
-	return retval;
-} /* }}} */
+	return &intern->std;
+#else
+	{
+		zend_object_value retval;
+		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_regex_free_object, NULL TSRMLS_CC);
+		retval.handlers = &php_phongo_handler_regex;
+
+		return retval;
+	}
 #endif
+} /* }}} */
 
 HashTable *php_phongo_regex_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {

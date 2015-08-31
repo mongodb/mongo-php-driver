@@ -374,42 +374,36 @@ static void php_phongo_manager_free_object(void *object TSRMLS_DC) /* {{{ */
 		mongoc_client_destroy(intern->client);
 	}
 
+#if PHP_VERSION_ID < 70000
 	efree(intern);
+#endif
 } /* }}} */
 
-#if PHP_VERSION_ID >= 70000
-zend_object* php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+phongo_create_object_retval php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
-        php_phongo_manager_t *intern;
-
-        intern = (php_phongo_manager_t *)ecalloc(1, sizeof(php_phongo_manager_t)+zend_object_properties_size(class_type));
-
-        zend_object_std_init(&intern->std, class_type TSRMLS_CC);
-        object_properties_init(&intern->std, class_type);
-
-        intern->std.handlers = &php_phongo_handler_manager;
-
-        return &intern->std;
-}
-#else
-zend_object_value php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
-{
-	zend_object_value retval;
 	php_phongo_manager_t *intern = NULL;
 
-	intern = (php_phongo_manager_t *)ecalloc(1, sizeof *intern);
+	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_manager_t, class_type);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_manager_free_object, NULL TSRMLS_CC);
-	retval.handlers = &php_phongo_handler_manager;
+#if PHP_VERSION_ID >= 70000
+	intern->std.handlers = &php_phongo_handler_manager;
 
-	return retval;
-} /* }}} */
+	return &intern->std;
+#else
+	{
+		zend_object_value retval;
+		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_manager_free_object, NULL TSRMLS_CC);
+		retval.handlers = &php_phongo_handler_manager;
+
+		return retval;
+	}
 #endif
+} /* }}} */
 
-bool phongo_add_server_debug(void *item, void *ctx)
+bool phongo_add_server_debug(void *item, void *ctx) /* {{{ */
 {
 	mongoc_server_description_t *server = item;
 	zval                        *retval = ctx;
@@ -422,7 +416,7 @@ bool phongo_add_server_debug(void *item, void *ctx)
 	add_next_index_zval(retval, entry);
 
 	return true;
-}
+} /* }}} */
 
 HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
@@ -466,6 +460,10 @@ PHP_MINIT_FUNCTION(Manager)
 
 	memcpy(&php_phongo_handler_manager, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_manager.get_debug_info = php_phongo_manager_get_debug_info;
+#if PHP_VERSION_ID >= 70000
+	php_phongo_handler_manager.free_obj = php_phongo_manager_free_object;
+	php_phongo_handler_manager.offset = XtOffsetOf(php_phongo_manager_t, std);
+#endif
 
 	return SUCCESS;
 }

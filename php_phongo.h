@@ -150,8 +150,9 @@ zend_object_iterator* php_phongo_cursor_get_iterator(zend_class_entry *ce, zval 
 
 #if PHP_VERSION_ID >= 70000
 #define PHONGO_CE_INIT(ce) do {                     \
-        ce->serialize    = zend_class_serialize_deny;   \
-        ce->unserialize  = zend_class_unserialize_deny; \
+	ce->ce_flags    |= ZEND_ACC_FINAL;              \
+	ce->serialize    = zend_class_serialize_deny;   \
+	ce->unserialize  = zend_class_unserialize_deny; \
 } while(0);
 #else
 #define PHONGO_CE_INIT(ce) do {                     \

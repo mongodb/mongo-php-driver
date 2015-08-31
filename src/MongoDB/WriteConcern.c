@@ -215,40 +215,35 @@ static void php_phongo_writeconcern_free_object(void *object TSRMLS_DC) /* {{{ *
 	if (intern->write_concern) {
 		mongoc_write_concern_destroy(intern->write_concern);
 	}
+
+#if PHP_VERSION_ID < 70000
 	efree(intern);
+#endif
 } /* }}} */
 
-#if PHP_VERSION_ID >= 70000
-zend_object* php_phongo_writeconcern_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+phongo_create_object_retval php_phongo_writeconcern_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
-        php_phongo_writeconcern_t *intern;
-
-        intern = (php_phongo_writeconcern_t *)ecalloc(1, sizeof(php_phongo_writeconcern_t)+zend_object_properties_size(class_type));
-
-        zend_object_std_init(&intern->std, class_type TSRMLS_CC);
-        object_properties_init(&intern->std, class_type);
-
-        intern->std.handlers = &php_phongo_handler_writeconcern;
-
-        return &intern->std;
-}
-#else
-zend_object_value php_phongo_writeconcern_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
-{
-	zend_object_value retval;
 	php_phongo_writeconcern_t *intern = NULL;
 
-	intern = (php_phongo_writeconcern_t *)ecalloc(1, sizeof *intern);
+	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_writeconcern_t, class_type);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeconcern_free_object, NULL TSRMLS_CC);
-	retval.handlers = &php_phongo_handler_writeconcern;
+#if PHP_VERSION_ID >= 70000
+	intern->std.handlers = &php_phongo_handler_writeconcern;
 
-	return retval;
-} /* }}} */
+	return &intern->std;
+#else
+	{
+		zend_object_value retval;
+		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeconcern_free_object, NULL TSRMLS_CC);
+		retval.handlers = &php_phongo_handler_writeconcern;
+
+		return retval;
+	}
 #endif
+} /* }}} */
 
 HashTable *php_phongo_writeconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
@@ -276,6 +271,10 @@ PHP_MINIT_FUNCTION(WriteConcern)
 
 	memcpy(&php_phongo_handler_writeconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeconcern.get_debug_info = php_phongo_writeconcern_get_debug_info;
+#if PHP_VERSION_ID >= 70000
+	php_phongo_handler_writeconcern.free_obj = php_phongo_writeconcern_free_object;
+	php_phongo_handler_writeconcern.offset = XtOffsetOf(php_phongo_writeconcern_t, std);
+#endif
 
 	zend_declare_class_constant_stringl(php_phongo_writeconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(PHONGO_WRITE_CONCERN_W_MAJORITY) TSRMLS_CC);
 
