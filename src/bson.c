@@ -203,7 +203,7 @@ bool php_phongo_bson_visit_utf8(const bson_iter_t *iter ARG_UNUSED, const char *
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 
-	add_assoc_stringl(retval, key, (char *)v_utf8, v_utf8_len, 1);
+	ADD_ASSOC_STRINGL(retval, key, (char *)v_utf8, v_utf8_len);
 
 	return false;
 }
@@ -982,7 +982,7 @@ PHP_FUNCTION(fromPHP)
 	bson = bson_new();
 	zval_to_bson(data, PHONGO_BSON_ADD_ODS|PHONGO_BSON_ADD_CHILD_ODS, bson, NULL TSRMLS_CC);
 
-	RETVAL_STRINGL((const char *) bson_get_data(bson), bson->len, 1);
+	PHONGO_RETVAL_STRINGL((const char *) bson_get_data(bson), bson->len);
 	bson_destroy(bson);
 }
 /* }}} */
@@ -1091,7 +1091,7 @@ PHP_FUNCTION(toJSON)
 		char   *str;
 		size_t  str_len;
 		str = bson_as_json(b, &str_len);
-		RETVAL_STRINGL(str, str_len, 1);
+		PHONGO_RETVAL_STRINGL(str, str_len);
 		bson_free(str);
 	} else {
 		RETURN_NULL();
@@ -1116,7 +1116,7 @@ PHP_FUNCTION(fromJSON)
 	}
 
 	if (bson_init_from_json(&b, (const char *)data, data_len, &error)) {
-		RETVAL_STRINGL((const char *) bson_get_data(&b), b.len, 1);
+		PHONGO_RETVAL_STRINGL((const char *) bson_get_data(&b), b.len);
 		bson_destroy(&b);
 	} else {
 		RETURN_NULL();

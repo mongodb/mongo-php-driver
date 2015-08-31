@@ -88,7 +88,7 @@ PHP_METHOD(Regex, getPattern)
 	}
 
 
-	RETURN_STRINGL(intern->pattern, intern->pattern_len, 1);
+	PHONGO_RETURN_STRINGL(intern->pattern, intern->pattern_len);
 }
 /* }}} */
 /* {{{ proto void Regex::getFlags()
@@ -105,7 +105,7 @@ PHP_METHOD(Regex, getFlags)
 	}
 
 
-	RETURN_STRINGL(intern->flags, intern->flags_len, 1);
+	PHONGO_RETURN_STRINGL(intern->flags, intern->flags_len);
 }
 /* }}} */
 /* {{{ proto void Regex::__toString()
@@ -125,7 +125,8 @@ PHP_METHOD(Regex, __toString)
 
 
 	regex_len = spprintf(&regex, 0, "/%s/%s", intern->pattern, intern->flags);
-	RETVAL_STRINGL(regex, regex_len, 0);
+	PHONGO_RETVAL_STRINGL(regex, regex_len);
+	efree(regex);
 }
 /* }}} */
 

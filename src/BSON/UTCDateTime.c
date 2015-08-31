@@ -97,7 +97,8 @@ PHP_METHOD(UTCDateTime, __toString)
 	}
 
 	tmp_len = spprintf(&tmp, 0, "%" PRId64, intern->milliseconds);
-	RETVAL_STRINGL(tmp, tmp_len, 0);
+	PHONGO_RETVAL_STRINGL(tmp, tmp_len);
+	efree(tmp);
 }
 /* }}} */
 /* {{{ proto string UTCDateTime::toDateTime()
