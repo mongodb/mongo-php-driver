@@ -183,7 +183,6 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 		while (bson_iter_next(&iter)) {
 			int32_t index;
 			bson_iter_t outer;
-			zval *zid = NULL;
 
 			if (!BSON_ITER_HOLDS_DOCUMENT(&iter) || !bson_iter_recurse(&iter, &outer)) {
 				continue;
@@ -199,10 +198,18 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 			}
 
 			if (BSON_ITER_HOLDS_OID(&outer)) {
+#if PHP_VERSION_ID >= 70000
+				zval zid;
+
+				php_phongo_objectid_new_from_oid(&zid, bson_iter_oid(&outer) TSRMLS_CC);
+				add_index_zval(return_value, index, &zid);
+#else
+				zval *zid = NULL;
 				MAKE_STD_ZVAL(zid);
 
 				php_phongo_objectid_new_from_oid(zid, bson_iter_oid(&outer) TSRMLS_CC);
 				add_index_zval(return_value, index, zid);
+#endif
 			} else if (BSON_ITER_HOLDS_INT32(&outer)) {
 				int32_t val = bson_iter_int32(&outer);
 
@@ -254,7 +261,11 @@ PHP_METHOD(WriteResult, getWriteConcernError)
 			object_init_ex(return_value, php_phongo_writeconcernerror_ce);
 
 			if (!phongo_writeconcernerror_init(return_value, &cbson TSRMLS_CC)) {
+#if PHP_VERSION_ID >= 70000
+				zval_ptr_dtor(return_value);
+#else
 				zval_ptr_dtor(&return_value);
+#endif
 			}
 
 			return;
@@ -288,7 +299,11 @@ PHP_METHOD(WriteResult, getWriteErrors)
 			bson_t cbson;
 			uint32_t len;
 			const uint8_t *data;
+#if PHP_VERSION_ID >= 70000
+			zval writeerror;
+#else
 			zval *writeerror = NULL;
+#endif
 
 			if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 				continue;
@@ -300,6 +315,16 @@ PHP_METHOD(WriteResult, getWriteErrors)
 				continue;
 			}
 
+#if PHP_VERSION_ID >= 70000
+			object_init_ex(&writeerror, php_phongo_writeerror_ce);
+
+			if (!phongo_writeerror_init(&writeerror, &cbson TSRMLS_CC)) {
+				zval_ptr_dtor(&writeerror);
+				continue;
+			}
+
+			add_next_index_zval(return_value, &writeerror);
+#else
 			MAKE_STD_ZVAL(writeerror);
 			object_init_ex(writeerror, php_phongo_writeerror_ce);
 
@@ -309,6 +334,7 @@ PHP_METHOD(WriteResult, getWriteErrors)
 			}
 
 			add_next_index_zval(return_value, writeerror);
+#endif
 		}
 	}
 }
@@ -479,10 +505,18 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	}
 
 	if (intern->write_concern) {
+#if PHP_VERSION_ID >= 70000
+		zval write_concern;
+
+		php_phongo_write_concern_to_zval(&write_concern, intern->write_concern);
+		add_assoc_zval_ex(&retval, ZEND_STRS("writeConcern"), &write_concern);
+#else
 		zval *write_concern = NULL;
+
 		MAKE_STD_ZVAL(write_concern);
 		php_phongo_write_concern_to_zval(write_concern, intern->write_concern);
 		add_assoc_zval_ex(&retval, ZEND_STRS("writeConcern"), write_concern);
+#endif
 	} else {
 		add_assoc_null_ex(&retval, ZEND_STRS("writeConcern"));
 	}
