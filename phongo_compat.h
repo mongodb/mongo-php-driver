@@ -156,8 +156,11 @@
 # define EXCEPTION_P(_ex, _zp) ZVAL_OBJ(_zp, _ex)
 # define PHONGO_STREAM_ID(stream) stream->res->handle
 # define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), _value);
+# define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRS(_key), _value, _len);
 # define phongo_free_object_arg zend_object
 # define ZEND_HASH_APPLY_COUNT(ht) (ht)->u.v.nApplyCount
+# define PHONGO_RETVAL_STRINGL(s, slen) RETVAL_STRINGL(s, slen)
+# define PHONGO_RETURN_STRINGL(s, slen) RETVAL_STRINGL(s, slen)
 #else
 # define phongo_char char
 # define phongo_char_pdup(str) pestrdup(filename, 1)
@@ -171,10 +174,13 @@
 # define EXCEPTION_P(_ex, _zp) _zp = _ex
 # define PHONGO_STREAM_ID(stream) stream->rsrc_id
 # define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), _value, 1);
+# define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRS(_key), _value, _len, 1);
 # define Z_PHPDATE_P(object) zend_object_store_get_object(object TSRMLS_CC)
 # define Z_ISUNDEF(x) !x
 # define phongo_free_object_arg void
 # define ZEND_HASH_APPLY_COUNT(ht) (ht)->nApplyCount
+# define PHONGO_RETVAL_STRINGL(s, slen) RETVAL_STRINGL(s, slen, 1)
+# define PHONGO_RETURN_STRINGL(s, slen) RETVAL_STRINGL(s, slen, 1)
 #endif
 
 

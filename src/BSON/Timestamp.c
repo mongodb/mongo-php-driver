@@ -85,7 +85,8 @@ PHP_METHOD(Timestamp, __toString)
 	}
 
 	retval_len = spprintf(&retval, 0, "[%d:%d]", intern->increment, intern->timestamp);
-	RETVAL_STRINGL(retval, retval_len, 0);
+	PHONGO_RETVAL_STRINGL(retval, retval_len);
+	efree(retval);
 }
 /* }}} */
 

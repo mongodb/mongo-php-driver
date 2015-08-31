@@ -98,7 +98,7 @@ PHP_METHOD(ObjectID, __toString)
 	}
 
 
-	RETURN_STRINGL(intern->oid, 24, 1);
+	PHONGO_RETURN_STRINGL(intern->oid, 24);
 }
 /* }}} */
 
@@ -181,7 +181,7 @@ HashTable *php_phongo_objectid_get_debug_info(zval *object, int *is_temp TSRMLS_
 
 	array_init(&retval);
 
-	add_assoc_stringl_ex(&retval, ZEND_STRS("oid"), intern->oid, 24, 1);
+	ADD_ASSOC_STRINGL(&retval, "oid", intern->oid, 24);
 
 	return Z_ARRVAL(retval);
 

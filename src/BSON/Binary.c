@@ -84,7 +84,7 @@ PHP_METHOD(Binary, getData)
 		return;
 	}
 
-	RETURN_STRINGL(intern->data, intern->data_len, 1);
+	PHONGO_RETURN_STRINGL(intern->data, intern->data_len);
 }
 /* }}} */
 /* {{{ proto integer Binary::getType()
@@ -178,7 +178,7 @@ HashTable *php_phongo_binary_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	*is_temp = 1;
 	array_init_size(&retval, 2);
 
-	add_assoc_stringl_ex(&retval, ZEND_STRS("data"), intern->data, intern->data_len, 1);
+	ADD_ASSOC_STRINGL(&retval, "data", intern->data, intern->data_len);
 	add_assoc_long_ex(&retval, ZEND_STRS("type"), intern->type);
 
 	return Z_ARRVAL(retval);
