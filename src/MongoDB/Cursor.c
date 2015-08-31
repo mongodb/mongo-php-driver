@@ -72,9 +72,26 @@ PHP_METHOD(Cursor, setTypeMap)
 
 static int php_phongo_cursor_to_array_apply(zend_object_iterator *iter, void *puser TSRMLS_DC) /* {{{ */
 {
-	zval **data, *return_value = (zval*)puser;
+#if PHP_VERSION_ID >= 70000
+	zval *data;
+	zval *return_value = (zval*)puser;
+
+	data = iter->funcs->get_current_data(iter TSRMLS_CC);
+
+	if (EG(exception)) {
+		return ZEND_HASH_APPLY_STOP;
+	}
+	if (Z_ISUNDEF_P(data)) {
+		return ZEND_HASH_APPLY_STOP;
+	}
+	Z_TRY_ADDREF_P(data);
+	add_next_index_zval(return_value, data);
+#else
+	zval **data;
+	zval *return_value = (zval*)puser;
 
 	iter->funcs->get_current_data(iter, &data TSRMLS_CC);
+
 	if (EG(exception)) {
 		return ZEND_HASH_APPLY_STOP;
 	}
@@ -83,6 +100,8 @@ static int php_phongo_cursor_to_array_apply(zend_object_iterator *iter, void *pu
 	}
 	Z_ADDREF_PP(data);
 	add_next_index_zval(return_value, *data);
+#endif
+
 	return ZEND_HASH_APPLY_KEEP;
 }
 /* }}} */
