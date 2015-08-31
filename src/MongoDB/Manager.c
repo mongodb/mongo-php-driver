@@ -364,7 +364,7 @@ static zend_function_entry php_phongo_manager_me[] = {
 
 
 /* {{{ php_phongo_manager_t object handlers */
-static void php_phongo_manager_free_object(void *object TSRMLS_DC) /* {{{ */
+static void php_phongo_manager_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_manager_t *intern = (php_phongo_manager_t*)object;
 
