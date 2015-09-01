@@ -768,7 +768,7 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			if (Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def TSRMLS_CC))) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC,
 					"Expected %s::%s() to return an array or stdClass, %s given",
-					Z_OBJCE_P(object)->name,
+					Z_OBJCE_P(object)->name->val,
 					BSON_SERIALIZE_FUNC_NAME,
 					(Z_TYPE(obj_data) == IS_OBJECT
 						 ? Z_OBJCE(obj_data)->name->val
@@ -1000,7 +1000,11 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 #endif
 					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC,
 						"Expected %s::%s() to return an array or stdClass, %s given",
-						Z_OBJCE_P(data)->name,
+#if PHP_VERSION_ID >= 70000
+						Z_OBJCE_P(data)->name->val,
+#else
+						Z_OBJCE_P(data)->name->val,
+#endif
 						BSON_SERIALIZE_FUNC_NAME,
 #if PHP_VERSION_ID >= 70000
 						(Z_TYPE(obj_data) == IS_OBJECT
