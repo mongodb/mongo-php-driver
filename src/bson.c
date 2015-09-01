@@ -1052,9 +1052,9 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 			if (key) {
 				if (Z_TYPE_P(data) == IS_OBJECT) {
 					const char *skey;
-					unsigned int skey_len = 0;
+					size_t skey_len = 0;
 					const char *class_name;
-					zend_unmangle_property_name(key, &class_name, &skey);
+					zend_unmangle_property_name_ex(key, &class_name, &skey, &skey_len);
 
 					if (flags & PHONGO_BSON_ADD_ID) {
 						if (!strncmp(skey, "_id", sizeof("_id")-1)) {
