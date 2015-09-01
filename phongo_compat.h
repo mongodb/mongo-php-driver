@@ -48,7 +48,9 @@
 		zend_hash_copy(*_std.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *));
 #endif
 
-#if PHP_VERSION_ID < 50400
+#if PHP_VERSION_ID >= 70000
+# define str_efree(s) efree((char*)s)
+#elif PHP_VERSION_ID < 50400
 # define str_efree(s) efree((char*)s)
 #else
 # include <Zend/zend_string.h>
