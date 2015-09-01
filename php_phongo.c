@@ -1280,8 +1280,8 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 	array_init(retval);
 
 	ADD_ASSOC_STRING(retval, "host", (char *)sd->host.host);
-	add_assoc_long_ex(retval, ZEND_STRS("port"), sd->host.port);
-	add_assoc_long_ex(retval, ZEND_STRS("type"), sd->type);
+	ADD_ASSOC_LONG_EX(retval, "port", sd->host.port);
+	ADD_ASSOC_LONG_EX(retval, "type", sd->type);
 	add_assoc_bool_ex(retval, ZEND_STRS("is_primary"), sd->type == MONGOC_SERVER_RS_PRIMARY);
 	add_assoc_bool_ex(retval, ZEND_STRS("is_secondary"), sd->type == MONGOC_SERVER_RS_SECONDARY);
 	add_assoc_bool_ex(retval, ZEND_STRS("is_arbiter"), sd->type == MONGOC_SERVER_RS_ARBITER);
@@ -1315,7 +1315,7 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 		bson_to_zval_ex(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
 		add_assoc_zval_ex(retval, ZEND_STRS("last_is_master"), state.zchild);
 	}
-	add_assoc_long_ex(retval, ZEND_STRS("round_trip_time"), sd->round_trip_time);
+	ADD_ASSOC_LONG_EX(retval, "round_trip_time", sd->round_trip_time);
 
 } /* }}} */
 
@@ -1337,7 +1337,7 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 
 	array_init_size(retval, 2);
 
-	add_assoc_long_ex(retval, ZEND_STRS("mode"), read_prefs->mode);
+	ADD_ASSOC_LONG_EX(retval, "mode", read_prefs->mode);
 	if (read_prefs->tags.len) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 		/* Use native arrays for debugging output */
@@ -1363,13 +1363,13 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 	} else if (mongoc_write_concern_get_wmajority(write_concern)) {
 		ADD_ASSOC_STRING(retval, "w", (char *)PHONGO_WRITE_CONCERN_W_MAJORITY);
 	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
-		add_assoc_long_ex(retval, ZEND_STRS("w"), w);
+		ADD_ASSOC_LONG_EX(retval, ZEND_STRS("w"), w);
 	} else {
 		add_assoc_null_ex(retval, ZEND_STRS("w"));
 	}
 
 	add_assoc_bool_ex(retval, ZEND_STRS("wmajority"), mongoc_write_concern_get_wmajority(write_concern));
-	add_assoc_long_ex(retval, ZEND_STRS("wtimeout"), mongoc_write_concern_get_wtimeout(write_concern));
+	ADD_ASSOC_LONG_EX(retval, ZEND_STRS("wtimeout"), mongoc_write_concern_get_wtimeout(write_concern));
 
 	if (write_concern->journal != MONGOC_WRITE_CONCERN_JOURNAL_DEFAULT) {
 		add_assoc_bool_ex(retval, ZEND_STRS("journal"), mongoc_write_concern_get_journal(write_concern));
@@ -1383,7 +1383,7 @@ void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor) /* {
 
 	array_init_size(retval, 19);
 
-		add_assoc_long_ex(retval, ZEND_STRS("stamp"), cursor->stamp);
+		ADD_ASSOC_LONG_EX(retval, "stamp", cursor->stamp);
 
 #define _ADD_BOOL(z, field) add_assoc_bool_ex(z, ZEND_STRS(#field), cursor->field)
 		_ADD_BOOL(retval, is_command);

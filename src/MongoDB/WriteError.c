@@ -211,8 +211,8 @@ HashTable *php_phongo_writeerror_get_debug_info(zval *object, int *is_temp TSRML
 
 	array_init_size(&retval, 3);
 	ADD_ASSOC_STRING(&retval, "message", intern->message);
-	add_assoc_long_ex(&retval, ZEND_STRS("code"), intern->code);
-	add_assoc_long_ex(&retval, ZEND_STRS("index"), intern->index);
+	ADD_ASSOC_LONG_EX(&retval, "code", intern->code);
+	ADD_ASSOC_LONG_EX(&retval, "index", intern->index);
 	if (intern->info) {
 		Z_ADDREF_P(intern->info);
 		add_assoc_zval_ex(&retval, ZEND_STRS("info"), intern->info);

@@ -132,7 +132,7 @@ HashTable *php_phongo_cursorid_get_debug_info(zval *object, int *is_temp TSRMLS_
 
 	array_init(&retval);
 
-	add_assoc_long_ex(&retval, ZEND_STRS("id"), intern->id);
+	ADD_ASSOC_LONG_EX(&retval, "id", intern->id);
 
 	return Z_ARRVAL(retval);
 
