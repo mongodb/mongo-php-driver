@@ -1046,9 +1046,10 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 #if PHP_VERSION_ID >= 70000
 	{
 		zend_string *key;
+		zend_ulong num_key;
 		zval *value;
 
-		ZEND_HASH_FOREACH_STR_KEY_VAL(ht_data, key, value) {
+		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, key, value) {
 			if (key) {
 				if (Z_TYPE_P(data) == IS_OBJECT) {
 					const char *skey;
@@ -1063,9 +1064,14 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 					}
 					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, skey, skey_len, Z_TYPE_P(value), value TSRMLS_CC);
 				} else {
-					/* Chop off the \0 from string lengths */
-					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, key->val, key->len-1, Z_TYPE_P(value), value TSRMLS_CC);
+					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, key->val, key->len, Z_TYPE_P(value), value TSRMLS_CC);
 				}
+			} else {
+				char          numbuf[32];
+				const char   *skey;
+				unsigned int  skey_len = 0;
+				skey_len = bson_uint32_to_string(num_key, (const char **)&skey, numbuf, sizeof(numbuf));
+				phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, skey, skey_len, Z_TYPE_P(value), value TSRMLS_CC);
 			}
 		} ZEND_HASH_FOREACH_END();
 	}
