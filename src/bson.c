@@ -663,34 +663,43 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 }
 
 
-int php_phongo_is_array_or_document(zval **val TSRMLS_DC) /* {{{ */
+int php_phongo_is_array_or_document(zval *val TSRMLS_DC) /* {{{ */
 {
-	HashTable *ht_data = HASH_OF(*val);
+	HashTable *ht_data = HASH_OF(val);
 	int        count;
 
-	if (Z_TYPE_PP(val) != IS_ARRAY) {
+	if (Z_TYPE_P(val) != IS_ARRAY) {
 		return IS_OBJECT;
 	}
 
 	count = ht_data ? zend_hash_num_elements(ht_data) : 0;
 	if (count > 0) {
-		char         *key;
-		unsigned int     key_len;
-		unsigned long         index = 0;
-		unsigned long         idx = 0;
-		int           hash_type = 0;
-		HashPosition  pos;
 #if PHP_VERSION_ID >= 70000
-                zend_string *zs_key;
-#endif
+		zend_string *key;
+		zend_ulong index, idx;
+
+		idx = 0;
+		ZEND_HASH_FOREACH_KEY(ht_data, index, key) {
+			if (key) {
+				return IS_OBJECT;
+			} else {
+				if (index != idx) {
+					return IS_OBJECT;
+				}
+			}
+			idx++;
+		} ZEND_HASH_FOREACH_END();
+#else
+		char          *key;
+		unsigned int   key_len;
+		unsigned long  index = 0;
+		unsigned long  idx = 0;
+		int            hash_type = 0;
+		HashPosition   pos;
 
 		zend_hash_internal_pointer_reset_ex(ht_data, &pos);
 		for (;; zend_hash_move_forward_ex(ht_data, &pos)) {
-#if PHP_VERSION_ID >= 70000
-                        hash_type = zend_hash_get_current_key_ex(ht_data, &zs_key, &index, &pos);
-#else
 			hash_type = zend_hash_get_current_key_ex(ht_data, &key, &key_len, &index, 0, &pos);
-#endif
 			if (hash_type == HASH_KEY_NON_EXISTENT) {
 				break;
 			}
@@ -704,8 +713,9 @@ int php_phongo_is_array_or_document(zval **val TSRMLS_DC) /* {{{ */
 			}
 			idx++;
 		}
+#endif
 	} else {
-		return Z_TYPE_PP(val);
+		return Z_TYPE_P(val);
 	}
 
 	return IS_ARRAY;
