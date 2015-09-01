@@ -187,7 +187,11 @@ void php_phongo_bson_visit_corrupt(const bson_iter_t *iter ARG_UNUSED, void *dat
 
 	mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "Corrupt BSON data detected!");
 
+#if PHP_VERSION_ID >= 70000
+	zval_ptr_dtor(retval);
+#else
 	zval_ptr_dtor(&retval);
+#endif
 }
 /* }}} */
 bool php_phongo_bson_visit_double(const bson_iter_t *iter ARG_UNUSED, const char *key, double v_double, void *data) /* {{{ */
@@ -211,7 +215,6 @@ bool php_phongo_bson_visit_utf8(const bson_iter_t *iter ARG_UNUSED, const char *
 bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char *key, bson_subtype_t v_subtype, size_t v_binary_len, const uint8_t *v_binary, void *data) /* {{{ */
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-	zval *zchild = NULL;
 	TSRMLS_FETCH();
 
 	if (v_subtype == 0x80 && strcmp(key, PHONGO_ODM_FIELD_NAME) == 0) {
@@ -228,12 +231,26 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char
 		}
 	}
 
-	MAKE_STD_ZVAL(zchild);
-	php_phongo_new_binary_from_binary_and_type(zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
+	{
+#if PHP_VERSION_ID >= 70000
+		zval zchild;
 
-	add_assoc_zval(retval, key, zchild);
+		php_phongo_new_binary_from_binary_and_type(&zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
 
-	Z_SET_REFCOUNT_P(zchild, 1);
+		add_assoc_zval(retval, key, &zchild);
+
+		Z_SET_REFCOUNT(zchild, 1);
+#else
+		zval *zchild = NULL;
+
+		MAKE_STD_ZVAL(zchild);
+		php_phongo_new_binary_from_binary_and_type(zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
+
+		add_assoc_zval(retval, key, zchild);
+
+		Z_SET_REFCOUNT_P(zchild, 1);
+#endif
+	}
 
 	return false;
 }
@@ -251,6 +268,13 @@ bool php_phongo_bson_visit_undefined(const bson_iter_t *iter ARG_UNUSED, const c
 bool php_phongo_bson_visit_oid(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_oid_t *v_oid, void *data) /* {{{ */
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#if PHP_VERSION_ID >= 70000
+	zval zchild;
+
+	php_phongo_objectid_new_from_oid(&zchild, v_oid TSRMLS_CC);
+
+	add_assoc_zval(retval, key, &zchild);
+#else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
 
@@ -260,6 +284,7 @@ bool php_phongo_bson_visit_oid(const bson_iter_t *iter ARG_UNUSED, const char *k
 	add_assoc_zval(retval, key, zchild);
 
 	Z_SET_REFCOUNT_P(zchild, 1);
+#endif
 
 	return false;
 }
@@ -276,6 +301,13 @@ bool php_phongo_bson_visit_bool(const bson_iter_t *iter ARG_UNUSED, const char *
 bool php_phongo_bson_visit_date_time(const bson_iter_t *iter ARG_UNUSED, const char *key, int64_t msec_since_epoch, void *data) /* {{{ */
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#if PHP_VERSION_ID >= 70000
+	zval zchild;
+
+	php_phongo_new_utcdatetime_from_epoch(&zchild, msec_since_epoch TSRMLS_CC);
+
+	add_assoc_zval(retval, key, &zchild);
+#else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
 
@@ -285,6 +317,7 @@ bool php_phongo_bson_visit_date_time(const bson_iter_t *iter ARG_UNUSED, const c
 	add_assoc_zval(retval, key, zchild);
 
 	Z_SET_REFCOUNT_P(zchild, 1);
+#endif
 
 	return false;
 }
@@ -301,6 +334,13 @@ bool php_phongo_bson_visit_null(const bson_iter_t *iter ARG_UNUSED, const char *
 bool php_phongo_bson_visit_regex(const bson_iter_t *iter ARG_UNUSED, const char *key, const char *v_regex, const char *v_options, void *data) /* {{{ */
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#if PHP_VERSION_ID >= 70000
+	zval zchild;
+
+	php_phongo_new_regex_from_regex_and_options(&zchild, v_regex, v_options TSRMLS_CC);
+
+	add_assoc_zval(retval, key, &zchild);
+#else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
 
@@ -310,6 +350,7 @@ bool php_phongo_bson_visit_regex(const bson_iter_t *iter ARG_UNUSED, const char 
 	add_assoc_zval(retval, key, zchild);
 
 	Z_SET_REFCOUNT_P(zchild, 1);
+#endif
 
 	return false;
 }
@@ -326,6 +367,13 @@ bool php_phongo_bson_visit_dbpointer(const bson_iter_t *iter ARG_UNUSED, const c
 bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const char *key, size_t v_code_len, const char *v_code, void *data) /* {{{ */
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#if PHP_VERSION_ID >= 70000
+	zval zchild;
+
+	php_phongo_new_javascript_from_javascript(1, &zchild, v_code, v_code_len TSRMLS_CC);
+
+	add_assoc_zval(retval, key, &zchild);
+#else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
 
@@ -335,6 +383,7 @@ bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const char *
 	add_assoc_zval(retval, key, zchild);
 
 	Z_SET_REFCOUNT_P(zchild, 1);
+#endif
 
 	return false;
 }
@@ -351,6 +400,13 @@ bool php_phongo_bson_visit_symbol(const bson_iter_t *iter ARG_UNUSED, const char
 bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter ARG_UNUSED, const char *key, size_t v_code_len, const char *v_code, const bson_t *v_scope, void *data) /* {{{ */
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#if PHP_VERSION_ID >= 70000
+	zval zchild;
+
+	php_phongo_new_javascript_from_javascript_and_scope(1, &zchild, v_code, v_code_len, v_scope TSRMLS_CC);
+
+	add_assoc_zval(retval, key, &zchild);
+#else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
 
@@ -360,6 +416,7 @@ bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter ARG_UNUSED, const 
 	add_assoc_zval(retval, key, zchild);
 
 	Z_SET_REFCOUNT_P(zchild, 1);
+#endif
 
 	return false;
 }
@@ -376,6 +433,13 @@ bool php_phongo_bson_visit_int32(const bson_iter_t *iter ARG_UNUSED, const char 
 bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter ARG_UNUSED, const char *key, uint32_t v_timestamp, uint32_t v_increment, void *data) /* {{{ */
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#if PHP_VERSION_ID >= 70000
+	zval zchild;
+
+	php_phongo_new_timestamp_from_increment_and_timestamp(&zchild, v_increment, v_timestamp TSRMLS_CC);
+
+	add_assoc_zval(retval, key, &zchild);
+#else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
 
@@ -385,6 +449,7 @@ bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter ARG_UNUSED, const c
 	add_assoc_zval(retval, key, zchild);
 
 	Z_SET_REFCOUNT_P(zchild, 1);
+#endif
 
 	return false;
 }
@@ -402,6 +467,13 @@ bool php_phongo_bson_visit_int64(const bson_iter_t *iter ARG_UNUSED, const char 
 bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter ARG_UNUSED, const char *key, void *data) /* {{{ */
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#if PHP_VERSION_ID >= 70000
+	zval zchild;
+
+	object_init_ex(&zchild, php_phongo_maxkey_ce);
+
+	add_assoc_zval(retval, key, &zchild);
+#else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
 
@@ -411,6 +483,7 @@ bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter ARG_UNUSED, const char
 	add_assoc_zval(retval, key, zchild);
 
 	Z_SET_REFCOUNT_P(zchild, 1);
+#endif
 
 	return false;
 }
@@ -418,6 +491,13 @@ bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter ARG_UNUSED, const char
 bool php_phongo_bson_visit_minkey(const bson_iter_t *iter ARG_UNUSED, const char *key, void *data) /* {{{ */
 {
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#if PHP_VERSION_ID >= 70000
+	zval zchild;
+
+	object_init_ex(&zchild, php_phongo_minkey_ce);
+
+	add_assoc_zval(retval, key, &zchild);
+#else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
 
@@ -427,6 +507,7 @@ bool php_phongo_bson_visit_minkey(const bson_iter_t *iter ARG_UNUSED, const char
 	add_assoc_zval(retval, key, zchild);
 
 	Z_SET_REFCOUNT_P(zchild, 1);
+#endif
 
 	return false;
 }
@@ -472,7 +553,9 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 
 		state.map = ((php_phongo_bson_state *)data)->map;
 
+#if PHP_VERSION_ID < 70000
 		MAKE_STD_ZVAL(state.zchild);
+#endif
 		array_init(state.zchild);
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
@@ -489,19 +572,20 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 					break;
 
 				case PHONGO_TYPEMAP_CLASS: {
+#if PHP_VERSION_ID >= 70000
+					zval obj;
+
+					object_init_ex(&obj, state.odm ? state.odm : state.map.document);
+					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
+					add_assoc_zval(retval, key, &obj);
+					zval_ptr_dtor(state.zchild);
+#else
 					zval *obj = NULL;
 
 					MAKE_STD_ZVAL(obj);
 					object_init_ex(obj, state.odm ? state.odm : state.map.document);
-#if PHP_VERSION_ID >= 70000
-                                        zend_call_method_with_1_params(obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
-#else
 					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
-#endif
 					add_assoc_zval(retval, key, obj);
-#if PHP_VERSION_ID >= 70000
-                                        zval_ptr_dtor(state.zchild);
-#else
 					zval_ptr_dtor(&state.zchild);
 #endif
 					break;
@@ -531,26 +615,29 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 
 		state.map = ((php_phongo_bson_state *)data)->map;
 
+#if PHP_VERSION_ID < 70000
 		MAKE_STD_ZVAL(state.zchild);
+#endif
 		array_init(state.zchild);
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
 
 			switch(state.map.array_type) {
 				case PHONGO_TYPEMAP_CLASS: {
+#if PHP_VERSION_ID >= 70000
+					zval obj;
+
+					object_init_ex(&obj, state.map.array);
+					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
+					add_assoc_zval(retval, key, &obj);
+					zval_ptr_dtor(state.zchild);
+#else
 					zval *obj = NULL;
 
 					MAKE_STD_ZVAL(obj);
 					object_init_ex(obj, state.map.array);
-#if PHP_VERSION_ID >= 70000
-                                        zend_call_method_with_1_params(obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
-#else
 					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
-#endif
 					add_assoc_zval(retval, key, obj);
-#if PHP_VERSION_ID >= 70000
-                                        zval_ptr_dtor(state.zchild);
-#else
 					zval_ptr_dtor(&state.zchild);
 #endif
 					break;
@@ -638,33 +725,58 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 
 	if (instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce TSRMLS_CC)) {
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_serializable_ce TSRMLS_CC)) {
+#if PHP_VERSION_ID >= 70000
+			zval obj_data;
+#else
 			zval *obj_data = NULL;
+#endif
 			bson_t child;
 			HashTable *tmp_ht;
 #if PHP_VERSION_ID >= 70000
-                        zend_call_method_with_0_params(object, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, obj_data);
+			zend_call_method_with_0_params(object, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
 #else
 			zend_call_method_with_0_params(&object, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
 #endif
 
-			if (!obj_data) {
+			if (Z_ISUNDEF(obj_data)) {
 				/* zend_call_method() failed */
 				return;
 			}
 
-			if (Z_TYPE_P(obj_data) != IS_ARRAY && !(Z_TYPE_P(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE_P(obj_data), zend_standard_class_def TSRMLS_CC))) {
-                                //TODO-PB
-				//phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Expected %s::%s() to return an array or stdClass, %s given", Z_OBJCE_P(object)->name, BSON_SERIALIZE_FUNC_NAME, (Z_TYPE_P(obj_data) == IS_OBJECT ? Z_OBJCE_P(obj_data)->name : zend_get_type_by_const(Z_TYPE_P(obj_data))));
 #if PHP_VERSION_ID >= 70000
-                                zval_ptr_dtor(obj_data);
+			if (Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def TSRMLS_CC))) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC,
+					"Expected %s::%s() to return an array or stdClass, %s given",
+					Z_OBJCE_P(object)->name,
+					BSON_SERIALIZE_FUNC_NAME,
+					(Z_TYPE(obj_data) == IS_OBJECT
+						 ? Z_OBJCE(obj_data)->name->val
+						 : zend_get_type_by_const(Z_TYPE(obj_data))
+					)
+				);
+				zval_ptr_dtor(&obj_data);
 #else
+			if (Z_TYPE_P(obj_data) != IS_ARRAY && !(Z_TYPE_P(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE_P(obj_data), zend_standard_class_def TSRMLS_CC))) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC,
+					"Expected %s::%s() to return an array or stdClass, %s given",
+					Z_OBJCE_P(object)->name,
+					BSON_SERIALIZE_FUNC_NAME,
+					(Z_TYPE_P(obj_data) == IS_OBJECT
+						 ? Z_OBJCE_P(obj_data)->name
+						 : zend_get_type_by_const(Z_TYPE_P(obj_data))
+					)
+				);
 				zval_ptr_dtor(&obj_data);
 #endif
 
 				return;
 			}
 
+#if PHP_VERSION_ID >= 70000
+			tmp_ht = HASH_OF(&obj_data);
+#else
 			tmp_ht = HASH_OF(obj_data);
+#endif
 
 			if (tmp_ht) {
 				ZEND_HASH_APPLY_COUNT(tmp_ht)++;
@@ -672,19 +784,34 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 
 			/* Persistable objects must always be serialized as BSON documents;
 			 * otherwise, infer based on bsonSerialize()'s return value. */
+#if PHP_VERSION_ID >= 70000
 			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC) || php_phongo_is_array_or_document(&obj_data TSRMLS_CC) == IS_OBJECT) {
+#else
+			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC) || php_phongo_is_array_or_document(obj_data TSRMLS_CC) == IS_OBJECT) {
+#endif
 				bson_append_document_begin(bson, key, key_len, &child);
 				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC)) {
 					if (flags & PHONGO_BSON_ADD_CHILD_ODS) {
-                                                //TODO-PB
-						//bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
+#if PHP_VERSION_ID >= 70000
+						bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name->val, Z_OBJCE_P(object)->name->len);
+#else
+						bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
+#endif
 					}
 				}
+#if PHP_VERSION_ID >= 70000
+				zval_to_bson(&obj_data, flags, &child, NULL TSRMLS_CC);
+#else
 				zval_to_bson(obj_data, flags, &child, NULL TSRMLS_CC);
+#endif
 				bson_append_document_end(bson, &child);
 			} else {
 				bson_append_array_begin(bson, key, key_len, &child);
+#if PHP_VERSION_ID >= 70000
+				zval_to_bson(&obj_data, flags, &child, NULL TSRMLS_CC);
+#else
 				zval_to_bson(obj_data, flags, &child, NULL TSRMLS_CC);
+#endif
 				bson_append_array_end(bson, &child);
 			}
 
@@ -794,7 +921,7 @@ void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char 
 			break;
 
 		case IS_ARRAY:
-			if (php_phongo_is_array_or_document(&entry TSRMLS_CC) == IS_ARRAY) {
+			if (php_phongo_is_array_or_document(entry TSRMLS_CC) == IS_ARRAY) {
 				bson_t     child;
 				HashTable *tmp_ht = HASH_OF(entry);
 
@@ -823,38 +950,67 @@ void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char 
 
 PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC) /* {{{ */
 {
-	HashPosition pos;
 	HashTable   *ht_data = NULL;
+#if PHP_VERSION_ID >= 70000
+	zval        obj_data;
+#else
+	HashPosition pos;
 	zval        *obj_data = NULL;
+#endif
 
 	switch(Z_TYPE_P(data)) {
 		case IS_OBJECT:
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce TSRMLS_CC)) {
 #if PHP_VERSION_ID >= 70000
-                                zend_call_method_with_0_params(data, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, obj_data);
+				zend_call_method_with_0_params(data, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
 #else
 				zend_call_method_with_0_params(&data, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
 #endif
 
-				if (!obj_data) {
+				if (Z_ISUNDEF(obj_data)) {
 					/* zend_call_method() failed */
 					break;
 				}
 
+#if PHP_VERSION_ID >= 70000
+				if (Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def TSRMLS_CC))) {
+#else
 				if (Z_TYPE_P(obj_data) != IS_ARRAY && !(Z_TYPE_P(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE_P(obj_data), zend_standard_class_def TSRMLS_CC))) {
-                                        //TODO-PB
-					//phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Expected %s::%s() to return an array or stdClass, %s given", Z_OBJCE_P(data)->name, BSON_SERIALIZE_FUNC_NAME, (Z_TYPE_P(obj_data) == IS_OBJECT ? Z_OBJCE_P(obj_data)->name : zend_get_type_by_const(Z_TYPE_P(obj_data))));
+#endif
+					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC,
+						"Expected %s::%s() to return an array or stdClass, %s given",
+						Z_OBJCE_P(data)->name,
+						BSON_SERIALIZE_FUNC_NAME,
+#if PHP_VERSION_ID >= 70000
+						(Z_TYPE(obj_data) == IS_OBJECT
+							 ? Z_OBJCE(obj_data)->name->val
+							 : zend_get_type_by_const(Z_TYPE(obj_data))
+#else
+						(Z_TYPE_P(obj_data) == IS_OBJECT
+							 ? Z_OBJCE_P(obj_data)->name
+							 : zend_get_type_by_const(Z_TYPE_P(obj_data))
+#endif
+						)
+					);
 
 					break;
 				}
 
+#if PHP_VERSION_ID >= 70000
+				ht_data = HASH_OF(&obj_data);
+#else
 				ht_data = HASH_OF(obj_data);
+#endif
 
 				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce TSRMLS_CC)) {
 					if (flags & PHONGO_BSON_ADD_ODS) {
-                                                //TODO-PB
-						//bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
-						//zend_hash_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME));
+#if PHP_VERSION_ID >= 70000
+						bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name->val, Z_OBJCE_P(data)->name->len);
+						zend_hash_str_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME));
+#else
+						bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
+						zend_hash_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME));
+#endif
 					}
 				}
 
@@ -972,13 +1128,22 @@ int bson_to_zval(const unsigned char *data, int data_len, zval **zv)
 }
 int bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state)
 {
+#if PHP_VERSION_ID >= 70000
+	zval zv;
+#endif
 	      bson_reader_t *reader;
 	      bson_iter_t    iter;
 	const bson_t        *b;
 	      bool           eof = false;
 		  TSRMLS_FETCH();
 
+#if PHP_VERSION_ID < 70000
 	MAKE_STD_ZVAL(state->zchild);
+#endif
+
+#if PHP_VERSION_ID >= 70000
+	state->zchild = &zv;
+#endif
 	/* Ensure that state->zchild has a type, since the calling code may want to
 	 * zval_ptr_dtor() it if we throw an exception. */
 	ZVAL_NULL(state->zchild);
@@ -1015,18 +1180,23 @@ int bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_sta
 			break;
 
 		case PHONGO_TYPEMAP_CLASS: {
+#if PHP_VERSION_ID >= 70000
+			zval obj;
+
+			object_init_ex(&obj, state->odm ? state->odm : state->map.root);
+			zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
+			zval_ptr_dtor(state->zchild);
+			state->zchild = &obj;
+#else
 			zval *obj = NULL;
 
 			MAKE_STD_ZVAL(obj);
 			object_init_ex(obj, state->odm ? state->odm : state->map.root);
-#if PHP_VERSION_ID >= 70000
-                        zend_call_method_with_1_params(obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
-                        zval_ptr_dtor(state->zchild);
-#else
-                        zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
+			zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
 			zval_ptr_dtor(&state->zchild);
-#endif
 			state->zchild = obj;
+#endif
+
 			break;
 		}
 
