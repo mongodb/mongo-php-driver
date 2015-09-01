@@ -134,7 +134,11 @@ phongo_create_object_retval php_phongo_command_create_object(zend_class_entry *c
 HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_command_t  *intern;
-	zval                   retval = zval_used_for_init;
+#if PHP_VERSION_ID <= 70000
+	zval                  retval;
+#else
+	zval                  retval = zval_used_for_init;
+#endif
 
 
 	*is_temp = 1;
