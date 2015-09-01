@@ -208,7 +208,7 @@ static zend_function_entry php_phongo_writeconcern_me[] = {
 /* {{{ php_phongo_writeconcern_t object handlers */
 static void php_phongo_writeconcern_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_writeconcern_t *intern = (php_phongo_writeconcern_t*)object;
+	php_phongo_writeconcern_t *intern = Z_OBJ_WRITECONCERN(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
