@@ -123,7 +123,7 @@ static zend_function_entry php_phongo_query_me[] = {
 /* {{{ php_phongo_query_t object handlers */
 static void php_phongo_query_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_query_t *intern = (php_phongo_query_t*)object;
+	php_phongo_query_t *intern = Z_OBJ_QUERY(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 

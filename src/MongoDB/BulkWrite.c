@@ -272,7 +272,7 @@ static zend_function_entry php_phongo_bulkwrite_me[] = {
 /* {{{ php_phongo_bulkwrite_t object handlers */
 static void php_phongo_bulkwrite_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_bulkwrite_t *intern = (php_phongo_bulkwrite_t*)object;
+	php_phongo_bulkwrite_t *intern = Z_OBJ_BULKWRITE(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 

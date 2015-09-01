@@ -216,7 +216,7 @@ static zend_function_entry php_phongo_cursor_me[] = {
 /* {{{ php_phongo_cursor_t object handlers */
 static void php_phongo_cursor_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_cursor_t *intern = (php_phongo_cursor_t*)object;
+	php_phongo_cursor_t *intern = Z_OBJ_CURSOR(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 

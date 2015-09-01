@@ -509,7 +509,7 @@ static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{
 /* {{{ php_phongo_server_t object handlers */
 static void php_phongo_server_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_server_t *intern = (php_phongo_server_t*)object;
+	php_phongo_server_t *intern = Z_OBJ_SERVER(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 

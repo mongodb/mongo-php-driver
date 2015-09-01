@@ -94,7 +94,7 @@ static zend_function_entry php_phongo_command_me[] = {
 /* {{{ php_phongo_command_t object handlers */
 static void php_phongo_command_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_command_t *intern = (php_phongo_command_t*)object;
+	php_phongo_command_t *intern = Z_OBJ_COMMAND(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 

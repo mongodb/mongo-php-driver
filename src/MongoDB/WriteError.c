@@ -151,7 +151,7 @@ static zend_function_entry php_phongo_writeerror_me[] = {
 /* {{{ php_phongo_writeerror_t object handlers */
 static void php_phongo_writeerror_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_writeerror_t *intern = (php_phongo_writeerror_t*)object;
+	php_phongo_writeerror_t *intern = Z_OBJ_WRITEERROR(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
