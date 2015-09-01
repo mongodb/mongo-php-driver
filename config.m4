@@ -134,22 +134,12 @@ if test "$MONGODB" != "no"; then
       EXTRA_LDFLAGS="$COVERAGE_CFLAGS"
   fi
 
-if test "$PHP_FOUND_VERNUM" -ge "70000"; then
-  MONGODB_BSON=""
-  MONGODB_BSON_CLASSES=""
-  MONGODB_ROOT="\
-      php_phongo.c \
-      phongo_compat.c \
-  ";
-  MONGODB_CONTRIB=""
-  MONGODB_MONGODB_CLASSES="\
-  ";
-  MONGODB_MONGODB_EXCEPTIONS=""
-else
+if test "$PHP_FOUND_VERNUM" -lt "70000"; then
   AC_DEFINE(PHONGO_TODO_SSL, 1, [Worksfine in PHP5])
   AC_DEFINE(PHONGO_TODO_MAKE_STD_ZVAL, 1, [Worksfine in PHP5])
   AC_DEFINE(PHONGO_TODO_INI, 1, [Worksfine in PHP5])
   AC_DEFINE(PHONGO_TODO_STREAM, 1, [Worksfine in PHP5])
+fi
   MONGODB_BSON="\
       src/bson.c \
   ";
@@ -204,7 +194,6 @@ else
       src/MongoDB/Exception/WriteException.c \
       src/MongoDB/Exception/BulkWriteException.c \
   ";
-fi
 
   YAJL_SOURCES="\
     yajl_version.c \
