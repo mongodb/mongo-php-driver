@@ -518,7 +518,11 @@ bool phongo_add_server_debug(void *item, void *ctx) /* {{{ */
 HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_manager_t  *intern;
+#if PHP_VERSION_ID <= 70000
+	zval                   retval;
+#else
 	zval                   retval = zval_used_for_init;
+#endif
 
 
 	*is_temp = 1;
