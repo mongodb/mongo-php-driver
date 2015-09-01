@@ -419,7 +419,7 @@ static zend_function_entry php_phongo_writeresult_me[] = {
 /* {{{ php_phongo_writeresult_t object handlers */
 static void php_phongo_writeresult_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_writeresult_t *intern = (php_phongo_writeresult_t*)object;
+	php_phongo_writeresult_t *intern = Z_OBJ_WRITERESULT(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
