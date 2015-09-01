@@ -156,7 +156,10 @@
 # define SUPPRESS_UNUSED_WARNING(x)
 # define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
 # define EXCEPTION_P(_ex, _zp) ZVAL_OBJ(_zp, _ex)
-# define PHONGO_STREAM_ID(stream) stream->res->handle
+//TODO - PHPC-401 - Revert this change when this issue is closed
+//# define PHONGO_STREAM_ID(stream) stream->res->handle
+# define PHONGO_STREAM_ID(stream) 42
+//End Workaround
 # define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), _value);
 # define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRL(_key), _value, _len);
 # define ADD_ASSOC_LONG_EX(_zv, _key, _value) add_assoc_long_ex(_zv, ZEND_STRL(_key), _value);
