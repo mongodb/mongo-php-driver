@@ -1037,7 +1037,7 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 	}
 
 	if (!ht_data || ZEND_HASH_APPLY_COUNT(ht_data) > 1) {
-		if (obj_data) {
+		if (!Z_ISUNDEF(obj_data)) {
 			zval_ptr_dtor(&obj_data);
 		}
 		return;
@@ -1116,10 +1116,8 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 			}
 		}
 	}
-	if (obj_data) {
-#if PHP_VERSION_ID >= 70000
-                zval_ptr_dtor(obj_data);
-#else
+	if (!Z_ISUNDEF(obj_data)) {
+#if PHP_VERSION_ID < 70000
 		zval_ptr_dtor(&obj_data);
 #endif
 	}
