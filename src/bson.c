@@ -901,13 +901,13 @@ void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char 
 			bson_append_null(bson, key, key_len);
 			break;
 #if PHP_VERSION_ID >= 70000
-                case IS_TRUE:
-                        bson_append_bool(bson, key, key_len, true);
-                        break;
+		case IS_TRUE:
+			bson_append_bool(bson, key, key_len, true);
+			break;
 
-                case IS_FALSE:
-                        bson_append_bool(bson, key, key_len, false);
-                        break;
+		case IS_FALSE:
+			bson_append_bool(bson, key, key_len, false);
+			break;
 #else
 		case IS_BOOL:
 			bson_append_bool(bson, key, key_len, Z_BVAL_P(entry));
