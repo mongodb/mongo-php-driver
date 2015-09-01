@@ -182,10 +182,10 @@ HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 		add_assoc_null_ex(&retval, ZEND_STRS("selector"));
 	}
 
-	add_assoc_long_ex(&retval, ZEND_STRS("flags"), intern->flags);
-	add_assoc_long_ex(&retval, ZEND_STRS("skip"), intern->skip);
-	add_assoc_long_ex(&retval, ZEND_STRS("limit"), intern->limit);
-	add_assoc_long_ex(&retval, ZEND_STRS("batch_size"), intern->batch_size);
+	ADD_ASSOC_LONG_EX(&retval, "flags", intern->flags);
+	ADD_ASSOC_LONG_EX(&retval, "skip", intern->skip);
+	ADD_ASSOC_LONG_EX(&retval, "limit", intern->limit);
+	ADD_ASSOC_LONG_EX(&retval, "batch_size", intern->batch_size);
 
 	return Z_ARRVAL(retval);
 
