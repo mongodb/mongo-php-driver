@@ -1003,7 +1003,7 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 #if PHP_VERSION_ID >= 70000
 						Z_OBJCE_P(data)->name->val,
 #else
-						Z_OBJCE_P(data)->name->val,
+						Z_OBJCE_P(data)->name,
 #endif
 						BSON_SERIALIZE_FUNC_NAME,
 #if PHP_VERSION_ID >= 70000
