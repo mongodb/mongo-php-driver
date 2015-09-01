@@ -472,15 +472,15 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	*is_temp = 1;
 	array_init_size(&retval, 9);
 
-	add_assoc_long_ex(&retval, ZEND_STRS("nInserted"), intern->write_result.nInserted);
-	add_assoc_long_ex(&retval, ZEND_STRS("nMatched"), intern->write_result.nMatched);
+	ADD_ASSOC_LONG_EX(&retval, "nInserted", intern->write_result.nInserted);
+	ADD_ASSOC_LONG_EX(&retval, "nMatched", intern->write_result.nMatched);
 	if (intern->write_result.omit_nModified) {
 		add_assoc_null_ex(&retval, ZEND_STRS("nModified"));
 	} else {
-		add_assoc_long_ex(&retval, ZEND_STRS("nModified"), intern->write_result.nModified);
+		ADD_ASSOC_LONG_EX(&retval, "nModified", intern->write_result.nModified);
 	}
-	add_assoc_long_ex(&retval, ZEND_STRS("nRemoved"), intern->write_result.nRemoved);
-	add_assoc_long_ex(&retval, ZEND_STRS("nUpserted"), intern->write_result.nUpserted);
+	ADD_ASSOC_LONG_EX(&retval, "nRemoved", intern->write_result.nRemoved);
+	ADD_ASSOC_LONG_EX(&retval, "nUpserted", intern->write_result.nUpserted);
 
 	/* Use native arrays for debugging output */
 	state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;

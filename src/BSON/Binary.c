@@ -182,7 +182,7 @@ HashTable *php_phongo_binary_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	array_init_size(&retval, 2);
 
 	ADD_ASSOC_STRINGL(&retval, "data", intern->data, intern->data_len);
-	add_assoc_long_ex(&retval, ZEND_STRS("type"), intern->type);
+	ADD_ASSOC_LONG_EX(&retval, "type", intern->type);
 
 	return Z_ARRVAL(retval);
 } /* }}} */
