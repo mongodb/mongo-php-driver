@@ -54,7 +54,7 @@ PHP_METHOD(Javascript, __construct)
 	php_phongo_javascript_t   *intern;
 	zend_error_handling        error_handling;
 	char                      *javascript;
-	int                        javascript_len;
+	phongo_zpp_char_len        javascript_len;
 	zval                      *document = NULL;
 	bson_t                     scope = BSON_INITIALIZER;
 
