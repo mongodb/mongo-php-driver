@@ -55,7 +55,7 @@ PHP_METHOD(WriteConcern, __construct)
 	php_phongo_writeconcern_t *intern;
 	zend_error_handling       error_handling;
 	char                     *wstring;
-	int                       wstring_len;
+	phongo_zpp_char_len       wstring_len;
 	long                      wtimeout = 0;
 	zend_bool                 journal = 0;
 	zend_bool                 fsync = 0;

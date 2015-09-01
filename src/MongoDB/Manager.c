@@ -59,7 +59,7 @@ PHP_METHOD(Manager, __construct)
 	php_phongo_manager_t     *intern;
 	zend_error_handling       error_handling;
 	char                     *uri_string;
-	int                       uri_string_len;
+	phongo_zpp_char_len       uri_string_len;
 	zval                     *options = NULL;
 	bson_t                    bson_options = BSON_INITIALIZER;
 	zval                     *driverOptions = NULL;
@@ -89,7 +89,7 @@ PHP_METHOD(Manager, executeCommand)
 {
 	php_phongo_manager_t     *intern;
 	char                     *db;
-	int                       db_len;
+	phongo_zpp_char_len      db_len;
 	zval                     *command;
 	zval                     *readPreference = NULL;
 	php_phongo_command_t     *cmd;
@@ -114,7 +114,7 @@ PHP_METHOD(Manager, executeQuery)
 {
 	php_phongo_manager_t     *intern;
 	char                     *namespace;
-	int                       namespace_len;
+	phongo_zpp_char_len       namespace_len;
 	zval                     *zquery;
 	zval                     *readPreference = NULL;
 	DECLARE_RETURN_VALUE_USED
@@ -137,7 +137,7 @@ PHP_METHOD(Manager, executeBulkWrite)
 {
 	php_phongo_manager_t      *intern;
 	char                      *namespace;
-	int                        namespace_len;
+	phongo_zpp_char_len        namespace_len;
 	zval                      *zbulk;
 	zval                      *zwrite_concern = NULL;
 	php_phongo_bulkwrite_t    *bulk;
@@ -162,7 +162,7 @@ PHP_METHOD(Manager, executeInsert)
 {
 	php_phongo_manager_t     *intern;
 	char                     *namespace;
-	int                       namespace_len;
+	phongo_zpp_char_len       namespace_len;
 	zval                     *document;
 	zval                     *zwrite_concern = NULL;
 	bson_t                   *bson;
@@ -189,7 +189,7 @@ PHP_METHOD(Manager, executeUpdate)
 {
 	php_phongo_manager_t     *intern;
 	char                     *namespace;
-	int                       namespace_len;
+	phongo_zpp_char_len       namespace_len;
 	zval                     *zquery;
 	zval                     *newObj;
 	zval                     *updateOptions = NULL;
@@ -229,7 +229,7 @@ PHP_METHOD(Manager, executeDelete)
 {
 	php_phongo_manager_t     *intern;
 	char                     *namespace;
-	int                       namespace_len;
+	phongo_zpp_char_len       namespace_len;
 	zval                     *query;
 	zval                     *deleteOptions = NULL;
 	zval                     *zwrite_concern = NULL;

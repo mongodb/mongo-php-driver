@@ -64,7 +64,7 @@ PHP_METHOD(Server, executeCommand)
 {
 	php_phongo_server_t      *intern;
 	char                     *db;
-	int                       db_len;
+	phongo_zpp_char_len       db_len;
 	zval                     *command;
 	php_phongo_command_t     *cmd;
 	DECLARE_RETURN_VALUE_USED
@@ -88,7 +88,7 @@ PHP_METHOD(Server, executeQuery)
 {
 	php_phongo_server_t      *intern;
 	char                     *namespace;
-	int                       namespace_len;
+	phongo_zpp_char_len       namespace_len;
 	zval                     *zquery;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
@@ -110,7 +110,7 @@ PHP_METHOD(Server, executeBulkWrite)
 {
 	php_phongo_server_t      *intern;
 	char                     *namespace;
-	int                       namespace_len;
+	phongo_zpp_char_len       namespace_len;
 	zval                     *zbulk;
 	zval                     *zwrite_concern = NULL;
 	php_phongo_bulkwrite_t   *bulk;

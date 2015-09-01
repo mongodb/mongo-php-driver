@@ -53,7 +53,7 @@ PHP_METHOD(Binary, __construct)
 	php_phongo_binary_t    *intern;
 	zend_error_handling     error_handling;
 	char                   *data;
-	int                     data_len;
+	phongo_zpp_char_len     data_len;
 	long                    type;
 
 

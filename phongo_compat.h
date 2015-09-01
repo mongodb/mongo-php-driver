@@ -158,6 +158,7 @@
 # define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), _value);
 # define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRS(_key), _value, _len);
 # define phongo_free_object_arg zend_object
+# define phongo_zpp_char_len size_t
 # define ZEND_HASH_APPLY_COUNT(ht) (ht)->u.v.nApplyCount
 # define PHONGO_RETVAL_STRINGL(s, slen) RETVAL_STRINGL(s, slen)
 # define PHONGO_RETURN_STRINGL(s, slen) RETVAL_STRINGL(s, slen)
@@ -179,6 +180,7 @@
 # define Z_PHPDATE_P(object) zend_object_store_get_object(object TSRMLS_CC)
 # define Z_ISUNDEF(x) !x
 # define phongo_free_object_arg void
+# define phongo_zpp_char_len int
 # define ZEND_HASH_APPLY_COUNT(ht) (ht)->nApplyCount
 # define PHONGO_RETVAL_STRINGL(s, slen) RETVAL_STRINGL(s, slen, 1)
 # define PHONGO_RETURN_STRINGL(s, slen) RETVAL_STRINGL(s, slen, 1)
