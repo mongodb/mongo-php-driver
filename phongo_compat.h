@@ -180,7 +180,7 @@
 # define PHONGO_STREAM_ID(stream) stream->rsrc_id
 # define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), _value, 1);
 # define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRS(_key), _value, _len, 1);
-# define ADD_ASSOC_STRING_EX(_zv, _key, _key_len, _value, _value_len) add_assoc_stringl_ex(_zv, _key, _key_len, _value, _value_len, 1);
+# define ADD_ASSOC_STRING_EX(_zv, _key, _key_len, _value, _value_len) add_assoc_stringl_ex(_zv, _key, _key_len+1, _value, _value_len, 1);
 # define Z_PHPDATE_P(object) zend_object_store_get_object(object TSRMLS_CC)
 # define Z_ISUNDEF(x) !x
 # define phongo_free_object_arg void
