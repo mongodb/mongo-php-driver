@@ -797,9 +797,9 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 void phongo_stream_destroy(mongoc_stream_t *stream_wrap) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
-#if PHP_VERSION_ID < 70000
+
 	MONGOC_DEBUG("Not destroying RSRC#%d", PHONGO_STREAM_ID(base_stream->stream));
-#endif
+
 	/*
 	 * DON'T DO ANYTHING TO THE INTERNAL base_stream->stream
 	 * The stream should not be closed during normal dtor -- as we want it to
