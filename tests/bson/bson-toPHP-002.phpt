@@ -1,6 +1,7 @@
 --TEST--
 BSON\fromPHP(): Null type map values imply default behavior
 --SKIPIF--
+<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM encodes __pclass last"); ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php

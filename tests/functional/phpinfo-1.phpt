@@ -1,6 +1,7 @@
 --TEST--
 phpinfo()
 --SKIPIF--
+<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM does not do phpinfo() this way"); ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
