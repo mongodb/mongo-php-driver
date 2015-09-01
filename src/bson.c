@@ -1043,45 +1043,56 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 		return;
 	}
 
+#if PHP_VERSION_ID >= 70000
+	{
+		zend_string *key;
+		zval *value;
+
+		ZEND_HASH_FOREACH_STR_KEY_VAL(ht_data, key, value) {
+			if (key) {
+				if (Z_TYPE_P(data) == IS_OBJECT) {
+					const char *skey;
+					unsigned int skey_len = 0;
+					const char *class_name;
+					zend_unmangle_property_name(key, &class_name, &skey);
+
+					if (flags & PHONGO_BSON_ADD_ID) {
+						if (!strncmp(skey, "_id", sizeof("_id")-1)) {
+							flags &= ~PHONGO_BSON_ADD_ID;
+						}
+					}
+					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, skey, skey_len, Z_TYPE_P(value), value TSRMLS_CC);
+				} else {
+					/* Chop off the \0 from string lengths */
+					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, key->val, key->len-1, Z_TYPE_P(value), value TSRMLS_CC);
+				}
+			}
+		} ZEND_HASH_FOREACH_END();
+	}
+#else
 	zend_hash_internal_pointer_reset_ex(ht_data, &pos);
 	for (;; zend_hash_move_forward_ex(ht_data, &pos)) {
 		unsigned int key_len = 0;
 		uint64_t     index = 0;
 		char         numbuf[32];
 		char        *key = NULL;
-#if PHP_VERSION_ID >= 70000
-                zend_string *zs_key;
-                zval        *entry;
-#else
 		zval       **entry;
-#endif
 		int          hash_type = HASH_KEY_NON_EXISTENT;
-#if PHP_VERSION_ID >= 70000
-#else
-		hash_type = zend_hash_get_current_key_ex(ht_data, &zs_key, &index, 0, &pos);
-#endif
+
+		hash_type = zend_hash_get_current_key_ex(ht_data, &key, &key_len, &index, 0, &pos);
 
 		if (hash_type == HASH_KEY_NON_EXISTENT) {
 			break;
 		}
 
-#if PHP_VERSION_ID >= 70000
-                if ((entry = zend_hash_get_current_data_ex(ht_data, &pos)) != NULL) {
-#else
 		if (zend_hash_get_current_data_ex(ht_data, (void **) &entry, &pos) == FAILURE) {
-#endif
 			break;
 		}
 
 		if (hash_type == HASH_KEY_IS_STRING) {
 			if (Z_TYPE_P(data) == IS_OBJECT) {
 				const char *class_name;
-#if PHP_VERSION_ID >= 70000
-                                zend_unmangle_property_name(zs_key, &class_name, (const char **)&key);
-                                zend_string_free(zs_key);
-#else
 				zend_unmangle_property_name(key, key_len-1, &class_name, (const char **)&key);
-#endif
 				key_len = strlen(key);
 			} else {
 				/* Chop off the \0 from string lengths */
@@ -1096,12 +1107,9 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 		} else {
 			key_len = bson_uint32_to_string(index, (const char **)&key, numbuf, sizeof(numbuf));
 		}
-#if PHP_VERSION_ID >= 70000
-                phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, key, key_len, Z_TYPE_P(entry), entry TSRMLS_CC);
-#else
 		phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, key, key_len, Z_TYPE_PP(entry), *entry TSRMLS_CC);
-#endif
 	}
+#endif
 
 	if (flags & PHONGO_BSON_ADD_ID) {
 		bson_oid_t oid;
