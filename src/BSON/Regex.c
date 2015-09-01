@@ -53,9 +53,9 @@ PHP_METHOD(Regex, __construct)
 	php_phongo_regex_t       *intern;
 	zend_error_handling       error_handling;
 	char                     *pattern;
-	int                       pattern_len;
+	phongo_zpp_char_len       pattern_len;
 	char                     *flags;
-	int                       flags_len;
+	phongo_zpp_char_len       flags_len;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);

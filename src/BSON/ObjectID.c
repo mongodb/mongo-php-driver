@@ -54,7 +54,7 @@ PHP_METHOD(ObjectID, __construct)
 	php_phongo_objectid_t    *intern;
 	zend_error_handling       error_handling;
 	char                     *id = NULL;
-	int                       id_len;
+	phongo_zpp_char_len       id_len;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);

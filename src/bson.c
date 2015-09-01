@@ -1165,7 +1165,7 @@ void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *ma
 PHP_FUNCTION(toPHP)
 {
 	char                  *data;
-	int                    data_len;
+	phongo_zpp_char_len    data_len;
 	zval                  *typemap = NULL;
 	php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
@@ -1193,11 +1193,11 @@ PHP_FUNCTION(toPHP)
    Returns the JSON representation of a BSON value */
 PHP_FUNCTION(toJSON)
 {
-	      char          *data;
-	      int            data_len;
-	const bson_t        *b;
-	      bool           eof = false;
-	      bson_reader_t *reader;
+	      char                *data;
+	      phongo_zpp_char_len  data_len;
+	const bson_t              *b;
+	      bool                 eof = false;
+	      bson_reader_t       *reader;
 
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
@@ -1230,10 +1230,10 @@ PHP_FUNCTION(toJSON)
    Returns the BSON representation of a JSON value */
 PHP_FUNCTION(fromJSON)
 {
-	char          *data;
-	int            data_len;
-	bson_t         b = BSON_INITIALIZER;
-	bson_error_t   error;
+	char                *data;
+	phongo_zpp_char_len  data_len;
+	bson_t               b = BSON_INITIALIZER;
+	bson_error_t         error;
 
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
