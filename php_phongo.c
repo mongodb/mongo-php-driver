@@ -1103,11 +1103,11 @@ int php_phongo_peer_verify(php_stream *stream, X509 *cert, const char *hostname,
 	zval **verify_peer_name;
 
 	/* This option is available since PHP 5.6.0 */
-	if (php_stream_context_get_option(stream->context, "ssl", "verify_peer_name", &verify_peer_name) == SUCCESS && zend_is_true(*verify_peer_name)) {
+	if (php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "verify_peer_name", &verify_peer_name) == SUCCESS && zend_is_true(*verify_peer_name)) {
 		zval **zhost = NULL;
 		const char *peer;
 
-		if (php_stream_context_get_option(stream->context, "ssl", "peer_name", &zhost) == SUCCESS) {
+		if (php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "peer_name", &zhost) == SUCCESS) {
 			convert_to_string_ex(zhost);
 			peer = Z_STRVAL_PP(zhost);
 		} else {
@@ -1124,23 +1124,35 @@ int php_phongo_peer_verify(php_stream *stream, X509 *cert, const char *hostname,
 }
 #endif
 
-#ifdef PHONGO_TODO_SSL
 bool php_phongo_ssl_verify(php_stream *stream, const char *hostname, bson_error_t *error TSRMLS_DC)
 {
+#if PHP_VERSION_ID >= 70000
+	zval *zcert;
+	zval *verify_expiry;
+#else
 	zval **zcert;
 	zval **verify_expiry;
+#endif
 	X509 *cert;
 
-	if (!stream->context) {
+	if (!PHP_STREAM_CONTEXT(stream)) {
 		return true;
 	}
 
-	if (!(php_stream_context_get_option(stream->context, "ssl", "peer_certificate", &zcert) == SUCCESS && Z_TYPE_PP(zcert) == IS_RESOURCE)) {
+#if PHP_VERSION_ID >= 70000
+	if (!((zcert = php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "peer_certificate")) != NULL && Z_TYPE_P(zcert) == IS_RESOURCE)) {
+#else
+	if (!(php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "peer_certificate", &zcert) == SUCCESS && Z_TYPE_PP(zcert) == IS_RESOURCE)) {
+#endif
 		bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Could not capture certificate of %s", hostname);
 		return false;
 	}
 
+#if PHP_VERSION_ID >= 70000
+	cert = (X509 *)x509_from_zval(zcert TSRMLS_CC);
+#else
 	cert = (X509 *)x509_from_zval(*zcert TSRMLS_CC);
+#endif
 	if (!cert) {
 		bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Could not get certificate of %s", hostname);
 		return false;
@@ -1152,7 +1164,11 @@ bool php_phongo_ssl_verify(php_stream *stream, const char *hostname, bson_error_
 	}
 #endif
 
-	if (php_stream_context_get_option(stream->context, "ssl", "verify_expiry", &verify_expiry) == SUCCESS && zend_is_true(*verify_expiry)) {
+#if PHP_VERSION_ID >= 70000
+	if ((verify_expiry = php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "verify_expiry")) != NULL && zend_is_true(verify_expiry)) {
+#else
+	if (php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "verify_expiry", &verify_expiry) == SUCCESS && zend_is_true(*verify_expiry)) {
+#endif
 		time_t current     = time(NULL);
 		time_t valid_from  = php_mongo_asn1_time_to_time_t(X509_get_notBefore(cert) TSRMLS_CC);
 		time_t valid_until = php_mongo_asn1_time_to_time_t(X509_get_notAfter(cert) TSRMLS_CC);
@@ -1169,7 +1185,6 @@ bool php_phongo_ssl_verify(php_stream *stream, const char *hostname, bson_error_
 
 	return true;
 }
-#endif
 
 mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error) /* {{{ */
 {
@@ -1240,7 +1255,6 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	efree(uniqid);
 
 	if (mongoc_uri_get_ssl(uri)) {
-#ifdef PHONGO_TODO_SSL
 		zend_error_handling       error_handling;
 
 		zend_replace_error_handling(EH_THROW, php_phongo_sslconnectionexception_ce, &error_handling TSRMLS_CC);
@@ -1248,10 +1262,10 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		MONGOC_DEBUG("Enabling SSL");
 
 		/* Capture the server certificate so we can do further verification */
-		if (stream->context) {
+		if (PHP_STREAM_CONTEXT(stream)) {
 			zval capture;
 			ZVAL_BOOL(&capture, 1);
-			php_stream_context_set_option(stream->context, "ssl", "capture_peer_cert", &capture);
+			php_stream_context_set_option(PHP_STREAM_CONTEXT(stream), "ssl", "capture_peer_cert", &capture);
 		}
 
 		if (php_stream_xport_crypto_setup(stream, PHONGO_CRYPTO_METHOD, NULL TSRMLS_CC) < 0) {
@@ -1278,7 +1292,6 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		}
 
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
-#endif
 	}
 	efree(dsn);
 
@@ -1635,9 +1648,37 @@ mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options TSRMLS
 	return uri;
 } /* }}} */
 
-#ifdef PHONGO_TODO_SSL
 void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOptions) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval                     *tmp;
+
+#define SET_STRING_CTX(name) \
+		if (driverOptions && php_array_exists(driverOptions, name)) { \
+			zval ztmp; \
+			zend_bool ctmp_free; \
+			int ctmp_len; \
+			char *ctmp; \
+			ctmp = php_array_fetchl_string(driverOptions, name, sizeof(name)-1, &ctmp_len, &ctmp_free); \
+			ZVAL_STRING(&ztmp, ctmp); \
+			if (ctmp_free) { \
+				str_efree(ctmp); \
+			} \
+			php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
+		}
+#define SET_BOOL_CTX(name, defaultvalue) \
+		{ \
+			zval ztmp; \
+			if (driverOptions && php_array_exists(driverOptions, name)) { \
+				ZVAL_BOOL(&ztmp, php_array_fetchl_bool(driverOptions, ZEND_STRL(name))); \
+				php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
+			} \
+			else if ((tmp = php_stream_context_get_option(ctx, "ssl", name)) == NULL) { \
+				ZVAL_BOOL(&ztmp, defaultvalue); \
+				php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
+			} \
+		}
+#else
 	zval                     **tmp;
 
 #define SET_STRING_CTX(name) \
@@ -1650,7 +1691,6 @@ void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOp
 			ZVAL_STRING(&ztmp, ctmp, ctmp_free); \
 			php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
 		}
-
 #define SET_BOOL_CTX(name, defaultvalue) \
 		{ \
 			zval ztmp; \
@@ -1663,6 +1703,7 @@ void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOp
 				php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
 			} \
 		}
+#endif
 
 		SET_BOOL_CTX("verify_peer", 1);
 		SET_BOOL_CTX("verify_peer_name", 1);
@@ -1680,7 +1721,6 @@ void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOp
 #undef SET_BOOL_CTX
 #undef SET_STRING_CTX
 } /* }}} */
-#endif
 
 bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
 {
@@ -1904,19 +1944,20 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 	}
 #endif
 
-#ifdef PHONGO_TODO_STREAM
+#if PHP_VERSION_ID >= 70000
+	if (driverOptions && (tmp = zend_hash_str_find(Z_ARRVAL_P(driverOptions), "context", sizeof("context")-1)) != NULL) {
+		ctx = php_stream_context_from_zval(tmp, 0);
+#else
 	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
 		ctx = php_stream_context_from_zval(*tmp, 0);
+#endif
 	} else {
 		GET_DEFAULT_CONTEXT();
 	}
-#endif
 
-#ifdef PHONGO_TODO_SSL
 	if (mongoc_uri_get_ssl(uri)) {
 		php_phongo_populate_default_ssl_ctx(ctx, driverOptions);
 	}
-#endif
 
 	MONGOC_DEBUG("Creating Manager, phongo-%s[%s] - mongoc-%s, libbson-%s", MONGODB_VERSION_S, MONGODB_STABILITY_S, MONGOC_VERSION_S, BSON_VERSION_S);
 	client = mongoc_client_new_from_uri(uri);
@@ -1929,15 +1970,26 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 	mech = mongoc_uri_get_auth_mechanism(uri);
 
 	/* Check if we are doing X509 auth, in which case extract the username (subject) from the cert if no username is provided */
-#ifdef PHONGO_TODO_SSL
 	if (mech && !strcasecmp(mech, "MONGODB-X509") && !mongoc_uri_get_username(uri)) {
+#if PHP_VERSION_ID >= 70000
+		zval *pem;
+#else
 		zval **pem;
+#endif
 
+#if PHP_VERSION_ID >= 70000
+		if ((pem = php_stream_context_get_option(ctx, "ssl", "local_cert")) != NULL) {
+#else
 		if (SUCCESS == php_stream_context_get_option(ctx, "ssl", "local_cert", &pem)) {
+#endif
 			char filename[MAXPATHLEN];
 
+#if PHP_VERSION_ID >= 70000
+			if (VCWD_REALPATH(zval_get_string(pem)->val, filename)) {
+#else
 			convert_to_string_ex(pem);
 			if (VCWD_REALPATH(Z_STRVAL_PP(pem), filename)) {
+#endif
 				mongoc_ssl_opt_t  ssl_options;
 
 				ssl_options.pem_file = filename;
@@ -1945,7 +1997,6 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 			}
 		}
 	}
-#endif
 
 	mongoc_client_set_stream_initiator(client, phongo_stream_initiator, ctx);
 
