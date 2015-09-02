@@ -1177,6 +1177,11 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 					}
 					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, skey, skey_len, Z_TYPE_P(value), value TSRMLS_CC);
 				} else {
+					if (flags & PHONGO_BSON_ADD_ID) {
+						if (!strncmp(key->val, "_id", sizeof("_id")-1)) {
+							flags &= ~PHONGO_BSON_ADD_ID;
+						}
+					}
 					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, key->val, key->len, Z_TYPE_P(value), value TSRMLS_CC);
 				}
 			} else {
