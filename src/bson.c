@@ -1308,7 +1308,7 @@ int bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_sta
 			object_init_ex(&obj, state->odm ? state->odm : state->map.root);
 			zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state->zchild);
 			zval_ptr_dtor(&state->zchild);
-			ZVAL_COPY(&state->zchild, &obj);
+			ZVAL_COPY_VALUE(&state->zchild, &obj);
 #else
 			zval *obj = NULL;
 
