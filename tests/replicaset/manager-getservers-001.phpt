@@ -97,6 +97,8 @@ array(3) {
       int(1000)
       ["localTime"]=>
       object(%s\UTCDateTime)#%d (%d) {
+        ["milliseconds"]=>
+        int(%d)
       }
       ["maxWireVersion"]=>
       int(3)
@@ -174,6 +176,8 @@ array(3) {
       int(1000)
       ["localTime"]=>
       object(%s\UTCDateTime)#%d (%d) {
+        ["milliseconds"]=>
+        int(%d)
       }
       ["maxWireVersion"]=>
       int(3)
@@ -238,7 +242,9 @@ array(3) {
       ["maxWriteBatchSize"]=>
       int(1000)
       ["localTime"]=>
-      object(%s\UTCDateTime)#8 (0) {
+      object(%s\UTCDateTime)#%d (%d) {
+        ["milliseconds"]=>
+        int(%d)
       }
       ["maxWireVersion"]=>
       int(3)
