@@ -111,8 +111,12 @@ PHP_METHOD(WriteError, getInfo)
 	}
 
 
-	if (intern->info) {
+	if (!Z_ISUNDEF(intern->info)) {
+#if PHP_VERSION_ID >= 70000
+		RETURN_ZVAL(&intern->info, 1, 0);
+#else
 		RETURN_ZVAL(intern->info, 1, 0);
+#endif
 	}
 }
 /* }}} */
@@ -159,12 +163,8 @@ static void php_phongo_writeerror_free_object(phongo_free_object_arg *object TSR
 		efree(intern->message);
 	}
 
-	if (intern->info) {
-#if PHP_VERSION_ID >= 70000
-		zval_ptr_dtor(intern->info);
-#else
+	if (!Z_ISUNDEF(intern->info)) {
 		zval_ptr_dtor(&intern->info);
-#endif
 	}
 
 #if PHP_VERSION_ID < 70000

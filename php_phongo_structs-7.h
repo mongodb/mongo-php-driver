@@ -90,14 +90,14 @@ typedef struct {
 typedef struct {
 	int                      code;
 	char                    *message;
-	zval                    *info;
+	zval                     info;
 	zend_object              std;
 } php_phongo_writeconcernerror_t;
 
 typedef struct {
 	int                      code;
 	char                    *message;
-	zval                    *info;
+	zval                     info;
 	uint32_t                 index;
 	zend_object              std;
 } php_phongo_writeerror_t;
