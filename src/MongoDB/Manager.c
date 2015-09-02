@@ -541,14 +541,14 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 
 		array_init(&cluster);
 		mongoc_set_for_each(intern->client->topology->description.servers, phongo_add_server_debug, &cluster);
-		add_assoc_zval_ex(&retval, ZEND_STRS("cluster"), &cluster);
+		ADD_ASSOC_ZVAL_EX(&retval, "cluster", &cluster);
 #else
 		zval *cluster = NULL;
 
 		MAKE_STD_ZVAL(cluster);
 		array_init(cluster);
 		mongoc_set_for_each(intern->client->topology->description.servers, phongo_add_server_debug, cluster);
-		add_assoc_zval_ex(&retval, ZEND_STRS("cluster"), cluster);
+		ADD_ASSOC_ZVAL_EX(&retval, "cluster", cluster);
 #endif
 	}
 

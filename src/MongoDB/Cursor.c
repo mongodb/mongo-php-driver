@@ -270,14 +270,14 @@ HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 		zval zcursor;
 
 		php_phongo_cursor_to_zval(&zcursor, intern->cursor);
-		add_assoc_zval_ex(&retval, ZEND_STRS("cursor"), &zcursor);
+		ADD_ASSOC_ZVAL_EX(&retval, "cursor", &zcursor);
 #else
 		zval *zcursor = NULL;
 
 		MAKE_STD_ZVAL(zcursor);
 
 		php_phongo_cursor_to_zval(zcursor, intern->cursor);
-		add_assoc_zval_ex(&retval, ZEND_STRS("cursor"), zcursor);
+		ADD_ASSOC_ZVAL_EX(&retval, "cursor", zcursor);
 #endif
 	} else {
 		add_assoc_null_ex(&retval, ZEND_STRS("cursor"));

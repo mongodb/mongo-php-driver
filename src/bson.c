@@ -237,8 +237,7 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char
 
 		php_phongo_new_binary_from_binary_and_type(&zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
 
-		add_assoc_zval(retval, key, &zchild);
-
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
 		Z_SET_REFCOUNT(zchild, 1);
 #else
 		zval *zchild = NULL;
@@ -246,8 +245,7 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char
 		MAKE_STD_ZVAL(zchild);
 		php_phongo_new_binary_from_binary_and_type(zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
 
-		add_assoc_zval(retval, key, zchild);
-
+		ADD_ASSOC_ZVAL(retval, key, zchild);
 		Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 	}
@@ -281,8 +279,7 @@ bool php_phongo_bson_visit_oid(const bson_iter_t *iter ARG_UNUSED, const char *k
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_objectid_new_from_oid(zchild, v_oid TSRMLS_CC);
 
-	add_assoc_zval(retval, key, zchild);
-
+	ADD_ASSOC_ZVAL(retval, key, zchild);
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -305,8 +302,7 @@ bool php_phongo_bson_visit_date_time(const bson_iter_t *iter ARG_UNUSED, const c
 	zval zchild;
 
 	php_phongo_new_utcdatetime_from_epoch(&zchild, msec_since_epoch TSRMLS_CC);
-
-	add_assoc_zval(retval, key, &zchild);
+	ADD_ASSOC_ZVAL(retval, key, &zchild);
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -314,8 +310,7 @@ bool php_phongo_bson_visit_date_time(const bson_iter_t *iter ARG_UNUSED, const c
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_utcdatetime_from_epoch(zchild, msec_since_epoch TSRMLS_CC);
 
-	add_assoc_zval(retval, key, zchild);
-
+	ADD_ASSOC_ZVAL(retval, key, zchild);
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -339,7 +334,7 @@ bool php_phongo_bson_visit_regex(const bson_iter_t *iter ARG_UNUSED, const char 
 
 	php_phongo_new_regex_from_regex_and_options(&zchild, v_regex, v_options TSRMLS_CC);
 
-	add_assoc_zval(retval, key, &zchild);
+	ADD_ASSOC_ZVAL(retval, key, &zchild);
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -347,8 +342,7 @@ bool php_phongo_bson_visit_regex(const bson_iter_t *iter ARG_UNUSED, const char 
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_regex_from_regex_and_options(zchild, v_regex, v_options TSRMLS_CC);
 
-	add_assoc_zval(retval, key, zchild);
-
+	ADD_ASSOC_ZVAL(retval, key, zchild);
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -372,7 +366,7 @@ bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const char *
 
 	php_phongo_new_javascript_from_javascript(1, &zchild, v_code, v_code_len TSRMLS_CC);
 
-	add_assoc_zval(retval, key, &zchild);
+	ADD_ASSOC_ZVAL(retval, key, &zchild);
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -380,8 +374,7 @@ bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const char *
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_javascript_from_javascript(1, zchild, v_code, v_code_len TSRMLS_CC);
 
-	add_assoc_zval(retval, key, zchild);
-
+	ADD_ASSOC_ZVAL(retval, key, zchild);
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -404,8 +397,8 @@ bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter ARG_UNUSED, const 
 	zval zchild;
 
 	php_phongo_new_javascript_from_javascript_and_scope(1, &zchild, v_code, v_code_len, v_scope TSRMLS_CC);
+	ADD_ASSOC_ZVAL(retval, key, &zchild);
 
-	add_assoc_zval(retval, key, &zchild);
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -413,8 +406,7 @@ bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter ARG_UNUSED, const 
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_javascript_from_javascript_and_scope(1, zchild, v_code, v_code_len, v_scope TSRMLS_CC);
 
-	add_assoc_zval(retval, key, zchild);
-
+	ADD_ASSOC_ZVAL(retval, key, zchild);
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -438,7 +430,7 @@ bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter ARG_UNUSED, const c
 
 	php_phongo_new_timestamp_from_increment_and_timestamp(&zchild, v_increment, v_timestamp TSRMLS_CC);
 
-	add_assoc_zval(retval, key, &zchild);
+	ADD_ASSOC_ZVAL(retval, key, &zchild);
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -446,8 +438,7 @@ bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter ARG_UNUSED, const c
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_timestamp_from_increment_and_timestamp(zchild, v_increment, v_timestamp TSRMLS_CC);
 
-	add_assoc_zval(retval, key, zchild);
-
+	ADD_ASSOC_ZVAL(retval, key, zchild);
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -471,8 +462,7 @@ bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter ARG_UNUSED, const char
 	zval zchild;
 
 	object_init_ex(&zchild, php_phongo_maxkey_ce);
-
-	add_assoc_zval(retval, key, &zchild);
+	ADD_ASSOC_ZVAL(retval, key, &zchild);
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -480,8 +470,7 @@ bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter ARG_UNUSED, const char
 	MAKE_STD_ZVAL(zchild);
 	object_init_ex(zchild, php_phongo_maxkey_ce);
 
-	add_assoc_zval(retval, key, zchild);
-
+	ADD_ASSOC_ZVAL(retval, key, zchild);
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -495,8 +484,7 @@ bool php_phongo_bson_visit_minkey(const bson_iter_t *iter ARG_UNUSED, const char
 	zval zchild;
 
 	object_init_ex(&zchild, php_phongo_minkey_ce);
-
-	add_assoc_zval(retval, key, &zchild);
+	ADD_ASSOC_ZVAL(retval, key, &zchild);
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -504,9 +492,8 @@ bool php_phongo_bson_visit_minkey(const bson_iter_t *iter ARG_UNUSED, const char
 	MAKE_STD_ZVAL(zchild);
 	object_init_ex(zchild, php_phongo_minkey_ce);
 
-	add_assoc_zval(retval, key, zchild);
-
 	Z_SET_REFCOUNT_P(zchild, 1);
+	ADD_ASSOC_ZVAL(retval, key, zchild);
 #endif
 
 	return false;
@@ -572,8 +559,13 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 
 			switch(state.map.document_type) {
 				case PHONGO_TYPEMAP_NATIVE_ARRAY:
-					add_assoc_zval(retval, key, state.zchild);
+#if PHP_VERSION_ID >= 70000
+					ADD_ASSOC_ZVAL(retval, key, &state.zchild);
+					Z_SET_REFCOUNT(state.zchild, 1);
+#else
+					ADD_ASSOC_ZVAL(retval, key, state.zchild);
 					Z_SET_REFCOUNT_P(state.zchild, 1);
+#endif
 					break;
 
 				case PHONGO_TYPEMAP_CLASS: {
@@ -655,15 +647,26 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 				}
 
 				case PHONGO_TYPEMAP_NATIVE_OBJECT:
+#if PHP_VERSION_ID >= 70000
+					object_and_properties_init(&state.zchild, zend_standard_class_def, Z_ARRVAL(state.zchild));
+					add_assoc_zval(retval, key, &state.zchild);
+					Z_SET_REFCOUNT(state.zchild, 1);
+#else
 					object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
 					add_assoc_zval(retval, key, state.zchild);
 					Z_SET_REFCOUNT_P(state.zchild, 1);
+#endif
 					break;
 
 				case PHONGO_TYPEMAP_NATIVE_ARRAY:
 				default:
-					add_assoc_zval(retval, key, state.zchild);
+#if PHP_VERSION_ID >= 70000
+					ADD_ASSOC_ZVAL(retval, key, &state.zchild);
+					Z_SET_REFCOUNT(state.zchild, 1);
+#else
+					ADD_ASSOC_ZVAL(retval, key, state.zchild);
 					Z_SET_REFCOUNT_P(state.zchild, 1);
+#endif
 					break;
 			}
 		}
@@ -1031,7 +1034,7 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 					if (flags & PHONGO_BSON_ADD_ODS) {
 #if PHP_VERSION_ID >= 70000
 						bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name->val, Z_OBJCE_P(data)->name->len);
-						zend_hash_str_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME));
+						zend_hash_str_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME)-1);
 #else
 						bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
 						zend_hash_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME));

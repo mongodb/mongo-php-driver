@@ -475,7 +475,7 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	ADD_ASSOC_LONG_EX(&retval, "nInserted", intern->write_result.nInserted);
 	ADD_ASSOC_LONG_EX(&retval, "nMatched", intern->write_result.nMatched);
 	if (intern->write_result.omit_nModified) {
-		add_assoc_null_ex(&retval, ZEND_STRS("nModified"));
+		ADD_ASSOC_NULL_EX(&retval, "nModified");
 	} else {
 		ADD_ASSOC_LONG_EX(&retval, "nModified", intern->write_result.nModified);
 	}
@@ -487,30 +487,45 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 	bson_to_zval_ex(bson_get_data(&intern->write_result.upserted), intern->write_result.upserted.len, &state);
-	add_assoc_zval_ex(&retval, ZEND_STRS("upsertedIds"), state.zchild);
+#if PHP_VERSION_ID >= 70000
+	ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", &state.zchild);
+#else
+	ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", state.zchild);
+#endif
 
 	bson_to_zval_ex(bson_get_data(&intern->write_result.writeErrors), intern->write_result.writeErrors.len, &state);
-	add_assoc_zval_ex(&retval, ZEND_STRS("writeErrors"), state.zchild);
+#if PHP_VERSION_ID >= 70000
+	ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", &state.zchild);
+#else
+	ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", state.zchild);
+#endif
 
 
 	bson_to_zval_ex(bson_get_data(&intern->write_result.writeConcernError), intern->write_result.writeConcernError.len, &state);
-	add_assoc_zval_ex(&retval, ZEND_STRS("writeConcernError"), state.zchild);
+#if PHP_VERSION_ID >= 70000
+	ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", &state.zchild);
+#else
+	ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", state.zchild);
+#endif
 
 	if (intern->write_concern) {
 #if PHP_VERSION_ID >= 70000
 		zval write_concern;
 
 		php_phongo_write_concern_to_zval(&write_concern, intern->write_concern);
-		add_assoc_zval_ex(&retval, ZEND_STRS("writeConcern"), &write_concern);
 #else
 		zval *write_concern = NULL;
 
 		MAKE_STD_ZVAL(write_concern);
 		php_phongo_write_concern_to_zval(write_concern, intern->write_concern);
-		add_assoc_zval_ex(&retval, ZEND_STRS("writeConcern"), write_concern);
+#endif
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(&retval, "writeConcern", &write_concern);
+#else
+		ADD_ASSOC_ZVAL_EX(&retval, "writeConcern", write_concern);
 #endif
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("writeConcern"));
+		ADD_ASSOC_NULL_EX(&retval, "writeConcern");
 	}
 
 	return Z_ARRVAL(retval);

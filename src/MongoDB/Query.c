@@ -166,21 +166,37 @@ HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 	/* Avoid using PHONGO_TYPEMAP_NATIVE_ARRAY for decoding query and selector
 	 * documents so that users can differentiate BSON arrays and documents. */
 	if (intern->query) {
+#if PHP_VERSION_ID >= 70000
+		zval zv;
+#else
 		zval *zv;
+#endif
 
 		bson_to_zval(bson_get_data(intern->query), intern->query->len, &zv);
-		add_assoc_zval_ex(&retval, ZEND_STRS("query"), zv);
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(&retval, "query", &zv);
+#else
+		ADD_ASSOC_ZVAL_EX(&retval, "query", zv);
+#endif
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("query"));
+		ADD_ASSOC_NULL_EX(&retval, "query");
 	}
 
 	if (intern->selector) {
+#if PHP_VERSION_ID >= 70000
+		zval zv;
+#else
 		zval *zv;
+#endif
 
 		bson_to_zval(bson_get_data(intern->selector), intern->selector->len, &zv);
-		add_assoc_zval_ex(&retval, ZEND_STRS("selector"), zv);
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(&retval, "selector", &zv);
+#else
+		ADD_ASSOC_ZVAL_EX(&retval, "selector", zv);
+#endif
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("selector"));
+		ADD_ASSOC_NULL_EX(&retval, "selector");
 	}
 
 	ADD_ASSOC_LONG_EX(&retval, "flags", intern->flags);
