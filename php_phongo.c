@@ -77,6 +77,11 @@
 #define PHONGO_STREAM_BUFFER_SIZE 4096
 
 ZEND_DECLARE_MODULE_GLOBALS(mongodb)
+#if PHP_VERSION_ID >= 70000
+#if defined(ZTS) && defined(COMPILE_DL_MONGODB)
+	ZEND_TSRMLS_CACHE_DEFINE();
+#endif
+#endif
 
 /* {{{ phongo_std_object_handlers */
 zend_object_handlers phongo_std_object_handlers;
@@ -1747,7 +1752,9 @@ static bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_
 
 static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
 {
-#ifdef PHONGO_TODO_INI
+#if PHP_VERSION_ID >= 70000
+	zval                      *tmp;
+#else
 	zval                     **tmp;
 #endif
 	php_stream_context        *ctx = NULL;
@@ -1756,12 +1763,15 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zv
 
 	ENTRY;
 
-#ifndef PHONGO_TODO_INI
-	(void)driverOptions;
-#endif
-
-
-#ifdef PHONGO_TODO_INI
+#if PHP_VERSION_ID >= 70000
+	if (driverOptions && (tmp = zend_hash_str_find(Z_ARRVAL_P(driverOptions), "debug", sizeof("debug")-1)) != NULL) {
+		zend_string *key = zend_string_init(PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI)-1, 0);
+		zend_string *value_str = zval_get_string(tmp);
+		zend_alter_ini_entry_ex(key, value_str, PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0);
+		zend_string_release(key);
+		zend_string_release(value_str);
+	}
+#else
 	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
 		convert_to_string(*tmp);
 
@@ -2221,11 +2231,13 @@ ZEND_INI_MH(OnUpdateDebug)
 
 
 /* {{{ INI entries */
-#ifdef PHONGO_TODO_INI
 PHP_INI_BEGIN()
+#if PHP_VERSION_ID >= 70000
+	STD_PHP_INI_ENTRY(PHONGO_DEBUG_INI,      PHONGO_DEBUG_INI_DEFAULT,   PHP_INI_ALL, OnUpdateDebug, debug,      zend_mongodb_globals,    mongodb_globals)
+#else
 	{ 0, PHP_INI_ALL, (char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), OnUpdateDebug, (void *) XtOffsetOf(zend_mongodb_globals, debug), (void *) &mglo, NULL, (char *)PHONGO_DEBUG_INI_DEFAULT, sizeof(PHONGO_DEBUG_INI_DEFAULT)-1, NULL, 0, 0, 0, NULL },
-PHP_INI_END()
 #endif
+PHP_INI_END()
 /* }}} */
 
 /* {{{ PHP_GINIT_FUNCTION */
@@ -2237,6 +2249,11 @@ PHP_GINIT_FUNCTION(mongodb)
 		php_phongo_realloc,
 		php_phongo_free,
 	};
+#if PHP_VERSION_ID >= 70000
+#if defined(COMPILE_DL_MONGODB) && defined(ZTS)
+	ZEND_TSRMLS_CACHE_UPDATE();
+#endif
+#endif
 	mongodb_globals->debug_fd = NULL;
 	mongodb_globals->bsonMemVTable = bsonMemVTable;
 
@@ -2249,9 +2266,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 
 
-#ifdef PHONGO_TODO_INI
 	REGISTER_INI_ENTRIES();
-#endif
 
 	/* Initialize libmongoc */
 	mongoc_init();
@@ -2328,9 +2343,7 @@ PHP_MSHUTDOWN_FUNCTION(mongodb)
 	/* Cleanup after libmongoc */
 	mongoc_cleanup();
 
-#ifdef PHONGO_TODO_INI
 	UNREGISTER_INI_ENTRIES();
-#endif
 
 	return SUCCESS;
 }

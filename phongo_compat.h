@@ -147,7 +147,7 @@
 
 #if PHP_VERSION_ID >= 70000
 # define phongo_char zend_string
-# define phongo_char_pdup(str) zend_string_copy(filename)->val
+# define phongo_char_pdup(str) pestrdup(filename->val, 1)
 # define phongo_char_free(str) zend_string_release(str)
 # define phongo_str(str) str->val
 # define phongo_create_object_retval zend_object*
