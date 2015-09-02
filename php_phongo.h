@@ -54,12 +54,16 @@ ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	bson_mem_vtable_t bsonMemVTable;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
-#ifdef ZTS
-#	define MONGODB_G(v) TSRMG(mongodb_globals_id, zend_mongodb_globals *, v)
-#	define mglo mongodb_globals_id
+#if PHP_VERSION_ID >= 70000
+#   define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)
 #else
-#	define MONGODB_G(v) (mongodb_globals.v)
-#	define mglo mongodb_globals
+#   ifdef ZTS
+#   	define MONGODB_G(v) TSRMG(mongodb_globals_id, zend_mongodb_globals *, v)
+#   	define mglo mongodb_globals_id
+#   else
+#   	define MONGODB_G(v) (mongodb_globals.v)
+#   	define mglo mongodb_globals
+#   endif
 #endif
 
 #include "php_phongo_classes.h"
