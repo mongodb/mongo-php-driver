@@ -7,10 +7,11 @@ BSON BSON\ObjectID #001 error
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$classname = BSON_NAMESPACE . "\\ObjectID";
-throws(function() use($classname) {
-$id = new $classname(new stdclass);
+throws(function() {
+    $classname = BSON_NAMESPACE . "\\ObjectID";
+    new $classname(new stdclass);
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
+
 ?>
 ===DONE===
 <?php exit(0); ?>
