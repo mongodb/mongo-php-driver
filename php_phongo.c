@@ -2031,7 +2031,9 @@ static void php_phongo_cursor_iterator_dtor(zend_object_iterator *iter TSRMLS_DC
 #endif
 	}
 
+#if PHP_VERSION_ID < 70000
 	efree(cursor_it);
+#endif
 } /* }}} */
 
 static int php_phongo_cursor_iterator_valid(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
@@ -2144,6 +2146,9 @@ zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce, zval 
 	cursor->got_iterator = 1;
 
 	cursor_it = ecalloc(1, sizeof(php_phongo_cursor_iterator));
+#if PHP_VERSION_ID >= 70000
+	zend_iterator_init(&cursor_it->intern);
+#endif
 
 #if PHP_VERSION_ID >= 70000
 	ZVAL_COPY(&cursor_it->intern.data, object);
