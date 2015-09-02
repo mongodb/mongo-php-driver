@@ -147,12 +147,20 @@ HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_D
 	array_init_size(&retval, 1);
 
 	if (intern->bson) {
-		zval *zv;
+#if PHP_VERSION_ID >= 70000
+			zval zv;
+#else
+			zval *zv;
+#endif
 
 		bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &zv);
-		add_assoc_zval_ex(&retval, ZEND_STRS("command"), zv);
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(&retval, "command", &zv);
+#else
+		ADD_ASSOC_ZVAL_EX(&retval, "command", zv);
+#endif
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("command"));
+		ADD_ASSOC_NULL_EX(&retval, "command");
 	}
 
 	return Z_ARRVAL(retval);

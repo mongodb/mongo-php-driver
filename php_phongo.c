@@ -1252,20 +1252,20 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 	ADD_ASSOC_STRING(retval, "host", (char *)sd->host.host);
 	ADD_ASSOC_LONG_EX(retval, "port", sd->host.port);
 	ADD_ASSOC_LONG_EX(retval, "type", sd->type);
-	add_assoc_bool_ex(retval, ZEND_STRS("is_primary"), sd->type == MONGOC_SERVER_RS_PRIMARY);
-	add_assoc_bool_ex(retval, ZEND_STRS("is_secondary"), sd->type == MONGOC_SERVER_RS_SECONDARY);
-	add_assoc_bool_ex(retval, ZEND_STRS("is_arbiter"), sd->type == MONGOC_SERVER_RS_ARBITER);
+	ADD_ASSOC_BOOL_EX(retval, "is_primary", sd->type == MONGOC_SERVER_RS_PRIMARY);
+	ADD_ASSOC_BOOL_EX(retval, "is_secondary", sd->type == MONGOC_SERVER_RS_SECONDARY);
+	ADD_ASSOC_BOOL_EX(retval, "is_arbiter", sd->type == MONGOC_SERVER_RS_ARBITER);
 	{
 		bson_iter_t iter;
 		zend_bool b = bson_iter_init_find_case(&iter, &sd->last_is_master, "hidden") && bson_iter_as_bool(&iter);
 
-		add_assoc_bool_ex(retval, ZEND_STRS("is_hidden"), b);
+		ADD_ASSOC_BOOL_EX(retval, "is_hidden", b);
 	}
 	{
 		bson_iter_t iter;
 		zend_bool b = bson_iter_init_find_case(&iter, &sd->last_is_master, "passive") && bson_iter_as_bool(&iter);
 
-		add_assoc_bool_ex(retval, ZEND_STRS("is_passive"), b);
+		ADD_ASSOC_BOOL_EX(retval, "is_passive", b);
 	}
 	if (sd->tags.len) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
@@ -1274,7 +1274,11 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		bson_to_zval_ex(bson_get_data(&sd->tags), sd->tags.len, &state);
-		add_assoc_zval_ex(retval, ZEND_STRS("tags"), state.zchild);
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
+#else
+		ADD_ASSOC_ZVAL_EX(retval, "tags", state.zchild);
+#endif
 	}
 	{
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
@@ -1283,7 +1287,11 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		bson_to_zval_ex(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
-		add_assoc_zval_ex(retval, ZEND_STRS("last_is_master"), state.zchild);
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", &state.zchild);
+#else
+		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", state.zchild);
+#endif
 	}
 	ADD_ASSOC_LONG_EX(retval, "round_trip_time", sd->round_trip_time);
 
@@ -1302,9 +1310,13 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		bson_to_zval_ex(bson_get_data(&read_prefs->tags), read_prefs->tags.len, &state);
-		add_assoc_zval_ex(retval, ZEND_STRS("tags"), state.zchild);
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
+#else
+		ADD_ASSOC_ZVAL_EX(retval, "tags", state.zchild);
+#endif
 	} else {
-		add_assoc_null_ex(retval, ZEND_STRS("tags"));
+		ADD_ASSOC_NULL_EX(retval, "tags");
 	}
 } /* }}} */
 
@@ -1322,16 +1334,16 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
 		ADD_ASSOC_LONG_EX(retval, ZEND_STRS("w"), w);
 	} else {
-		add_assoc_null_ex(retval, ZEND_STRS("w"));
+		ADD_ASSOC_NULL_EX(retval, ZEND_STRS("w"));
 	}
 
-	add_assoc_bool_ex(retval, ZEND_STRS("wmajority"), mongoc_write_concern_get_wmajority(write_concern));
+	ADD_ASSOC_BOOL_EX(retval, ZEND_STRS("wmajority"), mongoc_write_concern_get_wmajority(write_concern));
 	ADD_ASSOC_LONG_EX(retval, ZEND_STRS("wtimeout"), mongoc_write_concern_get_wtimeout(write_concern));
 
 	if (write_concern->journal != MONGOC_WRITE_CONCERN_JOURNAL_DEFAULT) {
-		add_assoc_bool_ex(retval, ZEND_STRS("journal"), mongoc_write_concern_get_journal(write_concern));
+		ADD_ASSOC_BOOL_EX(retval, "journal", mongoc_write_concern_get_journal(write_concern));
 	} else {
-		add_assoc_null_ex(retval, ZEND_STRS("journal"));
+		ADD_ASSOC_NULL_EX(retval, "journal");
 	}
 } /* }}} */
 
@@ -1342,7 +1354,7 @@ void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor) /* {
 
 		ADD_ASSOC_LONG_EX(retval, "stamp", cursor->stamp);
 
-#define _ADD_BOOL(z, field) add_assoc_bool_ex(z, ZEND_STRS(#field), cursor->field)
+#define _ADD_BOOL(z, field) ADD_ASSOC_BOOL_EX(z, #field, cursor->field)
 		_ADD_BOOL(retval, is_command);
 		_ADD_BOOL(retval, sent);
 		_ADD_BOOL(retval, done);
@@ -1357,28 +1369,49 @@ void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor) /* {
 		 * and current documents so that users can differentiate BSON arrays
 		 * and documents. */
 		{
+#if PHP_VERSION_ID >= 70000
+			zval zv;
+#else
 			zval *zv;
+#endif
 
 			bson_to_zval(bson_get_data(&cursor->query), cursor->query.len, &zv);
-			add_assoc_zval_ex(retval, ZEND_STRS("query"), zv);
-		}
-		{
-			zval *zv;
-
-			bson_to_zval(bson_get_data(&cursor->fields), cursor->fields.len, &zv);
-			add_assoc_zval_ex(retval, ZEND_STRS("fields"), zv);
-		}
-		{
-#ifdef PHONGO_TODO_MAKE_STD_ZVAL
-			zval *read_preference = NULL;
-
-			MAKE_STD_ZVAL(read_preference);
-			php_phongo_read_preference_to_zval(read_preference, cursor->read_prefs);
-			add_assoc_zval_ex(retval, ZEND_STRS("read_preference"), read_preference);
+#if PHP_VERSION_ID >= 70000
+			ADD_ASSOC_ZVAL_EX(retval, "query", &zv);
+#else
+			ADD_ASSOC_ZVAL_EX(retval, "query", zv);
 #endif
 		}
+		{
+#if PHP_VERSION_ID >= 70000
+			zval zv;
+#else
+			zval *zv;
+#endif
 
-#define _ADD_INT(z, field) add_assoc_long_ex(z, ZEND_STRS(#field), cursor->field)
+			bson_to_zval(bson_get_data(&cursor->fields), cursor->fields.len, &zv);
+#if PHP_VERSION_ID >= 70000
+			ADD_ASSOC_ZVAL_EX(retval, "fields", &zv);
+#else
+			ADD_ASSOC_ZVAL_EX(retval, "fields", zv);
+#endif
+		}
+		{
+#if PHP_VERSION_ID >= 70000
+			zval read_preference;
+
+			php_phongo_read_preference_to_zval(&read_preference, cursor->read_prefs);
+			ADD_ASSOC_ZVAL_EX(retval, "read_preference", &read_preference);
+#else
+			zval *read_preference = NULL;
+			MAKE_STD_ZVAL(read_preference);
+			php_phongo_read_preference_to_zval(read_preference, cursor->read_prefs);
+			ADD_ASSOC_ZVAL_EX(retval, "read_preference", read_preference);
+#endif
+
+		}
+
+#define _ADD_INT(z, field) ADD_ASSOC_LONG_EX(z, #field, cursor->field)
 		_ADD_INT(retval, flags);
 		_ADD_INT(retval, skip);
 		_ADD_INT(retval, limit);
@@ -1388,10 +1421,18 @@ void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor) /* {
 
 		ADD_ASSOC_STRING(retval, "ns", (char *)cursor->ns);
 		if (cursor->current) {
+#if PHP_VERSION_ID >= 70000
+			zval zv;
+#else
 			zval *zv;
+#endif
 
 			bson_to_zval(bson_get_data(cursor->current), cursor->current->len, &zv);
-			add_assoc_zval_ex(retval, ZEND_STRS("current_doc"), zv);
+#if PHP_VERSION_ID >= 70000
+			ADD_ASSOC_ZVAL_EX(retval, "current_doc", &zv);
+#else
+			ADD_ASSOC_ZVAL_EX(retval, "current_doc", zv);
+#endif
 		}
 
 } /* }}} */
