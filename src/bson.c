@@ -183,7 +183,11 @@ bool php_phongo_bson_visit_after(const bson_iter_t *iter ARG_UNUSED, const char 
 #endif
 void php_phongo_bson_visit_corrupt(const bson_iter_t *iter ARG_UNUSED, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 
 	mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "Corrupt BSON data detected!");
 
@@ -196,7 +200,11 @@ void php_phongo_bson_visit_corrupt(const bson_iter_t *iter ARG_UNUSED, void *dat
 /* }}} */
 bool php_phongo_bson_visit_double(const bson_iter_t *iter ARG_UNUSED, const char *key, double v_double, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 
 	add_assoc_double(retval, key, v_double);
 
@@ -205,7 +213,11 @@ bool php_phongo_bson_visit_double(const bson_iter_t *iter ARG_UNUSED, const char
 /* }}} */
 bool php_phongo_bson_visit_utf8(const bson_iter_t *iter ARG_UNUSED, const char *key, size_t v_utf8_len, const char *v_utf8, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 
 	ADD_ASSOC_STRING_EX(retval, key, strlen(key), (char *)v_utf8, v_utf8_len);
 
@@ -214,7 +226,11 @@ bool php_phongo_bson_visit_utf8(const bson_iter_t *iter ARG_UNUSED, const char *
 /* }}} */
 bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char *key, bson_subtype_t v_subtype, size_t v_binary_len, const uint8_t *v_binary, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 	TSRMLS_FETCH();
 
 	if (v_subtype == 0x80 && strcmp(key, PHONGO_ODM_FIELD_NAME) == 0) {
@@ -265,13 +281,16 @@ bool php_phongo_bson_visit_undefined(const bson_iter_t *iter ARG_UNUSED, const c
 
 bool php_phongo_bson_visit_oid(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_oid_t *v_oid, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
 	php_phongo_objectid_new_from_oid(&zchild, v_oid TSRMLS_CC);
-
-	add_assoc_zval(retval, key, &zchild);
+	ADD_ASSOC_ZVAL(retval, key, &zchild);
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -288,7 +307,11 @@ bool php_phongo_bson_visit_oid(const bson_iter_t *iter ARG_UNUSED, const char *k
 /* }}} */
 bool php_phongo_bson_visit_bool(const bson_iter_t *iter ARG_UNUSED, const char *key, bool v_bool, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 
 	add_assoc_bool(retval, key, v_bool);
 
@@ -297,7 +320,11 @@ bool php_phongo_bson_visit_bool(const bson_iter_t *iter ARG_UNUSED, const char *
 /* }}} */
 bool php_phongo_bson_visit_date_time(const bson_iter_t *iter ARG_UNUSED, const char *key, int64_t msec_since_epoch, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -319,7 +346,11 @@ bool php_phongo_bson_visit_date_time(const bson_iter_t *iter ARG_UNUSED, const c
 /* }}} */
 bool php_phongo_bson_visit_null(const bson_iter_t *iter ARG_UNUSED, const char *key, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 
 	add_assoc_null(retval, key);
 
@@ -328,7 +359,11 @@ bool php_phongo_bson_visit_null(const bson_iter_t *iter ARG_UNUSED, const char *
 /* }}} */
 bool php_phongo_bson_visit_regex(const bson_iter_t *iter ARG_UNUSED, const char *key, const char *v_regex, const char *v_options, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -360,7 +395,11 @@ bool php_phongo_bson_visit_dbpointer(const bson_iter_t *iter ARG_UNUSED, const c
 #endif
 bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const char *key, size_t v_code_len, const char *v_code, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -392,7 +431,11 @@ bool php_phongo_bson_visit_symbol(const bson_iter_t *iter ARG_UNUSED, const char
 #endif
 bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter ARG_UNUSED, const char *key, size_t v_code_len, const char *v_code, const bson_t *v_scope, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -415,7 +458,11 @@ bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter ARG_UNUSED, const 
 /* }}} */
 bool php_phongo_bson_visit_int32(const bson_iter_t *iter ARG_UNUSED, const char *key, int32_t v_int32, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 
 	add_assoc_long(retval, key, v_int32);
 
@@ -424,7 +471,11 @@ bool php_phongo_bson_visit_int32(const bson_iter_t *iter ARG_UNUSED, const char 
 /* }}} */
 bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter ARG_UNUSED, const char *key, uint32_t v_timestamp, uint32_t v_increment, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -447,7 +498,11 @@ bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter ARG_UNUSED, const c
 /* }}} */
 bool php_phongo_bson_visit_int64(const bson_iter_t *iter ARG_UNUSED, const char *key, int64_t v_int64, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 
 
 	ADD_ASSOC_INT64(retval, key, v_int64);
@@ -457,7 +512,11 @@ bool php_phongo_bson_visit_int64(const bson_iter_t *iter ARG_UNUSED, const char 
 /* }}} */
 bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter ARG_UNUSED, const char *key, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -479,7 +538,11 @@ bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter ARG_UNUSED, const char
 /* }}} */
 bool php_phongo_bson_visit_minkey(const bson_iter_t *iter ARG_UNUSED, const char *key, void *data) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -531,24 +594,25 @@ static const bson_visitor_t php_bson_visitors = {
 
 bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_t *v_document, void *data)
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 	bson_iter_t child;
 	TSRMLS_FETCH();
 
 	if (bson_iter_init(&child, v_document)) {
-#if PHP_VERSION_ID >= 70000
-		zval zv;
-#endif
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
 		state.map = ((php_phongo_bson_state *)data)->map;
 
 #if PHP_VERSION_ID >= 70000
-		state.zchild = &zv;
+		array_init(&state.zchild);
 #else
 		MAKE_STD_ZVAL(state.zchild);
-#endif
 		array_init(state.zchild);
+#endif
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
 			/* If php_phongo_bson_visit_binary() finds an ODM class, it should
@@ -573,9 +637,9 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 					zval obj;
 
 					object_init_ex(&obj, state.odm ? state.odm : state.map.document);
-					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
+					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
 					add_assoc_zval(retval, key, &obj);
-					zval_ptr_dtor(state.zchild);
+					zval_ptr_dtor(&state.zchild);
 #else
 					zval *obj = NULL;
 
@@ -590,9 +654,15 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 
 				case PHONGO_TYPEMAP_NATIVE_OBJECT:
 				default:
+#if PHP_VERSION_ID >= 70000
+					object_and_properties_init(&state.zchild, zend_standard_class_def, Z_ARRVAL(state.zchild));
+					add_assoc_zval(retval, key, &state.zchild);
+					Z_SET_REFCOUNT(state.zchild, 1);
+#else
 					object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
 					add_assoc_zval(retval, key, state.zchild);
 					Z_SET_REFCOUNT_P(state.zchild, 1);
+#endif
 			}
 		}
 	}
@@ -603,25 +673,25 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 
 bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_t *v_array, void *data)
 {
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+#else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+#endif
 	bson_iter_t child;
 	TSRMLS_FETCH();
 
 	if (bson_iter_init(&child, v_array)) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-#if PHP_VERSION_ID >= 70000
-		zval zv;
-#endif
 
 		state.map = ((php_phongo_bson_state *)data)->map;
 
 #if PHP_VERSION_ID >= 70000
-		state.zchild = &zv;
+		array_init(&state.zchild);
 #else
 		MAKE_STD_ZVAL(state.zchild);
-#endif
-
 		array_init(state.zchild);
+#endif
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
 
@@ -631,9 +701,9 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 					zval obj;
 
 					object_init_ex(&obj, state.map.array);
-					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
+					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
 					add_assoc_zval(retval, key, &obj);
-					zval_ptr_dtor(state.zchild);
+					zval_ptr_dtor(&state.zchild);
 #else
 					zval *obj = NULL;
 
@@ -1186,16 +1256,19 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 }
 
 /* }}} */
+#if PHP_VERSION_ID >= 70000
+int bson_to_zval(const unsigned char *data, int data_len, zval *zv)
+#else
 int bson_to_zval(const unsigned char *data, int data_len, zval **zv)
+#endif
 {
 	int retval = 0;
 	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-#if PHP_VERSION_ID >= 70000
-		state.zchild = *zv;
-#endif
 	retval = bson_to_zval_ex(data, data_len, &state);
-#if PHP_VERSION_ID < 70000
+#if PHP_VERSION_ID >= 70000
+	ZVAL_COPY(zv, &state.zchild);
+#else
 	*zv = state.zchild;
 #endif
 
@@ -1203,9 +1276,6 @@ int bson_to_zval(const unsigned char *data, int data_len, zval **zv)
 }
 int bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state)
 {
-#if PHP_VERSION_ID >= 70000
-	   	  zval zv;
-#endif
 	      bson_reader_t *reader;
 	      bson_iter_t    iter;
 	const bson_t        *b;
@@ -1214,14 +1284,12 @@ int bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_sta
 
 #if PHP_VERSION_ID < 70000
 	MAKE_STD_ZVAL(state->zchild);
-#endif
 
-#if PHP_VERSION_ID >= 70000
-	state->zchild = &zv;
-#endif
 	/* Ensure that state->zchild has a type, since the calling code may want to
 	 * zval_ptr_dtor() it if we throw an exception. */
 	ZVAL_NULL(state->zchild);
+
+#endif
 
 	reader = bson_reader_new_from_data(data, data_len);
 
@@ -1240,7 +1308,11 @@ int bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_sta
 	/* We initialize an array because it will either be returned as-is (native
 	 * array in type map), passed to bsonUnserialize() (ODM class), or used to
 	 * initialize a stdClass object (native object in type map). */
+#if PHP_VERSION_ID >= 70000
+	array_init(&state->zchild);
+#else
 	array_init(state->zchild);
+#endif
 	bson_iter_visit_all(&iter, &php_bson_visitors, state);
 
 	/* If php_phongo_bson_visit_binary() finds an ODM class, it should supersede
@@ -1259,9 +1331,9 @@ int bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_sta
 			zval obj;
 
 			object_init_ex(&obj, state->odm ? state->odm : state->map.root);
-			zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state->zchild);
-			zval_ptr_dtor(state->zchild);
-			state->zchild = &obj;
+			zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state->zchild);
+			zval_ptr_dtor(&state->zchild);
+			ZVAL_COPY(&state->zchild, &obj);
 #else
 			zval *obj = NULL;
 
@@ -1277,7 +1349,11 @@ int bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_sta
 
 		case PHONGO_TYPEMAP_NATIVE_OBJECT:
 		default:
+#if PHP_VERSION_ID >= 70000
+			object_and_properties_init(&state->zchild, zend_standard_class_def, Z_ARRVAL(state->zchild));
+#else
 			object_and_properties_init(state->zchild, zend_standard_class_def, Z_ARRVAL_P(state->zchild));
+#endif
 	}
 
 	if (bson_reader_read(reader, &eof) || !eof) {
@@ -1393,14 +1469,14 @@ PHP_FUNCTION(toPHP)
 	php_phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
 
 	if (!bson_to_zval_ex((const unsigned char *)data, data_len, &state)) {
-#if PHP_VERSION_ID >= 70000
-		zval_ptr_dtor(state.zchild);
-#else
 		zval_ptr_dtor(&state.zchild);
-#endif
 		RETURN_NULL();
 	}
+#if PHP_VERSION_ID >= 70000
+	RETURN_ZVAL(&state.zchild, 0, 1);
+#else
 	RETURN_ZVAL(state.zchild, 0, 1);
+#endif
 }
 /* }}} */
 

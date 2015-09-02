@@ -176,7 +176,11 @@ PHP_METHOD(Server, getTags)
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		bson_to_zval_ex(bson_get_data(&sd->tags), sd->tags.len, &state);
+#if PHP_VERSION_ID >= 70000
+		RETURN_ZVAL(&state.zchild, 0, 1);
+#else
 		RETURN_ZVAL(state.zchild, 0, 1);
+#endif
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
@@ -205,7 +209,12 @@ PHP_METHOD(Server, getInfo)
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		bson_to_zval_ex(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
+
+#if PHP_VERSION_ID >= 70000
+		RETURN_ZVAL(&state.zchild, 0, 1);
+#else
 		RETURN_ZVAL(state.zchild, 0, 1);
+#endif
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
