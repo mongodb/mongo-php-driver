@@ -199,6 +199,7 @@
 # define PHONGO_RETVAL_STRINGL(s, slen) RETVAL_STRINGL(s, slen, 1)
 # define PHONGO_RETURN_STRINGL(s, slen) RETURN_STRINGL(s, slen, 1)
 # define PHONGO_RETURN_STRING(s) RETURN_STRING(s, 1)
+# define PHP_STREAM_CONTEXT(stream) ((php_stream_context*) (stream)->context)
 #endif
 
 
