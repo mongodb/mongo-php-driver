@@ -424,10 +424,10 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 		}
 
 		if (!bson_to_zval(data, len, &writeconcernerror->info)) {
-#if PHP_VERSION_ID >= 70000
-			zval_ptr_dtor(writeconcernerror->info);
-#else
 			zval_ptr_dtor(&writeconcernerror->info);
+#if PHP_VERSION_ID >= 70000
+			ZVAL_UNDEF(&writeconcernerror->info);
+#else
 			writeconcernerror->info = NULL;
 #endif
 
@@ -458,12 +458,13 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 		bson_append_iter(&info, NULL, 0, &iter);
 
 		if (!bson_to_zval(bson_get_data(&info), info.len, &writeerror->info)) {
-#if PHP_VERSION_ID >= 70000
-			zval_ptr_dtor(writeerror->info);
-#else
 			zval_ptr_dtor(&writeerror->info);
+#if PHP_VERSION_ID >= 70000
+			ZVAL_UNDEF(&writeerror->info);
+#else
 			writeerror->info = NULL;
 #endif
+
 			return false;
 		}
 	}
@@ -531,6 +532,25 @@ mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
 void phongo_unwrap_exception(bool retval, zval *return_value TSRMLS_DC)
 {
 	if (!retval) {
+#if PHP_VERSION_ID >= 70000
+		zval ex;
+
+		EXCEPTION_P(EG(exception), ex);
+		if (instanceof_function(Z_OBJCE(ex), php_phongo_bulkwriteexception_ce TSRMLS_CC)) {
+			php_phongo_writeresult_t *wr = php_phongo_writeresult_get_from_bulkwriteexception(&ex TSRMLS_CC);
+
+			/* Clear the BulkWriteException */
+			zend_clear_exception(TSRMLS_C);
+
+			/* Throw WriteError and/or WriteConcernErrors */
+			php_phongo_throw_write_errors(wr TSRMLS_CC);
+			php_phongo_throw_write_concern_error(wr TSRMLS_CC);
+
+			if (instanceof_function(Z_OBJCE(ex), php_phongo_writeexception_ce TSRMLS_CC)) {
+				zend_update_property(Z_OBJCE(ex), &ex, ZEND_STRL("writeResult"), return_value TSRMLS_CC);
+			}
+		}
+#else
 		zval *ex = NULL;
 
 		EXCEPTION_P(EG(exception), ex);
@@ -548,6 +568,7 @@ void phongo_unwrap_exception(bool retval, zval *return_value TSRMLS_DC)
 				zend_update_property(Z_OBJCE_P(ex), ex, ZEND_STRL("writeResult"), return_value TSRMLS_CC);
 			}
 		}
+#endif
 	}
 }
 
@@ -2113,13 +2134,13 @@ php_phongo_writeresult_t *php_phongo_writeresult_get_from_bulkwriteexception(zva
 
 static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ */
 {
-	if (cursor->visitor_data.zchild) {
-#if PHP_VERSION_ID >= 70000
-		zval_ptr_dtor(cursor->visitor_data.zchild);
-#else
+	if (!Z_ISUNDEF(cursor->visitor_data.zchild)) {
 		zval_ptr_dtor(&cursor->visitor_data.zchild);
-#endif
+#if PHP_VERSION_ID >= 70000
+		ZVAL_UNDEF(&cursor->visitor_data.zchild);
+#else
 		cursor->visitor_data.zchild = NULL;
+#endif
 	}
 } /* }}} */
 
@@ -2154,7 +2175,7 @@ static int php_phongo_cursor_iterator_valid(zend_object_iterator *iter TSRMLS_DC
 {
 	php_phongo_cursor_t *cursor = ((php_phongo_cursor_iterator *)iter)->cursor;
 
-	if (cursor->visitor_data.zchild) {
+	if (!Z_ISUNDEF(cursor->visitor_data.zchild)) {
 		return SUCCESS;
 	}
 
@@ -2186,7 +2207,7 @@ static zval* php_phongo_cursor_iterator_get_current_data(zend_object_iterator *i
 {
 	php_phongo_cursor_t *cursor = ((php_phongo_cursor_iterator *)iter)->cursor;
 
-	return cursor->visitor_data.zchild;
+	return &cursor->visitor_data.zchild;
 } /* }}} */
 #endif
 
@@ -2261,10 +2282,10 @@ zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce, zval 
 
 	cursor_it = ecalloc(1, sizeof(php_phongo_cursor_iterator));
 
-	Z_ADDREF_P(object);
 #if PHP_VERSION_ID >= 70000
 	ZVAL_COPY(&cursor_it->intern.data, object);
 #else
+	Z_ADDREF_P(object);
 	cursor_it->intern.data  = (void*)object;
 #endif
 	cursor_it->intern.funcs = &php_phongo_cursor_iterator_funcs;
@@ -2273,7 +2294,7 @@ zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce, zval 
 
 	php_phongo_cursor_free_current(cursor_it->cursor);
 
-	return (zend_object_iterator*)cursor_it;
+	return &cursor_it->intern;
 } /* }}} */
 /* }}} */
 
