@@ -1,6 +1,7 @@
 --TEST--
 MongoDB\Driver\Cursor get_iterator handler does not yield multiple iterators (IteratorIterator)
 --SKIPIF--
+<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM cannot detect the *wrapping* of a Cursor"); ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
