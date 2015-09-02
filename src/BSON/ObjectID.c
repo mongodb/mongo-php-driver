@@ -172,7 +172,7 @@ static int php_phongo_objectid_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* 
 HashTable *php_phongo_objectid_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_objectid_t    *intern;
-#if PHP_VERSION_ID <= 70000
+#if PHP_VERSION_ID >= 70000
 	zval                      retval;
 #else
 	zval                      retval = zval_used_for_init;
