@@ -213,11 +213,16 @@ HashTable *php_phongo_writeerror_get_debug_info(zval *object, int *is_temp TSRML
 	ADD_ASSOC_STRING(&retval, "message", intern->message);
 	ADD_ASSOC_LONG_EX(&retval, "code", intern->code);
 	ADD_ASSOC_LONG_EX(&retval, "index", intern->index);
-	if (intern->info) {
+	if (!Z_ISUNDEF(intern->info)) {
+#if PHP_VERSION_ID >= 70000
+		Z_ADDREF(intern->info);
+		ADD_ASSOC_ZVAL_EX(&retval, "info", &intern->info);
+#else
 		Z_ADDREF_P(intern->info);
-		add_assoc_zval_ex(&retval, ZEND_STRS("info"), intern->info);
+		ADD_ASSOC_ZVAL_EX(&retval, "info", intern->info);
+#endif
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("info"));
+		ADD_ASSOC_NULL_EX(&retval, "info");
 	}
 
 	return Z_ARRVAL(retval);

@@ -326,17 +326,17 @@ HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS
 	if (intern->bulk->database) {
 		ADD_ASSOC_STRING(&retval, "database", intern->bulk->database);
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("database"));
+		ADD_ASSOC_NULL_EX(&retval, "database");
 	}
 
 	if (intern->bulk->collection) {
 		ADD_ASSOC_STRING(&retval, "collection", intern->bulk->collection);
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("collection"));
+		ADD_ASSOC_NULL_EX(&retval, "collection");
 	}
 
-	add_assoc_bool_ex(&retval, ZEND_STRS("ordered"), intern->bulk->flags.ordered);
-	add_assoc_bool_ex(&retval, ZEND_STRS("executed"), intern->bulk->executed);
+	ADD_ASSOC_BOOL_EX(&retval, "ordered", intern->bulk->flags.ordered);
+	ADD_ASSOC_BOOL_EX(&retval, "executed", intern->bulk->executed);
 	ADD_ASSOC_LONG_EX(&retval, "server_id", intern->bulk->hint);
 
 	if (intern->bulk->write_concern) {
@@ -344,16 +344,16 @@ HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS
 		zval write_concern;
 
 		php_phongo_write_concern_to_zval(&write_concern, intern->bulk->write_concern);
-		add_assoc_zval_ex(&retval, ZEND_STRS("write_concern"), &write_concern);
+		ADD_ASSOC_ZVAL_EX(&retval, "write_concern", &write_concern);
 #else
 		zval *write_concern = NULL;
 		MAKE_STD_ZVAL(write_concern);
 
 		php_phongo_write_concern_to_zval(write_concern, intern->bulk->write_concern);
-		add_assoc_zval_ex(&retval, ZEND_STRS("write_concern"), write_concern);
+		ADD_ASSOC_ZVAL_EX(&retval, "write_concern", write_concern);
 #endif
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("write_concern"));
+		ADD_ASSOC_NULL_EX(&retval, "write_concern");
 	}
 
 
