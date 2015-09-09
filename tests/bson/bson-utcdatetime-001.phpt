@@ -51,8 +51,8 @@ Test#1 { "0" : { "$date" : 1416445411987 } }
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 bool(true)
-Test#2 { }
-string(3) "{ }"
-string(3) "{ }"
+Test#2 { "0" : {  } }
+string(14) "{ "0" : {  } }"
+string(14) "{ "0" : {  } }"
 bool(false)
 ===DONE===
