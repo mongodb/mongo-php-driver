@@ -51,8 +51,8 @@ Test#1 { "0" : { "$date" : 1416445411987 } }
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 bool(true)
-Test#2 { "0" : {  } }
-string(14) "{ "0" : {  } }"
-string(14) "{ "0" : {  } }"
+Test#2 { "0" : { "date" : "2014-11-20 01:03:31.987%r(0+)%r", "timezone_type" : 1, "timezone" : "+00:00" } }
+string(98) "{ "0" : { "date" : "2014-11-20 01:03:31.987%r(0+)%r", "timezone_type" : 1, "timezone" : "+00:00" } }"
+string(98) "{ "0" : { "date" : "2014-11-20 01:03:31.987%r(0+)%r", "timezone_type" : 1, "timezone" : "+00:00" } }"
 bool(false)
 ===DONE===

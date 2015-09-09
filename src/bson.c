@@ -599,15 +599,7 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 {
 	bson_t child;
 
-	if (Z_TYPE_P(object) != IS_OBJECT || instanceof_function(Z_OBJCE_P(object), zend_standard_class_def TSRMLS_CC)) {
-		mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding as-if was stdclass");
-		bson_append_document_begin(bson, key, key_len, &child);
-		zval_to_bson(object, flags, &child, NULL TSRMLS_CC);
-		bson_append_document_end(bson, &child);
-		return;
-	}
-
-	if (instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce TSRMLS_CC)) {
+	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce TSRMLS_CC)) {
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_serializable_ce TSRMLS_CC)) {
 			zval *obj_data = NULL;
 			bson_t child;
@@ -718,9 +710,9 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 		}
 	}
 
-	/* Even if we don't know how to encode the object, ensure that we at least
-	 * create an empty BSON document. */
+	mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding document");
 	bson_append_document_begin(bson, key, key_len, &child);
+	zval_to_bson(object, flags, &child, NULL TSRMLS_CC);
 	bson_append_document_end(bson, &child);
 }
 void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char *key, long key_len, int entry_type, zval *entry TSRMLS_DC)
