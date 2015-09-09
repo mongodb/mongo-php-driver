@@ -12,21 +12,21 @@ $manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $classname = BSON_NAMESPACE . "\\UTCDateTime";
 $utcdatetime = new $classname("1416445411987");
-$result = $manager->executeInsert(NS, array('_id' => 1, 'x' => $utcdatetime));
+
+$manager->executeInsert(NS, array('_id' => 1, 'x' => $utcdatetime));
+
 $query = new MongoDB\Driver\Query(array('_id' => 1));
 $cursor = $manager->executeQuery(NS, $query);
-$array = iterator_to_array($cursor);
+$results = iterator_to_array($cursor);
 
-
-$date = $utcdatetime->toDateTime();
-var_dump($date->format(DATE_RSS));
-
-echo $utcdatetime, "\n";
+$datetime = $utcdatetime->toDateTime();
+var_dump($datetime->format(DATE_RSS));
+var_dump((string) $utcdatetime);
 
 $tests = array(
     array($utcdatetime),
-    array($array[0]->x),
-    array($date),
+    array($results[0]->x),
+    array($datetime),
 );
 
 foreach($tests as $n => $test) {
@@ -42,7 +42,7 @@ foreach($tests as $n => $test) {
 <?php exit(0); ?>
 --EXPECTF--
 string(31) "Thu, 20 Nov 2014 01:03:31 +0000"
-1416445411987
+string(13) "1416445411987"
 Test#0 { "0" : { "$date" : 1416445411987 } }
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
