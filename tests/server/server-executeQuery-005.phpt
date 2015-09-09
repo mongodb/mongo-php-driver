@@ -15,6 +15,8 @@ $command = new MongoDB\Driver\Command(array('profile' => 2));
 $cursor = $secondary->executeCommand(DATABASE_NAME, $command);
 $result = current($cursor->toArray());
 
+printf("Set profile level to 2 successfully: %s\n", (empty($result->ok) ? 'no' : 'yes'));
+
 if (empty($result->ok)) {
     exit("Could not set profile level\n");
 }
@@ -40,14 +42,13 @@ $command = new MongoDB\Driver\Command(array('profile' => 0));
 $cursor = $secondary->executeCommand(DATABASE_NAME, $command);
 $result = current($cursor->toArray());
 
-if (empty($result->ok)) {
-    exit("Could not set profile level\n");
-}
+printf("Set profile level to 0 successfully: %s\n", (empty($result->ok) ? 'no' : 'yes'));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Set profile level to 2 successfully: yes
 object(stdClass)#%d (%d) {
   ["$query"]=>
   object(stdClass)#%d (%d) {
@@ -63,4 +64,5 @@ object(stdClass)#%d (%d) {
     }
   }
 }
+Set profile level to 0 successfully: yes
 ===DONE===
