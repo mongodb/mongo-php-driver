@@ -236,6 +236,7 @@ function throws($function, $exceptionname, $infunction = null) {
     try {
         $function();
     } catch(Exception $e) {
+        $message = str_replace(array("\n", "\r"), ' ', $e->getMessage());
         if ($e instanceof $exceptionname) {
             if ($infunction) {
                 $trace = $e->getTrace();
@@ -243,19 +244,17 @@ function throws($function, $exceptionname, $infunction = null) {
                 if (strcasecmp($function, $infunction) == 0) {
                     printf("OK: Got %s thrown from %s\n", $exceptionname, $infunction);
                 } else {
-                    $message = str_replace(array("\n", "\r"), ' ', $e->getMessage());
                     printf("ALMOST: Got %s - but was thrown in %s, not %s (%s)\n", $exceptionname, $function, $infunction, $message);
                 }
                 return $e->getMessage();
             }
             printf("OK: Got %s\n", $exceptionname);
         } else {
-            $message = str_replace(array("\n", "\r"), ' ', $e->getMessage());
-            printf("ALMOST: Got %s - expected %s: %s\n", get_class($e), $exceptionname, $message);
+            printf("ALMOST: Got %s (%s) - expected %s\n", get_class($e), $message, $exceptionname);
         }
         return $e->getMessage();
     }
-    echo "FAILED: Expected $exceptionname thrown!\n";
+    echo "FAILED: Expected $exceptionname thrown, but no exception thrown!\n";
 }
 function printServer(MongoDB\Driver\Server $server)
 {
