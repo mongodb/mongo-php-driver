@@ -1,3 +1,120 @@
+RELEASE 1.0.0beta1
+-------------
+2015-09-10  Jeremy Mikola  <jmikola@gmail.com>
+	* Bump extension version to 1.0.0beta1
+
+2015-09-09  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #98
+
+2015-09-09  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-381: Print whether profile commands were successful
+
+2015-09-02  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-381: Server::executeQuery/Command() should take a read preference
+
+2015-09-04  Jeremy Mikola  <jmikola@gmail.com>
+	* Include unknown error domain in log messages
+
+2015-09-02  Jeremy Mikola  <jmikola@gmail.com>
+	* Fall back to driver's RuntimeException instead of SPL
+
+2015-09-04  Hannes Magnusson  <bjori@10gen.com>
+	* Merge pull request #100 from bjori/master
+
+2015-09-04  Hannes Magnusson  <bjori@php.net>
+	* s/10gen-labs/mongodb-labs/g after org changes
+
+2015-09-03  Hannes Magnusson  <bjori@10gen.com>
+	* Merge pull request #99 from bjori/master
+
+2015-08-20  Hannes Magnusson  <bjori@php.net>
+	* Bump libmongoc to 1.2-beta1
+
+2015-09-02  Derick Rethans  <github@derickrethans.nl>
+	* Merged pull request #95
+
+2015-09-02  Derick Rethans  <github@derickrethans.nl>
+	* Disable the test for a double wrap with IteratorIterator()
+
+2015-09-02  Derick Rethans  <github@derickrethans.nl>
+	* Disable test that dumps hex codes for generated BSON
+
+2015-09-02  Derick Rethans  <github@derickrethans.nl>
+	* Merged pull request #96
+
+2015-09-02  Derick Rethans  <github@derickrethans.nl>
+	* Fixed getServers test to include milliseconds in UTCDate dumps
+
+2015-09-02  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #92
+
+2015-08-30  Jeremy Mikola  <jmikola@gmail.com>
+	* Clean up BSON error tests
+
+2015-09-01  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #80
+
+2015-08-14  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-361: Manager::getServers() should omit unknown servers
+
+2015-09-01  Derick Rethans  <github@derickrethans.nl>
+	* Merged pull request #91
+
+2015-08-28  Derick Rethans  <github@derickrethans.nl>
+	* HHVM encodes __pclass last, so disable these tests here.
+
+2015-08-26  Derick Rethans  <github@derickrethans.nl>
+	* phpinfo() behaves totally different in HHVM
+
+2015-08-28  Derick Rethans  <github@derickrethans.nl>
+	* Merged pull request #89
+
+2015-08-27  Derick Rethans  <github@derickrethans.nl>
+	* HHVM does not allow for current() on an object
+
+2015-08-27  Derick Rethans  <github@derickrethans.nl>
+	* Split tests for invalid arguments out into their own files, and ignore them for HHVM
+
+2015-08-28  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #88
+
+2015-08-26  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-337: BSON\Javascript debug handler
+
+2015-08-26  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-339: BSON\Timestamp debug handler
+
+2015-08-26  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-340: BSON\UTCDateTime debug handler
+
+2015-08-26  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-338: BSON\Regex debug handler
+
+2015-08-26  Jeremy Mikola  <jmikola@gmail.com>
+	* Fix test expectation for builds with top-level BSON namespace
+
+2015-08-21  Jeremy Mikola  <jmikola@gmail.com>
+	* Merge pull request #85
+
+2015-08-21  Hannes Magnusson  <bjori@php.net>
+	* Don't be printing out these commands during execution
+
+2015-08-21  Hannes Magnusson  <bjori@php.net>
+	* Back to -dev
+
+2015-08-21  Hannes Magnusson  <bjori@php.net>
+	* PHPC-366: Update release script to use RELEASE-x.y file
+
+2015-08-21  Hannes Magnusson  <bjori@php.net>
+	* PHPC-366: Merge 1.0.x release notes into RELEASE-1.0
+
+2015-08-21  Hannes Magnusson  <bjori@php.net>
+	* PHPC-366: Merge RELEASE-0.* release notes into RELEASE-0
+
+2015-08-20  Jeremy Mikola  <jmikola@gmail.com>
+	* Add 1.0.0alpha2 release notes
+
+
 RELEASE 1.0.0alpha2
 --------------
 2015-08-20  Jeremy Mikola  <jmikola@gmail.com>
