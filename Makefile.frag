@@ -148,6 +148,7 @@ RELEASE:
 	@echo "RELEASE $(MONGODB_VERSION)" >> RELEASE-$(MONGODB_VERSION)
 	@echo "-------------" >> RELEASE-$(MONGODB_VERSION)
 	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short --since="$$(git show -s --format=%ad `git rev-list --tags --max-count=1`)" >> RELEASE-$(MONGODB_VERSION)
+	@echo -e "\n" >> RELEASE-$(MONGODB_VERSION)
 
 ChangeLog:
 	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > ChangeLog
