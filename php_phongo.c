@@ -775,7 +775,11 @@ void phongo_stream_destroy(mongoc_stream_t *stream_wrap) /* {{{ */
 {
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
 
-	MONGOC_DEBUG("Not destroying RSRC#%d", base_stream->stream->rsrc_id);
+	if (base_stream->stream) {
+		MONGOC_DEBUG("Not destroying RSRC#%d", base_stream->stream->rsrc_id);
+	} else {
+		MONGOC_DEBUG("Wrapped stream already destroyed");
+	}
 	/*
 	 * DON'T DO ANYTHING TO THE INTERNAL base_stream->stream
 	 * The stream should not be closed during normal dtor -- as we want it to
@@ -805,7 +809,14 @@ int phongo_stream_close(mongoc_stream_t *stream_wrap) /* {{{ */
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
 
 	MONGOC_DEBUG("Closing RSRC#%d", base_stream->stream->rsrc_id);
-	phongo_stream_destroy(stream_wrap);
+	if (base_stream->stream) {
+		TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+
+		MONGOC_DEBUG("Destroying RSRC#%d", base_stream->stream->rsrc_id);
+		php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
+		base_stream->stream = NULL;
+	}
+
 	return 0;
 } /* }}} */
 
