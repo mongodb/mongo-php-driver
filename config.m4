@@ -331,7 +331,7 @@ PHP_ARG_WITH(libmongoc, Use system libmongoc,
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0 && $PKG_CONFIG --exists libmongoc-priv; then
-      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.1.5; then
+      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.2.0; then
         LIBMONGOC_INC=`$PKG_CONFIG libmongoc-priv --cflags`
         LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-priv --libs`
         LIBMONGOC_VER=`$PKG_CONFIG libmongoc-priv --modversion`
@@ -339,13 +339,18 @@ PHP_ARG_WITH(libmongoc, Use system libmongoc,
         CFLAGS="$CFLAGS -DMONGOC_I_AM_A_DRIVER"
 
       else
-        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.1.6)
+        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.2.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and mongoc must be installed)
     fi
     PHP_EVAL_INCLINE($LIBMONGOC_INC)
     PHP_EVAL_LIBLINE($LIBMONGOC_LIB, MONGODB_SHARED_LIBADD)
+    PHP_CHECK_LIBRARY(mongoc-1.0, mongoc_get_version, [
+       AC_DEFINE(HAVE_MONGOC_GET_VERSION, 1, [mongoc_get_version function])
+    ], [], [
+       $MONGODB_SHARED_LIBADD
+    ])
   else
     CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
 

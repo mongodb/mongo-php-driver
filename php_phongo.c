@@ -2375,8 +2375,22 @@ PHP_MINFO_FUNCTION(mongodb)
 	php_info_print_table_header(2, "mongodb support", "enabled");
 	php_info_print_table_row(2, "mongodb version", MONGODB_VERSION_S);
 	php_info_print_table_row(2, "mongodb stability", MONGODB_STABILITY_S);
+#ifdef HAVE_MONGOC_GET_VERSION
+	{
+	char *tmp;
+
+	spprintf(&tmp, 0, "%d.%d.%d", bson_get_major_version(), bson_get_minor_version(), bson_get_micro_version());
+	php_info_print_table_row(2, "libmongoc headers version", MONGOC_VERSION_S);
+	php_info_print_table_row(2, "libmongoc library version", mongoc_get_version());
+	php_info_print_table_row(2, "libbson headers version", BSON_VERSION_S);
+	php_info_print_table_row(2, "libbson library version", tmp);
+	efree(tmp);
+	}
+#else
+	/* Bundled libraries, buildtime = runtime */
 	php_info_print_table_row(2, "libmongoc version", MONGOC_VERSION_S);
 	php_info_print_table_row(2, "libbson version", BSON_VERSION_S);
+#endif
 	php_info_print_table_end();
 
 	DISPLAY_INI_ENTRIES();
