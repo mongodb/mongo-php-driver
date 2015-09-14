@@ -717,6 +717,11 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			return;
 		}
 	}
+
+	/* Even if we don't know how to encode the object, ensure that we at least
+	 * create an empty BSON document. */
+	bson_append_document_begin(bson, key, key_len, &child);
+	bson_append_document_end(bson, &child);
 }
 void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char *key, long key_len, int entry_type, zval *entry TSRMLS_DC)
 {
