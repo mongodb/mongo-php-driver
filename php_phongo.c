@@ -270,7 +270,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 /* }}} */
 
 /* {{{ Init objects */
-void phongo_cursor_init(zval *return_value, mongoc_cursor_t *cursor, mongoc_client_t *client TSRMLS_DC) /* {{{ */
+static void phongo_cursor_init(zval *return_value, mongoc_cursor_t *cursor, mongoc_client_t *client TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t *intern;
 
