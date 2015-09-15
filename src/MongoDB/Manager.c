@@ -290,7 +290,7 @@ PHP_METHOD(Manager, getReadPreference)
 	}
 
 	if (return_value_used) {
-		php_phongo_read_preference_to_zval(return_value, mongoc_client_get_read_prefs(intern->client));
+		phongo_readpreference_init(return_value, mongoc_client_get_read_prefs(intern->client) TSRMLS_CC);
 	}
 }
 /* }}} */
@@ -341,7 +341,7 @@ PHP_METHOD(Manager, getWriteConcern)
 	}
 
 	if (return_value_used) {
-		php_phongo_write_concern_to_zval(return_value, mongoc_client_get_write_concern(intern->client));
+		phongo_writeconcern_init(return_value, mongoc_client_get_write_concern(intern->client) TSRMLS_CC);
 	}
 }
 /* }}} */

@@ -294,6 +294,28 @@ void phongo_server_init(zval *return_value, mongoc_client_t *client, int server_
 }
 /* }}} */
 
+void phongo_readpreference_init(zval *return_value, const mongoc_read_prefs_t *read_prefs TSRMLS_DC) /* {{{ */
+{
+	php_phongo_readpreference_t *intern;
+
+	object_init_ex(return_value, php_phongo_readpreference_ce);
+
+	intern = (php_phongo_readpreference_t *)zend_object_store_get_object(return_value TSRMLS_CC);
+	intern->read_preference = mongoc_read_prefs_copy(read_prefs);
+}
+/* }}} */
+
+void phongo_writeconcern_init(zval *return_value, const mongoc_write_concern_t *write_concern TSRMLS_DC) /* {{{ */
+{
+	php_phongo_writeconcern_t *intern;
+
+	object_init_ex(return_value, php_phongo_writeconcern_ce);
+
+	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(return_value TSRMLS_CC);
+	intern->write_concern = mongoc_write_concern_copy(write_concern);
+}
+/* }}} */
+
 bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC) /* {{{ */
 {
 	zval *zquery = NULL;

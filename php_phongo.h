@@ -111,6 +111,8 @@ PHONGO_API zval* phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_
 PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
 
 void phongo_server_init                              (zval *return_value, mongoc_client_t *client, int server_id TSRMLS_DC);
+void                     phongo_readpreference_init  (zval *return_value, const mongoc_read_prefs_t *read_prefs TSRMLS_DC);
+void                     phongo_writeconcern_init    (zval *return_value, const mongoc_write_concern_t *write_concern TSRMLS_DC);
 bool                     phongo_query_init           (php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC);
 mongoc_bulk_operation_t* phongo_bulkwrite_init      (zend_bool ordered);
 bool                     phongo_execute_write        (mongoc_client_t *client, const char *namespace, mongoc_bulk_operation_t *bulk, const mongoc_write_concern_t *write_concern, int server_id, zval *return_value, int return_value_used TSRMLS_DC);

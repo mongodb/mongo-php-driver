@@ -34,8 +34,8 @@ foreach ($tests as $i => $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-array(4) {
+--EXPECTF--
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wmajority"]=>
   bool(false)
   ["wtimeout"]=>
@@ -45,7 +45,7 @@ array(4) {
   ["journal"]=>
   NULL
 }
-array(5) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
   ["wmajority"]=>
@@ -57,7 +57,7 @@ array(5) {
   ["journal"]=>
   NULL
 }
-array(5) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
   ["wmajority"]=>
@@ -69,7 +69,7 @@ array(5) {
   ["journal"]=>
   NULL
 }
-array(5) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
   ["wmajority"]=>
@@ -81,7 +81,7 @@ array(5) {
   ["journal"]=>
   bool(true)
 }
-array(5) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
   ["wmajority"]=>
@@ -93,7 +93,7 @@ array(5) {
   ["journal"]=>
   bool(true)
 }
-array(5) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
   ["wmajority"]=>
@@ -105,7 +105,7 @@ array(5) {
   ["journal"]=>
   bool(false)
 }
-array(4) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wmajority"]=>
   bool(false)
   ["wtimeout"]=>
@@ -115,7 +115,7 @@ array(4) {
   ["journal"]=>
   NULL
 }
-array(4) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wmajority"]=>
   bool(false)
   ["wtimeout"]=>
@@ -125,7 +125,7 @@ array(4) {
   ["journal"]=>
   NULL
 }
-array(5) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(2)
   ["wmajority"]=>
@@ -137,7 +137,7 @@ array(5) {
   ["journal"]=>
   NULL
 }
-array(5) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
   ["wmajority"]=>
@@ -149,7 +149,7 @@ array(5) {
   ["journal"]=>
   NULL
 }
-array(5) {
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(12) "customTagSet"
   ["wmajority"]=>

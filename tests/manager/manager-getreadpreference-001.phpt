@@ -29,36 +29,36 @@ foreach ($tests as $i => $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-array(2) {
+--EXPECTF--
+object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   int(1)
   ["tags"]=>
   array(0) {
   }
 }
-array(2) {
+object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   int(2)
   ["tags"]=>
   array(0) {
   }
 }
-array(2) {
+object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   int(5)
   ["tags"]=>
   array(0) {
   }
 }
-array(2) {
+object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   int(6)
   ["tags"]=>
   array(0) {
   }
 }
-array(2) {
+object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   int(2)
   ["tags"]=>
@@ -75,7 +75,7 @@ array(2) {
     }
   }
 }
-array(2) {
+object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   int(2)
   ["tags"]=>
@@ -92,7 +92,7 @@ array(2) {
     }
   }
 }
-array(2) {
+object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   int(2)
   ["tags"]=>
