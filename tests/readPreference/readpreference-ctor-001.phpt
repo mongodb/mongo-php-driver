@@ -7,7 +7,7 @@ MongoDB\Driver\ReadPreference construction
 require_once __DIR__ . "/../utils/basic.inc";
 
 var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
-var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, array("tag" => "one")));
+var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, array(array("tag" => "one"))));
 var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY, array()));
 
 ?>
@@ -26,8 +26,11 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   int(2)
   ["tags"]=>
   array(1) {
-    ["tag"]=>
-    string(3) "one"
+    [0]=>
+    array(1) {
+      ["tag"]=>
+      string(3) "one"
+    }
   }
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {

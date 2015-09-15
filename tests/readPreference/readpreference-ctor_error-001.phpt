@@ -7,7 +7,7 @@ MongoDB\Driver\ReadPreference construction (invalid arguments)
 require_once __DIR__ . "/../utils/basic.inc";
 
 echo throws(function() {
-    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY, array("tag" => "one"));
+    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY, array(array("tag" => "one")));
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
