@@ -19,7 +19,7 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Invalid tagSet
+Invalid tagSets
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Invalid ReadPreference
+Invalid mode: 42
 ===DONE===
