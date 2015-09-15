@@ -708,6 +708,9 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			bson_append_minkey(bson, key, key_len);
 			return;
 		}
+
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Unexpected %s instance: %s", php_phongo_type_ce->name, Z_OBJCE_P(object)->name);
+		return;
 	}
 
 	mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding document");
