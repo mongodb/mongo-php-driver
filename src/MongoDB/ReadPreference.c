@@ -53,7 +53,7 @@ PHP_METHOD(ReadPreference, __construct)
 {
 	php_phongo_readpreference_t *intern;
 	zend_error_handling       error_handling;
-	long                      readPreference;
+	long                      mode;
 	zval                     *tagSets = NULL;
 	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
@@ -61,20 +61,20 @@ PHP_METHOD(ReadPreference, __construct)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_readpreference_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|a!", &readPreference, &tagSets) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|a!", &mode, &tagSets) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	switch(readPreference) {
+	switch(mode) {
 		case MONGOC_READ_PRIMARY:
 		case MONGOC_READ_SECONDARY:
 		case MONGOC_READ_PRIMARY_PREFERRED:
 		case MONGOC_READ_SECONDARY_PREFERRED:
 		case MONGOC_READ_NEAREST:
-			intern->read_preference = mongoc_read_prefs_new(readPreference);
+			intern->read_preference = mongoc_read_prefs_new(mode);
 
 			if (tagSets) {
 				bson_t *tags = bson_new();
@@ -146,7 +146,7 @@ PHP_METHOD(ReadPreference, getTagSets)
 /* {{{ MongoDB\Driver\ReadPreference */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, readPreference)
+	ZEND_ARG_INFO(0, mode)
 	ZEND_ARG_ARRAY_INFO(0, tagSets, 1)
 ZEND_END_ARG_INFO();
 
