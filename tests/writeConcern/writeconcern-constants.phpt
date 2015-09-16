@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\WriteConcern::MAJORITY
+MongoDB\Driver\WriteConcern constants
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
