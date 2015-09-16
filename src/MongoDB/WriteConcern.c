@@ -27,6 +27,7 @@
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
+#include "mongoc-write-concern-private.h"
 
 /* PHP Core stuff */
 #include <php.h>
@@ -98,6 +99,93 @@ PHP_METHOD(WriteConcern, __construct)
 }
 /* }}} */
 
+/* {{{ proto string|integer WriteConcern::getW()
+   Returns the WriteConcern "w" option */
+PHP_METHOD(WriteConcern, getW)
+{
+	php_phongo_writeconcern_t *intern;
+	const char *wtag;
+	(void)return_value_ptr; (void)return_value_used;
+
+	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	wtag = mongoc_write_concern_get_wtag(intern->write_concern);
+
+	if (wtag) {
+		RETURN_STRING(wtag, 1);
+	}
+
+	if (mongoc_write_concern_get_wmajority(intern->write_concern)) {
+		RETURN_STRING(PHONGO_WRITE_CONCERN_W_MAJORITY, 1);
+	}
+
+	RETURN_LONG(intern->write_concern->w);
+}
+/* }}} */
+
+/* {{{ proto string|integer WriteConcern::getWtimeout()
+   Returns the WriteConcern "wtimeout" option */
+PHP_METHOD(WriteConcern, getWtimeout)
+{
+	php_phongo_writeconcern_t *intern;
+	(void)return_value_ptr; (void)return_value_used;
+
+	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	RETURN_LONG(mongoc_write_concern_get_wtimeout(intern->write_concern));
+}
+/* }}} */
+
+/* {{{ proto null|boolean WriteConcern::getJournal()
+   Returns the WriteConcern "journal" option */
+PHP_METHOD(WriteConcern, getJournal)
+{
+	php_phongo_writeconcern_t *intern;
+	(void)return_value_ptr; (void)return_value_used;
+
+	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if (intern->write_concern->journal != MONGOC_WRITE_CONCERN_JOURNAL_DEFAULT) {
+		RETURN_BOOL(mongoc_write_concern_get_journal(intern->write_concern));
+	}
+
+	RETURN_NULL();
+}
+/* }}} */
+
+/* {{{ proto null|boolean WriteConcern::getFsync()
+   Returns the WriteConcern "fsync" option */
+PHP_METHOD(WriteConcern, getFsync)
+{
+	php_phongo_writeconcern_t *intern;
+	(void)return_value_ptr; (void)return_value_used;
+
+	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if (intern->write_concern->fsync_ != MONGOC_WRITE_CONCERN_FSYNC_DEFAULT) {
+		RETURN_BOOL(mongoc_write_concern_get_fsync(intern->write_concern));
+	}
+
+	RETURN_NULL();
+}
+/* }}} */
+
 /**
  * Value object for write concern used in issuing write operations.
  */
@@ -110,9 +198,24 @@ ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, fsync)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_getW, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_getWtimeout, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_getJournal, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_getFsync, 0, 0, 0)
+ZEND_END_ARG_INFO();
 
 static zend_function_entry php_phongo_writeconcern_me[] = {
 	PHP_ME(WriteConcern, __construct, ai_WriteConcern___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, getW, ai_WriteConcern_getW, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_getWtimeout, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, getJournal, ai_WriteConcern_getJournal, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, getFsync, ai_WriteConcern_getFsync, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
