@@ -1423,7 +1423,7 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 	if (wtag) {
 		add_assoc_string_ex(retval, ZEND_STRS("w"), (char *)wtag, 1);
 	} else if (mongoc_write_concern_get_wmajority(write_concern)) {
-		add_assoc_string_ex(retval, ZEND_STRS("w"), (char *)"majority", 1);
+		add_assoc_string_ex(retval, ZEND_STRS("w"), (char *)PHONGO_WRITE_CONCERN_W_MAJORITY, 1);
 	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
 		add_assoc_long_ex(retval, ZEND_STRS("w"), w);
 	}
@@ -1778,7 +1778,7 @@ bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_t *opti
 		} else if (BSON_ITER_HOLDS_UTF8(&iter)) {
 			const char *str = bson_iter_utf8(&iter, NULL);
 
-			if (0 == strcasecmp("majority", str)) {
+			if (0 == strcasecmp(PHONGO_WRITE_CONCERN_W_MAJORITY, str)) {
 				mongoc_write_concern_set_wmajority(new_wc, wtimeoutms);
 			} else {
 				mongoc_write_concern_set_wtag(new_wc, str);
