@@ -74,6 +74,10 @@ PHP_METHOD(WriteConcern, __construct)
 	intern->write_concern = mongoc_write_concern_new();
 
 	if (Z_TYPE_P(w) == IS_LONG) {
+		if (Z_LVAL_P(w) < -3) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected w to be >= -3, %ld given", Z_LVAL_P(w));
+			return;
+		}
 		mongoc_write_concern_set_w(intern->write_concern, Z_LVAL_P(w));
 	} else if (Z_TYPE_P(w) == IS_STRING) {
 		if (strcmp(Z_STRVAL_P(w), PHONGO_WRITE_CONCERN_W_MAJORITY) == 0) {
@@ -81,6 +85,9 @@ PHP_METHOD(WriteConcern, __construct)
 		} else {
 			mongoc_write_concern_set_wtag(intern->write_concern, Z_STRVAL_P(w));
 		}
+	} else {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected w to be integer or string, %s given", zend_get_type_by_const(Z_TYPE_P(w)));
+		return;
 	}
 
 	switch(ZEND_NUM_ARGS()) {
@@ -91,9 +98,12 @@ PHP_METHOD(WriteConcern, __construct)
 			mongoc_write_concern_set_journal(intern->write_concern, journal);
 			/* fallthrough */
 		case 2:
-			if (wtimeout > 0) {
-				mongoc_write_concern_set_wtimeout(intern->write_concern, wtimeout);
+			if (wtimeout < 0) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected wtimeout to be >= 0, %ld given", wtimeout);
+				return;
 			}
+
+			mongoc_write_concern_set_wtimeout(intern->write_concern, wtimeout);
 	}
 }
 /* }}} */
