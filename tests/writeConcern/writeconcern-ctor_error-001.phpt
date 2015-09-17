@@ -7,15 +7,14 @@ MongoDB\Driver\WriteConcern construction (invalid arguments)
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-try {
+echo throws(function() {
     new MongoDB\Driver\WriteConcern("string", 10000, false, true, 1);
-} catch(InvalidArgumentException $e) {
-    echo $e->getMessage(), "\n";
-}
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 MongoDB\Driver\WriteConcern::__construct() expects at most 4 parameters, 5 given
 ===DONE===
