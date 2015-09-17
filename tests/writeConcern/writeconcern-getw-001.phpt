@@ -15,6 +15,7 @@ $tests = array(
     1,
     2,
     'tag',
+    '2',
 );
 
 foreach ($tests as $test) {
@@ -34,4 +35,5 @@ int(0)
 int(1)
 int(2)
 string(3) "tag"
+string(1) "2"
 ===DONE===

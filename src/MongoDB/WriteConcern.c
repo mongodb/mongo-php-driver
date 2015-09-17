@@ -53,19 +53,18 @@ PHP_METHOD(WriteConcern, __construct)
 {
 	php_phongo_writeconcern_t *intern;
 	zend_error_handling       error_handling;
-	char                     *wstring;
-	int                       wstring_len;
+	zval                     *w;
 	long                      wtimeout = 0;
 	zend_bool                 journal = 0;
 	zend_bool                 fsync = 0;
-	long                      w;
+
 	(void)return_value; (void)return_value_ptr; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|lbb", &wstring, &wstring_len, &wtimeout, &journal, &fsync) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|lbb", &w, &wtimeout, &journal, &fsync) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -74,13 +73,13 @@ PHP_METHOD(WriteConcern, __construct)
 
 	intern->write_concern = mongoc_write_concern_new();
 
-	if (IS_LONG == is_numeric_string(wstring, wstring_len, &w, NULL, 0)) {
-		mongoc_write_concern_set_w(intern->write_concern, w);
-	} else {
-		if (strcmp(wstring, PHONGO_WRITE_CONCERN_W_MAJORITY) == 0) {
+	if (Z_TYPE_P(w) == IS_LONG) {
+		mongoc_write_concern_set_w(intern->write_concern, Z_LVAL_P(w));
+	} else if (Z_TYPE_P(w) == IS_STRING) {
+		if (strcmp(Z_STRVAL_P(w), PHONGO_WRITE_CONCERN_W_MAJORITY) == 0) {
 			mongoc_write_concern_set_w(intern->write_concern, MONGOC_WRITE_CONCERN_W_MAJORITY);
 		} else {
-			mongoc_write_concern_set_wtag(intern->write_concern, wstring);
+			mongoc_write_concern_set_wtag(intern->write_concern, Z_STRVAL_P(w));
 		}
 	}
 
