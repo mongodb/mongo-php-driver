@@ -53,7 +53,7 @@ PHP_METHOD(ReadPreference, __construct)
 {
 	php_phongo_readpreference_t *intern;
 	zend_error_handling       error_handling;
-	long                      readPreference;
+	long                      mode;
 	zval                     *tagSets = NULL;
 	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
@@ -61,20 +61,20 @@ PHP_METHOD(ReadPreference, __construct)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_readpreference_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|a!", &readPreference, &tagSets) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|a!", &mode, &tagSets) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	switch(readPreference) {
+	switch(mode) {
 		case MONGOC_READ_PRIMARY:
 		case MONGOC_READ_SECONDARY:
 		case MONGOC_READ_PRIMARY_PREFERRED:
 		case MONGOC_READ_SECONDARY_PREFERRED:
 		case MONGOC_READ_NEAREST:
-			intern->read_preference = mongoc_read_prefs_new(readPreference);
+			intern->read_preference = mongoc_read_prefs_new(mode);
 
 			if (tagSets) {
 				bson_t *tags = bson_new();
@@ -83,14 +83,59 @@ PHP_METHOD(ReadPreference, __construct)
 				mongoc_read_prefs_set_tags(intern->read_preference, tags);
 				bson_destroy(tags);
 				if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
-					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid tagSet");
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid tagSets");
 					return;
 				}
 			}
 			break;
 		default:
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid ReadPreference");
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid mode: %ld", mode);
 			return;
+	}
+}
+/* }}} */
+
+/* {{{ proto string ReadPreference::getMode()
+   Returns the ReadPreference mode */
+PHP_METHOD(ReadPreference, getMode)
+{
+	php_phongo_readpreference_t *intern;
+	(void)return_value_ptr; (void)return_value_used;
+
+	intern = (php_phongo_readpreference_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	RETURN_LONG(mongoc_read_prefs_get_mode(intern->read_preference));
+}
+/* }}} */
+
+/* {{{ proto array ReadPreference::getTagSets()
+   Returns the ReadPreference tag sets */
+PHP_METHOD(ReadPreference, getTagSets)
+{
+	php_phongo_readpreference_t *intern;
+	(void)return_value_ptr; (void)return_value_used;
+
+	intern = (php_phongo_readpreference_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if (intern->read_preference->tags.len) {
+		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+		/* Use native arrays for debugging output */
+		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+
+		MAKE_STD_ZVAL(state.zchild);
+		bson_to_zval(bson_get_data(&intern->read_preference->tags), intern->read_preference->tags.len, &state);
+		RETURN_ZVAL(state.zchild, 0, 1);
+	} else {
+		RETURN_NULL();
 	}
 }
 /* }}} */
@@ -101,13 +146,20 @@ PHP_METHOD(ReadPreference, __construct)
 /* {{{ MongoDB\Driver\ReadPreference */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, readPreference)
+	ZEND_ARG_INFO(0, mode)
 	ZEND_ARG_ARRAY_INFO(0, tagSets, 1)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference_getMode, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference_getTagSets, 0, 0, 0)
+ZEND_END_ARG_INFO();
 
 static zend_function_entry php_phongo_readpreference_me[] = {
 	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ReadPreference, getMode, ai_ReadPreference_getMode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_getTagSets, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 

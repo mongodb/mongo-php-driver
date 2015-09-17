@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ReadPreference#002: PHPC-146
+PHPC-146: ReadPreference primaryPreferred and secondary swapped
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
@@ -15,6 +15,7 @@ $rps = array(
     MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED,
     MongoDB\Driver\ReadPreference::RP_NEAREST,
 );
+
 foreach($rps as $r) {
     $rp = new MongoDB\Driver\ReadPreference($r);
     $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array("my" => "query")), $rp);
@@ -76,7 +77,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["batch_size"]=>
     int(0)
     ["ns"]=>
-    string(25) "phongo.readPreference_002"
+    string(%d) "%s"
   }
   ["server_id"]=>
   int(1)
@@ -140,7 +141,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["batch_size"]=>
     int(0)
     ["ns"]=>
-    string(25) "phongo.readPreference_002"
+    string(%d) "%s"
   }
   ["server_id"]=>
   int(1)
@@ -204,7 +205,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["batch_size"]=>
     int(0)
     ["ns"]=>
-    string(25) "phongo.readPreference_002"
+    string(%d) "%s"
   }
   ["server_id"]=>
   int(1)
@@ -268,7 +269,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["batch_size"]=>
     int(0)
     ["ns"]=>
-    string(25) "phongo.readPreference_002"
+    string(%d) "%s"
   }
   ["server_id"]=>
   int(1)
@@ -332,7 +333,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["batch_size"]=>
     int(0)
     ["ns"]=>
-    string(25) "phongo.readPreference_002"
+    string(%d) "%s"
   }
   ["server_id"]=>
   int(1)

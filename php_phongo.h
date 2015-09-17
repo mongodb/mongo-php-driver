@@ -64,8 +64,9 @@ ZEND_END_MODULE_GLOBALS(mongodb)
 #	define mglo mongodb_globals
 #endif
 
-#include "php_phongo_classes.h"
+#define PHONGO_WRITE_CONCERN_W_MAJORITY "majority"
 
+#include "php_phongo_classes.h"
 
 typedef enum {
 	PHONGO_ERROR_INVALID_ARGUMENT    = 1,
