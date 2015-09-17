@@ -19,14 +19,9 @@ $query = new MongoDB\Driver\Query(array('_id' => 1));
 $cursor = $manager->executeQuery(NS, $query);
 $results = iterator_to_array($cursor);
 
-$datetime = $utcdatetime->toDateTime();
-var_dump($datetime->format(DATE_RSS));
-var_dump((string) $utcdatetime);
-
 $tests = array(
     array($utcdatetime),
     array($results[0]->x),
-    array($datetime),
 );
 
 foreach($tests as $n => $test) {
@@ -40,9 +35,7 @@ foreach($tests as $n => $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-string(31) "Thu, 20 Nov 2014 01:03:31 +0000"
-string(13) "1416445411987"
+--EXPECT--
 Test#0 { "0" : { "$date" : 1416445411987 } }
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
@@ -51,8 +44,4 @@ Test#1 { "0" : { "$date" : 1416445411987 } }
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 string(37) "{ "0" : { "$date" : 1416445411987 } }"
 bool(true)
-Test#2 { "0" : {  } }
-string(14) "{ "0" : {  } }"
-string(14) "{ "0" : {  } }"
-bool(false)
 ===DONE===

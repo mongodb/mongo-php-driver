@@ -599,15 +599,7 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 {
 	bson_t child;
 
-	if (Z_TYPE_P(object) != IS_OBJECT || instanceof_function(Z_OBJCE_P(object), zend_standard_class_def TSRMLS_CC)) {
-		mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding as-if was stdclass");
-		bson_append_document_begin(bson, key, key_len, &child);
-		zval_to_bson(object, flags, &child, NULL TSRMLS_CC);
-		bson_append_document_end(bson, &child);
-		return;
-	}
-
-	if (instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce TSRMLS_CC)) {
+	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce TSRMLS_CC)) {
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_serializable_ce TSRMLS_CC)) {
 			zval *obj_data = NULL;
 			bson_t child;
@@ -660,7 +652,7 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_objectid_ce TSRMLS_CC)) {
 			bson_oid_t oid;
 
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding _id");
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding ObjectId");
 			php_phongo_objectid_get_id(object, &oid TSRMLS_CC);
 			bson_append_oid(bson, key, key_len, &oid);
 			return;
@@ -687,10 +679,10 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_javascript_ce TSRMLS_CC)) {
 			if (php_phongo_javascript_has_scope(object TSRMLS_CC)) {
-				mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Javascript w/scope");
+				mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Javascript with scope");
 				bson_append_code(bson, key, key_len, php_phongo_javascript_get_javascript(object TSRMLS_CC));
 			} else {
-				mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Javascript wo/scope");
+				mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Javascript without scope");
 				bson_append_code_with_scope(bson, key, key_len, php_phongo_javascript_get_javascript(object TSRMLS_CC), php_phongo_javascript_get_scope(object TSRMLS_CC));
 			}
 			return;
@@ -716,11 +708,14 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			bson_append_minkey(bson, key, key_len);
 			return;
 		}
+
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Unexpected %s instance: %s", php_phongo_type_ce->name, Z_OBJCE_P(object)->name);
+		return;
 	}
 
-	/* Even if we don't know how to encode the object, ensure that we at least
-	 * create an empty BSON document. */
+	mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding document");
 	bson_append_document_begin(bson, key, key_len, &child);
+	zval_to_bson(object, flags, &child, NULL TSRMLS_CC);
 	bson_append_document_end(bson, &child);
 }
 void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char *key, long key_len, int entry_type, zval *entry TSRMLS_DC)
@@ -809,6 +804,10 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 						zend_hash_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME));
 					}
 				}
+
+				break;
+			} else if (instanceof_function(Z_OBJCE_P(data), php_phongo_type_ce TSRMLS_CC)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s cannot be serialized as a root element", Z_OBJCE_P(data)->name);
 
 				break;
 			}
