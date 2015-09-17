@@ -14,7 +14,7 @@ echo throws(function() {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 MongoDB\Driver\WriteConcern::__construct() expects at most 4 parameters, 5 given
 ===DONE===
