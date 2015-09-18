@@ -36,6 +36,8 @@ foreach ($tests as $i => $test) {
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  NULL
   ["wmajority"]=>
   bool(false)
   ["wtimeout"]=>
@@ -106,6 +108,8 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  NULL
   ["wmajority"]=>
   bool(false)
   ["wtimeout"]=>
@@ -116,6 +120,8 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   NULL
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  NULL
   ["wmajority"]=>
   bool(false)
   ["wtimeout"]=>
