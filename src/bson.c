@@ -807,7 +807,7 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 
 				break;
 			} else if (instanceof_function(Z_OBJCE_P(data), php_phongo_type_ce TSRMLS_CC)) {
-				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s cannot be serialized as a root element", Z_OBJCE_P(data)->name);
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s instance %s cannot be serialized as a root element", php_phongo_type_ce->name, Z_OBJCE_P(data)->name);
 
 				break;
 			}
