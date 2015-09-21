@@ -31,6 +31,6 @@ bool(true)
 bool(false)
 bool(true)
 bool(false)
-bool(false)
+NULL
 NULL
 ===DONE===
