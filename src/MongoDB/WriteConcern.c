@@ -211,7 +211,7 @@ PHP_METHOD(WriteConcern, getFsync)
 /* {{{ MongoDB\Driver\WriteConcern */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, wstring)
+	ZEND_ARG_INFO(0, w)
 	ZEND_ARG_INFO(0, wtimeout)
 	ZEND_ARG_INFO(0, journal)
 	ZEND_ARG_INFO(0, fsync)
