@@ -10,7 +10,7 @@ require_once __DIR__ . "/../utils/basic.inc";
  * Although "w" will be omitted from the write concern sent to the server, we
  * should still yield other fields in the debug output, which may be sent.
  */
-var_dump(new MongoDB\Driver\WriteConcern(-2, 1000, true, true));
+var_dump(new MongoDB\Driver\WriteConcern(-2, 1000, true));
 
 ?>
 ===DONE===
@@ -23,8 +23,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
   ["wtimeout"]=>
   int(1000)
-  ["fsync"]=>
-  bool(true)
   ["journal"]=>
   bool(true)
 }

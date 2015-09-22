@@ -47,7 +47,7 @@ PHONGO_API zend_class_entry *php_phongo_writeconcern_ce;
 
 zend_object_handlers php_phongo_handler_writeconcern;
 
-/* {{{ proto MongoDB\Driver\WriteConcern WriteConcern::__construct(integer|string $w[, integer $wtimeout[, boolean $journal[, boolean $fsync]]])
+/* {{{ proto MongoDB\Driver\WriteConcern WriteConcern::__construct(integer|string $w[, integer $wtimeout[, boolean $journal]])
    Constructs a new WriteConcern */
 PHP_METHOD(WriteConcern, __construct)
 {
@@ -57,8 +57,6 @@ PHP_METHOD(WriteConcern, __construct)
 	long                      wtimeout = 0;
 	zend_bool                 journal = 0;
 	zend_bool                 journal_is_null = 0;
-	zend_bool                 fsync = 0;
-	zend_bool                 fsync_is_null = 0;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used;
 
@@ -66,7 +64,7 @@ PHP_METHOD(WriteConcern, __construct)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|lb!b!", &w, &wtimeout, &journal, &journal_is_null, &fsync, &fsync_is_null) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|lb!", &w, &wtimeout, &journal, &journal_is_null) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -93,11 +91,6 @@ PHP_METHOD(WriteConcern, __construct)
 	}
 
 	switch(ZEND_NUM_ARGS()) {
-		case 4:
-			if (!fsync_is_null) {
-				mongoc_write_concern_set_fsync(intern->write_concern, fsync);
-			}
-			/* fallthrough */
 		case 3:
 			if (!journal_is_null) {
 				mongoc_write_concern_set_journal(intern->write_concern, journal);
@@ -184,27 +177,6 @@ PHP_METHOD(WriteConcern, getJournal)
 }
 /* }}} */
 
-/* {{{ proto null|boolean WriteConcern::getFsync()
-   Returns the WriteConcern "fsync" option */
-PHP_METHOD(WriteConcern, getFsync)
-{
-	php_phongo_writeconcern_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
-
-	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-	if (intern->write_concern->fsync_ != MONGOC_WRITE_CONCERN_FSYNC_DEFAULT) {
-		RETURN_BOOL(mongoc_write_concern_get_fsync(intern->write_concern));
-	}
-
-	RETURN_NULL();
-}
-/* }}} */
-
 /**
  * Value object for write concern used in issuing write operations.
  */
@@ -214,7 +186,6 @@ ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, w)
 	ZEND_ARG_INFO(0, wtimeout)
 	ZEND_ARG_INFO(0, journal)
-	ZEND_ARG_INFO(0, fsync)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_getW, 0, 0, 0)
@@ -226,15 +197,11 @@ ZEND_END_ARG_INFO();
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_getJournal, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_getFsync, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
 static zend_function_entry php_phongo_writeconcern_me[] = {
 	PHP_ME(WriteConcern, __construct, ai_WriteConcern___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, getW, ai_WriteConcern_getW, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_getWtimeout, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, getJournal, ai_WriteConcern_getJournal, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, getFsync, ai_WriteConcern_getFsync, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 

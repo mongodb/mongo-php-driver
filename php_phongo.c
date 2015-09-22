@@ -1418,7 +1418,7 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 	const char *wtag = mongoc_write_concern_get_wtag(write_concern);
 	const int32_t w = mongoc_write_concern_get_w(write_concern);
 
-	array_init_size(retval, 5);
+	array_init_size(retval, 4);
 
 	if (wtag) {
 		add_assoc_string_ex(retval, ZEND_STRS("w"), (char *)wtag, 1);
@@ -1432,11 +1432,7 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 
 	add_assoc_bool_ex(retval, ZEND_STRS("wmajority"), mongoc_write_concern_get_wmajority(write_concern));
 	add_assoc_long_ex(retval, ZEND_STRS("wtimeout"), mongoc_write_concern_get_wtimeout(write_concern));
-	if (write_concern->fsync_ != MONGOC_WRITE_CONCERN_FSYNC_DEFAULT) {
-		add_assoc_bool_ex(retval, ZEND_STRS("fsync"), mongoc_write_concern_get_fsync(write_concern));
-	} else {
-		add_assoc_null_ex(retval, ZEND_STRS("fsync"));
-	}
+
 	if (write_concern->journal != MONGOC_WRITE_CONCERN_JOURNAL_DEFAULT) {
 		add_assoc_bool_ex(retval, ZEND_STRS("journal"), mongoc_write_concern_get_journal(write_concern));
 	} else {

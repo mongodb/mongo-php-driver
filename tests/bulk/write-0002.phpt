@@ -61,15 +61,13 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   ["server_id"]=>
   int(1)
   ["write_concern"]=>
-  array(5) {
+  array(%d) {
     ["w"]=>
     int(1)
     ["wmajority"]=>
     bool(false)
     ["wtimeout"]=>
     int(1000)
-    ["fsync"]=>
-    NULL
     ["journal"]=>
     NULL
   }
