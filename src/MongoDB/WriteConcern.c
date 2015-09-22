@@ -108,7 +108,7 @@ PHP_METHOD(WriteConcern, __construct)
 }
 /* }}} */
 
-/* {{{ proto string|integer WriteConcern::getW()
+/* {{{ proto string|integer|null WriteConcern::getW()
    Returns the WriteConcern "w" option */
 PHP_METHOD(WriteConcern, getW)
 {
@@ -132,7 +132,11 @@ PHP_METHOD(WriteConcern, getW)
 		RETURN_STRING(PHONGO_WRITE_CONCERN_W_MAJORITY, 1);
 	}
 
-	RETURN_LONG(intern->write_concern->w);
+	if (intern->write_concern->w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
+		RETURN_LONG(mongoc_write_concern_get_w(intern->write_concern));
+	}
+
+	RETURN_NULL();
 }
 /* }}} */
 

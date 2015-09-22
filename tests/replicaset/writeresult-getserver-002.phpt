@@ -80,7 +80,9 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   array(0) {
   }
   ["writeConcern"]=>
-  array(4) {
+  array(%d) {
+    ["w"]=>
+    NULL
     ["wmajority"]=>
     bool(false)
     ["wtimeout"]=>

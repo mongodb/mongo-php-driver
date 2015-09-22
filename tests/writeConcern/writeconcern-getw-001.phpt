@@ -29,7 +29,7 @@ foreach ($tests as $test) {
 --EXPECT--
 string(8) "majority"
 string(8) "majority"
-int(-2)
+NULL
 int(-1)
 int(0)
 int(1)
