@@ -7,7 +7,6 @@ MongoDB\Driver\WriteConcern::getWtimeout()
 require_once __DIR__ . "/../utils/basic.inc";
 
 $tests = array(
-    -1,
     0,
     1,
 );
@@ -25,7 +24,6 @@ var_dump($wc->getWtimeout());
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-int(0)
 int(0)
 int(1)
 int(0)
