@@ -1,6 +1,7 @@
 --TEST--
 MongoDB\Driver\Manager: mongodb.debug=stdout
 --SKIPIF--
+<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM uses HHVM's logging functionality"); ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --INI--
 mongodb.debug=stdout

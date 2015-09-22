@@ -1,6 +1,7 @@
 --TEST--
 Connect to MongoDB with using SSL and verify the stream
 --SKIPIF--
+<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM does not support peer verification"); ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("STANDALONE_SSL"); ?>
 --FILE--
 <?php
