@@ -71,7 +71,6 @@ PHP_METHOD(Query, __construct)
 
 	intern->query = bson_new();
 
-	convert_to_object(zfilter);
 	bson_init(&bfilter);
 	zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL TSRMLS_CC);
 
