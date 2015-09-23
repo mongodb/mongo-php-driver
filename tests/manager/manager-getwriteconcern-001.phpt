@@ -42,8 +42,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
   ["wtimeout"]=>
   int(0)
-  ["fsync"]=>
-  NULL
   ["journal"]=>
   NULL
 }
@@ -54,8 +52,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
   ["wtimeout"]=>
   int(0)
-  ["fsync"]=>
-  NULL
   ["journal"]=>
   NULL
 }
@@ -66,8 +62,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(true)
   ["wtimeout"]=>
   int(0)
-  ["fsync"]=>
-  NULL
   ["journal"]=>
   NULL
 }
@@ -78,8 +72,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
   ["wtimeout"]=>
   int(0)
-  ["fsync"]=>
-  NULL
   ["journal"]=>
   bool(true)
 }
@@ -90,8 +82,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(true)
   ["wtimeout"]=>
   int(0)
-  ["fsync"]=>
-  NULL
   ["journal"]=>
   bool(true)
 }
@@ -102,8 +92,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
   ["wtimeout"]=>
   int(0)
-  ["fsync"]=>
-  NULL
   ["journal"]=>
   bool(false)
 }
@@ -114,8 +102,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
   ["wtimeout"]=>
   int(0)
-  ["fsync"]=>
-  NULL
   ["journal"]=>
   NULL
 }
@@ -126,8 +112,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
   ["wtimeout"]=>
   int(0)
-  ["fsync"]=>
-  NULL
   ["journal"]=>
   NULL
 }
@@ -138,8 +122,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
   ["wtimeout"]=>
   int(1000)
-  ["fsync"]=>
-  NULL
   ["journal"]=>
   NULL
 }
@@ -150,8 +132,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(true)
   ["wtimeout"]=>
   int(1000)
-  ["fsync"]=>
-  NULL
   ["journal"]=>
   NULL
 }
@@ -162,8 +142,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
   ["wtimeout"]=>
   int(1000)
-  ["fsync"]=>
-  NULL
   ["journal"]=>
   NULL
 }

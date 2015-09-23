@@ -13,11 +13,8 @@ $w = MongoDB\Driver\WriteConcern::MAJORITY;
  * I have an application to run! */
 $wtimeout = 1000;
 
-/* No need to journal or fsync (are infact discouraged in general) */
-$journal = $fsync = false;
-
 /* Construct the WriteConcern object from our options */
-$wc = new MongoDB\Driver\WriteConcern($w, $wtimeout, $journal, $fsync);
+$wc = new MongoDB\Driver\WriteConcern($w, $wtimeout);
 
 
 /* We prefer to read from the secondary, but are OK to read from the primary

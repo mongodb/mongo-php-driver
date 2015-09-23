@@ -39,15 +39,13 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   array(0) {
   }
   ["writeConcern"]=>
-  array(5) {
+  array(%d) {
     ["w"]=>
     int(0)
     ["wmajority"]=>
     bool(false)
     ["wtimeout"]=>
     int(0)
-    ["fsync"]=>
-    NULL
     ["journal"]=>
     NULL
   }
