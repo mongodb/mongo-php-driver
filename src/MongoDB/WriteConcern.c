@@ -53,10 +53,8 @@ PHP_METHOD(WriteConcern, __construct)
 {
 	php_phongo_writeconcern_t *intern;
 	zend_error_handling       error_handling;
-	zval                     *w;
+	zval                     *w, *journal;
 	long                      wtimeout = 0;
-	zend_bool                 journal = 0;
-	zend_bool                 journal_is_null = 0;
 
 	(void)return_value; (void)return_value_ptr; (void)return_value_used;
 
@@ -64,7 +62,7 @@ PHP_METHOD(WriteConcern, __construct)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|lb!", &w, &wtimeout, &journal, &journal_is_null) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|lz", &w, &wtimeout, &journal) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -92,8 +90,8 @@ PHP_METHOD(WriteConcern, __construct)
 
 	switch(ZEND_NUM_ARGS()) {
 		case 3:
-			if (!journal_is_null) {
-				mongoc_write_concern_set_journal(intern->write_concern, journal);
+			if (Z_TYPE_P(journal) != IS_NULL) {
+				mongoc_write_concern_set_journal(intern->write_concern, Z_BVAL_P(journal));
 			}
 			/* fallthrough */
 		case 2:
