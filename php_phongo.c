@@ -316,82 +316,106 @@ void phongo_writeconcern_init(zval *return_value, const mongoc_write_concern_t *
 }
 /* }}} */
 
-bool phongo_query_init(php_phongo_query_t *query, zval *filter, zval *options TSRMLS_DC) /* {{{ */
+int32_t phongo_bson_find_as_int32(bson_t *bson, const char *key, int32_t fallback)
 {
-	zval *zquery = NULL;
+	bson_iter_t iter;
 
-	if (!(Z_TYPE_P(filter) == IS_ARRAY || Z_TYPE_P(filter) == IS_OBJECT)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected filter to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(filter)));
-		return false;
+	if (bson_iter_init_find(&iter, bson, key) && BSON_ITER_HOLDS_INT32(&iter)) {
+		return bson_iter_int32(&iter);
 	}
-	convert_to_object(filter);
 
-	MAKE_STD_ZVAL(zquery);
-	array_init(zquery);
+	return fallback;
+}
+
+bool phongo_bson_find_as_bool(bson_t *bson, const char *key, bool fallback)
+{
+	bson_iter_t iter;
+
+	if (bson_iter_init_find(&iter, bson, key) && BSON_ITER_HOLDS_BOOL(&iter)) {
+		return bson_iter_bool(&iter);
+	}
+
+	return fallback;
+}
+
+void phongo_bson_iter_as_document(const bson_iter_t  *iter, uint32_t *document_len, const uint8_t **document)
+{
+   *document = NULL;
+   *document_len = 0;
+
+   if (BSON_ITER_HOLDS_DOCUMENT(iter) || BSON_ITER_HOLDS_ARRAY(iter)) {
+      memcpy (document_len, (iter->raw + iter->d1), sizeof (*document_len));
+      *document_len = BSON_UINT32_FROM_LE (*document_len);
+      *document = (iter->raw + iter->d1);
+   }
+}
+
+bool phongo_query_init(php_phongo_query_t *query, bson_t *filter, bson_t *options TSRMLS_DC) /* {{{ */
+{
+	bson_iter_t iter;
 
 	if (options) {
-		/* TODO: Ensure batchSize, limit, and skip are 32-bit  */
-		query->batch_size = php_array_fetchc_long(options, "batchSize");
-		query->limit = php_array_fetchc_long(options, "limit");
-		query->skip = php_array_fetchc_long(options, "skip");
+		query->batch_size = phongo_bson_find_as_int32(options, "batchSize", 0);
+		query->limit = phongo_bson_find_as_int32(options, "limit", 0);
+		query->skip = phongo_bson_find_as_int32(options, "skip", 0);
 
 		query->flags = 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("tailable"))        ? MONGOC_QUERY_TAILABLE_CURSOR   : 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("slaveOk"))         ? MONGOC_QUERY_SLAVE_OK          : 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("oplogReplay"))     ? MONGOC_QUERY_OPLOG_REPLAY      : 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("noCursorTimeout")) ? MONGOC_QUERY_NO_CURSOR_TIMEOUT : 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("awaitData"))       ? MONGOC_QUERY_AWAIT_DATA        : 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("exhaust"))         ? MONGOC_QUERY_EXHAUST           : 0;
-		query->flags |= php_array_fetchl_bool(options, ZEND_STRS("partial"))         ? MONGOC_QUERY_PARTIAL           : 0;
+		query->flags |= phongo_bson_find_as_bool(options, "tailable", false)        ? MONGOC_QUERY_TAILABLE_CURSOR   : 0;
+		query->flags |= phongo_bson_find_as_bool(options, "slaveOk", false)         ? MONGOC_QUERY_SLAVE_OK          : 0;
+		query->flags |= phongo_bson_find_as_bool(options, "oplogReplay", false)     ? MONGOC_QUERY_OPLOG_REPLAY      : 0;
+		query->flags |= phongo_bson_find_as_bool(options, "noCursorTimeout", false) ? MONGOC_QUERY_NO_CURSOR_TIMEOUT : 0;
+		query->flags |= phongo_bson_find_as_bool(options, "awaitData", false)       ? MONGOC_QUERY_AWAIT_DATA        : 0;
+		query->flags |= phongo_bson_find_as_bool(options, "exhaust", false)         ? MONGOC_QUERY_EXHAUST           : 0;
+		query->flags |= phongo_bson_find_as_bool(options, "partial", false)         ? MONGOC_QUERY_PARTIAL           : 0;
 
 
-		if (php_array_existsc(options, "modifiers")) {
-			zval *modifiers = php_array_fetchc(options, "modifiers");
+		if (bson_iter_init_find(&iter, options, "modifiers")) {
+			bson_t tmp;
+			uint32_t len = 0;
+			const uint8_t *data = NULL;
 
-			if (modifiers && !(Z_TYPE_P(modifiers) == IS_ARRAY || Z_TYPE_P(modifiers) == IS_OBJECT)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected modifiers to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(modifiers)));
-				zval_ptr_dtor(&zquery);
+			if (! (BSON_ITER_HOLDS_DOCUMENT (&iter) || BSON_ITER_HOLDS_ARRAY (&iter))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected modifiers to be array or object, %d given", bson_iter_type(&iter));
 				return false;
 			}
 
-			zend_hash_merge(HASH_OF(zquery), HASH_OF(modifiers), (void (*)(void*))zval_add_ref, NULL, sizeof(zval *), 1);
+			bson_iter_document(&iter, &len, &data);
+			bson_init_static(&tmp, data, len);
+			bson_copy_to_excluding_noinit(&tmp, query->query, "nadastrada", NULL);
+			bson_destroy (&tmp);
 		}
 
-		if (php_array_existsc(options, "projection")) {
-			zval *projection = php_array_fetchc(options, "projection");
+		if (bson_iter_init_find(&iter, options, "projection")) {
+			uint32_t len = 0;
+			const uint8_t *data = NULL;
 
-			if (projection && !(Z_TYPE_P(projection) == IS_ARRAY || Z_TYPE_P(projection) == IS_OBJECT)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected projection to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(projection)));
-				zval_ptr_dtor(&zquery);
+			if (! (BSON_ITER_HOLDS_DOCUMENT (&iter) || BSON_ITER_HOLDS_ARRAY (&iter))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected projection to be array or object, %d given", bson_iter_type(&iter));
 				return false;
 			}
 
-			query->selector = bson_new();
-			zval_to_bson(projection, PHONGO_BSON_NONE, query->selector, NULL TSRMLS_CC);
+			bson_iter_document(&iter, &len, &data);
+			query->selector = bson_new_from_data(data, len);
 		}
 
-		if (php_array_existsc(options, "sort")) {
-			zval *sort = php_array_fetchc(options, "sort");
+		if (bson_iter_init_find(&iter, options, "sort")) {
+			bson_t tmp;
+			uint32_t len = 0;
+			const uint8_t *data = NULL;
 
-			if (sort && !(Z_TYPE_P(sort) == IS_ARRAY || Z_TYPE_P(sort) == IS_OBJECT)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected sort to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(sort)));
-				zval_ptr_dtor(&zquery);
+			if (! (BSON_ITER_HOLDS_DOCUMENT (&iter) || BSON_ITER_HOLDS_ARRAY (&iter))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected sort to be array or object, %d given", bson_iter_type(&iter));
 				return false;
 			}
 
-			convert_to_object_ex(&sort);
-			Z_ADDREF_P(sort);
-			add_assoc_zval_ex(zquery, ZEND_STRS("$orderby"), sort);
+			phongo_bson_iter_as_document(&iter, &len, &data);
+			bson_init_static(&tmp, data, len);
+			bson_append_document(query->query, "$orderby", -1, &tmp);
+			bson_destroy(&tmp);
 		}
 	}
 
-	Z_ADDREF_P(filter);
-	add_assoc_zval_ex(zquery, ZEND_STRS("$query"), filter);
-
-	query->query = bson_new();
-	zval_to_bson(zquery, PHONGO_BSON_NONE, query->query, NULL TSRMLS_CC);
-	zval_ptr_dtor(&zquery);
-
+	BSON_APPEND_DOCUMENT(query->query, "$query", filter);
 	return true;
 } /* }}} */
 

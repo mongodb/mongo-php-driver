@@ -52,22 +52,37 @@ PHP_METHOD(Query, __construct)
 {
 	php_phongo_query_t       *intern;
 	zend_error_handling       error_handling;
-	zval                     *filter;
-	zval                     *options = NULL;
+	zval                     *zfilter;
+	zval                     *zoptions = NULL;
+	bson_t                    bfilter;
+	bson_t                    boptions = BSON_INITIALIZER;
 	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_query_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &filter, &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &zfilter, &zoptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	phongo_query_init(intern, filter, options TSRMLS_CC);
+	intern->query = bson_new();
+
+	bson_init(&bfilter);
+	zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL TSRMLS_CC);
+
+	if (zoptions) {
+		bson_init(&boptions);
+		zval_to_bson(zoptions, PHONGO_BSON_NONE, &boptions, NULL TSRMLS_CC);
+	}
+	if (!phongo_query_init(intern, &bfilter, &boptions TSRMLS_CC)) {
+		bson_clear(&intern->query);
+	}
+	bson_destroy(&bfilter);
+	bson_destroy(&boptions);
 }
 /* }}} */
 
