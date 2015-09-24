@@ -706,7 +706,9 @@ void phongo_stream_failed(mongoc_stream_t *stream_wrap) /* {{{ */
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
 
 	if (base_stream->stream) {
+#if PHP_VERSION_ID < 70000
 		PHONGO_TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+#endif
 
 		MONGOC_DEBUG("Destroying RSRC#%d", PHONGO_STREAM_ID(base_stream->stream));
 		php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
@@ -722,7 +724,9 @@ int phongo_stream_close(mongoc_stream_t *stream_wrap) /* {{{ */
 
 	MONGOC_DEBUG("Closing RSRC#%d", PHONGO_STREAM_ID(base_stream->stream));
 	if (base_stream->stream) {
+#if PHP_VERSION_ID < 70000
 		TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
+#endif
 
 		MONGOC_DEBUG("Destroying RSRC#%d", PHONGO_STREAM_ID(base_stream->stream));
 		php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
