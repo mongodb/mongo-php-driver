@@ -774,11 +774,27 @@ void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char 
 	}
 }
 
+static bool is_public_property(zend_class_entry *ce, const char *prop_name, int prop_name_len TSRMLS_DC) /* {{{ */
+{
+	zend_property_info *property_info;
+	zval member;
+
+	ZVAL_STRINGL(&member, prop_name, prop_name_len, 0);
+	property_info = zend_get_property_info(ce, &member, 1 TSRMLS_CC);
+
+	return (property_info && (property_info->flags & ZEND_ACC_PUBLIC));
+}
+/* }}} */
+
 PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC) /* {{{ */
 {
 	HashPosition pos;
 	HashTable   *ht_data = NULL;
 	zval        *obj_data = NULL;
+
+	/* If we will be encoding a class that may contain protected and private
+	 * properties, we'll need to filter them out later. */
+	bool         ht_data_from_properties = false;
 
 	switch(Z_TYPE_P(data)) {
 		case IS_OBJECT:
@@ -806,12 +822,17 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 				}
 
 				break;
-			} else if (instanceof_function(Z_OBJCE_P(data), php_phongo_type_ce TSRMLS_CC)) {
+			}
+
+			if (instanceof_function(Z_OBJCE_P(data), php_phongo_type_ce TSRMLS_CC)) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s instance %s cannot be serialized as a root element", php_phongo_type_ce->name, Z_OBJCE_P(data)->name);
 
 				break;
 			}
-			/* break intentionally omitted */
+
+			ht_data = Z_OBJ_HT_P(data)->get_properties(data TSRMLS_CC);
+			ht_data_from_properties = true;
+			break;
 
 		case IS_ARRAY:
 			ht_data = HASH_OF(data);
@@ -848,11 +869,16 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 		}
 
 		if (hash_type == HASH_KEY_IS_STRING) {
-			if (Z_TYPE_P(data) == IS_OBJECT) {
+			if (ht_data_from_properties) {
 				const char *class_name;
 
 				zend_unmangle_property_name(key, key_len-1, &class_name, (const char **)&key);
 				key_len = strlen(key);
+
+				/* Ignore non-public properties */
+				if (!is_public_property(Z_OBJCE_P(data), key, key_len TSRMLS_CC)) {
+					continue;
+				}
 			} else {
 				/* Chop off the \0 from string lengths */
 				key_len -= 1;
