@@ -104,19 +104,11 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["has_fields"]=>
     bool(false)
     ["query"]=>
-    object(stdClass)#%d (2) {
+    object(stdClass)#%d (%d) {
       ["$query"]=>
       object(stdClass)#%d (%d) {
         ["my"]=>
         string(5) "query"
-      }
-      ["$readPreference"]=>
-      object(stdClass)#%d (%d) {
-        ["mode"]=>
-        string(16) "primaryPreferred"
-        ["tags"]=>
-        array(0) {
-        }
       }
     }
     ["fields"]=>
@@ -168,19 +160,11 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["has_fields"]=>
     bool(false)
     ["query"]=>
-    object(stdClass)#%d (2) {
+    object(stdClass)#%d (%d) {
       ["$query"]=>
       object(stdClass)#%d (%d) {
         ["my"]=>
         string(5) "query"
-      }
-      ["$readPreference"]=>
-      object(stdClass)#%d (%d) {
-        ["mode"]=>
-        string(9) "secondary"
-        ["tags"]=>
-        array(0) {
-        }
       }
     }
     ["fields"]=>
@@ -232,19 +216,11 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["has_fields"]=>
     bool(false)
     ["query"]=>
-    object(stdClass)#%d (2) {
+    object(stdClass)#%d (%d) {
       ["$query"]=>
       object(stdClass)#%d (%d) {
         ["my"]=>
         string(5) "query"
-      }
-      ["$readPreference"]=>
-      object(stdClass)#%d (%d) {
-        ["mode"]=>
-        string(18) "secondaryPreferred"
-        ["tags"]=>
-        array(0) {
-        }
       }
     }
     ["fields"]=>
@@ -296,19 +272,11 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["has_fields"]=>
     bool(false)
     ["query"]=>
-    object(stdClass)#%d (2) {
+    object(stdClass)#%d (%d) {
       ["$query"]=>
       object(stdClass)#%d (%d) {
         ["my"]=>
         string(5) "query"
-      }
-      ["$readPreference"]=>
-      object(stdClass)#%d (%d) {
-        ["mode"]=>
-        string(7) "nearest"
-        ["tags"]=>
-        array(0) {
-        }
       }
     }
     ["fields"]=>
