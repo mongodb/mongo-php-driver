@@ -361,7 +361,7 @@ function getMOUri() {
     if (!($PORT = getenv("MONGODB_ORCHESTRATION_PORT"))) {
         $PORT = "8889";
     }
-    $MO = "http://$HOST:$PORT";
+    $MO = "http://$HOST:$PORT/v1";
 
     return $MO;
 }
