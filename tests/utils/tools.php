@@ -148,7 +148,7 @@ function START($id, array $options = array()) {
     $options += array("name" => "mongod", "id" => $id);
     $opts = array(
         "http" => array(
-            "timeout" => 30,
+            "timeout" => 60,
             "method"  => "PUT",
             "header"  => "Accept: application/json\r\n" .
                          "Content-type: application/x-www-form-urlencoded",
@@ -177,7 +177,7 @@ function START($id, array $options = array()) {
 function DELETE($id) {
     $opts = array(
         "http" => array(
-            "timeout" => 30,
+            "timeout" => 60,
             "method"  => "DELETE",
             "header"  => "Accept: application/json\r\n",
             "ignore_errors" => true,
@@ -361,7 +361,7 @@ function getMOUri() {
     if (!($PORT = getenv("MONGODB_ORCHESTRATION_PORT"))) {
         $PORT = "8889";
     }
-    $MO = "http://$HOST:$PORT";
+    $MO = "http://$HOST:$PORT/v1";
 
     return $MO;
 }

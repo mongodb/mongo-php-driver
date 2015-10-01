@@ -14,7 +14,7 @@ function mo_delete($id) {
     $opts = array("http" =>
         array(
             "method"  => "DELETE",
-            "timeout" => 30,
+            "timeout" => 60,
             "header"  => "Accept: application/json\r\n" .
             "Content-type: application/x-www-form-urlencoded",
             "ignore_errors" => true,
@@ -32,7 +32,7 @@ function mo_post($url, $body) {
     $opts = array("http" =>
         array(
             "method"  => "POST",
-            "timeout" => 30,
+            "timeout" => 60,
             "header"  => "Accept: application/json\r\n" .
             "Content-type: application/x-www-form-urlencoded",
             "content" => json_encode($body),
@@ -151,6 +151,9 @@ function phase($phase, &$output) {
     if (isset($phase["MOOperation"])) {
         return MOOperation($phase["MOOperation"], $output);
     }
+    if (isset($phase["clientHosts"])) {
+        return clientHosts($phase["clientHosts"], $output);
+    }
     if (isset($phase["clientOperation"])) {
         return clientOperation($phase["clientOperation"], $output);
     }
@@ -166,9 +169,60 @@ function MOOperation($phase, &$output) {
     case "post":
         return 'mo_post("' . $phase["uri"] . '", ' . var_export($phase["payload"], true) . ');';
 
+    case "delete":
+        return 'mo_delete("' . $phase["uri"] . '");';
+
     default:
-        throw UnexpectedValueException("Don't know the method $method");
+        throw new UnexpectedValueException("Don't know the method $method");
     }
+}
+
+function clientHosts($hosts, &$output) {
+    $output = array();
+
+    $retval = <<< CODE
+\$clientHosts = array();
+
+CODE;
+
+    if (!empty($hosts['primary'])) {
+        $primary = var_export($hosts['primary'], true);
+
+        $retval .= <<< CODE
+\$found = array_filter(\$manager->getServers(), function(\$server) {
+    return \$server->getHost() == $primary && \$server->getType() == MongoDB\\Driver\\SERVERTYPE_RS_PRIMARY;
+});
+if (count(\$found) == 1) {
+    \$clientHosts['primary'] = $primary;
+}
+
+CODE;
+        $output['primary'] = $hosts['primary'];
+    }
+
+    if (!empty($hosts['secondaries'])) {
+        foreach ($hosts['secondaries'] as $secondaryHost) {
+            $secondary = var_export($secondaryHost, true);
+
+            $retval .= <<< CODE
+
+\$found = array_filter(\$manager->getServers(), function(\$server) {
+    return \$server->getHost() == $secondary && \$server->getType() == MongoDB\\Driver\\SERVERTYPE_RS_SECONDARY;
+});
+if (count(\$found) == 1) {
+    \$clientHosts['secondaries'][] = $secondary;
+}
+
+CODE;
+            $output['secondaries'][] = $secondaryHost;
+        }
+    }
+
+    $retval .= <<< CODE
+var_dump(\$clientHosts);
+CODE;
+
+    return $retval;
 }
 
 function clientOperation($phase, &$output) {
@@ -201,7 +255,7 @@ CODE;
         return $retval;
         break;
 
-    case "findOne":
+    case "find":
         $output = $phase["outcome"];
         if (!$output["ok"]) {
             $output["errmsg"] = "%s";
@@ -210,11 +264,7 @@ CODE;
 try {
     \$query = new MongoDB\\Driver\\Query(array());
     \$result = \$manager->executeQuery("databaseName.collectionName", \$query)->toArray();
-    if (\$result) {
-        var_dump(array("ok" => 1));
-    } else {
-        var_dump(array("ok" => 0, "errmsg" => "Empty result"));
-    }
+    var_dump(array("ok" => 1));
 } catch(Exception \$e) {
     var_dump(array("ok" => 0, "errmsg" => get_class(\$e) . ": " . \$e->getMessage()));
 }
