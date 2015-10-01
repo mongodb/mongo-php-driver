@@ -14,7 +14,7 @@ function mo_delete($id) {
     $opts = array("http" =>
         array(
             "method"  => "DELETE",
-            "timeout" => 30,
+            "timeout" => 60,
             "header"  => "Accept: application/json\r\n" .
             "Content-type: application/x-www-form-urlencoded",
             "ignore_errors" => true,
@@ -32,7 +32,7 @@ function mo_post($url, $body) {
     $opts = array("http" =>
         array(
             "method"  => "POST",
-            "timeout" => 30,
+            "timeout" => 60,
             "header"  => "Accept: application/json\r\n" .
             "Content-type: application/x-www-form-urlencoded",
             "content" => json_encode($body),
