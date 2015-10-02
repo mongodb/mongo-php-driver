@@ -512,9 +512,10 @@ php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, mongoc_wri
 	SCP(nRemoved);
 	SCP(nUpserted);
 
-	bson_copy_to(&write_result->upserted,          &writeresult->write_result.upserted);
-	bson_copy_to(&write_result->writeConcernError, &writeresult->write_result.writeConcernError);
-	bson_copy_to(&write_result->writeErrors,       &writeresult->write_result.writeErrors);
+	bson_copy_to(&write_result->upserted,           &writeresult->write_result.upserted);
+	SCP(n_writeConcernErrors);
+	bson_copy_to(&write_result->writeConcernErrors, &writeresult->write_result.writeConcernErrors);
+	bson_copy_to(&write_result->writeErrors,        &writeresult->write_result.writeErrors);
 	SCP(upsert_append_count);
 #undef SCP
 
@@ -684,10 +685,7 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc
 	/* The Write failed */
 	if (!success) {
 		/* The Command itself failed */
-		if (
-				bson_empty0(&writeresult->write_result.writeErrors)
-				&& bson_empty0(&writeresult->write_result.writeConcernError)
-			) {
+		if (bson_empty0(&writeresult->write_result.writeErrors) && bson_empty0(&writeresult->write_result.writeConcernErrors)) {
 			/* FIXME: Maybe we can look at write_result.error and not pass error at all? */
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 		} else {
@@ -2022,25 +2020,30 @@ bool php_phongo_writeresult_get_write_errors(php_phongo_writeresult_t *writeresu
 	}
 	return false;
 } /* }}} */
+
 bool php_phongo_writeresult_get_writeconcern_error(php_phongo_writeresult_t *writeresult, bson_error_t *error) /* {{{ */
 {
 	const char *err = NULL;
 	uint32_t code = 0;
+	bson_iter_t iter;
+	bson_iter_t citer;
 
-	if (!bson_empty0(&writeresult->write_result.writeConcernError)) {
-		bson_iter_t iter;
-
-		if (bson_iter_init_find(&iter, &writeresult->write_result.writeConcernError, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
-			code = bson_iter_int32(&iter);
-		}
-		if (bson_iter_init_find(&iter, &writeresult->write_result.writeConcernError, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
-			err = bson_iter_utf8(&iter, NULL);
+	if (!bson_empty0 (&writeresult->write_result.writeConcernErrors) &&
+			bson_iter_init (&iter, &writeresult->write_result.writeConcernErrors) &&
+			bson_iter_next (&iter) &&
+			BSON_ITER_HOLDS_DOCUMENT (&iter) &&
+			bson_iter_recurse (&iter, &citer)) {
+		while (bson_iter_next (&citer)) {
+			if (BSON_ITER_IS_KEY (&citer, "errmsg")) {
+				err = bson_iter_utf8 (&citer, NULL);
+			} else if (BSON_ITER_IS_KEY (&citer, "code")) {
+				code = bson_iter_int32 (&citer);
+			}
 		}
 
 		bson_set_error(error, PHONGO_ERROR_WRITECONCERN_FAILED, code, "%s", err);
 		return true;
 	}
-
 	return false;
 } /* }}} */
 zval* php_phongo_throw_write_errors(php_phongo_writeresult_t *wr TSRMLS_DC) /* {{{ */

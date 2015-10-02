@@ -250,10 +250,33 @@ PHP_METHOD(WriteResult, getWriteConcernError)
 	}
 
 
-	if (!bson_empty0(&intern->write_result.writeConcernError)) {
-		object_init_ex(return_value, php_phongo_writeconcernerror_ce);
-		if (!phongo_writeconcernerror_init(return_value, &intern->write_result.writeConcernError TSRMLS_CC)) {
-			zval_ptr_dtor(&return_value);
+	if (!bson_empty0(&intern->write_result.writeConcernErrors)) {
+		bson_iter_t iter;
+
+		bson_iter_init(&iter, &intern->write_result.writeConcernErrors);
+
+		while (bson_iter_next(&iter)) {
+			bson_t cbson;
+			uint32_t len;
+			const uint8_t *data;
+
+			if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+				continue;
+			}
+
+			bson_iter_document(&iter, &len, &data);
+
+			if (!bson_init_static(&cbson, data, len)) {
+				continue;
+			}
+
+			object_init_ex(return_value, php_phongo_writeconcernerror_ce);
+
+			if (!phongo_writeconcernerror_init(return_value, &cbson TSRMLS_CC)) {
+				zval_ptr_dtor(&return_value);
+			}
+
+			return;
 		}
 	}
 }
