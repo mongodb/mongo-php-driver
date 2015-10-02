@@ -217,7 +217,7 @@ if test "$MONGODB" != "no"; then
     bson-timegm.c \
     bson-utf8.c \
     bson-value.c \
-    bson-version.c \
+    bson-version-functions.c \
     bson-writer.c
   ";
   MONGOC_SOURCES="\
@@ -265,6 +265,7 @@ if test "$MONGODB" != "no"; then
     mongoc-topology-description.c \
     mongoc-uri.c \
     mongoc-util.c \
+    mongoc-version-functions.c \
     mongoc-write-command.c \
     mongoc-write-concern.c
   ";
