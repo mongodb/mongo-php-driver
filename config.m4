@@ -346,11 +346,7 @@ PHP_ARG_WITH(libmongoc, Use system libmongoc,
     fi
     PHP_EVAL_INCLINE($LIBMONGOC_INC)
     PHP_EVAL_LIBLINE($LIBMONGOC_LIB, MONGODB_SHARED_LIBADD)
-    PHP_CHECK_LIBRARY(mongoc-1.0, mongoc_get_version, [
-       AC_DEFINE(HAVE_MONGOC_GET_VERSION, 1, [mongoc_get_version function])
-    ], [], [
-       $MONGODB_SHARED_LIBADD
-    ])
+    AC_DEFINE(HAVE_LIBMONGOC, 1, [Use system libmongoc])
   else
     CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
