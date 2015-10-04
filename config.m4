@@ -313,6 +313,7 @@ PHP_ARG_WITH(libbson, Use system libbson,
     fi
     PHP_EVAL_INCLINE($LIBBSON_INC)
     PHP_EVAL_LIBLINE($LIBBSON_LIB, MONGODB_SHARED_LIBADD)
+    AC_DEFINE(HAVE_LIBBSON, 1, [Use system libbson])
   else
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES,            [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES,            [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
