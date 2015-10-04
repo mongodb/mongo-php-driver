@@ -313,6 +313,7 @@ PHP_ARG_WITH(libbson, Use system libbson,
     fi
     PHP_EVAL_INCLINE($LIBBSON_INC)
     PHP_EVAL_LIBLINE($LIBBSON_LIB, MONGODB_SHARED_LIBADD)
+    AC_DEFINE(HAVE_LIBBSON, 1, [Use system libbson])
   else
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES,            [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES,            [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
@@ -331,7 +332,7 @@ PHP_ARG_WITH(libmongoc, Use system libmongoc,
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0 && $PKG_CONFIG --exists libmongoc-priv; then
-      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.1.5; then
+      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.2.0; then
         LIBMONGOC_INC=`$PKG_CONFIG libmongoc-priv --cflags`
         LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-priv --libs`
         LIBMONGOC_VER=`$PKG_CONFIG libmongoc-priv --modversion`
@@ -339,13 +340,14 @@ PHP_ARG_WITH(libmongoc, Use system libmongoc,
         CFLAGS="$CFLAGS -DMONGOC_I_AM_A_DRIVER"
 
       else
-        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.1.6)
+        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.2.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and mongoc must be installed)
     fi
     PHP_EVAL_INCLINE($LIBMONGOC_INC)
     PHP_EVAL_LIBLINE($LIBMONGOC_LIB, MONGODB_SHARED_LIBADD)
+    AC_DEFINE(HAVE_LIBMONGOC, 1, [Use system libmongoc])
   else
     CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
