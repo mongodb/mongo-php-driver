@@ -313,7 +313,7 @@ PHP_ARG_WITH(libbson, Use system libbson,
     fi
     PHP_EVAL_INCLINE($LIBBSON_INC)
     PHP_EVAL_LIBLINE($LIBBSON_LIB, MONGODB_SHARED_LIBADD)
-    AC_DEFINE(HAVE_LIBBSON, 1, [Use system libbson])
+    AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
   else
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES,            [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES,            [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
@@ -347,7 +347,7 @@ PHP_ARG_WITH(libmongoc, Use system libmongoc,
     fi
     PHP_EVAL_INCLINE($LIBMONGOC_INC)
     PHP_EVAL_LIBLINE($LIBMONGOC_LIB, MONGODB_SHARED_LIBADD)
-    AC_DEFINE(HAVE_LIBMONGOC, 1, [Use system libmongoc])
+    AC_DEFINE(HAVE_SYSTEM_LIBMONGOC, 1, [Use system libmongoc])
   else
     CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
