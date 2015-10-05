@@ -250,10 +250,33 @@ PHP_METHOD(WriteResult, getWriteConcernError)
 	}
 
 
-	if (!bson_empty0(&intern->write_result.writeConcernError)) {
-		object_init_ex(return_value, php_phongo_writeconcernerror_ce);
-		if (!phongo_writeconcernerror_init(return_value, &intern->write_result.writeConcernError TSRMLS_CC)) {
-			zval_ptr_dtor(&return_value);
+	if (!bson_empty0(&intern->write_result.writeConcernErrors)) {
+		bson_iter_t iter;
+
+		bson_iter_init(&iter, &intern->write_result.writeConcernErrors);
+
+		while (bson_iter_next(&iter)) {
+			bson_t cbson;
+			uint32_t len;
+			const uint8_t *data;
+
+			if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+				continue;
+			}
+
+			bson_iter_document(&iter, &len, &data);
+
+			if (!bson_init_static(&cbson, data, len)) {
+				continue;
+			}
+
+			object_init_ex(return_value, php_phongo_writeconcernerror_ce);
+
+			if (!phongo_writeconcernerror_init(return_value, &cbson TSRMLS_CC)) {
+				zval_ptr_dtor(&return_value);
+			}
+
+			return;
 		}
 	}
 }
@@ -429,6 +452,7 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	php_phongo_writeresult_t *intern;
 	zval                      retval = zval_used_for_init;
 	php_phongo_bson_state     state = PHONGO_BSON_STATE_INITIALIZER;
+	bson_iter_t iter;
 
 	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(object TSRMLS_CC);
 	*is_temp = 1;
@@ -456,10 +480,21 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	bson_to_zval(bson_get_data(&intern->write_result.writeErrors), intern->write_result.writeErrors.len, &state);
 	add_assoc_zval_ex(&retval, ZEND_STRS("writeErrors"), state.zchild);
 
+	if (!bson_empty0(&intern->write_result.writeConcernErrors) &&
+			bson_iter_init(&iter, &intern->write_result.writeConcernErrors) &&
+			bson_iter_next(&iter) &&
+			BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+		uint32_t len;
+		const uint8_t *data;
 
-	MAKE_STD_ZVAL(state.zchild);
-	bson_to_zval(bson_get_data(&intern->write_result.writeConcernError), intern->write_result.writeConcernError.len, &state);
-	add_assoc_zval_ex(&retval, ZEND_STRS("writeConcernError"), state.zchild);
+		bson_iter_document(&iter, &len, &data);
+
+		MAKE_STD_ZVAL(state.zchild);
+		bson_to_zval(data, len, &state);
+		add_assoc_zval_ex(&retval, ZEND_STRS("writeConcernError"), state.zchild);
+	} else {
+		add_assoc_null_ex(&retval, ZEND_STRS("writeConcernError"));
+	}
 
 	if (intern->write_concern) {
 		zval *write_concern = NULL;

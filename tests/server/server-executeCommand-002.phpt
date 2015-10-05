@@ -63,14 +63,6 @@ object(stdClass)#%d (%d) {
       }
     }
   }
-  ["$readPreference"]=>
-  object(stdClass)#%d (%d) {
-    ["mode"]=>
-    string(9) "secondary"
-    ["tags"]=>
-    array(0) {
-    }
-  }
 }
 Set profile level to 0 successfully: yes
 ===DONE===

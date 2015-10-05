@@ -36,8 +36,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   array(0) {
   }
   ["writeConcernError"]=>
-  array(0) {
-  }
+  NULL
   ["writeConcern"]=>
   array(%d) {
     ["w"]=>
