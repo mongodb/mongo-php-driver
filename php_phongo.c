@@ -1883,7 +1883,23 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 		php_phongo_populate_default_ssl_ctx(ctx, driverOptions);
 	}
 
-	MONGOC_DEBUG("Creating Manager, phongo-%s[%s] - mongoc-%s, libbson-%s", MONGODB_VERSION_S, MONGODB_STABILITY_S, MONGOC_VERSION_S, BSON_VERSION_S);
+	MONGOC_DEBUG("Creating Manager, phongo-%s[%s] - mongoc-%s(%s), libbson-%s(%s), php-%s",
+		MONGODB_VERSION_S,
+		MONGODB_STABILITY_S,
+		MONGOC_VERSION_S,
+#ifdef HAVE_SYSTEM_LIBMONGOC
+		mongoc_get_version(),
+#else
+		"bundled",
+#endif
+		BSON_VERSION_S,
+#ifdef HAVE_SYSTEM_LIBBSON
+		bson_get_version(),
+#else
+		"bundled",
+#endif
+		PHP_VERSION
+	);
 	client = mongoc_client_new_from_uri(uri);
 
 	if (!client) {
@@ -2393,8 +2409,19 @@ PHP_MINFO_FUNCTION(mongodb)
 	php_info_print_table_header(2, "mongodb support", "enabled");
 	php_info_print_table_row(2, "mongodb version", MONGODB_VERSION_S);
 	php_info_print_table_row(2, "mongodb stability", MONGODB_STABILITY_S);
+#ifdef HAVE_SYSTEM_LIBMONGOC
+	php_info_print_table_row(2, "libmongoc headers version", MONGOC_VERSION_S);
+	php_info_print_table_row(2, "libmongoc library version", mongoc_get_version());
+#else
+	/* Bundled libraries, buildtime = runtime */
 	php_info_print_table_row(2, "libmongoc version", MONGOC_VERSION_S);
+#endif
+#ifdef HAVE_SYSTEM_LIBBSON
+	php_info_print_table_row(2, "libbson headers version", BSON_VERSION_S);
+	php_info_print_table_row(2, "libbson library version", bson_get_version());
+#else
 	php_info_print_table_row(2, "libbson version", BSON_VERSION_S);
+#endif
 	php_info_print_table_end();
 
 	DISPLAY_INI_ENTRIES();
