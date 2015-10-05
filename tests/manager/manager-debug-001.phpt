@@ -30,7 +30,7 @@ foreach($content as $line) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-[%s]     PHONGO: DEBUG   > Creating Manager, phongo-1.%d.%d%S[%s] - mongoc-1.%s(%s), libbson-1.%s(%s)
+[%s]     PHONGO: DEBUG   > Creating Manager, phongo-1.%d.%d%S[%s] - mongoc-1.%s(%s), libbson-1.%s(%s), php-%s
 [%s]     mongoc: TRACE   > ENTRY: mongoc_bulk_operation_execute():%d
 [%s]     mongoc: TRACE   >  EXIT: mongoc_bulk_operation_execute():%d
 ===DONE===
