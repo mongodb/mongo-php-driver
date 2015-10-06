@@ -1,3 +1,204 @@
+RELEASE 1.0.0beta2
+-------------
+2015-10-06  Jeremy Mikola  <jmikola@gmail.com>
+	* Avoid nested macros when reporting runtime version in debug mode
+
+2015-10-05  Jeremy Mikola  <jmikola@gmail.com>
+	* Omit merge commits from release changelog
+
+2015-10-05  Jeremy Mikola  <jmikola@gmail.com>
+	* Use UTC time when creating package.xml
+
+2015-10-05  Jeremy Mikola  <jmikola@gmail.com>
+	* Bump extension version to 1.0.0beta2
+
+2015-10-05  Remi Collet  <fedora@famillecollet.com>
+	* PHPC-442: report PHP version in debug info
+
+2015-10-05  Remi Collet  <fedora@famillecollet.com>
+	* report runtime version in debug mode
+
+2015-10-05  Remi Collet  <fedora@famillecollet.com>
+	* rename macros
+
+2015-10-04  Remi Collet  <fedora@famillecollet.com>
+	* report libraries runtime versions
+
+2015-10-05  Jeremy Mikola  <jmikola@gmail.com>
+	* Test write and WC error extraction for single write methods
+
+2015-10-02  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-409: $readPreference is no longer sent to non-mongos nodes
+
+2015-10-02  Jeremy Mikola  <jmikola@gmail.com>
+	* Update filenames for libmongoc and libbson version functions
+
+2015-10-02  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-438: Debug handler should display null for no WC error
+
+2015-10-02  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-436: Handle new writeConcernErrors array in mongoc_write_result_t
+
+2015-10-02  Jeremy Mikola  <jmikola@gmail.com>
+	* Bump libbson and libmongoc submodules to 1.2.0-rc0
+
+2015-09-11  Hannes Magnusson  <bjori@php.net>
+	* PHPC-415: Add testcase
+
+2015-09-11  Hannes Magnusson  <bjori@php.net>
+	* PHPC-415: SSL/TLS already set-up for this stream
+
+2015-09-09  Hannes Magnusson  <bjori@php.net>
+	* $readPreferences should not be sent to standalone server
+
+2015-09-09  Hannes Magnusson  <bjori@php.net>
+	* Don't provide server_id when we have none
+
+2015-10-01  Jeremy Mikola  <jmikola@gmail.com>
+	* Use versioned URI for mongo-orchestration
+
+2015-10-01  Jeremy Mikola  <jmikola@gmail.com>
+	* Increase mongo-orchestration HTTP timeout
+
+2015-08-20  Jeremy Mikola  <jmikola@gmail.com>
+	* Empty query results should still pass "find" phase in mo-tests
+
+2015-08-20  Jeremy Mikola  <jmikola@gmail.com>
+	* Implement "clientHosts" phase for mo-tests
+
+2015-08-19  Jeremy Mikola  <jmikola@gmail.com>
+	* Support "delete" operation in mo-tests
+
+2015-08-19  Jeremy Mikola  <jmikola@gmail.com>
+	* Rename "findOne" to "find" in mo-tests
+
+2015-08-19  Jeremy Mikola  <jmikola@gmail.com>
+	* Fix exception throwing in mo-tests conversion script
+
+2015-09-24  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-393: Ignore non-public properties when encoding BSON
+
+2015-09-24  Jeremy Mikola  <jmikola@gmail.com>
+	* Previous break statement makes the else condition redundant
+
+2015-09-23  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-430, PHPC-377: Do not convert Query filter arg to an object
+
+2015-08-27  Hannes Magnusson  <bjori@php.net>
+	* PHPC-377: Eliminate object casting and whole lot of zend hash helpers
+
+2015-08-25  Hannes Magnusson  <bjori@php.net>
+	* PHPC-373: Get rid of MAKE_STD_ZVAL() and use bson_t instead
+
+2015-09-23  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-430: Regression tests for Query arg corruption
+
+2015-09-23  Jeremy Mikola  <jmikola@gmail.com>
+	* PHP versions in .travis.yml don't need to be strings
+
+2015-08-27  Hannes Magnusson  <bjori@php.net>
+	* PHPC-379: I broke PHP5.3 build. Thats OK, since we don't support it.
+
+2015-09-23  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-427: Fix parsing of null WC journal param for PHP 5.4
+
+2015-09-22  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-428: Remove support for WriteConcern fsync option
+
+2015-09-22  Jeremy Mikola  <jmikola@gmail.com>
+	* Update arg info for WriteConcern $w ctor parameter
+
+2015-09-21  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-427: Do not set WC journal/fsync to false for NULL args
+
+2015-09-18  Jeremy Mikola  <jmikola@gmail.com>
+	* Additional tests for WriteConcern debug handler
+
+2015-09-18  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-423: WriteConcern should report default "w" option as null
+
+2015-09-17  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-426: WC ctor should throw for invalid $w and $wtimeout args
+
+2015-09-17  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-425: WC ctor should accept int/string $w args w/o casting
+
+2015-09-17  Jeremy Mikola  <jmikola@gmail.com>
+	* WriteConcern ctor error test doesn't need EXPECTF
+
+2015-09-17  Jeremy Mikola  <jmikola@gmail.com>
+	* Use throws() helper function in WriteConcern ctor error test
+
+2015-09-18  Derick Rethans  <github@derickrethans.nl>
+	* Skip logging tests for HHVM, which will use its own method
+
+2015-09-10  Derick Rethans  <github@derickrethans.nl>
+	* Better messages for when things go wrong with exceptions
+
+2015-09-10  Derick Rethans  <github@derickrethans.nl>
+	* PHPC-412: HHVM does not do SSL peer verification like PHP
+
+2015-09-18  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-410: Make BSON exception message consistent with HHVM
+
+2015-09-17  Jeremy Mikola  <jmikola@gmail.com>
+	* Split out UTCDateTime toDateTime and toString tests
+
+2015-09-15  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-410: zval_to_bson() should throw on non-Serializable Type objects
+
+2015-09-15  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-410: object_to_bson() should throw on unsupported BSON\Type objects
+
+2015-09-09  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-410: object_to_bson() should encode non-stdClass objects
+
+2015-09-09  Jeremy Mikola  <jmikola@gmail.com>
+	* Revise debug messages in object_to_bson()
+
+2015-09-16  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-418: Getters for WriteConcern properties
+
+2015-09-16  Jeremy Mikola  <jmikola@gmail.com>
+	* Rename WriteConcern tests
+
+2015-09-16  Jeremy Mikola  <jmikola@gmail.com>
+	* Move PHONGO_WRITE_CONCERN_W_MAJORITY definition to php_phongo.h
+
+2015-09-15  Jeremy Mikola  <jmikola@gmail.com>
+	* Revise ReadPreference constructor error messages
+
+2015-09-15  Jeremy Mikola  <jmikola@gmail.com>
+	* Rename first ReadPreference constructor arg to "mode"
+
+2015-09-15  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-418: Getters for ReadPreference properties
+
+2015-09-15  Jeremy Mikola  <jmikola@gmail.com>
+	* Use valid tag sets in ReadPreference tests
+
+2015-09-15  Jeremy Mikola  <jmikola@gmail.com>
+	* Rename ReadPreference tests and split constructor error test
+
+2015-09-15  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-417: Return value objects from Manager RP/WC getters
+
+2015-09-15  Jeremy Mikola  <jmikola@gmail.com>
+	* Declare phongo_cursor_init() statically
+
+2015-09-09  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-408: Ensure object_to_bson() always creates a BSON document
+
+2015-09-09  Jeremy Mikola  <jmikola@gmail.com>
+	* Refactor bson-utcdatetime-001.phpt
+
+2015-09-10  Jeremy Mikola  <jmikola@gmail.com>
+	* Back to -dev
+
+2015-09-10  Jeremy Mikola  <jmikola@gmail.com>
+	* Add 1.0.0beta1 release notes
+
+
 RELEASE 1.0.0beta1
 -------------
 2015-09-10  Jeremy Mikola  <jmikola@gmail.com>
