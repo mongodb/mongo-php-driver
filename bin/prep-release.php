@@ -190,9 +190,9 @@ $changelog = __DIR__ . "/../RELEASE-".$VERSION;
 verify_changelog($changelog);
 
 
-$currtime = $_SERVER["REQUEST_TIME"];
-$DATE = date("Y-m-d", $currtime);
-$TIME = date("H:i:s", $currtime);
+$currtime = new DateTime('now', new DateTimeZone('UTC'));
+$DATE = $currtime->format('Y-m-d');
+$TIME = $currtime->format('H:i:s');
 
 $fullnotes = file($changelog, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
 $NOTES = array();
