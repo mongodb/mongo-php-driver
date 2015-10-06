@@ -1861,7 +1861,7 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 {
 	zval                     **tmp;
 	php_stream_context        *ctx;
-	const char                *mech;
+	const char                *mech, *mongoc_version, *bson_version;
 	mongoc_client_t           *client;
 
 	ENTRY;
@@ -1883,21 +1883,25 @@ mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *dri
 		php_phongo_populate_default_ssl_ctx(ctx, driverOptions);
 	}
 
+#ifdef HAVE_SYSTEM_LIBMONGOC
+	mongoc_version = mongoc_get_version();
+#else
+	mongoc_version = "bundled";
+#endif
+
+#ifdef HAVE_SYSTEM_LIBBSON
+	bson_version = bson_get_version();
+#else
+	bson_version = "bundled";
+#endif
+
 	MONGOC_DEBUG("Creating Manager, phongo-%s[%s] - mongoc-%s(%s), libbson-%s(%s), php-%s",
 		MONGODB_VERSION_S,
 		MONGODB_STABILITY_S,
 		MONGOC_VERSION_S,
-#ifdef HAVE_SYSTEM_LIBMONGOC
-		mongoc_get_version(),
-#else
-		"bundled",
-#endif
+		mongoc_version,
 		BSON_VERSION_S,
-#ifdef HAVE_SYSTEM_LIBBSON
-		bson_get_version(),
-#else
-		"bundled",
-#endif
+		bson_version,
 		PHP_VERSION
 	);
 	client = mongoc_client_new_from_uri(uri);
