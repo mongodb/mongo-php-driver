@@ -26,7 +26,7 @@ them using, for example, Composer.
 
 To build and install the driver:
 
-	$ pecl install mongodb-alpha
+	$ pecl install mongodb-beta
 	$ echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
 
