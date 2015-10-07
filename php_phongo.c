@@ -1553,7 +1553,7 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{
 /* }}} */
 
 
-mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options TSRMLS_DC) /* {{{ */
+mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options) /* {{{ */
 {
 	bson_iter_t   iter;
 	mongoc_uri_t *uri;
