@@ -55,6 +55,9 @@
 /* PHP array helpers */
 #include "php_array_api.h"
 
+/* For our stream verifications */
+#include <openssl/x509.h>
+
 /* Our Compatability header */
 #include "phongo_compat.h"
 
