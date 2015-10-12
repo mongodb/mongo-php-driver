@@ -52,7 +52,7 @@ extern zend_module_entry mongodb_module_entry;
 
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char *debug;
-	char *debug_filename;
+	FILE *debug_fd;
 	bson_mem_vtable_t bsonMemVTable;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
@@ -135,7 +135,7 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor);
 
 bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC);
 bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC);
-mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options TSRMLS_DC);
+mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options);
 mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC);
 void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS_DC);
 void php_phongo_cursor_id_new_from_id(zval *object, int64_t cursorid TSRMLS_DC);

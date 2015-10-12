@@ -82,7 +82,7 @@ PHP_METHOD(Manager, __construct)
 		zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
 	}
 
-	if (!(uri = php_phongo_make_uri(uri_string, &bson_options TSRMLS_CC))) {
+	if (!(uri = php_phongo_make_uri(uri_string, &bson_options))) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse MongoDB URI: '%s'", uri_string);
 		bson_destroy(&bson_options);
 
