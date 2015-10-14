@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\Driver\Server::executeCommand() takes a read preference
---XFAIL--
-See PHPC-441: slaveOk bit not set when using hint to query a secondary directly
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("REPLICASET"); ?>
 --FILE--
