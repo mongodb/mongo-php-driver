@@ -140,25 +140,6 @@ PHP_METHOD(WriteResult, getUpsertedCount)
 	RETURN_LONG(intern->write_result.nUpserted);
 }
 /* }}} */
-/* {{{ proto array WriteResult::getInfo()
-   FIXME: See PHPC-72 & CDRIVER-428
-   Returns metadata about the operation. */
-PHP_METHOD(WriteResult, getInfo)
-{
-	php_phongo_writeresult_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
-
-
-	intern = (php_phongo_writeresult_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-
-	array_init(return_value);
-}
-/* }}} */
 /* {{{ proto MongoDB\Driver\Server WriteResult::getServer()
    Returns the Server from which the result originated */
 PHP_METHOD(WriteResult, getServer)
@@ -374,9 +355,6 @@ ZEND_END_ARG_INFO();
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getUpsertedCount, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getInfo, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getServer, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
@@ -400,7 +378,6 @@ static zend_function_entry php_phongo_writeresult_me[] = {
 	PHP_ME(WriteResult, getModifiedCount, ai_WriteResult_getModifiedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getDeletedCount, ai_WriteResult_getDeletedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getUpsertedCount, ai_WriteResult_getUpsertedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getInfo, ai_WriteResult_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getServer, ai_WriteResult_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getUpsertedIds, ai_WriteResult_getUpsertedIds, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getWriteConcernError, ai_WriteResult_getWriteConcernError, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
