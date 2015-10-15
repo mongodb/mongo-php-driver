@@ -10,7 +10,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 $manager = new MongoDB\Driver\Manager(REPLICASET);
 
 echo throws(function() use ($manager) {
-    $manager->executeInsert(NS, ['x' => 1], new MongoDB\Driver\WriteConcern(30));
+    $manager->executeInsert(NS, ['x' => 1], [], new MongoDB\Driver\WriteConcern(30));
 }, 'MongoDB\Driver\Exception\WriteConcernException'), "\n";
 
 ?>

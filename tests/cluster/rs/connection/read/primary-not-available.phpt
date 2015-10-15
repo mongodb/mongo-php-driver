@@ -91,7 +91,7 @@ try {
     $wc = new MongoDB\Driver\WriteConcern(1);
     $result = $manager->executeInsert("databaseName.collectionName", array (
       'x' => 1,
-    ), $wc);
+    ), [], $wc);
     if ($result->getInsertedCount() == 1) {
         var_dump(array("ok" => 1));
     } else {

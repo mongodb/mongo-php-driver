@@ -101,7 +101,7 @@ function LOAD($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME, $filen
     }
 
     $manager = new MongoDB\Driver\Manager($uri);
-    $bulk = new MongoDB\Driver\BulkWrite(false);
+    $bulk = new MongoDB\Driver\BulkWrite(['ordered' => false]);
 
     $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
 
