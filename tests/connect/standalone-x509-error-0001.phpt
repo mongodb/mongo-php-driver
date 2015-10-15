@@ -1,5 +1,5 @@
 --TEST--
-Connect to MongoDB with using X509 retrieving username from certificate #002
+X509 connection should not reuse previous stream after an auth failure
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("STANDALONE_X509"); ?>
 --FILE--
@@ -18,10 +18,9 @@ function connect($dsn, $opts) {
         echo get_class($e), ": ", $e->getMessage(), "\n";
     }
     return $manager;
-
 }
-$SSL_DIR = realpath(__DIR__ . "/" . "./../../scripts/ssl/");
 
+$SSL_DIR = realpath(__DIR__ . "/" . "./../../scripts/ssl/");
 $opts = array(
         "peer_name" => "server",
         "verify_peer" => true,
@@ -29,11 +28,12 @@ $opts = array(
         "allow_self_signed" => false,
         "cafile" => $SSL_DIR . "/ca.pem", /* Defaults to openssl.cafile */
         "capath" => $SSL_DIR, /* Defaults to openssl.capath */
-        "local_cert" => $SSL_DIR . "/src/libmongoc/tests/certificates/client.pem",
+        "local_cert" => $SSL_DIR . "/client.pem",
 );
+
+/* Wrong username */
 $parsed = parse_url(STANDALONE_X509);
 $dsn = sprintf("mongodb://username@%s:%d/%s?ssl=true&authMechanism=MONGODB-X509", $parsed["host"], $parsed["port"], DATABASE_NAME);
-
 
 $m1 = connect($dsn, $opts);
 $m2 = connect($dsn, $opts);
