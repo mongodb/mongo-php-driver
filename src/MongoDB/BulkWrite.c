@@ -56,8 +56,8 @@ zend_object_handlers php_phongo_handler_bulkwrite;
 PHP_METHOD(BulkWrite, __construct)
 {
 	php_phongo_bulkwrite_t  *intern;
-	zend_error_handling       error_handling;
-	zend_bool                 ordered = 1;
+	zend_error_handling      error_handling;
+	zend_bool                ordered = 1;
 	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
 
