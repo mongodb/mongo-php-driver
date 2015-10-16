@@ -62,7 +62,6 @@ PHP_MINIT_FUNCTION(ExecutionTimeoutException)
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "ExecutionTimeoutException", php_phongo_executiontimeoutexception_me);
 	php_phongo_executiontimeoutexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce, NULL TSRMLS_CC);
-	PHONGO_CE_INIT(php_phongo_executiontimeoutexception_ce);
 
 	return SUCCESS;
 }

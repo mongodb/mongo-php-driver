@@ -62,7 +62,6 @@ PHP_MINIT_FUNCTION(SSLConnectionException)
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "SSLConnectionException", php_phongo_sslconnectionexception_me);
 	php_phongo_sslconnectionexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce, NULL TSRMLS_CC);
-	PHONGO_CE_INIT(php_phongo_sslconnectionexception_ce);
 
 	return SUCCESS;
 }
