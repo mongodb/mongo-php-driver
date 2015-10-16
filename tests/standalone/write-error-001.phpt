@@ -9,9 +9,8 @@ require_once __DIR__ . "/../utils/basic.inc";
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $hannes = array("name" => "Hannes", "country" => "USA", "gender" => "male");
-$ordered = true;
 
-$bulk = new \MongoDB\Driver\BulkWrite($ordered);
+$bulk = new \MongoDB\Driver\BulkWrite(['ordered' => true]);
 $hannes_id = $bulk->insert($hannes);
 
 $w = 2;

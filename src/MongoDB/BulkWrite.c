@@ -51,25 +51,29 @@ PHONGO_API zend_class_entry *php_phongo_bulkwrite_ce;
 
 zend_object_handlers php_phongo_handler_bulkwrite;
 
-/* {{{ proto MongoDB\Driver\BulkWrite BulkWrite::__construct(boolean $ordered)
+/* {{{ proto MongoDB\Driver\BulkWrite BulkWrite::__construct([array $options = array()])
    Constructs a new BulkWrite */
 PHP_METHOD(BulkWrite, __construct)
 {
 	php_phongo_bulkwrite_t  *intern;
-	zend_error_handling       error_handling;
-	zend_bool                 ordered = 1;
+	zend_error_handling      error_handling;
+	zval                    *options = NULL;
+	zend_bool                ordered = 1;
 	(void)return_value_ptr; (void)return_value; (void)return_value_used;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_bulkwrite_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &ordered) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a!", &options) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	if (options && php_array_exists(options, "ordered")) {
+		ordered = php_array_fetch_bool(options, "ordered");
+	}
 
 	intern->bulk = phongo_bulkwrite_init(ordered);
 }
@@ -225,7 +229,7 @@ PHP_METHOD(BulkWrite, count)
 /* {{{ MongoDB\Driver\BulkWrite */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite___construct, 0, 0, 0)
-	ZEND_ARG_INFO(0, ordered)
+	ZEND_ARG_ARRAY_INFO(0, options, 1)
 ZEND_END_ARG_INFO();
 
 ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite_insert, 0, 0, 1)

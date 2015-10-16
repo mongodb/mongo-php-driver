@@ -180,7 +180,7 @@ PHP_METHOD(Manager, executeBulkWrite)
 	phongo_execute_write(intern->client, namespace, bulk->bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Driver\WriteResult Manager::executeInsert(string $namespace, array|object $document[, MongoDB\Driver\WriteConcern $writeConcern = null])
+/* {{{ proto MongoDB\Driver\WriteResult Manager::executeInsert(string $namespace, array|object $document[, array $insertOptions = array()[, MongoDB\Driver\WriteConcern $writeConcern = null]])
    Convenience method for single insert operation. */
 PHP_METHOD(Manager, executeInsert)
 {
@@ -188,6 +188,7 @@ PHP_METHOD(Manager, executeInsert)
 	char                     *namespace;
 	int                       namespace_len;
 	zval                     *document;
+	zval                     *insertOptions = NULL;
 	zval                     *zwrite_concern = NULL;
 	bson_t                   *bson;
 	(void)return_value_ptr;
@@ -195,13 +196,17 @@ PHP_METHOD(Manager, executeInsert)
 
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sA|O!", &namespace, &namespace_len, &document, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sA|a!O!", &namespace, &namespace_len, &document, &insertOptions, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
 		return;
 	}
 
 
 	bson = bson_new();
 	zval_to_bson(document, PHONGO_BSON_ADD_ODS|PHONGO_BSON_ADD_CHILD_ODS, bson, NULL TSRMLS_CC);
+
+	/* When PHPC-443 is implemented, insertOptions will be parsed for the
+	 * bypassDocumentValidation option; however, there's nothing to do now. */
+
 	phongo_execute_single_insert(intern->client, namespace, bson, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 	bson_clear(&bson);
 }
@@ -422,6 +427,7 @@ ZEND_END_ARG_INFO();
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeInsert, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_INFO(0, document)
+	ZEND_ARG_ARRAY_INFO(0, insertOptions, 1)
 	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
 ZEND_END_ARG_INFO();
 

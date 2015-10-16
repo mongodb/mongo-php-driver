@@ -10,9 +10,8 @@ $manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $hannes = array("name" => "Hannes", "country" => "USA", "gender" => "male");
 $hayley = array("name" => "Hayley", "country" => "USA", "gender" => "female");
-$ordered = true;
 
-$insertBulk = new \MongoDB\Driver\BulkWrite($ordered);
+$insertBulk = new \MongoDB\Driver\BulkWrite(['ordered' => true]);
 $hannes_id = $insertBulk->insert($hannes);
 $hayley_id = $insertBulk->insert($hayley);
 

@@ -8,7 +8,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$bulk = new MongoDB\Driver\BulkWrite(false);
+$bulk = new MongoDB\Driver\BulkWrite(['ordered' => false]);
 $bulk->update(array('x' => 'foo'), array('$set' => array('y' => 'foo')), array('upsert' => true));
 $bulk->update(array('x' => 'bar'), array('$set' => array('y' => 'bar')), array('upsert' => true));
 $bulk->update(array('x' => 'foo'), array('$set' => array('y' => 'bar')));
