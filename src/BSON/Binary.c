@@ -123,6 +123,7 @@ static zend_function_entry php_phongo_binary_me[] = {
 	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC)
 	PHP_ME(Binary, getData, ai_Binary_getData, ZEND_ACC_PUBLIC)
 	PHP_ME(Binary, getType, ai_Binary_getType, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
@@ -184,6 +185,7 @@ PHP_MINIT_FUNCTION(Binary)
 	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "Binary", php_phongo_binary_me);
 	php_phongo_binary_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_binary_ce->create_object = php_phongo_binary_create_object;
+	PHONGO_CE_INIT(php_phongo_binary_ce);
 
 	zend_class_implements(php_phongo_binary_ce TSRMLS_CC, 1, php_phongo_type_ce);
 

@@ -116,6 +116,7 @@ ZEND_END_ARG_INFO();
 static zend_function_entry php_phongo_objectid_me[] = {
 	PHP_ME(ObjectID, __construct, ai_ObjectID___construct, ZEND_ACC_PUBLIC)
 	PHP_ME(ObjectID, __toString, ai_ObjectID___toString, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
@@ -186,6 +187,7 @@ PHP_MINIT_FUNCTION(ObjectID)
 	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "ObjectID", php_phongo_objectid_me);
 	php_phongo_objectid_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_objectid_ce->create_object = php_phongo_objectid_create_object;
+	PHONGO_CE_INIT(php_phongo_objectid_ce);
 
 	zend_class_implements(php_phongo_objectid_ce TSRMLS_CC, 1, php_phongo_type_ce);
 

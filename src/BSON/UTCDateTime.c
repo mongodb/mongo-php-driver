@@ -135,6 +135,7 @@ static zend_function_entry php_phongo_utcdatetime_me[] = {
 	PHP_ME(UTCDateTime, __construct, ai_UTCDateTime___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, __toString, ai_UTCDateTime___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, toDateTime, ai_UTCDateTime_toDateTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
@@ -203,6 +204,7 @@ PHP_MINIT_FUNCTION(UTCDateTime)
 	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "UTCDateTime", php_phongo_utcdatetime_me);
 	php_phongo_utcdatetime_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_utcdatetime_ce->create_object = php_phongo_utcdatetime_create_object;
+	PHONGO_CE_INIT(php_phongo_utcdatetime_ce);
 
 	zend_class_implements(php_phongo_utcdatetime_ce TSRMLS_CC, 1, php_phongo_type_ce);
 
