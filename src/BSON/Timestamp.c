@@ -161,8 +161,8 @@ PHP_MINIT_FUNCTION(Timestamp)
 	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "Timestamp", php_phongo_timestamp_me);
-	ce.create_object = php_phongo_timestamp_create_object;
 	php_phongo_timestamp_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_timestamp_ce->create_object = php_phongo_timestamp_create_object;
 
 	zend_class_implements(php_phongo_timestamp_ce TSRMLS_CC, 1, php_phongo_type_ce);
 

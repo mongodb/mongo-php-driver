@@ -201,8 +201,8 @@ PHP_MINIT_FUNCTION(UTCDateTime)
 	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "UTCDateTime", php_phongo_utcdatetime_me);
-	ce.create_object = php_phongo_utcdatetime_create_object;
 	php_phongo_utcdatetime_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_utcdatetime_ce->create_object = php_phongo_utcdatetime_create_object;
 
 	zend_class_implements(php_phongo_utcdatetime_ce TSRMLS_CC, 1, php_phongo_type_ce);
 
