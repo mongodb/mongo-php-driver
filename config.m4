@@ -178,7 +178,6 @@ if test "$MONGODB" != "no"; then
       src/MongoDB/Exception/ConnectionException.c \
       src/MongoDB/Exception/AuthenticationException.c \
       src/MongoDB/Exception/SSLConnectionException.c \
-      src/MongoDB/Exception/DuplicateKeyException.c \
       src/MongoDB/Exception/ExecutionTimeoutException.c \
       src/MongoDB/Exception/ConnectionTimeoutException.c \
       src/MongoDB/Exception/WriteException.c \
