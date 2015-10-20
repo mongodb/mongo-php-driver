@@ -50,6 +50,7 @@ PHONGO_API zend_class_entry *php_phongo_minkey_ce;
 
 
 static zend_function_entry php_phongo_minkey_me[] = {
+	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
@@ -92,8 +93,9 @@ PHP_MINIT_FUNCTION(MinKey)
 
 
 	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "MinKey", php_phongo_minkey_me);
-	ce.create_object = php_phongo_minkey_create_object;
 	php_phongo_minkey_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_minkey_ce->create_object = php_phongo_minkey_create_object;
+	PHONGO_CE_INIT(php_phongo_minkey_ce);
 
 	zend_class_implements(php_phongo_minkey_ce TSRMLS_CC, 1, php_phongo_type_ce);
 
