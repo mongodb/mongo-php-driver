@@ -8,7 +8,9 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$result = $manager->executeInsert(NS, array('x' => 1));
+$bulk = new \MongoDB\Driver\BulkWrite;
+$bulk->insert(array('x' => 1));
+$result = $manager->executeBulkWrite(NS, $bulk);
 
 printf("WriteResult::isAcknowledged(): %s\n", $result->isAcknowledged() ? 'true' : 'false');
 var_dump($result);

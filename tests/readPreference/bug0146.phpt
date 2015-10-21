@@ -7,7 +7,11 @@ PHPC-146: ReadPreference primaryPreferred and secondary swapped
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
-$manager->executeInsert(NS, array("my" => "document"));
+
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('my' => 'document'));
+$manager->executeBulkWrite(NS, $bulk);
+
 $rps = array(
     MongoDB\Driver\ReadPreference::RP_PRIMARY,
     MongoDB\Driver\ReadPreference::RP_PRIMARY_PREFERRED,

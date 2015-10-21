@@ -8,15 +8,17 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(REPLICASET);
 
-
 $wc = new MongoDB\Driver\WriteConcern("MultipleDC", 500);
 
-$doc = array("example" => "document");
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('example' => 'document'));
+
 try {
-    $result = $manager->executeInsert("databaseName.collectionName", $doc, [], $wc);
-} catch(MongoDB\Driver\Exception\WriteConcernException $e) {
+    $manager->executeBulkWrite(NS, $bulk, $wc);
+} catch(MongoDB\Driver\Exception\BulkWriteException $e) {
     var_dump($e->getWriteResult()->getWriteConcernError());
 }
+
 ?>
 ===DONE===
 <?php exit(0); ?>

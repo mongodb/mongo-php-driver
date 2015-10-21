@@ -207,7 +207,9 @@ $array = $m->executeQuery(NS, $queryHartmann)->toArray();
 $hartmann = $array[0];
 $hartmann->setName("Dr. " . $hartmann->getName());
 
-$retval = $m->executeUpdate(NS, $hartmannFilter, $hartmann);
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->update($hartmannFilter, $hartmann);
+$retval = $m->executeBulkWrite(NS, $bulk);
 printf("Updated %d person (%s)\n", $retval->getModifiedCount(), $hartmann->getName());
 
 $queryAll = new MongoDB\Driver\Query(array());

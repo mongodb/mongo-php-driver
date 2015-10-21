@@ -8,9 +8,6 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$manager->executeInsert(NS, array('_id' => 1, 'x' => 1));
-$manager->executeInsert(NS, array('_id' => 2, 'x' => 1));
-
 $user = array(
     "username" => "bob",
     "address" => array(

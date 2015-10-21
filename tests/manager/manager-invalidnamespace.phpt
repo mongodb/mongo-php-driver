@@ -10,21 +10,19 @@ $manager = new MongoDB\Driver\Manager(STANDALONE);
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(array("my" => "value"));
 
-throws(function() use($manager, $bulk) {
-    $retval = $manager->executeBulkWrite("database", $bulk);
-}, "MongoDB\Driver\Exception\InvalidArgumentException");
+echo throws(function() use($manager, $bulk) {
+    $manager->executeBulkWrite("database", $bulk);
+}, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
-throws(function() use($manager) {
-    $retval = $manager->executeInsert("database", array("document "=> 1));
-}, "MongoDB\Driver\Exception\InvalidArgumentException");
-throws(function() use($manager) {
-    $retval = $manager->executeQuery("database", new MongoDB\Driver\Query(array("document "=> 1)));
-}, "MongoDB\Driver\Exception\InvalidArgumentException");
+echo throws(function() use($manager) {
+    $manager->executeQuery("database", new MongoDB\Driver\Query(array("document "=> 1)));
+}, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Invalid namespace provided: database
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Invalid namespace provided: database
 ===DONE===

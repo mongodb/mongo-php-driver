@@ -62,9 +62,11 @@ $manager = new MongoDB\Driver\Manager($dsn);
 
 try {
     $wc = new MongoDB\Driver\WriteConcern(1);
-    $result = $manager->executeInsert("databaseName.collectionName", array (
+    $bulk = new MongoDB\Driver\BulkWrite();
+    $bulk->insert(array (
       'x' => 1,
-    ), [], $wc);
+    ));
+    $result = $manager->executeBulkWrite("databaseName.collectionName", $bulk, $wc);
     if ($result->getInsertedCount() == 1) {
         var_dump(array("ok" => 1));
     } else {
@@ -80,9 +82,11 @@ mo_post("/servers/serverA", array (
 
 try {
     $wc = new MongoDB\Driver\WriteConcern(1);
-    $result = $manager->executeInsert("databaseName.collectionName", array (
+    $bulk = new MongoDB\Driver\BulkWrite();
+    $bulk->insert(array (
       'x' => 2,
-    ), [], $wc);
+    ));
+    $result = $manager->executeBulkWrite("databaseName.collectionName", $bulk, $wc);
     if ($result->getInsertedCount() == 1) {
         var_dump(array("ok" => 1));
     } else {
@@ -98,9 +102,11 @@ mo_post("/servers/serverA", array (
 
 try {
     $wc = new MongoDB\Driver\WriteConcern(1);
-    $result = $manager->executeInsert("databaseName.collectionName", array (
+    $bulk = new MongoDB\Driver\BulkWrite();
+    $bulk->insert(array (
       'x' => 3,
-    ), [], $wc);
+    ));
+    $result = $manager->executeBulkWrite("databaseName.collectionName", $bulk, $wc);
     if ($result->getInsertedCount() == 1) {
         var_dump(array("ok" => 1));
     } else {

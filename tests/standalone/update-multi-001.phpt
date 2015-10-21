@@ -9,29 +9,32 @@ require_once __DIR__ . "/../utils/basic.inc";
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
 // load fixtures for test
-$manager->executeInsert(NS, array('_id' => 1, 'x' => 1));
-$manager->executeInsert(NS, array('_id' => 2, 'x' => 2));
-$manager->executeInsert(NS, array('_id' => 3, 'x' => 2));
-$manager->executeInsert(NS, array('_id' => 4, 'x' => 2));
-$manager->executeInsert(NS, array('_id' => 5, 'x' => 1));
-$manager->executeInsert(NS, array('_id' => 6, 'x' => 1));
+$bulk = new \MongoDB\Driver\BulkWrite;
+$bulk->insert(array('_id' => 1, 'x' => 1));
+$bulk->insert(array('_id' => 2, 'x' => 2));
+$bulk->insert(array('_id' => 3, 'x' => 2));
+$bulk->insert(array('_id' => 4, 'x' => 2));
+$bulk->insert(array('_id' => 5, 'x' => 1));
+$bulk->insert(array('_id' => 6, 'x' => 1));
+$manager->executeBulkWrite(NS, $bulk);
 
-$result = $manager->executeUpdate(
-    NS,
+$bulk = new \MongoDB\Driver\BulkWrite;
+$bulk->update(
     array('x' => 1),
     array('$set' => array('x' => 3)),
     array('multi' => false, 'upsert' => false)
 );
+$result = $manager->executeBulkWrite(NS, $bulk);
 
 printf("Changed %d out of expected 1 (_id=1)\n", $result->getModifiedCount());
 
-
-$result = $manager->executeUpdate(
-    NS,
+$bulk = new \MongoDB\Driver\BulkWrite;
+$bulk->update(
     array('x' => 1),
     array('$set' => array('x' => 2)),
     array('multi' => true, 'upsert' => false)
 );
+$result = $manager->executeBulkWrite(NS, $bulk);
 
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
 var_dump(iterator_to_array($cursor));

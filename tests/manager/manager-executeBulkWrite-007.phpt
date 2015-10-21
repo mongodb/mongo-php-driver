@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeInsert()
+MongoDB\Driver\Manager::executeBulkWrite() update one document with no upsert
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -8,7 +8,18 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$result = $manager->executeInsert(NS, array('_id' => 1, 'x' => 1));
+// load fixtures for test
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, 'x' => 1));
+$manager->executeBulkWrite(NS, $bulk);
+
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->update(
+    array('_id' => 1),
+    array('$set' => array('x' => 2)),
+    array('multi' => false, 'upsert' => false)
+);
+$result = $manager->executeBulkWrite(NS, $bulk);
 
 echo "\n===> WriteResult\n";
 printWriteResult($result);
@@ -23,9 +34,9 @@ var_dump(iterator_to_array($cursor));
 --EXPECTF--
 ===> WriteResult
 server: %s:%d
-insertedCount: 1
-matchedCount: 0
-modifiedCount: 0
+insertedCount: 0
+matchedCount: 1
+modifiedCount: 1
 upsertedCount: 0
 deletedCount: 0
 
@@ -36,7 +47,7 @@ array(1) {
     ["_id"]=>
     int(1)
     ["x"]=>
-    int(1)
+    int(2)
   }
 }
 ===DONE===

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeUpdate() multiple documents with upsert
+MongoDB\Driver\Manager::executeBulkWrite() update multiple documents with upsert
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -8,12 +8,13 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$result = $manager->executeUpdate(
-    NS,
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->update(
     array('_id' => 1),
     array('$set' => array('x' => 1)),
     array('multi' => true, 'upsert' => true)
 );
+$result = $manager->executeBulkWrite(NS, $bulk);
 
 echo "\n===> WriteResult\n";
 printWriteResult($result);

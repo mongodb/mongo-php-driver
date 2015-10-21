@@ -13,7 +13,9 @@ $manager = new MongoDB\Driver\Manager(STANDALONE);
 $classname = BSON_NAMESPACE . "\\UTCDateTime";
 $utcdatetime = new $classname("1416445411987");
 
-$manager->executeInsert(NS, array('_id' => 1, 'x' => $utcdatetime));
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, 'x' => $utcdatetime));
+$manager->executeBulkWrite(NS, $bulk);
 
 $query = new MongoDB\Driver\Query(array('_id' => 1));
 $cursor = $manager->executeQuery(NS, $query);

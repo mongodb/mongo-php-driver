@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeBulkWrite() with duplicate key errors (unordered)
+MongoDB\Driver\Manager::executeBulkWrite() delete one document
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -8,22 +8,18 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$bulk = new MongoDB\Driver\BulkWrite(['ordered' => false]);
-$bulk->insert(array('_id' => 1));
-$bulk->insert(array('_id' => 1));
-$bulk->insert(array('_id' => 2));
-$bulk->insert(array('_id' => 2));
+// load fixtures for test
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, 'x' => 1));
+$bulk->insert(array('_id' => 2, 'x' => 1));
+$manager->executeBulkWrite(NS, $bulk);
 
-try {
-    $result = $manager->executeBulkWrite(NS, $bulk);
-    echo "FAILED\n";
-} catch (MongoDB\Driver\Exception\WriteException $e) {
-    printf("WriteException.message: %s\n", $e->getMessage());
-    printf("WriteException.code: %d\n", $e->getCode());
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->delete(array('x' => 1), array('limit' => 1));
+$result = $manager->executeBulkWrite(NS, $bulk);
 
-    echo "\n===> WriteResult\n";
-    printWriteResult($e->getWriteResult());
-}
+echo "\n===> WriteResult\n";
+printWriteResult($result);
 
 echo "\n===> Collection\n";
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
@@ -33,52 +29,22 @@ var_dump(iterator_to_array($cursor));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-WriteException.message: BulkWrite error
-WriteException.code: %d
-
 ===> WriteResult
 server: %s:%d
-insertedCount: 2
+insertedCount: 0
 matchedCount: 0
 modifiedCount: 0
 upsertedCount: 0
-deletedCount: 0
-object(MongoDB\Driver\WriteError)#%d (%d) {
-  ["message"]=>
-  string(%d) "%s"
-  ["code"]=>
-  int(11000)
-  ["index"]=>
-  int(1)
-  ["info"]=>
-  NULL
-}
-writeError[1].message: %s
-writeError[1].code: 11000
-object(MongoDB\Driver\WriteError)#%d (%d) {
-  ["message"]=>
-  string(%d) "%s"
-  ["code"]=>
-  int(11000)
-  ["index"]=>
-  int(3)
-  ["info"]=>
-  NULL
-}
-writeError[3].message: %s
-writeError[3].code: 11000
+deletedCount: 1
 
 ===> Collection
-array(2) {
+array(1) {
   [0]=>
-  object(stdClass)#%d (1) {
-    ["_id"]=>
-    int(1)
-  }
-  [1]=>
-  object(stdClass)#%d (1) {
+  object(stdClass)#%d (2) {
     ["_id"]=>
     int(2)
+    ["x"]=>
+    int(1)
   }
 }
 ===DONE===

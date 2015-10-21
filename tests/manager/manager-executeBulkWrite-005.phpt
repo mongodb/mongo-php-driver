@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeDelete() multiple documents
+MongoDB\Driver\Manager::executeBulkWrite() insert one document
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -8,18 +8,15 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-// load fixtures for test
-$manager->executeInsert(NS, array('_id' => 1, 'x' => 1));
-$manager->executeInsert(NS, array('_id' => 2, 'x' => 1));
-
-$result = $manager->executeDelete(NS, array('x' => 1), array('limit' => 0));
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, 'x' => 1));
+$result = $manager->executeBulkWrite(NS, $bulk);
 
 echo "\n===> WriteResult\n";
 printWriteResult($result);
 
 echo "\n===> Collection\n";
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
-
 var_dump(iterator_to_array($cursor));
 
 ?>
@@ -28,13 +25,20 @@ var_dump(iterator_to_array($cursor));
 --EXPECTF--
 ===> WriteResult
 server: %s:%d
-insertedCount: 0
+insertedCount: 1
 matchedCount: 0
 modifiedCount: 0
 upsertedCount: 0
-deletedCount: 2
+deletedCount: 0
 
 ===> Collection
-array(0) {
+array(1) {
+  [0]=>
+  object(stdClass)#%d (2) {
+    ["_id"]=>
+    int(1)
+    ["x"]=>
+    int(1)
+  }
 }
 ===DONE===
