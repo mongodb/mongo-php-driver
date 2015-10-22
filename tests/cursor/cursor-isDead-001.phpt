@@ -8,9 +8,11 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$manager->executeInsert(NS, array('_id' => 1));
-$manager->executeInsert(NS, array('_id' => 2));
-$manager->executeInsert(NS, array('_id' => 3));
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1));
+$bulk->insert(array('_id' => 2));
+$bulk->insert(array('_id' => 3));
+$manager->executeBulkWrite(NS, $bulk);
 
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array(), array('batchSize' => 2)));
 

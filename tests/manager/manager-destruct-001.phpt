@@ -11,15 +11,21 @@ require_once __DIR__ . "/../utils/basic.inc";
 $manager1 = new MongoDB\Driver\Manager(STANDALONE);
 $manager2 = new MongoDB\Driver\Manager(STANDALONE);
 
-$writeResult = $manager1->executeInsert(NS, array('_id' => 1));
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1));
+$writeResult = $manager1->executeBulkWrite(NS, $bulk);
 printf("Inserted: %d\n", $writeResult->getInsertedCount());
 
-$writeResult = $manager2->executeInsert(NS, array('_id' => 2));
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 2));
+$writeResult = $manager2->executeBulkWrite(NS, $bulk);
 printf("Inserted: %d\n", $writeResult->getInsertedCount());
 
 $manager2 = null;
 
-$writeResult = $manager1->executeInsert(NS, array('_id' => 3));
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 3));
+$writeResult = $manager1->executeBulkWrite(NS, $bulk);
 printf("Inserted: %d\n", $writeResult->getInsertedCount());
 
 ?>

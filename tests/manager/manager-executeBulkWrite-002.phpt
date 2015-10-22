@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeBulkWrite() with duplicate key errors (ordered)
+MongoDB\Driver\Manager::executeBulkWrite() with upserted ids
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -8,22 +8,15 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$bulk = new MongoDB\Driver\BulkWrite(['ordered' => true]);
-$bulk->insert(array('_id' => 1));
-$bulk->insert(array('_id' => 1));
-$bulk->insert(array('_id' => 2));
-$bulk->insert(array('_id' => 2));
+$bulk = new MongoDB\Driver\BulkWrite(['ordered' => false]);
+$bulk->update(array('x' => 'foo'), array('$set' => array('y' => 'foo')), array('upsert' => true));
+$bulk->update(array('x' => 'bar'), array('$set' => array('y' => 'bar')), array('upsert' => true));
+$bulk->update(array('x' => 'foo'), array('$set' => array('y' => 'bar')));
 
-try {
-    $result = $manager->executeBulkWrite(NS, $bulk);
-    echo "FAILED\n";
-} catch (MongoDB\Driver\Exception\WriteException $e) {
-    printf("WriteException.message: %s\n", $e->getMessage());
-    printf("WriteException.code: %d\n", $e->getCode());
+$result = $manager->executeBulkWrite(NS, $bulk);
 
-    echo "\n===> WriteResult\n";
-    printWriteResult($e->getWriteResult());
-}
+echo "\n===> WriteResult\n";
+printWriteResult($result);
 
 echo "\n===> Collection\n";
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
@@ -33,35 +26,47 @@ var_dump(iterator_to_array($cursor));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-WriteException.message: BulkWrite error
-WriteException.code: 0
-
 ===> WriteResult
 server: %s:%d
-insertedCount: 1
-matchedCount: 0
-modifiedCount: 0
-upsertedCount: 0
+insertedCount: 0
+matchedCount: 1
+modifiedCount: 1
+upsertedCount: 2
 deletedCount: 0
-object(MongoDB\Driver\WriteError)#%d (%d) {
-  ["message"]=>
-  string(%d) "%s"
-  ["code"]=>
-  int(11000)
-  ["index"]=>
-  int(1)
-  ["info"]=>
-  NULL
+upsertedId[0]: object(%s\ObjectID)#%d (%d) {
+  ["oid"]=>
+  string(24) "%s"
 }
-writeError[1].message: %s
-writeError[1].code: 11000
+upsertedId[1]: object(%s\ObjectID)#%d (%d) {
+  ["oid"]=>
+  string(24) "%s"
+}
 
 ===> Collection
-array(1) {
+array(2) {
   [0]=>
-  object(stdClass)#%d (1) {
+  object(stdClass)#%d (3) {
     ["_id"]=>
-    int(1)
+    object(%s\ObjectID)#%d (%d) {
+      ["oid"]=>
+      string(24) "%s"
+    }
+    ["x"]=>
+    string(3) "foo"
+    ["y"]=>
+    string(3) "bar"
+  }
+  [1]=>
+  object(stdClass)#%d (3) {
+    ["_id"]=>
+    object(%s\ObjectID)#%d (%d) {
+      ["oid"]=>
+      string(24) "%s"
+    }
+    ["x"]=>
+    string(3) "bar"
+    ["y"]=>
+    string(3) "bar"
   }
 }
 ===DONE===

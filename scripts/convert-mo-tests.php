@@ -242,7 +242,9 @@ function clientOperation($phase, &$output) {
         $retval = <<< CODE
 try {
     \$wc = new MongoDB\\Driver\\WriteConcern($wc);
-    \$result = \$manager->executeInsert("databaseName.collectionName", $doc, [], \$wc);
+    \$bulk = new MongoDB\Driver\BulkWrite();
+    \$bulk->insert($doc);
+    \$result = \$manager->executeBulkWrite("databaseName.collectionName", \$bulk, \$wc);
     if (\$result->getInsertedCount() == 1) {
         var_dump(array("ok" => 1));
     } else {

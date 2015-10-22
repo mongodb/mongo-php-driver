@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeUpdate() multiple documents with no upsert
+MongoDB\Driver\Manager::executeBulkWrite() update multiple documents with no upsert
 --SKIPIF--
 <?php if (getenv("TRAVIS")) exit("skip This oddly enough fails on travis and I cannot figureout why") ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
@@ -10,16 +10,19 @@ require_once __DIR__ . "/../utils/basic.inc";
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
 // load fixtures for test
-$manager->executeInsert(NS, array('_id' => 1, 'x' => 1));
-$manager->executeInsert(NS, array('_id' => 2, 'x' => 1));
-$manager->executeInsert(NS, array('_id' => 3, 'x' => 3));
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, 'x' => 1));
+$bulk->insert(array('_id' => 2, 'x' => 1));
+$bulk->insert(array('_id' => 3, 'x' => 3));
+$manager->executeBulkWrite(NS, $bulk);
 
-$result = $manager->executeUpdate(
-    NS,
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->update(
     array('x' => 1),
     array('$set' => array('x' => 2)),
     array('multi' => true, 'upsert' => false)
 );
+$result = $manager->executeBulkWrite(NS, $bulk);
 
 echo "\n===> WriteResult\n";
 printWriteResult($result);

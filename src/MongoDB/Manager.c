@@ -180,107 +180,6 @@ PHP_METHOD(Manager, executeBulkWrite)
 	phongo_execute_write(intern->client, namespace, bulk->bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Driver\WriteResult Manager::executeInsert(string $namespace, array|object $document[, array $insertOptions = array()[, MongoDB\Driver\WriteConcern $writeConcern = null]])
-   Convenience method for single insert operation. */
-PHP_METHOD(Manager, executeInsert)
-{
-	php_phongo_manager_t     *intern;
-	char                     *namespace;
-	int                       namespace_len;
-	zval                     *document;
-	zval                     *insertOptions = NULL;
-	zval                     *zwrite_concern = NULL;
-	bson_t                   *bson;
-	(void)return_value_ptr;
-
-
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sA|a!O!", &namespace, &namespace_len, &document, &insertOptions, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
-		return;
-	}
-
-
-	bson = bson_new();
-	zval_to_bson(document, PHONGO_BSON_ADD_ODS|PHONGO_BSON_ADD_CHILD_ODS, bson, NULL TSRMLS_CC);
-
-	/* When PHPC-443 is implemented, insertOptions will be parsed for the
-	 * bypassDocumentValidation option; however, there's nothing to do now. */
-
-	phongo_execute_single_insert(intern->client, namespace, bson, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
-	bson_clear(&bson);
-}
-/* }}} */
-/* {{{ proto MongoDB\Driver\WriteResult Manager::executeUpdate(string $namespace, array|object $zquery, array|object $newObj[, array $updateOptions = array()[, MongoDB\Driver\WriteConcern $writeConcern = null]])
-   Convenience method for single update operation. */
-PHP_METHOD(Manager, executeUpdate)
-{
-	php_phongo_manager_t     *intern;
-	char                     *namespace;
-	int                       namespace_len;
-	zval                     *zquery;
-	zval                     *newObj;
-	zval                     *updateOptions = NULL;
-	zval                     *zwrite_concern = NULL;
-	bson_t                   *query;
-	bson_t                   *update;
-	mongoc_update_flags_t     flags = MONGOC_UPDATE_NONE;
-	(void)return_value_ptr;
-
-
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sAA|a!O!", &namespace, &namespace_len, &zquery, &newObj, &updateOptions, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
-		return;
-	}
-
-
-	query = bson_new();
-	update = bson_new();
-	zval_to_bson(zquery, PHONGO_BSON_NONE, query, NULL TSRMLS_CC);
-	zval_to_bson(newObj, PHONGO_BSON_ADD_CHILD_ODS, update, NULL TSRMLS_CC);
-
-	if (updateOptions) {
-		flags |= php_array_fetch_bool(updateOptions, "multi") ? MONGOC_UPDATE_MULTI_UPDATE : 0 ;
-		flags |= php_array_fetch_bool(updateOptions, "upsert") ? MONGOC_UPDATE_UPSERT : 0;
-	}
-
-	phongo_execute_single_update(intern->client, namespace, query, update, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, flags, return_value, return_value_used TSRMLS_CC);
-	bson_clear(&query);
-	bson_clear(&update);
-}
-/* }}} */
-/* {{{ proto MongoDB\Driver\WriteResult Manager::executeDelete(string $namespace, array|object $query[, array $deleteOptions = array()[, MongoDB\Driver\WriteConcern $writeConcern = null]])
-   Convenience method for single delete operation. */
-PHP_METHOD(Manager, executeDelete)
-{
-	php_phongo_manager_t     *intern;
-	char                     *namespace;
-	int                       namespace_len;
-	zval                     *query;
-	zval                     *deleteOptions = NULL;
-	zval                     *zwrite_concern = NULL;
-	bson_t                   *bson;
-	mongoc_delete_flags_t     flags = MONGOC_DELETE_NONE;
-	(void)return_value_ptr;
-
-
-	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sA|a!O!", &namespace, &namespace_len, &query, &deleteOptions, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
-		return;
-	}
-
-
-	if (deleteOptions && php_array_fetch_bool(deleteOptions, "limit")) {
-		flags |= MONGOC_DELETE_SINGLE_REMOVE;
-	}
-	bson = bson_new();
-	zval_to_bson(query, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
-	phongo_execute_single_delete(intern->client, namespace, bson, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, flags, return_value, return_value_used TSRMLS_CC);
-	bson_clear(&bson);
-}
-/* }}} */
 /* {{{ proto MongoDB\Driver\ReadPreference Manager::getReadPreference()
    Returns the ReadPreference associated with this Manager */
 PHP_METHOD(Manager, getReadPreference)
@@ -424,28 +323,6 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeBulkWrite, 0, 0, 2)
 	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeInsert, 0, 0, 2)
-	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_INFO(0, document)
-	ZEND_ARG_ARRAY_INFO(0, insertOptions, 1)
-	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeUpdate, 0, 0, 3)
-	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_INFO(0, zquery)
-	ZEND_ARG_INFO(0, newObj)
-	ZEND_ARG_ARRAY_INFO(0, updateOptions, 1)
-	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeDelete, 0, 0, 2)
-	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_INFO(0, query)
-	ZEND_ARG_ARRAY_INFO(0, deleteOptions, 1)
-	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
-ZEND_END_ARG_INFO();
-
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getReadPreference, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
@@ -464,9 +341,6 @@ static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeInsert, ai_Manager_executeInsert, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeUpdate, ai_Manager_executeUpdate, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeDelete, ai_Manager_executeDelete, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, getReadPreference, ai_Manager_getReadPreference, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, getServers, ai_Manager_getServers, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, getWriteConcern, ai_Manager_getWriteConcern, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

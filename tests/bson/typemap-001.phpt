@@ -18,8 +18,10 @@ class MyArrayObject extends ArrayObject implements BSON\Unserializable
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$manager->executeInsert(NS, array('_id' => 1, 'bson_array' => array(1, 2, 3), 'bson_object' => array("string" => "keys", "for" => "ever")));
-$manager->executeInsert(NS, array('_id' => 2, 'bson_array' => array(4, 5, 6)));
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, 'bson_array' => array(1, 2, 3), 'bson_object' => array("string" => "keys", "for" => "ever")));
+$bulk->insert(array('_id' => 2, 'bson_array' => array(4, 5, 6)));
+$manager->executeBulkWrite(NS, $bulk);
 
 function fetch($manager, $typemap = array()) {
     $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array('bson_array' => 1)));

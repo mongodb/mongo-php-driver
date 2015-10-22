@@ -15,9 +15,11 @@ function getNumOpenCursors(MongoDB\Driver\Manager $manager)
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$manager->executeInsert(NS, array('_id' => 1));
-$manager->executeInsert(NS, array('_id' => 2));
-$manager->executeInsert(NS, array('_id' => 3));
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1));
+$bulk->insert(array('_id' => 2));
+$bulk->insert(array('_id' => 3));
+$manager->executeBulkWrite(NS, $bulk);
 
 $numOpenCursorsBeforeQuery = getNumOpenCursors($manager);
 

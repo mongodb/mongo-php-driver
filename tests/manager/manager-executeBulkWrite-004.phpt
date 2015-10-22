@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeBulkWrite() with upserted ids
+MongoDB\Driver\Manager::executeBulkWrite() delete multiple documents
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -8,11 +8,14 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$bulk = new MongoDB\Driver\BulkWrite(['ordered' => false]);
-$bulk->update(array('x' => 'foo'), array('$set' => array('y' => 'foo')), array('upsert' => true));
-$bulk->update(array('x' => 'bar'), array('$set' => array('y' => 'bar')), array('upsert' => true));
-$bulk->update(array('x' => 'foo'), array('$set' => array('y' => 'bar')));
+// load fixtures for test
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, 'x' => 1));
+$bulk->insert(array('_id' => 2, 'x' => 1));
+$manager->executeBulkWrite(NS, $bulk);
 
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->delete(array('x' => 1), array('limit' => 0));
 $result = $manager->executeBulkWrite(NS, $bulk);
 
 echo "\n===> WriteResult\n";
@@ -20,6 +23,7 @@ printWriteResult($result);
 
 echo "\n===> Collection\n";
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
+
 var_dump(iterator_to_array($cursor));
 
 ?>
@@ -29,44 +33,12 @@ var_dump(iterator_to_array($cursor));
 ===> WriteResult
 server: %s:%d
 insertedCount: 0
-matchedCount: 1
-modifiedCount: 1
-upsertedCount: 2
-deletedCount: 0
-upsertedId[0]: object(%s\ObjectID)#%d (%d) {
-  ["oid"]=>
-  string(24) "%s"
-}
-upsertedId[1]: object(%s\ObjectID)#%d (%d) {
-  ["oid"]=>
-  string(24) "%s"
-}
+matchedCount: 0
+modifiedCount: 0
+upsertedCount: 0
+deletedCount: 2
 
 ===> Collection
-array(2) {
-  [0]=>
-  object(stdClass)#%d (3) {
-    ["_id"]=>
-    object(%s\ObjectID)#%d (%d) {
-      ["oid"]=>
-      string(24) "%s"
-    }
-    ["x"]=>
-    string(3) "foo"
-    ["y"]=>
-    string(3) "bar"
-  }
-  [1]=>
-  object(stdClass)#%d (3) {
-    ["_id"]=>
-    object(%s\ObjectID)#%d (%d) {
-      ["oid"]=>
-      string(24) "%s"
-    }
-    ["x"]=>
-    string(3) "bar"
-    ["y"]=>
-    string(3) "bar"
-  }
+array(0) {
 }
 ===DONE===

@@ -23,7 +23,6 @@ try {
     $retval = $manager->executeBulkWrite(NS, $bulk, $w);
 } catch(MongoDB\Driver\Exception\BulkWriteException $e) {
     printWriteResult($e->getWriteResult(), false);
-    $e->getWriteResult(true);
 }
 ?>
 ===DONE===
@@ -36,6 +35,4 @@ modifiedCount: 1
 upsertedCount: 0
 deletedCount: 1
 writeConcernError: %s (%d)
-
-Warning: MongoDB\Driver\Exception\WriteException::getWriteResult() expects exactly 0 parameters, 1 given in %s on line %d
 ===DONE===

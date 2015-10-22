@@ -152,7 +152,9 @@ $hartmann = $array[0];
 var_dump($hartmann->getName());
 $hartmann->setName("Dr. " . $hartmann->getName());
  
-$retval = $m->executeUpdate(NS, $hartmannFilter, $hartmann);
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->update($hartmannFilter, $hartmann);
+$retval = $m->executeBulkWrite(NS, $bulk);
 var_dump($retval->getModifiedCount());
 ?>
 ===DONE===

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeInsert()
+MongoDB\Driver\Manager::executeBulkWrite() insert one document (with embedded)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -20,7 +20,9 @@ $michigan = new Address(48169, "USA");
 
 $hannes->addFriend($mikola);
 
-$result = $manager->executeInsert(NS, $hannes);
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->insert($hannes);
+$result = $manager->executeBulkWrite(NS, $bulk);
 
 echo "\n===> WriteResult\n";
 printWriteResult($result);
