@@ -100,10 +100,6 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 			return php_phongo_runtimeexception_ce;
 		case PHONGO_ERROR_WRITE_FAILED:
 			return php_phongo_bulkwriteexception_ce;
-		case PHONGO_ERROR_WRITE_SINGLE_FAILED:
-			return php_phongo_writeerrorexception_ce;
-		case PHONGO_ERROR_WRITECONCERN_FAILED:
-			return php_phongo_writeconcernexception_ce;
 		case PHONGO_ERROR_CONNECTION_FAILED:
 			return php_phongo_connectionexception_ce;
 	}
@@ -2208,8 +2204,6 @@ PHP_MINIT_FUNCTION(mongodb)
 	PHP_MINIT(AuthenticationException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(SSLConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(WriteException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteConcernException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteErrorException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(BulkWriteException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ExecutionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ConnectionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);

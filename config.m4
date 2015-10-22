@@ -181,8 +181,6 @@ if test "$MONGODB" != "no"; then
       src/MongoDB/Exception/ExecutionTimeoutException.c \
       src/MongoDB/Exception/ConnectionTimeoutException.c \
       src/MongoDB/Exception/WriteException.c \
-      src/MongoDB/Exception/WriteConcernException.c \
-      src/MongoDB/Exception/WriteErrorException.c \
       src/MongoDB/Exception/BulkWriteException.c \
   ";
 
