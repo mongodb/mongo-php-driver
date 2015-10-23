@@ -1,8 +1,8 @@
 # What is pecl/mongodb?
 
-[pecl/mongodb](https://github.com/mongodb-labs/mongo-php-driver-prototype) is an
+[pecl/mongodb](https://github.com/mongodb/mongo-php-driver) is an
 experimental MongoDB driver for PHP, likely replacing the
-[mongodb/mongo-php-driver](https://github.com/mongodb/mongo-php-driver) driver in the
+[pecl/mongo](https://github.com/mongodb/mongo-php-driver-legacy) driver in the
 near future.
 
 pecl/mongodb is written ontop of [libmongoc](https://github.com/mongodb/mongo-c-driver) and

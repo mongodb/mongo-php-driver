@@ -7,7 +7,7 @@ Developers who would like to contribute to the driver will need to build it from
 like so:
 
 ```
-$ git clone https://github.com/mongodb-labs/mongo-php-driver-prototype.git phongo
+$ git clone https://github.com/mongodb/mongo-php-driver.git phongo
 $ cd phongo
 $ git submodule update --init
 $ phpize
