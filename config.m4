@@ -305,7 +305,7 @@ PHP_ARG_WITH(libbson, Use system libbson,
         LIBBSON_VER=`$PKG_CONFIG libbson-1.0 --modversion`
         AC_MSG_RESULT(version $LIBBSON_VER found)
       else
-        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.2.0-beta)
+        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.2.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libbson must be installed)
