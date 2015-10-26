@@ -1,3 +1,81 @@
+RELEASE 1.0.0RC0
+-------------
+2015-10-26  Jeremy Mikola  <jmikola@gmail.com>
+	* Bump extension version to 1.0.0RC0
+
+2015-10-26  Jeremy Mikola  <jmikola@gmail.com>
+	* Revise system libbson version check error message
+
+2015-10-23  Jeremy Mikola  <jmikola@gmail.com>
+	* Update GitHub URLs for org change and repo rename
+
+2015-10-21  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-465: Remove WriteConcernException and WriteErrorException
+
+2015-10-21  Jeremy Mikola  <jmikola@gmail.com>
+	* Rename WriteConcernError tests
+
+2015-10-21  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-465: Remove Manager's single write methods
+
+2015-10-20  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-440: WriteErrorException extends abstract WriteException
+
+2015-10-20  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-462: Remove unused DuplicateKeyException
+
+2015-10-19  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-310: Make BSON types final and disable serialization for now
+
+2015-10-19  Jeremy Mikola  <jmikola@gmail.com>
+	* Make BSON create_object assignments consistent
+
+2015-10-16  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-310: Exception classes need not be final
+
+2015-10-15  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-444: Support options array in BulkWrite and executeInsert()
+
+2015-10-15  Jeremy Mikola  <jmikola@gmail.com>
+	* Fix indentation
+
+2015-10-14  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-407: Rename X509 error test and fix cert path
+
+2015-10-14  Jeremy Mikola  <jmikola@gmail.com>
+	* Rename X509 connection tests
+
+2015-10-14  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-454: Remove WriteResult::getInfo() method
+
+2015-10-14  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-441: slaveOk bit is now set on hinted secondary query
+
+2015-10-14  Jeremy Mikola  <jmikola@gmail.com>
+	* Bump libbson and libmongoc submodules to 1.2.0
+
+2015-10-07  Hannes Magnusson  <bjori@php.net>
+	* PHPC-256: Productions debug logs
+
+2015-10-07  Hannes Magnusson  <bjori@php.net>
+	* PHPC-441: Skip (xfail) these tests while the ticket is being worked on
+
+2015-10-07  Hannes Magnusson  <bjori@php.net>
+	* Make sure we have the X509 declaration we need
+
+2015-10-07  Hannes Magnusson  <bjori@php.net>
+	* No need for TSRMLS here -- no calls to PHP at all
+
+2015-10-06  Jeremy Mikola  <jmikola@gmail.com>
+	* Back to -dev
+
+2015-10-06  Jeremy Mikola  <jmikola@gmail.com>
+	* Update install examples to mongodb-beta
+
+2015-10-06  Jeremy Mikola  <jmikola@gmail.com>
+	* Add 1.0.0beta2 release notes
+
+
 RELEASE 1.0.0beta2
 -------------
 2015-10-06  Jeremy Mikola  <jmikola@gmail.com>
