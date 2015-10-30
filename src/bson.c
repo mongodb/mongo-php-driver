@@ -1096,6 +1096,7 @@ PHP_FUNCTION(toJSON)
 	      char          *data;
 	      int            data_len;
 	const bson_t        *b;
+	      bool           eof = false;
 	      bson_reader_t *reader;
 
 	(void)return_value_ptr; (void)this_ptr; (void)return_value_used; /* We don't use these */
@@ -1114,8 +1115,13 @@ PHP_FUNCTION(toJSON)
 		RETVAL_STRINGL(str, str_len, 1);
 		bson_free(str);
 	} else {
-		RETURN_NULL();
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not read document from BSON reader");
 	}
+
+	if (bson_reader_read(reader, &eof) || !eof) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Reading document did not exhaust input buffer");
+	}
+
 	bson_reader_destroy(reader);
 }
 /* }}} */
@@ -1139,7 +1145,7 @@ PHP_FUNCTION(fromJSON)
 		RETVAL_STRINGL((const char *) bson_get_data(&b), b.len, 1);
 		bson_destroy(&b);
 	} else {
-		RETURN_NULL();
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s", error.message ? error.message : "Error parsing JSON");
 	}
 }
 /* }}} */
