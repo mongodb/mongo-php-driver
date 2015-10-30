@@ -1,3 +1,21 @@
+RELEASE 1.0.0
+-------------
+2015-10-30  Jeremy Mikola  <jmikola@gmail.com>
+	* Bump extension version to 1.0.0
+
+2015-10-30  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-475: toJSON and fromJSON should thrown on error
+
+2015-10-28  Jeremy Mikola  <jmikola@gmail.com>
+	* Tests for fromJSON() and toJSON()
+
+2015-10-26  Jeremy Mikola  <jmikola@gmail.com>
+	* Back to -dev
+
+2015-10-26  Jeremy Mikola  <jmikola@gmail.com>
+	* Add 1.0.0RC0 release notes
+
+
 RELEASE 1.0.0RC0
 -------------
 2015-10-26  Jeremy Mikola  <jmikola@gmail.com>
