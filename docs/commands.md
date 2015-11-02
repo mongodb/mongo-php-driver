@@ -1,104 +1,118 @@
-# Running Commands
+# Executing Commands
 
-# Listing databases & collections
+# Listing databases and collections
 
 ```php
 <?php
 
-/* Construct the MongoDB Manager */
+// Construct the MongoDB Manager
 $manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
 
+// Construct and execute the listDatabases command
+$listdatabases = new MongoDB\Driver\Command(["listDatabases" => 1]);
+$result        = $manager->executeCommand("admin", $listdatabases);
 
-$listdatabases = new MongoDB\Driver\Command(array("listDatabases" => 1));
-$retval        = $manager->executeCommand("admin", $listdatabases);
-$databases     = $retval->toArray();
+/* The command returns a single result document, which contains the information
+ * for all databases in a "databases" array field. */
+$databases     = current($result->toArray());
 
-foreach($databases["databases"] as $database) {
+foreach ($databases["databases"] as $database) {
 	echo $database->name, "\n";
 
-	$listcollections = new MongoDB\Driver\Command(array("listCollections" => 1));
-	$retval          = $manager->executeCommand($database->name, $listcollections);
-	$collections     = $retval->toArray();
-	foreach($collections as $collection) {
-		echo "\t- ", $collection->name, "\n";
+	// Construct and execute the listCollections command for each database
+	$listcollections = new MongoDB\Driver\Command(["listCollections" => 1]);
+	$result          = $manager->executeCommand($database->name, $listcollections);
+
+	/* The command returns a cursor, which we can iterate on to access
+	 * information for each collection. */
+	$collections     = $result->toArray();
+
+	foreach ($collections as $collection) {
+		echo "\t * ", $collection->name, "\n";
 	}
 }
 
 ?>
 ```
 
-# Create a User
+# Create a user
 
 ```php
 <?php
 
-
-/* Construct the MongoDB Manager */
+// Construct the MongoDB Manager
 $manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
 
-
-$command = array(
+// Construct the createUser command
+$createuser = new MongoDB\Driver\Command([
 	"createUser" => "USERNAME2",
 	"pwd"        => "PASSWORD",
-	"roles"      => array(
-		array("role" => "clusterAdmin",         "db" => "admin"),
-		array("role" => "readWriteAnyDatabase", "db" => "admin"),
-		array("role" => "userAdminAnyDatabase", "db" => "admin"),
+	"roles"      => [
+		["role" => "clusterAdmin",         "db" => "admin"],
+		["role" => "readWriteAnyDatabase", "db" => "admin"],
+		["role" => "userAdminAnyDatabase", "db" => "admin"],
 		"readWrite",
-	),
-	"writeConcern" => array("w" => "majority"),
-);
-$createuser = new MongoDB\Driver\Command($command);
+	],
+	"writeConcern" => ["w" => "majority"],
+]);
 
 try {
 	$result     = $manager->executeCommand("admin", $createuser);
-	$response   = $result->toArray();
+	$response   = current($result->toArray());
+
 	if ($response["ok"]) {
-		echo "User created\n";
+		echo "User created successfully\n";
 	}
-} catch(Exception $e) {
+} catch (MongoDB\Driver\Exception\Exception $e) {
 	echo $e->getMessage(), "\n";
 }
-
 
 ?>
 ```
 
-## Commands and ReadPreferences
+## Commands and read preferences
 
 ```php
 <?php
 
-/* Some commands, like count, dbStats, aggregate, ... can be executed on secondaries.
- * Just like with normal queries, an instance of MongoDB\Driver\ReadPreference needs to
- * be constructed to prefer certain servers over others */
-$prefer = MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED;
-$tags = array(
-	/* Prefer the West Coast datacenter in Iceland */
-	array("country" => "iceland", "datacenter" => "west"),
+/* Some commands (e.g. count, aggregate) may be executed on secondaries. As with
+ * normal queries, we can supply a MongoDB\Driver\ReadPreference object when
+ * executing a command in order to prefer certain servers over others. */
 
-	/* Fallback to any datacenter in Iceland */
-	array("country" => "iceland"),
-
-	/* If Iceland is offline, read from whatever is online! */
-	array(),
+// Construct a read preference
+$rp = new MongoDB\Driver\ReadPreference(
+	/* We prefer to read from a secondary, but are OK with reading from the
+	 * primary if necessary (e.g. secondaries are offline) */
+	MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED,
+	// Specify some tag sets for our preferred nodes
+	[
+		// Prefer reading from our west coast datacenter in Iceland
+		["country" => "iceland", "datacenter" => "west"],
+		// Fall back to any datacenter in Iceland
+		["country" => "iceland"],
+		// If Iceland is offline, read from whatever is available
+		[],
+	]
 );
 
-/* Construct the ReadPreference object from our options */
-$rp = new MongoDB\Driver\ReadPreference($prefer, $tags);
-
-/* Construct the MongoDB Manager */
+// Construct the MongoDB Manager
 $manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
 
-$query    = array("citizen" => "Iceland");
-$count    = new MongoDB\Driver\Command(array("count" => "collection", "query" => $query));
-$retval   = $manager->executeCommand("db", $count, $rp);
-$response = $retval->toArray();
-if ($response["ok"]) {
-	printf("db.collection has %d documents matching: %s\n",
-		$response["n"],
-		BSON\toJSON(BSON\fromArray($query))
-	);
+$query = ["citizen" => "Iceland"];
+$count = new MongoDB\Driver\Command(["count" => "collection", "query" => $query]);
+
+try {
+	$result   = $manager->executeCommand("db", $count, $rp);
+	$response = current($result->toArray());
+
+	if ($response["ok"]) {
+		printf("db.collection has %d document(s) matching: %s\n",
+			$response["n"],
+			MongoDB\BSON\toJSON(MongoDB\BSON\fromArray($query))
+		);
+	}
+} catch (MongoDB\Driver\Exception\Exception $e) {
+	echo $e->getMessage(), "\n";
 }
 
 ?>

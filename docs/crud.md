@@ -1,153 +1,153 @@
-# Basic CRUD
+# Basic CRUD Operations
+
+## Setup and connecting
 
 ```php
 <?php
 
-/* The document we'll be working with */
-$document = array("hello" => "world");
+// The document that we'll be working with
+$document = ["hello" => "world"];
 
-/* We want to gurantee all writes to the majority of our nodes */
-$w = MongoDB\Driver\WriteConcern::MAJORITY;
-
-/* But don't be waiting on me fore more then 1000ms (1sec),
- * I have an application to run! */
-$wtimeout = 1000;
-
-/* Construct the WriteConcern object from our options */
-$wc = new MongoDB\Driver\WriteConcern($w, $wtimeout);
-
-
-/* We prefer to read from the secondary, but are OK to read from the primary
- * if we can't find any secondaries */
-$prefer = MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED;
-$tags = array(
-	/* Prefer the West Coast datacenter in Iceland */
-	array("country" => "iceland", "datacenter" => "west"),
-
-	/* Fallback to any datacenter in Iceland */
-	array("country" => "iceland"),
-
-	/* If Iceland is offline, read from whatever is online! */
-	array(),
+// Construct a write concern
+$wc = new MongoDB\Driver\WriteConcern(
+    // Guarantee that writes are acknowledged by a majority of our nodes
+    MongoDB\Driver\WriteConcern::MAJORITY,
+    // But only wait 1000ms because we have an application to run!
+    1000
 );
 
-/* Construct the ReadPreference object from our options */
-$rp = new MongoDB\Driver\ReadPreference($prefer, $tags);
+// Construct a read preference
+$rp = new MongoDB\Driver\ReadPreference(
+    /* We prefer to read from a secondary, but are OK with reading from the
+     * primary if necessary (e.g. secondaries are offline) */
+    MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED,
+    // Specify some tag sets for our preferred nodes
+    [
+        // Prefer reading from our west coast datacenter in Iceland
+        ["country" => "iceland", "datacenter" => "west"],
+        // Fall back to any datacenter in Iceland
+        ["country" => "iceland"],
+        // If Iceland is offline, read from whatever is available
+        [],
+    ]
+);
 
-
-/* Construct the MongoDB Manager */
+/* Construct the MongoDB Manager. For brevity, we're only connecting to one node
+ * here, but you'd likely want to specify several replica set members in a
+ * comma-delimited seed list */
 $manager = new MongoDB\Driver\Manager("mongodb://localhost:27017");
 
 ?>
 ```
 
-## CREATE
+## Create
 
 ```php
 <?php
 
+// Create a bulk write object and add our insert operation
+$bulk = new MongoDB\Driver\BulkWrite;
+$bulk->insert($document);
+
 try {
-	/* Full namespace as the first argumnet (databasename.collectionname),
-	 * and the document to insert as the second.
-	 *
-	 * Returns MongoDB\Driver\WriteResult on success, throws exception on failure
-	 */
-	$result = $manager->executeInsert("db.collection", $document, $wc);
-} catch(Exception $e) {
-	echo $e->getMessage(), "\n";
-	exit;
+    /* Specify the full namespace as the first argument, followed by the bulk
+     * write object and an optional write concern. MongoDB\Driver\WriteResult is
+     * returned on success; otherwise, an exception is thrown. */
+    $result = $manager->executeBulkWrite("db.collection", $bulk, $wc);
+    var_dump($result);
+} catch (MongoDB\Driver\Exception\Exception $e) {
+    echo $e->getMessage(), "\n";
 }
 
 ?>
 ```
 
-## READ
+## Read
 
 ```php
 <?php
 
-/* Construct an empty find query ("select all") */
-$query = new MongoDB\Driver\Query(array());
+/* Construct a query with an empty filter (i.e. "select all") */
+$query = new MongoDB\Driver\Query([]);
 
 try {
-	/* Full namespace as the first argument (dbname.collname), and the query object
-	 * to execute as the second.
-	 * Returns MongoDB\Driver\Cursor on success, throws exception on failure
-	 */
-	$cursor = $manager->executeQuery("db.collection", $query, $rp);
+    /* Specify the full namespace as the first argument, followed by the query
+     * object and an optional read preference. MongoDB\Driver\Cursor is returned
+     * success; otherwise, an exception is thrown. */
+    $cursor = $manager->executeQuery("db.collection", $query, $rp);
 
-	/* Iterate over all matched documents */
-	foreach($cursor as $document) {
-		var_dump($document);
-	}
-} catch(Exception $e) {
-	echo $e->getMessage(), "\n";
-	exit;
+    // Iterate over all matched documents
+    foreach ($cursor as $document) {
+        var_dump($document);
+    }
+} catch (MongoDB\Driver\Exception\Exception $e) {
+    echo $e->getMessage(), "\n";
 }
 
 ?>
 ```
 
-## UPDATE
+## Update
 
 ```php
 <?php
 
-/* The search criteria */
-$where = array("hello" => "world");
+// Specify the search criteria and update operations (or replacement document)
+$filter = ["hello" => "world"];
+$update = ['$set' => ["hello" => "wonderful world"]];
 
-/* What to update the matched document with */
-$set = array('$set' => array("hello" => "wonderful world"));
+/* Specify some command options for the update:
+ *
+ *  * limit (integer): Updates all matching documents when 0 (false). Otherwise,
+ *    only the first matching document is updated.
+ *  * upsert (boolean): If there is no matching document, create a new document
+ *    from $filter and $update. */
+$options = ["limit" => 1, "upsert" => false];
 
-/* Special MongoDB wireprotocol options:
- *   limit: integer. Updates all matching document when 0 (false).
- *                   Only the first matching document when > 0 (true).
- *   upsert: boolean. If there is no matching document, create a new document
- *                    from the $where and apply the $set
- */
-$options = array("limit" => 1, "upsert" => false);
+// Create a bulk write object and add our update operation
+$bulk = new MongoDB\Driver\BulkWrite;
+$bulk->update($filter, $update, $options);
+
 try {
-	/* Full namespace as the first argument (dbname.collname), the search criteria
-	 * second.
-	 * Returns MongoDB\Driver\WriteResult on success, throws exception on failure
-	 */
-	$result = $manager->executeUpdate("db.collection", $where, $set, $options, $wc);
-	var_dump($result);
-} catch(Exception $e) {
-	echo $e->getMessage(), "\n";
-	exit;
+    /* Specify the full namespace as the first argument, followed by the bulk
+     * write object and an optional write concern. MongoDB\Driver\WriteResult is
+     * returned on success; otherwise, an exception is thrown. */
+    $result = $manager->executeBulkWrite("db.collection", $bulk, $wc);
+    var_dump($result);
+} catch (MongoDB\Driver\Exception\Exception $e) {
+    echo $e->getMessage(), "\n";
 }
 
 ?>
 ```
 
-## DELETE
+## Delete
 
 ```php
 <?php
 
-/* The search criteria */
-$where = array("hello" => "world");
+// Specify the search criteria
+$filter = ["hello" => "world"];
 
-/* Special MongoDB wireprotocol options:
- *   limit: integer. Updates all matching document when > 0 (true).
- *                   Only the first matching document when 0 (false).
- */
-$options = array("limit" => 1);
+/* Specify some command options for the update:
+ *
+ *  * limit (integer): Deletes all matching documents when 0 (false). Otherwise,
+ *    only the first matching document is deleted. */
+$options = ["limit" => 1];
+
+// Create a bulk write object and add our delete operation
+$bulk = new MongoDB\Driver\BulkWrite;
+$bulk->delete($filter, $options);
+
 try {
-	/*
-	/* Full namespace as the first argument (dbname.collname), the search criteria
-	 * second.
-	 * Returns MongoDB\Driver\WriteResult on success, throws exception on failure
-	 */
-	$result = $manager->executeDelete("db.collection", $where, $options, $wc);
-	var_dump($result);
-} catch(Exception $e) {
-	echo $e->getMessage(), "\n";
-	exit;
+    /* Specify the full namespace as the first argument, followed by the bulk
+     * write object and an optional write concern. MongoDB\Driver\WriteResult is
+     * returned on success; otherwise, an exception is thrown. */
+    $result = $manager->executeBulkWrite("db.collection", $bulk, $wc);
+    var_dump($result);
+} catch (MongoDB\Driver\Exception\Exception $e) {
+    echo $e->getMessage(), "\n";
 }
 
 ?>
 ```
-
-
