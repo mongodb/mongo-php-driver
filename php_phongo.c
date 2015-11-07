@@ -2232,11 +2232,11 @@ ZEND_INI_MH(OnUpdateDebug)
 		MONGODB_G(debug_fd) = NULL;
 	}
 
-	if (!new_value_length
-		|| strcasecmp("0", new_value) == 0
-		|| strcasecmp("off", new_value) == 0
-		|| strcasecmp("no", new_value) == 0
-		|| strcasecmp("false", new_value) == 0
+	if (!new_value || (new_value && !phongo_str(new_value)[0])
+		|| strcasecmp("0", phongo_str(new_value)) == 0
+		|| strcasecmp("off", phongo_str(new_value)) == 0
+		|| strcasecmp("no", phongo_str(new_value)) == 0
+		|| strcasecmp("false", phongo_str(new_value)) == 0
 	   ) {
 		mongoc_log_trace_disable();
 		mongoc_log_set_handler(NULL, NULL);
@@ -2245,19 +2245,19 @@ ZEND_INI_MH(OnUpdateDebug)
 	}
 
 
-	if (strcasecmp(new_value, "stderr") == 0) {
+	if (strcasecmp(phongo_str(new_value), "stderr") == 0) {
 		MONGODB_G(debug_fd) = stderr;
-	} else if (strcasecmp(new_value, "stdout") == 0) {
+	} else if (strcasecmp(phongo_str(new_value), "stdout") == 0) {
 		MONGODB_G(debug_fd) = stdout;
 	} else if (
-		strcasecmp("1", new_value) == 0
-		|| strcasecmp("on", new_value) == 0
-		|| strcasecmp("yes", new_value) == 0
-		|| strcasecmp("true", new_value) == 0
+		strcasecmp("1", phongo_str(new_value)) == 0
+		|| strcasecmp("on", phongo_str(new_value)) == 0
+		|| strcasecmp("yes", phongo_str(new_value)) == 0
+		|| strcasecmp("true", phongo_str(new_value)) == 0
 	) {
 		tmp_dir = NULL;
 	} else {
-		tmp_dir = new_value;
+		tmp_dir = phongo_str(new_value);
 	}
 
 	if (!MONGODB_G(debug_fd)) {
@@ -2265,14 +2265,15 @@ ZEND_INI_MH(OnUpdateDebug)
 		int fd = -1;
 		char *prefix;
 		int len;
-		char *filename;
+		phongo_char *filename;
 
 		time(&t);
 		len = spprintf(&prefix, 0, "PHONGO-%ld", t);
 
 		fd = php_open_temporary_fd(tmp_dir, prefix, &filename TSRMLS_CC);
 		if (fd != -1) {
-			MONGODB_G(debug_fd) = VCWD_FOPEN(filename, "a");
+			const char *path = phongo_str(filename);
+			MONGODB_G(debug_fd) = VCWD_FOPEN(path, "a");
 		}
 		efree(filename);
 		efree(prefix);
