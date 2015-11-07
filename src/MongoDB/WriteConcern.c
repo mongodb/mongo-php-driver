@@ -110,7 +110,7 @@ PHP_METHOD(WriteConcern, getW)
 {
 	php_phongo_writeconcern_t *intern;
 	const char *wtag;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
@@ -141,7 +141,7 @@ PHP_METHOD(WriteConcern, getW)
 PHP_METHOD(WriteConcern, getWtimeout)
 {
 	php_phongo_writeconcern_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
@@ -158,7 +158,7 @@ PHP_METHOD(WriteConcern, getWtimeout)
 PHP_METHOD(WriteConcern, getJournal)
 {
 	php_phongo_writeconcern_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
