@@ -158,7 +158,7 @@ HashTable *php_phongo_timestamp_get_debug_info(zval *object, int *is_temp TSRMLS
 
 
 	*is_temp = 1;
-	intern = (php_phongo_timestamp_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern =  Z_TIMESTAMP_OBJ_P(object);
 
 	array_init(&retval);
 

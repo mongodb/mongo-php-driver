@@ -215,7 +215,7 @@ HashTable *php_phongo_regex_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 
 
 	*is_temp = 1;
-	intern = (php_phongo_regex_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern =  Z_REGEX_OBJ_P(object);
 
 	array_init(&retval);
 
