@@ -100,7 +100,7 @@ PHP_METHOD(ReadPreference, __construct)
 PHP_METHOD(ReadPreference, getMode)
 {
 	php_phongo_readpreference_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
@@ -117,7 +117,7 @@ PHP_METHOD(ReadPreference, getMode)
 PHP_METHOD(ReadPreference, getTagSets)
 {
 	php_phongo_readpreference_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
