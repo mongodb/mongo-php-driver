@@ -219,8 +219,8 @@ HashTable *php_phongo_regex_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 
 	array_init(&retval);
 
-	add_assoc_stringl_ex(&retval, ZEND_STRS("pattern"), intern->pattern, intern->pattern_len, 1);
-	add_assoc_stringl_ex(&retval, ZEND_STRS("flags"), intern->flags, intern->flags_len, 1);
+	ADD_ASSOC_STRINGL(&retval, "pattern", intern->pattern, intern->pattern_len);
+	ADD_ASSOC_STRINGL(&retval, "flags", intern->flags, intern->flags_len);
 
 	return Z_ARRVAL(retval);
 } /* }}} */

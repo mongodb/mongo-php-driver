@@ -517,7 +517,7 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", state.zchild);
 #endif
 	} else {
-		ADD_ASSOC_NULL_EX(&retval, ZEND_STRS("writeConcernError"));
+		ADD_ASSOC_NULL_EX(&retval, "writeConcernError");
 	}
 
 	if (intern->write_concern) {

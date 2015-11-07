@@ -162,8 +162,8 @@ HashTable *php_phongo_timestamp_get_debug_info(zval *object, int *is_temp TSRMLS
 
 	array_init(&retval);
 
-	add_assoc_long_ex(&retval, ZEND_STRS("increment"), intern->increment);
-	add_assoc_long_ex(&retval, ZEND_STRS("timestamp"), intern->timestamp);
+	ADD_ASSOC_LONG_EX(&retval, "increment", intern->increment);
+	ADD_ASSOC_LONG_EX(&retval, "timestamp", intern->timestamp);
 
 	return Z_ARRVAL(retval);
 } /* }}} */
