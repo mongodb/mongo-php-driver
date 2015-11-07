@@ -178,9 +178,9 @@ HashTable *php_phongo_writeconcernerror_get_debug_info(zval *object, int *is_tem
 {
 	php_phongo_writeconcernerror_t *intern;
 #if PHP_VERSION_ID >= 70000
-	zval                    retval;
+	zval                            retval;
 #else
-	zval                    retval = zval_used_for_init;
+	zval                            retval = zval_used_for_init;
 #endif
 
 
