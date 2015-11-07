@@ -195,14 +195,14 @@ HashTable *php_phongo_utcdatetime_get_debug_info(zval *object, int *is_temp TSRM
 
 #if SIZEOF_LONG == 4
 	{
-		char *tmp;
+		char tmp[24];
 		int tmp_len;
 
-		tmp_len = spprintf(&tmp, 0, "%" PRId64, intern->milliseconds);
-		add_assoc_stringl_ex(&retval, ZEND_STRS("milliseconds"), tmp, tmp_len, 0);
+		tmp_len = snprintf(tmp, sizeof(tmp), "%" PRId64, intern->milliseconds);
+		ADD_ASSOC_STRINGL(&retval, "milliseconds", tmp, tmp_len);
 	}
 #else
-	add_assoc_long_ex(&retval, ZEND_STRS("milliseconds"), intern->milliseconds);
+	ADD_ASSOC_LONG_EX(&retval, "milliseconds", intern->milliseconds);
 #endif
 
 	return Z_ARRVAL(retval);

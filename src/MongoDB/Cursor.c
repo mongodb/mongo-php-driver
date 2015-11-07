@@ -280,7 +280,7 @@ HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 		ADD_ASSOC_ZVAL_EX(&retval, "cursor", zcursor);
 #endif
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("cursor"));
+		ADD_ASSOC_NULL_EX(&retval, "cursor");
 	}
 
 	ADD_ASSOC_LONG_EX(&retval, "server_id", intern->server_id);

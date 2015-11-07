@@ -153,7 +153,7 @@ HashTable *php_phongo_javascript_get_debug_info(zval *object, int *is_temp TSRML
 
 	array_init(&retval);
 
-	add_assoc_stringl_ex(&retval, ZEND_STRS("javascript"), intern->javascript, intern->javascript_len, 1);
+	ADD_ASSOC_STRINGL(&retval, "javascript", intern->javascript, intern->javascript_len);
 
 	if (intern->document) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
@@ -164,7 +164,7 @@ HashTable *php_phongo_javascript_get_debug_info(zval *object, int *is_temp TSRML
 			Z_ADDREF_P(state.zchild);
 			add_assoc_zval_ex(&retval, ZEND_STRS("scope"), state.zchild);
 		} else {
-			add_assoc_null_ex(&retval, ZEND_STRS("scope"));
+			ADD_ASSOC_NULL_EX(&retval, "scope");
 		}
 
 		zval_ptr_dtor(&state.zchild);
