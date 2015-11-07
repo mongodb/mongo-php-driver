@@ -132,7 +132,11 @@ PHP_METHOD(ReadPreference, getTagSets)
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		bson_to_zval_ex(bson_get_data(&intern->read_preference->tags), intern->read_preference->tags.len, &state);
+#if PHP_VERSION_ID >= 70000
+		RETURN_ZVAL(&state.zchild, 0, 1);
+#else
 		RETURN_ZVAL(state.zchild, 0, 1);
+#endif
 	} else {
 		RETURN_NULL();
 	}

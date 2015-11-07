@@ -158,8 +158,13 @@ HashTable *php_phongo_javascript_get_debug_info(zval *object, int *is_temp TSRML
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
 		if (bson_to_zval_ex(bson_get_data(intern->document), intern->document->len, &state)) {
+#if PHP_VERSION_ID >= 70000
+			Z_ADDREF(state.zchild);
+			ADD_ASSOC_ZVAL_EX(&retval, "scope", &state.zchild);
+#else
 			Z_ADDREF_P(state.zchild);
-			add_assoc_zval_ex(&retval, ZEND_STRS("scope"), state.zchild);
+			ADD_ASSOC_ZVAL_EX(&retval, "scope", state.zchild);
+#endif
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "scope");
 		}
