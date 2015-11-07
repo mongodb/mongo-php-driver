@@ -252,7 +252,7 @@ void phongo_readpreference_init(zval *return_value, const mongoc_read_prefs_t *r
 
 	object_init_ex(return_value, php_phongo_readpreference_ce);
 
-	intern = (php_phongo_readpreference_t *)zend_object_store_get_object(return_value TSRMLS_CC);
+	intern = Z_READPREFERENCE_OBJ_P(return_value);
 	intern->read_preference = mongoc_read_prefs_copy(read_prefs);
 }
 /* }}} */
@@ -263,7 +263,7 @@ void phongo_writeconcern_init(zval *return_value, const mongoc_write_concern_t *
 
 	object_init_ex(return_value, php_phongo_writeconcern_ce);
 
-	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(return_value TSRMLS_CC);
+	intern = Z_WRITECONCERN_OBJ_P(return_value);
 	intern->write_concern = mongoc_write_concern_copy(write_concern);
 }
 /* }}} */

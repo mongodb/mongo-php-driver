@@ -102,7 +102,7 @@ PHP_METHOD(ReadPreference, getMode)
 	php_phongo_readpreference_t *intern;
 	(void)return_value_ptr; (void)return_value_used;
 
-	intern = (php_phongo_readpreference_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -119,7 +119,7 @@ PHP_METHOD(ReadPreference, getTagSets)
 	php_phongo_readpreference_t *intern;
 	(void)return_value_ptr; (void)return_value_used;
 
-	intern = (php_phongo_readpreference_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;

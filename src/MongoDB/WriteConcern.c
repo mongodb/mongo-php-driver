@@ -112,7 +112,7 @@ PHP_METHOD(WriteConcern, getW)
 	const char *wtag;
 	(void)return_value_ptr; (void)return_value_used;
 
-	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -143,7 +143,7 @@ PHP_METHOD(WriteConcern, getWtimeout)
 	php_phongo_writeconcern_t *intern;
 	(void)return_value_ptr; (void)return_value_used;
 
-	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -160,7 +160,7 @@ PHP_METHOD(WriteConcern, getJournal)
 	php_phongo_writeconcern_t *intern;
 	(void)return_value_ptr; (void)return_value_used;
 
-	intern = (php_phongo_writeconcern_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
