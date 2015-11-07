@@ -121,11 +121,11 @@ PHP_METHOD(WriteConcern, getW)
 	wtag = mongoc_write_concern_get_wtag(intern->write_concern);
 
 	if (wtag) {
-		RETURN_STRING(wtag, 1);
+		PHONGO_RETURN_STRING(wtag);
 	}
 
 	if (mongoc_write_concern_get_wmajority(intern->write_concern)) {
-		RETURN_STRING(PHONGO_WRITE_CONCERN_W_MAJORITY, 1);
+		PHONGO_RETURN_STRING(PHONGO_WRITE_CONCERN_W_MAJORITY);
 	}
 
 	if (intern->write_concern->w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
