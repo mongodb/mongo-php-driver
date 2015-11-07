@@ -2287,7 +2287,11 @@ ZEND_INI_MH(OnUpdateDebug)
 		mongoc_log_trace_disable();
 		mongoc_log_set_handler(NULL, NULL);
 
+#if PHP_VERSION_ID >= 70000
+		return OnUpdateString(entry, new_value, mh_arg1, mh_arg2, mh_arg3, stage TSRMLS_CC);
+#else
 		return OnUpdateString(entry, new_value, new_value_length, mh_arg1, mh_arg2, mh_arg3, stage TSRMLS_CC);
+#endif
 	}
 
 
@@ -2329,7 +2333,11 @@ ZEND_INI_MH(OnUpdateDebug)
 	mongoc_log_trace_enable();
 	mongoc_log_set_handler(php_phongo_log, ctx);
 
+#if PHP_VERSION_ID >= 70000
+	return OnUpdateString(entry, new_value, mh_arg1, mh_arg2, mh_arg3, stage TSRMLS_CC);
+#else
 	return OnUpdateString(entry, new_value, new_value_length, mh_arg1, mh_arg2, mh_arg3, stage TSRMLS_CC);
+#endif
 }
 
 
