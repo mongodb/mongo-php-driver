@@ -131,8 +131,7 @@ PHP_METHOD(ReadPreference, getTagSets)
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		MAKE_STD_ZVAL(state.zchild);
-		bson_to_zval(bson_get_data(&intern->read_preference->tags), intern->read_preference->tags.len, &state);
+		bson_to_zval_ex(bson_get_data(&intern->read_preference->tags), intern->read_preference->tags.len, &state);
 		RETURN_ZVAL(state.zchild, 0, 1);
 	} else {
 		RETURN_NULL();

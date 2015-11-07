@@ -158,9 +158,7 @@ HashTable *php_phongo_javascript_get_debug_info(zval *object, int *is_temp TSRML
 	if (intern->document) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-		MAKE_STD_ZVAL(state.zchild);
-
-		if (bson_to_zval(bson_get_data(intern->document), intern->document->len, &state)) {
+		if (bson_to_zval_ex(bson_get_data(intern->document), intern->document->len, &state)) {
 			Z_ADDREF_P(state.zchild);
 			add_assoc_zval_ex(&retval, ZEND_STRS("scope"), state.zchild);
 		} else {
