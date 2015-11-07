@@ -1047,8 +1047,13 @@ static bool is_public_property(zend_class_entry *ce, const char *prop_name, int 
 	zend_property_info *property_info;
 	zval member;
 
+#if PHP_VERSION_ID >= 70000
+	ZVAL_STRINGL(&member, prop_name, prop_name_len);
+	property_info = zend_get_property_info(ce, Z_STR(member), 1 TSRMLS_CC);
+#else
 	ZVAL_STRINGL(&member, prop_name, prop_name_len, 0);
 	property_info = zend_get_property_info(ce, &member, 1 TSRMLS_CC);
+#endif
 
 	return (property_info && (property_info->flags & ZEND_ACC_PUBLIC));
 }
@@ -1169,6 +1174,11 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 					size_t skey_len = 0;
 					const char *class_name;
 					zend_unmangle_property_name_ex(key, &class_name, &skey, &skey_len);
+
+					/* Ignore non-public properties */
+					if (!is_public_property(Z_OBJCE_P(data), skey, skey_len TSRMLS_CC)) {
+						continue;
+					}
 
 					if (flags & PHONGO_BSON_ADD_ID) {
 						if (!strncmp(skey, "_id", sizeof("_id")-1)) {
