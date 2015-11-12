@@ -3,7 +3,7 @@
 [![Build Status](https://api.travis-ci.org/mongodb/mongo-php-driver.png?branch=master)](https://travis-ci.org/mongodb/mongo-php-driver)
 [![Coverage Status](https://coveralls.io/repos/mongodb/mongo-php-driver/badge.svg?branch=master&service=github)](https://coveralls.io/github/mongodb/mongo-php-driver?branch=master)
 
-This is the low-level PHP driver for MongoDB. It implements the same interface
+This is the low-level PHP driver for MongoDB. The API is the same
 as the HHVM driver for MongoDB. The documentation for both of them is the same,
 and can be found at http://docs.php.net/manual/en/set.mongodb.php
 
@@ -14,9 +14,9 @@ have been split out into a layer written in PHP, the
 Using this library should be your preferred way of interacting with MongoDB.
 
 Please note that the new HHVM and PHP drivers implement a **different API**
-from the legacy driver at http://pecl.php.net/package/mongo, and hence, you
-will find it hard for other libraries like
-[Doctrine MongoDB's ODM](http://doctrine-mongodb-odm.readthedocs.org/en/latest/)
+from the legacy driver at http://pecl.php.net/package/mongo; therefore 
+existing libraries that use the legacy driver (e.g. 
+[Doctrine MongoDB's ODM](http://doctrine-mongodb-odm.readthedocs.org/en/latest/))
 will not work with the new drivers.
 
 In the long run, we hope that userland packages will be built atop this driver
@@ -38,7 +38,7 @@ $ echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed 
 ```
 
 We recommend using this extension in conjunction with our
-[userland library](https://github.com/mongodb-labs/mongo-php-library-prototype),
+[userland library](https://github.com/mongodb/mongo-php-library),
 which is distributed as
 [mongodb/mongodb](https://packagist.org/packages/mongodb/mongodb) for Composer.
 
