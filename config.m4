@@ -427,6 +427,8 @@ else
   AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
 fi
 
+AC_SUBST(MONGOC_HAVE_WEAK_SYMBOLS, 1)
+
   m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
   AX_PTHREAD
 
