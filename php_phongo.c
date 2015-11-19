@@ -643,8 +643,9 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 	 * after the error checking above. */
 	if (bson_iter_init_find(&iter, doc, "cursor") && BSON_ITER_HOLDS_DOCUMENT(&iter) && bson_iter_recurse(&iter, &child)) {
 		mongoc_cursor_cursorid_t *cid;
+		bson_t empty = BSON_INITIALIZER;
 
-		_mongoc_cursor_cursorid_init(cursor);
+		_mongoc_cursor_cursorid_init(cursor, &empty);
 		cursor->limit = 0;
 
 		cid = cursor->iface_data;
