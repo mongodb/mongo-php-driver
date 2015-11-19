@@ -248,6 +248,7 @@ if test "$MONGODB" != "no"; then
     mongoc-matcher.c \
     mongoc-opcode.c \
     mongoc-queue.c \
+    mongoc-read-concern.c \
     mongoc-read-prefs.c \
     mongoc-rpc.c \
     mongoc-set.c \
