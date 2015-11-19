@@ -75,7 +75,6 @@ PHP_METHOD(Query, __construct)
 	zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL TSRMLS_CC);
 
 	if (zoptions) {
-		bson_init(&boptions);
 		zval_to_bson(zoptions, PHONGO_BSON_NONE, &boptions, NULL TSRMLS_CC);
 	}
 	if (!phongo_query_init(intern, &bfilter, &boptions TSRMLS_CC)) {
