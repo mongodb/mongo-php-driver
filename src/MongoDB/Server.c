@@ -481,16 +481,24 @@ static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{
 {
     php_phongo_server_t *intern1;
     php_phongo_server_t *intern2;
+	bson_error_t error1;
+	bson_error_t error2;
 	mongoc_server_description_t *sd1, *sd2;
 
     intern1 = (php_phongo_server_t *)zend_object_store_get_object(o1 TSRMLS_CC);
     intern2 = (php_phongo_server_t *)zend_object_store_get_object(o2 TSRMLS_CC);
 
-	sd1 = mongoc_topology_description_server_by_id(&intern1->client->topology->description, intern1->server_id, NULL);
-	sd2 = mongoc_topology_description_server_by_id(&intern2->client->topology->description, intern2->server_id, NULL);
+	sd1 = mongoc_topology_description_server_by_id(&intern1->client->topology->description, intern1->server_id, &error1);
+	sd2 = mongoc_topology_description_server_by_id(&intern2->client->topology->description, intern2->server_id, &error2);
 
 	if (!sd1 || !sd2) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "Failed to get server description, server likely gone");
+		if (!sd1 && !sd2) {
+			phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s and %s", error1.message, error2.message);
+		} else if (!sd1) {
+			phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", error1.message);
+		} else {
+			phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", error2.message);
+		}
 		return 0;
 	}
 
