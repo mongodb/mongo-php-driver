@@ -649,7 +649,7 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 		cursor->limit = 0;
 
 		cid = cursor->iface_data;
-		cid->has_cursor = true;
+		cid->in_batch = true;
 
 		while (bson_iter_next(&child)) {
 			if (BSON_ITER_IS_KEY(&child, "id")) {
@@ -660,8 +660,8 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 				ns = bson_iter_utf8(&child, &cursor->nslen);
 				bson_strncpy(cursor->ns, ns, sizeof cursor->ns);
 			} else if (BSON_ITER_IS_KEY(&child, "firstBatch")) {
-				if (BSON_ITER_HOLDS_ARRAY(&child) && bson_iter_recurse(&child, &cid->first_batch_iter)) {
-					cid->in_first_batch = true;
+				if (BSON_ITER_HOLDS_ARRAY(&child) && bson_iter_recurse(&child, &cid->batch_iter)) {
+					cid->in_reader = true;
 				}
 			}
 		}
@@ -1357,10 +1357,8 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{
 		_ADD_BOOL(zcursor, is_command);
 		_ADD_BOOL(zcursor, sent);
 		_ADD_BOOL(zcursor, done);
-		_ADD_BOOL(zcursor, failed);
 		_ADD_BOOL(zcursor, end_of_event);
 		_ADD_BOOL(zcursor, in_exhaust);
-		_ADD_BOOL(zcursor, redir_primary);
 		_ADD_BOOL(zcursor, has_fields);
 #undef _ADD_BOOL
 
