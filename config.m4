@@ -252,7 +252,6 @@ if test "$MONGODB" != "no"; then
     mongoc-queue.c \
     mongoc-read-concern.c \
     mongoc-read-prefs.c \
-    mongoc-read-concern.c \
     mongoc-rpc.c \
     mongoc-set.c \
     mongoc-server-description.c \
