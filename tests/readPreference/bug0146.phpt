@@ -32,7 +32,7 @@ foreach($rps as $r) {
 --EXPECTF--
 object(MongoDB\Driver\Cursor)#%d (%d) {
   ["cursor"]=>
-  array(18) {
+  array(%d) {
     ["stamp"]=>
     int(0)
     ["is_command"]=>
@@ -41,13 +41,9 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     bool(true)
     ["done"]=>
     bool(true)
-    ["failed"]=>
-    bool(false)
     ["end_of_event"]=>
     bool(true)
     ["in_exhaust"]=>
-    bool(false)
-    ["redir_primary"]=>
     bool(false)
     ["has_fields"]=>
     bool(false)
@@ -88,7 +84,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
 }
 object(MongoDB\Driver\Cursor)#%d (%d) {
   ["cursor"]=>
-  array(18) {
+  array(%d) {
     ["stamp"]=>
     int(0)
     ["is_command"]=>
@@ -97,13 +93,9 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     bool(true)
     ["done"]=>
     bool(true)
-    ["failed"]=>
-    bool(false)
     ["end_of_event"]=>
     bool(true)
     ["in_exhaust"]=>
-    bool(false)
-    ["redir_primary"]=>
     bool(false)
     ["has_fields"]=>
     bool(false)
@@ -144,7 +136,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
 }
 object(MongoDB\Driver\Cursor)#%d (%d) {
   ["cursor"]=>
-  array(18) {
+  array(%d) {
     ["stamp"]=>
     int(0)
     ["is_command"]=>
@@ -153,13 +145,9 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     bool(true)
     ["done"]=>
     bool(true)
-    ["failed"]=>
-    bool(false)
     ["end_of_event"]=>
     bool(true)
     ["in_exhaust"]=>
-    bool(false)
-    ["redir_primary"]=>
     bool(false)
     ["has_fields"]=>
     bool(false)
@@ -200,7 +188,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
 }
 object(MongoDB\Driver\Cursor)#%d (%d) {
   ["cursor"]=>
-  array(18) {
+  array(%d) {
     ["stamp"]=>
     int(0)
     ["is_command"]=>
@@ -209,13 +197,9 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     bool(true)
     ["done"]=>
     bool(true)
-    ["failed"]=>
-    bool(false)
     ["end_of_event"]=>
     bool(true)
     ["in_exhaust"]=>
-    bool(false)
-    ["redir_primary"]=>
     bool(false)
     ["has_fields"]=>
     bool(false)
@@ -256,7 +240,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
 }
 object(MongoDB\Driver\Cursor)#%d (%d) {
   ["cursor"]=>
-  array(18) {
+  array(%d) {
     ["stamp"]=>
     int(0)
     ["is_command"]=>
@@ -265,13 +249,9 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     bool(true)
     ["done"]=>
     bool(true)
-    ["failed"]=>
-    bool(false)
     ["end_of_event"]=>
     bool(true)
     ["in_exhaust"]=>
-    bool(false)
-    ["redir_primary"]=>
     bool(false)
     ["has_fields"]=>
     bool(false)

@@ -73,6 +73,7 @@ PHP_METHOD(Javascript, __construct)
 	}
 
 	php_phongo_new_javascript_from_javascript_and_scope(0, getThis(), javascript, javascript_len, &scope TSRMLS_CC);
+	bson_destroy(&scope);
 }
 /* }}} */
 
