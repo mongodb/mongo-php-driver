@@ -9,7 +9,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $hannes = array("name" => "Hannes", "country" => "USA", "gender" => "male");
-$hayley = array("name" => "Hayley", "country" => "USA", "gender" => "female");
+$hayley = array("name" => "Bayley", "country" => "USA", "gender" => "female");
 
 $insertBulk = new \MongoDB\Driver\BulkWrite(['ordered' => true]);
 $hannes_id = $insertBulk->insert($hannes);
