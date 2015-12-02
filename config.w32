@@ -20,6 +20,7 @@ if (PHP_MONGODB != "no") {
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-sasl.c", "mongodb");
 
   AC_DEFINE("HAVE_MONGOC", 1);
+  AC_DEFINE("MONGOC_HAVE_WEAK_SYMBOLS", 1);
 
   if (!CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB)) {
 	  WARNING("mongodb libsasl support not enabled, libs not found");
