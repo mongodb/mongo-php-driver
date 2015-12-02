@@ -20,7 +20,7 @@ build_lcov() {
 build_lcov
 
 phpize
-./configure --enable-developer-flags --enable-coverage CFLAGS="-Wno-type-limits -Wno-missing-braces"
+./configure --enable-developer-flags --enable-coverage CFLAGS="-Wno-type-limits"
 make all -j4
 sudo make install
 echo "Use the most-up-to-date run-tests.. old ones like 5.3 don't report failure exit codes"
