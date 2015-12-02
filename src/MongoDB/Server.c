@@ -493,11 +493,11 @@ static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{
 
 	if (!sd1 || !sd2) {
 		if (!sd1 && !sd2) {
-			phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s and %s", error1.message, error2.message);
+			phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server descriptions: %s and %s", error1.message, error2.message);
 		} else if (!sd1) {
-			phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", error1.message);
+			phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error1.message);
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", error2.message);
+			phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error2.message);
 		}
 		return 0;
 	}
