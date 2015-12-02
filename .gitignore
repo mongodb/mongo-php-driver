@@ -39,6 +39,8 @@ tags
 *.mem
 *.php
 tests/*/*.sh
+tests/*/*/*/*.sh
+tests/*/*/*/*/*.sh
 php.ini
 *.patch
 *.swp
