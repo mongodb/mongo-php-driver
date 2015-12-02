@@ -271,6 +271,7 @@ PHP_METHOD(Manager, selectServer)
 	selected_server = mongoc_topology_select(intern->client->topology, MONGOC_SS_READ, readPreference, MONGOC_SS_DEFAULT_LOCAL_THRESHOLD_MS, &error);
 	if (selected_server) {
 		phongo_server_init(return_value, intern->client, selected_server->id TSRMLS_CC);
+		mongoc_server_description_destroy(selected_server);
 	} else {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", error.message);
 	}
