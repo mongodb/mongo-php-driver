@@ -147,7 +147,7 @@ PHP_METHOD(Server, getHost)
 		RETURN_STRING(sd->host.host, 1);
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s: %s", "Failed to get server description, server likely gone", error.message);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
 }
 /* }}} */
 /* {{{ proto array Server::getTags()
@@ -177,7 +177,7 @@ PHP_METHOD(Server, getTags)
 		RETURN_ZVAL(state.zchild, 0, 1);
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s: %s", "Failed to get server description, server likely gone", error.message);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
 }
 /* }}} */
 /* {{{ proto array Server::getInfo()
@@ -207,7 +207,7 @@ PHP_METHOD(Server, getInfo)
 		RETURN_ZVAL(state.zchild, 0, 1);
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s: %s", "Failed to get server description, server likely gone", error.message);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
 }
 /* }}} */
 /* {{{ proto integer Server::getLatency()
@@ -230,7 +230,7 @@ PHP_METHOD(Server, getLatency)
 		RETURN_LONG(sd->round_trip_time);
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s: %s", "Failed to get server description, server likely gone", error.message);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
 }
 /* }}} */
 /* {{{ proto integer Server::getPort()
@@ -253,7 +253,7 @@ PHP_METHOD(Server, getPort)
 		RETURN_LONG(sd->host.port);
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s: %s", "Failed to get server description, server likely gone", error.message);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
 }
 /* }}} */
 /* {{{ proto integer Server::getType()
@@ -276,7 +276,7 @@ PHP_METHOD(Server, getType)
 		RETURN_LONG(sd->type);
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s: %s", "Failed to get server description, server likely gone", error.message);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
 }
 /* }}} */
 /* {{{ proto bool Server::isPrimary()
@@ -299,7 +299,7 @@ PHP_METHOD(Server, isPrimary)
 		RETURN_BOOL(sd->type == MONGOC_SERVER_RS_PRIMARY);
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s: %s", "Failed to get server description, server likely gone", error.message);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
 }
 /* }}} */
 /* {{{ proto bool Server::isSecondary()
@@ -322,7 +322,7 @@ PHP_METHOD(Server, isSecondary)
 		RETURN_BOOL(sd->type == MONGOC_SERVER_RS_SECONDARY);
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s: %s", "Failed to get server description, server likely gone", error.message);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
 }
 /* }}} */
 /* {{{ proto bool Server::isArbiter()
@@ -345,7 +345,7 @@ PHP_METHOD(Server, isArbiter)
 		RETURN_BOOL(sd->type == MONGOC_SERVER_RS_ARBITER);
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s: %s", "Failed to get server description, server likely gone", error.message);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
 }
 /* }}} */
 /* {{{ proto bool Server::isHidden()
@@ -370,7 +370,7 @@ PHP_METHOD(Server, isHidden)
 		RETURN_BOOL(bson_iter_init_find_case(&iter, &sd->last_is_master, "hidden") && bson_iter_as_bool(&iter));
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s: %s", "Failed to get server description, server likely gone", error.message);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
 }
 /* }}} */
 /* {{{ proto bool Server::isPassive()
@@ -395,7 +395,7 @@ PHP_METHOD(Server, isPassive)
 		RETURN_BOOL(bson_iter_init_find_case(&iter, &sd->last_is_master, "passive") && bson_iter_as_bool(&iter));
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s: %s", "Failed to get server description, server likely gone", error.message);
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
 }
 /* }}} */
 
@@ -543,7 +543,7 @@ HashTable *php_phongo_server_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 
 
 	if (!(sd = mongoc_topology_description_server_by_id(&intern->client->topology->description, intern->server_id, &error))) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s: %s", "Failed to get server description, server likely gone", error.message);
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description: %s", error.message);
 		return NULL;
 	}
 
