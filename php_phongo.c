@@ -643,12 +643,14 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 	 * after the error checking above. */
 	if (bson_iter_init_find(&iter, doc, "cursor") && BSON_ITER_HOLDS_DOCUMENT(&iter) && bson_iter_recurse(&iter, &child)) {
 		mongoc_cursor_cursorid_t *cid;
+		bson_t empty = BSON_INITIALIZER;
 
-		_mongoc_cursor_cursorid_init(cursor);
+		_mongoc_cursor_cursorid_init(cursor, &empty);
 		cursor->limit = 0;
 
 		cid = cursor->iface_data;
-		cid->has_cursor = true;
+		cid->in_batch = true;
+		bson_destroy (&empty);
 
 		while (bson_iter_next(&child)) {
 			if (BSON_ITER_IS_KEY(&child, "id")) {
@@ -659,8 +661,8 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 				ns = bson_iter_utf8(&child, &cursor->nslen);
 				bson_strncpy(cursor->ns, ns, sizeof cursor->ns);
 			} else if (BSON_ITER_IS_KEY(&child, "firstBatch")) {
-				if (BSON_ITER_HOLDS_ARRAY(&child) && bson_iter_recurse(&child, &cid->first_batch_iter)) {
-					cid->in_first_batch = true;
+				if (BSON_ITER_HOLDS_ARRAY(&child) && bson_iter_recurse(&child, &cid->batch_iter)) {
+					cid->in_batch = true;
 				}
 			}
 		}
@@ -919,11 +921,6 @@ bool phongo_stream_socket_check_closed(mongoc_stream_t *stream) /* {{{ */
 	return PHP_STREAM_OPTION_RETURN_OK != php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_CHECK_LIVENESS, 0, NULL);
 } /* }}} */
 
-mongoc_stream_t* phongo_stream_get_base_stream(mongoc_stream_t *stream) /* {{{ */
-{
-	return (mongoc_stream_t *) stream;
-} /* }}} */
-
 ssize_t phongo_stream_poll (mongoc_stream_poll_t *streams, size_t nstreams, int32_t timeout) /* {{{ */
 {
 	php_pollfd *fds = NULL;
@@ -1174,7 +1171,6 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	base_stream->vtable.readv = phongo_stream_readv;
 	base_stream->vtable.setsockopt = phongo_stream_setsockopt;
 	base_stream->vtable.check_closed = phongo_stream_socket_check_closed;
-	base_stream->vtable.get_base_stream = phongo_stream_get_base_stream;
 	base_stream->vtable.poll = phongo_stream_poll;
 
 	if (host->family != AF_UNIX) {
@@ -1356,10 +1352,8 @@ void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor) /* {{{
 		_ADD_BOOL(zcursor, is_command);
 		_ADD_BOOL(zcursor, sent);
 		_ADD_BOOL(zcursor, done);
-		_ADD_BOOL(zcursor, failed);
 		_ADD_BOOL(zcursor, end_of_event);
 		_ADD_BOOL(zcursor, in_exhaust);
-		_ADD_BOOL(zcursor, redir_primary);
 		_ADD_BOOL(zcursor, has_fields);
 #undef _ADD_BOOL
 

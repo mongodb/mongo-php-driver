@@ -27,7 +27,7 @@ var_dump($server == $result->getServer());
 bool(true)
 object(MongoDB\Driver\Cursor)#%d (%d) {
   ["cursor"]=>
-  array(19) {
+  array(%d) {
     ["stamp"]=>
     int(0)
     ["is_command"]=>
@@ -36,13 +36,9 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     bool(true)
     ["done"]=>
     bool(false)
-    ["failed"]=>
-    bool(false)
     ["end_of_event"]=>
     bool(false)
     ["in_exhaust"]=>
-    bool(false)
-    ["redir_primary"]=>
     bool(false)
     ["has_fields"]=>
     bool(false)

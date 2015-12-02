@@ -256,7 +256,8 @@ PHP_METHOD(Manager, selectServer)
 	php_phongo_manager_t         *intern;
 	zval                         *zreadPreference = NULL;
 	const mongoc_read_prefs_t    *readPreference;
-	uint32_t                      server_id;
+	bson_error_t                  error;
+	mongoc_server_description_t *selected_server = NULL;
 	(void)return_value_ptr; (void)return_value_used;
 
 
@@ -267,8 +268,13 @@ PHP_METHOD(Manager, selectServer)
 	}
 
 	readPreference = phongo_read_preference_from_zval(zreadPreference TSRMLS_CC);
-	server_id = mongoc_cluster_preselect(&intern->client->cluster, MONGOC_OPCODE_QUERY, readPreference, NULL);
-	phongo_server_init(return_value, intern->client, server_id TSRMLS_CC);
+	selected_server = mongoc_topology_select(intern->client->topology, MONGOC_SS_READ, readPreference, MONGOC_SS_DEFAULT_LOCAL_THRESHOLD_MS, &error);
+	if (selected_server) {
+		phongo_server_init(return_value, intern->client, selected_server->id TSRMLS_CC);
+		mongoc_server_description_destroy(selected_server);
+	} else {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", error.message);
+	}
 }
 /* }}} */
 /* {{{ proto void MongoDB\Driver\Manager::__wakeUp()

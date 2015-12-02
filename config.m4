@@ -235,6 +235,7 @@ if test "$MONGODB" != "no"; then
     mongoc-cursor-transform.c \
     mongoc-cursor-cursorid.c \
     mongoc-database.c \
+    mongoc-find-and-modify.c \
     mongoc-init.c \
     mongoc-gridfs.c \
     mongoc-gridfs-file.c \
@@ -246,12 +247,15 @@ if test "$MONGODB" != "no"; then
     mongoc-log.c \
     mongoc-matcher-op.c \
     mongoc-matcher.c \
+    mongoc-memcmp.c \
     mongoc-opcode.c \
     mongoc-queue.c \
+    mongoc-read-concern.c \
     mongoc-read-prefs.c \
     mongoc-rpc.c \
     mongoc-set.c \
     mongoc-server-description.c \
+    mongoc-server-stream.c \
     mongoc-socket.c \
     mongoc-stream.c \
     mongoc-stream-buffered.c \
@@ -299,13 +303,13 @@ PHP_ARG_WITH(libbson, Use system libbson,
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
-      if $PKG_CONFIG libbson-1.0 --atleast-version 1.2.0; then
+      if $PKG_CONFIG libbson-1.0 --atleast-version 1.3.0; then
         LIBBSON_INC=`$PKG_CONFIG libbson-1.0 --cflags`
         LIBBSON_LIB=`$PKG_CONFIG libbson-1.0 --libs`
         LIBBSON_VER=`$PKG_CONFIG libbson-1.0 --modversion`
         AC_MSG_RESULT(version $LIBBSON_VER found)
       else
-        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.2.0)
+        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.3.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libbson must be installed)
@@ -314,8 +318,8 @@ PHP_ARG_WITH(libbson, Use system libbson,
     PHP_EVAL_LIBLINE($LIBBSON_LIB, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
   else
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES,            [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES,            [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES,            [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES,            [$STD_CFLAGS], shared_objects_mongodb, yes)
   fi
 
 dnl libmongoc stuff {{{
@@ -331,7 +335,7 @@ PHP_ARG_WITH(libmongoc, Use system libmongoc,
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0 && $PKG_CONFIG --exists libmongoc-priv; then
-      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.2.0; then
+      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.3.0; then
         LIBMONGOC_INC=`$PKG_CONFIG libmongoc-priv --cflags`
         LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-priv --libs`
         LIBMONGOC_VER=`$PKG_CONFIG libmongoc-priv --modversion`
@@ -339,7 +343,7 @@ PHP_ARG_WITH(libmongoc, Use system libmongoc,
         CFLAGS="$CFLAGS -DMONGOC_I_AM_A_DRIVER"
 
       else
-        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.2.0)
+        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.3.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and mongoc must be installed)
@@ -350,9 +354,9 @@ PHP_ARG_WITH(libmongoc, Use system libmongoc,
   else
     CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,      [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,  [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL, [$STD_CFLAGS $MAINTAINER_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,      [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,  [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL, [$STD_CFLAGS], shared_objects_mongodb, yes)
 
 
     PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD)
@@ -426,6 +430,7 @@ else
   AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
 fi
 
+  m4_include(src/libmongoc/build/autotools/WeakSymbols.m4)
   m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
   AX_PTHREAD
 
