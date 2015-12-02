@@ -916,7 +916,7 @@ bool phongo_stream_socket_check_closed(mongoc_stream_t *stream) /* {{{ */
 	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
 	TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
 
-	return PHP_STREAM_OPTION_RETURN_OK == php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_CHECK_LIVENESS, 0, NULL);
+	return PHP_STREAM_OPTION_RETURN_OK != php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_CHECK_LIVENESS, 0, NULL);
 } /* }}} */
 
 mongoc_stream_t* phongo_stream_get_base_stream(mongoc_stream_t *stream) /* {{{ */
