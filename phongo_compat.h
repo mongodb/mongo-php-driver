@@ -1,3 +1,34 @@
+/*
+  +---------------------------------------------------------------------------+
+  | PHP Driver for MongoDB                                                    |
+  +---------------------------------------------------------------------------+
+  | Copyright 2013-2015 MongoDB, Inc.                                         |
+  |                                                                           |
+  | Licensed under the Apache License, Version 2.0 (the "License");           |
+  | you may not use this file except in compliance with the License.          |
+  | You may obtain a copy of the License at                                   |
+  |                                                                           |
+  | http://www.apache.org/licenses/LICENSE-2.0                                |
+  |                                                                           |
+  | Unless required by applicable law or agreed to in writing, software       |
+  | distributed under the License is distributed on an "AS IS" BASIS,         |
+  | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  |
+  | See the License for the specific language governing permissions and       |
+  | limitations under the License.                                            |
+  +---------------------------------------------------------------------------+
+  | Copyright (c) 2015 MongoDB, Inc.                                          |
+  +---------------------------------------------------------------------------+
+*/
+
+#ifndef PHONGO_COMPAT_H
+#define PHONGO_COMPAT_H
+
+#include <php.h>
+#include <Zend/zend_string.h>
+#if PHP_VERSION_ID >= 70000
+#include <Zend/zend_portability.h>
+#endif
+
 #ifdef PHP_WIN32
 # include "config.w32.h"
 #else
@@ -17,7 +48,9 @@
 		zend_hash_copy(*_std.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *));
 #endif
 
-#if PHP_VERSION_ID < 50400
+#if PHP_VERSION_ID >= 70000
+# define str_efree(s) efree((char*)s)
+#elif PHP_VERSION_ID < 50400
 # define str_efree(s) efree((char*)s)
 #else
 # include <Zend/zend_string.h>
@@ -112,3 +145,76 @@
 # endif
 #endif
 
+#if PHP_VERSION_ID >= 70000
+# define phongo_char zend_string
+# define phongo_char_pdup(str) pestrdup(filename->val, 1)
+# define phongo_char_free(str) zend_string_release(str)
+# define phongo_str(str) str->val
+# define phongo_create_object_retval zend_object*
+# define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t *)ecalloc(1, sizeof(_obj_t)+zend_object_properties_size(_class_type))
+# define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data)
+# define SUPPRESS_UNUSED_WARNING(x)
+# define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
+# define EXCEPTION_P(_ex, _zp) ZVAL_OBJ(&_zp, _ex)
+# define PHONGO_STREAM_ID(stream) stream->res ? stream->res->handle : -1
+# define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRL(_key), _value);
+# define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRL(_key), _value, _len);
+# define ADD_ASSOC_LONG_EX(_zv, _key, _value) add_assoc_long_ex(_zv, ZEND_STRL(_key), _value);
+# define ADD_ASSOC_STRING_EX(_zv, _key, _key_len, _value, _value_len) add_assoc_stringl_ex(_zv, _key, _key_len, _value, _value_len);
+# define ADD_ASSOC_ZVAL_EX(_zv, _key, _value) add_assoc_zval_ex(_zv, ZEND_STRL(_key), _value);
+# define ADD_ASSOC_ZVAL(_zv, _key, _value) add_assoc_zval(_zv, _key, _value);
+# define ADD_ASSOC_NULL_EX(_zv, _key) add_assoc_null_ex(_zv, ZEND_STRL(_key));
+# define ADD_ASSOC_BOOL_EX(_zv, _key, _value) add_assoc_bool_ex(_zv, ZEND_STRL(_key), _value);
+# define phongo_free_object_arg zend_object
+# define phongo_zpp_char_len size_t
+# define ZEND_HASH_APPLY_COUNT(ht) (ht)->u.v.nApplyCount
+# define PHONGO_RETVAL_STRINGL(s, slen) RETVAL_STRINGL(s, slen)
+# define PHONGO_RETURN_STRINGL(s, slen) RETURN_STRINGL(s, slen)
+# define PHONGO_RETURN_STRING(s) RETURN_STRING(s)
+#else
+# define phongo_char char
+# define phongo_char_pdup(str) pestrdup(filename, 1)
+# define phongo_char_free(str) _efree(str ZEND_FILE_LINE_CC ZEND_FILE_LINE_CC)
+# define phongo_str(str) str
+# define phongo_create_object_retval zend_object_value
+# define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t *)ecalloc(1, sizeof(_obj_t))
+# define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data) TSRMLS_FETCH_FROM_CTX(user_data)
+# define SUPPRESS_UNUSED_WARNING(x) (void)x;
+# define DECLARE_RETURN_VALUE_USED
+# define EXCEPTION_P(_ex, _zp) _zp = _ex
+# define PHONGO_STREAM_ID(stream) stream->rsrc_id
+# define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), _value, 1);
+# define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRS(_key), _value, _len, 1);
+# define ADD_ASSOC_STRING_EX(_zv, _key, _key_len, _value, _value_len) add_assoc_stringl_ex(_zv, _key, _key_len+1, _value, _value_len, 1);
+# define ADD_ASSOC_LONG_EX(_zv, _key, _value) add_assoc_long_ex(_zv, ZEND_STRS(_key), _value);
+# define ADD_ASSOC_ZVAL_EX(_zv, _key, _value) add_assoc_zval_ex(_zv, ZEND_STRS(_key), _value);
+# define ADD_ASSOC_ZVAL(_zv, _key, _value) add_assoc_zval(_zv, _key, _value);
+# define ADD_ASSOC_NULL_EX(_zv, _key) add_assoc_null_ex(_zv, ZEND_STRS(_key));
+# define ADD_ASSOC_BOOL_EX(_zv, _key, _value) add_assoc_bool_ex(_zv, ZEND_STRS(_key), _value);
+# define Z_PHPDATE_P(object) zend_object_store_get_object(object TSRMLS_CC)
+# define Z_ISUNDEF(x) !x
+# define phongo_free_object_arg void
+# define phongo_zpp_char_len int
+# define ZEND_HASH_APPLY_COUNT(ht) (ht)->nApplyCount
+# define PHONGO_RETVAL_STRINGL(s, slen) RETVAL_STRINGL(s, slen, 1)
+# define PHONGO_RETURN_STRINGL(s, slen) RETURN_STRINGL(s, slen, 1)
+# define PHONGO_RETURN_STRING(s) RETURN_STRING(s, 1)
+# define PHP_STREAM_CONTEXT(stream) ((php_stream_context*) (stream)->context)
+#endif
+
+
+void *x509_from_zval(zval *zval TSRMLS_DC);
+void phongo_add_exception_prop(const char *prop, int prop_len, zval *value TSRMLS_DC);
+
+
+#endif /* PHONGO_COMPAT_H */
+
+
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: noet sw=4 ts=4 fdm=marker
+ * vim<600: noet sw=4 ts=4
+ */

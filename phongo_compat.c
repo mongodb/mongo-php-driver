@@ -16,63 +16,42 @@
   | See the License for the specific language governing permissions and       |
   | limitations under the License.                                            |
   +---------------------------------------------------------------------------+
-  | Copyright (c) 2014-2015 MongoDB, Inc.                                     |
+  | Copyright (c) 2015 MongoDB, Inc.                                          |
   +---------------------------------------------------------------------------+
 */
 
-#ifdef HAVE_CONFIG_H
-#	include "config.h"
-#endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
-#include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
 /* Our Compatability header */
 #include "phongo_compat.h"
 
-/* Our stuffz */
-#include "php_phongo.h"
-#include "php_bson.h"
-#include <ext/spl/spl_exceptions.h>
 
-
-PHONGO_API zend_class_entry *php_phongo_logicexception_ce;
-
-/* {{{ MongoDB\Driver\LogicException */
-
-static zend_function_entry php_phongo_logicexception_me[] = {
-	PHP_FE_END
-};
-
-/* }}} */
-
-
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(LogicException)
-{
-	zend_class_entry ce;
-	(void)type;(void)module_number;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "LogicException", php_phongo_logicexception_me);
+void *x509_from_zval(zval *zval TSRMLS_DC) {
 #if PHP_VERSION_ID >= 70000
-        php_phongo_logicexception_ce = zend_register_internal_class_ex(&ce, spl_ce_LogicException);
+	return Z_RES_P(zval)->ptr;
 #else
-	php_phongo_logicexception_ce = zend_register_internal_class_ex(&ce, spl_ce_LogicException, NULL TSRMLS_CC);
+	int resource_type;
+	int type;
+
+	zend_list_find(Z_LVAL_P(zval), &resource_type);
+	return zend_fetch_resource(&zval TSRMLS_CC, -1, "OpenSSL X.509", &type, 1, resource_type);
 #endif
-	zend_class_implements(php_phongo_logicexception_ce TSRMLS_CC, 1, php_phongo_exception_ce);
-
-	return SUCCESS;
 }
-/* }}} */
 
+void phongo_add_exception_prop(const char *prop, int prop_len, zval *value TSRMLS_DC)
+{
+	if (EG(exception)) {
+#if PHP_VERSION_ID >= 70000
+		zval ex;
+		EXCEPTION_P(EG(exception), ex);
+		zend_update_property(Z_OBJCE(ex), &ex, prop, prop_len, value);
+#else
+		zval *ex = NULL;
+		EXCEPTION_P(EG(exception), ex);
+		zend_update_property(Z_OBJCE_P(ex), ex, prop, prop_len, value TSRMLS_CC);
+#endif
 
+	}
+}
 
 /*
  * Local variables:

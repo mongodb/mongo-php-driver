@@ -61,7 +61,11 @@ PHP_MINIT_FUNCTION(RuntimeException)
 	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "RuntimeException", php_phongo_runtimeexception_me);
+#if PHP_VERSION_ID >= 70000
+        php_phongo_runtimeexception_ce = zend_register_internal_class_ex(&ce, spl_ce_RuntimeException);
+#else
 	php_phongo_runtimeexception_ce = zend_register_internal_class_ex(&ce, spl_ce_RuntimeException, NULL TSRMLS_CC);
+#endif
 	zend_class_implements(php_phongo_runtimeexception_ce TSRMLS_CC, 1, php_phongo_exception_ce);
 
 	return SUCCESS;

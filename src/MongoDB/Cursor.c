@@ -55,10 +55,10 @@ PHP_METHOD(Cursor, setTypeMap)
 	php_phongo_cursor_t *intern;
 	php_phongo_bson_state     state = PHONGO_BSON_STATE_INITIALIZER;
 	zval                     *typemap = NULL;
-	(void)return_value; (void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
-	intern = (php_phongo_cursor_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_CURSOR_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a!", &typemap) == FAILURE) {
 		return;
@@ -72,9 +72,26 @@ PHP_METHOD(Cursor, setTypeMap)
 
 static int php_phongo_cursor_to_array_apply(zend_object_iterator *iter, void *puser TSRMLS_DC) /* {{{ */
 {
-	zval **data, *return_value = (zval*)puser;
+#if PHP_VERSION_ID >= 70000
+	zval *data;
+	zval *return_value = (zval*)puser;
+
+	data = iter->funcs->get_current_data(iter TSRMLS_CC);
+
+	if (EG(exception)) {
+		return ZEND_HASH_APPLY_STOP;
+	}
+	if (Z_ISUNDEF_P(data)) {
+		return ZEND_HASH_APPLY_STOP;
+	}
+	Z_TRY_ADDREF_P(data);
+	add_next_index_zval(return_value, data);
+#else
+	zval **data;
+	zval *return_value = (zval*)puser;
 
 	iter->funcs->get_current_data(iter, &data TSRMLS_CC);
+
 	if (EG(exception)) {
 		return ZEND_HASH_APPLY_STOP;
 	}
@@ -83,6 +100,8 @@ static int php_phongo_cursor_to_array_apply(zend_object_iterator *iter, void *pu
 	}
 	Z_ADDREF_PP(data);
 	add_next_index_zval(return_value, *data);
+#endif
+
 	return ZEND_HASH_APPLY_KEEP;
 }
 /* }}} */
@@ -91,7 +110,7 @@ static int php_phongo_cursor_to_array_apply(zend_object_iterator *iter, void *pu
    Returns an array of all result documents for this cursor */
 PHP_METHOD(Cursor, toArray)
 {
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -111,10 +130,10 @@ PHP_METHOD(Cursor, toArray)
 PHP_METHOD(Cursor, getId)
 {
 	php_phongo_cursor_t      *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
-	intern = (php_phongo_cursor_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_CURSOR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -129,10 +148,10 @@ PHP_METHOD(Cursor, getId)
 PHP_METHOD(Cursor, getServer)
 {
 	php_phongo_cursor_t *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
-	intern = (php_phongo_cursor_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_CURSOR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -148,10 +167,10 @@ PHP_METHOD(Cursor, getServer)
 PHP_METHOD(Cursor, isDead)
 {
 	php_phongo_cursor_t      *intern;
-	(void)return_value_ptr; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
-	intern = (php_phongo_cursor_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_CURSOR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -195,43 +214,76 @@ static zend_function_entry php_phongo_cursor_me[] = {
 
 
 /* {{{ php_phongo_cursor_t object handlers */
-static void php_phongo_cursor_free_object(void *object TSRMLS_DC) /* {{{ */
+static void php_phongo_cursor_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_cursor_t *intern = (php_phongo_cursor_t*)object;
+	php_phongo_cursor_t *intern = Z_OBJ_CURSOR(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	php_phongo_cursor_free(intern);
 
+#if PHP_VERSION_ID < 70000
 	efree(intern);
+#endif
 } /* }}} */
 
-zend_object_value php_phongo_cursor_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+phongo_create_object_retval php_phongo_cursor_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
-	zend_object_value           retval;
 	php_phongo_cursor_t *intern = NULL;
 
-	intern = (php_phongo_cursor_t *)ecalloc(1, sizeof *intern);
+	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_cursor_t, class_type);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_cursor_free_object, NULL TSRMLS_CC);
-	retval.handlers = &php_phongo_handler_cursor;
+#if PHP_VERSION_ID >= 70000
+	intern->std.handlers = &php_phongo_handler_cursor;
 
-	return retval;
+	return &intern->std;
+#else
+	{
+		zend_object_value retval;
+		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_cursor_free_object, NULL TSRMLS_CC);
+		retval.handlers = &php_phongo_handler_cursor;
+
+		return retval;
+	}
+#endif
 } /* }}} */
 
 HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t    *intern;
-	zval                           retval = zval_used_for_init;
+#if PHP_VERSION_ID >= 70000
+	zval                    retval;
+#else
+	zval                    retval = zval_used_for_init;
+#endif
 
 
 	*is_temp = 1;
-	intern = (php_phongo_cursor_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_CURSOR_OBJ_P(object);
 
-	php_phongo_cursor_to_zval(&retval, intern);
+	array_init_size(&retval, 2);
+	if (intern->cursor) {
+#if PHP_VERSION_ID >= 70000
+		zval zcursor;
+
+		php_phongo_cursor_to_zval(&zcursor, intern->cursor);
+		ADD_ASSOC_ZVAL_EX(&retval, "cursor", &zcursor);
+#else
+		zval *zcursor = NULL;
+
+		MAKE_STD_ZVAL(zcursor);
+
+		php_phongo_cursor_to_zval(zcursor, intern->cursor);
+		ADD_ASSOC_ZVAL_EX(&retval, "cursor", zcursor);
+#endif
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "cursor");
+	}
+
+	ADD_ASSOC_LONG_EX(&retval, "server_id", intern->server_id);
 
 	return Z_ARRVAL(retval);
 
@@ -252,6 +304,10 @@ PHP_MINIT_FUNCTION(Cursor)
 
 	memcpy(&php_phongo_handler_cursor, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_cursor.get_debug_info = php_phongo_cursor_get_debug_info;
+#if PHP_VERSION_ID >= 70000
+	php_phongo_handler_cursor.free_obj = php_phongo_cursor_free_object;
+	php_phongo_handler_cursor.offset = XtOffsetOf(php_phongo_cursor_t, std);
+#endif
 
 	zend_class_implements(php_phongo_cursor_ce TSRMLS_CC, 1, zend_ce_traversable);
 

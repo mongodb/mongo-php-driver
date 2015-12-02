@@ -59,11 +59,11 @@ PHP_METHOD(BulkWrite, __construct)
 	zend_error_handling      error_handling;
 	zval                    *options = NULL;
 	zend_bool                ordered = 1;
-	(void)return_value_ptr; (void)return_value; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_bulkwrite_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_BULKWRITE_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a!", &options) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -87,10 +87,11 @@ PHP_METHOD(BulkWrite, insert)
 	bson_t                   *bson;
 	bson_t                   *bson_out = NULL;
 	int                       bson_flags = PHONGO_BSON_ADD_ID;
-	(void)return_value_ptr; (void)return_value_used;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
-	intern = (php_phongo_bulkwrite_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_BULKWRITE_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &document) == FAILURE) {
 		return;
@@ -131,10 +132,10 @@ PHP_METHOD(BulkWrite, update)
 	mongoc_update_flags_t     flags = MONGOC_UPDATE_NONE;
 	bson_t                   *bquery;
 	bson_t                   *bupdate;
-	(void)return_value_ptr; (void)return_value; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
-	intern = (php_phongo_bulkwrite_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_BULKWRITE_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "AA|a!", &query, &newObj, &updateOptions) == FAILURE) {
 		return;
@@ -185,10 +186,10 @@ PHP_METHOD(BulkWrite, delete)
 	zval                     *query;
 	zval                     *deleteOptions = NULL;
 	bson_t                   *bson;
-	(void)return_value_ptr; (void)return_value; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
-	intern = (php_phongo_bulkwrite_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_BULKWRITE_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &query, &deleteOptions) == FAILURE) {
 		return;
@@ -212,10 +213,10 @@ PHP_METHOD(BulkWrite, delete)
 PHP_METHOD(BulkWrite, count)
 {
 	php_phongo_bulkwrite_t  *intern;
-	(void)return_value_ptr; (void)return_value; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
-	intern = (php_phongo_bulkwrite_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_BULKWRITE_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -265,68 +266,90 @@ static zend_function_entry php_phongo_bulkwrite_me[] = {
 
 
 /* {{{ php_phongo_bulkwrite_t object handlers */
-static void php_phongo_bulkwrite_free_object(void *object TSRMLS_DC) /* {{{ */
+static void php_phongo_bulkwrite_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_bulkwrite_t *intern = (php_phongo_bulkwrite_t*)object;
+	php_phongo_bulkwrite_t *intern = Z_OBJ_BULKWRITE(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	if (intern->bulk) {
 		mongoc_bulk_operation_destroy(intern->bulk);
 	}
+
+#if PHP_VERSION_ID < 70000
 	efree(intern);
+#endif
 } /* }}} */
 
-zend_object_value php_phongo_bulkwrite_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+phongo_create_object_retval php_phongo_bulkwrite_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
-	zend_object_value retval;
 	php_phongo_bulkwrite_t *intern = NULL;
 
-	intern = (php_phongo_bulkwrite_t *)ecalloc(1, sizeof *intern);
+	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_bulkwrite_t, class_type);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_bulkwrite_free_object, NULL TSRMLS_CC);
-	retval.handlers = &php_phongo_handler_bulkwrite;
+#if PHP_VERSION_ID >= 70000
+	intern->std.handlers = &php_phongo_handler_bulkwrite;
 
-	return retval;
+	return &intern->std;
+#else
+	{
+		zend_object_value retval;
+		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_bulkwrite_free_object, NULL TSRMLS_CC);
+		retval.handlers = &php_phongo_handler_bulkwrite;
+
+		return retval;
+	}
+#endif
 } /* }}} */
 
 HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
-	zval                     retval = zval_used_for_init;
-	php_phongo_bulkwrite_t *intern = NULL;
+#if PHP_VERSION_ID >= 70000
+	zval                      retval;
+#else
+	zval                      retval = zval_used_for_init;
+#endif
+	php_phongo_bulkwrite_t   *intern = NULL;
 
 
 	*is_temp = 1;
-	intern = (php_phongo_bulkwrite_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_BULKWRITE_OBJ_P(object);
 	array_init(&retval);
 
 	if (intern->bulk->database) {
-		add_assoc_string_ex(&retval, ZEND_STRS("database"), intern->bulk->database, 1);
+		ADD_ASSOC_STRING(&retval, "database", intern->bulk->database);
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("database"));
+		ADD_ASSOC_NULL_EX(&retval, "database");
 	}
 
 	if (intern->bulk->collection) {
-		add_assoc_string_ex(&retval, ZEND_STRS("collection"), intern->bulk->collection, 1);
+		ADD_ASSOC_STRING(&retval, "collection", intern->bulk->collection);
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("collection"));
+		ADD_ASSOC_NULL_EX(&retval, "collection");
 	}
 
-	add_assoc_bool_ex(&retval, ZEND_STRS("ordered"), intern->bulk->ordered);
-	add_assoc_bool_ex(&retval, ZEND_STRS("executed"), intern->bulk->executed);
-	add_assoc_long_ex(&retval, ZEND_STRS("server_id"), intern->bulk->hint);
+	ADD_ASSOC_BOOL_EX(&retval, "ordered", intern->bulk->ordered);
+	ADD_ASSOC_BOOL_EX(&retval, "executed", intern->bulk->executed);
+	ADD_ASSOC_LONG_EX(&retval, "server_id", intern->bulk->hint);
 
 	if (intern->bulk->write_concern) {
+#if PHP_VERSION_ID >= 70000
+		zval write_concern;
+
+		php_phongo_write_concern_to_zval(&write_concern, intern->bulk->write_concern);
+		ADD_ASSOC_ZVAL_EX(&retval, "write_concern", &write_concern);
+#else
 		zval *write_concern = NULL;
 		MAKE_STD_ZVAL(write_concern);
 
 		php_phongo_write_concern_to_zval(write_concern, intern->bulk->write_concern);
-		add_assoc_zval_ex(&retval, ZEND_STRS("write_concern"), write_concern);
+		ADD_ASSOC_ZVAL_EX(&retval, "write_concern", write_concern);
+#endif
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("write_concern"));
+		ADD_ASSOC_NULL_EX(&retval, "write_concern");
 	}
 
 
@@ -348,6 +371,10 @@ PHP_MINIT_FUNCTION(BulkWrite)
 
 	memcpy(&php_phongo_handler_bulkwrite, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_bulkwrite.get_debug_info = php_phongo_bulkwrite_get_debug_info;
+#if PHP_VERSION_ID >= 70000
+	php_phongo_handler_bulkwrite.free_obj = php_phongo_bulkwrite_free_object;
+	php_phongo_handler_bulkwrite.offset = XtOffsetOf(php_phongo_bulkwrite_t, std);
+#endif
 
 	zend_class_implements(php_phongo_bulkwrite_ce TSRMLS_CC, 1, spl_ce_Countable);
 
