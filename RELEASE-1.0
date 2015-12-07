@@ -1,3 +1,42 @@
+RELEASE 1.0.1
+-------------
+2015-12-07  Jeremy Mikola  <jmikola@gmail.com>
+	* Bump extension version to 1.0.1
+
+2015-12-07  Jeremy Mikola  <jmikola@gmail.com>
+	* Revise prep-release.php handling
+
+2015-12-03  Jeremy Mikola  <jmikola@gmail.com>
+	* Add "-dev" to extension version constant
+
+2015-11-06  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-487: Regression tests for check_closed stream handler
+
+2015-11-06  Hannes Magnusson  <bjori@php.net>
+	* PHPC-487: Reverse logic in check_closed stream handler
+
+2015-11-25  Hannes Magnusson  <bjori@php.net>
+	* Its a bit creepy seeing my family in bug reports
+
+2015-11-25  Derick Rethans  <github@derickrethans.nl>
+	* PHPC-499: Only add the dependency when we're actually enabling the extension
+
+2015-11-12  Derick Rethans  <github@derickrethans.nl>
+	* Wording tweaks after review
+
+2015-11-12  Derick Rethans  <github@derickrethans.nl>
+	* HHVM-136: Make hippo and phongo README/CONTRIBUTING files consistent
+
+2015-11-02  Jeremy Mikola  <jmikola@gmail.com>
+	* Update documentation for 1.0.0
+
+2015-10-30  Jeremy Mikola  <jmikola@gmail.com>
+	* Back to -dev
+
+2015-10-30  Jeremy Mikola  <jmikola@gmail.com>
+	* Add 1.0.0 release notes
+
+
 RELEASE 1.0.0
 -------------
 2015-10-30  Jeremy Mikola  <jmikola@gmail.com>
