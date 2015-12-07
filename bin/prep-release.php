@@ -157,31 +157,26 @@ function usage() {
     global $argv;
 
     echo "Usage:\n\t";
-    echo $argv[0], " <version><-stability>\n";
+    echo $argv[0], " <version> <stability>\n";
 
     exit(1);
 }
 
-if ($argc != 2) {
+if ($argc != 3) {
     usage();
 }
 
-if (strpos($argv[1], "-")) {
-    list($VERSION, $STABILITY) = explode("-", $argv[1], 2);
-} else {
-    $VERSION = $argv[1];
+$VERSION = $argv[1];
+$STABILITY = $argv[2];
 
-    /* 0.x.y. are developmental releases and cannot be stable */
-    if ((int)$VERSION < 1) {
-        $STABILITY = "devel";
-    }
-    /* A release candidate is a "beta" stability in terms of PECL */
-    $rc = substr($VERSION, -3, 2);
-    if (strcasecmp($rc, "rc") == 0) {
-        $STABILITY = "beta";
-    } else {
-        $STABILITY = "stable";
-    }
+/* 0.x.y. are developmental releases and cannot be stable */
+if ((int)$VERSION < 1) {
+    $STABILITY = "devel";
+}
+
+/* A release candidate is a "beta" stability in terms of PECL */
+if (stristr($VERSION, '-rc') !== false) {
+    $STABILITY = "beta";
 }
 
 verify_stability($STABILITY);
