@@ -510,12 +510,11 @@ dnl }}}
   AC_SUBST(BSON_HAVE_SNPRINTF)
 
   if test "$PHP_LIBMONGOC" == "no"; then
+    backup_srcdir=${srcdir}
+    srcdir=${srcdir}/src/libmongoc/
     m4_include(src/libmongoc/build/autotools/Versions.m4)
-    MONGOC_MAJOR_VERSION=mongoc_major_version
-    MONGOC_MINOR_VERSION=mongoc_minor_version
-    MONGOC_MICRO_VERSION=mongoc_micro_version
+    srcdir=${backup_srcdir}
     MONGOC_API_VERSION=1.0
-    MONGOC_VERSION=mongoc_version
     AC_SUBST(MONGOC_MAJOR_VERSION)
     AC_SUBST(MONGOC_MINOR_VERSION)
     AC_SUBST(MONGOC_MICRO_VERSION)
@@ -525,12 +524,11 @@ dnl }}}
     AC_OUTPUT($srcdir/src/libmongoc/src/mongoc/mongoc-version.h)
   fi
   if test "$PHP_LIBBSON" == "no"; then
+    backup_srcdir=${srcdir}
+    srcdir=${srcdir}/src/libbson/
     m4_include(src/libbson/build/autotools/Versions.m4)
-    BSON_MAJOR_VERSION=bson_major_version
-    BSON_MINOR_VERSION=bson_minor_version
-    BSON_MICRO_VERSION=bson_micro_version
+    srcdir=${backup_srcdir}
     BSON_API_VERSION=1.0
-    BSON_VERSION=bson_version
     AC_SUBST(BSON_MAJOR_VERSION)
     AC_SUBST(BSON_MINOR_VERSION)
     AC_SUBST(BSON_MICRO_VERSION)
