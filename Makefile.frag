@@ -142,7 +142,7 @@ release-docs: docs
 	mkdocs gh-deploy --clean
 
 package.xml: RELEASE
-	php bin/prep-release.php $(MONGODB_VERSION)-$(MONGODB_STABILITY)
+	php bin/prep-release.php $(MONGODB_VERSION) $(MONGODB_STABILITY)
 
 RELEASE:
 	@echo "RELEASE $(MONGODB_VERSION)" >> RELEASE-$(MONGODB_VERSION)
