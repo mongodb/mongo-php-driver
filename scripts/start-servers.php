@@ -3,6 +3,8 @@ require __DIR__ . "/" . "../tests/utils/tools.php";
 $SERVERS = array();
 $FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
 
+ini_set("default_socket_timeout", 60000);
+
 function lap() {
     static $then = 0;
     static $now;
@@ -19,6 +21,7 @@ $PRESETS = [
         "scripts/presets/standalone.json",
         "scripts/presets/standalone-24.json",
         "scripts/presets/standalone-26.json",
+        "scripts/presets/standalone-30.json",
         "scripts/presets/standalone-ssl.json",
         "scripts/presets/standalone-auth.json",
         "scripts/presets/standalone-x509.json",
@@ -32,7 +35,7 @@ $PRESETS = [
 function make_ctx($preset, $method = "POST") {
     $opts = [
         "http" => [
-            "timeout" => 30,
+            "timeout" => 60,
             "method"  => $method,
             "header"  => "Accept: application/json\r\n" .
                          "Content-type: application/x-www-form-urlencoded",
@@ -47,28 +50,39 @@ function make_ctx($preset, $method = "POST") {
 function failed($result) {
     echo "\n\n";
     echo join("\n", $result);
+    printf("Last operation took: %.2f secs\n", lap());
     exit();
 }
 
+function mo_http_request($uri, $context) {
+    global $http_response_header;
 
+    $result = file_get_contents($uri, false, $context);
+
+    if ($result === false) {
+        failed($http_response_header);
+    }
+
+    return $result;
+}
 
 printf("Cleaning out previous processes, if any ");
 lap();
 /* Remove all pre-existing ReplicaSets */
-$replicasets = file_get_contents(getMOUri() . "/replica_sets", false, make_ctx(getMOPresetBase(), "GET"));
+$replicasets = mo_http_request(getMOUri() . "/replica_sets", make_ctx(getMOPresetBase(), "GET"));
 $replicasets = json_decode($replicasets, true);
 foreach($replicasets["replica_sets"] as $replicaset) {
     $uri = getMOUri() . "/replica_sets/" . $replicaset["id"];
-    file_get_contents($uri, false, make_ctx(getMOPresetBase(), "DELETE"));
+    mo_http_request($uri, make_ctx(getMOPresetBase(), "DELETE"));
     echo ".";
 }
 echo " ";
 /* Remove all pre-existing servers */
-$servers = file_get_contents(getMOUri() . "/servers", false, make_ctx(getMOPresetBase(), "GET"));
+$servers = mo_http_request(getMOUri() . "/servers", make_ctx(getMOPresetBase(), "GET"));
 $servers = json_decode($servers, true);
 foreach($servers["servers"] as $server) {
     $uri = getMOUri() . "/servers/" . $server["id"];
-    file_get_contents($uri, false, make_ctx(getMOPresetBase(), "DELETE"));
+    mo_http_request($uri, make_ctx(getMOPresetBase(), "DELETE"));
     echo ".";
 }
 printf("\t(took: %.2f secs)\n", lap());
@@ -78,7 +92,7 @@ foreach($PRESETS["standalone"] as $preset) {
     $json = json_decode(file_get_contents($preset), true);
     printf("Starting %-20s ...  ", $json["id"]);
 
-    $result = file_get_contents(getMOUri() . "/servers", false, make_ctx(getMOPresetBase() . $preset));
+    $result = mo_http_request(getMOUri() . "/servers", make_ctx(getMOPresetBase() . $preset));
     $decode = json_decode($result, true);
     if (!isset($decode["id"])) {
         failed($decode);
@@ -94,7 +108,7 @@ foreach($PRESETS["replicasets"] as $preset) {
     $json = json_decode(file_get_contents($preset), true);
     printf("Starting %-20s ...  ", $json["id"]);
 
-    $result = file_get_contents(getMOUri() . "/replica_sets", false, make_ctx(getMOPresetBase() . $preset));
+    $result = mo_http_request(getMOUri() . "/replica_sets", make_ctx(getMOPresetBase() . $preset));
     $decode = json_decode($result, true);
     if (!isset($decode["id"])) {
         failed($decode);
