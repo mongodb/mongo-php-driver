@@ -27,5 +27,5 @@ apt-get install -y python python-dev python-pip
 pip install --upgrade 'git+https://github.com/10gen/mongo-orchestration.git#egg=mongo_orchestration'
 
 # Launch mongo-orchestration
-mongo-orchestration -f mongo-orchestration-config.json -b 192.168.112.10 start
+mongo-orchestration -f mongo-orchestration-config.json -b 192.168.112.10 --enable-majority-read-concern start
 
