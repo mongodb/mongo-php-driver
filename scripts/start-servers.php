@@ -19,6 +19,7 @@ $PRESETS = [
         "scripts/presets/standalone.json",
         "scripts/presets/standalone-24.json",
         "scripts/presets/standalone-26.json",
+        "scripts/presets/standalone-30.json",
         "scripts/presets/standalone-ssl.json",
         "scripts/presets/standalone-auth.json",
         "scripts/presets/standalone-x509.json",

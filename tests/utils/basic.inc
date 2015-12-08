@@ -15,6 +15,7 @@ $servers = array(
     "STANDALONE"      => "",
     "STANDALONE_24"   => "",
     "STANDALONE_26"   => "",
+    "STANDALONE_30"   => "",
     "STANDALONE_SSL"  => "",
     "STANDALONE_AUTH" => "",
     "STANDALONE_X509" => "",
