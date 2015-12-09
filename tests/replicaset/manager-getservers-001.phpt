@@ -14,7 +14,6 @@ $bulk = new \MongoDB\Driver\BulkWrite();
 $bulk->insert($doc);
 $wresult = $manager->executeBulkWrite(NS, $bulk);
 
-
 var_dump($manager->getServers());
 $servers = $manager->getServers();
 
@@ -52,60 +51,8 @@ array(3) {
       string(3) "one"
     }
     ["last_is_master"]=>
-    array(17) {
-      ["setName"]=>
-      string(10) "REPLICASET"
-      ["setVersion"]=>
-      int(1)
-      ["ismaster"]=>
-      bool(true)
-      ["secondary"]=>
-      bool(false)
-      ["hosts"]=>
-      array(2) {
-        [0]=>
-        string(19) "192.168.112.10:3000"
-        [1]=>
-        string(19) "192.168.112.10:3001"
-      }
-      ["arbiters"]=>
-      array(1) {
-        [0]=>
-        string(19) "192.168.112.10:3002"
-      }
-      ["primary"]=>
-      string(19) "192.168.112.10:3000"
-      ["tags"]=>
-      array(%d) {
-        ["dc"]=>
-        string(2) "pa"
-        ["ordinal"]=>
-        string(3) "one"
-      }
-      ["me"]=>
-      string(19) "192.168.112.10:3000"
-      ["electionId"]=>
-      object(%s\ObjectID)#%d (1) {
-        ["oid"]=>
-        string(24) "%s"
-      }
-      ["maxBsonObjectSize"]=>
-      int(16777216)
-      ["maxMessageSizeBytes"]=>
-      int(48000000)
-      ["maxWriteBatchSize"]=>
-      int(1000)
-      ["localTime"]=>
-      object(%s\UTCDateTime)#%d (%d) {
-        ["milliseconds"]=>
-        int(%d)
-      }
-      ["maxWireVersion"]=>
-      int(3)
-      ["minWireVersion"]=>
-      int(0)
-      ["ok"]=>
-      float(1)
+    array(%d) {
+      %a
     }
     ["round_trip_time"]=>
     int(%d)
@@ -136,55 +83,8 @@ array(3) {
       string(3) "two"
     }
     ["last_is_master"]=>
-    array(16) {
-      ["setName"]=>
-      string(10) "REPLICASET"
-      ["setVersion"]=>
-      int(1)
-      ["ismaster"]=>
-      bool(false)
-      ["secondary"]=>
-      bool(true)
-      ["hosts"]=>
-      array(2) {
-        [0]=>
-        string(19) "192.168.112.10:3000"
-        [1]=>
-        string(19) "192.168.112.10:3001"
-      }
-      ["arbiters"]=>
-      array(1) {
-        [0]=>
-        string(19) "192.168.112.10:3002"
-      }
-      ["primary"]=>
-      string(19) "192.168.112.10:3000"
-      ["tags"]=>
-      array(%d) {
-        ["dc"]=>
-        string(3) "nyc"
-        ["ordinal"]=>
-        string(3) "two"
-      }
-      ["me"]=>
-      string(19) "192.168.112.10:3001"
-      ["maxBsonObjectSize"]=>
-      int(16777216)
-      ["maxMessageSizeBytes"]=>
-      int(48000000)
-      ["maxWriteBatchSize"]=>
-      int(1000)
-      ["localTime"]=>
-      object(%s\UTCDateTime)#%d (%d) {
-        ["milliseconds"]=>
-        int(%d)
-      }
-      ["maxWireVersion"]=>
-      int(3)
-      ["minWireVersion"]=>
-      int(0)
-      ["ok"]=>
-      float(1)
+    array(%d) {
+      %a
     }
     ["round_trip_time"]=>
     int(%d)
@@ -208,50 +108,8 @@ array(3) {
     ["is_passive"]=>
     bool(false)
     ["last_is_master"]=>
-    array(16) {
-      ["setName"]=>
-      string(10) "REPLICASET"
-      ["setVersion"]=>
-      int(1)
-      ["ismaster"]=>
-      bool(false)
-      ["secondary"]=>
-      bool(false)
-      ["hosts"]=>
-      array(2) {
-        [0]=>
-        string(19) "192.168.112.10:3000"
-        [1]=>
-        string(19) "192.168.112.10:3001"
-      }
-      ["arbiters"]=>
-      array(1) {
-        [0]=>
-        string(19) "192.168.112.10:3002"
-      }
-      ["primary"]=>
-      string(19) "192.168.112.10:3000"
-      ["arbiterOnly"]=>
-      bool(true)
-      ["me"]=>
-      string(19) "192.168.112.10:3002"
-      ["maxBsonObjectSize"]=>
-      int(16777216)
-      ["maxMessageSizeBytes"]=>
-      int(48000000)
-      ["maxWriteBatchSize"]=>
-      int(1000)
-      ["localTime"]=>
-      object(%s\UTCDateTime)#%d (%d) {
-        ["milliseconds"]=>
-        int(%d)
-      }
-      ["maxWireVersion"]=>
-      int(3)
-      ["minWireVersion"]=>
-      int(0)
-      ["ok"]=>
-      float(1)
+    array(%d) {
+      %a
     }
     ["round_trip_time"]=>
     int(%d)
