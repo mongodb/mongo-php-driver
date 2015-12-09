@@ -26,7 +26,7 @@ $secondary->executeCommand(DATABASE_NAME, $command, $rp);
 $query = new MongoDB\Driver\Query(
     array(
         'op' => 'command',
-        'ns' => DATABASE_NAME . '.$cmd',
+        'ns' => DATABASE_NAME . '.' . COLLECTION_NAME,
     ),
     array(
         'sort' => array('ts' => -1),
