@@ -1,13 +1,12 @@
 --TEST--
-MongoDB\Driver\Manager::executeQuery() one document (OP_QUERY)
+MongoDB\Driver\Manager::executeQuery() one document (find command)
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS("STANDALONE_30"); CLEANUP(STANDALONE_30); ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE_30);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 
 // load fixtures for test
 $bulk = new MongoDB\Driver\BulkWrite();
@@ -54,10 +53,17 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     bool(true)
     ["query"]=>
     object(stdClass)#%d (%d) {
-      ["$query"]=>
+      ["find"]=>
+      string(%d) "%s"
+      ["filter"]=>
       object(stdClass)#%d (%d) {
         ["x"]=>
         int(3)
+      }
+      ["projection"]=>
+      object(stdClass)#%d (%d) {
+        ["y"]=>
+        int(1)
       }
     }
     ["fields"]=>
@@ -84,7 +90,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["batch_size"]=>
     int(0)
     ["ns"]=>
-    string(39) "phongo.manager_manager_executeQuery_001"
+    string(39) "phongo.manager_manager_executeQuery_002"
     ["current_doc"]=>
     object(stdClass)#%d (2) {
       ["_id"]=>
