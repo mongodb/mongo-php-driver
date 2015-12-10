@@ -180,6 +180,24 @@ PHP_METHOD(Manager, executeBulkWrite)
 	phongo_execute_write(intern->client, namespace, bulk->bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
+/* {{{ proto MongoDB\Driver\ReadConcern Manager::getReadConcern()
+   Returns the ReadConcern associated with this Manager */
+PHP_METHOD(Manager, getReadConcern)
+{
+	php_phongo_manager_t *intern;
+	(void)return_value_ptr;
+
+	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if (return_value_used) {
+		phongo_readconcern_init(return_value, mongoc_client_get_read_concern(intern->client) TSRMLS_CC);
+	}
+}
+/* }}} */
 /* {{{ proto MongoDB\Driver\ReadPreference Manager::getReadPreference()
    Returns the ReadPreference associated with this Manager */
 PHP_METHOD(Manager, getReadPreference)
@@ -329,6 +347,9 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeBulkWrite, 0, 0, 2)
 	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getReadConcern, 0, 0, 0)
+ZEND_END_ARG_INFO();
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getReadPreference, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
@@ -347,6 +368,7 @@ static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, getReadConcern, ai_Manager_getReadConcern, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, getReadPreference, ai_Manager_getReadPreference, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, getServers, ai_Manager_getServers, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, getWriteConcern, ai_Manager_getWriteConcern, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
