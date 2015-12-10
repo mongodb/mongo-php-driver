@@ -332,7 +332,7 @@ bool phongo_query_init(php_phongo_query_t *query, bson_t *filter, bson_t *option
 				bson_t tmp;
 
 				bson_init_static(&tmp, data, len);
-				bson_copy_to_excluding_noinit(&tmp, query->query, "nadastrada", NULL);
+				bson_copy_to_excluding_noinit(&tmp, query->query, "not-used-value", NULL);
 				bson_destroy (&tmp);
 			}
 		}
