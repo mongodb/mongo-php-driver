@@ -391,10 +391,8 @@ function fromJSON($var) {
     return $func($var);
 }
 
-
-
-/* NOTE: Using this function will take down mongod ! */
+/* Note: this fail point may terminate the mongod process, so you may want to
+ * use this in conjunction with a throwaway server. */
 function failGetMore(MongoDB\Driver\Manager $manager) {
     return configureFailPoint($manager, "failReceivedGetmore", "alwaysOn");
 }
-

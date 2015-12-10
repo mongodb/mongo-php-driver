@@ -1,12 +1,12 @@
 --TEST--
-MongoDB\Driver\Server::executeQuery() takes a read preference (OP_QUERY)
+MongoDB\Driver\Server::executeQuery() takes a read preference (find command)
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("REPLICASET_30"); ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("REPLICASET"); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET_30);
+$manager = new MongoDB\Driver\Manager(REPLICASET);
 
 $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY);
 $secondary = $manager->selectServer($rp);
@@ -50,7 +50,9 @@ printf("Set profile level to 0 successfully: %s\n", (empty($result->ok) ? 'no' :
 --EXPECTF--
 Set profile level to 2 successfully: yes
 object(stdClass)#%d (%d) {
-  ["$query"]=>
+  ["find"]=>
+  string(%d) "%s"
+  ["filter"]=>
   object(stdClass)#%d (1) {
     ["x"]=>
     int(1)

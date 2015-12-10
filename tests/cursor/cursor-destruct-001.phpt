@@ -10,7 +10,16 @@ function getNumOpenCursors(MongoDB\Driver\Manager $manager)
 {
     $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(array('serverStatus' => 1)));
     $result = current($cursor->toArray());
-    return $result->cursors->totalOpen;
+
+    if (isset($result->metrics->cursor->open->total)) {
+        return $result->metrics->cursor->open->total;
+    }
+
+    if (isset($result->cursors->totalOpen)) {
+        return $result->cursors->totalOpen;
+    }
+
+    throw new RuntimeException('Could not find number of open cursors in serverStatus');
 }
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
