@@ -71,6 +71,11 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
+	mongoc_read_concern_t   *read_concern;
+} php_phongo_readconcern_t;
+
+typedef struct {
+	zend_object              std;
 	mongoc_read_prefs_t     *read_preference;
 } php_phongo_readpreference_t;
 
@@ -166,6 +171,7 @@ extern PHONGO_API zend_class_entry *php_phongo_cursor_ce;
 extern PHONGO_API zend_class_entry *php_phongo_cursorid_ce;
 extern PHONGO_API zend_class_entry *php_phongo_manager_ce;
 extern PHONGO_API zend_class_entry *php_phongo_query_ce;
+extern PHONGO_API zend_class_entry *php_phongo_readconcern_ce;
 extern PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
 extern PHONGO_API zend_class_entry *php_phongo_result_ce;
 extern PHONGO_API zend_class_entry *php_phongo_server_ce;
@@ -214,6 +220,7 @@ PHP_MINIT_FUNCTION(Cursor);
 PHP_MINIT_FUNCTION(CursorId);
 PHP_MINIT_FUNCTION(Manager);
 PHP_MINIT_FUNCTION(Query);
+PHP_MINIT_FUNCTION(ReadConcern);
 PHP_MINIT_FUNCTION(ReadPreference);
 PHP_MINIT_FUNCTION(Result);
 PHP_MINIT_FUNCTION(Server);
