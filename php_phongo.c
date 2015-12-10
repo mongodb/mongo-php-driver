@@ -597,6 +597,10 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 	efree(dbname);
 	efree(collname);
 
+	if (query->read_concern) {
+		mongoc_collection_set_read_concern(collection, query->read_concern);
+	}
+
 	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->query, query->selector, read_preference);
 	mongoc_collection_destroy(collection);
 

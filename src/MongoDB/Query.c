@@ -34,6 +34,10 @@
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
+
+/* PHP array helpers */
+#include "php_array_api.h"
+
 /* Our Compatability header */
 #include "phongo_compat.h"
 
@@ -75,8 +79,22 @@ PHP_METHOD(Query, __construct)
 	zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL TSRMLS_CC);
 
 	if (zoptions) {
+		if (php_array_exists(zoptions, "readConcern")) {
+			zval *zread_concern = php_array_fetchc(zoptions, "readConcern");
+
+			if (Z_TYPE_P(zread_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(zread_concern), php_phongo_readconcern_ce TSRMLS_CC)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", php_phongo_readconcern_ce->name, zend_get_type_by_const(Z_TYPE_P(zread_concern)));
+				bson_clear(&intern->query);
+				return;
+			}
+
+			intern->read_concern = mongoc_read_concern_copy(phongo_read_concern_from_zval(zread_concern TSRMLS_CC));
+			php_array_unsetc(zoptions, "readConcern");
+		}
+
 		zval_to_bson(zoptions, PHONGO_BSON_NONE, &boptions, NULL TSRMLS_CC);
 	}
+
 	if (!phongo_query_init(intern, &bfilter, &boptions TSRMLS_CC)) {
 		bson_clear(&intern->query);
 	}
@@ -115,6 +133,10 @@ static void php_phongo_query_free_object(void *object TSRMLS_DC) /* {{{ */
 
 	if (intern->query) {
 		bson_clear(&intern->query);
+	}
+
+	if (intern->read_concern) {
+		mongoc_read_concern_destroy(intern->read_concern);
 	}
 
 	efree(intern);
