@@ -319,7 +319,6 @@ bool phongo_query_init(php_phongo_query_t *query, bson_t *filter, bson_t *option
 
 
 		if (bson_iter_init_find(&iter, options, "modifiers")) {
-			bson_t tmp;
 			uint32_t len = 0;
 			const uint8_t *data = NULL;
 
@@ -329,9 +328,13 @@ bool phongo_query_init(php_phongo_query_t *query, bson_t *filter, bson_t *option
 			}
 
 			bson_iter_document(&iter, &len, &data);
-			bson_init_static(&tmp, data, len);
-			bson_copy_to_excluding_noinit(&tmp, query->query, "nadastrada", NULL);
-			bson_destroy (&tmp);
+			if (len) {
+				bson_t tmp;
+
+				bson_init_static(&tmp, data, len);
+				bson_copy_to_excluding_noinit(&tmp, query->query, "not-used-value", NULL);
+				bson_destroy (&tmp);
+			}
 		}
 
 		if (bson_iter_init_find(&iter, options, "projection")) {
@@ -344,11 +347,12 @@ bool phongo_query_init(php_phongo_query_t *query, bson_t *filter, bson_t *option
 			}
 
 			bson_iter_document(&iter, &len, &data);
-			query->selector = bson_new_from_data(data, len);
+			if (len) {
+				query->selector = bson_new_from_data(data, len);
+			}
 		}
 
 		if (bson_iter_init_find(&iter, options, "sort")) {
-			bson_t tmp;
 			uint32_t len = 0;
 			const uint8_t *data = NULL;
 
@@ -358,9 +362,13 @@ bool phongo_query_init(php_phongo_query_t *query, bson_t *filter, bson_t *option
 			}
 
 			phongo_bson_iter_as_document(&iter, &len, &data);
-			bson_init_static(&tmp, data, len);
-			bson_append_document(query->query, "$orderby", -1, &tmp);
-			bson_destroy(&tmp);
+			if (len) {
+				bson_t tmp;
+
+				bson_init_static(&tmp, data, len);
+				bson_append_document(query->query, "$orderby", -1, &tmp);
+				bson_destroy(&tmp);
+			}
 		}
 	}
 
