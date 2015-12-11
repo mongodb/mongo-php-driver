@@ -1,5 +1,7 @@
 # Enable MongoDB Enterprise repo
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+# 3.2 key
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
 echo 'deb http://repo.mongodb.com/apt/ubuntu precise/mongodb-enterprise/3.2 multiverse' | sudo tee /etc/apt/sources.list.d/mongodb-enterprise-3.2.list
 echo 'deb http://repo.mongodb.com/apt/ubuntu precise/mongodb-enterprise/3.0 multiverse' | sudo tee /etc/apt/sources.list.d/mongodb-enterprise-3.0.list
 echo 'deb http://repo.mongodb.com/apt/ubuntu precise/mongodb-enterprise/2.6 multiverse' | sudo tee /etc/apt/sources.list.d/mongodb-enterprise-2.6.list
