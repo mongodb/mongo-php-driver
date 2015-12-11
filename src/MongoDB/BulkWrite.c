@@ -76,6 +76,10 @@ PHP_METHOD(BulkWrite, __construct)
 	}
 
 	intern->bulk = phongo_bulkwrite_init(ordered);
+
+	if (options && php_array_exists(options, "bypassDocumentValidation")) {
+		mongoc_bulk_operation_set_bypass_document_validation(intern->bulk, php_array_fetch_bool(options, "bypassDocumentValidation"));
+	}
 }
 /* }}} */
 /* {{{ proto mixed BulkWrite::insert(array|object $document)
