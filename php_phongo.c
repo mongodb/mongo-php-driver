@@ -30,6 +30,7 @@
 #include "mongoc-cursor-cursorid-private.h"
 #include "mongoc-read-prefs-private.h"
 #include "mongoc-bulk-operation-private.h"
+#include "mongoc-read-concern-private.h"
 #include "mongoc-write-concern-private.h"
 #include "mongoc-uri-private.h"
 #include "mongoc-trace.h"
@@ -240,6 +241,17 @@ void phongo_server_init(zval *return_value, mongoc_client_t *client, int server_
 	server = (php_phongo_server_t *)zend_object_store_get_object(return_value TSRMLS_CC);
 	server->client = client;
 	server->server_id = server_id;
+}
+/* }}} */
+
+void phongo_readconcern_init(zval *return_value, const mongoc_read_concern_t *read_concern TSRMLS_DC) /* {{{ */
+{
+	php_phongo_readconcern_t *intern;
+
+	object_init_ex(return_value, php_phongo_readconcern_ce);
+
+	intern = (php_phongo_readconcern_t *)zend_object_store_get_object(return_value TSRMLS_CC);
+	intern->read_concern = mongoc_read_concern_copy(read_concern);
 }
 /* }}} */
 
@@ -584,6 +596,10 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 	collection = mongoc_client_get_collection(client, dbname, collname);
 	efree(dbname);
 	efree(collname);
+
+	if (query->read_concern) {
+		mongoc_collection_set_read_concern(collection, query->read_concern);
+	}
 
 	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->query, query->selector, read_preference);
 	mongoc_collection_destroy(collection);
@@ -1208,6 +1224,19 @@ const mongoc_write_concern_t* phongo_write_concern_from_zval(zval *zwrite_concer
 	return NULL;
 } /* }}} */
 
+const mongoc_read_concern_t* phongo_read_concern_from_zval(zval *zread_concern TSRMLS_DC) /* {{{ */
+{
+	if (zread_concern) {
+		php_phongo_readconcern_t *intern = (php_phongo_readconcern_t *)zend_object_store_get_object(zread_concern TSRMLS_CC);
+
+		if (intern) {
+			return intern->read_concern;
+		}
+	}
+
+	return NULL;
+} /* }}} */
+
 const mongoc_read_prefs_t* phongo_read_preference_from_zval(zval *zread_preference TSRMLS_DC) /* {{{ */
 {
 	if (zread_preference) {
@@ -1294,6 +1323,19 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 	}
 	add_assoc_long_ex(retval, ZEND_STRS("round_trip_time"), sd->round_trip_time);
 
+} /* }}} */
+
+void php_phongo_read_concern_to_zval(zval *retval, const mongoc_read_concern_t *read_concern) /* {{{ */
+{
+	const char *level = mongoc_read_concern_get_level(read_concern);
+
+	array_init_size(retval, 1);
+
+	if (level) {
+		add_assoc_string_ex(retval, ZEND_STRS("level"), (char *)level, 1);
+	} else {
+		add_assoc_null_ex(retval, ZEND_STRS("level"));
+	}
 } /* }}} */
 
 void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t *read_prefs) /* {{{ */
@@ -2189,6 +2231,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	PHP_MINIT(CursorId)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Manager)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Query)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(ReadConcern)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ReadPreference)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Server)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(BulkWrite)(INIT_FUNC_ARGS_PASSTHRU);

@@ -161,6 +161,7 @@ if test "$MONGODB" != "no"; then
       src/MongoDB/CursorId.c \
       src/MongoDB/Manager.c \
       src/MongoDB/Query.c \
+      src/MongoDB/ReadConcern.c \
       src/MongoDB/ReadPreference.c \
       src/MongoDB/Server.c \
       src/MongoDB/BulkWrite.c \

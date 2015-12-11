@@ -27,7 +27,7 @@
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
-#include "mongoc-write-concern-private.h"
+#include <mongoc-write-concern-private.h>
 
 /* PHP Core stuff */
 #include <php.h>
