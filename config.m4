@@ -391,7 +391,7 @@ PHP_ARG_WITH(mongodb-sasl, Build with Cyrus SASL support,
 
 if test "$PHP_MONGODB_SASL" != "no"; then
   AC_MSG_CHECKING(for SASL)
-  for i in $MONGODB_SASL /usr /usr/local; do
+  for i in $PHP_MONGODB_SASL /usr /usr/local; do
     if test -f $i/include/sasl/sasl.h; then
       MONGODB_SASL_DIR=$i
       AC_MSG_RESULT(found in $i)
