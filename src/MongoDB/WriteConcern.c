@@ -91,7 +91,7 @@ PHP_METHOD(WriteConcern, __construct)
 		case 3:
 			if (Z_TYPE_P(journal) != IS_NULL) {
 #ifdef ZEND_ENGINE_3
-				mongoc_write_concern_set_journal(intern->write_concern, Z_TYPE_P(journal) == IS_TRUE);
+				mongoc_write_concern_set_journal(intern->write_concern, zend_is_true(journal));
 #else
 				mongoc_write_concern_set_journal(intern->write_concern, Z_BVAL_P(journal));
 #endif

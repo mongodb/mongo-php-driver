@@ -1586,6 +1586,7 @@ void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOp
 				str_efree(ctmp); \
 			} \
 			php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
+			zval_ptr_dtor(&ztmp); \
 		}
 #define SET_BOOL_CTX(name, defaultvalue) \
 		{ \
@@ -1926,7 +1927,8 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zv
 			char filename[MAXPATHLEN];
 
 #if PHP_VERSION_ID >= 70000
-			if (VCWD_REALPATH(zval_get_string(pem)->val, filename)) {
+			zend_string *s = zval_get_string(pem);
+			if (VCWD_REALPATH(ZSTR_VAL(s), filename)) {
 #else
 			convert_to_string_ex(pem);
 			if (VCWD_REALPATH(Z_STRVAL_PP(pem), filename)) {
@@ -1936,6 +1938,9 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zv
 				ssl_options.pem_file = filename;
 				mongoc_client_set_ssl_opts(client, &ssl_options);
 			}
+#if PHP_VERSION_ID >= 70000
+			zend_string_release(s);
+#endif
 		}
 	}
 

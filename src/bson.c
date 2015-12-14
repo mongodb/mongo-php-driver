@@ -968,7 +968,11 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			return;
 		}
 
+#if PHP_VERSION_ID >= 70000
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Unexpected %s instance: %s", ZSTR_VAL(php_phongo_type_ce->name), ZSTR_VAL(Z_OBJCE_P(object)->name));
+#else
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Unexpected %s instance: %s", php_phongo_type_ce->name, Z_OBJCE_P(object)->name);
+#endif
 		return;
 	}
 
@@ -1037,25 +1041,52 @@ void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char 
 			object_to_bson(entry, flags, key, key_len, bson TSRMLS_CC);
 			break;
 
+#if PHP_VERSION_ID >= 70000
+		case IS_INDIRECT:
+			phongo_bson_append(bson, flags, key, key_len, Z_TYPE_P(Z_INDIRECT_P(entry)), Z_INDIRECT_P(entry) TSRMLS_DC);
+			break;
+#endif
+
 		default:
-			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Got unsupported type '%s'", zend_get_type_by_const(entry_type));
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Got unsupported type %d '%s'", entry_type, zend_get_type_by_const(entry_type));
 	}
 }
 
+#if PHP_VERSION_ID >= 70000
+static bool is_public_property(zend_class_entry *ce, zend_string *name, zend_string **member TSRMLS_DC) /* {{{ */
+#else
 static bool is_public_property(zend_class_entry *ce, const char *prop_name, int prop_name_len TSRMLS_DC) /* {{{ */
+#endif
 {
-	zend_property_info *property_info;
-	zval member;
+	zend_property_info *property_info = NULL;
 
 #if PHP_VERSION_ID >= 70000
-	ZVAL_STRINGL(&member, prop_name, prop_name_len);
-	property_info = zend_get_property_info(ce, Z_STR(member), 1 TSRMLS_CC);
+	if (ZSTR_VAL(name)[0] == 0) {
+		const char *prop_name,
+			 *class_name;
+		size_t prop_name_len;
+
+		zend_unmangle_property_name_ex(name,
+			&class_name, &prop_name, &prop_name_len);
+		(*member) = zend_string_init(prop_name, prop_name_len, 0);
+	} else (*member) = zend_string_copy(name);
+	property_info = zend_get_property_info(ce, (*member), 1 TSRMLS_CC);
+
+	if (!property_info) /* undefined property */
+		return true;
+
+	if (property_info == ZEND_WRONG_PROPERTY_INFO) {
+		return false;
+	}
+	
+	return (property_info->flags & ZEND_ACC_PUBLIC);
 #else
+	zval member;
 	ZVAL_STRINGL(&member, prop_name, prop_name_len, 0);
 	property_info = zend_get_property_info(ce, &member, 1 TSRMLS_CC);
-#endif
 
 	return (property_info && (property_info->flags & ZEND_ACC_PUBLIC));
+#endif
 }
 /* }}} */
 
@@ -1137,7 +1168,11 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 			}
 
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_type_ce TSRMLS_CC)) {
+#if PHP_VERSION_ID >= 70000
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s instance %s cannot be serialized as a root element", ZSTR_VAL(php_phongo_type_ce->name), ZSTR_VAL(Z_OBJCE_P(data)->name));
+#else
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s instance %s cannot be serialized as a root element", php_phongo_type_ce->name, Z_OBJCE_P(data)->name);
+#endif
 
 				break;
 			}
@@ -1170,29 +1205,36 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, key, value) {
 			if (key) {
 				if (Z_TYPE_P(data) == IS_OBJECT) {
-					const char *skey;
-					size_t skey_len = 0;
-					const char *class_name;
-					zend_unmangle_property_name_ex(key, &class_name, &skey, &skey_len);
-
+					zend_string *member = NULL;
+					
 					/* Ignore non-public properties */
-					if (!is_public_property(Z_OBJCE_P(data), skey, skey_len TSRMLS_CC)) {
+					if (!instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce) &&
+						!is_public_property(Z_OBJCE_P(data), key, &member TSRMLS_CC)) {
+						if (member)
+							zend_string_release(member);						
 						continue;
 					}
 
 					if (flags & PHONGO_BSON_ADD_ID) {
-						if (!strncmp(skey, "_id", sizeof("_id")-1)) {
+						if (!strncmp(member ? ZSTR_VAL(member) : ZSTR_VAL(key), "_id", sizeof("_id")-1)) {
 							flags &= ~PHONGO_BSON_ADD_ID;
 						}
 					}
-					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, skey, skey_len, Z_TYPE_P(value), value TSRMLS_CC);
+
+					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, 
+						member ? ZSTR_VAL(member) : ZSTR_VAL(key), 
+						member ? ZSTR_LEN(member) : ZSTR_LEN(key), 
+						Z_TYPE_P(value), value TSRMLS_CC);
+
+					if (member)
+						zend_string_release(member);
 				} else {
 					if (flags & PHONGO_BSON_ADD_ID) {
-						if (!strncmp(key->val, "_id", sizeof("_id")-1)) {
+						if (!strncmp(ZSTR_VAL(key), "_id", sizeof("_id")-1)) {
 							flags &= ~PHONGO_BSON_ADD_ID;
 						}
 					}
-					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, key->val, key->len, Z_TYPE_P(value), value TSRMLS_CC);
+					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, ZSTR_VAL(key), ZSTR_LEN(key), Z_TYPE_P(value), value TSRMLS_CC);
 				}
 			} else {
 				char          numbuf[32];
@@ -1264,8 +1306,12 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 		}
 	}
 	if (!Z_ISUNDEF(obj_data)) {
-#if PHP_VERSION_ID < 70000
-		zval_ptr_dtor(&obj_data);
+#if PHP_VERSION_ID >= 70000
+		if (Z_TYPE_P(data) == IS_OBJECT && instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce TSRMLS_CC)) {
+#endif
+			zval_ptr_dtor(&obj_data);
+#if PHP_VERSION_ID >= 70000
+		}
 #endif
 	}
 }
@@ -1282,7 +1328,7 @@ int bson_to_zval(const unsigned char *data, int data_len, zval **zv)
 
 	retval = bson_to_zval_ex(data, data_len, &state);
 #if PHP_VERSION_ID >= 70000
-	ZVAL_COPY(zv, &state.zchild);
+	ZVAL_ZVAL(zv, &state.zchild, 1, 1);
 #else
 	*zv = state.zchild;
 #endif
