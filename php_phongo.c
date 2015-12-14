@@ -1087,6 +1087,8 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	switch (host->family) {
 #if defined(AF_INET6)
 		case AF_INET6:
+			dsn_len = spprintf(&dsn, 0, "tcp://[%s]:%d", host->host, host->port);
+			break;
 #endif
 		case AF_INET:
 			dsn_len = spprintf(&dsn, 0, "tcp://%s:%d", host->host, host->port);
