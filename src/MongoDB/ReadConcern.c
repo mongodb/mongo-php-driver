@@ -107,7 +107,7 @@ PHP_METHOD(ReadConcern, getLevel)
  */
 /* {{{ MongoDB\Driver\ReadConcern */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern___construct, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, level)
 ZEND_END_ARG_INFO();
 
