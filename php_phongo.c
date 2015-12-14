@@ -1121,7 +1121,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	spprintf(&uniqid, 0, "%s:%d[%s]", host->host, host->port, mongoc_uri_get_string(uri));
 
 	MONGOC_DEBUG("Connecting to '%s'", uniqid);
-	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT | STREAM_XPORT_CONNECT_ASYNC, uniqid, timeoutp, (php_stream_context *)user_data, &errmsg, &errcode);
+	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, uniqid, timeoutp, (php_stream_context *)user_data, &errmsg, &errcode);
 
 	if (!stream) {
 		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, errmsg);
