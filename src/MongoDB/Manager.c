@@ -48,20 +48,21 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
+#define PHONGO_MANAGER_URI_DEFAULT "mongodb://localhost:27017/"
 
 PHONGO_API zend_class_entry *php_phongo_manager_ce;
 
 zend_object_handlers php_phongo_handler_manager;
 
-/* {{{ proto MongoDB\Driver\Manager Manager::__construct(string $uri[, array $options = array()[, array $driverOptions = array()]])
+/* {{{ proto MongoDB\Driver\Manager Manager::__construct([string $uri = "mongodb://localhost:27017/"[, array $options = array()[, array $driverOptions = array()]]])
    Constructs a new Manager */
 PHP_METHOD(Manager, __construct)
 {
 	php_phongo_manager_t     *intern;
 	zend_error_handling       error_handling;
 	mongoc_uri_t             *uri;
-	char                     *uri_string;
-	int                       uri_string_len;
+	char                     *uri_string = NULL;
+	int                       uri_string_len = 0;
 	zval                     *options = NULL;
 	bson_t                    bson_options = BSON_INITIALIZER;
 	zval                     *driverOptions = NULL;
@@ -71,19 +72,18 @@ PHP_METHOD(Manager, __construct)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!a!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s!a!a!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-
 	if (options) {
 		zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
 	}
 
-	if (!(uri = php_phongo_make_uri(uri_string, &bson_options))) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse MongoDB URI: '%s'", uri_string);
+	if (!(uri = php_phongo_make_uri(uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, &bson_options))) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse MongoDB URI: '%s'", uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT);
 		bson_destroy(&bson_options);
 
 		return;
@@ -93,7 +93,7 @@ PHP_METHOD(Manager, __construct)
 	mongoc_uri_destroy(uri);
 
 	if (!intern->client) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to create Manager from URI: '%s'", uri_string);
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to create Manager from URI: '%s'", uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT);
 		bson_destroy(&bson_options);
 
 		return;
@@ -323,7 +323,7 @@ PHP_METHOD(Manager, __wakeUp)
  */
 /* {{{ MongoDB\Driver\Manager */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager___construct, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, uri)
 	ZEND_ARG_ARRAY_INFO(0, options, 0)
 	ZEND_ARG_ARRAY_INFO(0, driverOptions, 0)
