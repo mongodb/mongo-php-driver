@@ -56,10 +56,12 @@ function get_files() {
         "src/libbson/src/bson/*.{c,h}",
         "src/libbson/src/yajl/*.{c,h}",
         "src/libbson/src/bson/*.h.{in}",
+        "src/libbson/VERSION*",
         "src/libmongoc/build/autotools/*.{m4}",
         "src/libmongoc/build/autotools/m4/*.{m4}",
         "src/libmongoc/src/mongoc/*.{c,h,def,defs}",
         "src/libmongoc/src/mongoc/*.h.{in}",
+        "src/libmongoc/VERSION*",
 
         "win32/*.h",
       ),
