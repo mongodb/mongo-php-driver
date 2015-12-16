@@ -140,7 +140,7 @@ PHP_METHOD(WriteConcern, getW)
 }
 /* }}} */
 
-/* {{{ proto string|integer WriteConcern::getWtimeout()
+/* {{{ proto integer WriteConcern::getWtimeout()
    Returns the WriteConcern "wtimeout" option */
 PHP_METHOD(WriteConcern, getWtimeout)
 {
