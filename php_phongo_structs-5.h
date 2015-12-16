@@ -64,6 +64,7 @@ typedef struct {
 	uint32_t                 skip;
 	uint32_t                 limit;
 	uint32_t                 batch_size;
+	mongoc_read_concern_t   *read_concern;
 } php_phongo_query_t;
 
 typedef struct {

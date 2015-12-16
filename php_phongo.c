@@ -253,7 +253,7 @@ void phongo_readconcern_init(zval *return_value, const mongoc_read_concern_t *re
 
 	object_init_ex(return_value, php_phongo_readconcern_ce);
 
-	intern = (php_phongo_readconcern_t *)zend_object_store_get_object(return_value TSRMLS_CC);
+	intern = Z_READCONCERN_OBJ_P(return_value);
 	intern->read_concern = mongoc_read_concern_copy(read_concern);
 }
 /* }}} */
@@ -1246,7 +1246,7 @@ const mongoc_write_concern_t* phongo_write_concern_from_zval(zval *zwrite_concer
 const mongoc_read_concern_t* phongo_read_concern_from_zval(zval *zread_concern TSRMLS_DC) /* {{{ */
 {
 	if (zread_concern) {
-		php_phongo_readconcern_t *intern = (php_phongo_readconcern_t *)zend_object_store_get_object(zread_concern TSRMLS_CC);
+		php_phongo_readconcern_t *intern = Z_READCONCERN_OBJ_P(zread_concern);
 
 		if (intern) {
 			return intern->read_concern;
@@ -1357,9 +1357,9 @@ void php_phongo_read_concern_to_zval(zval *retval, const mongoc_read_concern_t *
 	array_init_size(retval, 1);
 
 	if (level) {
-		add_assoc_string_ex(retval, ZEND_STRS("level"), (char *)level, 1);
+		ADD_ASSOC_STRING(retval, "level", (char *)level);
 	} else {
-		add_assoc_null_ex(retval, ZEND_STRS("level"));
+		ADD_ASSOC_NULL_EX(retval, "level");
 	}
 } /* }}} */
 

@@ -164,7 +164,8 @@ PHP_METHOD(Manager, executeBulkWrite)
 PHP_METHOD(Manager, getReadConcern)
 {
 	php_phongo_manager_t *intern;
-	(void)return_value_ptr;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 

@@ -63,6 +63,7 @@ typedef struct {
 	uint32_t                 skip;
 	uint32_t                 limit;
 	uint32_t                 batch_size;
+	mongoc_read_concern_t   *read_concern;
 	zend_object              std;
 } php_phongo_query_t;
 
@@ -177,6 +178,9 @@ static inline php_phongo_manager_t* php_manager_fetch_object(zend_object *obj) {
 }
 static inline php_phongo_query_t* php_query_fetch_object(zend_object *obj) {
     return (php_phongo_query_t *)((char *)obj - XtOffsetOf(php_phongo_query_t, std));
+}
+static inline php_phongo_readconcern_t* php_readconcern_fetch_object(zend_object *obj) {
+    return (php_phongo_readconcern_t *)((char *)obj - XtOffsetOf(php_phongo_readconcern_t, std));
 }
 static inline php_phongo_readpreference_t* php_readpreference_fetch_object(zend_object *obj) {
     return (php_phongo_readpreference_t *)((char *)obj - XtOffsetOf(php_phongo_readpreference_t, std));

@@ -27,6 +27,7 @@
 # define Z_CURSORID_OBJ_P(zv)          php_cursorid_fetch_object(Z_OBJ_P(zv));
 # define Z_MANAGER_OBJ_P(zv)           php_manager_fetch_object(Z_OBJ_P(zv));
 # define Z_QUERY_OBJ_P(zv)             php_query_fetch_object(Z_OBJ_P(zv));
+# define Z_READCONCERN_OBJ_P(zv)       php_readconcern_fetch_object(Z_OBJ_P(zv));
 # define Z_READPREFERENCE_OBJ_P(zv)    php_readpreference_fetch_object(Z_OBJ_P(zv));
 # define Z_SERVER_OBJ_P(zv)            php_server_fetch_object(Z_OBJ_P(zv));
 # define Z_BULKWRITE_OBJ_P(zv)         php_bulkwrite_fetch_object(Z_OBJ_P(zv));
@@ -51,6 +52,7 @@
 # define Z_OBJ_CURSORID(zo)            php_cursorid_fetch_object(zo);
 # define Z_OBJ_MANAGER(zo)             php_manager_fetch_object(zo);
 # define Z_OBJ_QUERY(zo)               php_query_fetch_object(zo);
+# define Z_OBJ_READCONCERN(zo)         php_readconcern_fetch_object(zo);
 # define Z_OBJ_READPREFERENCE(zo)      php_readpreference_fetch_object(zo);
 # define Z_OBJ_SERVER(zo)              php_server_fetch_object(zo);
 # define Z_OBJ_BULKWRITE(zo)           php_bulkwrite_fetch_object(zo);
@@ -79,6 +81,7 @@
 # define Z_CURSORID_OBJ_P(zv)          (php_phongo_cursorid_t *)zend_object_store_get_object(zv TSRMLS_CC);
 # define Z_MANAGER_OBJ_P(zv)           (php_phongo_manager_t *)zend_object_store_get_object(zv TSRMLS_CC);
 # define Z_QUERY_OBJ_P(zv)             (php_phongo_query_t *)zend_object_store_get_object(zv TSRMLS_CC);
+# define Z_READCONCERN_OBJ_P(zv)       (php_phongo_readconcern_t *)zend_object_store_get_object(zv TSRMLS_CC);
 # define Z_READPREFERENCE_OBJ_P(zv)    (php_phongo_readpreference_t *)zend_object_store_get_object(zv TSRMLS_CC);
 # define Z_SERVER_OBJ_P(zv)            (php_phongo_server_t *)zend_object_store_get_object(zv TSRMLS_CC);
 # define Z_BULKWRITE_OBJ_P(zv)         (php_phongo_bulkwrite_t *)zend_object_store_get_object(zv TSRMLS_CC);
@@ -103,6 +106,7 @@
 # define Z_OBJ_CURSORID(zo)            (php_phongo_cursorid_t *)zo;
 # define Z_OBJ_MANAGER(zo)             (php_phongo_manager_t *)zo;
 # define Z_OBJ_QUERY(zo)               (php_phongo_query_t *)zo;
+# define Z_OBJ_READCONCERN(zo)         (php_phongo_readconcern_t *)zo;
 # define Z_OBJ_READPREFERENCE(zo)      (php_phongo_readpreference_t *)zo;
 # define Z_OBJ_SERVER(zo)              (php_phongo_server_t *)zo;
 # define Z_OBJ_BULKWRITE(zo)           (php_phongo_bulkwrite_t *)zo;
