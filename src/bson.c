@@ -1210,8 +1210,9 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 					/* Ignore non-public properties */
 					if (!instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce) &&
 						!is_public_property(Z_OBJCE_P(data), key, &member TSRMLS_CC)) {
-						if (member)
-							zend_string_release(member);						
+						if (member) {
+							zend_string_release(member);
+						}
 						continue;
 					}
 
@@ -1221,13 +1222,14 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 						}
 					}
 
-					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, 
-						member ? ZSTR_VAL(member) : ZSTR_VAL(key), 
-						member ? ZSTR_LEN(member) : ZSTR_LEN(key), 
+					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID,
+						member ? ZSTR_VAL(member) : ZSTR_VAL(key),
+						member ? ZSTR_LEN(member) : ZSTR_LEN(key),
 						Z_TYPE_P(value), value TSRMLS_CC);
 
-					if (member)
+					if (member) {
 						zend_string_release(member);
+					}
 				} else {
 					if (flags & PHONGO_BSON_ADD_ID) {
 						if (!strncmp(ZSTR_VAL(key), "_id", sizeof("_id")-1)) {
