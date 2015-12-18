@@ -1190,9 +1190,15 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 	}
 
 	if (!ht_data || ZEND_HASH_APPLY_COUNT(ht_data) > 1) {
-		if (!Z_ISUNDEF(obj_data)) {
-			zval_ptr_dtor(&obj_data);
+#if PHP_VERSION_ID >= 70000
+		if (Z_TYPE_P(data) == IS_OBJECT && instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce TSRMLS_CC)) {
+#endif
+			if (!Z_ISUNDEF(obj_data)) {
+				zval_ptr_dtor(&obj_data);
+			}
+#if PHP_VERSION_ID >= 70000
 		}
+#endif
 		return;
 	}
 
@@ -1307,15 +1313,15 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 			}
 		}
 	}
-	if (!Z_ISUNDEF(obj_data)) {
 #if PHP_VERSION_ID >= 70000
-		if (Z_TYPE_P(data) == IS_OBJECT && instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce TSRMLS_CC)) {
+	if (Z_TYPE_P(data) == IS_OBJECT && instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce TSRMLS_CC)) {
 #endif
+		if (!Z_ISUNDEF(obj_data)) {
 			zval_ptr_dtor(&obj_data);
-#if PHP_VERSION_ID >= 70000
 		}
-#endif
+#if PHP_VERSION_ID >= 70000
 	}
+#endif
 }
 
 /* }}} */
