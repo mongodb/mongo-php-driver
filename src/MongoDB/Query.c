@@ -60,11 +60,11 @@ PHP_METHOD(Query, __construct)
 	zval                     *zoptions = NULL;
 	bson_t                    bfilter;
 	bson_t                    boptions = BSON_INITIALIZER;
-	(void)return_value_ptr; (void)return_value; (void)return_value_used;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
-	intern = (php_phongo_query_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_QUERY_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &zfilter, &zoptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -83,7 +83,11 @@ PHP_METHOD(Query, __construct)
 			zval *zread_concern = php_array_fetchc(zoptions, "readConcern");
 
 			if (Z_TYPE_P(zread_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(zread_concern), php_phongo_readconcern_ce TSRMLS_CC)) {
+#if PHP_VERSION_ID >= 70000
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), zend_get_type_by_const(Z_TYPE_P(zread_concern)));
+#else
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", php_phongo_readconcern_ce->name, zend_get_type_by_const(Z_TYPE_P(zread_concern)));
+#endif
 				bson_clear(&intern->query);
 				return;
 			}
@@ -121,9 +125,9 @@ static zend_function_entry php_phongo_query_me[] = {
 
 
 /* {{{ php_phongo_query_t object handlers */
-static void php_phongo_query_free_object(void *object TSRMLS_DC) /* {{{ */
+static void php_phongo_query_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_query_t *intern = (php_phongo_query_t*)object;
+	php_phongo_query_t *intern = Z_OBJ_QUERY(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -139,62 +143,90 @@ static void php_phongo_query_free_object(void *object TSRMLS_DC) /* {{{ */
 		mongoc_read_concern_destroy(intern->read_concern);
 	}
 
+#if PHP_VERSION_ID < 70000
 	efree(intern);
+#endif
 } /* }}} */
 
-zend_object_value php_phongo_query_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+phongo_create_object_retval php_phongo_query_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
-	zend_object_value retval;
 	php_phongo_query_t *intern = NULL;
 
-	intern = (php_phongo_query_t *)ecalloc(1, sizeof *intern);
+	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_query_t, class_type);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_query_free_object, NULL TSRMLS_CC);
-	retval.handlers = &php_phongo_handler_query;
+#if PHP_VERSION_ID >= 70000
+	intern->std.handlers = &php_phongo_handler_query;
 
-	return retval;
+	return &intern->std;
+#else
+	{
+		zend_object_value retval;
+		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_query_free_object, NULL TSRMLS_CC);
+		retval.handlers = &php_phongo_handler_query;
+
+		return retval;
+	}
+#endif
 } /* }}} */
 
 HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_query_t    *intern;
+#if PHP_VERSION_ID >= 70000
+	zval                   retval;
+#else
 	zval                   retval = zval_used_for_init;
+#endif
 
 
 	*is_temp = 1;
-	intern = (php_phongo_query_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_QUERY_OBJ_P(object);
 
 	array_init_size(&retval, 6);
 
 	/* Avoid using PHONGO_TYPEMAP_NATIVE_ARRAY for decoding query and selector
 	 * documents so that users can differentiate BSON arrays and documents. */
 	if (intern->query) {
-		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+#if PHP_VERSION_ID >= 70000
+		zval zv;
+#else
+		zval *zv;
+#endif
 
-		MAKE_STD_ZVAL(state.zchild);
-		bson_to_zval(bson_get_data(intern->query), intern->query->len, &state);
-		add_assoc_zval_ex(&retval, ZEND_STRS("query"), state.zchild);
+		bson_to_zval(bson_get_data(intern->query), intern->query->len, &zv);
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(&retval, "query", &zv);
+#else
+		ADD_ASSOC_ZVAL_EX(&retval, "query", zv);
+#endif
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("query"));
+		ADD_ASSOC_NULL_EX(&retval, "query");
 	}
 
 	if (intern->selector) {
-		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+#if PHP_VERSION_ID >= 70000
+		zval zv;
+#else
+		zval *zv;
+#endif
 
-		MAKE_STD_ZVAL(state.zchild);
-		bson_to_zval(bson_get_data(intern->selector), intern->selector->len, &state);
-		add_assoc_zval_ex(&retval, ZEND_STRS("selector"), state.zchild);
+		bson_to_zval(bson_get_data(intern->selector), intern->selector->len, &zv);
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(&retval, "selector", &zv);
+#else
+		ADD_ASSOC_ZVAL_EX(&retval, "selector", zv);
+#endif
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("selector"));
+		ADD_ASSOC_NULL_EX(&retval, "selector");
 	}
 
-	add_assoc_long_ex(&retval, ZEND_STRS("flags"), intern->flags);
-	add_assoc_long_ex(&retval, ZEND_STRS("skip"), intern->skip);
-	add_assoc_long_ex(&retval, ZEND_STRS("limit"), intern->limit);
-	add_assoc_long_ex(&retval, ZEND_STRS("batch_size"), intern->batch_size);
+	ADD_ASSOC_LONG_EX(&retval, "flags", intern->flags);
+	ADD_ASSOC_LONG_EX(&retval, "skip", intern->skip);
+	ADD_ASSOC_LONG_EX(&retval, "limit", intern->limit);
+	ADD_ASSOC_LONG_EX(&retval, "batch_size", intern->batch_size);
 
 	return Z_ARRVAL(retval);
 
@@ -214,6 +246,10 @@ PHP_MINIT_FUNCTION(Query)
 
 	memcpy(&php_phongo_handler_query, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_query.get_debug_info = php_phongo_query_get_debug_info;
+#if PHP_VERSION_ID >= 70000
+	php_phongo_handler_query.free_obj = php_phongo_query_free_object;
+	php_phongo_handler_query.offset = XtOffsetOf(php_phongo_query_t, std);
+#endif
 
 	return SUCCESS;
 }

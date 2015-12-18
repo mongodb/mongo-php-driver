@@ -16,8 +16,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 #ifndef PHONGO_H
 #define PHONGO_H
 
@@ -56,12 +54,16 @@ ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	bson_mem_vtable_t bsonMemVTable;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
-#ifdef ZTS
-#	define MONGODB_G(v) TSRMG(mongodb_globals_id, zend_mongodb_globals *, v)
-#	define mglo mongodb_globals_id
+#if PHP_VERSION_ID >= 70000
+#   define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)
 #else
-#	define MONGODB_G(v) (mongodb_globals.v)
-#	define mglo mongodb_globals
+#   ifdef ZTS
+#   	define MONGODB_G(v) TSRMG(mongodb_globals_id, zend_mongodb_globals *, v)
+#   	define mglo mongodb_globals_id
+#   else
+#   	define MONGODB_G(v) (mongodb_globals.v)
+#   	define mglo mongodb_globals
+#   endif
 #endif
 
 #define PHONGO_WRITE_CONCERN_W_MAJORITY "majority"
@@ -97,13 +99,15 @@ typedef struct
 
 PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
 PHONGO_API zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
-PHONGO_API zval* phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *format, ...)
-#ifndef PHP_WIN32
-#ifdef ZTS
+void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *format, ...)
+#if PHP_VERSION_ID < 70000
+# ifndef PHP_WIN32
+#  ifdef ZTS
 	 __attribute__ ((format(printf, 3, 4)))
-#else
+#  else
 	 __attribute__ ((format(printf, 2, 3)))
-#endif
+#  endif
+# endif
 #endif
 ;
 
@@ -129,12 +133,9 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 void php_phongo_read_concern_to_zval(zval *retval, const mongoc_read_concern_t *read_concern);
 void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t *read_prefs);
 void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t *write_concern);
-void php_phongo_cursor_to_zval(zval *retval, php_phongo_cursor_t *cursor);
+void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor);
 
-bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC);
-bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC);
-mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options);
-mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC);
+bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, bson_t *bson_options, zval *driverOptions TSRMLS_DC);
 void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS_DC);
 void php_phongo_cursor_id_new_from_id(zval *object, int64_t cursorid TSRMLS_DC);
 void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC);
@@ -151,11 +152,19 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 void php_phongo_cursor_free(php_phongo_cursor_t *cursor);
 zend_object_iterator* php_phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
 
+#if PHP_VERSION_ID >= 70000
+#define PHONGO_CE_INIT(ce) do {                     \
+	ce->ce_flags    |= ZEND_ACC_FINAL;              \
+	ce->serialize    = zend_class_serialize_deny;   \
+	ce->unserialize  = zend_class_unserialize_deny; \
+} while(0);
+#else
 #define PHONGO_CE_INIT(ce) do {                     \
 	ce->ce_flags    |= ZEND_ACC_FINAL_CLASS;        \
 	ce->serialize    = zend_class_serialize_deny;   \
 	ce->unserialize  = zend_class_unserialize_deny; \
 } while(0);
+#endif
 
 
 #ifdef PHP_DEBUG

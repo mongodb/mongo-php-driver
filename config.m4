@@ -70,6 +70,11 @@ AC_DEFUN([PHP_BSON_CLOCK],
 
 MONGOC_SYMBOL_SUFFIX="priv"
 
+AC_MSG_CHECKING(PHP version)
+PHP_FOUND_VERSION=`${PHP_CONFIG} --version`
+PHP_FOUND_VERNUM=`echo "${PHP_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
+AC_MSG_RESULT($PHP_FOUND_VERNUM)
+
 if test "$MONGODB" != "no"; then
   PHP_ARG_ENABLE(developer-flags, whether to enable developer build flags,
   [  --enable-developer-flags   Enable developer flags],, no)
@@ -110,10 +115,7 @@ if test "$MONGODB" != "no"; then
     PHP_CHECK_GCC_ARG(-Wparentheses,                    _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wparentheses")
     PHP_CHECK_GCC_ARG(-Wdeclaration-after-statement,    _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wdeclaration-after-statement")
 
-    PHP_MONGODB_FOUND_VERSION=`${PHP_CONFIG} --version`
-    PHP_MONGODB_FOUND_VERNUM=`echo "${PHP_MONGODB_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
-
-    if test "$PHP_MONGODB_FOUND_VERNUM" -ge "50400"; then
+    if test "$PHP_FOUND_VERNUM" -ge "50400"; then
       PHP_CHECK_GCC_ARG(-Werror,                        _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Werror")
     fi
 
@@ -135,6 +137,7 @@ if test "$MONGODB" != "no"; then
   MONGODB_BSON="\
       src/bson.c \
   ";
+
   MONGODB_BSON_CLASSES="\
     src/BSON/Type.c \
     src/BSON/Unserializable.c \
@@ -151,6 +154,7 @@ if test "$MONGODB" != "no"; then
   ";
   MONGODB_ROOT="\
       php_phongo.c \
+      phongo_compat.c \
   ";
   MONGODB_CONTRIB="\
       src/contrib/php-ssl.c \

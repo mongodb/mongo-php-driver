@@ -8,6 +8,7 @@ if (PHP_MONGODB != "no") {
 
   ADD_FLAG("CFLAGS_MONGODB", " /I" + configure_module_dirname + " /I" + configure_module_dirname + "/src/libmongoc/src/mongoc" + " /I" + configure_module_dirname + "/src/libbson/src/bson/ /I" + configure_module_dirname + "/src/libbson/src /I" + configure_module_dirname + "/src/contrib  /D HAVE_MONGODB_SASL=1 /D BSON_COMPILATION=1 /D MONGOC_COMPILATION=1 /D MONGOC_TRACE=1 /D MONGOC_NO_AUTOMATIC_GLOBALS=1 /D BSON_EXTRA_ALIGN=0");
   EXTENSION("mongodb", "php_phongo.c");
+  ADD_SOURCES(configure_module_dirname + "/", "phongo_compat.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src", "bson.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/BSON", "Type.c Unserializable.c Serializable.c Persistable.c Binary.c Javascript.c MaxKey.c MinKey.c ObjectID.c Regex.c Timestamp.c UTCDateTime.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/MongoDB", "Command.c Cursor.c CursorId.c Manager.c Query.c ReadConcern.c ReadPreference.c Server.c BulkWrite.c WriteConcern.c WriteConcernError.c WriteError.c WriteResult.c", "mongodb");

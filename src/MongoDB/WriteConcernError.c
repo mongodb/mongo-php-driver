@@ -53,7 +53,7 @@ PHP_METHOD(WriteConcernError, getCode)
 	php_phongo_writeconcernerror_t *intern;
 
 
-	intern = (php_phongo_writeconcernerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITECONCERNERROR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -70,15 +70,19 @@ PHP_METHOD(WriteConcernError, getInfo)
 	php_phongo_writeconcernerror_t *intern;
 
 
-	intern = (php_phongo_writeconcernerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITECONCERNERROR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
 
-	if (intern->info) {
+	if (!Z_ISUNDEF(intern->info)) {
+#if PHP_VERSION_ID >= 70000
+		RETURN_ZVAL(&intern->info, 1, 0);
+#else
 		RETURN_ZVAL(intern->info, 1, 0);
+#endif
 	}
 }
 /* }}} */
@@ -89,13 +93,13 @@ PHP_METHOD(WriteConcernError, getMessage)
 	php_phongo_writeconcernerror_t *intern;
 
 
-	intern = (php_phongo_writeconcernerror_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	intern = Z_WRITECONCERNERROR_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	RETURN_STRING(intern->message, 1);
+	PHONGO_RETURN_STRING(intern->message);
 }
 /* }}} */
 
@@ -127,9 +131,9 @@ static zend_function_entry php_phongo_writeconcernerror_me[] = {
 
 
 /* {{{ php_phongo_writeconcernerror_t object handlers */
-static void php_phongo_writeconcernerror_free_object(void *object TSRMLS_DC) /* {{{ */
+static void php_phongo_writeconcernerror_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_writeconcernerror_t *intern = (php_phongo_writeconcernerror_t*)object;
+	php_phongo_writeconcernerror_t *intern = Z_OBJ_WRITECONCERNERROR(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -137,47 +141,65 @@ static void php_phongo_writeconcernerror_free_object(void *object TSRMLS_DC) /* 
 		efree(intern->message);
 	}
 
-	if (intern->info) {
+	if (!Z_ISUNDEF(intern->info)) {
 		zval_ptr_dtor(&intern->info);
 	}
+
+#if PHP_VERSION_ID < 70000
 	efree(intern);
+#endif
 } /* }}} */
 
-zend_object_value php_phongo_writeconcernerror_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+phongo_create_object_retval php_phongo_writeconcernerror_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
-	zend_object_value retval;
 	php_phongo_writeconcernerror_t *intern = NULL;
 
-	intern = (php_phongo_writeconcernerror_t *)ecalloc(1, sizeof *intern);
+	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_writeconcernerror_t, class_type);
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-	retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeconcernerror_free_object, NULL TSRMLS_CC);
-	retval.handlers = &php_phongo_handler_writeconcernerror;
+#if PHP_VERSION_ID >= 70000
+	intern->std.handlers = &php_phongo_handler_writeconcernerror;
 
-	intern->info = NULL;
+	return &intern->std;
+#else
+	{
+		zend_object_value retval;
+		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeconcernerror_free_object, NULL TSRMLS_CC);
+		retval.handlers = &php_phongo_handler_writeconcernerror;
 
-	return retval;
+		return retval;
+	}
+#endif
 } /* }}} */
 
 HashTable *php_phongo_writeconcernerror_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeconcernerror_t *intern;
-	zval                    retval = zval_used_for_init;
+#if PHP_VERSION_ID >= 70000
+	zval                            retval;
+#else
+	zval                            retval = zval_used_for_init;
+#endif
 
 
 	*is_temp = 1;
-	intern = (php_phongo_writeconcernerror_t *)zend_object_store_get_object(object TSRMLS_CC);
+	intern = Z_WRITECONCERNERROR_OBJ_P(object);
 
 	array_init_size(&retval, 3);
-	add_assoc_string_ex(&retval, ZEND_STRS("message"), intern->message, 1);
-	add_assoc_long_ex(&retval, ZEND_STRS("code"), intern->code);
-	if (intern->info) {
+	ADD_ASSOC_STRING(&retval, "message", intern->message);
+	ADD_ASSOC_LONG_EX(&retval, "code", intern->code);
+	if (!Z_ISUNDEF(intern->info)) {
+#if PHP_VERSION_ID >= 70000
+		Z_ADDREF(intern->info);
+		ADD_ASSOC_ZVAL_EX(&retval, "info", &intern->info);
+#else
 		Z_ADDREF_P(intern->info);
-		add_assoc_zval_ex(&retval, ZEND_STRS("info"), intern->info);
+		ADD_ASSOC_ZVAL_EX(&retval, "info", intern->info);
+#endif
 	} else {
-		add_assoc_null_ex(&retval, ZEND_STRS("info"));
+		ADD_ASSOC_NULL_EX(&retval, "info");
 	}
 
 	return Z_ARRVAL(retval);
@@ -197,6 +219,10 @@ PHP_MINIT_FUNCTION(WriteConcernError)
 
 	memcpy(&php_phongo_handler_writeconcernerror, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeconcernerror.get_debug_info = php_phongo_writeconcernerror_get_debug_info;
+#if PHP_VERSION_ID >= 70000
+	php_phongo_handler_writeconcernerror.free_obj = php_phongo_writeconcernerror_free_object;
+	php_phongo_handler_writeconcernerror.offset = XtOffsetOf(php_phongo_writeconcernerror_t, std);
+#endif
 
 	return SUCCESS;
 }
