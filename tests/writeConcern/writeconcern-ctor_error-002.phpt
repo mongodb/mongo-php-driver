@@ -25,7 +25,7 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected w to be integer or string, double given
+Expected w to be integer or string, %r(double|float)%r given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected w to be integer or string, boolean given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
