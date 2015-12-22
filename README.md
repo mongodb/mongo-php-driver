@@ -33,7 +33,7 @@ management applications), and other interesting libraries.
 To build and install the driver:
 
 ```
-$ pecl install mongodb-beta
+$ pecl install mongodb
 $ echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```
 
