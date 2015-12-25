@@ -50,4 +50,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md)
 - [HHVM Implementation of this driver](https://github.com/mongodb/mongo-hhvm-driver)
 - [Official high-level library](https://github.com/mongodb/mongo-php-library)
 - [MongoDB Transistor](https://github.com/bjori/mongo-php-transistor) Lightweight ODM using the [Persistable](http://php.net/bson\\persistable) interface
+- [Yadm](https://github.com/makasim/yadm) is a MongoDB ODM. Schema less with fast object hydration and persistence.
 
