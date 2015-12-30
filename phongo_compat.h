@@ -99,7 +99,7 @@
 		int tmp_len; \
 		mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
 		tmp_len = spprintf(&tmp, 0, "%lld", value); \
-		ADD_ASSOC_STRINGL(zval, index, tmp, tmp_len); \
+		ADD_INDEX_STRINGL(zval, index, tmp, tmp_len); \
 		efree(tmp); \
 	} else { \
 		add_index_long(zval, index, val); \
@@ -167,6 +167,7 @@
 # define ADD_ASSOC_ZVAL(_zv, _key, _value) add_assoc_zval(_zv, _key, _value);
 # define ADD_ASSOC_NULL_EX(_zv, _key) add_assoc_null_ex(_zv, ZEND_STRL(_key));
 # define ADD_ASSOC_BOOL_EX(_zv, _key, _value) add_assoc_bool_ex(_zv, ZEND_STRL(_key), _value);
+# define ADD_INDEX_STRINGL(_zv, _ind, _value, _len) add_index_stringl(_zv, _ind, _value, _len);
 # define phongo_free_object_arg zend_object
 # define phongo_zpp_char_len size_t
 # define ZEND_HASH_APPLY_COUNT(ht) (ht)->u.v.nApplyCount
@@ -193,6 +194,7 @@
 # define ADD_ASSOC_ZVAL(_zv, _key, _value) add_assoc_zval(_zv, _key, _value);
 # define ADD_ASSOC_NULL_EX(_zv, _key) add_assoc_null_ex(_zv, ZEND_STRS(_key));
 # define ADD_ASSOC_BOOL_EX(_zv, _key, _value) add_assoc_bool_ex(_zv, ZEND_STRS(_key), _value);
+# define ADD_INDEX_STRINGL(_zv, _ind, _value, _len) add_index_stringl(_zv, _ind, _value, _len, 0);
 # define Z_PHPDATE_P(object) zend_object_store_get_object(object TSRMLS_CC)
 # define Z_ISUNDEF(x) !x
 # define phongo_free_object_arg void
