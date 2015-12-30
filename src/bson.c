@@ -983,6 +983,9 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 }
 void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char *key, long key_len, int entry_type, zval *entry TSRMLS_DC)
 {
+#if PHP_VERSION_ID >= 70000
+try_again:
+#endif
 	switch (entry_type)
 	{
 		case IS_NULL:
@@ -1045,6 +1048,11 @@ void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char 
 		case IS_INDIRECT:
 			phongo_bson_append(bson, flags, key, key_len, Z_TYPE_P(Z_INDIRECT_P(entry)), Z_INDIRECT_P(entry) TSRMLS_DC);
 			break;
+
+		case IS_REFERENCE:
+			ZVAL_DEREF(entry);
+			entry_type = Z_TYPE_P(entry);
+			goto try_again;
 #endif
 
 		default:
