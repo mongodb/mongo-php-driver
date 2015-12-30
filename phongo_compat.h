@@ -99,7 +99,8 @@
 		int tmp_len; \
 		mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
 		tmp_len = spprintf(&tmp, 0, "%lld", value); \
-		add_index_stringl(zval, index, tmp, tmp_len, 0); \
+		ADD_ASSOC_STRINGL(zval, index, tmp, tmp_len); \
+		efree(tmp); \
 	} else { \
 		add_index_long(zval, index, val); \
 	}
@@ -109,7 +110,8 @@
 		int tmp_len; \
 		mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
 		tmp_len = spprintf(&tmp, 0, "%lld", value); \
-		add_assoc_stringl(zval, key, tmp, tmp_len, 0); \
+		ADD_ASSOC_STRINGL(zval, key, tmp, tmp_len); \
+		efree(tmp); \
 	} else { \
 		add_assoc_long(zval, key, value); \
 	}
