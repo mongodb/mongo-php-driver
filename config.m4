@@ -370,7 +370,7 @@ PHP_ARG_WITH(libmongoc, Use system libmongoc,
   fi
 
 
-PHP_ARG_WITH(pcre-dir, pcre-dir install prefix
+PHP_ARG_WITH(pcre-dir, pcre-dir install prefix,
 [  --with-pcre-dir[=DIR]     mongodb: pcre install prefix], auto, yes)
 
 if test "$PHP_PCRE_DIR" != "no"; then
