@@ -390,7 +390,7 @@ if test "$PHP_PCRE_DIR" != "no"; then
   fi
 fi
 
-PHP_ARG_WITH(mongodb-sasl, Build with Cyrus SASL support,
+PHP_ARG_WITH(mongodb-sasl, for Cyrus SASL support,
 [  --with-mongodb-sasl[=DIR]     mongodb: Include Cyrus SASL support], auto, yes)
 
 if test "$PHP_MONGODB_SASL" != "no"; then
