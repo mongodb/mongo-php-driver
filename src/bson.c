@@ -886,17 +886,17 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 					}
 				}
 #if PHP_VERSION_ID >= 70000
-				zval_to_bson(&obj_data, flags, &child, NULL TSRMLS_CC);
+				phongo_zval_to_bson(&obj_data, flags, &child, NULL TSRMLS_CC);
 #else
-				zval_to_bson(obj_data, flags, &child, NULL TSRMLS_CC);
+				phongo_zval_to_bson(obj_data, flags, &child, NULL TSRMLS_CC);
 #endif
 				bson_append_document_end(bson, &child);
 			} else {
 				bson_append_array_begin(bson, key, key_len, &child);
 #if PHP_VERSION_ID >= 70000
-				zval_to_bson(&obj_data, flags, &child, NULL TSRMLS_CC);
+				phongo_zval_to_bson(&obj_data, flags, &child, NULL TSRMLS_CC);
 #else
-				zval_to_bson(obj_data, flags, &child, NULL TSRMLS_CC);
+				phongo_zval_to_bson(obj_data, flags, &child, NULL TSRMLS_CC);
 #endif
 				bson_append_array_end(bson, &child);
 			}
@@ -978,7 +978,7 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 
 	mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding document");
 	bson_append_document_begin(bson, key, key_len, &child);
-	zval_to_bson(object, flags, &child, NULL TSRMLS_CC);
+	phongo_zval_to_bson(object, flags, &child, NULL TSRMLS_CC);
 	bson_append_document_end(bson, &child);
 }
 
@@ -1032,7 +1032,7 @@ try_again:
 				}
 
 				bson_append_array_begin(bson, key, key_len, &child);
-				zval_to_bson(entry, flags, &child, NULL TSRMLS_CC);
+				phongo_zval_to_bson(entry, flags, &child, NULL TSRMLS_CC);
 				bson_append_array_end(bson, &child);
 
 				if (tmp_ht) {
@@ -1098,7 +1098,7 @@ static bool is_public_property(zend_class_entry *ce, const char *prop_name, int 
 }
 /* }}} */
 
-PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC) /* {{{ */
+PHONGO_API void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC) /* {{{ */
 {
 	HashTable   *ht_data = NULL;
 #if PHP_VERSION_ID >= 70000
@@ -1334,15 +1334,15 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 
 /* }}} */
 #if PHP_VERSION_ID >= 70000
-int bson_to_zval(const unsigned char *data, int data_len, zval *zv)
+PHONGO_API int phongo_bson_to_zval(const unsigned char *data, int data_len, zval *zv)
 #else
-int bson_to_zval(const unsigned char *data, int data_len, zval **zv)
+PHONGO_API int phongo_bson_to_zval(const unsigned char *data, int data_len, zval **zv)
 #endif
 {
 	int retval = 0;
 	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-	retval = bson_to_zval_ex(data, data_len, &state);
+	retval = phongo_bson_to_zval_ex(data, data_len, &state);
 #if PHP_VERSION_ID >= 70000
 	ZVAL_ZVAL(zv, &state.zchild, 1, 1);
 #else
@@ -1351,7 +1351,8 @@ int bson_to_zval(const unsigned char *data, int data_len, zval **zv)
 
 	return retval;
 }
-int bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state)
+
+PHONGO_API int phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state)
 {
 	      bson_reader_t *reader;
 	      bson_iter_t    iter;
@@ -1458,7 +1459,7 @@ PHP_FUNCTION(fromPHP)
 	}
 
 	bson = bson_new();
-	zval_to_bson(data, PHONGO_BSON_ADD_ODS|PHONGO_BSON_ADD_CHILD_ODS, bson, NULL TSRMLS_CC);
+	phongo_zval_to_bson(data, PHONGO_BSON_ADD_ODS|PHONGO_BSON_ADD_CHILD_ODS, bson, NULL TSRMLS_CC);
 
 	PHONGO_RETVAL_STRINGL((const char *) bson_get_data(bson), bson->len);
 	bson_destroy(bson);
@@ -1495,7 +1496,7 @@ static void apply_classname_to_state(const char *classname, int classname_len, p
 	}
 }
 
-void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC)
+PHONGO_API void phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC)
 {
 	if (typemap) {
 		char      *classname;
@@ -1543,9 +1544,9 @@ PHP_FUNCTION(toPHP)
 		return;
 	}
 
-	php_phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
+	phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
 
-	if (!bson_to_zval_ex((const unsigned char *)data, data_len, &state)) {
+	if (!phongo_bson_to_zval_ex((const unsigned char *)data, data_len, &state)) {
 		zval_ptr_dtor(&state.zchild);
 		RETURN_NULL();
 	}

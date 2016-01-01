@@ -414,7 +414,7 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 			return false;
 		}
 
-		if (!bson_to_zval(data, len, &writeconcernerror->info)) {
+		if (!phongo_bson_to_zval(data, len, &writeconcernerror->info)) {
 			zval_ptr_dtor(&writeconcernerror->info);
 #if PHP_VERSION_ID >= 70000
 			ZVAL_UNDEF(&writeconcernerror->info);
@@ -448,7 +448,7 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 		bson_init(&info);
 		bson_append_iter(&info, NULL, 0, &iter);
 
-		if (!bson_to_zval(bson_get_data(&info), info.len, &writeerror->info)) {
+		if (!phongo_bson_to_zval(bson_get_data(&info), info.len, &writeerror->info)) {
 			zval_ptr_dtor(&writeerror->info);
 #if PHP_VERSION_ID >= 70000
 			ZVAL_UNDEF(&writeerror->info);
@@ -1326,7 +1326,7 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		bson_to_zval_ex(bson_get_data(&sd->tags), sd->tags.len, &state);
+		phongo_bson_to_zval_ex(bson_get_data(&sd->tags), sd->tags.len, &state);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
 #else
@@ -1339,7 +1339,7 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		bson_to_zval_ex(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
+		phongo_bson_to_zval_ex(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", &state.zchild);
 #else
@@ -1375,7 +1375,7 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		bson_to_zval_ex(bson_get_data(&read_prefs->tags), read_prefs->tags.len, &state);
+		phongo_bson_to_zval_ex(bson_get_data(&read_prefs->tags), read_prefs->tags.len, &state);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
 #else
@@ -1439,7 +1439,7 @@ void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor) /* {
 			zval *zv;
 #endif
 
-			bson_to_zval(bson_get_data(&cursor->query), cursor->query.len, &zv);
+			phongo_bson_to_zval(bson_get_data(&cursor->query), cursor->query.len, &zv);
 #if PHP_VERSION_ID >= 70000
 			ADD_ASSOC_ZVAL_EX(retval, "query", &zv);
 #else
@@ -1453,7 +1453,7 @@ void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor) /* {
 			zval *zv;
 #endif
 
-			bson_to_zval(bson_get_data(&cursor->fields), cursor->fields.len, &zv);
+			phongo_bson_to_zval(bson_get_data(&cursor->fields), cursor->fields.len, &zv);
 #if PHP_VERSION_ID >= 70000
 			ADD_ASSOC_ZVAL_EX(retval, "fields", &zv);
 #else
@@ -1491,7 +1491,7 @@ void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor) /* {
 			zval *zv;
 #endif
 
-			bson_to_zval(bson_get_data(cursor->current), cursor->current->len, &zv);
+			phongo_bson_to_zval(bson_get_data(cursor->current), cursor->current->len, &zv);
 #if PHP_VERSION_ID >= 70000
 			ADD_ASSOC_ZVAL_EX(retval, "current_doc", &zv);
 #else
@@ -2146,7 +2146,7 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator *iter T
 	cursor_it->current++;
 
 	if (mongoc_cursor_next(cursor->cursor, &doc)) {
-		bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
+		phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
 	} else {
 		bson_error_t error;
 
@@ -2174,7 +2174,7 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_
 	doc = mongoc_cursor_current(cursor->cursor);
 
 	if (doc) {
-		bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
+		phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
 	}
 } /* }}} */
 

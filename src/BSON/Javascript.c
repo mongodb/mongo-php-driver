@@ -69,7 +69,7 @@ PHP_METHOD(Javascript, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	if (document) {
-		zval_to_bson(document, PHONGO_BSON_NONE, &scope, NULL TSRMLS_CC);
+		phongo_zval_to_bson(document, PHONGO_BSON_NONE, &scope, NULL TSRMLS_CC);
 	}
 
 	php_phongo_new_javascript_from_javascript_and_scope(0, getThis(), javascript, javascript_len, &scope TSRMLS_CC);
@@ -158,7 +158,7 @@ HashTable *php_phongo_javascript_get_debug_info(zval *object, int *is_temp TSRML
 	if (intern->document) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-		if (bson_to_zval_ex(bson_get_data(intern->document), intern->document->len, &state)) {
+		if (phongo_bson_to_zval_ex(bson_get_data(intern->document), intern->document->len, &state)) {
 #if PHP_VERSION_ID >= 70000
 			Z_ADDREF(state.zchild);
 			ADD_ASSOC_ZVAL_EX(&retval, "scope", &state.zchild);

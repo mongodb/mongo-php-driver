@@ -79,7 +79,7 @@ PHP_METHOD(ReadPreference, __construct)
 			if (tagSets) {
 				bson_t *tags = bson_new();
 
-				zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
+				phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
 				mongoc_read_prefs_set_tags(intern->read_preference, tags);
 				bson_destroy(tags);
 				if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
@@ -131,7 +131,7 @@ PHP_METHOD(ReadPreference, getTagSets)
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		bson_to_zval_ex(bson_get_data(&intern->read_preference->tags), intern->read_preference->tags.len, &state);
+		phongo_bson_to_zval_ex(bson_get_data(&intern->read_preference->tags), intern->read_preference->tags.len, &state);
 #if PHP_VERSION_ID >= 70000
 		RETURN_ZVAL(&state.zchild, 0, 1);
 #else

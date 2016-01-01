@@ -67,7 +67,7 @@ PHP_METHOD(Command, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
+	phongo_zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 	intern->bson = bson;
 }
 /* }}} */
@@ -153,7 +153,7 @@ HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_D
 			zval *zv;
 #endif
 
-		bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &zv);
+		phongo_bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &zv);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "command", &zv);
 #else

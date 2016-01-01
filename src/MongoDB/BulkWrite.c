@@ -108,7 +108,7 @@ PHP_METHOD(BulkWrite, insert)
 	bson_flags |= PHONGO_BSON_ADD_ODS|PHONGO_BSON_ADD_CHILD_ODS;
 
 	bson = bson_new();
-	zval_to_bson(document, bson_flags, bson, &bson_out TSRMLS_CC);
+	phongo_zval_to_bson(document, bson_flags, bson, &bson_out TSRMLS_CC);
 	mongoc_bulk_operation_insert(intern->bulk, bson);
 	bson_clear(&bson);
 
@@ -149,8 +149,8 @@ PHP_METHOD(BulkWrite, update)
 	bquery = bson_new();
 	bupdate = bson_new();
 
-	zval_to_bson(query, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
-	zval_to_bson(newObj, PHONGO_BSON_NONE, bupdate, NULL TSRMLS_CC);
+	phongo_zval_to_bson(query, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
+	phongo_zval_to_bson(newObj, PHONGO_BSON_NONE, bupdate, NULL TSRMLS_CC);
 
 	if (updateOptions) {
 		flags |= php_array_fetch_bool(updateOptions, "multi") ?  MONGOC_UPDATE_MULTI_UPDATE : 0;
@@ -201,7 +201,7 @@ PHP_METHOD(BulkWrite, delete)
 
 
 	bson = bson_new();
-	zval_to_bson(query, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
+	phongo_zval_to_bson(query, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 
 	if (deleteOptions && php_array_fetch_bool(deleteOptions, "limit")) {
 		mongoc_bulk_operation_remove_one(intern->bulk, bson);
