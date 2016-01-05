@@ -981,9 +981,13 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 	zval_to_bson(object, flags, &child, NULL TSRMLS_CC);
 	bson_append_document_end(bson, &child);
 }
-void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char *key, long key_len, int entry_type, zval *entry TSRMLS_DC)
+
+static void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char *key, long key_len, zval *entry TSRMLS_DC)
 {
-	switch (entry_type)
+#if PHP_VERSION_ID >= 70000
+try_again:
+#endif
+	switch (Z_TYPE_P(entry))
 	{
 		case IS_NULL:
 			bson_append_null(bson, key, key_len);
@@ -1043,12 +1047,16 @@ void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char 
 
 #if PHP_VERSION_ID >= 70000
 		case IS_INDIRECT:
-			phongo_bson_append(bson, flags, key, key_len, Z_TYPE_P(Z_INDIRECT_P(entry)), Z_INDIRECT_P(entry) TSRMLS_DC);
+			phongo_bson_append(bson, flags, key, key_len, Z_INDIRECT_P(entry) TSRMLS_DC);
 			break;
+
+		case IS_REFERENCE:
+			ZVAL_DEREF(entry);
+			goto try_again;
 #endif
 
 		default:
-			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Got unsupported type %d '%s'", entry_type, zend_get_type_by_const(entry_type));
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Got unsupported type %d '%s'", Z_TYPE_P(entry), zend_get_type_by_const(Z_TYPE_P(entry)));
 	}
 }
 
@@ -1231,7 +1239,7 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID,
 						member ? ZSTR_VAL(member) : ZSTR_VAL(key),
 						member ? ZSTR_LEN(member) : ZSTR_LEN(key),
-						Z_TYPE_P(value), value TSRMLS_CC);
+						value TSRMLS_CC);
 
 					if (member) {
 						zend_string_release(member);
@@ -1242,14 +1250,14 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 							flags &= ~PHONGO_BSON_ADD_ID;
 						}
 					}
-					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, ZSTR_VAL(key), ZSTR_LEN(key), Z_TYPE_P(value), value TSRMLS_CC);
+					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, ZSTR_VAL(key), ZSTR_LEN(key), value TSRMLS_CC);
 				}
 			} else {
 				char          numbuf[32];
 				const char   *skey;
 				unsigned int  skey_len = 0;
 				skey_len = bson_uint32_to_string(num_key, (const char **)&skey, numbuf, sizeof(numbuf));
-				phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, skey, skey_len, Z_TYPE_P(value), value TSRMLS_CC);
+				phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, skey, skey_len, value TSRMLS_CC);
 			}
 		} ZEND_HASH_FOREACH_END();
 	}
@@ -1296,7 +1304,7 @@ PHONGO_API void zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 		} else {
 			key_len = bson_uint32_to_string(index, (const char **)&key, numbuf, sizeof(numbuf));
 		}
-		phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, key, key_len, Z_TYPE_PP(entry), *entry TSRMLS_CC);
+		phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, key, key_len, *entry TSRMLS_CC);
 	}
 #endif
 
