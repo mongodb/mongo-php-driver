@@ -301,7 +301,7 @@ MONGOC_SOURCES_SASL=mongoc-sasl.c
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_CONTRIB,            [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
   fi
 
-PHP_ARG_WITH(libbson, Use system libbson,
+PHP_ARG_WITH(libbson, whether to use system libbson,
 [  --with-libbson             Use system libbson], no, no)
 
   if test "$PHP_LIBBSON" != "no"; then
@@ -331,7 +331,7 @@ dnl libmongoc stuff {{{
   AC_MSG_CHECKING(configuring libmongoc)
   AC_MSG_RESULT(...)
 
-PHP_ARG_WITH(libmongoc, Use system libmongoc,
+PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
 [  --with-libmongoc           Use system libmongoc], no, no)
 
   AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
@@ -370,7 +370,7 @@ PHP_ARG_WITH(libmongoc, Use system libmongoc,
   fi
 
 
-PHP_ARG_WITH(pcre-dir, pcre-dir install prefix,
+PHP_ARG_WITH(pcre-dir, for pcre-dir install prefix,
 [  --with-pcre-dir[=DIR]     mongodb: pcre install prefix], auto, yes)
 
 if test "$PHP_PCRE_DIR" != "no"; then
