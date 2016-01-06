@@ -487,14 +487,14 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 	state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-	bson_to_zval_ex(bson_get_data(&intern->write_result.upserted), intern->write_result.upserted.len, &state);
+	phongo_bson_to_zval_ex(bson_get_data(&intern->write_result.upserted), intern->write_result.upserted.len, &state);
 #if PHP_VERSION_ID >= 70000
 	ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", &state.zchild);
 #else
 	ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", state.zchild);
 #endif
 
-	bson_to_zval_ex(bson_get_data(&intern->write_result.writeErrors), intern->write_result.writeErrors.len, &state);
+	phongo_bson_to_zval_ex(bson_get_data(&intern->write_result.writeErrors), intern->write_result.writeErrors.len, &state);
 #if PHP_VERSION_ID >= 70000
 	ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", &state.zchild);
 #else
@@ -510,7 +510,7 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 
 		bson_iter_document(&iter, &len, &data);
 
-		bson_to_zval_ex(data, len, &state);
+		phongo_bson_to_zval_ex(data, len, &state);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", &state.zchild);
 #else

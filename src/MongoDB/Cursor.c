@@ -64,7 +64,7 @@ PHP_METHOD(Cursor, setTypeMap)
 		return;
 	}
 
-	php_phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
+	phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
 
 	intern->visitor_data = state;
 }

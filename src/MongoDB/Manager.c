@@ -78,7 +78,7 @@ PHP_METHOD(Manager, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	if (options) {
-		zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
+		phongo_zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
 	}
 
 	phongo_manager_init(intern, uri_string, &bson_options, driverOptions TSRMLS_CC);

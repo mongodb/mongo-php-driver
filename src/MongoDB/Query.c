@@ -76,7 +76,7 @@ PHP_METHOD(Query, __construct)
 	intern->query = bson_new();
 
 	bson_init(&bfilter);
-	zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL TSRMLS_CC);
+	phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &bfilter, NULL TSRMLS_CC);
 
 	if (zoptions) {
 		if (php_array_exists(zoptions, "readConcern")) {
@@ -96,7 +96,7 @@ PHP_METHOD(Query, __construct)
 			php_array_unsetc(zoptions, "readConcern");
 		}
 
-		zval_to_bson(zoptions, PHONGO_BSON_NONE, &boptions, NULL TSRMLS_CC);
+		phongo_zval_to_bson(zoptions, PHONGO_BSON_NONE, &boptions, NULL TSRMLS_CC);
 	}
 
 	if (!phongo_query_init(intern, &bfilter, &boptions TSRMLS_CC)) {
@@ -196,7 +196,7 @@ HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 		zval *zv;
 #endif
 
-		bson_to_zval(bson_get_data(intern->query), intern->query->len, &zv);
+		phongo_bson_to_zval(bson_get_data(intern->query), intern->query->len, &zv);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "query", &zv);
 #else
@@ -213,7 +213,7 @@ HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 		zval *zv;
 #endif
 
-		bson_to_zval(bson_get_data(intern->selector), intern->selector->len, &zv);
+		phongo_bson_to_zval(bson_get_data(intern->selector), intern->selector->len, &zv);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "selector", &zv);
 #else
