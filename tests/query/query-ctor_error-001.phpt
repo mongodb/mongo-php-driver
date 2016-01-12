@@ -39,5 +39,5 @@ Expected "readConcern" option to be MongoDB\Driver\ReadConcern, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readConcern" option to be MongoDB\Driver\ReadConcern, object given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "readConcern" option to be MongoDB\Driver\ReadConcern, null given
+Expected "readConcern" option to be MongoDB\Driver\ReadConcern, %r(null|NULL)%r given
 ===DONE===
