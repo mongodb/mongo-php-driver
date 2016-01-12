@@ -2,6 +2,7 @@
 MongoDB\Driver\ReadConcern construction (invalid level type)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM throws Exception instead of InvalidArgumentException"); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
