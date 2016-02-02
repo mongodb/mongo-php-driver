@@ -40,7 +40,7 @@ foreach ($cursor as $document) {
 <?php exit(0); ?>
 --EXPECTF--
 Inserted: 5
-object(MongoDB\Driver\Query)#%d (6) {
+object(MongoDB\Driver\Query)#%d (%d) {
   ["query"]=>
   object(stdClass)#%d (2) {
     ["$orderby"]=>
@@ -62,6 +62,8 @@ object(MongoDB\Driver\Query)#%d (6) {
   int(0)
   ["batch_size"]=>
   int(0)
+  ["readConcern"]=>
+  NULL
 }
 0
 1

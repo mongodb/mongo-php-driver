@@ -55,6 +55,8 @@ object(MongoDB\Driver\Query)#%d (%d) {
   int(0)
   ["batch_size"]=>
   int(0)
+  ["readConcern"]=>
+  NULL
 }
 string(21) "MongoDB\Driver\Cursor"
 aaliyah.kertzmann
