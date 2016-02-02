@@ -157,7 +157,9 @@ To save this information, we can insert `$hannes` into the database like so:
 try {
     $wc = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY);
     $manager = new MongoDB\Driver\Manager("mongodb://192.168.112.10:2000");
-    $result = $manager->executeInsert("congress.people", $hannes, $wc);
+    $bulk = new MongoDB\Driver\BulkWrite;
+    $bulk->insert($hannes);
+    $result = $manager->executeBulkWrite("congress.people", $bulk, $wc);
     echo "Hannes has been inserted\n";
 } catch(Exception $e) {
     echo $e->getMessage(), "\n";
