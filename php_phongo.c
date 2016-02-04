@@ -1086,6 +1086,7 @@ bool php_phongo_ssl_verify(php_stream *stream, const char *hostname, bson_error_
 
 mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error) /* {{{ */
 {
+	zend_error_handling error_handling;
 	php_phongo_stream_socket *base_stream = NULL;
 	php_stream *stream = NULL;
 	const bson_t *options;
@@ -1138,7 +1139,9 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	spprintf(&uniqid, 0, "%s:%d[%s]", host->host, host->port, mongoc_uri_get_string(uri));
 
 	MONGOC_DEBUG("Connecting to '%s'", uniqid);
+	zend_replace_error_handling(EH_SUPPRESS, NULL, &error_handling TSRMLS_CC);
 	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, uniqid, timeoutp, (php_stream_context *)user_data, &errmsg, &errcode);
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	if (!stream) {
 		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, phongo_str(errmsg));
@@ -1155,8 +1158,6 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	efree(uniqid);
 
 	if (mongoc_uri_get_ssl(uri)) {
-		zend_error_handling       error_handling;
-
 		zend_replace_error_handling(EH_THROW, php_phongo_sslconnectionexception_ce, &error_handling TSRMLS_CC);
 
 		MONGOC_DEBUG("Enabling SSL");
