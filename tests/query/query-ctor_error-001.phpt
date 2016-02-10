@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ReadConcern construction (invalid readConcern type)
+MongoDB\Driver\Query construction (invalid readConcern type)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
