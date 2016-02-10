@@ -120,9 +120,9 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_binary_me[] = {
-	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC)
-	PHP_ME(Binary, getData, ai_Binary_getData, ZEND_ACC_PUBLIC)
-	PHP_ME(Binary, getType, ai_Binary_getType, ZEND_ACC_PUBLIC)
+	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Binary, getData, ai_Binary_getData, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Binary, getType, ai_Binary_getType, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };

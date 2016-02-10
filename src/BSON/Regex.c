@@ -149,10 +149,10 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_regex_me[] = {
-	PHP_ME(Regex, __construct, ai_Regex___construct, ZEND_ACC_PUBLIC)
-	PHP_ME(Regex, getPattern, ai_Regex_getPattern, ZEND_ACC_PUBLIC)
-	PHP_ME(Regex, getFlags, ai_Regex_getFlags, ZEND_ACC_PUBLIC)
-	PHP_ME(Regex, __toString, ai_Regex___toString, ZEND_ACC_PUBLIC)
+	PHP_ME(Regex, __construct, ai_Regex___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Regex, getPattern, ai_Regex_getPattern, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Regex, getFlags, ai_Regex_getFlags, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Regex, __toString, ai_Regex___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };

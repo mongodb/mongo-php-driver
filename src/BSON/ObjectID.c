@@ -113,8 +113,8 @@ ZEND_END_ARG_INFO();
 
 
 static zend_function_entry php_phongo_objectid_me[] = {
-	PHP_ME(ObjectID, __construct, ai_ObjectID___construct, ZEND_ACC_PUBLIC)
-	PHP_ME(ObjectID, __toString, ai_ObjectID___toString, ZEND_ACC_PUBLIC)
+	PHP_ME(ObjectID, __construct, ai_ObjectID___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ObjectID, __toString, ai_ObjectID___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
