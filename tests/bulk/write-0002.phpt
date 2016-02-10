@@ -1,7 +1,7 @@
 --TEST--
 MongoDB\Driver\BulkWrite: #002 Get the generated ID
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -19,7 +19,7 @@ $w = 1;
 $wtimeout = 1000;
 $writeConcern = new \MongoDB\Driver\WriteConcern($w, $wtimeout);
 var_dump($insertBulk);
-$result = $manager->executeBulkWrite("db.collection", $insertBulk, $writeConcern);
+$result = $manager->executeBulkWrite(NS, $insertBulk, $writeConcern);
 var_dump($insertBulk);
 
 assert($result instanceof \MongoDB\Driver\WriteResult);
@@ -50,9 +50,9 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
 }
 object(MongoDB\Driver\BulkWrite)#%d (%d) {
   ["database"]=>
-  string(2) "db"
+  string(6) "phongo"
   ["collection"]=>
-  string(10) "collection"
+  string(15) "bulk_write_0002"
   ["ordered"]=>
   bool(true)
   ["executed"]=>
