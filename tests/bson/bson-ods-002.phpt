@@ -1,5 +1,7 @@
 --TEST--
 BSON encoding: Encoding data into BSON representation, and BSON into Extended JSON
+--XFAIL--
+Persistable::bsonSerialize() should not return atomic modifiers (see: PHPC-550)
 --INI--
 date.timezone=America/Los_Angeles
 --SKIPIF--
