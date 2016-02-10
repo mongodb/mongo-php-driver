@@ -228,6 +228,23 @@ HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 	ADD_ASSOC_LONG_EX(&retval, "limit", intern->limit);
 	ADD_ASSOC_LONG_EX(&retval, "batch_size", intern->batch_size);
 
+	if (intern->read_concern) {
+#if PHP_VERSION_ID >= 70000
+		zval read_concern;
+
+		php_phongo_read_concern_to_zval(&read_concern, intern->read_concern);
+		ADD_ASSOC_ZVAL_EX(&retval, "readConcern", &read_concern);
+#else
+		zval *read_concern = NULL;
+		MAKE_STD_ZVAL(read_concern);
+
+		php_phongo_read_concern_to_zval(read_concern, intern->read_concern);
+		ADD_ASSOC_ZVAL_EX(&retval, "readConcern", read_concern);
+#endif
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "readConcern");
+	}
+
 	return Z_ARRVAL(retval);
 
 } /* }}} */
