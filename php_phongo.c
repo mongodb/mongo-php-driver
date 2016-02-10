@@ -1634,6 +1634,41 @@ void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOp
 #undef SET_STRING_CTX
 } /* }}} */
 
+static bool php_phongo_apply_rc_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
+{
+	bson_iter_t iter;
+	mongoc_read_concern_t *new_rc;
+	const mongoc_read_concern_t *old_rc;
+
+	if (!(old_rc = mongoc_client_get_read_concern(client))) {
+		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "Client does not have a read concern");
+
+		return false;
+	}
+
+	/* Return early if there are no options to apply */
+	if (bson_empty0(options)) {
+		return true;
+	}
+
+	if (!bson_iter_init_find_case(&iter, options, "readconcernlevel")) {
+		return true;
+	}
+
+	new_rc = mongoc_read_concern_copy(old_rc);
+
+	if (bson_iter_init_find_case(&iter, options, "readconcernlevel") && BSON_ITER_HOLDS_UTF8(&iter)) {
+		const char *str = bson_iter_utf8(&iter, NULL);
+
+		mongoc_read_concern_set_level(new_rc, str);
+	}
+
+	mongoc_client_set_read_concern(client, new_rc);
+	mongoc_read_concern_destroy(new_rc);
+
+	return true;
+} /* }}} */
+
 static bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
@@ -1956,7 +1991,8 @@ bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 		return false;
 	}
 
-	if (!php_phongo_apply_rp_options_to_client(manager->client, bson_options TSRMLS_CC) ||
+	if (!php_phongo_apply_rc_options_to_client(manager->client, bson_options TSRMLS_CC) ||
+	    !php_phongo_apply_rp_options_to_client(manager->client, bson_options TSRMLS_CC) ||
 	    !php_phongo_apply_wc_options_to_client(manager->client, bson_options TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		return false;
