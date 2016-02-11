@@ -1540,16 +1540,6 @@ static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options
 			else if (mongoc_uri_option_is_utf8(key) && BSON_ITER_HOLDS_UTF8(&iter)) {
 				mongoc_uri_set_option_as_utf8(uri, key, bson_iter_utf8 (&iter, NULL));
 			}
-			else if (BSON_ITER_HOLDS_ARRAY(&iter) && !strcasecmp(key, "hosts")) {
-				bson_iter_t sub;
-
-				bson_iter_recurse(&iter, &sub);
-				while (bson_iter_next (&sub)) {
-					if (BSON_ITER_HOLDS_UTF8(&sub)) {
-						mongoc_uri_parse_host(uri, bson_iter_utf8(&sub, NULL));
-					}
-				}
-			}
 			else if (BSON_ITER_HOLDS_UTF8(&iter)) {
 				const char *value = bson_iter_utf8 (&iter, NULL);
 
