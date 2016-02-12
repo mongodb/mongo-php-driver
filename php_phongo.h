@@ -110,6 +110,7 @@ void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const ch
 # endif
 #endif
 ;
+void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC);
 
 PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
 

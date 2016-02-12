@@ -289,7 +289,7 @@ PHP_METHOD(Manager, selectServer)
 			return;
 		}
 
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", error.message);
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 	}
 }
 /* }}} */
