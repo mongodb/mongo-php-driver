@@ -26,9 +26,9 @@ echo throws(function() use ($manager, $bulk) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\RuntimeException
-No suitable servers found (`serverselectiontryonce` set): [Failed connecting to 'invalid.host:27017': php_network_getaddresses: getaddrinfo failed: Name or service not known]
+No suitable servers found (`serverselectiontryonce` set): %s
 OK: Got MongoDB\Driver\Exception\RuntimeException
-No suitable servers found (`serverselectiontryonce` set): [Failed connecting to 'localhost:54321': Connection refused]
+No suitable servers found (`serverselectiontryonce` set): %s
 ===DONE===
