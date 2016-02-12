@@ -618,6 +618,12 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 	if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error;
 
+		/* Check for connection related exceptions */
+		if (EG(exception)) {
+			mongoc_cursor_destroy(cursor);
+			return false;
+		}
+
 		/* Could simply be no docs, which is not an error */
 		if (mongoc_cursor_error(cursor, &error)) {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
@@ -651,6 +657,12 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 
 	if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error;
+
+		/* Check for connection related exceptions */
+		if (EG(exception)) {
+			mongoc_cursor_destroy(cursor);
+			return false;
+		}
 
 		if (mongoc_cursor_error(cursor, &error)) {
 			mongoc_cursor_destroy(cursor);
