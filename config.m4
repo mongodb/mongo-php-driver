@@ -308,13 +308,13 @@ PHP_ARG_WITH(libbson, whether to use system libbson,
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
-      if $PKG_CONFIG libbson-1.0 --atleast-version 1.3.0; then
+      if $PKG_CONFIG libbson-1.0 --atleast-version 1.3.3; then
         LIBBSON_INC=`$PKG_CONFIG libbson-1.0 --cflags`
         LIBBSON_LIB=`$PKG_CONFIG libbson-1.0 --libs`
         LIBBSON_VER=`$PKG_CONFIG libbson-1.0 --modversion`
         AC_MSG_RESULT(version $LIBBSON_VER found)
       else
-        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.3.0)
+        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.3.3)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libbson must be installed)
@@ -340,7 +340,7 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0 && $PKG_CONFIG --exists libmongoc-priv; then
-      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.3.0; then
+      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.3.3; then
         LIBMONGOC_INC=`$PKG_CONFIG libmongoc-priv --cflags`
         LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-priv --libs`
         LIBMONGOC_VER=`$PKG_CONFIG libmongoc-priv --modversion`
@@ -348,7 +348,7 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
         CFLAGS="$CFLAGS -DMONGOC_I_AM_A_DRIVER"
 
       else
-        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.3.0)
+        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.3.3)
       fi
     else
       AC_MSG_ERROR(pkgconfig and mongoc must be installed)
