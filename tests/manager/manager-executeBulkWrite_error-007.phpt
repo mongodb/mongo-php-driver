@@ -14,21 +14,21 @@ $manager = new MongoDB\Driver\Manager('mongodb://invalid.host:27017', ['serverSe
 
 echo throws(function() use ($manager, $bulk) {
     $manager->executeBulkWrite(NS, $bulk);
-}, 'MongoDB\Driver\Exception\RuntimeException'), "\n";
+}, 'MongoDB\Driver\Exception\ConnectionTimeoutException'), "\n";
 
 // Valid host refuses connection
 $manager = new MongoDB\Driver\Manager('mongodb://localhost:54321', ['serverSelectionTimeoutMS' => 1]);
 
 echo throws(function() use ($manager, $bulk) {
     $manager->executeBulkWrite(NS, $bulk);
-}, 'MongoDB\Driver\Exception\RuntimeException'), "\n";
+}, 'MongoDB\Driver\Exception\ConnectionTimeoutException'), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got MongoDB\Driver\Exception\RuntimeException
+OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
 No suitable servers found (`serverselectiontryonce` set): %s
-OK: Got MongoDB\Driver\Exception\RuntimeException
+OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
 No suitable servers found (`serverselectiontryonce` set): %s
 ===DONE===

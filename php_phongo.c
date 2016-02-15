@@ -121,6 +121,7 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 		case 50: /* ExceededTimeLimit */
 			return php_phongo_executiontimeoutexception_ce;
 		case MONGOC_ERROR_STREAM_SOCKET:
+		case MONGOC_ERROR_SERVER_SELECTION_FAILURE:
 			return php_phongo_connectiontimeoutexception_ce;
 		case MONGOC_ERROR_CLIENT_AUTHENTICATE:
 			return php_phongo_authenticationexception_ce;
