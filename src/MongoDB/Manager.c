@@ -284,6 +284,11 @@ PHP_METHOD(Manager, selectServer)
 		phongo_server_init(return_value, intern->client, selected_server->id TSRMLS_CC);
 		mongoc_server_description_destroy(selected_server);
 	} else {
+		/* Check for connection related exceptions */
+		if (EG(exception)) {
+			return;
+		}
+
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", error.message);
 	}
 }
