@@ -20,8 +20,6 @@ var_dump($manager);
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\Manager)#%d (%d) {
-  ["request_id"]=>
-  int(%d)
   ["uri"]=>
   string(%d) "mongodb://%s"
   ["cluster"]=>
@@ -56,8 +54,6 @@ object(MongoDB\Driver\Manager)#%d (%d) {
   }
 }
 object(MongoDB\Driver\Manager)#%d (%d) {
-  ["request_id"]=>
-  int(%d)
   ["uri"]=>
   string(%d) "mongodb://%s"
   ["cluster"]=>
