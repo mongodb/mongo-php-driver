@@ -55,24 +55,25 @@ $jonpall_id = $bulk->insert($jonpall);
  *  #1 (array|object): search criteria to select the document(s) for updating
  *  #2 (array|object): replacement document or atomic operations to apply
  *  #3 (array): update options
- *    * limit (integer): Updates all matching documents when 0 (false).
- *      Otherwise, only the first matching document is updated.
+ *    * multi (boolean): Updates all matching documents when true; otherwise,
+ *      only the first matching document is updated. Defaults to false.
  *    * upsert (boolean): If there is no matching document, create a new
- *      document from $filter and $update. */
+ *      document from the first two arguments. Defaults to false.
+ */
 $bulk->update(
     ["_id" => $hayley_id],
     ['$set' => ["citizen" => "Iceland"]],
-    ["limit" => 1, "upsert" => false]
+    ["multi" => false, "upsert" => false]
 );
 $bulk->update(
     ["citizen" => "Iceland"],
     ['$set' => ["viking" => true]],
-    ["limit" => 0, "upsert" => false]
+    ["multi" => true, "upsert" => false]
 );
 $bulk->update(
     ["name" => "Chuck Norris"],
     ['$set' => ["viking" => false]],
-    ["limit" => 1, "upsert" => true]
+    ["multi" => false, "upsert" => true]
 ];
 
 ?>
