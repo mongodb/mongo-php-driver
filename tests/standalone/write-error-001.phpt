@@ -17,7 +17,7 @@ $w = 2;
 $wtimeout = 1000;
 $writeConcern = new \MongoDB\Driver\WriteConcern($w, $wtimeout);
 throws(function() use($bulk, $writeConcern, $manager) {
-    $result = $manager->executeBulkWrite("db.collection", $bulk, $writeConcern);
+    $result = $manager->executeBulkWrite(NS, $bulk, $writeConcern);
 }, "MongoDB\Driver\Exception\ConnectionException");
 
 ?>

@@ -105,7 +105,6 @@ PHP_METHOD(BulkWrite, insert)
 	if (return_value_used) {
 		bson_flags |= PHONGO_BSON_RETURN_ID;
 	}
-	bson_flags |= PHONGO_BSON_ADD_ODS|PHONGO_BSON_ADD_CHILD_ODS;
 
 	bson = bson_new();
 	phongo_zval_to_bson(document, bson_flags, bson, &bson_out TSRMLS_CC);

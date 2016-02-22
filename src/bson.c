@@ -877,13 +877,11 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 #endif
 				bson_append_document_begin(bson, key, key_len, &child);
 				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce TSRMLS_CC)) {
-					if (flags & PHONGO_BSON_ADD_CHILD_ODS) {
 #if PHP_VERSION_ID >= 70000
-						bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name->val, Z_OBJCE_P(object)->name->len);
+					bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name->val, Z_OBJCE_P(object)->name->len);
 #else
-						bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
+					bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(object)->name, strlen(Z_OBJCE_P(object)->name));
 #endif
-					}
 				}
 #if PHP_VERSION_ID >= 70000
 				phongo_zval_to_bson(&obj_data, flags, &child, NULL TSRMLS_CC);
@@ -1161,15 +1159,13 @@ PHONGO_API void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, b
 #endif
 
 				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce TSRMLS_CC)) {
-					if (flags & PHONGO_BSON_ADD_ODS) {
 #if PHP_VERSION_ID >= 70000
-						bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name->val, Z_OBJCE_P(data)->name->len);
-						zend_hash_str_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME)-1);
+					bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name->val, Z_OBJCE_P(data)->name->len);
+					zend_hash_str_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME)-1);
 #else
-						bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
-						zend_hash_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME));
+					bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
+					zend_hash_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME));
 #endif
-					}
 				}
 
 				break;
@@ -1459,7 +1455,7 @@ PHP_FUNCTION(fromPHP)
 	}
 
 	bson = bson_new();
-	phongo_zval_to_bson(data, PHONGO_BSON_ADD_ODS|PHONGO_BSON_ADD_CHILD_ODS, bson, NULL TSRMLS_CC);
+	phongo_zval_to_bson(data, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 
 	PHONGO_RETVAL_STRINGL((const char *) bson_get_data(bson), bson->len);
 	bson_destroy(bson);

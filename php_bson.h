@@ -39,9 +39,7 @@
 typedef enum {
 	PHONGO_BSON_NONE      = 0x00,
 	PHONGO_BSON_ADD_ID    = 0x01,
-	PHONGO_BSON_RETURN_ID = 0x02,
-	PHONGO_BSON_ADD_ODS   = 0x04,
-	PHONGO_BSON_ADD_CHILD_ODS = 0x08
+	PHONGO_BSON_RETURN_ID = 0x02
 } php_phongo_bson_flags_t;
 
 typedef enum {
