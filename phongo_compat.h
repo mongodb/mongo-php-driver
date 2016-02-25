@@ -187,7 +187,7 @@
 # define ADD_ASSOC_INT64(zval, key, value) add_assoc_long(zval, key, value)
 #elif SIZEOF_PHONGO_LONG == 4
 # define ADD_INDEX_INT64(zval, index, value) \
-    if (value > LONG_MAX || value < LONG_MIN) { \
+    if (value > INT32_MAX || value < INT32_MIN) { \
         char *tmp; \
         int tmp_len; \
         mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
@@ -198,7 +198,7 @@
         add_index_long(zval, index, val); \
     }
 # define ADD_ASSOC_INT64(zval, key, value) \
-    if (value > LONG_MAX || value < LONG_MIN) { \
+    if (value > INT32_MAX || value < INT32_MIN) { \
         char *tmp; \
         int tmp_len; \
         mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
