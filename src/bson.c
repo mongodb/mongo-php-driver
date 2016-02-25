@@ -41,10 +41,6 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
-
-#define BSON_APPEND_INT32(b,key,val) \
-	bson_append_int32 (b, key, (int) strlen (key), val)
-
 #if SIZEOF_LONG == 8
 #	define BSON_APPEND_INT(b, key, keylen, val) \
 	if (val > INT_MAX || val < INT_MIN) { \
