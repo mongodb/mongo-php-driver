@@ -92,34 +92,6 @@
 #  define ARG_UNUSED
 #endif
 
-#if SIZEOF_LONG == 4
-# define ADD_INDEX_INT64(zval, index, value) \
-	if (value > LONG_MAX || value < LONG_MIN) { \
-		char *tmp; \
-		int tmp_len; \
-		mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
-		tmp_len = spprintf(&tmp, 0, "%lld", value); \
-		ADD_INDEX_STRINGL(zval, index, tmp, tmp_len); \
-		efree(tmp); \
-	} else { \
-		add_index_long(zval, index, val); \
-	}
-# define ADD_ASSOC_INT64(zval, key, value) \
-	if (value > LONG_MAX || value < LONG_MIN) { \
-		char *tmp; \
-		int tmp_len; \
-		mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
-		tmp_len = spprintf(&tmp, 0, "%lld", value); \
-		ADD_ASSOC_STRING_EX(zval, key, strlen(key), tmp, tmp_len); \
-		efree(tmp); \
-	} else { \
-		add_assoc_long(zval, key, value); \
-	}
-#else
-# define ADD_INDEX_INT64(zval, index, value) add_index_long(zval, index, value)
-# define ADD_ASSOC_INT64(zval, key, value) add_assoc_long(zval, key, value);
-#endif
-
 #ifdef HAVE_ATOLL
 # define STRTOLL(s) atoll(s)
 #else
@@ -151,6 +123,8 @@
 # define phongo_char zend_string
 # define phongo_char_pdup(str) pestrdup(filename->val, 1)
 # define phongo_char_free(str) zend_string_release(str)
+# define phongo_long zend_long
+# define SIZEOF_PHONGO_LONG SIZEOF_ZEND_LONG
 # define phongo_str(str) str->val
 # define phongo_create_object_retval zend_object*
 # define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t *)ecalloc(1, sizeof(_obj_t)+zend_object_properties_size(_class_type))
@@ -178,6 +152,8 @@
 # define phongo_char char
 # define phongo_char_pdup(str) pestrdup(filename, 1)
 # define phongo_char_free(str) _efree(str ZEND_FILE_LINE_CC ZEND_FILE_LINE_CC)
+# define phongo_long long
+# define SIZEOF_PHONGO_LONG SIZEOF_LONG
 # define phongo_str(str) str
 # define phongo_create_object_retval zend_object_value
 # define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t *)ecalloc(1, sizeof(_obj_t))
@@ -206,6 +182,35 @@
 # define PHP_STREAM_CONTEXT(stream) ((php_stream_context*) (stream)->context)
 #endif
 
+#if SIZEOF_PHONGO_LONG == 8
+# define ADD_INDEX_INT64(zval, index, value) add_index_long(zval, index, value)
+# define ADD_ASSOC_INT64(zval, key, value) add_assoc_long(zval, key, value)
+#elif SIZEOF_PHONGO_LONG == 4
+# define ADD_INDEX_INT64(zval, index, value) \
+    if (value > LONG_MAX || value < LONG_MIN) { \
+        char *tmp; \
+        int tmp_len; \
+        mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
+        tmp_len = spprintf(&tmp, 0, "%lld", value); \
+        ADD_INDEX_STRINGL(zval, index, tmp, tmp_len); \
+        efree(tmp); \
+    } else { \
+        add_index_long(zval, index, val); \
+    }
+# define ADD_ASSOC_INT64(zval, key, value) \
+    if (value > LONG_MAX || value < LONG_MIN) { \
+        char *tmp; \
+        int tmp_len; \
+        mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
+        tmp_len = spprintf(&tmp, 0, "%lld", value); \
+        ADD_ASSOC_STRING_EX(zval, key, strlen(key), tmp, tmp_len); \
+        efree(tmp); \
+    } else { \
+        add_assoc_long(zval, key, value); \
+    }
+#else
+# error Unsupported architecture (integers are neither 32-bit nor 64-bit)
+#endif
 
 void *x509_from_zval(zval *zval TSRMLS_DC);
 void phongo_add_exception_prop(const char *prop, int prop_len, zval *value TSRMLS_DC);

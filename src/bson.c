@@ -41,16 +41,18 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
-#if SIZEOF_LONG == 8
-#	define BSON_APPEND_INT(b, key, keylen, val) \
+#if SIZEOF_PHONGO_LONG == 8
+# define BSON_APPEND_INT(b, key, keylen, val) \
 	if (val > INT_MAX || val < INT_MIN) { \
 		bson_append_int64(b, key, keylen, val); \
 	} else { \
 		bson_append_int32(b, key, keylen, val); \
 	}
-#elif SIZEOF_LONG == 4
-#	define BSON_APPEND_INT(b, key, keylen, val) \
-	bson_append_int32(b, key, keylen, val);
+#elif SIZEOF_PHONGO_LONG == 4
+# define BSON_APPEND_INT(b, key, keylen, val) \
+	bson_append_int32(b, key, keylen, val)
+#else
+# error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif
 
 #undef MONGOC_LOG_DOMAIN
