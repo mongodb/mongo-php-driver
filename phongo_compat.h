@@ -110,7 +110,7 @@
 		int tmp_len; \
 		mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
 		tmp_len = spprintf(&tmp, 0, "%lld", value); \
-		ADD_ASSOC_STRINGL(zval, key, tmp, tmp_len); \
+		ADD_ASSOC_STRING_EX(zval, key, strlen(key), tmp, tmp_len); \
 		efree(tmp); \
 	} else { \
 		add_assoc_long(zval, key, value); \
