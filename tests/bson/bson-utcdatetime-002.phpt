@@ -1,7 +1,6 @@
 --TEST--
-BSON BSON\UTCDateTime debug handler (32-bit)
+BSON BSON\UTCDateTime debug handler
 --SKIPIF--
-<?php if (4 !== PHP_INT_SIZE) { die('skip Only for 32-bit platform'); } ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
@@ -18,6 +17,6 @@ var_dump($utcdatetime);
 --EXPECTF--
 object(%SBSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
-  string(13) "1416445411987"
+  %rint\(|string\(13\) "|%r1416445411987%r"|\)%r
 }
 ===DONE===
