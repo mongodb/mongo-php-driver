@@ -142,7 +142,7 @@ int php_phongo_binary_get_data(zval *object, char **data TSRMLS_DC)
 	*data = intern->data;
 	return intern->data_len;
 }
-int php_phongo_binary_get_type(zval *object TSRMLS_DC)
+uint8_t php_phongo_binary_get_type(zval *object TSRMLS_DC)
 {
 	php_phongo_binary_t *intern;
 

@@ -2080,7 +2080,7 @@ void php_phongo_new_binary_from_binary_and_type(zval *object, const char *data, 
 	intern = Z_BINARY_OBJ_P(object);
 	intern->data = estrndup(data, data_len);
 	intern->data_len = data_len;
-	intern->type = type;
+	intern->type = (uint8_t) type;
 } /* }}} */
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC) /* {{{ */
 {

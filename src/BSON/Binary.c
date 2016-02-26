@@ -54,7 +54,7 @@ PHP_METHOD(Binary, __construct)
 	zend_error_handling     error_handling;
 	char                   *data;
 	phongo_zpp_char_len     data_len;
-	long                    type;
+	phongo_long             type;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -66,9 +66,14 @@ PHP_METHOD(Binary, __construct)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	if (type < 0 || type > UINT8_MAX) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected type to be an unsigned 8-bit integer, %" PHONGO_LONG_FORMAT " given", type);
+		return;
+	}
+
 	intern->data = estrndup(data, data_len);
 	intern->data_len = data_len;
-	intern->type = type;
+	intern->type = (uint8_t) type;
 }
 /* }}} */
 /* {{{ proto string Binary::getData()
