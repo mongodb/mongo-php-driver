@@ -54,7 +54,7 @@ PHP_METHOD(WriteConcern, __construct)
 	php_phongo_writeconcern_t *intern;
 	zend_error_handling       error_handling;
 	zval                     *w, *journal;
-	long                      wtimeout = 0;
+	phongo_long               wtimeout = 0;
 	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
@@ -99,7 +99,12 @@ PHP_METHOD(WriteConcern, __construct)
 			/* fallthrough */
 		case 2:
 			if (wtimeout < 0) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected wtimeout to be >= 0, %ld given", wtimeout);
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected wtimeout to be >= 0, %" PHONGO_LONG_FORMAT " given", wtimeout);
+				return;
+			}
+
+			if (wtimeout > INT32_MAX) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected wtimeout to be <= %" PRId32 ", %" PHONGO_LONG_FORMAT " given", INT32_MAX, wtimeout);
 				return;
 			}
 
