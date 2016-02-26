@@ -93,7 +93,7 @@ int64_t php_phongo_utcdatetime_get_milliseconds(zval *object TSRMLS_DC)
 
 	return intern->milliseconds;
 }
-int32_t php_phongo_timestamp_get_increment(zval *object TSRMLS_DC)
+uint32_t php_phongo_timestamp_get_increment(zval *object TSRMLS_DC)
 {
 	php_phongo_timestamp_t     *intern;
 
@@ -101,7 +101,7 @@ int32_t php_phongo_timestamp_get_increment(zval *object TSRMLS_DC)
 
 	return intern->increment;
 }
-int32_t php_phongo_timestamp_get_timestamp(zval *object TSRMLS_DC)
+uint32_t php_phongo_timestamp_get_timestamp(zval *object TSRMLS_DC)
 {
 	php_phongo_timestamp_t     *intern;
 

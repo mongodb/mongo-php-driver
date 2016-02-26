@@ -2044,7 +2044,7 @@ void php_phongo_new_datetime_from_utcdatetime(zval *object, int64_t milliseconds
 	efree(sec);
 	datetime_obj->time->f = milliseconds % 1000;
 } /* }}} */
-void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, int32_t increment, int32_t timestamp TSRMLS_DC) /* {{{ */
+void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, uint32_t increment, uint32_t timestamp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_timestamp_t     *intern;
 

@@ -155,8 +155,8 @@ typedef struct {
 	zend_object              std;
 } php_phongo_regex_t;
 typedef struct {
-	int32_t                  increment;
-	int32_t                  timestamp;
+	uint32_t                 increment;
+	uint32_t                 timestamp;
 	zend_object              std;
 } php_phongo_timestamp_t;
 typedef struct {
