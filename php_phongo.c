@@ -2044,7 +2044,7 @@ void php_phongo_new_datetime_from_utcdatetime(zval *object, int64_t milliseconds
 	efree(sec);
 	datetime_obj->time->f = milliseconds % 1000;
 } /* }}} */
-void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, int32_t increment, int32_t timestamp TSRMLS_DC) /* {{{ */
+void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, uint32_t increment, uint32_t timestamp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_timestamp_t     *intern;
 
@@ -2080,7 +2080,7 @@ void php_phongo_new_binary_from_binary_and_type(zval *object, const char *data, 
 	intern = Z_BINARY_OBJ_P(object);
 	intern->data = estrndup(data, data_len);
 	intern->data_len = data_len;
-	intern->type = type;
+	intern->type = (uint8_t) type;
 } /* }}} */
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC) /* {{{ */
 {

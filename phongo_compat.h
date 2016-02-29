@@ -124,6 +124,13 @@
 # define phongo_char_pdup(str) pestrdup(filename->val, 1)
 # define phongo_char_free(str) zend_string_release(str)
 # define phongo_long zend_long
+#if SIZEOF_ZEND_LONG == 8
+#  define PHONGO_LONG_FORMAT PRId64
+#elif SIZEOF_ZEND_LONG == 4
+#  define PHONGO_LONG_FORMAT PRId32
+#else
+#  error Unsupported architecture (integers are neither 32-bit nor 64-bit)
+#endif
 # define SIZEOF_PHONGO_LONG SIZEOF_ZEND_LONG
 # define phongo_str(str) str->val
 # define phongo_create_object_retval zend_object*
@@ -153,6 +160,7 @@
 # define phongo_char_pdup(str) pestrdup(filename, 1)
 # define phongo_char_free(str) _efree(str ZEND_FILE_LINE_CC ZEND_FILE_LINE_CC)
 # define phongo_long long
+# define PHONGO_LONG_FORMAT "ld"
 # define SIZEOF_PHONGO_LONG SIZEOF_LONG
 # define phongo_str(str) str
 # define phongo_create_object_retval zend_object_value

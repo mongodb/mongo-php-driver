@@ -52,8 +52,8 @@ PHP_METHOD(Timestamp, __construct)
 {
 	php_phongo_timestamp_t    *intern;
 	zend_error_handling       error_handling;
-	long                      increment;
-	long                      timestamp;
+	phongo_long               increment;
+	phongo_long               timestamp;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -64,6 +64,16 @@ PHP_METHOD(Timestamp, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	if (increment < 0 || increment > UINT32_MAX) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected increment to be an unsigned 32-bit integer, %" PHONGO_LONG_FORMAT " given", increment);
+		return;
+	}
+
+	if (timestamp < 0 || timestamp > UINT32_MAX) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected timestamp to be an unsigned 32-bit integer, %" PHONGO_LONG_FORMAT " given", timestamp);
+		return;
+	}
 
 	intern->increment = increment;
 	intern->timestamp = timestamp;
@@ -84,7 +94,7 @@ PHP_METHOD(Timestamp, __toString)
 		return;
 	}
 
-	retval_len = spprintf(&retval, 0, "[%d:%d]", intern->increment, intern->timestamp);
+	retval_len = spprintf(&retval, 0, "[%" PRIu32 ":%" PRIu32 "]", intern->increment, intern->timestamp);
 	PHONGO_RETVAL_STRINGL(retval, retval_len);
 	efree(retval);
 }
