@@ -55,7 +55,7 @@ PHP_METHOD(UTCDateTime, __construct)
 	long                      milliseconds;
 #if SIZEOF_LONG == 4
 	char                        *s_milliseconds;
-	int                          s_milliseconds_len;
+	int 	                     s_milliseconds_len;
 #endif
 
 
