@@ -522,6 +522,56 @@ mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
 	return mongoc_bulk_operation_new(ordered);
 } /* }}} */
 
+static void phongo_bulk_write_error_add_message(char **tmp_msg, bson_t *errors)
+{
+	bson_iter_t iter;
+
+	bson_iter_init(&iter, errors);
+
+	while (bson_iter_next(&iter)) {
+		bson_t cbson;
+		uint32_t len;
+		const uint8_t *data;
+		bson_iter_t inner_iter;
+
+		if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+			continue;
+		}
+
+		bson_iter_document(&iter, &len, &data);
+
+		if (!bson_init_static(&cbson, data, len)) {
+			continue;
+		}
+
+		if (bson_iter_init_find(&inner_iter, &cbson, "errmsg") && BSON_ITER_HOLDS_UTF8(&inner_iter)) {
+			char *tmp_errmsg = bson_iter_dup_utf8(&inner_iter, NULL);
+
+			*tmp_msg = erealloc(*tmp_msg, strlen(*tmp_msg) + strlen(tmp_errmsg) + 5);
+			strncpy(*tmp_msg + strlen(*tmp_msg), " :: ", 5);
+			strncpy(*tmp_msg + strlen(*tmp_msg), tmp_errmsg, strlen(tmp_errmsg) + 1);
+			efree(tmp_errmsg);
+		}
+	}
+}
+
+static char* phongo_assemble_bulk_write_error(mongoc_write_result_t *write_result)
+{
+	char *tmp_msg = emalloc(sizeof("BulkWrite error"));
+
+	strncpy(tmp_msg, "BulkWrite error", sizeof("BulkWrite error"));
+
+	if (!bson_empty0(&write_result->writeErrors)) {
+		phongo_bulk_write_error_add_message(&tmp_msg, &write_result->writeErrors);
+	}
+
+	if (!bson_empty0(&write_result->writeConcernErrors)) {
+		phongo_bulk_write_error_add_message(&tmp_msg, &write_result->writeConcernErrors);
+	}
+
+	return tmp_msg;
+}
+
 bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc_bulk_operation_t *bulk, const mongoc_write_concern_t *write_concern, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
@@ -576,7 +626,11 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc
 			/* FIXME: Maybe we can look at write_result.error and not pass error at all? */
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "BulkWrite error");
+			char *bulk_error_msg;
+
+			bulk_error_msg = phongo_assemble_bulk_write_error(&writeresult->write_result);
+			phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "%s", bulk_error_msg);
+			efree(bulk_error_msg);
 			phongo_add_exception_prop(ZEND_STRL("writeResult"), return_value TSRMLS_CC);
 		}
 		return false;
