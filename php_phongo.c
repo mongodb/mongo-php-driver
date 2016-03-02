@@ -545,12 +545,12 @@ static void phongo_bulk_write_error_add_message(char **tmp_msg, bson_t *errors)
 		}
 
 		if (bson_iter_init_find(&inner_iter, &cbson, "errmsg") && BSON_ITER_HOLDS_UTF8(&inner_iter)) {
-			char *tmp_errmsg = bson_iter_dup_utf8(&inner_iter, NULL);
+			const char *tmp_errmsg = bson_iter_utf8(&inner_iter, NULL);
+			size_t tmp_errmsg_len = strlen(tmp_errmsg);
 
-			*tmp_msg = erealloc(*tmp_msg, strlen(*tmp_msg) + strlen(tmp_errmsg) + 5);
+			*tmp_msg = erealloc(*tmp_msg, strlen(*tmp_msg) + tmp_errmsg_len + 5);
 			strncpy(*tmp_msg + strlen(*tmp_msg), " :: ", 5);
-			strncpy(*tmp_msg + strlen(*tmp_msg), tmp_errmsg, strlen(tmp_errmsg) + 1);
-			efree(tmp_errmsg);
+			strncpy(*tmp_msg + strlen(*tmp_msg), tmp_errmsg, tmp_errmsg_len + 1);
 		}
 	}
 }
