@@ -1587,6 +1587,8 @@ PHP_FUNCTION(toJSON)
 		bson_free(str);
 	} else {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not read document from BSON reader");
+		bson_reader_destroy(reader);
+		return;
 	}
 
 	if (bson_reader_read(reader, &eof) || !eof) {
