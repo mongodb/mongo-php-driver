@@ -6,8 +6,8 @@ BSON\toJSON(): BSON decoding exceptions
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-/* We can't really test for bson_iter_init() failure, since bson_reader_read()
- * already checks that the buffer is at least 5 bytes.
+/* We can't really test for bson_iter_init() failure within bson_as_json(),
+ * since bson_reader_read() already checks that the buffer is at least 5 bytes.
  */
 $invalidBson = array(
     '',
