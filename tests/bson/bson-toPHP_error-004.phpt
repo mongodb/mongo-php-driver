@@ -9,6 +9,10 @@ require_once __DIR__ . "/../utils/basic.inc";
 $tests = array(
     // Invalid UTF-8 character in root document's field name
     str_replace('INVALID!', "INVALID\xFE", fromPHP(['INVALID!' => 'bar'])),
+    // Invalid UTF-8 character in embedded document's field name
+    str_replace('INVALID!', "INVALID\xFE", fromPHP(['foo' => ['INVALID!' => 'bar']])),
+    // Invalid UTF-8 character in string within array field
+    str_replace('INVALID!', "INVALID\xFE", fromPHP(['foo' => ['INVALID!']])),
     /* Note: we don't use a three-character string in the underflow case, as
      * the 4-byte string length and payload (i.e. three characters + null byte)
      * coincidentally satisfy the expected size for an 8-byte double. We also
@@ -30,6 +34,10 @@ foreach ($tests as $bson) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+OK: Got MongoDB\Driver\Exception\UnexpectedValueException
+Could not convert BSON document to a PHP variable
+OK: Got MongoDB\Driver\Exception\UnexpectedValueException
+Could not convert BSON document to a PHP variable
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Could not convert BSON document to a PHP variable
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException

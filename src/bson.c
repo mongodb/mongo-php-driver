@@ -655,6 +655,7 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 			 * visitor. Free state.zchild, which we just initialized, and return
 			 * true to stop iteration for our parent context. */
 			zval_ptr_dtor(&state.zchild);
+			return true;
 		}
 	}
 
@@ -735,6 +736,7 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 			 * visitor. Free state.zchild, which we just initialized, and return
 			 * true to stop iteration for our parent context. */
 			zval_ptr_dtor(&state.zchild);
+			return true;
 		}
 
 	}
