@@ -1583,6 +1583,13 @@ PHP_FUNCTION(toJSON)
 		char   *str;
 		size_t  str_len;
 		str = bson_as_json(b, &str_len);
+
+		if (!str) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not convert BSON document to a JSON string");
+			bson_reader_destroy(reader);
+			return;
+		}
+
 		PHONGO_RETVAL_STRINGL(str, str_len);
 		bson_free(str);
 	} else {
