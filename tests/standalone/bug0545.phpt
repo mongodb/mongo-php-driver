@@ -1,6 +1,7 @@
 --TEST--
 PHPC-545: Update does not serialize embedded Persistable's __pclass field
 --SKIPIF--
+<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM encodes __pclass last"); ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE)?>
 --FILE--
 <?php
