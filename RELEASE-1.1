@@ -1,3 +1,153 @@
+RELEASE 1.1.3
+-------------
+2016-03-03  Jeremy Mikola  <jmikola@gmail.com>
+	* Skip PHPC-545 test on HHVM due to __pclass encoding order
+
+2016-03-02  Jeremy Mikola  <jmikola@gmail.com>
+	* Improve comment in bson-toJSON_error-001.phpt
+
+2016-03-02  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-613: toJSON() should throw if bson_as_json() fails
+
+2016-03-02  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-615: Return after throwing for bson_reader_read() error
+
+2016-03-02  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-616: Document and array visitors should throw for corrupt BSON
+
+2016-03-02  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-531: Fix double free in corrupt BSON visitor
+
+2016-03-02  Jeremy Mikola  <jmikola@gmail.com>
+	* toPHP() regression tests for bson_reader_read() errors
+
+2016-03-02  Jeremy Mikola  <jmikola@gmail.com>
+	* Prevent duplication and reduce strlen() usage
+
+2016-03-01  Derick Rethans  <github@derickrethans.nl>
+	* Fixed PHPC-506: Use more descriptive messages in WriteExceptions
+
+2016-02-25  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-414: Combine 32-bit and 64-bit UTCDateTime debug handler tests
+
+2016-02-26  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-593: Binary type is an unsigned 8-bit integer
+
+2016-02-26  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-594: Timestamp components are unsigned 32-bit integers
+
+2016-02-26  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-595: Throw exception if wtimeout > INT32_MAX
+
+2016-02-25  Jeremy Mikola  <jmikola@gmail.com>
+	* Use INT32 limit constants instead of INT/LONG
+
+2016-02-25  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-544: Use phongo_long in UTCDateTime ctor
+
+2016-02-25  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-544: Consult SIZEOF_ZEND_LONG for 64-bit integer support
+
+2016-02-25  Jeremy Mikola  <jmikola@gmail.com>
+	* Remove unused macro, which is already defined in libbson
+
+2016-02-25  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-592: ADD_ASSOC_STRINGL() can only be used with string literals
+
+2016-02-29  Jeremy Mikola  <jmikola@gmail.com>
+	* Revert "Merge pull request #241"
+
+2016-02-24  Jeremy Mikola  <jmikola@gmail.com>
+	* wip
+
+2016-02-24  Jeremy Mikola  <jmikola@gmail.com>
+	* Fix whitespace
+
+2016-02-22  Jeremy Mikola  <jmikola@gmail.com>
+	* Fix BulkWrite::update() "multi" option usage in docs
+
+2016-02-12  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-545: Regression test for Peristable bug report
+
+2016-02-09  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-550: Always encode ODS field when serializing Persistable documents
+
+2016-02-09  Jeremy Mikola  <jmikola@gmail.com>
+	* Regression test for executing BulkWrite multiple times
+
+2016-02-10  Jeremy Mikola  <jmikola@gmail.com>
+	* Fix test title
+
+2016-02-10  Jeremy Mikola  <jmikola@gmail.com>
+	* Tests should use and cleanup their own collection
+
+2016-02-12  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-581: Use ConnectionTimeoutException for server selection failures
+
+2016-02-12  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-582: Manager::selectServer() should select exception class based on bson_error_t
+
+2016-02-12  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-553: Relax expected output patterns for HHVM
+
+2016-02-12  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-553: Check for connection exceptions in exec and SS methods
+
+2016-02-04  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-553: Suppress warnings during stream creation
+
+2016-02-12  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-566: Remove request_id from Manager::__debugInfo()
+
+2016-02-12  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-567: Bump config.m4 library deps
+
+2016-02-12  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-567: Upgrade libbson and libmongoc to 1.3.3
+
+2016-02-12  Derick Rethans  <github@derickrethans.nl>
+	* Skip this test on HHVM, as its DateTime class is ancient and behaves differently
+
+2016-02-10  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-523: Parse readconcernlevel in URI options array
+
+2016-02-10  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-563: Remove undocumented Manager "hosts" URI option
+
+2016-02-02  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-539: Include read concern in Query debug output
+
+2016-02-09  Jeremy Mikola  <jmikola@gmail.com>
+	* Regression test for extending final classes
+
+2016-02-09  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-519: Add missing modifiers to final class methods
+
+2016-02-08  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-538: ObjectID should not abort on null ctor arg
+
+2016-02-02  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-515: Test that negative cursor limits return one batch
+
+2016-01-20  Derick Rethans  <github@derickrethans.nl>
+	* Fixed PHPC-543: MongoDB\BSON\UTCDateTime on 32 bit platforms parse argument wrong
+
+2016-02-02  Derick Rethans  <github@derickrethans.nl>
+	* Fixed PHPC-558: Upgrade libmongoc and libbson to 1.3.2
+
+2016-02-02  Jeremy Mikola  <jmikola@gmail.com>
+	* Remove Manager::executeInsert() usage in ODS docs
+
+2016-01-12  Derick Rethans  <github@derickrethans.nl>
+	* Skip and fix test for HHVM with ReadConcerns
+
+2016-01-07  Jeremy Mikola  <jmikola@gmail.com>
+	* Back to -dev
+
+2016-01-07  Jeremy Mikola  <jmikola@gmail.com>
+	* Add 1.1.2 release notes
+
+
 RELEASE 1.1.2
 -------------
 2016-01-07  Jeremy Mikola  <jmikola@gmail.com>
