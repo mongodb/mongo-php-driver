@@ -179,21 +179,9 @@ bool php_phongo_bson_visit_after(const bson_iter_t *iter ARG_UNUSED, const char 
 }
 /* }}} */
 #endif
-void php_phongo_bson_visit_corrupt(const bson_iter_t *iter ARG_UNUSED, void *data) /* {{{ */
+void php_phongo_bson_visit_corrupt(const bson_iter_t *iter ARG_UNUSED, void *data ARG_UNUSED) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
-
 	mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "Corrupt BSON data detected!");
-
-#if PHP_VERSION_ID >= 70000
-	zval_ptr_dtor(retval);
-#else
-	zval_ptr_dtor(&retval);
-#endif
 }
 /* }}} */
 bool php_phongo_bson_visit_double(const bson_iter_t *iter ARG_UNUSED, const char *key, double v_double, void *data) /* {{{ */
@@ -612,7 +600,7 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 		array_init(state.zchild);
 #endif
 
-		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
+		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state) && !child.err_off) {
 			/* If php_phongo_bson_visit_binary() finds an ODM class, it should
 			 * supersede a default type map and named document class. */
 			if (state.odm && state.map.document_type == PHONGO_TYPEMAP_NONE) {
@@ -662,6 +650,12 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 					Z_SET_REFCOUNT_P(state.zchild, 1);
 #endif
 			}
+		} else {
+			/* Iteration stopped prematurely due to corruption or a failed
+			 * visitor. Free state.zchild, which we just initialized, and return
+			 * true to stop iteration for our parent context. */
+			zval_ptr_dtor(&state.zchild);
+			return true;
 		}
 	}
 
@@ -691,7 +685,7 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 		array_init(state.zchild);
 #endif
 
-		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state)) {
+		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state) && !child.err_off) {
 
 			switch(state.map.array_type) {
 				case PHONGO_TYPEMAP_CLASS: {
@@ -737,6 +731,12 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 #endif
 					break;
 			}
+		} else {
+			/* Iteration stopped prematurely due to corruption or a failed
+			 * visitor. Free state.zchild, which we just initialized, and return
+			 * true to stop iteration for our parent context. */
+			zval_ptr_dtor(&state.zchild);
+			return true;
 		}
 
 	}
@@ -1385,7 +1385,15 @@ PHONGO_API int phongo_bson_to_zval_ex(const unsigned char *data, int data_len, p
 #else
 	array_init(state->zchild);
 #endif
-	bson_iter_visit_all(&iter, &php_bson_visitors, state);
+
+	if (bson_iter_visit_all(&iter, &php_bson_visitors, state) || iter.err_off) {
+		/* Iteration stopped prematurely due to corruption or a failed visitor.
+		 * While we free the reader, state->zchild should be left as-is, since
+		 * the calling code may want to zval_ptr_dtor() it. */
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not convert BSON document to a PHP variable");
+		bson_reader_destroy(reader);
+		return 0;
+	}
 
 	/* If php_phongo_bson_visit_binary() finds an ODM class, it should supersede
 	 * a default type map and named root class. */
