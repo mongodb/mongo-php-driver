@@ -67,6 +67,7 @@ PHP_METHOD(ObjectID, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	if (id) {
+		zend_str_tolower(id, id_len);
 		if (bson_oid_is_valid(id, id_len)) {
 			bson_oid_t oid;
 
