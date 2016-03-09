@@ -1206,99 +1206,109 @@ PHONGO_API void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, b
 
 #if PHP_VERSION_ID >= 70000
 	{
-		zend_string *key;
-		zend_ulong num_key;
-		zval *value;
+		zend_string *string_key = NULL;
+		zend_ulong   num_key = 0;
+		zval        *value;
 
-		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, key, value) {
-			if (key) {
-				if (Z_TYPE_P(data) == IS_OBJECT) {
-					zend_string *member = NULL;
-					
-					/* Ignore non-public properties */
-					if (!instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce) &&
-						!is_public_property(Z_OBJCE_P(data), key, &member TSRMLS_CC)) {
-						if (member) {
-							zend_string_release(member);
-						}
-						continue;
-					}
+		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, value) {
+			/* Ensure we're working with a string key */
+			if (!string_key) {
+				string_key = zend_long_to_str(num_key);
+			} else {
+				zend_string_addref(string_key);
+			}
 
-					if (flags & PHONGO_BSON_ADD_ID) {
-						if (!strncmp(member ? ZSTR_VAL(member) : ZSTR_VAL(key), "_id", sizeof("_id")-1)) {
-							flags &= ~PHONGO_BSON_ADD_ID;
-						}
-					}
+			if (Z_TYPE_P(data) == IS_OBJECT) {
+				zend_string *member = NULL;
 
-					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID,
-						member ? ZSTR_VAL(member) : ZSTR_VAL(key),
-						member ? ZSTR_LEN(member) : ZSTR_LEN(key),
-						value TSRMLS_CC);
-
+				/* Ignore non-public properties */
+				if (!instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce) &&
+					!is_public_property(Z_OBJCE_P(data), string_key, &member TSRMLS_CC)) {
 					if (member) {
 						zend_string_release(member);
 					}
-				} else {
-					if (flags & PHONGO_BSON_ADD_ID) {
-						if (!strncmp(ZSTR_VAL(key), "_id", sizeof("_id")-1)) {
-							flags &= ~PHONGO_BSON_ADD_ID;
-						}
+					zend_string_release(string_key);
+					continue;
+				}
+
+				if (flags & PHONGO_BSON_ADD_ID) {
+					if (!strncmp(member ? ZSTR_VAL(member) : ZSTR_VAL(string_key), "_id", sizeof("_id")-1)) {
+						flags &= ~PHONGO_BSON_ADD_ID;
 					}
-					phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, ZSTR_VAL(key), ZSTR_LEN(key), value TSRMLS_CC);
+				}
+
+				phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID,
+					member ? ZSTR_VAL(member) : ZSTR_VAL(string_key),
+					member ? ZSTR_LEN(member) : ZSTR_LEN(string_key),
+					value TSRMLS_CC);
+
+				if (member) {
+					zend_string_release(member);
 				}
 			} else {
-				char          numbuf[32];
-				const char   *skey;
-				unsigned int  skey_len = 0;
-				skey_len = bson_uint32_to_string(num_key, (const char **)&skey, numbuf, sizeof(numbuf));
-				phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, skey, skey_len, value TSRMLS_CC);
+				if (flags & PHONGO_BSON_ADD_ID) {
+					if (!strncmp(ZSTR_VAL(string_key), "_id", sizeof("_id")-1)) {
+						flags &= ~PHONGO_BSON_ADD_ID;
+					}
+				}
+				phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, ZSTR_VAL(string_key), ZSTR_LEN(string_key), value TSRMLS_CC);
 			}
+
+			zend_string_release(string_key);
 		} ZEND_HASH_FOREACH_END();
 	}
 #else
 	zend_hash_internal_pointer_reset_ex(ht_data, &pos);
 	for (;; zend_hash_move_forward_ex(ht_data, &pos)) {
-		unsigned int key_len = 0;
-		uint64_t     index = 0;
-		char         numbuf[32];
-		char        *key = NULL;
-		zval       **entry;
-		int          hash_type = HASH_KEY_NON_EXISTENT;
+		char   *string_key = NULL;
+		uint    string_key_len = 0;
+		ulong   num_key = 0;
+		zval  **value;
+		int     hash_type;
 
-		hash_type = zend_hash_get_current_key_ex(ht_data, &key, &key_len, &index, 0, &pos);
+		hash_type = zend_hash_get_current_key_ex(ht_data, &string_key, &string_key_len, &num_key, 0, &pos);
 
 		if (hash_type == HASH_KEY_NON_EXISTENT) {
 			break;
 		}
 
-		if (zend_hash_get_current_data_ex(ht_data, (void **) &entry, &pos) == FAILURE) {
+		if (zend_hash_get_current_data_ex(ht_data, (void **) &value, &pos) == FAILURE) {
 			break;
 		}
 
 		if (hash_type == HASH_KEY_IS_STRING) {
 			if (ht_data_from_properties) {
 				const char *class_name;
-				zend_unmangle_property_name(key, key_len-1, &class_name, (const char **)&key);
-				key_len = strlen(key);
+				zend_unmangle_property_name(string_key, string_key_len-1, &class_name, (const char **)&string_key);
+				string_key_len = strlen(string_key);
 
 				/* Ignore non-public properties */
-				if (!is_public_property(Z_OBJCE_P(data), key, key_len TSRMLS_CC)) {
+				if (!is_public_property(Z_OBJCE_P(data), string_key, string_key_len TSRMLS_CC)) {
 					continue;
 				}
 			} else {
 				/* Chop off the \0 from string lengths */
-				key_len -= 1;
+				string_key_len -= 1;
 			}
 
 			if (flags & PHONGO_BSON_ADD_ID) {
-				if (!strncmp(key, "_id", sizeof("_id")-1)) {
+				if (!strncmp(string_key, "_id", sizeof("_id")-1)) {
 					flags &= ~PHONGO_BSON_ADD_ID;
 				}
 			}
-		} else {
-			key_len = bson_uint32_to_string(index, (const char **)&key, numbuf, sizeof(numbuf));
 		}
-		phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, key, key_len, *entry TSRMLS_CC);
+
+		/* Ensure we're working with a string key */
+		if (hash_type == HASH_KEY_IS_LONG) {
+			spprintf(&string_key, 0, "%ld", num_key);
+			string_key_len = strlen(string_key);
+		}
+
+		phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, string_key, string_key_len, *value TSRMLS_CC);
+
+		if (hash_type == HASH_KEY_IS_LONG) {
+			efree(string_key);
+		}
 	}
 #endif
 
