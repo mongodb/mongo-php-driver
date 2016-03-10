@@ -525,15 +525,12 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 		zval write_concern;
 
 		php_phongo_write_concern_to_zval(&write_concern, intern->write_concern);
+		ADD_ASSOC_ZVAL_EX(&retval, "writeConcern", &write_concern);
 #else
 		zval *write_concern = NULL;
 
 		MAKE_STD_ZVAL(write_concern);
 		php_phongo_write_concern_to_zval(write_concern, intern->write_concern);
-#endif
-#if PHP_VERSION_ID >= 70000
-		ADD_ASSOC_ZVAL_EX(&retval, "writeConcern", &write_concern);
-#else
 		ADD_ASSOC_ZVAL_EX(&retval, "writeConcern", write_concern);
 #endif
 	} else {
