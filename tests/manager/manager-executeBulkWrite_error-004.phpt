@@ -33,7 +33,7 @@ var_dump(iterator_to_array($cursor));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-BulkWriteException: BulkWrite error :: unknown top level operator: $foo
+BulkWriteException: unknown top level operator: $foo
 
 ===> WriteResult
 server: %s:%d

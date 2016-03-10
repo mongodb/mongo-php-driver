@@ -467,34 +467,18 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 	return true;
 } /* }}} */
 
-php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, mongoc_write_result_t *write_result, mongoc_client_t *client, int server_id TSRMLS_DC) /* {{{ */
+php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, bson_t *reply, mongoc_client_t *client, int server_id TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeresult_t *writeresult;
 
 	object_init_ex(return_value, php_phongo_writeresult_ce);
 
 	writeresult = Z_WRITERESULT_OBJ_P(return_value);
+	writeresult->reply     = bson_copy(reply);
 	writeresult->client    = client;
 	writeresult->server_id = server_id;
 
-	/* Copy write_results or else it'll get destroyed with the bulk destruction */
-#define SCP(field) writeresult->write_result.field = write_result->field
-	SCP(omit_nModified);
-	SCP(nInserted);
-	SCP(nMatched);
-	SCP(nModified);
-	SCP(nRemoved);
-	SCP(nUpserted);
-
-	bson_copy_to(&write_result->upserted,           &writeresult->write_result.upserted);
-	SCP(n_writeConcernErrors);
-	bson_copy_to(&write_result->writeConcernErrors, &writeresult->write_result.writeConcernErrors);
-	bson_copy_to(&write_result->writeErrors,        &writeresult->write_result.writeErrors);
-	SCP(upsert_append_count);
-#undef SCP
-
 	return writeresult;
-
 } /* }}} */
 /* }}} */
 
@@ -522,62 +506,13 @@ mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
 	return mongoc_bulk_operation_new(ordered);
 } /* }}} */
 
-static void phongo_bulk_write_error_add_message(char **tmp_msg, bson_t *errors)
-{
-	bson_iter_t iter;
-
-	bson_iter_init(&iter, errors);
-
-	while (bson_iter_next(&iter)) {
-		bson_t cbson;
-		uint32_t len;
-		const uint8_t *data;
-		bson_iter_t inner_iter;
-
-		if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
-			continue;
-		}
-
-		bson_iter_document(&iter, &len, &data);
-
-		if (!bson_init_static(&cbson, data, len)) {
-			continue;
-		}
-
-		if (bson_iter_init_find(&inner_iter, &cbson, "errmsg") && BSON_ITER_HOLDS_UTF8(&inner_iter)) {
-			const char *tmp_errmsg = bson_iter_utf8(&inner_iter, NULL);
-			size_t tmp_errmsg_len = strlen(tmp_errmsg);
-
-			*tmp_msg = erealloc(*tmp_msg, strlen(*tmp_msg) + tmp_errmsg_len + 5);
-			strncpy(*tmp_msg + strlen(*tmp_msg), " :: ", 5);
-			strncpy(*tmp_msg + strlen(*tmp_msg), tmp_errmsg, tmp_errmsg_len + 1);
-		}
-	}
-}
-
-static char* phongo_assemble_bulk_write_error(mongoc_write_result_t *write_result)
-{
-	char *tmp_msg = emalloc(sizeof("BulkWrite error"));
-
-	strncpy(tmp_msg, "BulkWrite error", sizeof("BulkWrite error"));
-
-	if (!bson_empty0(&write_result->writeErrors)) {
-		phongo_bulk_write_error_add_message(&tmp_msg, &write_result->writeErrors);
-	}
-
-	if (!bson_empty0(&write_result->writeConcernErrors)) {
-		phongo_bulk_write_error_add_message(&tmp_msg, &write_result->writeConcernErrors);
-	}
-
-	return tmp_msg;
-}
-
 bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc_bulk_operation_t *bulk, const mongoc_write_concern_t *write_concern, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
 	char *dbname;
 	char *collname;
 	int success;
+	bson_t reply = BSON_INITIALIZER;
 	php_phongo_writeresult_t *writeresult;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
@@ -604,38 +539,36 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc
 		mongoc_bulk_operation_set_hint(bulk, server_id);
 	}
 
-	success = mongoc_bulk_operation_execute(bulk, NULL, &error);
+	success = mongoc_bulk_operation_execute(bulk, &reply, &error);
 
 	/* Write succeeded and the user doesn't care for the results */
 	if (success && !return_value_used) {
+		bson_destroy(&reply);
 		return true;
 	}
 
 	/* Check for connection related exceptions */
 	if (EG(exception)) {
+		bson_destroy(&reply);
 		return false;
 	}
 
-	writeresult = phongo_writeresult_init(return_value, &bulk->result, client, bulk->hint TSRMLS_CC);
+	writeresult = phongo_writeresult_init(return_value, &reply, client, bulk->hint TSRMLS_CC);
 	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
 
 	/* The Write failed */
 	if (!success) {
-		/* The Command itself failed */
-		if (bson_empty0(&writeresult->write_result.writeErrors) && bson_empty0(&writeresult->write_result.writeConcernErrors)) {
-			/* FIXME: Maybe we can look at write_result.error and not pass error at all? */
-			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
-		} else {
-			char *bulk_error_msg;
-
-			bulk_error_msg = phongo_assemble_bulk_write_error(&writeresult->write_result);
-			phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "%s", bulk_error_msg);
-			efree(bulk_error_msg);
+		if (error.domain == MONGOC_ERROR_COMMAND || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
+			phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "%s", error.message);
 			phongo_add_exception_prop(ZEND_STRL("writeResult"), return_value TSRMLS_CC);
+		} else {
+			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 		}
-		return false;
 	}
-	return true;
+
+	bson_destroy(&reply);
+
+	return success;
 } /* }}} */
 
 int phongo_execute_query(mongoc_client_t *client, const char *namespace, const php_phongo_query_t *query, const mongoc_read_prefs_t *read_preference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */

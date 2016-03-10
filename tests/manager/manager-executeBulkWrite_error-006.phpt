@@ -28,7 +28,7 @@ try {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-BulkWriteException: BulkWrite error :: Unknown modifier: $foo
+BulkWriteException: Unknown modifier: $foo
 
 ===> WriteResult
 server: %s:%d
