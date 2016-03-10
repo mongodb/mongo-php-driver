@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\ObjectID #001 construction with string argument
+BSON BSON\ObjectID #003 construction with string argument
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
