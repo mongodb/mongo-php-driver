@@ -223,7 +223,9 @@ if test "$MONGODB" != "no"; then
     bson-version-functions.c \
     bson-writer.c
   ";
+
   MONGOC_SOURCES="\
+    mongoc-apm.c \
     mongoc-array.c \
     mongoc-async.c \
     mongoc-async-cmd.c \
@@ -237,16 +239,16 @@ if test "$MONGODB" != "no"; then
     mongoc-counters.c \
     mongoc-cursor.c \
     mongoc-cursor-array.c \
-    mongoc-cursor-transform.c \
     mongoc-cursor-cursorid.c \
+    mongoc-cursor-transform.c \
     mongoc-database.c \
     mongoc-find-and-modify.c \
+    mongoc-host-list.c \
     mongoc-init.c \
     mongoc-gridfs.c \
     mongoc-gridfs-file.c \
     mongoc-gridfs-file-page.c \
     mongoc-gridfs-file-list.c \
-    mongoc-host-list.c \
     mongoc-index.c \
     mongoc-list.c \
     mongoc-log.c \
@@ -258,9 +260,9 @@ if test "$MONGODB" != "no"; then
     mongoc-read-concern.c \
     mongoc-read-prefs.c \
     mongoc-rpc.c \
-    mongoc-set.c \
     mongoc-server-description.c \
     mongoc-server-stream.c \
+    mongoc-set.c \
     mongoc-socket.c \
     mongoc-stream.c \
     mongoc-stream-buffered.c \
@@ -268,8 +270,8 @@ if test "$MONGODB" != "no"; then
     mongoc-stream-gridfs.c \
     mongoc-stream-socket.c \
     mongoc-topology.c \
-    mongoc-topology-scanner.c \
     mongoc-topology-description.c \
+    mongoc-topology-scanner.c \
     mongoc-uri.c \
     mongoc-util.c \
     mongoc-version-functions.c \
@@ -277,15 +279,38 @@ if test "$MONGODB" != "no"; then
     mongoc-write-concern.c
   ";
 
-MONGOC_SOURCES_SSL="\
-    mongoc-rand.c \
-    mongoc-scram.c \
+  MONGOC_SOURCES_CRYPTO="\
+    mongoc-crypto.c \
+    mongoc-scram.c
+  ";
+
+  MONGOC_SOURCES_SSL="\
     mongoc-stream-tls.c \
     mongoc-ssl.c
   ";
 
-MONGOC_SOURCES_SASL=mongoc-sasl.c
+  MONGOC_SOURCES_LIBCRYPTO="\
+    mongoc-crypto-openssl.c \
+    mongoc-rand-openssl.c
+  ";
 
+  MONGOC_SOURCES_OPENSSL="\
+    mongoc-openssl.c \
+    mongoc-stream-tls-openssl.c \
+    mongoc-stream-tls-openssl-bio.c
+  ";
+
+  MONGOC_SOURCES_COMMON_CRYPTO="\
+    mongoc-crypto-common-crypto.c \
+    mongoc-rand-common-crypto.c
+  ";
+
+  MONGOC_SOURCES_SECURE_TRANSPORT="\
+    mongoc-secure-transport.c \
+    mongoc-stream-tls-secure-transport.c
+  ";
+
+  MONGOC_SOURCES_SASL=mongoc-sasl.c
 
   if test "$ext_shared" = "no"; then
     PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_BSON)
