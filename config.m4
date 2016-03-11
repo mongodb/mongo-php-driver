@@ -384,14 +384,26 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
   else
     CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,      [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,  [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL, [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,                  [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_CRYPTO,           [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,              [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_LIBCRYPTO,        [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_OPENSSL,          [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_COMMON_CRYPTO,    [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_TRANSPORT, [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL,             [$STD_CFLAGS], shared_objects_mongodb, yes)
 
 
     PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD)
-    MONGOC_ENABLE_SSL=1
-    AC_SUBST(MONGOC_ENABLE_SSL)
+    AC_SUBST(MONGOC_ENABLE_CRYPTO, 1)
+    AC_SUBST(MONGOC_ENABLE_SSL, 1)
+    AC_SUBST(MONGOC_ENABLE_LIBCRYPTO, 1)
+    AC_SUBST(MONGOC_ENABLE_OPENSSL, 1)
+
+    dnl TODO: Support building with Secure Transport on OSX
+    AC_SUBST(MONGOC_ENABLE_SECURE_TRANSPORT, 0)
+    AC_SUBST(MONGOC_ENABLE_COMMON_CRYPTO, 0)
+
     AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
   fi
 
@@ -443,12 +455,12 @@ if test "$PHP_MONGODB_SASL" != "no"; then
     [
       PHP_ADD_INCLUDE($MONGODB_SASL_DIR)
       PHP_ADD_LIBRARY_WITH_PATH(sasl2, $MONGODB_SASL_DIR/$PHP_LIBDIR, MONGODB_SHARED_LIBADD)
-      MONGOC_ENABLE_SASL=1
-      AC_SUBST(MONGOC_ENABLE_SASL)
+      AC_SUBST(MONGOC_ENABLE_SASL, 1)
     ], [
       if test "$MONGODB_SASL" != "auto"; then
-        AC_MSG_ERROR([MONGO SASL check failed. Please check config.log for more information.])
+        AC_MSG_ERROR([MongoDB SASL check failed. Please check config.log for more information.])
       fi
+      AC_SUBST(MONGOC_ENABLE_SASL, 0)
     ], [
       -L$MONGODB_SASL_DIR/$PHP_LIBDIR
     ])
