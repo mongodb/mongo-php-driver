@@ -42,6 +42,10 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
+#define RETURN_LONG_FROM_BSON_INT32(iter, bson, key) \
+	if (bson_iter_init_find((iter), (bson), (key)) && BSON_ITER_HOLDS_INT32((iter))) { \
+		RETURN_LONG(bson_iter_int32((iter))); \
+	}
 
 PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
@@ -62,9 +66,7 @@ PHP_METHOD(WriteResult, getInsertedCount)
 		return;
 	}
 
-	if (bson_iter_init_find(&iter, intern->reply, "nInserted") && BSON_ITER_HOLDS_INT32(&iter)) {
-		RETURN_LONG(bson_iter_int32(&iter));
-	}
+	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nInserted");
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getMatchedCount()
@@ -82,9 +84,7 @@ PHP_METHOD(WriteResult, getMatchedCount)
 		return;
 	}
 
-	if (bson_iter_init_find(&iter, intern->reply, "nMatched") && BSON_ITER_HOLDS_INT32(&iter)) {
-		RETURN_LONG(bson_iter_int32(&iter));
-	}
+	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nMatched");
 }
 /* }}} */
 /* {{{ proto integer|null WriteResult::getModifiedCount()
@@ -102,9 +102,7 @@ PHP_METHOD(WriteResult, getModifiedCount)
 		return;
 	}
 
-	if (bson_iter_init_find(&iter, intern->reply, "nModified") && BSON_ITER_HOLDS_INT32(&iter)) {
-		RETURN_LONG(bson_iter_int32(&iter));
-	}
+	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nModified");
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getDeletedCount()
@@ -122,9 +120,7 @@ PHP_METHOD(WriteResult, getDeletedCount)
 		return;
 	}
 
-	if (bson_iter_init_find(&iter, intern->reply, "nRemoved") && BSON_ITER_HOLDS_INT32(&iter)) {
-		RETURN_LONG(bson_iter_int32(&iter));
-	}
+	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nRemoved");
 }
 /* }}} */
 /* {{{ proto integer WriteResult::getUpsertedCount()
@@ -142,9 +138,7 @@ PHP_METHOD(WriteResult, getUpsertedCount)
 		return;
 	}
 
-	if (bson_iter_init_find(&iter, intern->reply, "nUpserted") && BSON_ITER_HOLDS_INT32(&iter)) {
-		RETURN_LONG(bson_iter_int32(&iter));
-	}
+	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nUpserted");
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\Server WriteResult::getServer()
@@ -471,35 +465,19 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	*is_temp = 1;
 	array_init_size(&retval, 9);
 
-	if (bson_iter_init_find(&iter, intern->reply, "nInserted") && BSON_ITER_HOLDS_INT32(&iter)) {
-		ADD_ASSOC_LONG_EX(&retval, "nInserted", bson_iter_int32(&iter));
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "nInserted");
+#define SCP(field) \
+	if (bson_iter_init_find(&iter, intern->reply, (field)) && BSON_ITER_HOLDS_INT32(&iter)) { \
+		ADD_ASSOC_LONG_EX(&retval, (field), bson_iter_int32(&iter)); \
+	} else { \
+		ADD_ASSOC_NULL_EX(&retval, (field)); \
 	}
 
-	if (bson_iter_init_find(&iter, intern->reply, "nMatched") && BSON_ITER_HOLDS_INT32(&iter)) {
-		ADD_ASSOC_LONG_EX(&retval, "nMatched", bson_iter_int32(&iter));
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "nMatched");
-	}
-
-	if (bson_iter_init_find(&iter, intern->reply, "nModified") && BSON_ITER_HOLDS_INT32(&iter)) {
-		ADD_ASSOC_LONG_EX(&retval, "nModified", bson_iter_int32(&iter));
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "nModified");
-	}
-
-	if (bson_iter_init_find(&iter, intern->reply, "nRemoved") && BSON_ITER_HOLDS_INT32(&iter)) {
-		ADD_ASSOC_LONG_EX(&retval, "nRemoved", bson_iter_int32(&iter));
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "nRemoved");
-	}
-
-	if (bson_iter_init_find(&iter, intern->reply, "nUpserted") && BSON_ITER_HOLDS_INT32(&iter)) {
-		ADD_ASSOC_LONG_EX(&retval, "nUpserted", bson_iter_int32(&iter));
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "nUpserted");
-	}
+	SCP("nInserted");
+	SCP("nMatched");
+	SCP("nModified");
+	SCP("nRemoved");
+	SCP("nUpserted");
+#undef SCP
 
 	if (bson_iter_init_find(&iter, intern->reply, "upserted") && BSON_ITER_HOLDS_ARRAY(&iter)) {
 		uint32_t len;
