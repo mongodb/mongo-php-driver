@@ -2583,6 +2583,16 @@ PHP_MINFO_FUNCTION(mongodb)
 #else
 	/* Bundled libraries, buildtime = runtime */
 	php_info_print_table_row(2, "libmongoc version", MONGOC_VERSION_S);
+# if HAVE_MONGOC_SSL
+	php_info_print_table_row(2, "libmongoc SSL support", "yes");
+# else
+	php_info_print_table_row(2, "libmongoc SSL support", "no");
+# endif
+# if HAVE_MONGOC_SASL
+	php_info_print_table_row(2, "libmongoc SASL support", "yes");
+# else
+	php_info_print_table_row(2, "libmongoc SASL support", "no");
+# endif
 #endif
 #ifdef HAVE_SYSTEM_LIBBSON
 	php_info_print_table_row(2, "libbson headers version", BSON_VERSION_S);

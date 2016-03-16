@@ -367,6 +367,7 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
     PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD)
     MONGOC_ENABLE_SSL=1
     AC_SUBST(MONGOC_ENABLE_SSL)
+    AC_DEFINE(HAVE_MONGOC_SSL, 1, "Whether SSL is enabled in the bundled libmongoc")
   fi
 
 
@@ -419,6 +420,7 @@ if test "$PHP_MONGODB_SASL" != "no"; then
       PHP_ADD_LIBRARY_WITH_PATH(sasl2, $MONGODB_SASL_DIR/$PHP_LIBDIR, MONGODB_SHARED_LIBADD)
       MONGOC_ENABLE_SASL=1
       AC_SUBST(MONGOC_ENABLE_SASL)
+      AC_DEFINE(HAVE_MONGOC_SASL, 1, "Whether SASL is enabled in the bundled libmongoc")
     ], [
       if test "$MONGODB_SASL" != "auto"; then
         AC_MSG_ERROR([MONGO SASL check failed. Please check config.log for more information.])
