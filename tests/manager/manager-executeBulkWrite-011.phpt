@@ -53,9 +53,9 @@ var_dump(iterator_to_array($cursor));
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\BulkWriteException
-BulkWrite error :: Document failed validation
+Document failed validation
 OK: Got MongoDB\Driver\Exception\BulkWriteException
-BulkWrite error :: Document failed validation
+Document failed validation
 array(3) {
   [0]=>
   object(stdClass)#%d (2) {

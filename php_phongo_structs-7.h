@@ -110,7 +110,7 @@ typedef struct {
 
 typedef struct {
 	mongoc_write_concern_t  *write_concern;
-	mongoc_write_result_t    write_result;
+	bson_t                  *reply;
 	mongoc_client_t         *client;
 	int                      server_id;
 	zend_object              std;

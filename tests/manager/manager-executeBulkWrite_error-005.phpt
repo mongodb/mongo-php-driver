@@ -24,7 +24,7 @@ try {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-BulkWriteException: BulkWrite error :: Document can't have $ prefixed field names: $foo
+BulkWriteException: Document can't have $ prefixed field names: $foo
 
 ===> WriteResult
 server: %s:%d
