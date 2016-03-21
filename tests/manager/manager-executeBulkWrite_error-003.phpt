@@ -29,7 +29,7 @@ var_dump(iterator_to_array($cursor));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-BulkWriteException: BulkWrite error :: Not enough data-bearing nodes
+BulkWriteException: Not enough data-bearing nodes
 
 ===> WriteResult
 server: %s:%d

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\WriteConcern construction
+PHPC-155: WriteConcernError->getInfo() can be scalar
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("REPLICASET"); ?>
 --FILE--

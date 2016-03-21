@@ -111,7 +111,7 @@ typedef struct {
 typedef struct {
 	zend_object              std;
 	mongoc_write_concern_t  *write_concern;
-	mongoc_write_result_t    write_result;
+	bson_t                  *reply;
 	mongoc_client_t         *client;
 	int                      server_id;
 } php_phongo_writeresult_t;
