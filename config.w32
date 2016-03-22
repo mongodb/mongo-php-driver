@@ -25,8 +25,11 @@ if (PHP_MONGODB != "no") {
 
   if (!CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB)) {
 	  WARNING("mongodb libsasl support not enabled, libs not found");
+  } else {
+    AC_DEFINE("HAVE_MONGOC_SASL", 1);
   }
   if (CHECK_LIB("ssleay32.lib", "mongodb", PHP_MONGODB) && CHECK_LIB("libeay32.lib", "mongodb", PHP_MONGODB) && CHECK_HEADER_ADD_INCLUDE("openssl/ssl.h", "CFLAGS_MONGOC")) {
+    AC_DEFINE("HAVE_MONGOC_SSL", 1);
   }
 
   FSO.CopyFile(configure_module_dirname + "/win32/bson-config.h", configure_module_dirname + "/src/libbson/src/bson/bson-config.h", true);

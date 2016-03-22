@@ -23,6 +23,8 @@ mongodb support => enabled
 mongodb version => 1.%d.%d%S
 mongodb stability => %s
 libmongoc version => 1.%s
+libmongoc SSL support => %s
+libmongoc SASL support => %s
 libbson version => 1.%s
 
 Directive => Local Value => Master Value
