@@ -1123,7 +1123,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 	options = mongoc_uri_get_options(uri);
 
-	if (bson_iter_init_find (&iter, options, "connecttimeoutms") && BSON_ITER_HOLDS_INT32 (&iter)) {
+	if (bson_iter_init_find_case (&iter, options, "connecttimeoutms") && BSON_ITER_HOLDS_INT32 (&iter)) {
 		int32_t connecttimeoutms = MONGOC_DEFAULT_CONNECTTIMEOUTMS;
 
 		if (!(connecttimeoutms = bson_iter_int32(&iter))) {
@@ -1134,6 +1134,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 		timeout.tv_usec = (connecttimeoutms % 1000) * 1000;
 
 		timeoutp = &timeout;
+		MONGOC_DEBUG("Applying connectTimeoutMS: %d", connecttimeoutms);
 	}
 
 	spprintf(&uniqid, 0, "%s:%d[%s]", host->host, host->port, mongoc_uri_get_string(uri));
