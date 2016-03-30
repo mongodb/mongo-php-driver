@@ -575,6 +575,7 @@ static const bson_visitor_t php_bson_visitors = {
    php_phongo_bson_visit_maxkey,
    php_phongo_bson_visit_minkey,
    NULL /*php_phongo_bson_visit_unsupported_type*/,
+   NULL /*php_phongo_bson_visit_decimal128*/,
    { NULL }
 };
 

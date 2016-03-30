@@ -533,6 +533,7 @@ dnl }}}
 
   BSON_EXTRA_ALIGN=0
   AC_SUBST(BSON_EXTRA_ALIGN)
+  AC_SUBST(BSON_HAVE_DECIMAL128, 0)
 
   if test "$ac_cv_header_stdbool_h" = "yes"; then
     BSON_HAVE_STDBOOL_H=1
