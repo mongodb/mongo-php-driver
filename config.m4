@@ -27,11 +27,10 @@ int main(void)
   ], [ac_cv_c_bigendian_php=yes], [ac_cv_c_bigendian_php=no], [ac_cv_c_bigendian_php=unknown])
  ])
  if test $ac_cv_c_bigendian_php = yes; then
-    BSON_BYTE_ORDER=4321
+    AC_SUBST(BSON_BYTE_ORDER, 4321)
   else
-    BSON_BYTE_ORDER=1234
+    AC_SUBST(BSON_BYTE_ORDER, 1234)
  fi
- AC_SUBST(BSON_BYTE_ORDER)
 ])
 dnl Borrowed from sapi/fpm/config.m4
 AC_DEFUN([PHP_BSON_CLOCK],
@@ -63,8 +62,7 @@ AC_DEFUN([PHP_BSON_CLOCK],
   fi
 
   if test "$have_clock_gettime" = "yes"; then
-    BSON_HAVE_CLOCK_GETTIME=1
-    AC_SUBST(BSON_HAVE_CLOCK_GETTIME)
+    AC_SUBST(BSON_HAVE_CLOCK_GETTIME, 1)
   fi
 ])
 
@@ -531,30 +529,30 @@ dnl }}}
   PHP_BSON_BIGENDIAN
   AC_HEADER_STDBOOL
 
-  BSON_EXTRA_ALIGN=0
-  AC_SUBST(BSON_EXTRA_ALIGN)
+  AC_SUBST(BSON_EXTRA_ALIGN, 0)
 
   if test "$ac_cv_header_stdbool_h" = "yes"; then
-    BSON_HAVE_STDBOOL_H=1
+    AC_SUBST(BSON_HAVE_STDBOOL_H, 1)
   else
-    BSON_HAVE_STDBOOL_H=0
+    AC_SUBST(BSON_HAVE_STDBOOL_H, 0)
   fi
-  AC_SUBST(BSON_HAVE_STDBOOL_H)
 
-  BSON_OS=1
-  AC_SUBST(BSON_OS)
+  AC_SUBST(BSON_OS, 1)
 
   PHP_BSON_CLOCK
   AC_CHECK_FUNC(strnlen,ac_cv_func_strnlen=yes,ac_cv_func_strnlen=no)
   if test "$ac_cv_func_strnlen" = "yes"; then
-    BSON_HAVE_STRNLEN=1
+    AC_SUBST(BSON_HAVE_STRNLEN, 1)
+  else
+    AC_SUBST(BSON_HAVE_STRNLEN, 0)
   fi
-  AC_SUBST(BSON_HAVE_STRNLEN)
+
   AC_CHECK_FUNC(snprintf,ac_cv_func_snprintf=yes,ac_cv_func_snprintf=no)
   if test "$ac_cv_func_snprintf" = "yes"; then
-    BSON_HAVE_SNPRINTF=1
+    AC_SUBST(BSON_HAVE_SNPRINTF, 1)
+  else
+    AC_SUBST(BSON_HAVE_SNPRINTF, 0)
   fi
-  AC_SUBST(BSON_HAVE_SNPRINTF)
 
   if test "$PHP_LIBMONGOC" == "no"; then
     backup_srcdir=${srcdir}
