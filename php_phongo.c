@@ -1851,7 +1851,7 @@ static bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_
 	/* This may be redundant in light of the last check (unacknowledged w with
 	   journal), but we'll check anyway in case additional validation is
 	   implemented. */
-	if (!_mongoc_write_concern_is_valid(new_wc)) {
+	if (!mongoc_write_concern_is_valid(new_wc)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Write concern is not valid");
 		mongoc_write_concern_destroy(new_wc);
 
