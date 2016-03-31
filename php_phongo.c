@@ -1408,7 +1408,7 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 	ADD_ASSOC_BOOL_EX(retval, "wmajority", mongoc_write_concern_get_wmajority(write_concern));
 	ADD_ASSOC_LONG_EX(retval, "wtimeout", mongoc_write_concern_get_wtimeout(write_concern));
 
-	if (write_concern->journal != MONGOC_WRITE_CONCERN_JOURNAL_DEFAULT) {
+	if (mongoc_write_concern_journal_is_set(write_concern)) {
 		ADD_ASSOC_BOOL_EX(retval, "journal", mongoc_write_concern_get_journal(write_concern));
 	} else {
 		ADD_ASSOC_NULL_EX(retval, "journal");

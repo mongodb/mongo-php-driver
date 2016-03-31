@@ -175,7 +175,7 @@ PHP_METHOD(WriteConcern, getJournal)
 		return;
 	}
 
-	if (intern->write_concern->journal != MONGOC_WRITE_CONCERN_JOURNAL_DEFAULT) {
+	if (mongoc_write_concern_journal_is_set(intern->write_concern)) {
 		RETURN_BOOL(mongoc_write_concern_get_journal(intern->write_concern));
 	}
 
