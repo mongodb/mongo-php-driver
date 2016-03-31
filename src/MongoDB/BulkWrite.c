@@ -336,7 +336,7 @@ HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS
 
 	ADD_ASSOC_BOOL_EX(&retval, "ordered", intern->bulk->flags.ordered);
 	ADD_ASSOC_BOOL_EX(&retval, "executed", intern->bulk->executed);
-	ADD_ASSOC_LONG_EX(&retval, "server_id", intern->bulk->hint);
+	ADD_ASSOC_LONG_EX(&retval, "server_id", mongoc_bulk_operation_get_hint(intern->bulk));
 
 	if (intern->bulk->write_concern) {
 #if PHP_VERSION_ID >= 70000

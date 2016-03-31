@@ -553,7 +553,7 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc
 		return false;
 	}
 
-	writeresult = phongo_writeresult_init(return_value, &reply, client, bulk->hint TSRMLS_CC);
+	writeresult = phongo_writeresult_init(return_value, &reply, client, mongoc_bulk_operation_get_hint(bulk) TSRMLS_CC);
 	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
 
 	/* The Write failed */
