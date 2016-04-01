@@ -601,7 +601,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 	}
 
 	if (server_id > 0) {
-		cursor->hint = server_id;
+		cursor->server_id = server_id;
 	}
 	if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error;
@@ -640,7 +640,7 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 
 	cursor = mongoc_client_command(client, db, MONGOC_QUERY_NONE, 0, 1, 0, command, NULL, read_preference);
 	if (server_id > 0) {
-		cursor->hint = server_id;
+		cursor->server_id = server_id;
 	}
 
 	if (!mongoc_cursor_next(cursor, &doc)) {
