@@ -345,7 +345,7 @@ PHP_METHOD(WriteResult, isAcknowledged)
 	}
 
 
-	RETURN_BOOL(_mongoc_write_concern_needs_gle(intern->write_concern));
+	RETURN_BOOL(mongoc_write_concern_is_acknowledged(intern->write_concern));
 }
 /* }}} */
 

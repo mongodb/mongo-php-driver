@@ -27,11 +27,10 @@ int main(void)
   ], [ac_cv_c_bigendian_php=yes], [ac_cv_c_bigendian_php=no], [ac_cv_c_bigendian_php=unknown])
  ])
  if test $ac_cv_c_bigendian_php = yes; then
-    BSON_BYTE_ORDER=4321
+    AC_SUBST(BSON_BYTE_ORDER, 4321)
   else
-    BSON_BYTE_ORDER=1234
+    AC_SUBST(BSON_BYTE_ORDER, 1234)
  fi
- AC_SUBST(BSON_BYTE_ORDER)
 ])
 dnl Borrowed from sapi/fpm/config.m4
 AC_DEFUN([PHP_BSON_CLOCK],
@@ -63,8 +62,7 @@ AC_DEFUN([PHP_BSON_CLOCK],
   fi
 
   if test "$have_clock_gettime" = "yes"; then
-    BSON_HAVE_CLOCK_GETTIME=1
-    AC_SUBST(BSON_HAVE_CLOCK_GETTIME)
+    AC_SUBST(BSON_HAVE_CLOCK_GETTIME, 1)
   fi
 ])
 
@@ -223,7 +221,9 @@ if test "$MONGODB" != "no"; then
     bson-version-functions.c \
     bson-writer.c
   ";
+
   MONGOC_SOURCES="\
+    mongoc-apm.c \
     mongoc-array.c \
     mongoc-async.c \
     mongoc-async-cmd.c \
@@ -237,16 +237,16 @@ if test "$MONGODB" != "no"; then
     mongoc-counters.c \
     mongoc-cursor.c \
     mongoc-cursor-array.c \
-    mongoc-cursor-transform.c \
     mongoc-cursor-cursorid.c \
+    mongoc-cursor-transform.c \
     mongoc-database.c \
     mongoc-find-and-modify.c \
+    mongoc-host-list.c \
     mongoc-init.c \
     mongoc-gridfs.c \
     mongoc-gridfs-file.c \
     mongoc-gridfs-file-page.c \
     mongoc-gridfs-file-list.c \
-    mongoc-host-list.c \
     mongoc-index.c \
     mongoc-list.c \
     mongoc-log.c \
@@ -258,9 +258,9 @@ if test "$MONGODB" != "no"; then
     mongoc-read-concern.c \
     mongoc-read-prefs.c \
     mongoc-rpc.c \
-    mongoc-set.c \
     mongoc-server-description.c \
     mongoc-server-stream.c \
+    mongoc-set.c \
     mongoc-socket.c \
     mongoc-stream.c \
     mongoc-stream-buffered.c \
@@ -268,8 +268,8 @@ if test "$MONGODB" != "no"; then
     mongoc-stream-gridfs.c \
     mongoc-stream-socket.c \
     mongoc-topology.c \
-    mongoc-topology-scanner.c \
     mongoc-topology-description.c \
+    mongoc-topology-scanner.c \
     mongoc-uri.c \
     mongoc-util.c \
     mongoc-version-functions.c \
@@ -277,15 +277,38 @@ if test "$MONGODB" != "no"; then
     mongoc-write-concern.c
   ";
 
-MONGOC_SOURCES_SSL="\
-    mongoc-rand.c \
-    mongoc-scram.c \
+  MONGOC_SOURCES_CRYPTO="\
+    mongoc-crypto.c \
+    mongoc-scram.c
+  ";
+
+  MONGOC_SOURCES_SSL="\
     mongoc-stream-tls.c \
     mongoc-ssl.c
   ";
 
-MONGOC_SOURCES_SASL=mongoc-sasl.c
+  MONGOC_SOURCES_LIBCRYPTO="\
+    mongoc-crypto-openssl.c \
+    mongoc-rand-openssl.c
+  ";
 
+  MONGOC_SOURCES_OPENSSL="\
+    mongoc-openssl.c \
+    mongoc-stream-tls-openssl.c \
+    mongoc-stream-tls-openssl-bio.c
+  ";
+
+  MONGOC_SOURCES_COMMON_CRYPTO="\
+    mongoc-crypto-common-crypto.c \
+    mongoc-rand-common-crypto.c
+  ";
+
+  MONGOC_SOURCES_SECURE_TRANSPORT="\
+    mongoc-secure-transport.c \
+    mongoc-stream-tls-secure-transport.c
+  ";
+
+  MONGOC_SOURCES_SASL=mongoc-sasl.c
 
   if test "$ext_shared" = "no"; then
     PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_BSON)
@@ -359,14 +382,26 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
   else
     CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,      [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,  [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL, [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,                  [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_CRYPTO,           [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,              [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_LIBCRYPTO,        [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_OPENSSL,          [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_COMMON_CRYPTO,    [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_TRANSPORT, [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL,             [$STD_CFLAGS], shared_objects_mongodb, yes)
 
 
     PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD)
-    MONGOC_ENABLE_SSL=1
-    AC_SUBST(MONGOC_ENABLE_SSL)
+    AC_SUBST(MONGOC_ENABLE_CRYPTO, 1)
+    AC_SUBST(MONGOC_ENABLE_SSL, 1)
+    AC_SUBST(MONGOC_ENABLE_LIBCRYPTO, 1)
+    AC_SUBST(MONGOC_ENABLE_OPENSSL, 1)
+
+    dnl TODO: Support building with Secure Transport on OSX
+    AC_SUBST(MONGOC_ENABLE_SECURE_TRANSPORT, 0)
+    AC_SUBST(MONGOC_ENABLE_COMMON_CRYPTO, 0)
+
     AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
   fi
 
@@ -418,12 +453,12 @@ if test "$PHP_MONGODB_SASL" != "no"; then
     [
       PHP_ADD_INCLUDE($MONGODB_SASL_DIR)
       PHP_ADD_LIBRARY_WITH_PATH(sasl2, $MONGODB_SASL_DIR/$PHP_LIBDIR, MONGODB_SHARED_LIBADD)
-      MONGOC_ENABLE_SASL=1
-      AC_SUBST(MONGOC_ENABLE_SASL)
+      AC_SUBST(MONGOC_ENABLE_SASL, 1)
     ], [
       if test "$MONGODB_SASL" != "auto"; then
-        AC_MSG_ERROR([MONGO SASL check failed. Please check config.log for more information.])
+        AC_MSG_ERROR([MongoDB SASL check failed. Please check config.log for more information.])
       fi
+      AC_SUBST(MONGOC_ENABLE_SASL, 0)
     ], [
       -L$MONGODB_SASL_DIR/$PHP_LIBDIR
     ])
@@ -494,30 +529,31 @@ dnl }}}
   PHP_BSON_BIGENDIAN
   AC_HEADER_STDBOOL
 
-  BSON_EXTRA_ALIGN=0
-  AC_SUBST(BSON_EXTRA_ALIGN)
+  AC_SUBST(BSON_EXTRA_ALIGN, 0)
+  AC_SUBST(BSON_HAVE_DECIMAL128, 0)
 
   if test "$ac_cv_header_stdbool_h" = "yes"; then
-    BSON_HAVE_STDBOOL_H=1
+    AC_SUBST(BSON_HAVE_STDBOOL_H, 1)
   else
-    BSON_HAVE_STDBOOL_H=0
+    AC_SUBST(BSON_HAVE_STDBOOL_H, 0)
   fi
-  AC_SUBST(BSON_HAVE_STDBOOL_H)
 
-  BSON_OS=1
-  AC_SUBST(BSON_OS)
+  AC_SUBST(BSON_OS, 1)
 
   PHP_BSON_CLOCK
   AC_CHECK_FUNC(strnlen,ac_cv_func_strnlen=yes,ac_cv_func_strnlen=no)
   if test "$ac_cv_func_strnlen" = "yes"; then
-    BSON_HAVE_STRNLEN=1
+    AC_SUBST(BSON_HAVE_STRNLEN, 1)
+  else
+    AC_SUBST(BSON_HAVE_STRNLEN, 0)
   fi
-  AC_SUBST(BSON_HAVE_STRNLEN)
+
   AC_CHECK_FUNC(snprintf,ac_cv_func_snprintf=yes,ac_cv_func_snprintf=no)
   if test "$ac_cv_func_snprintf" = "yes"; then
-    BSON_HAVE_SNPRINTF=1
+    AC_SUBST(BSON_HAVE_SNPRINTF, 1)
+  else
+    AC_SUBST(BSON_HAVE_SNPRINTF, 0)
   fi
-  AC_SUBST(BSON_HAVE_SNPRINTF)
 
   if test "$PHP_LIBMONGOC" == "no"; then
     backup_srcdir=${srcdir}
