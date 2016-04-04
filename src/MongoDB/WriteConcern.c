@@ -137,7 +137,7 @@ PHP_METHOD(WriteConcern, getW)
 		PHONGO_RETURN_STRING(PHONGO_WRITE_CONCERN_W_MAJORITY);
 	}
 
-	if (intern->write_concern->w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
+	if (mongoc_write_concern_get_w(intern->write_concern) != MONGOC_WRITE_CONCERN_W_DEFAULT) {
 		RETURN_LONG(mongoc_write_concern_get_w(intern->write_concern));
 	}
 
