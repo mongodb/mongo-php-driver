@@ -553,7 +553,7 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc
 		return false;
 	}
 
-	writeresult = phongo_writeresult_init(return_value, &reply, client, bulk->hint TSRMLS_CC);
+	writeresult = phongo_writeresult_init(return_value, &reply, client, mongoc_bulk_operation_get_hint(bulk) TSRMLS_CC);
 	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
 
 	/* The Write failed */
@@ -601,7 +601,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 	}
 
 	if (server_id > 0) {
-		cursor->hint = server_id;
+		cursor->server_id = server_id;
 	}
 	if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error;
@@ -640,7 +640,7 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 
 	cursor = mongoc_client_command(client, db, MONGOC_QUERY_NONE, 0, 1, 0, command, NULL, read_preference);
 	if (server_id > 0) {
-		cursor->hint = server_id;
+		cursor->server_id = server_id;
 	}
 
 	if (!mongoc_cursor_next(cursor, &doc)) {
@@ -1851,7 +1851,7 @@ static bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_
 	/* This may be redundant in light of the last check (unacknowledged w with
 	   journal), but we'll check anyway in case additional validation is
 	   implemented. */
-	if (!_mongoc_write_concern_is_valid(new_wc)) {
+	if (!mongoc_write_concern_is_valid(new_wc)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Write concern is not valid");
 		mongoc_write_concern_destroy(new_wc);
 

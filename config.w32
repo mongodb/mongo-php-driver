@@ -6,7 +6,7 @@ ARG_WITH("mongodb-sasl", "MongoDB: Build against Cyrus-SASL", "yes");
 if (PHP_MONGODB != "no") {
   ADD_EXTENSION_DEP("mongodb", "openssl", false);
 
-  ADD_FLAG("CFLAGS_MONGODB", " /I" + configure_module_dirname + " /I" + configure_module_dirname + "/src/libmongoc/src/mongoc" + " /I" + configure_module_dirname + "/src/libbson/src/bson/ /I" + configure_module_dirname + "/src/libbson/src /I" + configure_module_dirname + "/src/contrib  /D HAVE_MONGODB_SASL=1 /D BSON_COMPILATION=1 /D MONGOC_COMPILATION=1 /D MONGOC_TRACE=1 /D MONGOC_NO_AUTOMATIC_GLOBALS=1 /D BSON_EXTRA_ALIGN=0");
+  ADD_FLAG("CFLAGS_MONGODB", " /I" + configure_module_dirname + " /I" + configure_module_dirname + "/src/libmongoc/src/mongoc" + " /I" + configure_module_dirname + "/src/libbson/src/bson/ /I" + configure_module_dirname + "/src/libbson/src /I" + configure_module_dirname + "/src/contrib");
   EXTENSION("mongodb", "php_phongo.c");
   ADD_SOURCES(configure_module_dirname + "/", "phongo_compat.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src", "bson.c", "mongodb");
@@ -16,17 +16,53 @@ if (PHP_MONGODB != "no") {
   ADD_SOURCES(configure_module_dirname + "/src/contrib/", "php-ssl.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libbson/src/yajl", "yajl_version.c yajl.c yajl_encode.c yajl_lex.c yajl_parser.c yajl_buf.c yajl_tree.c yajl_alloc.c yajl_gen.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libbson/src/bson", "bcon.c bson.c bson-atomic.c bson-clock.c bson-context.c bson-error.c bson-iter.c bson-iso8601.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c", "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-b64.c mongoc-client.c mongoc-client-pool.c mongoc-cluster.c mongoc-collection.c mongoc-counters.c mongoc-cursor.c mongoc-cursor-array.c mongoc-cursor-transform.c mongoc-cursor-cursorid.c mongoc-database.c mongoc-find-and-modify.c mongoc-init.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-page.c mongoc-gridfs-file-list.c mongoc-host-list.c mongoc-index.c mongoc-list.c mongoc-log.c mongoc-matcher-op.c mongoc-matcher.c mongoc-memcmp.c mongoc-opcode.c mongoc-queue.c mongoc-read-prefs.c mongoc-read-concern.c mongoc-rpc.c mongoc-set.c mongoc-server-description.c mongoc-server-stream.c mongoc-socket.c mongoc-stream.c mongoc-stream-buffered.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-socket.c mongoc-topology.c mongoc-topology-scanner.c mongoc-topology-description.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-concern.c", "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-rand.c mongoc-scram.c mongoc-stream-tls.c mongoc-ssl.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-b64.c mongoc-client.c mongoc-client-pool.c mongoc-cluster.c mongoc-collection.c mongoc-counters.c mongoc-cursor.c mongoc-cursor-array.c mongoc-cursor-cursorid.c mongoc-cursor-transform.c mongoc-database.c mongoc-find-and-modify.c mongoc-host-list.c mongoc-init.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-page.c mongoc-gridfs-file-list.c mongoc-index.c mongoc-list.c mongoc-log.c mongoc-matcher-op.c mongoc-matcher.c mongoc-memcmp.c mongoc-opcode.c mongoc-queue.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-server-description.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-stream.c mongoc-stream-buffered.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-socket.c mongoc-topology.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-concern.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-crypto.c mongoc-scram.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-stream-tls.c mongoc-ssl.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-crypto-openssl.c mongoc-rand-openssl.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-openssl.c mongoc-stream-tls-openssl.c mongoc-stream-tls-openssl-bio.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-crypto-common-crypto.c mongoc-rand-common-crypto.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-secure-transport.c mongoc-stream-tls-secure-transport.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-sasl.c", "mongodb");
 
   AC_DEFINE("HAVE_MONGOC", 1);
   AC_DEFINE("MONGOC_HAVE_WEAK_SYMBOLS", 1);
 
-  if (!CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB)) {
-	  WARNING("mongodb libsasl support not enabled, libs not found");
+  AC_DEFINE("BSON_COMPILATION", 1);
+  AC_DEFINE("BSON_EXTRA_ALIGN", 0);
+  AC_DEFINE("BSON_HAVE_DECIMAL128", 0);
+  AC_DEFINE("MONGOC_COMPILATION", 1);
+  AC_DEFINE("MONGOC_NO_AUTOMATIC_GLOBALS", 1);
+  AC_DEFINE("MONGOC_TRACE", 1);
+
+  if (CHECK_LIB("ssleay32.lib", "mongodb", PHP_MONGODB) &&
+      CHECK_LIB("libeay32.lib", "mongodb", PHP_MONGODB) &&
+      CHECK_HEADER_ADD_INCLUDE("openssl/ssl.h", "CFLAGS_MONGOC")) {
+    AC_DEFINE("MONGOC_ENABLE_OPENSSL", 1);
+    AC_DEFINE("MONGOC_ENABLE_LIBCRYPTO", 1);
+    AC_DEFINE("MONGOC_ENABLE_SSL", 1);
+    AC_DEFINE("MONGOC_ENABLE_CRYPTO", 1);
+  } else {
+    WARNING("mongodb libopenssl support not enabled, libs not found");
+    AC_DEFINE("MONGOC_ENABLE_OPENSSL", 0);
+    AC_DEFINE("MONGOC_ENABLE_LIBCRYPTO", 0);
+    AC_DEFINE("MONGOC_ENABLE_SSL", 0);
+    AC_DEFINE("MONGOC_ENABLE_CRYPTO", 0);
   }
-  if (CHECK_LIB("ssleay32.lib", "mongodb", PHP_MONGODB) && CHECK_LIB("libeay32.lib", "mongodb", PHP_MONGODB) && CHECK_HEADER_ADD_INCLUDE("openssl/ssl.h", "CFLAGS_MONGOC")) {
+
+  // Secure Transport does not apply to Windows
+  AC_DEFINE("MONGOC_ENABLE_SECURE_TRANSPORT", 0);
+  AC_DEFINE("MONGOC_ENABLE_COMMON_CRYPTO", 0);
+
+  if (PHP_MONGODB_SASL != "no" &&
+      CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB) &&
+      CHECK_HEADER_ADD_INCLUDE("sasl/sasl.h", "CFLAGS_MONGOC")) {
+    AC_DEFINE("MONGOC_ENABLE_SASL", 1);
+    AC_DEFINE("MONGOC_HAVE_SASL_CLIENT_DONE", CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done") ? 1 : 0);
+  } else {
+    WARNING("mongodb libsasl support not enabled, libs not found");
+    AC_DEFINE("MONGOC_ENABLE_SASL", 0);
+    AC_DEFINE("MONGOC_HAVE_SASL_CLIENT_DONE", 0);
   }
 
   FSO.CopyFile(configure_module_dirname + "/win32/bson-config.h", configure_module_dirname + "/src/libbson/src/bson/bson-config.h", true);
