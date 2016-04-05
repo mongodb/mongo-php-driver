@@ -45,6 +45,7 @@ php.ini
 *.patch
 *.swp
 .*
+!.github/
 !tests/utils/*.php
 !.travis.yml
 !.travis.scripts/*
