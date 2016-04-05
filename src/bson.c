@@ -1234,7 +1234,7 @@ PHONGO_API void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, b
 				}
 
 				if (flags & PHONGO_BSON_ADD_ID) {
-					if (!strncmp(member ? ZSTR_VAL(member) : ZSTR_VAL(string_key), "_id", sizeof("_id")-1)) {
+					if (!strcmp(member ? ZSTR_VAL(member) : ZSTR_VAL(string_key), "_id")) {
 						flags &= ~PHONGO_BSON_ADD_ID;
 					}
 				}
@@ -1249,7 +1249,7 @@ PHONGO_API void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, b
 				}
 			} else {
 				if (flags & PHONGO_BSON_ADD_ID) {
-					if (!strncmp(ZSTR_VAL(string_key), "_id", sizeof("_id")-1)) {
+					if (!strcmp(ZSTR_VAL(string_key), "_id")) {
 						flags &= ~PHONGO_BSON_ADD_ID;
 					}
 				}
@@ -1294,7 +1294,7 @@ PHONGO_API void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, b
 			}
 
 			if (flags & PHONGO_BSON_ADD_ID) {
-				if (!strncmp(string_key, "_id", sizeof("_id")-1)) {
+				if (!strcmp(string_key, "_id")) {
 					flags &= ~PHONGO_BSON_ADD_ID;
 				}
 			}
