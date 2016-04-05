@@ -27,7 +27,6 @@
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
-#include <mongoc-read-prefs-private.h>
 
 /* PHP Core stuff */
 #include <php.h>
@@ -117,6 +116,7 @@ PHP_METHOD(ReadPreference, getMode)
 PHP_METHOD(ReadPreference, getTagSets)
 {
 	php_phongo_readpreference_t *intern;
+	const bson_t                *tags;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
@@ -125,13 +125,15 @@ PHP_METHOD(ReadPreference, getTagSets)
 		return;
 	}
 
-	if (intern->read_preference->tags.len) {
+	tags = mongoc_read_prefs_get_tags(intern->read_preference);
+
+	if (tags->len) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 		/* Use native arrays for debugging output */
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(&intern->read_preference->tags), intern->read_preference->tags.len, &state);
+		phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
 #if PHP_VERSION_ID >= 70000
 		RETURN_ZVAL(&state.zchild, 0, 1);
 #else

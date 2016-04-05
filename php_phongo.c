@@ -28,7 +28,6 @@
 #include "bson.h"
 #include "mongoc.h"
 #include "mongoc-cursor-cursorid-private.h"
-#include "mongoc-read-prefs-private.h"
 #include "mongoc-bulk-operation-private.h"
 #include "mongoc-read-concern-private.h"
 #include "mongoc-write-concern-private.h"
@@ -1367,17 +1366,19 @@ void php_phongo_read_concern_to_zval(zval *retval, const mongoc_read_concern_t *
 
 void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t *read_prefs) /* {{{ */
 {
+	const bson_t *tags = mongoc_read_prefs_get_tags(read_prefs);
 
 	array_init_size(retval, 2);
 
-	ADD_ASSOC_LONG_EX(retval, "mode", read_prefs->mode);
-	if (read_prefs->tags.len) {
+	ADD_ASSOC_LONG_EX(retval, "mode", mongoc_read_prefs_get_mode(read_prefs));
+
+	if (tags->len) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 		/* Use native arrays for debugging output */
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(&read_prefs->tags), read_prefs->tags.len, &state);
+		phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
 #else
