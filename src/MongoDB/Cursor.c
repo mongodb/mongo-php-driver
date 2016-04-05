@@ -158,7 +158,7 @@ PHP_METHOD(Cursor, getServer)
 	}
 
 
-	phongo_server_init(return_value, intern->cursor->client, intern->server_id TSRMLS_CC);
+	phongo_server_init(return_value, intern->client, intern->server_id TSRMLS_CC);
 }
 /* }}} */
 
