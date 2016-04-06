@@ -48,8 +48,6 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
-#define PHONGO_MANAGER_URI_DEFAULT "mongodb://localhost:27017/"
-
 PHONGO_API zend_class_entry *php_phongo_manager_ce;
 
 zend_object_handlers php_phongo_handler_manager;

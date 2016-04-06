@@ -31,7 +31,6 @@
 #include "mongoc-bulk-operation-private.h"
 #include "mongoc-read-concern-private.h"
 #include "mongoc-write-concern-private.h"
-#include "mongoc-uri-private.h"
 #include "mongoc-trace.h"
 
 
@@ -1637,14 +1636,14 @@ void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOp
 #undef SET_STRING_CTX
 } /* }}} */
 
-static bool php_phongo_apply_rc_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
+static bool php_phongo_apply_rc_options_to_uri(mongoc_uri_t *uri, bson_t *options TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
 	mongoc_read_concern_t *new_rc;
 	const mongoc_read_concern_t *old_rc;
 
-	if (!(old_rc = mongoc_client_get_read_concern(client))) {
-		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "Client does not have a read concern");
+	if (!(old_rc = mongoc_uri_get_read_concern(uri))) {
+		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "mongoc_uri_t does not have a read concern");
 
 		return false;
 	}
@@ -1666,20 +1665,20 @@ static bool php_phongo_apply_rc_options_to_client(mongoc_client_t *client, bson_
 		mongoc_read_concern_set_level(new_rc, str);
 	}
 
-	mongoc_client_set_read_concern(client, new_rc);
+	mongoc_uri_set_read_concern(uri, new_rc);
 	mongoc_read_concern_destroy(new_rc);
 
 	return true;
 } /* }}} */
 
-static bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
+static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *options TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
 	mongoc_read_prefs_t *new_rp;
 	const mongoc_read_prefs_t *old_rp;
 
-	if (!(old_rp = mongoc_client_get_read_prefs(client))) {
-		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "Client does not have a read preference");
+	if (!(old_rp = mongoc_uri_get_read_prefs_t(uri))) {
+		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "mongoc_uri_t does not have a read preference");
 
 		return false;
 	}
@@ -1751,21 +1750,21 @@ static bool php_phongo_apply_rp_options_to_client(mongoc_client_t *client, bson_
 		return false;
 	}
 
-	mongoc_client_set_read_prefs(client, new_rp);
+	mongoc_uri_set_read_prefs_t(uri, new_rp);
 	mongoc_read_prefs_destroy(new_rp);
 
 	return true;
 } /* }}} */
 
-static bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_t *options TSRMLS_DC) /* {{{ */
+static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t *uri, bson_t *options TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
 	int32_t wtimeoutms;
 	mongoc_write_concern_t *new_wc;
 	const mongoc_write_concern_t *old_wc;
 
-	if (!(old_wc = mongoc_client_get_write_concern(client))) {
-		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "Client does not have a write concern");
+	if (!(old_wc = mongoc_uri_get_write_concern(uri))) {
+		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "mongoc_uri_t does not have a write concern");
 
 		return false;
 	}
@@ -1859,7 +1858,7 @@ static bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_
 		return false;
 	}
 
-	mongoc_client_set_write_concern(client, new_wc);
+	mongoc_uri_set_write_concern(uri, new_wc);
 	mongoc_write_concern_destroy(new_wc);
 
 	return true;
@@ -1986,18 +1985,18 @@ bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 		return false;
 	}
 
+	if (!php_phongo_apply_rc_options_to_uri(uri, bson_options TSRMLS_CC) ||
+	    !php_phongo_apply_rp_options_to_uri(uri, bson_options TSRMLS_CC) ||
+	    !php_phongo_apply_wc_options_to_uri(uri, bson_options TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return false;
+	}
+
 	manager->client = php_phongo_make_mongo_client(uri, driverOptions TSRMLS_CC);
 	mongoc_uri_destroy(uri);
 
 	if (!manager->client) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to create Manager from URI: '%s'", uri_string);
-		return false;
-	}
-
-	if (!php_phongo_apply_rc_options_to_client(manager->client, bson_options TSRMLS_CC) ||
-	    !php_phongo_apply_rp_options_to_client(manager->client, bson_options TSRMLS_CC) ||
-	    !php_phongo_apply_wc_options_to_client(manager->client, bson_options TSRMLS_CC)) {
-		/* Exception should already have been thrown */
 		return false;
 	}
 
