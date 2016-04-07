@@ -23,34 +23,7 @@ object(MongoDB\Driver\Manager)#%d (%d) {
   ["uri"]=>
   string(%d) "mongodb://%s"
   ["cluster"]=>
-  array(1) {
-    [0]=>
-    array(11) {
-      ["host"]=>
-      string(%d) "%s"
-      ["port"]=>
-      int(%d)
-      ["type"]=>
-      int(0)
-      ["is_primary"]=>
-      bool(false)
-      ["is_secondary"]=>
-      bool(false)
-      ["is_arbiter"]=>
-      bool(false)
-      ["is_hidden"]=>
-      bool(false)
-      ["is_passive"]=>
-      bool(false)
-      ["tags"]=>
-      array(0) {
-      }
-      ["last_is_master"]=>
-      array(0) {
-      }
-      ["round_trip_time"]=>
-      int(-1)
-    }
+  array(0) {
   }
 }
 object(MongoDB\Driver\Manager)#%d (%d) {
