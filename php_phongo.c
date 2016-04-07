@@ -569,9 +569,34 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc
 	return success;
 } /* }}} */
 
+/* Advance the cursor and return whether there is an error. On error, the cursor
+ * will be destroyed and an exception will be thrown. */
+static bool phongo_advance_cursor_and_check_for_error(mongoc_cursor_t *cursor TSRMLS_DC)
+{
+	const bson_t *doc;
+
+	if (!mongoc_cursor_next(cursor, &doc)) {
+		bson_error_t error;
+
+		/* Check for connection related exceptions */
+		if (EG(exception)) {
+			mongoc_cursor_destroy(cursor);
+			return false;
+		}
+
+		/* Could simply be no docs, which is not an error */
+		if (mongoc_cursor_error(cursor, &error)) {
+			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			mongoc_cursor_destroy(cursor);
+			return false;
+		}
+	}
+
+	return true;
+}
+
 int phongo_execute_query(mongoc_client_t *client, const char *namespace, const php_phongo_query_t *query, const mongoc_read_prefs_t *read_preference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
-	const bson_t *doc = NULL;
 	mongoc_cursor_t *cursor;
 	char *dbname;
 	char *collname;
@@ -601,22 +626,9 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 	if (server_id > 0) {
 		cursor->server_id = server_id;
 	}
-	if (!mongoc_cursor_next(cursor, &doc)) {
-		bson_error_t error;
 
-		/* Check for connection related exceptions */
-		if (EG(exception)) {
-			mongoc_cursor_destroy(cursor);
-			return false;
-		}
-
-		/* Could simply be no docs, which is not an error */
-		if (mongoc_cursor_error(cursor, &error)) {
-			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
-			mongoc_cursor_destroy(cursor);
-			return false;
-		}
-
+	if (!phongo_advance_cursor_and_check_for_error(cursor TSRMLS_CC)) {
+		return false;
 	}
 
 	if (!return_value_used) {
@@ -631,9 +643,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t *command, const mongoc_read_prefs_t *read_preference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	mongoc_cursor_t *cursor;
-	const bson_t *doc;
 	bson_iter_t iter;
-	bson_iter_t child;
 
 
 	cursor = mongoc_client_command(client, db, MONGOC_QUERY_NONE, 0, 1, 0, command, NULL, read_preference);
@@ -641,20 +651,8 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 		cursor->server_id = server_id;
 	}
 
-	if (!mongoc_cursor_next(cursor, &doc)) {
-		bson_error_t error;
-
-		/* Check for connection related exceptions */
-		if (EG(exception)) {
-			mongoc_cursor_destroy(cursor);
-			return false;
-		}
-
-		if (mongoc_cursor_error(cursor, &error)) {
-			mongoc_cursor_destroy(cursor);
-			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
-			return false;
-		}
+	if (!phongo_advance_cursor_and_check_for_error(cursor TSRMLS_CC)) {
+		return false;
 	}
 
 	if (!return_value_used) {
@@ -662,42 +660,21 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 		return true;
 	}
 
-	/* This code is adapated from _mongoc_cursor_cursorid_prime(), but we avoid
-	 * advancing the cursor, since we are already positioned at the first result
-	 * after the error checking above. */
-	if (bson_iter_init_find(&iter, doc, "cursor") && BSON_ITER_HOLDS_DOCUMENT(&iter) && bson_iter_recurse(&iter, &child)) {
-		mongoc_cursor_cursorid_t *cid;
-		bson_t empty = BSON_INITIALIZER;
+	if (bson_iter_init_find(&iter, mongoc_cursor_current(cursor), "cursor") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+		mongoc_cursor_t *cmd_cursor;
 
-		_mongoc_cursor_cursorid_init(cursor, &empty);
-		cursor->limit = 0;
+		/* According to mongoc_cursor_new_from_command_reply(), the reply bson_t
+		 * is ultimately destroyed on both success and failure. Use bson_copy()
+		 * to create a writable copy of the const bson_t we fetched above. */
+		cmd_cursor = mongoc_cursor_new_from_command_reply(client, bson_copy(mongoc_cursor_current(cursor)), mongoc_cursor_get_hint(cursor));
+		mongoc_cursor_destroy(cursor);
 
-		cid = cursor->iface_data;
-		cid->in_batch = true;
-		bson_destroy (&empty);
-
-		while (bson_iter_next(&child)) {
-			if (BSON_ITER_IS_KEY(&child, "id")) {
-				cursor->rpc.reply.cursor_id = bson_iter_as_int64(&child);
-			} else if (BSON_ITER_IS_KEY(&child, "ns")) {
-				const char *ns;
-
-				ns = bson_iter_utf8(&child, &cursor->nslen);
-				bson_strncpy(cursor->ns, ns, sizeof cursor->ns);
-			} else if (BSON_ITER_IS_KEY(&child, "firstBatch")) {
-				if (BSON_ITER_HOLDS_ARRAY(&child) && bson_iter_recurse(&child, &cid->batch_iter)) {
-					cid->in_batch = true;
-				}
-			}
+		if (!phongo_advance_cursor_and_check_for_error(cmd_cursor TSRMLS_CC)) {
+			return false;
 		}
 
-		cursor->is_command = false;
-
-		/* The cursor's current element is the command's response document.
-		 * Advance once so that the cursor is positioned at the first document
-		 * within the command cursor's result set.
-		 */
-		mongoc_cursor_next(cursor, &doc);
+		phongo_cursor_init(return_value, cmd_cursor, client TSRMLS_CC);
+		return true;
 	}
 
 	phongo_cursor_init(return_value, cursor, client TSRMLS_CC);
