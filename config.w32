@@ -23,6 +23,8 @@ if (PHP_MONGODB != "no") {
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-openssl.c mongoc-stream-tls-openssl.c mongoc-stream-tls-openssl-bio.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-crypto-common-crypto.c mongoc-rand-common-crypto.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-secure-transport.c mongoc-stream-tls-secure-transport.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-crypto-cng.c mongoc-rand-cng.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-secure-channel.c mongoc-stream-tls-secure-channel.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-sasl.c", "mongodb");
 
   AC_DEFINE("HAVE_MONGOC", 1);
@@ -53,6 +55,10 @@ if (PHP_MONGODB != "no") {
   // Secure Transport does not apply to Windows
   AC_DEFINE("MONGOC_ENABLE_SECURE_TRANSPORT", 0);
   AC_DEFINE("MONGOC_ENABLE_COMMON_CRYPTO", 0);
+
+  // TODO: Support building with Secure Channel on Windows
+  AC_DEFINE("MONGOC_ENABLE_SECURE_CHANNEL", 0)
+  AC_DEFINE("MONGOC_ENABLE_CRYPTO_CNG", 0)
 
   if (PHP_MONGODB_SASL != "no" &&
       CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB) &&
