@@ -53,7 +53,7 @@ PHP_METHOD(ObjectID, __construct)
 {
 	php_phongo_objectid_t    *intern;
 	zend_error_handling       error_handling;
-	char                     *id = NULL;
+	char                     *id = NULL, *tid;
 	phongo_zpp_char_len       id_len;
 
 
@@ -67,15 +67,16 @@ PHP_METHOD(ObjectID, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	if (id) {
-		zend_str_tolower(id, id_len);
-		if (bson_oid_is_valid(id, id_len)) {
+		tid = zend_str_tolower_dup(id, id_len);
+		if (bson_oid_is_valid(tid, id_len)) {
 			bson_oid_t oid;
 
-			bson_oid_init_from_string(&oid, id);
+			bson_oid_init_from_string(&oid, tid);
 			bson_oid_to_string(&oid, intern->oid);
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid BSON ID provided");
 		}
+		efree(tid);
 	} else {
 		bson_oid_t oid;
 
