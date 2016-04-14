@@ -29,7 +29,6 @@
 #include <mongoc.h>
 #include <mongoc-client-private.h>
 #include <mongoc-host-list-private.h>
-#include <mongoc-server-description-private.h>
 
 /* PHP Core stuff */
 #include <php.h>
@@ -201,8 +200,8 @@ PHP_METHOD(Manager, getReadPreference)
 PHP_METHOD(Manager, getServers)
 {
 	php_phongo_manager_t         *intern;
-	mongoc_set_t                 *set;
-	size_t                        i;
+	mongoc_server_description_t **sds;
+	size_t                        i, n = 0;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
@@ -212,31 +211,25 @@ PHP_METHOD(Manager, getServers)
 		return;
 	}
 
-	array_init(return_value);
-	set = intern->client->topology->description.servers;
-	for(i=0; i<set->items_len; i++) {
+	sds = mongoc_client_get_server_descriptions(intern->client, &n);
+	array_init_size(return_value, n);
+
+	for (i = 0; i < n; i++) {
 #if PHP_VERSION_ID >= 70000
 		zval obj;
-#else
-		zval *obj = NULL;
-#endif
 
-		mongoc_server_description_t *sd = (mongoc_server_description_t *) set->items[i].item;
-
-		if (sd->type == MONGOC_SERVER_UNKNOWN) {
-			continue;
-		}
-
-#if PHP_VERSION_ID >= 70000
-		phongo_server_init(&obj, intern->client, ((mongoc_server_description_t *)set->items[i].item)->id TSRMLS_CC);
+		phongo_server_init(&obj, intern->client, mongoc_server_description_id(sds[i]) TSRMLS_CC);
 		add_next_index_zval(return_value, &obj);
 #else
-		MAKE_STD_ZVAL(obj);
+		zval *obj = NULL;
 
-		phongo_server_init(obj, intern->client, sd->id TSRMLS_CC);
+		MAKE_STD_ZVAL(obj);
+		phongo_server_init(obj, intern->client, mongoc_server_description_id(sds[i]) TSRMLS_CC);
 		add_next_index_zval(return_value, obj);
 #endif
 	}
+
+	mongoc_server_descriptions_destroy_all(sds, n);
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\WriteConcern Manager::getWriteConcern()
@@ -416,33 +409,16 @@ phongo_create_object_retval php_phongo_manager_create_object(zend_class_entry *c
 #endif
 } /* }}} */
 
-bool phongo_add_server_debug(void *item, void *ctx) /* {{{ */
-{
-	mongoc_server_description_t *server = item;
-	zval                        *retval = ctx;
-#if PHP_VERSION_ID >= 70000
-	zval                         entry;
-
-	php_phongo_server_to_zval(&entry, server);
-	add_next_index_zval(retval, &entry);
-#else
-	zval                        *entry = NULL;
-
-	MAKE_STD_ZVAL(entry);
-	php_phongo_server_to_zval(entry, server);
-	add_next_index_zval(retval, entry);
-#endif
-
-	return true;
-} /* }}} */
-
 HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
-	php_phongo_manager_t  *intern;
+	php_phongo_manager_t         *intern;
+	mongoc_server_description_t **sds;
+	size_t                        i, n = 0;
 #if PHP_VERSION_ID >= 70000
-	zval                   retval;
+	zval                          retval, cluster;
 #else
-	zval                   retval = zval_used_for_init;
+	zval                          retval = zval_used_for_init;
+	zval                         *cluster = NULL;
 #endif
 
 
@@ -450,27 +426,39 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 	intern = Z_MANAGER_OBJ_P(object);
 
 
-	array_init(&retval);
+	array_init_size(&retval, 2);
 
 	ADD_ASSOC_STRING(&retval, "uri", (char *)mongoc_uri_get_string(intern->client->uri));
 
+	sds = mongoc_client_get_server_descriptions(intern->client, &n);
 
-	{
 #if PHP_VERSION_ID >= 70000
-		zval cluster;
+	array_init_size(&cluster, n);
 
-		array_init(&cluster);
-		mongoc_set_for_each(intern->client->topology->description.servers, phongo_add_server_debug, &cluster);
-		ADD_ASSOC_ZVAL_EX(&retval, "cluster", &cluster);
-#else
-		zval *cluster = NULL;
+	for (i = 0; i < n; i++) {
+		zval obj;
 
-		MAKE_STD_ZVAL(cluster);
-		array_init(cluster);
-		mongoc_set_for_each(intern->client->topology->description.servers, phongo_add_server_debug, cluster);
-		ADD_ASSOC_ZVAL_EX(&retval, "cluster", cluster);
-#endif
+		php_phongo_server_to_zval(&obj, sds[i]);
+		add_next_index_zval(&cluster, &obj);
 	}
+
+	ADD_ASSOC_ZVAL_EX(&retval, "cluster", &cluster);
+#else
+	MAKE_STD_ZVAL(cluster);
+	array_init_size(cluster, n);
+
+	for (i = 0; i < n; i++) {
+		zval *obj = NULL;
+
+		MAKE_STD_ZVAL(obj);
+		php_phongo_server_to_zval(obj, sds[i]);
+		add_next_index_zval(cluster, obj);
+	}
+
+	ADD_ASSOC_ZVAL_EX(&retval, "cluster", cluster);
+#endif
+
+	mongoc_server_descriptions_destroy_all(sds, n);
 
 	return Z_ARRVAL(retval);
 } /* }}} */
