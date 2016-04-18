@@ -1989,6 +1989,7 @@ bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 	    !php_phongo_apply_rp_options_to_uri(uri, bson_options TSRMLS_CC) ||
 	    !php_phongo_apply_wc_options_to_uri(uri, bson_options TSRMLS_CC)) {
 		/* Exception should already have been thrown */
+		mongoc_uri_destroy(uri);
 		return false;
 	}
 

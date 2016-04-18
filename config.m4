@@ -287,25 +287,26 @@ if test "$MONGODB" != "no"; then
     mongoc-ssl.c
   ";
 
-  MONGOC_SOURCES_LIBCRYPTO="\
-    mongoc-crypto-openssl.c \
-    mongoc-rand-openssl.c
-  ";
-
   MONGOC_SOURCES_OPENSSL="\
+    mongoc-crypto-openssl.c \
     mongoc-openssl.c \
+    mongoc-rand-openssl.c \
     mongoc-stream-tls-openssl.c \
     mongoc-stream-tls-openssl-bio.c
   ";
 
-  MONGOC_SOURCES_COMMON_CRYPTO="\
-    mongoc-crypto-common-crypto.c \
-    mongoc-rand-common-crypto.c
-  ";
-
   MONGOC_SOURCES_SECURE_TRANSPORT="\
+    mongoc-crypto-common-crypto.c \
+    mongoc-rand-common-crypto.c \
     mongoc-secure-transport.c \
     mongoc-stream-tls-secure-transport.c
+  ";
+
+  MONGOC_SOURCES_SECURE_CHANNEL="\
+    mongoc-crypto-cng.c \
+    mongoc-rand-cng.c \
+    mongoc-secure-channel.c \
+    mongoc-stream-tls-secure-channel.c
   ";
 
   MONGOC_SOURCES_SASL=mongoc-sasl.c
@@ -385,10 +386,9 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,                  [$STD_CFLAGS], shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_CRYPTO,           [$STD_CFLAGS], shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,              [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_LIBCRYPTO,        [$STD_CFLAGS], shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_OPENSSL,          [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_COMMON_CRYPTO,    [$STD_CFLAGS], shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_TRANSPORT, [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_CHANNEL,   [$STD_CFLAGS], shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL,             [$STD_CFLAGS], shared_objects_mongodb, yes)
 
 
@@ -401,6 +401,10 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
     dnl TODO: Support building with Secure Transport on OSX
     AC_SUBST(MONGOC_ENABLE_SECURE_TRANSPORT, 0)
     AC_SUBST(MONGOC_ENABLE_COMMON_CRYPTO, 0)
+
+    dnl Secure Channel only applies to Windows
+    AC_SUBST(MONGOC_ENABLE_SECURE_CHANNEL, 0)
+    AC_SUBST(MONGOC_ENABLE_CRYPTO_CNG, 0)
 
     AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
   fi
