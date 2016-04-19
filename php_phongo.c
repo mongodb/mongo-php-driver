@@ -81,6 +81,19 @@ ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 #endif
 #endif
 
+php_phongo_server_description_type_map_t
+php_phongo_server_description_type_map[PHONGO_SERVER_DESCRIPTION_TYPES] = {
+	{ PHONGO_SERVER_UNKNOWN, "Unknown" },
+	{ PHONGO_SERVER_STANDALONE, "Standalone" },
+	{ PHONGO_SERVER_MONGOS, "Mongos" },
+	{ PHONGO_SERVER_POSSIBLE_PRIMARY, "PossiblePrimary" },
+	{ PHONGO_SERVER_RS_PRIMARY, "RSPrimary" },
+	{ PHONGO_SERVER_RS_SECONDARY, "RSSecondary" },
+	{ PHONGO_SERVER_RS_ARBITER, "RSArbiter" },
+	{ PHONGO_SERVER_RS_OTHER, "RSOther" },
+	{ PHONGO_SERVER_RS_GHOST, "RSGhost" },
+};
+
 /* {{{ phongo_std_object_handlers */
 zend_object_handlers phongo_std_object_handlers;
 
@@ -1275,6 +1288,20 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 	bson_oid_to_string(oid, intern->oid);
 } /* }}} */
 
+php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t *sd)
+{
+	const char* name = mongoc_server_description_type(sd);
+	int i;
+
+	for (i = 0; i < PHONGO_SERVER_DESCRIPTION_TYPES; i++) {
+		if (!strcmp(name, php_phongo_server_description_type_map[i].name)) {
+			return php_phongo_server_description_type_map[i].type;
+		}
+	}
+
+	return PHONGO_SERVER_UNKNOWN;
+}
+
 void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd) /* {{{ */
 {
 	mongoc_host_list_t *host = mongoc_server_description_host(sd);
@@ -1285,10 +1312,10 @@ void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd) /*
 
 	ADD_ASSOC_STRING(retval, "host", host->host);
 	ADD_ASSOC_LONG_EX(retval, "port", host->port);
-	ADD_ASSOC_LONG_EX(retval, "type", sd->type);
-	ADD_ASSOC_BOOL_EX(retval, "is_primary", sd->type == MONGOC_SERVER_RS_PRIMARY);
-	ADD_ASSOC_BOOL_EX(retval, "is_secondary", sd->type == MONGOC_SERVER_RS_SECONDARY);
-	ADD_ASSOC_BOOL_EX(retval, "is_arbiter", sd->type == MONGOC_SERVER_RS_ARBITER);
+	ADD_ASSOC_LONG_EX(retval, "type", php_phongo_server_description_type(sd));
+	ADD_ASSOC_BOOL_EX(retval, "is_primary", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_PRIMARY].name));
+	ADD_ASSOC_BOOL_EX(retval, "is_secondary", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_SECONDARY].name));
+	ADD_ASSOC_BOOL_EX(retval, "is_arbiter", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_ARBITER].name));
 	ADD_ASSOC_BOOL_EX(retval, "is_hidden", bson_iter_init_find_case(&iter, is_master, "hidden") && bson_iter_as_bool(&iter));
 	ADD_ASSOC_BOOL_EX(retval, "is_passive", bson_iter_init_find_case(&iter, is_master, "passive") && bson_iter_as_bool(&iter));
 

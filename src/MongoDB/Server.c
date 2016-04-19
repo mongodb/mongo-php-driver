@@ -301,7 +301,7 @@ PHP_METHOD(Server, getType)
 	}
 
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
-		RETVAL_LONG(sd->type);
+		RETVAL_LONG(php_phongo_server_description_type(sd));
 		mongoc_server_description_destroy(sd);
 		return;
 	}
@@ -325,7 +325,7 @@ PHP_METHOD(Server, isPrimary)
 	}
 
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
-		RETVAL_BOOL(sd->type == MONGOC_SERVER_RS_PRIMARY);
+		RETVAL_BOOL(!strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_PRIMARY].name));
 		mongoc_server_description_destroy(sd);
 		return;
 	}
@@ -349,7 +349,7 @@ PHP_METHOD(Server, isSecondary)
 	}
 
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
-		RETVAL_BOOL(sd->type == MONGOC_SERVER_RS_SECONDARY);
+		RETVAL_BOOL(!strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_SECONDARY].name));
 		mongoc_server_description_destroy(sd);
 		return;
 	}
@@ -373,7 +373,7 @@ PHP_METHOD(Server, isArbiter)
 	}
 
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
-		RETVAL_BOOL(sd->type == MONGOC_SERVER_RS_ARBITER);
+		RETVAL_BOOL(!strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_ARBITER].name));
 		mongoc_server_description_destroy(sd);
 		return;
 	}
@@ -622,15 +622,15 @@ PHP_MINIT_FUNCTION(Server)
 	php_phongo_handler_server.offset = XtOffsetOf(php_phongo_server_t, std);
 #endif
 
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_UNKNOWN"), MONGOC_SERVER_UNKNOWN TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_STANDALONE"), MONGOC_SERVER_STANDALONE TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_MONGOS"), MONGOC_SERVER_MONGOS TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_POSSIBLE_PRIMARY"), MONGOC_SERVER_POSSIBLE_PRIMARY TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_PRIMARY"), MONGOC_SERVER_RS_PRIMARY TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_SECONDARY"), MONGOC_SERVER_RS_SECONDARY TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_ARBITER"), MONGOC_SERVER_RS_ARBITER TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_OTHER"), MONGOC_SERVER_RS_OTHER TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_GHOST"), MONGOC_SERVER_RS_GHOST TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_UNKNOWN"), PHONGO_SERVER_UNKNOWN TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_STANDALONE"), PHONGO_SERVER_STANDALONE TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_MONGOS"), PHONGO_SERVER_MONGOS TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_POSSIBLE_PRIMARY"), PHONGO_SERVER_POSSIBLE_PRIMARY TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_PRIMARY"), PHONGO_SERVER_RS_PRIMARY TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_SECONDARY"), PHONGO_SERVER_RS_SECONDARY TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_ARBITER"), PHONGO_SERVER_RS_ARBITER TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_OTHER"), PHONGO_SERVER_RS_OTHER TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_GHOST"), PHONGO_SERVER_RS_GHOST TSRMLS_CC);
 
 
 	return SUCCESS;
