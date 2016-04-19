@@ -171,18 +171,31 @@ PHP_METHOD(Server, getTags)
 
 
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
-		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
-		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		const bson_t *is_master = mongoc_server_description_ismaster(sd);
+		bson_iter_t   iter;
 
-		phongo_bson_to_zval_ex(bson_get_data(&sd->tags), sd->tags.len, &state);
-		mongoc_server_description_destroy(sd);
+		if (bson_iter_init_find(&iter, is_master, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+			const uint8_t         *bytes;
+			uint32_t               len;
+			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
+			state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+			state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+
+			bson_iter_document(&iter, &len, &bytes);
+			phongo_bson_to_zval_ex(bytes, len, &state);
+			mongoc_server_description_destroy(sd);
 
 #if PHP_VERSION_ID >= 70000
-		RETURN_ZVAL(&state.zchild, 0, 1);
+			RETURN_ZVAL(&state.zchild, 0, 1);
 #else
-		RETURN_ZVAL(state.zchild, 0, 1);
+			RETURN_ZVAL(state.zchild, 0, 1);
 #endif
+		}
+
+		array_init(return_value);
+		mongoc_server_description_destroy(sd);
+		return;
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
@@ -205,11 +218,13 @@ PHP_METHOD(Server, getInfo)
 
 
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+		const bson_t          *is_master = mongoc_server_description_ismaster(sd);
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
+		phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state);
 		mongoc_server_description_destroy(sd);
 
 #if PHP_VERSION_ID >= 70000
@@ -384,7 +399,7 @@ PHP_METHOD(Server, isHidden)
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
 		bson_iter_t iter;
 
-		RETVAL_BOOL(bson_iter_init_find_case(&iter, &sd->last_is_master, "hidden") && bson_iter_as_bool(&iter));
+		RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_ismaster(sd), "hidden") && bson_iter_as_bool(&iter));
 		mongoc_server_description_destroy(sd);
 		return;
 	}
@@ -410,7 +425,7 @@ PHP_METHOD(Server, isPassive)
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
 		bson_iter_t iter;
 
-		RETVAL_BOOL(bson_iter_init_find_case(&iter, &sd->last_is_master, "passive") && bson_iter_as_bool(&iter));
+		RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_ismaster(sd), "passive") && bson_iter_as_bool(&iter));
 		mongoc_server_description_destroy(sd);
 		return;
 	}

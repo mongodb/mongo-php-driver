@@ -1275,8 +1275,11 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 	bson_oid_to_string(oid, intern->oid);
 } /* }}} */
 
-void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *sd) /* {{{ */
+void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd) /* {{{ */
 {
+	const bson_t *is_master = mongoc_server_description_ismaster(sd);
+	bson_iter_t   iter;
+
 	array_init(retval);
 
 	ADD_ASSOC_STRING(retval, "host", (char *)sd->host.host);
@@ -1285,38 +1288,36 @@ void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *
 	ADD_ASSOC_BOOL_EX(retval, "is_primary", sd->type == MONGOC_SERVER_RS_PRIMARY);
 	ADD_ASSOC_BOOL_EX(retval, "is_secondary", sd->type == MONGOC_SERVER_RS_SECONDARY);
 	ADD_ASSOC_BOOL_EX(retval, "is_arbiter", sd->type == MONGOC_SERVER_RS_ARBITER);
-	{
-		bson_iter_t iter;
-		zend_bool b = bson_iter_init_find_case(&iter, &sd->last_is_master, "hidden") && bson_iter_as_bool(&iter);
+	ADD_ASSOC_BOOL_EX(retval, "is_hidden", bson_iter_init_find_case(&iter, is_master, "hidden") && bson_iter_as_bool(&iter));
+	ADD_ASSOC_BOOL_EX(retval, "is_passive", bson_iter_init_find_case(&iter, is_master, "passive") && bson_iter_as_bool(&iter));
 
-		ADD_ASSOC_BOOL_EX(retval, "is_hidden", b);
-	}
-	{
-		bson_iter_t iter;
-		zend_bool b = bson_iter_init_find_case(&iter, &sd->last_is_master, "passive") && bson_iter_as_bool(&iter);
-
-		ADD_ASSOC_BOOL_EX(retval, "is_passive", b);
-	}
-	if (sd->tags.len) {
+	if (bson_iter_init_find(&iter, is_master, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+		const uint8_t         *bytes;
+		uint32_t       	       len;
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
 		/* Use native arrays for debugging output */
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(&sd->tags), sd->tags.len, &state);
+		bson_iter_document(&iter, &len, &bytes);
+		phongo_bson_to_zval_ex(bytes, len, &state);
+
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
 #else
 		ADD_ASSOC_ZVAL_EX(retval, "tags", state.zchild);
 #endif
 	}
+
 	{
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 		/* Use native arrays for debugging output */
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
+		phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state);
+
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", &state.zchild);
 #else
