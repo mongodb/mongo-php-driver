@@ -253,7 +253,7 @@ PHP_METHOD(Server, getLatency)
 	}
 
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
-		RETVAL_LONG(sd->round_trip_time);
+		RETVAL_LONG((phongo_long) mongoc_server_description_round_trip_time(sd));
 		mongoc_server_description_destroy(sd);
 		return;
 	}

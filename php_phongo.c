@@ -1325,7 +1325,7 @@ void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd) /*
 		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", state.zchild);
 #endif
 	}
-	ADD_ASSOC_LONG_EX(retval, "round_trip_time", sd->round_trip_time);
+	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (phongo_long) mongoc_server_description_round_trip_time(sd));
 
 } /* }}} */
 
