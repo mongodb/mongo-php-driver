@@ -146,7 +146,7 @@ PHP_METHOD(Server, getHost)
 	}
 
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
-		PHONGO_RETVAL_STRING(sd->host.host);
+		PHONGO_RETVAL_STRING(mongoc_server_description_host(sd)->host);
 		mongoc_server_description_destroy(sd);
 		return;
 	}
@@ -277,7 +277,7 @@ PHP_METHOD(Server, getPort)
 	}
 
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
-		RETVAL_LONG(sd->host.port);
+		RETVAL_LONG(mongoc_server_description_host(sd)->port);
 		mongoc_server_description_destroy(sd);
 		return;
 	}
@@ -525,7 +525,7 @@ static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{
 	sd2 = mongoc_client_get_server_description(intern2->client, intern2->server_id);
 
 	if (sd1 && sd2) {
-		retval = strcasecmp(sd1->host.host_and_port, sd2->host.host_and_port);
+		retval = strcasecmp(mongoc_server_description_host(sd1)->host_and_port, mongoc_server_description_host(sd2)->host_and_port);
 	} else {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description(s)");
 	}

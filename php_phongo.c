@@ -1277,13 +1277,14 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 
 void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd) /* {{{ */
 {
-	const bson_t *is_master = mongoc_server_description_ismaster(sd);
-	bson_iter_t   iter;
+	mongoc_host_list_t *host = mongoc_server_description_host(sd);
+	const bson_t       *is_master = mongoc_server_description_ismaster(sd);
+	bson_iter_t         iter;
 
 	array_init(retval);
 
-	ADD_ASSOC_STRING(retval, "host", (char *)sd->host.host);
-	ADD_ASSOC_LONG_EX(retval, "port", sd->host.port);
+	ADD_ASSOC_STRING(retval, "host", host->host);
+	ADD_ASSOC_LONG_EX(retval, "port", host->port);
 	ADD_ASSOC_LONG_EX(retval, "type", sd->type);
 	ADD_ASSOC_BOOL_EX(retval, "is_primary", sd->type == MONGOC_SERVER_RS_PRIMARY);
 	ADD_ASSOC_BOOL_EX(retval, "is_secondary", sd->type == MONGOC_SERVER_RS_SECONDARY);
