@@ -10,6 +10,11 @@ Vagrant.configure(2) do |config|
     vmware.vmx["numvcpus"] = "2"
   end
 
+  config.vm.provider "virtualbox" do |virtualbox|
+    virtualbox.memory = 2048
+    virtualbox.cpus = 2
+  end
+
   config.vm.define "mo", primary: true do |mo|
     mo.vm.network "private_network", ip: "192.168.112.10"
 
