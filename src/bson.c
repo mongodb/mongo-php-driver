@@ -183,7 +183,13 @@ void php_phongo_bson_visit_corrupt(const bson_iter_t *iter ARG_UNUSED, void *dat
 {
 	mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "Corrupt BSON data detected!");
 }
-/* }}} */
+
+void php_phongo_bson_visit_unsupported_type(const bson_iter_t *iter ARG_UNUSED, const char *key, uint32_t v_type_code, void *data ARG_UNUSED) /* {{{ */
+{
+	TSRMLS_FETCH();
+	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected unknown BSON type 0x%02hhx for fieldname \"%s\". Are you using the latest driver?", v_type_code, key);
+}
+
 bool php_phongo_bson_visit_double(const bson_iter_t *iter ARG_UNUSED, const char *key, double v_double, void *data) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
@@ -574,7 +580,7 @@ static const bson_visitor_t php_bson_visitors = {
    php_phongo_bson_visit_int64,
    php_phongo_bson_visit_maxkey,
    php_phongo_bson_visit_minkey,
-   NULL /*php_phongo_bson_visit_unsupported_type*/,
+   php_phongo_bson_visit_unsupported_type,
    NULL /*php_phongo_bson_visit_decimal128*/,
    { NULL }
 };
@@ -1401,8 +1407,12 @@ PHONGO_API int phongo_bson_to_zval_ex(const unsigned char *data, int data_len, p
 	if (bson_iter_visit_all(&iter, &php_bson_visitors, state) || iter.err_off) {
 		/* Iteration stopped prematurely due to corruption or a failed visitor.
 		 * While we free the reader, state->zchild should be left as-is, since
-		 * the calling code may want to zval_ptr_dtor() it. */
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not convert BSON document to a PHP variable");
+		 * the calling code may want to zval_ptr_dtor() it. If an exception has
+		 * been thrown already (due to an unsupported BSON type for example,
+		 * don't overwrite with a generic exception message. */
+		if (!EG(exception)) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected corrupt BSON data");
+		}
 		bson_reader_destroy(reader);
 		return 0;
 	}
