@@ -35,13 +35,13 @@ foreach ($tests as $bson) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Could not convert BSON document to a PHP variable
+Detected corrupt BSON data.
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Could not convert BSON document to a PHP variable
+Detected corrupt BSON data.
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Could not convert BSON document to a PHP variable
+Detected corrupt BSON data.
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Could not convert BSON document to a PHP variable
+Detected corrupt BSON data.
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Could not convert BSON document to a PHP variable
+Detected unknown BSON type 0x65 for fieldname "". Are you using the latest driver?
 ===DONE===
