@@ -1962,7 +1962,7 @@ static mongoc_client_t *php_phongo_make_mongo_client(php_phongo_manager_t *manag
 #else
 			if (VCWD_REALPATH(Z_STRVAL_PP(pem), manager->pem_file)) {
 #endif
-				mongoc_ssl_opt_t  ssl_options;
+				mongoc_ssl_opt_t ssl_options = {0};
 
 				ssl_options.pem_file = manager->pem_file;
 				mongoc_client_set_ssl_opts(client, &ssl_options);
