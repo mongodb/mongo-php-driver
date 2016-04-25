@@ -389,6 +389,10 @@ static void php_phongo_manager_free_object(phongo_free_object_arg *object TSRMLS
 		mongoc_client_destroy(intern->client);
 	}
 
+	if (intern->pem_file) {
+		efree(intern->pem_file);
+	}
+
 #if PHP_VERSION_ID < 70000
 	efree(intern);
 #endif

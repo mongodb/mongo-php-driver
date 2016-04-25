@@ -1864,7 +1864,7 @@ static bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_
 	return true;
 } /* }}} */
 
-static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
+static mongoc_client_t *php_phongo_make_mongo_client(php_phongo_manager_t *manager, const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval                      *tmp;
@@ -1948,21 +1948,23 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zv
 
 #if PHP_VERSION_ID >= 70000
 		if ((pem = php_stream_context_get_option(ctx, "ssl", "local_cert")) != NULL) {
+			zend_string *s = zval_get_string(pem);
 #else
 		if (SUCCESS == php_stream_context_get_option(ctx, "ssl", "local_cert", &pem)) {
+			convert_to_string_ex(pem);
 #endif
-			char filename[MAXPATHLEN];
+			/* mongoc_client_set_ssl_opts() copies mongoc_ssl_opt_t shallowly;
+			 * its strings must be kept valid for the life of mongoc_client_t */
+			manager->pem_file = ecalloc(1, MAXPATHLEN);
 
 #if PHP_VERSION_ID >= 70000
-			zend_string *s = zval_get_string(pem);
-			if (VCWD_REALPATH(ZSTR_VAL(s), filename)) {
+			if (VCWD_REALPATH(ZSTR_VAL(s), manager->pem_file)) {
 #else
-			convert_to_string_ex(pem);
-			if (VCWD_REALPATH(Z_STRVAL_PP(pem), filename)) {
+			if (VCWD_REALPATH(Z_STRVAL_PP(pem), manager->pem_file)) {
 #endif
 				mongoc_ssl_opt_t  ssl_options;
 
-				ssl_options.pem_file = filename;
+				ssl_options.pem_file = manager->pem_file;
 				mongoc_client_set_ssl_opts(client, &ssl_options);
 			}
 #if PHP_VERSION_ID >= 70000
@@ -1985,7 +1987,7 @@ bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 		return false;
 	}
 
-	manager->client = php_phongo_make_mongo_client(uri, driverOptions TSRMLS_CC);
+	manager->client = php_phongo_make_mongo_client(manager, uri, driverOptions TSRMLS_CC);
 	mongoc_uri_destroy(uri);
 
 	if (!manager->client) {
