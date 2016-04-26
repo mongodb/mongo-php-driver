@@ -26,7 +26,6 @@
 
 /* PHP Core stuff */
 #include <php.h>
-#include <mongoc-bulk-operation-private.h>
 
 /* Our stuffz */
 #include "php_bson.h"
