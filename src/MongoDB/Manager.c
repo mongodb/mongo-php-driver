@@ -272,7 +272,7 @@ PHP_METHOD(Manager, selectServer)
 	readPreference = phongo_read_preference_from_zval(zreadPreference TSRMLS_CC);
 	selected_server = mongoc_client_select_server(intern->client, false, readPreference, &error);
 	if (selected_server) {
-		phongo_server_init(return_value, intern->client, selected_server->id TSRMLS_CC);
+		phongo_server_init(return_value, intern->client, mongoc_server_description_id(selected_server) TSRMLS_CC);
 		mongoc_server_description_destroy(selected_server);
 	} else {
 		/* Check for connection related exceptions */
