@@ -89,6 +89,7 @@ typedef struct {
 	mongoc_bulk_operation_t *bulk;
 	size_t                   num_ops;
 	bool                     ordered;
+	int                      bypass;
 	char                    *database;
 	char                    *collection;
 	bool                     executed;

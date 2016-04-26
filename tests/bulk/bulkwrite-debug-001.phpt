@@ -1,39 +1,23 @@
 --TEST--
-MongoDB\Driver\BulkWrite: #001 Variety Bulk
+MongoDB\Driver\BulkWrite debug output before execution
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE); ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$tests = [
+    [],
+    ['ordered' => true],
+    ['ordered' => false],
+    ['bypassDocumentValidation' => true],
+    ['bypassDocumentValidation' => false],
+];
 
-$bulk = new MongoDB\Driver\BulkWrite;
-var_dump($bulk);
-
-$bulk->insert(array("my" => "value"));
-$bulk->insert(array("my" => "value", "foo" => "bar"));
-$bulk->insert(array("my" => "value", "foo" => "bar"));
-var_dump($bulk);
-
-$bulk->delete(array("my" => "value", "foo" => "bar"), array("limit" => 1));
-var_dump($bulk);
-
-$bulk->update(array("foo" => "bar"), array('$set' => array("foo" => "baz")), array("limit" => 1, "upsert" => 0));
-
-var_dump($bulk);
-
-$retval = $manager->executeBulkWrite(NS, $bulk);
-
-var_dump($bulk);
-
-printf("Inserted: %d\n", getInsertCount($retval));
-printf("Deleted: %d\n", getDeletedCount($retval));
-printf("Updated: %d\n", getModifiedCount($retval));
-printf("Upserted: %d\n", getUpsertedCount($retval));
-foreach(getWriteErrors($retval) as $error) {
-    printf("WriteErrors: %", $error);
+foreach ($tests as $options) {
+    var_dump(new MongoDB\Driver\BulkWrite($options));
 }
+
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -76,7 +60,7 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   ["collection"]=>
   NULL
   ["ordered"]=>
-  bool(true)
+  bool(false)
   ["bypassDocumentValidation"]=>
   NULL
   ["executed"]=>
@@ -94,7 +78,7 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   ["ordered"]=>
   bool(true)
   ["bypassDocumentValidation"]=>
-  NULL
+  bool(true)
   ["executed"]=>
   bool(false)
   ["server_id"]=>
@@ -104,22 +88,18 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
 }
 object(MongoDB\Driver\BulkWrite)#%d (%d) {
   ["database"]=>
-  string(6) "phongo"
+  NULL
   ["collection"]=>
-  string(15) "bulk_write_0001"
+  NULL
   ["ordered"]=>
   bool(true)
   ["bypassDocumentValidation"]=>
-  NULL
+  bool(false)
   ["executed"]=>
-  bool(true)
+  bool(false)
   ["server_id"]=>
-  int(1)
+  int(0)
   ["write_concern"]=>
   NULL
 }
-Inserted: 3
-Deleted: 1
-Updated: 1
-Upserted: 0
 ===DONE===
