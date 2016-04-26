@@ -70,6 +70,29 @@ ZEND_END_MODULE_GLOBALS(mongodb)
 
 #include "php_phongo_classes.h"
 
+/* This enum is necessary since mongoc_server_description_type_t is private and
+ * we need to translate strings returned by mongoc_server_description_type() to
+ * Server integer constants. */
+typedef enum {
+	PHONGO_SERVER_UNKNOWN           = 0,
+	PHONGO_SERVER_STANDALONE        = 1,
+	PHONGO_SERVER_MONGOS            = 2,
+	PHONGO_SERVER_POSSIBLE_PRIMARY  = 3,
+	PHONGO_SERVER_RS_PRIMARY        = 4,
+	PHONGO_SERVER_RS_SECONDARY      = 5,
+	PHONGO_SERVER_RS_ARBITER        = 6,
+	PHONGO_SERVER_RS_OTHER          = 7,
+	PHONGO_SERVER_RS_GHOST          = 8,
+	PHONGO_SERVER_DESCRIPTION_TYPES = 9,
+} php_phongo_server_description_type_t;
+
+typedef struct {
+	php_phongo_server_description_type_t  type;
+	const char                           *name;
+} php_phongo_server_description_type_map_t;
+
+extern php_phongo_server_description_type_map_t php_phongo_server_description_type_map[];
+
 typedef enum {
 	PHONGO_ERROR_INVALID_ARGUMENT    = 1,
 	PHONGO_ERROR_RUNTIME             = 2,
@@ -130,7 +153,9 @@ const mongoc_read_prefs_t*    phongo_read_preference_from_zval(zval *zread_prefe
 const mongoc_write_concern_t* phongo_write_concern_from_zval  (zval *zwrite_concern TSRMLS_DC);
 const php_phongo_query_t*     phongo_query_from_zval          (zval *zquery TSRMLS_DC);
 
-void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *sd);
+php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t *sd);
+
+void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd);
 void php_phongo_read_concern_to_zval(zval *retval, const mongoc_read_concern_t *read_concern);
 void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t *read_prefs);
 void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t *write_concern);

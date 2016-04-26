@@ -81,6 +81,19 @@ ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 #endif
 #endif
 
+php_phongo_server_description_type_map_t
+php_phongo_server_description_type_map[PHONGO_SERVER_DESCRIPTION_TYPES] = {
+	{ PHONGO_SERVER_UNKNOWN, "Unknown" },
+	{ PHONGO_SERVER_STANDALONE, "Standalone" },
+	{ PHONGO_SERVER_MONGOS, "Mongos" },
+	{ PHONGO_SERVER_POSSIBLE_PRIMARY, "PossiblePrimary" },
+	{ PHONGO_SERVER_RS_PRIMARY, "RSPrimary" },
+	{ PHONGO_SERVER_RS_SECONDARY, "RSSecondary" },
+	{ PHONGO_SERVER_RS_ARBITER, "RSArbiter" },
+	{ PHONGO_SERVER_RS_OTHER, "RSOther" },
+	{ PHONGO_SERVER_RS_GHOST, "RSGhost" },
+};
+
 /* {{{ phongo_std_object_handlers */
 zend_object_handlers phongo_std_object_handlers;
 
@@ -1275,55 +1288,71 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 	bson_oid_to_string(oid, intern->oid);
 } /* }}} */
 
-void php_phongo_server_to_zval(zval *retval, const mongoc_server_description_t *sd) /* {{{ */
+php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t *sd)
 {
+	const char* name = mongoc_server_description_type(sd);
+	int i;
+
+	for (i = 0; i < PHONGO_SERVER_DESCRIPTION_TYPES; i++) {
+		if (!strcmp(name, php_phongo_server_description_type_map[i].name)) {
+			return php_phongo_server_description_type_map[i].type;
+		}
+	}
+
+	return PHONGO_SERVER_UNKNOWN;
+}
+
+void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd) /* {{{ */
+{
+	mongoc_host_list_t *host = mongoc_server_description_host(sd);
+	const bson_t       *is_master = mongoc_server_description_ismaster(sd);
+	bson_iter_t         iter;
+
 	array_init(retval);
 
-	ADD_ASSOC_STRING(retval, "host", (char *)sd->host.host);
-	ADD_ASSOC_LONG_EX(retval, "port", sd->host.port);
-	ADD_ASSOC_LONG_EX(retval, "type", sd->type);
-	ADD_ASSOC_BOOL_EX(retval, "is_primary", sd->type == MONGOC_SERVER_RS_PRIMARY);
-	ADD_ASSOC_BOOL_EX(retval, "is_secondary", sd->type == MONGOC_SERVER_RS_SECONDARY);
-	ADD_ASSOC_BOOL_EX(retval, "is_arbiter", sd->type == MONGOC_SERVER_RS_ARBITER);
-	{
-		bson_iter_t iter;
-		zend_bool b = bson_iter_init_find_case(&iter, &sd->last_is_master, "hidden") && bson_iter_as_bool(&iter);
+	ADD_ASSOC_STRING(retval, "host", host->host);
+	ADD_ASSOC_LONG_EX(retval, "port", host->port);
+	ADD_ASSOC_LONG_EX(retval, "type", php_phongo_server_description_type(sd));
+	ADD_ASSOC_BOOL_EX(retval, "is_primary", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_PRIMARY].name));
+	ADD_ASSOC_BOOL_EX(retval, "is_secondary", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_SECONDARY].name));
+	ADD_ASSOC_BOOL_EX(retval, "is_arbiter", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_ARBITER].name));
+	ADD_ASSOC_BOOL_EX(retval, "is_hidden", bson_iter_init_find_case(&iter, is_master, "hidden") && bson_iter_as_bool(&iter));
+	ADD_ASSOC_BOOL_EX(retval, "is_passive", bson_iter_init_find_case(&iter, is_master, "passive") && bson_iter_as_bool(&iter));
 
-		ADD_ASSOC_BOOL_EX(retval, "is_hidden", b);
-	}
-	{
-		bson_iter_t iter;
-		zend_bool b = bson_iter_init_find_case(&iter, &sd->last_is_master, "passive") && bson_iter_as_bool(&iter);
-
-		ADD_ASSOC_BOOL_EX(retval, "is_passive", b);
-	}
-	if (sd->tags.len) {
+	if (bson_iter_init_find(&iter, is_master, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+		const uint8_t         *bytes;
+		uint32_t       	       len;
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+
 		/* Use native arrays for debugging output */
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(&sd->tags), sd->tags.len, &state);
+		bson_iter_document(&iter, &len, &bytes);
+		phongo_bson_to_zval_ex(bytes, len, &state);
+
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
 #else
 		ADD_ASSOC_ZVAL_EX(retval, "tags", state.zchild);
 #endif
 	}
+
 	{
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 		/* Use native arrays for debugging output */
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(&sd->last_is_master), sd->last_is_master.len, &state);
+		phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state);
+
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", &state.zchild);
 #else
 		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", state.zchild);
 #endif
 	}
-	ADD_ASSOC_LONG_EX(retval, "round_trip_time", sd->round_trip_time);
+	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (phongo_long) mongoc_server_description_round_trip_time(sd));
 
 } /* }}} */
 
