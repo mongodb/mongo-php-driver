@@ -76,6 +76,7 @@ PHP_METHOD(BulkWrite, __construct)
 	}
 
 	intern->bulk = phongo_bulkwrite_init(ordered);
+	intern->ordered = ordered;
 	intern->num_ops = 0;
 
 	if (options && php_array_exists(options, "bypassDocumentValidation")) {
@@ -286,6 +287,14 @@ static void php_phongo_bulkwrite_free_object(phongo_free_object_arg *object TSRM
 		mongoc_bulk_operation_destroy(intern->bulk);
 	}
 
+	if (intern->database) {
+		efree(intern->database);
+	}
+
+	if (intern->collection) {
+		efree(intern->collection);
+	}
+
 #if PHP_VERSION_ID < 70000
 	efree(intern);
 #endif
@@ -329,20 +338,20 @@ HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS
 	intern = Z_BULKWRITE_OBJ_P(object);
 	array_init(&retval);
 
-	if (intern->bulk->database) {
-		ADD_ASSOC_STRING(&retval, "database", intern->bulk->database);
+	if (intern->database) {
+		ADD_ASSOC_STRING(&retval, "database", intern->database);
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "database");
 	}
 
-	if (intern->bulk->collection) {
-		ADD_ASSOC_STRING(&retval, "collection", intern->bulk->collection);
+	if (intern->collection) {
+		ADD_ASSOC_STRING(&retval, "collection", intern->collection);
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "collection");
 	}
 
-	ADD_ASSOC_BOOL_EX(&retval, "ordered", intern->bulk->flags.ordered);
-	ADD_ASSOC_BOOL_EX(&retval, "executed", intern->bulk->executed);
+	ADD_ASSOC_BOOL_EX(&retval, "ordered", intern->ordered);
+	ADD_ASSOC_BOOL_EX(&retval, "executed", intern->executed);
 	ADD_ASSOC_LONG_EX(&retval, "server_id", mongoc_bulk_operation_get_hint(intern->bulk));
 
 	if (mongoc_bulk_operation_get_write_concern(intern->bulk)) {

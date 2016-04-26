@@ -517,22 +517,32 @@ mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
 	return mongoc_bulk_operation_new(ordered);
 } /* }}} */
 
-bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc_bulk_operation_t *bulk, const mongoc_write_concern_t *write_concern, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+bool phongo_execute_write(mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t  *bulk_write, const mongoc_write_concern_t *write_concern, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
-	char *dbname;
-	char *collname;
 	int success;
 	bson_t reply = BSON_INITIALIZER;
+	mongoc_bulk_operation_t *bulk = bulk_write->bulk;
 	php_phongo_writeresult_t *writeresult;
 
-	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
+	/* Since BulkWrite objects can currently be executed multiple times, ensure
+	 * that the database and collection name are freed before we overwrite them.
+	 * This may be removed once PHPC-676 is implemented. */
+	if (bulk_write->database) {
+		efree(bulk_write->database);
+	}
+
+	if (bulk_write->collection) {
+		efree(bulk_write->collection);
+	}
+
+	if (!phongo_split_namespace(namespace, &bulk_write->database, &bulk_write->collection)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s: %s", "Invalid namespace provided", namespace);
 		return false;
 	}
 
-	mongoc_bulk_operation_set_database(bulk, dbname);
-	mongoc_bulk_operation_set_collection(bulk, collname);
+	mongoc_bulk_operation_set_database(bulk, bulk_write->database);
+	mongoc_bulk_operation_set_collection(bulk, bulk_write->collection);
 	mongoc_bulk_operation_set_client(bulk, client);
 
 	/* If a write concern was not specified, libmongoc will use the client's
@@ -543,14 +553,12 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc
 		write_concern = mongoc_client_get_write_concern(client);
 	}
 
-	efree(dbname);
-	efree(collname);
-
 	if (server_id > 0) {
 		mongoc_bulk_operation_set_hint(bulk, server_id);
 	}
 
 	success = mongoc_bulk_operation_execute(bulk, &reply, &error);
+	bulk_write->executed = true;
 
 	/* Write succeeded and the user doesn't care for the results */
 	if (success && !return_value_used) {

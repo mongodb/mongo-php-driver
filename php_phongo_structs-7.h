@@ -87,6 +87,10 @@ typedef struct {
 typedef struct {
 	mongoc_bulk_operation_t *bulk;
 	size_t                   num_ops;
+	bool                     ordered;
+	char                    *database;
+	char                    *collection;
+	bool                     executed;
 	zend_object              std;
 } php_phongo_bulkwrite_t;
 

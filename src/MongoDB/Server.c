@@ -128,7 +128,7 @@ PHP_METHOD(Server, executeBulkWrite)
 
 
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
-	phongo_execute_write(intern->client, namespace, bulk->bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), intern->server_id, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_write(intern->client, namespace, bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), intern->server_id, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto string Server::getHost()
