@@ -76,6 +76,7 @@ PHP_METHOD(BulkWrite, __construct)
 	}
 
 	intern->bulk = phongo_bulkwrite_init(ordered);
+	intern->num_ops = 0;
 
 	if (options && php_array_exists(options, "bypassDocumentValidation")) {
 		mongoc_bulk_operation_set_bypass_document_validation(intern->bulk, php_array_fetch_bool(options, "bypassDocumentValidation"));
@@ -110,6 +111,8 @@ PHP_METHOD(BulkWrite, insert)
 	phongo_zval_to_bson(document, bson_flags, bson, &bson_out TSRMLS_CC);
 	mongoc_bulk_operation_insert(intern->bulk, bson);
 	bson_clear(&bson);
+
+	intern->num_ops++;
 
 	if (bson_out && return_value_used) {
 		bson_iter_t iter;
@@ -177,6 +180,8 @@ PHP_METHOD(BulkWrite, update)
 		}
 	}
 
+	intern->num_ops++;
+
 	bson_clear(&bquery);
 	bson_clear(&bupdate);
 }
@@ -208,6 +213,8 @@ PHP_METHOD(BulkWrite, delete)
 		mongoc_bulk_operation_remove(intern->bulk, bson);
 	}
 
+	intern->num_ops++;
+
 	bson_clear(&bson);
 }
 /* }}} */
@@ -225,7 +232,7 @@ PHP_METHOD(BulkWrite, count)
 		return;
 	}
 
-	RETURN_LONG(intern->bulk->commands.len);
+	RETURN_LONG(intern->num_ops);
 }
 /* }}} */
 
