@@ -41,6 +41,8 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   NULL
   ["ordered"]=>
   bool(true)
+  ["bypassDocumentValidation"]=>
+  NULL
   ["executed"]=>
   bool(false)
   ["server_id"]=>
@@ -55,6 +57,8 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   string(15) "bulk_write_0002"
   ["ordered"]=>
   bool(true)
+  ["bypassDocumentValidation"]=>
+  NULL
   ["executed"]=>
   bool(true)
   ["server_id"]=>
