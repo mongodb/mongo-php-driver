@@ -27,7 +27,7 @@ echo throws(function() use ($manager, $command) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
-No suitable servers found (`serverselectiontryonce` set): %s
+No suitable servers found (`serverSelectionTryOnce` set): %s
 OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
-No suitable servers found (`serverselectiontryonce` set): %s
+No suitable servers found (`serverSelectionTryOnce` set): %s
 ===DONE===
