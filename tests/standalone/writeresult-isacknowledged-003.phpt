@@ -22,15 +22,15 @@ var_dump($result);
 WriteResult::isAcknowledged(): false
 object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["nInserted"]=>
-  int(0)
+  NULL
   ["nMatched"]=>
-  int(0)
+  NULL
   ["nModified"]=>
-  int(0)
+  NULL
   ["nRemoved"]=>
-  int(0)
+  NULL
   ["nUpserted"]=>
-  int(0)
+  NULL
   ["upsertedIds"]=>
   array(0) {
   }

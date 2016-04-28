@@ -33,7 +33,7 @@ foreach ($writeConcerns as $wc) {
 <?php exit(0); ?>
 --EXPECT--
 bool(false)
-int(0)
+NULL
 OK: Got MongoDB\Driver\Exception\RuntimeException
 not master
 OK: Got MongoDB\Driver\Exception\RuntimeException

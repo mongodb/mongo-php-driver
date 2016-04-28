@@ -26,7 +26,7 @@ foreach ($writeConcerns as $wc) {
 <?php exit(0); ?>
 --EXPECT--
 bool(false)
-int(0)
+NULL
 bool(true)
 int(1)
 bool(true)

@@ -51,7 +51,7 @@ PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
 zend_object_handlers php_phongo_handler_writeresult;
 
-/* {{{ proto integer WriteResult::getInsertedCount()
+/* {{{ proto integer|null WriteResult::getInsertedCount()
    Returns the number of documents that were inserted */
 PHP_METHOD(WriteResult, getInsertedCount)
 {
@@ -69,7 +69,7 @@ PHP_METHOD(WriteResult, getInsertedCount)
 	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nInserted");
 }
 /* }}} */
-/* {{{ proto integer WriteResult::getMatchedCount()
+/* {{{ proto integer|null WriteResult::getMatchedCount()
    Returns the number of documents that matched the update criteria */
 PHP_METHOD(WriteResult, getMatchedCount)
 {
@@ -105,7 +105,7 @@ PHP_METHOD(WriteResult, getModifiedCount)
 	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nModified");
 }
 /* }}} */
-/* {{{ proto integer WriteResult::getDeletedCount()
+/* {{{ proto integer|null WriteResult::getDeletedCount()
    Returns the number of documents that were deleted */
 PHP_METHOD(WriteResult, getDeletedCount)
 {
@@ -123,7 +123,7 @@ PHP_METHOD(WriteResult, getDeletedCount)
 	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nRemoved");
 }
 /* }}} */
-/* {{{ proto integer WriteResult::getUpsertedCount()
+/* {{{ proto integer|null WriteResult::getUpsertedCount()
    Returns the number of documents that were upserted */
 PHP_METHOD(WriteResult, getUpsertedCount)
 {

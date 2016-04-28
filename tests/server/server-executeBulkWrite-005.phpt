@@ -31,7 +31,7 @@ $server->executeCommand('local', $command);
 <?php exit(0); ?>
 --EXPECT--
 bool(false)
-int(0)
+NULL
 bool(true)
 int(1)
 ===DONE===
