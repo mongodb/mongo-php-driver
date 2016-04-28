@@ -87,6 +87,6 @@ foreach($KILLLIST as $id) {
 --EXPECTF--
 int(1)
 OK: Got MongoDB\Driver\Exception\RuntimeException
-Failed to read 4 bytes from socket within 300000 milliseconds.
+Failed to send "insert" command with database "phongo": Failed to read 4 bytes from socket within 300000 milliseconds.
 int(1)
 ===DONE===
