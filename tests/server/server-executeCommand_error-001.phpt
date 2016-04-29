@@ -13,7 +13,7 @@ $secondary = $manager->selectServer($rp);
 
 echo throws(function() use ($secondary) {
     $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
-    $secondary->executeCommand(NS, new MongoDB\Driver\Command(array('ping' => 1)), $rp);
+    $secondary->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(array('ping' => 1)), $rp);
 }, "MongoDB\Driver\Exception\RuntimeException"), "\n";
 
 ?>
