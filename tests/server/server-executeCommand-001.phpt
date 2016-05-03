@@ -26,58 +26,32 @@ var_dump($server == $result->getServer());
 --EXPECTF--
 bool(true)
 object(MongoDB\Driver\Cursor)#%d (%d) {
-  ["cursor"]=>
-  array(%d) {
-    ["stamp"]=>
-    int(0)
-    ["is_command"]=>
-    bool(true)
-    ["sent"]=>
-    bool(true)
-    ["done"]=>
-    bool(false)
-    ["end_of_event"]=>
-    bool(false)
-    ["in_exhaust"]=>
-    bool(false)
-    ["has_fields"]=>
-    bool(false)
-    ["query"]=>
-    object(stdClass)#%d (1) {
+  ["database"]=>
+  string(6) "phongo"
+  ["collection"]=>
+  NULL
+  ["query"]=>
+  NULL
+  ["command"]=>
+  object(MongoDB\Driver\Command)#%d (%d) {
+    ["command"]=>
+    object(stdClass)#%d (%d) {
       ["ping"]=>
       int(1)
     }
-    ["fields"]=>
-    object(stdClass)#%d (0) {
-    }
-    ["read_preference"]=>
-    array(2) {
-      ["mode"]=>
-      int(1)
-      ["tags"]=>
-      array(0) {
-      }
-    }
-    ["flags"]=>
-    int(4)
-    ["skip"]=>
-    int(0)
-    ["limit"]=>
-    int(1)
-    ["count"]=>
-    int(1)
-    ["batch_size"]=>
-    int(0)
-    ["ns"]=>
-    string(11) "phongo.$cmd"
-    ["current_doc"]=>
-    object(stdClass)#%d (1) {
-      ["ok"]=>
-      float(1)
-    }
   }
-  ["server_id"]=>
-  int(1)
+  ["readPreference"]=>
+  NULL
+  ["isDead"]=>
+  bool(true)
+  ["currentIndex"]=>
+  int(0)
+  ["currentDocument"]=>
+  NULL
+  ["server"]=>
+  object(MongoDB\Driver\Server)#%d (%d) {
+    %a
+  }
 }
 
 Dumping response document:

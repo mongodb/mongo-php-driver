@@ -130,7 +130,6 @@
 typedef struct {
 	zend_object_iterator   intern;
 	php_phongo_cursor_t   *cursor;
-	long                   current;
 } php_phongo_cursor_iterator;
 
 

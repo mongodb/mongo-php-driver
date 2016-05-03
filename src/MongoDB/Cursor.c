@@ -220,6 +220,26 @@ static void php_phongo_cursor_free_object(phongo_free_object_arg *object TSRMLS_
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	if (intern->database) {
+		efree(intern->database);
+	}
+
+	if (intern->collection) {
+		efree(intern->collection);
+	}
+
+	if (!Z_ISUNDEF(intern->query)) {
+		zval_ptr_dtor(&intern->query);
+	}
+
+	if (!Z_ISUNDEF(intern->command)) {
+		zval_ptr_dtor(&intern->command);
+	}
+
+	if (!Z_ISUNDEF(intern->read_preference)) {
+		zval_ptr_dtor(&intern->read_preference);
+	}
+
 	php_phongo_cursor_free(intern);
 
 #if PHP_VERSION_ID < 70000
@@ -264,26 +284,86 @@ HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	*is_temp = 1;
 	intern = Z_CURSOR_OBJ_P(object);
 
-	array_init_size(&retval, 2);
-	if (intern->cursor) {
-#if PHP_VERSION_ID >= 70000
-		zval zcursor;
+	array_init_size(&retval, 9);
 
-		php_phongo_cursor_to_zval(&zcursor, intern->cursor);
-		ADD_ASSOC_ZVAL_EX(&retval, "cursor", &zcursor);
-#else
-		zval *zcursor = NULL;
-
-		MAKE_STD_ZVAL(zcursor);
-
-		php_phongo_cursor_to_zval(zcursor, intern->cursor);
-		ADD_ASSOC_ZVAL_EX(&retval, "cursor", zcursor);
-#endif
+	if (intern->database) {
+		ADD_ASSOC_STRING(&retval, "database", intern->database);
 	} else {
-		ADD_ASSOC_NULL_EX(&retval, "cursor");
+		ADD_ASSOC_NULL_EX(&retval, "database");
 	}
 
-	ADD_ASSOC_LONG_EX(&retval, "server_id", intern->server_id);
+	if (intern->collection) {
+		ADD_ASSOC_STRING(&retval, "collection", intern->collection);
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "collection");
+	}
+
+	if (!Z_ISUNDEF(intern->query)) {
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(&retval, "query", &intern->query);
+		Z_ADDREF(intern->query);
+#else
+		ADD_ASSOC_ZVAL_EX(&retval, "query", intern->query);
+		Z_ADDREF_P(intern->query);
+#endif
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "query");
+	}
+
+	if (!Z_ISUNDEF(intern->command)) {
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(&retval, "command", &intern->command);
+		Z_ADDREF(intern->command);
+#else
+		ADD_ASSOC_ZVAL_EX(&retval, "command", intern->command);
+		Z_ADDREF_P(intern->command);
+#endif
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "command");
+	}
+
+	if (!Z_ISUNDEF(intern->read_preference)) {
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(&retval, "readPreference", &intern->read_preference);
+		Z_ADDREF(intern->read_preference);
+#else
+		ADD_ASSOC_ZVAL_EX(&retval, "readPreference", intern->read_preference);
+		Z_ADDREF_P(intern->read_preference);
+#endif
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "readPreference");
+	}
+
+	ADD_ASSOC_BOOL_EX(&retval, "isDead", !mongoc_cursor_is_alive(intern->cursor));
+
+	ADD_ASSOC_LONG_EX(&retval, "currentIndex", intern->current);
+
+	if (!Z_ISUNDEF(intern->visitor_data.zchild)) {
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(&retval, "currentDocument", &intern->visitor_data.zchild);
+		/*Z_ADDREF(intern->visitor_data.zchild);*/
+#else
+		ADD_ASSOC_ZVAL_EX(&retval, "currentDocument", intern->visitor_data.zchild);
+		Z_ADDREF_P(intern->visitor_data.zchild);
+#endif
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "currentDocument");
+	}
+
+	{
+#if PHP_VERSION_ID >= 70000
+		zval server;
+
+		phongo_server_init(&server, intern->client, intern->server_id TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
+#else
+		zval *server = NULL;
+
+		MAKE_STD_ZVAL(server);
+		phongo_server_init(server, intern->client, intern->server_id TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(&retval, "server", server);
+#endif
+	}
 
 	return Z_ARRVAL(retval);
 

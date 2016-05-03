@@ -67,7 +67,6 @@ PHP_METHOD(Server, executeCommand)
 	phongo_zpp_char_len       db_len;
 	zval                     *command;
 	zval                     *readPreference = NULL;
-	php_phongo_command_t     *cmd;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -78,19 +77,17 @@ PHP_METHOD(Server, executeCommand)
 		return;
 	}
 
-
-	cmd = Z_COMMAND_OBJ_P(command);
-	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), intern->server_id, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, db, command, readPreference, intern->server_id, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Driver\Cursor Server::executeQuery(string $namespace, MongoDB\Driver\Query $zquery[, MongoDB\Driver\ReadPreference $readPreference = null]))
+/* {{{ proto MongoDB\Driver\Cursor Server::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null]))
    Executes a Query */
 PHP_METHOD(Server, executeQuery)
 {
 	php_phongo_server_t      *intern;
 	char                     *namespace;
 	phongo_zpp_char_len       namespace_len;
-	zval                     *zquery;
+	zval                     *query;
 	zval                     *readPreference = NULL;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
@@ -98,12 +95,11 @@ PHP_METHOD(Server, executeQuery)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zquery, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &query, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
 	}
 
-
-	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), intern->server_id, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_query(intern->client, namespace, query, readPreference, intern->server_id, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\WriteResult Server::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])

@@ -38,12 +38,18 @@ typedef struct {
 } php_phongo_command_t;
 
 typedef struct {
-	zend_object              std;
-	mongoc_cursor_t         *cursor;
-	mongoc_client_t         *client;
-	int                      server_id;
-	php_phongo_bson_state    visitor_data;
-	int                      got_iterator;
+	zend_object                 std;
+	mongoc_cursor_t            *cursor;
+	mongoc_client_t            *client;
+	int                         server_id;
+	php_phongo_bson_state       visitor_data;
+	int                         got_iterator;
+	long                        current;
+	char                       *database;
+	char                       *collection;
+	zval                       *query;
+	zval                       *command;
+	zval                       *read_preference;
 } php_phongo_cursor_t;
 
 typedef struct {
