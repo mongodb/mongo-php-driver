@@ -36,11 +36,11 @@ ini_set('mongodb.debug', 'off');
 [%s]     PHONGO: DEBUG   > Connecting to 'invalid.host:27017[mongodb://invalid.host:27017]'
 %a
 OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
-No suitable servers found (`serverselectiontryonce` set): %s
+No suitable servers found (`serverSelectionTryOnce` set): %s
 %a
 [%s]     PHONGO: DEBUG   > Applying connectTimeoutMS: 1
 [%s]     PHONGO: DEBUG   > Connecting to 'localhost:54321[mongodb://localhost:54321]'
 %a
 OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
-No suitable servers found (`serverselectiontryonce` set): %s
+No suitable servers found (`serverSelectionTryOnce` set): %s
 ===DONE===
