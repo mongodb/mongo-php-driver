@@ -59,7 +59,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
       }
     }
     ["flags"]=>
-    int(0)
+    int(4)
     ["skip"]=>
     int(0)
     ["limit"]=>

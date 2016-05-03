@@ -644,8 +644,9 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 		return false;
 	}
 
-	if (server_id > 0) {
-		cursor->server_id = server_id;
+	if (server_id > 0 && !mongoc_cursor_set_hint(cursor, server_id)) {
+		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "%s", "Could not set cursor server_id");
+		return false;
 	}
 
 	if (!phongo_advance_cursor_and_check_for_error(cursor TSRMLS_CC)) {
@@ -668,8 +669,10 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 
 
 	cursor = mongoc_client_command(client, db, MONGOC_QUERY_NONE, 0, 1, 0, command, NULL, read_preference);
-	if (server_id > 0) {
-		cursor->server_id = server_id;
+
+	if (server_id > 0 && !mongoc_cursor_set_hint(cursor, server_id)) {
+		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "%s", "Could not set cursor server_id");
+		return false;
 	}
 
 	if (!phongo_advance_cursor_and_check_for_error(cursor TSRMLS_CC)) {
