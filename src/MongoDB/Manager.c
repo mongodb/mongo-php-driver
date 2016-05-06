@@ -88,10 +88,9 @@ PHP_METHOD(Manager, executeCommand)
 {
 	php_phongo_manager_t     *intern;
 	char                     *db;
-	phongo_zpp_char_len      db_len;
+	phongo_zpp_char_len       db_len;
 	zval                     *command;
 	zval                     *readPreference = NULL;
-	php_phongo_command_t     *cmd;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -102,19 +101,17 @@ PHP_METHOD(Manager, executeCommand)
 		return;
 	}
 
-
-	cmd = Z_COMMAND_OBJ_P(command);
-	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, db, command, readPreference, -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto MongoDB\Driver\Cursor Manager::executeQuery(string $namespace, MongoDB\Driver\Query $zquery[, MongoDB\Driver\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\Driver\Cursor Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a Query */
 PHP_METHOD(Manager, executeQuery)
 {
 	php_phongo_manager_t     *intern;
 	char                     *namespace;
 	phongo_zpp_char_len       namespace_len;
-	zval                     *zquery;
+	zval                     *query;
 	zval                     *readPreference = NULL;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
@@ -122,12 +119,11 @@ PHP_METHOD(Manager, executeQuery)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zquery, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &query, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
 	}
 
-
-	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_query(intern->client, namespace, query, readPreference, -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\WriteResult Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])

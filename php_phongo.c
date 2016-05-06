@@ -103,6 +103,9 @@ PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void)
 }
 /* }}} */
 
+/* Forward declarations */
+static bool phongo_split_namespace(const char *namespace, char **dbname, char **cname);
+
 /* {{{ Error reporting and logging */
 zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain)
 {
@@ -235,7 +238,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 /* }}} */
 
 /* {{{ Init objects */
-static void phongo_cursor_init(zval *return_value, mongoc_cursor_t *cursor, mongoc_client_t *client TSRMLS_DC) /* {{{ */
+static void phongo_cursor_init(zval *return_value, mongoc_cursor_t *cursor, mongoc_client_t *client, zval *readPreference TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t *intern;
 
@@ -245,6 +248,50 @@ static void phongo_cursor_init(zval *return_value, mongoc_cursor_t *cursor, mong
 	intern->cursor = cursor;
 	intern->server_id = mongoc_cursor_get_hint(cursor);
 	intern->client = client;
+
+	if (readPreference) {
+#if PHP_VERSION_ID >= 70000
+		ZVAL_ZVAL(&intern->read_preference, readPreference, 1, 0);
+#else
+		Z_ADDREF_P(readPreference);
+		intern->read_preference = readPreference;
+#endif
+	}
+} /* }}} */
+
+static void phongo_cursor_init_for_command(zval *return_value, mongoc_cursor_t *cursor, mongoc_client_t *client, const char *db, zval *command, zval *readPreference TSRMLS_DC) /* {{{ */
+{
+	php_phongo_cursor_t *intern;
+
+	phongo_cursor_init(return_value, cursor, client, readPreference TSRMLS_CC);
+	intern = Z_CURSOR_OBJ_P(return_value);
+
+	intern->database = estrdup(db);
+
+#if PHP_VERSION_ID >= 70000
+	ZVAL_ZVAL(&intern->command, command, 1, 0);
+#else
+	Z_ADDREF_P(command);
+	intern->command = command;
+#endif
+} /* }}} */
+
+static void phongo_cursor_init_for_query(zval *return_value, mongoc_cursor_t *cursor, mongoc_client_t *client, const char *namespace, zval *query, zval *readPreference TSRMLS_DC) /* {{{ */
+{
+	php_phongo_cursor_t *intern;
+
+	phongo_cursor_init(return_value, cursor, client, readPreference TSRMLS_CC);
+	intern = Z_CURSOR_OBJ_P(return_value);
+
+	/* namespace has already been validated by phongo_execute_query() */
+	phongo_split_namespace(namespace, &intern->database, &intern->collection);
+
+#if PHP_VERSION_ID >= 70000
+	ZVAL_ZVAL(&intern->query, query, 1, 0);
+#else
+	Z_ADDREF_P(query);
+	intern->query = query;
+#endif
 } /* }}} */
 
 void phongo_server_init(zval *return_value, mongoc_client_t *client, int server_id TSRMLS_DC) /* {{{ */
@@ -495,7 +542,7 @@ php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, bson_t *re
 
 /* {{{ CRUD */
 /* Splits a namespace name into the database and collection names, allocated with estrdup. */
-bool phongo_split_namespace(const char *namespace, char **dbname, char **cname) /* {{{ */
+static bool phongo_split_namespace(const char *namespace, char **dbname, char **cname) /* {{{ */
 {
 	char *dot = strchr(namespace, '.');
 
@@ -616,8 +663,9 @@ static bool phongo_advance_cursor_and_check_for_error(mongoc_cursor_t *cursor TS
 	return true;
 }
 
-int phongo_execute_query(mongoc_client_t *client, const char *namespace, const php_phongo_query_t *query, const mongoc_read_prefs_t *read_preference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *zquery, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
+	const php_phongo_query_t *query;
 	mongoc_cursor_t *cursor;
 	char *dbname;
 	char *collname;
@@ -631,11 +679,13 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 	efree(dbname);
 	efree(collname);
 
+	query = Z_QUERY_OBJ_P(zquery);
+
 	if (query->read_concern) {
 		mongoc_collection_set_read_concern(collection, query->read_concern);
 	}
 
-	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->query, query->selector, read_preference);
+	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->query, query->selector, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC));
 	mongoc_collection_destroy(collection);
 
 	/* mongoc issues a warning we need to catch somehow */
@@ -658,17 +708,19 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 		return true;
 	}
 
-	phongo_cursor_init(return_value, cursor, client TSRMLS_CC);
+	phongo_cursor_init_for_query(return_value, cursor, client, namespace, zquery, zreadPreference TSRMLS_CC);
 	return true;
 } /* }}} */
 
-int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t *command, const mongoc_read_prefs_t *read_preference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_command(mongoc_client_t *client, const char *db, zval *zcommand, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
+	const php_phongo_command_t *command;
 	mongoc_cursor_t *cursor;
 	bson_iter_t iter;
 
+	command = Z_COMMAND_OBJ_P(zcommand);
 
-	cursor = mongoc_client_command(client, db, MONGOC_QUERY_NONE, 0, 1, 0, command, NULL, read_preference);
+	cursor = mongoc_client_command(client, db, MONGOC_QUERY_NONE, 0, 1, 0, command->bson, NULL, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC));
 
 	if (server_id > 0 && !mongoc_cursor_set_hint(cursor, server_id)) {
 		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "%s", "Could not set cursor server_id");
@@ -697,11 +749,11 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 			return false;
 		}
 
-		phongo_cursor_init(return_value, cmd_cursor, client TSRMLS_CC);
+		phongo_cursor_init_for_command(return_value, cmd_cursor, client, db, zcommand, zreadPreference TSRMLS_CC);
 		return true;
 	}
 
-	phongo_cursor_init(return_value, cursor, client TSRMLS_CC);
+	phongo_cursor_init_for_command(return_value, cursor, client, db, zcommand, zreadPreference TSRMLS_CC);
 	return true;
 } /* }}} */
 
@@ -1269,13 +1321,6 @@ const mongoc_read_prefs_t* phongo_read_preference_from_zval(zval *zread_preferen
 
 	return NULL;
 } /* }}} */
-
-const php_phongo_query_t* phongo_query_from_zval(zval *zquery TSRMLS_DC) /* {{{ */
-{
-	php_phongo_query_t *intern = Z_QUERY_OBJ_P(zquery);
-
-	return intern;
-} /* }}} */
 /* }}} */
 
 /* {{{ phongo zval from mongoc types */
@@ -1430,94 +1475,6 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 	} else {
 		ADD_ASSOC_NULL_EX(retval, "journal");
 	}
-} /* }}} */
-
-void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor) /* {{{ */
-{
-
-	array_init_size(retval, 19);
-
-		ADD_ASSOC_LONG_EX(retval, "stamp", cursor->stamp);
-
-#define _ADD_BOOL(z, field) ADD_ASSOC_BOOL_EX(z, #field, cursor->field)
-		_ADD_BOOL(retval, is_command);
-		_ADD_BOOL(retval, sent);
-		_ADD_BOOL(retval, done);
-		_ADD_BOOL(retval, end_of_event);
-		_ADD_BOOL(retval, in_exhaust);
-		_ADD_BOOL(retval, has_fields);
-#undef _ADD_BOOL
-
-		/* Avoid using PHONGO_TYPEMAP_NATIVE_ARRAY for decoding query, selector,
-		 * and current documents so that users can differentiate BSON arrays
-		 * and documents. */
-		{
-#if PHP_VERSION_ID >= 70000
-			zval zv;
-#else
-			zval *zv;
-#endif
-
-			phongo_bson_to_zval(bson_get_data(&cursor->query), cursor->query.len, &zv);
-#if PHP_VERSION_ID >= 70000
-			ADD_ASSOC_ZVAL_EX(retval, "query", &zv);
-#else
-			ADD_ASSOC_ZVAL_EX(retval, "query", zv);
-#endif
-		}
-		{
-#if PHP_VERSION_ID >= 70000
-			zval zv;
-#else
-			zval *zv;
-#endif
-
-			phongo_bson_to_zval(bson_get_data(&cursor->fields), cursor->fields.len, &zv);
-#if PHP_VERSION_ID >= 70000
-			ADD_ASSOC_ZVAL_EX(retval, "fields", &zv);
-#else
-			ADD_ASSOC_ZVAL_EX(retval, "fields", zv);
-#endif
-		}
-		{
-#if PHP_VERSION_ID >= 70000
-			zval read_preference;
-
-			php_phongo_read_preference_to_zval(&read_preference, cursor->read_prefs);
-			ADD_ASSOC_ZVAL_EX(retval, "read_preference", &read_preference);
-#else
-			zval *read_preference = NULL;
-			MAKE_STD_ZVAL(read_preference);
-			php_phongo_read_preference_to_zval(read_preference, cursor->read_prefs);
-			ADD_ASSOC_ZVAL_EX(retval, "read_preference", read_preference);
-#endif
-
-		}
-
-#define _ADD_INT(z, field) ADD_ASSOC_LONG_EX(z, #field, cursor->field)
-		_ADD_INT(retval, flags);
-		_ADD_INT(retval, skip);
-		_ADD_INT(retval, limit);
-		_ADD_INT(retval, count);
-		_ADD_INT(retval, batch_size);
-#undef _ADD_INT
-
-		ADD_ASSOC_STRING(retval, "ns", (char *)cursor->ns);
-		if (cursor->current) {
-#if PHP_VERSION_ID >= 70000
-			zval zv;
-#else
-			zval *zv;
-#endif
-
-			phongo_bson_to_zval(bson_get_data(cursor->current), cursor->current->len, &zv);
-#if PHP_VERSION_ID >= 70000
-			ADD_ASSOC_ZVAL_EX(retval, "current_doc", &zv);
-#else
-			ADD_ASSOC_ZVAL_EX(retval, "current_doc", zv);
-#endif
-		}
-
 } /* }}} */
 /* }}} */
 
@@ -2158,13 +2115,17 @@ static int php_phongo_cursor_iterator_valid(zend_object_iterator *iter TSRMLS_DC
 #if PHP_VERSION_ID < 50500
 static int php_phongo_cursor_iterator_get_current_key(zend_object_iterator *iter, char **str_key, uint *str_key_len, ulong *int_key TSRMLS_DC) /* {{{ */
 {
-	*int_key = (ulong) ((php_phongo_cursor_iterator *)iter)->current;
+	php_phongo_cursor_t *cursor = ((php_phongo_cursor_iterator *)iter)->cursor;
+
+	*int_key = (ulong) cursor->current;
 	return HASH_KEY_IS_LONG;
 } /* }}} */
 #else
 static void php_phongo_cursor_iterator_get_current_key(zend_object_iterator *iter, zval *key TSRMLS_DC) /* {{{ */
 {
-	ZVAL_LONG(key, ((php_phongo_cursor_iterator *)iter)->current);
+	php_phongo_cursor_t *cursor = ((php_phongo_cursor_iterator *)iter)->cursor;
+
+	ZVAL_LONG(key, cursor->current);
 } /* }}} */
 #endif
 
@@ -2191,7 +2152,7 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator *iter T
 	const bson_t               *doc;
 
 	php_phongo_cursor_free_current(cursor);
-	cursor_it->current++;
+	cursor->current++;
 
 	if (mongoc_cursor_next(cursor->cursor, &doc)) {
 		phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
@@ -2212,7 +2173,7 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_
 	php_phongo_cursor_t        *cursor = cursor_it->cursor;
 	const bson_t               *doc;
 
-	if (cursor_it->current > 0) {
+	if (cursor->current > 0) {
 		phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Cursors cannot rewind after starting iteration");
 		return;
 	}

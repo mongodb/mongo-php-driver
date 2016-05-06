@@ -31,22 +31,12 @@ foreach($rps as $r) {
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\Cursor)#%d (%d) {
-  ["cursor"]=>
-  array(%d) {
-    ["stamp"]=>
-    int(0)
-    ["is_command"]=>
-    bool(false)
-    ["sent"]=>
-    bool(true)
-    ["done"]=>
-    bool(true)
-    ["end_of_event"]=>
-    bool(true)
-    ["in_exhaust"]=>
-    bool(false)
-    ["has_fields"]=>
-    bool(false)
+  ["database"]=>
+  string(6) "phongo"
+  ["collection"]=>
+  string(26) "readPreference_bug0146_001"
+  ["query"]=>
+  object(MongoDB\Driver\Query)#%d (%d) {
     ["query"]=>
     object(stdClass)#%d (%d) {
       ["$query"]=>
@@ -55,50 +45,47 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
         string(5) "query"
       }
     }
-    ["fields"]=>
-    object(stdClass)#%d (0) {
-    }
-    ["read_preference"]=>
-    array(2) {
-      ["mode"]=>
-      int(1)
-      ["tags"]=>
-      array(0) {
-      }
-    }
+    ["selector"]=>
+    NULL
     ["flags"]=>
     int(0)
     ["skip"]=>
     int(0)
     ["limit"]=>
     int(0)
-    ["count"]=>
-    int(1)
     ["batch_size"]=>
     int(0)
-    ["ns"]=>
-    string(%d) "%s"
+    ["readConcern"]=>
+    NULL
   }
-  ["server_id"]=>
-  int(1)
+  ["command"]=>
+  NULL
+  ["readPreference"]=>
+  object(MongoDB\Driver\ReadPreference)#%d (%d) {
+    ["mode"]=>
+    int(1)
+    ["tags"]=>
+    array(0) {
+    }
+  }
+  ["isDead"]=>
+  bool(true)
+  ["currentIndex"]=>
+  int(0)
+  ["currentDocument"]=>
+  NULL
+  ["server"]=>
+  object(MongoDB\Driver\Server)#%d (%d) {
+    %a
+  }
 }
 object(MongoDB\Driver\Cursor)#%d (%d) {
-  ["cursor"]=>
-  array(%d) {
-    ["stamp"]=>
-    int(0)
-    ["is_command"]=>
-    bool(false)
-    ["sent"]=>
-    bool(true)
-    ["done"]=>
-    bool(true)
-    ["end_of_event"]=>
-    bool(true)
-    ["in_exhaust"]=>
-    bool(false)
-    ["has_fields"]=>
-    bool(false)
+  ["database"]=>
+  string(6) "phongo"
+  ["collection"]=>
+  string(26) "readPreference_bug0146_001"
+  ["query"]=>
+  object(MongoDB\Driver\Query)#%d (%d) {
     ["query"]=>
     object(stdClass)#%d (%d) {
       ["$query"]=>
@@ -107,50 +94,47 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
         string(5) "query"
       }
     }
-    ["fields"]=>
-    object(stdClass)#%d (0) {
-    }
-    ["read_preference"]=>
-    array(2) {
-      ["mode"]=>
-      int(5)
-      ["tags"]=>
-      array(0) {
-      }
-    }
+    ["selector"]=>
+    NULL
     ["flags"]=>
     int(0)
     ["skip"]=>
     int(0)
     ["limit"]=>
     int(0)
-    ["count"]=>
-    int(1)
     ["batch_size"]=>
     int(0)
-    ["ns"]=>
-    string(%d) "%s"
+    ["readConcern"]=>
+    NULL
   }
-  ["server_id"]=>
-  int(1)
+  ["command"]=>
+  NULL
+  ["readPreference"]=>
+  object(MongoDB\Driver\ReadPreference)#%d (%d) {
+    ["mode"]=>
+    int(5)
+    ["tags"]=>
+    array(0) {
+    }
+  }
+  ["isDead"]=>
+  bool(true)
+  ["currentIndex"]=>
+  int(0)
+  ["currentDocument"]=>
+  NULL
+  ["server"]=>
+  object(MongoDB\Driver\Server)#%d (%d) {
+    %a
+  }
 }
 object(MongoDB\Driver\Cursor)#%d (%d) {
-  ["cursor"]=>
-  array(%d) {
-    ["stamp"]=>
-    int(0)
-    ["is_command"]=>
-    bool(false)
-    ["sent"]=>
-    bool(true)
-    ["done"]=>
-    bool(true)
-    ["end_of_event"]=>
-    bool(true)
-    ["in_exhaust"]=>
-    bool(false)
-    ["has_fields"]=>
-    bool(false)
+  ["database"]=>
+  string(6) "phongo"
+  ["collection"]=>
+  string(26) "readPreference_bug0146_001"
+  ["query"]=>
+  object(MongoDB\Driver\Query)#%d (%d) {
     ["query"]=>
     object(stdClass)#%d (%d) {
       ["$query"]=>
@@ -159,50 +143,47 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
         string(5) "query"
       }
     }
-    ["fields"]=>
-    object(stdClass)#%d (0) {
-    }
-    ["read_preference"]=>
-    array(2) {
-      ["mode"]=>
-      int(2)
-      ["tags"]=>
-      array(0) {
-      }
-    }
+    ["selector"]=>
+    NULL
     ["flags"]=>
     int(0)
     ["skip"]=>
     int(0)
     ["limit"]=>
     int(0)
-    ["count"]=>
-    int(1)
     ["batch_size"]=>
     int(0)
-    ["ns"]=>
-    string(%d) "%s"
+    ["readConcern"]=>
+    NULL
   }
-  ["server_id"]=>
-  int(1)
+  ["command"]=>
+  NULL
+  ["readPreference"]=>
+  object(MongoDB\Driver\ReadPreference)#%d (%d) {
+    ["mode"]=>
+    int(2)
+    ["tags"]=>
+    array(0) {
+    }
+  }
+  ["isDead"]=>
+  bool(true)
+  ["currentIndex"]=>
+  int(0)
+  ["currentDocument"]=>
+  NULL
+  ["server"]=>
+  object(MongoDB\Driver\Server)#%d (%d) {
+    %a
+  }
 }
 object(MongoDB\Driver\Cursor)#%d (%d) {
-  ["cursor"]=>
-  array(%d) {
-    ["stamp"]=>
-    int(0)
-    ["is_command"]=>
-    bool(false)
-    ["sent"]=>
-    bool(true)
-    ["done"]=>
-    bool(true)
-    ["end_of_event"]=>
-    bool(true)
-    ["in_exhaust"]=>
-    bool(false)
-    ["has_fields"]=>
-    bool(false)
+  ["database"]=>
+  string(6) "phongo"
+  ["collection"]=>
+  string(26) "readPreference_bug0146_001"
+  ["query"]=>
+  object(MongoDB\Driver\Query)#%d (%d) {
     ["query"]=>
     object(stdClass)#%d (%d) {
       ["$query"]=>
@@ -211,50 +192,47 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
         string(5) "query"
       }
     }
-    ["fields"]=>
-    object(stdClass)#%d (0) {
-    }
-    ["read_preference"]=>
-    array(2) {
-      ["mode"]=>
-      int(6)
-      ["tags"]=>
-      array(0) {
-      }
-    }
+    ["selector"]=>
+    NULL
     ["flags"]=>
     int(0)
     ["skip"]=>
     int(0)
     ["limit"]=>
     int(0)
-    ["count"]=>
-    int(1)
     ["batch_size"]=>
     int(0)
-    ["ns"]=>
-    string(%d) "%s"
+    ["readConcern"]=>
+    NULL
   }
-  ["server_id"]=>
-  int(1)
+  ["command"]=>
+  NULL
+  ["readPreference"]=>
+  object(MongoDB\Driver\ReadPreference)#%d (%d) {
+    ["mode"]=>
+    int(6)
+    ["tags"]=>
+    array(0) {
+    }
+  }
+  ["isDead"]=>
+  bool(true)
+  ["currentIndex"]=>
+  int(0)
+  ["currentDocument"]=>
+  NULL
+  ["server"]=>
+  object(MongoDB\Driver\Server)#%d (%d) {
+    %a
+  }
 }
 object(MongoDB\Driver\Cursor)#%d (%d) {
-  ["cursor"]=>
-  array(%d) {
-    ["stamp"]=>
-    int(0)
-    ["is_command"]=>
-    bool(false)
-    ["sent"]=>
-    bool(true)
-    ["done"]=>
-    bool(true)
-    ["end_of_event"]=>
-    bool(true)
-    ["in_exhaust"]=>
-    bool(false)
-    ["has_fields"]=>
-    bool(false)
+  ["database"]=>
+  string(6) "phongo"
+  ["collection"]=>
+  string(26) "readPreference_bug0146_001"
+  ["query"]=>
+  object(MongoDB\Driver\Query)#%d (%d) {
     ["query"]=>
     object(stdClass)#%d (%d) {
       ["$query"]=>
@@ -263,31 +241,38 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
         string(5) "query"
       }
     }
-    ["fields"]=>
-    object(stdClass)#%d (0) {
-    }
-    ["read_preference"]=>
-    array(2) {
-      ["mode"]=>
-      int(10)
-      ["tags"]=>
-      array(0) {
-      }
-    }
+    ["selector"]=>
+    NULL
     ["flags"]=>
     int(0)
     ["skip"]=>
     int(0)
     ["limit"]=>
     int(0)
-    ["count"]=>
-    int(1)
     ["batch_size"]=>
     int(0)
-    ["ns"]=>
-    string(%d) "%s"
+    ["readConcern"]=>
+    NULL
   }
-  ["server_id"]=>
-  int(1)
+  ["command"]=>
+  NULL
+  ["readPreference"]=>
+  object(MongoDB\Driver\ReadPreference)#%d (%d) {
+    ["mode"]=>
+    int(10)
+    ["tags"]=>
+    array(0) {
+    }
+  }
+  ["isDead"]=>
+  bool(true)
+  ["currentIndex"]=>
+  int(0)
+  ["currentDocument"]=>
+  NULL
+  ["server"]=>
+  object(MongoDB\Driver\Server)#%d (%d) {
+    %a
+  }
 }
 ===DONE===

@@ -36,22 +36,12 @@ var_dump(iterator_to_array($qr));
 --EXPECTF--
 bool(true)
 object(MongoDB\Driver\Cursor)#%d (%d) {
-  ["cursor"]=>
-  array(%d) {
-    ["stamp"]=>
-    int(0)
-    ["is_command"]=>
-    bool(false)
-    ["sent"]=>
-    bool(true)
-    ["done"]=>
-    bool(false)
-    ["end_of_event"]=>
-    bool(false)
-    ["in_exhaust"]=>
-    bool(false)
-    ["has_fields"]=>
-    bool(true)
+  ["database"]=>
+  string(6) "phongo"
+  ["collection"]=>
+  string(32) "manager_manager_executeQuery_001"
+  ["query"]=>
+  object(MongoDB\Driver\Query)#%d (%d) {
     ["query"]=>
     object(stdClass)#%d (%d) {
       ["$query"]=>
@@ -60,18 +50,10 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
         int(3)
       }
     }
-    ["fields"]=>
+    ["selector"]=>
     object(stdClass)#%d (%d) {
       ["y"]=>
       int(1)
-    }
-    ["read_preference"]=>
-    array(2) {
-      ["mode"]=>
-      int(1)
-      ["tags"]=>
-      array(0) {
-      }
     }
     ["flags"]=>
     int(0)
@@ -79,22 +61,25 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     int(0)
     ["limit"]=>
     int(0)
-    ["count"]=>
-    int(1)
     ["batch_size"]=>
     int(0)
-    ["ns"]=>
-    string(39) "phongo.manager_manager_executeQuery_001"
-    ["current_doc"]=>
-    object(stdClass)#%d (2) {
-      ["_id"]=>
-      int(2)
-      ["y"]=>
-      int(4)
-    }
+    ["readConcern"]=>
+    NULL
   }
-  ["server_id"]=>
-  int(1)
+  ["command"]=>
+  NULL
+  ["readPreference"]=>
+  NULL
+  ["isDead"]=>
+  bool(true)
+  ["currentIndex"]=>
+  int(0)
+  ["currentDocument"]=>
+  NULL
+  ["server"]=>
+  object(MongoDB\Driver\Server)#%d (%d) {
+    %a
+  }
 }
 bool(true)
 string(%d) "%s"
