@@ -27,8 +27,6 @@
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
-#include <mongoc-cursor-private.h>
-#include <mongoc-bulk-operation-private.h>
 
 /* PHP Core stuff */
 #include <php.h>

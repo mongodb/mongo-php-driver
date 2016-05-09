@@ -27,10 +27,6 @@
 /* External libs */
 #include "bson.h"
 #include "mongoc.h"
-#include "mongoc-cursor-cursorid-private.h"
-#include "mongoc-bulk-operation-private.h"
-#include "mongoc-read-concern-private.h"
-#include "mongoc-write-concern-private.h"
 #include "mongoc-trace.h"
 
 

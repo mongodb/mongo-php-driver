@@ -22,7 +22,6 @@
 /* External libs */
 #include "bson.h"
 #include "mongoc.h"
-#include "mongoc-topology-description-private.h"
 
 #define phpext_mongodb_ptr &mongodb_module_entry
 extern zend_module_entry mongodb_module_entry;

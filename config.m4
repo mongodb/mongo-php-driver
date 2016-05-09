@@ -369,7 +369,6 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
         LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-priv --libs`
         LIBMONGOC_VER=`$PKG_CONFIG libmongoc-priv --modversion`
         AC_MSG_RESULT(version $LIBMONGOC_VER found)
-        CFLAGS="$CFLAGS -DMONGOC_I_AM_A_DRIVER"
 
       else
         AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.3.3)

@@ -28,9 +28,6 @@
 #include <bson.h>
 #include <mongoc.h>
 
-/* We need to access the internal bulk structure to access the bulk op count */
-#include <mongoc-bulk-operation-private.h>
-
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
