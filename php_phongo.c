@@ -1012,10 +1012,15 @@ int php_phongo_peer_verify(php_stream *stream, X509 *cert, const char *hostname,
 			peer = hostname;
 		}
 
+#ifdef HAVE_OPENSSL_EXT
 		if (php_phongo_verify_hostname(peer, cert TSRMLS_CC) == FAILURE) {
 			bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Remote certificate SubjectAltName or CN does not match '%s'", hostname);
 			return false;
 		}
+#else
+		bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Cannot verify remote certificate SubjectAltName or CN. Please ensure that extension is compiled against PHP with OpenSSL or disable the \"verify_peer_name\" SSL context option.");
+		return false;
+#endif
 	}
 
 	return true;
@@ -1067,6 +1072,7 @@ bool php_phongo_ssl_verify(php_stream *stream, const char *hostname, bson_error_
 #else
 	if (php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "verify_expiry", &verify_expiry) == SUCCESS && zend_is_true(*verify_expiry)) {
 #endif
+#ifdef HAVE_OPENSSL_EXT
 		time_t current     = time(NULL);
 		time_t valid_from  = php_mongodb_asn1_time_to_time_t(X509_get_notBefore(cert) TSRMLS_CC);
 		time_t valid_until = php_mongodb_asn1_time_to_time_t(X509_get_notAfter(cert) TSRMLS_CC);
@@ -1079,6 +1085,10 @@ bool php_phongo_ssl_verify(php_stream *stream, const char *hostname, bson_error_
 			bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Certificate has expired on %s", hostname);
 			return false;
 		}
+#else
+		bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Cannot verify certificate expiration. Please ensure that extension is compiled against PHP with OpenSSL or disable the \"verify_expiry\" SSL context option.");
+		return false;
+#endif
 	}
 
 	return true;
