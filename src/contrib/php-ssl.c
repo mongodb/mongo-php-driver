@@ -34,7 +34,7 @@
 #define timezone _timezone  /* timezone is called _timezone in LibC */
 #endif
 
-int php_mongo_matches_wildcard_name(const char *subjectname, const char *certname) /* {{{ */
+int php_mongodb_matches_wildcard_name(const char *subjectname, const char *certname) /* {{{ */
 {
     char *wildcard = NULL;
     int prefix_len, suffix_len, subject_len;
@@ -70,7 +70,7 @@ int php_mongo_matches_wildcard_name(const char *subjectname, const char *certnam
 }
 /* }}} */
 
-int php_mongo_matches_san_list(X509 *peer, const char *subject_name) /* {{{ */
+int php_mongodb_matches_san_list(X509 *peer, const char *subject_name) /* {{{ */
 {
 	int i, len;
 	unsigned char *cert_name = NULL;
@@ -96,7 +96,7 @@ int php_mongo_matches_san_list(X509 *peer, const char *subject_name) /* {{{ */
 				cert_name[len-1] = '\0';
 			}
 
-			if (php_mongo_matches_wildcard_name(subject_name, (const char *)cert_name) == SUCCESS) {
+			if (php_mongodb_matches_wildcard_name(subject_name, (const char *)cert_name) == SUCCESS) {
 				OPENSSL_free(cert_name);
 				return SUCCESS;
 			}
@@ -124,7 +124,7 @@ int php_mongo_matches_san_list(X509 *peer, const char *subject_name) /* {{{ */
 }
 /* }}} */
 
-int php_mongo_matches_common_name(X509 *peer, const char *subject_name TSRMLS_DC) /* {{{ */
+int php_mongodb_matches_common_name(X509 *peer, const char *subject_name TSRMLS_DC) /* {{{ */
 {
 	char buf[1024];
 	X509_NAME *cert_name;
@@ -137,7 +137,7 @@ int php_mongo_matches_common_name(X509 *peer, const char *subject_name TSRMLS_DC
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to locate peer certificate CN");
 	} else if ((size_t) cert_name_len != strlen(buf)) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Peer certificate CN=`%.*s' is malformed", cert_name_len, buf);
-	} else if (php_mongo_matches_wildcard_name(subject_name, buf) == SUCCESS) {
+	} else if (php_mongodb_matches_wildcard_name(subject_name, buf) == SUCCESS) {
 		return SUCCESS;
 	} else {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Peer certificate CN=`%.*s' did not match expected CN=`%s'", cert_name_len, buf, subject_name);
@@ -147,7 +147,7 @@ int php_mongo_matches_common_name(X509 *peer, const char *subject_name TSRMLS_DC
 }
 /* }}} */
 
-time_t php_mongo_asn1_time_to_time_t(ASN1_UTCTIME * timestr TSRMLS_DC) /* {{{ */
+time_t php_mongodb_asn1_time_to_time_t(ASN1_UTCTIME * timestr TSRMLS_DC) /* {{{ */
 {
 /*
 	This is how the time string is formatted:
