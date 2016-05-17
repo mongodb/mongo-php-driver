@@ -69,7 +69,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     }
   }
   ["isDead"]=>
-  bool(true)
+  bool(false)
   ["currentIndex"]=>
   int(0)
   ["currentDocument"]=>
@@ -118,7 +118,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     }
   }
   ["isDead"]=>
-  bool(true)
+  bool(false)
   ["currentIndex"]=>
   int(0)
   ["currentDocument"]=>
@@ -167,7 +167,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     }
   }
   ["isDead"]=>
-  bool(true)
+  bool(false)
   ["currentIndex"]=>
   int(0)
   ["currentDocument"]=>
@@ -216,7 +216,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     }
   }
   ["isDead"]=>
-  bool(true)
+  bool(false)
   ["currentIndex"]=>
   int(0)
   ["currentDocument"]=>
@@ -265,7 +265,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     }
   }
   ["isDead"]=>
-  bool(true)
+  bool(false)
   ["currentIndex"]=>
   int(0)
   ["currentDocument"]=>
