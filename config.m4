@@ -3,8 +3,8 @@ PHP_ARG_ENABLE(mongodb, whether to enable mongodb support,
 [  --enable-mongodb           Enable mongodb support])
 PHP_ARG_WITH(openssl-dir, OpenSSL dir for mongodb,
 [  --with-openssl-dir[=DIR]  openssl install prefix], yes, no)
-
-
+PHP_ARG_WITH(system-ciphers, whether to use system default cipher list instead of hardcoded value,
+[  --with-system-ciphers   OPENSSL: Use system default cipher list instead of hardcoded value], no, no)
 
 dnl borrowed from PHP acinclude.m4
 AC_DEFUN([PHP_BSON_BIGENDIAN],
@@ -396,6 +396,12 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
     AC_SUBST(MONGOC_ENABLE_SSL, 1)
     AC_SUBST(MONGOC_ENABLE_CRYPTO_LIBCRYPTO, 1)
     AC_SUBST(MONGOC_ENABLE_SSL_OPENSSL, 1)
+
+    if test "$PHP_SYSTEM_CIPHERS" != "no"; then
+      AC_SUBST(MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE, 1)
+    else
+      AC_SUBST(MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE, 0)
+    fi
 
     dnl TODO: Support building with Secure Transport on OSX
     AC_SUBST(MONGOC_ENABLE_SSL_SECURE_TRANSPORT, 0)
