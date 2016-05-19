@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Cursor::isDead() with basic iteration (find command)
+MongoDB\Driver\Cursor::isDead() with IteratorIterator (find command)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -16,8 +16,12 @@ $manager->executeBulkWrite(NS, $bulk);
 
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([], ['batchSize' => 2]));
 
-foreach ($cursor as $_) {
+$iterator = new IteratorIterator($cursor);
+$iterator->rewind();
+
+for ($i = 0; $i < 3; $i++) {
     var_dump($cursor->isDead());
+    $iterator->next();
 }
 
 var_dump($cursor->isDead());
