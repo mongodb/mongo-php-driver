@@ -40,6 +40,7 @@ typedef struct {
 typedef struct {
 	zend_object              std;
 	mongoc_cursor_t         *cursor;
+	zval                    *manager;
 	mongoc_client_t         *client;
 	int                      server_id;
 	php_phongo_bson_state    visitor_data;
@@ -80,6 +81,7 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
+	zval                    *manager;
 	mongoc_client_t         *client;
 	int                      server_id;
 } php_phongo_server_t;
@@ -113,6 +115,7 @@ typedef struct {
 	zend_object              std;
 	mongoc_write_concern_t  *write_concern;
 	bson_t                  *reply;
+	zval                    *manager;
 	mongoc_client_t         *client;
 	int                      server_id;
 } php_phongo_writeresult_t;

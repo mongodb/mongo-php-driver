@@ -224,7 +224,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 /* }}} */
 
 /* {{{ Init objects */
-static void phongo_cursor_init(zval *return_value, mongoc_cursor_t *cursor, mongoc_client_t *client TSRMLS_DC) /* {{{ */
+static void phongo_cursor_init(zval *return_value, zval *manager, mongoc_cursor_t *cursor TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t *intern;
 
@@ -233,18 +233,32 @@ static void phongo_cursor_init(zval *return_value, mongoc_cursor_t *cursor, mong
 	intern = Z_CURSOR_OBJ_P(return_value);
 	intern->cursor = cursor;
 	intern->server_id = mongoc_cursor_get_hint(cursor);
-	intern->client = client;
+	intern->client = Z_MANAGER_OBJ_P(manager)->client;
+
+#if PHP_VERSION_ID >= 70000
+	ZVAL_COPY(&intern->manager, manager);
+#else
+	Z_ADDREF_P(manager);
+	intern->manager = manager;
+#endif
 } /* }}} */
 
-void phongo_server_init(zval *return_value, mongoc_client_t *client, int server_id TSRMLS_DC) /* {{{ */
+void phongo_server_init(zval *return_value, zval *manager, int server_id TSRMLS_DC) /* {{{ */
 {
 	php_phongo_server_t *server;
 
 	object_init_ex(return_value, php_phongo_server_ce);
 
 	server = Z_SERVER_OBJ_P(return_value);
-	server->client = client;
 	server->server_id = server_id;
+	server->client = Z_MANAGER_OBJ_P(manager)->client;
+
+#if PHP_VERSION_ID >= 70000
+	ZVAL_COPY(&server->manager, manager);
+#else
+	Z_ADDREF_P(manager);
+	server->manager = manager;
+#endif
 }
 /* }}} */
 
@@ -467,7 +481,7 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 	return true;
 } /* }}} */
 
-php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, bson_t *reply, mongoc_client_t *client, int server_id TSRMLS_DC) /* {{{ */
+php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, bson_t *reply, zval *manager, int server_id TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeresult_t *writeresult;
 
@@ -475,8 +489,15 @@ php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, bson_t *re
 
 	writeresult = Z_WRITERESULT_OBJ_P(return_value);
 	writeresult->reply     = bson_copy(reply);
-	writeresult->client    = client;
 	writeresult->server_id = server_id;
+	writeresult->client = Z_MANAGER_OBJ_P(manager)->client;
+
+#if PHP_VERSION_ID >= 70000
+	ZVAL_COPY(&writeresult->manager, manager);
+#else
+	Z_ADDREF_P(manager);
+	writeresult->manager = manager;
+#endif
 
 	return writeresult;
 } /* }}} */
@@ -506,14 +527,17 @@ mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
 	return mongoc_bulk_operation_new(ordered);
 } /* }}} */
 
-bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc_bulk_operation_t *bulk, const mongoc_write_concern_t *write_concern, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+bool phongo_execute_write(zval *manager, const char *namespace, mongoc_bulk_operation_t *bulk, const mongoc_write_concern_t *write_concern, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
+	mongoc_client_t *client;
 	bson_error_t error;
 	char *dbname;
 	char *collname;
 	int success;
 	bson_t reply = BSON_INITIALIZER;
 	php_phongo_writeresult_t *writeresult;
+
+	client = Z_MANAGER_OBJ_P(manager)->client;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s: %s", "Invalid namespace provided", namespace);
@@ -553,7 +577,7 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc
 		return false;
 	}
 
-	writeresult = phongo_writeresult_init(return_value, &reply, client, bulk->hint TSRMLS_CC);
+	writeresult = phongo_writeresult_init(return_value, &reply, manager, bulk->hint TSRMLS_CC);
 	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
 
 	/* The Write failed */
@@ -571,13 +595,16 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, mongoc
 	return success;
 } /* }}} */
 
-int phongo_execute_query(mongoc_client_t *client, const char *namespace, const php_phongo_query_t *query, const mongoc_read_prefs_t *read_preference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_query(zval *manager, const char *namespace, const php_phongo_query_t *query, const mongoc_read_prefs_t *read_preference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
+	mongoc_client_t *client;
 	const bson_t *doc = NULL;
 	mongoc_cursor_t *cursor;
 	char *dbname;
 	char *collname;
 	mongoc_collection_t *collection;
+
+	client = Z_MANAGER_OBJ_P(manager)->client;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s: %s", "Invalid namespace provided", namespace);
@@ -626,17 +653,19 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, const p
 		return true;
 	}
 
-	phongo_cursor_init(return_value, cursor, client TSRMLS_CC);
+	phongo_cursor_init(return_value, manager, cursor TSRMLS_CC);
 	return true;
 } /* }}} */
 
-int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t *command, const mongoc_read_prefs_t *read_preference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_command(zval *manager, const char *db, const bson_t *command, const mongoc_read_prefs_t *read_preference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
+	mongoc_client_t *client;
 	mongoc_cursor_t *cursor;
 	const bson_t *doc;
 	bson_iter_t iter;
 	bson_iter_t child;
 
+	client = Z_MANAGER_OBJ_P(manager)->client;
 
 	cursor = mongoc_client_command(client, db, MONGOC_QUERY_NONE, 0, 1, 0, command, NULL, read_preference);
 	if (server_id > 0) {
@@ -702,7 +731,7 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, const bson_t
 		mongoc_cursor_next(cursor, &doc);
 	}
 
-	phongo_cursor_init(return_value, cursor, client TSRMLS_CC);
+	phongo_cursor_init(return_value, manager, cursor TSRMLS_CC);
 	return true;
 } /* }}} */
 

@@ -157,8 +157,11 @@ PHP_METHOD(Cursor, getServer)
 		return;
 	}
 
-
-	phongo_server_init(return_value, intern->cursor->client, intern->server_id TSRMLS_CC);
+#if PHP_VERSION_ID >= 70000
+	phongo_server_init(return_value, &intern->manager, intern->server_id TSRMLS_CC);
+#else
+	phongo_server_init(return_value, intern->manager, intern->server_id TSRMLS_CC);
+#endif
 }
 /* }}} */
 
@@ -221,6 +224,8 @@ static void php_phongo_cursor_free_object(phongo_free_object_arg *object TSRMLS_
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	php_phongo_cursor_free(intern);
+
+	zval_ptr_dtor(&intern->manager);
 
 #if PHP_VERSION_ID < 70000
 	efree(intern);
