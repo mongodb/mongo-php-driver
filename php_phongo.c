@@ -1906,9 +1906,11 @@ static bool php_phongo_apply_wc_options_to_client(mongoc_client_t *client, bson_
 static mongoc_client_t *php_phongo_make_mongo_client(php_phongo_manager_t *manager, const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
-	zval                      *tmp;
+	zval                      *zdebug = NULL;
+	zval                      *zcontext = NULL;
 #else
-	zval                     **tmp;
+	zval                     **zdebug = NULL;
+	zval                     **zcontext = NULL;
 #endif
 	php_stream_context        *ctx = NULL;
 	const char                *mech, *mongoc_version, *bson_version;
@@ -1917,27 +1919,27 @@ static mongoc_client_t *php_phongo_make_mongo_client(php_phongo_manager_t *manag
 	ENTRY;
 
 #if PHP_VERSION_ID >= 70000
-	if (driverOptions && (tmp = zend_hash_str_find(Z_ARRVAL_P(driverOptions), "debug", sizeof("debug")-1)) != NULL) {
+	if (driverOptions && (zdebug = zend_hash_str_find(Z_ARRVAL_P(driverOptions), "debug", sizeof("debug")-1)) != NULL) {
 		zend_string *key = zend_string_init(PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI)-1, 0);
-		zend_string *value_str = zval_get_string(tmp);
+		zend_string *value_str = zval_get_string(zdebug);
 		zend_alter_ini_entry_ex(key, value_str, PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0);
 		zend_string_release(key);
 		zend_string_release(value_str);
 	}
 #else
-	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&tmp) == SUCCESS) {
-		convert_to_string(*tmp);
+	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&zdebug) == SUCCESS) {
+		convert_to_string(*zdebug);
 
-		zend_alter_ini_entry_ex((char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), Z_STRVAL_PP(tmp), Z_STRLEN_PP(tmp), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
+		zend_alter_ini_entry_ex((char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), Z_STRVAL_PP(zdebug), Z_STRLEN_PP(zdebug), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
 	}
 #endif
 
 #if PHP_VERSION_ID >= 70000
-	if (driverOptions && (tmp = zend_hash_str_find(Z_ARRVAL_P(driverOptions), "context", sizeof("context")-1)) != NULL) {
-		ctx = php_stream_context_from_zval(tmp, 0);
+	if (driverOptions && (zcontext = zend_hash_str_find(Z_ARRVAL_P(driverOptions), "context", sizeof("context")-1)) != NULL) {
+		ctx = php_stream_context_from_zval(zcontext, 0);
 #else
-	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&tmp) == SUCCESS) {
-		ctx = php_stream_context_from_zval(*tmp, 0);
+	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&zcontext) == SUCCESS) {
+		ctx = php_stream_context_from_zval(*zcontext, 0);
 #endif
 	} else {
 		ctx = FG(default_context) ? FG(default_context) : php_stream_context_alloc(TSRMLS_C);
