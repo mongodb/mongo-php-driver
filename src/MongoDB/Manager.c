@@ -89,7 +89,6 @@ PHP_METHOD(Manager, __construct)
    Execute a command */
 PHP_METHOD(Manager, executeCommand)
 {
-	php_phongo_manager_t     *intern;
 	char                     *db;
 	phongo_zpp_char_len      db_len;
 	zval                     *command;
@@ -98,23 +97,19 @@ PHP_METHOD(Manager, executeCommand)
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
-
-	intern = Z_MANAGER_OBJ_P(getThis());
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &db, &db_len, &command, php_phongo_command_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
 	}
 
 
 	cmd = Z_COMMAND_OBJ_P(command);
-	phongo_execute_command(intern->client, db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(getThis(), db, cmd->bson, phongo_read_preference_from_zval(readPreference TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\Cursor Manager::executeQuery(string $namespace, MongoDB\Driver\Query $zquery[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a Query */
 PHP_METHOD(Manager, executeQuery)
 {
-	php_phongo_manager_t     *intern;
 	char                     *namespace;
 	phongo_zpp_char_len       namespace_len;
 	zval                     *zquery;
@@ -122,22 +117,18 @@ PHP_METHOD(Manager, executeQuery)
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
-
-	intern = Z_MANAGER_OBJ_P(getThis());
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zquery, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
 	}
 
 
-	phongo_execute_query(intern->client, namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_query(getThis(), namespace, phongo_query_from_zval(zquery TSRMLS_CC), phongo_read_preference_from_zval(readPreference TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\WriteResult Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
    Executes a write operation bulk (e.g. insert, update, delete) */
 PHP_METHOD(Manager, executeBulkWrite)
 {
-	php_phongo_manager_t      *intern;
 	char                      *namespace;
 	phongo_zpp_char_len        namespace_len;
 	zval                      *zbulk;
@@ -146,16 +137,13 @@ PHP_METHOD(Manager, executeBulkWrite)
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
-
-	intern = Z_MANAGER_OBJ_P(getThis());
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
 		return;
 	}
 
 
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
-	phongo_execute_write(intern->client, namespace, bulk->bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_write(getThis(), namespace, bulk->bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
 
@@ -230,12 +218,12 @@ PHP_METHOD(Manager, getServers)
 		}
 
 #if PHP_VERSION_ID >= 70000
-		phongo_server_init(&obj, intern->client, ((mongoc_server_description_t *)set->items[i].item)->id TSRMLS_CC);
+		phongo_server_init(&obj, getThis(), ((mongoc_server_description_t *)set->items[i].item)->id TSRMLS_CC);
 		add_next_index_zval(return_value, &obj);
 #else
 		MAKE_STD_ZVAL(obj);
 
-		phongo_server_init(obj, intern->client, sd->id TSRMLS_CC);
+		phongo_server_init(obj, getThis(), sd->id TSRMLS_CC);
 		add_next_index_zval(return_value, obj);
 #endif
 	}
@@ -281,7 +269,7 @@ PHP_METHOD(Manager, selectServer)
 	readPreference = phongo_read_preference_from_zval(zreadPreference TSRMLS_CC);
 	selected_server = mongoc_topology_select(intern->client->topology, MONGOC_SS_READ, readPreference, MONGOC_SS_DEFAULT_LOCAL_THRESHOLD_MS, &error);
 	if (selected_server) {
-		phongo_server_init(return_value, intern->client, selected_server->id TSRMLS_CC);
+		phongo_server_init(return_value, getThis(), selected_server->id TSRMLS_CC);
 		mongoc_server_description_destroy(selected_server);
 	} else {
 		/* Check for connection related exceptions */
