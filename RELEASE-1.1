@@ -1,3 +1,54 @@
+RELEASE 1.1.7
+-------------
+2016-06-01  Jeremy Mikola  <jmikola@gmail.com>
+	* Use php_stream_context_from_zval() to get default stream context
+
+2016-06-01  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-572: Keep stream context options alive for Manager's lifetime
+
+2016-06-01  Jeremy Mikola  <jmikola@gmail.com>
+	* Use separate vars when fetching debug and context from driverOptions
+
+2016-06-01  Jeremy Mikola  <jmikola@gmail.com>
+	* Remove macros for PHP 5.3 compatibility
+
+2016-05-28  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-671: Avoid mongoc_client_t use-after-free by Cursor and Server
+
+2016-05-28  Jeremy Mikola  <jmikola@gmail.com>
+	* Revise object macros for use within expressions
+
+2016-05-10  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-698: Check HAVE_OPENSSL_EXT before calling php-ssl.c functions
+
+2016-05-10  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-699: Rename "php_mongo" functions to not conflict with legacy driver
+
+2016-04-28  Jeremy Mikola  <jmikola@gmail.com>
+	* Fix expected exception message for PHPC-487 test case
+
+2016-04-25  Jeremy Mikola  <jmikola@gmail.com>
+	* Initialize mongoc_ssl_opt_t struct to zero
+
+2016-04-25  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-677: Keep pem_file valid for life of mongoc_client_t
+
+2016-04-20  Jeremy Mikola  <jmikola@gmail.com>
+	* PHPC-550: Remove XFAIL ODS tests for removed functionality
+
+2016-04-20  Derick Rethans  <github@derickrethans.nl>
+	* Increased vagrant memory usage for virtual box to 2G
+
+2016-04-13  Remi Collet  <fedora@famillecollet.com>
+	* PHPC-672: Fix zend_str_tolower usage
+
+2016-04-06  Jeremy Mikola  <jmikola@gmail.com>
+	* Back to -dev
+
+2016-04-06  Jeremy Mikola  <jmikola@gmail.com>
+	* Package 1.1.6
+
+
 RELEASE 1.1.6
 -------------
 2016-04-05  Jeremy Mikola  <jmikola@gmail.com>
