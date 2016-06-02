@@ -43,14 +43,7 @@
 # define HASH_KEY_NON_EXISTENT HASH_KEY_NON_EXISTANT
 #endif
 
-#if PHP_VERSION_ID < 50400
-# define object_properties_init(_std, _class_type) \
-		zend_hash_copy(*_std.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *));
-#endif
-
 #if PHP_VERSION_ID >= 70000
-# define str_efree(s) efree((char*)s)
-#elif PHP_VERSION_ID < 50400
 # define str_efree(s) efree((char*)s)
 #else
 # include <Zend/zend_string.h>
@@ -101,15 +94,6 @@
 #  define STRTOLL(s) strtoll(s, NULL, 10)
 # endif
 #endif
-
-#if PHP_VERSION_ID < 50400
-# define GET_DEFAULT_CONTEXT() \
-	ctx = FG(default_context) ? FG(default_context) : php_stream_context_alloc()
-#else
-# define GET_DEFAULT_CONTEXT() \
-	ctx = FG(default_context) ? FG(default_context) : php_stream_context_alloc(TSRMLS_C)
-#endif
-
 
 #ifndef php_ignore_value
 # if defined(__GNUC__) && __GNUC__ >= 4

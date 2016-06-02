@@ -76,7 +76,11 @@ PHP_METHOD(Server, executeCommand)
 		return;
 	}
 
-	phongo_execute_command(intern->client, db, command, readPreference, intern->server_id, return_value, return_value_used TSRMLS_CC);
+#if PHP_VERSION_ID >= 70000
+	phongo_execute_command(&intern->manager, db, command, readPreference, intern->server_id, return_value, return_value_used TSRMLS_CC);
+#else
+	phongo_execute_command(intern->manager, db, command, readPreference, intern->server_id, return_value, return_value_used TSRMLS_CC);
+#endif
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\Cursor Server::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null]))
@@ -98,7 +102,11 @@ PHP_METHOD(Server, executeQuery)
 		return;
 	}
 
-	phongo_execute_query(intern->client, namespace, query, readPreference, intern->server_id, return_value, return_value_used TSRMLS_CC);
+#if PHP_VERSION_ID >= 70000
+	phongo_execute_query(&intern->manager, namespace, query, readPreference, intern->server_id, return_value, return_value_used TSRMLS_CC);
+#else
+	phongo_execute_query(intern->manager, namespace, query, readPreference, intern->server_id, return_value, return_value_used TSRMLS_CC);
+#endif
 }
 /* }}} */
 /* {{{ proto MongoDB\Driver\WriteResult Server::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
@@ -123,7 +131,11 @@ PHP_METHOD(Server, executeBulkWrite)
 
 
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
-	phongo_execute_write(intern->client, namespace, bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), intern->server_id, return_value, return_value_used TSRMLS_CC);
+#if PHP_VERSION_ID >= 70000
+	phongo_execute_write(&intern->manager, namespace, bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), intern->server_id, return_value, return_value_used TSRMLS_CC);
+#else
+	phongo_execute_write(intern->manager, namespace, bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), intern->server_id, return_value, return_value_used TSRMLS_CC);
+#endif
 }
 /* }}} */
 /* {{{ proto string Server::getHost()
@@ -542,6 +554,8 @@ static void php_phongo_server_free_object(phongo_free_object_arg *object TSRMLS_
 	php_phongo_server_t *intern = Z_OBJ_SERVER(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
+
+	zval_ptr_dtor(&intern->manager);
 
 #if PHP_VERSION_ID < 70000
 	efree(intern);

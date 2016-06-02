@@ -155,8 +155,11 @@ PHP_METHOD(Cursor, getServer)
 		return;
 	}
 
-
-	phongo_server_init(return_value, intern->client, intern->server_id TSRMLS_CC);
+#if PHP_VERSION_ID >= 70000
+	phongo_server_init(return_value, &intern->manager, intern->server_id TSRMLS_CC);
+#else
+	phongo_server_init(return_value, intern->manager, intern->server_id TSRMLS_CC);
+#endif
 }
 /* }}} */
 
@@ -239,6 +242,8 @@ static void php_phongo_cursor_free_object(phongo_free_object_arg *object TSRMLS_
 	}
 
 	php_phongo_cursor_free(intern);
+
+	zval_ptr_dtor(&intern->manager);
 
 #if PHP_VERSION_ID < 70000
 	efree(intern);
@@ -352,13 +357,13 @@ HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 #if PHP_VERSION_ID >= 70000
 		zval server;
 
-		phongo_server_init(&server, intern->client, intern->server_id TSRMLS_CC);
+		phongo_server_init(&server, &intern->manager, intern->server_id TSRMLS_CC);
 		ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
 #else
 		zval *server = NULL;
 
 		MAKE_STD_ZVAL(server);
-		phongo_server_init(server, intern->client, intern->server_id TSRMLS_CC);
+		phongo_server_init(server, intern->manager, intern->server_id TSRMLS_CC);
 		ADD_ASSOC_ZVAL_EX(&retval, "server", server);
 #endif
 	}
