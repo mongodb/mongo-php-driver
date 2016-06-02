@@ -1942,7 +1942,8 @@ static mongoc_client_t *php_phongo_make_mongo_client(php_phongo_manager_t *manag
 		ctx = php_stream_context_from_zval(*zcontext, 0);
 #endif
 	} else {
-		ctx = FG(default_context) ? FG(default_context) : php_stream_context_alloc(TSRMLS_C);
+		zval *tmp = NULL; /* PHP 5.x requires an lvalue */
+		ctx = php_stream_context_from_zval(tmp, 0);
 	}
 
 	if (mongoc_uri_get_ssl(uri)) {
