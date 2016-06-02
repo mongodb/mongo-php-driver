@@ -56,6 +56,7 @@ typedef struct {
 	zend_object              std;
 	mongoc_client_t         *client;
 	char                    *pem_file;
+	zval                    *driverOptions;
 } php_phongo_manager_t;
 
 typedef struct {

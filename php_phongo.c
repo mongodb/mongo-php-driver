@@ -2043,6 +2043,17 @@ bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 		return false;
 	}
 
+	/* Keep a reference to driverOptions, since it may be referenced later for
+	 * lazy stream initialization. */
+	if (driverOptions) {
+#if PHP_VERSION_ID >= 70000
+		ZVAL_COPY(&manager->driverOptions, driverOptions);
+#else
+		Z_ADDREF_P(driverOptions);
+		manager->driverOptions = driverOptions;
+#endif
+	}
+
 	return true;
 } /* }}} */
 

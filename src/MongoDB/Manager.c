@@ -381,6 +381,14 @@ static void php_phongo_manager_free_object(phongo_free_object_arg *object TSRMLS
 		efree(intern->pem_file);
 	}
 
+#if PHP_VERSION_ID >= 70000
+	zval_ptr_dtor(&intern->driverOptions);
+#else
+	if (intern->driverOptions) {
+		zval_ptr_dtor(&intern->driverOptions);
+	}
+#endif
+
 #if PHP_VERSION_ID < 70000
 	efree(intern);
 #endif
