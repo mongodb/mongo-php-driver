@@ -138,6 +138,12 @@ typedef struct {
 	int                      data_len;
 	uint8_t                  type;
 } php_phongo_binary_t;
+
+typedef struct {
+	zend_object              std;
+	bson_decimal128_t        decimal;
+} php_phongo_decimal128_t;
+
 typedef struct {
 	zend_object              std;
 } php_phongo_int32_t;

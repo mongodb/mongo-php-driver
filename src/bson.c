@@ -150,6 +150,16 @@ uint8_t php_phongo_binary_get_type(zval *object TSRMLS_DC)
 
 	return intern->type;
 }
+
+static bson_decimal128_t *php_phongo_decimal128_get_decimal128(zval *object TSRMLS_DC)
+{
+	php_phongo_decimal128_t *intern;
+
+	intern = Z_DECIMAL128_OBJ_P(object);
+
+	return &intern->decimal;
+}
+
 char *php_phongo_regex_get_pattern(zval *object TSRMLS_DC)
 {
 	php_phongo_regex_t *intern;
@@ -336,6 +346,31 @@ bool php_phongo_bson_visit_date_time(const bson_iter_t *iter ARG_UNUSED, const c
 	return false;
 }
 /* }}} */
+
+bool php_phongo_bson_visit_decimal128(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_decimal128_t *decimal, void *data) /* {{{ */
+{
+#if PHP_VERSION_ID >= 70000
+	zval *retval = &((php_phongo_bson_state *)data)->zchild;
+	zval zchild;
+
+	php_phongo_new_decimal128(&zchild, decimal TSRMLS_CC);
+	ADD_ASSOC_ZVAL(retval, key, &zchild);
+#else
+	zval *retval = ((php_phongo_bson_state *)data)->zchild;
+	zval *zchild = NULL;
+	TSRMLS_FETCH();
+
+	MAKE_STD_ZVAL(zchild);
+	php_phongo_new_decimal128(zchild, decimal TSRMLS_CC);
+
+	ADD_ASSOC_ZVAL(retval, key, zchild);
+	Z_SET_REFCOUNT_P(zchild, 1);
+#endif
+
+	return false;
+}
+/* }}} */
+
 bool php_phongo_bson_visit_null(const bson_iter_t *iter ARG_UNUSED, const char *key, void *data) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
@@ -581,7 +616,7 @@ static const bson_visitor_t php_bson_visitors = {
    php_phongo_bson_visit_maxkey,
    php_phongo_bson_visit_minkey,
    php_phongo_bson_visit_unsupported_type,
-   NULL /*php_phongo_bson_visit_decimal128*/,
+   php_phongo_bson_visit_decimal128,
    { NULL }
 };
 
@@ -933,6 +968,11 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 
 			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Binary");
 			bson_append_binary(bson, key, key_len, php_phongo_binary_get_type(object TSRMLS_CC), data, data_len);
+			return;
+		}
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_decimal128_ce TSRMLS_CC)) {
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Decimal128");
+			bson_append_decimal128(bson, key, key_len, php_phongo_decimal128_get_decimal128(object TSRMLS_CC));
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_regex_ce TSRMLS_CC)) {

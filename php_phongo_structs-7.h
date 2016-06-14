@@ -138,6 +138,12 @@ typedef struct {
 	int                      type;
 	zend_object              std;
 } php_phongo_binary_t;
+
+typedef struct {
+    bson_decimal128_t        decimal;
+    zend_object              std;
+} php_phongo_decimal128_t;
+
 typedef struct {
 	zend_object              std;
 } php_phongo_int32_t;
@@ -221,6 +227,9 @@ static inline php_phongo_writeresult_t* php_writeresult_fetch_object(zend_object
 }
 static inline php_phongo_binary_t* php_binary_fetch_object(zend_object *obj) {
     return (php_phongo_binary_t *)((char *)obj - XtOffsetOf(php_phongo_binary_t, std));
+}
+static inline php_phongo_decimal128_t* php_decimal128_fetch_object(zend_object *obj) {
+    return (php_phongo_decimal128_t *)((char *)obj - XtOffsetOf(php_phongo_decimal128_t, std));
 }
 static inline php_phongo_int32_t* php_int32_fetch_object(zend_object *obj) {
     return (php_phongo_int32_t *)((char *)obj - XtOffsetOf(php_phongo_int32_t, std));
