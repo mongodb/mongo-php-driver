@@ -142,6 +142,7 @@ if test "$MONGODB" != "no"; then
     src/BSON/Serializable.c \
     src/BSON/Persistable.c \
     src/BSON/Binary.c \
+    src/BSON/Decimal128.c \
     src/BSON/Javascript.c \
     src/BSON/MaxKey.c \
     src/BSON/MinKey.c \
@@ -205,6 +206,7 @@ if test "$MONGODB" != "no"; then
     bson-atomic.c \
     bson-clock.c \
     bson-context.c \
+    bson-decimal128.c \
     bson-error.c \
     bson-iter.c \
     bson-iso8601.c \
