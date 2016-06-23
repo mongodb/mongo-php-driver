@@ -19,8 +19,76 @@
 #ifndef PHONGO_CLASSES_H
 #define PHONGO_CLASSES_H
 
+#include "php_phongo_structs.h"
+
 #if PHP_VERSION_ID >= 70000
-# include "php_phongo_structs-7.h"
+
+static inline php_phongo_bulkwrite_t* php_bulkwrite_fetch_object(zend_object *obj) {
+    return (php_phongo_bulkwrite_t *)((char *)obj - XtOffsetOf(php_phongo_bulkwrite_t, std));
+}
+static inline php_phongo_command_t* php_command_fetch_object(zend_object *obj) {
+    return (php_phongo_command_t *)((char *)obj - XtOffsetOf(php_phongo_command_t, std));
+}
+static inline php_phongo_cursor_t* php_cursor_fetch_object(zend_object *obj) {
+    return (php_phongo_cursor_t *)((char *)obj - XtOffsetOf(php_phongo_cursor_t, std));
+}
+static inline php_phongo_cursorid_t* php_cursorid_fetch_object(zend_object *obj) {
+    return (php_phongo_cursorid_t *)((char *)obj - XtOffsetOf(php_phongo_cursorid_t, std));
+}
+static inline php_phongo_manager_t* php_manager_fetch_object(zend_object *obj) {
+    return (php_phongo_manager_t *)((char *)obj - XtOffsetOf(php_phongo_manager_t, std));
+}
+static inline php_phongo_query_t* php_query_fetch_object(zend_object *obj) {
+    return (php_phongo_query_t *)((char *)obj - XtOffsetOf(php_phongo_query_t, std));
+}
+static inline php_phongo_readconcern_t* php_readconcern_fetch_object(zend_object *obj) {
+    return (php_phongo_readconcern_t *)((char *)obj - XtOffsetOf(php_phongo_readconcern_t, std));
+}
+static inline php_phongo_readpreference_t* php_readpreference_fetch_object(zend_object *obj) {
+    return (php_phongo_readpreference_t *)((char *)obj - XtOffsetOf(php_phongo_readpreference_t, std));
+}
+static inline php_phongo_server_t* php_server_fetch_object(zend_object *obj) {
+    return (php_phongo_server_t *)((char *)obj - XtOffsetOf(php_phongo_server_t, std));
+}
+static inline php_phongo_writeconcern_t* php_writeconcern_fetch_object(zend_object *obj) {
+    return (php_phongo_writeconcern_t *)((char *)obj - XtOffsetOf(php_phongo_writeconcern_t, std));
+}
+static inline php_phongo_writeconcernerror_t* php_writeconcernerror_fetch_object(zend_object *obj) {
+    return (php_phongo_writeconcernerror_t *)((char *)obj - XtOffsetOf(php_phongo_writeconcernerror_t, std));
+}
+static inline php_phongo_writeerror_t* php_writeerror_fetch_object(zend_object *obj) {
+    return (php_phongo_writeerror_t *)((char *)obj - XtOffsetOf(php_phongo_writeerror_t, std));
+}
+static inline php_phongo_writeresult_t* php_writeresult_fetch_object(zend_object *obj) {
+    return (php_phongo_writeresult_t *)((char *)obj - XtOffsetOf(php_phongo_writeresult_t, std));
+}
+static inline php_phongo_binary_t* php_binary_fetch_object(zend_object *obj) {
+    return (php_phongo_binary_t *)((char *)obj - XtOffsetOf(php_phongo_binary_t, std));
+}
+static inline php_phongo_decimal128_t* php_decimal128_fetch_object(zend_object *obj) {
+    return (php_phongo_decimal128_t *)((char *)obj - XtOffsetOf(php_phongo_decimal128_t, std));
+}
+static inline php_phongo_javascript_t* php_javascript_fetch_object(zend_object *obj) {
+    return (php_phongo_javascript_t *)((char *)obj - XtOffsetOf(php_phongo_javascript_t, std));
+}
+static inline php_phongo_maxkey_t* php_maxkey_fetch_object(zend_object *obj) {
+    return (php_phongo_maxkey_t *)((char *)obj - XtOffsetOf(php_phongo_maxkey_t, std));
+}
+static inline php_phongo_minkey_t* php_minkey_fetch_object(zend_object *obj) {
+    return (php_phongo_minkey_t *)((char *)obj - XtOffsetOf(php_phongo_minkey_t, std));
+}
+static inline php_phongo_objectid_t* php_objectid_fetch_object(zend_object *obj) {
+    return (php_phongo_objectid_t *)((char *)obj - XtOffsetOf(php_phongo_objectid_t, std));
+}
+static inline php_phongo_regex_t* php_regex_fetch_object(zend_object *obj) {
+    return (php_phongo_regex_t *)((char *)obj - XtOffsetOf(php_phongo_regex_t, std));
+}
+static inline php_phongo_timestamp_t* php_timestamp_fetch_object(zend_object *obj) {
+    return (php_phongo_timestamp_t *)((char *)obj - XtOffsetOf(php_phongo_timestamp_t, std));
+}
+static inline php_phongo_utcdatetime_t* php_utcdatetime_fetch_object(zend_object *obj) {
+    return (php_phongo_utcdatetime_t *)((char *)obj - XtOffsetOf(php_phongo_utcdatetime_t, std));
+}
 
 # define Z_COMMAND_OBJ_P(zv)           (php_command_fetch_object(Z_OBJ_P(zv)))
 # define Z_CURSOR_OBJ_P(zv)            (php_cursor_fetch_object(Z_OBJ_P(zv)))
@@ -70,8 +138,6 @@
 
 #else
 
-# include "php_phongo_structs-5.h"
-
 # define Z_COMMAND_OBJ_P(zv)           ((php_phongo_command_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_CURSOR_OBJ_P(zv)            ((php_phongo_cursor_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_CURSORID_OBJ_P(zv)          ((php_phongo_cursorid_t *)zend_object_store_get_object(zv TSRMLS_CC))
@@ -117,6 +183,7 @@
 # define Z_OBJ_REGEX(zo)               ((php_phongo_regex_t *)zo)
 # define Z_OBJ_TIMESTAMP(zo)           ((php_phongo_timestamp_t *)zo)
 # define Z_OBJ_UTCDATETIME(zo)         ((php_phongo_utcdatetime_t *)zo)
+
 #endif
 
 typedef struct {
