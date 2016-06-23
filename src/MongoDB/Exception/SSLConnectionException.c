@@ -67,7 +67,6 @@ PHP_MINIT_FUNCTION(SSLConnectionException)
 	php_phongo_sslconnectionexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce, NULL TSRMLS_CC);
 #endif
 	PHONGO_CE_FINAL(php_phongo_sslconnectionexception_ce);
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_sslconnectionexception_ce);
 
 	return SUCCESS;
 }
