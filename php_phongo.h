@@ -177,19 +177,19 @@ void php_phongo_cursor_free(php_phongo_cursor_t *cursor);
 zend_object_iterator* php_phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
 
 #if PHP_VERSION_ID >= 70000
-#define PHONGO_CE_INIT(ce) do {                     \
-	ce->ce_flags    |= ZEND_ACC_FINAL;              \
-	ce->serialize    = zend_class_serialize_deny;   \
-	ce->unserialize  = zend_class_unserialize_deny; \
+#define PHONGO_CE_FINAL(ce) do {    \
+	ce->ce_flags |= ZEND_ACC_FINAL; \
 } while(0);
 #else
-#define PHONGO_CE_INIT(ce) do {                     \
-	ce->ce_flags    |= ZEND_ACC_FINAL_CLASS;        \
-	ce->serialize    = zend_class_serialize_deny;   \
-	ce->unserialize  = zend_class_unserialize_deny; \
+#define PHONGO_CE_FINAL(ce) do {          \
+	ce->ce_flags |= ZEND_ACC_FINAL_CLASS; \
 } while(0);
 #endif
 
+#define PHONGO_CE_DISABLE_SERIALIZATION(ce) do {   \
+    ce->serialize   = zend_class_serialize_deny;   \
+    ce->unserialize = zend_class_unserialize_deny; \
+} while(0);
 
 #ifdef PHP_DEBUG
 void _phongo_debug_bson(bson_t *bson);

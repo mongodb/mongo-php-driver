@@ -187,7 +187,8 @@ PHP_MINIT_FUNCTION(Javascript)
 	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "Javascript", php_phongo_javascript_me);
 	php_phongo_javascript_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_javascript_ce->create_object = php_phongo_javascript_create_object;
-	PHONGO_CE_INIT(php_phongo_javascript_ce);
+	PHONGO_CE_FINAL(php_phongo_javascript_ce);
+	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_javascript_ce);
 
 	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, php_phongo_type_ce);
 

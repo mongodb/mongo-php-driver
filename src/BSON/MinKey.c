@@ -104,7 +104,8 @@ PHP_MINIT_FUNCTION(MinKey)
 	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "MinKey", php_phongo_minkey_me);
 	php_phongo_minkey_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_minkey_ce->create_object = php_phongo_minkey_create_object;
-	PHONGO_CE_INIT(php_phongo_minkey_ce);
+	PHONGO_CE_FINAL(php_phongo_minkey_ce);
+	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_minkey_ce);
 
 	zend_class_implements(php_phongo_minkey_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	memcpy(&php_phongo_handler_minkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

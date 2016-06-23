@@ -621,7 +621,8 @@ PHP_MINIT_FUNCTION(Server)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Server", php_phongo_server_me);
 	php_phongo_server_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_server_ce->create_object = php_phongo_server_create_object;
-	PHONGO_CE_INIT(php_phongo_server_ce);
+	PHONGO_CE_FINAL(php_phongo_server_ce);
+	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_server_ce);
 
 	memcpy(&php_phongo_handler_server, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_server.compare_objects = php_phongo_server_compare_objects;
