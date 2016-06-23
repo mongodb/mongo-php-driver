@@ -146,19 +146,10 @@ typedef struct {
 
 typedef struct {
 	zend_object              std;
-} php_phongo_int32_t;
-typedef struct {
-	zend_object              std;
-} php_phongo_int64_t;
-typedef struct {
-	zend_object              std;
 	char                    *javascript;
 	size_t                   javascript_len;
 	bson_t                  *document;
 } php_phongo_javascript_t;
-typedef struct {
-	zend_object              std;
-} php_phongo_log_t;
 typedef struct {
 	zend_object              std;
 } php_phongo_maxkey_t;

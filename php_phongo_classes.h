@@ -37,10 +37,7 @@
 # define Z_WRITERESULT_OBJ_P(zv)       (php_writeresult_fetch_object(Z_OBJ_P(zv)))
 # define Z_BINARY_OBJ_P(zv)            (php_binary_fetch_object(Z_OBJ_P(zv)))
 # define Z_DECIMAL128_OBJ_P(zv)        (php_decimal128_fetch_object(Z_OBJ_P(zv)))
-# define Z_INT32_OBJ_P(zv)             (php_int32_fetch_object(Z_OBJ_P(zv)))
-# define Z_INT64_OBJ_P(zv)             (php_int64_fetch_object(Z_OBJ_P(zv)))
 # define Z_JAVASCRIPT_OBJ_P(zv)        (php_javascript_fetch_object(Z_OBJ_P(zv)))
-# define Z_LOG_OBJ_P(zv)               (php_log_fetch_object(Z_OBJ_P(zv)))
 # define Z_MAXKEY_OBJ_P(zv)            (php_maxkey_fetch_object(Z_OBJ_P(zv)))
 # define Z_MINKEY_OBJ_P(zv)            (php_minkey_fetch_object(Z_OBJ_P(zv)))
 # define Z_OBJECTID_OBJ_P(zv)          (php_objectid_fetch_object(Z_OBJ_P(zv)))
@@ -63,10 +60,7 @@
 # define Z_OBJ_WRITERESULT(zo)         (php_writeresult_fetch_object(zo))
 # define Z_OBJ_BINARY(zo)              (php_binary_fetch_object(zo))
 # define Z_OBJ_DECIMAL128(zo)          (php_decimal128_fetch_object(zo))
-# define Z_OBJ_INT32(zo)               (php_int32_fetch_object(zo))
-# define Z_OBJ_INT64(zo)               (php_int64_fetch_object(zo))
 # define Z_OBJ_JAVASCRIPT(zo)          (php_javascript_fetch_object(zo))
-# define Z_OBJ_LOG(zo)                 (php_log_fetch_object(zo))
 # define Z_OBJ_MAXKEY(zo)              (php_maxkey_fetch_object(zo))
 # define Z_OBJ_MINKEY(zo)              (php_minkey_fetch_object(zo))
 # define Z_OBJ_OBJECTID(zo)            (php_objectid_fetch_object(zo))
@@ -93,10 +87,7 @@
 # define Z_WRITERESULT_OBJ_P(zv)       ((php_phongo_writeresult_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_BINARY_OBJ_P(zv)            ((php_phongo_binary_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_DECIMAL128_OBJ_P(zv)        ((php_phongo_decimal128_t *)zend_object_store_get_object(zv TSRMLS_CC))
-# define Z_INT32_OBJ_P(zv)             ((php_phongo_int32_t *)zend_object_store_get_object(zv TSRMLS_CC))
-# define Z_INT64_OBJ_P(zv)             ((php_phongo_int64_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_JAVASCRIPT_OBJ_P(zv)        ((php_phongo_javascript_t *)zend_object_store_get_object(zv TSRMLS_CC))
-# define Z_LOG_OBJ_P(zv)               ((php_phongo_log_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_MAXKEY_OBJ_P(zv)            ((php_phongo_maxkey_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_MINKEY_OBJ_P(zv)            ((php_phongo_minkey_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_OBJECTID_OBJ_P(zv)          ((php_phongo_objectid_t *)zend_object_store_get_object(zv TSRMLS_CC))
@@ -119,10 +110,7 @@
 # define Z_OBJ_WRITERESULT(zo)         ((php_phongo_writeresult_t *)zo)
 # define Z_OBJ_BINARY(zo)              ((php_phongo_binary_t *)zo)
 # define Z_OBJ_DECIMAL128(zo)          ((php_phongo_decimal128_t *)zo)
-# define Z_OBJ_INT32(zo)               ((php_phongo_int32_t *)zo)
-# define Z_OBJ_INT64(zo)               ((php_phongo_int64_t *)zo)
 # define Z_OBJ_JAVASCRIPT(zo)          ((php_phongo_javascript_t *)zo)
-# define Z_OBJ_LOG(zo)                 ((php_phongo_log_t *)zo)
 # define Z_OBJ_MAXKEY(zo)              ((php_phongo_maxkey_t *)zo)
 # define Z_OBJ_MINKEY(zo)              ((php_phongo_minkey_t *)zo)
 # define Z_OBJ_OBJECTID(zo)            ((php_phongo_objectid_t *)zo)
@@ -171,10 +159,7 @@ extern PHONGO_API zend_class_entry *php_phongo_unserializable_ce;
 extern PHONGO_API zend_class_entry *php_phongo_serializable_ce;
 extern PHONGO_API zend_class_entry *php_phongo_binary_ce;
 extern PHONGO_API zend_class_entry *php_phongo_decimal128_ce;
-extern PHONGO_API zend_class_entry *php_phongo_int32_ce;
-extern PHONGO_API zend_class_entry *php_phongo_int64_ce;
 extern PHONGO_API zend_class_entry *php_phongo_javascript_ce;
-extern PHONGO_API zend_class_entry *php_phongo_log_ce;
 extern PHONGO_API zend_class_entry *php_phongo_maxkey_ce;
 extern PHONGO_API zend_class_entry *php_phongo_minkey_ce;
 extern PHONGO_API zend_class_entry *php_phongo_objectid_ce;

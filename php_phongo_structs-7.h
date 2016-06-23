@@ -145,20 +145,11 @@ typedef struct {
 } php_phongo_decimal128_t;
 
 typedef struct {
-	zend_object              std;
-} php_phongo_int32_t;
-typedef struct {
-	zend_object              std;
-} php_phongo_int64_t;
-typedef struct {
 	char                    *javascript;
 	size_t                   javascript_len;
 	bson_t                  *document;
 	zend_object              std;
 } php_phongo_javascript_t;
-typedef struct {
-	zend_object              std;
-} php_phongo_log_t;
 typedef struct {
 	zend_object              std;
 } php_phongo_maxkey_t;
@@ -231,17 +222,8 @@ static inline php_phongo_binary_t* php_binary_fetch_object(zend_object *obj) {
 static inline php_phongo_decimal128_t* php_decimal128_fetch_object(zend_object *obj) {
     return (php_phongo_decimal128_t *)((char *)obj - XtOffsetOf(php_phongo_decimal128_t, std));
 }
-static inline php_phongo_int32_t* php_int32_fetch_object(zend_object *obj) {
-    return (php_phongo_int32_t *)((char *)obj - XtOffsetOf(php_phongo_int32_t, std));
-}
-static inline php_phongo_int64_t* php_int64_fetch_object(zend_object *obj) {
-    return (php_phongo_int64_t *)((char *)obj - XtOffsetOf(php_phongo_int64_t, std));
-}
 static inline php_phongo_javascript_t* php_javascript_fetch_object(zend_object *obj) {
     return (php_phongo_javascript_t *)((char *)obj - XtOffsetOf(php_phongo_javascript_t, std));
-}
-static inline php_phongo_log_t* php_log_fetch_object(zend_object *obj) {
-    return (php_phongo_log_t *)((char *)obj - XtOffsetOf(php_phongo_log_t, std));
 }
 static inline php_phongo_maxkey_t* php_maxkey_fetch_object(zend_object *obj) {
     return (php_phongo_maxkey_t *)((char *)obj - XtOffsetOf(php_phongo_maxkey_t, std));
