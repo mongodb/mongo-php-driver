@@ -1382,6 +1382,7 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 
 	intern = Z_OBJECTID_OBJ_P(object);
 	bson_oid_to_string(oid, intern->oid);
+	intern->initialized = true;
 } /* }}} */
 
 php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t *sd)

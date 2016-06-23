@@ -185,6 +185,7 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	bool initialized;
 	char oid[25];
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_objectid_t;
