@@ -2056,7 +2056,7 @@ void php_phongo_new_datetime_from_utcdatetime(zval *object, int64_t milliseconds
 	datetime_obj = Z_PHPDATE_P(object);
 	php_date_initialize(datetime_obj, sec, sec_len, NULL, NULL, 0 TSRMLS_CC);
 	efree(sec);
-	datetime_obj->time->f = milliseconds % 1000;
+	datetime_obj->time->f = (double) (milliseconds % 1000) / 1000;
 } /* }}} */
 void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, uint32_t increment, uint32_t timestamp TSRMLS_DC) /* {{{ */
 {

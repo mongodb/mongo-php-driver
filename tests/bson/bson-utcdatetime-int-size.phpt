@@ -26,7 +26,7 @@ object(MongoDB\BSON\UTCDateTime)#%d (1) {
 }
 object(DateTime)#%d (3) {
   ["date"]=>
-  string(29) "2014-11-20 01:03:31.987000000"
+  string(26) "2014-11-20 01:03:31.987000"
   ["timezone_type"]=>
   int(1)
   ["timezone"]=>
@@ -39,7 +39,7 @@ object(MongoDB\BSON\UTCDateTime)#%d (1) {
 }
 object(DateTime)#%d (3) {
   ["date"]=>
-  string(29) "2014-11-20 01:03:31.987000000"
+  string(26) "2014-11-20 01:03:31.987000"
   ["timezone_type"]=>
   int(1)
   ["timezone"]=>
