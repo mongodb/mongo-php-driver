@@ -2039,25 +2039,6 @@ void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoc
 	intern->milliseconds = msec_since_epoch;
 } /* }}} */
 
-void php_phongo_new_datetime_from_utcdatetime(zval *object, int64_t milliseconds TSRMLS_DC) /* {{{ */
-{
-	php_date_obj             *datetime_obj;
-	char                     *sec;
-	int                       sec_len;
-
-	object_init_ex(object, php_date_get_date_ce());
-
-#ifdef WIN32
-	sec_len = spprintf(&sec, 0, "@%I64d", (int64_t) milliseconds / 1000);
-#else
-	sec_len = spprintf(&sec, 0, "@%lld", (long long int) milliseconds / 1000);
-#endif
-
-	datetime_obj = Z_PHPDATE_P(object);
-	php_date_initialize(datetime_obj, sec, sec_len, NULL, NULL, 0 TSRMLS_CC);
-	efree(sec);
-	datetime_obj->time->f = (double) (milliseconds % 1000) / 1000;
-} /* }}} */
 void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, uint32_t increment, uint32_t timestamp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_timestamp_t     *intern;

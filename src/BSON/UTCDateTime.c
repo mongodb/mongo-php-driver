@@ -34,6 +34,7 @@
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
+#include <ext/date/php_date.h>
 /* Our Compatability header */
 #include "phongo_compat.h"
 
@@ -112,7 +113,10 @@ PHP_METHOD(UTCDateTime, __toString)
    Returns DateTime object representing this UTCDateTime */
 PHP_METHOD(UTCDateTime, toDateTime)
 {
-	php_phongo_utcdatetime_t    *intern;
+	php_phongo_utcdatetime_t *intern;
+	php_date_obj             *datetime_obj;
+	char                     *sec;
+	size_t                    sec_len;
 
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
@@ -121,7 +125,14 @@ PHP_METHOD(UTCDateTime, toDateTime)
 		return;
 	}
 
-	php_phongo_new_datetime_from_utcdatetime(return_value, intern->milliseconds TSRMLS_CC);
+	object_init_ex(return_value, php_date_get_date_ce());
+	datetime_obj = Z_PHPDATE_P(return_value);
+
+	sec_len = spprintf(&sec, 0, "@%" PRId64, intern->milliseconds / 1000);
+	php_date_initialize(datetime_obj, sec, sec_len, NULL, NULL, 0 TSRMLS_CC);
+	efree(sec);
+
+	datetime_obj->time->f = (double) (intern->milliseconds % 1000) / 1000;
 }
 /* }}} */
 
