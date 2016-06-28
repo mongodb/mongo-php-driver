@@ -116,7 +116,7 @@
 #  error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif
 # define SIZEOF_PHONGO_LONG SIZEOF_ZEND_LONG
-# define phongo_str(str) str->val
+# define phongo_str(str) (str)->val
 # define phongo_create_object_retval zend_object*
 # define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t *)ecalloc(1, sizeof(_obj_t)+zend_object_properties_size(_class_type))
 # define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data)
