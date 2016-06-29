@@ -116,7 +116,7 @@
 #  error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif
 # define SIZEOF_PHONGO_LONG SIZEOF_ZEND_LONG
-# define phongo_str(str) str->val
+# define phongo_str(str) (str)->val
 # define phongo_create_object_retval zend_object*
 # define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t *)ecalloc(1, sizeof(_obj_t)+zend_object_properties_size(_class_type))
 # define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data)
@@ -164,7 +164,7 @@
 # define ADD_ASSOC_NULL_EX(_zv, _key) add_assoc_null_ex(_zv, ZEND_STRS(_key));
 # define ADD_ASSOC_BOOL_EX(_zv, _key, _value) add_assoc_bool_ex(_zv, ZEND_STRS(_key), _value);
 # define ADD_INDEX_STRINGL(_zv, _ind, _value, _len) add_index_stringl(_zv, _ind, _value, _len, 0);
-# define Z_PHPDATE_P(object) zend_object_store_get_object(object TSRMLS_CC)
+# define Z_PHPDATE_P(object) ((php_date_obj*)zend_object_store_get_object(object TSRMLS_CC))
 # define Z_ISUNDEF(x) !x
 # define phongo_free_object_arg void
 # define phongo_zpp_char_len int

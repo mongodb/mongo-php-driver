@@ -33,10 +33,15 @@
 #include <php_ini.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
+#include <ext/date/php_date.h>
 #include <ext/spl/spl_iterators.h>
 #include <ext/date/php_date.h>
 /* Our Compatability header */
 #include "phongo_compat.h"
+
+#ifdef PHP_WIN32
+#include "win32/time.h"
+#endif
 
 /* Our stuffz */
 #include "php_phongo.h"
@@ -47,16 +52,59 @@ PHONGO_API zend_class_entry *php_phongo_utcdatetime_ce;
 
 zend_object_handlers php_phongo_handler_utcdatetime;
 
-/* {{{ proto BSON\UTCDateTime UTCDateTime::__construct(integer $milliseconds)
+static void php_phongo_utcdatetime_init_from_current_time(php_phongo_utcdatetime_t *intern)
+{
+	int64_t        sec, usec;
+	struct timeval cur_time;
+
+	gettimeofday(&cur_time, NULL);
+	sec = cur_time.tv_sec;
+	usec = cur_time.tv_usec;
+
+	intern->milliseconds = (sec * 1000) + (usec / 1000);
+}
+
+static void php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t *intern, php_date_obj *datetime_obj)
+{
+	int64_t sec, usec;
+
+	/* The following assignments use the same logic as date_format() in php_date.c */
+	sec = datetime_obj->time->sse;
+	usec = (int64_t) floor(datetime_obj->time->f * 1000000 + 0.5);
+
+	intern->milliseconds = (sec * 1000) + (usec / 1000);
+}
+
+/* {{{ proto BSON\UTCDateTime UTCDateTime::__construct([integer|DateTimeInterface $milliseconds = null])
    Construct a new UTCDateTime */
 PHP_METHOD(UTCDateTime, __construct)
 {
 	php_phongo_utcdatetime_t    *intern;
-	zend_error_handling       error_handling;
-
+	zend_error_handling          error_handling;
+	zval                        *datetime = NULL;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
+
+	if (zend_parse_parameters_ex(ZEND_PARSE_PARAMS_QUIET, ZEND_NUM_ARGS() TSRMLS_CC, "|o!", &datetime) == SUCCESS) {
+		if (datetime == NULL) {
+			php_phongo_utcdatetime_init_from_current_time(intern);
+		} else if (instanceof_function(Z_OBJCE_P(datetime), php_date_get_date_ce() TSRMLS_CC)) {
+			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(datetime));
+#if PHP_VERSION_ID >= 50500
+		} else if (instanceof_function(Z_OBJCE_P(datetime), php_date_get_immutable_ce() TSRMLS_CC)) {
+			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(datetime));
+#endif
+		} else {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
+				"Expected instance of DateTimeInterface, %s given",
+				phongo_str(Z_OBJCE_P(datetime)->name)
+			);
+		}
+
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
 
 #if SIZEOF_PHONGO_LONG == 8
 	{
