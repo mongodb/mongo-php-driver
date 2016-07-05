@@ -1219,7 +1219,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 			php_stream_free(stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
 			bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_INVALID_TYPE, "Failed to setup crypto, is the OpenSSL extension loaded?");
 			efree(dsn);
-			return NULL;
+			RETURN(NULL);
 		}
 
 		if (php_stream_xport_crypto_enable(stream, 1 TSRMLS_CC) < 0) {
@@ -1227,14 +1227,14 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 			php_stream_free(stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
 			bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_INVALID_TYPE, "Failed to setup crypto, is the server running with SSL?");
 			efree(dsn);
-			return NULL;
+			RETURN(NULL);
 		}
 
 		if (!php_phongo_ssl_verify(stream, host->host, error TSRMLS_CC)) {
 			zend_restore_error_handling(&error_handling TSRMLS_CC);
 			php_stream_pclose(stream);
 			efree(dsn);
-			return NULL;
+			RETURN(NULL);
 		}
 
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
