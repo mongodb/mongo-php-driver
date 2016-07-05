@@ -1180,6 +1180,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	struct timeval timeout = {0, 0};
 	struct timeval *timeoutp = NULL;
 	char *uniqid;
+	const char *persistent_id;
 	phongo_char *errmsg = NULL;
 	int errcode;
 	char *dsn;
@@ -1225,9 +1226,13 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 
 	spprintf(&uniqid, 0, "%s:%d[%s]", host->host, host->port, mongoc_uri_get_string(uri));
 
+	/* Do not persist SSL streams to avoid errors attempting to reinitialize SSL
+	 * on subsequent requests (see: PHPC-720) */
+	persistent_id = mongoc_uri_get_ssl(uri) ? NULL : uniqid;
+
 	MONGOC_DEBUG("Connecting to '%s'", uniqid);
 	zend_replace_error_handling(EH_SUPPRESS, NULL, &error_handling TSRMLS_CC);
-	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, uniqid, timeoutp, (php_stream_context *)user_data, &errmsg, &errcode);
+	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, persistent_id, timeoutp, (php_stream_context *)user_data, &errmsg, &errcode);
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	if (!stream) {
@@ -1247,7 +1252,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	if (mongoc_uri_get_ssl(uri)) {
 		zend_replace_error_handling(EH_THROW, php_phongo_sslconnectionexception_ce, &error_handling TSRMLS_CC);
 
-		MONGOC_DEBUG("Enabling SSL");
+		MONGOC_DEBUG("Enabling SSL (stream will not be persisted)");
 
 		/* Capture the server certificate so we can do further verification */
 		if (PHP_STREAM_CONTEXT(stream)) {
@@ -1261,7 +1266,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 			php_stream_free(stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
 			bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_INVALID_TYPE, "Failed to setup crypto, is the OpenSSL extension loaded?");
 			efree(dsn);
-			return NULL;
+			RETURN(NULL);
 		}
 
 		if (php_stream_xport_crypto_enable(stream, 1 TSRMLS_CC) < 0) {
@@ -1269,14 +1274,14 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 			php_stream_free(stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
 			bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_INVALID_TYPE, "Failed to setup crypto, is the server running with SSL?");
 			efree(dsn);
-			return NULL;
+			RETURN(NULL);
 		}
 
 		if (!php_phongo_ssl_verify(stream, host->host, error TSRMLS_CC)) {
 			zend_restore_error_handling(&error_handling TSRMLS_CC);
 			php_stream_pclose(stream);
 			efree(dsn);
-			return NULL;
+			RETURN(NULL);
 		}
 
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
