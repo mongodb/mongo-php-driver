@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Binary cannot be serialized
+BSON BSON\Binary constructor requires unsigned 8-bit integer for type
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
@@ -9,20 +9,19 @@ require_once __DIR__ . "/../utils/basic.inc";
 use MongoDB\BSON as BSON;
 
 echo throws(function() {
-    serialize(new BSON\Binary('foo', BSON\Binary::TYPE_GENERIC));
-}, 'Exception'), "\n";
+    new BSON\Binary('foo', -1);
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    $classname = BSON_NAMESPACE . '\Binary';
-    unserialize(sprintf('C:%d:"%s":0:{}', strlen($classname), $classname));
-}, 'Exception'), "\n";
+    new BSON\Binary('foo', 256);
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got Exception
-Serialization of '%SBSON\Binary' is not allowed
-OK: Got Exception
-Unserialization of '%SBSON\Binary' is not allowed
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected type to be an unsigned 8-bit integer, -1 given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected type to be an unsigned 8-bit integer, 256 given
 ===DONE===
