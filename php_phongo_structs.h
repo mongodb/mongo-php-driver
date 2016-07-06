@@ -161,6 +161,7 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	bool              initialized;
 	bson_decimal128_t decimal;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_decimal128_t;

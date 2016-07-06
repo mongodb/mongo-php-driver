@@ -2092,6 +2092,7 @@ void php_phongo_new_decimal128(zval *object, const bson_decimal128_t *decimal TS
 
 	intern = Z_DECIMAL128_OBJ_P(object);
 	memcpy(&intern->decimal, decimal, sizeof(bson_decimal128_t));
+	intern->initialized = true;
 } /* }}} */
 
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC) /* {{{ */
