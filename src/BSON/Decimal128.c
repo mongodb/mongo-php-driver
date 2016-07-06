@@ -166,7 +166,7 @@ PHP_METHOD(Decimal128, __wakeup)
 
 /* {{{ BSON\Decimal128 */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___construct, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO();
 
