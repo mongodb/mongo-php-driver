@@ -46,6 +46,38 @@ PHONGO_API zend_class_entry *php_phongo_regex_ce;
 
 zend_object_handlers php_phongo_handler_regex;
 
+/* Initialize the object from a string and return whether it was successful. */
+static bool php_phongo_regex_init(php_phongo_regex_t *intern, const char *pattern, phongo_zpp_char_len pattern_len, const char *flags, phongo_zpp_char_len flags_len)
+{
+	intern->pattern = estrndup(pattern, pattern_len);
+	intern->pattern_len = pattern_len;
+	intern->flags = estrndup(flags, flags_len);
+	intern->flags_len = flags_len;
+
+	return true;
+}
+
+/* Initialize the object from a HashTable and return whether it was successful. */
+static bool php_phongo_regex_init_from_hash(php_phongo_regex_t *intern, HashTable *props)
+{
+#if PHP_VERSION_ID >= 70000
+	zval *pattern, *flags;
+
+	if ((pattern = zend_hash_str_find(props, "pattern", sizeof("pattern")-1)) && Z_TYPE_P(pattern) == IS_STRING &&
+	    (flags = zend_hash_str_find(props, "flags", sizeof("flags")-1)) && Z_TYPE_P(flags) == IS_STRING) {
+		return php_phongo_regex_init(intern, Z_STRVAL_P(pattern), Z_STRLEN_P(pattern), Z_STRVAL_P(flags), Z_STRLEN_P(flags));
+	}
+#else
+	zval **pattern, **flags;
+
+	if (zend_hash_find(props, "pattern", sizeof("pattern"), (void**) &pattern) == SUCCESS && Z_TYPE_PP(pattern) == IS_STRING &&
+	    zend_hash_find(props, "flags", sizeof("flags"), (void**) &flags) == SUCCESS && Z_TYPE_PP(flags) == IS_STRING) {
+		return php_phongo_regex_init(intern, Z_STRVAL_PP(pattern), Z_STRLEN_PP(pattern), Z_STRVAL_PP(flags), Z_STRLEN_PP(flags));
+	}
+#endif
+	return false;
+}
+
 /* {{{ proto BSON\Regex Regex::__construct(string $pattern, string $flags)
    Constructs a new regular expression. */
 PHP_METHOD(Regex, __construct)
@@ -67,11 +99,7 @@ PHP_METHOD(Regex, __construct)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-
-	intern->pattern = estrndup(pattern, pattern_len);
-	intern->pattern_len = pattern_len;
-	intern->flags = estrndup(flags, flags_len);
-	intern->flags_len = flags_len;
+	php_phongo_regex_init(intern, pattern, pattern_len, flags, flags_len);
 }
 /* }}} */
 /* {{{ proto void Regex::getPattern()
@@ -108,6 +136,30 @@ PHP_METHOD(Regex, getFlags)
 	PHONGO_RETURN_STRINGL(intern->flags, intern->flags_len);
 }
 /* }}} */
+
+/* {{{ proto Regex::__set_state(array $properties)
+*/
+PHP_METHOD(Regex, __set_state)
+{
+	php_phongo_regex_t *intern;
+	HashTable          *props;
+	zval               *array;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
+		RETURN_FALSE;
+	}
+
+	object_init_ex(return_value, php_phongo_regex_ce);
+
+	intern = Z_REGEX_OBJ_P(return_value);
+	props = Z_ARRVAL_P(array);
+
+	if (!php_phongo_regex_init_from_hash(intern, props)) {
+		php_error(E_ERROR, "Invalid serialization data for Regex object");
+	}
+}
+/* }}} */
+
 /* {{{ proto void Regex::__toString()
     */
 PHP_METHOD(Regex, __toString)
@@ -130,6 +182,25 @@ PHP_METHOD(Regex, __toString)
 }
 /* }}} */
 
+/* {{{ proto Regex::__wakeup()
+*/
+PHP_METHOD(Regex, __wakeup)
+{
+	php_phongo_regex_t *intern;
+	HashTable          *props;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	intern = Z_REGEX_OBJ_P(getThis());
+	props = zend_std_get_properties(getThis() TSRMLS_CC);
+
+	if (!php_phongo_regex_init_from_hash(intern, props)) {
+		php_error(E_ERROR, "Invalid serialization data for Regex object");
+	}
+}
+/* }}} */
 
 /* {{{ BSON\Regex */
 
@@ -138,22 +209,20 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Regex___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, flags)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Regex_getPattern, 0, 0, 0)
-ZEND_END_ARG_INFO();
+ZEND_BEGIN_ARG_INFO_EX(ai_Regex___set_state, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Regex_getFlags, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Regex___toString, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
+ZEND_BEGIN_ARG_INFO_EX(ai_Regex_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_regex_me[] = {
 	PHP_ME(Regex, __construct, ai_Regex___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Regex, getPattern, ai_Regex_getPattern, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Regex, getFlags, ai_Regex_getFlags, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Regex, __toString, ai_Regex___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(Regex, __set_state, ai_Regex___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(Regex, __toString, ai_Regex_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Regex, __wakeup, ai_Regex_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Regex, getPattern, ai_Regex_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Regex, getFlags, ai_Regex_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -224,6 +293,45 @@ HashTable *php_phongo_regex_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 
 	return Z_ARRVAL(retval);
 } /* }}} */
+
+HashTable *php_phongo_regex_get_properties(zval *object TSRMLS_DC) /* {{{ */
+{
+	php_phongo_regex_t *intern;
+	HashTable          *props;
+
+	intern = Z_REGEX_OBJ_P(object);
+	props = zend_std_get_properties(object TSRMLS_CC);
+
+	if (!intern->pattern) {
+		return props;
+	}
+
+#if PHP_VERSION_ID >= 70000
+	{
+		zval pattern, flags;
+
+		ZVAL_STRINGL(&pattern, intern->pattern, intern->pattern_len);
+		zend_hash_str_update(props, "pattern", sizeof("pattern")-1, &pattern);
+
+		ZVAL_STRINGL(&flags, intern->flags, intern->flags_len);
+		zend_hash_str_update(props, "flags", sizeof("flags")-1, &flags);
+	}
+#else
+	{
+		zval *pattern, *flags;
+
+		MAKE_STD_ZVAL(pattern);
+		ZVAL_STRINGL(pattern, intern->pattern, intern->pattern_len, 1);
+		zend_hash_update(props, "pattern", sizeof("pattern"), &pattern, sizeof(pattern), NULL);
+
+		MAKE_STD_ZVAL(flags);
+		ZVAL_STRINGL(flags, intern->flags, intern->flags_len, 1);
+		zend_hash_update(props, "flags", sizeof("flags"), &flags, sizeof(flags), NULL);
+	}
+#endif
+
+	return props;
+} /* }}} */
 /* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION */
@@ -236,11 +344,10 @@ PHP_MINIT_FUNCTION(Regex)
 	php_phongo_regex_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_regex_ce->create_object = php_phongo_regex_create_object;
 	PHONGO_CE_FINAL(php_phongo_regex_ce);
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_regex_ce);
 
 	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	memcpy(&php_phongo_handler_regex, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_regex.get_debug_info = php_phongo_regex_get_debug_info;
+	php_phongo_handler_regex.get_properties = php_phongo_regex_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_regex.free_obj = php_phongo_regex_free_object;
 	php_phongo_handler_regex.offset = XtOffsetOf(php_phongo_regex_t, std);
