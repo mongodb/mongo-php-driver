@@ -46,11 +46,40 @@ PHONGO_API zend_class_entry *php_phongo_maxkey_ce;
 
 zend_object_handlers php_phongo_handler_maxkey;
 
+/* {{{ proto MaxKey::__set_state(array $properties)
+*/
+PHP_METHOD(MaxKey, __set_state)
+{
+	zval *array;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
+		RETURN_FALSE;
+	}
+
+	object_init_ex(return_value, php_phongo_maxkey_ce);
+}
+/* }}} */
+
+/* {{{ proto MaxKey::__wakeup()
+*/
+PHP_METHOD(MaxKey, __wakeup)
+{
+	zend_parse_parameters_none();
+}
+/* }}} */
+
 /* {{{ BSON\MaxKey */
 
+ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey___set_state, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_maxkey_me[] = {
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MaxKey, __set_state, ai_MaxKey___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(MaxKey, __wakeup, ai_MaxKey_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
@@ -104,7 +133,6 @@ PHP_MINIT_FUNCTION(MaxKey)
 	php_phongo_maxkey_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_maxkey_ce->create_object = php_phongo_maxkey_create_object;
 	PHONGO_CE_FINAL(php_phongo_maxkey_ce);
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_maxkey_ce);
 
 	zend_class_implements(php_phongo_maxkey_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	memcpy(&php_phongo_handler_maxkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
