@@ -2054,6 +2054,7 @@ void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, uint32_
 	intern = Z_TIMESTAMP_OBJ_P(object);
 	intern->increment = increment;
 	intern->timestamp = timestamp;
+	intern->initialized = true;
 } /* }}} */
 void php_phongo_new_javascript_from_javascript(int init, zval *object, const char *code, size_t code_len TSRMLS_DC) /* {{{ */
 {

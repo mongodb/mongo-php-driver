@@ -202,6 +202,7 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	bool     initialized;
 	uint32_t increment;
 	uint32_t timestamp;
 	PHONGO_ZEND_OBJECT_POST
