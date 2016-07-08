@@ -210,6 +210,7 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	bool    initialized;
 	int64_t milliseconds;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_utcdatetime_t;

@@ -2043,6 +2043,7 @@ void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoc
 
 	intern = Z_UTCDATETIME_OBJ_P(object);
 	intern->milliseconds = msec_since_epoch;
+	intern->initialized = true;
 } /* }}} */
 
 void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, uint32_t increment, uint32_t timestamp TSRMLS_DC) /* {{{ */
