@@ -46,10 +46,12 @@ PHONGO_API zend_class_entry *php_phongo_binary_ce;
 
 zend_object_handlers php_phongo_handler_binary;
 
-/* Initialize the object from a string and return whether it was successful. */
-static bool php_phongo_binary_init(php_phongo_binary_t *intern, const char *data, phongo_zpp_char_len data_len, phongo_long type)
+/* Initialize the object and return whether it was successful. An exception will
+ * be thrown on error. */
+static bool php_phongo_binary_init(php_phongo_binary_t *intern, const char *data, phongo_zpp_char_len data_len, phongo_long type TSRMLS_DC)
 {
 	if (type < 0 || type > UINT8_MAX) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected type to be an unsigned 8-bit integer, %" PHONGO_LONG_FORMAT " given", type);
 		return false;
 	}
 
@@ -60,24 +62,27 @@ static bool php_phongo_binary_init(php_phongo_binary_t *intern, const char *data
 	return true;
 }
 
-/* Initialize the object from a HashTable and return whether it was successful. */
-static bool php_phongo_binary_init_from_hash(php_phongo_binary_t *intern, HashTable *props)
+/* Initialize the object from a HashTable and return whether it was successful.
+ * An exception will be thrown on error. */
+static bool php_phongo_binary_init_from_hash(php_phongo_binary_t *intern, HashTable *props TSRMLS_DC)
 {
 #if PHP_VERSION_ID >= 70000
 	zval *data, *type;
 
 	if ((data = zend_hash_str_find(props, "data", sizeof("data")-1)) && Z_TYPE_P(data) == IS_STRING &&
 	    (type = zend_hash_str_find(props, "type", sizeof("type")-1)) && Z_TYPE_P(type) == IS_LONG) {
-		return php_phongo_binary_init(intern, Z_STRVAL_P(data), Z_STRLEN_P(data), Z_LVAL_P(type));
+		return php_phongo_binary_init(intern, Z_STRVAL_P(data), Z_STRLEN_P(data), Z_LVAL_P(type) TSRMLS_CC);
 	}
 #else
 	zval **data, **type;
 
 	if (zend_hash_find(props, "data", sizeof("data"), (void**) &data) == SUCCESS && Z_TYPE_PP(data) == IS_STRING &&
 	    zend_hash_find(props, "type", sizeof("type"), (void**) &type) == SUCCESS && Z_TYPE_PP(type) == IS_LONG) {
-		return php_phongo_binary_init(intern, Z_STRVAL_PP(data), Z_STRLEN_PP(data), Z_LVAL_PP(type));
+		return php_phongo_binary_init(intern, Z_STRVAL_PP(data), Z_STRLEN_PP(data), Z_LVAL_PP(type) TSRMLS_CC);
 	}
 #endif
+
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"data\" string and \"type\" integer fields", ZSTR_VAL(php_phongo_binary_ce->name));
 	return false;
 }
 
@@ -101,9 +106,7 @@ PHP_METHOD(Binary, __construct)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	if (!php_phongo_binary_init(intern, data, data_len, type)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected type to be an unsigned 8-bit integer, %" PHONGO_LONG_FORMAT " given", type);
-	}
+	php_phongo_binary_init(intern, data, data_len, type TSRMLS_CC);
 }
 /* }}} */
 
@@ -124,9 +127,7 @@ PHP_METHOD(Binary, __set_state)
 	intern = Z_BINARY_OBJ_P(return_value);
 	props = Z_ARRVAL_P(array);
 
-	if (!php_phongo_binary_init_from_hash(intern, props)) {
-		php_error(E_ERROR, "Invalid serialization data for Binary object");
-	}
+	php_phongo_binary_init_from_hash(intern, props TSRMLS_CC);
 }
 /* }}} */
 
@@ -144,9 +145,7 @@ PHP_METHOD(Binary, __wakeup)
 	intern = Z_BINARY_OBJ_P(getThis());
 	props = zend_std_get_properties(getThis() TSRMLS_CC);
 
-	if (!php_phongo_binary_init_from_hash(intern, props)) {
-		php_error(E_ERROR, "Invalid serialization data for Binary object");
-	}
+	php_phongo_binary_init_from_hash(intern, props TSRMLS_CC);
 }
 /* }}} */
 
