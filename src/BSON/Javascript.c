@@ -47,20 +47,20 @@ PHONGO_API zend_class_entry *php_phongo_javascript_ce;
 zend_object_handlers php_phongo_handler_javascript;
 
 /* Initialize the object from a string and return whether it was successful. */
-static bool php_phongo_javascript_init(php_phongo_javascript_t *intern, const char *javascript, phongo_zpp_char_len javascript_len, zval *scope TSRMLS_DC)
+static bool php_phongo_javascript_init(php_phongo_javascript_t *intern, const char *code, phongo_zpp_char_len code_len, zval *scope TSRMLS_DC)
 {
 	if (scope && Z_TYPE_P(scope) != IS_OBJECT && Z_TYPE_P(scope) != IS_ARRAY && Z_TYPE_P(scope) != IS_NULL) {
 		return false;
 	}
 
-	intern->javascript = estrndup(javascript, javascript_len);
-	intern->javascript_len = javascript_len;
+	intern->code = estrndup(code, code_len);
+	intern->code_len = code_len;
 
 	if (scope && (Z_TYPE_P(scope) == IS_OBJECT || Z_TYPE_P(scope) == IS_ARRAY)) {
-		intern->document = bson_new();
-		phongo_zval_to_bson(scope, PHONGO_BSON_NONE, intern->document, NULL TSRMLS_CC);
+		intern->scope = bson_new();
+		phongo_zval_to_bson(scope, PHONGO_BSON_NONE, intern->scope, NULL TSRMLS_CC);
 	} else {
-		intern->document = NULL;
+		intern->scope = NULL;
 	}
 
 	return true;
@@ -70,47 +70,47 @@ static bool php_phongo_javascript_init(php_phongo_javascript_t *intern, const ch
 static bool php_phongo_javascript_init_from_hash(php_phongo_javascript_t *intern, HashTable *props TSRMLS_DC)
 {
 #if PHP_VERSION_ID >= 70000
-	zval *javascript, *scope;
+	zval *code, *scope;
 
-	if ((javascript = zend_hash_str_find(props, "javascript", sizeof("javascript")-1)) && Z_TYPE_P(javascript) == IS_STRING) {
+	if ((code = zend_hash_str_find(props, "code", sizeof("code")-1)) && Z_TYPE_P(code) == IS_STRING) {
 		scope = zend_hash_str_find(props, "scope", sizeof("scope")-1);
 
-		return php_phongo_javascript_init(intern, Z_STRVAL_P(javascript), Z_STRLEN_P(javascript), scope TSRMLS_CC);
+		return php_phongo_javascript_init(intern, Z_STRVAL_P(code), Z_STRLEN_P(code), scope TSRMLS_CC);
 	}
 #else
-	zval **javascript, **scope;
+	zval **code, **scope;
 
-	if (zend_hash_find(props, "javascript", sizeof("javascript"), (void**) &javascript) == SUCCESS && Z_TYPE_PP(javascript) == IS_STRING) {
+	if (zend_hash_find(props, "code", sizeof("code"), (void**) &code) == SUCCESS && Z_TYPE_PP(code) == IS_STRING) {
 		zval *tmp = zend_hash_find(props, "scope", sizeof("scope"), (void**) &scope) == SUCCESS ? *scope : NULL;
 
-		return php_phongo_javascript_init(intern, Z_STRVAL_PP(javascript), Z_STRLEN_PP(javascript), tmp TSRMLS_CC);
+		return php_phongo_javascript_init(intern, Z_STRVAL_PP(code), Z_STRLEN_PP(code), tmp TSRMLS_CC);
 	}
 #endif
 	return false;
 }
 
-/* {{{ proto BSON\Javascript Javascript::__construct(string $javascript[, array|object $document])
+/* {{{ proto BSON\Javascript Javascript::__construct(string $code[, array|object $scope])
  * The string is JavaScript code. The document is a mapping from identifiers to values, representing the scope in which the string should be evaluated
  * NOTE: eJSON does not support this type :( */
 PHP_METHOD(Javascript, __construct)
 {
 	php_phongo_javascript_t   *intern;
 	zend_error_handling        error_handling;
-	char                      *javascript;
-	phongo_zpp_char_len        javascript_len;
-	zval                      *document = NULL;
+	char                      *code;
+	phongo_zpp_char_len        code_len;
+	zval                      *scope = NULL;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|A!", &javascript, &javascript_len, &document) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|A!", &code, &code_len, &scope) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	php_phongo_javascript_init(intern, javascript, javascript_len, document TSRMLS_CC);
+	php_phongo_javascript_init(intern, code, code_len, scope TSRMLS_CC);
 }
 /* }}} */
 
@@ -189,12 +189,12 @@ static void php_phongo_javascript_free_object(phongo_free_object_arg *object TSR
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
-	if (intern->javascript) {
-		efree(intern->javascript);
+	if (intern->code) {
+		efree(intern->code);
 	}
-	if (intern->document) {
-		bson_destroy(intern->document);
-		intern->document = NULL;
+	if (intern->scope) {
+		bson_destroy(intern->scope);
+		intern->scope = NULL;
 	}
 
 #if PHP_VERSION_ID < 70000
@@ -233,21 +233,21 @@ HashTable *php_phongo_javascript_get_properties(zval *object TSRMLS_DC) /* {{{ *
 	intern = Z_JAVASCRIPT_OBJ_P(object);
 	props = zend_std_get_properties(object TSRMLS_CC);
 
-	if (!intern->javascript) {
+	if (!intern->code) {
 		return props;
 	}
 
 #if PHP_VERSION_ID >= 70000
 	{
-		zval javascript;
+		zval code;
 
-		ZVAL_STRING(&javascript, intern->javascript);
-		zend_hash_str_update(props, "javascript", sizeof("javascript")-1, &javascript);
+		ZVAL_STRING(&code, intern->code);
+		zend_hash_str_update(props, "code", sizeof("code")-1, &code);
 
-		if (intern->document) {
+		if (intern->scope) {
 			php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-			if (phongo_bson_to_zval_ex(bson_get_data(intern->document), intern->document->len, &state)) {
+			if (phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 				Z_ADDREF(state.zchild);
 				zend_hash_str_update(props, "scope", sizeof("scope")-1, &state.zchild);
 			} else {
@@ -262,16 +262,16 @@ HashTable *php_phongo_javascript_get_properties(zval *object TSRMLS_DC) /* {{{ *
 	}
 #else
 	{
-		zval *javascript;
+		zval *code;
 
-		MAKE_STD_ZVAL(javascript);
-		ZVAL_STRING(javascript, intern->javascript, 1);
-		zend_hash_update(props, "javascript", sizeof("javascript"), &javascript, sizeof(javascript), NULL);
+		MAKE_STD_ZVAL(code);
+		ZVAL_STRING(code, intern->code, 1);
+		zend_hash_update(props, "code", sizeof("code"), &code, sizeof(code), NULL);
 
-		if (intern->document) {
+		if (intern->scope) {
 			php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-			if (phongo_bson_to_zval_ex(bson_get_data(intern->document), intern->document->len, &state)) {
+			if (phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 				Z_ADDREF_P(state.zchild);
 				zend_hash_update(props, "scope", sizeof("scope"), &state.zchild, sizeof(state.zchild), NULL);
 			} else {

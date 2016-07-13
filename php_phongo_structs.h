@@ -168,9 +168,9 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	char   *javascript;
-	size_t  javascript_len;
-	bson_t *document;
+	char   *code;
+	size_t  code_len;
+	bson_t *scope;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_javascript_t;
 

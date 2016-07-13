@@ -36,14 +36,14 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECTF--
 object(%SBSON\Javascript)#%d (%d) {
-  ["javascript"]=>
+  ["code"]=>
   string(33) "function foo(bar) { return bar; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
   }
 }
 object(%SBSON\Javascript)#%d (%d) {
-  ["javascript"]=>
+  ["code"]=>
   string(30) "function foo() { return foo; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
@@ -52,7 +52,7 @@ object(%SBSON\Javascript)#%d (%d) {
   }
 }
 object(%SBSON\Javascript)#%d (%d) {
-  ["javascript"]=>
+  ["code"]=>
   string(29) "function foo() { return id; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
