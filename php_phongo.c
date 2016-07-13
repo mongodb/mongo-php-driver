@@ -2070,9 +2070,9 @@ void php_phongo_new_javascript_from_javascript_and_scope(int init, zval *object,
 	}
 
 	intern = Z_JAVASCRIPT_OBJ_P(object);
-	intern->javascript = estrndup(code, code_len);
-	intern->javascript_len = code_len;
-	intern->document = scope ? bson_copy(scope) : NULL;
+	intern->code = estrndup(code, code_len);
+	intern->code_len = code_len;
+	intern->scope = scope ? bson_copy(scope) : NULL;
 } /* }}} */
 void php_phongo_new_binary_from_binary_and_type(zval *object, const char *data, size_t data_len, bson_subtype_t type TSRMLS_DC) /* {{{ */
 {

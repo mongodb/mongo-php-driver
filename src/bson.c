@@ -115,15 +115,15 @@ bool php_phongo_javascript_has_scope(zval *object TSRMLS_DC)
 
 	intern = Z_JAVASCRIPT_OBJ_P(object);
 
-	return !!intern->document;
+	return !!intern->scope;
 }
-char *php_phongo_javascript_get_javascript(zval *object TSRMLS_DC)
+char *php_phongo_javascript_get_code(zval *object TSRMLS_DC)
 {
 	php_phongo_javascript_t *intern;
 
 	intern = Z_JAVASCRIPT_OBJ_P(object);
 
-	return intern->javascript;
+	return intern->code;
 }
 bson_t *php_phongo_javascript_get_scope(zval *object TSRMLS_DC)
 {
@@ -131,7 +131,7 @@ bson_t *php_phongo_javascript_get_scope(zval *object TSRMLS_DC)
 
 	intern = Z_JAVASCRIPT_OBJ_P(object);
 
-	return intern->document;
+	return intern->scope;
 }
 int php_phongo_binary_get_data(zval *object, char **data TSRMLS_DC)
 {
@@ -983,10 +983,10 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_javascript_ce TSRMLS_CC)) {
 			if (php_phongo_javascript_has_scope(object TSRMLS_CC)) {
 				mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Javascript with scope");
-				bson_append_code(bson, key, key_len, php_phongo_javascript_get_javascript(object TSRMLS_CC));
+				bson_append_code(bson, key, key_len, php_phongo_javascript_get_code(object TSRMLS_CC));
 			} else {
 				mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Javascript without scope");
-				bson_append_code_with_scope(bson, key, key_len, php_phongo_javascript_get_javascript(object TSRMLS_CC), php_phongo_javascript_get_scope(object TSRMLS_CC));
+				bson_append_code_with_scope(bson, key, key_len, php_phongo_javascript_get_code(object TSRMLS_CC), php_phongo_javascript_get_scope(object TSRMLS_CC));
 			}
 			return;
 		}
