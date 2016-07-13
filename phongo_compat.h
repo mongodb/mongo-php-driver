@@ -85,16 +85,6 @@
 #  define ARG_UNUSED
 #endif
 
-#ifdef HAVE_ATOLL
-# define STRTOLL(s) atoll(s)
-#else
-# if defined(PHP_WIN32)
-#  define STRTOLL(s) _atoi64(s)
-# else
-#  define STRTOLL(s) strtoll(s, NULL, 10)
-# endif
-#endif
-
 #ifndef php_ignore_value
 # if defined(__GNUC__) && __GNUC__ >= 4
 #  define php_ignore_value(x) (({ __typeof__ (x) __x = (x); (void) __x; }))
