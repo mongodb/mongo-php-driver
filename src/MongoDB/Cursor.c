@@ -382,7 +382,8 @@ PHP_MINIT_FUNCTION(Cursor)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Cursor", php_phongo_cursor_me);
 	php_phongo_cursor_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_cursor_ce->create_object = php_phongo_cursor_create_object;
-	PHONGO_CE_INIT(php_phongo_cursor_ce);
+	PHONGO_CE_FINAL(php_phongo_cursor_ce);
+	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_cursor_ce);
 	php_phongo_cursor_ce->get_iterator = php_phongo_cursor_get_iterator;
 
 	memcpy(&php_phongo_handler_cursor, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

@@ -161,6 +161,7 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	bool              initialized;
 	bson_decimal128_t decimal;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_decimal128_t;
@@ -185,6 +186,7 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	bool initialized;
 	char oid[25];
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_objectid_t;
@@ -200,6 +202,7 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	bool     initialized;
 	uint32_t increment;
 	uint32_t timestamp;
 	PHONGO_ZEND_OBJECT_POST
@@ -207,6 +210,7 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	bool    initialized;
 	int64_t milliseconds;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_utcdatetime_t;

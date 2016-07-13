@@ -467,7 +467,8 @@ PHP_MINIT_FUNCTION(Manager)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Manager", php_phongo_manager_me);
 	php_phongo_manager_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_manager_ce->create_object = php_phongo_manager_create_object;
-	PHONGO_CE_INIT(php_phongo_manager_ce);
+	PHONGO_CE_FINAL(php_phongo_manager_ce);
+	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_manager_ce);
 
 	memcpy(&php_phongo_handler_manager, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_manager.get_debug_info = php_phongo_manager_get_debug_info;

@@ -46,6 +46,37 @@ PHONGO_API zend_class_entry *php_phongo_decimal128_ce;
 
 zend_object_handlers php_phongo_handler_decimal128;
 
+/* Initialize the object from a string and return whether it was successful. */
+static bool php_phongo_decimal128_init(php_phongo_decimal128_t *intern, const char *value)
+{
+	if (bson_decimal128_from_string(value, &intern->decimal)) {
+		intern->initialized = true;
+
+		return true;
+	}
+
+	return false;
+}
+
+/* Initialize the object from a HashTable and return whether it was successful. */
+static bool php_phongo_decimal128_init_from_hash(php_phongo_decimal128_t *intern, HashTable *props)
+{
+#if PHP_VERSION_ID >= 70000
+	zval *dec;
+
+	if ((dec = zend_hash_str_find(props, "dec", sizeof("dec")-1)) && Z_TYPE_P(dec) == IS_STRING) {
+		return php_phongo_decimal128_init(intern, Z_STRVAL_P(dec));
+	}
+#else
+	zval **dec;
+
+	if (zend_hash_find(props, "dec", sizeof("dec"), (void**) &dec) == SUCCESS && Z_TYPE_PP(dec) == IS_STRING) {
+		return php_phongo_decimal128_init(intern, Z_STRVAL_PP(dec));
+	}
+#endif
+	return false;
+}
+
 /* {{{ proto BSON\Decimal128 Decimal128::__construct(string $value)
    Construct a new BSON Decimal128 type */
 PHP_METHOD(Decimal128, __construct)
@@ -65,9 +96,31 @@ PHP_METHOD(Decimal128, __construct)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	if ( ! bson_decimal128_from_string(value, &intern->decimal)) {
+	if (!php_phongo_decimal128_init(intern, value)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing decimal string: %s", value);
-		return;
+	}
+}
+/* }}} */
+
+/* {{{ proto Decimal128::__set_state(array $properties)
+*/
+PHP_METHOD(Decimal128, __set_state)
+{
+	php_phongo_decimal128_t *intern;
+	HashTable               *props;
+	zval                    *array;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
+		RETURN_FALSE;
+	}
+
+	object_init_ex(return_value, php_phongo_decimal128_ce);
+
+	intern = Z_DECIMAL128_OBJ_P(return_value);
+	props = Z_ARRVAL_P(array);
+
+	if (!php_phongo_decimal128_init_from_hash(intern, props)) {
+		php_error(E_ERROR, "Invalid serialization data for Decimal128 object");
 	}
 }
 /* }}} */
@@ -91,21 +144,44 @@ PHP_METHOD(Decimal128, __toString)
 }
 /* }}} */
 
+/* {{{ proto Decimal128::__wakeup()
+*/
+PHP_METHOD(Decimal128, __wakeup)
+{
+	php_phongo_decimal128_t *intern;
+	HashTable               *props;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	intern = Z_DECIMAL128_OBJ_P(getThis());
+	props = zend_std_get_properties(getThis() TSRMLS_CC);
+
+	if (!php_phongo_decimal128_init_from_hash(intern, props)) {
+		php_error(E_ERROR, "Invalid serialization data for Decimal128 object");
+	}
+}
+/* }}} */
 
 /* {{{ BSON\Decimal128 */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___construct, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___toString, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___set_state, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, properties, 0)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128_void, 0, 0, 0)
+ZEND_END_ARG_INFO();
 
 static zend_function_entry php_phongo_decimal128_me[] = {
 	PHP_ME(Decimal128, __construct, ai_Decimal128___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Decimal128, __toString, ai_Decimal128___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(Decimal128, __set_state, ai_Decimal128___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(Decimal128, __toString, ai_Decimal128_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Decimal128, __wakeup, ai_Decimal128_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
@@ -148,24 +224,39 @@ phongo_create_object_retval php_phongo_decimal128_create_object(zend_class_entry
 #endif
 } /* }}} */
 
-HashTable *php_phongo_decimal128_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+HashTable *php_phongo_decimal128_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_decimal128_t *intern;
-	char                  outbuf[BSON_DECIMAL128_STRING] = "";
-#if PHP_VERSION_ID >= 70000
-	zval                  retval;
-#else
-	zval                  retval = zval_used_for_init;
-#endif
+	HashTable               *props;
+	char                     outbuf[BSON_DECIMAL128_STRING] = "";
 
 	intern = Z_DECIMAL128_OBJ_P(object);
-	*is_temp = 1;
-	array_init_size(&retval, 1);
+	props = zend_std_get_properties(object TSRMLS_CC);
+
+	if (!intern->initialized) {
+		return props;
+	}
 
 	bson_decimal128_to_string(&intern->decimal, outbuf);
-	ADD_ASSOC_STRING(&retval, "dec", outbuf);
 
-	return Z_ARRVAL(retval);
+#if PHP_VERSION_ID >= 70000
+	{
+		zval dec;
+
+		ZVAL_STRING(&dec, outbuf);
+		zend_hash_str_update(props, "dec", sizeof("dec")-1, &dec);
+	}
+#else
+	{
+		zval *dec;
+
+		MAKE_STD_ZVAL(dec);
+		ZVAL_STRING(dec, outbuf, 1);
+		zend_hash_update(props, "dec", sizeof("dec"), &dec, sizeof(dec), NULL);
+	}
+#endif
+
+	return props;
 } /* }}} */
 /* }}} */
 
@@ -178,12 +269,12 @@ PHP_MINIT_FUNCTION(Decimal128)
 	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "Decimal128", php_phongo_decimal128_me);
 	php_phongo_decimal128_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_decimal128_ce->create_object = php_phongo_decimal128_create_object;
-	PHONGO_CE_INIT(php_phongo_decimal128_ce);
+	PHONGO_CE_FINAL(php_phongo_decimal128_ce);
 
 	zend_class_implements(php_phongo_decimal128_ce TSRMLS_CC, 1, php_phongo_type_ce);
 
 	memcpy(&php_phongo_handler_decimal128, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_decimal128.get_debug_info = php_phongo_decimal128_get_debug_info;
+	php_phongo_handler_decimal128.get_properties = php_phongo_decimal128_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_decimal128.free_obj = php_phongo_decimal128_free_object;
 	php_phongo_handler_decimal128.offset = XtOffsetOf(php_phongo_decimal128_t, std);

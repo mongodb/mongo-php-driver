@@ -46,6 +46,59 @@ PHONGO_API zend_class_entry *php_phongo_objectid_ce;
 
 zend_object_handlers php_phongo_handler_objectid;
 
+/* Initialize the object with a generated value and return whether it was successful. */
+static bool php_phongo_objectid_init(php_phongo_objectid_t *intern)
+{
+	bson_oid_t oid;
+
+	intern->initialized = true;
+
+	bson_oid_init(&oid, NULL);
+	bson_oid_to_string(&oid, intern->oid);
+
+	return true;
+}
+
+/* Initialize the object from a hex string and return whether it was successful. */
+static bool php_phongo_objectid_init_from_hex_string(php_phongo_objectid_t *intern, const char *oid, phongo_zpp_char_len oid_len)
+{
+	char *tid = zend_str_tolower_dup(oid, oid_len);
+
+	if (bson_oid_is_valid(tid, oid_len)) {
+		bson_oid_t oid;
+
+		bson_oid_init_from_string(&oid, tid);
+		bson_oid_to_string(&oid, intern->oid);
+		intern->initialized = true;
+
+		efree(tid);
+		return true;
+	}
+
+	efree(tid);
+	return false;
+}
+
+/* Initialize the object from a HashTable and return whether it was successful. */
+static bool php_phongo_objectid_init_from_hash(php_phongo_objectid_t *intern, HashTable *props)
+{
+#if PHP_VERSION_ID >= 70000
+	zval *z_oid;
+
+	z_oid = zend_hash_str_find(props, "oid", sizeof("oid")-1);
+
+	if (z_oid && Z_TYPE_P(z_oid) == IS_STRING) {
+		return php_phongo_objectid_init_from_hex_string(intern, Z_STRVAL_P(z_oid), Z_STRLEN_P(z_oid));
+	}
+#else
+	zval **z_oid;
+
+	if (zend_hash_find(props, "oid", sizeof("oid"), (void**) &z_oid) == SUCCESS && Z_TYPE_PP(z_oid) == IS_STRING) {
+		return php_phongo_objectid_init_from_hex_string(intern, Z_STRVAL_PP(z_oid), Z_STRLEN_PP(z_oid));
+	}
+#endif
+	return false;
+}
 
 /* {{{ proto BSON\ObjectID ObjectID::__construct(string $id)
    Constructs a new Object ID, optionally from a string */
@@ -67,24 +120,38 @@ PHP_METHOD(ObjectID, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	if (id) {
-		char *tid = zend_str_tolower_dup(id, id_len);
-		if (bson_oid_is_valid(tid, id_len)) {
-			bson_oid_t oid;
-
-			bson_oid_init_from_string(&oid, tid);
-			bson_oid_to_string(&oid, intern->oid);
-		} else {
+		if (!php_phongo_objectid_init_from_hex_string(intern, id, id_len)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid BSON ID provided");
 		}
-		efree(tid);
 	} else {
-		bson_oid_t oid;
-
-		bson_oid_init(&oid, NULL);
-		bson_oid_to_string(&oid, intern->oid);
+		php_phongo_objectid_init(intern);
 	}
 }
 /* }}} */
+
+/* {{{ proto ObjectID::__set_state(array $properties)
+*/
+PHP_METHOD(ObjectID, __set_state)
+{
+	php_phongo_objectid_t *intern;
+	HashTable             *props;
+	zval                  *array;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
+		RETURN_FALSE;
+	}
+
+	object_init_ex(return_value, php_phongo_objectid_ce);
+
+	intern = Z_OBJECTID_OBJ_P(return_value);
+	props = Z_ARRVAL_P(array);
+
+	if (!php_phongo_objectid_init_from_hash(intern, props)) {
+		php_error(E_ERROR, "Invalid serialization data for ObjectID object");
+	}
+}
+/* }}} */
+
 /* {{{ proto void ObjectID::__toString()
     */
 PHP_METHOD(ObjectID, __toString)
@@ -103,6 +170,25 @@ PHP_METHOD(ObjectID, __toString)
 }
 /* }}} */
 
+/* {{{ proto ObjectID::__wakeup()
+*/
+PHP_METHOD(ObjectID, __wakeup)
+{
+	php_phongo_objectid_t *intern;
+	HashTable             *props;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	intern = Z_OBJECTID_OBJ_P(getThis());
+	props = zend_std_get_properties(getThis() TSRMLS_CC);
+
+	if (!php_phongo_objectid_init_from_hash(intern, props)) {
+		php_error(E_ERROR, "Invalid serialization data for ObjectID object");
+	}
+}
+/* }}} */
 
 /* {{{ BSON\ObjectID */
 
@@ -110,14 +196,18 @@ ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, id)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID___toString, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID___set_state, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, properties, 0)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_objectid_me[] = {
 	PHP_ME(ObjectID, __construct, ai_ObjectID___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ObjectID, __toString, ai_ObjectID___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(ObjectID, __set_state, ai_ObjectID___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(ObjectID, __toString, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ObjectID, __wakeup, ai_ObjectID_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
@@ -171,25 +261,36 @@ static int php_phongo_objectid_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* 
 	return strcmp(intern1->oid, intern2->oid);
 } /* }}} */
 
-HashTable *php_phongo_objectid_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+HashTable *php_phongo_objectid_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_objectid_t    *intern;
+	php_phongo_objectid_t *intern;
+	HashTable             *props;
+
+	intern = Z_OBJECTID_OBJ_P(object);
+	props = zend_std_get_properties(object TSRMLS_CC);
+
+	if (!intern->oid) {
+		return props;
+	}
+
 #if PHP_VERSION_ID >= 70000
-	zval                      retval;
+	{
+		zval zv;
+
+		ZVAL_STRING(&zv, intern->oid);
+		zend_hash_str_update(props, "oid", sizeof("oid")-1, &zv);
+	}
 #else
-	zval                      retval = zval_used_for_init;
+	{
+		zval *zv;
+
+		MAKE_STD_ZVAL(zv);
+		ZVAL_STRING(zv, intern->oid, 1);
+		zend_hash_update(props, "oid", sizeof("oid"), &zv, sizeof(zv), NULL);
+	}
 #endif
 
-
-	*is_temp = 1;
-	intern = Z_OBJECTID_OBJ_P(object);
-
-	array_init(&retval);
-
-	ADD_ASSOC_STRINGL(&retval, "oid", intern->oid, 24);
-
-	return Z_ARRVAL(retval);
-
+	return props;
 } /* }}} */
 /* }}} */
 
@@ -202,13 +303,13 @@ PHP_MINIT_FUNCTION(ObjectID)
 	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "ObjectID", php_phongo_objectid_me);
 	php_phongo_objectid_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_objectid_ce->create_object = php_phongo_objectid_create_object;
-	PHONGO_CE_INIT(php_phongo_objectid_ce);
+	PHONGO_CE_FINAL(php_phongo_objectid_ce);
 
 	zend_class_implements(php_phongo_objectid_ce TSRMLS_CC, 1, php_phongo_type_ce);
 
 	memcpy(&php_phongo_handler_objectid, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_objectid.compare_objects = php_phongo_objectid_compare_objects;
-	php_phongo_handler_objectid.get_debug_info = php_phongo_objectid_get_debug_info;
+	php_phongo_handler_objectid.get_properties = php_phongo_objectid_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_objectid.free_obj = php_phongo_objectid_free_object;
 	php_phongo_handler_objectid.offset = XtOffsetOf(php_phongo_objectid_t, std);

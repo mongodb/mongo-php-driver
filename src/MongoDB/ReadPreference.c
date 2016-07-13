@@ -240,7 +240,8 @@ PHP_MINIT_FUNCTION(ReadPreference)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ReadPreference", php_phongo_readpreference_me);
 	php_phongo_readpreference_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_readpreference_ce->create_object = php_phongo_readpreference_create_object;
-	PHONGO_CE_INIT(php_phongo_readpreference_ce);
+	PHONGO_CE_FINAL(php_phongo_readpreference_ce);
+	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_readpreference_ce);
 
 	memcpy(&php_phongo_handler_readpreference, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_readpreference.get_debug_info = php_phongo_readpreference_get_debug_info;

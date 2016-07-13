@@ -46,11 +46,40 @@ PHONGO_API zend_class_entry *php_phongo_minkey_ce;
 
 zend_object_handlers php_phongo_handler_minkey;
 
+/* {{{ proto MinKey::__set_state(array $properties)
+*/
+PHP_METHOD(MinKey, __set_state)
+{
+	zval *array;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
+		RETURN_FALSE;
+	}
+
+	object_init_ex(return_value, php_phongo_minkey_ce);
+}
+/* }}} */
+
+/* {{{ proto MinKey::__wakeup()
+*/
+PHP_METHOD(MinKey, __wakeup)
+{
+	zend_parse_parameters_none();
+}
+/* }}} */
+
 /* {{{ BSON\MinKey */
 
+ZEND_BEGIN_ARG_INFO_EX(ai_MinKey___set_state, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO();
+
+ZEND_BEGIN_ARG_INFO_EX(ai_MinKey_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_minkey_me[] = {
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MinKey, __set_state, ai_MinKey___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(MinKey, __wakeup, ai_MinKey_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
@@ -104,7 +133,7 @@ PHP_MINIT_FUNCTION(MinKey)
 	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "MinKey", php_phongo_minkey_me);
 	php_phongo_minkey_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_minkey_ce->create_object = php_phongo_minkey_create_object;
-	PHONGO_CE_INIT(php_phongo_minkey_ce);
+	PHONGO_CE_FINAL(php_phongo_minkey_ce);
 
 	zend_class_implements(php_phongo_minkey_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	memcpy(&php_phongo_handler_minkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

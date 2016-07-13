@@ -1382,6 +1382,7 @@ void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS
 
 	intern = Z_OBJECTID_OBJ_P(object);
 	bson_oid_to_string(oid, intern->oid);
+	intern->initialized = true;
 } /* }}} */
 
 php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t *sd)
@@ -2042,6 +2043,7 @@ void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoc
 
 	intern = Z_UTCDATETIME_OBJ_P(object);
 	intern->milliseconds = msec_since_epoch;
+	intern->initialized = true;
 } /* }}} */
 
 void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, uint32_t increment, uint32_t timestamp TSRMLS_DC) /* {{{ */
@@ -2053,6 +2055,7 @@ void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, uint32_
 	intern = Z_TIMESTAMP_OBJ_P(object);
 	intern->increment = increment;
 	intern->timestamp = timestamp;
+	intern->initialized = true;
 } /* }}} */
 void php_phongo_new_javascript_from_javascript(int init, zval *object, const char *code, size_t code_len TSRMLS_DC) /* {{{ */
 {
@@ -2091,6 +2094,7 @@ void php_phongo_new_decimal128(zval *object, const bson_decimal128_t *decimal TS
 
 	intern = Z_DECIMAL128_OBJ_P(object);
 	memcpy(&intern->decimal, decimal, sizeof(bson_decimal128_t));
+	intern->initialized = true;
 } /* }}} */
 
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC) /* {{{ */
