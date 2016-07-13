@@ -210,8 +210,6 @@ phongo_create_object_retval php_phongo_javascript_create_object(zend_class_entry
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-	intern->document = NULL;
-
 #if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_javascript;
 
