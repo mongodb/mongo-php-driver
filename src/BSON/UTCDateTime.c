@@ -140,10 +140,7 @@ PHP_METHOD(UTCDateTime, __construct)
 			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(datetime));
 #endif
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
-				"Expected instance of DateTimeInterface, %s given",
-				phongo_str(Z_OBJCE_P(datetime)->name)
-			);
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected instance of DateTimeInterface, %s given", ZSTR_VAL(Z_OBJCE_P(datetime)->name));
 		}
 
 		zend_restore_error_handling(&error_handling TSRMLS_CC);

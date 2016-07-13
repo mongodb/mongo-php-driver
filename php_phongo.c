@@ -224,7 +224,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 			time(&t);
 			dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), t, 0 TSRMLS_CC);
 
-			fprintf(MONGODB_G(debug_fd), "[%s] %10s: %-8s> %s\n", phongo_str(dt), log_domain, mongoc_log_level_str(log_level), message);
+			fprintf(MONGODB_G(debug_fd), "[%s] %10s: %-8s> %s\n", ZSTR_VAL(dt), log_domain, mongoc_log_level_str(log_level), message);
 			fflush(MONGODB_G(debug_fd));
 			efree(dt);
 		} break;
@@ -1236,7 +1236,7 @@ mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_h
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	if (!stream) {
-		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, phongo_str(errmsg));
+		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, ZSTR_VAL(errmsg));
 		efree(dsn);
 		efree(uniqid);
 		if (errmsg) {
@@ -2342,11 +2342,11 @@ ZEND_INI_MH(OnUpdateDebug)
 		MONGODB_G(debug_fd) = NULL;
 	}
 
-	if (!new_value || (new_value && !phongo_str(new_value)[0])
-		|| strcasecmp("0", phongo_str(new_value)) == 0
-		|| strcasecmp("off", phongo_str(new_value)) == 0
-		|| strcasecmp("no", phongo_str(new_value)) == 0
-		|| strcasecmp("false", phongo_str(new_value)) == 0
+	if (!new_value || (new_value && !ZSTR_VAL(new_value)[0])
+		|| strcasecmp("0", ZSTR_VAL(new_value)) == 0
+		|| strcasecmp("off", ZSTR_VAL(new_value)) == 0
+		|| strcasecmp("no", ZSTR_VAL(new_value)) == 0
+		|| strcasecmp("false", ZSTR_VAL(new_value)) == 0
 	   ) {
 		mongoc_log_trace_disable();
 		mongoc_log_set_handler(NULL, NULL);
@@ -2359,19 +2359,19 @@ ZEND_INI_MH(OnUpdateDebug)
 	}
 
 
-	if (strcasecmp(phongo_str(new_value), "stderr") == 0) {
+	if (strcasecmp(ZSTR_VAL(new_value), "stderr") == 0) {
 		MONGODB_G(debug_fd) = stderr;
-	} else if (strcasecmp(phongo_str(new_value), "stdout") == 0) {
+	} else if (strcasecmp(ZSTR_VAL(new_value), "stdout") == 0) {
 		MONGODB_G(debug_fd) = stdout;
 	} else if (
-		strcasecmp("1", phongo_str(new_value)) == 0
-		|| strcasecmp("on", phongo_str(new_value)) == 0
-		|| strcasecmp("yes", phongo_str(new_value)) == 0
-		|| strcasecmp("true", phongo_str(new_value)) == 0
+		strcasecmp("1", ZSTR_VAL(new_value)) == 0
+		|| strcasecmp("on", ZSTR_VAL(new_value)) == 0
+		|| strcasecmp("yes", ZSTR_VAL(new_value)) == 0
+		|| strcasecmp("true", ZSTR_VAL(new_value)) == 0
 	) {
 		tmp_dir = NULL;
 	} else {
-		tmp_dir = phongo_str(new_value);
+		tmp_dir = ZSTR_VAL(new_value);
 	}
 
 	if (!MONGODB_G(debug_fd)) {
@@ -2386,7 +2386,7 @@ ZEND_INI_MH(OnUpdateDebug)
 
 		fd = php_open_temporary_fd(tmp_dir, prefix, &filename TSRMLS_CC);
 		if (fd != -1) {
-			const char *path = phongo_str(filename);
+			const char *path = ZSTR_VAL(filename);
 			MONGODB_G(debug_fd) = VCWD_FOPEN(path, "a");
 		}
 		efree(filename);
