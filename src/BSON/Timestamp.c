@@ -46,9 +46,20 @@ PHONGO_API zend_class_entry *php_phongo_timestamp_ce;
 
 zend_object_handlers php_phongo_handler_timestamp;
 
-/* Initialize the object from a string and return whether it was successful. */
-static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, phongo_long increment, phongo_long timestamp)
+/* Initialize the object and return whether it was successful. An exception will
+ * be thrown on error. */
+static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, phongo_long increment, phongo_long timestamp TSRMLS_DC)
 {
+	if (increment < 0 || increment > UINT32_MAX) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected increment to be an unsigned 32-bit integer, %" PHONGO_LONG_FORMAT " given", increment);
+		return false;
+	}
+
+	if (timestamp < 0 || timestamp > UINT32_MAX) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected timestamp to be an unsigned 32-bit integer, %" PHONGO_LONG_FORMAT " given", timestamp);
+		return false;
+	}
+
 	intern->increment = increment;
 	intern->timestamp = timestamp;
 	intern->initialized = true;
@@ -56,24 +67,27 @@ static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, phongo_lon
 	return true;
 }
 
-/* Initialize the object from a HashTable and return whether it was successful. */
-static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, HashTable *props)
+/* Initialize the object from a HashTable and return whether it was successful.
+ * An exception will be thrown on error. */
+static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, HashTable *props TSRMLS_DC)
 {
 #if PHP_VERSION_ID >= 70000
 	zval *increment, *timestamp;
 
 	if ((increment = zend_hash_str_find(props, "increment", sizeof("increment")-1)) && Z_TYPE_P(increment) == IS_LONG &&
 	    (timestamp = zend_hash_str_find(props, "timestamp", sizeof("timestamp")-1)) && Z_TYPE_P(timestamp) == IS_LONG) {
-		return php_phongo_timestamp_init(intern, Z_LVAL_P(increment), Z_LVAL_P(timestamp));
+		return php_phongo_timestamp_init(intern, Z_LVAL_P(increment), Z_LVAL_P(timestamp) TSRMLS_CC);
 	}
 #else
 	zval **increment, **timestamp;
 
 	if (zend_hash_find(props, "increment", sizeof("increment"), (void**) &increment) == SUCCESS && Z_TYPE_PP(increment) == IS_LONG &&
 	    zend_hash_find(props, "timestamp", sizeof("timestamp"), (void**) &timestamp) == SUCCESS && Z_TYPE_PP(timestamp) == IS_LONG) {
-		return php_phongo_timestamp_init(intern, Z_LVAL_PP(increment), Z_LVAL_PP(timestamp));
+		return php_phongo_timestamp_init(intern, Z_LVAL_PP(increment), Z_LVAL_PP(timestamp) TSRMLS_CC);
 	}
 #endif
+
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"increment\" and \"timestamp\" integer fields", ZSTR_VAL(php_phongo_timestamp_ce->name));
 	return false;
 }
 
@@ -96,17 +110,7 @@ PHP_METHOD(Timestamp, __construct)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	if (increment < 0 || increment > UINT32_MAX) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected increment to be an unsigned 32-bit integer, %" PHONGO_LONG_FORMAT " given", increment);
-		return;
-	}
-
-	if (timestamp < 0 || timestamp > UINT32_MAX) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected timestamp to be an unsigned 32-bit integer, %" PHONGO_LONG_FORMAT " given", timestamp);
-		return;
-	}
-
-	php_phongo_timestamp_init(intern, increment, timestamp);
+	php_phongo_timestamp_init(intern, increment, timestamp TSRMLS_CC);
 }
 /* }}} */
 
@@ -127,9 +131,7 @@ PHP_METHOD(Timestamp, __set_state)
 	intern = Z_TIMESTAMP_OBJ_P(return_value);
 	props = Z_ARRVAL_P(array);
 
-	if (!php_phongo_timestamp_init_from_hash(intern, props)) {
-		php_error(E_ERROR, "Invalid serialization data for Timestamp object");
-	}
+	php_phongo_timestamp_init_from_hash(intern, props TSRMLS_CC);
 }
 /* }}} */
 
@@ -168,9 +170,7 @@ PHP_METHOD(Timestamp, __wakeup)
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 	props = zend_std_get_properties(getThis() TSRMLS_CC);
 
-	if (!php_phongo_timestamp_init_from_hash(intern, props)) {
-		php_error(E_ERROR, "Invalid serialization data for Timestamp object");
-	}
+	php_phongo_timestamp_init_from_hash(intern, props TSRMLS_CC);
 }
 /* }}} */
 
