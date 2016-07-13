@@ -52,7 +52,7 @@ PHONGO_API zend_class_entry *php_phongo_utcdatetime_ce;
 
 zend_object_handlers php_phongo_handler_utcdatetime;
 
-/* Initialize the object from an integer and return whether it was successful. */
+/* Initialize the object and return whether it was successful. */
 static bool php_phongo_utcdatetime_init(php_phongo_utcdatetime_t *intern, int64_t milliseconds)
 {
 	intern->milliseconds = milliseconds;
@@ -61,8 +61,39 @@ static bool php_phongo_utcdatetime_init(php_phongo_utcdatetime_t *intern, int64_
 	return true;
 }
 
-/* Initialize the object from a HashTable and return whether it was successful. */
-static bool php_phongo_utcdatetime_init_from_hash(php_phongo_utcdatetime_t *intern, HashTable *props)
+/* Initialize the object from a numeric string and return whether it was
+ * successful. An exception will be thrown on error. */
+static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t *intern, const char *s_milliseconds, phongo_zpp_char_len s_milliseconds_len TSRMLS_DC)
+{
+	int64_t milliseconds;
+	char *endptr = NULL;
+
+	errno = 0;
+
+#if defined(PHP_WIN32)
+	milliseconds = _atoi64(s);
+#else
+	milliseconds = bson_ascii_strtoll(s_milliseconds, &endptr, 10);
+#endif
+
+	/* errno will set errno if conversion fails; however, we do not need to
+	 * specify the type of error.
+	 *
+	 * Note: bson_ascii_strtoll() does not properly detect out-of-range values
+	 * (see: CDRIVER-1377). strtoll() would be preferable, but it is not
+	 * available on all platforms (e.g. HP-UX), and atoll() provides no error
+	 * reporting at all. */
+	if (errno || (endptr && endptr != ((const char *)s_milliseconds + s_milliseconds_len))) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer for %s initialization", s_milliseconds, ZSTR_VAL(php_phongo_utcdatetime_ce->name));
+		return false;
+	}
+
+	return php_phongo_utcdatetime_init(intern, milliseconds);
+}
+
+/* Initialize the object from a HashTable and return whether it was successful.
+ * An exception will be thrown on error. */
+static bool php_phongo_utcdatetime_init_from_hash(php_phongo_utcdatetime_t *intern, HashTable *props TSRMLS_DC)
 {
 #if PHP_VERSION_ID >= 70000
 	zval *milliseconds;
@@ -72,7 +103,7 @@ static bool php_phongo_utcdatetime_init_from_hash(php_phongo_utcdatetime_t *inte
 	}
 
 	if ((milliseconds = zend_hash_str_find(props, "milliseconds", sizeof("milliseconds")-1)) && Z_TYPE_P(milliseconds) == IS_STRING) {
-		return php_phongo_utcdatetime_init(intern, STRTOLL(Z_STRVAL_P(milliseconds)));
+		return php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_P(milliseconds), Z_STRLEN_P(milliseconds) TSRMLS_CC);
 	}
 #else
 	zval **milliseconds;
@@ -82,13 +113,16 @@ static bool php_phongo_utcdatetime_init_from_hash(php_phongo_utcdatetime_t *inte
 	}
 
 	if (zend_hash_find(props, "milliseconds", sizeof("milliseconds"), (void**) &milliseconds) == SUCCESS && Z_TYPE_PP(milliseconds) == IS_STRING) {
-		return php_phongo_utcdatetime_init(intern, STRTOLL(Z_STRVAL_PP(milliseconds)));
+		return php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_PP(milliseconds), Z_STRLEN_PP(milliseconds) TSRMLS_CC);
 	}
 #endif
+
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"milliseconds\" integer or numeric string field", ZSTR_VAL(php_phongo_utcdatetime_ce->name));
 	return false;
 }
 
-/* Initialize the object from the current time and return whether it was successful. */
+/* Initialize the object from the current time and return whether it was
+ * successful. */
 static bool php_phongo_utcdatetime_init_from_current_time(php_phongo_utcdatetime_t *intern)
 {
 	int64_t        sec, usec;
@@ -104,7 +138,8 @@ static bool php_phongo_utcdatetime_init_from_current_time(php_phongo_utcdatetime
 	return true;
 }
 
-/* Initialize the object from a DateTime object and return whether it was successful. */
+/* Initialize the object from a DateTime object and return whether it was
+ * successful. */
 static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t *intern, php_date_obj *datetime_obj)
 {
 	int64_t sec, usec;
@@ -168,7 +203,7 @@ PHP_METHOD(UTCDateTime, __construct)
 			return;
 		}
 
-		php_phongo_utcdatetime_init(intern, STRTOLL(s_milliseconds));
+		php_phongo_utcdatetime_init_from_string(intern, s_milliseconds, s_milliseconds_len);
 	}
 #else
 # error Unsupported architecture (integers are neither 32-bit nor 64-bit)
@@ -196,9 +231,7 @@ PHP_METHOD(UTCDateTime, __set_state)
 	intern = Z_UTCDATETIME_OBJ_P(return_value);
 	props = Z_ARRVAL_P(array);
 
-	if (!php_phongo_utcdatetime_init_from_hash(intern, props)) {
-		php_error(E_ERROR, "Invalid serialization data for UTCDateTime object");
-	}
+	php_phongo_utcdatetime_init_from_hash(intern, props TSRMLS_CC);
 }
 /* }}} */
 
@@ -237,9 +270,7 @@ PHP_METHOD(UTCDateTime, __wakeup)
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 	props = zend_std_get_properties(getThis() TSRMLS_CC);
 
-	if (!php_phongo_utcdatetime_init_from_hash(intern, props)) {
-		php_error(E_ERROR, "Invalid serialization data for UTCDateTime object");
-	}
+	php_phongo_utcdatetime_init_from_hash(intern, props TSRMLS_CC);
 }
 /* }}} */
 
