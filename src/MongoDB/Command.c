@@ -86,7 +86,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_command_me[] = {
 	PHP_ME(Command, __construct, ai_Command___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, ai_Command_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __wakeup, ai_Command_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

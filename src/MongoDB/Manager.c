@@ -273,9 +273,9 @@ PHP_METHOD(Manager, selectServer)
 }
 /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Manager::__wakeUp()
+/* {{{ proto void MongoDB\Driver\Manager::__wakeup()
    Throws MongoDB\Driver\RuntimeException (serialization is not supported) */
-PHP_METHOD(Manager, __wakeUp)
+PHP_METHOD(Manager, __wakeup)
 {
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(this_ptr)
 
@@ -342,7 +342,7 @@ static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, getServers, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, getWriteConcern, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, selectServer, ai_Manager_selectServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, ai_Manager_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __wakeup, ai_Manager_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

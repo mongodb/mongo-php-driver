@@ -118,7 +118,7 @@ static zend_function_entry php_phongo_writeconcernerror_me[] = {
 	PHP_ME(WriteConcernError, getCode, ai_WriteConcernError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcernError, getInfo, ai_WriteConcernError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcernError, getMessage, ai_WriteConcernError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, ai_WriteConcernError_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __wakeup, ai_WriteConcernError_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

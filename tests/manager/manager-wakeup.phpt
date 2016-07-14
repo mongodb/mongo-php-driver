@@ -8,10 +8,10 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 throws(function() use($manager) {
-    $manager->__wakeUp();
+    $manager->__wakeup();
 }, "MongoDB\Driver\Exception\RuntimeException");
 
-$manager->__wakeUp(1, 2);
+$manager->__wakeup(1, 2);
 
 ?>
 ===DONE===
@@ -19,5 +19,5 @@ $manager->__wakeUp(1, 2);
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\RuntimeException
 
-Warning: MongoDB\Driver\Manager::__wakeUp() expects exactly 0 parameters, 2 given in %s on line %d
+Warning: MongoDB\Driver\Manager::__wakeup() expects exactly 0 parameters, 2 given in %s on line %d
 ===DONE===

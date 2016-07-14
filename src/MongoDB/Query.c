@@ -115,7 +115,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_query_me[] = {
 	PHP_ME(Query, __construct, ai_Query___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, ai_Query_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __wakeup, ai_Query_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

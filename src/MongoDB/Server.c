@@ -495,7 +495,7 @@ static zend_function_entry php_phongo_server_me[] = {
 	PHP_ME(Server, isArbiter, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, isHidden, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, isPassive, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, ai_Server_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __wakeup, ai_Server_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

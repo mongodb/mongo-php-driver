@@ -197,7 +197,7 @@ static zend_function_entry php_phongo_cursor_me[] = {
 	PHP_ME(Cursor, getId, ai_Cursor_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Cursor, getServer, ai_Cursor_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Cursor, isDead, ai_Cursor_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, ai_Cursor_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __wakeup, ai_Cursor_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

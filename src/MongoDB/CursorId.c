@@ -73,7 +73,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_cursorid_me[] = {
 	PHP_ME(Server, __construct, ai_CursorId_void, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(CursorId, __toString, ai_CursorId_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, ai_CursorId_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __wakeup, ai_CursorId_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
