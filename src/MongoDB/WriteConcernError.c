@@ -63,6 +63,7 @@ PHP_METHOD(WriteConcernError, getCode)
 	RETURN_LONG(intern->code);
 }
 /* }}} */
+
 /* {{{ proto mixed WriteConcernError::getInfo()
    Returns additional metadata for the error */
 PHP_METHOD(WriteConcernError, getInfo)
@@ -86,6 +87,7 @@ PHP_METHOD(WriteConcernError, getInfo)
 	}
 }
 /* }}} */
+
 /* {{{ proto string WriteConcernError::getMessage()
    Returns the actual error message from the server */
 PHP_METHOD(WriteConcernError, getMessage)

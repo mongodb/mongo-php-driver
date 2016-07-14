@@ -50,7 +50,7 @@ PHONGO_API zend_class_entry *php_phongo_query_ce;
 
 zend_object_handlers php_phongo_handler_query;
 
-/* {{{ proto MongoDB\Driver\Query Query::__construct(array|object $filter[, array $options = array()])
+/* {{{ proto void Query::__construct(array|object $filter[, array $options = array()])
    Constructs a new Query */
 PHP_METHOD(Query, __construct)
 {

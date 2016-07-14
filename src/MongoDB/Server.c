@@ -48,8 +48,8 @@ PHONGO_API zend_class_entry *php_phongo_server_ce;
 zend_object_handlers php_phongo_handler_server;
 
 
-/* {{{ proto MongoDB\Driver\Server Server::__construct()
-   Throws exception -- can only be created internally */
+/* {{{ proto void Server::__construct()
+   Throws MongoDB\Driver\RuntimeException (can only be created internally) */
 PHP_METHOD(Server, __construct)
 {
 	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used) SUPPRESS_UNUSED_WARNING(return_value_ptr) (void)ZEND_NUM_ARGS(); (void)getThis();
@@ -57,8 +57,9 @@ PHP_METHOD(Server, __construct)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Accessing private constructor");
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\Cursor Server::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null]))
-   Executes a command on this server */
+   Executes a Command on this Server */
 PHP_METHOD(Server, executeCommand)
 {
 	php_phongo_server_t      *intern;
@@ -83,8 +84,9 @@ PHP_METHOD(Server, executeCommand)
 #endif
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\Cursor Server::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null]))
-   Executes a Query */
+   Executes a Query on this Server */
 PHP_METHOD(Server, executeQuery)
 {
 	php_phongo_server_t      *intern;
@@ -109,8 +111,10 @@ PHP_METHOD(Server, executeQuery)
 #endif
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\WriteResult Server::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
-   Executes a write operation bulk (e.g. insert, update, delete) */
+   Executes a BulkWrite (i.e. any number of insert, update, and delete ops) on
+   this Server */
 PHP_METHOD(Server, executeBulkWrite)
 {
 	php_phongo_server_t      *intern;
@@ -138,8 +142,9 @@ PHP_METHOD(Server, executeBulkWrite)
 #endif
 }
 /* }}} */
+
 /* {{{ proto string Server::getHost()
-   Returns the hostname used to connect to this Server */
+   Returns the hostname for this Server */
 PHP_METHOD(Server, getHost)
 {
 	php_phongo_server_t         *intern;
@@ -161,8 +166,9 @@ PHP_METHOD(Server, getHost)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
 }
 /* }}} */
+
 /* {{{ proto array Server::getTags()
-   Returns the currently configured tags for this node */
+   Returns the currently configured tags for this Server */
 PHP_METHOD(Server, getTags)
 {
 	php_phongo_server_t         *intern;
@@ -208,8 +214,9 @@ PHP_METHOD(Server, getTags)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
 }
 /* }}} */
+
 /* {{{ proto array Server::getInfo()
-   Returns the last isMaster() result document */
+   Returns the last isMaster result document for this Server */
 PHP_METHOD(Server, getInfo)
 {
 	php_phongo_server_t         *intern;
@@ -244,8 +251,9 @@ PHP_METHOD(Server, getInfo)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
 }
 /* }}} */
+
 /* {{{ proto integer Server::getLatency()
-   Returns the last messured latency */
+   Returns the last messured latency for this Server */
 PHP_METHOD(Server, getLatency)
 {
 	php_phongo_server_t         *intern;
@@ -268,8 +276,9 @@ PHP_METHOD(Server, getLatency)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
 }
 /* }}} */
+
 /* {{{ proto integer Server::getPort()
-   Returns the port used to create this Server */
+   Returns the port for this Server */
 PHP_METHOD(Server, getPort)
 {
 	php_phongo_server_t         *intern;
@@ -292,6 +301,7 @@ PHP_METHOD(Server, getPort)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
 }
 /* }}} */
+
 /* {{{ proto integer Server::getType()
    Returns the node type of this Server */
 PHP_METHOD(Server, getType)
@@ -316,8 +326,9 @@ PHP_METHOD(Server, getType)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
 }
 /* }}} */
+
 /* {{{ proto bool Server::isPrimary()
-   Checks if this is a special "Primary" member of a RepilcaSet */
+   Returns whether this Server is a primary member of a replica set */
 PHP_METHOD(Server, isPrimary)
 {
 	php_phongo_server_t         *intern;
@@ -340,8 +351,9 @@ PHP_METHOD(Server, isPrimary)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
 }
 /* }}} */
+
 /* {{{ proto bool Server::isSecondary()
-   Checks if this is a special "Secondary" member of a RepilcaSet */
+   Returns whether this Server is a secondary member of a replica set */
 PHP_METHOD(Server, isSecondary)
 {
 	php_phongo_server_t         *intern;
@@ -364,8 +376,9 @@ PHP_METHOD(Server, isSecondary)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
 }
 /* }}} */
+
 /* {{{ proto bool Server::isArbiter()
-   Checks if this is a special "Arbiter" member of a RepilcaSet */
+   Returns whether this Server is an arbiter member of a replica set */
 PHP_METHOD(Server, isArbiter)
 {
 	php_phongo_server_t         *intern;
@@ -388,8 +401,9 @@ PHP_METHOD(Server, isArbiter)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
 }
 /* }}} */
+
 /* {{{ proto bool Server::isHidden()
-   Checks if this is a special "hidden" member of a RepilcaSet */
+   Returns whether this Server is a hidden member of a replica set */
 PHP_METHOD(Server, isHidden)
 {
 	php_phongo_server_t         *intern;
@@ -414,8 +428,9 @@ PHP_METHOD(Server, isHidden)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
 }
 /* }}} */
+
 /* {{{ proto bool Server::isPassive()
-   Checks if this is a special passive node member of a ReplicaSet */
+   Returns whether this Server is a passive member of a replica set */
 PHP_METHOD(Server, isPassive)
 {
 	php_phongo_server_t         *intern;

@@ -46,7 +46,7 @@ PHONGO_API zend_class_entry *php_phongo_readconcern_ce;
 
 zend_object_handlers php_phongo_handler_readconcern;
 
-/* {{{ proto MongoDB\Driver\ReadConcern ReadConcern::__construct([string $level])
+/* {{{ proto void ReadConcern::__construct([string $level])
    Constructs a new ReadConcern */
 PHP_METHOD(ReadConcern, __construct)
 {

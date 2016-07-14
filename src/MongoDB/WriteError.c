@@ -63,8 +63,10 @@ PHP_METHOD(WriteError, getCode)
 	RETURN_LONG(intern->code);
 }
 /* }}} */
+
 /* {{{ proto integer WriteError::getIndex()
-   Returns the Bulk index where this WriteError occurred in */
+   Returns the index of the operation in the BulkWrite to which this WriteError
+   corresponds. */
 PHP_METHOD(WriteError, getIndex)
 {
 	php_phongo_writeerror_t  *intern;
@@ -80,6 +82,7 @@ PHP_METHOD(WriteError, getIndex)
 	RETURN_LONG(intern->index);
 }
 /* }}} */
+
 /* {{{ proto string WriteError::getMessage()
    Returns the actual error message from the server */
 PHP_METHOD(WriteError, getMessage)
@@ -97,6 +100,7 @@ PHP_METHOD(WriteError, getMessage)
 	PHONGO_RETURN_STRING(intern->message);
 }
 /* }}} */
+
 /* {{{ proto mixed WriteError::getInfo()
    Returns additional metadata for the error */
 PHP_METHOD(WriteError, getInfo)

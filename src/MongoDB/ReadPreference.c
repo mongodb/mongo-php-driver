@@ -46,7 +46,7 @@ PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
 
 zend_object_handlers php_phongo_handler_readpreference;
 
-/* {{{ proto MongoDB\Driver\ReadPreference ReadPreference::__construct(integer $mode[, array $tagSets = array()])
+/* {{{ proto void ReadPreference::__construct(integer $mode[, array $tagSets = array()])
    Constructs a new ReadPreference */
 PHP_METHOD(ReadPreference, __construct)
 {

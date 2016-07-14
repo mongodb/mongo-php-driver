@@ -46,7 +46,7 @@ PHONGO_API zend_class_entry *php_phongo_writeconcern_ce;
 
 zend_object_handlers php_phongo_handler_writeconcern;
 
-/* {{{ proto MongoDB\Driver\WriteConcern WriteConcern::__construct(integer|string $w[, integer $wtimeout[, boolean $journal]])
+/* {{{ proto void WriteConcern::__construct(integer|string $w[, integer $wtimeout[, boolean $journal]])
    Constructs a new WriteConcern */
 PHP_METHOD(WriteConcern, __construct)
 {

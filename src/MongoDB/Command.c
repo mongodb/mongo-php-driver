@@ -46,7 +46,7 @@ PHONGO_API zend_class_entry *php_phongo_command_ce;
 
 zend_object_handlers php_phongo_handler_command;
 
-/* {{{ proto MongoDB\Driver\Command Command::__construct(array|object $document)
+/* {{{ proto void Command::__construct(array|object $document)
    Constructs a new Command */
 PHP_METHOD(Command, __construct)
 {

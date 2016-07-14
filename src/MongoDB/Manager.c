@@ -49,7 +49,7 @@ PHONGO_API zend_class_entry *php_phongo_manager_ce;
 
 zend_object_handlers php_phongo_handler_manager;
 
-/* {{{ proto MongoDB\Driver\Manager Manager::__construct([string $uri = "mongodb://localhost:27017/"[, array $options = array()[, array $driverOptions = array()]]])
+/* {{{ proto void Manager::__construct([string $uri = "mongodb://localhost:27017/"[, array $options = array()[, array $driverOptions = array()]]])
    Constructs a new Manager */
 PHP_METHOD(Manager, __construct)
 {
@@ -80,8 +80,9 @@ PHP_METHOD(Manager, __construct)
 	bson_destroy(&bson_options);
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\Cursor Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
-   Execute a command */
+   Execute a Command */
 PHP_METHOD(Manager, executeCommand)
 {
 	char                     *db;
@@ -98,6 +99,7 @@ PHP_METHOD(Manager, executeCommand)
 	phongo_execute_command(getThis(), db, command, readPreference, -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\Cursor Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a Query */
 PHP_METHOD(Manager, executeQuery)
@@ -116,8 +118,9 @@ PHP_METHOD(Manager, executeQuery)
 	phongo_execute_query(getThis(), namespace, query, readPreference, -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\WriteResult Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
-   Executes a write operation bulk (e.g. insert, update, delete) */
+   Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
 PHP_METHOD(Manager, executeBulkWrite)
 {
 	char                      *namespace;
@@ -177,6 +180,7 @@ PHP_METHOD(Manager, getReadPreference)
 	}
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\Server[] Manager::getServers()
    Returns the Servers associated with this Manager */
 PHP_METHOD(Manager, getServers)
@@ -214,6 +218,7 @@ PHP_METHOD(Manager, getServers)
 	mongoc_server_descriptions_destroy_all(sds, n);
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\WriteConcern Manager::getWriteConcern()
    Returns the WriteConcern associated with this Manager */
 PHP_METHOD(Manager, getWriteConcern)
@@ -233,8 +238,9 @@ PHP_METHOD(Manager, getWriteConcern)
 	}
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\Server Manager::selectServers(MongoDB\Driver\ReadPreference $readPreference)
-   Returns a suitable Server for the given $readPreference */
+   Returns a suitable Server for the given ReadPreference */
 PHP_METHOD(Manager, selectServer)
 {
 	php_phongo_manager_t         *intern;
@@ -266,8 +272,9 @@ PHP_METHOD(Manager, selectServer)
 	}
 }
 /* }}} */
+
 /* {{{ proto void MongoDB\Driver\Manager::__wakeUp()
- * Throws MongoDB\Driver\RuntimeException as it cannot be serialized */
+   Throws MongoDB\Driver\RuntimeException (serialization is not supported) */
 PHP_METHOD(Manager, __wakeUp)
 {
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(this_ptr)
