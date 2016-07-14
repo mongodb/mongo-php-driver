@@ -201,6 +201,7 @@ static zend_function_entry php_phongo_writeconcern_me[] = {
 	PHP_ME(WriteConcern, getW, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, getJournal, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeup, ai_WriteConcern_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

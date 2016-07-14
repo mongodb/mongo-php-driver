@@ -162,6 +162,7 @@ static zend_function_entry php_phongo_readpreference_me[] = {
 	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeup, ai_ReadPreference_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
