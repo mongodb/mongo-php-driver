@@ -45,6 +45,8 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
+#define PHONGO_MANAGER_URI_DEFAULT "mongodb://127.0.0.1/"
+
 PHONGO_API zend_class_entry *php_phongo_manager_ce;
 
 zend_object_handlers php_phongo_handler_manager;
@@ -76,7 +78,7 @@ PHP_METHOD(Manager, __construct)
 		phongo_zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
 	}
 
-	phongo_manager_init(intern, uri_string, &bson_options, driverOptions TSRMLS_CC);
+	phongo_manager_init(intern, uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, &bson_options, driverOptions TSRMLS_CC);
 	bson_destroy(&bson_options);
 }
 /* }}} */
