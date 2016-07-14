@@ -49,7 +49,7 @@ PHONGO_API zend_class_entry *php_phongo_manager_ce;
 
 zend_object_handlers php_phongo_handler_manager;
 
-/* {{{ proto void Manager::__construct([string $uri = "mongodb://localhost:27017/"[, array $options = array()[, array $driverOptions = array()]]])
+/* {{{ proto void Manager::__construct([string $uri = "mongodb://127.0.0.1/"[, array $options = array()[, array $driverOptions = array()]]])
    Constructs a new Manager */
 PHP_METHOD(Manager, __construct)
 {
