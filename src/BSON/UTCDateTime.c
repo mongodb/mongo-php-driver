@@ -307,7 +307,7 @@ PHP_METHOD(UTCDateTime, toDateTime)
 
 ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, milliseconds)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)

@@ -48,12 +48,11 @@ PHONGO_API zend_class_entry *php_phongo_serializable_ce;
 
 /* {{{ BSON\Serializable */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_serializable_bsonserialize, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
+ZEND_BEGIN_ARG_INFO_EX(ai_Serializable_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_serializable_me[] = {
-	ZEND_ABSTRACT_ME(Serializable, bsonSerialize, ai_serializable_bsonserialize)
+	ZEND_ABSTRACT_ME(Serializable, bsonSerialize, ai_Serializable_void)
 	PHP_FE_END
 };
 

@@ -195,11 +195,11 @@ PHP_METHOD(ObjectID, __wakeup)
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, id)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID_void, 0, 0, 0)
 ZEND_END_ARG_INFO()

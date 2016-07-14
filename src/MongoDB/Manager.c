@@ -305,53 +305,44 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, uri)
 	ZEND_ARG_ARRAY_INFO(0, options, 0)
 	ZEND_ARG_ARRAY_INFO(0, driverOptions, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, db)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Driver\\Query, 0)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeBulkWrite, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zbulk, MongoDB\\Driver\\BulkWrite, 0)
 	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getReadConcern, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getReadPreference, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getServers, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getWriteConcern, 0, 0, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_selectServer, 0, 0, 1)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, getReadConcern, ai_Manager_getReadConcern, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, getReadPreference, ai_Manager_getReadPreference, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, getServers, ai_Manager_getServers, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, getWriteConcern, ai_Manager_getWriteConcern, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, getReadConcern, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, getReadPreference, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, getServers, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, getWriteConcern, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, selectServer, ai_Manager_selectServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __wakeUp, ai_Manager_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

@@ -189,19 +189,18 @@ PHP_METHOD(Binary, getType)
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, data)
 	ZEND_ARG_INFO(0, type)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary_void, 0, 0, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_binary_me[] = {
 	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Binary, __set_state, ai_Binary___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-	PHP_ME(Binary, __toString, ai_Binary_void, ZEND_ACC_PUBLIC)
 	PHP_ME(Binary, __wakeup, ai_Binary_void, ZEND_ACC_PUBLIC)
 	PHP_ME(Binary, getData, ai_Binary_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Binary, getType, ai_Binary_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

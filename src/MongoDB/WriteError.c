@@ -130,26 +130,16 @@ PHP_METHOD(WriteError, getInfo)
  */
 /* {{{ MongoDB\Driver\WriteError */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getCode, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getIndex, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getInfo, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getMessage, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeerror_me[] = {
-	PHP_ME(Server, __construct, NULL, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
-	PHP_ME(WriteError, getCode, ai_WriteError_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteError, getIndex, ai_WriteError_getIndex, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteError, getMessage, ai_WriteError_getMessage, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteError, getInfo, ai_WriteError_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(Server, __construct, ai_WriteError_void, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
+	PHP_ME(WriteError, getCode, ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteError, getIndex, ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteError, getMessage, ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteError, getInfo, ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeUp, ai_WriteError_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

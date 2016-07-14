@@ -169,14 +169,14 @@ PHP_METHOD(Javascript, __wakeup)
 ZEND_BEGIN_ARG_INFO_EX(ai_Javascript___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, javascript)
 	ZEND_ARG_INFO(0, scope)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Javascript___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Javascript_void, 0, 0, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_javascript_me[] = {
 	PHP_ME(Javascript, __construct, ai_Javascript___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

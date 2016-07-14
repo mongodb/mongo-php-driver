@@ -180,7 +180,7 @@ PHP_METHOD(Timestamp, __wakeup)
 ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, increment)
 	ZEND_ARG_INFO(0, timestamp)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)

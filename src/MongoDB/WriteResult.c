@@ -369,50 +369,22 @@ PHP_METHOD(WriteResult, isAcknowledged)
  */
 /* {{{ MongoDB\Driver\WriteResult */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getInsertedCount, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getMatchedCount, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getModifiedCount, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getDeletedCount, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getUpsertedCount, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getServer, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getUpsertedIds, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getWriteConcernError, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_getWriteErrors, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_isAcknowledged, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeresult_me[] = {
-	PHP_ME(Server, __construct, NULL, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
-	PHP_ME(WriteResult, getInsertedCount, ai_WriteResult_getInsertedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getMatchedCount, ai_WriteResult_getMatchedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getModifiedCount, ai_WriteResult_getModifiedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getDeletedCount, ai_WriteResult_getDeletedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getUpsertedCount, ai_WriteResult_getUpsertedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getServer, ai_WriteResult_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getUpsertedIds, ai_WriteResult_getUpsertedIds, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getWriteConcernError, ai_WriteResult_getWriteConcernError, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_getWriteErrors, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, isAcknowledged, ai_WriteResult_isAcknowledged, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(Server, __construct, ai_WriteResult_void, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
+	PHP_ME(WriteResult, getInsertedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getMatchedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getModifiedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getDeletedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getUpsertedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getServer, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getUpsertedIds, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getWriteConcernError, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, isAcknowledged, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeUp, ai_WriteResult_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

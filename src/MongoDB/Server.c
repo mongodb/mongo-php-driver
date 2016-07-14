@@ -462,71 +462,40 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, db)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Driver\\Query, 0)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeBulkWrite, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zbulk, MongoDB\\Driver\\BulkWrite, 0)
 	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_getHost, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_getTags, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_getInfo, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_getLatency, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_getPort, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_getType, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_isPrimary, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_isSecondary, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_isArbiter, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_isHidden, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Server_isPassive, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
+ZEND_BEGIN_ARG_INFO_EX(ai_Server_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_server_me[] = {
-	PHP_ME(Server, __construct, NULL, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
+	PHP_ME(Server, __construct, ai_Server_void, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(Server, executeCommand, ai_Server_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeBulkWrite, ai_Server_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getHost, ai_Server_getHost, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getTags, ai_Server_getTags, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getInfo, ai_Server_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getLatency, ai_Server_getLatency, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getPort, ai_Server_getPort, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getType, ai_Server_getType, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, isPrimary, ai_Server_isPrimary, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, isSecondary, ai_Server_isSecondary, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, isArbiter, ai_Server_isArbiter, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, isHidden, ai_Server_isHidden, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, isPassive, ai_Server_isPassive, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(Server, getHost, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, getTags, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, getInfo, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, getLatency, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, getPort, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, getType, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, isPrimary, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, isSecondary, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, isArbiter, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, isHidden, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, isPassive, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeUp, ai_Server_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

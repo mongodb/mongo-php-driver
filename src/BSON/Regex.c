@@ -219,7 +219,7 @@ PHP_METHOD(Regex, __wakeup)
 ZEND_BEGIN_ARG_INFO_EX(ai_Regex___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, pattern)
 	ZEND_ARG_INFO(0, flags)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Regex___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)

@@ -185,29 +185,19 @@ PHP_METHOD(Cursor, isDead)
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_setTypeMap, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, typemap, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_toArray, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_getId, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_getServer, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_isDead, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
+ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_cursor_me[] = {
-	PHP_ME(Server, __construct, NULL, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
+	PHP_ME(Server, __construct, ai_Cursor_void, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(Cursor, setTypeMap, ai_Cursor_setTypeMap, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Cursor, toArray, ai_Cursor_toArray, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Cursor, getId, ai_Cursor_getId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Cursor, getServer, ai_Cursor_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Cursor, isDead, ai_Cursor_isDead, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(Cursor, toArray, ai_Cursor_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Cursor, getId, ai_Cursor_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Cursor, getServer, ai_Cursor_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Cursor, isDead, ai_Cursor_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeUp, ai_Cursor_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

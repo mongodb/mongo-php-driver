@@ -167,14 +167,14 @@ PHP_METHOD(Decimal128, __wakeup)
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, value)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128_void, 0, 0, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_decimal128_me[] = {
 	PHP_ME(Decimal128, __construct, ai_Decimal128___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

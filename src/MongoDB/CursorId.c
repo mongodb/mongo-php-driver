@@ -67,14 +67,13 @@ PHP_METHOD(CursorId, __toString)
 
 /* {{{ MongoDB\Driver\CursorId */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___toString, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
+ZEND_BEGIN_ARG_INFO_EX(ai_CursorId_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_cursorid_me[] = {
-	PHP_ME(Server, __construct, NULL, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
-	PHP_ME(CursorId, __toString, ai_CursorId___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(Server, __construct, ai_CursorId_void, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
+	PHP_ME(CursorId, __toString, ai_CursorId_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeUp, ai_CursorId_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

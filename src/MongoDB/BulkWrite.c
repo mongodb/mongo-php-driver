@@ -247,34 +247,33 @@ PHP_METHOD(BulkWrite, count)
 
 ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite___construct, 0, 0, 0)
 	ZEND_ARG_ARRAY_INFO(0, options, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite_insert, 0, 0, 1)
 	ZEND_ARG_INFO(0, document)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite_update, 0, 0, 2)
 	ZEND_ARG_INFO(0, query)
 	ZEND_ARG_INFO(0, newObj)
 	ZEND_ARG_ARRAY_INFO(0, updateOptions, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite_delete, 0, 0, 1)
 	ZEND_ARG_INFO(0, query)
 	ZEND_ARG_ARRAY_INFO(0, deleteOptions, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite_count, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
+ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_bulkwrite_me[] = {
 	PHP_ME(BulkWrite, __construct, ai_BulkWrite___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(BulkWrite, insert, ai_BulkWrite_insert, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(BulkWrite, update, ai_BulkWrite_update, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(BulkWrite, delete, ai_BulkWrite_delete, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(BulkWrite, count, ai_BulkWrite_count, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(BulkWrite, count, ai_BulkWrite_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeUp, ai_BulkWrite_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
