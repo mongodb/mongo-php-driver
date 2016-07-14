@@ -46,10 +46,17 @@ PHONGO_API zend_class_entry *php_phongo_javascript_ce;
 
 zend_object_handlers php_phongo_handler_javascript;
 
-/* Initialize the object from a string and return whether it was successful. */
+/* Initialize the object and return whether it was successful. An exception will
+ * be thrown on error. */
 static bool php_phongo_javascript_init(php_phongo_javascript_t *intern, const char *code, phongo_zpp_char_len code_len, zval *scope TSRMLS_DC)
 {
 	if (scope && Z_TYPE_P(scope) != IS_OBJECT && Z_TYPE_P(scope) != IS_ARRAY && Z_TYPE_P(scope) != IS_NULL) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected scope to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(scope)));
+		return false;
+	}
+
+	if (strlen(code) != code_len) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Code cannot contain null bytes");
 		return false;
 	}
 
@@ -66,7 +73,8 @@ static bool php_phongo_javascript_init(php_phongo_javascript_t *intern, const ch
 	return true;
 }
 
-/* Initialize the object from a HashTable and return whether it was successful. */
+/* Initialize the object from a HashTable and return whether it was successful.
+ * An exception will be thrown on error. */
 static bool php_phongo_javascript_init_from_hash(php_phongo_javascript_t *intern, HashTable *props TSRMLS_DC)
 {
 #if PHP_VERSION_ID >= 70000
@@ -86,6 +94,8 @@ static bool php_phongo_javascript_init_from_hash(php_phongo_javascript_t *intern
 		return php_phongo_javascript_init(intern, Z_STRVAL_PP(code), Z_STRLEN_PP(code), tmp TSRMLS_CC);
 	}
 #endif
+
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"code\" string field", ZSTR_VAL(php_phongo_javascript_ce->name));
 	return false;
 }
 
@@ -131,9 +141,7 @@ PHP_METHOD(Javascript, __set_state)
 	intern = Z_JAVASCRIPT_OBJ_P(return_value);
 	props = Z_ARRVAL_P(array);
 
-	if (!php_phongo_javascript_init_from_hash(intern, props TSRMLS_CC)) {
-		php_error(E_ERROR, "Invalid serialization data for Javascript object");
-	}
+	php_phongo_javascript_init_from_hash(intern, props TSRMLS_CC);
 }
 /* }}} */
 
@@ -151,10 +159,7 @@ PHP_METHOD(Javascript, __wakeup)
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 	props = zend_std_get_properties(getThis() TSRMLS_CC);
 
-	if (!php_phongo_javascript_init_from_hash(intern, props TSRMLS_CC)) {
-		php_error(E_ERROR, "Invalid serialization data for Javascript object");
-	} else {
-	}
+	php_phongo_javascript_init_from_hash(intern, props TSRMLS_CC);
 }
 /* }}} */
 

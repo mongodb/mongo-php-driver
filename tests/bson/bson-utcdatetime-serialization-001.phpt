@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDateTime serialization
+MongoDB\BSON\UTCDateTime serialization
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--

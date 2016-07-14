@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDateTime serialization (unserialize 32-bit data on 64-bit)
+MongoDB\BSON\UTCDateTime serialization (unserialize 32-bit data on 64-bit)
 --SKIPIF--
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>

@@ -85,16 +85,6 @@
 #  define ARG_UNUSED
 #endif
 
-#ifdef HAVE_ATOLL
-# define STRTOLL(s) atoll(s)
-#else
-# if defined(PHP_WIN32)
-#  define STRTOLL(s) _atoi64(s)
-# else
-#  define STRTOLL(s) strtoll(s, NULL, 10)
-# endif
-#endif
-
 #ifndef php_ignore_value
 # if defined(__GNUC__) && __GNUC__ >= 4
 #  define php_ignore_value(x) (({ __typeof__ (x) __x = (x); (void) __x; }))
@@ -116,7 +106,6 @@
 #  error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif
 # define SIZEOF_PHONGO_LONG SIZEOF_ZEND_LONG
-# define phongo_str(str) (str)->val
 # define phongo_create_object_retval zend_object*
 # define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t *)ecalloc(1, sizeof(_obj_t)+zend_object_properties_size(_class_type))
 # define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data)
@@ -147,7 +136,7 @@
 # define phongo_long long
 # define PHONGO_LONG_FORMAT "ld"
 # define SIZEOF_PHONGO_LONG SIZEOF_LONG
-# define phongo_str(str) str
+# define ZSTR_VAL(str) str
 # define phongo_create_object_retval zend_object_value
 # define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t *)ecalloc(1, sizeof(_obj_t))
 # define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data) TSRMLS_FETCH_FROM_CTX(user_data)

@@ -46,7 +46,8 @@ PHONGO_API zend_class_entry *php_phongo_objectid_ce;
 
 zend_object_handlers php_phongo_handler_objectid;
 
-/* Initialize the object with a generated value and return whether it was successful. */
+/* Initialize the object with a generated value and return whether it was
+ * successful. */
 static bool php_phongo_objectid_init(php_phongo_objectid_t *intern)
 {
 	bson_oid_t oid;
@@ -59,8 +60,9 @@ static bool php_phongo_objectid_init(php_phongo_objectid_t *intern)
 	return true;
 }
 
-/* Initialize the object from a hex string and return whether it was successful. */
-static bool php_phongo_objectid_init_from_hex_string(php_phongo_objectid_t *intern, const char *oid, phongo_zpp_char_len oid_len)
+/* Initialize the object from a hex string and return whether it was successful.
+ * An exception will be thrown on error. */
+static bool php_phongo_objectid_init_from_hex_string(php_phongo_objectid_t *intern, const char *oid, phongo_zpp_char_len oid_len TSRMLS_DC)
 {
 	char *tid = zend_str_tolower_dup(oid, oid_len);
 
@@ -75,12 +77,15 @@ static bool php_phongo_objectid_init_from_hex_string(php_phongo_objectid_t *inte
 		return true;
 	}
 
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid BSON ID provided");
+
 	efree(tid);
 	return false;
 }
 
-/* Initialize the object from a HashTable and return whether it was successful. */
-static bool php_phongo_objectid_init_from_hash(php_phongo_objectid_t *intern, HashTable *props)
+/* Initialize the object from a HashTable and return whether it was successful.
+ * An exception will be thrown on error. */
+static bool php_phongo_objectid_init_from_hash(php_phongo_objectid_t *intern, HashTable *props TSRMLS_DC)
 {
 #if PHP_VERSION_ID >= 70000
 	zval *z_oid;
@@ -88,15 +93,17 @@ static bool php_phongo_objectid_init_from_hash(php_phongo_objectid_t *intern, Ha
 	z_oid = zend_hash_str_find(props, "oid", sizeof("oid")-1);
 
 	if (z_oid && Z_TYPE_P(z_oid) == IS_STRING) {
-		return php_phongo_objectid_init_from_hex_string(intern, Z_STRVAL_P(z_oid), Z_STRLEN_P(z_oid));
+		return php_phongo_objectid_init_from_hex_string(intern, Z_STRVAL_P(z_oid), Z_STRLEN_P(z_oid) TSRMLS_CC);
 	}
 #else
 	zval **z_oid;
 
 	if (zend_hash_find(props, "oid", sizeof("oid"), (void**) &z_oid) == SUCCESS && Z_TYPE_PP(z_oid) == IS_STRING) {
-		return php_phongo_objectid_init_from_hex_string(intern, Z_STRVAL_PP(z_oid), Z_STRLEN_PP(z_oid));
+		return php_phongo_objectid_init_from_hex_string(intern, Z_STRVAL_PP(z_oid), Z_STRLEN_PP(z_oid) TSRMLS_CC);
 	}
 #endif
+
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"oid\" string field", ZSTR_VAL(php_phongo_objectid_ce->name));
 	return false;
 }
 
@@ -120,9 +127,7 @@ PHP_METHOD(ObjectID, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	if (id) {
-		if (!php_phongo_objectid_init_from_hex_string(intern, id, id_len)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s", "Invalid BSON ID provided");
-		}
+		php_phongo_objectid_init_from_hex_string(intern, id, id_len TSRMLS_CC);
 	} else {
 		php_phongo_objectid_init(intern);
 	}
@@ -146,9 +151,7 @@ PHP_METHOD(ObjectID, __set_state)
 	intern = Z_OBJECTID_OBJ_P(return_value);
 	props = Z_ARRVAL_P(array);
 
-	if (!php_phongo_objectid_init_from_hash(intern, props)) {
-		php_error(E_ERROR, "Invalid serialization data for ObjectID object");
-	}
+	php_phongo_objectid_init_from_hash(intern, props TSRMLS_CC);
 }
 /* }}} */
 
@@ -184,9 +187,7 @@ PHP_METHOD(ObjectID, __wakeup)
 	intern = Z_OBJECTID_OBJ_P(getThis());
 	props = zend_std_get_properties(getThis() TSRMLS_CC);
 
-	if (!php_phongo_objectid_init_from_hash(intern, props)) {
-		php_error(E_ERROR, "Invalid serialization data for ObjectID object");
-	}
+	php_phongo_objectid_init_from_hash(intern, props TSRMLS_CC);
 }
 /* }}} */
 

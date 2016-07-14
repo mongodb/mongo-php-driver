@@ -46,9 +46,20 @@ PHONGO_API zend_class_entry *php_phongo_regex_ce;
 
 zend_object_handlers php_phongo_handler_regex;
 
-/* Initialize the object from a string and return whether it was successful. */
-static bool php_phongo_regex_init(php_phongo_regex_t *intern, const char *pattern, phongo_zpp_char_len pattern_len, const char *flags, phongo_zpp_char_len flags_len)
+/* Initialize the object and return whether it was successful. An exception will
+ * be thrown on error. */
+static bool php_phongo_regex_init(php_phongo_regex_t *intern, const char *pattern, phongo_zpp_char_len pattern_len, const char *flags, phongo_zpp_char_len flags_len TSRMLS_DC)
 {
+	if (strlen(pattern) != pattern_len) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Pattern cannot contain null bytes");
+		return false;
+	}
+
+	if (strlen(flags) != flags_len) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Flags cannot contain null bytes");
+		return false;
+	}
+
 	intern->pattern = estrndup(pattern, pattern_len);
 	intern->pattern_len = pattern_len;
 	intern->flags = estrndup(flags, flags_len);
@@ -57,24 +68,27 @@ static bool php_phongo_regex_init(php_phongo_regex_t *intern, const char *patter
 	return true;
 }
 
-/* Initialize the object from a HashTable and return whether it was successful. */
-static bool php_phongo_regex_init_from_hash(php_phongo_regex_t *intern, HashTable *props)
+/* Initialize the object from a HashTable and return whether it was successful.
+ * An exception will be thrown on error. */
+static bool php_phongo_regex_init_from_hash(php_phongo_regex_t *intern, HashTable *props TSRMLS_DC)
 {
 #if PHP_VERSION_ID >= 70000
 	zval *pattern, *flags;
 
 	if ((pattern = zend_hash_str_find(props, "pattern", sizeof("pattern")-1)) && Z_TYPE_P(pattern) == IS_STRING &&
 	    (flags = zend_hash_str_find(props, "flags", sizeof("flags")-1)) && Z_TYPE_P(flags) == IS_STRING) {
-		return php_phongo_regex_init(intern, Z_STRVAL_P(pattern), Z_STRLEN_P(pattern), Z_STRVAL_P(flags), Z_STRLEN_P(flags));
+		return php_phongo_regex_init(intern, Z_STRVAL_P(pattern), Z_STRLEN_P(pattern), Z_STRVAL_P(flags), Z_STRLEN_P(flags) TSRMLS_CC);
 	}
 #else
 	zval **pattern, **flags;
 
 	if (zend_hash_find(props, "pattern", sizeof("pattern"), (void**) &pattern) == SUCCESS && Z_TYPE_PP(pattern) == IS_STRING &&
 	    zend_hash_find(props, "flags", sizeof("flags"), (void**) &flags) == SUCCESS && Z_TYPE_PP(flags) == IS_STRING) {
-		return php_phongo_regex_init(intern, Z_STRVAL_PP(pattern), Z_STRLEN_PP(pattern), Z_STRVAL_PP(flags), Z_STRLEN_PP(flags));
+		return php_phongo_regex_init(intern, Z_STRVAL_PP(pattern), Z_STRLEN_PP(pattern), Z_STRVAL_PP(flags), Z_STRLEN_PP(flags) TSRMLS_CC);
 	}
 #endif
+
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"pattern\" and \"flags\" string fields", ZSTR_VAL(php_phongo_regex_ce->name));
 	return false;
 }
 
@@ -99,7 +113,7 @@ PHP_METHOD(Regex, __construct)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	php_phongo_regex_init(intern, pattern, pattern_len, flags, flags_len);
+	php_phongo_regex_init(intern, pattern, pattern_len, flags, flags_len TSRMLS_CC);
 }
 /* }}} */
 /* {{{ proto void Regex::getPattern()
@@ -154,9 +168,7 @@ PHP_METHOD(Regex, __set_state)
 	intern = Z_REGEX_OBJ_P(return_value);
 	props = Z_ARRVAL_P(array);
 
-	if (!php_phongo_regex_init_from_hash(intern, props)) {
-		php_error(E_ERROR, "Invalid serialization data for Regex object");
-	}
+	php_phongo_regex_init_from_hash(intern, props TSRMLS_CC);
 }
 /* }}} */
 
@@ -196,9 +208,7 @@ PHP_METHOD(Regex, __wakeup)
 	intern = Z_REGEX_OBJ_P(getThis());
 	props = zend_std_get_properties(getThis() TSRMLS_CC);
 
-	if (!php_phongo_regex_init_from_hash(intern, props)) {
-		php_error(E_ERROR, "Invalid serialization data for Regex object");
-	}
+	php_phongo_regex_init_from_hash(intern, props TSRMLS_CC);
 }
 /* }}} */
 

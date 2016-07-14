@@ -83,11 +83,7 @@ PHP_METHOD(Query, __construct)
 			zval *zread_concern = php_array_fetchc(zoptions, "readConcern");
 
 			if (Z_TYPE_P(zread_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(zread_concern), php_phongo_readconcern_ce TSRMLS_CC)) {
-#if PHP_VERSION_ID >= 70000
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), zend_get_type_by_const(Z_TYPE_P(zread_concern)));
-#else
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", php_phongo_readconcern_ce->name, zend_get_type_by_const(Z_TYPE_P(zread_concern)));
-#endif
 				bson_clear(&intern->query);
 				return;
 			}

@@ -1012,11 +1012,7 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			return;
 		}
 
-#if PHP_VERSION_ID >= 70000
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Unexpected %s instance: %s", ZSTR_VAL(php_phongo_type_ce->name), ZSTR_VAL(Z_OBJCE_P(object)->name));
-#else
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Unexpected %s instance: %s", php_phongo_type_ce->name, Z_OBJCE_P(object)->name);
-#endif
 		return;
 	}
 
@@ -1218,11 +1214,7 @@ PHONGO_API void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, b
 			}
 
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_type_ce TSRMLS_CC)) {
-#if PHP_VERSION_ID >= 70000
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s instance %s cannot be serialized as a root element", ZSTR_VAL(php_phongo_type_ce->name), ZSTR_VAL(Z_OBJCE_P(data)->name));
-#else
-				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s instance %s cannot be serialized as a root element", php_phongo_type_ce->name, Z_OBJCE_P(data)->name);
-#endif
 
 				break;
 			}
