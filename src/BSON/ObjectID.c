@@ -107,8 +107,8 @@ static bool php_phongo_objectid_init_from_hash(php_phongo_objectid_t *intern, Ha
 	return false;
 }
 
-/* {{{ proto BSON\ObjectID ObjectID::__construct(string $id)
-   Constructs a new Object ID, optionally from a string */
+/* {{{ proto void ObjectID::__construct([string $id])
+   Constructs a new BSON ObjectID type, optionally from a hex string. */
 PHP_METHOD(ObjectID, __construct)
 {
 	php_phongo_objectid_t    *intern;
@@ -155,7 +155,7 @@ PHP_METHOD(ObjectID, __set_state)
 }
 /* }}} */
 
-/* {{{ proto void ObjectID::__toString()
+/* {{{ proto string ObjectID::__toString()
     */
 PHP_METHOD(ObjectID, __toString)
 {

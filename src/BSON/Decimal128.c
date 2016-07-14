@@ -82,7 +82,7 @@ static bool php_phongo_decimal128_init_from_hash(php_phongo_decimal128_t *intern
 	return false;
 }
 
-/* {{{ proto BSON\Decimal128 Decimal128::__construct(string $value)
+/* {{{ proto void Decimal128::__construct(string $value)
    Construct a new BSON Decimal128 type */
 PHP_METHOD(Decimal128, __construct)
 {
@@ -105,7 +105,7 @@ PHP_METHOD(Decimal128, __construct)
 }
 /* }}} */
 
-/* {{{ proto Decimal128::__set_state(array $properties)
+/* {{{ proto void Decimal128::__set_state(array $properties)
 */
 PHP_METHOD(Decimal128, __set_state)
 {
@@ -126,8 +126,8 @@ PHP_METHOD(Decimal128, __set_state)
 }
 /* }}} */
 
-/* {{{ proto void Decimal128::__toString()
-    */
+/* {{{ proto string Decimal128::__toString()
+*/
 PHP_METHOD(Decimal128, __toString)
 {
 	php_phongo_decimal128_t *intern;
@@ -145,7 +145,7 @@ PHP_METHOD(Decimal128, __toString)
 }
 /* }}} */
 
-/* {{{ proto Decimal128::__wakeup()
+/* {{{ proto void Decimal128::__wakeup()
 */
 PHP_METHOD(Decimal128, __wakeup)
 {

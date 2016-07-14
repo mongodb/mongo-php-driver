@@ -91,8 +91,9 @@ static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, 
 	return false;
 }
 
-/* {{{ proto BSON\Timestamp Timestamp::__construct(integer $increment, int $timestamp)
-   Construct a new BSON Timestamp (4bytes increment, 4bytes timestamp) */
+/* {{{ proto void Timestamp::__construct(integer $increment, int $timestamp)
+   Construct a new BSON timestamp type, which consists of a 4-byte increment and
+   4-byte timestamp. */
 PHP_METHOD(Timestamp, __construct)
 {
 	php_phongo_timestamp_t    *intern;
@@ -114,7 +115,7 @@ PHP_METHOD(Timestamp, __construct)
 }
 /* }}} */
 
-/* {{{ proto Timestamp::__set_state(array $properties)
+/* {{{ proto void Timestamp::__set_state(array $properties)
 */
 PHP_METHOD(Timestamp, __set_state)
 {
@@ -136,7 +137,7 @@ PHP_METHOD(Timestamp, __set_state)
 /* }}} */
 
 /* {{{ proto string Timestamp::__toString()
-   Returns [increment:timestamp] */
+   Returns a string in the form: [increment:timestamp] */
 PHP_METHOD(Timestamp, __toString)
 {
 	php_phongo_timestamp_t    *intern;
@@ -156,7 +157,7 @@ PHP_METHOD(Timestamp, __toString)
 }
 /* }}} */
 
-/* {{{ proto Timestamp::__wakeup()
+/* {{{ proto void Timestamp::__wakeup()
 */
 PHP_METHOD(Timestamp, __wakeup)
 {

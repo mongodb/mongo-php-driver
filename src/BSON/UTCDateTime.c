@@ -154,8 +154,9 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t *inte
 	return true;
 }
 
-/* {{{ proto BSON\UTCDateTime UTCDateTime::__construct([integer|DateTimeInterface $milliseconds = null])
-   Construct a new UTCDateTime */
+/* {{{ proto void UTCDateTime::__construct([integer|DateTimeInterface $milliseconds = null])
+   Construct a new BSON UTCDateTime type from either the current time,
+   milliseconds since the epoch, or a DateTimeInterface object. */
 PHP_METHOD(UTCDateTime, __construct)
 {
 	php_phongo_utcdatetime_t    *intern;
@@ -214,7 +215,7 @@ PHP_METHOD(UTCDateTime, __construct)
 }
 /* }}} */
 
-/* {{{ proto UTCDateTime::__set_state(array $properties)
+/* {{{ proto void UTCDateTime::__set_state(array $properties)
 */
 PHP_METHOD(UTCDateTime, __set_state)
 {
@@ -236,7 +237,7 @@ PHP_METHOD(UTCDateTime, __set_state)
 /* }}} */
 
 /* {{{ proto string UTCDateTime::__toString()
-   Returns the string representation of the UTCDateTime */
+   Returns the UTCDateTime's milliseconds as a string */
 PHP_METHOD(UTCDateTime, __toString)
 {
 	php_phongo_utcdatetime_t    *intern;
@@ -256,7 +257,7 @@ PHP_METHOD(UTCDateTime, __toString)
 }
 /* }}} */
 
-/* {{{ proto UTCDateTime::__wakeup()
+/* {{{ proto void UTCDateTime::__wakeup()
 */
 PHP_METHOD(UTCDateTime, __wakeup)
 {
@@ -274,8 +275,8 @@ PHP_METHOD(UTCDateTime, __wakeup)
 }
 /* }}} */
 
-/* {{{ proto string UTCDateTime::toDateTime()
-   Returns DateTime object representing this UTCDateTime */
+/* {{{ proto DateTime UTCDateTime::toDateTime()
+   Returns a DateTime object representing this UTCDateTime */
 PHP_METHOD(UTCDateTime, toDateTime)
 {
 	php_phongo_utcdatetime_t *intern;

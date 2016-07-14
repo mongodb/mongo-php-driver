@@ -86,8 +86,8 @@ static bool php_phongo_binary_init_from_hash(php_phongo_binary_t *intern, HashTa
 	return false;
 }
 
-/* {{{ proto BSON\Binary Binary::__construct(string $data, int $type)
-   Construct a new BSON Binary type */
+/* {{{ proto void Binary::__construct(string $data, int $type)
+   Construct a new BSON binary type */
 PHP_METHOD(Binary, __construct)
 {
 	php_phongo_binary_t    *intern;
@@ -110,7 +110,7 @@ PHP_METHOD(Binary, __construct)
 }
 /* }}} */
 
-/* {{{ proto Binary::__set_state(array $properties)
+/* {{{ proto void Binary::__set_state(array $properties)
 */
 PHP_METHOD(Binary, __set_state)
 {
@@ -131,7 +131,7 @@ PHP_METHOD(Binary, __set_state)
 }
 /* }}} */
 
-/* {{{ proto Binary::__wakeup()
+/* {{{ proto void Binary::__wakeup()
 */
 PHP_METHOD(Binary, __wakeup)
 {
@@ -150,7 +150,7 @@ PHP_METHOD(Binary, __wakeup)
 /* }}} */
 
 /* {{{ proto string Binary::getData()
-    */
+*/
 PHP_METHOD(Binary, getData)
 {
 	php_phongo_binary_t      *intern;
@@ -165,8 +165,9 @@ PHP_METHOD(Binary, getData)
 	PHONGO_RETURN_STRINGL(intern->data, intern->data_len);
 }
 /* }}} */
+
 /* {{{ proto integer Binary::getType()
-    */
+*/
 PHP_METHOD(Binary, getType)
 {
 	php_phongo_binary_t      *intern;
@@ -200,9 +201,10 @@ ZEND_END_ARG_INFO();
 static zend_function_entry php_phongo_binary_me[] = {
 	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Binary, __set_state, ai_Binary___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(Binary, __toString, ai_Binary_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Binary, __wakeup, ai_Binary_void, ZEND_ACC_PUBLIC)
 	PHP_ME(Binary, getData, ai_Binary_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Binary, getType, ai_Binary_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Binary, __wakeup, ai_Binary_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
