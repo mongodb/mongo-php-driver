@@ -51,8 +51,9 @@ zend_object_handlers php_phongo_handler_cursorid;
 PHP_METHOD(CursorId, __toString)
 {
 	php_phongo_cursorid_t    *intern;
+	char *tmp;
+	int tmp_len;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
 
 	intern = Z_CURSORID_OBJ_P(getThis());
 
@@ -60,8 +61,9 @@ PHP_METHOD(CursorId, __toString)
 		return;
 	}
 
-	RETVAL_LONG(intern->id);
-	convert_to_string(return_value);
+	tmp_len = spprintf(&tmp, 0, "%" PRIu64, intern->id);
+	PHONGO_RETVAL_STRINGL(tmp, tmp_len);
+	efree(tmp);
 }
 /* }}} */
 
@@ -131,10 +133,19 @@ HashTable *php_phongo_cursorid_get_debug_info(zval *object, int *is_temp TSRMLS_
 
 	array_init(&retval);
 
+#if SIZEOF_LONG == 4
+	{
+		char tmp[24];
+		int tmp_len;
+
+		tmp_len = snprintf(tmp, sizeof(tmp), "%" PRIu64, intern->id);
+		ADD_ASSOC_STRINGL(&retval, "id", tmp, tmp_len);
+	}
+#else
 	ADD_ASSOC_LONG_EX(&retval, "id", intern->id);
+#endif
 
 	return Z_ARRVAL(retval);
-
 } /* }}} */
 /* }}} */
 

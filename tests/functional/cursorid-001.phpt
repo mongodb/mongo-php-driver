@@ -32,7 +32,7 @@ var_dump($s1 > 0);
 --EXPECTF--
 object(MongoDB\Driver\CursorId)#%d (%d) {
   ["id"]=>
-  %s(%d)
+  %rint\(\d+\)|string\(\d+\) "\d+"%r
 }
 string(%d) "%d"
 bool(true)
