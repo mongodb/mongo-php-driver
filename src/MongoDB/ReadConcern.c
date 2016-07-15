@@ -46,7 +46,7 @@ PHONGO_API zend_class_entry *php_phongo_readconcern_ce;
 
 zend_object_handlers php_phongo_handler_readconcern;
 
-/* {{{ proto MongoDB\Driver\ReadConcern ReadConcern::__construct([string $level])
+/* {{{ proto void ReadConcern::__construct([string $level])
    Constructs a new ReadConcern */
 PHP_METHOD(ReadConcern, __construct)
 {
@@ -108,14 +108,15 @@ PHP_METHOD(ReadConcern, getLevel)
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, level)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern_getLevel, 0, 0, 0)
-ZEND_END_ARG_INFO();
+ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_readconcern_me[] = {
 	PHP_ME(ReadConcern, __construct, ai_ReadConcern___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ReadConcern, getLevel, ai_ReadConcern_getLevel, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ReadConcern, getLevel, ai_ReadConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeup, ai_ReadConcern_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

@@ -235,7 +235,7 @@ extern PHONGO_API zend_class_entry *php_phongo_timestamp_ce;
 extern PHONGO_API zend_class_entry *php_phongo_utcdatetime_ce;
 
 /* Shared across all MongoDB\Driver objects to disable unserialize() */
-PHP_METHOD(Manager, __wakeUp);
+PHP_METHOD(Manager, __wakeup);
 /* Shared across all final MongoDB\Driver value objects, only possible to construct them internally */
 PHP_METHOD(Server, __construct);
 

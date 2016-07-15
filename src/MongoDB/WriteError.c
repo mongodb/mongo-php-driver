@@ -63,8 +63,10 @@ PHP_METHOD(WriteError, getCode)
 	RETURN_LONG(intern->code);
 }
 /* }}} */
+
 /* {{{ proto integer WriteError::getIndex()
-   Returns the Bulk index where this WriteError occurred in */
+   Returns the index of the operation in the BulkWrite to which this WriteError
+   corresponds. */
 PHP_METHOD(WriteError, getIndex)
 {
 	php_phongo_writeerror_t  *intern;
@@ -80,6 +82,7 @@ PHP_METHOD(WriteError, getIndex)
 	RETURN_LONG(intern->index);
 }
 /* }}} */
+
 /* {{{ proto string WriteError::getMessage()
    Returns the actual error message from the server */
 PHP_METHOD(WriteError, getMessage)
@@ -97,6 +100,7 @@ PHP_METHOD(WriteError, getMessage)
 	PHONGO_RETURN_STRING(intern->message);
 }
 /* }}} */
+
 /* {{{ proto mixed WriteError::getInfo()
    Returns additional metadata for the error */
 PHP_METHOD(WriteError, getInfo)
@@ -126,26 +130,16 @@ PHP_METHOD(WriteError, getInfo)
  */
 /* {{{ MongoDB\Driver\WriteError */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getCode, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getIndex, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getInfo, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_getMessage, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeerror_me[] = {
-	PHP_ME(Server, __construct, NULL, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
-	PHP_ME(WriteError, getCode, ai_WriteError_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteError, getIndex, ai_WriteError_getIndex, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteError, getMessage, ai_WriteError_getMessage, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteError, getInfo, ai_WriteError_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(Server, __construct, ai_WriteError_void, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
+	PHP_ME(WriteError, getCode, ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteError, getIndex, ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteError, getMessage, ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteError, getInfo, ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeup, ai_WriteError_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

@@ -46,7 +46,7 @@ PHONGO_API zend_class_entry *php_phongo_writeconcern_ce;
 
 zend_object_handlers php_phongo_handler_writeconcern;
 
-/* {{{ proto MongoDB\Driver\WriteConcern WriteConcern::__construct(integer|string $w[, integer $wtimeout[, boolean $journal]])
+/* {{{ proto void WriteConcern::__construct(integer|string $w[, integer $wtimeout[, boolean $journal]])
    Constructs a new WriteConcern */
 PHP_METHOD(WriteConcern, __construct)
 {
@@ -191,22 +191,17 @@ ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, w)
 	ZEND_ARG_INFO(0, wtimeout)
 	ZEND_ARG_INFO(0, journal)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_getW, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_getWtimeout, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_getJournal, 0, 0, 0)
-ZEND_END_ARG_INFO();
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeconcern_me[] = {
 	PHP_ME(WriteConcern, __construct, ai_WriteConcern___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, getW, ai_WriteConcern_getW, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_getWtimeout, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, getJournal, ai_WriteConcern_getJournal, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, getW, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, getJournal, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeup, ai_WriteConcern_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

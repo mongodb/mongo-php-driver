@@ -46,7 +46,7 @@ PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
 
 zend_object_handlers php_phongo_handler_readpreference;
 
-/* {{{ proto MongoDB\Driver\ReadPreference ReadPreference::__construct(integer $mode[, array $tagSets = array()])
+/* {{{ proto void ReadPreference::__construct(integer $mode[, array $tagSets = array()])
    Constructs a new ReadPreference */
 PHP_METHOD(ReadPreference, __construct)
 {
@@ -153,18 +153,16 @@ PHP_METHOD(ReadPreference, getTagSets)
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, mode)
 	ZEND_ARG_ARRAY_INFO(0, tagSets, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference_getMode, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference_getTagSets, 0, 0, 0)
-ZEND_END_ARG_INFO();
+ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_readpreference_me[] = {
 	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, getMode, ai_ReadPreference_getMode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_getTagSets, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeup, ai_ReadPreference_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

@@ -99,9 +99,10 @@ static bool php_phongo_javascript_init_from_hash(php_phongo_javascript_t *intern
 	return false;
 }
 
-/* {{{ proto BSON\Javascript Javascript::__construct(string $code[, array|object $scope])
- * The string is JavaScript code. The document is a mapping from identifiers to values, representing the scope in which the string should be evaluated
- * NOTE: eJSON does not support this type :( */
+/* {{{ proto void Javascript::__construct(string $code[, array|object $scope])
+   Construct a new BSON Javascript type. The scope is a document mapping
+   identifiers and values, representing the scope in which the code string will
+   be evaluated. Note that this type cannot be represented as Extended JSON. */
 PHP_METHOD(Javascript, __construct)
 {
 	php_phongo_javascript_t   *intern;
@@ -124,7 +125,7 @@ PHP_METHOD(Javascript, __construct)
 }
 /* }}} */
 
-/* {{{ proto Javascript::__set_state(array $properties)
+/* {{{ proto void Javascript::__set_state(array $properties)
 */
 PHP_METHOD(Javascript, __set_state)
 {
@@ -145,7 +146,7 @@ PHP_METHOD(Javascript, __set_state)
 }
 /* }}} */
 
-/* {{{ proto Javascript::__wakeup()
+/* {{{ proto void Javascript::__wakeup()
 */
 PHP_METHOD(Javascript, __wakeup)
 {
@@ -168,14 +169,14 @@ PHP_METHOD(Javascript, __wakeup)
 ZEND_BEGIN_ARG_INFO_EX(ai_Javascript___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, javascript)
 	ZEND_ARG_INFO(0, scope)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Javascript___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Javascript_void, 0, 0, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_javascript_me[] = {
 	PHP_ME(Javascript, __construct, ai_Javascript___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

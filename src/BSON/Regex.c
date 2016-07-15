@@ -92,8 +92,8 @@ static bool php_phongo_regex_init_from_hash(php_phongo_regex_t *intern, HashTabl
 	return false;
 }
 
-/* {{{ proto BSON\Regex Regex::__construct(string $pattern, string $flags)
-   Constructs a new regular expression. */
+/* {{{ proto void Regex::__construct(string $pattern, string $flags)
+   Constructs a new BSON regular expression type. */
 PHP_METHOD(Regex, __construct)
 {
 	php_phongo_regex_t       *intern;
@@ -116,8 +116,9 @@ PHP_METHOD(Regex, __construct)
 	php_phongo_regex_init(intern, pattern, pattern_len, flags, flags_len TSRMLS_CC);
 }
 /* }}} */
-/* {{{ proto void Regex::getPattern()
-    */
+
+/* {{{ proto string Regex::getPattern()
+*/
 PHP_METHOD(Regex, getPattern)
 {
 	php_phongo_regex_t       *intern;
@@ -133,8 +134,9 @@ PHP_METHOD(Regex, getPattern)
 	PHONGO_RETURN_STRINGL(intern->pattern, intern->pattern_len);
 }
 /* }}} */
-/* {{{ proto void Regex::getFlags()
-    */
+
+/* {{{ proto string Regex::getFlags()
+*/
 PHP_METHOD(Regex, getFlags)
 {
 	php_phongo_regex_t       *intern;
@@ -151,7 +153,7 @@ PHP_METHOD(Regex, getFlags)
 }
 /* }}} */
 
-/* {{{ proto Regex::__set_state(array $properties)
+/* {{{ proto void Regex::__set_state(array $properties)
 */
 PHP_METHOD(Regex, __set_state)
 {
@@ -172,8 +174,8 @@ PHP_METHOD(Regex, __set_state)
 }
 /* }}} */
 
-/* {{{ proto void Regex::__toString()
-    */
+/* {{{ proto string Regex::__toString()
+   Returns a string in the form: /pattern/flags */
 PHP_METHOD(Regex, __toString)
 {
 	php_phongo_regex_t       *intern;
@@ -194,7 +196,7 @@ PHP_METHOD(Regex, __toString)
 }
 /* }}} */
 
-/* {{{ proto Regex::__wakeup()
+/* {{{ proto void Regex::__wakeup()
 */
 PHP_METHOD(Regex, __wakeup)
 {
@@ -217,7 +219,7 @@ PHP_METHOD(Regex, __wakeup)
 ZEND_BEGIN_ARG_INFO_EX(ai_Regex___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, pattern)
 	ZEND_ARG_INFO(0, flags)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Regex___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)

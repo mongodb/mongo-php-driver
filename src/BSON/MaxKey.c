@@ -72,7 +72,7 @@ PHP_METHOD(MaxKey, __wakeup)
 
 ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey_void, 0, 0, 0)
 ZEND_END_ARG_INFO()

@@ -49,7 +49,7 @@ PHONGO_API zend_class_entry *php_phongo_manager_ce;
 
 zend_object_handlers php_phongo_handler_manager;
 
-/* {{{ proto MongoDB\Driver\Manager Manager::__construct([string $uri = "mongodb://localhost:27017/"[, array $options = array()[, array $driverOptions = array()]]])
+/* {{{ proto void Manager::__construct([string $uri = "mongodb://127.0.0.1/"[, array $options = array()[, array $driverOptions = array()]]])
    Constructs a new Manager */
 PHP_METHOD(Manager, __construct)
 {
@@ -80,8 +80,9 @@ PHP_METHOD(Manager, __construct)
 	bson_destroy(&bson_options);
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\Cursor Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
-   Execute a command */
+   Execute a Command */
 PHP_METHOD(Manager, executeCommand)
 {
 	char                     *db;
@@ -98,6 +99,7 @@ PHP_METHOD(Manager, executeCommand)
 	phongo_execute_command(getThis(), db, command, readPreference, -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\Cursor Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a Query */
 PHP_METHOD(Manager, executeQuery)
@@ -116,8 +118,9 @@ PHP_METHOD(Manager, executeQuery)
 	phongo_execute_query(getThis(), namespace, query, readPreference, -1, return_value, return_value_used TSRMLS_CC);
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\WriteResult Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
-   Executes a write operation bulk (e.g. insert, update, delete) */
+   Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
 PHP_METHOD(Manager, executeBulkWrite)
 {
 	char                      *namespace;
@@ -177,6 +180,7 @@ PHP_METHOD(Manager, getReadPreference)
 	}
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\Server[] Manager::getServers()
    Returns the Servers associated with this Manager */
 PHP_METHOD(Manager, getServers)
@@ -214,6 +218,7 @@ PHP_METHOD(Manager, getServers)
 	mongoc_server_descriptions_destroy_all(sds, n);
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\WriteConcern Manager::getWriteConcern()
    Returns the WriteConcern associated with this Manager */
 PHP_METHOD(Manager, getWriteConcern)
@@ -233,8 +238,9 @@ PHP_METHOD(Manager, getWriteConcern)
 	}
 }
 /* }}} */
+
 /* {{{ proto MongoDB\Driver\Server Manager::selectServers(MongoDB\Driver\ReadPreference $readPreference)
-   Returns a suitable Server for the given $readPreference */
+   Returns a suitable Server for the given ReadPreference */
 PHP_METHOD(Manager, selectServer)
 {
 	php_phongo_manager_t         *intern;
@@ -266,9 +272,10 @@ PHP_METHOD(Manager, selectServer)
 	}
 }
 /* }}} */
-/* {{{ proto void MongoDB\Driver\Manager::__wakeUp()
- * Throws MongoDB\Driver\RuntimeException as it cannot be serialized */
-PHP_METHOD(Manager, __wakeUp)
+
+/* {{{ proto void MongoDB\Driver\Manager::__wakeup()
+   Throws MongoDB\Driver\RuntimeException (serialization is not supported) */
+PHP_METHOD(Manager, __wakeup)
 {
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(this_ptr)
 
@@ -298,53 +305,44 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, uri)
 	ZEND_ARG_ARRAY_INFO(0, options, 0)
 	ZEND_ARG_ARRAY_INFO(0, driverOptions, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, db)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Driver\\Query, 0)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeBulkWrite, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zbulk, MongoDB\\Driver\\BulkWrite, 0)
 	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getReadConcern, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getReadPreference, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getServers, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_getWriteConcern, 0, 0, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_selectServer, 0, 0, 1)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, getReadConcern, ai_Manager_getReadConcern, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, getReadPreference, ai_Manager_getReadPreference, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, getServers, ai_Manager_getServers, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, getWriteConcern, ai_Manager_getWriteConcern, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, getReadConcern, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, getReadPreference, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, getServers, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, getWriteConcern, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, selectServer, ai_Manager_selectServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __wakeup, ai_Manager_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

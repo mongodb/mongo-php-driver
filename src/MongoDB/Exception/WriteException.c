@@ -74,12 +74,11 @@ PHP_METHOD(WriteException, getWriteResult)
  */
 /* {{{ MongoDB\Driver\WriteException */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteException_getWriteResult, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteException_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeexception_me[] = {
-	PHP_ME(WriteException, getWriteResult, ai_WriteException_getWriteResult, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteException, getWriteResult, ai_WriteException_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 

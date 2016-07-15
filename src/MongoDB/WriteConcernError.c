@@ -63,6 +63,7 @@ PHP_METHOD(WriteConcernError, getCode)
 	RETURN_LONG(intern->code);
 }
 /* }}} */
+
 /* {{{ proto mixed WriteConcernError::getInfo()
    Returns additional metadata for the error */
 PHP_METHOD(WriteConcernError, getInfo)
@@ -86,6 +87,7 @@ PHP_METHOD(WriteConcernError, getInfo)
 	}
 }
 /* }}} */
+
 /* {{{ proto string WriteConcernError::getMessage()
    Returns the actual error message from the server */
 PHP_METHOD(WriteConcernError, getMessage)
@@ -108,22 +110,15 @@ PHP_METHOD(WriteConcernError, getMessage)
  */
 /* {{{ MongoDB\Driver\WriteConcernError */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcernError_getCode, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcernError_getInfo, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcernError_getMessage, 0, 0, 0)
-ZEND_END_ARG_INFO();
-
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcernError_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeconcernerror_me[] = {
-	PHP_ME(Server, __construct, NULL, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
-	PHP_ME(WriteConcernError, getCode, ai_WriteConcernError_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteConcernError, getInfo, ai_WriteConcernError_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteConcernError, getMessage, ai_WriteConcernError_getMessage, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(Server, __construct, ai_WriteConcernError_void, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
+	PHP_ME(WriteConcernError, getCode, ai_WriteConcernError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcernError, getInfo, ai_WriteConcernError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcernError, getMessage, ai_WriteConcernError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, __wakeup, ai_WriteConcernError_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 

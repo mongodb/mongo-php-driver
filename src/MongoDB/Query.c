@@ -50,7 +50,7 @@ PHONGO_API zend_class_entry *php_phongo_query_ce;
 
 zend_object_handlers php_phongo_handler_query;
 
-/* {{{ proto MongoDB\Driver\Query Query::__construct(array|object $filter[, array $options = array()])
+/* {{{ proto void Query::__construct(array|object $filter[, array $options = array()])
    Constructs a new Query */
 PHP_METHOD(Query, __construct)
 {
@@ -108,12 +108,14 @@ PHP_METHOD(Query, __construct)
 ZEND_BEGIN_ARG_INFO_EX(ai_Query___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, filter)
 	ZEND_ARG_ARRAY_INFO(0, options, 0)
-ZEND_END_ARG_INFO();
+ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Query_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_query_me[] = {
 	PHP_ME(Query, __construct, ai_Query___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeUp, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(Manager, __wakeup, ai_Query_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
 
