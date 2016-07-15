@@ -146,6 +146,22 @@ PHP_METHOD(Javascript, __set_state)
 }
 /* }}} */
 
+/* {{{ proto string Javascript::__toString()
+   Return the Javascript's code string. */
+PHP_METHOD(Javascript, __toString)
+{
+	php_phongo_javascript_t *intern;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	intern = Z_JAVASCRIPT_OBJ_P(getThis());
+
+	PHONGO_RETURN_STRINGL(intern->code, intern->code_len);
+}
+/* }}} */
+
 /* {{{ proto void Javascript::__wakeup()
 */
 PHP_METHOD(Javascript, __wakeup)
@@ -181,6 +197,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_javascript_me[] = {
 	PHP_ME(Javascript, __construct, ai_Javascript___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, __set_state, ai_Javascript___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(Javascript, __toString, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, __wakeup, ai_Javascript_void, ZEND_ACC_PUBLIC)
 	PHP_FE_END
 };
