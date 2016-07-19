@@ -180,6 +180,53 @@ PHP_METHOD(Javascript, __wakeup)
 }
 /* }}} */
 
+/* {{{ proto string Javascript::getCode()
+*/
+PHP_METHOD(Javascript, getCode)
+{
+	php_phongo_javascript_t *intern;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	intern = Z_JAVASCRIPT_OBJ_P(getThis());
+
+	PHONGO_RETURN_STRINGL(intern->code, intern->code_len);
+}
+/* }}} */
+
+/* {{{ proto object|null Javascript::getScope()
+*/
+PHP_METHOD(Javascript, getScope)
+{
+	php_phongo_javascript_t *intern;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	intern = Z_JAVASCRIPT_OBJ_P(getThis());
+
+	if (!intern->scope) {
+		RETURN_NULL();
+	}
+
+	if (intern->scope->len) {
+		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+
+		phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state);
+#if PHP_VERSION_ID >= 70000
+		RETURN_ZVAL(&state.zchild, 0, 1);
+#else
+		RETURN_ZVAL(state.zchild, 0, 1);
+#endif
+	} else {
+		RETURN_NULL();
+	}
+}
+/* }}} */
+
 /* {{{ BSON\Javascript */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Javascript___construct, 0, 0, 1)
@@ -199,6 +246,8 @@ static zend_function_entry php_phongo_javascript_me[] = {
 	PHP_ME(Javascript, __set_state, ai_Javascript___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Javascript, __toString, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, __wakeup, ai_Javascript_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Javascript, getCode, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Javascript, getScope, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
