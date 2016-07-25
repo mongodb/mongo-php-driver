@@ -255,6 +255,7 @@ if test "$MONGODB" != "no"; then
     mongoc-matcher-op.c \
     mongoc-matcher.c \
     mongoc-memcmp.c \
+dnl    mongoc-metadata.c \
     mongoc-opcode.c \
     mongoc-queue.c \
     mongoc-read-concern.c \
@@ -567,6 +568,9 @@ dnl }}}
   fi
 
   if test "$PHP_LIBMONGOC" == "no"; then
+    dnl Disable experimental features for now
+    AC_SUBST(MONGOC_EXPERIMENTAL_FEATURES, 0)
+
     backup_srcdir=${srcdir}
     srcdir=${srcdir}/src/libmongoc/
     m4_include(src/libmongoc/build/autotools/Versions.m4)

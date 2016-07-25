@@ -2445,6 +2445,12 @@ PHP_MINIT_FUNCTION(mongodb)
 
 	/* Initialize libmongoc */
 	mongoc_init();
+
+#ifdef MONGOC_EXPERIMENTAL_FEATURES
+    /* Set metadata strings BEFORE changing allocation routines */
+    mongoc_metadata_append("phongo", MONGODB_VERSION_S, NULL);
+#endif
+
 	/* Initialize libbson */
 	bson_mem_set_vtable(&MONGODB_G(bsonMemVTable));
 
