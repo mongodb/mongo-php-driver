@@ -366,11 +366,11 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
   if test "$PHP_LIBMONGOC" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libmongoc)
-    if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0 && $PKG_CONFIG --exists libmongoc-priv; then
-      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.3.3; then
-        LIBMONGOC_INC=`$PKG_CONFIG libmongoc-priv --cflags`
-        LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-priv --libs`
-        LIBMONGOC_VER=`$PKG_CONFIG libmongoc-priv --modversion`
+    if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0; then
+      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.4.0; then
+        LIBMONGOC_INC=`$PKG_CONFIG libmongoc-1.0 --cflags`
+        LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-1.0 --libs`
+        LIBMONGOC_VER=`$PKG_CONFIG libmongoc-1.0 --modversion`
         AC_MSG_RESULT(version $LIBMONGOC_VER found)
 
       else
