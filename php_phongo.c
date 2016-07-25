@@ -27,7 +27,6 @@
 /* External libs */
 #include "bson.h"
 #include "mongoc.h"
-#include "mongoc-trace.h"
 
 
 /* PHP Core stuff */
