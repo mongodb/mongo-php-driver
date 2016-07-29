@@ -52,7 +52,7 @@ var_dump(toPHP($bson, $typeMap));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Test { "__pclass" : { "$type" : "80", "$binary" : "TXlEb2N1bWVudA==" }, "list" : [ 1, 2, 3 ], "map" : { "foo" : "bar" } }
+Test { "__pclass" : { "$binary" : "TXlEb2N1bWVudA==", "$type" : "80" }, "list" : [ 1, 2, 3 ], "map" : { "foo" : "bar" } }
      0 : 55 00 00 00 05 5f 5f 70 63 6c 61 73 73 00 0a 00  [U....__pclass...]
     10 : 00 00 80 4d 79 44 6f 63 75 6d 65 6e 74 04 6c 69  [...MyDocument.li]
     20 : 73 74 00 1a 00 00 00 10 30 00 01 00 00 00 10 31  [st......0......1]

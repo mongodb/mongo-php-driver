@@ -59,10 +59,10 @@ $testGroups = array(
             '{ "foo": "no", "array" : [ 5, 6 ] }',
             '{ "foo": "no", "obj" : { "embedded" : 3.14 } }',
             '{ "foo": "yes", "__pclass": "MyClass" }',
-            '{ "foo": "yes", "__pclass": { "$type" : "80", "$binary" : "' . $bMyClass . '" } }',
-            '{ "foo": "yes", "__pclass": { "$type" : "80", "$binary" : "' . $bYourClass . '" } }',
-            '{ "foo": "yes", "__pclass": { "$type" : "80", "$binary" : "' . $bOurClass . '" } }',
-            '{ "foo": "yes", "__pclass": { "$type" : "44", "$binary" : "' . $bYourClass . '" } }',
+            '{ "foo": "yes", "__pclass": { "$binary": "' . $bMyClass . '", "$type": "80" } }',
+            '{ "foo": "yes", "__pclass": { "$binary": "' . $bYourClass . '", "$type": "80" } }',
+            '{ "foo": "yes", "__pclass": { "$binary": "' . $bOurClass . '", "$type": "80" } }',
+            '{ "foo": "yes", "__pclass": { "$binary": "' . $bYourClass . '", "$type": "44" } }',
         ),
     ),
     array(
@@ -76,7 +76,7 @@ $testGroups = array(
         'name' => 'DOES NOT IMPLEMENT UNSERIALIZABLE',
         'typemap' => array('root' => 'MyClass'),
         'tests' => array(
-            '{ "foo": "yes", "__pclass": { "$type": "80", "$binary": "' . $bMyClass . '" } }',
+            '{ "foo": "yes", "__pclass": { "$binary": "' . $bMyClass . '", "$type": "80" } }',
         ),
     ),
     array(
@@ -90,24 +90,24 @@ $testGroups = array(
         'name' => 'IS NOT A CONCRETE CLASS VIA PCLASS',
         'typemap' => array('root' => 'YourClass'),
         'tests' => array(
-            '{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "' . $bInterface . '" } }',
+            '{ "foo": "yes", "__pclass" : { "$binary": "' . $bInterface . '", "$type": "80" } }',
         ),
     ),
     array(
         'name' => 'PCLASS OVERRIDES TYPEMAP (1)',
         'typemap' => array('root' => 'YourClass'),
         'tests' => array(
-            '{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "' . $bMyClass . '" } }',
-            '{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "' . $bOurClass . '" } }',
-            '{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "' . $bTheirClass . '" } }',
-            '{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "' . $bYourClass . '" } }',
+            '{ "foo": "yes", "__pclass" : { "$binary": "' . $bMyClass . '", "$type": "80" } }',
+            '{ "foo": "yes", "__pclass" : { "$binary": "' . $bOurClass . '", "$type": "80" } }',
+            '{ "foo": "yes", "__pclass" : { "$binary": "' . $bTheirClass . '", "$type": "80" } }',
+            '{ "foo": "yes", "__pclass" : { "$binary": "' . $bYourClass . '", "$type": "80" } }',
         ),
     ),
     array(
         'name' => 'PCLASS OVERRIDES TYPEMAP (2)',
         'typemap' => array('root' => 'OurClass'),
         'tests' => array(
-            '{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "' . $bTheirClass . '" } }',
+            '{ "foo": "yes", "__pclass" : { "$binary": "' . $bTheirClass . '", "$type": "80" } }',
         ),
     ),
     array(
@@ -118,16 +118,16 @@ $testGroups = array(
             '{ "foo": "no", "array" : [ 5, 6 ] }',
             '{ "foo": "no", "obj" : { "embedded" : 3.14 } }',
             '{ "foo": "yes", "__pclass": "MyClass" }',
-            '{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "' . $bMyClass . '" } }',
-            '{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "' . $bOurClass . '" } }',
+            '{ "foo": "yes", "__pclass" : { "$binary": "' . $bMyClass . '", "$type": "80" } }',
+            '{ "foo": "yes", "__pclass" : { "$binary": "' . $bOurClass . '", "$type": "80" } }',
         ),
     ),
     array(
         'name' => 'OBJECTS AS STDCLASS',
         'typemap' => array('root' => 'object', 'document' => 'object'),
         'tests' => array(
-            '{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "' . $bMyClass . '" } }',
-            '{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "' . $bOurClass . '" } }',
+            '{ "foo": "yes", "__pclass" : { "$binary": "' . $bMyClass . '", "$type": "80" } }',
+            '{ "foo": "yes", "__pclass" : { "$binary": "' . $bOurClass . '", "$type": "80" } }',
         ),
     ),
 );
@@ -197,7 +197,7 @@ object(stdClass)#%d (2) {
   string(7) "MyClass"
 }
 
-{ "foo": "yes", "__pclass": { "$type" : "80", "$binary" : "TXlDbGFzcw==" } }
+{ "foo": "yes", "__pclass": { "$binary": "TXlDbGFzcw==", "$type": "80" } }
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -210,7 +210,7 @@ object(stdClass)#%d (2) {
   }
 }
 
-{ "foo": "yes", "__pclass": { "$type" : "80", "$binary" : "WW91ckNsYXNz" } }
+{ "foo": "yes", "__pclass": { "$binary": "WW91ckNsYXNz", "$type": "80" } }
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -223,7 +223,7 @@ object(stdClass)#%d (2) {
   }
 }
 
-{ "foo": "yes", "__pclass": { "$type" : "80", "$binary" : "T3VyQ2xhc3M=" } }
+{ "foo": "yes", "__pclass": { "$binary": "T3VyQ2xhc3M=", "$type": "80" } }
 object(OurClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -238,7 +238,7 @@ object(OurClass)#%d (3) {
   bool(true)
 }
 
-{ "foo": "yes", "__pclass": { "$type" : "44", "$binary" : "WW91ckNsYXNz" } }
+{ "foo": "yes", "__pclass": { "$binary": "WW91ckNsYXNz", "$type": "44" } }
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -260,7 +260,7 @@ Class MissingClass does not exist
 
 === DOES NOT IMPLEMENT UNSERIALIZABLE ===
 
-{ "foo": "yes", "__pclass": { "$type": "80", "$binary": "TXlDbGFzcw==" } }
+{ "foo": "yes", "__pclass": { "$binary": "TXlDbGFzcw==", "$type": "80" } }
 Class MyClass does not implement MongoDB\BSON\Unserializable
 
 
@@ -272,7 +272,7 @@ Class %SBSON\Unserializable is not instantiatable
 
 === IS NOT A CONCRETE CLASS VIA PCLASS ===
 
-{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "TW9uZ29EQlxCU09OXFVuc2VyaWFsaXphYmxl" } }
+{ "foo": "yes", "__pclass" : { "$binary": "TW9uZ29EQlxCU09OXFVuc2VyaWFsaXphYmxl", "$type": "80" } }
 object(YourClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -290,7 +290,7 @@ object(YourClass)#%d (3) {
 
 === PCLASS OVERRIDES TYPEMAP (1) ===
 
-{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "TXlDbGFzcw==" } }
+{ "foo": "yes", "__pclass" : { "$binary": "TXlDbGFzcw==", "$type": "80" } }
 object(YourClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -305,7 +305,7 @@ object(YourClass)#%d (3) {
   bool(true)
 }
 
-{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "T3VyQ2xhc3M=" } }
+{ "foo": "yes", "__pclass" : { "$binary": "T3VyQ2xhc3M=", "$type": "80" } }
 object(OurClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -320,7 +320,7 @@ object(OurClass)#%d (3) {
   bool(true)
 }
 
-{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "VGhlaXJDbGFzcw==" } }
+{ "foo": "yes", "__pclass" : { "$binary": "VGhlaXJDbGFzcw==", "$type": "80" } }
 object(TheirClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -335,7 +335,7 @@ object(TheirClass)#%d (3) {
   bool(true)
 }
 
-{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "WW91ckNsYXNz" } }
+{ "foo": "yes", "__pclass" : { "$binary": "WW91ckNsYXNz", "$type": "80" } }
 object(YourClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -353,7 +353,7 @@ object(YourClass)#%d (3) {
 
 === PCLASS OVERRIDES TYPEMAP (2) ===
 
-{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "VGhlaXJDbGFzcw==" } }
+{ "foo": "yes", "__pclass" : { "$binary": "VGhlaXJDbGFzcw==", "$type": "80" } }
 object(TheirClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
@@ -411,7 +411,7 @@ array(2) {
   string(7) "MyClass"
 }
 
-{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "TXlDbGFzcw==" } }
+{ "foo": "yes", "__pclass" : { "$binary": "TXlDbGFzcw==", "$type": "80" } }
 array(2) {
   ["foo"]=>
   string(3) "yes"
@@ -424,7 +424,7 @@ array(2) {
   }
 }
 
-{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "T3VyQ2xhc3M=" } }
+{ "foo": "yes", "__pclass" : { "$binary": "T3VyQ2xhc3M=", "$type": "80" } }
 array(2) {
   ["foo"]=>
   string(3) "yes"
@@ -440,7 +440,7 @@ array(2) {
 
 === OBJECTS AS STDCLASS ===
 
-{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "TXlDbGFzcw==" } }
+{ "foo": "yes", "__pclass" : { "$binary": "TXlDbGFzcw==", "$type": "80" } }
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -453,7 +453,7 @@ object(stdClass)#%d (2) {
   }
 }
 
-{ "foo": "yes", "__pclass" : { "$type": "80", "$binary": "T3VyQ2xhc3M=" } }
+{ "foo": "yes", "__pclass" : { "$binary": "T3VyQ2xhc3M=", "$type": "80" } }
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"

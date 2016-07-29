@@ -29,7 +29,7 @@ foreach ($tests as $value) {
 <?php exit(0); ?>
 --EXPECT--
 { "_id" : { "$oid" : "56315a7c6118fd1b920270b1" } }
-{ "binary" : { "$type" : "00", "$binary" : "Zm9v" } }
+{ "binary" : { "$binary" : "Zm9v", "$type" : "00" } }
 { "date" : { "$date" : 1445990400000 } }
 { "timestamp" : { "$timestamp" : { "t" : 1446084619, "i" : 0 } } }
 { "regex" : { "$regex" : "pattern", "$options" : "i" } }

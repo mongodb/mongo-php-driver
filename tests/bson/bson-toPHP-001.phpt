@@ -27,10 +27,10 @@ $bUnserializable = base64_encode(BSON_NAMESPACE . '\Unserializable');
 $bPersistable = base64_encode(BSON_NAMESPACE . '\Persistable');
 
 $tests = array(
-    '{ "foo": "yes", "__pclass": { "$type" : "80", "$binary" : "' . $bMyAbstractDocument . '" } }',
-    '{ "foo": "yes", "__pclass": { "$type" : "80", "$binary" : "' . $bMyDocument . '" } }',
-    '{ "foo": "yes", "__pclass": { "$type" : "80", "$binary" : "' . $bUnserializable . '" } }',
-    '{ "foo": "yes", "__pclass": { "$type" : "44", "$binary" : "' . $bPersistable . '" } }',
+    '{ "foo": "yes", "__pclass": { "$binary": "' . $bMyAbstractDocument . '", "$type": "80" } }',
+    '{ "foo": "yes", "__pclass": { "$binary": "' . $bMyDocument . '", "$type": "80" } }',
+    '{ "foo": "yes", "__pclass": { "$binary": "' . $bUnserializable . '", "$type": "80" } }',
+    '{ "foo": "yes", "__pclass": { "$binary": "' . $bPersistable . '", "$type": "44" } }',
 );
 
 foreach ($tests as $test) {
@@ -43,7 +43,7 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-{ "foo": "yes", "__pclass": { "$type" : "80", "$binary" : "TXlBYnN0cmFjdERvY3VtZW50" } }
+{ "foo": "yes", "__pclass": { "$binary": "TXlBYnN0cmFjdERvY3VtZW50", "$type": "80" } }
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -56,7 +56,7 @@ object(stdClass)#%d (2) {
   }
 }
 
-{ "foo": "yes", "__pclass": { "$type" : "80", "$binary" : "TXlEb2N1bWVudA==" } }
+{ "foo": "yes", "__pclass": { "$binary": "TXlEb2N1bWVudA==", "$type": "80" } }
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -69,7 +69,7 @@ object(stdClass)#%d (2) {
   }
 }
 
-{ "foo": "yes", "__pclass": { "$type" : "80", "$binary" : "TW9uZ29EQlxCU09OXFVuc2VyaWFsaXphYmxl" } }
+{ "foo": "yes", "__pclass": { "$binary": "TW9uZ29EQlxCU09OXFVuc2VyaWFsaXphYmxl", "$type": "80" } }
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
@@ -82,7 +82,7 @@ object(stdClass)#%d (2) {
   }
 }
 
-{ "foo": "yes", "__pclass": { "$type" : "44", "$binary" : "TW9uZ29EQlxCU09OXFBlcnNpc3RhYmxl" } }
+{ "foo": "yes", "__pclass": { "$binary": "TW9uZ29EQlxCU09OXFBlcnNpc3RhYmxl", "$type": "44" } }
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
