@@ -67,7 +67,6 @@
 
 #define PHONGO_DEBUG_INI "mongodb.debug"
 #define PHONGO_DEBUG_INI_DEFAULT ""
-#define PHONGO_STREAM_BUFFER_SIZE 4096
 
 ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 #if PHP_VERSION_ID >= 70000
@@ -783,544 +782,6 @@ int phongo_execute_command(zval *manager, const char *db, zval *zcommand, zval *
 
 /* }}} */
 
-/* {{{ Stream vtable */
-void phongo_stream_destroy(mongoc_stream_t *stream_wrap) /* {{{ */
-{
-	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
-
-	if (base_stream->stream) {
-		MONGOC_DEBUG("Not destroying RSRC#%d", PHONGO_STREAM_ID(base_stream->stream));
-	} else {
-		MONGOC_DEBUG("Wrapped stream already destroyed");
-	}
-	/*
-	 * DON'T DO ANYTHING TO THE INTERNAL base_stream->stream
-	 * The stream should not be closed during normal dtor -- as we want it to
-	 * survive until next request.
-	 * We only clean it up on failure and (implicitly) MSHUTDOWN
-	 */
-
-	efree(base_stream);
-} /* }}} */
-void phongo_stream_failed(mongoc_stream_t *stream_wrap) /* {{{ */
-{
-	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
-
-	if (base_stream->stream) {
-#if PHP_VERSION_ID < 70000
-		PHONGO_TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
-#endif
-
-		MONGOC_DEBUG("Destroying RSRC#%d", PHONGO_STREAM_ID(base_stream->stream));
-		php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
-		base_stream->stream = NULL;
-	}
-
-	efree(base_stream);
-} /* }}} */
-
-int phongo_stream_close(mongoc_stream_t *stream_wrap) /* {{{ */
-{
-	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream_wrap;
-
-	MONGOC_DEBUG("Closing RSRC#%d", PHONGO_STREAM_ID(base_stream->stream));
-	if (base_stream->stream) {
-#if PHP_VERSION_ID < 70000
-		TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
-#endif
-
-		MONGOC_DEBUG("Destroying RSRC#%d", PHONGO_STREAM_ID(base_stream->stream));
-		php_stream_free(base_stream->stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
-		base_stream->stream = NULL;
-	}
-
-	return 0;
-} /* }}} */
-
-void php_phongo_set_timeout(php_phongo_stream_socket *base_stream, int32_t timeout_msec) /* {{{ */
-{
-	struct timeval rtimeout = {0, 0};
-	PHONGO_TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
-
-	if (timeout_msec > 0) {
-		rtimeout.tv_sec = timeout_msec / 1000;
-		rtimeout.tv_usec = (timeout_msec % 1000) * 1000;
-	}
-
-	php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &rtimeout);
-	MONGOC_DEBUG("Setting timeout to: %d", timeout_msec);
-} /* }}} */
-
-/* This is blatantr copy of _mongoc_stream_tls_writev
- * https://github.com/mongodb/mongo-c-driver/blob/4ebba3d84286df3867bad89358eb6ae956e62a59/src/mongoc/mongoc-stream-tls.c#L500
- */
-ssize_t phongo_stream_writev(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, int32_t timeout_msec) /* {{{ */
-{
-	char buf[PHONGO_STREAM_BUFFER_SIZE];
-
-	ssize_t ret = 0;
-	ssize_t child_ret;
-	size_t i;
-	size_t iov_pos = 0;
-
-	/* There's a bit of a dance to coalesce vectorized writes into
-	 * PHONGO_STREAM_BUFFER_SIZE'd writes to avoid lots of small tls
-	 * packets.
-	 *
-	 * The basic idea is that we want to combine writes in the buffer if they're
-	 * smaller than the buffer, flushing as it gets full.  For larger writes, or
-	 * the last write in the iovec array, we want to ignore the buffer and just
-	 * write immediately.  We take care of doing buffer writes by re-invoking
-	 * ourself with a single iovec_t, pointing at our stack buffer.
-	 */
-	char *buf_head = buf;
-	char *buf_tail = buf;
-	char *buf_end = buf + PHONGO_STREAM_BUFFER_SIZE;
-	size_t bytes;
-
-	char *to_write = NULL;
-	size_t to_write_len;
-
-	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
-	PHONGO_TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
-
-
-	php_phongo_set_timeout(base_stream, timeout_msec);
-
-
-	BSON_ASSERT (iov);
-	BSON_ASSERT (iovcnt);
-
-	for (i = 0; i < iovcnt; i++) {
-		iov_pos = 0;
-
-		while (iov_pos < iov[i].iov_len) {
-			if (buf_head != buf_tail ||
-					((i + 1 < iovcnt) &&
-					 ((buf_end - buf_tail) > (iov[i].iov_len - iov_pos)))) {
-				/* If we have either of:
-				 *   - buffered bytes already
-				 *   - another iovec to send after this one and we don't have more
-				 *     bytes to send than the size of the buffer.
-				 *
-				 * copy into the buffer */
-
-				bytes = BSON_MIN (iov[i].iov_len - iov_pos, buf_end - buf_tail);
-
-				memcpy (buf_tail, iov[i].iov_base + iov_pos, bytes);
-				buf_tail += bytes;
-				iov_pos += bytes;
-
-				if (buf_tail == buf_end) {
-					/* If we're full, request send */
-
-					to_write = buf_head;
-					to_write_len = buf_tail - buf_head;
-
-					buf_tail = buf_head = buf;
-				}
-			} else {
-				/* Didn't buffer, so just write it through */
-
-				to_write = (char *)iov[i].iov_base + iov_pos;
-				to_write_len = iov[i].iov_len - iov_pos;
-
-				iov_pos += to_write_len;
-			}
-
-			if (to_write) {
-				/* We get here if we buffered some bytes and filled the buffer, or
-				 * if we didn't buffer and have to send out of the iovec */
-
-				child_ret = php_stream_write(base_stream->stream, to_write, to_write_len);
-
-				if (child_ret < 0) {
-					/* Buffer write failed, just return the error */
-					return child_ret;
-				}
-
-				ret += child_ret;
-
-				if (child_ret < to_write_len) {
-					/* we timed out, so send back what we could send */
-
-					return ret;
-				}
-
-				to_write = NULL;
-			}
-		}
-	}
-
-	if (buf_head != buf_tail) {
-		/* If we have any bytes buffered, send */
-
-		child_ret = php_stream_write(base_stream->stream, buf_head, buf_tail - buf_head);
-
-		if (child_ret < 0) {
-			return child_ret;
-		}
-
-		ret += child_ret;
-	}
-
-
-	return ret;
-} /* }}} */
-
-ssize_t phongo_stream_readv(mongoc_stream_t *stream, mongoc_iovec_t *iov, size_t iovcnt, size_t min_bytes, int32_t timeout_msec) /* {{{ */
-{
-	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
-	ssize_t ret = 0;
-	ssize_t read;
-	size_t cur = 0;
-	PHONGO_TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
-
-	php_phongo_set_timeout(base_stream, timeout_msec);
-
-	do {
-		read = php_stream_read(base_stream->stream, iov[cur].iov_base, iov[cur].iov_len);
-		MONGOC_DEBUG("Reading got: %zd wanted: %zd", read, min_bytes);
-
-		if (read <= 0) {
-			if (ret >= (ssize_t)min_bytes) {
-				break;
-			}
-			return -1;
-		}
-
-		ret += read;
-
-		while ((cur < iovcnt) && (read >= (ssize_t)iov[cur].iov_len)) {
-			read -= iov[cur++].iov_len;
-		}
-
-		if (cur == iovcnt) {
-			break;
-		}
-
-		if (ret >= (ssize_t)min_bytes) {
-			break;
-		}
-
-		iov[cur].iov_base = ((char *)iov[cur].iov_base) + read;
-		iov[cur].iov_len -= read;
-	} while(1);
-
-	return ret;
-} /* }}} */
-
-int phongo_stream_setsockopt(mongoc_stream_t *stream, int level, int optname, void *optval, socklen_t optlen) /* {{{ */
-{
-	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
-	int socket = ((php_netstream_data_t *)base_stream->stream->abstract)->socket;
-
-	return setsockopt (socket, level, optname, optval, optlen);
-} /* }}} */
-
-bool phongo_stream_socket_check_closed(mongoc_stream_t *stream) /* {{{ */
-{
-	php_phongo_stream_socket *base_stream = (php_phongo_stream_socket *)stream;
-	PHONGO_TSRMLS_FETCH_FROM_CTX(base_stream->tsrm_ls);
-
-	return PHP_STREAM_OPTION_RETURN_OK != php_stream_set_option(base_stream->stream, PHP_STREAM_OPTION_CHECK_LIVENESS, 0, NULL);
-} /* }}} */
-
-ssize_t phongo_stream_poll (mongoc_stream_poll_t *streams, size_t nstreams, int32_t timeout) /* {{{ */
-{
-	php_pollfd *fds = NULL;
-	size_t i;
-	ssize_t rval = -1;
-	TSRMLS_FETCH();
-
-	fds = emalloc(sizeof(*fds) * nstreams);
-	for (i = 0; i < nstreams; i++) {
-		php_socket_t this_fd;
-
-		if (php_stream_cast(((php_phongo_stream_socket *)streams[i].stream)->stream, PHP_STREAM_AS_FD_FOR_SELECT | PHP_STREAM_CAST_INTERNAL, (void*)&this_fd, 0) == SUCCESS && this_fd >= 0) {
-			fds[i].fd = this_fd;
-			fds[i].events = streams[i].events;
-			fds[i].revents = 0;
-		}
-	}
-
-	rval = php_poll2(fds, nstreams, timeout);
-
-	if (rval > 0) {
-		for (i = 0; i < nstreams; i++) {
-			streams[i].revents = fds[i].revents;
-		}
-	}
-
-	efree(fds);
-
-	return rval;
-} /* }}} */
-
-#if PHP_VERSION_ID < 50600
-static int php_phongo_verify_hostname(const char *hostname, X509 *cert TSRMLS_DC)
-{
-	if (php_mongodb_matches_san_list(cert, hostname) == SUCCESS) {
-		return SUCCESS;
-	}
-
-	if (php_mongodb_matches_common_name(cert, hostname TSRMLS_CC) == SUCCESS) {
-		return SUCCESS;
-	}
-
-	return FAILURE;
-}
-
-int php_phongo_peer_verify(php_stream *stream, X509 *cert, const char *hostname, bson_error_t *error TSRMLS_DC)
-{
-	zval **verify_peer_name;
-
-	/* This option is available since PHP 5.6.0 */
-	if (php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "verify_peer_name", &verify_peer_name) == SUCCESS && zend_is_true(*verify_peer_name)) {
-		zval **zhost = NULL;
-		const char *peer;
-
-		if (php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "peer_name", &zhost) == SUCCESS) {
-			convert_to_string_ex(zhost);
-			peer = Z_STRVAL_PP(zhost);
-		} else {
-			peer = hostname;
-		}
-
-#ifdef HAVE_OPENSSL_EXT
-		if (php_phongo_verify_hostname(peer, cert TSRMLS_CC) == FAILURE) {
-			bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Remote certificate SubjectAltName or CN does not match '%s'", hostname);
-			return false;
-		}
-#else
-		bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Cannot verify remote certificate SubjectAltName or CN. Please ensure that extension is compiled against PHP with OpenSSL or disable the \"verify_peer_name\" SSL context option.");
-		return false;
-#endif
-	}
-
-	return true;
-}
-#endif
-
-bool php_phongo_ssl_verify(php_stream *stream, const char *hostname, bson_error_t *error TSRMLS_DC)
-{
-#if PHP_VERSION_ID >= 70000
-	zval *zcert;
-	zval *verify_expiry;
-#else
-	zval **zcert;
-	zval **verify_expiry;
-#endif
-	X509 *cert;
-
-	if (!PHP_STREAM_CONTEXT(stream)) {
-		return true;
-	}
-
-#if PHP_VERSION_ID >= 70000
-	if (!((zcert = php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "peer_certificate")) != NULL && Z_TYPE_P(zcert) == IS_RESOURCE)) {
-#else
-	if (!(php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "peer_certificate", &zcert) == SUCCESS && Z_TYPE_PP(zcert) == IS_RESOURCE)) {
-#endif
-		bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Could not capture certificate of %s", hostname);
-		return false;
-	}
-
-#if PHP_VERSION_ID >= 70000
-	cert = (X509 *)x509_from_zval(zcert TSRMLS_CC);
-#else
-	cert = (X509 *)x509_from_zval(*zcert TSRMLS_CC);
-#endif
-	if (!cert) {
-		bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Could not get certificate of %s", hostname);
-		return false;
-	}
-
-#if PHP_VERSION_ID < 50600
-	if (!php_phongo_peer_verify(stream, cert, hostname, error TSRMLS_CC)) {
-		return false;
-	}
-#endif
-
-#if PHP_VERSION_ID >= 70000
-	if ((verify_expiry = php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "verify_expiry")) != NULL && zend_is_true(verify_expiry)) {
-#else
-	if (php_stream_context_get_option(PHP_STREAM_CONTEXT(stream), "ssl", "verify_expiry", &verify_expiry) == SUCCESS && zend_is_true(*verify_expiry)) {
-#endif
-#ifdef HAVE_OPENSSL_EXT
-		time_t current     = time(NULL);
-		time_t valid_from  = php_mongodb_asn1_time_to_time_t(X509_get_notBefore(cert) TSRMLS_CC);
-		time_t valid_until = php_mongodb_asn1_time_to_time_t(X509_get_notAfter(cert) TSRMLS_CC);
-
-		if (valid_from > current) {
-			bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Certificate is not valid yet on %s", hostname);
-			return false;
-		}
-		if (current > valid_until) {
-			bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Certificate has expired on %s", hostname);
-			return false;
-		}
-#else
-		bson_set_error(error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Cannot verify certificate expiration. Please ensure that extension is compiled against PHP with OpenSSL or disable the \"verify_expiry\" SSL context option.");
-		return false;
-#endif
-	}
-
-	return true;
-}
-
-mongoc_stream_t* phongo_stream_initiator(const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error) /* {{{ */
-{
-	zend_error_handling error_handling;
-	php_phongo_stream_socket *base_stream = NULL;
-	php_stream *stream = NULL;
-	const bson_t *options;
-	bson_iter_t iter;
-	struct timeval timeout = {0, 0};
-	struct timeval *timeoutp = NULL;
-	char *uniqid;
-	const char *persistent_id;
-	phongo_char *errmsg = NULL;
-	int errcode;
-	char *dsn;
-	int dsn_len;
-	TSRMLS_FETCH();
-
-	ENTRY;
-
-	switch (host->family) {
-#if defined(AF_INET6)
-		case AF_INET6:
-			dsn_len = spprintf(&dsn, 0, "tcp://[%s]:%d", host->host, host->port);
-			break;
-#endif
-		case AF_INET:
-			dsn_len = spprintf(&dsn, 0, "tcp://%s:%d", host->host, host->port);
-			break;
-
-		case AF_UNIX:
-			dsn_len = spprintf(&dsn, 0, "unix://%s", host->host);
-			break;
-
-		default:
-			bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_INVALID_TYPE, "Invalid address family: 0x%02x", host->family);
-			RETURN(NULL);
-	}
-
-	options = mongoc_uri_get_options(uri);
-
-	if (bson_iter_init_find_case (&iter, options, "connecttimeoutms") && BSON_ITER_HOLDS_INT32 (&iter)) {
-		int32_t connecttimeoutms = MONGOC_DEFAULT_CONNECTTIMEOUTMS;
-
-		if (!(connecttimeoutms = bson_iter_int32(&iter))) {
-			connecttimeoutms = MONGOC_DEFAULT_CONNECTTIMEOUTMS;
-		}
-
-		timeout.tv_sec = connecttimeoutms / 1000;
-		timeout.tv_usec = (connecttimeoutms % 1000) * 1000;
-
-		timeoutp = &timeout;
-		MONGOC_DEBUG("Applying connectTimeoutMS: %d", connecttimeoutms);
-	}
-
-	spprintf(&uniqid, 0, "%s:%d[%s]", host->host, host->port, mongoc_uri_get_string(uri));
-
-	/* Do not persist SSL streams to avoid errors attempting to reinitialize SSL
-	 * on subsequent requests (see: PHPC-720) */
-	persistent_id = mongoc_uri_get_ssl(uri) ? NULL : uniqid;
-
-	MONGOC_DEBUG("Connecting to '%s'", uniqid);
-	zend_replace_error_handling(EH_SUPPRESS, NULL, &error_handling TSRMLS_CC);
-	stream = php_stream_xport_create(dsn, dsn_len, 0, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, persistent_id, timeoutp, (php_stream_context *)user_data, &errmsg, &errcode);
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
-	if (!stream) {
-		bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_CONNECT, "Failed connecting to '%s:%d': %s", host->host, host->port, ZSTR_VAL(errmsg));
-		efree(dsn);
-		efree(uniqid);
-		if (errmsg) {
-			phongo_char_free(errmsg);
-		}
-		RETURN(NULL);
-	}
-	php_stream_auto_cleanup(stream);
-
-	MONGOC_DEBUG("Created: RSRC#%d as '%s'", PHONGO_STREAM_ID(stream), uniqid);
-	efree(uniqid);
-
-	if (mongoc_uri_get_ssl(uri)) {
-		zend_replace_error_handling(EH_THROW, php_phongo_sslconnectionexception_ce, &error_handling TSRMLS_CC);
-
-		MONGOC_DEBUG("Enabling SSL (stream will not be persisted)");
-
-		/* Capture the server certificate so we can do further verification */
-		if (PHP_STREAM_CONTEXT(stream)) {
-			zval capture;
-			ZVAL_BOOL(&capture, 1);
-			php_stream_context_set_option(PHP_STREAM_CONTEXT(stream), "ssl", "capture_peer_cert", &capture);
-		}
-
-		if (php_stream_xport_crypto_setup(stream, PHONGO_CRYPTO_METHOD, NULL TSRMLS_CC) < 0) {
-			zend_restore_error_handling(&error_handling TSRMLS_CC);
-			php_stream_free(stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
-			bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_INVALID_TYPE, "Failed to setup crypto, is the OpenSSL extension loaded?");
-			efree(dsn);
-			RETURN(NULL);
-		}
-
-		if (php_stream_xport_crypto_enable(stream, 1 TSRMLS_CC) < 0) {
-			zend_restore_error_handling(&error_handling TSRMLS_CC);
-			php_stream_free(stream, PHP_STREAM_FREE_CLOSE_PERSISTENT | PHP_STREAM_FREE_RSRC_DTOR);
-			bson_set_error (error, MONGOC_ERROR_STREAM, MONGOC_ERROR_STREAM_INVALID_TYPE, "Failed to setup crypto, is the server running with SSL?");
-			efree(dsn);
-			RETURN(NULL);
-		}
-
-		if (!php_phongo_ssl_verify(stream, host->host, error TSRMLS_CC)) {
-			zend_restore_error_handling(&error_handling TSRMLS_CC);
-			php_stream_pclose(stream);
-			efree(dsn);
-			RETURN(NULL);
-		}
-
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
-	}
-	efree(dsn);
-
-
-	/* We only need the context really for SSL initialization, safe to remove now */
-	php_stream_context_set(stream, NULL);
-
-	base_stream = ecalloc(1, sizeof(php_phongo_stream_socket));
-	base_stream->stream = stream;
-	base_stream->uri = uri;
-	base_stream->host = host;
-	TSRMLS_SET_CTX(base_stream->tsrm_ls);
-
-	/* flush missing, doesn't seem to be used */
-	base_stream->vtable.type = 100;
-	base_stream->vtable.destroy = phongo_stream_destroy;
-	base_stream->vtable.failed  = phongo_stream_failed;
-	base_stream->vtable.close = phongo_stream_close;
-	base_stream->vtable.writev = phongo_stream_writev;
-	base_stream->vtable.readv = phongo_stream_readv;
-	base_stream->vtable.setsockopt = phongo_stream_setsockopt;
-	base_stream->vtable.check_closed = phongo_stream_socket_check_closed;
-	base_stream->vtable.poll = phongo_stream_poll;
-
-	if (host->family != AF_UNIX) {
-		int flag = 1;
-
-		if (phongo_stream_setsockopt((mongoc_stream_t *)base_stream, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int))) {
-			MONGOC_WARNING("setsockopt TCP_NODELAY failed");
-		}
-	}
-
-	RETURN((mongoc_stream_t *)base_stream);
-} /* }}} */
-
-/* }}} */
-
 /* {{{ mongoc types from from_zval */
 const mongoc_write_concern_t* phongo_write_concern_from_zval(zval *zwrite_concern TSRMLS_DC) /* {{{ */
 {
@@ -1575,81 +1036,6 @@ static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options
 	return uri;
 } /* }}} */
 
-void php_phongo_populate_default_ssl_ctx(php_stream_context *ctx, zval *driverOptions) /* {{{ */
-{
-#if PHP_VERSION_ID >= 70000
-	zval                     *tmp;
-
-#define SET_STRING_CTX(name) \
-		if (driverOptions && php_array_exists(driverOptions, name)) { \
-			zval ztmp; \
-			zend_bool ctmp_free; \
-			int ctmp_len; \
-			char *ctmp; \
-			ctmp = php_array_fetchl_string(driverOptions, name, sizeof(name)-1, &ctmp_len, &ctmp_free); \
-			ZVAL_STRING(&ztmp, ctmp); \
-			if (ctmp_free) { \
-				str_efree(ctmp); \
-			} \
-			php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
-			zval_ptr_dtor(&ztmp); \
-		}
-#define SET_BOOL_CTX(name, defaultvalue) \
-		{ \
-			zval ztmp; \
-			if (driverOptions && php_array_exists(driverOptions, name)) { \
-				ZVAL_BOOL(&ztmp, php_array_fetchl_bool(driverOptions, ZEND_STRL(name))); \
-				php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
-			} \
-			else if ((tmp = php_stream_context_get_option(ctx, "ssl", name)) == NULL) { \
-				ZVAL_BOOL(&ztmp, defaultvalue); \
-				php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
-			} \
-		}
-#else
-	zval                     **tmp;
-
-#define SET_STRING_CTX(name) \
-		if (driverOptions && php_array_exists(driverOptions, name)) { \
-			zval ztmp; \
-			zend_bool ctmp_free; \
-			int ctmp_len; \
-			char *ctmp; \
-			ctmp = php_array_fetchl_string(driverOptions, name, sizeof(name)-1, &ctmp_len, &ctmp_free); \
-			ZVAL_STRING(&ztmp, ctmp, ctmp_free); \
-			php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
-		}
-#define SET_BOOL_CTX(name, defaultvalue) \
-		{ \
-			zval ztmp; \
-			if (driverOptions && php_array_exists(driverOptions, name)) { \
-				ZVAL_BOOL(&ztmp, php_array_fetchl_bool(driverOptions, ZEND_STRL(name))); \
-				php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
-			} \
-			else if (php_stream_context_get_option(ctx, "ssl", name, &tmp) == FAILURE) { \
-				ZVAL_BOOL(&ztmp, defaultvalue); \
-				php_stream_context_set_option(ctx, "ssl", name, &ztmp); \
-			} \
-		}
-#endif
-
-		SET_BOOL_CTX("verify_peer", 1);
-		SET_BOOL_CTX("verify_peer_name", 1);
-		SET_BOOL_CTX("verify_hostname", 1);
-		SET_BOOL_CTX("verify_expiry", 1);
-		SET_BOOL_CTX("allow_self_signed", 0);
-
-		SET_STRING_CTX("peer_name");
-		SET_STRING_CTX("local_pk");
-		SET_STRING_CTX("local_cert");
-		SET_STRING_CTX("cafile");
-		SET_STRING_CTX("capath");
-		SET_STRING_CTX("passphrase");
-		SET_STRING_CTX("ciphers");
-#undef SET_BOOL_CTX
-#undef SET_STRING_CTX
-} /* }}} */
-
 static bool php_phongo_apply_rc_options_to_uri(mongoc_uri_t *uri, bson_t *options TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
@@ -1878,17 +1264,130 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t *uri, bson_t *option
 	return true;
 } /* }}} */
 
-static mongoc_client_t *php_phongo_make_mongo_client(php_phongo_manager_t *manager, const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
+static bool php_phongo_apply_ssl_opts(mongoc_client_t *client, zval *zdriverOptions TSRMLS_DC)
+{
+	mongoc_ssl_opt_t ssl_opt = {0};
+	zval *zoptions;
+	zend_bool free_pem_file = 0, free_pem_pwd = 0, free_ca_file = 0, free_ca_dir = 0, free_crl_file = 0;
+	int plen;
+	bool valid_options;
+
+	if (!zdriverOptions) {
+		return false;
+	}
+
+	zoptions = zdriverOptions;
+
+	/* Use SSL context options if provided for backwards compatibility */
+	if (php_array_existsc(zdriverOptions, "context")) {
+		php_stream_context *context;
+		zval *zcontext;
+
+		zcontext = php_array_fetchc(zdriverOptions, "context");
+
+		context = php_stream_context_from_zval(zcontext, 1);
+
+		if (!context) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"context\" driver option is not a valid Stream-Context resource");
+			return false;
+		}
+
+#if PHP_VERSION_ID >= 70000
+		zoptions = php_array_fetchc_array(&context->options, "ssl");
+#else
+		zoptions = php_array_fetchc_array(context->options, "ssl");
+#endif
+
+		if (!zoptions) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Stream-Context resource does not contain \"ssl\" options array");
+			return false;
+		}
+	}
+
+	/* Check canonical option names first and fall back to SSL context options
+	 * for backwards compatibility. */
+	if (php_array_existsc(zoptions, "allow_invalid_hostname")) {
+		ssl_opt.allow_invalid_hostname = php_array_fetchc_bool(zoptions, "allow_invalid_hostname");
+	}
+
+	if (php_array_existsc(zoptions, "weak_cert_validation")) {
+		ssl_opt.weak_cert_validation = php_array_fetchc_bool(zoptions, "weak_cert_validation");
+	} else if (php_array_existsc(zoptions, "allow_self_signed")) {
+		ssl_opt.weak_cert_validation = php_array_fetchc_bool(zoptions, "allow_self_signed");
+	}
+
+	if (php_array_existsc(zoptions, "pem_file")) {
+		ssl_opt.pem_file = php_array_fetchc_string(zoptions, "pem_file", &plen, &free_pem_file);
+	} else if (php_array_existsc(zoptions, "local_cert")) {
+		ssl_opt.pem_file = php_array_fetchc_string(zoptions, "local_cert", &plen, &free_pem_file);
+	}
+
+	if (php_array_existsc(zoptions, "pem_pwd")) {
+		ssl_opt.pem_pwd = php_array_fetchc_string(zoptions, "pem_pwd", &plen, &free_pem_pwd);
+	} else if (php_array_existsc(zoptions, "passphrase")) {
+		ssl_opt.pem_pwd = php_array_fetchc_string(zoptions, "passphrase", &plen, &free_pem_pwd);
+	}
+
+	if (php_array_existsc(zoptions, "ca_file")) {
+		ssl_opt.ca_file = php_array_fetchc_string(zoptions, "ca_file", &plen, &free_ca_file);
+	} else if (php_array_existsc(zoptions, "cafile")) {
+		ssl_opt.ca_file = php_array_fetchc_string(zoptions, "cafile", &plen, &free_ca_file);
+	}
+
+	if (php_array_existsc(zoptions, "ca_dir")) {
+		ssl_opt.ca_dir = php_array_fetchc_string(zoptions, "ca_dir", &plen, &free_ca_dir);
+	} else if (php_array_existsc(zoptions, "capath")) {
+		ssl_opt.ca_dir = php_array_fetchc_string(zoptions, "capath", &plen, &free_ca_dir);
+	}
+
+	if (php_array_existsc(zoptions, "crl_file")) {
+		ssl_opt.crl_file = php_array_fetchc_string(zoptions, "crl_file", &plen, &free_crl_file);
+	}
+
+	valid_options = true;
+
+#ifdef MONGOC_ENABLE_SSL_OPENSSL
+	if (ssl_opt.ca_dir) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"ca_dir\" or \"capath\" options may only be used with OpenSSL");
+		valid_options = false;
+	}
+#endif
+
+	if (valid_options) {
+		mongoc_client_set_ssl_opts(client, &ssl_opt);
+	}
+
+	if (free_pem_file) {
+		str_efree(ssl_opt.pem_file);
+	}
+
+	if (free_pem_pwd) {
+		str_efree(ssl_opt.pem_pwd);
+	}
+
+	if (free_ca_file) {
+		str_efree(ssl_opt.ca_file);
+	}
+
+	if (free_ca_dir) {
+		str_efree(ssl_opt.ca_dir);
+	}
+
+	if (free_crl_file) {
+		str_efree(ssl_opt.crl_file);
+	}
+
+	return valid_options;
+}
+
+static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval                      *zdebug = NULL;
-	zval                      *zcontext = NULL;
 #else
 	zval                     **zdebug = NULL;
-	zval                     **zcontext = NULL;
 #endif
-	php_stream_context        *ctx = NULL;
-	const char                *mech, *mongoc_version, *bson_version;
+	const char                *mongoc_version, *bson_version;
 	mongoc_client_t           *client;
 
 	ENTRY;
@@ -1908,22 +1407,6 @@ static mongoc_client_t *php_phongo_make_mongo_client(php_phongo_manager_t *manag
 		zend_alter_ini_entry_ex((char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), Z_STRVAL_PP(zdebug), Z_STRLEN_PP(zdebug), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
 	}
 #endif
-
-#if PHP_VERSION_ID >= 70000
-	if (driverOptions && (zcontext = zend_hash_str_find(Z_ARRVAL_P(driverOptions), "context", sizeof("context")-1)) != NULL) {
-		ctx = php_stream_context_from_zval(zcontext, 0);
-#else
-	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "context", strlen("context") + 1, (void**)&zcontext) == SUCCESS) {
-		ctx = php_stream_context_from_zval(*zcontext, 0);
-#endif
-	} else {
-		zval *tmp = NULL; /* PHP 5.x requires an lvalue */
-		ctx = php_stream_context_from_zval(tmp, 0);
-	}
-
-	if (mongoc_uri_get_ssl(uri)) {
-		php_phongo_populate_default_ssl_ctx(ctx, driverOptions);
-	}
 
 #ifdef HAVE_SYSTEM_LIBMONGOC
 	mongoc_version = mongoc_get_version();
@@ -1952,45 +1435,12 @@ static mongoc_client_t *php_phongo_make_mongo_client(php_phongo_manager_t *manag
 		RETURN(NULL);
 	}
 
-
-	mech = mongoc_uri_get_auth_mechanism(uri);
-
-	/* Check if we are doing X509 auth, in which case extract the username (subject) from the cert if no username is provided */
-	if (mech && !strcasecmp(mech, "MONGODB-X509") && !mongoc_uri_get_username(uri)) {
-#if PHP_VERSION_ID >= 70000
-		zval *pem;
-#else
-		zval **pem;
-#endif
-
-#if PHP_VERSION_ID >= 70000
-		if ((pem = php_stream_context_get_option(ctx, "ssl", "local_cert")) != NULL) {
-			zend_string *s = zval_get_string(pem);
-#else
-		if (SUCCESS == php_stream_context_get_option(ctx, "ssl", "local_cert", &pem)) {
-			convert_to_string_ex(pem);
-#endif
-			/* mongoc_client_set_ssl_opts() copies mongoc_ssl_opt_t shallowly;
-			 * its strings must be kept valid for the life of mongoc_client_t */
-			manager->pem_file = ecalloc(1, MAXPATHLEN);
-
-#if PHP_VERSION_ID >= 70000
-			if (VCWD_REALPATH(ZSTR_VAL(s), manager->pem_file)) {
-#else
-			if (VCWD_REALPATH(Z_STRVAL_PP(pem), manager->pem_file)) {
-#endif
-				mongoc_ssl_opt_t ssl_options = {0};
-
-				ssl_options.pem_file = manager->pem_file;
-				mongoc_client_set_ssl_opts(client, &ssl_options);
-			}
-#if PHP_VERSION_ID >= 70000
-			zend_string_release(s);
-#endif
+	if (mongoc_uri_get_ssl(uri) && driverOptions) {
+		if (!php_phongo_apply_ssl_opts(client, driverOptions TSRMLS_CC)) {
+			mongoc_client_destroy(client);
+			RETURN(NULL);
 		}
 	}
-
-	mongoc_client_set_stream_initiator(client, phongo_stream_initiator, ctx);
 
 	RETURN(client);
 } /* }}} */
@@ -2012,23 +1462,12 @@ bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 		return false;
 	}
 
-	manager->client = php_phongo_make_mongo_client(manager, uri, driverOptions TSRMLS_CC);
+	manager->client = php_phongo_make_mongo_client(uri, driverOptions TSRMLS_CC);
 	mongoc_uri_destroy(uri);
 
 	if (!manager->client) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to create Manager from URI: '%s'", uri_string);
 		return false;
-	}
-
-	/* Keep a reference to driverOptions, since it may be referenced later for
-	 * lazy stream initialization. */
-	if (driverOptions) {
-#if PHP_VERSION_ID >= 70000
-		ZVAL_COPY(&manager->driverOptions, driverOptions);
-#else
-		Z_ADDREF_P(driverOptions);
-		manager->driverOptions = driverOptions;
-#endif
 	}
 
 	return true;

@@ -82,7 +82,6 @@ typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_client_t    *client;
 	char               *pem_file;
-	PHONGO_STRUCT_ZVAL  driverOptions;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_manager_t;
 
