@@ -1,6 +1,7 @@
 --TEST--
 MongoDB\BSON\Decimal128 serialization
 --SKIPIF--
+<?php if (!class_exists('MongoDB\BSON\Decimal128')) { die('skip MongoDB\BSON\Decimal128 is not available'); } ?>
 <?php require __DIR__ . '/../utils/basic-skipif.inc'?>
 --FILE--
 <?php

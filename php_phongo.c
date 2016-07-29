@@ -2086,6 +2086,7 @@ void php_phongo_new_binary_from_binary_and_type(zval *object, const char *data, 
 	intern->type = (uint8_t) type;
 } /* }}} */
 
+#ifdef BSON_EXPERIMENTAL_FEATURES
 void php_phongo_new_decimal128(zval *object, const bson_decimal128_t *decimal TSRMLS_DC) /* {{{ */
 {
 	php_phongo_decimal128_t *intern;
@@ -2096,6 +2097,7 @@ void php_phongo_new_decimal128(zval *object, const bson_decimal128_t *decimal TS
 	memcpy(&intern->decimal, decimal, sizeof(bson_decimal128_t));
 	intern->initialized = true;
 } /* }}} */
+#endif
 
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC) /* {{{ */
 {
@@ -2493,7 +2495,9 @@ PHP_MINIT_FUNCTION(mongodb)
 	PHP_MINIT(Unserializable)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Persistable)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Binary)(INIT_FUNC_ARGS_PASSTHRU);
+#ifdef BSON_EXPERIMENTAL_FEATURES
 	PHP_MINIT(Decimal128)(INIT_FUNC_ARGS_PASSTHRU);
+#endif
 	PHP_MINIT(Javascript)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(MaxKey)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(MinKey)(INIT_FUNC_ARGS_PASSTHRU);

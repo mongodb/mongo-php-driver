@@ -206,7 +206,6 @@ if test "$MONGODB" != "no"; then
     bson-atomic.c \
     bson-clock.c \
     bson-context.c \
-    bson-decimal128.c \
     bson-error.c \
     bson-iter.c \
     bson-iso8601.c \
@@ -351,6 +350,8 @@ PHP_ARG_WITH(libbson, whether to use system libbson,
   else
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES,            [$STD_CFLAGS], shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES,            [$STD_CFLAGS], shared_objects_mongodb, yes)
+
+    AC_SUBST(BSON_EXPERIMENTAL_FEATURES, 0)
   fi
 
 dnl libmongoc stuff {{{
@@ -414,6 +415,7 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
     AC_SUBST(MONGOC_ENABLE_CRYPTO_CNG, 0)
 
     AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
+    AC_SUBST(MONGOC_EXPERIMENTAL_FEATURES, 0)
   fi
 
 

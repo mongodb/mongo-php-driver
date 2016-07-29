@@ -1,6 +1,7 @@
 --TEST--
 MongoDB\BSON\Decimal128 requires valid decimal string
 --SKIPIF--
+<?php if (!class_exists('MongoDB\BSON\Decimal128')) { die('skip MongoDB\BSON\Decimal128 is not available'); } ?>
 <?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM handles parameter parsing differently"); ?>
 <?php require __DIR__ . '/../utils/basic-skipif.inc'?>
 --FILE--

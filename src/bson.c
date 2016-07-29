@@ -151,6 +151,7 @@ uint8_t php_phongo_binary_get_type(zval *object TSRMLS_DC)
 	return intern->type;
 }
 
+#ifdef BSON_EXPERIMENTAL_FEATURES
 static bson_decimal128_t *php_phongo_decimal128_get_decimal128(zval *object TSRMLS_DC)
 {
 	php_phongo_decimal128_t *intern;
@@ -159,6 +160,7 @@ static bson_decimal128_t *php_phongo_decimal128_get_decimal128(zval *object TSRM
 
 	return &intern->decimal;
 }
+#endif
 
 char *php_phongo_regex_get_pattern(zval *object TSRMLS_DC)
 {
@@ -347,6 +349,7 @@ bool php_phongo_bson_visit_date_time(const bson_iter_t *iter ARG_UNUSED, const c
 }
 /* }}} */
 
+#ifdef BSON_EXPERIMENTAL_FEATURES
 bool php_phongo_bson_visit_decimal128(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_decimal128_t *decimal, void *data) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
@@ -370,6 +373,7 @@ bool php_phongo_bson_visit_decimal128(const bson_iter_t *iter ARG_UNUSED, const 
 	return false;
 }
 /* }}} */
+#endif
 
 bool php_phongo_bson_visit_null(const bson_iter_t *iter ARG_UNUSED, const char *key, void *data) /* {{{ */
 {
@@ -616,7 +620,9 @@ static const bson_visitor_t php_bson_visitors = {
    php_phongo_bson_visit_maxkey,
    php_phongo_bson_visit_minkey,
    php_phongo_bson_visit_unsupported_type,
+#ifdef BSON_EXPERIMENTAL_FEATURES
    php_phongo_bson_visit_decimal128,
+#endif
    { NULL }
 };
 
@@ -970,11 +976,13 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			bson_append_binary(bson, key, key_len, php_phongo_binary_get_type(object TSRMLS_CC), data, data_len);
 			return;
 		}
+#ifdef BSON_EXPERIMENTAL_FEATURES
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_decimal128_ce TSRMLS_CC)) {
 			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Decimal128");
 			bson_append_decimal128(bson, key, key_len, php_phongo_decimal128_get_decimal128(object TSRMLS_CC));
 			return;
 		}
+#endif
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_regex_ce TSRMLS_CC)) {
 			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Regex");
 			bson_append_regex(bson, key, key_len, php_phongo_regex_get_pattern(object TSRMLS_CC), php_phongo_regex_get_flags(object TSRMLS_CC));
