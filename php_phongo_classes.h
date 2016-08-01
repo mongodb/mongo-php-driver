@@ -65,9 +65,11 @@ static inline php_phongo_writeresult_t* php_writeresult_fetch_object(zend_object
 static inline php_phongo_binary_t* php_binary_fetch_object(zend_object *obj) {
     return (php_phongo_binary_t *)((char *)obj - XtOffsetOf(php_phongo_binary_t, std));
 }
+#ifdef BSON_EXPERIMENTAL_FEATURES
 static inline php_phongo_decimal128_t* php_decimal128_fetch_object(zend_object *obj) {
     return (php_phongo_decimal128_t *)((char *)obj - XtOffsetOf(php_phongo_decimal128_t, std));
 }
+#endif
 static inline php_phongo_javascript_t* php_javascript_fetch_object(zend_object *obj) {
     return (php_phongo_javascript_t *)((char *)obj - XtOffsetOf(php_phongo_javascript_t, std));
 }
@@ -104,7 +106,9 @@ static inline php_phongo_utcdatetime_t* php_utcdatetime_fetch_object(zend_object
 # define Z_WRITEERROR_OBJ_P(zv)        (php_writeerror_fetch_object(Z_OBJ_P(zv)))
 # define Z_WRITERESULT_OBJ_P(zv)       (php_writeresult_fetch_object(Z_OBJ_P(zv)))
 # define Z_BINARY_OBJ_P(zv)            (php_binary_fetch_object(Z_OBJ_P(zv)))
+#ifdef BSON_EXPERIMENTAL_FEATURES
 # define Z_DECIMAL128_OBJ_P(zv)        (php_decimal128_fetch_object(Z_OBJ_P(zv)))
+#endif
 # define Z_JAVASCRIPT_OBJ_P(zv)        (php_javascript_fetch_object(Z_OBJ_P(zv)))
 # define Z_MAXKEY_OBJ_P(zv)            (php_maxkey_fetch_object(Z_OBJ_P(zv)))
 # define Z_MINKEY_OBJ_P(zv)            (php_minkey_fetch_object(Z_OBJ_P(zv)))
@@ -127,7 +131,9 @@ static inline php_phongo_utcdatetime_t* php_utcdatetime_fetch_object(zend_object
 # define Z_OBJ_WRITEERROR(zo)          (php_writeerror_fetch_object(zo))
 # define Z_OBJ_WRITERESULT(zo)         (php_writeresult_fetch_object(zo))
 # define Z_OBJ_BINARY(zo)              (php_binary_fetch_object(zo))
+#ifdef BSON_EXPERIMENTAL_FEATURES
 # define Z_OBJ_DECIMAL128(zo)          (php_decimal128_fetch_object(zo))
+#endif
 # define Z_OBJ_JAVASCRIPT(zo)          (php_javascript_fetch_object(zo))
 # define Z_OBJ_MAXKEY(zo)              (php_maxkey_fetch_object(zo))
 # define Z_OBJ_MINKEY(zo)              (php_minkey_fetch_object(zo))
@@ -152,7 +158,9 @@ static inline php_phongo_utcdatetime_t* php_utcdatetime_fetch_object(zend_object
 # define Z_WRITEERROR_OBJ_P(zv)        ((php_phongo_writeerror_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_WRITERESULT_OBJ_P(zv)       ((php_phongo_writeresult_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_BINARY_OBJ_P(zv)            ((php_phongo_binary_t *)zend_object_store_get_object(zv TSRMLS_CC))
+#ifdef BSON_EXPERIMENTAL_FEATURES
 # define Z_DECIMAL128_OBJ_P(zv)        ((php_phongo_decimal128_t *)zend_object_store_get_object(zv TSRMLS_CC))
+#endif
 # define Z_JAVASCRIPT_OBJ_P(zv)        ((php_phongo_javascript_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_MAXKEY_OBJ_P(zv)            ((php_phongo_maxkey_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_MINKEY_OBJ_P(zv)            ((php_phongo_minkey_t *)zend_object_store_get_object(zv TSRMLS_CC))
@@ -175,7 +183,9 @@ static inline php_phongo_utcdatetime_t* php_utcdatetime_fetch_object(zend_object
 # define Z_OBJ_WRITEERROR(zo)          ((php_phongo_writeerror_t *)zo)
 # define Z_OBJ_WRITERESULT(zo)         ((php_phongo_writeresult_t *)zo)
 # define Z_OBJ_BINARY(zo)              ((php_phongo_binary_t *)zo)
+#ifdef BSON_EXPERIMENTAL_FEATURES
 # define Z_OBJ_DECIMAL128(zo)          ((php_phongo_decimal128_t *)zo)
+#endif
 # define Z_OBJ_JAVASCRIPT(zo)          ((php_phongo_javascript_t *)zo)
 # define Z_OBJ_MAXKEY(zo)              ((php_phongo_maxkey_t *)zo)
 # define Z_OBJ_MINKEY(zo)              ((php_phongo_minkey_t *)zo)
@@ -225,7 +235,9 @@ extern PHONGO_API zend_class_entry *php_phongo_persistable_ce;
 extern PHONGO_API zend_class_entry *php_phongo_unserializable_ce;
 extern PHONGO_API zend_class_entry *php_phongo_serializable_ce;
 extern PHONGO_API zend_class_entry *php_phongo_binary_ce;
+#ifdef BSON_EXPERIMENTAL_FEATURES
 extern PHONGO_API zend_class_entry *php_phongo_decimal128_ce;
+#endif
 extern PHONGO_API zend_class_entry *php_phongo_javascript_ce;
 extern PHONGO_API zend_class_entry *php_phongo_maxkey_ce;
 extern PHONGO_API zend_class_entry *php_phongo_minkey_ce;
@@ -272,7 +284,9 @@ PHP_MINIT_FUNCTION(Unserializable);
 PHP_MINIT_FUNCTION(Serializable);
 PHP_MINIT_FUNCTION(Persistable);
 PHP_MINIT_FUNCTION(Binary);
+#ifdef BSON_EXPERIMENTAL_FEATURES
 PHP_MINIT_FUNCTION(Decimal128);
+#endif
 PHP_MINIT_FUNCTION(Javascript);
 PHP_MINIT_FUNCTION(MaxKey);
 PHP_MINIT_FUNCTION(MinKey);

@@ -75,7 +75,7 @@ object(Person)#%d (5) {
   ["secret":protected]=>
   string(24) "Hannes confidential info"
 }
-Test { "0" : { "__pclass" : { "$type" : "80", "$binary" : "UGVyc29u" }, "name" : "Hannes", "age" : 42, "addresses" : [ { "__pclass" : { "$type" : "80", "$binary" : "QWRkcmVzcw==" }, "zip" : 94086, "country" : "USA" }, { "__pclass" : { "$type" : "80", "$binary" : "QWRkcmVzcw==" }, "zip" : 200, "country" : "Iceland" } ], "friends" : [ { "__pclass" : { "$type" : "80", "$binary" : "UGVyc29u" }, "name" : "Jeremy", "age" : 21, "addresses" : [  ], "friends" : [  ] } ] } }
+Test { "0" : { "__pclass" : { "$binary" : "UGVyc29u", "$type" : "80" }, "name" : "Hannes", "age" : 42, "addresses" : [ { "__pclass" : { "$binary" : "QWRkcmVzcw==", "$type" : "80" }, "zip" : 94086, "country" : "USA" }, { "__pclass" : { "$binary" : "QWRkcmVzcw==", "$type" : "80" }, "zip" : 200, "country" : "Iceland" } ], "friends" : [ { "__pclass" : { "$binary" : "UGVyc29u", "$type" : "80" }, "name" : "Jeremy", "age" : 21, "addresses" : [  ], "friends" : [  ] } ] } }
      0 : 23 01 00 00 03 30 00 1b 01 00 00 05 5f 5f 70 63  [#....0......__pc]
     10 : 6c 61 73 73 00 06 00 00 00 80 50 65 72 73 6f 6e  [lass......Person]
     20 : 02 6e 61 6d 65 00 07 00 00 00 48 61 6e 6e 65 73  [.name.....Hannes]
