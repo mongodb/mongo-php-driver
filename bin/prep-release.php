@@ -62,8 +62,6 @@ function get_files() {
         "src/libmongoc/src/mongoc/*.{c,h,def,defs}",
         "src/libmongoc/src/mongoc/*.h.{in}",
         "src/libmongoc/VERSION*",
-
-        "win32/*.h",
       ),
       'test' => array(
         "Vagrantfile",
