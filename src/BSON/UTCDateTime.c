@@ -204,7 +204,7 @@ PHP_METHOD(UTCDateTime, __construct)
 			return;
 		}
 
-		php_phongo_utcdatetime_init_from_string(intern, s_milliseconds, s_milliseconds_len);
+		php_phongo_utcdatetime_init_from_string(intern, s_milliseconds, s_milliseconds_len TSRMLS_CC);
 	}
 #else
 # error Unsupported architecture (integers are neither 32-bit nor 64-bit)
