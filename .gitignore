@@ -62,9 +62,7 @@ failed.txt
 
 # Release files
 !bin/*.php
-ChangeLog
 package.xml
-phongo-*tgz
 mongodb-*tgz
 
 # Composer (for testing)

@@ -27,14 +27,6 @@ function verify_version($version, $stability) {
         usage();
     }
 }
-function verify_changelog($filename) {
-    if (!file_exists($filename)) {
-        echo "Missing ChangeLog file!\n";
-        echo "Need pre-populated $filename\n";
-        echo "Did you forget to run $ make ChangeLog ?\n";
-        usage();
-    }
-}
 
 function get_files() {
     $dirs = array(
@@ -88,8 +80,6 @@ function get_files() {
       'doc' => array(
         "README*",
         "LICENSE",
-        "RELEASE*",
-        "ChangeLog*",
       )
     );
     $files = array();
@@ -181,30 +171,10 @@ if (stristr($VERSION, '-rc') !== false) {
 
 verify_stability($STABILITY);
 verify_version($VERSION, $STABILITY);
-$changelog = __DIR__ . "/../RELEASE-".$VERSION;
-verify_changelog($changelog);
-
 
 $currtime = new DateTime('now', new DateTimeZone('UTC'));
 $DATE = $currtime->format('Y-m-d');
 $TIME = $currtime->format('H:i:s');
-
-$fullnotes = file($changelog, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
-$NOTES = array();
-foreach($fullnotes as $note) {
-    $note = "    " . htmlspecialchars(trim($note), ENT_NOQUOTES);
-    /* PHP PHPC JIRA Project */
-    if (strstr($note, "PHPC-") !== false) {
-        $NOTES[] = $note;
-        continue;
-    }
-    /* Coverity ID */
-    if (strstr($note, "CID-") !== false) {
-        $NOTES[] = $note;
-        continue;
-    }
-}
-
 
 $TREE = make_tree(get_files());
 
@@ -215,7 +185,6 @@ $REPLACE = array(
     "%RELEASE_TIME%" => $TIME,
     "%RELEASE_VERSION%" => $VERSION,
     "%RELEASE_STABILITY%" => $STABILITY,
-    "%RELEASE_NOTES%" => join("\n", $NOTES),
     "%RELEASE_FILES%" => join("\n", $TREE),
 );
 
