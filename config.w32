@@ -1,12 +1,48 @@
 // vim:ft=javascript
 
+function mongodb_generate_header(inpath, outpath, replacements)
+{
+  STDOUT.WriteLine("Generating " + outpath);
+
+  var infile = FSO.OpenTextFile(inpath, 1);
+  var outdata = infile.ReadAll();
+  infile.Close();
+
+  for (var key in replacements) {
+    outdata = outdata.replace("@" + key + "@", replacements[key]);
+  }
+
+  var outfile = FSO.CreateTextFile(outpath, true);
+  outfile.Write(outdata);
+  outfile.Close();
+}
+
+function mongodb_parse_version_file(inpath, prefix)
+{
+  var infile = FSO.OpenTextFile(inpath, 1);
+  var version = infile.ReadLine();
+  infile.Close();
+
+  var xyz_pre = version.split("-");
+  var xyz = xyz_pre[0].split(".");
+
+  var replacements = {};
+  replacements[prefix + "VERSION"] = version;
+  replacements[prefix + "MAJOR_VERSION"] = xyz[0];
+  replacements[prefix + "MINOR_VERSION"] = xyz[1];
+  replacements[prefix + "MICRO_VERSION"] = xyz[2];
+  replacements[prefix + "PRERELEASE_VERSION"] = xyz_pre[1];
+
+  return replacements;
+}
+
 ARG_ENABLE("mongodb", "MongoDB support", "no");
 ARG_WITH("mongodb-sasl", "MongoDB: Build against Cyrus-SASL", "yes");
 
 if (PHP_MONGODB != "no") {
   ADD_EXTENSION_DEP("mongodb", "openssl", false);
 
-  ADD_FLAG("CFLAGS_MONGODB", " /I" + configure_module_dirname + " /I" + configure_module_dirname + "/src/libmongoc/src/mongoc" + " /I" + configure_module_dirname + "/src/libbson/src/bson/ /I" + configure_module_dirname + "/src/libbson/src /I" + configure_module_dirname + "/src/contrib");
+  ADD_FLAG("CFLAGS_MONGODB", " /D BSON_COMPILATION /D MONGOC_COMPILATION /D MONGOC_TRACE /I" + configure_module_dirname + " /I" + configure_module_dirname + "/src/libmongoc/src/mongoc" + " /I" + configure_module_dirname + "/src/libbson/src/bson/ /I" + configure_module_dirname + "/src/libbson/src /I" + configure_module_dirname + "/src/contrib");
   EXTENSION("mongodb", "php_phongo.c");
   ADD_SOURCES(configure_module_dirname + "/", "phongo_compat.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src", "bson.c", "mongodb");
@@ -28,56 +64,94 @@ if (PHP_MONGODB != "no") {
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-sasl.c", "mongodb");
 
   AC_DEFINE("HAVE_MONGOC", 1);
-  AC_DEFINE("MONGOC_HAVE_WEAK_SYMBOLS", 1);
 
-  AC_DEFINE("BSON_COMPILATION", 1);
-  AC_DEFINE("BSON_EXTRA_ALIGN", 0);
-  AC_DEFINE("BSON_HAVE_DECIMAL128", 0);
-  AC_DEFINE("BSON_EXPERIMENTAL_FEATURES", 0);
-  AC_DEFINE("MONGOC_COMPILATION", 1);
-  AC_DEFINE("MONGOC_NO_AUTOMATIC_GLOBALS", 1);
-  AC_DEFINE("MONGOC_TRACE", 1);
-  AC_DEFINE("MONGOC_EXPERIMENTAL_FEATURES", 0);
+  var bson_opts = {
+    BSON_BYTE_ORDER: 1234,
+    BSON_OS: 2,
+    BSON_HAVE_STDBOOL_H: 0,
+    BSON_HAVE_ATOMIC_32_ADD_AND_FETCH: 0,
+    BSON_HAVE_ATOMIC_64_ADD_AND_FETCH: 0,
+    BSON_PTHREAD_ONCE_INIT_NEEDS_BRACES: 0,
+    BSON_HAVE_CLOCK_GETTIME: 0,
+    BSON_HAVE_STRNLEN: 0,
+    BSON_HAVE_SNPRINTF: 0,
+    BSON_HAVE_REALLOCF: 0,
+    BSON_NEEDS_SET_OUTPUT_FORMAT: 0,
+    BSON_HAVE_TIMESPEC: 0,
+    BSON_EXTRA_ALIGN: 0,
+    BSON_HAVE_SYSCALL_TID: 0,
+    BSON_HAVE_DECIMAL128: 0,
+    BSON_EXPERIMENTAL_FEATURES: 0
+  };
+
+  if (CHECK_FUNC_IN_HEADER("stdio.h", "_set_output_format")) {
+    bson_opts.BSON_NEEDS_SET_OUTPUT_FORMAT = 1;
+  }
+
+  mongodb_generate_header(
+    configure_module_dirname + "/src/libbson/src/bson/bson-config.h.in",
+    configure_module_dirname + "/src/libbson/src/bson/bson-config.h",
+    bson_opts
+  );
+
+  mongodb_generate_header(
+    configure_module_dirname + "/src/libbson/src/bson/bson-version.h.in",
+    configure_module_dirname + "/src/libbson/src/bson/bson-version.h",
+    mongodb_parse_version_file(configure_module_dirname + "/src/libbson/VERSION_CURRENT", "BSON_")
+  );
+
+  var mongoc_opts = {
+    // TODO: Support building with Secure Channel on Windows
+    MONGOC_ENABLE_SSL_SECURE_CHANNEL: 0,
+    MONGOC_ENABLE_CRYPTO_CNG: 0,
+    // Secure Transport does not apply to Windows
+    MONGOC_ENABLE_SSL_SECURE_TRANSPORT: 0,
+    MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO: 0,
+    MONGOC_ENABLE_SSL_OPENSSL: 0,
+    MONGOC_ENABLE_CRYPTO_LIBCRYPTO: 0,
+    MONGOC_ENABLE_SSL: 0,
+    MONGOC_ENABLE_CRYPTO: 0,
+    MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE: 0,
+    MONGOC_ENABLE_SASL: 0,
+    MONGOC_HAVE_SASL_CLIENT_DONE: 0,
+    MONGOC_HAVE_WEAK_SYMBOLS: 0,
+    MONGOC_NO_AUTOMATIC_GLOBALS: 1,
+    MONGOC_EXPERIMENTAL_FEATURES: 0
+  };
 
   if (CHECK_LIB("ssleay32.lib", "mongodb", PHP_MONGODB) &&
       CHECK_LIB("libeay32.lib", "mongodb", PHP_MONGODB) &&
       CHECK_HEADER_ADD_INCLUDE("openssl/ssl.h", "CFLAGS_MONGOC")) {
-    AC_DEFINE("MONGOC_ENABLE_SSL_OPENSSL", 1);
-    AC_DEFINE("MONGOC_ENABLE_CRYPTO_LIBCRYPTO", 1);
-    AC_DEFINE("MONGOC_ENABLE_SSL", 1);
-    AC_DEFINE("MONGOC_ENABLE_CRYPTO", 1);
-    AC_DEFINE("MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE", 1);
+    mongoc_opts.MONGOC_ENABLE_SSL_OPENSSL = 1;
+    mongoc_opts.MONGOC_ENABLE_CRYPTO_LIBCRYPTO = 1;
+    mongoc_opts.MONGOC_ENABLE_SSL = 1;
+    mongoc_opts.MONGOC_ENABLE_CRYPTO = 1;
+    mongoc_opts.MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE = 1;
   } else {
     WARNING("mongodb libopenssl support not enabled, libs not found");
-    AC_DEFINE("MONGOC_ENABLE_SSL_OPENSSL", 0);
-    AC_DEFINE("MONGOC_ENABLE_CRYPTO_LIBCRYPTO", 0);
-    AC_DEFINE("MONGOC_ENABLE_SSL", 0);
-    AC_DEFINE("MONGOC_ENABLE_CRYPTO", 0);
-    AC_DEFINE("MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE", 0);
   }
-
-  // Secure Transport does not apply to Windows
-  AC_DEFINE("MONGOC_ENABLE_SSL_SECURE_TRANSPORT", 0);
-  AC_DEFINE("MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO", 0);
-
-  // TODO: Support building with Secure Channel on Windows
-  AC_DEFINE("MONGOC_ENABLE_SSL_SECURE_CHANNEL", 0)
-  AC_DEFINE("MONGOC_ENABLE_CRYPTO_CNG", 0)
 
   if (PHP_MONGODB_SASL != "no" &&
       CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB) &&
       CHECK_HEADER_ADD_INCLUDE("sasl/sasl.h", "CFLAGS_MONGOC")) {
-    AC_DEFINE("MONGOC_ENABLE_SASL", 1);
-    AC_DEFINE("MONGOC_HAVE_SASL_CLIENT_DONE", CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done") ? 1 : 0);
+    mongoc_opts.MONGOC_ENABLE_SASL = 1;
+    if (CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done")) {
+      mongoc_opts.MONGOC_HAVE_SASL_CLIENT_DONE = 1;
+    }
   } else {
     WARNING("mongodb libsasl support not enabled, libs not found");
-    AC_DEFINE("MONGOC_ENABLE_SASL", 0);
-    AC_DEFINE("MONGOC_HAVE_SASL_CLIENT_DONE", 0);
   }
 
-  FSO.CopyFile(configure_module_dirname + "/win32/bson-config.h", configure_module_dirname + "/src/libbson/src/bson/bson-config.h", true);
-  FSO.CopyFile(configure_module_dirname + "/win32/bson-version.h", configure_module_dirname + "/src/libbson/src/bson/bson-version.h", true);
-  FSO.CopyFile(configure_module_dirname + "/win32/mongoc-config.h", configure_module_dirname + "/src/libmongoc/src/mongoc/mongoc-config.h", true);
-  FSO.CopyFile(configure_module_dirname + "/win32/mongoc-version.h", configure_module_dirname + "/src/libmongoc/src/mongoc/mongoc-version.h", true);
+  mongodb_generate_header(
+    configure_module_dirname + "/src/libmongoc/src/mongoc/mongoc-config.h.in",
+    configure_module_dirname + "/src/libmongoc/src/mongoc/mongoc-config.h",
+    mongoc_opts
+  );
+
+  mongodb_generate_header(
+    configure_module_dirname + "/src/libmongoc/src/mongoc/mongoc-version.h.in",
+    configure_module_dirname + "/src/libmongoc/src/mongoc/mongoc-version.h",
+    mongodb_parse_version_file(configure_module_dirname + "/src/libmongoc/VERSION_CURRENT", "MONGOC_")
+  );
 }
 
