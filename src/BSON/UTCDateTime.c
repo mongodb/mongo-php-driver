@@ -71,7 +71,7 @@ static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t *in
 	errno = 0;
 
 #if defined(PHP_WIN32)
-	milliseconds = _atoi64(s);
+	milliseconds = _atoi64(s_milliseconds);
 #else
 	milliseconds = bson_ascii_strtoll(s_milliseconds, &endptr, 10);
 #endif
@@ -370,6 +370,11 @@ HashTable *php_phongo_utcdatetime_get_properties(zval *object TSRMLS_DC) /* {{{ 
 	php_phongo_utcdatetime_t *intern;
 	HashTable              *props;
 
+#if SIZEOF_LONG == 4
+	char s_milliseconds[24];
+	int s_milliseconds_len;
+#endif
+
 	intern = Z_UTCDATETIME_OBJ_P(object);
 	props = zend_std_get_properties(object TSRMLS_CC);
 
@@ -378,12 +383,7 @@ HashTable *php_phongo_utcdatetime_get_properties(zval *object TSRMLS_DC) /* {{{ 
 	}
 
 #if SIZEOF_LONG == 4
-	{
-		char s_milliseconds[24];
-		int s_milliseconds_len;
-
-		s_milliseconds_len = snprintf(s_milliseconds, sizeof(s_milliseconds), "%" PRId64, intern->milliseconds);
-	}
+	s_milliseconds_len = snprintf(s_milliseconds, sizeof(s_milliseconds), "%" PRId64, intern->milliseconds);
 #endif
 
 #if PHP_VERSION_ID >= 70000
