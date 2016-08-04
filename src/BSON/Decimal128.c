@@ -267,7 +267,7 @@ PHP_MINIT_FUNCTION(Decimal128)
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "Decimal128", php_phongo_decimal128_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Decimal128", php_phongo_decimal128_me);
 	php_phongo_decimal128_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_decimal128_ce->create_object = php_phongo_decimal128_create_object;
 	PHONGO_CE_FINAL(php_phongo_decimal128_ce);

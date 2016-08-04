@@ -312,7 +312,7 @@ PHP_MINIT_FUNCTION(Binary)
 	zend_class_entry ce;
 	(void)type;(void)module_number;
 
-	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "Binary", php_phongo_binary_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Binary", php_phongo_binary_me);
 	php_phongo_binary_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_binary_ce->create_object = php_phongo_binary_create_object;
 	PHONGO_CE_FINAL(php_phongo_binary_ce);
