@@ -5,13 +5,11 @@ BSON\toPHP(): Tests from serialization specification
 
 require_once __DIR__ . '/../utils/tools.php';
 
-use MongoDB\BSON as BSON;
-
 class MyClass
 {
 }
 
-class YourClass implements BSON\Unserializable
+class YourClass implements MongoDB\BSON\Unserializable
 {
     function bsonUnserialize(array $data)
     {
@@ -22,7 +20,7 @@ class YourClass implements BSON\Unserializable
     }
 }
 
-class OurClass implements BSON\Persistable
+class OurClass implements MongoDB\BSON\Persistable
 {
     function bsonSerialize()
     {
@@ -48,7 +46,7 @@ $bMyClass = base64_encode('MyClass');
 $bYourClass = base64_encode('YourClass');
 $bOurClass = base64_encode('OurClass');
 $bTheirClass = base64_encode('TheirClass');
-$bInterface = base64_encode(BSON_NAMESPACE . '\Unserializable');
+$bInterface = base64_encode('MongoDB\BSON\Unserializable');
 
 $testGroups = array(
     array(
@@ -202,7 +200,7 @@ object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
   ["__pclass"]=>
-  object(%SBSON\Binary)#%d (2) {
+  object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(7) "MyClass"
     ["type"]=>
@@ -267,7 +265,7 @@ Class MyClass does not implement MongoDB\BSON\Unserializable
 === IS NOT A CONCRETE CLASS ===
 
 { "foo": "yes" }
-Class %SBSON\Unserializable is not instantiatable
+Class MongoDB\BSON\Unserializable is not instantiatable
 
 
 === IS NOT A CONCRETE CLASS VIA PCLASS ===
@@ -277,9 +275,9 @@ object(YourClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
   ["__pclass"]=>
-  object(%SBSON\Binary)#%d (2) {
+  object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
-    string(27) "%SBSON\Unserializable"
+    string(27) "MongoDB\BSON\Unserializable"
     ["type"]=>
     int(128)
   }
@@ -295,7 +293,7 @@ object(YourClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
   ["__pclass"]=>
-  object(%SBSON\Binary)#%d (2) {
+  object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(7) "MyClass"
     ["type"]=>
@@ -310,7 +308,7 @@ object(OurClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
   ["__pclass"]=>
-  object(%SBSON\Binary)#%d (2) {
+  object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(8) "OurClass"
     ["type"]=>
@@ -325,7 +323,7 @@ object(TheirClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
   ["__pclass"]=>
-  object(%SBSON\Binary)#%d (2) {
+  object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(10) "TheirClass"
     ["type"]=>
@@ -358,7 +356,7 @@ object(TheirClass)#%d (3) {
   ["foo"]=>
   string(3) "yes"
   ["__pclass"]=>
-  object(%SBSON\Binary)#%d (2) {
+  object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(10) "TheirClass"
     ["type"]=>
@@ -416,7 +414,7 @@ array(2) {
   ["foo"]=>
   string(3) "yes"
   ["__pclass"]=>
-  object(%SBSON\Binary)#%d (2) {
+  object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(7) "MyClass"
     ["type"]=>
@@ -429,7 +427,7 @@ array(2) {
   ["foo"]=>
   string(3) "yes"
   ["__pclass"]=>
-  object(%SBSON\Binary)#%d (2) {
+  object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(8) "OurClass"
     ["type"]=>
@@ -445,7 +443,7 @@ object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
   ["__pclass"]=>
-  object(%SBSON\Binary)#%d (2) {
+  object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(7) "MyClass"
     ["type"]=>
@@ -458,7 +456,7 @@ object(stdClass)#%d (2) {
   ["foo"]=>
   string(3) "yes"
   ["__pclass"]=>
-  object(%SBSON\Binary)#%d (2) {
+  object(MongoDB\BSON\Binary)#%d (2) {
     ["data"]=>
     string(8) "OurClass"
     ["type"]=>

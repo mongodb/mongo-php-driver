@@ -2,11 +2,10 @@
 BSON encoding: Encoding object/arrays data into user specificied classes
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 
-class MyArrayObject extends ArrayObject implements BSON\Unserializable {
+class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable {
     function bsonUnserialize(array $data) {
         parent::__construct($data);
     }

@@ -3,9 +3,7 @@ BSON BSON\ObjectID #004 Constructor supports uppercase hexadecimal strings
 --FILE--
 <?php
 
-use MongoDB\BSON as BSON;
-
-var_dump(new BSON\ObjectID('56925B7330616224D0000001'));
+var_dump(new MongoDB\BSON\ObjectID('56925B7330616224D0000001'));
 
 ?>
 ===DONE===

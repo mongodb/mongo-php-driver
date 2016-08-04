@@ -2,15 +2,14 @@
 BSON\toPHP(): __pclass must be both instantiatable and Persistable
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 
-abstract class MyAbstractDocument implements BSON\Persistable
+abstract class MyAbstractDocument implements MongoDB\BSON\Persistable
 {
 }
 
-class MyDocument implements BSON\Unserializable
+class MyDocument implements MongoDB\BSON\Unserializable
 {
     public function bsonUnserialize(array $data)
     {
@@ -21,8 +20,8 @@ class MyDocument implements BSON\Unserializable
 // Create base64-encoded class names for __pclass field's binary data
 $bMyAbstractDocument = base64_encode('MyAbstractDocument');
 $bMyDocument = base64_encode('MyDocument');
-$bUnserializable = base64_encode(BSON_NAMESPACE . '\Unserializable');
-$bPersistable = base64_encode(BSON_NAMESPACE . '\Persistable');
+$bUnserializable = base64_encode('MongoDB\BSON\Unserializable');
+$bPersistable = base64_encode('MongoDB\BSON\Persistable');
 
 $tests = array(
     '{ "foo": "yes", "__pclass": { "$binary": "' . $bMyAbstractDocument . '", "$type": "80" } }',

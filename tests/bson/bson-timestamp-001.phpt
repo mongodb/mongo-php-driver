@@ -5,13 +5,12 @@ BSON BSON\Timestamp #001
 
 require_once __DIR__ . '/../utils/tools.php';
 
-$classname = BSON_NAMESPACE . "\\Timestamp";
-$timestamp = new $classname(1234, 5678);
+$timestamp = new MongoDB\BSON\Timestamp(1234, 5678);
 $tests = array(
     array("timestamp" => $timestamp),
 );
 
-$s = new $classname(1234, 5678);
+$s = new MongoDB\BSON\Timestamp(1234, 5678);
 echo $s, "\n";
 
 foreach($tests as $n => $test) {

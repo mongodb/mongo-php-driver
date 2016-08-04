@@ -5,14 +5,12 @@ BSON BSON\Binary constructor requires unsigned 8-bit integer for type
 
 require_once __DIR__ . '/../utils/tools.php';
 
-use MongoDB\BSON as BSON;
-
 echo throws(function() {
-    new BSON\Binary('foo', -1);
+    new MongoDB\BSON\Binary('foo', -1);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    new BSON\Binary('foo', 256);
+    new MongoDB\BSON\Binary('foo', 256);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

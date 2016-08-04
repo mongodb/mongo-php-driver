@@ -5,21 +5,19 @@ BSON BSON\Binary #001
 
 require_once __DIR__ . '/../utils/tools.php';
 
-$classname = BSON_NAMESPACE . "\\Binary";
-
 $types = array(
-    $classname::TYPE_GENERIC,
-    $classname::TYPE_FUNCTION,
-    $classname::TYPE_OLD_BINARY,
-    $classname::TYPE_OLD_UUID,
-    $classname::TYPE_UUID,
-    $classname::TYPE_MD5,
-    $classname::TYPE_USER_DEFINED,
-    $classname::TYPE_USER_DEFINED+5,
+    MongoDB\BSON\Binary::TYPE_GENERIC,
+    MongoDB\BSON\Binary::TYPE_FUNCTION,
+    MongoDB\BSON\Binary::TYPE_OLD_BINARY,
+    MongoDB\BSON\Binary::TYPE_OLD_UUID,
+    MongoDB\BSON\Binary::TYPE_UUID,
+    MongoDB\BSON\Binary::TYPE_MD5,
+    MongoDB\BSON\Binary::TYPE_USER_DEFINED,
+    MongoDB\BSON\Binary::TYPE_USER_DEFINED+5,
 );
 $tests = array();
 foreach($types as $type) {
-    $binary = new $classname("random binary data", $type);
+    $binary = new MongoDB\BSON\Binary("random binary data", $type);
     var_dump($binary->getData() == "random binary data");
     var_dump($binary->getType() == $type);
     $tests[] = array("binary" => $binary);

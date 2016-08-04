@@ -5,8 +5,7 @@ BSON BSON\Regex #001
 
 require_once __DIR__ . '/../utils/tools.php';
 
-$classname = BSON_NAMESPACE . "\\Regex";
-$regexp = new $classname("regexp", "i");
+$regexp = new MongoDB\BSON\Regex("regexp", "i");
 printf("Pattern: %s\n", $regexp->getPattern());
 printf("Flags: %s\n", $regexp->getFlags());
 printf("String representation: %s\n", $regexp);

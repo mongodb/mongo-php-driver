@@ -5,11 +5,9 @@ BSON BSON\Timestamp constructor requires 64-bit integers to be positive unsigned
 --FILE--
 <?php
 
-use MongoDB\BSON as BSON;
-
 $tests = [
-    new BSON\Timestamp(4294967295, 0),
-    new BSON\Timestamp(0, 4294967295),
+    new MongoDB\BSON\Timestamp(4294967295, 0),
+    new MongoDB\BSON\Timestamp(0, 4294967295),
 ];
 
 foreach ($tests as $test) {
@@ -23,7 +21,7 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECTF--
 Test [4294967295:0]
-object(%SBSON\Timestamp)#%d (%d) {
+object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["increment"]=>
   int(4294967295)
   ["timestamp"]=>
@@ -31,7 +29,7 @@ object(%SBSON\Timestamp)#%d (%d) {
 }
 
 Test [0:4294967295]
-object(%SBSON\Timestamp)#%d (%d) {
+object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["increment"]=>
   int(0)
   ["timestamp"]=>

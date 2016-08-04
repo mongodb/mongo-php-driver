@@ -8,8 +8,7 @@ BSON BSON\Javascript #001 error
 require_once __DIR__ . '/../utils/tools.php';
 
 throws(function() {
-    $classname = BSON_NAMESPACE . "\\Javascript";
-    new $classname;
+    new MongoDB\BSON\Javascript;
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 ?>

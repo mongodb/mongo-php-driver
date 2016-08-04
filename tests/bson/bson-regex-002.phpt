@@ -3,8 +3,7 @@ BSON BSON\Regex debug handler
 --FILE--
 <?php
 
-$classname = BSON_NAMESPACE . '\Regex';
-$regex = new $classname('regexp', 'i');
+$regex = new MongoDB\BSON\Regex('regexp', 'i');
 
 var_dump($regex);
 
@@ -12,7 +11,7 @@ var_dump($regex);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(%SBSON\Regex)#%d (%d) {
+object(MongoDB\BSON\Regex)#%d (%d) {
   ["pattern"]=>
   string(6) "regexp"
   ["flags"]=>

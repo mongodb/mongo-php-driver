@@ -4,10 +4,8 @@ BSON BSON\UTCDateTime::__toString()
 date.timezone=America/Los_Angeles
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
-
-$utcdatetime = new BSON\UTCDateTime("1416445411987");
+$utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
 var_dump((string) $utcdatetime);
 
 ?>

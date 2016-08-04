@@ -5,8 +5,7 @@ BSON BSON\MaxKey #001
 
 require_once __DIR__ . '/../utils/tools.php';
 
-$classname = BSON_NAMESPACE . "\\MaxKey";
-$maxkey = new $classname;
+$maxkey = new MongoDB\BSON\MaxKey;
 $tests = array(
     array("max" => $maxkey),
 );

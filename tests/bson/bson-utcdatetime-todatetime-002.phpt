@@ -2,9 +2,8 @@
 BSON BSON\UTCDateTime::toDateTime() dumping seconds and microseconds
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
-$utcdatetime = new BSON\UTCDateTime("1416445411987");
+$utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
 $datetime = $utcdatetime->toDateTime();
 echo $datetime->format('U.u'), "\n";
 

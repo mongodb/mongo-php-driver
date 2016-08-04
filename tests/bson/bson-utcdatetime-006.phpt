@@ -20,19 +20,19 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(%SBSON\UTCDateTime)#%d (%d) {
+object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   int(%d000)
 }
-object(%SBSON\UTCDateTime)#%d (%d) {
+object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   int(1215282385000)
 }
-object(%SBSON\UTCDateTime)#%d (%d) {
+object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   int(1293894181012)
 }
-object(%SBSON\UTCDateTime)#%d (%d) {
+object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   int(2551871655999)
 }

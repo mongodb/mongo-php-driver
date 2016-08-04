@@ -2,11 +2,10 @@
 BSON\fromPHP(): bsonSerialize() must return an array or stdClass
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 
-class MyDocument implements BSON\Serializable
+class MyDocument implements MongoDB\BSON\Serializable
 {
     private $data;
 

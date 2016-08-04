@@ -5,23 +5,22 @@ BSON BSON\ObjectID #001
 
 require_once __DIR__ . '/../utils/tools.php';
 
-$classname = BSON_NAMESPACE . "\\ObjectID";
-$sameid = new $classname("53e2a1c40640fd72175d4603");
+$sameid = new MongoDB\BSON\ObjectID("53e2a1c40640fd72175d4603");
 $samestd = new stdClass;
 $samestd->my = $sameid;
 $samearr = array("my" => $sameid);
 
 
 $std = new stdclass;
-$std->_id = new $classname;
+$std->_id = new MongoDB\BSON\ObjectID;
 
 $array = array(
-    "_id" => new $classname,
-    "id" => new $classname,
-    "d" => new $classname,
+    "_id" => new MongoDB\BSON\ObjectID,
+    "id" => new MongoDB\BSON\ObjectID,
+    "d" => new MongoDB\BSON\ObjectID,
 );
 
-$pregenerated = new $classname("53e28b650640fd3162152de1");
+$pregenerated = new MongoDB\BSON\ObjectID("53e28b650640fd3162152de1");
 
 $tests = array(
     $array,
@@ -40,17 +39,20 @@ foreach($tests as $n => $test) {
     var_dump((object)$test == (object)$testagain);
 }
 
-throws(function() use($classname) {
-$id = new $classname("53e28b650640fd3162152de12");
+throws(function() {
+    $id = new MongoDB\BSON\ObjectID("53e28b650640fd3162152de12");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
-throws(function() use($classname) {
-$id = new $classname("53e28b650640fd3162152dg1");
+
+throws(function() {
+    $id = new MongoDB\BSON\ObjectID("53e28b650640fd3162152dg1");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
-throws(function() use ($classname) {
-$id = new $classname("-3e28b650640fd3162152da1");
+
+throws(function() {
+    $id = new MongoDB\BSON\ObjectID("-3e28b650640fd3162152da1");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
-throws(function() use($classname) {
-$id = new $classname(" 3e28b650640fd3162152da1");
+
+throws(function() {
+    $id = new MongoDB\BSON\ObjectID(" 3e28b650640fd3162152da1");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 

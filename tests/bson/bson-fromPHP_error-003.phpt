@@ -4,22 +4,21 @@ BSON\fromPHP(): Encoding non-Serializable Type objects as a root element
 date.timezone=America/Los_Angeles
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 
-class UnknownType implements BSON\Type {}
+class UnknownType implements MongoDB\BSON\Type {}
 
 $tests = array(
     new UnknownType,
-    new BSON\Binary('foobar', BSON\Binary::TYPE_GENERIC),
-    new BSON\Javascript('function foo(bar) {var baz = bar; var bar = foo; return bar; }'),
-    new BSON\MinKey,
-    new BSON\MaxKey,
-    new BSON\ObjectId,
-    new BSON\Regex('regexp', 'i'),
-    new BSON\Timestamp(1234, 5678),
-    new BSON\UTCDateTime('1416445411987'),
+    new MongoDB\BSON\Binary('foobar', MongoDB\BSON\Binary::TYPE_GENERIC),
+    new MongoDB\BSON\Javascript('function foo(bar) {var baz = bar; var bar = foo; return bar; }'),
+    new MongoDB\BSON\MinKey,
+    new MongoDB\BSON\MaxKey,
+    new MongoDB\BSON\ObjectId,
+    new MongoDB\BSON\Regex('regexp', 'i'),
+    new MongoDB\BSON\Timestamp(1234, 5678),
+    new MongoDB\BSON\UTCDateTime('1416445411987'),
 );
 
 foreach ($tests as $document) {

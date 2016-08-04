@@ -16,11 +16,11 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(%SBSON\UTCDateTime)#%d (%d) {
+object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   int(%d)
 }
-object(%SBSON\UTCDateTime)#%d (%d) {
+object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   int(%d)
 }

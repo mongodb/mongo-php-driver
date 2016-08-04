@@ -8,8 +8,7 @@ BSON BSON\ObjectID #001 error
 require_once __DIR__ . '/../utils/tools.php';
 
 throws(function() {
-    $classname = BSON_NAMESPACE . "\\ObjectID";
-    new $classname(new stdclass);
+    new MongoDB\BSON\ObjectID(new stdclass);
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 ?>

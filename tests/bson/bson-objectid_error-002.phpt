@@ -3,12 +3,10 @@ BSON BSON\ObjectID cannot be extended
 --FILE--
 <?php
 
-use MongoDB\BSON as BSON;
-
-class MyObjectID extends BSON\ObjectID {}
+class MyObjectID extends MongoDB\BSON\ObjectID {}
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyObjectID may not inherit from final class (%SBSON\ObjectID) in %s on line %d
+Fatal error: Class MyObjectID may not inherit from final class (MongoDB\BSON\ObjectID) in %s on line %d

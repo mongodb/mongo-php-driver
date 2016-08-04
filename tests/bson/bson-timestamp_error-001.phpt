@@ -8,8 +8,7 @@ BSON BSON\Timestamp #001 error
 require_once __DIR__ . '/../utils/tools.php';
 
 throws(function() {
-    $classname = BSON_NAMESPACE . "\\Timestamp";
-    new $classname;
+    new MongoDB\BSON\Timestamp;
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 ?>

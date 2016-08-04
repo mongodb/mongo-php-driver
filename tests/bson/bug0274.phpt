@@ -2,11 +2,10 @@
 Test for PHPC-274: zval_to_bson() should process BSON\Serializable instances
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 
-class AssociativeArray implements BSON\Serializable
+class AssociativeArray implements MongoDB\BSON\Serializable
 {
     public function bsonSerialize()
     {
@@ -14,7 +13,7 @@ class AssociativeArray implements BSON\Serializable
     }
 }
 
-class NumericArray implements BSON\Serializable
+class NumericArray implements MongoDB\BSON\Serializable
 {
     public function bsonSerialize()
     {
