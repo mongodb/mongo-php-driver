@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDateTime constructor defaults to current time
+MongoDB\BSON\UTCDateTime constructor defaults to current time
 --FILE--
 <?php
 

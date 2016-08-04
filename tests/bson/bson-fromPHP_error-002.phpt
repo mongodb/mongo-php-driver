@@ -1,5 +1,5 @@
 --TEST--o
-BSON\fromPHP(): Encoding unknown Type objects as a document field value
+MongoDB\BSON\fromPHP(): Encoding unknown Type objects as a document field value
 --FILE--
 <?php
 

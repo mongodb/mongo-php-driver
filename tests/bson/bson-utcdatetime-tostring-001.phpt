@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDateTime::__toString()
+MongoDB\BSON\UTCDateTime::__toString()
 --INI--
 date.timezone=America/Los_Angeles
 --FILE--

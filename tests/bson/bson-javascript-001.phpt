@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Javascript #001
+MongoDB\BSON\Javascript #001
 --FILE--
 <?php
 

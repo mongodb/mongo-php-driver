@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDateTime #001
+MongoDB\BSON\UTCDateTime #001
 --INI--
 date.timezone=America/Los_Angeles
 --SKIPIF--

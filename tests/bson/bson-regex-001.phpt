@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Regex #001
+MongoDB\BSON\Regex #001
 --FILE--
 <?php
 

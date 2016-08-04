@@ -1,5 +1,5 @@
 --TEST--
-BSON\toPHP(): __pclass must be both instantiatable and Persistable
+MongoDB\BSON\toPHP(): __pclass must be both instantiatable and Persistable
 --FILE--
 <?php
 

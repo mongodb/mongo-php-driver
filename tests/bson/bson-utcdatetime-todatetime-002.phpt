@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDateTime::toDateTime() dumping seconds and microseconds
+MongoDB\BSON\UTCDateTime::toDateTime() dumping seconds and microseconds
 --FILE--
 <?php
 

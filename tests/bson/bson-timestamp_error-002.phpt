@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Timestamp cannot be extended
+MongoDB\BSON\Timestamp cannot be extended
 --FILE--
 <?php
 

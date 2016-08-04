@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Binary cannot be extended
+MongoDB\BSON\Binary cannot be extended
 --FILE--
 <?php
 

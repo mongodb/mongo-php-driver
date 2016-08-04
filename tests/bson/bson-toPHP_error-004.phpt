@@ -1,5 +1,5 @@
 --TEST--
-BSON\toPHP(): BSON decoding exceptions for bson_iter_visit_all() failure
+MongoDB\BSON\toPHP(): BSON decoding exceptions for bson_iter_visit_all() failure
 --FILE--
 <?php
 

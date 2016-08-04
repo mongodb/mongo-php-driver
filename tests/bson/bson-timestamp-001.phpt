@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Timestamp #001
+MongoDB\BSON\Timestamp #001
 --FILE--
 <?php
 

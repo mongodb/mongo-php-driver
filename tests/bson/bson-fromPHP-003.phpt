@@ -1,5 +1,5 @@
 --TEST--
-BSON\fromPHP(): Encoding non-Persistable objects as a document field value
+MongoDB\BSON\fromPHP(): Encoding non-Persistable objects as a document field value
 --INI--
 date.timezone=America/Los_Angeles
 --FILE--

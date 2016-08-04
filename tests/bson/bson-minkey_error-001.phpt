@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\MinKey cannot be extended
+MongoDB\BSON\MinKey cannot be extended
 --FILE--
 <?php
 

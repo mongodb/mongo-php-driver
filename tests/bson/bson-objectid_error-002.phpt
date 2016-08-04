@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\ObjectID cannot be extended
+MongoDB\BSON\ObjectID cannot be extended
 --FILE--
 <?php
 

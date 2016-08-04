@@ -1,5 +1,5 @@
 --TEST--
-BSON\toJSON(): BSON decoding exceptions for bson_as_json() failure
+MongoDB\BSON\toJSON(): BSON decoding exceptions for bson_as_json() failure
 --FILE--
 <?php
 

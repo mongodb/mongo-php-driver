@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Javascript cannot be extended
+MongoDB\BSON\Javascript cannot be extended
 --FILE--
 <?php
 

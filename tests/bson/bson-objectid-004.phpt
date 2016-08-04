@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\ObjectID #004 Constructor supports uppercase hexadecimal strings
+MongoDB\BSON\ObjectID #004 Constructor supports uppercase hexadecimal strings
 --FILE--
 <?php
 

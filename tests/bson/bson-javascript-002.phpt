@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Javascript debug handler
+MongoDB\BSON\Javascript debug handler
 --FILE--
 <?php
 

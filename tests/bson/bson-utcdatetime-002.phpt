@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDateTime debug handler
+MongoDB\BSON\UTCDateTime debug handler
 --FILE--
 <?php
 

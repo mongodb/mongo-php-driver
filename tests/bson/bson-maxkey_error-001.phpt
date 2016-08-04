@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\MaxKey cannot be extended
+MongoDB\BSON\MaxKey cannot be extended
 --FILE--
 <?php
 

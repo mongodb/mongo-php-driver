@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDateTime construction from DateTime
+MongoDB\BSON\UTCDateTime construction from DateTime
 --FILE--
 <?php
 

@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Binary #001
+MongoDB\BSON\Binary #001
 --FILE--
 <?php
 

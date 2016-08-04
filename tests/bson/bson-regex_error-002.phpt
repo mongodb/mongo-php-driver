@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Regex cannot be extended
+MongoDB\BSON\Regex cannot be extended
 --FILE--
 <?php
 

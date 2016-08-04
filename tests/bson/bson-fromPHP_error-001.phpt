@@ -1,5 +1,5 @@
 --TEST--
-BSON\fromPHP(): bsonSerialize() must return an array or stdClass
+MongoDB\BSON\fromPHP(): bsonSerialize() must return an array or stdClass
 --FILE--
 <?php
 

@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDateTime construction from DateTimeImmutable
+MongoDB\BSON\UTCDateTime construction from DateTimeImmutable
 --SKIPIF--
 <?php if (!version_compare(phpversion(), "5.5", '>=')) echo "skip >= PHP 5.5 needed\n"; ?>
 --FILE--

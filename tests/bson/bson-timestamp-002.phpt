@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Timestamp debug handler
+MongoDB\BSON\Timestamp debug handler
 --FILE--
 <?php
 

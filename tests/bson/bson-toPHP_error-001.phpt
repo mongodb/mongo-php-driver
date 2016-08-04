@@ -1,5 +1,5 @@
 --TEST--
-BSON\toPHP(): Type map class must be both instantiatable and Unserializable
+MongoDB\BSON\toPHP(): Type map class must be both instantiatable and Unserializable
 --FILE--
 <?php
 

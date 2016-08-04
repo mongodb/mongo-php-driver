@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Timestamp constructor requires 64-bit integers to be positive unsigned 32-bit integers
+MongoDB\BSON\Timestamp constructor requires 64-bit integers to be positive unsigned 32-bit integers
 --SKIPIF--
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
 --FILE--

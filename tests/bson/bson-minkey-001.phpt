@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\MinKey #001
+MongoDB\BSON\MinKey #001
 --FILE--
 <?php
 

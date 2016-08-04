@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\ObjectID #001 error
+MongoDB\BSON\ObjectID #001 error
 --SKIPIF--
 <?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM handles parameter parsing differently"); ?>
 --FILE--

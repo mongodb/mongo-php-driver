@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\ObjectID #002 generates ObjectID for null or missing constructor argument
+MongoDB\BSON\ObjectID #002 generates ObjectID for null or missing constructor argument
 --FILE--
 <?php
 

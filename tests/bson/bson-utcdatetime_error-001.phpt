@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDateTime requires object argument to implement DateTimeInterface
+MongoDB\BSON\UTCDateTime requires object argument to implement DateTimeInterface
 --FILE--
 <?php
 

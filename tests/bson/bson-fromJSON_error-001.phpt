@@ -1,5 +1,5 @@
 --TEST--
-BSON\fromJSON(): invalid JSON
+MongoDB\BSON\fromJSON(): invalid JSON
 --FILE--
 <?php
 

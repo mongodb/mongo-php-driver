@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\ObjectID #001
+MongoDB\BSON\ObjectID #001
 --FILE--
 <?php
 

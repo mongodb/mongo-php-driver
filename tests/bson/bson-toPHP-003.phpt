@@ -1,5 +1,5 @@
 --TEST--
-BSON\toPHP(): Tests from serialization specification
+MongoDB\BSON\toPHP(): Tests from serialization specification
 --FILE--
 <?php
 

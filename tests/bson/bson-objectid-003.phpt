@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\ObjectID #003 construction with string argument
+MongoDB\BSON\ObjectID #003 construction with string argument
 --FILE--
 <?php
 

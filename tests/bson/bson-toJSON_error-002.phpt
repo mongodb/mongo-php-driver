@@ -1,5 +1,5 @@
 --TEST--
-BSON\toJSON(): BSON decoding exceptions for malformed documents
+MongoDB\BSON\toJSON(): BSON decoding exceptions for malformed documents
 --FILE--
 <?php
 

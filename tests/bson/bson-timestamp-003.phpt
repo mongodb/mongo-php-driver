@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Timestamp constructor requires positive unsigned 32-bit integers
+MongoDB\BSON\Timestamp constructor requires positive unsigned 32-bit integers
 --FILE--
 <?php
 

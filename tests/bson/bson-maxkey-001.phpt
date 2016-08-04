@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\MaxKey #001
+MongoDB\BSON\MaxKey #001
 --FILE--
 <?php
 

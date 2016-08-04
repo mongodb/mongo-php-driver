@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDateTime cannot be extended
+MongoDB\BSON\UTCDateTime cannot be extended
 --FILE--
 <?php
 

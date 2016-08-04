@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Binary constructor requires unsigned 8-bit integer for type
+MongoDB\BSON\Binary constructor requires unsigned 8-bit integer for type
 --FILE--
 <?php
 
