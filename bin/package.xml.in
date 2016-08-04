@@ -38,7 +38,7 @@ necessary to build a fully-functional MongoDB driver.
  </stability>
  <license uri="http://www.apache.org/licenses/LICENSE-2.0">Apache License</license>
  <notes>
-%RELEASE_NOTES%
+
  </notes>
  <contents>
 %RELEASE_FILES%

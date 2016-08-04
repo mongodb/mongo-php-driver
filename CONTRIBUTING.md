@@ -142,12 +142,12 @@ you must rebuild the extension after updating `php_phongo.h`.
 
 ### Publish PECL package
 
-Create the PECL package with `make package`. This should generate a `Changelog`
-file, which Git ignores, and add its contents to relevant `RELEASE-X.Y` file.
-Additionally, the `package.xml` file will be created from a template and a
-`mongodb-X.Y.Z.tgz` package file will be created.
+Create the PECL package description file with `make package.xml`. This creates
+a `package.xml` file from a template. Version, author, and file information will
+be filled in, but release notes must be copied manually from JIRA.
 
-Ensure that the generated PECL package can be successfully installed:
+After copying release notes, use `make package` to create the package file (e.g.
+`mongodb-X.Y.Z.tgz`) and ensure that it can be successfully installed:
 
 ```
 $ pecl install -f mongodb-X.Y.Z.tgz
@@ -159,10 +159,10 @@ one chance to confirm the package information after uploading.
 
 ### Commit version update and release notes
 
-Commit the modified `php_phongo.h` and `RELEASE-X.Y` files as "Package X.Y.Z"
+Commit the modified `php_phongo.h` file as "Package X.Y.Z"
 
 ```
-$ git add php_phongo.h RELEASE-X.Y
+$ git add php_phongo.h
 $ git commit -m "Package X.Y.Z"
 ```
 

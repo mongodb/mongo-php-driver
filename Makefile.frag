@@ -1,4 +1,4 @@
-.PHONY: coverage testclean ChangeLog RELEASE package package.xml docs
+.PHONY: coverage testclean package package.xml docs
 
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 MONGODB_VERSION=$(shell php -n -dextension=modules/mongodb.so -r 'echo MONGODB_VERSION;')
@@ -29,11 +29,10 @@ help:
 	@echo ""
 	@echo -e "\t$$ make distcheck"
 	@echo -e "\t       - Builds the archive, runs the virtual tests"
-	@echo ""
-	@echo -e "\t$$ make release"
-	@echo -e "\t       - Packages the archive, runs the tests locally and virtual"
 
 	@echo ""
+	@echo -e "\t$$ make package.xml"
+	@echo -e "\t       - Creates a package.xml file with empty release notes"
 	@echo -e "\t$$ make package"
 	@echo -e "\t       - Creates the pecl archive to use for provisioning"
 	@echo -e "\t$$ make test-virtual"
@@ -112,28 +111,13 @@ testunit: composer
 
 testall: composer test testunit
 
-
 testclean:
 	@for group in generic standalone; do \
 		find $(top_srcdir)/tests/$$group -type f -name "*.diff" -o -name "*.exp" -o -name "*.log" -o -name "*.mem" -o -name "*.out" -o -name "*.php" -o -name "*.sh" | xargs rm -f; \
 	done;
 
-mongodbdep:
-
-release: test distcheck
-	@echo "Please run:"
-	@echo "		" git add RELEASE-$(MONGODB_VERSION)
-	@echo "		" git commit -m \"Add $(MONGODB_VERSION) release notes\"
-	@echo "		" git tag -a -m \"Release $(MONGODB_VERSION)\" $(MONGODB_VERSION)
-	@echo "		" git push --tags
-	@echo "		" make release-docs
-	@echo "And don't forget to bump version in php_phongo.h"
-
-package: ChangeLog package.xml
-	@git checkout RELEASE-$(MONGODB_MINOR)
+package:
 	pecl package package.xml
-	@cat RELEASE-$(MONGODB_MINOR) >> RELEASE-$(MONGODB_VERSION)
-	@mv RELEASE-$(MONGODB_VERSION) RELEASE-$(MONGODB_MINOR)
 
 docs:
 	mkdocs build --clean
@@ -141,15 +125,5 @@ docs:
 release-docs: docs
 	mkdocs gh-deploy --clean
 
-package.xml: RELEASE
+package.xml:
 	php bin/prep-release.php $(MONGODB_VERSION) $(MONGODB_STABILITY)
-
-RELEASE:
-	@echo "RELEASE $(MONGODB_VERSION)" >> RELEASE-$(MONGODB_VERSION)
-	@echo "-------------" >> RELEASE-$(MONGODB_VERSION)
-	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --no-merges --date short --since="$$(git show -s --format=%ad `git rev-list --tags --max-count=1`)" >> RELEASE-$(MONGODB_VERSION)
-	@echo -e "\n" >> RELEASE-$(MONGODB_VERSION)
-
-ChangeLog:
-	@git log --pretty=format:"%ad  %an  <%ae>%n%x09* %s%n" --date short > ChangeLog
-
