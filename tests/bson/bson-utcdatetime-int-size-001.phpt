@@ -1,0 +1,32 @@
+--TEST--
+MongoDB\BSON\UTCDateTime integer parsing from string
+--SKIPIF--
+<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM implements only an older version of DateTime"); ?>
+--INI--
+date.timezone=UTC
+error_reporting=-1
+dislay_errors=1
+--FILE--
+<?php
+
+$utcdatetime = new MongoDB\BSON\UTCDateTime('1416445411987');
+var_dump($utcdatetime);
+var_dump($utcdatetime->toDateTime());
+
+?>
+===DONE===
+<?php exit(0); ?>
+--EXPECTF--
+object(MongoDB\BSON\UTCDateTime)#%d (1) {
+  ["milliseconds"]=>
+  %r(string\(13\) "|int\()%r1416445411987%r("|\))%r
+}
+object(DateTime)#%d (3) {
+  ["date"]=>
+  string(26) "2014-11-20 01:03:31.987000"
+  ["timezone_type"]=>
+  int(1)
+  ["timezone"]=>
+  string(6) "+00:00"
+}
+===DONE===
