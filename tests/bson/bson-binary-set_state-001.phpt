@@ -1,10 +1,7 @@
 --TEST--
 MongoDB\BSON\Binary::__set_state()
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 $tests = [
     ['foobar', MongoDB\BSON\Binary::TYPE_GENERIC],

@@ -2,13 +2,12 @@
 PHPC-592: Property name corrupted when unserializing 64-bit integer on 32-bit platform
 --SKIPIF--
 <?php if (4 !== PHP_INT_SIZE) { die('skip Only for 32-bit platform'); } ?>
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --INI--
 mongodb.debug=stderr
 --FILE--
 <?php
 
-require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . '/../utils/tools.php';
 
 $tests = [
     '{ "x": { "$numberLong": "-2147483648" }}',

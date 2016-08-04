@@ -2,10 +2,8 @@
 BSON BSON\Timestamp constructor requires 64-bit integers to be positive unsigned 32-bit integers
 --SKIPIF--
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 use MongoDB\BSON as BSON;
 

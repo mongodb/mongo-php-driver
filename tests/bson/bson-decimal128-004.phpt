@@ -2,10 +2,8 @@
 BSON\Decimal128 debug handler
 --SKIPIF--
 <?php if (!class_exists('MongoDB\BSON\Decimal128')) { die('skip MongoDB\BSON\Decimal128 is not available'); } ?>
-<?php require __DIR__ . '/../utils/basic-skipif.inc'?>
 --FILE--
 <?php
-require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     1234.5678,

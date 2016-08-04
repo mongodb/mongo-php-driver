@@ -1,10 +1,7 @@
 --TEST--
 MongoDB\BSON\Javascript::__set_state()
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 $tests = [
     ['function foo(bar) { return bar; }', null],

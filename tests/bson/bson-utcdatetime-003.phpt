@@ -2,10 +2,10 @@
 BSON BSON\UTCDateTime construction from 64-bit integer
 --SKIPIF--
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 $classname = BSON_NAMESPACE . '\UTCDateTime';
 $utcdatetime = new $classname(1416445411987);

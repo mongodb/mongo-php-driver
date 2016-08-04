@@ -2,10 +2,10 @@
 BSON BSON\ObjectID #001 error
 --SKIPIF--
 <?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM handles parameter parsing differently"); ?>
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 throws(function() {
     $classname = BSON_NAMESPACE . "\\ObjectID";

@@ -1,10 +1,9 @@
 --TEST--
 BSON BSON\ObjectID #001
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 $classname = BSON_NAMESPACE . "\\ObjectID";
 $sameid = new $classname("53e2a1c40640fd72175d4603");

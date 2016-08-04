@@ -2,10 +2,8 @@
 BSON BSON\UTCDateTime construction from DateTimeImmutable
 --SKIPIF--
 <?php if (!version_compare(phpversion(), "5.5", '>=')) echo "skip >= PHP 5.5 needed\n"; ?>
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 $tests = [
     new DateTimeImmutable(),

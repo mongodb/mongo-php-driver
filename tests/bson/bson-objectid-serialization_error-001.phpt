@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\BSON\ObjectID unserialization requires "oid" string field
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     unserialize('O:21:"MongoDB\BSON\ObjectID":1:{s:3:"oid";i:0;}');

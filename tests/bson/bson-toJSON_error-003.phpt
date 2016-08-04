@@ -1,10 +1,9 @@
 --TEST--
 BSON\toJSON(): BSON decoding exceptions for bson_as_json() failure
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 $tests = array(
     // Invalid UTF-8 characters (i.e. 0xFE, 0xFF) in field name

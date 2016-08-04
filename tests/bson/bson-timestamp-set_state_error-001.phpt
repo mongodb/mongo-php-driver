@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\BSON\Timestamp::__set_state() requires "increment" and "timestamp" integer fields
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     MongoDB\BSON\Timestamp::__set_state(['increment' => 1234]);

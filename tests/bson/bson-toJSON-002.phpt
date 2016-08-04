@@ -1,12 +1,10 @@
 --TEST--
 BSON\toJSON(): Encoding extended JSON types
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
 use MongoDB\BSON as BSON;
 
-require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . '/../utils/tools.php';
 
 $tests = [
     ['_id' => new BSON\ObjectId('56315a7c6118fd1b920270b1')],

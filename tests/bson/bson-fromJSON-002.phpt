@@ -1,11 +1,9 @@
 --TEST--
 BSON\fromJSON(): Decoding extended JSON types
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
 
-require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . '/../utils/tools.php';
 
 $tests = [
     '{ "_id": { "$oid": "56315a7c6118fd1b920270b1" }}',

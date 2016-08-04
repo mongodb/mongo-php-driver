@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\BSON\Regex::__set_state() requires "pattern" and "flags" string fields
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     MongoDB\BSON\Regex::__set_state(['pattern' => 'regexp']);

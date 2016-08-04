@@ -1,10 +1,9 @@
 --TEST--
 BSON BSON\UTCDateTime debug handler
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 $classname = BSON_NAMESPACE . '\UTCDateTime';
 $utcdatetime = new $classname('1416445411987');

@@ -1,10 +1,7 @@
 --TEST--
 MongoDB\BSON\ObjectID serialization
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 var_dump($oid = new MongoDB\BSON\ObjectID('576c25db6118fd406e6e6471'));
 var_dump($s = serialize($oid));

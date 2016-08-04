@@ -1,10 +1,7 @@
 --TEST--
 MongoDB\BSON\Regex serialization
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 var_dump($regex = new MongoDB\BSON\Regex('regexp', 'i'));
 var_dump($s = serialize($regex));

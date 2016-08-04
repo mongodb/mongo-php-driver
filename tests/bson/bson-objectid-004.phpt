@@ -1,10 +1,7 @@
 --TEST--
 BSON BSON\ObjectID #004 Constructor supports uppercase hexadecimal strings
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 use MongoDB\BSON as BSON;
 
