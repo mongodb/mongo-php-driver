@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\BSON\UTCDateTime::__set_state() (64-bit)
+--SKIPIF--
+<?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
 --FILE--
 <?php
 
