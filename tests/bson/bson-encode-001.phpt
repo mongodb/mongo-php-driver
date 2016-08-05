@@ -2,7 +2,6 @@
 BSON encoding: Encoding data into BSON representation, and BSON into Extended JSON
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 

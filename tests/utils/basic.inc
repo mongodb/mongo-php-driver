@@ -36,9 +36,3 @@ $consts = array(
     "NS"             => DATABASE_NAME . "." . COLLECTION_NAME,
 );
 def($consts);
-
-/* If its not defined, set it to what the MongoDB exts define it, since this is mostly used for pecl/bson testing */
-if (!defined("BSON_NAMESPACE")) {
-    define("BSON_NAMESPACE", "MongoDB\\BSON");
-}
-

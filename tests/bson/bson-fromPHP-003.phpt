@@ -1,10 +1,9 @@
 --TEST--
-BSON\fromPHP(): Encoding non-Persistable objects as a document field value
+MongoDB\BSON\fromPHP(): Encoding non-Persistable objects as a document field value
 --INI--
 date.timezone=America/Los_Angeles
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 
@@ -15,8 +14,8 @@ class MyDocument {
 }
 
 $tests = array(
-    array(new BSON\UTCDateTime('1416445411987')),
-    array('x' => new BSON\UTCDateTime('1416445411987')),
+    array(new MongoDB\BSON\UTCDateTime('1416445411987')),
+    array('x' => new MongoDB\BSON\UTCDateTime('1416445411987')),
     array(new MyDocument),
     array('x' => new MyDocument),
 );

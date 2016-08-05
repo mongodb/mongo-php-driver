@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Javascript #001 error
+MongoDB\BSON\Javascript #001 error
 --SKIPIF--
 <?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM handles parameter parsing differently"); ?>
 --FILE--
@@ -8,8 +8,7 @@ BSON BSON\Javascript #001 error
 require_once __DIR__ . '/../utils/tools.php';
 
 throws(function() {
-    $classname = BSON_NAMESPACE . "\\Javascript";
-    new $classname;
+    new MongoDB\BSON\Javascript;
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 ?>

@@ -1,12 +1,11 @@
 --TEST--
-BSON BSON\MinKey #001
+MongoDB\BSON\MinKey #001
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/tools.php';
 
-$classname = BSON_NAMESPACE . "\\MinKey";
-$minkey = new $classname;
+$minkey = new MongoDB\BSON\MinKey;
 $tests = array(
     array("min" => $minkey),
 );

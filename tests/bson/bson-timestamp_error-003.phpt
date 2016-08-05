@@ -1,26 +1,24 @@
 --TEST--
-BSON BSON\Timestamp constructor requires positive unsigned 32-bit integers
+MongoDB\BSON\Timestamp constructor requires positive unsigned 32-bit integers
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/tools.php';
 
-use MongoDB\BSON as BSON;
-
 echo throws(function() {
-    new BSON\Timestamp(-1, 0);
+    new MongoDB\BSON\Timestamp(-1, 0);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    new BSON\Timestamp(-2147483648, 0);
+    new MongoDB\BSON\Timestamp(-2147483648, 0);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    new BSON\Timestamp(0, -1);
+    new MongoDB\BSON\Timestamp(0, -1);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    new BSON\Timestamp(0, -2147483648);
+    new MongoDB\BSON\Timestamp(0, -2147483648);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

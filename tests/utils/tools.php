@@ -375,20 +375,16 @@ function getMOPresetBase() {
 }
 
 function toPHP($var, $typemap = array()) {
-    $func = BSON_NAMESPACE . "\\" . __FUNCTION__;
-    return $func($var, $typemap);
+    return MongoDB\BSON\toPHP($var, $typemap);
 }
 function fromPHP($var) {
-    $func = BSON_NAMESPACE . "\\" . __FUNCTION__;
-    return $func($var);
+    return MongoDB\BSON\fromPHP($var);
 }
 function toJSON($var) {
-    $func = BSON_NAMESPACE . "\\" . __FUNCTION__;
-    return $func($var);
+    return MongoDB\BSON\toJSON($var);
 }
 function fromJSON($var) {
-    $func = BSON_NAMESPACE . "\\" . __FUNCTION__;
-    return $func($var);
+    return MongoDB\BSON\fromJSON($var);
 }
 
 /* Note: this fail point may terminate the mongod process, so you may want to

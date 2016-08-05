@@ -4,7 +4,6 @@ BSON encoding: Object Document Mapper
 <?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM encodes __pclass last"); ?>
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 require_once __DIR__ . "/../utils/classes.inc";

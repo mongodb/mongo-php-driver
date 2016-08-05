@@ -130,7 +130,7 @@ PHP_MINIT_FUNCTION(MinKey)
 	(void)type;(void)module_number;
 
 
-	INIT_NS_CLASS_ENTRY(ce, BSON_NAMESPACE, "MinKey", php_phongo_minkey_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MinKey", php_phongo_minkey_me);
 	php_phongo_minkey_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_minkey_ce->create_object = php_phongo_minkey_create_object;
 	PHONGO_CE_FINAL(php_phongo_minkey_ce);

@@ -4,11 +4,10 @@ MongoDB\Driver\Server::executeQuery() with filter and projection
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-class MyArrayObject extends ArrayObject implements BSON\Unserializable {
+class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable {
     function bsonUnserialize(array $data) {
         parent::__construct($data);
     }

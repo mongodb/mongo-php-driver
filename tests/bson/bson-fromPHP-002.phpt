@@ -1,10 +1,9 @@
 --TEST--
-BSON\fromPHP(): Encoding non-Persistable objects as a document
+MongoDB\BSON\fromPHP(): Encoding non-Persistable objects as a document
 --INI--
 date.timezone=America/Los_Angeles
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 

@@ -1,5 +1,5 @@
 --TEST--
-BSON\fromJSON(): Decoding extended JSON types
+MongoDB\BSON\fromJSON(): Decoding extended JSON types
 --FILE--
 <?php
 

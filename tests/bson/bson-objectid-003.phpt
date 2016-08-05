@@ -1,9 +1,7 @@
 --TEST--
-BSON BSON\ObjectID #003 construction with string argument
+MongoDB\BSON\ObjectID #003 construction with string argument
 --FILE--
 <?php
-
-$classname = BSON_NAMESPACE . "\\ObjectID";
 
 class StringObject
 {
@@ -20,12 +18,12 @@ class StringObject
     }
 }
 
-$oid = new $classname('53e2a1c40640fd72175d4603');
+$oid = new MongoDB\BSON\ObjectID('53e2a1c40640fd72175d4603');
 $str = new StringObject('53e2a1c40640fd72175d4603');
 
 var_dump($oid);
-var_dump(new $classname($oid));
-var_dump(new $classname($str));
+var_dump(new MongoDB\BSON\ObjectID($oid));
+var_dump(new MongoDB\BSON\ObjectID($str));
 
 ?>
 ===DONE===

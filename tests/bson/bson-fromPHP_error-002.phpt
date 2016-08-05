@@ -1,12 +1,11 @@
 --TEST--o
-BSON\fromPHP(): Encoding unknown Type objects as a document field value
+MongoDB\BSON\fromPHP(): Encoding unknown Type objects as a document field value
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 
-class UnknownType implements BSON\Type {}
+class UnknownType implements MongoDB\BSON\Type {}
 
 $tests = array(
     array(new UnknownType()),
@@ -24,7 +23,7 @@ foreach ($tests as $document) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Unexpected %SBSON\Type instance: UnknownType
+Unexpected MongoDB\BSON\Type instance: UnknownType
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Unexpected %SBSON\Type instance: UnknownType
+Unexpected MongoDB\BSON\Type instance: UnknownType
 ===DONE===

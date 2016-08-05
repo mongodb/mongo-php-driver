@@ -1,12 +1,11 @@
 --TEST--
-BSON BSON\UTCDateTime::toDateTime()
+MongoDB\BSON\UTCDateTime::toDateTime()
 --INI--
 date.timezone=America/Los_Angeles
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
-$utcdatetime = new BSON\UTCDateTime("1416445411987");
+$utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
 $datetime = $utcdatetime->toDateTime();
 var_dump($datetime->format(DATE_RSS));
 

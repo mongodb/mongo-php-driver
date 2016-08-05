@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\UTCDateTime #001
+MongoDB\BSON\UTCDateTime #001
 --INI--
 date.timezone=America/Los_Angeles
 --SKIPIF--
@@ -11,8 +11,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
-$classname = BSON_NAMESPACE . "\\UTCDateTime";
-$utcdatetime = new $classname("1416445411987");
+$utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1, 'x' => $utcdatetime));

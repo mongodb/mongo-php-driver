@@ -1,14 +1,13 @@
 --TEST--
-BSON\fromPHP(): Null type map values imply default behavior
+MongoDB\BSON\fromPHP(): Null type map values imply default behavior
 --SKIPIF--
 <?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM encodes __pclass last"); ?>
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 
-class MyDocument implements BSON\Persistable
+class MyDocument implements MongoDB\BSON\Persistable
 {
     public $data;
 

@@ -1,5 +1,5 @@
 --TEST--
-BSON\toPHP(): BSON decoding exceptions
+MongoDB\BSON\toPHP(): BSON decoding exceptions
 --FILE--
 <?php
 

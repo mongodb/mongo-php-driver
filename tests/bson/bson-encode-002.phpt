@@ -2,11 +2,10 @@
 BSON encoding: Encoding objects into BSON representation
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 
-class AssociativeArray implements BSON\Serializable, BSON\Unserializable
+class AssociativeArray implements MongoDB\BSON\Serializable, MongoDB\BSON\Unserializable
 {
     public function bsonSerialize()
     {
@@ -20,7 +19,7 @@ class AssociativeArray implements BSON\Serializable, BSON\Unserializable
     }
 }
 
-class NumericArray implements BSON\Serializable, BSON\Unserializable
+class NumericArray implements MongoDB\BSON\Serializable, MongoDB\BSON\Unserializable
 {
     public function bsonSerialize()
     {

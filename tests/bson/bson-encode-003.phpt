@@ -4,11 +4,10 @@ BSON encoding: Encoding objects into BSON representation
 <?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM encodes __pclass last"); ?>
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 
-class MyClass implements BSON\Persistable {
+class MyClass implements MongoDB\BSON\Persistable {
     function bsonSerialize() {
         return array(
             "random" => "class",
@@ -19,7 +18,7 @@ class MyClass implements BSON\Persistable {
         $this->props = $data;
     }
 }
-class MyClass2 implements BSON\Persistable {
+class MyClass2 implements MongoDB\BSON\Persistable {
     function bsonSerialize() {
         return array(
             1, 2, 3,
@@ -59,7 +58,7 @@ object(stdClass)#%d (1) {
     ["props"]=>
     array(3) {
       ["__pclass"]=>
-      object(%SBSON\Binary)#%d (2) {
+      object(MongoDB\BSON\Binary)#%d (2) {
         ["data"]=>
         string(7) "MyClass"
         ["type"]=>
@@ -83,7 +82,7 @@ object(stdClass)#%d (1) {
     ["props"]=>
     array(4) {
       ["__pclass"]=>
-      object(%SBSON\Binary)#%d (2) {
+      object(MongoDB\BSON\Binary)#%d (2) {
         ["data"]=>
         string(8) "MyClass2"
         ["type"]=>
@@ -116,7 +115,7 @@ object(stdClass)#%d (1) {
       ["props"]=>
       array(3) {
         ["__pclass"]=>
-        object(%SBSON\Binary)#%d (2) {
+        object(MongoDB\BSON\Binary)#%d (2) {
           ["data"]=>
           string(7) "MyClass"
           ["type"]=>
@@ -133,7 +132,7 @@ object(stdClass)#%d (1) {
       ["props"]=>
       array(4) {
         ["__pclass"]=>
-        object(%SBSON\Binary)#%d (2) {
+        object(MongoDB\BSON\Binary)#%d (2) {
           ["data"]=>
           string(8) "MyClass2"
           ["type"]=>

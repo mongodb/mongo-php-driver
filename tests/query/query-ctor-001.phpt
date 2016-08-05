@@ -6,9 +6,7 @@ MongoDB\Driver\Query construction should always encode __pclass for Persistable 
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-use MongoDB\BSON as BSON;
-
-class MyClass implements BSON\Persistable
+class MyClass implements MongoDB\BSON\Persistable
 {
     private $id;
     private $child;

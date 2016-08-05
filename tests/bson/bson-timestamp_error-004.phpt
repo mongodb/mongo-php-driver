@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Timestamp constructor requires 64-bit integers to be positive unsigned 32-bit integers
+MongoDB\BSON\Timestamp constructor requires 64-bit integers to be positive unsigned 32-bit integers
 --SKIPIF--
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
 --FILE--
@@ -7,14 +7,12 @@ BSON BSON\Timestamp constructor requires 64-bit integers to be positive unsigned
 
 require_once __DIR__ . '/../utils/tools.php';
 
-use MongoDB\BSON as BSON;
-
 echo throws(function() {
-    new BSON\Timestamp(4294967296, 0);
+    new MongoDB\BSON\Timestamp(4294967296, 0);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    new BSON\Timestamp(0, 4294967296);
+    new MongoDB\BSON\Timestamp(0, 4294967296);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

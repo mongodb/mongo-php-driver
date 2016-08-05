@@ -1,5 +1,5 @@
 --TEST--
-BSON BSON\Regex #001 error
+MongoDB\BSON\Regex #001 error
 --SKIPIF--
 <?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM handles parameter parsing differently"); ?>
 --FILE--
@@ -7,14 +7,12 @@ BSON BSON\Regex #001 error
 
 require_once __DIR__ . '/../utils/tools.php';
 
-$classname = BSON_NAMESPACE . "\\Regex";
-
-$regexp = new $classname("regexp", "i");
+$regexp = new MongoDB\BSON\Regex("regexp", "i");
 $regexp->getPattern(true);
 $regexp->getFlags(true);
 
-throws(function() use($classname) {
-    new $classname;
+throws(function() {
+    new MongoDB\BSON\Regex;
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 ?>

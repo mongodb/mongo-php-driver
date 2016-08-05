@@ -1552,7 +1552,7 @@ static void apply_classname_to_state(const char *classname, int classname_len, p
 		} else if (!PHONGO_IS_CLASS_INSTANTIATABLE(found_ce)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Class %s is not instantiatable", classname);
 		} else if (!instanceof_function(found_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Class %s does not implement %s\\Unserializable", classname, BSON_NAMESPACE);
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Class %s does not implement %s", classname, ZSTR_VAL(php_phongo_unserializable_ce->name));
 		} else {
 			*type = PHONGO_TYPEMAP_CLASS;
 			*type_ce = found_ce;

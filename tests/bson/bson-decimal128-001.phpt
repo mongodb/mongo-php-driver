@@ -1,5 +1,5 @@
 --TEST--
-BSON\Decimal128
+MongoDB\BSON\Decimal128
 --SKIPIF--
 <?php if (!class_exists('MongoDB\BSON\Decimal128')) { die('skip MongoDB\BSON\Decimal128 is not available'); } ?>
 --FILE--

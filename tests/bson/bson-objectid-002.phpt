@@ -1,12 +1,10 @@
 --TEST--
-BSON BSON\ObjectID #002 generates ObjectID for null or missing constructor argument
+MongoDB\BSON\ObjectID #002 generates ObjectID for null or missing constructor argument
 --FILE--
 <?php
 
-$classname = BSON_NAMESPACE . "\\ObjectID";
-
-var_dump(new $classname());
-var_dump(new $classname(null));
+var_dump(new MongoDB\BSON\ObjectID);
+var_dump(new MongoDB\BSON\ObjectID(null));
 
 ?>
 ===DONE===

@@ -2,7 +2,6 @@
 BSON Serializing a PHP resource should throw exception
 --FILE--
 <?php
-use MongoDB\BSON as BSON;
 
 require_once __DIR__ . '/../utils/tools.php';
 
