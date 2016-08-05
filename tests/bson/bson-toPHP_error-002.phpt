@@ -1,10 +1,9 @@
 --TEST--
 BSON\toPHP(): BSON decoding exceptions
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 /* We can't really test for bson_iter_init() failure, since bson_reader_read()
  * already checks that the buffer is at least 5 bytes.

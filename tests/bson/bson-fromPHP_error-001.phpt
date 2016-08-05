@@ -1,12 +1,10 @@
 --TEST--
 BSON\fromPHP(): bsonSerialize() must return an array or stdClass
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
 use MongoDB\BSON as BSON;
 
-require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . '/../utils/tools.php';
 
 class MyDocument implements BSON\Serializable
 {

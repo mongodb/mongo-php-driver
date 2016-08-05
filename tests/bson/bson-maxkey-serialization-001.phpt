@@ -1,10 +1,7 @@
 --TEST--
 MongoDB\BSON\MaxKey serialization
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 var_dump($maxkey = new MongoDB\BSON\MaxKey);
 var_dump($s = serialize($maxkey));

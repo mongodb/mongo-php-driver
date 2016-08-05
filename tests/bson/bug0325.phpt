@@ -1,10 +1,9 @@
 --TEST--
 Test for PHPC-325: Memory leak decoding buffers with multiple documents
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 $bson1 = fromJSON('{"x": "y"}');
 $bson2 = fromJSON('{"a": "b"}');

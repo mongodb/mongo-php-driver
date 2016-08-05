@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\BSON\Binary::__set_state() requires unsigned 8-bit integer for type
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     MongoDB\BSON\Binary::__set_state(['data' => 'foobar', 'type' => -1]);

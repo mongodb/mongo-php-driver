@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\BSON\Javascript unserialization requires "code" string field
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     unserialize('O:23:"MongoDB\BSON\Javascript":1:{s:4:"code";i:0;}');

@@ -1,10 +1,7 @@
 --TEST--
 MongoDB\BSON\Timestamp serialization
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 $tests = [
     [1234, 5678],

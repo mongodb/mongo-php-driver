@@ -1,10 +1,9 @@
 --TEST--
 PHPC-672: ObjectID constructor should not modify string argument's memory
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 $id = '56925B7330616224D0000001';
 var_dump(new MongoDB\BSON\ObjectID($id));

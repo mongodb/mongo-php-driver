@@ -1,10 +1,9 @@
 --TEST--
 Test for PHPC-347: Memory leak decoding empty buffer
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 try {
     var_dump(toPHP(''));

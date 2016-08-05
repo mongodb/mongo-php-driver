@@ -1,11 +1,9 @@
 --TEST--
 PHPC-531: Segfault due to double free by corrupt BSON visitor
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
 
-require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . '/../utils/tools.php';
 
 $bson = fromPHP(["hello" => "world"]);
 $bson[4] = 1;

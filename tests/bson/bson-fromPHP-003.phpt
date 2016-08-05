@@ -2,13 +2,11 @@
 BSON\fromPHP(): Encoding non-Persistable objects as a document field value
 --INI--
 date.timezone=America/Los_Angeles
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
 use MongoDB\BSON as BSON;
 
-require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . '/../utils/tools.php';
 
 class MyDocument {
     private $foo = 1;

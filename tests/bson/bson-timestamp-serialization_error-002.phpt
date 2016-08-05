@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\BSON\Timestamp unserialization requires positive unsigned 32-bit integers
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     unserialize('O:22:"MongoDB\BSON\Timestamp":2:{s:9:"increment";i:-1;s:9:"timestamp";i:5678;}');

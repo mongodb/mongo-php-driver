@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\BSON\Regex unserialization does not allow pattern or flags to contain null bytes
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     unserialize('O:18:"MongoDB\BSON\Regex":2:{s:7:"pattern";s:7:"regexp' . "\0" . '";s:5:"flags";s:1:"i";}');

@@ -1,10 +1,9 @@
 --TEST--
 BSON\toPHP(): BSON decoding exceptions for malformed documents
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 $tests = array(
     pack('Vx', 4), // Empty document with invalid length (too small)

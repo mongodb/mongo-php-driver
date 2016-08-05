@@ -1,12 +1,11 @@
 --TEST--
 PHPC-631: UTCDateTime::toDateTime() may return object that cannot be serialized
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
-$utcdatetime = new MongoDB\BSON\UTCDateTime(1466540755123);
+require_once __DIR__ . '/../utils/tools.php';
+
+$utcdatetime = new MongoDB\BSON\UTCDateTime('1466540755123');
 $datetime = $utcdatetime->toDateTime();
 $s = serialize($datetime);
 

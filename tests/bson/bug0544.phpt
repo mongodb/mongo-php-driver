@@ -2,13 +2,12 @@
 PHPC-544: Consult SIZEOF_ZEND_LONG for 64-bit integer support
 --SKIPIF--
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --INI--
 mongodb.debug=stderr
 --FILE--
 <?php
 
-require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . '/../utils/tools.php';
 
 $tests = [
     ['x' => -2147483648],

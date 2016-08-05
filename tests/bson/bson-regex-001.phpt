@@ -1,11 +1,9 @@
 --TEST--
 BSON BSON\Regex #001
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
+require_once __DIR__ . '/../utils/tools.php';
 
 $classname = BSON_NAMESPACE . "\\Regex";
 $regexp = new $classname("regexp", "i");

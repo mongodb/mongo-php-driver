@@ -1,10 +1,8 @@
 --TEST--
 MongoDB\BSON\UTCDateTime::__set_state() requires "milliseconds" string to parse as 64-bit integer
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     MongoDB\BSON\UTCDateTime::__set_state(['milliseconds' => 'INVALID']);

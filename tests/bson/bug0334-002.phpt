@@ -1,12 +1,10 @@
 --TEST--
 PHPC-334: Encoded BSON should never have multiple __pclass keys
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
 use MongoDB\BSON as BSON;
 
-require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . '/../utils/tools.php';
 
 class MyClass implements BSON\Persistable {
     function bsonSerialize() {

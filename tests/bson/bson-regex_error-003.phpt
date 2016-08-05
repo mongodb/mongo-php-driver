@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\BSON\Regex::__construct() does not allow pattern or flags to contain null bytes
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     new MongoDB\BSON\Regex("regexp\0", 'i');

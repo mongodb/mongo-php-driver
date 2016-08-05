@@ -1,12 +1,10 @@
 --TEST--
 BSON\toPHP(): Type map class must be both instantiatable and Unserializable
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
 use MongoDB\BSON as BSON;
 
-require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . '/../utils/tools.php';
 
 abstract class MyAbstractDocument implements BSON\Unserializable
 {

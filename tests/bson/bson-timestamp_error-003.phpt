@@ -1,10 +1,9 @@
 --TEST--
 BSON BSON\Timestamp constructor requires positive unsigned 32-bit integers
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 use MongoDB\BSON as BSON;
 

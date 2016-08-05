@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\BSON\UTCDateTime unserialization requires "milliseconds" integer or numeric string field
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     unserialize('O:24:"MongoDB\BSON\UTCDateTime":1:{s:12:"milliseconds";d:1;}');

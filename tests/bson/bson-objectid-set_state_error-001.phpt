@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\BSON\ObjectID::__set_state() requires "oid" string field
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     MongoDB\BSON\ObjectID::__set_state(['oid' => 0]);

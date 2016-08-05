@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\BSON\Javascript unserialization does not allow code to contain null bytes
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     unserialize('O:23:"MongoDB\BSON\Javascript":1:{s:4:"code";s:30:"function foo() { return ' . "'\0'" . '; }";}');

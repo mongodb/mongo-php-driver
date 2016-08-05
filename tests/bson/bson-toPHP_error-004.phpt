@@ -1,10 +1,9 @@
 --TEST--
 BSON\toPHP(): BSON decoding exceptions for bson_iter_visit_all() failure
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 $tests = array(
     // Invalid UTF-8 character in root document's field name

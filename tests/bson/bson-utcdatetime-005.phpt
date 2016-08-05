@@ -1,10 +1,7 @@
 --TEST--
 BSON BSON\UTCDateTime construction from DateTime
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 $tests = [
     new DateTime(),

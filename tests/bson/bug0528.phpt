@@ -1,10 +1,9 @@
 --TEST--
 PHPC-528: Cannot append reference to BSON
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 $embedded = ['foo'];
 $data = ['embedded' => &$embedded];
