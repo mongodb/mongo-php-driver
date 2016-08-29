@@ -22,6 +22,4 @@ ini_set("mongodb.debug", "off");
 %a
 [%s]     PHONGO: DEBUG   > Creating Manager, phongo-1.%d.%d%S[%s] - mongoc-1.%s(%s), libbson-1.%s(%s), php-%s
 %a
-[%s]     PHONGO: DEBUG   > Connecting to '%s:%d[mongodb://%s:%d]'
-%a
 ===DONE===
