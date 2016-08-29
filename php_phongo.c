@@ -1399,29 +1399,8 @@ static bool php_phongo_apply_ssl_opts(mongoc_client_t *client, zval *zdriverOpti
 
 static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval                      *zdebug = NULL;
-#else
-	zval                     **zdebug = NULL;
-#endif
-	const char                *mongoc_version, *bson_version;
-	mongoc_client_t           *client;
-
-#if PHP_VERSION_ID >= 70000
-	if (driverOptions && (zdebug = zend_hash_str_find(Z_ARRVAL_P(driverOptions), "debug", sizeof("debug")-1)) != NULL) {
-		zend_string *key = zend_string_init(PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI)-1, 0);
-		zend_string *value_str = zval_get_string(zdebug);
-		zend_alter_ini_entry_ex(key, value_str, PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0);
-		zend_string_release(key);
-		zend_string_release(value_str);
-	}
-#else
-	if (driverOptions && zend_hash_find(Z_ARRVAL_P(driverOptions), "debug", strlen("debug") + 1, (void**)&zdebug) == SUCCESS) {
-		convert_to_string(*zdebug);
-
-		zend_alter_ini_entry_ex((char *)PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), Z_STRVAL_PP(zdebug), Z_STRLEN_PP(zdebug), PHP_INI_USER, PHP_INI_STAGE_RUNTIME, 0 TSRMLS_CC);
-	}
-#endif
+	const char      *mongoc_version, *bson_version;
+	mongoc_client_t *client;
 
 #ifdef HAVE_SYSTEM_LIBMONGOC
 	mongoc_version = mongoc_get_version();

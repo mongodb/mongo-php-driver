@@ -10,16 +10,18 @@ require_once __DIR__ . "/../utils/basic.inc";
 $name = tempnam(sys_get_temp_dir(), "PHONGO");
 unlink($name);
 mkdir($name);
-$manager = new MongoDB\Driver\Manager(STANDALONE, array(), array("debug" => $name));
+ini_set('mongodb.debug', $name);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1, 'x' => 1));
 $result = $manager->executeBulkWrite(NS, $bulk);
+ini_set('mongodb.debug', 'off');
 foreach(glob($name."/*") as $file);
 $content = file($file);
 unlink($file);
 rmdir($name);
 
-echo $content[0];
+echo $content[0], $content[1];
 foreach($content as $line) {
     if (strpos($line, "mongoc_bulk_operation_execute")) {
         echo $line;
@@ -30,6 +32,7 @@ foreach($content as $line) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+[%s]     PHONGO: DEBUG   > Connection string: '%s'
 [%s]     PHONGO: DEBUG   > Creating Manager, phongo-1.%d.%d%S[%s] - mongoc-1.%s(%s), libbson-1.%s(%s), php-%s
 [%s]     mongoc: TRACE   > ENTRY: mongoc_bulk_operation_execute():%d
 [%s]     mongoc: TRACE   >  EXIT: mongoc_bulk_operation_execute():%d
