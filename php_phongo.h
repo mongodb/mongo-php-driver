@@ -40,13 +40,6 @@ extern zend_module_entry mongodb_module_entry;
 #	define PHONGO_API
 #endif
 
-#ifdef ZTS
-#	include "TSRM.h"
-#	define PHONGO_STREAM_CTX(x) x
-#else
-#	define PHONGO_STREAM_CTX(x) NULL
-#endif
-
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char *debug;
 	FILE *debug_fd;
@@ -102,23 +95,6 @@ typedef enum {
 	PHONGO_ERROR_LOGIC               = 9
 } php_phongo_error_domain_t;
 
-typedef struct
-{
-	void (*writer)(mongoc_stream_t *stream, int32_t timeout_msec, ssize_t sent, size_t iovcnt);
-} php_phongo_stream_logger;
-
-typedef struct
-{
-	mongoc_stream_t           vtable;
-	php_stream               *stream;
-	const mongoc_uri_t       *uri;
-	const mongoc_host_list_t *host;
-#if ZTS
-	void ***tsrm_ls;
-#endif
-} php_phongo_stream_socket;
-
-
 PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
 PHONGO_API zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
 void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *format, ...)
@@ -146,7 +122,6 @@ bool                     phongo_execute_write        (zval *manager, const char 
 int                      phongo_execute_command      (zval *manager, const char *db, zval *zcommand, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_query        (zval *manager, const char *namespace, zval *zquery, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
 
-mongoc_stream_t*         phongo_stream_initiator     (const mongoc_uri_t *uri, const mongoc_host_list_t *host, void *user_data, bson_error_t *error);
 const mongoc_read_concern_t*  phongo_read_concern_from_zval   (zval *zread_concern TSRMLS_DC);
 const mongoc_read_prefs_t*    phongo_read_preference_from_zval(zval *zread_preference TSRMLS_DC);
 const mongoc_write_concern_t* phongo_write_concern_from_zval  (zval *zwrite_concern TSRMLS_DC);

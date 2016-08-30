@@ -6,44 +6,34 @@ X509 connection should not reuse previous stream after an auth failure
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-function connect($dsn, $opts) {
-    try {
-        $manager = new MongoDB\Driver\Manager($dsn, array(), $opts);
+$SSL_DIR = realpath(__DIR__ . '/../../scripts/ssl/');
 
-        $bulk = new MongoDB\Driver\BulkWrite();
-        $bulk->insert(array("very" => "important"));
-        $manager->executeBulkWrite(NS, $bulk);
-        echo "Connected\n";
-    } catch(Exception $e) {
-        echo get_class($e), ": ", $e->getMessage(), "\n";
-    }
-    return $manager;
+$driverOptions = [
+    // libmongoc does not allow the hostname to be overridden as "server"
+    'allow_invalid_hostname' => true,
+    'ca_file' => $SSL_DIR . '/ca.pem',
+    'pem_file' => $SSL_DIR . '/client.pem',
+];
+
+// Wrong username for X509 authentication
+$parsed = parse_url(STANDALONE_X509);
+$dsn = sprintf('mongodb://username@%s:%d/?ssl=true&authMechanism=MONGODB-X509', $parsed['host'], $parsed['port']);
+
+// Both should fail with auth failure, without reusing the previous stream
+for ($i = 0; $i < 2; $i++) {
+    echo throws(function() use ($dsn, $driverOptions) {
+        $manager = new MongoDB\Driver\Manager($dsn, [], $driverOptions);
+        $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
+        var_dump($cursor->toArray()[0]);
+    }, 'MongoDB\Driver\Exception\AuthenticationException', 'executeCommand'), "\n";
 }
 
-$SSL_DIR = realpath(__DIR__ . "/" . "./../../scripts/ssl/");
-$opts = array(
-        "peer_name" => "server",
-        "verify_peer" => true,
-        "verify_peer_name" => true,
-        "allow_self_signed" => false,
-        "cafile" => $SSL_DIR . "/ca.pem", /* Defaults to openssl.cafile */
-        "capath" => $SSL_DIR, /* Defaults to openssl.capath */
-        "local_cert" => $SSL_DIR . "/client.pem",
-);
-
-/* Wrong username */
-$parsed = parse_url(STANDALONE_X509);
-$dsn = sprintf("mongodb://username@%s:%d/%s?ssl=true&authMechanism=MONGODB-X509", $parsed["host"], $parsed["port"], DATABASE_NAME);
-
-$m1 = connect($dsn, $opts);
-$m2 = connect($dsn, $opts);
-
-echo "Both should have failed with auth failure - without reusing previous stream\n";
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-MongoDB\Driver\Exception\AuthenticationException: auth failed
-MongoDB\Driver\Exception\AuthenticationException: auth failed
-Both should have failed with auth failure - without reusing previous stream
+OK: Got MongoDB\Driver\Exception\AuthenticationException thrown from executeCommand
+auth failed
+OK: Got MongoDB\Driver\Exception\AuthenticationException thrown from executeCommand
+auth failed
 ===DONE===
