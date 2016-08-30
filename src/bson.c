@@ -1101,6 +1101,9 @@ try_again:
 		case IS_REFERENCE:
 			ZVAL_DEREF(entry);
 			goto try_again;
+		case IS_UNDEF:
+        		  bson_append_undefined(bson, key, key_len);
+             		break;	
 #endif
 
 		default:
