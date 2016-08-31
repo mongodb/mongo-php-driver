@@ -16,8 +16,6 @@ $driverOptions = [
             'allow_self_signed' => false, // "weak_cert_validation" alias
             'cafile' => $SSL_DIR . '/ca.pem', // "ca_file" alias
             'local_cert' => $SSL_DIR . '/client.pem', // "pem_file" alias
-            // TODO: this doesn't appear to have any effect. Does the PEM file not have a password?
-            'passphrase' => 'qwerty', // "pem_pwd" alias
         ],
     ]),
 ];

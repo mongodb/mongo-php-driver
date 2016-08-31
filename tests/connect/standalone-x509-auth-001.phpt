@@ -14,8 +14,6 @@ $driverOptions = [
     'weak_cert_validation' => false,
     'ca_file' => $SSL_DIR . '/ca.pem',
     'pem_file' => $SSL_DIR . '/client.pem',
-    // TODO: this doesn't appear to have any effect. Does the PEM file not have a password?
-    'pem_pwd' => 'qwerty',
 ];
 
 $manager = new MongoDB\Driver\Manager(STANDALONE_X509, ['ssl' => true], $driverOptions);
