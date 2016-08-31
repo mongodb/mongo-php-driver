@@ -1004,7 +1004,9 @@ static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options
 			    !strcasecmp(key, "safe") ||
 			    !strcasecmp(key, "slaveok") ||
 			    !strcasecmp(key, "w") ||
-			    !strcasecmp(key, "wtimeoutms")) {
+			    !strcasecmp(key, "wtimeoutms") ||
+			    !strcasecmp(key, "maxstalenessms")
+			) {
 				continue;
 			}
 
@@ -1090,7 +1092,9 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 
 	if (!bson_iter_init_find_case(&iter, options, "slaveok") &&
 	    !bson_iter_init_find_case(&iter, options, "readpreference") &&
-	    !bson_iter_init_find_case(&iter, options, "readpreferencetags")) {
+	    !bson_iter_init_find_case(&iter, options, "readpreferencetags") &&
+	    !bson_iter_init_find_case(&iter, options, "maxstalenessms")
+	) {
 		return true;
 	}
 
@@ -1139,6 +1143,19 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 		mongoc_read_prefs_destroy(new_rp);
 
 		return false;
+	}
+
+	/* Handle maxStalenessMS, and make sure it is not combined with primary
+	 * readPreference */
+	if (bson_iter_init_find_case(&iter, options, "maxstalenessms") && BSON_ITER_HOLDS_INT32(&iter)) {
+		if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Primary read preference mode conflicts with maxStalenessMS");
+			mongoc_read_prefs_destroy(new_rp);
+
+			return false;
+		}
+
+		mongoc_read_prefs_set_max_staleness_ms(new_rp, bson_iter_int32(&iter));
 	}
 
 	/* This may be redundant in light of the last check (primary with tags), but
@@ -1390,8 +1407,6 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zv
 	const char                *mongoc_version, *bson_version;
 	mongoc_client_t           *client;
 
-	ENTRY;
-
 #if PHP_VERSION_ID >= 70000
 	if (driverOptions && (zdebug = zend_hash_str_find(Z_ARRVAL_P(driverOptions), "debug", sizeof("debug")-1)) != NULL) {
 		zend_string *key = zend_string_init(PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI)-1, 0);
@@ -1432,17 +1447,17 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zv
 	client = mongoc_client_new_from_uri(uri);
 
 	if (!client) {
-		RETURN(NULL);
+		return NULL;
 	}
 
 	if (mongoc_uri_get_ssl(uri) && driverOptions) {
 		if (!php_phongo_apply_ssl_opts(client, driverOptions TSRMLS_CC)) {
 			mongoc_client_destroy(client);
-			RETURN(NULL);
+			return NULL;
 		}
 	}
 
-	RETURN(client);
+	return client;
 } /* }}} */
 
 bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, bson_t *bson_options, zval *driverOptions TSRMLS_DC) /* {{{ */
@@ -1880,11 +1895,17 @@ PHP_MINIT_FUNCTION(mongodb)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 
+	char *php_version_string = malloc(4 + sizeof(MONGODB_VERSION_S) + 1);
 
 	REGISTER_INI_ENTRIES();
 
 	/* Initialize libmongoc */
 	mongoc_init();
+
+	/* Set handshake options */
+	snprintf(php_version_string, 4 + sizeof(MONGODB_VERSION_S) + 1, "PHP %s", PHP_VERSION);
+	mongoc_handshake_data_append("ext-mongodb:PHP", MONGODB_VERSION_S, php_version_string);
+
 	/* Initialize libbson */
 	bson_mem_set_vtable(&MONGODB_G(bsonMemVTable));
 

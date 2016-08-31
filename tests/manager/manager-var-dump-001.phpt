@@ -50,7 +50,7 @@ object(MongoDB\Driver\Manager)#%d (%d) {
       ["is_passive"]=>
       bool(false)
       ["last_is_master"]=>
-      array(8) {
+      array(%d) {
         ["ismaster"]=>
         bool(true)
         ["maxBsonObjectSize"]=>
@@ -68,6 +68,7 @@ object(MongoDB\Driver\Manager)#%d (%d) {
         int(%d)
         ["minWireVersion"]=>
         int(0)
+        %a
         ["ok"]=>
         float(1)
       }
