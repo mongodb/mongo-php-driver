@@ -1390,8 +1390,6 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zv
 	const char                *mongoc_version, *bson_version;
 	mongoc_client_t           *client;
 
-	ENTRY;
-
 #if PHP_VERSION_ID >= 70000
 	if (driverOptions && (zdebug = zend_hash_str_find(Z_ARRVAL_P(driverOptions), "debug", sizeof("debug")-1)) != NULL) {
 		zend_string *key = zend_string_init(PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI)-1, 0);
@@ -1432,17 +1430,17 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zv
 	client = mongoc_client_new_from_uri(uri);
 
 	if (!client) {
-		RETURN(NULL);
+		return NULL;
 	}
 
 	if (mongoc_uri_get_ssl(uri) && driverOptions) {
 		if (!php_phongo_apply_ssl_opts(client, driverOptions TSRMLS_CC)) {
 			mongoc_client_destroy(client);
-			RETURN(NULL);
+			return NULL;
 		}
 	}
 
-	RETURN(client);
+	return client;
 } /* }}} */
 
 bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, bson_t *bson_options, zval *driverOptions TSRMLS_DC) /* {{{ */
@@ -1524,7 +1522,6 @@ void php_phongo_new_binary_from_binary_and_type(zval *object, const char *data, 
 	intern->type = (uint8_t) type;
 } /* }}} */
 
-#ifdef BSON_EXPERIMENTAL_FEATURES
 void php_phongo_new_decimal128(zval *object, const bson_decimal128_t *decimal TSRMLS_DC) /* {{{ */
 {
 	php_phongo_decimal128_t *intern;
@@ -1535,7 +1532,6 @@ void php_phongo_new_decimal128(zval *object, const bson_decimal128_t *decimal TS
 	memcpy(&intern->decimal, decimal, sizeof(bson_decimal128_t));
 	intern->initialized = true;
 } /* }}} */
-#endif
 
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC) /* {{{ */
 {
@@ -1878,13 +1874,21 @@ PHP_GINIT_FUNCTION(mongodb)
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(mongodb)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	char *php_version_string;
 
+	(void)type; /* We don't care if we are loaded via dl() or extension= */
 
 	REGISTER_INI_ENTRIES();
 
 	/* Initialize libmongoc */
 	mongoc_init();
+
+	/* Set handshake options */
+	php_version_string = malloc(4 + sizeof(PHP_VERSION) + 1);
+	snprintf(php_version_string, 4 + sizeof(PHP_VERSION) + 1, "PHP %s", PHP_VERSION);
+	mongoc_handshake_data_append("ext-mongodb:PHP", MONGODB_VERSION_S, php_version_string);
+	free(php_version_string);
+
 	/* Initialize libbson */
 	bson_mem_set_vtable(&MONGODB_G(bsonMemVTable));
 
@@ -1933,9 +1937,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	PHP_MINIT(Unserializable)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Persistable)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Binary)(INIT_FUNC_ARGS_PASSTHRU);
-#ifdef BSON_EXPERIMENTAL_FEATURES
 	PHP_MINIT(Decimal128)(INIT_FUNC_ARGS_PASSTHRU);
-#endif
 	PHP_MINIT(Javascript)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(MaxKey)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(MinKey)(INIT_FUNC_ARGS_PASSTHRU);

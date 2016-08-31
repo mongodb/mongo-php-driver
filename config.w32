@@ -51,7 +51,7 @@ if (PHP_MONGODB != "no") {
   ADD_SOURCES(configure_module_dirname + "/src/MongoDB/Exception", "Exception.c LogicException.c RuntimeException.c UnexpectedValueException.c InvalidArgumentException.c ConnectionException.c AuthenticationException.c SSLConnectionException.c ExecutionTimeoutException.c ConnectionTimeoutException.c WriteException.c BulkWriteException.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/contrib/", "php-ssl.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libbson/src/yajl", "yajl_version.c yajl.c yajl_encode.c yajl_lex.c yajl_parser.c yajl_buf.c yajl_tree.c yajl_alloc.c yajl_gen.c", "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/libbson/src/bson", "bcon.c bson.c bson-atomic.c bson-clock.c bson-context.c bson-error.c bson-iter.c bson-iso8601.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/libbson/src/bson", "bcon.c bson.c bson-atomic.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-iter.c bson-iso8601.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-b64.c mongoc-client.c mongoc-client-pool.c mongoc-cluster.c mongoc-collection.c mongoc-counters.c mongoc-cursor.c mongoc-cursor-array.c mongoc-cursor-cursorid.c mongoc-cursor-transform.c mongoc-database.c mongoc-find-and-modify.c mongoc-host-list.c mongoc-init.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-page.c mongoc-gridfs-file-list.c mongoc-index.c mongoc-list.c mongoc-log.c mongoc-matcher-op.c mongoc-matcher.c mongoc-memcmp.c mongoc-opcode.c mongoc-queue.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-server-description.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-stream.c mongoc-stream-buffered.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-socket.c mongoc-topology.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-concern.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-crypto.c mongoc-scram.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-stream-tls.c mongoc-ssl.c", "mongodb");
@@ -81,7 +81,6 @@ if (PHP_MONGODB != "no") {
     BSON_EXTRA_ALIGN: 0,
     BSON_HAVE_SYSCALL_TID: 0,
     BSON_HAVE_DECIMAL128: 0,
-    BSON_EXPERIMENTAL_FEATURES: 0
   };
 
   if (CHECK_FUNC_IN_HEADER("stdio.h", "_set_output_format")) {
@@ -116,7 +115,6 @@ if (PHP_MONGODB != "no") {
     MONGOC_HAVE_SASL_CLIENT_DONE: 0,
     MONGOC_HAVE_WEAK_SYMBOLS: 0,
     MONGOC_NO_AUTOMATIC_GLOBALS: 1,
-    MONGOC_EXPERIMENTAL_FEATURES: 0
   };
 
   if (CHECK_LIB("ssleay32.lib", "mongodb", PHP_MONGODB) &&
