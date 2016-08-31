@@ -1004,7 +1004,9 @@ static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options
 			    !strcasecmp(key, "safe") ||
 			    !strcasecmp(key, "slaveok") ||
 			    !strcasecmp(key, "w") ||
-			    !strcasecmp(key, "wtimeoutms")) {
+			    !strcasecmp(key, "wtimeoutms") ||
+			    !strcasecmp(key, "maxstalenessms")
+			) {
 				continue;
 			}
 
@@ -1090,7 +1092,9 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 
 	if (!bson_iter_init_find_case(&iter, options, "slaveok") &&
 	    !bson_iter_init_find_case(&iter, options, "readpreference") &&
-	    !bson_iter_init_find_case(&iter, options, "readpreferencetags")) {
+	    !bson_iter_init_find_case(&iter, options, "readpreferencetags") &&
+	    !bson_iter_init_find_case(&iter, options, "maxstalenessms")
+	) {
 		return true;
 	}
 
@@ -1139,6 +1143,19 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 		mongoc_read_prefs_destroy(new_rp);
 
 		return false;
+	}
+
+	/* Handle maxStalenessMS, and make sure it is not combined with primary
+	 * readPreference */
+	if (bson_iter_init_find_case(&iter, options, "maxstalenessms") && BSON_ITER_HOLDS_INT32(&iter)) {
+		if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Primary read preference mode conflicts with maxStalenessMS");
+			mongoc_read_prefs_destroy(new_rp);
+
+			return false;
+		}
+
+		mongoc_read_prefs_set_max_staleness_ms(new_rp, bson_iter_int32(&iter));
 	}
 
 	/* This may be redundant in light of the last check (primary with tags), but
