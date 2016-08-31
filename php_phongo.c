@@ -1874,13 +1874,21 @@ PHP_GINIT_FUNCTION(mongodb)
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(mongodb)
 {
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
+	char *php_version_string;
 
+	(void)type; /* We don't care if we are loaded via dl() or extension= */
 
 	REGISTER_INI_ENTRIES();
 
 	/* Initialize libmongoc */
 	mongoc_init();
+
+	/* Set handshake options */
+	php_version_string = malloc(4 + sizeof(PHP_VERSION) + 1);
+	snprintf(php_version_string, 4 + sizeof(PHP_VERSION) + 1, "PHP %s", PHP_VERSION);
+	mongoc_handshake_data_append("ext-mongodb:PHP", MONGODB_VERSION_S, php_version_string);
+	free(php_version_string);
+
 	/* Initialize libbson */
 	bson_mem_set_vtable(&MONGODB_G(bsonMemVTable));
 
