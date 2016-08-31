@@ -1878,11 +1878,17 @@ PHP_MINIT_FUNCTION(mongodb)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 
+	char *php_version_string = malloc(4 + sizeof(MONGODB_VERSION_S) + 1);
 
 	REGISTER_INI_ENTRIES();
 
 	/* Initialize libmongoc */
 	mongoc_init();
+
+	/* Set handshake options */
+	snprintf(php_version_string, 4 + sizeof(MONGODB_VERSION_S) + 1, "PHP %s", PHP_VERSION);
+	mongoc_handshake_data_append("ext-mongodb:PHP", MONGODB_VERSION_S, php_version_string);
+
 	/* Initialize libbson */
 	bson_mem_set_vtable(&MONGODB_G(bsonMemVTable));
 
