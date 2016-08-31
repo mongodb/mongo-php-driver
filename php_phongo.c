@@ -1363,9 +1363,9 @@ static bool php_phongo_apply_ssl_opts(mongoc_client_t *client, zval *zdriverOpti
 
 	valid_options = true;
 
-#ifdef MONGOC_ENABLE_SSL_OPENSSL
+#if defined(MONGOC_ENABLE_SSL_SECURE_CHANNEL) || defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
 	if (ssl_opt.ca_dir) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"ca_dir\" or \"capath\" options may only be used with OpenSSL");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"ca_dir\" and \"capath\" options are not supported by Secure Channel and Secure Transport");
 		valid_options = false;
 	}
 #endif
