@@ -2,8 +2,6 @@
 PHPC-623: Numeric keys limited to unsigned 32-bit integer
 --SKIPIF--
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
---INI--
-mongodb.debug=stderr
 --FILE--
 <?php
 

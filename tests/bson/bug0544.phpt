@@ -2,8 +2,6 @@
 PHPC-544: Consult SIZEOF_ZEND_LONG for 64-bit integer support
 --SKIPIF--
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
---INI--
-mongodb.debug=stderr
 --FILE--
 <?php
 
