@@ -51,6 +51,55 @@ PHONGO_API zend_class_entry *php_phongo_manager_ce;
 
 zend_object_handlers php_phongo_handler_manager;
 
+/* Checks if driverOptions contains a stream context resource in the "context"
+ * key and incorporates any of its SSL options into the base array that did not
+ * already exist (i.e. array union). The "context" key is then unset from the
+ * base array.
+ *
+ * This handles the merging of any legacy SSL context options and also makes
+ * driverOptions suitable for serialization by removing the resource zval. */
+static bool php_phongo_manager_merge_context_options(zval *zdriverOptions TSRMLS_DC)
+{
+	php_stream_context *context;
+	zval *zcontext, *zcontextOptions;
+
+	if (!php_array_existsc(zdriverOptions, "context")) {
+		return true;
+	}
+
+	zcontext = php_array_fetchc(zdriverOptions, "context");
+	context = php_stream_context_from_zval(zcontext, 1);
+
+	if (!context) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"context\" driver option is not a valid Stream-Context resource");
+		return false;
+	}
+
+#if PHP_VERSION_ID >= 70000
+	zcontextOptions = php_array_fetchc_array(&context->options, "ssl");
+#else
+	zcontextOptions = php_array_fetchc_array(context->options, "ssl");
+#endif
+
+	if (!zcontextOptions) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Stream-Context resource does not contain \"ssl\" options array");
+		return false;
+	}
+
+	/* Perform array union (see: add_function() in zend_operators.c) */
+#if PHP_VERSION_ID >= 70000
+	zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), zval_add_ref, 0);	
+#else
+	{
+		zval *tmp;
+		zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), (void (*)(void *pData)) zval_add_ref, (void *) &tmp, sizeof(zval *), 0);
+	}
+#endif
+
+	php_array_unsetc(zdriverOptions, "context");
+	return true;
+}
+
 /* {{{ proto void Manager::__construct([string $uri = "mongodb://127.0.0.1/"[, array $options = array()[, array $driverOptions = array()]]])
    Constructs a new Manager */
 PHP_METHOD(Manager, __construct)
@@ -60,7 +109,6 @@ PHP_METHOD(Manager, __construct)
 	char                     *uri_string = NULL;
 	phongo_zpp_char_len       uri_string_len = 0;
 	zval                     *options = NULL;
-	bson_t                    bson_options = BSON_INITIALIZER;
 	zval                     *driverOptions = NULL;
 	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
@@ -68,18 +116,20 @@ PHP_METHOD(Manager, __construct)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_MANAGER_OBJ_P(getThis());
 
+	/* Separate the driverOptions zval, since we may end up modifying it in
+	 * php_phongo_manager_merge_context_options() below. */
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s!a!a!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	if (options) {
-		phongo_zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
+	if (driverOptions && !php_phongo_manager_merge_context_options(driverOptions TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return;
 	}
 
-	phongo_manager_init(intern, uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, &bson_options, driverOptions TSRMLS_CC);
-	bson_destroy(&bson_options);
+	phongo_manager_init(intern, uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, options, driverOptions TSRMLS_CC);
 }
 /* }}} */
 

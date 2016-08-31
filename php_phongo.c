@@ -1281,123 +1281,104 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t *uri, bson_t *option
 	return true;
 } /* }}} */
 
-static bool php_phongo_apply_ssl_opts(mongoc_client_t *client, zval *zdriverOptions TSRMLS_DC)
+static inline char *php_phongo_fetch_ssl_opt_string(zval *zoptions, const char *key, int key_len)
 {
-	mongoc_ssl_opt_t ssl_opt = {0};
-	zval *zoptions;
-	zend_bool free_pem_file = 0, free_pem_pwd = 0, free_ca_file = 0, free_ca_dir = 0, free_crl_file = 0;
-	int plen;
-	bool valid_options;
+	int        plen;
+	zend_bool  pfree;
+	char      *pval, *value;
 
-	if (!zdriverOptions) {
-		return false;
+	pval = php_array_fetchl_string(zoptions, key, key_len, &plen, &pfree);
+	value = pfree ? pval : estrndup(pval, plen);
+
+	return value;
+}
+
+static mongoc_ssl_opt_t *php_phongo_make_ssl_opt(zval *zoptions TSRMLS_DC)
+{
+	mongoc_ssl_opt_t *ssl_opt;
+
+	if (!zoptions) {
+		return NULL;
 	}
 
-	zoptions = zdriverOptions;
-
-	/* Use SSL context options if provided for backwards compatibility */
-	if (php_array_existsc(zdriverOptions, "context")) {
-		php_stream_context *context;
-		zval *zcontext;
-
-		zcontext = php_array_fetchc(zdriverOptions, "context");
-
-		context = php_stream_context_from_zval(zcontext, 1);
-
-		if (!context) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"context\" driver option is not a valid Stream-Context resource");
-			return false;
-		}
-
-#if PHP_VERSION_ID >= 70000
-		zoptions = php_array_fetchc_array(&context->options, "ssl");
-#else
-		zoptions = php_array_fetchc_array(context->options, "ssl");
+#if defined(MONGOC_ENABLE_SSL_SECURE_CHANNEL) || defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
+	if (php_array_existsc(zoptions, "ca_dir") || php_array_existsc(zoptions, "capath")) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"ca_dir\" and \"capath\" options are not supported by Secure Channel and Secure Transport");
+		return NULL;
+	}
 #endif
 
-		if (!zoptions) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Stream-Context resource does not contain \"ssl\" options array");
-			return false;
-		}
-	}
+	ssl_opt = ecalloc(1, sizeof(mongoc_ssl_opt_t));
 
 	/* Check canonical option names first and fall back to SSL context options
 	 * for backwards compatibility. */
 	if (php_array_existsc(zoptions, "allow_invalid_hostname")) {
-		ssl_opt.allow_invalid_hostname = php_array_fetchc_bool(zoptions, "allow_invalid_hostname");
+		ssl_opt->allow_invalid_hostname = php_array_fetchc_bool(zoptions, "allow_invalid_hostname");
 	}
 
 	if (php_array_existsc(zoptions, "weak_cert_validation")) {
-		ssl_opt.weak_cert_validation = php_array_fetchc_bool(zoptions, "weak_cert_validation");
+		ssl_opt->weak_cert_validation = php_array_fetchc_bool(zoptions, "weak_cert_validation");
 	} else if (php_array_existsc(zoptions, "allow_self_signed")) {
-		ssl_opt.weak_cert_validation = php_array_fetchc_bool(zoptions, "allow_self_signed");
+		ssl_opt->weak_cert_validation = php_array_fetchc_bool(zoptions, "allow_self_signed");
 	}
 
 	if (php_array_existsc(zoptions, "pem_file")) {
-		ssl_opt.pem_file = php_array_fetchc_string(zoptions, "pem_file", &plen, &free_pem_file);
+		ssl_opt->pem_file = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("pem_file"));
 	} else if (php_array_existsc(zoptions, "local_cert")) {
-		ssl_opt.pem_file = php_array_fetchc_string(zoptions, "local_cert", &plen, &free_pem_file);
+		ssl_opt->pem_file = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("local_cert"));
 	}
 
 	if (php_array_existsc(zoptions, "pem_pwd")) {
-		ssl_opt.pem_pwd = php_array_fetchc_string(zoptions, "pem_pwd", &plen, &free_pem_pwd);
+		ssl_opt->pem_pwd = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("pem_pwd"));
 	} else if (php_array_existsc(zoptions, "passphrase")) {
-		ssl_opt.pem_pwd = php_array_fetchc_string(zoptions, "passphrase", &plen, &free_pem_pwd);
+		ssl_opt->pem_pwd = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("passphrase"));
 	}
 
 	if (php_array_existsc(zoptions, "ca_file")) {
-		ssl_opt.ca_file = php_array_fetchc_string(zoptions, "ca_file", &plen, &free_ca_file);
+		ssl_opt->ca_file = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("ca_file"));
 	} else if (php_array_existsc(zoptions, "cafile")) {
-		ssl_opt.ca_file = php_array_fetchc_string(zoptions, "cafile", &plen, &free_ca_file);
+		ssl_opt->ca_file = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("cafile"));
 	}
 
 	if (php_array_existsc(zoptions, "ca_dir")) {
-		ssl_opt.ca_dir = php_array_fetchc_string(zoptions, "ca_dir", &plen, &free_ca_dir);
+		ssl_opt->ca_dir = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("ca_dir"));
 	} else if (php_array_existsc(zoptions, "capath")) {
-		ssl_opt.ca_dir = php_array_fetchc_string(zoptions, "capath", &plen, &free_ca_dir);
+		ssl_opt->ca_dir = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("capath"));
 	}
 
 	if (php_array_existsc(zoptions, "crl_file")) {
-		ssl_opt.crl_file = php_array_fetchc_string(zoptions, "crl_file", &plen, &free_crl_file);
+		ssl_opt->crl_file = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("crl_file"));
 	}
 
-	valid_options = true;
-
-#if defined(MONGOC_ENABLE_SSL_SECURE_CHANNEL) || defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
-	if (ssl_opt.ca_dir) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"ca_dir\" and \"capath\" options are not supported by Secure Channel and Secure Transport");
-		valid_options = false;
-	}
-#endif
-
-	if (valid_options) {
-		mongoc_client_set_ssl_opts(client, &ssl_opt);
-	}
-
-	if (free_pem_file) {
-		str_efree(ssl_opt.pem_file);
-	}
-
-	if (free_pem_pwd) {
-		str_efree(ssl_opt.pem_pwd);
-	}
-
-	if (free_ca_file) {
-		str_efree(ssl_opt.ca_file);
-	}
-
-	if (free_ca_dir) {
-		str_efree(ssl_opt.ca_dir);
-	}
-
-	if (free_crl_file) {
-		str_efree(ssl_opt.crl_file);
-	}
-
-	return valid_options;
+	return ssl_opt;
 }
 
-static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zval *driverOptions TSRMLS_DC) /* {{{ */
+static void php_phongo_free_ssl_opt(mongoc_ssl_opt_t *ssl_opt)
+{
+	if (ssl_opt->pem_file) {
+		str_efree(ssl_opt->pem_file);
+	}
+
+	if (ssl_opt->pem_pwd) {
+		str_efree(ssl_opt->pem_pwd);
+	}
+
+	if (ssl_opt->ca_file) {
+		str_efree(ssl_opt->ca_file);
+	}
+
+	if (ssl_opt->ca_dir) {
+		str_efree(ssl_opt->ca_dir);
+	}
+
+	if (ssl_opt->crl_file) {
+		str_efree(ssl_opt->crl_file);
+	}
+
+	efree(ssl_opt);
+}
+
+static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, mongoc_ssl_opt_t *ssl_opt TSRMLS_DC) /* {{{ */
 {
 	const char      *mongoc_version, *bson_version;
 	mongoc_client_t *client;
@@ -1429,42 +1410,63 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, zv
 		return NULL;
 	}
 
-	if (mongoc_uri_get_ssl(uri) && driverOptions) {
-		if (!php_phongo_apply_ssl_opts(client, driverOptions TSRMLS_CC)) {
-			mongoc_client_destroy(client);
-			return NULL;
-		}
+	if (mongoc_uri_get_ssl(uri) && ssl_opt) {
+		mongoc_client_set_ssl_opts(client, ssl_opt);
 	}
 
 	return client;
 } /* }}} */
 
-bool phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, bson_t *bson_options, zval *driverOptions TSRMLS_DC) /* {{{ */
+void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, zval *options, zval *driverOptions TSRMLS_DC) /* {{{ */
 {
-	mongoc_uri_t             *uri;
+	bson_t            bson_options = BSON_INITIALIZER;
+	mongoc_uri_t     *uri = NULL;
+	mongoc_ssl_opt_t *ssl_opt = NULL;
 
-	if (!(uri = php_phongo_make_uri(uri_string, bson_options))) {
+	if (options) {
+		phongo_zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
+	}
+
+	/* An exception may be thrown during BSON conversion */
+	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	if (!(uri = php_phongo_make_uri(uri_string, &bson_options))) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse MongoDB URI: '%s'", uri_string);
-		return false;
+		goto cleanup;
 	}
 
-	if (!php_phongo_apply_rc_options_to_uri(uri, bson_options TSRMLS_CC) ||
-	    !php_phongo_apply_rp_options_to_uri(uri, bson_options TSRMLS_CC) ||
-	    !php_phongo_apply_wc_options_to_uri(uri, bson_options TSRMLS_CC)) {
+	if (!php_phongo_apply_rc_options_to_uri(uri, &bson_options TSRMLS_CC) ||
+	    !php_phongo_apply_rp_options_to_uri(uri, &bson_options TSRMLS_CC) ||
+	    !php_phongo_apply_wc_options_to_uri(uri, &bson_options TSRMLS_CC)) {
 		/* Exception should already have been thrown */
-		mongoc_uri_destroy(uri);
-		return false;
+		goto cleanup;
 	}
 
-	manager->client = php_phongo_make_mongo_client(uri, driverOptions TSRMLS_CC);
-	mongoc_uri_destroy(uri);
+	ssl_opt = php_phongo_make_ssl_opt(driverOptions TSRMLS_CC);
+
+	/* An exception may be thrown during SSL option creation */
+	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	manager->client = php_phongo_make_mongo_client(uri, ssl_opt TSRMLS_CC);
 
 	if (!manager->client) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to create Manager from URI: '%s'", uri_string);
-		return false;
 	}
 
-	return true;
+cleanup:
+	bson_destroy(&bson_options);
+
+	if (uri) {
+		mongoc_uri_destroy(uri);
+	}
+
+	if (ssl_opt) {
+		php_phongo_free_ssl_opt(ssl_opt);
+	}
 } /* }}} */
 
 void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC) /* {{{ */
