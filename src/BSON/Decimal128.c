@@ -28,8 +28,6 @@
 #include <bson.h>
 #include <mongoc.h>
 
-#ifdef BSON_EXPERIMENTAL_FEATURES
-
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
@@ -284,8 +282,6 @@ PHP_MINIT_FUNCTION(Decimal128)
 	return SUCCESS;
 }
 /* }}} */
-
-#endif /* BSON_EXPERIMENTAL_FEATURES */
 
 /*
  * Local variables:

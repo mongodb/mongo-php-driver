@@ -142,9 +142,7 @@ void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, uint32_
 void php_phongo_new_javascript_from_javascript(int init, zval *object, const char *code, size_t code_len TSRMLS_DC);
 void php_phongo_new_javascript_from_javascript_and_scope(int init, zval *object, const char *code, size_t code_len, const bson_t *scope TSRMLS_DC);
 void php_phongo_new_binary_from_binary_and_type(zval *object, const char *data, size_t data_len, bson_subtype_t type TSRMLS_DC);
-#ifdef BSON_EXPERIMENTAL_FEATURES
 void php_phongo_new_decimal128(zval *object, const bson_decimal128_t *decimal TSRMLS_DC);
-#endif
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC);
 
 zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
