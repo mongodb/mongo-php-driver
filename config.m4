@@ -241,6 +241,7 @@ if test "$MONGODB" != "no"; then
     mongoc-cursor-cursorid.c \
     mongoc-cursor-transform.c \
     mongoc-database.c \
+    mongoc-linux-distro-scanner.c \
     mongoc-find-and-modify.c \
     mongoc-host-list.c \
     mongoc-init.c \
@@ -248,6 +249,7 @@ if test "$MONGODB" != "no"; then
     mongoc-gridfs-file.c \
     mongoc-gridfs-file-page.c \
     mongoc-gridfs-file-list.c \
+    mongoc-handshake.c \
     mongoc-index.c \
     mongoc-list.c \
     mongoc-log.c \
@@ -413,6 +415,8 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
     dnl Secure Channel only applies to Windows
     AC_SUBST(MONGOC_ENABLE_SSL_SECURE_CHANNEL, 0)
     AC_SUBST(MONGOC_ENABLE_CRYPTO_CNG, 0)
+
+    AC_SUBST(MONGOC_ENABLE_SSL_LIBRESSL, 0)
 
     AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
     AC_SUBST(MONGOC_EXPERIMENTAL_FEATURES, 0)
