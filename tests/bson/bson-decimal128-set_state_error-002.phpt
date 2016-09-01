@@ -16,5 +16,5 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Error parsing decimal string: INVALID
+Error parsing Decimal128 string: INVALID
 ===DONE===

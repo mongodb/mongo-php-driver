@@ -77,7 +77,7 @@ static bool php_phongo_objectid_init_from_hex_string(php_phongo_objectid_t *inte
 		return true;
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid BSON ID provided");
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing ObjectID string: %s", oid);
 
 	efree(tid);
 	return false;

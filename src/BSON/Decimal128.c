@@ -51,7 +51,7 @@ zend_object_handlers php_phongo_handler_decimal128;
 static bool php_phongo_decimal128_init(php_phongo_decimal128_t *intern, const char *value TSRMLS_DC)
 {
 	if (!bson_decimal128_from_string(value, &intern->decimal)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing decimal string: %s", value);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing Decimal128 string: %s", value);
 		return false;
 	}
 
