@@ -620,6 +620,9 @@ Please submit bugreports at:
   https://jira.mongodb.org/browse/PHPC
 
 "])
+
+  AC_SUBST(MONGOC_USER_SET_CFLAGS, "'$CFLAGS'")
+  AC_SUBST(MONGOC_USER_SET_LDFLAGS, "'$LDFLAGS'")
 fi
 
 dnl: vim: et sw=2
