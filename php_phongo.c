@@ -477,7 +477,10 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 		writeconcernerror->code = bson_iter_int32(&iter);
 	}
 	if (bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
-		writeconcernerror->message = bson_iter_dup_utf8(&iter, NULL);
+		uint32_t errmsg_len;
+		const char *err_msg = bson_iter_utf8(&iter, &errmsg_len);
+
+		writeconcernerror->message = estrndup(err_msg, errmsg_len);
 	}
 	if (bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 		uint32_t               len;
@@ -515,7 +518,10 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 		writeerror->code = bson_iter_int32(&iter);
 	}
 	if (bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
-		writeerror->message = bson_iter_dup_utf8(&iter, NULL);
+		uint32_t errmsg_len;
+		const char *err_msg = bson_iter_utf8(&iter, &errmsg_len);
+
+		writeerror->message = estrndup(err_msg, errmsg_len);
 	}
 	if (bson_iter_init_find(&iter, bson, "errInfo")) {
 		bson_t                 info;
