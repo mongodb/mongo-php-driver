@@ -409,7 +409,8 @@ static void php_phongo_manager_free_object(phongo_free_object_arg *object TSRMLS
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
 	if (intern->client) {
-		mongoc_client_destroy(intern->client);
+		MONGOC_DEBUG("Not destroying persistent client for Manager");
+		intern->client = NULL;
 	}
 
 #if PHP_VERSION_ID < 70000

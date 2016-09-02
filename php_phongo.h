@@ -44,6 +44,7 @@ ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char *debug;
 	FILE *debug_fd;
 	bson_mem_vtable_t bsonMemVTable;
+	HashTable clients;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
 #if PHP_VERSION_ID >= 70000

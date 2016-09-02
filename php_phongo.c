@@ -39,6 +39,14 @@
 #include <Zend/zend_exceptions.h>
 #include <ext/spl/spl_iterators.h>
 #include <ext/spl/spl_exceptions.h>
+#include <ext/standard/php_var.h>
+
+#if PHP_VERSION_ID >= 70000
+# include <Zend/zend_smart_str.h>
+#else
+# include <ext/standard/php_smart_str.h>
+#endif
+
 /* Stream wrapper */
 #include <main/php_streams.h>
 #include <main/php_network.h>
@@ -1378,6 +1386,84 @@ static void php_phongo_free_ssl_opt(mongoc_ssl_opt_t *ssl_opt)
 	efree(ssl_opt);
 }
 
+/* Creates a hash for a client by concatenating the URI string with serialized
+ * options arrays. On success, a persistent string is returned (i.e. pefree()
+ * should be used to free it) and hash_len will be set to the string's length.
+ * On error, an exception will have been thrown and NULL will be returned. */
+static char *php_phongo_manager_make_client_hash(const char *uri_string, zval *options, zval *driverOptions, size_t *hash_len TSRMLS_DC)
+{
+	char                 *hash = NULL;
+	smart_str             var_buf = {0};
+	php_serialize_data_t  var_hash;
+
+#if PHP_VERSION_ID >= 70000
+	zval                  args;
+
+	array_init_size(&args, 3);
+	ADD_ASSOC_STRING(&args, "uri", (char *) uri_string);
+
+	if (options) {
+		ADD_ASSOC_ZVAL_EX(&args, "options", options);
+		Z_ADDREF_P(options);
+	} else {
+		ADD_ASSOC_NULL_EX(&args, "options");
+	}
+
+	if (driverOptions) {
+		ADD_ASSOC_ZVAL_EX(&args, "driverOptions", driverOptions);
+		Z_ADDREF_P(driverOptions);
+	} else {
+		ADD_ASSOC_NULL_EX(&args, "driverOptions");
+	}
+
+	PHP_VAR_SERIALIZE_INIT(var_hash);
+	php_var_serialize(&var_buf, &args, &var_hash);
+	PHP_VAR_SERIALIZE_DESTROY(var_hash);
+
+	if (!EG(exception)) {
+		*hash_len = ZSTR_LEN(var_buf.s);
+		hash = pestrndup(ZSTR_VAL(var_buf.s), *hash_len, 1);
+	}
+
+	zval_ptr_dtor(&args);
+#else
+	zval                 *args;
+
+	MAKE_STD_ZVAL(args);
+	array_init_size(args, 3);
+	ADD_ASSOC_STRING(args, "uri", (char *) uri_string);
+
+	if (options) {
+		ADD_ASSOC_ZVAL_EX(args, "options", options);
+		Z_ADDREF_P(options);
+	} else {
+		ADD_ASSOC_NULL_EX(args, "options");
+	}
+
+	if (driverOptions) {
+		ADD_ASSOC_ZVAL_EX(args, "driverOptions", driverOptions);
+		Z_ADDREF_P(driverOptions);
+	} else {
+		ADD_ASSOC_NULL_EX(args, "driverOptions");
+	}
+
+	PHP_VAR_SERIALIZE_INIT(var_hash);
+	php_var_serialize(&var_buf, &args, &var_hash TSRMLS_CC);
+	PHP_VAR_SERIALIZE_DESTROY(var_hash);
+
+	if (!EG(exception)) {
+		*hash_len = var_buf.len;
+		hash = pestrndup(var_buf.c, *hash_len, 1);
+	}
+
+	zval_ptr_dtor(&args);
+#endif
+
+	smart_str_free(&var_buf);
+
+	return hash;
+}
+
 static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, mongoc_ssl_opt_t *ssl_opt TSRMLS_DC) /* {{{ */
 {
 	const char      *mongoc_version, *bson_version;
@@ -1419,9 +1505,37 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, mo
 
 void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, zval *options, zval *driverOptions TSRMLS_DC) /* {{{ */
 {
+	char             *hash = NULL;
+	size_t            hash_len = 0;
 	bson_t            bson_options = BSON_INITIALIZER;
 	mongoc_uri_t     *uri = NULL;
 	mongoc_ssl_opt_t *ssl_opt = NULL;
+
+#if PHP_VERSION_ID >= 70000
+	zval             *client_ptr;
+	zval              new_client_ptr;
+#else
+	mongoc_client_t **client_ptr;
+#endif
+
+	if (!(hash = php_phongo_manager_make_client_hash(uri_string, options, driverOptions, &hash_len TSRMLS_CC))) {
+		/* Exception should already have been thrown and there is nothing to free */
+		return;
+	}
+
+#if PHP_VERSION_ID >= 70000
+	if ((client_ptr = zend_hash_str_find(&MONGODB_G(clients), hash, hash_len)) && Z_TYPE_P(client_ptr) == IS_PTR) {
+		MONGOC_DEBUG("Found client for hash: %s\n", hash);
+		manager->client = (mongoc_client_t *)Z_PTR_P(client_ptr);
+		goto cleanup;
+	}
+#else
+	if (zend_hash_find(&MONGODB_G(clients), hash, hash_len + 1, (void**) &client_ptr) == SUCCESS) {
+		MONGOC_DEBUG("Found client for hash: %s\n", hash);
+		manager->client = *client_ptr;
+		goto cleanup;
+	}
+#endif
 
 	if (options) {
 		phongo_zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
@@ -1455,9 +1569,22 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 
 	if (!manager->client) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to create Manager from URI: '%s'", uri_string);
+		goto cleanup;
 	}
 
+	MONGOC_DEBUG("Created client hash: %s\n", hash);
+#if PHP_VERSION_ID >= 70000
+	ZVAL_PTR(&new_client_ptr, manager->client);
+	zend_hash_str_update(&MONGODB_G(clients), hash, hash_len, &new_client_ptr);
+#else
+	zend_hash_update(&MONGODB_G(clients), hash, hash_len + 1, &manager->client, sizeof(mongoc_client_t *), NULL);
+#endif
+
 cleanup:
+	if (hash) {
+		pefree(hash, 1);
+	}
+
 	bson_destroy(&bson_options);
 
 	if (uri) {
@@ -1723,22 +1850,22 @@ zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce, zval 
 /* {{{ Memory allocation wrappers */
 static void* php_phongo_malloc(size_t num_bytes) /* {{{ */
 {
-	return emalloc(num_bytes);
+	return pemalloc(num_bytes, 1);
 } /* }}} */
 
 static void* php_phongo_calloc(size_t num_members, size_t num_bytes) /* {{{ */
 {
-	return ecalloc(num_members, num_bytes);
+	return pecalloc(num_members, num_bytes, 1);
 } /* }}} */
 
 static void* php_phongo_realloc(void *mem, size_t num_bytes) { /* {{{ */
-	return erealloc(mem, num_bytes);
+	return perealloc(mem, num_bytes, 1);
 } /* }}} */
 
 static void php_phongo_free(void *mem) /* {{{ */
 {
 	if (mem) {
-		efree(mem);
+		pefree(mem, 1);
 	}
 } /* }}} */
 
@@ -1869,6 +1996,18 @@ PHP_GINIT_FUNCTION(mongodb)
 }
 /* }}} */
 
+#if PHP_VERSION_ID >= 70000
+static void php_phongo_client_dtor(zval *zv)
+{
+	mongoc_client_destroy((mongoc_client_t *) Z_PTR_P(zv));
+}
+#else
+static void php_phongo_client_dtor(void *client)
+{
+	mongoc_client_destroy(*((mongoc_client_t **) client));
+}
+#endif
+
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(mongodb)
 {
@@ -1889,6 +2028,9 @@ PHP_MINIT_FUNCTION(mongodb)
 
 	/* Initialize libbson */
 	bson_mem_set_vtable(&MONGODB_G(bsonMemVTable));
+
+	/* Initialize HashTable for persistent clients */
+	zend_hash_init(&MONGODB_G(clients), 0, NULL, php_phongo_client_dtor, 1);
 
 	/* Prep default object handlers to be used when we register the classes */
 	memcpy(&phongo_std_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
@@ -1955,6 +2097,10 @@ PHP_MINIT_FUNCTION(mongodb)
 PHP_MSHUTDOWN_FUNCTION(mongodb)
 {
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
+
+	/* Destroy HashTable for persistent clients. The HashTable destructor will
+	 * destroy any mongoc_client_t objects contained within. */
+	zend_hash_destroy(&MONGODB_G(clients));
 
 	bson_mem_restore_vtable();
 	/* Cleanup after libmongoc */
