@@ -134,6 +134,24 @@ PHP_METHOD(ObjectID, __construct)
 }
 /* }}} */
 
+/* {{{ proto integer ObjectID::getTimestamp()
+    */
+PHP_METHOD(ObjectID, getTimestamp)
+{
+	php_phongo_objectid_t    *intern;
+	bson_oid_t                tmp_oid;
+
+	intern = Z_OBJECTID_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	bson_oid_init_from_string(&tmp_oid, intern->oid);
+	RETVAL_LONG(bson_oid_get_time_t(&tmp_oid));
+}
+/* }}} */
+
 /* {{{ proto ObjectID::__set_state(array $properties)
 */
 PHP_METHOD(ObjectID, __set_state)
@@ -206,6 +224,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_objectid_me[] = {
 	PHP_ME(ObjectID, __construct, ai_ObjectID___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ObjectID, getTimestamp, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ObjectID, __set_state, ai_ObjectID___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(ObjectID, __toString, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ObjectID, __wakeup, ai_ObjectID_void, ZEND_ACC_PUBLIC)
