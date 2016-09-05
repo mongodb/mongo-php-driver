@@ -154,7 +154,7 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t *inte
 	return true;
 }
 
-/* {{{ proto void UTCDateTime::__construct([integer|DateTimeInterface $milliseconds = null])
+/* {{{ proto void UTCDateTime::__construct([string|DateTimeInterface $milliseconds = null])
    Construct a new BSON UTCDateTime type from either the current time,
    milliseconds since the epoch, or a DateTimeInterface object. */
 PHP_METHOD(UTCDateTime, __construct)
@@ -183,18 +183,6 @@ PHP_METHOD(UTCDateTime, __construct)
 		return;
 	}
 
-#if SIZEOF_PHONGO_LONG == 8
-	{
-		phongo_long milliseconds;
-
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &milliseconds) == FAILURE) {
-			zend_restore_error_handling(&error_handling TSRMLS_CC);
-			return;
-		}
-
-		php_phongo_utcdatetime_init(intern, milliseconds);
-	}
-#elif SIZEOF_PHONGO_LONG == 4
 	{
 		char                *s_milliseconds;
 		phongo_zpp_char_len  s_milliseconds_len;
@@ -206,9 +194,6 @@ PHP_METHOD(UTCDateTime, __construct)
 
 		php_phongo_utcdatetime_init_from_string(intern, s_milliseconds, s_milliseconds_len TSRMLS_CC);
 	}
-#else
-# error Unsupported architecture (integers are neither 32-bit nor 64-bit)
-#endif
 
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
@@ -368,12 +353,9 @@ phongo_create_object_retval php_phongo_utcdatetime_create_object(zend_class_entr
 HashTable *php_phongo_utcdatetime_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_utcdatetime_t *intern;
-	HashTable              *props;
-
-#if SIZEOF_LONG == 4
-	char s_milliseconds[24];
-	int s_milliseconds_len;
-#endif
+	HashTable                *props;
+	char                      s_milliseconds[24];
+	int                       s_milliseconds_len;
 
 	intern = Z_UTCDATETIME_OBJ_P(object);
 	props = zend_std_get_properties(object TSRMLS_CC);
@@ -382,19 +364,13 @@ HashTable *php_phongo_utcdatetime_get_properties(zval *object TSRMLS_DC) /* {{{ 
 		return props;
 	}
 
-#if SIZEOF_LONG == 4
 	s_milliseconds_len = snprintf(s_milliseconds, sizeof(s_milliseconds), "%" PRId64, intern->milliseconds);
-#endif
 
 #if PHP_VERSION_ID >= 70000
 	{
 		zval milliseconds;
 
-#if SIZEOF_LONG == 4
 		ZVAL_STRINGL(&milliseconds, s_milliseconds, s_milliseconds_len);
-#else
-		ZVAL_LONG(&milliseconds, intern->milliseconds);
-#endif
 		zend_hash_str_update(props, "milliseconds", sizeof("milliseconds")-1, &milliseconds);
 	}
 #else
@@ -402,11 +378,7 @@ HashTable *php_phongo_utcdatetime_get_properties(zval *object TSRMLS_DC) /* {{{ 
 		zval *milliseconds;
 
 		MAKE_STD_ZVAL(milliseconds);
-#if SIZEOF_LONG == 4
 		ZVAL_STRINGL(milliseconds, s_milliseconds, s_milliseconds_len, 1);
-#else
-		ZVAL_LONG(milliseconds, intern->milliseconds);
-#endif
 		zend_hash_update(props, "milliseconds", sizeof("milliseconds"), &milliseconds, sizeof(milliseconds), NULL);
 	}
 #endif

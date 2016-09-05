@@ -67,6 +67,48 @@ static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, phongo_lon
 	return true;
 }
 
+/* Initialize the object from numeric strings and return whether it was
+ * successful. An exception will be thrown on error. */
+static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t *intern, const char *s_increment, phongo_zpp_char_len s_increment_len, const char *s_timestamp, phongo_zpp_char_len s_timestamp_len TSRMLS_DC)
+{
+	int64_t increment, timestamp;
+	char *endptr = NULL;
+
+	errno = 0;
+
+	/* errno will set errno if conversion fails; however, we do not need to
+	 * specify the type of error.
+	 *
+	 * Note: bson_ascii_strtoll() does not properly detect out-of-range values
+	 * (see: CDRIVER-1377). strtoll() would be preferable, but it is not
+	 * available on all platforms (e.g. HP-UX), and atoll() provides no error
+	 * reporting at all. */
+
+#if defined(PHP_WIN32)
+	increment = _atoi64(s_increment);
+#else
+	increment = bson_ascii_strtoll(s_increment, &endptr, 10);
+#endif
+
+	if (errno || (endptr && endptr != ((const char *)s_increment + s_increment_len))) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer increment for %s initialization", s_increment, ZSTR_VAL(php_phongo_timestamp_ce->name));
+		return false;
+	}
+
+#if defined(PHP_WIN32)
+	timestamp = _atoi64(s_timestamp);
+#else
+	timestamp = bson_ascii_strtoll(s_timestamp, &endptr, 10);
+#endif
+
+	if (errno || (endptr && endptr != ((const char *)s_timestamp + s_timestamp_len))) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer timestamp for %s initialization", s_timestamp, ZSTR_VAL(php_phongo_timestamp_ce->name));
+		return false;
+	}
+
+	return php_phongo_timestamp_init(intern, increment, timestamp TSRMLS_CC);
+}
+
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
 static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, HashTable *props TSRMLS_DC)
@@ -78,6 +120,10 @@ static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, 
 	    (timestamp = zend_hash_str_find(props, "timestamp", sizeof("timestamp")-1)) && Z_TYPE_P(timestamp) == IS_LONG) {
 		return php_phongo_timestamp_init(intern, Z_LVAL_P(increment), Z_LVAL_P(timestamp) TSRMLS_CC);
 	}
+	if ((increment = zend_hash_str_find(props, "increment", sizeof("increment")-1)) && Z_TYPE_P(increment) == IS_STRING &&
+	    (timestamp = zend_hash_str_find(props, "timestamp", sizeof("timestamp")-1)) && Z_TYPE_P(timestamp) == IS_STRING) {
+		return php_phongo_timestamp_init_from_string(intern, Z_STRVAL_P(increment), Z_STRLEN_P(increment), Z_STRVAL_P(timestamp), Z_STRLEN_P(timestamp) TSRMLS_CC);
+	}
 #else
 	zval **increment, **timestamp;
 
@@ -85,13 +131,17 @@ static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, 
 	    zend_hash_find(props, "timestamp", sizeof("timestamp"), (void**) &timestamp) == SUCCESS && Z_TYPE_PP(timestamp) == IS_LONG) {
 		return php_phongo_timestamp_init(intern, Z_LVAL_PP(increment), Z_LVAL_PP(timestamp) TSRMLS_CC);
 	}
+	if (zend_hash_find(props, "increment", sizeof("increment"), (void**) &increment) == SUCCESS && Z_TYPE_PP(increment) == IS_STRING &&
+	    zend_hash_find(props, "timestamp", sizeof("timestamp"), (void**) &timestamp) == SUCCESS && Z_TYPE_PP(timestamp) == IS_STRING) {
+		return php_phongo_timestamp_init_from_string(intern, Z_STRVAL_PP(increment), Z_STRLEN_PP(increment), Z_STRVAL_PP(timestamp), Z_STRLEN_PP(timestamp) TSRMLS_CC);
+	}
 #endif
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"increment\" and \"timestamp\" integer fields", ZSTR_VAL(php_phongo_timestamp_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"increment\" and \"timestamp\" integer or numeric string fields", ZSTR_VAL(php_phongo_timestamp_ce->name));
 	return false;
 }
 
-/* {{{ proto void Timestamp::__construct(integer $increment, int $timestamp)
+/* {{{ proto void Timestamp::__construct(integer $increment, integer $timestamp)
    Construct a new BSON timestamp type, which consists of a 4-byte increment and
    4-byte timestamp. */
 PHP_METHOD(Timestamp, __construct)
@@ -261,6 +311,10 @@ HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_timestamp_t *intern;
 	HashTable              *props;
+	char                    s_increment[24];
+	char                    s_timestamp[24];
+	int                     s_increment_len;
+	int                     s_timestamp_len;
 
 	intern = Z_TIMESTAMP_OBJ_P(object);
 	props = zend_std_get_properties(object TSRMLS_CC);
@@ -269,14 +323,17 @@ HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
 		return props;
 	}
 
+	s_increment_len = snprintf(s_increment, sizeof(s_increment), "%" PRId64, intern->increment);
+	s_timestamp_len = snprintf(s_timestamp, sizeof(s_timestamp), "%" PRId64, intern->timestamp);
+
 #if PHP_VERSION_ID >= 70000
 	{
 		zval increment, timestamp;
 
-		ZVAL_LONG(&increment, intern->increment);
+		ZVAL_STRINGL(&increment, s_increment, s_increment_len);
 		zend_hash_str_update(props, "increment", sizeof("increment")-1, &increment);
 
-		ZVAL_LONG(&timestamp, intern->timestamp);
+		ZVAL_STRINGL(&timestamp, s_timestamp, s_timestamp_len);
 		zend_hash_str_update(props, "timestamp", sizeof("timestamp")-1, &timestamp);
 	}
 #else
@@ -284,11 +341,11 @@ HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
 		zval *increment, *timestamp;
 
 		MAKE_STD_ZVAL(increment);
-		ZVAL_LONG(increment, intern->increment);
+		ZVAL_STRINGL(increment, s_increment, s_increment_len, 1);
 		zend_hash_update(props, "increment", sizeof("increment"), &increment, sizeof(increment), NULL);
 
 		MAKE_STD_ZVAL(timestamp);
-		ZVAL_LONG(timestamp, intern->timestamp);
+		ZVAL_STRINGL(timestamp, s_timestamp, s_timestamp_len, 1);
 		zend_hash_update(props, "timestamp", sizeof("timestamp"), &timestamp, sizeof(timestamp), NULL);
 	}
 #endif

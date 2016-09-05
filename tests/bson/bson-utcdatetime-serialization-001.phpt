@@ -22,32 +22,32 @@ foreach ($tests as $milliseconds) {
 --EXPECTF--
 object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
-  %rint\(|string\(1\) "|%r0%r"|\)%r
+  string(1) "0"
 }
-string(60) "O:24:"MongoDB\BSON\UTCDateTime":1:{s:12:"milliseconds";%ri:|s:1:"%r0%r"?%r;}"
+string(64) "O:24:"MongoDB\BSON\UTCDateTime":1:{s:12:"milliseconds";s:1:"0";}"
 object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
-  %rint\(|string\(1\) "|%r0%r"|\)%r
-}
-
-object(MongoDB\BSON\UTCDateTime)#%d (%d) {
-  ["milliseconds"]=>
-  %rint\(|string\(14\) "|%r-1416445411987%r"|\)%r
-}
-string(73) "O:24:"MongoDB\BSON\UTCDateTime":1:{s:12:"milliseconds";%ri:|s:14:"%r-1416445411987%r"?%r;}"
-object(MongoDB\BSON\UTCDateTime)#%d (%d) {
-  ["milliseconds"]=>
-  %rint\(|string\(14\) "|%r-1416445411987%r"|\)%r
+  string(1) "0"
 }
 
 object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
-  %rint\(|string\(13\) "|%r1416445411987%r"|\)%r
+  string(14) "-1416445411987"
 }
-string(72) "O:24:"MongoDB\BSON\UTCDateTime":1:{s:12:"milliseconds";%ri:|s:13:"%r1416445411987%r"?%r;}"
+string(78) "O:24:"MongoDB\BSON\UTCDateTime":1:{s:12:"milliseconds";s:14:"-1416445411987";}"
 object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
-  %rint\(|string\(13\) "|%r1416445411987%r"|\)%r
+  string(14) "-1416445411987"
+}
+
+object(MongoDB\BSON\UTCDateTime)#%d (%d) {
+  ["milliseconds"]=>
+  string(13) "1416445411987"
+}
+string(77) "O:24:"MongoDB\BSON\UTCDateTime":1:{s:12:"milliseconds";s:13:"1416445411987";}"
+object(MongoDB\BSON\UTCDateTime)#%d (%d) {
+  ["milliseconds"]=>
+  string(13) "1416445411987"
 }
 
 ===DONE===
