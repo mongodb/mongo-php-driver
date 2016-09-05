@@ -18,7 +18,7 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Invalid BSON ID provided
+Error parsing ObjectID string: 0123456789abcdefghijklmn
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Invalid BSON ID provided
+Error parsing ObjectID string: INVALID
 ===DONE===
