@@ -141,27 +141,28 @@ static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, 
 	return false;
 }
 
-/* {{{ proto void Timestamp::__construct(integer $increment, integer $timestamp)
+/* {{{ proto void Timestamp::__construct(string $increment, string $timestamp)
    Construct a new BSON timestamp type, which consists of a 4-byte increment and
    4-byte timestamp. */
 PHP_METHOD(Timestamp, __construct)
 {
 	php_phongo_timestamp_t    *intern;
 	zend_error_handling       error_handling;
-	phongo_long               increment;
-	phongo_long               timestamp;
-
+	char                      *s_increment;
+	phongo_zpp_char_len       s_increment_len;
+	char                      *s_timestamp;
+	phongo_zpp_char_len       s_timestamp_len;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &increment, &timestamp) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &s_increment, &s_increment_len, &s_timestamp, &s_timestamp_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	php_phongo_timestamp_init(intern, increment, timestamp TSRMLS_CC);
+	php_phongo_timestamp_init_from_string(intern, s_increment, s_increment_len, s_timestamp, s_timestamp_len TSRMLS_CC);
 }
 /* }}} */
 
