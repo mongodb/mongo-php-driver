@@ -54,16 +54,20 @@ static bool php_phongo_regex_init(php_phongo_regex_t *intern, const char *patter
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Pattern cannot contain null bytes");
 		return false;
 	}
-
-	if (strlen(flags) != flags_len) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Flags cannot contain null bytes");
-		return false;
-	}
-
 	intern->pattern = estrndup(pattern, pattern_len);
 	intern->pattern_len = pattern_len;
-	intern->flags = estrndup(flags, flags_len);
-	intern->flags_len = flags_len;
+
+	if (flags) {
+		if (strlen(flags) != flags_len) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Flags cannot contain null bytes");
+			return false;
+		}
+		intern->flags = estrndup(flags, flags_len);
+		intern->flags_len = flags_len;
+	} else {
+		intern->flags = estrdup("");
+		intern->flags_len = 0;
+	}
 
 	return true;
 }
@@ -92,7 +96,7 @@ static bool php_phongo_regex_init_from_hash(php_phongo_regex_t *intern, HashTabl
 	return false;
 }
 
-/* {{{ proto void Regex::__construct(string $pattern, string $flags)
+/* {{{ proto void Regex::__construct(string $pattern [, string $flags])
    Constructs a new BSON regular expression type. */
 PHP_METHOD(Regex, __construct)
 {
@@ -100,14 +104,14 @@ PHP_METHOD(Regex, __construct)
 	zend_error_handling       error_handling;
 	char                     *pattern;
 	phongo_zpp_char_len       pattern_len;
-	char                     *flags;
-	phongo_zpp_char_len       flags_len;
+	char                     *flags = NULL;
+	phongo_zpp_char_len       flags_len = 0;
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_REGEX_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &pattern, &pattern_len, &flags, &flags_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s", &pattern, &pattern_len, &flags, &flags_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
