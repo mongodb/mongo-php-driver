@@ -330,6 +330,11 @@ HashTable *php_phongo_javascript_get_properties(zval *object TSRMLS_DC) /* {{{ *
 			}
 
 			zval_ptr_dtor(&state.zchild);
+		} else {
+			zval scope;
+
+			ZVAL_NULL(&scope);
+			zend_hash_str_update(props, "scope", sizeof("scope")-1, &scope);
 		}
 	}
 #else
@@ -355,6 +360,12 @@ HashTable *php_phongo_javascript_get_properties(zval *object TSRMLS_DC) /* {{{ *
 			}
 
 			zval_ptr_dtor(&state.zchild);
+		} else {
+			zval *scope;
+
+			MAKE_STD_ZVAL(scope);
+			ZVAL_NULL(scope);
+			zend_hash_update(props, "scope", sizeof("scope"), &scope, sizeof(scope), NULL);
 		}
 	}
 #endif

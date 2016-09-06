@@ -26,11 +26,15 @@ foreach ($tests as $test) {
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
   string(33) "function foo(bar) { return bar; }"
+  ["scope"]=>
+  NULL
 }
-string(87) "O:23:"MongoDB\BSON\Javascript":1:{s:4:"code";s:33:"function foo(bar) { return bar; }";}"
+string(101) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:33:"function foo(bar) { return bar; }";s:5:"scope";N;}"
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
   string(33) "function foo(bar) { return bar; }"
+  ["scope"]=>
+  NULL
 }
 
 object(MongoDB\BSON\Javascript)#%d (%d) {
