@@ -6,11 +6,11 @@ MongoDB\BSON\Binary unserialization requires unsigned 8-bit integer for type
 require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
-    unserialize('O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:6:"foobar";s:4:"type";i:-1;}');
+    unserialize('C:19:"MongoDB\BSON\Binary":46:{a:2:{s:4:"data";s:6:"foobar";s:4:"type";i:-1;}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    unserialize('O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:6:"foobar";s:4:"type";i:256;}');
+    unserialize('C:19:"MongoDB\BSON\Binary":47:{a:2:{s:4:"data";s:6:"foobar";s:4:"type";i:256;}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
