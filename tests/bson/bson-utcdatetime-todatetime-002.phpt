@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\BSON\UTCDateTime::toDateTime() dumping seconds and microseconds
+--INI--
+date.timezone=UTC
 --FILE--
 <?php
 
