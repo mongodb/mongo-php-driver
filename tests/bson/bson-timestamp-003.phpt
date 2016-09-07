@@ -21,17 +21,17 @@ foreach ($tests as $test) {
 Test [2147483647:0]
 object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["increment"]=>
-  int(2147483647)
+  string(10) "2147483647"
   ["timestamp"]=>
-  int(0)
+  string(1) "0"
 }
 
 Test [0:2147483647]
 object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["increment"]=>
-  int(0)
+  string(1) "0"
   ["timestamp"]=>
-  int(2147483647)
+  string(10) "2147483647"
 }
 
 ===DONE===
