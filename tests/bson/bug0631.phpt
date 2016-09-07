@@ -1,5 +1,7 @@
 --TEST--
 PHPC-631: UTCDateTime::toDateTime() may return object that cannot be serialized
+--INI--
+date.timezone=UTC
 --FILE--
 <?php
 
