@@ -85,7 +85,7 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
     }
   }
 }
-string(206) "C:23:"MongoDB\BSON\Javascript":169:{a:2:{s:4:"code";s:29:"function foo() { return id; }";s:5:"scope";O:8:"stdClass":1:{s:2:"id";O:21:"MongoDB\BSON\ObjectID":1:{s:3:"oid";s:24:"53e2a1c40640fd72175d4603";}}}}"
+string(213) "C:23:"MongoDB\BSON\Javascript":176:{a:2:{s:4:"code";s:29:"function foo() { return id; }";s:5:"scope";O:8:"stdClass":1:{s:2:"id";C:21:"MongoDB\BSON\ObjectID":48:{a:1:{s:3:"oid";s:24:"53e2a1c40640fd72175d4603";}}}}}"
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
   string(29) "function foo() { return id; }"

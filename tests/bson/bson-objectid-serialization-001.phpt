@@ -15,7 +15,7 @@ object(MongoDB\BSON\ObjectID)#%d (%d) {
   ["oid"]=>
   string(24) "576c25db6118fd406e6e6471"
 }
-string(75) "O:21:"MongoDB\BSON\ObjectID":1:{s:3:"oid";s:24:"576c25db6118fd406e6e6471";}"
+string(82) "C:21:"MongoDB\BSON\ObjectID":48:{a:1:{s:3:"oid";s:24:"576c25db6118fd406e6e6471";}}"
 object(MongoDB\BSON\ObjectID)#%d (%d) {
   ["oid"]=>
   string(24) "576c25db6118fd406e6e6471"
