@@ -1316,8 +1316,13 @@ static mongoc_ssl_opt_t *php_phongo_make_ssl_opt(zval *zoptions TSRMLS_DC)
 	}
 
 #if defined(MONGOC_ENABLE_SSL_SECURE_CHANNEL) || defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
-	if (php_array_existsc(zoptions, "ca_dir") || php_array_existsc(zoptions, "capath")) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"ca_dir\" and \"capath\" options are not supported by Secure Channel and Secure Transport");
+	if (php_array_existsc(zoptions, "ca_dir")) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"ca_dir\" option is not supported by Secure Channel and Secure Transport");
+		return NULL;
+	}
+
+	if (php_array_existsc(zoptions, "capath")) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"capath\" option is not supported by Secure Channel and Secure Transport");
 		return NULL;
 	}
 #endif
