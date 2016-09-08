@@ -1327,6 +1327,13 @@ static mongoc_ssl_opt_t *php_phongo_make_ssl_opt(zval *zoptions TSRMLS_DC)
 	}
 #endif
 
+#if defined(MONGOC_ENABLE_SSL_LIBRESSL) || defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
+	if (php_array_existsc(zoptions, "crl_file")) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"crl_file\" option is not supported by LibreSSL and Secure Transport");
+		return NULL;
+	}
+#endif
+
 	ssl_opt = ecalloc(1, sizeof(mongoc_ssl_opt_t));
 
 	/* Check canonical option names first and fall back to SSL context options
