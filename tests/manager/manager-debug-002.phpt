@@ -14,7 +14,6 @@ $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1, 'x' => 1));
 $result = $manager->executeBulkWrite(NS, $bulk);
 
-ini_set("mongodb.debug", "off");
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -23,3 +22,4 @@ ini_set("mongodb.debug", "off");
 [%s]     PHONGO: DEBUG   > Creating Manager, phongo-1.%d.%d%S[%s] - mongoc-1.%s(%s), libbson-1.%s(%s), php-%s
 %a
 ===DONE===
+%a
