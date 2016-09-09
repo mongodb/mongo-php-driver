@@ -6,7 +6,7 @@ MongoDB\BSON\UTCDateTime unserialization requires "milliseconds" string to parse
 require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
-    unserialize('O:24:"MongoDB\BSON\UTCDateTime":1:{s:12:"milliseconds";s:7:"INVALID";}');
+    unserialize('C:24:"MongoDB\BSON\UTCDateTime":40:{a:1:{s:12:"milliseconds";s:7:"INVALID";}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 /* TODO: Add tests for out-of-range values once CDRIVER-1377 is resolved */
