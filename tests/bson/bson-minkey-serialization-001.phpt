@@ -13,7 +13,7 @@ var_dump(unserialize($s));
 --EXPECTF--
 object(MongoDB\BSON\MinKey)#%d (%d) {
 }
-string(31) "O:19:"MongoDB\BSON\MinKey":0:{}"
+string(31) "C:19:"MongoDB\BSON\MinKey":0:{}"
 object(MongoDB\BSON\MinKey)#%d (%d) {
 }
 ===DONE===
