@@ -13,7 +13,7 @@ var_dump(unserialize($s));
 --EXPECTF--
 object(MongoDB\BSON\MaxKey)#%d (%d) {
 }
-string(31) "O:19:"MongoDB\BSON\MaxKey":0:{}"
+string(31) "C:19:"MongoDB\BSON\MaxKey":0:{}"
 object(MongoDB\BSON\MaxKey)#%d (%d) {
 }
 ===DONE===
