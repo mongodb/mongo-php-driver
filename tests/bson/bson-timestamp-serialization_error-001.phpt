@@ -6,19 +6,19 @@ MongoDB\BSON\Timestamp unserialization requires "increment" and "timestamp" inte
 require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
-    unserialize('O:22:"MongoDB\BSON\Timestamp":1:{s:9:"increment";i:1234;}');
+    unserialize('C:22:"MongoDB\BSON\Timestamp":29:{a:1:{s:9:"increment";i:1234;}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    unserialize('O:22:"MongoDB\BSON\Timestamp":1:{s:9:"timestamp";i:5678;}');
+    unserialize('C:22:"MongoDB\BSON\Timestamp":29:{a:1:{s:9:"timestamp";i:5678;}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    unserialize('O:22:"MongoDB\BSON\Timestamp":2:{s:9:"increment";i:1234;s:9:"timestamp";s:4:"5678";}');
+    unserialize('C:22:"MongoDB\BSON\Timestamp":56:{a:2:{s:9:"increment";i:1234;s:9:"timestamp";s:4:"5678";}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    unserialize('O:22:"MongoDB\BSON\Timestamp":2:{s:9:"increment";s:4:"1234";s:9:"timestamp";i:5678;}');
+    unserialize('C:22:"MongoDB\BSON\Timestamp":56:{a:2:{s:9:"increment";s:4:"1234";s:9:"timestamp";i:5678;}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

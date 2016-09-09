@@ -8,11 +8,11 @@ MongoDB\BSON\Timestamp unserialization requires 64-bit integers to be positive u
 require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
-    unserialize('O:22:"MongoDB\BSON\Timestamp":2:{s:9:"increment";i:4294967296;s:9:"timestamp";i:5678;}');
+    unserialize('C:22:"MongoDB\BSON\Timestamp":58:{a:2:{s:9:"increment";i:4294967296;s:9:"timestamp";i:5678;}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    unserialize('O:22:"MongoDB\BSON\Timestamp":2:{s:9:"increment";i:1234;s:9:"timestamp";i:4294967296;}');
+    unserialize('C:22:"MongoDB\BSON\Timestamp":58:{a:2:{s:9:"increment";i:1234;s:9:"timestamp";i:4294967296;}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
