@@ -52,7 +52,7 @@ PHP_METHOD(ReadPreference, __construct)
 {
 	php_phongo_readpreference_t *intern;
 	zend_error_handling       error_handling;
-	long                      mode;
+	phongo_long               mode;
 	zval                     *tagSets = NULL;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
@@ -88,7 +88,7 @@ PHP_METHOD(ReadPreference, __construct)
 			}
 			break;
 		default:
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid mode: %ld", mode);
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid mode: %" PHONGO_LONG_FORMAT, mode);
 			return;
 	}
 }
