@@ -936,6 +936,29 @@ void php_phongo_read_concern_to_zval(zval *retval, const mongoc_read_concern_t *
 	}
 } /* }}} */
 
+/* Checks if tags is valid to set on a mongoc_read_prefs_t. It may be null or an
+ * array of one or more documents. */
+bool php_phongo_read_preference_tags_are_valid(const bson_t *tags) /* {{{ */
+{
+	bson_iter_t iter;
+
+	if (bson_empty0(tags)) {
+		return true;
+	}
+
+	if (!bson_iter_init(&iter, tags)) {
+		return false;
+	}
+
+	while (bson_iter_next(&iter)) {
+		if (!BSON_ITER_HOLDS_DOCUMENT(&iter) && !BSON_ITER_HOLDS_ARRAY(&iter)) {
+			return false;
+		}
+	}
+
+	return true;
+} /* }}} */
+
 void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t *read_prefs) /* {{{ */
 {
 	const bson_t *tags = mongoc_read_prefs_get_tags(read_prefs);
@@ -1143,9 +1166,21 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 
 		bson_iter_array(&iter, &len, &data);
 
-		if (bson_init_static(&tags, data, len)) {
-			mongoc_read_prefs_set_tags(new_rp, &tags);
+		if (!bson_init_static(&tags, data, len)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Could not initialize BSON structure for read preference tags");
+			mongoc_read_prefs_destroy(new_rp);
+
+			return false;
 		}
+
+		if (!php_phongo_read_preference_tags_are_valid(&tags)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Read preference tags must be an array of zero or more documents");
+			mongoc_read_prefs_destroy(new_rp);
+
+			return false;
+		}
+
+		mongoc_read_prefs_set_tags(new_rp, &tags);
 	}
 
 	if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY &&
