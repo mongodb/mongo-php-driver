@@ -9,7 +9,13 @@ function mongodb_generate_header(inpath, outpath, replacements)
   infile.Close();
 
   for (var key in replacements) {
-    outdata = outdata.replace("@" + key + "@", replacements[key]);
+    var replacement = replacements[key];
+
+    if (typeof replacement === 'string') {
+      replacement = replacement.replace(/"/g, '\\"');
+    }
+
+    outdata = outdata.replace("@" + key + "@", replacement);
   }
 
   var outfile = FSO.CreateTextFile(outpath, true);
@@ -113,7 +119,10 @@ if (PHP_MONGODB != "no") {
     MONGOC_ENABLE_SASL: 0,
     MONGOC_HAVE_SASL_CLIENT_DONE: 0,
     MONGOC_HAVE_WEAK_SYMBOLS: 0,
-    MONGOC_NO_AUTOMATIC_GLOBALS: 1
+    MONGOC_NO_AUTOMATIC_GLOBALS: 1,
+    MONGOC_CC: "",
+    MONGOC_USER_SET_CFLAGS: "",
+    MONGOC_USER_SET_LDFLAGS: ""
   };
 
   if (CHECK_LIB("ssleay32.lib", "mongodb", PHP_MONGODB) &&
@@ -139,6 +148,15 @@ if (PHP_MONGODB != "no") {
   } else {
     WARNING("mongodb libsasl support not enabled, libs not found");
   }
+
+  if (typeof COMPILER_NAME === 'string') {
+    mongoc_opts.MONGOC_CC = COMPILER_NAME;
+  } else if (typeof VC_VERSIONS[VCVERS] === 'string') {
+    mongoc_opts.MONGOC_CC = VC_VERSIONS[VCVERS];
+  }
+
+  /* MONGOC_USER_SET_CFLAGS and MONGOC_USER_SET_LDFLAGS can be left blank, as we
+   * do not expect CFLAGS or LDFLAGS to be customized at build time. */
 
   mongodb_generate_header(
     configure_module_dirname + "/src/libmongoc/src/mongoc/mongoc-config.h.in",
