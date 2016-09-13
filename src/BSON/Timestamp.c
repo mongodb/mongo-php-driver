@@ -214,24 +214,6 @@ PHP_METHOD(Timestamp, __toString)
 }
 /* }}} */
 
-/* {{{ proto void Timestamp::__wakeup()
-*/
-PHP_METHOD(Timestamp, __wakeup)
-{
-	php_phongo_timestamp_t *intern;
-	HashTable              *props;
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-	intern = Z_TIMESTAMP_OBJ_P(getThis());
-	props = zend_std_get_properties(getThis() TSRMLS_CC);
-
-	php_phongo_timestamp_init_from_hash(intern, props TSRMLS_CC);
-}
-/* }}} */
-
 /* {{{ proto string Timestamp::serialize()
 */
 PHP_METHOD(Timestamp, serialize)
@@ -350,7 +332,6 @@ static zend_function_entry php_phongo_timestamp_me[] = {
 	PHP_ME(Timestamp, __construct, ai_Timestamp___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, __set_state, ai_Timestamp___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Timestamp, __toString, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, __wakeup, ai_Timestamp_void, ZEND_ACC_PUBLIC)
 	PHP_ME(Timestamp, serialize, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, unserialize, ai_Timestamp_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END

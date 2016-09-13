@@ -168,24 +168,6 @@ PHP_METHOD(Javascript, __toString)
 }
 /* }}} */
 
-/* {{{ proto void Javascript::__wakeup()
-*/
-PHP_METHOD(Javascript, __wakeup)
-{
-	php_phongo_javascript_t *intern;
-	HashTable               *props;
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-	intern = Z_JAVASCRIPT_OBJ_P(getThis());
-	props = zend_std_get_properties(getThis() TSRMLS_CC);
-
-	php_phongo_javascript_init_from_hash(intern, props TSRMLS_CC);
-}
-/* }}} */
-
 /* {{{ proto string Javascript::getCode()
 */
 PHP_METHOD(Javascript, getCode)
@@ -369,7 +351,6 @@ static zend_function_entry php_phongo_javascript_me[] = {
 	PHP_ME(Javascript, __construct, ai_Javascript___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, __set_state, ai_Javascript___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Javascript, __toString, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Javascript, __wakeup, ai_Javascript_void, ZEND_ACC_PUBLIC)
 	PHP_ME(Javascript, serialize, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, unserialize, ai_Javascript_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, getCode, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

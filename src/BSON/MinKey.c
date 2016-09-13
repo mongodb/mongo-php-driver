@@ -60,14 +60,6 @@ PHP_METHOD(MinKey, __set_state)
 }
 /* }}} */
 
-/* {{{ proto MinKey::__wakeup()
-*/
-PHP_METHOD(MinKey, __wakeup)
-{
-	zend_parse_parameters_none();
-}
-/* }}} */
-
 /* {{{ proto string MinKey::serialize()
 */
 PHP_METHOD(MinKey, serialize)
@@ -109,7 +101,6 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_minkey_me[] = {
 	PHP_ME(MinKey, __set_state, ai_MinKey___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-	PHP_ME(MinKey, __wakeup, ai_MinKey_void, ZEND_ACC_PUBLIC)
 	PHP_ME(MinKey, serialize, ai_MinKey_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(MinKey, unserialize, ai_MinKey_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
