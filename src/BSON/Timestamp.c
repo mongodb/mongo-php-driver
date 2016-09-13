@@ -34,6 +34,12 @@
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
+#include <ext/standard/php_var.h>
+#if PHP_VERSION_ID >= 70000
+# include <zend_smart_str.h>
+#else
+# include <ext/standard/php_smart_str.h>
+#endif
 /* Our Compatability header */
 #include "phongo_compat.h"
 
@@ -226,6 +232,102 @@ PHP_METHOD(Timestamp, __wakeup)
 }
 /* }}} */
 
+/* {{{ proto string Timestamp::serialize()
+*/
+PHP_METHOD(Timestamp, serialize)
+{
+	php_phongo_timestamp_t   *intern;
+#if PHP_VERSION_ID >= 70000
+	zval                      retval;
+#else
+	zval                     *retval;
+#endif
+	php_serialize_data_t      var_hash;
+	smart_str                 buf = { 0 };
+	char                      s_increment[12];
+	char                      s_timestamp[12];
+	int                       s_increment_len;
+	int                       s_timestamp_len;
+
+	intern = Z_TIMESTAMP_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	s_increment_len = snprintf(s_increment, sizeof(s_increment), "%" PRIu32, intern->increment);
+	s_timestamp_len = snprintf(s_timestamp, sizeof(s_timestamp), "%" PRIu32, intern->timestamp);
+
+#if PHP_VERSION_ID >= 70000
+	array_init_size(&retval, 2);
+	ADD_ASSOC_STRINGL(&retval, "increment", s_increment, s_increment_len);
+	ADD_ASSOC_STRINGL(&retval, "timestamp", s_timestamp, s_timestamp_len);
+#else
+	ALLOC_INIT_ZVAL(retval);
+	array_init_size(retval, 2);
+	ADD_ASSOC_STRINGL(retval, "increment", s_increment, s_increment_len);
+	ADD_ASSOC_STRINGL(retval, "timestamp", s_timestamp, s_timestamp_len);
+#endif
+
+	PHP_VAR_SERIALIZE_INIT(var_hash);
+	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
+	smart_str_0(&buf);
+	PHP_VAR_SERIALIZE_DESTROY(var_hash);
+
+	PHONGO_RETVAL_SMART_STR(buf);
+
+	smart_str_free(&buf);
+	zval_ptr_dtor(&retval);
+}
+/* }}} */
+
+/* {{{ proto string Timestamp::unserialize(string $serialized)
+*/
+PHP_METHOD(Timestamp, unserialize)
+{
+	php_phongo_timestamp_t *intern;
+	zend_error_handling     error_handling;
+	char                   *serialized;
+	phongo_zpp_char_len     serialized_len;
+#if PHP_VERSION_ID >= 70000
+	zval                    props;
+#else
+	zval                   *props;
+#endif
+	php_unserialize_data_t  var_hash;
+
+	intern = Z_TIMESTAMP_OBJ_P(getThis());
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &serialized, &serialized_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+#if PHP_VERSION_ID < 70000
+	ALLOC_INIT_ZVAL(props);
+#endif
+	PHP_VAR_UNSERIALIZE_INIT(var_hash);
+	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char *) serialized + serialized_len, &var_hash TSRMLS_CC)) {
+		zval_ptr_dtor(&props);
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s unserialization failed", ZSTR_VAL(php_phongo_timestamp_ce->name));
+
+		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+		return;
+	}
+	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+
+#if PHP_VERSION_ID >= 70000
+	php_phongo_timestamp_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
+#else
+	php_phongo_timestamp_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
+#endif
+	zval_ptr_dtor(&props);
+}
+/* }}} */
+
 /* {{{ BSON\Timestamp */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___construct, 0, 0, 2)
@@ -237,6 +339,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp_unserialize, 0, 0, 1)
+	ZEND_ARG_INFO(0, serialized)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -245,6 +351,8 @@ static zend_function_entry php_phongo_timestamp_me[] = {
 	PHP_ME(Timestamp, __set_state, ai_Timestamp___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Timestamp, __toString, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, __wakeup, ai_Timestamp_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Timestamp, serialize, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Timestamp, unserialize, ai_Timestamp_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -367,6 +475,8 @@ PHP_MINIT_FUNCTION(Timestamp)
 	PHONGO_CE_FINAL(php_phongo_timestamp_ce);
 
 	zend_class_implements(php_phongo_timestamp_ce TSRMLS_CC, 1, php_phongo_type_ce);
+	zend_class_implements(php_phongo_timestamp_ce TSRMLS_CC, 1, zend_ce_serializable);
+
 	memcpy(&php_phongo_handler_timestamp, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_timestamp.get_properties = php_phongo_timestamp_get_properties;
 #if PHP_VERSION_ID >= 70000

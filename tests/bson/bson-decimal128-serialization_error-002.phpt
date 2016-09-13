@@ -8,7 +8,7 @@ MongoDB\BSON\Decimal128 unserialization requires valid decimal string
 require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
-    unserialize('O:23:"MongoDB\BSON\Decimal128":1:{s:3:"dec";s:7:"INVALID";}');
+    unserialize('C:23:"MongoDB\BSON\Decimal128":30:{a:1:{s:3:"dec";s:7:"INVALID";}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

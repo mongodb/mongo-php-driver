@@ -34,6 +34,12 @@
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
+#include <ext/standard/php_var.h>
+#if PHP_VERSION_ID >= 70000
+# include <zend_smart_str.h>
+#else
+# include <ext/standard/php_smart_str.h>
+#endif
 /* Our Compatability header */
 #include "phongo_compat.h"
 
@@ -227,6 +233,120 @@ PHP_METHOD(Javascript, getScope)
 }
 /* }}} */
 
+/* {{{ proto string Javascript::serialize()
+*/
+PHP_METHOD(Javascript, serialize)
+{
+	php_phongo_javascript_t  *intern;
+#if PHP_VERSION_ID >= 70000
+	zval                      retval;
+#else
+	zval                     *retval;
+#endif
+	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+
+	php_serialize_data_t      var_hash;
+	smart_str                 buf = { 0 };
+
+	intern = Z_JAVASCRIPT_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+#if PHP_VERSION_ID >= 70000
+	if (intern->scope && intern->scope->len) {
+		if (!phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+			return;
+		}
+		Z_ADDREF(state.zchild);
+	} else {
+		ZVAL_NULL(&state.zchild);
+	}
+#else
+	if (intern->scope && intern->scope->len) {
+		if (!phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+			return;
+		}
+		Z_ADDREF_P(state.zchild);
+	} else {
+		MAKE_STD_ZVAL(state.zchild);
+		ZVAL_NULL(state.zchild);
+		Z_ADDREF_P(state.zchild);
+	}
+#endif
+
+#if PHP_VERSION_ID >= 70000
+	array_init_size(&retval, 2);
+	ADD_ASSOC_STRINGL(&retval, "code", intern->code, intern->code_len);
+	ADD_ASSOC_ZVAL(&retval, "scope", &state.zchild);
+#else
+	ALLOC_INIT_ZVAL(retval);
+	array_init_size(retval, 2);
+	ADD_ASSOC_STRINGL(retval, "code", intern->code, intern->code_len);
+	ADD_ASSOC_ZVAL(retval, "scope", state.zchild);
+#endif
+
+	PHP_VAR_SERIALIZE_INIT(var_hash);
+	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
+	smart_str_0(&buf);
+	PHP_VAR_SERIALIZE_DESTROY(var_hash);
+
+	PHONGO_RETVAL_SMART_STR(buf);
+
+	smart_str_free(&buf);
+	zval_ptr_dtor(&retval);
+	zval_ptr_dtor(&state.zchild);
+}
+/* }}} */
+
+/* {{{ proto string Javascript::unserialize(string $serialized)
+*/
+PHP_METHOD(Javascript, unserialize)
+{
+	php_phongo_javascript_t *intern;
+	zend_error_handling      error_handling;
+	char                    *serialized;
+	phongo_zpp_char_len      serialized_len;
+#if PHP_VERSION_ID >= 70000
+	zval                     props;
+#else
+	zval                    *props;
+#endif
+	php_unserialize_data_t   var_hash;
+
+	intern = Z_JAVASCRIPT_OBJ_P(getThis());
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &serialized, &serialized_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+#if PHP_VERSION_ID < 70000
+	ALLOC_INIT_ZVAL(props);
+#endif
+	PHP_VAR_UNSERIALIZE_INIT(var_hash);
+	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char *) serialized + serialized_len, &var_hash TSRMLS_CC)) {
+		zval_ptr_dtor(&props);
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s unserialization failed", ZSTR_VAL(php_phongo_javascript_ce->name));
+
+		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+		return;
+	}
+	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+
+#if PHP_VERSION_ID >= 70000
+	php_phongo_javascript_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
+#else
+	php_phongo_javascript_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
+#endif
+	zval_ptr_dtor(&props);
+}
+/* }}} */
+
 /* {{{ BSON\Javascript */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Javascript___construct, 0, 0, 1)
@@ -238,6 +358,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Javascript___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Javascript_unserialize, 0, 0, 1)
+	ZEND_ARG_INFO(0, serialized)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Javascript_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -246,6 +370,8 @@ static zend_function_entry php_phongo_javascript_me[] = {
 	PHP_ME(Javascript, __set_state, ai_Javascript___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Javascript, __toString, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, __wakeup, ai_Javascript_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Javascript, serialize, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Javascript, unserialize, ai_Javascript_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, getCode, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, getScope, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
@@ -387,6 +513,7 @@ PHP_MINIT_FUNCTION(Javascript)
 	PHONGO_CE_FINAL(php_phongo_javascript_ce);
 
 	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, php_phongo_type_ce);
+	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_javascript, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_javascript.get_properties = php_phongo_javascript_get_properties;

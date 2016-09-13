@@ -17,7 +17,7 @@ object(MongoDB\BSON\Regex)#%d (%d) {
   ["flags"]=>
   string(1) "i"
 }
-string(77) "O:18:"MongoDB\BSON\Regex":2:{s:7:"pattern";s:6:"regexp";s:5:"flags";s:1:"i";}"
+string(84) "C:18:"MongoDB\BSON\Regex":53:{a:2:{s:7:"pattern";s:6:"regexp";s:5:"flags";s:1:"i";}}"
 object(MongoDB\BSON\Regex)#%d (%d) {
   ["pattern"]=>
   string(6) "regexp"

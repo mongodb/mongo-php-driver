@@ -129,6 +129,7 @@
 # define PHONGO_RETURN_STRINGL(s, slen) RETURN_STRINGL(s, slen)
 # define PHONGO_RETVAL_STRING(s) RETVAL_STRING(s)
 # define PHONGO_RETURN_STRING(s) RETURN_STRING(s)
+# define PHONGO_RETVAL_SMART_STR(val) PHONGO_RETVAL_STRINGL(ZSTR_VAL((val).s), ZSTR_LEN((val).s));
 #else
 # define phongo_char char
 # define phongo_char_pdup(str) pestrdup(filename, 1)
@@ -162,6 +163,7 @@
 # define PHONGO_RETURN_STRINGL(s, slen) RETURN_STRINGL(s, slen, 1)
 # define PHONGO_RETVAL_STRING(s) RETVAL_STRING(s, 1)
 # define PHONGO_RETURN_STRING(s) RETURN_STRING(s, 1)
+# define PHONGO_RETVAL_SMART_STR(val) PHONGO_RETVAL_STRINGL((val).c, (val).len);
 # define PHP_STREAM_CONTEXT(stream) ((php_stream_context*) (stream)->context)
 #endif
 

@@ -68,10 +68,40 @@ PHP_METHOD(MaxKey, __wakeup)
 }
 /* }}} */
 
+/* {{{ proto string MaxKey::serialize()
+*/
+PHP_METHOD(MaxKey, serialize)
+{
+	PHONGO_RETURN_STRING("");
+}
+/* }}} */
+
+/* {{{ proto string MaxKey::unserialize(string $serialized)
+*/
+PHP_METHOD(MaxKey, unserialize)
+{
+	zend_error_handling     error_handling;
+	char                   *serialized;
+	phongo_zpp_char_len     serialized_len;
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &serialized, &serialized_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+}
+/* }}} */
+
 /* {{{ BSON\MaxKey */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey_unserialize, 0, 0, 1)
+	ZEND_ARG_INFO(0, serialized)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey_void, 0, 0, 0)
@@ -80,6 +110,8 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_maxkey_me[] = {
 	PHP_ME(MaxKey, __set_state, ai_MaxKey___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(MaxKey, __wakeup, ai_MaxKey_void, ZEND_ACC_PUBLIC)
+	PHP_ME(MaxKey, serialize, ai_MaxKey_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(MaxKey, unserialize, ai_MaxKey_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -135,6 +167,8 @@ PHP_MINIT_FUNCTION(MaxKey)
 	PHONGO_CE_FINAL(php_phongo_maxkey_ce);
 
 	zend_class_implements(php_phongo_maxkey_ce TSRMLS_CC, 1, php_phongo_type_ce);
+	zend_class_implements(php_phongo_maxkey_ce TSRMLS_CC, 1, zend_ce_serializable);
+
 	memcpy(&php_phongo_handler_maxkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_maxkey.free_obj = php_phongo_maxkey_free_object;

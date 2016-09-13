@@ -6,7 +6,7 @@ MongoDB\BSON\Javascript unserialization expects optional scope to be array or ob
 require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
-    unserialize('O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:17:"function foo() {}";s:5:"scope";s:7:"INVALID";}');
+    unserialize('C:23:"MongoDB\BSON\Javascript":68:{a:2:{s:4:"code";s:17:"function foo() {}";s:5:"scope";s:7:"INVALID";}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
