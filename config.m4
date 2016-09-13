@@ -6,6 +6,23 @@ PHP_ARG_WITH(openssl-dir, OpenSSL dir for mongodb,
 PHP_ARG_WITH(system-ciphers, whether to use system default cipher list instead of hardcoded value,
 [  --with-system-ciphers   OPENSSL: Use system default cipher list instead of hardcoded value], no, no)
 
+dnl borrowed from libmongoc configure.ac
+# AS_VAR_COPY is available in AC 2.64 and on, but we only require 2.60.
+# If we're on an older version, we define it ourselves:
+m4_ifndef([AS_VAR_COPY],
+          [m4_define([AS_VAR_COPY],
+          [AS_LITERAL_IF([$1[]$2], [$1=$$2], [eval $1=\$$2])])])
+
+# Get "user-set cflags" here, before we've added the flags we use by default
+AS_VAR_COPY(MONGOC_USER_SET_CFLAGS, [CFLAGS])
+AC_SUBST(MONGOC_USER_SET_CFLAGS)
+
+AS_VAR_COPY(MONGOC_USER_SET_LDFLAGS, [LDFLAGS])
+AC_SUBST(MONGOC_USER_SET_LDFLAGS)
+
+AS_VAR_COPY(MONGOC_CC, [CC])
+AC_SUBST(MONGOC_CC)
+
 dnl borrowed from PHP acinclude.m4
 AC_DEFUN([PHP_BSON_BIGENDIAN],
 [AC_CACHE_CHECK([whether byte ordering is bigendian], ac_cv_c_bigendian_php,
@@ -620,9 +637,6 @@ Please submit bugreports at:
   https://jira.mongodb.org/browse/PHPC
 
 "])
-
-  AC_SUBST(MONGOC_USER_SET_CFLAGS, "'$CFLAGS'")
-  AC_SUBST(MONGOC_USER_SET_LDFLAGS, "'$LDFLAGS'")
 fi
 
 dnl: vim: et sw=2
