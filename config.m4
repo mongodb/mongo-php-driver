@@ -242,7 +242,6 @@ if test "$MONGODB" != "no"; then
     mongoc-cursor-cursorid.c \
     mongoc-cursor-transform.c \
     mongoc-database.c \
-    mongoc-linux-distro-scanner.c \
     mongoc-find-and-modify.c \
     mongoc-host-list.c \
     mongoc-init.c \
@@ -252,6 +251,7 @@ if test "$MONGODB" != "no"; then
     mongoc-gridfs-file-list.c \
     mongoc-handshake.c \
     mongoc-index.c \
+    mongoc-linux-distro-scanner.c \
     mongoc-list.c \
     mongoc-log.c \
     mongoc-matcher-op.c \
