@@ -119,7 +119,7 @@ if (PHP_MONGODB != "no") {
   if (CHECK_LIB("ssleay32.lib", "mongodb", PHP_MONGODB) &&
       CHECK_LIB("libeay32.lib", "mongodb", PHP_MONGODB) &&
       CHECK_LIB("crypt32.lib", "mongodb", PHP_MONGODB) &&
-      CHECK_HEADER_ADD_INCLUDE("openssl/ssl.h", "CFLAGS_MONGOC")) {
+      CHECK_HEADER_ADD_INCLUDE("openssl/ssl.h", "CFLAGS_MONGODB")) {
     mongoc_opts.MONGOC_ENABLE_SSL_OPENSSL = 1;
     mongoc_opts.MONGOC_ENABLE_CRYPTO_LIBCRYPTO = 1;
     mongoc_opts.MONGOC_ENABLE_SSL = 1;
@@ -131,7 +131,7 @@ if (PHP_MONGODB != "no") {
 
   if (PHP_MONGODB_SASL != "no" &&
       CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB) &&
-      CHECK_HEADER_ADD_INCLUDE("sasl/sasl.h", "CFLAGS_MONGOC")) {
+      CHECK_HEADER_ADD_INCLUDE("sasl/sasl.h", "CFLAGS_MONGODB")) {
     mongoc_opts.MONGOC_ENABLE_SASL = 1;
     if (CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done")) {
       mongoc_opts.MONGOC_HAVE_SASL_CLIENT_DONE = 1;
