@@ -118,6 +118,7 @@ if (PHP_MONGODB != "no") {
 
   if (CHECK_LIB("ssleay32.lib", "mongodb", PHP_MONGODB) &&
       CHECK_LIB("libeay32.lib", "mongodb", PHP_MONGODB) &&
+      CHECK_LIB("crypt32.lib", "mongodb", PHP_MONGODB) &&
       CHECK_HEADER_ADD_INCLUDE("openssl/ssl.h", "CFLAGS_MONGOC")) {
     mongoc_opts.MONGOC_ENABLE_SSL_OPENSSL = 1;
     mongoc_opts.MONGOC_ENABLE_CRYPTO_LIBCRYPTO = 1;
