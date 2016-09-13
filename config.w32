@@ -79,7 +79,7 @@ if (PHP_MONGODB != "no") {
     BSON_HAVE_TIMESPEC: 0,
     BSON_EXTRA_ALIGN: 0,
     BSON_HAVE_SYSCALL_TID: 0,
-    BSON_HAVE_DECIMAL128: 0,
+    BSON_HAVE_DECIMAL128: 0
   };
 
   if (CHECK_FUNC_IN_HEADER("stdio.h", "_set_output_format")) {
@@ -113,7 +113,7 @@ if (PHP_MONGODB != "no") {
     MONGOC_ENABLE_SASL: 0,
     MONGOC_HAVE_SASL_CLIENT_DONE: 0,
     MONGOC_HAVE_WEAK_SYMBOLS: 0,
-    MONGOC_NO_AUTOMATIC_GLOBALS: 1,
+    MONGOC_NO_AUTOMATIC_GLOBALS: 1
   };
 
   if (CHECK_LIB("ssleay32.lib", "mongodb", PHP_MONGODB) &&
