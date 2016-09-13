@@ -153,24 +153,6 @@ PHP_METHOD(Binary, __toString)
 }
 /* }}} */
 
-/* {{{ proto void Binary::__wakeup()
-*/
-PHP_METHOD(Binary, __wakeup)
-{
-	php_phongo_binary_t *intern;
-	HashTable           *props;
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-	intern = Z_BINARY_OBJ_P(getThis());
-	props = zend_std_get_properties(getThis() TSRMLS_CC);
-
-	php_phongo_binary_init_from_hash(intern, props TSRMLS_CC);
-}
-/* }}} */
-
 /* {{{ proto string Binary::getData()
 */
 PHP_METHOD(Binary, getData)
@@ -317,7 +299,6 @@ static zend_function_entry php_phongo_binary_me[] = {
 	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Binary, __set_state, ai_Binary___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Binary, __toString, ai_Binary_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Binary, __wakeup, ai_Binary_void, ZEND_ACC_PUBLIC)
 	PHP_ME(Binary, serialize, ai_Binary_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Binary, unserialize, ai_Binary_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Binary, getData, ai_Binary_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

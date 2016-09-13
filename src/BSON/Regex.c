@@ -206,24 +206,6 @@ PHP_METHOD(Regex, __toString)
 }
 /* }}} */
 
-/* {{{ proto void Regex::__wakeup()
-*/
-PHP_METHOD(Regex, __wakeup)
-{
-	php_phongo_regex_t *intern;
-	HashTable          *props;
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-	intern = Z_REGEX_OBJ_P(getThis());
-	props = zend_std_get_properties(getThis() TSRMLS_CC);
-
-	php_phongo_regex_init_from_hash(intern, props TSRMLS_CC);
-}
-/* }}} */
-
 /* {{{ proto string Regex::serialize()
 */
 PHP_METHOD(Regex, serialize)
@@ -335,7 +317,6 @@ static zend_function_entry php_phongo_regex_me[] = {
 	PHP_ME(Regex, __construct, ai_Regex___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Regex, __set_state, ai_Regex___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Regex, __toString, ai_Regex_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Regex, __wakeup, ai_Regex_void, ZEND_ACC_PUBLIC)
 	PHP_ME(Regex, serialize, ai_Regex_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Regex, unserialize, ai_Regex_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Regex, getPattern, ai_Regex_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

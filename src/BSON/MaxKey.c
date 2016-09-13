@@ -60,14 +60,6 @@ PHP_METHOD(MaxKey, __set_state)
 }
 /* }}} */
 
-/* {{{ proto MaxKey::__wakeup()
-*/
-PHP_METHOD(MaxKey, __wakeup)
-{
-	zend_parse_parameters_none();
-}
-/* }}} */
-
 /* {{{ proto string MaxKey::serialize()
 */
 PHP_METHOD(MaxKey, serialize)
@@ -109,7 +101,6 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_maxkey_me[] = {
 	PHP_ME(MaxKey, __set_state, ai_MaxKey___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-	PHP_ME(MaxKey, __wakeup, ai_MaxKey_void, ZEND_ACC_PUBLIC)
 	PHP_ME(MaxKey, serialize, ai_MaxKey_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(MaxKey, unserialize, ai_MaxKey_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END

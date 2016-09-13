@@ -248,24 +248,6 @@ PHP_METHOD(UTCDateTime, __toString)
 }
 /* }}} */
 
-/* {{{ proto void UTCDateTime::__wakeup()
-*/
-PHP_METHOD(UTCDateTime, __wakeup)
-{
-	php_phongo_utcdatetime_t *intern;
-	HashTable                *props;
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-	intern = Z_UTCDATETIME_OBJ_P(getThis());
-	props = zend_std_get_properties(getThis() TSRMLS_CC);
-
-	php_phongo_utcdatetime_init_from_hash(intern, props TSRMLS_CC);
-}
-/* }}} */
-
 /* {{{ proto DateTime UTCDateTime::toDateTime()
    Returns a DateTime object representing this UTCDateTime */
 PHP_METHOD(UTCDateTime, toDateTime)
@@ -407,7 +389,6 @@ static zend_function_entry php_phongo_utcdatetime_me[] = {
 	PHP_ME(UTCDateTime, __construct, ai_UTCDateTime___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, __set_state, ai_UTCDateTime___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(UTCDateTime, __toString, ai_UTCDateTime_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, __wakeup, ai_UTCDateTime_void, ZEND_ACC_PUBLIC)
 	PHP_ME(UTCDateTime, serialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, unserialize, ai_UTCDateTime_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, toDateTime, ai_UTCDateTime_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

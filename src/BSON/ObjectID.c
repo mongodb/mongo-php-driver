@@ -197,24 +197,6 @@ PHP_METHOD(ObjectID, __toString)
 }
 /* }}} */
 
-/* {{{ proto ObjectID::__wakeup()
-*/
-PHP_METHOD(ObjectID, __wakeup)
-{
-	php_phongo_objectid_t *intern;
-	HashTable             *props;
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-	intern = Z_OBJECTID_OBJ_P(getThis());
-	props = zend_std_get_properties(getThis() TSRMLS_CC);
-
-	php_phongo_objectid_init_from_hash(intern, props TSRMLS_CC);
-}
-/* }}} */
-
 /* {{{ proto string ObjectID::serialize()
 */
 PHP_METHOD(ObjectID, serialize)
@@ -324,7 +306,6 @@ static zend_function_entry php_phongo_objectid_me[] = {
 	PHP_ME(ObjectID, getTimestamp, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ObjectID, __set_state, ai_ObjectID___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(ObjectID, __toString, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ObjectID, __wakeup, ai_ObjectID_void, ZEND_ACC_PUBLIC)
 	PHP_ME(ObjectID, serialize, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ObjectID, unserialize, ai_ObjectID_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END

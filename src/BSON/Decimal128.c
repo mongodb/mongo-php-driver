@@ -151,24 +151,6 @@ PHP_METHOD(Decimal128, __toString)
 }
 /* }}} */
 
-/* {{{ proto void Decimal128::__wakeup()
-*/
-PHP_METHOD(Decimal128, __wakeup)
-{
-	php_phongo_decimal128_t *intern;
-	HashTable               *props;
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-	intern = Z_DECIMAL128_OBJ_P(getThis());
-	props = zend_std_get_properties(getThis() TSRMLS_CC);
-
-	php_phongo_decimal128_init_from_hash(intern, props TSRMLS_CC);
-}
-/* }}} */
-
 /* {{{ proto string Decimal128::serialize()
 */
 PHP_METHOD(Decimal128, serialize)
@@ -280,7 +262,6 @@ static zend_function_entry php_phongo_decimal128_me[] = {
 	PHP_ME(Decimal128, __construct, ai_Decimal128___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Decimal128, __set_state, ai_Decimal128___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Decimal128, __toString, ai_Decimal128_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Decimal128, __wakeup, ai_Decimal128_void, ZEND_ACC_PUBLIC)
 	PHP_ME(Decimal128, serialize, ai_Decimal128_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Decimal128, unserialize, ai_Decimal128_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
