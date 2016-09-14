@@ -1015,7 +1015,8 @@ static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options
 			    !strcasecmp(key, "slaveok") ||
 			    !strcasecmp(key, "w") ||
 			    !strcasecmp(key, "wtimeoutms") ||
-			    !strcasecmp(key, "maxstalenessms")
+			    !strcasecmp(key, "maxstalenessms") ||
+			    !strcasecmp(key, "appname")
 			) {
 				continue;
 			}
@@ -1524,6 +1525,7 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 	bson_t            bson_options = BSON_INITIALIZER;
 	mongoc_uri_t     *uri = NULL;
 	mongoc_ssl_opt_t *ssl_opt = NULL;
+	bson_iter_t       iter;
 
 #if PHP_VERSION_ID >= 70000
 	zval             *client_ptr;
@@ -1570,6 +1572,15 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 	    !php_phongo_apply_wc_options_to_uri(uri, &bson_options TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
+	}
+
+	if (bson_iter_init_find_case(&iter, &bson_options, "appname") && BSON_ITER_HOLDS_UTF8(&iter)) {
+		const char *str = bson_iter_utf8(&iter, NULL);
+
+		if (!mongoc_uri_set_appname(uri, str)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid appname value: '%s'", str);
+			goto cleanup;
+		}
 	}
 
 	ssl_opt = php_phongo_make_ssl_opt(driverOptions TSRMLS_CC);
