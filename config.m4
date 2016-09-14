@@ -172,9 +172,6 @@ if test "$MONGODB" != "no"; then
       php_phongo.c \
       phongo_compat.c \
   ";
-  MONGODB_CONTRIB="\
-      src/contrib/php-ssl.c \
-  ";
   MONGODB_MONGODB_CLASSES="\
       src/MongoDB/Command.c \
       src/MongoDB/Cursor.c \
@@ -337,13 +334,11 @@ if test "$MONGODB" != "no"; then
     PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_BSON_CLASSES)
     PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_CLASSES)
     PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_EXCEPTIONS)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_CONTRIB)
   else
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_BSON,               [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_BSON_CLASSES,       [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_CLASSES,    [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_EXCEPTIONS, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_CONTRIB,            [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
   fi
 
 PHP_ARG_WITH(libbson, whether to use system libbson,

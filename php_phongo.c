@@ -59,16 +59,12 @@
 /* PHP array helpers */
 #include "php_array_api.h"
 
-/* For our stream verifications */
-#include <openssl/x509.h>
-
 /* Our Compatability header */
 #include "phongo_compat.h"
 
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
-#include "php-ssl.h"
 
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO"
