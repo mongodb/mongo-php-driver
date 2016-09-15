@@ -3,12 +3,12 @@ MongoDB\Driver\ReadPreference::getTagSets()
 --FILE--
 <?php
 
-$tests = array(
+$tests = [
     null,
-    array(),
-    array(array('dc' => 'ny'), array()),
-    array(array('dc' => 'ny'), array('dc' => 'sf', 'use' => 'reporting'), array()),
-);
+    [],
+    [['dc' => 'ny'], []],
+    [['dc' => 'ny'], ['dc' => 'sf', 'use' => 'reporting'], []],
+];
 
 foreach ($tests as $test) {
     $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED, $test);
