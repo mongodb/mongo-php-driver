@@ -11,11 +11,15 @@ echo throws(function() {
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(STANDALONE, array('readPreference' => 'nothing'));
+    $manager = new MongoDB\Driver\Manager(STANDALONE, ['readPreference' => 'nothing']);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(STANDALONE . '/?readPreference=primary', array('readPreferenceTags' => array(array())));
+    $manager = new MongoDB\Driver\Manager(STANDALONE . '/?readPreference=primary', ['readPreferenceTags' => [[]]]);
+}, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
+
+echo throws(function() {
+    $manager = new MongoDB\Driver\Manager(STANDALONE . '/?readPreference=primary', ['readPreferenceTags' => ['invalid']]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>
@@ -28,4 +32,6 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Unsupported readPreference value: 'nothing'
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Primary read preference mode conflicts with tags
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Read preference tags must be an array of zero or more documents
 ===DONE===

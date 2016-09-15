@@ -52,7 +52,7 @@ PHP_METHOD(ReadPreference, __construct)
 {
 	php_phongo_readpreference_t *intern;
 	zend_error_handling       error_handling;
-	long                      mode;
+	phongo_long               mode;
 	zval                     *tagSets = NULL;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
@@ -74,22 +74,39 @@ PHP_METHOD(ReadPreference, __construct)
 		case MONGOC_READ_SECONDARY_PREFERRED:
 		case MONGOC_READ_NEAREST:
 			intern->read_preference = mongoc_read_prefs_new(mode);
+			break;
+		default:
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid mode: %" PHONGO_LONG_FORMAT, mode);
+			return;
+	}
 
+	switch(ZEND_NUM_ARGS()) {
+		case 2:
 			if (tagSets) {
 				bson_t *tags = bson_new();
 
 				phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
-				mongoc_read_prefs_set_tags(intern->read_preference, tags);
-				bson_destroy(tags);
-				if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
-					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid tagSets");
+
+				if (!php_phongo_read_preference_tags_are_valid(tags)) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "tagSets must be an array of zero or more documents");
+					bson_destroy(tags);
 					return;
 				}
+
+				if (!bson_empty(tags) && mode == MONGOC_READ_PRIMARY) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "tagSets may not be used with primary mode");
+					bson_destroy(tags);
+					return;
+				}
+
+				mongoc_read_prefs_set_tags(intern->read_preference, tags);
+				bson_destroy(tags);
 			}
-			break;
-		default:
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid mode: %ld", mode);
-			return;
+	}
+
+	if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Read preference is not valid");
+		return;
 	}
 }
 /* }}} */
