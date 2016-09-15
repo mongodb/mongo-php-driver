@@ -962,7 +962,7 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 	const bson_t *tags = mongoc_read_prefs_get_tags(read_prefs);
 	mongoc_read_mode_t mode = mongoc_read_prefs_get_mode(read_prefs);
 
-	array_init_size(retval, 2);
+	array_init_size(retval, 3);
 
 	switch (mode) {
 		case MONGOC_READ_PRIMARY: ADD_ASSOC_STRING(retval, "mode", "primary"); break;
@@ -986,6 +986,10 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 #else
 		ADD_ASSOC_ZVAL_EX(retval, "tags", state.zchild);
 #endif
+	}
+
+	if (mongoc_read_prefs_get_max_staleness_ms(read_prefs) != 0) {
+		ADD_ASSOC_LONG_EX(retval, "maxStalenessMS", mongoc_read_prefs_get_max_staleness_ms(read_prefs));
 	}
 } /* }}} */
 
