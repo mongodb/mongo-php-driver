@@ -1201,6 +1201,18 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 	/* Handle maxStalenessMS, and make sure it is not combined with primary
 	 * readPreference */
 	if (bson_iter_init_find_case(&iter, options, "maxstalenessms") && BSON_ITER_HOLDS_INT32(&iter)) {
+		int32_t max_staleness_ms = bson_iter_int32(&iter);
+
+		if (max_staleness_ms < 0) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessMS to be >= 0, %" PRId32 " given", max_staleness_ms);
+			mongoc_read_prefs_destroy(new_rp);
+
+			return false;
+		}
+
+		/* max_staleness_ms is fetched as an INT32, so there is no need to check
+		 * if it exists INT32_MAX as we do in the ReadPreference constructor. */
+
 		if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Primary read preference mode conflicts with maxStalenessMS");
 			mongoc_read_prefs_destroy(new_rp);
@@ -1208,7 +1220,7 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 			return false;
 		}
 
-		mongoc_read_prefs_set_max_staleness_ms(new_rp, bson_iter_int32(&iter));
+		mongoc_read_prefs_set_max_staleness_ms(new_rp, max_staleness_ms);
 	}
 
 	/* This may be redundant in light of the last check (primary with tags), but
