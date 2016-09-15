@@ -12,9 +12,9 @@ echo "\n";
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 MongoDB\BSON\Regex::__set_state(array(
-   'pattern' => 'regexp',
-   'flags' => 'i',
+%w'pattern' => 'regexp',
+%w'flags' => 'i',
 ))
 ===DONE===

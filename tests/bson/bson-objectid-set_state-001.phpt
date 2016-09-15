@@ -4,15 +4,15 @@ MongoDB\BSON\ObjectID::__set_state()
 <?php
 
 var_export(MongoDB\BSON\ObjectID::__set_state([
-   'oid' => '576c25db6118fd406e6e6471',
+  'oid' => '576c25db6118fd406e6e6471',
 ]));
 echo "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 MongoDB\BSON\ObjectID::__set_state(array(
-   'oid' => '576c25db6118fd406e6e6471',
+%w'oid' => '576c25db6118fd406e6e6471',
 ))
 ===DONE===
