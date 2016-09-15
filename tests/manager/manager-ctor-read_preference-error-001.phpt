@@ -1,33 +1,32 @@
 --TEST--
 MongoDB\Driver\Manager::__construct(): invalid read preference
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(STANDALONE . '/?readPreference=primary&readPreferenceTags=dc:ny');
+    $manager = new MongoDB\Driver\Manager('mongodb://127.0.0.1/?readPreference=primary&readPreferenceTags=dc:ny');
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(STANDALONE, ['readPreference' => 'nothing']);
+    $manager = new MongoDB\Driver\Manager(null, ['readPreference' => 'nothing']);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(STANDALONE . '/?readPreference=primary', ['readPreferenceTags' => [[]]]);
+    $manager = new MongoDB\Driver\Manager('mongodb://127.0.0.1/?readPreference=primary', ['readPreferenceTags' => [[]]]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(STANDALONE . '/?readPreference=primary', ['readPreferenceTags' => ['invalid']]);
+    $manager = new MongoDB\Driver\Manager('mongodb://127.0.0.1/?readPreference=primary', ['readPreferenceTags' => ['invalid']]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: '%s/?readPreference=primary&readPreferenceTags=dc:ny'
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?readPreference=primary&readPreferenceTags=dc:ny'
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Unsupported readPreference value: 'nothing'
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
