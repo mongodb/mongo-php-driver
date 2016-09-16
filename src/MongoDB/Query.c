@@ -107,7 +107,7 @@ PHP_METHOD(Query, __construct)
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Query___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, filter)
-	ZEND_ARG_ARRAY_INFO(0, options, 0)
+	ZEND_ARG_ARRAY_INFO(0, options, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Query_void, 0, 0, 0)
