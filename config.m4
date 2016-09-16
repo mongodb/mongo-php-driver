@@ -287,6 +287,7 @@ if test "$MONGODB" != "no"; then
     mongoc-stream-socket.c \
     mongoc-topology.c \
     mongoc-topology-description.c \
+    mongoc-topology-description-apm.c \
     mongoc-topology-scanner.c \
     mongoc-uri.c \
     mongoc-util.c \
