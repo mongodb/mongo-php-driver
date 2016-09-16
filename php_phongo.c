@@ -351,117 +351,6 @@ void phongo_writeconcern_init(zval *return_value, const mongoc_write_concern_t *
 }
 /* }}} */
 
-int32_t phongo_bson_find_as_int32(bson_t *bson, const char *key, int32_t fallback)
-{
-	bson_iter_t iter;
-
-	if (bson_iter_init_find(&iter, bson, key) && BSON_ITER_HOLDS_INT32(&iter)) {
-		return bson_iter_int32(&iter);
-	}
-
-	return fallback;
-}
-
-bool phongo_bson_find_as_bool(bson_t *bson, const char *key, bool fallback)
-{
-	bson_iter_t iter;
-
-	if (bson_iter_init_find(&iter, bson, key) && BSON_ITER_HOLDS_BOOL(&iter)) {
-		return bson_iter_bool(&iter);
-	}
-
-	return fallback;
-}
-
-void phongo_bson_iter_as_document(const bson_iter_t  *iter, uint32_t *document_len, const uint8_t **document)
-{
-   *document = NULL;
-   *document_len = 0;
-
-   if (BSON_ITER_HOLDS_DOCUMENT(iter) || BSON_ITER_HOLDS_ARRAY(iter)) {
-      memcpy (document_len, (iter->raw + iter->d1), sizeof (*document_len));
-      *document_len = BSON_UINT32_FROM_LE (*document_len);
-      *document = (iter->raw + iter->d1);
-   }
-}
-
-bool phongo_query_init(php_phongo_query_t *query, bson_t *filter, bson_t *options TSRMLS_DC) /* {{{ */
-{
-	bson_iter_t iter;
-
-	if (options) {
-		query->batch_size = phongo_bson_find_as_int32(options, "batchSize", 0);
-		query->limit = phongo_bson_find_as_int32(options, "limit", 0);
-		query->skip = phongo_bson_find_as_int32(options, "skip", 0);
-
-		query->flags = 0;
-		query->flags |= phongo_bson_find_as_bool(options, "tailable", false)        ? MONGOC_QUERY_TAILABLE_CURSOR   : 0;
-		query->flags |= phongo_bson_find_as_bool(options, "slaveOk", false)         ? MONGOC_QUERY_SLAVE_OK          : 0;
-		query->flags |= phongo_bson_find_as_bool(options, "oplogReplay", false)     ? MONGOC_QUERY_OPLOG_REPLAY      : 0;
-		query->flags |= phongo_bson_find_as_bool(options, "noCursorTimeout", false) ? MONGOC_QUERY_NO_CURSOR_TIMEOUT : 0;
-		query->flags |= phongo_bson_find_as_bool(options, "awaitData", false)       ? MONGOC_QUERY_AWAIT_DATA        : 0;
-		query->flags |= phongo_bson_find_as_bool(options, "exhaust", false)         ? MONGOC_QUERY_EXHAUST           : 0;
-		query->flags |= phongo_bson_find_as_bool(options, "partial", false)         ? MONGOC_QUERY_PARTIAL           : 0;
-
-
-		if (bson_iter_init_find(&iter, options, "modifiers")) {
-			uint32_t len = 0;
-			const uint8_t *data = NULL;
-
-			if (! (BSON_ITER_HOLDS_DOCUMENT (&iter) || BSON_ITER_HOLDS_ARRAY (&iter))) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected modifiers to be array or object, %d given", bson_iter_type(&iter));
-				return false;
-			}
-
-			bson_iter_document(&iter, &len, &data);
-			if (len) {
-				bson_t tmp;
-
-				bson_init_static(&tmp, data, len);
-				bson_copy_to_excluding_noinit(&tmp, query->query, "not-used-value", NULL);
-				bson_destroy (&tmp);
-			}
-		}
-
-		if (bson_iter_init_find(&iter, options, "projection")) {
-			uint32_t len = 0;
-			const uint8_t *data = NULL;
-
-			if (! (BSON_ITER_HOLDS_DOCUMENT (&iter) || BSON_ITER_HOLDS_ARRAY (&iter))) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected projection to be array or object, %d given", bson_iter_type(&iter));
-				return false;
-			}
-
-			bson_iter_document(&iter, &len, &data);
-			if (len) {
-				query->selector = bson_new_from_data(data, len);
-			}
-		}
-
-		if (bson_iter_init_find(&iter, options, "sort")) {
-			uint32_t len = 0;
-			const uint8_t *data = NULL;
-
-			if (! (BSON_ITER_HOLDS_DOCUMENT (&iter) || BSON_ITER_HOLDS_ARRAY (&iter))) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected sort to be array or object, %d given", bson_iter_type(&iter));
-				return false;
-			}
-
-			phongo_bson_iter_as_document(&iter, &len, &data);
-			if (len) {
-				bson_t tmp;
-
-				bson_init_static(&tmp, data, len);
-				bson_append_document(query->query, "$orderby", -1, &tmp);
-				bson_destroy(&tmp);
-			}
-		}
-	}
-
-	BSON_APPEND_DOCUMENT(query->query, "$query", filter);
-	return true;
-} /* }}} */
-
 zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
@@ -716,7 +605,7 @@ int phongo_execute_query(zval *manager, const char *namespace, zval *zquery, zva
 		mongoc_collection_set_read_concern(collection, query->read_concern);
 	}
 
-	cursor = mongoc_collection_find(collection, query->flags, query->skip, query->limit, query->batch_size, query->query, query->selector, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC));
+	cursor = mongoc_collection_find_with_opts(collection, query->filter, query->opts, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC));
 	mongoc_collection_destroy(collection);
 
 	/* mongoc issues a warning we need to catch somehow */

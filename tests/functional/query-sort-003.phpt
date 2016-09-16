@@ -29,32 +29,24 @@ foreach ($cursor as $document) {
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\Query)#%d (%d) {
-  ["query"]=>
-  object(stdClass)#%d (2) {
-    ["$orderby"]=>
-    object(stdClass)#%d (1) {
+  ["filter"]=>
+  object(stdClass)#%d (%d) {
+  }
+  ["options"]=>
+  object(stdClass)#%d (%d) {
+    ["projection"]=>
+    object(stdClass)#%d (%d) {
+      ["_id"]=>
+      int(0)
       ["username"]=>
       int(1)
     }
-    ["$query"]=>
+    ["sort"]=>
     object(stdClass)#%d (%d) {
+      ["username"]=>
+      int(1)
     }
   }
-  ["selector"]=>
-  object(stdClass)#%d (2) {
-    ["_id"]=>
-    int(0)
-    ["username"]=>
-    int(1)
-  }
-  ["flags"]=>
-  int(0)
-  ["skip"]=>
-  int(0)
-  ["limit"]=>
-  int(0)
-  ["batch_size"]=>
-  int(0)
   ["readConcern"]=>
   NULL
 }
