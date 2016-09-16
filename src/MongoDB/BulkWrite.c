@@ -69,8 +69,8 @@ PHP_METHOD(BulkWrite, __construct)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	if (options && php_array_exists(options, "ordered")) {
-		ordered = php_array_fetch_bool(options, "ordered");
+	if (options && php_array_existsc(options, "ordered")) {
+		ordered = php_array_fetchc_bool(options, "ordered");
 	}
 
 	intern->bulk = phongo_bulkwrite_init(ordered);
@@ -78,8 +78,8 @@ PHP_METHOD(BulkWrite, __construct)
 	intern->bypass = BYPASS_UNSET;
 	intern->num_ops = 0;
 
-	if (options && php_array_exists(options, "bypassDocumentValidation")) {
-		zend_bool bypass = php_array_fetch_bool(options, "bypassDocumentValidation");
+	if (options && php_array_existsc(options, "bypassDocumentValidation")) {
+		zend_bool bypass = php_array_fetchc_bool(options, "bypassDocumentValidation");
 		mongoc_bulk_operation_set_bypass_document_validation(intern->bulk, bypass);
 		intern->bypass = bypass;
 	}
@@ -159,8 +159,8 @@ PHP_METHOD(BulkWrite, update)
 	phongo_zval_to_bson(newObj, PHONGO_BSON_NONE, bupdate, NULL TSRMLS_CC);
 
 	if (updateOptions) {
-		flags |= php_array_fetch_bool(updateOptions, "multi") ?  MONGOC_UPDATE_MULTI_UPDATE : 0;
-		flags |= php_array_fetch_bool(updateOptions, "upsert") ? MONGOC_UPDATE_UPSERT : 0;
+		flags |= php_array_fetchc_bool(updateOptions, "multi") ?  MONGOC_UPDATE_MULTI_UPDATE : 0;
+		flags |= php_array_fetchc_bool(updateOptions, "upsert") ? MONGOC_UPDATE_UPSERT : 0;
 	}
 
 	if (flags & MONGOC_UPDATE_MULTI_UPDATE) {
@@ -212,7 +212,7 @@ PHP_METHOD(BulkWrite, delete)
 	bson = bson_new();
 	phongo_zval_to_bson(query, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 
-	if (deleteOptions && php_array_fetch_bool(deleteOptions, "limit")) {
+	if (deleteOptions && php_array_fetchc_bool(deleteOptions, "limit")) {
 		mongoc_bulk_operation_remove_one(intern->bulk, bson);
 	} else {
 		mongoc_bulk_operation_remove(intern->bulk, bson);

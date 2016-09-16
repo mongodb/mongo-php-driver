@@ -1559,7 +1559,7 @@ PHONGO_API void phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_type
 		int        classname_len;
 		zend_bool  classname_free = 0;
 
-		classname = php_array_fetchl_string(typemap, "array", sizeof("array")-1, &classname_len, &classname_free);
+		classname = php_array_fetchc_string(typemap, "array", &classname_len, &classname_free);
 		if (classname_len) {
 			apply_classname_to_state(classname, classname_len, &map->array_type, &map->array TSRMLS_CC);
 		}
@@ -1567,7 +1567,7 @@ PHONGO_API void phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_type
 			str_efree(classname);
 		}
 
-		classname = php_array_fetchl_string(typemap, "document", sizeof("document")-1, &classname_len, &classname_free);
+		classname = php_array_fetchc_string(typemap, "document", &classname_len, &classname_free);
 		if (classname_len) {
 			apply_classname_to_state(classname, classname_len, &map->document_type, &map->document TSRMLS_CC);
 		}
@@ -1575,7 +1575,7 @@ PHONGO_API void phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_type
 			str_efree(classname);
 		}
 
-		classname = php_array_fetchl_string(typemap, "root", sizeof("root")-1, &classname_len, &classname_free);
+		classname = php_array_fetchc_string(typemap, "root", &classname_len, &classname_free);
 		if (classname_len) {
 			apply_classname_to_state(classname, classname_len, &map->root_type, &map->root TSRMLS_CC);
 		}
