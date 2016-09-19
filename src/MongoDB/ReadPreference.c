@@ -162,6 +162,20 @@ PHP_METHOD(ReadPreference, getTagSets)
 }
 /* }}} */
 
+/* {{{ proto array ReadPreference::bsonSerialize()
+   */
+PHP_METHOD(ReadPreference, bsonSerialize)
+{
+	const mongoc_read_prefs_t *read_preference = phongo_read_preference_from_zval(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	php_phongo_read_preference_to_zval(return_value, read_preference);
+}
+/* }}} */
+
 /**
  * Value object for read preferences used in issuing commands and queries.
  */
@@ -179,7 +193,7 @@ static zend_function_entry php_phongo_readpreference_me[] = {
 	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeup, ai_ReadPreference_void, ZEND_ACC_PUBLIC)
+	PHP_ME(ReadPreference, bsonSerialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -257,6 +271,8 @@ PHP_MINIT_FUNCTION(ReadPreference)
 	php_phongo_readpreference_ce->create_object = php_phongo_readpreference_create_object;
 	PHONGO_CE_FINAL(php_phongo_readpreference_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_readpreference_ce);
+
+	zend_class_implements(php_phongo_readpreference_ce TSRMLS_CC, 1, php_phongo_serializable_ce);
 
 	memcpy(&php_phongo_handler_readpreference, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_readpreference.get_debug_info = php_phongo_readpreference_get_debug_info;

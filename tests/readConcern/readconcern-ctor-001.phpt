@@ -17,12 +17,8 @@ var_dump(new MongoDB\Driver\ReadConcern('not-yet-supported'));
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
-  ["level"]=>
-  NULL
 }
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
-  ["level"]=>
-  NULL
 }
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>

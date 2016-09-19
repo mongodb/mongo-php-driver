@@ -16,14 +16,11 @@ var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRI
 --EXPECTF--
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
-  int(1)
-  ["tags"]=>
-  array(0) {
-  }
+  string(7) "primary"
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
-  int(2)
+  string(9) "secondary"
   ["tags"]=>
   array(1) {
     [0]=>
@@ -35,9 +32,6 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
-  int(1)
-  ["tags"]=>
-  array(0) {
-  }
+  string(7) "primary"
 }
 ===DONE===

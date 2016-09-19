@@ -17,13 +17,9 @@ var_dump(new MongoDB\Driver\WriteConcern(-2, 1000, true));
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
-  ["w"]=>
-  NULL
-  ["wmajority"]=>
-  bool(false)
+  ["j"]=>
+  bool(true)
   ["wtimeout"]=>
   int(1000)
-  ["journal"]=>
-  bool(true)
 }
 ===DONE===

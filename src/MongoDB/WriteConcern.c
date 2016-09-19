@@ -182,6 +182,20 @@ PHP_METHOD(WriteConcern, getJournal)
 }
 /* }}} */
 
+/* {{{ proto array WriteConcern::bsonSerialize()
+   */
+PHP_METHOD(WriteConcern, bsonSerialize)
+{
+	const mongoc_write_concern_t *write_concern = phongo_write_concern_from_zval(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	php_phongo_write_concern_to_zval(return_value, write_concern);
+}
+/* }}} */
+
 /**
  * Value object for write concern used in issuing write operations.
  */
@@ -201,7 +215,7 @@ static zend_function_entry php_phongo_writeconcern_me[] = {
 	PHP_ME(WriteConcern, getW, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, getJournal, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeup, ai_WriteConcern_void, ZEND_ACC_PUBLIC)
+	PHP_ME(WriteConcern, bsonSerialize, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -276,6 +290,8 @@ PHP_MINIT_FUNCTION(WriteConcern)
 	php_phongo_writeconcern_ce->create_object = php_phongo_writeconcern_create_object;
 	PHONGO_CE_FINAL(php_phongo_writeconcern_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_writeconcern_ce);
+
+	zend_class_implements(php_phongo_writeconcern_ce TSRMLS_CC, 1, php_phongo_serializable_ce);
 
 	memcpy(&php_phongo_handler_writeconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeconcern.get_debug_info = php_phongo_writeconcern_get_debug_info;
