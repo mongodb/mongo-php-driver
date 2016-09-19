@@ -221,7 +221,7 @@ bool php_phongo_bson_visit_utf8(const bson_iter_t *iter ARG_UNUSED, const char *
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 #endif
 
-	ADD_ASSOC_STRING_EX(retval, key, strlen(key), (char *)v_utf8, v_utf8_len);
+	ADD_ASSOC_STRING_EX(retval, key, strlen(key), v_utf8, v_utf8_len);
 
 	return false;
 }
@@ -241,7 +241,7 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char
 		zend_class_entry *found_ce = zend_fetch_class(zs_classname, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
 		zend_string_free(zs_classname);
 #else
-		zend_class_entry *found_ce = zend_fetch_class((char *)v_binary, v_binary_len, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
+		zend_class_entry *found_ce = zend_fetch_class((const char *)v_binary, v_binary_len, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
 #endif
 
 		if (found_ce && PHONGO_IS_CLASS_INSTANTIATABLE(found_ce) && instanceof_function(found_ce, php_phongo_persistable_ce TSRMLS_CC)) {

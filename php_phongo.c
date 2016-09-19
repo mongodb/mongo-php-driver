@@ -930,7 +930,7 @@ void php_phongo_read_concern_to_zval(zval *retval, const mongoc_read_concern_t *
 	array_init_size(retval, 1);
 
 	if (level) {
-		ADD_ASSOC_STRING(retval, "level", (char *)level);
+		ADD_ASSOC_STRING(retval, "level", level);
 	}
 } /* }}} */
 
@@ -998,9 +998,9 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 	array_init_size(retval, 4);
 
 	if (wtag) {
-		ADD_ASSOC_STRING(retval, "w", (char *)wtag);
+		ADD_ASSOC_STRING(retval, "w", wtag);
 	} else if (mongoc_write_concern_get_wmajority(write_concern)) {
-		ADD_ASSOC_STRING(retval, "w", (char *)PHONGO_WRITE_CONCERN_W_MAJORITY);
+		ADD_ASSOC_STRING(retval, "w", PHONGO_WRITE_CONCERN_W_MAJORITY);
 	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
 		ADD_ASSOC_LONG_EX(retval, "w", w);
 	}
@@ -1453,7 +1453,7 @@ static char *php_phongo_manager_make_client_hash(const char *uri_string, zval *o
 	zval                  args;
 
 	array_init_size(&args, 3);
-	ADD_ASSOC_STRING(&args, "uri", (char *) uri_string);
+	ADD_ASSOC_STRING(&args, "uri", uri_string);
 
 	if (options) {
 		ADD_ASSOC_ZVAL_EX(&args, "options", options);
@@ -1484,7 +1484,7 @@ static char *php_phongo_manager_make_client_hash(const char *uri_string, zval *o
 
 	MAKE_STD_ZVAL(args);
 	array_init_size(args, 3);
-	ADD_ASSOC_STRING(args, "uri", (char *) uri_string);
+	ADD_ASSOC_STRING(args, "uri", uri_string);
 
 	if (options) {
 		ADD_ASSOC_ZVAL_EX(args, "options", options);
