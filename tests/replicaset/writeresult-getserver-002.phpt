@@ -79,15 +79,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["writeConcernError"]=>
   NULL
   ["writeConcern"]=>
-  array(%d) {
-    ["w"]=>
-    NULL
-    ["wmajority"]=>
-    bool(false)
-    ["wtimeout"]=>
-    int(0)
-    ["journal"]=>
-    NULL
+  array(0) {
   }
 }
 string(14) "192.168.112.10"
