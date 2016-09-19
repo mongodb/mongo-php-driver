@@ -63,10 +63,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
   ["readPreference"]=>
   object(MongoDB\Driver\ReadPreference)#%d (%d) {
     ["mode"]=>
-    int(1)
-    ["tags"]=>
-    array(0) {
-    }
+    string(7) "primary"
   }
   ["isDead"]=>
   bool(true)
@@ -112,10 +109,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
   ["readPreference"]=>
   object(MongoDB\Driver\ReadPreference)#%d (%d) {
     ["mode"]=>
-    int(5)
-    ["tags"]=>
-    array(0) {
-    }
+    string(16) "primaryPreferred"
   }
   ["isDead"]=>
   bool(true)
@@ -161,10 +155,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
   ["readPreference"]=>
   object(MongoDB\Driver\ReadPreference)#%d (%d) {
     ["mode"]=>
-    int(2)
-    ["tags"]=>
-    array(0) {
-    }
+    string(9) "secondary"
   }
   ["isDead"]=>
   bool(true)
@@ -210,10 +201,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
   ["readPreference"]=>
   object(MongoDB\Driver\ReadPreference)#%d (%d) {
     ["mode"]=>
-    int(6)
-    ["tags"]=>
-    array(0) {
-    }
+    string(18) "secondaryPreferred"
   }
   ["isDead"]=>
   bool(true)
@@ -259,10 +247,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
   ["readPreference"]=>
   object(MongoDB\Driver\ReadPreference)#%d (%d) {
     ["mode"]=>
-    int(10)
-    ["tags"]=>
-    array(0) {
-    }
+    string(7) "nearest"
   }
   ["isDead"]=>
   bool(true)

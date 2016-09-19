@@ -100,15 +100,9 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
     string(29) "Not enough data-bearing nodes"
   }
   ["writeConcern"]=>
-  array(4) {
+  array(1) {
     ["w"]=>
     int(30)
-    ["wmajority"]=>
-    bool(false)
-    ["wtimeout"]=>
-    int(0)
-    ["journal"]=>
-    NULL
   }
 }
 ===DONE===
