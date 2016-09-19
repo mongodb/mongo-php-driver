@@ -101,6 +101,20 @@ PHP_METHOD(ReadConcern, getLevel)
 }
 /* }}} */
 
+/* {{{ proto array ReadConcern::bsonSerialize()
+   */
+PHP_METHOD(ReadConcern, bsonSerialize)
+{
+	const mongoc_read_concern_t *read_concern = phongo_read_concern_from_zval(getThis() TSRMLS_CC);
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	php_phongo_read_concern_to_zval(return_value, read_concern);
+}
+/* }}} */
+
 /**
  * Value object for read concern used in issuing read operations.
  */
@@ -116,7 +130,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_readconcern_me[] = {
 	PHP_ME(ReadConcern, __construct, ai_ReadConcern___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadConcern, getLevel, ai_ReadConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeup, ai_ReadConcern_void, ZEND_ACC_PUBLIC)
+	PHP_ME(ReadConcern, bsonSerialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
@@ -191,6 +205,8 @@ PHP_MINIT_FUNCTION(ReadConcern)
 	php_phongo_readconcern_ce->create_object = php_phongo_readconcern_create_object;
 	PHONGO_CE_FINAL(php_phongo_readconcern_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_readconcern_ce);
+
+	zend_class_implements(php_phongo_readconcern_ce TSRMLS_CC, 1, php_phongo_serializable_ce);
 
 	memcpy(&php_phongo_handler_readconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_readconcern.get_debug_info = php_phongo_readconcern_get_debug_info;

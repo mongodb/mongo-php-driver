@@ -26,91 +26,53 @@ var_dump(new MongoDB\Driver\WriteConcern("string", 6000, null));
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
-  ["wmajority"]=>
-  bool(true)
-  ["wtimeout"]=>
-  int(0)
-  ["journal"]=>
-  NULL
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
-  ["wmajority"]=>
-  bool(true)
   ["wtimeout"]=>
   int(1000)
-  ["journal"]=>
-  NULL
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(2)
-  ["wmajority"]=>
-  bool(false)
-  ["wtimeout"]=>
-  int(0)
-  ["journal"]=>
-  NULL
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(2)
-  ["wmajority"]=>
-  bool(false)
   ["wtimeout"]=>
   int(2000)
-  ["journal"]=>
-  NULL
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(7) "tagname"
-  ["wmajority"]=>
-  bool(false)
-  ["wtimeout"]=>
-  int(0)
-  ["journal"]=>
-  NULL
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(6) "string"
-  ["wmajority"]=>
-  bool(false)
   ["wtimeout"]=>
   int(3000)
-  ["journal"]=>
-  NULL
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(6) "string"
-  ["wmajority"]=>
-  bool(false)
+  ["j"]=>
+  bool(true)
   ["wtimeout"]=>
   int(4000)
-  ["journal"]=>
-  bool(true)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(6) "string"
-  ["wmajority"]=>
+  ["j"]=>
   bool(false)
   ["wtimeout"]=>
   int(5000)
-  ["journal"]=>
-  bool(false)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(6) "string"
-  ["wmajority"]=>
-  bool(false)
   ["wtimeout"]=>
   int(6000)
-  ["journal"]=>
-  NULL
 }
 ===DONE===

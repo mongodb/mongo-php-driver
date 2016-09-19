@@ -17,31 +17,21 @@ var_dump(new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
-  ["wmajority"]=>
-  bool(false)
-  ["wtimeout"]=>
-  int(0)
-  ["journal"]=>
-  NULL
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(3) "tag"
-  ["wmajority"]=>
+  ["j"]=>
   bool(false)
   ["wtimeout"]=>
   int(1000)
-  ["journal"]=>
-  bool(false)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
-  ["wmajority"]=>
+  ["j"]=>
   bool(true)
   ["wtimeout"]=>
   int(500)
-  ["journal"]=>
-  bool(true)
 }
 ===DONE===

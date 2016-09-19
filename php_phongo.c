@@ -931,8 +931,6 @@ void php_phongo_read_concern_to_zval(zval *retval, const mongoc_read_concern_t *
 
 	if (level) {
 		ADD_ASSOC_STRING(retval, "level", (char *)level);
-	} else {
-		ADD_ASSOC_NULL_EX(retval, "level");
 	}
 } /* }}} */
 
@@ -962,12 +960,21 @@ bool php_phongo_read_preference_tags_are_valid(const bson_t *tags) /* {{{ */
 void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t *read_prefs) /* {{{ */
 {
 	const bson_t *tags = mongoc_read_prefs_get_tags(read_prefs);
+	mongoc_read_mode_t mode = mongoc_read_prefs_get_mode(read_prefs);
 
 	array_init_size(retval, 2);
 
-	ADD_ASSOC_LONG_EX(retval, "mode", mongoc_read_prefs_get_mode(read_prefs));
+	switch (mode) {
+		case MONGOC_READ_PRIMARY: ADD_ASSOC_STRING(retval, "mode", "primary"); break;
+		case MONGOC_READ_PRIMARY_PREFERRED: ADD_ASSOC_STRING(retval, "mode", "primaryPreferred"); break;
+		case MONGOC_READ_SECONDARY: ADD_ASSOC_STRING(retval, "mode", "secondary"); break;
+		case MONGOC_READ_SECONDARY_PREFERRED: ADD_ASSOC_STRING(retval, "mode", "secondaryPreferred"); break;
+		case MONGOC_READ_NEAREST: ADD_ASSOC_STRING(retval, "mode", "nearest"); break;
+		default: /* Do nothing */
+			break;
+	}
 
-	if (tags->len) {
+	if (!bson_empty0(tags)) {
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 		/* Use native arrays for debugging output */
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
@@ -979,8 +986,6 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 #else
 		ADD_ASSOC_ZVAL_EX(retval, "tags", state.zchild);
 #endif
-	} else {
-		ADD_ASSOC_NULL_EX(retval, "tags");
 	}
 } /* }}} */
 
@@ -988,6 +993,7 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 {
 	const char *wtag = mongoc_write_concern_get_wtag(write_concern);
 	const int32_t w = mongoc_write_concern_get_w(write_concern);
+	const int32_t wtimeout = mongoc_write_concern_get_wtimeout(write_concern);
 
 	array_init_size(retval, 4);
 
@@ -997,17 +1003,14 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 		ADD_ASSOC_STRING(retval, "w", (char *)PHONGO_WRITE_CONCERN_W_MAJORITY);
 	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
 		ADD_ASSOC_LONG_EX(retval, "w", w);
-	} else {
-		ADD_ASSOC_NULL_EX(retval, "w");
 	}
 
-	ADD_ASSOC_BOOL_EX(retval, "wmajority", mongoc_write_concern_get_wmajority(write_concern));
-	ADD_ASSOC_LONG_EX(retval, "wtimeout", mongoc_write_concern_get_wtimeout(write_concern));
-
 	if (mongoc_write_concern_journal_is_set(write_concern)) {
-		ADD_ASSOC_BOOL_EX(retval, "journal", mongoc_write_concern_get_journal(write_concern));
-	} else {
-		ADD_ASSOC_NULL_EX(retval, "journal");
+		ADD_ASSOC_BOOL_EX(retval, "j", mongoc_write_concern_get_journal(write_concern));
+	}
+
+	if (wtimeout != 0) {
+		ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
 	}
 } /* }}} */
 /* }}} */
@@ -2105,6 +2108,20 @@ PHP_MINIT_FUNCTION(mongodb)
 
 	PHP_MINIT(bson)(INIT_FUNC_ARGS_PASSTHRU);
 
+	PHP_MINIT(Type)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(Serializable)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(Unserializable)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(Persistable)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(Binary)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(Decimal128)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(Javascript)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(MaxKey)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(MinKey)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(ObjectID)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(Regex)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(Timestamp)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(UTCDateTime)(INIT_FUNC_ARGS_PASSTHRU);
+
 	PHP_MINIT(Command)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(Cursor)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(CursorId)(INIT_FUNC_ARGS_PASSTHRU);
@@ -2131,20 +2148,6 @@ PHP_MINIT_FUNCTION(mongodb)
 	PHP_MINIT(BulkWriteException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ExecutionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ConnectionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
-
-	PHP_MINIT(Type)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Serializable)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Unserializable)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Persistable)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Binary)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Decimal128)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Javascript)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(MaxKey)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(MinKey)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ObjectID)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Regex)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Timestamp)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(UTCDateTime)(INIT_FUNC_ARGS_PASSTHRU);
 
 	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char *)MONGODB_VERSION_S, CONST_CS | CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("MONGODB_STABILITY", (char *)MONGODB_STABILITY_S, CONST_CS | CONST_PERSISTENT);

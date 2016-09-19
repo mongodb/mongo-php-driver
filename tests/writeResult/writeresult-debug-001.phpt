@@ -63,15 +63,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["writeConcernError"]=>
   NULL
   ["writeConcern"]=>
-  array(4) {
-    ["w"]=>
-    NULL
-    ["wmajority"]=>
-    bool(false)
-    ["wtimeout"]=>
-    int(0)
-    ["journal"]=>
-    NULL
+  array(%d) {
   }
 }
 ===DONE===

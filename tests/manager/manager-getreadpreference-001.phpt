@@ -32,35 +32,23 @@ foreach ($tests as $i => $test) {
 --EXPECTF--
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
-  int(1)
-  ["tags"]=>
-  array(0) {
-  }
+  string(7) "primary"
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
-  int(2)
-  ["tags"]=>
-  array(0) {
-  }
+  string(9) "secondary"
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
-  int(5)
-  ["tags"]=>
-  array(0) {
-  }
+  string(16) "primaryPreferred"
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
-  int(6)
-  ["tags"]=>
-  array(0) {
-  }
+  string(18) "secondaryPreferred"
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
-  int(2)
+  string(9) "secondary"
   ["tags"]=>
   array(2) {
     [0]=>
@@ -77,7 +65,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
-  int(2)
+  string(9) "secondary"
   ["tags"]=>
   array(2) {
     [0]=>
@@ -94,7 +82,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
-  int(2)
+  string(9) "secondary"
   ["tags"]=>
   array(1) {
     [0]=>

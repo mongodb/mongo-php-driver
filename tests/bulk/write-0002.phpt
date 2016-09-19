@@ -67,12 +67,8 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   array(%d) {
     ["w"]=>
     int(1)
-    ["wmajority"]=>
-    bool(false)
     ["wtimeout"]=>
     int(1000)
-    ["journal"]=>
-    NULL
   }
 }
 Inserted 2 documents to %s

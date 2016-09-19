@@ -45,12 +45,6 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   array(%d) {
     ["w"]=>
     int(0)
-    ["wmajority"]=>
-    bool(false)
-    ["wtimeout"]=>
-    int(0)
-    ["journal"]=>
-    NULL
   }
 }
 ===DONE===
