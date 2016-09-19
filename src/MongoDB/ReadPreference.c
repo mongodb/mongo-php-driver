@@ -34,6 +34,8 @@
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
+/* PHP array helpers */
+#include "php_array_api.h"
 /* Our Compatability header */
 #include "phongo_compat.h"
 
@@ -46,7 +48,7 @@ PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
 
 zend_object_handlers php_phongo_handler_readpreference;
 
-/* {{{ proto void ReadPreference::__construct(integer $mode[, array $tagSets = array()])
+/* {{{ proto void ReadPreference::__construct(integer $mode[, array $tagSets = array()[, array $options = array()]])
    Constructs a new ReadPreference */
 PHP_METHOD(ReadPreference, __construct)
 {
@@ -54,13 +56,14 @@ PHP_METHOD(ReadPreference, __construct)
 	zend_error_handling       error_handling;
 	phongo_long               mode;
 	zval                     *tagSets = NULL;
+	zval                     *options = NULL;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|a!", &mode, &tagSets) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|a!a!", &mode, &tagSets, &options) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
@@ -80,34 +83,69 @@ PHP_METHOD(ReadPreference, __construct)
 			return;
 	}
 
-	switch(ZEND_NUM_ARGS()) {
-		case 2:
-			if (tagSets) {
-				bson_t *tags = bson_new();
+	if (tagSets) {
+		bson_t *tags = bson_new();
 
-				phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
+		phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
 
-				if (!php_phongo_read_preference_tags_are_valid(tags)) {
-					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "tagSets must be an array of zero or more documents");
-					bson_destroy(tags);
-					return;
-				}
+		if (!php_phongo_read_preference_tags_are_valid(tags)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "tagSets must be an array of zero or more documents");
+			bson_destroy(tags);
+			return;
+		}
 
-				if (!bson_empty(tags) && mode == MONGOC_READ_PRIMARY) {
-					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "tagSets may not be used with primary mode");
-					bson_destroy(tags);
-					return;
-				}
+		if (!bson_empty(tags) && mode == MONGOC_READ_PRIMARY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "tagSets may not be used with primary mode");
+			bson_destroy(tags);
+			return;
+		}
 
-				mongoc_read_prefs_set_tags(intern->read_preference, tags);
-				bson_destroy(tags);
-			}
+		mongoc_read_prefs_set_tags(intern->read_preference, tags);
+		bson_destroy(tags);
+	}
+
+	if (options && php_array_exists(options, "maxStalenessMS")) {
+		phongo_long maxStalenessMS = php_array_fetchc_long(options, "maxStalenessMS");
+
+		if (maxStalenessMS < 0) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessMS to be >= 0, %" PHONGO_LONG_FORMAT " given", maxStalenessMS);
+			return;
+		}
+
+		if (maxStalenessMS > INT32_MAX) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessMS to be <= %" PRId32 ", %" PHONGO_LONG_FORMAT " given", INT32_MAX, maxStalenessMS);
+			return;
+		}
+
+		if (maxStalenessMS > 0 && mode == MONGOC_READ_PRIMARY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "maxStalenessMS may not be used with primary mode");
+			return;
+		}
+
+		mongoc_read_prefs_set_max_staleness_ms(intern->read_preference, maxStalenessMS);
 	}
 
 	if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Read preference is not valid");
 		return;
 	}
+}
+/* }}} */
+
+/* {{{ proto integer ReadPreference::getMaxStalenessMS()
+   Returns the ReadPreference maxStalenessMS value */
+PHP_METHOD(ReadPreference, getMaxStalenessMS)
+{
+	php_phongo_readpreference_t *intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+
+	intern = Z_READPREFERENCE_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	RETURN_LONG(mongoc_read_prefs_get_max_staleness_ms(intern->read_preference));
 }
 /* }}} */
 
@@ -184,6 +222,7 @@ PHP_METHOD(ReadPreference, bsonSerialize)
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, mode)
 	ZEND_ARG_ARRAY_INFO(0, tagSets, 1)
+	ZEND_ARG_ARRAY_INFO(0, options, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference_void, 0, 0, 0)
@@ -191,6 +230,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_readpreference_me[] = {
 	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ReadPreference, getMaxStalenessMS, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, bsonSerialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

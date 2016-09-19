@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\Driver\Manager::__construct(): invalid URI
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     $manager = new MongoDB\Driver\Manager("not a valid connection string");

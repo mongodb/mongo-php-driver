@@ -1,17 +1,14 @@
 --TEST--
 MongoDB\Driver\ReadPreference::getTagSets()
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
-$tests = array(
+$tests = [
     null,
-    array(),
-    array(array('dc' => 'ny'), array()),
-    array(array('dc' => 'ny'), array('dc' => 'sf', 'use' => 'reporting'), array()),
-);
+    [],
+    [['dc' => 'ny'], []],
+    [['dc' => 'ny'], ['dc' => 'sf', 'use' => 'reporting'], []],
+];
 
 foreach ($tests as $test) {
     $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY_PREFERRED, $test);

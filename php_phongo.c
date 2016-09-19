@@ -962,7 +962,7 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 	const bson_t *tags = mongoc_read_prefs_get_tags(read_prefs);
 	mongoc_read_mode_t mode = mongoc_read_prefs_get_mode(read_prefs);
 
-	array_init_size(retval, 2);
+	array_init_size(retval, 3);
 
 	switch (mode) {
 		case MONGOC_READ_PRIMARY: ADD_ASSOC_STRING(retval, "mode", "primary"); break;
@@ -986,6 +986,10 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 #else
 		ADD_ASSOC_ZVAL_EX(retval, "tags", state.zchild);
 #endif
+	}
+
+	if (mongoc_read_prefs_get_max_staleness_ms(read_prefs) != 0) {
+		ADD_ASSOC_LONG_EX(retval, "maxStalenessMS", mongoc_read_prefs_get_max_staleness_ms(read_prefs));
 	}
 } /* }}} */
 
@@ -1197,6 +1201,18 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 	/* Handle maxStalenessMS, and make sure it is not combined with primary
 	 * readPreference */
 	if (bson_iter_init_find_case(&iter, options, "maxstalenessms") && BSON_ITER_HOLDS_INT32(&iter)) {
+		int32_t max_staleness_ms = bson_iter_int32(&iter);
+
+		if (max_staleness_ms < 0) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessMS to be >= 0, %" PRId32 " given", max_staleness_ms);
+			mongoc_read_prefs_destroy(new_rp);
+
+			return false;
+		}
+
+		/* max_staleness_ms is fetched as an INT32, so there is no need to check
+		 * if it exists INT32_MAX as we do in the ReadPreference constructor. */
+
 		if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Primary read preference mode conflicts with maxStalenessMS");
 			mongoc_read_prefs_destroy(new_rp);
@@ -1204,7 +1220,7 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 			return false;
 		}
 
-		mongoc_read_prefs_set_max_staleness_ms(new_rp, bson_iter_int32(&iter));
+		mongoc_read_prefs_set_max_staleness_ms(new_rp, max_staleness_ms);
 	}
 
 	/* This may be redundant in light of the last check (primary with tags), but
