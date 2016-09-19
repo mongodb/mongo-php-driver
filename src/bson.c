@@ -221,7 +221,7 @@ bool php_phongo_bson_visit_utf8(const bson_iter_t *iter ARG_UNUSED, const char *
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 #endif
 
-	ADD_ASSOC_STRING_EX(retval, key, strlen(key), (char *)v_utf8, v_utf8_len);
+	ADD_ASSOC_STRING_EX(retval, key, strlen(key), v_utf8, v_utf8_len);
 
 	return false;
 }

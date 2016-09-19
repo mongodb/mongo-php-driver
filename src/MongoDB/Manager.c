@@ -461,7 +461,7 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 
 	array_init_size(&retval, 2);
 
-	ADD_ASSOC_STRING(&retval, "uri", (char *)mongoc_uri_get_string(mongoc_client_get_uri(intern->client)));
+	ADD_ASSOC_STRING(&retval, "uri", mongoc_uri_get_string(mongoc_client_get_uri(intern->client)));
 
 	sds = mongoc_client_get_server_descriptions(intern->client, &n);
 
