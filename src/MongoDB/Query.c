@@ -89,7 +89,7 @@ static bool php_phongo_query_opts_append_document(bson_t *opts, const char *opts
 	}
 
 	if (!BSON_APPEND_DOCUMENT(opts, opts_key, &b)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" options", opts_key);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", opts_key);
 		bson_destroy(&b);
 		return false;
 	}
