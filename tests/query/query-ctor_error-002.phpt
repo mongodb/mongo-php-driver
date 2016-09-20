@@ -7,6 +7,7 @@ require_once __DIR__ . '/../utils/tools.php';
 
 $tests = [
     ['modifiers' => 0],
+    ['collation' => 0],
     ['comment' => 0],
     ['hint' => 0],
     ['max' => 0],
@@ -32,6 +33,9 @@ foreach ($tests as $options) {
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "modifiers" option to be array, integer given
+
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected "collation" option to be array or object, integer given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "comment" option to be string, integer given

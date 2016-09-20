@@ -9,6 +9,7 @@ var_dump(new MongoDB\Driver\Query(
         'allowPartialResults' => false,
         'awaitData' => false,
         'batchSize' => 10,
+        'collation' => ['locale' => 'en_US'],
         'comment' => 'foo',
         'exhaust' => false,
         'limit' => 20,
@@ -62,6 +63,11 @@ object(MongoDB\Driver\Query)#%d (%d) {
     bool(false)
     ["batchSize"]=>
     int(10)
+    ["collation"]=>
+    object(stdClass)#3 (1) {
+      ["locale"]=>
+      string(5) "en_US"
+    }
     ["comment"]=>
     string(3) "foo"
     ["exhaust"]=>
