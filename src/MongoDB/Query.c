@@ -99,15 +99,15 @@ static bool php_phongo_query_opts_append_document(bson_t *opts, const char *opts
 }
 
 #define PHONGO_QUERY_OPT_BOOL(opt, zarr, key) \
-	if (zarr && php_array_existsc(zarr, key)) { \
-		if (!BSON_APPEND_BOOL(intern->opts, (opt), php_array_fetchc_bool(zarr, key))) { \
+	if ((zarr) && php_array_existsc((zarr), (key))) { \
+		if (!BSON_APPEND_BOOL(intern->opts, (opt), php_array_fetchc_bool((zarr), (key)))) { \
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt)); \
 			return false; \
 		} \
 	}
 
 #define PHONGO_QUERY_OPT_DOCUMENT(opt, zarr, key) \
-	if (zarr && php_array_existsc(zarr, key)) { \
+	if ((zarr) && php_array_existsc((zarr), (key))) { \
 		if (!php_phongo_query_opts_append_document(intern->opts, (opt), (zarr), (key) TSRMLS_CC)) { \
 			return false; \
 		} \
@@ -117,15 +117,15 @@ static bool php_phongo_query_opts_append_document(bson_t *opts, const char *opts
 	 * are not converting strings to 64-bit integers for 32-bit platforms. */
 
 #define PHONGO_QUERY_OPT_INT64(opt, zarr, key) \
-	if (zarr && php_array_existsc(zarr, key)) { \
-		if (!BSON_APPEND_INT64(intern->opts, (opt), php_array_fetchc_long(zarr, key))) { \
+	if ((zarr) && php_array_existsc((zarr), (key))) { \
+		if (!BSON_APPEND_INT64(intern->opts, (opt), php_array_fetchc_long((zarr), (key)))) { \
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt)); \
 			return false; \
 		} \
 	}
 
 #define PHONGO_QUERY_OPT_STRING(opt, zarr, key) \
-	if (zarr && php_array_existsc(zarr, key)) { \
+	if ((zarr) && php_array_existsc((zarr), (key))) { \
 		if (!php_phongo_query_opts_append_string(intern->opts, (opt), (zarr), (key) TSRMLS_CC)) { \
 			return false; \
 		} \
