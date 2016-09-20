@@ -24,19 +24,6 @@
 /* Our Compatability header */
 #include "phongo_compat.h"
 
-
-void *x509_from_zval(zval *zval TSRMLS_DC) {
-#if PHP_VERSION_ID >= 70000
-	return Z_RES_P(zval)->ptr;
-#else
-	int resource_type;
-	int type;
-
-	zend_list_find(Z_LVAL_P(zval), &resource_type);
-	return zend_fetch_resource(&zval TSRMLS_CC, -1, "OpenSSL X.509", &type, 1, resource_type);
-#endif
-}
-
 void phongo_add_exception_prop(const char *prop, int prop_len, zval *value TSRMLS_DC)
 {
 	if (EG(exception)) {
@@ -49,7 +36,6 @@ void phongo_add_exception_prop(const char *prop, int prop_len, zval *value TSRML
 		EXCEPTION_P(EG(exception), ex);
 		zend_update_property(Z_OBJCE_P(ex), ex, prop, prop_len, value TSRMLS_CC);
 #endif
-
 	}
 }
 

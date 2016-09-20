@@ -71,32 +71,14 @@
 }
 #endif
 
-/* There was a very bad bug in 5.6.0 through 5.6.6 downgrading
- * METHOD_SSLv23 to SSLv2 and SSLv3 exclusively */
-#if PHP_VERSION_ID >= 50600 && PHP_VERSION_ID < 50607
-# define PHONGO_CRYPTO_METHOD STREAM_CRYPTO_METHOD_ANY_CLIENT
-#else
-# define PHONGO_CRYPTO_METHOD STREAM_CRYPTO_METHOD_SSLv23_CLIENT
-#endif
-
 #if defined(__GNUC__)
 #  define ARG_UNUSED  __attribute__ ((unused))
 #else
 #  define ARG_UNUSED
 #endif
 
-#ifndef php_ignore_value
-# if defined(__GNUC__) && __GNUC__ >= 4
-#  define php_ignore_value(x) (({ __typeof__ (x) __x = (x); (void) __x; }))
-# else
-#  define php_ignore_value(x) ((void) (x))
-# endif
-#endif
-
 #if PHP_VERSION_ID >= 70000
 # define phongo_char zend_string
-# define phongo_char_pdup(str) pestrdup(filename->val, 1)
-# define phongo_char_free(str) zend_string_release(str)
 # define phongo_long zend_long
 #if SIZEOF_ZEND_LONG == 8
 #  define PHONGO_LONG_FORMAT PRId64
@@ -112,7 +94,6 @@
 # define SUPPRESS_UNUSED_WARNING(x)
 # define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
 # define EXCEPTION_P(_ex, _zp) ZVAL_OBJ(&_zp, _ex)
-# define PHONGO_STREAM_ID(stream) stream->res ? stream->res->handle : -1
 # define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRL(_key), (char *)(_value));
 # define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRL(_key), (char *)(_value), _len);
 # define ADD_ASSOC_STRING_EX(_zv, _key, _key_len, _value, _value_len) add_assoc_stringl_ex(_zv, _key, _key_len, (char *)(_value), _value_len);
@@ -132,8 +113,6 @@
 # define PHONGO_RETVAL_SMART_STR(val) PHONGO_RETVAL_STRINGL(ZSTR_VAL((val).s), ZSTR_LEN((val).s));
 #else
 # define phongo_char char
-# define phongo_char_pdup(str) pestrdup(filename, 1)
-# define phongo_char_free(str) _efree(str ZEND_FILE_LINE_CC ZEND_FILE_LINE_CC)
 # define phongo_long long
 # define PHONGO_LONG_FORMAT "ld"
 # define SIZEOF_PHONGO_LONG SIZEOF_LONG
@@ -144,7 +123,6 @@
 # define SUPPRESS_UNUSED_WARNING(x) (void)x;
 # define DECLARE_RETURN_VALUE_USED
 # define EXCEPTION_P(_ex, _zp) _zp = _ex
-# define PHONGO_STREAM_ID(stream) stream->rsrc_id
 # define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), (char *)(_value), 1);
 # define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRS(_key), (char *)(_value), _len, 1);
 # define ADD_ASSOC_STRING_EX(_zv, _key, _key_len, _value, _value_len) add_assoc_stringl_ex(_zv, _key, _key_len+1, (char *)(_value), _value_len, 1);
@@ -164,7 +142,6 @@
 # define PHONGO_RETVAL_STRING(s) RETVAL_STRING(s, 1)
 # define PHONGO_RETURN_STRING(s) RETURN_STRING(s, 1)
 # define PHONGO_RETVAL_SMART_STR(val) PHONGO_RETVAL_STRINGL((val).c, (val).len);
-# define PHP_STREAM_CONTEXT(stream) ((php_stream_context*) (stream)->context)
 #endif
 
 #if SIZEOF_PHONGO_LONG == 8
@@ -197,7 +174,6 @@
 # error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif
 
-void *x509_from_zval(zval *zval TSRMLS_DC);
 void phongo_add_exception_prop(const char *prop, int prop_len, zval *value TSRMLS_DC);
 
 
