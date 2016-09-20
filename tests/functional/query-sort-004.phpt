@@ -41,27 +41,17 @@ foreach ($cursor as $document) {
 --EXPECTF--
 Inserted: 5
 object(MongoDB\Driver\Query)#%d (%d) {
-  ["query"]=>
-  object(stdClass)#%d (2) {
-    ["$orderby"]=>
-    object(stdClass)#%d (1) {
+  ["filter"]=>
+  object(stdClass)#%d (%d) {
+  }
+  ["options"]=>
+  object(stdClass)#%d (%d) {
+    ["sort"]=>
+    object(stdClass)#%d (%d) {
       [0]=>
       int(1)
     }
-    ["$query"]=>
-    object(stdClass)#%d (0) {
-    }
   }
-  ["selector"]=>
-  NULL
-  ["flags"]=>
-  int(0)
-  ["skip"]=>
-  int(0)
-  ["limit"]=>
-  int(0)
-  ["batch_size"]=>
-  int(0)
   ["readConcern"]=>
   NULL
 }

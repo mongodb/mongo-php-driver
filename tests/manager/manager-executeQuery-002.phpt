@@ -41,27 +41,19 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
   string(32) "manager_manager_executeQuery_002"
   ["query"]=>
   object(MongoDB\Driver\Query)#%d (%d) {
-    ["query"]=>
+    ["filter"]=>
     object(stdClass)#%d (%d) {
-      ["$query"]=>
+      ["x"]=>
+      int(3)
+    }
+    ["options"]=>
+    object(stdClass)#%d (%d) {
+      ["projection"]=>
       object(stdClass)#%d (%d) {
-        ["x"]=>
-        int(3)
+        ["y"]=>
+        int(1)
       }
     }
-    ["selector"]=>
-    object(stdClass)#%d (%d) {
-      ["y"]=>
-      int(1)
-    }
-    ["flags"]=>
-    int(0)
-    ["skip"]=>
-    int(0)
-    ["limit"]=>
-    int(0)
-    ["batch_size"]=>
-    int(0)
     ["readConcern"]=>
     NULL
   }

@@ -86,12 +86,8 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	bson_t                *query;
-	bson_t                *selector;
-	mongoc_query_flags_t   flags;
-	uint32_t               skip;
-	uint32_t               limit;
-	uint32_t               batch_size;
+	bson_t                *filter;
+	bson_t                *opts;
 	mongoc_read_concern_t *read_concern;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_query_t;

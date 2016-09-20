@@ -50,11 +50,8 @@ printf("Set profile level to 0 successfully: %s\n", (empty($result->ok) ? 'no' :
 --EXPECTF--
 Set profile level to 2 successfully: yes
 object(stdClass)#%d (%d) {
-  ["$query"]=>
-  object(stdClass)#%d (1) {
-    ["x"]=>
-    int(1)
-  }
+  ["x"]=>
+  int(1)
 }
 Set profile level to 0 successfully: yes
 ===DONE===

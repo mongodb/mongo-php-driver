@@ -26,36 +26,32 @@ var_dump(new MongoDB\Driver\Query(
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\Query)#%d (%d) {
-  ["query"]=>
+  ["filter"]=>
   object(stdClass)#%d (%d) {
-    ["$comment"]=>
+    ["a"]=>
+    int(123)
+  }
+  ["options"]=>
+  object(stdClass)#%d (%d) {
+    ["comment"]=>
     string(3) "foo"
-    ["$maxTimeMS"]=>
+    ["maxTimeMS"]=>
     int(500)
-    ["$orderby"]=>
+    ["projection"]=>
+    object(stdClass)#%d (%d) {
+      ["c"]=>
+      int(1)
+    }
+    ["skip"]=>
+    int(10)
+    ["sort"]=>
     object(stdClass)#%d (%d) {
       ["b"]=>
       int(-1)
     }
-    ["$query"]=>
-    object(stdClass)#%d (%d) {
-      ["a"]=>
-      int(123)
-    }
+    ["limit"]=>
+    int(5)
   }
-  ["selector"]=>
-  object(stdClass)#%d (%d) {
-    ["c"]=>
-    int(1)
-  }
-  ["flags"]=>
-  int(0)
-  ["skip"]=>
-  int(10)
-  ["limit"]=>
-  int(5)
-  ["batch_size"]=>
-  int(0)
   ["readConcern"]=>
   array(1) {
     ["level"]=>

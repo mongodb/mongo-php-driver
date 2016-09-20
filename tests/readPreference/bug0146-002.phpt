@@ -37,24 +37,14 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
   string(26) "readPreference_bug0146_002"
   ["query"]=>
   object(MongoDB\Driver\Query)#%d (%d) {
-    ["query"]=>
+    ["filter"]=>
     object(stdClass)#%d (%d) {
-      ["$query"]=>
-      object(stdClass)#%d (%d) {
-        ["my"]=>
-        string(5) "query"
-      }
+      ["my"]=>
+      string(5) "query"
     }
-    ["selector"]=>
-    NULL
-    ["flags"]=>
-    int(0)
-    ["skip"]=>
-    int(0)
-    ["limit"]=>
-    int(0)
-    ["batch_size"]=>
-    int(0)
+    ["options"]=>
+    object(stdClass)#%d (%d) {
+    }
     ["readConcern"]=>
     NULL
   }
@@ -83,24 +73,14 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
   string(26) "readPreference_bug0146_002"
   ["query"]=>
   object(MongoDB\Driver\Query)#%d (%d) {
-    ["query"]=>
+    ["filter"]=>
     object(stdClass)#%d (%d) {
-      ["$query"]=>
-      object(stdClass)#%d (%d) {
-        ["my"]=>
-        string(5) "query"
-      }
+      ["my"]=>
+      string(5) "query"
     }
-    ["selector"]=>
-    NULL
-    ["flags"]=>
-    int(0)
-    ["skip"]=>
-    int(0)
-    ["limit"]=>
-    int(0)
-    ["batch_size"]=>
-    int(0)
+    ["options"]=>
+    object(stdClass)#%d (%d) {
+    }
     ["readConcern"]=>
     NULL
   }
@@ -129,24 +109,14 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
   string(26) "readPreference_bug0146_002"
   ["query"]=>
   object(MongoDB\Driver\Query)#%d (%d) {
-    ["query"]=>
+    ["filter"]=>
     object(stdClass)#%d (%d) {
-      ["$query"]=>
-      object(stdClass)#%d (%d) {
-        ["my"]=>
-        string(5) "query"
-      }
+      ["my"]=>
+      string(5) "query"
     }
-    ["selector"]=>
-    NULL
-    ["flags"]=>
-    int(0)
-    ["skip"]=>
-    int(0)
-    ["limit"]=>
-    int(0)
-    ["batch_size"]=>
-    int(0)
+    ["options"]=>
+    object(stdClass)#%d (%d) {
+    }
     ["readConcern"]=>
     NULL
   }
@@ -175,24 +145,14 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
   string(26) "readPreference_bug0146_002"
   ["query"]=>
   object(MongoDB\Driver\Query)#%d (%d) {
-    ["query"]=>
+    ["filter"]=>
     object(stdClass)#%d (%d) {
-      ["$query"]=>
-      object(stdClass)#%d (%d) {
-        ["my"]=>
-        string(5) "query"
-      }
+      ["my"]=>
+      string(5) "query"
     }
-    ["selector"]=>
-    NULL
-    ["flags"]=>
-    int(0)
-    ["skip"]=>
-    int(0)
-    ["limit"]=>
-    int(0)
-    ["batch_size"]=>
-    int(0)
+    ["options"]=>
+    object(stdClass)#%d (%d) {
+    }
     ["readConcern"]=>
     NULL
   }
@@ -221,24 +181,14 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
   string(26) "readPreference_bug0146_002"
   ["query"]=>
   object(MongoDB\Driver\Query)#%d (%d) {
-    ["query"]=>
+    ["filter"]=>
     object(stdClass)#%d (%d) {
-      ["$query"]=>
-      object(stdClass)#%d (%d) {
-        ["my"]=>
-        string(5) "query"
-      }
+      ["my"]=>
+      string(5) "query"
     }
-    ["selector"]=>
-    NULL
-    ["flags"]=>
-    int(0)
-    ["skip"]=>
-    int(0)
-    ["limit"]=>
-    int(0)
-    ["batch_size"]=>
-    int(0)
+    ["options"]=>
+    object(stdClass)#%d (%d) {
+    }
     ["readConcern"]=>
     NULL
   }
