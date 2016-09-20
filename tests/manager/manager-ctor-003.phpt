@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\Driver\Manager::__construct() URI defaults to "mongodb://127.0.0.1/"
+--SKIPIF--
+<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM uses HHVM's logging functionality, and hence can't catch this"); ?>
 --FILE--
 <?php
 

@@ -22,20 +22,20 @@ foreach ($tests as $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 MongoDB\BSON\Timestamp::__set_state(array(
-   'increment' => '1234',
-   'timestamp' => '5678',
+%w'increment' => '1234',
+%w'timestamp' => '5678',
 ))
 
 MongoDB\BSON\Timestamp::__set_state(array(
-   'increment' => '2147483647',
-   'timestamp' => '0',
+%w'increment' => '2147483647',
+%w'timestamp' => '0',
 ))
 
 MongoDB\BSON\Timestamp::__set_state(array(
-   'increment' => '0',
-   'timestamp' => '2147483647',
+%w'increment' => '0',
+%w'timestamp' => '2147483647',
 ))
 
 ===DONE===
