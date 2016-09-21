@@ -49,6 +49,74 @@ PHONGO_API zend_class_entry *php_phongo_bulkwrite_ce;
 
 zend_object_handlers php_phongo_handler_bulkwrite;
 
+/* Returns whether any top-level field names in the document contain a "$". */
+static inline bool php_phongo_bulkwrite_update_has_operators(bson_t *bupdate) /* {{{ */
+{
+	bson_iter_t iter;
+
+	if (bson_iter_init(&iter, bupdate)) {
+		while (bson_iter_next (&iter)) {
+			if (strchr(bson_iter_key(&iter), '$')) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+} /* }}} */
+
+#define PHONGO_BULKWRITE_APPEND_BOOL(opt, value) \
+	if (!BSON_APPEND_BOOL(boptions, (opt), (value))) { \
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt)); \
+		return false; \
+	}
+
+#define PHONGO_BULKWRITE_APPEND_INT32(opt, value) \
+	if (!BSON_APPEND_INT32(boptions, (opt), (value))) { \
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt)); \
+		return false; \
+	}
+
+/* Applies options (including defaults) for an update operation. */
+static bool php_phongo_bulkwrite_update_apply_options(bson_t *boptions, zval *zoptions TSRMLS_DC)/* {{{ */
+{
+	bool multi = false, upsert = false;
+
+	if (zoptions) {
+		if (php_array_existsc(zoptions, "multi")) {
+			multi = php_array_fetchc_bool(zoptions, "multi");
+		}
+		if (php_array_existsc(zoptions, "upsert")) {
+			upsert = php_array_fetchc_bool(zoptions, "upsert");
+		}
+	}
+
+	PHONGO_BULKWRITE_APPEND_BOOL("multi", multi);
+	PHONGO_BULKWRITE_APPEND_BOOL("upsert", upsert);
+
+	return true;
+} /* }}} */
+
+/* Applies options (including defaults) for an delete operation. */
+static bool php_phongo_bulkwrite_delete_apply_options(bson_t *boptions, zval *zoptions TSRMLS_DC)/* {{{ */
+{
+	int32_t limit = 0;
+
+	if (zoptions) {
+		if (php_array_existsc(zoptions, "limit")) {
+			limit = php_array_fetchc_bool(zoptions, "limit") ? 1 : 0;
+		}
+	}
+
+	PHONGO_BULKWRITE_APPEND_INT32("limit", limit);
+
+	return true;
+} /* }}} */
+
+#undef PHONGO_BULKWRITE_APPEND_BOOL
+#undef PHONGO_BULKWRITE_APPEND_INT32
+#undef PHONGO_BULKWRITE_OPT_DOCUMENT
+
 /* {{{ proto void BulkWrite::__construct([array $options = array()])
    Constructs a new BulkWrite */
 PHP_METHOD(BulkWrite, __construct)
@@ -135,59 +203,57 @@ PHP_METHOD(BulkWrite, insert)
    Adds an update operation to the BulkWrite */
 PHP_METHOD(BulkWrite, update)
 {
-	php_phongo_bulkwrite_t  *intern;
-	zval                     *query;
-	zval                     *newObj;
-	zval                     *updateOptions = NULL;
-	mongoc_update_flags_t     flags = MONGOC_UPDATE_NONE;
-	bson_t                   *bquery;
-	bson_t                   *bupdate;
+	php_phongo_bulkwrite_t *intern;
+	zval                   *zquery, *zupdate, *zoptions = NULL;
+	bson_t                 *bquery, *bupdate, *boptions = NULL;
+	bson_error_t            error = {0};
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "AA|a!", &query, &newObj, &updateOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "AA|a!", &zquery, &zupdate, &zoptions) == FAILURE) {
 		return;
 	}
 
-
 	bquery = bson_new();
 	bupdate = bson_new();
+	boptions = bson_new();
 
-	phongo_zval_to_bson(query, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
-	phongo_zval_to_bson(newObj, PHONGO_BSON_NONE, bupdate, NULL TSRMLS_CC);
+	phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
 
-	if (updateOptions) {
-		flags |= php_array_fetchc_bool(updateOptions, "multi") ?  MONGOC_UPDATE_MULTI_UPDATE : 0;
-		flags |= php_array_fetchc_bool(updateOptions, "upsert") ? MONGOC_UPDATE_UPSERT : 0;
+	if (EG(exception)) {
+		goto cleanup;
 	}
 
-	if (flags & MONGOC_UPDATE_MULTI_UPDATE) {
-		mongoc_bulk_operation_update(intern->bulk, bquery, bupdate, !!(flags & MONGOC_UPDATE_UPSERT));
-	} else {
-		bson_iter_t iter;
-		zend_bool   replaced = 0;
+	phongo_zval_to_bson(zupdate, PHONGO_BSON_NONE, bupdate, NULL TSRMLS_CC);
 
-		if (bson_iter_init(&iter, bupdate)) {
-			while (bson_iter_next (&iter)) {
-				if (!strchr (bson_iter_key (&iter), '$')) {
-					mongoc_bulk_operation_replace_one(intern->bulk, bquery, bupdate, !!(flags & MONGOC_UPDATE_UPSERT));
-					replaced = 1;
-					break;
-				}
-			}
+	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	if (!php_phongo_bulkwrite_update_apply_options(boptions, zoptions TSRMLS_CC)) {
+		goto cleanup;
+	}
+
+	if (php_phongo_bulkwrite_update_has_operators(bupdate)) {
+		if (!mongoc_bulk_operation_update_with_opts(intern->bulk, bquery, bupdate, boptions, &error)) {
+			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			goto cleanup;
 		}
-
-		if (!replaced) {
-			mongoc_bulk_operation_update_one(intern->bulk, bquery, bupdate, !!(flags & MONGOC_UPDATE_UPSERT));
+	} else {
+		if (!mongoc_bulk_operation_replace_one_with_opts(intern->bulk, bquery, bupdate, boptions, &error)) {
+			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			goto cleanup;
 		}
 	}
 
 	intern->num_ops++;
 
+cleanup:
 	bson_clear(&bquery);
 	bson_clear(&bupdate);
+	bson_clear(&boptions);
 }
 /* }}} */
 
@@ -195,32 +261,42 @@ PHP_METHOD(BulkWrite, update)
    Adds a delete operation to the BulkWrite */
 PHP_METHOD(BulkWrite, delete)
 {
-	php_phongo_bulkwrite_t  *intern;
-	zval                     *query;
-	zval                     *deleteOptions = NULL;
-	bson_t                   *bson;
+	php_phongo_bulkwrite_t *intern;
+	zval                   *zquery, *zoptions = NULL;
+	bson_t                 *bquery, *boptions = NULL;
+	bson_error_t            error = {0};
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &query, &deleteOptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &zquery, &zoptions) == FAILURE) {
 		return;
 	}
 
+	bquery = bson_new();
+	boptions = bson_new();
 
-	bson = bson_new();
-	phongo_zval_to_bson(query, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
+	phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
 
-	if (deleteOptions && php_array_fetchc_bool(deleteOptions, "limit")) {
-		mongoc_bulk_operation_remove_one(intern->bulk, bson);
-	} else {
-		mongoc_bulk_operation_remove(intern->bulk, bson);
+	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	if (!php_phongo_bulkwrite_delete_apply_options(boptions, zoptions TSRMLS_CC)) {
+		goto cleanup;
+	}
+
+	if (!mongoc_bulk_operation_remove_with_opts(intern->bulk, bquery, boptions, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		goto cleanup;
 	}
 
 	intern->num_ops++;
 
-	bson_clear(&bson);
+cleanup:
+	bson_clear(&bquery);
+	bson_clear(&boptions);
 }
 /* }}} */
 
