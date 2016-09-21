@@ -65,6 +65,35 @@ static inline bool php_phongo_bulkwrite_update_has_operators(bson_t *bupdate) /*
 	return false;
 } /* }}} */
 
+/* Appends a document field for the given opts document and key. Returns true on
+ * success; otherwise, false is returned and an exception is thrown. */
+static bool php_phongo_bulkwrite_opts_append_document(bson_t *opts, const char *opts_key, zval *zarr, const char *zarr_key TSRMLS_DC)
+{
+	zval *value = php_array_fetch(zarr, zarr_key);
+	bson_t b = BSON_INITIALIZER;
+
+	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" option to be array or object, %s given", zarr_key, zend_get_type_by_const(Z_TYPE_P(value)));
+		return false;
+	}
+
+	phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL TSRMLS_CC);
+
+	if (EG(exception)) {
+		bson_destroy(&b);
+		return false;
+	}
+
+	if (!BSON_APPEND_DOCUMENT(opts, opts_key, &b)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", opts_key);
+		bson_destroy(&b);
+		return false;
+	}
+
+	bson_destroy(&b);
+	return true;
+}
+
 #define PHONGO_BULKWRITE_APPEND_BOOL(opt, value) \
 	if (!BSON_APPEND_BOOL(boptions, (opt), (value))) { \
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt)); \
@@ -75,6 +104,13 @@ static inline bool php_phongo_bulkwrite_update_has_operators(bson_t *bupdate) /*
 	if (!BSON_APPEND_INT32(boptions, (opt), (value))) { \
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt)); \
 		return false; \
+	}
+
+#define PHONGO_BULKWRITE_OPT_DOCUMENT(opt) \
+	if (zoptions && php_array_existsc(zoptions, (opt))) { \
+		if (!php_phongo_bulkwrite_opts_append_document(boptions, (opt), zoptions, (opt) TSRMLS_CC)) { \
+			return false; \
+		} \
 	}
 
 /* Applies options (including defaults) for an update operation. */
@@ -93,6 +129,7 @@ static bool php_phongo_bulkwrite_update_apply_options(bson_t *boptions, zval *zo
 
 	PHONGO_BULKWRITE_APPEND_BOOL("multi", multi);
 	PHONGO_BULKWRITE_APPEND_BOOL("upsert", upsert);
+	PHONGO_BULKWRITE_OPT_DOCUMENT("collation");
 
 	return true;
 } /* }}} */
@@ -109,6 +146,7 @@ static bool php_phongo_bulkwrite_delete_apply_options(bson_t *boptions, zval *zo
 	}
 
 	PHONGO_BULKWRITE_APPEND_INT32("limit", limit);
+	PHONGO_BULKWRITE_OPT_DOCUMENT("collation");
 
 	return true;
 } /* }}} */

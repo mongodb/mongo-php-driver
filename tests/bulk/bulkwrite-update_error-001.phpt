@@ -13,8 +13,11 @@ echo throws(function() use ($bulk) {
 
 echo throws(function() use ($bulk) {
     $bulk->update(['x' => 1], ['y' => 1], ['multi' => true]);
-}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n\n";
 
+echo throws(function() use ($bulk) {
+    $bulk->update([], [], ['collation' => 1]);
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -24,4 +27,7 @@ Replacement document may not contain "$" or "." in keys
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Replacement document conflicts with true "multi" option
+
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected "collation" option to be array or object, integer given
 ===DONE===
