@@ -64,7 +64,7 @@ object(MongoDB\Driver\Query)#%d (%d) {
     ["batchSize"]=>
     int(10)
     ["collation"]=>
-    object(stdClass)#3 (1) {
+    object(stdClass)#%d (%d) {
       ["locale"]=>
       string(5) "en_US"
     }
