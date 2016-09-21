@@ -242,6 +242,16 @@ PHP_METHOD(BulkWrite, update)
 			goto cleanup;
 		}
 	} else {
+		if (!bson_validate(bupdate, BSON_VALIDATE_DOT_KEYS|BSON_VALIDATE_DOLLAR_KEYS, NULL)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Replacement document may not contain \"$\" or \".\" in keys");
+			goto cleanup;
+		}
+
+		if (zoptions && php_array_existsc(zoptions, "multi") && php_array_fetchc_bool(zoptions, "multi")) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Replacement document conflicts with true \"multi\" option");
+			goto cleanup;
+		}
+
 		if (!mongoc_bulk_operation_replace_one_with_opts(intern->bulk, bquery, bupdate, boptions, &error)) {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 			goto cleanup;
