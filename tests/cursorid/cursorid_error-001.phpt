@@ -1,10 +1,7 @@
 --TEST--
 MongoDB\Driver\CursorId cannot be extended
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 class MyCursorId extends MongoDB\Driver\CursorId {}
 
