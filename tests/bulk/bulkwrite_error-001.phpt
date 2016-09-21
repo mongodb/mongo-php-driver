@@ -1,10 +1,7 @@
 --TEST--
 MongoDB\Driver\BulkWrite cannot be extended
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 class MyBulkWrite extends MongoDB\Driver\BulkWrite {}
 
