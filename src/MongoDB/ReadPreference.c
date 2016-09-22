@@ -211,6 +211,7 @@ PHP_METHOD(ReadPreference, bsonSerialize)
 	}
 
 	php_phongo_read_preference_to_zval(return_value, read_preference);
+	convert_to_object(return_value);
 }
 /* }}} */
 
