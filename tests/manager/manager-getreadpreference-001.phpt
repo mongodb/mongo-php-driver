@@ -52,14 +52,14 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["tags"]=>
   array(2) {
     [0]=>
-    array(2) {
+    object(stdClass)#%d (%d) {
       ["dc"]=>
       string(2) "ny"
       ["use"]=>
       string(7) "reports"
     }
     [1]=>
-    array(0) {
+    object(stdClass)#%d (%d) {
     }
   }
 }
@@ -69,14 +69,14 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["tags"]=>
   array(2) {
     [0]=>
-    array(2) {
+    object(stdClass)#%d (%d) {
       ["dc"]=>
       string(2) "ny"
       ["use"]=>
       string(7) "reports"
     }
     [1]=>
-    array(0) {
+    object(stdClass)#%d (%d) {
     }
   }
 }
@@ -86,7 +86,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["tags"]=>
   array(1) {
     [0]=>
-    array(1) {
+    object(stdClass)#%d (%d) {
       ["dc"]=>
       string(2) "ca"
     }

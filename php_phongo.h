@@ -128,6 +128,7 @@ const mongoc_write_concern_t* phongo_write_concern_from_zval  (zval *zwrite_conc
 
 php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t *sd);
 
+void php_phongo_read_preference_prep_tagsets(zval *tagSets TSRMLS_DC);
 bool php_phongo_read_preference_tags_are_valid(const bson_t *tags);
 
 void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd);
