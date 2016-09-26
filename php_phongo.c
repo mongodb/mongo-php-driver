@@ -823,6 +823,49 @@ void php_phongo_read_concern_to_zval(zval *retval, const mongoc_read_concern_t *
 	}
 } /* }}} */
 
+/* Prepare tagSets for BSON encoding by converting each array in the set to an
+ * object. This ensures that empty arrays will serialize as empty documents.
+ *
+ * php_phongo_read_preference_tags_are_valid() handles actual validation of the
+ * tag set structure. */
+void php_phongo_read_preference_prep_tagsets(zval *tagSets TSRMLS_DC) /* {{{ */
+{
+	HashTable     *ht_data;
+
+	if (Z_TYPE_P(tagSets) != IS_ARRAY) {
+		return;
+	}
+
+	ht_data = HASH_OF(tagSets);
+
+#if PHP_VERSION_ID >= 70000
+	{
+		zval *tagSet;
+
+		ZEND_HASH_FOREACH_VAL(ht_data, tagSet) {
+			if (Z_TYPE_P(tagSet) == IS_ARRAY) {
+				convert_to_object(tagSet);
+			}
+		} ZEND_HASH_FOREACH_END();
+	}
+#else
+	{
+		HashPosition   pos;
+		zval         **tagSet;
+
+		for (zend_hash_internal_pointer_reset_ex(ht_data, &pos);
+		     zend_hash_get_current_data_ex(ht_data, (void **) &tagSet, &pos) == SUCCESS;
+		     zend_hash_move_forward_ex(ht_data, &pos)) {
+			if (Z_TYPE_PP(tagSet) == IS_ARRAY) {
+				convert_to_object(*tagSet);
+			}
+		}
+	}
+#endif
+
+	return;
+} /* }}} */
+
 /* Checks if tags is valid to set on a mongoc_read_prefs_t. It may be null or an
  * array of one or more documents. */
 bool php_phongo_read_preference_tags_are_valid(const bson_t *tags) /* {{{ */
@@ -864,10 +907,10 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 	}
 
 	if (!bson_empty0(tags)) {
+		/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type since tags is an
+		 * array; however, inner documents and arrays can use the default. */
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
-		/* Use native arrays for debugging output */
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
 #if PHP_VERSION_ID >= 70000

@@ -193,6 +193,7 @@ PHP_METHOD(WriteConcern, bsonSerialize)
 	}
 
 	php_phongo_write_concern_to_zval(return_value, write_concern);
+	convert_to_object(return_value);
 }
 /* }}} */
 

@@ -112,6 +112,7 @@ PHP_METHOD(ReadConcern, bsonSerialize)
 	}
 
 	php_phongo_read_concern_to_zval(return_value, read_concern);
+	convert_to_object(return_value);
 }
 /* }}} */
 

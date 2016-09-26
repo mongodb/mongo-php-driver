@@ -22,7 +22,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["tags"]=>
   array(1) {
     [0]=>
-    array(1) {
+    object(stdClass)#%d (%d) {
       ["tag"]=>
       string(3) "one"
     }

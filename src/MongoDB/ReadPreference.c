@@ -86,6 +86,7 @@ PHP_METHOD(ReadPreference, __construct)
 	if (tagSets) {
 		bson_t *tags = bson_new();
 
+		php_phongo_read_preference_prep_tagsets(tagSets TSRMLS_CC);
 		phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
 
 		if (!php_phongo_read_preference_tags_are_valid(tags)) {
@@ -211,6 +212,7 @@ PHP_METHOD(ReadPreference, bsonSerialize)
 	}
 
 	php_phongo_read_preference_to_zval(return_value, read_preference);
+	convert_to_object(return_value);
 }
 /* }}} */
 

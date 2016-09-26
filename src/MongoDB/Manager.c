@@ -100,6 +100,67 @@ static bool php_phongo_manager_merge_context_options(zval *zdriverOptions TSRMLS
 	return true;
 }
 
+/* Prepare tagSets for BSON encoding by converting each array in the set to an
+ * object. This ensures that empty arrays will serialize as empty documents.
+ *
+ * php_phongo_read_preference_tags_are_valid() handles actual validation of the
+ * tag set structure. */
+static void php_phongo_manager_prep_tagsets(zval *options TSRMLS_DC)
+{
+	HashTable     *ht_data;
+
+	if (Z_TYPE_P(options) != IS_ARRAY) {
+		return;
+	}
+
+	ht_data = HASH_OF(options);
+
+#if PHP_VERSION_ID >= 70000
+	{
+		zend_string *string_key = NULL;
+		zend_ulong   num_key = 0;
+		zval        *tagSets;
+
+		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, tagSets) {
+			if (!string_key) {
+				continue;
+			}
+
+			/* php_phongo_make_uri() and php_phongo_apply_rp_options_to_uri()
+			 * are both case-insensitive, so we need to be as well. */
+			if (!strcasecmp(ZSTR_VAL(string_key), "readpreferencetags")) {
+				php_phongo_read_preference_prep_tagsets(tagSets TSRMLS_CC);
+			}
+		} ZEND_HASH_FOREACH_END();
+	}
+#else
+	{
+		HashPosition   pos;
+		zval         **tagSets;
+
+		for (zend_hash_internal_pointer_reset_ex(ht_data, &pos);
+		     zend_hash_get_current_data_ex(ht_data, (void **) &tagSets, &pos) == SUCCESS;
+		     zend_hash_move_forward_ex(ht_data, &pos)) {
+			char  *string_key = NULL;
+			uint   string_key_len = 0;
+			ulong  num_key = 0;
+
+			if (HASH_KEY_IS_STRING != zend_hash_get_current_key_ex(ht_data, &string_key, &string_key_len, &num_key, 0, &pos)) {
+				continue;
+			}
+
+			/* php_phongo_make_uri() and php_phongo_apply_rp_options_to_uri()
+			 * are both case-insensitive, so we need to be as well. */
+			if (!strcasecmp(string_key, "readpreferencetags")) {
+				php_phongo_read_preference_prep_tagsets(*tagSets TSRMLS_CC);
+			}
+		}
+	}
+#endif
+
+	return;
+} /* }}} */
+
 /* {{{ proto void Manager::__construct([string $uri = "mongodb://127.0.0.1/"[, array $options = array()[, array $driverOptions = array()]]])
    Constructs a new Manager */
 PHP_METHOD(Manager, __construct)
@@ -123,6 +184,10 @@ PHP_METHOD(Manager, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	if (options) {
+		php_phongo_manager_prep_tagsets(options TSRMLS_CC);
+	}
 
 	if (driverOptions && !php_phongo_manager_merge_context_options(driverOptions TSRMLS_CC)) {
 		/* Exception should already have been thrown */
