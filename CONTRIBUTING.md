@@ -1,63 +1,94 @@
 # Contributing to the PHP Driver for MongoDB
 
-
 ## Building from VCS (GitHub)
 
-Developers who would like to contribute to the driver will need to build it from VCS
-like so:
+Developers who would like to contribute to the driver will need to build it from
+VCS. The repository may be initialized with:
 
 ```
-$ git clone https://github.com/mongodb/mongo-php-driver.git phongo
-$ cd phongo
+$ git clone https://github.com/mongodb/mongo-php-driver.git
+$ cd mongo-php-driver
 $ git submodule update --init
-$ phpize
-$ ./configure --enable-developer-flags
-$ make -j8 all
+```
+
+The following script may be used to build the driver:
+
+```
+#!/bin/sh
+
+phpize > /dev/null && \
+./configure --enable-developer-flags > /dev/null && \
+make clean > /dev/null && make all > /dev/null && make install
 ```
 
 ## Testing
 
-The test suites expects to find `PHONGO-SERVERS.json` in the system temp directory (typically `/tmp`).
-This file should contain JSON object with MONGODB URIs, similar to the following template
+The test suites expects to find `PHONGO-SERVERS.json` in the system temp
+directory (e.g. `/tmp`). This file should contain JSON object with MONGODB URIs,
+similar to the following template:
 
 ```
 {
     "STANDALONE": "mongodb:\/\/192.168.112.10:2000",
+    "STANDALONE_24": "mongodb:\/\/192.168.112.10:2500",
+    "STANDALONE_26": "mongodb:\/\/192.168.112.10:2600",
+    "STANDALONE_30": "mongodb:\/\/192.168.112.10:2700",
     "STANDALONE_SSL": "mongodb:\/\/192.168.112.10:2100",
     "STANDALONE_AUTH": "mongodb:\/\/root:toor@192.168.112.10:2200\/?authSource=admin",
     "STANDALONE_X509": "mongodb:\/\/C=US,ST=New York,L=New York City,O=MongoDB,OU=KernelUser,CN=client@192.168.112.10:2300\/?authSource=$external&authMechanism=MONGODB-X509",
     "STANDALONE_PLAIN": "mongodb:\/\/root:toor@192.168.112.10:2400\/?authSource=admin",
-    "REPLICASET": "mongodb:\/\/192.168.112.10:3000,192.168.112.10:3001,192.168.112.10:3002\/?replicaSet=REPLICASET"
+    "REPLICASET": "mongodb:\/\/192.168.112.10:3000,192.168.112.10:3001,192.168.112.10:3002\/?replicaSet=REPLICASET",
+    "REPLICASET_30": "mongodb:\/\/192.168.112.10:3100,192.168.112.10:3101,192.168.112.10:3102\/?replicaSet=REPLICASET_30"
 }
 ```
-The location of this PHONGO-SERVERS.json file can be configured by exporting
-`PHONGO_SERVERS` environment variable with a absolute path to the json configuration file.
 
-Alternatively, we provide, and use, [Vagrant](https://www.vagrantup.com/) to spin up handful of VMs
-where we setup and configure MongoDB according to our needs.
-This is the preferred way of creating PHONGO-SERVERS.json and running the test suite.
+The location of this `PHONGO-SERVERS.json` file can be configured by exporting a
+`PHONGO_SERVERS` environment variable with the absolute path to the JSON
+configuration file.
 
-
-```
-$ make vm # requires vagrant (www.vagrantup.com)
-$ make test-bootstrap # Spins up mongod's in the virtual machines
-```
-
-The `test-bootstrap` make target will then generate the required `PHONGO-SERVERS.json`.
-
-
-To execute the test suite:
+Our test suite also includes scripts to configure the necessary test environment
+with [Vagrant](https://www.vagrantup.com/) and
+[Mongo Orchestration](https://github.com/10gen/mongo-orchestration). This is the
+preferred way of creating `PHONGO-SERVERS.json` and running the test suite:
 
 ```
-$ make test # Executes the test suite against the virtual machines
+$ make vm             # Starts the test VMs with Vagrant
+$ make test-bootstrap # Starts the mongod servers within the test VM
 ```
 
-The bundled [Vagrantfile](Vagrantfile) also contains few other (growing) list of VMs
-that can be provisioned to execute the test suite on various platforms.
+The `test-bootstrap` make target also generates the required
+`PHONGO-SERVERS.json` file.
 
-These are automatically executed by the `make distcheck`, which will package a new PECL archive,
-spin up the various operating systems, install the newly packaged archive, and execute
-the test suite.
+The `test` make target may be used to execute the test suite:
+
+```
+$ make test # Executes the test suite against the VMs
+```
+
+### Mongo Orchestration
+
+Some tests interact directly with Mongo Orchestration to start their own servers
+for cluster testing (e.g. replica set failovers). These tests depend on
+`MONGODB_ORCHESTRATION_HOST` and `MONGODB_ORCHESTRATION_PORT` environment
+variables.
+
+By default, these tests will use the Mongo Orchestration instance within the
+test VM.
+
+### Restarting Mongo Orchestration
+
+If something goes awry in the test VM, it may be helpful to start the VM and
+Mongo Orchestration with the following script:
+
+```
+#!/bin/sh
+
+rm -f /tmp/PHONGO-SERVERS.json
+vagrant reload mo
+vagrant ssh mo -c 'sudo rm /home/vagrant/server.pid'
+vagrant ssh mo -c 'sudo mongo-orchestration -f mongo-orchestration-config.json -b 192.168.112.10 --enable-majority-read-concern start'
+make test-bootstrap
+```
 
 ## Releasing
 
