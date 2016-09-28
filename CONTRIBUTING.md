@@ -1,9 +1,9 @@
 # Contributing to the PHP Driver for MongoDB
 
-## Building from VCS (GitHub)
+## Building from Source
 
 Developers who would like to contribute to the driver will need to build it from
-VCS. The repository may be initialized with:
+source. The repository may be initialized with:
 
 ```
 $ git clone https://github.com/mongodb/mongo-php-driver.git
@@ -23,9 +23,9 @@ make clean > /dev/null && make all > /dev/null && make install
 
 ## Testing
 
-The test suites expects to find `PHONGO-SERVERS.json` in the system temp
-directory (e.g. `/tmp`). This file should contain JSON object with MONGODB URIs,
-similar to the following template:
+The test suite expects to find `PHONGO-SERVERS.json` in the system temp
+directory (e.g. `/tmp`). This file should contain a JSON object with MongoDB
+URIs and resemble the following:
 
 ```
 {
@@ -57,9 +57,8 @@ $ make test-bootstrap # Starts the mongod servers within the test VM
 ```
 
 The `test-bootstrap` make target also generates the required
-`PHONGO-SERVERS.json` file.
-
-The `test` make target may be used to execute the test suite:
+`PHONGO-SERVERS.json` file. The `test` make target may be used to execute the
+test suite:
 
 ```
 $ make test # Executes the test suite against the VMs
