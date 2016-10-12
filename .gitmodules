@@ -1,7 +1,7 @@
 [submodule "src/libmongoc"]
 	path = src/libmongoc
-	url = https://github.com/mongodb/mongo-c-driver.git
-	branch = 1.2.0-dev
+	url = https://github.com/stolenegg/mongo-c-driver.git
+	branch = master
 	ignore = untracked
 [submodule "src/libbson"]
 	path = src/libbson
