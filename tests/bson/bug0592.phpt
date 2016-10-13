@@ -2,8 +2,6 @@
 PHPC-592: Property name corrupted when unserializing 64-bit integer on 32-bit platform
 --SKIPIF--
 <?php if (4 !== PHP_INT_SIZE) { die('skip Only for 32-bit platform'); } ?>
---INI--
-mongodb.debug=stderr
 --FILE--
 <?php
 
@@ -24,7 +22,12 @@ $tests = [
 
 foreach ($tests as $json) {
     printf("Test %s\n", $json);
-    var_dump(toPHP(fromJSON($json)));
+    try {
+        $encoded = toPHP(fromJSON($json));
+        var_dump( $encoded );
+    } catch ( MongoDB\Driver\Exception\InvalidArgumentException $e ) {
+        echo "MongoDB\Driver\Exception\InvalidArgumentException: ", $e->getMessage(), "\n";
+    }
     echo "\n";
 }
 
@@ -32,7 +35,6 @@ foreach ($tests as $json) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-%a
 Test { "x": { "$numberLong": "-2147483648" }}
 object(stdClass)#%d (%d) {
   ["x"]=>
@@ -46,25 +48,13 @@ object(stdClass)#%d (%d) {
 }
 
 Test { "x": { "$numberLong": "4294967294" }}
-[%s] PHONGO-BSON: WARNING > Integer overflow detected on your platform: 4294967294
-object(stdClass)#%d (%d) {
-  ["x"]=>
-  string(10) "4294967294"
-}
+MongoDB\Driver\Exception\InvalidArgumentException: Integer overflow detected on your platform: 4294967294
 
 Test { "x": { "$numberLong": "4294967295" }}
-[%s] PHONGO-BSON: WARNING > Integer overflow detected on your platform: 4294967295
-object(stdClass)#%d (%d) {
-  ["x"]=>
-  string(10) "4294967295"
-}
+MongoDB\Driver\Exception\InvalidArgumentException: Integer overflow detected on your platform: 4294967295
 
 Test { "x": { "$numberLong": "9223372036854775807" }}
-[%s] PHONGO-BSON: WARNING > Integer overflow detected on your platform: 9223372036854775807
-object(stdClass)#%d (%d) {
-  ["x"]=>
-  string(19) "9223372036854775807"
-}
+MongoDB\Driver\Exception\InvalidArgumentException: Integer overflow detected on your platform: 9223372036854775807
 
 Test { "longFieldName": { "$numberLong": "-2147483648" }}
 object(stdClass)#%d (%d) {
@@ -79,24 +69,12 @@ object(stdClass)#%d (%d) {
 }
 
 Test { "longFieldName": { "$numberLong": "4294967294" }}
-[%s] PHONGO-BSON: WARNING > Integer overflow detected on your platform: 4294967294
-object(stdClass)#%d (%d) {
-  ["longFieldName"]=>
-  string(10) "4294967294"
-}
+MongoDB\Driver\Exception\InvalidArgumentException: Integer overflow detected on your platform: 4294967294
 
 Test { "longFieldName": { "$numberLong": "4294967295" }}
-[%s] PHONGO-BSON: WARNING > Integer overflow detected on your platform: 4294967295
-object(stdClass)#%d (%d) {
-  ["longFieldName"]=>
-  string(10) "4294967295"
-}
+MongoDB\Driver\Exception\InvalidArgumentException: Integer overflow detected on your platform: 4294967295
 
 Test { "longFieldName": { "$numberLong": "9223372036854775807" }}
-[%s] PHONGO-BSON: WARNING > Integer overflow detected on your platform: 9223372036854775807
-object(stdClass)#%d (%d) {
-  ["longFieldName"]=>
-  string(19) "9223372036854775807"
-}
+MongoDB\Driver\Exception\InvalidArgumentException: Integer overflow detected on your platform: 9223372036854775807
 
 ===DONE===
