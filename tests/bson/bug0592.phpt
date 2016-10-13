@@ -32,6 +32,7 @@ foreach ($tests as $json) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+%a
 Test { "x": { "$numberLong": "-2147483648" }}
 object(stdClass)#%d (%d) {
   ["x"]=>
@@ -44,15 +45,22 @@ object(stdClass)#%d (%d) {
   int(2147483647)
 }
 
+Test { "x": { "$numberLong": "4294967294" }}
+[%s] PHONGO-BSON: WARNING > Integer overflow detected on your platform: 4294967294
+object(stdClass)#%d (%d) {
+  ["x"]=>
+  string(10) "4294967294"
+}
+
 Test { "x": { "$numberLong": "4294967295" }}
-[%s]     PHONGO-BSON: WARNING   > ENTRY: Integer overflow detected on your platform: 4294967295
+[%s] PHONGO-BSON: WARNING > Integer overflow detected on your platform: 4294967295
 object(stdClass)#%d (%d) {
   ["x"]=>
   string(10) "4294967295"
 }
 
 Test { "x": { "$numberLong": "9223372036854775807" }}
-[%s]     PHONGO-BSON: WARNING   > ENTRY: Integer overflow detected on your platform: 9223372036854775807
+[%s] PHONGO-BSON: WARNING > Integer overflow detected on your platform: 9223372036854775807
 object(stdClass)#%d (%d) {
   ["x"]=>
   string(19) "9223372036854775807"
@@ -71,20 +79,21 @@ object(stdClass)#%d (%d) {
 }
 
 Test { "longFieldName": { "$numberLong": "4294967294" }}
+[%s] PHONGO-BSON: WARNING > Integer overflow detected on your platform: 4294967294
 object(stdClass)#%d (%d) {
   ["longFieldName"]=>
   string(10) "4294967294"
 }
 
 Test { "longFieldName": { "$numberLong": "4294967295" }}
-[%s]     PHONGO-BSON: WARNING   > ENTRY: Integer overflow detected on your platform: 4294967295
+[%s] PHONGO-BSON: WARNING > Integer overflow detected on your platform: 4294967295
 object(stdClass)#%d (%d) {
   ["longFieldName"]=>
   string(10) "4294967295"
 }
 
 Test { "longFieldName": { "$numberLong": "9223372036854775807" }}
-[%s]     PHONGO-BSON: WARNING   > ENTRY: Integer overflow detected on your platform: 9223372036854775807
+[%s] PHONGO-BSON: WARNING > Integer overflow detected on your platform: 9223372036854775807
 object(stdClass)#%d (%d) {
   ["longFieldName"]=>
   string(19) "9223372036854775807"

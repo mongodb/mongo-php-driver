@@ -54,7 +54,7 @@ zend_object_handlers php_phongo_handler_timestamp;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, phongo_long increment, phongo_long timestamp TSRMLS_DC)
+static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, int64_t increment, int64_t timestamp TSRMLS_DC)
 {
 	if (increment < 0 || increment > UINT32_MAX) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected increment to be an unsigned 32-bit integer, %" PHONGO_LONG_FORMAT " given", increment);
@@ -66,8 +66,8 @@ static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, phongo_lon
 		return false;
 	}
 
-	intern->increment = increment;
-	intern->timestamp = timestamp;
+	intern->increment = (uint32_t) increment;
+	intern->timestamp = (uint32_t) timestamp;
 	intern->initialized = true;
 
 	return true;
@@ -413,8 +413,8 @@ HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
 		return props;
 	}
 
-	s_increment_len = snprintf(s_increment, sizeof(s_increment), "%" PRId64, intern->increment);
-	s_timestamp_len = snprintf(s_timestamp, sizeof(s_timestamp), "%" PRId64, intern->timestamp);
+	s_increment_len = snprintf(s_increment, sizeof(s_increment), "%" PRIu32, intern->increment);
+	s_timestamp_len = snprintf(s_timestamp, sizeof(s_timestamp), "%" PRIu32, intern->timestamp);
 
 #if PHP_VERSION_ID >= 70000
 	{
