@@ -10,7 +10,7 @@ echo throws(function() {
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    MongoDB\BSON\Timestamp::__set_state(['increment' => -2147483648, 'timestamp' => 5678]);
+    MongoDB\BSON\Timestamp::__set_state(['increment' => -2147483647, 'timestamp' => 5678]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
@@ -18,7 +18,7 @@ echo throws(function() {
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    MongoDB\BSON\Timestamp::__set_state(['increment' => 1234, 'timestamp' => -2147483648]);
+    MongoDB\BSON\Timestamp::__set_state(['increment' => 1234, 'timestamp' => -2147483647]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
@@ -28,9 +28,9 @@ echo throws(function() {
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected increment to be an unsigned 32-bit integer, -1 given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected increment to be an unsigned 32-bit integer, -2147483648 given
+Expected increment to be an unsigned 32-bit integer, -2147483647 given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected timestamp to be an unsigned 32-bit integer, -1 given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected timestamp to be an unsigned 32-bit integer, -2147483648 given
+Expected timestamp to be an unsigned 32-bit integer, -2147483647 given
 ===DONE===
