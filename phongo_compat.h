@@ -150,23 +150,13 @@
 #elif SIZEOF_PHONGO_LONG == 4
 # define ADD_INDEX_INT64(zval, index, value) \
     if (value > INT32_MAX || value < INT32_MIN) { \
-        char *tmp; \
-        int tmp_len; \
-        mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
-        tmp_len = spprintf(&tmp, 0, "%lld", value); \
-        ADD_INDEX_STRINGL(zval, index, tmp, tmp_len); \
-        efree(tmp); \
+        phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", value); \
     } else { \
         add_index_long(zval, index, val); \
     }
 # define ADD_ASSOC_INT64(zval, key, value) \
     if (value > INT32_MAX || value < INT32_MIN) { \
-        char *tmp; \
-        int tmp_len; \
-        mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Integer overflow detected on your platform: %lld", value); \
-        tmp_len = spprintf(&tmp, 0, "%lld", value); \
-        ADD_ASSOC_STRING_EX(zval, key, strlen(key), tmp, tmp_len); \
-        efree(tmp); \
+        phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", value); \
     } else { \
         add_assoc_long(zval, key, value); \
     }
