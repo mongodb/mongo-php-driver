@@ -275,9 +275,16 @@ PHP_METHOD(BulkWrite, update)
 	}
 
 	if (php_phongo_bulkwrite_update_has_operators(bupdate)) {
-		if (!mongoc_bulk_operation_update_with_opts(intern->bulk, bquery, bupdate, boptions, &error)) {
-			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
-			goto cleanup;
+		if (zoptions && php_array_existsc(zoptions, "multi") && php_array_fetchc_bool(zoptions, "multi")) {
+			if (!mongoc_bulk_operation_update_many_with_opts(intern->bulk, bquery, bupdate, boptions, &error)) {
+				phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+				goto cleanup;
+			}
+		} else {
+			if (!mongoc_bulk_operation_update_one_with_opts(intern->bulk, bquery, bupdate, boptions, &error)) {
+				phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+				goto cleanup;
+			}
 		}
 	} else {
 		if (!bson_validate(bupdate, BSON_VALIDATE_DOT_KEYS|BSON_VALIDATE_DOLLAR_KEYS, NULL)) {
@@ -335,9 +342,16 @@ PHP_METHOD(BulkWrite, delete)
 		goto cleanup;
 	}
 
-	if (!mongoc_bulk_operation_remove_with_opts(intern->bulk, bquery, boptions, &error)) {
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
-		goto cleanup;
+	if (zoptions && php_array_existsc(zoptions, "limit") && php_array_fetchc_bool(zoptions, "limit")) {
+		if (!mongoc_bulk_operation_remove_one_with_opts(intern->bulk, bquery, boptions, &error)) {
+			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			goto cleanup;
+		}
+	} else {
+		if (!mongoc_bulk_operation_remove_many_with_opts(intern->bulk, bquery, boptions, &error)) {
+			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			goto cleanup;
+		}
 	}
 
 	intern->num_ops++;
