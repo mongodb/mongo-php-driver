@@ -1,7 +1,8 @@
 --TEST--
 MongoDB\Driver\WriteResult debug output with errors
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(REPLICASET); ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS("REPLICASET"); CLEANUP(REPLICASET); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -19,6 +20,7 @@ $bulk->insert(['_id' => 3]);
 $bulk->insert(['_id' => 3]);
 
 try {
+    /* We assume that the replica set does not have 30 nodes */
     $result = $manager->executeBulkWrite(NS, $bulk, new MongoDB\Driver\WriteConcern(30));
 } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
     var_dump($e->getWriteResult());
