@@ -41,6 +41,7 @@ ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	FILE *debug_fd;
 	bson_mem_vtable_t bsonMemVTable;
 	HashTable pclients;
+	HashTable subscribers;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
 #if PHP_VERSION_ID >= 70000
@@ -137,6 +138,7 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor);
 
 void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, zval *options, zval *driverOptions TSRMLS_DC);
+int php_phongo_set_monitoring_callbacks(mongoc_client_t *client);
 void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS_DC);
 void php_phongo_cursor_id_new_from_id(zval *object, int64_t cursorid TSRMLS_DC);
 void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC);

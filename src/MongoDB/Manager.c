@@ -29,6 +29,8 @@
 
 #define PHONGO_MANAGER_URI_DEFAULT "mongodb://127.0.0.1/"
 
+ZEND_EXTERN_MODULE_GLOBALS(mongodb)
+
 /**
  * Manager abstracts a cluster of Server objects (i.e. socket connections).
  *
@@ -42,6 +44,8 @@
  * Those options should be specified during construction.
  */
 zend_class_entry *php_phongo_manager_ce;
+
+static zend_object_handlers php_phongo_handler_manager;
 
 /* Checks if driverOptions contains a stream context resource in the "context"
  * key and incorporates any of its SSL options into the base array that did not
@@ -168,8 +172,8 @@ static PHP_METHOD(Manager, __construct)
 	zval                     *driverOptions = NULL;
 	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
-
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+
 	intern = Z_MANAGER_OBJ_P(getThis());
 
 	/* Separate the options and driverOptions zvals, since we may end up
@@ -191,6 +195,10 @@ static PHP_METHOD(Manager, __construct)
 	}
 
 	phongo_manager_init(intern, uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, options, driverOptions TSRMLS_CC);
+
+	if (intern->client) {
+		php_phongo_set_monitoring_callbacks(intern->client);
+	}
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
@@ -385,6 +393,34 @@ static PHP_METHOD(Manager, selectServer)
 	}
 } /* }}} */
 
+/* {{{ proto void MongoDB\Driver\Manager::__wakeup()
+   Throws MongoDB\Driver\RuntimeException (serialization is not supported) */
+PHP_METHOD(Manager, __wakeup)
+{
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(this_ptr)
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "MongoDB\\Driver objects cannot be serialized");
+}
+/* }}} */
+
+/**
+ * Manager abstracts a cluster of Server objects (i.e. socket connections).
+ *
+ * Typically, users will connect to a cluster using a URI, and the Manager will
+ * perform tasks such as replica set discovery and create the necessary Server
+ * objects. That said, it is also possible to create a Manager with an arbitrary
+ * collection of Server objects using the static factory method (this can be
+ * useful for testing or administration).
+ *
+ * Operation methods do not take socket-level options (e.g. socketTimeoutMS).
+ * Those options should be specified during construction.
+ */
+/* {{{ MongoDB\Driver\Manager */
+
 /* {{{ MongoDB\Driver\Manager function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, uri)
@@ -433,8 +469,6 @@ static zend_function_entry php_phongo_manager_me[] = {
 /* }}} */
 
 /* {{{ MongoDB\Driver\Manager object handlers */
-static zend_object_handlers php_phongo_handler_manager;
-
 static void php_phongo_manager_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_manager_t *intern = Z_OBJ_MANAGER(object);

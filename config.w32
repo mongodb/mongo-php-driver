@@ -85,8 +85,9 @@ if (PHP_MONGODB != "no") {
   EXTENSION("mongodb", "php_phongo.c phongo_compat.c", null, PHP_MONGODB_CFLAGS);
   ADD_SOURCES(configure_module_dirname + "/src", "bson.c bson-encode.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/BSON", "Binary.c Decimal128.c Javascript.c MaxKey.c MinKey.c ObjectID.c Persistable.c Regex.c Serializable.c Timestamp.c Type.c Unserializable.c UTCDateTime.c", "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/MongoDB", "BulkWrite.c Command.c Cursor.c CursorId.c Manager.c Query.c ReadConcern.c ReadPreference.c Server.c WriteConcern.c WriteConcernError.c WriteError.c WriteResult.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/MongoDB", "BulkWrite.c Command.c Cursor.c CursorId.c Manager.c Monitoring.c Query.c ReadConcern.c ReadPreference.c Server.c WriteConcern.c WriteConcernError.c WriteError.c WriteResult.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/MongoDB/Exception", "AuthenticationException.c BulkWriteException.c ConnectionException.c ConnectionTimeoutException.c Exception.c ExecutionTimeoutException.c InvalidArgumentException.c LogicException.c RuntimeException.c SSLConnectionException.c UnexpectedValueException.c WriteException.c", "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/MongoDB/Monitoring", "Subscriber.c CommandSubscriber.c CommandStartedEvent.c CommandSucceededEvent.c CommandFailedEvent.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libbson/src/bson", PHP_MONGODB_BSON_SOURCES, "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libbson/src/jsonsl", PHP_MONGODB_JSONSL_SOURCES, "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", PHP_MONGODB_MONGOC_SOURCES, "mongodb");
