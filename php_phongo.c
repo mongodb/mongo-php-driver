@@ -67,6 +67,7 @@
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
+#include "src/MongoDB/Monitoring.h"
 
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO"
@@ -1357,6 +1358,203 @@ static void php_phongo_free_ssl_opt(mongoc_ssl_opt_t *ssl_opt)
 }
 #endif
 
+/* APM callbacks */
+static void php_phongo_dispatch_handlers(const char *name, zval *z_event)
+{
+#if PHP_VERSION_ID >= 70000
+	zval        *value;
+#else
+	HashPosition pos;
+#endif
+	TSRMLS_FETCH();
+
+#if PHP_VERSION_ID >= 70000
+	ZEND_HASH_FOREACH_VAL(&MONGODB_G(subscribers), value) {
+		/* We can't use the zend_call_method_with_1_params macro here, as it
+		 * does a sizeof() on the name argument, which does only work with
+		 * constant names, but not with parameterized ones as it does
+		 * "sizeof(char*)" in that case. */
+		zend_call_method(value, NULL, NULL, name, strlen(name), NULL, 1, z_event, NULL TSRMLS_CC);
+	} ZEND_HASH_FOREACH_END();
+#else
+	zend_hash_internal_pointer_reset_ex(&MONGODB_G(subscribers), &pos);
+	for (;; zend_hash_move_forward_ex(&MONGODB_G(subscribers), &pos)) {
+		zval  **value;
+
+		if (zend_hash_get_current_data_ex(&MONGODB_G(subscribers), (void **) &value, &pos) == FAILURE) {
+			break;
+		}
+
+		/* We can't use the zend_call_method_with_1_params macro here, as it
+		 * does a sizeof() on the name argument, which does only work with
+		 * constant names, but not with parameterized ones as it does
+		 * "sizeof(char*)" in that case. */
+		zend_call_method(value, NULL, NULL, name, strlen(name), NULL, 1, z_event, NULL TSRMLS_CC);
+	}
+#endif
+}
+
+static void php_phongo_command_started(const mongoc_apm_command_started_t *event)
+{
+	mongoc_client_t *client = mongoc_apm_command_started_get_context(event);
+	php_phongo_commandstartedevent_t *p_event;
+#if PHP_VERSION_ID >= 70000
+	zval  z_event;
+#else
+	zval *z_event = NULL;
+#endif
+	TSRMLS_FETCH();
+
+	/* Check for subscriber size */
+	if (zend_hash_num_elements(&MONGODB_G(subscribers)) == 0) {
+		return;
+	}
+
+#if PHP_VERSION_ID >= 70000
+	object_init_ex(&z_event, php_phongo_commandstartedevent_ce);
+	p_event = Z_COMMANDSTARTEDEVENT_OBJ_P(&z_event);
+#else
+	MAKE_STD_ZVAL(z_event);
+	object_init_ex(z_event, php_phongo_commandstartedevent_ce);
+	p_event = Z_COMMANDSTARTEDEVENT_OBJ_P(z_event);
+#endif
+
+	p_event->client = client;
+	p_event->command_name = estrdup(mongoc_apm_command_started_get_command_name(event));
+	p_event->server_id = mongoc_apm_command_started_get_server_id(event);
+	p_event->operation_id = mongoc_apm_command_started_get_operation_id(event);
+	p_event->request_id = mongoc_apm_command_started_get_request_id(event);
+	p_event->command = bson_copy(mongoc_apm_command_started_get_command(event));
+	p_event->database_name = estrdup(mongoc_apm_command_started_get_database_name(event));
+
+#if PHP_VERSION_ID >= 70000
+	php_phongo_dispatch_handlers("commandStarted", &z_event);
+#else
+	php_phongo_dispatch_handlers("commandStarted", z_event);
+#endif
+	zval_ptr_dtor(&z_event);
+}
+
+static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t *event)
+{
+	mongoc_client_t *client = mongoc_apm_command_succeeded_get_context(event);
+	php_phongo_commandsucceededevent_t *p_event;
+#if PHP_VERSION_ID >= 70000
+	zval  z_event;
+#else
+	zval *z_event = NULL;
+#endif
+	TSRMLS_FETCH();
+
+	/* Check for subscriber size */
+	if (zend_hash_num_elements(&MONGODB_G(subscribers)) == 0) {
+		return;
+	}
+
+#if PHP_VERSION_ID >= 70000
+	object_init_ex(&z_event, php_phongo_commandsucceededevent_ce);
+	p_event = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(&z_event);
+#else
+	MAKE_STD_ZVAL(z_event);
+	object_init_ex(z_event, php_phongo_commandsucceededevent_ce);
+	p_event = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(z_event);
+#endif
+
+	p_event->client = client;
+	p_event->command_name = estrdup(mongoc_apm_command_succeeded_get_command_name(event));
+	p_event->server_id = mongoc_apm_command_succeeded_get_server_id(event);
+	p_event->operation_id = mongoc_apm_command_succeeded_get_operation_id(event);
+	p_event->request_id = mongoc_apm_command_succeeded_get_request_id(event);
+	p_event->duration_micros = mongoc_apm_command_succeeded_get_duration(event);
+	p_event->reply = bson_copy(mongoc_apm_command_succeeded_get_reply(event));
+
+#if PHP_VERSION_ID >= 70000
+	php_phongo_dispatch_handlers("commandSucceeded", &z_event);
+#else
+	php_phongo_dispatch_handlers("commandSucceeded", z_event);
+#endif
+	zval_ptr_dtor(&z_event);
+}
+
+static void php_phongo_command_failed(const mongoc_apm_command_failed_t *event)
+{
+	mongoc_client_t *client = mongoc_apm_command_failed_get_context(event);
+	php_phongo_commandfailedevent_t *p_event;
+#if PHP_VERSION_ID >= 70000
+	zval  z_event;
+#else
+	zval *z_event = NULL;
+#endif
+	bson_error_t tmp_error;
+	zend_class_entry *default_exception_ce;
+	TSRMLS_FETCH();
+
+	default_exception_ce = zend_exception_get_default(TSRMLS_C);
+
+	/* Check for subscriber size */
+	if (zend_hash_num_elements(&MONGODB_G(subscribers)) == 0) {
+		return;
+	}
+
+#if PHP_VERSION_ID >= 70000
+	object_init_ex(&z_event, php_phongo_commandfailedevent_ce);
+	p_event = Z_COMMANDFAILEDEVENT_OBJ_P(&z_event);
+#else
+	MAKE_STD_ZVAL(z_event);
+	object_init_ex(z_event, php_phongo_commandfailedevent_ce);
+	p_event = Z_COMMANDFAILEDEVENT_OBJ_P(z_event);
+#endif
+
+	p_event->client = client;
+	p_event->command_name = estrdup(mongoc_apm_command_failed_get_command_name(event));
+	p_event->server_id = mongoc_apm_command_failed_get_server_id(event);
+	p_event->operation_id = mongoc_apm_command_failed_get_operation_id(event);
+	p_event->request_id = mongoc_apm_command_failed_get_request_id(event);
+	p_event->duration_micros = mongoc_apm_command_failed_get_duration(event);
+
+	/* We need to process and convert the error right here, otherwise
+	 * debug_info will turn into a recursive loop, and with the wrong trace
+	 * locations */
+	mongoc_apm_command_failed_get_error(event, &tmp_error);
+	{
+#if PHP_VERSION_ID < 70000
+		MAKE_STD_ZVAL(p_event->z_error);
+		object_init_ex(p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
+		zend_update_property_string(default_exception_ce, p_event->z_error, "message", sizeof("message")-1, tmp_error.message TSRMLS_CC);
+		zend_update_property_long(default_exception_ce, p_event->z_error, "code", sizeof("code")-1, tmp_error.code TSRMLS_CC);
+#else
+		object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
+		zend_update_property_string(default_exception_ce, &p_event->z_error, "message", sizeof("message")-1, tmp_error.message TSRMLS_CC);
+		zend_update_property_long(default_exception_ce, &p_event->z_error, "code", sizeof("code")-1, tmp_error.code TSRMLS_CC);
+#endif
+	}
+
+#if PHP_VERSION_ID >= 70000
+	php_phongo_dispatch_handlers("commandFailed", &z_event);
+#else
+	php_phongo_dispatch_handlers("commandFailed", z_event);
+#endif
+	zval_ptr_dtor(&z_event);
+}
+
+
+/* Sets the callbacks for APM */
+int php_phongo_set_monitoring_callbacks(mongoc_client_t *client)
+{
+	int retval;
+
+	mongoc_apm_callbacks_t *callbacks = mongoc_apm_callbacks_new();
+
+	mongoc_apm_set_command_started_cb(callbacks, php_phongo_command_started);
+	mongoc_apm_set_command_succeeded_cb(callbacks, php_phongo_command_succeeded);
+	mongoc_apm_set_command_failed_cb(callbacks, php_phongo_command_failed);
+	retval = mongoc_client_set_apm_callbacks(client, callbacks, client);
+
+	mongoc_apm_callbacks_destroy(callbacks);
+
+	return retval;
+}
+
 /* Creates a hash for a client by concatenating the URI string with serialized
  * options arrays. On success, a persistent string is returned (i.e. pefree()
  * should be used to free it) and hash_len will be set to the string's length.
@@ -1827,6 +2025,16 @@ static void php_phongo_pclient_dtor(void *pp)
 }
 #endif
 
+/* {{{ PHP_RINIT_FUNCTION */
+PHP_RINIT_FUNCTION(mongodb)
+{
+	/* Initialize HashTable for persistent clients */
+	zend_hash_init(&MONGODB_G(subscribers), 0, NULL, ZVAL_PTR_DTOR, 0);
+
+	return SUCCESS;
+}
+/* }}} */
+
 /* {{{ PHP_GINIT_FUNCTION */
 PHP_GINIT_FUNCTION(mongodb)
 {
@@ -1843,6 +2051,7 @@ PHP_GINIT_FUNCTION(mongodb)
 #endif
 	memset(mongodb_globals, 0, sizeof(zend_mongodb_globals));
 	mongodb_globals->bsonMemVTable = bsonMemVTable;
+
 	/* Initialize HashTable for persistent clients */
 	zend_hash_init_ex(&mongodb_globals->pclients, 0, NULL, php_phongo_pclient_dtor, 1, 0);
 }
@@ -1963,6 +2172,12 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
+	php_phongo_subscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+
 	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char *)PHP_MONGODB_VERSION, CONST_CS | CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("MONGODB_STABILITY", (char *)PHP_MONGODB_STABILITY, CONST_CS | CONST_PERSISTENT);
 
@@ -1984,6 +2199,15 @@ PHP_MSHUTDOWN_FUNCTION(mongodb)
 	mongoc_cleanup();
 
 	UNREGISTER_INI_ENTRIES();
+
+	return SUCCESS;
+}
+/* }}} */
+
+/* {{{ PHP_RSHUTDOWN_FUNCTION */
+PHP_RSHUTDOWN_FUNCTION(mongodb)
+{
+	zend_hash_destroy(&MONGODB_G(subscribers));
 
 	return SUCCESS;
 }
@@ -2107,11 +2331,22 @@ ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromJSON, 0, 0, 1)
 	ZEND_ARG_INFO(0, json)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Monitoring_addSubscriber, 0, 0, 1)
+	ZEND_ARG_INFO(0, subscriber)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Monitoring_removeSubscriber, 0, 0, 1)
+	ZEND_ARG_INFO(0, subscriber)
+ZEND_END_ARG_INFO()
+
+
 static const zend_function_entry mongodb_functions[] = {
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", fromPHP, PHP_FN(MongoDB_BSON_fromPHP), ai_bson_fromPHP)
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", toPHP, PHP_FN(MongoDB_BSON_toPHP), ai_bson_toPHP)
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", toJSON, PHP_FN(MongoDB_BSON_toJSON), ai_bson_toJSON)
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", fromJSON, PHP_FN(MongoDB_BSON_fromJSON), ai_bson_fromJSON)
+	ZEND_NS_NAMED_FE("MongoDB\\Monitoring", addSubscriber, PHP_FN(MongoDB_Monitoring_addSubscriber), ai_Monitoring_addSubscriber)
+	ZEND_NS_NAMED_FE("MongoDB\\Monitoring", removeSubscriber, PHP_FN(MongoDB_Monitoring_removeSubscriber), ai_Monitoring_removeSubscriber)
 	PHP_FE_END
 };
 /* }}} */
@@ -2134,8 +2369,8 @@ zend_module_entry mongodb_module_entry = {
 	mongodb_functions,
 	PHP_MINIT(mongodb),
 	PHP_MSHUTDOWN(mongodb),
-	NULL /* PHP_RINIT(mongodb)*/,
-	NULL /* PHP_RSHUTDOWN(mongodb)*/,
+	PHP_RINIT(mongodb),
+	PHP_RSHUTDOWN(mongodb),
 	PHP_MINFO(mongodb),
 	PHP_MONGODB_VERSION,
 	PHP_MODULE_GLOBALS(mongodb),
