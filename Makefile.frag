@@ -1,4 +1,4 @@
-.PHONY: coverage testclean package package.xml docs
+.PHONY: coverage testclean package package.xml
 
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 MONGODB_VERSION=$(shell php -n -dextension=modules/mongodb.so -r 'echo MONGODB_VERSION;')
@@ -118,12 +118,6 @@ testclean:
 
 package:
 	pecl package package.xml
-
-docs:
-	mkdocs build --clean
-
-release-docs: docs
-	mkdocs gh-deploy --clean
 
 package.xml:
 	php bin/prep-release.php $(MONGODB_VERSION) $(MONGODB_STABILITY)

@@ -53,10 +53,6 @@ php.ini
 
 !scripts
 
-# MKDocs
-!docs
-site
-
 # Run tests
 tmp-php.ini
 failed.txt
