@@ -25,8 +25,8 @@ interfaces), management utilities (for creating admin utilities and cluster
 management applications), and other interesting libraries.
 
 ## Documentation
+
 - http://docs.php.net/set.mongodb
-- http://mongodb.github.io/mongo-php-driver
 
 ## Installation
 
