@@ -31,6 +31,7 @@
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
+#include <ext/json/php_json.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
@@ -57,6 +58,19 @@ PHP_METHOD(MinKey, __set_state)
 	}
 
 	object_init_ex(return_value, php_phongo_minkey_ce);
+}
+/* }}} */
+
+/* {{{ proto array MinKey::jsonSerialize()
+*/
+PHP_METHOD(MinKey, jsonSerialize)
+{
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	array_init_size(return_value, 1);
+	ADD_ASSOC_LONG_EX(return_value, "$minKey", 1);
 }
 /* }}} */
 
@@ -101,6 +115,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_minkey_me[] = {
 	PHP_ME(MinKey, __set_state, ai_MinKey___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(MinKey, jsonSerialize, ai_MinKey_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(MinKey, serialize, ai_MinKey_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(MinKey, unserialize, ai_MinKey_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
@@ -158,6 +173,7 @@ PHP_MINIT_FUNCTION(MinKey)
 	php_phongo_minkey_ce->create_object = php_phongo_minkey_create_object;
 	PHONGO_CE_FINAL(php_phongo_minkey_ce);
 
+	zend_class_implements(php_phongo_minkey_ce TSRMLS_CC, 1, php_json_serializable_ce);
 	zend_class_implements(php_phongo_minkey_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_minkey_ce TSRMLS_CC, 1, zend_ce_serializable);
 

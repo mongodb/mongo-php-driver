@@ -31,6 +31,7 @@
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
+#include <ext/json/php_json.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
@@ -206,6 +207,24 @@ PHP_METHOD(Regex, __toString)
 }
 /* }}} */
 
+/* {{{ proto array Regex::jsonSerialize()
+*/
+PHP_METHOD(Regex, jsonSerialize)
+{
+	php_phongo_regex_t *intern;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	intern = Z_REGEX_OBJ_P(getThis());
+
+	array_init_size(return_value, 2);
+	ADD_ASSOC_STRINGL(return_value, "$regex", intern->pattern, intern->pattern_len);
+	ADD_ASSOC_STRINGL(return_value, "$options", intern->flags, intern->flags_len);
+}
+/* }}} */
+
 /* {{{ proto string Regex::serialize()
 */
 PHP_METHOD(Regex, serialize)
@@ -317,6 +336,7 @@ static zend_function_entry php_phongo_regex_me[] = {
 	PHP_ME(Regex, __construct, ai_Regex___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Regex, __set_state, ai_Regex___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Regex, __toString, ai_Regex_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Regex, jsonSerialize, ai_Regex_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Regex, serialize, ai_Regex_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Regex, unserialize, ai_Regex_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Regex, getPattern, ai_Regex_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -445,6 +465,7 @@ PHP_MINIT_FUNCTION(Regex)
 
 	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, zend_ce_serializable);
+	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, php_json_serializable_ce);
 
 	memcpy(&php_phongo_handler_regex, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_regex.get_properties = php_phongo_regex_get_properties;

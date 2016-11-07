@@ -31,6 +31,8 @@
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
+#include <ext/json/php_json.h>
+#include <ext/standard/base64.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
@@ -187,6 +189,42 @@ PHP_METHOD(Binary, getType)
 }
 /* }}} */
 
+/* {{{ proto array Binary::jsonSerialize()
+*/
+PHP_METHOD(Binary, jsonSerialize)
+{
+	php_phongo_binary_t *intern;
+	char                 type[3];
+	int                  type_len;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	intern = Z_BINARY_OBJ_P(getThis());
+
+	array_init_size(return_value, 2);
+
+#if PHP_VERSION_ID >= 70000
+	{
+		zend_string *data = php_base64_encode((unsigned char *)intern->data, intern->data_len);
+		ADD_ASSOC_STRINGL(return_value, "$binary", ZSTR_VAL(data), ZSTR_LEN(data));
+		zend_string_free(data);
+	}
+#else
+	{
+		int data_len = 0;
+		unsigned char *data = php_base64_encode((unsigned char *)intern->data, intern->data_len, &data_len);
+		ADD_ASSOC_STRINGL(return_value, "$binary", (char *)data, data_len);
+		efree(data);
+	}
+#endif
+
+	type_len = snprintf(type, sizeof(type), "%02x", intern->type);
+	ADD_ASSOC_STRINGL(return_value, "$type", type, type_len);
+}
+/* }}} */
+
 /* {{{ proto string Binary::serialize()
 */
 PHP_METHOD(Binary, serialize)
@@ -299,6 +337,7 @@ static zend_function_entry php_phongo_binary_me[] = {
 	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Binary, __set_state, ai_Binary___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Binary, __toString, ai_Binary_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Binary, jsonSerialize, ai_Binary_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Binary, serialize, ai_Binary_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Binary, unserialize, ai_Binary_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Binary, getData, ai_Binary_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -399,6 +438,7 @@ PHP_MINIT_FUNCTION(Binary)
 	php_phongo_binary_ce->create_object = php_phongo_binary_create_object;
 	PHONGO_CE_FINAL(php_phongo_binary_ce);
 
+	zend_class_implements(php_phongo_binary_ce TSRMLS_CC, 1, php_json_serializable_ce);
 	zend_class_implements(php_phongo_binary_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_binary_ce TSRMLS_CC, 1, zend_ce_serializable);
 

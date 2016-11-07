@@ -31,6 +31,7 @@
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
+#include <ext/json/php_json.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
@@ -215,6 +216,39 @@ PHP_METHOD(Javascript, getScope)
 }
 /* }}} */
 
+/* {{{ proto array Javascript::jsonSerialize()
+*/
+PHP_METHOD(Javascript, jsonSerialize)
+{
+	php_phongo_javascript_t *intern;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	intern = Z_JAVASCRIPT_OBJ_P(getThis());
+
+	array_init_size(return_value, 2);
+	ADD_ASSOC_STRINGL(return_value, "$code", intern->code, intern->code_len);
+
+	if (intern->scope && intern->scope->len) {
+		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+
+		if (phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+#if PHP_VERSION_ID >= 70000
+			Z_ADDREF(state.zchild);
+			ADD_ASSOC_ZVAL_EX(return_value, "$scope", &state.zchild);
+#else
+			Z_ADDREF_P(state.zchild);
+			ADD_ASSOC_ZVAL_EX(return_value, "$scope", state.zchild);
+#endif
+		}
+
+		zval_ptr_dtor(&state.zchild);
+	}
+}
+/* }}} */
+
 /* {{{ proto string Javascript::serialize()
 */
 PHP_METHOD(Javascript, serialize)
@@ -351,6 +385,7 @@ static zend_function_entry php_phongo_javascript_me[] = {
 	PHP_ME(Javascript, __construct, ai_Javascript___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, __set_state, ai_Javascript___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(Javascript, __toString, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Javascript, jsonSerialize, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, serialize, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, unserialize, ai_Javascript_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Javascript, getCode, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -493,6 +528,7 @@ PHP_MINIT_FUNCTION(Javascript)
 	php_phongo_javascript_ce->create_object = php_phongo_javascript_create_object;
 	PHONGO_CE_FINAL(php_phongo_javascript_ce);
 
+	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, php_json_serializable_ce);
 	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, zend_ce_serializable);
 
