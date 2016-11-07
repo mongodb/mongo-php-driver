@@ -2189,10 +2189,20 @@ const zend_function_entry mongodb_functions[] = {
 };
 /* }}} */
 
+static const zend_module_dep mongodb_deps[] = {
+	ZEND_MOD_REQUIRED("date")
+	ZEND_MOD_REQUIRED("json")
+	ZEND_MOD_REQUIRED("spl")
+	ZEND_MOD_REQUIRED("standard")
+	ZEND_MOD_END
+};
+
 /* {{{ mongodb_module_entry
  */
 zend_module_entry mongodb_module_entry = {
-	STANDARD_MODULE_HEADER,
+	STANDARD_MODULE_HEADER_EX,
+	NULL,
+	mongodb_deps,
 	"mongodb",
 	mongodb_functions,
 	PHP_MINIT(mongodb),
