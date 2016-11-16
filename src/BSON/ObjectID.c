@@ -31,6 +31,7 @@
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
+#include <ext/json/php_json.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
@@ -197,6 +198,23 @@ PHP_METHOD(ObjectID, __toString)
 }
 /* }}} */
 
+/* {{{ proto array ObjectID::jsonSerialize()
+*/
+PHP_METHOD(ObjectID, jsonSerialize)
+{
+	php_phongo_objectid_t *intern;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	intern = Z_OBJECTID_OBJ_P(getThis());
+
+	array_init_size(return_value, 1);
+	ADD_ASSOC_STRINGL(return_value, "$oid", intern->oid, 24);
+}
+/* }}} */
+
 /* {{{ proto string ObjectID::serialize()
 */
 PHP_METHOD(ObjectID, serialize)
@@ -306,6 +324,7 @@ static zend_function_entry php_phongo_objectid_me[] = {
 	PHP_ME(ObjectID, getTimestamp, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ObjectID, __set_state, ai_ObjectID___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(ObjectID, __toString, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ObjectID, jsonSerialize, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ObjectID, serialize, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ObjectID, unserialize, ai_ObjectID_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
@@ -405,6 +424,7 @@ PHP_MINIT_FUNCTION(ObjectID)
 	php_phongo_objectid_ce->create_object = php_phongo_objectid_create_object;
 	PHONGO_CE_FINAL(php_phongo_objectid_ce);
 
+	zend_class_implements(php_phongo_objectid_ce TSRMLS_CC, 1, php_json_serializable_ce);
 	zend_class_implements(php_phongo_objectid_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_objectid_ce TSRMLS_CC, 1, zend_ce_serializable);
 

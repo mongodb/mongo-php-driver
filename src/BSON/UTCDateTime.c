@@ -31,6 +31,7 @@
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
+#include <ext/json/php_json.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/date/php_date.h>
@@ -275,6 +276,45 @@ PHP_METHOD(UTCDateTime, toDateTime)
 }
 /* }}} */
 
+/* {{{ proto array UTCDateTime::jsonSerialize()
+*/
+PHP_METHOD(UTCDateTime, jsonSerialize)
+{
+	php_phongo_utcdatetime_t *intern;
+	char                      s_milliseconds[24];
+	int                       s_milliseconds_len;
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	intern = Z_UTCDATETIME_OBJ_P(getThis());
+
+	s_milliseconds_len = snprintf(s_milliseconds, sizeof(s_milliseconds), "%" PRId64, intern->milliseconds);
+
+	array_init_size(return_value, 1);
+
+#if PHP_VERSION_ID >= 70000
+	{
+		zval udt;
+
+		array_init_size(&udt, 1);
+		ADD_ASSOC_STRINGL(&udt, "$numberLong", s_milliseconds, s_milliseconds_len);
+		ADD_ASSOC_ZVAL_EX(return_value, "$date", &udt);
+	}
+#else
+	{
+		zval *udt;
+
+		MAKE_STD_ZVAL(udt);
+		array_init_size(udt, 1);
+		ADD_ASSOC_STRINGL(udt, "$numberLong", s_milliseconds, s_milliseconds_len);
+		ADD_ASSOC_ZVAL_EX(return_value, "$date", udt);
+	}
+#endif
+}
+/* }}} */
+
 /* {{{ proto string UTCDateTime::serialize()
 */
 PHP_METHOD(UTCDateTime, serialize)
@@ -389,6 +429,7 @@ static zend_function_entry php_phongo_utcdatetime_me[] = {
 	PHP_ME(UTCDateTime, __construct, ai_UTCDateTime___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, __set_state, ai_UTCDateTime___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(UTCDateTime, __toString, ai_UTCDateTime_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(UTCDateTime, jsonSerialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, serialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, unserialize, ai_UTCDateTime_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, toDateTime, ai_UTCDateTime_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -482,6 +523,7 @@ PHP_MINIT_FUNCTION(UTCDateTime)
 	php_phongo_utcdatetime_ce->create_object = php_phongo_utcdatetime_create_object;
 	PHONGO_CE_FINAL(php_phongo_utcdatetime_ce);
 
+	zend_class_implements(php_phongo_utcdatetime_ce TSRMLS_CC, 1, php_json_serializable_ce);
 	zend_class_implements(php_phongo_utcdatetime_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_utcdatetime_ce TSRMLS_CC, 1, zend_ce_serializable);
 
