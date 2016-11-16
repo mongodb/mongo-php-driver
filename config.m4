@@ -523,7 +523,10 @@ fi
 dnl }}}
 
   PHP_NEW_EXTENSION(mongodb,    $MONGODB_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
+  PHP_ADD_EXTENSION_DEP(mongodb, date)
+  PHP_ADD_EXTENSION_DEP(mongodb, json)
   PHP_ADD_EXTENSION_DEP(mongodb, spl)
+  PHP_ADD_EXTENSION_DEP(mongodb, standard)
 
   PHP_ADD_INCLUDE([$ext_srcdir/src/BSON/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/])
