@@ -1679,7 +1679,7 @@ PHP_FUNCTION(fromJSON)
 		PHONGO_RETVAL_STRINGL((const char *) bson_get_data(&b), b.len);
 		bson_destroy(&b);
 	} else {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s", error.message ? error.message : "Error parsing JSON");
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s", error.domain == BSON_ERROR_JSON ? error.message : "Error parsing JSON");
 	}
 }
 /* }}} */
