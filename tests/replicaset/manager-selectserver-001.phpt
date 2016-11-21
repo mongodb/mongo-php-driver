@@ -41,6 +41,11 @@ $bulk->insert(array('_id' => 3, 'x' => 4, 'y' => 5));
 throws(function() use($server2, $bulk) {
     $server2->executeBulkWrite(NS, $bulk);
 }, "MongoDB\Driver\Exception\BulkWriteException");
+
+$bulk = new \MongoDB\Driver\BulkWrite();
+$bulk->insert(array('_id' => 1, 'x' => 2, 'y' => 3));
+$bulk->insert(array('_id' => 2, 'x' => 3, 'y' => 4));
+$bulk->insert(array('_id' => 3, 'x' => 4, 'y' => 5));
 $result = $server2->executeBulkWrite("local.example", $bulk);
 var_dump($result->getInsertedCount());
 ?>
