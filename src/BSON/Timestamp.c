@@ -91,22 +91,14 @@ static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t *intern
 	 * available on all platforms (e.g. HP-UX), and atoll() provides no error
 	 * reporting at all. */
 
-#if defined(PHP_WIN32)
-	increment = _atoi64(s_increment);
-#else
 	increment = bson_ascii_strtoll(s_increment, &endptr, 10);
-#endif
 
 	if (errno || (endptr && endptr != ((const char *)s_increment + s_increment_len))) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer increment for %s initialization", s_increment, ZSTR_VAL(php_phongo_timestamp_ce->name));
 		return false;
 	}
 
-#if defined(PHP_WIN32)
-	timestamp = _atoi64(s_timestamp);
-#else
 	timestamp = bson_ascii_strtoll(s_timestamp, &endptr, 10);
-#endif
 
 	if (errno || (endptr && endptr != ((const char *)s_timestamp + s_timestamp_len))) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer timestamp for %s initialization", s_timestamp, ZSTR_VAL(php_phongo_timestamp_ce->name));

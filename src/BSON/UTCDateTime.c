@@ -77,11 +77,7 @@ static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t *in
 
 	errno = 0;
 
-#if defined(PHP_WIN32)
-	milliseconds = _atoi64(s_milliseconds);
-#else
 	milliseconds = bson_ascii_strtoll(s_milliseconds, &endptr, 10);
-#endif
 
 	/* errno will set errno if conversion fails; however, we do not need to
 	 * specify the type of error.

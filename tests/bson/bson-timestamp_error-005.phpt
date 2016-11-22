@@ -1,18 +1,16 @@
 --TEST--
-MongoDB\BSON\Timestamp::__set_state() requires strings to parse as 64-bit integers
---SKIPIF--
-<?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
+MongoDB\BSON\Timestamp constructor requires strings to parse as 64-bit integers
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
-    MongoDB\BSON\Timestamp::__set_state(['increment' => '1.23', 'timestamp' => '5678']);
+    new MongoDB\BSON\Timestamp('1.23', '5678');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    MongoDB\BSON\Timestamp::__set_state(['increment' => '1234', 'timestamp' => '5.67']);
+    new MongoDB\BSON\Timestamp('1234', '5.67');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

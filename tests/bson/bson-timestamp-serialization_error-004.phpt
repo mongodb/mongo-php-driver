@@ -1,18 +1,16 @@
 --TEST--
-MongoDB\BSON\Timestamp::__set_state() requires strings to parse as 64-bit integers
---SKIPIF--
-<?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
+MongoDB\BSON\Timestamp unserialization requires strings to parse as 64-bit integers
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
-    MongoDB\BSON\Timestamp::__set_state(['increment' => '1.23', 'timestamp' => '5678']);
+    unserialize('C:22:"MongoDB\BSON\Timestamp":60:{a:2:{s:9:"increment";s:4:"1.23";s:9:"timestamp";s:4:"5678";}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    MongoDB\BSON\Timestamp::__set_state(['increment' => '1234', 'timestamp' => '5.67']);
+    unserialize('C:22:"MongoDB\BSON\Timestamp":60:{a:2:{s:9:"increment";s:4:"1234";s:9:"timestamp";s:4:"5.67";}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
