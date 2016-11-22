@@ -53,6 +53,15 @@ PHONGO_API zend_class_entry *php_phongo_regex_ce;
 
 zend_object_handlers php_phongo_handler_regex;
 
+/* qsort() compare callback for alphabetizing regex flags upon initialization */
+static int php_phongo_regex_compare_flags(const void *f1, const void *f2) {
+	if (* (const char *) f1 == * (const char *) f2) {
+		return 0;
+	}
+
+	return (* (const char *) f1 > * (const char *) f2) ? 1 : -1;
+}
+
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
 static bool php_phongo_regex_init(php_phongo_regex_t *intern, const char *pattern, phongo_zpp_char_len pattern_len, const char *flags, phongo_zpp_char_len flags_len TSRMLS_DC)
@@ -71,6 +80,8 @@ static bool php_phongo_regex_init(php_phongo_regex_t *intern, const char *patter
 		}
 		intern->flags = estrndup(flags, flags_len);
 		intern->flags_len = flags_len;
+		/* Ensure flags are alphabetized upon initialization */
+		qsort((void *) intern->flags, flags_len, 1, php_phongo_regex_compare_flags);
 	} else {
 		intern->flags = estrdup("");
 		intern->flags_len = 0;
