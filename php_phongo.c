@@ -489,15 +489,9 @@ bool phongo_execute_write(zval *manager, const char *namespace, php_phongo_bulkw
 
 	client = Z_MANAGER_OBJ_P(manager)->client;
 
-	/* Since BulkWrite objects can currently be executed multiple times, ensure
-	 * that the database and collection name are freed before we overwrite them.
-	 * This may be removed once PHPC-676 is implemented. */
-	if (bulk_write->database) {
-		efree(bulk_write->database);
-	}
-
-	if (bulk_write->collection) {
-		efree(bulk_write->collection);
+	if (bulk_write->executed) {
+		phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "BulkWrite objects may only be executed once and this instance has already been executed");
+		return false;
 	}
 
 	if (!phongo_split_namespace(namespace, &bulk_write->database, &bulk_write->collection)) {
