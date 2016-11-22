@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\BSON\Timestamp::__set_state() requires strings to parse as 64-bit integers
---SKIPIF--
-<?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
 --FILE--
 <?php
 
