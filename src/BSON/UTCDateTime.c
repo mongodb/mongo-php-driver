@@ -27,6 +27,7 @@
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
+#include <math.h>
 
 /* PHP Core stuff */
 #include <php.h>
@@ -157,7 +158,7 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t *inte
 	return true;
 }
 
-/* {{{ proto void UTCDateTime::__construct([int|string|DateTimeInterface $milliseconds = null])
+/* {{{ proto void UTCDateTime::__construct([int|float|string|DateTimeInterface $milliseconds = null])
    Construct a new BSON UTCDateTime type from either the current time,
    milliseconds since the epoch, or a DateTimeInterface object. Defaults to the
    current time. */
@@ -196,6 +197,16 @@ PHP_METHOD(UTCDateTime, __construct)
 
 	if (Z_TYPE_P(milliseconds) == IS_LONG) {
 		php_phongo_utcdatetime_init(intern, Z_LVAL_P(milliseconds));
+		return;
+	}
+
+	if (Z_TYPE_P(milliseconds) == IS_DOUBLE) {
+		char tmp[24];
+		int tmp_len;
+
+		tmp_len = snprintf(tmp, sizeof(tmp), "%.0f", Z_DVAL_P(milliseconds) > 0 ? floor(Z_DVAL_P(milliseconds)) : ceil(Z_DVAL_P(milliseconds)));
+
+		php_phongo_utcdatetime_init_from_string(intern, tmp, tmp_len TSRMLS_CC);
 		return;
 	}
 

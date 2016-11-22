@@ -5,6 +5,9 @@ MongoDB\BSON\UTCDateTime constructor requires integer or string argument
 
 require_once __DIR__ . '/../utils/tools.php';
 
+/* UTCDateTime::__construct() internally converts floats to integers, so we will
+ * not use a float to test for an invalid value. We also don't test an object,
+ * since that is used for validating a possible DateTimeInterface argument. */
 $invalidValues = [true, []];
 
 foreach ($invalidValues as $invalidValue) {
