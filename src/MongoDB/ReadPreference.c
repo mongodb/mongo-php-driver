@@ -105,25 +105,22 @@ PHP_METHOD(ReadPreference, __construct)
 		bson_destroy(tags);
 	}
 
-	if (options && php_array_exists(options, "maxStalenessMS")) {
-		phongo_long maxStalenessMS = php_array_fetchc_long(options, "maxStalenessMS");
+	if (options && php_array_exists(options, "maxStalenessSeconds")) {
+		double maxStalenessSeconds = php_array_fetchc_double(options, "maxStalenessSeconds");
 
-		if (maxStalenessMS < 0) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessMS to be >= 0, %" PHONGO_LONG_FORMAT " given", maxStalenessMS);
+		/* libmongoc does not export NO_MAX_STALENESS, so we need to use a magic
+		 * number for the default value */
+		if (maxStalenessSeconds != -1.0 && maxStalenessSeconds <= 0.0) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessSeconds to be > 0, %f given", maxStalenessSeconds);
 			return;
 		}
 
-		if (maxStalenessMS > INT32_MAX) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessMS to be <= %" PRId32 ", %" PHONGO_LONG_FORMAT " given", INT32_MAX, maxStalenessMS);
+		if (maxStalenessSeconds != -1.0 && mode == MONGOC_READ_PRIMARY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "maxStalenessSeconds may not be used with primary mode");
 			return;
 		}
 
-		if (maxStalenessMS > 0 && mode == MONGOC_READ_PRIMARY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "maxStalenessMS may not be used with primary mode");
-			return;
-		}
-
-		mongoc_read_prefs_set_max_staleness_ms(intern->read_preference, maxStalenessMS);
+		mongoc_read_prefs_set_max_staleness_seconds(intern->read_preference, maxStalenessSeconds);
 	}
 
 	if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
@@ -133,11 +130,12 @@ PHP_METHOD(ReadPreference, __construct)
 }
 /* }}} */
 
-/* {{{ proto integer ReadPreference::getMaxStalenessMS()
-   Returns the ReadPreference maxStalenessMS value */
-PHP_METHOD(ReadPreference, getMaxStalenessMS)
+/* {{{ proto double|null ReadPreference::getMaxStalenessSeconds()
+   Returns the ReadPreference maxStalenessSeconds value */
+PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 {
 	php_phongo_readpreference_t *intern;
+	double maxStalenessSeconds;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
@@ -146,7 +144,13 @@ PHP_METHOD(ReadPreference, getMaxStalenessMS)
 		return;
 	}
 
-	RETURN_LONG(mongoc_read_prefs_get_max_staleness_ms(intern->read_preference));
+	maxStalenessSeconds = mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference);
+
+	if (maxStalenessSeconds > 0.0) {
+		RETURN_DOUBLE(maxStalenessSeconds);
+	}
+
+	RETURN_NULL();
 }
 /* }}} */
 
@@ -232,7 +236,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_readpreference_me[] = {
 	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, getMaxStalenessMS, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ReadPreference, getMaxStalenessSeconds, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, bsonSerialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

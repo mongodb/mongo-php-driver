@@ -1,14 +1,14 @@
 --TEST--
-MongoDB\Driver\Manager::__construct(): read preference options (maxStalenessMS)
+MongoDB\Driver\Manager::__construct(): read preference options (maxStalenessSeconds)
 --FILE--
 <?php
 
 $tests = [
-    ['mongodb://127.0.0.1/?readPreference=secondary&maxStalenessMS=1231', []],
-    ['mongodb://127.0.0.1/?readPreference=secondary', ['maxStalenessMS' => 1231]],
-    ['mongodb://127.0.0.1/?readPreference=secondary&maxStalenessMS=1000', ['maxStalenessMS' => 2000]],
-    ['mongodb://127.0.0.1/?readpreference=secondary&maxstalenessms=1231', []],
-    ['mongodb://127.0.0.1/?readpreference=secondary', ['maxstalenessms' => 1231]],
+    ['mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=1.231', []],
+    ['mongodb://127.0.0.1/?readPreference=secondary', ['maxStalenessSeconds' => 1.231]],
+    ['mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=1.000', ['maxStalenessSeconds' => 2.000]],
+    ['mongodb://127.0.0.1/?readpreference=secondary&maxStalenessSeconds=1.231', []],
+    ['mongodb://127.0.0.1/?readpreference=secondary', ['maxStalenessSeconds' => 1.231]],
 ];
 
 foreach ($tests as $test) {
@@ -24,31 +24,31 @@ foreach ($tests as $test) {
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
-  int(1231)
+  ["maxStalenessSeconds"]=>
+  float(1.231)
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
-  int(1231)
+  ["maxStalenessSeconds"]=>
+  float(1.231)
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
-  int(2000)
+  ["maxStalenessSeconds"]=>
+  float(2)
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
-  int(1231)
+  ["maxStalenessSeconds"]=>
+  float(1.231)
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
-  int(1231)
+  ["maxStalenessSeconds"]=>
+  float(1.231)
 }
 ===DONE===
