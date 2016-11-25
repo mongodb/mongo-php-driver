@@ -6,7 +6,7 @@ MongoDB\Driver\Manager::__construct(): read preference options of the wrong type
 $tests = [
     ['mongodb://127.0.0.1/?readPreference=secondary', ['readPreference' => 1]],
     ['mongodb://127.0.0.1/?readPreference=secondary&readPreferenceTags=tag:one', ['readPreferenceTags' => 'invalid']],
-    ['mongodb://127.0.0.1/?readPreference=secondary&maxStalenessMS=1000', ['maxStalenessMS' => 'invalid']],
+    ['mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=1.000', ['maxStalenessSeconds' => 'invalid']],
 ];
 
 foreach ($tests as $test) {
@@ -38,7 +38,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
-  int(1000)
+  ["maxStalenessSeconds"]=>
+  float(1)
 }
 ===DONE===

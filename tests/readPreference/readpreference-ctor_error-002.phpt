@@ -17,9 +17,9 @@ echo throws(function() {
     new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, ['invalid']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
-// Ensure that tagSets is validated before maxStalenessMS option
+// Ensure that tagSets is validated before maxStalenessSeconds option
 echo throws(function() {
-    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, ['invalid'], ['maxStalenessMS' => -1]);
+    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, ['invalid'], ['maxStalenessSeconds' => 0]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
