@@ -1,12 +1,12 @@
 --TEST--
-MongoDB\BSON\UTCDateTime::__set_state() requires "milliseconds" string to parse as 64-bit integer
+MongoDB\BSON\UTCDateTime constructor requires strings to parse as 64-bit integers
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
-    MongoDB\BSON\UTCDateTime::__set_state(['milliseconds' => '1234.5678']);
+    new MongoDB\BSON\UTCDateTime('1234.5678');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 /* TODO: Add tests for out-of-range values once CDRIVER-1377 is resolved */

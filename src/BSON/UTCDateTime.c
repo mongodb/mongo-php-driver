@@ -27,6 +27,7 @@
 /* External libs */
 #include <bson.h>
 #include <mongoc.h>
+#include <math.h>
 
 /* PHP Core stuff */
 #include <php.h>
@@ -77,11 +78,7 @@ static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t *in
 
 	errno = 0;
 
-#if defined(PHP_WIN32)
-	milliseconds = _atoi64(s_milliseconds);
-#else
 	milliseconds = bson_ascii_strtoll(s_milliseconds, &endptr, 10);
-#endif
 
 	/* errno will set errno if conversion fails; however, we do not need to
 	 * specify the type of error.
@@ -161,49 +158,64 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t *inte
 	return true;
 }
 
-/* {{{ proto void UTCDateTime::__construct([string|DateTimeInterface $milliseconds = null])
+/* {{{ proto void UTCDateTime::__construct([int|float|string|DateTimeInterface $milliseconds = null])
    Construct a new BSON UTCDateTime type from either the current time,
-   milliseconds since the epoch, or a DateTimeInterface object. */
+   milliseconds since the epoch, or a DateTimeInterface object. Defaults to the
+   current time. */
 PHP_METHOD(UTCDateTime, __construct)
 {
 	php_phongo_utcdatetime_t    *intern;
 	zend_error_handling          error_handling;
-	zval                        *datetime = NULL;
+	zval                        *milliseconds = NULL;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
-	if (zend_parse_parameters_ex(ZEND_PARSE_PARAMS_QUIET, ZEND_NUM_ARGS() TSRMLS_CC, "|o!", &datetime) == SUCCESS) {
-		if (datetime == NULL) {
-			php_phongo_utcdatetime_init_from_current_time(intern);
-		} else if (instanceof_function(Z_OBJCE_P(datetime), php_date_get_date_ce() TSRMLS_CC)) {
-			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(datetime));
-#if PHP_VERSION_ID >= 50500
-		} else if (instanceof_function(Z_OBJCE_P(datetime), php_date_get_immutable_ce() TSRMLS_CC)) {
-			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(datetime));
-#endif
-		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected instance of DateTimeInterface, %s given", ZSTR_VAL(Z_OBJCE_P(datetime)->name));
-		}
-
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z!", &milliseconds) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
-
-	{
-		char                *s_milliseconds;
-		phongo_zpp_char_len  s_milliseconds_len;
-
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &s_milliseconds, &s_milliseconds_len) == FAILURE) {
-			zend_restore_error_handling(&error_handling TSRMLS_CC);
-			return;
-		}
-
-		php_phongo_utcdatetime_init_from_string(intern, s_milliseconds, s_milliseconds_len TSRMLS_CC);
-	}
-
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
+	if (milliseconds == NULL) {
+		php_phongo_utcdatetime_init_from_current_time(intern);
+		return;
+	}
+
+	if (Z_TYPE_P(milliseconds) == IS_OBJECT) {
+		if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_date_ce() TSRMLS_CC)) {
+			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(milliseconds));
+#if PHP_VERSION_ID >= 50500
+		} else if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_immutable_ce() TSRMLS_CC)) {
+			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(milliseconds));
+#endif
+		} else {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected instance of DateTimeInterface, %s given", ZSTR_VAL(Z_OBJCE_P(milliseconds)->name));
+		}
+		return;
+	}
+
+	if (Z_TYPE_P(milliseconds) == IS_LONG) {
+		php_phongo_utcdatetime_init(intern, Z_LVAL_P(milliseconds));
+		return;
+	}
+
+	if (Z_TYPE_P(milliseconds) == IS_DOUBLE) {
+		char tmp[24];
+		int tmp_len;
+
+		tmp_len = snprintf(tmp, sizeof(tmp), "%.0f", Z_DVAL_P(milliseconds) > 0 ? floor(Z_DVAL_P(milliseconds)) : ceil(Z_DVAL_P(milliseconds)));
+
+		php_phongo_utcdatetime_init_from_string(intern, tmp, tmp_len TSRMLS_CC);
+		return;
+	}
+
+	if (Z_TYPE_P(milliseconds) != IS_STRING) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected integer or string, %s given", zend_get_type_by_const(Z_TYPE_P(milliseconds)));
+		return;
+	}
+
+	php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_P(milliseconds), Z_STRLEN_P(milliseconds) TSRMLS_CC);
 }
 /* }}} */
 

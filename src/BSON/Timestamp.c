@@ -91,22 +91,14 @@ static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t *intern
 	 * available on all platforms (e.g. HP-UX), and atoll() provides no error
 	 * reporting at all. */
 
-#if defined(PHP_WIN32)
-	increment = _atoi64(s_increment);
-#else
 	increment = bson_ascii_strtoll(s_increment, &endptr, 10);
-#endif
 
 	if (errno || (endptr && endptr != ((const char *)s_increment + s_increment_len))) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer increment for %s initialization", s_increment, ZSTR_VAL(php_phongo_timestamp_ce->name));
 		return false;
 	}
 
-#if defined(PHP_WIN32)
-	timestamp = _atoi64(s_timestamp);
-#else
 	timestamp = bson_ascii_strtoll(s_timestamp, &endptr, 10);
-#endif
 
 	if (errno || (endptr && endptr != ((const char *)s_timestamp + s_timestamp_len))) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer timestamp for %s initialization", s_timestamp, ZSTR_VAL(php_phongo_timestamp_ce->name));
@@ -148,28 +140,48 @@ static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, 
 	return false;
 }
 
-/* {{{ proto void Timestamp::__construct(string $increment, string $timestamp)
+/* {{{ proto void Timestamp::__construct(int|string $increment, int|string $timestamp)
    Construct a new BSON timestamp type, which consists of a 4-byte increment and
    4-byte timestamp. */
 PHP_METHOD(Timestamp, __construct)
 {
-	php_phongo_timestamp_t    *intern;
-	zend_error_handling       error_handling;
-	char                      *s_increment;
-	phongo_zpp_char_len       s_increment_len;
-	char                      *s_timestamp;
-	phongo_zpp_char_len       s_timestamp_len;
+	php_phongo_timestamp_t *intern;
+	zend_error_handling     error_handling;
+	zval                   *increment = NULL, *timestamp = NULL;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &s_increment, &s_increment_len, &s_timestamp, &s_timestamp_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zz", &increment, &timestamp) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-	php_phongo_timestamp_init_from_string(intern, s_increment, s_increment_len, s_timestamp, s_timestamp_len TSRMLS_CC);
+	if (Z_TYPE_P(increment) == IS_LONG && Z_TYPE_P(timestamp) == IS_LONG) {
+		php_phongo_timestamp_init(intern, Z_LVAL_P(increment), Z_LVAL_P(timestamp) TSRMLS_CC);
+		return;
+	}
+
+	if (Z_TYPE_P(increment) == IS_LONG) {
+		convert_to_string(increment);
+	}
+
+	if (Z_TYPE_P(increment) != IS_STRING) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected increment to be an unsigned 32-bit integer or string, %s given", zend_get_type_by_const(Z_TYPE_P(increment)));
+		return;
+	}
+
+	if (Z_TYPE_P(timestamp) == IS_LONG) {
+		convert_to_string(timestamp);
+	}
+
+	if (Z_TYPE_P(timestamp) != IS_STRING) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected timestamp to be an unsigned 32-bit integer or string, %s given", zend_get_type_by_const(Z_TYPE_P(timestamp)));
+		return;
+	}
+
+	php_phongo_timestamp_init_from_string(intern, Z_STRVAL_P(increment), Z_STRLEN_P(increment), Z_STRVAL_P(timestamp), Z_STRLEN_P(timestamp) TSRMLS_CC);
 }
 /* }}} */
 
