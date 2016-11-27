@@ -105,25 +105,25 @@ PHP_METHOD(ReadPreference, __construct)
 		bson_destroy(tags);
 	}
 
-	if (options && php_array_exists(options, "maxStalenessMS")) {
-		phongo_long maxStalenessMS = php_array_fetchc_long(options, "maxStalenessMS");
+	if (options && php_array_exists(options, "maxStalenessSeconds")) {
+		phongo_long maxStalenessSeconds = php_array_fetchc_long(options, "maxStalenessSeconds");
 
-		if (maxStalenessMS < 0) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessMS to be >= 0, %" PHONGO_LONG_FORMAT " given", maxStalenessMS);
-			return;
+		if (maxStalenessSeconds != MONGOC_NO_MAX_STALENESS) {
+			if (maxStalenessSeconds < MONGOC_SMALLEST_MAX_STALENESS_SECONDS) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessSeconds to be >= %d, %" PHONGO_LONG_FORMAT " given", MONGOC_SMALLEST_MAX_STALENESS_SECONDS, maxStalenessSeconds);
+				return;
+			}
+			if (maxStalenessSeconds > INT32_MAX) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessSeconds to be <= %" PRId32 ", %" PHONGO_LONG_FORMAT " given", INT32_MAX, maxStalenessSeconds);
+				return;
+			}
+			if (mode == MONGOC_READ_PRIMARY) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "maxStalenessSeconds may not be used with primary mode");
+				return;
+			}
 		}
 
-		if (maxStalenessMS > INT32_MAX) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessMS to be <= %" PRId32 ", %" PHONGO_LONG_FORMAT " given", INT32_MAX, maxStalenessMS);
-			return;
-		}
-
-		if (maxStalenessMS > 0 && mode == MONGOC_READ_PRIMARY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "maxStalenessMS may not be used with primary mode");
-			return;
-		}
-
-		mongoc_read_prefs_set_max_staleness_ms(intern->read_preference, maxStalenessMS);
+		mongoc_read_prefs_set_max_staleness_seconds(intern->read_preference, maxStalenessSeconds);
 	}
 
 	if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
@@ -133,9 +133,9 @@ PHP_METHOD(ReadPreference, __construct)
 }
 /* }}} */
 
-/* {{{ proto integer ReadPreference::getMaxStalenessMS()
-   Returns the ReadPreference maxStalenessMS value */
-PHP_METHOD(ReadPreference, getMaxStalenessMS)
+/* {{{ proto integer ReadPreference::getMaxStalenessSeconds()
+   Returns the ReadPreference maxStalenessSeconds value */
+PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 {
 	php_phongo_readpreference_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -146,7 +146,7 @@ PHP_METHOD(ReadPreference, getMaxStalenessMS)
 		return;
 	}
 
-	RETURN_LONG(mongoc_read_prefs_get_max_staleness_ms(intern->read_preference));
+	RETURN_LONG(mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference));
 }
 /* }}} */
 
@@ -232,7 +232,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_readpreference_me[] = {
 	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, getMaxStalenessMS, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ReadPreference, getMaxStalenessSeconds, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, bsonSerialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -328,6 +328,8 @@ PHP_MINIT_FUNCTION(ReadPreference)
 	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("RP_SECONDARY"), MONGOC_READ_SECONDARY TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("RP_SECONDARY_PREFERRED"), MONGOC_READ_SECONDARY_PREFERRED TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("RP_NEAREST"), MONGOC_READ_NEAREST TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("NO_MAX_STALENESS"), MONGOC_NO_MAX_STALENESS TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("SMALLEST_MAX_STALENESS_SECONDS"), MONGOC_SMALLEST_MAX_STALENESS_SECONDS TSRMLS_CC);
 
 	return SUCCESS;
 }

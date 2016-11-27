@@ -1,14 +1,14 @@
 --TEST--
-MongoDB\Driver\Manager::__construct(): read preference options (maxStalenessMS)
+MongoDB\Driver\Manager::__construct(): read preference options (maxStalenessSeconds)
 --FILE--
 <?php
 
 $tests = [
-    ['mongodb://127.0.0.1/?readPreference=secondary&maxStalenessMS=1231', []],
-    ['mongodb://127.0.0.1/?readPreference=secondary', ['maxStalenessMS' => 1231]],
-    ['mongodb://127.0.0.1/?readPreference=secondary&maxStalenessMS=1000', ['maxStalenessMS' => 2000]],
-    ['mongodb://127.0.0.1/?readpreference=secondary&maxstalenessms=1231', []],
-    ['mongodb://127.0.0.1/?readpreference=secondary', ['maxstalenessms' => 1231]],
+    ['mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=1231', []],
+    ['mongodb://127.0.0.1/?readPreference=secondary', ['maxStalenessSeconds' => 1231]],
+    ['mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=1000', ['maxStalenessSeconds' => 2000]],
+    ['mongodb://127.0.0.1/?readpreference=secondary&maxstalenessseconds=1231', []],
+    ['mongodb://127.0.0.1/?readpreference=secondary', ['maxstalenessseconds' => 1231]],
 ];
 
 foreach ($tests as $test) {
@@ -24,31 +24,31 @@ foreach ($tests as $test) {
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
+  ["maxStalenessSeconds"]=>
   int(1231)
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
+  ["maxStalenessSeconds"]=>
   int(1231)
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
+  ["maxStalenessSeconds"]=>
   int(2000)
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
+  ["maxStalenessSeconds"]=>
   int(1231)
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
+  ["maxStalenessSeconds"]=>
   int(1231)
 }
 ===DONE===

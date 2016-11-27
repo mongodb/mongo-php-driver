@@ -6,10 +6,10 @@ MongoDB\Driver\Manager::__construct(): read preference options
 $tests = [
     ['mongodb://127.0.0.1/?readPreference=primary', []],
     ['mongodb://127.0.0.1/?readPreference=secondary&readPreferenceTags=tag:one&readPreferenceTags=', []],
-    ['mongodb://127.0.0.1/?readPreference=secondary&maxStalenessMS=1000', []],
+    ['mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=1000', []],
     [null, ['readPreference' => 'primary']],
     [null, ['readPreference' => 'secondary', 'readPreferenceTags' => [['tag' => 'one'], []]]],
-    [null, ['readPreference' => 'secondary', 'maxStalenessMS' => 1000]],
+    [null, ['readPreference' => 'secondary', 'maxStalenessSeconds' => 1000]],
 ];
 
 foreach ($tests as $test) {
@@ -45,7 +45,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
+  ["maxStalenessSeconds"]=>
   int(1000)
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
@@ -70,7 +70,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
+  ["maxStalenessSeconds"]=>
   int(1000)
 }
 ===DONE===
