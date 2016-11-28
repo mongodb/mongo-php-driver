@@ -96,8 +96,8 @@ typedef enum {
 	PHONGO_ERROR_LOGIC               = 9
 } php_phongo_error_domain_t;
 
-PHONGO_API zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
-PHONGO_API zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
+zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
+zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
 void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *format, ...)
 #if PHP_VERSION_ID < 70000
 # ifndef PHP_WIN32
@@ -111,7 +111,7 @@ void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const ch
 ;
 void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC);
 
-PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void);
+zend_object_handlers *phongo_get_std_object_handlers(void);
 
 void                     phongo_server_init          (zval *return_value, zval *manager, int server_id TSRMLS_DC);
 void                     phongo_readconcern_init     (zval *return_value, const mongoc_read_concern_t *read_concern TSRMLS_DC);

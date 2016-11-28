@@ -95,7 +95,7 @@ php_phongo_server_description_type_map[PHONGO_SERVER_DESCRIPTION_TYPES] = {
 /* {{{ phongo_std_object_handlers */
 zend_object_handlers phongo_std_object_handlers;
 
-PHONGO_API zend_object_handlers *phongo_get_std_object_handlers(void)
+zend_object_handlers *phongo_get_std_object_handlers(void)
 {
 	return &phongo_std_object_handlers;
 }

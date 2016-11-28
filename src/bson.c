@@ -1138,7 +1138,7 @@ static bool is_public_property(zend_class_entry *ce, const char *prop_name, int 
 }
 /* }}} */
 
-PHONGO_API void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC) /* {{{ */
+void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC) /* {{{ */
 {
 	HashTable   *ht_data = NULL;
 #if PHP_VERSION_ID >= 70000
@@ -1378,9 +1378,9 @@ PHONGO_API void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, b
 
 /* }}} */
 #if PHP_VERSION_ID >= 70000
-PHONGO_API int phongo_bson_to_zval(const unsigned char *data, int data_len, zval *zv)
+int phongo_bson_to_zval(const unsigned char *data, int data_len, zval *zv)
 #else
-PHONGO_API int phongo_bson_to_zval(const unsigned char *data, int data_len, zval **zv)
+int phongo_bson_to_zval(const unsigned char *data, int data_len, zval **zv)
 #endif
 {
 	int retval = 0;
@@ -1396,7 +1396,7 @@ PHONGO_API int phongo_bson_to_zval(const unsigned char *data, int data_len, zval
 	return retval;
 }
 
-PHONGO_API int phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state)
+int phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state)
 {
 	      bson_reader_t *reader;
 	      bson_iter_t    iter;
@@ -1552,7 +1552,7 @@ static void apply_classname_to_state(const char *classname, int classname_len, p
 	}
 }
 
-PHONGO_API void phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC)
+void phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC)
 {
 	if (typemap) {
 		char      *classname;
