@@ -79,7 +79,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["writeConcernError"]=>
   NULL
   ["writeConcern"]=>
-  array(0) {
+  object(MongoDB\Driver\WriteConcern)#%d (%d) {
   }
 }
 string(14) "192.168.112.10"

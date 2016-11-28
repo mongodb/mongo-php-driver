@@ -67,42 +67,50 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["writeErrors"]=>
   array(3) {
     [0]=>
-    array(3) {
+    object(MongoDB\Driver\WriteError)#%d (%d) {
+      ["message"]=>
+      string(108) "E11000 duplicate key error collection: phongo.writeResult_writeresult_debug_002 index: _id_ dup key: { : 1 }"
+      ["code"]=>
+      int(11000)
       ["index"]=>
       int(3)
-      ["code"]=>
-      int(11000)
-      ["errmsg"]=>
-      string(108) "E11000 duplicate key error collection: phongo.writeResult_writeresult_debug_002 index: _id_ dup key: { : 1 }"
+      ["info"]=>
+      NULL
     }
     [1]=>
-    array(3) {
+    object(MongoDB\Driver\WriteError)#%d (%d) {
+      ["message"]=>
+      string(108) "E11000 duplicate key error collection: phongo.writeResult_writeresult_debug_002 index: _id_ dup key: { : 2 }"
+      ["code"]=>
+      int(11000)
       ["index"]=>
       int(5)
-      ["code"]=>
-      int(11000)
-      ["errmsg"]=>
-      string(108) "E11000 duplicate key error collection: phongo.writeResult_writeresult_debug_002 index: _id_ dup key: { : 2 }"
+      ["info"]=>
+      NULL
     }
     [2]=>
-    array(3) {
-      ["index"]=>
-      int(7)
+    object(MongoDB\Driver\WriteError)#%d (%d) {
+      ["message"]=>
+      string(108) "E11000 duplicate key error collection: phongo.writeResult_writeresult_debug_002 index: _id_ dup key: { : 3 }"
       ["code"]=>
       int(11000)
-      ["errmsg"]=>
-      string(108) "E11000 duplicate key error collection: phongo.writeResult_writeresult_debug_002 index: _id_ dup key: { : 3 }"
+      ["index"]=>
+      int(7)
+      ["info"]=>
+      NULL
     }
   }
   ["writeConcernError"]=>
-  array(2) {
+  object(MongoDB\Driver\WriteConcernError)#%d (%d) {
+    ["message"]=>
+    string(29) "Not enough data-bearing nodes"
     ["code"]=>
     int(100)
-    ["errmsg"]=>
-    string(29) "Not enough data-bearing nodes"
+    ["info"]=>
+    NULL
   }
   ["writeConcern"]=>
-  array(1) {
+  object(MongoDB\Driver\WriteConcern)#%d (%d) {
     ["w"]=>
     int(30)
   }
