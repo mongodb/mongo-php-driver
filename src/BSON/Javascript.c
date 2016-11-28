@@ -439,6 +439,17 @@ phongo_create_object_retval php_phongo_javascript_create_object(zend_class_entry
 #endif
 } /* }}} */
 
+static int php_phongo_javascript_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
+{
+	php_phongo_javascript_t *intern1, *intern2;
+
+	intern1 = Z_JAVASCRIPT_OBJ_P(o1);
+	intern2 = Z_JAVASCRIPT_OBJ_P(o2);
+
+	/* Do not consider the scope document for comparisons */
+	return strcmp(intern1->code, intern2->code);
+} /* }}} */
+
 HashTable *php_phongo_javascript_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_javascript_t *intern;
@@ -533,6 +544,7 @@ PHP_MINIT_FUNCTION(Javascript)
 	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_javascript, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_javascript.compare_objects = php_phongo_javascript_compare_objects;
 	php_phongo_handler_javascript.get_properties = php_phongo_javascript_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_javascript.free_obj = php_phongo_javascript_free_object;
