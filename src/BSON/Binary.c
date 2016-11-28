@@ -35,6 +35,7 @@
 #include <ext/standard/base64.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
+#include <Zend/zend_operators.h>
 #include <ext/spl/spl_iterators.h>
 #include <ext/standard/php_var.h>
 #if PHP_VERSION_ID >= 70000
@@ -387,6 +388,26 @@ phongo_create_object_retval php_phongo_binary_create_object(zend_class_entry *cl
 #endif
 } /* }}} */
 
+static int php_phongo_binary_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
+{
+	php_phongo_binary_t *intern1, *intern2;
+
+	intern1 = Z_BINARY_OBJ_P(o1);
+	intern2 = Z_BINARY_OBJ_P(o2);
+
+	/* MongoDB compares binary types first by the data length, then by the type
+	 * byte, and finally by the binary data itself. */
+	if (intern1->data_len != intern2->data_len) {
+		return intern1->data_len < intern2->data_len ? -1 : 1;
+	}
+
+	if (intern1->type != intern2->type) {
+		return intern1->type < intern2->type ? -1 : 1;
+	}
+
+	return zend_binary_strcmp(intern1->data, intern1->data_len, intern2->data, intern2->data_len);
+} /* }}} */
+
 HashTable *php_phongo_binary_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_binary_t *intern;
@@ -443,6 +464,7 @@ PHP_MINIT_FUNCTION(Binary)
 	zend_class_implements(php_phongo_binary_ce TSRMLS_CC, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_binary, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_binary.compare_objects = php_phongo_binary_compare_objects;
 	php_phongo_handler_binary.get_properties = php_phongo_binary_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_binary.free_obj = php_phongo_binary_free_object;

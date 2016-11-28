@@ -402,25 +402,22 @@ phongo_create_object_retval php_phongo_regex_create_object(zend_class_entry *cla
 #endif
 } /* }}} */
 
-HashTable *php_phongo_regex_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static int php_phongo_regex_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
 {
-	php_phongo_regex_t *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                retval;
-#else
-	zval                retval = zval_used_for_init;
-#endif
+	php_phongo_regex_t *intern1, *intern2;
+	int retval;
 
+	intern1 = Z_REGEX_OBJ_P(o1);
+	intern2 = Z_REGEX_OBJ_P(o2);
 
-	*is_temp = 1;
-	intern =  Z_REGEX_OBJ_P(object);
+	/* MongoDB compares the pattern string before the flags. */
+	retval = strcmp(intern1->pattern, intern2->pattern);
 
-	array_init(&retval);
+	if (retval != 0) {
+		return retval;
+	}
 
-	ADD_ASSOC_STRINGL(&retval, "pattern", intern->pattern, intern->pattern_len);
-	ADD_ASSOC_STRINGL(&retval, "flags", intern->flags, intern->flags_len);
-
-	return Z_ARRVAL(retval);
+	return strcmp(intern1->flags, intern2->flags);
 } /* }}} */
 
 HashTable *php_phongo_regex_get_properties(zval *object TSRMLS_DC) /* {{{ */
@@ -479,6 +476,7 @@ PHP_MINIT_FUNCTION(Regex)
 	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, php_json_serializable_ce);
 
 	memcpy(&php_phongo_handler_regex, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_regex.compare_objects = php_phongo_regex_compare_objects;
 	php_phongo_handler_regex.get_properties = php_phongo_regex_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_regex.free_obj = php_phongo_regex_free_object;

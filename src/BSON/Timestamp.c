@@ -427,25 +427,23 @@ phongo_create_object_retval php_phongo_timestamp_create_object(zend_class_entry 
 #endif
 } /* }}} */
 
-HashTable *php_phongo_timestamp_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static int php_phongo_timestamp_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
 {
-	php_phongo_timestamp_t *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                    retval;
-#else
-	zval                    retval = zval_used_for_init;
-#endif
+	php_phongo_timestamp_t *intern1, *intern2;
 
+	intern1 = Z_TIMESTAMP_OBJ_P(o1);
+	intern2 = Z_TIMESTAMP_OBJ_P(o2);
 
-	*is_temp = 1;
-	intern =  Z_TIMESTAMP_OBJ_P(object);
+	/* MongoDB compares the timestamp before the increment. */
+	if (intern1->timestamp != intern2->timestamp) {
+		return intern1->timestamp < intern2->timestamp ? -1 : 1;
+	}
 
-	array_init(&retval);
+	if (intern1->increment != intern2->increment) {
+		return intern1->increment < intern2->increment ? -1 : 1;
+	}
 
-	ADD_ASSOC_LONG_EX(&retval, "increment", intern->increment);
-	ADD_ASSOC_LONG_EX(&retval, "timestamp", intern->timestamp);
-
-	return Z_ARRVAL(retval);
+	return 0;
 } /* }}} */
 
 HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
@@ -511,6 +509,7 @@ PHP_MINIT_FUNCTION(Timestamp)
 	zend_class_implements(php_phongo_timestamp_ce TSRMLS_CC, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_timestamp, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_timestamp.compare_objects = php_phongo_timestamp_compare_objects;
 	php_phongo_handler_timestamp.get_properties = php_phongo_timestamp_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_timestamp.free_obj = php_phongo_timestamp_free_object;
