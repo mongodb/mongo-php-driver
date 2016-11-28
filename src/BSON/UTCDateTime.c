@@ -487,6 +487,20 @@ phongo_create_object_retval php_phongo_utcdatetime_create_object(zend_class_entr
 #endif
 } /* }}} */
 
+static int php_phongo_utcdatetime_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
+{
+	php_phongo_utcdatetime_t *intern1, *intern2;
+
+	intern1 = Z_UTCDATETIME_OBJ_P(o1);
+	intern2 = Z_UTCDATETIME_OBJ_P(o2);
+
+	if (intern1->milliseconds != intern2->milliseconds) {
+		return intern1->milliseconds < intern2->milliseconds ? -1 : 1;
+	}
+
+	return 0;
+} /* }}} */
+
 HashTable *php_phongo_utcdatetime_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_utcdatetime_t *intern;
@@ -540,6 +554,7 @@ PHP_MINIT_FUNCTION(UTCDateTime)
 	zend_class_implements(php_phongo_utcdatetime_ce TSRMLS_CC, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_utcdatetime, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_utcdatetime.compare_objects = php_phongo_utcdatetime_compare_objects;
 	php_phongo_handler_utcdatetime.get_properties = php_phongo_utcdatetime_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_utcdatetime.free_obj = php_phongo_utcdatetime_free_object;
