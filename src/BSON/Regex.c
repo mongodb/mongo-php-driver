@@ -402,27 +402,6 @@ phongo_create_object_retval php_phongo_regex_create_object(zend_class_entry *cla
 #endif
 } /* }}} */
 
-HashTable *php_phongo_regex_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
-{
-	php_phongo_regex_t *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                retval;
-#else
-	zval                retval = zval_used_for_init;
-#endif
-
-
-	*is_temp = 1;
-	intern =  Z_REGEX_OBJ_P(object);
-
-	array_init(&retval);
-
-	ADD_ASSOC_STRINGL(&retval, "pattern", intern->pattern, intern->pattern_len);
-	ADD_ASSOC_STRINGL(&retval, "flags", intern->flags, intern->flags_len);
-
-	return Z_ARRVAL(retval);
-} /* }}} */
-
 HashTable *php_phongo_regex_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_regex_t *intern;

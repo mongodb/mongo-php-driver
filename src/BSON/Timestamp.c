@@ -427,27 +427,6 @@ phongo_create_object_retval php_phongo_timestamp_create_object(zend_class_entry 
 #endif
 } /* }}} */
 
-HashTable *php_phongo_timestamp_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
-{
-	php_phongo_timestamp_t *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                    retval;
-#else
-	zval                    retval = zval_used_for_init;
-#endif
-
-
-	*is_temp = 1;
-	intern =  Z_TIMESTAMP_OBJ_P(object);
-
-	array_init(&retval);
-
-	ADD_ASSOC_LONG_EX(&retval, "increment", intern->increment);
-	ADD_ASSOC_LONG_EX(&retval, "timestamp", intern->timestamp);
-
-	return Z_ARRVAL(retval);
-} /* }}} */
-
 HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_timestamp_t *intern;
