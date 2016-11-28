@@ -914,8 +914,8 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 #endif
 	}
 
-	if (mongoc_read_prefs_get_max_staleness_ms(read_prefs) != 0) {
-		ADD_ASSOC_LONG_EX(retval, "maxStalenessMS", mongoc_read_prefs_get_max_staleness_ms(read_prefs));
+	if (mongoc_read_prefs_get_max_staleness_seconds(read_prefs) != MONGOC_NO_MAX_STALENESS) {
+		ADD_ASSOC_LONG_EX(retval, "maxStalenessSeconds", mongoc_read_prefs_get_max_staleness_seconds(read_prefs));
 	}
 } /* }}} */
 
@@ -971,7 +971,7 @@ static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options
 			    !strcasecmp(key, "slaveok") ||
 			    !strcasecmp(key, "w") ||
 			    !strcasecmp(key, "wtimeoutms") ||
-			    !strcasecmp(key, "maxstalenessms") ||
+			    !strcasecmp(key, "maxstalenessseconds") ||
 			    !strcasecmp(key, "appname")
 			) {
 				continue;
@@ -1060,7 +1060,7 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 	if (!bson_iter_init_find_case(&iter, options, "slaveok") &&
 	    !bson_iter_init_find_case(&iter, options, "readpreference") &&
 	    !bson_iter_init_find_case(&iter, options, "readpreferencetags") &&
-	    !bson_iter_init_find_case(&iter, options, "maxstalenessms")
+	    !bson_iter_init_find_case(&iter, options, "maxstalenessseconds")
 	) {
 		return true;
 	}
@@ -1124,29 +1124,32 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 		return false;
 	}
 
-	/* Handle maxStalenessMS, and make sure it is not combined with primary
+	/* Handle maxStalenessSeconds, and make sure it is not combined with primary
 	 * readPreference */
-	if (bson_iter_init_find_case(&iter, options, "maxstalenessms") && BSON_ITER_HOLDS_INT32(&iter)) {
-		int32_t max_staleness_ms = bson_iter_int32(&iter);
+	if (bson_iter_init_find_case(&iter, options, "maxstalenessseconds") && BSON_ITER_HOLDS_INT32(&iter)) {
+		int32_t max_staleness_seconds = bson_iter_int32(&iter);
 
-		if (max_staleness_ms < 0) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessMS to be >= 0, %" PRId32 " given", max_staleness_ms);
-			mongoc_read_prefs_destroy(new_rp);
+		if (max_staleness_seconds != MONGOC_NO_MAX_STALENESS) {
 
-			return false;
+			if (max_staleness_seconds < MONGOC_SMALLEST_MAX_STALENESS_SECONDS) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessSeconds to be >= %d, %" PRId32 " given", MONGOC_SMALLEST_MAX_STALENESS_SECONDS, max_staleness_seconds);
+				mongoc_read_prefs_destroy(new_rp);
+
+				return false;
+			}
+
+			/* max_staleness_seconds is fetched as an INT32, so there is no need to check
+			 * if it exists INT32_MAX as we do in the ReadPreference constructor. */
+
+			if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Primary read preference mode conflicts with maxStalenessSeconds");
+				mongoc_read_prefs_destroy(new_rp);
+
+				return false;
+			}
 		}
 
-		/* max_staleness_ms is fetched as an INT32, so there is no need to check
-		 * if it exists INT32_MAX as we do in the ReadPreference constructor. */
-
-		if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Primary read preference mode conflicts with maxStalenessMS");
-			mongoc_read_prefs_destroy(new_rp);
-
-			return false;
-		}
-
-		mongoc_read_prefs_set_max_staleness_ms(new_rp, max_staleness_ms);
+		mongoc_read_prefs_set_max_staleness_seconds(new_rp, max_staleness_seconds);
 	}
 
 	/* This may be redundant in light of the last check (primary with tags), but

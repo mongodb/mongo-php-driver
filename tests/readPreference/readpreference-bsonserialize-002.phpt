@@ -14,7 +14,7 @@ $tests = [
     new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY, []),
     new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, [['dc' => 'ny']]),
     new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, [['dc' => 'ny'], ['dc' => 'sf', 'use' => 'reporting'], []]),
-    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, null, ['maxStalenessMS' => 1000]),
+    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, null, ['maxStalenessSeconds' => 1000]),
 ];
 
 foreach ($tests as $test) {
@@ -86,7 +86,7 @@ object(stdClass)#%d (%d) {
 object(stdClass)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
+  ["maxStalenessSeconds"]=>
   int(1000)
 }
 ===DONE===

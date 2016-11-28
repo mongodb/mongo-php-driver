@@ -6,7 +6,7 @@ MongoDB\Driver\ReadPreference construction
 var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
 var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, [['tag' => 'one']]));
 var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY, []));
-var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, null, ['maxStalenessMS' => 1000]));
+var_dump(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, null, ['maxStalenessSeconds' => 1000]));
 
 ?>
 ===DONE===
@@ -35,7 +35,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
-  ["maxStalenessMS"]=>
+  ["maxStalenessSeconds"]=>
   int(1000)
 }
 ===DONE===
