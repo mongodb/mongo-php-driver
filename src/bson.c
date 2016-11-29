@@ -530,7 +530,7 @@ bool php_phongo_bson_visit_int64(const bson_iter_t *iter ARG_UNUSED, const char 
 #else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 #endif
-
+	TSRMLS_FETCH();
 
 	ADD_ASSOC_INT64(retval, key, v_int64);
 
