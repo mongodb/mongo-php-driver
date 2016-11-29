@@ -1,3 +1,2 @@
-;; phongo
-Hannes Magnusson [bjori] <bjori@mongodb.com> (lead)
-Jeremy Mikola [jmikola] <jmikola@mongodb.com> (developer)
+MongoDB Driver for PHP
+Hannes Magnusson, Jeremy Mikola, Derick Rethans

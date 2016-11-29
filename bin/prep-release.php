@@ -80,6 +80,7 @@ function get_files() {
       'doc' => array(
         "README*",
         "LICENSE",
+        "CREDITS",
       )
     );
     $files = array();
