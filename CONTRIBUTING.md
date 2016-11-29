@@ -133,11 +133,12 @@ for more information.
 ### Transition JIRA issues and version
 
 All issues associated with the release version should be in the "Closed" state
-and have an appropriate resolution. Implemented issues should be resolved as
-"Fixed", while invalid issues may be "Duplicate", "Works as Designed", etc.
+and have a resolution of "Fixed". Issues with other resolutions (e.g.
+"Duplicate", "Works as Designed") should be removed from the release version so
+that they do not appear in the release notes.
 
-Check the corresponding ".x" fix version to see if any of its resolved issues
-should be included in this release version.
+Check the corresponding ".x" fix version to see if it contains any issues that
+are resolved as "Fixed" and should be included in this release version.
 
 Update the version's release date and status from the
 [Manage Versions](https://jira.mongodb.org/plugins/servlet/project-config/PHPC/versions)
