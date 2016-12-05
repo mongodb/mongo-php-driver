@@ -417,6 +417,7 @@ HashTable *php_phongo_objectid_get_properties(zval *object TSRMLS_DC) /* {{{ */
 PHP_MINIT_FUNCTION(ObjectID)
 {
 	zend_class_entry ce;
+	zend_string *zstr = zend_string_init("jsonserializable", sizeof("jsonserializable") - 1, 0);
 	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "ObjectID", php_phongo_objectid_me);
@@ -424,7 +425,8 @@ PHP_MINIT_FUNCTION(ObjectID)
 	php_phongo_objectid_ce->create_object = php_phongo_objectid_create_object;
 	PHONGO_CE_FINAL(php_phongo_objectid_ce);
 
-	zend_class_implements(php_phongo_objectid_ce TSRMLS_CC, 1, php_json_serializable_ce);
+	zend_class_implements(php_phongo_objectid_ce TSRMLS_CC, 1, zend_hash_find_ptr(CG(class_table), zstr));
+	zend_string_release(zstr);
 	zend_class_implements(php_phongo_objectid_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_objectid_ce TSRMLS_CC, 1, zend_ce_serializable);
 

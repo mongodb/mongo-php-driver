@@ -2016,6 +2016,18 @@ static void php_phongo_client_dtor(void *client)
 }
 #endif
 
+static void _phongo_check_json (void) __attribute__((constructor));
+static void _phongo_check_json (void)
+{
+	DL_HANDLE handle = DL_LOAD(NULL);
+	zend_class_entry *json = (zend_class_entry *)DL_FETCH_SYMBOL (handle, "php_json_serializable_ce");
+
+	if (json == NULL) {
+		fprintf (stderr, "Please make sure json.so is loaded before mongodb.so\n");
+		fflush (stderr);
+	}
+}
+
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(mongodb)
 {
