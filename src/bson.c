@@ -862,8 +862,8 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			tmp_ht = HASH_OF(obj_data);
 #endif
 
-			if (tmp_ht) {
-				ZEND_HASH_APPLY_COUNT(tmp_ht)++;
+			if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
+				ZEND_HASH_INC_APPLY_COUNT(tmp_ht);
 			}
 
 			/* Persistable objects must always be serialized as BSON documents;
@@ -897,8 +897,8 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 				bson_append_array_end(bson, &child);
 			}
 
-			if (tmp_ht) {
-				ZEND_HASH_APPLY_COUNT(tmp_ht)--;
+			if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
+				ZEND_HASH_DEC_APPLY_COUNT(tmp_ht);
 			}
 			zval_ptr_dtor(&obj_data);
 			return;
@@ -970,12 +970,22 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Unexpected %s instance: %s", php_phongo_type_ce->name, Z_OBJCE_P(object)->name);
 #endif
 		return;
-	}
+	} else {
+		HashTable *tmp_ht = HASH_OF(object);
 
-	mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding document");
-	bson_append_document_begin(bson, key, key_len, &child);
-	phongo_zval_to_bson(object, flags, &child, NULL TSRMLS_CC);
-	bson_append_document_end(bson, &child);
+		if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
+			ZEND_HASH_INC_APPLY_COUNT(tmp_ht);
+		}
+
+		mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding document");
+		bson_append_document_begin(bson, key, key_len, &child);
+		phongo_zval_to_bson(object, flags, &child, NULL TSRMLS_CC);
+		bson_append_document_end(bson, &child);
+
+		if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
+			ZEND_HASH_DEC_APPLY_COUNT(tmp_ht);
+		}
+	}
 }
 
 static void phongo_bson_append(bson_t *bson, php_phongo_bson_flags_t flags, const char *key, long key_len, zval *entry TSRMLS_DC)
@@ -1023,16 +1033,16 @@ try_again:
 				bson_t     child;
 				HashTable *tmp_ht = HASH_OF(entry);
 
-				if (tmp_ht) {
-					ZEND_HASH_APPLY_COUNT(tmp_ht)++;
+				if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
+					ZEND_HASH_INC_APPLY_COUNT(tmp_ht);
 				}
 
 				bson_append_array_begin(bson, key, key_len, &child);
 				phongo_zval_to_bson(entry, flags, &child, NULL TSRMLS_CC);
 				bson_append_array_end(bson, &child);
 
-				if (tmp_ht) {
-					ZEND_HASH_APPLY_COUNT(tmp_ht)--;
+				if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
+					ZEND_HASH_DEC_APPLY_COUNT(tmp_ht);
 				}
 				break;
 			}
@@ -1191,7 +1201,7 @@ PHONGO_API void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, b
 			return;
 	}
 
-	if (!ht_data || ZEND_HASH_APPLY_COUNT(ht_data) > 1) {
+	if (!ht_data || ZEND_HASH_GET_APPLY_COUNT(ht_data) > 1) {
 #if PHP_VERSION_ID >= 70000
 		if (Z_TYPE_P(data) == IS_OBJECT && instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce TSRMLS_CC)) {
 #endif
