@@ -136,7 +136,10 @@
 # define Z_ISUNDEF(x) !x
 # define phongo_free_object_arg void
 # define phongo_zpp_char_len int
-# define ZEND_HASH_APPLY_COUNT(ht) (ht)->nApplyCount
+# define ZEND_HASH_APPLY_PROTECTION(ht) true
+# define ZEND_HASH_GET_APPLY_COUNT(ht) ((ht)->nApplyCount)
+# define ZEND_HASH_DEC_APPLY_COUNT(ht) ((ht)->nApplyCount -= 1)
+# define ZEND_HASH_INC_APPLY_COUNT(ht) ((ht)->nApplyCount += 1)
 # define PHONGO_RETVAL_STRINGL(s, slen) RETVAL_STRINGL(s, slen, 1)
 # define PHONGO_RETURN_STRINGL(s, slen) RETURN_STRINGL(s, slen, 1)
 # define PHONGO_RETVAL_STRING(s) RETVAL_STRING(s, 1)
