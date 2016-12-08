@@ -15,7 +15,7 @@ function mongodb_generate_header(inpath, outpath, replacements)
       replacement = replacement.replace(/"/g, '\\"');
     }
 
-    outdata = outdata.replace("@" + key + "@", replacement);
+    outdata = outdata.replace(new RegExp('@' + key + '@', 'g'), replacement);
   }
 
   var outfile = FSO.CreateTextFile(outpath, true);
@@ -31,13 +31,14 @@ function mongodb_parse_version_file(inpath, prefix)
 
   var xyz_pre = version.split("-");
   var xyz = xyz_pre[0].split(".");
+  var pre = xyz_pre.length > 1 ? xyz_pre[1] : "";
 
   var replacements = {};
   replacements[prefix + "VERSION"] = version;
   replacements[prefix + "MAJOR_VERSION"] = xyz[0];
   replacements[prefix + "MINOR_VERSION"] = xyz[1];
   replacements[prefix + "MICRO_VERSION"] = xyz[2];
-  replacements[prefix + "PRERELEASE_VERSION"] = xyz_pre[1];
+  replacements[prefix + "PRERELEASE_VERSION"] = pre;
 
   return replacements;
 }
