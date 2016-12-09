@@ -1511,8 +1511,7 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 	bson_iter_t       iter;
 
 #if PHP_VERSION_ID >= 70000
-	zval             *client_ptr;
-	zval              new_client_ptr;
+	mongoc_client_t  *client_ptr;
 #else
 	mongoc_client_t **client_ptr;
 #endif
@@ -1523,9 +1522,9 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 	}
 
 #if PHP_VERSION_ID >= 70000
-	if ((client_ptr = zend_hash_str_find(&MONGODB_G(clients), hash, hash_len)) && Z_TYPE_P(client_ptr) == IS_PTR) {
+	if ((client_ptr = zend_hash_str_find_ptr(&MONGODB_G(clients), hash, hash_len)) != NULL) {
 		MONGOC_DEBUG("Found client for hash: %s\n", hash);
-		manager->client = (mongoc_client_t *)Z_PTR_P(client_ptr);
+		manager->client = client_ptr;
 		goto cleanup;
 	}
 #else
@@ -1582,8 +1581,7 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 
 	MONGOC_DEBUG("Created client hash: %s\n", hash);
 #if PHP_VERSION_ID >= 70000
-	ZVAL_PTR(&new_client_ptr, manager->client);
-	zend_hash_str_update(&MONGODB_G(clients), hash, hash_len, &new_client_ptr);
+	zend_hash_str_update_ptr(&MONGODB_G(clients), hash, hash_len, manager->client);
 #else
 	zend_hash_update(&MONGODB_G(clients), hash, hash_len + 1, &manager->client, sizeof(mongoc_client_t *), NULL);
 #endif
