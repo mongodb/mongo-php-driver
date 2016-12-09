@@ -1984,6 +1984,18 @@ PHP_INI_BEGIN()
 PHP_INI_END()
 /* }}} */
 
+#if PHP_VERSION_ID >= 70000
+static void php_phongo_client_dtor(zval *zv)
+{
+	mongoc_client_destroy((mongoc_client_t *) Z_PTR_P(zv));
+}
+#else
+static void php_phongo_client_dtor(void *client)
+{
+	mongoc_client_destroy(*((mongoc_client_t **) client));
+}
+#endif
+
 /* {{{ PHP_GINIT_FUNCTION */
 PHP_GINIT_FUNCTION(mongodb)
 {
@@ -1998,23 +2010,12 @@ PHP_GINIT_FUNCTION(mongodb)
 	ZEND_TSRMLS_CACHE_UPDATE();
 #endif
 #endif
-	mongodb_globals->debug_fd = NULL;
+	memset(mongodb_globals, 0, sizeof(zend_mongodb_globals));
 	mongodb_globals->bsonMemVTable = bsonMemVTable;
-
+	/* Initialize HashTable for persistent clients */
+	zend_hash_init_ex(&mongodb_globals->clients, 0, NULL, php_phongo_client_dtor, 1, 0);
 }
 /* }}} */
-
-#if PHP_VERSION_ID >= 70000
-static void php_phongo_client_dtor(zval *zv)
-{
-	mongoc_client_destroy((mongoc_client_t *) Z_PTR_P(zv));
-}
-#else
-static void php_phongo_client_dtor(void *client)
-{
-	mongoc_client_destroy(*((mongoc_client_t **) client));
-}
-#endif
 
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(mongodb)
@@ -2036,9 +2037,6 @@ PHP_MINIT_FUNCTION(mongodb)
 
 	/* Initialize libbson */
 	bson_mem_set_vtable(&MONGODB_G(bsonMemVTable));
-
-	/* Initialize HashTable for persistent clients */
-	zend_hash_init(&MONGODB_G(clients), 0, NULL, php_phongo_client_dtor, 1);
 
 	/* Prep default object handlers to be used when we register the classes */
 	memcpy(&phongo_std_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
