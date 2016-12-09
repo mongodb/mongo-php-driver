@@ -464,6 +464,7 @@ HashTable *php_phongo_regex_get_properties(zval *object TSRMLS_DC) /* {{{ */
 PHP_MINIT_FUNCTION(Regex)
 {
 	zend_class_entry ce;
+	zend_string *zstr = zend_string_init("jsonserializable", sizeof("jsonserializable") - 1, 0);
 	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Regex", php_phongo_regex_me);
@@ -471,9 +472,10 @@ PHP_MINIT_FUNCTION(Regex)
 	php_phongo_regex_ce->create_object = php_phongo_regex_create_object;
 	PHONGO_CE_FINAL(php_phongo_regex_ce);
 
+	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, zend_hash_find_ptr(CG(class_table), zstr));
+	zend_string_release(zstr);
 	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, zend_ce_serializable);
-	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, php_json_serializable_ce);
 
 	memcpy(&php_phongo_handler_regex, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_regex.compare_objects = php_phongo_regex_compare_objects;
