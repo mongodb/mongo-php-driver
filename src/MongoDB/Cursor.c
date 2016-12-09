@@ -58,16 +58,6 @@ static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ *
 	}
 } /* }}} */
 
-void php_phongo_cursor_free(php_phongo_cursor_t *cursor) /* {{{ */
-{
-	if (cursor->cursor) {
-		mongoc_cursor_destroy(cursor->cursor);
-		cursor->cursor = NULL;
-	}
-
-	php_phongo_cursor_free_current(cursor);
-} /* }}} */
-
 /* {{{ Iterator handlers */
 static void php_phongo_cursor_iterator_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
@@ -386,6 +376,10 @@ static void php_phongo_cursor_free_object(phongo_free_object_arg *object TSRMLS_
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	if (intern->cursor) {
+		mongoc_cursor_destroy(intern->cursor);
+	}
+
 	if (intern->database) {
 		efree(intern->database);
 	}
@@ -406,7 +400,7 @@ static void php_phongo_cursor_free_object(phongo_free_object_arg *object TSRMLS_
 		zval_ptr_dtor(&intern->read_preference);
 	}
 
-	php_phongo_cursor_free(intern);
+	php_phongo_cursor_free_current(intern);
 
 	zval_ptr_dtor(&intern->manager);
 
