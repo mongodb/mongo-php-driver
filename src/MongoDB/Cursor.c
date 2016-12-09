@@ -227,9 +227,23 @@ PHP_METHOD(Cursor, setTypeMap)
 		return;
 	}
 
+	/* Check if the existing element needs to be freed before we overwrite
+	 * visitor_data, which contains the only reference to it. */
+	if (!Z_ISUNDEF(intern->visitor_data.zchild)) {
+		php_phongo_cursor_free_current(intern);
+	}
+
 	phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
 
 	intern->visitor_data = state;
+
+	/* If the cursor has a current element, we just freed it and should restore
+	 * it with a new type map applied. */
+	if (mongoc_cursor_current(intern->cursor)) {
+		const bson_t *doc = mongoc_cursor_current(intern->cursor);
+
+		phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &intern->visitor_data);
+	}
 }
 /* }}} */
 
