@@ -1511,8 +1511,7 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 	bson_iter_t       iter;
 
 #if PHP_VERSION_ID >= 70000
-	zval             *client_ptr;
-	zval              new_client_ptr;
+	mongoc_client_t  *client_ptr;
 #else
 	mongoc_client_t **client_ptr;
 #endif
@@ -1523,9 +1522,9 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 	}
 
 #if PHP_VERSION_ID >= 70000
-	if ((client_ptr = zend_hash_str_find(&MONGODB_G(clients), hash, hash_len)) && Z_TYPE_P(client_ptr) == IS_PTR) {
+	if ((client_ptr = zend_hash_str_find_ptr(&MONGODB_G(clients), hash, hash_len)) != NULL) {
 		MONGOC_DEBUG("Found client for hash: %s\n", hash);
-		manager->client = (mongoc_client_t *)Z_PTR_P(client_ptr);
+		manager->client = client_ptr;
 		goto cleanup;
 	}
 #else
@@ -1582,8 +1581,7 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 
 	MONGOC_DEBUG("Created client hash: %s\n", hash);
 #if PHP_VERSION_ID >= 70000
-	ZVAL_PTR(&new_client_ptr, manager->client);
-	zend_hash_str_update(&MONGODB_G(clients), hash, hash_len, &new_client_ptr);
+	zend_hash_str_update_ptr(&MONGODB_G(clients), hash, hash_len, manager->client);
 #else
 	zend_hash_update(&MONGODB_G(clients), hash, hash_len + 1, &manager->client, sizeof(mongoc_client_t *), NULL);
 #endif
@@ -1984,6 +1982,18 @@ PHP_INI_BEGIN()
 PHP_INI_END()
 /* }}} */
 
+#if PHP_VERSION_ID >= 70000
+static void php_phongo_client_dtor(zval *zv)
+{
+	mongoc_client_destroy((mongoc_client_t *) Z_PTR_P(zv));
+}
+#else
+static void php_phongo_client_dtor(void *client)
+{
+	mongoc_client_destroy(*((mongoc_client_t **) client));
+}
+#endif
+
 /* {{{ PHP_GINIT_FUNCTION */
 PHP_GINIT_FUNCTION(mongodb)
 {
@@ -1998,23 +2008,12 @@ PHP_GINIT_FUNCTION(mongodb)
 	ZEND_TSRMLS_CACHE_UPDATE();
 #endif
 #endif
-	mongodb_globals->debug_fd = NULL;
+	memset(mongodb_globals, 0, sizeof(zend_mongodb_globals));
 	mongodb_globals->bsonMemVTable = bsonMemVTable;
-
+	/* Initialize HashTable for persistent clients */
+	zend_hash_init_ex(&mongodb_globals->clients, 0, NULL, php_phongo_client_dtor, 1, 0);
 }
 /* }}} */
-
-#if PHP_VERSION_ID >= 70000
-static void php_phongo_client_dtor(zval *zv)
-{
-	mongoc_client_destroy((mongoc_client_t *) Z_PTR_P(zv));
-}
-#else
-static void php_phongo_client_dtor(void *client)
-{
-	mongoc_client_destroy(*((mongoc_client_t **) client));
-}
-#endif
 
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(mongodb)
@@ -2036,9 +2035,6 @@ PHP_MINIT_FUNCTION(mongodb)
 
 	/* Initialize libbson */
 	bson_mem_set_vtable(&MONGODB_G(bsonMemVTable));
-
-	/* Initialize HashTable for persistent clients */
-	zend_hash_init(&MONGODB_G(clients), 0, NULL, php_phongo_client_dtor, 1);
 
 	/* Prep default object handlers to be used when we register the classes */
 	memcpy(&phongo_std_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

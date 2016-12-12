@@ -48,15 +48,18 @@ ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 ZEND_END_MODULE_GLOBALS(mongodb)
 
 #if PHP_VERSION_ID >= 70000
-#   define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)
+# define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)
+# if defined(ZTS) && defined(COMPILE_DL_MONGODB)
+ZEND_TSRMLS_CACHE_EXTERN()
+# endif
 #else
-#   ifdef ZTS
-#   	define MONGODB_G(v) TSRMG(mongodb_globals_id, zend_mongodb_globals *, v)
-#   	define mglo mongodb_globals_id
-#   else
-#   	define MONGODB_G(v) (mongodb_globals.v)
-#   	define mglo mongodb_globals
-#   endif
+# ifdef ZTS
+#  define MONGODB_G(v) TSRMG(mongodb_globals_id, zend_mongodb_globals *, v)
+#  define mglo mongodb_globals_id
+# else
+#  define MONGODB_G(v) (mongodb_globals.v)
+#  define mglo mongodb_globals
+# endif
 #endif
 
 #define PHONGO_WRITE_CONCERN_W_MAJORITY "majority"
