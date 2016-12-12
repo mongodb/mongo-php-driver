@@ -154,9 +154,6 @@ void php_phongo_new_regex_from_regex_and_options(zval *object, const char *patte
 zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
 zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
 
-void php_phongo_cursor_free(php_phongo_cursor_t *cursor);
-zend_object_iterator* php_phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
-
 #if PHP_VERSION_ID >= 70000
 #define PHONGO_CE_FINAL(ce) do {    \
 	ce->ce_flags |= ZEND_ACC_FINAL; \
