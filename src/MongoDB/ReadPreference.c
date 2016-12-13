@@ -63,7 +63,9 @@ PHP_METHOD(ReadPreference, __construct)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|a!a!", &mode, &tagSets, &options) == FAILURE) {
+	/* Separate the tagSets zval, since we may end up modifying it in
+	 * php_phongo_read_preference_prep_tagsets() below. */
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|a/!a!", &mode, &tagSets, &options) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}

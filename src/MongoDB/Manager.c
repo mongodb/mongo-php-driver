@@ -88,7 +88,7 @@ static bool php_phongo_manager_merge_context_options(zval *zdriverOptions TSRMLS
 
 	/* Perform array union (see: add_function() in zend_operators.c) */
 #if PHP_VERSION_ID >= 70000
-	zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), zval_add_ref, 0);	
+	zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), zval_add_ref, 0);
 #else
 	{
 		zval *tmp;
@@ -129,6 +129,8 @@ static void php_phongo_manager_prep_tagsets(zval *options TSRMLS_DC)
 			/* php_phongo_make_uri() and php_phongo_apply_rp_options_to_uri()
 			 * are both case-insensitive, so we need to be as well. */
 			if (!strcasecmp(ZSTR_VAL(string_key), "readpreferencetags")) {
+				ZVAL_DEREF(tagSets);
+				SEPARATE_ZVAL_NOREF(tagSets);
 				php_phongo_read_preference_prep_tagsets(tagSets TSRMLS_CC);
 			}
 		} ZEND_HASH_FOREACH_END();
@@ -152,6 +154,7 @@ static void php_phongo_manager_prep_tagsets(zval *options TSRMLS_DC)
 			/* php_phongo_make_uri() and php_phongo_apply_rp_options_to_uri()
 			 * are both case-insensitive, so we need to be as well. */
 			if (!strcasecmp(string_key, "readpreferencetags")) {
+				SEPARATE_ZVAL_IF_NOT_REF(tagSets);
 				php_phongo_read_preference_prep_tagsets(*tagSets TSRMLS_CC);
 			}
 		}
@@ -177,9 +180,10 @@ PHP_METHOD(Manager, __construct)
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	/* Separate the driverOptions zval, since we may end up modifying it in
-	 * php_phongo_manager_merge_context_options() below. */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s!a!a!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
+	/* Separate the options and driverOptions zvals, since we may end up
+	 * modifying them in php_phongo_manager_prep_tagsets() and
+	 * php_phongo_manager_merge_context_options() below, respectively. */
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s!a/!a/!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}

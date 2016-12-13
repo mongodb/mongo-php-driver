@@ -837,7 +837,9 @@ void php_phongo_read_preference_prep_tagsets(zval *tagSets TSRMLS_DC) /* {{{ */
 		zval *tagSet;
 
 		ZEND_HASH_FOREACH_VAL(ht_data, tagSet) {
+			ZVAL_DEREF(tagSet);
 			if (Z_TYPE_P(tagSet) == IS_ARRAY) {
+				SEPARATE_ZVAL_NOREF(tagSet);
 				convert_to_object(tagSet);
 			}
 		} ZEND_HASH_FOREACH_END();
@@ -851,6 +853,7 @@ void php_phongo_read_preference_prep_tagsets(zval *tagSets TSRMLS_DC) /* {{{ */
 		     zend_hash_get_current_data_ex(ht_data, (void **) &tagSet, &pos) == SUCCESS;
 		     zend_hash_move_forward_ex(ht_data, &pos)) {
 			if (Z_TYPE_PP(tagSet) == IS_ARRAY) {
+				SEPARATE_ZVAL_IF_NOT_REF(tagSet);
 				convert_to_object(*tagSet);
 			}
 		}
@@ -875,7 +878,7 @@ bool php_phongo_read_preference_tags_are_valid(const bson_t *tags) /* {{{ */
 	}
 
 	while (bson_iter_next(&iter)) {
-		if (!BSON_ITER_HOLDS_DOCUMENT(&iter) && !BSON_ITER_HOLDS_ARRAY(&iter)) {
+		if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 			return false;
 		}
 	}
