@@ -144,11 +144,12 @@ if test "$MONGODB" != "no"; then
       EXTRA_LDFLAGS="$COVERAGE_CFLAGS"
   fi
 
-  MONGODB_BSON="\
-      src/bson.c \
-  ";
+  PHP_MONGODB_CFLAGS="$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS"
 
-  MONGODB_BSON_CLASSES="\
+  PHP_MONGODB_SOURCES="\
+    php_phongo.c \
+    phongo_compat.c \
+    src/bson.c \
     src/BSON/Type.c \
     src/BSON/Unserializable.c \
     src/BSON/Serializable.c \
@@ -162,39 +163,31 @@ if test "$MONGODB" != "no"; then
     src/BSON/Regex.c \
     src/BSON/Timestamp.c \
     src/BSON/UTCDateTime.c \
-  ";
-  MONGODB_ROOT="\
-      php_phongo.c \
-      phongo_compat.c \
-  ";
-  MONGODB_MONGODB_CLASSES="\
-      src/MongoDB/Command.c \
-      src/MongoDB/Cursor.c \
-      src/MongoDB/CursorId.c \
-      src/MongoDB/Manager.c \
-      src/MongoDB/Query.c \
-      src/MongoDB/ReadConcern.c \
-      src/MongoDB/ReadPreference.c \
-      src/MongoDB/Server.c \
-      src/MongoDB/BulkWrite.c \
-      src/MongoDB/WriteConcern.c \
-      src/MongoDB/WriteConcernError.c \
-      src/MongoDB/WriteError.c \
-      src/MongoDB/WriteResult.c \
-  ";
-  MONGODB_MONGODB_EXCEPTIONS="\
-      src/MongoDB/Exception/Exception.c \
-      src/MongoDB/Exception/LogicException.c \
-      src/MongoDB/Exception/RuntimeException.c \
-      src/MongoDB/Exception/UnexpectedValueException.c \
-      src/MongoDB/Exception/InvalidArgumentException.c \
-      src/MongoDB/Exception/ConnectionException.c \
-      src/MongoDB/Exception/AuthenticationException.c \
-      src/MongoDB/Exception/SSLConnectionException.c \
-      src/MongoDB/Exception/ExecutionTimeoutException.c \
-      src/MongoDB/Exception/ConnectionTimeoutException.c \
-      src/MongoDB/Exception/WriteException.c \
-      src/MongoDB/Exception/BulkWriteException.c \
+    src/MongoDB/Command.c \
+    src/MongoDB/Cursor.c \
+    src/MongoDB/CursorId.c \
+    src/MongoDB/Manager.c \
+    src/MongoDB/Query.c \
+    src/MongoDB/ReadConcern.c \
+    src/MongoDB/ReadPreference.c \
+    src/MongoDB/Server.c \
+    src/MongoDB/BulkWrite.c \
+    src/MongoDB/WriteConcern.c \
+    src/MongoDB/WriteConcernError.c \
+    src/MongoDB/WriteError.c \
+    src/MongoDB/WriteResult.c \
+    src/MongoDB/Exception/Exception.c \
+    src/MongoDB/Exception/LogicException.c \
+    src/MongoDB/Exception/RuntimeException.c \
+    src/MongoDB/Exception/UnexpectedValueException.c \
+    src/MongoDB/Exception/InvalidArgumentException.c \
+    src/MongoDB/Exception/ConnectionException.c \
+    src/MongoDB/Exception/AuthenticationException.c \
+    src/MongoDB/Exception/SSLConnectionException.c \
+    src/MongoDB/Exception/ExecutionTimeoutException.c \
+    src/MongoDB/Exception/ConnectionTimeoutException.c \
+    src/MongoDB/Exception/WriteException.c \
+    src/MongoDB/Exception/BulkWriteException.c \
   ";
 
   YAJL_SOURCES="\
@@ -324,18 +317,6 @@ if test "$MONGODB" != "no"; then
   ";
 
   MONGOC_SOURCES_SASL=mongoc-sasl.c
-
-  if test "$ext_shared" = "no"; then
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_BSON)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_BSON_CLASSES)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_CLASSES)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_EXCEPTIONS)
-  else
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_BSON,               [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_BSON_CLASSES,       [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_CLASSES,    [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_EXCEPTIONS, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
-  fi
 
   PHP_ARG_WITH(libbson, whether to use system libbson,
   [  --with-libbson             Use system libbson], no, no)
@@ -498,7 +479,7 @@ fi
   MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $PTHREAD_LIBS $SASL_LIBS"
   PHP_SUBST(MONGODB_SHARED_LIBADD)
 
-  PHP_NEW_EXTENSION(mongodb,    $MONGODB_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
+  PHP_NEW_EXTENSION(mongodb, $PHP_MONGODB_SOURCES, $ext_shared,, $PHP_MONGODB_CFLAGS)
   PHP_ADD_EXTENSION_DEP(mongodb, date)
   PHP_ADD_EXTENSION_DEP(mongodb, json)
   PHP_ADD_EXTENSION_DEP(mongodb, spl)
