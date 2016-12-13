@@ -88,7 +88,7 @@ static bool php_phongo_manager_merge_context_options(zval *zdriverOptions TSRMLS
 
 	/* Perform array union (see: add_function() in zend_operators.c) */
 #if PHP_VERSION_ID >= 70000
-	zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), zval_add_ref, 0);	
+	zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), zval_add_ref, 0);
 #else
 	{
 		zval *tmp;
