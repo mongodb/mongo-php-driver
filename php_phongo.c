@@ -878,7 +878,7 @@ bool php_phongo_read_preference_tags_are_valid(const bson_t *tags) /* {{{ */
 	}
 
 	while (bson_iter_next(&iter)) {
-		if (!BSON_ITER_HOLDS_DOCUMENT(&iter) && !BSON_ITER_HOLDS_ARRAY(&iter)) {
+		if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 			return false;
 		}
 	}
