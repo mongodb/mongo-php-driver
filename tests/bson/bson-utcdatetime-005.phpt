@@ -22,7 +22,7 @@ foreach ($tests as $test) {
 --EXPECTF--
 object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
-  string(13) "%d000"
+  string(13) "%d"
 }
 object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
