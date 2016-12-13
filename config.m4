@@ -85,11 +85,6 @@ AC_DEFUN([PHP_BSON_CLOCK],
 
 MONGOC_SYMBOL_SUFFIX="priv"
 
-AC_MSG_CHECKING(PHP version)
-PHP_FOUND_VERSION=`${PHP_CONFIG} --version`
-PHP_FOUND_VERNUM=`echo "${PHP_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
-AC_MSG_RESULT($PHP_FOUND_VERNUM)
-
 if test "$MONGODB" != "no"; then
   PHP_ARG_ENABLE(developer-flags, whether to enable developer build flags,
   [  --enable-developer-flags   Enable developer flags],, no)
@@ -129,10 +124,7 @@ if test "$MONGODB" != "no"; then
     PHP_CHECK_GCC_ARG(-Wempty-body,                     _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wempty-body")
     PHP_CHECK_GCC_ARG(-Wparentheses,                    _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wparentheses")
     PHP_CHECK_GCC_ARG(-Wdeclaration-after-statement,    _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wdeclaration-after-statement")
-
-    if test "$PHP_FOUND_VERNUM" -ge "50400"; then
-      PHP_CHECK_GCC_ARG(-Werror,                        _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Werror")
-    fi
+    PHP_CHECK_GCC_ARG(-Werror,                          _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Werror")
 
     MAINTAINER_CFLAGS="-Wextra $_MAINTAINER_CFLAGS  -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-missing-field-initializers"
     STD_CFLAGS="-g -O0 -Wall"
