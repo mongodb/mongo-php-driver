@@ -33,10 +33,6 @@ before_script:
   - "./.travis.scripts/compile.sh"
   - mongo --eval 'tojson(db.runCommand({buildInfo:1}))'
 
-notifications:
-  email:
-  - bjori@mongodb.com
-
 script:
   - make test
 
