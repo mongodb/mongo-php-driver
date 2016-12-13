@@ -1,5 +1,5 @@
 --TEST--
-PHPC-487: check_closed stream handler should report closed socket as closed
+PHPC-487: Stream handler should report closed socket as closed
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; SLOW(); ?>
 --FILE--
@@ -87,6 +87,6 @@ foreach($KILLLIST as $id) {
 --EXPECTF--
 int(1)
 OK: Got MongoDB\Driver\Exception\RuntimeException
-Failed to send "insert" command with database "phongo": Failed to read %d bytes from socket within 300000 milliseconds.
+Failed to send "insert" command with database "phongo": socket error or timeout
 int(1)
 ===DONE===
