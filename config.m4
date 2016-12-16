@@ -364,8 +364,10 @@ PHP_ARG_WITH(libbson, whether to use system libbson,
     PHP_EVAL_LIBLINE($LIBBSON_LIB, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
   else
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES,            [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES,            [$STD_CFLAGS], shared_objects_mongodb, yes)
+    LIBBSON_CFLAGS="-DBSON_COMPILATION"
+
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES, [$STD_CFLAGS $LIBBSON_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES, [$STD_CFLAGS $LIBBSON_CFLAGS], shared_objects_mongodb, yes)
   fi
 
 dnl libmongoc stuff {{{
@@ -397,15 +399,15 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
     PHP_EVAL_LIBLINE($LIBMONGOC_LIB, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBMONGOC, 1, [Use system libmongoc])
   else
-    CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
+    LIBMONGOC_CFLAGS="-DMONGOC_COMPILATION -DMONGOC_TRACE"
 
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,                  [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_CRYPTO,           [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,              [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_OPENSSL,          [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_TRANSPORT, [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_CHANNEL,   [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL,             [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,                  [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_CRYPTO,           [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,              [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_OPENSSL,          [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_TRANSPORT, [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_CHANNEL,   [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL,             [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
 
 
     PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD)
