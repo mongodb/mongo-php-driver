@@ -342,10 +342,16 @@ if test "$MONGODB" != "no"; then
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_EXCEPTIONS, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
   fi
 
-PHP_ARG_WITH(libbson, whether to use system libbson,
-[  --with-libbson             Use system libbson], no, no)
+  PHP_ARG_WITH(libbson, whether to use system libbson,
+  [  --with-libbson             Use system libbson], no, no)
+  PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
+  [  --with-libmongoc           Use system libmongoc], no, no)
 
   if test "$PHP_LIBBSON" != "no"; then
+    if test "$PHP_LIBMONGOC" == "no"; then
+      AC_MSG_ERROR(Cannot use system libbson and bundled libmongoc)
+    fi
+
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
@@ -374,12 +380,13 @@ dnl libmongoc stuff {{{
   AC_MSG_CHECKING(configuring libmongoc)
   AC_MSG_RESULT(...)
 
-PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
-[  --with-libmongoc           Use system libmongoc], no, no)
-
   AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
 
   if test "$PHP_LIBMONGOC" != "no"; then
+    if test "$PHP_LIBBSON" == "no"; then
+      AC_MSG_ERROR(Cannot use system libmongoc and bundled libbson)
+    fi
+
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0; then
