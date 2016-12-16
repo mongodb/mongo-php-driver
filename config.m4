@@ -380,8 +380,6 @@ dnl libmongoc stuff {{{
   AC_MSG_CHECKING(configuring libmongoc)
   AC_MSG_RESULT(...)
 
-  AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
-
   if test "$PHP_LIBMONGOC" != "no"; then
     if test "$PHP_LIBBSON" == "no"; then
       AC_MSG_ERROR(Cannot use system libmongoc and bundled libbson)

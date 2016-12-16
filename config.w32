@@ -77,8 +77,6 @@ if (PHP_MONGODB != "no") {
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-secure-channel.c mongoc-stream-tls-secure-channel.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", "mongoc-sasl.c", "mongodb");
 
-  AC_DEFINE("HAVE_MONGOC", 1);
-
   var bson_opts = {
     BSON_BYTE_ORDER: 1234,
     BSON_OS: 2,
