@@ -136,7 +136,6 @@ if test "$MONGODB" != "no"; then
 
     MAINTAINER_CFLAGS="-Wextra $_MAINTAINER_CFLAGS  -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-missing-field-initializers"
     STD_CFLAGS="-g -O0 -Wall"
-    dnl EXTRA_LDFLAGS="-Wl,--no-undefined"
   fi
 
 
@@ -376,7 +375,6 @@ if test "$MONGODB" != "no"; then
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES, [$STD_CFLAGS $LIBBSON_CFLAGS], shared_objects_mongodb, yes)
   fi
 
-dnl libmongoc stuff {{{
   AC_MSG_CHECKING(configuring libmongoc)
   AC_MSG_RESULT(...)
 
@@ -517,17 +515,12 @@ fi
   AC_CHECK_FUNCS([shm_open], [SHM_LIB=], [AC_CHECK_LIB([rt], [shm_open], [SHM_LIB=-lrt], [SHM_LIB=])])
   MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $SHM_LIB"
 
-
-  dnl PHP_ADD_LIBRARY_WITH_PATH(bson-1.0, src/libbson/.libs, MONGODB_SHARED_LIBADD)
-  dnl PHP_ADD_LIBRARY_WITH_PATH(mongoc-priv, src/libmongoc/.libs, MONGODB_SHARED_LIBADD)
   EXTRA_CFLAGS="$PTHREAD_CFLAGS $SASL_CFLAGS"
   PHP_SUBST(EXTRA_CFLAGS)
   PHP_SUBST(EXTRA_LDFLAGS)
 
   MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $PTHREAD_LIBS $SASL_LIBS"
   PHP_SUBST(MONGODB_SHARED_LIBADD)
-
-dnl }}}
 
   PHP_NEW_EXTENSION(mongodb,    $MONGODB_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
   PHP_ADD_EXTENSION_DEP(mongodb, date)
@@ -560,9 +553,6 @@ dnl }}}
     PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/yajl/])
     PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/bson/])
   fi
-
-  dnl MONGODB_SHARED_DEPENDENCIES="mongodbdep"
-  dnl PHP_SUBST(MONGODB_SHARED_DEPENDENCIES)
 
   PHP_BSON_BIGENDIAN
   AC_HEADER_STDBOOL
