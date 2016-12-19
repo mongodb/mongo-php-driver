@@ -136,7 +136,6 @@ if test "$MONGODB" != "no"; then
 
     MAINTAINER_CFLAGS="-Wextra $_MAINTAINER_CFLAGS  -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-missing-field-initializers"
     STD_CFLAGS="-g -O0 -Wall"
-    dnl EXTRA_LDFLAGS="-Wl,--no-undefined"
   fi
 
 
@@ -342,10 +341,16 @@ if test "$MONGODB" != "no"; then
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_EXCEPTIONS, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
   fi
 
-PHP_ARG_WITH(libbson, whether to use system libbson,
-[  --with-libbson             Use system libbson], no, no)
+  PHP_ARG_WITH(libbson, whether to use system libbson,
+  [  --with-libbson             Use system libbson], no, no)
+  PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
+  [  --with-libmongoc           Use system libmongoc], no, no)
 
   if test "$PHP_LIBBSON" != "no"; then
+    if test "$PHP_LIBMONGOC" == "no"; then
+      AC_MSG_ERROR(Cannot use system libbson and bundled libmongoc)
+    fi
+
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
@@ -364,20 +369,20 @@ PHP_ARG_WITH(libbson, whether to use system libbson,
     PHP_EVAL_LIBLINE($LIBBSON_LIB, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
   else
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES,            [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES,            [$STD_CFLAGS], shared_objects_mongodb, yes)
+    LIBBSON_CFLAGS="-DBSON_COMPILATION"
+
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES, [$STD_CFLAGS $LIBBSON_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES, [$STD_CFLAGS $LIBBSON_CFLAGS], shared_objects_mongodb, yes)
   fi
 
-dnl libmongoc stuff {{{
   AC_MSG_CHECKING(configuring libmongoc)
   AC_MSG_RESULT(...)
 
-PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
-[  --with-libmongoc           Use system libmongoc], no, no)
-
-  AC_DEFINE(HAVE_MONGOC, 1, [Kinda useless extension without it..])
-
   if test "$PHP_LIBMONGOC" != "no"; then
+    if test "$PHP_LIBBSON" == "no"; then
+      AC_MSG_ERROR(Cannot use system libmongoc and bundled libbson)
+    fi
+
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0; then
@@ -397,15 +402,15 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
     PHP_EVAL_LIBLINE($LIBMONGOC_LIB, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBMONGOC, 1, [Use system libmongoc])
   else
-    CPPFLAGS="$CPPFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION -DMONGOC_TRACE"
+    LIBMONGOC_CFLAGS="-DMONGOC_COMPILATION -DMONGOC_TRACE"
 
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,                  [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_CRYPTO,           [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,              [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_OPENSSL,          [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_TRANSPORT, [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_CHANNEL,   [$STD_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL,             [$STD_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,                  [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_CRYPTO,           [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,              [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_OPENSSL,          [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_TRANSPORT, [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_CHANNEL,   [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL,             [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
 
 
     PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD)
@@ -433,26 +438,6 @@ PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
     AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
   fi
 
-
-PHP_ARG_WITH(pcre-dir, for pcre-dir install prefix,
-[  --with-pcre-dir[=DIR]     mongodb: pcre install prefix], auto, yes)
-
-if test "$PHP_PCRE_DIR" != "no"; then
-  AC_MSG_CHECKING(for pcre)
-  for i in $PHP_PCRE_DIR /usr /usr/local; do
-    if test -f $i/include/pcre.h; then
-      MONGODB_PCRE_DIR=$i/include
-      AC_MSG_RESULT(found in $i)
-      break
-    fi
-  done
-
-  if test -z "$MONGODB_PCRE_DIR"; then
-    AC_MSG_RESULT(not found)
-  else
-    PHP_ADD_INCLUDE($MONGODB_PCRE_DIR)
-  fi
-fi
 
 PHP_ARG_WITH(mongodb-sasl, for Cyrus SASL support,
 [  --with-mongodb-sasl[=DIR]     mongodb: Include Cyrus SASL support], auto, no)
@@ -510,17 +495,12 @@ fi
   AC_CHECK_FUNCS([shm_open], [SHM_LIB=], [AC_CHECK_LIB([rt], [shm_open], [SHM_LIB=-lrt], [SHM_LIB=])])
   MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $SHM_LIB"
 
-
-  dnl PHP_ADD_LIBRARY_WITH_PATH(bson-1.0, src/libbson/.libs, MONGODB_SHARED_LIBADD)
-  dnl PHP_ADD_LIBRARY_WITH_PATH(mongoc-priv, src/libmongoc/.libs, MONGODB_SHARED_LIBADD)
   EXTRA_CFLAGS="$PTHREAD_CFLAGS $SASL_CFLAGS"
   PHP_SUBST(EXTRA_CFLAGS)
   PHP_SUBST(EXTRA_LDFLAGS)
 
   MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $PTHREAD_LIBS $SASL_LIBS"
   PHP_SUBST(MONGODB_SHARED_LIBADD)
-
-dnl }}}
 
   PHP_NEW_EXTENSION(mongodb,    $MONGODB_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
   PHP_ADD_EXTENSION_DEP(mongodb, date)
@@ -553,9 +533,6 @@ dnl }}}
     PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/yajl/])
     PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/bson/])
   fi
-
-  dnl MONGODB_SHARED_DEPENDENCIES="mongodbdep"
-  dnl PHP_SUBST(MONGODB_SHARED_DEPENDENCIES)
 
   PHP_BSON_BIGENDIAN
   AC_HEADER_STDBOOL
