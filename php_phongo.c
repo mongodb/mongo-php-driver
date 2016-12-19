@@ -354,35 +354,35 @@ void phongo_writeconcern_init(zval *return_value, const mongoc_write_concern_t *
 zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
-	php_phongo_writeconcernerror_t *writeconcernerror;
+	php_phongo_writeconcernerror_t *intern;
 
-	writeconcernerror = Z_WRITECONCERNERROR_OBJ_P(return_value);
+	object_init_ex(return_value, php_phongo_writeconcernerror_ce);
+
+	intern = Z_WRITECONCERNERROR_OBJ_P(return_value);
 
 	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
-		writeconcernerror->code = bson_iter_int32(&iter);
+		intern->code = bson_iter_int32(&iter);
 	}
+
 	if (bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
 		uint32_t errmsg_len;
 		const char *err_msg = bson_iter_utf8(&iter, &errmsg_len);
 
-		writeconcernerror->message = estrndup(err_msg, errmsg_len);
+		intern->message = estrndup(err_msg, errmsg_len);
 	}
+
 	if (bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
-		uint32_t               len;
-		const uint8_t         *data;
+		uint32_t       len;
+		const uint8_t *data = NULL;
 
 		bson_iter_document(&iter, &len, &data);
 
-		if (!data) {
-			return false;
-		}
-
-		if (!phongo_bson_to_zval(data, len, &writeconcernerror->info)) {
-			zval_ptr_dtor(&writeconcernerror->info);
+		if (!phongo_bson_to_zval(data, len, &intern->info)) {
+			zval_ptr_dtor(&intern->info);
 #if PHP_VERSION_ID >= 70000
-			ZVAL_UNDEF(&writeconcernerror->info);
+			ZVAL_UNDEF(&intern->info);
 #else
-			writeconcernerror->info = NULL;
+			intern->info = NULL;
 #endif
 
 			return false;
@@ -395,38 +395,43 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
-	php_phongo_writeerror_t *writeerror;
+	php_phongo_writeerror_t *intern;
 
-	writeerror = Z_WRITEERROR_OBJ_P(return_value);
+	object_init_ex(return_value, php_phongo_writeerror_ce);
+
+	intern = Z_WRITEERROR_OBJ_P(return_value);
 
 	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
-		writeerror->code = bson_iter_int32(&iter);
+		intern->code = bson_iter_int32(&iter);
 	}
+
 	if (bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
 		uint32_t errmsg_len;
 		const char *err_msg = bson_iter_utf8(&iter, &errmsg_len);
 
-		writeerror->message = estrndup(err_msg, errmsg_len);
+		intern->message = estrndup(err_msg, errmsg_len);
 	}
-	if (bson_iter_init_find(&iter, bson, "errInfo")) {
-		bson_t                 info;
 
-		bson_init(&info);
-		bson_append_iter(&info, NULL, 0, &iter);
+	if (bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+		uint32_t       len;
+		const uint8_t *data = NULL;
 
-		if (!phongo_bson_to_zval(bson_get_data(&info), info.len, &writeerror->info)) {
-			zval_ptr_dtor(&writeerror->info);
+		bson_iter_document(&iter, &len, &data);
+
+		if (!phongo_bson_to_zval(data, len, &intern->info)) {
+			zval_ptr_dtor(&intern->info);
 #if PHP_VERSION_ID >= 70000
-			ZVAL_UNDEF(&writeerror->info);
+			ZVAL_UNDEF(&intern->info);
 #else
-			writeerror->info = NULL;
+			intern->info = NULL;
 #endif
 
 			return false;
 		}
 	}
+
 	if (bson_iter_init_find(&iter, bson, "index") && BSON_ITER_HOLDS_INT32(&iter)) {
-		writeerror->index = bson_iter_int32(&iter);
+		intern->index = bson_iter_int32(&iter);
 	}
 
 	return true;

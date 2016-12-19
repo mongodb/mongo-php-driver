@@ -50,6 +50,108 @@ PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
 
 zend_object_handlers php_phongo_handler_writeresult;
 
+static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_t *intern, zval *return_value TSRMLS_DC)
+{
+	bson_iter_t iter, child;
+#if PHP_VERSION_ID >= 70000
+	zval writeconcernerror;
+#else
+	zval *writeconcernerror = NULL;
+#endif
+
+	ZVAL_NULL(return_value);
+
+	if (bson_iter_init_find(&iter, intern->reply, "writeConcernErrors") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
+		while (bson_iter_next(&child)) {
+			bson_t cbson;
+			uint32_t len;
+			const uint8_t *data;
+
+			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
+				continue;
+			}
+
+			bson_iter_document(&child, &len, &data);
+
+			if (!bson_init_static(&cbson, data, len)) {
+				continue;
+			}
+
+#if PHP_VERSION_ID >= 70000
+			if (!phongo_writeconcernerror_init(&writeconcernerror, &cbson TSRMLS_CC)) {
+				zval_ptr_dtor(&writeconcernerror);
+				return false;
+			}
+
+			ZVAL_ZVAL(return_value, &writeconcernerror, 1, 1);
+#else
+			MAKE_STD_ZVAL(writeconcernerror);
+
+			if (!phongo_writeconcernerror_init(writeconcernerror, &cbson TSRMLS_CC)) {
+				zval_ptr_dtor(&writeconcernerror);
+				return false;
+			}
+
+			ZVAL_ZVAL(return_value, writeconcernerror, 1, 1);
+#endif
+
+			return true;
+		}
+	}
+
+	return true;
+}
+
+static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t *intern, zval *return_value TSRMLS_DC)
+{
+	bson_iter_t iter, child;
+
+	array_init(return_value);
+
+	if (bson_iter_init_find(&iter, intern->reply, "writeErrors") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
+		while (bson_iter_next(&child)) {
+			bson_t cbson;
+			uint32_t len;
+			const uint8_t *data;
+#if PHP_VERSION_ID >= 70000
+			zval writeerror;
+#else
+			zval *writeerror = NULL;
+#endif
+
+			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
+				continue;
+			}
+
+			bson_iter_document(&child, &len, &data);
+
+			if (!bson_init_static(&cbson, data, len)) {
+				continue;
+			}
+
+#if PHP_VERSION_ID >= 70000
+			if (!phongo_writeerror_init(&writeerror, &cbson TSRMLS_CC)) {
+				zval_ptr_dtor(&writeerror);
+				continue;
+			}
+
+			add_next_index_zval(return_value, &writeerror);
+#else
+			MAKE_STD_ZVAL(writeerror);
+
+			if (!phongo_writeerror_init(writeerror, &cbson TSRMLS_CC)) {
+				zval_ptr_dtor(&writeerror);
+				continue;
+			}
+
+			add_next_index_zval(return_value, writeerror);
+#endif
+		}
+	}
+
+	return true;
+}
+
 /* {{{ proto integer|null WriteResult::getInsertedCount()
    Returns the number of documents that were inserted */
 PHP_METHOD(WriteResult, getInsertedCount)
@@ -234,7 +336,6 @@ PHP_METHOD(WriteResult, getUpsertedIds)
    Return any write concern error that occurred */
 PHP_METHOD(WriteResult, getWriteConcernError)
 {
-	bson_iter_t iter, child;
 	php_phongo_writeresult_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
@@ -245,35 +346,7 @@ PHP_METHOD(WriteResult, getWriteConcernError)
 		return;
 	}
 
-	if (bson_iter_init_find(&iter, intern->reply, "writeConcernErrors") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
-		while (bson_iter_next(&child)) {
-			bson_t cbson;
-			uint32_t len;
-			const uint8_t *data;
-
-			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
-				continue;
-			}
-
-			bson_iter_document(&child, &len, &data);
-
-			if (!bson_init_static(&cbson, data, len)) {
-				continue;
-			}
-
-			object_init_ex(return_value, php_phongo_writeconcernerror_ce);
-
-			if (!phongo_writeconcernerror_init(return_value, &cbson TSRMLS_CC)) {
-#if PHP_VERSION_ID >= 70000
-				zval_ptr_dtor(return_value);
-#else
-				zval_ptr_dtor(&return_value);
-#endif
-			}
-
-			return;
-		}
-	}
+	php_phongo_writeresult_get_writeconcernerror(intern, return_value TSRMLS_CC);
 }
 /* }}} */
 
@@ -281,7 +354,6 @@ PHP_METHOD(WriteResult, getWriteConcernError)
    Returns any write errors that occurred */
 PHP_METHOD(WriteResult, getWriteErrors)
 {
-	bson_iter_t iter, child;
 	php_phongo_writeresult_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
@@ -292,52 +364,7 @@ PHP_METHOD(WriteResult, getWriteErrors)
 		return;
 	}
 
-
-	array_init(return_value);
-
-	if (bson_iter_init_find(&iter, intern->reply, "writeErrors") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
-		while (bson_iter_next(&child)) {
-			bson_t cbson;
-			uint32_t len;
-			const uint8_t *data;
-#if PHP_VERSION_ID >= 70000
-			zval writeerror;
-#else
-			zval *writeerror = NULL;
-#endif
-
-			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
-				continue;
-			}
-
-			bson_iter_document(&child, &len, &data);
-
-			if (!bson_init_static(&cbson, data, len)) {
-				continue;
-			}
-
-#if PHP_VERSION_ID >= 70000
-			object_init_ex(&writeerror, php_phongo_writeerror_ce);
-
-			if (!phongo_writeerror_init(&writeerror, &cbson TSRMLS_CC)) {
-				zval_ptr_dtor(&writeerror);
-				continue;
-			}
-
-			add_next_index_zval(return_value, &writeerror);
-#else
-			MAKE_STD_ZVAL(writeerror);
-			object_init_ex(writeerror, php_phongo_writeerror_ce);
-
-			if (!phongo_writeerror_init(writeerror, &cbson TSRMLS_CC)) {
-				zval_ptr_dtor(&writeerror);
-				continue;
-			}
-
-			add_next_index_zval(return_value, writeerror);
-#endif
-		}
-	}
+	php_phongo_writeresult_get_writeerrors(intern, return_value TSRMLS_CC);
 }
 /* }}} */
 
@@ -445,7 +472,7 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 #else
 	zval                      retval = zval_used_for_init;
 #endif
-	bson_iter_t iter, child;
+	bson_iter_t iter;
 
 	intern = Z_WRITERESULT_OBJ_P(object);
 	*is_temp = 1;
@@ -494,67 +521,47 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 #endif
 	}
 
-	if (bson_iter_init_find(&iter, intern->reply, "writeErrors") && BSON_ITER_HOLDS_ARRAY(&iter)) {
-		uint32_t len;
-		const uint8_t *data;
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-
-		/* Use native arrays for debugging output */
-		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-
-		bson_iter_array(&iter, &len, &data);
-		phongo_bson_to_zval_ex(data, len, &state);
+	{
 #if PHP_VERSION_ID >= 70000
-		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", &state.zchild);
+		zval writeerrors;
+
+		php_phongo_writeresult_get_writeerrors(intern, &writeerrors TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", &writeerrors);
 #else
-		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", state.zchild);
-#endif
-	} else {
-#if PHP_VERSION_ID >= 70000
-		zval writeErrors;
-		array_init(&writeErrors);
-		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", &writeErrors);
-#else
-		zval *writeErrors = NULL;
-		MAKE_STD_ZVAL(writeErrors);
-		array_init(writeErrors);
-		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", writeErrors);
+		zval *writeerrors = NULL;
+
+		MAKE_STD_ZVAL(writeerrors);
+		php_phongo_writeresult_get_writeerrors(intern, writeerrors TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", writeerrors);
 #endif
 	}
 
-	if (bson_iter_init_find(&iter, intern->reply, "writeConcernErrors") && BSON_ITER_HOLDS_ARRAY(&iter) &&
-	    bson_iter_recurse(&iter, &child) && bson_iter_next(&child) && BSON_ITER_HOLDS_DOCUMENT(&child)) {
-		uint32_t len;
-		const uint8_t *data;
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-
-		/* Use native arrays for debugging output */
-		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-
-		bson_iter_document(&child, &len, &data);
-		phongo_bson_to_zval_ex(data, len, &state);
+	{
 #if PHP_VERSION_ID >= 70000
-		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", &state.zchild);
+		zval writeconcernerror;
+
+		php_phongo_writeresult_get_writeconcernerror(intern, &writeconcernerror TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", &writeconcernerror);
 #else
-		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", state.zchild);
+		zval *writeconcernerror = NULL;
+
+		MAKE_STD_ZVAL(writeconcernerror);
+		php_phongo_writeresult_get_writeconcernerror(intern, writeconcernerror TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", writeconcernerror);
 #endif
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "writeConcernError");
 	}
 
 	if (intern->write_concern) {
 #if PHP_VERSION_ID >= 70000
 		zval write_concern;
 
-		php_phongo_write_concern_to_zval(&write_concern, intern->write_concern);
+		phongo_writeconcern_init(&write_concern, intern->write_concern);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeConcern", &write_concern);
 #else
 		zval *write_concern = NULL;
 
 		MAKE_STD_ZVAL(write_concern);
-		php_phongo_write_concern_to_zval(write_concern, intern->write_concern);
+		phongo_writeconcern_init(write_concern, intern->write_concern TSRMLS_CC);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeConcern", write_concern);
 #endif
 	} else {
