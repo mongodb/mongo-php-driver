@@ -22,8 +22,8 @@ mongodb
 MongoDB support => enabled
 MongoDB extension version => 1.%d.%d%S
 MongoDB extension stability => %s
-libmongoc bundled version => 1.%s
-libbson bundled version => 1.%s
+libbson bundled version => 1.%d.%d%S
+libmongoc bundled version => 1.%d.%d%S
 
 Directive => Local Value => Master Value
 mongodb.debug => stdout => stderr
