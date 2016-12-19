@@ -16,11 +16,11 @@ phpinfo();
 %a
 mongodb
 
-mongodb support => enabled
-mongodb version => 1.%d.%d%S
-mongodb stability => %s
-libmongoc version => 1.%s
-libbson version => 1.%s
+MongoDB support => enabled
+MongoDB extension version => 1.%d.%d%S
+MongoDB extension stability => %s
+libmongoc bundled version => 1.%s
+libbson bundled version => 1.%s
 
 Directive => Local Value => Master Value
 mongodb.debug => no value => no value
