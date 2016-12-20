@@ -19,11 +19,17 @@ phpinfo();
 %a
 mongodb
 
-mongodb support => enabled
-mongodb version => 1.%d.%d%S
-mongodb stability => %s
-libmongoc version => 1.%s
-libbson version => 1.%s
+MongoDB support => enabled
+MongoDB extension version => 1.%d.%d%S
+MongoDB extension stability => %s
+libbson bundled version => 1.%d.%d%S
+libmongoc bundled version => 1.%d.%d%S
+libmongoc SSL => enabled
+libmongoc SSL library => %s
+libmongoc crypto => enabled
+libmongoc crypto library => %s
+libmongoc crypto system profile => %s
+libmongoc SASL => enabled
 
 Directive => Local Value => Master Value
 mongodb.debug => stdout => stderr

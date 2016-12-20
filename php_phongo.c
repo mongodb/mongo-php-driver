@@ -1963,22 +1963,68 @@ PHP_GSHUTDOWN_FUNCTION(mongodb)
 PHP_MINFO_FUNCTION(mongodb)
 {
 	php_info_print_table_start();
-	php_info_print_table_header(2, "mongodb support", "enabled");
-	php_info_print_table_row(2, "mongodb version", MONGODB_VERSION_S);
-	php_info_print_table_row(2, "mongodb stability", MONGODB_STABILITY_S);
+	php_info_print_table_header(2, "MongoDB support", "enabled");
+	php_info_print_table_row(2, "MongoDB extension version", MONGODB_VERSION_S);
+	php_info_print_table_row(2, "MongoDB extension stability", MONGODB_STABILITY_S);
+
+#ifdef HAVE_SYSTEM_LIBBSON
+	php_info_print_table_row(2, "libbson headers version", BSON_VERSION_S);
+	php_info_print_table_row(2, "libbson library version", bson_get_version());
+#else
+	php_info_print_table_row(2, "libbson bundled version", BSON_VERSION_S);
+#endif
+
 #ifdef HAVE_SYSTEM_LIBMONGOC
 	php_info_print_table_row(2, "libmongoc headers version", MONGOC_VERSION_S);
 	php_info_print_table_row(2, "libmongoc library version", mongoc_get_version());
 #else
 	/* Bundled libraries, buildtime = runtime */
-	php_info_print_table_row(2, "libmongoc version", MONGOC_VERSION_S);
+	php_info_print_table_row(2, "libmongoc bundled version", MONGOC_VERSION_S);
 #endif
-#ifdef HAVE_SYSTEM_LIBBSON
-	php_info_print_table_row(2, "libbson headers version", BSON_VERSION_S);
-	php_info_print_table_row(2, "libbson library version", bson_get_version());
+
+#ifdef MONGOC_ENABLE_SSL
+	php_info_print_table_row(2, "libmongoc SSL", "enabled");
+# if defined(MONGOC_ENABLE_SSL_OPENSSL)
+	php_info_print_table_row(2, "libmongoc SSL library", "OpenSSL");
+# elif defined(MONGOC_ENABLE_SSL_LIBRESSL)
+	php_info_print_table_row(2, "libmongoc SSL library", "LibreSSL");
+# elif defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
+	php_info_print_table_row(2, "libmongoc SSL library", "Secure Transport");
+# elif defined(MONGOC_ENABLE_SSL_SECURE_CHANNEL)
+	php_info_print_table_row(2, "libmongoc SSL library", "Secure Channel");
+# else
+	php_info_print_table_row(2, "libmongoc SSL library", "unknown");
+# endif
 #else
-	php_info_print_table_row(2, "libbson version", BSON_VERSION_S);
+	php_info_print_table_row(2, "libmongoc SSL", "disabled");
 #endif
+
+#ifdef MONGOC_ENABLE_CRYPTO
+	php_info_print_table_row(2, "libmongoc crypto", "enabled");
+# if defined(MONGOC_ENABLE_CRYPTO_LIBCRYPTO)
+	php_info_print_table_row(2, "libmongoc crypto library", "libcrypto");
+# elif defined(MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO)
+	php_info_print_table_row(2, "libmongoc crypto library", "Common Crypto");
+# elif defined(MONGOC_ENABLE_CRYPTO_CNG)
+	php_info_print_table_row(2, "libmongoc crypto library", "CNG");
+# else
+	php_info_print_table_row(2, "libmongoc crypto library", "unknown");
+# endif
+# ifdef MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE
+	php_info_print_table_row(2, "libmongoc crypto system profile", "enabled");
+# else
+	php_info_print_table_row(2, "libmongoc crypto system profile", "disabled");
+# endif
+#else
+	php_info_print_table_row(2, "libmongoc crypto", "disabled");
+#endif
+
+#ifdef MONGOC_ENABLE_SASL
+	php_info_print_table_row(2, "libmongoc SASL", "enabled");
+#else
+	php_info_print_table_row(2, "libmongoc SASL", "disabled");
+#endif
+
 	php_info_print_table_end();
 
 	DISPLAY_INI_ENTRIES();
