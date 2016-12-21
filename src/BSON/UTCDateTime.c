@@ -30,7 +30,6 @@
 #include <Zend/zend_interfaces.h>
 #include <ext/date/php_date.h>
 #include <ext/spl/spl_iterators.h>
-#include <ext/date/php_date.h>
 #include <ext/standard/php_var.h>
 #if PHP_VERSION_ID >= 70000
 # include <zend_smart_str.h>
