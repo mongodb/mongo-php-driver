@@ -20,6 +20,7 @@
 #include "php_phongo_structs.h"
 
 /* Export zend_class_entry dependencies, which are initialized in MINIT */
+extern zend_class_entry *php_phongo_date_immutable_ce;
 extern zend_class_entry *php_phongo_json_serializable_ce;
 
 #if PHP_VERSION_ID >= 70000

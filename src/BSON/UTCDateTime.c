@@ -176,12 +176,9 @@ PHP_METHOD(UTCDateTime, __construct)
 	}
 
 	if (Z_TYPE_P(milliseconds) == IS_OBJECT) {
-		if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_date_ce() TSRMLS_CC)) {
+		if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_date_ce() TSRMLS_CC) ||
+		    (php_phongo_date_immutable_ce && instanceof_function(Z_OBJCE_P(milliseconds), php_phongo_date_immutable_ce TSRMLS_CC))) {
 			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(milliseconds));
-#if PHP_VERSION_ID >= 50500
-		} else if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_immutable_ce() TSRMLS_CC)) {
-			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(milliseconds));
-#endif
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected instance of DateTimeInterface, %s given", ZSTR_VAL(Z_OBJCE_P(milliseconds)->name));
 		}
