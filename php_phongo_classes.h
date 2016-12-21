@@ -19,6 +19,9 @@
 
 #include "php_phongo_structs.h"
 
+/* Export zend_class_entry dependencies, which are initialized in MINIT */
+extern zend_class_entry *php_phongo_json_serializable_ce;
+
 #if PHP_VERSION_ID >= 70000
 
 static inline php_phongo_bulkwrite_t* php_bulkwrite_fetch_object(zend_object *obj) {

@@ -25,7 +25,6 @@
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
-#include <ext/json/php_json.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
@@ -498,7 +497,7 @@ PHP_MINIT_FUNCTION(Timestamp)
 	php_phongo_timestamp_ce->create_object = php_phongo_timestamp_create_object;
 	PHONGO_CE_FINAL(php_phongo_timestamp_ce);
 
-	zend_class_implements(php_phongo_timestamp_ce TSRMLS_CC, 1, php_json_serializable_ce);
+	zend_class_implements(php_phongo_timestamp_ce TSRMLS_CC, 1, php_phongo_json_serializable_ce);
 	zend_class_implements(php_phongo_timestamp_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_timestamp_ce TSRMLS_CC, 1, zend_ce_serializable);
 
