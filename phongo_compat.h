@@ -97,6 +97,7 @@
 # define ADD_ASSOC_NULL_EX(_zv, _key) add_assoc_null_ex(_zv, ZEND_STRL(_key));
 # define ADD_ASSOC_BOOL_EX(_zv, _key, _value) add_assoc_bool_ex(_zv, ZEND_STRL(_key), _value);
 # define ADD_INDEX_STRINGL(_zv, _ind, _value, _len) add_index_stringl(_zv, _ind, _value, _len);
+# define ADD_NEXT_INDEX_STRINGL(_zv, _value, _len) add_next_index_stringl(_zv, _value, _len);
 # define phongo_free_object_arg zend_object
 # define phongo_zpp_char_len size_t
 # define ZEND_HASH_APPLY_COUNT(ht) (ht)->u.v.nApplyCount
@@ -126,6 +127,7 @@
 # define ADD_ASSOC_NULL_EX(_zv, _key) add_assoc_null_ex(_zv, ZEND_STRS(_key));
 # define ADD_ASSOC_BOOL_EX(_zv, _key, _value) add_assoc_bool_ex(_zv, ZEND_STRS(_key), _value);
 # define ADD_INDEX_STRINGL(_zv, _ind, _value, _len) add_index_stringl(_zv, _ind, _value, _len, 0);
+# define ADD_NEXT_INDEX_STRINGL(_zv, _value, _len) add_next_index_stringl(_zv, _value, _len, 1);
 # define Z_PHPDATE_P(object) ((php_date_obj*)zend_object_store_get_object(object TSRMLS_CC))
 # define Z_ISUNDEF(x) !x
 # define phongo_free_object_arg void
@@ -143,6 +145,7 @@
 
 #if SIZEOF_PHONGO_LONG == 8
 # define ADD_INDEX_INT64(zval, index, value) add_index_long(zval, index, value)
+# define ADD_NEXT_INDEX_INT64(zval, value) add_next_index_long(zval, value)
 # define ADD_ASSOC_INT64(zval, key, value) add_assoc_long(zval, key, value)
 #elif SIZEOF_PHONGO_LONG == 4
 # define ADD_INDEX_INT64(zval, index, value) \
@@ -150,6 +153,12 @@
         phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", value); \
     } else { \
         add_index_long(zval, index, val); \
+    }
+# define ADD_NEXT_INDEX_INT64(zval, value) \
+    if (value > INT32_MAX || value < INT32_MIN) { \
+        phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", value); \
+    } else { \
+        add_next_index_long(zval, val); \
     }
 # define ADD_ASSOC_INT64(zval, key, value) \
     if (value > INT32_MAX || value < INT32_MIN) { \

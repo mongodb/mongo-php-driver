@@ -204,7 +204,11 @@ bool php_phongo_bson_visit_double(const bson_iter_t *iter ARG_UNUSED, const char
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 #endif
 
-	add_assoc_double(retval, key, v_double);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_double(retval, v_double);
+	} else {
+		add_assoc_double(retval, key, v_double);
+	}
 
 	return false;
 }
@@ -217,7 +221,11 @@ bool php_phongo_bson_visit_utf8(const bson_iter_t *iter ARG_UNUSED, const char *
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 #endif
 
-	ADD_ASSOC_STRING_EX(retval, key, strlen(key), v_utf8, v_utf8_len);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		ADD_NEXT_INDEX_STRINGL(retval, v_utf8, v_utf8_len);
+	} else {
+		ADD_ASSOC_STRING_EX(retval, key, strlen(key), v_utf8, v_utf8_len);
+	}
 
 	return false;
 }
@@ -251,7 +259,11 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char
 
 		php_phongo_new_binary_from_binary_and_type(&zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
 
-		ADD_ASSOC_ZVAL(retval, key, &zchild);
+		if (((php_phongo_bson_state *)data)->is_visiting_array) {
+			add_next_index_zval(retval, &zchild);
+		} else {
+			ADD_ASSOC_ZVAL(retval, key, &zchild);
+		}
 		Z_SET_REFCOUNT(zchild, 1);
 #else
 		zval *zchild = NULL;
@@ -259,7 +271,11 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char
 		MAKE_STD_ZVAL(zchild);
 		php_phongo_new_binary_from_binary_and_type(zchild, (const char *)v_binary, v_binary_len, v_subtype TSRMLS_CC);
 
-		ADD_ASSOC_ZVAL(retval, key, zchild);
+		if (((php_phongo_bson_state *)data)->is_visiting_array) {
+			add_next_index_zval(retval, zchild);
+		} else {
+			ADD_ASSOC_ZVAL(retval, key, zchild);
+		}
 		Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 	}
@@ -288,7 +304,12 @@ bool php_phongo_bson_visit_oid(const bson_iter_t *iter ARG_UNUSED, const char *k
 	zval zchild;
 
 	php_phongo_objectid_new_from_oid(&zchild, v_oid TSRMLS_CC);
-	ADD_ASSOC_ZVAL(retval, key, &zchild);
+
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, &zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
+	}
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -296,7 +317,11 @@ bool php_phongo_bson_visit_oid(const bson_iter_t *iter ARG_UNUSED, const char *k
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_objectid_new_from_oid(zchild, v_oid TSRMLS_CC);
 
-	ADD_ASSOC_ZVAL(retval, key, zchild);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, zchild);
+	}
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -311,7 +336,11 @@ bool php_phongo_bson_visit_bool(const bson_iter_t *iter ARG_UNUSED, const char *
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 #endif
 
-	add_assoc_bool(retval, key, v_bool);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_bool(retval, v_bool);
+	} else {
+		add_assoc_bool(retval, key, v_bool);
+	}
 
 	return false;
 }
@@ -327,7 +356,12 @@ bool php_phongo_bson_visit_date_time(const bson_iter_t *iter ARG_UNUSED, const c
 	zval zchild;
 
 	php_phongo_new_utcdatetime_from_epoch(&zchild, msec_since_epoch TSRMLS_CC);
-	ADD_ASSOC_ZVAL(retval, key, &zchild);
+
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, &zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
+	}
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -335,7 +369,11 @@ bool php_phongo_bson_visit_date_time(const bson_iter_t *iter ARG_UNUSED, const c
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_utcdatetime_from_epoch(zchild, msec_since_epoch TSRMLS_CC);
 
-	ADD_ASSOC_ZVAL(retval, key, zchild);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, zchild);
+	}
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -350,7 +388,12 @@ bool php_phongo_bson_visit_decimal128(const bson_iter_t *iter ARG_UNUSED, const 
 	zval zchild;
 
 	php_phongo_new_decimal128(&zchild, decimal TSRMLS_CC);
-	ADD_ASSOC_ZVAL(retval, key, &zchild);
+
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, &zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
+	}
 #else
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 	zval *zchild = NULL;
@@ -359,7 +402,11 @@ bool php_phongo_bson_visit_decimal128(const bson_iter_t *iter ARG_UNUSED, const 
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_decimal128(zchild, decimal TSRMLS_CC);
 
-	ADD_ASSOC_ZVAL(retval, key, zchild);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, zchild);
+	}
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -375,7 +422,11 @@ bool php_phongo_bson_visit_null(const bson_iter_t *iter ARG_UNUSED, const char *
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 #endif
 
-	add_assoc_null(retval, key);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_null(retval);
+	} else {
+		add_assoc_null(retval, key);
+	}
 
 	return false;
 }
@@ -392,7 +443,11 @@ bool php_phongo_bson_visit_regex(const bson_iter_t *iter ARG_UNUSED, const char 
 
 	php_phongo_new_regex_from_regex_and_options(&zchild, v_regex, v_options TSRMLS_CC);
 
-	ADD_ASSOC_ZVAL(retval, key, &zchild);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, &zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
+	}
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -400,7 +455,11 @@ bool php_phongo_bson_visit_regex(const bson_iter_t *iter ARG_UNUSED, const char 
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_regex_from_regex_and_options(zchild, v_regex, v_options TSRMLS_CC);
 
-	ADD_ASSOC_ZVAL(retval, key, zchild);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, zchild);
+	}
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -428,7 +487,11 @@ bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const char *
 
 	php_phongo_new_javascript_from_javascript(1, &zchild, v_code, v_code_len TSRMLS_CC);
 
-	ADD_ASSOC_ZVAL(retval, key, &zchild);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, &zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
+	}
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -436,7 +499,11 @@ bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const char *
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_javascript_from_javascript(1, zchild, v_code, v_code_len TSRMLS_CC);
 
-	ADD_ASSOC_ZVAL(retval, key, zchild);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, zchild);
+	}
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -463,8 +530,12 @@ bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter ARG_UNUSED, const 
 	zval zchild;
 
 	php_phongo_new_javascript_from_javascript_and_scope(1, &zchild, v_code, v_code_len, v_scope TSRMLS_CC);
-	ADD_ASSOC_ZVAL(retval, key, &zchild);
 
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, &zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
+	}
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -472,7 +543,11 @@ bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter ARG_UNUSED, const 
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_javascript_from_javascript_and_scope(1, zchild, v_code, v_code_len, v_scope TSRMLS_CC);
 
-	ADD_ASSOC_ZVAL(retval, key, zchild);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, zchild);
+	}
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -487,7 +562,11 @@ bool php_phongo_bson_visit_int32(const bson_iter_t *iter ARG_UNUSED, const char 
 	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 #endif
 
-	add_assoc_long(retval, key, v_int32);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_long(retval, v_int32);
+	} else {
+		add_assoc_long(retval, key, v_int32);
+	}
 
 	return false;
 }
@@ -504,7 +583,11 @@ bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter ARG_UNUSED, const c
 
 	php_phongo_new_timestamp_from_increment_and_timestamp(&zchild, v_increment, v_timestamp TSRMLS_CC);
 
-	ADD_ASSOC_ZVAL(retval, key, &zchild);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, &zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
+	}
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -512,7 +595,11 @@ bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter ARG_UNUSED, const c
 	MAKE_STD_ZVAL(zchild);
 	php_phongo_new_timestamp_from_increment_and_timestamp(zchild, v_increment, v_timestamp TSRMLS_CC);
 
-	ADD_ASSOC_ZVAL(retval, key, zchild);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, zchild);
+	}
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -530,7 +617,11 @@ bool php_phongo_bson_visit_int64(const bson_iter_t *iter ARG_UNUSED, const char 
 	TSRMLS_FETCH();
 #endif
 
-	ADD_ASSOC_INT64(retval, key, v_int64);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		ADD_NEXT_INDEX_INT64(retval, v_int64);
+	} else {
+		ADD_ASSOC_INT64(retval, key, v_int64);
+	}
 
 	return false;
 }
@@ -546,7 +637,12 @@ bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter ARG_UNUSED, const char
 	zval zchild;
 
 	object_init_ex(&zchild, php_phongo_maxkey_ce);
-	ADD_ASSOC_ZVAL(retval, key, &zchild);
+
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, &zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
+	}
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -554,7 +650,11 @@ bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter ARG_UNUSED, const char
 	MAKE_STD_ZVAL(zchild);
 	object_init_ex(zchild, php_phongo_maxkey_ce);
 
-	ADD_ASSOC_ZVAL(retval, key, zchild);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, zchild);
+	}
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
 
@@ -572,7 +672,12 @@ bool php_phongo_bson_visit_minkey(const bson_iter_t *iter ARG_UNUSED, const char
 	zval zchild;
 
 	object_init_ex(&zchild, php_phongo_minkey_ce);
-	ADD_ASSOC_ZVAL(retval, key, &zchild);
+
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, &zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
+	}
 #else
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
@@ -581,7 +686,11 @@ bool php_phongo_bson_visit_minkey(const bson_iter_t *iter ARG_UNUSED, const char
 	object_init_ex(zchild, php_phongo_minkey_ce);
 
 	Z_SET_REFCOUNT_P(zchild, 1);
-	ADD_ASSOC_ZVAL(retval, key, zchild);
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, zchild);
+	}
 #endif
 
 	return false;
@@ -651,10 +760,18 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 			switch(state.map.document_type) {
 				case PHONGO_TYPEMAP_NATIVE_ARRAY:
 #if PHP_VERSION_ID >= 70000
-					ADD_ASSOC_ZVAL(retval, key, &state.zchild);
+					if (((php_phongo_bson_state *)data)->is_visiting_array) {
+						add_next_index_zval(retval, &state.zchild);
+					} else {
+						ADD_ASSOC_ZVAL(retval, key, &state.zchild);
+					}
 					Z_SET_REFCOUNT(state.zchild, 1);
 #else
-					ADD_ASSOC_ZVAL(retval, key, state.zchild);
+					if (((php_phongo_bson_state *)data)->is_visiting_array) {
+						add_next_index_zval(retval, state.zchild);
+					} else {
+						ADD_ASSOC_ZVAL(retval, key, state.zchild);
+					}
 					Z_SET_REFCOUNT_P(state.zchild, 1);
 #endif
 					break;
@@ -665,7 +782,11 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 
 					object_init_ex(&obj, state.odm ? state.odm : state.map.document);
 					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
-					add_assoc_zval(retval, key, &obj);
+					if (((php_phongo_bson_state *)data)->is_visiting_array) {
+						add_next_index_zval(retval, &obj);
+					} else {
+						ADD_ASSOC_ZVAL(retval, key, &obj);
+					}
 					zval_ptr_dtor(&state.zchild);
 #else
 					zval *obj = NULL;
@@ -673,7 +794,11 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 					MAKE_STD_ZVAL(obj);
 					object_init_ex(obj, state.odm ? state.odm : state.map.document);
 					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
-					add_assoc_zval(retval, key, obj);
+					if (((php_phongo_bson_state *)data)->is_visiting_array) {
+						add_next_index_zval(retval, obj);
+					} else {
+						ADD_ASSOC_ZVAL(retval, key, obj);
+					}
 					zval_ptr_dtor(&state.zchild);
 #endif
 					break;
@@ -683,11 +808,19 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 				default:
 #if PHP_VERSION_ID >= 70000
 					object_and_properties_init(&state.zchild, zend_standard_class_def, Z_ARRVAL(state.zchild));
-					add_assoc_zval(retval, key, &state.zchild);
+					if (((php_phongo_bson_state *)data)->is_visiting_array) {
+						add_next_index_zval(retval, &state.zchild);
+					} else {
+						ADD_ASSOC_ZVAL(retval, key, &state.zchild);
+					}
 					Z_SET_REFCOUNT(state.zchild, 1);
 #else
 					object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
-					add_assoc_zval(retval, key, state.zchild);
+					if (((php_phongo_bson_state *)data)->is_visiting_array) {
+						add_next_index_zval(retval, state.zchild);
+					} else {
+						ADD_ASSOC_ZVAL(retval, key, state.zchild);
+					}
 					Z_SET_REFCOUNT_P(state.zchild, 1);
 #endif
 			}
@@ -719,6 +852,12 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 
 		state.map = ((php_phongo_bson_state *)data)->map;
 
+		/* Note that we are visiting an array, so element visitors know to use
+		 * add_next_index() (i.e. disregard BSON keys) instead of add_assoc()
+		 * when building the PHP array.
+		 */
+		state.is_visiting_array = true;
+
 #if PHP_VERSION_ID >= 70000
 		array_init(&state.zchild);
 #else
@@ -735,7 +874,11 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 
 					object_init_ex(&obj, state.map.array);
 					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
-					add_assoc_zval(retval, key, &obj);
+					if (((php_phongo_bson_state *)data)->is_visiting_array) {
+						add_next_index_zval(retval, &obj);
+					} else {
+						ADD_ASSOC_ZVAL(retval, key, &obj);
+					}
 					zval_ptr_dtor(&state.zchild);
 #else
 					zval *obj = NULL;
@@ -743,7 +886,11 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 					MAKE_STD_ZVAL(obj);
 					object_init_ex(obj, state.map.array);
 					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, state.zchild);
-					add_assoc_zval(retval, key, obj);
+					if (((php_phongo_bson_state *)data)->is_visiting_array) {
+						add_next_index_zval(retval, obj);
+					} else {
+						ADD_ASSOC_ZVAL(retval, key, obj);
+					}
 					zval_ptr_dtor(&state.zchild);
 #endif
 					break;
@@ -752,11 +899,19 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 				case PHONGO_TYPEMAP_NATIVE_OBJECT:
 #if PHP_VERSION_ID >= 70000
 					object_and_properties_init(&state.zchild, zend_standard_class_def, Z_ARRVAL(state.zchild));
-					add_assoc_zval(retval, key, &state.zchild);
+					if (((php_phongo_bson_state *)data)->is_visiting_array) {
+						add_next_index_zval(retval, &state.zchild);
+					} else {
+						ADD_ASSOC_ZVAL(retval, key, &state.zchild);
+					}
 					Z_SET_REFCOUNT(state.zchild, 1);
 #else
 					object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
-					add_assoc_zval(retval, key, state.zchild);
+					if (((php_phongo_bson_state *)data)->is_visiting_array) {
+						add_next_index_zval(retval, state.zchild);
+					} else {
+						ADD_ASSOC_ZVAL(retval, key, state.zchild);
+					}
 					Z_SET_REFCOUNT_P(state.zchild, 1);
 #endif
 					break;
@@ -764,10 +919,18 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 				case PHONGO_TYPEMAP_NATIVE_ARRAY:
 				default:
 #if PHP_VERSION_ID >= 70000
-					ADD_ASSOC_ZVAL(retval, key, &state.zchild);
+					if (((php_phongo_bson_state *)data)->is_visiting_array) {
+						add_next_index_zval(retval, &state.zchild);
+					} else {
+						ADD_ASSOC_ZVAL(retval, key, &state.zchild);
+					}
 					Z_SET_REFCOUNT(state.zchild, 1);
 #else
-					ADD_ASSOC_ZVAL(retval, key, state.zchild);
+					if (((php_phongo_bson_state *)data)->is_visiting_array) {
+						add_next_index_zval(retval, state.zchild);
+					} else {
+						ADD_ASSOC_ZVAL(retval, key, state.zchild);
+					}
 					Z_SET_REFCOUNT_P(state.zchild, 1);
 #endif
 					break;
