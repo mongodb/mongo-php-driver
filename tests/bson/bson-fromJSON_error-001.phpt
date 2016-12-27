@@ -14,8 +14,5 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-lexical error: invalid string in json text.
-                                       foo
-                     (right here) ------^
-
+Got parse error at 'o', position 1: SPECIAL_EXPECTED
 ===DONE===

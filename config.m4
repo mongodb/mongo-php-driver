@@ -206,13 +206,13 @@ if test "$MONGODB" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
-      if $PKG_CONFIG libbson-1.0 --atleast-version 1.5.0; then
+      if $PKG_CONFIG libbson-1.0 --atleast-version 1.6.0; then
         LIBBSON_INC=`$PKG_CONFIG libbson-1.0 --cflags`
         LIBBSON_LIB=`$PKG_CONFIG libbson-1.0 --libs`
         LIBBSON_VER=`$PKG_CONFIG libbson-1.0 --modversion`
         AC_MSG_RESULT(version $LIBBSON_VER found)
       else
-        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.5.0)
+        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.6.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libbson must be installed)
@@ -226,11 +226,11 @@ if test "$MONGODB" != "no"; then
     # Generated with: find src/libbson/src/bson -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
     PHP_MONGODB_BSON_SOURCES="bcon.c bson-atomic.c bson.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-iso8601.c bson-iter.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c"
 
-    # Generated with: find src/libbson/src/yajl -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
-    PHP_MONGODB_YAJL_SOURCES="yajl_alloc.c yajl_buf.c yajl.c yajl_encode.c yajl_gen.c yajl_lex.c yajl_parser.c yajl_tree.c yajl_version.c"
+    # Generated with: find src/libbson/src/jsonsl -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
+    PHP_MONGODB_JSONSL_SOURCES="jsonsl.c"
 
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $PHP_MONGODB_YAJL_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/jsonsl], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
   fi
 
   AC_MSG_CHECKING(configuring libmongoc)
@@ -381,10 +381,10 @@ fi
     m4_include(src/libbson/build/autotools/m4/ac_create_stdint_h.m4)
     AC_CREATE_STDINT_H([$srcdir/src/libbson/src/bson/bson-stdint.h])
     PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/])
-    PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/yajl/])
+    PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/jsonsl/])
     PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/bson/])
     PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/])
-    PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/yajl/])
+    PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/jsonsl/])
     PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/bson/])
   fi
 
