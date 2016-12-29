@@ -1444,19 +1444,14 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 					flags &= ~PHONGO_BSON_ADD_ID;
 				}
 			}
-
-			/* PHP's HashTable API includes the terminating NULL byte in key's
-			 * string length, so subtract to track the equivalent strlen(). */
-			string_key_len -= 1;
 		}
 
 		/* Ensure we're working with a string key */
 		if (hash_type == HASH_KEY_IS_LONG) {
 			spprintf(&string_key, 0, "%ld", num_key);
-			string_key_len = strlen(string_key);
 		}
 
-		phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, string_key, string_key_len, *value TSRMLS_CC);
+		phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, string_key, strlen(string_key), *value TSRMLS_CC);
 
 		if (hash_type == HASH_KEY_IS_LONG) {
 			efree(string_key);
