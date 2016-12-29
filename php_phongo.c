@@ -1666,6 +1666,15 @@ void php_phongo_new_decimal128(zval *object, const bson_decimal128_t *decimal TS
 	intern->initialized = true;
 } /* }}} */
 
+/* qsort() compare callback for alphabetizing regex flags upon initialization */
+static int php_phongo_regex_compare_flags(const void *f1, const void *f2) {
+	if (* (const char *) f1 == * (const char *) f2) {
+		return 0;
+	}
+
+	return (* (const char *) f1 > * (const char *) f2) ? 1 : -1;
+}
+
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC) /* {{{ */
 {
 	php_phongo_regex_t     *intern;
@@ -1677,6 +1686,10 @@ void php_phongo_new_regex_from_regex_and_options(zval *object, const char *patte
 	intern->pattern = estrndup(pattern, intern->pattern_len);
 	intern->flags_len = strlen(flags);
 	intern->flags = estrndup(flags, intern->flags_len);
+
+	/* Ensure flags are alphabetized upon initialization. This may be removed
+	 * once CDRIVER-1883 is implemented. */
+	qsort((void *) intern->flags, intern->flags_len, 1, php_phongo_regex_compare_flags);
 } /* }}} */
 
 /* {{{ Memory allocation wrappers */
