@@ -96,7 +96,6 @@
 # define ADD_ASSOC_ZVAL(_zv, _key, _value) add_assoc_zval(_zv, _key, _value);
 # define ADD_ASSOC_NULL_EX(_zv, _key) add_assoc_null_ex(_zv, ZEND_STRL(_key));
 # define ADD_ASSOC_BOOL_EX(_zv, _key, _value) add_assoc_bool_ex(_zv, ZEND_STRL(_key), _value);
-# define ADD_INDEX_STRINGL(_zv, _ind, _value, _len) add_index_stringl(_zv, _ind, _value, _len);
 # define ADD_NEXT_INDEX_STRINGL(_zv, _value, _len) add_next_index_stringl(_zv, _value, _len);
 # define phongo_free_object_arg zend_object
 # define phongo_zpp_char_len size_t
@@ -126,7 +125,6 @@
 # define ADD_ASSOC_ZVAL(_zv, _key, _value) add_assoc_zval(_zv, _key, _value);
 # define ADD_ASSOC_NULL_EX(_zv, _key) add_assoc_null_ex(_zv, ZEND_STRS(_key));
 # define ADD_ASSOC_BOOL_EX(_zv, _key, _value) add_assoc_bool_ex(_zv, ZEND_STRS(_key), _value);
-# define ADD_INDEX_STRINGL(_zv, _ind, _value, _len) add_index_stringl(_zv, _ind, _value, _len, 0);
 # define ADD_NEXT_INDEX_STRINGL(_zv, _value, _len) add_next_index_stringl(_zv, _value, _len, 1);
 # define Z_PHPDATE_P(object) ((php_date_obj*)zend_object_store_get_object(object TSRMLS_CC))
 # define Z_ISUNDEF(x) !x
