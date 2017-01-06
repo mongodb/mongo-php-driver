@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-/* $Id$ */
-
 #ifndef PHONGO_BSON_H
 #define PHONGO_BSON_H
 
