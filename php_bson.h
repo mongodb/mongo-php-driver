@@ -55,12 +55,13 @@ typedef struct {
 #endif
 	php_phongo_bson_typemap  map;
 	zend_class_entry        *odm;
+	bool                     is_visiting_array;
 } php_phongo_bson_state;
 
 #if PHP_VERSION_ID >= 70000
-#define PHONGO_BSON_STATE_INITIALIZER  { {{ 0 }}, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL}, NULL}
+#define PHONGO_BSON_STATE_INITIALIZER  { {{ 0 }}, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL}, NULL, 0 }
 #else
-#define PHONGO_BSON_STATE_INITIALIZER  { NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL}, NULL}
+#define PHONGO_BSON_STATE_INITIALIZER  { NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL}, NULL, 0 }
 #endif
 
 void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
