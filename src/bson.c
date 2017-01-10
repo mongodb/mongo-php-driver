@@ -1271,44 +1271,6 @@ try_again:
 	}
 }
 
-#if PHP_VERSION_ID >= 70000
-static bool is_public_property(zend_class_entry *ce, zend_string *name, zend_string **member TSRMLS_DC) /* {{{ */
-#else
-static bool is_public_property(zend_class_entry *ce, const char *prop_name, int prop_name_len TSRMLS_DC) /* {{{ */
-#endif
-{
-	zend_property_info *property_info = NULL;
-
-#if PHP_VERSION_ID >= 70000
-	if (ZSTR_VAL(name)[0] == 0) {
-		const char *prop_name,
-			 *class_name;
-		size_t prop_name_len;
-
-		zend_unmangle_property_name_ex(name,
-			&class_name, &prop_name, &prop_name_len);
-		(*member) = zend_string_init(prop_name, prop_name_len, 0);
-	} else (*member) = zend_string_copy(name);
-	property_info = zend_get_property_info(ce, (*member), 1 TSRMLS_CC);
-
-	if (!property_info) /* undefined property */
-		return true;
-
-	if (property_info == ZEND_WRONG_PROPERTY_INFO) {
-		return false;
-	}
-	
-	return (property_info->flags & ZEND_ACC_PUBLIC);
-#else
-	zval member;
-	ZVAL_STRINGL(&member, prop_name, prop_name_len, 0);
-	property_info = zend_get_property_info(ce, &member, 1 TSRMLS_CC);
-
-	return (property_info && (property_info->flags & ZEND_ACC_PUBLIC));
-#endif
-}
-/* }}} */
-
 void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC) /* {{{ */
 {
 	HashTable   *ht_data = NULL;
@@ -1422,6 +1384,28 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 		zval        *value;
 
 		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, value) {
+			if (string_key) {
+				if (ht_data_from_properties) {
+					/* Skip protected and private properties */
+					if (ZSTR_VAL(string_key)[0] == '\0' && ZSTR_LEN(string_key) > 0) {
+						zend_string_release(string_key);
+						continue;
+					}
+				}
+
+				if (strlen(ZSTR_VAL(string_key)) != ZSTR_LEN(string_key)) {
+					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "BSON keys cannot contain null bytes. Unexpected null byte after \"%s\".", ZSTR_VAL(string_key));
+
+					return;
+				}
+
+				if (flags & PHONGO_BSON_ADD_ID) {
+					if (!strcmp(ZSTR_VAL(string_key), "_id")) {
+						flags &= ~PHONGO_BSON_ADD_ID;
+					}
+				}
+			}
+
 			/* Ensure we're working with a string key */
 			if (!string_key) {
 				string_key = zend_long_to_str(num_key);
@@ -1429,41 +1413,7 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 				zend_string_addref(string_key);
 			}
 
-			if (Z_TYPE_P(data) == IS_OBJECT) {
-				zend_string *member = NULL;
-
-				/* Ignore non-public properties */
-				if (!instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce) &&
-					!is_public_property(Z_OBJCE_P(data), string_key, &member TSRMLS_CC)) {
-					if (member) {
-						zend_string_release(member);
-					}
-					zend_string_release(string_key);
-					continue;
-				}
-
-				if (flags & PHONGO_BSON_ADD_ID) {
-					if (!strcmp(member ? ZSTR_VAL(member) : ZSTR_VAL(string_key), "_id")) {
-						flags &= ~PHONGO_BSON_ADD_ID;
-					}
-				}
-
-				phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID,
-					member ? ZSTR_VAL(member) : ZSTR_VAL(string_key),
-					member ? ZSTR_LEN(member) : ZSTR_LEN(string_key),
-					value TSRMLS_CC);
-
-				if (member) {
-					zend_string_release(member);
-				}
-			} else {
-				if (flags & PHONGO_BSON_ADD_ID) {
-					if (!strcmp(ZSTR_VAL(string_key), "_id")) {
-						flags &= ~PHONGO_BSON_ADD_ID;
-					}
-				}
-				phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, ZSTR_VAL(string_key), ZSTR_LEN(string_key), value TSRMLS_CC);
-			}
+			phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, ZSTR_VAL(string_key), strlen(ZSTR_VAL(string_key)), value TSRMLS_CC);
 
 			zend_string_release(string_key);
 		} ZEND_HASH_FOREACH_END();
@@ -1489,17 +1439,16 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 
 		if (hash_type == HASH_KEY_IS_STRING) {
 			if (ht_data_from_properties) {
-				const char *class_name;
-				zend_unmangle_property_name(string_key, string_key_len-1, &class_name, (const char **)&string_key);
-				string_key_len = strlen(string_key);
-
-				/* Ignore non-public properties */
-				if (!is_public_property(Z_OBJCE_P(data), string_key, string_key_len TSRMLS_CC)) {
+				/* Skip protected and private properties */
+				if (string_key[0] == '\0' && string_key_len > 1) {
 					continue;
 				}
-			} else {
-				/* Chop off the \0 from string lengths */
-				string_key_len -= 1;
+			}
+
+			if (strlen(string_key) != string_key_len - 1) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "BSON keys cannot contain null bytes. Unexpected null byte after \"%s\".", ZSTR_VAL(string_key));
+
+				return;
 			}
 
 			if (flags & PHONGO_BSON_ADD_ID) {
@@ -1512,10 +1461,9 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 		/* Ensure we're working with a string key */
 		if (hash_type == HASH_KEY_IS_LONG) {
 			spprintf(&string_key, 0, "%ld", num_key);
-			string_key_len = strlen(string_key);
 		}
 
-		phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, string_key, string_key_len, *value TSRMLS_CC);
+		phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, string_key, strlen(string_key), *value TSRMLS_CC);
 
 		if (hash_type == HASH_KEY_IS_LONG) {
 			efree(string_key);
