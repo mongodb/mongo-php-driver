@@ -26,12 +26,10 @@
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
-#include <ext/json/php_json.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/date/php_date.h>
 #include <ext/spl/spl_iterators.h>
-#include <ext/date/php_date.h>
 #include <ext/standard/php_var.h>
 #if PHP_VERSION_ID >= 70000
 # include <zend_smart_str.h>
@@ -177,12 +175,9 @@ PHP_METHOD(UTCDateTime, __construct)
 	}
 
 	if (Z_TYPE_P(milliseconds) == IS_OBJECT) {
-		if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_date_ce() TSRMLS_CC)) {
+		if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_date_ce() TSRMLS_CC) ||
+		    (php_phongo_date_immutable_ce && instanceof_function(Z_OBJCE_P(milliseconds), php_phongo_date_immutable_ce TSRMLS_CC))) {
 			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(milliseconds));
-#if PHP_VERSION_ID >= 50500
-		} else if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_immutable_ce() TSRMLS_CC)) {
-			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(milliseconds));
-#endif
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected instance of DateTimeInterface, %s given", ZSTR_VAL(Z_OBJCE_P(milliseconds)->name));
 		}
@@ -543,7 +538,7 @@ PHP_MINIT_FUNCTION(UTCDateTime)
 	php_phongo_utcdatetime_ce->create_object = php_phongo_utcdatetime_create_object;
 	PHONGO_CE_FINAL(php_phongo_utcdatetime_ce);
 
-	zend_class_implements(php_phongo_utcdatetime_ce TSRMLS_CC, 1, php_json_serializable_ce);
+	zend_class_implements(php_phongo_utcdatetime_ce TSRMLS_CC, 1, php_phongo_json_serializable_ce);
 	zend_class_implements(php_phongo_utcdatetime_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_utcdatetime_ce TSRMLS_CC, 1, zend_ce_serializable);
 

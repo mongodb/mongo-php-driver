@@ -73,6 +73,10 @@ ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 #endif
 #endif
 
+/* Declare zend_class_entry dependencies, which are initialized in MINIT */
+zend_class_entry *php_phongo_date_immutable_ce;
+zend_class_entry *php_phongo_json_serializable_ce;
+
 php_phongo_server_description_type_map_t
 php_phongo_server_description_type_map[PHONGO_SERVER_DESCRIPTION_TYPES] = {
 	{ PHONGO_SERVER_UNKNOWN, "Unknown" },
@@ -1854,6 +1858,25 @@ PHP_GINIT_FUNCTION(mongodb)
 }
 /* }}} */
 
+static zend_class_entry *php_phongo_fetch_internal_class(const char *class_name, size_t class_name_len TSRMLS_DC)
+{
+#if PHP_VERSION_ID >= 70000
+	zend_class_entry *pce;
+
+	if ((pce = zend_hash_str_find_ptr(CG(class_table), class_name, class_name_len))) {
+		return pce;
+	}
+#else
+	zend_class_entry **pce;
+
+	if (zend_hash_find(CG(class_table), class_name, class_name_len + 1, (void **) &pce) == SUCCESS) {
+		return *pce;
+	}
+#endif
+
+	return NULL;
+}
+
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(mongodb)
 {
@@ -1885,6 +1908,25 @@ PHP_MINIT_FUNCTION(mongodb)
 	phongo_std_object_handlers.count_elements       = NULL;
 	phongo_std_object_handlers.get_closure          = NULL;
 	*/
+
+	/* Initialize zend_class_entry dependencies.
+	 *
+	 * Although DateTimeImmutable was introduced in PHP 5.5.0,
+	 * php_date_get_immutable_ce() is not available in PHP versions before
+	 * 5.5.24 and 5.6.8.
+	 *
+	 * Although JsonSerializable was introduced in PHP 5.4.0,
+	 * php_json_serializable_ce is not exported in PHP versions before 5.4.26
+	 * and 5.5.10. For later PHP versions, looking up the class manually also
+	 * helps with distros that disable LTDL_LAZY for dlopen() (e.g. Fedora).
+	 */
+	php_phongo_date_immutable_ce = php_phongo_fetch_internal_class(ZEND_STRL("datetimeimmutable") TSRMLS_CC);
+	php_phongo_json_serializable_ce = php_phongo_fetch_internal_class(ZEND_STRL("jsonserializable") TSRMLS_CC);
+
+	if (php_phongo_json_serializable_ce == NULL) {
+		zend_error(E_ERROR, "JsonSerializable class is not defined. Please ensure that the 'json' module is loaded before the 'mongodb' module.");
+		return FAILURE;
+	}
 
 	PHP_MINIT(bson)(INIT_FUNC_ARGS_PASSTHRU);
 

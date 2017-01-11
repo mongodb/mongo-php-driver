@@ -25,7 +25,6 @@
 /* PHP Core stuff */
 #include <php.h>
 #include <php_ini.h>
-#include <ext/json/php_json.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
@@ -467,7 +466,7 @@ PHP_MINIT_FUNCTION(Regex)
 
 	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, zend_ce_serializable);
-	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, php_json_serializable_ce);
+	zend_class_implements(php_phongo_regex_ce TSRMLS_CC, 1, php_phongo_json_serializable_ce);
 
 	memcpy(&php_phongo_handler_regex, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_regex.compare_objects = php_phongo_regex_compare_objects;
