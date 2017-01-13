@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Prints a traditional hex dump of byte values and printable characters.
  *
@@ -29,6 +30,23 @@ function hex_dump($data, $width = 16)
         printf("%6X : %-{$length}s [%s]\n", $offset, implode(' ', str_split($line, 2)), $chars[$i]);
         $offset += $width;
     }
+}
+
+/**
+ * Canonicalizes a JSON string.
+ *
+ * @param string $json
+ * @return string
+ */
+function json_canonicalize($json)
+{
+    $json = json_encode(json_decode($json));
+
+    /* Versions of PHP before 7.1 replace empty JSON keys with "_empty_" when
+     * decoding to a stdClass (see: https://bugs.php.net/bug.php?id=46600). Work
+     * around this by replacing "_empty_" keys before returning.
+     */
+    return str_replace('"_empty_":', '"":', $json);
 }
 
 /**
