@@ -150,13 +150,13 @@
     if (value > INT32_MAX || value < INT32_MIN) { \
         phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", value); \
     } else { \
-        add_index_long(zval, index, val); \
+        add_index_long(zval, index, value); \
     }
 # define ADD_NEXT_INDEX_INT64(zval, value) \
     if (value > INT32_MAX || value < INT32_MIN) { \
         phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", value); \
     } else { \
-        add_next_index_long(zval, val); \
+        add_next_index_long(zval, value); \
     }
 # define ADD_ASSOC_INT64(zval, key, value) \
     if (value > INT32_MAX || value < INT32_MIN) { \
