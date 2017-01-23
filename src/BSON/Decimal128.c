@@ -320,6 +320,14 @@ phongo_create_object_retval php_phongo_decimal128_create_object(zend_class_entry
 #endif
 } /* }}} */
 
+static HashTable *php_phongo_decimal128_get_gc(zval *object, phongo_get_gc_table table, int *n TSRMLS_DC) /* {{{ */
+{
+	*table = NULL;
+	*n = 0;
+
+	return zend_std_get_properties(object TSRMLS_CC);
+} /* }}} */
+
 HashTable *php_phongo_decimal128_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_decimal128_t *intern;
@@ -372,6 +380,7 @@ PHP_MINIT_FUNCTION(Decimal128)
 	zend_class_implements(php_phongo_decimal128_ce TSRMLS_CC, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_decimal128, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_decimal128.get_gc = php_phongo_decimal128_get_gc;
 	php_phongo_handler_decimal128.get_properties = php_phongo_decimal128_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_decimal128.free_obj = php_phongo_decimal128_free_object;
