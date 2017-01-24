@@ -443,6 +443,14 @@ static int php_phongo_javascript_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /
 	return strcmp(intern1->code, intern2->code);
 } /* }}} */
 
+static HashTable *php_phongo_javascript_get_gc(zval *object, phongo_get_gc_table table, int *n TSRMLS_DC) /* {{{ */
+{
+	*table = NULL;
+	*n = 0;
+
+	return zend_std_get_properties(object TSRMLS_CC);
+} /* }}} */
+
 HashTable *php_phongo_javascript_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_javascript_t *intern;
@@ -538,6 +546,7 @@ PHP_MINIT_FUNCTION(Javascript)
 
 	memcpy(&php_phongo_handler_javascript, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_javascript.compare_objects = php_phongo_javascript_compare_objects;
+	php_phongo_handler_javascript.get_gc = php_phongo_javascript_get_gc;
 	php_phongo_handler_javascript.get_properties = php_phongo_javascript_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_javascript.free_obj = php_phongo_javascript_free_object;

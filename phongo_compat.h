@@ -83,6 +83,7 @@
 #endif
 # define SIZEOF_PHONGO_LONG SIZEOF_ZEND_LONG
 # define phongo_create_object_retval zend_object*
+# define phongo_get_gc_table zval **
 # define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t *)ecalloc(1, sizeof(_obj_t)+zend_object_properties_size(_class_type))
 # define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data)
 # define SUPPRESS_UNUSED_WARNING(x)
@@ -112,6 +113,7 @@
 # define SIZEOF_PHONGO_LONG SIZEOF_LONG
 # define ZSTR_VAL(str) str
 # define phongo_create_object_retval zend_object_value
+# define phongo_get_gc_table zval ***
 # define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t *)ecalloc(1, sizeof(_obj_t))
 # define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data) TSRMLS_FETCH_FROM_CTX(user_data)
 # define SUPPRESS_UNUSED_WARNING(x) (void)x;
