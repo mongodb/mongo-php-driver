@@ -83,8 +83,6 @@ AC_DEFUN([PHP_BSON_CLOCK],
   fi
 ])
 
-MONGOC_SYMBOL_SUFFIX="priv"
-
 AC_MSG_CHECKING(PHP version)
 PHP_FOUND_VERSION=`${PHP_CONFIG} --version`
 PHP_FOUND_VERNUM=`echo "${PHP_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
