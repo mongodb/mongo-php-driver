@@ -147,198 +147,51 @@ if test "$MONGODB" != "no"; then
       EXTRA_LDFLAGS="$COVERAGE_CFLAGS"
   fi
 
-  MONGODB_BSON="\
-      src/bson.c \
-  ";
+  PHP_MONGODB_CFLAGS="$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS"
 
-  MONGODB_BSON_CLASSES="\
-    src/BSON/Type.c \
-    src/BSON/Unserializable.c \
-    src/BSON/Serializable.c \
-    src/BSON/Persistable.c \
+  PHP_MONGODB_SOURCES="\
+    php_phongo.c \
+    phongo_compat.c \
+    src/bson.c \
     src/BSON/Binary.c \
     src/BSON/Decimal128.c \
     src/BSON/Javascript.c \
     src/BSON/MaxKey.c \
     src/BSON/MinKey.c \
     src/BSON/ObjectID.c \
+    src/BSON/Persistable.c \
     src/BSON/Regex.c \
+    src/BSON/Serializable.c \
     src/BSON/Timestamp.c \
+    src/BSON/Type.c \
+    src/BSON/Unserializable.c \
     src/BSON/UTCDateTime.c \
-  ";
-  MONGODB_ROOT="\
-      php_phongo.c \
-      phongo_compat.c \
-  ";
-  MONGODB_MONGODB_CLASSES="\
-      src/MongoDB/Command.c \
-      src/MongoDB/Cursor.c \
-      src/MongoDB/CursorId.c \
-      src/MongoDB/Manager.c \
-      src/MongoDB/Query.c \
-      src/MongoDB/ReadConcern.c \
-      src/MongoDB/ReadPreference.c \
-      src/MongoDB/Server.c \
-      src/MongoDB/BulkWrite.c \
-      src/MongoDB/WriteConcern.c \
-      src/MongoDB/WriteConcernError.c \
-      src/MongoDB/WriteError.c \
-      src/MongoDB/WriteResult.c \
-  ";
-  MONGODB_MONGODB_EXCEPTIONS="\
-      src/MongoDB/Exception/Exception.c \
-      src/MongoDB/Exception/LogicException.c \
-      src/MongoDB/Exception/RuntimeException.c \
-      src/MongoDB/Exception/UnexpectedValueException.c \
-      src/MongoDB/Exception/InvalidArgumentException.c \
-      src/MongoDB/Exception/ConnectionException.c \
-      src/MongoDB/Exception/AuthenticationException.c \
-      src/MongoDB/Exception/SSLConnectionException.c \
-      src/MongoDB/Exception/ExecutionTimeoutException.c \
-      src/MongoDB/Exception/ConnectionTimeoutException.c \
-      src/MongoDB/Exception/WriteException.c \
-      src/MongoDB/Exception/BulkWriteException.c \
-  ";
-
-  YAJL_SOURCES="\
-    yajl_version.c \
-    yajl.c \
-    yajl_encode.c \
-    yajl_lex.c \
-    yajl_parser.c \
-    yajl_buf.c \
-    yajl_tree.c \
-    yajl_alloc.c \
-    yajl_gen.c
-  ";
-
-  BSON_SOURCES="\
-    bcon.c \
-    bson.c \
-    bson-atomic.c \
-    bson-clock.c \
-    bson-context.c \
-    bson-decimal128.c \
-    bson-error.c \
-    bson-iter.c \
-    bson-iso8601.c \
-    bson-json.c \
-    bson-keys.c \
-    bson-md5.c \
-    bson-memory.c \
-    bson-oid.c \
-    bson-reader.c \
-    bson-string.c \
-    bson-timegm.c \
-    bson-utf8.c \
-    bson-value.c \
-    bson-version-functions.c \
-    bson-writer.c
-  ";
-
-  MONGOC_SOURCES="\
-    mongoc-apm.c \
-    mongoc-array.c \
-    mongoc-async.c \
-    mongoc-async-cmd.c \
-    mongoc-buffer.c \
-    mongoc-bulk-operation.c \
-    mongoc-b64.c \
-    mongoc-client.c \
-    mongoc-client-pool.c \
-    mongoc-cluster.c \
-    mongoc-collection.c \
-    mongoc-counters.c \
-    mongoc-cursor.c \
-    mongoc-cursor-array.c \
-    mongoc-cursor-cursorid.c \
-    mongoc-cursor-transform.c \
-    mongoc-database.c \
-    mongoc-find-and-modify.c \
-    mongoc-host-list.c \
-    mongoc-init.c \
-    mongoc-gridfs.c \
-    mongoc-gridfs-file.c \
-    mongoc-gridfs-file-page.c \
-    mongoc-gridfs-file-list.c \
-    mongoc-handshake.c \
-    mongoc-index.c \
-    mongoc-linux-distro-scanner.c \
-    mongoc-list.c \
-    mongoc-log.c \
-    mongoc-matcher-op.c \
-    mongoc-matcher.c \
-    mongoc-memcmp.c \
-    mongoc-opcode.c \
-    mongoc-queue.c \
-    mongoc-read-concern.c \
-    mongoc-read-prefs.c \
-    mongoc-rpc.c \
-    mongoc-server-description.c \
-    mongoc-server-stream.c \
-    mongoc-set.c \
-    mongoc-socket.c \
-    mongoc-stream.c \
-    mongoc-stream-buffered.c \
-    mongoc-stream-file.c \
-    mongoc-stream-gridfs.c \
-    mongoc-stream-socket.c \
-    mongoc-topology.c \
-    mongoc-topology-description.c \
-    mongoc-topology-description-apm.c \
-    mongoc-topology-scanner.c \
-    mongoc-uri.c \
-    mongoc-util.c \
-    mongoc-version-functions.c \
-    mongoc-write-command.c \
-    mongoc-write-concern.c
-  ";
-
-  MONGOC_SOURCES_CRYPTO="\
-    mongoc-crypto.c \
-    mongoc-scram.c
-  ";
-
-  MONGOC_SOURCES_SSL="\
-    mongoc-stream-tls.c \
-    mongoc-ssl.c
-  ";
-
-  MONGOC_SOURCES_OPENSSL="\
-    mongoc-crypto-openssl.c \
-    mongoc-openssl.c \
-    mongoc-rand-openssl.c \
-    mongoc-stream-tls-openssl.c \
-    mongoc-stream-tls-openssl-bio.c
-  ";
-
-  MONGOC_SOURCES_SECURE_TRANSPORT="\
-    mongoc-crypto-common-crypto.c \
-    mongoc-rand-common-crypto.c \
-    mongoc-secure-transport.c \
-    mongoc-stream-tls-secure-transport.c
-  ";
-
-  MONGOC_SOURCES_SECURE_CHANNEL="\
-    mongoc-crypto-cng.c \
-    mongoc-rand-cng.c \
-    mongoc-secure-channel.c \
-    mongoc-stream-tls-secure-channel.c
-  ";
-
-  MONGOC_SOURCES_SASL=mongoc-sasl.c
-
-  if test "$ext_shared" = "no"; then
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_BSON)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_BSON_CLASSES)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_CLASSES)
-    PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_EXCEPTIONS)
-  else
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_BSON,               [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_BSON_CLASSES,       [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_CLASSES,    [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb), $MONGODB_MONGODB_EXCEPTIONS, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS], shared_objects_mongodb, yes)
-  fi
+    src/MongoDB/BulkWrite.c \
+    src/MongoDB/Command.c \
+    src/MongoDB/Cursor.c \
+    src/MongoDB/CursorId.c \
+    src/MongoDB/Manager.c \
+    src/MongoDB/Query.c \
+    src/MongoDB/ReadConcern.c \
+    src/MongoDB/ReadPreference.c \
+    src/MongoDB/Server.c \
+    src/MongoDB/WriteConcern.c \
+    src/MongoDB/WriteConcernError.c \
+    src/MongoDB/WriteError.c \
+    src/MongoDB/WriteResult.c \
+    src/MongoDB/Exception/AuthenticationException.c \
+    src/MongoDB/Exception/BulkWriteException.c \
+    src/MongoDB/Exception/ConnectionException.c \
+    src/MongoDB/Exception/ConnectionTimeoutException.c \
+    src/MongoDB/Exception/Exception.c \
+    src/MongoDB/Exception/ExecutionTimeoutException.c \
+    src/MongoDB/Exception/InvalidArgumentException.c \
+    src/MongoDB/Exception/LogicException.c \
+    src/MongoDB/Exception/RuntimeException.c \
+    src/MongoDB/Exception/SSLConnectionException.c \
+    src/MongoDB/Exception/UnexpectedValueException.c \
+    src/MongoDB/Exception/WriteException.c \
+  "
 
   PHP_ARG_WITH(libbson, whether to use system libbson,
   [  --with-libbson             Use system libbson], no, no)
@@ -368,10 +221,16 @@ if test "$MONGODB" != "no"; then
     PHP_EVAL_LIBLINE($LIBBSON_LIB, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
   else
-    LIBBSON_CFLAGS="-DBSON_COMPILATION"
+    PHP_MONGODB_BSON_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION"
 
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $YAJL_SOURCES, [$STD_CFLAGS $LIBBSON_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $BSON_SOURCES, [$STD_CFLAGS $LIBBSON_CFLAGS], shared_objects_mongodb, yes)
+    # Generated with: find src/libbson/src/bson -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
+    PHP_MONGODB_BSON_SOURCES="bcon.c bson-atomic.c bson.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-iso8601.c bson-iter.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c"
+
+    # Generated with: find src/libbson/src/yajl -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
+    PHP_MONGODB_YAJL_SOURCES="yajl_alloc.c yajl_buf.c yajl.c yajl_encode.c yajl_gen.c yajl_lex.c yajl_parser.c yajl_tree.c yajl_version.c"
+
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/yajl], $PHP_MONGODB_YAJL_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
   fi
 
   AC_MSG_CHECKING(configuring libmongoc)
@@ -401,16 +260,12 @@ if test "$MONGODB" != "no"; then
     PHP_EVAL_LIBLINE($LIBMONGOC_LIB, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBMONGOC, 1, [Use system libmongoc])
   else
-    LIBMONGOC_CFLAGS="-DMONGOC_COMPILATION -DMONGOC_TRACE"
+    PHP_MONGODB_MONGOC_CFLAGS="$STD_CFLAGS -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES,                  [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_CRYPTO,           [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SSL,              [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_OPENSSL,          [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_TRANSPORT, [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SECURE_CHANNEL,   [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $MONGOC_SOURCES_SASL,             [$STD_CFLAGS $LIBMONGOC_CFLAGS], shared_objects_mongodb, yes)
+    # Generated with: find src/libmongoc/src/mongoc -name '*.c' -print0 | cut -sz -d / -f 4- | sort -z | tr '\000' ' '
+    PHP_MONGODB_MONGOC_SOURCES="mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-b64.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-client.c mongoc-client-pool.c mongoc-cluster.c mongoc-collection.c mongoc-counters.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-cursorid.c mongoc-cursor-transform.c mongoc-database.c mongoc-find-and-modify.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-handshake.c mongoc-host-list.c mongoc-index.c mongoc-init.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-opcode.c mongoc-openssl.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-description.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-ssl.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-concern.c"
 
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
 
     PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD)
     AC_SUBST(MONGOC_ENABLE_CRYPTO, 1)
@@ -501,7 +356,7 @@ fi
   MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $PTHREAD_LIBS $SASL_LIBS"
   PHP_SUBST(MONGODB_SHARED_LIBADD)
 
-  PHP_NEW_EXTENSION(mongodb,    $MONGODB_ROOT, $ext_shared,, [$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS])
+  PHP_NEW_EXTENSION(mongodb, $PHP_MONGODB_SOURCES, $ext_shared,, $PHP_MONGODB_CFLAGS)
   PHP_ADD_EXTENSION_DEP(mongodb, date)
   PHP_ADD_EXTENSION_DEP(mongodb, json)
   PHP_ADD_EXTENSION_DEP(mongodb, spl)
