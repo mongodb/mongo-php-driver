@@ -120,12 +120,19 @@ bin\phpsdk_setvars.bat
 cd C:\php-sdk\phpdev\vc11\x86\php-5.6.12-src
 nmake clean
 buildconf --force
-configure --disable-all --with-openssl --enable-cli --enable-json --enable-mongodb
+configure --disable-all --with-openssl --enable-cli --enable-json --enable-mongodb=shared
 nmake
 ```
 
-If the extension was successfully compiled, "mongodb" should be reported by
-`Release_TS\php.exe -m`.
+If the extension was successfully compiled, a `php_mongodb.dll` file should be
+generated in the build directory (e.g. `Release_TS`). You should then verify
+that the extension loads and executes properly:
+
+```
+cd Release_TS
+php.exe -d extension=./php_mongodb.dll -m
+php.exe -d extension=./php_mongodb.dll -r "var_dump(new MongoDB\Driver\Manager);"
+```
 
 See the [internals wiki](https://wiki.php.net/internals/windows/stepbystepbuild)
 for more information.
