@@ -139,7 +139,10 @@ if (PHP_MONGODB != "no") {
     MONGOC_ENABLE_CRYPTO: 0,
     MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE: 0,
     MONGOC_ENABLE_SASL: 0,
+    MONGOC_ENABLE_SASL_CYRUS: 0,
+    MONGOC_ENABLE_SASL_SSPI: 0,
     MONGOC_HAVE_SASL_CLIENT_DONE: 0,
+    MONGOC_HAVE_SOCKLEN: 0,
     MONGOC_HAVE_WEAK_SYMBOLS: 0,
     MONGOC_NO_AUTOMATIC_GLOBALS: 1,
     MONGOC_CC: "",
@@ -165,15 +168,21 @@ if (PHP_MONGODB != "no") {
     WARNING("mongodb libopenssl support not enabled, libs not found");
   }
 
+  // TODO: Support building with native GSSAPI (SSPI) on Windows
   if (PHP_MONGODB_SASL != "no" &&
       CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB) &&
       CHECK_HEADER_ADD_INCLUDE("sasl/sasl.h", "CFLAGS_MONGODB")) {
     mongoc_opts.MONGOC_ENABLE_SASL = 1;
+    mongoc_opts.MONGOC_ENABLE_SASL_CYRUS = 1;
     if (CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done")) {
       mongoc_opts.MONGOC_HAVE_SASL_CLIENT_DONE = 1;
     }
   } else {
     WARNING("mongodb libsasl support not enabled, libs not found");
+  }
+
+  if (CHECK_FUNC_IN_HEADER("ws2tcpip.h", "socklen_t")) {
+    mongoc_opts.MONGOC_HAVE_SOCKLEN = 1;
   }
 
   if (typeof COMPILER_NAME === 'string') {

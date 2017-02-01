@@ -244,14 +244,14 @@ if test "$MONGODB" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0; then
-      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.5.0; then
+      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.6.0; then
         LIBMONGOC_INC=`$PKG_CONFIG libmongoc-1.0 --cflags`
         LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-1.0 --libs`
         LIBMONGOC_VER=`$PKG_CONFIG libmongoc-1.0 --modversion`
         AC_MSG_RESULT(version $LIBMONGOC_VER found)
 
       else
-        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.5.0)
+        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.6.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and mongoc must be installed)
@@ -262,8 +262,8 @@ if test "$MONGODB" != "no"; then
   else
     PHP_MONGODB_MONGOC_CFLAGS="$STD_CFLAGS -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
-    # Generated with: find src/libmongoc/src/mongoc -name '*.c' -print0 | cut -sz -d / -f 4- | sort -z | tr '\000' ' '
-    PHP_MONGODB_MONGOC_SOURCES="mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-b64.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-client.c mongoc-client-pool.c mongoc-cluster.c mongoc-collection.c mongoc-counters.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-cursorid.c mongoc-cursor-transform.c mongoc-database.c mongoc-find-and-modify.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-handshake.c mongoc-host-list.c mongoc-index.c mongoc-init.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-opcode.c mongoc-openssl.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-description.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-ssl.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-concern.c"
+    # Generated with: find src/libmongoc/src/mongoc -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
+    PHP_MONGODB_MONGOC_SOURCES="mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-b64.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-client.c mongoc-client-pool.c mongoc-cluster.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-collection.c mongoc-counters.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-cursorid.c mongoc-cursor-transform.c mongoc-database.c mongoc-find-and-modify.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-handshake.c mongoc-host-list.c mongoc-index.c mongoc-init.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-opcode.c mongoc-openssl.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-description.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-concern.c"
 
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
 
@@ -290,6 +290,8 @@ if test "$MONGODB" != "no"; then
     AC_SUBST(MONGOC_ENABLE_SSL_LIBRESSL, 0)
 
     AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
+
+    AC_CHECK_TYPE([socklen_t], [AC_SUBST(MONGOC_HAVE_SOCKLEN, 1)], [AC_SUBST(MONGOC_HAVE_SOCKLEN, 0)], [#include <sys/socket.h>])
   fi
 
 
@@ -321,11 +323,15 @@ if test "$PHP_MONGODB_SASL" != "no"; then
       PHP_ADD_INCLUDE($MONGODB_SASL_DIR)
       PHP_ADD_LIBRARY_WITH_PATH(sasl2, $MONGODB_SASL_DIR/$PHP_LIBDIR, MONGODB_SHARED_LIBADD)
       AC_SUBST(MONGOC_ENABLE_SASL, 1)
+      AC_SUBST(MONGOC_ENABLE_SASL_CYRUS, 1)
+      AC_SUBST(MONGOC_ENABLE_SASL_SSPI, 0)
     ], [
       if test "$MONGODB_SASL" != "auto"; then
         AC_MSG_ERROR([MongoDB SASL check failed. Please check config.log for more information.])
       fi
       AC_SUBST(MONGOC_ENABLE_SASL, 0)
+      AC_SUBST(MONGOC_ENABLE_SASL_CYRUS, 0)
+      AC_SUBST(MONGOC_ENABLE_SASL_SSPI, 0)
     ], [
       -L$MONGODB_SASL_DIR/$PHP_LIBDIR
     ])
