@@ -10,8 +10,7 @@ $tests = array(
     array((object)array("hello" => "world")),
     array(null),
     array(123),
-
-    array(4.23),
+    array(4.125),
     array(true),
     array(false),
     array("string"),
@@ -60,7 +59,7 @@ Test#2 { "0" : null }
 OK
 Test#3 { "0" : 123 }
 OK
-Test#4 { "0" : 4.23 }
+Test#4 { "0" : 4.125 }
 OK
 Test#5 { "0" : true }
 OK

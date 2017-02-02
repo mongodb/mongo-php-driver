@@ -76,8 +76,8 @@ if (PHP_MONGODB != "no") {
   // Generated with: find src/libbson/src/bson -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
   var PHP_MONGODB_BSON_SOURCES="bcon.c bson-atomic.c bson.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-iso8601.c bson-iter.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c";
 
-  // Generated with: find src/libbson/src/yajl -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
-  var PHP_MONGODB_YAJL_SOURCES="yajl_alloc.c yajl_buf.c yajl.c yajl_encode.c yajl_gen.c yajl_lex.c yajl_parser.c yajl_tree.c yajl_version.c";
+  // Generated with: find src/libbson/src/jsonsl -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
+  var PHP_MONGODB_JSONSL_SOURCES="jsonsl";
 
   // Generated with: find src/libmongoc/src/mongoc -name '*.c' -print0 | cut -sz -d / -f 4- | sort -z | tr '\000' ' '
   var PHP_MONGODB_MONGOC_SOURCES="mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-b64.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-client.c mongoc-client-pool.c mongoc-cluster.c mongoc-collection.c mongoc-counters.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-cursorid.c mongoc-cursor-transform.c mongoc-database.c mongoc-find-and-modify.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-handshake.c mongoc-host-list.c mongoc-index.c mongoc-init.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-opcode.c mongoc-openssl.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-description.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-ssl.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-concern.c";
@@ -88,7 +88,7 @@ if (PHP_MONGODB != "no") {
   ADD_SOURCES(configure_module_dirname + "/src/MongoDB", "BulkWrite.c Command.c Cursor.c CursorId.c Manager.c Query.c ReadConcern.c ReadPreference.c Server.c WriteConcern.c WriteConcernError.c WriteError.c WriteResult.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/MongoDB/Exception", "AuthenticationException.c BulkWriteException.c ConnectionException.c ConnectionTimeoutException.c Exception.c ExecutionTimeoutException.c InvalidArgumentException.c LogicException.c RuntimeException.c SSLConnectionException.c UnexpectedValueException.c WriteException.c", "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libbson/src/bson", PHP_MONGODB_BSON_SOURCES, "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/libbson/src/yajl", PHP_MONGODB_YAJL_SOURCES, "mongodb");
+  ADD_SOURCES(configure_module_dirname + "/src/libbson/src/jsonsl", PHP_MONGODB_JSONSL_SOURCES, "mongodb");
   ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/mongoc", PHP_MONGODB_MONGOC_SOURCES, "mongodb");
 
   var bson_opts = {
@@ -139,7 +139,10 @@ if (PHP_MONGODB != "no") {
     MONGOC_ENABLE_CRYPTO: 0,
     MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE: 0,
     MONGOC_ENABLE_SASL: 0,
+    MONGOC_ENABLE_SASL_CYRUS: 0,
+    MONGOC_ENABLE_SASL_SSPI: 0,
     MONGOC_HAVE_SASL_CLIENT_DONE: 0,
+    MONGOC_HAVE_SOCKLEN: 0,
     MONGOC_HAVE_WEAK_SYMBOLS: 0,
     MONGOC_NO_AUTOMATIC_GLOBALS: 1,
     MONGOC_CC: "",
@@ -165,15 +168,21 @@ if (PHP_MONGODB != "no") {
     WARNING("mongodb libopenssl support not enabled, libs not found");
   }
 
+  // TODO: Support building with native GSSAPI (SSPI) on Windows
   if (PHP_MONGODB_SASL != "no" &&
       CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB) &&
       CHECK_HEADER_ADD_INCLUDE("sasl/sasl.h", "CFLAGS_MONGODB")) {
     mongoc_opts.MONGOC_ENABLE_SASL = 1;
+    mongoc_opts.MONGOC_ENABLE_SASL_CYRUS = 1;
     if (CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done")) {
       mongoc_opts.MONGOC_HAVE_SASL_CLIENT_DONE = 1;
     }
   } else {
     WARNING("mongodb libsasl support not enabled, libs not found");
+  }
+
+  if (CHECK_FUNC_IN_HEADER("ws2tcpip.h", "socklen_t")) {
+    mongoc_opts.MONGOC_HAVE_SOCKLEN = 1;
   }
 
   if (typeof COMPILER_NAME === 'string') {

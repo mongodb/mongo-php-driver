@@ -20,10 +20,10 @@ var_dump(toPHP(fromJSON($json)));
 {"foo":{"$code":"function foo(bar) { return bar; }","$scope":{"foo":42}}}
 object(stdClass)#%d (%d) {
   ["foo"]=>
-  object(stdClass)#%d (%d) {
-    ["$code"]=>
+  object(MongoDB\BSON\Javascript)#%d (%d) {
+    ["code"]=>
     string(33) "function foo(bar) { return bar; }"
-    ["$scope"]=>
+    ["scope"]=>
     object(stdClass)#%d (%d) {
       ["foo"]=>
       int(42)
