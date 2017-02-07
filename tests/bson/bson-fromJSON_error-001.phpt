@@ -5,17 +5,13 @@ MongoDB\BSON\fromJSON(): invalid JSON
 
 require_once __DIR__ . '/../utils/tools.php';
 
-echo throws(function() {
+throws(function() {
     fromJSON('foo');
-}, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
+}, 'MongoDB\Driver\Exception\UnexpectedValueException');
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-lexical error: invalid string in json text.
-                                       foo
-                     (right here) ------^
-
 ===DONE===
