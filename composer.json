@@ -1,5 +1,0 @@
-{
-    "require-dev": {
-        "mongodb/mongodb": "dev-master"
-    }
-}

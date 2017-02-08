@@ -62,11 +62,5 @@ failed.txt
 package.xml
 mongodb-*tgz
 
-# Composer (for testing)
-composer.phar
-composer.lock
-vendor/
-phpunit.phar
-
 # Coverage files
 coverage*
