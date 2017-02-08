@@ -37,7 +37,7 @@
 #include <ext/spl/spl_exceptions.h>
 
 
-PHONGO_API zend_class_entry *php_phongo_sslconnectionexception_ce;
+zend_class_entry *php_phongo_sslconnectionexception_ce;
 
 /* {{{ MongoDB\Driver\SSLConnectionException */
 

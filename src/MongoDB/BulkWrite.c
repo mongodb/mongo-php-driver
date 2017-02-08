@@ -39,7 +39,7 @@
 
 #define BYPASS_UNSET -1
 
-PHONGO_API zend_class_entry *php_phongo_bulkwrite_ce;
+zend_class_entry *php_phongo_bulkwrite_ce;
 
 zend_object_handlers php_phongo_handler_bulkwrite;
 

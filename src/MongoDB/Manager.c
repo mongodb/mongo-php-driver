@@ -41,7 +41,7 @@
 
 #define PHONGO_MANAGER_URI_DEFAULT "mongodb://127.0.0.1/"
 
-PHONGO_API zend_class_entry *php_phongo_manager_ce;
+zend_class_entry *php_phongo_manager_ce;
 
 zend_object_handlers php_phongo_handler_manager;
 

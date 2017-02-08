@@ -37,7 +37,7 @@
 #include <ext/spl/spl_exceptions.h>
 
 
-PHONGO_API zend_class_entry *php_phongo_writeexception_ce;
+zend_class_entry *php_phongo_writeexception_ce;
 
 /* {{{ proto MongoDB\Driver\WriteResult WriteException::getWriteResult()
    Returns the WriteResult from the failed write operation. */

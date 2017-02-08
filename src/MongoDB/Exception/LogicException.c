@@ -37,7 +37,7 @@
 #include <ext/spl/spl_exceptions.h>
 
 
-PHONGO_API zend_class_entry *php_phongo_logicexception_ce;
+zend_class_entry *php_phongo_logicexception_ce;
 
 /* {{{ MongoDB\Driver\LogicException */
 

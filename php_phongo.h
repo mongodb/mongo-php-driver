@@ -29,14 +29,6 @@ extern zend_module_entry mongodb_module_entry;
 #define MONGODB_STABILITY_S "devel"
 #define MONGODB_VERSION   MONGODB_VERSION_S
 
-#ifdef PHP_WIN32
-#	define PHONGO_API __declspec(dllexport)
-#elif defined(__GNUC__) && __GNUC__ >= 4
-#	define PHONGO_API __attribute__ ((visibility("default")))
-#else
-#	define PHONGO_API
-#endif
-
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char *debug;
 	FILE *debug_fd;

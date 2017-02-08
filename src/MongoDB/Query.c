@@ -40,7 +40,7 @@
 #include "php_bson.h"
 
 
-PHONGO_API zend_class_entry *php_phongo_query_ce;
+zend_class_entry *php_phongo_query_ce;
 
 zend_object_handlers php_phongo_handler_query;
 

@@ -40,7 +40,7 @@
 		RETURN_LONG(bson_iter_int32((iter))); \
 	}
 
-PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
+zend_class_entry *php_phongo_writeresult_ce;
 
 zend_object_handlers php_phongo_handler_writeresult;
 
