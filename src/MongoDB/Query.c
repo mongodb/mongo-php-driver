@@ -75,7 +75,7 @@ static bool php_phongo_query_opts_append_document(bson_t *opts, const char *opts
 		return false;
 	}
 
-	phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL TSRMLS_CC);
 
 	if (EG(exception)) {
 		bson_destroy(&b);
@@ -225,7 +225,7 @@ static bool php_phongo_query_init(php_phongo_query_t *intern, zval *filter, zval
 	intern->filter = bson_new();
 	intern->opts = bson_new();
 
-	phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->filter, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->filter, NULL TSRMLS_CC);
 
 	/* Note: if any exceptions are thrown, we can simply return as PHP will
 	 * invoke php_phongo_query_free_object to destruct the object. */
@@ -416,7 +416,7 @@ HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 		zval *zv;
 #endif
 
-		phongo_bson_to_zval(bson_get_data(intern->filter), intern->filter->len, &zv);
+		php_phongo_bson_to_zval(bson_get_data(intern->filter), intern->filter->len, &zv);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "filter", &zv);
 #else
@@ -433,7 +433,7 @@ HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC)
 		zval *zv;
 #endif
 
-		phongo_bson_to_zval(bson_get_data(intern->opts), intern->opts->len, &zv);
+		php_phongo_bson_to_zval(bson_get_data(intern->opts), intern->opts->len, &zv);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "options", &zv);
 #else

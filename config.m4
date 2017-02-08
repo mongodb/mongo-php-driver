@@ -153,6 +153,7 @@ if test "$MONGODB" != "no"; then
     php_phongo.c \
     phongo_compat.c \
     src/bson.c \
+    src/bson-encode.c \
     src/BSON/Binary.c \
     src/BSON/Decimal128.c \
     src/BSON/Javascript.c \

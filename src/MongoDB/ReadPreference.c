@@ -83,7 +83,7 @@ PHP_METHOD(ReadPreference, __construct)
 		bson_t *tags = bson_new();
 
 		php_phongo_read_preference_prep_tagsets(tagSets TSRMLS_CC);
-		phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
+		php_phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
 
 		if (!php_phongo_read_preference_tags_are_valid(tags)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "tagSets must be an array of zero or more documents");
@@ -185,7 +185,7 @@ PHP_METHOD(ReadPreference, getTagSets)
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
+		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
 #if PHP_VERSION_ID >= 70000
 		RETURN_ZVAL(&state.zchild, 0, 1);
 #else

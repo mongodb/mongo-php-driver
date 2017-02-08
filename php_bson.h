@@ -25,6 +25,8 @@
 #define BSON_UNSERIALIZE_FUNC_NAME    "bsonUnserialize"
 #define BSON_SERIALIZE_FUNC_NAME      "bsonSerialize"
 
+#define PHONGO_ODM_FIELD_NAME "__pclass"
+
 typedef enum {
 	PHONGO_BSON_NONE      = 0x00,
 	PHONGO_BSON_ADD_ID    = 0x01,
@@ -64,14 +66,14 @@ typedef struct {
 #define PHONGO_BSON_STATE_INITIALIZER  { NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL}, NULL, 0 }
 #endif
 
-void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
-int phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state);
+void php_phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
+int php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state);
 #if PHP_VERSION_ID >= 70000
-int phongo_bson_to_zval(const unsigned char *data, int data_len, zval *out);
+int php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval *out);
 #else
-int phongo_bson_to_zval(const unsigned char *data, int data_len, zval **out);
+int php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval **out);
 #endif
-void phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC);
+void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC);
 
 PHP_FUNCTION(toPHP);
 PHP_FUNCTION(fromPHP);

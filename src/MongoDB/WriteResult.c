@@ -496,7 +496,7 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		bson_iter_array(&iter, &len, &data);
-		phongo_bson_to_zval_ex(data, len, &state);
+		php_phongo_bson_to_zval_ex(data, len, &state);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", &state.zchild);
 #else

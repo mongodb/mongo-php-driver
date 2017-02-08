@@ -375,7 +375,7 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 
 		bson_iter_document(&iter, &len, &data);
 
-		if (!phongo_bson_to_zval(data, len, &intern->info)) {
+		if (!php_phongo_bson_to_zval(data, len, &intern->info)) {
 			zval_ptr_dtor(&intern->info);
 #if PHP_VERSION_ID >= 70000
 			ZVAL_UNDEF(&intern->info);
@@ -416,7 +416,7 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 
 		bson_iter_document(&iter, &len, &data);
 
-		if (!phongo_bson_to_zval(data, len, &intern->info)) {
+		if (!php_phongo_bson_to_zval(data, len, &intern->info)) {
 			zval_ptr_dtor(&intern->info);
 #if PHP_VERSION_ID >= 70000
 			ZVAL_UNDEF(&intern->info);
@@ -782,7 +782,7 @@ void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd) /*
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		bson_iter_document(&iter, &len, &bytes);
-		phongo_bson_to_zval_ex(bytes, len, &state);
+		php_phongo_bson_to_zval_ex(bytes, len, &state);
 
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
@@ -797,7 +797,7 @@ void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd) /*
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state);
+		php_phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state);
 
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", &state.zchild);
@@ -912,7 +912,7 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
+		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
 #else
@@ -1542,7 +1542,7 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 #endif
 
 	if (options) {
-		phongo_zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
+		php_phongo_zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
 	}
 
 	/* An exception may be thrown during BSON conversion */

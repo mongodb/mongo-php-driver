@@ -71,7 +71,7 @@ static bool php_phongo_bulkwrite_opts_append_document(bson_t *opts, const char *
 		return false;
 	}
 
-	phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL TSRMLS_CC);
 
 	if (EG(exception)) {
 		bson_destroy(&b);
@@ -211,7 +211,7 @@ PHP_METHOD(BulkWrite, insert)
 	}
 
 	bson = bson_new();
-	phongo_zval_to_bson(document, bson_flags, bson, &bson_out TSRMLS_CC);
+	php_phongo_zval_to_bson(document, bson_flags, bson, &bson_out TSRMLS_CC);
 	mongoc_bulk_operation_insert(intern->bulk, bson);
 	bson_clear(&bson);
 
@@ -252,13 +252,13 @@ PHP_METHOD(BulkWrite, update)
 	bupdate = bson_new();
 	boptions = bson_new();
 
-	phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
 
 	if (EG(exception)) {
 		goto cleanup;
 	}
 
-	phongo_zval_to_bson(zupdate, PHONGO_BSON_NONE, bupdate, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(zupdate, PHONGO_BSON_NONE, bupdate, NULL TSRMLS_CC);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -326,7 +326,7 @@ PHP_METHOD(BulkWrite, delete)
 	bquery = bson_new();
 	boptions = bson_new();
 
-	phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
 
 	if (EG(exception)) {
 		goto cleanup;

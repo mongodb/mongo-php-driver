@@ -65,7 +65,7 @@ static bool php_phongo_javascript_init(php_phongo_javascript_t *intern, const ch
 
 	if (scope && (Z_TYPE_P(scope) == IS_OBJECT || Z_TYPE_P(scope) == IS_ARRAY)) {
 		intern->scope = bson_new();
-		phongo_zval_to_bson(scope, PHONGO_BSON_NONE, intern->scope, NULL TSRMLS_CC);
+		php_phongo_zval_to_bson(scope, PHONGO_BSON_NONE, intern->scope, NULL TSRMLS_CC);
 	} else {
 		intern->scope = NULL;
 	}
@@ -197,7 +197,7 @@ PHP_METHOD(Javascript, getScope)
 	if (intern->scope->len) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-		phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state);
+		php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state);
 #if PHP_VERSION_ID >= 70000
 		RETURN_ZVAL(&state.zchild, 0, 1);
 #else
@@ -227,7 +227,7 @@ PHP_METHOD(Javascript, jsonSerialize)
 	if (intern->scope && intern->scope->len) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-		if (phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+		if (php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 #if PHP_VERSION_ID >= 70000
 			Z_ADDREF(state.zchild);
 			ADD_ASSOC_ZVAL_EX(return_value, "$scope", &state.zchild);
@@ -265,7 +265,7 @@ PHP_METHOD(Javascript, serialize)
 
 #if PHP_VERSION_ID >= 70000
 	if (intern->scope && intern->scope->len) {
-		if (!phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 			return;
 		}
 		Z_ADDREF(state.zchild);
@@ -274,7 +274,7 @@ PHP_METHOD(Javascript, serialize)
 	}
 #else
 	if (intern->scope && intern->scope->len) {
-		if (!phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 			return;
 		}
 		Z_ADDREF_P(state.zchild);
@@ -473,7 +473,7 @@ HashTable *php_phongo_javascript_get_properties(zval *object TSRMLS_DC) /* {{{ *
 		if (intern->scope) {
 			php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-			if (phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+			if (php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 				Z_ADDREF(state.zchild);
 				zend_hash_str_update(props, "scope", sizeof("scope")-1, &state.zchild);
 			} else {
@@ -502,7 +502,7 @@ HashTable *php_phongo_javascript_get_properties(zval *object TSRMLS_DC) /* {{{ *
 		if (intern->scope) {
 			php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-			if (phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+			if (php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 				Z_ADDREF_P(state.zchild);
 				zend_hash_update(props, "scope", sizeof("scope"), &state.zchild, sizeof(state.zchild), NULL);
 			} else {
