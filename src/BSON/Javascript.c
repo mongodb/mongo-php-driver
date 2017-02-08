@@ -528,12 +528,9 @@ HashTable *php_phongo_javascript_get_properties(zval *object TSRMLS_DC) /* {{{ *
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Javascript)
+void php_phongo_javascript_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
-
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Javascript", php_phongo_javascript_me);
 	php_phongo_javascript_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -552,12 +549,7 @@ PHP_MINIT_FUNCTION(Javascript)
 	php_phongo_handler_javascript.free_obj = php_phongo_javascript_free_object;
 	php_phongo_handler_javascript.offset = XtOffsetOf(php_phongo_javascript_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

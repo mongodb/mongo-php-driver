@@ -164,8 +164,6 @@ void _phongo_debug_bson(bson_t *bson);
 	#define _phongo_debug_bson(bson)
 #endif
 
-PHP_MINIT_FUNCTION(bson);
-
 #endif /* PHONGO_H */
 
 

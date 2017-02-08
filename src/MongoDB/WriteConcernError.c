@@ -195,11 +195,9 @@ HashTable *php_phongo_writeconcernerror_get_debug_info(zval *object, int *is_tem
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(WriteConcernError)
+void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcernError", php_phongo_writeconcernerror_me);
 	php_phongo_writeconcernerror_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -213,12 +211,7 @@ PHP_MINIT_FUNCTION(WriteConcernError)
 	php_phongo_handler_writeconcernerror.free_obj = php_phongo_writeconcernerror_free_object;
 	php_phongo_handler_writeconcernerror.offset = XtOffsetOf(php_phongo_writeconcernerror_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

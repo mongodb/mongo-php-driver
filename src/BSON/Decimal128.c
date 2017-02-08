@@ -364,11 +364,9 @@ HashTable *php_phongo_decimal128_get_properties(zval *object TSRMLS_DC) /* {{{ *
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Decimal128)
+void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Decimal128", php_phongo_decimal128_me);
 	php_phongo_decimal128_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -386,10 +384,7 @@ PHP_MINIT_FUNCTION(Decimal128)
 	php_phongo_handler_decimal128.free_obj = php_phongo_decimal128_free_object;
 	php_phongo_handler_decimal128.offset = XtOffsetOf(php_phongo_decimal128_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
+} /* }}} */
 
 /*
  * Local variables:

@@ -49,23 +49,14 @@ static zend_function_entry php_phongo_persistable_me[] = {
 
 /* }}} */
 
-
-
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Persistable)
+void php_phongo_persistable_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Persistable", php_phongo_persistable_me);
 	php_phongo_persistable_ce = zend_register_internal_interface(&ce TSRMLS_CC);
 	zend_class_implements(php_phongo_persistable_ce TSRMLS_CC, 2, php_phongo_unserializable_ce, php_phongo_serializable_ce);
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

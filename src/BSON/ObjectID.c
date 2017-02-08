@@ -414,11 +414,9 @@ HashTable *php_phongo_objectid_get_properties(zval *object TSRMLS_DC) /* {{{ */
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(ObjectID)
+void php_phongo_objectid_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "ObjectID", php_phongo_objectid_me);
 	php_phongo_objectid_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -437,12 +435,7 @@ PHP_MINIT_FUNCTION(ObjectID)
 	php_phongo_handler_objectid.free_obj = php_phongo_objectid_free_object;
 	php_phongo_handler_objectid.offset = XtOffsetOf(php_phongo_objectid_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

@@ -566,11 +566,9 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(WriteResult)
+void php_phongo_writeresult_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteResult", php_phongo_writeresult_me);
 	php_phongo_writeresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -584,12 +582,7 @@ PHP_MINIT_FUNCTION(WriteResult)
 	php_phongo_handler_writeresult.free_obj = php_phongo_writeresult_free_object;
 	php_phongo_handler_writeresult.offset = XtOffsetOf(php_phongo_writeresult_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

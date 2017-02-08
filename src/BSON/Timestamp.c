@@ -494,11 +494,9 @@ HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Timestamp)
+void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Timestamp", php_phongo_timestamp_me);
 	php_phongo_timestamp_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -517,12 +515,7 @@ PHP_MINIT_FUNCTION(Timestamp)
 	php_phongo_handler_timestamp.free_obj = php_phongo_timestamp_free_object;
 	php_phongo_handler_timestamp.offset = XtOffsetOf(php_phongo_timestamp_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

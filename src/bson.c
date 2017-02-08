@@ -59,15 +59,6 @@
 #define PHONGO_IS_CLASS_INSTANTIATABLE(ce) \
 	(!(ce->ce_flags & (ZEND_ACC_INTERFACE|ZEND_ACC_IMPLICIT_ABSTRACT_CLASS|ZEND_ACC_EXPLICIT_ABSTRACT_CLASS)))
 
-PHP_MINIT_FUNCTION(bson)
-{
-	(void)type; /* We don't care if we are loaded via dl() or extension= */
-	(void)module_number; /* Really doesn't matter which module number we are */
-
-	/* Register BSONable */
-	return SUCCESS;
-}
-
 /* Forward declarations */
 bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_t *v_document, void *data);
 bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_t *v_document, void *data);

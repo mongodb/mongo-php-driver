@@ -153,12 +153,9 @@ phongo_create_object_retval php_phongo_maxkey_create_object(zend_class_entry *cl
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(MaxKey)
+void php_phongo_maxkey_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
-
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MaxKey", php_phongo_maxkey_me);
 	php_phongo_maxkey_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -174,12 +171,7 @@ PHP_MINIT_FUNCTION(MaxKey)
 	php_phongo_handler_maxkey.free_obj = php_phongo_maxkey_free_object;
 	php_phongo_handler_maxkey.offset = XtOffsetOf(php_phongo_maxkey_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

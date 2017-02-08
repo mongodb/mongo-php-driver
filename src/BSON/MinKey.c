@@ -154,12 +154,9 @@ phongo_create_object_retval php_phongo_minkey_create_object(zend_class_entry *cl
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(MinKey)
+void php_phongo_minkey_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
-
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MinKey", php_phongo_minkey_me);
 	php_phongo_minkey_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -175,12 +172,7 @@ PHP_MINIT_FUNCTION(MinKey)
 	php_phongo_handler_minkey.free_obj = php_phongo_minkey_free_object;
 	php_phongo_handler_minkey.offset = XtOffsetOf(php_phongo_minkey_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

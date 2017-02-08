@@ -540,11 +540,9 @@ HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Cursor)
+void php_phongo_cursor_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Cursor", php_phongo_cursor_me);
 	php_phongo_cursor_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -561,13 +559,7 @@ PHP_MINIT_FUNCTION(Cursor)
 #endif
 
 	zend_class_implements(php_phongo_cursor_ce TSRMLS_CC, 1, zend_ce_traversable);
-
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

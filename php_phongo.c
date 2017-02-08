@@ -1928,48 +1928,50 @@ PHP_MINIT_FUNCTION(mongodb)
 		return FAILURE;
 	}
 
-	PHP_MINIT(bson)(INIT_FUNC_ARGS_PASSTHRU);
+	/* Register base BSON classes first */
+	php_phongo_type_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_serializable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_unserializable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	PHP_MINIT(Type)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Serializable)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Unserializable)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Persistable)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Binary)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Decimal128)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Javascript)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(MaxKey)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(MinKey)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ObjectID)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Regex)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Timestamp)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(UTCDateTime)(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_binary_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_decimal128_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_javascript_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_maxkey_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_minkey_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_objectid_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_persistable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_regex_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_timestamp_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	PHP_MINIT(Command)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Cursor)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(CursorId)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Manager)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Query)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ReadConcern)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ReadPreference)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Server)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(BulkWrite)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteConcern)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteConcernError)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteError)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteResult)(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_command_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_cursor_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_cursorid_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_manager_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_query_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_readconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_readpreference_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_server_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_writeerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_writeresult_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	PHP_MINIT(Exception)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(LogicException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(RuntimeException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(UnexpectedValueException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(InvalidArgumentException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(AuthenticationException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(SSLConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(BulkWriteException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ExecutionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ConnectionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
+	/* Register base exception classes first */
+	php_phongo_exception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_connectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_writeexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+
+	php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_invalidargumentexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_logicexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char *)MONGODB_VERSION_S, CONST_CS | CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("MONGODB_STABILITY", (char *)MONGODB_STABILITY_S, CONST_CS | CONST_PERSISTENT);

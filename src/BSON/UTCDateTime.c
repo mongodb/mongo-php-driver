@@ -535,11 +535,9 @@ HashTable *php_phongo_utcdatetime_get_properties(zval *object TSRMLS_DC) /* {{{ 
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(UTCDateTime)
+void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "UTCDateTime", php_phongo_utcdatetime_me);
 	php_phongo_utcdatetime_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -558,12 +556,7 @@ PHP_MINIT_FUNCTION(UTCDateTime)
 	php_phongo_handler_utcdatetime.free_obj = php_phongo_utcdatetime_free_object;
 	php_phongo_handler_utcdatetime.offset = XtOffsetOf(php_phongo_utcdatetime_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

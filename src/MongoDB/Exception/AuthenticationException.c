@@ -47,12 +47,9 @@ static zend_function_entry php_phongo_authenticationexception_me[] = {
 
 /* }}} */
 
-
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(AuthenticationException)
+void php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "AuthenticationException", php_phongo_authenticationexception_me);
 #if PHP_VERSION_ID >= 70000
@@ -60,12 +57,7 @@ PHP_MINIT_FUNCTION(AuthenticationException)
 #else
 	php_phongo_authenticationexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce, NULL TSRMLS_CC);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

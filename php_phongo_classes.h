@@ -235,52 +235,51 @@ extern zend_class_entry *php_phongo_regex_ce;
 extern zend_class_entry *php_phongo_timestamp_ce;
 extern zend_class_entry *php_phongo_utcdatetime_ce;
 
+extern void php_phongo_binary_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_javascript_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_maxkey_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_minkey_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_objectid_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_persistable_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_regex_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_serializable_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_type_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_unserializable_init_ce(INIT_FUNC_ARGS);
+
+extern void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_command_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_cursor_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_manager_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_query_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_server_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_writeresult_init_ce(INIT_FUNC_ARGS);
+
+extern void php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_connectionexception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_exception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_invalidargumentexception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_logicexception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_writeexception_init_ce(INIT_FUNC_ARGS);
+
 /* Shared across all MongoDB\Driver objects to disable unserialize() */
 PHP_METHOD(Manager, __wakeup);
 /* Shared across all final MongoDB\Driver value objects, only possible to construct them internally */
 PHP_METHOD(Server, __construct);
-
-PHP_MINIT_FUNCTION(Command);
-PHP_MINIT_FUNCTION(Cursor);
-PHP_MINIT_FUNCTION(CursorId);
-PHP_MINIT_FUNCTION(Manager);
-PHP_MINIT_FUNCTION(Query);
-PHP_MINIT_FUNCTION(ReadConcern);
-PHP_MINIT_FUNCTION(ReadPreference);
-PHP_MINIT_FUNCTION(Result);
-PHP_MINIT_FUNCTION(Server);
-PHP_MINIT_FUNCTION(BulkWrite);
-PHP_MINIT_FUNCTION(WriteConcern);
-PHP_MINIT_FUNCTION(WriteConcernError);
-PHP_MINIT_FUNCTION(WriteError);
-PHP_MINIT_FUNCTION(WriteResult);
-
-PHP_MINIT_FUNCTION(Exception);
-PHP_MINIT_FUNCTION(LogicException);
-PHP_MINIT_FUNCTION(RuntimeException);
-PHP_MINIT_FUNCTION(UnexpectedValueException);
-PHP_MINIT_FUNCTION(InvalidArgumentException);
-PHP_MINIT_FUNCTION(ConnectionException);
-PHP_MINIT_FUNCTION(AuthenticationException);
-PHP_MINIT_FUNCTION(SSLConnectionException);
-PHP_MINIT_FUNCTION(ExecutionTimeoutException);
-PHP_MINIT_FUNCTION(ConnectionTimeoutException);
-PHP_MINIT_FUNCTION(WriteException);
-PHP_MINIT_FUNCTION(BulkWriteException);
-
-PHP_MINIT_FUNCTION(Type);
-PHP_MINIT_FUNCTION(Unserializable);
-PHP_MINIT_FUNCTION(Serializable);
-PHP_MINIT_FUNCTION(Persistable);
-PHP_MINIT_FUNCTION(Binary);
-PHP_MINIT_FUNCTION(Decimal128);
-PHP_MINIT_FUNCTION(Javascript);
-PHP_MINIT_FUNCTION(MaxKey);
-PHP_MINIT_FUNCTION(MinKey);
-PHP_MINIT_FUNCTION(ObjectID);
-PHP_MINIT_FUNCTION(Regex);
-PHP_MINIT_FUNCTION(Timestamp);
-PHP_MINIT_FUNCTION(UTCDateTime);
 
 #endif /* PHONGO_CLASSES_H */
 

@@ -47,12 +47,9 @@ static zend_function_entry php_phongo_executiontimeoutexception_me[] = {
 
 /* }}} */
 
-
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(ExecutionTimeoutException)
+void php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "ExecutionTimeoutException", php_phongo_executiontimeoutexception_me);
 #if PHP_VERSION_ID >= 70000
@@ -61,12 +58,7 @@ PHP_MINIT_FUNCTION(ExecutionTimeoutException)
 	php_phongo_executiontimeoutexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce, NULL TSRMLS_CC);
 #endif
 	PHONGO_CE_FINAL(php_phongo_executiontimeoutexception_ce);
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

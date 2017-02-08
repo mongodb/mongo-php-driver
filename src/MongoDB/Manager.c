@@ -560,11 +560,9 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Manager)
+void php_phongo_manager_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Manager", php_phongo_manager_me);
 	php_phongo_manager_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -578,12 +576,7 @@ PHP_MINIT_FUNCTION(Manager)
 	php_phongo_handler_manager.free_obj = php_phongo_manager_free_object;
 	php_phongo_handler_manager.offset = XtOffsetOf(php_phongo_manager_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:
