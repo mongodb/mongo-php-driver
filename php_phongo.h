@@ -158,12 +158,6 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
     ce->unserialize = zend_class_unserialize_deny; \
 } while(0);
 
-#ifdef PHP_DEBUG
-void _phongo_debug_bson(bson_t *bson);
-#else
-	#define _phongo_debug_bson(bson)
-#endif
-
 #endif /* PHONGO_H */
 
 

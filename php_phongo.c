@@ -1720,21 +1720,6 @@ static void php_phongo_free(void *mem) /* {{{ */
 
 /* }}} */
 
-#ifdef PHP_DEBUG
-/* LCOV_EXCL_START */
-void _phongo_debug_bson(bson_t *bson)
-{
-	char   *str;
-	size_t  str_len;
-
-	str = bson_as_json(bson, &str_len);
-
-	php_printf("JSON: %s\n", str);
-	bson_free(str);
-}
-/* LCOV_EXCL_STOP */
-#endif
-
 /* {{{ M[INIT|SHUTDOWN] R[INIT|SHUTDOWN] G[INIT|SHUTDOWN] MINFO INI */
 
 ZEND_INI_MH(OnUpdateDebug)
