@@ -201,7 +201,6 @@ extern zend_class_entry *php_phongo_manager_ce;
 extern zend_class_entry *php_phongo_query_ce;
 extern zend_class_entry *php_phongo_readconcern_ce;
 extern zend_class_entry *php_phongo_readpreference_ce;
-extern zend_class_entry *php_phongo_result_ce;
 extern zend_class_entry *php_phongo_server_ce;
 extern zend_class_entry *php_phongo_bulkwrite_ce;
 extern zend_class_entry *php_phongo_writeconcern_ce;
