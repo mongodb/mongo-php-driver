@@ -897,7 +897,7 @@ int php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phon
 
 /* {{{ proto string MongoDB\BSON\fromPHP(array|object $value)
    Returns the BSON representation of a PHP value */
-PHP_FUNCTION(fromPHP)
+PHP_FUNCTION(MongoDB_BSON_fromPHP)
 {
 	zval   *data;
 	bson_t *bson;
@@ -982,7 +982,7 @@ void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *ma
 
 /* {{{ proto array|object MongoDB\BSON\toPHP(string $bson [, array $typemap = array()])
    Returns the PHP representation of a BSON value, optionally converting it into a custom class */
-PHP_FUNCTION(toPHP)
+PHP_FUNCTION(MongoDB_BSON_toPHP)
 {
 	char                  *data;
 	phongo_zpp_char_len    data_len;
@@ -1010,7 +1010,7 @@ PHP_FUNCTION(toPHP)
 
 /* {{{ proto string MongoDB\BSON\toJSON(string $bson)
    Returns the JSON representation of a BSON value */
-PHP_FUNCTION(toJSON)
+PHP_FUNCTION(MongoDB_BSON_toJSON)
 {
 	      char                *data;
 	      phongo_zpp_char_len  data_len;
@@ -1055,7 +1055,7 @@ PHP_FUNCTION(toJSON)
 
 /* {{{ proto string MongoDB\BSON\fromJSON(string $json)
    Returns the BSON representation of a JSON value */
-PHP_FUNCTION(fromJSON)
+PHP_FUNCTION(MongoDB_BSON_fromJSON)
 {
 	char                *data;
 	phongo_zpp_char_len  data_len;
