@@ -15,32 +15,24 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+#include <ext/standard/php_var.h>
+#if PHP_VERSION_ID >= 70000
+# include <zend_smart_str.h>
+#else
+# include <ext/standard/php_smart_str.h>
+#endif
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
-
 
 zend_class_entry *php_phongo_minkey_ce;
 
-static zend_object_handlers php_phongo_handler_minkey;
-
-/* {{{ proto MinKey::__set_state(array $properties)
+/* {{{ proto void MongoDB\BSON\MinKey::__set_state(array $properties)
 */
 static PHP_METHOD(MinKey, __set_state)
 {
@@ -51,10 +43,9 @@ static PHP_METHOD(MinKey, __set_state)
 	}
 
 	object_init_ex(return_value, php_phongo_minkey_ce);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array MinKey::jsonSerialize()
+/* {{{ proto array MongoDB\BSON\MinKey::jsonSerialize()
 */
 static PHP_METHOD(MinKey, jsonSerialize)
 {
@@ -64,18 +55,16 @@ static PHP_METHOD(MinKey, jsonSerialize)
 
 	array_init_size(return_value, 1);
 	ADD_ASSOC_LONG_EX(return_value, "$minKey", 1);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string MinKey::serialize()
+/* {{{ proto string MongoDB\BSON\MinKey::serialize()
 */
 static PHP_METHOD(MinKey, serialize)
 {
 	PHONGO_RETURN_STRING("");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string MinKey::unserialize(string $serialized)
+/* {{{ proto void MongoDB\BSON\MinKey::unserialize(string $serialized)
 */
 static PHP_METHOD(MinKey, unserialize)
 {
@@ -90,11 +79,9 @@ static PHP_METHOD(MinKey, unserialize)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ BSON\MinKey */
-
+/* {{{ MongoDB\BSON\MinKey function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_MinKey___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
 ZEND_END_ARG_INFO()
@@ -113,11 +100,11 @@ static zend_function_entry php_phongo_minkey_me[] = {
 	PHP_ME(MinKey, unserialize, ai_MinKey_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\BSON\MinKey object handlers */
+static zend_object_handlers php_phongo_handler_minkey;
 
-/* {{{ php_phongo_minkey_t object handlers */
 static void php_phongo_minkey_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_minkey_t *intern = Z_OBJ_MINKEY(object);

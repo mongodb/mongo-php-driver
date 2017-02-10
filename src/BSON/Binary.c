@@ -15,42 +15,28 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
 #include <ext/standard/base64.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <Zend/zend_operators.h>
-#include <ext/spl/spl_iterators.h>
 #include <ext/standard/php_var.h>
 #if PHP_VERSION_ID >= 70000
 # include <zend_smart_str.h>
 #else
 # include <ext/standard/php_smart_str.h>
 #endif
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
-
 
 zend_class_entry *php_phongo_binary_ce;
 
-static zend_object_handlers php_phongo_handler_binary;
-
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_binary_init(php_phongo_binary_t *intern, const char *data, phongo_zpp_char_len data_len, phongo_long type TSRMLS_DC)
+static bool php_phongo_binary_init(php_phongo_binary_t *intern, const char *data, phongo_zpp_char_len data_len, phongo_long type TSRMLS_DC) /* {{{ */
 {
 	if (type < 0 || type > UINT8_MAX) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected type to be an unsigned 8-bit integer, %" PHONGO_LONG_FORMAT " given", type);
@@ -62,11 +48,11 @@ static bool php_phongo_binary_init(php_phongo_binary_t *intern, const char *data
 	intern->type = (uint8_t) type;
 
 	return true;
-}
+} /* }}} */
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_binary_init_from_hash(php_phongo_binary_t *intern, HashTable *props TSRMLS_DC)
+static bool php_phongo_binary_init_from_hash(php_phongo_binary_t *intern, HashTable *props TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval *data, *type;
@@ -86,9 +72,9 @@ static bool php_phongo_binary_init_from_hash(php_phongo_binary_t *intern, HashTa
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"data\" string and \"type\" integer fields", ZSTR_VAL(php_phongo_binary_ce->name));
 	return false;
-}
+} /* }}} */
 
-/* {{{ proto void Binary::__construct(string $data, int $type)
+/* {{{ proto void MongoDB\BSON\Binary::__construct(string $data, int $type)
    Construct a new BSON binary type */
 static PHP_METHOD(Binary, __construct)
 {
@@ -109,10 +95,9 @@ static PHP_METHOD(Binary, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	php_phongo_binary_init(intern, data, data_len, type TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto void Binary::__set_state(array $properties)
+/* {{{ proto void MongoDB\BSON\Binary::__set_state(array $properties)
 */
 static PHP_METHOD(Binary, __set_state)
 {
@@ -130,10 +115,9 @@ static PHP_METHOD(Binary, __set_state)
 	props = Z_ARRVAL_P(array);
 
 	php_phongo_binary_init_from_hash(intern, props TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Binary::__toString()
+/* {{{ proto string MongoDB\BSON\Binary::__toString()
    Return the Binary's data string. */
 static PHP_METHOD(Binary, __toString)
 {
@@ -146,10 +130,9 @@ static PHP_METHOD(Binary, __toString)
 	intern = Z_BINARY_OBJ_P(getThis());
 
 	PHONGO_RETURN_STRINGL(intern->data, intern->data_len);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Binary::getData()
+/* {{{ proto string MongoDB\BSON\Binary::getData()
 */
 static PHP_METHOD(Binary, getData)
 {
@@ -163,10 +146,9 @@ static PHP_METHOD(Binary, getData)
 	}
 
 	PHONGO_RETURN_STRINGL(intern->data, intern->data_len);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto integer Binary::getType()
+/* {{{ proto integer MongoDB\BSON\Binary::getType()
 */
 static PHP_METHOD(Binary, getType)
 {
@@ -180,10 +162,9 @@ static PHP_METHOD(Binary, getType)
 	}
 
 	RETURN_LONG(intern->type);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array Binary::jsonSerialize()
+/* {{{ proto array MongoDB\BSON\Binary::jsonSerialize()
 */
 static PHP_METHOD(Binary, jsonSerialize)
 {
@@ -216,10 +197,9 @@ static PHP_METHOD(Binary, jsonSerialize)
 
 	type_len = snprintf(type, sizeof(type), "%02x", intern->type);
 	ADD_ASSOC_STRINGL(return_value, "$type", type, type_len);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Binary::serialize()
+/* {{{ proto string MongoDB\BSON\Binary::serialize()
 */
 static PHP_METHOD(Binary, serialize)
 {
@@ -258,10 +238,9 @@ static PHP_METHOD(Binary, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Binary::unserialize(string $serialized)
+/* {{{ proto void MongoDB\BSON\Binary::unserialize(string $serialized)
 */
 static PHP_METHOD(Binary, unserialize)
 {
@@ -305,12 +284,9 @@ static PHP_METHOD(Binary, unserialize)
 	php_phongo_binary_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
 #endif
 	zval_ptr_dtor(&props);
-}
-/* }}} */
+} /* }}} */
 
-
-/* {{{ BSON\Binary */
-
+/* {{{ MongoDB\BSON\Binary function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, data)
 	ZEND_ARG_INFO(0, type)
@@ -338,11 +314,11 @@ static zend_function_entry php_phongo_binary_me[] = {
 	PHP_ME(Binary, getType, ai_Binary_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\BSON\Binary object handlers */
+static zend_object_handlers php_phongo_handler_binary;
 
-/* {{{ php_phongo_binary_t object handlers */
 static void php_phongo_binary_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_binary_t *intern = Z_OBJ_BINARY(object);

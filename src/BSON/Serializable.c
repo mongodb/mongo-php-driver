@@ -15,33 +15,17 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
-
 
 zend_class_entry *php_phongo_serializable_ce;
 
-
-
-/* {{{ BSON\Serializable */
-
+/* {{{ MongoDB\BSON\Serializable function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Serializable_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -49,7 +33,6 @@ static zend_function_entry php_phongo_serializable_me[] = {
 	ZEND_ABSTRACT_ME(Serializable, bsonSerialize, ai_Serializable_void)
 	PHP_FE_END
 };
-
 /* }}} */
 
 void php_phongo_serializable_init_ce(INIT_FUNC_ARGS) /* {{{ */
