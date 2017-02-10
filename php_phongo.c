@@ -2068,6 +2068,21 @@ PHP_MINFO_FUNCTION(mongodb)
 /* }}} */
 /* }}} */
 
+/* {{{ Shared function entries for disabling constructors and unserialize() */
+PHP_FUNCTION(MongoDB_disabled___construct) /* {{{ */
+{
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Accessing private constructor");
+} /* }}} */
+
+PHP_FUNCTION(MongoDB_disabled___wakeup) /* {{{ */
+{
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "MongoDB\\Driver objects cannot be serialized");
+} /* }}} */
+ /* }}} */
 
 /* {{{ mongodb_functions[]
 */

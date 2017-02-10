@@ -276,10 +276,9 @@ extern void php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeexception_init_ce(INIT_FUNC_ARGS);
 
-/* Shared across all MongoDB\Driver objects to disable unserialize() */
-PHP_METHOD(Manager, __wakeup);
-/* Shared across all final MongoDB\Driver value objects, only possible to construct them internally */
-PHP_METHOD(Server, __construct);
+/* Shared function entries for disabling constructors and unserialize() */
+PHP_FUNCTION(MongoDB_disabled___construct);
+PHP_FUNCTION(MongoDB_disabled___wakeup);
 
 #endif /* PHONGO_CLASSES_H */
 

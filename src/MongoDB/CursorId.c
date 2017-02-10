@@ -67,9 +67,9 @@ ZEND_BEGIN_ARG_INFO_EX(ai_CursorId_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_cursorid_me[] = {
-	PHP_ME(Server, __construct, ai_CursorId_void, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(CursorId, __toString, ai_CursorId_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeup, ai_CursorId_void, ZEND_ACC_PUBLIC)
+	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CursorId_void, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CursorId_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 

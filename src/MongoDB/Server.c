@@ -41,17 +41,6 @@ zend_class_entry *php_phongo_server_ce;
 
 zend_object_handlers php_phongo_handler_server;
 
-
-/* {{{ proto void Server::__construct()
-   Throws MongoDB\Driver\RuntimeException (can only be created internally) */
-PHP_METHOD(Server, __construct)
-{
-	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used) SUPPRESS_UNUSED_WARNING(return_value_ptr) (void)ZEND_NUM_ARGS(); (void)getThis();
-
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Accessing private constructor");
-}
-/* }}} */
-
 /* {{{ proto MongoDB\Driver\Cursor Server::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null]))
    Executes a Command on this Server */
 PHP_METHOD(Server, executeCommand)
@@ -474,7 +463,6 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Server_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_server_me[] = {
-	PHP_ME(Server, __construct, ai_Server_void, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(Server, executeCommand, ai_Server_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeBulkWrite, ai_Server_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -489,7 +477,8 @@ static zend_function_entry php_phongo_server_me[] = {
 	PHP_ME(Server, isArbiter, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, isHidden, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, isPassive, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeup, ai_Server_void, ZEND_ACC_PUBLIC)
+	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Server_void, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 

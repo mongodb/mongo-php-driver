@@ -405,7 +405,7 @@ static zend_function_entry php_phongo_bulkwrite_me[] = {
 	PHP_ME(BulkWrite, update, ai_BulkWrite_update, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(BulkWrite, delete, ai_BulkWrite_delete, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(BulkWrite, count, ai_BulkWrite_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeup, ai_BulkWrite_void, ZEND_ACC_PUBLIC)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_BulkWrite_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 
