@@ -15,30 +15,18 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
-#include "phongo_compat.h"
 
-/* Our stuffz */
+#include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
 
-
 zend_class_entry *php_phongo_cursor_ce;
-
-static zend_object_handlers php_phongo_handler_cursor;
 
 static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ */
 {
@@ -52,7 +40,7 @@ static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ *
 	}
 } /* }}} */
 
-/* {{{ Iterator handlers */
+/* {{{ MongoDB\Driver\Cursor iterator handlers */
 static void php_phongo_cursor_iterator_dtor(zend_object_iterator *iter TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_iterator *cursor_it = (php_phongo_cursor_iterator *)iter;
@@ -157,7 +145,6 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_
 	}
 } /* }}} */
 
-/* iterator handler table */
 static zend_object_iterator_funcs php_phongo_cursor_iterator_funcs = {
 	php_phongo_cursor_iterator_dtor,
 	php_phongo_cursor_iterator_valid,
@@ -203,9 +190,9 @@ static zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce
 
 	return &cursor_it->intern;
 } /* }}} */
- /* }}} */
+/* }}} */
 
-/* {{{ proto void Cursor::setTypeMap(array $typemap)
+/* {{{ proto void MongoDB\Driver\Cursor::setTypeMap(array $typemap)
    Sets a type map to use for BSON unserialization */
 static PHP_METHOD(Cursor, setTypeMap)
 {
@@ -238,8 +225,7 @@ static PHP_METHOD(Cursor, setTypeMap)
 
 		php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &intern->visitor_data);
 	}
-}
-/* }}} */
+} /* }}} */
 
 static int php_phongo_cursor_to_array_apply(zend_object_iterator *iter, void *puser TSRMLS_DC) /* {{{ */
 {
@@ -274,10 +260,9 @@ static int php_phongo_cursor_to_array_apply(zend_object_iterator *iter, void *pu
 #endif
 
 	return ZEND_HASH_APPLY_KEEP;
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array Cursor::toArray()
+/* {{{ proto array MongoDB\Driver\Cursor::toArray()
    Returns an array of all result documents for this cursor */
 static PHP_METHOD(Cursor, toArray)
 {
@@ -293,10 +278,9 @@ static PHP_METHOD(Cursor, toArray)
 		zval_dtor(return_value);
 		RETURN_NULL();
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\CursorId Cursor::getId()
+/* {{{ proto MongoDB\Driver\CursorId MongoDB\Driver\Cursor::getId()
    Returns the CursorId for this cursor */
 static PHP_METHOD(Cursor, getId)
 {
@@ -311,10 +295,9 @@ static PHP_METHOD(Cursor, getId)
 	}
 
 	php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->cursor) TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\Server Cursor::getServer()
+/* {{{ proto MongoDB\Driver\Server MongoDB\Driver\Cursor::getServer()
    Returns the Server object to which this cursor is attached */
 static PHP_METHOD(Cursor, getServer)
 {
@@ -333,10 +316,9 @@ static PHP_METHOD(Cursor, getServer)
 #else
 	phongo_server_init(return_value, intern->manager, intern->server_id TSRMLS_CC);
 #endif
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto boolean Cursor::isDead()
+/* {{{ proto boolean MongoDB\Driver\Cursor::isDead()
    Checks if a cursor is still alive */
 static PHP_METHOD(Cursor, isDead)
 {
@@ -351,11 +333,9 @@ static PHP_METHOD(Cursor, isDead)
 	}
 
 	RETURN_BOOL(!mongoc_cursor_is_alive(intern->cursor));
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ MongoDB\Driver\Cursor */
-
+/* {{{ MongoDB\Driver\Cursor function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_setTypeMap, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, typemap, 0)
 ZEND_END_ARG_INFO()
@@ -373,11 +353,11 @@ static zend_function_entry php_phongo_cursor_me[] = {
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Cursor_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\Cursor object handlers */
+static zend_object_handlers php_phongo_handler_cursor;
 
-/* {{{ php_phongo_cursor_t object handlers */
 static void php_phongo_cursor_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t *intern = Z_OBJ_CURSOR(object);

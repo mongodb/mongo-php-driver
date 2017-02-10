@@ -15,34 +15,20 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* PHP array helpers */
-#include "php_array_api.h"
-/* Our Compatability header */
-#include "phongo_compat.h"
 
-/* Our stuffz */
+#include "php_array_api.h"
+#include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
 
-
 zend_class_entry *php_phongo_readpreference_ce;
 
-static zend_object_handlers php_phongo_handler_readpreference;
-
-/* {{{ proto void ReadPreference::__construct(integer $mode[, array $tagSets = array()[, array $options = array()]])
+/* {{{ proto void MongoDB\Driver\ReadPreference::__construct(integer $mode[, array $tagSets = array()[, array $options = array()]])
    Constructs a new ReadPreference */
 static PHP_METHOD(ReadPreference, __construct)
 {
@@ -126,10 +112,9 @@ static PHP_METHOD(ReadPreference, __construct)
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Read preference is not valid");
 		return;
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto integer ReadPreference::getMaxStalenessSeconds()
+/* {{{ proto integer MongoDB\Driver\ReadPreference::getMaxStalenessSeconds()
    Returns the ReadPreference maxStalenessSeconds value */
 static PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 {
@@ -143,10 +128,9 @@ static PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 	}
 
 	RETURN_LONG(mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference));
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto integer ReadPreference::getMode()
+/* {{{ proto integer MongoDB\Driver\ReadPreference::getMode()
    Returns the ReadPreference mode */
 static PHP_METHOD(ReadPreference, getMode)
 {
@@ -160,10 +144,9 @@ static PHP_METHOD(ReadPreference, getMode)
 	}
 
 	RETURN_LONG(mongoc_read_prefs_get_mode(intern->read_preference));
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array ReadPreference::getTagSets()
+/* {{{ proto array MongoDB\Driver\ReadPreference::getTagSets()
    Returns the ReadPreference tag sets */
 static PHP_METHOD(ReadPreference, getTagSets)
 {
@@ -194,11 +177,10 @@ static PHP_METHOD(ReadPreference, getTagSets)
 	} else {
 		RETURN_NULL();
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array ReadPreference::bsonSerialize()
-   */
+/* {{{ proto array MongoDB\Driver\ReadPreference::bsonSerialize()
+*/
 static PHP_METHOD(ReadPreference, bsonSerialize)
 {
 	const mongoc_read_prefs_t *read_preference = phongo_read_preference_from_zval(getThis() TSRMLS_CC);
@@ -209,14 +191,9 @@ static PHP_METHOD(ReadPreference, bsonSerialize)
 
 	php_phongo_read_preference_to_zval(return_value, read_preference);
 	convert_to_object(return_value);
-}
-/* }}} */
+} /* }}} */
 
-/**
- * Value object for read preferences used in issuing commands and queries.
- */
-/* {{{ MongoDB\Driver\ReadPreference */
-
+/* {{{ MongoDB\Driver\ReadPreference function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, mode)
 	ZEND_ARG_ARRAY_INFO(0, tagSets, 1)
@@ -234,11 +211,11 @@ static zend_function_entry php_phongo_readpreference_me[] = {
 	PHP_ME(ReadPreference, bsonSerialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\ReadPreference object handlers */
+static zend_object_handlers php_phongo_handler_readpreference;
 
-/* {{{ php_phongo_readpreference_t object handlers */
 static void php_phongo_readpreference_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readpreference_t *intern = Z_OBJ_READPREFERENCE(object);

@@ -15,32 +15,18 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
-
 
 zend_class_entry *php_phongo_writeerror_ce;
 
-static zend_object_handlers php_phongo_handler_writeerror;
-
-/* {{{ proto integer WriteError::getCode()
+/* {{{ proto integer MongoDB\Driver\WriteError::getCode()
    Returns the MongoDB error code */
 static PHP_METHOD(WriteError, getCode)
 {
@@ -55,10 +41,9 @@ static PHP_METHOD(WriteError, getCode)
 
 
 	RETURN_LONG(intern->code);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto integer WriteError::getIndex()
+/* {{{ proto integer MongoDB\Driver\WriteError::getIndex()
    Returns the index of the operation in the BulkWrite to which this WriteError
    corresponds. */
 static PHP_METHOD(WriteError, getIndex)
@@ -74,10 +59,9 @@ static PHP_METHOD(WriteError, getIndex)
 
 
 	RETURN_LONG(intern->index);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string WriteError::getMessage()
+/* {{{ proto string MongoDB\Driver\WriteError::getMessage()
    Returns the actual error message from the server */
 static PHP_METHOD(WriteError, getMessage)
 {
@@ -92,10 +76,9 @@ static PHP_METHOD(WriteError, getMessage)
 
 
 	PHONGO_RETURN_STRING(intern->message);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto mixed WriteError::getInfo()
+/* {{{ proto mixed MongoDB\Driver\WriteError::getInfo()
    Returns additional metadata for the error */
 static PHP_METHOD(WriteError, getInfo)
 {
@@ -116,14 +99,9 @@ static PHP_METHOD(WriteError, getInfo)
 		RETURN_ZVAL(intern->info, 1, 0);
 #endif
 	}
-}
-/* }}} */
+} /* }}} */
 
-/**
- * Value object for a write error (e.g. duplicate key).
- */
-/* {{{ MongoDB\Driver\WriteError */
-
+/* {{{ MongoDB\Driver\WriteError function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -136,11 +114,11 @@ static zend_function_entry php_phongo_writeerror_me[] = {
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\WriteError object handlers */
+static zend_object_handlers php_phongo_handler_writeerror;
 
-/* {{{ php_phongo_writeerror_t object handlers */
 static void php_phongo_writeerror_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeerror_t *intern = Z_OBJ_WRITEERROR(object);

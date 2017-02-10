@@ -15,32 +15,18 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
-
 
 zend_class_entry *php_phongo_cursorid_ce;
 
-static zend_object_handlers php_phongo_handler_cursorid;
-
-/* {{{ proto string CursorId::__toString()
+/* {{{ proto string MongoDB\Driver\CursorId::__toString()
    Returns the string representation of the CursorId */
 static PHP_METHOD(CursorId, __toString)
 {
@@ -58,11 +44,9 @@ static PHP_METHOD(CursorId, __toString)
 	tmp_len = spprintf(&tmp, 0, "%" PRIu64, intern->id);
 	PHONGO_RETVAL_STRINGL(tmp, tmp_len);
 	efree(tmp);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ MongoDB\Driver\CursorId */
-
+/* {{{ MongoDB\Driver\CursorId function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_CursorId_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -72,11 +56,11 @@ static zend_function_entry php_phongo_cursorid_me[] = {
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CursorId_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\CursorId object handlers */
+static zend_object_handlers php_phongo_handler_cursorid;
 
-/* {{{ php_phongo_cursorid_t object handlers */
 static void php_phongo_cursorid_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursorid_t *intern = Z_OBJ_CURSORID(object);

@@ -15,32 +15,18 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
-
 
 zend_class_entry *php_phongo_readconcern_ce;
 
-static zend_object_handlers php_phongo_handler_readconcern;
-
-/* {{{ proto void ReadConcern::__construct([string $level])
+/* {{{ proto void MongoDB\Driver\ReadConcern::__construct([string $level])
    Constructs a new ReadConcern */
 static PHP_METHOD(ReadConcern, __construct)
 {
@@ -68,10 +54,9 @@ static PHP_METHOD(ReadConcern, __construct)
 	if (level) {
 		mongoc_read_concern_set_level(intern->read_concern, level);
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string|null ReadConcern::getLevel()
+/* {{{ proto string|null MongoDB\Driver\ReadConcern::getLevel()
    Returns the ReadConcern "level" option */
 static PHP_METHOD(ReadConcern, getLevel)
 {
@@ -92,11 +77,10 @@ static PHP_METHOD(ReadConcern, getLevel)
 	}
 
 	RETURN_NULL();
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array ReadConcern::bsonSerialize()
-   */
+/* {{{ proto array MongoDB\Driver\ReadConcern::bsonSerialize()
+*/
 static PHP_METHOD(ReadConcern, bsonSerialize)
 {
 	const mongoc_read_concern_t *read_concern = phongo_read_concern_from_zval(getThis() TSRMLS_CC);
@@ -107,14 +91,9 @@ static PHP_METHOD(ReadConcern, bsonSerialize)
 
 	php_phongo_read_concern_to_zval(return_value, read_concern);
 	convert_to_object(return_value);
-}
-/* }}} */
+} /* }}} */
 
-/**
- * Value object for read concern used in issuing read operations.
- */
-/* {{{ MongoDB\Driver\ReadConcern */
-
+/* {{{ MongoDB\Driver\ReadConcern function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, level)
 ZEND_END_ARG_INFO()
@@ -128,11 +107,11 @@ static zend_function_entry php_phongo_readconcern_me[] = {
 	PHP_ME(ReadConcern, bsonSerialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\ReadConcern object handlers */
+static zend_object_handlers php_phongo_handler_readconcern;
 
-/* {{{ php_phongo_readconcern_t object handlers */
 static void php_phongo_readconcern_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readconcern_t *intern = Z_OBJ_READCONCERN(object);

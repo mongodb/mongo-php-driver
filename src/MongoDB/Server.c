@@ -15,33 +15,19 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
-#include <ext/standard/file.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
-#include "phongo_compat.h"
 
-/* Our stuffz */
+#include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
 
-
 zend_class_entry *php_phongo_server_ce;
 
-static zend_object_handlers php_phongo_handler_server;
-
-/* {{{ proto MongoDB\Driver\Cursor Server::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null]))
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null]))
    Executes a Command on this Server */
 static PHP_METHOD(Server, executeCommand)
 {
@@ -65,10 +51,9 @@ static PHP_METHOD(Server, executeCommand)
 #else
 	phongo_execute_command(intern->manager, db, command, readPreference, intern->server_id, return_value, return_value_used TSRMLS_CC);
 #endif
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor Server::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null]))
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null]))
    Executes a Query on this Server */
 static PHP_METHOD(Server, executeQuery)
 {
@@ -92,10 +77,9 @@ static PHP_METHOD(Server, executeQuery)
 #else
 	phongo_execute_query(intern->manager, namespace, query, readPreference, intern->server_id, return_value, return_value_used TSRMLS_CC);
 #endif
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\WriteResult Server::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
+/* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Server::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
    Executes a BulkWrite (i.e. any number of insert, update, and delete ops) on
    this Server */
 static PHP_METHOD(Server, executeBulkWrite)
@@ -123,10 +107,9 @@ static PHP_METHOD(Server, executeBulkWrite)
 #else
 	phongo_execute_write(intern->manager, namespace, bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), intern->server_id, return_value, return_value_used TSRMLS_CC);
 #endif
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Server::getHost()
+/* {{{ proto string MongoDB\Driver\Server::getHost()
    Returns the hostname for this Server */
 static PHP_METHOD(Server, getHost)
 {
@@ -147,10 +130,9 @@ static PHP_METHOD(Server, getHost)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array Server::getTags()
+/* {{{ proto array MongoDB\Driver\Server::getTags()
    Returns the currently configured tags for this Server */
 static PHP_METHOD(Server, getTags)
 {
@@ -195,10 +177,9 @@ static PHP_METHOD(Server, getTags)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array Server::getInfo()
+/* {{{ proto array MongoDB\Driver\Server::getInfo()
    Returns the last isMaster result document for this Server */
 static PHP_METHOD(Server, getInfo)
 {
@@ -232,11 +213,10 @@ static PHP_METHOD(Server, getInfo)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto integer Server::getLatency()
-   Returns the last messured latency for this Server */
+/* {{{ proto integer MongoDB\Driver\Server::getLatency()
+   Returns the last measured latency for this Server */
 static PHP_METHOD(Server, getLatency)
 {
 	php_phongo_server_t         *intern;
@@ -257,10 +237,9 @@ static PHP_METHOD(Server, getLatency)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto integer Server::getPort()
+/* {{{ proto integer MongoDB\Driver\Server::getPort()
    Returns the port for this Server */
 static PHP_METHOD(Server, getPort)
 {
@@ -282,10 +261,9 @@ static PHP_METHOD(Server, getPort)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto integer Server::getType()
+/* {{{ proto integer MongoDB\Driver\Server::getType()
    Returns the node type of this Server */
 static PHP_METHOD(Server, getType)
 {
@@ -307,10 +285,9 @@ static PHP_METHOD(Server, getType)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto bool Server::isPrimary()
+/* {{{ proto boolean MongoDB\Driver\Server::isPrimary()
    Returns whether this Server is a primary member of a replica set */
 static PHP_METHOD(Server, isPrimary)
 {
@@ -332,10 +309,9 @@ static PHP_METHOD(Server, isPrimary)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto bool Server::isSecondary()
+/* {{{ proto boolean MongoDB\Driver\Server::isSecondary()
    Returns whether this Server is a secondary member of a replica set */
 static PHP_METHOD(Server, isSecondary)
 {
@@ -357,10 +333,9 @@ static PHP_METHOD(Server, isSecondary)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto bool Server::isArbiter()
+/* {{{ proto boolean MongoDB\Driver\Server::isArbiter()
    Returns whether this Server is an arbiter member of a replica set */
 static PHP_METHOD(Server, isArbiter)
 {
@@ -382,10 +357,9 @@ static PHP_METHOD(Server, isArbiter)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto bool Server::isHidden()
+/* {{{ proto boolean MongoDB\Driver\Server::isHidden()
    Returns whether this Server is a hidden member of a replica set */
 static PHP_METHOD(Server, isHidden)
 {
@@ -409,10 +383,9 @@ static PHP_METHOD(Server, isHidden)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto bool Server::isPassive()
+/* {{{ proto boolean MongoDB\Driver\Server::isPassive()
    Returns whether this Server is a passive member of a replica set */
 static PHP_METHOD(Server, isPassive)
 {
@@ -436,11 +409,9 @@ static PHP_METHOD(Server, isPassive)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ MongoDB\Driver\Server */
-
+/* {{{ MongoDB\Driver\Server function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, db)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
@@ -481,11 +452,11 @@ static zend_function_entry php_phongo_server_me[] = {
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\Server object handlers */
+static zend_object_handlers php_phongo_handler_server;
 
-/* {{{ Other functions */
 static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
 {
 	php_phongo_server_t         *intern1, *intern2;
@@ -514,8 +485,7 @@ static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{
 
 	return retval;
 } /* }}} */
-/* }}} */
-/* {{{ php_phongo_server_t object handlers */
+
 static void php_phongo_server_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_server_t *intern = Z_OBJ_SERVER(object);

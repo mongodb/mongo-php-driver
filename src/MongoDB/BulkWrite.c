@@ -15,33 +15,21 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
-/* PHP array helpers */
-#include "php_array_api.h"
-/* Our Compatability header */
-#include "phongo_compat.h"
 
-/* Our stuffz */
+#include "php_array_api.h"
+#include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
 
-#define BYPASS_UNSET -1
+#define PHONGO_BULKWRITE_BYPASS_UNSET -1
 
 zend_class_entry *php_phongo_bulkwrite_ce;
-
-static zend_object_handlers php_phongo_handler_bulkwrite;
 
 /* Returns whether any top-level field names in the document contain a "$". */
 static inline bool php_phongo_bulkwrite_update_has_operators(bson_t *bupdate) /* {{{ */
@@ -61,7 +49,7 @@ static inline bool php_phongo_bulkwrite_update_has_operators(bson_t *bupdate) /*
 
 /* Appends a document field for the given opts document and key. Returns true on
  * success; otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_bulkwrite_opts_append_document(bson_t *opts, const char *opts_key, zval *zarr, const char *zarr_key TSRMLS_DC)
+static bool php_phongo_bulkwrite_opts_append_document(bson_t *opts, const char *opts_key, zval *zarr, const char *zarr_key TSRMLS_DC) /* {{{ */
 {
 	zval *value = php_array_fetch(zarr, zarr_key);
 	bson_t b = BSON_INITIALIZER;
@@ -86,7 +74,7 @@ static bool php_phongo_bulkwrite_opts_append_document(bson_t *opts, const char *
 
 	bson_destroy(&b);
 	return true;
-}
+} /* }}} */
 
 #define PHONGO_BULKWRITE_APPEND_BOOL(opt, value) \
 	if (!BSON_APPEND_BOOL(boptions, (opt), (value))) { \
@@ -149,7 +137,7 @@ static bool php_phongo_bulkwrite_delete_apply_options(bson_t *boptions, zval *zo
 #undef PHONGO_BULKWRITE_APPEND_INT32
 #undef PHONGO_BULKWRITE_OPT_DOCUMENT
 
-/* {{{ proto void BulkWrite::__construct([array $options = array()])
+/* {{{ proto void MongoDB\Driver\BulkWrite::__construct([array $options = array()])
    Constructs a new BulkWrite */
 static PHP_METHOD(BulkWrite, __construct)
 {
@@ -175,7 +163,7 @@ static PHP_METHOD(BulkWrite, __construct)
 
 	intern->bulk = phongo_bulkwrite_init(ordered);
 	intern->ordered = ordered;
-	intern->bypass = BYPASS_UNSET;
+	intern->bypass = PHONGO_BULKWRITE_BYPASS_UNSET;
 	intern->num_ops = 0;
 
 	if (options && php_array_existsc(options, "bypassDocumentValidation")) {
@@ -183,10 +171,9 @@ static PHP_METHOD(BulkWrite, __construct)
 		mongoc_bulk_operation_set_bypass_document_validation(intern->bulk, bypass);
 		intern->bypass = bypass;
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto mixed BulkWrite::insert(array|object $document)
+/* {{{ proto mixed MongoDB\Driver\BulkWrite::insert(array|object $document)
    Adds an insert operation to the BulkWrite */
 static PHP_METHOD(BulkWrite, insert)
 {
@@ -228,10 +215,9 @@ static PHP_METHOD(BulkWrite, insert)
 
 		bson_clear(&bson_out);
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto void BulkWrite::update(array|object $query, array|object $newObj[, array $updateOptions = array()])
+/* {{{ proto void MongoDB\Driver\BulkWrite::update(array|object $query, array|object $newObj[, array $updateOptions = array()])
    Adds an update operation to the BulkWrite */
 static PHP_METHOD(BulkWrite, update)
 {
@@ -303,10 +289,9 @@ cleanup:
 	bson_clear(&bquery);
 	bson_clear(&bupdate);
 	bson_clear(&boptions);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto void BulkWrite::delete(array|object $query[, array $deleteOptions = array()])
+/* {{{ proto void MongoDB\Driver\BulkWrite::delete(array|object $query[, array $deleteOptions = array()])
    Adds a delete operation to the BulkWrite */
 static PHP_METHOD(BulkWrite, delete)
 {
@@ -353,10 +338,9 @@ static PHP_METHOD(BulkWrite, delete)
 cleanup:
 	bson_clear(&bquery);
 	bson_clear(&boptions);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto integer BulkWrite::count()
+/* {{{ proto integer MongoDB\Driver\BulkWrite::count()
    Returns the number of operations that have been added to the BulkWrite */
 static PHP_METHOD(BulkWrite, count)
 {
@@ -371,12 +355,9 @@ static PHP_METHOD(BulkWrite, count)
 	}
 
 	RETURN_LONG(intern->num_ops);
-}
-/* }}} */
+} /* }}} */
 
-
-/* {{{ MongoDB\Driver\BulkWrite */
-
+/* {{{ MongoDB\Driver\BulkWrite function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite___construct, 0, 0, 0)
 	ZEND_ARG_ARRAY_INFO(0, options, 1)
 ZEND_END_ARG_INFO()
@@ -408,11 +389,11 @@ static zend_function_entry php_phongo_bulkwrite_me[] = {
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_BulkWrite_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\BulkWrite object handlers */
+static zend_object_handlers php_phongo_handler_bulkwrite;
 
-/* {{{ php_phongo_bulkwrite_t object handlers */
 static void php_phongo_bulkwrite_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_bulkwrite_t *intern = Z_OBJ_BULKWRITE(object);
@@ -488,7 +469,7 @@ static HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp
 
 	ADD_ASSOC_BOOL_EX(&retval, "ordered", intern->ordered);
 
-	if (intern->bypass != BYPASS_UNSET) {
+	if (intern->bypass != PHONGO_BULKWRITE_BYPASS_UNSET) {
 		ADD_ASSOC_BOOL_EX(&retval, "bypassDocumentValidation", intern->bypass);
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "bypassDocumentValidation");
@@ -513,8 +494,6 @@ static HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "write_concern");
 	}
-
-
 
 	return Z_ARRVAL(retval);
 } /* }}} */
