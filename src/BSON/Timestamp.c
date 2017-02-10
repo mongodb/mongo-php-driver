@@ -44,7 +44,7 @@
 
 zend_class_entry *php_phongo_timestamp_ce;
 
-zend_object_handlers php_phongo_handler_timestamp;
+static zend_object_handlers php_phongo_handler_timestamp;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
@@ -136,7 +136,7 @@ static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, 
 /* {{{ proto void Timestamp::__construct(int|string $increment, int|string $timestamp)
    Construct a new BSON timestamp type, which consists of a 4-byte increment and
    4-byte timestamp. */
-PHP_METHOD(Timestamp, __construct)
+static PHP_METHOD(Timestamp, __construct)
 {
 	php_phongo_timestamp_t *intern;
 	zend_error_handling     error_handling;
@@ -180,7 +180,7 @@ PHP_METHOD(Timestamp, __construct)
 
 /* {{{ proto void Timestamp::__set_state(array $properties)
 */
-PHP_METHOD(Timestamp, __set_state)
+static PHP_METHOD(Timestamp, __set_state)
 {
 	php_phongo_timestamp_t *intern;
 	HashTable              *props;
@@ -201,7 +201,7 @@ PHP_METHOD(Timestamp, __set_state)
 
 /* {{{ proto string Timestamp::__toString()
    Returns a string in the form: [increment:timestamp] */
-PHP_METHOD(Timestamp, __toString)
+static PHP_METHOD(Timestamp, __toString)
 {
 	php_phongo_timestamp_t    *intern;
 	char                      *retval;
@@ -222,7 +222,7 @@ PHP_METHOD(Timestamp, __toString)
 
 /* {{{ proto array Timestamp::jsonSerialize()
 */
-PHP_METHOD(Timestamp, jsonSerialize)
+static PHP_METHOD(Timestamp, jsonSerialize)
 {
 	php_phongo_timestamp_t *intern;
 
@@ -259,7 +259,7 @@ PHP_METHOD(Timestamp, jsonSerialize)
 
 /* {{{ proto string Timestamp::serialize()
 */
-PHP_METHOD(Timestamp, serialize)
+static PHP_METHOD(Timestamp, serialize)
 {
 	php_phongo_timestamp_t   *intern;
 #if PHP_VERSION_ID >= 70000
@@ -308,7 +308,7 @@ PHP_METHOD(Timestamp, serialize)
 
 /* {{{ proto string Timestamp::unserialize(string $serialized)
 */
-PHP_METHOD(Timestamp, unserialize)
+static PHP_METHOD(Timestamp, unserialize)
 {
 	php_phongo_timestamp_t *intern;
 	zend_error_handling     error_handling;
@@ -396,7 +396,7 @@ static void php_phongo_timestamp_free_object(phongo_free_object_arg *object TSRM
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_timestamp_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_timestamp_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_timestamp_t *intern = NULL;
 
@@ -447,7 +447,7 @@ static HashTable *php_phongo_timestamp_get_gc(zval *object, phongo_get_gc_table 
 	return zend_std_get_properties(object TSRMLS_CC);
 } /* }}} */
 
-HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_timestamp_t *intern;
 	HashTable              *props;

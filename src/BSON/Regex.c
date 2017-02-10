@@ -44,7 +44,7 @@
 
 zend_class_entry *php_phongo_regex_ce;
 
-zend_object_handlers php_phongo_handler_regex;
+static zend_object_handlers php_phongo_handler_regex;
 
 /* qsort() compare callback for alphabetizing regex flags upon initialization */
 static int php_phongo_regex_compare_flags(const void *f1, const void *f2) {
@@ -109,7 +109,7 @@ static bool php_phongo_regex_init_from_hash(php_phongo_regex_t *intern, HashTabl
 
 /* {{{ proto void Regex::__construct(string $pattern [, string $flags])
    Constructs a new BSON regular expression type. */
-PHP_METHOD(Regex, __construct)
+static PHP_METHOD(Regex, __construct)
 {
 	php_phongo_regex_t       *intern;
 	zend_error_handling       error_handling;
@@ -134,7 +134,7 @@ PHP_METHOD(Regex, __construct)
 
 /* {{{ proto string Regex::getPattern()
 */
-PHP_METHOD(Regex, getPattern)
+static PHP_METHOD(Regex, getPattern)
 {
 	php_phongo_regex_t       *intern;
 
@@ -152,7 +152,7 @@ PHP_METHOD(Regex, getPattern)
 
 /* {{{ proto string Regex::getFlags()
 */
-PHP_METHOD(Regex, getFlags)
+static PHP_METHOD(Regex, getFlags)
 {
 	php_phongo_regex_t       *intern;
 
@@ -170,7 +170,7 @@ PHP_METHOD(Regex, getFlags)
 
 /* {{{ proto void Regex::__set_state(array $properties)
 */
-PHP_METHOD(Regex, __set_state)
+static PHP_METHOD(Regex, __set_state)
 {
 	php_phongo_regex_t *intern;
 	HashTable          *props;
@@ -191,7 +191,7 @@ PHP_METHOD(Regex, __set_state)
 
 /* {{{ proto string Regex::__toString()
    Returns a string in the form: /pattern/flags */
-PHP_METHOD(Regex, __toString)
+static PHP_METHOD(Regex, __toString)
 {
 	php_phongo_regex_t       *intern;
 	char                     *regex;
@@ -213,7 +213,7 @@ PHP_METHOD(Regex, __toString)
 
 /* {{{ proto array Regex::jsonSerialize()
 */
-PHP_METHOD(Regex, jsonSerialize)
+static PHP_METHOD(Regex, jsonSerialize)
 {
 	php_phongo_regex_t *intern;
 
@@ -231,7 +231,7 @@ PHP_METHOD(Regex, jsonSerialize)
 
 /* {{{ proto string Regex::serialize()
 */
-PHP_METHOD(Regex, serialize)
+static PHP_METHOD(Regex, serialize)
 {
 	php_phongo_regex_t       *intern;
 #if PHP_VERSION_ID >= 70000
@@ -273,7 +273,7 @@ PHP_METHOD(Regex, serialize)
 
 /* {{{ proto string Regex::unserialize(string $serialized)
 */
-PHP_METHOD(Regex, unserialize)
+static PHP_METHOD(Regex, unserialize)
 {
 	php_phongo_regex_t     *intern;
 	zend_error_handling     error_handling;
@@ -371,7 +371,7 @@ static void php_phongo_regex_free_object(phongo_free_object_arg *object TSRMLS_D
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_regex_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_regex_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_regex_t *intern = NULL;
 
@@ -421,7 +421,7 @@ static HashTable *php_phongo_regex_get_gc(zval *object, phongo_get_gc_table tabl
 	return zend_std_get_properties(object TSRMLS_CC);
 } /* }}} */
 
-HashTable *php_phongo_regex_get_properties(zval *object TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_regex_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_regex_t *intern;
 	HashTable          *props;

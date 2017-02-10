@@ -44,7 +44,7 @@
 
 zend_class_entry *php_phongo_objectid_ce;
 
-zend_object_handlers php_phongo_handler_objectid;
+static zend_object_handlers php_phongo_handler_objectid;
 
 /* Initialize the object with a generated value and return whether it was
  * successful. */
@@ -109,7 +109,7 @@ static bool php_phongo_objectid_init_from_hash(php_phongo_objectid_t *intern, Ha
 
 /* {{{ proto void ObjectID::__construct([string $id])
    Constructs a new BSON ObjectID type, optionally from a hex string. */
-PHP_METHOD(ObjectID, __construct)
+static PHP_METHOD(ObjectID, __construct)
 {
 	php_phongo_objectid_t    *intern;
 	zend_error_handling       error_handling;
@@ -136,7 +136,7 @@ PHP_METHOD(ObjectID, __construct)
 
 /* {{{ proto integer ObjectID::getTimestamp()
     */
-PHP_METHOD(ObjectID, getTimestamp)
+static PHP_METHOD(ObjectID, getTimestamp)
 {
 	php_phongo_objectid_t    *intern;
 	bson_oid_t                tmp_oid;
@@ -154,7 +154,7 @@ PHP_METHOD(ObjectID, getTimestamp)
 
 /* {{{ proto ObjectID::__set_state(array $properties)
 */
-PHP_METHOD(ObjectID, __set_state)
+static PHP_METHOD(ObjectID, __set_state)
 {
 	php_phongo_objectid_t *intern;
 	HashTable             *props;
@@ -175,7 +175,7 @@ PHP_METHOD(ObjectID, __set_state)
 
 /* {{{ proto string ObjectID::__toString()
     */
-PHP_METHOD(ObjectID, __toString)
+static PHP_METHOD(ObjectID, __toString)
 {
 	php_phongo_objectid_t    *intern;
 
@@ -193,7 +193,7 @@ PHP_METHOD(ObjectID, __toString)
 
 /* {{{ proto array ObjectID::jsonSerialize()
 */
-PHP_METHOD(ObjectID, jsonSerialize)
+static PHP_METHOD(ObjectID, jsonSerialize)
 {
 	php_phongo_objectid_t *intern;
 
@@ -210,7 +210,7 @@ PHP_METHOD(ObjectID, jsonSerialize)
 
 /* {{{ proto string ObjectID::serialize()
 */
-PHP_METHOD(ObjectID, serialize)
+static PHP_METHOD(ObjectID, serialize)
 {
 	php_phongo_objectid_t    *intern;
 #if PHP_VERSION_ID >= 70000
@@ -250,7 +250,7 @@ PHP_METHOD(ObjectID, serialize)
 
 /* {{{ proto string ObjectID::unserialize(string $serialized)
 */
-PHP_METHOD(ObjectID, unserialize)
+static PHP_METHOD(ObjectID, unserialize)
 {
 	php_phongo_objectid_t   *intern;
 	zend_error_handling      error_handling;
@@ -338,7 +338,7 @@ static void php_phongo_objectid_free_object(phongo_free_object_arg *object TSRML
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_objectid_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_objectid_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_objectid_t *intern = NULL;
 
@@ -381,7 +381,7 @@ static HashTable *php_phongo_objectid_get_gc(zval *object, phongo_get_gc_table t
 	return zend_std_get_properties(object TSRMLS_CC);
 } /* }}} */
 
-HashTable *php_phongo_objectid_get_properties(zval *object TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_objectid_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_objectid_t *intern;
 	HashTable             *props;

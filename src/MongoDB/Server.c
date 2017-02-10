@@ -39,11 +39,11 @@
 
 zend_class_entry *php_phongo_server_ce;
 
-zend_object_handlers php_phongo_handler_server;
+static zend_object_handlers php_phongo_handler_server;
 
 /* {{{ proto MongoDB\Driver\Cursor Server::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null]))
    Executes a Command on this Server */
-PHP_METHOD(Server, executeCommand)
+static PHP_METHOD(Server, executeCommand)
 {
 	php_phongo_server_t      *intern;
 	char                     *db;
@@ -70,7 +70,7 @@ PHP_METHOD(Server, executeCommand)
 
 /* {{{ proto MongoDB\Driver\Cursor Server::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null]))
    Executes a Query on this Server */
-PHP_METHOD(Server, executeQuery)
+static PHP_METHOD(Server, executeQuery)
 {
 	php_phongo_server_t      *intern;
 	char                     *namespace;
@@ -98,7 +98,7 @@ PHP_METHOD(Server, executeQuery)
 /* {{{ proto MongoDB\Driver\WriteResult Server::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
    Executes a BulkWrite (i.e. any number of insert, update, and delete ops) on
    this Server */
-PHP_METHOD(Server, executeBulkWrite)
+static PHP_METHOD(Server, executeBulkWrite)
 {
 	php_phongo_server_t      *intern;
 	char                     *namespace;
@@ -128,7 +128,7 @@ PHP_METHOD(Server, executeBulkWrite)
 
 /* {{{ proto string Server::getHost()
    Returns the hostname for this Server */
-PHP_METHOD(Server, getHost)
+static PHP_METHOD(Server, getHost)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
@@ -152,7 +152,7 @@ PHP_METHOD(Server, getHost)
 
 /* {{{ proto array Server::getTags()
    Returns the currently configured tags for this Server */
-PHP_METHOD(Server, getTags)
+static PHP_METHOD(Server, getTags)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
@@ -200,7 +200,7 @@ PHP_METHOD(Server, getTags)
 
 /* {{{ proto array Server::getInfo()
    Returns the last isMaster result document for this Server */
-PHP_METHOD(Server, getInfo)
+static PHP_METHOD(Server, getInfo)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
@@ -237,7 +237,7 @@ PHP_METHOD(Server, getInfo)
 
 /* {{{ proto integer Server::getLatency()
    Returns the last messured latency for this Server */
-PHP_METHOD(Server, getLatency)
+static PHP_METHOD(Server, getLatency)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
@@ -262,7 +262,7 @@ PHP_METHOD(Server, getLatency)
 
 /* {{{ proto integer Server::getPort()
    Returns the port for this Server */
-PHP_METHOD(Server, getPort)
+static PHP_METHOD(Server, getPort)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
@@ -287,7 +287,7 @@ PHP_METHOD(Server, getPort)
 
 /* {{{ proto integer Server::getType()
    Returns the node type of this Server */
-PHP_METHOD(Server, getType)
+static PHP_METHOD(Server, getType)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
@@ -312,7 +312,7 @@ PHP_METHOD(Server, getType)
 
 /* {{{ proto bool Server::isPrimary()
    Returns whether this Server is a primary member of a replica set */
-PHP_METHOD(Server, isPrimary)
+static PHP_METHOD(Server, isPrimary)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
@@ -337,7 +337,7 @@ PHP_METHOD(Server, isPrimary)
 
 /* {{{ proto bool Server::isSecondary()
    Returns whether this Server is a secondary member of a replica set */
-PHP_METHOD(Server, isSecondary)
+static PHP_METHOD(Server, isSecondary)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
@@ -362,7 +362,7 @@ PHP_METHOD(Server, isSecondary)
 
 /* {{{ proto bool Server::isArbiter()
    Returns whether this Server is an arbiter member of a replica set */
-PHP_METHOD(Server, isArbiter)
+static PHP_METHOD(Server, isArbiter)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
@@ -387,7 +387,7 @@ PHP_METHOD(Server, isArbiter)
 
 /* {{{ proto bool Server::isHidden()
    Returns whether this Server is a hidden member of a replica set */
-PHP_METHOD(Server, isHidden)
+static PHP_METHOD(Server, isHidden)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
@@ -414,7 +414,7 @@ PHP_METHOD(Server, isHidden)
 
 /* {{{ proto bool Server::isPassive()
    Returns whether this Server is a passive member of a replica set */
-PHP_METHOD(Server, isPassive)
+static PHP_METHOD(Server, isPassive)
 {
 	php_phongo_server_t         *intern;
 	mongoc_server_description_t *sd;
@@ -529,7 +529,7 @@ static void php_phongo_server_free_object(phongo_free_object_arg *object TSRMLS_
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_server_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_server_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_server_t *intern = NULL;
 
@@ -553,7 +553,7 @@ phongo_create_object_retval php_phongo_server_create_object(zend_class_entry *cl
 #endif
 } /* }}} */
 
-HashTable *php_phongo_server_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_server_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_server_t         *intern = NULL;
 #if PHP_VERSION_ID >= 70000

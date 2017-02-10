@@ -44,11 +44,11 @@
 
 zend_class_entry *php_phongo_decimal128_ce;
 
-zend_object_handlers php_phongo_handler_decimal128;
+static zend_object_handlers php_phongo_handler_decimal128;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_decimal128_init(php_phongo_decimal128_t *intern, const char *value TSRMLS_DC)
+static bool php_phongo_decimal128_init(php_phongo_decimal128_t *intern, const char *value TSRMLS_DC) /* {{{ */
 {
 	if (!bson_decimal128_from_string(value, &intern->decimal)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing Decimal128 string: %s", value);
@@ -62,7 +62,7 @@ static bool php_phongo_decimal128_init(php_phongo_decimal128_t *intern, const ch
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_decimal128_init_from_hash(php_phongo_decimal128_t *intern, HashTable *props TSRMLS_DC)
+static bool php_phongo_decimal128_init_from_hash(php_phongo_decimal128_t *intern, HashTable *props TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval *dec;
@@ -84,7 +84,7 @@ static bool php_phongo_decimal128_init_from_hash(php_phongo_decimal128_t *intern
 
 /* {{{ proto void Decimal128::__construct(string $value)
    Construct a new BSON Decimal128 type */
-PHP_METHOD(Decimal128, __construct)
+static PHP_METHOD(Decimal128, __construct)
 {
 	php_phongo_decimal128_t *intern;
 	zend_error_handling      error_handling;
@@ -107,7 +107,7 @@ PHP_METHOD(Decimal128, __construct)
 
 /* {{{ proto void Decimal128::__set_state(array $properties)
 */
-PHP_METHOD(Decimal128, __set_state)
+static PHP_METHOD(Decimal128, __set_state)
 {
 	php_phongo_decimal128_t *intern;
 	HashTable               *props;
@@ -128,7 +128,7 @@ PHP_METHOD(Decimal128, __set_state)
 
 /* {{{ proto string Decimal128::__toString()
 */
-PHP_METHOD(Decimal128, __toString)
+static PHP_METHOD(Decimal128, __toString)
 {
 	php_phongo_decimal128_t *intern;
 	char                     outbuf[BSON_DECIMAL128_STRING];
@@ -147,7 +147,7 @@ PHP_METHOD(Decimal128, __toString)
 
 /* {{{ proto array Decimal128::jsonSerialize()
 */
-PHP_METHOD(Decimal128, jsonSerialize)
+static PHP_METHOD(Decimal128, jsonSerialize)
 {
 	php_phongo_decimal128_t *intern;
 	char                     outbuf[BSON_DECIMAL128_STRING] = "";
@@ -166,7 +166,7 @@ PHP_METHOD(Decimal128, jsonSerialize)
 
 /* {{{ proto string Decimal128::serialize()
 */
-PHP_METHOD(Decimal128, serialize)
+static PHP_METHOD(Decimal128, serialize)
 {
 	php_phongo_decimal128_t  *intern;
 #if PHP_VERSION_ID >= 70000
@@ -208,7 +208,7 @@ PHP_METHOD(Decimal128, serialize)
 
 /* {{{ proto string Decimal128::unserialize(string $serialized)
 */
-PHP_METHOD(Decimal128, unserialize)
+static PHP_METHOD(Decimal128, unserialize)
 {
 	php_phongo_decimal128_t *intern;
 	zend_error_handling      error_handling;
@@ -296,7 +296,7 @@ static void php_phongo_decimal128_free_object(phongo_free_object_arg *object TSR
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_decimal128_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_decimal128_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_decimal128_t *intern = NULL;
 
@@ -328,7 +328,7 @@ static HashTable *php_phongo_decimal128_get_gc(zval *object, phongo_get_gc_table
 	return zend_std_get_properties(object TSRMLS_CC);
 } /* }}} */
 
-HashTable *php_phongo_decimal128_get_properties(zval *object TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_decimal128_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_decimal128_t *intern;
 	HashTable               *props;

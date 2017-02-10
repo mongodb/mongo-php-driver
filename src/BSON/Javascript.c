@@ -44,7 +44,7 @@
 
 zend_class_entry *php_phongo_javascript_ce;
 
-zend_object_handlers php_phongo_handler_javascript;
+static zend_object_handlers php_phongo_handler_javascript;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
@@ -103,7 +103,7 @@ static bool php_phongo_javascript_init_from_hash(php_phongo_javascript_t *intern
    Construct a new BSON Javascript type. The scope is a document mapping
    identifiers and values, representing the scope in which the code string will
    be evaluated. Note that this type cannot be represented as Extended JSON. */
-PHP_METHOD(Javascript, __construct)
+static PHP_METHOD(Javascript, __construct)
 {
 	php_phongo_javascript_t   *intern;
 	zend_error_handling        error_handling;
@@ -127,7 +127,7 @@ PHP_METHOD(Javascript, __construct)
 
 /* {{{ proto void Javascript::__set_state(array $properties)
 */
-PHP_METHOD(Javascript, __set_state)
+static PHP_METHOD(Javascript, __set_state)
 {
 	php_phongo_javascript_t *intern;
 	HashTable               *props;
@@ -148,7 +148,7 @@ PHP_METHOD(Javascript, __set_state)
 
 /* {{{ proto string Javascript::__toString()
    Return the Javascript's code string. */
-PHP_METHOD(Javascript, __toString)
+static PHP_METHOD(Javascript, __toString)
 {
 	php_phongo_javascript_t *intern;
 
@@ -164,7 +164,7 @@ PHP_METHOD(Javascript, __toString)
 
 /* {{{ proto string Javascript::getCode()
 */
-PHP_METHOD(Javascript, getCode)
+static PHP_METHOD(Javascript, getCode)
 {
 	php_phongo_javascript_t *intern;
 
@@ -180,7 +180,7 @@ PHP_METHOD(Javascript, getCode)
 
 /* {{{ proto object|null Javascript::getScope()
 */
-PHP_METHOD(Javascript, getScope)
+static PHP_METHOD(Javascript, getScope)
 {
 	php_phongo_javascript_t *intern;
 
@@ -211,7 +211,7 @@ PHP_METHOD(Javascript, getScope)
 
 /* {{{ proto array Javascript::jsonSerialize()
 */
-PHP_METHOD(Javascript, jsonSerialize)
+static PHP_METHOD(Javascript, jsonSerialize)
 {
 	php_phongo_javascript_t *intern;
 
@@ -244,7 +244,7 @@ PHP_METHOD(Javascript, jsonSerialize)
 
 /* {{{ proto string Javascript::serialize()
 */
-PHP_METHOD(Javascript, serialize)
+static PHP_METHOD(Javascript, serialize)
 {
 	php_phongo_javascript_t  *intern;
 #if PHP_VERSION_ID >= 70000
@@ -311,7 +311,7 @@ PHP_METHOD(Javascript, serialize)
 
 /* {{{ proto string Javascript::unserialize(string $serialized)
 */
-PHP_METHOD(Javascript, unserialize)
+static PHP_METHOD(Javascript, unserialize)
 {
 	php_phongo_javascript_t *intern;
 	zend_error_handling      error_handling;

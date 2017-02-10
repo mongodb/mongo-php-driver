@@ -42,7 +42,7 @@
 
 zend_class_entry *php_phongo_query_ce;
 
-zend_object_handlers php_phongo_handler_query;
+static zend_object_handlers php_phongo_handler_query;
 
 /* Appends a string field into the BSON options. Returns true on
  * success; otherwise, false is returned and an exception is thrown. */
@@ -303,7 +303,7 @@ static bool php_phongo_query_init(php_phongo_query_t *intern, zval *filter, zval
 
 /* {{{ proto void Query::__construct(array|object $filter[, array $options = array()])
    Constructs a new Query */
-PHP_METHOD(Query, __construct)
+static PHP_METHOD(Query, __construct)
 {
 	php_phongo_query_t  *intern;
 	zend_error_handling  error_handling;
@@ -368,7 +368,7 @@ static void php_phongo_query_free_object(phongo_free_object_arg *object TSRMLS_D
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_query_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_query_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_query_t *intern = NULL;
 
@@ -392,7 +392,7 @@ phongo_create_object_retval php_phongo_query_create_object(zend_class_entry *cla
 #endif
 } /* }}} */
 
-HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_query_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_query_t    *intern;
 #if PHP_VERSION_ID >= 70000

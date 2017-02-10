@@ -38,11 +38,11 @@
 
 zend_class_entry *php_phongo_readconcern_ce;
 
-zend_object_handlers php_phongo_handler_readconcern;
+static zend_object_handlers php_phongo_handler_readconcern;
 
 /* {{{ proto void ReadConcern::__construct([string $level])
    Constructs a new ReadConcern */
-PHP_METHOD(ReadConcern, __construct)
+static PHP_METHOD(ReadConcern, __construct)
 {
 	php_phongo_readconcern_t *intern;
 	zend_error_handling       error_handling;
@@ -73,7 +73,7 @@ PHP_METHOD(ReadConcern, __construct)
 
 /* {{{ proto string|null ReadConcern::getLevel()
    Returns the ReadConcern "level" option */
-PHP_METHOD(ReadConcern, getLevel)
+static PHP_METHOD(ReadConcern, getLevel)
 {
 	php_phongo_readconcern_t *intern;
 	const char *level;
@@ -97,7 +97,7 @@ PHP_METHOD(ReadConcern, getLevel)
 
 /* {{{ proto array ReadConcern::bsonSerialize()
    */
-PHP_METHOD(ReadConcern, bsonSerialize)
+static PHP_METHOD(ReadConcern, bsonSerialize)
 {
 	const mongoc_read_concern_t *read_concern = phongo_read_concern_from_zval(getThis() TSRMLS_CC);
 
@@ -148,7 +148,7 @@ static void php_phongo_readconcern_free_object(phongo_free_object_arg *object TS
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_readconcern_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_readconcern_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readconcern_t *intern = NULL;
 
@@ -172,7 +172,7 @@ phongo_create_object_retval php_phongo_readconcern_create_object(zend_class_entr
 #endif
 } /* }}} */
 
-HashTable *php_phongo_readconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_readconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval retval;

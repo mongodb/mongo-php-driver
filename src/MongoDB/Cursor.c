@@ -38,7 +38,7 @@
 
 zend_class_entry *php_phongo_cursor_ce;
 
-zend_object_handlers php_phongo_handler_cursor;
+static zend_object_handlers php_phongo_handler_cursor;
 
 static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ */
 {
@@ -158,7 +158,7 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_
 } /* }}} */
 
 /* iterator handler table */
-zend_object_iterator_funcs php_phongo_cursor_iterator_funcs = {
+static zend_object_iterator_funcs php_phongo_cursor_iterator_funcs = {
 	php_phongo_cursor_iterator_dtor,
 	php_phongo_cursor_iterator_valid,
 	php_phongo_cursor_iterator_get_current_data,
@@ -168,7 +168,7 @@ zend_object_iterator_funcs php_phongo_cursor_iterator_funcs = {
 	NULL /* invalidate_current is not used */
 };
 
-zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC) /* {{{ */
+static zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_iterator *cursor_it = NULL;
 	php_phongo_cursor_t *cursor = Z_CURSOR_OBJ_P(object);
@@ -207,7 +207,7 @@ zend_object_iterator *php_phongo_cursor_get_iterator(zend_class_entry *ce, zval 
 
 /* {{{ proto void Cursor::setTypeMap(array $typemap)
    Sets a type map to use for BSON unserialization */
-PHP_METHOD(Cursor, setTypeMap)
+static PHP_METHOD(Cursor, setTypeMap)
 {
 	php_phongo_cursor_t *intern;
 	php_phongo_bson_state     state = PHONGO_BSON_STATE_INITIALIZER;
@@ -279,7 +279,7 @@ static int php_phongo_cursor_to_array_apply(zend_object_iterator *iter, void *pu
 
 /* {{{ proto array Cursor::toArray()
    Returns an array of all result documents for this cursor */
-PHP_METHOD(Cursor, toArray)
+static PHP_METHOD(Cursor, toArray)
 {
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
@@ -298,7 +298,7 @@ PHP_METHOD(Cursor, toArray)
 
 /* {{{ proto MongoDB\Driver\CursorId Cursor::getId()
    Returns the CursorId for this cursor */
-PHP_METHOD(Cursor, getId)
+static PHP_METHOD(Cursor, getId)
 {
 	php_phongo_cursor_t      *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -316,7 +316,7 @@ PHP_METHOD(Cursor, getId)
 
 /* {{{ proto MongoDB\Driver\Server Cursor::getServer()
    Returns the Server object to which this cursor is attached */
-PHP_METHOD(Cursor, getServer)
+static PHP_METHOD(Cursor, getServer)
 {
 	php_phongo_cursor_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -338,7 +338,7 @@ PHP_METHOD(Cursor, getServer)
 
 /* {{{ proto boolean Cursor::isDead()
    Checks if a cursor is still alive */
-PHP_METHOD(Cursor, isDead)
+static PHP_METHOD(Cursor, isDead)
 {
 	php_phongo_cursor_t      *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -417,7 +417,7 @@ static void php_phongo_cursor_free_object(phongo_free_object_arg *object TSRMLS_
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_cursor_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_cursor_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t *intern = NULL;
 
@@ -441,7 +441,7 @@ phongo_create_object_retval php_phongo_cursor_create_object(zend_class_entry *cl
 #endif
 } /* }}} */
 
-HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t    *intern;
 #if PHP_VERSION_ID >= 70000

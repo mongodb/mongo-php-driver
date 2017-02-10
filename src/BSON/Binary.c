@@ -46,7 +46,7 @@
 
 zend_class_entry *php_phongo_binary_ce;
 
-zend_object_handlers php_phongo_handler_binary;
+static zend_object_handlers php_phongo_handler_binary;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
@@ -90,7 +90,7 @@ static bool php_phongo_binary_init_from_hash(php_phongo_binary_t *intern, HashTa
 
 /* {{{ proto void Binary::__construct(string $data, int $type)
    Construct a new BSON binary type */
-PHP_METHOD(Binary, __construct)
+static PHP_METHOD(Binary, __construct)
 {
 	php_phongo_binary_t    *intern;
 	zend_error_handling     error_handling;
@@ -114,7 +114,7 @@ PHP_METHOD(Binary, __construct)
 
 /* {{{ proto void Binary::__set_state(array $properties)
 */
-PHP_METHOD(Binary, __set_state)
+static PHP_METHOD(Binary, __set_state)
 {
 	php_phongo_binary_t *intern;
 	HashTable           *props;
@@ -135,7 +135,7 @@ PHP_METHOD(Binary, __set_state)
 
 /* {{{ proto string Binary::__toString()
    Return the Binary's data string. */
-PHP_METHOD(Binary, __toString)
+static PHP_METHOD(Binary, __toString)
 {
 	php_phongo_binary_t *intern;
 
@@ -151,7 +151,7 @@ PHP_METHOD(Binary, __toString)
 
 /* {{{ proto string Binary::getData()
 */
-PHP_METHOD(Binary, getData)
+static PHP_METHOD(Binary, getData)
 {
 	php_phongo_binary_t      *intern;
 
@@ -168,7 +168,7 @@ PHP_METHOD(Binary, getData)
 
 /* {{{ proto integer Binary::getType()
 */
-PHP_METHOD(Binary, getType)
+static PHP_METHOD(Binary, getType)
 {
 	php_phongo_binary_t      *intern;
 
@@ -185,7 +185,7 @@ PHP_METHOD(Binary, getType)
 
 /* {{{ proto array Binary::jsonSerialize()
 */
-PHP_METHOD(Binary, jsonSerialize)
+static PHP_METHOD(Binary, jsonSerialize)
 {
 	php_phongo_binary_t *intern;
 	char                 type[3];
@@ -221,7 +221,7 @@ PHP_METHOD(Binary, jsonSerialize)
 
 /* {{{ proto string Binary::serialize()
 */
-PHP_METHOD(Binary, serialize)
+static PHP_METHOD(Binary, serialize)
 {
 	php_phongo_binary_t      *intern;
 #if PHP_VERSION_ID >= 70000
@@ -263,7 +263,7 @@ PHP_METHOD(Binary, serialize)
 
 /* {{{ proto string Binary::unserialize(string $serialized)
 */
-PHP_METHOD(Binary, unserialize)
+static PHP_METHOD(Binary, unserialize)
 {
 	php_phongo_binary_t    *intern;
 	zend_error_handling     error_handling;
@@ -357,7 +357,8 @@ static void php_phongo_binary_free_object(phongo_free_object_arg *object TSRMLS_
 	efree(intern);
 #endif
 } /* }}} */
-phongo_create_object_retval php_phongo_binary_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+
+static phongo_create_object_retval php_phongo_binary_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_binary_t *intern = NULL;
 
@@ -409,7 +410,7 @@ static HashTable *php_phongo_binary_get_gc(zval *object, phongo_get_gc_table tab
 	return zend_std_get_properties(object TSRMLS_CC);
 } /* }}} */
 
-HashTable *php_phongo_binary_get_properties(zval *object TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_binary_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_binary_t *intern;
 	HashTable           *props;

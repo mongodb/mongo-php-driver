@@ -38,11 +38,11 @@
 
 zend_class_entry *php_phongo_writeconcern_ce;
 
-zend_object_handlers php_phongo_handler_writeconcern;
+static zend_object_handlers php_phongo_handler_writeconcern;
 
 /* {{{ proto void WriteConcern::__construct(integer|string $w[, integer $wtimeout[, boolean $journal]])
    Constructs a new WriteConcern */
-PHP_METHOD(WriteConcern, __construct)
+static PHP_METHOD(WriteConcern, __construct)
 {
 	php_phongo_writeconcern_t *intern;
 	zend_error_handling       error_handling;
@@ -108,7 +108,7 @@ PHP_METHOD(WriteConcern, __construct)
 
 /* {{{ proto string|integer|null WriteConcern::getW()
    Returns the WriteConcern "w" option */
-PHP_METHOD(WriteConcern, getW)
+static PHP_METHOD(WriteConcern, getW)
 {
 	php_phongo_writeconcern_t *intern;
 	const char *wtag;
@@ -140,7 +140,7 @@ PHP_METHOD(WriteConcern, getW)
 
 /* {{{ proto integer WriteConcern::getWtimeout()
    Returns the WriteConcern "wtimeout" option */
-PHP_METHOD(WriteConcern, getWtimeout)
+static PHP_METHOD(WriteConcern, getWtimeout)
 {
 	php_phongo_writeconcern_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -157,7 +157,7 @@ PHP_METHOD(WriteConcern, getWtimeout)
 
 /* {{{ proto null|boolean WriteConcern::getJournal()
    Returns the WriteConcern "journal" option */
-PHP_METHOD(WriteConcern, getJournal)
+static PHP_METHOD(WriteConcern, getJournal)
 {
 	php_phongo_writeconcern_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -178,7 +178,7 @@ PHP_METHOD(WriteConcern, getJournal)
 
 /* {{{ proto array WriteConcern::bsonSerialize()
    */
-PHP_METHOD(WriteConcern, bsonSerialize)
+static PHP_METHOD(WriteConcern, bsonSerialize)
 {
 	const mongoc_write_concern_t *write_concern = phongo_write_concern_from_zval(getThis() TSRMLS_CC);
 
@@ -233,7 +233,7 @@ static void php_phongo_writeconcern_free_object(phongo_free_object_arg *object T
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_writeconcern_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_writeconcern_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeconcern_t *intern = NULL;
 
@@ -257,7 +257,7 @@ phongo_create_object_retval php_phongo_writeconcern_create_object(zend_class_ent
 #endif
 } /* }}} */
 
-HashTable *php_phongo_writeconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_writeconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval                          retval;

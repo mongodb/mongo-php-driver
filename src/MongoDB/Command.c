@@ -38,11 +38,11 @@
 
 zend_class_entry *php_phongo_command_ce;
 
-zend_object_handlers php_phongo_handler_command;
+static zend_object_handlers php_phongo_handler_command;
 
 /* {{{ proto void Command::__construct(array|object $document)
    Constructs a new Command */
-PHP_METHOD(Command, __construct)
+static PHP_METHOD(Command, __construct)
 {
 	php_phongo_command_t     *intern;
 	zend_error_handling       error_handling;
@@ -103,7 +103,7 @@ static void php_phongo_command_free_object(phongo_free_object_arg *object TSRMLS
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_command_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_command_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_command_t *intern = NULL;
 
@@ -127,7 +127,7 @@ phongo_create_object_retval php_phongo_command_create_object(zend_class_entry *c
 #endif
 } /* }}} */
 
-HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_command_t  *intern;
 #if PHP_VERSION_ID >= 70000

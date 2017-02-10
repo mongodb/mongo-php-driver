@@ -38,11 +38,11 @@
 
 zend_class_entry *php_phongo_maxkey_ce;
 
-zend_object_handlers php_phongo_handler_maxkey;
+static zend_object_handlers php_phongo_handler_maxkey;
 
 /* {{{ proto MaxKey::__set_state(array $properties)
 */
-PHP_METHOD(MaxKey, __set_state)
+static PHP_METHOD(MaxKey, __set_state)
 {
 	zval *array;
 
@@ -56,7 +56,7 @@ PHP_METHOD(MaxKey, __set_state)
 
 /* {{{ proto array MaxKey::jsonSerialize()
 */
-PHP_METHOD(MaxKey, jsonSerialize)
+static PHP_METHOD(MaxKey, jsonSerialize)
 {
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -69,7 +69,7 @@ PHP_METHOD(MaxKey, jsonSerialize)
 
 /* {{{ proto string MaxKey::serialize()
 */
-PHP_METHOD(MaxKey, serialize)
+static PHP_METHOD(MaxKey, serialize)
 {
 	PHONGO_RETURN_STRING("");
 }
@@ -77,7 +77,7 @@ PHP_METHOD(MaxKey, serialize)
 
 /* {{{ proto string MaxKey::unserialize(string $serialized)
 */
-PHP_METHOD(MaxKey, unserialize)
+static PHP_METHOD(MaxKey, unserialize)
 {
 	zend_error_handling     error_handling;
 	char                   *serialized;
@@ -129,7 +129,7 @@ static void php_phongo_maxkey_free_object(phongo_free_object_arg *object TSRMLS_
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_maxkey_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_maxkey_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_maxkey_t *intern = NULL;
 

@@ -38,11 +38,11 @@
 
 zend_class_entry *php_phongo_writeerror_ce;
 
-zend_object_handlers php_phongo_handler_writeerror;
+static zend_object_handlers php_phongo_handler_writeerror;
 
 /* {{{ proto integer WriteError::getCode()
    Returns the MongoDB error code */
-PHP_METHOD(WriteError, getCode)
+static PHP_METHOD(WriteError, getCode)
 {
 	php_phongo_writeerror_t  *intern;
 
@@ -61,7 +61,7 @@ PHP_METHOD(WriteError, getCode)
 /* {{{ proto integer WriteError::getIndex()
    Returns the index of the operation in the BulkWrite to which this WriteError
    corresponds. */
-PHP_METHOD(WriteError, getIndex)
+static PHP_METHOD(WriteError, getIndex)
 {
 	php_phongo_writeerror_t  *intern;
 
@@ -79,7 +79,7 @@ PHP_METHOD(WriteError, getIndex)
 
 /* {{{ proto string WriteError::getMessage()
    Returns the actual error message from the server */
-PHP_METHOD(WriteError, getMessage)
+static PHP_METHOD(WriteError, getMessage)
 {
 	php_phongo_writeerror_t  *intern;
 
@@ -97,7 +97,7 @@ PHP_METHOD(WriteError, getMessage)
 
 /* {{{ proto mixed WriteError::getInfo()
    Returns additional metadata for the error */
-PHP_METHOD(WriteError, getInfo)
+static PHP_METHOD(WriteError, getInfo)
 {
 	php_phongo_writeerror_t *intern;
 
@@ -160,7 +160,7 @@ static void php_phongo_writeerror_free_object(phongo_free_object_arg *object TSR
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_writeerror_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_writeerror_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeerror_t *intern = NULL;
 
@@ -184,7 +184,7 @@ phongo_create_object_retval php_phongo_writeerror_create_object(zend_class_entry
 #endif
 } /* }}} */
 
-HashTable *php_phongo_writeerror_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_writeerror_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeerror_t *intern;
 #if PHP_VERSION_ID >= 70000

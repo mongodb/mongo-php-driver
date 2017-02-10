@@ -50,7 +50,7 @@
 
 zend_class_entry *php_phongo_utcdatetime_ce;
 
-zend_object_handlers php_phongo_handler_utcdatetime;
+static zend_object_handlers php_phongo_handler_utcdatetime;
 
 /* Initialize the object and return whether it was successful. */
 static bool php_phongo_utcdatetime_init(php_phongo_utcdatetime_t *intern, int64_t milliseconds)
@@ -154,7 +154,7 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t *inte
    Construct a new BSON UTCDateTime type from either the current time,
    milliseconds since the epoch, or a DateTimeInterface object. Defaults to the
    current time. */
-PHP_METHOD(UTCDateTime, __construct)
+static PHP_METHOD(UTCDateTime, __construct)
 {
 	php_phongo_utcdatetime_t    *intern;
 	zend_error_handling          error_handling;
@@ -210,7 +210,7 @@ PHP_METHOD(UTCDateTime, __construct)
 
 /* {{{ proto void UTCDateTime::__set_state(array $properties)
 */
-PHP_METHOD(UTCDateTime, __set_state)
+static PHP_METHOD(UTCDateTime, __set_state)
 {
 	php_phongo_utcdatetime_t *intern;
 	HashTable                *props;
@@ -231,7 +231,7 @@ PHP_METHOD(UTCDateTime, __set_state)
 
 /* {{{ proto string UTCDateTime::__toString()
    Returns the UTCDateTime's milliseconds as a string */
-PHP_METHOD(UTCDateTime, __toString)
+static PHP_METHOD(UTCDateTime, __toString)
 {
 	php_phongo_utcdatetime_t    *intern;
 	char *tmp;
@@ -252,7 +252,7 @@ PHP_METHOD(UTCDateTime, __toString)
 
 /* {{{ proto DateTime UTCDateTime::toDateTime()
    Returns a DateTime object representing this UTCDateTime */
-PHP_METHOD(UTCDateTime, toDateTime)
+static PHP_METHOD(UTCDateTime, toDateTime)
 {
 	php_phongo_utcdatetime_t *intern;
 	php_date_obj             *datetime_obj;
@@ -279,7 +279,7 @@ PHP_METHOD(UTCDateTime, toDateTime)
 
 /* {{{ proto array UTCDateTime::jsonSerialize()
 */
-PHP_METHOD(UTCDateTime, jsonSerialize)
+static PHP_METHOD(UTCDateTime, jsonSerialize)
 {
 	php_phongo_utcdatetime_t *intern;
 	char                      s_milliseconds[24];
@@ -318,7 +318,7 @@ PHP_METHOD(UTCDateTime, jsonSerialize)
 
 /* {{{ proto string UTCDateTime::serialize()
 */
-PHP_METHOD(UTCDateTime, serialize)
+static PHP_METHOD(UTCDateTime, serialize)
 {
 	php_phongo_utcdatetime_t *intern;
 #if PHP_VERSION_ID >= 70000
@@ -362,7 +362,7 @@ PHP_METHOD(UTCDateTime, serialize)
 
 /* {{{ proto string UTCDateTime::unserialize(string $serialized)
 */
-PHP_METHOD(UTCDateTime, unserialize)
+static PHP_METHOD(UTCDateTime, unserialize)
 {
 	php_phongo_utcdatetime_t *intern;
 	zend_error_handling       error_handling;
@@ -452,7 +452,7 @@ static void php_phongo_utcdatetime_free_object(phongo_free_object_arg *object TS
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_utcdatetime_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_utcdatetime_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_utcdatetime_t *intern = NULL;
 
@@ -498,7 +498,7 @@ static HashTable *php_phongo_utcdatetime_get_gc(zval *object, phongo_get_gc_tabl
 	return zend_std_get_properties(object TSRMLS_CC);
 } /* }}} */
 
-HashTable *php_phongo_utcdatetime_get_properties(zval *object TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_utcdatetime_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_utcdatetime_t *intern;
 	HashTable                *props;

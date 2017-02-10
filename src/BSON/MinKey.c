@@ -38,11 +38,11 @@
 
 zend_class_entry *php_phongo_minkey_ce;
 
-zend_object_handlers php_phongo_handler_minkey;
+static zend_object_handlers php_phongo_handler_minkey;
 
 /* {{{ proto MinKey::__set_state(array $properties)
 */
-PHP_METHOD(MinKey, __set_state)
+static PHP_METHOD(MinKey, __set_state)
 {
 	zval *array;
 
@@ -56,7 +56,7 @@ PHP_METHOD(MinKey, __set_state)
 
 /* {{{ proto array MinKey::jsonSerialize()
 */
-PHP_METHOD(MinKey, jsonSerialize)
+static PHP_METHOD(MinKey, jsonSerialize)
 {
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -69,7 +69,7 @@ PHP_METHOD(MinKey, jsonSerialize)
 
 /* {{{ proto string MinKey::serialize()
 */
-PHP_METHOD(MinKey, serialize)
+static PHP_METHOD(MinKey, serialize)
 {
 	PHONGO_RETURN_STRING("");
 }
@@ -77,7 +77,7 @@ PHP_METHOD(MinKey, serialize)
 
 /* {{{ proto string MinKey::unserialize(string $serialized)
 */
-PHP_METHOD(MinKey, unserialize)
+static PHP_METHOD(MinKey, unserialize)
 {
 	zend_error_handling     error_handling;
 	char                   *serialized;
@@ -129,7 +129,7 @@ static void php_phongo_minkey_free_object(phongo_free_object_arg *object TSRMLS_
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_minkey_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_minkey_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_minkey_t *intern = NULL;
 

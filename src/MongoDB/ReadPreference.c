@@ -40,11 +40,11 @@
 
 zend_class_entry *php_phongo_readpreference_ce;
 
-zend_object_handlers php_phongo_handler_readpreference;
+static zend_object_handlers php_phongo_handler_readpreference;
 
 /* {{{ proto void ReadPreference::__construct(integer $mode[, array $tagSets = array()[, array $options = array()]])
    Constructs a new ReadPreference */
-PHP_METHOD(ReadPreference, __construct)
+static PHP_METHOD(ReadPreference, __construct)
 {
 	php_phongo_readpreference_t *intern;
 	zend_error_handling       error_handling;
@@ -131,7 +131,7 @@ PHP_METHOD(ReadPreference, __construct)
 
 /* {{{ proto integer ReadPreference::getMaxStalenessSeconds()
    Returns the ReadPreference maxStalenessSeconds value */
-PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
+static PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 {
 	php_phongo_readpreference_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -148,7 +148,7 @@ PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 
 /* {{{ proto integer ReadPreference::getMode()
    Returns the ReadPreference mode */
-PHP_METHOD(ReadPreference, getMode)
+static PHP_METHOD(ReadPreference, getMode)
 {
 	php_phongo_readpreference_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -165,7 +165,7 @@ PHP_METHOD(ReadPreference, getMode)
 
 /* {{{ proto array ReadPreference::getTagSets()
    Returns the ReadPreference tag sets */
-PHP_METHOD(ReadPreference, getTagSets)
+static PHP_METHOD(ReadPreference, getTagSets)
 {
 	php_phongo_readpreference_t *intern;
 	const bson_t                *tags;
@@ -199,7 +199,7 @@ PHP_METHOD(ReadPreference, getTagSets)
 
 /* {{{ proto array ReadPreference::bsonSerialize()
    */
-PHP_METHOD(ReadPreference, bsonSerialize)
+static PHP_METHOD(ReadPreference, bsonSerialize)
 {
 	const mongoc_read_prefs_t *read_preference = phongo_read_preference_from_zval(getThis() TSRMLS_CC);
 
@@ -254,7 +254,7 @@ static void php_phongo_readpreference_free_object(phongo_free_object_arg *object
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_readpreference_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_readpreference_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readpreference_t *intern = NULL;
 
@@ -278,7 +278,7 @@ phongo_create_object_retval php_phongo_readpreference_create_object(zend_class_e
 #endif
 } /* }}} */
 
-HashTable *php_phongo_readpreference_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_readpreference_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval                       retval;

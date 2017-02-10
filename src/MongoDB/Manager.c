@@ -43,7 +43,7 @@
 
 zend_class_entry *php_phongo_manager_ce;
 
-zend_object_handlers php_phongo_handler_manager;
+static zend_object_handlers php_phongo_handler_manager;
 
 /* Checks if driverOptions contains a stream context resource in the "context"
  * key and incorporates any of its SSL options into the base array that did not
@@ -160,7 +160,7 @@ static void php_phongo_manager_prep_tagsets(zval *options TSRMLS_DC)
 
 /* {{{ proto void Manager::__construct([string $uri = "mongodb://127.0.0.1/"[, array $options = array()[, array $driverOptions = array()]]])
    Constructs a new Manager */
-PHP_METHOD(Manager, __construct)
+static PHP_METHOD(Manager, __construct)
 {
 	php_phongo_manager_t     *intern;
 	zend_error_handling       error_handling;
@@ -198,7 +198,7 @@ PHP_METHOD(Manager, __construct)
 
 /* {{{ proto MongoDB\Driver\Cursor Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a Command */
-PHP_METHOD(Manager, executeCommand)
+static PHP_METHOD(Manager, executeCommand)
 {
 	char                     *db;
 	phongo_zpp_char_len       db_len;
@@ -217,7 +217,7 @@ PHP_METHOD(Manager, executeCommand)
 
 /* {{{ proto MongoDB\Driver\Cursor Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a Query */
-PHP_METHOD(Manager, executeQuery)
+static PHP_METHOD(Manager, executeQuery)
 {
 	char                     *namespace;
 	phongo_zpp_char_len       namespace_len;
@@ -236,7 +236,7 @@ PHP_METHOD(Manager, executeQuery)
 
 /* {{{ proto MongoDB\Driver\WriteResult Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
    Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
-PHP_METHOD(Manager, executeBulkWrite)
+static PHP_METHOD(Manager, executeBulkWrite)
 {
 	char                      *namespace;
 	phongo_zpp_char_len        namespace_len;
@@ -258,7 +258,7 @@ PHP_METHOD(Manager, executeBulkWrite)
 
 /* {{{ proto MongoDB\Driver\ReadConcern Manager::getReadConcern()
    Returns the ReadConcern associated with this Manager */
-PHP_METHOD(Manager, getReadConcern)
+static PHP_METHOD(Manager, getReadConcern)
 {
 	php_phongo_manager_t *intern;
 	DECLARE_RETURN_VALUE_USED
@@ -278,7 +278,7 @@ PHP_METHOD(Manager, getReadConcern)
 
 /* {{{ proto MongoDB\Driver\ReadPreference Manager::getReadPreference()
    Returns the ReadPreference associated with this Manager */
-PHP_METHOD(Manager, getReadPreference)
+static PHP_METHOD(Manager, getReadPreference)
 {
 	php_phongo_manager_t *intern;
 	DECLARE_RETURN_VALUE_USED
@@ -298,7 +298,7 @@ PHP_METHOD(Manager, getReadPreference)
 
 /* {{{ proto MongoDB\Driver\Server[] Manager::getServers()
    Returns the Servers associated with this Manager */
-PHP_METHOD(Manager, getServers)
+static PHP_METHOD(Manager, getServers)
 {
 	php_phongo_manager_t         *intern;
 	mongoc_server_description_t **sds;
@@ -336,7 +336,7 @@ PHP_METHOD(Manager, getServers)
 
 /* {{{ proto MongoDB\Driver\WriteConcern Manager::getWriteConcern()
    Returns the WriteConcern associated with this Manager */
-PHP_METHOD(Manager, getWriteConcern)
+static PHP_METHOD(Manager, getWriteConcern)
 {
 	php_phongo_manager_t *intern;
 	DECLARE_RETURN_VALUE_USED
@@ -356,7 +356,7 @@ PHP_METHOD(Manager, getWriteConcern)
 
 /* {{{ proto MongoDB\Driver\Server Manager::selectServers(MongoDB\Driver\ReadPreference $readPreference)
    Returns a suitable Server for the given ReadPreference */
-PHP_METHOD(Manager, selectServer)
+static PHP_METHOD(Manager, selectServer)
 {
 	php_phongo_manager_t         *intern;
 	zval                         *zreadPreference = NULL;
@@ -467,7 +467,7 @@ static void php_phongo_manager_free_object(phongo_free_object_arg *object TSRMLS
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_manager_t *intern = NULL;
 
@@ -491,7 +491,7 @@ phongo_create_object_retval php_phongo_manager_create_object(zend_class_entry *c
 #endif
 } /* }}} */
 
-HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_manager_t         *intern;
 	mongoc_server_description_t **sds;

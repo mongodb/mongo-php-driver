@@ -41,7 +41,7 @@
 
 zend_class_entry *php_phongo_bulkwrite_ce;
 
-zend_object_handlers php_phongo_handler_bulkwrite;
+static zend_object_handlers php_phongo_handler_bulkwrite;
 
 /* Returns whether any top-level field names in the document contain a "$". */
 static inline bool php_phongo_bulkwrite_update_has_operators(bson_t *bupdate) /* {{{ */
@@ -151,7 +151,7 @@ static bool php_phongo_bulkwrite_delete_apply_options(bson_t *boptions, zval *zo
 
 /* {{{ proto void BulkWrite::__construct([array $options = array()])
    Constructs a new BulkWrite */
-PHP_METHOD(BulkWrite, __construct)
+static PHP_METHOD(BulkWrite, __construct)
 {
 	php_phongo_bulkwrite_t  *intern;
 	zend_error_handling      error_handling;
@@ -188,7 +188,7 @@ PHP_METHOD(BulkWrite, __construct)
 
 /* {{{ proto mixed BulkWrite::insert(array|object $document)
    Adds an insert operation to the BulkWrite */
-PHP_METHOD(BulkWrite, insert)
+static PHP_METHOD(BulkWrite, insert)
 {
 	php_phongo_bulkwrite_t  *intern;
 	zval                     *document;
@@ -233,7 +233,7 @@ PHP_METHOD(BulkWrite, insert)
 
 /* {{{ proto void BulkWrite::update(array|object $query, array|object $newObj[, array $updateOptions = array()])
    Adds an update operation to the BulkWrite */
-PHP_METHOD(BulkWrite, update)
+static PHP_METHOD(BulkWrite, update)
 {
 	php_phongo_bulkwrite_t *intern;
 	zval                   *zquery, *zupdate, *zoptions = NULL;
@@ -308,7 +308,7 @@ cleanup:
 
 /* {{{ proto void BulkWrite::delete(array|object $query[, array $deleteOptions = array()])
    Adds a delete operation to the BulkWrite */
-PHP_METHOD(BulkWrite, delete)
+static PHP_METHOD(BulkWrite, delete)
 {
 	php_phongo_bulkwrite_t *intern;
 	zval                   *zquery, *zoptions = NULL;
@@ -358,7 +358,7 @@ cleanup:
 
 /* {{{ proto integer BulkWrite::count()
    Returns the number of operations that have been added to the BulkWrite */
-PHP_METHOD(BulkWrite, count)
+static PHP_METHOD(BulkWrite, count)
 {
 	php_phongo_bulkwrite_t  *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -436,7 +436,7 @@ static void php_phongo_bulkwrite_free_object(phongo_free_object_arg *object TSRM
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_bulkwrite_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_bulkwrite_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_bulkwrite_t *intern = NULL;
 
@@ -460,7 +460,7 @@ phongo_create_object_retval php_phongo_bulkwrite_create_object(zend_class_entry 
 #endif
 } /* }}} */
 
-HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval                      retval;
