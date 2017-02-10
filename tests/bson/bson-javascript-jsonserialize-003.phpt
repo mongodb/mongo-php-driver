@@ -20,9 +20,9 @@ var_dump(toPHP(fromJSON($json)));
 {"foo":{"$code":"function foo(bar) { return bar; }"}}
 object(stdClass)#%d (%d) {
   ["foo"]=>
-  object(stdClass)#%d (%d) {
-    ["$code"]=>
+  object(%r(stdClass|MongoDB\\BSON\\Javascript)%r)#%d (%d) {
+    ["%r(\$?)%rcode"]=>
     string(33) "function foo(bar) { return bar; }"
-  }
+  %A}
 }
 ===DONE===
