@@ -15,31 +15,17 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
-#include <ext/spl/spl_exceptions.h>
-
 
 zend_class_entry *php_phongo_writeexception_ce;
 
-/* {{{ proto MongoDB\Driver\WriteResult WriteException::getWriteResult()
+/* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Exception\WriteException::getWriteResult()
    Returns the WriteResult from the failed write operation. */
 static PHP_METHOD(WriteException, getWriteResult)
 {
@@ -47,7 +33,6 @@ static PHP_METHOD(WriteException, getWriteResult)
 #if PHP_VERSION_ID >= 70000
 	zval  rv;
 #endif
-
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -60,14 +45,9 @@ static PHP_METHOD(WriteException, getWriteResult)
 #endif
 
 	RETURN_ZVAL(writeresult, 1, 0);
-}
-/* }}} */
+} /* }}} */
 
-/**
- * Value object for write concern used in issuing write operations.
- */
-/* {{{ MongoDB\Driver\WriteException */
-
+/* {{{ MongoDB\Driver\Exception\WriteException function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteException_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -75,7 +55,6 @@ static zend_function_entry php_phongo_writeexception_me[] = {
 	PHP_ME(WriteException, getWriteResult, ai_WriteException_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
 void php_phongo_writeexception_init_ce(INIT_FUNC_ARGS) /* {{{ */

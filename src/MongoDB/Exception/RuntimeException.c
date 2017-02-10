@@ -15,36 +15,21 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
-#include "phongo_compat.h"
-
-/* Our stuffz */
-#include "php_phongo.h"
-#include "php_bson.h"
 #include <ext/spl/spl_exceptions.h>
 
+#include "phongo_compat.h"
+#include "php_phongo.h"
 
 zend_class_entry *php_phongo_runtimeexception_ce;
 
-/* {{{ MongoDB\Driver\RuntimeException */
-
+/* {{{ MongoDB\Driver\Exception\RuntimeException function entries */
 static zend_function_entry php_phongo_runtimeexception_me[] = {
 	PHP_FE_END
 };
-
 /* }}} */
 
 void php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
@@ -53,7 +38,7 @@ void php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "RuntimeException", php_phongo_runtimeexception_me);
 #if PHP_VERSION_ID >= 70000
-        php_phongo_runtimeexception_ce = zend_register_internal_class_ex(&ce, spl_ce_RuntimeException);
+	php_phongo_runtimeexception_ce = zend_register_internal_class_ex(&ce, spl_ce_RuntimeException);
 #else
 	php_phongo_runtimeexception_ce = zend_register_internal_class_ex(&ce, spl_ce_RuntimeException, NULL TSRMLS_CC);
 #endif

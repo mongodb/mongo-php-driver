@@ -15,36 +15,20 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
-#include <ext/spl/spl_exceptions.h>
-
 
 zend_class_entry *php_phongo_connectionexception_ce;
 
-/* {{{ MongoDB\Driver\ConnectionException */
-
+/* {{{ MongoDB\Driver\Exception\ConnectionException function entries */
 static zend_function_entry php_phongo_connectionexception_me[] = {
 	PHP_FE_END
 };
-
 /* }}} */
 
 void php_phongo_connectionexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
@@ -53,7 +37,7 @@ void php_phongo_connectionexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "ConnectionException", php_phongo_connectionexception_me);
 #if PHP_VERSION_ID >= 70000
-        php_phongo_connectionexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce);
+	php_phongo_connectionexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce);
 #else
 	php_phongo_connectionexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce, NULL TSRMLS_CC);
 #endif
