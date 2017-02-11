@@ -43,6 +43,9 @@ PHONGO_API zend_class_entry *php_phongo_bulkwrite_ce;
 
 zend_object_handlers php_phongo_handler_bulkwrite;
 
+/* Forward declaration */
+static zval *php_phongo_bulkwrite_get_debug_info_ex(zval *object, int *is_temp TSRMLS_DC);
+
 /* Returns whether any top-level field names in the document contain a "$". */
 static inline bool php_phongo_bulkwrite_update_has_operators(bson_t *bupdate) /* {{{ */
 {
@@ -375,6 +378,18 @@ PHP_METHOD(BulkWrite, count)
 /* }}} */
 
 
+/* {{{ proto integer BulkWrite::__debugInfo()
+   Returns the debug information for BulkWrite */
+PHP_METHOD(BulkWrite, __debugInfo)
+{
+	int is_temp;
+	zval *tmp = php_phongo_bulkwrite_get_debug_info_ex(getThis(), &is_temp TSRMLS_CC);
+
+	RETURN_ZVAL(tmp, 0, 1);
+}
+/* }}} */
+
+
 /* {{{ MongoDB\Driver\BulkWrite */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite___construct, 0, 0, 0)
@@ -401,6 +416,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_bulkwrite_me[] = {
 	PHP_ME(BulkWrite, __construct, ai_BulkWrite___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(BulkWrite, __debugInfo, ai_BulkWrite_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(BulkWrite, insert, ai_BulkWrite_insert, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(BulkWrite, update, ai_BulkWrite_update, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(BulkWrite, delete, ai_BulkWrite_delete, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -460,63 +476,78 @@ phongo_create_object_retval php_phongo_bulkwrite_create_object(zend_class_entry 
 #endif
 } /* }}} */
 
-HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static zval *php_phongo_bulkwrite_get_debug_info_ex(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
-	zval                      retval;
+	zval                      *retval;
 #else
-	zval                      retval = zval_used_for_init;
+	zval                      *retval;
 #endif
 	php_phongo_bulkwrite_t   *intern = NULL;
 
+#if PHP_VERSION_ID >= 70000
+	retval = ecalloc(1, sizeof(zval));
+#else
+	MAKE_STD_ZVAL(retval);
+#endif
 
 	*is_temp = 1;
 	intern = Z_BULKWRITE_OBJ_P(object);
-	array_init(&retval);
+	array_init(retval);
 
 	if (intern->database) {
-		ADD_ASSOC_STRING(&retval, "database", intern->database);
+		ADD_ASSOC_STRING(retval, "database", intern->database);
 	} else {
-		ADD_ASSOC_NULL_EX(&retval, "database");
+		ADD_ASSOC_NULL_EX(retval, "database");
 	}
 
 	if (intern->collection) {
-		ADD_ASSOC_STRING(&retval, "collection", intern->collection);
+		ADD_ASSOC_STRING(retval, "collection", intern->collection);
 	} else {
-		ADD_ASSOC_NULL_EX(&retval, "collection");
+		ADD_ASSOC_NULL_EX(retval, "collection");
 	}
 
-	ADD_ASSOC_BOOL_EX(&retval, "ordered", intern->ordered);
+	ADD_ASSOC_BOOL_EX(retval, "ordered", intern->ordered);
 
 	if (intern->bypass != BYPASS_UNSET) {
-		ADD_ASSOC_BOOL_EX(&retval, "bypassDocumentValidation", intern->bypass);
+		ADD_ASSOC_BOOL_EX(retval, "bypassDocumentValidation", intern->bypass);
 	} else {
-		ADD_ASSOC_NULL_EX(&retval, "bypassDocumentValidation");
+		ADD_ASSOC_NULL_EX(retval, "bypassDocumentValidation");
 	}
 
-	ADD_ASSOC_BOOL_EX(&retval, "executed", intern->executed);
-	ADD_ASSOC_LONG_EX(&retval, "server_id", mongoc_bulk_operation_get_hint(intern->bulk));
+	ADD_ASSOC_BOOL_EX(retval, "executed", intern->executed);
+	ADD_ASSOC_LONG_EX(retval, "server_id", mongoc_bulk_operation_get_hint(intern->bulk));
 
 	if (mongoc_bulk_operation_get_write_concern(intern->bulk)) {
 #if PHP_VERSION_ID >= 70000
 		zval write_concern;
 
 		php_phongo_write_concern_to_zval(&write_concern, mongoc_bulk_operation_get_write_concern(intern->bulk));
-		ADD_ASSOC_ZVAL_EX(&retval, "write_concern", &write_concern);
+		ADD_ASSOC_ZVAL_EX(retval, "write_concern", &write_concern);
 #else
 		zval *write_concern = NULL;
 		MAKE_STD_ZVAL(write_concern);
 
 		php_phongo_write_concern_to_zval(write_concern, mongoc_bulk_operation_get_write_concern(intern->bulk));
-		ADD_ASSOC_ZVAL_EX(&retval, "write_concern", write_concern);
+		ADD_ASSOC_ZVAL_EX(retval, "write_concern", write_concern);
 #endif
 	} else {
-		ADD_ASSOC_NULL_EX(&retval, "write_concern");
+		ADD_ASSOC_NULL_EX(retval, "write_concern");
 	}
 
+	return retval;
+} /* }}} */
 
+HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	HashTable *tmp_ht;
+	zval *tmp = php_phongo_bulkwrite_get_debug_info_ex(object, is_temp TSRMLS_CC);
 
-	return Z_ARRVAL(retval);
+	tmp_ht = Z_ARRVAL_P(tmp);
+
+	efree(tmp);
+
+	return tmp_ht;
 } /* }}} */
 /* }}} */
 
