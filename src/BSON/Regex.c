@@ -15,49 +15,36 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
 #include <ext/standard/php_var.h>
 #if PHP_VERSION_ID >= 70000
 # include <zend_smart_str.h>
 #else
 # include <ext/standard/php_smart_str.h>
 #endif
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
 
-
-PHONGO_API zend_class_entry *php_phongo_regex_ce;
-
-zend_object_handlers php_phongo_handler_regex;
+zend_class_entry *php_phongo_regex_ce;
 
 /* qsort() compare callback for alphabetizing regex flags upon initialization */
-static int php_phongo_regex_compare_flags(const void *f1, const void *f2) {
+static int php_phongo_regex_compare_flags(const void *f1, const void *f2) /* {{{ */
+{
 	if (* (const char *) f1 == * (const char *) f2) {
 		return 0;
 	}
 
 	return (* (const char *) f1 > * (const char *) f2) ? 1 : -1;
-}
+} /* }}} */
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_regex_init(php_phongo_regex_t *intern, const char *pattern, phongo_zpp_char_len pattern_len, const char *flags, phongo_zpp_char_len flags_len TSRMLS_DC)
+static bool php_phongo_regex_init(php_phongo_regex_t *intern, const char *pattern, phongo_zpp_char_len pattern_len, const char *flags, phongo_zpp_char_len flags_len TSRMLS_DC) /* {{{ */
 {
 	if (strlen(pattern) != pattern_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Pattern cannot contain null bytes");
@@ -81,11 +68,11 @@ static bool php_phongo_regex_init(php_phongo_regex_t *intern, const char *patter
 	}
 
 	return true;
-}
+} /* }}} */
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_regex_init_from_hash(php_phongo_regex_t *intern, HashTable *props TSRMLS_DC)
+static bool php_phongo_regex_init_from_hash(php_phongo_regex_t *intern, HashTable *props TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval *pattern, *flags;
@@ -105,11 +92,11 @@ static bool php_phongo_regex_init_from_hash(php_phongo_regex_t *intern, HashTabl
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"pattern\" and \"flags\" string fields", ZSTR_VAL(php_phongo_regex_ce->name));
 	return false;
-}
+} /* }}} */
 
-/* {{{ proto void Regex::__construct(string $pattern [, string $flags])
+/* {{{ proto void MongoDB\BSON\Regex::__construct(string $pattern [, string $flags])
    Constructs a new BSON regular expression type. */
-PHP_METHOD(Regex, __construct)
+static PHP_METHOD(Regex, __construct)
 {
 	php_phongo_regex_t       *intern;
 	zend_error_handling       error_handling;
@@ -129,12 +116,11 @@ PHP_METHOD(Regex, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	php_phongo_regex_init(intern, pattern, pattern_len, flags, flags_len TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Regex::getPattern()
+/* {{{ proto string MongoDB\BSON\Regex::getPattern()
 */
-PHP_METHOD(Regex, getPattern)
+static PHP_METHOD(Regex, getPattern)
 {
 	php_phongo_regex_t       *intern;
 
@@ -147,12 +133,11 @@ PHP_METHOD(Regex, getPattern)
 
 
 	PHONGO_RETURN_STRINGL(intern->pattern, intern->pattern_len);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Regex::getFlags()
+/* {{{ proto string MongoDB\BSON\Regex::getFlags()
 */
-PHP_METHOD(Regex, getFlags)
+static PHP_METHOD(Regex, getFlags)
 {
 	php_phongo_regex_t       *intern;
 
@@ -165,12 +150,11 @@ PHP_METHOD(Regex, getFlags)
 
 
 	PHONGO_RETURN_STRINGL(intern->flags, intern->flags_len);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto void Regex::__set_state(array $properties)
+/* {{{ proto void MongoDB\BSON\Regex::__set_state(array $properties)
 */
-PHP_METHOD(Regex, __set_state)
+static PHP_METHOD(Regex, __set_state)
 {
 	php_phongo_regex_t *intern;
 	HashTable          *props;
@@ -186,12 +170,11 @@ PHP_METHOD(Regex, __set_state)
 	props = Z_ARRVAL_P(array);
 
 	php_phongo_regex_init_from_hash(intern, props TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Regex::__toString()
+/* {{{ proto string MongoDB\BSON\Regex::__toString()
    Returns a string in the form: /pattern/flags */
-PHP_METHOD(Regex, __toString)
+static PHP_METHOD(Regex, __toString)
 {
 	php_phongo_regex_t       *intern;
 	char                     *regex;
@@ -208,12 +191,11 @@ PHP_METHOD(Regex, __toString)
 	regex_len = spprintf(&regex, 0, "/%s/%s", intern->pattern, intern->flags);
 	PHONGO_RETVAL_STRINGL(regex, regex_len);
 	efree(regex);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array Regex::jsonSerialize()
+/* {{{ proto array MongoDB\BSON\Regex::jsonSerialize()
 */
-PHP_METHOD(Regex, jsonSerialize)
+static PHP_METHOD(Regex, jsonSerialize)
 {
 	php_phongo_regex_t *intern;
 
@@ -226,12 +208,11 @@ PHP_METHOD(Regex, jsonSerialize)
 	array_init_size(return_value, 2);
 	ADD_ASSOC_STRINGL(return_value, "$regex", intern->pattern, intern->pattern_len);
 	ADD_ASSOC_STRINGL(return_value, "$options", intern->flags, intern->flags_len);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Regex::serialize()
+/* {{{ proto string MongoDB\BSON\Regex::serialize()
 */
-PHP_METHOD(Regex, serialize)
+static PHP_METHOD(Regex, serialize)
 {
 	php_phongo_regex_t       *intern;
 #if PHP_VERSION_ID >= 70000
@@ -268,12 +249,11 @@ PHP_METHOD(Regex, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Regex::unserialize(string $serialized)
+/* {{{ proto void MongoDB\BSON\Regex::unserialize(string $serialized)
 */
-PHP_METHOD(Regex, unserialize)
+static PHP_METHOD(Regex, unserialize)
 {
 	php_phongo_regex_t     *intern;
 	zend_error_handling     error_handling;
@@ -315,11 +295,9 @@ PHP_METHOD(Regex, unserialize)
 	php_phongo_regex_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
 #endif
 	zval_ptr_dtor(&props);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ BSON\Regex */
-
+/* {{{ MongoDB\BSON\Regex function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Regex___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, pattern)
 	ZEND_ARG_INFO(0, flags)
@@ -347,11 +325,11 @@ static zend_function_entry php_phongo_regex_me[] = {
 	PHP_ME(Regex, getFlags, ai_Regex_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\BSON\Regex object handlers */
+static zend_object_handlers php_phongo_handler_regex;
 
-/* {{{ php_phongo_regex_t object handlers */
 static void php_phongo_regex_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_regex_t *intern = Z_OBJ_REGEX(object);
@@ -371,7 +349,7 @@ static void php_phongo_regex_free_object(phongo_free_object_arg *object TSRMLS_D
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_regex_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_regex_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_regex_t *intern = NULL;
 
@@ -421,7 +399,7 @@ static HashTable *php_phongo_regex_get_gc(zval *object, phongo_get_gc_table tabl
 	return zend_std_get_properties(object TSRMLS_CC);
 } /* }}} */
 
-HashTable *php_phongo_regex_get_properties(zval *object TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_regex_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_regex_t *intern;
 	HashTable          *props;
@@ -461,11 +439,9 @@ HashTable *php_phongo_regex_get_properties(zval *object TSRMLS_DC) /* {{{ */
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Regex)
+void php_phongo_regex_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Regex", php_phongo_regex_me);
 	php_phongo_regex_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -484,12 +460,7 @@ PHP_MINIT_FUNCTION(Regex)
 	php_phongo_handler_regex.free_obj = php_phongo_regex_free_object;
 	php_phongo_handler_regex.offset = XtOffsetOf(php_phongo_regex_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

@@ -15,34 +15,20 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
 
+zend_class_entry *php_phongo_readconcern_ce;
 
-PHONGO_API zend_class_entry *php_phongo_readconcern_ce;
-
-zend_object_handlers php_phongo_handler_readconcern;
-
-/* {{{ proto void ReadConcern::__construct([string $level])
+/* {{{ proto void MongoDB\Driver\ReadConcern::__construct([string $level])
    Constructs a new ReadConcern */
-PHP_METHOD(ReadConcern, __construct)
+static PHP_METHOD(ReadConcern, __construct)
 {
 	php_phongo_readconcern_t *intern;
 	zend_error_handling       error_handling;
@@ -68,12 +54,11 @@ PHP_METHOD(ReadConcern, __construct)
 	if (level) {
 		mongoc_read_concern_set_level(intern->read_concern, level);
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string|null ReadConcern::getLevel()
+/* {{{ proto string|null MongoDB\Driver\ReadConcern::getLevel()
    Returns the ReadConcern "level" option */
-PHP_METHOD(ReadConcern, getLevel)
+static PHP_METHOD(ReadConcern, getLevel)
 {
 	php_phongo_readconcern_t *intern;
 	const char *level;
@@ -92,12 +77,11 @@ PHP_METHOD(ReadConcern, getLevel)
 	}
 
 	RETURN_NULL();
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array ReadConcern::bsonSerialize()
-   */
-PHP_METHOD(ReadConcern, bsonSerialize)
+/* {{{ proto array MongoDB\Driver\ReadConcern::bsonSerialize()
+*/
+static PHP_METHOD(ReadConcern, bsonSerialize)
 {
 	const mongoc_read_concern_t *read_concern = phongo_read_concern_from_zval(getThis() TSRMLS_CC);
 
@@ -107,14 +91,9 @@ PHP_METHOD(ReadConcern, bsonSerialize)
 
 	php_phongo_read_concern_to_zval(return_value, read_concern);
 	convert_to_object(return_value);
-}
-/* }}} */
+} /* }}} */
 
-/**
- * Value object for read concern used in issuing read operations.
- */
-/* {{{ MongoDB\Driver\ReadConcern */
-
+/* {{{ MongoDB\Driver\ReadConcern function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, level)
 ZEND_END_ARG_INFO()
@@ -128,11 +107,11 @@ static zend_function_entry php_phongo_readconcern_me[] = {
 	PHP_ME(ReadConcern, bsonSerialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\ReadConcern object handlers */
+static zend_object_handlers php_phongo_handler_readconcern;
 
-/* {{{ php_phongo_readconcern_t object handlers */
 static void php_phongo_readconcern_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readconcern_t *intern = Z_OBJ_READCONCERN(object);
@@ -148,7 +127,7 @@ static void php_phongo_readconcern_free_object(phongo_free_object_arg *object TS
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_readconcern_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_readconcern_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readconcern_t *intern = NULL;
 
@@ -172,7 +151,7 @@ phongo_create_object_retval php_phongo_readconcern_create_object(zend_class_entr
 #endif
 } /* }}} */
 
-HashTable *php_phongo_readconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_readconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval retval;
@@ -189,11 +168,9 @@ HashTable *php_phongo_readconcern_get_debug_info(zval *object, int *is_temp TSRM
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(ReadConcern)
+void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ReadConcern", php_phongo_readconcern_me);
 	php_phongo_readconcern_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -213,12 +190,7 @@ PHP_MINIT_FUNCTION(ReadConcern)
 	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("LOCAL"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_LOCAL) TSRMLS_CC);
 	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_MAJORITY) TSRMLS_CC);
 	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("LINEARIZABLE"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_LINEARIZABLE) TSRMLS_CC);
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

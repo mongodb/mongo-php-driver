@@ -375,7 +375,7 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 
 		bson_iter_document(&iter, &len, &data);
 
-		if (!phongo_bson_to_zval(data, len, &intern->info)) {
+		if (!php_phongo_bson_to_zval(data, len, &intern->info)) {
 			zval_ptr_dtor(&intern->info);
 #if PHP_VERSION_ID >= 70000
 			ZVAL_UNDEF(&intern->info);
@@ -416,7 +416,7 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 
 		bson_iter_document(&iter, &len, &data);
 
-		if (!phongo_bson_to_zval(data, len, &intern->info)) {
+		if (!php_phongo_bson_to_zval(data, len, &intern->info)) {
 			zval_ptr_dtor(&intern->info);
 #if PHP_VERSION_ID >= 70000
 			ZVAL_UNDEF(&intern->info);
@@ -782,7 +782,7 @@ void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd) /*
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		bson_iter_document(&iter, &len, &bytes);
-		phongo_bson_to_zval_ex(bytes, len, &state);
+		php_phongo_bson_to_zval_ex(bytes, len, &state);
 
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
@@ -797,7 +797,7 @@ void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd) /*
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state);
+		php_phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state);
 
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", &state.zchild);
@@ -912,7 +912,7 @@ void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t 
 		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
+		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
 #else
@@ -1542,7 +1542,7 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 #endif
 
 	if (options) {
-		phongo_zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
+		php_phongo_zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
 	}
 
 	/* An exception may be thrown during BSON conversion */
@@ -1719,21 +1719,6 @@ static void php_phongo_free(void *mem) /* {{{ */
 } /* }}} */
 
 /* }}} */
-
-#ifdef PHP_DEBUG
-/* LCOV_EXCL_START */
-void _phongo_debug_bson(bson_t *bson)
-{
-	char   *str;
-	size_t  str_len;
-
-	str = bson_as_json(bson, &str_len);
-
-	php_printf("JSON: %s\n", str);
-	bson_free(str);
-}
-/* LCOV_EXCL_STOP */
-#endif
 
 /* {{{ M[INIT|SHUTDOWN] R[INIT|SHUTDOWN] G[INIT|SHUTDOWN] MINFO INI */
 
@@ -1928,48 +1913,50 @@ PHP_MINIT_FUNCTION(mongodb)
 		return FAILURE;
 	}
 
-	PHP_MINIT(bson)(INIT_FUNC_ARGS_PASSTHRU);
+	/* Register base BSON classes first */
+	php_phongo_type_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_serializable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_unserializable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	PHP_MINIT(Type)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Serializable)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Unserializable)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Persistable)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Binary)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Decimal128)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Javascript)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(MaxKey)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(MinKey)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ObjectID)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Regex)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Timestamp)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(UTCDateTime)(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_binary_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_decimal128_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_javascript_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_maxkey_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_minkey_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_objectid_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_persistable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_regex_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_timestamp_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	PHP_MINIT(Command)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Cursor)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(CursorId)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Manager)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Query)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ReadConcern)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ReadPreference)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(Server)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(BulkWrite)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteConcern)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteConcernError)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteError)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteResult)(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_command_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_cursor_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_cursorid_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_manager_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_query_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_readconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_readpreference_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_server_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_writeerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_writeresult_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	PHP_MINIT(Exception)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(LogicException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(RuntimeException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(UnexpectedValueException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(InvalidArgumentException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(AuthenticationException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(SSLConnectionException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(WriteException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(BulkWriteException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ExecutionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
-	PHP_MINIT(ConnectionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
+	/* Register base exception classes first */
+	php_phongo_exception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_connectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_writeexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+
+	php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_invalidargumentexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_logicexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char *)MONGODB_VERSION_S, CONST_CS | CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("MONGODB_STABILITY", (char *)MONGODB_STABILITY_S, CONST_CS | CONST_PERSISTENT);
@@ -2081,6 +2068,21 @@ PHP_MINFO_FUNCTION(mongodb)
 /* }}} */
 /* }}} */
 
+/* {{{ Shared function entries for disabling constructors and unserialize() */
+PHP_FUNCTION(MongoDB_disabled___construct) /* {{{ */
+{
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Accessing private constructor");
+} /* }}} */
+
+PHP_FUNCTION(MongoDB_disabled___wakeup) /* {{{ */
+{
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "MongoDB\\Driver objects cannot be serialized");
+} /* }}} */
+ /* }}} */
 
 /* {{{ mongodb_functions[]
 */
@@ -2100,11 +2102,11 @@ ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromJSON, 0, 0, 1)
 	ZEND_ARG_INFO(0, json)
 ZEND_END_ARG_INFO();
 
-const zend_function_entry mongodb_functions[] = {
-	ZEND_NS_FE("MongoDB\\BSON", fromPHP, ai_bson_fromPHP)
-	ZEND_NS_FE("MongoDB\\BSON", toPHP,   ai_bson_toPHP)
-	ZEND_NS_FE("MongoDB\\BSON", toJSON,    ai_bson_toJSON)
-	ZEND_NS_FE("MongoDB\\BSON", fromJSON,  ai_bson_fromJSON)
+static const zend_function_entry mongodb_functions[] = {
+	ZEND_NS_NAMED_FE("MongoDB\\BSON", fromPHP, PHP_FN(MongoDB_BSON_fromPHP), ai_bson_fromPHP)
+	ZEND_NS_NAMED_FE("MongoDB\\BSON", toPHP, PHP_FN(MongoDB_BSON_toPHP), ai_bson_toPHP)
+	ZEND_NS_NAMED_FE("MongoDB\\BSON", toJSON, PHP_FN(MongoDB_BSON_toJSON), ai_bson_toJSON)
+	ZEND_NS_NAMED_FE("MongoDB\\BSON", fromJSON, PHP_FN(MongoDB_BSON_fromJSON), ai_bson_fromJSON)
 	PHP_FE_END
 };
 /* }}} */

@@ -15,40 +15,26 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
 #include <ext/standard/php_var.h>
 #if PHP_VERSION_ID >= 70000
 # include <zend_smart_str.h>
 #else
 # include <ext/standard/php_smart_str.h>
 #endif
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
 
-
-PHONGO_API zend_class_entry *php_phongo_timestamp_ce;
-
-zend_object_handlers php_phongo_handler_timestamp;
+zend_class_entry *php_phongo_timestamp_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, int64_t increment, int64_t timestamp TSRMLS_DC)
+static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, int64_t increment, int64_t timestamp TSRMLS_DC) /* {{{ */
 {
 	if (increment < 0 || increment > UINT32_MAX) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected increment to be an unsigned 32-bit integer, %" PHONGO_LONG_FORMAT " given", increment);
@@ -65,11 +51,11 @@ static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, int64_t in
 	intern->initialized = true;
 
 	return true;
-}
+} /* }}} */
 
 /* Initialize the object from numeric strings and return whether it was
  * successful. An exception will be thrown on error. */
-static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t *intern, const char *s_increment, phongo_zpp_char_len s_increment_len, const char *s_timestamp, phongo_zpp_char_len s_timestamp_len TSRMLS_DC)
+static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t *intern, const char *s_increment, phongo_zpp_char_len s_increment_len, const char *s_timestamp, phongo_zpp_char_len s_timestamp_len TSRMLS_DC) /* {{{ */
 {
 	int64_t increment, timestamp;
 	char *endptr = NULL;
@@ -99,11 +85,11 @@ static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t *intern
 	}
 
 	return php_phongo_timestamp_init(intern, increment, timestamp TSRMLS_CC);
-}
+} /* }}} */
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, HashTable *props TSRMLS_DC)
+static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, HashTable *props TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval *increment, *timestamp;
@@ -131,12 +117,12 @@ static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, 
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"increment\" and \"timestamp\" integer or numeric string fields", ZSTR_VAL(php_phongo_timestamp_ce->name));
 	return false;
-}
+} /* }}} */
 
-/* {{{ proto void Timestamp::__construct(int|string $increment, int|string $timestamp)
+/* {{{ proto void MongoDB\BSON\Timestamp::__construct(int|string $increment, int|string $timestamp)
    Construct a new BSON timestamp type, which consists of a 4-byte increment and
    4-byte timestamp. */
-PHP_METHOD(Timestamp, __construct)
+static PHP_METHOD(Timestamp, __construct)
 {
 	php_phongo_timestamp_t *intern;
 	zend_error_handling     error_handling;
@@ -175,12 +161,11 @@ PHP_METHOD(Timestamp, __construct)
 	}
 
 	php_phongo_timestamp_init_from_string(intern, Z_STRVAL_P(increment), Z_STRLEN_P(increment), Z_STRVAL_P(timestamp), Z_STRLEN_P(timestamp) TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto void Timestamp::__set_state(array $properties)
+/* {{{ proto void MongoDB\BSON\Timestamp::__set_state(array $properties)
 */
-PHP_METHOD(Timestamp, __set_state)
+static PHP_METHOD(Timestamp, __set_state)
 {
 	php_phongo_timestamp_t *intern;
 	HashTable              *props;
@@ -196,12 +181,11 @@ PHP_METHOD(Timestamp, __set_state)
 	props = Z_ARRVAL_P(array);
 
 	php_phongo_timestamp_init_from_hash(intern, props TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Timestamp::__toString()
+/* {{{ proto string MongoDB\BSON\Timestamp::__toString()
    Returns a string in the form: [increment:timestamp] */
-PHP_METHOD(Timestamp, __toString)
+static PHP_METHOD(Timestamp, __toString)
 {
 	php_phongo_timestamp_t    *intern;
 	char                      *retval;
@@ -217,12 +201,11 @@ PHP_METHOD(Timestamp, __toString)
 	retval_len = spprintf(&retval, 0, "[%" PRIu32 ":%" PRIu32 "]", intern->increment, intern->timestamp);
 	PHONGO_RETVAL_STRINGL(retval, retval_len);
 	efree(retval);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array Timestamp::jsonSerialize()
+/* {{{ proto array MongoDB\BSON\Timestamp::jsonSerialize()
 */
-PHP_METHOD(Timestamp, jsonSerialize)
+static PHP_METHOD(Timestamp, jsonSerialize)
 {
 	php_phongo_timestamp_t *intern;
 
@@ -254,12 +237,11 @@ PHP_METHOD(Timestamp, jsonSerialize)
 		ADD_ASSOC_ZVAL_EX(return_value, "$timestamp", ts);
 	}
 #endif
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Timestamp::serialize()
+/* {{{ proto string MongoDB\BSON\Timestamp::serialize()
 */
-PHP_METHOD(Timestamp, serialize)
+static PHP_METHOD(Timestamp, serialize)
 {
 	php_phongo_timestamp_t   *intern;
 #if PHP_VERSION_ID >= 70000
@@ -303,12 +285,11 @@ PHP_METHOD(Timestamp, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Timestamp::unserialize(string $serialized)
+/* {{{ proto void MongoDB\BSON\Timestamp::unserialize(string $serialized)
 */
-PHP_METHOD(Timestamp, unserialize)
+static PHP_METHOD(Timestamp, unserialize)
 {
 	php_phongo_timestamp_t *intern;
 	zend_error_handling     error_handling;
@@ -350,11 +331,9 @@ PHP_METHOD(Timestamp, unserialize)
 	php_phongo_timestamp_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
 #endif
 	zval_ptr_dtor(&props);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ BSON\Timestamp */
-
+/* {{{ MongoDB\BSON\Timestamp function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, increment)
 	ZEND_ARG_INFO(0, timestamp)
@@ -380,11 +359,11 @@ static zend_function_entry php_phongo_timestamp_me[] = {
 	PHP_ME(Timestamp, unserialize, ai_Timestamp_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\BSON\Timestamp object handlers */
+static zend_object_handlers php_phongo_handler_timestamp;
 
-/* {{{ php_phongo_timestamp_t object handlers */
 static void php_phongo_timestamp_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_timestamp_t *intern = Z_OBJ_TIMESTAMP(object);
@@ -396,7 +375,7 @@ static void php_phongo_timestamp_free_object(phongo_free_object_arg *object TSRM
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_timestamp_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_timestamp_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_timestamp_t *intern = NULL;
 
@@ -447,7 +426,7 @@ static HashTable *php_phongo_timestamp_get_gc(zval *object, phongo_get_gc_table 
 	return zend_std_get_properties(object TSRMLS_CC);
 } /* }}} */
 
-HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_timestamp_t *intern;
 	HashTable              *props;
@@ -494,11 +473,9 @@ HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Timestamp)
+void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Timestamp", php_phongo_timestamp_me);
 	php_phongo_timestamp_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -517,12 +494,7 @@ PHP_MINIT_FUNCTION(Timestamp)
 	php_phongo_handler_timestamp.free_obj = php_phongo_timestamp_free_object;
 	php_phongo_handler_timestamp.offset = XtOffsetOf(php_phongo_timestamp_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

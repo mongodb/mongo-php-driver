@@ -15,34 +15,26 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+#include <ext/standard/php_var.h>
+#if PHP_VERSION_ID >= 70000
+# include <zend_smart_str.h>
+#else
+# include <ext/standard/php_smart_str.h>
+#endif
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
 
+zend_class_entry *php_phongo_maxkey_ce;
 
-PHONGO_API zend_class_entry *php_phongo_maxkey_ce;
-
-zend_object_handlers php_phongo_handler_maxkey;
-
-/* {{{ proto MaxKey::__set_state(array $properties)
+/* {{{ proto void MongoDB\BSON\MaxKey::__set_state(array $properties)
 */
-PHP_METHOD(MaxKey, __set_state)
+static PHP_METHOD(MaxKey, __set_state)
 {
 	zval *array;
 
@@ -51,12 +43,11 @@ PHP_METHOD(MaxKey, __set_state)
 	}
 
 	object_init_ex(return_value, php_phongo_maxkey_ce);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array MaxKey::jsonSerialize()
+/* {{{ proto array MongoDB\BSON\MaxKey::jsonSerialize()
 */
-PHP_METHOD(MaxKey, jsonSerialize)
+static PHP_METHOD(MaxKey, jsonSerialize)
 {
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -64,20 +55,18 @@ PHP_METHOD(MaxKey, jsonSerialize)
 
 	array_init_size(return_value, 1);
 	ADD_ASSOC_LONG_EX(return_value, "$maxKey", 1);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string MaxKey::serialize()
+/* {{{ proto string MongoDB\BSON\MaxKey::serialize()
 */
-PHP_METHOD(MaxKey, serialize)
+static PHP_METHOD(MaxKey, serialize)
 {
 	PHONGO_RETURN_STRING("");
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string MaxKey::unserialize(string $serialized)
+/* {{{ proto void MongoDB\BSON\MaxKey::unserialize(string $serialized)
 */
-PHP_METHOD(MaxKey, unserialize)
+static PHP_METHOD(MaxKey, unserialize)
 {
 	zend_error_handling     error_handling;
 	char                   *serialized;
@@ -90,11 +79,9 @@ PHP_METHOD(MaxKey, unserialize)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ BSON\MaxKey */
-
+/* {{{ MongoDB\BSON\MaxKey function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
 ZEND_END_ARG_INFO()
@@ -113,11 +100,11 @@ static zend_function_entry php_phongo_maxkey_me[] = {
 	PHP_ME(MaxKey, unserialize, ai_MaxKey_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\BSON\MaxKey object handlers */
+static zend_object_handlers php_phongo_handler_maxkey;
 
-/* {{{ php_phongo_maxkey_t object handlers */
 static void php_phongo_maxkey_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_maxkey_t *intern = Z_OBJ_MAXKEY(object);
@@ -129,7 +116,7 @@ static void php_phongo_maxkey_free_object(phongo_free_object_arg *object TSRMLS_
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_maxkey_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_maxkey_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_maxkey_t *intern = NULL;
 
@@ -153,12 +140,9 @@ phongo_create_object_retval php_phongo_maxkey_create_object(zend_class_entry *cl
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(MaxKey)
+void php_phongo_maxkey_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
-
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MaxKey", php_phongo_maxkey_me);
 	php_phongo_maxkey_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -174,12 +158,7 @@ PHP_MINIT_FUNCTION(MaxKey)
 	php_phongo_handler_maxkey.free_obj = php_phongo_maxkey_free_object;
 	php_phongo_handler_maxkey.offset = XtOffsetOf(php_phongo_maxkey_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

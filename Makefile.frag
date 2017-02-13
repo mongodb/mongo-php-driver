@@ -4,9 +4,6 @@ DATE=`date +%Y-%m-%d--%H-%M-%S`
 MONGODB_VERSION=$(shell php -n -dextension=modules/mongodb.so -r 'echo MONGODB_VERSION;')
 MONGODB_MINOR=$(shell echo $(MONGODB_VERSION) | cut -d. -f1,2)
 MONGODB_STABILITY=$(shell php -n -dextension=modules/mongodb.so -r 'echo MONGODB_STABILITY;')
-LIB_PATH=vendor/mongodb/mongodb
-COMPOSER_ARGS=update --no-interaction --prefer-source
-PHPUNIT_ARGS=--process-isolation
 
 help:
 	@echo -e "\t$$ make vm"
@@ -21,10 +18,6 @@ help:
 	@echo -e "\t       - Creates code coverage report using coveralls"
 	@echo -e "\t$$ make coverage"
 	@echo -e "\t       - Creates code coverage report using gcov"
-
-	@echo ""
-	@echo -e "\t$$ make composer"
-	@echo -e "\t       - Installs test dependencies using composer"
 
 	@echo ""
 	@echo -e "\t$$ make distcheck"
@@ -58,24 +51,6 @@ coverage: mv-coverage lcov-local
 coveralls: mv-coverage lcov-coveralls
 	coveralls --exclude src/libbson --exclude src/libmongoc --exclude src/contrib --exclude lib --exclude tests
 
-composer:
-	@command -v composer >/dev/null 2>&1; \
-	if test $$? -eq 0; then \
-		composer $(COMPOSER_ARGS) ;\
-		if test -d $(LIB_PATH); then \
-			composer $(COMPOSER_ARGS) --working-dir $(LIB_PATH) ;\
-		fi \
-	elif test -r composer.phar; then \
-		php composer.phar $(COMPOSER_ARGS); \
-		if test -d $(LIB_PATH); then \
-			php $(top_srcdir)/composer.phar $(COMPOSER_ARGS) --working-dir $(LIB_PATH) ;\
-		fi \
-	else \
-		echo "Cannot find composer :("; \
-		echo "Aborting."; \
-		exit 1; \
-	fi
-
 vm:
 	@command -v vagrant >/dev/null 2>&1 || { echo >&2 "Vagrant needs to be installed to run vms"; exit 1; }
 	@vagrant up ldap mo
@@ -92,24 +67,6 @@ test-virtual: package
 	sh ./scripts/run-tests-on.sh freebsd
 	sh ./scripts/run-tests-on.sh precise32
 	sh ./scripts/run-tests-on.sh precise64
-
-testunit: composer
-	@command -v phpunit >/dev/null 2>&1; \
-	if test $$? -eq 0; then \
-		pushd $(LIB_PATH) ;\
-		phpunit $(PHPUNIT_ARGS) ;\
-		popd ;\
-	elif test -r phpunit.phar; then \
-		pushd $(LIB_PATH) ;\
-		php $(top_srcdir)/phpunit.phar $(PHPUNIT_ARGS) ;\
-		popd ;\
-	else \
-		echo "Cannot find phpunit :("; \
-		echo "Aborting."; \
-		exit 1; \
-	fi
-
-testall: composer test testunit
 
 testclean:
 	@for group in generic standalone; do \

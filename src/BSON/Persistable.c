@@ -15,57 +15,30 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
 
+zend_class_entry *php_phongo_persistable_ce;
 
-PHONGO_API zend_class_entry *php_phongo_persistable_ce;
-
-
-
-/* {{{ BSON\Persistable */
-
-
+/* {{{ MongoDB\BSON\Persistable function entries */
 static zend_function_entry php_phongo_persistable_me[] = {
 	PHP_FE_END
 };
-
 /* }}} */
 
-
-
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Persistable)
+void php_phongo_persistable_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Persistable", php_phongo_persistable_me);
 	php_phongo_persistable_ce = zend_register_internal_interface(&ce TSRMLS_CC);
 	zend_class_implements(php_phongo_persistable_ce TSRMLS_CC, 2, php_phongo_unserializable_ce, php_phongo_serializable_ce);
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

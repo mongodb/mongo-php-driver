@@ -15,36 +15,22 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* PHP array helpers */
-#include "php_array_api.h"
-/* Our Compatability header */
-#include "phongo_compat.h"
 
-/* Our stuffz */
+#include "php_array_api.h"
+#include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
 
+zend_class_entry *php_phongo_readpreference_ce;
 
-PHONGO_API zend_class_entry *php_phongo_readpreference_ce;
-
-zend_object_handlers php_phongo_handler_readpreference;
-
-/* {{{ proto void ReadPreference::__construct(integer $mode[, array $tagSets = array()[, array $options = array()]])
+/* {{{ proto void MongoDB\Driver\ReadPreference::__construct(integer $mode[, array $tagSets = array()[, array $options = array()]])
    Constructs a new ReadPreference */
-PHP_METHOD(ReadPreference, __construct)
+static PHP_METHOD(ReadPreference, __construct)
 {
 	php_phongo_readpreference_t *intern;
 	zend_error_handling       error_handling;
@@ -83,7 +69,7 @@ PHP_METHOD(ReadPreference, __construct)
 		bson_t *tags = bson_new();
 
 		php_phongo_read_preference_prep_tagsets(tagSets TSRMLS_CC);
-		phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
+		php_phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
 
 		if (!php_phongo_read_preference_tags_are_valid(tags)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "tagSets must be an array of zero or more documents");
@@ -126,12 +112,11 @@ PHP_METHOD(ReadPreference, __construct)
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Read preference is not valid");
 		return;
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto integer ReadPreference::getMaxStalenessSeconds()
+/* {{{ proto integer MongoDB\Driver\ReadPreference::getMaxStalenessSeconds()
    Returns the ReadPreference maxStalenessSeconds value */
-PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
+static PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 {
 	php_phongo_readpreference_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -143,12 +128,11 @@ PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 	}
 
 	RETURN_LONG(mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference));
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto integer ReadPreference::getMode()
+/* {{{ proto integer MongoDB\Driver\ReadPreference::getMode()
    Returns the ReadPreference mode */
-PHP_METHOD(ReadPreference, getMode)
+static PHP_METHOD(ReadPreference, getMode)
 {
 	php_phongo_readpreference_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -160,12 +144,11 @@ PHP_METHOD(ReadPreference, getMode)
 	}
 
 	RETURN_LONG(mongoc_read_prefs_get_mode(intern->read_preference));
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array ReadPreference::getTagSets()
+/* {{{ proto array MongoDB\Driver\ReadPreference::getTagSets()
    Returns the ReadPreference tag sets */
-PHP_METHOD(ReadPreference, getTagSets)
+static PHP_METHOD(ReadPreference, getTagSets)
 {
 	php_phongo_readpreference_t *intern;
 	const bson_t                *tags;
@@ -185,7 +168,7 @@ PHP_METHOD(ReadPreference, getTagSets)
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
+		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
 #if PHP_VERSION_ID >= 70000
 		RETURN_ZVAL(&state.zchild, 0, 1);
 #else
@@ -194,12 +177,11 @@ PHP_METHOD(ReadPreference, getTagSets)
 	} else {
 		RETURN_NULL();
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array ReadPreference::bsonSerialize()
-   */
-PHP_METHOD(ReadPreference, bsonSerialize)
+/* {{{ proto array MongoDB\Driver\ReadPreference::bsonSerialize()
+*/
+static PHP_METHOD(ReadPreference, bsonSerialize)
 {
 	const mongoc_read_prefs_t *read_preference = phongo_read_preference_from_zval(getThis() TSRMLS_CC);
 
@@ -209,14 +191,9 @@ PHP_METHOD(ReadPreference, bsonSerialize)
 
 	php_phongo_read_preference_to_zval(return_value, read_preference);
 	convert_to_object(return_value);
-}
-/* }}} */
+} /* }}} */
 
-/**
- * Value object for read preferences used in issuing commands and queries.
- */
-/* {{{ MongoDB\Driver\ReadPreference */
-
+/* {{{ MongoDB\Driver\ReadPreference function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, mode)
 	ZEND_ARG_ARRAY_INFO(0, tagSets, 1)
@@ -234,11 +211,11 @@ static zend_function_entry php_phongo_readpreference_me[] = {
 	PHP_ME(ReadPreference, bsonSerialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\ReadPreference object handlers */
+static zend_object_handlers php_phongo_handler_readpreference;
 
-/* {{{ php_phongo_readpreference_t object handlers */
 static void php_phongo_readpreference_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readpreference_t *intern = Z_OBJ_READPREFERENCE(object);
@@ -254,7 +231,7 @@ static void php_phongo_readpreference_free_object(phongo_free_object_arg *object
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_readpreference_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_readpreference_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readpreference_t *intern = NULL;
 
@@ -278,7 +255,7 @@ phongo_create_object_retval php_phongo_readpreference_create_object(zend_class_e
 #endif
 } /* }}} */
 
-HashTable *php_phongo_readpreference_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_readpreference_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval                       retval;
@@ -296,13 +273,9 @@ HashTable *php_phongo_readpreference_get_debug_info(zval *object, int *is_temp T
 } /* }}} */
 /* }}} */
 
-
-
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(ReadPreference)
+void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ReadPreference", php_phongo_readpreference_me);
 	php_phongo_readpreference_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -326,12 +299,7 @@ PHP_MINIT_FUNCTION(ReadPreference)
 	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("RP_NEAREST"), MONGOC_READ_NEAREST TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("NO_MAX_STALENESS"), MONGOC_NO_MAX_STALENESS TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("SMALLEST_MAX_STALENESS_SECONDS"), MONGOC_SMALLEST_MAX_STALENESS_SECONDS TSRMLS_CC);
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

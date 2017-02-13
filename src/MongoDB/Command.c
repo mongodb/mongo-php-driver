@@ -15,34 +15,21 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
-#include "phongo_compat.h"
 
-/* Our stuffz */
+#include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
 
+zend_class_entry *php_phongo_command_ce;
 
-PHONGO_API zend_class_entry *php_phongo_command_ce;
-
-zend_object_handlers php_phongo_handler_command;
-
-/* {{{ proto void Command::__construct(array|object $document)
+/* {{{ proto void MongoDB\Driver\Command::__construct(array|object $document)
    Constructs a new Command */
-PHP_METHOD(Command, __construct)
+static PHP_METHOD(Command, __construct)
 {
 	php_phongo_command_t     *intern;
 	zend_error_handling       error_handling;
@@ -61,16 +48,11 @@ PHP_METHOD(Command, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 
-	phongo_zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 	intern->bson = bson;
-}
-/* }}} */
+} /* }}} */
 
-/**
- * Value object for a database command document.
- */
-/* {{{ MongoDB\Driver\Command */
-
+/* {{{ MongoDB\Driver\Command function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Command___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, document)
 ZEND_END_ARG_INFO()
@@ -80,14 +62,14 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_command_me[] = {
 	PHP_ME(Command, __construct, ai_Command___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeup, ai_Command_void, ZEND_ACC_PUBLIC)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Command_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\Command object handlers */
+static zend_object_handlers php_phongo_handler_command;
 
-/* {{{ php_phongo_command_t object handlers */
 static void php_phongo_command_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_command_t *intern = Z_OBJ_COMMAND(object);
@@ -103,7 +85,7 @@ static void php_phongo_command_free_object(phongo_free_object_arg *object TSRMLS
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_command_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_command_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_command_t *intern = NULL;
 
@@ -127,7 +109,7 @@ phongo_create_object_retval php_phongo_command_create_object(zend_class_entry *c
 #endif
 } /* }}} */
 
-HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_command_t  *intern;
 #if PHP_VERSION_ID >= 70000
@@ -149,7 +131,7 @@ HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_D
 			zval *zv;
 #endif
 
-		phongo_bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &zv);
+		php_phongo_bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &zv);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "command", &zv);
 #else
@@ -164,11 +146,9 @@ HashTable *php_phongo_command_get_debug_info(zval *object, int *is_temp TSRMLS_D
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Command)
+void php_phongo_command_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Command", php_phongo_command_me);
 	php_phongo_command_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -182,13 +162,7 @@ PHP_MINIT_FUNCTION(Command)
 	php_phongo_handler_command.free_obj = php_phongo_command_free_object;
 	php_phongo_handler_command.offset = XtOffsetOf(php_phongo_command_t, std);
 #endif
-
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

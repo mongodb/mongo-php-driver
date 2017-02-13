@@ -15,36 +15,24 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
-#include "phongo_compat.h"
 
-/* Our stuffz */
+#include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
 
-#define RETURN_LONG_FROM_BSON_INT32(iter, bson, key) \
+#define PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(iter, bson, key) \
 	if (bson_iter_init_find((iter), (bson), (key)) && BSON_ITER_HOLDS_INT32((iter))) { \
 		RETURN_LONG(bson_iter_int32((iter))); \
 	}
 
-PHONGO_API zend_class_entry *php_phongo_writeresult_ce;
+zend_class_entry *php_phongo_writeresult_ce;
 
-zend_object_handlers php_phongo_handler_writeresult;
-
-static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_t *intern, zval *return_value TSRMLS_DC)
+static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_t *intern, zval *return_value TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter, child;
 #if PHP_VERSION_ID >= 70000
@@ -94,9 +82,9 @@ static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_
 	}
 
 	return true;
-}
+} /* }}} */
 
-static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t *intern, zval *return_value TSRMLS_DC)
+static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t *intern, zval *return_value TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter, child;
 
@@ -144,11 +132,11 @@ static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t *int
 	}
 
 	return true;
-}
+} /* }}} */
 
-/* {{{ proto integer|null WriteResult::getInsertedCount()
+/* {{{ proto integer|null MongoDB\Driver\WriteResult::getInsertedCount()
    Returns the number of documents that were inserted */
-PHP_METHOD(WriteResult, getInsertedCount)
+static PHP_METHOD(WriteResult, getInsertedCount)
 {
 	bson_iter_t iter;
 	php_phongo_writeresult_t *intern;
@@ -161,13 +149,12 @@ PHP_METHOD(WriteResult, getInsertedCount)
 		return;
 	}
 
-	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nInserted");
-}
-/* }}} */
+	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nInserted");
+} /* }}} */
 
-/* {{{ proto integer|null WriteResult::getMatchedCount()
+/* {{{ proto integer|null MongoDB\Driver\WriteResult::getMatchedCount()
    Returns the number of documents that matched the update criteria */
-PHP_METHOD(WriteResult, getMatchedCount)
+static PHP_METHOD(WriteResult, getMatchedCount)
 {
 	bson_iter_t iter;
 	php_phongo_writeresult_t *intern;
@@ -180,13 +167,12 @@ PHP_METHOD(WriteResult, getMatchedCount)
 		return;
 	}
 
-	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nMatched");
-}
-/* }}} */
+	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nMatched");
+} /* }}} */
 
-/* {{{ proto integer|null WriteResult::getModifiedCount()
+/* {{{ proto integer|null MongoDB\Driver\WriteResult::getModifiedCount()
    Returns the number of documents that were actually modified by an update */
-PHP_METHOD(WriteResult, getModifiedCount)
+static PHP_METHOD(WriteResult, getModifiedCount)
 {
 	bson_iter_t iter;
 	php_phongo_writeresult_t *intern;
@@ -199,13 +185,12 @@ PHP_METHOD(WriteResult, getModifiedCount)
 		return;
 	}
 
-	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nModified");
-}
-/* }}} */
+	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nModified");
+} /* }}} */
 
-/* {{{ proto integer|null WriteResult::getDeletedCount()
+/* {{{ proto integer|null MongoDB\Driver\WriteResult::getDeletedCount()
    Returns the number of documents that were deleted */
-PHP_METHOD(WriteResult, getDeletedCount)
+static PHP_METHOD(WriteResult, getDeletedCount)
 {
 	bson_iter_t iter;
 	php_phongo_writeresult_t *intern;
@@ -218,13 +203,12 @@ PHP_METHOD(WriteResult, getDeletedCount)
 		return;
 	}
 
-	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nRemoved");
-}
-/* }}} */
+	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nRemoved");
+} /* }}} */
 
-/* {{{ proto integer|null WriteResult::getUpsertedCount()
+/* {{{ proto integer|null MongoDB\Driver\WriteResult::getUpsertedCount()
    Returns the number of documents that were upserted */
-PHP_METHOD(WriteResult, getUpsertedCount)
+static PHP_METHOD(WriteResult, getUpsertedCount)
 {
 	bson_iter_t iter;
 	php_phongo_writeresult_t *intern;
@@ -237,13 +221,12 @@ PHP_METHOD(WriteResult, getUpsertedCount)
 		return;
 	}
 
-	RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nUpserted");
-}
-/* }}} */
+	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nUpserted");
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\Server WriteResult::getServer()
+/* {{{ proto MongoDB\Driver\Server MongoDB\Driver\WriteResult::getServer()
    Returns the Server from which the result originated */
-PHP_METHOD(WriteResult, getServer)
+static PHP_METHOD(WriteResult, getServer)
 {
 	php_phongo_writeresult_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -260,12 +243,11 @@ PHP_METHOD(WriteResult, getServer)
 #else
 	phongo_server_init(return_value, intern->manager, intern->server_id TSRMLS_CC);
 #endif
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array WriteResult::getUpsertedIds()
+/* {{{ proto array MongoDB\Driver\WriteResult::getUpsertedIds()
    Returns the identifiers generated by the server for upsert operations. */
-PHP_METHOD(WriteResult, getUpsertedIds)
+static PHP_METHOD(WriteResult, getUpsertedIds)
 {
 	bson_iter_t iter, child;
 	php_phongo_writeresult_t *intern;
@@ -323,12 +305,11 @@ PHP_METHOD(WriteResult, getUpsertedIds)
 			}
 		}
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto WriteConcernError WriteResult::getWriteConcernError()
+/* {{{ proto WriteConcernError MongoDB\Driver\WriteResult::getWriteConcernError()
    Return any write concern error that occurred */
-PHP_METHOD(WriteResult, getWriteConcernError)
+static PHP_METHOD(WriteResult, getWriteConcernError)
 {
 	php_phongo_writeresult_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -341,12 +322,11 @@ PHP_METHOD(WriteResult, getWriteConcernError)
 	}
 
 	php_phongo_writeresult_get_writeconcernerror(intern, return_value TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto WriteError[] WriteResult::getWriteErrors()
+/* {{{ proto WriteError[] MongoDB\Driver\WriteResult::getWriteErrors()
    Returns any write errors that occurred */
-PHP_METHOD(WriteResult, getWriteErrors)
+static PHP_METHOD(WriteResult, getWriteErrors)
 {
 	php_phongo_writeresult_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -359,13 +339,12 @@ PHP_METHOD(WriteResult, getWriteErrors)
 	}
 
 	php_phongo_writeresult_get_writeerrors(intern, return_value TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto boolean WriteResult::isAcknowledged()
+/* {{{ proto boolean MongoDB\Driver\WriteResult::isAcknowledged()
    Returns whether the write operation was acknowledged (based on the write
    concern). */
-PHP_METHOD(WriteResult, isAcknowledged)
+static PHP_METHOD(WriteResult, isAcknowledged)
 {
 	php_phongo_writeresult_t *intern;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -379,22 +358,13 @@ PHP_METHOD(WriteResult, isAcknowledged)
 
 
 	RETURN_BOOL(mongoc_write_concern_is_acknowledged(intern->write_concern));
-}
-/* }}} */
+} /* }}} */
 
-/**
- * Result returned by Server and Manager executeBulkWrite() methods.
- *
- * This class may be constructed internally if it will encapsulate a libmongoc
- * data structure.
- */
-/* {{{ MongoDB\Driver\WriteResult */
-
+/* {{{ MongoDB\Driver\WriteResult function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeresult_me[] = {
-	PHP_ME(Server, __construct, ai_WriteResult_void, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(WriteResult, getInsertedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getMatchedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getModifiedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -405,14 +375,15 @@ static zend_function_entry php_phongo_writeresult_me[] = {
 	PHP_ME(WriteResult, getWriteConcernError, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteResult, isAcknowledged, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeup, ai_WriteResult_void, ZEND_ACC_PUBLIC)
+	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_WriteResult_void, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\WriteResult object handlers */
+static zend_object_handlers php_phongo_handler_writeresult;
 
-/* {{{ php_phongo_writeresult_t object handlers */
 static void php_phongo_writeresult_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeresult_t *intern = Z_OBJ_WRITERESULT(object);
@@ -434,7 +405,7 @@ static void php_phongo_writeresult_free_object(phongo_free_object_arg *object TS
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_writeresult_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_writeresult_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeresult_t *intern = NULL;
 
@@ -458,7 +429,7 @@ phongo_create_object_retval php_phongo_writeresult_create_object(zend_class_entr
 #endif
 } /* }}} */
 
-HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeresult_t *intern;
 #if PHP_VERSION_ID >= 70000
@@ -472,19 +443,19 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 	*is_temp = 1;
 	array_init_size(&retval, 9);
 
-#define SCP(field) \
+#define PHONGO_WRITERESULT_SCP(field) \
 	if (bson_iter_init_find(&iter, intern->reply, (field)) && BSON_ITER_HOLDS_INT32(&iter)) { \
 		ADD_ASSOC_LONG_EX(&retval, (field), bson_iter_int32(&iter)); \
 	} else { \
 		ADD_ASSOC_NULL_EX(&retval, (field)); \
 	}
 
-	SCP("nInserted");
-	SCP("nMatched");
-	SCP("nModified");
-	SCP("nRemoved");
-	SCP("nUpserted");
-#undef SCP
+	PHONGO_WRITERESULT_SCP("nInserted");
+	PHONGO_WRITERESULT_SCP("nMatched");
+	PHONGO_WRITERESULT_SCP("nModified");
+	PHONGO_WRITERESULT_SCP("nRemoved");
+	PHONGO_WRITERESULT_SCP("nUpserted");
+#undef PHONGO_WRITERESULT_SCP
 
 	if (bson_iter_init_find(&iter, intern->reply, "upserted") && BSON_ITER_HOLDS_ARRAY(&iter)) {
 		uint32_t len;
@@ -496,7 +467,7 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		bson_iter_array(&iter, &len, &data);
-		phongo_bson_to_zval_ex(data, len, &state);
+		php_phongo_bson_to_zval_ex(data, len, &state);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", &state.zchild);
 #else
@@ -566,11 +537,9 @@ HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRM
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(WriteResult)
+void php_phongo_writeresult_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteResult", php_phongo_writeresult_me);
 	php_phongo_writeresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -584,12 +553,7 @@ PHP_MINIT_FUNCTION(WriteResult)
 	php_phongo_handler_writeresult.free_obj = php_phongo_writeresult_free_object;
 	php_phongo_handler_writeresult.offset = XtOffsetOf(php_phongo_writeresult_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

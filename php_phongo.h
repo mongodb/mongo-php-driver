@@ -29,15 +29,6 @@ extern zend_module_entry mongodb_module_entry;
 #define MONGODB_STABILITY_S "devel"
 #define MONGODB_VERSION   MONGODB_VERSION_S
 
-#ifdef PHP_WIN32
-#	define PHONGO_API __declspec(dllexport)
-#	include "ext/standard/flock_compat.h"
-#elif defined(__GNUC__) && __GNUC__ >= 4
-#	define PHONGO_API __attribute__ ((visibility("default")))
-#else
-#	define PHONGO_API
-#endif
-
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char *debug;
 	FILE *debug_fd;
@@ -166,14 +157,6 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
     ce->serialize   = zend_class_serialize_deny;   \
     ce->unserialize = zend_class_unserialize_deny; \
 } while(0);
-
-#ifdef PHP_DEBUG
-void _phongo_debug_bson(bson_t *bson);
-#else
-	#define _phongo_debug_bson(bson)
-#endif
-
-PHP_MINIT_FUNCTION(bson);
 
 #endif /* PHONGO_H */
 

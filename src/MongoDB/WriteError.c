@@ -15,34 +15,20 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
 
+zend_class_entry *php_phongo_writeerror_ce;
 
-PHONGO_API zend_class_entry *php_phongo_writeerror_ce;
-
-zend_object_handlers php_phongo_handler_writeerror;
-
-/* {{{ proto integer WriteError::getCode()
+/* {{{ proto integer MongoDB\Driver\WriteError::getCode()
    Returns the MongoDB error code */
-PHP_METHOD(WriteError, getCode)
+static PHP_METHOD(WriteError, getCode)
 {
 	php_phongo_writeerror_t  *intern;
 
@@ -55,13 +41,12 @@ PHP_METHOD(WriteError, getCode)
 
 
 	RETURN_LONG(intern->code);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto integer WriteError::getIndex()
+/* {{{ proto integer MongoDB\Driver\WriteError::getIndex()
    Returns the index of the operation in the BulkWrite to which this WriteError
    corresponds. */
-PHP_METHOD(WriteError, getIndex)
+static PHP_METHOD(WriteError, getIndex)
 {
 	php_phongo_writeerror_t  *intern;
 
@@ -74,12 +59,11 @@ PHP_METHOD(WriteError, getIndex)
 
 
 	RETURN_LONG(intern->index);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string WriteError::getMessage()
+/* {{{ proto string MongoDB\Driver\WriteError::getMessage()
    Returns the actual error message from the server */
-PHP_METHOD(WriteError, getMessage)
+static PHP_METHOD(WriteError, getMessage)
 {
 	php_phongo_writeerror_t  *intern;
 
@@ -92,12 +76,11 @@ PHP_METHOD(WriteError, getMessage)
 
 
 	PHONGO_RETURN_STRING(intern->message);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto mixed WriteError::getInfo()
+/* {{{ proto mixed MongoDB\Driver\WriteError::getInfo()
    Returns additional metadata for the error */
-PHP_METHOD(WriteError, getInfo)
+static PHP_METHOD(WriteError, getInfo)
 {
 	php_phongo_writeerror_t *intern;
 
@@ -116,31 +99,26 @@ PHP_METHOD(WriteError, getInfo)
 		RETURN_ZVAL(intern->info, 1, 0);
 #endif
 	}
-}
-/* }}} */
+} /* }}} */
 
-/**
- * Value object for a write error (e.g. duplicate key).
- */
-/* {{{ MongoDB\Driver\WriteError */
-
+/* {{{ MongoDB\Driver\WriteError function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteError_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeerror_me[] = {
-	PHP_ME(Server, __construct, ai_WriteError_void, ZEND_ACC_FINAL|ZEND_ACC_PRIVATE)
 	PHP_ME(WriteError, getCode, ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteError, getIndex, ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteError, getMessage, ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteError, getInfo, ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeup, ai_WriteError_void, ZEND_ACC_PUBLIC)
+	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_WriteError_void, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_WriteError_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\WriteError object handlers */
+static zend_object_handlers php_phongo_handler_writeerror;
 
-/* {{{ php_phongo_writeerror_t object handlers */
 static void php_phongo_writeerror_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeerror_t *intern = Z_OBJ_WRITEERROR(object);
@@ -160,7 +138,7 @@ static void php_phongo_writeerror_free_object(phongo_free_object_arg *object TSR
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_writeerror_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_writeerror_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeerror_t *intern = NULL;
 
@@ -184,7 +162,7 @@ phongo_create_object_retval php_phongo_writeerror_create_object(zend_class_entry
 #endif
 } /* }}} */
 
-HashTable *php_phongo_writeerror_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_writeerror_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeerror_t *intern;
 #if PHP_VERSION_ID >= 70000
@@ -217,11 +195,9 @@ HashTable *php_phongo_writeerror_get_debug_info(zval *object, int *is_temp TSRML
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(WriteError)
+void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteError", php_phongo_writeerror_me);
 	php_phongo_writeerror_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -235,12 +211,7 @@ PHP_MINIT_FUNCTION(WriteError)
 	php_phongo_handler_writeerror.free_obj = php_phongo_writeerror_free_object;
 	php_phongo_handler_writeerror.offset = XtOffsetOf(php_phongo_writeerror_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

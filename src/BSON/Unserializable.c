@@ -15,33 +15,17 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
 
+zend_class_entry *php_phongo_unserializable_ce;
 
-PHONGO_API zend_class_entry *php_phongo_unserializable_ce;
-
-
-
-/* {{{ BSON\Unserializable */
-
+/* {{{ MongoDB\BSON\Unserializable function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Unserializable_bsonUnserialize, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
@@ -50,25 +34,15 @@ static zend_function_entry php_phongo_unserializable_me[] = {
 	ZEND_ABSTRACT_ME(Unserializable, bsonUnserialize, ai_Unserializable_bsonUnserialize)
 	PHP_FE_END
 };
-
 /* }}} */
 
-
-
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Unserializable)
+void php_phongo_unserializable_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Unserializable", php_phongo_unserializable_me);
 	php_phongo_unserializable_ce = zend_register_internal_interface(&ce TSRMLS_CC);
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

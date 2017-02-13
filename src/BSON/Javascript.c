@@ -15,40 +15,27 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
 #include <ext/standard/php_var.h>
 #if PHP_VERSION_ID >= 70000
 # include <zend_smart_str.h>
 #else
 # include <ext/standard/php_smart_str.h>
 #endif
-/* Our Compatability header */
-#include "phongo_compat.h"
 
-/* Our stuffz */
+#include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
 
-
-PHONGO_API zend_class_entry *php_phongo_javascript_ce;
-
-zend_object_handlers php_phongo_handler_javascript;
+zend_class_entry *php_phongo_javascript_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_javascript_init(php_phongo_javascript_t *intern, const char *code, phongo_zpp_char_len code_len, zval *scope TSRMLS_DC)
+static bool php_phongo_javascript_init(php_phongo_javascript_t *intern, const char *code, phongo_zpp_char_len code_len, zval *scope TSRMLS_DC) /* {{{ */
 {
 	if (scope && Z_TYPE_P(scope) != IS_OBJECT && Z_TYPE_P(scope) != IS_ARRAY && Z_TYPE_P(scope) != IS_NULL) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected scope to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(scope)));
@@ -65,17 +52,17 @@ static bool php_phongo_javascript_init(php_phongo_javascript_t *intern, const ch
 
 	if (scope && (Z_TYPE_P(scope) == IS_OBJECT || Z_TYPE_P(scope) == IS_ARRAY)) {
 		intern->scope = bson_new();
-		phongo_zval_to_bson(scope, PHONGO_BSON_NONE, intern->scope, NULL TSRMLS_CC);
+		php_phongo_zval_to_bson(scope, PHONGO_BSON_NONE, intern->scope, NULL TSRMLS_CC);
 	} else {
 		intern->scope = NULL;
 	}
 
 	return true;
-}
+} /* }}} */
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_javascript_init_from_hash(php_phongo_javascript_t *intern, HashTable *props TSRMLS_DC)
+static bool php_phongo_javascript_init_from_hash(php_phongo_javascript_t *intern, HashTable *props TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval *code, *scope;
@@ -97,13 +84,13 @@ static bool php_phongo_javascript_init_from_hash(php_phongo_javascript_t *intern
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"code\" string field", ZSTR_VAL(php_phongo_javascript_ce->name));
 	return false;
-}
+} /* }}} */
 
-/* {{{ proto void Javascript::__construct(string $code[, array|object $scope])
+/* {{{ proto void MongoDB\BSON\Javascript::__construct(string $code[, array|object $scope])
    Construct a new BSON Javascript type. The scope is a document mapping
    identifiers and values, representing the scope in which the code string will
    be evaluated. Note that this type cannot be represented as Extended JSON. */
-PHP_METHOD(Javascript, __construct)
+static PHP_METHOD(Javascript, __construct)
 {
 	php_phongo_javascript_t   *intern;
 	zend_error_handling        error_handling;
@@ -122,12 +109,11 @@ PHP_METHOD(Javascript, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	php_phongo_javascript_init(intern, code, code_len, scope TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto void Javascript::__set_state(array $properties)
+/* {{{ proto void MongoDB\BSON\Javascript::__set_state(array $properties)
 */
-PHP_METHOD(Javascript, __set_state)
+static PHP_METHOD(Javascript, __set_state)
 {
 	php_phongo_javascript_t *intern;
 	HashTable               *props;
@@ -143,12 +129,11 @@ PHP_METHOD(Javascript, __set_state)
 	props = Z_ARRVAL_P(array);
 
 	php_phongo_javascript_init_from_hash(intern, props TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Javascript::__toString()
+/* {{{ proto string MongoDB\BSON\Javascript::__toString()
    Return the Javascript's code string. */
-PHP_METHOD(Javascript, __toString)
+static PHP_METHOD(Javascript, __toString)
 {
 	php_phongo_javascript_t *intern;
 
@@ -159,12 +144,11 @@ PHP_METHOD(Javascript, __toString)
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
 	PHONGO_RETURN_STRINGL(intern->code, intern->code_len);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Javascript::getCode()
+/* {{{ proto string MongoDB\BSON\Javascript::getCode()
 */
-PHP_METHOD(Javascript, getCode)
+static PHP_METHOD(Javascript, getCode)
 {
 	php_phongo_javascript_t *intern;
 
@@ -175,12 +159,11 @@ PHP_METHOD(Javascript, getCode)
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
 	PHONGO_RETURN_STRINGL(intern->code, intern->code_len);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto object|null Javascript::getScope()
+/* {{{ proto object|null MongoDB\BSON\Javascript::getScope()
 */
-PHP_METHOD(Javascript, getScope)
+static PHP_METHOD(Javascript, getScope)
 {
 	php_phongo_javascript_t *intern;
 
@@ -197,7 +180,7 @@ PHP_METHOD(Javascript, getScope)
 	if (intern->scope->len) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-		phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state);
+		php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state);
 #if PHP_VERSION_ID >= 70000
 		RETURN_ZVAL(&state.zchild, 0, 1);
 #else
@@ -206,12 +189,11 @@ PHP_METHOD(Javascript, getScope)
 	} else {
 		RETURN_NULL();
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto array Javascript::jsonSerialize()
+/* {{{ proto array MongoDB\BSON\Javascript::jsonSerialize()
 */
-PHP_METHOD(Javascript, jsonSerialize)
+static PHP_METHOD(Javascript, jsonSerialize)
 {
 	php_phongo_javascript_t *intern;
 
@@ -227,7 +209,7 @@ PHP_METHOD(Javascript, jsonSerialize)
 	if (intern->scope && intern->scope->len) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-		if (phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+		if (php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 #if PHP_VERSION_ID >= 70000
 			Z_ADDREF(state.zchild);
 			ADD_ASSOC_ZVAL_EX(return_value, "$scope", &state.zchild);
@@ -239,12 +221,11 @@ PHP_METHOD(Javascript, jsonSerialize)
 
 		zval_ptr_dtor(&state.zchild);
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Javascript::serialize()
+/* {{{ proto string MongoDB\BSON\Javascript::serialize()
 */
-PHP_METHOD(Javascript, serialize)
+static PHP_METHOD(Javascript, serialize)
 {
 	php_phongo_javascript_t  *intern;
 #if PHP_VERSION_ID >= 70000
@@ -265,7 +246,7 @@ PHP_METHOD(Javascript, serialize)
 
 #if PHP_VERSION_ID >= 70000
 	if (intern->scope && intern->scope->len) {
-		if (!phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 			return;
 		}
 		Z_ADDREF(state.zchild);
@@ -274,7 +255,7 @@ PHP_METHOD(Javascript, serialize)
 	}
 #else
 	if (intern->scope && intern->scope->len) {
-		if (!phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 			return;
 		}
 		Z_ADDREF_P(state.zchild);
@@ -306,12 +287,11 @@ PHP_METHOD(Javascript, serialize)
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
 	zval_ptr_dtor(&state.zchild);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto string Javascript::unserialize(string $serialized)
+/* {{{ proto void MongoDB\BSON\Javascript::unserialize(string $serialized)
 */
-PHP_METHOD(Javascript, unserialize)
+static PHP_METHOD(Javascript, unserialize)
 {
 	php_phongo_javascript_t *intern;
 	zend_error_handling      error_handling;
@@ -353,11 +333,9 @@ PHP_METHOD(Javascript, unserialize)
 	php_phongo_javascript_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
 #endif
 	zval_ptr_dtor(&props);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ BSON\Javascript */
-
+/* {{{ MongoDB\BSON\Javascript function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Javascript___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, javascript)
 	ZEND_ARG_INFO(0, scope)
@@ -385,11 +363,11 @@ static zend_function_entry php_phongo_javascript_me[] = {
 	PHP_ME(Javascript, getScope, ai_Javascript_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\BSON\Javascript object handlers */
+static zend_object_handlers php_phongo_handler_javascript;
 
-/* {{{ php_phongo_javascript_t object handlers */
 static void php_phongo_javascript_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_javascript_t *intern = Z_OBJ_JAVASCRIPT(object);
@@ -473,7 +451,7 @@ HashTable *php_phongo_javascript_get_properties(zval *object TSRMLS_DC) /* {{{ *
 		if (intern->scope) {
 			php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-			if (phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+			if (php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 				Z_ADDREF(state.zchild);
 				zend_hash_str_update(props, "scope", sizeof("scope")-1, &state.zchild);
 			} else {
@@ -502,7 +480,7 @@ HashTable *php_phongo_javascript_get_properties(zval *object TSRMLS_DC) /* {{{ *
 		if (intern->scope) {
 			php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-			if (phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+			if (php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 				Z_ADDREF_P(state.zchild);
 				zend_hash_update(props, "scope", sizeof("scope"), &state.zchild, sizeof(state.zchild), NULL);
 			} else {
@@ -528,12 +506,9 @@ HashTable *php_phongo_javascript_get_properties(zval *object TSRMLS_DC) /* {{{ *
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Javascript)
+void php_phongo_javascript_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
-
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Javascript", php_phongo_javascript_me);
 	php_phongo_javascript_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -552,12 +527,7 @@ PHP_MINIT_FUNCTION(Javascript)
 	php_phongo_handler_javascript.free_obj = php_phongo_javascript_free_object;
 	php_phongo_handler_javascript.offset = XtOffsetOf(php_phongo_javascript_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

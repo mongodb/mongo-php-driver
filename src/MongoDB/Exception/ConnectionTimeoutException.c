@@ -15,44 +15,25 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
+
 #include "phongo_compat.h"
-
-/* Our stuffz */
 #include "php_phongo.h"
-#include "php_bson.h"
-#include <ext/spl/spl_exceptions.h>
 
+zend_class_entry *php_phongo_connectiontimeoutexception_ce;
 
-PHONGO_API zend_class_entry *php_phongo_connectiontimeoutexception_ce;
-
-/* {{{ MongoDB\Driver\ConnectionTimeoutException */
-
+/* {{{ MongoDB\Driver\Exception\ConnectionTimeoutException function entries */
 static zend_function_entry php_phongo_connectiontimeoutexception_me[] = {
 	PHP_FE_END
 };
-
 /* }}} */
 
-
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(ConnectionTimeoutException)
+void php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "ConnectionTimeoutException", php_phongo_connectiontimeoutexception_me);
 #if PHP_VERSION_ID >= 70000
@@ -61,12 +42,7 @@ PHP_MINIT_FUNCTION(ConnectionTimeoutException)
 	php_phongo_connectiontimeoutexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce, NULL TSRMLS_CC);
 #endif
 	PHONGO_CE_FINAL(php_phongo_connectiontimeoutexception_ce);
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

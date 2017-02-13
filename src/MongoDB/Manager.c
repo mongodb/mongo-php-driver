@@ -15,35 +15,33 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
-#include <ext/standard/file.h>
-#include <Zend/zend_interfaces.h>
 #include <Zend/zend_hash.h>
-#include <ext/spl/spl_iterators.h>
-/* PHP array helpers */
-#include "php_array_api.h"
-/* Our Compatability header */
-#include "phongo_compat.h"
+#include <Zend/zend_interfaces.h>
+#include <ext/standard/file.h>
 
-/* Our stuffz */
+#include "php_array_api.h"
+#include "phongo_compat.h"
 #include "php_phongo.h"
-#include "php_bson.h"
 
 #define PHONGO_MANAGER_URI_DEFAULT "mongodb://127.0.0.1/"
 
-PHONGO_API zend_class_entry *php_phongo_manager_ce;
-
-zend_object_handlers php_phongo_handler_manager;
+/**
+ * Manager abstracts a cluster of Server objects (i.e. socket connections).
+ *
+ * Typically, users will connect to a cluster using a URI, and the Manager will
+ * perform tasks such as replica set discovery and create the necessary Server
+ * objects. That said, it is also possible to create a Manager with an arbitrary
+ * collection of Server objects using the static factory method (this can be
+ * useful for testing or administration).
+ *
+ * Operation methods do not take socket-level options (e.g. socketTimeoutMS).
+ * Those options should be specified during construction.
+ */
+zend_class_entry *php_phongo_manager_ce;
 
 /* Checks if driverOptions contains a stream context resource in the "context"
  * key and incorporates any of its SSL options into the base array that did not
@@ -52,7 +50,7 @@ zend_object_handlers php_phongo_handler_manager;
  *
  * This handles the merging of any legacy SSL context options and also makes
  * driverOptions suitable for serialization by removing the resource zval. */
-static bool php_phongo_manager_merge_context_options(zval *zdriverOptions TSRMLS_DC)
+static bool php_phongo_manager_merge_context_options(zval *zdriverOptions TSRMLS_DC) /* {{{ */
 {
 	php_stream_context *context;
 	zval *zcontext, *zcontextOptions;
@@ -92,14 +90,14 @@ static bool php_phongo_manager_merge_context_options(zval *zdriverOptions TSRMLS
 
 	php_array_unsetc(zdriverOptions, "context");
 	return true;
-}
+} /* }}} */
 
 /* Prepare tagSets for BSON encoding by converting each array in the set to an
  * object. This ensures that empty arrays will serialize as empty documents.
  *
  * php_phongo_read_preference_tags_are_valid() handles actual validation of the
  * tag set structure. */
-static void php_phongo_manager_prep_tagsets(zval *options TSRMLS_DC)
+static void php_phongo_manager_prep_tagsets(zval *options TSRMLS_DC) /* {{{ */
 {
 	HashTable     *ht_data;
 
@@ -158,9 +156,9 @@ static void php_phongo_manager_prep_tagsets(zval *options TSRMLS_DC)
 	return;
 } /* }}} */
 
-/* {{{ proto void Manager::__construct([string $uri = "mongodb://127.0.0.1/"[, array $options = array()[, array $driverOptions = array()]]])
+/* {{{ proto void MongoDB\Driver\Manager::__construct([string $uri = "mongodb://127.0.0.1/"[, array $options = array()[, array $driverOptions = array()]]])
    Constructs a new Manager */
-PHP_METHOD(Manager, __construct)
+static PHP_METHOD(Manager, __construct)
 {
 	php_phongo_manager_t     *intern;
 	zend_error_handling       error_handling;
@@ -193,12 +191,11 @@ PHP_METHOD(Manager, __construct)
 	}
 
 	phongo_manager_init(intern, uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, options, driverOptions TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a Command */
-PHP_METHOD(Manager, executeCommand)
+static PHP_METHOD(Manager, executeCommand)
 {
 	char                     *db;
 	phongo_zpp_char_len       db_len;
@@ -212,12 +209,11 @@ PHP_METHOD(Manager, executeCommand)
 	}
 
 	phongo_execute_command(getThis(), db, command, readPreference, -1, return_value, return_value_used TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a Query */
-PHP_METHOD(Manager, executeQuery)
+static PHP_METHOD(Manager, executeQuery)
 {
 	char                     *namespace;
 	phongo_zpp_char_len       namespace_len;
@@ -231,12 +227,11 @@ PHP_METHOD(Manager, executeQuery)
 	}
 
 	phongo_execute_query(getThis(), namespace, query, readPreference, -1, return_value, return_value_used TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\WriteResult Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
+/* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
    Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
-PHP_METHOD(Manager, executeBulkWrite)
+static PHP_METHOD(Manager, executeBulkWrite)
 {
 	char                      *namespace;
 	phongo_zpp_char_len        namespace_len;
@@ -253,12 +248,11 @@ PHP_METHOD(Manager, executeBulkWrite)
 
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 	phongo_execute_write(getThis(), namespace, bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\ReadConcern Manager::getReadConcern()
+/* {{{ proto MongoDB\Driver\ReadConcern MongoDB\Driver\Manager::getReadConcern()
    Returns the ReadConcern associated with this Manager */
-PHP_METHOD(Manager, getReadConcern)
+static PHP_METHOD(Manager, getReadConcern)
 {
 	php_phongo_manager_t *intern;
 	DECLARE_RETURN_VALUE_USED
@@ -273,12 +267,11 @@ PHP_METHOD(Manager, getReadConcern)
 	if (return_value_used) {
 		phongo_readconcern_init(return_value, mongoc_client_get_read_concern(intern->client) TSRMLS_CC);
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\ReadPreference Manager::getReadPreference()
+/* {{{ proto MongoDB\Driver\ReadPreference MongoDB\Driver\Manager::getReadPreference()
    Returns the ReadPreference associated with this Manager */
-PHP_METHOD(Manager, getReadPreference)
+static PHP_METHOD(Manager, getReadPreference)
 {
 	php_phongo_manager_t *intern;
 	DECLARE_RETURN_VALUE_USED
@@ -293,12 +286,11 @@ PHP_METHOD(Manager, getReadPreference)
 	if (return_value_used) {
 		phongo_readpreference_init(return_value, mongoc_client_get_read_prefs(intern->client) TSRMLS_CC);
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\Server[] Manager::getServers()
+/* {{{ proto MongoDB\Driver\Server[] MongoDB\Driver\Manager::getServers()
    Returns the Servers associated with this Manager */
-PHP_METHOD(Manager, getServers)
+static PHP_METHOD(Manager, getServers)
 {
 	php_phongo_manager_t         *intern;
 	mongoc_server_description_t **sds;
@@ -331,12 +323,11 @@ PHP_METHOD(Manager, getServers)
 	}
 
 	mongoc_server_descriptions_destroy_all(sds, n);
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\WriteConcern Manager::getWriteConcern()
+/* {{{ proto MongoDB\Driver\WriteConcern MongoDB\Driver\Manager::getWriteConcern()
    Returns the WriteConcern associated with this Manager */
-PHP_METHOD(Manager, getWriteConcern)
+static PHP_METHOD(Manager, getWriteConcern)
 {
 	php_phongo_manager_t *intern;
 	DECLARE_RETURN_VALUE_USED
@@ -351,12 +342,11 @@ PHP_METHOD(Manager, getWriteConcern)
 	if (return_value_used) {
 		phongo_writeconcern_init(return_value, mongoc_client_get_write_concern(intern->client) TSRMLS_CC);
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto MongoDB\Driver\Server Manager::selectServers(MongoDB\Driver\ReadPreference $readPreference)
+/* {{{ proto MongoDB\Driver\Server MongoDB\Driver\Manager::selectServers(MongoDB\Driver\ReadPreference $readPreference)
    Returns a suitable Server for the given ReadPreference */
-PHP_METHOD(Manager, selectServer)
+static PHP_METHOD(Manager, selectServer)
 {
 	php_phongo_manager_t         *intern;
 	zval                         *zreadPreference = NULL;
@@ -385,37 +375,9 @@ PHP_METHOD(Manager, selectServer)
 
 		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 	}
-}
-/* }}} */
+} /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Manager::__wakeup()
-   Throws MongoDB\Driver\RuntimeException (serialization is not supported) */
-PHP_METHOD(Manager, __wakeup)
-{
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(this_ptr)
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "%s", "MongoDB\\Driver objects cannot be serialized");
-}
-/* }}} */
-
-/**
- * Manager abstracts a cluster of Server objects (i.e. socket connections).
- *
- * Typically, users will connect to a cluster using a URI, and the Manager will
- * perform tasks such as replica set discovery and create the necessary Server
- * objects. That said, it is also possible to create a Manager with an arbitrary
- * collection of Server objects using the static factory method (this can be
- * useful for testing or administration).
- *
- * Operation methods do not take socket-level options (e.g. socketTimeoutMS).
- * Those options should be specified during construction.
- */
-/* {{{ MongoDB\Driver\Manager */
-
+/* {{{ MongoDB\Driver\Manager function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, uri)
 	ZEND_ARG_ARRAY_INFO(0, options, 0)
@@ -457,14 +419,14 @@ static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, getServers, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, getWriteConcern, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, selectServer, ai_Manager_selectServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, __wakeup, ai_Manager_void, ZEND_ACC_PUBLIC)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\Manager object handlers */
+static zend_object_handlers php_phongo_handler_manager;
 
-/* {{{ php_phongo_manager_t object handlers */
 static void php_phongo_manager_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_manager_t *intern = Z_OBJ_MANAGER(object);
@@ -481,7 +443,7 @@ static void php_phongo_manager_free_object(phongo_free_object_arg *object TSRMLS
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_manager_t *intern = NULL;
 
@@ -505,7 +467,7 @@ phongo_create_object_retval php_phongo_manager_create_object(zend_class_entry *c
 #endif
 } /* }}} */
 
-HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_manager_t         *intern;
 	mongoc_server_description_t **sds;
@@ -560,11 +522,9 @@ HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_D
 } /* }}} */
 /* }}} */
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Manager)
+void php_phongo_manager_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Manager", php_phongo_manager_me);
 	php_phongo_manager_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -578,12 +538,7 @@ PHP_MINIT_FUNCTION(Manager)
 	php_phongo_handler_manager.free_obj = php_phongo_manager_free_object;
 	php_phongo_handler_manager.offset = XtOffsetOf(php_phongo_manager_t, std);
 #endif
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:

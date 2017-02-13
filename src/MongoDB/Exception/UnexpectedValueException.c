@@ -15,58 +15,35 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
-#include "phongo_compat.h"
-
-/* Our stuffz */
-#include "php_phongo.h"
-#include "php_bson.h"
 #include <ext/spl/spl_exceptions.h>
 
+#include "phongo_compat.h"
+#include "php_phongo.h"
 
-PHONGO_API zend_class_entry *php_phongo_unexpectedvalueexception_ce;
+zend_class_entry *php_phongo_unexpectedvalueexception_ce;
 
-/* {{{ MongoDB\Driver\UnexpectedValueException */
-
+/* {{{ MongoDB\Driver\Exception\UnexpectedValueException function entries */
 static zend_function_entry php_phongo_unexpectedvalueexception_me[] = {
 	PHP_FE_END
 };
-
 /* }}} */
 
-
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(UnexpectedValueException)
+void php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "UnexpectedValueException", php_phongo_unexpectedvalueexception_me);
 #if PHP_VERSION_ID >= 70000
-        php_phongo_unexpectedvalueexception_ce = zend_register_internal_class_ex(&ce, spl_ce_UnexpectedValueException);
+	php_phongo_unexpectedvalueexception_ce = zend_register_internal_class_ex(&ce, spl_ce_UnexpectedValueException);
 #else
 	php_phongo_unexpectedvalueexception_ce = zend_register_internal_class_ex(&ce, spl_ce_UnexpectedValueException, NULL TSRMLS_CC);
 #endif
 	zend_class_implements(php_phongo_unexpectedvalueexception_ce TSRMLS_CC, 1, php_phongo_exception_ce);
-
-	return SUCCESS;
-}
-/* }}} */
-
-
+} /* }}} */
 
 /*
  * Local variables:
