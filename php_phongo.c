@@ -41,6 +41,14 @@
 # include <ext/standard/php_smart_str.h>
 #endif
 
+/* getpid() */
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+#ifdef PHP_WIN32
+# include <process.h>
+#endif
+
 /* Stream wrapper */
 #include <main/php_streams.h>
 #include <main/php_network.h>
@@ -1403,7 +1411,8 @@ static char *php_phongo_manager_make_client_hash(const char *uri_string, zval *o
 #if PHP_VERSION_ID >= 70000
 	zval                  args;
 
-	array_init_size(&args, 3);
+	array_init_size(&args, 4);
+	ADD_ASSOC_LONG_EX(&args, "pid", getpid());
 	ADD_ASSOC_STRING(&args, "uri", uri_string);
 
 	if (options) {
@@ -1434,7 +1443,8 @@ static char *php_phongo_manager_make_client_hash(const char *uri_string, zval *o
 	zval                 *args;
 
 	MAKE_STD_ZVAL(args);
-	array_init_size(args, 3);
+	array_init_size(args, 4);
+	ADD_ASSOC_LONG_EX(args, "pid", getpid());
 	ADD_ASSOC_STRING(args, "uri", uri_string);
 
 	if (options) {
