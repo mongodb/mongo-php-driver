@@ -62,11 +62,11 @@ static bool php_phongo_objectid_init(php_phongo_objectid_t *intern)
 
 /* Initialize the object from a hex string and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_objectid_init_from_hex_string(php_phongo_objectid_t *intern, const char *oid, phongo_zpp_char_len oid_len TSRMLS_DC)
+static bool php_phongo_objectid_init_from_hex_string(php_phongo_objectid_t *intern, const char *hex, phongo_zpp_char_len hex_len TSRMLS_DC)
 {
-	char *tid = zend_str_tolower_dup(oid, oid_len);
+	char *tid = zend_str_tolower_dup(hex, hex_len);
 
-	if (bson_oid_is_valid(tid, oid_len)) {
+	if (bson_oid_is_valid(tid, hex_len)) {
 		bson_oid_t oid;
 
 		bson_oid_init_from_string(&oid, tid);
@@ -77,7 +77,7 @@ static bool php_phongo_objectid_init_from_hex_string(php_phongo_objectid_t *inte
 		return true;
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing ObjectID string: %s", oid);
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing ObjectID string: %s", hex);
 
 	efree(tid);
 	return false;
