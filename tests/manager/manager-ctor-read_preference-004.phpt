@@ -11,6 +11,7 @@ $tests = [
     ['mongodb://127.0.0.1/?readPreference=nearest', ['slaveok' => true]],
     // False array option is ignored
     ['mongodb://127.0.0.1/?slaveok=true', ['slaveok' => false]],
+    ['mongodb://127.0.0.1/?readPreference=nearest', ['slaveok' => false]],
     // readPreference option takes priority
     ['mongodb://127.0.0.1/?slaveok=true&readPreference=nearest', []],
     ['mongodb://127.0.0.1/?slaveok=false&readPreference=nearest', []],
@@ -61,6 +62,10 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(18) "secondaryPreferred"
+}
+object(MongoDB\Driver\ReadPreference)#%d (%d) {
+  ["mode"]=>
+  string(7) "nearest"
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
