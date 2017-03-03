@@ -212,6 +212,7 @@ PHP_METHOD(Cursor, setTypeMap)
 	php_phongo_cursor_t *intern;
 	php_phongo_bson_state     state = PHONGO_BSON_STATE_INITIALIZER;
 	zval                     *typemap = NULL;
+	bool                      restore_current_element = false;
 	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
@@ -225,6 +226,7 @@ PHP_METHOD(Cursor, setTypeMap)
 	 * visitor_data, which contains the only reference to it. */
 	if (!Z_ISUNDEF(intern->visitor_data.zchild)) {
 		php_phongo_cursor_free_current(intern);
+		restore_current_element = true;
 	}
 
 	phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
@@ -233,7 +235,7 @@ PHP_METHOD(Cursor, setTypeMap)
 
 	/* If the cursor has a current element, we just freed it and should restore
 	 * it with a new type map applied. */
-	if (mongoc_cursor_current(intern->cursor)) {
+	if (restore_current_element && mongoc_cursor_current(intern->cursor)) {
 		const bson_t *doc = mongoc_cursor_current(intern->cursor);
 
 		phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &intern->visitor_data);
