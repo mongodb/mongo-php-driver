@@ -243,7 +243,7 @@ bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char
 #if PHP_VERSION_ID >= 70000
 		zend_string *zs_classname = zend_string_init((const char *)v_binary, v_binary_len, 0);
 		zend_class_entry *found_ce = zend_fetch_class(zs_classname, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
-		zend_string_free(zs_classname);
+		zend_string_release(zs_classname);
 #else
 		zend_class_entry *found_ce = zend_fetch_class((const char *)v_binary, v_binary_len, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
 #endif
@@ -1653,7 +1653,7 @@ static void apply_classname_to_state(const char *classname, int classname_len, p
 #if PHP_VERSION_ID >= 70000
 		zend_string* zs_classname = zend_string_init(classname, classname_len, 0);
 		zend_class_entry *found_ce = zend_fetch_class(zs_classname, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
-		zend_string_free(zs_classname);
+		zend_string_release(zs_classname);
 #else
 		zend_class_entry *found_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
 #endif
