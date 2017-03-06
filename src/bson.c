@@ -137,6 +137,14 @@ static bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, con
 	return false;
 } /* }}} */
 
+static bool php_phongo_bson_visit_undefined(const bson_iter_t *iter, const char *key, void *data) /* {{{ */
+{
+	TSRMLS_FETCH();
+	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected unsupported BSON type 0x06 (undefined) for fieldname \"%s\"", key);
+
+	return false;
+} /* }}} */
+
 static bool php_phongo_bson_visit_oid(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_oid_t *v_oid, void *data) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
@@ -308,6 +316,14 @@ static bool php_phongo_bson_visit_regex(const bson_iter_t *iter ARG_UNUSED, cons
 	return false;
 } /* }}} */
 
+static bool php_phongo_bson_visit_symbol(const bson_iter_t *iter, const char *key, size_t symbol_len, const char *symbol, void *data) /* {{{ */
+{
+	TSRMLS_FETCH();
+	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected unsupported BSON type 0x0E (symbol) for fieldname \"%s\"", key);
+
+	return false;
+} /* }}} */
+
 static bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const char *key, size_t v_code_len, const char *v_code, void *data) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
@@ -339,6 +355,14 @@ static bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const
 	}
 	Z_SET_REFCOUNT_P(zchild, 1);
 #endif
+
+	return false;
+} /* }}} */
+
+static bool php_phongo_bson_visit_dbpointer(const bson_iter_t *iter, const char *key, size_t collection_len, const char *collection, const bson_oid_t *oid, void *data) /* {{{ */
+{
+	TSRMLS_FETCH();
+	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected unsupported BSON type 0x0C (DBPointer) for fieldname \"%s\"", key);
 
 	return false;
 } /* }}} */
@@ -529,15 +553,15 @@ static const bson_visitor_t php_bson_visitors = {
    php_phongo_bson_visit_document,
    php_phongo_bson_visit_array,
    php_phongo_bson_visit_binary,
-   NULL /*php_phongo_bson_visit_undefined*/,
+   php_phongo_bson_visit_undefined,
    php_phongo_bson_visit_oid,
    php_phongo_bson_visit_bool,
    php_phongo_bson_visit_date_time,
    php_phongo_bson_visit_null,
    php_phongo_bson_visit_regex,
-   NULL /*php_phongo_bson_visit_dbpointer*/,
+   php_phongo_bson_visit_dbpointer,
    php_phongo_bson_visit_code,
-   NULL /*php_phongo_bson_visit_symbol*/,
+   php_phongo_bson_visit_symbol,
    php_phongo_bson_visit_codewscope,
    php_phongo_bson_visit_int32,
    php_phongo_bson_visit_timestamp,
