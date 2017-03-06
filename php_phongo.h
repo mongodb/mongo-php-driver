@@ -29,11 +29,19 @@ extern zend_module_entry mongodb_module_entry;
 #define MONGODB_STABILITY_S "devel"
 #define MONGODB_VERSION   MONGODB_VERSION_S
 
+/* Structure for persisted libmongoc clients. The PID is included to ensure that
+ * processes do not destroy clients created by other processes (relevant for
+ * forking). We avoid using pid_t for Windows compatibility. */
+typedef struct {
+	mongoc_client_t *client;
+	int              pid;
+} php_phongo_pclient_t;
+
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char *debug;
 	FILE *debug_fd;
 	bson_mem_vtable_t bsonMemVTable;
-	HashTable clients;
+	HashTable pclients;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
 #if PHP_VERSION_ID >= 70000

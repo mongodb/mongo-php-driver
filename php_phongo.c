@@ -1081,7 +1081,7 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 
 	new_rp = mongoc_read_prefs_copy(old_rp);
 
-	if (bson_iter_init_find_case(&iter, options, "slaveok") && BSON_ITER_HOLDS_BOOL(&iter)) {
+	if (bson_iter_init_find_case(&iter, options, "slaveok") && BSON_ITER_HOLDS_BOOL(&iter) && bson_iter_bool(&iter)) {
 		mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
 	}
 
@@ -1517,6 +1517,39 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, mo
 	return client;
 } /* }}} */
 
+static void php_phongo_persist_client(const char *hash, size_t hash_len, mongoc_client_t *client TSRMLS_DC)
+{
+	php_phongo_pclient_t *pclient = (php_phongo_pclient_t *) pecalloc(1, sizeof(php_phongo_pclient_t), 1);
+
+	pclient->pid = (int) getpid();
+	pclient->client = client;
+
+#if PHP_VERSION_ID >= 70000
+	zend_hash_str_update_ptr(&MONGODB_G(pclients), hash, hash_len, pclient);
+#else
+	zend_hash_update(&MONGODB_G(pclients), hash, hash_len + 1, &pclient, sizeof(php_phongo_pclient_t *), NULL);
+#endif
+}
+
+static mongoc_client_t *php_phongo_find_client(const char *hash, size_t hash_len TSRMLS_DC)
+{
+#if PHP_VERSION_ID >= 70000
+	php_phongo_pclient_t *pclient;
+
+	if ((pclient = zend_hash_str_find_ptr(&MONGODB_G(pclients), hash, hash_len)) != NULL) {
+		return pclient->client;
+	}
+#else
+	php_phongo_pclient_t **pclient;
+
+	if (zend_hash_find(&MONGODB_G(pclients), hash, hash_len + 1, (void**) &pclient) == SUCCESS) {
+		return (*pclient)->client;
+	}
+#endif
+
+	return NULL;
+}
+
 void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, zval *options, zval *driverOptions TSRMLS_DC) /* {{{ */
 {
 	char             *hash = NULL;
@@ -1526,30 +1559,15 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 	mongoc_ssl_opt_t *ssl_opt = NULL;
 	bson_iter_t       iter;
 
-#if PHP_VERSION_ID >= 70000
-	mongoc_client_t  *client_ptr;
-#else
-	mongoc_client_t **client_ptr;
-#endif
-
 	if (!(hash = php_phongo_manager_make_client_hash(uri_string, options, driverOptions, &hash_len TSRMLS_CC))) {
 		/* Exception should already have been thrown and there is nothing to free */
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
-	if ((client_ptr = zend_hash_str_find_ptr(&MONGODB_G(clients), hash, hash_len)) != NULL) {
+	if ((manager->client = php_phongo_find_client(hash, hash_len TSRMLS_CC))) {
 		MONGOC_DEBUG("Found client for hash: %s\n", hash);
-		manager->client = client_ptr;
 		goto cleanup;
 	}
-#else
-	if (zend_hash_find(&MONGODB_G(clients), hash, hash_len + 1, (void**) &client_ptr) == SUCCESS) {
-		MONGOC_DEBUG("Found client for hash: %s\n", hash);
-		manager->client = *client_ptr;
-		goto cleanup;
-	}
-#endif
 
 	if (options) {
 		php_phongo_zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
@@ -1596,11 +1614,7 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 	}
 
 	MONGOC_DEBUG("Created client hash: %s\n", hash);
-#if PHP_VERSION_ID >= 70000
-	zend_hash_str_update_ptr(&MONGODB_G(clients), hash, hash_len, manager->client);
-#else
-	zend_hash_update(&MONGODB_G(clients), hash, hash_len + 1, &manager->client, sizeof(mongoc_client_t *), NULL);
-#endif
+	php_phongo_persist_client(hash, hash_len, manager->client TSRMLS_CC);
 
 cleanup:
 	if (hash) {
@@ -1820,15 +1834,26 @@ PHP_INI_BEGIN()
 PHP_INI_END()
 /* }}} */
 
-#if PHP_VERSION_ID >= 70000
-static void php_phongo_client_dtor(zval *zv)
+static inline void php_phongo_pclient_destroy(php_phongo_pclient_t *pclient)
 {
-	mongoc_client_destroy((mongoc_client_t *) Z_PTR_P(zv));
+	/* Do not destroy mongoc_client_t objects created by other processes. This
+	 * ensures that we do not shutdown sockets that may still be in use by our
+	 * parent process (see: CDRIVER-2049). While this is a leak, we are already
+	 * in MSHUTDOWN at this point. */
+	if (pclient->pid == getpid()) {
+		mongoc_client_destroy(pclient->client);
+	}
+}
+
+#if PHP_VERSION_ID >= 70000
+static void php_phongo_pclient_dtor(zval *zv)
+{
+	php_phongo_pclient_destroy((php_phongo_pclient_t *) Z_PTR_P(zv));
 }
 #else
-static void php_phongo_client_dtor(void *client)
+static void php_phongo_pclient_dtor(void *pp)
 {
-	mongoc_client_destroy(*((mongoc_client_t **) client));
+	php_phongo_pclient_destroy(*((php_phongo_pclient_t **) pp));
 }
 #endif
 
@@ -1849,7 +1874,7 @@ PHP_GINIT_FUNCTION(mongodb)
 	memset(mongodb_globals, 0, sizeof(zend_mongodb_globals));
 	mongodb_globals->bsonMemVTable = bsonMemVTable;
 	/* Initialize HashTable for persistent clients */
-	zend_hash_init_ex(&mongodb_globals->clients, 0, NULL, php_phongo_client_dtor, 1, 0);
+	zend_hash_init_ex(&mongodb_globals->pclients, 0, NULL, php_phongo_pclient_dtor, 1, 0);
 }
 /* }}} */
 
@@ -1981,8 +2006,8 @@ PHP_MSHUTDOWN_FUNCTION(mongodb)
 	(void)type; /* We don't care if we are loaded via dl() or extension= */
 
 	/* Destroy HashTable for persistent clients. The HashTable destructor will
-	 * destroy any mongoc_client_t objects contained within. */
-	zend_hash_destroy(&MONGODB_G(clients));
+	 * destroy any mongoc_client_t objects that were created by this process. */
+	zend_hash_destroy(&MONGODB_G(pclients));
 
 	bson_mem_restore_vtable();
 	/* Cleanup after libmongoc */
