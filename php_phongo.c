@@ -1289,6 +1289,7 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t *uri, bson_t *option
 	return true;
 } /* }}} */
 
+#ifdef MONGOC_ENABLE_SSL
 static inline char *php_phongo_fetch_ssl_opt_string(zval *zoptions, const char *key, int key_len)
 {
 	int        plen;
@@ -1397,6 +1398,7 @@ static void php_phongo_free_ssl_opt(mongoc_ssl_opt_t *ssl_opt)
 
 	efree(ssl_opt);
 }
+#endif
 
 /* Creates a hash for a client by concatenating the URI string with serialized
  * options arrays. On success, a persistent string is returned (i.e. pefree()
@@ -1478,10 +1480,9 @@ static char *php_phongo_manager_make_client_hash(const char *uri_string, zval *o
 	return hash;
 }
 
-static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, mongoc_ssl_opt_t *ssl_opt TSRMLS_DC) /* {{{ */
+static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri TSRMLS_DC) /* {{{ */
 {
-	const char      *mongoc_version, *bson_version;
-	mongoc_client_t *client;
+	const char *mongoc_version, *bson_version;
 
 #ifdef HAVE_SYSTEM_LIBMONGOC
 	mongoc_version = mongoc_get_version();
@@ -1504,17 +1505,8 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, mo
 		bson_version,
 		PHP_VERSION
 	);
-	client = mongoc_client_new_from_uri(uri);
 
-	if (!client) {
-		return NULL;
-	}
-
-	if (mongoc_uri_get_ssl(uri) && ssl_opt) {
-		mongoc_client_set_ssl_opts(client, ssl_opt);
-	}
-
-	return client;
+	return mongoc_client_new_from_uri(uri);
 } /* }}} */
 
 static void php_phongo_persist_client(const char *hash, size_t hash_len, mongoc_client_t *client TSRMLS_DC)
@@ -1556,8 +1548,10 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 	size_t            hash_len = 0;
 	bson_t            bson_options = BSON_INITIALIZER;
 	mongoc_uri_t     *uri = NULL;
-	mongoc_ssl_opt_t *ssl_opt = NULL;
 	bson_iter_t       iter;
+#ifdef MONGOC_ENABLE_SSL
+	mongoc_ssl_opt_t *ssl_opt = NULL;
+#endif
 
 	if (!(hash = php_phongo_manager_make_client_hash(uri_string, options, driverOptions, &hash_len TSRMLS_CC))) {
 		/* Exception should already have been thrown and there is nothing to free */
@@ -1599,19 +1593,34 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 		}
 	}
 
+#ifdef MONGOC_ENABLE_SSL
+	/* Construct SSL options even if SSL is not enabled so that exceptions can
+	 * be thrown for unsupported driver options. */
 	ssl_opt = php_phongo_make_ssl_opt(driverOptions TSRMLS_CC);
 
 	/* An exception may be thrown during SSL option creation */
 	if (EG(exception)) {
 		goto cleanup;
 	}
+#else
+	if (mongoc_uri_get_ssl(uri)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Cannot create SSL client. SSL is not enabled in this build.");
+		goto cleanup;
+	}
+#endif
 
-	manager->client = php_phongo_make_mongo_client(uri, ssl_opt TSRMLS_CC);
+	manager->client = php_phongo_make_mongo_client(uri TSRMLS_CC);
 
 	if (!manager->client) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to create Manager from URI: '%s'", uri_string);
 		goto cleanup;
 	}
+
+#ifdef MONGOC_ENABLE_SSL
+	if (ssl_opt && mongoc_uri_get_ssl(uri)) {
+		mongoc_client_set_ssl_opts(manager->client, ssl_opt);
+	}
+#endif
 
 	MONGOC_DEBUG("Created client hash: %s\n", hash);
 	php_phongo_persist_client(hash, hash_len, manager->client TSRMLS_CC);
@@ -1627,9 +1636,11 @@ cleanup:
 		mongoc_uri_destroy(uri);
 	}
 
+#ifdef MONGOC_ENABLE_SSL
 	if (ssl_opt) {
 		php_phongo_free_ssl_opt(ssl_opt);
 	}
+#endif
 } /* }}} */
 
 void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC) /* {{{ */
