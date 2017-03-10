@@ -1843,6 +1843,8 @@ static inline void php_phongo_pclient_destroy(php_phongo_pclient_t *pclient)
 	if (pclient->pid == getpid()) {
 		mongoc_client_destroy(pclient->client);
 	}
+
+	pefree(pclient, 1);
 }
 
 #if PHP_VERSION_ID >= 70000
