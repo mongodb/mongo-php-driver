@@ -211,32 +211,16 @@ void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC)
 }
 static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain, const char *message, void *user_data)
 {
+	phongo_char *dt;
+
 	PHONGO_TSRMLS_FETCH_FROM_CTX(user_data);
 	(void)user_data;
 
-	switch(log_level) {
-	case MONGOC_LOG_LEVEL_ERROR:
-	case MONGOC_LOG_LEVEL_CRITICAL:
-		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "%s", message);
-		return;
+	dt = php_format_date((char *) ZEND_STRL("Y-m-d\\TH:i:sP"), time(NULL), 0 TSRMLS_CC);
 
-	case MONGOC_LOG_LEVEL_WARNING:
-	case MONGOC_LOG_LEVEL_MESSAGE:
-	case MONGOC_LOG_LEVEL_INFO:
-	case MONGOC_LOG_LEVEL_DEBUG:
-	case MONGOC_LOG_LEVEL_TRACE:
-		{
-			time_t t;
-			phongo_char *dt;
-
-			time(&t);
-			dt = php_format_date((char *)"Y-m-d\\TH:i:sP", strlen("Y-m-d\\TH:i:sP"), t, 0 TSRMLS_CC);
-
-			fprintf(MONGODB_G(debug_fd), "[%s] %10s: %-8s> %s\n", ZSTR_VAL(dt), log_domain, mongoc_log_level_str(log_level), message);
-			fflush(MONGODB_G(debug_fd));
-			efree(dt);
-		} break;
-	}
+	fprintf(MONGODB_G(debug_fd), "[%s] %10s: %-8s> %s\n", ZSTR_VAL(dt), log_domain, mongoc_log_level_str(log_level), message);
+	fflush(MONGODB_G(debug_fd));
+	efree(dt);
 }
 
 /* }}} */
