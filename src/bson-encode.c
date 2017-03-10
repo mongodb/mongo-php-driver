@@ -500,7 +500,6 @@ void php_phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 				if (ht_data_from_properties) {
 					/* Skip protected and private properties */
 					if (ZSTR_VAL(string_key)[0] == '\0' && ZSTR_LEN(string_key) > 0) {
-						zend_string_release(string_key);
 						continue;
 					}
 				}
