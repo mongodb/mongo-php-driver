@@ -238,11 +238,7 @@ static PHP_METHOD(WriteResult, getServer)
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
-	phongo_server_init(return_value, &intern->manager, intern->server_id TSRMLS_CC);
-#else
-	phongo_server_init(return_value, intern->manager, intern->server_id TSRMLS_CC);
-#endif
+	phongo_server_init(return_value, intern->client, intern->server_id TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto array MongoDB\Driver\WriteResult::getUpsertedIds()
@@ -397,8 +393,6 @@ static void php_phongo_writeresult_free_object(phongo_free_object_arg *object TS
 	if (intern->write_concern) {
 		mongoc_write_concern_destroy(intern->write_concern);
 	}
-
-	zval_ptr_dtor(&intern->manager);
 
 #if PHP_VERSION_ID < 70000
 	efree(intern);

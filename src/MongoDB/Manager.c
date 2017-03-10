@@ -197,6 +197,7 @@ static PHP_METHOD(Manager, __construct)
    Execute a Command */
 static PHP_METHOD(Manager, executeCommand)
 {
+	php_phongo_manager_t     *intern;
 	char                     *db;
 	phongo_zpp_char_len       db_len;
 	zval                     *command;
@@ -208,13 +209,16 @@ static PHP_METHOD(Manager, executeCommand)
 		return;
 	}
 
-	phongo_execute_command(getThis(), db, command, readPreference, -1, return_value, return_value_used TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
+
+	phongo_execute_command(intern->client, db, command, readPreference, -1, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a Query */
 static PHP_METHOD(Manager, executeQuery)
 {
+	php_phongo_manager_t     *intern;
 	char                     *namespace;
 	phongo_zpp_char_len       namespace_len;
 	zval                     *query;
@@ -226,13 +230,16 @@ static PHP_METHOD(Manager, executeQuery)
 		return;
 	}
 
-	phongo_execute_query(getThis(), namespace, query, readPreference, -1, return_value, return_value_used TSRMLS_CC);
+	intern = Z_MANAGER_OBJ_P(getThis());
+
+	phongo_execute_query(intern->client, namespace, query, readPreference, -1, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
    Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
 static PHP_METHOD(Manager, executeBulkWrite)
 {
+	php_phongo_manager_t      *intern;
 	char                      *namespace;
 	phongo_zpp_char_len        namespace_len;
 	zval                      *zbulk;
@@ -245,9 +252,10 @@ static PHP_METHOD(Manager, executeBulkWrite)
 		return;
 	}
 
-
+	intern = Z_MANAGER_OBJ_P(getThis());
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
-	phongo_execute_write(getThis(), namespace, bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
+
+	phongo_execute_write(intern->client, namespace, bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\ReadConcern MongoDB\Driver\Manager::getReadConcern()
@@ -311,13 +319,13 @@ static PHP_METHOD(Manager, getServers)
 #if PHP_VERSION_ID >= 70000
 		zval obj;
 
-		phongo_server_init(&obj, getThis(), mongoc_server_description_id(sds[i]) TSRMLS_CC);
+		phongo_server_init(&obj, intern->client, mongoc_server_description_id(sds[i]) TSRMLS_CC);
 		add_next_index_zval(return_value, &obj);
 #else
 		zval *obj = NULL;
 
 		MAKE_STD_ZVAL(obj);
-		phongo_server_init(obj, getThis(), mongoc_server_description_id(sds[i]) TSRMLS_CC);
+		phongo_server_init(obj, intern->client, mongoc_server_description_id(sds[i]) TSRMLS_CC);
 		add_next_index_zval(return_value, obj);
 #endif
 	}
@@ -365,7 +373,7 @@ static PHP_METHOD(Manager, selectServer)
 	readPreference = phongo_read_preference_from_zval(zreadPreference TSRMLS_CC);
 	selected_server = mongoc_client_select_server(intern->client, false, readPreference, &error);
 	if (selected_server) {
-		phongo_server_init(return_value, getThis(), mongoc_server_description_id(selected_server) TSRMLS_CC);
+		phongo_server_init(return_value, intern->client, mongoc_server_description_id(selected_server) TSRMLS_CC);
 		mongoc_server_description_destroy(selected_server);
 	} else {
 		/* Check for connection related exceptions */
