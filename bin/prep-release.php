@@ -45,14 +45,12 @@ function get_files() {
 
         "src/libbson/build/autotools/*.{m4}",
         "src/libbson/build/autotools/m4/*.{m4}",
-        "src/libbson/src/bson/*.{c,h}",
-        "src/libbson/src/yajl/*.{c,h}",
-        "src/libbson/src/bson/*.h.{in}",
+        "src/libbson/src/bson/*.{c,h,h.in}",
+        "src/libbson/src/jsonsl/*.{c,h}",
         "src/libbson/VERSION*",
         "src/libmongoc/build/autotools/*.{m4}",
         "src/libmongoc/build/autotools/m4/*.{m4}",
-        "src/libmongoc/src/mongoc/*.{c,h,def,defs}",
-        "src/libmongoc/src/mongoc/*.h.{in}",
+        "src/libmongoc/src/mongoc/*.{c,def,defs,h,h.in}",
         "src/libmongoc/VERSION*",
       ),
       'test' => array(
