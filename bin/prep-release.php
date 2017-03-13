@@ -63,16 +63,7 @@ function get_files() {
         "scripts/ssl/*.pem",
         "scripts/*.{php,sh}",
         "tests/utils/*.{inc,json.gz,php}",
-
-        "tests/connect/*.{phpt}",
-        "tests/bulk/*.{phpt}",
-        "tests/bson/*.{phpt}",
-        "tests/functional/*.{phpt}",
-        "tests/readPreference/*.{phpt}",
-        "tests/manager/*.{phpt}",
-        "tests/server/*.{phpt}",
-        "tests/standalone/*.{phpt}",
-        "tests/writeConcern/*.{phpt}",
+        "tests/**/*.{phpt}",
         ),
       'doc' => array(
         "README*",
