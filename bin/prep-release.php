@@ -62,7 +62,7 @@ function get_files() {
         "scripts/presets/*.{json}",
         "scripts/ssl/*.pem",
         "scripts/*.{php,sh}",
-        "tests/utils/*.json.gz",
+        "tests/utils/*.{inc,json.gz,php}",
 
         "tests/connect/*.{phpt}",
         "tests/bulk/*.{phpt}",
@@ -72,7 +72,6 @@ function get_files() {
         "tests/manager/*.{phpt}",
         "tests/server/*.{phpt}",
         "tests/standalone/*.{phpt}",
-        "tests/utils/*.{inc,php}",
         "tests/writeConcern/*.{phpt}",
         ),
       'doc' => array(
