@@ -61,7 +61,7 @@ function get_files() {
         "scripts/centos/ldap/users",
         "scripts/presets/*.{json}",
         "scripts/ssl/*.pem",
-        "scripts/*.php",
+        "scripts/*.{php,sh}",
         "tests/utils/*.json.gz",
 
         "tests/connect/*.{phpt}",
