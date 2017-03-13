@@ -57,7 +57,7 @@ function get_files() {
         "Vagrantfile",
 
         "scripts/*/*.{sh}",
-        "scripts/*/ldap/*.{sh,conf,ldif}",
+        "scripts/*/ldap/*.{conf,ldif,py,sh}",
         "scripts/centos/ldap/users",
         "scripts/presets/*.{json}",
         "scripts/ssl/*.pem",
