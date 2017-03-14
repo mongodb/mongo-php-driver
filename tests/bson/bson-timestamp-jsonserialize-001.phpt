@@ -12,11 +12,6 @@ var_dump($ts->jsonSerialize());
 --EXPECT--
 array(1) {
   ["$timestamp"]=>
-  array(2) {
-    ["t"]=>
-    int(5678)
-    ["i"]=>
-    int(1234)
-  }
+  string(14) "24386824307922"
 }
 ===DONE===

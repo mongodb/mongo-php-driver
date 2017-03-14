@@ -203,11 +203,18 @@ static PHP_METHOD(Timestamp, __toString)
 	efree(retval);
 } /* }}} */
 
+static uint64_t php_phongo_timestamp_to_uint64 (php_phongo_timestamp_t *intern)
+{
+	return (((uint64_t) intern->timestamp) << 32) | (uint64_t) intern->increment;
+}
+
 /* {{{ proto array MongoDB\BSON\Timestamp::jsonSerialize()
 */
 static PHP_METHOD(Timestamp, jsonSerialize)
 {
 	php_phongo_timestamp_t *intern;
+	char *tmp;
+	int tmp_len;
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -215,28 +222,11 @@ static PHP_METHOD(Timestamp, jsonSerialize)
 
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
+	tmp_len = spprintf(&tmp, 0, "%" PRIu64, php_phongo_timestamp_to_uint64(intern));
+
 	array_init_size(return_value, 1);
-
-#if PHP_VERSION_ID >= 70000
-	{
-		zval ts;
-
-		array_init_size(&ts, 2);
-		ADD_ASSOC_LONG_EX(&ts, "t", intern->timestamp);
-		ADD_ASSOC_LONG_EX(&ts, "i", intern->increment);
-		ADD_ASSOC_ZVAL_EX(return_value, "$timestamp", &ts);
-	}
-#else
-	{
-		zval *ts;
-
-		MAKE_STD_ZVAL(ts);
-		array_init_size(ts, 2);
-		ADD_ASSOC_LONG_EX(ts, "t", intern->timestamp);
-		ADD_ASSOC_LONG_EX(ts, "i", intern->increment);
-		ADD_ASSOC_ZVAL_EX(return_value, "$timestamp", ts);
-	}
-#endif
+	ADD_ASSOC_STRINGL(return_value, "$timestamp", tmp, tmp_len);
+	efree(tmp);
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\Timestamp::serialize()
