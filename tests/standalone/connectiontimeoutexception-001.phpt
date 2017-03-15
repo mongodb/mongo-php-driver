@@ -1,8 +1,8 @@
 --TEST--
 ConnectionTimeoutException: exceeding sockettimeoutms
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
-<?php TESTCOMMANDS(STANDALONE) ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); TESTCOMMANDS(STANDALONE); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/" . "../utils/basic.inc";

@@ -1,8 +1,8 @@
 --TEST--
 MongoDB\Driver\WriteConcernError debug output
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; SLOW(); ?>
-<?php NEEDS("REPLICASET_30"); CLEANUP(REPLICASET_30); ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php SLOW(); NEEDS('REPLICASET_30'); CLEANUP(REPLICASET_30); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

@@ -1,7 +1,8 @@
 --TEST--
 MongoDB\Driver\Cursor iteration beyond last document (OP_QUERY)
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE_30) ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('STANDALONE_30'); CLEANUP(STANDALONE_30); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

@@ -2,7 +2,7 @@
 MongoDB\Driver\WriteResult debug output with errors
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS("REPLICASET"); CLEANUP(REPLICASET); ?>
+<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

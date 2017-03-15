@@ -2,7 +2,8 @@
 PHPC-912: Child process should not destroy mongoc_client_t objects from parent
 --SKIPIF--
 <?php if (!function_exists('pcntl_fork')) { die('skip pcntl_fork() not available'); } ?>
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE); SLOW(); ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php SLOW(); NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
