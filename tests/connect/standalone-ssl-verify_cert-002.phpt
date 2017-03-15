@@ -1,7 +1,8 @@
 --TEST--
 Connect to MongoDB with SSL and cert verification (context options)
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("STANDALONE_SSL"); ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('STANDALONE_SSL'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

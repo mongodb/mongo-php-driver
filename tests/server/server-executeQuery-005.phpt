@@ -1,7 +1,8 @@
 --TEST--
 MongoDB\Driver\Server::executeQuery() takes a read preference (OP_QUERY)
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("REPLICASET_30"); ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('REPLICASET_30'); CLEANUP(REPLICASET_30, DATABASE_NAME, 'system.profile'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

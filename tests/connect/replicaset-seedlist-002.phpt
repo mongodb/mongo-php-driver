@@ -1,8 +1,8 @@
 --TEST--
 MongoDB\Driver\Manager: Connecting to Replica Set with only arbiter in seedlist
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("REPLICASET"); ?>
-<?php CLEANUP(REPLICASET); PREDICTABLE(); ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); PREDICTABLE(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

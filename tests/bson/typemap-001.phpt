@@ -1,7 +1,8 @@
 --TEST--
 MongoDB\Driver\Cursor::setTypeMap(): Setting typemaps
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
 --FILE--
 <?php
 

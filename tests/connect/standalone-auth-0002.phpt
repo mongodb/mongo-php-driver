@@ -1,8 +1,8 @@
 --TEST--
 Connect to MongoDB with using default auth mechanism #002
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("STANDALONE_AUTH"); ?>
-<?php CLEANUP(STANDALONE_AUTH) ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('STANDALONE_AUTH'); CLEANUP(STANDALONE_AUTH); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

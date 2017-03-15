@@ -1,7 +1,8 @@
 --TEST--
 DRIVERS-289: Test iteration on live command cursor with empty first batch
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE); ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

@@ -2,7 +2,7 @@
 Sorting single field, descending
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php CLEANUP(STANDALONE); LOAD(STANDALONE); ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); LOAD(STANDALONE); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
