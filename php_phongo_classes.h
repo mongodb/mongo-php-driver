@@ -243,6 +243,7 @@ extern zend_class_entry *php_phongo_writeexception_ce;
 extern zend_class_entry *php_phongo_bulkwriteexception_ce;
 
 extern zend_class_entry *php_phongo_type_ce;
+extern zend_class_entry *php_phongo_typewrapper_ce;
 extern zend_class_entry *php_phongo_persistable_ce;
 extern zend_class_entry *php_phongo_unserializable_ce;
 extern zend_class_entry *php_phongo_serializable_ce;
@@ -273,6 +274,7 @@ extern void php_phongo_regex_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_serializable_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_type_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_typewrapper_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_unserializable_init_ce(INIT_FUNC_ARGS);
 

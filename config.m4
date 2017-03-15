@@ -165,6 +165,7 @@ if test "$MONGODB" != "no"; then
     src/BSON/Serializable.c \
     src/BSON/Timestamp.c \
     src/BSON/Type.c \
+    src/BSON/TypeWrapper.c \
     src/BSON/Unserializable.c \
     src/BSON/UTCDateTime.c \
     src/MongoDB/BulkWrite.c \
