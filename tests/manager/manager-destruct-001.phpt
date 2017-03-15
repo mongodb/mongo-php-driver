@@ -1,7 +1,8 @@
 --TEST--
 MongoDB\Driver\Manager destruct should not free streams that are still in use
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
 --INI--
 ignore_repeated_errors=1
 --FILE--

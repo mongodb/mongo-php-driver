@@ -1,8 +1,8 @@
 --TEST--
 MongoDB\Driver\Manager: Logging into MongoDB using credentials from $options
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; NEEDS("STANDALONE_AUTH"); ?>
-<?php CLEANUP(STANDALONE_AUTH) ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('STANDALONE_AUTH'); CLEANUP(STANDALONE_AUTH); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

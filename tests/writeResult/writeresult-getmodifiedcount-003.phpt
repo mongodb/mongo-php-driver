@@ -2,7 +2,7 @@
 MongoDB\Driver\WriteResult::getModifiedCount() not available for legacy writes
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS("STANDALONE_24"); CLEANUP(STANDALONE_24); ?>
+<?php NEEDS('STANDALONE_24'); CLEANUP(STANDALONE_24); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

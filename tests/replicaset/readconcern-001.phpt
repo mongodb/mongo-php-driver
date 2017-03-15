@@ -1,7 +1,8 @@
 --TEST--
 ReadConcern: MongoDB\Driver\Manager::executeQuery() with readConcern option (find command)
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(REPLICASET) ?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
