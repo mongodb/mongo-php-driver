@@ -35,6 +35,12 @@
 #define PHONGO_IS_CLASS_INSTANTIATABLE(ce) \
 	(!(ce->ce_flags & (ZEND_ACC_INTERFACE|ZEND_ACC_IMPLICIT_ABSTRACT_CLASS|ZEND_ACC_EXPLICIT_ABSTRACT_CLASS)))
 
+#if PHP_VERSION_ID >= 70000
+# define PHONGO_BSON_STATE_ZCHILD(state) (&((php_phongo_bson_state *)(state))->zchild)
+#else
+# define PHONGO_BSON_STATE_ZCHILD(state) (((php_phongo_bson_state *)(state))->zchild)
+#endif
+
 /* Forward declarations */
 static bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_t *v_document, void *data);
 static bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_t *v_document, void *data);
@@ -52,11 +58,7 @@ static void php_phongo_bson_visit_unsupported_type(const bson_iter_t *iter ARG_U
 
 static bool php_phongo_bson_visit_double(const bson_iter_t *iter ARG_UNUSED, const char *key, double v_double, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 
 	if (((php_phongo_bson_state *)data)->is_visiting_array) {
 		add_next_index_double(retval, v_double);
@@ -69,11 +71,7 @@ static bool php_phongo_bson_visit_double(const bson_iter_t *iter ARG_UNUSED, con
 
 static bool php_phongo_bson_visit_utf8(const bson_iter_t *iter ARG_UNUSED, const char *key, size_t v_utf8_len, const char *v_utf8, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 
 	if (((php_phongo_bson_state *)data)->is_visiting_array) {
 		ADD_NEXT_INDEX_STRINGL(retval, v_utf8, v_utf8_len);
@@ -86,11 +84,7 @@ static bool php_phongo_bson_visit_utf8(const bson_iter_t *iter ARG_UNUSED, const
 
 static bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, const char *key, bson_subtype_t v_subtype, size_t v_binary_len, const uint8_t *v_binary, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 	TSRMLS_FETCH();
 
 	if (v_subtype == 0x80 && strcmp(key, PHONGO_ODM_FIELD_NAME) == 0) {
@@ -145,11 +139,7 @@ static bool php_phongo_bson_visit_undefined(const bson_iter_t *iter, const char 
 
 static bool php_phongo_bson_visit_oid(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_oid_t *v_oid, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -179,11 +169,7 @@ static bool php_phongo_bson_visit_oid(const bson_iter_t *iter ARG_UNUSED, const 
 
 static bool php_phongo_bson_visit_bool(const bson_iter_t *iter ARG_UNUSED, const char *key, bool v_bool, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 
 	if (((php_phongo_bson_state *)data)->is_visiting_array) {
 		add_next_index_bool(retval, v_bool);
@@ -196,11 +182,7 @@ static bool php_phongo_bson_visit_bool(const bson_iter_t *iter ARG_UNUSED, const
 
 static bool php_phongo_bson_visit_date_time(const bson_iter_t *iter ARG_UNUSED, const char *key, int64_t msec_since_epoch, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -230,8 +212,8 @@ static bool php_phongo_bson_visit_date_time(const bson_iter_t *iter ARG_UNUSED, 
 
 static bool php_phongo_bson_visit_decimal128(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_decimal128_t *decimal, void *data) /* {{{ */
 {
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 #if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
 	zval zchild;
 
 	php_phongo_new_decimal128(&zchild, decimal TSRMLS_CC);
@@ -242,7 +224,6 @@ static bool php_phongo_bson_visit_decimal128(const bson_iter_t *iter ARG_UNUSED,
 		ADD_ASSOC_ZVAL(retval, key, &zchild);
 	}
 #else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
 	zval *zchild = NULL;
 	TSRMLS_FETCH();
 
@@ -261,11 +242,7 @@ static bool php_phongo_bson_visit_decimal128(const bson_iter_t *iter ARG_UNUSED,
 
 static bool php_phongo_bson_visit_null(const bson_iter_t *iter ARG_UNUSED, const char *key, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 
 	if (((php_phongo_bson_state *)data)->is_visiting_array) {
 		add_next_index_null(retval);
@@ -278,11 +255,7 @@ static bool php_phongo_bson_visit_null(const bson_iter_t *iter ARG_UNUSED, const
 
 static bool php_phongo_bson_visit_regex(const bson_iter_t *iter ARG_UNUSED, const char *key, const char *v_regex, const char *v_options, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -320,11 +293,7 @@ static bool php_phongo_bson_visit_symbol(const bson_iter_t *iter, const char *ke
 
 static bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const char *key, size_t v_code_len, const char *v_code, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -362,11 +331,7 @@ static bool php_phongo_bson_visit_dbpointer(const bson_iter_t *iter, const char 
 
 static bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter ARG_UNUSED, const char *key, size_t v_code_len, const char *v_code, const bson_t *v_scope, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -396,11 +361,7 @@ static bool php_phongo_bson_visit_codewscope(const bson_iter_t *iter ARG_UNUSED,
 
 static bool php_phongo_bson_visit_int32(const bson_iter_t *iter ARG_UNUSED, const char *key, int32_t v_int32, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 
 	if (((php_phongo_bson_state *)data)->is_visiting_array) {
 		add_next_index_long(retval, v_int32);
@@ -413,11 +374,7 @@ static bool php_phongo_bson_visit_int32(const bson_iter_t *iter ARG_UNUSED, cons
 
 static bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter ARG_UNUSED, const char *key, uint32_t v_timestamp, uint32_t v_increment, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -447,11 +404,7 @@ static bool php_phongo_bson_visit_timestamp(const bson_iter_t *iter ARG_UNUSED, 
 
 static bool php_phongo_bson_visit_int64(const bson_iter_t *iter ARG_UNUSED, const char *key, int64_t v_int64, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 #if SIZEOF_PHONGO_LONG == 4
 	TSRMLS_FETCH();
 #endif
@@ -467,11 +420,7 @@ static bool php_phongo_bson_visit_int64(const bson_iter_t *iter ARG_UNUSED, cons
 
 static bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter ARG_UNUSED, const char *key, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -501,11 +450,7 @@ static bool php_phongo_bson_visit_maxkey(const bson_iter_t *iter ARG_UNUSED, con
 
 static bool php_phongo_bson_visit_minkey(const bson_iter_t *iter ARG_UNUSED, const char *key, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
@@ -564,11 +509,7 @@ static const bson_visitor_t php_bson_visitors = {
 
 static bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_t *v_document, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 	bson_iter_t child;
 	TSRMLS_FETCH();
 
@@ -668,11 +609,7 @@ static bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, c
 
 static bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char *key, const bson_t *v_array, void *data) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval *retval = &((php_phongo_bson_state *)data)->zchild;
-#else
-	zval *retval = ((php_phongo_bson_state *)data)->zchild;
-#endif
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
 	bson_iter_t child;
 	TSRMLS_FETCH();
 
