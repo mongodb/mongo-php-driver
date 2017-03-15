@@ -66,6 +66,12 @@ static bool php_phongo_query_opts_append_document(bson_t *opts, const char *opts
 		return false;
 	}
 
+	if (!bson_validate(&b, BSON_VALIDATE_EMPTY_KEYS, NULL)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Cannot use empty keys in \"%s\" %s", zarr_key, zarr_key[0] == '$' ? "modifier" : "option");
+		bson_destroy(&b);
+		return false;
+	}
+
 	if (!BSON_APPEND_DOCUMENT(opts, opts_key, &b)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", opts_key);
 		bson_destroy(&b);
@@ -214,6 +220,11 @@ static bool php_phongo_query_init(php_phongo_query_t *intern, zval *filter, zval
 	/* Note: if any exceptions are thrown, we can simply return as PHP will
 	 * invoke php_phongo_query_free_object to destruct the object. */
 	if (EG(exception)) {
+		return false;
+	}
+
+	if (!bson_validate(intern->filter, BSON_VALIDATE_EMPTY_KEYS, NULL)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Cannot use empty keys in filter document");
 		return false;
 	}
 
