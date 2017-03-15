@@ -3,6 +3,7 @@ PHPC-705: Do not unnecessarily wrap filters in $query (profiled query)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE_30'); CLEANUP(STANDALONE_30); ?>
+<?php CLEANUP(STANDALONE_30, DATABASE_NAME, 'system.profile'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
