@@ -857,8 +857,48 @@ PHP_FUNCTION(MongoDB_BSON_fromPHP)
 	bson_destroy(bson);
 } /* }}} */
 
-static void php_phongo_apply_classname_to_state(const char *classname, int classname_len, php_phongo_bson_typemap_types *type, zend_class_entry **type_ce TSRMLS_DC) /* {{{ */
+/* Fetches a zend_class_entry for the given class name and checks that it is
+ * also instantiatable and implements a specified interface. Returns the class
+ * on success; otherwise, NULL is returned and an exception is thrown. */
+static zend_class_entry *php_phongo_bson_state_fetch_class(const char *classname, int classname_len, zend_class_entry *interface_ce TSRMLS_DC) /* {{{ */
 {
+#if PHP_VERSION_ID >= 70000
+	zend_string *zs_classname = zend_string_init(classname, classname_len, 0);
+	zend_class_entry *found_ce = zend_fetch_class(zs_classname, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
+	zend_string_release(zs_classname);
+#else
+	zend_class_entry *found_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
+#endif
+
+	if (!found_ce) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Class %s does not exist", classname);
+	} else if (!PHONGO_IS_CLASS_INSTANTIATABLE(found_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Class %s is not instantiatable", classname);
+	} else if (!instanceof_function(found_ce, interface_ce TSRMLS_CC)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Class %s does not implement %s", classname, ZSTR_VAL(interface_ce->name));
+	} else {
+		return found_ce;
+	}
+
+	return NULL;
+} /* }}} */
+
+/* Parses a BSON type (i.e. array, document, or root). On success, the type and
+ * type_ce output arguments will be assigned and true will be returned;
+ * otherwise, false is returned and an exception is thrown. */
+static bool php_phongo_bson_state_parse_type(zval *options, const char *name, php_phongo_bson_typemap_types *type, zend_class_entry **type_ce TSRMLS_DC) /* {{{ */
+{
+	char      *classname;
+	int        classname_len;
+	zend_bool  classname_free = 0;
+	bool       retval = true;
+
+	classname = php_array_fetch_string(options, name, &classname_len, &classname_free);
+
+	if (!classname_len) {
+		goto cleanup;
+	}
+
 	if (!strcasecmp(classname, "array")) {
 		*type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		*type_ce = NULL;
@@ -866,60 +906,37 @@ static void php_phongo_apply_classname_to_state(const char *classname, int class
 		*type = PHONGO_TYPEMAP_NATIVE_OBJECT;
 		*type_ce = NULL;
 	} else {
-#if PHP_VERSION_ID >= 70000
-		zend_string* zs_classname = zend_string_init(classname, classname_len, 0);
-		zend_class_entry *found_ce = zend_fetch_class(zs_classname, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
-		zend_string_release(zs_classname);
-#else
-		zend_class_entry *found_ce = zend_fetch_class(classname, classname_len, ZEND_FETCH_CLASS_AUTO|ZEND_FETCH_CLASS_SILENT TSRMLS_CC);
-#endif
-
-		if (!found_ce) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Class %s does not exist", classname);
-		} else if (!PHONGO_IS_CLASS_INSTANTIATABLE(found_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Class %s is not instantiatable", classname);
-		} else if (!instanceof_function(found_ce, php_phongo_unserializable_ce TSRMLS_CC)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Class %s does not implement %s", classname, ZSTR_VAL(php_phongo_unserializable_ce->name));
-		} else {
+		if ((*type_ce = php_phongo_bson_state_fetch_class(classname, classname_len, php_phongo_unserializable_ce TSRMLS_CC))) {
 			*type = PHONGO_TYPEMAP_CLASS;
-			*type_ce = found_ce;
+		} else {
+			retval = false;
 		}
 	}
+
+cleanup:
+	if (classname_free) {
+		str_efree(classname);
+	}
+
+	return retval;
 } /* }}} */
 
-/* Applies the array argument to a typemap struct. An exception may be thrown if
- * an invalid class name is provided. */
-void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC) /* {{{ */
+/* Applies the array argument to a typemap struct. Returns true on success;
+ * otherwise, false is returned an an exception is thrown. */
+bool php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC) /* {{{ */
 {
-	if (typemap) {
-		char      *classname;
-		int        classname_len;
-		zend_bool  classname_free = 0;
-
-		classname = php_array_fetchc_string(typemap, "array", &classname_len, &classname_free);
-		if (classname_len) {
-			php_phongo_apply_classname_to_state(classname, classname_len, &map->array_type, &map->array TSRMLS_CC);
-		}
-		if (classname_free) {
-			str_efree(classname);
-		}
-
-		classname = php_array_fetchc_string(typemap, "document", &classname_len, &classname_free);
-		if (classname_len) {
-			php_phongo_apply_classname_to_state(classname, classname_len, &map->document_type, &map->document TSRMLS_CC);
-		}
-		if (classname_free) {
-			str_efree(classname);
-		}
-
-		classname = php_array_fetchc_string(typemap, "root", &classname_len, &classname_free);
-		if (classname_len) {
-			php_phongo_apply_classname_to_state(classname, classname_len, &map->root_type, &map->root TSRMLS_CC);
-		}
-		if (classname_free) {
-			str_efree(classname);
-		}
+	if (!typemap) {
+		return true;
 	}
+
+	if (!php_phongo_bson_state_parse_type(typemap, "array", &map->array_type, &map->array TSRMLS_CC) ||
+	    !php_phongo_bson_state_parse_type(typemap, "document", &map->document_type, &map->document TSRMLS_CC) ||
+	    !php_phongo_bson_state_parse_type(typemap, "root", &map->root_type, &map->root TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return false;
+	}
+
+	return true;
 } /* }}} */
 
 /* {{{ proto array|object MongoDB\BSON\toPHP(string $bson [, array $typemap = array()])
@@ -937,7 +954,9 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
 		return;
 	}
 
-	php_phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
+	if (!php_phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC)) {
+		return;
+	}
 
 	if (!php_phongo_bson_to_zval_ex((const unsigned char *)data, data_len, &state)) {
 		zval_ptr_dtor(&state.zchild);

@@ -69,7 +69,7 @@ int php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval *out);
 #else
 int php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval **out);
 #endif
-void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC);
+bool php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC);
 
 PHP_FUNCTION(MongoDB_BSON_toPHP);
 PHP_FUNCTION(MongoDB_BSON_fromPHP);

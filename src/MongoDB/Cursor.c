@@ -205,14 +205,16 @@ static PHP_METHOD(Cursor, setTypeMap)
 		return;
 	}
 
+	if (!php_phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC)) {
+		return;
+	}
+
 	/* Check if the existing element needs to be freed before we overwrite
 	 * visitor_data, which contains the only reference to it. */
 	if (!Z_ISUNDEF(intern->visitor_data.zchild)) {
 		php_phongo_cursor_free_current(intern);
 		restore_current_element = true;
 	}
-
-	php_phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC);
 
 	intern->visitor_data = state;
 

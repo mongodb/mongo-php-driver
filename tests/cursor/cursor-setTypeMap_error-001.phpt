@@ -1,5 +1,8 @@
 --TEST--
-MongoDB\BSON\toPHP(): Type classes must be instantiatable and implement Unserializable
+Cursor::setTypeMap(): Type classes must be instantiatable and implement Unserializable
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
 --FILE--
 <?php
 
@@ -22,7 +25,8 @@ $classes = [
     'MongoDB\BSON\Unserializable',
 ];
 
-$bson = pack('Vx', 5); // Empty document
+$manager = new MongoDB\Driver\Manager(STANDALONE);
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([]));
 
 foreach ($types as $type) {
     foreach ($classes as $class) {
@@ -30,8 +34,8 @@ foreach ($types as $type) {
 
         printf("Test typeMap: %s\n", json_encode($typeMap));
 
-        echo throws(function() use ($bson, $typeMap) {
-            toPHP($bson, $typeMap);
+        echo throws(function() use ($cursor, $typeMap) {
+            $cursor->setTypeMap($typeMap);
         }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
         echo "\n";
