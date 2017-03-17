@@ -1496,8 +1496,8 @@ static mongoc_client_t *php_phongo_make_mongo_client(const mongoc_uri_t *uri, mo
 #endif
 
 	MONGOC_DEBUG("Creating Manager, phongo-%s[%s] - mongoc-%s(%s), libbson-%s(%s), php-%s",
-		MONGODB_VERSION_S,
-		MONGODB_STABILITY_S,
+		PHP_MONGODB_VERSION,
+		PHP_MONGODB_STABILITY,
 		MONGOC_VERSION_S,
 		mongoc_version,
 		BSON_VERSION_S,
@@ -1929,7 +1929,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	/* Set handshake options */
 	php_version_string = malloc(4 + sizeof(PHP_VERSION) + 1);
 	snprintf(php_version_string, 4 + sizeof(PHP_VERSION) + 1, "PHP %s", PHP_VERSION);
-	mongoc_handshake_data_append("ext-mongodb:PHP", MONGODB_VERSION_S, php_version_string);
+	mongoc_handshake_data_append("ext-mongodb:PHP", PHP_MONGODB_VERSION, php_version_string);
 	free(php_version_string);
 
 	/* Initialize libbson */
@@ -2008,8 +2008,8 @@ PHP_MINIT_FUNCTION(mongodb)
 	PHP_MINIT(ExecutionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(ConnectionTimeoutException)(INIT_FUNC_ARGS_PASSTHRU);
 
-	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char *)MONGODB_VERSION_S, CONST_CS | CONST_PERSISTENT);
-	REGISTER_STRING_CONSTANT("MONGODB_STABILITY", (char *)MONGODB_STABILITY_S, CONST_CS | CONST_PERSISTENT);
+	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char *)PHP_MONGODB_VERSION, CONST_CS | CONST_PERSISTENT);
+	REGISTER_STRING_CONSTANT("MONGODB_STABILITY", (char *)PHP_MONGODB_STABILITY, CONST_CS | CONST_PERSISTENT);
 
 	return SUCCESS;
 }
@@ -2050,8 +2050,8 @@ PHP_MINFO_FUNCTION(mongodb)
 {
 	php_info_print_table_start();
 	php_info_print_table_header(2, "MongoDB support", "enabled");
-	php_info_print_table_row(2, "MongoDB extension version", MONGODB_VERSION_S);
-	php_info_print_table_row(2, "MongoDB extension stability", MONGODB_STABILITY_S);
+	php_info_print_table_row(2, "MongoDB extension version", PHP_MONGODB_VERSION);
+	php_info_print_table_row(2, "MongoDB extension stability", PHP_MONGODB_STABILITY);
 
 #ifdef HAVE_SYSTEM_LIBBSON
 	php_info_print_table_row(2, "libbson headers version", BSON_VERSION_S);
@@ -2167,7 +2167,7 @@ zend_module_entry mongodb_module_entry = {
 	NULL /* PHP_RINIT(mongodb)*/,
 	NULL /* PHP_RSHUTDOWN(mongodb)*/,
 	PHP_MINFO(mongodb),
-	MONGODB_VERSION,
+	PHP_MONGODB_VERSION,
 	PHP_MODULE_GLOBALS(mongodb),
 	PHP_GINIT(mongodb),
 	PHP_GSHUTDOWN(mongodb),
