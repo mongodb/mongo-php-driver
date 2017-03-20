@@ -165,15 +165,15 @@ Update the version and stability constants in `php_phongo.h`. This should entail
 removing the version's "-dev" suffix and changing the stability to "stable":
 
 ```
-#define MONGODB_VERSION_S "1.1.8-dev"
-#define MONGODB_STABILITY_S "devel"
+#define PHP_MONGODB_VERSION "1.1.8-dev"
+#define PHP_MONGODB_STABILITY "devel"
 ```
 
 The above would be changed to:
 
 ```
-#define MONGODB_VERSION_S "1.1.8"
-#define MONGODB_STABILITY_S "stable"
+#define PHP_MONGODB_VERSION "1.1.8"
+#define PHP_MONGODB_STABILITY "stable"
 ```
 
 The Makefile targets for creating the PECL package depend on these constants, so
@@ -219,15 +219,15 @@ After tagging, the version and stability constants in `php_phongo.h` should be
 updated back to development status.
 
 ```
-#define MONGODB_VERSION_S "1.1.8"
-#define MONGODB_STABILITY_S "stable"
+#define PHP_MONGODB_VERSION "1.1.8"
+#define PHP_MONGODB_STABILITY "stable"
 ```
 
 The above would be changed to:
 
 ```
-#define MONGODB_VERSION_S "1.1.9-dev"
-#define MONGODB_STABILITY_S "devel"
+#define PHP_MONGODB_VERSION "1.1.9-dev"
+#define PHP_MONGODB_STABILITY "devel"
 ```
 
 Commit this change:

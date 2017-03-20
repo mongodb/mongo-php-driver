@@ -25,9 +25,8 @@
 extern zend_module_entry mongodb_module_entry;
 
 /* FIXME: Its annoying to bump version. Move into phongo_version.h.in */
-#define MONGODB_VERSION_S "1.2.8-dev"
-#define MONGODB_STABILITY_S "devel"
-#define MONGODB_VERSION   MONGODB_VERSION_S
+#define PHP_MONGODB_VERSION "1.2.8-dev"
+#define PHP_MONGODB_STABILITY "devel"
 
 #ifdef PHP_WIN32
 #	define PHONGO_API __declspec(dllexport)
