@@ -921,10 +921,40 @@ cleanup:
 	return retval;
 } /* }}} */
 
+/* Parses a TypeWrapper class. On success, the type_ce output argument will be
+ * assigned and true will be returned; otherwise, false is returned and an
+ * exception is thrown. */
+static bool php_phongo_bson_state_parse_typewrapper(zval *options, const char *name, zend_class_entry **type_ce TSRMLS_DC) /* {{{ */
+{
+	char      *classname;
+	int        classname_len;
+	zend_bool  classname_free = 0;
+	bool       retval = true;
+
+	classname = php_array_fetch_string(options, name, &classname_len, &classname_free);
+
+	if (!classname_len) {
+		goto cleanup;
+	}
+
+	if (!(*type_ce = php_phongo_bson_state_fetch_class(classname, classname_len, php_phongo_typewrapper_ce TSRMLS_CC))) {
+		retval = false;
+	}
+
+cleanup:
+	if (classname_free) {
+		str_efree(classname);
+	}
+
+	return retval;
+} /* }}} */
+
 /* Applies the array argument to a typemap struct. Returns true on success;
  * otherwise, false is returned an an exception is thrown. */
 bool php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC) /* {{{ */
 {
+	zval *types;
+
 	if (!typemap) {
 		return true;
 	}
@@ -932,6 +962,23 @@ bool php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *ma
 	if (!php_phongo_bson_state_parse_type(typemap, "array", &map->array_type, &map->array TSRMLS_CC) ||
 	    !php_phongo_bson_state_parse_type(typemap, "document", &map->document_type, &map->document TSRMLS_CC) ||
 	    !php_phongo_bson_state_parse_type(typemap, "root", &map->root_type, &map->root TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return false;
+	}
+
+	if (!(types = php_array_fetchc_array(typemap, "types"))) {
+		return true;
+	}
+
+	if (!php_phongo_bson_state_parse_typewrapper(types, "Binary", &map->binary TSRMLS_CC) ||
+	    !php_phongo_bson_state_parse_typewrapper(types, "Decimal128", &map->decimal128 TSRMLS_CC) ||
+	    !php_phongo_bson_state_parse_typewrapper(types, "Javascript", &map->javascript TSRMLS_CC) ||
+	    !php_phongo_bson_state_parse_typewrapper(types, "MaxKey", &map->maxkey TSRMLS_CC) ||
+	    !php_phongo_bson_state_parse_typewrapper(types, "MinKey", &map->minkey TSRMLS_CC) ||
+	    !php_phongo_bson_state_parse_typewrapper(types, "ObjectID", &map->objectid TSRMLS_CC) ||
+	    !php_phongo_bson_state_parse_typewrapper(types, "Regex", &map->regex TSRMLS_CC) ||
+	    !php_phongo_bson_state_parse_typewrapper(types, "Timestamp", &map->timestamp TSRMLS_CC) ||
+	    !php_phongo_bson_state_parse_typewrapper(types, "UTCDateTime", &map->utcdatetime TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		return false;
 	}
