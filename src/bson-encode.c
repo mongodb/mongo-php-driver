@@ -113,8 +113,6 @@ static int php_phongo_is_array_or_document(zval *val TSRMLS_DC) /* {{{ */
  * will be appended as an embedded document. */
 static void php_phongo_bson_append_object(bson_t *bson, php_phongo_bson_flags_t flags, const char *key, long key_len, zval *object TSRMLS_DC) /* {{{ */
 {
-	bson_t child;
-
 	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_cursorid_ce TSRMLS_CC)) {
 		bson_append_int64(bson, key, key_len, Z_CURSORID_OBJ_P(object)->id);
 		return;
@@ -275,6 +273,8 @@ static void php_phongo_bson_append_object(bson_t *bson, php_phongo_bson_flags_t 
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Unexpected %s instance: %s", ZSTR_VAL(php_phongo_type_ce->name), ZSTR_VAL(Z_OBJCE_P(object)->name));
 		return;
 	} else {
+		bson_t child;
+
 		mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding document");
 		bson_append_document_begin(bson, key, key_len, &child);
 		php_phongo_zval_to_bson(object, flags, &child, NULL TSRMLS_CC);
