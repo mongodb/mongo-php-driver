@@ -1515,12 +1515,12 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t *event)
 #if PHP_VERSION_ID < 70000
 		MAKE_STD_ZVAL(p_event->z_error);
 		object_init_ex(p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
-		zend_update_property_string(default_exception_ce, p_event->z_error, "message", sizeof("message")-1, tmp_error.message TSRMLS_CC);
-		zend_update_property_long(default_exception_ce, p_event->z_error, "code", sizeof("code")-1, tmp_error.code TSRMLS_CC);
+		zend_update_property_string(default_exception_ce, p_event->z_error, ZEND_STRL("message"), tmp_error.message TSRMLS_CC);
+		zend_update_property_long(default_exception_ce, p_event->z_error, ZEND_STRL("code"), tmp_error.code TSRMLS_CC);
 #else
 		object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
-		zend_update_property_string(default_exception_ce, &p_event->z_error, "message", sizeof("message")-1, tmp_error.message TSRMLS_CC);
-		zend_update_property_long(default_exception_ce, &p_event->z_error, "code", sizeof("code")-1, tmp_error.code TSRMLS_CC);
+		zend_update_property_string(default_exception_ce, &p_event->z_error, ZEND_STRL("message"), tmp_error.message TSRMLS_CC);
+		zend_update_property_long(default_exception_ce, &p_event->z_error, ZEND_STRL("code"), tmp_error.code TSRMLS_CC);
 #endif
 	}
 
