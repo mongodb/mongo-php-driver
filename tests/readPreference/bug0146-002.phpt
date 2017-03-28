@@ -2,6 +2,7 @@
 PHPC-146: ReadPreference primaryPreferred and secondary swapped (find command)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -56,7 +57,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     string(7) "primary"
   }
   ["isDead"]=>
-  bool(false)
+  bool(true)
   ["currentIndex"]=>
   int(0)
   ["currentDocument"]=>
@@ -92,7 +93,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     string(16) "primaryPreferred"
   }
   ["isDead"]=>
-  bool(false)
+  bool(true)
   ["currentIndex"]=>
   int(0)
   ["currentDocument"]=>
@@ -128,7 +129,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     string(9) "secondary"
   }
   ["isDead"]=>
-  bool(false)
+  bool(true)
   ["currentIndex"]=>
   int(0)
   ["currentDocument"]=>
@@ -164,7 +165,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     string(18) "secondaryPreferred"
   }
   ["isDead"]=>
-  bool(false)
+  bool(true)
   ["currentIndex"]=>
   int(0)
   ["currentDocument"]=>
@@ -200,7 +201,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     string(7) "nearest"
   }
   ["isDead"]=>
-  bool(false)
+  bool(true)
   ["currentIndex"]=>
   int(0)
   ["currentDocument"]=>
