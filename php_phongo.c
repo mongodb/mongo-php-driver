@@ -1363,12 +1363,7 @@ static void php_phongo_dispatch_handlers(const char *name, zval *z_event)
 {
 #if PHP_VERSION_ID >= 70000
 	zval        *value;
-#else
-	HashPosition pos;
-#endif
-	TSRMLS_FETCH();
 
-#if PHP_VERSION_ID >= 70000
 	ZEND_HASH_FOREACH_VAL(&MONGODB_G(subscribers), value) {
 		/* We can't use the zend_call_method_with_1_params macro here, as it
 		 * does a sizeof() on the name argument, which does only work with
@@ -1377,6 +1372,9 @@ static void php_phongo_dispatch_handlers(const char *name, zval *z_event)
 		zend_call_method(value, NULL, NULL, name, strlen(name), NULL, 1, z_event, NULL TSRMLS_CC);
 	} ZEND_HASH_FOREACH_END();
 #else
+	HashPosition pos;
+	TSRMLS_FETCH();
+
 	zend_hash_internal_pointer_reset_ex(&MONGODB_G(subscribers), &pos);
 	for (;; zend_hash_move_forward_ex(&MONGODB_G(subscribers), &pos)) {
 		zval  **value;
