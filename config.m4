@@ -193,11 +193,11 @@ if test "$MONGODB" != "no"; then
     src/MongoDB/Exception/UnexpectedValueException.c \
     src/MongoDB/Exception/WriteException.c \
     src/MongoDB/Monitoring.c \
-    src/MongoDB/Monitoring/Subscriber.c \
-    src/MongoDB/Monitoring/CommandSubscriber.c \
+    src/MongoDB/Monitoring/CommandFailedEvent.c \
     src/MongoDB/Monitoring/CommandStartedEvent.c \
+    src/MongoDB/Monitoring/CommandSubscriber.c \
     src/MongoDB/Monitoring/CommandSucceededEvent.c \
-    src/MongoDB/Monitoring/CommandFailedEvent.c
+    src/MongoDB/Monitoring/Subscriber.c
   "
 
   PHP_ARG_WITH(libbson, whether to use system libbson,
