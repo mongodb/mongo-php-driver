@@ -2023,7 +2023,7 @@ static void php_phongo_pclient_dtor(void *pp)
 /* {{{ PHP_RINIT_FUNCTION */
 PHP_RINIT_FUNCTION(mongodb)
 {
-	/* Initialize HashTable for persistent clients */
+	/* Initialize HashTable for APM subscribers */
 	zend_hash_init(&MONGODB_G(subscribers), 0, NULL, ZVAL_PTR_DTOR, 0);
 
 	return SUCCESS;
