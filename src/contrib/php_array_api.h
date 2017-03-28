@@ -355,13 +355,10 @@ char *php_array_zval_to_string(zval *z, int *plen, zend_bool *pfree) {
 	*plen = 0;
 	*pfree = 0;
 	if (!z) { return NULL; }
-	*pfree = 1;
 	switch (Z_TYPE_P(z)) {
 		case IS_NULL:
-			*pfree = 0;
 			return (char *)"";
 		case IS_STRING:
-			*pfree = 0;
 			*plen = Z_STRLEN_P(z);
 			return Z_STRVAL_P(z);
 		default:
@@ -369,6 +366,11 @@ char *php_array_zval_to_string(zval *z, int *plen, zend_bool *pfree) {
 			zval c = *z;
 			zval_copy_ctor(&c);
 			convert_to_string(&c);
+#ifdef ZEND_ENGINE_3
+			*pfree = ! IS_INTERNED(Z_STR(c));
+#else
+			*pfree = ! IS_INTERNED(Z_STRVAL(c));
+#endif
 			*plen = Z_STRLEN(c);
 			return Z_STRVAL(c);
 		}
