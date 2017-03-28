@@ -91,14 +91,14 @@ static inline php_phongo_timestamp_t* php_timestamp_fetch_object(zend_object *ob
 static inline php_phongo_utcdatetime_t* php_utcdatetime_fetch_object(zend_object *obj) {
     return (php_phongo_utcdatetime_t *)((char *)obj - XtOffsetOf(php_phongo_utcdatetime_t, std));
 }
+static inline php_phongo_commandfailedevent_t* php_commandfailedevent_fetch_object(zend_object *obj) {
+    return (php_phongo_commandfailedevent_t *)((char *)obj - XtOffsetOf(php_phongo_commandfailedevent_t, std));
+}
 static inline php_phongo_commandstartedevent_t* php_commandstartedevent_fetch_object(zend_object *obj) {
     return (php_phongo_commandstartedevent_t *)((char *)obj - XtOffsetOf(php_phongo_commandstartedevent_t, std));
 }
 static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetch_object(zend_object *obj) {
     return (php_phongo_commandsucceededevent_t *)((char *)obj - XtOffsetOf(php_phongo_commandsucceededevent_t, std));
-}
-static inline php_phongo_commandfailedevent_t* php_commandfailedevent_fetch_object(zend_object *obj) {
-    return (php_phongo_commandfailedevent_t *)((char *)obj - XtOffsetOf(php_phongo_commandfailedevent_t, std));
 }
 
 # define Z_COMMAND_OBJ_P(zv)           (php_command_fetch_object(Z_OBJ_P(zv)))
@@ -123,9 +123,9 @@ static inline php_phongo_commandfailedevent_t* php_commandfailedevent_fetch_obje
 # define Z_REGEX_OBJ_P(zv)             (php_regex_fetch_object(Z_OBJ_P(zv)))
 # define Z_TIMESTAMP_OBJ_P(zv)         (php_timestamp_fetch_object(Z_OBJ_P(zv)))
 # define Z_UTCDATETIME_OBJ_P(zv)       (php_utcdatetime_fetch_object(Z_OBJ_P(zv)))
+# define Z_COMMANDFAILEDEVENT_OBJ_P(zv)    (php_commandfailedevent_fetch_object(Z_OBJ_P(zv)))
 # define Z_COMMANDSTARTEDEVENT_OBJ_P(zv)   (php_commandstartedevent_fetch_object(Z_OBJ_P(zv)))
 # define Z_COMMANDSUCCEEDEDEVENT_OBJ_P(zv) (php_commandsucceededevent_fetch_object(Z_OBJ_P(zv)))
-# define Z_COMMANDFAILEDEVENT_OBJ_P(zv)    (php_commandfailedevent_fetch_object(Z_OBJ_P(zv)))
 
 # define Z_OBJ_COMMAND(zo)             (php_command_fetch_object(zo))
 # define Z_OBJ_CURSOR(zo)              (php_cursor_fetch_object(zo))
@@ -149,9 +149,9 @@ static inline php_phongo_commandfailedevent_t* php_commandfailedevent_fetch_obje
 # define Z_OBJ_REGEX(zo)               (php_regex_fetch_object(zo))
 # define Z_OBJ_TIMESTAMP(zo)           (php_timestamp_fetch_object(zo))
 # define Z_OBJ_UTCDATETIME(zo)         (php_utcdatetime_fetch_object(zo))
+# define Z_OBJ_COMMANDFAILEDEVENT(zo)    (php_commandfailedevent_fetch_object(zo))
 # define Z_OBJ_COMMANDSTARTEDEVENT(zo)   (php_commandstartedevent_fetch_object(zo))
 # define Z_OBJ_COMMANDSUCCEEDEDEVENT(zo) (php_commandsucceededevent_fetch_object(zo))
-# define Z_OBJ_COMMANDFAILEDEVENT(zo)    (php_commandfailedevent_fetch_object(zo))
 
 #else
 
@@ -177,9 +177,9 @@ static inline php_phongo_commandfailedevent_t* php_commandfailedevent_fetch_obje
 # define Z_REGEX_OBJ_P(zv)             ((php_phongo_regex_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_TIMESTAMP_OBJ_P(zv)         ((php_phongo_timestamp_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_UTCDATETIME_OBJ_P(zv)       ((php_phongo_utcdatetime_t *)zend_object_store_get_object(zv TSRMLS_CC))
+# define Z_COMMANDFAILEDEVENT_OBJ_P(zv)    ((php_phongo_commandfailedevent_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_COMMANDSTARTEDEVENT_OBJ_P(zv)   ((php_phongo_commandstartedevent_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_COMMANDSUCCEEDEDEVENT_OBJ_P(zv) ((php_phongo_commandsucceededevent_t *)zend_object_store_get_object(zv TSRMLS_CC))
-# define Z_COMMANDFAILEDEVENT_OBJ_P(zv)    ((php_phongo_commandfailedevent_t *)zend_object_store_get_object(zv TSRMLS_CC))
 
 # define Z_OBJ_COMMAND(zo)             ((php_phongo_command_t *)zo)
 # define Z_OBJ_CURSOR(zo)              ((php_phongo_cursor_t *)zo)
@@ -203,9 +203,9 @@ static inline php_phongo_commandfailedevent_t* php_commandfailedevent_fetch_obje
 # define Z_OBJ_REGEX(zo)               ((php_phongo_regex_t *)zo)
 # define Z_OBJ_TIMESTAMP(zo)           ((php_phongo_timestamp_t *)zo)
 # define Z_OBJ_UTCDATETIME(zo)         ((php_phongo_utcdatetime_t *)zo)
+# define Z_OBJ_COMMANDFAILEDEVENT(zo)    ((php_phongo_commandfailedevent_t *)zo)
 # define Z_OBJ_COMMANDSTARTEDEVENT(zo)   ((php_phongo_commandstartedevent_t *)zo)
 # define Z_OBJ_COMMANDSUCCEEDEDEVENT(zo) ((php_phongo_commandsucceededevent_t *)zo)
-# define Z_OBJ_COMMANDFAILEDEVENT(zo)    ((php_phongo_commandfailedevent_t *)zo)
 
 #endif
 
@@ -256,11 +256,11 @@ extern zend_class_entry *php_phongo_regex_ce;
 extern zend_class_entry *php_phongo_timestamp_ce;
 extern zend_class_entry *php_phongo_utcdatetime_ce;
 
-extern zend_class_entry *php_phongo_subscriber_ce;
-extern zend_class_entry *php_phongo_commandsubscriber_ce;
-extern zend_class_entry *php_phongo_commandstartedevent_ce;
-extern zend_class_entry *php_phongo_commandsucceededevent_ce;
 extern zend_class_entry *php_phongo_commandfailedevent_ce;
+extern zend_class_entry *php_phongo_commandstartedevent_ce;
+extern zend_class_entry *php_phongo_commandsubscriber_ce;
+extern zend_class_entry *php_phongo_commandsucceededevent_ce;
+extern zend_class_entry *php_phongo_subscriber_ce;
 
 extern void php_phongo_binary_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS);
@@ -303,11 +303,11 @@ extern void php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeexception_init_ce(INIT_FUNC_ARGS);
 
-extern void php_phongo_subscriber_init_ce(INIT_FUNC_ARGS);
-extern void php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS);
-extern void php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS);
-extern void php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_subscriber_init_ce(INIT_FUNC_ARGS);
 
 /* Shared function entries for disabling constructors and unserialize() */
 PHP_FUNCTION(MongoDB_disabled___construct);
