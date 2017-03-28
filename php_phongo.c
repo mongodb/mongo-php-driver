@@ -1392,7 +1392,6 @@ static void php_phongo_dispatch_handlers(const char *name, zval *z_event)
 
 static void php_phongo_command_started(const mongoc_apm_command_started_t *event)
 {
-	mongoc_client_t *client = mongoc_apm_command_started_get_context(event);
 	php_phongo_commandstartedevent_t *p_event;
 #if PHP_VERSION_ID >= 70000
 	zval  z_event;
@@ -1415,7 +1414,7 @@ static void php_phongo_command_started(const mongoc_apm_command_started_t *event
 	p_event = Z_COMMANDSTARTEDEVENT_OBJ_P(z_event);
 #endif
 
-	p_event->client = client;
+	p_event->client = mongoc_apm_command_started_get_context(event);
 	p_event->command_name = estrdup(mongoc_apm_command_started_get_command_name(event));
 	p_event->server_id = mongoc_apm_command_started_get_server_id(event);
 	p_event->operation_id = mongoc_apm_command_started_get_operation_id(event);
@@ -1433,7 +1432,6 @@ static void php_phongo_command_started(const mongoc_apm_command_started_t *event
 
 static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t *event)
 {
-	mongoc_client_t *client = mongoc_apm_command_succeeded_get_context(event);
 	php_phongo_commandsucceededevent_t *p_event;
 #if PHP_VERSION_ID >= 70000
 	zval  z_event;
@@ -1456,7 +1454,7 @@ static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t *e
 	p_event = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(z_event);
 #endif
 
-	p_event->client = client;
+	p_event->client = mongoc_apm_command_succeeded_get_context(event);
 	p_event->command_name = estrdup(mongoc_apm_command_succeeded_get_command_name(event));
 	p_event->server_id = mongoc_apm_command_succeeded_get_server_id(event);
 	p_event->operation_id = mongoc_apm_command_succeeded_get_operation_id(event);
@@ -1474,7 +1472,6 @@ static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t *e
 
 static void php_phongo_command_failed(const mongoc_apm_command_failed_t *event)
 {
-	mongoc_client_t *client = mongoc_apm_command_failed_get_context(event);
 	php_phongo_commandfailedevent_t *p_event;
 #if PHP_VERSION_ID >= 70000
 	zval  z_event;
@@ -1501,7 +1498,7 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t *event)
 	p_event = Z_COMMANDFAILEDEVENT_OBJ_P(z_event);
 #endif
 
-	p_event->client = client;
+	p_event->client = mongoc_apm_command_failed_get_context(event);
 	p_event->command_name = estrdup(mongoc_apm_command_failed_get_command_name(event));
 	p_event->server_id = mongoc_apm_command_failed_get_server_id(event);
 	p_event->operation_id = mongoc_apm_command_failed_get_operation_id(event);
