@@ -17,6 +17,8 @@
 #ifndef PHONGO_MONITORING_H
 #define PHONGO_MONITORING_H
 
+#include <php.h>
+
 PHP_FUNCTION(MongoDB_Monitoring_addSubscriber);
 PHP_FUNCTION(MongoDB_Monitoring_removeSubscriber);
 
