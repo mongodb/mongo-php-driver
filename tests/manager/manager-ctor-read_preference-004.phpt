@@ -22,7 +22,6 @@ $tests = [
     // Alternative values for true in URI string (all other strings are false)
     ['mongodb://127.0.0.1/?slaveok=t', []],
     ['mongodb://127.0.0.1/?slaveok=1', []],
-    ['mongodb://127.0.0.1/?slaveok=anything_other_than_true_t_and_0', []],
     // Case insensitivity for URI string and array options
     ['mongodb://127.0.0.1/?slaveOk=True', []],
     ['mongodb://127.0.0.1/?SLAVEOK=TRUE', []],
@@ -98,10 +97,6 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(18) "secondaryPreferred"
-}
-object(MongoDB\Driver\ReadPreference)#%d (%d) {
-  ["mode"]=>
-  string(7) "primary"
 }
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>

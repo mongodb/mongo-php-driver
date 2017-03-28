@@ -915,15 +915,17 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 /* }}} */
 
 
-static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options) /* {{{ */
+static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t   iter;
 	mongoc_uri_t *uri;
+	bson_error_t  error;
 
-	uri = mongoc_uri_new(uri_string);
+	uri = mongoc_uri_new_with_error(uri_string, &error);
 	MONGOC_DEBUG("Connection string: '%s'", uri_string);
 
 	if (!uri) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse MongoDB URI: '%s'. %s.", uri_string, error.message);
 		return NULL;
 	}
 
@@ -1527,8 +1529,8 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 		goto cleanup;
 	}
 
-	if (!(uri = php_phongo_make_uri(uri_string, &bson_options))) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse MongoDB URI: '%s'", uri_string);
+	if (!(uri = php_phongo_make_uri(uri_string, &bson_options TSRMLS_CC))) {
+		/* Exception should already have been thrown */
 		goto cleanup;
 	}
 

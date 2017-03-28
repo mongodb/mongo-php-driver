@@ -38,9 +38,9 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?maxstalenessseconds=1231'
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?maxstalenessseconds=1231'. Invalid readPreferences.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?maxStalenessSeconds=1231'
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?maxStalenessSeconds=1231'. Invalid readPreferences.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Primary read preference mode conflicts with maxStalenessSeconds
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

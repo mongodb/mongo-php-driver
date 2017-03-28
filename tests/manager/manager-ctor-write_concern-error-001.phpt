@@ -46,9 +46,9 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?w=-1&journal=true'
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?w=-1&journal=true'. Invalid writeConcern.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?w=0&journal=true'
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?w=0&journal=true'. Invalid writeConcern.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Journal conflicts with w value: -1
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
