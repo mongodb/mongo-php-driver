@@ -414,7 +414,7 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 	return true;
 } /* }}} */
 
-php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, bson_t *reply, mongoc_client_t *client, int server_id TSRMLS_DC) /* {{{ */
+static php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, bson_t *reply, mongoc_client_t *client, int server_id TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeresult_t *writeresult;
 
