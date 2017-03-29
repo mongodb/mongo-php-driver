@@ -14,5 +14,5 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'not a valid connection string'
+Failed to parse MongoDB URI: 'not a valid connection string'. Invalid URI Schema, expecting 'mongodb://'.
 ===DONE===
