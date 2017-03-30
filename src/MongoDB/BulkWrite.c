@@ -177,30 +177,27 @@ static PHP_METHOD(BulkWrite, __construct)
    Adds an insert operation to the BulkWrite */
 static PHP_METHOD(BulkWrite, insert)
 {
-	php_phongo_bulkwrite_t  *intern;
-	zval                     *document;
-	bson_t                   *bson;
-	bson_t                   *bson_out = NULL;
-	int                       bson_flags = PHONGO_BSON_ADD_ID;
+	php_phongo_bulkwrite_t *intern;
+	zval                   *zdocument;
+	bson_t                  bdocument = BSON_INITIALIZER;
+	bson_t                 *bson_out = NULL;
+	int                     bson_flags = PHONGO_BSON_ADD_ID;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &document) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &zdocument) == FAILURE) {
 		return;
 	}
-
 
 	if (return_value_used) {
 		bson_flags |= PHONGO_BSON_RETURN_ID;
 	}
 
-	bson = bson_new();
-	php_phongo_zval_to_bson(document, bson_flags, bson, &bson_out TSRMLS_CC);
-	mongoc_bulk_operation_insert(intern->bulk, bson);
-	bson_clear(&bson);
+	php_phongo_zval_to_bson(zdocument, bson_flags, &bdocument, &bson_out TSRMLS_CC);
+	mongoc_bulk_operation_insert(intern->bulk, &bdocument);
 
 	intern->num_ops++;
 
@@ -209,12 +206,12 @@ static PHP_METHOD(BulkWrite, insert)
 
 		if (bson_iter_init_find(&iter, bson_out, "_id")) {
 			php_phongo_objectid_new_from_oid(return_value, bson_iter_oid(&iter) TSRMLS_CC);
-			bson_clear(&bson_out);
-			return;
 		}
-
-		bson_clear(&bson_out);
 	}
+
+cleanup:
+	bson_destroy(&bdocument);
+	bson_clear(&bson_out);
 } /* }}} */
 
 /* {{{ proto void MongoDB\Driver\BulkWrite::update(array|object $query, array|object $newObj[, array $updateOptions = array()])
@@ -223,7 +220,7 @@ static PHP_METHOD(BulkWrite, update)
 {
 	php_phongo_bulkwrite_t *intern;
 	zval                   *zquery, *zupdate, *zoptions = NULL;
-	bson_t                 *bquery, *bupdate, *boptions = NULL;
+	bson_t                  bquery = BSON_INITIALIZER, bupdate = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
 	bson_error_t            error = {0};
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
@@ -234,40 +231,36 @@ static PHP_METHOD(BulkWrite, update)
 		return;
 	}
 
-	bquery = bson_new();
-	bupdate = bson_new();
-	boptions = bson_new();
-
-	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, &bquery, NULL TSRMLS_CC);
 
 	if (EG(exception)) {
 		goto cleanup;
 	}
 
-	php_phongo_zval_to_bson(zupdate, PHONGO_BSON_NONE, bupdate, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(zupdate, PHONGO_BSON_NONE, &bupdate, NULL TSRMLS_CC);
 
 	if (EG(exception)) {
 		goto cleanup;
 	}
 
-	if (!php_phongo_bulkwrite_update_apply_options(boptions, zoptions TSRMLS_CC)) {
+	if (!php_phongo_bulkwrite_update_apply_options(&boptions, zoptions TSRMLS_CC)) {
 		goto cleanup;
 	}
 
-	if (php_phongo_bulkwrite_update_has_operators(bupdate)) {
+	if (php_phongo_bulkwrite_update_has_operators(&bupdate)) {
 		if (zoptions && php_array_existsc(zoptions, "multi") && php_array_fetchc_bool(zoptions, "multi")) {
-			if (!mongoc_bulk_operation_update_many_with_opts(intern->bulk, bquery, bupdate, boptions, &error)) {
+			if (!mongoc_bulk_operation_update_many_with_opts(intern->bulk, &bquery, &bupdate, &boptions, &error)) {
 				phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 				goto cleanup;
 			}
 		} else {
-			if (!mongoc_bulk_operation_update_one_with_opts(intern->bulk, bquery, bupdate, boptions, &error)) {
+			if (!mongoc_bulk_operation_update_one_with_opts(intern->bulk, &bquery, &bupdate, &boptions, &error)) {
 				phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 				goto cleanup;
 			}
 		}
 	} else {
-		if (!bson_validate(bupdate, BSON_VALIDATE_DOT_KEYS|BSON_VALIDATE_DOLLAR_KEYS, NULL)) {
+		if (!bson_validate(&bupdate, BSON_VALIDATE_DOT_KEYS|BSON_VALIDATE_DOLLAR_KEYS, NULL)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Replacement document may not contain \"$\" or \".\" in keys");
 			goto cleanup;
 		}
@@ -277,7 +270,7 @@ static PHP_METHOD(BulkWrite, update)
 			goto cleanup;
 		}
 
-		if (!mongoc_bulk_operation_replace_one_with_opts(intern->bulk, bquery, bupdate, boptions, &error)) {
+		if (!mongoc_bulk_operation_replace_one_with_opts(intern->bulk, &bquery, &bupdate, &boptions, &error)) {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 			goto cleanup;
 		}
@@ -286,9 +279,9 @@ static PHP_METHOD(BulkWrite, update)
 	intern->num_ops++;
 
 cleanup:
-	bson_clear(&bquery);
-	bson_clear(&bupdate);
-	bson_clear(&boptions);
+	bson_destroy(&bquery);
+	bson_destroy(&bupdate);
+	bson_destroy(&boptions);
 } /* }}} */
 
 /* {{{ proto void MongoDB\Driver\BulkWrite::delete(array|object $query[, array $deleteOptions = array()])
@@ -297,7 +290,7 @@ static PHP_METHOD(BulkWrite, delete)
 {
 	php_phongo_bulkwrite_t *intern;
 	zval                   *zquery, *zoptions = NULL;
-	bson_t                 *bquery, *boptions = NULL;
+	bson_t                  bquery = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
 	bson_error_t            error = {0};
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
 
@@ -308,26 +301,23 @@ static PHP_METHOD(BulkWrite, delete)
 		return;
 	}
 
-	bquery = bson_new();
-	boptions = bson_new();
-
-	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, bquery, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, &bquery, NULL TSRMLS_CC);
 
 	if (EG(exception)) {
 		goto cleanup;
 	}
 
-	if (!php_phongo_bulkwrite_delete_apply_options(boptions, zoptions TSRMLS_CC)) {
+	if (!php_phongo_bulkwrite_delete_apply_options(&boptions, zoptions TSRMLS_CC)) {
 		goto cleanup;
 	}
 
 	if (zoptions && php_array_existsc(zoptions, "limit") && php_array_fetchc_bool(zoptions, "limit")) {
-		if (!mongoc_bulk_operation_remove_one_with_opts(intern->bulk, bquery, boptions, &error)) {
+		if (!mongoc_bulk_operation_remove_one_with_opts(intern->bulk, &bquery, &boptions, &error)) {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 			goto cleanup;
 		}
 	} else {
-		if (!mongoc_bulk_operation_remove_many_with_opts(intern->bulk, bquery, boptions, &error)) {
+		if (!mongoc_bulk_operation_remove_many_with_opts(intern->bulk, &bquery, &boptions, &error)) {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 			goto cleanup;
 		}
@@ -336,8 +326,8 @@ static PHP_METHOD(BulkWrite, delete)
 	intern->num_ops++;
 
 cleanup:
-	bson_clear(&bquery);
-	bson_clear(&boptions);
+	bson_destroy(&bquery);
+	bson_destroy(&boptions);
 } /* }}} */
 
 /* {{{ proto integer MongoDB\Driver\BulkWrite::count()
