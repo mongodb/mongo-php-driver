@@ -31,6 +31,20 @@
 
 zend_class_entry *php_phongo_bulkwrite_ce;
 
+/* Returns whether the insert document appears to be a legacy index. */
+static inline bool php_phongo_bulkwrite_insert_is_legacy_index(bson_t *bdocument) /* {{{ */
+{
+	bson_iter_t iter;
+
+	if (bson_iter_init_find(&iter, bdocument, "key") && BSON_ITER_HOLDS_DOCUMENT(&iter) &&
+	    bson_iter_init_find(&iter, bdocument, "name") && BSON_ITER_HOLDS_UTF8(&iter) &&
+	    bson_iter_init_find(&iter, bdocument, "ns") && BSON_ITER_HOLDS_UTF8(&iter)) {
+		return true;
+	}
+
+	return false;
+} /* }}} */
+
 /* Returns whether any top-level field names in the document contain a "$". */
 static inline bool php_phongo_bulkwrite_update_has_operators(bson_t *bupdate) /* {{{ */
 {
@@ -179,9 +193,10 @@ static PHP_METHOD(BulkWrite, insert)
 {
 	php_phongo_bulkwrite_t *intern;
 	zval                   *zdocument;
-	bson_t                  bdocument = BSON_INITIALIZER;
+	bson_t                  bdocument = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
 	bson_t                 *bson_out = NULL;
 	int                     bson_flags = PHONGO_BSON_ADD_ID;
+	bson_error_t            error = {0};
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -197,7 +212,30 @@ static PHP_METHOD(BulkWrite, insert)
 	}
 
 	php_phongo_zval_to_bson(zdocument, bson_flags, &bdocument, &bson_out TSRMLS_CC);
-	mongoc_bulk_operation_insert(intern->bulk, &bdocument);
+
+	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	/* If the insert document appears to be a legacy index, instruct libmongoc
+	 * to allow dots in BSON keys by setting the "legacyIndex" option.
+	 *
+	 * Note: php_phongo_zval_to_bson() may have added an ObjectID if the "_id"
+	 * field was unset. We don't know at this point if the insert is destined
+	 * for a pre-2.6 server's "system.indexes" collection, but legacy index
+	 * creation will ignore the "_id" so there is no harm in leaving it. In the
+	 * event php_phongo_bulkwrite_insert_is_legacy_index() returns a false
+	 * positive, we absolutely want ObjectID added if "_id" was unset. */
+	if (php_phongo_bulkwrite_insert_is_legacy_index(&bdocument) &&
+	    !BSON_APPEND_BOOL(&boptions, "legacyIndex", true)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"legacyIndex\" option");
+		goto cleanup;
+	}
+
+	if (!mongoc_bulk_operation_insert_with_opts(intern->bulk, &bdocument, &boptions, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		goto cleanup;
+	}
 
 	intern->num_ops++;
 
@@ -211,6 +249,7 @@ static PHP_METHOD(BulkWrite, insert)
 
 cleanup:
 	bson_destroy(&bdocument);
+	bson_destroy(&boptions);
 	bson_clear(&bson_out);
 } /* }}} */
 
@@ -260,11 +299,6 @@ static PHP_METHOD(BulkWrite, update)
 			}
 		}
 	} else {
-		if (!bson_validate(&bupdate, BSON_VALIDATE_DOT_KEYS|BSON_VALIDATE_DOLLAR_KEYS, NULL)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Replacement document may not contain \"$\" or \".\" in keys");
-			goto cleanup;
-		}
-
 		if (zoptions && php_array_existsc(zoptions, "multi") && php_array_fetchc_bool(zoptions, "multi")) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Replacement document conflicts with true \"multi\" option");
 			goto cleanup;
