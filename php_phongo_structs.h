@@ -204,7 +204,7 @@ typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_client_t    *client;
 	char               *command_name;
-	int                 server_id;
+	uint32_t            server_id;
 	uint64_t            operation_id;
 	uint64_t            request_id;
 	uint64_t            duration_micros;
@@ -228,7 +228,7 @@ typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_client_t    *client;
 	char               *command_name;
-	int                 server_id;
+	uint32_t            server_id;
 	uint64_t            operation_id;
 	uint64_t            request_id;
 	uint64_t            duration_micros;
