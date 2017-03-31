@@ -207,6 +207,18 @@ typedef struct {
 	uint32_t            server_id;
 	uint64_t            operation_id;
 	uint64_t            request_id;
+	uint64_t            duration_micros;
+	PHONGO_STRUCT_ZVAL  z_error;
+	PHONGO_ZEND_OBJECT_POST
+} php_phongo_commandfailedevent_t;
+
+typedef struct {
+	PHONGO_ZEND_OBJECT_PRE
+	mongoc_client_t    *client;
+	char               *command_name;
+	uint32_t            server_id;
+	uint64_t            operation_id;
+	uint64_t            request_id;
 	bson_t             *command;
 	char               *database_name;
 	PHONGO_ZEND_OBJECT_POST
@@ -216,25 +228,13 @@ typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_client_t    *client;
 	char               *command_name;
-	int                 server_id;
+	uint32_t            server_id;
 	uint64_t            operation_id;
 	uint64_t            request_id;
 	uint64_t            duration_micros;
 	bson_t             *reply;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_commandsucceededevent_t;
-
-typedef struct {
-	PHONGO_ZEND_OBJECT_PRE
-	mongoc_client_t    *client;
-	char               *command_name;
-	int                 server_id;
-	uint64_t            operation_id;
-	uint64_t            request_id;
-	uint64_t            duration_micros;
-	PHONGO_STRUCT_ZVAL  z_error;
-	PHONGO_ZEND_OBJECT_POST
-} php_phongo_commandfailedevent_t;
 
 #undef PHONGO_ZEND_OBJECT_PRE
 #undef PHONGO_ZEND_OBJECT_POST

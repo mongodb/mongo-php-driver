@@ -414,7 +414,7 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 	return true;
 } /* }}} */
 
-php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, bson_t *reply, mongoc_client_t *client, int server_id TSRMLS_DC) /* {{{ */
+static php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, bson_t *reply, mongoc_client_t *client, int server_id TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeresult_t *writeresult;
 
@@ -1361,12 +1361,7 @@ static void php_phongo_dispatch_handlers(const char *name, zval *z_event)
 {
 #if PHP_VERSION_ID >= 70000
 	zval        *value;
-#else
-	HashPosition pos;
-#endif
-	TSRMLS_FETCH();
 
-#if PHP_VERSION_ID >= 70000
 	ZEND_HASH_FOREACH_VAL(&MONGODB_G(subscribers), value) {
 		/* We can't use the zend_call_method_with_1_params macro here, as it
 		 * does a sizeof() on the name argument, which does only work with
@@ -1375,6 +1370,9 @@ static void php_phongo_dispatch_handlers(const char *name, zval *z_event)
 		zend_call_method(value, NULL, NULL, name, strlen(name), NULL, 1, z_event, NULL TSRMLS_CC);
 	} ZEND_HASH_FOREACH_END();
 #else
+	HashPosition pos;
+	TSRMLS_FETCH();
+
 	zend_hash_internal_pointer_reset_ex(&MONGODB_G(subscribers), &pos);
 	for (;; zend_hash_move_forward_ex(&MONGODB_G(subscribers), &pos)) {
 		zval  **value;
@@ -1394,7 +1392,6 @@ static void php_phongo_dispatch_handlers(const char *name, zval *z_event)
 
 static void php_phongo_command_started(const mongoc_apm_command_started_t *event)
 {
-	mongoc_client_t *client = mongoc_apm_command_started_get_context(event);
 	php_phongo_commandstartedevent_t *p_event;
 #if PHP_VERSION_ID >= 70000
 	zval  z_event;
@@ -1417,7 +1414,7 @@ static void php_phongo_command_started(const mongoc_apm_command_started_t *event
 	p_event = Z_COMMANDSTARTEDEVENT_OBJ_P(z_event);
 #endif
 
-	p_event->client = client;
+	p_event->client = mongoc_apm_command_started_get_context(event);
 	p_event->command_name = estrdup(mongoc_apm_command_started_get_command_name(event));
 	p_event->server_id = mongoc_apm_command_started_get_server_id(event);
 	p_event->operation_id = mongoc_apm_command_started_get_operation_id(event);
@@ -1435,7 +1432,6 @@ static void php_phongo_command_started(const mongoc_apm_command_started_t *event
 
 static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t *event)
 {
-	mongoc_client_t *client = mongoc_apm_command_succeeded_get_context(event);
 	php_phongo_commandsucceededevent_t *p_event;
 #if PHP_VERSION_ID >= 70000
 	zval  z_event;
@@ -1458,7 +1454,7 @@ static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t *e
 	p_event = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(z_event);
 #endif
 
-	p_event->client = client;
+	p_event->client = mongoc_apm_command_succeeded_get_context(event);
 	p_event->command_name = estrdup(mongoc_apm_command_succeeded_get_command_name(event));
 	p_event->server_id = mongoc_apm_command_succeeded_get_server_id(event);
 	p_event->operation_id = mongoc_apm_command_succeeded_get_operation_id(event);
@@ -1476,7 +1472,6 @@ static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t *e
 
 static void php_phongo_command_failed(const mongoc_apm_command_failed_t *event)
 {
-	mongoc_client_t *client = mongoc_apm_command_failed_get_context(event);
 	php_phongo_commandfailedevent_t *p_event;
 #if PHP_VERSION_ID >= 70000
 	zval  z_event;
@@ -1503,7 +1498,7 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t *event)
 	p_event = Z_COMMANDFAILEDEVENT_OBJ_P(z_event);
 #endif
 
-	p_event->client = client;
+	p_event->client = mongoc_apm_command_failed_get_context(event);
 	p_event->command_name = estrdup(mongoc_apm_command_failed_get_command_name(event));
 	p_event->server_id = mongoc_apm_command_failed_get_server_id(event);
 	p_event->operation_id = mongoc_apm_command_failed_get_operation_id(event);
@@ -1518,12 +1513,12 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t *event)
 #if PHP_VERSION_ID < 70000
 		MAKE_STD_ZVAL(p_event->z_error);
 		object_init_ex(p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
-		zend_update_property_string(default_exception_ce, p_event->z_error, "message", sizeof("message")-1, tmp_error.message TSRMLS_CC);
-		zend_update_property_long(default_exception_ce, p_event->z_error, "code", sizeof("code")-1, tmp_error.code TSRMLS_CC);
+		zend_update_property_string(default_exception_ce, p_event->z_error, ZEND_STRL("message"), tmp_error.message TSRMLS_CC);
+		zend_update_property_long(default_exception_ce, p_event->z_error, ZEND_STRL("code"), tmp_error.code TSRMLS_CC);
 #else
 		object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
-		zend_update_property_string(default_exception_ce, &p_event->z_error, "message", sizeof("message")-1, tmp_error.message TSRMLS_CC);
-		zend_update_property_long(default_exception_ce, &p_event->z_error, "code", sizeof("code")-1, tmp_error.code TSRMLS_CC);
+		zend_update_property_string(default_exception_ce, &p_event->z_error, ZEND_STRL("message"), tmp_error.message TSRMLS_CC);
+		zend_update_property_long(default_exception_ce, &p_event->z_error, ZEND_STRL("code"), tmp_error.code TSRMLS_CC);
 #endif
 	}
 
@@ -2026,7 +2021,7 @@ static void php_phongo_pclient_dtor(void *pp)
 /* {{{ PHP_RINIT_FUNCTION */
 PHP_RINIT_FUNCTION(mongodb)
 {
-	/* Initialize HashTable for persistent clients */
+	/* Initialize HashTable for APM subscribers */
 	zend_hash_init(&MONGODB_G(subscribers), 0, NULL, ZVAL_PTR_DTOR, 0);
 
 	return SUCCESS;
@@ -2170,11 +2165,12 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
+	/* Register base APM classes first */
 	php_phongo_subscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char *)PHP_MONGODB_VERSION, CONST_CS | CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("MONGODB_STABILITY", (char *)PHP_MONGODB_STABILITY, CONST_CS | CONST_PERSISTENT);

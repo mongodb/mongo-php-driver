@@ -21,29 +21,16 @@
 */
 
 #ifdef HAVE_CONFIG_H
-#	include "config.h"
+# include "config.h"
 #endif
 
-/* External libs */
-#include <bson.h>
-#include <mongoc.h>
-
-/* PHP Core stuff */
 #include <php.h>
-#include <php_ini.h>
-#include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
-/* Our Compatability header */
-#include "phongo_compat.h"
 
-/* Our stuff */
+#include "phongo_compat.h"
 #include "php_phongo.h"
-#include "php_bson.h"
 
 zend_class_entry *php_phongo_commandstartedevent_ce;
-
-zend_object_handlers php_phongo_handler_commandstartedevent;
 
 /* {{{ proto stdClass CommandStartedEvent::getCommand()
    Returns the command document associated with the event */
@@ -65,8 +52,7 @@ PHP_METHOD(CommandStartedEvent, getCommand)
 #else
 	RETURN_ZVAL(state.zchild, 0, 1);
 #endif
-}
-/* }}} */
+} /* }}} */
 
 /* {{{ proto string CommandStartedEvent::getCommandName()
    Returns the command name for this event */
@@ -82,8 +68,7 @@ PHP_METHOD(CommandStartedEvent, getCommandName)
 	}
 
 	PHONGO_RETVAL_STRING(intern->command_name);
-}
-/* }}} */
+} /* }}} */
 
 /* {{{ proto string CommandStartedEvent::getDatabaseName()
    Returns the database name for this event */
@@ -99,8 +84,7 @@ PHP_METHOD(CommandStartedEvent, getDatabaseName)
 	}
 
 	PHONGO_RETVAL_STRING(intern->database_name);
-}
-/* }}} */
+} /* }}} */
 
 /* {{{ proto string CommandStartedEvent::getOperationId()
    Returns the event's operation ID */
@@ -118,8 +102,7 @@ PHP_METHOD(CommandStartedEvent, getOperationId)
 
 	sprintf(int_as_string, "%" PHONGO_LONG_FORMAT, intern->operation_id);
 	PHONGO_RETVAL_STRING(int_as_string);
-}
-/* }}} */
+} /* }}} */
 
 /* {{{ proto string CommandStartedEvent::getRequestId()
    Returns the event's request ID */
@@ -137,8 +120,7 @@ PHP_METHOD(CommandStartedEvent, getRequestId)
 
 	sprintf(int_as_string, "%" PHONGO_LONG_FORMAT, intern->request_id);
 	PHONGO_RETVAL_STRING(int_as_string);
-}
-/* }}} */
+} /* }}} */
 
 /* {{{ proto MongoDB\Driver\Server CommandStartedEvent::getServer()
    Returns the Server from which the event originated */
@@ -154,16 +136,15 @@ PHP_METHOD(CommandStartedEvent, getServer)
 	}
 
 	phongo_server_init(return_value, intern->client, intern->server_id TSRMLS_CC);
-}
-/* }}} */
+} /* }}} */
 
 /**
  * Event thrown when a command has started to execute.
  *
  * This class is only constructed internally.
  */
-/* {{{ MongoDB\Driver\Monitoring\CommandStartedEvent */
 
+/* {{{ MongoDB\Driver\Monitoring\CommandStartedEvent function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_CommandStartedEvent_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -178,11 +159,11 @@ static zend_function_entry php_phongo_commandstartedevent_me[] = {
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
-
 /* }}} */
 
+/* {{{ MongoDB\Driver\Monitoring\CommandStartedEvent object handlers */
+static zend_object_handlers php_phongo_handler_commandstartedevent;
 
-/* {{{ php_phongo_commandstartedevent_t object handlers */
 static void php_phongo_commandstartedevent_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_commandstartedevent_t *intern = Z_OBJ_COMMANDSTARTEDEVENT(object);
@@ -204,7 +185,7 @@ static void php_phongo_commandstartedevent_free_object(phongo_free_object_arg *o
 #endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_commandstartedevent_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_commandstartedevent_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_commandstartedevent_t *intern = NULL;
 
@@ -228,7 +209,7 @@ phongo_create_object_retval php_phongo_commandstartedevent_create_object(zend_cl
 #endif
 } /* }}} */
 
-HashTable *php_phongo_commandstartedevent_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_commandstartedevent_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_commandstartedevent_t *intern;
 #if PHP_VERSION_ID >= 70000
@@ -298,8 +279,6 @@ void php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	return;
 } /* }}} */
-
-
 
 /*
  * Local variables:
