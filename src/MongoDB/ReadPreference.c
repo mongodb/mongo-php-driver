@@ -28,13 +28,13 @@
 
 zend_class_entry *php_phongo_readpreference_ce;
 
-/* {{{ proto void MongoDB\Driver\ReadPreference::__construct(integer $mode[, array $tagSets = array()[, array $options = array()]])
+/* {{{ proto void MongoDB\Driver\ReadPreference::__construct(int|string $mode[, array $tagSets = array()[, array $options = array()]])
    Constructs a new ReadPreference */
 static PHP_METHOD(ReadPreference, __construct)
 {
 	php_phongo_readpreference_t *intern;
 	zend_error_handling       error_handling;
-	phongo_long               mode;
+	zval                     *mode;
 	zval                     *tagSets = NULL;
 	zval                     *options = NULL;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
@@ -45,24 +45,43 @@ static PHP_METHOD(ReadPreference, __construct)
 
 	/* Separate the tagSets zval, since we may end up modifying it in
 	 * php_phongo_read_preference_prep_tagsets() below. */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|a/!a!", &mode, &tagSets, &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|a/!a!", &mode, &tagSets, &options) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-
-	switch(mode) {
-		case MONGOC_READ_PRIMARY:
-		case MONGOC_READ_SECONDARY:
-		case MONGOC_READ_PRIMARY_PREFERRED:
-		case MONGOC_READ_SECONDARY_PREFERRED:
-		case MONGOC_READ_NEAREST:
-			intern->read_preference = mongoc_read_prefs_new(mode);
-			break;
-		default:
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid mode: %" PHONGO_LONG_FORMAT, mode);
+	if (Z_TYPE_P(mode) == IS_LONG) {
+		switch(Z_LVAL_P(mode)) {
+			case MONGOC_READ_PRIMARY:
+			case MONGOC_READ_SECONDARY:
+			case MONGOC_READ_PRIMARY_PREFERRED:
+			case MONGOC_READ_SECONDARY_PREFERRED:
+			case MONGOC_READ_NEAREST:
+				intern->read_preference = mongoc_read_prefs_new(Z_LVAL_P(mode));
+				break;
+			default:
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid mode: %" PHONGO_LONG_FORMAT, Z_LVAL_P(mode));
+				return;
+		}
+	} else if (Z_TYPE_P(mode) == IS_STRING) {
+		if (strcasecmp(Z_STRVAL_P(mode), "primary") == 0) {
+			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_PRIMARY);
+		} else if (strcasecmp(Z_STRVAL_P(mode), "primaryPreferred") == 0) {
+			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_PRIMARY_PREFERRED);
+		} else if (strcasecmp(Z_STRVAL_P(mode), "secondary") == 0) {
+			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_SECONDARY);
+		} else if (strcasecmp(Z_STRVAL_P(mode), "secondaryPreferred") == 0) {
+			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_SECONDARY_PREFERRED);
+		} else if (strcasecmp(Z_STRVAL_P(mode), "nearest") == 0) {
+			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_NEAREST);
+		} else {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid mode: '%s'", Z_STRVAL_P(mode));
 			return;
+		}
+	} else {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected mode to be integer or string, %s given", zend_get_type_by_const(Z_TYPE_P(mode)));
+		return;
 	}
 
 	if (tagSets) {
@@ -77,7 +96,7 @@ static PHP_METHOD(ReadPreference, __construct)
 			return;
 		}
 
-		if (!bson_empty(tags) && mode == MONGOC_READ_PRIMARY) {
+		if (!bson_empty(tags) && (mongoc_read_prefs_get_mode(intern->read_preference) == MONGOC_READ_PRIMARY)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "tagSets may not be used with primary mode");
 			bson_destroy(tags);
 			return;
@@ -99,7 +118,7 @@ static PHP_METHOD(ReadPreference, __construct)
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessSeconds to be <= %" PRId32 ", %" PHONGO_LONG_FORMAT " given", INT32_MAX, maxStalenessSeconds);
 				return;
 			}
-			if (mode == MONGOC_READ_PRIMARY) {
+			if (mongoc_read_prefs_get_mode(intern->read_preference) == MONGOC_READ_PRIMARY) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "maxStalenessSeconds may not be used with primary mode");
 				return;
 			}

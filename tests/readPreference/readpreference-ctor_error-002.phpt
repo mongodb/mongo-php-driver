@@ -10,6 +10,10 @@ echo throws(function() {
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
+    new MongoDB\Driver\ReadPreference("primary", [['tag' => 'one']]);
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
+
+echo throws(function() {
     new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY, ['invalid']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
@@ -26,6 +30,8 @@ echo throws(function() {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+tagSets may not be used with primary mode
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 tagSets may not be used with primary mode
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
