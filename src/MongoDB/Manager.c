@@ -168,8 +168,8 @@ static PHP_METHOD(Manager, __construct)
 	zval                     *driverOptions = NULL;
 	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
-
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+
 	intern = Z_MANAGER_OBJ_P(getThis());
 
 	/* Separate the options and driverOptions zvals, since we may end up
@@ -191,6 +191,10 @@ static PHP_METHOD(Manager, __construct)
 	}
 
 	phongo_manager_init(intern, uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, options, driverOptions TSRMLS_CC);
+
+	if (intern->client) {
+		php_phongo_set_monitoring_callbacks(intern->client);
+	}
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
