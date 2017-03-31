@@ -8,7 +8,7 @@ require_once __DIR__ . '/../utils/tools.php';
 $bulk = new MongoDB\Driver\BulkWrite;
 
 echo throws(function() use ($bulk) {
-    $bulk->update([], [], ['collation' => 1]);
+    $bulk->delete(['x' => 1], ['collation' => 1]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

@@ -145,6 +145,9 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 		case MONGOC_ERROR_CLIENT_AUTHENTICATE:
 			return php_phongo_authenticationexception_ce;
 
+		case MONGOC_ERROR_COMMAND_INVALID_ARG:
+			return php_phongo_invalidargumentexception_ce;
+
 		case MONGOC_ERROR_STREAM_INVALID_TYPE:
 		case MONGOC_ERROR_STREAM_INVALID_STATE:
 		case MONGOC_ERROR_STREAM_NAME_RESOLUTION:
@@ -165,7 +168,6 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 		case MONGOC_ERROR_BSON_INVALID:
 		case MONGOC_ERROR_MATCHER_INVALID:
 		case MONGOC_ERROR_NAMESPACE_INVALID:
-		case MONGOC_ERROR_COMMAND_INVALID_ARG:
 		case MONGOC_ERROR_COLLECTION_INSERT_FAILED:
 		case MONGOC_ERROR_GRIDFS_INVALID_FILENAME:
 		case MONGOC_ERROR_QUERY_COMMAND_NOT_FOUND:
