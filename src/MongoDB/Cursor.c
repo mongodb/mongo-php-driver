@@ -44,11 +44,7 @@ static void php_phongo_cursor_free_current(php_phongo_cursor_t *cursor) /* {{{ *
 {
 	if (!Z_ISUNDEF(cursor->visitor_data.zchild)) {
 		zval_ptr_dtor(&cursor->visitor_data.zchild);
-#if PHP_VERSION_ID >= 70000
 		ZVAL_UNDEF(&cursor->visitor_data.zchild);
-#else
-		cursor->visitor_data.zchild = NULL;
-#endif
 	}
 } /* }}} */
 
