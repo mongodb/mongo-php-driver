@@ -1384,7 +1384,7 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 				if (strlen(ZSTR_VAL(string_key)) != ZSTR_LEN(string_key)) {
 					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "BSON keys cannot contain null bytes. Unexpected null byte after \"%s\".", ZSTR_VAL(string_key));
 
-					return;
+					goto cleanup;
 				}
 
 				if (flags & PHONGO_BSON_ADD_ID) {
@@ -1436,7 +1436,7 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 			if (strlen(string_key) != string_key_len - 1) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "BSON keys cannot contain null bytes. Unexpected null byte after \"%s\".", ZSTR_VAL(string_key));
 
-				return;
+				goto cleanup;
 			}
 
 			if (flags & PHONGO_BSON_ADD_ID) {
