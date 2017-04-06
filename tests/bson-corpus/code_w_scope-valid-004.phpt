@@ -15,12 +15,12 @@ $bson = hex2bin('210000000F6100190000000500000061626364000C000000107800010000000
 echo bin2hex(fromPHP(toPHP($bson))), "\n";
 
 // BSON to Canonical extJSON
-echo json_canonicalize(toJSON($bson)), "\n";
+echo json_canonicalize(toExtendedJSON($bson)), "\n";
 
-$json = '{"a" : {"$code" : "abcd", "$scope" : {"x" : 1}}}';
+$json = '{"a" : {"$code" : "abcd", "$scope" : {"x" : {"$numberInt": "1"}}}}';
 
 // extJSON to Canonical extJSON
-echo json_canonicalize(toJSON(fromJSON($json))), "\n";
+echo json_canonicalize(toExtendedJSON(fromJSON($json))), "\n";
 
 // extJSON to Canonical BSON
 echo bin2hex(fromJSON($json)), "\n";
@@ -30,7 +30,7 @@ echo bin2hex(fromJSON($json)), "\n";
 <?php exit(0); ?>
 --EXPECT--
 210000000f6100190000000500000061626364000c000000107800010000000000
-{"a":{"$code":"abcd","$scope":{"x":1}}}
-{"a":{"$code":"abcd","$scope":{"x":1}}}
+{"a":{"$code":"abcd","$scope":{"x":{"$numberInt":"1"}}}}
+{"a":{"$code":"abcd","$scope":{"x":{"$numberInt":"1"}}}}
 210000000f6100190000000500000061626364000c000000107800010000000000
 ===DONE===

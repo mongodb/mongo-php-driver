@@ -15,12 +15,12 @@ $bson = hex2bin('1000000001640000807ca1a9a012c200');
 echo bin2hex(fromPHP(toPHP($bson))), "\n";
 
 // BSON to Canonical extJSON
-echo json_canonicalize(toJSON($bson)), "\n";
+echo json_canonicalize(toExtendedJSON($bson)), "\n";
 
-$json = '{"d" : -2.0001220703125e10}';
+$json = '{"d" : {"$numberDouble": "-2.0001220703125e10"}}';
 
 // extJSON to Canonical extJSON
-echo json_canonicalize(toJSON(fromJSON($json))), "\n";
+echo json_canonicalize(toExtendedJSON(fromJSON($json))), "\n";
 
 // extJSON to Canonical BSON
 echo bin2hex(fromJSON($json)), "\n";
@@ -30,7 +30,7 @@ echo bin2hex(fromJSON($json)), "\n";
 <?php exit(0); ?>
 --EXPECT--
 1000000001640000807ca1a9a012c200
-{"d":-20001220703.125}
-{"d":-20001220703.125}
+{"d":{"$numberDouble":"-2.0001220703125e10"}}
+{"d":{"$numberDouble":"-2.0001220703125e10"}}
 1000000001640000807ca1a9a012c200
 ===DONE===
