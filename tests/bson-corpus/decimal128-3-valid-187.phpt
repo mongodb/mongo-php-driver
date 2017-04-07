@@ -15,17 +15,17 @@ $bson = hex2bin('180000001364000700000000000000000000000000583000');
 echo bin2hex(fromPHP(toPHP($bson))), "\n";
 
 // BSON to Canonical extJSON
-echo json_canonicalize(toJSON($bson)), "\n";
+echo json_canonicalize(toExtendedJSON($bson)), "\n";
 
 $json = '{"d" : {"$numberDecimal" : "7E12"}}';
 
 // extJSON to Canonical extJSON
-echo json_canonicalize(toJSON(fromJSON($json))), "\n";
+echo json_canonicalize(toExtendedJSON(fromJSON($json))), "\n";
 
 $canonicalJson = '{"d" : {"$numberDecimal" : "7E+12"}}';
 
 // Canonical extJSON to Canonical extJSON
-echo json_canonicalize(toJSON(fromJSON($canonicalJson))), "\n";
+echo json_canonicalize(toExtendedJSON(fromJSON($canonicalJson))), "\n";
 
 // extJSON to Canonical BSON
 echo bin2hex(fromJSON($json)), "\n";

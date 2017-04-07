@@ -15,12 +15,12 @@ $bson = hex2bin('1400000007610056E1FC72E0C917E9C471416100');
 echo bin2hex(fromPHP(toPHP($bson))), "\n";
 
 // BSON to Canonical extJSON
-echo json_canonicalize(toJSON($bson)), "\n";
+echo json_canonicalize(toExtendedJSON($bson)), "\n";
 
 $json = '{"a" : {"$oid" : "56e1fc72e0c917e9c4714161"}}';
 
 // extJSON to Canonical extJSON
-echo json_canonicalize(toJSON(fromJSON($json))), "\n";
+echo json_canonicalize(toExtendedJSON(fromJSON($json))), "\n";
 
 // extJSON to Canonical BSON
 echo bin2hex(fromJSON($json)), "\n";

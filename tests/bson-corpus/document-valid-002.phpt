@@ -15,12 +15,12 @@ $bson = hex2bin('150000000378000D00000002000200000062000000');
 echo bin2hex(fromPHP(toPHP($bson))), "\n";
 
 // BSON to Canonical extJSON
-echo json_canonicalize(toJSON($bson)), "\n";
+echo json_canonicalize(toExtendedJSON($bson)), "\n";
 
 $json = '{"x" : {"" : "b"}}';
 
 // extJSON to Canonical extJSON
-echo json_canonicalize(toJSON(fromJSON($json))), "\n";
+echo json_canonicalize(toExtendedJSON(fromJSON($json))), "\n";
 
 // extJSON to Canonical BSON
 echo bin2hex(fromJSON($json)), "\n";

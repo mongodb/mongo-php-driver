@@ -401,6 +401,9 @@ function fromPHP($var) {
 function toJSON($var) {
     return MongoDB\BSON\toJSON($var);
 }
+function toExtendedJSON($var) {
+    return MongoDB\BSON\toExtendedJSON($var);
+}
 function fromJSON($var) {
     return MongoDB\BSON\fromJSON($var);
 }

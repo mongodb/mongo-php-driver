@@ -1032,15 +1032,13 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
 #endif
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\toJSON(string $bson)
-   Returns the JSON representation of a BSON value */
-PHP_FUNCTION(MongoDB_BSON_toJSON)
+static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, int type)
 {
-	      char                *data;
-	      phongo_zpp_char_len  data_len;
-	const bson_t              *b;
-	      bool                 eof = false;
-	      bson_reader_t       *reader;
+	char                *data;
+	phongo_zpp_char_len  data_len;
+	const bson_t        *b;
+	bool                 eof = false;
+	bson_reader_t       *reader;
 
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
@@ -1054,7 +1052,12 @@ PHP_FUNCTION(MongoDB_BSON_toJSON)
 	if (b) {
 		char   *str;
 		size_t  str_len;
-		str = bson_as_json(b, &str_len);
+
+		if (type == 0) {
+			str = bson_as_json(b, &str_len);
+		} else {
+			str = bson_as_extended_json(b, &str_len);
+		}
 
 		if (!str) {
 			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not convert BSON document to a JSON string");
@@ -1075,6 +1078,20 @@ PHP_FUNCTION(MongoDB_BSON_toJSON)
 	}
 
 	bson_reader_destroy(reader);
+} /* }}} */
+
+/* {{{ proto string MongoDB\BSON\toJSON(string $bson)
+   Returns the JSON representation of a BSON value */
+PHP_FUNCTION(MongoDB_BSON_toJSON)
+{
+	return phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
+} /* }}} */
+
+/* {{{ proto string MongoDB\BSON\toExtendedJSON(string $bson)
+   Returns the extended JSON representation of a BSON value */
+PHP_FUNCTION(MongoDB_BSON_toExtendedJSON)
+{
+	return phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\fromJSON(string $json)
