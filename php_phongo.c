@@ -358,11 +358,7 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
 
 		if (!php_phongo_bson_to_zval(data, len, &intern->info)) {
 			zval_ptr_dtor(&intern->info);
-#if PHP_VERSION_ID >= 70000
 			ZVAL_UNDEF(&intern->info);
-#else
-			intern->info = NULL;
-#endif
 
 			return false;
 		}
@@ -399,11 +395,7 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 
 		if (!php_phongo_bson_to_zval(data, len, &intern->info)) {
 			zval_ptr_dtor(&intern->info);
-#if PHP_VERSION_ID >= 70000
 			ZVAL_UNDEF(&intern->info);
-#else
-			intern->info = NULL;
-#endif
 
 			return false;
 		}
