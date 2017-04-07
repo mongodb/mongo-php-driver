@@ -1019,7 +1019,7 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 			zval *obj_data = NULL;
 #endif
 			bson_t child;
-			HashTable *tmp_ht;
+
 #if PHP_VERSION_ID >= 70000
 			zend_call_method_with_0_params(object, NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
 #else
@@ -1027,7 +1027,8 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 #endif
 
 			if (Z_ISUNDEF(obj_data)) {
-				/* zend_call_method() failed */
+				/* zend_call_method() failed or bsonSerialize() threw an
+				 * exception. Either way, there is nothing else to do. */
 				return;
 			}
 
@@ -1058,16 +1059,6 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 #endif
 
 				return;
-			}
-
-#if PHP_VERSION_ID >= 70000
-			tmp_ht = HASH_OF(&obj_data);
-#else
-			tmp_ht = HASH_OF(obj_data);
-#endif
-
-			if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
-				ZEND_HASH_INC_APPLY_COUNT(tmp_ht);
 			}
 
 			/* Persistable objects must always be serialized as BSON documents;
@@ -1101,9 +1092,6 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 				bson_append_array_end(bson, &child);
 			}
 
-			if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
-				ZEND_HASH_DEC_APPLY_COUNT(tmp_ht);
-			}
 			zval_ptr_dtor(&obj_data);
 			return;
 		}
@@ -1176,20 +1164,10 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Unexpected %s instance: %s", ZSTR_VAL(php_phongo_type_ce->name), ZSTR_VAL(Z_OBJCE_P(object)->name));
 		return;
 	} else {
-		HashTable *tmp_ht = HASH_OF(object);
-
-		if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
-			ZEND_HASH_INC_APPLY_COUNT(tmp_ht);
-		}
-
 		mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding document");
 		bson_append_document_begin(bson, key, key_len, &child);
 		phongo_zval_to_bson(object, flags, &child, NULL TSRMLS_CC);
 		bson_append_document_end(bson, &child);
-
-		if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
-			ZEND_HASH_DEC_APPLY_COUNT(tmp_ht);
-		}
 	}
 }
 
@@ -1238,6 +1216,11 @@ try_again:
 				bson_t     child;
 				HashTable *tmp_ht = HASH_OF(entry);
 
+				if (tmp_ht && ZEND_HASH_GET_APPLY_COUNT(tmp_ht) > 0) {
+					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected recursion for fieldname \"%s\"", key);
+					break;
+				}
+
 				if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
 					ZEND_HASH_INC_APPLY_COUNT(tmp_ht);
 				}
@@ -1252,9 +1235,25 @@ try_again:
 				break;
 			}
 			/* break intentionally omitted */
-		case IS_OBJECT:
+		case IS_OBJECT: {
+			HashTable *tmp_ht = HASH_OF(entry);
+
+			if (tmp_ht && ZEND_HASH_GET_APPLY_COUNT(tmp_ht) > 0) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected recursion for fieldname \"%s\"", key);
+				break;
+			}
+
+			if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
+				ZEND_HASH_INC_APPLY_COUNT(tmp_ht);
+			}
+
 			object_to_bson(entry, flags, key, key_len, bson TSRMLS_CC);
+
+			if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
+				ZEND_HASH_DEC_APPLY_COUNT(tmp_ht);
+			}
 			break;
+		}
 
 #if PHP_VERSION_ID >= 70000
 		case IS_INDIRECT:
@@ -1285,6 +1284,8 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 	 * properties, we'll need to filter them out later. */
 	bool         ht_data_from_properties = false;
 
+	ZVAL_UNDEF(&obj_data);
+
 	switch(Z_TYPE_P(data)) {
 		case IS_OBJECT:
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce TSRMLS_CC)) {
@@ -1295,8 +1296,9 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 #endif
 
 				if (Z_ISUNDEF(obj_data)) {
-					/* zend_call_method() failed */
-					break;
+					/* zend_call_method() failed or bsonSerialize() threw an
+					 * exception. Either way, there is nothing else to do. */
+					return;
 				}
 
 #if PHP_VERSION_ID >= 70000
@@ -1324,7 +1326,7 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 						)
 					);
 
-					break;
+					goto cleanup;
 				}
 
 #if PHP_VERSION_ID >= 70000
@@ -1349,7 +1351,7 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_type_ce TSRMLS_CC)) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s instance %s cannot be serialized as a root element", ZSTR_VAL(php_phongo_type_ce->name), ZSTR_VAL(Z_OBJCE_P(data)->name));
 
-				break;
+				return;
 			}
 
 			ht_data = Z_OBJ_HT_P(data)->get_properties(data TSRMLS_CC);
@@ -1362,19 +1364,6 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 
 		default:
 			return;
-	}
-
-	if (!ht_data || ZEND_HASH_GET_APPLY_COUNT(ht_data) > 1) {
-#if PHP_VERSION_ID >= 70000
-		if (Z_TYPE_P(data) == IS_OBJECT && instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce TSRMLS_CC)) {
-#endif
-			if (!Z_ISUNDEF(obj_data)) {
-				zval_ptr_dtor(&obj_data);
-			}
-#if PHP_VERSION_ID >= 70000
-		}
-#endif
-		return;
 	}
 
 #if PHP_VERSION_ID >= 70000
@@ -1483,15 +1472,11 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 			}
 		}
 	}
-#if PHP_VERSION_ID >= 70000
-	if (Z_TYPE_P(data) == IS_OBJECT && instanceof_function(Z_OBJCE_P(data), php_phongo_serializable_ce TSRMLS_CC)) {
-#endif
-		if (!Z_ISUNDEF(obj_data)) {
-			zval_ptr_dtor(&obj_data);
-		}
-#if PHP_VERSION_ID >= 70000
+
+cleanup:
+	if (!Z_ISUNDEF(obj_data)) {
+		zval_ptr_dtor(&obj_data);
 	}
-#endif
 }
 
 /* }}} */

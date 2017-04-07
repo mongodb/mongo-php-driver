@@ -130,6 +130,7 @@
 # define ADD_NEXT_INDEX_STRINGL(_zv, _value, _len) add_next_index_stringl(_zv, _value, _len, 1);
 # define Z_PHPDATE_P(object) ((php_date_obj*)zend_object_store_get_object(object TSRMLS_CC))
 # define Z_ISUNDEF(x) !x
+# define ZVAL_UNDEF(x) do { (*x) = NULL; } while (0)
 # define phongo_free_object_arg void
 # define phongo_zpp_char_len int
 # define ZEND_HASH_APPLY_PROTECTION(ht) true
