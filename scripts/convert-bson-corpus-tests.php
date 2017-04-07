@@ -97,24 +97,24 @@ function getParamsForValid(array $test, array $case)
         $lossy = isset($case['lossy']) ? (boolean) $case['lossy'] : false;
 
         $code .= "\n// BSON to Canonical extJSON\n";
-        $code .= 'echo json_canonicalize(toJSON($bson)), "\n";' . "\n";;
+        $code .= 'echo json_canonicalize(toExtendedJSON($bson)), "\n";' . "\n";;
         $expect .= $expectedCanonicalJson . "\n";
 
         $code .= "\n" . sprintf('$json = %s;', var_export($json, true)) . "\n";
         $code .= "\n// extJSON to Canonical extJSON\n";
-        $code .= 'echo json_canonicalize(toJSON(fromJSON($json))), "\n";' . "\n";;
+        $code .= 'echo json_canonicalize(toExtendedJSON(fromJSON($json))), "\n";' . "\n";;
         $expect .= $expectedCanonicalJson . "\n";
 
         if ($bson !== $canonicalBson) {
             $code .= "\n// Canonical BSON to Canonical extJSON\n";
-            $code .= 'echo json_canonicalize(toJSON($canonicalBson)), "\n";' . "\n";;
+            $code .= 'echo json_canonicalize(toExtendedJSON($canonicalBson)), "\n";' . "\n";;
             $expect .= $expectedCanonicalJson . "\n";
         }
 
         if ($json !== $canonicalJson) {
             $code .= "\n" . sprintf('$canonicalJson = %s;', var_export($canonicalJson, true)) . "\n";
             $code .= "\n// Canonical extJSON to Canonical extJSON\n";
-            $code .= 'echo json_canonicalize(toJSON(fromJSON($canonicalJson))), "\n";' . "\n";;
+            $code .= 'echo json_canonicalize(toExtendedJSON(fromJSON($canonicalJson))), "\n";' . "\n";;
             $expect .= $expectedCanonicalJson . "\n";
         }
 

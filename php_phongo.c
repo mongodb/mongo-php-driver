@@ -2317,6 +2317,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_bson_toJSON, 0, 0, 1)
 	ZEND_ARG_INFO(0, bson)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_bson_toExtendedJSON, 0, 0, 1)
+	ZEND_ARG_INFO(0, bson)
+ZEND_END_ARG_INFO();
+
 ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromJSON, 0, 0, 1)
 	ZEND_ARG_INFO(0, json)
 ZEND_END_ARG_INFO();
@@ -2334,6 +2338,7 @@ static const zend_function_entry mongodb_functions[] = {
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", fromPHP, PHP_FN(MongoDB_BSON_fromPHP), ai_bson_fromPHP)
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", toPHP, PHP_FN(MongoDB_BSON_toPHP), ai_bson_toPHP)
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", toJSON, PHP_FN(MongoDB_BSON_toJSON), ai_bson_toJSON)
+	ZEND_NS_NAMED_FE("MongoDB\\BSON", toExtendedJSON, PHP_FN(MongoDB_BSON_toExtendedJSON), ai_bson_toExtendedJSON)
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", fromJSON, PHP_FN(MongoDB_BSON_fromJSON), ai_bson_fromJSON)
 	ZEND_NS_NAMED_FE("MongoDB\\Monitoring", addSubscriber, PHP_FN(MongoDB_Monitoring_addSubscriber), ai_Monitoring_addSubscriber)
 	ZEND_NS_NAMED_FE("MongoDB\\Monitoring", removeSubscriber, PHP_FN(MongoDB_Monitoring_removeSubscriber), ai_Monitoring_removeSubscriber)

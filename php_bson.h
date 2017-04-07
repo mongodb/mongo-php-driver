@@ -78,6 +78,7 @@ void php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *ma
 PHP_FUNCTION(MongoDB_BSON_toPHP);
 PHP_FUNCTION(MongoDB_BSON_fromPHP);
 PHP_FUNCTION(MongoDB_BSON_toJSON);
+PHP_FUNCTION(MongoDB_BSON_toExtendedJSON);
 PHP_FUNCTION(MongoDB_BSON_fromJSON);
 
 #endif	/* PHONGO_BSON_H */
