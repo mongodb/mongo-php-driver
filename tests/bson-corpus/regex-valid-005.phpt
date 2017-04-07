@@ -20,15 +20,15 @@ $canonicalBson = hex2bin('100000000B610061626300696D780000');
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
 // BSON to Canonical extJSON
-echo json_canonicalize(toJSON($bson)), "\n";
+echo json_canonicalize(toExtendedJSON($bson)), "\n";
 
 $json = '{"a" : {"$regex" : "abc", "$options" : "imx"}}';
 
 // extJSON to Canonical extJSON
-echo json_canonicalize(toJSON(fromJSON($json))), "\n";
+echo json_canonicalize(toExtendedJSON(fromJSON($json))), "\n";
 
 // Canonical BSON to Canonical extJSON
-echo json_canonicalize(toJSON($canonicalBson)), "\n";
+echo json_canonicalize(toExtendedJSON($canonicalBson)), "\n";
 
 // extJSON to Canonical BSON
 echo bin2hex(fromJSON($json)), "\n";

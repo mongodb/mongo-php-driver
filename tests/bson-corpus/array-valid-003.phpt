@@ -20,15 +20,15 @@ $canonicalBson = hex2bin('140000000461000C0000001030000A0000000000');
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
 // BSON to Canonical extJSON
-echo json_canonicalize(toJSON($bson)), "\n";
+echo json_canonicalize(toExtendedJSON($bson)), "\n";
 
-$json = '{"a" : [10]}';
+$json = '{"a" : [{"$numberInt": "10"}]}';
 
 // extJSON to Canonical extJSON
-echo json_canonicalize(toJSON(fromJSON($json))), "\n";
+echo json_canonicalize(toExtendedJSON(fromJSON($json))), "\n";
 
 // Canonical BSON to Canonical extJSON
-echo json_canonicalize(toJSON($canonicalBson)), "\n";
+echo json_canonicalize(toExtendedJSON($canonicalBson)), "\n";
 
 // extJSON to Canonical BSON
 echo bin2hex(fromJSON($json)), "\n";
@@ -39,8 +39,8 @@ echo bin2hex(fromJSON($json)), "\n";
 --EXPECT--
 140000000461000c0000001030000a0000000000
 140000000461000c0000001030000a0000000000
-{"a":[10]}
-{"a":[10]}
-{"a":[10]}
+{"a":[{"$numberInt":"10"}]}
+{"a":[{"$numberInt":"10"}]}
+{"a":[{"$numberInt":"10"}]}
 140000000461000c0000001030000a0000000000
 ===DONE===

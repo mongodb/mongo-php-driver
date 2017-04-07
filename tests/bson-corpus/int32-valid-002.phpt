@@ -15,12 +15,12 @@ $bson = hex2bin('0C000000106900FFFFFF7F00');
 echo bin2hex(fromPHP(toPHP($bson))), "\n";
 
 // BSON to Canonical extJSON
-echo json_canonicalize(toJSON($bson)), "\n";
+echo json_canonicalize(toExtendedJSON($bson)), "\n";
 
-$json = '{"i" : 2147483647}';
+$json = '{"i" : {"$numberInt": "2147483647"}}';
 
 // extJSON to Canonical extJSON
-echo json_canonicalize(toJSON(fromJSON($json))), "\n";
+echo json_canonicalize(toExtendedJSON(fromJSON($json))), "\n";
 
 // extJSON to Canonical BSON
 echo bin2hex(fromJSON($json)), "\n";
@@ -30,7 +30,7 @@ echo bin2hex(fromJSON($json)), "\n";
 <?php exit(0); ?>
 --EXPECT--
 0c000000106900ffffff7f00
-{"i":2147483647}
-{"i":2147483647}
+{"i":{"$numberInt":"2147483647"}}
+{"i":{"$numberInt":"2147483647"}}
 0c000000106900ffffff7f00
 ===DONE===
