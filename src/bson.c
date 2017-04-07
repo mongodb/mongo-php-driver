@@ -1027,7 +1027,8 @@ void object_to_bson(zval *object, php_phongo_bson_flags_t flags, const char *key
 #endif
 
 			if (Z_ISUNDEF(obj_data)) {
-				/* zend_call_method() failed */
+				/* zend_call_method() failed or bsonSerialize() threw an
+				 * exception. Either way, there is nothing else to do. */
 				return;
 			}
 
@@ -1295,7 +1296,8 @@ void phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson
 #endif
 
 				if (Z_ISUNDEF(obj_data)) {
-					/* zend_call_method() failed */
+					/* zend_call_method() failed or bsonSerialize() threw an
+					 * exception. Either way, there is nothing else to do. */
 					return;
 				}
 
