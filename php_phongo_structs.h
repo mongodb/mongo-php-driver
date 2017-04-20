@@ -67,7 +67,7 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	uint64_t id;
+	int64_t id;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_cursorid_t;
 

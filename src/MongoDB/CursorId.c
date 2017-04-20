@@ -41,7 +41,7 @@ static PHP_METHOD(CursorId, __toString)
 		return;
 	}
 
-	tmp_len = spprintf(&tmp, 0, "%" PRIu64, intern->id);
+	tmp_len = spprintf(&tmp, 0, "%" PRId64, intern->id);
 	PHONGO_RETVAL_STRINGL(tmp, tmp_len);
 	efree(tmp);
 } /* }}} */
@@ -116,7 +116,7 @@ static HashTable *php_phongo_cursorid_get_debug_info(zval *object, int *is_temp 
 		char tmp[24];
 		int tmp_len;
 
-		tmp_len = snprintf(tmp, sizeof(tmp), "%" PRIu64, intern->id);
+		tmp_len = snprintf(tmp, sizeof(tmp), "%" PRId64, intern->id);
 		ADD_ASSOC_STRINGL(&retval, "id", tmp, tmp_len);
 	}
 #else
