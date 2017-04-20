@@ -115,6 +115,11 @@ static void php_phongo_bson_append_object(bson_t *bson, php_phongo_bson_flags_t 
 {
 	bson_t child;
 
+	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_cursorid_ce TSRMLS_CC)) {
+		bson_append_int64(bson, key, key_len, Z_CURSORID_OBJ_P(object)->id);
+		return;
+	}
+
 	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce TSRMLS_CC)) {
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_serializable_ce TSRMLS_CC)) {
 #if PHP_VERSION_ID >= 70000
