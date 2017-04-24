@@ -912,7 +912,6 @@ void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t
 
 static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options TSRMLS_DC) /* {{{ */
 {
-	bson_iter_t   iter;
 	mongoc_uri_t *uri;
 	bson_error_t  error;
 
@@ -924,49 +923,96 @@ static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options
 		return NULL;
 	}
 
-	if (options && bson_iter_init(&iter, options)) {
-		while (bson_iter_next (&iter)) {
-			const char *key = bson_iter_key(&iter);
+	return uri;
+} /* }}} */
 
-			/* Skip read preference and write concern options, as those must be
-			 * processed after the mongoc_client_t is constructed. */
-			if (!strcasecmp(key, MONGOC_URI_JOURNAL) ||
-			    !strcasecmp(key, MONGOC_URI_READPREFERENCE) ||
-			    !strcasecmp(key, MONGOC_URI_READPREFERENCETAGS) ||
-			    !strcasecmp(key, MONGOC_URI_SAFE) ||
-			    !strcasecmp(key, MONGOC_URI_SLAVEOK) ||
-			    !strcasecmp(key, MONGOC_URI_W) ||
-			    !strcasecmp(key, MONGOC_URI_WTIMEOUTMS) ||
-			    !strcasecmp(key, MONGOC_URI_MAXSTALENESSSECONDS) ||
-			    !strcasecmp(key, MONGOC_URI_APPNAME)
-			) {
+static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options TSRMLS_DC) /* {{{ */
+{
+	bson_iter_t iter;
+
+	/* Return early if there are no options to apply */
+	if (bson_empty0(options) || !bson_iter_init(&iter, options)) {
+		return true;
+	}
+
+	while (bson_iter_next(&iter)) {
+		const char *key = bson_iter_key(&iter);
+
+		/* Skip read preference, read concern, and write concern options, as
+		 * those will be processed by other functions. */
+		if (!strcasecmp(key, MONGOC_URI_JOURNAL) ||
+		    !strcasecmp(key, MONGOC_URI_MAXSTALENESSSECONDS) ||
+		    !strcasecmp(key, MONGOC_URI_READCONCERNLEVEL) ||
+		    !strcasecmp(key, MONGOC_URI_READPREFERENCE) ||
+		    !strcasecmp(key, MONGOC_URI_READPREFERENCETAGS) ||
+		    !strcasecmp(key, MONGOC_URI_SAFE) ||
+		    !strcasecmp(key, MONGOC_URI_SLAVEOK) ||
+		    !strcasecmp(key, MONGOC_URI_W) ||
+		    !strcasecmp(key, MONGOC_URI_WTIMEOUTMS) ||
+		    !strcasecmp(key, MONGOC_URI_APPNAME)) {
+			continue;
+		}
+
+		if (mongoc_uri_option_is_bool(key)) {
+			if (!mongoc_uri_set_option_as_bool(uri, key, bson_iter_as_bool(&iter))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+				return false;
+			}
+
+			continue;
+		}
+
+		if (mongoc_uri_option_is_int32(key) && BSON_ITER_HOLDS_INT32(&iter)) {
+			if (!mongoc_uri_set_option_as_int32(uri, key, bson_iter_int32(&iter))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+				return false;
+			}
+
+			continue;
+		}
+
+		if (mongoc_uri_option_is_utf8(key) && BSON_ITER_HOLDS_UTF8(&iter)) {
+			if (!mongoc_uri_set_option_as_utf8(uri, key, bson_iter_utf8(&iter, NULL))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+				return false;
+			}
+
+			continue;
+		}
+
+		if (BSON_ITER_HOLDS_UTF8(&iter)) {
+			const char *value = bson_iter_utf8(&iter, NULL);
+
+			if (!strcasecmp(key, "username")) {
+				if (!mongoc_uri_set_username(uri, value)) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+					return false;
+				}
+
 				continue;
 			}
 
-			if (mongoc_uri_option_is_bool(key)) {
-				mongoc_uri_set_option_as_bool (uri, key, bson_iter_as_bool(&iter));
-			}
-			else if (mongoc_uri_option_is_int32(key) && BSON_ITER_HOLDS_INT32(&iter)) {
-				mongoc_uri_set_option_as_int32 (uri, key, bson_iter_int32 (&iter));
-			}
-			else if (mongoc_uri_option_is_utf8(key) && BSON_ITER_HOLDS_UTF8(&iter)) {
-				mongoc_uri_set_option_as_utf8(uri, key, bson_iter_utf8 (&iter, NULL));
-			}
-			else if (BSON_ITER_HOLDS_UTF8(&iter)) {
-				const char *value = bson_iter_utf8 (&iter, NULL);
-
-				if (!strcasecmp(key, "username")) {
-					mongoc_uri_set_username(uri, value);
-				} else if (!strcasecmp(key, "password")) {
-					mongoc_uri_set_password(uri, value);
-				} else if (!strcasecmp(key, MONGOC_URI_AUTHSOURCE)) {
-					mongoc_uri_set_auth_source(uri, value);
+			if (!strcasecmp(key, "password")) {
+				if (!mongoc_uri_set_password(uri, value)) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+					return false;
 				}
+
+				continue;
+			}
+
+			if (!strcasecmp(key, MONGOC_URI_AUTHSOURCE)) {
+				if (!mongoc_uri_set_auth_source(uri, value)) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+					return false;
+				}
+
+				continue;
 			}
 		}
 	}
 
-	return uri;
+	return true;
 } /* }}} */
 
 static bool php_phongo_apply_rc_options_to_uri(mongoc_uri_t *uri, bson_t *options TSRMLS_DC) /* {{{ */
@@ -1719,7 +1765,8 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 		goto cleanup;
 	}
 
-	if (!php_phongo_apply_rc_options_to_uri(uri, &bson_options TSRMLS_CC) ||
+	if (!php_phongo_apply_options_to_uri(uri, &bson_options TSRMLS_CC) ||
+	    !php_phongo_apply_rc_options_to_uri(uri, &bson_options TSRMLS_CC) ||
 	    !php_phongo_apply_rp_options_to_uri(uri, &bson_options TSRMLS_CC) ||
 	    !php_phongo_apply_wc_options_to_uri(uri, &bson_options TSRMLS_CC)) {
 		/* Exception should already have been thrown */
