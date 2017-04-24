@@ -959,8 +959,6 @@ static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options
 					mongoc_uri_set_username(uri, value);
 				} else if (!strcasecmp(key, "password")) {
 					mongoc_uri_set_password(uri, value);
-				} else if (!strcasecmp(key, "database")) {
-					mongoc_uri_set_database(uri, value);
 				} else if (!strcasecmp(key, MONGOC_URI_AUTHSOURCE)) {
 					mongoc_uri_set_auth_source(uri, value);
 				}
