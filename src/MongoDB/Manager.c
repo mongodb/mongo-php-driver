@@ -120,7 +120,7 @@ static void php_phongo_manager_prep_tagsets(zval *options TSRMLS_DC) /* {{{ */
 
 			/* php_phongo_make_uri() and php_phongo_apply_rp_options_to_uri()
 			 * are both case-insensitive, so we need to be as well. */
-			if (!strcasecmp(ZSTR_VAL(string_key), "readpreferencetags")) {
+			if (!strcasecmp(ZSTR_VAL(string_key), MONGOC_URI_READPREFERENCETAGS)) {
 				ZVAL_DEREF(tagSets);
 				SEPARATE_ZVAL_NOREF(tagSets);
 				php_phongo_read_preference_prep_tagsets(tagSets TSRMLS_CC);
@@ -145,7 +145,7 @@ static void php_phongo_manager_prep_tagsets(zval *options TSRMLS_DC) /* {{{ */
 
 			/* php_phongo_make_uri() and php_phongo_apply_rp_options_to_uri()
 			 * are both case-insensitive, so we need to be as well. */
-			if (!strcasecmp(string_key, "readpreferencetags")) {
+			if (!strcasecmp(string_key, MONGOC_URI_READPREFERENCETAGS)) {
 				SEPARATE_ZVAL_IF_NOT_REF(tagSets);
 				php_phongo_read_preference_prep_tagsets(*tagSets TSRMLS_CC);
 			}
