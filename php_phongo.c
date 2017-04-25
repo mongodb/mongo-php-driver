@@ -1001,6 +1001,15 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 				continue;
 			}
 
+			if (!strcasecmp(key, MONGOC_URI_AUTHMECHANISM)) {
+				if (!mongoc_uri_set_auth_mechanism(uri, value)) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+					return false;
+				}
+
+				continue;
+			}
+
 			if (!strcasecmp(key, MONGOC_URI_AUTHSOURCE)) {
 				if (!mongoc_uri_set_auth_source(uri, value)) {
 					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
@@ -1009,6 +1018,26 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 
 				continue;
 			}
+		}
+
+		if (BSON_ITER_HOLDS_DOCUMENT(&iter) && !strcasecmp(key, MONGOC_URI_AUTHMECHANISMPROPERTIES)) {
+			bson_t properties;
+			uint32_t len;
+			const uint8_t *data;
+
+			bson_iter_document(&iter, &len, &data);
+
+			if (!bson_init_static(&properties, data, len)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Could not initialize BSON structure for auth mechanism properties");
+				return false;
+			}
+
+			if (!mongoc_uri_set_mechanism_properties(uri, &properties)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+				return false;
+			}
+
+			continue;
 		}
 	}
 
