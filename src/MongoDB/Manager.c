@@ -92,12 +92,87 @@ static bool php_phongo_manager_merge_context_options(zval *zdriverOptions TSRMLS
 	return true;
 } /* }}} */
 
-/* Prepare tagSets for BSON encoding by converting each array in the set to an
- * object. This ensures that empty arrays will serialize as empty documents.
+/* Prepare authMechanismProperties for BSON encoding by converting a boolean
+ * value for the "CANONICALIZE_HOST_NAME" option to a string.
  *
- * php_phongo_read_preference_tags_are_valid() handles actual validation of the
- * tag set structure. */
-static void php_phongo_manager_prep_tagsets(zval *options TSRMLS_DC) /* {{{ */
+ * Note: URI options are case-insensitive, so we must iterate through the
+ * HashTable in order to detect options. */
+static void php_phongo_manager_prep_authmechanismproperties(zval *properties TSRMLS_DC) /* {{{ */
+{
+	HashTable *ht_data;
+
+	if (Z_TYPE_P(properties) != IS_ARRAY && Z_TYPE_P(properties) != IS_OBJECT) {
+		return;
+	}
+
+	ht_data = HASH_OF(properties);
+
+#if PHP_VERSION_ID >= 70000
+	{
+		zend_string *string_key = NULL;
+		zend_ulong   num_key = 0;
+		zval        *property;
+
+		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, property) {
+			if (!string_key) {
+				continue;
+			}
+
+			/* URI options are case-insensitive */
+			if (!strcasecmp(ZSTR_VAL(string_key), "CANONICALIZE_HOST_NAME")) {
+				ZVAL_DEREF(property);
+				if (Z_TYPE_P(property) != IS_STRING && zend_is_true(property)) {
+					SEPARATE_ZVAL_NOREF(property);
+					ZVAL_NEW_STR(property, zend_string_init(ZEND_STRL("true"), 0));
+				}
+			}
+		} ZEND_HASH_FOREACH_END();
+	}
+#else
+	{
+		HashPosition   pos;
+		zval         **property;
+
+		for (zend_hash_internal_pointer_reset_ex(ht_data, &pos);
+		     zend_hash_get_current_data_ex(ht_data, (void **) &property, &pos) == SUCCESS;
+		     zend_hash_move_forward_ex(ht_data, &pos)) {
+			char  *string_key = NULL;
+			uint   string_key_len = 0;
+			ulong  num_key = 0;
+
+			if (HASH_KEY_IS_STRING != zend_hash_get_current_key_ex(ht_data, &string_key, &string_key_len, &num_key, 0, &pos)) {
+				continue;
+			}
+
+			/* URI options are case-insensitive */
+			if (!strcasecmp(string_key, "CANONICALIZE_HOST_NAME")) {
+				if (Z_TYPE_PP(property) != IS_STRING && zend_is_true(*property)) {
+					SEPARATE_ZVAL_IF_NOT_REF(property);
+					Z_TYPE_PP(property) = IS_STRING;
+					Z_STRVAL_PP(property) = estrndup("true", sizeof("true")-1);
+					Z_STRLEN_PP(property) = sizeof("true")-1;
+				}
+			}
+		}
+	}
+#endif
+
+	return;
+} /* }}} */
+
+/* Prepare URI options for BSON encoding.
+ *
+ * Read preference tag sets must be an array of documents. In order to ensure
+ * that empty arrays serialize as empty documents, array elements will be
+ * converted to objects. php_phongo_read_preference_tags_are_valid() handles
+ * actual validation of the tag set structure.
+ *
+ * Auth mechanism properties must have string values, so a boolean true value
+ * for the "CANONICALIZE_HOST_NAME" property will be converted to "true".
+ *
+ * Note: URI options are case-insensitive, so we must iterate through the
+ * HashTable in order to detect options. */
+static void php_phongo_manager_prep_uri_options(zval *options TSRMLS_DC) /* {{{ */
 {
 	HashTable     *ht_data;
 
@@ -111,29 +186,35 @@ static void php_phongo_manager_prep_tagsets(zval *options TSRMLS_DC) /* {{{ */
 	{
 		zend_string *string_key = NULL;
 		zend_ulong   num_key = 0;
-		zval        *tagSets;
+		zval        *option;
 
-		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, tagSets) {
+		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, option) {
 			if (!string_key) {
 				continue;
 			}
 
-			/* php_phongo_make_uri() and php_phongo_apply_rp_options_to_uri()
-			 * are both case-insensitive, so we need to be as well. */
-			if (!strcasecmp(ZSTR_VAL(string_key), "readpreferencetags")) {
-				ZVAL_DEREF(tagSets);
-				SEPARATE_ZVAL_NOREF(tagSets);
-				php_phongo_read_preference_prep_tagsets(tagSets TSRMLS_CC);
+			if (!strcasecmp(ZSTR_VAL(string_key), MONGOC_URI_READPREFERENCETAGS)) {
+				ZVAL_DEREF(option);
+				SEPARATE_ZVAL_NOREF(option);
+				php_phongo_read_preference_prep_tagsets(option TSRMLS_CC);
+				continue;
+			}
+
+			if (!strcasecmp(ZSTR_VAL(string_key), MONGOC_URI_AUTHMECHANISMPROPERTIES)) {
+				ZVAL_DEREF(option);
+				SEPARATE_ZVAL_NOREF(option);
+				php_phongo_manager_prep_authmechanismproperties(option TSRMLS_CC);
+				continue;
 			}
 		} ZEND_HASH_FOREACH_END();
 	}
 #else
 	{
 		HashPosition   pos;
-		zval         **tagSets;
+		zval         **option;
 
 		for (zend_hash_internal_pointer_reset_ex(ht_data, &pos);
-		     zend_hash_get_current_data_ex(ht_data, (void **) &tagSets, &pos) == SUCCESS;
+		     zend_hash_get_current_data_ex(ht_data, (void **) &option, &pos) == SUCCESS;
 		     zend_hash_move_forward_ex(ht_data, &pos)) {
 			char  *string_key = NULL;
 			uint   string_key_len = 0;
@@ -143,11 +224,16 @@ static void php_phongo_manager_prep_tagsets(zval *options TSRMLS_DC) /* {{{ */
 				continue;
 			}
 
-			/* php_phongo_make_uri() and php_phongo_apply_rp_options_to_uri()
-			 * are both case-insensitive, so we need to be as well. */
-			if (!strcasecmp(string_key, "readpreferencetags")) {
-				SEPARATE_ZVAL_IF_NOT_REF(tagSets);
-				php_phongo_read_preference_prep_tagsets(*tagSets TSRMLS_CC);
+			if (!strcasecmp(string_key, MONGOC_URI_READPREFERENCETAGS)) {
+				SEPARATE_ZVAL_IF_NOT_REF(option);
+				php_phongo_read_preference_prep_tagsets(*option TSRMLS_CC);
+				continue;
+			}
+
+			if (!strcasecmp(string_key, MONGOC_URI_AUTHMECHANISMPROPERTIES)) {
+				SEPARATE_ZVAL_IF_NOT_REF(option);
+				php_phongo_manager_prep_authmechanismproperties(*option TSRMLS_CC);
+				continue;
 			}
 		}
 	}
@@ -173,7 +259,7 @@ static PHP_METHOD(Manager, __construct)
 	intern = Z_MANAGER_OBJ_P(getThis());
 
 	/* Separate the options and driverOptions zvals, since we may end up
-	 * modifying them in php_phongo_manager_prep_tagsets() and
+	 * modifying them in php_phongo_manager_prep_uri_options() and
 	 * php_phongo_manager_merge_context_options() below, respectively. */
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s!a/!a/!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
@@ -182,7 +268,7 @@ static PHP_METHOD(Manager, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	if (options) {
-		php_phongo_manager_prep_tagsets(options TSRMLS_CC);
+		php_phongo_manager_prep_uri_options(options TSRMLS_CC);
 	}
 
 	if (driverOptions && !php_phongo_manager_merge_context_options(driverOptions TSRMLS_CC)) {

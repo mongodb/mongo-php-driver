@@ -17,11 +17,12 @@ $driverOptions = [
     'pem_file' => $SSL_DIR . '/client.pem',
 ];
 
-$parsed = parse_url(STANDALONE_X509);
-// TODO: authMechanism cannot be parsed from URI options array (PHPC-772)
-$uri = sprintf('mongodb://%s:%d/?ssl=true&authMechanism=MONGODB-X509', $parsed['host'], $parsed['port']);
+$uriOptions = ['authMechanism' => 'MONGODB-X509', 'ssl' => true];
 
-$manager = new MongoDB\Driver\Manager($uri, [], $driverOptions);
+$parsed = parse_url(STANDALONE_X509);
+$uri = sprintf('mongodb://%s:%d', $parsed['host'], $parsed['port']);
+
+$manager = new MongoDB\Driver\Manager($uri, $uriOptions, $driverOptions);
 $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
 var_dump($cursor->toArray()[0]);
 
