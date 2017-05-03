@@ -566,12 +566,6 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 	cursor = mongoc_collection_find_with_opts(collection, query->filter, query->opts, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC));
 	mongoc_collection_destroy(collection);
 
-	/* mongoc issues a warning we need to catch somehow */
-	if (!cursor) {
-		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "%s", "FIXME: Couldn't create cursor...");
-		return false;
-	}
-
 	if (server_id > 0 && !mongoc_cursor_set_hint(cursor, server_id)) {
 		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "%s", "Could not set cursor server_id");
 		return false;
