@@ -782,11 +782,12 @@ bool php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval **zv)
  */
 bool php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state) /* {{{ */
 {
-	      bson_reader_t *reader;
-	      bson_iter_t    iter;
-	const bson_t        *b;
-	      bool           eof = false;
-		  TSRMLS_FETCH();
+	bson_reader_t *reader = NULL;
+	bson_iter_t    iter;
+	const bson_t  *b;
+	bool           eof = false;
+	bool           retval = false;
+	TSRMLS_FETCH();
 
 #if PHP_VERSION_ID < 70000
 	MAKE_STD_ZVAL(state->zchild);
@@ -801,14 +802,14 @@ bool php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_pho
 
 	if (!(b = bson_reader_read(reader, NULL))) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not read document from BSON reader");
-		bson_reader_destroy(reader);
-		return false;
+
+		goto cleanup;
 	}
 
 	if (!bson_iter_init(&iter, b)) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not initialize BSON iterator");
-		bson_reader_destroy(reader);
-		return false;
+
+		goto cleanup;
 	}
 
 	/* We initialize an array because it will either be returned as-is (native
@@ -829,8 +830,8 @@ bool php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_pho
 		if (!EG(exception)) {
 			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected corrupt BSON data");
 		}
-		bson_reader_destroy(reader);
-		return false;
+
+		goto cleanup;
 	}
 
 	/* If php_phongo_bson_visit_binary() finds an ODM class, it should supersede
@@ -876,13 +877,18 @@ bool php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_pho
 
 	if (bson_reader_read(reader, &eof) || !eof) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Reading document did not exhaust input buffer");
-		bson_reader_destroy(reader);
-		return false;
+
+		goto cleanup;
 	}
 
-	bson_reader_destroy(reader);
+	retval = true;
 
-	return true;
+cleanup:
+	if (reader) {
+		bson_reader_destroy(reader);
+	}
+
+	return retval;
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\fromPHP(array|object $value)
