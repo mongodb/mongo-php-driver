@@ -45,6 +45,32 @@ static inline bool php_phongo_bulkwrite_insert_is_legacy_index(bson_t *bdocument
 	return false;
 } /* }}} */
 
+/* Extracts the "_id" field of a BSON document into a return value. */
+static void php_phongo_bulkwrite_extract_id(bson_t *doc, zval **return_value) /* {{{ */
+{
+	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+	zval *id = NULL;
+
+	state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+
+	if (!php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &state)) {
+		goto cleanup;
+	}
+
+#if PHP_VERSION_ID >= 70000
+	id = php_array_fetchc(&state.zchild, "_id");
+#else
+	id = php_array_fetchc(state.zchild, "_id");
+#endif
+
+	if (id) {
+		ZVAL_ZVAL(*return_value, id, 1, 0);
+	}
+
+cleanup:
+	zval_ptr_dtor(&state.zchild);
+} /* }}} */
+
 /* Returns whether any top-level field names in the document contain a "$". */
 static inline bool php_phongo_bulkwrite_update_has_operators(bson_t *bupdate) /* {{{ */
 {
@@ -240,11 +266,7 @@ static PHP_METHOD(BulkWrite, insert)
 	intern->num_ops++;
 
 	if (bson_out && return_value_used) {
-		bson_iter_t iter;
-
-		if (bson_iter_init_find(&iter, bson_out, "_id")) {
-			php_phongo_objectid_new_from_oid(return_value, bson_iter_oid(&iter) TSRMLS_CC);
-		}
+		php_phongo_bulkwrite_extract_id(bson_out, &return_value);
 	}
 
 cleanup:
