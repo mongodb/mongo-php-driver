@@ -150,7 +150,13 @@ static PHP_METHOD(Server, getTags)
 			state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 			bson_iter_document(&iter, &len, &bytes);
-			php_phongo_bson_to_zval_ex(bytes, len, &state);
+			if (!php_phongo_bson_to_zval_ex(bytes, len, &state)) {
+				/* Exception should already have been thrown */
+				zval_ptr_dtor(&state.zchild);
+				mongoc_server_description_destroy(sd);
+				return;
+			}
+
 			mongoc_server_description_destroy(sd);
 
 #if PHP_VERSION_ID >= 70000
@@ -191,7 +197,13 @@ static PHP_METHOD(Server, getInfo)
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		php_phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state);
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state)) {
+			/* Exception should already have been thrown */
+			zval_ptr_dtor(&state.zchild);
+			mongoc_server_description_destroy(sd);
+			return;
+		}
+
 		mongoc_server_description_destroy(sd);
 
 #if PHP_VERSION_ID >= 70000
