@@ -32,6 +32,8 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
+#define PHONGO_BINARY_UUID_SIZE 16
+
 zend_class_entry *php_phongo_binary_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
@@ -40,6 +42,11 @@ static bool php_phongo_binary_init(php_phongo_binary_t *intern, const char *data
 {
 	if (type < 0 || type > UINT8_MAX) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected type to be an unsigned 8-bit integer, %" PHONGO_LONG_FORMAT " given", type);
+		return false;
+	}
+
+	if ((type == BSON_SUBTYPE_UUID_DEPRECATED || type == BSON_SUBTYPE_UUID) && data_len != PHONGO_BINARY_UUID_SIZE) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected UUID length to be %d bytes, %d given", PHONGO_BINARY_UUID_SIZE, data_len);
 		return false;
 	}
 
