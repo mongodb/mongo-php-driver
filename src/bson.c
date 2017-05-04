@@ -750,12 +750,12 @@ static bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, cons
 
 /* Converts a BSON document to a PHP value using the default typemap. */
 #if PHP_VERSION_ID >= 70000
-int php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval *zv) /* {{{ */
+bool php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval *zv) /* {{{ */
 #else
-int php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval **zv)
+bool php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval **zv)
 #endif
 {
-	int retval = 0;
+	bool                  retval;
 	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
 	retval = php_phongo_bson_to_zval_ex(data, data_len, &state);
@@ -769,8 +769,18 @@ int php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval **zv)
 } /* }}} */
 
 /* Converts a BSON document to a PHP value according to the typemap specified in
- * the state argument. The result will be set on the state argument. */
-int php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state) /* {{{ */
+ * the state argument.
+ *
+ * On success, the result will be set on the state argument and true will be
+ * returned. On error, an exception will have been thrown and false will be
+ * returned.
+ *
+ * Note: the result zval in the state argument will always be initialized for
+ * PHP 5.x so that the caller may always zval_ptr_dtor() it. The zval is left
+ * as-is on PHP 7; however, it should have the type undefined if the state
+ * was initialized to zero.
+ */
+bool php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state) /* {{{ */
 {
 	      bson_reader_t *reader;
 	      bson_iter_t    iter;
@@ -792,13 +802,13 @@ int php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phon
 	if (!(b = bson_reader_read(reader, NULL))) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not read document from BSON reader");
 		bson_reader_destroy(reader);
-		return 0;
+		return false;
 	}
 
 	if (!bson_iter_init(&iter, b)) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not initialize BSON iterator");
 		bson_reader_destroy(reader);
-		return 0;
+		return false;
 	}
 
 	/* We initialize an array because it will either be returned as-is (native
@@ -820,7 +830,7 @@ int php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phon
 			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected corrupt BSON data");
 		}
 		bson_reader_destroy(reader);
-		return 0;
+		return false;
 	}
 
 	/* If php_phongo_bson_visit_binary() finds an ODM class, it should supersede
@@ -867,12 +877,12 @@ int php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phon
 	if (bson_reader_read(reader, &eof) || !eof) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Reading document did not exhaust input buffer");
 		bson_reader_destroy(reader);
-		return 0;
+		return false;
 	}
 
 	bson_reader_destroy(reader);
 
-	return 1;
+	return true;
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\fromPHP(array|object $value)
