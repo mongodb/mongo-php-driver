@@ -501,7 +501,8 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, php_ph
 
 	/* The Write failed */
 	if (!success) {
-		if (error.domain == MONGOC_ERROR_COMMAND || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
+		if ((error.domain == MONGOC_ERROR_COMMAND && error.code != MONGOC_ERROR_COMMAND_INVALID_ARG) ||
+		    error.domain == MONGOC_ERROR_WRITE_CONCERN) {
 			phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "%s", error.message);
 			phongo_add_exception_prop(ZEND_STRL("writeResult"), return_value TSRMLS_CC);
 		} else {
