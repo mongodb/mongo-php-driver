@@ -76,11 +76,11 @@ typedef struct {
 #endif
 
 void php_phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
-int php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state);
+bool php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state);
 #if PHP_VERSION_ID >= 70000
-int php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval *out);
+bool php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval *out);
 #else
-int php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval **out);
+bool php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval **out);
 #endif
 bool php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC);
 
