@@ -13,6 +13,14 @@ echo throws(function() use ($bulk) {
 
 echo throws(function() use ($bulk) {
     $bulk->update(['x' => 1], ['$set' => ['x' => ["\xc3\x28" => 1]]]);
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n\n";
+
+/* This newObj argument mixes an update and replacement document, but
+ * php_phongo_bulkwrite_update_has_operators() will categorize it as an update
+ * due to the presence of an atomic operator. As such, _mongoc_validate_update()
+ * will report the error. */
+echo throws(function() use ($bulk) {
+    $bulk->update(['x' => 1], ['$set' => ['y' => 1], 'z' => 1]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
@@ -24,4 +32,7 @@ update document contains invalid keys
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 update document contains invalid keys
+
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Invalid key 'z': update only works with $ operators
 ===DONE===
