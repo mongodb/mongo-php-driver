@@ -69,7 +69,11 @@ typedef struct {
 	bool                     is_visiting_array;
 } php_phongo_bson_state;
 
-#define PHONGO_BSON_STATE_INITIALIZER  { 0 }
+#if PHP_VERSION_ID >= 70000
+#define PHONGO_BSON_STATE_INITIALIZER  { {{ 0 }}, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, NULL, 0 }
+#else
+#define PHONGO_BSON_STATE_INITIALIZER  { NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, NULL, 0 }
+#endif
 
 void php_phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
 int php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state);
