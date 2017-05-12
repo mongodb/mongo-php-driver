@@ -612,11 +612,19 @@ void php_phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 		bson_oid_init(&oid, NULL);
 		bson_append_oid(bson, "_id", strlen("_id"), &oid);
 		mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "Added new _id");
-		if (flags & PHONGO_BSON_RETURN_ID) {
-			if (bson_out) {
-				*bson_out = bson_new();
-				bson_append_oid(*bson_out, "_id", strlen("_id"), &oid);
-			}
+	}
+
+	if (flags & PHONGO_BSON_RETURN_ID && bson_out) {
+		bson_iter_t iter;
+
+		*bson_out = bson_new();
+
+		if (bson_iter_init_find(&iter, bson, "_id") && !bson_append_iter(*bson_out, NULL, 0, &iter)) {
+			/* This should not be able to happen since we are copying from
+			 * within a valid bson_t. */
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Error copying \"_id\" field from encoded document");
+
+			goto cleanup;
 		}
 	}
 
