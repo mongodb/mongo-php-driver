@@ -309,58 +309,58 @@ if test "$MONGODB" != "no"; then
   fi
 
 
-PHP_ARG_WITH(mongodb-sasl, for Cyrus SASL support,
-[  --with-mongodb-sasl[=DIR]     mongodb: Include Cyrus SASL support], auto, no)
+  PHP_ARG_WITH(mongodb-sasl, for Cyrus SASL support,
+  [  --with-mongodb-sasl[=DIR]     mongodb: Include Cyrus SASL support], auto, no)
 
-if test "$PHP_MONGODB_SASL" != "no"; then
-  AC_MSG_CHECKING(for SASL)
-  for i in $PHP_MONGODB_SASL /usr /usr/local; do
-    if test -f $i/include/sasl/sasl.h; then
-      MONGODB_SASL_DIR=$i
-      AC_MSG_RESULT(found in $i)
-      break
-    fi
-  done
+  if test "$PHP_MONGODB_SASL" != "no"; then
+    AC_MSG_CHECKING(for SASL)
+    for i in $PHP_MONGODB_SASL /usr /usr/local; do
+      if test -f $i/include/sasl/sasl.h; then
+        MONGODB_SASL_DIR=$i
+        AC_MSG_RESULT(found in $i)
+        break
+      fi
+    done
 
-  if test -z "$MONGODB_SASL_DIR"; then
-    AC_MSG_RESULT(not found)
-    if test "$PHP_MONGODB_SASL" != "auto"; then
-      AC_MSG_ERROR([sasl.h not found!])
+    if test -z "$MONGODB_SASL_DIR"; then
+      AC_MSG_RESULT(not found)
+      if test "$PHP_MONGODB_SASL" != "auto"; then
+        AC_MSG_ERROR([sasl.h not found!])
+      else
+        AC_SUBST(MONGOC_ENABLE_SASL, 0)
+        AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
+      fi
     else
-      AC_SUBST(MONGOC_ENABLE_SASL, 0)
-      AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
+
+      PHP_CHECK_LIBRARY(sasl2, sasl_version,
+      [
+        PHP_ADD_INCLUDE($MONGODB_SASL_DIR)
+        PHP_ADD_LIBRARY_WITH_PATH(sasl2, $MONGODB_SASL_DIR/$PHP_LIBDIR, MONGODB_SHARED_LIBADD)
+        AC_SUBST(MONGOC_ENABLE_SASL, 1)
+        AC_SUBST(MONGOC_ENABLE_SASL_CYRUS, 1)
+        AC_SUBST(MONGOC_ENABLE_SASL_SSPI, 0)
+      ], [
+        if test "$MONGODB_SASL" != "auto"; then
+          AC_MSG_ERROR([MongoDB SASL check failed. Please check config.log for more information.])
+        fi
+        AC_SUBST(MONGOC_ENABLE_SASL, 0)
+        AC_SUBST(MONGOC_ENABLE_SASL_CYRUS, 0)
+        AC_SUBST(MONGOC_ENABLE_SASL_SSPI, 0)
+      ], [
+        -L$MONGODB_SASL_DIR/$PHP_LIBDIR
+      ])
+
+      PHP_CHECK_LIBRARY(sasl2, sasl_client_done,
+      [
+        AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 1)
+      ], [
+        AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
+      ])
     fi
   else
-
-    PHP_CHECK_LIBRARY(sasl2, sasl_version,
-    [
-      PHP_ADD_INCLUDE($MONGODB_SASL_DIR)
-      PHP_ADD_LIBRARY_WITH_PATH(sasl2, $MONGODB_SASL_DIR/$PHP_LIBDIR, MONGODB_SHARED_LIBADD)
-      AC_SUBST(MONGOC_ENABLE_SASL, 1)
-      AC_SUBST(MONGOC_ENABLE_SASL_CYRUS, 1)
-      AC_SUBST(MONGOC_ENABLE_SASL_SSPI, 0)
-    ], [
-      if test "$MONGODB_SASL" != "auto"; then
-        AC_MSG_ERROR([MongoDB SASL check failed. Please check config.log for more information.])
-      fi
-      AC_SUBST(MONGOC_ENABLE_SASL, 0)
-      AC_SUBST(MONGOC_ENABLE_SASL_CYRUS, 0)
-      AC_SUBST(MONGOC_ENABLE_SASL_SSPI, 0)
-    ], [
-      -L$MONGODB_SASL_DIR/$PHP_LIBDIR
-    ])
-
-    PHP_CHECK_LIBRARY(sasl2, sasl_client_done,
-    [
-      AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 1)
-    ], [
-      AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
-    ])
+    AC_SUBST(MONGOC_ENABLE_SASL, 0)
+    AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
   fi
-else
-  AC_SUBST(MONGOC_ENABLE_SASL, 0)
-  AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
-fi
 
   m4_include(src/libmongoc/build/autotools/m4/ax_prototype.m4)
   m4_include(src/libmongoc/build/autotools/CheckCompiler.m4)
