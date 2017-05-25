@@ -571,6 +571,11 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 		return false;
 	}
 
+	/* maxAwaitTimeMS must be set before the cursor is sent */
+	if (query->max_await_time_ms) {
+		mongoc_cursor_set_max_await_time_ms(cursor, query->max_await_time_ms);
+	}
+
 	if (!phongo_advance_cursor_and_check_for_error(cursor TSRMLS_CC)) {
 		return false;
 	}
