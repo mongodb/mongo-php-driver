@@ -492,9 +492,13 @@ bool php_phongo_ping_connection(zval *manager)
     command = BCON_NEW ("ping", BCON_INT32(1));
 
     if (!mongoc_client_command_simple(client, "testing", command, NULL, &reply, &error)) {
+        bson_destroy(command);
+        bson_destroy(&reply);
         return false;
     }
 
+    bson_destroy(command);
+    bson_destroy(&reply);
     return true;
 }
 
