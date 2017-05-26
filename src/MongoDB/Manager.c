@@ -196,6 +196,19 @@ PHP_METHOD(Manager, __construct)
 }
 /* }}} */
 
+/* {{{ proto MongoDB\Driver\Cursor Manager::pingConnection()
+   Ping a connection against given URI */
+PHP_METHOD(Manager, pingConnection)
+{
+    if (zend_parse_parameters_none() == FAILURE) {
+        return;
+    }
+
+    if (!php_phongo_ping_connection(getThis())) {
+        phongo_throw_exception(PHONGO_ERROR_CONNECTION_FAILED TSRMLS_CC, "Failed to create Manager from URI");
+    }
+}
+
 /* {{{ proto MongoDB\Driver\Cursor Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
    Execute a Command */
 PHP_METHOD(Manager, executeCommand)
@@ -449,6 +462,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+    PHP_ME(Manager, pingConnection, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

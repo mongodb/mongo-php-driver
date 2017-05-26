@@ -481,6 +481,23 @@ mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
 	return mongoc_bulk_operation_new(ordered);
 } /* }}} */
 
+bool php_phongo_ping_connection(zval *manager)
+{
+    mongoc_client_t *client;
+    bson_t *command, reply;
+    bson_error_t error;
+
+    client = Z_MANAGER_OBJ_P(manager)->client;
+
+    command = BCON_NEW ("ping", BCON_INT32(1));
+
+    if (!mongoc_client_command_simple(client, "testing", command, NULL, &reply, &error)) {
+        return false;
+    }
+
+    return true;
+}
+
 bool phongo_execute_write(zval *manager, const char *namespace, php_phongo_bulkwrite_t  *bulk_write, const mongoc_write_concern_t *write_concern, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	mongoc_client_t *client;
