@@ -205,7 +205,7 @@ PHP_METHOD(Manager, pingConnection)
     }
 
     if (!php_phongo_ping_connection(getThis())) {
-        phongo_throw_exception(PHONGO_ERROR_CONNECTION_FAILED, "Failed to create Manager from URI");
+        phongo_throw_exception(PHONGO_ERROR_CONNECTION_FAILED TSRMLS_CC, "Failed to create Manager from URI");
     }
 }
 
