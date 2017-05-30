@@ -205,6 +205,32 @@ static bool php_phongo_query_init_readconcern(php_phongo_query_t *intern, zval *
 	return true;
 } /* }}} */
 
+/* Initialize the "maxAwaitTimeMS" option. Returns true on success; otherwise,
+ * false is returned and an exception is thrown.
+ *
+ * The "maxAwaitTimeMS" option is assigned to the cursor after query execution
+ * via mongoc_cursor_set_max_await_time_ms(). */
+static bool php_phongo_query_init_max_await_time_ms(php_phongo_query_t *intern, zval *options TSRMLS_DC) /* {{{ */
+{
+	if (php_array_existsc(options, "maxAwaitTimeMS")) {
+		int64_t max_await_time_ms = php_array_fetchc_long(options, "maxAwaitTimeMS");
+
+		if (max_await_time_ms < 0) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxAwaitTimeMS\" option to be >= 0, %" PRId64 " given", max_await_time_ms);
+			return false;
+		}
+
+		if (max_await_time_ms > UINT32_MAX) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxAwaitTimeMS\" option to be <= %" PRIu32 ", %" PRId64 " given", UINT32_MAX, max_await_time_ms);
+			return false;
+		}
+
+		intern->max_await_time_ms = (uint32_t) max_await_time_ms;
+	}
+
+	return true;
+} /* }}} */
+
 /* Initializes the php_phongo_query_t from filter and options arguments. This
  * function will fall back to a modifier in the absence of a top-level option
  * (where applicable). */
@@ -285,6 +311,10 @@ static bool php_phongo_query_init(php_phongo_query_t *intern, zval *filter, zval
 	}
 
 	if (!php_phongo_query_init_readconcern(intern, options TSRMLS_CC)) {
+		return false;
+	}
+
+	if (!php_phongo_query_init_max_await_time_ms(intern, options TSRMLS_CC)) {
 		return false;
 	}
 

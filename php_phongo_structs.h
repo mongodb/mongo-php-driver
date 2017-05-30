@@ -82,6 +82,7 @@ typedef struct {
 	bson_t                *filter;
 	bson_t                *opts;
 	mongoc_read_concern_t *read_concern;
+	uint32_t               max_await_time_ms;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_query_t;
 
