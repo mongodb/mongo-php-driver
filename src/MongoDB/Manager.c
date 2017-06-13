@@ -239,6 +239,14 @@ static void php_phongo_manager_prep_uri_options(zval *options TSRMLS_DC) /* {{{ 
 				continue;
 			}
 
+            if (!strcasecmp(string_key, MONGOC_URI_READPREFERENCETAGS)) {
+				SEPARATE_ZVAL_IF_NOT_REF(option);
+                if (Z_TYPE_P(option) != IS_STRING) {
+                    phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Unsupported readPreference type, a string must be given");
+                }
+				continue;
+			}
+
 			if (!strcasecmp(string_key, MONGOC_URI_AUTHMECHANISMPROPERTIES)) {
 				SEPARATE_ZVAL_IF_NOT_REF(option);
 				php_phongo_manager_prep_authmechanismproperties(*option TSRMLS_CC);
