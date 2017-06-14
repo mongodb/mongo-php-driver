@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::getReadPreference()
+MongoDB\Driver\Manager::__construct(): read preference options of the wrong type will throw an invalid argmument exception
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
@@ -14,7 +14,6 @@ try {
     $manager = new MongoDB\Driver\Manager($uri, $options);
 } catch (\MongoDB\Driver\Exception\InvalidArgumentException $exception) {
     echo $exception->getMessage() . "\n";
-    exit;
 }
 
 ?>
