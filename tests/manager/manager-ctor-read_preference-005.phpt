@@ -1,17 +1,14 @@
 --TEST--
-MongoDB\Driver\Manager::__construct(): read preference options of the wrong type will throw an invalid argmument exception
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
+MongoDB\Driver\Manager::__construct(): read preference options of the wrong type will throw an InvalidArgumentException exception
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
-$test = array(STANDALONE, array('readPreference' => new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY)));
-
-list($uri, $options) = $test;
+$options = array(
+    'readPreference' => []
+);
 
 try {
-    $manager = new MongoDB\Driver\Manager($uri, $options);
+    $manager = new MongoDB\Driver\Manager(null, $options);
 } catch (\MongoDB\Driver\Exception\InvalidArgumentException $exception) {
     echo $exception->getMessage() . "\n";
 }
@@ -19,6 +16,6 @@ try {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-Unsupported readPreference type, a string must be given
+--EXPECT--
+"readPreference" URI option expected to be string
 ===DONE===

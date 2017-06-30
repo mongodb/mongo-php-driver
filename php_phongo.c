@@ -943,7 +943,6 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 		if (!strcasecmp(key, MONGOC_URI_JOURNAL) ||
 		    !strcasecmp(key, MONGOC_URI_MAXSTALENESSSECONDS) ||
 		    !strcasecmp(key, MONGOC_URI_READCONCERNLEVEL) ||
-		    !strcasecmp(key, MONGOC_URI_READPREFERENCE) ||
 		    !strcasecmp(key, MONGOC_URI_READPREFERENCETAGS) ||
 		    !strcasecmp(key, MONGOC_URI_SAFE) ||
 		    !strcasecmp(key, MONGOC_URI_SLAVEOK) ||
@@ -952,6 +951,13 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 		    !strcasecmp(key, MONGOC_URI_APPNAME)) {
 			continue;
 		}
+
+        if (!strcasecmp(key, MONGOC_URI_READPREFERENCE)) {
+            if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+                phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"%s\" URI option expected to be string", key);
+                return false;
+            }
+        }
 
 		if (mongoc_uri_option_is_bool(key)) {
 			if (!mongoc_uri_set_option_as_bool(uri, key, bson_iter_as_bool(&iter))) {
