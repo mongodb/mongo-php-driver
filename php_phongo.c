@@ -943,6 +943,7 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 		if (!strcasecmp(key, MONGOC_URI_JOURNAL) ||
 		    !strcasecmp(key, MONGOC_URI_MAXSTALENESSSECONDS) ||
 		    !strcasecmp(key, MONGOC_URI_READCONCERNLEVEL) ||
+		    !strcasecmp(key, MONGOC_URI_READPREFERENCE) ||
 		    !strcasecmp(key, MONGOC_URI_READPREFERENCETAGS) ||
 		    !strcasecmp(key, MONGOC_URI_SAFE) ||
 		    !strcasecmp(key, MONGOC_URI_SLAVEOK) ||
@@ -951,13 +952,6 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 		    !strcasecmp(key, MONGOC_URI_APPNAME)) {
 			continue;
 		}
-
-        if (!strcasecmp(key, MONGOC_URI_READPREFERENCE)) {
-            if (!BSON_ITER_HOLDS_UTF8(&iter)) {
-                phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"%s\" URI option expected to be string", key);
-                return false;
-            }
-        }
 
 		if (mongoc_uri_option_is_bool(key)) {
 			if (!mongoc_uri_set_option_as_bool(uri, key, bson_iter_as_bool(&iter))) {
@@ -1116,25 +1110,31 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 		mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
 	}
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCE) && BSON_ITER_HOLDS_UTF8(&iter)) {
-		const char *str = bson_iter_utf8(&iter, NULL);
+	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCE)) {
+        const char *key = bson_iter_key(&iter);
+        if (BSON_ITER_HOLDS_UTF8(&iter)) {
+            const char *str = bson_iter_utf8(&iter, NULL);
 
-		if (0 == strcasecmp("primary", str)) {
-			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_PRIMARY);
-		} else if (0 == strcasecmp("primarypreferred", str)) {
-			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_PRIMARY_PREFERRED);
-		} else if (0 == strcasecmp("secondary", str)) {
-			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY);
-		} else if (0 == strcasecmp("secondarypreferred", str)) {
-			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
-		} else if (0 == strcasecmp("nearest", str)) {
-			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_NEAREST);
-		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Unsupported readPreference value: '%s'", str);
-			mongoc_read_prefs_destroy(new_rp);
+			if (0 == strcasecmp("primary", str)) {
+				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_PRIMARY);
+			} else if (0 == strcasecmp("primarypreferred", str)) {
+				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_PRIMARY_PREFERRED);
+			} else if (0 == strcasecmp("secondary", str)) {
+				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY);
+			} else if (0 == strcasecmp("secondarypreferred", str)) {
+				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
+			} else if (0 == strcasecmp("nearest", str)) {
+				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_NEAREST);
+			} else {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Unsupported %s value: '%s'", key, str);
+				mongoc_read_prefs_destroy(new_rp);
 
-			return false;
-		}
+				return false;
+			}
+	    } else {
+	        phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s URI option expected to be string", key);
+	        return false;
+	    }
 	}
 
 	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCETAGS) && BSON_ITER_HOLDS_ARRAY(&iter)) {
