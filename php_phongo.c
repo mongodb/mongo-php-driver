@@ -1112,8 +1112,8 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 
 	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCE)) {
 		const char *key = bson_iter_key(&iter);
-        if (BSON_ITER_HOLDS_UTF8(&iter)) {
-            const char *str = bson_iter_utf8(&iter, NULL);
+		if (BSON_ITER_HOLDS_UTF8(&iter)) {
+			const char *str = bson_iter_utf8(&iter, NULL);
 
 			if (0 == strcasecmp("primary", str)) {
 				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_PRIMARY);
