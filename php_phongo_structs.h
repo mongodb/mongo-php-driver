@@ -139,24 +139,27 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	char    *data;
-	int      data_len;
-	uint8_t  type;
+	char      *data;
+	int        data_len;
+	uint8_t    type;
+	HashTable *properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_binary_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	bool              initialized;
-	bson_decimal128_t decimal;
+	bool               initialized;
+	bson_decimal128_t  decimal;
+	HashTable         *properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_decimal128_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	char   *code;
-	size_t  code_len;
-	bson_t *scope;
+	char      *code;
+	size_t     code_len;
+	bson_t    *scope;
+	HashTable *properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_javascript_t;
 
@@ -172,32 +175,36 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	bool initialized;
-	char oid[25];
+	bool       initialized;
+	char       oid[25];
+	HashTable *properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_objectid_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	char *pattern;
-	int   pattern_len;
-	char *flags;
-	int   flags_len;
+	char      *pattern;
+	int        pattern_len;
+	char      *flags;
+	int        flags_len;
+	HashTable *properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_regex_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	bool     initialized;
-	uint32_t increment;
-	uint32_t timestamp;
+	bool       initialized;
+	uint32_t   increment;
+	uint32_t   timestamp;
+	HashTable *properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_timestamp_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	bool    initialized;
-	int64_t milliseconds;
+	bool       initialized;
+	int64_t    milliseconds;
+	HashTable *properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_utcdatetime_t;
 
