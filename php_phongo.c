@@ -1111,7 +1111,7 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 	}
 
 	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCE)) {
-        const char *key = bson_iter_key(&iter);
+		const char *key = bson_iter_key(&iter);
         if (BSON_ITER_HOLDS_UTF8(&iter)) {
             const char *str = bson_iter_utf8(&iter, NULL);
 
@@ -1131,10 +1131,10 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 
 				return false;
 			}
-	    } else {
-	        phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s URI option expected to be string", key);
-	        return false;
-	    }
+		} else {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s URI option expected to be string", key);
+			return false;
+		}
 	}
 
 	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCETAGS) && BSON_ITER_HOLDS_ARRAY(&iter)) {
