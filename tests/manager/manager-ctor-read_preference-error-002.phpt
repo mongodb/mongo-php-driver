@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::__construct(): invalid read preference (maxStalenesSeconds)
+MongoDB\Driver\Manager::__construct(): invalid read preference (maxStalenessSeconds)
 --FILE--
 <?php
 
