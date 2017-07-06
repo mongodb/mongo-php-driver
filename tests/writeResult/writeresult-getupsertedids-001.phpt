@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\WriteResult::getUpsertedIds()
+MongoDB\Driver\WriteResult::getUpsertedIds() with server-generated values
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>

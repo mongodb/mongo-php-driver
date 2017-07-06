@@ -21,6 +21,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
+#include "php_array_api.h"
 #include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
@@ -261,44 +262,33 @@ static PHP_METHOD(WriteResult, getUpsertedIds)
 
 	if (bson_iter_init_find(&iter, intern->reply, "upserted") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
 		while (bson_iter_next(&child)) {
-			int32_t index;
-			bson_iter_t outer;
+			uint32_t               data_len;
+			const uint8_t         *data = NULL;
+			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
 
-			if (!BSON_ITER_HOLDS_DOCUMENT(&child) || !bson_iter_recurse(&child, &outer)) {
-				continue;
-			}
-			if (!bson_iter_find(&outer, "index") || !BSON_ITER_HOLDS_INT32(&outer)) {
-				continue;
-			}
+			/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type so we can
+			 * easily access the "index" and "_id" fields. */
+			state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-			index = bson_iter_int32(&outer);
-
-			if (!bson_iter_find(&outer, "_id")) {
+			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
 				continue;
 			}
 
-			if (BSON_ITER_HOLDS_OID(&outer)) {
+			bson_iter_document(&child, &data_len, &data);
+
+			if (php_phongo_bson_to_zval_ex(data, data_len, &state)) {
 #if PHP_VERSION_ID >= 70000
-				zval zid;
-
-				php_phongo_objectid_new_from_oid(&zid, bson_iter_oid(&outer) TSRMLS_CC);
-				add_index_zval(return_value, index, &zid);
+				zval *zid = php_array_fetchc(&state.zchild, "_id");
+				add_index_zval(return_value, php_array_fetchc_long(&state.zchild, "index"), zid);
+				zval_add_ref(zid);
 #else
-				zval *zid = NULL;
-				MAKE_STD_ZVAL(zid);
-
-				php_phongo_objectid_new_from_oid(zid, bson_iter_oid(&outer) TSRMLS_CC);
-				add_index_zval(return_value, index, zid);
+				zval *zid = php_array_fetchc(state.zchild, "_id");
+				add_index_zval(return_value, php_array_fetchc_long(state.zchild, "index"), zid);
+				zval_add_ref(&zid);
 #endif
-			} else if (BSON_ITER_HOLDS_INT32(&outer)) {
-				int32_t val = bson_iter_int32(&outer);
-
-				add_index_long(return_value, index, val);
-			} else if (BSON_ITER_HOLDS_INT64(&outer)) {
-				int64_t val = bson_iter_int64(&outer);
-
-				ADD_INDEX_INT64(return_value, index, val);
 			}
+
+			zval_ptr_dtor(&state.zchild);
 		}
 	}
 } /* }}} */
