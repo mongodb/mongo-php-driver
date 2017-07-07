@@ -28,10 +28,10 @@ echo throws(function() use ($bulk) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-update document contains invalid keys
+update document contains invalid key: empty key
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-update document contains invalid keys
+update document contains invalid key: corrupt BSON
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Invalid key 'z': update only works with $ operators
