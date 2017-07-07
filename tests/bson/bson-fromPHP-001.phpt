@@ -50,7 +50,7 @@ foreach ($tests as $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 Testing top-level objects
 { "0" : 1, "1" : 2, "2" : 3 }
 { "foo" : "bar" }

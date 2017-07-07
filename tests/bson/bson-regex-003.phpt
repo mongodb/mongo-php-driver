@@ -25,7 +25,7 @@ foreach($tests as $n => $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 Pattern: regexp
 Flags: 
 String representation: /regexp/

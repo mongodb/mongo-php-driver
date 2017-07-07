@@ -24,7 +24,7 @@ foreach ($invalidBson as $bson) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 Could not read document from BSON reader
 Reading document did not exhaust input buffer
 ===DONE===

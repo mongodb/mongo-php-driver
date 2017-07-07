@@ -13,7 +13,7 @@ var_dump(new MongoDB\BSON\UTCDateTime(1234) > new MongoDB\BSON\UTCDateTime(1233)
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 bool(true)
 bool(false)
 bool(false)

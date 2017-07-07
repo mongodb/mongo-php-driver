@@ -20,7 +20,7 @@ foreach ($tests as $bson) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Detected unsupported BSON type 0x06 (undefined) for fieldname "foo"
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException

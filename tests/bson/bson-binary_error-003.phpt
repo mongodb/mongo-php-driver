@@ -16,7 +16,7 @@ echo throws(function() {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected type to be an unsigned 8-bit integer, -1 given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

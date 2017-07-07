@@ -18,7 +18,7 @@ var_dump(new MongoDB\BSON\Timestamp(1234, 5678) > new MongoDB\BSON\Timestamp(123
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 bool(true)
 bool(false)
 bool(false)

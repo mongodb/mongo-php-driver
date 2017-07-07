@@ -11,6 +11,6 @@ var_dump((string) $utcdatetime);
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 string(13) "1416445411987"
 ===DONE===

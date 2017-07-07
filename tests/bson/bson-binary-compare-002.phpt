@@ -22,7 +22,7 @@ var_dump(new MongoDB\BSON\Binary("foo\x00bar", 1) > new MongoDB\BSON\Binary("foo
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 bool(true)
 bool(false)
 bool(false)

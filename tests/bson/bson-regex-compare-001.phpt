@@ -13,7 +13,7 @@ var_dump(new MongoDB\BSON\Regex('regexp') > new MongoDB\BSON\Regex('regexo'));
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 bool(true)
 bool(false)
 bool(false)

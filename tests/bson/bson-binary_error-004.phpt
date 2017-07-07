@@ -24,7 +24,7 @@ echo throws(function() {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected UUID length to be 16 bytes, 15 given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

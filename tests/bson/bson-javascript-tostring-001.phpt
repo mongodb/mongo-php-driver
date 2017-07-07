@@ -12,7 +12,7 @@ var_dump((string) $js);
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 string(28) "function foo() { return 1; }"
 string(30) "function foo() { return bar; }"
 ===DONE===

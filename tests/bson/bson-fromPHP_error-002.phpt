@@ -21,7 +21,7 @@ foreach ($tests as $document) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Unexpected MongoDB\BSON\Type instance: UnknownType
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
