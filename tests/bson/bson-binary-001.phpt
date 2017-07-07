@@ -52,36 +52,36 @@ bool(true)
 bool(true)
 bool(true)
 bool(true)
-Test#0 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "00" } }
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "00" } }"
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "00" } }"
+Test#0 { "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "00" } } }
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "00" } } }"
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "00" } } }"
 bool(true)
-Test#1 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "01" } }
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "01" } }"
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "01" } }"
+Test#1 { "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "01" } } }
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "01" } } }"
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "01" } } }"
 bool(true)
-Test#2 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "02" } }
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "02" } }"
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "02" } }"
+Test#2 { "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "02" } } }
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "02" } } }"
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "02" } } }"
 bool(true)
-Test#3 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "03" } }
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "03" } }"
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "03" } }"
+Test#3 { "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "03" } } }
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "03" } } }"
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "03" } } }"
 bool(true)
-Test#4 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "04" } }
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "04" } }"
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "04" } }"
+Test#4 { "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "04" } } }
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "04" } } }"
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "04" } } }"
 bool(true)
-Test#5 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "05" } }
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "05" } }"
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "05" } }"
+Test#5 { "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "05" } } }
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "05" } } }"
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "05" } } }"
 bool(true)
-Test#6 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "80" } }
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "80" } }"
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "80" } }"
+Test#6 { "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "80" } } }
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "80" } } }"
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "80" } } }"
 bool(true)
-Test#7 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "85" } }
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "85" } }"
-string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "85" } }"
+Test#7 { "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "85" } } }
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "85" } } }"
+string(89) "{ "binary" : { "$binary" : { "base64": "cmFuZG9tQmluYXJ5RGF0YQ==", "subType" : "85" } } }"
 bool(true)
 ===DONE===
