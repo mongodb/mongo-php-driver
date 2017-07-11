@@ -17,7 +17,7 @@ var_dump(toPHP(fromJSON($json)));
 <?php exit(0); ?>
 --EXPECTF--
 { "foo" : { "$timestamp" : { "t" : 5678, "i" : 1234 } } }
-{"foo":{"$timestamp":{"t":5678,"i":1234}}}
+{"foo":{"$timestamp":"24386824307922"}}
 object(stdClass)#%d (%d) {
   ["foo"]=>
   object(MongoDB\BSON\Timestamp)#%d (%d) {
