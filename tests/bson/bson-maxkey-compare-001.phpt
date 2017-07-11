@@ -10,7 +10,7 @@ var_dump(new MongoDB\BSON\MaxKey > new MongoDB\BSON\MaxKey);
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 bool(true)
 bool(false)
 bool(false)

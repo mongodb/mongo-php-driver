@@ -28,7 +28,7 @@ foreach ($tests as $bson) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Could not convert BSON document to a JSON string
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException

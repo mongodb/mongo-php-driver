@@ -12,6 +12,6 @@ var_dump($datetime->format(DATE_RSS));
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 string(31) "Thu, 20 Nov 2014 01:03:31 +0000"
 ===DONE===

@@ -14,6 +14,6 @@ try {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 Could not read document from BSON reader
 ===DONE===

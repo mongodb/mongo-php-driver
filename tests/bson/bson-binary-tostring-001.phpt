@@ -9,6 +9,6 @@ var_dump((string) $binary);
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 string(6) "foobar"
 ===DONE===

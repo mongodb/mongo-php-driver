@@ -15,7 +15,7 @@ echo throws(function() use ($bson) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Detected unknown BSON type 0x31 for fieldname "hello". Are you using the latest driver?
 ===DONE===

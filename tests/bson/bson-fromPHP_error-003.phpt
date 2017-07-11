@@ -29,23 +29,23 @@ foreach ($tests as $document) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-%S\BSON\Type instance UnknownType cannot be serialized as a root element
+MongoDB\BSON\Type instance UnknownType cannot be serialized as a root element
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-%S\BSON\Type instance %S\BSON\Binary cannot be serialized as a root element
+MongoDB\BSON\Type instance MongoDB\BSON\Binary cannot be serialized as a root element
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-%S\BSON\Type instance %S\BSON\Javascript cannot be serialized as a root element
+MongoDB\BSON\Type instance MongoDB\BSON\Javascript cannot be serialized as a root element
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-%S\BSON\Type instance %S\BSON\MinKey cannot be serialized as a root element
+MongoDB\BSON\Type instance MongoDB\BSON\MinKey cannot be serialized as a root element
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-%S\BSON\Type instance %S\BSON\MaxKey cannot be serialized as a root element
+MongoDB\BSON\Type instance MongoDB\BSON\MaxKey cannot be serialized as a root element
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-%S\BSON\Type instance %S\BSON\ObjectID cannot be serialized as a root element
+MongoDB\BSON\Type instance MongoDB\BSON\ObjectID cannot be serialized as a root element
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-%S\BSON\Type instance %S\BSON\Regex cannot be serialized as a root element
+MongoDB\BSON\Type instance MongoDB\BSON\Regex cannot be serialized as a root element
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-%S\BSON\Type instance %S\BSON\Timestamp cannot be serialized as a root element
+MongoDB\BSON\Type instance MongoDB\BSON\Timestamp cannot be serialized as a root element
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-%S\BSON\Type instance %S\BSON\UTCDateTime cannot be serialized as a root element
+MongoDB\BSON\Type instance MongoDB\BSON\UTCDateTime cannot be serialized as a root element
 ===DONE===

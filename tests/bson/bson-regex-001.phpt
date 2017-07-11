@@ -25,12 +25,12 @@ foreach($tests as $n => $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 Pattern: regexp
 Flags: i
 String representation: /regexp/i
-Test#0 { "regex" : { "$regex" : "regexp", "$options" : "i" } }
-string(55) "{ "regex" : { "$regex" : "regexp", "$options" : "i" } }"
-string(55) "{ "regex" : { "$regex" : "regexp", "$options" : "i" } }"
+Test#0 { "regex" : { "$regularExpression" : { "pattern" : "regexp", "options" : "i" } } }
+string(82) "{ "regex" : { "$regularExpression" : { "pattern" : "regexp", "options" : "i" } } }"
+string(82) "{ "regex" : { "$regularExpression" : { "pattern" : "regexp", "options" : "i" } } }"
 bool(true)
 ===DONE===

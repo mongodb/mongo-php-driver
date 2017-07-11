@@ -32,7 +32,7 @@ echo throws(function() {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 Testing packed array with circular reference
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Detected recursion for fieldname "0"

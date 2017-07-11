@@ -16,6 +16,6 @@ try {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 Reading document did not exhaust input buffer
 ===DONE===

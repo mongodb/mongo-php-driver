@@ -11,7 +11,7 @@ var_dump(new MongoDB\BSON\Javascript('function() { return 1; }', ['x' => 1]) == 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 bool(true)
 bool(true)
 bool(true)

@@ -24,7 +24,7 @@ foreach($tests as $n => $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 [1234:5678]
 Test#0 { "timestamp" : { "$timestamp" : { "t" : 5678, "i" : 1234 } } }
 string(63) "{ "timestamp" : { "$timestamp" : { "t" : 5678, "i" : 1234 } } }"

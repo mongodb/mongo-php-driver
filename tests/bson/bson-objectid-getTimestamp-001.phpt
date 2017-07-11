@@ -9,6 +9,6 @@ $ts = $objectid->getTimestamp();
 echo $ts, "\n";
 echo date_create( "@{$ts}" )->format( "Y-m-d H:i:s" ), "\n";
 ?>
---EXPECTF--
+--EXPECT--
 1447757782
 2015-11-17 10:56:22

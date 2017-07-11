@@ -26,10 +26,10 @@ foreach ($tests as $value) {
 <?php exit(0); ?>
 --EXPECT--
 { "_id" : { "$oid" : "56315a7c6118fd1b920270b1" } }
-{ "binary" : { "$binary" : "Zm9v", "$type" : "00" } }
-{ "date" : { "$date" : 1445990400000 } }
+{ "binary" : { "$binary" : { "base64": "Zm9v", "subType" : "00" } } }
+{ "date" : { "$date" : "2015-10-28T00:00:00Z" } }
 { "timestamp" : { "$timestamp" : { "t" : 1446084619, "i" : 0 } } }
-{ "regex" : { "$regex" : "pattern", "$options" : "i" } }
+{ "regex" : { "$regularExpression" : { "pattern" : "pattern", "options" : "i" } } }
 { "minkey" : { "$minKey" : 1 } }
 { "maxkey" : { "$maxKey" : 1 } }
 { "long" : 1234 }

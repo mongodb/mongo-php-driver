@@ -22,7 +22,7 @@ foreach ($invalidBson as $bson) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Could not read document from BSON reader
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
