@@ -336,6 +336,11 @@ static void php_phongo_binary_free_object(phongo_free_object_arg *object TSRMLS_
 		efree(intern->data);
 	}
 
+	if (intern->properties) {
+		zend_hash_destroy(intern->properties);
+		FREE_HASHTABLE(intern->properties);
+	}
+
 #if PHP_VERSION_ID < 70000
 	efree(intern);
 #endif
@@ -390,16 +395,17 @@ static HashTable *php_phongo_binary_get_gc(zval *object, phongo_get_gc_table tab
 	*table = NULL;
 	*n = 0;
 
-	return zend_std_get_properties(object TSRMLS_CC);
+	return Z_BINARY_OBJ_P(object)->properties;
 } /* }}} */
 
-static HashTable *php_phongo_binary_get_properties(zval *object TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_binary_get_properties_hash(zval *object, bool is_debug TSRMLS_DC) /* {{{ */
 {
 	php_phongo_binary_t *intern;
 	HashTable           *props;
 
 	intern = Z_BINARY_OBJ_P(object);
-	props = zend_std_get_properties(object TSRMLS_CC);
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
 
 	if (!intern->data) {
 		return props;
@@ -431,6 +437,17 @@ static HashTable *php_phongo_binary_get_properties(zval *object TSRMLS_DC) /* {{
 
 	return props;
 } /* }}} */
+
+static HashTable *php_phongo_binary_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	*is_temp = 1;
+	return php_phongo_binary_get_properties_hash(object, true TSRMLS_CC);
+} /* }}} */
+
+static HashTable *php_phongo_binary_get_properties(zval *object TSRMLS_DC) /* {{{ */
+{
+	return php_phongo_binary_get_properties_hash(object, false TSRMLS_CC);
+} /* }}} */
 /* }}} */
 
 void php_phongo_binary_init_ce(INIT_FUNC_ARGS) /* {{{ */
@@ -448,6 +465,7 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_binary, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_binary.compare_objects = php_phongo_binary_compare_objects;
+	php_phongo_handler_binary.get_debug_info = php_phongo_binary_get_debug_info;
 	php_phongo_handler_binary.get_gc = php_phongo_binary_get_gc;
 	php_phongo_handler_binary.get_properties = php_phongo_binary_get_properties;
 #if PHP_VERSION_ID >= 70000

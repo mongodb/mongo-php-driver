@@ -167,6 +167,20 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
     ce->unserialize = zend_class_unserialize_deny; \
 } while(0);
 
+#define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, size) do { \
+    if (is_debug) {                                                             \
+        ALLOC_HASHTABLE(props);                                                 \
+        zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);                \
+    } else if ((intern)->properties) {                                          \
+        zend_hash_clean((intern)->properties);                                  \
+        (props) = (intern)->properties;                                         \
+    } else {                                                                    \
+        ALLOC_HASHTABLE(props);                                                 \
+        zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);                \
+        (intern)->properties = (props);                                         \
+    }                                                                           \
+} while(0);
+
 #endif /* PHONGO_H */
 
 

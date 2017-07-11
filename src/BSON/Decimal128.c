@@ -269,6 +269,11 @@ static void php_phongo_decimal128_free_object(phongo_free_object_arg *object TSR
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	if (intern->properties) {
+		zend_hash_destroy(intern->properties);
+		FREE_HASHTABLE(intern->properties);
+	}
+
 #if PHP_VERSION_ID < 70000
 	efree(intern);
 #endif
@@ -303,17 +308,18 @@ static HashTable *php_phongo_decimal128_get_gc(zval *object, phongo_get_gc_table
 	*table = NULL;
 	*n = 0;
 
-	return zend_std_get_properties(object TSRMLS_CC);
+	return Z_DECIMAL128_OBJ_P(object)->properties;
 } /* }}} */
 
-static HashTable *php_phongo_decimal128_get_properties(zval *object TSRMLS_DC) /* {{{ */
+static HashTable *php_phongo_decimal128_get_properties_hash(zval *object, bool is_debug TSRMLS_DC) /* {{{ */
 {
 	php_phongo_decimal128_t *intern;
 	HashTable               *props;
 	char                     outbuf[BSON_DECIMAL128_STRING] = "";
 
 	intern = Z_DECIMAL128_OBJ_P(object);
-	props = zend_std_get_properties(object TSRMLS_CC);
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 1);
 
 	if (!intern->initialized) {
 		return props;
@@ -340,6 +346,17 @@ static HashTable *php_phongo_decimal128_get_properties(zval *object TSRMLS_DC) /
 
 	return props;
 } /* }}} */
+
+static HashTable *php_phongo_decimal128_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+{
+	*is_temp = 1;
+	return php_phongo_decimal128_get_properties_hash(object, true TSRMLS_CC);
+} /* }}} */
+
+static HashTable *php_phongo_decimal128_get_properties(zval *object TSRMLS_DC) /* {{{ */
+{
+	return php_phongo_decimal128_get_properties_hash(object, false TSRMLS_CC);
+} /* }}} */
 /* }}} */
 
 void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS) /* {{{ */
@@ -356,6 +373,7 @@ void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_implements(php_phongo_decimal128_ce TSRMLS_CC, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_decimal128, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_decimal128.get_debug_info = php_phongo_decimal128_get_debug_info;
 	php_phongo_handler_decimal128.get_gc = php_phongo_decimal128_get_gc;
 	php_phongo_handler_decimal128.get_properties = php_phongo_decimal128_get_properties;
 #if PHP_VERSION_ID >= 70000
