@@ -79,6 +79,23 @@ static PHP_METHOD(ReadConcern, getLevel)
 	RETURN_NULL();
 } /* }}} */
 
+/* {{{ proto boolean MongoDB\Driver\ReadConcern::isDefault()
+   Returns whether the read concern has not been modified (i.e. constructed
+   without a level or from a Manager with no read concern URI options). */
+static PHP_METHOD(ReadConcern, isDefault)
+{
+	php_phongo_readconcern_t *intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+
+	intern = Z_READCONCERN_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	RETURN_BOOL(mongoc_read_concern_is_default(intern->read_concern));
+} /* }}} */
+
 /* {{{ proto array MongoDB\Driver\ReadConcern::bsonSerialize()
 */
 static PHP_METHOD(ReadConcern, bsonSerialize)
@@ -104,6 +121,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_readconcern_me[] = {
 	PHP_ME(ReadConcern, __construct, ai_ReadConcern___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadConcern, getLevel, ai_ReadConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ReadConcern, isDefault, ai_ReadConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(ReadConcern, bsonSerialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
