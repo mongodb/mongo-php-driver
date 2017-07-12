@@ -158,6 +158,23 @@ static PHP_METHOD(WriteConcern, getJournal)
 	RETURN_NULL();
 } /* }}} */
 
+/* {{{ proto boolean MongoDB\Driver\WriteConcern::isDefault()
+   Returns whether the write concern has not been modified (i.e. from a Manager
+   with no write concern URI options). */
+static PHP_METHOD(WriteConcern, isDefault)
+{
+	php_phongo_writeconcern_t *intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+
+	intern = Z_WRITECONCERN_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	RETURN_BOOL(mongoc_write_concern_is_default(intern->write_concern));
+} /* }}} */
+
 /* {{{ proto array MongoDB\Driver\WriteConcern::bsonSerialize()
 */
 static PHP_METHOD(WriteConcern, bsonSerialize)
@@ -187,6 +204,7 @@ static zend_function_entry php_phongo_writeconcern_me[] = {
 	PHP_ME(WriteConcern, getW, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, getJournal, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, isDefault, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, bsonSerialize, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
