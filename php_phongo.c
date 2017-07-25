@@ -2409,14 +2409,9 @@ ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromJSON, 0, 0, 1)
 	ZEND_ARG_INFO(0, json)
 ZEND_END_ARG_INFO();
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Monitoring_addSubscriber, 0, 0, 1)
-	ZEND_ARG_INFO(0, subscriber)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Monitoring_removeSubscriber, 0, 0, 1)
-	ZEND_ARG_INFO(0, subscriber)
-ZEND_END_ARG_INFO()
-
+ZEND_BEGIN_ARG_INFO_EX(ai_mongodb_driver_monitoring_subscriber, 0, 0, 1)
+	ZEND_ARG_OBJ_INFO(0, subscriber, MongoDB\\Driver\\Monitoring\\Subscriber, 0)
+ZEND_END_ARG_INFO();
 
 static const zend_function_entry mongodb_functions[] = {
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", fromPHP, PHP_FN(MongoDB_BSON_fromPHP), ai_bson_fromPHP)
@@ -2424,8 +2419,8 @@ static const zend_function_entry mongodb_functions[] = {
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", toJSON, PHP_FN(MongoDB_BSON_toJSON), ai_bson_toJSON)
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", toExtendedJSON, PHP_FN(MongoDB_BSON_toExtendedJSON), ai_bson_toExtendedJSON)
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", fromJSON, PHP_FN(MongoDB_BSON_fromJSON), ai_bson_fromJSON)
-	ZEND_NS_NAMED_FE("MongoDB\\Driver\\Monitoring", addSubscriber, PHP_FN(MongoDB_Driver_Monitoring_addSubscriber), ai_Monitoring_addSubscriber)
-	ZEND_NS_NAMED_FE("MongoDB\\Driver\\Monitoring", removeSubscriber, PHP_FN(MongoDB_Driver_Monitoring_removeSubscriber), ai_Monitoring_removeSubscriber)
+	ZEND_NS_NAMED_FE("MongoDB\\Driver\\Monitoring", addSubscriber, PHP_FN(MongoDB_Driver_Monitoring_addSubscriber), ai_mongodb_driver_monitoring_subscriber)
+	ZEND_NS_NAMED_FE("MongoDB\\Driver\\Monitoring", removeSubscriber, PHP_FN(MongoDB_Driver_Monitoring_removeSubscriber), ai_mongodb_driver_monitoring_subscriber)
 	PHP_FE_END
 };
 /* }}} */
