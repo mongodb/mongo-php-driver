@@ -1431,7 +1431,7 @@ static void php_phongo_dispatch_handlers(const char *name, zval *z_event)
 #if PHP_VERSION_ID >= 70000
 	zval        *value;
 
-	ZEND_HASH_FOREACH_VAL(&MONGODB_G(subscribers), value) {
+	ZEND_HASH_FOREACH_VAL(MONGODB_G(subscribers), value) {
 		/* We can't use the zend_call_method_with_1_params macro here, as it
 		 * does a sizeof() on the name argument, which does only work with
 		 * constant names, but not with parameterized ones as it does
@@ -1442,11 +1442,11 @@ static void php_phongo_dispatch_handlers(const char *name, zval *z_event)
 	HashPosition pos;
 	TSRMLS_FETCH();
 
-	zend_hash_internal_pointer_reset_ex(&MONGODB_G(subscribers), &pos);
-	for (;; zend_hash_move_forward_ex(&MONGODB_G(subscribers), &pos)) {
+	zend_hash_internal_pointer_reset_ex(MONGODB_G(subscribers), &pos);
+	for (;; zend_hash_move_forward_ex(MONGODB_G(subscribers), &pos)) {
 		zval  **value;
 
-		if (zend_hash_get_current_data_ex(&MONGODB_G(subscribers), (void **) &value, &pos) == FAILURE) {
+		if (zend_hash_get_current_data_ex(MONGODB_G(subscribers), (void **) &value, &pos) == FAILURE) {
 			break;
 		}
 
@@ -1469,8 +1469,8 @@ static void php_phongo_command_started(const mongoc_apm_command_started_t *event
 #endif
 	TSRMLS_FETCH();
 
-	/* Check for subscriber size */
-	if (zend_hash_num_elements(&MONGODB_G(subscribers)) == 0) {
+	/* Return early if there are no APM subscribers to notify */
+	if (!MONGODB_G(subscribers) || zend_hash_num_elements(MONGODB_G(subscribers)) == 0) {
 		return;
 	}
 
@@ -1509,8 +1509,8 @@ static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t *e
 #endif
 	TSRMLS_FETCH();
 
-	/* Check for subscriber size */
-	if (zend_hash_num_elements(&MONGODB_G(subscribers)) == 0) {
+	/* Return early if there are no APM subscribers to notify */
+	if (!MONGODB_G(subscribers) || zend_hash_num_elements(MONGODB_G(subscribers)) == 0) {
 		return;
 	}
 
@@ -1553,8 +1553,8 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t *event)
 
 	default_exception_ce = zend_exception_get_default(TSRMLS_C);
 
-	/* Check for subscriber size */
-	if (zend_hash_num_elements(&MONGODB_G(subscribers)) == 0) {
+	/* Return early if there are no APM subscribers to notify */
+	if (!MONGODB_G(subscribers) || zend_hash_num_elements(MONGODB_G(subscribers)) == 0) {
 		return;
 	}
 
@@ -2091,8 +2091,12 @@ static void php_phongo_pclient_dtor(void *pp)
 /* {{{ PHP_RINIT_FUNCTION */
 PHP_RINIT_FUNCTION(mongodb)
 {
-	/* Initialize HashTable for APM subscribers */
-	zend_hash_init(&MONGODB_G(subscribers), 0, NULL, ZVAL_PTR_DTOR, 0);
+	/* Initialize HashTable for APM subscribers, which is initialized to NULL in
+	 * GINIT and destroyed and reset to NULL in RSHUTDOWN. */
+	if (MONGODB_G(subscribers) == NULL) {
+		ALLOC_HASHTABLE(MONGODB_G(subscribers));
+		zend_hash_init(MONGODB_G(subscribers), 0, NULL, ZVAL_PTR_DTOR, 0);
+	}
 
 	return SUCCESS;
 }
@@ -2272,7 +2276,12 @@ PHP_MSHUTDOWN_FUNCTION(mongodb)
 /* {{{ PHP_RSHUTDOWN_FUNCTION */
 PHP_RSHUTDOWN_FUNCTION(mongodb)
 {
-	zend_hash_destroy(&MONGODB_G(subscribers));
+	/* Destroy HashTable for APM subscribers, which was initialized in RINIT */
+	if (MONGODB_G(subscribers)) {
+		zend_hash_destroy(MONGODB_G(subscribers));
+		FREE_HASHTABLE(MONGODB_G(subscribers));
+		MONGODB_G(subscribers) = NULL;
+	}
 
 	return SUCCESS;
 }
