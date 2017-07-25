@@ -1,5 +1,5 @@
 --TEST--
-APM: commandStarted callback
+MongoDB\Driver\Monitoring\CommandStartedEvent
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -37,7 +37,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 $query = new MongoDB\Driver\Query( [] );
 $subscriber = new MySubscriber;
 
-MongoDB\Monitoring\addSubscriber( $subscriber );
+MongoDB\Driver\Monitoring\addSubscriber( $subscriber );
 
 $cursor = $m->executeQuery( "demo.test", $query );
 ?>

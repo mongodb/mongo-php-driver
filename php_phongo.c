@@ -67,7 +67,7 @@
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
-#include "src/MongoDB/Monitoring.h"
+#include "src/MongoDB/Monitoring/functions.h"
 
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO"
@@ -2424,8 +2424,8 @@ static const zend_function_entry mongodb_functions[] = {
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", toJSON, PHP_FN(MongoDB_BSON_toJSON), ai_bson_toJSON)
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", toExtendedJSON, PHP_FN(MongoDB_BSON_toExtendedJSON), ai_bson_toExtendedJSON)
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", fromJSON, PHP_FN(MongoDB_BSON_fromJSON), ai_bson_fromJSON)
-	ZEND_NS_NAMED_FE("MongoDB\\Monitoring", addSubscriber, PHP_FN(MongoDB_Monitoring_addSubscriber), ai_Monitoring_addSubscriber)
-	ZEND_NS_NAMED_FE("MongoDB\\Monitoring", removeSubscriber, PHP_FN(MongoDB_Monitoring_removeSubscriber), ai_Monitoring_removeSubscriber)
+	ZEND_NS_NAMED_FE("MongoDB\\Driver\\Monitoring", addSubscriber, PHP_FN(MongoDB_Driver_Monitoring_addSubscriber), ai_Monitoring_addSubscriber)
+	ZEND_NS_NAMED_FE("MongoDB\\Driver\\Monitoring", removeSubscriber, PHP_FN(MongoDB_Driver_Monitoring_removeSubscriber), ai_Monitoring_removeSubscriber)
 	PHP_FE_END
 };
 /* }}} */

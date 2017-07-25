@@ -1,5 +1,5 @@
 --TEST--
-APM: Manager::addSubscriber() (single)
+MongoDB\Driver\Monitoring\removeSubscriber(): Removing the only subscriber
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -24,19 +24,24 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 	}
 }
 
-CLEANUP( STANDALONE );
 $query = new MongoDB\Driver\Query( [] );
 $subscriber = new MySubscriber;
 
 echo "Before addSubscriber\n";
 $cursor = $m->executeQuery( "demo.test", $query );
 
-MongoDB\Monitoring\addSubscriber( $subscriber );
+MongoDB\Driver\Monitoring\addSubscriber( $subscriber );
 
 echo "After addSubscriber\n";
+$cursor = $m->executeQuery( "demo.test", $query );
+
+MongoDB\Driver\Monitoring\removeSubscriber( $subscriber );
+
+echo "After removeSubscriber\n";
 $cursor = $m->executeQuery( "demo.test", $query );
 ?>
 --EXPECT--
 Before addSubscriber
 After addSubscriber
 - started: find
+After removeSubscriber

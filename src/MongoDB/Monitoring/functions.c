@@ -1,18 +1,24 @@
 /*
- * Copyright 2014-2017 MongoDB, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+  +---------------------------------------------------------------------------+
+  | PHP Driver for MongoDB                                                    |
+  +---------------------------------------------------------------------------+
+  | Copyright 2016-2016 MongoDB, Inc.                                         |
+  |                                                                           |
+  | Licensed under the Apache License, Version 2.0 (the "License");           |
+  | you may not use this file except in compliance with the License.          |
+  | You may obtain a copy of the License at                                   |
+  |                                                                           |
+  | http://www.apache.org/licenses/LICENSE-2.0                                |
+  |                                                                           |
+  | Unless required by applicable law or agreed to in writing, software       |
+  | distributed under the License is distributed on an "AS IS" BASIS,         |
+  | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  |
+  | See the License for the specific language governing permissions and       |
+  | limitations under the License.                                            |
+  +---------------------------------------------------------------------------+
+  | Copyright (c) 2016-2016 MongoDB, Inc.                                     |
+  +---------------------------------------------------------------------------+
+*/
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -34,9 +40,9 @@ static char *php_phongo_make_subscriber_hash(zval *subscriber TSRMLS_DC)
 	return hash;
 }
 
-/* {{{ proto void MongoDB\Monitoring::addSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
+/* {{{ proto void MongoDB\Driver\Monitoring\addSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
    Adds a monitoring subscriber to the set of subscribers */
-PHP_FUNCTION(MongoDB_Monitoring_addSubscriber)
+PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 {
 	zval                         *zSubscriber = NULL;
 	char                         *hash;
@@ -59,6 +65,7 @@ PHP_FUNCTION(MongoDB_Monitoring_addSubscriber)
 	}
 
 	hash = php_phongo_make_subscriber_hash(zSubscriber TSRMLS_CC);
+
 	/* If we have already stored the subscriber, bail out. Otherwise, add
 	 * subscriber to list */
 #if PHP_VERSION_ID >= 70000
@@ -81,9 +88,9 @@ PHP_FUNCTION(MongoDB_Monitoring_addSubscriber)
 }
 /* }}} */
 
-/* {{{ proto void MongoDB\Monitoring::removeSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
+/* {{{ proto void MongoDB\Driver\Monitoring\removeSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
    Removes a monitoring subscriber from the set of subscribers */
-PHP_FUNCTION(MongoDB_Monitoring_removeSubscriber)
+PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 {
 	zval                         *zSubscriber = NULL;
 	char                         *hash;

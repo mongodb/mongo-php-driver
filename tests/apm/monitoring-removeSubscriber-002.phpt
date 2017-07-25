@@ -1,5 +1,5 @@
 --TEST--
-APM: Manager::addSubscriber() (multiple)
+MongoDB\Driver\Monitoring\removeSubscriber(): Removing one of multiple subscribers
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -31,28 +31,26 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 	}
 }
 
-CLEANUP( STANDALONE );
 $query = new MongoDB\Driver\Query( [] );
 $subscriber1 = new MySubscriber( "ONE" );
 $subscriber2 = new MySubscriber( "TWO" );
-$subscriber3 = new MySubscriber( "THR" );
 
 echo "Before addSubscriber\n";
 $cursor = $m->executeQuery( "demo.test", $query );
 
-MongoDB\Monitoring\addSubscriber( $subscriber1 );
+MongoDB\Driver\Monitoring\addSubscriber( $subscriber1 );
 
 echo "After addSubscriber (ONE)\n";
 $cursor = $m->executeQuery( "demo.test", $query );
 
-MongoDB\Monitoring\addSubscriber( $subscriber2 );
+MongoDB\Driver\Monitoring\addSubscriber( $subscriber2 );
 
 echo "After addSubscriber (TWO)\n";
 $cursor = $m->executeQuery( "demo.test", $query );
 
-MongoDB\Monitoring\addSubscriber( $subscriber3 );
+MongoDB\Driver\Monitoring\removeSubscriber( $subscriber2 );
 
-echo "After addSubscriber (THR)\n";
+echo "After removeSubscriber (TWO)\n";
 $cursor = $m->executeQuery( "demo.test", $query );
 ?>
 --EXPECT--
@@ -62,7 +60,5 @@ After addSubscriber (ONE)
 After addSubscriber (TWO)
 - (ONE) - started: find
 - (TWO) - started: find
-After addSubscriber (THR)
+After removeSubscriber (TWO)
 - (ONE) - started: find
-- (TWO) - started: find
-- (THR) - started: find

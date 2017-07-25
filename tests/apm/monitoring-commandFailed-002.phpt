@@ -1,5 +1,5 @@
 --TEST--
-APM: commandSucceeded callback (requestId and operationId match)
+MongoDB\Driver\Monitoring\CommandFailedEvent: requestId and operationId match
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -19,25 +19,25 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 
 	public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event )
 	{
-		echo "succeeded: ", $event->getCommandName(), "\n";
-		echo "- requestId matches: ", $this->startRequestId == $event->getRequestId() ? 'yes' : 'no', " \n";
-		echo "- operationId matches: ", $this->startOperationId == $event->getOperationId() ? 'yes' : 'no', " \n";
 	}
 
 	public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event )
 	{
+		echo "failed: ", $event->getCommandName(), "\n";
+		echo "- requestId matches: ", $this->startRequestId == $event->getRequestId() ? 'yes' : 'no', " \n";
+		echo "- operationId matches: ", $this->startOperationId == $event->getOperationId() ? 'yes' : 'no', " \n";
 	}
 }
 
 $query = new MongoDB\Driver\Query( [] );
 $subscriber = new MySubscriber;
 
-MongoDB\Monitoring\addSubscriber( $subscriber );
+MongoDB\Driver\Monitoring\addSubscriber( $subscriber );
 
-$cursor = $m->executeQuery( "demo.test", $query );
+CLEANUP( STANDALONE );
 ?>
 --EXPECT--
-started: find
-succeeded: find
+started: drop
+failed: drop
 - requestId matches: yes 
 - operationId matches: yes
