@@ -1094,7 +1094,7 @@ static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, int type)
 		if (type == 0) {
 			str = bson_as_json(b, &str_len);
 		} else {
-			str = bson_as_extended_json(b, &str_len);
+			str = bson_as_canonical_json(b, &str_len);
 		}
 
 		if (!str) {
