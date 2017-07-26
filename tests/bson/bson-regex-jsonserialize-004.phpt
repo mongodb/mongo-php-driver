@@ -16,7 +16,7 @@ var_dump(toPHP(fromJSON($json)));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-{ "foo" : { "$regularExpression" : { "pattern" : "pattern", "options" : "i" } } }
+{ "foo" : { "$regex" : "pattern", "$options" : "i" } }
 {"foo":{"$regex":"pattern","$options":"i"}}
 object(stdClass)#%d (%d) {
   ["foo"]=>

@@ -16,7 +16,7 @@ var_dump(toPHP(fromJSON($json)));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-{ "foo" : { "$binary" : { "base64": "Z2FyZ2xlYmxhc3Rlcg==", "subType" : "18" } } }
+{ "foo" : { "$binary" : "Z2FyZ2xlYmxhc3Rlcg==", "$type" : "18" } }
 {"foo":{"$binary":"Z2FyZ2xlYmxhc3Rlcg==","$type":"18"}}
 object(stdClass)#%d (%d) {
   ["foo"]=>
