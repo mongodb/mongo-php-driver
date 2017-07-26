@@ -52,23 +52,29 @@ PHP_FUNCTION(MongoDB_Monitoring_addSubscriber)
 		return;
 	}
 
+	/* The HashTable should never be NULL, as it's initialized during RINIT and
+	 * destroyed during RSHUTDOWN. This is simply a defensive guard. */
+	if (!MONGODB_G(subscribers)) {
+		return;
+	}
+
 	hash = php_phongo_make_subscriber_hash(zSubscriber TSRMLS_CC);
 	/* If we have already stored the subscriber, bail out. Otherwise, add
 	 * subscriber to list */
 #if PHP_VERSION_ID >= 70000
-	if ((subscriber = zend_hash_str_find(&MONGODB_G(subscribers), hash, strlen(hash)))) {
+	if ((subscriber = zend_hash_str_find(MONGODB_G(subscribers), hash, strlen(hash)))) {
 		efree(hash);
 		return;
 	}
 
-	zend_hash_str_update(&MONGODB_G(subscribers), hash, strlen(hash), zSubscriber);
+	zend_hash_str_update(MONGODB_G(subscribers), hash, strlen(hash), zSubscriber);
 #else
-	if (zend_hash_find(&MONGODB_G(subscribers), hash, strlen(hash), (void**) &subscriber) == SUCCESS) {
+	if (zend_hash_find(MONGODB_G(subscribers), hash, strlen(hash), (void**) &subscriber) == SUCCESS) {
 		efree(hash);
 		return;
 	}
 
-	zend_hash_update(&MONGODB_G(subscribers), hash, strlen(hash), (void*) &zSubscriber, sizeof(zval*), NULL);
+	zend_hash_update(MONGODB_G(subscribers), hash, strlen(hash), (void*) &zSubscriber, sizeof(zval*), NULL);
 #endif
 	Z_ADDREF_P(zSubscriber);
 	efree(hash);
@@ -87,12 +93,18 @@ PHP_FUNCTION(MongoDB_Monitoring_removeSubscriber)
 		return;
 	}
 
+	/* The HashTable should never be NULL, as it's initialized during RINIT and
+	 * destroyed during RSHUTDOWN. This is simply a defensive guard. */
+	if (!MONGODB_G(subscribers)) {
+		return;
+	}
+
 	hash = php_phongo_make_subscriber_hash(zSubscriber TSRMLS_CC);
 
 #if PHP_VERSION_ID >= 70000
-	zend_hash_str_del(&MONGODB_G(subscribers), hash, strlen(hash));
+	zend_hash_str_del(MONGODB_G(subscribers), hash, strlen(hash));
 #else
-	zend_hash_del(&MONGODB_G(subscribers), hash, strlen(hash));
+	zend_hash_del(MONGODB_G(subscribers), hash, strlen(hash));
 #endif
 	efree(hash);
 }
