@@ -70,12 +70,12 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 
 	zend_hash_str_update(MONGODB_G(subscribers), hash, strlen(hash), zSubscriber);
 #else
-	if (zend_hash_find(MONGODB_G(subscribers), hash, strlen(hash), (void**) &subscriber) == SUCCESS) {
+	if (zend_hash_find(MONGODB_G(subscribers), hash, strlen(hash) + 1, (void**) &subscriber) == SUCCESS) {
 		efree(hash);
 		return;
 	}
 
-	zend_hash_update(MONGODB_G(subscribers), hash, strlen(hash), (void*) &zSubscriber, sizeof(zval*), NULL);
+	zend_hash_update(MONGODB_G(subscribers), hash, strlen(hash) + 1, (void*) &zSubscriber, sizeof(zval*), NULL);
 #endif
 	Z_ADDREF_P(zSubscriber);
 	efree(hash);
@@ -105,7 +105,7 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 #if PHP_VERSION_ID >= 70000
 	zend_hash_str_del(MONGODB_G(subscribers), hash, strlen(hash));
 #else
-	zend_hash_del(MONGODB_G(subscribers), hash, strlen(hash));
+	zend_hash_del(MONGODB_G(subscribers), hash, strlen(hash) + 1);
 #endif
 	efree(hash);
 }
