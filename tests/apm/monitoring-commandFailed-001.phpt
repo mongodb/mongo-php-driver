@@ -1,5 +1,5 @@
 --TEST--
-APM: commandFailed callback
+MongoDB\Driver\Monitoring\CommandFailedEvent
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE); ?>
 --FILE--
@@ -37,7 +37,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 
 $subscriber = new MySubscriber;
 
-MongoDB\Monitoring\addSubscriber( $subscriber );
+MongoDB\Driver\Monitoring\addSubscriber( $subscriber );
 
 CLEANUP( STANDALONE );
 ?>

@@ -33,7 +33,7 @@ $bulk->insert(['_id' => 2]);
 $bulk->insert(['_id' => 3]);
 $manager->executeBulkWrite(NS, $bulk);
 
-MongoDB\Monitoring\addSubscriber(new MySubscriber);
+MongoDB\Driver\Monitoring\addSubscriber(new MySubscriber);
 
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([], ['batchSize' => 2]));
 

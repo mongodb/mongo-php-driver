@@ -1,5 +1,5 @@
 --TEST--
-APM: Manager::removeSubscriber()
+MongoDB\Driver\Monitoring\addSubscriber(): Adding two subscribers
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -10,9 +10,16 @@ $m = new MongoDB\Driver\Manager(STANDALONE);
 
 class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
+	private $instanceName;
+
+	public function __construct( $instanceName )
+	{
+		$this->instanceName = $instanceName;
+	}
+
 	public function commandStarted( \MongoDB\Driver\Monitoring\CommandStartedEvent $event )
 	{
-		echo "- started: ", $event->getCommandName(), "\n";
+		echo "- ({$this->instanceName}) - started: ", $event->getCommandName(), "\n";
 	}
 
 	public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event )
@@ -24,24 +31,28 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 	}
 }
 
+CLEANUP( STANDALONE );
 $query = new MongoDB\Driver\Query( [] );
-$subscriber = new MySubscriber;
+$subscriber1 = new MySubscriber( "ONE" );
+$subscriber2 = new MySubscriber( "TWO" );
 
 echo "Before addSubscriber\n";
 $cursor = $m->executeQuery( "demo.test", $query );
 
-MongoDB\Monitoring\addSubscriber( $subscriber );
+MongoDB\Driver\Monitoring\addSubscriber( $subscriber1 );
 
-echo "After addSubscriber\n";
+echo "After addSubscriber (ONE)\n";
 $cursor = $m->executeQuery( "demo.test", $query );
 
-MongoDB\Monitoring\removeSubscriber( $subscriber );
+MongoDB\Driver\Monitoring\addSubscriber( $subscriber2 );
 
-echo "After removeSubscriber\n";
+echo "After addSubscriber (TWO)\n";
 $cursor = $m->executeQuery( "demo.test", $query );
 ?>
 --EXPECT--
 Before addSubscriber
-After addSubscriber
-- started: find
-After removeSubscriber
+After addSubscriber (ONE)
+- (ONE) - started: find
+After addSubscriber (TWO)
+- (ONE) - started: find
+- (TWO) - started: find

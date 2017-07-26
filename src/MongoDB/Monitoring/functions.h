@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 MongoDB, Inc.
+ * Copyright 2016-2017 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#ifndef PHONGO_MONITORING_H
-#define PHONGO_MONITORING_H
+#ifndef PHONGO_MONITORING_FUNCTIONS_H
+#define PHONGO_MONITORING_FUNCTIONS_H
 
 #include <php.h>
 
-PHP_FUNCTION(MongoDB_Monitoring_addSubscriber);
-PHP_FUNCTION(MongoDB_Monitoring_removeSubscriber);
+PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber);
+PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber);
 
-#endif	/* PHONGO_BSON_H */
+#endif /* PHONGO_MONITORING_FUNCTIONS_H */
 
 
 /*
@@ -33,4 +33,3 @@ PHP_FUNCTION(MongoDB_Monitoring_removeSubscriber);
  * vim600: noet sw=4 ts=4 fdm=marker
  * vim<600: noet sw=4 ts=4
  */
-

@@ -29,7 +29,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 	}
 }
 
-MongoDB\Monitoring\addSubscriber( new MySubscriber() );
+MongoDB\Driver\Monitoring\addSubscriber( new MySubscriber() );
 CLEANUP(STANDALONE);
 
 $d = 12345678;

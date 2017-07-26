@@ -1,5 +1,5 @@
 --TEST--
-APM: Manager::addSubscriber() (duplicate)
+MongoDB\Driver\Monitoring\CommandSucceededEvent: requestId and operationId match
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; CLEANUP(STANDALONE) ?>
 --FILE--
@@ -12,11 +12,16 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
 	public function commandStarted( \MongoDB\Driver\Monitoring\CommandStartedEvent $event )
 	{
-		echo "- started: ", $event->getCommandName(), "\n";
+		echo "started: ", $event->getCommandName(), "\n";
+		$this->startRequestId = $event->getRequestId();
+		$this->startOperationId = $event->getOperationId();
 	}
 
 	public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event )
 	{
+		echo "succeeded: ", $event->getCommandName(), "\n";
+		echo "- requestId matches: ", $this->startRequestId == $event->getRequestId() ? 'yes' : 'no', " \n";
+		echo "- operationId matches: ", $this->startOperationId == $event->getOperationId() ? 'yes' : 'no', " \n";
 	}
 
 	public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event )
@@ -25,24 +30,14 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 }
 
 $query = new MongoDB\Driver\Query( [] );
-$subscriber = new MySubscriber();
+$subscriber = new MySubscriber;
 
-echo "Before addSubscriber\n";
-$cursor = $m->executeQuery( "demo.test", $query );
+MongoDB\Driver\Monitoring\addSubscriber( $subscriber );
 
-MongoDB\Monitoring\addSubscriber( $subscriber );
-
-echo "After addSubscriber\n";
-$cursor = $m->executeQuery( "demo.test", $query );
-
-MongoDB\Monitoring\addSubscriber( $subscriber );
-
-echo "After addSubscriber\n";
 $cursor = $m->executeQuery( "demo.test", $query );
 ?>
 --EXPECT--
-Before addSubscriber
-After addSubscriber
-- started: find
-After addSubscriber
-- started: find
+started: find
+succeeded: find
+- requestId matches: yes 
+- operationId matches: yes
