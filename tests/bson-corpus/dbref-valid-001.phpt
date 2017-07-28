@@ -16,7 +16,7 @@ $canonicalExtJson = '{"dbref": {"$ref": "collection", "$id": {"$oid": "58921b3e6
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
 // Canonical BSON -> Canonical extJSON 
-echo json_canonicalize(toExtendedJSON($canonicalBson)), "\n";
+echo json_canonicalize(toCanonicalJSON($canonicalBson)), "\n";
 
 // Canonical extJSON -> Canonical BSON 
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";

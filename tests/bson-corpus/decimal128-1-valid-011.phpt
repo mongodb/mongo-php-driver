@@ -16,7 +16,7 @@ $canonicalExtJson = '{"d" : {"$numberDecimal" : "0E+3"}}';
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
 // Canonical BSON -> Canonical extJSON 
-echo json_canonicalize(toExtendedJSON($canonicalBson)), "\n";
+echo json_canonicalize(toCanonicalJSON($canonicalBson)), "\n";
 
 ?>
 ===DONE===

@@ -16,7 +16,7 @@ $canonicalExtJson = '{"x" : { "$binary" : {"base64" : "c//SZESzTGmQ6OfR38A11A=="
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
 // Canonical BSON -> Canonical extJSON 
-echo json_canonicalize(toExtendedJSON($canonicalBson)), "\n";
+echo json_canonicalize(toCanonicalJSON($canonicalBson)), "\n";
 
 // Canonical extJSON -> Canonical BSON 
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
