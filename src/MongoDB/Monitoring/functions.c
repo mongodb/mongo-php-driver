@@ -79,8 +79,7 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 #endif
 	Z_ADDREF_P(zSubscriber);
 	efree(hash);
-}
-/* }}} */
+} /* }}} */
 
 /* {{{ proto void MongoDB\Driver\Monitoring\removeSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
    Removes a monitoring subscriber from the set of subscribers */
@@ -108,5 +107,13 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 	zend_hash_del(MONGODB_G(subscribers), hash, strlen(hash) + 1);
 #endif
 	efree(hash);
-}
-/* }}} */
+} /* }}} */
+
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: noet sw=4 ts=4 fdm=marker
+ * vim<600: noet sw=4 ts=4
+ */
