@@ -1,18 +1,21 @@
 --TEST--
-MongoDB\BSON\toExtendedJSON(): BSON decoding exceptions for malformed documents
+MongoDB\BSON\toRelaxedJSON(): BSON decoding exceptions
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/tools.php';
 
-$tests = array(
-    pack('Vx', 4), // Empty document with invalid length (too small)
-    pack('Vx', 6), // Empty document with invalid length (too large)
-);
+/* We can't really test for bson_iter_init() failure within
+ * bson_as_relaxed_json(), since bson_reader_read() already checks that the
+ * buffer is at least 5 bytes. */
+$tests = [
+    '',
+    str_repeat(fromJSON('{"x": "y"}'), 2),
+];
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {
-        toExtendedJSON($bson);
+        toRelaxedJSON($bson);
     }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 }
 
@@ -23,5 +26,5 @@ foreach ($tests as $bson) {
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 Could not read document from BSON reader
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Could not read document from BSON reader
+Reading document did not exhaust input buffer
 ===DONE===
