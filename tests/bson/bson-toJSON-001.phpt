@@ -7,9 +7,18 @@ require_once __DIR__ . '/../utils/tools.php';
 
 $tests = [
     [],
-    [ 'foo' => 'bar' ],
-    [ 'foo' => [ 1, 2, 3 ]],
-    [ 'foo' => [ 'bar' => 1 ]],
+    [ 'null' => null ],
+    [ 'boolean' => true ],
+    [ 'string' => 'foo' ],
+    [ 'integer' => 123 ],
+    [ 'double' => 1.0, ],
+    /* Note: toJSON() does not properly handle NAN and INF values.
+     * toCanonicalJSON() or toRelaxedJSON() should be used instead. */
+    [ 'nan' => NAN ],
+    [ 'pos_inf' => INF ],
+    [ 'neg_inf' => -INF ],
+    [ 'array' => [ 'foo', 'bar' ]],
+    [ 'document' => [ 'foo' => 'bar' ]],
 ];
 
 foreach ($tests as $value) {
@@ -22,7 +31,14 @@ foreach ($tests as $value) {
 <?php exit(0); ?>
 --EXPECT--
 { }
-{ "foo" : "bar" }
-{ "foo" : [ 1, 2, 3 ] }
-{ "foo" : { "bar" : 1 } }
+{ "null" : null }
+{ "boolean" : true }
+{ "string" : "foo" }
+{ "integer" : 123 }
+{ "double" : 1.0 }
+{ "nan" : nan }
+{ "pos_inf" : inf }
+{ "neg_inf" : -inf }
+{ "array" : [ "foo", "bar" ] }
+{ "document" : { "foo" : "bar" } }
 ===DONE===

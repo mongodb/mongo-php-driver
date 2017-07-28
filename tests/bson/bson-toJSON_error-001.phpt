@@ -8,12 +8,12 @@ require_once __DIR__ . '/../utils/tools.php';
 /* We can't really test for bson_iter_init() failure within bson_as_json(),
  * since bson_reader_read() already checks that the buffer is at least 5 bytes.
  */
-$invalidBson = array(
+$tests = [
     '',
     str_repeat(fromJSON('{"x": "y"}'), 2),
-);
+];
 
-foreach ($invalidBson as $bson) {
+foreach ($tests as $bson) {
     echo throws(function() use ($bson) {
         toJSON($bson);
     }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
