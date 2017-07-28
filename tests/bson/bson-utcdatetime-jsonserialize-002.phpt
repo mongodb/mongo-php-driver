@@ -16,7 +16,7 @@ var_dump(toPHP(fromJSON($json)));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-{ "foo" : { "$date" : "2016-10-11T13:34:26.817Z" } }
+{ "foo" : { "$date" : 1476192866817 } }
 {"foo":{"$date":{"$numberLong":"1476192866817"}}}
 object(stdClass)#%d (%d) {
   ["foo"]=>

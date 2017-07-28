@@ -1,11 +1,11 @@
 --TEST--
-MongoDB\BSON\toExtendedJSON(): BSON decoding exceptions for bson_as_extended_json() failure
+MongoDB\BSON\toCanonicalJSON(): BSON decoding exceptions for bson_as_canonical_json() failure
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/tools.php';
 
-$tests = array(
+$tests = [
     // Invalid UTF-8 characters (i.e. 0xFE, 0xFF) in field name
     pack('VCCCxVa*xx', 17, 2, 254, 255, 3, 'bar'),
     /* Note: we don't use a three-character string in the underflow case, as
@@ -17,11 +17,11 @@ $tests = array(
      */
     pack('VCa*xVa*xx', 17, 1, 'foo', 3, 'ab'), // Invalid field type (underflow)
     pack('VCa*xVa*xx', 20, 1, 'foo', 6, 'abcde'), // Invalid field type (overflow)
-);
+];
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {
-        toExtendedJSON($bson);
+        toCanonicalJSON($bson);
     }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 }
 

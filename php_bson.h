@@ -84,12 +84,6 @@ bool php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval **out
 #endif
 bool php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC);
 
-PHP_FUNCTION(MongoDB_BSON_toPHP);
-PHP_FUNCTION(MongoDB_BSON_fromPHP);
-PHP_FUNCTION(MongoDB_BSON_toJSON);
-PHP_FUNCTION(MongoDB_BSON_toExtendedJSON);
-PHP_FUNCTION(MongoDB_BSON_fromJSON);
-
 #endif	/* PHONGO_BSON_H */
 
 

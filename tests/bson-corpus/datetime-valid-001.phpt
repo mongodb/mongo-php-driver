@@ -17,16 +17,16 @@ $relaxedExtJson = '{"a" : {"$date" : "1970-01-01T00:00:00Z"}}';
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
 // Canonical BSON -> Canonical extJSON 
-echo json_canonicalize(toExtendedJSON($canonicalBson)), "\n";
+echo json_canonicalize(toCanonicalJSON($canonicalBson)), "\n";
 
 // Canonical BSON -> Relaxed extJSON 
-echo json_canonicalize(toJSON($canonicalBson)), "\n";
+echo json_canonicalize(toRelaxedJSON($canonicalBson)), "\n";
 
 // Canonical extJSON -> Canonical BSON 
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
 // Relaxed extJSON -> BSON -> Relaxed extJSON 
-echo json_canonicalize(toJSON(fromJSON($relaxedExtJson))), "\n";
+echo json_canonicalize(toRelaxedJSON(fromJSON($relaxedExtJson))), "\n";
 
 ?>
 ===DONE===

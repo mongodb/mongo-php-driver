@@ -6,14 +6,15 @@ MongoDB\BSON\toJSON(): Encoding extended JSON types
 require_once __DIR__ . '/../utils/tools.php';
 
 $tests = [
-    ['_id' => new MongoDB\BSON\ObjectId('56315a7c6118fd1b920270b1')],
-    ['binary' => new MongoDB\BSON\Binary('foo', MongoDB\BSON\Binary::TYPE_GENERIC)],
-    ['date' => new MongoDB\BSON\UTCDateTime(1445990400000)],
-    ['timestamp' => new MongoDB\BSON\Timestamp(MongoDB\BSON\Binary::TYPE_GENERIC, 1446084619)],
-    ['regex' => new MongoDB\BSON\Regex('pattern', 'i')],
-    ['minkey' => new MongoDB\BSON\MinKey],
-    ['maxkey' => new MongoDB\BSON\MaxKey],
-    ['long' => 1234],
+    [ '_id' => new MongoDB\BSON\ObjectId('56315a7c6118fd1b920270b1') ],
+    [ 'binary' => new MongoDB\BSON\Binary('foo', MongoDB\BSON\Binary::TYPE_GENERIC) ],
+    [ 'date' => new MongoDB\BSON\UTCDateTime(1445990400000) ],
+    [ 'timestamp' => new MongoDB\BSON\Timestamp(1234, 5678) ],
+    [ 'regex' => new MongoDB\BSON\Regex('pattern', 'i') ],
+    [ 'code' => new MongoDB\BSON\Javascript('function() { return 1; }') ],
+    [ 'code_ws' => new MongoDB\BSON\Javascript('function() { return a; }', ['a' => 1]) ],
+    [ 'minkey' => new MongoDB\BSON\MinKey ],
+    [ 'maxkey' => new MongoDB\BSON\MaxKey ],
 ];
 
 foreach ($tests as $value) {
@@ -26,11 +27,12 @@ foreach ($tests as $value) {
 <?php exit(0); ?>
 --EXPECT--
 { "_id" : { "$oid" : "56315a7c6118fd1b920270b1" } }
-{ "binary" : { "$binary" : { "base64": "Zm9v", "subType" : "00" } } }
-{ "date" : { "$date" : "2015-10-28T00:00:00Z" } }
-{ "timestamp" : { "$timestamp" : { "t" : 1446084619, "i" : 0 } } }
-{ "regex" : { "$regularExpression" : { "pattern" : "pattern", "options" : "i" } } }
+{ "binary" : { "$binary" : "Zm9v", "$type" : "00" } }
+{ "date" : { "$date" : 1445990400000 } }
+{ "timestamp" : { "$timestamp" : { "t" : 5678, "i" : 1234 } } }
+{ "regex" : { "$regex" : "pattern", "$options" : "i" } }
+{ "code" : { "$code" : "function() { return 1; }" } }
+{ "code_ws" : { "$code" : "function() { return a; }", "$scope" : { "a" : 1 } } }
 { "minkey" : { "$minKey" : 1 } }
 { "maxkey" : { "$maxKey" : 1 } }
-{ "long" : 1234 }
 ===DONE===

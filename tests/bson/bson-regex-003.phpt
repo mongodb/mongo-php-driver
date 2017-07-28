@@ -29,8 +29,8 @@ foreach($tests as $n => $test) {
 Pattern: regexp
 Flags: 
 String representation: /regexp/
-Test#0 { "regex" : { "$regularExpression" : { "pattern" : "regexp", "options" : "" } } }
-string(81) "{ "regex" : { "$regularExpression" : { "pattern" : "regexp", "options" : "" } } }"
-string(81) "{ "regex" : { "$regularExpression" : { "pattern" : "regexp", "options" : "" } } }"
+Test#0 { "regex" : { "$regex" : "regexp", "$options" : "" } }
+string(54) "{ "regex" : { "$regex" : "regexp", "$options" : "" } }"
+string(54) "{ "regex" : { "$regex" : "regexp", "$options" : "" } }"
 bool(true)
 ===DONE===

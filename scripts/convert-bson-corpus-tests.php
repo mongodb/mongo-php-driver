@@ -2,6 +2,18 @@
 
 require_once __DIR__ . '/../tests/utils/tools.php';
 
+$expectedFailures = [
+    'Double type: 1.23456789012345677E+18' => 'Variation in double\'s string representation (SPEC-850)',
+    'Double type: -1.23456789012345677E+18' => 'Variation in double\'s string representation (SPEC-850)',
+    'Int64 type: -1' => 'PHP encodes integers as 32-bit if range allows',
+    'Int64 type: 0' => 'PHP encodes integers as 32-bit if range allows',
+    'Int64 type: 1' => 'PHP encodes integers as 32-bit if range allows',
+    'Javascript Code with Scope: bad scope doc (field has bad string length)' => 'Depends on PHPC-889',
+    'Javascript Code with Scope: Unicode and embedded null in code string, empty scope' => 'Embedded null in code string is not supported in libbson (CDRIVER-1879)',
+    'Multiple types within the same document: All BSON types' => 'PHP encodes integers as 32-bit if range allows',
+    'Top-level document validity: Bad $date (number, not string or hash)' => 'Legacy extended JSON $date syntax uses numbers (CDRIVER-2223)',
+];
+
 $outputPath = realpath(__DIR__ . '/../tests') . '/bson-corpus/';
 
 if ( ! is_dir($outputPath) && ! mkdir($outputPath, 0755, true)) {
@@ -35,7 +47,7 @@ foreach (array_slice($argv, 1) as $inputFile) {
         foreach ($test['valid'] as $i => $case) {
             $outputFile = sprintf('%s-valid-%03d.phpt', pathinfo($inputFile, PATHINFO_FILENAME), $i + 1);
             try {
-                $output = renderPhpt(getParamsForValid($test, $case));
+                $output = renderPhpt(getParamsForValid($test, $case), $expectedFailures);
             } catch (Exception $e) {
                 printf("Error processing valid[%d] in %s: %s\n", $i, $inputFile, $e->getMessage());
                 continue;
@@ -52,7 +64,7 @@ foreach (array_slice($argv, 1) as $inputFile) {
         foreach ($test['decodeErrors'] as $i => $case) {
             $outputFile = sprintf('%s-decodeError-%03d.phpt', pathinfo($inputFile, PATHINFO_FILENAME), $i + 1);
             try {
-                $output = renderPhpt(getParamsForDecodeError($test, $case));
+                $output = renderPhpt(getParamsForDecodeError($test, $case), $expectedFailures);
             } catch (Exception $e) {
                 printf("Error processing decodeErrors[%d] in %s: %s\n", $i, $inputFile, $e->getMessage());
                 continue;
@@ -69,7 +81,7 @@ foreach (array_slice($argv, 1) as $inputFile) {
         foreach ($test['parseErrors'] as $i => $case) {
             $outputFile = sprintf('%s-parseError-%03d.phpt', pathinfo($inputFile, PATHINFO_FILENAME), $i + 1);
             try {
-                $output = renderPhpt(getParamsForParseError($test, $case));
+                $output = renderPhpt(getParamsForParseError($test, $case), $expectedFailures);
             } catch (Exception $e) {
                 printf("Error processing parseErrors[%d] in %s: %s\n", $i, $inputFile, $e->getMessage());
                 continue;
@@ -139,12 +151,12 @@ function getParamsForValid(array $test, array $case)
     $expect .= $expectedCanonicalBson . "\n";
 
     $code .= "\n// Canonical BSON -> Canonical extJSON \n";
-    $code .= 'echo json_canonicalize(toExtendedJSON($canonicalBson)), "\n";' . "\n";;
+    $code .= 'echo json_canonicalize(toCanonicalJSON($canonicalBson)), "\n";' . "\n";;
     $expect .= $expectedCanonicalExtJson . "\n";
 
     if (isset($relaxedExtJson)) {
         $code .= "\n// Canonical BSON -> Relaxed extJSON \n";
-        $code .= 'echo json_canonicalize(toJSON($canonicalBson)), "\n";' . "\n";;
+        $code .= 'echo json_canonicalize(toRelaxedJSON($canonicalBson)), "\n";' . "\n";;
         $expect .= $expectedRelaxedExtJson . "\n";
     }
 
@@ -160,12 +172,12 @@ function getParamsForValid(array $test, array $case)
         $expect .= $expectedCanonicalBson . "\n";
 
         $code .= "\n// Degenerate BSON -> Canonical extJSON \n";
-        $code .= 'echo json_canonicalize(toExtendedJSON($degenerateBson)), "\n";' . "\n";;
+        $code .= 'echo json_canonicalize(toCanonicalJSON($degenerateBson)), "\n";' . "\n";;
         $expect .= $expectedCanonicalExtJson . "\n";
 
         if (isset($relaxedExtJson)) {
             $code .= "\n// Degenerate BSON -> Relaxed extJSON \n";
-            $code .= 'echo json_canonicalize(toJSON($degenerateBson)), "\n";' . "\n";;
+            $code .= 'echo json_canonicalize(toRelaxedJSON($degenerateBson)), "\n";' . "\n";;
             $expect .= $expectedRelaxedExtJson . "\n";
         }
     }
@@ -178,7 +190,7 @@ function getParamsForValid(array $test, array $case)
 
     if (isset($relaxedExtJson)) {
         $code .= "\n// Relaxed extJSON -> BSON -> Relaxed extJSON \n";
-        $code .= 'echo json_canonicalize(toJSON(fromJSON($relaxedExtJson))), "\n";' . "\n";
+        $code .= 'echo json_canonicalize(toRelaxedJSON(fromJSON($relaxedExtJson))), "\n";' . "\n";
         $expect .= $expectedRelaxedExtJson . "\n";
     }
 
@@ -256,12 +268,16 @@ function getParamsForParseError(array $test, array $case)
     ];
 }
 
-function renderPhpt(array $params)
+function renderPhpt(array $params, array $expectedFailures)
 {
+     $params['%XFAIL%'] = isset($expectedFailures[$params['%NAME%']])
+        ? "--XFAIL--\n" . $expectedFailures[$params['%NAME%']] . "\n"
+        : '';
+
     $template = <<< 'TEMPLATE'
 --TEST--
 %NAME%
---DESCRIPTION--
+%XFAIL%--DESCRIPTION--
 Generated by scripts/convert-bson-corpus-tests.php
 
 DO NOT EDIT THIS FILE
