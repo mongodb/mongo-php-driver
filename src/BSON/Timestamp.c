@@ -163,6 +163,36 @@ static PHP_METHOD(Timestamp, __construct)
 	php_phongo_timestamp_init_from_string(intern, Z_STRVAL_P(increment), Z_STRLEN_P(increment), Z_STRVAL_P(timestamp), Z_STRLEN_P(timestamp) TSRMLS_CC);
 } /* }}} */
 
+/* {{{ proto integer MongoDB\BSON\Timestamp::getIncrement()
+*/
+static PHP_METHOD(Timestamp, getIncrement)
+{
+	php_phongo_timestamp_t *intern;
+
+	intern = Z_TIMESTAMP_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	RETVAL_LONG(intern->increment);
+} /* }}} */
+
+/* {{{ proto integer MongoDB\BSON\Timestamp::getTimestamp()
+*/
+static PHP_METHOD(Timestamp, getTimestamp)
+{
+	php_phongo_timestamp_t *intern;
+
+	intern = Z_TIMESTAMP_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	RETVAL_LONG(intern->timestamp);
+} /* }}} */
+
 /* {{{ proto void MongoDB\BSON\Timestamp::__set_state(array $properties)
 */
 static PHP_METHOD(Timestamp, __set_state)
@@ -357,6 +387,8 @@ static zend_function_entry php_phongo_timestamp_me[] = {
 	PHP_ME(Timestamp, jsonSerialize, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, serialize, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, unserialize, ai_Timestamp_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Timestamp, getIncrement, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Timestamp, getTimestamp, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 /* }}} */
