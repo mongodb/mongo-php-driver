@@ -532,6 +532,7 @@ void php_phongo_javascript_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_javascript_ce->create_object = php_phongo_javascript_create_object;
 	PHONGO_CE_FINAL(php_phongo_javascript_ce);
 
+	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, php_phongo_javascript_interface_ce);
 	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, php_phongo_json_serializable_ce);
 	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_javascript_ce TSRMLS_CC, 1, zend_ce_serializable);
