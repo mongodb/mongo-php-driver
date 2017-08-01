@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::__construct(): read preference options of the wrong type are ignored
+MongoDB\Driver\Manager::__construct(): read preference options of the wrong type will not be ignored
 --FILE--
 <?php
 
@@ -12,17 +12,19 @@ $tests = [
 foreach ($tests as $test) {
     list($uri, $options) = $test;
 
-    $manager = new MongoDB\Driver\Manager($uri, $options);
+    try {
+        $manager = new MongoDB\Driver\Manager($uri, $options);
+    } catch (MongoDB\Driver\Exception\InvalidArgumentException $e) {
+        echo $e->getMessage() . "\n";
+        continue;
+    }
     var_dump($manager->getReadPreference());
 }
 
 ?>
 ===DONE===
 --EXPECTF--
-object(MongoDB\Driver\ReadPreference)#%d (%d) {
-  ["mode"]=>
-  string(9) "secondary"
-}
+readPreference URI option expected to be string
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
