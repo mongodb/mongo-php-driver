@@ -27,9 +27,6 @@ $tests = [
     ['mongodb://127.0.0.1/?SLAVEOK=TRUE', []],
     [null, ['slaveOk' => true]],
     [null, ['SLAVEOK' => true]],
-    // Strict type checking on options array (non-booleans are ignored)
-    [null, ['slaveok' => 'true']],
-    [null, ['slaveok' => 1]],
 ];
 
 foreach ($tests as $test) {
@@ -113,13 +110,5 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(18) "secondaryPreferred"
-}
-object(MongoDB\Driver\ReadPreference)#%d (%d) {
-  ["mode"]=>
-  string(7) "primary"
-}
-object(MongoDB\Driver\ReadPreference)#%d (%d) {
-  ["mode"]=>
-  string(7) "primary"
 }
 ===DONE===
