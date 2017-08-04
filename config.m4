@@ -155,19 +155,28 @@ if test "$MONGODB" != "no"; then
     src/bson.c \
     src/bson-encode.c \
     src/BSON/Binary.c \
+    src/BSON/BinaryInterface.c \
     src/BSON/Decimal128.c \
+    src/BSON/Decimal128Interface.c \
     src/BSON/Javascript.c \
+    src/BSON/JavascriptInterface.c \
     src/BSON/MaxKey.c \
+    src/BSON/MaxKeyInterface.c \
     src/BSON/MinKey.c \
+    src/BSON/MinKeyInterface.c \
     src/BSON/ObjectID.c \
+    src/BSON/ObjectIDInterface.c \
     src/BSON/Persistable.c \
     src/BSON/Regex.c \
+    src/BSON/RegexInterface.c \
     src/BSON/Serializable.c \
     src/BSON/Timestamp.c \
+    src/BSON/TimestampInterface.c \
     src/BSON/Type.c \
     src/BSON/TypeWrapper.c \
     src/BSON/Unserializable.c \
     src/BSON/UTCDateTime.c \
+    src/BSON/UTCDateTimeInterface.c \
     src/BSON/functions.c \
     src/MongoDB/BulkWrite.c \
     src/MongoDB/Command.c \

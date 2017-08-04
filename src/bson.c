@@ -47,6 +47,9 @@
 		zval zwrapper; \
 		zend_call_method_with_1_params(NULL, wrapper_ce, NULL, "createfrombsontype", &zwrapper, &(zchild)); \
 		zval_ptr_dtor(&(zchild)); \
+		if (EG(exception)) { \
+			return false; \
+		} \
 		ZVAL_COPY_VALUE(&(zchild), &zwrapper); \
 	}
 #else
@@ -55,6 +58,9 @@
 		zval *zwrapper; \
 		zend_call_method_with_1_params(NULL, wrapper_ce, NULL, "createfrombsontype", &zwrapper, (zchild)); \
 		zval_ptr_dtor(&(zchild)); \
+		if (EG(exception)) { \
+			return false; \
+		} \
 		zchild = zwrapper; \
 	}
 #endif

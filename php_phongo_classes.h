@@ -257,6 +257,16 @@ extern zend_class_entry *php_phongo_regex_ce;
 extern zend_class_entry *php_phongo_timestamp_ce;
 extern zend_class_entry *php_phongo_utcdatetime_ce;
 
+extern zend_class_entry *php_phongo_binary_interface_ce;
+extern zend_class_entry *php_phongo_decimal128_interface_ce;
+extern zend_class_entry *php_phongo_javascript_interface_ce;
+extern zend_class_entry *php_phongo_maxkey_interface_ce;
+extern zend_class_entry *php_phongo_minkey_interface_ce;
+extern zend_class_entry *php_phongo_objectid_interface_ce;
+extern zend_class_entry *php_phongo_regex_interface_ce;
+extern zend_class_entry *php_phongo_timestamp_interface_ce;
+extern zend_class_entry *php_phongo_utcdatetime_interface_ce;
+
 extern zend_class_entry *php_phongo_commandfailedevent_ce;
 extern zend_class_entry *php_phongo_commandstartedevent_ce;
 extern zend_class_entry *php_phongo_commandsubscriber_ce;
@@ -277,6 +287,16 @@ extern void php_phongo_type_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_typewrapper_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_unserializable_init_ce(INIT_FUNC_ARGS);
+
+extern void php_phongo_binary_interface_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_decimal128_interface_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_javascript_interface_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_maxkey_interface_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_minkey_interface_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_objectid_interface_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_regex_interface_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_timestamp_interface_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_utcdatetime_interface_init_ce(INIT_FUNC_ARGS);
 
 extern void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_command_init_ce(INIT_FUNC_ARGS);

@@ -368,6 +368,7 @@ void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_decimal128_ce->create_object = php_phongo_decimal128_create_object;
 	PHONGO_CE_FINAL(php_phongo_decimal128_ce);
 
+	zend_class_implements(php_phongo_decimal128_ce TSRMLS_CC, 1, php_phongo_decimal128_interface_ce);
 	zend_class_implements(php_phongo_decimal128_ce TSRMLS_CC, 1, php_phongo_json_serializable_ce);
 	zend_class_implements(php_phongo_decimal128_ce TSRMLS_CC, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_decimal128_ce TSRMLS_CC, 1, zend_ce_serializable);

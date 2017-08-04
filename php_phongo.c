@@ -2200,6 +2200,16 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_serializable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_unserializable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
+	php_phongo_binary_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_decimal128_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_javascript_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_maxkey_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_minkey_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_objectid_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_regex_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_timestamp_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_utcdatetime_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+
 	php_phongo_binary_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_decimal128_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_javascript_init_ce(INIT_FUNC_ARGS_PASSTHRU);
