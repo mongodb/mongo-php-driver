@@ -1166,20 +1166,24 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 
 	/* Handle maxStalenessSeconds, and make sure it is not combined with primary
 	 * readPreference */
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_MAXSTALENESSSECONDS) && BSON_ITER_HOLDS_INT32(&iter)) {
-		int32_t max_staleness_seconds = bson_iter_int32(&iter);
+	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_MAXSTALENESSSECONDS) && BSON_ITER_HOLDS_INT(&iter)) {
+		int64_t max_staleness_seconds = bson_iter_as_int64(&iter);
 
 		if (max_staleness_seconds != MONGOC_NO_MAX_STALENESS) {
 
 			if (max_staleness_seconds < MONGOC_SMALLEST_MAX_STALENESS_SECONDS) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessSeconds to be >= %d, %" PRId32 " given", MONGOC_SMALLEST_MAX_STALENESS_SECONDS, max_staleness_seconds);
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessSeconds to be >= %d, %" PRId64 " given", MONGOC_SMALLEST_MAX_STALENESS_SECONDS, max_staleness_seconds);
 				mongoc_read_prefs_destroy(new_rp);
 
 				return false;
 			}
 
-			/* max_staleness_seconds is fetched as an INT32, so there is no need to check
-			 * if it exists INT32_MAX as we do in the ReadPreference constructor. */
+			if (max_staleness_seconds > INT32_MAX) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessSeconds to be <= %d, %" PRId64 " given", INT32_MAX, max_staleness_seconds);
+				mongoc_read_prefs_destroy(new_rp);
+
+				return false;
+			}
 
 			if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Primary read preference mode conflicts with maxStalenessSeconds");

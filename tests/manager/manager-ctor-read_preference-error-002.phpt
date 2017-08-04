@@ -14,6 +14,10 @@ echo throws(function() {
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
+    $manager = new MongoDB\Driver\Manager('mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=2147483648');
+}, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
+
+echo throws(function() {
     $manager = new MongoDB\Driver\Manager(null, ['maxstalenessseconds' => 1231]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
@@ -41,6 +45,8 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?maxstalenessseconds=1231'. Invalid readPreferences.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?maxStalenessSeconds=1231'. Invalid readPreferences.
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=2147483648'. Unknown option or value for 'maxStalenessSeconds=2147483648'.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Primary read preference mode conflicts with maxStalenessSeconds
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
