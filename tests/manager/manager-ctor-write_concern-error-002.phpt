@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::__construct(): invalid read preference (maxStalenessSeconds range)
+MongoDB\Driver\Manager::__construct(): invalid write concern (w range)
 --SKIPIF--
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
 --FILE--
@@ -7,8 +7,11 @@ MongoDB\Driver\Manager::__construct(): invalid read preference (maxStalenessSeco
 
 require_once __DIR__ . '/../utils/tools.php';
 
+/* Note: libmongoc does not check w's range in the URI string. 64-bit integers
+ * will be truncated by strtol() */
+
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['readPreference' => 'secondary', 'maxStalenessSeconds' => 2147483648]);
+    new MongoDB\Driver\Manager(null, ['w' => 2147483648]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>
@@ -16,5 +19,5 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected maxStalenessSeconds to be <= 2147483647, 2147483648 given
+Expected 32-bit integer or string for "w" URI option, 64-bit integer given
 ===DONE===

@@ -927,6 +927,42 @@ static mongoc_uri_t *php_phongo_make_uri(const char *uri_string, bson_t *options
 	return uri;
 } /* }}} */
 
+static const char *php_phongo_bson_type_to_string(bson_type_t type) /* {{{ */
+{
+	switch (type) {
+		case BSON_TYPE_EOD: return "EOD";
+		case BSON_TYPE_DOUBLE: return "double";
+		case BSON_TYPE_UTF8: return "string";
+		case BSON_TYPE_DOCUMENT: return "document";
+		case BSON_TYPE_ARRAY: return "array";
+		case BSON_TYPE_BINARY: return "Binary";
+		case BSON_TYPE_UNDEFINED: return "undefined";
+		case BSON_TYPE_OID: return "ObjectID";
+		case BSON_TYPE_BOOL: return "boolean";
+		case BSON_TYPE_DATE_TIME: return "UTCDateTime";
+		case BSON_TYPE_NULL: return "null";
+		case BSON_TYPE_REGEX: return "Regex";
+		case BSON_TYPE_DBPOINTER: return "DBPointer";
+		case BSON_TYPE_CODE: return "Javascript";
+		case BSON_TYPE_SYMBOL: return "symbol";
+		case BSON_TYPE_CODEWSCOPE: return "Javascript with scope";
+		case BSON_TYPE_INT32: return "32-bit integer";
+		case BSON_TYPE_TIMESTAMP: return "Timestamp";
+		case BSON_TYPE_INT64: return "64-bit integer";
+		case BSON_TYPE_DECIMAL128: return "Decimal128";
+		case BSON_TYPE_MAXKEY: return "MaxKey";
+		case BSON_TYPE_MINKEY: return "MinKey";
+		default: return "unknown";
+	}
+} /* }}} */
+
+#define PHONGO_URI_INVALID_TYPE(iter, expected) \
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, \
+	                       "Expected %s for \"%s\" URI option, %s given", \
+	                       (expected), \
+	                       bson_iter_key(&(iter)), \
+	                       php_phongo_bson_type_to_string(bson_iter_type(&(iter))))
+
 static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
@@ -949,12 +985,14 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 		    !strcasecmp(key, MONGOC_URI_SAFE) ||
 		    !strcasecmp(key, MONGOC_URI_SLAVEOK) ||
 		    !strcasecmp(key, MONGOC_URI_W) ||
-		    !strcasecmp(key, MONGOC_URI_WTIMEOUTMS) ||
-		    !strcasecmp(key, MONGOC_URI_APPNAME)) {
+		    !strcasecmp(key, MONGOC_URI_WTIMEOUTMS)) {
 			continue;
 		}
 
 		if (mongoc_uri_option_is_bool(key)) {
+			/* The option's type is not validated because bson_iter_as_bool() is
+			 * used to cast the value to a boolean. Validation may be introduced
+			 * in PHPC-990. */
 			if (!mongoc_uri_set_option_as_bool(uri, key, bson_iter_as_bool(&iter))) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
 				return false;
@@ -963,7 +1001,12 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 			continue;
 		}
 
-		if (mongoc_uri_option_is_int32(key) && BSON_ITER_HOLDS_INT32(&iter)) {
+		if (mongoc_uri_option_is_int32(key)) {
+			if (!BSON_ITER_HOLDS_INT32(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "32-bit integer");
+				return false;
+			}
+
 			if (!mongoc_uri_set_option_as_int32(uri, key, bson_iter_int32(&iter))) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
 				return false;
@@ -972,8 +1015,34 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 			continue;
 		}
 
-		if (mongoc_uri_option_is_utf8(key) && BSON_ITER_HOLDS_UTF8(&iter)) {
+		if (mongoc_uri_option_is_utf8(key)) {
+			if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "string");
+				return false;
+			}
+
 			if (!mongoc_uri_set_option_as_utf8(uri, key, bson_iter_utf8(&iter, NULL))) {
+				/* Assignment uses mongoc_uri_set_appname() for the "appname"
+				 * option, which validates length in addition to UTF-8 encoding.
+				 * For BC, we report the invalid string to the user. */
+				if (!strcasecmp(key, MONGOC_URI_APPNAME)) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid appname value: '%s'", bson_iter_utf8(&iter, NULL));
+				} else {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+				}
+				return false;
+			}
+
+			continue;
+		}
+
+		if (!strcasecmp(key, "username")) {
+			if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "string");
+				return false;
+			}
+
+			if (!mongoc_uri_set_username(uri, bson_iter_utf8(&iter, NULL))) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
 				return false;
 			}
@@ -981,50 +1050,57 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 			continue;
 		}
 
-		if (BSON_ITER_HOLDS_UTF8(&iter)) {
-			const char *value = bson_iter_utf8(&iter, NULL);
-
-			if (!strcasecmp(key, "username")) {
-				if (!mongoc_uri_set_username(uri, value)) {
-					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
-					return false;
-				}
-
-				continue;
+		if (!strcasecmp(key, "password")) {
+			if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "string");
+				return false;
 			}
 
-			if (!strcasecmp(key, "password")) {
-				if (!mongoc_uri_set_password(uri, value)) {
-					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
-					return false;
-				}
-
-				continue;
+			if (!mongoc_uri_set_password(uri, bson_iter_utf8(&iter, NULL))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+				return false;
 			}
 
-			if (!strcasecmp(key, MONGOC_URI_AUTHMECHANISM)) {
-				if (!mongoc_uri_set_auth_mechanism(uri, value)) {
-					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
-					return false;
-				}
-
-				continue;
-			}
-
-			if (!strcasecmp(key, MONGOC_URI_AUTHSOURCE)) {
-				if (!mongoc_uri_set_auth_source(uri, value)) {
-					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
-					return false;
-				}
-
-				continue;
-			}
+			continue;
 		}
 
-		if (BSON_ITER_HOLDS_DOCUMENT(&iter) && !strcasecmp(key, MONGOC_URI_AUTHMECHANISMPROPERTIES)) {
+		if (!strcasecmp(key, MONGOC_URI_AUTHMECHANISM)) {
+			if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "string");
+				return false;
+			}
+
+			if (!mongoc_uri_set_auth_mechanism(uri, bson_iter_utf8(&iter, NULL))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+				return false;
+			}
+
+			continue;
+		}
+
+		if (!strcasecmp(key, MONGOC_URI_AUTHSOURCE)) {
+			if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "string");
+				return false;
+			}
+
+			if (!mongoc_uri_set_auth_source(uri, bson_iter_utf8(&iter, NULL))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+				return false;
+			}
+
+			continue;
+		}
+
+		if (!strcasecmp(key, MONGOC_URI_AUTHMECHANISMPROPERTIES)) {
 			bson_t properties;
 			uint32_t len;
 			const uint8_t *data;
+
+			if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "array or object");
+				return false;
+			}
 
 			bson_iter_document(&iter, &len, &data);
 
@@ -1062,16 +1138,21 @@ static bool php_phongo_apply_rc_options_to_uri(mongoc_uri_t *uri, bson_t *option
 		return true;
 	}
 
-	if (!bson_iter_init_find_case(&iter, options, "readconcernlevel")) {
+	if (!bson_iter_init_find_case(&iter, options, MONGOC_URI_READCONCERNLEVEL)) {
 		return true;
 	}
 
 	new_rc = mongoc_read_concern_copy(old_rc);
 
-	if (bson_iter_init_find_case(&iter, options, "readconcernlevel") && BSON_ITER_HOLDS_UTF8(&iter)) {
-		const char *str = bson_iter_utf8(&iter, NULL);
+	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READCONCERNLEVEL)) {
+		if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+			PHONGO_URI_INVALID_TYPE(iter, "string");
+			mongoc_read_concern_destroy(new_rc);
 
-		mongoc_read_concern_set_level(new_rc, str);
+			return false;
+		}
+
+		mongoc_read_concern_set_level(new_rc, bson_iter_utf8(&iter, NULL));
 	}
 
 	mongoc_uri_set_read_concern(uri, new_rc);
@@ -1107,12 +1188,30 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 
 	new_rp = mongoc_read_prefs_copy(old_rp);
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_SLAVEOK) && BSON_ITER_HOLDS_BOOL(&iter) && bson_iter_bool(&iter)) {
-		mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
+	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_SLAVEOK)) {
+		if (!BSON_ITER_HOLDS_BOOL(&iter)) {
+			PHONGO_URI_INVALID_TYPE(iter, "boolean");
+			mongoc_read_prefs_destroy(new_rp);
+
+			return false;
+		}
+
+		if (bson_iter_bool(&iter)) {
+			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
+		}
 	}
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCE) && BSON_ITER_HOLDS_UTF8(&iter)) {
-		const char *str = bson_iter_utf8(&iter, NULL);
+	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCE)) {
+		const char *str;
+
+		if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+			PHONGO_URI_INVALID_TYPE(iter, "string");
+			mongoc_read_prefs_destroy(new_rp);
+
+			return false;
+		}
+
+		str = bson_iter_utf8(&iter, NULL);
 
 		if (0 == strcasecmp("primary", str)) {
 			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_PRIMARY);
@@ -1125,17 +1224,24 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 		} else if (0 == strcasecmp("nearest", str)) {
 			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_NEAREST);
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Unsupported readPreference value: '%s'", str);
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Unsupported %s value: '%s'", bson_iter_key(&iter), str);
 			mongoc_read_prefs_destroy(new_rp);
 
 			return false;
 		}
 	}
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCETAGS) && BSON_ITER_HOLDS_ARRAY(&iter)) {
+	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCETAGS)) {
 		bson_t tags;
 		uint32_t len;
 		const uint8_t *data;
+
+		if (!BSON_ITER_HOLDS_ARRAY(&iter)) {
+			PHONGO_URI_INVALID_TYPE(iter, "array");
+			mongoc_read_prefs_destroy(new_rp);
+
+			return false;
+		}
 
 		bson_iter_array(&iter, &len, &data);
 
@@ -1166,8 +1272,17 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t *uri, bson_t *option
 
 	/* Handle maxStalenessSeconds, and make sure it is not combined with primary
 	 * readPreference */
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_MAXSTALENESSSECONDS) && BSON_ITER_HOLDS_INT(&iter)) {
-		int64_t max_staleness_seconds = bson_iter_as_int64(&iter);
+	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_MAXSTALENESSSECONDS)) {
+		int64_t max_staleness_seconds;
+
+		if (!BSON_ITER_HOLDS_INT(&iter)) {
+			PHONGO_URI_INVALID_TYPE(iter, "integer");
+			mongoc_read_prefs_destroy(new_rp);
+
+			return false;
+		}
+
+		max_staleness_seconds = bson_iter_as_int64(&iter);
 
 		if (max_staleness_seconds != MONGOC_NO_MAX_STALENESS) {
 
@@ -1240,15 +1355,36 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t *uri, bson_t *option
 
 	new_wc = mongoc_write_concern_copy(old_wc);
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_SAFE) && BSON_ITER_HOLDS_BOOL(&iter)) {
+	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_SAFE)) {
+		if (!BSON_ITER_HOLDS_BOOL(&iter)) {
+			PHONGO_URI_INVALID_TYPE(iter, "boolean");
+			mongoc_write_concern_destroy(new_wc);
+
+			return false;
+		}
+
 		mongoc_write_concern_set_w(new_wc, bson_iter_bool(&iter) ? 1 : MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED);
 	}
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_WTIMEOUTMS) && BSON_ITER_HOLDS_INT32(&iter)) {
+	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_WTIMEOUTMS)) {
+		if (!BSON_ITER_HOLDS_INT32(&iter)) {
+			PHONGO_URI_INVALID_TYPE(iter, "32-bit integer");
+			mongoc_write_concern_destroy(new_wc);
+
+			return false;
+		}
+
 		wtimeoutms = bson_iter_int32(&iter);
 	}
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_JOURNAL) && BSON_ITER_HOLDS_BOOL(&iter)) {
+	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_JOURNAL)) {
+		if (!BSON_ITER_HOLDS_BOOL(&iter)) {
+			PHONGO_URI_INVALID_TYPE(iter, "boolean");
+			mongoc_write_concern_destroy(new_wc);
+
+			return false;
+		}
+
 		mongoc_write_concern_set_journal(new_wc, bson_iter_bool(&iter));
 	}
 
@@ -1280,6 +1416,11 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t *uri, bson_t *option
 			} else {
 				mongoc_write_concern_set_wtag(new_wc, str);
 			}
+		} else {
+			PHONGO_URI_INVALID_TYPE(iter, "32-bit integer or string");
+			mongoc_write_concern_destroy(new_wc);
+
+			return false;
 		}
 	}
 
@@ -1770,7 +1911,6 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 	size_t            hash_len = 0;
 	bson_t            bson_options = BSON_INITIALIZER;
 	mongoc_uri_t     *uri = NULL;
-	bson_iter_t       iter;
 #ifdef MONGOC_ENABLE_SSL
 	mongoc_ssl_opt_t *ssl_opt = NULL;
 #endif
@@ -1805,15 +1945,6 @@ void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, 
 	    !php_phongo_apply_wc_options_to_uri(uri, &bson_options TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
-	}
-
-	if (bson_iter_init_find_case(&iter, &bson_options, MONGOC_URI_APPNAME) && BSON_ITER_HOLDS_UTF8(&iter)) {
-		const char *str = bson_iter_utf8(&iter, NULL);
-
-		if (!mongoc_uri_set_appname(uri, str)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid appname value: '%s'", str);
-			goto cleanup;
-		}
 	}
 
 #ifdef MONGOC_ENABLE_SSL
