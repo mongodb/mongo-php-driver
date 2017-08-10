@@ -396,10 +396,12 @@ if test "$MONGODB" != "no"; then
   PHP_ADD_INCLUDE([$ext_srcdir/src/BSON/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/Exception/])
+  PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/Monitoring/])
   PHP_ADD_INCLUDE([$ext_srcdir/src/contrib/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/BSON/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/Exception/])
+  PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/Monitoring/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/contrib/])
   if test "$PHP_LIBMONGOC" == "no"; then
     PHP_ADD_INCLUDE([$ext_srcdir/src/libmongoc/src/mongoc/])
