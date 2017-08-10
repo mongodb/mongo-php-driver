@@ -17,7 +17,7 @@ $degenerateExtJson = '{"d" : {"$numberDecimal" : "-NaN"}}';
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
 // Canonical BSON -> Canonical extJSON 
-echo json_canonicalize(toCanonicalJSON($canonicalBson)), "\n";
+echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
 ?>
 ===DONE===

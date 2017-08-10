@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\toCanonicalJSON(): Encoding extended JSON types
+MongoDB\BSON\toCanonicalExtendedJSON(): Encoding extended JSON types
 --FILE--
 <?php
 
@@ -19,7 +19,7 @@ $tests = [
 
 foreach ($tests as $value) {
     $bson = fromPHP($value);
-    echo toCanonicalJSON($bson), "\n";
+    echo toCanonicalExtendedJSON($bson), "\n";
 }
 
 ?>

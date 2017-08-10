@@ -159,16 +159,16 @@ PHP_FUNCTION(MongoDB_BSON_toJSON)
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_LEGACY);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\toCanonicalJSON(string $bson)
-   Returns the canonical JSON representation of a BSON value */
-PHP_FUNCTION(MongoDB_BSON_toCanonicalJSON)
+/* {{{ proto string MongoDB\BSON\toCanonicalExtendedJSON(string $bson)
+   Returns the canonical extended JSON representation of a BSON value */
+PHP_FUNCTION(MongoDB_BSON_toCanonicalExtendedJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_CANONICAL);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\toRelaxedJSON(string $bson)
-   Returns the relaxed JSON representation of a BSON value */
-PHP_FUNCTION(MongoDB_BSON_toRelaxedJSON)
+/* {{{ proto string MongoDB\BSON\toRelaxedExtendedJSON(string $bson)
+   Returns the relaxed extended JSON representation of a BSON value */
+PHP_FUNCTION(MongoDB_BSON_toRelaxedExtendedJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_RELAXED);
 } /* }}} */

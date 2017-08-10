@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\toCanonicalJSON(): BSON decoding exceptions for malformed documents
+MongoDB\BSON\toCanonicalExtendedJSON(): BSON decoding exceptions for malformed documents
 --FILE--
 <?php
 
@@ -12,7 +12,7 @@ $tests = [
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {
-        toCanonicalJSON($bson);
+        toCanonicalExtendedJSON($bson);
     }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 }
 

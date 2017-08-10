@@ -401,11 +401,11 @@ function fromPHP($var) {
 function toJSON($var) {
     return MongoDB\BSON\toJSON($var);
 }
-function toCanonicalJSON($var) {
-    return MongoDB\BSON\toCanonicalJSON($var);
+function toCanonicalExtendedJSON($var) {
+    return MongoDB\BSON\toCanonicalExtendedJSON($var);
 }
-function toRelaxedJSON($var) {
-    return MongoDB\BSON\toRelaxedJSON($var);
+function toRelaxedExtendedJSON($var) {
+    return MongoDB\BSON\toRelaxedExtendedJSON($var);
 }
 function fromJSON($var) {
     return MongoDB\BSON\fromJSON($var);
