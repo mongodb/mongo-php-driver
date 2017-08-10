@@ -151,12 +151,12 @@ function getParamsForValid(array $test, array $case)
     $expect .= $expectedCanonicalBson . "\n";
 
     $code .= "\n// Canonical BSON -> Canonical extJSON \n";
-    $code .= 'echo json_canonicalize(toCanonicalJSON($canonicalBson)), "\n";' . "\n";;
+    $code .= 'echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";' . "\n";;
     $expect .= $expectedCanonicalExtJson . "\n";
 
     if (isset($relaxedExtJson)) {
         $code .= "\n// Canonical BSON -> Relaxed extJSON \n";
-        $code .= 'echo json_canonicalize(toRelaxedJSON($canonicalBson)), "\n";' . "\n";;
+        $code .= 'echo json_canonicalize(toRelaxedExtendedJSON($canonicalBson)), "\n";' . "\n";;
         $expect .= $expectedRelaxedExtJson . "\n";
     }
 
@@ -172,12 +172,12 @@ function getParamsForValid(array $test, array $case)
         $expect .= $expectedCanonicalBson . "\n";
 
         $code .= "\n// Degenerate BSON -> Canonical extJSON \n";
-        $code .= 'echo json_canonicalize(toCanonicalJSON($degenerateBson)), "\n";' . "\n";;
+        $code .= 'echo json_canonicalize(toCanonicalExtendedJSON($degenerateBson)), "\n";' . "\n";;
         $expect .= $expectedCanonicalExtJson . "\n";
 
         if (isset($relaxedExtJson)) {
             $code .= "\n// Degenerate BSON -> Relaxed extJSON \n";
-            $code .= 'echo json_canonicalize(toRelaxedJSON($degenerateBson)), "\n";' . "\n";;
+            $code .= 'echo json_canonicalize(toRelaxedExtendedJSON($degenerateBson)), "\n";' . "\n";;
             $expect .= $expectedRelaxedExtJson . "\n";
         }
     }
@@ -190,7 +190,7 @@ function getParamsForValid(array $test, array $case)
 
     if (isset($relaxedExtJson)) {
         $code .= "\n// Relaxed extJSON -> BSON -> Relaxed extJSON \n";
-        $code .= 'echo json_canonicalize(toRelaxedJSON(fromJSON($relaxedExtJson))), "\n";' . "\n";
+        $code .= 'echo json_canonicalize(toRelaxedExtendedJSON(fromJSON($relaxedExtJson))), "\n";' . "\n";
         $expect .= $expectedRelaxedExtJson . "\n";
     }
 

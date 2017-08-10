@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\toRelaxedJSON(): BSON decoding exceptions for malformed documents
+MongoDB\BSON\toRelaxedExtendedJSON(): BSON decoding exceptions for malformed documents
 --FILE--
 <?php
 
@@ -12,7 +12,7 @@ $tests = [
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {
-        toRelaxedJSON($bson);
+        toRelaxedExtendedJSON($bson);
     }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 }
 

@@ -13,7 +13,8 @@ $tests = [
     [ 'integer' => 123 ],
     [ 'double' => 1.0, ],
     /* Note: toJSON() does not properly handle NAN and INF values.
-     * toCanonicalJSON() or toRelaxedJSON() should be used instead. */
+     * toCanonicalExtendedJSON() or toRelaxedExtendedJSON() should be used
+     * instead. */
     [ 'nan' => NAN ],
     [ 'pos_inf' => INF ],
     [ 'neg_inf' => -INF ],

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\toRelaxedJSON(): Encoding JSON
+MongoDB\BSON\toRelaxedExtendedJSON(): Encoding JSON
 --FILE--
 <?php
 
@@ -21,7 +21,7 @@ $tests = [
 
 foreach ($tests as $value) {
     $bson = fromPHP($value);
-    echo toRelaxedJSON($bson), "\n";
+    echo toRelaxedExtendedJSON($bson), "\n";
 }
 
 ?>
