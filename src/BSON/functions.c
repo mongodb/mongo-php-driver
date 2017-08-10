@@ -131,9 +131,9 @@ static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mo
 	if (mode == PHONGO_JSON_MODE_LEGACY) {
 		json = bson_as_json(bson, &json_len);
 	} else if (mode == PHONGO_JSON_MODE_CANONICAL) {
-		json = bson_as_canonical_json(bson, &json_len);
+		json = bson_as_canonical_extended_json(bson, &json_len);
 	} else if (mode == PHONGO_JSON_MODE_RELAXED) {
-		json = bson_as_relaxed_json(bson, &json_len);
+		json = bson_as_relaxed_extended_json(bson, &json_len);
 	}
 
 	if (!json) {
