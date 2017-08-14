@@ -1,7 +1,6 @@
 --TEST--
 PHPC-732: Possible mongoc_client_t use-after-free with Cursor wrapped in generator
 --SKIPIF--
-<?php if (PHP_VERSION_ID < 50500) exit("skip PHP 5.5 is required for generators"); ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
 --FILE--
