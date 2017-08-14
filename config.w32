@@ -149,11 +149,11 @@ if (PHP_MONGODB != "no") {
     MONGOC_ENABLE_SASL_SSPI: 0,
     MONGOC_HAVE_ASN1_STRING_GET0_DATA: 0,
     MONGOC_HAVE_SASL_CLIENT_DONE: 0,
-    MONGOC_HAVE_SOCKLEN: 0,
+    MONGOC_HAVE_SOCKLEN: 1,
     MONGOC_HAVE_WEAK_SYMBOLS: 0,
     MONGOC_NO_AUTOMATIC_GLOBALS: 1,
     MONGOC_SOCKET_ARG2: "struct sockaddr",
-    MONGOC_SOCKET_ARG3: "int",
+    MONGOC_SOCKET_ARG3: "socklen_t",
     MONGOC_CC: "",
     MONGOC_USER_SET_CFLAGS: "",
     MONGOC_USER_SET_LDFLAGS: ""
@@ -188,10 +188,6 @@ if (PHP_MONGODB != "no") {
     }
   } else {
     WARNING("mongodb libsasl support not enabled, libs not found");
-  }
-
-  if (CHECK_FUNC_IN_HEADER("ws2tcpip.h", "socklen_t")) {
-    mongoc_opts.MONGOC_HAVE_SOCKLEN = 1;
   }
 
   if (typeof COMPILER_NAME === 'string') {
