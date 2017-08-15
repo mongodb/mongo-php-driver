@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\BSON\UTCDateTimeInterface example with MongoDB\BSON\TypeWrapper
+--INI--
+date.timezone=UTC
 --FILE--
 <?php
 

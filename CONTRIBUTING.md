@@ -96,7 +96,7 @@ releasing the `vX.Y` branch as X.Y.Z).
 
 ### Ensure PHP version compatibility
 
-Ensure that the extension compiles on PHP 5.4, 5.5, 5.6, and 7.0. Be sure to
+Ensure that the extension compiles on PHP 5.5, 5.6, 7.0, and 7.1. Be sure to
 test both ZTS and non-ZTS builds for PHP 5.x.
 
 ### Ensure Windows compatibility

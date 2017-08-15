@@ -66,22 +66,12 @@ static int php_phongo_cursor_iterator_valid(zend_object_iterator *iter TSRMLS_DC
 	return FAILURE;
 } /* }}} */
 
-#if PHP_VERSION_ID < 50500
-static int php_phongo_cursor_iterator_get_current_key(zend_object_iterator *iter, char **str_key, uint *str_key_len, ulong *int_key TSRMLS_DC) /* {{{ */
-{
-	php_phongo_cursor_t *cursor = ((php_phongo_cursor_iterator *)iter)->cursor;
-
-	*int_key = (ulong) cursor->current;
-	return HASH_KEY_IS_LONG;
-} /* }}} */
-#else
 static void php_phongo_cursor_iterator_get_current_key(zend_object_iterator *iter, zval *key TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t *cursor = ((php_phongo_cursor_iterator *)iter)->cursor;
 
 	ZVAL_LONG(key, cursor->current);
 } /* }}} */
-#endif
 
 #if PHP_VERSION_ID < 70000
 static void php_phongo_cursor_iterator_get_current_data(zend_object_iterator *iter, zval ***data TSRMLS_DC) /* {{{ */
