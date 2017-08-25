@@ -321,7 +321,7 @@ try_again:
 			if (bson_utf8_validate(Z_STRVAL_P(entry), Z_STRLEN_P(entry), true)) {
 				bson_append_utf8(bson, key, key_len, Z_STRVAL_P(entry), Z_STRLEN_P(entry));
 			} else {
-				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Got invalid UTF-8 value serializing '%s'", Z_STRVAL_P(entry));
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected invalid UTF-8 for fieldname \"%s\": %s", key, Z_STRVAL_P(entry));
 			}
 			break;
 
@@ -380,7 +380,7 @@ try_again:
 #endif
 
 		default:
-			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Got unsupported type %d '%s'", Z_TYPE_P(entry), zend_get_type_by_const(Z_TYPE_P(entry)));
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected unsupported PHP type for fieldname \"%s\": %d (%s)", key, Z_TYPE_P(entry), zend_get_type_by_const(Z_TYPE_P(entry)));
 	}
 } /* }}} */
 
