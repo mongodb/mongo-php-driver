@@ -30,33 +30,12 @@ class MyPersistableId extends MySerializableId implements MongoDB\BSON\Persistab
     }
 }
 
-class MyWrapper implements MongoDB\BSON\TypeWrapper
-{
-    private $bsonType;
-
-    public function __construct($bsonType)
-    {
-        $this->bsonType = $bsonType;
-    }
-
-    public static function createFromBSONType(MongoDB\BSON\Type $bsonType)
-    {
-        return new self($bsonType);
-    }
-
-    public function toBSONType()
-    {
-        return $this->bsonType;
-    }
-}
-
 $documents = [
     ['x' => 1],
     ['_id' => new MongoDB\BSON\ObjectID('590b72d606e9660190656a55')],
     ['_id' => ['foo' => 1]],
     ['_id' => new MySerializableId('foo')],
     ['_id' => new MyPersistableId('bar')],
-    ['_id' => new MyWrapper(new MongoDB\BSON\Binary('foo', 0))],
 ];
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
@@ -97,14 +76,8 @@ object(MyPersistableId)#%d (%d) {
   ["id"]=>
   string(3) "bar"
 }
-object(MongoDB\BSON\Binary)#%d (%d) {
-  ["data"]=>
-  string(3) "foo"
-  ["type"]=>
-  int(0)
-}
-Inserted 6 document(s)
-array(6) {
+Inserted 5 document(s)
+array(5) {
   [0]=>
   object(stdClass)#%d (%d) {
     ["_id"]=>
@@ -145,16 +118,6 @@ array(6) {
     object(MyPersistableId)#%d (%d) {
       ["id"]=>
       string(3) "bar"
-    }
-  }
-  [5]=>
-  object(stdClass)#%d (%d) {
-    ["_id"]=>
-    object(MongoDB\BSON\Binary)#%d (%d) {
-      ["data"]=>
-      string(3) "foo"
-      ["type"]=>
-      int(0)
     }
   }
 }
