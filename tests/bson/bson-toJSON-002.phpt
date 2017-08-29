@@ -6,7 +6,7 @@ MongoDB\BSON\toJSON(): Encoding extended JSON types
 require_once __DIR__ . '/../utils/tools.php';
 
 $tests = [
-    [ '_id' => new MongoDB\BSON\ObjectId('56315a7c6118fd1b920270b1') ],
+    [ '_id' => new MongoDB\BSON\ObjectID('56315a7c6118fd1b920270b1') ],
     [ 'binary' => new MongoDB\BSON\Binary('foo', MongoDB\BSON\Binary::TYPE_GENERIC) ],
     [ 'date' => new MongoDB\BSON\UTCDateTime(1445990400000) ],
     [ 'timestamp' => new MongoDB\BSON\Timestamp(1234, 5678) ],
