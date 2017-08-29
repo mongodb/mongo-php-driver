@@ -1,12 +1,12 @@
 --TEST--
-MongoDB\Driver\CursorId cannot be extended
+MongoDB\Driver\CursorID cannot be extended
 --FILE--
 <?php
 
-class MyCursorId extends MongoDB\Driver\CursorId {}
+class MyCursorID extends MongoDB\Driver\CursorID {}
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyCursorId may not inherit from final class (MongoDB\Driver\CursorId) in %s on line %d
+Fatal error: Class MyCursorID may not inherit from final class (MongoDB\Driver\CursorID) in %s on line %d

@@ -180,7 +180,7 @@ if test "$MONGODB" != "no"; then
     src/MongoDB/BulkWrite.c \
     src/MongoDB/Command.c \
     src/MongoDB/Cursor.c \
-    src/MongoDB/CursorId.c \
+    src/MongoDB/CursorID.c \
     src/MongoDB/Manager.c \
     src/MongoDB/Query.c \
     src/MongoDB/ReadConcern.c \

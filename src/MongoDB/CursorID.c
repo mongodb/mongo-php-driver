@@ -26,9 +26,9 @@
 
 zend_class_entry *php_phongo_cursorid_ce;
 
-/* {{{ proto string MongoDB\Driver\CursorId::__toString()
-   Returns the string representation of the CursorId */
-static PHP_METHOD(CursorId, __toString)
+/* {{{ proto string MongoDB\Driver\CursorID::__toString()
+   Returns the string representation of the CursorID */
+static PHP_METHOD(CursorID, __toString)
 {
 	php_phongo_cursorid_t    *intern;
 	char *tmp;
@@ -46,19 +46,19 @@ static PHP_METHOD(CursorId, __toString)
 	efree(tmp);
 } /* }}} */
 
-/* {{{ MongoDB\Driver\CursorId function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_CursorId_void, 0, 0, 0)
+/* {{{ MongoDB\Driver\CursorID function entries */
+ZEND_BEGIN_ARG_INFO_EX(ai_CursorID_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_cursorid_me[] = {
-	PHP_ME(CursorId, __toString, ai_CursorId_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CursorId_void, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CursorId_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(CursorID, __toString, ai_CursorID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CursorID_void, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CursorID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 /* }}} */
 
-/* {{{ MongoDB\Driver\CursorId object handlers */
+/* {{{ MongoDB\Driver\CursorID object handlers */
 static zend_object_handlers php_phongo_handler_cursorid;
 
 static void php_phongo_cursorid_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
@@ -131,7 +131,7 @@ void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "CursorId", php_phongo_cursorid_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "CursorID", php_phongo_cursorid_me);
 	php_phongo_cursorid_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_cursorid_ce->create_object = php_phongo_cursorid_create_object;
 	PHONGO_CE_FINAL(php_phongo_cursorid_ce);
