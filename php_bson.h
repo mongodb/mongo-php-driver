@@ -47,15 +47,6 @@ typedef struct {
 	zend_class_entry              *array;
 	php_phongo_bson_typemap_types  root_type;
 	zend_class_entry              *root;
-	zend_class_entry              *binary;
-	zend_class_entry              *decimal128;
-	zend_class_entry              *javascript;
-	zend_class_entry              *maxkey;
-	zend_class_entry              *minkey;
-	zend_class_entry              *objectid;
-	zend_class_entry              *regex;
-	zend_class_entry              *timestamp;
-	zend_class_entry              *utcdatetime;
 } php_phongo_bson_typemap;
 
 typedef struct {
@@ -70,9 +61,9 @@ typedef struct {
 } php_phongo_bson_state;
 
 #if PHP_VERSION_ID >= 70000
-#define PHONGO_BSON_STATE_INITIALIZER  { {{ 0 }}, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, NULL, 0 }
+#define PHONGO_BSON_STATE_INITIALIZER  { {{ 0 }}, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL }, NULL, 0 }
 #else
-#define PHONGO_BSON_STATE_INITIALIZER  { NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, NULL, 0 }
+#define PHONGO_BSON_STATE_INITIALIZER  { NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL }, NULL, 0 }
 #endif
 
 void php_phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
