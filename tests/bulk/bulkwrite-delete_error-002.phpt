@@ -20,8 +20,8 @@ echo throws(function() use ($bulk) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Got invalid UTF-8 value serializing '%s'
+Detected invalid UTF-8 for fieldname "x": %s
 
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Got invalid UTF-8 value serializing '%s'
+Detected invalid UTF-8 for fieldname "locale": %s
 ===DONE===
