@@ -207,7 +207,7 @@ static void php_phongo_bson_append_object(bson_t *bson, php_phongo_bson_flags_t 
 			bson_oid_t oid;
 			php_phongo_objectid_t *intern = Z_OBJECTID_OBJ_P(object);
 
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding ObjectID");
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding ObjectId");
 			bson_oid_init_from_string(&oid, intern->oid);
 			bson_append_oid(bson, key, key_len, &oid);
 			return;

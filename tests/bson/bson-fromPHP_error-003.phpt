@@ -15,7 +15,7 @@ $tests = array(
     new MongoDB\BSON\Javascript('function foo(bar) {var baz = bar; var bar = foo; return bar; }'),
     new MongoDB\BSON\MinKey,
     new MongoDB\BSON\MaxKey,
-    new MongoDB\BSON\ObjectID,
+    new MongoDB\BSON\ObjectId,
     new MongoDB\BSON\Regex('regexp', 'i'),
     new MongoDB\BSON\Timestamp(1234, 5678),
     new MongoDB\BSON\UTCDateTime('1416445411987'),
