@@ -270,7 +270,7 @@ static PHP_METHOD(Cursor, toArray)
 	}
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\CursorID MongoDB\Driver\Cursor::getId()
+/* {{{ proto MongoDB\Driver\CursorId MongoDB\Driver\Cursor::getId()
    Returns the CursorId for this cursor */
 static PHP_METHOD(Cursor, getId)
 {
