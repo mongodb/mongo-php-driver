@@ -48,7 +48,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
       ["index"]=>
       int(0)
       ["_id"]=>
-      object(MongoDB\BSON\ObjectID)#%d (%d) {
+      object(MongoDB\BSON\ObjectId)#%d (%d) {
         ["oid"]=>
         string(24) "%x"
       }
@@ -58,7 +58,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
       ["index"]=>
       int(1)
       ["_id"]=>
-      object(MongoDB\BSON\ObjectID)#%d (%d) {
+      object(MongoDB\BSON\ObjectId)#%d (%d) {
         ["oid"]=>
         string(24) "%x"
       }

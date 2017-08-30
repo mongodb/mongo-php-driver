@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ObjectID #003 construction with string argument
+MongoDB\BSON\ObjectId #003 construction with string argument
 --FILE--
 <?php
 
@@ -18,26 +18,26 @@ class StringObject
     }
 }
 
-$oid = new MongoDB\BSON\ObjectID('53e2a1c40640fd72175d4603');
+$oid = new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603');
 $str = new StringObject('53e2a1c40640fd72175d4603');
 
 var_dump($oid);
-var_dump(new MongoDB\BSON\ObjectID($oid));
-var_dump(new MongoDB\BSON\ObjectID($str));
+var_dump(new MongoDB\BSON\ObjectId($oid));
+var_dump(new MongoDB\BSON\ObjectId($str));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\BSON\ObjectID)#%d (%d) {
+object(MongoDB\BSON\ObjectId)#%d (%d) {
   ["oid"]=>
   string(24) "53e2a1c40640fd72175d4603"
 }
-object(MongoDB\BSON\ObjectID)#%d (%d) {
+object(MongoDB\BSON\ObjectId)#%d (%d) {
   ["oid"]=>
   string(24) "53e2a1c40640fd72175d4603"
 }
-object(MongoDB\BSON\ObjectID)#%d (%d) {
+object(MongoDB\BSON\ObjectId)#%d (%d) {
   ["oid"]=>
   string(24) "53e2a1c40640fd72175d4603"
 }

@@ -246,12 +246,12 @@ static PHP_METHOD(BulkWrite, insert)
 	/* If the insert document appears to be a legacy index, instruct libmongoc
 	 * to allow dots in BSON keys by setting the "legacyIndex" option.
 	 *
-	 * Note: php_phongo_zval_to_bson() may have added an ObjectID if the "_id"
+	 * Note: php_phongo_zval_to_bson() may have added an ObjectId if the "_id"
 	 * field was unset. We don't know at this point if the insert is destined
 	 * for a pre-2.6 server's "system.indexes" collection, but legacy index
 	 * creation will ignore the "_id" so there is no harm in leaving it. In the
 	 * event php_phongo_bulkwrite_insert_is_legacy_index() returns a false
-	 * positive, we absolutely want ObjectID added if "_id" was unset. */
+	 * positive, we absolutely want ObjectId added if "_id" was unset. */
 	if (php_phongo_bulkwrite_insert_is_legacy_index(&bdocument) &&
 	    !BSON_APPEND_BOOL(&boptions, "legacyIndex", true)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"legacyIndex\" option");

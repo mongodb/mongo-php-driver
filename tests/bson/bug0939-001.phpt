@@ -9,7 +9,7 @@ $tests = [
     [ new MongoDB\BSON\Javascript('function foo() { return bar; }', ['bar' => 42]), ['code', 'scope'] ],
     [ new MongoDB\BSON\MaxKey, [] ],
     [ new MongoDB\BSON\MinKey, [] ],
-    [ new MongoDB\BSON\ObjectID, ['oid'] ],
+    [ new MongoDB\BSON\ObjectId, ['oid'] ],
     [ new MongoDB\BSON\Regex('foo', 'i'), ['pattern', 'flags'] ],
     [ new MongoDB\BSON\Timestamp(1234, 5678), ['increment', 'timestamp'] ],
     [ new MongoDB\BSON\UTCDateTime, ['milliseconds'] ],
@@ -74,12 +74,12 @@ object(MongoDB\BSON\MaxKey)#%d (%d) {
 object(MongoDB\BSON\MinKey)#%d (%d) {
 }
 
-object(MongoDB\BSON\ObjectID)#%d (%d) {
+object(MongoDB\BSON\ObjectId)#%d (%d) {
   ["oid"]=>
   string(24) "%x"
 }
 
-Notice: Undefined property: MongoDB\BSON\ObjectID::$oid in %s on line %d
+Notice: Undefined property: MongoDB\BSON\ObjectId::$oid in %s on line %d
 NULL
 
 object(MongoDB\BSON\Regex)#%d (%d) {

@@ -26,7 +26,7 @@ $invalidIntegerValues = [
     true,
     1.0,
     'string',
-    new MongoDB\BSON\ObjectID,
+    new MongoDB\BSON\ObjectId,
     [ 1, 2, 3 ],
     ['x' => 1],
 ];
@@ -55,7 +55,7 @@ $invalidStringValues = [
     true,
     1.0,
     42,
-    new MongoDB\BSON\ObjectID,
+    new MongoDB\BSON\ObjectId,
     [ 1, 2, 3 ],
     ['x' => 1],
 ];
@@ -75,7 +75,7 @@ $invalidDocumentValues = [
     1.0,
     42,
     'string',
-    new MongoDB\BSON\ObjectID,
+    new MongoDB\BSON\ObjectId,
     [ 1, 2, 3 ],
 ];
 
@@ -97,7 +97,7 @@ Expected 32-bit integer for "connectTimeoutMS" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "connectTimeoutMS" URI option, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected 32-bit integer for "connectTimeoutMS" URI option, ObjectID given
+Expected 32-bit integer for "connectTimeoutMS" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "connectTimeoutMS" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -109,7 +109,7 @@ Expected 32-bit integer for "heartbeatFrequencyMS" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "heartbeatFrequencyMS" URI option, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected 32-bit integer for "heartbeatFrequencyMS" URI option, ObjectID given
+Expected 32-bit integer for "heartbeatFrequencyMS" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "heartbeatFrequencyMS" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -121,7 +121,7 @@ Expected 32-bit integer for "localThresholdMS" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "localThresholdMS" URI option, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected 32-bit integer for "localThresholdMS" URI option, ObjectID given
+Expected 32-bit integer for "localThresholdMS" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "localThresholdMS" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -133,7 +133,7 @@ Expected 32-bit integer for "serverSelectionTimeoutMS" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "serverSelectionTimeoutMS" URI option, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected 32-bit integer for "serverSelectionTimeoutMS" URI option, ObjectID given
+Expected 32-bit integer for "serverSelectionTimeoutMS" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "serverSelectionTimeoutMS" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -145,7 +145,7 @@ Expected 32-bit integer for "socketCheckIntervalMS" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "socketCheckIntervalMS" URI option, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected 32-bit integer for "socketCheckIntervalMS" URI option, ObjectID given
+Expected 32-bit integer for "socketCheckIntervalMS" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "socketCheckIntervalMS" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -157,7 +157,7 @@ Expected 32-bit integer for "socketTimeoutMS" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "socketTimeoutMS" URI option, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected 32-bit integer for "socketTimeoutMS" URI option, ObjectID given
+Expected 32-bit integer for "socketTimeoutMS" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 32-bit integer for "socketTimeoutMS" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -171,7 +171,7 @@ Expected string for "appname" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "appname" URI option, 32-bit integer given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "appname" URI option, ObjectID given
+Expected string for "appname" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "appname" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -183,7 +183,7 @@ Expected string for "authMechanism" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "authMechanism" URI option, 32-bit integer given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "authMechanism" URI option, ObjectID given
+Expected string for "authMechanism" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "authMechanism" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -195,7 +195,7 @@ Expected string for "authSource" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "authSource" URI option, 32-bit integer given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "authSource" URI option, ObjectID given
+Expected string for "authSource" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "authSource" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -207,7 +207,7 @@ Expected string for "gssapiServiceName" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "gssapiServiceName" URI option, 32-bit integer given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "gssapiServiceName" URI option, ObjectID given
+Expected string for "gssapiServiceName" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "gssapiServiceName" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -219,7 +219,7 @@ Expected string for "password" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "password" URI option, 32-bit integer given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "password" URI option, ObjectID given
+Expected string for "password" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "password" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -231,7 +231,7 @@ Expected string for "replicaSet" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "replicaSet" URI option, 32-bit integer given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "replicaSet" URI option, ObjectID given
+Expected string for "replicaSet" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "replicaSet" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -243,7 +243,7 @@ Expected string for "username" URI option, double given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "username" URI option, 32-bit integer given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected string for "username" URI option, ObjectID given
+Expected string for "username" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected string for "username" URI option, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -259,7 +259,7 @@ Expected array or object for "authMechanismProperties" URI option, 32-bit intege
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected array or object for "authMechanismProperties" URI option, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected array or object for "authMechanismProperties" URI option, ObjectID given
+Expected array or object for "authMechanismProperties" URI option, ObjectId given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected array or object for "authMechanismProperties" URI option, array given
 ===DONE===

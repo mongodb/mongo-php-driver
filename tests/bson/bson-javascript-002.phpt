@@ -14,7 +14,7 @@ $tests = array(
     ),
     array(
         'function foo() { return id; }',
-        array('id' => new MongoDB\BSON\ObjectID('53e2a1c40640fd72175d4603')),
+        array('id' => new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603')),
     ),
 );
 
@@ -51,7 +51,7 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
   ["scope"]=>
   object(stdClass)#%d (%d) {
     ["id"]=>
-    object(MongoDB\BSON\ObjectID)#%d (%d) {
+    object(MongoDB\BSON\ObjectId)#%d (%d) {
       ["oid"]=>
       string(24) "53e2a1c40640fd72175d4603"
     }

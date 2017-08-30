@@ -25,13 +25,13 @@
 
 zend_class_entry *php_phongo_objectid_interface_ce;
 
-/* {{{ MongoDB\BSON\ObjectIDInterface function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_ObjectIDInterface_void, 0, 0, 0)
+/* {{{ MongoDB\BSON\ObjectIdInterface function entries */
+ZEND_BEGIN_ARG_INFO_EX(ai_ObjectIdInterface_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_objectid_interface_me[] = {
-	ZEND_ABSTRACT_ME(ObjectIDInterface, getTimestamp, ai_ObjectIDInterface_void)
-	ZEND_ABSTRACT_ME(ObjectIDInterface, __toString, ai_ObjectIDInterface_void)
+	ZEND_ABSTRACT_ME(ObjectIdInterface, getTimestamp, ai_ObjectIdInterface_void)
+	ZEND_ABSTRACT_ME(ObjectIdInterface, __toString, ai_ObjectIdInterface_void)
 	PHP_FE_END
 };
 /* }}} */
@@ -40,7 +40,7 @@ void php_phongo_objectid_interface_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "ObjectIDInterface", php_phongo_objectid_interface_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "ObjectIdInterface", php_phongo_objectid_interface_me);
 	php_phongo_objectid_interface_ce = zend_register_internal_interface(&ce TSRMLS_CC);
 } /* }}} */
 

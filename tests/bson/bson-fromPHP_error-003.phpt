@@ -41,7 +41,7 @@ MongoDB\BSON\Type instance MongoDB\BSON\MinKey cannot be serialized as a root el
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\Type instance MongoDB\BSON\MaxKey cannot be serialized as a root element
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-MongoDB\BSON\Type instance MongoDB\BSON\ObjectID cannot be serialized as a root element
+MongoDB\BSON\Type instance MongoDB\BSON\ObjectId cannot be serialized as a root element
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 MongoDB\BSON\Type instance MongoDB\BSON\Regex cannot be serialized as a root element
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException

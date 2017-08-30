@@ -30,7 +30,7 @@ object(stdClass)#%d (%d) {
 }
 object(stdClass)#%d (%d) {
   ["id"]=>
-  object(MongoDB\BSON\ObjectID)#%d (%d) {
+  object(MongoDB\BSON\ObjectId)#%d (%d) {
     ["oid"]=>
     string(24) "53e2a1c40640fd72175d4603"
   }

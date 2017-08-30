@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\BSON\ObjectID::jsonSerialize() return value
+MongoDB\BSON\ObjectId::jsonSerialize() return value
 --FILE--
 <?php
 
-$oid = new MongoDB\BSON\ObjectID('5820ca4bef62d52d9924d0d8');
+$oid = new MongoDB\BSON\ObjectId('5820ca4bef62d52d9924d0d8');
 var_dump($oid->jsonSerialize());
 
 ?>

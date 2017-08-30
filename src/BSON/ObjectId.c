@@ -60,7 +60,7 @@ static bool php_phongo_objectid_init_from_hex_string(php_phongo_objectid_t *inte
 		return true;
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing ObjectID string: %s", hex);
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing ObjectId string: %s", hex);
 
 	return false;
 } /* }}} */
@@ -89,9 +89,9 @@ static bool php_phongo_objectid_init_from_hash(php_phongo_objectid_t *intern, Ha
 	return false;
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\ObjectID::__construct([string $id])
-   Constructs a new BSON ObjectID type, optionally from a hex string. */
-static PHP_METHOD(ObjectID, __construct)
+/* {{{ proto void MongoDB\BSON\ObjectId::__construct([string $id])
+   Constructs a new BSON ObjectId type, optionally from a hex string. */
+static PHP_METHOD(ObjectId, __construct)
 {
 	php_phongo_objectid_t    *intern;
 	zend_error_handling       error_handling;
@@ -115,9 +115,9 @@ static PHP_METHOD(ObjectID, __construct)
 	}
 } /* }}} */
 
-/* {{{ proto integer MongoDB\BSON\ObjectID::getTimestamp()
+/* {{{ proto integer MongoDB\BSON\ObjectId::getTimestamp()
 */
-static PHP_METHOD(ObjectID, getTimestamp)
+static PHP_METHOD(ObjectId, getTimestamp)
 {
 	php_phongo_objectid_t    *intern;
 	bson_oid_t                tmp_oid;
@@ -132,9 +132,9 @@ static PHP_METHOD(ObjectID, getTimestamp)
 	RETVAL_LONG(bson_oid_get_time_t(&tmp_oid));
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\ObjectID::__set_state(array $properties)
+/* {{{ proto MongoDB\BSON\ObjectId::__set_state(array $properties)
 */
-static PHP_METHOD(ObjectID, __set_state)
+static PHP_METHOD(ObjectId, __set_state)
 {
 	php_phongo_objectid_t *intern;
 	HashTable             *props;
@@ -152,9 +152,9 @@ static PHP_METHOD(ObjectID, __set_state)
 	php_phongo_objectid_init_from_hash(intern, props TSRMLS_CC);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\ObjectID::__toString()
+/* {{{ proto string MongoDB\BSON\ObjectId::__toString()
 */
-static PHP_METHOD(ObjectID, __toString)
+static PHP_METHOD(ObjectId, __toString)
 {
 	php_phongo_objectid_t    *intern;
 
@@ -169,9 +169,9 @@ static PHP_METHOD(ObjectID, __toString)
 	PHONGO_RETURN_STRINGL(intern->oid, 24);
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\ObjectID::jsonSerialize()
+/* {{{ proto array MongoDB\BSON\ObjectId::jsonSerialize()
 */
-static PHP_METHOD(ObjectID, jsonSerialize)
+static PHP_METHOD(ObjectId, jsonSerialize)
 {
 	php_phongo_objectid_t *intern;
 
@@ -185,9 +185,9 @@ static PHP_METHOD(ObjectID, jsonSerialize)
 	ADD_ASSOC_STRINGL(return_value, "$oid", intern->oid, 24);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\ObjectID::serialize()
+/* {{{ proto string MongoDB\BSON\ObjectId::serialize()
 */
-static PHP_METHOD(ObjectID, serialize)
+static PHP_METHOD(ObjectId, serialize)
 {
 	php_phongo_objectid_t    *intern;
 #if PHP_VERSION_ID >= 70000
@@ -224,9 +224,9 @@ static PHP_METHOD(ObjectID, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\ObjectID::unserialize(string $serialized)
+/* {{{ proto void MongoDB\BSON\ObjectId::unserialize(string $serialized)
 */
-static PHP_METHOD(ObjectID, unserialize)
+static PHP_METHOD(ObjectId, unserialize)
 {
 	php_phongo_objectid_t   *intern;
 	zend_error_handling      error_handling;
@@ -270,35 +270,35 @@ static PHP_METHOD(ObjectID, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ MongoDB\BSON\ObjectID function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID___construct, 0, 0, 0)
+/* {{{ MongoDB\BSON\ObjectId function entries */
+ZEND_BEGIN_ARG_INFO_EX(ai_ObjectId___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, id)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID___set_state, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(ai_ObjectId___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID_unserialize, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(ai_ObjectId_unserialize, 0, 0, 1)
 	ZEND_ARG_INFO(0, serialized)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(ai_ObjectID_void, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_ObjectId_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_objectid_me[] = {
-	PHP_ME(ObjectID, __construct, ai_ObjectID___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ObjectID, getTimestamp, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ObjectID, __set_state, ai_ObjectID___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-	PHP_ME(ObjectID, __toString, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ObjectID, jsonSerialize, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ObjectID, serialize, ai_ObjectID_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ObjectID, unserialize, ai_ObjectID_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, __construct, ai_ObjectId___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, getTimestamp, ai_ObjectId_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, __set_state, ai_ObjectId___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(ObjectId, __toString, ai_ObjectId_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, jsonSerialize, ai_ObjectId_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, serialize, ai_ObjectId_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, unserialize, ai_ObjectId_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };
 /* }}} */
 
-/* {{{ MongoDB\BSON\ObjectID object handlers */
+/* {{{ MongoDB\BSON\ObjectId object handlers */
 static zend_object_handlers php_phongo_handler_objectid;
 
 static void php_phongo_objectid_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
@@ -409,7 +409,7 @@ void php_phongo_objectid_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "ObjectID", php_phongo_objectid_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "ObjectId", php_phongo_objectid_me);
 	php_phongo_objectid_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_objectid_ce->create_object = php_phongo_objectid_create_object;
 	PHONGO_CE_FINAL(php_phongo_objectid_ce);

@@ -42,7 +42,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
       ["index"]=>
       int(2)
       ["_id"]=>
-      object(MongoDB\BSON\ObjectID)#%d (%d) {
+      object(MongoDB\BSON\ObjectId)#%d (%d) {
         ["oid"]=>
         string(24) "%x"
       }
@@ -52,7 +52,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
       ["index"]=>
       int(3)
       ["_id"]=>
-      object(MongoDB\BSON\ObjectID)#%d (%d) {
+      object(MongoDB\BSON\ObjectId)#%d (%d) {
         ["oid"]=>
         string(24) "%x"
       }

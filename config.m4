@@ -164,8 +164,8 @@ if test "$MONGODB" != "no"; then
     src/BSON/MaxKeyInterface.c \
     src/BSON/MinKey.c \
     src/BSON/MinKeyInterface.c \
-    src/BSON/ObjectID.c \
-    src/BSON/ObjectIDInterface.c \
+    src/BSON/ObjectId.c \
+    src/BSON/ObjectIdInterface.c \
     src/BSON/Persistable.c \
     src/BSON/Regex.c \
     src/BSON/RegexInterface.c \

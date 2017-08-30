@@ -32,7 +32,7 @@ class MyPersistableId extends MySerializableId implements MongoDB\BSON\Persistab
 
 $documents = [
     ['x' => 1],
-    ['_id' => new MongoDB\BSON\ObjectID('590b72d606e9660190656a55')],
+    ['_id' => new MongoDB\BSON\ObjectId('590b72d606e9660190656a55')],
     ['_id' => ['foo' => 1]],
     ['_id' => new MySerializableId('foo')],
     ['_id' => new MyPersistableId('bar')],
@@ -56,11 +56,11 @@ var_dump($cursor->toArray());
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\BSON\ObjectID)#%d (%d) {
+object(MongoDB\BSON\ObjectId)#%d (%d) {
   ["oid"]=>
   string(24) "%x"
 }
-object(MongoDB\BSON\ObjectID)#%d (%d) {
+object(MongoDB\BSON\ObjectId)#%d (%d) {
   ["oid"]=>
   string(24) "590b72d606e9660190656a55"
 }
@@ -81,7 +81,7 @@ array(5) {
   [0]=>
   object(stdClass)#%d (%d) {
     ["_id"]=>
-    object(MongoDB\BSON\ObjectID)#%d (%d) {
+    object(MongoDB\BSON\ObjectId)#%d (%d) {
       ["oid"]=>
       string(24) "%x"
     }
@@ -91,7 +91,7 @@ array(5) {
   [1]=>
   object(stdClass)#%d (%d) {
     ["_id"]=>
-    object(MongoDB\BSON\ObjectID)#%d (%d) {
+    object(MongoDB\BSON\ObjectId)#%d (%d) {
       ["oid"]=>
       string(24) "590b72d606e9660190656a55"
     }

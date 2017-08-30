@@ -34,11 +34,11 @@ matchedCount: 1
 modifiedCount: 1
 upsertedCount: 2
 deletedCount: 0
-upsertedId[0]: object(%s\ObjectID)#%d (%d) {
+upsertedId[0]: object(%s\ObjectId)#%d (%d) {
   ["oid"]=>
   string(24) "%s"
 }
-upsertedId[1]: object(%s\ObjectID)#%d (%d) {
+upsertedId[1]: object(%s\ObjectId)#%d (%d) {
   ["oid"]=>
   string(24) "%s"
 }
@@ -48,7 +48,7 @@ array(2) {
   [0]=>
   object(stdClass)#%d (3) {
     ["_id"]=>
-    object(%s\ObjectID)#%d (%d) {
+    object(%s\ObjectId)#%d (%d) {
       ["oid"]=>
       string(24) "%s"
     }
@@ -60,7 +60,7 @@ array(2) {
   [1]=>
   object(stdClass)#%d (3) {
     ["_id"]=>
-    object(%s\ObjectID)#%d (%d) {
+    object(%s\ObjectId)#%d (%d) {
       ["oid"]=>
       string(24) "%s"
     }
