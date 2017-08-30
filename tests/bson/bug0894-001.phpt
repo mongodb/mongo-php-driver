@@ -9,7 +9,7 @@ $objects = [
     new MongoDB\BSON\Javascript('function foo() { return bar; }', ['bar' => 42]),
     new MongoDB\BSON\MaxKey,
     new MongoDB\BSON\MinKey,
-    new MongoDB\BSON\ObjectID,
+    new MongoDB\BSON\ObjectId,
     new MongoDB\BSON\Regex('foo', 'i'),
     new MongoDB\BSON\Timestamp(1234, 5678),
     new MongoDB\BSON\UTCDateTime,

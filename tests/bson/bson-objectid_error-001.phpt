@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ObjectID #001 error
+MongoDB\BSON\ObjectId #001 error
 --SKIPIF--
 <?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM handles parameter parsing differently"); ?>
 --FILE--
@@ -8,7 +8,7 @@ MongoDB\BSON\ObjectID #001 error
 require_once __DIR__ . '/../utils/tools.php';
 
 throws(function() {
-    new MongoDB\BSON\ObjectID(new stdclass);
+    new MongoDB\BSON\ObjectId(new stdclass);
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
 ?>

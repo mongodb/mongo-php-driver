@@ -26,7 +26,7 @@ $tests = [
     new MongoDB\BSON\Javascript('function(){}'),
     new MongoDB\BSON\MaxKey,
     new MongoDB\BSON\MinKey,
-    new MongoDB\BSON\ObjectID('586c18d86118fd6c9012dec1'),
+    new MongoDB\BSON\ObjectId('586c18d86118fd6c9012dec1'),
     new MongoDB\BSON\Regex('foo'),
     new MongoDB\BSON\Timestamp(1234, 5678),
     new MongoDB\BSON\UTCDateTime('1483479256924'),
@@ -422,12 +422,12 @@ object(stdClass)#%d (1) {
   }
 }
 
-Testing MongoDB\BSON\ObjectID visitor function
+Testing MongoDB\BSON\ObjectId visitor function
 object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
     [0]=>
-    object(MongoDB\BSON\ObjectID)#%d (1) {
+    object(MongoDB\BSON\ObjectId)#%d (1) {
       ["oid"]=>
       string(24) "586c18d86118fd6c9012dec1"
     }
@@ -437,7 +437,7 @@ object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
     [0]=>
-    object(MongoDB\BSON\ObjectID)#%d (1) {
+    object(MongoDB\BSON\ObjectId)#%d (1) {
       ["oid"]=>
       string(24) "586c18d86118fd6c9012dec1"
     }
@@ -449,7 +449,7 @@ object(stdClass)#%d (1) {
     ["storage":"ArrayObject":private]=>
     array(1) {
       [0]=>
-      object(MongoDB\BSON\ObjectID)#%d (1) {
+      object(MongoDB\BSON\ObjectId)#%d (1) {
         ["oid"]=>
         string(24) "586c18d86118fd6c9012dec1"
       }

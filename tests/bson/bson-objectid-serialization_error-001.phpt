@@ -1,12 +1,12 @@
 --TEST--
-MongoDB\BSON\ObjectID unserialization requires "oid" string field
+MongoDB\BSON\ObjectId unserialization requires "oid" string field
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
-    unserialize('C:21:"MongoDB\BSON\ObjectID":20:{a:1:{s:3:"oid";i:0;}}');
+    unserialize('C:21:"MongoDB\BSON\ObjectId":20:{a:1:{s:3:"oid";i:0;}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
@@ -14,5 +14,5 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\BSON\ObjectID initialization requires "oid" string field
+MongoDB\BSON\ObjectId initialization requires "oid" string field
 ===DONE===

@@ -11,7 +11,7 @@ require_once __DIR__ . "/../utils/basic.inc";
  *
  * Do not test array or Regex types, which are not permitted to be used as an
  * ID. If a regular expression is used in upsert criteria and does not match an
- * existing document, the server generates a new ObjectID. */
+ * existing document, the server generates a new ObjectId. */
 $tests = [
     null,
     true,
@@ -23,7 +23,7 @@ $tests = [
     new MongoDB\BSON\Javascript('function(){}'),
     new MongoDB\BSON\MaxKey,
     new MongoDB\BSON\MinKey,
-    new MongoDB\BSON\ObjectID('586c18d86118fd6c9012dec1'),
+    new MongoDB\BSON\ObjectId('586c18d86118fd6c9012dec1'),
     new MongoDB\BSON\Timestamp(1234, 5678),
     new MongoDB\BSON\UTCDateTime('1483479256924'),
 ];
@@ -79,7 +79,7 @@ array(13) {
   object(MongoDB\BSON\MinKey)#%d (%d) {
   }
   [10]=>
-  object(MongoDB\BSON\ObjectID)#%d (%d) {
+  object(MongoDB\BSON\ObjectId)#%d (%d) {
     ["oid"]=>
     string(24) "586c18d86118fd6c9012dec1"
   }

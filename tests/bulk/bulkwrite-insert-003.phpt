@@ -38,7 +38,7 @@ array(1) {
   [0]=>
   object(stdClass)#%d (%d) {
     ["_id"]=>
-    object(MongoDB\BSON\ObjectID)#%d (%d) {
+    object(MongoDB\BSON\ObjectId)#%d (%d) {
       ["oid"]=>
       string(24) "%x"
     }

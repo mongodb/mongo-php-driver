@@ -7,7 +7,7 @@ $tests = [
     ['function foo(bar) { return bar; }', null],
     ['function foo(bar) { return bar; }', []],
     ['function foo() { return foo; }', ['foo' => 42]],
-    ['function foo() { return id; }', ['id' => new MongoDB\BSON\ObjectID('53e2a1c40640fd72175d4603')]],
+    ['function foo() { return id; }', ['id' => new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603')]],
 ];
 
 foreach ($tests as $test) {
@@ -30,7 +30,7 @@ object(stdClass)#%d (%d) {
 }
 object(stdClass)#%d (%d) {
   ["id"]=>
-  object(MongoDB\BSON\ObjectID)#%d (%d) {
+  object(MongoDB\BSON\ObjectId)#%d (%d) {
     ["oid"]=>
     string(24) "53e2a1c40640fd72175d4603"
   }

@@ -937,7 +937,7 @@ static const char *php_phongo_bson_type_to_string(bson_type_t type) /* {{{ */
 		case BSON_TYPE_ARRAY: return "array";
 		case BSON_TYPE_BINARY: return "Binary";
 		case BSON_TYPE_UNDEFINED: return "undefined";
-		case BSON_TYPE_OID: return "ObjectID";
+		case BSON_TYPE_OID: return "ObjectId";
 		case BSON_TYPE_BOOL: return "boolean";
 		case BSON_TYPE_DATE_TIME: return "UTCDateTime";
 		case BSON_TYPE_NULL: return "null";

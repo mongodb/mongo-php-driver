@@ -1,10 +1,10 @@
 --TEST--
-MongoDB\BSON\ObjectIDInterface is implemented by MongoDB\BSON\ObjectID
+MongoDB\BSON\ObjectIdInterface is implemented by MongoDB\BSON\ObjectId
 --FILE--
 <?php
 
-$oid = new MongoDB\BSON\ObjectID;
-var_dump($oid instanceof MongoDB\BSON\ObjectIDInterface);
+$oid = new MongoDB\BSON\ObjectId;
+var_dump($oid instanceof MongoDB\BSON\ObjectIdInterface);
 
 ?>
 ===DONE===

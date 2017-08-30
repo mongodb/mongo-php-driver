@@ -113,7 +113,7 @@ object(MongoDB\Driver\Monitoring\CommandStartedEvent)#%d (%d) {
         ["decimal"]=>
         int(12345678)
         ["_id"]=>
-        object(MongoDB\BSON\ObjectID)#%d (%d) {
+        object(MongoDB\BSON\ObjectId)#%d (%d) {
           ["oid"]=>
           string(24) "%s"
         }
@@ -198,7 +198,7 @@ array(%d) {
   [0]=>
   object(stdClass)#%d (%d) {
     ["_id"]=>
-    object(MongoDB\BSON\ObjectID)#%d (%d) {
+    object(MongoDB\BSON\ObjectId)#%d (%d) {
       ["oid"]=>
       string(24) "%s"
     }

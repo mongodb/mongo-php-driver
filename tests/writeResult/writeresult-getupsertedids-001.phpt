@@ -26,12 +26,12 @@ var_dump($result->getUpsertedIds());
 --EXPECTF--
 array(2) {
   [2]=>
-  object(MongoDB\BSON\ObjectID)#%d (%d) {
+  object(MongoDB\BSON\ObjectId)#%d (%d) {
     ["oid"]=>
     string(24) "%x"
   }
   [3]=>
-  object(MongoDB\BSON\ObjectID)#%d (%d) {
+  object(MongoDB\BSON\ObjectId)#%d (%d) {
     ["oid"]=>
     string(24) "%x"
   }

@@ -24,7 +24,7 @@ object(stdClass)#%d (%d) {
   ["myArray"]=>
   array(1) {
     [0]=>
-    object(MongoDB\BSON\ObjectID)#%d (%d) {
+    object(MongoDB\BSON\ObjectId)#%d (%d) {
       ["oid"]=>
       string(24) "201700601301102102609060"
     }
@@ -45,7 +45,7 @@ object(stdClass)#%d (%d) {
 }
 object(stdClass)#3 (2) {
   [0]=>
-  object(MongoDB\BSON\ObjectID)#%d (%d) {
+  object(MongoDB\BSON\ObjectId)#%d (%d) {
     ["oid"]=>
     string(24) "55f2b3f1f657b3fa97c9c0a2"
   }

@@ -30,7 +30,7 @@ var_dump($s1 > 0);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\CursorID)#%d (%d) {
+object(MongoDB\Driver\CursorId)#%d (%d) {
   ["id"]=>
   %rint\(\d+\)|string\(\d+\) "\d+"%r
 }

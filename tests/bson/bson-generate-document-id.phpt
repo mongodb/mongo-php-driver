@@ -46,7 +46,7 @@ array(3) {
     string(8) "New York"
   }
   ["_id"]=>
-  object(%s\ObjectID)#%d (%d) {
+  object(%s\ObjectId)#%d (%d) {
     ["oid"]=>
     string(24) "%s"
   }
@@ -55,7 +55,7 @@ array(3) {
 Dumping fetched user document:
 object(stdClass)#%d (3) {
   ["_id"]=>
-  object(%s\ObjectID)#%d (%d) {
+  object(%s\ObjectId)#%d (%d) {
     ["oid"]=>
     string(24) "%s"
   }

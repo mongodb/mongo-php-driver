@@ -85,7 +85,7 @@ Inserted 1 document(s)
 Modified 1 document(s)
 object(Book)#%d (%d) {
   ["_id"]=>
-  object(MongoDB\BSON\ObjectID)#%d (%d) {
+  object(MongoDB\BSON\ObjectId)#%d (%d) {
     ["oid"]=>
     string(24) "%s"
   }

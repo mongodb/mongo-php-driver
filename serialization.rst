@@ -233,7 +233,7 @@ map from each supported data type to a class of your own, providing it
 implements the ``MongoDB\BSON\TypeWrapper`` interface.
 
 The supported data types are Binary, Decimal128, Javascript, MaxKey, MinKey,
-ObjectID, Regex, Timestamp, and UTCDateTime.
+ObjectId, Regex, Timestamp, and UTCDateTime.
 
 The ``MongoDB\BSON\TypeWrapper`` interface defines two functions:
 ``createFromBSONType()``, a factory method which takes a ``MongoDB\BSON\Type``

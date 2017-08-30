@@ -164,8 +164,8 @@ if test "$MONGODB" != "no"; then
     src/BSON/MaxKeyInterface.c \
     src/BSON/MinKey.c \
     src/BSON/MinKeyInterface.c \
-    src/BSON/ObjectID.c \
-    src/BSON/ObjectIDInterface.c \
+    src/BSON/ObjectId.c \
+    src/BSON/ObjectIdInterface.c \
     src/BSON/Persistable.c \
     src/BSON/Regex.c \
     src/BSON/RegexInterface.c \
@@ -180,7 +180,7 @@ if test "$MONGODB" != "no"; then
     src/MongoDB/BulkWrite.c \
     src/MongoDB/Command.c \
     src/MongoDB/Cursor.c \
-    src/MongoDB/CursorID.c \
+    src/MongoDB/CursorId.c \
     src/MongoDB/Manager.c \
     src/MongoDB/Query.c \
     src/MongoDB/ReadConcern.c \

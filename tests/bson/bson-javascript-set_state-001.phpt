@@ -7,7 +7,7 @@ $tests = [
     ['function foo(bar) { return bar; }', null],
     ['function foo(bar) { return bar; }', []],
     ['function foo() { return foo; }', ['foo' => 42]],
-    ['function foo() { return id; }', ['id' => new MongoDB\BSON\ObjectID('53e2a1c40640fd72175d4603')]],
+    ['function foo() { return id; }', ['id' => new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603')]],
 ];
 
 foreach ($tests as $test) {
@@ -55,7 +55,7 @@ MongoDB\BSON\Javascript::__set_state(array(
 %w'scope' => 
   stdClass::__set_state(array(
   %w'id' => 
-    MongoDB\BSON\ObjectID::__set_state(array(
+    MongoDB\BSON\ObjectId::__set_state(array(
     %w'oid' => '53e2a1c40640fd72175d4603',
     )),
   )),
