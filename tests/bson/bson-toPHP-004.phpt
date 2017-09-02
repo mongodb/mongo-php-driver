@@ -67,7 +67,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     NULL
   }
 }
@@ -93,7 +93,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     bool(true)
   }
 }
@@ -119,7 +119,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     int(1)
   }
 }
@@ -145,7 +145,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     float(3.14)
   }
 }
@@ -171,7 +171,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     string(3) "foo"
   }
 }
@@ -198,7 +198,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     object(stdClass)#%d (0) {
     }
   }
@@ -230,7 +230,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     object(stdClass)#%d (0) {
     }
   }
@@ -263,7 +263,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     object(MongoDB\BSON\Binary)#%d (2) {
       ["data"]=>
       string(3) "foo"
@@ -302,7 +302,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     object(MongoDB\BSON\Decimal128)#%d (1) {
       ["dec"]=>
       string(4) "3.14"
@@ -339,7 +339,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     object(MongoDB\BSON\Javascript)#%d (2) {
       ["code"]=>
       string(12) "function(){}"
@@ -376,7 +376,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     object(MongoDB\BSON\MaxKey)#%d (0) {
     }
   }
@@ -405,7 +405,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     object(MongoDB\BSON\MinKey)#%d (0) {
     }
   }
@@ -436,7 +436,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     object(MongoDB\BSON\ObjectId)#%d (1) {
       ["oid"]=>
       string(24) "586c18d86118fd6c9012dec1"
@@ -473,7 +473,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     object(MongoDB\BSON\Regex)#%d (2) {
       ["pattern"]=>
       string(3) "foo"
@@ -514,7 +514,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     object(MongoDB\BSON\Timestamp)#%d (2) {
       ["increment"]=>
       string(4) "1234"
@@ -553,7 +553,7 @@ object(stdClass)#%d (1) {
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
-    [0]=>
+    [%r(0|"0")%r]=>
     object(MongoDB\BSON\UTCDateTime)#%d (1) {
       ["milliseconds"]=>
       string(13) "1483479256924"
