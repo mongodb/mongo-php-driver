@@ -401,6 +401,11 @@ void php_phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 	 * properties, we'll need to filter them out later. */
 	bool         ht_data_from_properties = false;
 
+	/* If the object is an instance of MongoDB\BSON\Persistable, we will need to
+	 * inject the PHP class name as a BSON key and ignore any existing key in
+	 * the return value of bsonSerialize(). */
+	bool         skip_odm_field = false;
+
 	ZVAL_UNDEF(&obj_data);
 
 	switch(Z_TYPE_P(data)) {
@@ -455,11 +460,12 @@ void php_phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce TSRMLS_CC)) {
 #if PHP_VERSION_ID >= 70000
 					bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name->val, Z_OBJCE_P(data)->name->len);
-					zend_hash_str_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME)-1);
 #else
 					bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t *)Z_OBJCE_P(data)->name, strlen(Z_OBJCE_P(data)->name));
-					zend_hash_del(ht_data, PHONGO_ODM_FIELD_NAME, sizeof(PHONGO_ODM_FIELD_NAME));
 #endif
+					/* Ensure that we ignore an existing key with the same name
+					 * if one exists in the bsonSerialize() return value. */
+					skip_odm_field = true;
 				}
 
 				break;
@@ -502,6 +508,10 @@ void php_phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "BSON keys cannot contain null bytes. Unexpected null byte after \"%s\".", ZSTR_VAL(string_key));
 
 					goto cleanup;
+				}
+
+				if (skip_odm_field && !strcmp(ZSTR_VAL(string_key), PHONGO_ODM_FIELD_NAME)) {
+					continue;
 				}
 
 				if (flags & PHONGO_BSON_ADD_ID) {
@@ -554,6 +564,10 @@ void php_phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "BSON keys cannot contain null bytes. Unexpected null byte after \"%s\".", ZSTR_VAL(string_key));
 
 				goto cleanup;
+			}
+
+			if (skip_odm_field && !strcmp(string_key, PHONGO_ODM_FIELD_NAME)) {
+				continue;
 			}
 
 			if (flags & PHONGO_BSON_ADD_ID) {
