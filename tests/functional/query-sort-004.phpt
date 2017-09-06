@@ -48,7 +48,7 @@ object(MongoDB\Driver\Query)#%d (%d) {
   object(stdClass)#%d (%d) {
     ["sort"]=>
     object(stdClass)#%d (%d) {
-      [0]=>
+      [%r(0|"0")%r]=>
       int(1)
     }
   }

@@ -94,7 +94,7 @@ Test { "0" : { "__pclass" : { "$binary" : "UGVyc29u", "$type" : "80" }, "name" :
    110 : 00 04 66 72 69 65 6e 64 73 00 05 00 00 00 00 00  [..friends.......]
    120 : 00 00 00                                         [...]
 object(stdClass)#%d (1) {
-  [0]=>
+  [%r(0|"0")%r]=>
   object(Person)#%d (5) {
     ["name":protected]=>
     string(6) "Hannes"
