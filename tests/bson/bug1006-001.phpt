@@ -1,5 +1,5 @@
 --TEST--
-PHPC-1005: Do not modify memory of Persistable::bsonSerialize() return value
+PHPC-1006: Do not modify memory of Persistable::bsonSerialize() return value
 --FILE--
 <?php
 
