@@ -5,6 +5,9 @@ php:
   - 5.6
   - 5.5
 
+services:
+  - mongodb
+
 env:
   global:
     - TEST_PHP_ARGS="-q -s output.txt -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
@@ -18,10 +21,7 @@ env:
 before_install:
   - sudo pip install cpp-coveralls
   - sudo pip install ${MONGODB_ORCHESTRATION_REPO}
-  - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
-  - echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
   - sudo apt-get update
-  - sudo apt-get install -y mongodb-org
   - sudo apt-get install gdb valgrind
   - sudo apt-get install cdbs debhelper build-essential python-lxml
   - php -r 'if ( ! ($f = php_ini_loaded_file())) { $f = PHP_CONFIG_FILE_PATH . "/php.ini"; } file_put_contents($f, "variables_order=EGPCS\n", FILE_APPEND); $a = file($f, FILE_IGNORE_NEW_LINES); var_dump($a[count($a)-1]);'
@@ -30,7 +30,6 @@ before_script:
   - ulimit -a
   - ulimit -c unlimited || true
   - "./.travis.scripts/compile.sh"
-  - mongo --eval 'tojson(db.runCommand({buildInfo:1}))'
 
 script:
   - make test
