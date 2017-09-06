@@ -807,7 +807,7 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 				case PHONGO_TYPEMAP_NATIVE_OBJECT:
 				default:
 #if PHP_VERSION_ID >= 70000
-					object_and_properties_init(&state.zchild, zend_standard_class_def, Z_ARRVAL(state.zchild));
+					convert_to_object(&state.zchild);
 					if (((php_phongo_bson_state *)data)->is_visiting_array) {
 						add_next_index_zval(retval, &state.zchild);
 					} else {
@@ -815,7 +815,7 @@ bool php_phongo_bson_visit_document(const bson_iter_t *iter ARG_UNUSED, const ch
 					}
 					Z_SET_REFCOUNT(state.zchild, 1);
 #else
-					object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
+					convert_to_object(state.zchild);
 					if (((php_phongo_bson_state *)data)->is_visiting_array) {
 						add_next_index_zval(retval, state.zchild);
 					} else {
@@ -898,7 +898,7 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 
 				case PHONGO_TYPEMAP_NATIVE_OBJECT:
 #if PHP_VERSION_ID >= 70000
-					object_and_properties_init(&state.zchild, zend_standard_class_def, Z_ARRVAL(state.zchild));
+					convert_to_object(&state.zchild);
 					if (((php_phongo_bson_state *)data)->is_visiting_array) {
 						add_next_index_zval(retval, &state.zchild);
 					} else {
@@ -906,7 +906,7 @@ bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, const char 
 					}
 					Z_SET_REFCOUNT(state.zchild, 1);
 #else
-					object_and_properties_init(state.zchild, zend_standard_class_def, Z_ARRVAL_P(state.zchild));
+					convert_to_object(state.zchild);
 					if (((php_phongo_bson_state *)data)->is_visiting_array) {
 						add_next_index_zval(retval, state.zchild);
 					} else {
@@ -1587,9 +1587,9 @@ int phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_b
 		case PHONGO_TYPEMAP_NATIVE_OBJECT:
 		default:
 #if PHP_VERSION_ID >= 70000
-			object_and_properties_init(&state->zchild, zend_standard_class_def, Z_ARRVAL(state->zchild));
+			convert_to_object(&state->zchild);
 #else
-			object_and_properties_init(state->zchild, zend_standard_class_def, Z_ARRVAL_P(state->zchild));
+			convert_to_object(state->zchild);
 #endif
 	}
 
