@@ -153,10 +153,20 @@ if (PHP_MONGODB != "no") {
     mongoc_ssl_path_to_check += ";" + PHP_OPENSSL;
   }
 
-  if (CHECK_LIB("ssleay32.lib", "mongodb", mongoc_ssl_path_to_check) &&
-      CHECK_LIB("libeay32.lib", "mongodb", mongoc_ssl_path_to_check) &&
-      CHECK_LIB("crypt32.lib", "mongodb") &&
-      CHECK_HEADER_ADD_INCLUDE("openssl/ssl.h", "CFLAGS_MONGODB")) {
+  var mongoc_ssl_found = false;
+
+  /* PHP 7.1.2 introduced SETUP_OPENSSL(), which supports OpenSSL 1.1.x. Earlier
+   * versions will use the legacy check for OpenSSL 1.0.x and lower. */
+  if (typeof SETUP_OPENSSL === 'function') {
+    mongoc_ssl_found = SETUP_OPENSSL("mongodb", mongoc_ssl_path_to_check) > 0;
+  } else if (CHECK_LIB("ssleay32.lib", "mongodb", mongoc_ssl_path_to_check) &&
+             CHECK_LIB("libeay32.lib", "mongodb", mongoc_ssl_path_to_check) &&
+             CHECK_LIB("crypt32.lib", "mongodb", mongoc_ssl_path_to_check) &&
+             CHECK_HEADER_ADD_INCLUDE("openssl/ssl.h", "CFLAGS_MONGODB")) {
+    mongoc_ssl_found = true;
+  }
+
+  if (mongoc_ssl_found) {
     mongoc_opts.MONGOC_ENABLE_SSL_OPENSSL = 1;
     mongoc_opts.MONGOC_ENABLE_CRYPTO_LIBCRYPTO = 1;
     mongoc_opts.MONGOC_ENABLE_SSL = 1;
