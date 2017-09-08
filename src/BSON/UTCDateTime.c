@@ -29,6 +29,7 @@
 #include <ext/standard/info.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/date/php_date.h>
+#include <ext/date/lib/timelib.h>
 #include <ext/spl/spl_iterators.h>
 #include <ext/standard/php_var.h>
 #if PHP_VERSION_ID >= 70000
@@ -142,7 +143,7 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t *inte
 
 	/* The following assignments use the same logic as date_format() in php_date.c */
 	sec = datetime_obj->time->sse;
-#if PHP_VERSION_ID >= 70200
+#if TIMELIB_VERSION >= 201705
 	usec = (int64_t) floor(datetime_obj->time->us);
 #else
 	usec = (int64_t) floor(datetime_obj->time->f * 1000000 + 0.5);
@@ -277,7 +278,7 @@ PHP_METHOD(UTCDateTime, toDateTime)
 	php_date_initialize(datetime_obj, sec, sec_len, NULL, NULL, 0 TSRMLS_CC);
 	efree(sec);
 
-#if PHP_VERSION_ID >= 70200
+#if TIMELIB_VERSION >= 201705
 	datetime_obj->time->us = (intern->milliseconds % 1000) * 1000;
 #else
 	datetime_obj->time->f = (double) (intern->milliseconds % 1000) / 1000;
