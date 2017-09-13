@@ -223,13 +223,13 @@ if test "$MONGODB" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
-      if $PKG_CONFIG libbson-1.0 --atleast-version 1.7.0; then
+      if $PKG_CONFIG libbson-1.0 --atleast-version 1.8.0; then
         LIBBSON_INC=`$PKG_CONFIG libbson-1.0 --cflags`
         LIBBSON_LIB=`$PKG_CONFIG libbson-1.0 --libs`
         LIBBSON_VER=`$PKG_CONFIG libbson-1.0 --modversion`
         AC_MSG_RESULT(version $LIBBSON_VER found)
       else
-        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.7.0)
+        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.8.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libbson must be installed)
@@ -261,14 +261,14 @@ if test "$MONGODB" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0; then
-      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.7.0; then
+      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.8.0; then
         LIBMONGOC_INC=`$PKG_CONFIG libmongoc-1.0 --cflags`
         LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-1.0 --libs`
         LIBMONGOC_VER=`$PKG_CONFIG libmongoc-1.0 --modversion`
         AC_MSG_RESULT(version $LIBMONGOC_VER found)
 
       else
-        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.7.0)
+        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.8.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and mongoc must be installed)
