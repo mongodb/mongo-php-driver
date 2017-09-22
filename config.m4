@@ -207,7 +207,7 @@ if test "$MONGODB" != "no"; then
     src/MongoDB/Monitoring/CommandSubscriber.c \
     src/MongoDB/Monitoring/CommandSucceededEvent.c \
     src/MongoDB/Monitoring/Subscriber.c \
-    src/MongoDB/Monitoring/functions.c
+    src/MongoDB/Monitoring/functions.c \
   "
 
   PHP_ARG_WITH(libbson, whether to use system libbson,
