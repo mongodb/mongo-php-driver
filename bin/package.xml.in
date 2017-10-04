@@ -55,5 +55,7 @@ necessary to build a fully-functional MongoDB driver.
   </required>
  </dependencies>
  <providesextension>mongodb</providesextension>
- <extsrcrelease/>
+ <extsrcrelease>
+  <configureoption name="with-openssl-dir" default="no" prompt="openssl directory"/>
+ </extsrcrelease>
 </package>
