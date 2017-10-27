@@ -20,7 +20,7 @@ env:
     - secure: "pfGVPucvgcgcefhtzAVeejlpOtn4TnAqJSTM8mJkBl36KdU9P7hMuD3czQ4drWgzZ373/VT5UVhLu/HNsdbW0YBTeqPKJ4YNjqVVLytI8xT7y2Lw9l+I7o93j98TMgAoo8nVRmp/E4D6yutbKK1eddrcmf899R1iJbw8v8d1Ht8="
 
 before_install:
-  - sudo pip install cpp-coveralls
+  - sudo pip install --upgrade cpp-coveralls
   - sudo pip install ${MONGODB_ORCHESTRATION_REPO}
   - sudo apt-get update
   - sudo apt-get install gdb valgrind
