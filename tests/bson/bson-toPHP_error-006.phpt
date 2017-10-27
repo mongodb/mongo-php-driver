@@ -1,9 +1,7 @@
 --TEST--
-MongoDB\BSON\toPHP(): BSON decoding throws multiple exceptions
+MongoDB\BSON\toPHP(): BSON decoding shows multiple warnings
 --FILE--
 <?php
-
-require_once __DIR__ . '/../utils/tools.php';
 
 $tests = [
     // two undefined fields in root document
@@ -18,12 +16,11 @@ $tests = [
     pack('VCa*xVCa*xxCa*xVCa*xxx', 31, 0x03, 'e1', 9, 0x06, 'u1', 0x03, 'e2', 9, 0x06, 'u2'),
 ];
 
-ini_set("mongodb.debug", "stdout");
+ini_set('mongodb.debug', 'stdout');
 foreach ($tests as $bson) {
-    var_dump(toPHP($bson));
+	var_dump(MongoDB\BSON\toPHP($bson));
 }
-ini_set("mongodb.debug", "off");
-
+ini_set('mongodb.debug', 'off');
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -31,53 +28,33 @@ ini_set("mongodb.debug", "off");
 [%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x06 (undefined) for fieldname "u1"
 [%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x06 (undefined) for fieldname "u2"
 object(stdClass)#%d (%d) {
-  ["u1"]=>
-  NULL
-  ["u2"]=>
-  NULL
 }
 [%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x06 (undefined) for fieldname "u1"
 [%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x0E (symbol) for fieldname "s1"
 object(stdClass)#%d (%d) {
-  ["u1"]=>
-  NULL
-  ["s1"]=>
-  NULL
 }
 [%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x06 (undefined) for fieldname "u1"
 [%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x06 (undefined) for fieldname "u2"
 object(stdClass)#%d (%d) {
-  ["u1"]=>
-  NULL
   ["e1"]=>
-  object(stdClass)#%d (%d) {
-    ["u2"]=>
-    NULL
+  object(stdClass)#%d (0) {
   }
 }
 [%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x06 (undefined) for fieldname "u1"
 [%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x06 (undefined) for fieldname "u2"
 object(stdClass)#%d (%d) {
   ["e1"]=>
-  object(stdClass)#%d (%d) {
-    ["u1"]=>
-    NULL
+  object(stdClass)#%d (0) {
   }
-  ["u2"]=>
-  NULL
 }
 [%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x06 (undefined) for fieldname "u1"
 [%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x06 (undefined) for fieldname "u2"
-object(stdClass)#3 (%d) {
+object(stdClass)#%d (%d) {
   ["e1"]=>
-  object(stdClass)#%d (%d) {
-    ["u1"]=>
-    NULL
+  object(stdClass)#%d (0) {
   }
   ["e2"]=>
-  object(stdClass)#%d (%d) {
-    ["u2"]=>
-    NULL
+  object(stdClass)#%d (0) {
   }
 }
 ===DONE===

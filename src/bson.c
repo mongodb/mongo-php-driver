@@ -131,15 +131,7 @@ static bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, con
 
 static bool php_phongo_bson_visit_undefined(const bson_iter_t *iter, const char *key, void *data) /* {{{ */
 {
-	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
-
 	mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Detected unsupported BSON type 0x06 (undefined) for fieldname \"%s\"", key);
-
-	if (((php_phongo_bson_state *)data)->is_visiting_array) {
-		add_next_index_null(retval);
-	} else {
-		add_assoc_null(retval, key);
-	}
 
 	return false;
 } /* }}} */
@@ -292,15 +284,7 @@ static bool php_phongo_bson_visit_regex(const bson_iter_t *iter ARG_UNUSED, cons
 
 static bool php_phongo_bson_visit_symbol(const bson_iter_t *iter, const char *key, size_t symbol_len, const char *symbol, void *data) /* {{{ */
 {
-	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
-
 	mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Detected unsupported BSON type 0x0E (symbol) for fieldname \"%s\"", key);
-
-	if (((php_phongo_bson_state *)data)->is_visiting_array) {
-		add_next_index_null(retval);
-	} else {
-		add_assoc_null(retval, key);
-	}
 
 	return false;
 } /* }}} */
@@ -337,15 +321,7 @@ static bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const
 
 static bool php_phongo_bson_visit_dbpointer(const bson_iter_t *iter, const char *key, size_t collection_len, const char *collection, const bson_oid_t *oid, void *data) /* {{{ */
 {
-	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
-
 	mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Detected unsupported BSON type 0x0C (DBPointer) for fieldname \"%s\"", key);
-
-	if (((php_phongo_bson_state *)data)->is_visiting_array) {
-		add_next_index_null(retval);
-	} else {
-		add_assoc_null(retval, key);
-	}
 
 	return false;
 } /* }}} */
