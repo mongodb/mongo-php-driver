@@ -47,7 +47,7 @@ static bool php_phongo_bson_visit_array(const bson_iter_t *iter ARG_UNUSED, cons
 
 static void php_phongo_bson_visit_corrupt(const bson_iter_t *iter ARG_UNUSED, void *data ARG_UNUSED) /* {{{ */
 {
-	mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "Corrupt BSON data detected!");
+	mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Corrupt BSON data detected!");
 } /* }}} */
 
 static void php_phongo_bson_visit_unsupported_type(const bson_iter_t *iter ARG_UNUSED, const char *key, uint32_t v_type_code, void *data ARG_UNUSED) /* {{{ */
@@ -131,8 +131,7 @@ static bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, con
 
 static bool php_phongo_bson_visit_undefined(const bson_iter_t *iter, const char *key, void *data) /* {{{ */
 {
-	TSRMLS_FETCH();
-	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected unsupported BSON type 0x06 (undefined) for fieldname \"%s\"", key);
+	mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Detected unsupported BSON type 0x06 (undefined) for fieldname \"%s\"", key);
 
 	return false;
 } /* }}} */
@@ -285,8 +284,7 @@ static bool php_phongo_bson_visit_regex(const bson_iter_t *iter ARG_UNUSED, cons
 
 static bool php_phongo_bson_visit_symbol(const bson_iter_t *iter, const char *key, size_t symbol_len, const char *symbol, void *data) /* {{{ */
 {
-	TSRMLS_FETCH();
-	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected unsupported BSON type 0x0E (symbol) for fieldname \"%s\"", key);
+	mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Detected unsupported BSON type 0x0E (symbol) for fieldname \"%s\"", key);
 
 	return false;
 } /* }}} */
@@ -323,8 +321,7 @@ static bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const
 
 static bool php_phongo_bson_visit_dbpointer(const bson_iter_t *iter, const char *key, size_t collection_len, const char *collection, const bson_oid_t *oid, void *data) /* {{{ */
 {
-	TSRMLS_FETCH();
-	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected unsupported BSON type 0x0C (DBPointer) for fieldname \"%s\"", key);
+	mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Detected unsupported BSON type 0x0C (DBPointer) for fieldname \"%s\"", key);
 
 	return false;
 } /* }}} */
