@@ -11,20 +11,29 @@ $tests = [
     pack('VCa*xVa*xx', 18, 0x0E, 'foo', 4, 'bar'), // symbol
 ];
 
+ini_set("mongodb.debug", "stdout");
 foreach ($tests as $bson) {
-    echo throws(function() use ($bson) {
-        var_dump(toPHP($bson));
-    }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
+	var_dump(toPHP($bson));
 }
+ini_set("mongodb.debug", "off");
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Detected unsupported BSON type 0x06 (undefined) for fieldname "foo"
-OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Detected unsupported BSON type 0x0C (DBPointer) for fieldname "foo"
-OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Detected unsupported BSON type 0x0E (symbol) for fieldname "foo"
+--EXPECTF--
+[%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x06 (undefined) for fieldname "foo"
+object(stdClass)#%d (%d) {
+  ["foo"]=>
+  NULL
+}
+[%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x0C (DBPointer) for fieldname "foo"
+object(stdClass)#%d (%d) {
+  ["foo"]=>
+  NULL
+}
+[%s] PHONGO-BSON: WARNING > Detected unsupported BSON type 0x0E (symbol) for fieldname "foo"
+object(stdClass)#%d (%d) {
+  ["foo"]=>
+  NULL
+}
 ===DONE===
