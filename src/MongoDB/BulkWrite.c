@@ -137,6 +137,7 @@ static bool php_phongo_bulkwrite_update_apply_options(bson_t *boptions, zval *zo
 
 	PHONGO_BULKWRITE_APPEND_BOOL("multi", multi);
 	PHONGO_BULKWRITE_APPEND_BOOL("upsert", upsert);
+	PHONGO_BULKWRITE_OPT_DOCUMENT("arrayFilters");
 	PHONGO_BULKWRITE_OPT_DOCUMENT("collation");
 
 	return true;
