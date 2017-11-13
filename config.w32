@@ -170,7 +170,11 @@ if (PHP_MONGODB != "no") {
   /* PHP 7.1.2 introduced SETUP_OPENSSL(), which supports OpenSSL 1.1.x. Earlier
    * versions will use the legacy check for OpenSSL 1.0.x and lower. */
   if (typeof SETUP_OPENSSL === 'function') {
-    mongoc_ssl_found = SETUP_OPENSSL("mongodb", mongoc_ssl_path_to_check) > 0;
+    openssl_type = SETUP_OPENSSL("mongodb", mongoc_ssl_path_to_check);
+    mongoc_ssl_found = openssl_type > 0;
+    if (openssl_type >= 2) {
+      mongoc_opts.MONGOC_HAVE_ASN1_STRING_GET0_DATA = 1;
+    }
   } else if (CHECK_LIB("ssleay32.lib", "mongodb", mongoc_ssl_path_to_check) &&
              CHECK_LIB("libeay32.lib", "mongodb", mongoc_ssl_path_to_check) &&
              CHECK_LIB("crypt32.lib", "mongodb", mongoc_ssl_path_to_check) &&
