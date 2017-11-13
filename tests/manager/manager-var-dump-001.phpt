@@ -52,23 +52,6 @@ object(MongoDB\Driver\Manager)#%d (%d) {
       bool(false)
       ["last_is_master"]=>
       array(%d) {
-        ["ismaster"]=>
-        bool(true)
-        ["maxBsonObjectSize"]=>
-        int(16777216)
-        ["maxMessageSizeBytes"]=>
-        int(48000000)
-        ["maxWriteBatchSize"]=>
-        int(1000)
-        ["localTime"]=>
-        object(%s\UTCDateTime)#%d (%d) {
-          ["milliseconds"]=>
-          %r(int\(\d+\)|string\(\d+\) "\d+")%r
-        }
-        ["maxWireVersion"]=>
-        int(%d)
-        ["minWireVersion"]=>
-        int(0)
         %a
       }
       ["round_trip_time"]=>

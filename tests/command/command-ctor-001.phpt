@@ -51,8 +51,9 @@ $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command([
     'pipeline' => [
         ['$match' => $document],
     ],
+    'cursor' => new stdClass(),
 ]));
-var_dump($cursor->toArray()[0]->result[0]);
+var_dump($cursor->toArray()[0]);
 
 ?>
 ===DONE===
