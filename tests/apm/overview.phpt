@@ -48,7 +48,7 @@ object(MongoDB\Driver\Monitoring\CommandStartedEvent)#%d (%d) {
   ["command"]=>
   object(stdClass)#%d (%d) {
     ["drop"]=>
-    string(12) "apm_overview"
+    string(12) "apm_overview"%A
   }
   ["commandName"]=>
   string(4) "drop"
@@ -105,20 +105,7 @@ object(MongoDB\Driver\Monitoring\CommandStartedEvent)#%d (%d) {
     object(stdClass)#%d (%d) {
     }
     ["ordered"]=>
-    bool(false)
-    ["documents"]=>
-    array(%d) {
-      [0]=>
-      object(stdClass)#%d (%d) {
-        ["decimal"]=>
-        int(12345678)
-        ["_id"]=>
-        object(MongoDB\BSON\ObjectId)#%d (%d) {
-          ["oid"]=>
-          string(24) "%s"
-        }
-      }
-    }
+    bool(false)%A
   }
   ["commandName"]=>
   string(6) "insert"
@@ -160,7 +147,7 @@ object(MongoDB\Driver\Monitoring\CommandStartedEvent)#%d (%d) {
     string(12) "apm_overview"
     ["filter"]=>
     object(stdClass)#%d (%d) {
-    }
+    }%A
   }
   ["commandName"]=>
   string(4) "find"

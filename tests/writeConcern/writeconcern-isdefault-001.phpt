@@ -14,8 +14,8 @@ $tests = [
     new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY),
     // mongoc_uri_parse_option() ignores empty string for w
     (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w='))->getWriteConcern(),
-    // Cannot test "w=-3" since libmongoc URI parsing expects integers >= -2
-    (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=-2'))->getWriteConcern(),
+    // Cannot test "w=-3" since libmongoc URI parsing expects integers >= -1
+    // Cannot test "w=-2" since libmongoc URI parsing expects integers >= -1, and throws an error otherwise
     (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=-1'))->getWriteConcern(),
     (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=0'))->getWriteConcern(),
     (new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=1'))->getWriteConcern(),
@@ -49,7 +49,6 @@ bool(false)
 bool(false)
 bool(false)
 bool(false)
-bool(true)
 bool(true)
 bool(false)
 bool(false)

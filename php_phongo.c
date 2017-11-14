@@ -1116,6 +1116,32 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 
 			continue;
 		}
+
+		if (!strcasecmp(key, MONGOC_URI_GSSAPISERVICENAME)) {
+			bson_t unused, properties = BSON_INITIALIZER;
+
+			if (mongoc_uri_get_mechanism_properties(uri, &unused)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "authMechanismProperties SERVICE_NAME already set, ignoring \"%s\"", key);
+				return false;
+			}
+
+			if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "string");
+				return false;
+			}
+
+			bson_append_utf8(&properties, "SERVICE_NAME", -1, bson_iter_utf8(&iter, NULL), -1);
+
+			if (!mongoc_uri_set_mechanism_properties(uri, &properties)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+				bson_destroy(&properties);
+				return false;
+			}
+
+			bson_destroy(&properties);
+
+			continue;
+		}
 	}
 
 	return true;

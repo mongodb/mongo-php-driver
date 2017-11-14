@@ -4,8 +4,8 @@ MongoDB\Driver\Manager::__construct(): authMechanism option
 <?php
 
 $tests = [
-    ['mongodb://127.0.0.1/?authMechanism=MONGODB-X509', []],
-    ['mongodb://127.0.0.1/?authMechanism=GSSAPI', []],
+    ['mongodb://username@127.0.0.1/?authMechanism=MONGODB-X509', []],
+    ['mongodb://username@127.0.0.1/?authMechanism=GSSAPI', []],
     [null, ['authMechanism' => 'MONGODB-X509']],
     [null, ['authMechanism' => 'GSSAPI']],
 ];
