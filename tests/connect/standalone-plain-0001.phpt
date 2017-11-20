@@ -33,7 +33,7 @@ $username = "bugs";
 $password = "password";
 $database = '$external';
 
-$dsn = sprintf("mongodb://%s:%s@%s:%d/%s?authMechanism=PLAIN", $username, $password, $parsed["host"], $parsed["port"], $database);
+$dsn = sprintf("mongodb://%s:%s@%s:%d/?authSource=%s&authMechanism=PLAIN", $username, $password, $parsed["host"], $parsed["port"], $database);
 $manager = new MongoDB\Driver\Manager($dsn);
 
 $bulk = new MongoDB\Driver\BulkWrite();
