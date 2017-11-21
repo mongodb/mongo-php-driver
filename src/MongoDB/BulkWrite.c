@@ -31,20 +31,6 @@
 
 zend_class_entry *php_phongo_bulkwrite_ce;
 
-/* Returns whether the insert document appears to be a legacy index. */
-static inline bool php_phongo_bulkwrite_insert_is_legacy_index(bson_t *bdocument) /* {{{ */
-{
-	bson_iter_t iter;
-
-	if (bson_iter_init_find(&iter, bdocument, "key") && BSON_ITER_HOLDS_DOCUMENT(&iter) &&
-	    bson_iter_init_find(&iter, bdocument, "name") && BSON_ITER_HOLDS_UTF8(&iter) &&
-	    bson_iter_init_find(&iter, bdocument, "ns") && BSON_ITER_HOLDS_UTF8(&iter)) {
-		return true;
-	}
-
-	return false;
-} /* }}} */
-
 /* Extracts the "_id" field of a BSON document into a return value. */
 static void php_phongo_bulkwrite_extract_id(bson_t *doc, zval **return_value) /* {{{ */
 {
@@ -240,21 +226,6 @@ static PHP_METHOD(BulkWrite, insert)
 	php_phongo_zval_to_bson(zdocument, bson_flags, &bdocument, &bson_out TSRMLS_CC);
 
 	if (EG(exception)) {
-		goto cleanup;
-	}
-
-	/* If the insert document appears to be a legacy index, instruct libmongoc
-	 * to allow dots in BSON keys by setting the "legacyIndex" option.
-	 *
-	 * Note: php_phongo_zval_to_bson() may have added an ObjectId if the "_id"
-	 * field was unset. We don't know at this point if the insert is destined
-	 * for a pre-2.6 server's "system.indexes" collection, but legacy index
-	 * creation will ignore the "_id" so there is no harm in leaving it. In the
-	 * event php_phongo_bulkwrite_insert_is_legacy_index() returns a false
-	 * positive, we absolutely want ObjectId added if "_id" was unset. */
-	if (php_phongo_bulkwrite_insert_is_legacy_index(&bdocument) &&
-	    !BSON_APPEND_BOOL(&boptions, "legacyIndex", true)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"legacyIndex\" option");
 		goto cleanup;
 	}
 

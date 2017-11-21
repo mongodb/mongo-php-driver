@@ -30,7 +30,6 @@ URIs and resemble the following:
 ```
 {
     "STANDALONE": "mongodb:\/\/192.168.112.10:2000",
-    "STANDALONE_24": "mongodb:\/\/192.168.112.10:2500",
     "STANDALONE_26": "mongodb:\/\/192.168.112.10:2600",
     "STANDALONE_30": "mongodb:\/\/192.168.112.10:2700",
     "STANDALONE_SSL": "mongodb:\/\/192.168.112.10:2100",

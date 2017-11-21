@@ -19,7 +19,6 @@ function lap() {
 $PRESETS = [
     "standalone" => [
         "scripts/presets/standalone.json",
-        "scripts/presets/standalone-24.json",
         "scripts/presets/standalone-26.json",
         "scripts/presets/standalone-30.json",
         "scripts/presets/standalone-ssl.json",
@@ -124,7 +123,6 @@ file_put_contents($FILENAME, json_encode($SERVERS, JSON_PRETTY_PRINT));
 wget --body-data='' --method='GET' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/servers
 wget --body-data='' --method='DELETE' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/servers/STANDALONE-AUTH
 wget --body-data='' --method='DELETE' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/servers/STANDALONE
-wget --body-data='' --method='DELETE' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/servers/STANDALONE-24
 wget --body-data='' --method='DELETE' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/servers/STANDALONE-26
 wget --body-data='' --method='DELETE' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/servers/RS-two
 wget --body-data='' --method='DELETE' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/servers/RS-arbiter
@@ -141,7 +139,6 @@ wget --body-data='' --method='GET' --header='Accept: application/json' --header=
 wget --body-data='' --method='GET' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/replica_sets
 
 wget --body-data='{"preset":"\/phongo\/\/scripts\/presets\/standalone.json"}' --method='POST' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/servers
-wget --body-data='{"preset":"\/phongo\/\/scripts\/presets\/standalone-24.json"}' --method='POST' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/servers
 wget --body-data='{"preset":"\/phongo\/\/scripts\/presets\/standalone-26.json"}' --method='POST' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/servers
 wget --body-data='{"preset":"\/phongo\/\/scripts\/presets\/standalone-ssl.json"}' --method='POST' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/servers
 wget --body-data='{"preset":"\/phongo\/\/scripts\/presets\/standalone-auth.json"}' --method='POST' --header='Accept: application/json' --header='Content-type: application/x-www-form-urlencoded'  http://192.168.112.10:8889/servers
