@@ -13,7 +13,6 @@ if (!$config) {
 
 $servers = array(
     "STANDALONE"      => "",
-    "STANDALONE_24"   => "",
     "STANDALONE_26"   => "",
     "STANDALONE_30"   => "",
     "STANDALONE_SSL"  => "",
