@@ -22,13 +22,13 @@ echo throws(function() use ($bulk) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-legacy index document contains invalid key: empty key
+%s contains invalid key: empty key
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-legacy index document contains invalid key: keys cannot begin with "$": "$x"
+%s contains invalid key: keys cannot begin with "$": "$x"
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-legacy index document contains invalid key: corrupt BSON
+%s contains invalid key: corrupt BSON
 ===DONE===

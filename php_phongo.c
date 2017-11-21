@@ -590,48 +590,84 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 	return true;
 } /* }}} */
 
+static bson_t *create_wrapped_command_envelope(const char *db, bson_t *reply)
+{
+	bson_t *tmp;
+	size_t max_ns_len = strlen(db) + 5 + 1; /* db + ".$cmd" + '\0' */
+	char *ns = emalloc(max_ns_len);
+
+	snprintf(ns, max_ns_len, "%s.$cmd", db);
+	tmp = BCON_NEW("cursor", "{", "id", BCON_INT64(0), "ns", BCON_UTF8(ns), "firstBatch", "[", BCON_DOCUMENT(reply), "]", "}");
+	efree(ns);
+
+	return tmp;
+}
+
 int phongo_execute_command(mongoc_client_t *client, const char *db, zval *zcommand, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	const php_phongo_command_t *command;
-	mongoc_cursor_t *cursor;
 	bson_iter_t iter;
+	bson_t reply;
+	bson_error_t error;
+	bson_t *opts;
+	mongoc_cursor_t *cmd_cursor;
+	uint32_t selected_server_id;
 
 	command = Z_COMMAND_OBJ_P(zcommand);
 
-	cursor = mongoc_client_command(client, db, MONGOC_QUERY_NONE, 0, 1, 0, command->bson, NULL, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC));
+	opts = bson_new();
+	if (server_id > 0) {
+		bson_append_int32(opts, "serverId", -1, server_id);
+		selected_server_id = server_id;
+	} else {
+		mongoc_server_description_t  *selected_server = NULL;
 
-	if (server_id > 0 && !mongoc_cursor_set_hint(cursor, server_id)) {
-		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "%s", "Could not set cursor server_id");
-		return false;
-	}
+		selected_server = mongoc_client_select_server(client, false, (zreadPreference ? phongo_read_preference_from_zval(zreadPreference TSRMLS_CC) : mongoc_client_get_read_prefs(client)), &error);
+		if (selected_server) {
+			selected_server_id = mongoc_server_description_id(selected_server);
+			bson_append_int32(opts, "serverId", -1, selected_server_id);
+			mongoc_server_description_destroy(selected_server);
+		} else {
+			/* Check for connection related exceptions */
+			if (!EG(exception)) {
+				phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			}
 
-	if (!phongo_advance_cursor_and_check_for_error(cursor TSRMLS_CC)) {
-		return false;
-	}
-
-	if (!return_value_used) {
-		mongoc_cursor_destroy(cursor);
-		return true;
-	}
-
-	if (bson_iter_init_find(&iter, mongoc_cursor_current(cursor), "cursor") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
-		mongoc_cursor_t *cmd_cursor;
-
-		/* According to mongoc_cursor_new_from_command_reply(), the reply bson_t
-		 * is ultimately destroyed on both success and failure. Use bson_copy()
-		 * to create a writable copy of the const bson_t we fetched above. */
-		cmd_cursor = mongoc_cursor_new_from_command_reply(client, bson_copy(mongoc_cursor_current(cursor)), mongoc_cursor_get_hint(cursor));
-		mongoc_cursor_destroy(cursor);
-
-		if (!phongo_advance_cursor_and_check_for_error(cmd_cursor TSRMLS_CC)) {
+			bson_free(opts);
 			return false;
 		}
+	}
 
-		phongo_cursor_init_for_command(return_value, client, cmd_cursor, db, zcommand, zreadPreference TSRMLS_CC);
+	if (!mongoc_client_command_with_opts(client, db, command->bson, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC), opts, &reply, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		bson_free(opts);
+		return false;
+	}
+
+	bson_free(opts);
+
+	if (!return_value_used) {
+		bson_destroy(&reply);
 		return true;
 	}
 
-	phongo_cursor_init_for_command(return_value, client, cursor, db, zcommand, zreadPreference TSRMLS_CC);
+	/* According to mongoc_cursor_new_from_command_reply(), the reply bson_t
+	 * is ultimately destroyed on both success and failure. */
+	if (bson_iter_init_find(&iter, &reply, "cursor") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+		cmd_cursor = mongoc_cursor_new_from_command_reply(client, &reply, selected_server_id);
+	} else {
+		bson_t *wrapped_reply = create_wrapped_command_envelope(db, &reply);
+
+		cmd_cursor = mongoc_cursor_new_from_command_reply(client, wrapped_reply, selected_server_id);
+		bson_destroy(&reply);
+	}
+
+	if (!phongo_advance_cursor_and_check_for_error(cmd_cursor TSRMLS_CC)) {
+		mongoc_cursor_destroy(cmd_cursor);
+		return false;
+	}
+
+	phongo_cursor_init_for_command(return_value, client, cmd_cursor, db, zcommand, zreadPreference TSRMLS_CC);
 	return true;
 } /* }}} */
 
@@ -1113,6 +1149,32 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
 				return false;
 			}
+
+			continue;
+		}
+
+		if (!strcasecmp(key, MONGOC_URI_GSSAPISERVICENAME)) {
+			bson_t unused, properties = BSON_INITIALIZER;
+
+			if (mongoc_uri_get_mechanism_properties(uri, &unused)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "authMechanismProperties SERVICE_NAME already set, ignoring \"%s\"", key);
+				return false;
+			}
+
+			if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "string");
+				return false;
+			}
+
+			bson_append_utf8(&properties, "SERVICE_NAME", -1, bson_iter_utf8(&iter, NULL), -1);
+
+			if (!mongoc_uri_set_mechanism_properties(uri, &properties)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+				bson_destroy(&properties);
+				return false;
+			}
+
+			bson_destroy(&properties);
 
 			continue;
 		}
