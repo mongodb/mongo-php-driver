@@ -21,35 +21,86 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
+#include "php_array_api.h"
 #include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
 
 zend_class_entry *php_phongo_command_ce;
 
-/* {{{ proto void MongoDB\Driver\Command::__construct(array|object $document)
+/* Initialize the "maxAwaitTimeMS" option. Returns true on success; otherwise,
+ * false is returned and an exception is thrown.
+ *
+ * The "maxAwaitTimeMS" option is assigned to the cursor after query execution
+ * via mongoc_cursor_set_max_await_time_ms(). */
+static bool php_phongo_command_init_max_await_time_ms(php_phongo_command_t *intern, zval *options TSRMLS_DC) /* {{{ */
+{
+	if (php_array_existsc(options, "maxAwaitTimeMS")) {
+		int64_t max_await_time_ms = php_array_fetchc_long(options, "maxAwaitTimeMS");
+
+		if (max_await_time_ms < 0) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxAwaitTimeMS\" option to be >= 0, %" PRId64 " given", max_await_time_ms);
+			return false;
+		}
+
+		if (max_await_time_ms > UINT32_MAX) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxAwaitTimeMS\" option to be <= %" PRIu32 ", %" PRId64 " given", UINT32_MAX, max_await_time_ms);
+			return false;
+		}
+
+		intern->max_await_time_ms = (uint32_t) max_await_time_ms;
+	}
+
+	return true;
+} /* }}} */
+
+/* Initializes the php_phongo_command_init from options argument. This
+ * function will fall back to a modifier in the absence of a top-level option
+ * (where applicable). */
+static bool php_phongo_command_init(php_phongo_command_t *intern, zval *filter, zval *options TSRMLS_DC) /* {{{ */
+{
+	intern->bson = bson_new();
+
+	php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->bson, NULL TSRMLS_CC);
+
+	/* Note: if any exceptions are thrown, we can simply return as PHP will
+	* invoke php_phongo_query_free_object to destruct the object. */
+	if (EG(exception)) {
+		return false;
+	}
+
+	if (!options) {
+		return true;
+	}
+
+	if (!php_phongo_command_init_max_await_time_ms(intern, options TSRMLS_CC)) {
+		return false;
+	}
+
+	return true;
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\Command::__construct(array|object $document[, array $options = array()])
    Constructs a new Command */
 static PHP_METHOD(Command, __construct)
 {
 	php_phongo_command_t     *intern;
 	zend_error_handling       error_handling;
 	zval                     *document;
-	bson_t                   *bson = bson_new();
+	zval                     *options = NULL;
 	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_COMMAND_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &document) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &document, &options) == FAILURE) {
 		zend_restore_error_handling(&error_handling TSRMLS_CC);
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-
-	php_phongo_zval_to_bson(document, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
-	intern->bson = bson;
+	php_phongo_command_init(intern, document, options TSRMLS_CC);
 } /* }}} */
 
 /* {{{ MongoDB\Driver\Command function entries */
