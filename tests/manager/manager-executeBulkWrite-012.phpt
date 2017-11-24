@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Server::executeBulkWrite() with legacy write concern (replica set primary)
+MongoDB\Driver\Manager::executeBulkWrite() with legacy write concern (replica set primary)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
@@ -8,15 +8,18 @@ MongoDB\Driver\Server::executeBulkWrite() with legacy write concern (replica set
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(REPLICASET);
-$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
 
-$writeConcerns = array(0, 1, 2, MongoDB\Driver\WriteConcern::MAJORITY);
+$writeConcerns = [0, 1, 2, MongoDB\Driver\WriteConcern::MAJORITY];
 
 foreach ($writeConcerns as $wc) {
     $bulk = new MongoDB\Driver\BulkWrite();
-    $bulk->insert(array('wc' => $wc));
+    $bulk->insert(['wc' => $wc]);
 
-    $result = $server->executeBulkWrite(NS, $bulk, new MongoDB\Driver\WriteConcern($wc));
+    $options = [
+        'writeConcern' => new MongoDB\Driver\WriteConcern($wc),
+    ];
+
+    $result = $manager->executeBulkWrite(NS, $bulk, $options);
     var_dump($result->isAcknowledged());
     var_dump($result->getInsertedCount());
 }
