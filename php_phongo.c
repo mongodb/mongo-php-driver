@@ -603,19 +603,11 @@ static bson_t *create_wrapped_command_envelope(const char *db, bson_t *reply)
 	return tmp;
 }
 
-int phongo_execute_command(mongoc_client_t *client, const char *db, zval *zcommand, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+static int phongo_do_select_server(mongoc_client_t *client, bson_t *opts, zval *zreadPreference, int server_id)
 {
-	const php_phongo_command_t *command;
-	bson_iter_t iter;
-	bson_t reply;
 	bson_error_t error;
-	bson_t *opts;
-	mongoc_cursor_t *cmd_cursor;
 	uint32_t selected_server_id;
 
-	command = Z_COMMAND_OBJ_P(zcommand);
-
-	opts = bson_new();
 	if (server_id > 0) {
 		bson_append_int32(opts, "serverId", -1, server_id);
 		selected_server_id = server_id;
@@ -633,9 +625,31 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, zval *zcomma
 				phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 			}
 
-			bson_free(opts);
 			return false;
 		}
+	}
+
+	return selected_server_id;
+}
+
+int phongo_execute_command(mongoc_client_t *client, const char *db, zval *zcommand, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+{
+	const php_phongo_command_t *command;
+	bson_iter_t iter;
+	bson_t reply;
+	bson_error_t error;
+	bson_t *opts;
+	mongoc_cursor_t *cmd_cursor;
+	uint32_t selected_server_id;
+
+	command = Z_COMMAND_OBJ_P(zcommand);
+
+	opts = bson_new();
+
+	selected_server_id = phongo_do_select_server(client, opts, zreadPreference, server_id);
+	if (!selected_server_id) {
+		bson_free(opts);
+		return false;
 	}
 
 	if (!mongoc_client_command_with_opts(client, db, command->bson, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC), opts, &reply, &error)) {
