@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Server::executeQuery() with filter and projection
+MongoDB\Driver\Manager::executeQuery() with filter and projection
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>

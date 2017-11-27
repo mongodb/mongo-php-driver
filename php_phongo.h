@@ -118,7 +118,7 @@ void                     phongo_readconcern_init     (zval *return_value, const 
 void                     phongo_readpreference_init  (zval *return_value, const mongoc_read_prefs_t *read_prefs TSRMLS_DC);
 void                     phongo_writeconcern_init    (zval *return_value, const mongoc_write_concern_t *write_concern TSRMLS_DC);
 mongoc_bulk_operation_t* phongo_bulkwrite_init       (zend_bool ordered);
-bool                     phongo_execute_write        (mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t  *bulk_write, const mongoc_write_concern_t *write_concern, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
+bool                     phongo_execute_write        (mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t *bulk_write, zval *zwriteConcern, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_command      (mongoc_client_t *client, const char *db, zval *zcommand, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_query        (mongoc_client_t *client, const char *namespace, zval *zquery, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
 

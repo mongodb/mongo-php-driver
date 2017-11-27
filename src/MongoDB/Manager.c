@@ -283,7 +283,7 @@ static PHP_METHOD(Manager, __construct)
 	}
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, MongoDB\Driver\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
    Execute a Command */
 static PHP_METHOD(Manager, executeCommand)
 {
@@ -291,20 +291,20 @@ static PHP_METHOD(Manager, executeCommand)
 	char                     *db;
 	phongo_zpp_char_len       db_len;
 	zval                     *command;
-	zval                     *readPreference = NULL;
+	zval                     *options = NULL;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &db, &db_len, &command, php_phongo_command_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
 	}
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	phongo_execute_command(intern->client, db, command, readPreference, -1, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, db, command, options, -1, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, MongoDB\Driver\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, array $options = null])
    Execute a Query */
 static PHP_METHOD(Manager, executeQuery)
 {
@@ -312,20 +312,20 @@ static PHP_METHOD(Manager, executeQuery)
 	char                     *namespace;
 	phongo_zpp_char_len       namespace_len;
 	zval                     *query;
-	zval                     *readPreference = NULL;
+	zval                     *options = NULL;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &query, php_phongo_query_ce, &readPreference, php_phongo_readpreference_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &namespace, &namespace_len, &query, php_phongo_query_ce, &options) == FAILURE) {
 		return;
 	}
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	phongo_execute_query(intern->client, namespace, query, readPreference, -1, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_query(intern->client, namespace, query, options, -1, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, MongoDB\Driver\WriteConcern $writeConcern = null])
+/* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, array $options = null])
    Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
 static PHP_METHOD(Manager, executeBulkWrite)
 {
@@ -333,19 +333,19 @@ static PHP_METHOD(Manager, executeBulkWrite)
 	char                      *namespace;
 	phongo_zpp_char_len        namespace_len;
 	zval                      *zbulk;
-	zval                      *zwrite_concern = NULL;
+	zval                      *options = NULL;
 	php_phongo_bulkwrite_t    *bulk;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|O!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &zwrite_concern, php_phongo_writeconcern_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &options) == FAILURE) {
 		return;
 	}
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 
-	phongo_execute_write(intern->client, namespace, bulk, phongo_write_concern_from_zval(zwrite_concern TSRMLS_CC), -1, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_write(intern->client, namespace, bulk, options, -1, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\ReadConcern MongoDB\Driver\Manager::getReadConcern()
@@ -485,19 +485,19 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, db)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
-	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
+	ZEND_ARG_INFO(0, options)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Driver\\Query, 0)
-	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
+	ZEND_ARG_INFO(0, options)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeBulkWrite, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zbulk, MongoDB\\Driver\\BulkWrite, 0)
-	ZEND_ARG_OBJ_INFO(0, writeConcern, MongoDB\\Driver\\WriteConcern, 1)
+	ZEND_ARG_INFO(0, options)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_selectServer, 0, 0, 1)
