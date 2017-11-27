@@ -654,7 +654,18 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, zval *zcomma
 	/* According to mongoc_cursor_new_from_command_reply(), the reply bson_t
 	 * is ultimately destroyed on both success and failure. */
 	if (bson_iter_init_find(&iter, &reply, "cursor") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
-		cmd_cursor = mongoc_cursor_new_from_command_reply(client, &reply, selected_server_id);
+		bson_t initial_reply = BSON_INITIALIZER;
+
+		bson_copy_to(&reply, &initial_reply);
+
+		if (command->max_await_time_ms) {
+			bson_append_bool(&initial_reply, "awaitData", -1, 1);
+			bson_append_int32(&initial_reply, "maxAwaitTimeMS", -1, command->max_await_time_ms);
+			bson_append_bool(&initial_reply, "tailable", -1, 1);
+		}
+
+		cmd_cursor = mongoc_cursor_new_from_command_reply(client, &initial_reply, selected_server_id);
+		bson_destroy(&reply);
 	} else {
 		bson_t *wrapped_reply = create_wrapped_command_envelope(db, &reply);
 
@@ -663,7 +674,7 @@ int phongo_execute_command(mongoc_client_t *client, const char *db, zval *zcomma
 	}
 
 	if (!phongo_advance_cursor_and_check_for_error(cmd_cursor TSRMLS_CC)) {
-		mongoc_cursor_destroy(cmd_cursor);
+		/* If an error is found, the cmd_cursor is destroyed already */
 		return false;
 	}
 

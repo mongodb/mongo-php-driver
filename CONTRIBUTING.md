@@ -37,7 +37,8 @@ URIs and resemble the following:
     "STANDALONE_X509": "mongodb:\/\/C=US,ST=New York,L=New York City,O=MongoDB,OU=KernelUser,CN=client@192.168.112.10:2300\/?authSource=$external&authMechanism=MONGODB-X509",
     "STANDALONE_PLAIN": "mongodb:\/\/root:toor@192.168.112.10:2400\/?authSource=admin",
     "REPLICASET": "mongodb:\/\/192.168.112.10:3000,192.168.112.10:3001,192.168.112.10:3002\/?replicaSet=REPLICASET",
-    "REPLICASET_30": "mongodb:\/\/192.168.112.10:3100,192.168.112.10:3101,192.168.112.10:3102\/?replicaSet=REPLICASET_30"
+    "REPLICASET_30": "mongodb:\/\/192.168.112.10:3100,192.168.112.10:3101,192.168.112.10:3102\/?replicaSet=REPLICASET_30",
+    "REPLICASET_36": "mongodb:\/\/192.168.112.10:3200,192.168.112.10:3201,192.168.112.10:3202\/?replicaSet=REPLICASET_36"
 }
 ```
 
