@@ -507,10 +507,46 @@ static int process_read_concern(zval *option, bson_t *mongoc_opts TSRMLS_DC)
 	return true;
 }
 
-static int process_read_preference(zval *option, zval **zreadPreference TSRMLS_DC)
+static int phongo_do_select_server(mongoc_client_t *client, bson_t *opts, zval *zreadPreference, int server_id TSRMLS_DC)
+{
+	bson_error_t error;
+	uint32_t selected_server_id;
+
+	if (server_id > 0) {
+		bson_append_int32(opts, "serverId", -1, server_id);
+		selected_server_id = server_id;
+	} else {
+		mongoc_server_description_t  *selected_server = NULL;
+
+		selected_server = mongoc_client_select_server(client, false, (zreadPreference ? phongo_read_preference_from_zval(zreadPreference TSRMLS_CC) : mongoc_client_get_read_prefs(client)), &error);
+		if (selected_server) {
+			selected_server_id = mongoc_server_description_id(selected_server);
+			bson_append_int32(opts, "serverId", -1, selected_server_id);
+			mongoc_server_description_destroy(selected_server);
+		} else {
+			/* Check for connection related exceptions */
+			if (!EG(exception)) {
+				phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			}
+
+			return false;
+		}
+	}
+
+	return selected_server_id;
+}
+
+static int process_read_preference(zval *option, bson_t *mongoc_opts, zval **zreadPreference, mongoc_client_t *client, int server_id TSRMLS_DC)
 {
 	if (Z_TYPE_P(option) == IS_OBJECT && instanceof_function(Z_OBJCE_P(option), php_phongo_readpreference_ce TSRMLS_CC)) {
+		int selected_server_id;
+
 		*zreadPreference = option;
+
+		selected_server_id = phongo_do_select_server(client, mongoc_opts, *zreadPreference, server_id TSRMLS_CC);
+		if (!selected_server_id) {
+			return false;
+		}
 	} else {
 		phongo_throw_exception(
 			PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
@@ -522,10 +558,12 @@ static int process_read_preference(zval *option, zval **zreadPreference TSRMLS_D
 	return true;
 }
 
-static int process_write_concern(zval *option, zval **zwriteConcern TSRMLS_DC)
+static int process_write_concern(zval *option, bson_t *command_opts, zval **zwriteConcern TSRMLS_DC)
 {
 	if (Z_TYPE_P(option) == IS_OBJECT && instanceof_function(Z_OBJCE_P(option), php_phongo_writeconcern_ce TSRMLS_CC)) {
 		*zwriteConcern = option;
+
+error: add write concern to command_opts too
 	} else {
 		phongo_throw_exception(
 			PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
@@ -537,7 +575,7 @@ static int process_write_concern(zval *option, zval **zwriteConcern TSRMLS_DC)
 	return true;
 }
 
-static int phongo_execute_parse_options(zval *driver_options, int flags, bson_t *mongoc_opts, zval **zreadPreference, zval **zwriteConcern TSRMLS_DC)
+static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, zval *driver_options, int flags, bson_t *mongoc_opts, zval **zreadPreference, zval **zwriteConcern TSRMLS_DC)
 {
 	if (driver_options && Z_TYPE_P(driver_options) == IS_ARRAY) {
 		HashTable *ht_data = HASH_OF(driver_options);
@@ -561,11 +599,11 @@ static int phongo_execute_parse_options(zval *driver_options, int flags, bson_t 
 					return false;
 				}
 			} else if ((!strcasecmp(ZSTR_VAL(string_key), "readPreference")) && (flags & PHONGO_READPREFERENCE_ALLOWED)) {
-				if (!process_read_preference(driver_option, zreadPreference)) {
+				if (!process_read_preference(driver_option, mongoc_opts, zreadPreference, client, server_id)) {
 					return false;
 				}
 			} else if ((!strcasecmp(ZSTR_VAL(string_key), "writeConcern")) && (flags & PHONGO_WRITECONCERN_ALLOWED)) {
-				if (!process_write_concern(driver_option, zwriteConcern)) {
+				if (!process_write_concern(driver_option, mongoc_opts, zwriteConcern)) {
 					return false;
 				}
 			} else {
@@ -638,7 +676,7 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, php_ph
 	/* FIXME: Legacy way of specifying the writeConcern option into this function */
 	if (options && Z_TYPE_P(options) == IS_OBJECT && instanceof_function(Z_OBJCE_P(options), php_phongo_writeconcern_ce TSRMLS_CC)) {
 		zwriteConcern = options;
-	} else if (!phongo_execute_parse_options(options, PHONGO_WRITECONCERN_ALLOWED, NULL, NULL, &zwriteConcern TSRMLS_CC)) {
+	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_WRITECONCERN_ALLOWED, NULL, NULL, &zwriteConcern TSRMLS_CC)) {
 		return false;
 	}
 
@@ -745,7 +783,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 	/* FIXME: Legacy way of specifying the readPreference option into this function */
 	if (options && Z_TYPE_P(options) == IS_OBJECT && instanceof_function(Z_OBJCE_P(options), php_phongo_readpreference_ce TSRMLS_CC)) {
 		zreadPreference = options;
-	} else if (!phongo_execute_parse_options(options, PHONGO_READPREFERENCE_ALLOWED, NULL, &zreadPreference, NULL TSRMLS_CC)) {
+	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_READPREFERENCE_ALLOWED, NULL, &zreadPreference, NULL TSRMLS_CC)) {
 		return false;
 	}
 
@@ -788,35 +826,6 @@ static bson_t *create_wrapped_command_envelope(const char *db, bson_t *reply)
 	return tmp;
 }
 
-static int phongo_do_select_server(mongoc_client_t *client, bson_t *opts, zval *zreadPreference, int server_id TSRMLS_DC)
-{
-	bson_error_t error;
-	uint32_t selected_server_id;
-
-	if (server_id > 0) {
-		bson_append_int32(opts, "serverId", -1, server_id);
-		selected_server_id = server_id;
-	} else {
-		mongoc_server_description_t  *selected_server = NULL;
-
-		selected_server = mongoc_client_select_server(client, false, (zreadPreference ? phongo_read_preference_from_zval(zreadPreference TSRMLS_CC) : mongoc_client_get_read_prefs(client)), &error);
-		if (selected_server) {
-			selected_server_id = mongoc_server_description_id(selected_server);
-			bson_append_int32(opts, "serverId", -1, selected_server_id);
-			mongoc_server_description_destroy(selected_server);
-		} else {
-			/* Check for connection related exceptions */
-			if (!EG(exception)) {
-				phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
-			}
-
-			return false;
-		}
-	}
-
-	return selected_server_id;
-}
-
 int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t type, const char *db, zval *zcommand, zval *options, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	const php_phongo_command_t *command;
@@ -836,7 +845,7 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 	/* FIXME: Legacy way of specifying the readPreference option into this function */
 	if (options && Z_TYPE_P(options) == IS_OBJECT && instanceof_function(Z_OBJCE_P(options), php_phongo_readpreference_ce TSRMLS_CC)) {
 		zreadPreference = options;
-	} else if (!phongo_execute_parse_options(options, PHONGO_READPREFERENCE_ALLOWED, opts, &zreadPreference, NULL TSRMLS_CC)) {
+	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_READPREFERENCE_ALLOWED, opts, &zreadPreference, NULL TSRMLS_CC)) {
 		return false;
 	}
 
@@ -860,11 +869,12 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 			result = mongoc_client_write_command_with_opts(client, db, command->bson, opts, &reply, &error);
 			break;
 		case PHONGO_COMMAND_READ_WRITE:
-			result = mongoc_client_read_write_command_with_opts(client, db, command->bson, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC), opts, &reply, &error);
+			/* We can pass NULL as readPreference, as this argument was added historically, but has no function */
+			result = mongoc_client_read_write_command_with_opts(client, db, command->bson, NULL, opts, &reply, &error);
 			break;
 		default:
-			/* Should never happen, but if it does: abort */
-			assert(false);
+			/* Should never happen, but if it does: exception */
+			phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Type '%d' should never have been passed to phongo_execute_command, please file a bug report", type);
 	}
 	if (!result) {
 		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
