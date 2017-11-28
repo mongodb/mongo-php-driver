@@ -451,51 +451,12 @@ mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
 #define PHONGO_WRITECONCERN_ALLOWED   0x01
 #define PHONGO_READPREFERENCE_ALLOWED 0x02
 
-/* Appends a document field for the given opts document and key. Returns true on
- * success; otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_command_opts_append_document(bson_t *opts, const char *opts_key, zval *zarr, const char *zarr_key TSRMLS_DC) /* {{{ */
-{
-	zval *value = php_array_fetch(zarr, zarr_key);
-	bson_t b = BSON_INITIALIZER;
-
-	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" option to be array or object, %s given", zarr_key, zend_get_type_by_const(Z_TYPE_P(value)));
-		return false;
-	}
-
-	php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL TSRMLS_CC);
-
-	if (EG(exception)) {
-		bson_destroy(&b);
-		return false;
-	}
-
-	if (!BSON_APPEND_DOCUMENT(opts, opts_key, &b)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", opts_key);
-		bson_destroy(&b);
-		return false;
-	}
-
-	bson_destroy(&b);
-	return true;
-} /* }}} */
-
-
-static int process_collation(zval *option, bson_t *mongoc_opts TSRMLS_DC)
-{
-	return php_phongo_command_opts_append_document(mongoc_opts, "collation", option, "collation" TSRMLS_CC);
-}
-
 static int process_read_concern(zval *option, bson_t *mongoc_opts TSRMLS_DC)
 {
 	if (Z_TYPE_P(option) == IS_OBJECT && instanceof_function(Z_OBJCE_P(option), php_phongo_readconcern_ce TSRMLS_CC)) {
-		zval zreadConcern;
 		const mongoc_read_concern_t *read_concern = phongo_read_concern_from_zval(option TSRMLS_CC);
 
-		php_phongo_read_concern_to_zval(&zreadConcern, read_concern);
-		convert_to_object(&zreadConcern);
-
-		return php_phongo_command_opts_append_document(mongoc_opts, "readConcern", &zreadConcern, "readConcern" TSRMLS_CC);
+		mongoc_read_concern_append((mongoc_read_concern_t*)read_concern, mongoc_opts);
 	} else {
 		phongo_throw_exception(
 			PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
@@ -558,12 +519,14 @@ static int process_read_preference(zval *option, bson_t *mongoc_opts, zval **zre
 	return true;
 }
 
-static int process_write_concern(zval *option, bson_t *command_opts, zval **zwriteConcern TSRMLS_DC)
+static int process_write_concern(zval *option, bson_t *mongoc_opts, zval **zwriteConcern TSRMLS_DC)
 {
 	if (Z_TYPE_P(option) == IS_OBJECT && instanceof_function(Z_OBJCE_P(option), php_phongo_writeconcern_ce TSRMLS_CC)) {
+		const mongoc_write_concern_t *write_concern = phongo_write_concern_from_zval(option TSRMLS_CC);
+
 		*zwriteConcern = option;
 
-error: add write concern to command_opts too
+		mongoc_write_concern_append((mongoc_write_concern_t*) write_concern, mongoc_opts);
 	} else {
 		phongo_throw_exception(
 			PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
@@ -590,11 +553,7 @@ static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, 
 			}
 
 			/* URI options are case-insensitive */
-			if (!strcasecmp(ZSTR_VAL(string_key), "collation")) {
-				if (!process_collation(driver_option, mongoc_opts)) {
-					return false;
-				}
-			} else if (!strcasecmp(ZSTR_VAL(string_key), "readConcern")) {
+			if (!strcasecmp(ZSTR_VAL(string_key), "readConcern")) {
 				if (!process_read_concern(driver_option, mongoc_opts)) {
 					return false;
 				}
@@ -627,16 +586,12 @@ static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, 
 			}
 
 			/* URI options are case-insensitive */
-			if (!strcasecmp(string_key, "collation")) {
-				if (!process_collation(*driver_option, mongoc_opts)) {
-					return false;
-				}
-			} else if (!strcasecmp(string_key, "readConcern")) {
+			if (!strcasecmp(string_key, "readConcern")) {
 				if (!process_read_concern(*driver_option, mongoc_opts)) {
 					return false;
 				}
 			} else if ((!strcasecmp(string_key, "readPreference")) && (flags & PHONGO_READPREFERENCE_ALLOWED)) {
-				if (!process_read_preference(*driver_option, zreadPreference TSRMLS_CC)) {
+				if (!process_read_preference(*driver_option, mongoc_opts, zreadPreference, client, server_id TSRMLS_CC)) {
 					return false;
 				}
 			} else if ((!strcasecmp(string_key, "writeConcern")) && (flags & PHONGO_WRITECONCERN_ALLOWED)) {
