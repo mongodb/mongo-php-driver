@@ -451,12 +451,14 @@ mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
 #define PHONGO_WRITECONCERN_ALLOWED   0x01
 #define PHONGO_READPREFERENCE_ALLOWED 0x02
 
-static int process_read_concern(zval *option, bson_t *mongoc_opts TSRMLS_DC)
+static bool process_read_concern(zval *option, bson_t *mongoc_opts TSRMLS_DC)
 {
 	if (Z_TYPE_P(option) == IS_OBJECT && instanceof_function(Z_OBJCE_P(option), php_phongo_readconcern_ce TSRMLS_CC)) {
 		const mongoc_read_concern_t *read_concern = phongo_read_concern_from_zval(option TSRMLS_CC);
 
-		mongoc_read_concern_append((mongoc_read_concern_t*)read_concern, mongoc_opts);
+		if (!mongoc_read_concern_append((mongoc_read_concern_t*)read_concern, mongoc_opts)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", "ReadPreference");
+		}
 	} else {
 		phongo_throw_exception(
 			PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
@@ -497,7 +499,7 @@ static int phongo_do_select_server(mongoc_client_t *client, bson_t *opts, zval *
 	return selected_server_id;
 }
 
-static int process_read_preference(zval *option, bson_t *mongoc_opts, zval **zreadPreference, mongoc_client_t *client, int server_id TSRMLS_DC)
+static bool process_read_preference(zval *option, bson_t *mongoc_opts, zval **zreadPreference, mongoc_client_t *client, int server_id TSRMLS_DC)
 {
 	if (Z_TYPE_P(option) == IS_OBJECT && instanceof_function(Z_OBJCE_P(option), php_phongo_readpreference_ce TSRMLS_CC)) {
 		int selected_server_id;
@@ -519,14 +521,16 @@ static int process_read_preference(zval *option, bson_t *mongoc_opts, zval **zre
 	return true;
 }
 
-static int process_write_concern(zval *option, bson_t *mongoc_opts, zval **zwriteConcern TSRMLS_DC)
+static bool process_write_concern(zval *option, bson_t *mongoc_opts, zval **zwriteConcern TSRMLS_DC)
 {
 	if (Z_TYPE_P(option) == IS_OBJECT && instanceof_function(Z_OBJCE_P(option), php_phongo_writeconcern_ce TSRMLS_CC)) {
 		const mongoc_write_concern_t *write_concern = phongo_write_concern_from_zval(option TSRMLS_CC);
 
 		*zwriteConcern = option;
 
-		mongoc_write_concern_append((mongoc_write_concern_t*) write_concern, mongoc_opts);
+		if (!mongoc_write_concern_append((mongoc_write_concern_t*) write_concern, mongoc_opts)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", "WriteConcern");
+		}
 	} else {
 		phongo_throw_exception(
 			PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
@@ -830,6 +834,8 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 		default:
 			/* Should never happen, but if it does: exception */
 			phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Type '%d' should never have been passed to phongo_execute_command, please file a bug report", type);
+			bson_free(opts);
+			return false;
 	}
 	if (!result) {
 		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
