@@ -595,7 +595,7 @@ static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, 
 					return false;
 				}
 			} else if ((!strcasecmp(string_key, "writeConcern")) && (flags & PHONGO_WRITECONCERN_ALLOWED)) {
-				if (!process_write_concern(*driver_option, zwriteConcern TSRMLS_CC)) {
+				if (!process_write_concern(*driver_option, mongoc_opts, zwriteConcern TSRMLS_CC)) {
 					return false;
 				}
 			} else {
