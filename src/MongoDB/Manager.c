@@ -316,7 +316,7 @@ static PHP_METHOD(Manager, executeReadCommand)
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
 	}
 
@@ -337,7 +337,7 @@ static PHP_METHOD(Manager, executeWriteCommand)
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
 	}
 
@@ -358,7 +358,7 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
 	}
 
@@ -551,6 +551,12 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, options)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeRWCommand, 0, 0, 2)
+	ZEND_ARG_INFO(0, db)
+	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
+	ZEND_ARG_ARRAY_INFO(0, options, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Driver\\Query, 0)
@@ -573,8 +579,8 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeReadCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeWriteCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeReadCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeWriteCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeReadWriteCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
