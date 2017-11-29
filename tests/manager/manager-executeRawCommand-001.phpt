@@ -16,21 +16,25 @@ $manager = new MongoDB\Driver\Manager(STANDALONE);
 		$command = new MongoDB\Driver\Command([
 			'ping' => true,
 		]);
-		$manager->executeCommand(
-			DATABASE_NAME,
-			$command,
-			[
-				'readPreference' => new \MongoDB\Driver\ReadPreference(\MongoDB\Driver\ReadPreference::RP_SECONDARY),
-				'readConcern' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\ReadConcern::LOCAL),
-				/* The ping command itself doesn't support writeConcern */
-				// 'writeConcern' => new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY),
-			]
-		);
+
+		try {
+			$manager->executeCommand(
+				DATABASE_NAME,
+				$command,
+				[
+					'readPreference' => new \MongoDB\Driver\ReadPreference(\MongoDB\Driver\ReadPreference::RP_SECONDARY),
+					'readConcern' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\ReadConcern::LOCAL),
+					'writeConcern' => new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY),
+				]
+			);
+		} catch ( Exception $e ) {
+			// Ignore exception that ping doesn't support writeConcern
+		}
 	},
 	function(stdClass $command) {
 		echo "Read Preference: ", $command->{'$readPreference'}->mode, "\n";
 		echo "Read Concern: ", $command->readConcern->level, "\n";
-		// echo "Write Concern: ", $command->writeConcern->w, "\n";
+		echo "Write Concern: ", $command->writeConcern->w, "\n";
 	}
 );
 
@@ -40,4 +44,5 @@ $manager = new MongoDB\Driver\Manager(STANDALONE);
 --EXPECTF--
 Read Preference: secondary
 Read Concern: local
+Write Concern: majority
 ===DONE===

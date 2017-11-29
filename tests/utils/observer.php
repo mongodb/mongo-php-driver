@@ -13,10 +13,13 @@ class CommandObserver implements CommandSubscriber
     {
         $this->commands = [];
         \MongoDB\Driver\Monitoring\addSubscriber($this);
-        call_user_func($execution);
-        \MongoDB\Driver\Monitoring\removeSubscriber($this);
-        foreach ($this->commands as $command) {
-            call_user_func($commandCallback, $command);
+        try {
+            call_user_func($execution);
+        } finally {
+            \MongoDB\Driver\Monitoring\removeSubscriber($this);
+            foreach ($this->commands as $command) {
+                call_user_func($commandCallback, $command);
+            }
         }
     }
     public function commandStarted(CommandStartedEvent $event)
