@@ -111,12 +111,15 @@ void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const ch
 ;
 void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC);
 
-/* This enum is used for libmongoc function selection for the phongo_execute_command types */
+/* This enum is used for libmongoc function selection for the
+ * phongo_execute_command types. The values are important, as the READ and
+ * WRITE fields are also used as a bit field to see whether ReadPreference,
+ * ReadConcern, and WriteConcern are supported for each type. */
 typedef enum {
-	PHONGO_COMMAND_RAW = 1,
-	PHONGO_COMMAND_READ = 2,
-	PHONGO_COMMAND_WRITE = 3,
-	PHONGO_COMMAND_READ_WRITE = 4
+	PHONGO_COMMAND_RAW =        0x13,
+	PHONGO_COMMAND_READ =       0x01,
+	PHONGO_COMMAND_WRITE =      0x02,
+	PHONGO_COMMAND_READ_WRITE = 0x03
 } php_phongo_command_type_t;
 
 zend_object_handlers *phongo_get_std_object_handlers(void);
