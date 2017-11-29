@@ -454,7 +454,7 @@ static bool process_read_concern(zval *option, bson_t *mongoc_opts TSRMLS_DC)
 		const mongoc_read_concern_t *read_concern = phongo_read_concern_from_zval(option TSRMLS_CC);
 
 		if (!mongoc_read_concern_append((mongoc_read_concern_t*)read_concern, mongoc_opts)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", "ReadConcern");
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", "readConcern");
 			return false;
 		}
 	} else {
@@ -529,7 +529,7 @@ static bool process_write_concern(zval *option, bson_t *mongoc_opts, zval **zwri
 		}
 
 		if (!mongoc_write_concern_append((mongoc_write_concern_t*) write_concern, mongoc_opts)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", "WriteConcern");
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", "writeConcern");
 		}
 	} else {
 		phongo_throw_exception(
