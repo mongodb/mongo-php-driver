@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeWriteCommand()
+MongoDB\Driver\Manager::executeRawCommand()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
