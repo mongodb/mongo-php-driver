@@ -1,6 +1,7 @@
 --TEST--
 MongoDB\Driver\Manager::executeRawCommand()
 --SKIPIF--
+<?php if (getenv("TRAVIS")) exit("skip This currently tails on Travis because it doesn't run 3.6 yet"); ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
 --FILE--
