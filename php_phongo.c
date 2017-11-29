@@ -591,7 +591,7 @@ static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, 
 
 			/* URI options are case-insensitive */
 			if ((!strcasecmp(string_key, "readConcern")) && (type & PHONGO_COMMAND_READ)) {
-				if (!process_read_concern(*driver_option, mongoc_opts)) {
+				if (!process_read_concern(*driver_option, mongoc_opts TSRMLS_CC)) {
 					return false;
 				}
 			} else if ((!strcasecmp(string_key, "readPreference")) && (type == PHONGO_COMMAND_READ)) {
