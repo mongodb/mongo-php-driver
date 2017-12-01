@@ -396,7 +396,7 @@ static PHP_METHOD(UTCDateTime, unserialize)
 } /* }}} */
 
 /* {{{ MongoDB\BSON\UTCDateTime function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime___construct, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, milliseconds)
 ZEND_END_ARG_INFO()
 
