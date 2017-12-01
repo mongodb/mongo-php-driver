@@ -46,7 +46,73 @@ static PHP_METHOD(Server, executeCommand)
 		return;
 	}
 
-	phongo_execute_command(intern->client, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+} /* }}} */
+
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeReadCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
+   Executes a ReadCommand on this Server */
+static PHP_METHOD(Server, executeReadCommand)
+{
+	php_phongo_server_t      *intern;
+	char                     *db;
+	phongo_zpp_char_len       db_len;
+	zval                     *command;
+	zval                     *options = NULL;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+
+
+	intern = Z_SERVER_OBJ_P(getThis());
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+		return;
+	}
+
+	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+} /* }}} */
+
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
+   Executes a WriteCommand on this Server */
+static PHP_METHOD(Server, executeWriteCommand)
+{
+	php_phongo_server_t      *intern;
+	char                     *db;
+	phongo_zpp_char_len       db_len;
+	zval                     *command;
+	zval                     *options = NULL;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+
+
+	intern = Z_SERVER_OBJ_P(getThis());
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+		return;
+	}
+
+	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+} /* }}} */
+
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeReadWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
+   Executes a ReadWriteCommand on this Server */
+static PHP_METHOD(Server, executeReadWriteCommand)
+{
+	php_phongo_server_t      *intern;
+	char                     *db;
+	phongo_zpp_char_len       db_len;
+	zval                     *command;
+	zval                     *options = NULL;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+
+
+	intern = Z_SERVER_OBJ_P(getThis());
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+		return;
+	}
+
+	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeQuery(string $namespace, MongoDB\Driver\Query $query[, array $options = null]))
@@ -419,6 +485,12 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, options)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeRWCommand, 0, 0, 2)
+	ZEND_ARG_INFO(0, db)
+	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
+	ZEND_ARG_ARRAY_INFO(0, options, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Server_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Driver\\Query, 0)
@@ -436,6 +508,9 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_server_me[] = {
 	PHP_ME(Server, executeCommand, ai_Server_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, executeReadCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, executeWriteCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Server, executeReadWriteCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, executeBulkWrite, ai_Server_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Server, getHost, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

@@ -111,6 +111,17 @@ void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const ch
 ;
 void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC);
 
+/* This enum is used for libmongoc function selection for the
+ * phongo_execute_command types. The values are important, as the READ and
+ * WRITE fields are also used as a bit field to see whether ReadPreference,
+ * ReadConcern, and WriteConcern are supported for each type. */
+typedef enum {
+	PHONGO_COMMAND_RAW =        0x13,
+	PHONGO_COMMAND_READ =       0x01,
+	PHONGO_COMMAND_WRITE =      0x02,
+	PHONGO_COMMAND_READ_WRITE = 0x03
+} php_phongo_command_type_t;
+
 zend_object_handlers *phongo_get_std_object_handlers(void);
 
 void                     phongo_server_init          (zval *return_value, mongoc_client_t *client, int server_id TSRMLS_DC);
@@ -119,7 +130,7 @@ void                     phongo_readpreference_init  (zval *return_value, const 
 void                     phongo_writeconcern_init    (zval *return_value, const mongoc_write_concern_t *write_concern TSRMLS_DC);
 mongoc_bulk_operation_t* phongo_bulkwrite_init       (zend_bool ordered);
 bool                     phongo_execute_write        (mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t *bulk_write, zval *zwriteConcern, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_command      (mongoc_client_t *client, const char *db, zval *zcommand, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_command      (mongoc_client_t *client, php_phongo_command_type_t type, const char *db, zval *zcommand, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
 int                      phongo_execute_query        (mongoc_client_t *client, const char *namespace, zval *zquery, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
 
 const mongoc_read_concern_t*  phongo_read_concern_from_zval   (zval *zread_concern TSRMLS_DC);

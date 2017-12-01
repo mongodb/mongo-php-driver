@@ -301,7 +301,70 @@ static PHP_METHOD(Manager, executeCommand)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	phongo_execute_command(intern->client, db, command, options, -1, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, -1, return_value, return_value_used TSRMLS_CC);
+} /* }}} */
+
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeReadCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
+   Execute a ReadCommand */
+static PHP_METHOD(Manager, executeReadCommand)
+{
+	php_phongo_manager_t     *intern;
+	char                     *db;
+	phongo_zpp_char_len       db_len;
+	zval                     *command;
+	zval                     *options = NULL;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+		return;
+	}
+
+	intern = Z_MANAGER_OBJ_P(getThis());
+
+	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, -1, return_value, return_value_used TSRMLS_CC);
+} /* }}} */
+
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
+   Execute a WriteCommand */
+static PHP_METHOD(Manager, executeWriteCommand)
+{
+	php_phongo_manager_t     *intern;
+	char                     *db;
+	phongo_zpp_char_len       db_len;
+	zval                     *command;
+	zval                     *options = NULL;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+		return;
+	}
+
+	intern = Z_MANAGER_OBJ_P(getThis());
+
+	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, -1, return_value, return_value_used TSRMLS_CC);
+} /* }}} */
+
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeReadWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
+   Execute a ReadWriteCommand */
+static PHP_METHOD(Manager, executeReadWriteCommand)
+{
+	php_phongo_manager_t     *intern;
+	char                     *db;
+	phongo_zpp_char_len       db_len;
+	zval                     *command;
+	zval                     *options = NULL;
+	DECLARE_RETURN_VALUE_USED
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+		return;
+	}
+
+	intern = Z_MANAGER_OBJ_P(getThis());
+
+	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, -1, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, array $options = null])
@@ -488,6 +551,12 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, options)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeRWCommand, 0, 0, 2)
+	ZEND_ARG_INFO(0, db)
+	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
+	ZEND_ARG_ARRAY_INFO(0, options, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeQuery, 0, 0, 2)
 	ZEND_ARG_INFO(0, namespace)
 	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Driver\\Query, 0)
@@ -510,6 +579,9 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeReadCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeWriteCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeReadWriteCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, getReadConcern, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
