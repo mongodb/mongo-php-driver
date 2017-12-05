@@ -375,7 +375,11 @@ if test "$MONGODB" != "no"; then
 
   m4_include(src/libmongoc/build/autotools/m4/ax_prototype.m4)
   m4_include(src/libmongoc/build/autotools/CheckCompiler.m4)
+
+  dnl We need to convince the libmongoc M4 file to actually run these checks for us
+  enable_srv=auto
   m4_include(src/libmongoc/build/autotools/FindResSearch.m4)
+
   m4_include(src/libmongoc/build/autotools/WeakSymbols.m4)
   m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
   AX_PTHREAD
