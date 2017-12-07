@@ -59,6 +59,9 @@ list-servers:
 	php scripts/list-servers.php
 
 test-bootstrap:
+	vagrant reload mo
+	vagrant ssh mo -c 'sudo rm -f /home/vagrant/server.pid'
+	vagrant ssh mo -c 'sudo mongo-orchestration -f mongo-orchestration-config.json -b 192.168.112.10 --enable-majority-read-concern start'
 	php scripts/start-servers.php
 
 distcheck: package test-virtual
