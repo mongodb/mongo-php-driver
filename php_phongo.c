@@ -306,6 +306,17 @@ void phongo_server_init(zval *return_value, mongoc_client_t *client, int server_
 }
 /* }}} */
 
+void phongo_session_init(zval *return_value, mongoc_client_session_t *client_session TSRMLS_DC) /* {{{ */
+{
+	php_phongo_session_t *session;
+
+	object_init_ex(return_value, php_phongo_session_ce);
+
+	session = Z_SESSION_OBJ_P(return_value);
+	session->client_session = client_session;
+}
+/* }}} */
+
 void phongo_readconcern_init(zval *return_value, const mongoc_read_concern_t *read_concern TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readconcern_t *intern;
@@ -527,6 +538,25 @@ static bool process_read_preference(zval *option, bson_t *mongoc_opts, zval **zr
 	return true;
 }
 
+static bool process_session(zval *option, bson_t *mongoc_opts TSRMLS_DC)
+{
+	const mongoc_client_session_t *client_session;
+
+	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), php_phongo_session_ce TSRMLS_CC)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"session\" option to be %s, %s given", ZSTR_VAL(php_phongo_session_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(option));
+		return false;
+	}
+
+	client_session = Z_SESSION_OBJ_P(option)->client_session;
+
+	if (!mongoc_client_session_append(Z_SESSION_OBJ_P(option)->client_session, mongoc_opts, NULL)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"session\" option");
+		return false;
+	}
+
+	return true;
+}
+
 static bool process_write_concern(zval *option, bson_t *mongoc_opts, zval **zwriteConcern TSRMLS_DC)
 {
 	if (Z_TYPE_P(option) == IS_OBJECT && instanceof_function(Z_OBJCE_P(option), php_phongo_writeconcern_ce TSRMLS_CC)) {
@@ -573,6 +603,10 @@ static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, 
 				if (!process_read_preference(driver_option, mongoc_opts, zreadPreference, client, server_id)) {
 					return false;
 				}
+			} else if ((!strcmp(ZSTR_VAL(string_key), "session"))) {
+				if (!process_session(driver_option, mongoc_opts)) {
+					return false;
+				}
 			} else if ((!strcasecmp(ZSTR_VAL(string_key), "writeConcern")) && (type & PHONGO_COMMAND_WRITE)) {
 				if (!process_write_concern(driver_option, mongoc_opts, zwriteConcern)) {
 					return false;
@@ -604,6 +638,10 @@ static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, 
 				}
 			} else if ((!strcasecmp(string_key, "readPreference")) && (type == PHONGO_COMMAND_READ || type == PHONGO_COMMAND_RAW)) {
 				if (!process_read_preference(*driver_option, mongoc_opts, zreadPreference, client, server_id TSRMLS_CC)) {
+					return false;
+				}
+			} else if ((!strcmp(ZSTR_VAL(string_key), "session"))) {
+				if (!process_session(*driver_option, mongoc_opts)) {
 					return false;
 				}
 			} else if ((!strcasecmp(string_key, "writeConcern")) && (type & PHONGO_COMMAND_WRITE)) {
@@ -2693,6 +2731,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_readconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_readpreference_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_server_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_session_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_writeerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);

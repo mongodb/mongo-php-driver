@@ -126,6 +126,7 @@ typedef enum {
 zend_object_handlers *phongo_get_std_object_handlers(void);
 
 void                     phongo_server_init          (zval *return_value, mongoc_client_t *client, int server_id TSRMLS_DC);
+void                     phongo_session_init         (zval *return_value, mongoc_client_session_t *client_session TSRMLS_DC);
 void                     phongo_readconcern_init     (zval *return_value, const mongoc_read_concern_t *read_concern TSRMLS_DC);
 void                     phongo_readpreference_init  (zval *return_value, const mongoc_read_prefs_t *read_prefs TSRMLS_DC);
 void                     phongo_writeconcern_init    (zval *return_value, const mongoc_write_concern_t *write_concern TSRMLS_DC);
