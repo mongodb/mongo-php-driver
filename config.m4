@@ -1,10 +1,10 @@
 dnl config.m4 for extension mongodb
-PHP_ARG_ENABLE(mongodb, whether to enable mongodb support,
-[  --enable-mongodb           Enable mongodb support])
-PHP_ARG_WITH(openssl-dir, OpenSSL dir for mongodb,
-[  --with-openssl-dir[=DIR]  openssl install prefix], yes, no)
+PHP_ARG_ENABLE(mongodb, whether to enable MongoDB support,
+[  --enable-mongodb        Enable MongoDB support])
+PHP_ARG_WITH(openssl-dir, OpenSSL dir for MongoDB,
+[  --with-openssl-dir[=DIR]    MongoDB: OpenSSL install prefix], yes, no)
 PHP_ARG_WITH(system-ciphers, whether to use system default cipher list instead of hardcoded value,
-[  --with-system-ciphers   OPENSSL: Use system default cipher list instead of hardcoded value], no, no)
+[  --with-system-ciphers     MongoDB: OpenSSL, use system default cipher list instead of hardcoded value], no, no)
 
 dnl borrowed from libmongoc configure.ac
 dnl AS_VAR_COPY is available in AC 2.64 and on, but we only require 2.60.
@@ -90,7 +90,7 @@ AC_MSG_RESULT($PHP_FOUND_VERNUM)
 
 if test "$MONGODB" != "no"; then
   PHP_ARG_ENABLE(developer-flags, whether to enable developer build flags,
-  [  --enable-developer-flags   Enable developer flags],, no)
+  [  --enable-developer-flags  MongoDB: Enable developer flags],, no)
 
   if test "$PHP_DEVELOPER_FLAGS" = "yes"; then
     dnl Warn about functions which might be candidates for format attributes
@@ -140,7 +140,7 @@ if test "$MONGODB" != "no"; then
 
 
   PHP_ARG_ENABLE(coverage, whether to enable code coverage,
-  [  --enable-coverage Enable developer code coverage information],, no)
+  [  --enable-coverage         MongoDB: Enable developer code coverage information],, no)
 
   if test "$PHP_COVERAGE" = "yes"; then
       PHP_CHECK_GCC_ARG(-fprofile-arcs,                     COVERAGE_CFLAGS="$COVERAGE_CFLAGS -fprofile-arcs")
@@ -212,9 +212,9 @@ if test "$MONGODB" != "no"; then
   "
 
   PHP_ARG_WITH(libbson, whether to use system libbson,
-  [  --with-libbson             Use system libbson], no, no)
+  [  --with-libbson            MongoDB: Use system libbson], no, no)
   PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
-  [  --with-libmongoc           Use system libmongoc], no, no)
+  [  --with-libmongoc          MongoDB: Use system libmongoc], no, no)
 
   if test "$PHP_LIBBSON" != "no"; then
     if test "$PHP_LIBMONGOC" == "no"; then
@@ -327,7 +327,7 @@ if test "$MONGODB" != "no"; then
 
 
   PHP_ARG_WITH(mongodb-sasl, for Cyrus SASL support,
-  [  --with-mongodb-sasl[=DIR]     mongodb: Include Cyrus SASL support], auto, no)
+  [  --with-mongodb-sasl[=DIR]   MongoDB: Include Cyrus SASL support], auto, no)
 
   AC_SUBST(MONGOC_ENABLE_SASL, 0)
   AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)

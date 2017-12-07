@@ -55,5 +55,11 @@ necessary to build a fully-functional MongoDB driver.
   </required>
  </dependencies>
  <providesextension>mongodb</providesextension>
- <extsrcrelease/>
+ <extsrcrelease>
+  <configureoption name="with-libbson" default="no" prompt="Use system libbson"/>
+  <configureoption name="with-libmongoc" default="no" prompt="Use system libmongoc"/>
+  <configureoption name="with-openssl-dir" default="yes" prompt="OpenSSL dir for MongoDB"/>
+  <configureoption name="with-system-ciphers" default="no" prompt="Use system default cipher list instead of hardcoded value"/>
+  <configureoption name="with-mongodb-sasl" default="auto" prompt="Include Cyrus SASL support"/>
+ </extsrcrelease>
 </package>
