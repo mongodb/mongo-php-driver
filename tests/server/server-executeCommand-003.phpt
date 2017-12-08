@@ -28,7 +28,7 @@ array(1) {
   [0]=>
   object(stdClass)#%d (%d) {
     ["ok"]=>
-    float(1)
+    float(1)%A
   }
 }
 ===DONE===

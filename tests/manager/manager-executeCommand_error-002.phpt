@@ -36,5 +36,5 @@ Expected 'readPreference' option to be 'MongoDB\Driver\ReadPreference', object g
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Unknown option 'unknown'
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Unknown option 'writeConcern'
+Expected 'writeConcern' option to be 'MongoDB\Driver\WriteConcern', string given
 ===DONE===
