@@ -621,6 +621,7 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, php_ph
 	php_phongo_writeresult_t *writeresult;
 	zval *zwriteConcern = NULL;
 	const mongoc_write_concern_t *write_concern;
+	bson_t *opts;
 
 	if (bulk_write->executed) {
 		phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "BulkWrite objects may only be executed once and this instance has already been executed");
@@ -632,10 +633,12 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, php_ph
 		return false;
 	}
 
+	opts = bson_new();
+
 	/* FIXME: Legacy way of specifying the writeConcern option into this function */
 	if (options && Z_TYPE_P(options) == IS_OBJECT && instanceof_function(Z_OBJCE_P(options), php_phongo_writeconcern_ce TSRMLS_CC)) {
 		zwriteConcern = options;
-	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_COMMAND_WRITE, NULL, NULL, &zwriteConcern TSRMLS_CC)) {
+	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_COMMAND_WRITE, opts, NULL, &zwriteConcern TSRMLS_CC)) {
 		return false;
 	}
 
@@ -724,6 +727,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 	char *collname;
 	mongoc_collection_t *collection;
 	zval *zreadPreference = NULL;
+	bson_t *opts;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s: %s", "Invalid namespace provided", namespace);
@@ -738,11 +742,13 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 	if (query->read_concern) {
 		mongoc_collection_set_read_concern(collection, query->read_concern);
 	}
+	
+	opts = bson_new();
 
 	/* FIXME: Legacy way of specifying the readPreference option into this function */
 	if (options && Z_TYPE_P(options) == IS_OBJECT && instanceof_function(Z_OBJCE_P(options), php_phongo_readpreference_ce TSRMLS_CC)) {
 		zreadPreference = options;
-	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_COMMAND_READ, NULL, &zreadPreference, NULL TSRMLS_CC)) {
+	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_COMMAND_READ, opts, &zreadPreference, NULL TSRMLS_CC)) {
 		return false;
 	}
 
