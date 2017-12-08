@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\Driver\Manager: Writing debug log files
---SKIPIF--
-<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM uses HHVM's logging functionality"); ?>
 --FILE--
 <?php
 

@@ -213,16 +213,24 @@ void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC)
 {
 	zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code), error->message, error->code TSRMLS_CC);
 }
+
 static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain, const char *message, void *user_data)
 {
-	phongo_char *dt;
+	struct timeval tv;
+	time_t         t;
+	phongo_long    tu;
+	phongo_char   *dt;
 
 	PHONGO_TSRMLS_FETCH_FROM_CTX(user_data);
 	(void)user_data;
 
-	dt = php_format_date((char *) ZEND_STRL("Y-m-d\\TH:i:sP"), time(NULL), 0 TSRMLS_CC);
+	gettimeofday(&tv, NULL);
+	t = tv.tv_sec;
+	tu = tv.tv_usec;
 
-	fprintf(MONGODB_G(debug_fd), "[%s] %10s: %-8s> %s\n", ZSTR_VAL(dt), log_domain, mongoc_log_level_str(log_level), message);
+	dt = php_format_date((char *) ZEND_STRL("Y-m-d\\TH:i:s"), t, 0 TSRMLS_CC);
+
+	fprintf(MONGODB_G(debug_fd), "[%s.%06lu+00:00] %10s: %-8s> %s\n", ZSTR_VAL(dt), tu, log_domain, mongoc_log_level_str(log_level), message);
 	fflush(MONGODB_G(debug_fd));
 	efree(dt);
 }
