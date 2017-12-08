@@ -621,6 +621,7 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, php_ph
 	php_phongo_writeresult_t *writeresult;
 	zval *zwriteConcern = NULL;
 	const mongoc_write_concern_t *write_concern;
+	bson_t opts = BSON_INITIALIZER;
 
 	if (bulk_write->executed) {
 		phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "BulkWrite objects may only be executed once and this instance has already been executed");
@@ -635,9 +636,12 @@ bool phongo_execute_write(mongoc_client_t *client, const char *namespace, php_ph
 	/* FIXME: Legacy way of specifying the writeConcern option into this function */
 	if (options && Z_TYPE_P(options) == IS_OBJECT && instanceof_function(Z_OBJCE_P(options), php_phongo_writeconcern_ce TSRMLS_CC)) {
 		zwriteConcern = options;
-	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_COMMAND_WRITE, NULL, NULL, &zwriteConcern TSRMLS_CC)) {
+	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_COMMAND_WRITE, &opts, NULL, &zwriteConcern TSRMLS_CC)) {
+		bson_destroy(&opts);
 		return false;
 	}
+
+	bson_destroy(&opts);
 
 	mongoc_bulk_operation_set_database(bulk, bulk_write->database);
 	mongoc_bulk_operation_set_collection(bulk, bulk_write->collection);
@@ -724,6 +728,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 	char *collname;
 	mongoc_collection_t *collection;
 	zval *zreadPreference = NULL;
+	bson_t opts = BSON_INITIALIZER;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s: %s", "Invalid namespace provided", namespace);
@@ -742,9 +747,12 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 	/* FIXME: Legacy way of specifying the readPreference option into this function */
 	if (options && Z_TYPE_P(options) == IS_OBJECT && instanceof_function(Z_OBJCE_P(options), php_phongo_readpreference_ce TSRMLS_CC)) {
 		zreadPreference = options;
-	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_COMMAND_READ, NULL, &zreadPreference, NULL TSRMLS_CC)) {
+	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_COMMAND_READ, &opts, &zreadPreference, NULL TSRMLS_CC)) {
+		bson_destroy(&opts);
 		return false;
 	}
+
+	bson_destroy(&opts);
 
 	cursor = mongoc_collection_find_with_opts(collection, query->filter, query->opts, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC));
 	mongoc_collection_destroy(collection);
@@ -791,7 +799,7 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 	bson_iter_t iter;
 	bson_t reply;
 	bson_error_t error;
-	bson_t *opts;
+	bson_t opts = BSON_INITIALIZER;
 	mongoc_cursor_t *cmd_cursor;
 	uint32_t selected_server_id;
 	zval                     *zreadPreference = NULL;
@@ -799,18 +807,16 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 
 	command = Z_COMMAND_OBJ_P(zcommand);
 
-	opts = bson_new();
-
 	/* FIXME: Legacy way of specifying the readPreference option into this function */
 	if (options && Z_TYPE_P(options) == IS_OBJECT && instanceof_function(Z_OBJCE_P(options), php_phongo_readpreference_ce TSRMLS_CC)) {
 		zreadPreference = options;
-	} else if (!phongo_execute_parse_options(client, server_id, options, type, opts, &zreadPreference, NULL TSRMLS_CC)) {
+	} else if (!phongo_execute_parse_options(client, server_id, options, type, &opts, &zreadPreference, NULL TSRMLS_CC)) {
 		return false;
 	}
 
-	selected_server_id = phongo_do_select_server(client, opts, zreadPreference, server_id TSRMLS_CC);
+	selected_server_id = phongo_do_select_server(client, &opts, zreadPreference, server_id TSRMLS_CC);
 	if (!selected_server_id) {
-		bson_free(opts);
+		bson_destroy(&opts);
 		return false;
 	}
 
@@ -819,31 +825,31 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 	 * command construction. */
 	switch (type) {
 		case PHONGO_COMMAND_RAW:
-			result = mongoc_client_command_with_opts(client, db, command->bson, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC), opts, &reply, &error);
+			result = mongoc_client_command_with_opts(client, db, command->bson, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC), &opts, &reply, &error);
 			break;
 		case PHONGO_COMMAND_READ:
-			result = mongoc_client_read_command_with_opts(client, db, command->bson, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC), opts, &reply, &error);
+			result = mongoc_client_read_command_with_opts(client, db, command->bson, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC), &opts, &reply, &error);
 			break;
 		case PHONGO_COMMAND_WRITE:
-			result = mongoc_client_write_command_with_opts(client, db, command->bson, opts, &reply, &error);
+			result = mongoc_client_write_command_with_opts(client, db, command->bson, &opts, &reply, &error);
 			break;
 		case PHONGO_COMMAND_READ_WRITE:
 			/* We can pass NULL as readPreference, as this argument was added historically, but has no function */
-			result = mongoc_client_read_write_command_with_opts(client, db, command->bson, NULL, opts, &reply, &error);
+			result = mongoc_client_read_write_command_with_opts(client, db, command->bson, NULL, &opts, &reply, &error);
 			break;
 		default:
 			/* Should never happen, but if it does: exception */
 			phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Type '%d' should never have been passed to phongo_execute_command, please file a bug report", type);
-			bson_free(opts);
+			bson_destroy(&opts);
 			return false;
 	}
 	if (!result) {
 		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
-		bson_free(opts);
+		bson_destroy(&opts);
 		return false;
 	}
 
-	bson_free(opts);
+	bson_destroy(&opts);
 
 	if (!return_value_used) {
 		bson_destroy(&reply);

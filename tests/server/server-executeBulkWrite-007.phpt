@@ -10,13 +10,6 @@ require_once __DIR__ . "/../utils/basic.inc";
 $manager = new MongoDB\Driver\Manager(REPLICASET);
 $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY));
 
-$bulk = new MongoDB\Driver\BulkWrite();
-$bulk->insert(['wc' => 0]);
-
-$result = $server->executeBulkWrite(NS, $bulk, new MongoDB\Driver\WriteConcern(0));
-var_dump($result->isAcknowledged());
-var_dump($result->getInsertedCount());
-
 $writeConcerns = [1, 2, MongoDB\Driver\WriteConcern::MAJORITY];
 
 foreach ($writeConcerns as $wc) {
@@ -36,8 +29,6 @@ foreach ($writeConcerns as $wc) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-bool(false)
-NULL
 OK: Got MongoDB\Driver\Exception\RuntimeException
 not master
 OK: Got MongoDB\Driver\Exception\RuntimeException

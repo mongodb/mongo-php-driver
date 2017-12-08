@@ -37,7 +37,8 @@ $query = new MongoDB\Driver\Query(
 $cursor = $secondary->executeQuery(DATABASE_NAME . '.system.profile', $query, $rp);
 $profileEntry = current($cursor->toArray());
 
-var_dump($profileEntry->query);
+var_dump($profileEntry->command->find);
+var_dump($profileEntry->command->filter);
 
 $command = new MongoDB\Driver\Command(array('profile' => 0));
 $cursor = $secondary->executeCommand(DATABASE_NAME, $command);
@@ -50,14 +51,10 @@ printf("Set profile level to 0 successfully: %s\n", (empty($result->ok) ? 'no' :
 <?php exit(0); ?>
 --EXPECTF--
 Set profile level to 2 successfully: yes
-object(stdClass)#%d (%d) {
-  ["find"]=>
-  string(%d) "%s"
-  ["filter"]=>
-  object(stdClass)#%d (1) {
-    ["x"]=>
-    int(1)
-  }
+string(%d) "%s"
+object(stdClass)#%d (1) {
+  ["x"]=>
+  int(1)
 }
 Set profile level to 0 successfully: yes
 ===DONE===

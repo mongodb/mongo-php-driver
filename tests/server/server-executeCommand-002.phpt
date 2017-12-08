@@ -18,10 +18,11 @@ $result = current($cursor->toArray());
 
 printf("Set profile level to 2 successfully: %s\n", (empty($result->ok) ? 'no' : 'yes'));
 
-$command = new MongoDB\Driver\Command(array(
+$command = new MongoDB\Driver\Command([
     'aggregate' => COLLECTION_NAME,
-    'pipeline' => array(array('$match' => array('x' => 1))),
-));
+    'pipeline' => [ [ '$match' => [ 'x' => 1 ] ] ],
+    'cursor' => (object) [],
+]);
 $secondary->executeCommand(DATABASE_NAME, $command, $rp);
 
 $query = new MongoDB\Driver\Query(
@@ -64,6 +65,9 @@ object(stdClass)#%d (%d) {
       }
     }
   }
+  ["cursor"]=>
+  object(stdClass)#16 (0) {
+  }%A
 }
 Set profile level to 0 successfully: yes
 ===DONE===
