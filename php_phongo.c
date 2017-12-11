@@ -1394,6 +1394,20 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t *uri, bson_t *options T
 
 			continue;
 		}
+
+		if (!strcasecmp(key, MONGOC_URI_COMPRESSORS)) {
+			if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "string");
+				return false;
+			}
+
+			if (!mongoc_uri_set_compressors(uri, bson_iter_utf8(&iter, NULL))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" URI option", key);
+				return false;
+			}
+
+			continue;
+		}
 	}
 
 	return true;

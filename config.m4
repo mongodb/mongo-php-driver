@@ -380,6 +380,18 @@ if test "$MONGODB" != "no"; then
   enable_srv=auto
   m4_include(src/libmongoc/build/autotools/FindResSearch.m4)
 
+  with_snappy=auto
+  with_zlib=auto
+  m4_include(src/libmongoc/build/autotools/m4/pkg.m4)
+  m4_include(src/libmongoc/build/autotools/CheckSnappy.m4)
+  m4_include(src/libmongoc/build/autotools/CheckZlib.m4)
+
+  if test "x$with_zlib" != "xno" -o "x$with_snappy" != "xno"; then
+     AC_SUBST(MONGOC_ENABLE_COMPRESSION, 1)
+  else
+     AC_SUBST(MONGOC_ENABLE_COMPRESSION, 0)
+  fi
+
   m4_include(src/libmongoc/build/autotools/WeakSymbols.m4)
   m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
   AX_PTHREAD
@@ -391,7 +403,7 @@ if test "$MONGODB" != "no"; then
   PHP_SUBST(EXTRA_CFLAGS)
   PHP_SUBST(EXTRA_LDFLAGS)
 
-  MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $PTHREAD_LIBS $SASL_LIBS"
+  MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $PTHREAD_LIBS $SASL_LIBS $SNAPPY_LIBS $ZLIB_LIBS"
   PHP_SUBST(MONGODB_SHARED_LIBADD)
 
   PHP_NEW_EXTENSION(mongodb, $PHP_MONGODB_SOURCES, $ext_shared,, $PHP_MONGODB_CFLAGS)
