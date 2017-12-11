@@ -131,7 +131,30 @@ static bool php_phongo_bson_visit_binary(const bson_iter_t *iter ARG_UNUSED, con
 
 static bool php_phongo_bson_visit_undefined(const bson_iter_t *iter, const char *key, void *data) /* {{{ */
 {
-	mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Detected unsupported BSON type 0x06 (undefined) for fieldname \"%s\"", key);
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
+#if PHP_VERSION_ID >= 70000
+	zval zchild;
+
+	object_init_ex(&zchild, php_phongo_undefined_ce);
+
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, &zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
+	}
+#else
+	zval *zchild = NULL;
+	TSRMLS_FETCH();
+
+	MAKE_STD_ZVAL(zchild);
+	object_init_ex(zchild, php_phongo_undefined_ce);
+
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, zchild);
+	}
+#endif
 
 	return false;
 } /* }}} */

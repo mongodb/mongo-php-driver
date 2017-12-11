@@ -174,6 +174,7 @@ if test "$MONGODB" != "no"; then
     src/BSON/Timestamp.c \
     src/BSON/TimestampInterface.c \
     src/BSON/Type.c \
+    src/BSON/Undefined.c \
     src/BSON/Unserializable.c \
     src/BSON/UTCDateTime.c \
     src/BSON/UTCDateTimeInterface.c \

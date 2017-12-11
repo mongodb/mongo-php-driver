@@ -2655,6 +2655,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_persistable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_regex_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_timestamp_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_undefined_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS_PASSTHRU);

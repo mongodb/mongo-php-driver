@@ -270,6 +270,13 @@ static void php_phongo_bson_append_object(bson_t *bson, php_phongo_bson_flags_t 
 			return;
 		}
 
+		/* Deprecated types */
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_undefined_ce TSRMLS_CC)) {
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Undefined");
+			bson_append_undefined(bson, key, key_len);
+			return;
+		}
+
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Unexpected %s instance: %s", ZSTR_VAL(php_phongo_type_ce->name), ZSTR_VAL(Z_OBJCE_P(object)->name));
 		return;
 	} else {

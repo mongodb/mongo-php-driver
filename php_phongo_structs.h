@@ -203,6 +203,11 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	PHONGO_ZEND_OBJECT_POST
+} php_phongo_undefined_t;
+
+typedef struct {
+	PHONGO_ZEND_OBJECT_PRE
 	bool       initialized;
 	int64_t    milliseconds;
 	HashTable *properties;
