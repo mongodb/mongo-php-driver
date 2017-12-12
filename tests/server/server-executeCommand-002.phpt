@@ -66,7 +66,7 @@ object(stdClass)#%d (%d) {
     }
   }
   ["cursor"]=>
-  object(stdClass)#16 (0) {
+  object(stdClass)#%d (%d) {
   }%A
 }
 Set profile level to 0 successfully: yes
