@@ -157,6 +157,7 @@ if test "$MONGODB" != "no"; then
     src/bson-encode.c \
     src/BSON/Binary.c \
     src/BSON/BinaryInterface.c \
+    src/BSON/DBPointer.c \
     src/BSON/Decimal128.c \
     src/BSON/Decimal128Interface.c \
     src/BSON/Javascript.c \

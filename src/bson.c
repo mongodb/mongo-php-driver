@@ -365,9 +365,32 @@ static bool php_phongo_bson_visit_code(const bson_iter_t *iter ARG_UNUSED, const
 	return false;
 } /* }}} */
 
-static bool php_phongo_bson_visit_dbpointer(const bson_iter_t *iter, const char *key, size_t collection_len, const char *collection, const bson_oid_t *oid, void *data) /* {{{ */
+static bool php_phongo_bson_visit_dbpointer(const bson_iter_t *iter, const char *key, size_t namespace_len, const char *namespace, const bson_oid_t *oid, void *data) /* {{{ */
 {
-	mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Detected unsupported BSON type 0x0C (DBPointer) for fieldname \"%s\"", key);
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
+#if PHP_VERSION_ID >= 70000
+	zval zchild;
+
+	php_phongo_new_dbpointer(&zchild, namespace, namespace_len, oid TSRMLS_CC);
+
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, &zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
+	}
+#else
+	zval *zchild = NULL;
+	TSRMLS_FETCH();
+
+	MAKE_STD_ZVAL(zchild);
+	php_phongo_new_dbpointer(zchild, namespace, namespace_len, oid TSRMLS_CC);
+
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, zchild);
+	}
+#endif
 
 	return false;
 } /* }}} */

@@ -160,6 +160,7 @@ void php_phongo_new_binary_from_binary_and_type(zval *object, const char *data, 
 void php_phongo_new_decimal128(zval *object, const bson_decimal128_t *decimal TSRMLS_DC);
 void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC);
 void php_phongo_new_symbol(zval *object, const char *symbol, size_t symbol_len TSRMLS_DC);
+void php_phongo_new_dbpointer(zval *object, const char *namespace, size_t namespace_len, const bson_oid_t *oid TSRMLS_DC);
 
 zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
 zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
