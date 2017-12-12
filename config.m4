@@ -171,6 +171,7 @@ if test "$MONGODB" != "no"; then
     src/BSON/Regex.c \
     src/BSON/RegexInterface.c \
     src/BSON/Serializable.c \
+    src/BSON/Symbol.c \
     src/BSON/Timestamp.c \
     src/BSON/TimestampInterface.c \
     src/BSON/Type.c \

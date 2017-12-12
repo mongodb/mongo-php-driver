@@ -2386,6 +2386,17 @@ void php_phongo_new_regex_from_regex_and_options(zval *object, const char *patte
 	qsort((void *) intern->flags, intern->flags_len, 1, php_phongo_regex_compare_flags);
 } /* }}} */
 
+void php_phongo_new_symbol(zval *object, const char *symbol, size_t symbol_len TSRMLS_DC) /* {{{ */
+{
+	php_phongo_symbol_t     *intern;
+
+	object_init_ex(object, php_phongo_symbol_ce);
+
+	intern = Z_SYMBOL_OBJ_P(object);
+	intern->symbol = estrndup(symbol, symbol_len);
+	intern->symbol_len = symbol_len;
+} /* }}} */
+
 /* {{{ Memory allocation wrappers */
 static void* php_phongo_malloc(size_t num_bytes) /* {{{ */
 {
@@ -2654,6 +2665,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_objectid_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_persistable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_regex_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_symbol_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_timestamp_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_undefined_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS_PASSTHRU);

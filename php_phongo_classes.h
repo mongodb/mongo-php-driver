@@ -85,6 +85,9 @@ static inline php_phongo_objectid_t* php_objectid_fetch_object(zend_object *obj)
 static inline php_phongo_regex_t* php_regex_fetch_object(zend_object *obj) {
     return (php_phongo_regex_t *)((char *)obj - XtOffsetOf(php_phongo_regex_t, std));
 }
+static inline php_phongo_symbol_t* php_symbol_fetch_object(zend_object *obj) {
+    return (php_phongo_symbol_t *)((char *)obj - XtOffsetOf(php_phongo_symbol_t, std));
+}
 static inline php_phongo_timestamp_t* php_timestamp_fetch_object(zend_object *obj) {
     return (php_phongo_timestamp_t *)((char *)obj - XtOffsetOf(php_phongo_timestamp_t, std));
 }
@@ -124,6 +127,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 # define Z_MINKEY_OBJ_P(zv)            (php_minkey_fetch_object(Z_OBJ_P(zv)))
 # define Z_OBJECTID_OBJ_P(zv)          (php_objectid_fetch_object(Z_OBJ_P(zv)))
 # define Z_REGEX_OBJ_P(zv)             (php_regex_fetch_object(Z_OBJ_P(zv)))
+# define Z_SYMBOL_OBJ_P(zv)            (php_symbol_fetch_object(Z_OBJ_P(zv)))
 # define Z_TIMESTAMP_OBJ_P(zv)         (php_timestamp_fetch_object(Z_OBJ_P(zv)))
 # define Z_UNDEFINED_OBJ_P(zv)         (php_undefined_fetch_object(Z_OBJ_P(zv)))
 # define Z_UTCDATETIME_OBJ_P(zv)       (php_utcdatetime_fetch_object(Z_OBJ_P(zv)))
@@ -151,6 +155,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 # define Z_OBJ_MINKEY(zo)              (php_minkey_fetch_object(zo))
 # define Z_OBJ_OBJECTID(zo)            (php_objectid_fetch_object(zo))
 # define Z_OBJ_REGEX(zo)               (php_regex_fetch_object(zo))
+# define Z_OBJ_SYMBOL(zo)              (php_symbol_fetch_object(zo))
 # define Z_OBJ_TIMESTAMP(zo)           (php_timestamp_fetch_object(zo))
 # define Z_OBJ_UNDEFINED(zo)           (php_undefined_fetch_object(zo))
 # define Z_OBJ_UTCDATETIME(zo)         (php_utcdatetime_fetch_object(zo))
@@ -180,6 +185,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 # define Z_MINKEY_OBJ_P(zv)            ((php_phongo_minkey_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_OBJECTID_OBJ_P(zv)          ((php_phongo_objectid_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_REGEX_OBJ_P(zv)             ((php_phongo_regex_t *)zend_object_store_get_object(zv TSRMLS_CC))
+# define Z_SYMBOL_OBJ_P(zv)            ((php_phongo_symbol_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_TIMESTAMP_OBJ_P(zv)         ((php_phongo_timestamp_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_UNDEFINED_OBJ_P(zv)         ((php_phongo_undefined_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_UTCDATETIME_OBJ_P(zv)       ((php_phongo_utcdatetime_t *)zend_object_store_get_object(zv TSRMLS_CC))
@@ -207,6 +213,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 # define Z_OBJ_MINKEY(zo)              ((php_phongo_minkey_t *)zo)
 # define Z_OBJ_OBJECTID(zo)            ((php_phongo_objectid_t *)zo)
 # define Z_OBJ_REGEX(zo)               ((php_phongo_regex_t *)zo)
+# define Z_OBJ_SYMBOL(zo)              ((php_phongo_symbol_t *)zo)
 # define Z_OBJ_TIMESTAMP(zo)           ((php_phongo_timestamp_t *)zo)
 # define Z_OBJ_UNDEFINED(zo)           ((php_phongo_undefined_t *)zo)
 # define Z_OBJ_UTCDATETIME(zo)         ((php_phongo_utcdatetime_t *)zo)
@@ -260,6 +267,7 @@ extern zend_class_entry *php_phongo_maxkey_ce;
 extern zend_class_entry *php_phongo_minkey_ce;
 extern zend_class_entry *php_phongo_objectid_ce;
 extern zend_class_entry *php_phongo_regex_ce;
+extern zend_class_entry *php_phongo_symbol_ce;
 extern zend_class_entry *php_phongo_timestamp_ce;
 extern zend_class_entry *php_phongo_undefined_ce;
 extern zend_class_entry *php_phongo_utcdatetime_ce;
@@ -289,6 +297,7 @@ extern void php_phongo_objectid_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_persistable_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_regex_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_serializable_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_symbol_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_type_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_undefined_init_ce(INIT_FUNC_ARGS);

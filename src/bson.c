@@ -305,9 +305,32 @@ static bool php_phongo_bson_visit_regex(const bson_iter_t *iter ARG_UNUSED, cons
 	return false;
 } /* }}} */
 
-static bool php_phongo_bson_visit_symbol(const bson_iter_t *iter, const char *key, size_t symbol_len, const char *symbol, void *data) /* {{{ */
+static bool php_phongo_bson_visit_symbol(const bson_iter_t *iter, const char *key, size_t v_symbol_len, const char *v_symbol, void *data) /* {{{ */
 {
-	mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Detected unsupported BSON type 0x0E (symbol) for fieldname \"%s\"", key);
+	zval *retval = PHONGO_BSON_STATE_ZCHILD(data);
+#if PHP_VERSION_ID >= 70000
+	zval zchild;
+
+	php_phongo_new_symbol(&zchild, v_symbol, v_symbol_len TSRMLS_CC);
+
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, &zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &zchild);
+	}
+#else
+	zval *zchild = NULL;
+	TSRMLS_FETCH();
+
+	MAKE_STD_ZVAL(zchild);
+	php_phongo_new_symbol(zchild, v_symbol, v_symbol_len TSRMLS_CC);
+
+	if (((php_phongo_bson_state *)data)->is_visiting_array) {
+		add_next_index_zval(retval, zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, zchild);
+	}
+#endif
 
 	return false;
 } /* }}} */

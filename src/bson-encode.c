@@ -271,6 +271,13 @@ static void php_phongo_bson_append_object(bson_t *bson, php_phongo_bson_flags_t 
 		}
 
 		/* Deprecated types */
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_symbol_ce TSRMLS_CC)) {
+			php_phongo_symbol_t *intern = Z_SYMBOL_OBJ_P(object);
+
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Symbol");
+			bson_append_symbol(bson, key, key_len, intern->symbol, intern->symbol_len);
+			return;
+		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_undefined_ce TSRMLS_CC)) {
 			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Undefined");
 			bson_append_undefined(bson, key, key_len);
