@@ -602,7 +602,7 @@ static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, 
 				if (!process_read_concern(*driver_option, mongoc_opts TSRMLS_CC)) {
 					return false;
 				}
-			} else if ((!strcasecmp(string_key, "readPreference")) && (type == PHONGO_COMMAND_READ)) {
+			} else if ((!strcasecmp(string_key, "readPreference")) && (type == PHONGO_COMMAND_READ || type == PHONGO_COMMAND_RAW)) {
 				if (!process_read_preference(*driver_option, mongoc_opts, zreadPreference, client, server_id TSRMLS_CC)) {
 					return false;
 				}
