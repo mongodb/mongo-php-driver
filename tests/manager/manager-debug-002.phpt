@@ -1,7 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager: mongodb.debug=stderr
---SKIPIF--
-<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM uses HHVM's logging functionality"); ?>
+MongoDB\Driver\Manager: mongodb.debug=stderr (connection string and version)
 --INI--
 mongodb.debug=stderr
 --FILE--
