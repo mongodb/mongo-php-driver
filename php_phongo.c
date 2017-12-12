@@ -767,6 +767,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 
 	if (server_id > 0 && !mongoc_cursor_set_hint(cursor, server_id)) {
 		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "%s", "Could not set cursor server_id");
+		mongoc_cursor_destroy(cursor);
 		return false;
 	}
 
