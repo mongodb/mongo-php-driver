@@ -408,7 +408,7 @@ static PHP_METHOD(Manager, executeBulkWrite)
 	intern = Z_MANAGER_OBJ_P(getThis());
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 
-	phongo_execute_write(intern->client, namespace, bulk, options, -1, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_bulk_write(intern->client, namespace, bulk, options, -1, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\ReadConcern MongoDB\Driver\Manager::getReadConcern()

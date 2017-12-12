@@ -161,7 +161,7 @@ static PHP_METHOD(Server, executeBulkWrite)
 
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 
-	phongo_execute_write(intern->client, namespace, bulk, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_bulk_write(intern->client, namespace, bulk, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto string MongoDB\Driver\Server::getHost()

@@ -620,7 +620,7 @@ static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, 
 	return true;
 }
 
-bool phongo_execute_write(mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t *bulk_write, zval *options, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+bool phongo_execute_bulk_write(mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t *bulk_write, zval *options, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
 	int success;
