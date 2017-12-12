@@ -18,10 +18,10 @@ $bulk->insert([ '_id' => 3, 'grades' => [ 95, 110, 100 ] ]);
 $manager->executeBulkWrite(DATABASE_NAME . '.' . COLLECTION_NAME, $bulk);
 
 $command = new MongoDB\Driver\Command([
-	'findAndModify' => COLLECTION_NAME, 
-	'query' => ['grades' => [ '$gt' => 100 ] ], 
-	'update' => ['$set' => [ 'grades.$[element]' => 100 ] ],
-	'arrayFilters' => [ [ 'element' => [ '$gt' => 100 ] ] ],
+    'findAndModify' => COLLECTION_NAME, 
+    'query' => ['grades' => [ '$gt' => 100 ] ], 
+    'update' => ['$set' => [ 'grades.$[element]' => 100 ] ],
+    'arrayFilters' => [ [ 'element' => [ '$gt' => 100 ] ] ],
 ]);
 
 // Running this twice, because findAndModify only updates the first document

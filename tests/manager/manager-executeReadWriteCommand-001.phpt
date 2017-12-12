@@ -11,24 +11,24 @@ require_once __DIR__ . "/../utils/observer.php";
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
 (new CommandObserver)->observe(
-	function() use ($manager) {
-		$command = new MongoDB\Driver\Command( [
-			'findAndModify' => NS,
-			'update' => [ '$set' => [ 'foo' => 'bar' ] ],
-		] );
-		$manager->executeReadWriteCommand(
-			DATABASE_NAME,
-			$command,
-			[
-				'readConcern' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\ReadConcern::LOCAL),
-				'writeConcern' => new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY),
-			]
-		);
-	},
-	function(stdClass $command) {
-		echo "Read Concern: ", $command->readConcern->level, "\n";
-		echo "Write Concern: ", $command->writeConcern->w, "\n";
-	}
+    function() use ($manager) {
+        $command = new MongoDB\Driver\Command( [
+            'findAndModify' => NS,
+            'update' => [ '$set' => [ 'foo' => 'bar' ] ],
+        ] );
+        $manager->executeReadWriteCommand(
+            DATABASE_NAME,
+            $command,
+            [
+                'readConcern' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\ReadConcern::LOCAL),
+                'writeConcern' => new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY),
+            ]
+        );
+    },
+    function(stdClass $command) {
+        echo "Read Concern: ", $command->readConcern->level, "\n";
+        echo "Write Concern: ", $command->writeConcern->w, "\n";
+    }
 );
 
 ?>

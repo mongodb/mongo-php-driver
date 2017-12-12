@@ -10,7 +10,7 @@ $tests = [
 
 ini_set('mongodb.debug', 'stdout');
 foreach ($tests as $bson) {
-	var_dump(MongoDB\BSON\toPHP($bson));
+    var_dump(MongoDB\BSON\toPHP($bson));
 }
 ini_set('mongodb.debug', 'off');
 

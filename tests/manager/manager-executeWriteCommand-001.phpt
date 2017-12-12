@@ -16,21 +16,21 @@ $bw->insert(['a' => 1]);
 $manager->executeBulkWrite(NS, $bw);
 
 (new CommandObserver)->observe(
-	function() use ($manager) {
-		$command = new MongoDB\Driver\Command([
-			'drop' => COLLECTION_NAME,
-		]);
-		$manager->executeWriteCommand(
-			DATABASE_NAME,
-			$command,
-			[
-				'writeConcern' => new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY),
-			]
-		);
-	},
-	function(stdClass $command) {
-		echo "Write Concern: ", $command->writeConcern->w, "\n";
-	}
+    function() use ($manager) {
+        $command = new MongoDB\Driver\Command([
+            'drop' => COLLECTION_NAME,
+        ]);
+        $manager->executeWriteCommand(
+            DATABASE_NAME,
+            $command,
+            [
+                'writeConcern' => new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY),
+            ]
+        );
+    },
+    function(stdClass $command) {
+        echo "Write Concern: ", $command->writeConcern->w, "\n";
+    }
 );
 
 ?>

@@ -24,7 +24,7 @@ $servers = $m->getServers();
 
 foreach ( $servers as $server )
 {
-	echo $server->getHost(), ':', $server->getPort(), "\n";
+    echo $server->getHost(), ':', $server->getPort(), "\n";
 }
 ?>
 ===DONE===
