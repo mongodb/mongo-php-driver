@@ -28,14 +28,14 @@ echo throws(function() use ($bulk) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-replacement document contains invalid key: empty key
+invalid argument for replace: empty key
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-replacement document contains invalid key: keys cannot contain ".": "x.y"
+invalid argument for replace: keys cannot contain ".": "x.y"
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-replacement document contains invalid key: keys cannot begin with "$": "$x"
+invalid argument for replace: keys cannot begin with "$": "$x"
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-replacement document contains invalid key: corrupt BSON
+invalid argument for replace: corrupt BSON
 ===DONE===
