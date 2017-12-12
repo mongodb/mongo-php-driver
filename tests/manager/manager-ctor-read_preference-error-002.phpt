@@ -56,11 +56,11 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=invalid'. Unknown option or value for 'maxStalenessSeconds=invalid'.
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=invalid'. Unsupported value for "maxStalenessSeconds": "invalid".
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected integer for "maxStalenessSeconds" URI option, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=2147483648'. Unknown option or value for 'maxStalenessSeconds=2147483648'.
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=2147483648'. Unsupported value for "maxStalenessSeconds": "2147483648".
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?maxstalenessseconds=1231'. Invalid readPreferences.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

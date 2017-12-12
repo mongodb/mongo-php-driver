@@ -101,9 +101,6 @@ object(MongoDB\Driver\Monitoring\CommandStartedEvent)#%d (%d) {
   object(stdClass)#%d (%d) {
     ["insert"]=>
     string(12) "apm_overview"
-    ["writeConcern"]=>
-    object(stdClass)#%d (%d) {
-    }
     ["ordered"]=>
     bool(false)%A
   }

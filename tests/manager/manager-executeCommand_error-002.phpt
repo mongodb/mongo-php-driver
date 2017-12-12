@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeCommand(): wrong options and values
+MongoDB\Driver\Manager::executeCommand(): wrong options and values (MONGOC_CMD_RAW)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>

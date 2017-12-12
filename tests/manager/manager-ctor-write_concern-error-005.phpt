@@ -54,7 +54,7 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?journal=invalid'. Unknown option or value for 'journal=invalid'.
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?journal=invalid'. Unsupported value for "journal": "invalid".
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected boolean for "journal" URI option, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

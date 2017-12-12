@@ -18,7 +18,7 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?slaveok=other'. Unknown option or value for 'slaveok=other'.
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?slaveok=other'. Unsupported value for "slaveok": "other".
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected boolean for "slaveOk" URI option, 32-bit integer given
 ===DONE===
