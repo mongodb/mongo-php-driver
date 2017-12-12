@@ -10,25 +10,25 @@ $m = new MongoDB\Driver\Manager(STANDALONE);
 
 class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
-	private $instanceName;
+    private $instanceName;
 
-	public function __construct( $instanceName )
-	{
-		$this->instanceName = $instanceName;
-	}
+    public function __construct( $instanceName )
+    {
+        $this->instanceName = $instanceName;
+    }
 
-	public function commandStarted( \MongoDB\Driver\Monitoring\CommandStartedEvent $event )
-	{
-		echo "- ({$this->instanceName}) - started: ", $event->getCommandName(), "\n";
-	}
+    public function commandStarted( \MongoDB\Driver\Monitoring\CommandStartedEvent $event )
+    {
+        echo "- ({$this->instanceName}) - started: ", $event->getCommandName(), "\n";
+    }
 
-	public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event )
-	{
-	}
+    public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event )
+    {
+    }
 
-	public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event )
-	{
-	}
+    public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event )
+    {
+    }
 }
 
 CLEANUP( STANDALONE );

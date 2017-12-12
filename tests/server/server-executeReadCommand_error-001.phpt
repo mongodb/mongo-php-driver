@@ -13,12 +13,12 @@ $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Drive
 $command = new MongoDB\Driver\Command([]);
 
 echo throws(function() use ($server, $command) {
-	$server->executeReadCommand(
-		DATABASE_NAME, $command,
-		[
-			'writeConcern' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\WriteConcern::MAJORITY),
-		]
-	);
+    $server->executeReadCommand(
+        DATABASE_NAME, $command,
+        [
+            'writeConcern' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\WriteConcern::MAJORITY),
+        ]
+    );
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 ?>
 ===DONE===

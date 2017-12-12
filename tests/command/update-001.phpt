@@ -18,13 +18,13 @@ $bulk->insert([ '_id' => 3, 'grades' => [ 95, 110, 100 ] ]);
 $manager->executeBulkWrite(DATABASE_NAME . '.' . COLLECTION_NAME, $bulk);
 
 $command = new MongoDB\Driver\Command([
-	'update' => COLLECTION_NAME, 
-	'updates' => [[
-		'q' => [ 'grades' => [ '$gte' => 100 ] ],
-		'u' => [ '$set' => [ 'grades.$[element]' => 100 ] ],
-		'arrayFilters' => [ [ 'element' => [ '$gte' => 100 ] ] ],
-		'multi' => true
-	]],
+    'update' => COLLECTION_NAME, 
+    'updates' => [[
+        'q' => [ 'grades' => [ '$gte' => 100 ] ],
+        'u' => [ '$set' => [ 'grades.$[element]' => 100 ] ],
+        'arrayFilters' => [ [ 'element' => [ '$gte' => 100 ] ] ],
+        'multi' => true
+    ]],
 ]);
 
 $manager->executeCommand(DATABASE_NAME, $command);

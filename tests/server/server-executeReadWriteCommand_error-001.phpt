@@ -13,12 +13,12 @@ $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Drive
 $command = new MongoDB\Driver\Command([]);
 
 echo throws(function() use ($server, $command) {
-	$server->executeReadWriteCommand(
-		DATABASE_NAME, $command,
-		[
-			'readPreference' => new \MongoDB\Driver\ReadPreference(\MongoDB\Driver\ReadPreference::RP_SECONDARY),
-		]
-	);
+    $server->executeReadWriteCommand(
+        DATABASE_NAME, $command,
+        [
+            'readPreference' => new \MongoDB\Driver\ReadPreference(\MongoDB\Driver\ReadPreference::RP_SECONDARY),
+        ]
+    );
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

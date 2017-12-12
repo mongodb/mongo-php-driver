@@ -14,21 +14,21 @@ $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Drive
 $command = new MongoDB\Driver\Command([]);
 
 echo throws(function() use ($server, $command) {
-	$server->executeWriteCommand(
-		DATABASE_NAME, $command,
-		[
-			'readConcern' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\ReadConcern::MAJORITY),
-		]
-	);
+    $server->executeWriteCommand(
+        DATABASE_NAME, $command,
+        [
+            'readConcern' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\ReadConcern::MAJORITY),
+        ]
+    );
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() use ($server, $command) {
-	$server->executeWriteCommand(
-		DATABASE_NAME, $command,
-		[
-			'readPreference' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\ReadPreference::RP_NEAREST),
-		]
-	);
+    $server->executeWriteCommand(
+        DATABASE_NAME, $command,
+        [
+            'readPreference' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\ReadPreference::RP_NEAREST),
+        ]
+    );
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 ?>
 ===DONE===

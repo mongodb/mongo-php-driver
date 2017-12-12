@@ -12,30 +12,30 @@ require_once __DIR__ . "/../utils/observer.php";
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
 (new CommandObserver)->observe(
-	function() use ($manager) {
-		$command = new MongoDB\Driver\Command([
-			'ping' => true,
-		]);
+    function() use ($manager) {
+        $command = new MongoDB\Driver\Command([
+            'ping' => true,
+        ]);
 
-		try {
-			$manager->executeCommand(
-				DATABASE_NAME,
-				$command,
-				[
-					'readPreference' => new \MongoDB\Driver\ReadPreference(\MongoDB\Driver\ReadPreference::RP_SECONDARY),
-					'readConcern' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\ReadConcern::LOCAL),
-					'writeConcern' => new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY),
-				]
-			);
-		} catch ( Exception $e ) {
-			// Ignore exception that ping doesn't support writeConcern
-		}
-	},
-	function(stdClass $command) {
-		echo "Read Preference: ", $command->{'$readPreference'}->mode, "\n";
-		echo "Read Concern: ", $command->readConcern->level, "\n";
-		echo "Write Concern: ", $command->writeConcern->w, "\n";
-	}
+        try {
+            $manager->executeCommand(
+                DATABASE_NAME,
+                $command,
+                [
+                    'readPreference' => new \MongoDB\Driver\ReadPreference(\MongoDB\Driver\ReadPreference::RP_SECONDARY),
+                    'readConcern' => new \MongoDB\Driver\ReadConcern(\MongoDB\Driver\ReadConcern::LOCAL),
+                    'writeConcern' => new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY),
+                ]
+            );
+        } catch ( Exception $e ) {
+            // Ignore exception that ping doesn't support writeConcern
+        }
+    },
+    function(stdClass $command) {
+        echo "Read Preference: ", $command->{'$readPreference'}->mode, "\n";
+        echo "Read Concern: ", $command->readConcern->level, "\n";
+        echo "Write Concern: ", $command->writeConcern->w, "\n";
+    }
 );
 
 ?>

@@ -2,7 +2,7 @@
 require __DIR__ . "/" . "tools.php";
 
 if (($FILENAME = getenv("PHONGO_SERVERS")) === false) {
-	$FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
+    $FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
 }
 
 $json = file_get_contents($FILENAME);

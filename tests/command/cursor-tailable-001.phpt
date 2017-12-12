@@ -19,13 +19,13 @@ $bulkWrite->insert(['_id' => 1]);
 $manager->executeBulkWrite(NS, $bulkWrite);
 
 $pipeline = [
-	[ '$changeStream' => [ 'fullDocument' => 'updateLookup' ] ]
+    [ '$changeStream' => [ 'fullDocument' => 'updateLookup' ] ]
 ];
 
 $command = new MongoDB\Driver\Command([
-	'aggregate' => COLLECTION_NAME,
-	'pipeline' => $pipeline,
-	'cursor' => ['batchSize' => 0],
+    'aggregate' => COLLECTION_NAME,
+    'pipeline' => $pipeline,
+    'cursor' => ['batchSize' => 0],
 ], [
     'tailable' => true,
     'awaitData' => true,

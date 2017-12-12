@@ -10,23 +10,23 @@ $m = new MongoDB\Driver\Manager(STANDALONE);
 
 class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
-	public function commandStarted( \MongoDB\Driver\Monitoring\CommandStartedEvent $event )
-	{
-		echo "started:\n";
-		var_dump( $event );
-	}
+    public function commandStarted( \MongoDB\Driver\Monitoring\CommandStartedEvent $event )
+    {
+        echo "started:\n";
+        var_dump( $event );
+    }
 
-	public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event )
-	{
-		echo "succeeded:\n";
-		var_dump( $event );
-	}
+    public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event )
+    {
+        echo "succeeded:\n";
+        var_dump( $event );
+    }
 
-	public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event )
-	{
-		echo "failed:\n";
-		var_dump( $event );
-	}
+    public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event )
+    {
+        echo "failed:\n";
+        var_dump( $event );
+    }
 }
 
 MongoDB\Driver\Monitoring\addSubscriber( new MySubscriber() );
