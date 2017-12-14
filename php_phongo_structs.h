@@ -149,6 +149,15 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	char       *ref;
+	size_t      ref_len;
+	char        id[25];
+	HashTable  *properties;
+	PHONGO_ZEND_OBJECT_POST
+} php_phongo_dbpointer_t;
+
+typedef struct {
+	PHONGO_ZEND_OBJECT_PRE
 	bool               initialized;
 	bson_decimal128_t  decimal;
 	HashTable         *properties;
@@ -194,12 +203,25 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	char      *symbol;
+	size_t     symbol_len;
+	HashTable *properties;
+	PHONGO_ZEND_OBJECT_POST
+} php_phongo_symbol_t;
+
+typedef struct {
+	PHONGO_ZEND_OBJECT_PRE
 	bool       initialized;
 	uint32_t   increment;
 	uint32_t   timestamp;
 	HashTable *properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_timestamp_t;
+
+typedef struct {
+	PHONGO_ZEND_OBJECT_PRE
+	PHONGO_ZEND_OBJECT_POST
+} php_phongo_undefined_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE

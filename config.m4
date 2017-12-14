@@ -157,6 +157,7 @@ if test "$MONGODB" != "no"; then
     src/bson-encode.c \
     src/BSON/Binary.c \
     src/BSON/BinaryInterface.c \
+    src/BSON/DBPointer.c \
     src/BSON/Decimal128.c \
     src/BSON/Decimal128Interface.c \
     src/BSON/Javascript.c \
@@ -171,9 +172,11 @@ if test "$MONGODB" != "no"; then
     src/BSON/Regex.c \
     src/BSON/RegexInterface.c \
     src/BSON/Serializable.c \
+    src/BSON/Symbol.c \
     src/BSON/Timestamp.c \
     src/BSON/TimestampInterface.c \
     src/BSON/Type.c \
+    src/BSON/Undefined.c \
     src/BSON/Unserializable.c \
     src/BSON/UTCDateTime.c \
     src/BSON/UTCDateTimeInterface.c \
