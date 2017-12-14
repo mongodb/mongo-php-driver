@@ -34,7 +34,7 @@ echo throws(function() use ($manager, $query) {
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected 'readPreference' option to be 'MongoDB\Driver\ReadPreference', string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected 'readPreference' option to be 'MongoDB\Driver\ReadPreference', object given
+Expected 'readPreference' option to be 'MongoDB\Driver\ReadPreference', stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Unknown option 'unknown'
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

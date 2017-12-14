@@ -32,7 +32,7 @@ Expected increment to be an unsigned 32-bit integer or string, boolean given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected increment to be an unsigned 32-bit integer or string, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected increment to be an unsigned 32-bit integer or string, object given
+Expected increment to be an unsigned 32-bit integer or string, stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected timestamp to be an unsigned 32-bit integer or string, %r(null|NULL)%r given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -42,5 +42,5 @@ Expected timestamp to be an unsigned 32-bit integer or string, boolean given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected timestamp to be an unsigned 32-bit integer or string, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected timestamp to be an unsigned 32-bit integer or string, object given
+Expected timestamp to be an unsigned 32-bit integer or string, stdClass given
 ===DONE===
