@@ -854,6 +854,7 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 	}
 	if (!result) {
 		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		bson_destroy(&reply);
 		bson_destroy(&opts);
 		return false;
 	}
