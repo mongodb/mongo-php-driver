@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeQuery(): wrong options and values
+MongoDB\Driver\Manager::executeQuery() with invalid options
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
@@ -14,27 +14,29 @@ $query = new MongoDB\Driver\Query(['x' => 3], ['projection' => ['y' => 1]]);
 echo throws(function() use ($manager, $query) {
     $manager->executeQuery(NS, $query, ['readPreference' => 'foo']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
+
 echo throws(function() use ($manager, $query) {
     $manager->executeQuery(NS, $query, ['readPreference' => new stdClass]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() use ($manager, $query) {
-    $manager->executeQuery(NS, $query, ['unknown' => 'foo']);
+    $manager->executeQuery(NS, $query, ['session' => 'foo']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() use ($manager, $query) {
-    $manager->executeQuery(NS, $query, ['writeConcern' => 'foo']);
+    $manager->executeQuery(NS, $query, ['session' => new stdClass]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
+
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected 'readPreference' option to be 'MongoDB\Driver\ReadPreference', string given
+Expected "readPreference" option to be MongoDB\Driver\ReadPreference, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected 'readPreference' option to be 'MongoDB\Driver\ReadPreference', stdClass given
+Expected "readPreference" option to be MongoDB\Driver\ReadPreference, stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Unknown option 'unknown'
+Expected "session" option to be MongoDB\Driver\Session, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Unknown option 'writeConcern'
+Expected "session" option to be MongoDB\Driver\Session, stdClass given
 ===DONE===

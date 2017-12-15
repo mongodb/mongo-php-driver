@@ -242,6 +242,40 @@ static void php_phongo_manager_prep_uri_options(zval *options TSRMLS_DC) /* {{{ 
 	return;
 } /* }}} */
 
+/* Selects a server for an execute method. If "for_writes" is true, a primary
+ * will be selected. Otherwise, a read preference will be used to select the
+ * server. If zreadPreference is NULL, the client's read preference will be
+ * used.
+ *
+ * On success, server_id will be set and the function will return true;
+ * otherwise, false is returned and an exception is thrown. */
+static bool php_phongo_manager_select_server(bool for_writes, zval *zreadPreference, mongoc_client_t *client, uint32_t *server_id TSRMLS_DC) /* {{{ */
+{
+	const mongoc_read_prefs_t *read_preference = NULL;
+	mongoc_server_description_t *selected_server;
+	bson_error_t error;
+
+	if (!for_writes) {
+		read_preference = zreadPreference ? phongo_read_preference_from_zval(zreadPreference TSRMLS_CC) : mongoc_client_get_read_prefs(client);
+	}
+
+	selected_server = mongoc_client_select_server(client, for_writes, read_preference, &error);
+
+	if (selected_server) {
+		*server_id = mongoc_server_description_id(selected_server);
+		mongoc_server_description_destroy(selected_server);
+
+		return true;
+	}
+
+	/* Check for connection related exceptions */
+	if (!EG(exception)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+	}
+
+	return false;
+} /* }}} */
+
 /* {{{ proto void MongoDB\Driver\Manager::__construct([string $uri = "mongodb://127.0.0.1/"[, array $options = array()[, array $driverOptions = array()]]])
    Constructs a new Manager */
 static PHP_METHOD(Manager, __construct)
@@ -292,6 +326,9 @@ static PHP_METHOD(Manager, executeCommand)
 	phongo_zpp_char_len       db_len;
 	zval                     *command;
 	zval                     *options = NULL;
+	bool                      free_options = false;
+	zval                     *zreadPreference = NULL;
+	uint32_t                  server_id = 0;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -301,7 +338,24 @@ static PHP_METHOD(Manager, executeCommand)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, -1, return_value, return_value_used TSRMLS_CC);
+	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options TSRMLS_CC);
+
+	if (!phongo_parse_read_preference(options, &zreadPreference TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		goto cleanup;
+	}
+
+	if (!php_phongo_manager_select_server(false, zreadPreference, intern->client, &server_id TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		goto cleanup;
+	}
+
+	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, server_id, return_value, return_value_used TSRMLS_CC);
+
+cleanup:
+	if (free_options) {
+		php_phongo_prep_legacy_option_free(options TSRMLS_CC);
+	}
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeReadCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
@@ -313,6 +367,8 @@ static PHP_METHOD(Manager, executeReadCommand)
 	phongo_zpp_char_len       db_len;
 	zval                     *command;
 	zval                     *options = NULL;
+	zval                     *zreadPreference = NULL;
+	uint32_t                  server_id = 0;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -322,7 +378,17 @@ static PHP_METHOD(Manager, executeReadCommand)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, -1, return_value, return_value_used TSRMLS_CC);
+	if (!phongo_parse_read_preference(options, &zreadPreference TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return;
+	}
+
+	if (!php_phongo_manager_select_server(false, zreadPreference, intern->client, &server_id TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return;
+	}
+
+	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
@@ -334,6 +400,7 @@ static PHP_METHOD(Manager, executeWriteCommand)
 	phongo_zpp_char_len       db_len;
 	zval                     *command;
 	zval                     *options = NULL;
+	uint32_t                  server_id = 0;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -343,7 +410,12 @@ static PHP_METHOD(Manager, executeWriteCommand)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, -1, return_value, return_value_used TSRMLS_CC);
+	if (!php_phongo_manager_select_server(true, NULL, intern->client, &server_id TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return;
+	}
+
+	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeReadWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
@@ -355,6 +427,7 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 	phongo_zpp_char_len       db_len;
 	zval                     *command;
 	zval                     *options = NULL;
+	uint32_t                  server_id = 0;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -364,7 +437,12 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, -1, return_value, return_value_used TSRMLS_CC);
+	if (!php_phongo_manager_select_server(true, NULL, intern->client, &server_id TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return;
+	}
+
+	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, array $options = null])
@@ -376,6 +454,9 @@ static PHP_METHOD(Manager, executeQuery)
 	phongo_zpp_char_len       namespace_len;
 	zval                     *query;
 	zval                     *options = NULL;
+	bool                      free_options = false;
+	zval                     *zreadPreference = NULL;
+	uint32_t                  server_id = 0;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -385,7 +466,24 @@ static PHP_METHOD(Manager, executeQuery)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	phongo_execute_query(intern->client, namespace, query, options, -1, return_value, return_value_used TSRMLS_CC);
+	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options TSRMLS_CC);
+
+	if (!phongo_parse_read_preference(options, &zreadPreference TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		goto cleanup;
+	}
+
+	if (!php_phongo_manager_select_server(false, zreadPreference, intern->client, &server_id TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		goto cleanup;
+	}
+
+	phongo_execute_query(intern->client, namespace, query, options, server_id, return_value, return_value_used TSRMLS_CC);
+
+cleanup:
+	if (free_options) {
+		php_phongo_prep_legacy_option_free(options TSRMLS_CC);
+	}
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, array $options = null])
@@ -396,8 +494,10 @@ static PHP_METHOD(Manager, executeBulkWrite)
 	char                      *namespace;
 	phongo_zpp_char_len        namespace_len;
 	zval                      *zbulk;
-	zval                      *options = NULL;
 	php_phongo_bulkwrite_t    *bulk;
+	zval                      *options = NULL;
+	bool                       free_options = false;
+	uint32_t                   server_id = 0;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -408,7 +508,19 @@ static PHP_METHOD(Manager, executeBulkWrite)
 	intern = Z_MANAGER_OBJ_P(getThis());
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 
-	phongo_execute_bulk_write(intern->client, namespace, bulk, options, -1, return_value, return_value_used TSRMLS_CC);
+	options = php_phongo_prep_legacy_option(options, "writeConcern", &free_options TSRMLS_CC);
+
+	if (!php_phongo_manager_select_server(true, NULL, intern->client, &server_id TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		goto cleanup;
+	}
+
+	phongo_execute_bulk_write(intern->client, namespace, bulk, options, server_id, return_value, return_value_used TSRMLS_CC);
+
+cleanup:
+	if (free_options) {
+		php_phongo_prep_legacy_option_free(options TSRMLS_CC);
+	}
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\ReadConcern MongoDB\Driver\Manager::getReadConcern()
@@ -511,9 +623,7 @@ static PHP_METHOD(Manager, selectServer)
 {
 	php_phongo_manager_t         *intern;
 	zval                         *zreadPreference = NULL;
-	const mongoc_read_prefs_t    *readPreference;
-	bson_error_t                  error;
-	mongoc_server_description_t  *selected_server = NULL;
+	uint32_t                      server_id = 0;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
 
 
@@ -523,19 +633,12 @@ static PHP_METHOD(Manager, selectServer)
 		return;
 	}
 
-	readPreference = phongo_read_preference_from_zval(zreadPreference TSRMLS_CC);
-	selected_server = mongoc_client_select_server(intern->client, false, readPreference, &error);
-	if (selected_server) {
-		phongo_server_init(return_value, intern->client, mongoc_server_description_id(selected_server) TSRMLS_CC);
-		mongoc_server_description_destroy(selected_server);
-	} else {
-		/* Check for connection related exceptions */
-		if (EG(exception)) {
-			return;
-		}
-
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+	if (!php_phongo_manager_select_server(false, zreadPreference, intern->client, &server_id TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return;
 	}
+
+	phongo_server_init(return_value, intern->client, server_id TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Session MongoDB\Driver\Manager::startSession([array $options = null])
