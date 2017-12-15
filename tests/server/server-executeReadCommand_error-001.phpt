@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeReadCommand()
+MongoDB\Driver\Server::executeReadCommand()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
