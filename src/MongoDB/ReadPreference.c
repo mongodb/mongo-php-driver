@@ -80,7 +80,7 @@ static PHP_METHOD(ReadPreference, __construct)
 			return;
 		}
 	} else {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected mode to be integer or string, %s given", zend_get_type_by_const(Z_TYPE_P(mode)));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected mode to be integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(mode));
 		return;
 	}
 

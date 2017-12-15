@@ -31,7 +31,7 @@ Expected w to be integer or string, boolean given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected w to be integer or string, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected w to be integer or string, object given
+Expected w to be integer or string, stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected w to be integer or string, %r(null|NULL)%r given
 ===DONE===

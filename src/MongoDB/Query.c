@@ -35,7 +35,7 @@ static bool php_phongo_query_opts_append_string(bson_t *opts, const char *opts_k
 	zval *value = php_array_fetch(zarr, zarr_key);
 
 	if (Z_TYPE_P(value) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" %s to be string, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", zend_get_type_by_const(Z_TYPE_P(value)));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" %s to be string, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
 		return false;
 	}
 
@@ -55,7 +55,7 @@ static bool php_phongo_query_opts_append_document(bson_t *opts, const char *opts
 	bson_t b = BSON_INITIALIZER;
 
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" %s to be array or object, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", zend_get_type_by_const(Z_TYPE_P(value)));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" %s to be array or object, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
 		return false;
 	}
 
@@ -195,7 +195,7 @@ static bool php_phongo_query_init_readconcern(php_phongo_query_t *intern, zval *
 		zval *read_concern = php_array_fetchc(options, "readConcern");
 
 		if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce TSRMLS_CC)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), zend_get_type_by_const(Z_TYPE_P(read_concern)));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
 			return false;
 		}
 
@@ -262,7 +262,7 @@ static bool php_phongo_query_init(php_phongo_query_t *intern, zval *filter, zval
 		modifiers = php_array_fetchc(options, "modifiers");
 
 		if (Z_TYPE_P(modifiers) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"modifiers\" option to be array, %s given", zend_get_type_by_const(Z_TYPE_P(modifiers)));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"modifiers\" option to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(modifiers));
 			return false;
 		}
 	}

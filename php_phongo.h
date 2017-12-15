@@ -21,6 +21,9 @@
 #include "bson.h"
 #include "mongoc.h"
 
+#include "phongo_compat.h"
+#include "php_phongo_classes.h"
+
 #define phpext_mongodb_ptr &mongodb_module_entry
 extern zend_module_entry mongodb_module_entry;
 
@@ -60,8 +63,6 @@ ZEND_TSRMLS_CACHE_EXTERN()
 #endif
 
 #define PHONGO_WRITE_CONCERN_W_MAJORITY "majority"
-
-#include "php_phongo_classes.h"
 
 /* This enum is necessary since mongoc_server_description_type_t is private and
  * we need to translate strings returned by mongoc_server_description_type() to
@@ -193,6 +194,9 @@ zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_
         (intern)->properties = (props);                                         \
     }                                                                           \
 } while(0);
+
+#define PHONGO_ZVAL_CLASS_OR_TYPE_NAME(zv) (Z_TYPE(zv) == IS_OBJECT ? ZSTR_VAL(Z_OBJCE(zv)->name) : zend_get_type_by_const(Z_TYPE(zv)))
+#define PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvp) PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*(zvp))
 
 #endif /* PHONGO_H */
 

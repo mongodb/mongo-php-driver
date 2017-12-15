@@ -190,7 +190,7 @@ static PHP_METHOD(UTCDateTime, __construct)
 	}
 
 	if (Z_TYPE_P(milliseconds) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected integer or string, %s given", zend_get_type_by_const(Z_TYPE_P(milliseconds)));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(milliseconds));
 		return;
 	}
 

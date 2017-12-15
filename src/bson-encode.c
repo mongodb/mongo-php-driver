@@ -143,24 +143,18 @@ static void php_phongo_bson_append_object(bson_t *bson, php_phongo_bson_flags_t 
 			if (Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def TSRMLS_CC))) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC,
 					"Expected %s::%s() to return an array or stdClass, %s given",
-					Z_OBJCE_P(object)->name->val,
+					ZSTR_VAL(Z_OBJCE_P(object)->name),
 					BSON_SERIALIZE_FUNC_NAME,
-					(Z_TYPE(obj_data) == IS_OBJECT
-						 ? Z_OBJCE(obj_data)->name->val
-						 : zend_get_type_by_const(Z_TYPE(obj_data))
-					)
+					PHONGO_ZVAL_CLASS_OR_TYPE_NAME(obj_data)
 				);
 				zval_ptr_dtor(&obj_data);
 #else
 			if (Z_TYPE_P(obj_data) != IS_ARRAY && !(Z_TYPE_P(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE_P(obj_data), zend_standard_class_def TSRMLS_CC))) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC,
 					"Expected %s::%s() to return an array or stdClass, %s given",
-					Z_OBJCE_P(object)->name,
+					ZSTR_VAL(Z_OBJCE_P(object)->name),
 					BSON_SERIALIZE_FUNC_NAME,
-					(Z_TYPE_P(obj_data) == IS_OBJECT
-						 ? Z_OBJCE_P(obj_data)->name
-						 : zend_get_type_by_const(Z_TYPE_P(obj_data))
-					)
+					PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(obj_data)
 				);
 				zval_ptr_dtor(&obj_data);
 #endif
@@ -453,22 +447,13 @@ void php_phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *
 #endif
 					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC,
 						"Expected %s::%s() to return an array or stdClass, %s given",
-#if PHP_VERSION_ID >= 70000
-						Z_OBJCE_P(data)->name->val,
-#else
-						Z_OBJCE_P(data)->name,
-#endif
+						ZSTR_VAL(Z_OBJCE_P(data)->name),
 						BSON_SERIALIZE_FUNC_NAME,
 #if PHP_VERSION_ID >= 70000
-						(Z_TYPE(obj_data) == IS_OBJECT
-							 ? Z_OBJCE(obj_data)->name->val
-							 : zend_get_type_by_const(Z_TYPE(obj_data))
+						PHONGO_ZVAL_CLASS_OR_TYPE_NAME(obj_data)
 #else
-						(Z_TYPE_P(obj_data) == IS_OBJECT
-							 ? Z_OBJCE_P(obj_data)->name
-							 : zend_get_type_by_const(Z_TYPE_P(obj_data))
+						PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(obj_data)
 #endif
-						)
 					);
 
 					goto cleanup;

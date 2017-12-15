@@ -62,7 +62,7 @@ static PHP_METHOD(WriteConcern, __construct)
 			mongoc_write_concern_set_wtag(intern->write_concern, Z_STRVAL_P(w));
 		}
 	} else {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected w to be integer or string, %s given", zend_get_type_by_const(Z_TYPE_P(w)));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected w to be integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(w));
 		return;
 	}
 

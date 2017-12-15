@@ -469,7 +469,7 @@ static bool process_read_concern(zval *option, bson_t *mongoc_opts TSRMLS_DC)
 		phongo_throw_exception(
 			PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
 			"Expected 'readConcern' option to be 'MongoDB\\Driver\\ReadConcern', %s given",
-			zend_get_type_by_const(Z_TYPE_P(option))
+			PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(option)
 		);
 		return false;
 	}
@@ -520,7 +520,7 @@ static bool process_read_preference(zval *option, bson_t *mongoc_opts, zval **zr
 		phongo_throw_exception(
 			PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
 			"Expected 'readPreference' option to be 'MongoDB\\Driver\\ReadPreference', %s given",
-			zend_get_type_by_const(Z_TYPE_P(option))
+			PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(option)
 		);
 		return false;
 	}
@@ -543,7 +543,7 @@ static bool process_write_concern(zval *option, bson_t *mongoc_opts, zval **zwri
 		phongo_throw_exception(
 			PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
 			"Expected 'writeConcern' option to be 'MongoDB\\Driver\\WriteConcern', %s given",
-			zend_get_type_by_const(Z_TYPE_P(option))
+			PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(option)
 		);
 		return false;
 	}
