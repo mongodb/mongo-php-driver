@@ -294,7 +294,7 @@ static void phongo_cursor_init_for_query(zval *return_value, mongoc_client_t *cl
 #endif
 } /* }}} */
 
-void phongo_server_init(zval *return_value, mongoc_client_t *client, int server_id TSRMLS_DC) /* {{{ */
+void phongo_server_init(zval *return_value, mongoc_client_t *client, uint32_t server_id TSRMLS_DC) /* {{{ */
 {
 	php_phongo_server_t *server;
 
@@ -428,7 +428,7 @@ zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC) /* 
 	return true;
 } /* }}} */
 
-static php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, bson_t *reply, mongoc_client_t *client, int server_id TSRMLS_DC) /* {{{ */
+static php_phongo_writeresult_t *phongo_writeresult_init(zval *return_value, bson_t *reply, mongoc_client_t *client, uint32_t server_id TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeresult_t *writeresult;
 
@@ -630,7 +630,7 @@ static bool phongo_parse_write_concern(zval *options, bson_t *mongoc_opts, zval 
 	return true;
 }
 
-bool phongo_execute_bulk_write(mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t *bulk_write, zval *options, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+bool phongo_execute_bulk_write(mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t *bulk_write, zval *options, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	bson_error_t error;
 	int success;
@@ -739,7 +739,7 @@ static bool phongo_advance_cursor_and_check_for_error(mongoc_cursor_t *cursor TS
 	return true;
 }
 
-int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *zquery, zval *options, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *zquery, zval *options, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	const php_phongo_query_t *query;
 	mongoc_cursor_t *cursor;
@@ -814,7 +814,7 @@ static bson_t *create_wrapped_command_envelope(const char *db, bson_t *reply)
 	return tmp;
 }
 
-int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t type, const char *db, zval *zcommand, zval *options, int server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
+int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t type, const char *db, zval *zcommand, zval *options, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	const php_phongo_command_t *command;
 	bson_iter_t iter;

@@ -128,15 +128,15 @@ typedef enum {
 
 zend_object_handlers *phongo_get_std_object_handlers(void);
 
-void                     phongo_server_init          (zval *return_value, mongoc_client_t *client, int server_id TSRMLS_DC);
+void                     phongo_server_init          (zval *return_value, mongoc_client_t *client, uint32_t server_id TSRMLS_DC);
 void                     phongo_session_init         (zval *return_value, mongoc_client_session_t *client_session TSRMLS_DC);
 void                     phongo_readconcern_init     (zval *return_value, const mongoc_read_concern_t *read_concern TSRMLS_DC);
 void                     phongo_readpreference_init  (zval *return_value, const mongoc_read_prefs_t *read_prefs TSRMLS_DC);
 void                     phongo_writeconcern_init    (zval *return_value, const mongoc_write_concern_t *write_concern TSRMLS_DC);
 mongoc_bulk_operation_t* phongo_bulkwrite_init       (zend_bool ordered);
-bool                     phongo_execute_bulk_write   (mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t *bulk_write, zval *zwriteConcern, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_command      (mongoc_client_t *client, php_phongo_command_type_t type, const char *db, zval *zcommand, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_query        (mongoc_client_t *client, const char *namespace, zval *zquery, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
+bool                     phongo_execute_bulk_write   (mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t *bulk_write, zval *zwriteConcern, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_command      (mongoc_client_t *client, php_phongo_command_type_t type, const char *db, zval *zcommand, zval *zreadPreference, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_query        (mongoc_client_t *client, const char *namespace, zval *zquery, zval *zreadPreference, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC);
 
 const mongoc_read_concern_t*  phongo_read_concern_from_zval   (zval *zread_concern TSRMLS_DC);
 const mongoc_read_prefs_t*    phongo_read_preference_from_zval(zval *zread_preference TSRMLS_DC);

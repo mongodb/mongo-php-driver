@@ -54,7 +54,7 @@ typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_cursor_t       *cursor;
 	mongoc_client_t       *client;
-	int                    server_id;
+	uint32_t               server_id;
 	php_phongo_bson_state  visitor_data;
 	int                    got_iterator;
 	long                   current;
@@ -102,7 +102,7 @@ typedef struct {
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_client_t    *client;
-	int                 server_id;
+	uint32_t            server_id;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_server_t;
 
@@ -140,7 +140,7 @@ typedef struct {
 	mongoc_write_concern_t *write_concern;
 	bson_t                 *reply;
 	mongoc_client_t        *client;
-	int                     server_id;
+	uint32_t                server_id;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_writeresult_t;
 
