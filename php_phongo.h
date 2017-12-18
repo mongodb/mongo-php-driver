@@ -112,34 +112,42 @@ void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const ch
 ;
 void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC);
 
-/* This enum is used for libmongoc function selection for the
- * phongo_execute_command types. The values are important, as the READ and
- * WRITE fields are also used as a bit field to see whether ReadPreference,
- * ReadConcern, and WriteConcern are supported for each type. */
+/* This enum is used for processing options in phongo_execute_parse_options and
+ * selecting a libmongoc function to use in phongo_execute_command. The values
+ * are important, as READ and WRITE are also used as a bit field to determine
+ * whether readPreference, readConcern, and writeConcern options are parsed. */
 typedef enum {
-	PHONGO_COMMAND_RAW =        0x13,
-	PHONGO_COMMAND_READ =       0x01,
-	PHONGO_COMMAND_WRITE =      0x02,
-	PHONGO_COMMAND_READ_WRITE = 0x03
+	PHONGO_OPTION_READ_CONCERN    = 0x01,
+	PHONGO_OPTION_READ_PREFERENCE = 0x02,
+	PHONGO_OPTION_WRITE_CONCERN   = 0x04,
+	PHONGO_COMMAND_RAW            = 0x07,
+	PHONGO_COMMAND_READ           = 0x03,
+	PHONGO_COMMAND_WRITE          = 0x04,
+	PHONGO_COMMAND_READ_WRITE     = 0x05,
 } php_phongo_command_type_t;
 
 zend_object_handlers *phongo_get_std_object_handlers(void);
 
-void                     phongo_server_init          (zval *return_value, mongoc_client_t *client, int server_id TSRMLS_DC);
+void                     phongo_server_init          (zval *return_value, mongoc_client_t *client, uint32_t server_id TSRMLS_DC);
 void                     phongo_session_init         (zval *return_value, mongoc_client_session_t *client_session TSRMLS_DC);
 void                     phongo_readconcern_init     (zval *return_value, const mongoc_read_concern_t *read_concern TSRMLS_DC);
 void                     phongo_readpreference_init  (zval *return_value, const mongoc_read_prefs_t *read_prefs TSRMLS_DC);
 void                     phongo_writeconcern_init    (zval *return_value, const mongoc_write_concern_t *write_concern TSRMLS_DC);
 mongoc_bulk_operation_t* phongo_bulkwrite_init       (zend_bool ordered);
-bool                     phongo_execute_bulk_write   (mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t *bulk_write, zval *zwriteConcern, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_command      (mongoc_client_t *client, php_phongo_command_type_t type, const char *db, zval *zcommand, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_query        (mongoc_client_t *client, const char *namespace, zval *zquery, zval *zreadPreference, int server_id, zval *return_value, int return_value_used TSRMLS_DC);
+bool                     phongo_execute_bulk_write   (mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t *bulk_write, zval *zwriteConcern, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_command      (mongoc_client_t *client, php_phongo_command_type_t type, const char *db, zval *zcommand, zval *zreadPreference, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC);
+int                      phongo_execute_query        (mongoc_client_t *client, const char *namespace, zval *zquery, zval *zreadPreference, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC);
 
 const mongoc_read_concern_t*  phongo_read_concern_from_zval   (zval *zread_concern TSRMLS_DC);
 const mongoc_read_prefs_t*    phongo_read_preference_from_zval(zval *zread_preference TSRMLS_DC);
 const mongoc_write_concern_t* phongo_write_concern_from_zval  (zval *zwrite_concern TSRMLS_DC);
 
 php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t *sd);
+
+bool phongo_parse_read_preference(zval *options, zval **zreadPreference TSRMLS_DC);
+
+zval* php_phongo_prep_legacy_option(zval *options, const char *key, bool *allocated TSRMLS_DC);
+void php_phongo_prep_legacy_option_free(zval *options TSRMLS_DC);
 
 void php_phongo_read_preference_prep_tagsets(zval *tagSets TSRMLS_DC);
 bool php_phongo_read_preference_tags_are_valid(const bson_t *tags);

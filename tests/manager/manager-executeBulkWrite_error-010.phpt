@@ -1,5 +1,7 @@
 --TEST--
-MongoDB\Driver\Manager::executeBulkWrite() with invalid options
+MongoDB\Driver\Manager::executeBulkWrite() with unknown options
+--XFAIL--
+Depends on PHPC-1066
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('REPLICASET'); ?>
@@ -12,25 +14,19 @@ $manager = new MongoDB\Driver\Manager(REPLICASET);
 echo throws(function() use ($manager) {
     $bulk = new MongoDB\Driver\BulkWrite();
     $bulk->insert(['x' => 1]);
-    $manager->executeBulkWrite(NS, $bulk, ['session' => 'foo']);
+    $manager->executeBulkWrite(NS, $bulk, ['readConcern' => 'foo']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() use ($manager) {
     $bulk = new MongoDB\Driver\BulkWrite();
     $bulk->insert(['x' => 1]);
-    $manager->executeBulkWrite(NS, $bulk, ['session' =>  new stdClass]);
+    $manager->executeBulkWrite(NS, $bulk, ['readPreference' => 'foo']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() use ($manager) {
     $bulk = new MongoDB\Driver\BulkWrite();
     $bulk->insert(['x' => 1]);
-    $manager->executeBulkWrite(NS, $bulk, ['writeConcern' => 'foo']);
-}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
-
-echo throws(function() use ($manager) {
-    $bulk = new MongoDB\Driver\BulkWrite();
-    $bulk->insert(['x' => 1]);
-    $manager->executeBulkWrite(NS, $bulk, ['writeConcern' => new stdClass]);
+    $manager->executeBulkWrite(NS, $bulk, ['unknown' => 'foo']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
@@ -38,11 +34,9 @@ echo throws(function() use ($manager) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "session" option to be MongoDB\Driver\Session, string given
+Unknown option 'readConcern'
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "session" option to be MongoDB\Driver\Session, stdClass given
+Unknown option 'readPreference'
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, string given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, stdClass given
+Unknown option 'unknown'
 ===DONE===

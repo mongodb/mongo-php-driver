@@ -54,6 +54,8 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
         ["y"]=>
         int(1)
       }
+      ["serverId"]=>
+      int(%d)
     }
     ["readConcern"]=>
     NULL

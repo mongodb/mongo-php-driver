@@ -1,5 +1,7 @@
 --TEST--
-MongoDB\Driver\Server::executeWriteCommand() with invalid options
+MongoDB\Driver\Server::executeWriteCommand() with unknown options
+--XFAIL--
+Depends on PHPC-1066
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
@@ -14,19 +16,15 @@ $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Drive
 $command = new MongoDB\Driver\Command([]);
 
 echo throws(function() use ($server, $command) {
-    $server->executeWriteCommand(DATABASE_NAME, $command, ['session' => 'foo']);
+    $server->executeWriteCommand(DATABASE_NAME, $command, ['readConcern' => 'foo']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() use ($server, $command) {
-    $server->executeWriteCommand(DATABASE_NAME, $command, ['session' => new stdClass]);
+    $server->executeWriteCommand(DATABASE_NAME, $command, ['readPreference' => 'foo']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() use ($server, $command) {
-    $server->executeWriteCommand(DATABASE_NAME, $command, ['writeConcern' => 'foo']);
-}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
-
-echo throws(function() use ($server, $command) {
-    $server->executeWriteCommand(DATABASE_NAME, $command, ['writeConcern' => new stdClass]);
+    $server->executeWriteCommand(DATABASE_NAME, $command, ['unknown' => 'foo']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
@@ -34,11 +32,9 @@ echo throws(function() use ($server, $command) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "session" option to be MongoDB\Driver\Session, string given
+Unknown option 'readConcern'
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "session" option to be MongoDB\Driver\Session, stdClass given
+Unknown option 'readPreference'
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, string given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, stdClass given
+Unknown option 'unknown'
 ===DONE===

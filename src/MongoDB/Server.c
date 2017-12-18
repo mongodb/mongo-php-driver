@@ -36,6 +36,7 @@ static PHP_METHOD(Server, executeCommand)
 	phongo_zpp_char_len       db_len;
 	zval                     *command;
 	zval                     *options = NULL;
+	bool                      free_options = false;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -46,7 +47,13 @@ static PHP_METHOD(Server, executeCommand)
 		return;
 	}
 
+	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options TSRMLS_CC);
+
 	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+
+	if (free_options) {
+		php_phongo_prep_legacy_option_free(options TSRMLS_CC);
+	}
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeReadCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
@@ -124,6 +131,7 @@ static PHP_METHOD(Server, executeQuery)
 	phongo_zpp_char_len       namespace_len;
 	zval                     *query;
 	zval                     *options = NULL;
+	bool                      free_options = false;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -134,7 +142,13 @@ static PHP_METHOD(Server, executeQuery)
 		return;
 	}
 
+	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options TSRMLS_CC);
+
 	phongo_execute_query(intern->client, namespace, query, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+
+	if (free_options) {
+		php_phongo_prep_legacy_option_free(options TSRMLS_CC);
+	}
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Server::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, array $options = null])
@@ -146,8 +160,9 @@ static PHP_METHOD(Server, executeBulkWrite)
 	char                     *namespace;
 	phongo_zpp_char_len       namespace_len;
 	zval                     *zbulk;
-	zval                     *options = NULL;
 	php_phongo_bulkwrite_t   *bulk;
+	zval                     *options = NULL;
+	bool                      free_options = false;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -161,7 +176,13 @@ static PHP_METHOD(Server, executeBulkWrite)
 
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 
+	options = php_phongo_prep_legacy_option(options, "writeConcern", &free_options TSRMLS_CC);
+
 	phongo_execute_bulk_write(intern->client, namespace, bulk, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+
+	if (free_options) {
+		php_phongo_prep_legacy_option_free(options TSRMLS_CC);
+	}
 } /* }}} */
 
 /* {{{ proto string MongoDB\Driver\Server::getHost()
