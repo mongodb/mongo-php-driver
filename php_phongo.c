@@ -306,6 +306,17 @@ void phongo_server_init(zval *return_value, mongoc_client_t *client, int server_
 }
 /* }}} */
 
+void phongo_session_init(zval *return_value, mongoc_client_session_t *client_session TSRMLS_DC) /* {{{ */
+{
+	php_phongo_session_t *session;
+
+	object_init_ex(return_value, php_phongo_session_ce);
+
+	session = Z_SESSION_OBJ_P(return_value);
+	session->client_session = client_session;
+}
+/* }}} */
+
 void phongo_readconcern_init(zval *return_value, const mongoc_read_concern_t *read_concern TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readconcern_t *intern;
@@ -527,6 +538,34 @@ static bool process_read_preference(zval *option, bson_t *mongoc_opts, zval **zr
 	return true;
 }
 
+static bool process_session(zval *option, bson_t *mongoc_opts, zval **zsession, mongoc_client_t *client TSRMLS_DC)
+{
+	const mongoc_client_session_t *client_session;
+
+	if (Z_TYPE_P(option) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(option), php_phongo_session_ce TSRMLS_CC)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"session\" option to be %s, %s given", ZSTR_VAL(php_phongo_session_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(option));
+		return false;
+	}
+
+	client_session = Z_SESSION_OBJ_P(option)->client_session;
+
+	if (client != mongoc_client_session_get_client(client_session)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Cannot use Session started from a different Manager");
+		return false;
+	}
+
+	if (!mongoc_client_session_append(Z_SESSION_OBJ_P(option)->client_session, mongoc_opts, NULL)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"session\" option");
+		return false;
+	}
+
+	if (zsession) {
+		*zsession = option;
+	}
+
+	return true;
+}
+
 static bool process_write_concern(zval *option, bson_t *mongoc_opts, zval **zwriteConcern TSRMLS_DC)
 {
 	if (Z_TYPE_P(option) == IS_OBJECT && instanceof_function(Z_OBJCE_P(option), php_phongo_writeconcern_ce TSRMLS_CC)) {
@@ -550,7 +589,7 @@ static bool process_write_concern(zval *option, bson_t *mongoc_opts, zval **zwri
 	return true;
 }
 
-static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, zval *driver_options, int type, bson_t *mongoc_opts, zval **zreadPreference, zval **zwriteConcern TSRMLS_DC)
+static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, zval *driver_options, int type, bson_t *mongoc_opts, zval **zreadPreference, zval **zwriteConcern, zval **zsession TSRMLS_DC)
 {
 	if (driver_options && Z_TYPE_P(driver_options) == IS_ARRAY) {
 		HashTable *ht_data = HASH_OF(driver_options);
@@ -571,6 +610,10 @@ static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, 
 				}
 			} else if ((!strcasecmp(ZSTR_VAL(string_key), "readPreference")) && (type == PHONGO_COMMAND_READ || type == PHONGO_COMMAND_RAW)) {
 				if (!process_read_preference(driver_option, mongoc_opts, zreadPreference, client, server_id)) {
+					return false;
+				}
+			} else if ((!strcmp(ZSTR_VAL(string_key), "session"))) {
+				if (!process_session(driver_option, mongoc_opts, zsession, client)) {
 					return false;
 				}
 			} else if ((!strcasecmp(ZSTR_VAL(string_key), "writeConcern")) && (type & PHONGO_COMMAND_WRITE)) {
@@ -606,6 +649,10 @@ static int phongo_execute_parse_options(mongoc_client_t* client, int server_id, 
 				if (!process_read_preference(*driver_option, mongoc_opts, zreadPreference, client, server_id TSRMLS_CC)) {
 					return false;
 				}
+			} else if ((!strcasecmp(ZSTR_VAL(string_key), "session"))) {
+				if (!process_session(*driver_option, mongoc_opts, zsession, client TSRMLS_CC)) {
+					return false;
+				}
 			} else if ((!strcasecmp(string_key, "writeConcern")) && (type & PHONGO_COMMAND_WRITE)) {
 				if (!process_write_concern(*driver_option, mongoc_opts, zwriteConcern TSRMLS_CC)) {
 					return false;
@@ -628,6 +675,7 @@ bool phongo_execute_bulk_write(mongoc_client_t *client, const char *namespace, p
 	mongoc_bulk_operation_t *bulk = bulk_write->bulk;
 	php_phongo_writeresult_t *writeresult;
 	zval *zwriteConcern = NULL;
+	zval *zsession = NULL;
 	const mongoc_write_concern_t *write_concern;
 	bson_t opts = BSON_INITIALIZER;
 
@@ -644,7 +692,7 @@ bool phongo_execute_bulk_write(mongoc_client_t *client, const char *namespace, p
 	/* FIXME: Legacy way of specifying the writeConcern option into this function */
 	if (options && Z_TYPE_P(options) == IS_OBJECT && instanceof_function(Z_OBJCE_P(options), php_phongo_writeconcern_ce TSRMLS_CC)) {
 		zwriteConcern = options;
-	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_COMMAND_WRITE, &opts, NULL, &zwriteConcern TSRMLS_CC)) {
+	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_COMMAND_WRITE, &opts, NULL, &zwriteConcern, &zsession TSRMLS_CC)) {
 		bson_destroy(&opts);
 		return false;
 	}
@@ -654,6 +702,10 @@ bool phongo_execute_bulk_write(mongoc_client_t *client, const char *namespace, p
 	mongoc_bulk_operation_set_database(bulk, bulk_write->database);
 	mongoc_bulk_operation_set_collection(bulk, bulk_write->collection);
 	mongoc_bulk_operation_set_client(bulk, client);
+
+	if (zsession) {
+		mongoc_bulk_operation_set_client_session(bulk, Z_SESSION_OBJ_P(zsession)->client_session);
+	}
 
 	/* If a write concern was not specified, libmongoc will use the client's
 	 * write concern; however, we should still fetch it for the write result. */
@@ -736,7 +788,6 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 	char *collname;
 	mongoc_collection_t *collection;
 	zval *zreadPreference = NULL;
-	bson_t opts = BSON_INITIALIZER;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s: %s", "Invalid namespace provided", namespace);
@@ -755,12 +806,9 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 	/* FIXME: Legacy way of specifying the readPreference option into this function */
 	if (options && Z_TYPE_P(options) == IS_OBJECT && instanceof_function(Z_OBJCE_P(options), php_phongo_readpreference_ce TSRMLS_CC)) {
 		zreadPreference = options;
-	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_COMMAND_READ, &opts, &zreadPreference, NULL TSRMLS_CC)) {
-		bson_destroy(&opts);
+	} else if (!phongo_execute_parse_options(client, server_id, options, PHONGO_COMMAND_READ, query->opts, &zreadPreference, NULL, NULL TSRMLS_CC)) {
 		return false;
 	}
-
-	bson_destroy(&opts);
 
 	cursor = mongoc_collection_find_with_opts(collection, query->filter, query->opts, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC));
 	mongoc_collection_destroy(collection);
@@ -819,7 +867,7 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 	/* FIXME: Legacy way of specifying the readPreference option into this function */
 	if (options && Z_TYPE_P(options) == IS_OBJECT && instanceof_function(Z_OBJCE_P(options), php_phongo_readpreference_ce TSRMLS_CC)) {
 		zreadPreference = options;
-	} else if (!phongo_execute_parse_options(client, server_id, options, type, &opts, &zreadPreference, NULL TSRMLS_CC)) {
+	} else if (!phongo_execute_parse_options(client, server_id, options, type, &opts, &zreadPreference, NULL, NULL TSRMLS_CC)) {
 		return false;
 	}
 
@@ -2693,6 +2741,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_readconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_readpreference_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_server_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_session_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_writeerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);

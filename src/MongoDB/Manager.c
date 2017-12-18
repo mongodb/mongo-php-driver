@@ -538,6 +538,42 @@ static PHP_METHOD(Manager, selectServer)
 	}
 } /* }}} */
 
+/* {{{ proto MongoDB\Driver\Session MongoDB\Driver\Manager::startSession([array $options = null])
+   Returns a new client session */
+static PHP_METHOD(Manager, startSession)
+{
+	php_phongo_manager_t    *intern;
+	zval                    *options = NULL;
+	mongoc_session_opt_t    *cs_opts = NULL;
+	mongoc_client_session_t *cs;
+	bson_error_t             error;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+
+
+	intern = Z_MANAGER_OBJ_P(getThis());
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a!", &options) == FAILURE) {
+		return;
+	}
+
+	if (options && php_array_exists(options, "causalConsistency")) {
+		cs_opts = mongoc_session_opts_new();
+		mongoc_session_opts_set_causal_consistency(cs_opts, php_array_fetchc_bool(options, "causalConsistency"));
+	}
+
+	cs = mongoc_client_start_session(intern->client, cs_opts, &error);
+
+	if (cs_opts) {
+		mongoc_session_opts_destroy(cs_opts);
+	}
+
+	if (cs) {
+		phongo_session_init(return_value, cs TSRMLS_CC);
+	} else {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+	}
+} /* }}} */
+
 /* {{{ MongoDB\Driver\Manager function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, uri)
@@ -573,6 +609,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_selectServer, 0, 0, 1)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_startSession, 0, 0, 0)
+	ZEND_ARG_ARRAY_INFO(0, options, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -589,6 +629,7 @@ static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, getServers, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, getWriteConcern, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Manager, selectServer, ai_Manager_selectServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Manager, startSession, ai_Manager_startSession, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
 };

@@ -108,6 +108,12 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	mongoc_client_session_t *client_session;
+	PHONGO_ZEND_OBJECT_POST
+} php_phongo_session_t;
+
+typedef struct {
+	PHONGO_ZEND_OBJECT_PRE
 	mongoc_write_concern_t *write_concern;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_writeconcern_t;

@@ -52,6 +52,9 @@ static inline php_phongo_readpreference_t* php_readpreference_fetch_object(zend_
 static inline php_phongo_server_t* php_server_fetch_object(zend_object *obj) {
     return (php_phongo_server_t *)((char *)obj - XtOffsetOf(php_phongo_server_t, std));
 }
+static inline php_phongo_session_t* php_session_fetch_object(zend_object *obj) {
+    return (php_phongo_session_t *)((char *)obj - XtOffsetOf(php_phongo_session_t, std));
+}
 static inline php_phongo_writeconcern_t* php_writeconcern_fetch_object(zend_object *obj) {
     return (php_phongo_writeconcern_t *)((char *)obj - XtOffsetOf(php_phongo_writeconcern_t, std));
 }
@@ -118,6 +121,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 # define Z_READCONCERN_OBJ_P(zv)       (php_readconcern_fetch_object(Z_OBJ_P(zv)))
 # define Z_READPREFERENCE_OBJ_P(zv)    (php_readpreference_fetch_object(Z_OBJ_P(zv)))
 # define Z_SERVER_OBJ_P(zv)            (php_server_fetch_object(Z_OBJ_P(zv)))
+# define Z_SESSION_OBJ_P(zv)           (php_session_fetch_object(Z_OBJ_P(zv)))
 # define Z_BULKWRITE_OBJ_P(zv)         (php_bulkwrite_fetch_object(Z_OBJ_P(zv)))
 # define Z_WRITECONCERN_OBJ_P(zv)      (php_writeconcern_fetch_object(Z_OBJ_P(zv)))
 # define Z_WRITECONCERNERROR_OBJ_P(zv) (php_writeconcernerror_fetch_object(Z_OBJ_P(zv)))
@@ -147,6 +151,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 # define Z_OBJ_READCONCERN(zo)         (php_readconcern_fetch_object(zo))
 # define Z_OBJ_READPREFERENCE(zo)      (php_readpreference_fetch_object(zo))
 # define Z_OBJ_SERVER(zo)              (php_server_fetch_object(zo))
+# define Z_OBJ_SESSION(zo)             (php_session_fetch_object(zo))
 # define Z_OBJ_BULKWRITE(zo)           (php_bulkwrite_fetch_object(zo))
 # define Z_OBJ_WRITECONCERN(zo)        (php_writeconcern_fetch_object(zo))
 # define Z_OBJ_WRITECONCERNERROR(zo)   (php_writeconcernerror_fetch_object(zo))
@@ -178,6 +183,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 # define Z_READCONCERN_OBJ_P(zv)       ((php_phongo_readconcern_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_READPREFERENCE_OBJ_P(zv)    ((php_phongo_readpreference_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_SERVER_OBJ_P(zv)            ((php_phongo_server_t *)zend_object_store_get_object(zv TSRMLS_CC))
+# define Z_SESSION_OBJ_P(zv)           ((php_phongo_session_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_BULKWRITE_OBJ_P(zv)         ((php_phongo_bulkwrite_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_WRITECONCERN_OBJ_P(zv)      ((php_phongo_writeconcern_t *)zend_object_store_get_object(zv TSRMLS_CC))
 # define Z_WRITECONCERNERROR_OBJ_P(zv) ((php_phongo_writeconcernerror_t *)zend_object_store_get_object(zv TSRMLS_CC))
@@ -207,6 +213,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 # define Z_OBJ_READCONCERN(zo)         ((php_phongo_readconcern_t *)zo)
 # define Z_OBJ_READPREFERENCE(zo)      ((php_phongo_readpreference_t *)zo)
 # define Z_OBJ_SERVER(zo)              ((php_phongo_server_t *)zo)
+# define Z_OBJ_SESSION(zo)             ((php_phongo_session_t *)zo)
 # define Z_OBJ_BULKWRITE(zo)           ((php_phongo_bulkwrite_t *)zo)
 # define Z_OBJ_WRITECONCERN(zo)        ((php_phongo_writeconcern_t *)zo)
 # define Z_OBJ_WRITECONCERNERROR(zo)   ((php_phongo_writeconcernerror_t *)zo)
@@ -244,6 +251,7 @@ extern zend_class_entry *php_phongo_query_ce;
 extern zend_class_entry *php_phongo_readconcern_ce;
 extern zend_class_entry *php_phongo_readpreference_ce;
 extern zend_class_entry *php_phongo_server_ce;
+extern zend_class_entry *php_phongo_session_ce;
 extern zend_class_entry *php_phongo_bulkwrite_ce;
 extern zend_class_entry *php_phongo_writeconcern_ce;
 extern zend_class_entry *php_phongo_writeconcernerror_ce;
@@ -332,6 +340,7 @@ extern void php_phongo_query_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_server_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_session_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS);
