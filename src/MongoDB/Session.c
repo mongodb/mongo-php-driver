@@ -27,6 +27,61 @@
 
 zend_class_entry *php_phongo_session_ce;
 
+static bool php_phongo_session_get_timestamp_parts(zval *obj, uint32_t *timestamp, uint32_t *increment TSRMLS_DC)
+{
+	bool retval = false;
+#if PHP_VERSION_ID >= 70000
+	zval ztimestamp;
+	zval zincrement;
+
+	zend_call_method_with_0_params(obj, NULL, NULL, "getTimestamp", &ztimestamp);
+
+	if (Z_ISUNDEF(ztimestamp) || EG(exception)) {
+		goto cleanup;
+	}
+
+	zend_call_method_with_0_params(obj, NULL, NULL, "getIncrement", &zincrement);
+
+	if (Z_ISUNDEF(zincrement) || EG(exception)) {
+		goto cleanup;
+	}
+
+	*timestamp = Z_LVAL(ztimestamp);
+	*increment = Z_LVAL(zincrement);
+#else
+	zval *ztimestamp = NULL;
+	zval *zincrement = NULL;
+
+	zend_call_method_with_0_params(&obj, NULL, NULL, "getTimestamp", &ztimestamp);
+
+	if (Z_ISUNDEF(ztimestamp) || EG(exception)) {
+		goto cleanup;
+	}
+
+	zend_call_method_with_0_params(&obj, NULL, NULL, "getIncrement", &zincrement);
+
+	if (Z_ISUNDEF(zincrement) || EG(exception)) {
+		goto cleanup;
+	}
+
+	*timestamp = Z_LVAL_P(ztimestamp);
+	*increment = Z_LVAL_P(zincrement);
+#endif
+
+	retval = true;
+
+cleanup:
+	if (!Z_ISUNDEF(ztimestamp)) {
+		zval_ptr_dtor(&ztimestamp);
+	}
+
+	if (!Z_ISUNDEF(zincrement)) {
+		zval_ptr_dtor(&zincrement);
+	}
+
+	return retval;
+}
+
 /* {{{ proto void MongoDB\Driver\Session::advanceClusterTime(array|object $clusterTime)
    Advances the cluster time for this Session */
 static PHP_METHOD(Session, advanceClusterTime)
@@ -54,6 +109,30 @@ static PHP_METHOD(Session, advanceClusterTime)
 
 cleanup:
 	bson_destroy(&cluster_time);
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\Session::advanceOperationTime(MongoDB\BSON\Timestamp $timestamp)
+   Advances the operation time for this Session */
+static PHP_METHOD(Session, advanceOperationTime)
+{
+	php_phongo_session_t *intern;
+	zval                 *ztimestamp;
+	uint32_t              timestamp = 0;
+	uint32_t              increment = 0;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+
+
+	intern = Z_SESSION_OBJ_P(getThis());
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &ztimestamp, php_phongo_timestamp_interface_ce) == FAILURE) {
+		return;
+	}
+
+	if (!php_phongo_session_get_timestamp_parts(ztimestamp, &timestamp, &increment TSRMLS_CC)) {
+		return;
+	}
+
+	mongoc_client_session_advance_operation_time(intern->client_session, timestamp, increment);
 } /* }}} */
 
 /* {{{ proto object|null MongoDB\Driver\Session::getClusterTime()
@@ -123,9 +202,40 @@ static PHP_METHOD(Session, getLogicalSessionId)
 #endif
 } /* }}} */
 
+/* {{{ proto MongoDB\BSON\Timestamp MongoDB\Driver\Session::getOperationTime()
+   Returns the operation time for this Session */
+static PHP_METHOD(Session, getOperationTime)
+{
+	php_phongo_session_t *intern;
+	uint32_t              timestamp, increment;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+
+
+	intern = Z_SESSION_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	mongoc_client_session_get_operation_time(intern->client_session, &timestamp, &increment);
+
+	/* mongoc_client_session_get_operation_time() returns 0 for both parts if
+	 * the session has not been used. According to the causal consistency spec,
+	 * the operation time for an unused session is null. */
+	if (timestamp == 0 && increment == 0) {
+		RETURN_NULL();
+	}
+
+	php_phongo_new_timestamp_from_increment_and_timestamp(return_value, increment, timestamp TSRMLS_CC);
+} /* }}} */
+
 /* {{{ MongoDB\Driver\Session function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Session_advanceClusterTime, 0, 0, 1)
 	ZEND_ARG_INFO(0, clusterTime)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Session_advanceOperationTime, 0, 0, 1)
+	ZEND_ARG_INFO(0, timestamp)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Session_void, 0, 0, 0)
@@ -133,8 +243,10 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_session_me[] = {
 	PHP_ME(Session, advanceClusterTime, ai_Session_advanceClusterTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Session, advanceOperationTime, ai_Session_advanceOperationTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Session, getClusterTime, ai_Session_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_ME(Session, getLogicalSessionId, ai_Session_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	PHP_ME(Session, getOperationTime, ai_Session_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Session_void, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Session_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	PHP_FE_END
@@ -242,6 +354,29 @@ static HashTable *php_phongo_session_get_debug_info(zval *object, int *is_temp T
 
 	cs_opts = mongoc_client_session_get_opts(intern->client_session);
 	ADD_ASSOC_BOOL_EX(&retval, "causalConsistency", mongoc_session_opts_get_causal_consistency(cs_opts));
+
+	{
+		uint32_t timestamp, increment;
+
+		mongoc_client_session_get_operation_time(intern->client_session, &timestamp, &increment);
+
+		if (timestamp && increment) {
+#if PHP_VERSION_ID >= 70000
+			zval ztimestamp;
+
+			php_phongo_new_timestamp_from_increment_and_timestamp(&ztimestamp, increment, timestamp TSRMLS_CC);
+			ADD_ASSOC_ZVAL_EX(&retval, "operationTime", &ztimestamp);
+#else
+			zval *ztimestamp;
+
+			MAKE_STD_ZVAL(ztimestamp);
+			php_phongo_new_timestamp_from_increment_and_timestamp(ztimestamp, increment, timestamp TSRMLS_CC);
+			ADD_ASSOC_ZVAL_EX(&retval, "operationTime", ztimestamp);
+#endif
+		} else {
+			ADD_ASSOC_NULL_EX(&retval, "operationTime");
+		}
+	}
 
 	return Z_ARRVAL(retval);
 } /* }}} */
