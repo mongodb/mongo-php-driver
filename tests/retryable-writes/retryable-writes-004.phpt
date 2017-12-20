@@ -1,0 +1,86 @@
+--TEST--
+Retryable writes: unacknowledged write operations do not include transaction IDs
+--XFAIL--
+Depends on CDRIVER-2432
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
+--FILE--
+<?php
+require_once __DIR__ . "/../utils/basic.inc";
+
+class TransactionIdObserver implements MongoDB\Driver\Monitoring\CommandSubscriber
+{
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event)
+    {
+        $command = $event->getCommand();
+        $hasTransactionId = isset($command->lsid) && isset($command->txnNumber);
+
+        printf("%s command includes transaction ID: %s\n", $event->getCommandName(), $hasTransactionId ? 'yes' : 'no');
+    }
+
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
+    {
+    }
+
+    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event)
+    {
+    }
+}
+
+$observer = new TransactionIdObserver;
+MongoDB\Driver\Monitoring\addSubscriber($observer);
+
+$manager = new MongoDB\Driver\Manager(REPLICASET, ['retryWrites' => true]);
+$writeConcern = new MongoDB\Driver\WriteConcern(0);
+
+echo "Testing unacknowledged deleteOne\n";
+$bulk = new MongoDB\Driver\BulkWrite;
+$bulk->delete(['x' => 1], ['limit' => 1]);
+$manager->executeBulkWrite(NS, $bulk, ['writeConcern' => $writeConcern]);
+
+echo "\nTesting unacknowledged insertOne\n";
+$bulk = new MongoDB\Driver\BulkWrite;
+$bulk->insert(['x' => 1]);
+$manager->executeBulkWrite(NS, $bulk, ['writeConcern' => $writeConcern]);
+
+echo "\nTesting unacknowledged replaceOne\n";
+$bulk = new MongoDB\Driver\BulkWrite;
+$bulk->update(['x' => 1], ['x' => 2]);
+$manager->executeBulkWrite(NS, $bulk, ['writeConcern' => $writeConcern]);
+
+echo "\nTesting unacknowledged updateOne\n";
+$bulk = new MongoDB\Driver\BulkWrite;
+$bulk->update(['x' => 1], ['$inc' => ['x' => 1]]);
+$manager->executeBulkWrite(NS, $bulk, ['writeConcern' => $writeConcern]);
+
+echo "\nTesting unacknowledged findAndModify\n";
+$command = new MongoDB\Driver\Command([
+    'findAndModify' => COLLECTION_NAME,
+    'query' => ['x' => 1],
+    'update' => ['$inc' => ['x' => 1]],
+    'writeConcern' => $writeConcern,
+]);
+$manager->executeReadWriteCommand(DATABASE_NAME, $command);
+
+MongoDB\Driver\Monitoring\removeSubscriber($observer);
+
+?>
+===DONE===
+<?php exit(0); ?>
+--EXPECT--
+Testing unacknowledged deleteOne
+delete command includes transaction ID: no
+
+Testing unacknowledged insertOne
+insert command includes transaction ID: no
+
+Testing unacknowledged replaceOne
+update command includes transaction ID: no
+
+Testing unacknowledged updateOne
+update command includes transaction ID: no
+
+Testing unacknowledged findAndModify
+findAndModify command includes transaction ID: no
+===DONE===
