@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Session debug output (before processing $clusterTime)
+MongoDB\Driver\Session debug output (before an operation)
 --SKIPIF--
 <?php if (getenv("TRAVIS")) exit("skip This currently fails on Travis because it doesn't run 3.6 yet"); ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
@@ -32,5 +32,7 @@ object(MongoDB\Driver\Session)#%d (%d) {
   NULL
   ["causalConsistency"]=>
   bool(true)
+  ["operationTime"]=>
+  NULL
 }
 ===DONE===
