@@ -108,7 +108,8 @@ if (PHP_MONGODB != "no") {
     BSON_EXTRA_ALIGN: 0,
     BSON_HAVE_SYSCALL_TID: 0,
     BSON_HAVE_DECIMAL128: 0,
-    BSON_HAVE_GMTIME_R: 0
+    BSON_HAVE_GMTIME_R: 0,
+    BSON_HAVE_RAND_R: 0
   };
 
   if (CHECK_FUNC_IN_HEADER("stdio.h", "_set_output_format")) {
@@ -154,6 +155,11 @@ if (PHP_MONGODB != "no") {
     MONGOC_NO_AUTOMATIC_GLOBALS: 1,
     MONGOC_SOCKET_ARG2: "struct sockaddr",
     MONGOC_SOCKET_ARG3: "socklen_t",
+    MONGOC_HAVE_DNSAPI: 0,
+    MONGOC_HAVE_RES_NSEARCH: 0,
+    MONGOC_HAVE_RES_NDESTROY: 0,
+    MONGOC_HAVE_RES_NCLOSE: 0,
+    MONGOC_HAVE_RES_SEARCH: 0,
     MONGOC_CC: "",
     MONGOC_USER_SET_CFLAGS: "",
     MONGOC_USER_SET_LDFLAGS: ""
@@ -202,6 +208,11 @@ if (PHP_MONGODB != "no") {
     }
   } else {
     WARNING("mongodb libsasl support not enabled, libs not found");
+  }
+
+  if (CHECK_LIB("dnsapi.lib", "mongodb", PHP_MONGODB) &&
+      CHECK_HEADER_ADD_INCLUDE("windns.h", "CFLAGS_MONGODB")) {
+    mongoc_opts.MONGOC_HAVE_DNSAPI = 1;
   }
 
   if (typeof COMPILER_NAME === 'string') {
