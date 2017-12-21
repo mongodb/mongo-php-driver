@@ -276,7 +276,7 @@ if test "$MONGODB" != "no"; then
         AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.9.0)
       fi
     else
-      AC_MSG_ERROR(pkgconfig and mongoc must be installed)
+      AC_MSG_ERROR(pkgconfig and libmongoc must be installed)
     fi
     PHP_EVAL_INCLINE($LIBMONGOC_INC)
     PHP_EVAL_LIBLINE($LIBMONGOC_LIB, MONGODB_SHARED_LIBADD)
