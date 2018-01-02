@@ -103,6 +103,19 @@ object(MongoDB\Driver\Monitoring\CommandStartedEvent)#%d (%d) {
     string(12) "apm_overview"
     ["ordered"]=>
     bool(false)%A
+    ["documents"]=>
+    array(1) {
+      [0]=>
+      object(stdClass)#%d (%d) {
+        ["decimal"]=>
+        int(12345678)
+        ["_id"]=>
+        object(MongoDB\BSON\ObjectId)#%d (%d) {
+          ["oid"]=>
+          string(24) "%s"
+        }
+      }
+    }
   }
   ["commandName"]=>
   string(6) "insert"
