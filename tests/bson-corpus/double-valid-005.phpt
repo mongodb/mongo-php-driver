@@ -36,7 +36,7 @@ echo json_canonicalize(toRelaxedExtendedJSON(fromJSON($relaxedExtJson))), "\n";
 --EXPECT--
 1000000001640081e97df41022b14300
 {"d":{"$numberDouble":"1.23456789012345677E+18"}}
-{"d":1.2345678901235e+18}
+{"d":1.2345678901234568e+18}
 1000000001640081e97df41022b14300
-{"d":1.2345678901235e+18}
+{"d":1.2345678901234568e+18}
 ===DONE===

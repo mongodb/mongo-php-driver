@@ -38,11 +38,6 @@ foreach (array_slice($argv, 1) as $inputFile) {
         continue;
     }
 
-    if ( ! empty($test['deprecated'])) {
-        printf("Skipping deprecated test file: %s\n", $inputFile);
-        continue;
-    }
-
     if ( ! empty($test['valid'])) {
         foreach ($test['valid'] as $i => $case) {
             $outputFile = sprintf('%s-valid-%03d.phpt', pathinfo($inputFile, PATHINFO_FILENAME), $i + 1);
