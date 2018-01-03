@@ -83,12 +83,15 @@ AC_DEFUN([PHP_BSON_CLOCK],
   fi
 ])
 
-AC_MSG_CHECKING(PHP version)
-PHP_FOUND_VERSION=`${PHP_CONFIG} --version`
-PHP_FOUND_VERNUM=`echo "${PHP_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
-AC_MSG_RESULT($PHP_FOUND_VERNUM)
-
 if test "$MONGODB" != "no"; then
+  AC_MSG_CHECKING([Check for supported PHP versions])
+  PHP_MONGODB_FOUND_VERSION=`${PHP_CONFIG} --version`
+  PHP_MONGODB_FOUND_VERNUM=`echo "${PHP_MONGODB_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
+  AC_MSG_RESULT($PHP_MONGODB_FOUND_VERSION)
+  if test "$PHP_MONGODB_FOUND_VERNUM" -lt "50500"; then
+    AC_MSG_ERROR([not supported. Need a PHP version >= 5.5.0 (found $PHP_MONGODB_FOUND_VERSION)])
+  fi
+
   PHP_ARG_ENABLE(developer-flags, whether to enable developer build flags,
   [  --enable-developer-flags   Enable developer flags],, no)
 
