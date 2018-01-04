@@ -49,6 +49,21 @@
 #  define ARG_UNUSED
 #endif
 
+#if defined (__GNUC__)
+# define PHONGO_GNUC_CHECK_VERSION(major, minor) \
+      ((__GNUC__ > (major)) ||                   \
+      ((__GNUC__ == (major)) && (__GNUC_MINOR__ >= (minor))))
+#else
+# define PHONGO_GNUC_CHECK_VERSION(major, minor) 0
+#endif
+
+#if PHONGO_GNUC_CHECK_VERSION(7, 0)
+# define PHONGO_BREAK_INTENTIONALLY_MISSING __attribute__ ((fallthrough));
+#else
+# define PHONGO_BREAK_INTENTIONALLY_MISSING
+#endif
+
+
 #if PHP_VERSION_ID >= 70000
 # define phongo_char zend_string
 # define phongo_long zend_long
