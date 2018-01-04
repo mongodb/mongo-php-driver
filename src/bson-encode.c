@@ -365,7 +365,8 @@ try_again:
 				}
 				break;
 			}
-			/* break intentionally omitted */
+			PHONGO_BREAK_INTENTIONALLY_MISSING
+
 		case IS_OBJECT: {
 			HashTable *tmp_ht = HASH_OF(entry);
 
