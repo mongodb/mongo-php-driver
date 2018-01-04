@@ -11,7 +11,7 @@
         "setParameter": {"enableTestCommands": 1}
     },
     "sslParams": {
-	"sslMode": "requireSSL",
+        "sslMode": "requireSSL",
         "sslCAFile": "/phongo/scripts/ssl/ca.pem",
         "sslPEMKeyFile": "/phongo/scripts/ssl/server.pem",
         "sslWeakCertificateValidation": true
