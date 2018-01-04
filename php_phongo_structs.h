@@ -55,6 +55,7 @@ typedef struct {
 	mongoc_cursor_t       *cursor;
 	mongoc_client_t       *client;
 	uint32_t               server_id;
+	bool                   advanced;
 	php_phongo_bson_state  visitor_data;
 	int                    got_iterator;
 	long                   current;
