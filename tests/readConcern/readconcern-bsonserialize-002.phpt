@@ -10,6 +10,7 @@ $tests = [
     new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::LINEARIZABLE),
     new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::LOCAL),
     new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::MAJORITY),
+    new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::AVAILABLE),
 ];
 
 foreach ($tests as $test) {
@@ -33,5 +34,9 @@ object(stdClass)#%d (%d) {
 object(stdClass)#%d (%d) {
   ["level"]=>
   string(8) "majority"
+}
+object(stdClass)#%d (%d) {
+  ["level"]=>
+  string(9) "available"
 }
 ===DONE===
