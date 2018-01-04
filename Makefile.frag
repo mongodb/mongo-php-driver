@@ -72,7 +72,7 @@ test-virtual: package
 	sh ./scripts/run-tests-on.sh precise64
 
 test-clean:
-	find $(top_srcdir)/tests -not \( -path $(top_srcdir)/tests/utils -prune \) -type f -name "*.diff" -o -name "*.exp" -o -name "*.log" -o -name "*.mem" -o -name "*.out" -o -name "*.php" -o -name "*.sh" | xargs rm
+	find $(top_srcdir)/tests -not \( -path $(top_srcdir)/tests/utils -prune \) -type f -name "*.diff" -o -name "*.exp" -o -name "*.log" -o -name "*.mem" -o -name "*.out" -o -name "*.php" -o -name "*.sh" | xargs -r rm
 
 package:
 	pecl package package.xml
