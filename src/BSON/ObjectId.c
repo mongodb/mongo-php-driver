@@ -369,7 +369,7 @@ static HashTable *php_phongo_objectid_get_properties_hash(zval *object, bool is_
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 1);
 
-	if (!intern->oid) {
+	if (!intern->initialized) {
 		return props;
 	}
 
