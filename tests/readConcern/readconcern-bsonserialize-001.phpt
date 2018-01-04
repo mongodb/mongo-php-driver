@@ -10,6 +10,7 @@ $tests = [
     new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::LINEARIZABLE),
     new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::LOCAL),
     new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::MAJORITY),
+    new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::AVAILABLE),
 ];
 
 foreach ($tests as $test) {
@@ -24,4 +25,5 @@ foreach ($tests as $test) {
 { "level" : "linearizable" }
 { "level" : "local" }
 { "level" : "majority" }
+{ "level" : "available" }
 ===DONE===
