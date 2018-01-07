@@ -28,7 +28,6 @@ $PRESETS = [
     "replicasets" => [
         "scripts/presets/replicaset.json",
         "scripts/presets/replicaset-30.json",
-        "scripts/presets/replicaset-36.json",
         "scripts/presets/replicaset-dns.json",
     ],
 ];

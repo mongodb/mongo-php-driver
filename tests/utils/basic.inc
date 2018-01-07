@@ -20,7 +20,6 @@ $servers = array(
     "STANDALONE_PLAIN" => "",
     "REPLICASET"       => "",
     "REPLICASET_30"    => "",
-    "REPLICASET_36"    => "",
 );
 $servers = array_merge($servers, $config);
 def($servers);
