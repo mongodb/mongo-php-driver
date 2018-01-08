@@ -463,10 +463,6 @@ static bool phongo_split_namespace(const char *namespace, char **dbname, char **
 	return true;
 } /* }}} */
 
-mongoc_bulk_operation_t *phongo_bulkwrite_init(zend_bool ordered) { /* {{{ */
-	return mongoc_bulk_operation_new(ordered);
-} /* }}} */
-
 /* Parses the "readConcern" option for an execute method. If mongoc_opts is not
  * NULL, the option will be appended. On error, false is returned and an
  * exception is thrown. */

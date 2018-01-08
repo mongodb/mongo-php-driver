@@ -188,7 +188,7 @@ static PHP_METHOD(BulkWrite, __construct)
 		ordered = php_array_fetchc_bool(options, "ordered");
 	}
 
-	intern->bulk = phongo_bulkwrite_init(ordered);
+	intern->bulk = mongoc_bulk_operation_new(ordered);
 	intern->ordered = ordered;
 	intern->bypass = PHONGO_BULKWRITE_BYPASS_UNSET;
 	intern->num_ops = 0;
