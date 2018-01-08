@@ -18,13 +18,10 @@ Vagrant.configure(2) do |config|
   config.vm.define "mo", primary: true do |mo|
     mo.vm.network "private_network", ip: "192.168.112.10"
 
-    mo.vm.box = "http://files.vagrantup.com/precise64.box"
-    mo.vm.provider "vmware_workstation" do |vmware, override|
-      override.vm.box_url = 'http://files.vagrantup.com/precise64_vmware.box'
-      override.vm.provision "shell", path: "scripts/vmware/kernel.sh", privileged: true
-    end
+    mo.vm.box = "ubuntu/trusty64"
 
     mo.vm.provision "shell", path: "scripts/ubuntu/essentials.sh", privileged: true
+    mo.vm.provision "file", source: "scripts/ubuntu/get-pip.py", destination: "get-pip.py"
     mo.vm.provision "file", source: "scripts/ubuntu/mongo-orchestration-config.json", destination: "mongo-orchestration-config.json"
     mo.vm.provision "shell", path: "scripts/ubuntu/mongo-orchestration.sh", privileged: true
     mo.vm.provision "shell", path: "scripts/ubuntu/ldap/install.sh", privileged: true

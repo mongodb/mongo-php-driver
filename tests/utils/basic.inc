@@ -13,7 +13,6 @@ if (!$config) {
 
 $servers = array(
     "STANDALONE"      => "",
-    "STANDALONE_26"   => "",
     "STANDALONE_30"   => "",
     "STANDALONE_SSL"  => "",
     "STANDALONE_AUTH" => "",
@@ -21,7 +20,7 @@ $servers = array(
     "STANDALONE_PLAIN" => "",
     "REPLICASET"       => "",
     "REPLICASET_30"    => "",
-    "REPLICASET_36"    => "",
+    "REPLICASET_DNS"   => "",
 );
 $servers = array_merge($servers, $config);
 def($servers);

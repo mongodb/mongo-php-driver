@@ -1,8 +1,6 @@
 {
 	"releases": {
-		"36-release": "/home/vagrant/3.6.0/usr/bin",
-		"32-release": "/home/vagrant/3.2.0/usr/bin",
-		"30-release": "/home/vagrant/3.0.3/usr/bin",
-		"26-release": "/home/vagrant/2.6.9/usr/bin"
+		"36-release": "/home/vagrant/3.6/usr/bin",
+		"30-release": "/home/vagrant/3.0/usr/bin"
 	}
 }
