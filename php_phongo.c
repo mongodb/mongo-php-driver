@@ -248,6 +248,7 @@ static void phongo_cursor_init(zval *return_value, mongoc_client_t *client, mong
 	intern->cursor = cursor;
 	intern->server_id = mongoc_cursor_get_hint(cursor);
 	intern->client = client;
+	intern->advanced = false;
 
 	if (readPreference) {
 #if PHP_VERSION_ID >= 70000
@@ -285,6 +286,10 @@ static void phongo_cursor_init_for_query(zval *return_value, mongoc_client_t *cl
 
 	/* namespace has already been validated by phongo_execute_query() */
 	phongo_split_namespace(namespace, &intern->database, &intern->collection);
+
+	/* cursor has already been advanced by phongo_execute_query() calling
+	 * phongo_cursor_advance_and_check_for_error() */
+	intern->advanced = true;
 
 #if PHP_VERSION_ID >= 70000
 	ZVAL_ZVAL(&intern->query, query, 1, 0);
@@ -709,9 +714,9 @@ bool phongo_execute_bulk_write(mongoc_client_t *client, const char *namespace, p
 	return success;
 } /* }}} */
 
-/* Advance the cursor and return whether there is an error. On error, the cursor
- * will be destroyed and an exception will be thrown. */
-static bool phongo_advance_cursor_and_check_for_error(mongoc_cursor_t *cursor TSRMLS_DC)
+/* Advance the cursor and return whether there is an error. On error, false is
+ * returned and an exception is thrown. */
+bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t *cursor TSRMLS_DC) /* {{{ */
 {
 	const bson_t *doc;
 
@@ -720,20 +725,18 @@ static bool phongo_advance_cursor_and_check_for_error(mongoc_cursor_t *cursor TS
 
 		/* Check for connection related exceptions */
 		if (EG(exception)) {
-			mongoc_cursor_destroy(cursor);
 			return false;
 		}
 
 		/* Could simply be no docs, which is not an error */
 		if (mongoc_cursor_error(cursor, &error)) {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
-			mongoc_cursor_destroy(cursor);
 			return false;
 		}
 	}
 
 	return true;
-}
+} /* }}} */
 
 int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *zquery, zval *options, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
@@ -784,7 +787,8 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 		mongoc_cursor_set_max_await_time_ms(cursor, query->max_await_time_ms);
 	}
 
-	if (!phongo_advance_cursor_and_check_for_error(cursor TSRMLS_CC)) {
+	if (!phongo_cursor_advance_and_check_for_error(cursor TSRMLS_CC)) {
+		mongoc_cursor_destroy(cursor);
 		return false;
 	}
 
@@ -912,15 +916,9 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 		bson_destroy(&reply);
 	}
 
-	if (!phongo_advance_cursor_and_check_for_error(cmd_cursor TSRMLS_CC)) {
-		/* If an error is found, the cmd_cursor is destroyed already */
-		return false;
-	}
-
 	phongo_cursor_init_for_command(return_value, client, cmd_cursor, db, zcommand, zreadPreference TSRMLS_CC);
 	return true;
 } /* }}} */
-
 /* }}} */
 
 /* {{{ mongoc types from from_zval */

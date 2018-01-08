@@ -96,7 +96,15 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator *iter T
 	const bson_t               *doc;
 
 	php_phongo_cursor_free_current(cursor);
-	cursor->current++;
+
+	/* If the cursor has already advanced, increment its position. Otherwise,
+	 * the first call to mongoc_cursor_next() will be made below and we should
+	 * leave its position at zero. */
+	if (cursor->advanced) {
+		cursor->current++;
+	} else {
+		cursor->advanced = true;
+	}
 
 	if (mongoc_cursor_next(cursor->cursor, &doc)) {
 		php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
@@ -116,6 +124,16 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator *iter TSRMLS_
 	php_phongo_cursor_iterator *cursor_it = (php_phongo_cursor_iterator *)iter;
 	php_phongo_cursor_t        *cursor = cursor_it->cursor;
 	const bson_t               *doc;
+
+	/* If the cursor was never advanced (e.g. command cursor), do so now */
+	if (!cursor->advanced) {
+		cursor->advanced = true;
+
+		if (!phongo_cursor_advance_and_check_for_error(cursor->cursor TSRMLS_CC)) {
+			/* Exception should already have been thrown */
+			return;
+		}
+	}
 
 	if (cursor->current > 0) {
 		phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Cursors cannot rewind after starting iteration");
