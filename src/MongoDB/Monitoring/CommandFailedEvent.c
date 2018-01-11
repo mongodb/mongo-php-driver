@@ -214,7 +214,7 @@ static HashTable *php_phongo_commandfailedevent_get_debug_info(zval *object, int
 	array_init_size(&retval, 6);
 
 	ADD_ASSOC_STRING(&retval, "commandName", intern->command_name);
-	ADD_ASSOC_INT64(&retval, "durationMicros", intern->duration_micros);
+	ADD_ASSOC_INT64(&retval, "durationMicros", (int64_t) intern->duration_micros);
 
 #if PHP_VERSION_ID >= 70000
 	ADD_ASSOC_ZVAL_EX(&retval, "error", &intern->z_error);
