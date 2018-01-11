@@ -83,7 +83,7 @@ AC_DEFUN([PHP_BSON_CLOCK],
   fi
 ])
 
-if test "$MONGODB" != "no"; then
+if test "$PHP_MONGODB" != "no"; then
   AC_MSG_CHECKING([Check for supported PHP versions])
   PHP_MONGODB_FOUND_VERSION=`${PHP_CONFIG} --version`
   PHP_MONGODB_FOUND_VERNUM=`echo "${PHP_MONGODB_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
