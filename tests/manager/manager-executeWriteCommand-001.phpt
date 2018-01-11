@@ -1,9 +1,8 @@
 --TEST--
 MongoDB\Driver\Manager::executeWriteCommand()
 --SKIPIF--
-<?php if (getenv("TRAVIS")) exit("skip This currently tails on Travis because it doesn't run 3.6 yet"); ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.6"); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
