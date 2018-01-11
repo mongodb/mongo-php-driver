@@ -1,7 +1,6 @@
 --TEST--
 MongoDB\Driver\Manager::executeBulkWrite() update multiple documents with no upsert
 --SKIPIF--
-<?php if (getenv("TRAVIS")) exit("skip This oddly enough fails on travis and I cannot figureout why") ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
 --FILE--
