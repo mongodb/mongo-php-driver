@@ -230,7 +230,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 
 	dt = php_format_date((char *) ZEND_STRL("Y-m-d\\TH:i:s"), t, 0 TSRMLS_CC);
 
-	fprintf(MONGODB_G(debug_fd), "[%s.%06lu+00:00] %10s: %-8s> %s\n", ZSTR_VAL(dt), tu, log_domain, mongoc_log_level_str(log_level), message);
+	fprintf(MONGODB_G(debug_fd), "[%s.%06" PHONGO_LONG_FORMAT "+00:00] %10s: %-8s> %s\n", ZSTR_VAL(dt), tu, log_domain, mongoc_log_level_str(log_level), message);
 	fflush(MONGODB_G(debug_fd));
 	efree(dt);
 }
