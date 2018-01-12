@@ -2,7 +2,7 @@
 MongoDB\Driver\Server::executeReadCommand()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.6"); CLEANUP(STANDALONE); ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.6"); NEEDS_STORAGE_ENGINE(STANDALONE, "wiredTiger"); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
