@@ -143,22 +143,22 @@
 # define ADD_ASSOC_INT64(zval, key, value) add_assoc_long(zval, key, value)
 #elif SIZEOF_PHONGO_LONG == 4
 # define ADD_INDEX_INT64(zval, index, value) \
-    if (value > INT32_MAX || value < INT32_MIN) { \
-        phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", value); \
+    if ((value) > INT32_MAX || (value) < INT32_MIN) { \
+        phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", (value)); \
     } else { \
-        add_index_long(zval, index, value); \
+        add_index_long(zval, index, (value)); \
     }
 # define ADD_NEXT_INDEX_INT64(zval, value) \
-    if (value > INT32_MAX || value < INT32_MIN) { \
-        phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", value); \
+    if ((value) > INT32_MAX || (value) < INT32_MIN) { \
+        phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", (value)); \
     } else { \
-        add_next_index_long(zval, value); \
+        add_next_index_long(zval, (value)); \
     }
 # define ADD_ASSOC_INT64(zval, key, value) \
-    if (value > INT32_MAX || value < INT32_MIN) { \
-        phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", value); \
+    if ((value) > INT32_MAX || (value) < INT32_MIN) { \
+        phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", (value)); \
     } else { \
-        add_assoc_long(zval, key, value); \
+        add_assoc_long(zval, key, (value)); \
     }
 #else
 # error Unsupported architecture (integers are neither 32-bit nor 64-bit)

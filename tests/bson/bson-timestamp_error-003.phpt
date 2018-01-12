@@ -10,7 +10,10 @@ echo throws(function() {
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    new MongoDB\BSON\Timestamp(-2147483648, 0);
+    /* I realise that "-2147483647 - 1" could be written as "-2147483648", *however*, PHP considers
+     * the latter a floating point number, as it parses "-" and "2147483648" separately, and
+     * "2147483648" doesn't fit in the 32-bit signed range. */
+    new MongoDB\BSON\Timestamp(-2147483647 - 1, 0);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
@@ -18,7 +21,7 @@ echo throws(function() {
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    new MongoDB\BSON\Timestamp(0, -2147483648);
+    new MongoDB\BSON\Timestamp(0, -2147483647 - 1);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
