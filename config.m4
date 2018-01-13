@@ -226,7 +226,7 @@ if test "$PHP_MONGODB" != "no"; then
   [  --with-libmongoc           Use system libmongoc], no, no)
 
   if test "$PHP_LIBBSON" != "no"; then
-    if test "$PHP_LIBMONGOC" == "no"; then
+    if test "$PHP_LIBMONGOC" = "no"; then
       AC_MSG_ERROR(Cannot use system libbson and bundled libmongoc)
     fi
 
@@ -264,7 +264,7 @@ if test "$PHP_MONGODB" != "no"; then
   AC_MSG_RESULT(...)
 
   if test "$PHP_LIBMONGOC" != "no"; then
-    if test "$PHP_LIBBSON" == "no"; then
+    if test "$PHP_LIBBSON" = "no"; then
       AC_MSG_ERROR(Cannot use system libmongoc and bundled libbson)
     fi
 
@@ -434,7 +434,7 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/Exception/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/Monitoring/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/contrib/])
-  if test "$PHP_LIBMONGOC" == "no"; then
+  if test "$PHP_LIBMONGOC" = "no"; then
     PHP_ADD_INCLUDE([$ext_srcdir/src/libmongoc/src/mongoc/])
     PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/mongoc/])
     if test "x$with_zlib" = "xbundled"; then
@@ -442,7 +442,7 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_ADD_BUILD_DIR([$ext_srcdir/src/libmongoc/src/zlib-1.2.11/])
     fi
   fi
-  if test "$PHP_LIBBSON" == "no"; then
+  if test "$PHP_LIBBSON" = "no"; then
     m4_include(src/libbson/build/autotools/CheckAtomics.m4)
     m4_include(src/libbson/build/autotools/FindDependencies.m4)
     m4_include(src/libbson/build/autotools/m4/ac_compile_check_sizeof.m4)
@@ -485,7 +485,7 @@ if test "$PHP_MONGODB" != "no"; then
     AC_SUBST(BSON_HAVE_SNPRINTF, 0)
   fi
 
-  if test "$PHP_LIBMONGOC" == "no"; then
+  if test "$PHP_LIBMONGOC" = "no"; then
     backup_srcdir=${srcdir}
     srcdir=${srcdir}/src/libmongoc/
     m4_include(src/libmongoc/build/autotools/Versions.m4)
@@ -502,7 +502,7 @@ if test "$PHP_MONGODB" != "no"; then
       AC_OUTPUT($srcdir/src/libmongoc/src/zlib-1.2.11/zconf.h)
     fi
   fi
-  if test "$PHP_LIBBSON" == "no"; then
+  if test "$PHP_LIBBSON" = "no"; then
     backup_srcdir=${srcdir}
     srcdir=${srcdir}/src/libbson/
     m4_include(src/libbson/build/autotools/Versions.m4)
