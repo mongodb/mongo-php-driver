@@ -1,10 +1,6 @@
 dnl config.m4 for extension mongodb
 PHP_ARG_ENABLE(mongodb, whether to enable mongodb support,
 [  --enable-mongodb           Enable mongodb support])
-PHP_ARG_WITH(openssl-dir, OpenSSL dir for mongodb,
-[  --with-openssl-dir[=DIR]  openssl install prefix], yes, no)
-PHP_ARG_WITH(system-ciphers, whether to use system default cipher list instead of hardcoded value,
-[  --with-system-ciphers   OPENSSL: Use system default cipher list instead of hardcoded value], no, no)
 
 dnl borrowed from libmongoc configure.ac
 dnl AS_VAR_COPY is available in AC 2.64 and on, but we only require 2.60.
@@ -297,20 +293,10 @@ if test "$PHP_MONGODB" != "no"; then
 
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
 
-    AC_SUBST(MONGOC_ENABLE_CRYPTO, 0)
-    AC_SUBST(MONGOC_ENABLE_SSL, 0)
-    AC_SUBST(MONGOC_ENABLE_CRYPTO_LIBCRYPTO, 0)
-    AC_SUBST(MONGOC_ENABLE_SSL_OPENSSL, 0)
-    AC_SUBST(MONGOC_HAVE_ASN1_STRING_GET0_DATA, 0)
+    m4_include(scripts/build/autotools/m4/pkg.m4)
 
-    PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD, [
-      AC_SUBST(MONGOC_ENABLE_CRYPTO, 1)
-      AC_SUBST(MONGOC_ENABLE_SSL, 1)
-      AC_SUBST(MONGOC_ENABLE_CRYPTO_LIBCRYPTO, 1)
-      AC_SUBST(MONGOC_ENABLE_SSL_OPENSSL, 1)
-
-      AC_CHECK_DECLS([ASN1_STRING_get0_data], [AC_SUBST(MONGOC_HAVE_ASN1_STRING_GET0_DATA, 1)], [AC_SUBST(MONGOC_HAVE_ASN1_STRING_GET0_DATA, 0)], [[#include <openssl/asn1.h>]])
-    ])
+    m4_include(scripts/build/autotools/CheckHost.m4)
+    m4_include(scripts/build/autotools/CheckSSL.m4)
 
     if test "$PHP_SYSTEM_CIPHERS" != "no"; then
       AC_SUBST(MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE, 1)
@@ -318,23 +304,12 @@ if test "$PHP_MONGODB" != "no"; then
       AC_SUBST(MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE, 0)
     fi
 
-    dnl TODO: Support building with Secure Transport on OSX
-    AC_SUBST(MONGOC_ENABLE_SSL_SECURE_TRANSPORT, 0)
-    AC_SUBST(MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO, 0)
-
-    dnl Secure Channel only applies to Windows
-    AC_SUBST(MONGOC_ENABLE_SSL_SECURE_CHANNEL, 0)
-    AC_SUBST(MONGOC_ENABLE_CRYPTO_CNG, 0)
-
-    AC_SUBST(MONGOC_ENABLE_SSL_LIBRESSL, 0)
-
     AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
 
     AC_CHECK_TYPE([socklen_t], [AC_SUBST(MONGOC_HAVE_SOCKLEN, 1)], [AC_SUBST(MONGOC_HAVE_SOCKLEN, 0)], [#include <sys/socket.h>])
 
     with_snappy=auto
     with_zlib=auto
-    m4_include(src/libmongoc/build/autotools/m4/pkg.m4)
     m4_include(src/libmongoc/build/autotools/CheckSnappy.m4)
     m4_include(src/libmongoc/build/autotools/CheckZlib.m4)
 
