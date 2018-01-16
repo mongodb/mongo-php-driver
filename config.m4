@@ -329,9 +329,17 @@ if test "$MONGODB" != "no"; then
 
     AC_CHECK_TYPE([socklen_t], [AC_SUBST(MONGOC_HAVE_SOCKLEN, 1)], [AC_SUBST(MONGOC_HAVE_SOCKLEN, 0)], [#include <sys/socket.h>])
 
-    AC_SUBST(MONGOC_ENABLE_COMPRESSION_SNAPPY, 0)
-    AC_SUBST(MONGOC_ENABLE_COMPRESSION_ZLIB, 0)
-    AC_SUBST(MONGOC_ENABLE_COMPRESSION, 0)
+    with_snappy=auto
+    with_zlib=auto
+    m4_include(src/libmongoc/build/autotools/m4/pkg.m4)
+    m4_include(src/libmongoc/build/autotools/CheckSnappy.m4)
+    m4_include(src/libmongoc/build/autotools/CheckZlib.m4)
+
+    if test "x$with_zlib" != "xno" -o "x$with_snappy" != "xno"; then
+      AC_SUBST(MONGOC_ENABLE_COMPRESSION, 1)
+    else
+      AC_SUBST(MONGOC_ENABLE_COMPRESSION, 0)
+    fi
   fi
 
 
@@ -388,18 +396,6 @@ if test "$MONGODB" != "no"; then
   dnl We need to convince the libmongoc M4 file to actually run these checks for us
   enable_srv=auto
   m4_include(src/libmongoc/build/autotools/FindResSearch.m4)
-
-  with_snappy=auto
-  with_zlib=auto
-  m4_include(src/libmongoc/build/autotools/m4/pkg.m4)
-  m4_include(src/libmongoc/build/autotools/CheckSnappy.m4)
-  m4_include(src/libmongoc/build/autotools/CheckZlib.m4)
-
-  if test "x$with_zlib" != "xno" -o "x$with_snappy" != "xno"; then
-     AC_SUBST(MONGOC_ENABLE_COMPRESSION, 1)
-  else
-     AC_SUBST(MONGOC_ENABLE_COMPRESSION, 0)
-  fi
 
   m4_include(src/libmongoc/build/autotools/WeakSymbols.m4)
   m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
