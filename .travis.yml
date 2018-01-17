@@ -17,7 +17,6 @@ env:
     - MONGODB_ORCHESTRATION_REPO="git+git://github.com/mongodb/mongo-orchestration@master"
     - MONGODB_ORCHESTRATION_PRESETS_ROOT=`pwd`
     - secure: "Dofd9NvXIKEat1PMiia3RQgNsJLaKtzZRf9rM4MsqFaBQPbJmVWPANJkayJPcK+l8pLxHyzzH7WqxML+SlBhBTHdJB++1woXxoVwm+sDdwSye6e+eXc3/zRUxb7zyItBZcvVp2tIJpx5kXJb+CoUQakbfWEQQFk4xrOF0R56+8Y="
-    - secure: "pfGVPucvgcgcefhtzAVeejlpOtn4TnAqJSTM8mJkBl36KdU9P7hMuD3czQ4drWgzZ373/VT5UVhLu/HNsdbW0YBTeqPKJ4YNjqVVLytI8xT7y2Lw9l+I7o93j98TMgAoo8nVRmp/E4D6yutbKK1eddrcmf899R1iJbw8v8d1Ht8="
 
 before_install:
   - sudo pip install --upgrade cpp-coveralls
