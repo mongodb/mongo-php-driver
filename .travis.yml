@@ -13,7 +13,6 @@ env:
   global:
     - TEST_PHP_ARGS="-q -s output.txt -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
     - REPORT_EXIT_STATUS=1
-    - secure: "Dofd9NvXIKEat1PMiia3RQgNsJLaKtzZRf9rM4MsqFaBQPbJmVWPANJkayJPcK+l8pLxHyzzH7WqxML+SlBhBTHdJB++1woXxoVwm+sDdwSye6e+eXc3/zRUxb7zyItBZcvVp2tIJpx5kXJb+CoUQakbfWEQQFk4xrOF0R56+8Y="
 
 before_install:
   - sudo pip install --upgrade cpp-coveralls
