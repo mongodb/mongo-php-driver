@@ -49,7 +49,7 @@ php.ini
 !.github/
 !tests/utils/*.php
 !.travis.yml
-!.travis.scripts/*
+!.travis.scripts/
 
 
 !scripts
