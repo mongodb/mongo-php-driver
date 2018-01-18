@@ -33,5 +33,5 @@ after_success:
   - make coveralls
 
 after_failure:
-  - find . -name \*core\* -exec ./.travis.scripts/debug-core.sh {} \;
-  - find . -name \*diff -exec ./.travis.scripts/debug-script.sh {} \;
+  - find . -name 'core*' -exec .travis.scripts/debug-core.sh {} \;
+  - find . -name '*.diff' -exec .travis.scripts/debug-diff.sh {} \;
