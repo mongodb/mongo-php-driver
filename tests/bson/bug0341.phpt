@@ -8,7 +8,7 @@ require_once __DIR__ . '/../utils/tools.php';
 $tests = array(
     '{ "foo": "yes", "bar" : false }',
     '{ "foo": "no", "array" : [ 5, 6 ] }',
-    '{ "foo": "no", "obj" : { "embedded" : 3.14 } }',
+    '{ "foo": "no", "obj" : { "embedded" : 4.125 } }',
 );
 
 foreach ($tests as $test) {
@@ -43,7 +43,7 @@ object(stdClass)#%d (2) {
   ["obj"]=>
   object(stdClass)#%d (1) {
     ["embedded"]=>
-    float(3.14)
+    float(4.125)
   }
 }
 ===DONE===
