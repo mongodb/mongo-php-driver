@@ -28,22 +28,6 @@ matrix:
       dist: trusty
       sudo: required
       php: 7.2
-    - os: osx
-      osx_image: xcode8.3
-      language: generic
-      env:
-        - PHP_VERSION: php56
-    - os: osx
-      osx_image: xcode9.2
-      language: generic
-      env:
-        - PHP_VERSION: php72
-    - os: osx
-      osx_image: xcode9.2
-      language: generic
-      env:
-        - PHP_VERSION: php72
-        - SSL_VERSION: darwin
 
 services:
   - mongodb
