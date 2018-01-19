@@ -1,10 +1,49 @@
 language: php
-php:
-  - 7.2
-  - 7.1
-  - 7.0
-  - 5.6
-  - 5.5
+
+addons:
+  apt:
+    packages:
+      - gdb
+      - lcov
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      php: 5.5
+    - os: linux
+      dist: trusty
+      sudo: required
+      php: 5.6
+    - os: linux
+      dist: trusty
+      sudo: required
+      php: 7.0
+    - os: linux
+      dist: trusty
+      sudo: required
+      php: 7.1
+    - os: linux
+      dist: trusty
+      sudo: required
+      php: 7.2
+    - os: osx
+      osx_image: xcode8.3
+      language: generic
+      env:
+        - PHP_VERSION: php56
+    - os: osx
+      osx_image: xcode9.2
+      language: generic
+      env:
+        - PHP_VERSION: php72
+    - os: osx
+      osx_image: xcode9.2
+      language: generic
+      env:
+        - PHP_VERSION: php72
+        - SSL_VERSION: darwin
 
 services:
   - mongodb
@@ -15,16 +54,13 @@ env:
     - REPORT_EXIT_STATUS=1
 
 before_install:
-  - sudo pip install --upgrade cpp-coveralls
-  - sudo apt-get update
-  - sudo apt-get install gdb valgrind
-  - sudo apt-get install cdbs debhelper build-essential python-lxml
+  - .travis.scripts/before_install.sh
   - php -r 'if ( ! ($f = php_ini_loaded_file())) { $f = PHP_CONFIG_FILE_PATH . "/php.ini"; } file_put_contents($f, "variables_order=EGPCS\n", FILE_APPEND); $a = file($f, FILE_IGNORE_NEW_LINES); var_dump($a[count($a)-1]);'
 
 before_script:
   - ulimit -a
   - ulimit -c unlimited || true
-  - "./.travis.scripts/compile.sh"
+  - .travis.scripts/before_script.sh
 
 script:
   - make test
