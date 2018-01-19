@@ -55,7 +55,7 @@ $testGroups = array(
         'tests' => array(
             '{ "foo": "yes", "bar" : false }',
             '{ "foo": "no", "array" : [ 5, 6 ] }',
-            '{ "foo": "no", "obj" : { "embedded" : 3.14 } }',
+            '{ "foo": "no", "obj" : { "embedded" : 4.125 } }',
             '{ "foo": "yes", "__pclass": "MyClass" }',
             '{ "foo": "yes", "__pclass": { "$binary": "' . $bMyClass . '", "$type": "80" } }',
             '{ "foo": "yes", "__pclass": { "$binary": "' . $bYourClass . '", "$type": "80" } }',
@@ -114,7 +114,7 @@ $testGroups = array(
         'tests' => array(
             '{ "foo": "yes", "bar" : false }',
             '{ "foo": "no", "array" : [ 5, 6 ] }',
-            '{ "foo": "no", "obj" : { "embedded" : 3.14 } }',
+            '{ "foo": "no", "obj" : { "embedded" : 4.125 } }',
             '{ "foo": "yes", "__pclass": "MyClass" }',
             '{ "foo": "yes", "__pclass" : { "$binary": "' . $bMyClass . '", "$type": "80" } }',
             '{ "foo": "yes", "__pclass" : { "$binary": "' . $bOurClass . '", "$type": "80" } }',
@@ -176,14 +176,14 @@ object(stdClass)#%d (2) {
   }
 }
 
-{ "foo": "no", "obj" : { "embedded" : 3.14 } }
+{ "foo": "no", "obj" : { "embedded" : 4.125 } }
 object(stdClass)#%d (2) {
   ["foo"]=>
   string(2) "no"
   ["obj"]=>
   object(stdClass)#%d (1) {
     ["embedded"]=>
-    float(3.14)
+    float(4.125)
   }
 }
 
@@ -390,14 +390,14 @@ array(2) {
   }
 }
 
-{ "foo": "no", "obj" : { "embedded" : 3.14 } }
+{ "foo": "no", "obj" : { "embedded" : 4.125 } }
 array(2) {
   ["foo"]=>
   string(2) "no"
   ["obj"]=>
   array(1) {
     ["embedded"]=>
-    float(3.14)
+    float(4.125)
   }
 }
 

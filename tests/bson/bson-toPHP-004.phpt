@@ -17,7 +17,7 @@ $tests = [
     null,
     true,
     1,
-    3.14,
+    4.125,
     'foo',
     [],
     (object) [],
@@ -139,14 +139,14 @@ object(stdClass)#%d (1) {
   ["x"]=>
   array(1) {
     [0]=>
-    float(3.14)
+    float(4.125)
   }
 }
 object(stdClass)#%d (1) {
   ["x"]=>
   object(stdClass)#%d (1) {
     [%r(0|"0")%r]=>
-    float(3.14)
+    float(4.125)
   }
 }
 object(stdClass)#%d (1) {
@@ -155,7 +155,7 @@ object(stdClass)#%d (1) {
     ["storage":"ArrayObject":private]=>
     array(1) {
       [0]=>
-      float(3.14)
+      float(4.125)
     }
   }
 }
