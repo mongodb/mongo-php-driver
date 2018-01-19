@@ -16,7 +16,7 @@ $tests = [
     null,
     true,
     1,
-    3.14,
+    4.125,
     'foo',
     (object) [],
     new MongoDB\BSON\Binary('foo', MongoDB\BSON\Binary::TYPE_GENERIC),
@@ -52,7 +52,7 @@ array(13) {
   [2]=>
   int(1)
   [3]=>
-  float(3.14)
+  float(4.125)
   [4]=>
   string(3) "foo"
   [5]=>
