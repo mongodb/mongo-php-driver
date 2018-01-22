@@ -144,6 +144,9 @@ AS_IF([test "$PHP_MONGODB_SSL" = "libressl" -o "$PHP_MONGODB_SSL" = "auto"],[
 ])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "darwin" -o \( "$PHP_MONGODB_SSL" = "auto" -a "$os_darwin" = "yes" \)],[
+  if test "$os_darwin" = "no"; then
+    AC_MSG_ERROR([Darwin SSL is only supported on macOS])
+  fi
   dnl PHP_FRAMEWORKS is only used for SAPI builds, so use MONGODB_SHARED_LIBADD for shared builds
   if test "$ext_shared" = "yes"; then
     MONGODB_SHARED_LIBADD="-framework Security -framework CoreFoundation $MONGODB_SHARED_LIBADD"
