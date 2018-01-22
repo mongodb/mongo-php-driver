@@ -226,10 +226,18 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/Monitoring/functions.c \
   "
 
-  PHP_ARG_WITH(libbson, whether to use system libbson,
-  [  --with-libbson          MongoDB: Use system libbson], no, no)
-  PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
-  [  --with-libmongoc        MongoDB: Use system libmongoc], no, no)
+  PHP_ARG_WITH([libbson],
+               [whether to use system libbson],
+               [AS_HELP_STRING([--with-libbson=@<:@yes/no@:>@],
+                               [MongoDB: Use system libbson [default=no]])],
+               [no],
+               [no])
+  PHP_ARG_WITH([libmongoc],
+               [whether to use system libmongoc],
+               [AS_HELP_STRING([--with-libmongoc=@<:@yes/no@:>@],
+                               [MongoDB: Use system libmongoc [default=no]])],
+               [no],
+               [no])
 
   if test "$PHP_LIBBSON" != "no"; then
     if test "$PHP_LIBMONGOC" = "no"; then
@@ -335,8 +343,12 @@ if test "$PHP_MONGODB" != "no"; then
   fi
 
 
-  PHP_ARG_WITH(mongodb-sasl, for Cyrus SASL support,
-  [  --with-mongodb-sasl[=DIR] MongoDB: Include Cyrus SASL support], auto, no)
+  PHP_ARG_WITH([mongodb-sasl],
+               [for Cyrus SASL support],
+               [AC_HELP_STRING([--with-mongodb-sasl=@<:@auto/no/DIR@:>@],
+                               [MongoDB: Cyrus SASL support [default=auto]])],
+               [auto],
+               [no])
 
   AC_SUBST(MONGOC_ENABLE_SASL, 0)
   AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
