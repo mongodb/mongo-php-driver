@@ -93,8 +93,8 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_ARG_ENABLE([developer-flags],
                  [whether to enable developer build flags],
                  [AC_HELP_STRING([--enable-developer-flags],
-                                 [MongoDB: Enable developer flags])],
-                 [],
+                                 [MongoDB: Enable developer flags [default=no]])],
+                 [no],
                  [no])
 
   if test "$PHP_DEVELOPER_FLAGS" = "yes"; then
@@ -149,8 +149,8 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_ARG_ENABLE([coverage],
                  [whether to enable code coverage],
                  [AC_HELP_STRING([--enable-coverage],
-                                 [MongoDB: Enable developer code coverage information])],
-                 [],
+                                 [MongoDB: Enable developer code coverage information [default=no]])],
+                 [no],
                  [no])
 
   if test "$PHP_COVERAGE" = "yes"; then
