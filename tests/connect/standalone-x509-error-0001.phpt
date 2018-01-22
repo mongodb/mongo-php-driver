@@ -2,6 +2,7 @@
 X509 connection should not reuse previous stream after an auth failure
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS_SSL(); ?>
 <?php NEEDS('STANDALONE_X509'); ?>
 --FILE--
 <?php

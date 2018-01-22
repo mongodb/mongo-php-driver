@@ -175,14 +175,55 @@ function NEEDS_STORAGE_ENGINE($uri, $engine) {
     }
 }
 
-/* Checks that libmongoc is using one of the following SSL libraries, denoted by
- * the value of "libmongoc SSL library" in phpinfo() output. Possible values are
- * "OpenSSL", "LibreSSL", "Secure Transport", and "Secure Channel". */
-function NEEDS_SSL(array $libs)
+/* Checks that libmongoc supports crypto. If one or more libaries are provided,
+ * additionally check the value of "libmongoc crypto library" as reported by
+ * phpinfo(). Possible values are "libcrypto", "Common Crypto", and "CNG". */
+function NEEDS_CRYPTO(array $libs = [])
 {
     ob_start();
     phpinfo(INFO_MODULES);
     $info = ob_get_clean();
+
+    $pattern = sprintf('/^%s$/m', preg_quote('libmongoc crypto => enabled'));
+
+    if (preg_match($pattern, $info) !== 1) {
+        exit('skip Crypto is not supported');
+    }
+
+    if (empty($libs)) {
+        return;
+    }
+
+    $pattern = sprintf('/^%s([\w ]+)$/m', preg_quote('libmongoc crypto library => '));
+
+    if (preg_match($pattern, $info, $matches) !== 1) {
+        exit('skip Could not determine crypto library');
+    }
+
+    if (!in_array($matches[1], $libs)) {
+        exit('skip Needs crypto library ' . implode(', ', $libs) . ', but found ' . $matches[1]);
+    }
+}
+
+/* Checks that libmongoc supports SSL. If one or more libaries are provided,
+ * additionally check the value of "libmongoc SSL library" as reported by
+ * phpinfo(). Possible values are "OpenSSL", "LibreSSL", "Secure Transport", and
+ * "Secure Channel". */
+function NEEDS_SSL(array $libs = [])
+{
+    ob_start();
+    phpinfo(INFO_MODULES);
+    $info = ob_get_clean();
+
+    $pattern = sprintf('/^%s$/m', preg_quote('libmongoc SSL => enabled'));
+
+    if (preg_match($pattern, $info) !== 1) {
+        exit('skip SSL is not supported');
+    }
+
+    if (empty($libs)) {
+        return;
+    }
 
     $pattern = sprintf('/^%s([\w ]+)$/m', preg_quote('libmongoc SSL library => '));
 

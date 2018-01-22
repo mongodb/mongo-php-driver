@@ -4,6 +4,7 @@ Retryable writes: unacknowledged write operations do not include transaction IDs
 Depends on CDRIVER-2432
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS_CRYPTO(); ?>
 <?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
 --FILE--
 <?php

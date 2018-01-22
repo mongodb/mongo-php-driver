@@ -2,6 +2,7 @@
 Causal consistency: unacknowledged write does not update operationTime
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS_CRYPTO(); ?>
 <?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
 --FILE--
 <?php

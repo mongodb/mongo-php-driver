@@ -2,6 +2,7 @@
 MongoDB\Driver\Session spec test: $clusterTime in commands
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS_CRYPTO(); ?>
 <?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
 --FILE--
 <?php
