@@ -2901,6 +2901,22 @@ PHP_MINFO_FUNCTION(mongodb)
 	php_info_print_table_row(2, "libmongoc SASL", "disabled");
 #endif
 
+#ifdef MONGOC_ENABLE_COMPRESSION
+	php_info_print_table_row(2, "libmongoc compression", "enabled");
+# ifdef MONGOC_ENABLE_COMPRESSION_SNAPPY
+	php_info_print_table_row(2, "libmongoc compression snappy", "enabled");
+# else
+	php_info_print_table_row(2, "libmongoc compression snappy", "disabled");
+# endif
+# ifdef MONGOC_ENABLE_COMPRESSION_ZLIB
+	php_info_print_table_row(2, "libmongoc compression zlib", "enabled");
+# else
+	php_info_print_table_row(2, "libmongoc compression zlib", "disabled");
+# endif
+#else
+	php_info_print_table_row(2, "libmongoc compression", "disabled");
+#endif
+
 	php_info_print_table_end();
 
 	DISPLAY_INI_ENTRIES();
