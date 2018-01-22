@@ -1,10 +1,33 @@
 language: php
-php:
-  - 7.2
-  - 7.1
-  - 7.0
-  - 5.6
-  - 5.5
+
+addons:
+  apt:
+    packages:
+      - gdb
+      - lcov
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: false
+      php: 5.5
+    - os: linux
+      dist: trusty
+      sudo: false
+      php: 5.6
+    - os: linux
+      dist: trusty
+      sudo: false
+      php: 7.0
+    - os: linux
+      dist: trusty
+      sudo: false
+      php: 7.1
+    - os: linux
+      dist: trusty
+      sudo: false
+      php: 7.2
 
 services:
   - mongodb
@@ -13,24 +36,15 @@ env:
   global:
     - TEST_PHP_ARGS="-q -s output.txt -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
     - REPORT_EXIT_STATUS=1
-    - MONGODB_ORCHESTRATION="http://localhost:8889"
-    - MONGODB_ORCHESTRATION_REPO="git+git://github.com/mongodb/mongo-orchestration@master"
-    - MONGODB_ORCHESTRATION_PRESETS_ROOT=`pwd`
-    - secure: "Dofd9NvXIKEat1PMiia3RQgNsJLaKtzZRf9rM4MsqFaBQPbJmVWPANJkayJPcK+l8pLxHyzzH7WqxML+SlBhBTHdJB++1woXxoVwm+sDdwSye6e+eXc3/zRUxb7zyItBZcvVp2tIJpx5kXJb+CoUQakbfWEQQFk4xrOF0R56+8Y="
-    - secure: "pfGVPucvgcgcefhtzAVeejlpOtn4TnAqJSTM8mJkBl36KdU9P7hMuD3czQ4drWgzZ373/VT5UVhLu/HNsdbW0YBTeqPKJ4YNjqVVLytI8xT7y2Lw9l+I7o93j98TMgAoo8nVRmp/E4D6yutbKK1eddrcmf899R1iJbw8v8d1Ht8="
 
 before_install:
-  - sudo pip install --upgrade cpp-coveralls
-  - sudo pip install ${MONGODB_ORCHESTRATION_REPO}
-  - sudo apt-get update
-  - sudo apt-get install gdb valgrind
-  - sudo apt-get install cdbs debhelper build-essential python-lxml
+  - .travis.scripts/before_install.sh
   - php -r 'if ( ! ($f = php_ini_loaded_file())) { $f = PHP_CONFIG_FILE_PATH . "/php.ini"; } file_put_contents($f, "variables_order=EGPCS\n", FILE_APPEND); $a = file($f, FILE_IGNORE_NEW_LINES); var_dump($a[count($a)-1]);'
 
 before_script:
   - ulimit -a
   - ulimit -c unlimited || true
-  - "./.travis.scripts/compile.sh"
+  - .travis.scripts/before_script.sh
 
 script:
   - make test
@@ -39,5 +53,5 @@ after_success:
   - make coveralls
 
 after_failure:
-  - find . -name \*core\* -exec ./.travis.scripts/debug-core.sh {} \;
-  - find . -name \*diff -exec ./.travis.scripts/debug-script.sh {} \;
+  - find . -name 'core*' -exec .travis.scripts/debug-core.sh {} \;
+  - find . -name '*.diff' -exec .travis.scripts/debug-diff.sh {} \;

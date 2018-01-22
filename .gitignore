@@ -6,7 +6,7 @@
 acinclude.m4
 aclocal.m4
 autom4te.cache
-build
+/build
 config.guess
 config.h
 config.h.in
@@ -49,7 +49,7 @@ php.ini
 !.github/
 !tests/utils/*.php
 !.travis.yml
-!.travis.scripts/*
+!.travis.scripts/
 
 
 !scripts

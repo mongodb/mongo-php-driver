@@ -1,10 +1,8 @@
 dnl config.m4 for extension mongodb
-PHP_ARG_ENABLE(mongodb, whether to enable mongodb support,
-[  --enable-mongodb           Enable mongodb support])
-PHP_ARG_WITH(openssl-dir, OpenSSL dir for mongodb,
-[  --with-openssl-dir[=DIR]  openssl install prefix], yes, no)
-PHP_ARG_WITH(system-ciphers, whether to use system default cipher list instead of hardcoded value,
-[  --with-system-ciphers   OPENSSL: Use system default cipher list instead of hardcoded value], no, no)
+PHP_ARG_ENABLE([mongodb],
+               [whether to enable MongoDB support],
+               [AC_HELP_STRING([--enable-mongodb],
+                               [Enable MongoDB support])])
 
 dnl borrowed from libmongoc configure.ac
 dnl AS_VAR_COPY is available in AC 2.64 and on, but we only require 2.60.
@@ -83,7 +81,7 @@ AC_DEFUN([PHP_BSON_CLOCK],
   fi
 ])
 
-if test "$MONGODB" != "no"; then
+if test "$PHP_MONGODB" != "no"; then
   AC_MSG_CHECKING([Check for supported PHP versions])
   PHP_MONGODB_FOUND_VERSION=`${PHP_CONFIG} --version`
   PHP_MONGODB_FOUND_VERNUM=`echo "${PHP_MONGODB_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
@@ -92,8 +90,12 @@ if test "$MONGODB" != "no"; then
     AC_MSG_ERROR([not supported. Need a PHP version >= 5.5.0 (found $PHP_MONGODB_FOUND_VERSION)])
   fi
 
-  PHP_ARG_ENABLE(developer-flags, whether to enable developer build flags,
-  [  --enable-developer-flags   Enable developer flags],, no)
+  PHP_ARG_ENABLE([developer-flags],
+                 [whether to enable developer build flags],
+                 [AC_HELP_STRING([--enable-developer-flags],
+                                 [MongoDB: Enable developer flags [default=no]])],
+                 [no],
+                 [no])
 
   if test "$PHP_DEVELOPER_FLAGS" = "yes"; then
     dnl Warn about functions which might be candidates for format attributes
@@ -144,8 +146,12 @@ if test "$MONGODB" != "no"; then
   fi
 
 
-  PHP_ARG_ENABLE(coverage, whether to enable code coverage,
-  [  --enable-coverage Enable developer code coverage information],, no)
+  PHP_ARG_ENABLE([coverage],
+                 [whether to enable code coverage],
+                 [AC_HELP_STRING([--enable-coverage],
+                                 [MongoDB: Enable developer code coverage information [default=no]])],
+                 [no],
+                 [no])
 
   if test "$PHP_COVERAGE" = "yes"; then
       PHP_CHECK_GCC_ARG(-fprofile-arcs,                     COVERAGE_CFLAGS="$COVERAGE_CFLAGS -fprofile-arcs")
@@ -220,13 +226,21 @@ if test "$MONGODB" != "no"; then
     src/MongoDB/Monitoring/functions.c \
   "
 
-  PHP_ARG_WITH(libbson, whether to use system libbson,
-  [  --with-libbson             Use system libbson], no, no)
-  PHP_ARG_WITH(libmongoc, whether to use system libmongoc,
-  [  --with-libmongoc           Use system libmongoc], no, no)
+  PHP_ARG_WITH([libbson],
+               [whether to use system libbson],
+               [AS_HELP_STRING([--with-libbson=@<:@yes/no@:>@],
+                               [MongoDB: Use system libbson [default=no]])],
+               [no],
+               [no])
+  PHP_ARG_WITH([libmongoc],
+               [whether to use system libmongoc],
+               [AS_HELP_STRING([--with-libmongoc=@<:@yes/no@:>@],
+                               [MongoDB: Use system libmongoc [default=no]])],
+               [no],
+               [no])
 
   if test "$PHP_LIBBSON" != "no"; then
-    if test "$PHP_LIBMONGOC" == "no"; then
+    if test "$PHP_LIBMONGOC" = "no"; then
       AC_MSG_ERROR(Cannot use system libbson and bundled libmongoc)
     fi
 
@@ -264,7 +278,7 @@ if test "$MONGODB" != "no"; then
   AC_MSG_RESULT(...)
 
   if test "$PHP_LIBMONGOC" != "no"; then
-    if test "$PHP_LIBBSON" == "no"; then
+    if test "$PHP_LIBBSON" = "no"; then
       AC_MSG_ERROR(Cannot use system libmongoc and bundled libbson)
     fi
 
@@ -297,20 +311,10 @@ if test "$MONGODB" != "no"; then
 
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
 
-    AC_SUBST(MONGOC_ENABLE_CRYPTO, 0)
-    AC_SUBST(MONGOC_ENABLE_SSL, 0)
-    AC_SUBST(MONGOC_ENABLE_CRYPTO_LIBCRYPTO, 0)
-    AC_SUBST(MONGOC_ENABLE_SSL_OPENSSL, 0)
-    AC_SUBST(MONGOC_HAVE_ASN1_STRING_GET0_DATA, 0)
+    m4_include(scripts/build/autotools/m4/pkg.m4)
 
-    PHP_SETUP_OPENSSL(MONGODB_SHARED_LIBADD, [
-      AC_SUBST(MONGOC_ENABLE_CRYPTO, 1)
-      AC_SUBST(MONGOC_ENABLE_SSL, 1)
-      AC_SUBST(MONGOC_ENABLE_CRYPTO_LIBCRYPTO, 1)
-      AC_SUBST(MONGOC_ENABLE_SSL_OPENSSL, 1)
-
-      AC_CHECK_DECLS([ASN1_STRING_get0_data], [AC_SUBST(MONGOC_HAVE_ASN1_STRING_GET0_DATA, 1)], [AC_SUBST(MONGOC_HAVE_ASN1_STRING_GET0_DATA, 0)], [[#include <openssl/asn1.h>]])
-    ])
+    m4_include(scripts/build/autotools/CheckHost.m4)
+    m4_include(scripts/build/autotools/CheckSSL.m4)
 
     if test "$PHP_SYSTEM_CIPHERS" != "no"; then
       AC_SUBST(MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE, 1)
@@ -318,23 +322,12 @@ if test "$MONGODB" != "no"; then
       AC_SUBST(MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE, 0)
     fi
 
-    dnl TODO: Support building with Secure Transport on OSX
-    AC_SUBST(MONGOC_ENABLE_SSL_SECURE_TRANSPORT, 0)
-    AC_SUBST(MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO, 0)
-
-    dnl Secure Channel only applies to Windows
-    AC_SUBST(MONGOC_ENABLE_SSL_SECURE_CHANNEL, 0)
-    AC_SUBST(MONGOC_ENABLE_CRYPTO_CNG, 0)
-
-    AC_SUBST(MONGOC_ENABLE_SSL_LIBRESSL, 0)
-
     AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
 
     AC_CHECK_TYPE([socklen_t], [AC_SUBST(MONGOC_HAVE_SOCKLEN, 1)], [AC_SUBST(MONGOC_HAVE_SOCKLEN, 0)], [#include <sys/socket.h>])
 
     with_snappy=auto
     with_zlib=auto
-    m4_include(src/libmongoc/build/autotools/m4/pkg.m4)
     m4_include(src/libmongoc/build/autotools/CheckSnappy.m4)
     m4_include(src/libmongoc/build/autotools/CheckZlib.m4)
 
@@ -350,8 +343,12 @@ if test "$MONGODB" != "no"; then
   fi
 
 
-  PHP_ARG_WITH(mongodb-sasl, for Cyrus SASL support,
-  [  --with-mongodb-sasl[=DIR]     mongodb: Include Cyrus SASL support], auto, no)
+  PHP_ARG_WITH([mongodb-sasl],
+               [for Cyrus SASL support],
+               [AC_HELP_STRING([--with-mongodb-sasl=@<:@auto/no/DIR@:>@],
+                               [MongoDB: Cyrus SASL support [default=auto]])],
+               [auto],
+               [no])
 
   AC_SUBST(MONGOC_ENABLE_SASL, 0)
   AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
@@ -434,7 +431,7 @@ if test "$MONGODB" != "no"; then
   PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/Exception/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/Monitoring/])
   PHP_ADD_BUILD_DIR([$ext_builddir/src/contrib/])
-  if test "$PHP_LIBMONGOC" == "no"; then
+  if test "$PHP_LIBMONGOC" = "no"; then
     PHP_ADD_INCLUDE([$ext_srcdir/src/libmongoc/src/mongoc/])
     PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/mongoc/])
     if test "x$with_zlib" = "xbundled"; then
@@ -442,7 +439,7 @@ if test "$MONGODB" != "no"; then
       PHP_ADD_BUILD_DIR([$ext_srcdir/src/libmongoc/src/zlib-1.2.11/])
     fi
   fi
-  if test "$PHP_LIBBSON" == "no"; then
+  if test "$PHP_LIBBSON" = "no"; then
     m4_include(src/libbson/build/autotools/CheckAtomics.m4)
     m4_include(src/libbson/build/autotools/FindDependencies.m4)
     m4_include(src/libbson/build/autotools/m4/ac_compile_check_sizeof.m4)
@@ -485,7 +482,7 @@ if test "$MONGODB" != "no"; then
     AC_SUBST(BSON_HAVE_SNPRINTF, 0)
   fi
 
-  if test "$PHP_LIBMONGOC" == "no"; then
+  if test "$PHP_LIBMONGOC" = "no"; then
     backup_srcdir=${srcdir}
     srcdir=${srcdir}/src/libmongoc/
     m4_include(src/libmongoc/build/autotools/Versions.m4)
@@ -502,7 +499,7 @@ if test "$MONGODB" != "no"; then
       AC_OUTPUT($srcdir/src/libmongoc/src/zlib-1.2.11/zconf.h)
     fi
   fi
-  if test "$PHP_LIBBSON" == "no"; then
+  if test "$PHP_LIBBSON" = "no"; then
     backup_srcdir=${srcdir}
     srcdir=${srcdir}/src/libbson/
     m4_include(src/libbson/build/autotools/Versions.m4)

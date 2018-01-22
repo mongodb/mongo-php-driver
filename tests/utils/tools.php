@@ -175,6 +175,26 @@ function NEEDS_STORAGE_ENGINE($uri, $engine) {
     }
 }
 
+/* Checks that libmongoc is using one of the following SSL libraries, denoted by
+ * the value of "libmongoc SSL library" in phpinfo() output. Possible values are
+ * "OpenSSL", "LibreSSL", "Secure Transport", and "Secure Channel". */
+function NEEDS_SSL(array $libs)
+{
+    ob_start();
+    phpinfo(INFO_MODULES);
+    $info = ob_get_clean();
+
+    $pattern = sprintf('/^%s([\w ]+)$/m', preg_quote('libmongoc SSL library => '));
+
+    if (preg_match($pattern, $info, $matches) !== 1) {
+        exit('skip Could not determine SSL library');
+    }
+
+    if (!in_array($matches[1], $libs)) {
+        exit('skip Needs SSL library ' . implode(', ', $libs) . ', but found ' . $matches[1]);
+    }
+}
+
 function CLEANUP($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME) {
     try {
         $manager = new MongoDB\Driver\Manager($uri);

@@ -2,6 +2,7 @@
 Connect to MongoDB with SSL and X509 auth and username retrieved from cert
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS_SSL(['OpenSSL', 'Secure Transport', 'Secure Channel']); ?>
 <?php NEEDS('STANDALONE_X509'); ?>
 --FILE--
 <?php
