@@ -1,5 +1,8 @@
 --TEST--
 MongoDB\Driver\Manager::__construct(): ssl option does not require driverOptions
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS_SSL(); ?>
 --FILE--
 <?php
 

@@ -2,6 +2,7 @@
 PHPC-720: Do not persist SSL streams to avoid SSL reinitialization errors
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS_SSL(); ?>
 <?php NEEDS('STANDALONE_SSL'); ?>
 --FILE--
 <?php

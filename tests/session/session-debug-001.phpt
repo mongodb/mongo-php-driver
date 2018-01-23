@@ -2,6 +2,7 @@
 MongoDB\Driver\Session debug output (before an operation)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php NEEDS_CRYPTO(); ?>
 <?php NEEDS('STANDALONE'); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.6"); ?>
 --FILE--
 <?php
