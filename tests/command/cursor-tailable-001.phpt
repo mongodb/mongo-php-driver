@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Cursor tailable iteration with awaitData and maxAwaitTimeMS options
+MongoDB\Driver\Command tailable cursor iteration with maxAwaitTimeMS option
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
@@ -27,8 +27,6 @@ $command = new MongoDB\Driver\Command([
     'pipeline' => $pipeline,
     'cursor' => ['batchSize' => 0],
 ], [
-    'tailable' => true,
-    'awaitData' => true,
     'maxAwaitTimeMS' => 100,
 ]);
 
