@@ -64,7 +64,7 @@ static bool php_phongo_command_init(php_phongo_command_t *intern, zval *filter, 
 	php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->bson, NULL TSRMLS_CC);
 
 	/* Note: if any exceptions are thrown, we can simply return as PHP will
-	* invoke php_phongo_query_free_object to destruct the object. */
+	 * invoke php_phongo_query_free_object to destruct the object. */
 	if (EG(exception)) {
 		return false;
 	}
