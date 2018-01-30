@@ -111,7 +111,7 @@ cleanup:
 	bson_destroy(&cluster_time);
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Session::advanceOperationTime(MongoDB\BSON\Timestamp $timestamp)
+/* {{{ proto void MongoDB\Driver\Session::advanceOperationTime(MongoDB\BSON\TimestampInterface $timestamp)
    Advances the operation time for this Session */
 static PHP_METHOD(Session, advanceOperationTime)
 {
@@ -202,7 +202,7 @@ static PHP_METHOD(Session, getLogicalSessionId)
 #endif
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\Timestamp MongoDB\Driver\Session::getOperationTime()
+/* {{{ proto MongoDB\BSON\Timestamp|null MongoDB\Driver\Session::getOperationTime()
    Returns the operation time for this Session */
 static PHP_METHOD(Session, getOperationTime)
 {
