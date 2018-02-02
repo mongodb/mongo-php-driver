@@ -82,12 +82,18 @@ AC_DEFUN([PHP_BSON_CLOCK],
 ])
 
 if test "$PHP_MONGODB" != "no"; then
-  AC_MSG_CHECKING([Check for supported PHP versions])
-  PHP_MONGODB_FOUND_VERSION=`${PHP_CONFIG} --version`
-  PHP_MONGODB_FOUND_VERNUM=`echo "${PHP_MONGODB_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
-  AC_MSG_RESULT($PHP_MONGODB_FOUND_VERSION)
-  if test "$PHP_MONGODB_FOUND_VERNUM" -lt "50500"; then
-    AC_MSG_ERROR([not supported. Need a PHP version >= 5.5.0 (found $PHP_MONGODB_FOUND_VERSION)])
+  AC_MSG_CHECKING([for PHP_CONFIG binary])
+  AC_CHECK_PROG(PHP_CONFIG_BINARY, [${PHP_CONFIG}], [yes], [no])
+  AC_MSG_CHECKING([supported PHP versions])
+  if test x"$PHP_CONFIG_BINARY" == x"yes"; then
+    PHP_MONGODB_FOUND_VERSION=`${PHP_CONFIG} --version`
+    PHP_MONGODB_FOUND_VERNUM=`echo "${PHP_MONGODB_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
+    AC_MSG_RESULT($PHP_MONGODB_FOUND_VERSION)
+    if test "$PHP_MONGODB_FOUND_VERNUM" -lt "50500"; then
+      AC_MSG_ERROR([not supported. Need a PHP version >= 5.5.0 (found $PHP_MONGODB_FOUND_VERSION)])
+    fi
+  else
+    AC_MSG_RESULT([undeterminate, continuing, but need a PHP version >= 5.5.0])
   fi
 
   PHP_ARG_ENABLE([developer-flags],
@@ -270,8 +276,13 @@ if test "$PHP_MONGODB" != "no"; then
     dnl Generated with: find src/libbson/src/jsonsl -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
     PHP_MONGODB_JSONSL_SOURCES="jsonsl.c"
 
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/jsonsl], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
+    if test "$ext_shared" = "no"; then
+      PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb)[/src/libbson/src/bson], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BSON_CFLAGS)
+      PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb)[/src/libbson/src/jsonsl], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BSON_CFLAGS)
+    else
+      PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
+      PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/jsonsl], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
+    fi
   fi
 
   AC_MSG_CHECKING(configuring libmongoc)
@@ -309,12 +320,19 @@ if test "$PHP_MONGODB" != "no"; then
     dnl Generated with: find src/libmongoc/src/zlib-1.2.11 -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
     PHP_MONGODB_ZLIB_SOURCES="adler32.c compress.c crc32.c deflate.c gzclose.c gzlib.c gzread.c gzwrite.c infback.c inffast.c inflate.c inftrees.c trees.c uncompr.c zutil.c"
 
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
+    if test "$ext_shared" = "no"; then
+      PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb)[/src/libmongoc/src/mongoc], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS)
+    else
+      PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
+    fi
 
-    m4_include(scripts/build/autotools/m4/pkg.m4)
+    sinclude(ext/mongodb/scripts/build/autotools/m4/pkg.m4)
+    sinclude(ext/mongodb/scripts/build/autotools/CheckHost.m4)
+    sinclude(ext/mongodb/scripts/build/autotools/CheckSSL.m4)
 
-    m4_include(scripts/build/autotools/CheckHost.m4)
-    m4_include(scripts/build/autotools/CheckSSL.m4)
+    sinclude(scripts/build/autotools/m4/pkg.m4)
+    sinclude(scripts/build/autotools/CheckHost.m4)
+    sinclude(scripts/build/autotools/CheckSSL.m4)
 
     if test "$PHP_SYSTEM_CIPHERS" != "no"; then
       AC_SUBST(MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE, 1)
@@ -328,8 +346,11 @@ if test "$PHP_MONGODB" != "no"; then
 
     with_snappy=auto
     with_zlib=auto
-    m4_include(src/libmongoc/build/autotools/CheckSnappy.m4)
-    m4_include(src/libmongoc/build/autotools/CheckZlib.m4)
+    sinclude(ext/mongodb/src/libmongoc/build/autotools/CheckSnappy.m4)
+    sinclude(ext/mongodb/src/libmongoc/build/autotools/CheckZlib.m4)
+
+    sinclude(src/libmongoc/build/autotools/CheckSnappy.m4)
+    sinclude(src/libmongoc/build/autotools/CheckZlib.m4)
 
     if test "x$with_zlib" != "xno" -o "x$with_snappy" != "xno"; then
       AC_SUBST(MONGOC_ENABLE_COMPRESSION, 1)
@@ -338,7 +359,11 @@ if test "$PHP_MONGODB" != "no"; then
     fi
 
     if test "x$with_zlib" = "xbundled"; then
-      PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/zlib-1.2.11], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
+      if test "$ext_shared" = "no"; then
+        PHP_ADD_SOURCES(PHP_EXT_DIR(mongodb)[/src/libmongoc/src/zlib-1.2.11], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS)
+      else
+        PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/zlib-1.2.11], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
+      fi
     fi
   fi
 
@@ -394,15 +419,21 @@ if test "$PHP_MONGODB" != "no"; then
     fi
   fi
 
-  m4_include(src/libmongoc/build/autotools/m4/ax_prototype.m4)
-  m4_include(src/libmongoc/build/autotools/CheckCompiler.m4)
+  sinclude(src/libmongoc/build/autotools/m4/ax_prototype.m4)
+  sinclude(src/libmongoc/build/autotools/CheckCompiler.m4)
+
+  sinclude(ext/mongodb/src/libmongoc/build/autotools/m4/ax_prototype.m4)
+  sinclude(ext/mongodb/src/libmongoc/build/autotools/CheckCompiler.m4)
 
   dnl We need to convince the libmongoc M4 file to actually run these checks for us
   enable_srv=auto
-  m4_include(src/libmongoc/build/autotools/FindResSearch.m4)
+  sinclude(src/libmongoc/build/autotools/FindResSearch.m4)
+  sinclude(src/libmongoc/build/autotools/WeakSymbols.m4)
+  sinclude(src/libmongoc/build/autotools/m4/ax_pthread.m4)
 
-  m4_include(src/libmongoc/build/autotools/WeakSymbols.m4)
-  m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
+  sinclude(ext/mongodb/src/libmongoc/build/autotools/FindResSearch.m4)
+  sinclude(ext/mongodb/src/libmongoc/build/autotools/WeakSymbols.m4)
+  sinclude(ext/mongodb/src/libmongoc/build/autotools/m4/ax_pthread.m4)
   AX_PTHREAD
 
   AC_CHECK_FUNCS([shm_open], [SHM_LIB=], [AC_CHECK_LIB([rt], [shm_open], [SHM_LIB=-lrt], [SHM_LIB=])])
@@ -440,11 +471,21 @@ if test "$PHP_MONGODB" != "no"; then
     fi
   fi
   if test "$PHP_LIBBSON" = "no"; then
-    m4_include(src/libbson/build/autotools/CheckAtomics.m4)
-    m4_include(src/libbson/build/autotools/FindDependencies.m4)
-    m4_include(src/libbson/build/autotools/m4/ac_compile_check_sizeof.m4)
-    m4_include(src/libbson/build/autotools/m4/ac_create_stdint_h.m4)
-    AC_CREATE_STDINT_H([$srcdir/src/libbson/src/bson/bson-stdint.h])
+    sinclude(src/libbson/build/autotools/CheckAtomics.m4)
+    sinclude(src/libbson/build/autotools/FindDependencies.m4)
+    sinclude(src/libbson/build/autotools/m4/ac_compile_check_sizeof.m4)
+    sinclude(src/libbson/build/autotools/m4/ac_create_stdint_h.m4)
+
+    sinclude(ext/mongodb/src/libbson/build/autotools/CheckAtomics.m4)
+    sinclude(ext/mongodb/src/libbson/build/autotools/FindDependencies.m4)
+    sinclude(ext/mongodb/src/libbson/build/autotools/m4/ac_compile_check_sizeof.m4)
+    sinclude(ext/mongodb/src/libbson/build/autotools/m4/ac_create_stdint_h.m4)
+    if test -d "${srcdir}/src/libbson/"; then
+      prefixdir=${srcdir}
+    else
+      prefixdir=${srcdir}/ext/mongodb
+    fi
+    AC_CREATE_STDINT_H([$prefixdir/src/libbson/src/bson/bson-stdint.h])
     PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/])
     PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/jsonsl/])
     PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/bson/])
@@ -484,35 +525,49 @@ if test "$PHP_MONGODB" != "no"; then
 
   if test "$PHP_LIBMONGOC" = "no"; then
     backup_srcdir=${srcdir}
-    srcdir=${srcdir}/src/libmongoc/
-    m4_include(src/libmongoc/build/autotools/Versions.m4)
-    srcdir=${backup_srcdir}
+    if test -d "${srcdir}/src/libmongoc/"; then
+      prefixdir=${srcdir}
+    else
+      prefixdir=${srcdir}/ext/mongodb
+    fi
+    srcdir=${prefixdir}/src/libmongoc
+    sinclude(src/libmongoc/build/autotools/Versions.m4)
+    sinclude(ext/mongodb/src/libmongoc/build/autotools/Versions.m4)
     MONGOC_API_VERSION=1.0
     AC_SUBST(MONGOC_MAJOR_VERSION)
     AC_SUBST(MONGOC_MINOR_VERSION)
     AC_SUBST(MONGOC_MICRO_VERSION)
     AC_SUBST(MONGOC_API_VERSION)
     AC_SUBST(MONGOC_VERSION)
-    AC_OUTPUT($srcdir/src/libmongoc/src/mongoc/mongoc-config.h)
-    AC_OUTPUT($srcdir/src/libmongoc/src/mongoc/mongoc-version.h)
+    AC_OUTPUT($prefixdir/src/libmongoc/src/mongoc/mongoc-config.h)
+    AC_OUTPUT($prefixdir/src/libmongoc/src/mongoc/mongoc-version.h)
     if test "x$with_zlib" = "xbundled"; then
-      AC_OUTPUT($srcdir/src/libmongoc/src/zlib-1.2.11/zconf.h)
+      AC_OUTPUT($prefixdir/src/libmongoc/src/zlib-1.2.11/zconf.h)
     fi
+    srcdir=${backup_srcdir}
   fi
   if test "$PHP_LIBBSON" = "no"; then
     backup_srcdir=${srcdir}
-    srcdir=${srcdir}/src/libbson/
-    m4_include(src/libbson/build/autotools/Versions.m4)
-    srcdir=${backup_srcdir}
+    if test -d "${srcdir}/src/libbson/"; then
+      prefixdir=${srcdir}
+    else
+      prefixdir=${srcdir}/ext/mongodb
+    fi
+    srcdir=${prefixdir}/src/libbson
+    sinclude(src/libbson/build/autotools/Versions.m4)
+    sinclude(ext/mongodb/src/libbson/build/autotools/Versions.m4)
     BSON_API_VERSION=1.0
     AC_SUBST(BSON_MAJOR_VERSION)
     AC_SUBST(BSON_MINOR_VERSION)
     AC_SUBST(BSON_MICRO_VERSION)
     AC_SUBST(BSON_API_VERSION)
     AC_SUBST(BSON_VERSION)
-    AC_OUTPUT($srcdir/src/libbson/src/bson/bson-config.h)
-    AC_OUTPUT($srcdir/src/libbson/src/bson/bson-version.h)
+    AC_OUTPUT($prefixdir/src/libbson/src/bson/bson-config.h)
+    AC_OUTPUT($prefixdir/src/libbson/src/bson/bson-version.h)
+    srcdir=${backup_srcdir}
   fi
+
+  EXTRA_LIBS="$EXTRA_LIBS $MONGODB_SHARED_LIBADD"
 
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
   PHP_ADD_MAKEFILE_FRAGMENT
