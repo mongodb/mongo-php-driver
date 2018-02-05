@@ -907,6 +907,10 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 			bson_append_bool(&initial_reply, "tailable", -1, 1);
 		}
 
+		if (command->batch_size) {
+			bson_append_int64(&initial_reply, "batchSize", -1, command->batch_size);
+		}
+
 		cmd_cursor = mongoc_cursor_new_from_command_reply(client, &initial_reply, server_id);
 		bson_destroy(&reply);
 	} else {
