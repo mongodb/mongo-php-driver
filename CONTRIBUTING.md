@@ -95,14 +95,14 @@ releasing the `vX.Y` branch as X.Y.Z).
 
 ### Ensure PHP version compatibility
 
-Ensure that the extension compiles on PHP 5.5, 5.6, 7.0, and 7.1. Be sure to
-test both ZTS and non-ZTS builds for PHP 5.x.
+Ensure that the extension compiles on PHP 5.5 through the latest PHP 7.x
+release. Be sure to test both ZTS and non-ZTS builds for PHP 5.x.
 
 ### Ensure Windows compatibility
 
 PECL will create Windows DLLs for new releases; however, you must ensure that
 the extension successfully builds on Windows before releasing. Note that PHP 5.5
-and 5.6 require VS2012, while PHP 7 requires VS2015.
+and 5.6 require VS2012, while PHP 7.x requires VS2015.
 
 Given the following assumptions:
 
