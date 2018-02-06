@@ -95,14 +95,14 @@ releasing the `vX.Y` branch as X.Y.Z).
 
 ### Ensure PHP version compatibility
 
-Ensure that the extension compiles on PHP 5.5, 5.6, 7.0, and 7.1. Be sure to
-test both ZTS and non-ZTS builds for PHP 5.x.
+Ensure that the extension compiles on PHP 5.5 through the latest PHP 7.x
+release. Be sure to test both ZTS and non-ZTS builds for PHP 5.x.
 
 ### Ensure Windows compatibility
 
 PECL will create Windows DLLs for new releases; however, you must ensure that
 the extension successfully builds on Windows before releasing. Note that PHP 5.5
-and 5.6 require VS2012, while PHP 7 requires VS2015.
+and 5.6 require VS2012, while PHP 7.x requires VS2015.
 
 Given the following assumptions:
 
@@ -178,6 +178,14 @@ The above would be changed to:
 The Makefile targets for creating the PECL package depend on these constants, so
 you must rebuild the extension after updating `php_phongo.h`.
 
+> **Note:** If this is an alpha or beta release, the version string should
+> include the X.Y.Z version followed by the stability and an increment. For
+> instance, the first beta release in the 1.4.0 series would be "1.4.0beta1".
+> Alpha and beta releases use "alpha" and "beta" stability strings,
+> respectively. Release candidates (e.g. "1.4.0RC1") also use "beta" stability.
+> See [Documenting release stability and API stability](https://pear.php.net/manual/en/guide.developers.package2.stability.php)
+> for more information.
+
 ### Publish PECL package
 
 Create the PECL package description file with `make package.xml`. This creates
@@ -235,6 +243,13 @@ Commit this change:
 $ git commit -m "Back to -dev" php_phongo.h
 ```
 
+> **Note:** If this is an alpha or beta release, the version string revert back
+> to its pre-release value without incrementing the patch version. For example,
+> the constants may have indicated version "1.4.0-dev" and stability "devel"
+> before being changed to "1.4.0beta1" and "beta" for a beta release,
+> respectively. After the release, the constants should revert back to
+> "1.4.0-dev" and "devel".
+
 ### Push commits and tags
 
 ```
@@ -260,7 +275,7 @@ The following template should be used for creating GitHub release notes via
 package may also be attached to the release notes.
 
 ```
-The PHP team is happy to announce that version X.Y.Z of our new [mongodb](http://pecl.php.net/package/mongodb) PHP extension is now available on PECL.
+The PHP team is happy to announce that version X.Y.Z of the [mongodb](http://pecl.php.net/package/mongodb) PHP extension is now available on PECL.
 
 **Release Highlights**
 
@@ -282,16 +297,19 @@ https://jira.mongodb.org/secure/CreateIssue.jspa?pid=12484&issuetype=6
 **Installation**
 
 You can either download and install the source manually, or you can install the extension with:
- 
+
     pecl install mongodb
- 
+
 or update with:
- 
+
     pecl upgrade mongodb
 
 Windows binaries are available on PECL:
 http://pecl.php.net/package/mongodb
 ```
+
+> **Note:** If this is an alpha or beta release, the installation examples
+> should append the stability to the package name (e.g. "mongodb-beta").
 
 The URL for the list of resolved JIRA issues will need to be updated with each
 release. You may obtain the list from
