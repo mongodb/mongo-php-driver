@@ -275,7 +275,7 @@ The following template should be used for creating GitHub release notes via
 package may also be attached to the release notes.
 
 ```
-The PHP team is happy to announce that version X.Y.Z of our new [mongodb](http://pecl.php.net/package/mongodb) PHP extension is now available on PECL.
+The PHP team is happy to announce that version X.Y.Z of the [mongodb](http://pecl.php.net/package/mongodb) PHP extension is now available on PECL.
 
 **Release Highlights**
 
