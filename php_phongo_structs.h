@@ -47,6 +47,7 @@ typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	bson_t   *bson;
 	uint32_t  max_await_time_ms;
+	uint32_t  batch_size;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_command_t;
 

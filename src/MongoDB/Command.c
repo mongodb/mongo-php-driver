@@ -59,6 +59,9 @@ static bool php_phongo_command_init_max_await_time_ms(php_phongo_command_t *inte
  * (where applicable). */
 static bool php_phongo_command_init(php_phongo_command_t *intern, zval *filter, zval *options TSRMLS_DC) /* {{{ */
 {
+	bson_iter_t iter;
+	bson_iter_t sub_iter;
+
 	intern->bson = bson_new();
 
 	php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->bson, NULL TSRMLS_CC);
@@ -67,6 +70,14 @@ static bool php_phongo_command_init(php_phongo_command_t *intern, zval *filter, 
 	 * invoke php_phongo_query_free_object to destruct the object. */
 	if (EG(exception)) {
 		return false;
+	}
+
+	if (bson_iter_init(&iter, intern->bson) && bson_iter_find_descendant(&iter, "cursor.batchSize", &sub_iter) && BSON_ITER_HOLDS_INT(&sub_iter)) {
+		int64_t batch_size = bson_iter_as_int64(&sub_iter);
+		
+		if (batch_size >= 0 && batch_size <= UINT32_MAX) {
+			intern->batch_size = (uint32_t) batch_size;
+		}
 	}
 
 	if (!options) {
