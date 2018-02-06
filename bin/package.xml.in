@@ -20,12 +20,18 @@ necessary to build a fully-functional MongoDB driver.
   <email>derick@php.net</email>
   <active>yes</active>
  </lead>
- <lead>
+ <developer>
+  <name>Katherine Walker</name>
+  <user>kvwalker</user>
+  <email>kvwalker@php.net</email>
+  <active>yes</active>
+ </developer>
+ <contributor>
   <name>Hannes Magnusson</name>
   <user>bjori</user>
   <email>bjori@php.net</email>
   <active>no</active>
- </lead>
+ </contributor>
  <date>%RELEASE_DATE%</date>
  <time>%RELEASE_TIME%</time>
  <version>
