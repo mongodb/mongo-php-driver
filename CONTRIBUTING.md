@@ -243,12 +243,11 @@ Commit this change:
 $ git commit -m "Back to -dev" php_phongo.h
 ```
 
-> **Note:** If this is an alpha or beta release, the version string revert back
-> to its pre-release value without incrementing the patch version. For example,
-> the constants may have indicated version "1.4.0-dev" and stability "devel"
-> before being changed to "1.4.0beta1" and "beta" for a beta release,
-> respectively. After the release, the constants should revert back to
-> "1.4.0-dev" and "devel".
+> **Note:** If this is an alpha, beta, or RC release, the version string should
+> increment the stability sequence instead of the patch version. For example,
+> if the constants were originally "1.4.0-dev" and "devel" and then changed to
+> "1.4.0beta1" and "beta" for the first beta release, this step would see them
+> ultimately changed to "1.4.0beta2-dev" and "devel".
 
 ### Push commits and tags
 
