@@ -228,13 +228,8 @@ static PHP_METHOD(Javascript, jsonSerialize)
 static PHP_METHOD(Javascript, serialize)
 {
 	php_phongo_javascript_t  *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                      retval;
-#else
-	zval                     *retval;
-#endif
+	ZVAL_RETVAL_TYPE          retval;
 	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-
 	php_serialize_data_t      var_hash;
 	smart_str                 buf = { 0 };
 

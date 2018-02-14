@@ -99,6 +99,8 @@
 # define PHONGO_RETVAL_STRING(s) RETVAL_STRING(s)
 # define PHONGO_RETURN_STRING(s) RETURN_STRING(s)
 # define PHONGO_RETVAL_SMART_STR(val) PHONGO_RETVAL_STRINGL(ZSTR_VAL((val).s), ZSTR_LEN((val).s));
+# define ZVAL_RETVAL_TYPE zval
+# define ZVAL_STATIC_INIT { 0 }
 #else
 # define phongo_char char
 # define phongo_long long
@@ -135,6 +137,8 @@
 # define PHONGO_RETVAL_STRING(s) RETVAL_STRING(s, 1)
 # define PHONGO_RETURN_STRING(s) RETURN_STRING(s, 1)
 # define PHONGO_RETVAL_SMART_STR(val) PHONGO_RETVAL_STRINGL((val).c, (val).len);
+# define ZVAL_RETVAL_TYPE zval*
+# define ZVAL_STATIC_INIT zval_used_for_init
 #endif
 
 #if SIZEOF_PHONGO_LONG == 8

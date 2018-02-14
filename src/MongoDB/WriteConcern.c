@@ -254,11 +254,7 @@ static phongo_create_object_retval php_phongo_writeconcern_create_object(zend_cl
 
 static HashTable *php_phongo_writeconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval                          retval;
-#else
-	zval                          retval = zval_used_for_init;
-#endif
+	zval                          retval = ZVAL_STATIC_INIT;
 	const mongoc_write_concern_t *write_concern = phongo_write_concern_from_zval(object TSRMLS_CC);
 
 

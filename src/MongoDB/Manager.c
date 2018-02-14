@@ -786,10 +786,10 @@ static HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp T
 	php_phongo_manager_t         *intern;
 	mongoc_server_description_t **sds;
 	size_t                        i, n = 0;
+	zval                          retval = ZVAL_STATIC_INIT;
 #if PHP_VERSION_ID >= 70000
-	zval                          retval, cluster;
+	zval                          cluster;
 #else
-	zval                          retval = zval_used_for_init;
 	zval                         *cluster = NULL;
 #endif
 

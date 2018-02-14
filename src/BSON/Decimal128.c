@@ -151,11 +151,7 @@ static PHP_METHOD(Decimal128, jsonSerialize)
 static PHP_METHOD(Decimal128, serialize)
 {
 	php_phongo_decimal128_t  *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                      retval;
-#else
-	zval                     *retval;
-#endif
+	ZVAL_RETVAL_TYPE          retval;
 	php_serialize_data_t      var_hash;
 	smart_str                 buf = { 0 };
 	char                      outbuf[BSON_DECIMAL128_STRING];

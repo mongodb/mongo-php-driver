@@ -50,11 +50,7 @@ typedef struct {
 } php_phongo_bson_typemap;
 
 typedef struct {
-#if PHP_VERSION_ID >= 70000
-	zval                     zchild;
-#else
-	zval                    *zchild;
-#endif
+	ZVAL_RETVAL_TYPE         zchild;
 	php_phongo_bson_typemap  map;
 	zend_class_entry        *odm;
 	bool                     is_visiting_array;
