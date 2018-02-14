@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -23,7 +23,7 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry *php_phongo_executiontimeoutexception_ce;
+zend_class_entry* php_phongo_executiontimeoutexception_ce;
 
 /* {{{ MongoDB\Driver\Exception\ExecutionTimeoutException function entries */
 static zend_function_entry php_phongo_executiontimeoutexception_me[] = {

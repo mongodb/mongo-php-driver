@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -29,13 +29,13 @@
 
 #define PHONGO_BULKWRITE_BYPASS_UNSET -1
 
-zend_class_entry *php_phongo_bulkwrite_ce;
+zend_class_entry* php_phongo_bulkwrite_ce;
 
 /* Extracts the "_id" field of a BSON document into a return value. */
-static void php_phongo_bulkwrite_extract_id(bson_t *doc, zval **return_value) /* {{{ */
+static void php_phongo_bulkwrite_extract_id(bson_t* doc, zval** return_value) /* {{{ */
 {
 	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-	zval *id = NULL;
+	zval*                 id    = NULL;
 
 	state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
@@ -58,12 +58,12 @@ cleanup:
 } /* }}} */
 
 /* Returns whether any top-level field names in the document contain a "$". */
-static inline bool php_phongo_bulkwrite_update_has_operators(bson_t *bupdate) /* {{{ */
+static inline bool php_phongo_bulkwrite_update_has_operators(bson_t* bupdate) /* {{{ */
 {
 	bson_iter_t iter;
 
 	if (bson_iter_init(&iter, bupdate)) {
-		while (bson_iter_next (&iter)) {
+		while (bson_iter_next(&iter)) {
 			if (strchr(bson_iter_key(&iter), '$')) {
 				return true;
 			}
@@ -75,10 +75,10 @@ static inline bool php_phongo_bulkwrite_update_has_operators(bson_t *bupdate) /*
 
 /* Appends a document field for the given opts document and key. Returns true on
  * success; otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_bulkwrite_opts_append_document(bson_t *opts, const char *opts_key, zval *zarr, const char *zarr_key TSRMLS_DC) /* {{{ */
+static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key TSRMLS_DC) /* {{{ */
 {
-	zval *value = php_array_fetch(zarr, zarr_key);
-	bson_t b = BSON_INITIALIZER;
+	zval*  value = php_array_fetch(zarr, zarr_key);
+	bson_t b     = BSON_INITIALIZER;
 
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" option to be array or object, %s given", zarr_key, zend_get_type_by_const(Z_TYPE_P(value)));
@@ -102,27 +102,27 @@ static bool php_phongo_bulkwrite_opts_append_document(bson_t *opts, const char *
 	return true;
 } /* }}} */
 
-#define PHONGO_BULKWRITE_APPEND_BOOL(opt, value) \
-	if (!BSON_APPEND_BOOL(boptions, (opt), (value))) { \
+#define PHONGO_BULKWRITE_APPEND_BOOL(opt, value)                                                                 \
+	if (!BSON_APPEND_BOOL(boptions, (opt), (value))) {                                                           \
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt)); \
-		return false; \
+		return false;                                                                                            \
 	}
 
-#define PHONGO_BULKWRITE_APPEND_INT32(opt, value) \
-	if (!BSON_APPEND_INT32(boptions, (opt), (value))) { \
+#define PHONGO_BULKWRITE_APPEND_INT32(opt, value)                                                                \
+	if (!BSON_APPEND_INT32(boptions, (opt), (value))) {                                                          \
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt)); \
-		return false; \
+		return false;                                                                                            \
 	}
 
-#define PHONGO_BULKWRITE_OPT_DOCUMENT(opt) \
-	if (zoptions && php_array_existsc(zoptions, (opt))) { \
+#define PHONGO_BULKWRITE_OPT_DOCUMENT(opt)                                                            \
+	if (zoptions && php_array_existsc(zoptions, (opt))) {                                             \
 		if (!php_phongo_bulkwrite_opts_append_document(boptions, (opt), zoptions, (opt) TSRMLS_CC)) { \
-			return false; \
-		} \
+			return false;                                                                             \
+		}                                                                                             \
 	}
 
 /* Applies options (including defaults) for an update operation. */
-static bool php_phongo_bulkwrite_update_apply_options(bson_t *boptions, zval *zoptions TSRMLS_DC)/* {{{ */
+static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zoptions TSRMLS_DC) /* {{{ */
 {
 	bool multi = false, upsert = false;
 
@@ -144,7 +144,7 @@ static bool php_phongo_bulkwrite_update_apply_options(bson_t *boptions, zval *zo
 } /* }}} */
 
 /* Applies options (including defaults) for an delete operation. */
-static bool php_phongo_bulkwrite_delete_apply_options(bson_t *boptions, zval *zoptions TSRMLS_DC)/* {{{ */
+static bool php_phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zoptions TSRMLS_DC) /* {{{ */
 {
 	int32_t limit = 0;
 
@@ -168,12 +168,13 @@ static bool php_phongo_bulkwrite_delete_apply_options(bson_t *boptions, zval *zo
    Constructs a new BulkWrite */
 static PHP_METHOD(BulkWrite, __construct)
 {
-	php_phongo_bulkwrite_t  *intern;
-	zend_error_handling      error_handling;
-	zval                    *options = NULL;
-	zend_bool                ordered = 1;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_bulkwrite_t* intern;
+	zend_error_handling     error_handling;
+	zval*                   options = NULL;
+	zend_bool               ordered = 1;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_BULKWRITE_OBJ_P(getThis());
@@ -188,9 +189,9 @@ static PHP_METHOD(BulkWrite, __construct)
 		ordered = php_array_fetchc_bool(options, "ordered");
 	}
 
-	intern->bulk = mongoc_bulk_operation_new(ordered);
+	intern->bulk    = mongoc_bulk_operation_new(ordered);
 	intern->ordered = ordered;
-	intern->bypass = PHONGO_BULKWRITE_BYPASS_UNSET;
+	intern->bypass  = PHONGO_BULKWRITE_BYPASS_UNSET;
 	intern->num_ops = 0;
 
 	if (options && php_array_existsc(options, "bypassDocumentValidation")) {
@@ -204,15 +205,14 @@ static PHP_METHOD(BulkWrite, __construct)
    Adds an insert operation to the BulkWrite */
 static PHP_METHOD(BulkWrite, insert)
 {
-	php_phongo_bulkwrite_t *intern;
-	zval                   *zdocument;
+	php_phongo_bulkwrite_t* intern;
+	zval*                   zdocument;
 	bson_t                  bdocument = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
-	bson_t                 *bson_out = NULL;
+	bson_t*                 bson_out   = NULL;
 	int                     bson_flags = PHONGO_BSON_ADD_ID;
-	bson_error_t            error = {0};
+	bson_error_t            error      = { 0 };
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
@@ -251,12 +251,13 @@ cleanup:
    Adds an update operation to the BulkWrite */
 static PHP_METHOD(BulkWrite, update)
 {
-	php_phongo_bulkwrite_t *intern;
-	zval                   *zquery, *zupdate, *zoptions = NULL;
+	php_phongo_bulkwrite_t* intern;
+	zval *                  zquery, *zupdate, *zoptions = NULL;
 	bson_t                  bquery = BSON_INITIALIZER, bupdate = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
-	bson_error_t            error = {0};
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	bson_error_t            error = { 0 };
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
@@ -316,12 +317,13 @@ cleanup:
    Adds a delete operation to the BulkWrite */
 static PHP_METHOD(BulkWrite, delete)
 {
-	php_phongo_bulkwrite_t *intern;
-	zval                   *zquery, *zoptions = NULL;
+	php_phongo_bulkwrite_t* intern;
+	zval *                  zquery, *zoptions = NULL;
 	bson_t                  bquery = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
-	bson_error_t            error = {0};
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	bson_error_t            error = { 0 };
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
@@ -362,9 +364,10 @@ cleanup:
    Returns the number of operations that have been added to the BulkWrite */
 static PHP_METHOD(BulkWrite, count)
 {
-	php_phongo_bulkwrite_t  *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_bulkwrite_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
@@ -399,22 +402,22 @@ ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_bulkwrite_me[] = {
-	PHP_ME(BulkWrite, __construct, ai_BulkWrite___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(BulkWrite, insert, ai_BulkWrite_insert, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(BulkWrite, update, ai_BulkWrite_update, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(BulkWrite, delete, ai_BulkWrite_delete, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(BulkWrite, count, ai_BulkWrite_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_BulkWrite_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	PHP_ME(BulkWrite, __construct, ai_BulkWrite___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+		PHP_ME(BulkWrite, insert, ai_BulkWrite_insert, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+			PHP_ME(BulkWrite, update, ai_BulkWrite_update, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+				PHP_ME(BulkWrite, delete, ai_BulkWrite_delete, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					PHP_ME(BulkWrite, count, ai_BulkWrite_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+						ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_BulkWrite_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+							PHP_FE_END
 };
 /* }}} */
 
 /* {{{ MongoDB\Driver\BulkWrite object handlers */
 static zend_object_handlers php_phongo_handler_bulkwrite;
 
-static void php_phongo_bulkwrite_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
+static void php_phongo_bulkwrite_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_bulkwrite_t *intern = Z_OBJ_BULKWRITE(object);
+	php_phongo_bulkwrite_t* intern = Z_OBJ_BULKWRITE(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -435,9 +438,9 @@ static void php_phongo_bulkwrite_free_object(phongo_free_object_arg *object TSRM
 #endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_bulkwrite_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_bulkwrite_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
-	php_phongo_bulkwrite_t *intern = NULL;
+	php_phongo_bulkwrite_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_bulkwrite_t, class_type);
 
@@ -451,7 +454,7 @@ static phongo_create_object_retval php_phongo_bulkwrite_create_object(zend_class
 #else
 	{
 		zend_object_value retval;
-		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_bulkwrite_free_object, NULL TSRMLS_CC);
+		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_bulkwrite_free_object, NULL TSRMLS_CC);
 		retval.handlers = &php_phongo_handler_bulkwrite;
 
 		return retval;
@@ -459,14 +462,13 @@ static phongo_create_object_retval php_phongo_bulkwrite_create_object(zend_class
 #endif
 } /* }}} */
 
-static HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_bulkwrite_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
-	zval                      retval = ZVAL_STATIC_INIT;
-	php_phongo_bulkwrite_t   *intern = NULL;
-
+	zval                    retval = ZVAL_STATIC_INIT;
+	php_phongo_bulkwrite_t* intern = NULL;
 
 	*is_temp = 1;
-	intern = Z_BULKWRITE_OBJ_P(object);
+	intern   = Z_BULKWRITE_OBJ_P(object);
 	array_init(&retval);
 
 	if (intern->database) {
@@ -499,7 +501,7 @@ static HashTable *php_phongo_bulkwrite_get_debug_info(zval *object, int *is_temp
 		php_phongo_write_concern_to_zval(&write_concern, mongoc_bulk_operation_get_write_concern(intern->bulk));
 		ADD_ASSOC_ZVAL_EX(&retval, "write_concern", &write_concern);
 #else
-		zval *write_concern = NULL;
+		zval* write_concern = NULL;
 		MAKE_STD_ZVAL(write_concern);
 
 		php_phongo_write_concern_to_zval(write_concern, mongoc_bulk_operation_get_write_concern(intern->bulk));
@@ -518,7 +520,7 @@ void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "BulkWrite", php_phongo_bulkwrite_me);
-	php_phongo_bulkwrite_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_bulkwrite_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_bulkwrite_ce->create_object = php_phongo_bulkwrite_create_object;
 	PHONGO_CE_FINAL(php_phongo_bulkwrite_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_bulkwrite_ce);
@@ -527,7 +529,7 @@ void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_bulkwrite.get_debug_info = php_phongo_bulkwrite_get_debug_info;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_bulkwrite.free_obj = php_phongo_bulkwrite_free_object;
-	php_phongo_handler_bulkwrite.offset = XtOffsetOf(php_phongo_bulkwrite_t, std);
+	php_phongo_handler_bulkwrite.offset   = XtOffsetOf(php_phongo_bulkwrite_t, std);
 #endif
 
 	zend_class_implements(php_phongo_bulkwrite_ce TSRMLS_CC, 1, spl_ce_Countable);

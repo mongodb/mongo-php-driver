@@ -15,28 +15,28 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/standard/php_var.h>
 #if PHP_VERSION_ID >= 70000
-# include <zend_smart_str.h>
+#include <zend_smart_str.h>
 #else
-# include <ext/standard/php_smart_str.h>
+#include <ext/standard/php_smart_str.h>
 #endif
 
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry *php_phongo_minkey_ce;
+zend_class_entry* php_phongo_minkey_ce;
 
 /* {{{ proto void MongoDB\BSON\MinKey::__set_state(array $properties)
 */
 static PHP_METHOD(MinKey, __set_state)
 {
-	zval *array;
+	zval* array;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
 		RETURN_FALSE;
@@ -68,9 +68,9 @@ static PHP_METHOD(MinKey, serialize)
 */
 static PHP_METHOD(MinKey, unserialize)
 {
-	zend_error_handling     error_handling;
-	char                   *serialized;
-	phongo_zpp_char_len     serialized_len;
+	zend_error_handling error_handling;
+	char*               serialized;
+	phongo_zpp_char_len serialized_len;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 
@@ -94,20 +94,20 @@ ZEND_BEGIN_ARG_INFO_EX(ai_MinKey_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_minkey_me[] = {
-	PHP_ME(MinKey, __set_state, ai_MinKey___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-	PHP_ME(MinKey, jsonSerialize, ai_MinKey_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(MinKey, serialize, ai_MinKey_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(MinKey, unserialize, ai_MinKey_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	PHP_ME(MinKey, __set_state, ai_MinKey___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+		PHP_ME(MinKey, jsonSerialize, ai_MinKey_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+			PHP_ME(MinKey, serialize, ai_MinKey_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+				PHP_ME(MinKey, unserialize, ai_MinKey_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					PHP_FE_END
 };
 /* }}} */
 
 /* {{{ MongoDB\BSON\MinKey object handlers */
 static zend_object_handlers php_phongo_handler_minkey;
 
-static void php_phongo_minkey_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
+static void php_phongo_minkey_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_minkey_t *intern = Z_OBJ_MINKEY(object);
+	php_phongo_minkey_t* intern = Z_OBJ_MINKEY(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -116,9 +116,9 @@ static void php_phongo_minkey_free_object(phongo_free_object_arg *object TSRMLS_
 #endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_minkey_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_minkey_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
-	php_phongo_minkey_t *intern = NULL;
+	php_phongo_minkey_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_minkey_t, class_type);
 
@@ -132,7 +132,7 @@ static phongo_create_object_retval php_phongo_minkey_create_object(zend_class_en
 #else
 	{
 		zend_object_value retval;
-		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_minkey_free_object, NULL TSRMLS_CC);
+		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_minkey_free_object, NULL TSRMLS_CC);
 		retval.handlers = &php_phongo_handler_minkey;
 
 		return retval;
@@ -146,7 +146,7 @@ void php_phongo_minkey_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MinKey", php_phongo_minkey_me);
-	php_phongo_minkey_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_minkey_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_minkey_ce->create_object = php_phongo_minkey_create_object;
 	PHONGO_CE_FINAL(php_phongo_minkey_ce);
 
@@ -158,7 +158,7 @@ void php_phongo_minkey_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	memcpy(&php_phongo_handler_minkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_minkey.free_obj = php_phongo_minkey_free_object;
-	php_phongo_handler_minkey.offset = XtOffsetOf(php_phongo_minkey_t, std);
+	php_phongo_handler_minkey.offset   = XtOffsetOf(php_phongo_minkey_t, std);
 #endif
 } /* }}} */
 

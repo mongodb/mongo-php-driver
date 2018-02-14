@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -41,7 +41,7 @@
  * Operation methods do not take socket-level options (e.g. socketTimeoutMS).
  * Those options should be specified during construction.
  */
-zend_class_entry *php_phongo_manager_ce;
+zend_class_entry* php_phongo_manager_ce;
 
 /* Checks if driverOptions contains a stream context resource in the "context"
  * key and incorporates any of its SSL options into the base array that did not
@@ -50,17 +50,17 @@ zend_class_entry *php_phongo_manager_ce;
  *
  * This handles the merging of any legacy SSL context options and also makes
  * driverOptions suitable for serialization by removing the resource zval. */
-static bool php_phongo_manager_merge_context_options(zval *zdriverOptions TSRMLS_DC) /* {{{ */
+static bool php_phongo_manager_merge_context_options(zval* zdriverOptions TSRMLS_DC) /* {{{ */
 {
-	php_stream_context *context;
-	zval *zcontext, *zcontextOptions;
+	php_stream_context* context;
+	zval *              zcontext, *zcontextOptions;
 
 	if (!php_array_existsc(zdriverOptions, "context")) {
 		return true;
 	}
 
 	zcontext = php_array_fetchc(zdriverOptions, "context");
-	context = php_stream_context_from_zval(zcontext, 1);
+	context  = php_stream_context_from_zval(zcontext, 1);
 
 	if (!context) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"context\" driver option is not a valid Stream-Context resource");
@@ -83,8 +83,8 @@ static bool php_phongo_manager_merge_context_options(zval *zdriverOptions TSRMLS
 	zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), zval_add_ref, 0);
 #else
 	{
-		zval *tmp;
-		zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), (void (*)(void *pData)) zval_add_ref, (void *) &tmp, sizeof(zval *), 0);
+		zval* tmp;
+		zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), (void (*)(void* pData)) zval_add_ref, (void*) &tmp, sizeof(zval*), 0);
 	}
 #endif
 
@@ -97,9 +97,9 @@ static bool php_phongo_manager_merge_context_options(zval *zdriverOptions TSRMLS
  *
  * Note: URI options are case-insensitive, so we must iterate through the
  * HashTable in order to detect options. */
-static void php_phongo_manager_prep_authmechanismproperties(zval *properties TSRMLS_DC) /* {{{ */
+static void php_phongo_manager_prep_authmechanismproperties(zval* properties TSRMLS_DC) /* {{{ */
 {
-	HashTable *ht_data;
+	HashTable* ht_data;
 
 	if (Z_TYPE_P(properties) != IS_ARRAY && Z_TYPE_P(properties) != IS_OBJECT) {
 		return;
@@ -109,11 +109,12 @@ static void php_phongo_manager_prep_authmechanismproperties(zval *properties TSR
 
 #if PHP_VERSION_ID >= 70000
 	{
-		zend_string *string_key = NULL;
-		zend_ulong   num_key = 0;
-		zval        *property;
+		zend_string* string_key = NULL;
+		zend_ulong   num_key    = 0;
+		zval*        property;
 
-		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, property) {
+		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, property)
+		{
 			if (!string_key) {
 				continue;
 			}
@@ -126,19 +127,22 @@ static void php_phongo_manager_prep_authmechanismproperties(zval *properties TSR
 					ZVAL_NEW_STR(property, zend_string_init(ZEND_STRL("true"), 0));
 				}
 			}
-		} ZEND_HASH_FOREACH_END();
+		}
+		ZEND_HASH_FOREACH_END();
 	}
 #else
 	{
-		HashPosition   pos;
-		zval         **property;
+		HashPosition pos;
+		zval**       property;
 
-		for (zend_hash_internal_pointer_reset_ex(ht_data, &pos);
-		     zend_hash_get_current_data_ex(ht_data, (void **) &property, &pos) == SUCCESS;
-		     zend_hash_move_forward_ex(ht_data, &pos)) {
-			char  *string_key = NULL;
-			uint   string_key_len = 0;
-			ulong  num_key = 0;
+		for (
+			zend_hash_internal_pointer_reset_ex(ht_data, &pos);
+			zend_hash_get_current_data_ex(ht_data, (void**) &property, &pos) == SUCCESS;
+			zend_hash_move_forward_ex(ht_data, &pos)) {
+
+			char* string_key     = NULL;
+			uint  string_key_len = 0;
+			ulong num_key        = 0;
 
 			if (HASH_KEY_IS_STRING != zend_hash_get_current_key_ex(ht_data, &string_key, &string_key_len, &num_key, 0, &pos)) {
 				continue;
@@ -148,14 +152,14 @@ static void php_phongo_manager_prep_authmechanismproperties(zval *properties TSR
 			if (!strcasecmp(string_key, "CANONICALIZE_HOST_NAME")) {
 				if (Z_TYPE_PP(property) != IS_STRING && zend_is_true(*property)) {
 					SEPARATE_ZVAL_IF_NOT_REF(property);
-					Z_TYPE_PP(property) = IS_STRING;
-					Z_STRVAL_PP(property) = estrndup("true", sizeof("true")-1);
-					Z_STRLEN_PP(property) = sizeof("true")-1;
+					Z_TYPE_PP(property)   = IS_STRING;
+					Z_STRVAL_PP(property) = estrndup("true", sizeof("true") - 1);
+					Z_STRLEN_PP(property) = sizeof("true") - 1;
 				}
 			}
 		}
 	}
-#endif
+#endif /* PHP_VERSION_ID >= 70000 */
 
 	return;
 } /* }}} */
@@ -172,9 +176,9 @@ static void php_phongo_manager_prep_authmechanismproperties(zval *properties TSR
  *
  * Note: URI options are case-insensitive, so we must iterate through the
  * HashTable in order to detect options. */
-static void php_phongo_manager_prep_uri_options(zval *options TSRMLS_DC) /* {{{ */
+static void php_phongo_manager_prep_uri_options(zval* options TSRMLS_DC) /* {{{ */
 {
-	HashTable     *ht_data;
+	HashTable* ht_data;
 
 	if (Z_TYPE_P(options) != IS_ARRAY) {
 		return;
@@ -184,11 +188,12 @@ static void php_phongo_manager_prep_uri_options(zval *options TSRMLS_DC) /* {{{ 
 
 #if PHP_VERSION_ID >= 70000
 	{
-		zend_string *string_key = NULL;
-		zend_ulong   num_key = 0;
-		zval        *option;
+		zend_string* string_key = NULL;
+		zend_ulong   num_key    = 0;
+		zval*        option;
 
-		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, option) {
+		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, option)
+		{
 			if (!string_key) {
 				continue;
 			}
@@ -206,19 +211,22 @@ static void php_phongo_manager_prep_uri_options(zval *options TSRMLS_DC) /* {{{ 
 				php_phongo_manager_prep_authmechanismproperties(option TSRMLS_CC);
 				continue;
 			}
-		} ZEND_HASH_FOREACH_END();
+		}
+		ZEND_HASH_FOREACH_END();
 	}
 #else
 	{
-		HashPosition   pos;
-		zval         **option;
+		HashPosition pos;
+		zval**       option;
 
-		for (zend_hash_internal_pointer_reset_ex(ht_data, &pos);
-		     zend_hash_get_current_data_ex(ht_data, (void **) &option, &pos) == SUCCESS;
-		     zend_hash_move_forward_ex(ht_data, &pos)) {
-			char  *string_key = NULL;
-			uint   string_key_len = 0;
-			ulong  num_key = 0;
+		for (
+			zend_hash_internal_pointer_reset_ex(ht_data, &pos);
+			zend_hash_get_current_data_ex(ht_data, (void**) &option, &pos) == SUCCESS;
+			zend_hash_move_forward_ex(ht_data, &pos)) {
+
+			char* string_key     = NULL;
+			uint  string_key_len = 0;
+			ulong num_key        = 0;
 
 			if (HASH_KEY_IS_STRING != zend_hash_get_current_key_ex(ht_data, &string_key, &string_key_len, &num_key, 0, &pos)) {
 				continue;
@@ -249,11 +257,11 @@ static void php_phongo_manager_prep_uri_options(zval *options TSRMLS_DC) /* {{{ 
  *
  * On success, server_id will be set and the function will return true;
  * otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_manager_select_server(bool for_writes, zval *zreadPreference, mongoc_client_t *client, uint32_t *server_id TSRMLS_DC) /* {{{ */
+static bool php_phongo_manager_select_server(bool for_writes, zval* zreadPreference, mongoc_client_t* client, uint32_t* server_id TSRMLS_DC) /* {{{ */
 {
-	const mongoc_read_prefs_t *read_preference = NULL;
-	mongoc_server_description_t *selected_server;
-	bson_error_t error;
+	const mongoc_read_prefs_t*   read_preference = NULL;
+	mongoc_server_description_t* selected_server;
+	bson_error_t                 error;
 
 	if (!for_writes) {
 		read_preference = zreadPreference ? phongo_read_preference_from_zval(zreadPreference TSRMLS_CC) : mongoc_client_get_read_prefs(client);
@@ -280,13 +288,15 @@ static bool php_phongo_manager_select_server(bool for_writes, zval *zreadPrefere
    Constructs a new Manager */
 static PHP_METHOD(Manager, __construct)
 {
-	php_phongo_manager_t     *intern;
-	zend_error_handling       error_handling;
-	char                     *uri_string = NULL;
-	phongo_zpp_char_len       uri_string_len = 0;
-	zval                     *options = NULL;
-	zval                     *driverOptions = NULL;
-	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_manager_t* intern;
+	zend_error_handling   error_handling;
+	char*                 uri_string     = NULL;
+	phongo_zpp_char_len   uri_string_len = 0;
+	zval*                 options        = NULL;
+	zval*                 driverOptions  = NULL;
+	SUPPRESS_UNUSED_WARNING(return_value)
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 
@@ -321,14 +331,14 @@ static PHP_METHOD(Manager, __construct)
    Execute a Command */
 static PHP_METHOD(Manager, executeCommand)
 {
-	php_phongo_manager_t     *intern;
-	char                     *db;
-	phongo_zpp_char_len       db_len;
-	zval                     *command;
-	zval                     *options = NULL;
-	bool                      free_options = false;
-	zval                     *zreadPreference = NULL;
-	uint32_t                  server_id = 0;
+	php_phongo_manager_t* intern;
+	char*                 db;
+	phongo_zpp_char_len   db_len;
+	zval*                 command;
+	zval*                 options         = NULL;
+	bool                  free_options    = false;
+	zval*                 zreadPreference = NULL;
+	uint32_t              server_id       = 0;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -362,13 +372,13 @@ cleanup:
    Execute a ReadCommand */
 static PHP_METHOD(Manager, executeReadCommand)
 {
-	php_phongo_manager_t     *intern;
-	char                     *db;
-	phongo_zpp_char_len       db_len;
-	zval                     *command;
-	zval                     *options = NULL;
-	zval                     *zreadPreference = NULL;
-	uint32_t                  server_id = 0;
+	php_phongo_manager_t* intern;
+	char*                 db;
+	phongo_zpp_char_len   db_len;
+	zval*                 command;
+	zval*                 options         = NULL;
+	zval*                 zreadPreference = NULL;
+	uint32_t              server_id       = 0;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -395,12 +405,12 @@ static PHP_METHOD(Manager, executeReadCommand)
    Execute a WriteCommand */
 static PHP_METHOD(Manager, executeWriteCommand)
 {
-	php_phongo_manager_t     *intern;
-	char                     *db;
-	phongo_zpp_char_len       db_len;
-	zval                     *command;
-	zval                     *options = NULL;
-	uint32_t                  server_id = 0;
+	php_phongo_manager_t* intern;
+	char*                 db;
+	phongo_zpp_char_len   db_len;
+	zval*                 command;
+	zval*                 options   = NULL;
+	uint32_t              server_id = 0;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -422,12 +432,12 @@ static PHP_METHOD(Manager, executeWriteCommand)
    Execute a ReadWriteCommand */
 static PHP_METHOD(Manager, executeReadWriteCommand)
 {
-	php_phongo_manager_t     *intern;
-	char                     *db;
-	phongo_zpp_char_len       db_len;
-	zval                     *command;
-	zval                     *options = NULL;
-	uint32_t                  server_id = 0;
+	php_phongo_manager_t* intern;
+	char*                 db;
+	phongo_zpp_char_len   db_len;
+	zval*                 command;
+	zval*                 options   = NULL;
+	uint32_t              server_id = 0;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -449,14 +459,14 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
    Execute a Query */
 static PHP_METHOD(Manager, executeQuery)
 {
-	php_phongo_manager_t     *intern;
-	char                     *namespace;
-	phongo_zpp_char_len       namespace_len;
-	zval                     *query;
-	zval                     *options = NULL;
-	bool                      free_options = false;
-	zval                     *zreadPreference = NULL;
-	uint32_t                  server_id = 0;
+	php_phongo_manager_t* intern;
+	char* namespace;
+	phongo_zpp_char_len namespace_len;
+	zval*               query;
+	zval*               options         = NULL;
+	bool                free_options    = false;
+	zval*               zreadPreference = NULL;
+	uint32_t            server_id       = 0;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -490,14 +500,14 @@ cleanup:
    Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
 static PHP_METHOD(Manager, executeBulkWrite)
 {
-	php_phongo_manager_t      *intern;
-	char                      *namespace;
-	phongo_zpp_char_len        namespace_len;
-	zval                      *zbulk;
-	php_phongo_bulkwrite_t    *bulk;
-	zval                      *options = NULL;
-	bool                       free_options = false;
-	uint32_t                   server_id = 0;
+	php_phongo_manager_t* intern;
+	char* namespace;
+	phongo_zpp_char_len     namespace_len;
+	zval*                   zbulk;
+	php_phongo_bulkwrite_t* bulk;
+	zval*                   options      = NULL;
+	bool                    free_options = false;
+	uint32_t                server_id    = 0;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -506,7 +516,7 @@ static PHP_METHOD(Manager, executeBulkWrite)
 	}
 
 	intern = Z_MANAGER_OBJ_P(getThis());
-	bulk = Z_BULKWRITE_OBJ_P(zbulk);
+	bulk   = Z_BULKWRITE_OBJ_P(zbulk);
 
 	options = php_phongo_prep_legacy_option(options, "writeConcern", &free_options TSRMLS_CC);
 
@@ -527,7 +537,7 @@ cleanup:
    Returns the ReadConcern associated with this Manager */
 static PHP_METHOD(Manager, getReadConcern)
 {
-	php_phongo_manager_t *intern;
+	php_phongo_manager_t* intern;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -546,7 +556,7 @@ static PHP_METHOD(Manager, getReadConcern)
    Returns the ReadPreference associated with this Manager */
 static PHP_METHOD(Manager, getReadPreference)
 {
-	php_phongo_manager_t *intern;
+	php_phongo_manager_t* intern;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -565,11 +575,11 @@ static PHP_METHOD(Manager, getReadPreference)
    Returns the Servers associated with this Manager */
 static PHP_METHOD(Manager, getServers)
 {
-	php_phongo_manager_t         *intern;
-	mongoc_server_description_t **sds;
+	php_phongo_manager_t*         intern;
+	mongoc_server_description_t** sds;
 	size_t                        i, n = 0;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -587,7 +597,7 @@ static PHP_METHOD(Manager, getServers)
 		phongo_server_init(&obj, intern->client, mongoc_server_description_id(sds[i]) TSRMLS_CC);
 		add_next_index_zval(return_value, &obj);
 #else
-		zval *obj = NULL;
+		zval* obj = NULL;
 
 		MAKE_STD_ZVAL(obj);
 		phongo_server_init(obj, intern->client, mongoc_server_description_id(sds[i]) TSRMLS_CC);
@@ -602,7 +612,7 @@ static PHP_METHOD(Manager, getServers)
    Returns the WriteConcern associated with this Manager */
 static PHP_METHOD(Manager, getWriteConcern)
 {
-	php_phongo_manager_t *intern;
+	php_phongo_manager_t* intern;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
@@ -621,11 +631,11 @@ static PHP_METHOD(Manager, getWriteConcern)
    Returns a suitable Server for the given ReadPreference */
 static PHP_METHOD(Manager, selectServer)
 {
-	php_phongo_manager_t         *intern;
-	zval                         *zreadPreference = NULL;
-	uint32_t                      server_id = 0;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_manager_t* intern;
+	zval*                 zreadPreference = NULL;
+	uint32_t              server_id       = 0;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -645,13 +655,13 @@ static PHP_METHOD(Manager, selectServer)
    Returns a new client session */
 static PHP_METHOD(Manager, startSession)
 {
-	php_phongo_manager_t    *intern;
-	zval                    *options = NULL;
-	mongoc_session_opt_t    *cs_opts = NULL;
-	mongoc_client_session_t *cs;
+	php_phongo_manager_t*    intern;
+	zval*                    options = NULL;
+	mongoc_session_opt_t*    cs_opts = NULL;
+	mongoc_client_session_t* cs;
 	bson_error_t             error;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -720,30 +730,30 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_manager_me[] = {
-	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeReadCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeWriteCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeReadWriteCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, getReadConcern, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, getReadPreference, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, getServers, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, getWriteConcern, ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, selectServer, ai_Manager_selectServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Manager, startSession, ai_Manager_startSession, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Manager_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+		PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+			PHP_ME(Manager, executeReadCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+				PHP_ME(Manager, executeWriteCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					PHP_ME(Manager, executeReadWriteCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+						PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+							PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+								PHP_ME(Manager, getReadConcern, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+									PHP_ME(Manager, getReadPreference, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+										PHP_ME(Manager, getServers, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+											PHP_ME(Manager, getWriteConcern, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+												PHP_ME(Manager, selectServer, ai_Manager_selectServer, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+													PHP_ME(Manager, startSession, ai_Manager_startSession, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+														ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+															PHP_FE_END
 };
 /* }}} */
 
 /* {{{ MongoDB\Driver\Manager object handlers */
 static zend_object_handlers php_phongo_handler_manager;
 
-static void php_phongo_manager_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
+static void php_phongo_manager_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_manager_t *intern = Z_OBJ_MANAGER(object);
+	php_phongo_manager_t* intern = Z_OBJ_MANAGER(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -757,9 +767,9 @@ static void php_phongo_manager_free_object(phongo_free_object_arg *object TSRMLS
 #endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_manager_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_manager_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
-	php_phongo_manager_t *intern = NULL;
+	php_phongo_manager_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_manager_t, class_type);
 
@@ -773,7 +783,7 @@ static phongo_create_object_retval php_phongo_manager_create_object(zend_class_e
 #else
 	{
 		zend_object_value retval;
-		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_manager_free_object, NULL TSRMLS_CC);
+		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_manager_free_object, NULL TSRMLS_CC);
 		retval.handlers = &php_phongo_handler_manager;
 
 		return retval;
@@ -781,22 +791,20 @@ static phongo_create_object_retval php_phongo_manager_create_object(zend_class_e
 #endif
 } /* }}} */
 
-static HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_manager_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
-	php_phongo_manager_t         *intern;
-	mongoc_server_description_t **sds;
+	php_phongo_manager_t*         intern;
+	mongoc_server_description_t** sds;
 	size_t                        i, n = 0;
 	zval                          retval = ZVAL_STATIC_INIT;
 #if PHP_VERSION_ID >= 70000
-	zval                          cluster;
+	zval cluster;
 #else
-	zval                         *cluster = NULL;
+	zval* cluster = NULL;
 #endif
 
-
 	*is_temp = 1;
-	intern = Z_MANAGER_OBJ_P(object);
-
+	intern   = Z_MANAGER_OBJ_P(object);
 
 	array_init_size(&retval, 2);
 
@@ -820,7 +828,7 @@ static HashTable *php_phongo_manager_get_debug_info(zval *object, int *is_temp T
 	array_init_size(cluster, n);
 
 	for (i = 0; i < n; i++) {
-		zval *obj = NULL;
+		zval* obj = NULL;
 
 		MAKE_STD_ZVAL(obj);
 		php_phongo_server_to_zval(obj, sds[i]);
@@ -841,7 +849,7 @@ void php_phongo_manager_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Manager", php_phongo_manager_me);
-	php_phongo_manager_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_manager_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_manager_ce->create_object = php_phongo_manager_create_object;
 	PHONGO_CE_FINAL(php_phongo_manager_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_manager_ce);
@@ -850,7 +858,7 @@ void php_phongo_manager_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_manager.get_debug_info = php_phongo_manager_get_debug_info;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_manager.free_obj = php_phongo_manager_free_object;
-	php_phongo_handler_manager.offset = XtOffsetOf(php_phongo_manager_t, std);
+	php_phongo_handler_manager.offset   = XtOffsetOf(php_phongo_manager_t, std);
 #endif
 } /* }}} */
 

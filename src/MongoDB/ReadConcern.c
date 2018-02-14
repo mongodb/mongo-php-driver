@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -24,20 +24,20 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry *php_phongo_readconcern_ce;
+zend_class_entry* php_phongo_readconcern_ce;
 
 /* {{{ proto void MongoDB\Driver\ReadConcern::__construct([string $level])
    Constructs a new ReadConcern */
 static PHP_METHOD(ReadConcern, __construct)
 {
-	php_phongo_readconcern_t *intern;
+	php_phongo_readconcern_t* intern;
 	zend_error_handling       error_handling;
-	char                     *level = NULL;
+	char*                     level     = NULL;
 	phongo_zpp_char_len       level_len = 0;
 
-
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_READCONCERN_OBJ_P(getThis());
@@ -47,7 +47,6 @@ static PHP_METHOD(ReadConcern, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
 
 	intern->read_concern = mongoc_read_concern_new();
 
@@ -60,9 +59,10 @@ static PHP_METHOD(ReadConcern, __construct)
    Returns the ReadConcern "level" option */
 static PHP_METHOD(ReadConcern, getLevel)
 {
-	php_phongo_readconcern_t *intern;
-	const char *level;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_readconcern_t* intern;
+	const char*               level;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READCONCERN_OBJ_P(getThis());
 
@@ -84,8 +84,9 @@ static PHP_METHOD(ReadConcern, getLevel)
    without a level or from a Manager with no read concern URI options). */
 static PHP_METHOD(ReadConcern, isDefault)
 {
-	php_phongo_readconcern_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_readconcern_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READCONCERN_OBJ_P(getThis());
 
@@ -100,7 +101,7 @@ static PHP_METHOD(ReadConcern, isDefault)
 */
 static PHP_METHOD(ReadConcern, bsonSerialize)
 {
-	const mongoc_read_concern_t *read_concern = phongo_read_concern_from_zval(getThis() TSRMLS_CC);
+	const mongoc_read_concern_t* read_concern = phongo_read_concern_from_zval(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -119,20 +120,20 @@ ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_readconcern_me[] = {
-	PHP_ME(ReadConcern, __construct, ai_ReadConcern___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ReadConcern, getLevel, ai_ReadConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ReadConcern, isDefault, ai_ReadConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ReadConcern, bsonSerialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	PHP_ME(ReadConcern, __construct, ai_ReadConcern___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+		PHP_ME(ReadConcern, getLevel, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+			PHP_ME(ReadConcern, isDefault, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+				PHP_ME(ReadConcern, bsonSerialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					PHP_FE_END
 };
 /* }}} */
 
 /* {{{ MongoDB\Driver\ReadConcern object handlers */
 static zend_object_handlers php_phongo_handler_readconcern;
 
-static void php_phongo_readconcern_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
+static void php_phongo_readconcern_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_readconcern_t *intern = Z_OBJ_READCONCERN(object);
+	php_phongo_readconcern_t* intern = Z_OBJ_READCONCERN(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -145,9 +146,9 @@ static void php_phongo_readconcern_free_object(phongo_free_object_arg *object TS
 #endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_readconcern_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_readconcern_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
-	php_phongo_readconcern_t *intern = NULL;
+	php_phongo_readconcern_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_readconcern_t, class_type);
 
@@ -161,7 +162,7 @@ static phongo_create_object_retval php_phongo_readconcern_create_object(zend_cla
 #else
 	{
 		zend_object_value retval;
-		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_readconcern_free_object, NULL TSRMLS_CC);
+		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_readconcern_free_object, NULL TSRMLS_CC);
 		retval.handlers = &php_phongo_handler_readconcern;
 
 		return retval;
@@ -169,11 +170,10 @@ static phongo_create_object_retval php_phongo_readconcern_create_object(zend_cla
 #endif
 } /* }}} */
 
-static HashTable *php_phongo_readconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_readconcern_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
-	zval                         retval = ZVAL_STATIC_INIT;
-	const mongoc_read_concern_t *read_concern = phongo_read_concern_from_zval(object TSRMLS_CC);
-
+	zval                         retval       = ZVAL_STATIC_INIT;
+	const mongoc_read_concern_t* read_concern = phongo_read_concern_from_zval(object TSRMLS_CC);
 
 	*is_temp = 1;
 	php_phongo_read_concern_to_zval(&retval, read_concern);
@@ -187,7 +187,7 @@ void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ReadConcern", php_phongo_readconcern_me);
-	php_phongo_readconcern_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_readconcern_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_readconcern_ce->create_object = php_phongo_readconcern_create_object;
 	PHONGO_CE_FINAL(php_phongo_readconcern_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_readconcern_ce);
@@ -198,7 +198,7 @@ void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_readconcern.get_debug_info = php_phongo_readconcern_get_debug_info;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_readconcern.free_obj = php_phongo_readconcern_free_object;
-	php_phongo_handler_readconcern.offset = XtOffsetOf(php_phongo_readconcern_t, std);
+	php_phongo_handler_readconcern.offset   = XtOffsetOf(php_phongo_readconcern_t, std);
 #endif
 
 	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("LOCAL"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_LOCAL) TSRMLS_CC);

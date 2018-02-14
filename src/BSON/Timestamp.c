@@ -15,26 +15,26 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/standard/php_var.h>
 #if PHP_VERSION_ID >= 70000
-# include <zend_smart_str.h>
+#include <zend_smart_str.h>
 #else
-# include <ext/standard/php_smart_str.h>
+#include <ext/standard/php_smart_str.h>
 #endif
 
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry *php_phongo_timestamp_ce;
+zend_class_entry* php_phongo_timestamp_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, int64_t increment, int64_t timestamp TSRMLS_DC) /* {{{ */
+static bool php_phongo_timestamp_init(php_phongo_timestamp_t* intern, int64_t increment, int64_t timestamp TSRMLS_DC) /* {{{ */
 {
 	if (increment < 0 || increment > UINT32_MAX) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected increment to be an unsigned 32-bit integer, %" PHONGO_LONG_FORMAT " given", increment);
@@ -46,8 +46,8 @@ static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, int64_t in
 		return false;
 	}
 
-	intern->increment = (uint32_t) increment;
-	intern->timestamp = (uint32_t) timestamp;
+	intern->increment   = (uint32_t) increment;
+	intern->timestamp   = (uint32_t) timestamp;
 	intern->initialized = true;
 
 	return true;
@@ -55,10 +55,10 @@ static bool php_phongo_timestamp_init(php_phongo_timestamp_t *intern, int64_t in
 
 /* Initialize the object from numeric strings and return whether it was
  * successful. An exception will be thrown on error. */
-static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t *intern, const char *s_increment, phongo_zpp_char_len s_increment_len, const char *s_timestamp, phongo_zpp_char_len s_timestamp_len TSRMLS_DC) /* {{{ */
+static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t* intern, const char* s_increment, phongo_zpp_char_len s_increment_len, const char* s_timestamp, phongo_zpp_char_len s_timestamp_len TSRMLS_DC) /* {{{ */
 {
 	int64_t increment, timestamp;
-	char *endptr = NULL;
+	char*   endptr = NULL;
 
 	errno = 0;
 
@@ -72,14 +72,14 @@ static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t *intern
 
 	increment = bson_ascii_strtoll(s_increment, &endptr, 10);
 
-	if (errno || (endptr && endptr != ((const char *)s_increment + s_increment_len))) {
+	if (errno || (endptr && endptr != ((const char*) s_increment + s_increment_len))) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer increment for %s initialization", s_increment, ZSTR_VAL(php_phongo_timestamp_ce->name));
 		return false;
 	}
 
 	timestamp = bson_ascii_strtoll(s_timestamp, &endptr, 10);
 
-	if (errno || (endptr && endptr != ((const char *)s_timestamp + s_timestamp_len))) {
+	if (errno || (endptr && endptr != ((const char*) s_timestamp + s_timestamp_len))) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer timestamp for %s initialization", s_timestamp, ZSTR_VAL(php_phongo_timestamp_ce->name));
 		return false;
 	}
@@ -89,28 +89,32 @@ static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t *intern
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, HashTable *props TSRMLS_DC) /* {{{ */
+static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t* intern, HashTable* props TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
 	zval *increment, *timestamp;
 
-	if ((increment = zend_hash_str_find(props, "increment", sizeof("increment")-1)) && Z_TYPE_P(increment) == IS_LONG &&
-	    (timestamp = zend_hash_str_find(props, "timestamp", sizeof("timestamp")-1)) && Z_TYPE_P(timestamp) == IS_LONG) {
+	if ((increment = zend_hash_str_find(props, "increment", sizeof("increment") - 1)) && Z_TYPE_P(increment) == IS_LONG &&
+		(timestamp = zend_hash_str_find(props, "timestamp", sizeof("timestamp") - 1)) && Z_TYPE_P(timestamp) == IS_LONG) {
+
 		return php_phongo_timestamp_init(intern, Z_LVAL_P(increment), Z_LVAL_P(timestamp) TSRMLS_CC);
 	}
-	if ((increment = zend_hash_str_find(props, "increment", sizeof("increment")-1)) && Z_TYPE_P(increment) == IS_STRING &&
-	    (timestamp = zend_hash_str_find(props, "timestamp", sizeof("timestamp")-1)) && Z_TYPE_P(timestamp) == IS_STRING) {
+	if ((increment = zend_hash_str_find(props, "increment", sizeof("increment") - 1)) && Z_TYPE_P(increment) == IS_STRING &&
+		(timestamp = zend_hash_str_find(props, "timestamp", sizeof("timestamp") - 1)) && Z_TYPE_P(timestamp) == IS_STRING) {
+
 		return php_phongo_timestamp_init_from_string(intern, Z_STRVAL_P(increment), Z_STRLEN_P(increment), Z_STRVAL_P(timestamp), Z_STRLEN_P(timestamp) TSRMLS_CC);
 	}
 #else
 	zval **increment, **timestamp;
 
 	if (zend_hash_find(props, "increment", sizeof("increment"), (void**) &increment) == SUCCESS && Z_TYPE_PP(increment) == IS_LONG &&
-	    zend_hash_find(props, "timestamp", sizeof("timestamp"), (void**) &timestamp) == SUCCESS && Z_TYPE_PP(timestamp) == IS_LONG) {
+		zend_hash_find(props, "timestamp", sizeof("timestamp"), (void**) &timestamp) == SUCCESS && Z_TYPE_PP(timestamp) == IS_LONG) {
+
 		return php_phongo_timestamp_init(intern, Z_LVAL_PP(increment), Z_LVAL_PP(timestamp) TSRMLS_CC);
 	}
 	if (zend_hash_find(props, "increment", sizeof("increment"), (void**) &increment) == SUCCESS && Z_TYPE_PP(increment) == IS_STRING &&
-	    zend_hash_find(props, "timestamp", sizeof("timestamp"), (void**) &timestamp) == SUCCESS && Z_TYPE_PP(timestamp) == IS_STRING) {
+		zend_hash_find(props, "timestamp", sizeof("timestamp"), (void**) &timestamp) == SUCCESS && Z_TYPE_PP(timestamp) == IS_STRING) {
+
 		return php_phongo_timestamp_init_from_string(intern, Z_STRVAL_PP(increment), Z_STRLEN_PP(increment), Z_STRVAL_PP(timestamp), Z_STRLEN_PP(timestamp) TSRMLS_CC);
 	}
 #endif
@@ -124,9 +128,9 @@ static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t *intern, 
    4-byte timestamp. */
 static PHP_METHOD(Timestamp, __construct)
 {
-	php_phongo_timestamp_t *intern;
+	php_phongo_timestamp_t* intern;
 	zend_error_handling     error_handling;
-	zval                   *increment = NULL, *timestamp = NULL;
+	zval *                  increment = NULL, *timestamp = NULL;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
@@ -167,7 +171,7 @@ static PHP_METHOD(Timestamp, __construct)
 */
 static PHP_METHOD(Timestamp, getIncrement)
 {
-	php_phongo_timestamp_t *intern;
+	php_phongo_timestamp_t* intern;
 
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
@@ -182,7 +186,7 @@ static PHP_METHOD(Timestamp, getIncrement)
 */
 static PHP_METHOD(Timestamp, getTimestamp)
 {
-	php_phongo_timestamp_t *intern;
+	php_phongo_timestamp_t* intern;
 
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
@@ -197,9 +201,9 @@ static PHP_METHOD(Timestamp, getTimestamp)
 */
 static PHP_METHOD(Timestamp, __set_state)
 {
-	php_phongo_timestamp_t *intern;
-	HashTable              *props;
-	zval                   *array;
+	php_phongo_timestamp_t* intern;
+	HashTable*              props;
+	zval*                   array;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
 		RETURN_FALSE;
@@ -208,7 +212,7 @@ static PHP_METHOD(Timestamp, __set_state)
 	object_init_ex(return_value, php_phongo_timestamp_ce);
 
 	intern = Z_TIMESTAMP_OBJ_P(return_value);
-	props = Z_ARRVAL_P(array);
+	props  = Z_ARRVAL_P(array);
 
 	php_phongo_timestamp_init_from_hash(intern, props TSRMLS_CC);
 } /* }}} */
@@ -217,10 +221,9 @@ static PHP_METHOD(Timestamp, __set_state)
    Returns a string in the form: [increment:timestamp] */
 static PHP_METHOD(Timestamp, __toString)
 {
-	php_phongo_timestamp_t    *intern;
-	char                      *retval;
-	int                        retval_len;
-
+	php_phongo_timestamp_t* intern;
+	char*                   retval;
+	int                     retval_len;
 
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
@@ -237,7 +240,7 @@ static PHP_METHOD(Timestamp, __toString)
 */
 static PHP_METHOD(Timestamp, jsonSerialize)
 {
-	php_phongo_timestamp_t *intern;
+	php_phongo_timestamp_t* intern;
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -258,7 +261,7 @@ static PHP_METHOD(Timestamp, jsonSerialize)
 	}
 #else
 	{
-		zval *ts;
+		zval* ts;
 
 		MAKE_STD_ZVAL(ts);
 		array_init_size(ts, 2);
@@ -273,14 +276,14 @@ static PHP_METHOD(Timestamp, jsonSerialize)
 */
 static PHP_METHOD(Timestamp, serialize)
 {
-	php_phongo_timestamp_t   *intern;
-	ZVAL_RETVAL_TYPE          retval;
-	php_serialize_data_t      var_hash;
-	smart_str                 buf = { 0 };
-	char                      s_increment[12];
-	char                      s_timestamp[12];
-	int                       s_increment_len;
-	int                       s_timestamp_len;
+	php_phongo_timestamp_t* intern;
+	ZVAL_RETVAL_TYPE        retval;
+	php_serialize_data_t    var_hash;
+	smart_str               buf = { 0 };
+	char                    s_increment[12];
+	char                    s_timestamp[12];
+	int                     s_increment_len;
+	int                     s_timestamp_len;
 
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
@@ -317,16 +320,16 @@ static PHP_METHOD(Timestamp, serialize)
 */
 static PHP_METHOD(Timestamp, unserialize)
 {
-	php_phongo_timestamp_t *intern;
+	php_phongo_timestamp_t* intern;
 	zend_error_handling     error_handling;
-	char                   *serialized;
+	char*                   serialized;
 	phongo_zpp_char_len     serialized_len;
 #if PHP_VERSION_ID >= 70000
-	zval                    props;
+	zval props;
 #else
-	zval                   *props;
+	zval* props;
 #endif
-	php_unserialize_data_t  var_hash;
+	php_unserialize_data_t var_hash;
 
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
@@ -342,7 +345,7 @@ static PHP_METHOD(Timestamp, unserialize)
 	ALLOC_INIT_ZVAL(props);
 #endif
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
-	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char *) serialized + serialized_len, &var_hash TSRMLS_CC)) {
+	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
 		zval_ptr_dtor(&props);
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s unserialization failed", ZSTR_VAL(php_phongo_timestamp_ce->name));
 
@@ -377,24 +380,24 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_timestamp_me[] = {
-	PHP_ME(Timestamp, __construct, ai_Timestamp___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, __set_state, ai_Timestamp___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-	PHP_ME(Timestamp, __toString, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, jsonSerialize, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, serialize, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, unserialize, ai_Timestamp_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, getIncrement, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, getTimestamp, ai_Timestamp_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	PHP_ME(Timestamp, __construct, ai_Timestamp___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+		PHP_ME(Timestamp, __set_state, ai_Timestamp___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+			PHP_ME(Timestamp, __toString, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+				PHP_ME(Timestamp, jsonSerialize, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					PHP_ME(Timestamp, serialize, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+						PHP_ME(Timestamp, unserialize, ai_Timestamp_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+							PHP_ME(Timestamp, getIncrement, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+								PHP_ME(Timestamp, getTimestamp, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+									PHP_FE_END
 };
 /* }}} */
 
 /* {{{ MongoDB\BSON\Timestamp object handlers */
 static zend_object_handlers php_phongo_handler_timestamp;
 
-static void php_phongo_timestamp_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
+static void php_phongo_timestamp_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_timestamp_t *intern = Z_OBJ_TIMESTAMP(object);
+	php_phongo_timestamp_t* intern = Z_OBJ_TIMESTAMP(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -408,9 +411,9 @@ static void php_phongo_timestamp_free_object(phongo_free_object_arg *object TSRM
 #endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_timestamp_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_timestamp_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
-	php_phongo_timestamp_t *intern = NULL;
+	php_phongo_timestamp_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_timestamp_t, class_type);
 
@@ -424,7 +427,7 @@ static phongo_create_object_retval php_phongo_timestamp_create_object(zend_class
 #else
 	{
 		zend_object_value retval;
-		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_timestamp_free_object, NULL TSRMLS_CC);
+		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_timestamp_free_object, NULL TSRMLS_CC);
 		retval.handlers = &php_phongo_handler_timestamp;
 
 		return retval;
@@ -432,7 +435,7 @@ static phongo_create_object_retval php_phongo_timestamp_create_object(zend_class
 #endif
 } /* }}} */
 
-static int php_phongo_timestamp_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
+static int php_phongo_timestamp_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /* {{{ */
 {
 	php_phongo_timestamp_t *intern1, *intern2;
 
@@ -451,18 +454,18 @@ static int php_phongo_timestamp_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /*
 	return 0;
 } /* }}} */
 
-static HashTable *php_phongo_timestamp_get_gc(zval *object, phongo_get_gc_table table, int *n TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_timestamp_get_gc(zval* object, phongo_get_gc_table table, int* n TSRMLS_DC) /* {{{ */
 {
 	*table = NULL;
-	*n = 0;
+	*n     = 0;
 
 	return Z_TIMESTAMP_OBJ_P(object)->properties;
 } /* }}} */
 
-static HashTable *php_phongo_timestamp_get_properties_hash(zval *object, bool is_debug TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_timestamp_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
 {
-	php_phongo_timestamp_t *intern;
-	HashTable              *props;
+	php_phongo_timestamp_t* intern;
+	HashTable*              props;
 	char                    s_increment[24];
 	char                    s_timestamp[24];
 	int                     s_increment_len;
@@ -484,10 +487,10 @@ static HashTable *php_phongo_timestamp_get_properties_hash(zval *object, bool is
 		zval increment, timestamp;
 
 		ZVAL_STRINGL(&increment, s_increment, s_increment_len);
-		zend_hash_str_update(props, "increment", sizeof("increment")-1, &increment);
+		zend_hash_str_update(props, "increment", sizeof("increment") - 1, &increment);
 
 		ZVAL_STRINGL(&timestamp, s_timestamp, s_timestamp_len);
-		zend_hash_str_update(props, "timestamp", sizeof("timestamp")-1, &timestamp);
+		zend_hash_str_update(props, "timestamp", sizeof("timestamp") - 1, &timestamp);
 	}
 #else
 	{
@@ -506,13 +509,13 @@ static HashTable *php_phongo_timestamp_get_properties_hash(zval *object, bool is
 	return props;
 } /* }}} */
 
-static HashTable *php_phongo_timestamp_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_timestamp_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
 	*is_temp = 1;
 	return php_phongo_timestamp_get_properties_hash(object, true TSRMLS_CC);
 } /* }}} */
 
-static HashTable *php_phongo_timestamp_get_properties(zval *object TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_timestamp_get_properties(zval* object TSRMLS_DC) /* {{{ */
 {
 	return php_phongo_timestamp_get_properties_hash(object, false TSRMLS_CC);
 } /* }}} */
@@ -523,7 +526,7 @@ void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Timestamp", php_phongo_timestamp_me);
-	php_phongo_timestamp_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_timestamp_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_timestamp_ce->create_object = php_phongo_timestamp_create_object;
 	PHONGO_CE_FINAL(php_phongo_timestamp_ce);
 
@@ -534,12 +537,12 @@ void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_timestamp, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_timestamp.compare_objects = php_phongo_timestamp_compare_objects;
-	php_phongo_handler_timestamp.get_debug_info = php_phongo_timestamp_get_debug_info;
-	php_phongo_handler_timestamp.get_gc = php_phongo_timestamp_get_gc;
-	php_phongo_handler_timestamp.get_properties = php_phongo_timestamp_get_properties;
+	php_phongo_handler_timestamp.get_debug_info  = php_phongo_timestamp_get_debug_info;
+	php_phongo_handler_timestamp.get_gc          = php_phongo_timestamp_get_gc;
+	php_phongo_handler_timestamp.get_properties  = php_phongo_timestamp_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_timestamp.free_obj = php_phongo_timestamp_free_object;
-	php_phongo_handler_timestamp.offset = XtOffsetOf(php_phongo_timestamp_t, std);
+	php_phongo_handler_timestamp.offset   = XtOffsetOf(php_phongo_timestamp_t, std);
 #endif
 } /* }}} */
 
