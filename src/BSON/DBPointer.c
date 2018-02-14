@@ -104,11 +104,8 @@ static PHP_METHOD(DBPointer, __toString)
 static PHP_METHOD(DBPointer, jsonSerialize)
 {
 	php_phongo_dbpointer_t *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                    zdb_pointer, zoid;
-#else
-	zval                   *zdb_pointer, *zoid;
-#endif
+	ZVAL_RETVAL_TYPE        zdb_pointer;
+	ZVAL_RETVAL_TYPE        zoid;
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -144,12 +141,7 @@ static PHP_METHOD(DBPointer, jsonSerialize)
 static PHP_METHOD(DBPointer, serialize)
 {
 	php_phongo_dbpointer_t *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                    retval;
-#else
-	zval                   *retval;
-#endif
-
+	ZVAL_RETVAL_TYPE          retval;
 	php_serialize_data_t      var_hash;
 	smart_str                 buf = { 0 };
 

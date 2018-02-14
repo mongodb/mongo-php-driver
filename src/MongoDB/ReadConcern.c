@@ -171,11 +171,7 @@ static phongo_create_object_retval php_phongo_readconcern_create_object(zend_cla
 
 static HashTable *php_phongo_readconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval retval;
-#else
-	zval retval = zval_used_for_init;
-#endif
+	zval                         retval = ZVAL_STATIC_INIT;
 	const mongoc_read_concern_t *read_concern = phongo_read_concern_from_zval(object TSRMLS_CC);
 
 

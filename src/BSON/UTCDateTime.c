@@ -311,11 +311,7 @@ static PHP_METHOD(UTCDateTime, jsonSerialize)
 static PHP_METHOD(UTCDateTime, serialize)
 {
 	php_phongo_utcdatetime_t *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                      retval;
-#else
-	zval                     *retval;
-#endif
+	ZVAL_RETVAL_TYPE          retval;
 	php_serialize_data_t      var_hash;
 	smart_str                 buf = { 0 };
 	char                      s_milliseconds[24];

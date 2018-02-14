@@ -206,11 +206,7 @@ static phongo_create_object_retval php_phongo_commandstartedevent_create_object(
 static HashTable *php_phongo_commandstartedevent_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_commandstartedevent_t *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                      retval;
-#else
-	zval                      retval = zval_used_for_init;
-#endif
+	zval                              retval = ZVAL_STATIC_INIT;
 	char operation_id[20], request_id[20];
 	php_phongo_bson_state command_state = PHONGO_BSON_STATE_INITIALIZER;
 

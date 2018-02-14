@@ -145,11 +145,7 @@ static phongo_create_object_retval php_phongo_writeconcernerror_create_object(ze
 static HashTable *php_phongo_writeconcernerror_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeconcernerror_t *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                            retval;
-#else
-	zval                            retval = zval_used_for_init;
-#endif
+	zval                            retval = ZVAL_STATIC_INIT;
 
 
 	*is_temp = 1;

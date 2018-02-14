@@ -211,11 +211,7 @@ static PHP_METHOD(Binary, jsonSerialize)
 static PHP_METHOD(Binary, serialize)
 {
 	php_phongo_binary_t      *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                      retval;
-#else
-	zval                     *retval;
-#endif
+	ZVAL_RETVAL_TYPE          retval;
 	php_serialize_data_t      var_hash;
 	smart_str                 buf = { 0 };
 
