@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -25,21 +25,20 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
-zend_class_entry *php_phongo_server_ce;
+zend_class_entry* php_phongo_server_ce;
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
    Executes a Command on this Server */
 static PHP_METHOD(Server, executeCommand)
 {
-	php_phongo_server_t      *intern;
-	char                     *db;
-	phongo_zpp_char_len       db_len;
-	zval                     *command;
-	zval                     *options = NULL;
-	bool                      free_options = false;
+	php_phongo_server_t* intern;
+	char*                db;
+	phongo_zpp_char_len  db_len;
+	zval*                command;
+	zval*                options      = NULL;
+	bool                 free_options = false;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -60,14 +59,13 @@ static PHP_METHOD(Server, executeCommand)
    Executes a ReadCommand on this Server */
 static PHP_METHOD(Server, executeReadCommand)
 {
-	php_phongo_server_t      *intern;
-	char                     *db;
-	phongo_zpp_char_len       db_len;
-	zval                     *command;
-	zval                     *options = NULL;
+	php_phongo_server_t* intern;
+	char*                db;
+	phongo_zpp_char_len  db_len;
+	zval*                command;
+	zval*                options = NULL;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -82,14 +80,13 @@ static PHP_METHOD(Server, executeReadCommand)
    Executes a WriteCommand on this Server */
 static PHP_METHOD(Server, executeWriteCommand)
 {
-	php_phongo_server_t      *intern;
-	char                     *db;
-	phongo_zpp_char_len       db_len;
-	zval                     *command;
-	zval                     *options = NULL;
+	php_phongo_server_t* intern;
+	char*                db;
+	phongo_zpp_char_len  db_len;
+	zval*                command;
+	zval*                options = NULL;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -104,14 +101,13 @@ static PHP_METHOD(Server, executeWriteCommand)
    Executes a ReadWriteCommand on this Server */
 static PHP_METHOD(Server, executeReadWriteCommand)
 {
-	php_phongo_server_t      *intern;
-	char                     *db;
-	phongo_zpp_char_len       db_len;
-	zval                     *command;
-	zval                     *options = NULL;
+	php_phongo_server_t* intern;
+	char*                db;
+	phongo_zpp_char_len  db_len;
+	zval*                command;
+	zval*                options = NULL;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -126,15 +122,14 @@ static PHP_METHOD(Server, executeReadWriteCommand)
    Executes a Query on this Server */
 static PHP_METHOD(Server, executeQuery)
 {
-	php_phongo_server_t      *intern;
-	char                     *namespace;
-	phongo_zpp_char_len       namespace_len;
-	zval                     *query;
-	zval                     *options = NULL;
-	bool                      free_options = false;
+	php_phongo_server_t* intern;
+	char* namespace;
+	phongo_zpp_char_len namespace_len;
+	zval*               query;
+	zval*               options      = NULL;
+	bool                free_options = false;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -156,23 +151,21 @@ static PHP_METHOD(Server, executeQuery)
    this Server */
 static PHP_METHOD(Server, executeBulkWrite)
 {
-	php_phongo_server_t      *intern;
-	char                     *namespace;
-	phongo_zpp_char_len       namespace_len;
-	zval                     *zbulk;
-	php_phongo_bulkwrite_t   *bulk;
-	zval                     *options = NULL;
-	bool                      free_options = false;
+	php_phongo_server_t* intern;
+	char* namespace;
+	phongo_zpp_char_len     namespace_len;
+	zval*                   zbulk;
+	php_phongo_bulkwrite_t* bulk;
+	zval*                   options      = NULL;
+	bool                    free_options = false;
 	DECLARE_RETURN_VALUE_USED
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &options, php_phongo_writeconcern_ce) == FAILURE) {
 		return;
 	}
-
 
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 
@@ -189,9 +182,10 @@ static PHP_METHOD(Server, executeBulkWrite)
    Returns the hostname for this Server */
 static PHP_METHOD(Server, getHost)
 {
-	php_phongo_server_t         *intern;
-	mongoc_server_description_t *sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_server_t*         intern;
+	mongoc_server_description_t* sd;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -212,10 +206,10 @@ static PHP_METHOD(Server, getHost)
    Returns the currently configured tags for this Server */
 static PHP_METHOD(Server, getTags)
 {
-	php_phongo_server_t         *intern;
-	mongoc_server_description_t *sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_server_t*         intern;
+	mongoc_server_description_t* sd;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -223,17 +217,16 @@ static PHP_METHOD(Server, getTags)
 		return;
 	}
 
-
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
-		const bson_t *is_master = mongoc_server_description_ismaster(sd);
+		const bson_t* is_master = mongoc_server_description_ismaster(sd);
 		bson_iter_t   iter;
 
 		if (bson_iter_init_find(&iter, is_master, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
-			const uint8_t         *bytes;
-			uint32_t               len;
-			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+			const uint8_t*        bytes;
+			uint32_t              len;
+			php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
-			state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+			state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
 			state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 			bson_iter_document(&iter, &len, &bytes);
@@ -265,10 +258,10 @@ static PHP_METHOD(Server, getTags)
    Returns the last isMaster result document for this Server */
 static PHP_METHOD(Server, getInfo)
 {
-	php_phongo_server_t         *intern;
-	mongoc_server_description_t *sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_server_t*         intern;
+	mongoc_server_description_t* sd;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -276,12 +269,11 @@ static PHP_METHOD(Server, getInfo)
 		return;
 	}
 
-
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
-		const bson_t          *is_master = mongoc_server_description_ismaster(sd);
-		php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+		const bson_t*         is_master = mongoc_server_description_ismaster(sd);
+		php_phongo_bson_state state     = PHONGO_BSON_STATE_INITIALIZER;
 
-		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		if (!php_phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state)) {
@@ -307,10 +299,10 @@ static PHP_METHOD(Server, getInfo)
    Returns the last measured latency for this Server */
 static PHP_METHOD(Server, getLatency)
 {
-	php_phongo_server_t         *intern;
-	mongoc_server_description_t *sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_server_t*         intern;
+	mongoc_server_description_t* sd;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -331,10 +323,10 @@ static PHP_METHOD(Server, getLatency)
    Returns the port for this Server */
 static PHP_METHOD(Server, getPort)
 {
-	php_phongo_server_t         *intern;
-	mongoc_server_description_t *sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_server_t*         intern;
+	mongoc_server_description_t* sd;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -355,10 +347,10 @@ static PHP_METHOD(Server, getPort)
    Returns the node type of this Server */
 static PHP_METHOD(Server, getType)
 {
-	php_phongo_server_t         *intern;
-	mongoc_server_description_t *sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_server_t*         intern;
+	mongoc_server_description_t* sd;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -379,10 +371,10 @@ static PHP_METHOD(Server, getType)
    Returns whether this Server is a primary member of a replica set */
 static PHP_METHOD(Server, isPrimary)
 {
-	php_phongo_server_t         *intern;
-	mongoc_server_description_t *sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_server_t*         intern;
+	mongoc_server_description_t* sd;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -403,10 +395,10 @@ static PHP_METHOD(Server, isPrimary)
    Returns whether this Server is a secondary member of a replica set */
 static PHP_METHOD(Server, isSecondary)
 {
-	php_phongo_server_t         *intern;
-	mongoc_server_description_t *sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_server_t*         intern;
+	mongoc_server_description_t* sd;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -427,10 +419,10 @@ static PHP_METHOD(Server, isSecondary)
    Returns whether this Server is an arbiter member of a replica set */
 static PHP_METHOD(Server, isArbiter)
 {
-	php_phongo_server_t         *intern;
-	mongoc_server_description_t *sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_server_t*         intern;
+	mongoc_server_description_t* sd;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -451,10 +443,10 @@ static PHP_METHOD(Server, isArbiter)
    Returns whether this Server is a hidden member of a replica set */
 static PHP_METHOD(Server, isHidden)
 {
-	php_phongo_server_t         *intern;
-	mongoc_server_description_t *sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_server_t*         intern;
+	mongoc_server_description_t* sd;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -477,10 +469,10 @@ static PHP_METHOD(Server, isHidden)
    Returns whether this Server is a passive member of a replica set */
 static PHP_METHOD(Server, isPassive)
 {
-	php_phongo_server_t         *intern;
-	mongoc_server_description_t *sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_server_t*         intern;
+	mongoc_server_description_t* sd;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -528,35 +520,36 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Server_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_server_me[] = {
-	PHP_ME(Server, executeCommand, ai_Server_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, executeReadCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, executeWriteCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, executeReadWriteCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, executeBulkWrite, ai_Server_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getHost, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getTags, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getInfo, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getLatency, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getPort, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, getType, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, isPrimary, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, isSecondary, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, isArbiter, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, isHidden, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Server, isPassive, ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Server_void, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Server_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	PHP_ME(Server, executeCommand, ai_Server_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+		PHP_ME(Server, executeReadCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+			PHP_ME(Server, executeWriteCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+				PHP_ME(Server, executeReadWriteCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+						PHP_ME(Server, executeBulkWrite, ai_Server_executeBulkWrite, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+							PHP_ME(Server, getHost, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+								PHP_ME(Server, getTags, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+									PHP_ME(Server, getInfo, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+										PHP_ME(Server, getLatency, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+											PHP_ME(Server, getPort, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+												PHP_ME(Server, getType, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+													PHP_ME(Server, isPrimary, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+														PHP_ME(Server, isSecondary, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+															PHP_ME(Server, isArbiter, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+																PHP_ME(Server, isHidden, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+																	PHP_ME(Server, isPassive, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+																		ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Server_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
+																			ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+																				PHP_FE_END
 };
 /* }}} */
 
 /* {{{ MongoDB\Driver\Server object handlers */
 static zend_object_handlers php_phongo_handler_server;
 
-static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
+static int php_phongo_server_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /* {{{ */
 {
-	php_phongo_server_t         *intern1, *intern2;
+	php_phongo_server_t*         intern1;
+	php_phongo_server_t*         intern2;
 	mongoc_server_description_t *sd1, *sd2;
 	int                          retval = 0;
 
@@ -583,9 +576,9 @@ static int php_phongo_server_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{
 	return retval;
 } /* }}} */
 
-static void php_phongo_server_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
+static void php_phongo_server_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_server_t *intern = Z_OBJ_SERVER(object);
+	php_phongo_server_t* intern = Z_OBJ_SERVER(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -594,9 +587,9 @@ static void php_phongo_server_free_object(phongo_free_object_arg *object TSRMLS_
 #endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_server_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_server_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
-	php_phongo_server_t *intern = NULL;
+	php_phongo_server_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_server_t, class_type);
 
@@ -618,15 +611,14 @@ static phongo_create_object_retval php_phongo_server_create_object(zend_class_en
 #endif
 } /* }}} */
 
-static HashTable *php_phongo_server_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_server_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
-	php_phongo_server_t         *intern = NULL;
+	php_phongo_server_t*         intern = NULL;
 	zval                         retval = ZVAL_STATIC_INIT;
-	mongoc_server_description_t *sd;
+	mongoc_server_description_t* sd;
 
 	*is_temp = 1;
-	intern = Z_SERVER_OBJ_P(object);
-
+	intern   = Z_SERVER_OBJ_P(object);
 
 	if (!(sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to get server description");
@@ -645,17 +637,17 @@ void php_phongo_server_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Server", php_phongo_server_me);
-	php_phongo_server_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_server_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_server_ce->create_object = php_phongo_server_create_object;
 	PHONGO_CE_FINAL(php_phongo_server_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_server_ce);
 
 	memcpy(&php_phongo_handler_server, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_server.compare_objects = php_phongo_server_compare_objects;
-	php_phongo_handler_server.get_debug_info = php_phongo_server_get_debug_info;
+	php_phongo_handler_server.get_debug_info  = php_phongo_server_get_debug_info;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_server.free_obj = php_phongo_server_free_object;
-	php_phongo_handler_server.offset = XtOffsetOf(php_phongo_server_t, std);
+	php_phongo_handler_server.offset   = XtOffsetOf(php_phongo_server_t, std);
 #endif
 
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_UNKNOWN"), PHONGO_SERVER_UNKNOWN TSRMLS_CC);

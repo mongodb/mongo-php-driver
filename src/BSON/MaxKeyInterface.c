@@ -15,15 +15,15 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
-#include <php.h> 
+#include <php.h>
 
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry *php_phongo_maxkey_interface_ce;
+zend_class_entry* php_phongo_maxkey_interface_ce;
 
 /* {{{ MongoDB\BSON\MaxKeyInterface function entries */
 static zend_function_entry php_phongo_maxkey_interface_me[] = {

@@ -15,15 +15,15 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
-#include <php.h> 
+#include <php.h>
 
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry *php_phongo_binary_interface_ce;
+zend_class_entry* php_phongo_binary_interface_ce;
 
 /* {{{ MongoDB\BSON\BinaryInterface function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_BinaryInterface_void, 0, 0, 0)
@@ -31,9 +31,9 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_binary_interface_me[] = {
 	ZEND_ABSTRACT_ME(BinaryInterface, getData, ai_BinaryInterface_void)
-	ZEND_ABSTRACT_ME(BinaryInterface, getType, ai_BinaryInterface_void)
-	ZEND_ABSTRACT_ME(BinaryInterface, __toString, ai_BinaryInterface_void)
-	PHP_FE_END
+		ZEND_ABSTRACT_ME(BinaryInterface, getType, ai_BinaryInterface_void)
+			ZEND_ABSTRACT_ME(BinaryInterface, __toString, ai_BinaryInterface_void)
+				PHP_FE_END
 };
 /* }}} */
 

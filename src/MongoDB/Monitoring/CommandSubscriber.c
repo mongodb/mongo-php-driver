@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -24,7 +24,7 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry *php_phongo_commandsubscriber_ce;
+zend_class_entry* php_phongo_commandsubscriber_ce;
 
 /* {{{ MongoDB\Driver\Monitoring\CommandSubscriber function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_CommandSubscriber_commandStarted, 0, 0, 1)
@@ -41,16 +41,17 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_commandsubscriber_me[] = {
 	ZEND_ABSTRACT_ME(CommandSubscriber, commandStarted, ai_CommandSubscriber_commandStarted)
-	ZEND_ABSTRACT_ME(CommandSubscriber, commandSucceeded, ai_CommandSubscriber_commandSucceeded)
-	ZEND_ABSTRACT_ME(CommandSubscriber, commandFailed, ai_CommandSubscriber_commandFailed)
-	PHP_FE_END
+		ZEND_ABSTRACT_ME(CommandSubscriber, commandSucceeded, ai_CommandSubscriber_commandSucceeded)
+			ZEND_ABSTRACT_ME(CommandSubscriber, commandFailed, ai_CommandSubscriber_commandFailed)
+				PHP_FE_END
 };
 /* }}} */
 
 void php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
+	(void) type;
+	(void) module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "CommandSubscriber", php_phongo_commandsubscriber_me);
 	php_phongo_commandsubscriber_ce = zend_register_internal_interface(&ce TSRMLS_CC);

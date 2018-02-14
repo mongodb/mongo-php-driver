@@ -24,7 +24,6 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber);
 
 #endif /* PHONGO_MONITORING_FUNCTIONS_H */
 
-
 /*
  * Local variables:
  * tab-width: 4

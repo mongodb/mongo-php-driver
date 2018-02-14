@@ -1,4 +1,4 @@
-.PHONY: coverage test-clean package package.xml
+.PHONY: coverage test-clean package package.xml format format-changed
 
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 MONGODB_VERSION=$(shell php -n -dextension=modules/mongodb.so -r 'echo MONGODB_VERSION;')
@@ -63,6 +63,12 @@ test-bootstrap:
 	vagrant ssh mo -c 'sudo rm -f /home/vagrant/server.pid'
 	vagrant ssh mo -c 'sudo mongo-orchestration -f mongo-orchestration-config.json -b 192.168.112.10 --enable-majority-read-concern start'
 	php scripts/start-servers.php
+
+format:
+	$(top_srcdir)/scripts/clang-format.sh
+
+format-changed:
+	$(top_srcdir)/scripts/clang-format.sh changed
 
 distcheck: package test-virtual
 

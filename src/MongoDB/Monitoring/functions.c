@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -24,9 +24,9 @@
 
 ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 
-static char *php_phongo_make_subscriber_hash(zval *subscriber TSRMLS_DC)
+static char* php_phongo_make_subscriber_hash(zval* subscriber TSRMLS_DC)
 {
-	char *hash;
+	char* hash;
 	int   hash_len;
 
 	hash_len = spprintf(&hash, 0, "SUBS-%09d", Z_OBJ_HANDLE_P(subscriber));
@@ -38,15 +38,16 @@ static char *php_phongo_make_subscriber_hash(zval *subscriber TSRMLS_DC)
    Adds a monitoring subscriber to the set of subscribers */
 PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 {
-	zval                         *zSubscriber = NULL;
-	char                         *hash;
+	zval* zSubscriber = NULL;
+	char* hash;
 #if PHP_VERSION_ID >= 70000
-	zval *subscriber;
+	zval* subscriber;
 #else
-	zval **subscriber;
+	zval** subscriber;
 #endif
 
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
 		return;
@@ -85,9 +86,10 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
    Removes a monitoring subscriber from the set of subscribers */
 PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 {
-	zval                         *zSubscriber = NULL;
-	char                         *hash;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	zval* zSubscriber = NULL;
+	char* hash;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
 		return;

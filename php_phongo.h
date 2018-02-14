@@ -35,32 +35,32 @@ extern zend_module_entry mongodb_module_entry;
  * processes do not destroy clients created by other processes (relevant for
  * forking). We avoid using pid_t for Windows compatibility. */
 typedef struct {
-	mongoc_client_t *client;
+	mongoc_client_t* client;
 	int              pid;
 } php_phongo_pclient_t;
 
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
-	char *debug;
-	FILE *debug_fd;
+	char*             debug;
+	FILE*             debug_fd;
 	bson_mem_vtable_t bsonMemVTable;
-	HashTable pclients;
-	HashTable *subscribers;
+	HashTable         pclients;
+	HashTable*        subscribers;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
 #if PHP_VERSION_ID >= 70000
-# define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)
-# if defined(ZTS) && defined(COMPILE_DL_MONGODB)
+#define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)
+#if defined(ZTS) && defined(COMPILE_DL_MONGODB)
 ZEND_TSRMLS_CACHE_EXTERN()
-# endif
-#else
-# ifdef ZTS
-#  define MONGODB_G(v) TSRMG(mongodb_globals_id, zend_mongodb_globals *, v)
-#  define mglo mongodb_globals_id
-# else
-#  define MONGODB_G(v) (mongodb_globals.v)
-#  define mglo mongodb_globals
-# endif
 #endif
+#else /* PHP_VERSION_ID >= 70000 */
+#ifdef ZTS
+#define MONGODB_G(v) TSRMG(mongodb_globals_id, zend_mongodb_globals*, v)
+#define mglo mongodb_globals_id
+#else /* ZTS */
+#define MONGODB_G(v) (mongodb_globals.v)
+#define mglo mongodb_globals
+#endif /* ZTS */
+#endif /* PHP_VERSION_ID >= 70000 */
 
 #define PHONGO_WRITE_CONCERN_W_MAJORITY "majority"
 
@@ -81,36 +81,36 @@ typedef enum {
 } php_phongo_server_description_type_t;
 
 typedef struct {
-	php_phongo_server_description_type_t  type;
-	const char                           *name;
+	php_phongo_server_description_type_t type;
+	const char*                          name;
 } php_phongo_server_description_type_map_t;
 
 extern php_phongo_server_description_type_map_t php_phongo_server_description_type_map[];
 
 typedef enum {
-	PHONGO_ERROR_INVALID_ARGUMENT    = 1,
-	PHONGO_ERROR_RUNTIME             = 2,
-	PHONGO_ERROR_UNEXPECTED_VALUE    = 8,
-	PHONGO_ERROR_MONGOC_FAILED       = 3,
-	PHONGO_ERROR_WRITE_FAILED        = 5,
-	PHONGO_ERROR_CONNECTION_FAILED   = 7,
-	PHONGO_ERROR_LOGIC               = 9
+	PHONGO_ERROR_INVALID_ARGUMENT  = 1,
+	PHONGO_ERROR_RUNTIME           = 2,
+	PHONGO_ERROR_UNEXPECTED_VALUE  = 8,
+	PHONGO_ERROR_MONGOC_FAILED     = 3,
+	PHONGO_ERROR_WRITE_FAILED      = 5,
+	PHONGO_ERROR_CONNECTION_FAILED = 7,
+	PHONGO_ERROR_LOGIC             = 9
 } php_phongo_error_domain_t;
 
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
 zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
-void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char *format, ...)
+void              phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char* format, ...)
 #if PHP_VERSION_ID < 70000
-# ifndef PHP_WIN32
-#  ifdef ZTS
-	 __attribute__ ((format(printf, 3, 4)))
-#  else
-	 __attribute__ ((format(printf, 2, 3)))
-#  endif
-# endif
-#endif
-;
-void phongo_throw_exception_from_bson_error_t(bson_error_t *error TSRMLS_DC);
+#ifndef PHP_WIN32
+#ifdef ZTS
+	__attribute__((format(printf, 3, 4)))
+#else
+	__attribute__((format(printf, 2, 3)))
+#endif /* ZTS */
+#endif /* PHP_WIN32 */
+#endif /* PHP_VERSION_ID < 70000 */
+	;
+void phongo_throw_exception_from_bson_error_t(bson_error_t* error TSRMLS_DC);
 
 /* This enum is used for processing options in phongo_execute_parse_options and
  * selecting a libmongoc function to use in phongo_execute_command. The values
@@ -126,89 +126,92 @@ typedef enum {
 	PHONGO_COMMAND_READ_WRITE     = 0x05,
 } php_phongo_command_type_t;
 
-zend_object_handlers *phongo_get_std_object_handlers(void);
+zend_object_handlers* phongo_get_std_object_handlers(void);
 
-void                     phongo_server_init          (zval *return_value, mongoc_client_t *client, uint32_t server_id TSRMLS_DC);
-void                     phongo_session_init         (zval *return_value, mongoc_client_session_t *client_session TSRMLS_DC);
-void                     phongo_readconcern_init     (zval *return_value, const mongoc_read_concern_t *read_concern TSRMLS_DC);
-void                     phongo_readpreference_init  (zval *return_value, const mongoc_read_prefs_t *read_prefs TSRMLS_DC);
-void                     phongo_writeconcern_init    (zval *return_value, const mongoc_write_concern_t *write_concern TSRMLS_DC);
-bool                     phongo_execute_bulk_write   (mongoc_client_t *client, const char *namespace, php_phongo_bulkwrite_t *bulk_write, zval *zwriteConcern, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_command      (mongoc_client_t *client, php_phongo_command_type_t type, const char *db, zval *zcommand, zval *zreadPreference, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC);
-int                      phongo_execute_query        (mongoc_client_t *client, const char *namespace, zval *zquery, zval *zreadPreference, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC);
+void phongo_server_init(zval* return_value, mongoc_client_t* client, uint32_t server_id TSRMLS_DC);
+void phongo_session_init(zval* return_value, mongoc_client_session_t* client_session TSRMLS_DC);
+void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern TSRMLS_DC);
+void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs TSRMLS_DC);
+void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern TSRMLS_DC);
+bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value, int return_value_used TSRMLS_DC);
+int  phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value, int return_value_used TSRMLS_DC);
+int  phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value, int return_value_used TSRMLS_DC);
 
-bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t *cursor TSRMLS_DC);
+bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor TSRMLS_DC);
 
-const mongoc_read_concern_t*  phongo_read_concern_from_zval   (zval *zread_concern TSRMLS_DC);
-const mongoc_read_prefs_t*    phongo_read_preference_from_zval(zval *zread_preference TSRMLS_DC);
-const mongoc_write_concern_t* phongo_write_concern_from_zval  (zval *zwrite_concern TSRMLS_DC);
+const mongoc_read_concern_t*  phongo_read_concern_from_zval(zval* zread_concern TSRMLS_DC);
+const mongoc_read_prefs_t*    phongo_read_preference_from_zval(zval* zread_preference TSRMLS_DC);
+const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concern TSRMLS_DC);
 
-php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t *sd);
+php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t* sd);
 
-bool phongo_parse_read_preference(zval *options, zval **zreadPreference TSRMLS_DC);
+bool phongo_parse_read_preference(zval* options, zval** zreadPreference TSRMLS_DC);
 
-zval* php_phongo_prep_legacy_option(zval *options, const char *key, bool *allocated TSRMLS_DC);
-void php_phongo_prep_legacy_option_free(zval *options TSRMLS_DC);
+zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* allocated TSRMLS_DC);
+void  php_phongo_prep_legacy_option_free(zval* options TSRMLS_DC);
 
-void php_phongo_read_preference_prep_tagsets(zval *tagSets TSRMLS_DC);
-bool php_phongo_read_preference_tags_are_valid(const bson_t *tags);
+void php_phongo_read_preference_prep_tagsets(zval* tagSets TSRMLS_DC);
+bool php_phongo_read_preference_tags_are_valid(const bson_t* tags);
 
-void php_phongo_server_to_zval(zval *retval, mongoc_server_description_t *sd);
-void php_phongo_read_concern_to_zval(zval *retval, const mongoc_read_concern_t *read_concern);
-void php_phongo_read_preference_to_zval(zval *retval, const mongoc_read_prefs_t *read_prefs);
-void php_phongo_write_concern_to_zval(zval *retval, const mongoc_write_concern_t *write_concern);
-void php_phongo_cursor_to_zval(zval *retval, const mongoc_cursor_t *cursor);
+void php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd);
+void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* read_concern);
+void php_phongo_read_preference_to_zval(zval* retval, const mongoc_read_prefs_t* read_prefs);
+void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern);
+void php_phongo_cursor_to_zval(zval* retval, const mongoc_cursor_t* cursor);
 
-void phongo_manager_init(php_phongo_manager_t *manager, const char *uri_string, zval *options, zval *driverOptions TSRMLS_DC);
-int php_phongo_set_monitoring_callbacks(mongoc_client_t *client);
-void php_phongo_objectid_new_from_oid(zval *object, const bson_oid_t *oid TSRMLS_DC);
-void php_phongo_cursor_id_new_from_id(zval *object, int64_t cursorid TSRMLS_DC);
-void php_phongo_new_utcdatetime_from_epoch(zval *object, int64_t msec_since_epoch TSRMLS_DC);
-void php_phongo_new_timestamp_from_increment_and_timestamp(zval *object, uint32_t increment, uint32_t timestamp TSRMLS_DC);
-void php_phongo_new_javascript_from_javascript(int init, zval *object, const char *code, size_t code_len TSRMLS_DC);
-void php_phongo_new_javascript_from_javascript_and_scope(int init, zval *object, const char *code, size_t code_len, const bson_t *scope TSRMLS_DC);
-void php_phongo_new_binary_from_binary_and_type(zval *object, const char *data, size_t data_len, bson_subtype_t type TSRMLS_DC);
-void php_phongo_new_decimal128(zval *object, const bson_decimal128_t *decimal TSRMLS_DC);
-void php_phongo_new_regex_from_regex_and_options(zval *object, const char *pattern, const char *flags TSRMLS_DC);
-void php_phongo_new_symbol(zval *object, const char *symbol, size_t symbol_len TSRMLS_DC);
-void php_phongo_new_dbpointer(zval *object, const char *namespace, size_t namespace_len, const bson_oid_t *oid TSRMLS_DC);
+void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions TSRMLS_DC);
+int  php_phongo_set_monitoring_callbacks(mongoc_client_t* client);
+void php_phongo_objectid_new_from_oid(zval* object, const bson_oid_t* oid TSRMLS_DC);
+void php_phongo_cursor_id_new_from_id(zval* object, int64_t cursorid TSRMLS_DC);
+void php_phongo_new_utcdatetime_from_epoch(zval* object, int64_t msec_since_epoch TSRMLS_DC);
+void php_phongo_new_timestamp_from_increment_and_timestamp(zval* object, uint32_t increment, uint32_t timestamp TSRMLS_DC);
+void php_phongo_new_javascript_from_javascript(int init, zval* object, const char* code, size_t code_len TSRMLS_DC);
+void php_phongo_new_javascript_from_javascript_and_scope(int init, zval* object, const char* code, size_t code_len, const bson_t* scope TSRMLS_DC);
+void php_phongo_new_binary_from_binary_and_type(zval* object, const char* data, size_t data_len, bson_subtype_t type TSRMLS_DC);
+void php_phongo_new_decimal128(zval* object, const bson_decimal128_t* decimal TSRMLS_DC);
+void php_phongo_new_regex_from_regex_and_options(zval* object, const char* pattern, const char* flags TSRMLS_DC);
+void php_phongo_new_symbol(zval* object, const char* symbol, size_t symbol_len TSRMLS_DC);
+void php_phongo_new_dbpointer(zval* object, const char* namespace, size_t namespace_len, const bson_oid_t* oid TSRMLS_DC);
 
-zend_bool phongo_writeerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
-zend_bool phongo_writeconcernerror_init(zval *return_value, bson_t *bson TSRMLS_DC);
+zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson TSRMLS_DC);
+zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_DC);
 
 #if PHP_VERSION_ID >= 70000
-#define PHONGO_CE_FINAL(ce) do {    \
-	ce->ce_flags |= ZEND_ACC_FINAL; \
-} while(0);
+#define PHONGO_CE_FINAL(ce)             \
+	do {                                \
+		ce->ce_flags |= ZEND_ACC_FINAL; \
+	} while (0);
 #else
-#define PHONGO_CE_FINAL(ce) do {          \
-	ce->ce_flags |= ZEND_ACC_FINAL_CLASS; \
-} while(0);
+#define PHONGO_CE_FINAL(ce)                   \
+	do {                                      \
+		ce->ce_flags |= ZEND_ACC_FINAL_CLASS; \
+	} while (0);
 #endif
 
-#define PHONGO_CE_DISABLE_SERIALIZATION(ce) do {   \
-    ce->serialize   = zend_class_serialize_deny;   \
-    ce->unserialize = zend_class_unserialize_deny; \
-} while(0);
+#define PHONGO_CE_DISABLE_SERIALIZATION(ce)            \
+	do {                                               \
+		ce->serialize   = zend_class_serialize_deny;   \
+		ce->unserialize = zend_class_unserialize_deny; \
+	} while (0);
 
-#define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, size) do { \
-    if (is_debug) {                                                             \
-        ALLOC_HASHTABLE(props);                                                 \
-        zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);                \
-    } else if ((intern)->properties) {                                          \
-        (props) = (intern)->properties;                                         \
-    } else {                                                                    \
-        ALLOC_HASHTABLE(props);                                                 \
-        zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);                \
-        (intern)->properties = (props);                                         \
-    }                                                                           \
-} while(0);
+#define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, size) \
+	do {                                                                   \
+		if (is_debug) {                                                    \
+			ALLOC_HASHTABLE(props);                                        \
+			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);       \
+		} else if ((intern)->properties) {                                 \
+			(props) = (intern)->properties;                                \
+		} else {                                                           \
+			ALLOC_HASHTABLE(props);                                        \
+			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);       \
+			(intern)->properties = (props);                                \
+		}                                                                  \
+	} while (0);
 
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME(zv) (Z_TYPE(zv) == IS_OBJECT ? ZSTR_VAL(Z_OBJCE(zv)->name) : zend_get_type_by_const(Z_TYPE(zv)))
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvp) PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*(zvp))
 
 #endif /* PHONGO_H */
-
 
 /*
  * Local variables:
