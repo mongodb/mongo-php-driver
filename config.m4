@@ -436,7 +436,7 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/mongoc/])
     if test "x$with_zlib" = "xbundled"; then
       PHP_ADD_INCLUDE([$ext_srcdir/src/libmongoc/src/zlib-1.2.11/])
-      PHP_ADD_BUILD_DIR([$ext_srcdir/src/libmongoc/src/zlib-1.2.11/])
+      PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/zlib-1.2.11/])
     fi
   fi
   if test "$PHP_LIBBSON" = "no"; then
