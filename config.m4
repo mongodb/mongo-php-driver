@@ -375,7 +375,7 @@ if test "$PHP_MONGODB" != "no"; then
 
       PHP_CHECK_LIBRARY(sasl2, sasl_version,
       [
-        PHP_ADD_INCLUDE($MONGODB_SASL_DIR)
+        PHP_ADD_INCLUDE($MONGODB_SASL_DIR/include)
         PHP_ADD_LIBRARY_WITH_PATH(sasl2, $MONGODB_SASL_DIR/$PHP_LIBDIR, MONGODB_SHARED_LIBADD)
         AC_SUBST(MONGOC_ENABLE_SASL, 1)
         AC_SUBST(MONGOC_ENABLE_SASL_CYRUS, 1)
@@ -436,7 +436,7 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/mongoc/])
     if test "x$with_zlib" = "xbundled"; then
       PHP_ADD_INCLUDE([$ext_srcdir/src/libmongoc/src/zlib-1.2.11/])
-      PHP_ADD_BUILD_DIR([$ext_srcdir/src/libmongoc/src/zlib-1.2.11/])
+      PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/zlib-1.2.11/])
     fi
   fi
   if test "$PHP_LIBBSON" = "no"; then
