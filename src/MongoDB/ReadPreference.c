@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -26,19 +26,20 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
-zend_class_entry *php_phongo_readpreference_ce;
+zend_class_entry* php_phongo_readpreference_ce;
 
 /* {{{ proto void MongoDB\Driver\ReadPreference::__construct(int|string $mode[, array $tagSets = array()[, array $options = array()]])
    Constructs a new ReadPreference */
 static PHP_METHOD(ReadPreference, __construct)
 {
-	php_phongo_readpreference_t *intern;
-	zend_error_handling       error_handling;
-	zval                     *mode;
-	zval                     *tagSets = NULL;
-	zval                     *options = NULL;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_readpreference_t* intern;
+	zend_error_handling          error_handling;
+	zval*                        mode;
+	zval*                        tagSets = NULL;
+	zval*                        options = NULL;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
@@ -52,7 +53,7 @@ static PHP_METHOD(ReadPreference, __construct)
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
 	if (Z_TYPE_P(mode) == IS_LONG) {
-		switch(Z_LVAL_P(mode)) {
+		switch (Z_LVAL_P(mode)) {
 			case MONGOC_READ_PRIMARY:
 			case MONGOC_READ_SECONDARY:
 			case MONGOC_READ_PRIMARY_PREFERRED:
@@ -85,10 +86,10 @@ static PHP_METHOD(ReadPreference, __construct)
 	}
 
 	if (tagSets) {
-		bson_t *tags = bson_new();
+		bson_t* tags = bson_new();
 
 		php_phongo_read_preference_prep_tagsets(tagSets TSRMLS_CC);
-		php_phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t *)tags, NULL TSRMLS_CC);
+		php_phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t*) tags, NULL TSRMLS_CC);
 
 		if (!php_phongo_read_preference_tags_are_valid(tags)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "tagSets must be an array of zero or more documents");
@@ -137,8 +138,9 @@ static PHP_METHOD(ReadPreference, __construct)
    Returns the ReadPreference maxStalenessSeconds value */
 static PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 {
-	php_phongo_readpreference_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_readpreference_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
@@ -153,8 +155,9 @@ static PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
    Returns the ReadPreference mode */
 static PHP_METHOD(ReadPreference, getMode)
 {
-	php_phongo_readpreference_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_readpreference_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
@@ -169,9 +172,10 @@ static PHP_METHOD(ReadPreference, getMode)
    Returns the ReadPreference tag sets */
 static PHP_METHOD(ReadPreference, getTagSets)
 {
-	php_phongo_readpreference_t *intern;
-	const bson_t                *tags;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_readpreference_t* intern;
+	const bson_t*                tags;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
@@ -184,7 +188,7 @@ static PHP_METHOD(ReadPreference, getTagSets)
 	if (tags->len) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 		/* Use native arrays for debugging output */
-		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
@@ -202,7 +206,7 @@ static PHP_METHOD(ReadPreference, getTagSets)
 */
 static PHP_METHOD(ReadPreference, bsonSerialize)
 {
-	const mongoc_read_prefs_t *read_preference = phongo_read_preference_from_zval(getThis() TSRMLS_CC);
+	const mongoc_read_prefs_t* read_preference = phongo_read_preference_from_zval(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -223,21 +227,21 @@ ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_readpreference_me[] = {
-	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, getMaxStalenessSeconds, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, bsonSerialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+		PHP_ME(ReadPreference, getMaxStalenessSeconds, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+			PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+				PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					PHP_ME(ReadPreference, bsonSerialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+						PHP_FE_END
 };
 /* }}} */
 
 /* {{{ MongoDB\Driver\ReadPreference object handlers */
 static zend_object_handlers php_phongo_handler_readpreference;
 
-static void php_phongo_readpreference_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
+static void php_phongo_readpreference_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_readpreference_t *intern = Z_OBJ_READPREFERENCE(object);
+	php_phongo_readpreference_t* intern = Z_OBJ_READPREFERENCE(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -250,9 +254,9 @@ static void php_phongo_readpreference_free_object(phongo_free_object_arg *object
 #endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_readpreference_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_readpreference_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
-	php_phongo_readpreference_t *intern = NULL;
+	php_phongo_readpreference_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_readpreference_t, class_type);
 
@@ -274,15 +278,10 @@ static phongo_create_object_retval php_phongo_readpreference_create_object(zend_
 #endif
 } /* }}} */
 
-static HashTable *php_phongo_readpreference_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_readpreference_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval                       retval;
-#else
-	zval                       retval = zval_used_for_init;
-#endif
-	const mongoc_read_prefs_t *read_prefs = phongo_read_preference_from_zval(object TSRMLS_CC);
-
+	zval                       retval     = ZVAL_STATIC_INIT;
+	const mongoc_read_prefs_t* read_prefs = phongo_read_preference_from_zval(object TSRMLS_CC);
 
 	*is_temp = 1;
 
@@ -297,7 +296,7 @@ void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ReadPreference", php_phongo_readpreference_me);
-	php_phongo_readpreference_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_readpreference_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_readpreference_ce->create_object = php_phongo_readpreference_create_object;
 	PHONGO_CE_FINAL(php_phongo_readpreference_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_readpreference_ce);
@@ -308,7 +307,7 @@ void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_readpreference.get_debug_info = php_phongo_readpreference_get_debug_info;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_readpreference.free_obj = php_phongo_readpreference_free_object;
-	php_phongo_handler_readpreference.offset = XtOffsetOf(php_phongo_readpreference_t, std);
+	php_phongo_handler_readpreference.offset   = XtOffsetOf(php_phongo_readpreference_t, std);
 #endif
 
 	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("RP_PRIMARY"), MONGOC_READ_PRIMARY TSRMLS_CC);

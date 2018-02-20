@@ -22,49 +22,49 @@
 #include "php_bson.h"
 
 #if PHP_VERSION_ID >= 70000
-#	define PHONGO_ZEND_OBJECT_PRE
-#	define PHONGO_ZEND_OBJECT_POST zend_object std;
-#	define PHONGO_STRUCT_ZVAL      zval
+#define PHONGO_ZEND_OBJECT_PRE
+#define PHONGO_ZEND_OBJECT_POST zend_object std;
+#define PHONGO_STRUCT_ZVAL zval
 #else
-#	define PHONGO_ZEND_OBJECT_PRE  zend_object std;
-#	define PHONGO_ZEND_OBJECT_POST
-#	define PHONGO_STRUCT_ZVAL      zval*
+#define PHONGO_ZEND_OBJECT_PRE zend_object std;
+#define PHONGO_ZEND_OBJECT_POST
+#define PHONGO_STRUCT_ZVAL zval*
 #endif
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	mongoc_bulk_operation_t *bulk;
+	mongoc_bulk_operation_t* bulk;
 	size_t                   num_ops;
 	bool                     ordered;
 	int                      bypass;
-	char                    *database;
-	char                    *collection;
+	char*                    database;
+	char*                    collection;
 	bool                     executed;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_bulkwrite_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	bson_t   *bson;
-	uint32_t  max_await_time_ms;
-	uint32_t  batch_size;
+	bson_t*  bson;
+	uint32_t max_await_time_ms;
+	uint32_t batch_size;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_command_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	mongoc_cursor_t       *cursor;
-	mongoc_client_t       *client;
-	uint32_t               server_id;
-	bool                   advanced;
-	php_phongo_bson_state  visitor_data;
-	int                    got_iterator;
-	long                   current;
-	char                  *database;
-	char                  *collection;
-	PHONGO_STRUCT_ZVAL     query;
-	PHONGO_STRUCT_ZVAL     command;
-	PHONGO_STRUCT_ZVAL     read_preference;
+	mongoc_cursor_t*      cursor;
+	mongoc_client_t*      client;
+	uint32_t              server_id;
+	bool                  advanced;
+	php_phongo_bson_state visitor_data;
+	int                   got_iterator;
+	long                  current;
+	char*                 database;
+	char*                 collection;
+	PHONGO_STRUCT_ZVAL    query;
+	PHONGO_STRUCT_ZVAL    command;
+	PHONGO_STRUCT_ZVAL    read_preference;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_cursor_t;
 
@@ -76,108 +76,108 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	mongoc_client_t    *client;
+	mongoc_client_t* client;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_manager_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	bson_t                *filter;
-	bson_t                *opts;
-	mongoc_read_concern_t *read_concern;
+	bson_t*                filter;
+	bson_t*                opts;
+	mongoc_read_concern_t* read_concern;
 	uint32_t               max_await_time_ms;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_query_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	mongoc_read_concern_t *read_concern;
+	mongoc_read_concern_t* read_concern;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_readconcern_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	mongoc_read_prefs_t *read_preference;
+	mongoc_read_prefs_t* read_preference;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_readpreference_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	mongoc_client_t    *client;
-	uint32_t            server_id;
+	mongoc_client_t* client;
+	uint32_t         server_id;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_server_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	mongoc_client_session_t *client_session;
+	mongoc_client_session_t* client_session;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_session_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	mongoc_write_concern_t *write_concern;
+	mongoc_write_concern_t* write_concern;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_writeconcern_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	int                 code;
-	char               *message;
-	PHONGO_STRUCT_ZVAL  info;
+	int                code;
+	char*              message;
+	PHONGO_STRUCT_ZVAL info;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_writeconcernerror_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	int                 code;
-	char               *message;
-	PHONGO_STRUCT_ZVAL  info;
-	uint32_t            index;
+	int                code;
+	char*              message;
+	PHONGO_STRUCT_ZVAL info;
+	uint32_t           index;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_writeerror_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	mongoc_write_concern_t *write_concern;
-	bson_t                 *reply;
-	mongoc_client_t        *client;
+	mongoc_write_concern_t* write_concern;
+	bson_t*                 reply;
+	mongoc_client_t*        client;
 	uint32_t                server_id;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_writeresult_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	char      *data;
+	char*      data;
 	int        data_len;
 	uint8_t    type;
-	HashTable *properties;
+	HashTable* properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_binary_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	char       *ref;
-	size_t      ref_len;
-	char        id[25];
-	HashTable  *properties;
+	char*      ref;
+	size_t     ref_len;
+	char       id[25];
+	HashTable* properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_dbpointer_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	bool               initialized;
-	bson_decimal128_t  decimal;
-	HashTable         *properties;
+	bool              initialized;
+	bson_decimal128_t decimal;
+	HashTable*        properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_decimal128_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	char      *code;
+	char*      code;
 	size_t     code_len;
-	bson_t    *scope;
-	HashTable *properties;
+	bson_t*    scope;
+	HashTable* properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_javascript_t;
 
@@ -195,25 +195,25 @@ typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	bool       initialized;
 	char       oid[25];
-	HashTable *properties;
+	HashTable* properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_objectid_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	char      *pattern;
+	char*      pattern;
 	int        pattern_len;
-	char      *flags;
+	char*      flags;
 	int        flags_len;
-	HashTable *properties;
+	HashTable* properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_regex_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	char      *symbol;
+	char*      symbol;
 	size_t     symbol_len;
-	HashTable *properties;
+	HashTable* properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_symbol_t;
 
@@ -222,7 +222,7 @@ typedef struct {
 	bool       initialized;
 	uint32_t   increment;
 	uint32_t   timestamp;
-	HashTable *properties;
+	HashTable* properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_timestamp_t;
 
@@ -235,43 +235,43 @@ typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	bool       initialized;
 	int64_t    milliseconds;
-	HashTable *properties;
+	HashTable* properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_utcdatetime_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	mongoc_client_t    *client;
-	char               *command_name;
-	uint32_t            server_id;
-	uint64_t            operation_id;
-	uint64_t            request_id;
-	uint64_t            duration_micros;
-	PHONGO_STRUCT_ZVAL  z_error;
+	mongoc_client_t*   client;
+	char*              command_name;
+	uint32_t           server_id;
+	uint64_t           operation_id;
+	uint64_t           request_id;
+	uint64_t           duration_micros;
+	PHONGO_STRUCT_ZVAL z_error;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_commandfailedevent_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	mongoc_client_t    *client;
-	char               *command_name;
-	uint32_t            server_id;
-	uint64_t            operation_id;
-	uint64_t            request_id;
-	bson_t             *command;
-	char               *database_name;
+	mongoc_client_t* client;
+	char*            command_name;
+	uint32_t         server_id;
+	uint64_t         operation_id;
+	uint64_t         request_id;
+	bson_t*          command;
+	char*            database_name;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_commandstartedevent_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
-	mongoc_client_t    *client;
-	char               *command_name;
-	uint32_t            server_id;
-	uint64_t            operation_id;
-	uint64_t            request_id;
-	uint64_t            duration_micros;
-	bson_t             *reply;
+	mongoc_client_t* client;
+	char*            command_name;
+	uint32_t         server_id;
+	uint64_t         operation_id;
+	uint64_t         request_id;
+	uint64_t         duration_micros;
+	bson_t*          reply;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_commandsucceededevent_t;
 

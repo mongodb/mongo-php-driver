@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -24,7 +24,7 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry *php_phongo_unexpectedvalueexception_ce;
+zend_class_entry* php_phongo_unexpectedvalueexception_ce;
 
 /* {{{ MongoDB\Driver\Exception\UnexpectedValueException function entries */
 static zend_function_entry php_phongo_unexpectedvalueexception_me[] = {

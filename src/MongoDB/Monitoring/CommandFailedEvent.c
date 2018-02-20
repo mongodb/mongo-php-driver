@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -24,14 +24,15 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry *php_phongo_commandfailedevent_ce;
+zend_class_entry* php_phongo_commandfailedevent_ce;
 
 /* {{{ proto string CommandFailedEvent::getCommandName()
    Returns the command name for this event */
 PHP_METHOD(CommandFailedEvent, getCommandName)
 {
-	php_phongo_commandfailedevent_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_commandfailedevent_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -46,8 +47,9 @@ PHP_METHOD(CommandFailedEvent, getCommandName)
    Returns the event's duration in microseconds */
 PHP_METHOD(CommandFailedEvent, getDurationMicros)
 {
-	php_phongo_commandfailedevent_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_commandfailedevent_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -62,8 +64,9 @@ PHP_METHOD(CommandFailedEvent, getDurationMicros)
    Returns the error document associated with the event */
 PHP_METHOD(CommandFailedEvent, getError)
 {
-	php_phongo_commandfailedevent_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_commandfailedevent_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -82,9 +85,10 @@ PHP_METHOD(CommandFailedEvent, getError)
    Returns the event's operation ID */
 PHP_METHOD(CommandFailedEvent, getOperationId)
 {
-	php_phongo_commandfailedevent_t *intern;
-	char int_as_string[20];
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_commandfailedevent_t* intern;
+	char                             int_as_string[20];
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -100,9 +104,10 @@ PHP_METHOD(CommandFailedEvent, getOperationId)
    Returns the event's request ID */
 PHP_METHOD(CommandFailedEvent, getRequestId)
 {
-	php_phongo_commandfailedevent_t *intern;
-	char int_as_string[20];
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_commandfailedevent_t* intern;
+	char                             int_as_string[20];
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -118,8 +123,9 @@ PHP_METHOD(CommandFailedEvent, getRequestId)
    Returns the Server from which the event originated */
 PHP_METHOD(CommandFailedEvent, getServer)
 {
-	php_phongo_commandfailedevent_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_commandfailedevent_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -141,24 +147,24 @@ ZEND_BEGIN_ARG_INFO_EX(ai_CommandFailedEvent_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_commandfailedevent_me[] = {
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CommandFailedEvent_void, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getCommandName, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getError, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getDurationMicros, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getOperationId, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getRequestId, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getServer, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CommandFailedEvent_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
+		PHP_ME(CommandFailedEvent, getCommandName, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+			PHP_ME(CommandFailedEvent, getError, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+				PHP_ME(CommandFailedEvent, getDurationMicros, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					PHP_ME(CommandFailedEvent, getOperationId, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+						PHP_ME(CommandFailedEvent, getRequestId, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+							PHP_ME(CommandFailedEvent, getServer, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+								ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+									PHP_FE_END
 };
 /* }}} */
 
 /* {{{ MongoDB\Driver\Monitoring\CommandFailedEvent object handlers */
 static zend_object_handlers php_phongo_handler_commandfailedevent;
 
-static void php_phongo_commandfailedevent_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
+static void php_phongo_commandfailedevent_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_commandfailedevent_t *intern = Z_OBJ_COMMANDFAILEDEVENT(object);
+	php_phongo_commandfailedevent_t* intern = Z_OBJ_COMMANDFAILEDEVENT(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -175,9 +181,9 @@ static void php_phongo_commandfailedevent_free_object(phongo_free_object_arg *ob
 #endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_commandfailedevent_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_commandfailedevent_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
-	php_phongo_commandfailedevent_t *intern = NULL;
+	php_phongo_commandfailedevent_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_commandfailedevent_t, class_type);
 
@@ -191,7 +197,7 @@ static phongo_create_object_retval php_phongo_commandfailedevent_create_object(z
 #else
 	{
 		zend_object_value retval;
-		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_commandfailedevent_free_object, NULL TSRMLS_CC);
+		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_commandfailedevent_free_object, NULL TSRMLS_CC);
 		retval.handlers = &php_phongo_handler_commandfailedevent;
 
 		return retval;
@@ -199,17 +205,13 @@ static phongo_create_object_retval php_phongo_commandfailedevent_create_object(z
 #endif
 } /* }}} */
 
-static HashTable *php_phongo_commandfailedevent_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_commandfailedevent_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
-	php_phongo_commandfailedevent_t *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                      retval;
-#else
-	zval                      retval = zval_used_for_init;
-#endif
-	char operation_id[20], request_id[20];
+	php_phongo_commandfailedevent_t* intern;
+	zval                             retval = ZVAL_STATIC_INIT;
+	char                             operation_id[20], request_id[20];
 
-	intern = Z_COMMANDFAILEDEVENT_OBJ_P(object);
+	intern   = Z_COMMANDFAILEDEVENT_OBJ_P(object);
 	*is_temp = 1;
 	array_init_size(&retval, 6);
 
@@ -237,7 +239,7 @@ static HashTable *php_phongo_commandfailedevent_get_debug_info(zval *object, int
 		phongo_server_init(&server, intern->client, intern->server_id TSRMLS_CC);
 		ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
 #else
-		zval *server = NULL;
+		zval* server = NULL;
 
 		MAKE_STD_ZVAL(server);
 		phongo_server_init(server, intern->client, intern->server_id TSRMLS_CC);
@@ -252,10 +254,11 @@ static HashTable *php_phongo_commandfailedevent_get_debug_info(zval *object, int
 void php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void)type;(void)module_number;
+	(void) type;
+	(void) module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "CommandFailedEvent", php_phongo_commandfailedevent_me);
-	php_phongo_commandfailedevent_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_commandfailedevent_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_commandfailedevent_ce->create_object = php_phongo_commandfailedevent_create_object;
 	PHONGO_CE_FINAL(php_phongo_commandfailedevent_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_commandfailedevent_ce);
@@ -264,7 +267,7 @@ void php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_commandfailedevent.get_debug_info = php_phongo_commandfailedevent_get_debug_info;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_commandfailedevent.free_obj = php_phongo_commandfailedevent_free_object;
-	php_phongo_handler_commandfailedevent.offset = XtOffsetOf(php_phongo_commandfailedevent_t, std);
+	php_phongo_handler_commandfailedevent.offset   = XtOffsetOf(php_phongo_commandfailedevent_t, std);
 #endif
 
 	return;
