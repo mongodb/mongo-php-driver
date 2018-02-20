@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -24,19 +24,21 @@
 #include "php_bson.h"
 
 typedef enum {
-   PHONGO_JSON_MODE_LEGACY,
-   PHONGO_JSON_MODE_CANONICAL,
-   PHONGO_JSON_MODE_RELAXED,
+	PHONGO_JSON_MODE_LEGACY,
+	PHONGO_JSON_MODE_CANONICAL,
+	PHONGO_JSON_MODE_RELAXED,
 } php_phongo_json_mode_t;
 
 /* {{{ proto string MongoDB\BSON\fromPHP(array|object $value)
    Returns the BSON representation of a PHP value */
 PHP_FUNCTION(MongoDB_BSON_fromPHP)
 {
-	zval   *data;
-	bson_t *bson;
+	zval*   data;
+	bson_t* bson;
 
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(this_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &data) == FAILURE) {
 		return;
@@ -45,7 +47,7 @@ PHP_FUNCTION(MongoDB_BSON_fromPHP)
 	bson = bson_new();
 	php_phongo_zval_to_bson(data, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 
-	PHONGO_RETVAL_STRINGL((const char *) bson_get_data(bson), bson->len);
+	PHONGO_RETVAL_STRINGL((const char*) bson_get_data(bson), bson->len);
 	bson_destroy(bson);
 } /* }}} */
 
@@ -53,12 +55,14 @@ PHP_FUNCTION(MongoDB_BSON_fromPHP)
    Returns the PHP representation of a BSON value, optionally converting it into a custom class */
 PHP_FUNCTION(MongoDB_BSON_toPHP)
 {
-	char                  *data;
-	phongo_zpp_char_len    data_len;
-	zval                  *typemap = NULL;
-	php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+	char*                 data;
+	phongo_zpp_char_len   data_len;
+	zval*                 typemap = NULL;
+	php_phongo_bson_state state   = PHONGO_BSON_STATE_INITIALIZER;
 
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(this_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &data, &data_len, &typemap) == FAILURE) {
 		return;
@@ -68,7 +72,7 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
 		return;
 	}
 
-	if (!php_phongo_bson_to_zval_ex((const unsigned char *)data, data_len, &state)) {
+	if (!php_phongo_bson_to_zval_ex((const unsigned char*) data, data_len, &state)) {
 		zval_ptr_dtor(&state.zchild);
 		RETURN_NULL();
 	}
@@ -84,19 +88,21 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
    Returns the BSON representation of a JSON value */
 PHP_FUNCTION(MongoDB_BSON_fromJSON)
 {
-	char                *json;
-	phongo_zpp_char_len  json_len;
-	bson_t               bson = BSON_INITIALIZER;
-	bson_error_t         error;
+	char*               json;
+	phongo_zpp_char_len json_len;
+	bson_t              bson = BSON_INITIALIZER;
+	bson_error_t        error;
 
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(this_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &json, &json_len) == FAILURE) {
 		return;
 	}
 
-	if (bson_init_from_json(&bson, (const char *)json, json_len, &error)) {
-		PHONGO_RETVAL_STRINGL((const char *) bson_get_data(&bson), bson.len);
+	if (bson_init_from_json(&bson, (const char*) json, json_len, &error)) {
+		PHONGO_RETVAL_STRINGL((const char*) bson_get_data(&bson), bson.len);
 		bson_destroy(&bson);
 	} else {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s", error.domain == BSON_ERROR_JSON ? error.message : "Error parsing JSON");
@@ -105,22 +111,24 @@ PHP_FUNCTION(MongoDB_BSON_fromJSON)
 
 static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mode_t mode)
 {
-	char                *data;
-	phongo_zpp_char_len  data_len;
-	const bson_t        *bson;
-	bool                 eof = false;
-	bson_reader_t       *reader;
-	char                *json = NULL;
-	size_t               json_len;
+	char*               data;
+	phongo_zpp_char_len data_len;
+	const bson_t*       bson;
+	bool                eof = false;
+	bson_reader_t*      reader;
+	char*               json = NULL;
+	size_t              json_len;
 
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(this_ptr) SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(this_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &data, &data_len) == FAILURE) {
 		return;
 	}
 
-	reader = bson_reader_new_from_data((const unsigned char *)data, data_len);
-	bson = bson_reader_read(reader, NULL);
+	reader = bson_reader_new_from_data((const unsigned char*) data, data_len);
+	bson   = bson_reader_read(reader, NULL);
 
 	if (!bson) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not read document from BSON reader");

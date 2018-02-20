@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -24,18 +24,19 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry *php_phongo_writeconcern_ce;
+zend_class_entry* php_phongo_writeconcern_ce;
 
 /* {{{ proto void MongoDB\Driver\WriteConcern::__construct(integer|string $w[, integer $wtimeout[, boolean $journal]])
    Constructs a new WriteConcern */
 static PHP_METHOD(WriteConcern, __construct)
 {
-	php_phongo_writeconcern_t *intern;
-	zend_error_handling       error_handling;
-	zval                     *w, *journal;
-	phongo_long               wtimeout = 0;
-	SUPPRESS_UNUSED_WARNING(return_value) SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_writeconcern_t* intern;
+	zend_error_handling        error_handling;
+	zval *                     w, *journal;
+	phongo_long                wtimeout = 0;
+	SUPPRESS_UNUSED_WARNING(return_value)
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
@@ -45,7 +46,6 @@ static PHP_METHOD(WriteConcern, __construct)
 		return;
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
-
 
 	intern->write_concern = mongoc_write_concern_new();
 
@@ -66,7 +66,7 @@ static PHP_METHOD(WriteConcern, __construct)
 		return;
 	}
 
-	switch(ZEND_NUM_ARGS()) {
+	switch (ZEND_NUM_ARGS()) {
 		case 3:
 			if (Z_TYPE_P(journal) != IS_NULL) {
 #ifdef ZEND_ENGINE_3
@@ -95,9 +95,10 @@ static PHP_METHOD(WriteConcern, __construct)
    Returns the WriteConcern "w" option */
 static PHP_METHOD(WriteConcern, getW)
 {
-	php_phongo_writeconcern_t *intern;
-	const char *wtag;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_writeconcern_t* intern;
+	const char*                wtag;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
@@ -126,8 +127,9 @@ static PHP_METHOD(WriteConcern, getW)
    Returns the WriteConcern "wtimeout" option */
 static PHP_METHOD(WriteConcern, getWtimeout)
 {
-	php_phongo_writeconcern_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_writeconcern_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
@@ -142,8 +144,9 @@ static PHP_METHOD(WriteConcern, getWtimeout)
    Returns the WriteConcern "journal" option */
 static PHP_METHOD(WriteConcern, getJournal)
 {
-	php_phongo_writeconcern_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_writeconcern_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
@@ -163,8 +166,9 @@ static PHP_METHOD(WriteConcern, getJournal)
    with no write concern URI options). */
 static PHP_METHOD(WriteConcern, isDefault)
 {
-	php_phongo_writeconcern_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
+	php_phongo_writeconcern_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
@@ -179,7 +183,7 @@ static PHP_METHOD(WriteConcern, isDefault)
 */
 static PHP_METHOD(WriteConcern, bsonSerialize)
 {
-	const mongoc_write_concern_t *write_concern = phongo_write_concern_from_zval(getThis() TSRMLS_CC);
+	const mongoc_write_concern_t* write_concern = phongo_write_concern_from_zval(getThis() TSRMLS_CC);
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -200,22 +204,22 @@ ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeconcern_me[] = {
-	PHP_ME(WriteConcern, __construct, ai_WriteConcern___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, getW, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, getJournal, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, isDefault, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, bsonSerialize, ai_WriteConcern_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	PHP_ME(WriteConcern, __construct, ai_WriteConcern___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+		PHP_ME(WriteConcern, getW, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+			PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+				PHP_ME(WriteConcern, getJournal, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					PHP_ME(WriteConcern, isDefault, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+						PHP_ME(WriteConcern, bsonSerialize, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+							PHP_FE_END
 };
 /* }}} */
 
 /* {{{ MongoDB\Driver\WriteConcern object handlers */
 static zend_object_handlers php_phongo_handler_writeconcern;
 
-static void php_phongo_writeconcern_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
+static void php_phongo_writeconcern_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_writeconcern_t *intern = Z_OBJ_WRITECONCERN(object);
+	php_phongo_writeconcern_t* intern = Z_OBJ_WRITECONCERN(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -228,9 +232,9 @@ static void php_phongo_writeconcern_free_object(phongo_free_object_arg *object T
 #endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_writeconcern_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_writeconcern_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
-	php_phongo_writeconcern_t *intern = NULL;
+	php_phongo_writeconcern_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_writeconcern_t, class_type);
 
@@ -252,15 +256,10 @@ static phongo_create_object_retval php_phongo_writeconcern_create_object(zend_cl
 #endif
 } /* }}} */
 
-static HashTable *php_phongo_writeconcern_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_writeconcern_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
-	zval                          retval;
-#else
-	zval                          retval = zval_used_for_init;
-#endif
-	const mongoc_write_concern_t *write_concern = phongo_write_concern_from_zval(object TSRMLS_CC);
-
+	zval                          retval        = ZVAL_STATIC_INIT;
+	const mongoc_write_concern_t* write_concern = phongo_write_concern_from_zval(object TSRMLS_CC);
 
 	*is_temp = 1;
 	php_phongo_write_concern_to_zval(&retval, write_concern);
@@ -274,7 +273,7 @@ void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcern", php_phongo_writeconcern_me);
-	php_phongo_writeconcern_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_writeconcern_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeconcern_ce->create_object = php_phongo_writeconcern_create_object;
 	PHONGO_CE_FINAL(php_phongo_writeconcern_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_writeconcern_ce);
@@ -285,7 +284,7 @@ void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_writeconcern.get_debug_info = php_phongo_writeconcern_get_debug_info;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_writeconcern.free_obj = php_phongo_writeconcern_free_object;
-	php_phongo_handler_writeconcern.offset = XtOffsetOf(php_phongo_writeconcern_t, std);
+	php_phongo_handler_writeconcern.offset   = XtOffsetOf(php_phongo_writeconcern_t, std);
 #endif
 
 	zend_declare_class_constant_stringl(php_phongo_writeconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(PHONGO_WRITE_CONCERN_W_MAJORITY) TSRMLS_CC);

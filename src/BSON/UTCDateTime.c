@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <math.h>
@@ -25,34 +25,34 @@
 #include <ext/date/php_date.h>
 #include <ext/standard/php_var.h>
 #if PHP_VERSION_ID >= 70000
-# include <zend_smart_str.h>
+#include <zend_smart_str.h>
 #else
-# include <ext/standard/php_smart_str.h>
+#include <ext/standard/php_smart_str.h>
 #endif
 #ifdef PHP_WIN32
-# include "win32/time.h"
+#include "win32/time.h"
 #endif
 
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry *php_phongo_utcdatetime_ce;
+zend_class_entry* php_phongo_utcdatetime_ce;
 
 /* Initialize the object and return whether it was successful. */
-static bool php_phongo_utcdatetime_init(php_phongo_utcdatetime_t *intern, int64_t milliseconds) /* {{{ */
+static bool php_phongo_utcdatetime_init(php_phongo_utcdatetime_t* intern, int64_t milliseconds) /* {{{ */
 {
 	intern->milliseconds = milliseconds;
-	intern->initialized = true;
+	intern->initialized  = true;
 
 	return true;
 } /* }}} */
 
 /* Initialize the object from a numeric string and return whether it was
  * successful. An exception will be thrown on error. */
-static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t *intern, const char *s_milliseconds, phongo_zpp_char_len s_milliseconds_len TSRMLS_DC) /* {{{ */
+static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t* intern, const char* s_milliseconds, phongo_zpp_char_len s_milliseconds_len TSRMLS_DC) /* {{{ */
 {
 	int64_t milliseconds;
-	char *endptr = NULL;
+	char*   endptr = NULL;
 
 	errno = 0;
 
@@ -65,7 +65,7 @@ static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t *in
 	 * (see: CDRIVER-1377). strtoll() would be preferable, but it is not
 	 * available on all platforms (e.g. HP-UX), and atoll() provides no error
 	 * reporting at all. */
-	if (errno || (endptr && endptr != ((const char *)s_milliseconds + s_milliseconds_len))) {
+	if (errno || (endptr && endptr != ((const char*) s_milliseconds + s_milliseconds_len))) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer for %s initialization", s_milliseconds, ZSTR_VAL(php_phongo_utcdatetime_ce->name));
 		return false;
 	}
@@ -75,20 +75,20 @@ static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t *in
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_utcdatetime_init_from_hash(php_phongo_utcdatetime_t *intern, HashTable *props TSRMLS_DC) /* {{{ */
+static bool php_phongo_utcdatetime_init_from_hash(php_phongo_utcdatetime_t* intern, HashTable* props TSRMLS_DC) /* {{{ */
 {
 #if PHP_VERSION_ID >= 70000
-	zval *milliseconds;
+	zval* milliseconds;
 
-	if ((milliseconds = zend_hash_str_find(props, "milliseconds", sizeof("milliseconds")-1)) && Z_TYPE_P(milliseconds) == IS_LONG) {
+	if ((milliseconds = zend_hash_str_find(props, "milliseconds", sizeof("milliseconds") - 1)) && Z_TYPE_P(milliseconds) == IS_LONG) {
 		return php_phongo_utcdatetime_init(intern, Z_LVAL_P(milliseconds));
 	}
 
-	if ((milliseconds = zend_hash_str_find(props, "milliseconds", sizeof("milliseconds")-1)) && Z_TYPE_P(milliseconds) == IS_STRING) {
+	if ((milliseconds = zend_hash_str_find(props, "milliseconds", sizeof("milliseconds") - 1)) && Z_TYPE_P(milliseconds) == IS_STRING) {
 		return php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_P(milliseconds), Z_STRLEN_P(milliseconds) TSRMLS_CC);
 	}
 #else
-	zval **milliseconds;
+	zval** milliseconds;
 
 	if (zend_hash_find(props, "milliseconds", sizeof("milliseconds"), (void**) &milliseconds) == SUCCESS && Z_TYPE_PP(milliseconds) == IS_LONG) {
 		return php_phongo_utcdatetime_init(intern, Z_LVAL_PP(milliseconds));
@@ -105,24 +105,24 @@ static bool php_phongo_utcdatetime_init_from_hash(php_phongo_utcdatetime_t *inte
 
 /* Initialize the object from the current time and return whether it was
  * successful. */
-static bool php_phongo_utcdatetime_init_from_current_time(php_phongo_utcdatetime_t *intern) /* {{{ */
+static bool php_phongo_utcdatetime_init_from_current_time(php_phongo_utcdatetime_t* intern) /* {{{ */
 {
 	int64_t        sec, usec;
 	struct timeval cur_time;
 
 	gettimeofday(&cur_time, NULL);
-	sec = cur_time.tv_sec;
+	sec  = cur_time.tv_sec;
 	usec = cur_time.tv_usec;
 
 	intern->milliseconds = (sec * 1000) + (usec / 1000);
-	intern->initialized = true;
+	intern->initialized  = true;
 
 	return true;
 } /* }}} */
 
 /* Initialize the object from a DateTime object and return whether it was
  * successful. */
-static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t *intern, php_date_obj *datetime_obj) /* {{{ */
+static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t* intern, php_date_obj* datetime_obj) /* {{{ */
 {
 	int64_t sec, usec;
 
@@ -131,11 +131,11 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t *inte
 #if PHP_VERSION_ID >= 70200
 	usec = (int64_t) floor(datetime_obj->time->us);
 #else
-	usec = (int64_t) floor(datetime_obj->time->f * 1000000 + 0.5);
+	usec                  = (int64_t) floor(datetime_obj->time->f * 1000000 + 0.5);
 #endif
 
 	intern->milliseconds = (sec * 1000) + (usec / 1000);
-	intern->initialized = true;
+	intern->initialized  = true;
 
 	return true;
 } /* }}} */
@@ -146,9 +146,9 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t *inte
    current time. */
 static PHP_METHOD(UTCDateTime, __construct)
 {
-	php_phongo_utcdatetime_t    *intern;
-	zend_error_handling          error_handling;
-	zval                        *milliseconds = NULL;
+	php_phongo_utcdatetime_t* intern;
+	zend_error_handling       error_handling;
+	zval*                     milliseconds = NULL;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
@@ -166,7 +166,8 @@ static PHP_METHOD(UTCDateTime, __construct)
 
 	if (Z_TYPE_P(milliseconds) == IS_OBJECT) {
 		if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_date_ce() TSRMLS_CC) ||
-		    (php_phongo_date_immutable_ce && instanceof_function(Z_OBJCE_P(milliseconds), php_phongo_date_immutable_ce TSRMLS_CC))) {
+			(php_phongo_date_immutable_ce && instanceof_function(Z_OBJCE_P(milliseconds), php_phongo_date_immutable_ce TSRMLS_CC))) {
+
 			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(milliseconds));
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected instance of DateTimeInterface, %s given", ZSTR_VAL(Z_OBJCE_P(milliseconds)->name));
@@ -181,7 +182,7 @@ static PHP_METHOD(UTCDateTime, __construct)
 
 	if (Z_TYPE_P(milliseconds) == IS_DOUBLE) {
 		char tmp[24];
-		int tmp_len;
+		int  tmp_len;
 
 		tmp_len = snprintf(tmp, sizeof(tmp), "%.0f", Z_DVAL_P(milliseconds) > 0 ? floor(Z_DVAL_P(milliseconds)) : ceil(Z_DVAL_P(milliseconds)));
 
@@ -201,9 +202,9 @@ static PHP_METHOD(UTCDateTime, __construct)
 */
 static PHP_METHOD(UTCDateTime, __set_state)
 {
-	php_phongo_utcdatetime_t *intern;
-	HashTable                *props;
-	zval                     *array;
+	php_phongo_utcdatetime_t* intern;
+	HashTable*                props;
+	zval*                     array;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
 		RETURN_FALSE;
@@ -212,7 +213,7 @@ static PHP_METHOD(UTCDateTime, __set_state)
 	object_init_ex(return_value, php_phongo_utcdatetime_ce);
 
 	intern = Z_UTCDATETIME_OBJ_P(return_value);
-	props = Z_ARRVAL_P(array);
+	props  = Z_ARRVAL_P(array);
 
 	php_phongo_utcdatetime_init_from_hash(intern, props TSRMLS_CC);
 } /* }}} */
@@ -221,10 +222,9 @@ static PHP_METHOD(UTCDateTime, __set_state)
    Returns the UTCDateTime's milliseconds as a string */
 static PHP_METHOD(UTCDateTime, __toString)
 {
-	php_phongo_utcdatetime_t    *intern;
-	char *tmp;
-	int tmp_len;
-
+	php_phongo_utcdatetime_t* intern;
+	char*                     tmp;
+	int                       tmp_len;
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
@@ -241,11 +241,10 @@ static PHP_METHOD(UTCDateTime, __toString)
    Returns a DateTime object representing this UTCDateTime */
 static PHP_METHOD(UTCDateTime, toDateTime)
 {
-	php_phongo_utcdatetime_t *intern;
-	php_date_obj             *datetime_obj;
-	char                     *sec;
+	php_phongo_utcdatetime_t* intern;
+	php_date_obj*             datetime_obj;
+	char*                     sec;
 	size_t                    sec_len;
-
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
@@ -272,7 +271,7 @@ static PHP_METHOD(UTCDateTime, toDateTime)
 */
 static PHP_METHOD(UTCDateTime, jsonSerialize)
 {
-	php_phongo_utcdatetime_t *intern;
+	php_phongo_utcdatetime_t* intern;
 	char                      s_milliseconds[24];
 	int                       s_milliseconds_len;
 
@@ -296,7 +295,7 @@ static PHP_METHOD(UTCDateTime, jsonSerialize)
 	}
 #else
 	{
-		zval *udt;
+		zval* udt;
 
 		MAKE_STD_ZVAL(udt);
 		array_init_size(udt, 1);
@@ -310,12 +309,8 @@ static PHP_METHOD(UTCDateTime, jsonSerialize)
 */
 static PHP_METHOD(UTCDateTime, serialize)
 {
-	php_phongo_utcdatetime_t *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                      retval;
-#else
-	zval                     *retval;
-#endif
+	php_phongo_utcdatetime_t* intern;
+	ZVAL_RETVAL_TYPE          retval;
 	php_serialize_data_t      var_hash;
 	smart_str                 buf = { 0 };
 	char                      s_milliseconds[24];
@@ -353,16 +348,16 @@ static PHP_METHOD(UTCDateTime, serialize)
 */
 static PHP_METHOD(UTCDateTime, unserialize)
 {
-	php_phongo_utcdatetime_t *intern;
+	php_phongo_utcdatetime_t* intern;
 	zend_error_handling       error_handling;
-	char                     *serialized;
+	char*                     serialized;
 	phongo_zpp_char_len       serialized_len;
 #if PHP_VERSION_ID >= 70000
-	zval                      props;
+	zval props;
 #else
-	zval                     *props;
+	zval* props;
 #endif
-	php_unserialize_data_t    var_hash;
+	php_unserialize_data_t var_hash;
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
@@ -378,7 +373,7 @@ static PHP_METHOD(UTCDateTime, unserialize)
 	ALLOC_INIT_ZVAL(props);
 #endif
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
-	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char *) serialized + serialized_len, &var_hash TSRMLS_CC)) {
+	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
 		zval_ptr_dtor(&props);
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s unserialization failed", ZSTR_VAL(php_phongo_utcdatetime_ce->name));
 
@@ -412,23 +407,23 @@ ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_utcdatetime_me[] = {
-	PHP_ME(UTCDateTime, __construct, ai_UTCDateTime___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, __set_state, ai_UTCDateTime___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-	PHP_ME(UTCDateTime, __toString, ai_UTCDateTime_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, jsonSerialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, serialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, unserialize, ai_UTCDateTime_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, toDateTime, ai_UTCDateTime_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	PHP_ME(UTCDateTime, __construct, ai_UTCDateTime___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+		PHP_ME(UTCDateTime, __set_state, ai_UTCDateTime___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+			PHP_ME(UTCDateTime, __toString, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+				PHP_ME(UTCDateTime, jsonSerialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					PHP_ME(UTCDateTime, serialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+						PHP_ME(UTCDateTime, unserialize, ai_UTCDateTime_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+							PHP_ME(UTCDateTime, toDateTime, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+								PHP_FE_END
 };
 /* }}} */
 
 /* {{{ MongoDB\BSON\UTCDateTime object handlers */
 static zend_object_handlers php_phongo_handler_utcdatetime;
 
-static void php_phongo_utcdatetime_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
+static void php_phongo_utcdatetime_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_utcdatetime_t *intern = Z_OBJ_UTCDATETIME(object);
+	php_phongo_utcdatetime_t* intern = Z_OBJ_UTCDATETIME(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -442,9 +437,9 @@ static void php_phongo_utcdatetime_free_object(phongo_free_object_arg *object TS
 #endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_utcdatetime_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_utcdatetime_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
-	php_phongo_utcdatetime_t *intern = NULL;
+	php_phongo_utcdatetime_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_utcdatetime_t, class_type);
 
@@ -458,7 +453,7 @@ static phongo_create_object_retval php_phongo_utcdatetime_create_object(zend_cla
 #else
 	{
 		zend_object_value retval;
-		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_utcdatetime_free_object, NULL TSRMLS_CC);
+		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_utcdatetime_free_object, NULL TSRMLS_CC);
 		retval.handlers = &php_phongo_handler_utcdatetime;
 
 		return retval;
@@ -466,7 +461,7 @@ static phongo_create_object_retval php_phongo_utcdatetime_create_object(zend_cla
 #endif
 } /* }}} */
 
-static int php_phongo_utcdatetime_compare_objects(zval *o1, zval *o2 TSRMLS_DC) /* {{{ */
+static int php_phongo_utcdatetime_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /* {{{ */
 {
 	php_phongo_utcdatetime_t *intern1, *intern2;
 
@@ -480,18 +475,18 @@ static int php_phongo_utcdatetime_compare_objects(zval *o1, zval *o2 TSRMLS_DC) 
 	return 0;
 } /* }}} */
 
-static HashTable *php_phongo_utcdatetime_get_gc(zval *object, phongo_get_gc_table table, int *n TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_utcdatetime_get_gc(zval* object, phongo_get_gc_table table, int* n TSRMLS_DC) /* {{{ */
 {
 	*table = NULL;
-	*n = 0;
+	*n     = 0;
 
 	return Z_UTCDATETIME_OBJ_P(object)->properties;
 } /* }}} */
 
-static HashTable *php_phongo_utcdatetime_get_properties_hash(zval *object, bool is_debug TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_utcdatetime_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
 {
-	php_phongo_utcdatetime_t *intern;
-	HashTable                *props;
+	php_phongo_utcdatetime_t* intern;
+	HashTable*                props;
 	char                      s_milliseconds[24];
 	int                       s_milliseconds_len;
 
@@ -510,11 +505,11 @@ static HashTable *php_phongo_utcdatetime_get_properties_hash(zval *object, bool 
 		zval milliseconds;
 
 		ZVAL_STRINGL(&milliseconds, s_milliseconds, s_milliseconds_len);
-		zend_hash_str_update(props, "milliseconds", sizeof("milliseconds")-1, &milliseconds);
+		zend_hash_str_update(props, "milliseconds", sizeof("milliseconds") - 1, &milliseconds);
 	}
 #else
 	{
-		zval *milliseconds;
+		zval* milliseconds;
 
 		MAKE_STD_ZVAL(milliseconds);
 		ZVAL_STRINGL(milliseconds, s_milliseconds, s_milliseconds_len, 1);
@@ -525,13 +520,13 @@ static HashTable *php_phongo_utcdatetime_get_properties_hash(zval *object, bool 
 	return props;
 } /* }}} */
 
-static HashTable *php_phongo_utcdatetime_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_utcdatetime_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
 	*is_temp = 1;
 	return php_phongo_utcdatetime_get_properties_hash(object, true TSRMLS_CC);
 } /* }}} */
 
-static HashTable *php_phongo_utcdatetime_get_properties(zval *object TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_utcdatetime_get_properties(zval* object TSRMLS_DC) /* {{{ */
 {
 	return php_phongo_utcdatetime_get_properties_hash(object, false TSRMLS_CC);
 } /* }}} */
@@ -542,7 +537,7 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "UTCDateTime", php_phongo_utcdatetime_me);
-	php_phongo_utcdatetime_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_utcdatetime_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_utcdatetime_ce->create_object = php_phongo_utcdatetime_create_object;
 	PHONGO_CE_FINAL(php_phongo_utcdatetime_ce);
 
@@ -553,12 +548,12 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_utcdatetime, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_utcdatetime.compare_objects = php_phongo_utcdatetime_compare_objects;
-	php_phongo_handler_utcdatetime.get_debug_info = php_phongo_utcdatetime_get_debug_info;
-	php_phongo_handler_utcdatetime.get_gc = php_phongo_utcdatetime_get_gc;
-	php_phongo_handler_utcdatetime.get_properties = php_phongo_utcdatetime_get_properties;
+	php_phongo_handler_utcdatetime.get_debug_info  = php_phongo_utcdatetime_get_debug_info;
+	php_phongo_handler_utcdatetime.get_gc          = php_phongo_utcdatetime_get_gc;
+	php_phongo_handler_utcdatetime.get_properties  = php_phongo_utcdatetime_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_utcdatetime.free_obj = php_phongo_utcdatetime_free_object;
-	php_phongo_handler_utcdatetime.offset = XtOffsetOf(php_phongo_utcdatetime_t, std);
+	php_phongo_handler_utcdatetime.offset   = XtOffsetOf(php_phongo_utcdatetime_t, std);
 #endif
 } /* }}} */
 

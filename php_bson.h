@@ -22,8 +22,8 @@
 /* PHP Core stuff */
 #include <php.h>
 
-#define BSON_UNSERIALIZE_FUNC_NAME    "bsonUnserialize"
-#define BSON_SERIALIZE_FUNC_NAME      "bsonSerialize"
+#define BSON_UNSERIALIZE_FUNC_NAME "bsonUnserialize"
+#define BSON_SERIALIZE_FUNC_NAME "bsonSerialize"
 
 #define PHONGO_ODM_FIELD_NAME "__pclass"
 
@@ -41,42 +41,43 @@ typedef enum {
 } php_phongo_bson_typemap_types;
 
 typedef struct {
-	php_phongo_bson_typemap_types  document_type;
-	zend_class_entry              *document;
-	php_phongo_bson_typemap_types  array_type;
-	zend_class_entry              *array;
-	php_phongo_bson_typemap_types  root_type;
-	zend_class_entry              *root;
+	php_phongo_bson_typemap_types document_type;
+	zend_class_entry*             document;
+	php_phongo_bson_typemap_types array_type;
+	zend_class_entry*             array;
+	php_phongo_bson_typemap_types root_type;
+	zend_class_entry*             root;
 } php_phongo_bson_typemap;
 
 typedef struct {
-#if PHP_VERSION_ID >= 70000
-	zval                     zchild;
-#else
-	zval                    *zchild;
-#endif
-	php_phongo_bson_typemap  map;
-	zend_class_entry        *odm;
-	bool                     is_visiting_array;
+	ZVAL_RETVAL_TYPE        zchild;
+	php_phongo_bson_typemap map;
+	zend_class_entry*       odm;
+	bool                    is_visiting_array;
 } php_phongo_bson_state;
 
 #if PHP_VERSION_ID >= 70000
-#define PHONGO_BSON_STATE_INITIALIZER  { {{ 0 }}, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL }, NULL, 0 }
+#define PHONGO_BSON_STATE_INITIALIZER                                                                           \
+	{                                                                                                           \
+		{ { 0 } }, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL }, NULL, 0 \
+	}
 #else
-#define PHONGO_BSON_STATE_INITIALIZER  { NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL }, NULL, 0 }
+#define PHONGO_BSON_STATE_INITIALIZER                                                                      \
+	{                                                                                                      \
+		NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL }, NULL, 0 \
+	}
 #endif
 
-void php_phongo_zval_to_bson(zval *data, php_phongo_bson_flags_t flags, bson_t *bson, bson_t **bson_out TSRMLS_DC);
-bool php_phongo_bson_to_zval_ex(const unsigned char *data, int data_len, php_phongo_bson_state *state);
+void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out TSRMLS_DC);
+bool php_phongo_bson_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state);
 #if PHP_VERSION_ID >= 70000
-bool php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval *out);
+bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval* out);
 #else
-bool php_phongo_bson_to_zval(const unsigned char *data, int data_len, zval **out);
+bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval** out);
 #endif
-bool php_phongo_bson_typemap_to_state(zval *typemap, php_phongo_bson_typemap *map TSRMLS_DC);
+bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map TSRMLS_DC);
 
-#endif	/* PHONGO_BSON_H */
-
+#endif /* PHONGO_BSON_H */
 
 /*
  * Local variables:

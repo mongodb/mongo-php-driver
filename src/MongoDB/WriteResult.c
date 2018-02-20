@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -26,29 +26,29 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
-#define PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(iter, bson, key) \
+#define PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(iter, bson, key)                \
 	if (bson_iter_init_find((iter), (bson), (key)) && BSON_ITER_HOLDS_INT32((iter))) { \
-		RETURN_LONG(bson_iter_int32((iter))); \
+		RETURN_LONG(bson_iter_int32((iter)));                                          \
 	}
 
-zend_class_entry *php_phongo_writeresult_ce;
+zend_class_entry* php_phongo_writeresult_ce;
 
-static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_t *intern, zval *return_value TSRMLS_DC) /* {{{ */
+static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_t* intern, zval* return_value TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter, child;
 #if PHP_VERSION_ID >= 70000
 	zval writeconcernerror;
 #else
-	zval *writeconcernerror = NULL;
+	zval* writeconcernerror = NULL;
 #endif
 
 	ZVAL_NULL(return_value);
 
 	if (bson_iter_init_find(&iter, intern->reply, "writeConcernErrors") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
 		while (bson_iter_next(&child)) {
-			bson_t cbson;
-			uint32_t len;
-			const uint8_t *data;
+			bson_t         cbson;
+			uint32_t       len;
+			const uint8_t* data;
 
 			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
 				continue;
@@ -85,7 +85,7 @@ static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_
 	return true;
 } /* }}} */
 
-static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t *intern, zval *return_value TSRMLS_DC) /* {{{ */
+static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t* intern, zval* return_value TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter, child;
 
@@ -93,13 +93,13 @@ static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t *int
 
 	if (bson_iter_init_find(&iter, intern->reply, "writeErrors") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
 		while (bson_iter_next(&child)) {
-			bson_t cbson;
-			uint32_t len;
-			const uint8_t *data;
+			bson_t         cbson;
+			uint32_t       len;
+			const uint8_t* data;
 #if PHP_VERSION_ID >= 70000
 			zval writeerror;
 #else
-			zval *writeerror = NULL;
+			zval* writeerror = NULL;
 #endif
 
 			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
@@ -139,10 +139,10 @@ static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t *int
    Returns the number of documents that were inserted */
 static PHP_METHOD(WriteResult, getInsertedCount)
 {
-	bson_iter_t iter;
-	php_phongo_writeresult_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	bson_iter_t               iter;
+	php_phongo_writeresult_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -157,10 +157,10 @@ static PHP_METHOD(WriteResult, getInsertedCount)
    Returns the number of documents that matched the update criteria */
 static PHP_METHOD(WriteResult, getMatchedCount)
 {
-	bson_iter_t iter;
-	php_phongo_writeresult_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	bson_iter_t               iter;
+	php_phongo_writeresult_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -175,10 +175,10 @@ static PHP_METHOD(WriteResult, getMatchedCount)
    Returns the number of documents that were actually modified by an update */
 static PHP_METHOD(WriteResult, getModifiedCount)
 {
-	bson_iter_t iter;
-	php_phongo_writeresult_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	bson_iter_t               iter;
+	php_phongo_writeresult_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -193,10 +193,10 @@ static PHP_METHOD(WriteResult, getModifiedCount)
    Returns the number of documents that were deleted */
 static PHP_METHOD(WriteResult, getDeletedCount)
 {
-	bson_iter_t iter;
-	php_phongo_writeresult_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	bson_iter_t               iter;
+	php_phongo_writeresult_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -211,10 +211,10 @@ static PHP_METHOD(WriteResult, getDeletedCount)
    Returns the number of documents that were upserted */
 static PHP_METHOD(WriteResult, getUpsertedCount)
 {
-	bson_iter_t iter;
-	php_phongo_writeresult_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	bson_iter_t               iter;
+	php_phongo_writeresult_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -229,9 +229,9 @@ static PHP_METHOD(WriteResult, getUpsertedCount)
    Returns the Server from which the result originated */
 static PHP_METHOD(WriteResult, getServer)
 {
-	php_phongo_writeresult_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_writeresult_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -246,10 +246,10 @@ static PHP_METHOD(WriteResult, getServer)
    Returns the identifiers generated by the server for upsert operations. */
 static PHP_METHOD(WriteResult, getUpsertedIds)
 {
-	bson_iter_t iter, child;
-	php_phongo_writeresult_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	bson_iter_t               iter, child;
+	php_phongo_writeresult_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -257,14 +257,13 @@ static PHP_METHOD(WriteResult, getUpsertedIds)
 		return;
 	}
 
-
 	array_init(return_value);
 
 	if (bson_iter_init_find(&iter, intern->reply, "upserted") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
 		while (bson_iter_next(&child)) {
-			uint32_t               data_len;
-			const uint8_t         *data = NULL;
-			php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
+			uint32_t              data_len;
+			const uint8_t*        data  = NULL;
+			php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
 			/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type so we can
 			 * easily access the "index" and "_id" fields. */
@@ -278,11 +277,11 @@ static PHP_METHOD(WriteResult, getUpsertedIds)
 
 			if (php_phongo_bson_to_zval_ex(data, data_len, &state)) {
 #if PHP_VERSION_ID >= 70000
-				zval *zid = php_array_fetchc(&state.zchild, "_id");
+				zval* zid = php_array_fetchc(&state.zchild, "_id");
 				add_index_zval(return_value, php_array_fetchc_long(&state.zchild, "index"), zid);
 				zval_add_ref(zid);
 #else
-				zval *zid = php_array_fetchc(state.zchild, "_id");
+				zval* zid = php_array_fetchc(state.zchild, "_id");
 				add_index_zval(return_value, php_array_fetchc_long(state.zchild, "index"), zid);
 				zval_add_ref(&zid);
 #endif
@@ -297,9 +296,9 @@ static PHP_METHOD(WriteResult, getUpsertedIds)
    Return any write concern error that occurred */
 static PHP_METHOD(WriteResult, getWriteConcernError)
 {
-	php_phongo_writeresult_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_writeresult_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -314,9 +313,9 @@ static PHP_METHOD(WriteResult, getWriteConcernError)
    Returns any write errors that occurred */
 static PHP_METHOD(WriteResult, getWriteErrors)
 {
-	php_phongo_writeresult_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_writeresult_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -332,16 +331,15 @@ static PHP_METHOD(WriteResult, getWriteErrors)
    concern). */
 static PHP_METHOD(WriteResult, isAcknowledged)
 {
-	php_phongo_writeresult_t *intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_writeresult_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
-
 
 	RETURN_BOOL(mongoc_write_concern_is_acknowledged(intern->write_concern));
 } /* }}} */
@@ -351,28 +349,28 @@ ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeresult_me[] = {
-	PHP_ME(WriteResult, getInsertedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getMatchedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getModifiedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getDeletedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getUpsertedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getServer, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getUpsertedIds, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getWriteConcernError, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(WriteResult, isAcknowledged, ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_WriteResult_void, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_WriteResult_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	PHP_ME(WriteResult, getInsertedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+		PHP_ME(WriteResult, getMatchedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+			PHP_ME(WriteResult, getModifiedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+				PHP_ME(WriteResult, getDeletedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					PHP_ME(WriteResult, getUpsertedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+						PHP_ME(WriteResult, getServer, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+							PHP_ME(WriteResult, getUpsertedIds, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+								PHP_ME(WriteResult, getWriteConcernError, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+									PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+										PHP_ME(WriteResult, isAcknowledged, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+											ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_WriteResult_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
+												ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+													PHP_FE_END
 };
 /* }}} */
 
 /* {{{ MongoDB\Driver\WriteResult object handlers */
 static zend_object_handlers php_phongo_handler_writeresult;
 
-static void php_phongo_writeresult_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
+static void php_phongo_writeresult_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_writeresult_t *intern = Z_OBJ_WRITERESULT(object);
+	php_phongo_writeresult_t* intern = Z_OBJ_WRITERESULT(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -389,9 +387,9 @@ static void php_phongo_writeresult_free_object(phongo_free_object_arg *object TS
 #endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_writeresult_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_writeresult_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
-	php_phongo_writeresult_t *intern = NULL;
+	php_phongo_writeresult_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_writeresult_t, class_type);
 
@@ -405,7 +403,7 @@ static phongo_create_object_retval php_phongo_writeresult_create_object(zend_cla
 #else
 	{
 		zend_object_value retval;
-		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeresult_free_object, NULL TSRMLS_CC);
+		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeresult_free_object, NULL TSRMLS_CC);
 		retval.handlers = &php_phongo_handler_writeresult;
 
 		return retval;
@@ -413,25 +411,21 @@ static phongo_create_object_retval php_phongo_writeresult_create_object(zend_cla
 #endif
 } /* }}} */
 
-static HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_writeresult_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
-	php_phongo_writeresult_t *intern;
-#if PHP_VERSION_ID >= 70000
-	zval                      retval;
-#else
-	zval                      retval = zval_used_for_init;
-#endif
-	bson_iter_t iter;
+	php_phongo_writeresult_t* intern;
+	zval                      retval = ZVAL_STATIC_INIT;
+	bson_iter_t               iter;
 
-	intern = Z_WRITERESULT_OBJ_P(object);
+	intern   = Z_WRITERESULT_OBJ_P(object);
 	*is_temp = 1;
 	array_init_size(&retval, 9);
 
-#define PHONGO_WRITERESULT_SCP(field) \
+#define PHONGO_WRITERESULT_SCP(field)                                                         \
 	if (bson_iter_init_find(&iter, intern->reply, (field)) && BSON_ITER_HOLDS_INT32(&iter)) { \
-		ADD_ASSOC_LONG_EX(&retval, (field), bson_iter_int32(&iter)); \
-	} else { \
-		ADD_ASSOC_NULL_EX(&retval, (field)); \
+		ADD_ASSOC_LONG_EX(&retval, (field), bson_iter_int32(&iter));                          \
+	} else {                                                                                  \
+		ADD_ASSOC_NULL_EX(&retval, (field));                                                  \
 	}
 
 	PHONGO_WRITERESULT_SCP("nInserted");
@@ -442,12 +436,12 @@ static HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_te
 #undef PHONGO_WRITERESULT_SCP
 
 	if (bson_iter_init_find(&iter, intern->reply, "upserted") && BSON_ITER_HOLDS_ARRAY(&iter)) {
-		uint32_t len;
-		const uint8_t *data;
+		uint32_t              len;
+		const uint8_t*        data;
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 
 		/* Use native arrays for debugging output */
-		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		bson_iter_array(&iter, &len, &data);
@@ -463,7 +457,7 @@ static HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_te
 		array_init(&upsertedIds);
 		ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", &upsertedIds);
 #else
-		zval *upsertedIds = NULL;
+		zval* upsertedIds = NULL;
 		MAKE_STD_ZVAL(upsertedIds);
 		array_init(upsertedIds);
 		ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", upsertedIds);
@@ -477,7 +471,7 @@ static HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_te
 		php_phongo_writeresult_get_writeerrors(intern, &writeerrors TSRMLS_CC);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", &writeerrors);
 #else
-		zval *writeerrors = NULL;
+		zval* writeerrors = NULL;
 
 		MAKE_STD_ZVAL(writeerrors);
 		php_phongo_writeresult_get_writeerrors(intern, writeerrors TSRMLS_CC);
@@ -492,7 +486,7 @@ static HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_te
 		php_phongo_writeresult_get_writeconcernerror(intern, &writeconcernerror TSRMLS_CC);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", &writeconcernerror);
 #else
-		zval *writeconcernerror = NULL;
+		zval* writeconcernerror = NULL;
 
 		MAKE_STD_ZVAL(writeconcernerror);
 		php_phongo_writeresult_get_writeconcernerror(intern, writeconcernerror TSRMLS_CC);
@@ -507,7 +501,7 @@ static HashTable *php_phongo_writeresult_get_debug_info(zval *object, int *is_te
 		phongo_writeconcern_init(&write_concern, intern->write_concern);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeConcern", &write_concern);
 #else
-		zval *write_concern = NULL;
+		zval* write_concern = NULL;
 
 		MAKE_STD_ZVAL(write_concern);
 		phongo_writeconcern_init(write_concern, intern->write_concern TSRMLS_CC);
@@ -526,7 +520,7 @@ void php_phongo_writeresult_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteResult", php_phongo_writeresult_me);
-	php_phongo_writeresult_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_writeresult_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeresult_ce->create_object = php_phongo_writeresult_create_object;
 	PHONGO_CE_FINAL(php_phongo_writeresult_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_writeresult_ce);
@@ -535,7 +529,7 @@ void php_phongo_writeresult_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_writeresult.get_debug_info = php_phongo_writeresult_get_debug_info;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_writeresult.free_obj = php_phongo_writeresult_free_object;
-	php_phongo_handler_writeresult.offset = XtOffsetOf(php_phongo_writeresult_t, std);
+	php_phongo_handler_writeresult.offset   = XtOffsetOf(php_phongo_writeresult_t, std);
 #endif
 } /* }}} */
 

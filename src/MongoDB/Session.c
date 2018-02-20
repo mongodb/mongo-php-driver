@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -25,9 +25,9 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
-zend_class_entry *php_phongo_session_ce;
+zend_class_entry* php_phongo_session_ce;
 
-static bool php_phongo_session_get_timestamp_parts(zval *obj, uint32_t *timestamp, uint32_t *increment TSRMLS_DC)
+static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestamp, uint32_t* increment TSRMLS_DC)
 {
 	bool retval = false;
 #if PHP_VERSION_ID >= 70000
@@ -49,8 +49,8 @@ static bool php_phongo_session_get_timestamp_parts(zval *obj, uint32_t *timestam
 	*timestamp = Z_LVAL(ztimestamp);
 	*increment = Z_LVAL(zincrement);
 #else
-	zval *ztimestamp = NULL;
-	zval *zincrement = NULL;
+	zval* ztimestamp = NULL;
+	zval* zincrement = NULL;
 
 	zend_call_method_with_0_params(&obj, NULL, NULL, "getTimestamp", &ztimestamp);
 
@@ -86,11 +86,11 @@ cleanup:
    Advances the cluster time for this Session */
 static PHP_METHOD(Session, advanceClusterTime)
 {
-	php_phongo_session_t *intern;
-	zval                 *zcluster_time;
+	php_phongo_session_t* intern;
+	zval*                 zcluster_time;
 	bson_t                cluster_time = BSON_INITIALIZER;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 
@@ -115,12 +115,12 @@ cleanup:
    Advances the operation time for this Session */
 static PHP_METHOD(Session, advanceOperationTime)
 {
-	php_phongo_session_t *intern;
-	zval                 *ztimestamp;
+	php_phongo_session_t* intern;
+	zval*                 ztimestamp;
 	uint32_t              timestamp = 0;
 	uint32_t              increment = 0;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 
@@ -139,11 +139,11 @@ static PHP_METHOD(Session, advanceOperationTime)
    Returns the cluster time for this Session */
 static PHP_METHOD(Session, getClusterTime)
 {
-	php_phongo_session_t  *intern;
-	const bson_t          *cluster_time;
-	php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_session_t* intern;
+	const bson_t*         cluster_time;
+	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 
@@ -174,11 +174,11 @@ static PHP_METHOD(Session, getClusterTime)
    Returns the logical session ID for this Session */
 static PHP_METHOD(Session, getLogicalSessionId)
 {
-	php_phongo_session_t  *intern;
-	const bson_t          *lsid;
-	php_phongo_bson_state  state = PHONGO_BSON_STATE_INITIALIZER;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	php_phongo_session_t* intern;
+	const bson_t*         lsid;
+	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 
@@ -187,7 +187,6 @@ static PHP_METHOD(Session, getLogicalSessionId)
 	}
 
 	lsid = mongoc_client_session_get_lsid(intern->client_session);
-
 
 	if (!php_phongo_bson_to_zval_ex(bson_get_data(lsid), lsid->len, &state)) {
 		/* Exception should already have been thrown */
@@ -206,10 +205,10 @@ static PHP_METHOD(Session, getLogicalSessionId)
    Returns the operation time for this Session */
 static PHP_METHOD(Session, getOperationTime)
 {
-	php_phongo_session_t *intern;
+	php_phongo_session_t* intern;
 	uint32_t              timestamp, increment;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr) SUPPRESS_UNUSED_WARNING(return_value_used)
-
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 
@@ -242,23 +241,23 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Session_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_session_me[] = {
-	PHP_ME(Session, advanceClusterTime, ai_Session_advanceClusterTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Session, advanceOperationTime, ai_Session_advanceOperationTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Session, getClusterTime, ai_Session_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Session, getLogicalSessionId, ai_Session_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_ME(Session, getOperationTime, ai_Session_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Session_void, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Session_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	PHP_ME(Session, advanceClusterTime, ai_Session_advanceClusterTime, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+		PHP_ME(Session, advanceOperationTime, ai_Session_advanceOperationTime, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+			PHP_ME(Session, getClusterTime, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+				PHP_ME(Session, getLogicalSessionId, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					PHP_ME(Session, getOperationTime, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+						ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Session_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
+							ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+								PHP_FE_END
 };
 /* }}} */
 
 /* {{{ MongoDB\Driver\Session object handlers */
 static zend_object_handlers php_phongo_handler_session;
 
-static void php_phongo_session_free_object(phongo_free_object_arg *object TSRMLS_DC) /* {{{ */
+static void php_phongo_session_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_session_t *intern = Z_OBJ_SESSION(object);
+	php_phongo_session_t* intern = Z_OBJ_SESSION(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
@@ -271,9 +270,9 @@ static void php_phongo_session_free_object(phongo_free_object_arg *object TSRMLS
 #endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_session_create_object(zend_class_entry *class_type TSRMLS_DC) /* {{{ */
+static phongo_create_object_retval php_phongo_session_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
-	php_phongo_session_t *intern = NULL;
+	php_phongo_session_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_session_t, class_type);
 
@@ -287,7 +286,7 @@ static phongo_create_object_retval php_phongo_session_create_object(zend_class_e
 #else
 	{
 		zend_object_value retval;
-		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_session_free_object, NULL TSRMLS_CC);
+		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_session_free_object, NULL TSRMLS_CC);
 		retval.handlers = &php_phongo_handler_session;
 
 		return retval;
@@ -295,27 +294,23 @@ static phongo_create_object_retval php_phongo_session_create_object(zend_class_e
 #endif
 } /* }}} */
 
-static HashTable *php_phongo_session_get_debug_info(zval *object, int *is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
-	php_phongo_session_t       *intern = NULL;
-	const mongoc_session_opt_t *cs_opts;
-#if PHP_VERSION_ID >= 70000
-	zval                        retval;
-#else
-	zval                        retval = zval_used_for_init;
-#endif
+	php_phongo_session_t*       intern = NULL;
+	const mongoc_session_opt_t* cs_opts;
+	zval                        retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern = Z_SESSION_OBJ_P(object);
+	intern   = Z_SESSION_OBJ_P(object);
 
 	array_init(&retval);
 
 	{
-		const bson_t *lsid;
+		const bson_t* lsid;
 
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 		/* Use native arrays for debugging output */
-		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		lsid = mongoc_client_session_get_lsid(intern->client_session);
@@ -330,11 +325,11 @@ static HashTable *php_phongo_session_get_debug_info(zval *object, int *is_temp T
 	}
 
 	{
-		const bson_t *cluster_time;
+		const bson_t* cluster_time;
 
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
 		/* Use native arrays for debugging output */
-		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		cluster_time = mongoc_client_session_get_cluster_time(intern->client_session);
@@ -367,7 +362,7 @@ static HashTable *php_phongo_session_get_debug_info(zval *object, int *is_temp T
 			php_phongo_new_timestamp_from_increment_and_timestamp(&ztimestamp, increment, timestamp TSRMLS_CC);
 			ADD_ASSOC_ZVAL_EX(&retval, "operationTime", &ztimestamp);
 #else
-			zval *ztimestamp;
+			zval* ztimestamp;
 
 			MAKE_STD_ZVAL(ztimestamp);
 			php_phongo_new_timestamp_from_increment_and_timestamp(ztimestamp, increment, timestamp TSRMLS_CC);
@@ -387,7 +382,7 @@ void php_phongo_session_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Session", php_phongo_session_me);
-	php_phongo_session_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_session_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_session_ce->create_object = php_phongo_session_create_object;
 	PHONGO_CE_FINAL(php_phongo_session_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_session_ce);
@@ -396,7 +391,7 @@ void php_phongo_session_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_session.get_debug_info = php_phongo_session_get_debug_info;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_session.free_obj = php_phongo_session_free_object;
-	php_phongo_handler_session.offset = XtOffsetOf(php_phongo_session_t, std);
+	php_phongo_handler_session.offset   = XtOffsetOf(php_phongo_session_t, std);
 #endif
 } /* }}} */
 

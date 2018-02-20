@@ -29,7 +29,6 @@ PHP_FUNCTION(MongoDB_BSON_toRelaxedExtendedJSON);
 
 #endif /* PHONGO_BSON_FUNCTIONS_H */
 
-
 /*
  * Local variables:
  * tab-width: 4

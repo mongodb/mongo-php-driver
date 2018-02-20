@@ -15,7 +15,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <php.h>
@@ -23,15 +23,15 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry *php_phongo_writeexception_ce;
+zend_class_entry* php_phongo_writeexception_ce;
 
 /* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Exception\WriteException::getWriteResult()
    Returns the WriteResult from the failed write operation. */
 static PHP_METHOD(WriteException, getWriteResult)
 {
-	zval *writeresult;
+	zval* writeresult;
 #if PHP_VERSION_ID >= 70000
-	zval  rv;
+	zval rv;
 #endif
 
 	if (zend_parse_parameters_none() == FAILURE) {
@@ -41,7 +41,7 @@ static PHP_METHOD(WriteException, getWriteResult)
 #if PHP_VERSION_ID >= 70000
 	writeresult = zend_read_property(php_phongo_writeexception_ce, getThis(), ZEND_STRL("writeResult"), 0, &rv TSRMLS_CC);
 #else
-	writeresult = zend_read_property(php_phongo_writeexception_ce, getThis(), ZEND_STRL("writeResult"), 0 TSRMLS_CC);
+	writeresult                  = zend_read_property(php_phongo_writeexception_ce, getThis(), ZEND_STRL("writeResult"), 0 TSRMLS_CC);
 #endif
 
 	RETURN_ZVAL(writeresult, 1, 0);
@@ -52,8 +52,8 @@ ZEND_BEGIN_ARG_INFO_EX(ai_WriteException_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeexception_me[] = {
-	PHP_ME(WriteException, getWriteResult, ai_WriteException_void, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	PHP_FE_END
+	PHP_ME(WriteException, getWriteResult, ai_WriteException_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+		PHP_FE_END
 };
 /* }}} */
 

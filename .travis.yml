@@ -6,6 +6,7 @@ addons:
     packages:
       - gdb
       - lcov
+      - clang-format-7
 
 matrix:
   include:
