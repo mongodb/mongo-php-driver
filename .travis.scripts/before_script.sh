@@ -8,6 +8,11 @@ fi
 
 phpize
 ./configure ${CONFIGURE_OPTS}
+./scripts/clang-format.sh test
+if [ ! $? -eq 0 ];
+    echo "Formatting errors"
+    exit 1;
+fi
 make all -j4
 make install
 
