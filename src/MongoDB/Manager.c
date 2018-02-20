@@ -797,11 +797,7 @@ static HashTable* php_phongo_manager_get_debug_info(zval* object, int* is_temp T
 	mongoc_server_description_t** sds;
 	size_t                        i, n = 0;
 	zval                          retval = ZVAL_STATIC_INIT;
-#if PHP_VERSION_ID >= 70000
-	zval cluster;
-#else
-	zval* cluster = NULL;
-#endif
+	ZVAL_RETVAL_TYPE              cluster;
 
 	*is_temp = 1;
 	intern   = Z_MANAGER_OBJ_P(object);
