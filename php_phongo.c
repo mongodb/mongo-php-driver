@@ -163,18 +163,21 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 		case MONGOC_ERROR_PROTOCOL_INVALID_REPLY:
 		case MONGOC_ERROR_PROTOCOL_BAD_WIRE_VERSION:
 		case MONGOC_ERROR_CURSOR_INVALID_CURSOR:
-		case MONGOC_ERROR_QUERY_FAILURE:
 		/*case MONGOC_ERROR_PROTOCOL_ERROR:*/
 		case MONGOC_ERROR_BSON_INVALID:
 		case MONGOC_ERROR_MATCHER_INVALID:
 		case MONGOC_ERROR_NAMESPACE_INVALID:
-		case MONGOC_ERROR_COLLECTION_INSERT_FAILED:
 		case MONGOC_ERROR_GRIDFS_INVALID_FILENAME:
+			return php_phongo_runtimeexception_ce;
+		case MONGOC_ERROR_QUERY_FAILURE:
 		case MONGOC_ERROR_QUERY_COMMAND_NOT_FOUND:
 		case MONGOC_ERROR_QUERY_NOT_TAILABLE:
-			return php_phongo_runtimeexception_ce;
+		case MONGOC_ERROR_COLLECTION_INSERT_FAILED:
+			return php_phongo_serverexception_ce;
 	}
 	switch (domain) {
+		case MONGOC_ERROR_SERVER:
+			return php_phongo_serverexception_ce;
 		case MONGOC_ERROR_CLIENT:
 		case MONGOC_ERROR_STREAM:
 		case MONGOC_ERROR_PROTOCOL:
@@ -2800,6 +2803,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	/* Register base exception classes first */
 	php_phongo_exception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_serverexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_connectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_writeexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
