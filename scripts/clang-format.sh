@@ -13,24 +13,23 @@ if test x"$1" = xchanged; then
 fi
 
 # Find clang-format, we prefer -6.0, but also allow binaries without -suffix as
-# long as they're 6.0.0
-CLANG_FORMAT=
+# long as they're >= 6.0.0
+CLANG_FORMAT=`which clang-format-6.0`
 
-which clang-format-6.0
-if [ $? = 0 ]; then
-	CLANG_FORMAT=`which clang-format-6.0`
+if [ -z "$CLANG_FORMAT" ]; then
+	CLANG_FORMAT=`which clang-format`
 fi
 
-which clang-format
-if [ $? = 0 ]; then
-	VERSION=`clang-format -version | cut -d " " -f 3 | cut -c 1-3`
-	if [ x"$VERSION" = "x6.0" ]; then
-		CLANG_FORMAT=`which clang-format`
-	fi
+if [ -z "$CLANG_FORMAT" ]; then
+	echo "Couldn't find clang-format"
+	exit
 fi
 
-if [ x"$CLANG_FORMAT" = "x" ]; then
-	echo "Couldn't find the right clang-format (needs version 6.0)"
+VERSION=`$CLANG_FORMAT -version | cut -d " " -f 3`
+VERSION_MAJOR=`echo $VERSION | cut -d "." -f 1`
+
+if [ $VERSION_MAJOR -lt 6 ]; then
+	echo "Found clang-format $VERSION but we need >= 6.0.0"
 	exit
 fi
 
