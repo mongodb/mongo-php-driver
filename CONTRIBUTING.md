@@ -63,16 +63,6 @@ test suite:
 $ make test # Executes the test suite against the VMs
 ```
 
-### Mongo Orchestration
-
-Some tests interact directly with Mongo Orchestration to start their own servers
-for cluster testing (e.g. replica set failovers). These tests depend on
-`MONGODB_ORCHESTRATION_HOST` and `MONGODB_ORCHESTRATION_PORT` environment
-variables.
-
-By default, these tests will use the Mongo Orchestration instance within the
-test VM.
-
 ### Restarting Mongo Orchestration
 
 If something goes awry in the test VM, it may be helpful to start the VM and
