@@ -70,7 +70,7 @@ object(MongoDB\Driver\Monitoring\CommandFailedEvent)#%d (%d) {
   ["durationMicros"]=>
   int(%d)
   ["error"]=>
-  object(MongoDB\Driver\Exception\RuntimeException)#%d (%d) {
+  object(MongoDB\Driver\Exception\ServerException)#%d (%d) {
     ["message":protected]=>
     string(12) "ns not found"
     ["string":"Exception":private]=>

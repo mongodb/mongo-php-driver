@@ -17,13 +17,14 @@ $hannes_id = $bulk->insert($hannes);
 $w = 2;
 $wtimeout = 1000;
 $writeConcern = new \MongoDB\Driver\WriteConcern($w, $wtimeout);
-throws(function() use($bulk, $writeConcern, $manager) {
+echo throws(function() use($bulk, $writeConcern, $manager) {
     $result = $manager->executeBulkWrite(NS, $bulk, $writeConcern);
-}, "MongoDB\Driver\Exception\ConnectionException");
+}, "MongoDB\Driver\Exception\BulkWriteException"),  "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-OK: Got MongoDB\Driver\Exception\ConnectionException
+--EXPECT--
+OK: Got MongoDB\Driver\Exception\BulkWriteException
+cannot use 'w' > 1 when a host is not replicated
 ===DONE===
