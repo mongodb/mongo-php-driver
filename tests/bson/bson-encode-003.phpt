@@ -1,7 +1,5 @@
 --TEST--
 BSON encoding: Encoding objects into BSON representation
---SKIPIF--
-<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM encodes __pclass last"); ?>
 --FILE--
 <?php
 

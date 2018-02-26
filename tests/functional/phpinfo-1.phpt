@@ -1,7 +1,5 @@
 --TEST--
 phpinfo() reports mongodb.debug (no value)
---SKIPIF--
-<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM does not do phpinfo() this way"); ?>
 --FILE--
 <?php
 

@@ -2,8 +2,6 @@
 phpinfo() reports mongodb.debug (default and overridden)
 --INI--
 mongodb.debug=stderr
---SKIPIF--
-<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM does not do phpinfo() this way"); ?>
 --FILE--
 <?php
 
