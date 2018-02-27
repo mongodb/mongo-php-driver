@@ -2355,8 +2355,6 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	}
 
 #ifdef MONGOC_ENABLE_SSL
-	/* Construct SSL options even if SSL is not enabled so that exceptions can
-	 * be thrown for unsupported driver options. */
 	ssl_opt = php_phongo_make_ssl_opt(driverOptions TSRMLS_CC);
 
 	/* An exception may be thrown during SSL option creation */
