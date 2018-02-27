@@ -208,6 +208,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/WriteResult.c \
     src/MongoDB/Exception/AuthenticationException.c \
     src/MongoDB/Exception/BulkWriteException.c \
+    src/MongoDB/Exception/CommandException.c \
     src/MongoDB/Exception/ConnectionException.c \
     src/MongoDB/Exception/ConnectionTimeoutException.c \
     src/MongoDB/Exception/Exception.c \
