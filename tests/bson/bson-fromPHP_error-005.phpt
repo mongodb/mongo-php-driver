@@ -7,7 +7,7 @@ require_once __DIR__ . '/../utils/tools.php';
 
 class MyRecursiveSerializable implements MongoDB\BSON\Serializable
 {
-    public $x = 1;
+    public $child = 1;
 
     public function bsonSerialize()
     {
@@ -19,7 +19,7 @@ class MyIndirectlyRecursiveSerializable extends MyRecursiveSerializable
 {
     public function bsonSerialize()
     {
-        return ['x' => $this];
+        return ['parent' => $this];
     }
 }
 
@@ -45,5 +45,5 @@ Expected MyRecursiveSerializable::bsonSerialize() to return an array or stdClass
 
 Testing Serializable with indirect circular reference
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Detected recursion for fieldname "x"
+Detected recursion for field path "parent.parent"
 ===DONE===

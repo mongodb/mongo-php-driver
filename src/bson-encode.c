@@ -45,6 +45,9 @@
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO-BSON"
 
+/* Forwards declarations */
+static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out TSRMLS_DC);
+
 /* Determines whether the argument should be serialized as a BSON array or
  * document. IS_ARRAY is returned if the argument's keys are a sequence of
  * integers starting at zero; otherwise, IS_OBJECT is returned. */
@@ -113,7 +116,7 @@ static int php_phongo_is_array_or_document(zval* val TSRMLS_DC) /* {{{ */
  * will be appended as an embedded document. Other MongoDB\BSON\Type instances
  * will be appended as the appropriate BSON type. Other array or object values
  * will be appended as an embedded document. */
-static void php_phongo_bson_append_object(bson_t* bson, php_phongo_bson_flags_t flags, const char* key, long key_len, zval* object TSRMLS_DC) /* {{{ */
+static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, long key_len, zval* object TSRMLS_DC) /* {{{ */
 {
 	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_cursorid_ce TSRMLS_CC)) {
 		bson_append_int64(bson, key, key_len, Z_CURSORID_OBJ_P(object)->id);
@@ -178,17 +181,17 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_bson_flags_t 
 #endif
 				}
 #if PHP_VERSION_ID >= 70000
-				php_phongo_zval_to_bson(&obj_data, flags, &child, NULL TSRMLS_CC);
+				php_phongo_zval_to_bson_internal(&obj_data, field_path, flags, &child, NULL TSRMLS_CC);
 #else
-				php_phongo_zval_to_bson(obj_data, flags, &child, NULL TSRMLS_CC);
+				php_phongo_zval_to_bson_internal(obj_data, field_path, flags, &child, NULL TSRMLS_CC);
 #endif
 				bson_append_document_end(bson, &child);
 			} else {
 				bson_append_array_begin(bson, key, key_len, &child);
 #if PHP_VERSION_ID >= 70000
-				php_phongo_zval_to_bson(&obj_data, flags, &child, NULL TSRMLS_CC);
+				php_phongo_zval_to_bson_internal(&obj_data, field_path, flags, &child, NULL TSRMLS_CC);
 #else
-				php_phongo_zval_to_bson(obj_data, flags, &child, NULL TSRMLS_CC);
+				php_phongo_zval_to_bson_internal(obj_data, field_path, flags, &child, NULL TSRMLS_CC);
 #endif
 				bson_append_array_end(bson, &child);
 			}
@@ -294,7 +297,7 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_bson_flags_t 
 
 		mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding document");
 		bson_append_document_begin(bson, key, key_len, &child);
-		php_phongo_zval_to_bson(object, flags, &child, NULL TSRMLS_CC);
+		php_phongo_zval_to_bson_internal(object, field_path, flags, &child, NULL TSRMLS_CC);
 		bson_append_document_end(bson, &child);
 	}
 } /* }}} */
@@ -302,8 +305,10 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_bson_flags_t 
 /* Appends the zval argument to the BSON document. If the argument is an object,
  * or an array that should be serialized as an embedded document, this function
  * will defer to php_phongo_bson_append_object(). */
-static void php_phongo_bson_append(bson_t* bson, php_phongo_bson_flags_t flags, const char* key, long key_len, zval* entry TSRMLS_DC) /* {{{ */
+static void php_phongo_bson_append(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, long key_len, zval* entry TSRMLS_DC) /* {{{ */
 {
+	php_phongo_field_path_write_item_at_current_level(field_path, key);
+
 #if PHP_VERSION_ID >= 70000
 try_again:
 #endif
@@ -337,7 +342,9 @@ try_again:
 			if (bson_utf8_validate(Z_STRVAL_P(entry), Z_STRLEN_P(entry), true)) {
 				bson_append_utf8(bson, key, key_len, Z_STRVAL_P(entry), Z_STRLEN_P(entry));
 			} else {
-				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected invalid UTF-8 for fieldname \"%s\": %s", key, Z_STRVAL_P(entry));
+				char* path_string = php_phongo_field_path_as_string(field_path);
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected invalid UTF-8 for field path \"%s\": %s", path_string, Z_STRVAL_P(entry));
+				efree(path_string);
 			}
 			break;
 
@@ -347,7 +354,9 @@ try_again:
 				HashTable* tmp_ht = HASH_OF(entry);
 
 				if (tmp_ht && ZEND_HASH_GET_APPLY_COUNT(tmp_ht) > 0) {
-					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected recursion for fieldname \"%s\"", key);
+					char* path_string = php_phongo_field_path_as_string(field_path);
+					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected recursion for field path \"%s\"", path_string);
+					efree(path_string);
 					break;
 				}
 
@@ -356,7 +365,9 @@ try_again:
 				}
 
 				bson_append_array_begin(bson, key, key_len, &child);
-				php_phongo_zval_to_bson(entry, flags, &child, NULL TSRMLS_CC);
+				field_path->current_level++;
+				php_phongo_zval_to_bson_internal(entry, field_path, flags, &child, NULL TSRMLS_CC);
+				field_path->current_level--;
 				bson_append_array_end(bson, &child);
 
 				if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
@@ -370,7 +381,9 @@ try_again:
 			HashTable* tmp_ht = HASH_OF(entry);
 
 			if (tmp_ht && ZEND_HASH_GET_APPLY_COUNT(tmp_ht) > 0) {
-				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected recursion for fieldname \"%s\"", key);
+				char* path_string = php_phongo_field_path_as_string(field_path);
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected recursion for field path \"%s\"", path_string);
+				efree(path_string);
 				break;
 			}
 
@@ -378,7 +391,9 @@ try_again:
 				ZEND_HASH_INC_APPLY_COUNT(tmp_ht);
 			}
 
-			php_phongo_bson_append_object(bson, flags, key, key_len, entry TSRMLS_CC);
+			field_path->current_level++;
+			php_phongo_bson_append_object(bson, field_path, flags, key, key_len, entry TSRMLS_CC);
+			field_path->current_level--;
 
 			if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
 				ZEND_HASH_DEC_APPLY_COUNT(tmp_ht);
@@ -388,7 +403,7 @@ try_again:
 
 #if PHP_VERSION_ID >= 70000
 		case IS_INDIRECT:
-			php_phongo_bson_append(bson, flags, key, key_len, Z_INDIRECT_P(entry) TSRMLS_DC);
+			php_phongo_bson_append(bson, field_path, flags, key, key_len, Z_INDIRECT_P(entry) TSRMLS_DC);
 			break;
 
 		case IS_REFERENCE:
@@ -396,15 +411,15 @@ try_again:
 			goto try_again;
 #endif
 
-		default:
-			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected unsupported PHP type for fieldname \"%s\": %d (%s)", key, Z_TYPE_P(entry), zend_get_type_by_const(Z_TYPE_P(entry)));
+		default: {
+			char* path_string = php_phongo_field_path_as_string(field_path);
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected unsupported PHP type for field path \"%s\": %d (%s)", path_string, Z_TYPE_P(entry), zend_get_type_by_const(Z_TYPE_P(entry)));
+			efree(path_string);
+		}
 	}
 } /* }}} */
 
-/* Converts the array or object argument to a BSON document. If the object is an
- * instance of MongoDB\BSON\Serializable, the return value of bsonSerialize()
- * will be used. */
-void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out TSRMLS_DC) /* {{{ */
+static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out TSRMLS_DC) /* {{{ */
 {
 	HashTable* ht_data = NULL;
 #if PHP_VERSION_ID >= 70000
@@ -482,7 +497,6 @@ void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* 
 
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_type_ce TSRMLS_CC)) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s instance %s cannot be serialized as a root element", ZSTR_VAL(php_phongo_type_ce->name), ZSTR_VAL(Z_OBJCE_P(data)->name));
-
 				return;
 			}
 
@@ -538,7 +552,7 @@ void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* 
 				zend_string_addref(string_key);
 			}
 
-			php_phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, ZSTR_VAL(string_key), strlen(ZSTR_VAL(string_key)), value TSRMLS_CC);
+			php_phongo_bson_append(bson, field_path, flags & ~PHONGO_BSON_ADD_ID, ZSTR_VAL(string_key), strlen(ZSTR_VAL(string_key)), value TSRMLS_CC);
 
 			zend_string_release(string_key);
 		}
@@ -593,7 +607,7 @@ void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* 
 			spprintf(&string_key, 0, "%ld", num_key);
 		}
 
-		php_phongo_bson_append(bson, flags & ~PHONGO_BSON_ADD_ID, string_key, strlen(string_key), *value TSRMLS_CC);
+		php_phongo_bson_append(bson, field_path, flags & ~PHONGO_BSON_ADD_ID, string_key, strlen(string_key), *value TSRMLS_CC);
 
 		if (hash_type == HASH_KEY_IS_LONG) {
 			efree(string_key);
@@ -627,6 +641,18 @@ cleanup:
 	if (!Z_ISUNDEF(obj_data)) {
 		zval_ptr_dtor(&obj_data);
 	}
+} /* }}} */
+
+/* Converts the array or object argument to a BSON document. If the object is an
+ * instance of MongoDB\BSON\Serializable, the return value of bsonSerialize()
+ * will be used. */
+void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out TSRMLS_DC) /* {{{ */
+{
+	php_phongo_field_path* field_path = php_phongo_field_path_alloc();
+
+	php_phongo_zval_to_bson_internal(data, field_path, flags, bson, bson_out TSRMLS_CC);
+
+	php_phongo_field_path_free(field_path);
 } /* }}} */
 
 /*
