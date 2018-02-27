@@ -1,7 +1,5 @@
 --TEST--
 BSON encoding: Object Document Mapper
---SKIPIF--
-<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM encodes __pclass last"); ?>
 --FILE--
 <?php
 

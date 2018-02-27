@@ -1,10 +1,7 @@
 --TEST--
 MongoDB\Driver\Server constants
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc" ?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 var_dump(MongoDB\Driver\Server::TYPE_UNKNOWN);
 var_dump(MongoDB\Driver\Server::TYPE_STANDALONE);

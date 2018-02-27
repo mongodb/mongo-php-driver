@@ -2,7 +2,6 @@
 MongoDB\BSON\UTCDateTime integer parsing from number (64-bit)
 --SKIPIF--
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
-<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM implements only an older version of DateTime"); ?>
 --INI--
 date.timezone=UTC
 error_reporting=-1

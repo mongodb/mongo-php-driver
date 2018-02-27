@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\BSON\UTCDateTime integer parsing from string
---SKIPIF--
-<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM implements only an older version of DateTime"); ?>
 --INI--
 date.timezone=UTC
 error_reporting=-1

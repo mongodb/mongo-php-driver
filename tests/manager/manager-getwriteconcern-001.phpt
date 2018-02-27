@@ -1,24 +1,21 @@
 --TEST--
 MongoDB\Driver\Manager::getWriteConcern()
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 $tests = array(
-    array(STANDALONE, array()),
-    array(STANDALONE . '/?w=1', array()),
-    array(STANDALONE . '/?w=majority', array()),
-    array(STANDALONE, array('w' => 1, 'journal' => true)),
-    array(STANDALONE, array('w' => 'majority', 'journal' => true)),
-    array(STANDALONE . '/?w=majority&journal=true', array('w' => 1, 'journal' => false)),
+    array(null, array()),
+    array('mongodb://127.0.0.1/?w=1', array()),
+    array('mongodb://127.0.0.1/?w=majority', array()),
+    array(null, array('w' => 1, 'journal' => true)),
+    array(null, array('w' => 'majority', 'journal' => true)),
+    array('mongodb://127.0.0.1/?w=majority&journal=true', array('w' => 1, 'journal' => false)),
     // wtimeoutms does not get applied unless w > 1, w = majority, or tag sets are used
-    array(STANDALONE . '/?wtimeoutms=1000', array()),
-    array(STANDALONE, array('wtimeoutms' => 1000)),
-    array(STANDALONE . '/?w=2', array('wtimeoutms' => 1000)),
-    array(STANDALONE . '/?w=majority', array('wtimeoutms' => 1000)),
-    array(STANDALONE . '/?w=customTagSet', array('wtimeoutms' => 1000)),
+    array('mongodb://127.0.0.1/?wtimeoutms=1000', array()),
+    array(null, array('wtimeoutms' => 1000)),
+    array('mongodb://127.0.0.1/?w=2', array('wtimeoutms' => 1000)),
+    array('mongodb://127.0.0.1/?w=majority', array('wtimeoutms' => 1000)),
+    array('mongodb://127.0.0.1/?w=customTagSet', array('wtimeoutms' => 1000)),
 );
 
 foreach ($tests as $i => $test) {

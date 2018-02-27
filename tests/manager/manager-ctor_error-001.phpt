@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\Driver\Manager::__construct(): too many arguments
---SKIPIF--
-<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM throws Exception instead of InvalidArgumentException"); ?>
 --FILE--
 <?php
 

@@ -2,10 +2,10 @@
 MongoDB\Driver\WriteConcern construction (invalid wtimeout range)
 --SKIPIF--
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     new MongoDB\Driver\WriteConcern(1, 2147483648);

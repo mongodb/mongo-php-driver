@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\BSON\Regex #001 error
---SKIPIF--
-<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM handles parameter parsing differently"); ?>
 --FILE--
 <?php
 

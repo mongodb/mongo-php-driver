@@ -1,7 +1,5 @@
 --TEST--
 PHPC-631: UTCDateTime::toDateTime() may return object that cannot be serialized
---SKIPIF--
-<?php if (defined("HHVM_VERSION_ID")) exit("skip HHVM uses 'UTC' instead of '+00:00'"); ?>
 --INI--
 date.timezone=UTC
 --FILE--

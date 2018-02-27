@@ -1,12 +1,11 @@
 --TEST--
 MongoDB\Driver\Manager: Manager cannot be woken up
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+require_once __DIR__ . '/../utils/tools.php';
+
+$manager = new MongoDB\Driver\Manager();
 throws(function() use($manager) {
     $manager->__wakeup();
 }, "MongoDB\Driver\Exception\RuntimeException");

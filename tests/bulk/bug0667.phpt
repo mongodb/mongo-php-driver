@@ -1,10 +1,7 @@
 --TEST--
 PHPC-667: BulkWrite::insert() does not generate ObjectId if another field has "_id" prefix
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 $bulk = new MongoDB\Driver\BulkWrite;
 var_dump($bulk->insert(['_ids' => 1]));
