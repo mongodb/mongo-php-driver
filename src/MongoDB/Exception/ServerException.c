@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2018 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,25 +23,24 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-zend_class_entry* php_phongo_executiontimeoutexception_ce;
+zend_class_entry* php_phongo_serverexception_ce;
 
-/* {{{ MongoDB\Driver\Exception\ExecutionTimeoutException function entries */
-static zend_function_entry php_phongo_executiontimeoutexception_me[] = {
+/* {{{ MongoDB\Driver\Exception\ServerException function entries */
+static zend_function_entry php_phongo_serverexception_me[] = {
 	PHP_FE_END
 };
 /* }}} */
 
-void php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_serverexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "ExecutionTimeoutException", php_phongo_executiontimeoutexception_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "ServerException", php_phongo_serverexception_me);
 #if PHP_VERSION_ID >= 70000
-	php_phongo_executiontimeoutexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce);
+	php_phongo_serverexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce);
 #else
-	php_phongo_executiontimeoutexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce, NULL TSRMLS_CC);
+	php_phongo_serverexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce, NULL TSRMLS_CC);
 #endif
-	PHONGO_CE_FINAL(php_phongo_executiontimeoutexception_ce);
 } /* }}} */
 
 /*

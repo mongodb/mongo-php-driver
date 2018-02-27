@@ -215,6 +215,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/Exception/InvalidArgumentException.c \
     src/MongoDB/Exception/LogicException.c \
     src/MongoDB/Exception/RuntimeException.c \
+    src/MongoDB/Exception/ServerException.c \
     src/MongoDB/Exception/SSLConnectionException.c \
     src/MongoDB/Exception/UnexpectedValueException.c \
     src/MongoDB/Exception/WriteException.c \

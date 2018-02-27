@@ -63,9 +63,9 @@ void php_phongo_writeexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "WriteException", php_phongo_writeexception_me);
 #if PHP_VERSION_ID >= 70000
-	php_phongo_writeexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce);
+	php_phongo_writeexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce);
 #else
-	php_phongo_writeexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce, NULL TSRMLS_CC);
+	php_phongo_writeexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce, NULL TSRMLS_CC);
 #endif
 	php_phongo_writeexception_ce->ce_flags |= ZEND_ACC_EXPLICIT_ABSTRACT_CLASS;
 
