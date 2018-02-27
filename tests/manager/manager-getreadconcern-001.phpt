@@ -1,20 +1,17 @@
 --TEST--
 MongoDB\Driver\Manager::getReadConcern()
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 $tests = [
-    [STANDALONE, []],
-    [STANDALONE . '/?readconcernlevel=local', []],
-    [STANDALONE . '/?readconcernlevel=majority', []],
-    [STANDALONE . '/?readconcernlevel=not-yet-supported', []],
-    [STANDALONE, ['readconcernlevel' => 'local']],
-    [STANDALONE, ['readconcernlevel' => 'majority']],
-    [STANDALONE, ['readconcernlevel' => 'not-yet-supported']],
-    [STANDALONE . '/?readconcernlevel=local', ['readconcernlevel' => 'majority']],
+    [null, []],
+    ['mongodb://127.0.0.1/?readconcernlevel=local', []],
+    ['mongodb://127.0.0.1/?readconcernlevel=majority', []],
+    ['mongodb://127.0.0.1/?readconcernlevel=not-yet-supported', []],
+    [null, ['readconcernlevel' => 'local']],
+    [null, ['readconcernlevel' => 'majority']],
+    [null, ['readconcernlevel' => 'not-yet-supported']],
+    ['mongodb://127.0.0.1/?readconcernlevel=local', ['readconcernlevel' => 'majority']],
 ];
 
 foreach ($tests as $i => $test) {

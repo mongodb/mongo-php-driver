@@ -1,7 +1,5 @@
 --TEST--
 PHPC-655: Use case insensitive parsing for Manager connectTimeoutMS array option
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

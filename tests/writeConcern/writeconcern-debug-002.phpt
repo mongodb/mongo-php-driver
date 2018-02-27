@@ -1,10 +1,7 @@
 --TEST--
 MongoDB\Driver\WriteConcern debug output
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 var_dump(new MongoDB\Driver\WriteConcern(1));
 var_dump(new MongoDB\Driver\WriteConcern("tag", 1000, false));

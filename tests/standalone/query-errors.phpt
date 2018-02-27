@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\Driver\Query: Invalid types
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

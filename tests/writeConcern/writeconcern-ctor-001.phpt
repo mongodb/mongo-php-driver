@@ -1,10 +1,7 @@
 --TEST--
 MongoDB\Driver\WriteConcern construction
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 var_dump(new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY));
 var_dump(new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY, 1000));

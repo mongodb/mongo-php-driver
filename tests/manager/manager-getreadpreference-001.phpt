@@ -1,19 +1,16 @@
 --TEST--
 MongoDB\Driver\Manager::getReadPreference()
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 $tests = array(
-    array(STANDALONE, array()),
-    array(STANDALONE . '/?readPreference=secondary', array()),
-    array(STANDALONE, array('readPreference' => 'primaryPreferred')),
-    array(STANDALONE . '/?readPreference=secondary', array('readPreference' => 'secondaryPreferred')),
-    array(STANDALONE . '/?readPreference=secondary&readPreferenceTags=dc:ny,use:reports&readPreferenceTags=', array()),
-    array(STANDALONE . '/?readPreference=secondary', array('readPreferenceTags' => array(array('dc' => 'ny', 'use' => 'reports'), array()))),
-    array(STANDALONE . '/?readPreference=secondary&readPreferenceTags=dc:ny,use:reports', array('readPreferenceTags' => array(array('dc' => 'ca')))),
+    array(null, array()),
+    array('mongodb://127.0.0.1/?readPreference=secondary', array()),
+    array(null, array('readPreference' => 'primaryPreferred')),
+    array('mongodb://127.0.0.1/?readPreference=secondary', array('readPreference' => 'secondaryPreferred')),
+    array('mongodb://127.0.0.1/?readPreference=secondary&readPreferenceTags=dc:ny,use:reports&readPreferenceTags=', array()),
+    array('mongodb://127.0.0.1/?readPreference=secondary', array('readPreferenceTags' => array(array('dc' => 'ny', 'use' => 'reports'), array()))),
+    array('mongodb://127.0.0.1/?readPreference=secondary&readPreferenceTags=dc:ny,use:reports', array('readPreferenceTags' => array(array('dc' => 'ca')))),
 );
 
 foreach ($tests as $i => $test) {

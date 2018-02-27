@@ -1,10 +1,9 @@
 --TEST--
 MongoDB\Driver\WriteConcern construction (invalid arguments)
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
+
+require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     new MongoDB\Driver\WriteConcern("string", 10000, false, 1);

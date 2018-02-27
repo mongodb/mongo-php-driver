@@ -1,10 +1,7 @@
 --TEST--
 PHPC-430: Query constructor arguments are modified
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/basic.inc";
 
 $filter = [];
 $options = ['sort' => ['x' => 1]];
