@@ -21,15 +21,12 @@
 #include "bson.h"
 #include "mongoc.h"
 
+#include "phongo_version.h"
 #include "phongo_compat.h"
 #include "php_phongo_classes.h"
 
 #define phpext_mongodb_ptr &mongodb_module_entry
 extern zend_module_entry mongodb_module_entry;
-
-/* FIXME: Its annoying to bump version. Move into phongo_version.h.in */
-#define PHP_MONGODB_VERSION "1.5.0-dev"
-#define PHP_MONGODB_STABILITY "devel"
 
 /* Structure for persisted libmongoc clients. The PID is included to ensure that
  * processes do not destroy clients created by other processes (relevant for

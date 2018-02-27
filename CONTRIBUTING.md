@@ -150,12 +150,14 @@ changes in this maintenance branch. This is important because we will later
 merge the ensuing release commits up to master with `--strategy=ours`, which
 will ignore changes from the merged commits.
 
-Update the version and stability constants in `php_phongo.h`. This should entail
-removing the version's "-dev" suffix and changing the stability to "stable":
+Update the version and stability constants in `phongo_version.h`. This should
+entail removing the version's "-dev" suffix, changing the stability to
+"stable", and increasing the last digit for `PHP_MONGO_VERSION_DESC`:
 
 ```
 #define PHP_MONGODB_VERSION "1.1.8-dev"
 #define PHP_MONGODB_STABILITY "devel"
+#define PHP_MONGODB_VERSION_DESC 1,1,8,0
 ```
 
 The above would be changed to:
@@ -163,10 +165,11 @@ The above would be changed to:
 ```
 #define PHP_MONGODB_VERSION "1.1.8"
 #define PHP_MONGODB_STABILITY "stable"
+#define PHP_MONGODB_VERSION_DESC 1,1,8,1
 ```
 
 The Makefile targets for creating the PECL package depend on these constants, so
-you must rebuild the extension after updating `php_phongo.h`.
+you must rebuild the extension after updating `phongo_version.h`.
 
 > **Note:** If this is an alpha or beta release, the version string should
 > include the X.Y.Z version followed by the stability and an increment. For
@@ -174,7 +177,9 @@ you must rebuild the extension after updating `php_phongo.h`.
 > Alpha and beta releases use "alpha" and "beta" stability strings,
 > respectively. Release candidates (e.g. "1.4.0RC1") also use "beta" stability.
 > See [Documenting release stability and API stability](https://pear.php.net/manual/en/guide.developers.package2.stability.php)
-> for more information.
+> for more information. For each change to the suffixes of
+> `PHP_MONGODB_VERSION`, increment the last digit of
+> `PHP_MONGODB_VERSION_DESC`.
 
 ### Publish PECL package
 
@@ -195,10 +200,10 @@ one chance to confirm the package information after uploading.
 
 ### Commit version update and release notes
 
-Commit the modified `php_phongo.h` file as "Package X.Y.Z"
+Commit the modified `phongo_version.h` file as "Package X.Y.Z"
 
 ```
-$ git add php_phongo.h
+$ git add phongo_version.h
 $ git commit -m "Package X.Y.Z"
 ```
 
@@ -212,12 +217,13 @@ $ git tag -a -m "Release X.Y.Z" X.Y.Z
 
 ### Update version info back to dev
 
-After tagging, the version and stability constants in `php_phongo.h` should be
+After tagging, the version and stability constants in `phongo_version.h` should be
 updated back to development status.
 
 ```
 #define PHP_MONGODB_VERSION "1.1.8"
 #define PHP_MONGODB_STABILITY "stable"
+#define PHP_MONGODB_VERSION_DESC 1,1,8,1
 ```
 
 The above would be changed to:
@@ -225,12 +231,13 @@ The above would be changed to:
 ```
 #define PHP_MONGODB_VERSION "1.1.9-dev"
 #define PHP_MONGODB_STABILITY "devel"
+#define PHP_MONGODB_VERSION_DESC 1,1,9,0
 ```
 
 Commit this change:
 
 ```
-$ git commit -m "Back to -dev" php_phongo.h
+$ git commit -m "Back to -dev" phongo_version.h
 ```
 
 > **Note:** If this is an alpha, beta, or RC release, the version string should
