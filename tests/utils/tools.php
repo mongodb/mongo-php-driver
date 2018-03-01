@@ -1,5 +1,189 @@
 <?php
 
+use MongoDB\Driver\Command;
+use MongoDB\Driver\Manager;
+use MongoDB\Driver\ReadPreference;
+use MongoDB\Driver\Server;
+use MongoDB\Driver\Exception\ConnectionException;
+use MongoDB\Driver\Exception\RuntimeException;
+
+/**
+ * Returns the value of a module row from phpinfo(), or null if it's not found.
+ *
+ * @param string $row
+ * @return string|null
+ */
+function get_module_info($row)
+{
+    ob_start();
+    phpinfo(INFO_MODULES);
+    $info = ob_get_clean();
+
+    $pattern = sprintf('/^%s([\w ]+)$/m', preg_quote($row . ' => '));
+
+    if (preg_match($pattern, $info, $matches) !== 1) {
+        return null;
+    }
+
+    return $matches[1];
+}
+
+/**
+ * Returns the primary server.
+ *
+ * @param string $uri Connection string
+ * @return Server
+ * @throws ConnectionException
+ */
+function get_primary_server($uri)
+{
+    return (new Manager($uri))->selectServer(new ReadPreference('primary'));
+}
+
+/**
+ * Returns the storage engine of the primary server.
+ *
+ * @param string $uri Connection string
+ * @return string
+ * @throws RuntimeException
+ */
+function get_server_storage_engine($uri)
+{
+    $server = get_primary_server($uri);
+    $command = new Command(['serverStatus' => 1]);
+    $cursor = $server->executeCommand('admin', $command);
+
+    return current($cursor->toArray())->storageEngine->name;
+}
+
+/**
+ * Returns the version of the primary server.
+ *
+ * @param string $uri Connection string
+ * @return string
+ * @throws RuntimeException
+ */
+function get_server_version($uri)
+{
+    $server = get_primary_server($uri);
+    $command = new Command(['buildInfo' => 1]);
+    $cursor = $server->executeCommand('admin', $command);
+
+    return current($cursor->toArray())->version;
+}
+
+/**
+ * Checks that the topology is a sharded cluster.
+ *
+ * @param string $uri
+ * @return boolean
+ */
+function is_mongos($uri)
+{
+    return get_primary_server($uri)->getType() === Server::TYPE_MONGOS;
+}
+
+/**
+ * Checks that the topology is a replica set.
+ *
+ * @param string $uri
+ * @return boolean
+ */
+function is_replica_set($uri)
+{
+    return get_primary_server($uri)->getType() === Server::TYPE_RS_PRIMARY;
+}
+
+/**
+ * Checks if the connection string uses SSL.
+ *
+ * @param string $uri
+ * @return boolean
+ */
+function is_ssl($uri)
+{
+    return stripos($uri, 'ssl=true') !== false;
+}
+
+/**
+ * Checks that the topology is a standalone.
+ *
+ * @param string $uri
+ * @return boolean
+ */
+function is_standalone($uri)
+{
+    return get_primary_server($uri)->getType() === Server::TYPE_STANDALONE;
+}
+
+/**
+ * Converts the server type constant to a string.
+ *
+ * @see http://php.net/manual/en/class.mongodb-driver-server.php
+ * @param integer $type
+ * @return string
+ */
+function server_type_as_string($type)
+{
+    switch ($type) {
+        case Server::TYPE_STANDALONE:
+            return 'Standalone';
+        case Server::TYPE_MONGOS:
+            return 'Mongos';
+        case Server::TYPE_POSSIBLE_PRIMARY:
+            return 'PossiblePrimary';
+        case Server::TYPE_RS_PRIMARY:
+            return 'RSPrimary';
+        case Server::TYPE_RS_SECONDARY:
+            return 'RSSecondary';
+        case Server::TYPE_RS_ARBITER:
+            return 'RSArbiter';
+        case Server::TYPE_RS_OTHER:
+            return 'RSOther';
+        case Server::TYPE_RS_GHOST:
+            return 'RSGhost';
+        default:
+            return 'Unknown';
+    }
+}
+
+/**
+ * Converts an errno number to a string.
+ *
+ * @see http://php.net/manual/en/errorfunc.constants.php
+ * @param integer $errno
+ * @param string
+ */
+function errno_as_string($errno)
+{
+    $errors = [
+        'E_ERROR',
+        'E_WARNING',
+        'E_PARSE',
+        'E_NOTICE',
+        'E_CORE_ERROR',
+        'E_CORE_WARNING',
+        'E_COMPILE_ERROR',
+        'E_COMPILE_WARNING',
+        'E_USER_ERROR',
+        'E_USER_WARNING',
+        'E_USER_NOTICE',
+        'E_STRICT',
+        'E_RECOVERABLE_ERROR',
+        'E_DEPRECATED',
+        'E_USER_DEPRECATED',
+        'E_ALL',
+    ];
+
+    foreach ($errors as $error) {
+        if ($errno === constant($error)) {
+            return $error;
+        }
+    }
+
+    return 'Unknown';
+}
+
 /**
  * Prints a traditional hex dump of byte values and printable characters.
  *
