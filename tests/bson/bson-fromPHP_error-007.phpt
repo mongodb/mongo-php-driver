@@ -1,5 +1,5 @@
 --TEST--
-BSON\fromPHP(): Serializable returns document with null bytes in field name
+MongoDB\BSON\fromPHP(): Serializable returns document with null bytes in field name
 --FILE--
 <?php
 

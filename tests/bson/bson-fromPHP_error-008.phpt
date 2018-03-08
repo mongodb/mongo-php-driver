@@ -1,5 +1,5 @@
 --TEST--
-BSON\fromPHP(): PHP documents with circular references
+MongoDB\BSON\fromPHP(): PHP documents with circular references
 --FILE--
 <?php
 
