@@ -16,5 +16,5 @@ echo throws(function() use ($bulk) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Detected invalid UTF-8 for fieldname "x": %s
+Detected invalid UTF-8 for field path "x": %s
 ===DONE===

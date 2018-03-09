@@ -1,5 +1,5 @@
 --TEST--
-BSON\fromPHP(): PHP documents with null bytes in field name
+MongoDB\BSON\fromPHP(): PHP documents with null bytes in field name
 --FILE--
 <?php
 

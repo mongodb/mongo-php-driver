@@ -32,15 +32,15 @@ foreach ($tests as $bson) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Detected corrupt BSON data
+Detected corrupt BSON data for field path '' at offset 4
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Detected corrupt BSON data
+Detected corrupt BSON data for field path 'foo' at offset 0
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Detected corrupt BSON data
+Detected corrupt BSON data for field path 'foo' at offset 0
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Detected corrupt BSON data
+Detected corrupt BSON data for field path '' at offset 9
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Detected unknown BSON type 0x65 for fieldname "". Are you using the latest driver?
+Detected unknown BSON type 0x65 for field path "". Are you using the latest driver?
 ===DONE===

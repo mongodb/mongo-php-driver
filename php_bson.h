@@ -50,21 +50,29 @@ typedef struct {
 } php_phongo_bson_typemap;
 
 typedef struct {
+	const char** elements;
+	size_t       allocated_levels;
+	size_t       current_level;
+	size_t       ref_count;
+} php_phongo_field_path;
+
+typedef struct {
 	ZVAL_RETVAL_TYPE        zchild;
 	php_phongo_bson_typemap map;
 	zend_class_entry*       odm;
 	bool                    is_visiting_array;
+	php_phongo_field_path*  field_path;
 } php_phongo_bson_state;
 
 #if PHP_VERSION_ID >= 70000
-#define PHONGO_BSON_STATE_INITIALIZER                                                                           \
-	{                                                                                                           \
-		{ { 0 } }, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL }, NULL, 0 \
+#define PHONGO_BSON_STATE_INITIALIZER                                                                              \
+	{                                                                                                              \
+		{ { 0 } }, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL }, NULL, NULL \
 	}
 #else
-#define PHONGO_BSON_STATE_INITIALIZER                                                                      \
-	{                                                                                                      \
-		NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL }, NULL, 0 \
+#define PHONGO_BSON_STATE_INITIALIZER                                                                         \
+	{                                                                                                         \
+		NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL }, NULL, NULL \
 	}
 #endif
 
@@ -76,6 +84,17 @@ bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval* out)
 bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval** out);
 #endif
 bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map TSRMLS_DC);
+void php_phongo_bson_state_ctor(php_phongo_bson_state* state);
+void php_phongo_bson_state_dtor(php_phongo_bson_state* state);
+void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson_state* src);
+
+php_phongo_field_path* php_phongo_field_path_alloc(void);
+void                   php_phongo_field_path_free(php_phongo_field_path* field_path);
+void                   php_phongo_field_path_write_item_at_current_level(php_phongo_field_path* field_path, const char* element);
+bool                   php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element);
+bool                   php_phongo_field_path_pop(php_phongo_field_path* field_path);
+
+char* php_phongo_field_path_as_string(php_phongo_field_path* field_path);
 
 #endif /* PHONGO_BSON_H */
 

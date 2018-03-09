@@ -15,5 +15,5 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Detected invalid UTF-8 for fieldname "compressors": %s
+Detected invalid UTF-8 for field path "compressors": %s
 ===DONE===
