@@ -365,6 +365,7 @@ try_again:
 				}
 
 				bson_append_array_begin(bson, key, key_len, &child);
+				php_phongo_field_path_write_type_at_current_level(field_path, PHONGO_FIELD_PATH_ITEM_ARRAY);
 				field_path->current_level++;
 				php_phongo_zval_to_bson_internal(entry, field_path, flags, &child, NULL TSRMLS_CC);
 				field_path->current_level--;
@@ -391,6 +392,7 @@ try_again:
 				ZEND_HASH_INC_APPLY_COUNT(tmp_ht);
 			}
 
+			php_phongo_field_path_write_type_at_current_level(field_path, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
 			field_path->current_level++;
 			php_phongo_bson_append_object(bson, field_path, flags, key, key_len, entry TSRMLS_CC);
 			field_path->current_level--;

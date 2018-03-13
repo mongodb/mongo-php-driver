@@ -99,6 +99,9 @@ void php_phongo_field_path_free(php_phongo_field_path* field_path)
 	if (field_path->elements) {
 		efree(field_path->elements);
 	}
+	if (field_path->element_types) {
+		efree(field_path->element_types);
+	}
 	efree(field_path);
 }
 
@@ -109,9 +112,11 @@ static void php_phongo_field_path_ensure_allocation(php_phongo_field_path* field
 
 		field_path->allocated_levels = field_path->current_level + PHONGO_FIELD_PATH_EXPANSION;
 		field_path->elements         = erealloc(field_path->elements, sizeof(char**) * field_path->allocated_levels);
+		field_path->element_types    = erealloc(field_path->element_types, sizeof(php_phongo_bson_field_path_item_types*) * field_path->allocated_levels);
 
 		for (i = level; i < field_path->allocated_levels; i++) {
-			field_path->elements[i] = NULL;
+			field_path->elements[i]      = NULL;
+			field_path->element_types[i] = PHONGO_FIELD_PATH_ITEM_NONE;
 		}
 	}
 }
@@ -123,9 +128,17 @@ void php_phongo_field_path_write_item_at_current_level(php_phongo_field_path* fi
 	field_path->elements[field_path->current_level] = element;
 }
 
-bool php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element)
+void php_phongo_field_path_write_type_at_current_level(php_phongo_field_path* field_path, php_phongo_bson_field_path_item_types element_type)
+{
+	php_phongo_field_path_ensure_allocation(field_path, field_path->current_level);
+
+	field_path->element_types[field_path->current_level] = element_type;
+}
+
+bool php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element, php_phongo_bson_field_path_item_types element_type)
 {
 	php_phongo_field_path_write_item_at_current_level(field_path, element);
+	php_phongo_field_path_write_type_at_current_level(field_path, element_type);
 
 	field_path->current_level++;
 
@@ -134,11 +147,13 @@ bool php_phongo_field_path_push(php_phongo_field_path* field_path, const char* e
 
 bool php_phongo_field_path_pop(php_phongo_field_path* field_path)
 {
-	field_path->elements[field_path->current_level] = NULL;
+	field_path->elements[field_path->current_level]      = NULL;
+	field_path->element_types[field_path->current_level] = PHONGO_FIELD_PATH_ITEM_NONE;
 
 	field_path->current_level--;
 
-	field_path->elements[field_path->current_level] = NULL;
+	field_path->elements[field_path->current_level]      = NULL;
+	field_path->element_types[field_path->current_level] = PHONGO_FIELD_PATH_ITEM_NONE;
 
 	return true;
 }
@@ -774,7 +789,7 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 	php_phongo_bson_state* parent_state = (php_phongo_bson_state*) data;
 	TSRMLS_FETCH();
 
-	php_phongo_field_path_push(parent_state->field_path, key);
+	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
 
 	if (bson_iter_init(&child, v_document)) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
@@ -881,7 +896,7 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 	php_phongo_bson_state* parent_state = (php_phongo_bson_state*) data;
 	TSRMLS_FETCH();
 
-	php_phongo_field_path_push(parent_state->field_path, key);
+	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_ARRAY);
 
 	if (bson_iter_init(&child, v_array)) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
