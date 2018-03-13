@@ -1201,6 +1201,78 @@ cleanup:
 	return retval;
 } /* }}} */
 
+/* Loops over each element in the fieldPaths array (if exists, and is an
+ * array), and then checks whether each element is a valid type mapping */
+bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bson_typemap* map TSRMLS_DC) /* {{{ */
+{
+	zval*      fieldpaths = NULL;
+	HashTable* ht_data;
+
+	if (!php_array_existsc(typemap, "fieldPaths")) {
+		return true;
+	}
+
+	fieldpaths = php_array_fetchc_array(typemap, "fieldPaths");
+
+	if (!fieldpaths) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "The 'fieldPaths' element is not an array");
+		return false;
+	}
+
+	ht_data = HASH_OF(fieldpaths);
+
+#if PHP_VERSION_ID >= 70000
+	{
+		zend_string* string_key = NULL;
+		zend_ulong   num_key    = 0;
+		zval*        property;
+
+		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, property)
+		{
+			zend_class_entry*             map_ce = NULL;
+			php_phongo_bson_typemap_types map_type;
+
+			if (!string_key) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "The 'fieldPaths' element is not an associative array");
+				return false;
+			}
+
+			if (!php_phongo_bson_state_parse_type(fieldpaths, ZSTR_VAL(string_key), &map_type, &map_ce TSRMLS_CC)) {
+				return false;
+			}
+		}
+		ZEND_HASH_FOREACH_END();
+	}
+#else
+	{
+		HashPosition pos;
+		zval**       property;
+
+		for (
+			zend_hash_internal_pointer_reset_ex(ht_data, &pos);
+			zend_hash_get_current_data_ex(ht_data, (void**) &property, &pos) == SUCCESS;
+			zend_hash_move_forward_ex(ht_data, &pos)) {
+
+			char*                         string_key     = NULL;
+			uint                          string_key_len = 0;
+			ulong                         num_key        = 0;
+			zend_class_entry*             map_ce         = NULL;
+			php_phongo_bson_typemap_types map_type;
+
+			if (HASH_KEY_IS_STRING != zend_hash_get_current_key_ex(ht_data, &string_key, &string_key_len, &num_key, 0, &pos)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "The 'fieldPaths' element is not an associative array");
+				return false;
+			}
+
+			if (!php_phongo_bson_state_parse_type(fieldpaths, string_key, &map_type, &map_ce TSRMLS_CC)) {
+				return false;
+			}
+		}
+	}
+#endif /* PHP_VERSION_ID >= 70000 */
+	return true;
+} /* }}} */
+
 /* Applies the array argument to a typemap struct. Returns true on success;
  * otherwise, false is returned an an exception is thrown. */
 bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map TSRMLS_DC) /* {{{ */
@@ -1211,7 +1283,8 @@ bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* ma
 
 	if (!php_phongo_bson_state_parse_type(typemap, "array", &map->array_type, &map->array TSRMLS_CC) ||
 		!php_phongo_bson_state_parse_type(typemap, "document", &map->document_type, &map->document TSRMLS_CC) ||
-		!php_phongo_bson_state_parse_type(typemap, "root", &map->root_type, &map->root TSRMLS_CC)) {
+		!php_phongo_bson_state_parse_type(typemap, "root", &map->root_type, &map->root TSRMLS_CC) ||
+		!php_phongo_bson_state_parse_fieldpaths(typemap, map TSRMLS_CC)) {
 
 		/* Exception should already have been thrown */
 		return false;
