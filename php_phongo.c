@@ -144,57 +144,16 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 			return php_phongo_connectiontimeoutexception_ce;
 		case MONGOC_ERROR_CLIENT_AUTHENTICATE:
 			return php_phongo_authenticationexception_ce;
-
 		case MONGOC_ERROR_COMMAND_INVALID_ARG:
 			return php_phongo_invalidargumentexception_ce;
-
-		case MONGOC_ERROR_STREAM_INVALID_TYPE:
-		case MONGOC_ERROR_STREAM_INVALID_STATE:
-		case MONGOC_ERROR_STREAM_NAME_RESOLUTION:
-		case MONGOC_ERROR_STREAM_CONNECT:
-		case MONGOC_ERROR_STREAM_NOT_ESTABLISHED:
-			return php_phongo_connectionexception_ce;
-		case MONGOC_ERROR_CLIENT_NOT_READY:
-		case MONGOC_ERROR_CLIENT_TOO_BIG:
-		case MONGOC_ERROR_CLIENT_TOO_SMALL:
-		case MONGOC_ERROR_CLIENT_GETNONCE:
-		case MONGOC_ERROR_CLIENT_NO_ACCEPTABLE_PEER:
-		case MONGOC_ERROR_CLIENT_IN_EXHAUST:
-		case MONGOC_ERROR_PROTOCOL_INVALID_REPLY:
-		case MONGOC_ERROR_PROTOCOL_BAD_WIRE_VERSION:
-		case MONGOC_ERROR_CURSOR_INVALID_CURSOR:
-		/*case MONGOC_ERROR_PROTOCOL_ERROR:*/
-		case MONGOC_ERROR_BSON_INVALID:
-		case MONGOC_ERROR_MATCHER_INVALID:
-		case MONGOC_ERROR_NAMESPACE_INVALID:
-		case MONGOC_ERROR_GRIDFS_INVALID_FILENAME:
-			return php_phongo_runtimeexception_ce;
-		case MONGOC_ERROR_QUERY_FAILURE:
-		case MONGOC_ERROR_QUERY_COMMAND_NOT_FOUND:
-		case MONGOC_ERROR_QUERY_NOT_TAILABLE:
-		case MONGOC_ERROR_COLLECTION_INSERT_FAILED:
-			return php_phongo_serverexception_ce;
 	}
 	switch (domain) {
+		case MONGOC_ERROR_COMMAND:
+			// TODO: return php_phongo_commandexception_ce after PHPC-1089 is merged
 		case MONGOC_ERROR_SERVER:
 			return php_phongo_serverexception_ce;
-		case MONGOC_ERROR_CLIENT:
 		case MONGOC_ERROR_STREAM:
-		case MONGOC_ERROR_PROTOCOL:
-		case MONGOC_ERROR_CURSOR:
-		case MONGOC_ERROR_QUERY:
-		case MONGOC_ERROR_INSERT:
-		case MONGOC_ERROR_SASL:
-		case MONGOC_ERROR_BSON:
-		case MONGOC_ERROR_MATCHER:
-		case MONGOC_ERROR_NAMESPACE:
-		case MONGOC_ERROR_COMMAND:
-		case MONGOC_ERROR_COLLECTION:
-		case MONGOC_ERROR_GRIDFS:
-			/* FIXME: We don't have the Exceptions mocked yet.. */
-#if 0
-			return phongo_ce_mongo_connection_exception;
-#endif
+			return php_phongo_connectionexception_ce;
 		default:
 			return php_phongo_runtimeexception_ce;
 	}
@@ -703,7 +662,7 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 	/* The Write failed */
 	if (!success) {
 		if ((error.domain == MONGOC_ERROR_COMMAND && error.code != MONGOC_ERROR_COMMAND_INVALID_ARG) ||
-			error.domain == MONGOC_ERROR_WRITE_CONCERN) {
+			error.domain == MONGOC_ERROR_SERVER || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
 			phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "%s", error.message);
 			phongo_add_exception_prop(ZEND_STRL("writeResult"), return_value TSRMLS_CC);
 		} else {
@@ -2372,6 +2331,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 #endif
 
 	manager->client = php_phongo_make_mongo_client(uri TSRMLS_CC);
+	mongoc_client_set_error_api(manager->client, MONGOC_ERROR_API_VERSION_2);
 
 	if (!manager->client) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "Failed to create Manager from URI: '%s'", uri_string);
