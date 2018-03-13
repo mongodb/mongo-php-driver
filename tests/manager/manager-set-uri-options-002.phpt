@@ -26,10 +26,10 @@ $manager = new MongoDB\Driver\Manager(STANDALONE_SSL, $options, array("context" 
 
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(array("my" => "value"));
-throws(function() use ($manager, $bulk) {
+echo throws(function() use ($manager, $bulk) {
     $inserted = $manager->executeBulkWrite(NS, $bulk)->getInsertedCount();
     printf("Inserted incorrectly: %d\n", $inserted);
-}, "Exception");
+}, "MongoDB\Driver\Exception\ConnectionTimeoutException"), "\n";
 
 
 
@@ -46,6 +46,7 @@ printf("Inserted: %d\n", $inserted);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got Exception
+OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
+No suitable servers found (`serverSelectionTryOnce` set): [connection closed calling ismaster on '%s']
 Inserted: 1
 ===DONE===
