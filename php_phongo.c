@@ -137,8 +137,6 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code)
 {
 	switch (code) {
-		case 50: /* ExceededTimeLimit */
-			return php_phongo_executiontimeoutexception_ce;
 		case MONGOC_ERROR_STREAM_SOCKET:
 		case MONGOC_ERROR_SERVER_SELECTION_FAILURE:
 			return php_phongo_connectiontimeoutexception_ce;
@@ -151,6 +149,9 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 		case MONGOC_ERROR_COMMAND:
 			// TODO: return php_phongo_commandexception_ce after PHPC-1089 is merged
 		case MONGOC_ERROR_SERVER:
+			if (code == 50) {
+				return php_phongo_executiontimeoutexception_ce;
+			}
 			return php_phongo_serverexception_ce;
 		case MONGOC_ERROR_STREAM:
 			return php_phongo_connectionexception_ce;
