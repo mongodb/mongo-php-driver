@@ -290,6 +290,7 @@ extern zend_class_entry* php_phongo_exception_ce;
 extern zend_class_entry* php_phongo_logicexception_ce;
 extern zend_class_entry* php_phongo_runtimeexception_ce;
 extern zend_class_entry* php_phongo_serverexception_ce;
+extern zend_class_entry* php_phongo_commandexception_ce;
 extern zend_class_entry* php_phongo_unexpectedvalueexception_ce;
 extern zend_class_entry* php_phongo_invalidargumentexception_ce;
 extern zend_class_entry* php_phongo_connectionexception_ce;
@@ -377,6 +378,7 @@ extern void php_phongo_writeresult_init_ce(INIT_FUNC_ARGS);
 
 extern void php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_commandexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_connectionexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_exception_init_ce(INIT_FUNC_ARGS);

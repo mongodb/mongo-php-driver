@@ -147,7 +147,7 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 	}
 	switch (domain) {
 		case MONGOC_ERROR_COMMAND:
-			// TODO: return php_phongo_commandexception_ce after PHPC-1089 is merged
+			return php_phongo_commandexception_ce;
 		case MONGOC_ERROR_SERVER:
 			if (code == 50) {
 				return php_phongo_executiontimeoutexception_ce;
@@ -2770,6 +2770,7 @@ PHP_MINIT_FUNCTION(mongodb)
 
 	php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_commandexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_invalidargumentexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
