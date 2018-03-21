@@ -146,8 +146,6 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 			return php_phongo_invalidargumentexception_ce;
 	}
 	switch (domain) {
-		case MONGOC_ERROR_COMMAND:
-			return php_phongo_commandexception_ce;
 		case MONGOC_ERROR_SERVER:
 			if (code == 50) {
 				return php_phongo_executiontimeoutexception_ce;
