@@ -136,28 +136,35 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 }
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code)
 {
-	switch (code) {
-		case MONGOC_ERROR_STREAM_SOCKET:
-		case MONGOC_ERROR_SERVER_SELECTION_FAILURE:
+	if (domain == MONGOC_ERROR_CLIENT && code == MONGOC_ERROR_CLIENT_AUTHENTICATE) {
+		return php_phongo_authenticationexception_ce;
+	}
+
+	if (domain == MONGOC_ERROR_COMMAND && code == MONGOC_ERROR_COMMAND_INVALID_ARG) {
+		return php_phongo_invalidargumentexception_ce;
+	}
+
+	if (domain == MONGOC_ERROR_SERVER) {
+		if (code == 50) {
+			return php_phongo_executiontimeoutexception_ce;
+		}
+
+		return php_phongo_serverexception_ce;
+	}
+
+	if (domain == MONGOC_ERROR_SERVER_SELECTION && code == MONGOC_ERROR_SERVER_SELECTION_FAILURE) {
+		return php_phongo_connectiontimeoutexception_ce;
+	}
+
+	if (domain == MONGOC_ERROR_STREAM) {
+		if (code == MONGOC_ERROR_STREAM_SOCKET) {
 			return php_phongo_connectiontimeoutexception_ce;
-		case MONGOC_ERROR_CLIENT_AUTHENTICATE:
-			return php_phongo_authenticationexception_ce;
-		case MONGOC_ERROR_COMMAND_INVALID_ARG:
-			return php_phongo_invalidargumentexception_ce;
+		}
+
+		return php_phongo_connectionexception_ce;
 	}
-	switch (domain) {
-		case MONGOC_ERROR_COMMAND:
-			return php_phongo_commandexception_ce;
-		case MONGOC_ERROR_SERVER:
-			if (code == 50) {
-				return php_phongo_executiontimeoutexception_ce;
-			}
-			return php_phongo_serverexception_ce;
-		case MONGOC_ERROR_STREAM:
-			return php_phongo_connectionexception_ce;
-		default:
-			return php_phongo_runtimeexception_ce;
-	}
+
+	return php_phongo_runtimeexception_ce;
 }
 void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char* format, ...)
 {
