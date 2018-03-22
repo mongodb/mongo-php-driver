@@ -673,8 +673,7 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 
 	/* The Write failed */
 	if (!success) {
-		if ((error.domain == MONGOC_ERROR_COMMAND && error.code != MONGOC_ERROR_COMMAND_INVALID_ARG) ||
-			error.domain == MONGOC_ERROR_SERVER || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
+		if (error.domain == MONGOC_ERROR_SERVER || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
 			zend_throw_exception(php_phongo_bulkwriteexception_ce, error.message, error.code TSRMLS_CC);
 			phongo_add_exception_prop(ZEND_STRL("writeResult"), return_value TSRMLS_CC);
 		} else {
