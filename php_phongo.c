@@ -164,6 +164,10 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 		return php_phongo_connectionexception_ce;
 	}
 
+	if (domain == MONGOC_ERROR_WRITE_CONCERN) {
+		return php_phongo_serverexception_ce;
+	}
+
 	return php_phongo_runtimeexception_ce;
 }
 void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char* format, ...)
