@@ -2,7 +2,7 @@
 Causal consistency: first read in session does not include afterClusterTime
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_CRYPTO(); ?>
+<?php skip_if_not_libmongoc_crypto(); ?>
 <?php NEEDS('REPLICASET'); ?>
 --FILE--
 <?php

@@ -2,7 +2,7 @@
 Causal consistency: first read or write in session updates operationTime (even on error)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_CRYPTO(); ?>
+<?php skip_if_not_libmongoc_crypto(); ?>
 <?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
 --FILE--
 <?php

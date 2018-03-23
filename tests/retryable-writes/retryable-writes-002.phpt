@@ -2,7 +2,7 @@
 Retryable writes: supported multi-statement operations include transaction IDs
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_CRYPTO(); ?>
+<?php skip_if_not_libmongoc_crypto(); ?>
 <?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
 --FILE--
 <?php

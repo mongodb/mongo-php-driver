@@ -2,7 +2,7 @@
 PHPC-1151: Segfault if session unset before cursor is killed (aggregate)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_CRYPTO(); ?>
+<?php skip_if_not_libmongoc_crypto(); ?>
 <?php NEEDS('STANDALONE'); ?>
 <?php NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.6"); ?>
 <?php CLEANUP(STANDALONE); ?>

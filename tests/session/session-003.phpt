@@ -2,7 +2,7 @@
 MongoDB\Driver\Session spec test: session cannot be used for different clients
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_CRYPTO(); ?>
+<?php skip_if_not_libmongoc_crypto(); ?>
 <?php NEEDS('STANDALONE'); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.6"); CLEANUP(STANDALONE); ?>
 --FILE--
 <?php
