@@ -98,7 +98,7 @@ PHP_METHOD(CommandStartedEvent, getOperationId)
 		return;
 	}
 
-	sprintf(int_as_string, "%" PHONGO_LONG_FORMAT, intern->operation_id);
+	sprintf(int_as_string, "%" PRIu64, intern->operation_id);
 	PHONGO_RETVAL_STRING(int_as_string);
 } /* }}} */
 
@@ -117,7 +117,7 @@ PHP_METHOD(CommandStartedEvent, getRequestId)
 		return;
 	}
 
-	sprintf(int_as_string, "%" PHONGO_LONG_FORMAT, intern->request_id);
+	sprintf(int_as_string, "%" PRIu64, intern->request_id);
 	PHONGO_RETVAL_STRING(int_as_string);
 } /* }}} */
 
@@ -230,10 +230,10 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(zval* object, in
 	ADD_ASSOC_STRING(&retval, "commandName", intern->command_name);
 	ADD_ASSOC_STRING(&retval, "databaseName", intern->database_name);
 
-	sprintf(operation_id, "%" PHONGO_LONG_FORMAT, intern->operation_id);
+	sprintf(operation_id, "%" PRIu64, intern->operation_id);
 	ADD_ASSOC_STRING(&retval, "operationId", operation_id);
 
-	sprintf(request_id, "%" PHONGO_LONG_FORMAT, intern->request_id);
+	sprintf(request_id, "%" PRIu64, intern->request_id);
 	ADD_ASSOC_STRING(&retval, "requestId", request_id);
 
 	{

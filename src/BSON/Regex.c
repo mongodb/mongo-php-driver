@@ -46,7 +46,7 @@ static int php_phongo_regex_compare_flags(const void* f1, const void* f2) /* {{{
  * be thrown on error. */
 static bool php_phongo_regex_init(php_phongo_regex_t* intern, const char* pattern, phongo_zpp_char_len pattern_len, const char* flags, phongo_zpp_char_len flags_len TSRMLS_DC) /* {{{ */
 {
-	if (strlen(pattern) != pattern_len) {
+	if (strlen(pattern) != (size_t) pattern_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Pattern cannot contain null bytes");
 		return false;
 	}
@@ -54,7 +54,7 @@ static bool php_phongo_regex_init(php_phongo_regex_t* intern, const char* patter
 	intern->pattern_len = pattern_len;
 
 	if (flags) {
-		if (strlen(flags) != flags_len) {
+		if (strlen(flags) != (size_t) flags_len) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Flags cannot contain null bytes");
 			return false;
 		}
