@@ -340,25 +340,6 @@ function NEEDS_ATLEAST_MONGODB_VERSION($uri, $version) {
     }
 }
 
-function NEEDS_STORAGE_ENGINE($uri, $engine) {
-    $manager = new MongoDB\Driver\Manager($uri);
-    $cmd = new MongoDB\Driver\Command(["serverStatus" => 1]);
-    $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
-
-    try {
-        $cursor = $manager->executeCommand("admin", $cmd, $rp);
-        $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
-        $document = current($cursor->toArray());
-
-        if ($document['storageEngine']['name'] != $engine) {
-            echo "skip Needs storage engine '$engine', but is '{$document['storageEngine']['name']}'";
-        }
-    } catch(Exception $e) {
-        echo "skip (needs version); $uri ($version): " . $e->getCode(), ": ", $e->getMessage();
-        exit(1);
-    }
-}
-
 function CLEANUP($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME) {
     try {
         $manager = new MongoDB\Driver\Manager($uri);
