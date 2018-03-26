@@ -111,6 +111,16 @@ function skip_if_not_server_storage_engine($storageEngine)
 }
 
 /**
+ * Skips the test if the server does not support test commands.
+ */
+function skip_if_test_commands_disabled()
+{
+    if (!get_server_parameter(URI, 'enableTestCommands')) {
+        exit('skip test commands are disabled');
+    }
+}
+
+/**
  * Skips the test if libmongoc does not support crypto.
  *
  * If one or more libaries are provided, additionally check that the reported

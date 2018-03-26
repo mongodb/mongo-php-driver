@@ -41,6 +41,22 @@ function get_primary_server($uri)
 }
 
 /**
+ * Returns a parameter of the primary server.
+ *
+ * @param string $uri Connection string
+ * @return mixed
+ * @throws RuntimeException
+ */
+function get_server_parameter($uri, $parameter)
+{
+    $server = get_primary_server($uri);
+    $command = new Command(['getParameter' => 1, $parameter => 1]);
+    $cursor = $server->executeCommand('admin', $command);
+
+    return current($cursor->toArray())->$parameter;
+}
+
+/**
  * Returns the storage engine of the primary server.
  *
  * @param string $uri Connection string
@@ -262,22 +278,6 @@ function makeCollectionNameFromFilename($filename)
     return preg_replace(array_keys($replacements), array_values($replacements), $filename);
 }
 
-function TESTCOMMANDS($uri) {
-    $cmd = array(
-        "configureFailPoint" => 1,
-    );
-    $command = new MongoDB\Driver\Command($cmd);
-
-    $manager = new MongoDB\Driver\Manager($uri);
-    try {
-        $result = $manager->executeCommand("test", $command);
-    } catch(Exception $e) {
-        /* command not found */
-        if ($e->getCode() == 59) {
-            die("skip this test requires mongod with enableTestCommands");
-        }
-    }
-}
 function NEEDS($configuration) {
     if (!constant($configuration)) {
         exit("skip -- need '$configuration' defined");
