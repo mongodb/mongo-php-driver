@@ -4,7 +4,7 @@ MongoDB\Driver\Cursor debug output for query cursor omits implicit session
 <?php require __DIR__ . "/" ."../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php NEEDS('STANDALONE'); ?>
-<?php NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.6"); ?>
+<?php skip_if_server_version('<', '3.6'); ?>
 <?php CLEANUP(STANDALONE); ?>
 --FILE--
 <?php

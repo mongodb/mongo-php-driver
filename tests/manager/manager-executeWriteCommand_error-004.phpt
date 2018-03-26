@@ -4,7 +4,7 @@ MongoDB\Driver\Manager::executeWriteCommand() cannot combine session with unackn
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php NEEDS('STANDALONE'); ?>
-<?php NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.6"); ?>
+<?php skip_if_server_version('<', '3.6'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

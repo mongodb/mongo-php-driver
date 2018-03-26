@@ -2,7 +2,8 @@
 PHPC-1050: Command cursor should not invoke getMore at execution (rewind omitted)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('REPLICASET'); NEEDS_ATLEAST_MONGODB_VERSION(REPLICASET, "3.2"); CLEANUP(REPLICASET); ?>
+<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
+<?php skip_if_server_version('<', '3.2'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

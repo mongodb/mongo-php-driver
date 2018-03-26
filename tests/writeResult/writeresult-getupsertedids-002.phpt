@@ -2,7 +2,8 @@
 MongoDB\Driver\WriteResult::getUpsertedIds() with client-generated values
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.0"); CLEANUP(STANDALONE); ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_server_version('<', '3.0'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

@@ -2,7 +2,8 @@
 MongoDB\Driver\Server::executeCommand() options (MONGO_CMD_RAW)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.6"); CLEANUP(STANDALONE); ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_server_version('<', '3.6'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

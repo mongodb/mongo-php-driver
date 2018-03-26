@@ -2,7 +2,8 @@
 PHPC-349: APM Specification
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.2"); CLEANUP(STANDALONE); ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_server_version('<', '3.2'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

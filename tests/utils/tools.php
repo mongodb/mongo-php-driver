@@ -321,25 +321,6 @@ function LOAD($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME, $filen
     }
 }
 
-function NEEDS_ATLEAST_MONGODB_VERSION($uri, $version) {
-    $manager = new MongoDB\Driver\Manager($uri);
-    $cmd = new MongoDB\Driver\Command(["buildInfo" => 1]);
-    $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
-
-    try {
-        $cursor = $manager->executeCommand("admin", $cmd, $rp);
-        $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
-        $document = current($cursor->toArray());
-
-        if (version_compare($document['version'], $version, '<')) {
-            echo "skip Needs version >= $version, but is {$document['version']}";
-        }
-    } catch(Exception $e) {
-        echo "skip (needs version); $uri ($version): " . $e->getCode(), ": ", $e->getMessage();
-        exit(1);
-    }
-}
-
 function CLEANUP($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME) {
     try {
         $manager = new MongoDB\Driver\Manager($uri);
