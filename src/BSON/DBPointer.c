@@ -37,7 +37,7 @@ zend_class_entry* php_phongo_dbpointer_ce;
  * be thrown on error. */
 static bool php_phongo_dbpointer_init(php_phongo_dbpointer_t* intern, const char* ref, phongo_zpp_char_len ref_len, const char* id, phongo_zpp_char_len id_len TSRMLS_DC) /* {{{ */
 {
-	if (strlen(ref) != ref_len) {
+	if (strlen(ref) != (size_t) ref_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Ref cannot contain null bytes");
 		return false;
 	}

@@ -37,7 +37,7 @@ zend_class_entry* php_phongo_symbol_ce;
  * be thrown on error. */
 static bool php_phongo_symbol_init(php_phongo_symbol_t* intern, const char* symbol, phongo_zpp_char_len symbol_len TSRMLS_DC) /* {{{ */
 {
-	if (strlen(symbol) != symbol_len) {
+	if (strlen(symbol) != (size_t) symbol_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Symbol cannot contain null bytes");
 		return false;
 	}

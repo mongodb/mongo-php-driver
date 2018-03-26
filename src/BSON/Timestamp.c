@@ -37,12 +37,12 @@ zend_class_entry* php_phongo_timestamp_ce;
 static bool php_phongo_timestamp_init(php_phongo_timestamp_t* intern, int64_t increment, int64_t timestamp TSRMLS_DC) /* {{{ */
 {
 	if (increment < 0 || increment > UINT32_MAX) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected increment to be an unsigned 32-bit integer, %" PHONGO_LONG_FORMAT " given", increment);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected increment to be an unsigned 32-bit integer, %" PRId64 " given", increment);
 		return false;
 	}
 
 	if (timestamp < 0 || timestamp > UINT32_MAX) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected timestamp to be an unsigned 32-bit integer, %" PHONGO_LONG_FORMAT " given", timestamp);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected timestamp to be an unsigned 32-bit integer, %" PRId64 " given", timestamp);
 		return false;
 	}
 

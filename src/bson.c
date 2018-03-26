@@ -188,7 +188,7 @@ static void php_phongo_bson_visit_unsupported_type(const bson_iter_t* iter ARG_U
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 	path_string = php_phongo_field_path_as_string(state->field_path);
 
-	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected unknown BSON type 0x%02hhx for field path \"%s\". Are you using the latest driver?", v_type_code, path_string);
+	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected unknown BSON type 0x%02hhx for field path \"%s\". Are you using the latest driver?", (unsigned char) v_type_code, path_string);
 
 	efree(path_string);
 } /* }}} */

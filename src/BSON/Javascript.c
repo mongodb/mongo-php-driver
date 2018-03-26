@@ -42,7 +42,7 @@ static bool php_phongo_javascript_init(php_phongo_javascript_t* intern, const ch
 		return false;
 	}
 
-	if (strlen(code) != code_len) {
+	if (strlen(code) != (size_t) code_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Code cannot contain null bytes");
 		return false;
 	}
