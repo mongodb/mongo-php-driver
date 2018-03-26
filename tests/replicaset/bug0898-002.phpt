@@ -2,7 +2,8 @@
 PHPC-898: readConcern option should not be included in getMore commands (query option)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
+<?php skip_if_not_replica_set(); ?>
+<?php CLEANUP(REPLICASET); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

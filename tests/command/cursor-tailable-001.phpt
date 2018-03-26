@@ -2,7 +2,8 @@
 MongoDB\Driver\Command tailable cursor iteration with maxAwaitTimeMS option
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
+<?php skip_if_not_replica_set(); ?>
+<?php CLEANUP(REPLICASET); ?>
 <?php skip_if_server_version('<', '3.2'); ?>
 --FILE--
 <?php

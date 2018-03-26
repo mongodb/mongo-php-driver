@@ -2,7 +2,7 @@
 PHPC-155: WriteConcernError->getInfo() can be scalar
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('REPLICASET'); ?>
+<?php skip_if_not_replica_set(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
