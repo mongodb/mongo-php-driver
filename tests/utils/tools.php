@@ -111,6 +111,25 @@ function is_replica_set($uri)
 }
 
 /**
+ * Checks if the connection string uses authentication.
+ *
+ * @param string $uri
+ * @return boolean
+ */
+function is_auth($uri)
+{
+    if (stripos($uri, 'authmechanism=') !== false) {
+        return true;
+    }
+
+    if (strpos($uri, ':') !== false && strpos($uri, '@') !== false) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Checks if the connection string uses SSL.
  *
  * @param string $uri

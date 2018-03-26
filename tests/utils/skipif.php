@@ -69,6 +69,14 @@ function skip_if_not_ssl()
 }
 
 /**
+ * Skips the test if the connection string is not using auth.
+ */
+function skip_if_not_auth()
+{
+    is_auth(URI) or exit('skip URI is not using auth');
+}
+
+/**
  * Skips the test if the server is not accessible.
  */
 function skip_if_not_live()
