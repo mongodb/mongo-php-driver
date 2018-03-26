@@ -89,6 +89,23 @@ function get_server_version($uri)
 }
 
 /**
+ * Returns the value of a URI option, or null if it's not found.
+ *
+ * @param string $uri
+ * @return string|null
+ */
+function get_uri_option($uri, $option)
+{
+    $pattern = sprintf('/[?&]%s=([^&]+)/i', preg_quote($option));
+
+    if (preg_match($pattern, $uri, $matches) !== 1) {
+        return null;
+    }
+
+    return $matches[1];
+}
+
+/**
  * Checks that the topology is a sharded cluster.
  *
  * @param string $uri

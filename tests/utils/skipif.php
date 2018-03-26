@@ -77,6 +77,25 @@ function skip_if_not_auth()
 }
 
 /**
+ * Skips the test if the connection string is not using a particular
+ * authMechanism.
+ *
+ * @param string $authMechanism
+ */
+function skip_if_not_auth_mechanism($authMechanism)
+{
+    $uriAuthMechanism = get_uri_option(URI, 'authMechanism');
+
+    if ($uriAuthMechanism === null) {
+        exit('skip URI is not using authMechanism');
+    }
+
+    if ($uriAuthMechanism !== $authMechanism) {
+        exit("skip URI authMechanism is '$uriAuthMechanism' (needed: '$authMechanism')");
+    }
+}
+
+/**
  * Skips the test if the server is not accessible.
  */
 function skip_if_not_live()
