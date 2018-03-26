@@ -2,7 +2,7 @@
 Connect to MongoDB with SSL and no host/cert verification (context options)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_SSL(); ?>
+<?php skip_if_not_libmongoc_ssl(); ?>
 <?php NEEDS('STANDALONE_SSL'); ?>
 --FILE--
 <?php

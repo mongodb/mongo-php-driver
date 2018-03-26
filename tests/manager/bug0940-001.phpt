@@ -2,7 +2,7 @@
 PHPC-940: php_phongo_free_ssl_opt() attempts to free interned strings
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_SSL(); /* SSL opts are ignored without MONGOC_ENABLE_SSL */ ?>
+<?php skip_if_not_libmongoc_ssl(); /* SSL opts are ignored without MONGOC_ENABLE_SSL */ ?>
 --FILE--
 <?php
 

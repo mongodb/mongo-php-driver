@@ -2,7 +2,7 @@
 PHPC-572: Ensure stream context does not go out of scope before socket init
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_SSL(); ?>
+<?php skip_if_not_libmongoc_ssl(); ?>
 <?php NEEDS('STANDALONE_SSL'); ?>
 --FILE--
 <?php
