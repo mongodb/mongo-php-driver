@@ -3,7 +3,9 @@ PHPC-913: Child process should not re-use mongoc_client_t objects from parent
 --SKIPIF--
 <?php if (!function_exists('pcntl_fork')) { die('skip pcntl_fork() not available'); } ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php SLOW(); NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php SLOW(); ?>
+<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

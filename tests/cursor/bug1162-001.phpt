@@ -3,7 +3,7 @@ MongoDB\Driver\Cursor segfault dumping cursor while iterating with IteratorItera
 --SKIPIF--
 <?php require __DIR__ . "/" ."../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE'); ?>
-<?php CLEANUP(STANDALONE); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

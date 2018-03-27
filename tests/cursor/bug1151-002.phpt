@@ -5,7 +5,7 @@ PHPC-1151: Segfault if session unset before first getMore (aggregate)
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php NEEDS('STANDALONE'); ?>
 <?php skip_if_server_version('<', '3.6'); ?>
-<?php CLEANUP(STANDALONE); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

@@ -4,7 +4,7 @@ Retryable writes: non-write command methods do not include transaction IDs
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php skip_if_not_replica_set(); ?>
-<?php CLEANUP(REPLICASET); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

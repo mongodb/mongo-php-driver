@@ -3,7 +3,7 @@ MongoDB\Driver\Manager::executeCommand() with invalid options (MONGOC_CMD_RAW)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
-<?php CLEANUP(REPLICASET); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

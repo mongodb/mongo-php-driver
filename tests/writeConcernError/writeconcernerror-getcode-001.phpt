@@ -2,7 +2,8 @@
 MongoDB\Driver\WriteConcernError::getCode()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('REPLICASET_30'); CLEANUP(REPLICASET_30); ?>
+<?php NEEDS('REPLICASET_30'); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

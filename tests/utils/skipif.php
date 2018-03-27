@@ -1,8 +1,10 @@
 <?php
 
 use MongoDB\Driver\Exception\ConnectionException;
+use MongoDB\Driver\Exception\RuntimeException;
 
-require_once __DIR__ . "/" . "basic.inc";
+require_once __DIR__ . '/basic.inc';
+require_once __DIR__ . '/tools.php';
 
 /**
  * Skips the test if the topology is a sharded cluster.
@@ -188,5 +190,20 @@ function skip_if_not_libmongoc_ssl(array $libs = [])
 
     if (!empty($libs) && !in_array($lib, $libs)) {
         exit('skip Needs libmongoc SSL library ' . implode(', ', $libs) . ', but found ' . $lib);
+    }
+}
+
+/**
+ * Skips the test if the collection cannot be dropped.
+ *
+ * @param string $databaseName   Database name
+ * @param string $collectionName Collection name
+ */
+function skip_if_not_clean($databaseName = DATABASE_NAME, $collectionName = COLLECTION_NAME)
+{
+    try {
+        drop_collection(URI, $databaseName, $collectionName);
+    } catch (RuntimeException $e) {
+        exit("skip Could not drop '$databaseName.$collectionName': " . $e->getMessage());
     }
 }

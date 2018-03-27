@@ -3,7 +3,8 @@ MongoDB\Driver\Manager: Connecting to Replica Set with only secondary in seedlis
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
-<?php CLEANUP(REPLICASET); PREDICTABLE(); ?>
+<?php skip_if_not_clean(); ?>
+<?php PREDICTABLE(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

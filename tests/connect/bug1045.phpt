@@ -3,7 +3,8 @@ PHPC-1045: Segfault if username is not provided for SCRAM-SHA-1 authMechanism
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_ssl(); ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 

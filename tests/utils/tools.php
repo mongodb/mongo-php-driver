@@ -8,6 +8,28 @@ use MongoDB\Driver\Exception\ConnectionException;
 use MongoDB\Driver\Exception\RuntimeException;
 
 /**
+ * Drops a collection on the primary server.
+ *
+ * @param string $uri            Connection string
+ * @param string $databaseName   Database name
+ * @param string $collectionName Collection name
+ * @throws RuntimeException
+ */
+function drop_collection($uri, $databaseName, $collectionName)
+{
+    $server = get_primary_server($uri);
+    $command = new Command(['drop' => $collectionName]);
+
+    try {
+        $server->executeCommand($databaseName, $command);
+    } catch (RuntimeException $e) {
+        if ($e->getMessage() !== 'ns not found') {
+            throw $e;
+        }
+    }
+}
+
+/**
  * Returns the value of a module row from phpinfo(), or null if it's not found.
  *
  * @param string $row
@@ -354,28 +376,6 @@ function LOAD($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME, $filen
 
     if ($retval->getInsertedCount() !== count($array)) {
         exit(sprintf('skip Fixtures were not loaded (expected: %d, actual: %d)', $total, $retval->getInsertedCount()));
-    }
-}
-
-function CLEANUP($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME) {
-    try {
-        $manager = new MongoDB\Driver\Manager($uri);
-        $cmd = new MongoDB\Driver\Command(array("drop" => $collname));
-        $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
-        try {
-            $manager->executeCommand($dbname, $cmd, $rp);
-        } catch(Exception $e) {
-            do {
-                /* ns not found */
-                if ($e->getCode() == 59 || $e->getCode() == 26) {
-                    continue;
-                }
-                throw $e;
-            } while (0);
-        }
-    } catch(Exception $e) {
-        echo "skip (cleanup); $uri: " . $e->getCode(), ": ", $e->getMessage();
-        exit(1);
     }
 }
 

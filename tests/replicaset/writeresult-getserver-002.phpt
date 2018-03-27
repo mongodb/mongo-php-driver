@@ -3,7 +3,8 @@ MongoDB\Driver\Server: Manager->getServer() returning correct server
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
-<?php CLEANUP(REPLICASET); CLEANUP(REPLICASET, 'local', 'example'); ?>
+<?php skip_if_not_clean(); ?>
+<?php skip_if_not_clean('local', 'examples'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

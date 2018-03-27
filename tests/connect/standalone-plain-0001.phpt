@@ -2,7 +2,8 @@
 Connect to MongoDB with using PLAIN auth mechanism
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE_PLAIN'); CLEANUP(STANDALONE_PLAIN); ?>
+<?php NEEDS('STANDALONE_PLAIN'); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

@@ -2,7 +2,9 @@
 MongoDB\Driver\Cursor tailable iteration with awaitData option
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php SLOW(); NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php SLOW(); ?>
+<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
