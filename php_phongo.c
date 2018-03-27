@@ -853,7 +853,25 @@ int phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t ty
 			return false;
 	}
 	if (!result) {
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		if (error.domain == MONGOC_ERROR_SERVER || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
+#if PHP_VERSION_ID >= 70000
+			zval zv;
+#else
+			zval* zv;
+#endif
+
+			zend_throw_exception(php_phongo_commandexception_ce, error.message, error.code TSRMLS_CC);
+			php_phongo_bson_to_zval(bson_get_data(&reply), reply.len, &zv);
+
+#if PHP_VERSION_ID >= 70000
+			phongo_add_exception_prop(ZEND_STRL("resultDocument"), &zv);
+#else
+			phongo_add_exception_prop(ZEND_STRL("resultDocument"), zv TSRMLS_CC);
+#endif
+			zval_ptr_dtor(&zv);
+		} else {
+			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		}
 		bson_destroy(&reply);
 		bson_destroy(&opts);
 		return false;
