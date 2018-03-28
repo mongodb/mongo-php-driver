@@ -366,9 +366,9 @@ try_again:
 
 				bson_append_array_begin(bson, key, key_len, &child);
 				php_phongo_field_path_write_type_at_current_level(field_path, PHONGO_FIELD_PATH_ITEM_ARRAY);
-				field_path->current_level++;
+				field_path->size++;
 				php_phongo_zval_to_bson_internal(entry, field_path, flags, &child, NULL TSRMLS_CC);
-				field_path->current_level--;
+				field_path->size--;
 				bson_append_array_end(bson, &child);
 
 				if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
@@ -393,9 +393,9 @@ try_again:
 			}
 
 			php_phongo_field_path_write_type_at_current_level(field_path, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
-			field_path->current_level++;
+			field_path->size++;
 			php_phongo_bson_append_object(bson, field_path, flags, key, key_len, entry TSRMLS_CC);
-			field_path->current_level--;
+			field_path->size--;
 
 			if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
 				ZEND_HASH_DEC_APPLY_COUNT(tmp_ht);
@@ -650,7 +650,7 @@ cleanup:
  * will be used. */
 void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out TSRMLS_DC) /* {{{ */
 {
-	php_phongo_field_path* field_path = php_phongo_field_path_alloc();
+	php_phongo_field_path* field_path = php_phongo_field_path_alloc(false);
 
 	php_phongo_zval_to_bson_internal(data, field_path, flags, bson, bson_out TSRMLS_CC);
 
