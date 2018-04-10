@@ -616,7 +616,7 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 	const mongoc_write_concern_t* write_concern = NULL;
 
 	if (bulk_write->executed) {
-		phongo_throw_exception(PHONGO_ERROR_WRITE_FAILED TSRMLS_CC, "BulkWrite objects may only be executed once and this instance has already been executed");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "BulkWrite objects may only be executed once and this instance has already been executed");
 		return false;
 	}
 

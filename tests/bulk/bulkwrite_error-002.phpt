@@ -16,13 +16,13 @@ printf("Inserted %d document(s)\n", $result->getInsertedCount());
 
 echo throws(function() use ($manager, $bulk) {
     $result = $manager->executeBulkWrite(NS, $bulk);
-}, 'MongoDB\Driver\Exception\BulkWriteException'), "\n";
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
 Inserted 1 document(s)
-OK: Got MongoDB\Driver\Exception\BulkWriteException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 BulkWrite objects may only be executed once and this instance has already been executed
 ===DONE===
