@@ -12,6 +12,20 @@ PHP_ARG_WITH([openssl-dir],
              [auto],
              [no])
 
+AS_IF([test "$PHP_MONGODB_SSL" = "darwin" -o \( "$PHP_MONGODB_SSL" = "auto" -a "$os_darwin" = "yes" \)],[
+  if test "$os_darwin" = "no"; then
+    AC_MSG_ERROR([Darwin SSL is only supported on macOS])
+  fi
+  dnl PHP_FRAMEWORKS is only used for SAPI builds, so use MONGODB_SHARED_LIBADD for shared builds
+  if test "$ext_shared" = "yes"; then
+    MONGODB_SHARED_LIBADD="-framework Security -framework CoreFoundation $MONGODB_SHARED_LIBADD"
+  else
+    PHP_ADD_FRAMEWORK([Security])
+    PHP_ADD_FRAMEWORK([CoreFoundation])
+  fi
+  PHP_MONGODB_SSL="darwin"
+])
+
 AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
   found_openssl="no"
 
@@ -127,20 +141,6 @@ AS_IF([test "$PHP_MONGODB_SSL" = "libressl" -o "$PHP_MONGODB_SSL" = "auto"],[
   if test "$PHP_MONGODB_SSL" = "libressl" -a "$found_libressl" != "yes"; then
     AC_MSG_ERROR([LibreSSL libraries and development headers could not be found])
   fi
-])
-
-AS_IF([test "$PHP_MONGODB_SSL" = "darwin" -o \( "$PHP_MONGODB_SSL" = "auto" -a "$os_darwin" = "yes" \)],[
-  if test "$os_darwin" = "no"; then
-    AC_MSG_ERROR([Darwin SSL is only supported on macOS])
-  fi
-  dnl PHP_FRAMEWORKS is only used for SAPI builds, so use MONGODB_SHARED_LIBADD for shared builds
-  if test "$ext_shared" = "yes"; then
-    MONGODB_SHARED_LIBADD="-framework Security -framework CoreFoundation $MONGODB_SHARED_LIBADD"
-  else
-    PHP_ADD_FRAMEWORK([Security])
-    PHP_ADD_FRAMEWORK([CoreFoundation])
-  fi
-  PHP_MONGODB_SSL="darwin"
 ])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "auto"],[
