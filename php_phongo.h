@@ -89,7 +89,6 @@ typedef enum {
 	PHONGO_ERROR_RUNTIME           = 2,
 	PHONGO_ERROR_UNEXPECTED_VALUE  = 8,
 	PHONGO_ERROR_MONGOC_FAILED     = 3,
-	PHONGO_ERROR_WRITE_FAILED      = 5,
 	PHONGO_ERROR_CONNECTION_FAILED = 7,
 	PHONGO_ERROR_LOGIC             = 9
 } php_phongo_error_domain_t;

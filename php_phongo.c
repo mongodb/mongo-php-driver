@@ -125,8 +125,6 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 			return php_phongo_unexpectedvalueexception_ce;
 		case PHONGO_ERROR_MONGOC_FAILED:
 			return php_phongo_runtimeexception_ce;
-		case PHONGO_ERROR_WRITE_FAILED:
-			return php_phongo_bulkwriteexception_ce;
 		case PHONGO_ERROR_CONNECTION_FAILED:
 			return php_phongo_connectionexception_ce;
 	}
