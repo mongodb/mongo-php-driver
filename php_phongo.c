@@ -540,11 +540,13 @@ bool phongo_parse_read_preference(zval *options, zval **zreadPreference TSRMLS_D
 	return true;
 } /* }}} */
 
-/* Parses the "session" option for an execute method. If mongoc_opts is not
- * NULL, the option will be appended. If zsession is not NULL, it will be
+/* Parses the "session" option for an execute method. The client object should
+ * correspond to the Manager executing the operation and will be used to ensure
+ * that the session is correctly associated with that client. If mongoc_opts is
+ * not NULL, the option will be appended. If zsession is not NULL, it will be
  * assigned to the option. On error, false is returned and an exception is
  * thrown. */
-static bool phongo_parse_session(zval *options, bson_t *mongoc_opts, zval **zsession, mongoc_client_t *client TSRMLS_DC) /* {{{ */
+static bool phongo_parse_session(zval *options, mongoc_client_t *client, bson_t *mongoc_opts, zval **zsession TSRMLS_DC) /* {{{ */
 {
 	zval *option = NULL;
 	const mongoc_client_session_t *client_session;
@@ -652,7 +654,7 @@ bool phongo_execute_bulk_write(mongoc_client_t *client, const char *namespace, p
 		return false;
 	}
 
-	if (!phongo_parse_session(options, NULL, &zsession, client TSRMLS_CC)) {
+	if (!phongo_parse_session(options, client, NULL, &zsession TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		return false;
 	}
@@ -767,7 +769,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 		return false;
 	}
 
-	if (!phongo_parse_session(options, query->opts, NULL, client TSRMLS_CC)) {
+	if (!phongo_parse_session(options, client, query->opts, NULL TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		mongoc_collection_destroy(collection);
 		return false;
@@ -839,7 +841,7 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 		return false;
 	}
 
-	if (!phongo_parse_session(options, &opts, NULL, client TSRMLS_CC)) {
+	if (!phongo_parse_session(options, client, &opts, NULL TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		bson_destroy(&opts);
 		return false;
