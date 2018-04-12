@@ -827,6 +827,28 @@ static bson_t *create_wrapped_command_envelope(const char *db, bson_t *reply)
 	return tmp;
 }
 
+static zval *phongo_create_implicit_session(mongoc_client_t *client TSRMLS_DC) /* {{{ */
+{
+	mongoc_client_session_t *cs;
+	zval *zsession;
+
+	cs = mongoc_client_start_session(client, NULL, NULL);
+
+	if (!cs) {
+		return NULL;
+	}
+
+#if PHP_VERSION_ID >= 70000
+	zsession = ecalloc(sizeof(zval), 1);
+#else
+	ALLOC_INIT_ZVAL(zsession);
+#endif
+
+	phongo_session_init(zsession, cs TSRMLS_CC);
+
+	return zsession;
+} /* }}} */
+
 bool phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t type, const char *db, zval *zcommand, zval *options, uint32_t server_id, zval *return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	const php_phongo_command_t *command;
@@ -839,6 +861,7 @@ bool phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t t
 	zval *zsession = NULL;
 	bool result = false;
 	bool free_reply = false;
+	bool free_zsession = false;
 
 	command = Z_COMMAND_OBJ_P(zcommand);
 
@@ -855,6 +878,21 @@ bool phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t t
 	if (!phongo_parse_session(options, client, &opts, &zsession TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
+	}
+
+	/* If an explicit session was not provided, attempt to create an implicit
+	 * client session (ignoring any errors). */
+	if (!zsession) {
+		zsession = phongo_create_implicit_session(client TSRMLS_CC);
+
+		if (zsession) {
+			free_zsession = true;
+
+			if (!mongoc_client_session_append(Z_SESSION_OBJ_P(zsession)->client_session, &opts, NULL)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending implicit \"sessionId\" option");
+				goto cleanup;
+			}
+		}
 	}
 
 	if ((type & PHONGO_OPTION_WRITE_CONCERN) && !phongo_parse_write_concern(options, &opts, NULL TSRMLS_CC)) {
@@ -905,6 +943,7 @@ bool phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t t
 	 * is ultimately destroyed on both success and failure. */
 	if (bson_iter_init_find(&iter, &reply, "cursor") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 		bson_t initial_reply = BSON_INITIALIZER;
+		bson_error_t error = {0};
 
 		bson_copy_to(&reply, &initial_reply);
 
@@ -916,6 +955,13 @@ bool phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t t
 
 		if (command->batch_size) {
 			bson_append_int64(&initial_reply, "batchSize", -1, command->batch_size);
+		}
+
+		if (zsession && !mongoc_client_session_append(Z_SESSION_OBJ_P(zsession)->client_session, &initial_reply, &error)) {
+			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			bson_destroy(&initial_reply);
+			result = false;
+			goto cleanup;
 		}
 
 		cmd_cursor = mongoc_cursor_new_from_command_reply(client, &initial_reply, server_id);
@@ -932,6 +978,15 @@ cleanup:
 
 	if (free_reply) {
 		bson_destroy(&reply);
+	}
+
+	if (free_zsession) {
+#if PHP_VERSION_ID >= 70000
+		zval_ptr_dtor(zsession);
+		efree(zsession);
+#else
+		zval_ptr_dtor(&zsession);
+#endif
 	}
 
 	return result;
