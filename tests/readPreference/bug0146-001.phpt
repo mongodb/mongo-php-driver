@@ -58,6 +58,8 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["mode"]=>
     string(7) "primary"
   }
+  ["session"]=>
+  NULL
   ["isDead"]=>
   bool(true)
   ["currentIndex"]=>
@@ -96,6 +98,8 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["mode"]=>
     string(16) "primaryPreferred"
   }
+  ["session"]=>
+  NULL
   ["isDead"]=>
   bool(true)
   ["currentIndex"]=>
@@ -134,6 +138,8 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["mode"]=>
     string(9) "secondary"
   }
+  ["session"]=>
+  NULL
   ["isDead"]=>
   bool(true)
   ["currentIndex"]=>
@@ -172,6 +178,8 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["mode"]=>
     string(18) "secondaryPreferred"
   }
+  ["session"]=>
+  NULL
   ["isDead"]=>
   bool(true)
   ["currentIndex"]=>
@@ -210,6 +218,8 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     ["mode"]=>
     string(7) "nearest"
   }
+  ["session"]=>
+  NULL
   ["isDead"]=>
   bool(true)
   ["currentIndex"]=>

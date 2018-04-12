@@ -490,6 +490,18 @@ static HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TS
 		ADD_ASSOC_NULL_EX(&retval, "readPreference");
 	}
 
+	if (!Z_ISUNDEF(intern->session)) {
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(&retval, "session", &intern->session);
+		Z_ADDREF(intern->session);
+#else
+		ADD_ASSOC_ZVAL_EX(&retval, "session", intern->session);
+		Z_ADDREF_P(intern->session);
+#endif
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "session");
+	}
+
 	ADD_ASSOC_BOOL_EX(&retval, "isDead", !mongoc_cursor_is_alive(intern->cursor));
 
 	ADD_ASSOC_LONG_EX(&retval, "currentIndex", intern->current);
