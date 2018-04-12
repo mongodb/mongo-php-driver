@@ -27,7 +27,7 @@ $command = new MongoDB\Driver\Command([
     'pipeline' => $pipeline,
     'cursor' => ['batchSize' => 0],
 ], [
-    'maxAwaitTimeMS' => 100,
+    'maxAwaitTimeMS' => 500,
 ]);
 
 $cursor = $manager->executeCommand(DATABASE_NAME, $command);
@@ -65,5 +65,5 @@ object(stdClass)#%d (%d) {
 Waited for 0.%d seconds
 Awaiting results...
 NULL
-Waited for 0.1%d seconds
+Waited for 0.5%d seconds
 ===DONE===
