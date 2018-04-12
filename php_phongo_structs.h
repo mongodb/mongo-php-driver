@@ -65,6 +65,7 @@ typedef struct {
 	PHONGO_STRUCT_ZVAL     query;
 	PHONGO_STRUCT_ZVAL     command;
 	PHONGO_STRUCT_ZVAL     read_preference;
+	PHONGO_STRUCT_ZVAL     session;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_cursor_t;
 

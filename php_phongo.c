@@ -238,7 +238,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char *log_domain,
 /* }}} */
 
 /* {{{ Init objects */
-static void phongo_cursor_init(zval *return_value, mongoc_client_t *client, mongoc_cursor_t *cursor, zval *readPreference TSRMLS_DC) /* {{{ */
+static void phongo_cursor_init(zval *return_value, mongoc_client_t *client, mongoc_cursor_t *cursor, zval *readPreference, zval *session TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t *intern;
 
@@ -258,13 +258,22 @@ static void phongo_cursor_init(zval *return_value, mongoc_client_t *client, mong
 		intern->read_preference = readPreference;
 #endif
 	}
+
+	if (session) {
+#if PHP_VERSION_ID >= 70000
+		ZVAL_ZVAL(&intern->session, session, 1, 0);
+#else
+		Z_ADDREF_P(session);
+		intern->session = session;
+#endif
+	}
 } /* }}} */
 
-static void phongo_cursor_init_for_command(zval *return_value, mongoc_client_t *client, mongoc_cursor_t *cursor, const char *db, zval *command, zval *readPreference TSRMLS_DC) /* {{{ */
+static void phongo_cursor_init_for_command(zval *return_value, mongoc_client_t *client, mongoc_cursor_t *cursor, const char *db, zval *command, zval *readPreference, zval *session TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t *intern;
 
-	phongo_cursor_init(return_value, client, cursor, readPreference TSRMLS_CC);
+	phongo_cursor_init(return_value, client, cursor, readPreference, session TSRMLS_CC);
 	intern = Z_CURSOR_OBJ_P(return_value);
 
 	intern->database = estrdup(db);
@@ -277,11 +286,11 @@ static void phongo_cursor_init_for_command(zval *return_value, mongoc_client_t *
 #endif
 } /* }}} */
 
-static void phongo_cursor_init_for_query(zval *return_value, mongoc_client_t *client, mongoc_cursor_t *cursor, const char *namespace, zval *query, zval *readPreference TSRMLS_DC) /* {{{ */
+static void phongo_cursor_init_for_query(zval *return_value, mongoc_client_t *client, mongoc_cursor_t *cursor, const char *namespace, zval *query, zval *readPreference, zval *session TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t *intern;
 
-	phongo_cursor_init(return_value, client, cursor, readPreference TSRMLS_CC);
+	phongo_cursor_init(return_value, client, cursor, readPreference, session TSRMLS_CC);
 	intern = Z_CURSOR_OBJ_P(return_value);
 
 	/* namespace has already been validated by phongo_execute_query() */
@@ -748,6 +757,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 	char *collname;
 	mongoc_collection_t *collection;
 	zval *zreadPreference = NULL;
+	zval *zsession = NULL;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s: %s", "Invalid namespace provided", namespace);
@@ -769,7 +779,7 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 		return false;
 	}
 
-	if (!phongo_parse_session(options, client, query->opts, NULL TSRMLS_CC)) {
+	if (!phongo_parse_session(options, client, query->opts, &zsession TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		mongoc_collection_destroy(collection);
 		return false;
@@ -799,7 +809,8 @@ int phongo_execute_query(mongoc_client_t *client, const char *namespace, zval *z
 		return true;
 	}
 
-	phongo_cursor_init_for_query(return_value, client, cursor, namespace, zquery, zreadPreference TSRMLS_CC);
+	phongo_cursor_init_for_query(return_value, client, cursor, namespace, zquery, zreadPreference, zsession TSRMLS_CC);
+
 	return true;
 } /* }}} */
 
@@ -825,6 +836,7 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 	bson_t opts = BSON_INITIALIZER;
 	mongoc_cursor_t *cmd_cursor;
 	zval *zreadPreference = NULL;
+	zval *zsession = NULL;
 	int result;
 
 	command = Z_COMMAND_OBJ_P(zcommand);
@@ -841,7 +853,7 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 		return false;
 	}
 
-	if (!phongo_parse_session(options, client, &opts, NULL TSRMLS_CC)) {
+	if (!phongo_parse_session(options, client, &opts, &zsession TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		bson_destroy(&opts);
 		return false;
@@ -922,7 +934,7 @@ int phongo_execute_command(mongoc_client_t *client, php_phongo_command_type_t ty
 		bson_destroy(&reply);
 	}
 
-	phongo_cursor_init_for_command(return_value, client, cmd_cursor, db, zcommand, zreadPreference TSRMLS_CC);
+	phongo_cursor_init_for_command(return_value, client, cmd_cursor, db, zcommand, zreadPreference, zsession TSRMLS_CC);
 	return true;
 } /* }}} */
 /* }}} */

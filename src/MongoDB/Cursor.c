@@ -392,6 +392,10 @@ static void php_phongo_cursor_free_object(phongo_free_object_arg *object TSRMLS_
 		zval_ptr_dtor(&intern->read_preference);
 	}
 
+	if (!Z_ISUNDEF(intern->session)) {
+		zval_ptr_dtor(&intern->session);
+	}
+
 	php_phongo_cursor_free_current(intern);
 
 #if PHP_VERSION_ID < 70000
