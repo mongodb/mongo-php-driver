@@ -804,6 +804,9 @@ static bool map_element_matches_field_path(php_phongo_field_path_map_element* ma
 		return false;
 	}
 	for (i = 0; i < current->size; i++) {
+		if (strcmp(map_element->entry->elements[i], "$") == 0) {
+			continue;
+		}
 		if (strcmp(map_element->entry->elements[i], current->elements[i]) != 0) {
 			return false;
 		}
