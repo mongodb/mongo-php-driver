@@ -74,8 +74,11 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
 
 	if (!php_phongo_bson_to_zval_ex((const unsigned char*) data, data_len, &state)) {
 		zval_ptr_dtor(&state.zchild);
+		php_phongo_bson_typemap_dtor(&state.map);
 		RETURN_NULL();
 	}
+	
+	php_phongo_bson_typemap_dtor(&state.map);
 
 #if PHP_VERSION_ID >= 70000
 	RETURN_ZVAL(&state.zchild, 0, 1);
