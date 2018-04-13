@@ -34,7 +34,7 @@ $startTime = microtime(true);
 echo "Awaiting results...\n";
 $it->next();
 printf("Waited for %.6f seconds\n", microtime(true) - $startTime);
-// Sometimes the cursor will wait for 0.09999 seconds and sometimes it will wait for 0.1000.
+// Sometimes the cursor will wait for 0.0099 seconds and sometimes it will wait for 0.01.
 ?>
 ===DONE===
 <?php exit(0); ?>
