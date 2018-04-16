@@ -143,7 +143,7 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 	}
 
 	if (domain == MONGOC_ERROR_SERVER) {
-		if (code == 50) {
+		if (code == PHONGO_SERVER_ERROR_EXCEEDED_TIME_LIMIT) {
 			return php_phongo_executiontimeoutexception_ce;
 		}
 

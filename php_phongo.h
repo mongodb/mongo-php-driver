@@ -93,6 +93,10 @@ typedef enum {
 	PHONGO_ERROR_LOGIC             = 9
 } php_phongo_error_domain_t;
 
+/* This constant is used for determining if a server error for an exceeded query
+ * or command should select ExecutionTimeoutException. */
+#define PHONGO_SERVER_ERROR_EXCEEDED_TIME_LIMIT 50
+
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
 zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
 void              phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char* format, ...)
