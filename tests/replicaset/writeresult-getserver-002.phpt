@@ -47,10 +47,6 @@ foreach($result as $document) {
 $cmd = new MongoDB\Driver\Command(array("drop" => "examples"));
 $server3->executeCommand("local", $cmd);
 
-throws(function() use ($server3, $bulk) {
-    $result = $server3->executeBulkWrite(NS, $bulk);
-}, "MongoDB\\Driver\\Exception\\RuntimeException");
-
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -93,5 +89,4 @@ object(stdClass)#%d (2) {
   ["example"]=>
   string(8) "document"
 }
-OK: Got MongoDB\Driver\Exception\RuntimeException
 ===DONE===
