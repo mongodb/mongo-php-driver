@@ -64,6 +64,8 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
   NULL
   ["readPreference"]=>
   NULL
+  ["session"]=>
+  NULL
   ["isDead"]=>
   bool(false)
   ["currentIndex"]=>
