@@ -865,7 +865,11 @@ int phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t ty
 			return false;
 	}
 	if (!result) {
-		if (error.domain == MONGOC_ERROR_SERVER || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
+		/* Server errors (other than ExceededTimeLimit) and write concern errors
+		 * may use CommandException and report the result document for the
+		 * failed command. For BC, ExceededTimeLimit errors will continue to use
+		 * ExcecutionTimeoutException and omit the result document. */
+		if ((error.domain == MONGOC_ERROR_SERVER && error.code != PHONGO_SERVER_ERROR_EXCEEDED_TIME_LIMIT) || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
 #if PHP_VERSION_ID >= 70000
 			zval zv;
 #else
