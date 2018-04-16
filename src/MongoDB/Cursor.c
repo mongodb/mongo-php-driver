@@ -509,7 +509,7 @@ static HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TS
 	if (!Z_ISUNDEF(intern->visitor_data.zchild)) {
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "currentDocument", &intern->visitor_data.zchild);
-		/*Z_ADDREF(intern->visitor_data.zchild);*/
+		Z_ADDREF(intern->visitor_data.zchild);
 #else
 		ADD_ASSOC_ZVAL_EX(&retval, "currentDocument", intern->visitor_data.zchild);
 		Z_ADDREF_P(intern->visitor_data.zchild);
