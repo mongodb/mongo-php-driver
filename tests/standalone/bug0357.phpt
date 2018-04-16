@@ -7,7 +7,7 @@ PHPC-357: The exception for "invalid namespace" does not list the broken name
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$m = new MongoDB\Driver\Manager(null);
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 $c = new MongoDB\Driver\Query(array());
 
 echo throws(function() use($m, $c) {
