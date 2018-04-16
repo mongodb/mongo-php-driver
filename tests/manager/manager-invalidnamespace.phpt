@@ -1,5 +1,8 @@
 --TEST--
 MongoDB\Driver\Manager: Invalid namespace
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
+<?php NEEDS('STANDALONE'); ?>
 --FILE--
 <?php
 
