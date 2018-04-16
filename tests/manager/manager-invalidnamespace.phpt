@@ -1,14 +1,14 @@
 --TEST--
 MongoDB\Driver\Manager: Invalid namespace
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"?>
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE'); ?>
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager();
+$manager = new MongoDB\Driver\Manager(STANDALONE);
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(array("my" => "value"));
 
