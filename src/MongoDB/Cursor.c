@@ -460,7 +460,7 @@ static HashTable *php_phongo_cursor_get_debug_info(zval *object, int *is_temp TS
 	*is_temp = 1;
 	intern = Z_CURSOR_OBJ_P(object);
 
-	array_init_size(&retval, 9);
+	array_init_size(&retval, 10);
 
 	if (intern->database) {
 		ADD_ASSOC_STRING(&retval, "database", intern->database);
