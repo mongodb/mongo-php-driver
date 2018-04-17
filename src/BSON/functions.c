@@ -77,7 +77,7 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
 		php_phongo_bson_typemap_dtor(&state.map);
 		RETURN_NULL();
 	}
-	
+
 	php_phongo_bson_typemap_dtor(&state.map);
 
 #if PHP_VERSION_ID >= 70000

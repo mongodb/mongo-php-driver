@@ -117,14 +117,14 @@ void php_phongo_field_path_free(php_phongo_field_path* field_path)
 
 static void php_phongo_field_path_ensure_allocation(php_phongo_field_path* field_path, size_t level)
 {
-	if (level >= field_path->allocated) {
+	if (level >= field_path->allocated_size) {
 		size_t i;
 
-		field_path->allocated     = field_path->size + PHONGO_FIELD_PATH_EXPANSION;
-		field_path->elements      = erealloc(field_path->elements, sizeof(char**) * field_path->allocated);
-		field_path->element_types = erealloc(field_path->element_types, sizeof(php_phongo_bson_field_path_item_types*) * field_path->allocated);
+		field_path->allocated_size = field_path->size + PHONGO_FIELD_PATH_EXPANSION;
+		field_path->elements       = erealloc(field_path->elements, sizeof(char**) * field_path->allocated_size);
+		field_path->element_types  = erealloc(field_path->element_types, sizeof(php_phongo_bson_field_path_item_types*) * field_path->allocated_size);
 
-		for (i = level; i < field_path->allocated; i++) {
+		for (i = level; i < field_path->allocated_size; i++) {
 			field_path->elements[i]      = NULL;
 			field_path->element_types[i] = PHONGO_FIELD_PATH_ITEM_NONE;
 		}
@@ -1298,9 +1298,9 @@ static void field_path_map_element_set_info(php_phongo_field_path_map_element* e
 static void map_add_field_path_element(php_phongo_bson_typemap* map, php_phongo_field_path_map_element* element)
 {
 	/* Make sure we have allocated enough */
-	if (map->field_paths.allocated < map->field_paths.size + 1) {
-		map->field_paths.allocated += PHONGO_FIELD_PATH_EXPANSION;
-		map->field_paths.map = erealloc(map->field_paths.map, sizeof(php_phongo_field_path_map_element) * map->field_paths.allocated);
+	if (map->field_paths.allocated_size < map->field_paths.size + 1) {
+		map->field_paths.allocated_size += PHONGO_FIELD_PATH_EXPANSION;
+		map->field_paths.map = erealloc(map->field_paths.map, sizeof(php_phongo_field_path_map_element) * map->field_paths.allocated_size);
 	}
 
 	map->field_paths.map[map->field_paths.size] = element;

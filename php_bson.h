@@ -49,7 +49,7 @@ typedef enum {
 typedef struct {
 	char**                                 elements;
 	php_phongo_bson_field_path_item_types* element_types;
-	size_t                                 allocated;
+	size_t                                 allocated_size;
 	size_t                                 size;
 	size_t                                 ref_count;
 	bool                                   free_elements;
@@ -70,7 +70,7 @@ typedef struct {
 	zend_class_entry*             root;
 	struct {
 		php_phongo_field_path_map_element** map;
-		size_t                              allocated;
+		size_t                              allocated_size;
 		size_t                              size;
 	} field_paths;
 } php_phongo_bson_typemap;
