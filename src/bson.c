@@ -796,7 +796,7 @@ static const bson_visitor_t php_bson_visitors = {
 	{ NULL }
 };
 
-static bool map_element_matches_field_path(php_phongo_field_path_map_element* map_element, php_phongo_field_path* current)
+static inline bool map_element_matches_field_path(php_phongo_field_path_map_element* map_element, php_phongo_field_path* current)
 {
 	size_t i;
 
