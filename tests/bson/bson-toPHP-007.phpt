@@ -1,7 +1,5 @@
 --TEST--
-MongoDB\Driver\Cursor::setTypeMap(): fieldPath typemaps without server
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+MongoDB\BSON\toPHP(): fieldPath typemaps without server
 --FILE--
 <?php
 
