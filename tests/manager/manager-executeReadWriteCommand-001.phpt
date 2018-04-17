@@ -2,7 +2,7 @@
 MongoDB\Driver\Manager::executeReadWriteCommand()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php NEEDS('STANDALONE'); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.2"); CLEANUP(STANDALONE); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

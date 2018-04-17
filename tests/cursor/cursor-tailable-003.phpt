@@ -2,7 +2,7 @@
 MongoDB\Driver\Cursor tailable iteration with awaitData and maxAwaitTimeMS options
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php NEEDS('STANDALONE'); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.2"); CLEANUP(STANDALONE); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -34,12 +34,12 @@ $startTime = microtime(true);
 echo "Awaiting results...\n";
 $it->next();
 printf("Waited for %.6f seconds\n", microtime(true) - $startTime);
-
+// Sometimes the cursor will wait for 0.0099 seconds and sometimes it will wait for 0.01.
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
 {_id: 1}
 Awaiting results...
-Waited for 0.01%d seconds
+Waited for 0.0%d seconds
 ===DONE===

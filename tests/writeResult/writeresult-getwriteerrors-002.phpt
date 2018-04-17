@@ -31,7 +31,7 @@ array(2) {
   [0]=>
   object(MongoDB\Driver\WriteError)#%d (%d) {
     ["message"]=>
-    string(%d) "E11000 duplicate key error %s: phongo.writeResult_writeresult_getwriteerrors_002%sdup key: { : 2 }"
+    string(%d) "%SE11000 duplicate key error %s: phongo.writeResult_writeresult_getwriteerrors_002%sdup key: { : 2 }"
     ["code"]=>
     int(11000)
     ["index"]=>
@@ -42,7 +42,7 @@ array(2) {
   [1]=>
   object(MongoDB\Driver\WriteError)#%d (%d) {
     ["message"]=>
-    string(%d) "E11000 duplicate key error %s: phongo.writeResult_writeresult_getwriteerrors_002%sdup key: { : 4 }"
+    string(%d) "%SE11000 duplicate key error %s: phongo.writeResult_writeresult_getwriteerrors_002%sdup key: { : 4 }"
     ["code"]=>
     int(11000)
     ["index"]=>
