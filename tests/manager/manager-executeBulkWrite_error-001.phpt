@@ -33,7 +33,7 @@ var_dump(iterator_to_array($cursor));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-BulkWriteException: E11000 duplicate key error %s: phongo.manager_manager_executeBulkWrite_error_001%sdup key: { : 1 }
+BulkWriteException:%S E11000 duplicate key error %s: phongo.manager_manager_executeBulkWrite_error_001%sdup key: { : 1 }
 
 ===> WriteResult
 server: %s:%d

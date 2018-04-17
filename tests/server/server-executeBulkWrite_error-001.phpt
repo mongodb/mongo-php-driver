@@ -2,7 +2,7 @@
 MongoDB\Driver\Server::executeBulkWrite() with empty BulkWrite
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); ?>
+<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

@@ -1,11 +1,17 @@
-sudo: false
 language: php
+sudo: false
 
 addons:
   apt:
     packages:
       - gdb
       - lcov
+
+env:
+  global:
+    - TEST_PHP_ARGS="-q -s output.txt -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
+    - REPORT_EXIT_STATUS=1
+    - SERVER_VERSION=3.6.2
 
 matrix:
   include:
@@ -14,20 +20,34 @@ matrix:
     - php: 7.0
     - php: 7.1
     - php: 7.2
-
-services:
-  - mongodb
-
-env:
-  global:
-    - TEST_PHP_ARGS="-q -s output.txt -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
-    - REPORT_EXIT_STATUS=1
+    - php: 7.0
+      env:
+        - SERVER_VERSION=2.6.12
+    - php: 7.0
+      env:
+        - SERVER_VERSION=3.0.15
+    - php: 7.0
+      env:
+        - SERVER_VERSION=3.2.18
+    - php: 7.0
+      env:
+        - SERVER_VERSION=3.4.11
 
 before_install:
+  - pip install "mongo-orchestration>=0.6.7,<1.0" --user `whoami`
   - .travis.scripts/before_install.sh
+  - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${SERVER_VERSION}.tgz
+  - tar zxf mongodb-linux-x86_64-${SERVER_VERSION}.tgz
+  - export PATH=${PWD}/mongodb-linux-x86_64-${SERVER_VERSION}/bin/:${PATH}
+  - mongod --version
+  - mongo-orchestration --version
+  - export MO_PATH=`python -c 'import mongo_orchestration; from os import path;
+    print(path.dirname(mongo_orchestration.__file__));'`
   - php -r 'if ( ! ($f = php_ini_loaded_file())) { $f = PHP_CONFIG_FILE_PATH . "/php.ini"; } file_put_contents($f, "variables_order=EGPCS\n", FILE_APPEND); $a = file($f, FILE_IGNORE_NEW_LINES); var_dump($a[count($a)-1]);'
 
 before_script:
+  - mongo-orchestration start
+  - pushd ${MO_PATH} && ${TRAVIS_BUILD_DIR}/.travis.scripts/mo.sh configurations/servers/clean.json start && popd
   - ulimit -a
   - ulimit -c unlimited || true
   - .travis.scripts/before_script.sh
@@ -41,3 +61,6 @@ after_success:
 after_failure:
   - find . -name 'core*' -exec .travis.scripts/debug-core.sh {} \;
   - find . -name '*.diff' -exec .travis.scripts/debug-diff.sh {} \;
+
+after_script:
+  - mongo-orchestration stop
