@@ -88,18 +88,18 @@ char* php_phongo_field_path_as_string(php_phongo_field_path* field_path)
 	return path;
 }
 
-php_phongo_field_path* php_phongo_field_path_alloc(bool free_elements)
+php_phongo_field_path* php_phongo_field_path_alloc(bool owns_elements)
 {
 	php_phongo_field_path* tmp = ecalloc(1, sizeof(php_phongo_field_path));
 	tmp->ref_count             = 1;
-	tmp->free_elements         = free_elements;
+	tmp->owns_elements         = owns_elements;
 
 	return tmp;
 }
 
 void php_phongo_field_path_free(php_phongo_field_path* field_path)
 {
-	if (field_path->free_elements) {
+	if (field_path->owns_elements) {
 		size_t i;
 
 		for (i = 0; i < field_path->size; i++) {
@@ -135,7 +135,7 @@ void php_phongo_field_path_write_item_at_current_level(php_phongo_field_path* fi
 {
 	php_phongo_field_path_ensure_allocation(field_path, field_path->size);
 
-	if (field_path->free_elements) {
+	if (field_path->owns_elements) {
 		field_path->elements[field_path->size] = estrdup(element);
 	} else {
 		field_path->elements[field_path->size] = (char*) element;

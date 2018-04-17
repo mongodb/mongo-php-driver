@@ -52,7 +52,7 @@ typedef struct {
 	size_t                                 allocated_size;
 	size_t                                 size;
 	size_t                                 ref_count;
-	bool                                   free_elements;
+	bool                                   owns_elements;
 } php_phongo_field_path;
 
 typedef struct _php_phongo_field_path_map_element {
@@ -108,7 +108,7 @@ void php_phongo_bson_state_dtor(php_phongo_bson_state* state);
 void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson_state* src);
 void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map);
 
-php_phongo_field_path* php_phongo_field_path_alloc(bool free_elements);
+php_phongo_field_path* php_phongo_field_path_alloc(bool owns_elements);
 void                   php_phongo_field_path_free(php_phongo_field_path* field_path);
 void                   php_phongo_field_path_write_item_at_current_level(php_phongo_field_path* field_path, const char* element);
 void                   php_phongo_field_path_write_type_at_current_level(php_phongo_field_path* field_path, php_phongo_bson_field_path_item_types element_type);
