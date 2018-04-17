@@ -34,8 +34,7 @@ function fetch($manager, $typemap = []) {
         $cursor->setTypeMap($typemap);
     }
 
-    $documents = $cursor->toArray();
-    return $documents;
+    return $cursor->toArray();
 }
 
 

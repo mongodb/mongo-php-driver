@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Cursor::setTypeMap(): Setting fieldPath typemaps for compound types with wild card keys
+MongoDB\Driver\Cursor::setTypeMap(): Setting fieldPath typemaps for compound types with wildcard keys
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
@@ -16,7 +16,13 @@ class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
     }
 }
 
-class MyWildCardArrayObject extends MyArrayObject {};
+class MyWildcardArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
+{
+    function bsonUnserialize(array $data)
+    {
+        parent::__construct($data, ArrayObject::ARRAY_AS_PROPS);
+    }
+}
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
@@ -41,99 +47,99 @@ function fetch($manager, $typemap = []) {
 }
 
 
-echo "\nSetting 'array.$' path to 'MyWildCardArrayObject'\n";
+echo "\nSetting 'array.$' path to 'MyWildcardArrayObject'\n";
 $documents = fetch($manager, ["fieldPaths" => [
-    'array.$' => "MyWildCardArrayObject"
+    'array.$' => "MyWildcardArrayObject"
 ]]);
 var_dump($documents[0] instanceof stdClass);
 var_dump(is_array($documents[0]->array));
-var_dump($documents[0]->array[0] instanceof MyWildCardArrayObject);
-var_dump($documents[0]->array[1] instanceof MyWildCardArrayObject);
+var_dump($documents[0]->array[0] instanceof MyWildcardArrayObject);
+var_dump($documents[0]->array[1] instanceof MyWildcardArrayObject);
 
-echo "\nSetting 'array.1' to 'MyArrayObject' and 'array.$' path to 'MyWildCardArrayObject'\n";
+echo "\nSetting 'array.1' to 'MyArrayObject' and 'array.$' path to 'MyWildcardArrayObject'\n";
 $documents = fetch($manager, ["fieldPaths" => [
     'array.1' => "MyArrayObject",
-    'array.$' => "MyWildCardArrayObject"
+    'array.$' => "MyWildcardArrayObject"
 ]]);
 var_dump($documents[0] instanceof stdClass);
 var_dump(is_array($documents[0]->array));
-var_dump($documents[0]->array[0] instanceof MyWildCardArrayObject);
+var_dump($documents[0]->array[0] instanceof MyWildcardArrayObject);
 var_dump($documents[0]->array[1] instanceof MyArrayObject);
 
-echo "\nSetting 'array.$' to 'MyWildCardArrayObject' and 'array.1' path to 'MyArrayObject'\n";
+echo "\nSetting 'array.$' to 'MyWildcardArrayObject' and 'array.1' path to 'MyArrayObject'\n";
 $documents = fetch($manager, ["fieldPaths" => [
-    'array.$' => "MyWildCardArrayObject",
+    'array.$' => "MyWildcardArrayObject",
     'array.1' => "MyArrayObject"
 ]]);
 var_dump($documents[0] instanceof stdClass);
 var_dump(is_array($documents[0]->array));
-var_dump($documents[0]->array[0] instanceof MyWildCardArrayObject);
-var_dump($documents[0]->array[1] instanceof MyArrayObject);
+var_dump($documents[0]->array[0] instanceof MyWildcardArrayObject);
+var_dump($documents[0]->array[1] instanceof MyWildcardArrayObject);
 
 
-echo "\nSetting 'object.$' path to 'MyWildCardArrayObject'\n";
+echo "\nSetting 'object.$' path to 'MyWildcardArrayObject'\n";
 $documents = fetch($manager, ["fieldPaths" => [
-    'object.$' => "MyWildCardArrayObject"
+    'object.$' => "MyWildcardArrayObject"
 ]]);
 var_dump($documents[0] instanceof stdClass);
 var_dump(is_object($documents[0]->object));
-var_dump($documents[0]->object->one instanceof MyWildCardArrayObject);
-var_dump($documents[0]->object->two instanceof MyWildCardArrayObject);
+var_dump($documents[0]->object->one instanceof MyWildcardArrayObject);
+var_dump($documents[0]->object->two instanceof MyWildcardArrayObject);
 
-echo "\nSetting 'object.two' to 'MyArrayObject' and 'object.$' path to 'MyWildCardArrayObject'\n";
+echo "\nSetting 'object.two' to 'MyArrayObject' and 'object.$' path to 'MyWildcardArrayObject'\n";
 $documents = fetch($manager, ["fieldPaths" => [
     'object.two' => "MyArrayObject",
-    'object.$' => "MyWildCardArrayObject"
+    'object.$' => "MyWildcardArrayObject"
 ]]);
 var_dump($documents[0] instanceof stdClass);
 var_dump(is_object($documents[0]->object));
-var_dump($documents[0]->object->one instanceof MyWildCardArrayObject);
+var_dump($documents[0]->object->one instanceof MyWildcardArrayObject);
 var_dump($documents[0]->object->two instanceof MyArrayObject);
 
-echo "\nSetting 'object.$' to 'MyWildCardArrayObject' and 'object.one' path to 'MyArrayObject'\n";
+echo "\nSetting 'object.$' to 'MyWildcardArrayObject' and 'object.one' path to 'MyArrayObject'\n";
 $documents = fetch($manager, ["fieldPaths" => [
-    'object.$' => "MyWildCardArrayObject",
+    'object.$' => "MyWildcardArrayObject",
     'object.one' => "MyArrayObject"
 ]]);
 var_dump($documents[0] instanceof stdClass);
 var_dump(is_object($documents[0]->object));
-var_dump($documents[0]->object->one instanceof MyArrayObject);
-var_dump($documents[0]->object->two instanceof MyWildCardArrayObject);
+var_dump($documents[0]->object->one instanceof MyWildcardArrayObject);
+var_dump($documents[0]->object->two instanceof MyWildcardArrayObject);
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-Setting 'array.$' path to 'MyWildCardArrayObject'
+Setting 'array.$' path to 'MyWildcardArrayObject'
 bool(true)
 bool(true)
 bool(true)
 bool(true)
 
-Setting 'array.1' to 'MyArrayObject' and 'array.$' path to 'MyWildCardArrayObject'
+Setting 'array.1' to 'MyArrayObject' and 'array.$' path to 'MyWildcardArrayObject'
 bool(true)
 bool(true)
 bool(true)
 bool(true)
 
-Setting 'array.$' to 'MyWildCardArrayObject' and 'array.1' path to 'MyArrayObject'
+Setting 'array.$' to 'MyWildcardArrayObject' and 'array.1' path to 'MyArrayObject'
 bool(true)
 bool(true)
 bool(true)
 bool(true)
 
-Setting 'object.$' path to 'MyWildCardArrayObject'
+Setting 'object.$' path to 'MyWildcardArrayObject'
 bool(true)
 bool(true)
 bool(true)
 bool(true)
 
-Setting 'object.two' to 'MyArrayObject' and 'object.$' path to 'MyWildCardArrayObject'
+Setting 'object.two' to 'MyArrayObject' and 'object.$' path to 'MyWildcardArrayObject'
 bool(true)
 bool(true)
 bool(true)
 bool(true)
 
-Setting 'object.$' to 'MyWildCardArrayObject' and 'object.one' path to 'MyArrayObject'
+Setting 'object.$' to 'MyWildcardArrayObject' and 'object.one' path to 'MyArrayObject'
 bool(true)
 bool(true)
 bool(true)

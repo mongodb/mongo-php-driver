@@ -31,9 +31,7 @@ foreach ($fieldPaths as $fieldPath) {
 
     echo throws(function() use ($cursor, $typeMap) {
         $cursor->setTypeMap($typeMap);
-    }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
-
-    echo "\n";
+    }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n\n";
 }
 
 ?>

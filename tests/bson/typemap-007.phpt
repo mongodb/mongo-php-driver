@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Cursor::setTypeMap(): Setting fieldPath typemaps for compound types with wild card keys (nested)
+MongoDB\Driver\Cursor::setTypeMap(): Setting fieldPath typemaps for compound types with wildcard keys (nested)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
@@ -16,7 +16,7 @@ class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
     }
 }
 
-class MyWildCardArrayObject extends MyArrayObject {};
+class MyWildcardArrayObject extends MyArrayObject {};
 
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
@@ -49,57 +49,69 @@ function fetch($manager, $typemap = []) {
 }
 
 
-echo "\nSetting 'object.$.child1' path to 'MyWildCardArrayObject'\n";
+echo "\nSetting 'object.$.child1' path to 'MyWildcardArrayObject'\n";
 $documents = fetch($manager, ["fieldPaths" => [
-    'object.$.child1' => "MyWildCardArrayObject"
+    'object.$.child1' => "MyWildcardArrayObject"
 ]]);
 var_dump($documents[0]->object->parent1 instanceof stdClass);
-var_dump($documents[0]->object->parent1->child1 instanceof MyWildCardArrayObject);
+var_dump($documents[0]->object->parent1->child1 instanceof MyWildcardArrayObject);
 var_dump(is_array($documents[0]->object->parent1->child2));
 var_dump($documents[0]->object->parent2 instanceof stdClass);
-var_dump($documents[0]->object->parent2->child1 instanceof MyWildCardArrayObject);
+var_dump($documents[0]->object->parent2->child1 instanceof MyWildcardArrayObject);
 var_dump(is_array($documents[0]->object->parent2->child2));
 
-echo "\nSetting 'object.parent1.$' path to 'MyWildCardArrayObject' and 'object.parent2.child1' to 'MyArrayObject'\n";
+echo "\nSetting 'object.parent1.$' path to 'MyWildcardArrayObject' and 'object.parent2.child1' to 'MyArrayObject'\n";
 $documents = fetch($manager, ["fieldPaths" => [
-    'object.parent1.$'      => "MyWildCardArrayObject",
+    'object.parent1.$'      => "MyWildcardArrayObject",
     'object.parent2.child1' => "MyArrayObject",
 ]]);
 var_dump($documents[0]->object->parent1 instanceof stdClass);
-var_dump($documents[0]->object->parent1->child1 instanceof MyWildCardArrayObject);
-var_dump($documents[0]->object->parent1->child2 instanceof MyWildCardArrayObject);
+var_dump($documents[0]->object->parent1->child1 instanceof MyWildcardArrayObject);
+var_dump($documents[0]->object->parent1->child2 instanceof MyWildcardArrayObject);
 var_dump($documents[0]->object->parent2 instanceof stdClass);
 var_dump($documents[0]->object->parent2->child1 instanceof MyArrayObject);
 var_dump(is_array($documents[0]->object->parent2->child2));
 
-echo "\nSetting 'object.parent1.$' path to 'MyWildCardArrayObject' and 'object.$.$' to 'MyArrayObject'\n";
+echo "\nSetting 'object.parent1.$' path to 'MyWildcardArrayObject' and 'object.$.$' to 'MyArrayObject'\n";
 $documents = fetch($manager, ["fieldPaths" => [
-    'object.parent1.$'    => "MyWildCardArrayObject",
+    'object.parent1.$'    => "MyWildcardArrayObject",
     'object.$.$'          => "MyArrayObject",
 ]]);
 var_dump($documents[0]->object->parent1 instanceof stdClass);
-var_dump($documents[0]->object->parent1->child1 instanceof MyWildCardArrayObject);
-var_dump($documents[0]->object->parent1->child2 instanceof MyWildCardArrayObject);
+var_dump($documents[0]->object->parent1->child1 instanceof MyWildcardArrayObject);
+var_dump($documents[0]->object->parent1->child2 instanceof MyWildcardArrayObject);
 var_dump($documents[0]->object->parent2 instanceof stdClass);
 var_dump($documents[0]->object->parent2->child1 instanceof MyArrayObject);
 var_dump($documents[0]->object->parent2->child2 instanceof MyArrayObject);
 
-echo "\nSetting 'object.parent1.$' path to 'MyWildCardArrayObject' and 'object.$.child2' to 'MyArrayObject'\n";
+echo "\nSetting 'object.parent1.$' path to 'MyWildcardArrayObject' and 'object.$.child2' to 'MyArrayObject'\n";
 $documents = fetch($manager, ["fieldPaths" => [
-    'object.parent1.child1' => "MyWildCardArrayObject",
+    'object.parent1.child1' => "MyWildcardArrayObject",
     'object.$.child2'       => "MyArrayObject",
 ]]);
 var_dump($documents[0]->object->parent1 instanceof stdClass);
-var_dump($documents[0]->object->parent1->child1 instanceof MyWildCardArrayObject);
+var_dump($documents[0]->object->parent1->child1 instanceof MyWildcardArrayObject);
 var_dump($documents[0]->object->parent1->child2 instanceof MyArrayObject);
 var_dump($documents[0]->object->parent2 instanceof stdClass);
 var_dump(is_array($documents[0]->object->parent2->child1));
 var_dump($documents[0]->object->parent2->child2 instanceof MyArrayObject);
+
+echo "\nSetting 'object.parent1.child2 path to 'MyArrayObject' and 'object.$.$' to 'MyWildcardArrayObject'\n";
+$documents = fetch($manager, ["fieldPaths" => [
+    'object.parent1.child2' => "MyArrayObject",
+    'object.$.$'            => "MyWildcardArrayObject",
+]]);
+var_dump($documents[0]->object->parent1 instanceof stdClass);
+var_dump($documents[0]->object->parent1->child1 instanceof MyWildcardArrayObject);
+var_dump($documents[0]->object->parent1->child2 instanceof MyArrayObject);
+var_dump($documents[0]->object->parent2 instanceof stdClass);
+var_dump($documents[0]->object->parent2->child1 instanceof MyWildcardArrayObject);
+var_dump($documents[0]->object->parent2->child2 instanceof MyWildcardArrayObject);
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-Setting 'object.$.child1' path to 'MyWildCardArrayObject'
+Setting 'object.$.child1' path to 'MyWildcardArrayObject'
 bool(true)
 bool(true)
 bool(true)
@@ -107,7 +119,7 @@ bool(true)
 bool(true)
 bool(true)
 
-Setting 'object.parent1.$' path to 'MyWildCardArrayObject' and 'object.parent2.child1' to 'MyArrayObject'
+Setting 'object.parent1.$' path to 'MyWildcardArrayObject' and 'object.parent2.child1' to 'MyArrayObject'
 bool(true)
 bool(true)
 bool(true)
@@ -115,7 +127,7 @@ bool(true)
 bool(true)
 bool(true)
 
-Setting 'object.parent1.$' path to 'MyWildCardArrayObject' and 'object.$.$' to 'MyArrayObject'
+Setting 'object.parent1.$' path to 'MyWildcardArrayObject' and 'object.$.$' to 'MyArrayObject'
 bool(true)
 bool(true)
 bool(true)
@@ -123,7 +135,15 @@ bool(true)
 bool(true)
 bool(true)
 
-Setting 'object.parent1.$' path to 'MyWildCardArrayObject' and 'object.$.child2' to 'MyArrayObject'
+Setting 'object.parent1.$' path to 'MyWildcardArrayObject' and 'object.$.child2' to 'MyArrayObject'
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+
+Setting 'object.parent1.child2 path to 'MyArrayObject' and 'object.$.$' to 'MyWildcardArrayObject'
 bool(true)
 bool(true)
 bool(true)
