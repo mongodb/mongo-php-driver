@@ -121,8 +121,8 @@ static void php_phongo_field_path_ensure_allocation(php_phongo_field_path* field
 		size_t i;
 
 		field_path->allocated_size = field_path->size + PHONGO_FIELD_PATH_EXPANSION;
-		field_path->elements       = erealloc(field_path->elements, sizeof(char**) * field_path->allocated_size);
-		field_path->element_types  = erealloc(field_path->element_types, sizeof(php_phongo_bson_field_path_item_types*) * field_path->allocated_size);
+		field_path->elements       = erealloc(field_path->elements, sizeof(char*) * field_path->allocated_size);
+		field_path->element_types  = erealloc(field_path->element_types, sizeof(php_phongo_bson_field_path_item_types) * field_path->allocated_size);
 
 		for (i = level; i < field_path->allocated_size; i++) {
 			field_path->elements[i]      = NULL;
