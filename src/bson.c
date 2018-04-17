@@ -1289,7 +1289,7 @@ cleanup:
 	return retval;
 } /* }}} */
 
-static void field_path_map_element_set_info(php_phongo_field_path_map_element* element, php_phongo_bson_typemap_types type, zend_class_entry* ce TSRMLS_DC)
+static void field_path_map_element_set_info(php_phongo_field_path_map_element* element, php_phongo_bson_typemap_types type, zend_class_entry* ce)
 {
 	element->node_type = type;
 	element->node_ce   = ce;
@@ -1316,44 +1316,69 @@ static php_phongo_field_path_map_element* field_path_map_element_alloc(void)
 	return tmp;
 }
 
-bool php_phongo_bson_state_add_field_path(php_phongo_bson_typemap* map, char* field_path_original, php_phongo_bson_typemap_types type, zend_class_entry* ce TSRMLS_DC)
-{
-	char*                              saveptr;
-	char*                              field_path_str = estrdup(field_path_original);
-	const char*                        element;
-	php_phongo_field_path_map_element* field_path_map_element;
-
-	field_path_map_element = field_path_map_element_alloc();
-
-	/* Loop over all the segments. A segment is delimited by a "." */
-	element = php_strtok_r(field_path_str, ".", &saveptr);
-	while (element) {
-		php_phongo_field_path_push(field_path_map_element->entry, element, PHONGO_FIELD_PATH_ITEM_NONE);
-		element = php_strtok_r(NULL, ".", &saveptr);
-	}
-
-	efree(field_path_str);
-
-	field_path_map_element_set_info(field_path_map_element, type, ce TSRMLS_CC);
-	map_add_field_path_element(map, field_path_map_element);
-
-	return true;
-}
-
 static void field_path_map_element_dtor(php_phongo_field_path_map_element* element)
 {
 	php_phongo_field_path_free(element->entry);
 	efree(element);
 }
 
+bool php_phongo_bson_state_add_field_path(php_phongo_bson_typemap* map, char* field_path_original, php_phongo_bson_typemap_types type, zend_class_entry* ce TSRMLS_DC)
+{
+	char*                              ptr         = NULL;
+	char*                              segment_end = NULL;
+	php_phongo_field_path_map_element* field_path_map_element;
+
+	if (field_path_original[0] == '.') {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "A 'fieldPaths' key may not start with a '.'");
+		return false;
+	}
+
+	if (field_path_original[strlen(field_path_original) - 1] == '.') {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "A 'fieldPaths' key may not end with a '.'");
+		return false;
+	}
+
+	field_path_map_element = field_path_map_element_alloc();
+	ptr                    = field_path_original;
+
+	/* Loop over all the segments. A segment is delimited by a "." */
+	while ((segment_end = strchr(ptr, '.')) != NULL) {
+		char* tmp = NULL;
+
+		/* Bail out if we have an empty segment */
+		if (ptr == segment_end) {
+			field_path_map_element_dtor(field_path_map_element);
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "A 'fieldPaths' key may not have an empty segment");
+			return false;
+		}
+
+		tmp = calloc(1, segment_end - ptr + 1);
+		memcpy(tmp, ptr, segment_end - ptr);
+		php_phongo_field_path_push(field_path_map_element->entry, tmp, PHONGO_FIELD_PATH_ITEM_NONE);
+		free(tmp);
+
+		ptr = segment_end + 1;
+	}
+
+	/* Add the last (or single) element */
+	php_phongo_field_path_push(field_path_map_element->entry, ptr, PHONGO_FIELD_PATH_ITEM_NONE);
+
+	field_path_map_element_set_info(field_path_map_element, type, ce);
+	map_add_field_path_element(map, field_path_map_element);
+
+	return true;
+}
+
 void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map)
 {
 	size_t i;
 
-	for (i = 0; i < map->field_paths.size; i++) {
-		field_path_map_element_dtor(map->field_paths.map[i]);
+	if (map->field_paths.map) {
+		for (i = 0; i < map->field_paths.size; i++) {
+			field_path_map_element_dtor(map->field_paths.map[i]);
+		}
+		efree(map->field_paths.map);
 	}
-	efree(map->field_paths.map);
 
 	map->field_paths.map = NULL;
 }
@@ -1394,6 +1419,11 @@ bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bson_typem
 				return false;
 			}
 
+			if (strcmp(ZSTR_VAL(string_key), "") == 0) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "The 'fieldPaths' element may not be an empty string");
+				return false;
+			}
+
 			if (!php_phongo_bson_state_parse_type(fieldpaths, ZSTR_VAL(string_key), &map_type, &map_ce TSRMLS_CC)) {
 				return false;
 			}
@@ -1422,6 +1452,11 @@ bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bson_typem
 
 			if (HASH_KEY_IS_STRING != zend_hash_get_current_key_ex(ht_data, &string_key, &string_key_len, &num_key, 0, &pos)) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "The 'fieldPaths' element is not an associative array");
+				return false;
+			}
+
+			if (strcmp(string_key, "") == 0) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "The 'fieldPaths' element may not be an empty string");
 				return false;
 			}
 
