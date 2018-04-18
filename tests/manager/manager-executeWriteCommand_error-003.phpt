@@ -26,9 +26,9 @@ try {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 MongoDB\Driver\Exception\CommandException(9): Either an update or remove=true must be specified
-object(stdClass)#4 (4) {
+object(stdClass)#%d (%d) {
   ["ok"]=>
   float(0)
   ["errmsg"]=>
