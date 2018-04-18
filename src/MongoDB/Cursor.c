@@ -28,6 +28,22 @@
 
 zend_class_entry* php_phongo_cursor_ce;
 
+/* Check if the cursor is exhausted (i.e. ID is zero) and free any reference to
+ * the session. Calling this function during iteration will allow an implicit
+ * session to return to the pool immediately after a getMore indicates that the
+ * server has no more results to return. */
+static void php_phongo_cursor_free_session_if_exhausted(php_phongo_cursor_t *cursor) /* {{{ */
+{
+	if (mongoc_cursor_get_id(cursor->cursor)) {
+		return;
+	}
+
+	if (!Z_ISUNDEF(cursor->session)) {
+		zval_ptr_dtor(&cursor->session);
+		ZVAL_UNDEF(&cursor->session);
+	}
+} /* }}} */
+
 static void php_phongo_cursor_free_current(php_phongo_cursor_t* cursor) /* {{{ */
 {
 	if (!Z_ISUNDEF(cursor->visitor_data.zchild)) {
@@ -117,6 +133,8 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator* iter T
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 		}
 	}
+
+	php_phongo_cursor_free_session_if_exhausted(cursor);
 } /* }}} */
 
 static void php_phongo_cursor_iterator_rewind(zend_object_iterator* iter TSRMLS_DC) /* {{{ */
@@ -147,6 +165,8 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator* iter TSRMLS_
 	if (doc) {
 		php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
 	}
+
+	php_phongo_cursor_free_session_if_exhausted(cursor);
 } /* }}} */
 
 static zend_object_iterator_funcs php_phongo_cursor_iterator_funcs = {
@@ -441,7 +461,7 @@ static HashTable* php_phongo_cursor_get_debug_info(zval* object, int* is_temp TS
 	*is_temp = 1;
 	intern   = Z_CURSOR_OBJ_P(object);
 
-	array_init_size(&retval, 9);
+	array_init_size(&retval, 10);
 
 	if (intern->database) {
 		ADD_ASSOC_STRING(&retval, "database", intern->database);
