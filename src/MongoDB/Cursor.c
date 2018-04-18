@@ -32,7 +32,7 @@ zend_class_entry* php_phongo_cursor_ce;
  * the session. Calling this function during iteration will allow an implicit
  * session to return to the pool immediately after a getMore indicates that the
  * server has no more results to return. */
-static void php_phongo_cursor_free_session_if_exhausted(php_phongo_cursor_t *cursor) /* {{{ */
+static void php_phongo_cursor_free_session_if_exhausted(php_phongo_cursor_t* cursor) /* {{{ */
 {
 	if (mongoc_cursor_get_id(cursor->cursor)) {
 		return;

@@ -526,7 +526,7 @@ bool phongo_parse_read_preference(zval* options, zval** zreadPreference TSRMLS_D
  * not NULL, the option will be appended. If zsession is not NULL, it will be
  * assigned to the option. On error, false is returned and an exception is
  * thrown. */
-static bool phongo_parse_session(zval *options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession TSRMLS_DC) /* {{{ */
+static bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession TSRMLS_DC) /* {{{ */
 {
 	zval*                          option = NULL;
 	const mongoc_client_session_t* client_session;
@@ -727,7 +727,7 @@ bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* 
 	char*                     collname;
 	mongoc_collection_t*      collection;
 	zval*                     zreadPreference = NULL;
-	zval*                     zsession = NULL;
+	zval*                     zsession        = NULL;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s: %s", "Invalid namespace provided", namespace);
@@ -797,10 +797,10 @@ static bson_t* create_wrapped_command_envelope(const char* db, bson_t* reply)
 	return tmp;
 }
 
-static zval *phongo_create_implicit_session(mongoc_client_t *client TSRMLS_DC) /* {{{ */
+static zval* phongo_create_implicit_session(mongoc_client_t* client TSRMLS_DC) /* {{{ */
 {
-	mongoc_client_session_t *cs;
-	zval *zsession;
+	mongoc_client_session_t* cs;
+	zval*                    zsession;
 
 	cs = mongoc_client_start_session(client, NULL, NULL);
 
@@ -828,10 +828,10 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 	bson_t                      opts = BSON_INITIALIZER;
 	mongoc_cursor_t*            cmd_cursor;
 	zval*                       zreadPreference = NULL;
-	zval*                       zsession = NULL;
-	bool                        result = false;
-	bool                        free_reply = false;
-	bool                        free_zsession = false;
+	zval*                       zsession        = NULL;
+	bool                        result          = false;
+	bool                        free_reply      = false;
+	bool                        free_zsession   = false;
 
 	command = Z_COMMAND_OBJ_P(zcommand);
 
@@ -934,8 +934,8 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 	/* According to mongoc_cursor_new_from_command_reply(), the reply bson_t
 	 * is ultimately destroyed on both success and failure. */
 	if (bson_iter_init_find(&iter, &reply, "cursor") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
-		bson_t initial_reply = BSON_INITIALIZER;
-		bson_error_t error = {0};
+		bson_t       initial_reply = BSON_INITIALIZER;
+		bson_error_t error         = { 0 };
 
 		bson_copy_to(&reply, &initial_reply);
 
