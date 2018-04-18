@@ -40,6 +40,27 @@ typedef enum {
 	PHONGO_TYPEMAP_CLASS
 } php_phongo_bson_typemap_types;
 
+typedef enum {
+	PHONGO_FIELD_PATH_ITEM_NONE,
+	PHONGO_FIELD_PATH_ITEM_ARRAY,
+	PHONGO_FIELD_PATH_ITEM_DOCUMENT
+} php_phongo_bson_field_path_item_types;
+
+typedef struct {
+	char**                                 elements;
+	php_phongo_bson_field_path_item_types* element_types;
+	size_t                                 allocated_size;
+	size_t                                 size;
+	size_t                                 ref_count;
+	bool                                   owns_elements;
+} php_phongo_field_path;
+
+typedef struct _php_phongo_field_path_map_element {
+	php_phongo_field_path*        entry;
+	php_phongo_bson_typemap_types node_type;
+	zend_class_entry*             node_ce;
+} php_phongo_field_path_map_element;
+
 typedef struct {
 	php_phongo_bson_typemap_types document_type;
 	zend_class_entry*             document;
@@ -47,14 +68,12 @@ typedef struct {
 	zend_class_entry*             array;
 	php_phongo_bson_typemap_types root_type;
 	zend_class_entry*             root;
+	struct {
+		php_phongo_field_path_map_element** map;
+		size_t                              allocated_size;
+		size_t                              size;
+	} field_paths;
 } php_phongo_bson_typemap;
-
-typedef struct {
-	const char** elements;
-	size_t       allocated_levels;
-	size_t       current_level;
-	size_t       ref_count;
-} php_phongo_field_path;
 
 typedef struct {
 	ZVAL_RETVAL_TYPE        zchild;
@@ -87,11 +106,13 @@ bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* ma
 void php_phongo_bson_state_ctor(php_phongo_bson_state* state);
 void php_phongo_bson_state_dtor(php_phongo_bson_state* state);
 void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson_state* src);
+void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map);
 
-php_phongo_field_path* php_phongo_field_path_alloc(void);
+php_phongo_field_path* php_phongo_field_path_alloc(bool owns_elements);
 void                   php_phongo_field_path_free(php_phongo_field_path* field_path);
 void                   php_phongo_field_path_write_item_at_current_level(php_phongo_field_path* field_path, const char* element);
-bool                   php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element);
+void                   php_phongo_field_path_write_type_at_current_level(php_phongo_field_path* field_path, php_phongo_bson_field_path_item_types element_type);
+bool                   php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element, php_phongo_bson_field_path_item_types element_type);
 bool                   php_phongo_field_path_pop(php_phongo_field_path* field_path);
 
 char* php_phongo_field_path_as_string(php_phongo_field_path* field_path);

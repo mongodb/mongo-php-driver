@@ -29,6 +29,8 @@
 #include "phongo_compat.h"
 #include "php_array_api.h"
 
+#define DEBUG 0
+
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO-BSON"
 
@@ -62,7 +64,7 @@ char* php_phongo_field_path_as_string(php_phongo_field_path* field_path)
 		return estrdup("");
 	}
 
-	for (i = 0; i <= field_path->current_level; i++) {
+	for (i = 0; i <= field_path->size; i++) {
 		if (!field_path->elements[i]) {
 			continue;
 		}
@@ -72,7 +74,7 @@ char* php_phongo_field_path_as_string(php_phongo_field_path* field_path)
 	path = emalloc(length);
 	ptr  = path;
 
-	for (i = 0; i <= field_path->current_level; i++) {
+	for (i = 0; i <= field_path->size; i++) {
 		if (!field_path->elements[i]) {
 			continue;
 		}
@@ -86,59 +88,86 @@ char* php_phongo_field_path_as_string(php_phongo_field_path* field_path)
 	return path;
 }
 
-php_phongo_field_path* php_phongo_field_path_alloc(void)
+php_phongo_field_path* php_phongo_field_path_alloc(bool owns_elements)
 {
 	php_phongo_field_path* tmp = ecalloc(1, sizeof(php_phongo_field_path));
 	tmp->ref_count             = 1;
+	tmp->owns_elements         = owns_elements;
 
 	return tmp;
 }
 
 void php_phongo_field_path_free(php_phongo_field_path* field_path)
 {
+	if (field_path->owns_elements) {
+		size_t i;
+
+		for (i = 0; i < field_path->size; i++) {
+			efree(field_path->elements[i]);
+		}
+	}
 	if (field_path->elements) {
 		efree(field_path->elements);
+	}
+	if (field_path->element_types) {
+		efree(field_path->element_types);
 	}
 	efree(field_path);
 }
 
 static void php_phongo_field_path_ensure_allocation(php_phongo_field_path* field_path, size_t level)
 {
-	if (level >= field_path->allocated_levels) {
+	if (level >= field_path->allocated_size) {
 		size_t i;
 
-		field_path->allocated_levels = field_path->current_level + PHONGO_FIELD_PATH_EXPANSION;
-		field_path->elements         = erealloc(field_path->elements, sizeof(char**) * field_path->allocated_levels);
+		field_path->allocated_size = field_path->size + PHONGO_FIELD_PATH_EXPANSION;
+		field_path->elements       = erealloc(field_path->elements, sizeof(char*) * field_path->allocated_size);
+		field_path->element_types  = erealloc(field_path->element_types, sizeof(php_phongo_bson_field_path_item_types) * field_path->allocated_size);
 
-		for (i = level; i < field_path->allocated_levels; i++) {
-			field_path->elements[i] = NULL;
+		for (i = level; i < field_path->allocated_size; i++) {
+			field_path->elements[i]      = NULL;
+			field_path->element_types[i] = PHONGO_FIELD_PATH_ITEM_NONE;
 		}
 	}
 }
 
 void php_phongo_field_path_write_item_at_current_level(php_phongo_field_path* field_path, const char* element)
 {
-	php_phongo_field_path_ensure_allocation(field_path, field_path->current_level);
+	php_phongo_field_path_ensure_allocation(field_path, field_path->size);
 
-	field_path->elements[field_path->current_level] = element;
+	if (field_path->owns_elements) {
+		field_path->elements[field_path->size] = estrdup(element);
+	} else {
+		field_path->elements[field_path->size] = (char*) element;
+	}
 }
 
-bool php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element)
+void php_phongo_field_path_write_type_at_current_level(php_phongo_field_path* field_path, php_phongo_bson_field_path_item_types element_type)
+{
+	php_phongo_field_path_ensure_allocation(field_path, field_path->size);
+
+	field_path->element_types[field_path->size] = element_type;
+}
+
+bool php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element, php_phongo_bson_field_path_item_types element_type)
 {
 	php_phongo_field_path_write_item_at_current_level(field_path, element);
+	php_phongo_field_path_write_type_at_current_level(field_path, element_type);
 
-	field_path->current_level++;
+	field_path->size++;
 
 	return true;
 }
 
 bool php_phongo_field_path_pop(php_phongo_field_path* field_path)
 {
-	field_path->elements[field_path->current_level] = NULL;
+	field_path->elements[field_path->size]      = NULL;
+	field_path->element_types[field_path->size] = PHONGO_FIELD_PATH_ITEM_NONE;
 
-	field_path->current_level--;
+	field_path->size--;
 
-	field_path->elements[field_path->current_level] = NULL;
+	field_path->elements[field_path->size]      = NULL;
+	field_path->element_types[field_path->size] = PHONGO_FIELD_PATH_ITEM_NONE;
 
 	return true;
 }
@@ -150,7 +179,7 @@ inline static bool php_phongo_bson_state_is_initialized(php_phongo_bson_state* s
 
 void php_phongo_bson_state_ctor(php_phongo_bson_state* state)
 {
-	state->field_path = php_phongo_field_path_alloc();
+	state->field_path = php_phongo_field_path_alloc(false);
 }
 
 void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson_state* src)
@@ -767,6 +796,58 @@ static const bson_visitor_t php_bson_visitors = {
 	{ NULL }
 };
 
+static inline bool map_element_matches_field_path(php_phongo_field_path_map_element* map_element, php_phongo_field_path* current)
+{
+	size_t i;
+
+	if (map_element->entry->size != current->size) {
+		return false;
+	}
+	for (i = 0; i < current->size; i++) {
+		if (strcmp(map_element->entry->elements[i], "$") == 0) {
+			continue;
+		}
+		if (strcmp(map_element->entry->elements[i], current->elements[i]) != 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
+static php_phongo_field_path_map_element* map_find_field_path_entry(php_phongo_bson_state* state)
+{
+	size_t i;
+
+	/* Loop over all field path mappings, and for each, try to see whether it matches the current path */
+	for (i = 0; i < state->map.field_paths.size; i++) {
+		if (map_element_matches_field_path(state->map.field_paths.map[i], state->field_path)) {
+			return state->map.field_paths.map[i];
+		}
+	}
+	return NULL;
+}
+
+static void php_phongo_handle_field_path_entry_for_compound_type(php_phongo_bson_state* state, php_phongo_bson_typemap_types* type, zend_class_entry** ce)
+{
+	php_phongo_field_path_map_element* entry = map_find_field_path_entry(state);
+
+	if (entry) {
+		switch (entry->node_type) {
+			case PHONGO_TYPEMAP_NATIVE_ARRAY:
+			case PHONGO_TYPEMAP_NATIVE_OBJECT:
+				*type = entry->node_type;
+				break;
+			case PHONGO_TYPEMAP_CLASS:
+				*type = entry->node_type;
+				*ce   = entry->node_ce;
+				break;
+			default:
+				/* Do nothing - pacify compiler */
+				break;
+		}
+	}
+}
+
 static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data) /* {{{ */
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
@@ -774,7 +855,7 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 	php_phongo_bson_state* parent_state = (php_phongo_bson_state*) data;
 	TSRMLS_FETCH();
 
-	php_phongo_field_path_push(parent_state->field_path, key);
+	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
 
 	if (bson_iter_init(&child, v_document)) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
@@ -789,6 +870,10 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 #endif
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state) && !child.err_off) {
+			/* Check for entries in the fieldPath type map key, and use them to
+			 * override the default ones for this type */
+			php_phongo_handle_field_path_entry_for_compound_type(&state, &state.map.document_type, &state.map.document);
+
 			/* If php_phongo_bson_visit_binary() finds an ODM class, it should
 			 * supersede a default type map and named document class. */
 			if (state.odm && state.map.document_type == PHONGO_TYPEMAP_NONE) {
@@ -881,7 +966,7 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 	php_phongo_bson_state* parent_state = (php_phongo_bson_state*) data;
 	TSRMLS_FETCH();
 
-	php_phongo_field_path_push(parent_state->field_path, key);
+	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_ARRAY);
 
 	if (bson_iter_init(&child, v_array)) {
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
@@ -902,6 +987,9 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 #endif
 
 		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state) && !child.err_off) {
+			/* Check for entries in the fieldPath type map key, and use them to
+			 * override the default ones for this type */
+			php_phongo_handle_field_path_entry_for_compound_type(&state, &state.map.array_type, &state.map.array);
 
 			switch (state.map.array_type) {
 				case PHONGO_TYPEMAP_CLASS: {
@@ -1201,6 +1289,230 @@ cleanup:
 	return retval;
 } /* }}} */
 
+static void field_path_map_element_set_info(php_phongo_field_path_map_element* element, php_phongo_bson_typemap_types type, zend_class_entry* ce)
+{
+	element->node_type = type;
+	element->node_ce   = ce;
+}
+
+static void map_add_field_path_element(php_phongo_bson_typemap* map, php_phongo_field_path_map_element* element)
+{
+	/* Make sure we have allocated enough */
+	if (map->field_paths.allocated_size < map->field_paths.size + 1) {
+		map->field_paths.allocated_size += PHONGO_FIELD_PATH_EXPANSION;
+		map->field_paths.map = erealloc(map->field_paths.map, sizeof(php_phongo_field_path_map_element) * map->field_paths.allocated_size);
+	}
+
+	map->field_paths.map[map->field_paths.size] = element;
+	map->field_paths.size++;
+}
+
+static php_phongo_field_path_map_element* field_path_map_element_alloc(void)
+{
+	php_phongo_field_path_map_element* tmp = ecalloc(1, sizeof(php_phongo_field_path_map_element));
+
+	tmp->entry = php_phongo_field_path_alloc(true);
+
+	return tmp;
+}
+
+static void field_path_map_element_dtor(php_phongo_field_path_map_element* element)
+{
+	php_phongo_field_path_free(element->entry);
+	efree(element);
+}
+
+bool php_phongo_bson_state_add_field_path(php_phongo_bson_typemap* map, char* field_path_original, php_phongo_bson_typemap_types type, zend_class_entry* ce TSRMLS_DC)
+{
+	char*                              ptr         = NULL;
+	char*                              segment_end = NULL;
+	php_phongo_field_path_map_element* field_path_map_element;
+
+	if (field_path_original[0] == '.') {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "A 'fieldPaths' key may not start with a '.'");
+		return false;
+	}
+
+	if (field_path_original[strlen(field_path_original) - 1] == '.') {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "A 'fieldPaths' key may not end with a '.'");
+		return false;
+	}
+
+	field_path_map_element = field_path_map_element_alloc();
+	ptr                    = field_path_original;
+
+	/* Loop over all the segments. A segment is delimited by a "." */
+	while ((segment_end = strchr(ptr, '.')) != NULL) {
+		char* tmp = NULL;
+
+		/* Bail out if we have an empty segment */
+		if (ptr == segment_end) {
+			field_path_map_element_dtor(field_path_map_element);
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "A 'fieldPaths' key may not have an empty segment");
+			return false;
+		}
+
+		tmp = calloc(1, segment_end - ptr + 1);
+		memcpy(tmp, ptr, segment_end - ptr);
+		php_phongo_field_path_push(field_path_map_element->entry, tmp, PHONGO_FIELD_PATH_ITEM_NONE);
+		free(tmp);
+
+		ptr = segment_end + 1;
+	}
+
+	/* Add the last (or single) element */
+	php_phongo_field_path_push(field_path_map_element->entry, ptr, PHONGO_FIELD_PATH_ITEM_NONE);
+
+	field_path_map_element_set_info(field_path_map_element, type, ce);
+	map_add_field_path_element(map, field_path_map_element);
+
+	return true;
+}
+
+void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map)
+{
+	size_t i;
+
+	if (map->field_paths.map) {
+		for (i = 0; i < map->field_paths.size; i++) {
+			field_path_map_element_dtor(map->field_paths.map[i]);
+		}
+		efree(map->field_paths.map);
+	}
+
+	map->field_paths.map = NULL;
+}
+
+/* Loops over each element in the fieldPaths array (if exists, and is an
+ * array), and then checks whether each element is a valid type mapping */
+bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bson_typemap* map TSRMLS_DC) /* {{{ */
+{
+	zval*      fieldpaths = NULL;
+	HashTable* ht_data;
+
+	if (!php_array_existsc(typemap, "fieldPaths")) {
+		return true;
+	}
+
+	fieldpaths = php_array_fetchc_array(typemap, "fieldPaths");
+
+	if (!fieldpaths) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "The 'fieldPaths' element is not an array");
+		return false;
+	}
+
+	ht_data = HASH_OF(fieldpaths);
+
+#if PHP_VERSION_ID >= 70000
+	{
+		zend_string* string_key = NULL;
+		zend_ulong   num_key    = 0;
+		zval*        property;
+
+		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, property)
+		{
+			zend_class_entry*             map_ce = NULL;
+			php_phongo_bson_typemap_types map_type;
+
+			if (!string_key) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "The 'fieldPaths' element is not an associative array");
+				return false;
+			}
+
+			if (strcmp(ZSTR_VAL(string_key), "") == 0) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "The 'fieldPaths' element may not be an empty string");
+				return false;
+			}
+
+			if (!php_phongo_bson_state_parse_type(fieldpaths, ZSTR_VAL(string_key), &map_type, &map_ce TSRMLS_CC)) {
+				return false;
+			}
+
+			if (!php_phongo_bson_state_add_field_path(map, ZSTR_VAL(string_key), map_type, map_ce TSRMLS_CC)) {
+				return false;
+			}
+		}
+		ZEND_HASH_FOREACH_END();
+	}
+#else
+	{
+		HashPosition pos;
+		zval**       property;
+
+		for (
+			zend_hash_internal_pointer_reset_ex(ht_data, &pos);
+			zend_hash_get_current_data_ex(ht_data, (void**) &property, &pos) == SUCCESS;
+			zend_hash_move_forward_ex(ht_data, &pos)) {
+
+			char*                         string_key     = NULL;
+			uint                          string_key_len = 0;
+			ulong                         num_key        = 0;
+			zend_class_entry*             map_ce         = NULL;
+			php_phongo_bson_typemap_types map_type;
+
+			if (HASH_KEY_IS_STRING != zend_hash_get_current_key_ex(ht_data, &string_key, &string_key_len, &num_key, 0, &pos)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "The 'fieldPaths' element is not an associative array");
+				return false;
+			}
+
+			if (strcmp(string_key, "") == 0) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "The 'fieldPaths' element may not be an empty string");
+				return false;
+			}
+
+			if (!php_phongo_bson_state_parse_type(fieldpaths, string_key, &map_type, &map_ce TSRMLS_CC)) {
+				return false;
+			}
+
+			if (!php_phongo_bson_state_add_field_path(map, string_key, map_type, map_ce TSRMLS_CC)) {
+				return false;
+			}
+		}
+	}
+#endif /* PHP_VERSION_ID >= 70000 */
+	return true;
+} /* }}} */
+
+#if DEBUG
+static void print_node_info(php_phongo_field_path_node* ptr, int level)
+{
+	printf("%*sNAME: %s\n", level * 4, "", ptr->name);
+	printf("%*s- type:", level * 4, "");
+	switch (ptr->node_type) {
+		case PHONGO_TYPEMAP_NONE:
+			printf(" none (unset)\n");
+			break;
+		case PHONGO_TYPEMAP_CLASS:
+			printf(" class (%s)\n", ZSTR_VAL(ptr->node_ce->name));
+			break;
+		case PHONGO_TYPEMAP_NATIVE_ARRAY:
+			printf(" array\n");
+			break;
+		case PHONGO_TYPEMAP_NATIVE_OBJECT:
+			printf(" stdClass\n");
+			break;
+	}
+}
+
+static void print_map_list(php_phongo_field_path_node* node, int level)
+{
+	php_phongo_field_path_node* ptr = node->children;
+
+	if (!ptr) {
+		return;
+	}
+
+	do {
+		print_node_info(ptr, level);
+		if (ptr->children) {
+			printf("%*s- children:\n", level * 4, "");
+			print_map_list(ptr, level + 1);
+		}
+		ptr = ptr->next;
+	} while (ptr);
+}
+#endif
+
 /* Applies the array argument to a typemap struct. Returns true on success;
  * otherwise, false is returned an an exception is thrown. */
 bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map TSRMLS_DC) /* {{{ */
@@ -1211,12 +1523,15 @@ bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* ma
 
 	if (!php_phongo_bson_state_parse_type(typemap, "array", &map->array_type, &map->array TSRMLS_CC) ||
 		!php_phongo_bson_state_parse_type(typemap, "document", &map->document_type, &map->document TSRMLS_CC) ||
-		!php_phongo_bson_state_parse_type(typemap, "root", &map->root_type, &map->root TSRMLS_CC)) {
+		!php_phongo_bson_state_parse_type(typemap, "root", &map->root_type, &map->root TSRMLS_CC) ||
+		!php_phongo_bson_state_parse_fieldpaths(typemap, map TSRMLS_CC)) {
 
 		/* Exception should already have been thrown */
 		return false;
 	}
-
+#if DEBUG
+	print_map_list(&map->field_path_map, 0);
+#endif
 	return true;
 } /* }}} */
 

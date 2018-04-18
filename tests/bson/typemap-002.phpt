@@ -8,14 +8,6 @@ MongoDB\Driver\Cursor::setTypeMap(): Setting using type "object"
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
-{
-    function bsonUnserialize(array $data)
-    {
-        parent::__construct($data);
-    }
-}
-
 $manager = new MongoDB\Driver\Manager(STANDALONE);
 
 $bulk = new MongoDB\Driver\BulkWrite();
