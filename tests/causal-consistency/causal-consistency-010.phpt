@@ -17,7 +17,12 @@ var_dump($session->getOperationTime());
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(['x' => 1]);
 $writeConcern = new MongoDB\Driver\WriteConcern(0);
-$manager->executeBulkWrite(NS, $bulk, ['session' => $session, 'writeConcern' => $writeConcern]);
+
+/* Ignore the InvalidArgumentException for trying to combine an unacknowledged
+ * write concern with an explicit session. */
+try {
+    $manager->executeBulkWrite(NS, $bulk, ['session' => $session, 'writeConcern' => $writeConcern]);
+} catch (MongoDB\Driver\Exception\InvalidArgumentException $e) {}
 
 echo "\nOperation time after unacknowledged write:\n";
 var_dump($session->getOperationTime());
