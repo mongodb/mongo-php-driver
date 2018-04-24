@@ -644,6 +644,17 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 		return false;
 	}
 
+	/* If a write concern was not specified, libmongoc will use the client's
+	 * write concern; however, we should still fetch it for the write result.
+	 * Additionally, we need to check if an unacknowledged write concern would
+	 * conflict with an explicit session. */
+	write_concern = zwriteConcern ? Z_WRITECONCERN_OBJ_P(zwriteConcern)->write_concern : mongoc_client_get_write_concern(client);
+
+	if (zsession && !mongoc_write_concern_is_acknowledged(write_concern)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Cannot combine \"session\" option with an unacknowledged write concern");
+		return false;
+	}
+
 	mongoc_bulk_operation_set_database(bulk, bulk_write->database);
 	mongoc_bulk_operation_set_collection(bulk, bulk_write->collection);
 	mongoc_bulk_operation_set_client(bulk, client);
@@ -653,13 +664,8 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 		mongoc_bulk_operation_set_client_session(bulk, Z_SESSION_OBJ_P(zsession)->client_session);
 	}
 
-	/* If a write concern was not specified, libmongoc will use the client's
-	 * write concern; however, we should still fetch it for the write result. */
-	write_concern = phongo_write_concern_from_zval(zwriteConcern TSRMLS_CC);
-	if (write_concern) {
-		mongoc_bulk_operation_set_write_concern(bulk, write_concern);
-	} else {
-		write_concern = mongoc_client_get_write_concern(client);
+	if (zwriteConcern) {
+		mongoc_bulk_operation_set_write_concern(bulk, Z_WRITECONCERN_OBJ_P(zwriteConcern)->write_concern);
 	}
 
 	success              = mongoc_bulk_operation_execute(bulk, &reply, &error);
@@ -827,11 +833,12 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 	bson_error_t                error;
 	bson_t                      opts = BSON_INITIALIZER;
 	mongoc_cursor_t*            cmd_cursor;
-	zval*                       zreadPreference = NULL;
-	zval*                       zsession        = NULL;
-	bool                        result          = false;
-	bool                        free_reply      = false;
-	bool                        free_zsession   = false;
+	zval*                       zreadPreference                 = NULL;
+	zval*                       zsession                        = NULL;
+	bool                        result                          = false;
+	bool                        free_reply                      = false;
+	bool                        free_zsession                   = false;
+	bool                        is_unacknowledged_write_concern = false;
 
 	command = Z_COMMAND_OBJ_P(zcommand);
 
@@ -850,9 +857,33 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 		goto cleanup;
 	}
 
-	/* If an explicit session was not provided, attempt to create an implicit
-	 * client session (ignoring any errors). */
-	if (!zsession) {
+	if (type & PHONGO_OPTION_WRITE_CONCERN) {
+		zval* zwriteConcern = NULL;
+
+		if (!phongo_parse_write_concern(options, &opts, &zwriteConcern TSRMLS_CC)) {
+			/* Exception should already have been thrown */
+			goto cleanup;
+		}
+
+		/* Determine if the explicit or inherited write concern is
+		 * unacknowledged so that we can ensure it does not conflict with an
+		 * explicit or implicit session. */
+		if (zwriteConcern) {
+			is_unacknowledged_write_concern = !mongoc_write_concern_is_acknowledged(Z_WRITECONCERN_OBJ_P(zwriteConcern)->write_concern);
+		} else if (type != PHONGO_COMMAND_RAW) {
+			is_unacknowledged_write_concern = !mongoc_write_concern_is_acknowledged(mongoc_client_get_write_concern(client));
+		}
+	}
+
+	if (zsession && is_unacknowledged_write_concern) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Cannot combine \"session\" option with an unacknowledged write concern");
+		goto cleanup;
+	}
+
+	/* If an explicit session was not provided and the effective write concern
+	 * is not unacknowledged, attempt to create an implicit client session
+	 * (ignoring any errors). */
+	if (!zsession && !is_unacknowledged_write_concern) {
 		zsession = phongo_create_implicit_session(client TSRMLS_CC);
 
 		if (zsession) {
@@ -863,11 +894,6 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 				goto cleanup;
 			}
 		}
-	}
-
-	if ((type & PHONGO_OPTION_WRITE_CONCERN) && !phongo_parse_write_concern(options, &opts, NULL TSRMLS_CC)) {
-		/* Exception should already have been thrown */
-		goto cleanup;
 	}
 
 	if (!BSON_APPEND_INT32(&opts, "serverId", server_id)) {
