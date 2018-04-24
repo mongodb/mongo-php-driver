@@ -104,7 +104,7 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 	}
 
 /* Note: handling of integer options will depend on SIZEOF_ZEND_LONG and we
-	 * are not converting strings to 64-bit integers for 32-bit platforms. */
+ * are not converting strings to 64-bit integers for 32-bit platforms. */
 
 #define PHONGO_QUERY_OPT_INT64_EX(opt, zarr, key, deprecated)                                                                             \
 	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                                     \
