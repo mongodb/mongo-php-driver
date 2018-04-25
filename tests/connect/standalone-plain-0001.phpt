@@ -1,8 +1,8 @@
 --TEST--
 Connect to MongoDB with using PLAIN auth mechanism
 --SKIPIF--
+<?php echo "skip authMechanism=PLAIN (LDAP) tests must be reimplemented (PHPC-1172)\n"; ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE_PLAIN'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php
