@@ -82,13 +82,19 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 	return true;
 } /* }}} */
 
-#define PHONGO_QUERY_OPT_BOOL(opt, zarr, key)                                                                        \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                \
-		if (!BSON_APPEND_BOOL(intern->opts, (opt), php_array_fetchc_bool((zarr), (key)))) {                          \
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt)); \
-			return false;                                                                                            \
-		}                                                                                                            \
+#define PHONGO_QUERY_OPT_BOOL_EX(opt, zarr, key, deprecated)                                                                              \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                                     \
+		if ((deprecated)) {                                                                                                               \
+			php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"%s\" option is deprecated and will be removed in a future release", key); \
+		}                                                                                                                                 \
+		if (!BSON_APPEND_BOOL(intern->opts, (opt), php_array_fetchc_bool((zarr), (key)))) {                                               \
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt));                      \
+			return false;                                                                                                                 \
+		}                                                                                                                                 \
 	}
+
+#define PHONGO_QUERY_OPT_BOOL(opt, zarr, key) PHONGO_QUERY_OPT_BOOL_EX((opt), (zarr), (key), 0)
+#define PHONGO_QUERY_OPT_BOOL_DEPRECATED(opt, zarr, key) PHONGO_QUERY_OPT_BOOL_EX((opt), (zarr), (key), 1)
 
 #define PHONGO_QUERY_OPT_DOCUMENT(opt, zarr, key)                                                   \
 	if ((zarr) && php_array_existsc((zarr), (key))) {                                               \
@@ -98,15 +104,21 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 	}
 
 /* Note: handling of integer options will depend on SIZEOF_ZEND_LONG and we
-	 * are not converting strings to 64-bit integers for 32-bit platforms. */
+ * are not converting strings to 64-bit integers for 32-bit platforms. */
 
-#define PHONGO_QUERY_OPT_INT64(opt, zarr, key)                                                                       \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                \
-		if (!BSON_APPEND_INT64(intern->opts, (opt), php_array_fetchc_long((zarr), (key)))) {                         \
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt)); \
-			return false;                                                                                            \
-		}                                                                                                            \
+#define PHONGO_QUERY_OPT_INT64_EX(opt, zarr, key, deprecated)                                                                             \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                                     \
+		if ((deprecated)) {                                                                                                               \
+			php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"%s\" option is deprecated and will be removed in a future release", key); \
+		}                                                                                                                                 \
+		if (!BSON_APPEND_INT64(intern->opts, (opt), php_array_fetchc_long((zarr), (key)))) {                                              \
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt));                      \
+			return false;                                                                                                                 \
+		}                                                                                                                                 \
 	}
+
+#define PHONGO_QUERY_OPT_INT64(opt, zarr, key) PHONGO_QUERY_OPT_INT64_EX((opt), (zarr), (key), 0)
+#define PHONGO_QUERY_OPT_INT64_DEPRECATED(opt, zarr, key) PHONGO_QUERY_OPT_INT64_EX((opt), (zarr), (key), 1)
 
 #define PHONGO_QUERY_OPT_STRING(opt, zarr, key)                                                   \
 	if ((zarr) && php_array_existsc((zarr), (key))) {                                             \
@@ -277,8 +289,8 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 	PHONGO_QUERY_OPT_BOOL("exhaust", options, "exhaust");
 	PHONGO_QUERY_OPT_DOCUMENT("max", options, "max")
 	else PHONGO_QUERY_OPT_DOCUMENT("max", modifiers, "$max");
-	PHONGO_QUERY_OPT_INT64("maxScan", options, "maxScan")
-	else PHONGO_QUERY_OPT_INT64("maxScan", modifiers, "$maxScan");
+	PHONGO_QUERY_OPT_INT64_DEPRECATED("maxScan", options, "maxScan")
+	else PHONGO_QUERY_OPT_INT64_DEPRECATED("maxScan", modifiers, "$maxScan");
 	PHONGO_QUERY_OPT_INT64("maxTimeMS", options, "maxTimeMS")
 	else PHONGO_QUERY_OPT_INT64("maxTimeMS", modifiers, "$maxTimeMS");
 	PHONGO_QUERY_OPT_DOCUMENT("min", options, "min")
@@ -293,8 +305,8 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 	PHONGO_QUERY_OPT_INT64("skip", options, "skip");
 	PHONGO_QUERY_OPT_DOCUMENT("sort", options, "sort")
 	else PHONGO_QUERY_OPT_DOCUMENT("sort", modifiers, "$orderby");
-	PHONGO_QUERY_OPT_BOOL("snapshot", options, "snapshot")
-	else PHONGO_QUERY_OPT_BOOL("snapshot", modifiers, "$snapshot");
+	PHONGO_QUERY_OPT_BOOL_DEPRECATED("snapshot", options, "snapshot")
+	else PHONGO_QUERY_OPT_BOOL_DEPRECATED("snapshot", modifiers, "$snapshot");
 	PHONGO_QUERY_OPT_BOOL("tailable", options, "tailable");
 
 	/* The "$explain" modifier should be converted to an "explain" option, which
