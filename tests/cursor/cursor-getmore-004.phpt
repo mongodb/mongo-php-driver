@@ -2,7 +2,7 @@
 MongoDB\Driver\Cursor command result iteration with batchSize requiring getmore with non-full batches
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

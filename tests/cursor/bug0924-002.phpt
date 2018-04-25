@@ -2,7 +2,7 @@
 PHPC-924: Cursor::setTypeMap() may unnecessarily convert first BSON document (__pclass)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

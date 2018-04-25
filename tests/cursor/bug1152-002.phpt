@@ -4,7 +4,7 @@ PHPC-1152: Command cursors should use the same session for getMore and killCurso
  <?php if (PHP_INT_SIZE !== 8) { die("skip Can't represent 64-bit ints on a 32-bit platform"); } ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
-<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_live(); ?>
 <?php skip_if_server_version('<', '3.6'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--

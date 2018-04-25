@@ -2,7 +2,7 @@
 _id should only be generated for top-level document, not embedded docs
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

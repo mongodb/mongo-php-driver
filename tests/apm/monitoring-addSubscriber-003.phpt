@@ -2,7 +2,7 @@
 MongoDB\Driver\Monitoring\addSubscriber(): Adding one subscriber multiple times
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

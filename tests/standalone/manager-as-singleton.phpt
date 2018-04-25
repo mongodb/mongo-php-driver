@@ -2,7 +2,7 @@
 PHPC-431: Segfault when using Manager through singleton class
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_live(); ?>
 --FILE--
 <?php
 use MongoDB\Driver\Manager;

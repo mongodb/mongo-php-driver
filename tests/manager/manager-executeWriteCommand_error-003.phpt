@@ -2,7 +2,7 @@
 MongoDB\Driver\Manager::executeWriteCommand() throws CommandException for unsupported update operator
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_live(); ?>
 <?php skip_if_server_version('<', '3.4'); ?>
 --FILE--
 <?php

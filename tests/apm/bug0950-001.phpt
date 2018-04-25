@@ -2,7 +2,7 @@
 PHPC-950: Segfault killing cursor after subscriber HashTable is destroyed (no subscribers)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

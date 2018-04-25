@@ -2,7 +2,7 @@
 MongoDB\Driver\Manager::executeBulkWrite() update multiple documents with no upsert
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

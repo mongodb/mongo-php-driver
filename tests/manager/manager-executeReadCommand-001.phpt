@@ -2,7 +2,7 @@
 MongoDB\Driver\Manager::executeReadCommand()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
 <?php skip_if_server_version('<', '3.6'); ?>
 <?php skip_if_not_server_storage_engine('wiredTiger'); ?>
