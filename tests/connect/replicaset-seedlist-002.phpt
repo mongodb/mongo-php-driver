@@ -1,6 +1,7 @@
 --TEST--
 MongoDB\Driver\Manager: Connecting to Replica Set with only arbiter in seedlist
 --SKIPIF--
+<?php echo "skip replica set seedlist tests must be reimplemented (PHPC-1173)\n"; ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
 <?php skip_if_not_clean(); ?>
