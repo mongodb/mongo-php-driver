@@ -2,7 +2,8 @@
 ReadConcern: MongoDB\Driver\Manager::executeQuery() with readConcern option (OP_QUERY)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('REPLICASET_30'); ?>
+<?php skip_if_not_replica_set(); ?>
+<?php skip_if_server_version('>', '3.0.99'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php
