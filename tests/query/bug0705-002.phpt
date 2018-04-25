@@ -2,7 +2,8 @@
 PHPC-705: Do not unnecessarily wrap filters in $query (currentOp query)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE_30'); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_server_version('>', '3.0.99'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

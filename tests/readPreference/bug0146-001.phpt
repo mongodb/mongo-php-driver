@@ -2,7 +2,8 @@
 PHPC-146: ReadPreference primaryPreferred and secondary swapped (OP_QUERY)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE_30'); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_server_version('>', '3.0.99'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
