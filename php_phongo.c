@@ -2220,11 +2220,13 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 	p_event->operation_id    = mongoc_apm_command_failed_get_operation_id(event);
 	p_event->request_id      = mongoc_apm_command_failed_get_request_id(event);
 	p_event->duration_micros = mongoc_apm_command_failed_get_duration(event);
+	p_event->reply           = bson_copy(mongoc_apm_command_failed_get_reply(event));
 
 	/* We need to process and convert the error right here, otherwise
 	 * debug_info will turn into a recursive loop, and with the wrong trace
 	 * locations */
 	mongoc_apm_command_failed_get_error(event, &tmp_error);
+
 	{
 #if PHP_VERSION_ID < 70000
 		MAKE_STD_ZVAL(p_event->z_error);
