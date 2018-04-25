@@ -1,9 +1,7 @@
 --TEST--
 PHPC-1015: Initial DNS Seedlist test
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php echo "skip Manual test, as it needs configuration\n"; ?>
-<?php NEEDS('REPLICASET_DNS'); ?>
+<?php echo "skip DNS seedlist test must be run manually\n"; ?>
 --FILE--
 <?php
 /**
