@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager: Logging into MongoDB using credentials from $options
+MongoDB\Driver\Manager: Connecting to MongoDB using "ssl" from $options
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_ssl(); ?>
