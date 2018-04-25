@@ -10,7 +10,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 /* We use w:0 here because libmongoc detects w:1 as the server's default and
  */
-$manager = new MongoDB\Driver\Manager(STANDALONE . "/?w=0");
+$manager = new MongoDB\Driver\Manager(URI . "/?w=0");
 
 $bulk = new \MongoDB\Driver\BulkWrite;
 $bulk->insert(array('x' => 1));

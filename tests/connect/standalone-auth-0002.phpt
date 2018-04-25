@@ -12,7 +12,7 @@ $username = "root";
 $password = "tooring";
 $database = "admin";
 
-$parsed = parse_url(STANDALONE_AUTH);
+$parsed = parse_url(URI);
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s", $username, $password, $parsed["host"], $parsed["port"], $database);
 $manager = new MongoDB\Driver\Manager($dsn);
 

@@ -19,7 +19,7 @@ $driverOptions = [
 ];
 
 // Wrong username for X509 authentication
-$parsed = parse_url(STANDALONE_X509);
+$parsed = parse_url(URI);
 $dsn = sprintf('mongodb://username@%s:%d/?ssl=true&authMechanism=MONGODB-X509', $parsed['host'], $parsed['port']);
 
 // Both should fail with auth failure, without reusing the previous stream

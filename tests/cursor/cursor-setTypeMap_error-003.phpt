@@ -22,7 +22,7 @@ $fieldPaths = [
     ['unserialize' => 'MongoDB\BSON\Unserializable'],
 ];
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([]));
 
 foreach ($fieldPaths as $fieldPath) {

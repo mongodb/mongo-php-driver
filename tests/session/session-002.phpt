@@ -19,7 +19,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
 
         MongoDB\Driver\Monitoring\addSubscriber($this);
 
-        $manager = new MongoDB\Driver\Manager(REPLICASET);
+        $manager = new MongoDB\Driver\Manager(URI);
         $session = $manager->startSession();
 
         $command = new MongoDB\Driver\Command([
@@ -41,7 +41,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
 
         MongoDB\Driver\Monitoring\addSubscriber($this);
 
-        $manager = new MongoDB\Driver\Manager(REPLICASET);
+        $manager = new MongoDB\Driver\Manager(URI);
         $session = $manager->startSession();
 
         $query = new MongoDB\Driver\Query([]);
@@ -59,7 +59,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
 
         MongoDB\Driver\Monitoring\addSubscriber($this);
 
-        $manager = new MongoDB\Driver\Manager(REPLICASET);
+        $manager = new MongoDB\Driver\Manager(URI);
         $session = $manager->startSession();
 
         $bulk = new MongoDB\Driver\BulkWrite();
@@ -81,7 +81,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
 
         MongoDB\Driver\Monitoring\addSubscriber($this);
 
-        $manager = new MongoDB\Driver\Manager(REPLICASET);
+        $manager = new MongoDB\Driver\Manager(URI);
         $session = $manager->startSession();
 
         $command = new MongoDB\Driver\Command(['ping' => 1]);

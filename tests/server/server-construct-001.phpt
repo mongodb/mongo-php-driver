@@ -9,7 +9,7 @@ MongoDB\Driver\Server::__construct()
 require_once __DIR__ . "/../utils/basic.inc";
 
 $parsed = parse_url(STANDALONE);
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new \MongoDB\Driver\BulkWrite();
 $bulk->insert(array('foo' => 'bar'));

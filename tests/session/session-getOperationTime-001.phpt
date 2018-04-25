@@ -8,7 +8,7 @@ MongoDB\Driver\Session::getOperationTime()
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 $session = $manager->startSession();
 
 echo "Initial operation time:\n";

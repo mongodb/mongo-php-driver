@@ -13,7 +13,7 @@ $driverOptions = [
     "weak_cert_validation" => true,
 ];
 
-$manager = new MongoDB\Driver\Manager(STANDALONE_SSL, ['ssl' => true], $driverOptions);
+$manager = new MongoDB\Driver\Manager(URI, [], $driverOptions);
 $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
 var_dump($cursor->toArray()[0]);
 

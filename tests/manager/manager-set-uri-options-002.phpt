@@ -22,7 +22,7 @@ $options = array(
     "serverselectiontimeoutms" => 100,
 );
 /* The server requires SSL */
-$manager = new MongoDB\Driver\Manager(STANDALONE_SSL, $options, array("context" => $context));
+$manager = new MongoDB\Driver\Manager(URI, $options, array("context" => $context));
 
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(array("my" => "value"));
@@ -36,7 +36,7 @@ echo throws(function() use ($manager, $bulk) {
 $options = array(
     "ssl" => true,
 );
-$manager = new MongoDB\Driver\Manager(STANDALONE_SSL, $options, array("context" => $context));
+$manager = new MongoDB\Driver\Manager(URI, $options, array("context" => $context));
 $bulk = new MongoDB\Driver\BulkWrite;
 
 $bulk->insert(array("my" => "value"));

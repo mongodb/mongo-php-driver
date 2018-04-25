@@ -14,7 +14,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
     {
         MongoDB\Driver\Monitoring\addSubscriber($this);
 
-        $manager = new MongoDB\Driver\Manager(STANDALONE);
+        $manager = new MongoDB\Driver\Manager(URI);
 
         $bulkWrite = new MongoDB\Driver\BulkWrite;
 

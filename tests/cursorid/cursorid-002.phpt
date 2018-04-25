@@ -11,7 +11,7 @@ MongoDB\Driver\CursorID BSON serialization for killCursors command
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(['_id' => 1]);

@@ -19,7 +19,7 @@ class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
 
 class MyWildcardArrayObject extends MyArrayObject {};
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $document = [
     '_id' => 1,

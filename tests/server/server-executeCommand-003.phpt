@@ -7,7 +7,7 @@ MongoDB\Driver\Server::executeCommand() with conflicting read preference for sec
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $secondaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY);
 $secondary = $manager->selectServer($secondaryRp);

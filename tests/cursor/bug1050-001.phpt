@@ -9,7 +9,7 @@ PHPC-1050: Command cursor should not invoke getMore at execution
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $cmd = new MongoDB\Driver\Command(
     [

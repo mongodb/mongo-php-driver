@@ -25,7 +25,7 @@ class MyWildcardArrayObject extends ArrayObject implements MongoDB\BSON\Unserial
     }
 }
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $document = [
     '_id' => 1,

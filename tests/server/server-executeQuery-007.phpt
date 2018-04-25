@@ -8,7 +8,7 @@ MongoDB\Driver\Server::executeQuery() with negative limit returns a single batch
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 $server = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()))->getServer();
 
 // load fixtures for test

@@ -29,7 +29,7 @@ class MyDocument implements MongoDB\BSON\Persistable
     }
 }
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(new MyDocument('a'));

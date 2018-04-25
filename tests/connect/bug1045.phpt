@@ -11,7 +11,7 @@ PHPC-1045: Segfault if username is not provided for SCRAM-SHA-1 authMechanism
 require_once __DIR__ . "/../utils/basic.inc";
 
 // STANDALONE does not support auth, but that is not necessary for the test
-$m = new MongoDB\Driver\Manager(STANDALONE, ['authMechanism' => 'SCRAM-SHA-1', 'ssl' => false]);
+$m = new MongoDB\Driver\Manager(URI, ['authMechanism' => 'SCRAM-SHA-1', 'ssl' => false]);
 
 // Execute a basic ping command to trigger connection initialization
 echo throws(function() use ($m) {

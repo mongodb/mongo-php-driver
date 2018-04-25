@@ -21,14 +21,14 @@ function logMyURI(MongoDB\Driver\Manager $manager)
     $manager->executeBulkWrite(NS, $bulk);
 }
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 logMyURI($manager);
 
 $parentPid = getmypid();
 $childPid = pcntl_fork();
 
 if ($childPid === 0) {
-    $manager = new MongoDB\Driver\Manager(STANDALONE);
+    $manager = new MongoDB\Driver\Manager(URI);
     logMyURI($manager);
     exit;
 }

@@ -21,7 +21,7 @@ $driverOptions = [
 
 $uriOptions = ['authMechanism' => 'MONGODB-X509', 'ssl' => true];
 
-$parsed = parse_url(STANDALONE_X509);
+$parsed = parse_url(URI);
 $uri = sprintf('mongodb://%s:%d', $parsed['host'], $parsed['port']);
 
 $manager = new MongoDB\Driver\Manager($uri, $uriOptions, $driverOptions);

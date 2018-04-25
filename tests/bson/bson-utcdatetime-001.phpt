@@ -11,7 +11,7 @@ date.timezone=America/Los_Angeles
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
 

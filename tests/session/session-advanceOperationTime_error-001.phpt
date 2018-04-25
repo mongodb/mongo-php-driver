@@ -43,7 +43,7 @@ class MyTimestamp implements MongoDB\BSON\TimestampInterface
     }
 }
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 $session = $manager->startSession();
 
 echo "Initial operation time of session:\n";

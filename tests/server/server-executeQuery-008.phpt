@@ -8,7 +8,7 @@ MongoDB\Driver\Server::executeQuery() with conflicting read preference for secon
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $primaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
 $primary = $manager->selectServer($primaryRp);

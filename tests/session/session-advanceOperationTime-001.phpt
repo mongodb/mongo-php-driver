@@ -8,7 +8,7 @@ MongoDB\Driver\Session::advanceOperationTime()
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 $sessionA = $manager->startSession();
 $sessionB = $manager->startSession();
 

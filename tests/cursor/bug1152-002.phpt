@@ -18,7 +18,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
 
     public function executeCommand()
     {
-        $manager = new MongoDB\Driver\Manager(STANDALONE);
+        $manager = new MongoDB\Driver\Manager(URI);
 
         $bulk = new MongoDB\Driver\BulkWrite;
         $bulk->insert(['_id' => 1]);

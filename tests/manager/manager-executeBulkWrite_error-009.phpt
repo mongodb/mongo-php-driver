@@ -7,7 +7,7 @@ MongoDB\Driver\Manager::executeBulkWrite() with invalid options
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 
 echo throws(function() use ($manager) {
     $bulk = new MongoDB\Driver\BulkWrite();

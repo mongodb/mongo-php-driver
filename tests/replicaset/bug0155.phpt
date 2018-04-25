@@ -7,7 +7,7 @@ PHPC-155: WriteConcernError->getInfo() can be scalar
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $wc = new MongoDB\Driver\WriteConcern("MultipleDC", 500);
 

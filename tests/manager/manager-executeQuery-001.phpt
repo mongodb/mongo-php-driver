@@ -9,7 +9,7 @@ MongoDB\Driver\Manager::executeQuery() one document (OP_QUERY)
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE_30);
+$manager = new MongoDB\Driver\Manager(URI);
 
 // load fixtures for test
 $bulk = new MongoDB\Driver\BulkWrite();

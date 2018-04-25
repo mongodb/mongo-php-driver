@@ -17,7 +17,7 @@ class Database {
     private static $Instance;
  
     public function __construct() {
-        $Manager = new Manager(STANDALONE, array(), array());
+        $Manager = new Manager(URI, array(), array());
         $this->Database = $Manager;
     }
  

@@ -8,7 +8,7 @@ MongoDB\Driver\Session debug output (after an operation)
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 $session = $manager->startSession();
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);

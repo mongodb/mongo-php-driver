@@ -31,7 +31,7 @@ class TransactionIdObserver implements MongoDB\Driver\Monitoring\CommandSubscrib
 $observer = new TransactionIdObserver;
 MongoDB\Driver\Monitoring\addSubscriber($observer);
 
-$manager = new MongoDB\Driver\Manager(REPLICASET, ['retryWrites' => true]);
+$manager = new MongoDB\Driver\Manager(URI, ['retryWrites' => true]);
 $command = new MongoDB\Driver\Command([
     'findAndModify' => COLLECTION_NAME,
     'query' => ['x' => 1],

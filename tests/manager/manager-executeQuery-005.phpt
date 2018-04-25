@@ -14,7 +14,7 @@ class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable {
         parent::__construct($data);
     }
 }
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new \MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1, array('x' => 2, 'y' => 3)));

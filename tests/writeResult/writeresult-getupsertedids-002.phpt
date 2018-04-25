@@ -30,7 +30,7 @@ $tests = [
     new MongoDB\BSON\UTCDateTime('1483479256924'),
 ];
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite;
 

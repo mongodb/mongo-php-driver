@@ -21,7 +21,7 @@ class MyProperties extends MyArrayObject
 {
 }
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $document1 = [
     '_id' => 1,

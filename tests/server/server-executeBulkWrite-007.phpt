@@ -8,7 +8,7 @@ MongoDB\Driver\Server::executeBulkWrite() with write concern (replica set second
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY));
 
 $writeConcerns = [1, 2, MongoDB\Driver\WriteConcern::MAJORITY];

@@ -8,7 +8,7 @@ MongoDB\Driver\WriteResult::isAcknowledged()
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $wcs = [
     new MongoDB\Driver\WriteConcern(0),

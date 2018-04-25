@@ -8,7 +8,7 @@ MongoDB\Driver\Manager::executeInsert()
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $hannes = array("name" => "Hannes", "country" => "USA", "gender" => "male");
 

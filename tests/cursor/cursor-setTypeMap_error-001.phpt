@@ -26,7 +26,7 @@ $classes = [
     'MongoDB\BSON\Unserializable',
 ];
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([]));
 
 foreach ($types as $type) {

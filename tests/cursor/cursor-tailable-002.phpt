@@ -26,7 +26,7 @@ function insert(MongoDB\Driver\Manager $manager, $from, $to = null)
     printf("Inserted %d document(s): %s\n", $writeResult->getInsertedCount(), implode(range($from, $to), ', '));
 }
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command([
     'create' => COLLECTION_NAME,

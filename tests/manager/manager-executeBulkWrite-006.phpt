@@ -9,7 +9,7 @@ MongoDB\Driver\Manager::executeBulkWrite() insert one document (with embedded)
 require_once __DIR__ . "/../utils/basic.inc";
 require_once __DIR__ . "/../utils/classes.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $hannes = new Person("Hannes", 42);
 $sunnyvale = new Address(94086, "USA");

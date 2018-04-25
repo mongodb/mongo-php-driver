@@ -10,7 +10,7 @@ MongoDB\Driver\Manager::executeCommand() options (MONGOC_CMD_RAW)
 require_once __DIR__ . "/../utils/basic.inc";
 require_once __DIR__ . "/../utils/observer.php";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 (new CommandObserver)->observe(
     function() use ($manager) {

@@ -8,7 +8,7 @@ PHPC-146: ReadPreference primaryPreferred and secondary swapped (find command)
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('my' => 'document'));

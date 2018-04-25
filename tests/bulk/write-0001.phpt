@@ -8,7 +8,7 @@ MongoDB\Driver\BulkWrite: #001 Variety Bulk
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite;
 var_dump($bulk);

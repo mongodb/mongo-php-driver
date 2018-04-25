@@ -10,7 +10,7 @@ MongoDB\Driver\Manager::executeBulkWrite() cannot combine session with unacknowl
 require_once __DIR__ . "/../utils/basic.inc";
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(STANDALONE);
+    $manager = new MongoDB\Driver\Manager(URI);
 
     $bulk = new MongoDB\Driver\BulkWrite;
     $bulk->insert(['x' => 1]);
@@ -22,7 +22,7 @@ echo throws(function() {
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(STANDALONE, ['w' => 0]);
+    $manager = new MongoDB\Driver\Manager(URI, ['w' => 0]);
 
     $bulk = new MongoDB\Driver\BulkWrite;
     $bulk->insert(['x' => 1]);

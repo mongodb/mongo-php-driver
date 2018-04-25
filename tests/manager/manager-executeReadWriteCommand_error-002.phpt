@@ -12,7 +12,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 /* insert should not normally be used with executeReadWriteCommand(), but we are
  * only testing executeReadWriteCommand()'s option validation. */
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(STANDALONE);
+    $manager = new MongoDB\Driver\Manager(URI);
 
     $command = new MongoDB\Driver\Command([
         'insert' => COLLECTION_NAME,
@@ -26,7 +26,7 @@ echo throws(function() {
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(STANDALONE, ['w' => 0]);
+    $manager = new MongoDB\Driver\Manager(URI, ['w' => 0]);
 
     $command = new MongoDB\Driver\Command([
         'insert' => COLLECTION_NAME,

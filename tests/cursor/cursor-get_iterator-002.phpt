@@ -8,7 +8,7 @@ MongoDB\Driver\Cursor get_iterator handler does not yield multiple iterators (It
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulkWrite = new MongoDB\Driver\BulkWrite;
 

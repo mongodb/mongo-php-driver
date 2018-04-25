@@ -16,7 +16,7 @@ function assertServerType($type) {
     }
 }
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $servers = $manager->getServers();
 printf("Known servers: %d\n", count($servers));

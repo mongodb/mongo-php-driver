@@ -9,7 +9,7 @@ ExecutionTimeoutException: exceeding $maxTimeMS (queries)
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $query = new MongoDB\Driver\Query(array("company" => "Smith, Carter and Buckridge"), array(
     'projection' => array('_id' => 0, 'username' => 1),

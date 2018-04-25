@@ -8,7 +8,7 @@ MongoDB\Driver\Manager::executeWriteCommand() throws CommandException for invali
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $command = new MongoDB\Driver\Command([
     'findAndModify' => COLLECTION_NAME,

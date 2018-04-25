@@ -8,7 +8,7 @@ MongoDB\Driver\Manager: Logging into MongoDB using credentials from $options
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$url = parse_url(STANDALONE_AUTH);
+$url = parse_url(URI);
 parse_str($url["query"], $args);
 
 

@@ -10,8 +10,8 @@ ignore_repeated_errors=1
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager1 = new MongoDB\Driver\Manager(STANDALONE);
-$manager2 = new MongoDB\Driver\Manager(STANDALONE);
+$manager1 = new MongoDB\Driver\Manager(URI);
+$manager2 = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1));

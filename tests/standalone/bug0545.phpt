@@ -41,7 +41,7 @@ class Page implements MongoDB\BSON\Persistable
 }
 
 // Aux
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 $wc = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY);
 
 // Create

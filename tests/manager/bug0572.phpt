@@ -16,7 +16,7 @@ $closure = function() {
             'allow_self_signed' => true,
         ],
     ]);
-    return new MongoDB\Driver\Manager(STANDALONE_SSL, ['ssl' => true], ['context' => $context]);
+    return new MongoDB\Driver\Manager(URI, [], ['context' => $context]);
 };
 
 $manager = $closure();
