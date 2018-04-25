@@ -100,6 +100,29 @@ PHP_METHOD(CommandFailedEvent, getOperationId)
 	PHONGO_RETVAL_STRING(int_as_string);
 } /* }}} */
 
+/* {{{ proto stdClass CommandFailedEvent::getReply()
+   Returns the reply document associated with the event */
+PHP_METHOD(CommandFailedEvent, getReply)
+{
+	php_phongo_commandfailedevent_t* intern;
+	php_phongo_bson_state            state = PHONGO_BSON_STATE_INITIALIZER;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
+
+	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	php_phongo_bson_to_zval_ex(bson_get_data(intern->reply), intern->reply->len, &state);
+#if PHP_VERSION_ID >= 70000
+	RETURN_ZVAL(&state.zchild, 0, 1);
+#else
+	RETURN_ZVAL(state.zchild, 0, 1);
+#endif
+} /* }}} */
+
 /* {{{ proto string CommandFailedEvent::getRequestId()
    Returns the event's request ID */
 PHP_METHOD(CommandFailedEvent, getRequestId)
@@ -152,6 +175,7 @@ static zend_function_entry php_phongo_commandfailedevent_me[] = {
 			PHP_ME(CommandFailedEvent, getError, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 				PHP_ME(CommandFailedEvent, getDurationMicros, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 					PHP_ME(CommandFailedEvent, getOperationId, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+					  PHP_ME(CommandFailedEvent, getReply, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 						PHP_ME(CommandFailedEvent, getRequestId, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 							PHP_ME(CommandFailedEvent, getServer, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 								ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -170,6 +194,10 @@ static void php_phongo_commandfailedevent_free_object(phongo_free_object_arg* ob
 
 	if (!Z_ISUNDEF(intern->z_error)) {
 		zval_ptr_dtor(&intern->z_error);
+	}
+
+	if (intern->reply) {
+		bson_destroy(intern->reply);
 	}
 
 	if (intern->command_name) {
@@ -210,6 +238,7 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(zval* object, int
 	php_phongo_commandfailedevent_t* intern;
 	zval                             retval = ZVAL_STATIC_INIT;
 	char                             operation_id[20], request_id[20];
+	php_phongo_bson_state            reply_state = PHONGO_BSON_STATE_INITIALIZER;
 
 	intern   = Z_COMMANDFAILEDEVENT_OBJ_P(object);
 	*is_temp = 1;
@@ -228,6 +257,13 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(zval* object, int
 
 	sprintf(operation_id, "%" PRIu64, intern->operation_id);
 	ADD_ASSOC_STRING(&retval, "operationId", operation_id);
+
+	php_phongo_bson_to_zval_ex(bson_get_data(intern->reply), intern->reply->len, &reply_state);
+#if PHP_VERSION_ID >= 70000
+	ADD_ASSOC_ZVAL(&retval, "reply", &reply_state.zchild);
+#else
+	ADD_ASSOC_ZVAL(&retval, "reply", reply_state.zchild);
+#endif
 
 	sprintf(request_id, "%" PRIu64, intern->request_id);
 	ADD_ASSOC_STRING(&retval, "requestId", request_id);
