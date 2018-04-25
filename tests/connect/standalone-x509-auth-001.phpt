@@ -3,6 +3,7 @@ Connect to MongoDB with SSL and X509 auth
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_ssl(); ?>
+<?php skip_if_not_ssl(); ?>
 <?php skip_if_not_auth_mechanism('MONGODB-X509'); ?>
 --FILE--
 <?php

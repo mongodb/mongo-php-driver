@@ -3,6 +3,7 @@ X509 connection should not reuse previous stream after an auth failure
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_ssl(); ?>
+<?php skip_if_not_ssl(); ?>
 <?php skip_if_not_auth_mechanism('MONGODB-X509'); ?>
 --FILE--
 <?php
