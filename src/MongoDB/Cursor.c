@@ -125,7 +125,7 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator* iter T
 	if (mongoc_cursor_next(cursor->cursor, &doc)) {
 		php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
 	} else {
-		bson_error_t error;
+		bson_error_t error = { 0 };
 
 		if (mongoc_cursor_error(cursor->cursor, &error)) {
 			/* Intentionally not destroying the cursor as it will happen

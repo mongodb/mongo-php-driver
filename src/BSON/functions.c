@@ -93,8 +93,8 @@ PHP_FUNCTION(MongoDB_BSON_fromJSON)
 {
 	char*               json;
 	phongo_zpp_char_len json_len;
-	bson_t              bson = BSON_INITIALIZER;
-	bson_error_t        error;
+	bson_t              bson  = BSON_INITIALIZER;
+	bson_error_t        error = { 0 };
 
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 	SUPPRESS_UNUSED_WARNING(this_ptr)
