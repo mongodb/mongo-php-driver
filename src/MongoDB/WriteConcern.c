@@ -204,13 +204,15 @@ ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeconcern_me[] = {
+	/* clang-format off */
 	PHP_ME(WriteConcern, __construct, ai_WriteConcern___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(WriteConcern, getW, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-			PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(WriteConcern, getJournal, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_ME(WriteConcern, isDefault, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						PHP_ME(WriteConcern, bsonSerialize, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-							PHP_FE_END
+	PHP_ME(WriteConcern, getW, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, getJournal, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, isDefault, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, bsonSerialize, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

@@ -402,13 +402,15 @@ ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_bulkwrite_me[] = {
+	/* clang-format off */
 	PHP_ME(BulkWrite, __construct, ai_BulkWrite___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(BulkWrite, insert, ai_BulkWrite_insert, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-			PHP_ME(BulkWrite, update, ai_BulkWrite_update, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(BulkWrite, delete, ai_BulkWrite_delete, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_ME(BulkWrite, count, ai_BulkWrite_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_BulkWrite_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-							PHP_FE_END
+	PHP_ME(BulkWrite, insert, ai_BulkWrite_insert, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(BulkWrite, update, ai_BulkWrite_update, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(BulkWrite, delete, ai_BulkWrite_delete, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(BulkWrite, count, ai_BulkWrite_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_BulkWrite_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

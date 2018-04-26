@@ -245,13 +245,15 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_decimal128_me[] = {
+	/* clang-format off */
 	PHP_ME(Decimal128, __construct, ai_Decimal128___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(Decimal128, __set_state, ai_Decimal128___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-			PHP_ME(Decimal128, __toString, ai_Decimal128_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(Decimal128, jsonSerialize, ai_Decimal128_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_ME(Decimal128, serialize, ai_Decimal128_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						PHP_ME(Decimal128, unserialize, ai_Decimal128_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-							PHP_FE_END
+	PHP_ME(Decimal128, __set_state, ai_Decimal128___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(Decimal128, __toString, ai_Decimal128_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Decimal128, jsonSerialize, ai_Decimal128_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Decimal128, serialize, ai_Decimal128_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Decimal128, unserialize, ai_Decimal128_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

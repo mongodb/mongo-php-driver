@@ -120,11 +120,13 @@ ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_readconcern_me[] = {
+	/* clang-format off */
 	PHP_ME(ReadConcern, __construct, ai_ReadConcern___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(ReadConcern, getLevel, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-			PHP_ME(ReadConcern, isDefault, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(ReadConcern, bsonSerialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_FE_END
+	PHP_ME(ReadConcern, getLevel, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ReadConcern, isDefault, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ReadConcern, bsonSerialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

@@ -520,26 +520,28 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Server_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_server_me[] = {
+	/* clang-format off */
 	PHP_ME(Server, executeCommand, ai_Server_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(Server, executeReadCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-			PHP_ME(Server, executeWriteCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(Server, executeReadWriteCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						PHP_ME(Server, executeBulkWrite, ai_Server_executeBulkWrite, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-							PHP_ME(Server, getHost, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-								PHP_ME(Server, getTags, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-									PHP_ME(Server, getInfo, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-										PHP_ME(Server, getLatency, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-											PHP_ME(Server, getPort, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-												PHP_ME(Server, getType, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-													PHP_ME(Server, isPrimary, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-														PHP_ME(Server, isSecondary, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-															PHP_ME(Server, isArbiter, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-																PHP_ME(Server, isHidden, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-																	PHP_ME(Server, isPassive, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-																		ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Server_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-																			ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-																				PHP_FE_END
+	PHP_ME(Server, executeReadCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, executeWriteCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, executeReadWriteCommand, ai_Server_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, executeQuery, ai_Server_executeQuery, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, executeBulkWrite, ai_Server_executeBulkWrite, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, getHost, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, getTags, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, getInfo, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, getLatency, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, getPort, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, getType, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, isPrimary, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, isSecondary, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, isArbiter, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, isHidden, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Server, isPassive, ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Server_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Server_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

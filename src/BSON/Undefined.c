@@ -84,13 +84,15 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Undefined_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_undefined_me[] = {
+	/* clang-format off */
 	/* __set_state intentionally missing */
 	PHP_ME(Undefined, __toString, ai_Undefined_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(Undefined, jsonSerialize, ai_Undefined_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-			PHP_ME(Undefined, serialize, ai_Undefined_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(Undefined, unserialize, ai_Undefined_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Undefined_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-						PHP_FE_END
+	PHP_ME(Undefined, jsonSerialize, ai_Undefined_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Undefined, serialize, ai_Undefined_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Undefined, unserialize, ai_Undefined_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Undefined_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

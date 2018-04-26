@@ -191,13 +191,15 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Symbol_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_symbol_me[] = {
+	/* clang-format off */
 	/* __set_state intentionally missing */
 	PHP_ME(Symbol, __toString, ai_Symbol_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(Symbol, jsonSerialize, ai_Symbol_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-			PHP_ME(Symbol, serialize, ai_Symbol_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(Symbol, unserialize, ai_Symbol_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Symbol_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-						PHP_FE_END
+	PHP_ME(Symbol, jsonSerialize, ai_Symbol_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Symbol, serialize, ai_Symbol_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Symbol, unserialize, ai_Symbol_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Symbol_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

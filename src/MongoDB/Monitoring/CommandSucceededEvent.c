@@ -149,15 +149,17 @@ ZEND_BEGIN_ARG_INFO_EX(ai_CommandSucceededEvent_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_commandsucceededevent_me[] = {
+	/* clang-format off */
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CommandSucceededEvent_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-		PHP_ME(CommandSucceededEvent, getCommandName, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-			PHP_ME(CommandSucceededEvent, getDurationMicros, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(CommandSucceededEvent, getOperationId, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_ME(CommandSucceededEvent, getReply, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						PHP_ME(CommandSucceededEvent, getRequestId, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-							PHP_ME(CommandSucceededEvent, getServer, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-								ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-									PHP_FE_END
+	PHP_ME(CommandSucceededEvent, getCommandName, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandSucceededEvent, getDurationMicros, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandSucceededEvent, getOperationId, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandSucceededEvent, getReply, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandSucceededEvent, getRequestId, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandSucceededEvent, getServer, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

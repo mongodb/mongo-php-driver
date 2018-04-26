@@ -407,14 +407,16 @@ ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_utcdatetime_me[] = {
+	/* clang-format off */
 	PHP_ME(UTCDateTime, __construct, ai_UTCDateTime___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(UTCDateTime, __set_state, ai_UTCDateTime___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-			PHP_ME(UTCDateTime, __toString, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(UTCDateTime, jsonSerialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_ME(UTCDateTime, serialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						PHP_ME(UTCDateTime, unserialize, ai_UTCDateTime_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-							PHP_ME(UTCDateTime, toDateTime, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-								PHP_FE_END
+	PHP_ME(UTCDateTime, __set_state, ai_UTCDateTime___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(UTCDateTime, __toString, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(UTCDateTime, jsonSerialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(UTCDateTime, serialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(UTCDateTime, unserialize, ai_UTCDateTime_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(UTCDateTime, toDateTime, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

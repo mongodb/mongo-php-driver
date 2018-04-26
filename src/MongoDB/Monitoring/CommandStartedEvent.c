@@ -149,15 +149,17 @@ ZEND_BEGIN_ARG_INFO_EX(ai_CommandStartedEvent_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_commandstartedevent_me[] = {
+	/* clang-format off */
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CommandStartedEvent_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-		PHP_ME(CommandStartedEvent, getCommand, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-			PHP_ME(CommandStartedEvent, getCommandName, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(CommandStartedEvent, getDatabaseName, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_ME(CommandStartedEvent, getOperationId, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						PHP_ME(CommandStartedEvent, getRequestId, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-							PHP_ME(CommandStartedEvent, getServer, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-								ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-									PHP_FE_END
+	PHP_ME(CommandStartedEvent, getCommand, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandStartedEvent, getCommandName, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandStartedEvent, getDatabaseName, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandStartedEvent, getOperationId, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandStartedEvent, getRequestId, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandStartedEvent, getServer, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

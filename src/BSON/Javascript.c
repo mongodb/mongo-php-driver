@@ -347,15 +347,17 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Javascript_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_javascript_me[] = {
+	/* clang-format off */
 	PHP_ME(Javascript, __construct, ai_Javascript___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(Javascript, __set_state, ai_Javascript___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-			PHP_ME(Javascript, __toString, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(Javascript, jsonSerialize, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_ME(Javascript, serialize, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						PHP_ME(Javascript, unserialize, ai_Javascript_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-							PHP_ME(Javascript, getCode, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-								PHP_ME(Javascript, getScope, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-									PHP_FE_END
+	PHP_ME(Javascript, __set_state, ai_Javascript___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(Javascript, __toString, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Javascript, jsonSerialize, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Javascript, serialize, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Javascript, unserialize, ai_Javascript_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Javascript, getCode, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Javascript, getScope, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

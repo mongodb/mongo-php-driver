@@ -280,14 +280,16 @@ ZEND_BEGIN_ARG_INFO_EX(ai_ObjectId_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_objectid_me[] = {
+	/* clang-format off */
 	PHP_ME(ObjectId, __construct, ai_ObjectId___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(ObjectId, getTimestamp, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-			PHP_ME(ObjectId, __set_state, ai_ObjectId___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-				PHP_ME(ObjectId, __toString, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_ME(ObjectId, jsonSerialize, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						PHP_ME(ObjectId, serialize, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-							PHP_ME(ObjectId, unserialize, ai_ObjectId_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-								PHP_FE_END
+	PHP_ME(ObjectId, getTimestamp, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, __set_state, ai_ObjectId___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(ObjectId, __toString, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, jsonSerialize, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, serialize, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, unserialize, ai_ObjectId_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

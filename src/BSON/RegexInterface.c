@@ -30,10 +30,12 @@ ZEND_BEGIN_ARG_INFO_EX(ai_RegexInterface_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_regex_interface_me[] = {
+	/* clang-format off */
 	ZEND_ABSTRACT_ME(RegexInterface, getFlags, ai_RegexInterface_void)
-		ZEND_ABSTRACT_ME(RegexInterface, getPattern, ai_RegexInterface_void)
-			ZEND_ABSTRACT_ME(RegexInterface, __toString, ai_RegexInterface_void)
-				PHP_FE_END
+	ZEND_ABSTRACT_ME(RegexInterface, getPattern, ai_RegexInterface_void)
+	ZEND_ABSTRACT_ME(RegexInterface, __toString, ai_RegexInterface_void)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

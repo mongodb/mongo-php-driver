@@ -30,10 +30,12 @@ ZEND_BEGIN_ARG_INFO_EX(ai_TimestampInterface_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_timestamp_interface_me[] = {
+	/* clang-format off */
 	ZEND_ABSTRACT_ME(TimestampInterface, getIncrement, ai_TimestampInterface_void)
-		ZEND_ABSTRACT_ME(TimestampInterface, getTimestamp, ai_TimestampInterface_void)
-			ZEND_ABSTRACT_ME(TimestampInterface, __toString, ai_TimestampInterface_void)
-				PHP_FE_END
+	ZEND_ABSTRACT_ME(TimestampInterface, getTimestamp, ai_TimestampInterface_void)
+	ZEND_ABSTRACT_ME(TimestampInterface, __toString, ai_TimestampInterface_void)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 
