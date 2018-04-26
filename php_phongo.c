@@ -2072,6 +2072,9 @@ static void php_phongo_dispatch_handlers(const char* name, zval* z_event)
 
 	ZEND_HASH_FOREACH_VAL(MONGODB_G(subscribers), value)
 	{
+		if (EG(exception)) {
+			break;
+		}
 		/* We can't use the zend_call_method_with_1_params macro here, as it
 		 * does a sizeof() on the name argument, which does only work with
 		 * constant names, but not with parameterized ones as it does
@@ -2091,6 +2094,9 @@ static void php_phongo_dispatch_handlers(const char* name, zval* z_event)
 			break;
 		}
 
+		if (EG(exception)) {
+			break;
+		}
 		/* We can't use the zend_call_method_with_1_params macro here, as it
 		 * does a sizeof() on the name argument, which does only work with
 		 * constant names, but not with parameterized ones as it does
