@@ -615,7 +615,7 @@ static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval*
 
 bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
-	bson_error_t                  error;
+	bson_error_t                  error = { 0 };
 	int                           success;
 	bson_t                        reply = BSON_INITIALIZER;
 	mongoc_bulk_operation_t*      bulk  = bulk_write->bulk;
@@ -708,7 +708,7 @@ bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor TSRMLS_DC
 	const bson_t* doc;
 
 	if (!mongoc_cursor_next(cursor, &doc)) {
-		bson_error_t error;
+		bson_error_t error = { 0 };
 
 		/* Check for connection related exceptions */
 		if (EG(exception)) {
@@ -830,8 +830,8 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 	const php_phongo_command_t* command;
 	bson_iter_t                 iter;
 	bson_t                      reply;
-	bson_error_t                error;
-	bson_t                      opts = BSON_INITIALIZER;
+	bson_error_t                error = { 0 };
+	bson_t                      opts  = BSON_INITIALIZER;
 	mongoc_cursor_t*            cmd_cursor;
 	zval*                       zreadPreference                 = NULL;
 	zval*                       zsession                        = NULL;
@@ -1341,7 +1341,7 @@ void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t
 static mongoc_uri_t* php_phongo_make_uri(const char* uri_string, bson_t* options TSRMLS_DC) /* {{{ */
 {
 	mongoc_uri_t* uri;
-	bson_error_t  error;
+	bson_error_t  error = { 0 };
 
 	uri = mongoc_uri_new_with_error(uri_string, &error);
 	MONGOC_DEBUG("Connection string: '%s'", uri_string);
@@ -2188,7 +2188,7 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 #else
 	zval* z_event = NULL;
 #endif
-	bson_error_t      tmp_error;
+	bson_error_t      tmp_error = { 0 };
 	zend_class_entry* default_exception_ce;
 	TSRMLS_FETCH();
 

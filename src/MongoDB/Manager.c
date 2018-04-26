@@ -261,7 +261,7 @@ static bool php_phongo_manager_select_server(bool for_writes, zval* zreadPrefere
 {
 	const mongoc_read_prefs_t*   read_preference = NULL;
 	mongoc_server_description_t* selected_server;
-	bson_error_t                 error;
+	bson_error_t                 error = { 0 };
 
 	if (!for_writes) {
 		read_preference = zreadPreference ? phongo_read_preference_from_zval(zreadPreference TSRMLS_CC) : mongoc_client_get_read_prefs(client);
@@ -659,7 +659,7 @@ static PHP_METHOD(Manager, startSession)
 	zval*                    options = NULL;
 	mongoc_session_opt_t*    cs_opts = NULL;
 	mongoc_client_session_t* cs;
-	bson_error_t             error;
+	bson_error_t             error = { 0 };
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 	SUPPRESS_UNUSED_WARNING(return_value_used)
 
