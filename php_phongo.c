@@ -2214,11 +2214,13 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 	p_event->operation_id    = mongoc_apm_command_failed_get_operation_id(event);
 	p_event->request_id      = mongoc_apm_command_failed_get_request_id(event);
 	p_event->duration_micros = mongoc_apm_command_failed_get_duration(event);
+	p_event->reply           = bson_copy(mongoc_apm_command_failed_get_reply(event));
 
 	/* We need to process and convert the error right here, otherwise
 	 * debug_info will turn into a recursive loop, and with the wrong trace
 	 * locations */
 	mongoc_apm_command_failed_get_error(event, &tmp_error);
+
 	{
 #if PHP_VERSION_ID < 70000
 		MAKE_STD_ZVAL(p_event->z_error);
@@ -2229,6 +2231,7 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 		object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
 		zend_update_property_string(default_exception_ce, &p_event->z_error, ZEND_STRL("message"), tmp_error.message TSRMLS_CC);
 		zend_update_property_long(default_exception_ce, &p_event->z_error, ZEND_STRL("code"), tmp_error.code TSRMLS_CC);
+
 #endif
 	}
 

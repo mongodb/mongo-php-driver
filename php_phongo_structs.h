@@ -248,6 +248,7 @@ typedef struct {
 	uint64_t           operation_id;
 	uint64_t           request_id;
 	uint64_t           duration_micros;
+	bson_t*            reply;
 	PHONGO_STRUCT_ZVAL z_error;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_commandfailedevent_t;
