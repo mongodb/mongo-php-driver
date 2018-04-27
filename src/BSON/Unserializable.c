@@ -31,8 +31,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Unserializable_bsonUnserialize, 0, 0, 1)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_unserializable_me[] = {
+	/* clang-format off */
 	ZEND_ABSTRACT_ME(Unserializable, bsonUnserialize, ai_Unserializable_bsonUnserialize)
-		PHP_FE_END
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

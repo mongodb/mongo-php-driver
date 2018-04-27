@@ -30,8 +30,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Serializable_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_serializable_me[] = {
+	/* clang-format off */
 	ZEND_ABSTRACT_ME(Serializable, bsonSerialize, ai_Serializable_void)
-		PHP_FE_END
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

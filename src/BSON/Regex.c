@@ -306,15 +306,17 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Regex_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_regex_me[] = {
+	/* clang-format off */
 	PHP_ME(Regex, __construct, ai_Regex___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(Regex, __set_state, ai_Regex___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-			PHP_ME(Regex, __toString, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(Regex, jsonSerialize, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_ME(Regex, serialize, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						PHP_ME(Regex, unserialize, ai_Regex_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-							PHP_ME(Regex, getPattern, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-								PHP_ME(Regex, getFlags, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-									PHP_FE_END
+	PHP_ME(Regex, __set_state, ai_Regex___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(Regex, __toString, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Regex, jsonSerialize, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Regex, serialize, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Regex, unserialize, ai_Regex_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Regex, getPattern, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Regex, getFlags, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

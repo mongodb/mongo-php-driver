@@ -730,21 +730,23 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_manager_me[] = {
+	/* clang-format off */
 	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-			PHP_ME(Manager, executeReadCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(Manager, executeWriteCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_ME(Manager, executeReadWriteCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-							PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-								PHP_ME(Manager, getReadConcern, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-									PHP_ME(Manager, getReadPreference, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-										PHP_ME(Manager, getServers, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-											PHP_ME(Manager, getWriteConcern, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-												PHP_ME(Manager, selectServer, ai_Manager_selectServer, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-													PHP_ME(Manager, startSession, ai_Manager_startSession, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-														ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-															PHP_FE_END
+	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeReadCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeWriteCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeReadWriteCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, getReadConcern, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, getReadPreference, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, getServers, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, getWriteConcern, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, selectServer, ai_Manager_selectServer, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, startSession, ai_Manager_startSession, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

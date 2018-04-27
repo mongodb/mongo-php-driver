@@ -349,19 +349,21 @@ ZEND_BEGIN_ARG_INFO_EX(ai_WriteResult_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeresult_me[] = {
+	/* clang-format off */
 	PHP_ME(WriteResult, getInsertedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(WriteResult, getMatchedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-			PHP_ME(WriteResult, getModifiedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				PHP_ME(WriteResult, getDeletedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-					PHP_ME(WriteResult, getUpsertedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						PHP_ME(WriteResult, getServer, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-							PHP_ME(WriteResult, getUpsertedIds, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-								PHP_ME(WriteResult, getWriteConcernError, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-									PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-										PHP_ME(WriteResult, isAcknowledged, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-											ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_WriteResult_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-												ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-													PHP_FE_END
+	PHP_ME(WriteResult, getMatchedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getModifiedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getDeletedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getUpsertedCount, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getServer, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getUpsertedIds, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getWriteConcernError, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, getWriteErrors, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteResult, isAcknowledged, ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_WriteResult_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_WriteResult_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

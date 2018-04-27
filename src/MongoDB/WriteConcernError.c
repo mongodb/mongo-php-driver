@@ -82,12 +82,14 @@ ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcernError_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_writeconcernerror_me[] = {
+	/* clang-format off */
 	PHP_ME(WriteConcernError, getCode, ai_WriteConcernError_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-		PHP_ME(WriteConcernError, getInfo, ai_WriteConcernError_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-			PHP_ME(WriteConcernError, getMessage, ai_WriteConcernError_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-				ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_WriteConcernError_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-					ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_WriteConcernError_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-						PHP_FE_END
+	PHP_ME(WriteConcernError, getInfo, ai_WriteConcernError_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteConcernError, getMessage, ai_WriteConcernError_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_WriteConcernError_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
+	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_WriteConcernError_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

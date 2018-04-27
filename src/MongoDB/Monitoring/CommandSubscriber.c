@@ -40,10 +40,12 @@ ZEND_BEGIN_ARG_INFO_EX(ai_CommandSubscriber_commandFailed, 0, 0, 1)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_commandsubscriber_me[] = {
+	/* clang-format off */
 	ZEND_ABSTRACT_ME(CommandSubscriber, commandStarted, ai_CommandSubscriber_commandStarted)
-		ZEND_ABSTRACT_ME(CommandSubscriber, commandSucceeded, ai_CommandSubscriber_commandSucceeded)
-			ZEND_ABSTRACT_ME(CommandSubscriber, commandFailed, ai_CommandSubscriber_commandFailed)
-				PHP_FE_END
+	ZEND_ABSTRACT_ME(CommandSubscriber, commandSucceeded, ai_CommandSubscriber_commandSucceeded)
+	ZEND_ABSTRACT_ME(CommandSubscriber, commandFailed, ai_CommandSubscriber_commandFailed)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 

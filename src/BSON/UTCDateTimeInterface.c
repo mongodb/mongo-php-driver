@@ -30,9 +30,11 @@ ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTimeInterface_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_utcdatetime_interface_me[] = {
+	/* clang-format off */
 	ZEND_ABSTRACT_ME(UTCDateTimeInterface, toDateTime, ai_UTCDateTimeInterface_void)
-		ZEND_ABSTRACT_ME(UTCDateTimeInterface, __toString, ai_UTCDateTimeInterface_void)
-			PHP_FE_END
+	ZEND_ABSTRACT_ME(UTCDateTimeInterface, __toString, ai_UTCDateTimeInterface_void)
+	PHP_FE_END
+	/* clang-format on */
 };
 /* }}} */
 
