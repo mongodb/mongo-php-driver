@@ -353,15 +353,11 @@ try_again:
 				bson_t     child;
 				HashTable* tmp_ht = HASH_OF(entry);
 
-				if (tmp_ht && ZEND_HASH_GET_APPLY_COUNT(tmp_ht) > 0) {
+				if (!php_phongo_zend_hash_apply_protection_begin(tmp_ht)) {
 					char* path_string = php_phongo_field_path_as_string(field_path);
 					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected recursion for field path \"%s\"", path_string);
 					efree(path_string);
 					break;
-				}
-
-				if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
-					ZEND_HASH_INC_APPLY_COUNT(tmp_ht);
 				}
 
 				bson_append_array_begin(bson, key, key_len, &child);
@@ -371,9 +367,7 @@ try_again:
 				field_path->size--;
 				bson_append_array_end(bson, &child);
 
-				if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
-					ZEND_HASH_DEC_APPLY_COUNT(tmp_ht);
-				}
+				php_phongo_zend_hash_apply_protection_end(tmp_ht);
 				break;
 			}
 			PHONGO_BREAK_INTENTIONALLY_MISSING
@@ -381,15 +375,11 @@ try_again:
 		case IS_OBJECT: {
 			HashTable* tmp_ht = HASH_OF(entry);
 
-			if (tmp_ht && ZEND_HASH_GET_APPLY_COUNT(tmp_ht) > 0) {
+			if (!php_phongo_zend_hash_apply_protection_begin(tmp_ht)) {
 				char* path_string = php_phongo_field_path_as_string(field_path);
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Detected recursion for field path \"%s\"", path_string);
 				efree(path_string);
 				break;
-			}
-
-			if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
-				ZEND_HASH_INC_APPLY_COUNT(tmp_ht);
 			}
 
 			php_phongo_field_path_write_type_at_current_level(field_path, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
@@ -397,9 +387,7 @@ try_again:
 			php_phongo_bson_append_object(bson, field_path, flags, key, key_len, entry TSRMLS_CC);
 			field_path->size--;
 
-			if (tmp_ht && ZEND_HASH_APPLY_PROTECTION(tmp_ht)) {
-				ZEND_HASH_DEC_APPLY_COUNT(tmp_ht);
-			}
+			php_phongo_zend_hash_apply_protection_end(tmp_ht);
 			break;
 		}
 

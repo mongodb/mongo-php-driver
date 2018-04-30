@@ -32,6 +32,58 @@ void phongo_add_exception_prop(const char* prop, int prop_len, zval* value TSRML
 	}
 }
 
+#ifdef ZEND_HASH_GET_APPLY_COUNT /* PHP 7.2 or earlier recursion protection */
+inline zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht)
+{
+	if (!ht) {
+		return 1;
+	}
+	if (ZEND_HASH_GET_APPLY_COUNT(ht) > 0) {
+		return 0;
+	}
+	if (ZEND_HASH_APPLY_PROTECTION(ht)) {
+		ZEND_HASH_INC_APPLY_COUNT(ht);
+	}
+	return 1;
+}
+
+inline zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht)
+{
+	if (!ht) {
+		return 1;
+	}
+	if (ZEND_HASH_GET_APPLY_COUNT(ht) == 0) {
+		return 0;
+	}
+	if (ZEND_HASH_APPLY_PROTECTION(ht)) {
+		ZEND_HASH_DEC_APPLY_COUNT(ht);
+	}
+	return 1;
+}
+#else /* PHP 7.3 or later */
+inline zend_bool php_phongo_zend_hash_apply_protection_begin(zend_array* ht)
+{
+	if (GC_IS_RECURSIVE(ht)) {
+		return 0;
+	}
+	if (!(GC_FLAGS(ht) & GC_IMMUTABLE)) {
+		GC_PROTECT_RECURSION(ht);
+	}
+	return 1;
+}
+
+inline zend_bool php_phongo_zend_hash_apply_protection_end(zend_array* ht)
+{
+	if (!GC_IS_RECURSIVE(ht)) {
+		return 0;
+	}
+	if (!(GC_FLAGS(ht) & GC_IMMUTABLE)) {
+		GC_UNPROTECT_RECURSION(ht);
+	}
+	return 1;
+}
+#endif
+
 /*
  * Local variables:
  * tab-width: 4
