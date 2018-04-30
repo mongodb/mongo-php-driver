@@ -82,15 +82,15 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 	return true;
 } /* }}} */
 
-#define PHONGO_QUERY_OPT_BOOL_EX(opt, zarr, key, deprecated)                                                                              \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                                     \
-		if ((deprecated)) {                                                                                                               \
+#define PHONGO_QUERY_OPT_BOOL_EX(opt, zarr, key, deprecated)                                                                                \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                                       \
+		if ((deprecated)) {                                                                                                                 \
 			php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"%s\" option is deprecated and will be removed in a future release", key); \
-		}                                                                                                                                 \
-		if (!BSON_APPEND_BOOL(intern->opts, (opt), php_array_fetchc_bool((zarr), (key)))) {                                               \
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt));                      \
-			return false;                                                                                                                 \
-		}                                                                                                                                 \
+		}                                                                                                                                   \
+		if (!BSON_APPEND_BOOL(intern->opts, (opt), php_array_fetchc_bool((zarr), (key)))) {                                                 \
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt));                        \
+			return false;                                                                                                                   \
+		}                                                                                                                                   \
 	}
 
 #define PHONGO_QUERY_OPT_BOOL(opt, zarr, key) PHONGO_QUERY_OPT_BOOL_EX((opt), (zarr), (key), 0)
@@ -106,15 +106,15 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 /* Note: handling of integer options will depend on SIZEOF_ZEND_LONG and we
  * are not converting strings to 64-bit integers for 32-bit platforms. */
 
-#define PHONGO_QUERY_OPT_INT64_EX(opt, zarr, key, deprecated)                                                                             \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                                     \
-		if ((deprecated)) {                                                                                                               \
+#define PHONGO_QUERY_OPT_INT64_EX(opt, zarr, key, deprecated)                                                                               \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                                       \
+		if ((deprecated)) {                                                                                                                 \
 			php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"%s\" option is deprecated and will be removed in a future release", key); \
-		}                                                                                                                                 \
-		if (!BSON_APPEND_INT64(intern->opts, (opt), php_array_fetchc_long((zarr), (key)))) {                                              \
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt));                      \
-			return false;                                                                                                                 \
-		}                                                                                                                                 \
+		}                                                                                                                                   \
+		if (!BSON_APPEND_INT64(intern->opts, (opt), php_array_fetchc_long((zarr), (key)))) {                                                \
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt));                        \
+			return false;                                                                                                                   \
+		}                                                                                                                                   \
 	}
 
 #define PHONGO_QUERY_OPT_INT64(opt, zarr, key) PHONGO_QUERY_OPT_INT64_EX((opt), (zarr), (key), 0)
