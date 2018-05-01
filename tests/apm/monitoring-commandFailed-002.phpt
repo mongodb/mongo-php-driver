@@ -36,7 +36,7 @@ $subscriber = new MySubscriber;
 
 MongoDB\Driver\Monitoring\addSubscriber( $subscriber );
 
-CLEANUP( STANDALONE );
+drop_collection(URI, DATABASE_NAME, COLLECTION_NAME);
 ?>
 --EXPECT--
 started: drop

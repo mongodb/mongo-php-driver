@@ -33,7 +33,6 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
     }
 }
 
-CLEANUP( STANDALONE );
 $query = new MongoDB\Driver\Query( [] );
 $subscriber1 = new MySubscriber( "ONE" );
 $subscriber2 = new MySubscriber( "TWO" );

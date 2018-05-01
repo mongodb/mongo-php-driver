@@ -33,7 +33,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 }
 
 MongoDB\Driver\Monitoring\addSubscriber( new MySubscriber() );
-CLEANUP(STANDALONE);
+drop_collection(URI, DATABASE_NAME, COLLECTION_NAME);
 
 $d = 12345678;
 
