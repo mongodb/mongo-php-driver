@@ -1,6 +1,7 @@
 --TEST--
 MongoDB\Driver\Command with findAndModify and arrayFilters
 --SKIPIF--
+<?php echo "skip START() tests must be reimplemented (PHPC-1179)\n"; ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php START('THROWAWAY', ["version" => "36-release"]); CLEANUP(THROWAWAY); ?>
 --FILE--
