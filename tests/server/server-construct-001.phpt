@@ -1,6 +1,7 @@
 --TEST--
 MongoDB\Driver\Server::__construct()
 --SKIPIF--
+<?php echo "skip parse_url() tests must be reimplemented (PHPC-1177)\n"; ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>

@@ -1,6 +1,7 @@
 --TEST--
 Connect to MongoDB with using default auth mechanism #002
 --SKIPIF--
+<?php echo "skip parse_url() tests must be reimplemented (PHPC-1177)\n"; ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_auth(); ?>
 <?php skip_if_not_clean(); ?>

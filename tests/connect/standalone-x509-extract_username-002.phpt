@@ -1,6 +1,7 @@
 --TEST--
 Connect to MongoDB with SSL and X509 auth and username retrieved from cert (stream context)
 --SKIPIF--
+<?php echo "skip parse_url() tests must be reimplemented (PHPC-1177)\n"; ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_ssl(['OpenSSL', 'Secure Transport', 'Secure Channel']); ?>
 <?php skip_if_not_ssl(); ?>
