@@ -1,6 +1,7 @@
 --TEST--
 Sorting single field, descending
 --SKIPIF--
+<?php echo "skip LOAD() tests must be reimplemented (PHPC-1178)\n"; ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
