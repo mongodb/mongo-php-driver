@@ -11,7 +11,8 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $name1 = str_repeat('PHONGO', 20);
 $name2 = str_repeat('PHONGO', 20);
-$manager = new \MongoDB\Driver\Manager(URI . "/?appname={$name1}", ['appname' => "2-{$name2}"]);
+$uri = append_uri_option(URI, "appname={$name1}");
+$manager = new \MongoDB\Driver\Manager($uri, ['appname' => "2-{$name2}"]);
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 $manager->executeCommand("test", $command);

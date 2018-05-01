@@ -8,6 +8,30 @@ use MongoDB\Driver\Exception\ConnectionException;
 use MongoDB\Driver\Exception\RuntimeException;
 
 /**
+ * Appends an option to a URI string and returns a new URI.
+ *
+ * @param string $uri
+ * @param string $option
+ * @param string $value
+ * @return string
+ */
+function append_uri_option($uri, $option)
+{
+    // Append to existing query string
+    if (strpos($uri, '?') !== false) {
+        return $uri . '&' . $option;
+    }
+
+    // Terminate host list and append new query string
+    if (parse_url($uri, PHP_URL_PATH) === null) {
+        return $uri . '/?' . $option;
+    }
+
+    // Append query string after terminated host list and possible auth database
+    return $uri . '?' . $option;
+}
+
+/**
  * Drops a collection on the primary server.
  *
  * @param string $uri            Connection string
