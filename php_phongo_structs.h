@@ -99,6 +99,7 @@ typedef struct {
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_read_prefs_t* read_preference;
+	HashTable*           properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_readpreference_t;
 

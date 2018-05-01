@@ -136,6 +136,13 @@
 	do {              \
 		(*x) = NULL;  \
 	} while (0)
+#define ZVAL_ARR(z, a)               \
+	do {                             \
+		HashTable* __arr = (a);      \
+		zval*      __z   = (z);      \
+		Z_ARRVAL_P(__z)  = __arr;    \
+		Z_TYPE_P(__z)    = IS_ARRAY; \
+	} while (0);
 #define phongo_free_object_arg void
 #define phongo_zpp_char_len int
 #define ZEND_HASH_APPLY_PROTECTION(ht) 1
