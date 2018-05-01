@@ -9,7 +9,7 @@ MongoDB\Driver\WriteResult::isAcknowledged() with inherited WriteConcern
 require_once __DIR__ . "/../utils/basic.inc";
 
 /* We use w:0 here because libmongoc detects w:1 as the server's default and
- */
+ * omits it. */
 $manager = new MongoDB\Driver\Manager(URI . "/?w=0");
 
 $bulk = new \MongoDB\Driver\BulkWrite;
