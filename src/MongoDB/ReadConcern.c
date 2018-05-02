@@ -97,17 +97,49 @@ static PHP_METHOD(ReadConcern, isDefault)
 	RETURN_BOOL(mongoc_read_concern_is_default(intern->read_concern));
 } /* }}} */
 
+static HashTable* php_phongo_read_concern_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
+{
+	php_phongo_readconcern_t* intern;
+	HashTable*                props;
+	const char*               level;
+
+	intern = Z_READCONCERN_OBJ_P(object);
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 1);
+
+	if (!intern->read_concern) {
+		return props;
+	}
+
+	level = mongoc_read_concern_get_level(intern->read_concern);
+
+	if (level) {
+#if PHP_VERSION_ID >= 70000
+		zval z_level;
+
+		ZVAL_STRING(&z_level, level);
+		zend_hash_str_update(props, "level", sizeof("level") - 1, &z_level);
+#else
+		zval* z_level;
+
+		MAKE_STD_ZVAL(z_level);
+		ZVAL_STRING(z_level, level, 1);
+		zend_hash_update(props, "level", sizeof("level"), &z_level, sizeof(z_level), NULL);
+#endif
+	}
+
+	return props;
+} /* }}} */
+
 /* {{{ proto array MongoDB\Driver\ReadConcern::bsonSerialize()
 */
 static PHP_METHOD(ReadConcern, bsonSerialize)
 {
-	const mongoc_read_concern_t* read_concern = phongo_read_concern_from_zval(getThis() TSRMLS_CC);
-
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	php_phongo_read_concern_to_zval(return_value, read_concern);
+	ZVAL_ARR(return_value, php_phongo_read_concern_get_properties_hash(getThis(), true TSRMLS_CC));
 	convert_to_object(return_value);
 } /* }}} */
 
@@ -138,6 +170,11 @@ static void php_phongo_readconcern_free_object(phongo_free_object_arg* object TS
 	php_phongo_readconcern_t* intern = Z_OBJ_READCONCERN(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
+
+	if (intern->properties) {
+		zend_hash_destroy(intern->properties);
+		FREE_HASHTABLE(intern->properties);
+	}
 
 	if (intern->read_concern) {
 		mongoc_read_concern_destroy(intern->read_concern);
@@ -174,15 +211,14 @@ static phongo_create_object_retval php_phongo_readconcern_create_object(zend_cla
 
 static HashTable* php_phongo_readconcern_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
-	zval                         retval       = ZVAL_STATIC_INIT;
-	const mongoc_read_concern_t* read_concern = phongo_read_concern_from_zval(object TSRMLS_CC);
-
 	*is_temp = 1;
-	php_phongo_read_concern_to_zval(&retval, read_concern);
-
-	return Z_ARRVAL(retval);
+	return php_phongo_read_concern_get_properties_hash(object, true TSRMLS_CC);
 } /* }}} */
-/* }}} */
+
+static HashTable* php_phongo_readconcern_get_properties(zval* object TSRMLS_DC) /* {{{ */
+{
+	return php_phongo_read_concern_get_properties_hash(object, false TSRMLS_CC);
+} /* }}} */
 
 void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
@@ -198,6 +234,7 @@ void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_readconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_readconcern.get_debug_info = php_phongo_readconcern_get_debug_info;
+	php_phongo_handler_readconcern.get_properties = php_phongo_readconcern_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_readconcern.free_obj = php_phongo_readconcern_free_object;
 	php_phongo_handler_readconcern.offset   = XtOffsetOf(php_phongo_readconcern_t, std);
