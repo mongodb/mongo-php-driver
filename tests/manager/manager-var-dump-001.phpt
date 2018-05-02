@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager: Constructing invalid manager
+MongoDB\Driver\Manager debug output
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Server debugInfo
+MongoDB\Driver\Server debug output
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
