@@ -22,6 +22,6 @@ var_dump($cursor->toArray()[0]);
 --EXPECTF--
 object(stdClass)#%d (%d) {
   ["ok"]=>
-  float(1)
+  float(1)%A
 }
 ===DONE===

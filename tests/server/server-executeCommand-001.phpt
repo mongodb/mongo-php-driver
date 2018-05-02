@@ -59,9 +59,9 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
 }
 
 Dumping response document:
-object(stdClass)#%d (1) {
+object(stdClass)#%d (%d) {
   ["ok"]=>
-  float(1)
+  float(1)%A
 }
 bool(true)
 ===DONE===

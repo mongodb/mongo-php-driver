@@ -37,6 +37,6 @@ object(stdClass)#%d (%d) {
   ["code"]=>
   int(9)
   ["codeName"]=>
-  string(13) "FailedToParse"
+  string(13) "FailedToParse"%A
 }
 ===DONE===

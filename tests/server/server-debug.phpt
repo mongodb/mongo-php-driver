@@ -23,17 +23,17 @@ object(MongoDB\Driver\Server)#%d (%d) {
   ["port"]=>
   int(%d)
   ["type"]=>
-  int(1)
+  int(%d)
   ["is_primary"]=>
-  bool(false)
+  bool(%s)
   ["is_secondary"]=>
-  bool(false)
+  bool(%s)
   ["is_arbiter"]=>
   bool(false)
   ["is_hidden"]=>
   bool(false)
   ["is_passive"]=>
-  bool(false)
+  bool(false)%A
   ["last_is_master"]=>
   array(%d) {
     %a
