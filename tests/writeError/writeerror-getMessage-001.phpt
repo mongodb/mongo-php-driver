@@ -3,7 +3,6 @@ MongoDB\Driver\WriteError::getMessage()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_server_version('>', '3.0.99'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php
@@ -25,6 +24,6 @@ try {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-string(100) "E11000 duplicate key error index: phongo.writeError_writeerror_getMessage_001.$_id_ dup key: { : 1 }"
+--EXPECTF--
+string(%d) "%SE11000 duplicate key error %s: phongo.writeError_writeerror_getMessage_001%s dup key: { : 1 }"
 ===DONE===
