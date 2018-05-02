@@ -179,17 +179,102 @@ static PHP_METHOD(WriteConcern, isDefault)
 	RETURN_BOOL(mongoc_write_concern_is_default(intern->write_concern));
 } /* }}} */
 
+static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
+{
+	php_phongo_writeconcern_t* intern;
+	HashTable*                 props;
+	const char*                wtag;
+	int32_t                    w;
+	int32_t                    wtimeout;
+
+	intern = Z_WRITECONCERN_OBJ_P(object);
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 4);
+
+	if (!intern->write_concern) {
+		return props;
+	}
+
+	wtag     = mongoc_write_concern_get_wtag(intern->write_concern);
+	w        = mongoc_write_concern_get_w(intern->write_concern);
+	wtimeout = mongoc_write_concern_get_wtimeout(intern->write_concern);
+
+#if PHP_VERSION_ID >= 70000
+	{
+		zval z_w;
+
+		if (wtag) {
+			ZVAL_STRING(&z_w, wtag);
+			zend_hash_str_update(props, "w", sizeof("w") - 1, &z_w);
+		} else if (mongoc_write_concern_get_wmajority(intern->write_concern)) {
+			ZVAL_STRING(&z_w, PHONGO_WRITE_CONCERN_W_MAJORITY);
+			zend_hash_str_update(props, "w", sizeof("w") - 1, &z_w);
+		} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
+			ZVAL_LONG(&z_w, w);
+			zend_hash_str_update(props, "w", sizeof("w") - 1, &z_w);
+		}
+
+		if (mongoc_write_concern_journal_is_set(intern->write_concern)) {
+			zval z_j;
+
+			ZVAL_BOOL(&z_j, mongoc_write_concern_get_journal(intern->write_concern));
+			zend_hash_str_update(props, "j", sizeof("j") - 1, &z_j);
+		}
+
+		if (wtimeout != 0) {
+			zval z_wtimeout;
+
+			ZVAL_LONG(&z_wtimeout, wtimeout);
+			zend_hash_str_update(props, "wtimeout", sizeof("wtimeout") - 1, &z_wtimeout);
+		}
+#else
+	{
+		zval* z_w;
+
+		if (wtag) {
+			MAKE_STD_ZVAL(z_w);
+			ZVAL_STRING(z_w, wtag, 1);
+			zend_hash_update(props, "w", sizeof("w"), &z_w, sizeof(z_w), NULL);
+		} else if (mongoc_write_concern_get_wmajority(intern->write_concern)) {
+			MAKE_STD_ZVAL(z_w);
+			ZVAL_STRING(z_w, PHONGO_WRITE_CONCERN_W_MAJORITY, 1);
+			zend_hash_update(props, "w", sizeof("w"), &z_w, sizeof(z_w), NULL);
+		} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
+			MAKE_STD_ZVAL(z_w);
+			ZVAL_LONG(z_w, w);
+			zend_hash_update(props, "w", sizeof("w"), &z_w, sizeof(z_w), NULL);
+		}
+
+		if (mongoc_write_concern_journal_is_set(intern->write_concern)) {
+			zval* z_j;
+
+			MAKE_STD_ZVAL(z_j);
+			ZVAL_BOOL(z_j, mongoc_write_concern_get_journal(intern->write_concern));
+			zend_hash_update(props, "j", sizeof("j"), &z_j, sizeof(z_j), NULL);
+		}
+
+		if (wtimeout != 0) {
+			zval* z_wtimeout;
+
+			MAKE_STD_ZVAL(z_wtimeout);
+			ZVAL_LONG(z_wtimeout, wtimeout);
+			zend_hash_update(props, "wtimeout", sizeof("wtimeout"), &z_wtimeout, sizeof(z_wtimeout), NULL);
+		}
+#endif
+	}
+
+	return props;
+} /* }}} */
+
 /* {{{ proto array MongoDB\Driver\WriteConcern::bsonSerialize()
 */
 static PHP_METHOD(WriteConcern, bsonSerialize)
 {
-	const mongoc_write_concern_t* write_concern = phongo_write_concern_from_zval(getThis() TSRMLS_CC);
-
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	php_phongo_write_concern_to_zval(return_value, write_concern);
+	ZVAL_ARR(return_value, php_phongo_write_concern_get_properties_hash(getThis(), true TSRMLS_CC));
 	convert_to_object(return_value);
 } /* }}} */
 
@@ -224,6 +309,11 @@ static void php_phongo_writeconcern_free_object(phongo_free_object_arg* object T
 	php_phongo_writeconcern_t* intern = Z_OBJ_WRITECONCERN(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
+
+	if (intern->properties) {
+		zend_hash_destroy(intern->properties);
+		FREE_HASHTABLE(intern->properties);
+	}
 
 	if (intern->write_concern) {
 		mongoc_write_concern_destroy(intern->write_concern);
@@ -260,15 +350,14 @@ static phongo_create_object_retval php_phongo_writeconcern_create_object(zend_cl
 
 static HashTable* php_phongo_writeconcern_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
-	zval                          retval        = ZVAL_STATIC_INIT;
-	const mongoc_write_concern_t* write_concern = phongo_write_concern_from_zval(object TSRMLS_CC);
-
 	*is_temp = 1;
-	php_phongo_write_concern_to_zval(&retval, write_concern);
-
-	return Z_ARRVAL(retval);
+	return php_phongo_write_concern_get_properties_hash(object, true TSRMLS_CC);
 } /* }}} */
-/* }}} */
+
+static HashTable* php_phongo_writeconcern_get_properties(zval* object TSRMLS_DC) /* {{{ */
+{
+	return php_phongo_write_concern_get_properties_hash(object, false TSRMLS_CC);
+} /* }}} */
 
 void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
@@ -284,6 +373,7 @@ void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_writeconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeconcern.get_debug_info = php_phongo_writeconcern_get_debug_info;
+	php_phongo_handler_writeconcern.get_properties = php_phongo_writeconcern_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_writeconcern.free_obj = php_phongo_writeconcern_free_object;
 	php_phongo_handler_writeconcern.offset   = XtOffsetOf(php_phongo_writeconcern_t, std);
