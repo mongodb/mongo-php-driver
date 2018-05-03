@@ -2,12 +2,13 @@
 ReadConcern: MongoDB\Driver\Manager::executeQuery() with readConcern option (find command)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
+<?php skip_if_not_replica_set(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $wc = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY);
 

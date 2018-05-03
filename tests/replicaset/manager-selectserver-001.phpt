@@ -2,13 +2,15 @@
 MongoDB\Driver\Manager::selectServer() select a server from SDAM based on ReadPreference
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); CLEANUP(REPLICASET, 'local', 'example'); ?>
+<?php skip_if_not_replica_set(); ?>
+<?php skip_if_not_clean(); ?>
+<?php skip_if_not_clean('local', 'example'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
 $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 $server = $manager->selectServer($rp);
 $rp2 = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
 $server2 = $manager->selectServer($rp2);

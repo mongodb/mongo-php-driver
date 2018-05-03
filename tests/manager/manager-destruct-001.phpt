@@ -2,15 +2,16 @@
 MongoDB\Driver\Manager destruct should not free streams that are still in use
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --INI--
 ignore_repeated_errors=1
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager1 = new MongoDB\Driver\Manager(STANDALONE);
-$manager2 = new MongoDB\Driver\Manager(STANDALONE);
+$manager1 = new MongoDB\Driver\Manager(URI);
+$manager2 = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1));

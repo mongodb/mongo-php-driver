@@ -2,7 +2,8 @@
 MongoDB\Driver\Cursor::setTypeMap(): Setting fieldPath typemaps for compound types with wildcard keys (nested)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 
@@ -18,7 +19,7 @@ class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
 
 class MyWildcardArrayObject extends MyArrayObject {};
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $document = [
     '_id' => 1,

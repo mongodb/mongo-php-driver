@@ -1,9 +1,12 @@
 --TEST--
 Connect to MongoDB with SSL and X509 auth and username retrieved from cert (stream context)
+--XFAIL--
+parse_url() tests must be reimplemented (PHPC-1177)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_SSL(['OpenSSL', 'Secure Transport', 'Secure Channel']); ?>
-<?php NEEDS('STANDALONE_X509'); ?>
+<?php skip_if_not_libmongoc_ssl(['OpenSSL', 'Secure Transport', 'Secure Channel']); ?>
+<?php skip_if_not_ssl(); ?>
+<?php skip_if_not_auth_mechanism('MONGODB-X509'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -24,7 +27,7 @@ $driverOptions = [
 
 $uriOptions = ['authMechanism' => 'MONGODB-X509', 'ssl' => true];
 
-$parsed = parse_url(STANDALONE_X509);
+$parsed = parse_url(URI);
 $uri = sprintf('mongodb://%s:%d', $parsed['host'], $parsed['port']);
 
 $manager = new MongoDB\Driver\Manager($uri, $uriOptions, $driverOptions);

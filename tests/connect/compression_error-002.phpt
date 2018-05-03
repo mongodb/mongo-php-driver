@@ -2,13 +2,13 @@
 MongoDB\Driver\Manager: Connecting with invalid compressor values
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); ?>
+<?php skip_if_not_live(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(STANDALONE, [ 'compressors' => "foo\xFEbar"] );
+    $manager = new MongoDB\Driver\Manager(URI, [ 'compressors' => "foo\xFEbar"] );
 }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 ?>
 ===DONE===

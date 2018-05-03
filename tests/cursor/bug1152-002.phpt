@@ -3,10 +3,10 @@ PHPC-1152: Command cursors should use the same session for getMore and killCurso
 --SKIPIF--
  <?php if (PHP_INT_SIZE !== 8) { die("skip Can't represent 64-bit ints on a 32-bit platform"); } ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_CRYPTO(); ?>
-<?php NEEDS('STANDALONE'); ?>
-<?php NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.6"); ?>
-<?php CLEANUP(STANDALONE); ?>
+<?php skip_if_not_libmongoc_crypto(); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_server_version('<', '3.6'); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -18,7 +18,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
 
     public function executeCommand()
     {
-        $manager = new MongoDB\Driver\Manager(STANDALONE);
+        $manager = new MongoDB\Driver\Manager(URI);
 
         $bulk = new MongoDB\Driver\BulkWrite;
         $bulk->insert(['_id' => 1]);

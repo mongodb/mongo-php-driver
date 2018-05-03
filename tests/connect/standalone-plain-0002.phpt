@@ -1,9 +1,11 @@
 --TEST--
 Connect to MongoDB with using PLAIN auth mechanism #002
+--XFAIL--
+authMechanism=PLAIN (LDAP) tests must be reimplemented (PHPC-1172)
+parse_url() tests must be reimplemented (PHPC-1177)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_SSL(); ?>
-<?php NEEDS('STANDALONE_PLAIN'); ?>
+<?php skip_if_not_libmongoc_ssl(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -12,7 +14,7 @@ $username = "root";
 $password = "toor";
 $database = "admin";
 
-$parsed = parse_url(STANDALONE_PLAIN);
+$parsed = parse_url(URI);
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s", $username, $password, $parsed["host"], $parsed["port"], $database);
 $adminmanager = new MongoDB\Driver\Manager($dsn);
 

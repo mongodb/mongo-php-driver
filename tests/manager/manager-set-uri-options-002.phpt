@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\Driver\Manager: Logging into MongoDB using credentials from $options
+MongoDB\Driver\Manager: Connecting to MongoDB using "ssl" from $options
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_SSL(); ?>
-<?php NEEDS('STANDALONE_SSL'); ?>
+<?php skip_if_not_libmongoc_ssl(); ?>
+<?php skip_if_not_ssl(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -22,7 +22,7 @@ $options = array(
     "serverselectiontimeoutms" => 100,
 );
 /* The server requires SSL */
-$manager = new MongoDB\Driver\Manager(STANDALONE_SSL, $options, array("context" => $context));
+$manager = new MongoDB\Driver\Manager(URI, $options, array("context" => $context));
 
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(array("my" => "value"));
@@ -36,7 +36,7 @@ echo throws(function() use ($manager, $bulk) {
 $options = array(
     "ssl" => true,
 );
-$manager = new MongoDB\Driver\Manager(STANDALONE_SSL, $options, array("context" => $context));
+$manager = new MongoDB\Driver\Manager(URI, $options, array("context" => $context));
 $bulk = new MongoDB\Driver\BulkWrite;
 
 $bulk->insert(array("my" => "value"));

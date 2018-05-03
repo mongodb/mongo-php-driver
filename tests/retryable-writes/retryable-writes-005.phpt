@@ -2,8 +2,9 @@
 Retryable writes: non-write command methods do not include transaction IDs
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_CRYPTO(); ?>
-<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
+<?php skip_if_not_libmongoc_crypto(); ?>
+<?php skip_if_not_replica_set(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -30,7 +31,7 @@ class TransactionIdObserver implements MongoDB\Driver\Monitoring\CommandSubscrib
 $observer = new TransactionIdObserver;
 MongoDB\Driver\Monitoring\addSubscriber($observer);
 
-$manager = new MongoDB\Driver\Manager(REPLICASET, ['retryWrites' => true]);
+$manager = new MongoDB\Driver\Manager(URI, ['retryWrites' => true]);
 $command = new MongoDB\Driver\Command([
     'findAndModify' => COLLECTION_NAME,
     'query' => ['x' => 1],

@@ -2,7 +2,8 @@
 MongoDB\Driver\Cursor::setTypeMap(): Setting and replacing typemaps
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 
@@ -20,7 +21,7 @@ class MyProperties extends MyArrayObject
 {
 }
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $document1 = [
     '_id' => 1,

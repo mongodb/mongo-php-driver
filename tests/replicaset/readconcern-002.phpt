@@ -2,12 +2,14 @@
 ReadConcern: MongoDB\Driver\Manager::executeQuery() with readConcern option (OP_QUERY)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('REPLICASET_30'); CLEANUP(REPLICASET_30); ?>
+<?php skip_if_not_replica_set(); ?>
+<?php skip_if_server_version('>=', '3.1'); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET_30);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(['_id' => 1, 'x' => 1]);

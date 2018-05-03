@@ -2,7 +2,8 @@
 Cursor::setTypeMap(): invalid fieldPaths keys
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 
@@ -24,7 +25,7 @@ $fieldPaths = [
     ['foo..bar' => 'MyDocument'],
 ];
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([]));
 
 foreach ($fieldPaths as $fieldPath) {

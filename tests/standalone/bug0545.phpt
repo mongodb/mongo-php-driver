@@ -2,7 +2,8 @@
 PHPC-545: Update does not serialize embedded Persistable's __pclass field
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -40,7 +41,7 @@ class Page implements MongoDB\BSON\Persistable
 }
 
 // Aux
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 $wc = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY);
 
 // Create

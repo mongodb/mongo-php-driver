@@ -2,12 +2,13 @@
 MongoDB\Driver\Manager::executeCommand()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $command = new MongoDB\Driver\Command(array('ping' => 1));
 $result = $manager->executeCommand(DATABASE_NAME, $command);
@@ -71,7 +72,7 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
 Dumping response document:
 object(stdClass)#%d (%d) {
   ["ok"]=>
-  float(1)
+  float(1)%A
 }
 bool(true)
 string(%d) "%s"

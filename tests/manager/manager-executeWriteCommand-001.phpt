@@ -2,13 +2,15 @@
 MongoDB\Driver\Manager::executeWriteCommand()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.6"); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
+<?php skip_if_server_version('<', '3.6'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 require_once __DIR__ . "/../utils/observer.php";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bw = new MongoDB\Driver\BulkWrite();
 $bw->insert(['a' => 1]);

@@ -2,13 +2,13 @@
 MongoDB\Driver\Session debug output (after an operation)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_CRYPTO(); ?>
-<?php NEEDS('REPLICASET'); ?>
+<?php skip_if_not_libmongoc_crypto(); ?>
+<?php skip_if_not_replica_set(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 $session = $manager->startSession();
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);

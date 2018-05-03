@@ -2,12 +2,13 @@
 MongoDB\Driver\Manager::executeWriteCommand() throws CommandException for unsupported update operator
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.4"); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_server_version('<', '3.4'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $command = new MongoDB\Driver\Command([
     'findAndModify' => COLLECTION_NAME,
@@ -36,6 +37,6 @@ object(stdClass)#%d (%d) {
   ["code"]=>
   int(9)
   ["codeName"]=>
-  string(13) "FailedToParse"
+  string(13) "FailedToParse"%A
 }
 ===DONE===

@@ -2,7 +2,9 @@
 MongoDB\Driver\WriteResult::getUpsertedIds() with client-generated values
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.0"); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
+<?php skip_if_server_version('<', '3.0'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -28,7 +30,7 @@ $tests = [
     new MongoDB\BSON\UTCDateTime('1483479256924'),
 ];
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite;
 

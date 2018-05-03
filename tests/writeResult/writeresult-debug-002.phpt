@@ -2,12 +2,13 @@
 MongoDB\Driver\WriteResult debug output with errors
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
+<?php skip_if_not_replica_set(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite(['ordered' => false]);
 $bulk->update(['x' => 1], ['$set' => ['y' => 1]], ['upsert' => true]);

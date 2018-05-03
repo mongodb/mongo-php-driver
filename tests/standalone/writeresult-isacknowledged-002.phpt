@@ -2,14 +2,16 @@
 MongoDB\Driver\WriteResult::isAcknowledged() with inherited WriteConcern
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
 /* We use w:0 here because libmongoc detects w:1 as the server's default and
- */
-$manager = new MongoDB\Driver\Manager(STANDALONE . "/?w=0");
+ * omits it. */
+$uri = append_uri_option(URI, 'w=0');
+$manager = new MongoDB\Driver\Manager($uri);
 
 $bulk = new \MongoDB\Driver\BulkWrite;
 $bulk->insert(array('x' => 1));

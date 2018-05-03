@@ -2,8 +2,8 @@
 Causal consistency: first read in session does not include afterClusterTime
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_CRYPTO(); ?>
-<?php NEEDS('REPLICASET'); ?>
+<?php skip_if_not_libmongoc_crypto(); ?>
+<?php skip_if_not_replica_set(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -11,7 +11,7 @@ require_once __DIR__ . "/../utils/observer.php";
 
 (new CommandObserver)->observe(
     function() {
-        $manager = new MongoDB\Driver\Manager(REPLICASET);
+        $manager = new MongoDB\Driver\Manager(URI);
         $session = $manager->startSession();
 
         $query = new MongoDB\Driver\Query([]);

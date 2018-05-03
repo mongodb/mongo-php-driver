@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\Driver\Cursor command result iteration with getmore failure
+--XFAIL--
+START() tests must be reimplemented (PHPC-1179)
 --SKIPIF--
 <?php require __DIR__ . "/" ."../utils/basic-skipif.inc"; ?>
 <?php START("THROWAWAY", ["version" => "30-release"]); CLEANUP(THROWAWAY); ?>

@@ -2,12 +2,13 @@
 MongoDB\Driver\Server::executeCommand() with invalid options (MONGOC_CMD_RAW)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
+<?php skip_if_not_replica_set(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);

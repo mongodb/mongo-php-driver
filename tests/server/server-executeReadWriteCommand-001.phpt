@@ -2,14 +2,16 @@
 MongoDB\Driver\Server::executeReadWriteCommand()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); NEEDS_ATLEAST_MONGODB_VERSION(STANDALONE, "3.2"); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
+<?php skip_if_server_version('<', '3.2'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 require_once __DIR__ . "/../utils/observer.php";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
-$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY));
+$manager = new MongoDB\Driver\Manager(URI);
+$server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
 
 (new CommandObserver)->observe(
     function() use ($server) {

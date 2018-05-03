@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\Driver\Command with update and arrayFilters
+--XFAIL--
+START() tests must be reimplemented (PHPC-1179)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php START('THROWAWAY', ["version" => "36-release"]); CLEANUP(THROWAWAY); ?>

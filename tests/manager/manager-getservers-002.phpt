@@ -2,7 +2,8 @@
 MongoDB\Driver\Manager::getServers() (replica set)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET); ?>
+<?php skip_if_not_replica_set(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -21,7 +22,7 @@ function assertServerType($type) {
     }
 }
 
-$manager = new MongoDB\Driver\Manager(REPLICASET);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $servers = $manager->getServers();
 printf("Known servers: %d\n", count($servers));

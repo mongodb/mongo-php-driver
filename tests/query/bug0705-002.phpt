@@ -2,12 +2,14 @@
 PHPC-705: Do not unnecessarily wrap filters in $query (currentOp query)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE_30'); CLEANUP(STANDALONE_30); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_server_version('>=', '3.1'); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE_30);
+$manager = new MongoDB\Driver\Manager(URI);
 $cursor = $manager->executeQuery('admin.$cmd.sys.inprog', new MongoDB\Driver\Query([]));
 var_dump($cursor->toArray());
 

@@ -2,8 +2,8 @@
 PHPC-720: Do not persist SSL streams to avoid SSL reinitialization errors
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_SSL(); ?>
-<?php NEEDS('STANDALONE_SSL'); ?>
+<?php skip_if_not_libmongoc_ssl(); ?>
+<?php skip_if_not_ssl(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -16,13 +16,13 @@ $driverOptions = [
     'ca_file' => $SSL_DIR . '/ca.pem',
 ];
 
-$manager = new MongoDB\Driver\Manager(STANDALONE_SSL, ['ssl' => true], $driverOptions);
+$manager = new MongoDB\Driver\Manager(URI, [], $driverOptions);
 $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
 var_dump($cursor->toArray()[0]);
 
 unset($manager, $cursor);
 
-$manager = new MongoDB\Driver\Manager(STANDALONE_SSL, ['ssl' => true], $driverOptions);
+$manager = new MongoDB\Driver\Manager(URI, [], $driverOptions);
 $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
 var_dump($cursor->toArray()[0]);
 

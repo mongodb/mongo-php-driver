@@ -1,13 +1,14 @@
 --TEST--
-MongoDB\Driver\Server debugInfo
+MongoDB\Driver\Server debug output
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 $server = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()))->getServer();
 
 var_dump($server);
@@ -22,17 +23,17 @@ object(MongoDB\Driver\Server)#%d (%d) {
   ["port"]=>
   int(%d)
   ["type"]=>
-  int(1)
+  int(%d)
   ["is_primary"]=>
-  bool(false)
+  bool(%s)
   ["is_secondary"]=>
-  bool(false)
+  bool(%s)
   ["is_arbiter"]=>
   bool(false)
   ["is_hidden"]=>
   bool(false)
   ["is_passive"]=>
-  bool(false)
+  bool(false)%A
   ["last_is_master"]=>
   array(%d) {
     %a

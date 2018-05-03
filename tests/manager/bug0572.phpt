@@ -2,8 +2,8 @@
 PHPC-572: Ensure stream context does not go out of scope before socket init
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_SSL(); ?>
-<?php NEEDS('STANDALONE_SSL'); ?>
+<?php skip_if_not_libmongoc_ssl(); ?>
+<?php skip_if_not_ssl(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -16,7 +16,7 @@ $closure = function() {
             'allow_self_signed' => true,
         ],
     ]);
-    return new MongoDB\Driver\Manager(STANDALONE_SSL, ['ssl' => true], ['context' => $context]);
+    return new MongoDB\Driver\Manager(URI, [], ['context' => $context]);
 };
 
 $manager = $closure();

@@ -2,7 +2,8 @@
 MongoDB\Driver\Cursor::toArray() respects type map
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 
@@ -16,7 +17,7 @@ class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
     }
 }
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1, 'x' => array(1, 2, 3)));

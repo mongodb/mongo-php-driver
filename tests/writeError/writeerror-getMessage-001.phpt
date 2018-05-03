@@ -2,12 +2,13 @@
 MongoDB\Driver\WriteError::getMessage()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE_30'); CLEANUP(STANDALONE_30); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(STANDALONE_30);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(['_id' => 1]);
@@ -23,6 +24,6 @@ try {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-string(100) "E11000 duplicate key error index: phongo.writeError_writeerror_getMessage_001.$_id_ dup key: { : 1 }"
+--EXPECTF--
+string(%d) "%SE11000 duplicate key error %s: phongo.writeError_writeerror_getMessage_001%s dup key: { : 1 }"
 ===DONE===

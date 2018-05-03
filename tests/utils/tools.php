@@ -1,5 +1,287 @@
 <?php
 
+use MongoDB\Driver\Command;
+use MongoDB\Driver\Manager;
+use MongoDB\Driver\ReadPreference;
+use MongoDB\Driver\Server;
+use MongoDB\Driver\Exception\ConnectionException;
+use MongoDB\Driver\Exception\RuntimeException;
+
+/**
+ * Appends an option to a URI string and returns a new URI.
+ *
+ * @param string $uri
+ * @param string $option
+ * @param string $value
+ * @return string
+ */
+function append_uri_option($uri, $option)
+{
+    // Append to existing query string
+    if (strpos($uri, '?') !== false) {
+        return $uri . '&' . $option;
+    }
+
+    // Terminate host list and append new query string
+    if (parse_url($uri, PHP_URL_PATH) === null) {
+        return $uri . '/?' . $option;
+    }
+
+    // Append query string after terminated host list and possible auth database
+    return $uri . '?' . $option;
+}
+
+/**
+ * Drops a collection on the primary server.
+ *
+ * @param string $uri            Connection string
+ * @param string $databaseName   Database name
+ * @param string $collectionName Collection name
+ * @throws RuntimeException
+ */
+function drop_collection($uri, $databaseName, $collectionName)
+{
+    $server = get_primary_server($uri);
+    $command = new Command(['drop' => $collectionName]);
+
+    try {
+        $server->executeCommand($databaseName, $command);
+    } catch (RuntimeException $e) {
+        if ($e->getMessage() !== 'ns not found') {
+            throw $e;
+        }
+    }
+}
+
+/**
+ * Returns the value of a module row from phpinfo(), or null if it's not found.
+ *
+ * @param string $row
+ * @return string|null
+ */
+function get_module_info($row)
+{
+    ob_start();
+    phpinfo(INFO_MODULES);
+    $info = ob_get_clean();
+
+    $pattern = sprintf('/^%s([\w ]+)$/m', preg_quote($row . ' => '));
+
+    if (preg_match($pattern, $info, $matches) !== 1) {
+        return null;
+    }
+
+    return $matches[1];
+}
+
+/**
+ * Returns the primary server.
+ *
+ * @param string $uri Connection string
+ * @return Server
+ * @throws ConnectionException
+ */
+function get_primary_server($uri)
+{
+    return (new Manager($uri))->selectServer(new ReadPreference('primary'));
+}
+
+/**
+ * Returns a parameter of the primary server.
+ *
+ * @param string $uri Connection string
+ * @return mixed
+ * @throws RuntimeException
+ */
+function get_server_parameter($uri, $parameter)
+{
+    $server = get_primary_server($uri);
+    $command = new Command(['getParameter' => 1, $parameter => 1]);
+    $cursor = $server->executeCommand('admin', $command);
+
+    return current($cursor->toArray())->$parameter;
+}
+
+/**
+ * Returns the storage engine of the primary server.
+ *
+ * @param string $uri Connection string
+ * @return string
+ * @throws RuntimeException
+ */
+function get_server_storage_engine($uri)
+{
+    $server = get_primary_server($uri);
+    $command = new Command(['serverStatus' => 1]);
+    $cursor = $server->executeCommand('admin', $command);
+
+    return current($cursor->toArray())->storageEngine->name;
+}
+
+/**
+ * Returns the version of the primary server.
+ *
+ * @param string $uri Connection string
+ * @return string
+ * @throws RuntimeException
+ */
+function get_server_version($uri)
+{
+    $server = get_primary_server($uri);
+    $command = new Command(['buildInfo' => 1]);
+    $cursor = $server->executeCommand('admin', $command);
+
+    return current($cursor->toArray())->version;
+}
+
+/**
+ * Returns the value of a URI option, or null if it's not found.
+ *
+ * @param string $uri
+ * @return string|null
+ */
+function get_uri_option($uri, $option)
+{
+    $pattern = sprintf('/[?&]%s=([^&]+)/i', preg_quote($option));
+
+    if (preg_match($pattern, $uri, $matches) !== 1) {
+        return null;
+    }
+
+    return $matches[1];
+}
+
+/**
+ * Checks that the topology is a sharded cluster.
+ *
+ * @param string $uri
+ * @return boolean
+ */
+function is_mongos($uri)
+{
+    return get_primary_server($uri)->getType() === Server::TYPE_MONGOS;
+}
+
+/**
+ * Checks that the topology is a replica set.
+ *
+ * @param string $uri
+ * @return boolean
+ */
+function is_replica_set($uri)
+{
+    return get_primary_server($uri)->getType() === Server::TYPE_RS_PRIMARY;
+}
+
+/**
+ * Checks if the connection string uses authentication.
+ *
+ * @param string $uri
+ * @return boolean
+ */
+function is_auth($uri)
+{
+    if (stripos($uri, 'authmechanism=') !== false) {
+        return true;
+    }
+
+    if (strpos($uri, ':') !== false && strpos($uri, '@') !== false) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Checks if the connection string uses SSL.
+ *
+ * @param string $uri
+ * @return boolean
+ */
+function is_ssl($uri)
+{
+    return stripos($uri, 'ssl=true') !== false;
+}
+
+/**
+ * Checks that the topology is a standalone.
+ *
+ * @param string $uri
+ * @return boolean
+ */
+function is_standalone($uri)
+{
+    return get_primary_server($uri)->getType() === Server::TYPE_STANDALONE;
+}
+
+/**
+ * Converts the server type constant to a string.
+ *
+ * @see http://php.net/manual/en/class.mongodb-driver-server.php
+ * @param integer $type
+ * @return string
+ */
+function server_type_as_string($type)
+{
+    switch ($type) {
+        case Server::TYPE_STANDALONE:
+            return 'Standalone';
+        case Server::TYPE_MONGOS:
+            return 'Mongos';
+        case Server::TYPE_POSSIBLE_PRIMARY:
+            return 'PossiblePrimary';
+        case Server::TYPE_RS_PRIMARY:
+            return 'RSPrimary';
+        case Server::TYPE_RS_SECONDARY:
+            return 'RSSecondary';
+        case Server::TYPE_RS_ARBITER:
+            return 'RSArbiter';
+        case Server::TYPE_RS_OTHER:
+            return 'RSOther';
+        case Server::TYPE_RS_GHOST:
+            return 'RSGhost';
+        default:
+            return 'Unknown';
+    }
+}
+
+/**
+ * Converts an errno number to a string.
+ *
+ * @see http://php.net/manual/en/errorfunc.constants.php
+ * @param integer $errno
+ * @param string
+ */
+function errno_as_string($errno)
+{
+    $errors = [
+        'E_ERROR',
+        'E_WARNING',
+        'E_PARSE',
+        'E_NOTICE',
+        'E_CORE_ERROR',
+        'E_CORE_WARNING',
+        'E_COMPILE_ERROR',
+        'E_COMPILE_WARNING',
+        'E_USER_ERROR',
+        'E_USER_WARNING',
+        'E_USER_NOTICE',
+        'E_STRICT',
+        'E_RECOVERABLE_ERROR',
+        'E_DEPRECATED',
+        'E_USER_DEPRECATED',
+        'E_ALL',
+    ];
+
+    foreach ($errors as $error) {
+        if ($errno === constant($error)) {
+            return $error;
+        }
+    }
+
+    return 'Unknown';
+}
+
 /**
  * Prints a traditional hex dump of byte values and printable characters.
  *
@@ -78,22 +360,6 @@ function makeCollectionNameFromFilename($filename)
     return preg_replace(array_keys($replacements), array_values($replacements), $filename);
 }
 
-function TESTCOMMANDS($uri) {
-    $cmd = array(
-        "configureFailPoint" => 1,
-    );
-    $command = new MongoDB\Driver\Command($cmd);
-
-    $manager = new MongoDB\Driver\Manager($uri);
-    try {
-        $result = $manager->executeCommand("test", $command);
-    } catch(Exception $e) {
-        /* command not found */
-        if ($e->getCode() == 59) {
-            die("skip this test requires mongod with enableTestCommands");
-        }
-    }
-}
 function NEEDS($configuration) {
     if (!constant($configuration)) {
         exit("skip -- need '$configuration' defined");
@@ -134,127 +400,6 @@ function LOAD($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME, $filen
 
     if ($retval->getInsertedCount() !== count($array)) {
         exit(sprintf('skip Fixtures were not loaded (expected: %d, actual: %d)', $total, $retval->getInsertedCount()));
-    }
-}
-
-function NEEDS_ATLEAST_MONGODB_VERSION($uri, $version) {
-    $manager = new MongoDB\Driver\Manager($uri);
-    $cmd = new MongoDB\Driver\Command(["buildInfo" => 1]);
-    $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
-
-    try {
-        $cursor = $manager->executeCommand("admin", $cmd, $rp);
-        $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
-        $document = current($cursor->toArray());
-
-        if (version_compare($document['version'], $version, '<')) {
-            echo "skip Needs version >= $version, but is {$document['version']}";
-        }
-    } catch(Exception $e) {
-        echo "skip (needs version); $uri ($version): " . $e->getCode(), ": ", $e->getMessage();
-        exit(1);
-    }
-}
-
-function NEEDS_STORAGE_ENGINE($uri, $engine) {
-    $manager = new MongoDB\Driver\Manager($uri);
-    $cmd = new MongoDB\Driver\Command(["serverStatus" => 1]);
-    $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
-
-    try {
-        $cursor = $manager->executeCommand("admin", $cmd, $rp);
-        $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
-        $document = current($cursor->toArray());
-
-        if ($document['storageEngine']['name'] != $engine) {
-            echo "skip Needs storage engine '$engine', but is '{$document['storageEngine']['name']}'";
-        }
-    } catch(Exception $e) {
-        echo "skip (needs version); $uri ($version): " . $e->getCode(), ": ", $e->getMessage();
-        exit(1);
-    }
-}
-
-/* Checks that libmongoc supports crypto. If one or more libaries are provided,
- * additionally check the value of "libmongoc crypto library" as reported by
- * phpinfo(). Possible values are "libcrypto", "Common Crypto", and "CNG". */
-function NEEDS_CRYPTO(array $libs = [])
-{
-    ob_start();
-    phpinfo(INFO_MODULES);
-    $info = ob_get_clean();
-
-    $pattern = sprintf('/^%s$/m', preg_quote('libmongoc crypto => enabled'));
-
-    if (preg_match($pattern, $info) !== 1) {
-        exit('skip Crypto is not supported');
-    }
-
-    if (empty($libs)) {
-        return;
-    }
-
-    $pattern = sprintf('/^%s([\w ]+)$/m', preg_quote('libmongoc crypto library => '));
-
-    if (preg_match($pattern, $info, $matches) !== 1) {
-        exit('skip Could not determine crypto library');
-    }
-
-    if (!in_array($matches[1], $libs)) {
-        exit('skip Needs crypto library ' . implode(', ', $libs) . ', but found ' . $matches[1]);
-    }
-}
-
-/* Checks that libmongoc supports SSL. If one or more libaries are provided,
- * additionally check the value of "libmongoc SSL library" as reported by
- * phpinfo(). Possible values are "OpenSSL", "LibreSSL", "Secure Transport", and
- * "Secure Channel". */
-function NEEDS_SSL(array $libs = [])
-{
-    ob_start();
-    phpinfo(INFO_MODULES);
-    $info = ob_get_clean();
-
-    $pattern = sprintf('/^%s$/m', preg_quote('libmongoc SSL => enabled'));
-
-    if (preg_match($pattern, $info) !== 1) {
-        exit('skip SSL is not supported');
-    }
-
-    if (empty($libs)) {
-        return;
-    }
-
-    $pattern = sprintf('/^%s([\w ]+)$/m', preg_quote('libmongoc SSL library => '));
-
-    if (preg_match($pattern, $info, $matches) !== 1) {
-        exit('skip Could not determine SSL library');
-    }
-
-    if (!in_array($matches[1], $libs)) {
-        exit('skip Needs SSL library ' . implode(', ', $libs) . ', but found ' . $matches[1]);
-    }
-}
-
-function CLEANUP($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME) {
-    try {
-        $manager = new MongoDB\Driver\Manager($uri);
-        $cmd = new MongoDB\Driver\Command(array("drop" => $collname));
-        $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
-        try {
-            $manager->executeCommand($dbname, $cmd, $rp);
-        } catch(Exception $e) {
-            do {
-                /* ns not found */
-                if ($e->getCode() == 59 || $e->getCode() == 26) {
-                    continue;
-                }
-                throw $e;
-            } while (0);
-        }
-    } catch(Exception $e) {
-        echo "skip (cleanup); $uri: " . $e->getCode(), ": ", $e->getMessage();
-        exit(1);
     }
 }
 

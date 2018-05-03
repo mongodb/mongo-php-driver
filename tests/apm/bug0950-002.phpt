@@ -2,7 +2,8 @@
 PHPC-950: Segfault killing cursor after subscriber HashTable is destroyed (one subscriber)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -25,7 +26,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
     }
 }
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(['_id' => 1]);

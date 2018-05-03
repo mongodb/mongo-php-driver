@@ -2,8 +2,9 @@
 Causal consistency: second read's afterClusterTime uses last reply's operationTime (even on error)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS_CRYPTO(); ?>
-<?php NEEDS('REPLICASET'); CLEANUP(REPLICASET);  ?>
+<?php skip_if_not_libmongoc_crypto(); ?>
+<?php skip_if_not_replica_set(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -18,7 +19,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
 
         MongoDB\Driver\Monitoring\addSubscriber($this);
 
-        $manager = new MongoDB\Driver\Manager(REPLICASET);
+        $manager = new MongoDB\Driver\Manager(URI);
         $session = $manager->startSession();
 
         $query = new MongoDB\Driver\Query(['$unsupportedOperator' => 1]);
@@ -44,7 +45,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
 
         MongoDB\Driver\Monitoring\addSubscriber($this);
 
-        $manager = new MongoDB\Driver\Manager(REPLICASET);
+        $manager = new MongoDB\Driver\Manager(URI);
         $session = $manager->startSession();
 
         $bulk = new MongoDB\Driver\BulkWrite;

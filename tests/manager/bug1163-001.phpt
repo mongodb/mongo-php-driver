@@ -5,8 +5,8 @@ Depends on CDRIVER-2615
 --SKIPIF--
 <?php if (PHP_INT_SIZE !== 8) { die("skip Can't represent 64-bit ints on a 32-bit platform"); } ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); ?>
-<?php CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -15,7 +15,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
     public function run()
     {
-        $manager = new MongoDB\Driver\Manager(STANDALONE, ['w' => 0]);
+        $manager = new MongoDB\Driver\Manager(URI, ['w' => 0]);
 
         MongoDB\Driver\Monitoring\addSubscriber($this);
 

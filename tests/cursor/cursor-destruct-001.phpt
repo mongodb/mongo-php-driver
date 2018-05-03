@@ -3,7 +3,8 @@ MongoDB\Driver\Cursor destruct should kill a live cursor
 --SKIPIF--
 <?php if (PHP_INT_SIZE !== 8) { die('skip Only for 64-bit platform'); } ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -23,7 +24,7 @@ function getNumOpenCursors(MongoDB\Driver\Manager $manager)
     throw new RuntimeException('Could not find number of open cursors in serverStatus');
 }
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1));

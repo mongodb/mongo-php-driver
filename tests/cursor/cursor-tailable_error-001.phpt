@@ -2,7 +2,8 @@
 MongoDB\Driver\Cursor collection dropped during tailable iteration
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -24,7 +25,7 @@ function insert(MongoDB\Driver\Manager $manager, $from, $to = null)
     printf("Inserted %d document(s): %s\n", $writeResult->getInsertedCount(), implode(range($from, $to), ', '));
 }
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 
 $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command([
     'create' => COLLECTION_NAME,

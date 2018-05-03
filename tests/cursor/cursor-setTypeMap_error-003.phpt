@@ -2,7 +2,8 @@
 Cursor::setTypeMap(): fieldPaths must be an array, with single key/string elements
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php NEEDS('STANDALONE'); CLEANUP(STANDALONE); ?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 
@@ -21,7 +22,7 @@ $fieldPaths = [
     ['unserialize' => 'MongoDB\BSON\Unserializable'],
 ];
 
-$manager = new MongoDB\Driver\Manager(STANDALONE);
+$manager = new MongoDB\Driver\Manager(URI);
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([]));
 
 foreach ($fieldPaths as $fieldPath) {
