@@ -4,7 +4,7 @@ MongoDB\Driver\WriteConcernError::getInfo()
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php SLOW(); ?>
 <?php skip_if_not_replica_set(); ?>
-<?php skip_if_server_version('>', '3.0.99'); ?>
+<?php skip_if_server_version('>=', '3.1'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

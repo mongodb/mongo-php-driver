@@ -3,7 +3,7 @@ PHPC-705: Do not unnecessarily wrap filters in $query (profiled query)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_server_version('>', '3.0.99'); ?>
+<?php skip_if_server_version('>=', '3.1'); ?>
 <?php skip_if_not_clean(); ?>
 <?php skip_if_not_clean(DATABASE_NAME, 'system.profile'); ?>
 --FILE--
