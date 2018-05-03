@@ -1,7 +1,8 @@
 --TEST--
 X509 connection should not reuse previous stream after an auth failure
+--XFAIL--
+parse_url() tests must be reimplemented (PHPC-1177)
 --SKIPIF--
-<?php echo "skip parse_url() tests must be reimplemented (PHPC-1177)\n"; ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_ssl(); ?>
 <?php skip_if_not_ssl(); ?>
