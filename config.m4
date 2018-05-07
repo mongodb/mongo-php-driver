@@ -318,12 +318,6 @@ if test "$PHP_MONGODB" != "no"; then
     m4_include(scripts/build/autotools/CheckHost.m4)
     m4_include(scripts/build/autotools/CheckSSL.m4)
 
-    if test "$PHP_SYSTEM_CIPHERS" != "no"; then
-      AC_SUBST(MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE, 1)
-    else
-      AC_SUBST(MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE, 0)
-    fi
-
     AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
 
     AC_CHECK_TYPE([socklen_t], [AC_SUBST(MONGOC_HAVE_SOCKLEN, 1)], [AC_SUBST(MONGOC_HAVE_SOCKLEN, 0)], [#include <sys/socket.h>])
