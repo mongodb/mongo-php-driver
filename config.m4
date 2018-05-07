@@ -314,9 +314,9 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
 
     m4_include(scripts/build/autotools/m4/pkg.m4)
-
     m4_include(scripts/build/autotools/CheckHost.m4)
     m4_include(scripts/build/autotools/CheckSSL.m4)
+    m4_include(scripts/build/autotools/CheckSasl.m4)
 
     AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
 
@@ -338,58 +338,6 @@ if test "$PHP_MONGODB" != "no"; then
     fi
   fi
 
-
-  PHP_ARG_WITH([mongodb-sasl],
-               [for Cyrus SASL support],
-               [AC_HELP_STRING([--with-mongodb-sasl=@<:@auto/no/DIR@:>@],
-                               [MongoDB: Cyrus SASL support [default=auto]])],
-               [auto],
-               [no])
-
-  AC_SUBST(MONGOC_ENABLE_SASL, 0)
-  AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)
-  AC_SUBST(MONGOC_ENABLE_SASL_CYRUS, 0)
-  AC_SUBST(MONGOC_ENABLE_SASL_SSPI, 0)
-  AC_SUBST(MONGOC_ENABLE_SASL_GSSAPI, 0)
-
-  if test "$PHP_MONGODB_SASL" != "no"; then
-    AC_MSG_CHECKING(for SASL)
-    for i in $PHP_MONGODB_SASL /usr /usr/local; do
-      if test -f $i/include/sasl/sasl.h; then
-        MONGODB_SASL_DIR=$i
-        AC_MSG_RESULT(found in $i)
-        break
-      fi
-    done
-
-    if test -z "$MONGODB_SASL_DIR"; then
-      AC_MSG_RESULT(not found)
-      if test "$PHP_MONGODB_SASL" != "auto"; then
-        AC_MSG_ERROR([sasl.h not found!])
-      fi
-    else
-
-      PHP_CHECK_LIBRARY(sasl2, sasl_version,
-      [
-        PHP_ADD_INCLUDE($MONGODB_SASL_DIR/include)
-        PHP_ADD_LIBRARY_WITH_PATH(sasl2, $MONGODB_SASL_DIR/$PHP_LIBDIR, MONGODB_SHARED_LIBADD)
-        AC_SUBST(MONGOC_ENABLE_SASL, 1)
-        AC_SUBST(MONGOC_ENABLE_SASL_CYRUS, 1)
-      ], [
-        if test "$MONGODB_SASL" != "auto"; then
-          AC_MSG_ERROR([MongoDB SASL check failed. Please check config.log for more information.])
-        fi
-      ], [
-        -L$MONGODB_SASL_DIR/$PHP_LIBDIR
-      ])
-
-      PHP_CHECK_LIBRARY(sasl2, sasl_client_done,
-      [
-        AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 1)
-      ])
-    fi
-  fi
-
   m4_include(src/libmongoc/build/autotools/m4/ax_prototype.m4)
   m4_include(src/libmongoc/build/autotools/CheckCompiler.m4)
 
@@ -404,11 +352,11 @@ if test "$PHP_MONGODB" != "no"; then
   AC_CHECK_FUNCS([shm_open], [SHM_LIB=], [AC_CHECK_LIB([rt], [shm_open], [SHM_LIB=-lrt], [SHM_LIB=])])
   MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $SHM_LIB"
 
-  EXTRA_CFLAGS="$PTHREAD_CFLAGS $SASL_CFLAGS"
+  EXTRA_CFLAGS="$PTHREAD_CFLAGS"
   PHP_SUBST(EXTRA_CFLAGS)
   PHP_SUBST(EXTRA_LDFLAGS)
 
-  MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $PTHREAD_LIBS $SASL_LIBS $SNAPPY_LIBS $ZLIB_LIBS"
+  MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $PTHREAD_LIBS $SNAPPY_LIBS $ZLIB_LIBS"
   PHP_SUBST(MONGODB_SHARED_LIBADD)
 
   PHP_NEW_EXTENSION(mongodb, $PHP_MONGODB_SOURCES, $ext_shared,, $PHP_MONGODB_CFLAGS)
