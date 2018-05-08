@@ -64,6 +64,11 @@ AS_IF([test "$PHP_MONGODB_SASL" = "auto"],[
   PHP_MONGODB_SASL="no"
 ])
 
+dnl Warn for unsupported values (e.g. Cyrus SASL search path)
+if test ! \( "$PHP_MONGODB_SASL" = "cyrus" -o "$PHP_MONGODB_SASL" = "gssapi" -o "$PHP_MONGODB_SASL" = "no" \); then
+  AC_MSG_WARN([unsupported --with-mongodb-sasl value: $PHP_MONGODB_SASL])
+fi
+
 AC_MSG_CHECKING([which SASL library to use])
 AC_MSG_RESULT([$PHP_MONGODB_SASL])
 
