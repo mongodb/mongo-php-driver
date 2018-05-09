@@ -17,7 +17,7 @@ case "$host" in
         ;;
     *-*-*netbsd*)
         os_netbsd=yes
-        ARGET_OS=unix
+        TARGET_OS=unix
         ;;
     *-*-*freebsd*)
         os_freebsd=yes

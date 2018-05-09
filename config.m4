@@ -4,83 +4,6 @@ PHP_ARG_ENABLE([mongodb],
                [AC_HELP_STRING([--enable-mongodb],
                                [Enable MongoDB support])])
 
-dnl borrowed from libmongoc configure.ac
-dnl AS_VAR_COPY is available in AC 2.64 and on, but we only require 2.60.
-dnl If we're on an older version, we define it ourselves:
-m4_ifndef([AS_VAR_COPY],
-          [m4_define([AS_VAR_COPY],
-          [AS_LITERAL_IF([$1[]$2], [$1=$$2], [eval $1=\$$2])])])
-
-dnl Get "user-set cflags" here, before we've added the flags we use by default
-AS_VAR_COPY(MONGOC_USER_SET_CFLAGS, [CFLAGS])
-AC_SUBST(MONGOC_USER_SET_CFLAGS)
-
-AS_VAR_COPY(MONGOC_USER_SET_LDFLAGS, [LDFLAGS])
-AC_SUBST(MONGOC_USER_SET_LDFLAGS)
-
-AS_VAR_COPY(MONGOC_CC, [CC])
-AC_SUBST(MONGOC_CC)
-
-dnl borrowed from PHP acinclude.m4
-AC_DEFUN([PHP_BSON_BIGENDIAN],
-[AC_CACHE_CHECK([whether byte ordering is bigendian], ac_cv_c_bigendian_php,
- [
-  ac_cv_c_bigendian_php=unknown
-  AC_TRY_RUN(
-  [
-int main(void)
-{
-  short one = 1;
-  char *cp = (char *)&one;
-
-  if (*cp == 0) {
-    return(0);
-  } else {
-    return(1);
-  }
-}
-  ], [ac_cv_c_bigendian_php=yes], [ac_cv_c_bigendian_php=no], [ac_cv_c_bigendian_php=unknown])
- ])
- if test $ac_cv_c_bigendian_php = yes; then
-    AC_SUBST(BSON_BYTE_ORDER, 4321)
-  else
-    AC_SUBST(BSON_BYTE_ORDER, 1234)
- fi
-])
-dnl Borrowed from sapi/fpm/config.m4
-AC_DEFUN([PHP_BSON_CLOCK],
-[
-  have_clock_gettime=no
-
-  AC_MSG_CHECKING([for clock_gettime])
-
-  AC_TRY_LINK([ #include <time.h> ], [struct timespec ts; clock_gettime(CLOCK_MONOTONIC, &ts);], [
-    have_clock_gettime=yes
-    AC_MSG_RESULT([yes])
-  ], [
-    AC_MSG_RESULT([no])
-  ])
-
-  if test "$have_clock_gettime" = "no"; then
-    AC_MSG_CHECKING([for clock_gettime in -lrt])
-
-    SAVED_LIBS="$LIBS"
-    LIBS="$LIBS -lrt"
-
-    AC_TRY_LINK([ #include <time.h> ], [struct timespec ts; clock_gettime(CLOCK_MONOTONIC, &ts);], [
-      have_clock_gettime=yes
-      AC_MSG_RESULT([yes])
-    ], [
-      LIBS="$SAVED_LIBS"
-      AC_MSG_RESULT([no])
-    ])
-  fi
-
-  if test "$have_clock_gettime" = "yes"; then
-    AC_SUBST(BSON_HAVE_CLOCK_GETTIME, 1)
-  fi
-])
-
 if test "$PHP_MONGODB" != "no"; then
   AC_MSG_CHECKING([Check for supported PHP versions])
   PHP_MONGODB_FOUND_VERSION=`${PHP_CONFIG} --version`
@@ -263,21 +186,7 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_EVAL_INCLINE($LIBBSON_INC)
     PHP_EVAL_LIBLINE($LIBBSON_LIB, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
-  else
-    PHP_MONGODB_BSON_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION"
-
-    dnl Generated with: find src/libbson/src/bson -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
-    PHP_MONGODB_BSON_SOURCES="bcon.c bson-atomic.c bson.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-iso8601.c bson-iter.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c"
-
-    dnl Generated with: find src/libbson/src/jsonsl -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
-    PHP_MONGODB_JSONSL_SOURCES="jsonsl.c"
-
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/jsonsl], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
   fi
-
-  AC_MSG_CHECKING(configuring libmongoc)
-  AC_MSG_RESULT(...)
 
   if test "$PHP_LIBMONGOC" != "no"; then
     if test "$PHP_LIBBSON" = "no"; then
@@ -302,8 +211,59 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_EVAL_INCLINE($LIBMONGOC_INC)
     PHP_EVAL_LIBLINE($LIBMONGOC_LIB, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBMONGOC, 1, [Use system libmongoc])
-  else
+  fi
+
+  if test "$PHP_LIBBSON" = "no" -a "$PHP_LIBMONGOC" = "no"; then
+    PHP_MONGODB_BSON_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION"
     PHP_MONGODB_MONGOC_CFLAGS="$STD_CFLAGS -DMONGOC_COMPILATION -DMONGOC_TRACE"
+
+    dnl Avoid using AC_CONFIG_MACRO_DIR, which might conflict with PHP
+    m4_include([scripts/build/autotools/m4/ac_compile_check_sizeof.m4])
+    m4_include([scripts/build/autotools/m4/ac_create_stdint_h.m4])
+    m4_include([scripts/build/autotools/m4/as_var_copy.m4])
+    m4_include([scripts/build/autotools/m4/ax_check_compile_flag.m4])
+    m4_include([scripts/build/autotools/m4/ax_prototype.m4])
+    m4_include([scripts/build/autotools/m4/ax_pthread.m4])
+    m4_include([scripts/build/autotools/m4/pkg.m4])
+
+    m4_include([scripts/build/autotools/CheckCompiler.m4])
+    m4_include([scripts/build/autotools/CheckHost.m4])
+
+    m4_include([scripts/build/autotools/libbson/CheckAtomics.m4])
+    m4_include([scripts/build/autotools/libbson/CheckHeaders.m4])
+    m4_include([scripts/build/autotools/libbson/Endian.m4])
+    m4_include([scripts/build/autotools/libbson/FindDependencies.m4])
+    m4_include([scripts/build/autotools/libbson/Versions.m4])
+
+    m4_include([scripts/build/autotools/libmongoc/CheckCompression.m4])
+    m4_include([scripts/build/autotools/libmongoc/CheckResolv.m4])
+    m4_include([scripts/build/autotools/libmongoc/CheckSasl.m4])
+    m4_include([scripts/build/autotools/libmongoc/CheckSSL.m4])
+    m4_include([scripts/build/autotools/libmongoc/FindDependencies.m4])
+    m4_include([scripts/build/autotools/libmongoc/PlatformFlags.m4])
+    m4_include([scripts/build/autotools/libmongoc/Versions.m4])
+    m4_include([scripts/build/autotools/libmongoc/WeakSymbols.m4])
+
+    AC_SUBST(BSON_EXTRA_ALIGN, 0)
+    AC_SUBST(BSON_OS, 1)
+
+    AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
+
+    dnl Capture user-set environment variables for metadata handshake
+    dnl We can do this after the above scripts as they only modify STD_CFLAGS
+    AS_VAR_COPY(MONGOC_USER_SET_CFLAGS, [CFLAGS])
+    AS_VAR_COPY(MONGOC_USER_SET_LDFLAGS, [LDFLAGS])
+    AS_VAR_COPY(MONGOC_CC, [CC])
+
+    AC_SUBST(MONGOC_USER_SET_CFLAGS)
+    AC_SUBST(MONGOC_USER_SET_LDFLAGS)
+    AC_SUBST(MONGOC_CC)
+
+    dnl Generated with: find src/libbson/src/bson -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
+    PHP_MONGODB_BSON_SOURCES="bcon.c bson-atomic.c bson.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-iso8601.c bson-iter.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c"
+
+    dnl Generated with: find src/libbson/src/jsonsl -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
+    PHP_MONGODB_JSONSL_SOURCES="jsonsl.c"
 
     dnl Generated with: find src/libmongoc/src/mongoc -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
     PHP_MONGODB_MONGOC_SOURCES="mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-b64.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-change-stream.c mongoc-client.c mongoc-client-pool.c mongoc-client-session.c mongoc-cluster.c mongoc-cluster-cyrus.c mongoc-cluster-gssapi.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-cmd.c mongoc-collection.c mongoc-compression.c mongoc-counters.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-cursorid.c mongoc-cursor-transform.c mongoc-cyrus.c mongoc-database.c mongoc-find-and-modify.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-gssapi.c mongoc-handshake.c mongoc-host-list.c mongoc-index.c mongoc-init.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-openssl.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-description.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-command-legacy.c mongoc-write-concern.c"
@@ -311,152 +271,59 @@ if test "$PHP_MONGODB" != "no"; then
     dnl Generated with: find src/libmongoc/src/zlib-1.2.11 -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
     PHP_MONGODB_ZLIB_SOURCES="adler32.c compress.c crc32.c deflate.c gzclose.c gzlib.c gzread.c gzwrite.c infback.c inffast.c inflate.c inftrees.c trees.c uncompr.c zutil.c"
 
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
+    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/jsonsl], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
     PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
 
-    m4_include(scripts/build/autotools/m4/pkg.m4)
-    m4_include(scripts/build/autotools/CheckHost.m4)
-    m4_include(scripts/build/autotools/CheckSSL.m4)
-    m4_include(scripts/build/autotools/CheckSasl.m4)
+    PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libbson/src/])
+    PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libbson/src/bson/])
+    PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libbson/src/jsonsl/])
+    PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libmongoc/src/mongoc/])
 
-    AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
+    PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libbson/src/jsonsl/])
+    PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libbson/src/bson/])
+    PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libmongoc/src/mongoc/])
 
-    AC_CHECK_TYPE([socklen_t], [AC_SUBST(MONGOC_HAVE_SOCKLEN, 1)], [AC_SUBST(MONGOC_HAVE_SOCKLEN, 0)], [#include <sys/socket.h>])
+    AC_CONFIG_FILES([
+      src/libbson/src/bson/bson-config.h
+      src/libbson/src/bson/bson-version.h
+      src/libmongoc/src/mongoc/mongoc-config.h
+      src/libmongoc/src/mongoc/mongoc-version.h
+    ])
 
-    with_snappy=auto
-    with_zlib=auto
-    m4_include(src/libmongoc/build/autotools/CheckSnappy.m4)
-    m4_include(src/libmongoc/build/autotools/CheckZlib.m4)
-
-    if test "x$with_zlib" != "xno" -o "x$with_snappy" != "xno"; then
-      AC_SUBST(MONGOC_ENABLE_COMPRESSION, 1)
-    else
-      AC_SUBST(MONGOC_ENABLE_COMPRESSION, 0)
-    fi
-
-    if test "x$with_zlib" = "xbundled"; then
+    if test "x$bundled_zlib" = "xyes"; then
       PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/zlib-1.2.11], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
+      PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libmongoc/src/zlib-1.2.11/])
+      PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libmongoc/src/zlib-1.2.11/])
+      AC_CONFIG_FILES(src/libmongoc/src/zlib-1.2.11/zconf.h)
     fi
+
+    dnl Apply any CFLAGS and LIBS from libbson calling AX_PTHREAD
+    PHP_EVAL_INCLINE([$PTHREAD_CFLAGS])
+    PHP_EVAL_LIBLINE([$PTHREAD_LIBS],[MONGODB_SHARED_LIBADD])
   fi
 
-  m4_include(src/libmongoc/build/autotools/m4/ax_prototype.m4)
-  m4_include(src/libmongoc/build/autotools/CheckCompiler.m4)
+  PHP_NEW_EXTENSION(mongodb, $PHP_MONGODB_SOURCES, $ext_shared,, $PHP_MONGODB_CFLAGS)
 
-  dnl We need to convince the libmongoc M4 file to actually run these checks for us
-  enable_srv=auto
-  m4_include(src/libmongoc/build/autotools/FindResSearch.m4)
-
-  m4_include(src/libmongoc/build/autotools/WeakSymbols.m4)
-  m4_include(src/libmongoc/build/autotools/m4/ax_pthread.m4)
-  AX_PTHREAD
-
-  AC_CHECK_FUNCS([shm_open], [SHM_LIB=], [AC_CHECK_LIB([rt], [shm_open], [SHM_LIB=-lrt], [SHM_LIB=])])
-  MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $SHM_LIB"
-
-  EXTRA_CFLAGS="$PTHREAD_CFLAGS"
-  PHP_SUBST(EXTRA_CFLAGS)
+  PHP_SUBST(MONGODB_SHARED_LIBADD)
   PHP_SUBST(EXTRA_LDFLAGS)
 
-  MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $PTHREAD_LIBS $SNAPPY_LIBS $ZLIB_LIBS"
-  PHP_SUBST(MONGODB_SHARED_LIBADD)
-
-  PHP_NEW_EXTENSION(mongodb, $PHP_MONGODB_SOURCES, $ext_shared,, $PHP_MONGODB_CFLAGS)
   PHP_ADD_EXTENSION_DEP(mongodb, date)
   PHP_ADD_EXTENSION_DEP(mongodb, json)
   PHP_ADD_EXTENSION_DEP(mongodb, spl)
   PHP_ADD_EXTENSION_DEP(mongodb, standard)
 
-  PHP_ADD_INCLUDE([$ext_srcdir/src/BSON/])
-  PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/])
-  PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/Exception/])
-  PHP_ADD_INCLUDE([$ext_srcdir/src/MongoDB/Monitoring/])
-  PHP_ADD_INCLUDE([$ext_srcdir/src/contrib/])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/BSON/])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/Exception/])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/MongoDB/Monitoring/])
-  PHP_ADD_BUILD_DIR([$ext_builddir/src/contrib/])
-  if test "$PHP_LIBMONGOC" = "no"; then
-    PHP_ADD_INCLUDE([$ext_srcdir/src/libmongoc/src/mongoc/])
-    PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/mongoc/])
-    if test "x$with_zlib" = "xbundled"; then
-      PHP_ADD_INCLUDE([$ext_srcdir/src/libmongoc/src/zlib-1.2.11/])
-      PHP_ADD_BUILD_DIR([$ext_builddir/src/libmongoc/src/zlib-1.2.11/])
-    fi
-  fi
-  if test "$PHP_LIBBSON" = "no"; then
-    m4_include(src/libbson/build/autotools/CheckAtomics.m4)
-    m4_include(src/libbson/build/autotools/FindDependencies.m4)
-    m4_include(src/libbson/build/autotools/m4/ac_compile_check_sizeof.m4)
-    m4_include(src/libbson/build/autotools/m4/ac_create_stdint_h.m4)
-    AC_CREATE_STDINT_H([$srcdir/src/libbson/src/bson/bson-stdint.h])
-    PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/])
-    PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/jsonsl/])
-    PHP_ADD_INCLUDE([$ext_srcdir/src/libbson/src/bson/])
-    PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/])
-    PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/jsonsl/])
-    PHP_ADD_BUILD_DIR([$ext_builddir/src/libbson/src/bson/])
-  fi
+  PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/BSON/])
+  PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/])
+  PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/Exception/])
+  PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/Monitoring/])
+  PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/contrib/])
 
-  PHP_BSON_BIGENDIAN
-  AC_HEADER_STDBOOL
-
-  AC_SUBST(BSON_EXTRA_ALIGN, 0)
-  AC_SUBST(BSON_HAVE_DECIMAL128, 0)
-
-  if test "$ac_cv_header_stdbool_h" = "yes"; then
-    AC_SUBST(BSON_HAVE_STDBOOL_H, 1)
-  else
-    AC_SUBST(BSON_HAVE_STDBOOL_H, 0)
-  fi
-
-  AC_SUBST(BSON_OS, 1)
-
-  PHP_BSON_CLOCK
-  AC_CHECK_FUNC(strnlen,ac_cv_func_strnlen=yes,ac_cv_func_strnlen=no)
-  if test "$ac_cv_func_strnlen" = "yes"; then
-    AC_SUBST(BSON_HAVE_STRNLEN, 1)
-  else
-    AC_SUBST(BSON_HAVE_STRNLEN, 0)
-  fi
-
-  AC_CHECK_FUNC(snprintf,ac_cv_func_snprintf=yes,ac_cv_func_snprintf=no)
-  if test "$ac_cv_func_snprintf" = "yes"; then
-    AC_SUBST(BSON_HAVE_SNPRINTF, 1)
-  else
-    AC_SUBST(BSON_HAVE_SNPRINTF, 0)
-  fi
-
-  if test "$PHP_LIBMONGOC" = "no"; then
-    backup_srcdir=${srcdir}
-    srcdir=${srcdir}/src/libmongoc/
-    m4_include(src/libmongoc/build/autotools/Versions.m4)
-    srcdir=${backup_srcdir}
-    MONGOC_API_VERSION=1.0
-    AC_SUBST(MONGOC_MAJOR_VERSION)
-    AC_SUBST(MONGOC_MINOR_VERSION)
-    AC_SUBST(MONGOC_MICRO_VERSION)
-    AC_SUBST(MONGOC_API_VERSION)
-    AC_SUBST(MONGOC_VERSION)
-    AC_OUTPUT($srcdir/src/libmongoc/src/mongoc/mongoc-config.h)
-    AC_OUTPUT($srcdir/src/libmongoc/src/mongoc/mongoc-version.h)
-    if test "x$with_zlib" = "xbundled"; then
-      AC_OUTPUT($srcdir/src/libmongoc/src/zlib-1.2.11/zconf.h)
-    fi
-  fi
-  if test "$PHP_LIBBSON" = "no"; then
-    backup_srcdir=${srcdir}
-    srcdir=${srcdir}/src/libbson/
-    m4_include(src/libbson/build/autotools/Versions.m4)
-    srcdir=${backup_srcdir}
-    BSON_API_VERSION=1.0
-    AC_SUBST(BSON_MAJOR_VERSION)
-    AC_SUBST(BSON_MINOR_VERSION)
-    AC_SUBST(BSON_MICRO_VERSION)
-    AC_SUBST(BSON_API_VERSION)
-    AC_SUBST(BSON_VERSION)
-    AC_OUTPUT($srcdir/src/libbson/src/bson/bson-config.h)
-    AC_OUTPUT($srcdir/src/libbson/src/bson/bson-version.h)
-  fi
+  PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/BSON/])
+  PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/])
+  PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/Exception/])
+  PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/Monitoring/])
+  PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/contrib/])
 
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
   PHP_ADD_MAKEFILE_FRAGMENT
