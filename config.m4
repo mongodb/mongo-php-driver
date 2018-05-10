@@ -228,32 +228,46 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_BSON_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION"
     PHP_MONGODB_MONGOC_CFLAGS="$STD_CFLAGS -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
+    dnl M4 doesn't know if we're building statically or as a shared module, so
+    dnl attempt to include both paths while ignoring errors. If neither path
+    dnl exists, report an error during configure (this is later than M4 parsing
+    dnl during phpize but better than nothing).
+    m4_pushdef([_include],[
+      if test ! \( -f "$1" -o -f "ext/mongodb/$1" \); then
+        AC_MSG_ERROR([m4 could not include $1: No such file or directory])
+      fi
+      m4_builtin([sinclude],[$1])
+      m4_builtin([sinclude],[ext/mongodb/][$1])
+    ])
+
     dnl Avoid using AC_CONFIG_MACRO_DIR, which might conflict with PHP
-    m4_include([scripts/build/autotools/m4/ac_compile_check_sizeof.m4])
-    m4_include([scripts/build/autotools/m4/ac_create_stdint_h.m4])
-    m4_include([scripts/build/autotools/m4/as_var_copy.m4])
-    m4_include([scripts/build/autotools/m4/ax_check_compile_flag.m4])
-    m4_include([scripts/build/autotools/m4/ax_prototype.m4])
-    m4_include([scripts/build/autotools/m4/ax_pthread.m4])
-    m4_include([scripts/build/autotools/m4/pkg.m4])
+    _include([scripts/build/autotools/m4/ac_compile_check_sizeof.m4])
+    _include([scripts/build/autotools/m4/ac_create_stdint_h.m4])
+    _include([scripts/build/autotools/m4/as_var_copy.m4])
+    _include([scripts/build/autotools/m4/ax_check_compile_flag.m4])
+    _include([scripts/build/autotools/m4/ax_prototype.m4])
+    _include([scripts/build/autotools/m4/ax_pthread.m4])
+    _include([scripts/build/autotools/m4/pkg.m4])
 
-    m4_include([scripts/build/autotools/CheckCompiler.m4])
-    m4_include([scripts/build/autotools/CheckHost.m4])
+    _include([scripts/build/autotools/CheckCompiler.m4])
+    _include([scripts/build/autotools/CheckHost.m4])
 
-    m4_include([scripts/build/autotools/libbson/CheckAtomics.m4])
-    m4_include([scripts/build/autotools/libbson/CheckHeaders.m4])
-    m4_include([scripts/build/autotools/libbson/Endian.m4])
-    m4_include([scripts/build/autotools/libbson/FindDependencies.m4])
-    m4_include([scripts/build/autotools/libbson/Versions.m4])
+    _include([scripts/build/autotools/libbson/CheckAtomics.m4])
+    _include([scripts/build/autotools/libbson/CheckHeaders.m4])
+    _include([scripts/build/autotools/libbson/Endian.m4])
+    _include([scripts/build/autotools/libbson/FindDependencies.m4])
+    _include([scripts/build/autotools/libbson/Versions.m4])
 
-    m4_include([scripts/build/autotools/libmongoc/CheckCompression.m4])
-    m4_include([scripts/build/autotools/libmongoc/CheckResolv.m4])
-    m4_include([scripts/build/autotools/libmongoc/CheckSasl.m4])
-    m4_include([scripts/build/autotools/libmongoc/CheckSSL.m4])
-    m4_include([scripts/build/autotools/libmongoc/FindDependencies.m4])
-    m4_include([scripts/build/autotools/libmongoc/PlatformFlags.m4])
-    m4_include([scripts/build/autotools/libmongoc/Versions.m4])
-    m4_include([scripts/build/autotools/libmongoc/WeakSymbols.m4])
+    _include([scripts/build/autotools/libmongoc/CheckCompression.m4])
+    _include([scripts/build/autotools/libmongoc/CheckResolv.m4])
+    _include([scripts/build/autotools/libmongoc/CheckSasl.m4])
+    _include([scripts/build/autotools/libmongoc/CheckSSL.m4])
+    _include([scripts/build/autotools/libmongoc/FindDependencies.m4])
+    _include([scripts/build/autotools/libmongoc/PlatformFlags.m4])
+    _include([scripts/build/autotools/libmongoc/Versions.m4])
+    _include([scripts/build/autotools/libmongoc/WeakSymbols.m4])
+
+    m4_popdef([_include])
 
     AC_SUBST(BSON_EXTRA_ALIGN, 0)
     AC_SUBST(BSON_OS, 1)
