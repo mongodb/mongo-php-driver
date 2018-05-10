@@ -5,12 +5,23 @@ PHP_ARG_ENABLE([mongodb],
                                [Enable MongoDB support])])
 
 if test "$PHP_MONGODB" != "no"; then
-  AC_MSG_CHECKING([Check for supported PHP versions])
-  PHP_MONGODB_FOUND_VERSION=`${PHP_CONFIG} --version`
-  PHP_MONGODB_FOUND_VERNUM=`echo "${PHP_MONGODB_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
-  AC_MSG_RESULT($PHP_MONGODB_FOUND_VERSION)
-  if test "$PHP_MONGODB_FOUND_VERNUM" -lt "50500"; then
-    AC_MSG_ERROR([not supported. Need a PHP version >= 5.5.0 (found $PHP_MONGODB_FOUND_VERSION)])
+  dnl Check PHP version is compatible with this extension
+  AC_MSG_CHECKING([PHP version])
+
+  PHP_MONGODB_PHP_VERSION=$PHP_VERSION
+  PHP_MONGODB_PHP_VERSION_ID=$PHP_VERSION_ID
+
+  if test -z "$PHP_MONGODB_PHP_VERSION"; then
+    if test -z "$PHP_CONFIG"; then
+      AC_MSG_ERROR([php-config not found])
+    fi
+    PHP_MONGODB_PHP_VERSION=`${PHP_CONFIG} --version`
+    PHP_MONGODB_PHP_VERSION_ID=`echo "${PHP_MONGODB_PHP_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
+  fi
+
+  AC_MSG_RESULT($PHP_MONGODB_PHP_VERSION)
+  if test "$PHP_MONGODB_PHP_VERSION_ID" -lt "50500"; then
+    AC_MSG_ERROR([not supported. Need a PHP version >= 5.5.0 (found $PHP_MONGODB_PHP_VERSION)])
   fi
 
   PHP_ARG_ENABLE([developer-flags],
