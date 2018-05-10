@@ -309,18 +309,21 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libbson/src/bson/])
     PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libmongoc/src/mongoc/])
 
+    dnl TODO: Use $ext_srcdir if we can move this after PHP_NEW_EXTENSION
+    ac_config_dir=PHP_EXT_SRCDIR(mongodb)
+
     AC_CONFIG_FILES([
-      src/libbson/src/bson/bson-config.h
-      src/libbson/src/bson/bson-version.h
-      src/libmongoc/src/mongoc/mongoc-config.h
-      src/libmongoc/src/mongoc/mongoc-version.h
+      ${ac_config_dir}/src/libbson/src/bson/bson-config.h
+      ${ac_config_dir}/src/libbson/src/bson/bson-version.h
+      ${ac_config_dir}/src/libmongoc/src/mongoc/mongoc-config.h
+      ${ac_config_dir}/src/libmongoc/src/mongoc/mongoc-version.h
     ])
 
     if test "x$bundled_zlib" = "xyes"; then
       PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/zlib-1.2.11], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
       PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libmongoc/src/zlib-1.2.11/])
       PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libmongoc/src/zlib-1.2.11/])
-      AC_CONFIG_FILES(src/libmongoc/src/zlib-1.2.11/zconf.h)
+      AC_CONFIG_FILES([${ac_config_dir}/src/libmongoc/src/zlib-1.2.11/zconf.h])
     fi
 
     dnl Apply any CFLAGS and LIBS from libbson calling AX_PTHREAD
