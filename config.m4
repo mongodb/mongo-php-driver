@@ -325,10 +325,6 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libmongoc/src/zlib-1.2.11/])
       AC_CONFIG_FILES([${ac_config_dir}/src/libmongoc/src/zlib-1.2.11/zconf.h])
     fi
-
-    dnl Apply any CFLAGS and LIBS from libbson calling AX_PTHREAD
-    PHP_EVAL_INCLINE([$PTHREAD_CFLAGS])
-    PHP_EVAL_LIBLINE([$PTHREAD_LIBS],[MONGODB_SHARED_LIBADD])
   fi
 
   PHP_NEW_EXTENSION(mongodb, $PHP_MONGODB_SOURCES, $ext_shared,, $PHP_MONGODB_CFLAGS)
