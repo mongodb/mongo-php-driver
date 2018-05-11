@@ -212,7 +212,6 @@ if test "$PHP_MONGODB" != "no"; then
         LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-1.0 --libs`
         LIBMONGOC_VER=`$PKG_CONFIG libmongoc-1.0 --modversion`
         AC_MSG_RESULT(version $LIBMONGOC_VER found)
-
       else
         AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.9.0)
       fi
