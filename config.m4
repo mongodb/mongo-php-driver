@@ -247,6 +247,7 @@ if test "$PHP_MONGODB" != "no"; then
     _include([scripts/build/autotools/m4/ax_check_compile_flag.m4])
     _include([scripts/build/autotools/m4/ax_prototype.m4])
     _include([scripts/build/autotools/m4/ax_pthread.m4])
+    _include([scripts/build/autotools/m4/php_mongodb.m4])
     _include([scripts/build/autotools/m4/pkg.m4])
 
     _include([scripts/build/autotools/CheckCompiler.m4])
@@ -296,18 +297,18 @@ if test "$PHP_MONGODB" != "no"; then
     dnl Generated with: find src/libmongoc/src/zlib-1.2.11 -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
     PHP_MONGODB_ZLIB_SOURCES="adler32.c compress.c crc32.c deflate.c gzclose.c gzlib.c gzread.c gzwrite.c infback.c inffast.c inflate.c inftrees.c trees.c uncompr.c zutil.c"
 
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/jsonsl], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
+    PHP_MONGODB_ADD_SOURCES([src/libbson/src/bson/], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BSON_CFLAGS)
+    PHP_MONGODB_ADD_SOURCES([src/libbson/src/jsonsl/], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BSON_CFLAGS)
+    PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/mongoc/], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS)
 
-    PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libbson/src/])
-    PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libbson/src/bson/])
-    PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libbson/src/jsonsl/])
-    PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libmongoc/src/mongoc/])
+    PHP_MONGODB_ADD_INCLUDE([src/libbson/src/])
+    PHP_MONGODB_ADD_INCLUDE([src/libbson/src/bson/])
+    PHP_MONGODB_ADD_INCLUDE([src/libbson/src/jsonsl/])
+    PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/mongoc/])
 
-    PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libbson/src/jsonsl/])
-    PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libbson/src/bson/])
-    PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libmongoc/src/mongoc/])
+    PHP_MONGODB_ADD_BUILD_DIR([src/libbson/src/bson/])
+    PHP_MONGODB_ADD_BUILD_DIR([src/libbson/src/jsonsl/])
+    PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/mongoc/])
 
     dnl TODO: Use $ext_srcdir if we can move this after PHP_NEW_EXTENSION
     ac_config_dir=PHP_EXT_SRCDIR(mongodb)
@@ -320,9 +321,9 @@ if test "$PHP_MONGODB" != "no"; then
     ])
 
     if test "x$bundled_zlib" = "xyes"; then
-      PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/zlib-1.2.11], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
-      PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libmongoc/src/zlib-1.2.11/])
-      PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libmongoc/src/zlib-1.2.11/])
+      PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/zlib-1.2.11/], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS)
+      PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/zlib-1.2.11/])
+      PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/zlib-1.2.11/])
       AC_CONFIG_FILES([${ac_config_dir}/src/libmongoc/src/zlib-1.2.11/zconf.h])
     fi
   fi
