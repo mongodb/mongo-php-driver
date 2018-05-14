@@ -88,9 +88,10 @@ if test "$PHP_MONGODB" != "no"; then
                  [no])
 
   if test "$PHP_COVERAGE" = "yes"; then
-      PHP_CHECK_GCC_ARG(-fprofile-arcs,                     COVERAGE_CFLAGS="$COVERAGE_CFLAGS -fprofile-arcs")
-      PHP_CHECK_GCC_ARG(-ftest-coverage,                    COVERAGE_CFLAGS="$COVERAGE_CFLAGS -ftest-coverage")
-      EXTRA_LDFLAGS="$COVERAGE_CFLAGS"
+    COVERAGE_CFLAGS="--coverage -g"
+    COVERAGE_LDFLAGS="--coverage"
+
+    MONGODB_SHARED_LIBADD="$MONGODB_SHARED_LIBADD $COVERAGE_LDFLAGS"
   fi
 
   PHP_MONGODB_CFLAGS="$STD_CFLAGS $MAINTAINER_CFLAGS $COVERAGE_CFLAGS"
