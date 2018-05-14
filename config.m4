@@ -349,6 +349,11 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/Monitoring/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/contrib/])
 
+  dnl Necessary to ensure that static builds include "-pthread" when linking
+  if test "$ext_shared" != "yes"; then
+    EXTRA_LDFLAGS_PROGRAM="$EXTRA_LDFLAGS_PROGRAM $EXTRA_LDFLAGS"
+  fi
+
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
   PHP_ADD_MAKEFILE_FRAGMENT
 
