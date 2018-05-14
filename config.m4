@@ -184,18 +184,18 @@ if test "$PHP_MONGODB" != "no"; then
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
       if $PKG_CONFIG libbson-1.0 --atleast-version 1.9.0; then
-        LIBBSON_INC=`$PKG_CONFIG libbson-1.0 --cflags`
-        LIBBSON_LIB=`$PKG_CONFIG libbson-1.0 --libs`
-        LIBBSON_VER=`$PKG_CONFIG libbson-1.0 --modversion`
-        AC_MSG_RESULT(version $LIBBSON_VER found)
+        PHP_MONGODB_BSON_CFLAGS=`$PKG_CONFIG libbson-1.0 --cflags`
+        PHP_MONGODB_BSON_LIBS=`$PKG_CONFIG libbson-1.0 --libs`
+        PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
+        AC_MSG_RESULT(version $PHP_MONGODB_BSON_VERSION found)
       else
         AC_MSG_ERROR(system libbson must be upgraded to version >= 1.9.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libbson must be installed)
     fi
-    PHP_EVAL_INCLINE($LIBBSON_INC)
-    PHP_EVAL_LIBLINE($LIBBSON_LIB, MONGODB_SHARED_LIBADD)
+    PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_BSON_CFLAGS"
+    PHP_EVAL_LIBLINE($PHP_MONGODB_BSON_LIBS, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
   fi
 
@@ -208,18 +208,18 @@ if test "$PHP_MONGODB" != "no"; then
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0; then
       if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.9.0; then
-        LIBMONGOC_INC=`$PKG_CONFIG libmongoc-1.0 --cflags`
-        LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-1.0 --libs`
-        LIBMONGOC_VER=`$PKG_CONFIG libmongoc-1.0 --modversion`
-        AC_MSG_RESULT(version $LIBMONGOC_VER found)
+        PHP_MONGODB_MONGOC_CFLAGS=`$PKG_CONFIG libmongoc-1.0 --cflags`
+        PHP_MONGODB_MONGOC_LIBS=`$PKG_CONFIG libmongoc-1.0 --libs`
+        PHP_MONGODB_MONGOC_VERSION=`$PKG_CONFIG libmongoc-1.0 --modversion`
+        AC_MSG_RESULT(version $PHP_MONGODB_MONGOC_VERSION found)
       else
         AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.9.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libmongoc must be installed)
     fi
-    PHP_EVAL_INCLINE($LIBMONGOC_INC)
-    PHP_EVAL_LIBLINE($LIBMONGOC_LIB, MONGODB_SHARED_LIBADD)
+    PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_MONGOC_CFLAGS"
+    PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOC_LIBS, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBMONGOC, 1, [Use system libmongoc])
   fi
 
