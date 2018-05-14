@@ -356,7 +356,9 @@ if test "$PHP_MONGODB" != "no"; then
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
   PHP_ADD_MAKEFILE_FRAGMENT
 
-AC_CONFIG_COMMANDS_POST([echo "
+  AC_CONFIG_COMMANDS_POST([
+    if test "$enable_static" = "no"; then
+      echo "
 mongodb was configured with the following options:
 
 Build configuration:
@@ -373,7 +375,9 @@ Build configuration:
 Please submit bugreports at:
   https://jira.mongodb.org/browse/PHPC
 
-"])
+"
+    fi
+  ])
 fi
 
 dnl: vim: et sw=2
