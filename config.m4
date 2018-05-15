@@ -88,6 +88,10 @@ if test "$PHP_MONGODB" != "no"; then
                  [no])
 
   if test "$PHP_COVERAGE" = "yes"; then
+    if test "$ext_shared" != "yes"; then
+      AC_MSG_ERROR(code coverage is not supported for static builds)
+    fi
+
     COVERAGE_CFLAGS="--coverage -g"
     COVERAGE_LDFLAGS="--coverage"
 
