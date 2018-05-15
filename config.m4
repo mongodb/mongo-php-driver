@@ -24,14 +24,14 @@ if test "$PHP_MONGODB" != "no"; then
     AC_MSG_ERROR([not supported. Need a PHP version >= 5.5.0 (found $PHP_MONGODB_PHP_VERSION)])
   fi
 
-  PHP_ARG_ENABLE([developer-flags],
+  PHP_ARG_ENABLE([mongodb-developer-flags],
                  [whether to enable developer build flags],
-                 [AC_HELP_STRING([--enable-developer-flags],
+                 [AC_HELP_STRING([--enable-mongodb-developer-flags],
                                  [MongoDB: Enable developer flags [default=no]])],
                  [no],
                  [no])
 
-  if test "$PHP_DEVELOPER_FLAGS" = "yes"; then
+  if test "$PHP_MONGODB_DEVELOPER_FLAGS" = "yes"; then
     dnl Warn about functions which might be candidates for format attributes
     PHP_CHECK_GCC_ARG(-Wmissing-format-attribute,       _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wmissing-format-attribute")
     dnl Avoid duplicating values for an enum
@@ -80,14 +80,14 @@ if test "$PHP_MONGODB" != "no"; then
   fi
 
 
-  PHP_ARG_ENABLE([coverage],
+  PHP_ARG_ENABLE([mongodb-coverage],
                  [whether to enable code coverage],
-                 [AC_HELP_STRING([--enable-coverage],
+                 [AC_HELP_STRING([--enable-mongodb-coverage],
                                  [MongoDB: Enable developer code coverage information [default=no]])],
                  [no],
                  [no])
 
-  if test "$PHP_COVERAGE" = "yes"; then
+  if test "$PHP_MONGODB_COVERAGE" = "yes"; then
     if test "$ext_shared" != "yes"; then
       AC_MSG_ERROR(code coverage is not supported for static builds)
     fi
