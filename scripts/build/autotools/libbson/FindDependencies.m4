@@ -78,8 +78,16 @@ AC_CHECK_FUNC(rand_r, [AC_SUBST(BSON_HAVE_RAND_R, 1)], [], [#include <stdlib.h>]
 # Check for pthreads. We might need to make this better to handle mingw,
 # but I actually think it is okay to just check for it even though we will
 # use win32 primatives.
-AX_PTHREAD([],
-           [AC_MSG_ERROR([libbson requires pthreads on non-Windows platforms.])])
+AX_PTHREAD([
+  PHP_MONGODB_BSON_CFLAGS="$PHP_MONGODB_BSON_CFLAGS $PTHREAD_CFLAGS"
+  PHP_EVAL_LIBLINE([$PTHREAD_LIBS],[MONGODB_SHARED_LIBADD])
+
+  # PTHREAD_CFLAGS may come back as "-pthread", which should also be used when
+  # linking. We can trust PHP_EVAL_LIBLINE to ignore other values.
+  PHP_EVAL_LIBLINE([$PTHREAD_CFLAGS],[MONGODB_SHARED_LIBADD])
+],[
+  AC_MSG_ERROR([libbson requires pthreads on non-Windows platforms.])
+])
 
 
 # The following is borrowed from the guile configure script.

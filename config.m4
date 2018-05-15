@@ -5,12 +5,23 @@ PHP_ARG_ENABLE([mongodb],
                                [Enable MongoDB support])])
 
 if test "$PHP_MONGODB" != "no"; then
-  AC_MSG_CHECKING([Check for supported PHP versions])
-  PHP_MONGODB_FOUND_VERSION=`${PHP_CONFIG} --version`
-  PHP_MONGODB_FOUND_VERNUM=`echo "${PHP_MONGODB_FOUND_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
-  AC_MSG_RESULT($PHP_MONGODB_FOUND_VERSION)
-  if test "$PHP_MONGODB_FOUND_VERNUM" -lt "50500"; then
-    AC_MSG_ERROR([not supported. Need a PHP version >= 5.5.0 (found $PHP_MONGODB_FOUND_VERSION)])
+  dnl Check PHP version is compatible with this extension
+  AC_MSG_CHECKING([PHP version])
+
+  PHP_MONGODB_PHP_VERSION=$PHP_VERSION
+  PHP_MONGODB_PHP_VERSION_ID=$PHP_VERSION_ID
+
+  if test -z "$PHP_MONGODB_PHP_VERSION"; then
+    if test -z "$PHP_CONFIG"; then
+      AC_MSG_ERROR([php-config not found])
+    fi
+    PHP_MONGODB_PHP_VERSION=`${PHP_CONFIG} --version`
+    PHP_MONGODB_PHP_VERSION_ID=`echo "${PHP_MONGODB_PHP_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
+  fi
+
+  AC_MSG_RESULT($PHP_MONGODB_PHP_VERSION)
+  if test "$PHP_MONGODB_PHP_VERSION_ID" -lt "50500"; then
+    AC_MSG_ERROR([not supported. Need a PHP version >= 5.5.0 (found $PHP_MONGODB_PHP_VERSION)])
   fi
 
   PHP_ARG_ENABLE([developer-flags],
@@ -173,18 +184,18 @@ if test "$PHP_MONGODB" != "no"; then
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
       if $PKG_CONFIG libbson-1.0 --atleast-version 1.9.0; then
-        LIBBSON_INC=`$PKG_CONFIG libbson-1.0 --cflags`
-        LIBBSON_LIB=`$PKG_CONFIG libbson-1.0 --libs`
-        LIBBSON_VER=`$PKG_CONFIG libbson-1.0 --modversion`
-        AC_MSG_RESULT(version $LIBBSON_VER found)
+        PHP_MONGODB_BSON_CFLAGS=`$PKG_CONFIG libbson-1.0 --cflags`
+        PHP_MONGODB_BSON_LIBS=`$PKG_CONFIG libbson-1.0 --libs`
+        PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
+        AC_MSG_RESULT(version $PHP_MONGODB_BSON_VERSION found)
       else
         AC_MSG_ERROR(system libbson must be upgraded to version >= 1.9.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libbson must be installed)
     fi
-    PHP_EVAL_INCLINE($LIBBSON_INC)
-    PHP_EVAL_LIBLINE($LIBBSON_LIB, MONGODB_SHARED_LIBADD)
+    PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_BSON_CFLAGS"
+    PHP_EVAL_LIBLINE($PHP_MONGODB_BSON_LIBS, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
   fi
 
@@ -197,19 +208,18 @@ if test "$PHP_MONGODB" != "no"; then
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0; then
       if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.9.0; then
-        LIBMONGOC_INC=`$PKG_CONFIG libmongoc-1.0 --cflags`
-        LIBMONGOC_LIB=`$PKG_CONFIG libmongoc-1.0 --libs`
-        LIBMONGOC_VER=`$PKG_CONFIG libmongoc-1.0 --modversion`
-        AC_MSG_RESULT(version $LIBMONGOC_VER found)
-
+        PHP_MONGODB_MONGOC_CFLAGS=`$PKG_CONFIG libmongoc-1.0 --cflags`
+        PHP_MONGODB_MONGOC_LIBS=`$PKG_CONFIG libmongoc-1.0 --libs`
+        PHP_MONGODB_MONGOC_VERSION=`$PKG_CONFIG libmongoc-1.0 --modversion`
+        AC_MSG_RESULT(version $PHP_MONGODB_MONGOC_VERSION found)
       else
         AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.9.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libmongoc must be installed)
     fi
-    PHP_EVAL_INCLINE($LIBMONGOC_INC)
-    PHP_EVAL_LIBLINE($LIBMONGOC_LIB, MONGODB_SHARED_LIBADD)
+    PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_MONGOC_CFLAGS"
+    PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOC_LIBS, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBMONGOC, 1, [Use system libmongoc])
   fi
 
@@ -217,32 +227,47 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_BSON_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION"
     PHP_MONGODB_MONGOC_CFLAGS="$STD_CFLAGS -DMONGOC_COMPILATION -DMONGOC_TRACE"
 
+    dnl M4 doesn't know if we're building statically or as a shared module, so
+    dnl attempt to include both paths while ignoring errors. If neither path
+    dnl exists, report an error during configure (this is later than M4 parsing
+    dnl during phpize but better than nothing).
+    m4_pushdef([_include],[
+      if test ! \( -f "$1" -o -f "ext/mongodb/$1" \); then
+        AC_MSG_ERROR([m4 could not include $1: No such file or directory])
+      fi
+      m4_builtin([sinclude],[$1])
+      m4_builtin([sinclude],[ext/mongodb/][$1])
+    ])
+
     dnl Avoid using AC_CONFIG_MACRO_DIR, which might conflict with PHP
-    m4_include([scripts/build/autotools/m4/ac_compile_check_sizeof.m4])
-    m4_include([scripts/build/autotools/m4/ac_create_stdint_h.m4])
-    m4_include([scripts/build/autotools/m4/as_var_copy.m4])
-    m4_include([scripts/build/autotools/m4/ax_check_compile_flag.m4])
-    m4_include([scripts/build/autotools/m4/ax_prototype.m4])
-    m4_include([scripts/build/autotools/m4/ax_pthread.m4])
-    m4_include([scripts/build/autotools/m4/pkg.m4])
+    _include([scripts/build/autotools/m4/ac_compile_check_sizeof.m4])
+    _include([scripts/build/autotools/m4/ac_create_stdint_h.m4])
+    _include([scripts/build/autotools/m4/as_var_copy.m4])
+    _include([scripts/build/autotools/m4/ax_check_compile_flag.m4])
+    _include([scripts/build/autotools/m4/ax_prototype.m4])
+    _include([scripts/build/autotools/m4/ax_pthread.m4])
+    _include([scripts/build/autotools/m4/php_mongodb.m4])
+    _include([scripts/build/autotools/m4/pkg.m4])
 
-    m4_include([scripts/build/autotools/CheckCompiler.m4])
-    m4_include([scripts/build/autotools/CheckHost.m4])
+    _include([scripts/build/autotools/CheckCompiler.m4])
+    _include([scripts/build/autotools/CheckHost.m4])
 
-    m4_include([scripts/build/autotools/libbson/CheckAtomics.m4])
-    m4_include([scripts/build/autotools/libbson/CheckHeaders.m4])
-    m4_include([scripts/build/autotools/libbson/Endian.m4])
-    m4_include([scripts/build/autotools/libbson/FindDependencies.m4])
-    m4_include([scripts/build/autotools/libbson/Versions.m4])
+    _include([scripts/build/autotools/libbson/CheckAtomics.m4])
+    _include([scripts/build/autotools/libbson/CheckHeaders.m4])
+    _include([scripts/build/autotools/libbson/Endian.m4])
+    _include([scripts/build/autotools/libbson/FindDependencies.m4])
+    _include([scripts/build/autotools/libbson/Versions.m4])
 
-    m4_include([scripts/build/autotools/libmongoc/CheckCompression.m4])
-    m4_include([scripts/build/autotools/libmongoc/CheckResolv.m4])
-    m4_include([scripts/build/autotools/libmongoc/CheckSasl.m4])
-    m4_include([scripts/build/autotools/libmongoc/CheckSSL.m4])
-    m4_include([scripts/build/autotools/libmongoc/FindDependencies.m4])
-    m4_include([scripts/build/autotools/libmongoc/PlatformFlags.m4])
-    m4_include([scripts/build/autotools/libmongoc/Versions.m4])
-    m4_include([scripts/build/autotools/libmongoc/WeakSymbols.m4])
+    _include([scripts/build/autotools/libmongoc/CheckCompression.m4])
+    _include([scripts/build/autotools/libmongoc/CheckResolv.m4])
+    _include([scripts/build/autotools/libmongoc/CheckSasl.m4])
+    _include([scripts/build/autotools/libmongoc/CheckSSL.m4])
+    _include([scripts/build/autotools/libmongoc/FindDependencies.m4])
+    _include([scripts/build/autotools/libmongoc/PlatformFlags.m4])
+    _include([scripts/build/autotools/libmongoc/Versions.m4])
+    _include([scripts/build/autotools/libmongoc/WeakSymbols.m4])
+
+    m4_popdef([_include])
 
     AC_SUBST(BSON_EXTRA_ALIGN, 0)
     AC_SUBST(BSON_OS, 1)
@@ -271,42 +296,40 @@ if test "$PHP_MONGODB" != "no"; then
     dnl Generated with: find src/libmongoc/src/zlib-1.2.11 -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
     PHP_MONGODB_ZLIB_SOURCES="adler32.c compress.c crc32.c deflate.c gzclose.c gzlib.c gzread.c gzwrite.c infback.c inffast.c inflate.c inftrees.c trees.c uncompr.c zutil.c"
 
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/bson], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libbson/src/jsonsl], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BSON_CFLAGS, shared_objects_mongodb, yes)
-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/mongoc], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
+    PHP_MONGODB_ADD_SOURCES([src/libbson/src/bson/], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BSON_CFLAGS)
+    PHP_MONGODB_ADD_SOURCES([src/libbson/src/jsonsl/], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BSON_CFLAGS)
+    PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/mongoc/], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS)
 
-    PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libbson/src/])
-    PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libbson/src/bson/])
-    PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libbson/src/jsonsl/])
-    PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libmongoc/src/mongoc/])
+    PHP_MONGODB_ADD_INCLUDE([src/libbson/src/])
+    PHP_MONGODB_ADD_INCLUDE([src/libbson/src/bson/])
+    PHP_MONGODB_ADD_INCLUDE([src/libbson/src/jsonsl/])
+    PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/mongoc/])
 
-    PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libbson/src/jsonsl/])
-    PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libbson/src/bson/])
-    PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libmongoc/src/mongoc/])
+    PHP_MONGODB_ADD_BUILD_DIR([src/libbson/src/bson/])
+    PHP_MONGODB_ADD_BUILD_DIR([src/libbson/src/jsonsl/])
+    PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/mongoc/])
+
+    dnl TODO: Use $ext_srcdir if we can move this after PHP_NEW_EXTENSION
+    ac_config_dir=PHP_EXT_SRCDIR(mongodb)
 
     AC_CONFIG_FILES([
-      src/libbson/src/bson/bson-config.h
-      src/libbson/src/bson/bson-version.h
-      src/libmongoc/src/mongoc/mongoc-config.h
-      src/libmongoc/src/mongoc/mongoc-version.h
+      ${ac_config_dir}/src/libbson/src/bson/bson-config.h
+      ${ac_config_dir}/src/libbson/src/bson/bson-version.h
+      ${ac_config_dir}/src/libmongoc/src/mongoc/mongoc-config.h
+      ${ac_config_dir}/src/libmongoc/src/mongoc/mongoc-version.h
     ])
 
     if test "x$bundled_zlib" = "xyes"; then
-      PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/zlib-1.2.11], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
-      PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/libmongoc/src/zlib-1.2.11/])
-      PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/libmongoc/src/zlib-1.2.11/])
-      AC_CONFIG_FILES(src/libmongoc/src/zlib-1.2.11/zconf.h)
+      PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/zlib-1.2.11/], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS)
+      PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/zlib-1.2.11/])
+      PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/zlib-1.2.11/])
+      AC_CONFIG_FILES([${ac_config_dir}/src/libmongoc/src/zlib-1.2.11/zconf.h])
     fi
-
-    dnl Apply any CFLAGS and LIBS from libbson calling AX_PTHREAD
-    PHP_EVAL_INCLINE([$PTHREAD_CFLAGS])
-    PHP_EVAL_LIBLINE([$PTHREAD_LIBS],[MONGODB_SHARED_LIBADD])
   fi
 
   PHP_NEW_EXTENSION(mongodb, $PHP_MONGODB_SOURCES, $ext_shared,, $PHP_MONGODB_CFLAGS)
 
   PHP_SUBST(MONGODB_SHARED_LIBADD)
-  PHP_SUBST(EXTRA_LDFLAGS)
 
   PHP_ADD_EXTENSION_DEP(mongodb, date)
   PHP_ADD_EXTENSION_DEP(mongodb, json)
@@ -325,10 +348,17 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/Monitoring/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/contrib/])
 
+  dnl Necessary to ensure that static builds include "-pthread" when linking
+  if test "$ext_shared" != "yes"; then
+    EXTRA_LDFLAGS_PROGRAM="$EXTRA_LDFLAGS_PROGRAM $EXTRA_LDFLAGS"
+  fi
+
   dnl This must come after PHP_NEW_EXTENSION, otherwise the srcdir won't be set
   PHP_ADD_MAKEFILE_FRAGMENT
 
-AC_CONFIG_COMMANDS_POST([echo "
+  AC_CONFIG_COMMANDS_POST([
+    if test "$enable_static" = "no"; then
+      echo "
 mongodb was configured with the following options:
 
 Build configuration:
@@ -345,7 +375,9 @@ Build configuration:
 Please submit bugreports at:
   https://jira.mongodb.org/browse/PHPC
 
-"])
+"
+    fi
+  ])
 fi
 
 dnl: vim: et sw=2

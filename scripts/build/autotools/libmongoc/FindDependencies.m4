@@ -23,5 +23,16 @@ AC_CHECK_TYPE([socklen_t],
               [AC_SUBST(MONGOC_HAVE_SOCKLEN, 0)],
               [#include <sys/socket.h>])
 
-dnl libbson already requires pthreads, so skip a redundant, optional check here
-dnl AX_PTHREAD
+# Check for pthreads. libmongoc's original FindDependencies.m4 script did not
+# require pthreads, but it does appear to be necessary on non-Windows platforms
+# based on mongoc-openssl.c and mongoc-thread-private.h.
+AX_PTHREAD([
+  PHP_MONGODB_MONGOC_CFLAGS="$PHP_MONGODB_MONGOC_CFLAGS $PTHREAD_CFLAGS"
+  PHP_EVAL_LIBLINE([$PTHREAD_LIBS],[MONGODB_SHARED_LIBADD])
+
+  # PTHREAD_CFLAGS may come back as "-pthread", which should also be used when
+  # linking. We can trust PHP_EVAL_LIBLINE to ignore other values.
+  PHP_EVAL_LIBLINE([$PTHREAD_CFLAGS],[MONGODB_SHARED_LIBADD])
+],[
+  AC_MSG_ERROR([libmongoc requires pthreads on non-Windows platforms.])
+])
