@@ -35,8 +35,8 @@ function get_files() {
         "phongo_*.{h,c}",
         "config.{m4,w32}",
         "Makefile.frag",
-        "scripts/build/autotools/*.{m4}",
-        "scripts/build/autotools/m4/*.{m4}",
+        "scripts/autotools/*.{m4}",
+        "scripts/autotools/*/*.{m4}",
 
         "src/*.{c,h}",
 
