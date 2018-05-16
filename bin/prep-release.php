@@ -46,13 +46,9 @@ function get_files() {
         "src/BSON/*.{c,h}",
         "src/contrib/*.{c,h}",
 
-        "src/libbson/build/autotools/*.{m4}",
-        "src/libbson/build/autotools/m4/*.{m4}",
         "src/libbson/src/bson/*.{c,h,h.in}",
         "src/libbson/src/jsonsl/*.{c,h}",
         "src/libbson/VERSION*",
-        "src/libmongoc/build/autotools/*.{m4}",
-        "src/libmongoc/build/autotools/m4/*.{m4}",
         "src/libmongoc/src/mongoc/*.{c,def,defs,h,h.in}",
         "src/libmongoc/src/zlib-1.2.11/*.{c,def,defs,h,in}",
         "src/libmongoc/VERSION*",
