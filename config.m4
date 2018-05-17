@@ -188,13 +188,13 @@ if test "$PHP_MONGODB" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
-      if $PKG_CONFIG libbson-1.0 --atleast-version 1.9.0; then
+      if $PKG_CONFIG libbson-1.0 --atleast-version 1.10.0; then
         PHP_MONGODB_BSON_CFLAGS=`$PKG_CONFIG libbson-1.0 --cflags`
         PHP_MONGODB_BSON_LIBS=`$PKG_CONFIG libbson-1.0 --libs`
         PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
         AC_MSG_RESULT(version $PHP_MONGODB_BSON_VERSION found)
       else
-        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.9.0)
+        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.10.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libbson must be installed)
@@ -212,13 +212,13 @@ if test "$PHP_MONGODB" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0; then
-      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.9.0; then
+      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.10.0; then
         PHP_MONGODB_MONGOC_CFLAGS=`$PKG_CONFIG libmongoc-1.0 --cflags`
         PHP_MONGODB_MONGOC_LIBS=`$PKG_CONFIG libmongoc-1.0 --libs`
         PHP_MONGODB_MONGOC_VERSION=`$PKG_CONFIG libmongoc-1.0 --modversion`
         AC_MSG_RESULT(version $PHP_MONGODB_MONGOC_VERSION found)
       else
-        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.9.0)
+        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.10.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libmongoc must be installed)
@@ -229,8 +229,7 @@ if test "$PHP_MONGODB" != "no"; then
   fi
 
   if test "$PHP_LIBBSON" = "no" -a "$PHP_LIBMONGOC" = "no"; then
-    PHP_MONGODB_BSON_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION"
-    PHP_MONGODB_MONGOC_CFLAGS="$STD_CFLAGS -DMONGOC_COMPILATION -DMONGOC_TRACE"
+    PHP_MONGODB_BUNDLED_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
 
     dnl M4 doesn't know if we're building statically or as a shared module, so
     dnl attempt to include both paths while ignoring errors. If neither path
@@ -278,6 +277,9 @@ if test "$PHP_MONGODB" != "no"; then
     AC_SUBST(BSON_OS, 1)
 
     AC_SUBST(MONGOC_NO_AUTOMATIC_GLOBALS, 1)
+    AC_SUBST(MONGOC_ENABLE_RDTSCP, 0)
+    AC_SUBST(MONGOC_ENABLE_SHM_COUNTERS, 0)
+    AC_SUBST(MONGOC_TRACE, 1)
 
     dnl Capture user-set environment variables for metadata handshake
     dnl We can do this after the above scripts as they only modify STD_CFLAGS
@@ -289,43 +291,49 @@ if test "$PHP_MONGODB" != "no"; then
     AC_SUBST(MONGOC_USER_SET_LDFLAGS)
     AC_SUBST(MONGOC_CC)
 
-    dnl Generated with: find src/libbson/src/bson -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
+    dnl Generated with: find src/libmongoc/src/common -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
+    PHP_MONGODB_COMMON_SOURCES="common-b64.c"
+
+    dnl Generated with: find src/libmongoc/src/libbson/src/bson -name '*.c' -print0 | cut -sz -d / -f 7- | sort -z | tr '\000' ' '
     PHP_MONGODB_BSON_SOURCES="bcon.c bson-atomic.c bson.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-iso8601.c bson-iter.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c"
 
-    dnl Generated with: find src/libbson/src/jsonsl -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
+    dnl Generated with: find src/libmongoc/src/libbson/src/jsonsl -name '*.c' -print0 | cut -sz -d / -f 7- | sort -z | tr '\000' ' '
     PHP_MONGODB_JSONSL_SOURCES="jsonsl.c"
 
     dnl Generated with: find src/libmongoc/src/mongoc -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
-    PHP_MONGODB_MONGOC_SOURCES="mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-b64.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-change-stream.c mongoc-client.c mongoc-client-pool.c mongoc-client-session.c mongoc-cluster.c mongoc-cluster-cyrus.c mongoc-cluster-gssapi.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-cmd.c mongoc-collection.c mongoc-compression.c mongoc-counters.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-cursorid.c mongoc-cursor-transform.c mongoc-cyrus.c mongoc-database.c mongoc-find-and-modify.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-gssapi.c mongoc-handshake.c mongoc-host-list.c mongoc-index.c mongoc-init.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-openssl.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-description.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-command-legacy.c mongoc-write-concern.c"
+    PHP_MONGODB_MONGOC_SOURCES="mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-change-stream.c mongoc-client.c mongoc-client-pool.c mongoc-client-session.c mongoc-cluster.c mongoc-cluster-cyrus.c mongoc-cluster-gssapi.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-cmd.c mongoc-collection.c mongoc-compression.c mongoc-counters.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-cmd.c mongoc-cursor-cmd-deprecated.c mongoc-cursor-find.c mongoc-cursor-find-cmd.c mongoc-cursor-find-opquery.c mongoc-cursor-legacy.c mongoc-cyrus.c mongoc-database.c mongoc-find-and-modify.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-gssapi.c mongoc-handshake.c mongoc-host-list.c mongoc-index.c mongoc-init.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-openssl.c mongoc-opts.c mongoc-opts-helpers.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-description.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-command-legacy.c mongoc-write-concern.c"
 
     dnl Generated with: find src/libmongoc/src/zlib-1.2.11 -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
     PHP_MONGODB_ZLIB_SOURCES="adler32.c compress.c crc32.c deflate.c gzclose.c gzlib.c gzread.c gzwrite.c infback.c inffast.c inflate.c inftrees.c trees.c uncompr.c zutil.c"
 
-    PHP_MONGODB_ADD_SOURCES([src/libbson/src/bson/], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BSON_CFLAGS)
-    PHP_MONGODB_ADD_SOURCES([src/libbson/src/jsonsl/], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BSON_CFLAGS)
-    PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/mongoc/], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS)
+    PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/common/], $PHP_MONGODB_COMMON_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
+    PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libbson/src/bson/], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
+    PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libbson/src/jsonsl/], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
+    PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/mongoc/], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
 
-    PHP_MONGODB_ADD_INCLUDE([src/libbson/src/])
-    PHP_MONGODB_ADD_INCLUDE([src/libbson/src/bson/])
-    PHP_MONGODB_ADD_INCLUDE([src/libbson/src/jsonsl/])
+    PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/common/])
+    PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/libbson/src/])
+    PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/libbson/src/bson/])
+    PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/libbson/src/jsonsl/])
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/mongoc/])
 
-    PHP_MONGODB_ADD_BUILD_DIR([src/libbson/src/bson/])
-    PHP_MONGODB_ADD_BUILD_DIR([src/libbson/src/jsonsl/])
+    PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/common/])
+    PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/libbson/src/bson/])
+    PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/libbson/src/jsonsl/])
     PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/mongoc/])
 
     dnl TODO: Use $ext_srcdir if we can move this after PHP_NEW_EXTENSION
     ac_config_dir=PHP_EXT_SRCDIR(mongodb)
 
     AC_CONFIG_FILES([
-      ${ac_config_dir}/src/libbson/src/bson/bson-config.h
-      ${ac_config_dir}/src/libbson/src/bson/bson-version.h
+      ${ac_config_dir}/src/libmongoc/src/libbson/src/bson/bson-config.h
+      ${ac_config_dir}/src/libmongoc/src/libbson/src/bson/bson-version.h
       ${ac_config_dir}/src/libmongoc/src/mongoc/mongoc-config.h
       ${ac_config_dir}/src/libmongoc/src/mongoc/mongoc-version.h
     ])
 
     if test "x$bundled_zlib" = "xyes"; then
-      PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/zlib-1.2.11/], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS)
+      PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/zlib-1.2.11/], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
       PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/zlib-1.2.11/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/zlib-1.2.11/])
       AC_CONFIG_FILES([${ac_config_dir}/src/libmongoc/src/zlib-1.2.11/zconf.h])

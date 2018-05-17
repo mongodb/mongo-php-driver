@@ -1,7 +1,5 @@
 --TEST--
 PHPC-1163: Unacknowledged write concern should omit implicit session
---XFAIL--
-Depends on CDRIVER-2615
 --SKIPIF--
 <?php if (PHP_INT_SIZE !== 8) { die("skip Can't represent 64-bit ints on a 32-bit platform"); } ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>

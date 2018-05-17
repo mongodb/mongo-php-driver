@@ -6,4 +6,6 @@ fi
 
 AC_CREATE_STDINT_H([$srcdir/src/libbson/src/bson/bson-stdint.h])
 
-AC_CHECK_HEADERS_ONCE([strings.h])
+AC_CHECK_HEADER([strings.h],
+                [AC_SUBST(BSON_HAVE_STRINGS_H, 1)],
+                [AC_SUBST(BSON_HAVE_STRINGS_H, 0)])

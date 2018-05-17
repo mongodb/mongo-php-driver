@@ -360,7 +360,7 @@ static PHP_METHOD(Cursor, isDead)
 		return;
 	}
 
-	RETURN_BOOL(!mongoc_cursor_is_alive(intern->cursor));
+	RETURN_BOOL(!mongoc_cursor_more(intern->cursor));
 } /* }}} */
 
 /* {{{ MongoDB\Driver\Cursor function entries */
@@ -525,7 +525,7 @@ static HashTable* php_phongo_cursor_get_debug_info(zval* object, int* is_temp TS
 		ADD_ASSOC_NULL_EX(&retval, "session");
 	}
 
-	ADD_ASSOC_BOOL_EX(&retval, "isDead", !mongoc_cursor_is_alive(intern->cursor));
+	ADD_ASSOC_BOOL_EX(&retval, "isDead", !mongoc_cursor_more(intern->cursor));
 
 	ADD_ASSOC_LONG_EX(&retval, "currentIndex", intern->current);
 
