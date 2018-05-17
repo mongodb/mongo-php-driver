@@ -178,7 +178,9 @@
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif
 
-void phongo_add_exception_prop(const char* prop, int prop_len, zval* value TSRMLS_DC);
+void      phongo_add_exception_prop(const char* prop, int prop_len, zval* value TSRMLS_DC);
+zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
+zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht);
 
 #endif /* PHONGO_COMPAT_H */
 

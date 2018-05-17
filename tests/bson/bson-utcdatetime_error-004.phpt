@@ -19,9 +19,9 @@ foreach ($invalidValues as $invalidValue) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected integer or string, boolean given
+Expected integer or string, bool%S given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected integer or string, array given
 ===DONE===

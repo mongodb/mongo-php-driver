@@ -48,15 +48,15 @@ foreach ($invalidValues as $invalidValue) {
 --EXPECTF--
 Testing top-level objects
 Expected MyDocument::bsonSerialize() to return an array or stdClass, %r(null|NULL)%r given
-Expected MyDocument::bsonSerialize() to return an array or stdClass, integer given
+Expected MyDocument::bsonSerialize() to return an array or stdClass, int%S given
 Expected MyDocument::bsonSerialize() to return an array or stdClass, string given
-Expected MyDocument::bsonSerialize() to return an array or stdClass, boolean given
+Expected MyDocument::bsonSerialize() to return an array or stdClass, bool%S given
 Expected MyDocument::bsonSerialize() to return an array or stdClass, MyDocument given
 
 Testing nested objects
 Expected MyDocument::bsonSerialize() to return an array or stdClass, %r(null|NULL)%r given
-Expected MyDocument::bsonSerialize() to return an array or stdClass, integer given
+Expected MyDocument::bsonSerialize() to return an array or stdClass, int%S given
 Expected MyDocument::bsonSerialize() to return an array or stdClass, string given
-Expected MyDocument::bsonSerialize() to return an array or stdClass, boolean given
+Expected MyDocument::bsonSerialize() to return an array or stdClass, bool%S given
 Expected MyDocument::bsonSerialize() to return an array or stdClass, MyDocument given
 ===DONE===
