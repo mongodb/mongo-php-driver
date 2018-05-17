@@ -30,6 +30,14 @@ AS_IF([test "$PHP_MONGODB_SASL" = "cyrus" -o "$PHP_MONGODB_SASL" = "auto"],[
     fi
   ])
 
+  if test "$found_cyrus" = "yes"; then
+    PHP_CHECK_LIBRARY([sasl2],
+                      [sasl_client_done],
+                      [have_sasl_client_done=yes],
+                      [have_sasl_client_done=no],
+                      $MONGODB_SHARED_LIBADD)
+  fi
+
   if test "$PHP_MONGODB_SASL" = "cyrus" -a "$found_cyrus" != "yes"; then
     AC_MSG_ERROR([Cyrus SASL libraries and development headers could not be found])
   fi
