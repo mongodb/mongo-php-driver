@@ -25,13 +25,13 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "readConcern" option to be MongoDB\Driver\ReadConcern, integer given
+Expected "readConcern" option to be MongoDB\Driver\ReadConcern, int%S given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readConcern" option to be MongoDB\Driver\ReadConcern, %r(double|float)%r given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readConcern" option to be MongoDB\Driver\ReadConcern, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "readConcern" option to be MongoDB\Driver\ReadConcern, boolean given
+Expected "readConcern" option to be MongoDB\Driver\ReadConcern, bool%S given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readConcern" option to be MongoDB\Driver\ReadConcern, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

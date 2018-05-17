@@ -26,7 +26,7 @@ foreach ($tests as $test) {
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected w to be integer or string, %r(double|float)%r given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected w to be integer or string, boolean given
+Expected w to be integer or string, bool%S given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected w to be integer or string, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

@@ -14,7 +14,7 @@ echo throws(function() use ($bulk) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "collation" option to be array or object, integer given
+Expected "collation" option to be array or object, int%S given
 ===DONE===
