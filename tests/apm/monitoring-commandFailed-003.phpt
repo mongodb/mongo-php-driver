@@ -48,7 +48,7 @@ try {
 --EXPECTF--
 started: findAndModify
 failed: findAndModify
-object(stdClass)#%d (4) {
+object(stdClass)#%d (%d) {
   ["ok"]=>
   float(0)
   ["errmsg"]=>
@@ -56,5 +56,5 @@ object(stdClass)#%d (4) {
   ["code"]=>
   int(9)
   ["codeName"]=>
-  string(13) "FailedToParse"
+  string(13) "FailedToParse"%A
 }
