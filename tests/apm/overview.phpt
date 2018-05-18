@@ -91,6 +91,15 @@ object(MongoDB\Driver\Monitoring\CommandFailedEvent)#%d (%d) {
   }
   ["operationId"]=>
   string(%d) "%s"
+  ["reply"]=>
+  object(stdClass)#%d (%d) {
+    ["ok"]=>
+    float(0)
+    ["errmsg"]=>
+    string(12) "ns not found"
+    ["code"]=>
+    int(26)%A
+  }
   ["requestId"]=>
   string(%d) "%s"
   ["server"]=>
