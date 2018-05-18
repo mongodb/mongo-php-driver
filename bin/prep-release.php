@@ -46,11 +46,12 @@ function get_files() {
         "src/BSON/*.{c,h}",
         "src/contrib/*.{c,h}",
 
-        "src/libbson/src/bson/*.{c,h,h.in}",
-        "src/libbson/src/jsonsl/*.{c,h}",
-        "src/libbson/VERSION*",
+        "src/libmongoc/src/common/*.{c,h}",
+        "src/libmongoc/src/libbson/src/bson/*.{c,h,h.in}",
+        "src/libmongoc/src/libbson/src/jsonsl/*.{c,h}",
+        "src/libmongoc/src/libbson/VERSION*",
         "src/libmongoc/src/mongoc/*.{c,def,defs,h,h.in}",
-        "src/libmongoc/src/zlib-1.2.11/*.{c,def,defs,h,in}",
+        "src/libmongoc/src/zlib-1.2.11/*.{c,h,h.in}",
         "src/libmongoc/VERSION*",
       ),
       'test' => array(

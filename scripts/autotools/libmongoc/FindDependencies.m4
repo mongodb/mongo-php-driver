@@ -16,7 +16,9 @@ AC_CHECK_FUNCS([shm_open],[],[
 ])
 
 # Check for sched_getcpu
-AC_CHECK_FUNCS([sched_getcpu])
+AC_CHECK_FUNC([sched_getcpu],
+              [AC_SUBST(MONGOC_HAVE_SCHED_GETCPU, 1)],
+              [AC_SUBST(MONGOC_HAVE_SCHED_GETCPU, 0)])
 
 AC_CHECK_TYPE([socklen_t],
               [AC_SUBST(MONGOC_HAVE_SOCKLEN, 1)],
