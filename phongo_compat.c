@@ -33,7 +33,7 @@ void phongo_add_exception_prop(const char* prop, int prop_len, zval* value TSRML
 }
 
 #ifdef ZEND_HASH_GET_APPLY_COUNT /* PHP 7.2 or earlier recursion protection */
-inline zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht)
+zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht)
 {
 	if (!ht) {
 		return 1;
@@ -47,7 +47,7 @@ inline zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht)
 	return 1;
 }
 
-inline zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht)
+zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht)
 {
 	if (!ht) {
 		return 1;
@@ -61,7 +61,7 @@ inline zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht)
 	return 1;
 }
 #else /* PHP 7.3 or later */
-inline zend_bool php_phongo_zend_hash_apply_protection_begin(zend_array* ht)
+zend_bool php_phongo_zend_hash_apply_protection_begin(zend_array* ht)
 {
 	if (GC_IS_RECURSIVE(ht)) {
 		return 0;
@@ -72,7 +72,7 @@ inline zend_bool php_phongo_zend_hash_apply_protection_begin(zend_array* ht)
 	return 1;
 }
 
-inline zend_bool php_phongo_zend_hash_apply_protection_end(zend_array* ht)
+zend_bool php_phongo_zend_hash_apply_protection_end(zend_array* ht)
 {
 	if (!GC_IS_RECURSIVE(ht)) {
 		return 0;
