@@ -300,7 +300,7 @@ if test "$PHP_MONGODB" != "no"; then
     dnl Generated with: find src/libmongoc/src/libbson/src/jsonsl -name '*.c' -print0 | cut -sz -d / -f 7- | sort -z | tr '\000' ' '
     PHP_MONGODB_JSONSL_SOURCES="jsonsl.c"
 
-    dnl Generated with: find src/libmongoc/src/mongoc -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
+    dnl Generated with: find src/libmongoc/src/libmongoc/src/mongoc -name '*.c' -print0 | cut -sz -d / -f 7- | sort -z | tr '\000' ' '
     PHP_MONGODB_MONGOC_SOURCES="mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-change-stream.c mongoc-client.c mongoc-client-pool.c mongoc-client-session.c mongoc-cluster.c mongoc-cluster-cyrus.c mongoc-cluster-gssapi.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-cmd.c mongoc-collection.c mongoc-compression.c mongoc-counters.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-cmd.c mongoc-cursor-cmd-deprecated.c mongoc-cursor-find.c mongoc-cursor-find-cmd.c mongoc-cursor-find-opquery.c mongoc-cursor-legacy.c mongoc-cyrus.c mongoc-database.c mongoc-find-and-modify.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-gssapi.c mongoc-handshake.c mongoc-host-list.c mongoc-index.c mongoc-init.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-openssl.c mongoc-opts.c mongoc-opts-helpers.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-description.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-command-legacy.c mongoc-write-concern.c"
 
     dnl Generated with: find src/libmongoc/src/zlib-1.2.11 -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
@@ -309,18 +309,18 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/common/], $PHP_MONGODB_COMMON_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
     PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libbson/src/bson/], $PHP_MONGODB_BSON_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
     PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libbson/src/jsonsl/], $PHP_MONGODB_JSONSL_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
-    PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/mongoc/], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
+    PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/libmongoc/src/mongoc/], $PHP_MONGODB_MONGOC_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
 
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/common/])
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/libbson/src/])
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/libbson/src/bson/])
     PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/libbson/src/jsonsl/])
-    PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/mongoc/])
+    PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/libmongoc/src/mongoc/])
 
     PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/common/])
     PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/libbson/src/bson/])
     PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/libbson/src/jsonsl/])
-    PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/mongoc/])
+    PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/libmongoc/src/mongoc/])
 
     dnl TODO: Use $ext_srcdir if we can move this after PHP_NEW_EXTENSION
     ac_config_dir=PHP_EXT_SRCDIR(mongodb)
@@ -328,8 +328,8 @@ if test "$PHP_MONGODB" != "no"; then
     AC_CONFIG_FILES([
       ${ac_config_dir}/src/libmongoc/src/libbson/src/bson/bson-config.h
       ${ac_config_dir}/src/libmongoc/src/libbson/src/bson/bson-version.h
-      ${ac_config_dir}/src/libmongoc/src/mongoc/mongoc-config.h
-      ${ac_config_dir}/src/libmongoc/src/mongoc/mongoc-version.h
+      ${ac_config_dir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h
+      ${ac_config_dir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h
     ])
 
     if test "x$bundled_zlib" = "xyes"; then

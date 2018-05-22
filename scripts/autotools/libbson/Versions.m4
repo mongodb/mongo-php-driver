@@ -1,4 +1,4 @@
-BSON_CURRENT_FILE=[]PHP_EXT_SRCDIR(mongodb)[/src/libmongoc/src/libbson/VERSION_CURRENT]
+BSON_CURRENT_FILE=[]PHP_EXT_SRCDIR(mongodb)[/src/libmongoc/VERSION_CURRENT]
 BSON_VERSION=$(cat $BSON_CURRENT_FILE)
 
 dnl Ensure newline for "cut" implementations that need it, e.g. HP-UX.
