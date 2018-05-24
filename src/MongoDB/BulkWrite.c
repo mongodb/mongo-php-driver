@@ -73,6 +73,70 @@ static inline bool php_phongo_bulkwrite_update_has_operators(bson_t* bupdate) /*
 	return false;
 } /* }}} */
 
+/* Returns whether the BSON array's keys are a sequence of integer strings
+ * starting with "0". BSON_APPEND_ARRAY considers it the caller's responsibility
+ * to ensure that the array's keys are properly formatted. */
+static inline bool php_phongo_bulkwrite_bson_array_has_valid_keys(bson_t* array) /* {{{ */
+{
+	bson_iter_t iter;
+
+	if (bson_empty(array)) {
+		return true;
+	}
+
+	if (bson_iter_init(&iter, array)) {
+		char key[12];
+		int  count = 0;
+
+		while (bson_iter_next(&iter)) {
+			bson_snprintf(key, sizeof(key), "%d", count);
+
+			if (0 != strcmp(key, bson_iter_key(&iter))) {
+				return false;
+			}
+
+			count++;
+		}
+	}
+
+	return true;
+} /* }}} */
+
+/* Appends an array field for the given opts document and key. Returns true on
+ * success; otherwise, false is returned and an exception is thrown. */
+static bool php_phongo_bulkwrite_opts_append_array(bson_t* opts, const char* key, zval* zarr TSRMLS_DC) /* {{{ */
+{
+	zval*  value = php_array_fetch(zarr, key);
+	bson_t b     = BSON_INITIALIZER;
+
+	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" option to be array or object, %s given", key, zend_get_type_by_const(Z_TYPE_P(value)));
+		return false;
+	}
+
+	php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL TSRMLS_CC);
+
+	if (EG(exception)) {
+		bson_destroy(&b);
+		return false;
+	}
+
+	if (!php_phongo_bulkwrite_bson_array_has_valid_keys(&b)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"%s\" option has invalid keys for a BSON array", key);
+		bson_destroy(&b);
+		return false;
+	}
+
+	if (!BSON_APPEND_ARRAY(opts, key, &b)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", key);
+		bson_destroy(&b);
+		return false;
+	}
+
+	bson_destroy(&b);
+	return true;
+} /* }}} */
+
 /* Appends a document field for the given opts document and key. Returns true on
  * success; otherwise, false is returned and an exception is thrown. */
 static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key TSRMLS_DC) /* {{{ */
@@ -114,6 +178,13 @@ static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* 
 		return false;                                                                                            \
 	}
 
+#define PHONGO_BULKWRITE_OPT_ARRAY(opt)                                                     \
+	if (zoptions && php_array_existsc(zoptions, (opt))) {                                   \
+		if (!php_phongo_bulkwrite_opts_append_array(boptions, (opt), zoptions TSRMLS_CC)) { \
+			return false;                                                                   \
+		}                                                                                   \
+	}
+
 #define PHONGO_BULKWRITE_OPT_DOCUMENT(opt)                                                            \
 	if (zoptions && php_array_existsc(zoptions, (opt))) {                                             \
 		if (!php_phongo_bulkwrite_opts_append_document(boptions, (opt), zoptions, (opt) TSRMLS_CC)) { \
@@ -137,7 +208,7 @@ static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zo
 
 	PHONGO_BULKWRITE_APPEND_BOOL("multi", multi);
 	PHONGO_BULKWRITE_APPEND_BOOL("upsert", upsert);
-	PHONGO_BULKWRITE_OPT_DOCUMENT("arrayFilters");
+	PHONGO_BULKWRITE_OPT_ARRAY("arrayFilters");
 	PHONGO_BULKWRITE_OPT_DOCUMENT("collation");
 
 	return true;
