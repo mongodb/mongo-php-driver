@@ -139,13 +139,13 @@ static bool php_phongo_bulkwrite_opts_append_array(bson_t* opts, const char* key
 
 /* Appends a document field for the given opts document and key. Returns true on
  * success; otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key TSRMLS_DC) /* {{{ */
+static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* key, zval* zarr TSRMLS_DC) /* {{{ */
 {
-	zval*  value = php_array_fetch(zarr, zarr_key);
+	zval*  value = php_array_fetch(zarr, key);
 	bson_t b     = BSON_INITIALIZER;
 
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" option to be array or object, %s given", zarr_key, zend_get_type_by_const(Z_TYPE_P(value)));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" option to be array or object, %s given", key, zend_get_type_by_const(Z_TYPE_P(value)));
 		return false;
 	}
 
@@ -156,8 +156,8 @@ static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* 
 		return false;
 	}
 
-	if (!BSON_APPEND_DOCUMENT(opts, opts_key, &b)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", opts_key);
+	if (!BSON_APPEND_DOCUMENT(opts, key, &b)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", key);
 		bson_destroy(&b);
 		return false;
 	}
@@ -185,11 +185,11 @@ static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* 
 		}                                                                                   \
 	}
 
-#define PHONGO_BULKWRITE_OPT_DOCUMENT(opt)                                                            \
-	if (zoptions && php_array_existsc(zoptions, (opt))) {                                             \
-		if (!php_phongo_bulkwrite_opts_append_document(boptions, (opt), zoptions, (opt) TSRMLS_CC)) { \
-			return false;                                                                             \
-		}                                                                                             \
+#define PHONGO_BULKWRITE_OPT_DOCUMENT(opt)                                                     \
+	if (zoptions && php_array_existsc(zoptions, (opt))) {                                      \
+		if (!php_phongo_bulkwrite_opts_append_document(boptions, (opt), zoptions TSRMLS_CC)) { \
+			return false;                                                                      \
+		}                                                                                      \
 	}
 
 /* Applies options (including defaults) for an update operation. */
