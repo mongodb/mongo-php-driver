@@ -338,7 +338,9 @@ if test "$PHP_MONGODB" != "no"; then
     fi
 
     if test "x$with_zlib" = "xbundled"; then
-      PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/zlib-1.2.11], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_MONGOC_CFLAGS, shared_objects_mongodb, yes)
+      PHP_MONGODB_ZLIB_CFLAGS="$PHP_MONGODB_MONGOC_CFLAGS"
+      AC_CHECK_HEADER([unistd.h], [PHP_MONGODB_ZLIB_CFLAGS="$PHP_MONGODB_ZLIB_CFLAGS -DHAVE_UNISTD_H=1"], [])
+      PHP_ADD_SOURCES_X(PHP_EXT_DIR(mongodb)[src/libmongoc/src/zlib-1.2.11], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_ZLIB_CFLAGS, shared_objects_mongodb, yes)
     fi
   fi
 
