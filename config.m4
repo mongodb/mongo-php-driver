@@ -332,7 +332,9 @@ if test "$PHP_MONGODB" != "no"; then
     ])
 
     if test "x$bundled_zlib" = "xyes"; then
-      PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/zlib-1.2.11/], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
+      PHP_MONGODB_ZLIB_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS"
+      AC_CHECK_HEADER([unistd.h], [PHP_MONGODB_ZLIB_CFLAGS="$PHP_MONGODB_ZLIB_CFLAGS -DHAVE_UNISTD_H=1"], [])
+      PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/zlib-1.2.11/], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_ZLIB_CFLAGS)
       PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/zlib-1.2.11/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/zlib-1.2.11/])
       AC_CONFIG_FILES([${ac_config_dir}/src/libmongoc/src/zlib-1.2.11/zconf.h])
