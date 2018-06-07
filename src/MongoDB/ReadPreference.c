@@ -202,17 +202,105 @@ static PHP_METHOD(ReadPreference, getTagSets)
 	}
 } /* }}} */
 
+static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
+{
+	php_phongo_readpreference_t* intern;
+	HashTable*                   props;
+	const char*                  modeString = NULL;
+	const bson_t*                tags;
+	mongoc_read_mode_t           mode;
+
+	intern = Z_READPREFERENCE_OBJ_P(object);
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 3);
+
+	if (!intern->read_preference) {
+		return props;
+	}
+
+	tags = mongoc_read_prefs_get_tags(intern->read_preference);
+	mode = mongoc_read_prefs_get_mode(intern->read_preference);
+
+	switch (mode) {
+		case MONGOC_READ_PRIMARY:
+			modeString = "primary";
+			break;
+		case MONGOC_READ_PRIMARY_PREFERRED:
+			modeString = "primaryPreferred";
+			break;
+		case MONGOC_READ_SECONDARY:
+			modeString = "secondary";
+			break;
+		case MONGOC_READ_SECONDARY_PREFERRED:
+			modeString = "secondaryPreferred";
+			break;
+		case MONGOC_READ_NEAREST:
+			modeString = "nearest";
+			break;
+		default: /* Do nothing */
+			break;
+	}
+
+	if (modeString) {
+#if PHP_VERSION_ID >= 70000
+		zval z_mode;
+
+		ZVAL_STRING(&z_mode, modeString);
+		zend_hash_str_update(props, "mode", sizeof("mode") - 1, &z_mode);
+#else
+		zval* z_mode;
+
+		MAKE_STD_ZVAL(z_mode);
+		ZVAL_STRING(z_mode, modeString, 1);
+		zend_hash_update(props, "mode", sizeof("mode"), &z_mode, sizeof(z_mode), NULL);
+#endif
+	}
+
+	if (!bson_empty0(tags)) {
+		/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type since tags is an
+		 * array; however, inner documents and arrays can use the default. */
+		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+		state.map.root_type         = PHONGO_TYPEMAP_NATIVE_ARRAY;
+
+		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
+#if PHP_VERSION_ID >= 70000
+		Z_ADDREF(state.zchild);
+		zend_hash_str_update(props, "tags", sizeof("tags") - 1, &state.zchild);
+#else
+		Z_ADDREF_P(state.zchild);
+		zend_hash_update(props, "tags", sizeof("tags"), &state.zchild, sizeof(state.zchild), NULL);
+#endif
+		zval_ptr_dtor(&state.zchild);
+	}
+
+	if (mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference) != MONGOC_NO_MAX_STALENESS) {
+		long maxStalenessSeconds = mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference);
+#if PHP_VERSION_ID >= 70000
+		zval z_max_ss;
+
+		ZVAL_LONG(&z_max_ss, maxStalenessSeconds);
+		zend_hash_str_update(props, "maxStalenessSeconds", sizeof("maxStalenessSeconds") - 1, &z_max_ss);
+#else
+		zval* z_max_ss;
+
+		MAKE_STD_ZVAL(z_max_ss);
+		ZVAL_LONG(z_max_ss, maxStalenessSeconds);
+		zend_hash_update(props, "maxStalenessSeconds", sizeof("maxStalenessSeconds"), &z_max_ss, sizeof(z_max_ss), NULL);
+#endif
+	}
+
+	return props;
+} /* }}} */
+
 /* {{{ proto array MongoDB\Driver\ReadPreference::bsonSerialize()
 */
 static PHP_METHOD(ReadPreference, bsonSerialize)
 {
-	const mongoc_read_prefs_t* read_preference = phongo_read_preference_from_zval(getThis() TSRMLS_CC);
-
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	php_phongo_read_preference_to_zval(return_value, read_preference);
+	ZVAL_ARR(return_value, php_phongo_readpreference_get_properties_hash(getThis(), true TSRMLS_CC));
 	convert_to_object(return_value);
 } /* }}} */
 
@@ -246,6 +334,11 @@ static void php_phongo_readpreference_free_object(phongo_free_object_arg* object
 	php_phongo_readpreference_t* intern = Z_OBJ_READPREFERENCE(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
+
+	if (intern->properties) {
+		zend_hash_destroy(intern->properties);
+		FREE_HASHTABLE(intern->properties);
+	}
 
 	if (intern->read_preference) {
 		mongoc_read_prefs_destroy(intern->read_preference);
@@ -282,14 +375,13 @@ static phongo_create_object_retval php_phongo_readpreference_create_object(zend_
 
 static HashTable* php_phongo_readpreference_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
-	zval                       retval     = ZVAL_STATIC_INIT;
-	const mongoc_read_prefs_t* read_prefs = phongo_read_preference_from_zval(object TSRMLS_CC);
-
 	*is_temp = 1;
+	return php_phongo_readpreference_get_properties_hash(object, true TSRMLS_CC);
+} /* }}} */
 
-	php_phongo_read_preference_to_zval(&retval, read_prefs);
-
-	return Z_ARRVAL(retval);
+static HashTable* php_phongo_readpreference_get_properties(zval* object TSRMLS_DC) /* {{{ */
+{
+	return php_phongo_readpreference_get_properties_hash(object, false TSRMLS_CC);
 } /* }}} */
 /* }}} */
 
@@ -307,6 +399,7 @@ void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_readpreference, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_readpreference.get_debug_info = php_phongo_readpreference_get_debug_info;
+	php_phongo_handler_readpreference.get_properties = php_phongo_readpreference_get_properties;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_readpreference.free_obj = php_phongo_readpreference_free_object;
 	php_phongo_handler_readpreference.offset   = XtOffsetOf(php_phongo_readpreference_t, std);

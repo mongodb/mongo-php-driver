@@ -93,12 +93,14 @@ typedef struct {
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_read_concern_t* read_concern;
+	HashTable*             properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_readconcern_t;
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_read_prefs_t* read_preference;
+	HashTable*           properties;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_readpreference_t;
 
@@ -117,6 +119,7 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	HashTable*              properties;
 	mongoc_write_concern_t* write_concern;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_writeconcern_t;

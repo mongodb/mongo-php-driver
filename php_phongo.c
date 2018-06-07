@@ -1266,52 +1266,6 @@ bool php_phongo_read_preference_tags_are_valid(const bson_t* tags) /* {{{ */
 	return true;
 } /* }}} */
 
-void php_phongo_read_preference_to_zval(zval* retval, const mongoc_read_prefs_t* read_prefs) /* {{{ */
-{
-	const bson_t*      tags = mongoc_read_prefs_get_tags(read_prefs);
-	mongoc_read_mode_t mode = mongoc_read_prefs_get_mode(read_prefs);
-
-	array_init_size(retval, 3);
-
-	switch (mode) {
-		case MONGOC_READ_PRIMARY:
-			ADD_ASSOC_STRING(retval, "mode", "primary");
-			break;
-		case MONGOC_READ_PRIMARY_PREFERRED:
-			ADD_ASSOC_STRING(retval, "mode", "primaryPreferred");
-			break;
-		case MONGOC_READ_SECONDARY:
-			ADD_ASSOC_STRING(retval, "mode", "secondary");
-			break;
-		case MONGOC_READ_SECONDARY_PREFERRED:
-			ADD_ASSOC_STRING(retval, "mode", "secondaryPreferred");
-			break;
-		case MONGOC_READ_NEAREST:
-			ADD_ASSOC_STRING(retval, "mode", "nearest");
-			break;
-		default: /* Do nothing */
-			break;
-	}
-
-	if (!bson_empty0(tags)) {
-		/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type since tags is an
-		 * array; however, inner documents and arrays can use the default. */
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-		state.map.root_type         = PHONGO_TYPEMAP_NATIVE_ARRAY;
-
-		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
-#if PHP_VERSION_ID >= 70000
-		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
-#else
-		ADD_ASSOC_ZVAL_EX(retval, "tags", state.zchild);
-#endif
-	}
-
-	if (mongoc_read_prefs_get_max_staleness_seconds(read_prefs) != MONGOC_NO_MAX_STALENESS) {
-		ADD_ASSOC_LONG_EX(retval, "maxStalenessSeconds", mongoc_read_prefs_get_max_staleness_seconds(read_prefs));
-	}
-} /* }}} */
-
 void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern) /* {{{ */
 {
 	const char*   wtag     = mongoc_write_concern_get_wtag(write_concern);
