@@ -3034,6 +3034,12 @@ PHP_MINFO_FUNCTION(mongodb)
 	php_info_print_table_row(2, "libmongoc SASL", "disabled");
 #endif
 
+#ifdef MONGOC_ENABLE_ICU
+	php_info_print_table_row(2, "libmongoc ICU", "enabled");
+#else
+	php_info_print_table_row(2, "libmongoc ICU", "disabled");
+#endif
+
 #ifdef MONGOC_ENABLE_COMPRESSION
 	php_info_print_table_row(2, "libmongoc compression", "enabled");
 #ifdef MONGOC_ENABLE_COMPRESSION_SNAPPY

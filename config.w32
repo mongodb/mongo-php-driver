@@ -154,6 +154,7 @@ if (PHP_MONGODB != "no") {
     MONGOC_ENABLE_SASL_CYRUS: 0,
     MONGOC_ENABLE_SASL_GSSAPI: 0,
     MONGOC_ENABLE_SASL_SSPI: 0,
+    MONGOC_ENABLE_ICU: 0,
     MONGOC_ENABLE_RDTSCP: 0,
     MONGOC_ENABLE_SHM_COUNTERS: 0,
     MONGOC_HAVE_ASN1_STRING_GET0_DATA: 0,
@@ -223,6 +224,23 @@ if (PHP_MONGODB != "no") {
   if (CHECK_LIB("dnsapi.lib", "mongodb", PHP_MONGODB) &&
       CHECK_HEADER_ADD_INCLUDE("windns.h", "CFLAGS_MONGODB")) {
     mongoc_opts.MONGOC_HAVE_DNSAPI = 1;
+  }
+
+  if (CHECK_LIB("icuuc.lib", "mongodb", PHP_MONGODB) &&
+      CHECK_HEADER_ADD_INCLUDE("unicode/utf.h", "CFLAGS_MONGODB")) {
+    mongoc_opts.MONGODB_ENABLE_ICU = 1;
+
+    ADD_FLAG("LIBS_MONGODB", "icudt.lib icuin.lib icuio.lib");
+
+    /* Compat for ICU before 58.1.*/
+    if (CHECK_LIB("icule.lib", "mongodb", PHP_MONGODB)) {
+      ADD_FLAG("LIBS_MONGODB", "icule.lib");
+    }
+    if (CHECK_LIB("iculx.lib", "mongodb", PHP_MONGODB)) {
+      ADD_FLAG("LIBS_MONGODB", "iculx.lib");
+    }
+
+    ADD_FLAG("CFLAGS_MONGODB", "/EHsc /D U_USING_ICU_NAMESPACE=1");
   }
 
   if (typeof COMPILER_NAME === 'string') {

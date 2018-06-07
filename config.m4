@@ -265,6 +265,7 @@ if test "$PHP_MONGODB" != "no"; then
     _include([scripts/autotools/libmongoc/CheckResolv.m4])
     _include([scripts/autotools/libmongoc/CheckSasl.m4])
     _include([scripts/autotools/libmongoc/CheckSSL.m4])
+    _include([scripts/autotools/libmongoc/CheckICU.m4])
     _include([scripts/autotools/libmongoc/FindDependencies.m4])
     _include([scripts/autotools/libmongoc/PlatformFlags.m4])
     _include([scripts/autotools/libmongoc/Versions.m4])
