@@ -24,6 +24,8 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
+#include "php_array_api.h"
+#include "Session.h"
 
 zend_class_entry* php_phongo_session_ce;
 
@@ -228,6 +230,166 @@ static PHP_METHOD(Session, getOperationTime)
 	php_phongo_new_timestamp_from_increment_and_timestamp(return_value, increment, timestamp TSRMLS_CC);
 } /* }}} */
 
+/* Creates a opts structure from an array optionally containing an RP, RC,
+ * and/or WC object. Returns NULL if no options were found, or there was an
+ * invalid option. If there was an invalid option or structure, an exception
+ * will be thrown too. */
+mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* options TSRMLS_DC)
+{
+	mongoc_transaction_opt_t* opts = NULL;
+
+	if (php_array_existsc(options, "readConcern")) {
+		zval* read_concern = php_array_fetchc(options, "readConcern");
+
+		if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce TSRMLS_CC)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
+			/* Freeing opts is not needed here, as it can't be set yet. The
+			 * code is here to keep it consistent with the others in case more
+			 * options are added before this one. */
+			if (opts) {
+				mongoc_transaction_opts_destroy(opts);
+			}
+			return NULL;
+		}
+
+		if (!opts) {
+			opts = mongoc_transaction_opts_new();
+		}
+
+		mongoc_transaction_opts_set_read_concern(opts, phongo_read_concern_from_zval(read_concern TSRMLS_CC));
+	}
+
+	if (php_array_existsc(options, "readPreference")) {
+		zval* read_preference = php_array_fetchc(options, "readPreference");
+
+		if (Z_TYPE_P(read_preference) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_preference), php_phongo_readpreference_ce TSRMLS_CC)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readPreference\" option to be %s, %s given", ZSTR_VAL(php_phongo_readpreference_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_preference));
+			if (opts) {
+				mongoc_transaction_opts_destroy(opts);
+			}
+			return NULL;
+		}
+
+		if (!opts) {
+			opts = mongoc_transaction_opts_new();
+		}
+
+		mongoc_transaction_opts_set_read_prefs(opts, phongo_read_preference_from_zval(read_preference TSRMLS_CC));
+	}
+
+	if (php_array_existsc(options, "writeConcern")) {
+		zval* write_concern = php_array_fetchc(options, "writeConcern");
+
+		if (Z_TYPE_P(write_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(write_concern), php_phongo_writeconcern_ce TSRMLS_CC)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_writeconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(write_concern));
+			if (opts) {
+				mongoc_transaction_opts_destroy(opts);
+			}
+			return NULL;
+		}
+
+		if (!opts) {
+			opts = mongoc_transaction_opts_new();
+		}
+
+		mongoc_transaction_opts_set_write_concern(opts, phongo_write_concern_from_zval(write_concern TSRMLS_CC));
+	}
+
+	return opts;
+}
+
+/* {{{ proto void MongoDB\Driver\Session::startTransaction([array $options = null])
+   Starts a new transaction */
+static PHP_METHOD(Session, startTransaction)
+{
+	php_phongo_session_t*     intern;
+	zval*                     options     = NULL;
+	mongoc_transaction_opt_t* txn_options = NULL;
+	bson_error_t              error;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
+
+	intern = Z_SESSION_OBJ_P(getThis());
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a", &options) == FAILURE) {
+		return;
+	}
+
+	if (options) {
+		txn_options = php_mongodb_session_parse_transaction_options(options TSRMLS_CC);
+	}
+	if (EG(exception)) {
+		return;
+	}
+
+	if (!mongoc_client_session_start_transaction(intern->client_session, txn_options, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+	}
+
+	if (txn_options) {
+		mongoc_transaction_opts_destroy(txn_options);
+	}
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\Session::commitTransaction(void)
+   Commits an existing transaction */
+static PHP_METHOD(Session, commitTransaction)
+{
+	php_phongo_session_t* intern;
+	bson_error_t          error;
+	bson_t                reply;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
+
+	intern = Z_SESSION_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if (!mongoc_client_session_commit_transaction(intern->client_session, &reply, &error)) {
+		phongo_throw_exception_from_bson_error_and_reply_t(&error, &reply TSRMLS_CC);
+		bson_destroy(&reply);
+	}
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\Session::abortTransaction(void)
+   Aborts (rolls back) an existing transaction */
+static PHP_METHOD(Session, abortTransaction)
+{
+	php_phongo_session_t* intern;
+	bson_error_t          error;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
+
+	intern = Z_SESSION_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if (!mongoc_client_session_abort_transaction(intern->client_session, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+	}
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\Session::endSession(void)
+   Ends the session, and a running transaction if active */
+static PHP_METHOD(Session, endSession)
+{
+	php_phongo_session_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
+
+	intern = Z_SESSION_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	mongoc_client_session_destroy(intern->client_session);
+} /* }}} */
+
 /* {{{ MongoDB\Driver\Session function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Session_advanceClusterTime, 0, 0, 1)
 	ZEND_ARG_INFO(0, clusterTime)
@@ -235,6 +397,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Session_advanceOperationTime, 0, 0, 1)
 	ZEND_ARG_INFO(0, timestamp)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Session_startTransaction, 0, 0, 0)
+	ZEND_ARG_INFO(0, options)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Session_void, 0, 0, 0)
@@ -247,6 +413,10 @@ static zend_function_entry php_phongo_session_me[] = {
 	PHP_ME(Session, getClusterTime, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getLogicalSessionId, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getOperationTime, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Session, startTransaction, ai_Session_startTransaction, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Session, commitTransaction, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Session, abortTransaction, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Session, endSession, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Session_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END

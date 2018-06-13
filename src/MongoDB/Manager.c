@@ -26,6 +26,7 @@
 #include "php_array_api.h"
 #include "phongo_compat.h"
 #include "php_phongo.h"
+#include "Session.h"
 
 #define PHONGO_MANAGER_URI_DEFAULT "mongodb://127.0.0.1/"
 
@@ -655,11 +656,12 @@ static PHP_METHOD(Manager, selectServer)
    Returns a new client session */
 static PHP_METHOD(Manager, startSession)
 {
-	php_phongo_manager_t*    intern;
-	zval*                    options = NULL;
-	mongoc_session_opt_t*    cs_opts = NULL;
-	mongoc_client_session_t* cs;
-	bson_error_t             error = { 0 };
+	php_phongo_manager_t*     intern;
+	zval*                     options = NULL;
+	mongoc_session_opt_t*     cs_opts = NULL;
+	mongoc_client_session_t*  cs;
+	bson_error_t              error    = { 0 };
+	mongoc_transaction_opt_t* txn_opts = NULL;
 	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 	SUPPRESS_UNUSED_WARNING(return_value_used)
 
@@ -674,16 +676,50 @@ static PHP_METHOD(Manager, startSession)
 		mongoc_session_opts_set_causal_consistency(cs_opts, php_array_fetchc_bool(options, "causalConsistency"));
 	}
 
-	cs = mongoc_client_start_session(intern->client, cs_opts, &error);
+	if (options && php_array_existsc(options, "defaultTransactionOptions")) {
+		zval* txn_options = php_array_fetchc(options, "defaultTransactionOptions");
 
-	if (cs_opts) {
-		mongoc_session_opts_destroy(cs_opts);
+		/* Thrown exception and return if the defaultTransactionOptions is not an array */
+		if (Z_TYPE_P(txn_options) != IS_ARRAY) {
+			phongo_throw_exception(
+				PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
+				"Expected \"defaultTransactionOptions\" option to be an array, %s given",
+				PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(txn_options)
+			);
+			goto cleanup;
+		}
+
+		/* Parse transaction options */
+		txn_opts = php_mongodb_session_parse_transaction_options(txn_options TSRMLS_CC);
+
+		/* If an exception is thrown while parsing, the txn_opts struct is also
+		 * NULL, so no need to free it here */
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		/* If the options are non-empty, add them to the client session opts struct */
+		if (txn_opts) {
+			if (!cs_opts) {
+				cs_opts = mongoc_session_opts_new();
+			}
+
+			mongoc_session_opts_set_default_transaction_opts(cs_opts, txn_opts);
+			mongoc_transaction_opts_destroy(txn_opts);
+		}
 	}
+
+	cs = mongoc_client_start_session(intern->client, cs_opts, &error);
 
 	if (cs) {
 		phongo_session_init(return_value, cs TSRMLS_CC);
 	} else {
 		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+	}
+
+cleanup:
+	if (cs_opts) {
+		mongoc_session_opts_destroy(cs_opts);
 	}
 } /* }}} */
 
