@@ -669,7 +669,7 @@ static PHP_METHOD(Manager, startSession)
 		return;
 	}
 
-	if (options && php_array_exists(options, "causalConsistency")) {
+	if (options && php_array_existsc(options, "causalConsistency")) {
 		cs_opts = mongoc_session_opts_new();
 		mongoc_session_opts_set_causal_consistency(cs_opts, php_array_fetchc_bool(options, "causalConsistency"));
 	}
