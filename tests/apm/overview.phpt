@@ -92,7 +92,7 @@ object(MongoDB\Driver\Monitoring\CommandFailedEvent)#%d (%d) {
   ["operationId"]=>
   string(%d) "%s"
   ["reply"]=>
-  object(stdClass)#%d (%d) {
+  object(stdClass)#%d (%d) {%A
     ["ok"]=>
     float(0)
     ["errmsg"]=>

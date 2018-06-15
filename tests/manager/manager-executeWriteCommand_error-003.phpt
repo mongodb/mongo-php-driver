@@ -21,22 +21,11 @@ try {
     $manager->executeWriteCommand(DATABASE_NAME, $command);
 } catch (MongoDB\Driver\Exception\CommandException $e) {
     printf("%s(%d): %s\n", get_class($e), $e->getCode(), $e->getMessage());
-    var_dump($e->getResultDocument());
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 MongoDB\Driver\Exception\CommandException(9): Either an update or remove=true must be specified
-object(stdClass)#%d (%d) {
-  ["ok"]=>
-  float(0)
-  ["errmsg"]=>
-  string(49) "Either an update or remove=true must be specified"
-  ["code"]=>
-  int(9)
-  ["codeName"]=>
-  string(13) "FailedToParse"%A
-}
 ===DONE===
