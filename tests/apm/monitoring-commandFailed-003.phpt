@@ -48,7 +48,7 @@ try {
 --EXPECTF--
 started: findAndModify
 failed: findAndModify
-object(stdClass)#%d (%d) {
+object(stdClass)#%d (%d) {%A
   ["ok"]=>
   float(0)
   ["errmsg"]=>

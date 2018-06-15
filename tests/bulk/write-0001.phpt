@@ -116,7 +116,7 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   ["executed"]=>
   bool(true)
   ["server_id"]=>
-  int(1)
+  int(%r[1-9]\d*%r)
   ["write_concern"]=>
   NULL
 }
