@@ -39,48 +39,5 @@ Vagrant.configure(2) do |config|
     ldap.vm.provision "shell", path: "scripts/centos/essentials.sh", privileged: true
     ldap.vm.provision "shell", path: "scripts/centos/ldap/install.sh", privileged: true
   end
-
-  config.vm.define "freebsd", autostart: false do |bsd|
-    bsd.vm.network "private_network", ip: "192.168.112.30"
-
-    bsd.vm.box = "geoffgarside/freebsd-10.0"
-
-    bsd.vm.provision "shell", path: "scripts/freebsd/essentials.sh", privileged: true
-    bsd.vm.provision "file", source: "/tmp/PHONGO-SERVERS.json", destination: "/tmp/PHONGO-SERVERS.json"
-    bsd.vm.provision "file", source: "scripts/configs/.gdbinit", destination: "/home/vagrant/.gdbinit"
-    bsd.vm.provision "shell", path: "scripts/freebsd/phongo.sh", privileged: true
-    bsd.vm.synced_folder ".", "/phongo", :nfs => true, id: "vagrant-root"
-  end
-
-  config.vm.define "precise64" do |linux|
-    linux.vm.network "private_network", ip: "192.168.112.40"
-
-    linux.vm.box = "http://files.vagrantup.com/precise64.box"
-    linux.vm.provider "vmware_workstation" do |vmware, override|
-      override.vm.box_url = 'http://files.vagrantup.com/precise64_vmware.box'
-      override.vm.provision "shell", path: "scripts/vmware/kernel.sh", privileged: true
-    end
-
-    linux.vm.provision "shell", path: "scripts/ubuntu/essentials.sh", privileged: true
-    linux.vm.provision "file", source: "/tmp/PHONGO-SERVERS.json", destination: "/tmp/PHONGO-SERVERS.json"
-    linux.vm.provision "file", source: "scripts/configs/.gdbinit", destination: "/home/vagrant/.gdbinit"
-    linux.vm.provision "shell", path: "scripts/ubuntu/phongo.sh", privileged: true
-  end
-
-  config.vm.define "precise32" do |linux|
-    linux.vm.network "private_network", ip: "192.168.112.50"
-
-    linux.vm.box = "bjori/precise32"
-    linux.vm.provider "vmware_workstation" do |vmware, override|
-      override.vm.box_url = "bjori/precise32"
-      override.vm.provision "shell", path: "scripts/vmware/kernel.sh", privileged: true
-    end
-
-    linux.vm.provision "shell", path: "scripts/ubuntu/essentials.sh", privileged: true
-    linux.vm.provision "file", source: "/tmp/PHONGO-SERVERS.json", destination: "/tmp/PHONGO-SERVERS.json"
-    linux.vm.provision "file", source: "scripts/configs/.gdbinit", destination: "/home/vagrant/.gdbinit"
-    linux.vm.provision "shell", path: "scripts/ubuntu/phongo.sh", privileged: true
-  end
-
 end
 

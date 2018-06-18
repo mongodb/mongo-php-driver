@@ -8,6 +8,7 @@
         "logpath": "/tmp/standalone-ssl/m.log",
         "journal": true,
         "port": 2100,
+        "bind_ip_all": true,
         "setParameter": {"enableTestCommands": 1}
     },
     "sslParams": {

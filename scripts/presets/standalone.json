@@ -8,6 +8,7 @@
         "logpath": "/tmp/standalone/mongod.log",
         "journal": true,
         "port": 2000,
+        "bind_ip_all": true,
         "setParameter": {"enableTestCommands": 1}
     }
 }

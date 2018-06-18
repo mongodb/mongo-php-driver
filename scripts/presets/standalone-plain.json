@@ -11,7 +11,8 @@
         "logpath": "/tmp/standalone-plain/m.log",
         "journal": true,
         "port": 2400,
-        "setParameter": {"enableTestCommands": 1, "saslauthdPath": "/var/run/saslauthd/mux", "authenticationMechanisms": "MONGODB-CR,PLAIN"}
+        "bind_ip_all": true,
+        "setParameter": {"enableTestCommands": 1, "saslauthdPath": "/var/run/saslauthd/mux", "authenticationMechanisms": "SCRAM-SHA-1,PLAIN"}
     }
 }
 
