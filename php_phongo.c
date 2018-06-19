@@ -963,36 +963,44 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 		goto cleanup;
 	}
 
-	/* According to mongoc_cursor_new_from_command_reply(), the reply bson_t
-	 * is ultimately destroyed on both success and failure. */
+	/* According to mongoc_cursor_new_from_command_reply_with_opts(), the reply
+	 * bson_t is ultimately destroyed on both success and failure. */
 	if (bson_iter_init_find(&iter, &reply, "cursor") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 		bson_t       initial_reply = BSON_INITIALIZER;
+		bson_t       cursor_opts   = BSON_INITIALIZER;
 		bson_error_t error         = { 0 };
 
 		bson_copy_to(&reply, &initial_reply);
 
+		bson_append_int32(&cursor_opts, "serverId", -1, server_id);
+
 		if (command->max_await_time_ms) {
-			bson_append_bool(&initial_reply, "awaitData", -1, 1);
-			bson_append_int64(&initial_reply, "maxAwaitTimeMS", -1, command->max_await_time_ms);
-			bson_append_bool(&initial_reply, "tailable", -1, 1);
+			bson_append_bool(&cursor_opts, "awaitData", -1, 1);
+			bson_append_int64(&cursor_opts, "maxAwaitTimeMS", -1, command->max_await_time_ms);
+			bson_append_bool(&cursor_opts, "tailable", -1, 1);
 		}
 
 		if (command->batch_size) {
-			bson_append_int64(&initial_reply, "batchSize", -1, command->batch_size);
+			bson_append_int64(&cursor_opts, "batchSize", -1, command->batch_size);
 		}
 
-		if (zsession && !mongoc_client_session_append(Z_SESSION_OBJ_P(zsession)->client_session, &initial_reply, &error)) {
+		if (zsession && !mongoc_client_session_append(Z_SESSION_OBJ_P(zsession)->client_session, &cursor_opts, &error)) {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 			bson_destroy(&initial_reply);
+			bson_destroy(&cursor_opts);
 			result = false;
 			goto cleanup;
 		}
 
-		cmd_cursor = mongoc_cursor_new_from_command_reply(client, &initial_reply, server_id);
+		cmd_cursor = mongoc_cursor_new_from_command_reply_with_opts(client, &initial_reply, &cursor_opts);
+		bson_destroy(&cursor_opts);
 	} else {
+		bson_t  cursor_opts   = BSON_INITIALIZER;
 		bson_t* wrapped_reply = create_wrapped_command_envelope(db, &reply);
 
-		cmd_cursor = mongoc_cursor_new_from_command_reply(client, wrapped_reply, server_id);
+		bson_append_int32(&cursor_opts, "serverId", -1, server_id);
+		cmd_cursor = mongoc_cursor_new_from_command_reply_with_opts(client, wrapped_reply, &cursor_opts);
+		bson_destroy(&cursor_opts);
 	}
 
 	phongo_cursor_init_for_command(return_value, client, cmd_cursor, db, zcommand, zreadPreference, zsession TSRMLS_CC);
