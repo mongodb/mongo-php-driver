@@ -12,7 +12,7 @@ set_error_handler(function($errno, $errstr) {
 });
 
 set_exception_handler(function($e) {
-    exit(sprintf('skip %s(%d): %s', get_class($e), $e->getCode(), $e->getMessage()));
+    exit(sprintf('skip %s(%d): %s @ %s:%d', get_class($e), $e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine()));
 });
 
 register_shutdown_function(function() {

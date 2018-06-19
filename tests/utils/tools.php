@@ -45,7 +45,16 @@ function drop_collection($uri, $databaseName, $collectionName)
     $command = new Command(['drop' => $collectionName]);
 
     try {
-        $server->executeCommand($databaseName, $command);
+        /* We need to use WriteConcern::MAJORITY here due to the issue
+         * explained in SERVER-35613: "drop" uses a two phase commit, and due
+         * to that, it is possible that a lock can't be acquired for a
+         * transaction that gets quickly started as the "drop" reaper hasn't
+         * completed yet. */
+        $server->executeCommand(
+            $databaseName,
+            $command,
+            [ 'writeConcern' => new \MongoDB\Driver\WriteConcern( \MongoDB\Driver\WriteConcern::MAJORITY ) ]
+        );
     } catch (RuntimeException $e) {
         if ($e->getMessage() !== 'ns not found') {
             throw $e;

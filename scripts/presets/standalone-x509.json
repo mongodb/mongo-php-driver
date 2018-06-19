@@ -10,6 +10,7 @@
         "logpath": "/tmp/standalone-x509/m.log",
         "journal": true,
         "port": 2300,
+        "bind_ip_all": true,
         "setParameter": {"enableTestCommands": 1, "authenticationMechanisms": "MONGODB-X509"}
     },
     "sslParams": {
