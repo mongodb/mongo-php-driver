@@ -9,8 +9,10 @@
         "logappend": true,
         "logpath": "/tmp/standalone-x509/m.log",
         "journal": true,
+        "nssize": 1,
         "port": 2300,
         "bind_ip_all": true,
+        "smallfiles": true,
         "setParameter": {"enableTestCommands": 1, "authenticationMechanisms": "MONGODB-X509"}
     },
     "sslParams": {
