@@ -17,4 +17,3 @@
         "setParameter": {"enableTestCommands": 1, "saslauthdPath": "/var/run/saslauthd/mux", "authenticationMechanisms": "SCRAM-SHA-1,PLAIN"}
     }
 }
-
