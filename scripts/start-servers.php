@@ -66,11 +66,24 @@ function mo_http_request($uri, $context) {
     return $result;
 }
 
+function json_decode_or_fail(/* json_decode() args */)
+{
+    $decoded = call_user_func_array('json_decode', func_get_args());
+
+    if ($decoded === NULL && json_last_error() !== JSON_ERROR_NONE) {
+        printf("\njson_decode() failed: %s\n", json_last_error_msg());
+        var_dump(func_get_arg(0));
+        exit(1);
+    }
+
+    return $decoded;
+}
+
 printf("Cleaning out previous processes, if any ");
 lap();
 /* Remove all pre-existing ReplicaSets */
 $replicasets = mo_http_request(getMOUri() . "/replica_sets", make_ctx(getMOPresetBase(), "GET"));
-$replicasets = json_decode($replicasets, true);
+$replicasets = json_decode_or_fail($replicasets, true);
 foreach($replicasets["replica_sets"] as $replicaset) {
     $uri = getMOUri() . "/replica_sets/" . $replicaset["id"];
     mo_http_request($uri, make_ctx(getMOPresetBase(), "DELETE"));
@@ -79,7 +92,7 @@ foreach($replicasets["replica_sets"] as $replicaset) {
 echo " ";
 /* Remove all pre-existing servers */
 $servers = mo_http_request(getMOUri() . "/servers", make_ctx(getMOPresetBase(), "GET"));
-$servers = json_decode($servers, true);
+$servers = json_decode_or_fail($servers, true);
 foreach($servers["servers"] as $server) {
     $uri = getMOUri() . "/servers/" . $server["id"];
     mo_http_request($uri, make_ctx(getMOPresetBase(), "DELETE"));
@@ -89,11 +102,12 @@ printf("\t(took: %.2f secs)\n", lap());
 
 foreach($PRESETS["standalone"] as $preset) {
     lap();
-    $json = json_decode(file_get_contents($preset), true);
+    $json = json_decode_or_fail(file_get_contents($preset), true);
     printf("Starting %-20s ...  ", $json["id"]);
 
     $result = mo_http_request(getMOUri() . "/servers", make_ctx(getMOPresetBase() . $preset));
-    $decode = json_decode($result, true);
+    $decode = json_decode_or_fail($result, true);
+
     if (!isset($decode["id"])) {
         failed($decode);
     }
@@ -105,11 +119,12 @@ echo "---\n";
 
 foreach($PRESETS["replicasets"] as $preset) {
     lap();
-    $json = json_decode(file_get_contents($preset), true);
+    $json = json_decode_or_fail(file_get_contents($preset), true);
     printf("Starting %-20s ...  ", $json["id"]);
 
     $result = mo_http_request(getMOUri() . "/replica_sets", make_ctx(getMOPresetBase() . $preset));
-    $decode = json_decode($result, true);
+    $decode = json_decode_or_fail($result, true);
+
     if (!isset($decode["id"])) {
         failed($decode);
     }
