@@ -10,9 +10,10 @@
         "logappend": true,
         "logpath": "/tmp/standalone-plain/m.log",
         "journal": true,
+        "nssize": 1,
         "port": 2400,
         "bind_ip_all": true,
+        "smallfiles": true,
         "setParameter": {"enableTestCommands": 1, "saslauthdPath": "/var/run/saslauthd/mux", "authenticationMechanisms": "SCRAM-SHA-1,PLAIN"}
     }
 }
-

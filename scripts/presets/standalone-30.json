@@ -7,10 +7,11 @@
         "logappend": true,
         "logpath": "/tmp/standalone-30/mongod.log",
         "journal": true,
+        "nssize": 1,
         "port": 2700,
         "bind_ip": "0.0.0.0,::",
+        "smallfiles": true,
         "setParameter": {"enableTestCommands": 1}
     },
     "version": "30-release"
 }
-
