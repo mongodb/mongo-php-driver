@@ -93,6 +93,10 @@ static inline php_phongo_decimal128_t* php_decimal128_fetch_object(zend_object* 
 {
 	return (php_phongo_decimal128_t*) ((char*) obj - XtOffsetOf(php_phongo_decimal128_t, std));
 }
+static inline php_phongo_int64_t* php_int64_fetch_object(zend_object* obj)
+{
+	return (php_phongo_int64_t*) ((char*) obj - XtOffsetOf(php_phongo_int64_t, std));
+}
 static inline php_phongo_javascript_t* php_javascript_fetch_object(zend_object* obj)
 {
 	return (php_phongo_javascript_t*) ((char*) obj - XtOffsetOf(php_phongo_javascript_t, std));
@@ -159,6 +163,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_BINARY_OBJ_P(zv) (php_binary_fetch_object(Z_OBJ_P(zv)))
 #define Z_DBPOINTER_OBJ_P(zv) (php_dbpointer_fetch_object(Z_OBJ_P(zv)))
 #define Z_DECIMAL128_OBJ_P(zv) (php_decimal128_fetch_object(Z_OBJ_P(zv)))
+#define Z_INT64_OBJ_P(zv) (php_int64_fetch_object(Z_OBJ_P(zv)))
 #define Z_JAVASCRIPT_OBJ_P(zv) (php_javascript_fetch_object(Z_OBJ_P(zv)))
 #define Z_MAXKEY_OBJ_P(zv) (php_maxkey_fetch_object(Z_OBJ_P(zv)))
 #define Z_MINKEY_OBJ_P(zv) (php_minkey_fetch_object(Z_OBJ_P(zv)))
@@ -189,6 +194,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_OBJ_BINARY(zo) (php_binary_fetch_object(zo))
 #define Z_OBJ_DBPOINTER(zo) (php_dbpointer_fetch_object(zo))
 #define Z_OBJ_DECIMAL128(zo) (php_decimal128_fetch_object(zo))
+#define Z_OBJ_INT64(zo) (php_int64_fetch_object(zo))
 #define Z_OBJ_JAVASCRIPT(zo) (php_javascript_fetch_object(zo))
 #define Z_OBJ_MAXKEY(zo) (php_maxkey_fetch_object(zo))
 #define Z_OBJ_MINKEY(zo) (php_minkey_fetch_object(zo))
@@ -221,6 +227,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_BINARY_OBJ_P(zv) ((php_phongo_binary_t*) zend_object_store_get_object(zv TSRMLS_CC))
 #define Z_DBPOINTER_OBJ_P(zv) ((php_phongo_dbpointer_t*) zend_object_store_get_object(zv TSRMLS_CC))
 #define Z_DECIMAL128_OBJ_P(zv) ((php_phongo_decimal128_t*) zend_object_store_get_object(zv TSRMLS_CC))
+#define Z_INT64_OBJ_P(zv) ((php_phongo_int64_t*) zend_object_store_get_object(zv TSRMLS_CC))
 #define Z_JAVASCRIPT_OBJ_P(zv) ((php_phongo_javascript_t*) zend_object_store_get_object(zv TSRMLS_CC))
 #define Z_MAXKEY_OBJ_P(zv) ((php_phongo_maxkey_t*) zend_object_store_get_object(zv TSRMLS_CC))
 #define Z_MINKEY_OBJ_P(zv) ((php_phongo_minkey_t*) zend_object_store_get_object(zv TSRMLS_CC))
@@ -251,6 +258,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_OBJ_BINARY(zo) ((php_phongo_binary_t*) zo)
 #define Z_OBJ_DBPOINTER(zo) ((php_phongo_dbpointer_t*) zo)
 #define Z_OBJ_DECIMAL128(zo) ((php_phongo_decimal128_t*) zo)
+#define Z_OBJ_INT64(zo) ((php_phongo_int64_t*) zo)
 #define Z_OBJ_JAVASCRIPT(zo) ((php_phongo_javascript_t*) zo)
 #define Z_OBJ_MAXKEY(zo) ((php_phongo_maxkey_t*) zo)
 #define Z_OBJ_MINKEY(zo) ((php_phongo_minkey_t*) zo)
@@ -308,6 +316,7 @@ extern zend_class_entry* php_phongo_serializable_ce;
 extern zend_class_entry* php_phongo_binary_ce;
 extern zend_class_entry* php_phongo_dbpointer_ce;
 extern zend_class_entry* php_phongo_decimal128_ce;
+extern zend_class_entry* php_phongo_int64_ce;
 extern zend_class_entry* php_phongo_javascript_ce;
 extern zend_class_entry* php_phongo_maxkey_ce;
 extern zend_class_entry* php_phongo_minkey_ce;
@@ -337,6 +346,7 @@ extern zend_class_entry* php_phongo_subscriber_ce;
 extern void php_phongo_binary_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_int64_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_javascript_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_maxkey_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_minkey_init_ce(INIT_FUNC_ARGS);

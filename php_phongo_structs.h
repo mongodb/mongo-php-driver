@@ -178,6 +178,14 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	bool       initialized;
+	int64_t    integer;
+	HashTable* properties;
+	PHONGO_ZEND_OBJECT_POST
+} php_phongo_int64_t;
+
+typedef struct {
+	PHONGO_ZEND_OBJECT_PRE
 	char*      code;
 	size_t     code_len;
 	bson_t*    scope;

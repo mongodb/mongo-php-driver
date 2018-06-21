@@ -159,31 +159,70 @@
 #endif
 
 #if SIZEOF_PHONGO_LONG == 8
-#define ADD_INDEX_INT64(zval, index, value) add_index_long(zval, index, value)
-#define ADD_NEXT_INDEX_INT64(zval, value) add_next_index_long(zval, value)
-#define ADD_ASSOC_INT64(zval, key, value) add_assoc_long(zval, key, value)
+#define ADD_INDEX_INT64(_zv, _index, _value) add_index_long((_zv), (_index), (_value))
+#define ADD_NEXT_INDEX_INT64(_zv, _value) add_next_index_long((_zv), (_value))
+#define ADD_ASSOC_INT64(_zv, _key, _value) add_assoc_long((_zv), (_key), (_value))
 #elif SIZEOF_PHONGO_LONG == 4
-#define ADD_INDEX_INT64(zval, index, value)                                                                                           \
-	if ((value) > INT32_MAX || (value) < INT32_MIN) {                                                                                 \
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", (value)); \
-	} else {                                                                                                                          \
-		add_index_long(zval, index, (value));                                                                                         \
+#if PHP_VERSION_ID >= 70000
+#define ADD_INDEX_INT64(_zv, _index, _value)               \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {    \
+		zval zchild;                                       \
+		php_phongo_new_int64(&zchild, (_value) TSRMLS_CC); \
+		add_index_zval((_zv), (_index), &zchild);          \
+	} else {                                               \
+		add_index_long((_zv), (_index), (_value));         \
 	}
-#define ADD_NEXT_INDEX_INT64(zval, value)                                                                                             \
-	if ((value) > INT32_MAX || (value) < INT32_MIN) {                                                                                 \
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", (value)); \
-	} else {                                                                                                                          \
-		add_next_index_long(zval, (value));                                                                                           \
+#define ADD_NEXT_INDEX_INT64(_zv, _value)                  \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {    \
+		zval zchild;                                       \
+		php_phongo_new_int64(&zchild, (_value) TSRMLS_CC); \
+		add_next_index_zval((_zv), &zchild);               \
+	} else {                                               \
+		add_next_index_long((_zv), (_value));              \
 	}
-#define ADD_ASSOC_INT64(zval, key, value)                                                                                             \
-	if ((value) > INT32_MAX || (value) < INT32_MIN) {                                                                                 \
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Integer overflow detected on your platform: %lld", (value)); \
-	} else {                                                                                                                          \
-		add_assoc_long(zval, key, (value));                                                                                           \
+#define ADD_ASSOC_INT64(_zv, _key, _value)                 \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {    \
+		zval zchild;                                       \
+		php_phongo_new_int64(&zchild, (_value) TSRMLS_CC); \
+		add_assoc_zval((_zv), (_key), &zchild);            \
+	} else {                                               \
+		add_assoc_long((_zv), (_key), (_value));           \
 	}
-#else
+#else /* PHP_VERSION_ID < 70000 */
+#define ADD_INDEX_INT64(_zv, _index, _value)              \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {   \
+		zval* zchild = NULL;                              \
+		TSRMLS_FETCH();                                   \
+		MAKE_STD_ZVAL(zchild);                            \
+		php_phongo_new_int64(zchild, (_value) TSRMLS_CC); \
+		add_index_zval((_zv), (_index), zchild);          \
+	} else {                                              \
+		add_index_long((_zv), (_index), (_value));        \
+	}
+#define ADD_NEXT_INDEX_INT64(_zv, _value)                 \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {   \
+		zval* zchild = NULL;                              \
+		TSRMLS_FETCH();                                   \
+		MAKE_STD_ZVAL(zchild);                            \
+		php_phongo_new_int64(zchild, (_value) TSRMLS_CC); \
+		add_next_index_zval((_zv), zchild);               \
+	} else {                                              \
+		add_next_index_long((_zv), (_value));             \
+	}
+#define ADD_ASSOC_INT64(_zv, _key, _value)                \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {   \
+		zval* zchild = NULL;                              \
+		TSRMLS_FETCH();                                   \
+		MAKE_STD_ZVAL(zchild);                            \
+		php_phongo_new_int64(zchild, (_value) TSRMLS_CC); \
+		add_assoc_zval((_zv), (_key), zchild);            \
+	} else {                                              \
+		add_assoc_long((_zv), (_key), (_value));          \
+	}
+#endif /* PHP_VERSION_ID */
+#else  /* SIZEOF_PHONGO_LONG != 8 && SIZEOF_PHONGO_LONG != 4 */
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)
-#endif
+#endif /* SIZEOF_PHONGO_LONG */
 
 void      phongo_add_exception_prop(const char* prop, int prop_len, zval* value TSRMLS_DC);
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);

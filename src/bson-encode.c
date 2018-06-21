@@ -230,6 +230,13 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 			bson_append_decimal128(bson, key, key_len, &intern->decimal);
 			return;
 		}
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_int64_ce TSRMLS_CC)) {
+			php_phongo_int64_t* intern = Z_INT64_OBJ_P(object);
+
+			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Int64");
+			bson_append_int64(bson, key, key_len, intern->integer);
+			return;
+		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_regex_ce TSRMLS_CC)) {
 			php_phongo_regex_t* intern = Z_REGEX_OBJ_P(object);
 

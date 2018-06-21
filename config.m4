@@ -110,6 +110,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/BSON/DBPointer.c \
     src/BSON/Decimal128.c \
     src/BSON/Decimal128Interface.c \
+    src/BSON/Int64.c \
     src/BSON/Javascript.c \
     src/BSON/JavascriptInterface.c \
     src/BSON/MaxKey.c \
