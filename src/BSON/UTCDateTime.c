@@ -217,8 +217,8 @@ static PHP_METHOD(UTCDateTime, __set_state)
 static PHP_METHOD(UTCDateTime, __toString)
 {
 	php_phongo_utcdatetime_t* intern;
-	char*                     tmp;
-	int                       tmp_len;
+	char                      s_milliseconds[24];
+	int                       s_milliseconds_len;
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
@@ -226,9 +226,9 @@ static PHP_METHOD(UTCDateTime, __toString)
 		return;
 	}
 
-	tmp_len = spprintf(&tmp, 0, "%" PRId64, intern->milliseconds);
-	PHONGO_RETVAL_STRINGL(tmp, tmp_len);
-	efree(tmp);
+	s_milliseconds_len = snprintf(s_milliseconds, sizeof(s_milliseconds), "%" PRId64, intern->milliseconds);
+
+	PHONGO_RETVAL_STRINGL(s_milliseconds, s_milliseconds_len);
 } /* }}} */
 
 /* {{{ proto DateTime MongoDB\BSON\UTCDateTime::toDateTime()
