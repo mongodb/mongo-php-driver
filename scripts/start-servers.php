@@ -47,6 +47,12 @@ function make_ctx($preset, $method = "POST") {
     return $ctx;
 }
 
+function failed()
+{
+    printf("\nLast operation took: %.2f secs\n", lap());
+    exit(1);
+}
+
 function mo_http_request($uri, $context) {
     global $http_response_header;
 
@@ -55,21 +61,20 @@ function mo_http_request($uri, $context) {
     if ($result === false) {
         printf("HTTP request to %s failed:\n", $uri);
         var_dump($http_response_header);
-        printf("Last operation took: %.2f secs\n", lap());
-        exit(1);
+        failed();
     }
 
     return $result;
 }
 
-function json_decode_or_fail(/* json_decode() args */)
+function json_decode_or_fail(...$args)
 {
-    $decoded = call_user_func_array('json_decode', func_get_args());
+    $decoded = json_decode(...$args);
 
     if ($decoded === NULL && json_last_error() !== JSON_ERROR_NONE) {
         printf("\njson_decode() failed: %s\n", json_last_error_msg());
         var_dump(func_get_arg(0));
-        exit(1);
+        failed();
     }
 
     return $decoded;
@@ -106,7 +111,7 @@ foreach($PRESETS["standalone"] as $preset) {
 
     if (!isset($decode["id"])) {
         printf("\"id\" field not found in server response:\n%s\n", $decode);
-        exit(1);
+        failed();
     }
 
     $SERVERS[$decode["id"]] = isset($decode["mongodb_auth_uri"]) ? $decode["mongodb_auth_uri"] : $decode["mongodb_uri"];
@@ -124,7 +129,7 @@ foreach($PRESETS["replicasets"] as $preset) {
 
     if (!isset($decode["id"])) {
         printf("\"id\" field not found in replica set response:\n%s\n", $decode);
-        exit(1);
+        failed();
     }
 
     $SERVERS[$decode["id"]] = isset($decode["mongodb_auth_uri"]) ? $decode["mongodb_auth_uri"] : $decode["mongodb_uri"];
