@@ -1,7 +1,6 @@
 --TEST--
 PHPC-1152: Command cursors should use the same session for getMore and killCursors (explicit)
 --SKIPIF--
- <?php if (PHP_INT_SIZE !== 8) { die("skip Can't represent 64-bit ints on a 32-bit platform"); } ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php skip_if_not_live(); ?>
@@ -72,7 +71,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
         }
 
         if ($event->getCommandName() === 'getMore') {
-            $cursorId = $event->getCommand()->getMore;
+            $cursorId = (string) $event->getCommand()->getMore;
 
             if ( ! isset($this->lsidByCursorId[$cursorId])) {
                 throw new UnexpectedValueException('No previous command observed for cursor ID: ' . $cursorId);
@@ -82,7 +81,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
         }
 
         if ($event->getCommandName() === 'killCursors') {
-            $cursorId = $event->getCommand()->cursors[0];
+            $cursorId = (string) $event->getCommand()->cursors[0];
 
             if ( ! isset($this->lsidByCursorId[$cursorId])) {
                 throw new UnexpectedValueException('No previous command observed for cursor ID: ' . $cursorId);
@@ -97,7 +96,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
         /* Associate the aggregate's session ID with its cursor ID so it can be
          * looked up by the subsequent getMore or killCursors */
         if ($event->getCommandName() === 'aggregate') {
-            $cursorId = $event->getReply()->cursor->id;
+            $cursorId = (string) $event->getReply()->cursor->id;
             $requestId = $event->getRequestId();
 
             $this->lsidByCursorId[$cursorId] = $this->lsidByRequestId[$requestId];
