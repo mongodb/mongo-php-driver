@@ -47,11 +47,10 @@ function make_ctx($preset, $method = "POST") {
     return $ctx;
 }
 
-function failed($result) {
-    echo "\n\n";
-    echo join("\n", $result);
-    printf("Last operation took: %.2f secs\n", lap());
-    exit();
+function failed()
+{
+    printf("\nLast operation took: %.2f secs\n", lap());
+    exit(1);
 }
 
 function mo_http_request($uri, $context) {
@@ -60,17 +59,32 @@ function mo_http_request($uri, $context) {
     $result = file_get_contents($uri, false, $context);
 
     if ($result === false) {
-        failed($http_response_header);
+        printf("HTTP request to %s failed:\n", $uri);
+        var_dump($http_response_header);
+        failed();
     }
 
     return $result;
+}
+
+function json_decode_or_fail(...$args)
+{
+    $decoded = json_decode(...$args);
+
+    if ($decoded === NULL && json_last_error() !== JSON_ERROR_NONE) {
+        printf("\njson_decode() failed: %s\n", json_last_error_msg());
+        var_dump(func_get_arg(0));
+        failed();
+    }
+
+    return $decoded;
 }
 
 printf("Cleaning out previous processes, if any ");
 lap();
 /* Remove all pre-existing ReplicaSets */
 $replicasets = mo_http_request(getMOUri() . "/replica_sets", make_ctx(getMOPresetBase(), "GET"));
-$replicasets = json_decode($replicasets, true);
+$replicasets = json_decode_or_fail($replicasets, true);
 foreach($replicasets["replica_sets"] as $replicaset) {
     $uri = getMOUri() . "/replica_sets/" . $replicaset["id"];
     mo_http_request($uri, make_ctx(getMOPresetBase(), "DELETE"));
@@ -79,7 +93,7 @@ foreach($replicasets["replica_sets"] as $replicaset) {
 echo " ";
 /* Remove all pre-existing servers */
 $servers = mo_http_request(getMOUri() . "/servers", make_ctx(getMOPresetBase(), "GET"));
-$servers = json_decode($servers, true);
+$servers = json_decode_or_fail($servers, true);
 foreach($servers["servers"] as $server) {
     $uri = getMOUri() . "/servers/" . $server["id"];
     mo_http_request($uri, make_ctx(getMOPresetBase(), "DELETE"));
@@ -89,13 +103,15 @@ printf("\t(took: %.2f secs)\n", lap());
 
 foreach($PRESETS["standalone"] as $preset) {
     lap();
-    $json = json_decode(file_get_contents($preset), true);
+    $json = json_decode_or_fail(file_get_contents($preset), true);
     printf("Starting %-20s ...  ", $json["id"]);
 
     $result = mo_http_request(getMOUri() . "/servers", make_ctx(getMOPresetBase() . $preset));
-    $decode = json_decode($result, true);
+    $decode = json_decode_or_fail($result, true);
+
     if (!isset($decode["id"])) {
-        failed($decode);
+        printf("\"id\" field not found in server response:\n%s\n", $decode);
+        failed();
     }
 
     $SERVERS[$decode["id"]] = isset($decode["mongodb_auth_uri"]) ? $decode["mongodb_auth_uri"] : $decode["mongodb_uri"];
@@ -105,14 +121,17 @@ echo "---\n";
 
 foreach($PRESETS["replicasets"] as $preset) {
     lap();
-    $json = json_decode(file_get_contents($preset), true);
+    $json = json_decode_or_fail(file_get_contents($preset), true);
     printf("Starting %-20s ...  ", $json["id"]);
 
     $result = mo_http_request(getMOUri() . "/replica_sets", make_ctx(getMOPresetBase() . $preset));
-    $decode = json_decode($result, true);
+    $decode = json_decode_or_fail($result, true);
+
     if (!isset($decode["id"])) {
-        failed($decode);
+        printf("\"id\" field not found in replica set response:\n%s\n", $decode);
+        failed();
     }
+
     $SERVERS[$decode["id"]] = isset($decode["mongodb_auth_uri"]) ? $decode["mongodb_auth_uri"] : $decode["mongodb_uri"];
     printf("'%s'\t(took: %.2f secs)\n", $SERVERS[$decode["id"]], lap());
 }
