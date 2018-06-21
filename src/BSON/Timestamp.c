@@ -60,15 +60,8 @@ static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t* intern
 	int64_t increment, timestamp;
 	char*   endptr = NULL;
 
-	errno = 0;
-
-	/* errno will set errno if conversion fails; however, we do not need to
-	 * specify the type of error.
-	 *
-	 * Note: bson_ascii_strtoll() does not properly detect out-of-range values
-	 * (see: CDRIVER-1377). strtoll() would be preferable, but it is not
-	 * available on all platforms (e.g. HP-UX), and atoll() provides no error
-	 * reporting at all. */
+	/* bson_ascii_strtoll() sets errno if conversion fails. If conversion
+	 * succeeds, we still want to ensure that the entire string was parsed. */
 
 	increment = bson_ascii_strtoll(s_increment, &endptr, 10);
 
