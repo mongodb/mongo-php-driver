@@ -15,8 +15,11 @@ $expectedFailures = [
 ];
 
 $for64bitOnly = [
-	'Int64 type: MinValue' => "Can't represent 64-bit ints on a 32-bit platform",
-	'Int64 type: MaxValue' => "Can't represent 64-bit ints on a 32-bit platform",
+    /* Note: Although 64-bit integers be represented by the Int64 class, these
+     * tests fail on 32-bit platforms due to json_canonicalize() roundtripping
+     * values through PHP, which converts large integers to floats. */
+    'Int64 type: MinValue' => "Can't represent 64-bit ints on a 32-bit platform",
+    'Int64 type: MaxValue' => "Can't represent 64-bit ints on a 32-bit platform",
 ];
 
 $outputPath = realpath(__DIR__ . '/../tests') . '/bson-corpus/';

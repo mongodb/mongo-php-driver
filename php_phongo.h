@@ -169,6 +169,7 @@ void php_phongo_new_javascript_from_javascript(int init, zval* object, const cha
 void php_phongo_new_javascript_from_javascript_and_scope(int init, zval* object, const char* code, size_t code_len, const bson_t* scope TSRMLS_DC);
 void php_phongo_new_binary_from_binary_and_type(zval* object, const char* data, size_t data_len, bson_subtype_t type TSRMLS_DC);
 void php_phongo_new_decimal128(zval* object, const bson_decimal128_t* decimal TSRMLS_DC);
+void php_phongo_new_int64(zval* object, int64_t integer TSRMLS_DC);
 void php_phongo_new_regex_from_regex_and_options(zval* object, const char* pattern, const char* flags TSRMLS_DC);
 void php_phongo_new_symbol(zval* object, const char* symbol, size_t symbol_len TSRMLS_DC);
 void php_phongo_new_dbpointer(zval* object, const char* namespace, size_t namespace_len, const bson_oid_t* oid TSRMLS_DC);

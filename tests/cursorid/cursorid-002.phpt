@@ -1,7 +1,6 @@
 --TEST--
 MongoDB\Driver\CursorID BSON serialization for killCursors command
 --SKIPIF--
-<?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>

@@ -48,13 +48,31 @@ object(stdClass)#%d (%d) {
 }
 
 Test { "x": { "$numberLong": "4294967294" }}
-MongoDB\Driver\Exception\InvalidArgumentException: Integer overflow detected on your platform: 4294967294
+object(stdClass)#%d (%d) {
+  ["x"]=>
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(10) "4294967294"
+  }
+}
 
 Test { "x": { "$numberLong": "4294967295" }}
-MongoDB\Driver\Exception\InvalidArgumentException: Integer overflow detected on your platform: 4294967295
+object(stdClass)#%d (%d) {
+  ["x"]=>
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(10) "4294967295"
+  }
+}
 
 Test { "x": { "$numberLong": "9223372036854775807" }}
-MongoDB\Driver\Exception\InvalidArgumentException: Integer overflow detected on your platform: 9223372036854775807
+object(stdClass)#%d (%d) {
+  ["x"]=>
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(19) "9223372036854775807"
+  }
+}
 
 Test { "longFieldName": { "$numberLong": "-2147483648" }}
 object(stdClass)#%d (%d) {
@@ -69,12 +87,30 @@ object(stdClass)#%d (%d) {
 }
 
 Test { "longFieldName": { "$numberLong": "4294967294" }}
-MongoDB\Driver\Exception\InvalidArgumentException: Integer overflow detected on your platform: 4294967294
+object(stdClass)#%d (%d) {
+  ["longFieldName"]=>
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(10) "4294967294"
+  }
+}
 
 Test { "longFieldName": { "$numberLong": "4294967295" }}
-MongoDB\Driver\Exception\InvalidArgumentException: Integer overflow detected on your platform: 4294967295
+object(stdClass)#%d (%d) {
+  ["longFieldName"]=>
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(10) "4294967295"
+  }
+}
 
 Test { "longFieldName": { "$numberLong": "9223372036854775807" }}
-MongoDB\Driver\Exception\InvalidArgumentException: Integer overflow detected on your platform: 9223372036854775807
+object(stdClass)#%d (%d) {
+  ["longFieldName"]=>
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(19) "9223372036854775807"
+  }
+}
 
 ===DONE===

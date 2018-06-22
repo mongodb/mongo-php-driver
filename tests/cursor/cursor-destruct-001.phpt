@@ -1,7 +1,6 @@
 --TEST--
 MongoDB\Driver\Cursor destruct should kill a live cursor
 --SKIPIF--
-<?php if (PHP_INT_SIZE !== 8) { die('skip Only for 64-bit platform'); } ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>

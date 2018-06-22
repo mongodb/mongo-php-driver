@@ -2528,6 +2528,17 @@ void php_phongo_new_decimal128(zval* object, const bson_decimal128_t* decimal TS
 	intern->initialized = true;
 } /* }}} */
 
+void php_phongo_new_int64(zval* object, int64_t integer TSRMLS_DC) /* {{{ */
+{
+	php_phongo_int64_t* intern;
+
+	object_init_ex(object, php_phongo_int64_ce);
+
+	intern              = Z_INT64_OBJ_P(object);
+	intern->integer     = integer;
+	intern->initialized = true;
+} /* }}} */
+
 /* qsort() compare callback for alphabetizing regex flags upon initialization */
 static int php_phongo_regex_compare_flags(const void* f1, const void* f2)
 {
@@ -2835,6 +2846,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_binary_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_decimal128_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_int64_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_javascript_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_maxkey_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_minkey_init_ce(INIT_FUNC_ARGS_PASSTHRU);
