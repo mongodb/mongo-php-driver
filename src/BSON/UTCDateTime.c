@@ -54,17 +54,11 @@ static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t* in
 	int64_t milliseconds;
 	char*   endptr = NULL;
 
-	errno = 0;
+	/* bson_ascii_strtoll() sets errno if conversion fails. If conversion
+	 * succeeds, we still want to ensure that the entire string was parsed. */
 
 	milliseconds = bson_ascii_strtoll(s_milliseconds, &endptr, 10);
 
-	/* errno will set errno if conversion fails; however, we do not need to
-	 * specify the type of error.
-	 *
-	 * Note: bson_ascii_strtoll() does not properly detect out-of-range values
-	 * (see: CDRIVER-1377). strtoll() would be preferable, but it is not
-	 * available on all platforms (e.g. HP-UX), and atoll() provides no error
-	 * reporting at all. */
 	if (errno || (endptr && endptr != ((const char*) s_milliseconds + s_milliseconds_len))) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer for %s initialization", s_milliseconds, ZSTR_VAL(php_phongo_utcdatetime_ce->name));
 		return false;
@@ -223,8 +217,8 @@ static PHP_METHOD(UTCDateTime, __set_state)
 static PHP_METHOD(UTCDateTime, __toString)
 {
 	php_phongo_utcdatetime_t* intern;
-	char*                     tmp;
-	int                       tmp_len;
+	char                      s_milliseconds[24];
+	int                       s_milliseconds_len;
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
@@ -232,9 +226,9 @@ static PHP_METHOD(UTCDateTime, __toString)
 		return;
 	}
 
-	tmp_len = spprintf(&tmp, 0, "%" PRId64, intern->milliseconds);
-	PHONGO_RETVAL_STRINGL(tmp, tmp_len);
-	efree(tmp);
+	s_milliseconds_len = snprintf(s_milliseconds, sizeof(s_milliseconds), "%" PRId64, intern->milliseconds);
+
+	PHONGO_RETVAL_STRINGL(s_milliseconds, s_milliseconds_len);
 } /* }}} */
 
 /* {{{ proto DateTime MongoDB\BSON\UTCDateTime::toDateTime()
