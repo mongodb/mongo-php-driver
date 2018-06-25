@@ -5,6 +5,7 @@ MongoDB\Driver\Command tailable cursor iteration with maxAwaitTimeMS option
 <?php skip_if_not_replica_set(); ?>
 <?php skip_if_not_clean(); ?>
 <?php skip_if_server_version('<', '3.2'); ?>
+<?php skip_if_not_server_storage_engine('wiredTiger'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
