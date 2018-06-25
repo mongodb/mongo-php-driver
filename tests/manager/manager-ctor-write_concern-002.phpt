@@ -4,7 +4,6 @@ MongoDB\Driver\Manager::__construct(): write concern options (wtimeoutms)
 <?php
 
 $tests = [
-    // wtimeoutms does not get applied unless w > 1, w = majority, or tag sets are used
     ['mongodb://127.0.0.1/?wtimeoutms=1000', []],
     ['mongodb://127.0.0.1/?w=2&wtimeoutms=1000', []],
     ['mongodb://127.0.0.1/?w=majority&wtimeoutms=1000', []],
@@ -27,6 +26,8 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["wtimeout"]=>
+  int(1000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
@@ -47,6 +48,8 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   int(1000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["wtimeout"]=>
+  int(1000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
