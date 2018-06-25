@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\BulkWrite::update with arrayFilters
+MongoDB\Driver\BulkWrite::update() with arrayFilters option
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -21,7 +21,7 @@ $manager->executeBulkWrite(DATABASE_NAME . '.' . COLLECTION_NAME, $bulk);
 
 $updateBulk = new MongoDB\Driver\BulkWrite();
 
-$query = new MongoDB\Driver\Query(['grades' => ['$gte' => 100]]);
+$query = ['grades' => ['$gte' => 100]];
 $update = [ '$set' => [ 'grades.$[element]' => 100 ] ];
 $options = [
     'arrayFilters' => [ [ 'element' => [ '$gte' => 100 ] ] ],
