@@ -10,7 +10,6 @@ $tests = array(
     array(null, array('w' => 1, 'journal' => true)),
     array(null, array('w' => 'majority', 'journal' => true)),
     array('mongodb://127.0.0.1/?w=majority&journal=true', array('w' => 1, 'journal' => false)),
-    // wtimeoutms does not get applied unless w > 1, w = majority, or tag sets are used
     array('mongodb://127.0.0.1/?wtimeoutms=1000', array()),
     array(null, array('wtimeoutms' => 1000)),
     array('mongodb://127.0.0.1/?w=2', array('wtimeoutms' => 1000)),
@@ -61,8 +60,12 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   bool(false)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["wtimeout"]=>
+  int(1000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["wtimeout"]=>
+  int(1000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>

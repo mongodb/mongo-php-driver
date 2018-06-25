@@ -1788,7 +1788,6 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* options TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t                   iter;
-	int32_t                       wtimeoutms;
 	mongoc_write_concern_t*       new_wc;
 	const mongoc_write_concern_t* old_wc;
 
@@ -1811,8 +1810,6 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 		return true;
 	}
 
-	wtimeoutms = mongoc_write_concern_get_wtimeout(old_wc);
-
 	new_wc = mongoc_write_concern_copy(old_wc);
 
 	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_SAFE)) {
@@ -1827,6 +1824,8 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	}
 
 	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_WTIMEOUTMS)) {
+		int32_t wtimeout;
+
 		if (!BSON_ITER_HOLDS_INT32(&iter)) {
 			PHONGO_URI_INVALID_TYPE(iter, "32-bit integer");
 			mongoc_write_concern_destroy(new_wc);
@@ -1834,7 +1833,16 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 			return false;
 		}
 
-		wtimeoutms = bson_iter_int32(&iter);
+		wtimeout = bson_iter_int32(&iter);
+
+		if (wtimeout < 0) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected wtimeoutMS to be >= 0, %d given", wtimeout);
+			mongoc_write_concern_destroy(new_wc);
+
+			return false;
+		}
+
+		mongoc_write_concern_set_wtimeout(new_wc, wtimeout);
 	}
 
 	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_JOURNAL)) {
@@ -1872,7 +1880,8 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 			const char* str = bson_iter_utf8(&iter, NULL);
 
 			if (0 == strcasecmp(PHONGO_WRITE_CONCERN_W_MAJORITY, str)) {
-				mongoc_write_concern_set_wmajority(new_wc, wtimeoutms);
+				/* wtimeoutMS is set independently, so preserve its value here */
+				mongoc_write_concern_set_wmajority(new_wc, mongoc_write_concern_get_wtimeout(new_wc));
 			} else {
 				mongoc_write_concern_set_wtag(new_wc, str);
 			}
@@ -1882,15 +1891,6 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 
 			return false;
 		}
-	}
-
-	/* Only set wtimeout if it's still applicable; otherwise, clear it. */
-	if (mongoc_write_concern_get_w(new_wc) > 1 ||
-		mongoc_write_concern_get_wmajority(new_wc) ||
-		mongoc_write_concern_get_wtag(new_wc)) {
-		mongoc_write_concern_set_wtimeout(new_wc, wtimeoutms);
-	} else {
-		mongoc_write_concern_set_wtimeout(new_wc, 0);
 	}
 
 	if (mongoc_write_concern_get_journal(new_wc)) {
