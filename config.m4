@@ -237,9 +237,10 @@ if test "$PHP_MONGODB" != "no"; then
     dnl exists, report an error during configure (this is later than M4 parsing
     dnl during phpize but better than nothing).
     m4_pushdef([_include],[
-      if test ! \( -f "$1" -o -f "ext/mongodb/$1" \); then
-        AC_MSG_ERROR([m4 could not include $1: No such file or directory])
-      fi
+      dnl TODO: Fix this for PECL install (PHPC-1218)
+      dnl if test ! \( -f "$1" -o -f "ext/mongodb/$1" \); then
+      dnl   AC_MSG_ERROR([m4 could not include $1: No such file or directory])
+      dnl fi
       m4_builtin([sinclude],[$1])
       m4_builtin([sinclude],[ext/mongodb/][$1])
     ])
