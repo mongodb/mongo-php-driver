@@ -12,7 +12,15 @@ PHP_ARG_WITH([openssl-dir],
              [auto],
              [no])
 
+dnl PHP_ARG_WITH without a value assigns "yes". Treat it like "auto" but required.
+AS_IF([test "$PHP_MONGODB_SSL" = "yes"],[
+  crypto_required="yes"
+  PHP_MONGODB_SSL="auto"
+])
+
 AS_IF([test "$PHP_MONGODB_SSL" = "darwin" -o \( "$PHP_MONGODB_SSL" = "auto" -a "$os_darwin" = "yes" \)],[
+  AC_MSG_NOTICE([checking whether Darwin SSL is available])
+
   if test "$os_darwin" = "no"; then
     AC_MSG_ERROR([Darwin SSL is only supported on macOS])
   fi
@@ -27,6 +35,7 @@ AS_IF([test "$PHP_MONGODB_SSL" = "darwin" -o \( "$PHP_MONGODB_SSL" = "auto" -a "
 ])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
+  AC_MSG_NOTICE([checking whether OpenSSL is available])
   found_openssl="no"
 
   PKG_CHECK_MODULES([PHP_MONGODB_SSL],[openssl],[
@@ -112,6 +121,7 @@ AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
 ])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "libressl" -o "$PHP_MONGODB_SSL" = "auto"],[
+  AC_MSG_NOTICE([checking whether LibreSSL is available])
   found_libressl="no"
 
   PKG_CHECK_MODULES([PHP_MONGODB_SSL],[libtls libcrypto],[
@@ -144,6 +154,9 @@ AS_IF([test "$PHP_MONGODB_SSL" = "libressl" -o "$PHP_MONGODB_SSL" = "auto"],[
 ])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "auto"],[
+  if test "x$crypto_required" = "xyes"; then
+    AC_MSG_ERROR([crypto and TLS libraries not found])
+  fi
   PHP_MONGODB_SSL="no"
 ])
 
