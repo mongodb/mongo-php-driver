@@ -5,7 +5,8 @@ PHP_ARG_WITH([mongodb-sasl],
              [auto],
              [no])
 
-AS_IF([test "$PHP_MONGODB_SASL" = "cyrus" -o "$PHP_MONGODB_SASL" = "auto"],[
+dnl PHP_ARG_WITH without a value assigns "yes". Treat it like "auto" but required.
+AS_IF([test "$PHP_MONGODB_SASL" = "cyrus" -o "$PHP_MONGODB_SASL" = "auto" -o "$PHP_MONGODB_SASL" = "yes"],[
   found_cyrus="no"
 
   PKG_CHECK_MODULES([PHP_MONGODB_SASL],[libsasl2],[
@@ -38,7 +39,7 @@ AS_IF([test "$PHP_MONGODB_SASL" = "cyrus" -o "$PHP_MONGODB_SASL" = "auto"],[
                       $MONGODB_SHARED_LIBADD)
   fi
 
-  if test "$PHP_MONGODB_SASL" = "cyrus" -a "$found_cyrus" != "yes"; then
+  if test \( "$PHP_MONGODB_SASL" = "cyrus" -o "$PHP_MONGODB_SASL" = "yes" \) -a "$found_cyrus" != "yes"; then
     AC_MSG_ERROR([Cyrus SASL libraries and development headers could not be found])
   fi
 ])
