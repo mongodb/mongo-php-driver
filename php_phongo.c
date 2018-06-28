@@ -181,9 +181,49 @@ void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const ch
 	va_end(args);
 }
 
-void phongo_throw_exception_from_bson_error_t(bson_error_t* error TSRMLS_DC)
+static void phongo_exception_add_error_labels(bson_t* reply TSRMLS_DC)
 {
-	zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code), error->message, error->code TSRMLS_CC);
+	bson_iter_t iter;
+
+	if (!reply) {
+		return;
+	}
+
+	if (bson_iter_init_find(&iter, reply, "errorLabels")) {
+		bson_iter_t error_labels;
+#if PHP_VERSION_ID >= 70000
+		zval labels;
+
+		array_init(&labels);
+#else
+		zval* labels = NULL;
+
+		ALLOC_INIT_ZVAL(labels);
+		array_init(labels);
+#endif
+
+		bson_iter_recurse(&iter, &error_labels);
+		while (bson_iter_next(&error_labels)) {
+			if (BSON_ITER_HOLDS_UTF8(&error_labels)) {
+				const char*    error_label;
+				uint32_t       error_label_len;
+
+				error_label = bson_iter_utf8(&error_labels, &error_label_len);
+#if PHP_VERSION_ID >= 70000
+				ADD_NEXT_INDEX_STRINGL(&labels, error_label, error_label_len);
+#else
+				ADD_NEXT_INDEX_STRINGL(labels, error_label, error_label_len);
+#endif
+			}
+		}
+
+#if PHP_VERSION_ID >= 70000
+		phongo_add_exception_prop(ZEND_STRL("errorLabels"), &labels);
+#else
+		phongo_add_exception_prop(ZEND_STRL("errorLabels"), labels TSRMLS_CC);
+#endif
+		zval_ptr_dtor(&labels);
+	}
 }
 
 void phongo_throw_exception_from_bson_error_and_reply_t(bson_error_t* error, bson_t* reply TSRMLS_DC)
@@ -192,7 +232,7 @@ void phongo_throw_exception_from_bson_error_and_reply_t(bson_error_t* error, bso
 	 * may use CommandException and report the result document for the
 	 * failed command. For BC, ExceededTimeLimit errors will continue to use
 	 * ExcecutionTimeoutException and omit the result document. */
-	if ((error->domain == MONGOC_ERROR_SERVER && error->code != PHONGO_SERVER_ERROR_EXCEEDED_TIME_LIMIT) || error->domain == MONGOC_ERROR_WRITE_CONCERN) {
+	if (reply && ((error->domain == MONGOC_ERROR_SERVER && error->code != PHONGO_SERVER_ERROR_EXCEEDED_TIME_LIMIT) || error->domain == MONGOC_ERROR_WRITE_CONCERN)) {
 #if PHP_VERSION_ID >= 70000
 		zval zv;
 #else
@@ -209,8 +249,14 @@ void phongo_throw_exception_from_bson_error_and_reply_t(bson_error_t* error, bso
 #endif
 		zval_ptr_dtor(&zv);
 	} else {
-		phongo_throw_exception_from_bson_error_t(error TSRMLS_CC);
+		zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code), error->message, error->code TSRMLS_CC);
 	}
+	phongo_exception_add_error_labels(reply TSRMLS_CC);
+}
+
+void phongo_throw_exception_from_bson_error_t(bson_error_t* error TSRMLS_DC)
+{
+	phongo_throw_exception_from_bson_error_and_reply_t(error, NULL TSRMLS_CC);
 }
 
 static void php_phongo_log(mongoc_log_level_t log_level, const char* log_domain, const char* message, void* user_data)

@@ -88,6 +88,8 @@ object(MongoDB\Driver\Monitoring\CommandFailedEvent)#%d (%d) {
     %a
     ["previous":"Exception":private]=>
     NULL
+    ["errorLabels":protected]=>
+    NULL
   }
   ["operationId"]=>
   string(%d) "%s"
