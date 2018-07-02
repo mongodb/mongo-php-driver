@@ -58,7 +58,7 @@ while (true) {
 
         $session->commitTransaction();
         echo "Transaction committed.\n";break;
-    } catch (\MongoDB\Driver\Exception\Exception $e) {
+    } catch (\MongoDB\Driver\Exception\CommandException $e) {
         $rd = $e->getResultDocument();
 
         if (isset($rd->errorLabels) && in_array('TransientTransactionError', $rd->errorLabels)) {
