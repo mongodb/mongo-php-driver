@@ -29,7 +29,7 @@ array(3) {
   [0]=>
   object(MongoDB\Driver\Server)#%d (%d) {
     ["host"]=>
-    string(14) "192.168.112.10"
+    string(%d) "%s"
     ["port"]=>
     int(3000)
     ["type"]=>
@@ -61,7 +61,7 @@ array(3) {
   [1]=>
   object(MongoDB\Driver\Server)#%d (%d) {
     ["host"]=>
-    string(14) "192.168.112.10"
+    string(%d) "%s"
     ["port"]=>
     int(3001)
     ["type"]=>
@@ -93,7 +93,7 @@ array(3) {
   [2]=>
   object(MongoDB\Driver\Server)#%d (%d) {
     ["host"]=>
-    string(14) "192.168.112.10"
+    string(%d) "%s"
     ["port"]=>
     int(3002)
     ["type"]=>
@@ -116,7 +116,7 @@ array(3) {
     int(%d)
   }
 }
-192.168.112.10:3000 - primary: 1, secondary: 0, arbiter: 0
-192.168.112.10:3001 - primary: 0, secondary: 1, arbiter: 0
-192.168.112.10:3002 - primary: 0, secondary: 0, arbiter: 1
+%s:3000 - primary: 1, secondary: 0, arbiter: 0
+%s:3001 - primary: 0, secondary: 1, arbiter: 0
+%s:3002 - primary: 0, secondary: 0, arbiter: 1
 ===DONE===

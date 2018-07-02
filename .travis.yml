@@ -12,6 +12,7 @@ env:
     - TEST_PHP_ARGS="-q -s output.txt -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
     - REPORT_EXIT_STATUS=1
     - SERVER_VERSION=4.0.0
+    - DEPLOYMENT=STANDALONE
 
 matrix:
   include:
@@ -20,15 +21,30 @@ matrix:
     - php: 7.0
     - php: 7.1
     - php: 7.2
+    - php: 7.2
+      env:
+        - DEPLOYMENT=STANDALONE_SSL
+    - php: 7.2
+      env:
+        - DEPLOYMENT=SHARDED_CLUSTER
+    - php: 7.2
+      env:
+        - DEPLOYMENT=STANDALONE_AUTH
+    - php: 7.2
+      env:
+        - DEPLOYMENT=REPLICASET
     - php: 7.0
       env:
         - SERVER_VERSION=3.0.15
+        - DEPLOYMENT=STANDALONE_OLD
     - php: 7.0
       env:
         - SERVER_VERSION=3.2.20
+        - DEPLOYMENT=STANDALONE_OLD
     - php: 7.0
       env:
         - SERVER_VERSION=3.4.15
+        - DEPLOYMENT=STANDALONE_OLD
     - php: 7.0
       env:
         - SERVER_VERSION=3.6.5
@@ -36,9 +52,9 @@ matrix:
 before_install:
   - pip install "mongo-orchestration>=0.6.7,<1.0" --user `whoami`
   - .travis.scripts/before_install.sh
-  - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${SERVER_VERSION}.tgz
-  - tar zxf mongodb-linux-x86_64-${SERVER_VERSION}.tgz
-  - export PATH=${PWD}/mongodb-linux-x86_64-${SERVER_VERSION}/bin/:${PATH}
+  - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-${SERVER_VERSION}.tgz
+  - tar zxf mongodb-linux-x86_64-ubuntu1404-${SERVER_VERSION}.tgz
+  - export PATH=${PWD}/mongodb-linux-x86_64-ubuntu1404-${SERVER_VERSION}/bin:${PATH}
   - mongod --version
   - mongo-orchestration --version
   - export MO_PATH=`python -c 'import mongo_orchestration; from os import path;
@@ -47,12 +63,14 @@ before_install:
 
 before_script:
   - mongo-orchestration start
-  - pushd ${MO_PATH} && ${TRAVIS_BUILD_DIR}/.travis.scripts/mo.sh configurations/servers/clean.json start && popd
+  - .travis.scripts/setup_mo.sh
   - ulimit -a
   - ulimit -c unlimited || true
   - .travis.scripts/before_script.sh
 
 script:
+  - export MONGODB_URI=`cat /tmp/uri.txt`
+  - echo $MONGODB_URI
   - make test
 
 after_success:
