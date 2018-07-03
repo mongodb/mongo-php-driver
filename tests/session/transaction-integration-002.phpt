@@ -61,9 +61,7 @@ try {
     ] );
     $manager->executeCommand(DATABASE_NAME, $cmd, ['session' => $sessionB]);
 } catch (MongoDB\Driver\Exception\CommandException $e) {
-    $rd = $e->getResultDocument();
-
-    echo (isset($rd->errorLabels) && in_array("TransientTransactionError", $rd->errorLabels)) ?
+    echo $e->hasErrorLabel('TransientTransactionError') ?
         "found a TransientTransactionError" : "did NOT get a TransientTransactionError", "\n";
 }
 ?>
