@@ -82,11 +82,23 @@ AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
                       [have_crypto_lib="yes"],
                       [have_crypto_lib="no"],
                       [$OPENSSL_LIBDIR_LDFLAG])
+
+
+    AC_MSG_NOTICE([checking whether OpenSSL >= 1.1.0 is available])
     PHP_CHECK_LIBRARY([ssl],
-                      [SSL_library_init],
+                      [OPENSSL_init_ssl],
                       [have_ssl_lib="yes"],
                       [have_ssl_lib="no"],
                       [$OPENSSL_LIBDIR_LDFLAG -lcrypto])
+
+    if test "$have_ssl_lib" = "no"; then
+        AC_MSG_NOTICE([checking whether OpenSSL < 1.1.0 is available])
+        PHP_CHECK_LIBRARY([ssl],
+                          [SSL_library_init],
+                          [have_ssl_lib="yes"],
+                          [have_ssl_lib="no"],
+                          [$OPENSSL_LIBDIR_LDFLAG -lcrypto])
+    fi
 
     if test "$have_ssl_lib" = "yes" -a "$have_crypto_lib" = "yes"; then
       PHP_ADD_LIBRARY([ssl],,[MONGODB_SHARED_LIBADD])
