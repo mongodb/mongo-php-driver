@@ -47,6 +47,6 @@ printf("Inserted: %d\n", $inserted);
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
-No suitable servers found (`serverSelectionTryOnce` set): [connection closed calling ismaster on '%s']
+No suitable servers found (`serverSelectionTryOnce` set): [%scalling ismaster on '%s']
 Inserted: 1
 ===DONE===

@@ -1,5 +1,6 @@
 <?php
 
+use MongoDB\Driver\Command;
 use MongoDB\Driver\Exception\ConnectionException;
 use MongoDB\Driver\Exception\RuntimeException;
 
@@ -144,6 +145,16 @@ function skip_if_not_server_storage_engine($storageEngine)
 
     if ($serverStorageEngine !== $storageEngine) {
         exit("skip Server storage engine is '$serverStorageEngine' (needed '$storageEngine')");
+    }
+}
+
+/**
+ * Skips the test if the server does not support the sleep command.
+ */
+function skip_if_sleep_command_unavailable()
+{
+    if (!command_works(URI, ['sleep' => 1, 'secs' => 1, 'w' => false])) {
+        exit('skip sleep command not available');
     }
 }
 

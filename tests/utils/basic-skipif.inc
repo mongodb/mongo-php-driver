@@ -7,8 +7,8 @@ if ( ! extension_loaded('mongodb')) {
     exit('skip mongodb extension is not loaded');
 }
 
-set_error_handler(function($errno, $errstr) {
-    exit(sprintf('skip %s: %s', errno_as_string($errno), $errstr));
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    exit(sprintf('skip %s: %s @ %s:%d', errno_as_string($errno), $errstr, $errfile, $errline));
 });
 
 set_exception_handler(function($e) {

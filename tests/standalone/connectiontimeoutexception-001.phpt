@@ -5,6 +5,7 @@ ConnectionTimeoutException: exceeding sockettimeoutms
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
 <?php skip_if_test_commands_disabled(); ?>
+<?php skip_if_sleep_command_unavailable(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/" . "../utils/basic.inc";

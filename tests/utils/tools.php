@@ -96,6 +96,26 @@ function get_primary_server($uri)
 }
 
 /**
+ * Runs a command and returns whether an exception was thrown or not
+ *
+ * @param string $uri Connection string
+ * @param array|object $commandSpec
+ * @return bool
+ * @throws RuntimeException
+ */
+function command_works($uri, $commandSpec)
+{
+    $command = new Command($commandSpec);
+    $server = get_primary_server($uri);
+    try {
+        $cursor = $server->executeCommand('admin', $command);
+        return true;
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+/**
  * Returns a parameter of the primary server.
  *
  * @param string $uri Connection string

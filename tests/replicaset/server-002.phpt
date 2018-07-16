@@ -35,7 +35,7 @@ var_dump($info["me"] == $server->getHost() . ":" . $server->getPort());
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-string(14) "192.168.112.10"
+string(%d) "%s"
 array(2) {
   ["dc"]=>
   string(3) "nyc"
@@ -53,9 +53,9 @@ bool(false)
 string(10) "REPLICASET"
 array(2) {
   [0]=>
-  string(19) "192.168.112.10:3000"
+  string(%d) "%s:3000"
   [1]=>
-  string(19) "192.168.112.10:3001"
+  string(%d) "%s:3001"
 }
 bool(true)
 ===DONE===

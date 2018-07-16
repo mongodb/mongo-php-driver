@@ -80,7 +80,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   object(MongoDB\Driver\WriteConcern)#%d (%d) {
   }
 }
-string(14) "192.168.112.10"
+string(%d) "%s"
 int(3001)
 object(stdClass)#%d (2) {
   ["_id"]=>

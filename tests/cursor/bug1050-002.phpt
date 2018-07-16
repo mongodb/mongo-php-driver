@@ -21,7 +21,7 @@ $cmd = new MongoDB\Driver\Command(
         'cursor' => (object) [],
     ],
     [
-        'maxAwaitTimeMS' => 1000,
+        'maxAwaitTimeMS' => 500,
     ]
 );
 
@@ -60,7 +60,7 @@ if (isset($document)) {
 --EXPECTF--
 Executing command took 0.%d seconds
 Current position is valid: no
-Advancing cursor took 1.%d seconds
+Advancing cursor took 0.%r(4|5)%r%d seconds
 Current position is valid: no
 Advancing cursor took %d.%d seconds
 Current position is valid: yes
