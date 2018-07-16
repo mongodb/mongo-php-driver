@@ -19,7 +19,7 @@ function eval_params {
 } 
 
 function r {
-    echo $1| cut -d'/' -f 2
+    echo $1| awk -F'/' '{print $(NF-1)}'| sed 's/standalone/servers/'
 }
 
 function a {

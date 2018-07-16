@@ -36,10 +36,19 @@ $subscriber = new MySubscriber;
 
 MongoDB\Driver\Monitoring\addSubscriber( $subscriber );
 
-drop_collection(URI, DATABASE_NAME, COLLECTION_NAME);
+$primary = get_primary_server(URI);
+$command = new \MongoDB\Driver\Command([
+    'aggregate' => COLLECTION_NAME,
+    'pipeline' => [['$unsupported' => 1]]
+]);
+try {
+    $primary->executeCommand(DATABASE_NAME, $command);
+} catch (Exception $e) {
+    /* Swallow */
+}
 ?>
 --EXPECT--
-started: drop
-failed: drop
+started: aggregate
+failed: aggregate
 - requestId matches: yes 
 - operationId matches: yes
