@@ -764,9 +764,10 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 	if (!success) {
 		if (error.domain == MONGOC_ERROR_SERVER || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
 			zend_throw_exception(php_phongo_bulkwriteexception_ce, error.message, error.code TSRMLS_CC);
+			phongo_exception_add_error_labels(&reply TSRMLS_CC);
 			phongo_add_exception_prop(ZEND_STRL("writeResult"), return_value TSRMLS_CC);
 		} else {
-			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			phongo_throw_exception_from_bson_error_and_reply_t(&error, &reply TSRMLS_CC);
 		}
 	}
 
