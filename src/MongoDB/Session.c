@@ -390,6 +390,24 @@ static PHP_METHOD(Session, endSession)
 	mongoc_client_session_destroy(intern->client_session);
 } /* }}} */
 
+/* {{{ proto void MongoDB\Driver\Session::isInTransaction(void)
+   Returns whether a multi-document transaction is in progress */
+static PHP_METHOD(Session, isInTransaction)
+{
+	php_phongo_session_t* intern;
+	SUPPRESS_UNUSED_WARNING(return_value_ptr)
+	SUPPRESS_UNUSED_WARNING(return_value_used)
+
+	intern = Z_SESSION_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	RETURN_BOOL(mongoc_client_session_in_transaction(intern->client_session));
+} /* }}} */
+
+
 /* {{{ MongoDB\Driver\Session function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Session_advanceClusterTime, 0, 0, 1)
 	ZEND_ARG_INFO(0, clusterTime)
@@ -416,6 +434,7 @@ static zend_function_entry php_phongo_session_me[] = {
 	PHP_ME(Session, getClusterTime, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getLogicalSessionId, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getOperationTime, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Session, isInTransaction, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, startTransaction, ai_Session_startTransaction, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Session_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
