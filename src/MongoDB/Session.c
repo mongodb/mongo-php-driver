@@ -408,15 +408,15 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_session_me[] = {
 	/* clang-format off */
+	PHP_ME(Session, abortTransaction, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, advanceClusterTime, ai_Session_advanceClusterTime, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, advanceOperationTime, ai_Session_advanceOperationTime, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Session, commitTransaction, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Session, endSession, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getClusterTime, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getLogicalSessionId, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getOperationTime, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, startTransaction, ai_Session_startTransaction, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Session, commitTransaction, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Session, abortTransaction, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Session, endSession, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Session_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
