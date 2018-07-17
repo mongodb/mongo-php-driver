@@ -23,58 +23,84 @@ make clean > /dev/null && make all > /dev/null && make install
 
 ## Testing
 
-The test suite expects to find `PHONGO-SERVERS.json` in the system temp
-directory (e.g. `/tmp`). This file should contain a JSON object with MongoDB
-URIs and resemble the following:
+The test suite depends on [Mongo Orchestration](https://github.com/10gen/mongo-orchestration).
+Mongo Orchestration is an HTTP server that provides a REST API for maintaining
+MongoDB configurations. These configurations are located in ``scripts/presets``
+and for Travis CI in ``scripts/presets/travis``. The presets for Travis CI can
+also be spun-up locally, and that is the preferred testing method. An older way
+using a specific VM is also still available (see further down).
+
+Mongo Orchestration expects that the ``mongod`` (and ``mongos``) binaries are
+available in the ``PATH``.
+
+Once installed, Mongo Orchestration can be started with
 
 ```
-{
-    "STANDALONE": "mongodb:\/\/192.168.112.10:2000",
-    "STANDALONE_30": "mongodb:\/\/192.168.112.10:2700",
-    "STANDALONE_SSL": "mongodb:\/\/192.168.112.10:2100",
-    "STANDALONE_AUTH": "mongodb:\/\/root:toor@192.168.112.10:2200\/?authSource=admin",
-    "STANDALONE_X509": "mongodb:\/\/C=US,ST=New York,L=New York City,O=MongoDB,OU=KernelUser,CN=client@192.168.112.10:2300\/?authSource=$external&authMechanism=MONGODB-X509",
-    "STANDALONE_PLAIN": "mongodb:\/\/root:toor@192.168.112.10:2400\/?authSource=admin",
-    "REPLICASET": "mongodb:\/\/192.168.112.10:3000,192.168.112.10:3001,192.168.112.10:3002\/?replicaSet=REPLICASET",
-    "REPLICASET_30": "mongodb:\/\/192.168.112.10:3100,192.168.112.10:3101,192.168.112.10:3102\/?replicaSet=REPLICASET_30",
-    "REPLICASET_36": "mongodb:\/\/192.168.112.10:3200,192.168.112.10:3201,192.168.112.10:3202\/?replicaSet=REPLICASET_36"
-}
+~/.local/bin/mongo-orchestration start --no-fork --enable-majority-read-concern
 ```
 
-The location of this `PHONGO-SERVERS.json` file can be configured by exporting a
-`PHONGO_SERVERS` environment variable with the absolute path to the JSON
-configuration file.
+The Travis CI setup uses
+[deployments](https://github.com/mongodb/mongo-php-driver/blob/master/.travis.scripts/setup_mo.sh)
+to test different topologies. Currently, it supports ``STANDALONE``,
+``STANDALONE_OLD`` (for MongoDB versions before 3.6), ``STANDALONE_SSL``,
+``REPLICASET`` and ``SHARDED_CLUSTER``.
 
-Our test suite also includes scripts to configure the necessary test environment
+The test suite uses the ``MONGODB_URI`` environment variable as connection
+string to run all tests. In order to make the URI available to the test suite,
+you can run the following for a "deployment" in the *root* of the MongoDB
+Driver GIT checkout:
+
+```
+export TRAVIS_BUILD_DIR=`pwd`
+DEPLOYMENT=STANDALONE_AUTH .travis.scripts/setup_mo.sh
+export MONGODB_URI=`cat /tmp/uri.txt`
+```
+
+With this set-up, the tests can be run with `make test`.
+
+### Legacy VM set-up
+
+Alternative to the Travis CI set-up, our test suite also includes scripts to configure test environments
 with [Vagrant](https://www.vagrantup.com/) and
-[Mongo Orchestration](https://github.com/10gen/mongo-orchestration). This is the
-preferred way of creating `PHONGO-SERVERS.json` and running the test suite:
+[Mongo Orchestration](https://github.com/10gen/mongo-orchestration).
+The deployments started in this Vagrant image have hard coded URLs to be used
+with the ``MONGODB_URI`` environment variable:
+
+Deployment                  | URI
+--------------------------- | ---
+Standalone (MongoDB 4.0)    | `mongodb://192.168.112.10:2000`
+Standalone (MongoDB 3.0)    | `mongodb://192.168.112.10:2700`
+Standalone with SSL         | `mongodb://192.168.112.10:2100`
+Standalone with Auth        | `mongodb://root:toor@192.168.112.10:2200/?authSource=admin`
+Standalone with X509 Auth   | `mongodb://C=US,ST=New York,L=New York City,O=MongoDB,OU=KernelUser,CN=client@192.168.112.10:2300/?authSource=$external&authMechanism=MONGODB-X509`
+Standalone with Plain Auth  | `mongodb://root:toor@192.168.112.10:2400/?authSource=admin`
+Replicaset (MongoDB 4.0)    | `mongodb://192.168.112.10:3000,192.168.112.10:3001,192.168.112.10:3002/?replicaSet=REPLICASET`
+Replicaset (MongoDB 3.0)    | `mongodb://192.168.112.10:3100,192.168.112.10:3101,192.168.112.10:3102/?replicaSet=REPLICASET_30`
+Replicaset (MongoDB 3.6)    | `mongodb://192.168.112.10:3200,192.168.112.10:3201,192.168.112.10:3202/?replicaSet=REPLICASET_36`
+
+The Vagrant images can be started by using:
 
 ```
 $ make vm             # Starts the test VMs with Vagrant
 $ make test-bootstrap # Starts the mongod servers within the test VM
 ```
 
-The `test-bootstrap` make target also generates the required
-`PHONGO-SERVERS.json` file. The `test` make target may be used to execute the
-test suite:
+After this set-up is completed, you need to export the `MONGODB_URI`
+environment variables with one of the values from the table above. The `test`
+make target may be used to execute the test suite:
 
 ```
 $ make test # Executes the test suite against the VMs
 ```
 
-### Restarting Mongo Orchestration
+To find out which VM servers are running at a later point in time, you can run
+`make test-bootstrap` to obtain a list of deployments and their URIs.
 
-If something goes awry in the test VM, it may be helpful to start the VM and
-Mongo Orchestration with the following script:
+#### Restarting Mongo Orchestration
+
+If something goes awry in the test VM, you can reload it by running:
 
 ```
-#!/bin/sh
-
-rm -f /tmp/PHONGO-SERVERS.json
-vagrant reload mo
-vagrant ssh mo -c 'sudo rm /home/vagrant/server.pid'
-vagrant ssh mo -c 'sudo mongo-orchestration -f mongo-orchestration-config.json -b 192.168.112.10 --enable-majority-read-concern start'
 make test-bootstrap
 ```
 
