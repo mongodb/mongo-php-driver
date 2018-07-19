@@ -33,6 +33,10 @@ matrix:
     - php: 7.2
       env:
         - DEPLOYMENT=REPLICASET
+    - php: 7.2
+      env:
+        - SERVER_VERSION=3.0.15
+        - DEPLOYMENT=REPLICASET_OLD
     - php: 7.0
       env:
         - SERVER_VERSION=3.0.15
