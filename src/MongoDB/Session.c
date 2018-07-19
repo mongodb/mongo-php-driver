@@ -29,6 +29,12 @@
 
 zend_class_entry* php_phongo_session_ce;
 
+#define SESSION_CHECK_LIVELINESS(i,m) \
+	if (!(i)->client_session) { \
+		phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Cannot call '%s', as the session has already been ended.", (m)); \
+		return; \
+	}
+
 static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestamp, uint32_t* increment TSRMLS_DC)
 {
 	bool retval = false;
@@ -95,6 +101,7 @@ static PHP_METHOD(Session, advanceClusterTime)
 	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
+	SESSION_CHECK_LIVELINESS(intern, "advanceClusterTime")
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &zcluster_time) == FAILURE) {
 		return;
@@ -125,6 +132,7 @@ static PHP_METHOD(Session, advanceOperationTime)
 	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
+	SESSION_CHECK_LIVELINESS(intern, "advanceOperationTime")
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &ztimestamp, php_phongo_timestamp_interface_ce) == FAILURE) {
 		return;
@@ -148,6 +156,7 @@ static PHP_METHOD(Session, getClusterTime)
 	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
+	SESSION_CHECK_LIVELINESS(intern, "getClusterTime")
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -183,6 +192,7 @@ static PHP_METHOD(Session, getLogicalSessionId)
 	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
+	SESSION_CHECK_LIVELINESS(intern, "getLogicalSessionId")
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -213,6 +223,7 @@ static PHP_METHOD(Session, getOperationTime)
 	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
+	SESSION_CHECK_LIVELINESS(intern, "getOperationTime")
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -310,6 +321,7 @@ static PHP_METHOD(Session, startTransaction)
 	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
+	SESSION_CHECK_LIVELINESS(intern, "startTransaction")
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a", &options) == FAILURE) {
 		return;
@@ -342,6 +354,7 @@ static PHP_METHOD(Session, commitTransaction)
 	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
+	SESSION_CHECK_LIVELINESS(intern, "commitTransaction")
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -363,6 +376,7 @@ static PHP_METHOD(Session, abortTransaction)
 	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
+	SESSION_CHECK_LIVELINESS(intern, "abortTransaction")
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -388,6 +402,7 @@ static PHP_METHOD(Session, endSession)
 	}
 
 	mongoc_client_session_destroy(intern->client_session);
+	intern->client_session = NULL;
 } /* }}} */
 
 /* {{{ MongoDB\Driver\Session function entries */
@@ -477,7 +492,7 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 
 	array_init(&retval);
 
-	{
+	if (intern->client_session) {
 		const bson_t* lsid;
 
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
@@ -494,9 +509,11 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 #else
 		ADD_ASSOC_ZVAL_EX(&retval, "logicalSessionId", state.zchild);
 #endif
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "logicalSessionId");
 	}
 
-	{
+	if (intern->client_session) {
 		const bson_t* cluster_time;
 
 		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
@@ -517,12 +534,18 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "clusterTime");
 		}
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "clusterTime");
 	}
 
-	cs_opts = mongoc_client_session_get_opts(intern->client_session);
-	ADD_ASSOC_BOOL_EX(&retval, "causalConsistency", mongoc_session_opts_get_causal_consistency(cs_opts));
+	if (intern->client_session) {
+		cs_opts = mongoc_client_session_get_opts(intern->client_session);
+		ADD_ASSOC_BOOL_EX(&retval, "causalConsistency", mongoc_session_opts_get_causal_consistency(cs_opts));
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "causalConsistency");
+	}
 
-	{
+	if (intern->client_session) {
 		uint32_t timestamp, increment;
 
 		mongoc_client_session_get_operation_time(intern->client_session, &timestamp, &increment);
@@ -543,6 +566,8 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "operationTime");
 		}
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "operationTime");
 	}
 
 	return Z_ARRVAL(retval);
