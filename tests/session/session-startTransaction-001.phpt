@@ -3,6 +3,7 @@ MongoDB\Driver\Session::startTransaction() ensure that methods can be called
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto() ?>
+<?php skip_if_not_replica_set(); ?>
 <?php skip_if_server_version('<', '4.0'); ?>
 --FILE--
 <?php
