@@ -1,12 +1,10 @@
 --TEST--
 MongoDB\Driver\Session with wrong defaultTransactionOptions
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = new MongoDB\Driver\Manager();
 
 $options = [
     [ 'readConcern' => 42 ], 
