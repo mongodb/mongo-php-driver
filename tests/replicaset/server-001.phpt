@@ -48,19 +48,19 @@ array(2) {
   string(3) "one"
 }
 int(%d)
-int(3000)
+int(%d)
 bool(true)
 bool(true)
 bool(false)
 bool(false)
 bool(false)
 bool(false)
-string(10) "REPLICASET"
+string(%d) "REPLICASET%S"
 array(2) {
   [0]=>
-  string(%d) "%s:3000"
+  string(%d) "%s:%d"
   [1]=>
-  string(%d) "%s:3001"
+  string(%d) "%s:%d"
 }
 bool(true)
 ===DONE===
