@@ -1,7 +1,7 @@
 dnl config.m4 for extension mongodb
 PHP_ARG_ENABLE([mongodb],
                [whether to enable MongoDB support],
-               [AC_HELP_STRING([--enable-mongodb],
+               [AS_HELP_STRING([--enable-mongodb],
                                [Enable MongoDB support])])
 
 if test "$PHP_MONGODB" != "no"; then
@@ -26,7 +26,7 @@ if test "$PHP_MONGODB" != "no"; then
 
   PHP_ARG_ENABLE([mongodb-developer-flags],
                  [whether to enable developer build flags],
-                 [AC_HELP_STRING([--enable-mongodb-developer-flags],
+                 [AS_HELP_STRING([--enable-mongodb-developer-flags],
                                  [MongoDB: Enable developer flags [default=no]])],
                  [no],
                  [no])
@@ -82,7 +82,7 @@ if test "$PHP_MONGODB" != "no"; then
 
   PHP_ARG_ENABLE([mongodb-coverage],
                  [whether to enable code coverage],
-                 [AC_HELP_STRING([--enable-mongodb-coverage],
+                 [AS_HELP_STRING([--enable-mongodb-coverage],
                                  [MongoDB: Enable developer code coverage information [default=no]])],
                  [no],
                  [no])

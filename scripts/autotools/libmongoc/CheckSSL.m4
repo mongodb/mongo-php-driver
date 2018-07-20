@@ -7,7 +7,7 @@ PHP_ARG_WITH([mongodb-ssl],
 
 PHP_ARG_WITH([openssl-dir],
              [deprecated option for OpenSSL library path],
-             [AC_HELP_STRING([--with-openssl-dir=@<:@auto/DIR@:>@],
+             [AS_HELP_STRING([--with-openssl-dir=@<:@auto/DIR@:>@],
                              [MongoDB: OpenSSL library path (deprecated for pkg-config) [default=auto]])],
              [auto],
              [no])
@@ -219,14 +219,14 @@ fi
 
 PHP_ARG_ENABLE([mongodb-crypto-system-profile],
                [whether to use system crypto profile],
-               [AC_HELP_STRING([--enable-mongodb-crypto-system-profile],
+               [AS_HELP_STRING([--enable-mongodb-crypto-system-profile],
                                [MongoDB: Use system crypto profile (OpenSSL only) [default=no]])],
                [no],
                [no])
 
 PHP_ARG_WITH([system-ciphers],
              [deprecated option for whether to use system crypto profile],
-             AC_HELP_STRING([--enable-system-ciphers],
+             AS_HELP_STRING([--enable-system-ciphers],
                             [MongoDB: whether to use system crypto profile (deprecated for --enable-mongodb-crypto-system-profile) [default=no]]),
              [no],
              [no])
