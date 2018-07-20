@@ -55,8 +55,8 @@ $server3->executeCommand("local", $cmd);
 --EXPECTF--
 bool(true)
 bool(false)
-int(3000)
-int(3001)
+int(%d)
+int(%d)
 object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["nInserted"]=>
   int(1)
@@ -81,7 +81,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   }
 }
 string(%d) "%s"
-int(3001)
+int(%d)
 object(stdClass)#%d (2) {
   ["_id"]=>
   object(%s\ObjectId)#%d (1) {

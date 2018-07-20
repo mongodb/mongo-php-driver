@@ -31,7 +31,7 @@ array(3) {
     ["host"]=>
     string(%d) "%s"
     ["port"]=>
-    int(3000)
+    int(%d)
     ["type"]=>
     int(4)
     ["is_primary"]=>
@@ -63,7 +63,7 @@ array(3) {
     ["host"]=>
     string(%d) "%s"
     ["port"]=>
-    int(3001)
+    int(%d)
     ["type"]=>
     int(5)
     ["is_primary"]=>
@@ -95,7 +95,7 @@ array(3) {
     ["host"]=>
     string(%d) "%s"
     ["port"]=>
-    int(3002)
+    int(%d)
     ["type"]=>
     int(6)
     ["is_primary"]=>
@@ -116,7 +116,7 @@ array(3) {
     int(%d)
   }
 }
-%s:3000 - primary: 1, secondary: 0, arbiter: 0
-%s:3001 - primary: 0, secondary: 1, arbiter: 0
-%s:3002 - primary: 0, secondary: 0, arbiter: 1
+%s:%d - primary: 1, secondary: 0, arbiter: 0
+%s:%d - primary: 0, secondary: 1, arbiter: 0
+%s:%d - primary: 0, secondary: 0, arbiter: 1
 ===DONE===

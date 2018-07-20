@@ -39,6 +39,6 @@ var_dump($server->getPort(), $server3->getPort());
 --EXPECTF--
 bool(true)
 bool(false)
-int(3000)
-int(3001)
+int(%d)
+int(%d)
 ===DONE===
