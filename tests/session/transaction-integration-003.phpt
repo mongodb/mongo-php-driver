@@ -2,9 +2,10 @@
 MongoDB\Driver\Session::startTransaction() Transient Error Test
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_not_clean(DATABASE_NAME, COLLECTION_NAME); ?>
+<?php skip_if_not_libmongoc_crypto(); ?>
 <?php skip_if_not_replica_set(); ?>
 <?php skip_if_server_version('<', '4.0'); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
