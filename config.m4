@@ -294,7 +294,7 @@ if test "$PHP_MONGODB" != "no"; then
     AC_SUBST(MONGOC_CC)
 
     dnl Generated with: find src/libmongoc/src/common -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
-    PHP_MONGODB_COMMON_SOURCES="common-b64.c"
+    PHP_MONGODB_COMMON_SOURCES="common-b64.c common-md5.c"
 
     dnl Generated with: find src/libmongoc/src/libbson/src/bson -name '*.c' -print0 | cut -sz -d / -f 7- | sort -z | tr '\000' ' '
     PHP_MONGODB_BSON_SOURCES="bcon.c bson-atomic.c bson.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-fnv.c bson-iso8601.c bson-iter.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c"
