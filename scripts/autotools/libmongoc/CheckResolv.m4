@@ -7,20 +7,20 @@ old_LIBS="$LIBS"
 LIBS="$LIBS -lresolv"
 
 dnl Thread-safe DNS query function for _mongoc_client_get_srv.
-dnl Could be a macro, not a function, so check with AC_TRY_LINK.
+dnl Could be a macro, not a function, so check with AC_LINK_IFELSE.
 AC_MSG_CHECKING([for res_nsearch])
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
    #include <sys/types.h>
    #include <netinet/in.h>
    #include <arpa/nameser.h>
    #include <resolv.h>
-],[
+]], [[
    int len;
    unsigned char reply[1024];
    res_state statep;
    len = res_nsearch(
       statep, "example.com", ns_c_in, ns_t_srv, reply, sizeof(reply));
-],[
+]])], [
    AC_MSG_RESULT([yes])
    AC_SUBST(MONGOC_HAVE_RES_SEARCH, 0)
    AC_SUBST(MONGOC_HAVE_RES_NSEARCH, 1)
@@ -28,15 +28,15 @@ AC_TRY_LINK([
 
    dnl We have res_nsearch. Call res_ndestroy (BSD/Mac) or res_nclose (Linux)?
    AC_MSG_CHECKING([for res_ndestroy])
-   AC_TRY_LINK([
+   AC_LINK_IFELSE([AC_LANG_PROGRAM([[
       #include <sys/types.h>
       #include <netinet/in.h>
       #include <arpa/nameser.h>
       #include <resolv.h>
-   ],[
+   ]], [[
       res_state statep;
       res_ndestroy(statep);
-   ], [
+   ]])], [
       AC_MSG_RESULT([yes])
       AC_SUBST(MONGOC_HAVE_RES_NDESTROY, 1)
       AC_SUBST(MONGOC_HAVE_RES_NCLOSE, 0)
@@ -44,15 +44,15 @@ AC_TRY_LINK([
       AC_MSG_RESULT([no])
       AC_SUBST(MONGOC_HAVE_RES_NDESTROY, 0)
       AC_MSG_CHECKING([for res_nclose])
-      AC_TRY_LINK([
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
          #include <sys/types.h>
          #include <netinet/in.h>
          #include <arpa/nameser.h>
          #include <resolv.h>
-      ],[
+      ]], [[
          res_state statep;
          res_nclose(statep);
-      ], [
+      ]])], [
          AC_MSG_RESULT([yes])
          AC_SUBST(MONGOC_HAVE_RES_NCLOSE, 1)
       ], [
@@ -68,16 +68,16 @@ AC_TRY_LINK([
 
    dnl Thread-unsafe function.
    AC_MSG_CHECKING([for res_search])
-   AC_TRY_LINK([
+   AC_LINK_IFELSE([AC_LANG_PROGRAM([[
       #include <sys/types.h>
       #include <netinet/in.h>
       #include <arpa/nameser.h>
       #include <resolv.h>
-   ],[
+   ]], [[
       int len;
       unsigned char reply[1024];
       len = res_search("example.com", ns_c_in, ns_t_srv, reply, sizeof(reply));
-   ], [
+   ]])], [
       AC_MSG_RESULT([yes])
       AC_SUBST(MONGOC_HAVE_RES_SEARCH, 1)
       found_resolv="yes"
