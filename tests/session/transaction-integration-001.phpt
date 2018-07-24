@@ -17,15 +17,17 @@ $EVENTS_COL =    COLLECTION_NAME . '_events';
 $manager = new MongoDB\Driver\Manager(URI);
 
 /* Create collections as that can't be (automatically) done in a transaction */
-$cmd = new \MongoDB\Driver\Command([
-    'create' => $EMPLOYEES_COL
-]);
-$manager->executeCommand(DATABASE_NAME, $cmd);
+$manager->executeCommand(
+    DATABASE_NAME,
+    new \MongoDB\Driver\Command([ 'create' => $EMPLOYEES_COL ]),
+    [ 'writeConcern' => new \MongoDB\Driver\WriteConcern( \MongoDB\Driver\WriteConcern::MAJORITY ) ]
+);
 
-$cmd = new \MongoDB\Driver\Command([
-    'create' => $EVENTS_COL
-]);
-$manager->executeCommand(DATABASE_NAME, $cmd);
+$manager->executeCommand(
+    DATABASE_NAME,
+    new \MongoDB\Driver\Command([ 'create' => $EVENTS_COL ]),
+    [ 'writeConcern' => new \MongoDB\Driver\WriteConcern( \MongoDB\Driver\WriteConcern::MAJORITY ) ]
+);
 
 
 /* Do the transaction */
