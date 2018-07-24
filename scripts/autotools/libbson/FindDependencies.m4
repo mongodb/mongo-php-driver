@@ -73,7 +73,7 @@ AC_CHECK_FUNC(gmtime_r, [AC_SUBST(BSON_HAVE_GMTIME_R, 1)])
 
 # Check for rand_r()
 AC_SUBST(BSON_HAVE_RAND_R, 0)
-AC_CHECK_FUNC(rand_r, [AC_SUBST(BSON_HAVE_RAND_R, 1)], [], [#include <stdlib.h>])
+AC_CHECK_FUNC(rand_r, [AC_SUBST(BSON_HAVE_RAND_R, 1)])
 
 # Check for pthreads. We might need to make this better to handle mingw,
 # but I actually think it is okay to just check for it even though we will
