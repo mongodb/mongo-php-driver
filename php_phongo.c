@@ -1921,6 +1921,17 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 } /* }}} */
 
 #ifdef MONGOC_ENABLE_SSL
+
+/* This is copied from mongoc-ssl.c */
+static void php_phongo_mongoc_ssl_opts_from_uri(mongoc_ssl_opt_t* ssl_opt, mongoc_uri_t* uri)
+{
+	ssl_opt->pem_file               = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_SSLCLIENTCERTIFICATEKEYFILE, NULL);
+	ssl_opt->pem_pwd                = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_SSLCLIENTCERTIFICATEKEYPASSWORD, NULL);
+	ssl_opt->ca_file                = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_SSLCERTIFICATEAUTHORITYFILE, NULL);
+	ssl_opt->weak_cert_validation   = mongoc_uri_get_option_as_bool(uri, MONGOC_URI_SSLALLOWINVALIDCERTIFICATES, false);
+	ssl_opt->allow_invalid_hostname = mongoc_uri_get_option_as_bool(uri, MONGOC_URI_SSLALLOWINVALIDHOSTNAMES, false);
+}
+
 static inline char* php_phongo_fetch_ssl_opt_string(zval* zoptions, const char* key, int key_len)
 {
 	int       plen;
@@ -1934,9 +1945,10 @@ static inline char* php_phongo_fetch_ssl_opt_string(zval* zoptions, const char* 
 	return value;
 }
 
-static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(zval* zoptions TSRMLS_DC)
+static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptions TSRMLS_DC)
 {
 	mongoc_ssl_opt_t* ssl_opt;
+	bool              any_ssl_option_set = false;
 
 	if (!zoptions) {
 		return NULL;
@@ -1963,6 +1975,14 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(zval* zoptions TSRMLS_DC)
 
 	ssl_opt = ecalloc(1, sizeof(mongoc_ssl_opt_t));
 
+	/* If SSL options are set in the URL, we need to read them and set them on
+	 * the options struct so we can merge potential options from passed in
+	 * driverOptions (zoptions)*/
+	if (mongoc_uri_get_ssl(uri)) {
+		php_phongo_mongoc_ssl_opts_from_uri(ssl_opt, uri);
+		any_ssl_option_set = true;
+	}
+
 	/* Check canonical option names first and fall back to SSL context options
 	 * for backwards compatibility. */
 	if (php_array_existsc(zoptions, "allow_invalid_hostname")) {
@@ -1971,36 +1991,52 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(zval* zoptions TSRMLS_DC)
 
 	if (php_array_existsc(zoptions, "weak_cert_validation")) {
 		ssl_opt->weak_cert_validation = php_array_fetchc_bool(zoptions, "weak_cert_validation");
+		any_ssl_option_set            = true;
 	} else if (php_array_existsc(zoptions, "allow_self_signed")) {
 		ssl_opt->weak_cert_validation = php_array_fetchc_bool(zoptions, "allow_self_signed");
+		any_ssl_option_set            = true;
 	}
 
 	if (php_array_existsc(zoptions, "pem_file")) {
-		ssl_opt->pem_file = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("pem_file"));
+		ssl_opt->pem_file  = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("pem_file"));
+		any_ssl_option_set = true;
 	} else if (php_array_existsc(zoptions, "local_cert")) {
-		ssl_opt->pem_file = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("local_cert"));
+		ssl_opt->pem_file  = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("local_cert"));
+		any_ssl_option_set = true;
 	}
 
 	if (php_array_existsc(zoptions, "pem_pwd")) {
-		ssl_opt->pem_pwd = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("pem_pwd"));
+		ssl_opt->pem_pwd   = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("pem_pwd"));
+		any_ssl_option_set = true;
 	} else if (php_array_existsc(zoptions, "passphrase")) {
-		ssl_opt->pem_pwd = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("passphrase"));
+		ssl_opt->pem_pwd   = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("passphrase"));
+		any_ssl_option_set = true;
 	}
 
 	if (php_array_existsc(zoptions, "ca_file")) {
-		ssl_opt->ca_file = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("ca_file"));
+		ssl_opt->ca_file   = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("ca_file"));
+		any_ssl_option_set = true;
 	} else if (php_array_existsc(zoptions, "cafile")) {
-		ssl_opt->ca_file = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("cafile"));
+		ssl_opt->ca_file   = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("cafile"));
+		any_ssl_option_set = true;
 	}
 
 	if (php_array_existsc(zoptions, "ca_dir")) {
-		ssl_opt->ca_dir = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("ca_dir"));
+		ssl_opt->ca_dir    = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("ca_dir"));
+		any_ssl_option_set = true;
 	} else if (php_array_existsc(zoptions, "capath")) {
-		ssl_opt->ca_dir = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("capath"));
+		ssl_opt->ca_dir    = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("capath"));
+		any_ssl_option_set = true;
 	}
 
 	if (php_array_existsc(zoptions, "crl_file")) {
-		ssl_opt->crl_file = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("crl_file"));
+		ssl_opt->crl_file  = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL("crl_file"));
+		any_ssl_option_set = true;
+	}
+
+	if (!any_ssl_option_set) {
+		efree(ssl_opt);
+		return NULL;
 	}
 
 	return ssl_opt;
@@ -2418,7 +2454,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	}
 
 #ifdef MONGOC_ENABLE_SSL
-	ssl_opt = php_phongo_make_ssl_opt(driverOptions TSRMLS_CC);
+	ssl_opt = php_phongo_make_ssl_opt(uri, driverOptions TSRMLS_CC);
 
 	/* An exception may be thrown during SSL option creation */
 	if (EG(exception)) {
