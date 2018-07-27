@@ -39,8 +39,8 @@ static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestam
 {
 	bool retval = false;
 #if PHP_VERSION_ID >= 70000
-	zval ztimestamp;
-	zval zincrement;
+	zval ztimestamp = ZVAL_STATIC_INIT;
+	zval zincrement = ZVAL_STATIC_INIT;
 
 	zend_call_method_with_0_params(obj, NULL, NULL, "getTimestamp", &ztimestamp);
 
