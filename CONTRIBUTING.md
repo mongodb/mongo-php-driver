@@ -23,6 +23,38 @@ make clean > /dev/null && make all > /dev/null && make install
 
 ## Testing
 
+The extension's test use the PHPT format from PHP internals. This format is
+documented in the following links:
+
+ * [Introduction to PHPT Files](https://qa.php.net/write-test.php)
+ * [PHPT - Test File Layout](https://qa.php.net/phpt_details.php)
+
+Generally, most tests will be based on the following template:
+
+```
+--TEST--
+Description of API or JIRA issue being tested
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php /* One or more skip functions */ ?>
+--FILE--
+<?php
+require_once __DIR__ . "/../utils/basic.inc";
+
+// Test code
+
+?>
+===DONE===
+<?php exit(0); ?>
+--EXPECT--
+===DONE===
+```
+
+The `basic-skipif.inc` and `basic.inc` files contain utility functions for the
+`SKIPIF` and `FILE` sections, respectively. If those functions are not needed
+(e.g. skip logic only depends on checking the `PHP_INT_SIZE` constant), the test
+should not include the file. When it doubt, keep it simple.
+
 ### Local Mongo Orchestration (and Travis CI)
 
 The test suite depends on [Mongo Orchestration](https://github.com/10gen/mongo-orchestration).
