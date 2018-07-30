@@ -23,6 +23,8 @@ make clean > /dev/null && make all > /dev/null && make install
 
 ## Testing
 
+### Local Mongo Orchestration (and Travis CI)
+
 The test suite depends on [Mongo Orchestration](https://github.com/10gen/mongo-orchestration).
 Mongo Orchestration is an HTTP server that provides a REST API for maintaining
 MongoDB configurations. These configurations are located in ``scripts/presets``
@@ -58,7 +60,7 @@ export MONGODB_URI=`cat /tmp/uri.txt`
 
 With this set-up, the tests can be run with `make test`.
 
-### Legacy VM set-up
+### VM-based Mongo Orchestration (legacy set-up)
 
 Alternative to the Travis CI set-up, our test suite also includes scripts to configure test environments
 with [Vagrant](https://www.vagrantup.com/) and
