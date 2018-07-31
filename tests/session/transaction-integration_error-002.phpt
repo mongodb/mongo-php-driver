@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Session: Setting per-op readConcern or writeConcern in transaction (executeCommand)
+MongoDB\Driver\Session: Setting per-op readConcern in transaction (executeReadCommand)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
@@ -30,30 +30,15 @@ $session->startTransaction( [
 
 echo throws(function() use ($manager, $session) {
     $cmd = new \MongoDB\Driver\Command( [
-        'update' => COLLECTION_NAME,
-        'updates' => [ [ 'q' => [ 'employee' => 3 ], 'u' => [ '$set' => [ 'status' => 'Inactive' ] ] ] ]
+        'count' => COLLECTION_NAME,
+        'query' => [ 'q' => [ 'employee' => 3 ] ]
     ] );
-    $manager->executeCommand(
+    $manager->executeReadCommand(
         DATABASE_NAME,
         $cmd,
         [
             'session' => $session,
             'readConcern' => new \MongoDB\Driver\ReadConcern( \MongoDB\Driver\ReadConcern::LOCAL )
-        ]
-    );
-}, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
-
-echo throws(function() use ($manager, $session) {
-    $cmd = new \MongoDB\Driver\Command( [
-        'update' => COLLECTION_NAME,
-        'updates' => [ [ 'q' => [ 'employee' => 3 ], 'u' => [ '$set' => [ 'status' => 'Inactive' ] ] ] ]
-    ] );
-    $manager->executeCommand(
-        DATABASE_NAME,
-        $cmd,
-        [
-            'session' => $session,
-            'writeConcern' => new \MongoDB\Driver\WriteConcern( \MongoDB\Driver\WriteConcern::MAJORITY )
         ]
     );
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
@@ -64,6 +49,4 @@ echo throws(function() use ($manager, $session) {
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Cannot set read concern after starting transaction
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Cannot set write concern after starting transaction
 ===DONE===

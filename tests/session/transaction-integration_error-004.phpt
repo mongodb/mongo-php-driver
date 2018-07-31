@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Session: Setting per-op readConcern or writeConcern in transaction (executeCommand)
+MongoDB\Driver\Session: Setting per-op readConcern or writeConcern in transaction (executeReadWriteCommand)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
@@ -30,10 +30,10 @@ $session->startTransaction( [
 
 echo throws(function() use ($manager, $session) {
     $cmd = new \MongoDB\Driver\Command( [
-        'update' => COLLECTION_NAME,
-        'updates' => [ [ 'q' => [ 'employee' => 3 ], 'u' => [ '$set' => [ 'status' => 'Inactive' ] ] ] ]
+        'count' => COLLECTION_NAME,
+        'query' => [ 'q' => [ 'employee' => 3 ] ]
     ] );
-    $manager->executeCommand(
+    $manager->executeReadWriteCommand(
         DATABASE_NAME,
         $cmd,
         [
@@ -48,7 +48,7 @@ echo throws(function() use ($manager, $session) {
         'update' => COLLECTION_NAME,
         'updates' => [ [ 'q' => [ 'employee' => 3 ], 'u' => [ '$set' => [ 'status' => 'Inactive' ] ] ] ]
     ] );
-    $manager->executeCommand(
+    $manager->executeReadWriteCommand(
         DATABASE_NAME,
         $cmd,
         [
