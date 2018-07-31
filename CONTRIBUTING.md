@@ -23,6 +23,74 @@ make clean > /dev/null && make all > /dev/null && make install
 
 ## Testing
 
+The extension's test use the PHPT format from PHP internals. This format is
+documented in the following links:
+
+ * [Introduction to PHPT Files](https://qa.php.net/write-test.php)
+ * [PHPT - Test File Layout](https://qa.php.net/phpt_details.php)
+
+Generally, most tests will be based on the following template:
+
+```
+--TEST--
+Description of API or JIRA issue being tested
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php /* One or more skip functions */ ?>
+--FILE--
+<?php
+require_once __DIR__ . "/../utils/basic.inc";
+
+// Test code
+
+?>
+===DONE===
+<?php exit(0); ?>
+--EXPECT--
+===DONE===
+```
+
+The `basic-skipif.inc` and `basic.inc` files contain utility functions for the
+`SKIPIF` and `FILE` sections, respectively. If those functions are not needed
+(e.g. skip logic only depends on checking the `PHP_INT_SIZE` constant), the test
+should not include the file. When it doubt, keep it simple.
+
+### Best Practices for `SKIPIF`
+
+The [`skipif.php`](tests/utils/skipif.php) file defines various helper functions
+for use within a test's [`SKIPIF`](https://qa.php.net/phpt_details.php#skipif_section)
+section. When multiple functions are used in a single `SKIPIF` section, they
+should be logically ordered:
+
+ * Any PHP environment requirements should be checked first. For example, if a
+   test requires a 64-bit architecture, start by checking `PHP_INT_SIZE` before
+   anything else.
+ * Any extension build requirements (e.g. `skip_if_not_libmongoc_crypto()`) or
+   test environment requirements (e.g. `skip_if_auth()`) should then be checked.
+   These functions only examine local information, such as `phpinfo()` output or
+   the structure of the `URI` constant, and do not interact with a remote
+   MongoDB server.
+ * Any remote server requirements should then be checked. A general integration
+   test that requires any type of remote server to be accessible might use
+   `skip_if_not_live()` while a test requiring a replica set would prefer
+   `skip_if_not_replica_set()`.
+ * After requiring a remote server to be accessible (optionally with a specific
+   type), you can enforce requirements about that server. This includes checking
+   its server version, storage engine, availability of test commands, etc.
+ * Finally, use `skip_if_not_clean()` if needed to ensure that the collection(s)
+   under test are dropped before the test runs.
+
+As a rule of thumb, your `SKIPIF` logic should be written to allow the test to
+run in as many environments as possible. To paraphrase the
+[robustness principal](https://en.wikipedia.org/wiki/Robustness_principle):
+
+> Be conservative in what/how you test, and liberal in what environment you require
+
+Consider that a well-crafted `EXPECTF` section may allow a `SKIPIF` section to
+be less restrictive.
+
+### Local Mongo Orchestration (and Travis CI)
+
 The test suite depends on [Mongo Orchestration](https://github.com/10gen/mongo-orchestration).
 Mongo Orchestration is an HTTP server that provides a REST API for maintaining
 MongoDB configurations. These configurations are located in ``scripts/presets``
@@ -58,7 +126,7 @@ export MONGODB_URI=`cat /tmp/uri.txt`
 
 With this set-up, the tests can be run with `make test`.
 
-### Legacy VM set-up
+### VM-based Mongo Orchestration (legacy set-up)
 
 Alternative to the Travis CI set-up, our test suite also includes scripts to configure test environments
 with [Vagrant](https://www.vagrantup.com/) and
