@@ -33,6 +33,9 @@ matrix:
         - DEPLOYMENT=SHARDED_CLUSTER
     - php: 7.2
       env:
+        - DEPLOYMENT=SHARDED_CLUSTER_RS
+    - php: 7.2
+      env:
         - DEPLOYMENT=STANDALONE_AUTH
     - php: 7.2
       env:
