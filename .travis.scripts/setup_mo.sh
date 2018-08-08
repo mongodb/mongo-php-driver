@@ -23,6 +23,10 @@ case $DEPLOYMENT in
     ${TRAVIS_BUILD_DIR}/.travis.scripts/mo.sh ${TRAVIS_BUILD_DIR}/scripts/presets/travis/replica_sets/replicaset.json start > /tmp/mo-result.json
     cat /tmp/mo-result.json | tail -n 1 | php -r 'echo json_decode(file_get_contents("php://stdin"))->mongodb_uri;' > /tmp/uri.txt
     ;;
+  REPLICASET_AUTH)
+    ${TRAVIS_BUILD_DIR}/.travis.scripts/mo.sh ${TRAVIS_BUILD_DIR}/scripts/presets/travis/replica_sets/replicaset-auth.json start > /tmp/mo-result.json
+    cat /tmp/mo-result.json | tail -n 1 | php -r 'echo json_decode(file_get_contents("php://stdin"))->mongodb_auth_uri;' > /tmp/uri.txt
+    ;;
   REPLICASET_OLD)
     ${TRAVIS_BUILD_DIR}/.travis.scripts/mo.sh ${TRAVIS_BUILD_DIR}/scripts/presets/travis/replica_sets/replicaset-old.json start > /tmp/mo-result.json
     cat /tmp/mo-result.json | tail -n 1 | php -r 'echo json_decode(file_get_contents("php://stdin"))->mongodb_uri;' > /tmp/uri.txt
