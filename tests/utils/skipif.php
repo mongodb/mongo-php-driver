@@ -74,6 +74,52 @@ function skip_if_no_secondary()
 }
 
 /**
+ * Skips the test if the topology does not have enough data carrying nodes
+ */
+function skip_if_not_enough_data_nodes($requiredNodes, $maxNodeCount = null)
+{
+    try {
+        $primary = get_primary_server(URI);
+    } catch (ConnectionException $e) {
+        exit('skip primary server is not accessible: ' . $e->getMessage());
+    }
+    $info = $primary->getInfo();
+
+    $dataNodeCount = isset($info['hosts']) ? count($info['hosts']) : 0;
+
+    if ($dataNodeCount < $requiredNodes) {
+        exit("skip not enough nodes available (wanted: {$requiredNodes}, available: " . count($info['hosts']) . ')');
+    }
+    if ($maxNodeCount !== null && $dataNodeCount > $requiredNodes) {
+        exit("skip too many nodes available (wanted: {$requiredNodes}, available: " . count($info['hosts']) . ')');
+    }
+}
+
+/**
+ * Skips the test if the topology does not have enough nodes
+ */
+function skip_if_not_enough_nodes($requiredNodes, $maxNodeCount = null)
+{
+    try {
+        $primary = get_primary_server(URI);
+    } catch (ConnectionException $e) {
+        exit('skip primary server is not accessible: ' . $e->getMessage());
+    }
+    $info = $primary->getInfo();
+
+    $nodeCount =
+        (isset($info['hosts']) ? count($info['hosts']) : 0) +
+        (isset($info['arbiters']) ? count($info['arbiters']) : 0);
+
+    if ($nodeCount < $requiredNodes) {
+        exit("skip not enough nodes available (wanted: {$requiredNodes}, available: " . count($info['hosts']) . ')');
+    }
+    if ($maxNodeCount !== null && $nodeCount > $requiredNodes) {
+        exit("skip too many nodes available (wanted: {$requiredNodes}, available: " . count($info['hosts']) . ')');
+    }
+}
+
+/**
  * Skips the test if the topology is a standalone.
  */
 function skip_if_standalone()
