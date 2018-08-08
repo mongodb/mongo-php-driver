@@ -3,6 +3,7 @@ Atlas Connectivity Tests
 --SKIPIF--
 <?php
 if (!file_exists('.travis.scripts/atlas-uris.txt')) { echo "skip Atlas URIs not found\n"; }
+if (filesize('.travis.scripts/atlas-uris.txt') < 10) { echo "skip Atlas URI file empty\n"; }
 if ($_ENV['TESTS'] !== 'tests/atlas.phpt') { echo "skip Atlas tests not wanted\n"; }
 ?>
 --FILE--

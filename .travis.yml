@@ -33,6 +33,9 @@ matrix:
         - DEPLOYMENT=SHARDED_CLUSTER
     - php: 7.2
       env:
+        - DEPLOYMENT=SHARDED_CLUSTER_RS
+    - php: 7.2
+      env:
         - DEPLOYMENT=STANDALONE_AUTH
     - php: 7.2
       env:
@@ -58,7 +61,7 @@ matrix:
         - SERVER_VERSION=3.6.5
 
 before_install:
-  - openssl aes-256-cbc -K $encrypted_b354efda2943_key -iv $encrypted_b354efda2943_iv -in .travis.scripts/atlas-uris.txt.enc -out .travis.scripts/atlas-uris.txt -d
+  - openssl aes-256-cbc -K $encrypted_b354efda2943_key -iv $encrypted_b354efda2943_iv -in .travis.scripts/atlas-uris.txt.enc -out .travis.scripts/atlas-uris.txt -d || true
   - pip install "mongo-orchestration>=0.6.7,<1.0" --user `whoami`
   - .travis.scripts/before_install.sh
   - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-${SERVER_VERSION}.tgz
