@@ -1,19 +1,21 @@
 --TEST--
 MongoDB\Driver\Manager: Connecting to Replica Set with only arbiter in seedlist
---XFAIL--
-replica set seedlist tests must be reimplemented (PHPC-1173)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
+<?php skip_if_no_arbiter(); ?>
 <?php skip_if_not_clean(); ?>
-<?php PREDICTABLE(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
+$primary = get_primary_server(URI);
+$info = $primary->getInfo();
 
-$dsn = "mongodb://192.168.112.10:3002/?replicaSet=REPLICASET";
-$manager = new MongoDB\Driver\Manager($dsn);
+// We already checked whether there is an arbiter through `skip_if_no_arbiter`
+$dsn = 'mongodb://' . $info['arbiters'][0];
+
+$manager = new MongoDB\Driver\Manager($dsn, ['replicaSet' => $info['setName']]);
 
 // load fixtures for test
 $bulk = new \MongoDB\Driver\BulkWrite();

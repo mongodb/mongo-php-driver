@@ -40,6 +40,40 @@ function skip_if_not_replica_set()
 }
 
 /**
+ * Skips the test if the topology has no arbiter.
+ */
+function skip_if_no_arbiter()
+{
+    try {
+        $primary = get_primary_server(URI);
+    } catch (ConnectionException $e) {
+        exit('skip primary server is not accessible: ' . $e->getMessage());
+    }
+    $info = $primary->getInfo();
+
+    if (!isset($info['arbiters']) || count($info['arbiters']) < 1) {
+        exit('skip no arbiters available');
+    }
+}
+
+/**
+ * Skips the test if the topology has no secondary.
+ */
+function skip_if_no_secondary()
+{
+    try {
+        $primary = get_primary_server(URI);
+    } catch (ConnectionException $e) {
+        exit('skip primary server is not accessible: ' . $e->getMessage());
+    }
+    $info = $primary->getInfo();
+
+    if (!isset($info['hosts']) || count($info['hosts']) < 2) {
+        exit('skip no secondaries available');
+    }
+}
+
+/**
  * Skips the test if the topology is a standalone.
  */
 function skip_if_standalone()
