@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\Driver\Manager: Logging into MongoDB using credentials from $options
---XFAIL--
-parse_url() tests must be reimplemented (PHPC-1177)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_auth(); ?>
