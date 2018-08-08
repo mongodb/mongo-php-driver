@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\Driver\Server::__construct()
---XFAIL--
-parse_url() tests must be reimplemented (PHPC-1177)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -10,7 +8,10 @@ parse_url() tests must be reimplemented (PHPC-1177)
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$parsed = parse_url(STANDALONE);
+/* For replica sets we need to do some extra work to get the primary */
+$uri = is_replica_set(URI) ? get_primary_server(URI)->getInfo()['me'] : URI;
+$parsed = parse_url($uri);
+
 $manager = new MongoDB\Driver\Manager(URI);
 
 $bulk = new \MongoDB\Driver\BulkWrite();
