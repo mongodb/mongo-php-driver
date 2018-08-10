@@ -3,6 +3,8 @@ MongoDB\Driver\Manager::getServers()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
+<?php skip_if_no_secondary(); ?>
+<?php skip_if_no_arbiter(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

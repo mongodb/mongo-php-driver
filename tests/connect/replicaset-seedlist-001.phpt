@@ -1,19 +1,19 @@
 --TEST--
 MongoDB\Driver\Manager: Connecting to Replica Set with only secondary in seedlist
---XFAIL--
-replica set seedlist tests must be reimplemented (PHPC-1173)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
+<?php skip_if_no_secondary(); ?>
 <?php skip_if_not_clean(); ?>
-<?php PREDICTABLE(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
+$secondary = get_secondary_server(URI);
+$info = $secondary->getInfo();
 
-$dsn = "mongodb://192.168.112.10:3001/?replicaSet=REPLICASET";
-$manager = new MongoDB\Driver\Manager($dsn);
+$dsn = 'mongodb://' . $info['me'];
+$manager = new MongoDB\Driver\Manager($dsn, ['replicaSet' => $info['setName']]);
 
 // load fixtures for test
 $bulk = new \MongoDB\Driver\BulkWrite();

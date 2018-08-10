@@ -3,6 +3,7 @@ MongoDB\Driver\Server::executeQuery() with conflicting read preference for secon
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
+<?php skip_if_no_secondary(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

@@ -96,6 +96,18 @@ function get_primary_server($uri)
 }
 
 /**
+ * Returns a secondary server.
+ *
+ * @param string $uri Connection string
+ * @return Server
+ * @throws ConnectionException
+ */
+function get_secondary_server($uri)
+{
+    return (new Manager($uri))->selectServer(new ReadPreference('secondary'));
+}
+
+/**
  * Runs a command and returns whether an exception was thrown or not
  *
  * @param string $uri Connection string
@@ -392,15 +404,6 @@ function makeCollectionNameFromFilename($filename)
 function NEEDS($configuration) {
     if (!constant($configuration)) {
         exit("skip -- need '$configuration' defined");
-    }
-}
-function PREDICTABLE() {
-    global $servers;
-
-    foreach($servers as $k => $v) {
-        if (!defined($k) || !constant($k)) {
-            exit("skip - needs predictable environment (e.g. vagrant)\n");
-        }
     }
 }
 function SLOW() {

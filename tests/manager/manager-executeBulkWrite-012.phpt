@@ -3,6 +3,7 @@ MongoDB\Driver\Manager::executeBulkWrite() with legacy write concern (replica se
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
+<?php skip_if_not_enough_data_nodes(2); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php
