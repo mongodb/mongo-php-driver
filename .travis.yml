@@ -23,6 +23,9 @@ matrix:
     - php: 7.2
     - php: 7.2
       env:
+        - DEPLOYMENT=STANDALONE_X509
+    - php: 7.2
+      env:
         - DEPLOYMENT=STANDALONE_SSL
     - php: 7.2
       env:

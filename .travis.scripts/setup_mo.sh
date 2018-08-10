@@ -19,6 +19,10 @@ case $DEPLOYMENT in
     ${TRAVIS_BUILD_DIR}/.travis.scripts/mo.sh ${TRAVIS_BUILD_DIR}/scripts/presets/travis/standalone/standalone-ssl.json start > /tmp/mo-result.json
     cat /tmp/mo-result.json | tail -n 1 | php -r 'echo json_decode(file_get_contents("php://stdin"))->mongodb_uri, "/?ssl=true&sslallowinvalidcertificates=true";' > /tmp/uri.txt
     ;;
+  STANDALONE_X509)
+    ${TRAVIS_BUILD_DIR}/.travis.scripts/mo.sh ${TRAVIS_BUILD_DIR}/scripts/presets/travis/standalone/standalone-x509.json start > /tmp/mo-result.json
+    cat /tmp/mo-result.json | tail -n 1 | php -r 'echo json_decode(file_get_contents("php://stdin"))->mongodb_auth_uri, "&ssl=true&sslallowinvalidcertificates=true";' > /tmp/uri.txt
+    ;;
   REPLICASET)
     ${TRAVIS_BUILD_DIR}/.travis.scripts/mo.sh ${TRAVIS_BUILD_DIR}/scripts/presets/travis/replica_sets/replicaset.json start > /tmp/mo-result.json
     cat /tmp/mo-result.json | tail -n 1 | php -r 'echo json_decode(file_get_contents("php://stdin"))->mongodb_uri;' > /tmp/uri.txt
