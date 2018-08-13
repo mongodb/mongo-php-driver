@@ -24,7 +24,10 @@ foreach ($writeConcerns as $wc) {
     var_dump($result->getInsertedCount());
 }
 
-$command = new MongoDB\Driver\Command(array('drop' => COLLECTION_NAME));
+$command = new MongoDB\Driver\Command([
+    'delete' => COLLECTION_NAME,
+    'deletes' => [ [ 'q' => (object) [], 'limit' => 0 ] ]
+]);
 $server->executeCommand('local', $command);
 
 ?>
