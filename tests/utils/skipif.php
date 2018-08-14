@@ -97,7 +97,7 @@ function skip_if_not_auth_mechanism($authMechanism)
 {
     $uriAuthMechanism = get_uri_option(URI, 'authMechanism');
 
-    if ($uriAuthMechanism === null) {
+    if ($uriAuthMechanism === null && $authMechanism !== null) {
         exit('skip URI is not using authMechanism');
     }
 

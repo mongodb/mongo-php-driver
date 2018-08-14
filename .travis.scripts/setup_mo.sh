@@ -2,6 +2,10 @@
 
 echo Loading MO for $DEPLOYMENT
 
+if [[ -z $TRAVIS_BUILD_DIR ]]; then
+    TRAVIS_BUILD_DIR=`pwd`;
+fi
+
 case $DEPLOYMENT in
   SHARDED_CLUSTER)
     ${TRAVIS_BUILD_DIR}/.travis.scripts/mo.sh ${TRAVIS_BUILD_DIR}/scripts/presets/travis/sharded_clusters/cluster.json start > /tmp/mo-result.json

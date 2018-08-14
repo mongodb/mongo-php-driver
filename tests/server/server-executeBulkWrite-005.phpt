@@ -24,11 +24,9 @@ foreach ($writeConcerns as $wc) {
     var_dump($result->getInsertedCount());
 }
 
-$command = new MongoDB\Driver\Command([
-    'delete' => COLLECTION_NAME,
-    'deletes' => [ [ 'q' => (object) [], 'limit' => 0 ] ]
-]);
-$server->executeCommand('local', $command);
+$bulk = new MongoDB\Driver\BulkWrite();
+$bulk->delete( (object) [] );
+$server->executeBulkWrite('local.' . COLLECTION_NAME, $bulk);
 
 ?>
 ===DONE===
