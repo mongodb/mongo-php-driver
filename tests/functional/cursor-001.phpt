@@ -1,7 +1,5 @@
 --TEST--
 Sorting single field, ascending, using the Cursor Iterator
---XFAIL--
-LOAD() tests must be reimplemented (PHPC-1178)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -11,6 +9,7 @@ LOAD() tests must be reimplemented (PHPC-1178)
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(URI);
+loadFixtures($manager);
 
 $query = new MongoDB\Driver\Query(array(), array(
     'projection' => array('_id' => 0, 'username' => 1),
