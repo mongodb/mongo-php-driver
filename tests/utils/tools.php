@@ -411,12 +411,13 @@ function SLOW() {
         exit("skip SKIP_SLOW_TESTS");
     }
 }
-function LOAD($uri, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME, $filename = null) {
+
+function loadFixtures(\MongoDB\Driver\Manager $manager, $dbname = DATABASE_NAME, $collname = COLLECTION_NAME, $filename = null)
+{
     if (!$filename) {
         $filename = "compress.zlib://" . __DIR__ . "/" . "PHONGO-FIXTURES.json.gz";
     }
 
-    $manager = new MongoDB\Driver\Manager($uri);
     $bulk = new MongoDB\Driver\BulkWrite(['ordered' => false]);
 
     $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
