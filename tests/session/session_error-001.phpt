@@ -47,19 +47,19 @@ foreach ($options as $txnOptions) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "readConcern" option to be MongoDB\Driver\ReadConcern, integer given
+Expected "readConcern" option to be MongoDB\Driver\ReadConcern, int%S given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readConcern" option to be MongoDB\Driver\ReadConcern, stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readConcern" option to be MongoDB\Driver\ReadConcern, MongoDB\Driver\WriteConcern given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "readPreference" option to be MongoDB\Driver\ReadPreference, integer given
+Expected "readPreference" option to be MongoDB\Driver\ReadPreference, int%S given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readPreference" option to be MongoDB\Driver\ReadPreference, stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readPreference" option to be MongoDB\Driver\ReadPreference, MongoDB\Driver\ReadConcern given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, integer given
+Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, int%S given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -71,7 +71,7 @@ Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, MongoDB\Driver
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, MongoDB\Driver\ReadPreference given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "defaultTransactionOptions" option to be an array, integer given
+Expected "defaultTransactionOptions" option to be an array, int%S given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "defaultTransactionOptions" option to be an array, stdClass given
 ===DONE===
