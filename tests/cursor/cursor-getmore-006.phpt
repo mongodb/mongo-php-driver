@@ -7,7 +7,9 @@ MongoDB\Driver\Cursor command result iteration with getmore failure
  * auth" configurations. This way, we can test on multiple server versions, but not waste resources
  * on f.e. Travis. */
 ?>
+<?php skip_if_not_live(); ?>
 <?php skip_if_not_standalone(); ?>
+<?php skip_if_no_getmore_failpoint(); ?>
 <?php skip_if_auth(); ?>
 --FILE--
 <?php
