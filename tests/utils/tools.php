@@ -199,7 +199,15 @@ function is_mongos($uri)
  */
 function is_replica_set($uri)
 {
-    return get_primary_server($uri)->getType() === Server::TYPE_RS_PRIMARY;
+    if (get_primary_server($uri)->getType() !== Server::TYPE_RS_PRIMARY) {
+        return false;
+    }
+
+    if (get_uri_option($uri, 'replicaSet') === NULL) {
+        return false;
+    }
+
+    return true;
 }
 
 /**
