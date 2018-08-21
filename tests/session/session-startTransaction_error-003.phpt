@@ -13,7 +13,7 @@ $manager = new MongoDB\Driver\Manager(URI);
 $session = $manager->startSession();
 
 $options = [
-    2,
+    '2',
     new stdClass,
 ];
 
@@ -25,7 +25,7 @@ foreach ($options as $txnOptions) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Warning: MongoDB\Driver\Session::startTransaction() expects parameter 1 to be array, integer given in %s on line %d
+Warning: MongoDB\Driver\Session::startTransaction() expects parameter 1 to be array, string given in %s on line %d
 
 Warning: MongoDB\Driver\Session::startTransaction() expects parameter 1 to be array, object given in %s on line %d
 ===DONE===
