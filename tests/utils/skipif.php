@@ -135,6 +135,20 @@ function skip_if_server_version($operator, $version)
 }
 
 /**
+ * Skips the test if the PHP version satisfies a comparison.
+ *
+ * @see http://php.net/version_compare
+ * @param string $operator Comparison operator
+ * @param string $version  Version to compare against
+ */
+function skip_if_php_version($operator, $version)
+{
+    if (version_compare(PHP_VERSION, $version, $operator)) {
+        exit("skip PHP version '" . PHP_VERSION . "' $operator '$version'");
+    }
+}
+
+/**
  * Skips the test if the server not using a particular storage engine.
  *
  * @param string $storageEngine Storage engine name

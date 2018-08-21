@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\Javascript::__set_state() (PHP <7.3)
+MongoDB\BSON\Javascript::__set_state() (PHP >=7.3)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.3'); ?>
+<?php skip_if_php_version('<', '7.3'); ?>
 --FILE--
 <?php
 
@@ -40,28 +40,28 @@ MongoDB\BSON\Javascript::__set_state(array(
 
 MongoDB\BSON\Javascript::__set_state(array(
 %w'code' => 'function foo(bar) { return bar; }',
-%w'scope' => 
-  stdClass::__set_state(array(
-  )),
+%w'scope' =>
+  (object) array(
+  ),
 ))
 
 MongoDB\BSON\Javascript::__set_state(array(
 %w'code' => 'function foo() { return foo; }',
-%w'scope' => 
-  stdClass::__set_state(array(
+%w'scope' =>
+  (object) array(
   %w'foo' => 42,
-  )),
+  ),
 ))
 
 MongoDB\BSON\Javascript::__set_state(array(
 %w'code' => 'function foo() { return id; }',
-%w'scope' => 
-  stdClass::__set_state(array(
+%w'scope' =>
+  (object) array(
   %w'id' => 
     MongoDB\BSON\ObjectId::__set_state(array(
     %w'oid' => '53e2a1c40640fd72175d4603',
     )),
-  )),
+  ),
 ))
 
 MongoDB\BSON\Javascript::__set_state(array(

@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\Driver\ReadPreference: var_export() (PHP <7.3)
+MongoDB\Driver\ReadPreference: var_export() (PHP >=7.3)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.3'); ?>
+<?php skip_if_php_version('<', '7.3'); ?>
 --FILE--
 <?php
 
@@ -51,9 +51,9 @@ MongoDB\Driver\ReadPreference::__set_state(array(
    'tags' => 
   array (
     0 => 
-    stdClass::__set_state(array(
+    (object) array(
        'dc' => 'ny',
-    )),
+    ),
   ),
 ))
 MongoDB\Driver\ReadPreference::__set_state(array(
@@ -61,17 +61,17 @@ MongoDB\Driver\ReadPreference::__set_state(array(
    'tags' => 
   array (
     0 => 
-    stdClass::__set_state(array(
+    (object) array(
        'dc' => 'ny',
-    )),
+    ),
     1 => 
-    stdClass::__set_state(array(
+    (object) array(
        'dc' => 'sf',
        'use' => 'reporting',
-    )),
+    ),
     2 => 
-    stdClass::__set_state(array(
-    )),
+    (object) array(
+    ),
   ),
 ))
 MongoDB\Driver\ReadPreference::__set_state(array(
