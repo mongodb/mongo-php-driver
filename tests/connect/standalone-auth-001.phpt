@@ -3,6 +3,7 @@ Connect to MongoDB with using default auth mechanism
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_auth(); ?>
+<?php skip_if_not_auth_mechanism(null); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php
