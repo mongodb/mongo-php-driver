@@ -38,27 +38,27 @@ MongoDB\BSON\Javascript::__set_state(array(
 MongoDB\BSON\Javascript::__set_state(array(
 %w'code' => 'function foo(bar) { return bar; }',
 %w'scope' => 
-  stdClass::__set_state(array(
-  )),
+  %Sarray(
+  %S),
 ))
 
 MongoDB\BSON\Javascript::__set_state(array(
 %w'code' => 'function foo() { return foo; }',
 %w'scope' => 
-  stdClass::__set_state(array(
+  %Sarray(
   %w'foo' => 42,
-  )),
+  %S),
 ))
 
 MongoDB\BSON\Javascript::__set_state(array(
 %w'code' => 'function foo() { return id; }',
 %w'scope' => 
-  stdClass::__set_state(array(
+  %Sarray(
   %w'id' => 
     MongoDB\BSON\ObjectId::__set_state(array(
     %w'oid' => '53e2a1c40640fd72175d4603',
     )),
-  )),
+  %S),
 ))
 
 MongoDB\BSON\Javascript::__set_state(array(

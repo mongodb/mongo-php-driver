@@ -24,7 +24,7 @@ foreach ($tests as $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 MongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'primary',
 ))
@@ -48,9 +48,9 @@ MongoDB\Driver\ReadPreference::__set_state(array(
    'tags' => 
   array (
     0 => 
-    stdClass::__set_state(array(
+    %Sarray(
        'dc' => 'ny',
-    )),
+    %S),
   ),
 ))
 MongoDB\Driver\ReadPreference::__set_state(array(
@@ -58,17 +58,17 @@ MongoDB\Driver\ReadPreference::__set_state(array(
    'tags' => 
   array (
     0 => 
-    stdClass::__set_state(array(
+    %Sarray(
        'dc' => 'ny',
-    )),
+    %S),
     1 => 
-    stdClass::__set_state(array(
+    %Sarray(
        'dc' => 'sf',
        'use' => 'reporting',
-    )),
+    %S),
     2 => 
-    stdClass::__set_state(array(
-    )),
+    %Sarray(
+    %S),
   ),
 ))
 MongoDB\Driver\ReadPreference::__set_state(array(
