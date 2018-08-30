@@ -12,8 +12,14 @@ require_once __DIR__ . "/../utils/basic.inc";
 $primary = get_primary_server(URI);
 $info = $primary->getInfo();
 
+// As we're building our own URL here, we do need to extract username and password
 // We already checked whether there is an arbiter through `skip_if_no_arbiter`
-$dsn = 'mongodb://' . $info['arbiters'][0];
+$url = parse_url(URI);
+if (array_key_exists('user', $url) && array_key_exists('pass', $url)) {
+    $dsn = sprintf('mongodb://%s:%s@%s', $url['user'], $url['pass'], $info['arbiters'][0]);
+} else {
+    $dsn = 'mongodb://' . $info['arbiters'][0];
+}
 
 $manager = new MongoDB\Driver\Manager($dsn, ['replicaSet' => $info['setName']]);
 
