@@ -45,14 +45,7 @@ array(3) {
     ["is_hidden"]=>
     bool(false)
     ["is_passive"]=>
-    bool(false)
-    ["tags"]=>
-    array(%d) {
-      ["dc"]=>
-      string(2) "pa"
-      ["ordinal"]=>
-      string(3) "one"
-    }
+    bool(false)%A
     ["last_is_master"]=>
     array(%d) {
       %a
@@ -77,14 +70,7 @@ array(3) {
     ["is_hidden"]=>
     bool(false)
     ["is_passive"]=>
-    bool(false)
-    ["tags"]=>
-    array(%d) {
-      ["dc"]=>
-      string(3) "nyc"
-      ["ordinal"]=>
-      string(3) "two"
-    }
+    bool(false)%A
     ["last_is_master"]=>
     array(%d) {
       %a
