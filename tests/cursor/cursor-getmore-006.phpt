@@ -9,6 +9,7 @@ MongoDB\Driver\Cursor command result iteration with getmore failure
 ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_standalone(); ?>
+<?php skip_if_server_version(">=", "3.6"); ?>
 <?php skip_if_no_getmore_failpoint(); ?>
 <?php skip_if_auth(); ?>
 --FILE--
