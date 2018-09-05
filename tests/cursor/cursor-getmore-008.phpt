@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Cursor query result iteration with getmore failure
+MongoDB\Driver\Cursor command result iteration with getmore failure
 --SKIPIF--
 <?php require __DIR__ . "/" ."../utils/basic-skipif.inc"; ?>
 <?php
@@ -9,7 +9,7 @@ MongoDB\Driver\Cursor query result iteration with getmore failure
 ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_standalone(); ?>
-<?php skip_if_server_version(">=", "3.6"); ?>
+<?php skip_if_server_version("<", "3.6"); ?>
 <?php skip_if_no_getmore_failpoint(); ?>
 <?php skip_if_auth(); ?>
 --FILE--
@@ -28,8 +28,15 @@ for ($i = 0; $i < 5; $i++) {
 $writeResult = $manager->executeBulkWrite(NS, $bulkWrite);
 printf("Inserted: %d\n", $writeResult->getInsertedCount());
 
-$query = new MongoDB\Driver\Query([], ['batchSize' => 2]);
-$cursor = $manager->executeQuery(NS, $query);
+$command = new MongoDB\Driver\Command([
+    'aggregate' => COLLECTION_NAME,
+    'pipeline' => [
+        ['$match' => new stdClass],
+    ],
+    'cursor' => ['batchSize' => 2],
+]);
+
+$cursor = $manager->executeCommand(DATABASE_NAME, $command);
 
 failGetMore($manager);
 
@@ -37,7 +44,8 @@ throws(function() use ($cursor) {
     foreach ($cursor as $i => $document) {
         printf("%d => {_id: %d}\n", $i, $document->_id);
     }
-}, "MongoDB\Driver\Exception\ConnectionException");
+}, "MongoDB\Driver\Exception\ServerException");
+
 ?>
 ===DONE===
 <?php destroyTemporaryMongoInstance(); ?>
@@ -49,5 +57,5 @@ throws(function() use ($cursor) {
 Inserted: 5
 0 => {_id: 0}
 1 => {_id: 1}
-OK: Got MongoDB\Driver\Exception\ConnectionException
+OK: Got MongoDB\Driver\Exception\ServerException
 ===DONE===
