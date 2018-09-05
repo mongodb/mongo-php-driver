@@ -160,6 +160,21 @@ function get_server_storage_engine($uri)
 }
 
 /**
+ * Helper to return the version of a specific server.
+ *
+ * @param MongoDB\Driver\Server $server
+ * @return string
+ * @throws RuntimeException
+ */
+function get_server_version_from_server(MongoDB\Driver\Server $server)
+{
+    $command = new Command(['buildInfo' => 1]);
+    $cursor = $server->executeCommand('admin', $command);
+
+    return current($cursor->toArray())->version;
+}
+
+/**
  * Returns the version of the primary server.
  *
  * @param string $uri Connection string
@@ -169,10 +184,7 @@ function get_server_storage_engine($uri)
 function get_server_version($uri)
 {
     $server = get_primary_server($uri);
-    $command = new Command(['buildInfo' => 1]);
-    $cursor = $server->executeCommand('admin', $command);
-
-    return current($cursor->toArray())->version;
+    return get_server_version_from_server($server);
 }
 
 /**
@@ -444,11 +456,19 @@ function loadFixtures(\MongoDB\Driver\Manager $manager, $dbname = DATABASE_NAME,
     }
 }
 
-function START($id, array $options = array()) {
-    /* starting/stopping servers only works using the Vagrant setup */
-    PREDICTABLE();
-
-    $options += array("name" => "mongod", "id" => $id);
+function createTemporaryMongoInstance(array $options = [])
+{
+    $id = 'mo_' . COLLECTION_NAME;
+    $options += [
+        "name" => "mongod",
+        "id" => $id,
+        'procParams' => [
+            'dbpath' => "/tmp/phongo/{$id}",
+            'logpath' => "/tmp/phongo/{$id}.log",
+            'ipv6' => true,
+            'setParameter' => [ 'enableTestCommands' => 1 ],
+        ],
+    ];
     $opts = array(
         "http" => array(
             "timeout" => 60,
@@ -460,24 +480,24 @@ function START($id, array $options = array()) {
         ),
     );
     $ctx = stream_context_create($opts);
-    $json = file_get_contents(getMOUri() . "/servers/$id", false, $ctx);
+    $json = file_get_contents(MONGO_ORCHESTRATION_URI . "/servers/$id", false, $ctx);
     $result = json_decode($json, true);
 
     /* Failed -- or was already started */
     if (!isset($result["mongodb_uri"])) {
-        DELETE($id);
-        define($id, false);
+        destroyTemporaryMongoInstance($id);
+        throw new Exception("Could not start temporary server instance\n");
     } else {
-        define($id, $result["mongodb_uri"]);
-        $FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
-
-        $json = file_get_contents($FILENAME);
-        $config = json_decode($json, true);
-        $config[$id] = constant($id);
-        file_put_contents($FILENAME, json_encode($config, JSON_PRETTY_PRINT));
+        return $result['mongodb_uri'];
     }
 }
-function DELETE($id) {
+
+function destroyTemporaryMongoInstance($id = NULL)
+{
+    if ($id == NULL) {
+        $id = 'mo_' . COLLECTION_NAME;
+    }
+
     $opts = array(
         "http" => array(
             "timeout" => 60,
@@ -487,14 +507,9 @@ function DELETE($id) {
         ),
     );
     $ctx = stream_context_create($opts);
-    $json = file_get_contents(getMOUri() . "/servers/$id", false, $ctx);
-        $FILENAME = sys_get_temp_dir() . "/PHONGO-SERVERS.json";
-
-        $json = file_get_contents($FILENAME);
-        $config = json_decode($json, true);
-        unset($config[$id]);
-        file_put_contents($FILENAME, json_encode($config, JSON_PRETTY_PRINT));
+    $json = file_get_contents(MONGO_ORCHESTRATION_URI . "/servers/$id", false, $ctx);
 }
+
 function severityToString($type) {
     switch($type) {
     case E_WARNING:
@@ -632,41 +647,23 @@ function def($arr) {
     }
 }
 
-function configureFailPoint(MongoDB\Driver\Manager $manager, $failPoint, $mode, $data = array()) {
-
+function configureFailPoint(MongoDB\Driver\Manager $manager, $failPoint, $mode, array $data = [])
+{
     $doc = array(
-        "configureFailPoint" => $failPoint,
-        "mode"               => $mode,
+        'configureFailPoint' => $failPoint,
+        'mode'               => $mode,
     );
     if ($data) {
-        $doc["data"] = $data;
+        $doc['data'] = $data;
     }
 
     $cmd = new MongoDB\Driver\Command($doc);
-    $result = $manager->executeCommand("admin", $cmd);
-    $arr = current($result->toArray());
-    if (empty($arr->ok)) {
-        var_dump($result);
-        throw new RuntimeException("Failpoint failed");
-    }
-    return true;
+    $manager->executeCommand('admin', $cmd);
 }
 
-function failMaxTimeMS(MongoDB\Driver\Manager $manager) {
-    return configureFailPoint($manager, "maxTimeAlwaysTimeOut", array("times" => 1));
-}
-
-function getMOUri() {
-    if (!($HOST = getenv("MONGODB_ORCHESTRATION_HOST"))) {
-        $HOST = "192.168.112.10";
-    }
-
-    if (!($PORT = getenv("MONGODB_ORCHESTRATION_PORT"))) {
-        $PORT = "8889";
-    }
-    $MO = "http://$HOST:$PORT/v1";
-
-    return $MO;
+function failMaxTimeMS(MongoDB\Driver\Manager $manager)
+{
+    configureFailPoint($manager, 'maxTimeAlwaysTimeOut', [ 'times' => 1 ]);
 }
 
 function getMOPresetBase() {
@@ -698,6 +695,26 @@ function fromJSON($var) {
 
 /* Note: this fail point may terminate the mongod process, so you may want to
  * use this in conjunction with a throwaway server. */
-function failGetMore(MongoDB\Driver\Manager $manager) {
-    return configureFailPoint($manager, "failReceivedGetmore", "alwaysOn");
+function failGetMore(MongoDB\Driver\Manager $manager)
+{
+    /* We need to do version detection here */
+    $primary = $manager->selectServer(new ReadPreference('primary'));
+    $version = get_server_version_from_server($primary);
+
+    if (version_compare($version, "3.2", "<")) {
+        configureFailPoint($manager, 'failReceivedGetmore', 'alwaysOn');
+        return;
+    }
+
+    if (version_compare($version, "4.0", ">=")) {
+        /* We use 237 here, as that's the same original code that MongoD would
+         * throw if a cursor had already gone by the time we call getMore. This
+         * allows us to make things consistent with the getMore OP behaviour
+         * from previous mongod versions. An errorCode is required here for the
+         * failPoint to work. */
+        configureFailPoint($manager, 'failCommand', 'alwaysOn', [ 'errorCode' => 237, 'failCommands' => ['getMore'] ]);
+        return;
+    }
+
+    throw new Exception("Trying to configure a getMore fail point for a server version ($version) that doesn't support it");
 }

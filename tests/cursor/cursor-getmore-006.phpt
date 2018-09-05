@@ -1,15 +1,23 @@
 --TEST--
 MongoDB\Driver\Cursor command result iteration with getmore failure
---XFAIL--
-START() tests must be reimplemented (PHPC-1179)
 --SKIPIF--
 <?php require __DIR__ . "/" ."../utils/basic-skipif.inc"; ?>
-<?php START("THROWAWAY", ["version" => "30-release"]); CLEANUP(THROWAWAY); ?>
+<?php
+/* This test spins up its own mongod instance, so only run this in the most default "standalone, no
+ * auth" configurations. This way, we can test on multiple server versions, but not waste resources
+ * on f.e. Travis. */
+?>
+<?php skip_if_not_live(); ?>
+<?php skip_if_not_standalone(); ?>
+<?php skip_if_server_version(">=", "3.6"); ?>
+<?php skip_if_no_getmore_failpoint(); ?>
+<?php skip_if_auth(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(THROWAWAY);
+$uri = createTemporaryMongoInstance();
+$manager = new MongoDB\Driver\Manager($uri);
 
 $bulkWrite = new MongoDB\Driver\BulkWrite;
 
@@ -40,11 +48,11 @@ throws(function() use ($cursor) {
 
 ?>
 ===DONE===
-<?php DELETE("THROWAWAY"); ?>
+<?php destroyTemporaryMongoInstance(); ?>
 <?php exit(0); ?>
 --CLEAN--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php DELETE("THROWAWAY"); ?>
+<?php destroyTemporaryMongoInstance(); ?>
 --EXPECT--
 Inserted: 5
 0 => {_id: 0}

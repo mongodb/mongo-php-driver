@@ -306,3 +306,15 @@ function skip_if_not_clean($databaseName = DATABASE_NAME, $collectionName = COLL
         exit("skip Could not drop '$databaseName.$collectionName': " . $e->getMessage());
     }
 }
+
+function skip_if_no_getmore_failpoint()
+{
+    $serverVersion = get_server_version(URI);
+
+    if (
+        version_compare($serverVersion, '3.2', '>=') &&
+        version_compare($serverVersion, '4.0', '<')
+    ) {
+        exit("skip Server version '$serverVersion' does not support a getMore failpoint'");
+    }
+}
