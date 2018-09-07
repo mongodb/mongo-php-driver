@@ -161,6 +161,8 @@ bool php_phongo_field_path_push(php_phongo_field_path* field_path, const char* e
 
 bool php_phongo_field_path_pop(php_phongo_field_path* field_path)
 {
+	php_phongo_field_path_ensure_allocation(field_path, field_path->size);
+
 	field_path->elements[field_path->size]      = NULL;
 	field_path->element_types[field_path->size] = PHONGO_FIELD_PATH_ITEM_NONE;
 
