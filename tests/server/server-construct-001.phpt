@@ -18,8 +18,11 @@ $bulk = new \MongoDB\Driver\BulkWrite();
 $bulk->insert(array('foo' => 'bar'));
 $server = $manager->executeBulkWrite(NS, $bulk)->getServer();
 
-var_dump($server->getHost() == $parsed["host"]);
-var_dump($server->getPort() == $parsed["port"]);
+$expectedHost = $parsed['host'];
+$expectedPort = (integer) (isset($parsed['port']) ? $parsed['port'] : 27017);
+
+var_dump($server->getHost() == $expectedHost);
+var_dump($server->getPort() == $expectedPort);
 ?>
 ===DONE===
 <?php exit(0); ?>
