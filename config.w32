@@ -66,9 +66,8 @@ if (PHP_MONGODB != "no") {
     /I" + configure_module_dirname + "/src/contrib \
     /I" + configure_module_dirname + "/src/libmongoc/src/common \
     /I" + configure_module_dirname + "/src/libmongoc/src/libbson/src \
-    /I" + configure_module_dirname + "/src/libmongoc/src/libbson/src/bson \
     /I" + configure_module_dirname + "/src/libmongoc/src/libbson/src/jsonsl \
-    /I" + configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc \
+    /I" + configure_module_dirname + "/src/libmongoc/src/libmongoc/src \
   ";
 
   // Condense whitespace in CFLAGS
