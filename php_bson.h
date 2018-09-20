@@ -17,7 +17,7 @@
 #ifndef PHONGO_BSON_H
 #define PHONGO_BSON_H
 
-#include <bson.h>
+#include <bson/bson.h>
 
 /* PHP Core stuff */
 #include <php.h>

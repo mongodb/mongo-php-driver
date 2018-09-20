@@ -18,7 +18,7 @@
 #include "config.h"
 #endif
 
-#include <bson.h>
+#include <bson/bson.h>
 
 #include <php.h>
 #include <Zend/zend_hash.h>
