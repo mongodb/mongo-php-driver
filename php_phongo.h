@@ -18,8 +18,8 @@
 #define PHONGO_H
 
 /* External libs */
-#include "bson.h"
-#include "mongoc.h"
+#include "bson/bson.h"
+#include "mongoc/mongoc.h"
 
 #include "phongo_version.h"
 #include "phongo_compat.h"

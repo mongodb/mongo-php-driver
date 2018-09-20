@@ -19,8 +19,8 @@
 #endif
 
 /* External libs */
-#include "bson.h"
-#include "mongoc.h"
+#include "bson/bson.h"
+#include "mongoc/mongoc.h"
 
 /* PHP Core stuff */
 #include <php.h>
