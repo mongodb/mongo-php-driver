@@ -48,8 +48,6 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     }
     ["options"]=>
     object(stdClass)#%d (%d) {
-      ["serverId"]=>
-      int(%d)
     }
     ["readConcern"]=>
     NULL
@@ -88,8 +86,6 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     }
     ["options"]=>
     object(stdClass)#%d (%d) {
-      ["serverId"]=>
-      int(%d)
     }
     ["readConcern"]=>
     NULL
@@ -128,8 +124,6 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     }
     ["options"]=>
     object(stdClass)#%d (%d) {
-      ["serverId"]=>
-      int(%d)
     }
     ["readConcern"]=>
     NULL
@@ -168,8 +162,6 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     }
     ["options"]=>
     object(stdClass)#%d (%d) {
-      ["serverId"]=>
-      int(%d)
     }
     ["readConcern"]=>
     NULL
@@ -208,8 +200,6 @@ object(MongoDB\Driver\Cursor)#%d (%d) {
     }
     ["options"]=>
     object(stdClass)#%d (%d) {
-      ["serverId"]=>
-      int(%d)
     }
     ["readConcern"]=>
     NULL

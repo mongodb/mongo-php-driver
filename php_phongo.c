@@ -807,6 +807,7 @@ bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor TSRMLS_DC
 bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* zquery, zval* options, uint32_t server_id, zval* return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	const php_phongo_query_t* query;
+	bson_t                    opts  = BSON_INITIALIZER;
 	mongoc_cursor_t*          cursor;
 	char*                     dbname;
 	char*                     collname;
@@ -824,6 +825,8 @@ bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* 
 
 	query = Z_QUERY_OBJ_P(zquery);
 
+	bson_copy_to(query->opts, &opts);
+
 	if (query->read_concern) {
 		mongoc_collection_set_read_concern(collection, query->read_concern);
 	}
@@ -831,23 +834,27 @@ bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* 
 	if (!phongo_parse_read_preference(options, &zreadPreference TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		mongoc_collection_destroy(collection);
+		bson_destroy(&opts);
 		return false;
 	}
 
-	if (!phongo_parse_session(options, client, query->opts, &zsession TSRMLS_CC)) {
+	if (!phongo_parse_session(options, client, &opts, &zsession TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		mongoc_collection_destroy(collection);
+		bson_destroy(&opts);
 		return false;
 	}
 
-	if (!BSON_APPEND_INT32(query->opts, "serverId", server_id)) {
+	if (!BSON_APPEND_INT32(&opts, "serverId", server_id)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"serverId\" option");
 		mongoc_collection_destroy(collection);
+		bson_destroy(&opts);
 		return false;
 	}
 
-	cursor = mongoc_collection_find_with_opts(collection, query->filter, query->opts, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC));
+	cursor = mongoc_collection_find_with_opts(collection, query->filter, &opts, phongo_read_preference_from_zval(zreadPreference TSRMLS_CC));
 	mongoc_collection_destroy(collection);
+	bson_destroy(&opts);
 
 	/* maxAwaitTimeMS must be set before the cursor is sent */
 	if (query->max_await_time_ms) {
