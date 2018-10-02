@@ -99,9 +99,6 @@ static PHP_METHOD(Command, __construct)
 	zend_error_handling   error_handling;
 	zval*                 document;
 	zval*                 options = NULL;
-	SUPPRESS_UNUSED_WARNING(return_value)
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_COMMAND_OBJ_P(getThis());

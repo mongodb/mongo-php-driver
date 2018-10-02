@@ -141,8 +141,6 @@ static PHP_METHOD(WriteResult, getInsertedCount)
 {
 	bson_iter_t               iter;
 	php_phongo_writeresult_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -159,8 +157,6 @@ static PHP_METHOD(WriteResult, getMatchedCount)
 {
 	bson_iter_t               iter;
 	php_phongo_writeresult_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -177,8 +173,6 @@ static PHP_METHOD(WriteResult, getModifiedCount)
 {
 	bson_iter_t               iter;
 	php_phongo_writeresult_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -195,8 +189,6 @@ static PHP_METHOD(WriteResult, getDeletedCount)
 {
 	bson_iter_t               iter;
 	php_phongo_writeresult_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -213,8 +205,6 @@ static PHP_METHOD(WriteResult, getUpsertedCount)
 {
 	bson_iter_t               iter;
 	php_phongo_writeresult_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -230,8 +220,6 @@ static PHP_METHOD(WriteResult, getUpsertedCount)
 static PHP_METHOD(WriteResult, getServer)
 {
 	php_phongo_writeresult_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -248,8 +236,6 @@ static PHP_METHOD(WriteResult, getUpsertedIds)
 {
 	bson_iter_t               iter, child;
 	php_phongo_writeresult_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -297,8 +283,6 @@ static PHP_METHOD(WriteResult, getUpsertedIds)
 static PHP_METHOD(WriteResult, getWriteConcernError)
 {
 	php_phongo_writeresult_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -314,8 +298,6 @@ static PHP_METHOD(WriteResult, getWriteConcernError)
 static PHP_METHOD(WriteResult, getWriteErrors)
 {
 	php_phongo_writeresult_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
@@ -332,8 +314,6 @@ static PHP_METHOD(WriteResult, getWriteErrors)
 static PHP_METHOD(WriteResult, isAcknowledged)
 {
 	php_phongo_writeresult_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 

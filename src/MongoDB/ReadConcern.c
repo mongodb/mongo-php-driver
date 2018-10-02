@@ -35,10 +35,6 @@ static PHP_METHOD(ReadConcern, __construct)
 	char*                     level     = NULL;
 	phongo_zpp_char_len       level_len = 0;
 
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
-
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_READCONCERN_OBJ_P(getThis());
 
@@ -61,8 +57,6 @@ static PHP_METHOD(ReadConcern, getLevel)
 {
 	php_phongo_readconcern_t* intern;
 	const char*               level;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READCONCERN_OBJ_P(getThis());
 
@@ -85,8 +79,6 @@ static PHP_METHOD(ReadConcern, getLevel)
 static PHP_METHOD(ReadConcern, isDefault)
 {
 	php_phongo_readconcern_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READCONCERN_OBJ_P(getThis());
 

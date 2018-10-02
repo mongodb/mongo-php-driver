@@ -243,9 +243,6 @@ static PHP_METHOD(BulkWrite, __construct)
 	zend_error_handling     error_handling;
 	zval*                   options = NULL;
 	zend_bool               ordered = 1;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_BULKWRITE_OBJ_P(getThis());
@@ -283,7 +280,6 @@ static PHP_METHOD(BulkWrite, insert)
 	int                     bson_flags = PHONGO_BSON_ADD_ID;
 	bson_error_t            error      = { 0 };
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
@@ -326,9 +322,6 @@ static PHP_METHOD(BulkWrite, update)
 	zval *                  zquery, *zupdate, *zoptions = NULL;
 	bson_t                  bquery = BSON_INITIALIZER, bupdate = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
 	bson_error_t            error = { 0 };
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
@@ -392,9 +385,6 @@ static PHP_METHOD(BulkWrite, delete)
 	zval *                  zquery, *zoptions = NULL;
 	bson_t                  bquery = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
 	bson_error_t            error = { 0 };
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
@@ -436,9 +426,6 @@ cleanup:
 static PHP_METHOD(BulkWrite, count)
 {
 	php_phongo_bulkwrite_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 

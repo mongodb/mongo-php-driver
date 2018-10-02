@@ -32,8 +32,6 @@ PHP_METHOD(CommandStartedEvent, getCommand)
 {
 	php_phongo_commandstartedevent_t* intern;
 	php_phongo_bson_state             state = PHONGO_BSON_STATE_INITIALIZER;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -54,8 +52,6 @@ PHP_METHOD(CommandStartedEvent, getCommand)
 PHP_METHOD(CommandStartedEvent, getCommandName)
 {
 	php_phongo_commandstartedevent_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -71,8 +67,6 @@ PHP_METHOD(CommandStartedEvent, getCommandName)
 PHP_METHOD(CommandStartedEvent, getDatabaseName)
 {
 	php_phongo_commandstartedevent_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -89,8 +83,6 @@ PHP_METHOD(CommandStartedEvent, getOperationId)
 {
 	php_phongo_commandstartedevent_t* intern;
 	char                              int_as_string[20];
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -108,8 +100,6 @@ PHP_METHOD(CommandStartedEvent, getRequestId)
 {
 	php_phongo_commandstartedevent_t* intern;
 	char                              int_as_string[20];
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -126,8 +116,6 @@ PHP_METHOD(CommandStartedEvent, getRequestId)
 PHP_METHOD(CommandStartedEvent, getServer)
 {
 	php_phongo_commandstartedevent_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 

@@ -97,8 +97,6 @@ static PHP_METHOD(Session, advanceClusterTime)
 	php_phongo_session_t* intern;
 	zval*                 zcluster_time;
 	bson_t                cluster_time = BSON_INITIALIZER;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "advanceClusterTime")
@@ -128,8 +126,6 @@ static PHP_METHOD(Session, advanceOperationTime)
 	zval*                 ztimestamp;
 	uint32_t              timestamp = 0;
 	uint32_t              increment = 0;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "advanceOperationTime")
@@ -152,8 +148,6 @@ static PHP_METHOD(Session, getClusterTime)
 	php_phongo_session_t* intern;
 	const bson_t*         cluster_time;
 	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getClusterTime")
@@ -188,8 +182,6 @@ static PHP_METHOD(Session, getLogicalSessionId)
 	php_phongo_session_t* intern;
 	const bson_t*         lsid;
 	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getLogicalSessionId")
@@ -219,8 +211,6 @@ static PHP_METHOD(Session, getOperationTime)
 {
 	php_phongo_session_t* intern;
 	uint32_t              timestamp, increment;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getOperationTime")
@@ -317,8 +307,6 @@ static PHP_METHOD(Session, startTransaction)
 	zval*                     options     = NULL;
 	mongoc_transaction_opt_t* txn_options = NULL;
 	bson_error_t              error;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "startTransaction")
@@ -350,8 +338,6 @@ static PHP_METHOD(Session, commitTransaction)
 	php_phongo_session_t* intern;
 	bson_error_t          error;
 	bson_t                reply;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "commitTransaction")
@@ -372,8 +358,6 @@ static PHP_METHOD(Session, abortTransaction)
 {
 	php_phongo_session_t* intern;
 	bson_error_t          error;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "abortTransaction")
@@ -392,8 +376,6 @@ static PHP_METHOD(Session, abortTransaction)
 static PHP_METHOD(Session, endSession)
 {
 	php_phongo_session_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 
@@ -410,8 +392,6 @@ static PHP_METHOD(Session, endSession)
 static PHP_METHOD(Session, isInTransaction)
 {
 	php_phongo_session_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "isInTransaction")

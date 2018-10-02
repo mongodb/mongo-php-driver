@@ -38,7 +38,6 @@ static PHP_METHOD(Server, executeCommand)
 	zval*                options      = NULL;
 	bool                 free_options = false;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -65,7 +64,6 @@ static PHP_METHOD(Server, executeReadCommand)
 	zval*                command;
 	zval*                options = NULL;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -86,7 +84,6 @@ static PHP_METHOD(Server, executeWriteCommand)
 	zval*                command;
 	zval*                options = NULL;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -107,7 +104,6 @@ static PHP_METHOD(Server, executeReadWriteCommand)
 	zval*                command;
 	zval*                options = NULL;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -129,7 +125,6 @@ static PHP_METHOD(Server, executeQuery)
 	zval*               options      = NULL;
 	bool                free_options = false;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -159,7 +154,6 @@ static PHP_METHOD(Server, executeBulkWrite)
 	zval*                   options      = NULL;
 	bool                    free_options = false;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -184,8 +178,6 @@ static PHP_METHOD(Server, getHost)
 {
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -208,8 +200,6 @@ static PHP_METHOD(Server, getTags)
 {
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -260,8 +250,6 @@ static PHP_METHOD(Server, getInfo)
 {
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -301,8 +289,6 @@ static PHP_METHOD(Server, getLatency)
 {
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -325,8 +311,6 @@ static PHP_METHOD(Server, getPort)
 {
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -349,8 +333,6 @@ static PHP_METHOD(Server, getType)
 {
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -373,8 +355,6 @@ static PHP_METHOD(Server, isPrimary)
 {
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -397,8 +377,6 @@ static PHP_METHOD(Server, isSecondary)
 {
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -421,8 +399,6 @@ static PHP_METHOD(Server, isArbiter)
 {
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -445,8 +421,6 @@ static PHP_METHOD(Server, isHidden)
 {
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -471,8 +445,6 @@ static PHP_METHOD(Server, isPassive)
 {
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 

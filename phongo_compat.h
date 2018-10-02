@@ -81,7 +81,6 @@
 #define phongo_get_gc_table zval**
 #define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t*) ecalloc(1, sizeof(_obj_t) + zend_object_properties_size(_class_type))
 #define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data)
-#define SUPPRESS_UNUSED_WARNING(x)
 #define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
 #define EXCEPTION_P(_ex, _zp) ZVAL_OBJ(&_zp, _ex)
 #define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRL(_key), (char*) (_value));
@@ -118,7 +117,6 @@
 #define phongo_get_gc_table zval***
 #define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t*) ecalloc(1, sizeof(_obj_t))
 #define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data) TSRMLS_FETCH_FROM_CTX(user_data)
-#define SUPPRESS_UNUSED_WARNING(x) (void) x;
 #define DECLARE_RETURN_VALUE_USED
 #define EXCEPTION_P(_ex, _zp) _zp = _ex
 #define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), (char*) (_value), 1);

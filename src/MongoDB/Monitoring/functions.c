@@ -46,9 +46,6 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 	zval** subscriber;
 #endif
 
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
 		return;
 	}
@@ -88,8 +85,6 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 {
 	zval* zSubscriber = NULL;
 	char* hash;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
 		return;

@@ -34,9 +34,6 @@ static PHP_METHOD(WriteConcern, __construct)
 	zend_error_handling        error_handling;
 	zval *                     w, *journal;
 	phongo_long                wtimeout = 0;
-	SUPPRESS_UNUSED_WARNING(return_value)
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
@@ -97,8 +94,6 @@ static PHP_METHOD(WriteConcern, getW)
 {
 	php_phongo_writeconcern_t* intern;
 	const char*                wtag;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
@@ -128,8 +123,6 @@ static PHP_METHOD(WriteConcern, getW)
 static PHP_METHOD(WriteConcern, getWtimeout)
 {
 	php_phongo_writeconcern_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
@@ -145,8 +138,6 @@ static PHP_METHOD(WriteConcern, getWtimeout)
 static PHP_METHOD(WriteConcern, getJournal)
 {
 	php_phongo_writeconcern_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
@@ -167,8 +158,6 @@ static PHP_METHOD(WriteConcern, getJournal)
 static PHP_METHOD(WriteConcern, isDefault)
 {
 	php_phongo_writeconcern_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 

@@ -37,9 +37,6 @@ static PHP_METHOD(ReadPreference, __construct)
 	zval*                        mode;
 	zval*                        tagSets = NULL;
 	zval*                        options = NULL;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
@@ -139,8 +136,6 @@ static PHP_METHOD(ReadPreference, __construct)
 static PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 {
 	php_phongo_readpreference_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
@@ -156,8 +151,6 @@ static PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 static PHP_METHOD(ReadPreference, getMode)
 {
 	php_phongo_readpreference_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
@@ -174,8 +167,6 @@ static PHP_METHOD(ReadPreference, getTagSets)
 {
 	php_phongo_readpreference_t* intern;
 	const bson_t*                tags;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 

@@ -36,10 +36,6 @@ PHP_FUNCTION(MongoDB_BSON_fromPHP)
 	zval*   data;
 	bson_t* bson;
 
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(this_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &data) == FAILURE) {
 		return;
 	}
@@ -59,10 +55,6 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
 	phongo_zpp_char_len   data_len;
 	zval*                 typemap = NULL;
 	php_phongo_bson_state state   = PHONGO_BSON_STATE_INITIALIZER;
-
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(this_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &data, &data_len, &typemap) == FAILURE) {
 		return;
@@ -96,10 +88,6 @@ PHP_FUNCTION(MongoDB_BSON_fromJSON)
 	bson_t              bson  = BSON_INITIALIZER;
 	bson_error_t        error = { 0 };
 
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(this_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &json, &json_len) == FAILURE) {
 		return;
 	}
@@ -121,10 +109,6 @@ static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mo
 	bson_reader_t*      reader;
 	char*               json = NULL;
 	size_t              json_len;
-
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(this_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used) /* We don't use these */
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &data, &data_len) == FAILURE) {
 		return;

@@ -33,8 +33,6 @@ static PHP_METHOD(CursorId, __toString)
 	php_phongo_cursorid_t* intern;
 	char*                  tmp;
 	int                    tmp_len;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_CURSORID_OBJ_P(getThis());
 
