@@ -666,8 +666,7 @@ static PHP_METHOD(Manager, startSession)
 			phongo_throw_exception(
 				PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
 				"Expected \"defaultTransactionOptions\" option to be an array, %s given",
-				PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(txn_options)
-			);
+				PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(txn_options));
 			goto cleanup;
 		}
 

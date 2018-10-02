@@ -29,10 +29,13 @@
 
 zend_class_entry* php_phongo_session_ce;
 
-#define SESSION_CHECK_LIVELINESS(i,m) \
-	if (!(i)->client_session) { \
-		phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Cannot call '%s', as the session has already been ended.", (m)); \
-		return; \
+#define SESSION_CHECK_LIVELINESS(i, m)                                  \
+	if (!(i)->client_session) {                                         \
+		phongo_throw_exception(                                         \
+			PHONGO_ERROR_LOGIC TSRMLS_CC,                               \
+			"Cannot call '%s', as the session has already been ended.", \
+			(m));                                                       \
+		return;                                                         \
 	}
 
 static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestamp, uint32_t* increment TSRMLS_DC)
@@ -402,7 +405,6 @@ static PHP_METHOD(Session, isInTransaction)
 
 	RETURN_BOOL(mongoc_client_session_in_transaction(intern->client_session));
 } /* }}} */
-
 
 /* {{{ MongoDB\Driver\Session function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Session_advanceClusterTime, 0, 0, 1)

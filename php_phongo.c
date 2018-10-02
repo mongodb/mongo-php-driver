@@ -209,8 +209,8 @@ static void phongo_exception_add_error_labels(bson_t* reply TSRMLS_DC)
 		bson_iter_recurse(&iter, &error_labels);
 		while (bson_iter_next(&error_labels)) {
 			if (BSON_ITER_HOLDS_UTF8(&error_labels)) {
-				const char*    error_label;
-				uint32_t       error_label_len;
+				const char* error_label;
+				uint32_t    error_label_len;
 
 				error_label = bson_iter_utf8(&error_labels, &error_label_len);
 #if PHP_VERSION_ID >= 70000
@@ -807,7 +807,7 @@ bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor TSRMLS_DC
 bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* zquery, zval* options, uint32_t server_id, zval* return_value, int return_value_used TSRMLS_DC) /* {{{ */
 {
 	const php_phongo_query_t* query;
-	bson_t                    opts  = BSON_INITIALIZER;
+	bson_t                    opts = BSON_INITIALIZER;
 	mongoc_cursor_t*          cursor;
 	char*                     dbname;
 	char*                     collname;
