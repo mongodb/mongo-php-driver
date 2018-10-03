@@ -52,7 +52,7 @@ static bool php_phongo_has_string_array_element(zval* labels, char* label TSRMLS
 #else
 	{
 		HashPosition pos;
-		zval** z_label;
+		zval**       z_label;
 
 		for (
 			zend_hash_internal_pointer_reset_ex(ht_data, &pos);
@@ -75,9 +75,9 @@ static bool php_phongo_has_string_array_element(zval* labels, char* label TSRMLS
    Returns whether a specific error label has been set */
 static PHP_METHOD(RuntimeException, hasErrorLabel)
 {
-	char*                           label;
-	phongo_zpp_char_len             label_len;
-	zval*                           error_labels;
+	char*               label;
+	phongo_zpp_char_len label_len;
+	zval*               error_labels;
 #if PHP_VERSION_ID >= 70000
 	zval rv;
 #endif

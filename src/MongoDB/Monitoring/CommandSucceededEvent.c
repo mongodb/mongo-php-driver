@@ -31,8 +31,6 @@ zend_class_entry* php_phongo_commandsucceededevent_ce;
 PHP_METHOD(CommandSucceededEvent, getCommandName)
 {
 	php_phongo_commandsucceededevent_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
@@ -48,8 +46,6 @@ PHP_METHOD(CommandSucceededEvent, getCommandName)
 PHP_METHOD(CommandSucceededEvent, getDurationMicros)
 {
 	php_phongo_commandsucceededevent_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
@@ -66,8 +62,6 @@ PHP_METHOD(CommandSucceededEvent, getOperationId)
 {
 	php_phongo_commandsucceededevent_t* intern;
 	char                                int_as_string[20];
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
@@ -85,8 +79,6 @@ PHP_METHOD(CommandSucceededEvent, getReply)
 {
 	php_phongo_commandsucceededevent_t* intern;
 	php_phongo_bson_state               state = PHONGO_BSON_STATE_INITIALIZER;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
@@ -108,8 +100,6 @@ PHP_METHOD(CommandSucceededEvent, getRequestId)
 {
 	php_phongo_commandsucceededevent_t* intern;
 	char                                int_as_string[20];
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 
@@ -126,8 +116,6 @@ PHP_METHOD(CommandSucceededEvent, getRequestId)
 PHP_METHOD(CommandSucceededEvent, getServer)
 {
 	php_phongo_commandsucceededevent_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
 

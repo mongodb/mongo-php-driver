@@ -31,8 +31,6 @@ zend_class_entry* php_phongo_commandfailedevent_ce;
 PHP_METHOD(CommandFailedEvent, getCommandName)
 {
 	php_phongo_commandfailedevent_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -48,8 +46,6 @@ PHP_METHOD(CommandFailedEvent, getCommandName)
 PHP_METHOD(CommandFailedEvent, getDurationMicros)
 {
 	php_phongo_commandfailedevent_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -65,8 +61,6 @@ PHP_METHOD(CommandFailedEvent, getDurationMicros)
 PHP_METHOD(CommandFailedEvent, getError)
 {
 	php_phongo_commandfailedevent_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -87,8 +81,6 @@ PHP_METHOD(CommandFailedEvent, getOperationId)
 {
 	php_phongo_commandfailedevent_t* intern;
 	char                             int_as_string[20];
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -106,8 +98,6 @@ PHP_METHOD(CommandFailedEvent, getReply)
 {
 	php_phongo_commandfailedevent_t* intern;
 	php_phongo_bson_state            state = PHONGO_BSON_STATE_INITIALIZER;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -129,8 +119,6 @@ PHP_METHOD(CommandFailedEvent, getRequestId)
 {
 	php_phongo_commandfailedevent_t* intern;
 	char                             int_as_string[20];
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -147,8 +135,6 @@ PHP_METHOD(CommandFailedEvent, getRequestId)
 PHP_METHOD(CommandFailedEvent, getServer)
 {
 	php_phongo_commandfailedevent_t* intern;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 

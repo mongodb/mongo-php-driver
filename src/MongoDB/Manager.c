@@ -295,9 +295,6 @@ static PHP_METHOD(Manager, __construct)
 	phongo_zpp_char_len   uri_string_len = 0;
 	zval*                 options        = NULL;
 	zval*                 driverOptions  = NULL;
-	SUPPRESS_UNUSED_WARNING(return_value)
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 
@@ -341,7 +338,6 @@ static PHP_METHOD(Manager, executeCommand)
 	zval*                 zreadPreference = NULL;
 	uint32_t              server_id       = 0;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
@@ -381,7 +377,6 @@ static PHP_METHOD(Manager, executeReadCommand)
 	zval*                 zreadPreference = NULL;
 	uint32_t              server_id       = 0;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
@@ -413,7 +408,6 @@ static PHP_METHOD(Manager, executeWriteCommand)
 	zval*                 options   = NULL;
 	uint32_t              server_id = 0;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
@@ -440,7 +434,6 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 	zval*                 options   = NULL;
 	uint32_t              server_id = 0;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
@@ -469,7 +462,6 @@ static PHP_METHOD(Manager, executeQuery)
 	zval*               zreadPreference = NULL;
 	uint32_t            server_id       = 0;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &namespace, &namespace_len, &query, php_phongo_query_ce, &options) == FAILURE) {
 		return;
@@ -510,7 +502,6 @@ static PHP_METHOD(Manager, executeBulkWrite)
 	bool                    free_options = false;
 	uint32_t                server_id    = 0;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &options) == FAILURE) {
 		return;
@@ -540,7 +531,6 @@ static PHP_METHOD(Manager, getReadConcern)
 {
 	php_phongo_manager_t* intern;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -559,7 +549,6 @@ static PHP_METHOD(Manager, getReadPreference)
 {
 	php_phongo_manager_t* intern;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -579,8 +568,6 @@ static PHP_METHOD(Manager, getServers)
 	php_phongo_manager_t*         intern;
 	mongoc_server_description_t** sds;
 	size_t                        i, n = 0;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -615,7 +602,6 @@ static PHP_METHOD(Manager, getWriteConcern)
 {
 	php_phongo_manager_t* intern;
 	DECLARE_RETURN_VALUE_USED
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -635,8 +621,6 @@ static PHP_METHOD(Manager, selectServer)
 	php_phongo_manager_t* intern;
 	zval*                 zreadPreference = NULL;
 	uint32_t              server_id       = 0;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -662,8 +646,6 @@ static PHP_METHOD(Manager, startSession)
 	mongoc_client_session_t*  cs;
 	bson_error_t              error    = { 0 };
 	mongoc_transaction_opt_t* txn_opts = NULL;
-	SUPPRESS_UNUSED_WARNING(return_value_ptr)
-	SUPPRESS_UNUSED_WARNING(return_value_used)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -684,8 +666,7 @@ static PHP_METHOD(Manager, startSession)
 			phongo_throw_exception(
 				PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
 				"Expected \"defaultTransactionOptions\" option to be an array, %s given",
-				PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(txn_options)
-			);
+				PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(txn_options));
 			goto cleanup;
 		}
 
