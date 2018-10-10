@@ -26,6 +26,48 @@
 
 zend_class_entry* php_phongo_readconcern_ce;
 
+/* Initialize the object from a HashTable and return whether it was successful.
+ * An exception will be thrown on error. */
+static bool php_phongo_readconcern_init_from_hash(php_phongo_readconcern_t* intern, HashTable* props TSRMLS_DC) /* {{{ */
+{
+#if PHP_VERSION_ID >= 70000
+	zval* level;
+
+	intern->read_concern = mongoc_read_concern_new();
+
+	if ((level = zend_hash_str_find(props, "level", sizeof("level") - 1))) {
+		if (Z_TYPE_P(level) == IS_STRING) {
+			mongoc_read_concern_set_level(intern->read_concern, Z_STRVAL_P(level));
+			return true;
+		}
+
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"level\" string field", ZSTR_VAL(php_phongo_readconcern_ce->name));
+		goto failure;
+	}
+#else
+	zval** level;
+
+	intern->read_concern = mongoc_read_concern_new();
+
+	if (zend_hash_find(props, "level", sizeof("level"), (void**) &level) == SUCCESS) {
+		if (Z_TYPE_PP(level) == IS_STRING) {
+			mongoc_read_concern_set_level(intern->read_concern, Z_STRVAL_PP(level));
+			return true;
+		}
+
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"level\" string field", ZSTR_VAL(php_phongo_readconcern_ce->name));
+		goto failure;
+	}
+#endif
+
+	return true;
+
+failure:
+	mongoc_read_concern_destroy(intern->read_concern);
+	intern->read_concern = NULL;
+	return false;
+} /* }}} */
+
 /* {{{ proto void MongoDB\Driver\ReadConcern::__construct([string $level])
    Constructs a new ReadConcern */
 static PHP_METHOD(ReadConcern, __construct)
@@ -49,6 +91,26 @@ static PHP_METHOD(ReadConcern, __construct)
 	if (level) {
 		mongoc_read_concern_set_level(intern->read_concern, level);
 	}
+} /* }}} */
+
+/* {{{ proto void MongoDB\BSON\ReadConcern::__set_state(array $properties)
+*/
+static PHP_METHOD(ReadConcern, __set_state)
+{
+	php_phongo_readconcern_t* intern;
+	HashTable*                props;
+	zval*                     array;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
+		RETURN_FALSE;
+	}
+
+	object_init_ex(return_value, php_phongo_readconcern_ce);
+
+	intern = Z_READCONCERN_OBJ_P(return_value);
+	props  = Z_ARRVAL_P(array);
+
+	php_phongo_readconcern_init_from_hash(intern, props TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto string|null MongoDB\Driver\ReadConcern::getLevel()
@@ -140,12 +202,17 @@ ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, level)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern___set_state, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_readconcern_me[] = {
 	/* clang-format off */
 	PHP_ME(ReadConcern, __construct, ai_ReadConcern___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ReadConcern, __set_state, ai_ReadConcern___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME(ReadConcern, getLevel, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadConcern, isDefault, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadConcern, bsonSerialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -175,7 +242,7 @@ static void php_phongo_readconcern_free_object(phongo_free_object_arg* object TS
 #if PHP_VERSION_ID < 70000
 	efree(intern);
 #endif
-} /* }}} */
+}
 
 static phongo_create_object_retval php_phongo_readconcern_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
