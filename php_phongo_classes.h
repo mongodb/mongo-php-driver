@@ -294,6 +294,8 @@ extern zend_class_entry* php_phongo_writeconcernerror_ce;
 extern zend_class_entry* php_phongo_writeerror_ce;
 extern zend_class_entry* php_phongo_writeresult_ce;
 
+extern zend_class_entry* php_phongo_cursor_interface_ce;
+
 extern zend_class_entry* php_phongo_exception_ce;
 extern zend_class_entry* php_phongo_logicexception_ce;
 extern zend_class_entry* php_phongo_runtimeexception_ce;
@@ -385,6 +387,8 @@ extern void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeresult_init_ce(INIT_FUNC_ARGS);
+
+extern void php_phongo_cursor_interface_init_ce(INIT_FUNC_ARGS);
 
 extern void php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS);

@@ -560,14 +560,14 @@ void php_phongo_cursor_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_cursor_ce);
 	php_phongo_cursor_ce->get_iterator = php_phongo_cursor_get_iterator;
 
+	zend_class_implements(php_phongo_cursor_ce TSRMLS_CC, 1, php_phongo_cursor_interface_ce);
+
 	memcpy(&php_phongo_handler_cursor, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_cursor.get_debug_info = php_phongo_cursor_get_debug_info;
 #if PHP_VERSION_ID >= 70000
 	php_phongo_handler_cursor.free_obj = php_phongo_cursor_free_object;
 	php_phongo_handler_cursor.offset   = XtOffsetOf(php_phongo_cursor_t, std);
 #endif
-
-	zend_class_implements(php_phongo_cursor_ce TSRMLS_CC, 1, zend_ce_traversable);
 } /* }}} */
 
 /*
