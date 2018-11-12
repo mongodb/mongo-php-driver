@@ -1,5 +1,6 @@
 ########################################
 # Evergreen Template for MongoDB Drivers
+# Modified for the PHP driver
 ########################################
 
 # When a task that used to pass starts to fail
