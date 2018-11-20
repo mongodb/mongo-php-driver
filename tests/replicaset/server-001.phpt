@@ -23,8 +23,14 @@ $bulk->insert($doc);
 $server = $wresult->getServer();
 
 var_dump(
-    $server->getHost(),
-    $server->getTags(),
+    $server->getHost()
+);
+
+$tags = $server->getTags();
+echo "dc: ", array_key_exists('dc', $tags) ? $tags['dc'] : 'not set', "\n";
+echo "ordinal: ", array_key_exists('ordinal', $tags) ? $tags['ordinal'] : 'not set', "\n";
+
+var_dump(
     $server->getLatency(),
     $server->getPort(),
     $server->getType() == MongoDB\Driver\Server::TYPE_RS_PRIMARY,
@@ -42,12 +48,8 @@ var_dump($info["me"] == $server->getHost() . ":" . $server->getPort());
 <?php exit(0); ?>
 --EXPECTF--
 string(%d) "%s"
-array(2) {
-  ["dc"]=>
-  string(2) "pa"
-  ["ordinal"]=>
-  string(3) "one"
-}
+dc: pa
+ordinal: one
 int(%d)
 int(%d)
 bool(true)

@@ -25,5 +25,5 @@ try {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-string(%d) "%SE11000 duplicate key error %s: phongo.writeError_writeerror_getMessage_001%s dup key: { : 1 }"
+string(%d) "%SE11000 duplicate key error %s: phongo.writeError_writeerror_getMessage_001%s dup key: { %S: 1 }"
 ===DONE===

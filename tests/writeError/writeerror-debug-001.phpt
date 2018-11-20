@@ -27,7 +27,7 @@ try {
 --EXPECTF--
 object(MongoDB\Driver\WriteError)#%d (%d) {
   ["message"]=>
-  string(%d) "%SE11000 duplicate key error %s: phongo.writeError_writeerror_debug_001%s dup key: { : 1 }"
+  string(%d) "%SE11000 duplicate key error %s: phongo.writeError_writeerror_debug_001%s dup key: { %S: 1 }"
   ["code"]=>
   int(11000)
   ["index"]=>
