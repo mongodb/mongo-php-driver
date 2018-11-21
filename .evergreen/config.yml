@@ -553,6 +553,9 @@ axes:
       - id: debian92-test
         display_name: "Debian 9.2"
         run_on: debian92-test
+      - id: rhel70-test
+        display_name: "RHEL 7.0"
+        run_on: rhel70
 
   - id: topology
     display_name: Topology
