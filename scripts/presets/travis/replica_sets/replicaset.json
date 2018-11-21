@@ -22,10 +22,9 @@
         },
         {
             "procParams": {
-                "dbpath": "/tmp/REPLICASET/3001/",
                 "ipv6": true,
                 "logappend": true,
-                "logpath": "/tmp/REPLICASET/3001/mongod.log",
+                "logpath": "/tmp/MO/REPLICASET/3001/mongod.log",
                 "journal": true,
                 "port": 3001,
                 "bind_ip_all": true
@@ -41,10 +40,9 @@
         },
         {
             "procParams": {
-                "dbpath": "/tmp/REPLICASET/3002/",
                 "ipv6": true,
                 "logappend": true,
-                "logpath": "/tmp/REPLICASET/3002/mongod.log",
+                "logpath": "/tmp/MO/REPLICASET/3002/mongod.log",
                 "journal": true,
                 "port": 3002,
                 "bind_ip_all": true
