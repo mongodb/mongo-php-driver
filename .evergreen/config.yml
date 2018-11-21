@@ -482,6 +482,36 @@ tasks:
             CONFIG: "standalone"
         - func: "run tests"
 
+    - name: "test-standalone-auth"
+      tags: ["standalone"]
+      commands:
+        - func: "compile driver"
+        - func: "bootstrap mongo-orchestration"
+          vars:
+            TOPOLOGY: "standalone"
+            CONFIG: "standalone-auth"
+        - func: "run tests"
+
+    - name: "test-standalone-ssl"
+      tags: ["standalone"]
+      commands:
+        - func: "compile driver"
+        - func: "bootstrap mongo-orchestration"
+          vars:
+            TOPOLOGY: "standalone"
+            CONFIG: "standalone-ssl"
+        - func: "run tests"
+
+    - name: "test-standalone-old"
+      tags: ["standalone"]
+      commands:
+        - func: "compile driver"
+        - func: "bootstrap mongo-orchestration"
+          vars:
+            TOPOLOGY: "standalone"
+            CONFIG: "standalone-old"
+        - func: "run tests"
+
     - name: "test-replicaset"
       tags: ["replicaset"]
       commands:
@@ -492,6 +522,36 @@ tasks:
             CONFIG: "replicaset"
         - func: "run tests"
 
+    - name: "test-replicaset-auth"
+      tags: ["replicaset"]
+      commands:
+        - func: "compile driver"
+        - func: "bootstrap mongo-orchestration"
+          vars:
+            TOPOLOGY: "replica_sets"
+            CONFIG: "replicaset-auth"
+        - func: "run tests"
+
+    - name: "test-replicaset-single"
+      tags: ["replicaset"]
+      commands:
+        - func: "compile driver"
+        - func: "bootstrap mongo-orchestration"
+          vars:
+            TOPOLOGY: "replica_sets"
+            CONFIG: "replicaset-one-node"
+        - func: "run tests"
+
+    - name: "test-replicaset-old"
+      tags: ["replicaset"]
+      commands:
+        - func: "compile driver"
+        - func: "bootstrap mongo-orchestration"
+          vars:
+            TOPOLOGY: "replica_sets"
+            CONFIG: "replicaset-old"
+        - func: "run tests"
+
     - name: "test-sharded"
       tags: ["sharded"]
       commands:
@@ -500,6 +560,16 @@ tasks:
           vars:
             TOPOLOGY: "sharded_clusters"
             CONFIG: "cluster"
+        - func: "run tests"
+
+    - name: "test-sharded-rs"
+      tags: ["sharded"]
+      commands:
+        - func: "compile driver"
+        - func: "bootstrap mongo-orchestration"
+          vars:
+            TOPOLOGY: "sharded_clusters"
+            CONFIG: "cluster_replset"
         - func: "run tests"
 
 # }}}
@@ -521,6 +591,18 @@ axes:
         display_name: "3.6"
         variables:
            VERSION: "3.6"
+      - id: "3.4"
+        display_name: "3.4"
+        variables:
+           VERSION: "3.4"
+      - id: "3.2"
+        display_name: "3.2"
+        variables:
+           VERSION: "3.2"
+      - id: "3.0"
+        display_name: "3.0"
+        variables:
+           VERSION: "3.0"
 
   - id: php-versions
     display_name: PHP Version
@@ -546,8 +628,19 @@ axes:
         variables:
           PHP_VERSION: "5.5.38"
 
-  # OSes that support versions of MongoDB>=4.0 with SSL.
-  - id: os-requires-40
+  - id: os-php5
+    display_name: OS
+    values:
+      - id: ubuntu1604-test
+        display_name: "Ubuntu 16.04"
+        run_on: ubuntu1604-test
+      - id: rhel70-test
+        display_name: "RHEL 7.0"
+        run_on: rhel70
+      - id: rhel72-zseries
+        display_name: "RHEL 7.2 zSeries"
+        run_on: rhel72-zseries-test
+  - id: os-php7
     display_name: OS
     values:
       - id: debian92-test
@@ -556,46 +649,81 @@ axes:
       - id: rhel70-test
         display_name: "RHEL 7.0"
         run_on: rhel70
-
-  - id: topology
-    display_name: Topology
-    values:
-      - id: standalone
-        display_name: Standalone
-        variables:
-           TOPOLOGY: "server"
-      - id: replicaset
-        display_name: Replica Set
-        variables:
-           TOPOLOGY: "replica_set"
-      - id: sharded-cluster
-        display_name: Sharded Cluster
-        variables:
-           TOPOLOGY: "sharded_cluster"
-
-  - id: storage-engine
-    display_name: Storage
-    values:
-      - id: mmapv1
-        display_name: MMAPv1
-        variables:
-           STORAGE_ENGINE: "mmapv1"
-      - id: wiredtiger
-        display_name: WiredTiger
-        variables:
-           STORAGE_ENGINE: "wiredtiger"
-      - id: inmemory
-        display_name: InMemory
-        variables:
-           STORAGE_ENGINE: "inmemory"
-
+      - id: rhel72-zseries
+        display_name: "RHEL 7.2 zSeries"
+        run_on: rhel72-zseries-test
 
 buildvariants:
 
-- matrix_name: "tests-os-requires-40"
-  matrix_spec: {"os-requires-40": "*", "versions": "*", "php-versions": "*" }
-  display_name: "${os-requires-40}: MongoDB ${versions} with ${php-versions}"
+- matrix_name: "tests-php5"
+  matrix_spec: {"os-php5": "*", "versions": "4.0", "php-versions": ["5.5", "5.6"] }
+  display_name: "All: ${os-php5}: MongoDB ${versions}/${php-versions}"
+  tasks:
+     - name: "test-standalone-ssl"
+     - name: "test-replicaset-auth"
+
+- matrix_name: "tests-php7"
+  matrix_spec: {"os-php7": "*", "versions": "4.0", "php-versions": ["7.0","7.1","7.2"] }
+  display_name: "All: ${os-php7}: MongoDB ${versions}/${php-versions}"
+  tasks:
+     - name: "test-standalone-ssl"
+     - name: "test-replicaset-auth"
+
+
+- matrix_name: "mongo-old-php5"
+  matrix_spec: {"os-php5": "*", "versions": ["3.0", "3.2", "3.4"], "php-versions": "5.6" }
+  display_name: "${os-php5}: MongoDB ${versions}/${php-versions}"
+  tasks:
+     - name: "test-standalone-old"
+     - name: "test-replicaset-old"
+
+- matrix_name: "mongo-old-php7"
+  matrix_spec: {"os-php7": "*", "versions": ["3.0", "3.2", "3.4"], "php-versions": "7.2" }
+  display_name: "${os-php7}: MongoDB ${versions}/PHP ${php-versions}"
+  tasks:
+     - name: "test-standalone-old"
+     - name: "test-replicaset-old"
+
+
+- matrix_name: "mongo-legacy-php5"
+  matrix_spec: {"os-php5": "*", "versions": ["3.6"], "php-versions": "5.6" }
+  display_name: "${os-php5}: MongoDB ${versions}/${php-versions}"
   tasks:
      - name: "test-standalone"
      - name: "test-replicaset"
+     - name: "test-replicaset-auth"
+
+- matrix_name: "mongo-legacy-php7"
+  matrix_spec: {"os-php7": "*", "versions": ["3.6"], "php-versions": "7.2" }
+  display_name: "${os-php7}: MongoDB ${versions}/${php-versions}"
+  tasks:
+     - name: "test-standalone"
+     - name: "test-replicaset"
+     - name: "test-replicaset-auth"
+
+
+- matrix_name: "mongo-new-php5"
+  matrix_spec: {"os-php5": "*", "versions": ["4.0", "latest"], "php-versions": "5.6" }
+  display_name: "${os-php5}: MongoDB ${versions}/${php-versions}"
+  tasks:
+     - name: "test-standalone"
+     - name: "test-standalone-auth"
+     - name: "test-standalone-ssl"
+     - name: "test-replicaset"
+     - name: "test-replicaset-auth"
+     - name: "test-replicaset-single"
      - name: "test-sharded"
+     - name: "test-sharded-rs"
+
+- matrix_name: "mongo-new-php7"
+  matrix_spec: {"os-php7": "*", "versions": ["4.0", "latest"], "php-versions": "7.2" }
+  display_name: "${os-php7}: MongoDB ${versions}/${php-versions}"
+  tasks:
+     - name: "test-standalone"
+     - name: "test-standalone-auth"
+     - name: "test-standalone-ssl"
+     - name: "test-replicaset"
+     - name: "test-replicaset-auth"
+     - name: "test-replicaset-single"
+     - name: "test-sharded"
+     - name: "test-sharded-rs"
