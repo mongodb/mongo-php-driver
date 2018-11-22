@@ -4,10 +4,9 @@
     "members": [
         {
             "procParams": {
-                "dbpath": "/tmp/REPLICASET/3020/",
                 "ipv6": true,
                 "logappend": true,
-                "logpath": "/tmp/REPLICASET/3020/mongod.log",
+                "logpath": "/tmp/MO/REPLICASET/3020/mongod.log",
                 "journal": true,
                 "nssize": 1,
                 "port": 3020,

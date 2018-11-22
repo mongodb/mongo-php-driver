@@ -5,10 +5,9 @@
     "login": "root",
     "password": "toor",
     "procParams": {
-        "dbpath": "/tmp/standalone-auth/",
         "ipv6": true,
         "logappend": true,
-        "logpath": "/tmp/standalone-auth/m.log",
+        "logpath": "/tmp/MO/STANDALONE/AUTH/mongod.log",
         "journal": true,
         "nssize": 1,
         "port": 2200,

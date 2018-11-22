@@ -2,10 +2,9 @@
     "name": "mongod",
     "id" : "STANDALONE",
     "procParams": {
-        "dbpath": "/tmp/standalone/",
         "ipv6": true,
         "logappend": true,
-        "logpath": "/tmp/standalone/mongod.log",
+        "logpath": "/tmp/MO/STANDALONE/OLD/mongod.log",
         "journal": true,
         "nssize": 1,
         "port": 2700,

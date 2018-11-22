@@ -6,6 +6,7 @@
         "journal": true,
         "port": 2000,
         "bind_ip_all": true,
+        "logpath": "/tmp/MO/STANDALONE/mongod.log",
         "setParameter": {"enableTestCommands": 1}
     }
 }
