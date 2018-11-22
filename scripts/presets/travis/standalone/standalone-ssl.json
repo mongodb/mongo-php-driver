@@ -2,10 +2,8 @@
     "name": "mongod",
     "id" : "STANDALONE_SSL",
     "procParams": {
-        "dbpath": "/tmp/standalone-ssl/",
         "ipv6": true,
         "logappend": true,
-        "logpath": "/tmp/standalone-ssl/m.log",
         "journal": true,
         "nssize": 1,
         "port": 2100,

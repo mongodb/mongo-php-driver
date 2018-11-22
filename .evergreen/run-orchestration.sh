@@ -31,8 +31,11 @@ if [ "standalone" = "${TOPOLOGY}" ]; then
     END_POINT="servers"
 fi
 
-export ORCHESTRATION_FILE="$PROJECT_DIRECTORY/scripts/presets/travis/${TOPOLOGY}/${CONFIG}.json"
 export ORCHESTRATION_URL="http://localhost:8889/v1/${END_POINT}"
+
+# Replace $TRAVIS_BUILD_DIR variable in orchestration file
+cat "${PROJECT_DIRECTORY}/scripts/presets/travis/${TOPOLOGY}/${CONFIG}.json" | sed "s@\$TRAVIS_BUILD_DIR@${PROJECT_DIRECTORY}@" > ${PROJECT_DIRECTORY}/../tmp-config.json
+export ORCHESTRATION_FILE="${PROJECT_DIRECTORY}/../tmp-config.json"
 
 # Start mongo-orchestration
 sh ${PROJECT_DIRECTORY}/.evergreen/start-orchestration.sh "$MONGO_ORCHESTRATION_HOME"
