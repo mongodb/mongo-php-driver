@@ -11,10 +11,8 @@
                 "logappend": true,
                 "logpath": "/tmp/MO/REPLICASET/3010/mongod.log",
                 "journal": true,
-                "nssize": 1,
                 "port": 3010,
-                "bind_ip_all": true,
-                "smallfiles": true
+                "bind_ip_all": true
             },
             "rsParams": {
                 "priority": 99,
@@ -31,10 +29,8 @@
                 "logappend": true,
                 "logpath": "/tmp/MO/REPLICASET/3011/mongod.log",
                 "journal": true,
-                "nssize": 1,
                 "port": 3011,
-                "bind_ip_all": true,
-                "smallfiles": true
+                "bind_ip_all": true
             },
             "rsParams": {
                 "priority": 1.1,
@@ -51,10 +47,8 @@
                 "logappend": true,
                 "logpath": "/tmp/MO/REPLICASET/3012/mongod.log",
                 "journal": true,
-                "nssize": 1,
                 "port": 3012,
-                "bind_ip_all": true,
-                "smallfiles": true
+                "bind_ip_all": true
             },
             "rsParams": {
                 "arbiterOnly": true

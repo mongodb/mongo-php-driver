@@ -8,10 +8,8 @@
                 "logappend": true,
                 "logpath": "/tmp/MO/REPLICASET/3020/mongod.log",
                 "journal": true,
-                "nssize": 1,
                 "port": 3020,
-                "bind_ip_all": true,
-                "smallfiles": true
+                "bind_ip_all": true
             },
             "rsParams": {
                 "priority": 99,
