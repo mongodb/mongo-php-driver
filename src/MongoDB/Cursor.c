@@ -122,6 +122,8 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator* iter T
 		cursor->advanced = true;
 	}
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(cursor->client, cursor->created_by_pid);
+
 	if (mongoc_cursor_next(cursor->cursor, &doc)) {
 		php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
 	} else {
@@ -382,6 +384,8 @@ static void php_phongo_cursor_free_object(phongo_free_object_arg* object TSRMLS_
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
+
 	if (intern->cursor) {
 		mongoc_cursor_destroy(intern->cursor);
 	}
@@ -427,6 +431,8 @@ static phongo_create_object_retval php_phongo_cursor_create_object(zend_class_en
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
+
+	intern->created_by_pid = (int) getpid();
 
 #if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_cursor;

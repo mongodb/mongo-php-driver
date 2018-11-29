@@ -357,6 +357,7 @@ static PHP_METHOD(Manager, executeCommand)
 		goto cleanup;
 	}
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, server_id, return_value, return_value_used TSRMLS_CC);
 
 cleanup:
@@ -394,6 +395,7 @@ static PHP_METHOD(Manager, executeReadCommand)
 		return;
 	}
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
@@ -420,6 +422,7 @@ static PHP_METHOD(Manager, executeWriteCommand)
 		return;
 	}
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
@@ -446,6 +449,7 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 		return;
 	}
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
@@ -481,6 +485,7 @@ static PHP_METHOD(Manager, executeQuery)
 		goto cleanup;
 	}
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	phongo_execute_query(intern->client, namespace, query, options, server_id, return_value, return_value_used TSRMLS_CC);
 
 cleanup:
@@ -517,6 +522,7 @@ static PHP_METHOD(Manager, executeBulkWrite)
 		goto cleanup;
 	}
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	phongo_execute_bulk_write(intern->client, namespace, bulk, options, server_id, return_value, return_value_used TSRMLS_CC);
 
 cleanup:
@@ -690,6 +696,7 @@ static PHP_METHOD(Manager, startSession)
 		}
 	}
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	cs = mongoc_client_start_session(intern->client, cs_opts, &error);
 
 	if (cs) {
@@ -794,6 +801,8 @@ static phongo_create_object_retval php_phongo_manager_create_object(zend_class_e
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
+
+	intern->created_by_pid = (int) getpid();
 
 #if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_manager;

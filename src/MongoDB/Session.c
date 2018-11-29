@@ -450,6 +450,8 @@ static void php_phongo_session_free_object(phongo_free_object_arg* object TSRMLS
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(mongoc_client_session_get_client(intern->client_session), intern->created_by_pid);
+
 	if (intern->client_session) {
 		mongoc_client_session_destroy(intern->client_session);
 	}
@@ -467,6 +469,8 @@ static phongo_create_object_retval php_phongo_session_create_object(zend_class_e
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
+
+	intern->created_by_pid = (int) getpid();
 
 #if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_session;

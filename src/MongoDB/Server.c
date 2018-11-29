@@ -47,6 +47,7 @@ static PHP_METHOD(Server, executeCommand)
 
 	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options TSRMLS_CC);
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 
 	if (free_options) {
@@ -71,6 +72,7 @@ static PHP_METHOD(Server, executeReadCommand)
 		return;
 	}
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
@@ -91,6 +93,7 @@ static PHP_METHOD(Server, executeWriteCommand)
 		return;
 	}
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
@@ -111,6 +114,7 @@ static PHP_METHOD(Server, executeReadWriteCommand)
 		return;
 	}
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
@@ -134,6 +138,7 @@ static PHP_METHOD(Server, executeQuery)
 
 	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options TSRMLS_CC);
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	phongo_execute_query(intern->client, namespace, query, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 
 	if (free_options) {
@@ -165,6 +170,7 @@ static PHP_METHOD(Server, executeBulkWrite)
 
 	options = php_phongo_prep_legacy_option(options, "writeConcern", &free_options TSRMLS_CC);
 
+	PHONGO_CLIENT_RESET_IF_CHIlD_PID(intern->client, intern->created_by_pid);
 	phongo_execute_bulk_write(intern->client, namespace, bulk, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 
 	if (free_options) {
@@ -569,6 +575,8 @@ static phongo_create_object_retval php_phongo_server_create_object(zend_class_en
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
+
+	intern->created_by_pid = (int) getpid();
 
 #if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_server;

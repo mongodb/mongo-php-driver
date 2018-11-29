@@ -212,6 +212,13 @@ zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME(zv) (Z_TYPE(zv) == IS_OBJECT ? ZSTR_VAL(Z_OBJCE(zv)->name) : zend_get_type_by_const(Z_TYPE(zv)))
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvp) PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*(zvp))
 
+#define PHONGO_CLIENT_RESET_IF_CHIlD_PID(client, created_by_pid) \
+	do {                                                         \
+		if ((created_by_pid) != getpid()) {                      \
+			mongoc_client_reset(client);                         \
+		}                                                        \
+	} while (0);
+
 #endif /* PHONGO_H */
 
 /*
