@@ -177,6 +177,19 @@ make test-bootstrap
 The follow steps outline the release process for a maintenance branch (e.g.
 releasing the `vX.Y` branch as X.Y.Z).
 
+### Ensure libmongoc version information is correct
+
+The build process for Autotools and Windows rely on
+`src/LIBMONGOC_VERSION_CURRENT` to infer version information for libmongoc and
+libbson. This file can be regenerated using the following Makefile target:
+
+```
+$ make libmongoc-version-current
+```
+
+Alternatively, the `build/calc_release_version.py` script in libmongoc can be
+executed directly.
+
 ### Ensure PHP version compatibility
 
 Ensure that the extension compiles on PHP 5.5 through the latest PHP 7.x
