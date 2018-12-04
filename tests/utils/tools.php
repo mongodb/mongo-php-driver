@@ -463,7 +463,6 @@ function createTemporaryMongoInstance(array $options = [])
         "name" => "mongod",
         "id" => $id,
         'procParams' => [
-            'dbpath' => "/tmp/MO/phongo/{$id}",
             'logpath' => "/tmp/MO/phongo/{$id}.log",
             'ipv6' => true,
             'setParameter' => [ 'enableTestCommands' => 1 ],
