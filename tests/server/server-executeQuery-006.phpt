@@ -40,6 +40,9 @@ $query = new MongoDB\Driver\Query(
 $cursor = $secondary->executeQuery(DATABASE_NAME . '.system.profile', $query, $rp);
 $profileEntry = current($cursor->toArray());
 
+if (! isset( $profileEntry->command )) {
+    var_dump($profileEntry);
+}
 var_dump($profileEntry->command->find);
 var_dump($profileEntry->command->filter);
 
