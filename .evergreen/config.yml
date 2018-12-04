@@ -659,14 +659,14 @@ buildvariants:
 
 - matrix_name: "tests-php5"
   matrix_spec: {"os-php5": "*", "versions": "4.0", "php-versions": ["5.5", "5.6"] }
-  display_name: "All: ${versions}/${php-versions} (${os-php5}"
+  display_name: "All: ${versions}/${php-versions} — ${os-php5}"
   tasks:
      - name: "test-standalone-ssl"
      - name: "test-replicaset-auth"
 
 - matrix_name: "tests-php7"
   matrix_spec: {"os-php7": "*", "versions": "4.0", "php-versions": ["7.0","7.1","7.2"] }
-  display_name: "All: ${versions}/${php-versions} (${os-php7}"
+  display_name: "All: ${versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone-ssl"
      - name: "test-replicaset-auth"
@@ -674,14 +674,14 @@ buildvariants:
 
 - matrix_name: "mongo-30-php5"
   matrix_spec: {"os-php5": "*", "versions": ["3.0", "3.2", "3.4"], "php-versions": "5.6" }
-  display_name: "${versions}/${php-versions} (${os-php5}"
+  display_name: "${versions}/${php-versions} — ${os-php5}"
   tasks:
      - name: "test-standalone-old"
      - name: "test-replicaset-old"
 
 - matrix_name: "mongo-30-php7"
   matrix_spec: {"os-php7": "*", "versions": ["3.0", "3.2", "3.4"], "php-versions": "7.2" }
-  display_name: "${versions}/${php-versions} (${os-php7}"
+  display_name: "${versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone-old"
      - name: "test-replicaset-old"
@@ -689,7 +689,7 @@ buildvariants:
 
 - matrix_name: "mongo-36-php5"
   matrix_spec: {"os-php5": "*", "versions": ["3.6"], "php-versions": "5.6" }
-  display_name: "${versions}/${php-versions} (${os-php5}"
+  display_name: "${versions}/${php-versions} — ${os-php5}"
   tasks:
      - name: "test-standalone"
      - name: "test-replicaset"
@@ -697,7 +697,7 @@ buildvariants:
 
 - matrix_name: "mongo-36-php7"
   matrix_spec: {"os-php7": "*", "versions": ["3.6"], "php-versions": "7.2" }
-  display_name: "${versions}/${php-versions} (${os-php7}"
+  display_name: "${versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone"
      - name: "test-replicaset"
@@ -706,7 +706,7 @@ buildvariants:
 
 - matrix_name: "mongo-40-php5"
   matrix_spec: {"os-php5": "*", "versions": ["4.0", "latest"], "php-versions": "5.6" }
-  display_name: "${versions}/${php-versions} (${os-php5}"
+  display_name: "${versions}/${php-versions} — ${os-php5}"
   tasks:
      - name: "test-standalone"
      - name: "test-standalone-auth"
@@ -719,7 +719,7 @@ buildvariants:
 
 - matrix_name: "mongo-40-php7"
   matrix_spec: {"os-php7": "*", "versions": ["4.0", "latest"], "php-versions": "7.2" }
-  display_name: "${versions}/${php-versions} (${os-php7}"
+  display_name: "${versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone"
      - name: "test-standalone-auth"
