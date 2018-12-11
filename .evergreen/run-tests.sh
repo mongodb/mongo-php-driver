@@ -16,6 +16,7 @@ MONGODB_URI=${MONGODB_URI:-}
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 [ -z "$MARCH" ] && MARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
 
+export REPORT_EXIT_STATUS=1
 
 if [ "$SSL" == "yes" ]; then
    MONGODB_URI="${MONGODB_URI}/?ssl=true"
