@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 /* External libs */
 #include "bson/bson.h"
 #include "mongoc/mongoc.h"
@@ -33,6 +29,10 @@
 #include <ext/spl/spl_iterators.h>
 #include <ext/spl/spl_exceptions.h>
 #include <ext/standard/php_var.h>
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #if PHP_VERSION_ID >= 70000
 #include <Zend/zend_smart_str.h>

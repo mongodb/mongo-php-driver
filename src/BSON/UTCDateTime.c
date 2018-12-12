@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <math.h>
 
 #include <php.h>
@@ -29,10 +25,14 @@
 #else
 #include <ext/standard/php_smart_str.h>
 #endif
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #ifdef PHP_WIN32
 #include "win32/time.h"
 #endif
-
 #include "phongo_compat.h"
 #include "php_phongo.h"
 

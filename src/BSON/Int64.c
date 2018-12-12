@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/standard/php_var.h>
@@ -25,6 +21,10 @@
 #include <zend_smart_str.h>
 #else
 #include <ext/standard/php_smart_str.h>
+#endif
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
 #endif
 
 #include "phongo_compat.h"

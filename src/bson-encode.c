@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <bson/bson.h>
 
 #include <php.h>
 #include <Zend/zend_hash.h>
 #include <Zend/zend_interfaces.h>
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "php_phongo.h"
 #include "php_bson.h"

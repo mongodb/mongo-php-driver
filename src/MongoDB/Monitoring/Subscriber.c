@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+#include <php.h>
+#include <Zend/zend_interfaces.h>
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-
-#include <php.h>
-#include <Zend/zend_interfaces.h>
 
 #include "phongo_compat.h"
 #include "php_phongo.h"

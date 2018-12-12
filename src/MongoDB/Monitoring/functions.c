@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
+#include <php.h>
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include <php.h>
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
