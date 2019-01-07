@@ -31,6 +31,12 @@ if [ "standalone" = "${TOPOLOGY}" ]; then
     END_POINT="servers"
 fi
 
+# Storage engine config files take precedence over the CONFIG variable, and
+# only exist for plain standalone
+if [ ! -z "$STORAGE_ENGINE" ]; then
+  CONFIG="engine-$STORAGE_ENGINE"
+fi
+
 export ORCHESTRATION_URL="http://localhost:8889/v1/${END_POINT}"
 
 # Replace $TRAVIS_BUILD_DIR variable in orchestration file

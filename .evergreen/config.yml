@@ -326,7 +326,7 @@ functions:
       params:
         script: |
           ${PREPARE_SHELL}
-          MONGODB_VERSION=${VERSION} PROJECT_DIRECTORY=${PROJECT_DIRECTORY} DRIVERS_TOOLS=${DRIVERS_TOOLS} CONFIG=${CONFIG} TOPOLOGY=${TOPOLOGY} sh ${PROJECT_DIRECTORY}/.evergreen/run-orchestration.sh
+          MONGODB_VERSION=${VERSION} PROJECT_DIRECTORY=${PROJECT_DIRECTORY} DRIVERS_TOOLS=${DRIVERS_TOOLS} CONFIG=${CONFIG} TOPOLOGY=${TOPOLOGY} STORAGE_ENGINE=${STORAGE_ENGINE} sh ${PROJECT_DIRECTORY}/.evergreen/run-orchestration.sh
     # run-orchestration generates expansion file with the MONGODB_URI for the cluster
     - command: expansions.update
       params:
@@ -642,6 +642,23 @@ axes:
         display_name: "Ubuntu 16.04 ARM64"
         run_on: ubuntu1604-arm64-large
 
+  - id: storage-engine
+    display_name: Storage
+    values:
+      - id: mmapv1
+        display_name: MMAPv1
+        variables:
+           STORAGE_ENGINE: "mmapv1"
+      - id: wiredtiger
+        display_name: WiredTiger
+        variables:
+           STORAGE_ENGINE: "wiredtiger"
+      - id: inmemory
+        display_name: InMemory
+        variables:
+           STORAGE_ENGINE: "inmemory"
+
+
 buildvariants:
 
 - matrix_name: "tests-php5"
@@ -732,3 +749,9 @@ buildvariants:
      - name: "test-replicaset-single"
      - name: "test-sharded"
      - name: "test-sharded-rs"
+
+- matrix_name: "mongo-40-storage-engines"
+  matrix_spec: {"os-php7": "debian92-test", "versions": "4.0", "php-versions": "7.2", "storage-engine": "*"}
+  display_name: "${versions}/${php-versions}/${os-php7} — ${storage-engine}"
+  tasks:
+     - name: "test-standalone"

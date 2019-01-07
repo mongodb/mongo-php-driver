@@ -1,0 +1,13 @@
+{
+    "id" : "STANDALONE",
+    "name": "mongod",
+    "procParams": {
+        "storageEngine": "inMemory",
+        "ipv6": true,
+        "journal": true,
+        "port": 2000,
+        "bind_ip_all": true,
+        "logpath": "/tmp/MO/STANDALONE-INMEMORY/mongod.log",
+        "setParameter": {"enableTestCommands": 1}
+    }
+}
