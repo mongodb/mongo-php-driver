@@ -2025,6 +2025,16 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptio
 	}
 
 #if defined(MONGOC_ENABLE_SSL_SECURE_CHANNEL) || defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
+	if (php_array_existsc(zoptions, "tlsCADirectory")) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"tlsCADirectory\" option is not supported by Secure Channel and Secure Transport");
+		return NULL;
+	}
+
+	if (php_array_existsc(zoptions, "tlsCAFile")) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"tlsCAFile\" option is not supported by Secure Channel and Secure Transport");
+		return NULL;
+	}
+
 	if (php_array_existsc(zoptions, "ca_dir")) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"ca_dir\" option is not supported by Secure Channel and Secure Transport");
 		return NULL;
@@ -2037,6 +2047,11 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptio
 #endif
 
 #if defined(MONGOC_ENABLE_SSL_LIBRESSL) || defined(MONGOC_ENABLE_SSL_SECURE_TRANSPORT)
+	if (php_array_existsc(zoptions, "tlsCRLFile")) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"tlsCRLFile\" option is not supported by LibreSSL and Secure Transport");
+		return NULL;
+	}
+
 	if (php_array_existsc(zoptions, "crl_file")) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"crl_file\" option is not supported by LibreSSL and Secure Transport");
 		return NULL;
@@ -2054,17 +2069,29 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptio
 
 	/* Check canonical option names first and fall back to SSL context options
 	 * for backwards compatibility. */
-	if (php_array_existsc(zoptions, "allow_invalid_hostname")) {
+	if (php_array_existsc(zoptions, "tlsAllowedInvalidHostnames")) {
+		ssl_opt->allow_invalid_hostname = php_array_fetchc_bool(zoptions, "tlsAllowedInvalidHostnames");
+		any_ssl_option_set              = true;
+	} else if (php_array_existsc(zoptions, "allow_invalid_hostname")) {
 		ssl_opt->allow_invalid_hostname = php_array_fetchc_bool(zoptions, "allow_invalid_hostname");
 		any_ssl_option_set              = true;
 	}
 
-	if (php_array_existsc(zoptions, "weak_cert_validation")) {
+	if (php_array_existsc(zoptions, "tlsAllowInvalidCertificates")) {
+		ssl_opt->weak_cert_validation = php_array_fetchc_bool(zoptions, "tlsAllowInvalidCertificates");
+		any_ssl_option_set            = true;
+	} else if (php_array_existsc(zoptions, "weak_cert_validation")) {
 		ssl_opt->weak_cert_validation = php_array_fetchc_bool(zoptions, "weak_cert_validation");
 		any_ssl_option_set            = true;
 	} else if (php_array_existsc(zoptions, "allow_self_signed")) {
 		ssl_opt->weak_cert_validation = php_array_fetchc_bool(zoptions, "allow_self_signed");
 		any_ssl_option_set            = true;
+	}
+
+	if (php_array_existsc(zoptions, "tlsInsecure")) {
+		ssl_opt->allow_invalid_hostname = php_array_fetchc_bool(zoptions, "tlsInsecure");
+		ssl_opt->weak_cert_validation   = php_array_fetchc_bool(zoptions, "tlsInsecure");
+		any_ssl_option_set              = true;
 	}
 
 #define PHONGO_SSL_OPTION_SWAP_STRING(o, n) \
@@ -2073,7 +2100,10 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptio
 	}                                       \
 	(o) = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL((n)));
 
-	if (php_array_existsc(zoptions, "pem_file")) {
+	if (php_array_existsc(zoptions, "tlsCertificateKeyFile")) {
+		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->pem_file, "tlsCertificateKeyFile");
+		any_ssl_option_set = true;
+	} else if (php_array_existsc(zoptions, "pem_file")) {
 		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->pem_file, "pem_file");
 		any_ssl_option_set = true;
 	} else if (php_array_existsc(zoptions, "local_cert")) {
@@ -2081,7 +2111,10 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptio
 		any_ssl_option_set = true;
 	}
 
-	if (php_array_existsc(zoptions, "pem_pwd")) {
+	if (php_array_existsc(zoptions, "tlsCertificateKeyPassword")) {
+		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->pem_pwd, "tlsCertificateKeyPassword");
+		any_ssl_option_set = true;
+	} else if (php_array_existsc(zoptions, "pem_pwd")) {
 		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->pem_pwd, "pem_pwd");
 		any_ssl_option_set = true;
 	} else if (php_array_existsc(zoptions, "passphrase")) {
@@ -2089,7 +2122,10 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptio
 		any_ssl_option_set = true;
 	}
 
-	if (php_array_existsc(zoptions, "ca_file")) {
+	if (php_array_existsc(zoptions, "tlsCAFile")) {
+		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->ca_file, "tlsCAFile");
+		any_ssl_option_set = true;
+	} else if (php_array_existsc(zoptions, "ca_file")) {
 		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->ca_file, "ca_file");
 		any_ssl_option_set = true;
 	} else if (php_array_existsc(zoptions, "cafile")) {
@@ -2097,7 +2133,10 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptio
 		any_ssl_option_set = true;
 	}
 
-	if (php_array_existsc(zoptions, "ca_dir")) {
+	if (php_array_existsc(zoptions, "tlsCADirectory")) {
+		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->ca_dir, "tlsCADirectory");
+		any_ssl_option_set = true;
+	} else if (php_array_existsc(zoptions, "ca_dir")) {
 		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->ca_dir, "ca_dir");
 		any_ssl_option_set = true;
 	} else if (php_array_existsc(zoptions, "capath")) {
@@ -2105,7 +2144,10 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptio
 		any_ssl_option_set = true;
 	}
 
-	if (php_array_existsc(zoptions, "crl_file")) {
+	if (php_array_existsc(zoptions, "tlsCRLFile")) {
+		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->crl_file, "tlsCRLFile");
+		any_ssl_option_set = true;
+	} else if (php_array_existsc(zoptions, "crl_file")) {
 		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->crl_file, "crl_file");
 		any_ssl_option_set = true;
 	}
