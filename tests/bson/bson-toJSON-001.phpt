@@ -30,14 +30,14 @@ foreach ($tests as $value) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 { }
 { "null" : null }
 { "boolean" : true }
 { "string" : "foo" }
 { "integer" : 123 }
 { "double" : 1.0 }
-{ "nan" : nan }
+{ "nan" : %r-?nan(\(ind\))?%r }
 { "pos_inf" : inf }
 { "neg_inf" : -inf }
 { "array" : [ "foo", "bar" ] }
