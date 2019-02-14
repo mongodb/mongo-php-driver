@@ -7,15 +7,12 @@
     "members": [
         {
             "procParams": {
-                "dbpath": "/tmp/REPLICASET/3010/",
                 "ipv6": true,
                 "logappend": true,
-                "logpath": "/tmp/REPLICASET/3010/mongod.log",
+                "logpath": "/tmp/MO/REPLICASET/3010/mongod.log",
                 "journal": true,
-                "nssize": 1,
                 "port": 3010,
-                "bind_ip_all": true,
-                "smallfiles": true
+                "bind_ip_all": true
             },
             "rsParams": {
                 "priority": 99,
@@ -28,15 +25,12 @@
         },
         {
             "procParams": {
-                "dbpath": "/tmp/REPLICASET/3011/",
                 "ipv6": true,
                 "logappend": true,
-                "logpath": "/tmp/REPLICASET/3011/mongod.log",
+                "logpath": "/tmp/MO/REPLICASET/3011/mongod.log",
                 "journal": true,
-                "nssize": 1,
                 "port": 3011,
-                "bind_ip_all": true,
-                "smallfiles": true
+                "bind_ip_all": true
             },
             "rsParams": {
                 "priority": 1.1,
@@ -49,15 +43,12 @@
         },
         {
             "procParams": {
-                "dbpath": "/tmp/REPLICASET/3012/",
                 "ipv6": true,
                 "logappend": true,
-                "logpath": "/tmp/REPLICASET/3012/mongod.log",
+                "logpath": "/tmp/MO/REPLICASET/3012/mongod.log",
                 "journal": true,
-                "nssize": 1,
                 "port": 3012,
-                "bind_ip_all": true,
-                "smallfiles": true
+                "bind_ip_all": true
             },
             "rsParams": {
                 "arbiterOnly": true

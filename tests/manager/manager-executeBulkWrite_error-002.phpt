@@ -34,7 +34,7 @@ var_dump(iterator_to_array($cursor));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-BulkWriteException: Multiple write errors: "%SE11000 duplicate key error %s: phongo.manager_manager_executeBulkWrite_error_002%sdup key: { : 1 }", "%SE11000 duplicate key error %s: phongo.manager_manager_executeBulkWrite_error_002%sdup key: { : 2 }"
+BulkWriteException: Multiple write errors: "%SE11000 duplicate key error %s: phongo.manager_manager_executeBulkWrite_error_002%sdup key: { %S: 1 }", "%SE11000 duplicate key error %s: phongo.manager_manager_executeBulkWrite_error_002%sdup key: { %S: 2 }"
 
 ===> WriteResult
 server: %s:%d

@@ -18,8 +18,14 @@ $result = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()), $rp);
 $server = $result->getServer();
 
 var_dump(
-    $server->getHost(),
-    $server->getTags(),
+    $server->getHost()
+);
+
+$tags = $server->getTags();
+echo "dc: ", array_key_exists('dc', $tags) ? $tags['dc'] : 'not set', "\n";
+echo "ordinal: ", array_key_exists('ordinal', $tags) ? $tags['ordinal'] : 'not set', "\n";
+
+var_dump(
     $server->getLatency(),
     $server->getPort(),
     $server->getType() == MongoDB\Driver\Server::TYPE_RS_SECONDARY,
@@ -37,12 +43,8 @@ var_dump($info["me"] == $server->getHost() . ":" . $server->getPort());
 <?php exit(0); ?>
 --EXPECTF--
 string(%d) "%s"
-array(2) {
-  ["dc"]=>
-  string(3) "nyc"
-  ["ordinal"]=>
-  string(3) "two"
-}
+dc: nyc
+ordinal: two
 int(%d)
 int(%d)
 bool(true)

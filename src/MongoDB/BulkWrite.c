@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "php_array_api.h"
 #include "phongo_compat.h"

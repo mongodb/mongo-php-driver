@@ -7,6 +7,9 @@ if ( ! extension_loaded('mongodb')) {
     exit('skip mongodb extension is not loaded');
 }
 
+/* Force date.timezone to be "UTC" */
+date_default_timezone_set("UTC");
+
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
     exit(sprintf('skip %s: %s @ %s:%d', errno_as_string($errno), $errstr, $errfile, $errline));
 });

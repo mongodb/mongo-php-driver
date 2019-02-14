@@ -70,7 +70,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
     [0]=>
     object(MongoDB\Driver\WriteError)#%d (%d) {
       ["message"]=>
-      string(%d) "E11000 duplicate key %S phongo.writeResult_writeresult_debug_002%s dup key: { : 1 }"
+      string(%d) "E11000 duplicate key %S phongo.writeResult_writeresult_debug_002%s dup key: { %S: 1 }"
       ["code"]=>
       int(11000)
       ["index"]=>
@@ -81,7 +81,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
     [1]=>
     object(MongoDB\Driver\WriteError)#%d (%d) {
       ["message"]=>
-      string(%d) "E11000 duplicate key %S phongo.writeResult_writeresult_debug_002%s dup key: { : 2 }"
+      string(%d) "E11000 duplicate key %S phongo.writeResult_writeresult_debug_002%s dup key: { %S: 2 }"
       ["code"]=>
       int(11000)
       ["index"]=>
@@ -92,7 +92,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
     [2]=>
     object(MongoDB\Driver\WriteError)#%d (%d) {
       ["message"]=>
-      string(%d) "E11000 duplicate key %S phongo.writeResult_writeresult_debug_002%s dup key: { : 3 }"
+      string(%d) "E11000 duplicate key %S phongo.writeResult_writeresult_debug_002%s dup key: { %S: 3 }"
       ["code"]=>
       int(11000)
       ["index"]=>

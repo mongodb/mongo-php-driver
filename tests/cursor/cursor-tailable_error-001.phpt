@@ -66,7 +66,7 @@ echo throws(function() use ($manager) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 Inserted 3 document(s): 1, 2, 3
 {_id: 1}
 {_id: 2}
@@ -82,5 +82,5 @@ Awaiting results...
 Awaiting results...
 Awaiting results...
 OK: Got MongoDB\Driver\Exception\RuntimeException
-collection dropped between getMore calls
+%Scollection dropped%S
 ===DONE===

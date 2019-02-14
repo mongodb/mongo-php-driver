@@ -4,7 +4,7 @@ PHPC-1050: Command cursor should not invoke getMore at execution
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
 <?php skip_if_not_clean(); ?>
-<?php skip_if_server_version('<', '3.2'); ?>
+<?php skip_if_server_version('<', '3.6'); ?>
 <?php skip_if_not_server_storage_engine('wiredTiger'); ?>
 --FILE--
 <?php

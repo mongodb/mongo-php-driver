@@ -10,23 +10,20 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(URI);
 
-var_dump($manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY))->getTags());
-var_dump($manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY))->getTags());
+$tags = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY))->getTags();
+echo "dc: ", array_key_exists('dc', $tags) ? $tags['dc'] : 'not set', "\n";
+echo "ordinal: ", array_key_exists('ordinal', $tags) ? $tags['ordinal'] : 'not set', "\n";
+
+$tags = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY))->getTags();
+echo "dc: ", array_key_exists('dc', $tags) ? $tags['dc'] : 'not set', "\n";
+echo "ordinal: ", array_key_exists('ordinal', $tags) ? $tags['ordinal'] : 'not set', "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-array(2) {
-  ["dc"]=>
-  string(2) "pa"
-  ["ordinal"]=>
-  string(3) "one"
-}
-array(2) {
-  ["dc"]=>
-  string(3) "nyc"
-  ["ordinal"]=>
-  string(3) "two"
-}
+dc: pa
+ordinal: one
+dc: nyc
+ordinal: two
 ===DONE===
