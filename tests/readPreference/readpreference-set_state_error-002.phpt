@@ -8,7 +8,7 @@ MongoDB\Driver\ReadPreference::__set_state() requires correct data types and val
 require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
-    MongoDB\Driver\ReadPreference::__set_state(['mode' => 'secondary', 'maxStalenessSeconds' => pow(2, 32) + 1]);
+    MongoDB\Driver\ReadPreference::__set_state(['mode' => 'secondary', 'maxStalenessSeconds' => 2147483648]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
