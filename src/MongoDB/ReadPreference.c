@@ -63,13 +63,13 @@ static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t
 			php_phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t*) tags, NULL TSRMLS_CC);
 
 			if (!php_phongo_read_preference_tags_are_valid(tags)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"tags\" array field to have zero or more documents", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"tags\" array field to have zero or more documents", ZSTR_VAL(php_phongo_readpreference_ce->name));
 				bson_destroy(tags);
 				goto failure;
 			}
 
 			if (!bson_empty(tags) && (mongoc_read_prefs_get_mode(intern->read_preference) == MONGOC_READ_PRIMARY)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"tags\" array field to not be present with \"primary\" mode", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"tags\" array field to not be present with \"primary\" mode", ZSTR_VAL(php_phongo_readpreference_ce->name));
 				bson_destroy(tags);
 				goto failure;
 			}
@@ -77,7 +77,7 @@ static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t
 			mongoc_read_prefs_set_tags(intern->read_preference, tags);
 			bson_destroy(tags);
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"tags\" field to be array", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"tags\" field to be array", ZSTR_VAL(php_phongo_readpreference_ce->name));
 			goto failure;
 		}
 	}
@@ -85,21 +85,21 @@ static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t
 	if ((maxStalenessSeconds = zend_hash_str_find(props, "maxStalenessSeconds", sizeof("maxStalenessSeconds") - 1))) {
 		if (Z_TYPE_P(maxStalenessSeconds) == IS_LONG) {
 			if (Z_LVAL_P(maxStalenessSeconds) < MONGOC_SMALLEST_MAX_STALENESS_SECONDS) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" integer field to be >= %d", ZSTR_VAL(php_phongo_writeconcern_ce->name), MONGOC_SMALLEST_MAX_STALENESS_SECONDS);
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" integer field to be >= %d", ZSTR_VAL(php_phongo_readpreference_ce->name), MONGOC_SMALLEST_MAX_STALENESS_SECONDS);
 				goto failure;
 			}
 			if (Z_LVAL_P(maxStalenessSeconds) > INT32_MAX) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" integer field to be <= %" PRId32, ZSTR_VAL(php_phongo_writeconcern_ce->name), INT32_MAX);
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" integer field to be <= %" PRId32, ZSTR_VAL(php_phongo_readpreference_ce->name), INT32_MAX);
 				goto failure;
 			}
 			if (mongoc_read_prefs_get_mode(intern->read_preference) == MONGOC_READ_PRIMARY) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" array field to not be present with \"primary\" mode", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" array field to not be present with \"primary\" mode", ZSTR_VAL(php_phongo_readpreference_ce->name));
 				goto failure;
 			}
 
 			mongoc_read_prefs_set_max_staleness_seconds(intern->read_preference, Z_LVAL_P(maxStalenessSeconds));
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" field to be integer", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" field to be integer", ZSTR_VAL(php_phongo_readpreference_ce->name));
 			goto failure;
 		}
 	}
@@ -134,13 +134,13 @@ static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t
 			php_phongo_zval_to_bson(*tagSets, PHONGO_BSON_NONE, (bson_t*) tags, NULL TSRMLS_CC);
 
 			if (!php_phongo_read_preference_tags_are_valid(tags)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"tags\" array field to have zero or more documents", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"tags\" array field to have zero or more documents", ZSTR_VAL(php_phongo_readpreference_ce->name));
 				bson_destroy(tags);
 				goto failure;
 			}
 
 			if (!bson_empty(tags) && (mongoc_read_prefs_get_mode(intern->read_preference) == MONGOC_READ_PRIMARY)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"tags\" array field to not be present with \"primary\" mode", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"tags\" array field to not be present with \"primary\" mode", ZSTR_VAL(php_phongo_readpreference_ce->name));
 				bson_destroy(tags);
 				goto failure;
 			}
@@ -148,7 +148,7 @@ static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t
 			mongoc_read_prefs_set_tags(intern->read_preference, tags);
 			bson_destroy(tags);
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"tags\" field to be array", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"tags\" field to be array", ZSTR_VAL(php_phongo_readpreference_ce->name));
 			goto failure;
 		}
 	}
@@ -156,21 +156,21 @@ static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t
 	if (zend_hash_find(props, "maxStalenessSeconds", sizeof("maxStalenessSeconds"), (void**) &maxStalenessSeconds) == SUCCESS) {
 		if (Z_TYPE_PP(maxStalenessSeconds) == IS_LONG) {
 			if (Z_LVAL_PP(maxStalenessSeconds) < MONGOC_SMALLEST_MAX_STALENESS_SECONDS) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" integer field to be >= %d", ZSTR_VAL(php_phongo_writeconcern_ce->name), MONGOC_SMALLEST_MAX_STALENESS_SECONDS);
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" integer field to be >= %d", ZSTR_VAL(php_phongo_readpreference_ce->name), MONGOC_SMALLEST_MAX_STALENESS_SECONDS);
 				goto failure;
 			}
 			if (Z_LVAL_PP(maxStalenessSeconds) > INT32_MAX) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" integer field to be <= %" PRId32, ZSTR_VAL(php_phongo_writeconcern_ce->name), INT32_MAX);
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" integer field to be <= %" PRId32, ZSTR_VAL(php_phongo_readpreference_ce->name), INT32_MAX);
 				goto failure;
 			}
 			if (mongoc_read_prefs_get_mode(intern->read_preference) == MONGOC_READ_PRIMARY) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" array field to not be present with \"primary\" mode", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" array field to not be present with \"primary\" mode", ZSTR_VAL(php_phongo_readpreference_ce->name));
 				goto failure;
 			}
 
 			mongoc_read_prefs_set_max_staleness_seconds(intern->read_preference, Z_LVAL_PP(maxStalenessSeconds));
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" field to be integer", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"maxStalenessSeconds\" field to be integer", ZSTR_VAL(php_phongo_readpreference_ce->name));
 			goto failure;
 		}
 	}

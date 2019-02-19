@@ -16,5 +16,5 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\Driver\WriteConcern initialization requires "maxStalenessSeconds" integer field to be <= 2147483647
+MongoDB\Driver\ReadPreference initialization requires "maxStalenessSeconds" integer field to be <= 2147483647
 ===DONE===
