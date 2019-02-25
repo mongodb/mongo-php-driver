@@ -12,7 +12,7 @@ env:
     - TEST_PHP_ARGS="-q -s output.txt -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
     - REPORT_EXIT_STATUS=1
     - SERVER_DISTRO=ubuntu1604
-    - SERVER_VERSION=4.0.0
+    - SERVER_VERSION=4.0.6
     - DEPLOYMENT=STANDALONE
 
 matrix:
@@ -65,15 +65,15 @@ matrix:
         - DEPLOYMENT=STANDALONE_OLD
     - php: 7.1
       env:
-        - SERVER_VERSION=3.2.20
+        - SERVER_VERSION=3.2.22
         - DEPLOYMENT=STANDALONE_OLD
     - php: 7.1
       env:
-        - SERVER_VERSION=3.4.15
+        - SERVER_VERSION=3.4.19
         - DEPLOYMENT=STANDALONE_OLD
     - php: 7.1
       env:
-        - SERVER_VERSION=3.6.5
+        - SERVER_VERSION=3.6.10
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_b354efda2943_key -iv $encrypted_b354efda2943_iv -in .travis.scripts/atlas-uris.txt.enc -out .travis.scripts/atlas-uris.txt -d || true
