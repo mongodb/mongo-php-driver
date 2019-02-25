@@ -11,6 +11,7 @@ env:
   global:
     - TEST_PHP_ARGS="-q -s output.txt -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
     - REPORT_EXIT_STATUS=1
+    - SERVER_DISTRO=ubuntu1604
     - SERVER_VERSION=4.0.0
     - DEPLOYMENT=STANDALONE
 
@@ -22,6 +23,8 @@ matrix:
         - TEST_PHP_ARGS="-q -s output.txt -x --show-diff"
     - php: 5.5
       dist: trusty
+      env:
+        - SERVER_DISTRO=ubuntu1404
     - php: 5.6
     - php: 7.0
     - php: 7.1
@@ -49,11 +52,15 @@ matrix:
       env:
         - DEPLOYMENT=REPLICASET_AUTH
     - php: 7.1
+      dist: trusty
       env:
+        - SERVER_DISTRO=ubuntu1404
         - SERVER_VERSION=3.0.15
         - DEPLOYMENT=REPLICASET_OLD
     - php: 7.1
+      dist: trusty
       env:
+        - SERVER_DISTRO=ubuntu1404
         - SERVER_VERSION=3.0.15
         - DEPLOYMENT=STANDALONE_OLD
     - php: 7.1
@@ -72,9 +79,9 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_b354efda2943_key -iv $encrypted_b354efda2943_iv -in .travis.scripts/atlas-uris.txt.enc -out .travis.scripts/atlas-uris.txt -d || true
   - pip install "mongo-orchestration>=0.6.7,<1.0" --user `whoami`
   - .travis.scripts/before_install.sh
-  - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-${SERVER_VERSION}.tgz
-  - tar zxf mongodb-linux-x86_64-ubuntu1404-${SERVER_VERSION}.tgz
-  - export PATH=${PWD}/mongodb-linux-x86_64-ubuntu1404-${SERVER_VERSION}/bin:${PATH}
+  - export SERVER_FILENAME=mongodb-linux-x86_64-${SERVER_DISTRO}-${SERVER_VERSION}
+  - wget -qO- http://fastdl.mongodb.org/linux/${SERVER_FILENAME}.tgz | tar xz
+  - export PATH=${PWD}/${SERVER_FILENAME}/bin:${PATH}
   - mongod --version
   - mongo-orchestration --version
   - export MO_PATH=`python -c 'import mongo_orchestration; from os import path;
