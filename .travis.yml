@@ -87,6 +87,9 @@ before_install:
   - php -r 'if ( ! ($f = php_ini_loaded_file())) { $f = PHP_CONFIG_FILE_PATH . "/php.ini"; } file_put_contents($f, "variables_order=EGPCS\n", FILE_APPEND); $a = file($f, FILE_IGNORE_NEW_LINES); var_dump($a[count($a)-1]);'
 
 before_script:
+  - export MONGO_ORCHESTRATION_HOME=${PWD}/orchestration
+  - mkdir -p ${MONGO_ORCHESTRATION_HOME}/lib
+  - cp ${PWD}/scripts/ssl/client.pem ${MONGO_ORCHESTRATION_HOME}/lib/client.pem
   - mongo-orchestration start
   - .travis.scripts/setup_mo.sh
   - ulimit -a
