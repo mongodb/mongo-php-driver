@@ -16,8 +16,8 @@ OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 
 export REPORT_EXIT_STATUS=1
 
-if [ "$SSL" == "yes" ]; then
-   MONGODB_URI="${MONGODB_URI}/?ssl=true"
+if [ "$SSL" = "yes" ]; then
+   MONGODB_URI="${MONGODB_URI}/?ssl=true&sslallowinvalidcertificates=true"
 fi
 
 echo "Running $AUTH tests, connecting to $MONGODB_URI"

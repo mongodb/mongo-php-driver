@@ -10,7 +10,7 @@ $command = new MongoDB\Driver\Command(['ping' => 1]);
 try {
     $manager->executeCommand("test", $command);
 } catch (\MongoDB\Driver\Exception\ConnectionException $e) {
-    if ($e->getCode() == 15) { // Bad Wire Version
+    if ($e->getCode() == 15) { // MONGOC_ERROR_PROTOCOL_BAD_WIRE_VERSION
         echo "Bad wire version detected: ", $e->getMessage(), "\n";
     }
 }
