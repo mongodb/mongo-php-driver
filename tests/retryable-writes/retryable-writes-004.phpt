@@ -1,7 +1,5 @@
 --TEST--
 Retryable writes: unacknowledged write operations do not include transaction IDs
---XFAIL--
-Depends on CDRIVER-2432
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
@@ -57,14 +55,16 @@ $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->update(['x' => 1], ['$inc' => ['x' => 1]]);
 $manager->executeBulkWrite(NS, $bulk, ['writeConcern' => $writeConcern]);
 
+/* Note: the server does not actually support unacknowledged write concerns for
+ * findAndModify. This is just testing that mongoc_cmd_parts_set_write_concern()
+ * in libmongoc detects w:0 and refrains from adding a transaction ID. */
 echo "\nTesting unacknowledged findAndModify\n";
 $command = new MongoDB\Driver\Command([
     'findAndModify' => COLLECTION_NAME,
     'query' => ['x' => 1],
     'update' => ['$inc' => ['x' => 1]],
-    'writeConcern' => $writeConcern,
 ]);
-$manager->executeReadWriteCommand(DATABASE_NAME, $command);
+$manager->executeReadWriteCommand(DATABASE_NAME, $command, ['writeConcern' => $writeConcern]);
 
 MongoDB\Driver\Monitoring\removeSubscriber($observer);
 
