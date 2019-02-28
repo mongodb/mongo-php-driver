@@ -72,14 +72,7 @@ case $2 in
 start)
     if [ "$HTTP_CODE" != "200" ]
     then
-        WORKSPACE=${TRAVIS_BUILD_DIR}/orchestrations
-        rm -fr $WORKSPACE
-        mkdir $WORKSPACE
-        LOGPATH=$WORKSPACE
-        DBPATH=$WORKSPACE
         POST_DATA=$(eval_params $1)
-        echo "DBPATH=$DBPATH"
-        echo "LOGPATH=$LOGPATH"
         echo "POST_DATA='$POST_DATA'"
         echo
         POST=$(post $BASE_URL/$R "$POST_DATA")

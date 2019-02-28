@@ -77,18 +77,19 @@ matrix:
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_b354efda2943_key -iv $encrypted_b354efda2943_iv -in .travis.scripts/atlas-uris.txt.enc -out .travis.scripts/atlas-uris.txt -d || true
-  - pip install "mongo-orchestration>=0.6.7,<1.0" --user `whoami`
+  - pip install --user "mongo-orchestration>=0.6.7,<1.0"
   - .travis.scripts/before_install.sh
   - export SERVER_FILENAME=mongodb-linux-x86_64-${SERVER_DISTRO}-${SERVER_VERSION}
   - wget -qO- http://fastdl.mongodb.org/linux/${SERVER_FILENAME}.tgz | tar xz
   - export PATH=${PWD}/${SERVER_FILENAME}/bin:${PATH}
   - mongod --version
   - mongo-orchestration --version
-  - export MO_PATH=`python -c 'import mongo_orchestration; from os import path;
-    print(path.dirname(mongo_orchestration.__file__));'`
   - php -r 'if ( ! ($f = php_ini_loaded_file())) { $f = PHP_CONFIG_FILE_PATH . "/php.ini"; } file_put_contents($f, "variables_order=EGPCS\n", FILE_APPEND); $a = file($f, FILE_IGNORE_NEW_LINES); var_dump($a[count($a)-1]);'
 
 before_script:
+  - export MONGO_ORCHESTRATION_HOME=${PWD}/orchestration
+  - mkdir -p ${MONGO_ORCHESTRATION_HOME}/lib
+  - cp ${PWD}/scripts/ssl/client.pem ${MONGO_ORCHESTRATION_HOME}/lib/client.pem
   - mongo-orchestration start
   - .travis.scripts/setup_mo.sh
   - ulimit -a

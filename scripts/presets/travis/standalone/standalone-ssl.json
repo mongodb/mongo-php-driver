@@ -14,7 +14,6 @@
         "sslMode": "requireSSL",
         "sslCAFile": "$TRAVIS_BUILD_DIR/scripts/ssl/ca.pem",
         "sslPEMKeyFile": "$TRAVIS_BUILD_DIR/scripts/ssl/server.pem",
-        "sslWeakCertificateValidation": true,
-        "sslAllowInvalidHostnames": true
+        "sslAllowConnectionsWithoutCertificates": "true"
     }
 }
