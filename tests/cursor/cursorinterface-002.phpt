@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\CursorInterface is extending Traversable
+MongoDB\Driver\CursorInterface extends Traversable
 --FILE--
 <?php
 var_dump(in_array('Traversable', class_implements('MongoDB\Driver\CursorInterface')));
