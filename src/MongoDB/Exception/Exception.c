@@ -15,6 +15,7 @@
  */
 
 #include <php.h>
+#include <zend_exceptions.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,6 +38,10 @@ void php_phongo_exception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "Exception", php_phongo_exception_me);
 	php_phongo_exception_ce = zend_register_internal_interface(&ce TSRMLS_CC);
+
+#if PHP_VERSION_ID >= 70000
+	zend_class_implements(php_phongo_exception_ce TSRMLS_CC, 1, zend_ce_throwable);
+#endif
 } /* }}} */
 
 /*
