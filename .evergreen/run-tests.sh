@@ -16,7 +16,7 @@ OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 
 export REPORT_EXIT_STATUS=1
 
-if [ "$SSL" == "yes" ]; then
+if [ "$SSL" = "yes" ]; then
    MONGODB_URI="${MONGODB_URI}/?ssl=true"
 fi
 
