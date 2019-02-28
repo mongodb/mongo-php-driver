@@ -193,7 +193,7 @@ static zend_object_iterator* php_phongo_cursor_get_iterator(zend_class_entry* ce
 		return NULL;
 	}
 
-	cursor->got_iterator = 1;
+	cursor->got_iterator = true;
 
 	cursor_it = ecalloc(1, sizeof(php_phongo_cursor_iterator));
 #if PHP_VERSION_ID >= 70000
