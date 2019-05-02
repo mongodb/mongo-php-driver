@@ -1,4 +1,4 @@
-MONGOC_CURRENT_FILE=[]PHP_EXT_SRCDIR(mongodb)[/src/libmongoc/VERSION_CURRENT]
+MONGOC_CURRENT_FILE=[]PHP_EXT_SRCDIR(mongodb)[/src/LIBMONGOC_VERSION_CURRENT]
 MONGOC_VERSION=$(cat $MONGOC_CURRENT_FILE)
 
 dnl Ensure newline for "cut" implementations that need it, e.g. HP-UX.

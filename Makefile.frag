@@ -85,3 +85,6 @@ package:
 
 package.xml:
 	php bin/prep-release.php $(MONGODB_VERSION) $(MONGODB_STABILITY)
+
+libmongoc-version-current:
+	cd src/libmongoc/ && python build/calc_release_version.py > ../LIBMONGOC_VERSION_CURRENT
