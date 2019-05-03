@@ -30,7 +30,7 @@ try {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-BulkWriteException: Unknown modifier: $foo
+BulkWriteException: Unknown modifier: $foo%S
 
 ===> WriteResult
 server: %s:%d
@@ -41,7 +41,7 @@ upsertedCount: 0
 deletedCount: 0
 object(MongoDB\Driver\WriteError)#%d (%d) {
   ["message"]=>
-  string(22) "Unknown modifier: $foo"
+  string(%d) "Unknown modifier: $foo%S"
   ["code"]=>
   int(9)
   ["index"]=>
@@ -49,6 +49,6 @@ object(MongoDB\Driver\WriteError)#%d (%d) {
   ["info"]=>
   NULL
 }
-writeError[0].message: Unknown modifier: $foo
+writeError[0].message: Unknown modifier: $foo%S
 writeError[0].code: 9
 ===DONE===
