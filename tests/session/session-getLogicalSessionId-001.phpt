@@ -12,19 +12,19 @@ require_once __DIR__ . "/../utils/basic.inc";
 $manager = new MongoDB\Driver\Manager(URI);
 $session = $manager->startSession();
 
-var_dump($session->getLogicalSessionId());
+$lsid = $session->getLogicalSessionId();
+
+/* Note: we avoid dumping the Binary object as it may contain bytes that
+ * intefere with the test suite's ability to compare expected output. */
+var_dump($lsid instanceof stdClass);
+var_dump($lsid->id instanceof MongoDB\BSON\Binary);
+var_dump($lsid->id->getType() === MongoDB\BSON\Binary::TYPE_UUID);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(stdClass)#%d (%d) {
-  ["id"]=>
-  object(MongoDB\BSON\Binary)#%d (%d) {
-    ["data"]=>
-    string(16) "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c"
-    ["type"]=>
-    int(4)
-  }
-}
+bool(true)
+bool(true)
+bool(true)
 ===DONE===
