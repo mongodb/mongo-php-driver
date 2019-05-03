@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\Driver\Server::executeBulkWrite() with write concern (standalone)
---XFAIL--
-Fails on big Endian systems due to CDRIVER-2902
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
