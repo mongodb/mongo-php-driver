@@ -638,10 +638,10 @@ axes:
       - id: rhel74-zseries
         display_name: "RHEL 7.4 zSeries"
         run_on: rhel72-zseries-test
-      # Pending re-installation of PHP toolchain on ARM64 (see: BUILD-8395)
-      #- id: ubuntu1604-arm64
-      #  display_name: "Ubuntu 16.04 ARM64"
-      #  run_on: ubuntu1604-arm64-large
+      # Pending re-installation of PHP toolchain on ARM64 (see: PHPC-1372)
+      # - id: ubuntu1604-arm64
+      #   display_name: "Ubuntu 16.04 ARM64"
+      #   run_on: ubuntu1604-arm64-large
       # Pending installation of PHP toolchain on macOS hosts (see: PHPC-869)
       # - id: macos-1014
       #   display_name: "Mac OS 10.14"
@@ -691,7 +691,8 @@ buildvariants:
 
 - matrix_name: "mongo-30-php7"
   matrix_spec: {"os-php7": "*", "versions": ["3.0", "3.2", "3.4"], "php-versions": "7.2" }
-  exclude_spec: [ {"os-php7": "rhel71-power8", "versions": "3.0", "php-versions": "7.2"}, {"os-php7": "rhel74-zseries", "versions": ["3.0", "3.2"], "php-versions": "7.2"} , {"os-php7": "ubuntu1604-arm64", "versions": ["3.0", "3.2"], "php-versions": "7.2"} ]
+  # Pending PHPC-1372, restore exclude_spec: {"os-php7": "ubuntu1604-arm64", "versions": ["3.0", "3.2"], "php-versions": "7.2"}
+  exclude_spec: [ {"os-php7": "rhel71-power8", "versions": "3.0", "php-versions": "7.2"}, {"os-php7": "rhel74-zseries", "versions": ["3.0", "3.2"], "php-versions": "7.2"} ]
   display_name: "${versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone-old"
