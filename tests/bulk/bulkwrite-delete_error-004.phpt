@@ -19,12 +19,12 @@ $bulk->delete(
 
 echo throws(function() use ($manager, $bulk) {
     $manager->executeBulkWrite(DATABASE_NAME . '.' . COLLECTION_NAME, $bulk);
-}, 'MongoDB\Driver\Exception\RuntimeException'), "\n";
+}, 'MongoDB\Driver\Exception\BulkWriteException'), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-OK: Got MongoDB\Driver\Exception\RuntimeException
-The selected server does not support collation
+OK: Got MongoDB\Driver\Exception\BulkWriteException
+Bulk write failed due to previous MongoDB\Driver\Exception\RuntimeException: The selected server does not support collation
 ===DONE===
