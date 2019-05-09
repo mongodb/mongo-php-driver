@@ -755,12 +755,6 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 		return true;
 	}
 
-	/* Check for connection related exceptions */
-	if (EG(exception)) {
-		bson_destroy(&reply);
-		return false;
-	}
-
 	writeresult                = phongo_writeresult_init(return_value, &reply, client, mongoc_bulk_operation_get_hint(bulk) TSRMLS_CC);
 	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
 
