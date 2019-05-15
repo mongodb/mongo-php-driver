@@ -31,16 +31,18 @@ printf("Inserted: %d\n", $inserted);
 $options["username"]      = "not-found-user";
 $manager = new MongoDB\Driver\Manager($dsn, $options);
 $bulk = new MongoDB\Driver\BulkWrite;
-
 $bulk->insert(array("my" => "value"));
-throws(function() use ($manager, $bulk) {
+
+echo throws(function() use ($manager, $bulk) {
     $inserted = $manager->executeBulkWrite(NS, $bulk)->getInsertedCount();
     printf("Incorrectly inserted: %d\n", $inserted);
-}, "MongoDB\Driver\Exception\AuthenticationException");
+}, 'MongoDB\Driver\Exception\BulkWriteException'), "\n";
+
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
 Inserted: 1
-OK: Got MongoDB\Driver\Exception\AuthenticationException
+OK: Got MongoDB\Driver\Exception\BulkWriteException
+Bulk write failed due to previous MongoDB\Driver\Exception\AuthenticationException: Authentication failed.
 ===DONE===

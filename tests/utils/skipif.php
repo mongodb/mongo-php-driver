@@ -1,6 +1,9 @@
 <?php
 
 use MongoDB\Driver\Command;
+use MongoDB\Driver\Manager;
+use MongoDB\Driver\ReadPreference;
+use MongoDB\Driver\Server;
 use MongoDB\Driver\Exception\ConnectionException;
 use MongoDB\Driver\Exception\RuntimeException;
 
@@ -13,6 +16,28 @@ require_once __DIR__ . '/tools.php';
 function skip_if_mongos()
 {
     is_mongos(URI) and exit('skip topology is a sharded cluster');
+}
+
+/**
+ * Skips the test if the topology contains multiple mongos nodes.
+ *
+ * This is particularly useful for tests that rely on configureFailPoint, since
+ * randomized server selection can interfere with testing.
+ */
+function skip_if_multiple_mongos()
+{
+    $manager = new Manager(URI);
+
+    // Ensure SDAM is initialized before calling Manager::getServers()
+    $manager->selectServer(new ReadPreference('nearest'));
+
+    $mongosNodes = array_filter($manager->getServers(), function(Server $server) {
+        return $server->getType() === Server::TYPE_MONGOS;
+    });
+
+    if (count($mongosNodes) > 1) {
+        exit('skip topology contains multiple mongos nodes');
+    }
 }
 
 /**
@@ -316,5 +341,18 @@ function skip_if_no_getmore_failpoint()
         version_compare($serverVersion, '4.0', '<')
     ) {
         exit("skip Server version '$serverVersion' does not support a getMore failpoint'");
+    }
+}
+
+function skip_if_no_failcommand_failpoint()
+{
+    skip_if_test_commands_disabled();
+
+    $serverVersion = get_server_version(URI);
+
+    if (is_mongos(URI) && version_compare($serverVersion, '4.1.8', '<')) {
+        exit("skip mongos version '$serverVersion' does not support 'failCommand' failpoint'");
+    } elseif (version_compare($serverVersion, '4.0', '<')) {
+        exit("skip mongod version '$serverVersion' does not support 'failCommand' failpoint'");
     }
 }

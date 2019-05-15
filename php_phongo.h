@@ -212,6 +212,12 @@ zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME(zv) (Z_TYPE(zv) == IS_OBJECT ? ZSTR_VAL(Z_OBJCE(zv)->name) : zend_get_type_by_const(Z_TYPE(zv)))
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvp) PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*(zvp))
 
+#if PHP_VERSION_ID >= 70000
+#define PHONGO_ZVAL_EXCEPTION_NAME(e) (ZSTR_VAL(e->ce->name))
+#else
+#define PHONGO_ZVAL_EXCEPTION_NAME(e) (ZSTR_VAL(Z_OBJCE_P(e)->name))
+#endif
+
 #endif /* PHONGO_H */
 
 /*

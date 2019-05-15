@@ -18,15 +18,16 @@ $dsn = sprintf("mongodb://%s:%s@%s:%d/%s", $username, $password, $parsed["host"]
 $manager = new MongoDB\Driver\Manager($dsn);
 
 $bulk = new MongoDB\Driver\BulkWrite;
-
 $bulk->insert(array("my" => "value"));
-throws(function() use($manager, $bulk) {
-    $retval = $manager->executeBulkWrite(NS, $bulk);
-}, "MongoDB\Driver\Exception\AuthenticationException");
+
+echo throws(function() use($manager, $bulk) {
+    $manager->executeBulkWrite(NS, $bulk);
+}, 'MongoDB\Driver\Exception\BulkWriteException'), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-OK: Got MongoDB\Driver\Exception\AuthenticationException
+OK: Got MongoDB\Driver\Exception\BulkWriteException
+Bulk write failed due to previous MongoDB\Driver\Exception\AuthenticationException: Authentication failed.
 ===DONE===

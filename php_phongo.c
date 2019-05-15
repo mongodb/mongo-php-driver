@@ -755,26 +755,44 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 		return true;
 	}
 
-	/* Check for connection related exceptions */
-	if (EG(exception)) {
-		bson_destroy(&reply);
-		return false;
-	}
-
 	writeresult                = phongo_writeresult_init(return_value, &reply, client, mongoc_bulk_operation_get_hint(bulk) TSRMLS_CC);
 	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
 
-	/* The Write failed */
+	/* A BulkWriteException is always thrown if mongoc_bulk_operation_execute()
+	 * fails to ensure that the write result is accessible. If the error does
+	 * not originate from the server (e.g. socket error), throw the appropriate
+	 * exception first. It will be included in BulkWriteException's message and
+	 * will also be accessible via Exception::getPrevious(). */
 	if (!success) {
-		if (error.domain == MONGOC_ERROR_SERVER || error.domain == MONGOC_ERROR_WRITE_CONCERN) {
-			zend_throw_exception(php_phongo_bulkwriteexception_ce, error.message, error.code TSRMLS_CC);
-			phongo_exception_add_error_labels(&reply TSRMLS_CC);
-			phongo_add_exception_prop(ZEND_STRL("writeResult"), return_value TSRMLS_CC);
-		} else {
+		if (error.domain != MONGOC_ERROR_SERVER && error.domain != MONGOC_ERROR_WRITE_CONCERN) {
 			phongo_throw_exception_from_bson_error_and_reply_t(&error, &reply TSRMLS_CC);
 		}
+
+		/* Argument errors occur before command execution, so there is no need
+		 * to layer this InvalidArgumentException behind a BulkWriteException.
+		 * In practice, this will be a "Cannot do an empty bulk write" error. */
+		if (error.domain == MONGOC_ERROR_COMMAND && error.code == MONGOC_ERROR_COMMAND_INVALID_ARG) {
+			goto cleanup;
+		}
+
+		if (EG(exception)) {
+			char *message;
+
+			(void) spprintf(&message, 0, "Bulk write failed due to previous %s: %s", PHONGO_ZVAL_EXCEPTION_NAME(EG(exception)), error.message);
+			zend_throw_exception(php_phongo_bulkwriteexception_ce, message, 0 TSRMLS_CC);
+			efree(message);
+		} else {
+			zend_throw_exception(php_phongo_bulkwriteexception_ce, error.message, error.code TSRMLS_CC);
+		}
+
+		/* Ensure error labels are added to the final BulkWriteException. If a
+		 * previous exception was also thrown, error labels will already have
+		 * been added by phongo_throw_exception_from_bson_error_and_reply_t. */
+		phongo_exception_add_error_labels(&reply TSRMLS_CC);
+		phongo_add_exception_prop(ZEND_STRL("writeResult"), return_value TSRMLS_CC);
 	}
 
+cleanup:
 	bson_destroy(&reply);
 
 	return success;
