@@ -809,6 +809,8 @@ bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor TSRMLS_DC
 
 		/* Check for connection related exceptions */
 		if (EG(exception)) {
+			fprintf(stderr, "%s\n", "EG(exception) already set in phongo_cursor_advance_and_check_for_error");
+			abort();
 			return false;
 		}
 
