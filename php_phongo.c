@@ -190,7 +190,7 @@ void phongo_throw_exception_from_bson_error_t(bson_error_t* error TSRMLS_DC)
 	zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code), error->message, error->code TSRMLS_CC);
 }
 
-void phongo_throw_exception_from_bson_error_and_reply_t(bson_error_t* error, bson_t* reply TSRMLS_DC)
+void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, bson_t* reply TSRMLS_DC)
 {
 	/* Server errors (other than ExceededTimeLimit) and write concern errors
 	 * may use CommandException and report the result document for the
@@ -966,7 +966,7 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 	free_reply = true;
 
 	if (!result) {
-		phongo_throw_exception_from_bson_error_and_reply_t(&error, &reply TSRMLS_CC);
+		phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply TSRMLS_CC);
 		goto cleanup;
 	}
 
