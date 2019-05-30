@@ -111,7 +111,7 @@ void              phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS
 #endif /* PHP_VERSION_ID < 70000 */
 	;
 void phongo_throw_exception_from_bson_error_t(bson_error_t* error TSRMLS_DC);
-void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, bson_t* reply TSRMLS_DC);
+void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, const bson_t* reply TSRMLS_DC);
 
 /* This enum is used for processing options in phongo_execute_parse_options and
  * selecting a libmongoc function to use in phongo_execute_command. The values

@@ -190,7 +190,7 @@ void phongo_throw_exception_from_bson_error_t(bson_error_t* error TSRMLS_DC)
 	zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code), error->message, error->code TSRMLS_CC);
 }
 
-void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, bson_t* reply TSRMLS_DC)
+void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, const bson_t* reply TSRMLS_DC)
 {
 	/* Server errors (other than ExceededTimeLimit) and write concern errors
 	 * may use CommandException and report the result document for the
@@ -737,7 +737,7 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
  * returned and an exception is thrown. */
 bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor TSRMLS_DC) /* {{{ */
 {
-	const bson_t* doc;
+	const bson_t* doc = NULL;
 
 	if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error = { 0 };
@@ -748,8 +748,8 @@ bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor TSRMLS_DC
 		}
 
 		/* Could simply be no docs, which is not an error */
-		if (mongoc_cursor_error(cursor, &error)) {
-			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		if (mongoc_cursor_error_document(cursor, &error, &doc)) {
+			phongo_throw_exception_from_bson_error_t_and_reply(&error, doc TSRMLS_CC);
 			return false;
 		}
 	}
