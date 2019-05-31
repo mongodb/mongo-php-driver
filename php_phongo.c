@@ -230,7 +230,7 @@ static void phongo_exception_add_error_labels(bson_t* reply TSRMLS_DC)
 	}
 }
 
-void phongo_throw_exception_from_bson_error_and_reply_t(bson_error_t* error, bson_t* reply TSRMLS_DC)
+void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, const bson_t* reply TSRMLS_DC)
 {
 	/* Server errors (other than ExceededTimeLimit) and write concern errors
 	 * may use CommandException and report the result document for the
@@ -802,7 +802,7 @@ cleanup:
  * returned and an exception is thrown. */
 bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor TSRMLS_DC) /* {{{ */
 {
-	const bson_t* doc;
+	const bson_t* doc = NULL;
 
 	if (!mongoc_cursor_next(cursor, &doc)) {
 		bson_error_t error = { 0 };
@@ -813,8 +813,8 @@ bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor TSRMLS_DC
 		}
 
 		/* Could simply be no docs, which is not an error */
-		if (mongoc_cursor_error(cursor, &error)) {
-			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		if (mongoc_cursor_error_document(cursor, &error, &doc)) {
+			phongo_throw_exception_from_bson_error_t_and_reply(&error, doc TSRMLS_CC);
 			return false;
 		}
 	}
@@ -1031,7 +1031,7 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 	free_reply = true;
 
 	if (!result) {
-		phongo_throw_exception_from_bson_error_and_reply_t(&error, &reply TSRMLS_CC);
+		phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply TSRMLS_CC);
 		goto cleanup;
 	}
 

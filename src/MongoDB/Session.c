@@ -350,7 +350,7 @@ static PHP_METHOD(Session, commitTransaction)
 	}
 
 	if (!mongoc_client_session_commit_transaction(intern->client_session, &reply, &error)) {
-		phongo_throw_exception_from_bson_error_and_reply_t(&error, &reply TSRMLS_CC);
+		phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply TSRMLS_CC);
 		bson_destroy(&reply);
 	}
 } /* }}} */
