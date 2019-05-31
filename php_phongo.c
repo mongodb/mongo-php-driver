@@ -185,7 +185,7 @@ void phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const ch
 	va_end(args);
 }
 
-static void phongo_exception_add_error_labels(bson_t* reply TSRMLS_DC)
+static void phongo_exception_add_error_labels(const bson_t* reply TSRMLS_DC)
 {
 	bson_iter_t iter;
 
@@ -260,7 +260,7 @@ void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, con
 
 void phongo_throw_exception_from_bson_error_t(bson_error_t* error TSRMLS_DC)
 {
-	phongo_throw_exception_from_bson_error_and_reply_t(error, NULL TSRMLS_CC);
+	phongo_throw_exception_from_bson_error_t_and_reply(error, NULL TSRMLS_CC);
 }
 
 static void php_phongo_log(mongoc_log_level_t log_level, const char* log_domain, const char* message, void* user_data)
@@ -765,7 +765,7 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 	 * will also be accessible via Exception::getPrevious(). */
 	if (!success) {
 		if (error.domain != MONGOC_ERROR_SERVER && error.domain != MONGOC_ERROR_WRITE_CONCERN) {
-			phongo_throw_exception_from_bson_error_and_reply_t(&error, &reply TSRMLS_CC);
+			phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply TSRMLS_CC);
 		}
 
 		/* Argument errors occur before command execution, so there is no need
@@ -787,7 +787,7 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 
 		/* Ensure error labels are added to the final BulkWriteException. If a
 		 * previous exception was also thrown, error labels will already have
-		 * been added by phongo_throw_exception_from_bson_error_and_reply_t. */
+		 * been added by phongo_throw_exception_from_bson_error_t_and_reply. */
 		phongo_exception_add_error_labels(&reply TSRMLS_CC);
 		phongo_add_exception_prop(ZEND_STRL("writeResult"), return_value TSRMLS_CC);
 	}
