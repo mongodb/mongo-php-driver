@@ -283,15 +283,12 @@ if test "$PHP_MONGODB" != "no"; then
     AC_SUBST(MONGOC_ENABLE_SHM_COUNTERS, 0)
     AC_SUBST(MONGOC_TRACE, 1)
 
-    dnl Capture user-set environment variables for metadata handshake
-    dnl We can do this after the above scripts as they only modify STD_CFLAGS
-    AS_VAR_COPY(MONGOC_USER_SET_CFLAGS, [CFLAGS])
-    AS_VAR_COPY(MONGOC_USER_SET_LDFLAGS, [LDFLAGS])
-    AS_VAR_COPY(MONGOC_CC, [CC])
-
-    AC_SUBST(MONGOC_USER_SET_CFLAGS)
-    AC_SUBST(MONGOC_USER_SET_LDFLAGS)
-    AC_SUBST(MONGOC_CC)
+    dnl Assignments for metadata handshake. Leave CFLAGS/LDFLAGS empty as they
+    dnl would likely cause platform info (PHP version) to be truncated. We can
+    dnl consider restoring CFLAGS/LDFLAGS once CDRIVER-3134 is resolved.
+    AC_SUBST(MONGOC_CC, [$CC])
+    AC_SUBST(MONGOC_USER_SET_CFLAGS, [])
+    AC_SUBST(MONGOC_USER_SET_LDFLAGS, [])
 
     dnl Generated with: find src/libmongoc/src/common -name '*.c' -print0 | cut -sz -d / -f 5- | sort -z | tr '\000' ' '
     PHP_MONGODB_COMMON_SOURCES="common-b64.c common-md5.c"
