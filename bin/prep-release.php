@@ -39,6 +39,7 @@ function get_files() {
         "scripts/autotools/*/*.{m4}",
 
         "src/*.{c,h}",
+        "src/LIBMONGOC_VERSION_CURRENT",
 
         "src/MongoDB/*.{c,h}",
         "src/MongoDB/Exception/*.{c,h}",
