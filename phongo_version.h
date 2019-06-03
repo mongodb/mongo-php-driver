@@ -18,9 +18,9 @@
 #define PHONGO_VERSION_H
 
 /* clang-format off */
-#define PHP_MONGODB_VERSION "1.5.4-dev"
-#define PHP_MONGODB_STABILITY "devel"
-#define PHP_MONGODB_VERSION_DESC 1,5,4,0
+#define PHP_MONGODB_VERSION "1.5.4"
+#define PHP_MONGODB_STABILITY "stable"
+#define PHP_MONGODB_VERSION_DESC 1,5,4,1
 /* clang-format on */
 
 #endif /* PHONGO_VERSION_H */
