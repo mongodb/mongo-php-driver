@@ -3,31 +3,31 @@ ConnectionTimeoutException: exceeding sockettimeoutms
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_not_clean(); ?>
 <?php skip_if_test_commands_disabled(); ?>
 <?php skip_if_sleep_command_unavailable(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/" . "../utils/basic.inc";
 
-$uri = append_uri_option(URI, 'sockettimeoutms=9');
+/* A 500ms socket timeout will ensure that SDAM and any authentication can
+ * complete before executing a sleep command to trigger a network error. */
+$uri = append_uri_option(URI, 'sockettimeoutms=500');
 $manager = new MongoDB\Driver\Manager($uri);
 
-$cmd = array(
-    "sleep" => 1,
-    "w" => false,
-    "secs" => 2,
-);
-$command = new MongoDB\Driver\Command($cmd);
+$command = new MongoDB\Driver\Command([
+    'sleep' => 1,
+    'secs' => 1,
+    'w' => false,
+]);
 
-throws(function() use ($manager, $command) {
-    $result = $manager->executeCommand("admin", $command);
-    var_dump($result->toArray());
-}, "MongoDB\Driver\Exception\\ConnectionTimeoutException");
+echo throws(function() use ($manager, $command) {
+    $manager->executeCommand('admin', $command);
+}, 'MongoDB\Driver\Exception\\ConnectionTimeoutException'), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
+Failed to send "sleep" command with database "admin": Failed to read 4 bytes: socket error or timeout
 ===DONE===
