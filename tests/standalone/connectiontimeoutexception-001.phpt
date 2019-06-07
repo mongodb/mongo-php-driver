@@ -27,7 +27,7 @@ echo throws(function() use ($manager, $command) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
 Failed to send "sleep" command with database "admin": %Ssocket error or timeout
 ===DONE===
