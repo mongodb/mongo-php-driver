@@ -29,5 +29,5 @@ echo throws(function() use ($manager, $command) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
-Failed to send "sleep" command with database "admin": Failed to read 4 bytes: socket error or timeout
+Failed to send "sleep" command with database "admin": %Ssocket error or timeout
 ===DONE===
