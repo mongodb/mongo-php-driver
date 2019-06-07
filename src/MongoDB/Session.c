@@ -40,9 +40,14 @@ zend_class_entry* php_phongo_session_ce;
 
 static bool php_phongo_topology_is_sharded_cluster(mongoc_client_t* client)
 {
-	mongoc_server_description_t* sd = mongoc_client_select_server(client, true, NULL, NULL);
+	mongoc_server_description_t* sd;
+	bool ret;
 
-	return (sd && !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_MONGOS].name));
+	sd = mongoc_client_select_server(client, true, NULL, NULL);
+	ret = (sd && !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_MONGOS].name));
+	mongoc_server_description_destroy(sd);
+
+	return ret;
 }
 
 static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestamp, uint32_t* increment TSRMLS_DC)
