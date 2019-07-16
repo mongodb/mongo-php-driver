@@ -1,12 +1,3 @@
----
-name: Bug Report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
----
-
 <!--
 You are about to open an issue for the MongoDB PHP extension. If you instead
 intended to report an issue with the MongoDB PHP library, please do so via its
@@ -24,8 +15,7 @@ project, please create a vulnerability report[^2].
 <!--
 Briefly describe the issue. Feel free to cross-reference your report with any
 other related GitHub or JIRA issues for additional context. Before reporting an
-issue, check that you are using the most recent version of the extension and
-library.
+issue, check that you are using the most recent version of the driver.
 -->
 
 ### Environment
@@ -34,6 +24,13 @@ library.
 What operating system and PHP version are you using? Mention if PHP was
 installed through a third-party bundle (e.g. MAMP, XAMPP) and report its version
 if applicable.
+
+What version of MongoDB are you using? Include details about the topology (e.g.
+replica set, sharded cluster) and how you are connecting to the database (e.g.
+TLS connections, authentication). If possible, share your connection string and
+additional URI options (be sure to redact any auth credentials). Please specify
+whether you are self-hosting the database or using a cloud provider, such as
+MongoDB Atlas.
 
 Include version information for the extension, libmongoc, and libbson. This may
 be collected by grepping phpinfo() output:
@@ -52,7 +49,7 @@ collected by running the following from your project's root directory:
 ### Test Script
 
 <!--
-If possible, attach a complete PHP script that can be excuted on its own to
+If possible, attach a complete PHP script that can be executed on its own to
 reproduce the issue. Clarify whether this script can be run from the CLI or if
 it can must be run through a web SAPI.
 
