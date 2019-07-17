@@ -1360,7 +1360,7 @@ void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t
 {
 	const char*   wtag     = mongoc_write_concern_get_wtag(write_concern);
 	const int32_t w        = mongoc_write_concern_get_w(write_concern);
-	const int32_t wtimeout = mongoc_write_concern_get_wtimeout(write_concern);
+	const int64_t wtimeout = mongoc_write_concern_get_wtimeout_int64(write_concern);
 
 	array_init_size(retval, 4);
 
@@ -1377,7 +1377,10 @@ void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t
 	}
 
 	if (wtimeout != 0) {
-		ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
+		/* Note: PHP currently enforces that wimeoutMS is a 32-bit integer, so
+		 * casting will never truncate the value. This may change with
+		 * PHPC-1411. */
+		ADD_ASSOC_LONG_EX(retval, "wtimeout", (int32_t) wtimeout);
 	}
 } /* }}} */
 /* }}} */
@@ -1900,8 +1903,10 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	}
 
 	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_WTIMEOUTMS)) {
-		int32_t wtimeout;
+		int64_t wtimeout;
 
+		/* Although the write concern spec defines wtimeoutMS as 64-bit, PHP has
+		 * historically required 32-bit. This may change with PHPC-1411. */
 		if (!BSON_ITER_HOLDS_INT32(&iter)) {
 			PHONGO_URI_INVALID_TYPE(iter, "32-bit integer");
 			mongoc_write_concern_destroy(new_wc);
@@ -1909,16 +1914,16 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 			return false;
 		}
 
-		wtimeout = bson_iter_int32(&iter);
+		wtimeout = bson_iter_as_int64(&iter);
 
 		if (wtimeout < 0) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected wtimeoutMS to be >= 0, %d given", wtimeout);
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected wtimeoutMS to be >= 0, %" PRId64 " given", wtimeout);
 			mongoc_write_concern_destroy(new_wc);
 
 			return false;
 		}
 
-		mongoc_write_concern_set_wtimeout(new_wc, wtimeout);
+		mongoc_write_concern_set_wtimeout_int64(new_wc, wtimeout);
 	}
 
 	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_JOURNAL)) {
@@ -1956,8 +1961,7 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 			const char* str = bson_iter_utf8(&iter, NULL);
 
 			if (0 == strcasecmp(PHONGO_WRITE_CONCERN_W_MAJORITY, str)) {
-				/* wtimeoutMS is set independently, so preserve its value here */
-				mongoc_write_concern_set_wmajority(new_wc, mongoc_write_concern_get_wtimeout(new_wc));
+				mongoc_write_concern_set_w(new_wc, MONGOC_WRITE_CONCERN_W_MAJORITY);
 			} else {
 				mongoc_write_concern_set_wtag(new_wc, str);
 			}
@@ -2066,7 +2070,7 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptio
 	/* If SSL options are set in the URL, we need to read them and set them on
 	 * the options struct so we can merge potential options from passed in
 	 * driverOptions (zoptions) */
-	if (mongoc_uri_get_ssl(uri)) {
+	if (mongoc_uri_get_tls(uri)) {
 		php_phongo_mongoc_ssl_opts_from_uri(ssl_opt, uri, &any_ssl_option_set);
 	}
 
@@ -2557,7 +2561,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		goto cleanup;
 	}
 #else
-	if (mongoc_uri_get_ssl(uri)) {
+	if (mongoc_uri_get_tls(uri)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Cannot create SSL client. SSL is not enabled in this build.");
 		goto cleanup;
 	}
@@ -2572,7 +2576,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	}
 
 #ifdef MONGOC_ENABLE_SSL
-	if (ssl_opt && mongoc_uri_get_ssl(uri)) {
+	if (ssl_opt && mongoc_uri_get_tls(uri)) {
 		mongoc_client_set_ssl_opts(manager->client, ssl_opt);
 	}
 #endif
