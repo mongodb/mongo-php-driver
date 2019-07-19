@@ -5,12 +5,13 @@ MongoDB\Driver\Server: Manager->getServer() returning correct server
 <?php skip_if_not_replica_set(); ?>
 <?php skip_if_no_secondary(); ?>
 <?php skip_if_not_clean(); ?>
-<?php skip_if_not_clean('local', 'examples'); ?>
+<?php skip_if_not_clean('local', COLLECTION_NAME); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+// Disable retryWrites since the test writes to the unreplicated "local" database
+$manager = new MongoDB\Driver\Manager(URI, ['retryWrites' => false]);
 
 
 $doc = array("example" => "document");
@@ -41,13 +42,13 @@ var_dump($server->getPort(), $server3->getPort());
 $bulk = new \MongoDB\Driver\BulkWrite();
 $bulk->insert($doc);
 
-$result = $server3->executeBulkWrite("local.examples", $bulk);
+$result = $server3->executeBulkWrite('local.' . COLLECTION_NAME, $bulk);
 var_dump($result, $result->getServer()->getHost(), $result->getServer()->getPort());
-$result = $server3->executeQuery("local.examples", new MongoDB\Driver\Query(array()));
+$result = $server3->executeQuery('local.' . COLLECTION_NAME, new MongoDB\Driver\Query(array()));
 foreach($result as $document) {
     var_dump($document);
 }
-$cmd = new MongoDB\Driver\Command(array("drop" => "examples"));
+$cmd = new MongoDB\Driver\Command(['drop' => COLLECTION_NAME]);
 $server3->executeCommand("local", $cmd);
 
 ?>
