@@ -12,6 +12,7 @@ MongoDB\Driver\Cursor command result iteration with getmore failure
 <?php skip_if_server_version("<", "3.6"); ?>
 <?php skip_if_no_getmore_failpoint(); ?>
 <?php skip_if_auth(); ?>
+<?php skip_if_no_mongo_orchestration(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
