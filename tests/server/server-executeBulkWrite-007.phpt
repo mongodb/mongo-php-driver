@@ -9,7 +9,9 @@ MongoDB\Driver\Server::executeBulkWrite() with write concern (replica set second
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+/* Disable retryWrites since the test expects to receive a "not master" error,
+ * which retryable writes would otherwise use to retry against the primary. */
+$manager = new MongoDB\Driver\Manager(URI, ['retryWrites' => false]);
 $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY));
 
 $writeConcerns = [1, 2, MongoDB\Driver\WriteConcern::MAJORITY];

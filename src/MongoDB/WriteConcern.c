@@ -65,7 +65,7 @@ static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* in
 				goto failure;
 			}
 
-			mongoc_write_concern_set_wtimeout(intern->write_concern, Z_LVAL_P(wtimeout));
+			mongoc_write_concern_set_wtimeout_int64(intern->write_concern, (int64_t) Z_LVAL_P(wtimeout));
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" field to be integer", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 			goto failure;
@@ -115,7 +115,7 @@ static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* in
 				goto failure;
 			}
 
-			mongoc_write_concern_set_wtimeout(intern->write_concern, Z_LVAL_PP(wtimeout));
+			mongoc_write_concern_set_wtimeout_int64(intern->write_concern, (int64_t) Z_LVAL_PP(wtimeout));
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" field to be integer", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 			goto failure;
@@ -199,7 +199,7 @@ static PHP_METHOD(WriteConcern, __construct)
 				return;
 			}
 
-			mongoc_write_concern_set_wtimeout(intern->write_concern, wtimeout);
+			mongoc_write_concern_set_wtimeout_int64(intern->write_concern, (int64_t) wtimeout);
 	}
 } /* }}} */
 
@@ -265,7 +265,9 @@ static PHP_METHOD(WriteConcern, getWtimeout)
 		return;
 	}
 
-	RETURN_LONG(mongoc_write_concern_get_wtimeout(intern->write_concern));
+	/* Note: PHP currently enforces that wimeoutMS is a 32-bit integer, so
+	 * casting will never truncate the value. This may change with PHPC-1411. */
+	RETURN_LONG((int32_t) mongoc_write_concern_get_wtimeout_int64(intern->write_concern));
 } /* }}} */
 
 /* {{{ proto null|boolean MongoDB\Driver\WriteConcern::getJournal()
@@ -321,7 +323,9 @@ static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, boo
 
 	wtag     = mongoc_write_concern_get_wtag(intern->write_concern);
 	w        = mongoc_write_concern_get_w(intern->write_concern);
-	wtimeout = mongoc_write_concern_get_wtimeout(intern->write_concern);
+	/* Note: PHP currently enforces that wimeoutMS is a 32-bit integer, so
+	 * casting will never truncate the value. This may change with PHPC-1411. */
+	wtimeout = (int32_t) mongoc_write_concern_get_wtimeout_int64(intern->write_concern);
 
 #if PHP_VERSION_ID >= 70000
 	{
