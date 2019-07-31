@@ -566,6 +566,10 @@ axes:
         display_name: "MongoDB latest"
         variables:
            VERSION: "latest"
+      - id: "4.2"
+        display_name: "MongoDB 4.2"
+        variables:
+           VERSION: "4.2"
       - id: "4.0"
         display_name: "MongoDB 4.0"
         variables:
@@ -663,14 +667,14 @@ axes:
 buildvariants:
 
 - matrix_name: "tests-php5"
-  matrix_spec: {"os-php5": "*", "versions": "4.0", "php-versions": "5.6" }
+  matrix_spec: {"os-php5": "*", "versions": "4.2", "php-versions": ["5.6"] }
   display_name: "All: ${versions}/${php-versions} — ${os-php5}"
   tasks:
      - name: "test-standalone-ssl"
      - name: "test-replicaset-auth"
 
 - matrix_name: "tests-php7"
-  matrix_spec: {"os-php7": "*", "versions": "4.0", "php-versions": ["7.0","7.1","7.2"] }
+  matrix_spec: {"os-php7": "*", "versions": "4.2", "php-versions": ["7.0","7.1","7.2"] }
   display_name: "All: ${versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone-ssl"
@@ -713,7 +717,7 @@ buildvariants:
 
 
 - matrix_name: "mongo-40-php5"
-  matrix_spec: {"os-php5": "*", "versions": ["4.0", "latest"], "php-versions": "5.6" }
+  matrix_spec: {"os-php5": "*", "versions": ["4.0", "4.2", "latest"], "php-versions": "5.6" }
   display_name: "${versions}/${php-versions} — ${os-php5}"
   tasks:
      - name: "test-standalone"
@@ -726,9 +730,9 @@ buildvariants:
      - name: "test-sharded-rs"
 
 - matrix_name: "mongo-40-php7"
-  matrix_spec: {"os-php7": "*", "versions": ["4.0", "latest"], "php-versions": "7.2" }
+  matrix_spec: {"os-php7": "*", "versions": ["4.0", "4.2", "latest"], "php-versions": "7.2" }
   exclude_spec:
-     - {"os-php7": "rhel74-zseries", "versions": ["4.0", "latest"], "php-versions": "7.2"}
+     - {"os-php7": "rhel74-zseries", "versions": ["4.0", "4.2", "latest"], "php-versions": "7.2"}
   display_name: "${versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone"
@@ -741,7 +745,7 @@ buildvariants:
      - name: "test-sharded-rs"
 
 - matrix_name: "mongo-40-php7-nossl"
-  matrix_spec: {"os-php7": "rhel74-zseries", "versions": ["4.0", "latest"], "php-versions": "7.2"}
+  matrix_spec: {"os-php7": "rhel74-zseries", "versions": ["4.0", "4.2", "latest"], "php-versions": "7.2"}
   display_name: "${versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone"
@@ -752,8 +756,14 @@ buildvariants:
      - name: "test-sharded"
      - name: "test-sharded-rs"
 
+- matrix_name: "mongo-42-storage-engines"
+  matrix_spec: {"os-php7": "debian92-test", "versions": "4.2", "php-versions": "7.2", "storage-engine": ["wiredtiger", "inmemory"]}
+  display_name: "${versions}/${php-versions}/${os-php7} — ${storage-engine}"
+  tasks:
+     - name: "test-standalone"
+
 - matrix_name: "mongo-40-storage-engines"
-  matrix_spec: {"os-php7": "debian92-test", "versions": "4.0", "php-versions": "7.2", "storage-engine": "*"}
+  matrix_spec: {"os-php7": "debian92-test", "versions": "4.0", "php-versions": "7.2", "storage-engine": "mmapv1"}
   display_name: "${versions}/${php-versions}/${os-php7} — ${storage-engine}"
   tasks:
      - name: "test-standalone"
