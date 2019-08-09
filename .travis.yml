@@ -12,64 +12,95 @@ env:
     - TEST_PHP_ARGS="-q -s output.txt -g XFAIL,FAIL,BORK,WARN,LEAK,SKIP -x --show-diff"
     - REPORT_EXIT_STATUS=1
     - SERVER_DISTRO=ubuntu1604
-    - SERVER_VERSION=4.0.6
+    - SERVER_VERSION=4.2.0
     - DEPLOYMENT=STANDALONE
 
-matrix:
+jobs:
   include:
-    - php: 7.3
+
+    - stage: Smoke Testing
+      php: 7.3
+
+    # Test remaining PHP versions
+    - stage: Test
+      php: 5.6
+    - stage: Test
+      php: 7.0
+    - stage: Test
+      php: 7.1
+    - stage: Test
+      php: 7.2
+    - stage: Test
+      php: 7.4snapshot
+
+    # Test against various server topologies
+    - stage: Test
+      php: 7.3
       env:
         - TESTS=tests/atlas.phpt
         - TEST_PHP_ARGS="-q -s output.txt -x --show-diff"
-    - php: 5.6
-    - php: 7.0
-    - php: 7.1
-    - php: 7.2
-    - php: 7.3
-    - php: 7.3
+    - stage: Test
+      php: 7.3
       env:
         - DEPLOYMENT=STANDALONE_SSL
-    - php: 7.3
+    - stage: Test
+      php: 7.3
       env:
         - DEPLOYMENT=SHARDED_CLUSTER
-    - php: 7.3
+    - stage: Test
+      php: 7.3
       env:
         - DEPLOYMENT=SHARDED_CLUSTER_RS
-    - php: 7.3
+    - stage: Test
+      php: 7.3
       env:
         - DEPLOYMENT=STANDALONE_AUTH
-    - php: 7.3
+    - stage: Test
+      php: 7.3
       env:
         - DEPLOYMENT=REPLICASET
-    - php: 7.3
+    - stage: Test
+      php: 7.3
       env:
         - DEPLOYMENT=REPLICASET_SINGLE
-    - php: 7.3
+    - stage: Test
+      php: 7.3
       env:
         - DEPLOYMENT=REPLICASET_AUTH
-    - php: 7.1
+
+    # Test against older server versions
+    - stage: Test
+      php: 7.1
       dist: trusty
       env:
         - SERVER_DISTRO=ubuntu1404
         - SERVER_VERSION=3.0.15
         - DEPLOYMENT=REPLICASET_OLD
-    - php: 7.1
+    - stage: Test
+      php: 7.1
       dist: trusty
       env:
         - SERVER_DISTRO=ubuntu1404
         - SERVER_VERSION=3.0.15
         - DEPLOYMENT=STANDALONE_OLD
-    - php: 7.1
+    - stage: Test
+      php: 7.3
       env:
         - SERVER_VERSION=3.2.22
         - DEPLOYMENT=STANDALONE_OLD
-    - php: 7.1
+    - stage: Test
+      php: 7.3
       env:
         - SERVER_VERSION=3.4.19
         - DEPLOYMENT=STANDALONE_OLD
-    - php: 7.1
+    - stage: Test
+      php: 7.3
       env:
         - SERVER_VERSION=3.6.10
+    - stage: Test
+      php: 7.1
+      env:
+        - SERVER_VERSION=4.0.12
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_b354efda2943_key -iv $encrypted_b354efda2943_iv -in .travis.scripts/atlas-uris.txt.enc -out .travis.scripts/atlas-uris.txt -d || true
