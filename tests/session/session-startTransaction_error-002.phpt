@@ -13,13 +13,14 @@ $manager = new MongoDB\Driver\Manager(URI);
 $session = $manager->startSession();
 
 $options = [
-    [ 'readConcern' => 42 ], 
+    [ 'maxCommitTimeMS' => -1 ],
+    [ 'readConcern' => 42 ],
     [ 'readConcern' => new stdClass ],
     [ 'readConcern' => new \MongoDB\Driver\WriteConcern( 2 ) ],
-    [ 'readPreference' => 42 ], 
+    [ 'readPreference' => 42 ],
     [ 'readPreference' => new stdClass ],
     [ 'readPreference' => new \MongoDB\Driver\ReadConcern( \MongoDB\Driver\ReadConcern::LOCAL ) ],
-    [ 'writeConcern' => 42 ], 
+    [ 'writeConcern' => 42 ],
     [ 'writeConcern' => new stdClass ],
     [ 'writeConcern' => new \MongoDB\Driver\ReadPreference( \MongoDB\Driver\ReadPreference::RP_SECONDARY ) ],
 
@@ -43,10 +44,16 @@ foreach ($options as $txnOptions) {
     }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 }
 
+echo raises(function() use ($session) {
+    $session->startTransaction([ 'maxCommitTimeMS' => new stdClass ]);
+}, E_NOTICE), "\n";
+
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected "maxCommitTimeMS" option to be >= 0, -1 given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readConcern" option to be MongoDB\Driver\ReadConcern, int%S given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
@@ -71,4 +78,6 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, MongoDB\Driver\ReadPreference given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, MongoDB\Driver\ReadPreference given
+OK: Got E_NOTICE
+Object of class stdClass could not be converted to int
 ===DONE===

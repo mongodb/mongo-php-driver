@@ -518,6 +518,8 @@ function severityToString($type) {
     switch($type) {
     case E_WARNING:
         return "E_WARNING";
+    case E_NOTICE:
+        return "E_NOTICE";
     default:
         return "Some other #_$type";
     }
@@ -531,6 +533,8 @@ function raises($function, $type, $infunction = null) {
     try {
         $function();
     } catch(Exception $e) {
+        $exceptionname = get_class($e);
+
         if ($e instanceof ErrorException && $e->getSeverity() & $type) {
             if ($infunction) {
                 $trace = $e->getTrace();
@@ -551,7 +555,7 @@ function raises($function, $type, $infunction = null) {
         return $e->getMessage();
     }
 
-    echo "FAILED: Expected $exceptionname thrown!\n";
+    printf("FAILED: Expected %s thrown!\n", ErrorException::class);
     restore_error_handler();
 }
 function throws($function, $exceptionname, $infunction = null) {
