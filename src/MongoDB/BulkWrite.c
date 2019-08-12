@@ -73,6 +73,50 @@ static inline bool php_phongo_bulkwrite_update_has_operators(bson_t* bupdate) /*
 	return false;
 } /* }}} */
 
+/* Returns whether the update document is considered an aggregation pipeline */
+static inline bool php_phongo_bulkwrite_update_is_pipeline(bson_t* bupdate) /* {{{ */
+{
+	bson_iter_t iter;
+	bson_iter_t child;
+	const char* key;
+	int         i = 0;
+	char*       i_str;
+
+	if (!bson_iter_init(&iter, bupdate)) {
+		return false;
+	}
+
+	while (bson_iter_next(&iter)) {
+		key   = bson_iter_key(&iter);
+		i_str = bson_strdup_printf("%d", i++);
+
+		if (strcmp(key, i_str)) {
+			bson_free(i_str);
+			return false;
+		}
+
+		bson_free(i_str);
+
+		if (BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+			if (!bson_iter_recurse(&iter, &child)) {
+				return false;
+			}
+			if (!bson_iter_next(&child)) {
+				return false;
+			}
+			key = bson_iter_key(&child);
+			if (key[0] != '$') {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	/* should return false when the document is empty */
+	return i != 0;
+} /* }}} */
+
 /* Returns whether the BSON array's keys are a sequence of integer strings
  * starting with "0". BSON_APPEND_ARRAY considers it the caller's responsibility
  * to ensure that the array's keys are properly formatted. */
@@ -345,7 +389,7 @@ static PHP_METHOD(BulkWrite, update)
 		goto cleanup;
 	}
 
-	if (php_phongo_bulkwrite_update_has_operators(&bupdate)) {
+	if (php_phongo_bulkwrite_update_has_operators(&bupdate) || php_phongo_bulkwrite_update_is_pipeline(&bupdate)) {
 		if (zoptions && php_array_existsc(zoptions, "multi") && php_array_fetchc_bool(zoptions, "multi")) {
 			if (!mongoc_bulk_operation_update_many_with_opts(intern->bulk, &bquery, &bupdate, &boptions, &error)) {
 				phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
