@@ -34,5 +34,5 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 invalid argument for update: corrupt BSON
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Invalid key 'z': update only works with $ operators
+Invalid key 'z': update only works with $ operators and pipelines
 ===DONE===

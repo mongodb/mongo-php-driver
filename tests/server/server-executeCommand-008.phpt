@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\Driver\Server::executeCommand() options (MONGO_CMD_RAW)
+MongoDB\Driver\Server::executeCommand() does not send read preference to standalone
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_standalone(); ?>
+<?php skip_if_not_standalone(); ?>
 <?php skip_if_not_clean(); ?>
 <?php skip_if_server_version('<', '3.6'); ?>
 --FILE--
@@ -35,7 +35,7 @@ $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Drive
         }
     },
     function(stdClass $command) {
-        echo "Read Preference: ", $command->{'$readPreference'}->mode, "\n";
+        echo isset($command->{'$readPreference'}) ? 'Read preference set' : 'No read preference set', "\n";
         echo "Read Concern: ", $command->readConcern->level, "\n";
         echo "Write Concern: ", $command->writeConcern->w, "\n";
     }
@@ -45,7 +45,7 @@ $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Drive
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Read Preference: secondary
+No read preference set
 Read Concern: local
 Write Concern: majority
 ===DONE===
