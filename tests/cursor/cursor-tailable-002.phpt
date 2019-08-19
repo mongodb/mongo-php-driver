@@ -23,7 +23,7 @@ function insert(MongoDB\Driver\Manager $manager, $from, $to = null)
 
     $writeResult = $manager->executeBulkWrite(NS, $bulkWrite);
 
-    printf("Inserted %d document(s): %s\n", $writeResult->getInsertedCount(), implode(range($from, $to), ', '));
+    printf("Inserted %d document(s): %s\n", $writeResult->getInsertedCount(), implode(', ', range($from, $to)));
 }
 
 $manager = new MongoDB\Driver\Manager(URI);
