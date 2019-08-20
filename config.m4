@@ -190,13 +190,13 @@ if test "$PHP_MONGODB" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
-      if $PKG_CONFIG libbson-1.0 --atleast-version 1.14.0; then
+      if $PKG_CONFIG libbson-1.0 --atleast-version 1.15.0; then
         PHP_MONGODB_BSON_CFLAGS=`$PKG_CONFIG libbson-1.0 --cflags`
         PHP_MONGODB_BSON_LIBS=`$PKG_CONFIG libbson-1.0 --libs`
         PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
         AC_MSG_RESULT(version $PHP_MONGODB_BSON_VERSION found)
       else
-        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.14.0)
+        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.15.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libbson must be installed)
@@ -214,13 +214,13 @@ if test "$PHP_MONGODB" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0; then
-      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.14.0; then
+      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.15.0; then
         PHP_MONGODB_MONGOC_CFLAGS=`$PKG_CONFIG libmongoc-1.0 --cflags`
         PHP_MONGODB_MONGOC_LIBS=`$PKG_CONFIG libmongoc-1.0 --libs`
         PHP_MONGODB_MONGOC_VERSION=`$PKG_CONFIG libmongoc-1.0 --modversion`
         AC_MSG_RESULT(version $PHP_MONGODB_MONGOC_VERSION found)
       else
-        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.14.0)
+        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.15.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libmongoc must be installed)

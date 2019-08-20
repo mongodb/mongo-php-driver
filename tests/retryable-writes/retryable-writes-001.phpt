@@ -32,7 +32,7 @@ class TransactionIdObserver implements MongoDB\Driver\Monitoring\CommandSubscrib
 $observer = new TransactionIdObserver;
 MongoDB\Driver\Monitoring\addSubscriber($observer);
 
-$manager = new MongoDB\Driver\Manager(URI, ['retryWrites' => true]);
+$manager = new MongoDB\Driver\Manager(URI);
 
 echo "Testing deleteOne\n";
 $bulk = new MongoDB\Driver\BulkWrite;
