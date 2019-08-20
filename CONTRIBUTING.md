@@ -172,10 +172,18 @@ If something goes awry in the test VM, you can reload it by running:
 make test-bootstrap
 ```
 
-## Releasing
+## Updating libmongoc and libbson
 
-The follow steps outline the release process for a maintenance branch (e.g.
-releasing the `vX.Y` branch as X.Y.Z).
+The PHP driver uses a bundled version of libmongoc and libbson. If a new version
+of libmongoc is available, the submodule needs to be updated.
+
+### Update libmongoc to the latest version
+
+```
+$ cd src/libmongoc
+$ git fetch
+$ git checkout 1.15.0
+```
 
 ### Ensure libmongoc version information is correct
 
@@ -189,6 +197,20 @@ $ make libmongoc-version-current
 
 Alternatively, the `build/calc_release_version.py` script in libmongoc can be
 executed directly.
+
+### Test and commit your changes
+
+Once you have verified that all tests pass, commit the changes to the submodule
+and `src/LIBMONGOC_VERSION_CURRENT`:
+
+```
+$ git commit -m "Bump libmongoc to 1.15.0" src/LIBMONGOC_VERSION_CURRENT src/libmongoc
+```
+
+## Releasing
+
+The follow steps outline the release process for a maintenance branch (e.g.
+releasing the `vX.Y` branch as X.Y.Z).
 
 ### Ensure PHP version compatibility
 
