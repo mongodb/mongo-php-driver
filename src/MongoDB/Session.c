@@ -247,21 +247,50 @@ static PHP_METHOD(Session, getOperationTime)
 } /* }}} */
 
 /* Creates a opts structure from an array optionally containing an RP, RC,
- * and/or WC object. Returns NULL if no options were found, or there was an
- * invalid option. If there was an invalid option or structure, an exception
- * will be thrown too. */
+ * WC object, and/or maxCommitTimeMS int. Returns NULL if no options were found,
+ * or there was an invalid option. If there was an invalid option or structure,
+ * an exception will be thrown too. */
 mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* options TSRMLS_DC)
 {
 	mongoc_transaction_opt_t* opts = NULL;
+
+	if (php_array_existsc(options, "maxCommitTimeMS")) {
+		int64_t max_commit_time_ms = php_array_fetchc_long(options, "maxCommitTimeMS");
+
+		if (max_commit_time_ms < 0) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxCommitTimeMS\" option to be >= 0, %" PRId64 " given", max_commit_time_ms);
+			/* Freeing opts is not needed here, as it can't be set yet. The
+			 * code is here to keep it consistent with the others in case more
+			 * options are added before this one. */
+			if (opts) {
+				mongoc_transaction_opts_destroy(opts);
+			}
+			return NULL;
+		}
+
+		if (max_commit_time_ms > UINT32_MAX) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxCommitTimeMS\" option to be <= %" PRIu32 ", %" PRId64 " given", UINT32_MAX, max_commit_time_ms);
+			/* Freeing opts is not needed here, as it can't be set yet. The
+			 * code is here to keep it consistent with the others in case more
+			 * options are added before this one. */
+			if (opts) {
+				mongoc_transaction_opts_destroy(opts);
+			}
+			return NULL;
+		}
+
+		if (!opts) {
+			opts = mongoc_transaction_opts_new();
+		}
+
+		mongoc_transaction_opts_set_max_commit_time_ms(opts, max_commit_time_ms);
+	}
 
 	if (php_array_existsc(options, "readConcern")) {
 		zval* read_concern = php_array_fetchc(options, "readConcern");
 
 		if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce TSRMLS_CC)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
-			/* Freeing opts is not needed here, as it can't be set yet. The
-			 * code is here to keep it consistent with the others in case more
-			 * options are added before this one. */
 			if (opts) {
 				mongoc_transaction_opts_destroy(opts);
 			}
