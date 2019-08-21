@@ -1461,6 +1461,45 @@ static const char* php_phongo_bson_type_to_string(bson_type_t type) /* {{{ */
 		bson_iter_key(&(iter)),                        \
 		php_phongo_bson_type_to_string(bson_iter_type(&(iter))))
 
+static bool php_phongo_uri_finalize_auth(mongoc_uri_t* uri TSRMLS_DC) /* {{{ */
+{
+	/* authSource with GSSAPI or X509 should always be external */
+	if (mongoc_uri_get_auth_mechanism(uri)) {
+		if (!strcasecmp(mongoc_uri_get_auth_mechanism(uri), "GSSAPI") ||
+			!strcasecmp(mongoc_uri_get_auth_mechanism(uri), "MONGODB-X509")) {
+			const char *source = mongoc_uri_get_auth_source(uri);
+
+			if (source) {
+				if (strcasecmp(source, "$external")) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse URI options: GSSAPI and X509 require \"$external\" authSource.");
+					return false;
+				}
+			} else {
+				mongoc_uri_set_auth_source(uri, "$external");
+			}
+		}
+
+		/* MONGODB-X509 is the only mechanism that doesn't require username */
+		if (strcasecmp(mongoc_uri_get_auth_mechanism(uri), "MONGODB-X509")) {
+			if (!mongoc_uri_get_username(uri) ||
+				!strcmp(mongoc_uri_get_username(uri), "")) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse URI options: '%s' authentication mechanism requires username.", mongoc_uri_get_auth_mechanism(uri));
+				return false;
+			}
+		}
+
+		/* MONGODB-X509 errors if a password is supplied. */
+		if (!strcasecmp(mongoc_uri_get_auth_mechanism(uri), "MONGODB-X509")) {
+			if (mongoc_uri_get_password(uri)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse URI options: X509 authentication mechanism does not accept a password.");
+				return false;
+			}
+		}
+	}
+
+	return true;
+} /* }}} */
+
 static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
@@ -1655,6 +1694,12 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options T
 
 			continue;
 		}
+	}
+
+	// Finalize auth options
+	if (!php_phongo_uri_finalize_auth(uri TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return false;
 	}
 
 	return true;
