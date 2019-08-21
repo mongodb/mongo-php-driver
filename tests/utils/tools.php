@@ -266,7 +266,7 @@ function is_auth($uri)
  */
 function is_ssl($uri)
 {
-    return stripos($uri, 'ssl=true') !== false;
+    return stripos($uri, 'ssl=true') !== false || stripos($uri, 'tls=true') !== false;
 }
 
 /**

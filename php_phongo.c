@@ -1500,6 +1500,25 @@ static bool php_phongo_uri_finalize_auth(mongoc_uri_t* uri TSRMLS_DC) /* {{{ */
 	return true;
 } /* }}} */
 
+static bool php_phongo_uri_finalize_tls(mongoc_uri_t* uri TSRMLS_DC) /* {{{ */
+{
+	const bson_t *options;
+	bson_iter_t iter;
+
+	if (!(options = mongoc_uri_get_options(uri))) {
+		return true;
+	}
+
+	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSINSECURE) &&
+		(bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES) ||
+		 bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSALLOWINVALIDHOSTNAMES))) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse URI options: %s may not be combined with %s or %s.", MONGOC_URI_TLSINSECURE, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES, MONGOC_URI_TLSALLOWINVALIDHOSTNAMES);
+		return false;
+	}
+
+	return true;
+} /* }}} */
+
 static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options TSRMLS_DC) /* {{{ */
 {
 	bson_iter_t iter;
@@ -2658,6 +2677,11 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 
 	/* An exception may be thrown during SSL option creation */
 	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	if (!php_phongo_uri_finalize_tls(uri TSRMLS_CC)) {
+		/* Exception should already have been thrown */
 		goto cleanup;
 	}
 #else
