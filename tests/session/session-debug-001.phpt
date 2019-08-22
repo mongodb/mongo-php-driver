@@ -35,5 +35,7 @@ object(MongoDB\Driver\Session)#%d (%d) {
   bool(true)
   ["operationTime"]=>
   NULL
+  ["server"]=>
+  NULL
 }
 ===DONE===

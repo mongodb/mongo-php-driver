@@ -1,21 +1,27 @@
 --TEST--
-MongoDB\Driver\Session debug output (after an operation)
+MongoDB\Driver\Session debug output (during a pinned transaction)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_not_libmongoc_crypto(); ?>
-<?php skip_if_not_replica_set(); ?>
-<?php skip_if_server_version('<', '3.6'); ?>
+<?php skip_if_not_mongos_with_replica_set(); ?>
+<?php skip_if_server_version('<', '4.1.6'); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(URI);
-$session = $manager->startSession();
+$server = $manager->selectServer(new \MongoDB\Driver\ReadPreference('primary'));
 
-$command = new MongoDB\Driver\Command(['ping' => 1]);
-$manager->executeCommand(DATABASE_NAME, $command, ['session' => $session]);
+$session = $manager->startSession();
+$session->startTransaction();
+
+$query = new MongoDB\Driver\Query([]);
+$server->executeQuery(NS, $query, ['session' => $session]);
 
 var_dump($session);
+
+$session->abortTransaction();
+$session->endSession();
 
 ?>
 ===DONE===
@@ -54,6 +60,8 @@ object(MongoDB\Driver\Session)#%d (%d) {
     string(%d) "%d"
   }
   ["server"]=>
-  NULL
+  object(MongoDB\Driver\Server)#%d (%d) {
+    %a
+  }
 }
 ===DONE===

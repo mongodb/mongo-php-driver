@@ -234,6 +234,30 @@ static PHP_METHOD(Session, getOperationTime)
 	php_phongo_new_timestamp_from_increment_and_timestamp(return_value, increment, timestamp TSRMLS_CC);
 } /* }}} */
 
+/* {{{ proto MongoDB\Driver\Server|null MongoDB\Driver\Session::getServer()
+   Returns the server this session is pinned to */
+static PHP_METHOD(Session, getServer)
+{
+	php_phongo_session_t* intern;
+	uint32_t              server_id = 0;
+
+	intern = Z_SESSION_OBJ_P(getThis());
+	SESSION_CHECK_LIVELINESS(intern, "getServer")
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	server_id = mongoc_client_session_get_server_id(intern->client_session);
+
+	/* For sessions without a pinned server, 0 is returned. */
+	if (!server_id) {
+	    RETURN_NULL();
+	}
+
+	phongo_server_init(return_value, mongoc_client_session_get_client(intern->client_session), server_id TSRMLS_CC);
+} /* }}} */
+
 /* Creates a opts structure from an array optionally containing an RP, RC,
  * WC object, and/or maxCommitTimeMS int. Returns NULL if no options were found,
  * or there was an invalid option. If there was an invalid option or structure,
@@ -461,6 +485,7 @@ static zend_function_entry php_phongo_session_me[] = {
 	PHP_ME(Session, getClusterTime, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getLogicalSessionId, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getOperationTime, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Session, getServer, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, isInTransaction, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, startTransaction, ai_Session_startTransaction, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Session_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
@@ -599,6 +624,30 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 		}
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "operationTime");
+	}
+
+	if (intern->client_session) {
+		uint32_t server_id = mongoc_client_session_get_server_id(intern->client_session);
+
+		if (server_id) {
+
+#if PHP_VERSION_ID >= 70000
+			zval server;
+
+			phongo_server_init(&server, mongoc_client_session_get_client(intern->client_session), server_id TSRMLS_CC);
+			ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
+#else
+			zval* server = NULL;
+
+			MAKE_STD_ZVAL(server);
+			phongo_server_init(server, mongoc_client_session_get_client(intern->client_session), server_id TSRMLS_CC);
+			ADD_ASSOC_ZVAL_EX(&retval, "server", server);
+#endif
+		} else {
+			ADD_ASSOC_NULL_EX(&retval, "server");
+		}
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "server");
 	}
 
 	return Z_ARRVAL(retval);
