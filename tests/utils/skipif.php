@@ -48,6 +48,11 @@ function skip_if_not_mongos()
     is_mongos(URI) or exit('skip topology is not a sharded cluster');
 }
 
+function skip_if_not_mongos_with_replica_set()
+{
+    is_mongos_with_replica_set(URI) or exit('skip topology is not a sharded cluster with replica set');
+}
+
 /**
  * Skips the test if the topology is a replica set.
  */
