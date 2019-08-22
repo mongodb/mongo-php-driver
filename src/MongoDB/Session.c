@@ -38,18 +38,6 @@ zend_class_entry* php_phongo_session_ce;
 		return;                                                         \
 	}
 
-static bool php_phongo_topology_is_sharded_cluster(mongoc_client_t* client)
-{
-	mongoc_server_description_t* sd;
-	bool ret;
-
-	sd = mongoc_client_select_server(client, true, NULL, NULL);
-	ret = (sd && !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_MONGOS].name));
-	mongoc_server_description_destroy(sd);
-
-	return ret;
-}
-
 static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestamp, uint32_t* increment TSRMLS_DC)
 {
 	bool retval = false;
@@ -363,11 +351,6 @@ static PHP_METHOD(Session, startTransaction)
 		txn_options = php_mongodb_session_parse_transaction_options(options TSRMLS_CC);
 	}
 	if (EG(exception)) {
-		return;
-	}
-
-	if (php_phongo_topology_is_sharded_cluster(mongoc_client_session_get_client(intern->client_session))) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME TSRMLS_CC, "PHP MongoDB driver %s does not support running multi-document transactions on sharded clusters", PHP_MONGODB_VERSION);
 		return;
 	}
 

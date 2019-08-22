@@ -147,6 +147,7 @@ const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concer
 php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t* sd);
 
 bool phongo_parse_read_preference(zval* options, zval** zreadPreference TSRMLS_DC);
+bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession TSRMLS_DC);
 
 zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* allocated TSRMLS_DC);
 void  php_phongo_prep_legacy_option_free(zval* options TSRMLS_DC);
