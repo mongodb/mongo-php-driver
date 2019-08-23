@@ -687,6 +687,20 @@ function def($arr) {
 
 function configureFailPoint(Manager $manager, $failPoint, $mode, array $data = [])
 {
+    $doc = [
+        'configureFailPoint' => $failPoint,
+        'mode'               => $mode,
+    ];
+    if ($data) {
+        $doc['data'] = $data;
+    }
+
+    $cmd = new Command($doc);
+    $manager->executeCommand('admin', $cmd);
+}
+
+function configureTargetedFailPoint(Server $server, $failPoint, $mode, array $data = [])
+{
     $doc = array(
         'configureFailPoint' => $failPoint,
         'mode'               => $mode,
@@ -696,12 +710,12 @@ function configureFailPoint(Manager $manager, $failPoint, $mode, array $data = [
     }
 
     $cmd = new Command($doc);
-    $manager->executeCommand('admin', $cmd);
+    $server->executeCommand('admin', $cmd);
 }
 
-function failMaxTimeMS(Manager $manager)
+function failMaxTimeMS(Server $server)
 {
-    configureFailPoint($manager, 'maxTimeAlwaysTimeOut', [ 'times' => 1 ]);
+    configureTargetedFailPoint($server, 'maxTimeAlwaysTimeOut', [ 'times' => 1 ]);
 }
 
 function getMOPresetBase() {

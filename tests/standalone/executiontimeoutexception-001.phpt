@@ -11,6 +11,9 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(URI);
 
+// Select a specific server for future operations to avoid mongos switching in sharded clusters
+$server = $manager->selectServer(new \MongoDB\Driver\ReadPreference('primary'));
+
 $query = new MongoDB\Driver\Query(array("company" => "Smith, Carter and Buckridge"), array(
     'projection' => array('_id' => 0, 'username' => 1),
     'sort' => array('phoneNumber' => 1),
@@ -19,9 +22,9 @@ $query = new MongoDB\Driver\Query(array("company" => "Smith, Carter and Buckridg
     ),
 ));
 
-failMaxTimeMS($manager);
-throws(function() use ($manager, $query) {
-    $result = $manager->executeQuery(NS, $query);
+failMaxTimeMS($server);
+throws(function() use ($server, $query) {
+    $result = $server->executeQuery(NS, $query);
 }, "MongoDB\Driver\Exception\ExecutionTimeoutException");
 
 ?>

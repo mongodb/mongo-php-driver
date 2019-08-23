@@ -26,13 +26,16 @@ class Observer implements MongoDB\Driver\Monitoring\CommandSubscriber
 
 $manager = new MongoDB\Driver\Manager(URI, ['retryReads' => false]);
 
-configureFailPoint($manager, 'failCommand', ['times' => 1], ['failCommands' => ['aggregate'], 'closeConnection' => true]);
+// Select a specific server for future operations to avoid mongos switching in sharded clusters
+$server = $manager->selectServer(new \MongoDB\Driver\ReadPreference('primary'));
+
+configureTargetedFailPoint($server, 'failCommand', ['times' => 1], ['failCommands' => ['aggregate'], 'closeConnection' => true]);
 
 $observer = new Observer;
 MongoDB\Driver\Monitoring\addSubscriber($observer);
 
 throws(
-    function() use ($manager) {
+    function() use ($server) {
         $command = new MongoDB\Driver\Command([
             'aggregate' => COLLECTION_NAME,
             'pipeline' => [
@@ -40,7 +43,7 @@ throws(
             ],
             'cursor' => (object) [],
         ]);
-        $manager->executeReadCommand(DATABASE_NAME, $command);
+        $server->executeReadCommand(DATABASE_NAME, $command);
     },
     \MongoDB\Driver\Exception\ConnectionTimeoutException::class
 );

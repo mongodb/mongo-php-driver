@@ -8,9 +8,9 @@ MongoDB\Driver\Cursor destruct should kill a live cursor
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-function getNumOpenCursors(MongoDB\Driver\Manager $manager)
+function getNumOpenCursors(MongoDB\Driver\Server $server)
 {
-    $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(array('serverStatus' => 1)));
+    $cursor = $server->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(array('serverStatus' => 1)));
     $result = current($cursor->toArray());
     if (isset($result->metrics->cursor->open->total)) {
         return $result->metrics->cursor->open->total;
@@ -25,22 +25,25 @@ function getNumOpenCursors(MongoDB\Driver\Manager $manager)
 
 $manager = new MongoDB\Driver\Manager(URI);
 
+// Select a specific server for future operations to avoid mongos switching in sharded clusters
+$server = $manager->selectServer(new \MongoDB\Driver\ReadPreference('primary'));
+
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1));
 $bulk->insert(array('_id' => 2));
 $bulk->insert(array('_id' => 3));
-$manager->executeBulkWrite(NS, $bulk);
+$server->executeBulkWrite(NS, $bulk);
 
-$numOpenCursorsBeforeQuery = getNumOpenCursors($manager);
+$numOpenCursorsBeforeQuery = getNumOpenCursors($server);
 
-$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array(), array('batchSize' => 2)));
+$cursor = $server->executeQuery(NS, new MongoDB\Driver\Query(array(), array('batchSize' => 2)));
 
 var_dump($cursor->isDead());
-var_dump(getNumOpenCursors($manager) == $numOpenCursorsBeforeQuery + 1);
+var_dump(getNumOpenCursors($server) == $numOpenCursorsBeforeQuery + 1);
 
 unset($cursor);
 
-var_dump(getNumOpenCursors($manager) == $numOpenCursorsBeforeQuery);
+var_dump(getNumOpenCursors($server) == $numOpenCursorsBeforeQuery);
 
 ?>
 ===DONE===
