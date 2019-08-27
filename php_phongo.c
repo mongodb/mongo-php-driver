@@ -2049,15 +2049,16 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 
 static void php_phongo_mongoc_ssl_opts_from_uri(mongoc_ssl_opt_t* ssl_opt, mongoc_uri_t* uri, bool* any_ssl_option_set)
 {
-	const char* pem_file = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_SSLCLIENTCERTIFICATEKEYFILE, NULL);
-	const char* pem_pwd  = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_SSLCLIENTCERTIFICATEKEYPASSWORD, NULL);
-	const char* ca_file  = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_SSLCERTIFICATEAUTHORITYFILE, NULL);
+	bool insecure        = mongoc_uri_get_option_as_bool(uri, MONGOC_URI_TLSINSECURE, false);
+	const char* pem_file = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_TLSCERTIFICATEKEYFILE, NULL);
+	const char* pem_pwd  = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_TLSCERTIFICATEKEYFILEPASSWORD, NULL);
+	const char* ca_file  = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_TLSCAFILE, NULL);
 
 	ssl_opt->pem_file               = pem_file ? estrdup(pem_file) : NULL;
 	ssl_opt->pem_pwd                = pem_pwd ? estrdup(pem_pwd) : NULL;
 	ssl_opt->ca_file                = ca_file ? estrdup(ca_file) : NULL;
-	ssl_opt->weak_cert_validation   = mongoc_uri_get_option_as_bool(uri, MONGOC_URI_SSLALLOWINVALIDCERTIFICATES, false);
-	ssl_opt->allow_invalid_hostname = mongoc_uri_get_option_as_bool(uri, MONGOC_URI_SSLALLOWINVALIDHOSTNAMES, false);
+	ssl_opt->weak_cert_validation   = mongoc_uri_get_option_as_bool(uri, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES, insecure);
+	ssl_opt->allow_invalid_hostname = mongoc_uri_get_option_as_bool(uri, MONGOC_URI_TLSALLOWINVALIDHOSTNAMES, insecure);
 
 	/* Boolean options default to false, so we cannot consider them for
 	 * any_ssl_option_set. This isn't actually a problem as libmongoc will
@@ -2069,14 +2070,14 @@ static void php_phongo_mongoc_ssl_opts_from_uri(mongoc_ssl_opt_t* ssl_opt, mongo
 	}
 }
 
-static inline char* php_phongo_fetch_ssl_opt_string(zval* zoptions, const char* key, int key_len)
+static inline char* php_phongo_fetch_ssl_opt_string(zval* zoptions, const char* key)
 {
 	int       plen;
 	zend_bool pfree;
 	char*     pval;
 	char*     value;
 
-	pval  = php_array_fetchl_string(zoptions, key, key_len, &plen, &pfree);
+	pval  = php_array_fetch_string(zoptions, key, &plen, &pfree);
 	value = pfree ? pval : estrndup(pval, plen);
 
 	return value;
@@ -2119,51 +2120,14 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptio
 		php_phongo_mongoc_ssl_opts_from_uri(ssl_opt, uri, &any_ssl_option_set);
 	}
 
-	/* Check canonical option names first and fall back to SSL context options
-	 * for backwards compatibility. */
-	if (php_array_existsc(zoptions, "allow_invalid_hostname")) {
-		ssl_opt->allow_invalid_hostname = php_array_fetchc_bool(zoptions, "allow_invalid_hostname");
-		any_ssl_option_set              = true;
-	}
-
-	if (php_array_existsc(zoptions, "weak_cert_validation")) {
-		ssl_opt->weak_cert_validation = php_array_fetchc_bool(zoptions, "weak_cert_validation");
-		any_ssl_option_set            = true;
-	} else if (php_array_existsc(zoptions, "allow_self_signed")) {
-		ssl_opt->weak_cert_validation = php_array_fetchc_bool(zoptions, "allow_self_signed");
-		any_ssl_option_set            = true;
-	}
-
 #define PHONGO_SSL_OPTION_SWAP_STRING(o, n) \
 	if ((o)) {                              \
 		efree((char*) (o));                 \
 	}                                       \
-	(o) = php_phongo_fetch_ssl_opt_string(zoptions, ZEND_STRL((n)));
+	(o) = php_phongo_fetch_ssl_opt_string(zoptions, n);
 
-	if (php_array_existsc(zoptions, "pem_file")) {
-		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->pem_file, "pem_file");
-		any_ssl_option_set = true;
-	} else if (php_array_existsc(zoptions, "local_cert")) {
-		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->pem_file, "local_cert");
-		any_ssl_option_set = true;
-	}
-
-	if (php_array_existsc(zoptions, "pem_pwd")) {
-		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->pem_pwd, "pem_pwd");
-		any_ssl_option_set = true;
-	} else if (php_array_existsc(zoptions, "passphrase")) {
-		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->pem_pwd, "passphrase");
-		any_ssl_option_set = true;
-	}
-
-	if (php_array_existsc(zoptions, "ca_file")) {
-		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->ca_file, "ca_file");
-		any_ssl_option_set = true;
-	} else if (php_array_existsc(zoptions, "cafile")) {
-		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->ca_file, "cafile");
-		any_ssl_option_set = true;
-	}
-
+	/* Apply driver options that don't have a corresponding URI option. These
+	 * are set directly on the SSL options struct. */
 	if (php_array_existsc(zoptions, "ca_dir")) {
 		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->ca_dir, "ca_dir");
 		any_ssl_option_set = true;
@@ -2210,6 +2174,92 @@ static void php_phongo_free_ssl_opt(mongoc_ssl_opt_t* ssl_opt)
 	}
 
 	efree(ssl_opt);
+}
+
+static inline bool php_phongo_apply_driver_option_to_uri(mongoc_uri_t* uri, zval* zoptions, const char* driverOptionKey, const char* optionKey)
+{
+	bool  ret;
+	char* value;
+
+	value = php_phongo_fetch_ssl_opt_string(zoptions, driverOptionKey);
+	ret = mongoc_uri_set_option_as_utf8(uri, optionKey, value);
+	efree(value);
+
+	return ret;
+}
+
+static bool php_phongo_apply_driver_options_to_uri(mongoc_uri_t* uri, zval* zoptions TSRMLS_DC)
+{
+	if (!zoptions) {
+		return true;
+	}
+
+	/* Map TLS driver options to the canonical tls options in the URI. */
+	if (php_array_existsc(zoptions, "allow_invalid_hostname")) {
+		if (!mongoc_uri_set_option_as_bool(uri, MONGOC_URI_TLSALLOWINVALIDHOSTNAMES, php_array_fetchc_bool(zoptions, "allow_invalid_hostname"))) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "allow_invalid_hostname");
+
+			return false;
+		}
+	}
+
+	if (php_array_existsc(zoptions, "weak_cert_validation")) {
+		if (!mongoc_uri_set_option_as_bool(uri, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES, php_array_fetchc_bool(zoptions, "weak_cert_validation"))) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "weak_cert_validation");
+
+			return false;
+		}
+	} else if (php_array_existsc(zoptions, "allow_self_signed")) {
+		if (!mongoc_uri_set_option_as_bool(uri, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES, php_array_fetchc_bool(zoptions, "allow_self_signed"))) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "allow_self_signed");
+
+			return false;
+		}
+	}
+
+	if (php_array_existsc(zoptions, "pem_file")) {
+		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "pem_file", MONGOC_URI_TLSCERTIFICATEKEYFILE)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "pem_file");
+
+			return false;
+		}
+	} else if (php_array_existsc(zoptions, "local_cert")) {
+		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "local_cert", MONGOC_URI_TLSCERTIFICATEKEYFILE)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "local_cert");
+
+			return false;
+		}
+	}
+
+	if (php_array_existsc(zoptions, "pem_pwd")) {
+		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "pem_pwd", MONGOC_URI_TLSCERTIFICATEKEYFILEPASSWORD)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "pem_pwd");
+
+			return false;
+		}
+	} else if (php_array_existsc(zoptions, "passphrase")) {
+		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "passphrase", MONGOC_URI_TLSCERTIFICATEKEYFILEPASSWORD)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "passphrase");
+
+			return false;
+		}
+	}
+
+	if (php_array_existsc(zoptions, "ca_file")) {
+		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "ca_file", MONGOC_URI_TLSCAFILE)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "ca_file");
+
+			return false;
+		}
+	} else if (php_array_existsc(zoptions, "cafile")) {
+		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "cafile", MONGOC_URI_TLSCAFILE)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "cafile");
+
+			return false;
+		}
+	}
+
+	return true;
 }
 #endif
 
@@ -2599,6 +2649,11 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	}
 
 #ifdef MONGOC_ENABLE_SSL
+	if (!php_phongo_apply_driver_options_to_uri(uri, driverOptions TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		goto cleanup;
+	}
+
 	ssl_opt = php_phongo_make_ssl_opt(uri, driverOptions TSRMLS_CC);
 
 	/* An exception may be thrown during SSL option creation */
