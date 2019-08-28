@@ -367,7 +367,7 @@ static PHP_METHOD(Session, startTransaction)
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "startTransaction")
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a", &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a!", &options) == FAILURE) {
 		return;
 	}
 
