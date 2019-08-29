@@ -310,7 +310,7 @@ you must rebuild the extension after updating `phongo_version.h`.
 > `PHP_MONGODB_VERSION`, increment the last digit of
 > `PHP_MONGODB_VERSION_DESC`.
 
-### Publish PECL package
+### Build PECL package
 
 Create the PECL package description file with `make package.xml`. This creates
 a `package.xml` file from a template. Version, author, and file information will
@@ -322,10 +322,6 @@ After copying release notes, use `make package` to create the package file (e.g.
 ```
 $ pecl install -f mongodb-X.Y.Z.tgz
 ```
-
-The PECL package may be published via the
-[Release Upload](https://pecl.php.net/release-upload.php) form. You will have
-one chance to confirm the package information after uploading.
 
 ### Commit version update and release notes
 
@@ -381,6 +377,12 @@ $ git commit -m "Back to -dev" phongo_version.h
 $ git push
 $ git push --tags
 ```
+
+### Release PECL package
+
+The PECL package may be published via the
+[Release Upload](https://pecl.php.net/release-upload.php) form. You will have
+one chance to confirm the package information after uploading.
 
 ### Merge the maintenance branch up to master
 
