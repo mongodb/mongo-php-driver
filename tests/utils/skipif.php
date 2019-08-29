@@ -77,6 +77,17 @@ function skip_if_not_replica_set_or_mongos_with_replica_set()
     is_replica_set(URI) or is_mongos_with_replica_set(URI) or exit('skip topology is not a replica set or sharded cluster with replica set');
 }
 
+function skip_if_no_transactions()
+{
+    if (is_mongos_with_replica_set(URI)) {
+        skip_if_server_version('<', '4.2');
+    } elseif (is_replica_set(URI)) {
+        skip_if_server_version('<', '4.0');
+    } else {
+        exit('skip topology does not support transactions');
+    }
+}
+
 /**
  * Skips the test if the topology has no arbiter.
  */
