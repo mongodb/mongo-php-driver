@@ -545,6 +545,8 @@ function destroyTemporaryMongoInstance($id = NULL)
 
 function severityToString($type) {
     switch($type) {
+    case E_RECOVERABLE_ERROR:
+        return "E_RECOVERABLE_ERROR";
     case E_WARNING:
         return "E_WARNING";
     case E_NOTICE:
@@ -590,26 +592,33 @@ function raises($function, $type, $infunction = null) {
 function throws($function, $exceptionname, $infunction = null) {
     try {
         $function();
+    } catch (Throwable $e) {
     } catch(Exception $e) {
-        $message = str_replace(array("\n", "\r"), ' ', $e->getMessage());
-        if ($e instanceof $exceptionname) {
-            if ($infunction) {
-                $trace = $e->getTrace();
-                $function = $trace[0]["function"];
-                if (strcasecmp($function, $infunction) == 0) {
-                    printf("OK: Got %s thrown from %s\n", $exceptionname, $infunction);
-                } else {
-                    printf("ALMOST: Got %s - but was thrown in %s, not %s (%s)\n", $exceptionname, $function, $infunction, $message);
-                }
-                return $e->getMessage();
-            }
-            printf("OK: Got %s\n", $exceptionname);
-        } else {
-            printf("ALMOST: Got %s (%s) - expected %s\n", get_class($e), $message, $exceptionname);
-        }
-        return $e->getMessage();
     }
-    echo "FAILED: Expected $exceptionname thrown, but no exception thrown!\n";
+
+    if ($e === null) {
+        echo "FAILED: Expected $exceptionname thrown, but no exception thrown!\n";
+        return;
+    }
+
+    $message = str_replace(array("\n", "\r"), ' ', $e->getMessage());
+    if ($e instanceof $exceptionname) {
+        if ($infunction) {
+            $trace = $e->getTrace();
+            $function = $trace[0]["function"];
+            if (strcasecmp($function, $infunction) == 0) {
+                printf("OK: Got %s thrown from %s\n", $exceptionname, $infunction);
+            } else {
+                printf("ALMOST: Got %s - but was thrown in %s, not %s (%s)\n", $exceptionname, $function, $infunction, $message);
+            }
+            return $e->getMessage();
+        }
+        printf("OK: Got %s\n", $exceptionname);
+    } else {
+        printf("ALMOST: Got %s (%s) - expected %s\n", get_class($e), $message, $exceptionname);
+    }
+
+    return $e->getMessage();
 }
 
 function printServer(Server $server)

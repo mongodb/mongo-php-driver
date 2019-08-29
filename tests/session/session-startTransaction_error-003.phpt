@@ -1,10 +1,11 @@
 --TEST--
-MongoDB\Driver\Session::startTransaction() with wrong argument for options array
+MongoDB\Driver\Session::startTransaction() with wrong argument for options array on PHP 5
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto() ?>
 <?php skip_if_not_replica_set_or_mongos_with_replica_set(); ?>
 <?php skip_if_server_version('<', '4.0'); ?>
+<?php skip_if_php_version('>=', '7.0.0'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -18,14 +19,17 @@ $options = [
 ];
 
 foreach ($options as $txnOptions) {
-    $session->startTransaction($txnOptions);
+    echo raises(function () use ($session, $txnOptions) {
+        $session->startTransaction($txnOptions);
+    }, E_RECOVERABLE_ERROR), "\n";
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Warning: MongoDB\Driver\Session::startTransaction() expects parameter 1 to be array, int%S given in %s on line %d
-
-Warning: MongoDB\Driver\Session::startTransaction() expects parameter 1 to be array, object given in %s on line %d
+OK: Got E_RECOVERABLE_ERROR
+Argument 1 passed to MongoDB\Driver\Session::startTransaction() must be of the type array, int%S given, called in %S
+OK: Got E_RECOVERABLE_ERROR
+Argument 1 passed to MongoDB\Driver\Session::startTransaction() must be of the type array, object given, called in %S
 ===DONE===
