@@ -70,6 +70,14 @@ function skip_if_not_replica_set()
 }
 
 /**
+ * Skips the test if the topology is not a replica set or sharded cluster backed by replica sets
+ */
+function skip_if_not_replica_set_or_mongos_with_replica_set()
+{
+    is_replica_set(URI) or is_mongos_with_replica_set(URI) or exit('skip topology is not a replica set or sharded cluster with replica set');
+}
+
+/**
  * Skips the test if the topology has no arbiter.
  */
 function skip_if_no_arbiter()
