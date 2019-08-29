@@ -32,5 +32,7 @@ object(MongoDB\Driver\Session)#%d (%d) {
   NULL
   ["operationTime"]=>
   NULL
+  ["server"]=>
+  NULL
 }
 ===DONE===

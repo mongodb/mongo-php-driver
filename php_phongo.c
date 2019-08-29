@@ -604,7 +604,7 @@ bool phongo_parse_read_preference(zval* options, zval** zreadPreference TSRMLS_D
  * not NULL, the option will be appended. If zsession is not NULL, it will be
  * assigned to the option. On error, false is returned and an exception is
  * thrown. */
-static bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession TSRMLS_DC) /* {{{ */
+bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession TSRMLS_DC) /* {{{ */
 {
 	zval*                          option = NULL;
 	const mongoc_client_session_t* client_session;

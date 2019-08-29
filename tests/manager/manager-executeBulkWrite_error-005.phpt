@@ -4,7 +4,6 @@ MongoDB\Driver\Manager::executeBulkWrite() WriteResult accessible for network er
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_no_failcommand_failpoint(); ?>
-<?php skip_if_multiple_mongos(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php
@@ -12,7 +11,10 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(URI);
 
-configureFailPoint($manager, 'failCommand', [ 'times' => 1 ], [
+// Select a specific server for future operations to avoid mongos switching in sharded clusters
+$server = $manager->selectServer(new \MongoDB\Driver\ReadPreference('primary'));
+
+configureTargetedFailPoint($server, 'failCommand', [ 'times' => 1 ], [
   'failCommands' => ['delete'],
   'closeConnection' => true,
 ]);
@@ -23,7 +25,7 @@ $bulk->update(['x' => 1], ['$set' => ['y' => 1]]);
 $bulk->delete(['x' => 1]);
 
 try {
-    $manager->executeBulkWrite(NS, $bulk);
+    $server->executeBulkWrite(NS, $bulk);
 } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
     printf("%s(%d): %s\n", get_class($e), $e->getCode(), $e->getMessage());
     $prev = $e->getPrevious();

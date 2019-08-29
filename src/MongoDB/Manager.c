@@ -254,15 +254,28 @@ static void php_phongo_manager_prep_uri_options(zval* options TSRMLS_DC) /* {{{ 
 /* Selects a server for an execute method. If "for_writes" is true, a primary
  * will be selected. Otherwise, a read preference will be used to select the
  * server. If zreadPreference is NULL, the client's read preference will be
- * used.
+ * used. If zsession is a session object in a sharded transaction, the session
+ * will be checked whether it is pinned to a server. If so, that server will be
+ * selected. Otherwise, server selection
  *
  * On success, server_id will be set and the function will return true;
  * otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_manager_select_server(bool for_writes, zval* zreadPreference, mongoc_client_t* client, uint32_t* server_id TSRMLS_DC) /* {{{ */
+static bool php_phongo_manager_select_server(bool for_writes, zval* zreadPreference, zval* zsession, mongoc_client_t* client, uint32_t* server_id TSRMLS_DC) /* {{{ */
 {
-	const mongoc_read_prefs_t*   read_preference = NULL;
 	mongoc_server_description_t* selected_server;
-	bson_error_t                 error = { 0 };
+	const mongoc_read_prefs_t*   read_preference = NULL;
+	bson_error_t                 error           = { 0 };
+
+	if (zsession) {
+		const mongoc_client_session_t* session = Z_SESSION_OBJ_P(zsession)->client_session;
+
+		/* Attempt to fetch server pinned to session */
+		if (mongoc_client_session_get_server_id(session) > 0) {
+			*server_id = mongoc_client_session_get_server_id(session);
+
+			return true;
+		}
+	}
 
 	if (!for_writes) {
 		read_preference = zreadPreference ? phongo_read_preference_from_zval(zreadPreference TSRMLS_CC) : mongoc_client_get_read_prefs(client);
@@ -336,6 +349,7 @@ static PHP_METHOD(Manager, executeCommand)
 	zval*                 options         = NULL;
 	bool                  free_options    = false;
 	zval*                 zreadPreference = NULL;
+	zval*                 zsession        = NULL;
 	uint32_t              server_id       = 0;
 	DECLARE_RETURN_VALUE_USED
 
@@ -347,12 +361,17 @@ static PHP_METHOD(Manager, executeCommand)
 
 	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options TSRMLS_CC);
 
+	if (!phongo_parse_session(options, intern->client, NULL, &zsession TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		goto cleanup;
+	}
+
 	if (!phongo_parse_read_preference(options, &zreadPreference TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
 
-	if (!php_phongo_manager_select_server(false, zreadPreference, intern->client, &server_id TSRMLS_CC)) {
+	if (!php_phongo_manager_select_server(false, zreadPreference, zsession, intern->client, &server_id TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
@@ -376,6 +395,7 @@ static PHP_METHOD(Manager, executeReadCommand)
 	zval*                 options         = NULL;
 	zval*                 zreadPreference = NULL;
 	uint32_t              server_id       = 0;
+	zval*                 zsession        = NULL;
 	DECLARE_RETURN_VALUE_USED
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
@@ -384,12 +404,17 @@ static PHP_METHOD(Manager, executeReadCommand)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
+	if (!phongo_parse_session(options, intern->client, NULL, &zsession TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return;
+	}
+
 	if (!phongo_parse_read_preference(options, &zreadPreference TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		return;
 	}
 
-	if (!php_phongo_manager_select_server(false, zreadPreference, intern->client, &server_id TSRMLS_CC)) {
+	if (!php_phongo_manager_select_server(false, zreadPreference, zsession, intern->client, &server_id TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		return;
 	}
@@ -407,6 +432,7 @@ static PHP_METHOD(Manager, executeWriteCommand)
 	zval*                 command;
 	zval*                 options   = NULL;
 	uint32_t              server_id = 0;
+	zval*                 zsession  = NULL;
 	DECLARE_RETURN_VALUE_USED
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
@@ -415,7 +441,12 @@ static PHP_METHOD(Manager, executeWriteCommand)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	if (!php_phongo_manager_select_server(true, NULL, intern->client, &server_id TSRMLS_CC)) {
+	if (!phongo_parse_session(options, intern->client, NULL, &zsession TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return;
+	}
+
+	if (!php_phongo_manager_select_server(true, NULL, zsession, intern->client, &server_id TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		return;
 	}
@@ -433,6 +464,7 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 	zval*                 command;
 	zval*                 options   = NULL;
 	uint32_t              server_id = 0;
+	zval*                 zsession  = NULL;
 	DECLARE_RETURN_VALUE_USED
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
@@ -441,7 +473,12 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	if (!php_phongo_manager_select_server(true, NULL, intern->client, &server_id TSRMLS_CC)) {
+	if (!phongo_parse_session(options, intern->client, NULL, &zsession TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return;
+	}
+
+	if (!php_phongo_manager_select_server(true, NULL, zsession, intern->client, &server_id TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		return;
 	}
@@ -461,6 +498,7 @@ static PHP_METHOD(Manager, executeQuery)
 	bool                free_options    = false;
 	zval*               zreadPreference = NULL;
 	uint32_t            server_id       = 0;
+	zval*               zsession        = NULL;
 	DECLARE_RETURN_VALUE_USED
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &namespace, &namespace_len, &query, php_phongo_query_ce, &options) == FAILURE) {
@@ -471,12 +509,17 @@ static PHP_METHOD(Manager, executeQuery)
 
 	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options TSRMLS_CC);
 
+	if (!phongo_parse_session(options, intern->client, NULL, &zsession TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		goto cleanup;
+	}
+
 	if (!phongo_parse_read_preference(options, &zreadPreference TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
 
-	if (!php_phongo_manager_select_server(false, zreadPreference, intern->client, &server_id TSRMLS_CC)) {
+	if (!php_phongo_manager_select_server(false, zreadPreference, zsession, intern->client, &server_id TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
@@ -501,6 +544,7 @@ static PHP_METHOD(Manager, executeBulkWrite)
 	zval*                   options      = NULL;
 	bool                    free_options = false;
 	uint32_t                server_id    = 0;
+	zval*                   zsession     = NULL;
 	DECLARE_RETURN_VALUE_USED
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &options) == FAILURE) {
@@ -512,7 +556,12 @@ static PHP_METHOD(Manager, executeBulkWrite)
 
 	options = php_phongo_prep_legacy_option(options, "writeConcern", &free_options TSRMLS_CC);
 
-	if (!php_phongo_manager_select_server(true, NULL, intern->client, &server_id TSRMLS_CC)) {
+	if (!phongo_parse_session(options, intern->client, NULL, &zsession TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		return;
+	}
+
+	if (!php_phongo_manager_select_server(true, NULL, zsession, intern->client, &server_id TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
@@ -628,7 +677,7 @@ static PHP_METHOD(Manager, selectServer)
 		return;
 	}
 
-	if (!php_phongo_manager_select_server(false, zreadPreference, intern->client, &server_id TSRMLS_CC)) {
+	if (!php_phongo_manager_select_server(false, zreadPreference, NULL, intern->client, &server_id TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		return;
 	}

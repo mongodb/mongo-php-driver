@@ -56,7 +56,7 @@ echo throws(function() use ($manager) {
         }
 
         if ($numAwaitAttempts === 5) {
-            $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command([
+            $cursor->getServer()->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command([
                 'killCursors' => COLLECTION_NAME,
                 'cursors' => [ $cursor->getId() ],
             ]));

@@ -221,6 +221,35 @@ function is_mongos($uri)
 }
 
 /**
+ * Checks that the topology is a sharded cluster using a replica set
+ */
+function is_mongos_with_replica_set($uri)
+{
+    if (! is_mongos($uri)) {
+        return false;
+    }
+
+    $cursor = get_primary_server($uri)->executeQuery(
+        'config.shards',
+        new \MongoDB\Driver\Query([], ['limit' => 1])
+    );
+
+    $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
+    $document = current($cursor->toArray());
+
+    if (! $document) {
+        return false;
+    }
+
+    /**
+     * Use regular expression to distinguish between standalone or replicaset:
+     * Without a replicaset: "host" : "localhost:4100"
+     * With a replicaset: "host" : "dec6d8a7-9bc1-4c0e-960c-615f860b956f/localhost:4400,localhost:4401"
+     */
+    return preg_match('@^.*/.*:\d+@', $document['host']);
+}
+
+/**
  * Checks that the topology is a replica set.
  *
  * @param string $uri
@@ -658,6 +687,20 @@ function def($arr) {
 
 function configureFailPoint(Manager $manager, $failPoint, $mode, array $data = [])
 {
+    $doc = [
+        'configureFailPoint' => $failPoint,
+        'mode'               => $mode,
+    ];
+    if ($data) {
+        $doc['data'] = $data;
+    }
+
+    $cmd = new Command($doc);
+    $manager->executeCommand('admin', $cmd);
+}
+
+function configureTargetedFailPoint(Server $server, $failPoint, $mode, array $data = [])
+{
     $doc = array(
         'configureFailPoint' => $failPoint,
         'mode'               => $mode,
@@ -667,12 +710,12 @@ function configureFailPoint(Manager $manager, $failPoint, $mode, array $data = [
     }
 
     $cmd = new Command($doc);
-    $manager->executeCommand('admin', $cmd);
+    $server->executeCommand('admin', $cmd);
 }
 
-function failMaxTimeMS(Manager $manager)
+function failMaxTimeMS(Server $server)
 {
-    configureFailPoint($manager, 'maxTimeAlwaysTimeOut', [ 'times' => 1 ]);
+    configureTargetedFailPoint($server, 'maxTimeAlwaysTimeOut', [ 'times' => 1 ]);
 }
 
 function getMOPresetBase() {

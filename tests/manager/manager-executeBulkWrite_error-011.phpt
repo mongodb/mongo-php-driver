@@ -3,7 +3,7 @@ MongoDB\Driver\Manager::executeBulkWrite() BulkWriteException inherits labels fr
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
-<?php skip_if_not_replica_set(); ?>
+<?php skip_if_not_replica_set_or_mongos_with_replica_set(); ?>
 <?php skip_if_server_version('<', '4.0'); ?>
 <?php skip_if_no_failcommand_failpoint(); ?>
 <?php skip_if_not_clean(); ?>
@@ -13,15 +13,18 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(URI);
 
+// Select a specific server for future operations to avoid mongos switching in sharded clusters
+$server = $manager->selectServer(new \MongoDB\Driver\ReadPreference('primary'));
+
 // Create collection since it can't be (automatically) done within the transaction
 $majority = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY);
-$manager->executeWriteCommand(
+$server->executeWriteCommand(
     DATABASE_NAME,
     new MongoDB\Driver\Command(['create' => COLLECTION_NAME]),
     ['writeConcern' => $majority]
 );
 
-configureFailPoint($manager, 'failCommand', [ 'times' => 1 ], [
+configureTargetedFailPoint($server, 'failCommand', [ 'times' => 1 ], [
   'failCommands' => ['insert'],
   'closeConnection' => true,
 ]);
@@ -33,7 +36,7 @@ $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(['x' => 1]);
 
 try {
-    $manager->executeBulkWrite(NS, $bulk, ['session' => $session]);
+    $server->executeBulkWrite(NS, $bulk, ['session' => $session]);
 } catch (MongoDB\Driver\Exception\BulkWriteException $e) {
     printf("%s(%d): %s\n", get_class($e), $e->getCode(), $e->getMessage());
     var_dump($e->hasErrorLabel('TransientTransactionError'));

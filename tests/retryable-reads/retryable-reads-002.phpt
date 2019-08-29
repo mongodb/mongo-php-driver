@@ -27,18 +27,21 @@ class Observer implements MongoDB\Driver\Monitoring\CommandSubscriber
 
 $manager = new MongoDB\Driver\Manager(URI, ['retryReads' => true]);
 
+// Select a specific server for future operations to avoid mongos switching in sharded clusters
+$server = $manager->selectServer(new \MongoDB\Driver\ReadPreference('primary'));
+
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(['x' => 1]);
 $bulk->insert(['x' => 2]);
 
-$manager->executeBulkWrite(NS, $bulk);
+$server->executeBulkWrite(NS, $bulk);
 
-configureFailPoint($manager, 'failCommand', ['times' => 1], ['failCommands' => ['find'], 'closeConnection' => true]);
+configureTargetedFailPoint($server, 'failCommand', ['times' => 1], ['failCommands' => ['find'], 'closeConnection' => true]);
 
 $observer = new Observer;
 MongoDB\Driver\Monitoring\addSubscriber($observer);
 
-$cursor = $manager->executeQuery(NS, new \MongoDB\Driver\Query(['x' => 1]));
+$cursor = $server->executeQuery(NS, new \MongoDB\Driver\Query(['x' => 1]));
 var_dump(iterator_count($cursor));
 
 MongoDB\Driver\Monitoring\removeSubscriber($observer);
