@@ -126,11 +126,12 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator* iter T
 		php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
 	} else {
 		bson_error_t error = { 0 };
+		const bson_t* doc = NULL;
 
-		if (mongoc_cursor_error(cursor->cursor, &error)) {
+		if (mongoc_cursor_error_document(cursor->cursor, &error, &doc)) {
 			/* Intentionally not destroying the cursor as it will happen
 			 * naturally now that there are no more results */
-			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			phongo_throw_exception_from_bson_error_t_and_reply(&error, doc TSRMLS_CC);
 		}
 	}
 
