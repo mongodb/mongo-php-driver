@@ -2,6 +2,7 @@
 MongoDB\Driver\Server::executeQuery() with invalid options
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_not_live(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
