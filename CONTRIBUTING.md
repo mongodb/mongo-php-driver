@@ -174,8 +174,10 @@ make test-bootstrap
 
 ## Updating libmongoc and libbson
 
-The PHP driver uses a bundled version of libmongoc and libbson. If a new version
-of libmongoc is available, the submodule needs to be updated.
+The PHP driver can use either system libraries or bundled versions of libmongoc
+and libbson. If a new version of libmongoc is available, the submodule and build
+configuration will need to be updated to reflect the new sources and/or package
+version.
 
 ### Update libmongoc to the latest version
 
@@ -198,13 +200,50 @@ $ make libmongoc-version-current
 Alternatively, the `build/calc_release_version.py` script in libmongoc can be
 executed directly.
 
-### Test and commit your changes
+### Update sources in build configurations
 
-Once you have verified that all tests pass, commit the changes to the submodule
-and `src/LIBMONGOC_VERSION_CURRENT`:
+The Autotools and Windows build configurations (`config.m4` and `config.w32`,
+respectively) define several variables (e.g. `PHP_MONGODB_MONGOC_SOURCES`) that
+collectively enumerate all of the the sources within the libmongoc submodule to
+include in a bundled build.
+
+These variables should each have a shell command in a preceding comment, which
+should be run to regenerate that particular list of source files. In the event
+that either libmongoc or libbson introduce a new source directory, that will
+need to be manually added (follow prior art).
+
+### Update package dependencies
+
+The Autotools configuration additionally includes some `pkg-config` commands for
+using libmongoc and libbson as system libraries (in lieu of a bundled build).
+When bumping the libmongoc version, be sure to update the version check _and_
+error message in the `pkg-config` blocks for both libmongoc and libbson.
+
+For example, the following lines might be updated for libmongoc:
 
 ```
-$ git commit -m "Bump libmongoc to 1.15.0" src/LIBMONGOC_VERSION_CURRENT src/libmongoc
+if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.15.0; then
+
+...
+
+AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.15.0)
+```
+
+### Update sources in PECL package generation script
+
+If either libmongoc or libbson introduce a new source directory, that may also
+require updating the glob patterns in the `bin/prep-release.php` script to
+ensure new source files will be included in any generated PECL package.
+
+### Test and commit your changes
+
+Verify that the upgrade was successful by ensuring that the driver can compile
+using both the bundled sources and system libraries for libmongoc and libbson,
+and by ensuring that the test suite passes. Once done, commit the changes to all
+of the above files/paths. For example:
+
+```
+$ git commit -m "Bump libmongoc to 1.15.0" config.m4 config.w32 src/libmongoc src/LIBMONGOC_VERSION_CURRENT
 ```
 
 ## Releasing
