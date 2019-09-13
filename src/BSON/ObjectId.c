@@ -198,11 +198,11 @@ static PHP_METHOD(ObjectId, serialize)
 	}
 
 #if PHP_VERSION_ID >= 70000
-	array_init_size(&retval, 2);
+	array_init_size(&retval, 1);
 	ADD_ASSOC_STRINGL(&retval, "oid", intern->oid, 24);
 #else
 	ALLOC_INIT_ZVAL(retval);
-	array_init_size(retval, 2);
+	array_init_size(retval, 1);
 	ADD_ASSOC_STRINGL(retval, "oid", intern->oid, 24);
 #endif
 
