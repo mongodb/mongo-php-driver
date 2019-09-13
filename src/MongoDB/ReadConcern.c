@@ -16,6 +16,12 @@
 
 #include <php.h>
 #include <Zend/zend_interfaces.h>
+#include <ext/standard/php_var.h>
+#if PHP_VERSION_ID >= 70000
+#include <zend_smart_str.h>
+#else
+#include <ext/standard/php_smart_str.h>
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -197,6 +203,102 @@ static PHP_METHOD(ReadConcern, bsonSerialize)
 	convert_to_object(return_value);
 } /* }}} */
 
+/* {{{ proto string MongoDB\Driver\ReadConcern::serialize()
+*/
+static PHP_METHOD(ReadConcern, serialize)
+{
+	php_phongo_readconcern_t* intern;
+	ZVAL_RETVAL_TYPE          retval;
+	php_serialize_data_t      var_hash;
+	smart_str                 buf = { 0 };
+	const char*               level;
+
+	intern = Z_READCONCERN_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if (!intern->read_concern) {
+		return;
+	}
+
+	level = mongoc_read_concern_get_level(intern->read_concern);
+
+	if (!level) {
+		PHONGO_RETURN_STRING("");
+	}
+
+#if PHP_VERSION_ID >= 70000
+	array_init_size(&retval, 1);
+	ADD_ASSOC_STRING(&retval, "level", level);
+#else
+	ALLOC_INIT_ZVAL(retval);
+	array_init_size(retval, 1);
+	ADD_ASSOC_STRING(retval, "level", level);
+#endif
+
+	PHP_VAR_SERIALIZE_INIT(var_hash);
+	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
+	smart_str_0(&buf);
+	PHP_VAR_SERIALIZE_DESTROY(var_hash);
+
+	PHONGO_RETVAL_SMART_STR(buf);
+
+	smart_str_free(&buf);
+	zval_ptr_dtor(&retval);
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\ReadConcern::unserialize(string $serialized)
+*/
+static PHP_METHOD(ReadConcern, unserialize)
+{
+	php_phongo_readconcern_t* intern;
+	zend_error_handling       error_handling;
+	char*                     serialized;
+	phongo_zpp_char_len       serialized_len;
+#if PHP_VERSION_ID >= 70000
+	zval props;
+#else
+	zval* props;
+#endif
+	php_unserialize_data_t var_hash;
+
+	intern = Z_READCONCERN_OBJ_P(getThis());
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &serialized, &serialized_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	if (!serialized_len) {
+		return;
+	}
+
+#if PHP_VERSION_ID < 70000
+	ALLOC_INIT_ZVAL(props);
+#endif
+	PHP_VAR_UNSERIALIZE_INIT(var_hash);
+	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
+		zval_ptr_dtor(&props);
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s unserialization failed", ZSTR_VAL(php_phongo_readconcern_ce->name));
+
+		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+		return;
+	}
+	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+
+#if PHP_VERSION_ID >= 70000
+	php_phongo_readconcern_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
+#else
+	php_phongo_readconcern_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
+#endif
+	zval_ptr_dtor(&props);
+} /* }}} */
+
 /* {{{ MongoDB\Driver\ReadConcern function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, level)
@@ -204,6 +306,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern_unserialize, 0, 0, 1)
+	ZEND_ARG_INFO(0, serialized)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern_void, 0, 0, 0)
@@ -216,6 +322,8 @@ static zend_function_entry php_phongo_readconcern_me[] = {
 	PHP_ME(ReadConcern, getLevel, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadConcern, isDefault, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadConcern, bsonSerialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ReadConcern, serialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ReadConcern, unserialize, ai_ReadConcern_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
 	/* clang-format on */
 };
@@ -287,9 +395,9 @@ void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_readconcern_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_readconcern_ce->create_object = php_phongo_readconcern_create_object;
 	PHONGO_CE_FINAL(php_phongo_readconcern_ce);
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_readconcern_ce);
 
 	zend_class_implements(php_phongo_readconcern_ce TSRMLS_CC, 1, php_phongo_serializable_ce);
+	zend_class_implements(php_phongo_readconcern_ce TSRMLS_CC, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_readconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_readconcern.get_debug_info = php_phongo_readconcern_get_debug_info;
