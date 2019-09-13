@@ -375,6 +375,26 @@ static PHP_METHOD(ReadPreference, getTagSets)
 	}
 } /* }}} */
 
+static const char* php_phongo_readpreference_get_mode_string(mongoc_read_mode_t mode) /* {{{ */
+{
+	switch (mode) {
+		case MONGOC_READ_PRIMARY:
+			return "primary";
+		case MONGOC_READ_PRIMARY_PREFERRED:
+			return "primaryPreferred";
+		case MONGOC_READ_SECONDARY:
+			return "secondary";
+		case MONGOC_READ_SECONDARY_PREFERRED:
+			return "secondaryPreferred";
+		case MONGOC_READ_NEAREST:
+			return "nearest";
+		default: /* Do nothing */
+			break;
+	}
+
+	return NULL;
+} /* }}} */
+
 static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readpreference_t* intern;
@@ -393,26 +413,7 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bo
 
 	tags = mongoc_read_prefs_get_tags(intern->read_preference);
 	mode = mongoc_read_prefs_get_mode(intern->read_preference);
-
-	switch (mode) {
-		case MONGOC_READ_PRIMARY:
-			modeString = "primary";
-			break;
-		case MONGOC_READ_PRIMARY_PREFERRED:
-			modeString = "primaryPreferred";
-			break;
-		case MONGOC_READ_SECONDARY:
-			modeString = "secondary";
-			break;
-		case MONGOC_READ_SECONDARY_PREFERRED:
-			modeString = "secondaryPreferred";
-			break;
-		case MONGOC_READ_NEAREST:
-			modeString = "nearest";
-			break;
-		default: /* Do nothing */
-			break;
-	}
+	modeString = php_phongo_readpreference_get_mode_string(mode);
 
 	if (modeString) {
 #if PHP_VERSION_ID >= 70000
@@ -502,27 +503,8 @@ static PHP_METHOD(ReadPreference, serialize)
 
 	tags                = mongoc_read_prefs_get_tags(intern->read_preference);
 	mode                = mongoc_read_prefs_get_mode(intern->read_preference);
+	modeString          = php_phongo_readpreference_get_mode_string(mode);
 	maxStalenessSeconds = mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference);
-
-	switch (mode) {
-		case MONGOC_READ_PRIMARY:
-			modeString = "primary";
-			break;
-		case MONGOC_READ_PRIMARY_PREFERRED:
-			modeString = "primaryPreferred";
-			break;
-		case MONGOC_READ_SECONDARY:
-			modeString = "secondary";
-			break;
-		case MONGOC_READ_SECONDARY_PREFERRED:
-			modeString = "secondaryPreferred";
-			break;
-		case MONGOC_READ_NEAREST:
-			modeString = "nearest";
-			break;
-		default: /* Do nothing */
-			break;
-	}
 
 #if PHP_VERSION_ID >= 70000
 	array_init_size(&retval, 3);
