@@ -1385,7 +1385,7 @@ void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t
 } /* }}} */
 /* }}} */
 
-static mongoc_uri_t* php_phongo_make_uri(const char* uri_string, bson_t* options TSRMLS_DC) /* {{{ */
+static mongoc_uri_t* php_phongo_make_uri(const char* uri_string TSRMLS_DC) /* {{{ */
 {
 	mongoc_uri_t* uri;
 	bson_error_t  error = { 0 };
@@ -2654,7 +2654,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		goto cleanup;
 	}
 
-	if (!(uri = php_phongo_make_uri(uri_string, &bson_options TSRMLS_CC))) {
+	if (!(uri = php_phongo_make_uri(uri_string TSRMLS_CC))) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
