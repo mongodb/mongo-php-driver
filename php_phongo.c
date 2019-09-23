@@ -1769,6 +1769,7 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	bson_iter_t                iter;
 	mongoc_read_prefs_t*       new_rp;
 	const mongoc_read_prefs_t* old_rp;
+	bool                       ignore_slaveok = false;
 
 	if (!(old_rp = mongoc_uri_get_read_prefs_t(uri))) {
 		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "mongoc_uri_t does not have a read preference");
@@ -1786,7 +1787,7 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	while (bson_iter_next(&iter)) {
 		const char* key = bson_iter_key(&iter);
 
-		if (!strcasecmp(key, MONGOC_URI_SLAVEOK)) {
+		if (!ignore_slaveok && !strcasecmp(key, MONGOC_URI_SLAVEOK)) {
 			if (!BSON_ITER_HOLDS_BOOL(&iter)) {
 				PHONGO_URI_INVALID_TYPE(iter, "boolean");
 				mongoc_read_prefs_destroy(new_rp);
@@ -1827,6 +1828,8 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 
 				return false;
 			}
+
+			ignore_slaveok = true;
 		}
 
 		if (!strcasecmp(key, MONGOC_URI_READPREFERENCETAGS)) {
@@ -1938,6 +1941,7 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	bson_iter_t                   iter;
 	mongoc_write_concern_t*       new_wc;
 	const mongoc_write_concern_t* old_wc;
+	bool                          ignore_safe = false;
 
 	if (!(old_wc = mongoc_uri_get_write_concern(uri))) {
 		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "mongoc_uri_t does not have a write concern");
@@ -1955,7 +1959,7 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	while (bson_iter_next(&iter)) {
 		const char* key = bson_iter_key(&iter);
 
-		if (!strcasecmp(key, MONGOC_URI_SAFE)) {
+		if (!ignore_safe && !strcasecmp(key, MONGOC_URI_SAFE)) {
 			if (!BSON_ITER_HOLDS_BOOL(&iter)) {
 				PHONGO_URI_INVALID_TYPE(iter, "boolean");
 				mongoc_write_concern_destroy(new_wc);
@@ -2035,6 +2039,8 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 
 				return false;
 			}
+
+			ignore_safe = true;
 		}
 	}
 
