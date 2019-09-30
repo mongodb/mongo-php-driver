@@ -1385,7 +1385,7 @@ void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t
 } /* }}} */
 /* }}} */
 
-static mongoc_uri_t* php_phongo_make_uri(const char* uri_string, bson_t* options TSRMLS_DC) /* {{{ */
+static mongoc_uri_t* php_phongo_make_uri(const char* uri_string TSRMLS_DC) /* {{{ */
 {
 	mongoc_uri_t* uri;
 	bson_error_t  error = { 0 };
@@ -1737,25 +1737,25 @@ static bool php_phongo_apply_rc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	}
 
 	/* Return early if there are no options to apply */
-	if (bson_empty0(options)) {
-		return true;
-	}
-
-	if (!bson_iter_init_find_case(&iter, options, MONGOC_URI_READCONCERNLEVEL)) {
+	if (bson_empty0(options) || !bson_iter_init(&iter, options)) {
 		return true;
 	}
 
 	new_rc = mongoc_read_concern_copy(old_rc);
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READCONCERNLEVEL)) {
-		if (!BSON_ITER_HOLDS_UTF8(&iter)) {
-			PHONGO_URI_INVALID_TYPE(iter, "string");
-			mongoc_read_concern_destroy(new_rc);
+	while (bson_iter_next(&iter)) {
+		const char* key = bson_iter_key(&iter);
 
-			return false;
+		if (!strcasecmp(key, MONGOC_URI_READCONCERNLEVEL)) {
+			if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "string");
+				mongoc_read_concern_destroy(new_rc);
+
+				return false;
+			}
+
+			mongoc_read_concern_set_level(new_rc, bson_iter_utf8(&iter, NULL));
 		}
-
-		mongoc_read_concern_set_level(new_rc, bson_iter_utf8(&iter, NULL));
 	}
 
 	mongoc_uri_set_read_concern(uri, new_rc);
@@ -1769,6 +1769,7 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	bson_iter_t                iter;
 	mongoc_read_prefs_t*       new_rp;
 	const mongoc_read_prefs_t* old_rp;
+	bool                       ignore_slaveok = false;
 
 	if (!(old_rp = mongoc_uri_get_read_prefs_t(uri))) {
 		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "mongoc_uri_t does not have a read preference");
@@ -1777,91 +1778,129 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	}
 
 	/* Return early if there are no options to apply */
-	if (bson_empty0(options)) {
-		return true;
-	}
-
-	if (!bson_iter_init_find_case(&iter, options, MONGOC_URI_SLAVEOK) &&
-		!bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCE) &&
-		!bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCETAGS) &&
-		!bson_iter_init_find_case(&iter, options, MONGOC_URI_MAXSTALENESSSECONDS)) {
+	if (bson_empty0(options) || !bson_iter_init(&iter, options)) {
 		return true;
 	}
 
 	new_rp = mongoc_read_prefs_copy(old_rp);
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_SLAVEOK)) {
-		if (!BSON_ITER_HOLDS_BOOL(&iter)) {
-			PHONGO_URI_INVALID_TYPE(iter, "boolean");
-			mongoc_read_prefs_destroy(new_rp);
+	while (bson_iter_next(&iter)) {
+		const char* key = bson_iter_key(&iter);
 
-			return false;
+		if (!ignore_slaveok && !strcasecmp(key, MONGOC_URI_SLAVEOK)) {
+			if (!BSON_ITER_HOLDS_BOOL(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "boolean");
+				mongoc_read_prefs_destroy(new_rp);
+
+				return false;
+			}
+
+			if (bson_iter_bool(&iter)) {
+				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
+			}
 		}
 
-		if (bson_iter_bool(&iter)) {
-			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
-		}
-	}
+		if (!strcasecmp(key, MONGOC_URI_READPREFERENCE)) {
+			const char* str;
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCE)) {
-		const char* str;
+			if (!BSON_ITER_HOLDS_UTF8(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "string");
+				mongoc_read_prefs_destroy(new_rp);
 
-		if (!BSON_ITER_HOLDS_UTF8(&iter)) {
-			PHONGO_URI_INVALID_TYPE(iter, "string");
-			mongoc_read_prefs_destroy(new_rp);
+				return false;
+			}
 
-			return false;
-		}
+			str = bson_iter_utf8(&iter, NULL);
 
-		str = bson_iter_utf8(&iter, NULL);
+			if (0 == strcasecmp("primary", str)) {
+				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_PRIMARY);
+			} else if (0 == strcasecmp("primarypreferred", str)) {
+				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_PRIMARY_PREFERRED);
+			} else if (0 == strcasecmp("secondary", str)) {
+				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY);
+			} else if (0 == strcasecmp("secondarypreferred", str)) {
+				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
+			} else if (0 == strcasecmp("nearest", str)) {
+				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_NEAREST);
+			} else {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Unsupported %s value: '%s'", bson_iter_key(&iter), str);
+				mongoc_read_prefs_destroy(new_rp);
 
-		if (0 == strcasecmp("primary", str)) {
-			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_PRIMARY);
-		} else if (0 == strcasecmp("primarypreferred", str)) {
-			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_PRIMARY_PREFERRED);
-		} else if (0 == strcasecmp("secondary", str)) {
-			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY);
-		} else if (0 == strcasecmp("secondarypreferred", str)) {
-			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
-		} else if (0 == strcasecmp("nearest", str)) {
-			mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_NEAREST);
-		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Unsupported %s value: '%s'", bson_iter_key(&iter), str);
-			mongoc_read_prefs_destroy(new_rp);
+				return false;
+			}
 
-			return false;
-		}
-	}
-
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_READPREFERENCETAGS)) {
-		bson_t         tags;
-		uint32_t       len;
-		const uint8_t* data;
-
-		if (!BSON_ITER_HOLDS_ARRAY(&iter)) {
-			PHONGO_URI_INVALID_TYPE(iter, "array");
-			mongoc_read_prefs_destroy(new_rp);
-
-			return false;
+			ignore_slaveok = true;
 		}
 
-		bson_iter_array(&iter, &len, &data);
+		if (!strcasecmp(key, MONGOC_URI_READPREFERENCETAGS)) {
+			bson_t         tags;
+			uint32_t       len;
+			const uint8_t* data;
 
-		if (!bson_init_static(&tags, data, len)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Could not initialize BSON structure for read preference tags");
-			mongoc_read_prefs_destroy(new_rp);
+			if (!BSON_ITER_HOLDS_ARRAY(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "array");
+				mongoc_read_prefs_destroy(new_rp);
 
-			return false;
+				return false;
+			}
+
+			bson_iter_array(&iter, &len, &data);
+
+			if (!bson_init_static(&tags, data, len)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Could not initialize BSON structure for read preference tags");
+				mongoc_read_prefs_destroy(new_rp);
+
+				return false;
+			}
+
+			if (!php_phongo_read_preference_tags_are_valid(&tags)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Read preference tags must be an array of zero or more documents");
+				mongoc_read_prefs_destroy(new_rp);
+
+				return false;
+			}
+
+			mongoc_read_prefs_set_tags(new_rp, &tags);
 		}
 
-		if (!php_phongo_read_preference_tags_are_valid(&tags)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Read preference tags must be an array of zero or more documents");
-			mongoc_read_prefs_destroy(new_rp);
+		if (!strcasecmp(key, MONGOC_URI_MAXSTALENESSSECONDS)) {
+			int64_t max_staleness_seconds;
 
-			return false;
+			if (!BSON_ITER_HOLDS_INT(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "integer");
+				mongoc_read_prefs_destroy(new_rp);
+
+				return false;
+			}
+
+			max_staleness_seconds = bson_iter_as_int64(&iter);
+
+			if (max_staleness_seconds != MONGOC_NO_MAX_STALENESS) {
+
+				if (max_staleness_seconds < MONGOC_SMALLEST_MAX_STALENESS_SECONDS) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessSeconds to be >= %d, %" PRId64 " given", MONGOC_SMALLEST_MAX_STALENESS_SECONDS, max_staleness_seconds);
+					mongoc_read_prefs_destroy(new_rp);
+
+					return false;
+				}
+
+				if (max_staleness_seconds > INT32_MAX) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessSeconds to be <= %d, %" PRId64 " given", INT32_MAX, max_staleness_seconds);
+					mongoc_read_prefs_destroy(new_rp);
+
+					return false;
+				}
+
+				if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Primary read preference mode conflicts with maxStalenessSeconds");
+					mongoc_read_prefs_destroy(new_rp);
+
+					return false;
+				}
+			}
+
+			mongoc_read_prefs_set_max_staleness_seconds(new_rp, max_staleness_seconds);
 		}
-
-		mongoc_read_prefs_set_tags(new_rp, &tags);
 	}
 
 	if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY &&
@@ -1872,49 +1911,18 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 		return false;
 	}
 
-	/* Handle maxStalenessSeconds, and make sure it is not combined with primary
-	 * readPreference */
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_MAXSTALENESSSECONDS)) {
-		int64_t max_staleness_seconds;
+	/* Make sure maxStalenessSeconds is not combined with primary readPreference */
+	if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY &&
+		mongoc_read_prefs_get_max_staleness_seconds(new_rp) != MONGOC_NO_MAX_STALENESS) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Primary read preference mode conflicts with maxStalenessSeconds");
+		mongoc_read_prefs_destroy(new_rp);
 
-		if (!BSON_ITER_HOLDS_INT(&iter)) {
-			PHONGO_URI_INVALID_TYPE(iter, "integer");
-			mongoc_read_prefs_destroy(new_rp);
-
-			return false;
-		}
-
-		max_staleness_seconds = bson_iter_as_int64(&iter);
-
-		if (max_staleness_seconds != MONGOC_NO_MAX_STALENESS) {
-
-			if (max_staleness_seconds < MONGOC_SMALLEST_MAX_STALENESS_SECONDS) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessSeconds to be >= %d, %" PRId64 " given", MONGOC_SMALLEST_MAX_STALENESS_SECONDS, max_staleness_seconds);
-				mongoc_read_prefs_destroy(new_rp);
-
-				return false;
-			}
-
-			if (max_staleness_seconds > INT32_MAX) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected maxStalenessSeconds to be <= %d, %" PRId64 " given", INT32_MAX, max_staleness_seconds);
-				mongoc_read_prefs_destroy(new_rp);
-
-				return false;
-			}
-
-			if (mongoc_read_prefs_get_mode(new_rp) == MONGOC_READ_PRIMARY) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Primary read preference mode conflicts with maxStalenessSeconds");
-				mongoc_read_prefs_destroy(new_rp);
-
-				return false;
-			}
-		}
-
-		mongoc_read_prefs_set_max_staleness_seconds(new_rp, max_staleness_seconds);
+		return false;
 	}
 
-	/* This may be redundant in light of the last check (primary with tags), but
-	 * we'll check anyway in case additional validation is implemented. */
+	/* This may be redundant in light of the previous checks (primary with tags
+	 * or maxStalenessSeconds), but we'll check anyway in case additional
+	 * validation is implemented. */
 	if (!mongoc_read_prefs_is_valid(new_rp)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Read preference is not valid");
 		mongoc_read_prefs_destroy(new_rp);
@@ -1933,6 +1941,7 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	bson_iter_t                   iter;
 	mongoc_write_concern_t*       new_wc;
 	const mongoc_write_concern_t* old_wc;
+	bool                          ignore_safe = false;
 
 	if (!(old_wc = mongoc_uri_get_write_concern(uri))) {
 		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED TSRMLS_CC, "mongoc_uri_t does not have a write concern");
@@ -1941,99 +1950,97 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	}
 
 	/* Return early if there are no options to apply */
-	if (bson_empty0(options)) {
-		return true;
-	}
-
-	if (!bson_iter_init_find_case(&iter, options, MONGOC_URI_JOURNAL) &&
-		!bson_iter_init_find_case(&iter, options, MONGOC_URI_SAFE) &&
-		!bson_iter_init_find_case(&iter, options, MONGOC_URI_W) &&
-		!bson_iter_init_find_case(&iter, options, MONGOC_URI_WTIMEOUTMS)) {
-
+	if (bson_empty0(options) || !bson_iter_init(&iter, options)) {
 		return true;
 	}
 
 	new_wc = mongoc_write_concern_copy(old_wc);
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_SAFE)) {
-		if (!BSON_ITER_HOLDS_BOOL(&iter)) {
-			PHONGO_URI_INVALID_TYPE(iter, "boolean");
-			mongoc_write_concern_destroy(new_wc);
+	while (bson_iter_next(&iter)) {
+		const char* key = bson_iter_key(&iter);
 
-			return false;
+		if (!ignore_safe && !strcasecmp(key, MONGOC_URI_SAFE)) {
+			if (!BSON_ITER_HOLDS_BOOL(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "boolean");
+				mongoc_write_concern_destroy(new_wc);
+
+				return false;
+			}
+
+			mongoc_write_concern_set_w(new_wc, bson_iter_bool(&iter) ? 1 : MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED);
 		}
 
-		mongoc_write_concern_set_w(new_wc, bson_iter_bool(&iter) ? 1 : MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED);
-	}
+		if (!strcasecmp(key, MONGOC_URI_WTIMEOUTMS)) {
+			int64_t wtimeout;
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_WTIMEOUTMS)) {
-		int64_t wtimeout;
+			/* Although the write concern spec defines wtimeoutMS as 64-bit, PHP has
+			 * historically required 32-bit. This may change with PHPC-1411. */
+			if (!BSON_ITER_HOLDS_INT32(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "32-bit integer");
+				mongoc_write_concern_destroy(new_wc);
 
-		/* Although the write concern spec defines wtimeoutMS as 64-bit, PHP has
-		 * historically required 32-bit. This may change with PHPC-1411. */
-		if (!BSON_ITER_HOLDS_INT32(&iter)) {
-			PHONGO_URI_INVALID_TYPE(iter, "32-bit integer");
-			mongoc_write_concern_destroy(new_wc);
+				return false;
+			}
 
-			return false;
+			wtimeout = bson_iter_as_int64(&iter);
+
+			if (wtimeout < 0) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected wtimeoutMS to be >= 0, %" PRId64 " given", wtimeout);
+				mongoc_write_concern_destroy(new_wc);
+
+				return false;
+			}
+
+			mongoc_write_concern_set_wtimeout_int64(new_wc, wtimeout);
 		}
 
-		wtimeout = bson_iter_as_int64(&iter);
+		if (!strcasecmp(key, MONGOC_URI_JOURNAL)) {
+			if (!BSON_ITER_HOLDS_BOOL(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "boolean");
+				mongoc_write_concern_destroy(new_wc);
 
-		if (wtimeout < 0) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected wtimeoutMS to be >= 0, %" PRId64 " given", wtimeout);
-			mongoc_write_concern_destroy(new_wc);
+				return false;
+			}
 
-			return false;
+			mongoc_write_concern_set_journal(new_wc, bson_iter_bool(&iter));
 		}
 
-		mongoc_write_concern_set_wtimeout_int64(new_wc, wtimeout);
-	}
+		if (!strcasecmp(key, MONGOC_URI_W)) {
+			if (BSON_ITER_HOLDS_INT32(&iter)) {
+				int32_t value = bson_iter_int32(&iter);
 
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_JOURNAL)) {
-		if (!BSON_ITER_HOLDS_BOOL(&iter)) {
-			PHONGO_URI_INVALID_TYPE(iter, "boolean");
-			mongoc_write_concern_destroy(new_wc);
-
-			return false;
-		}
-
-		mongoc_write_concern_set_journal(new_wc, bson_iter_bool(&iter));
-	}
-
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_W)) {
-		if (BSON_ITER_HOLDS_INT32(&iter)) {
-			int32_t value = bson_iter_int32(&iter);
-
-			switch (value) {
-				case MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED:
-				case MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED:
-					mongoc_write_concern_set_w(new_wc, value);
-					break;
-
-				default:
-					if (value > 0) {
+				switch (value) {
+					case MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED:
+					case MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED:
 						mongoc_write_concern_set_w(new_wc, value);
 						break;
-					}
-					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Unsupported w value: %d", value);
-					mongoc_write_concern_destroy(new_wc);
 
-					return false;
-			}
-		} else if (BSON_ITER_HOLDS_UTF8(&iter)) {
-			const char* str = bson_iter_utf8(&iter, NULL);
+					default:
+						if (value > 0) {
+							mongoc_write_concern_set_w(new_wc, value);
+							break;
+						}
+						phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Unsupported w value: %d", value);
+						mongoc_write_concern_destroy(new_wc);
 
-			if (0 == strcasecmp(PHONGO_WRITE_CONCERN_W_MAJORITY, str)) {
-				mongoc_write_concern_set_w(new_wc, MONGOC_WRITE_CONCERN_W_MAJORITY);
+						return false;
+				}
+			} else if (BSON_ITER_HOLDS_UTF8(&iter)) {
+				const char* str = bson_iter_utf8(&iter, NULL);
+
+				if (0 == strcasecmp(PHONGO_WRITE_CONCERN_W_MAJORITY, str)) {
+					mongoc_write_concern_set_w(new_wc, MONGOC_WRITE_CONCERN_W_MAJORITY);
+				} else {
+					mongoc_write_concern_set_wtag(new_wc, str);
+				}
 			} else {
-				mongoc_write_concern_set_wtag(new_wc, str);
-			}
-		} else {
-			PHONGO_URI_INVALID_TYPE(iter, "32-bit integer or string");
-			mongoc_write_concern_destroy(new_wc);
+				PHONGO_URI_INVALID_TYPE(iter, "32-bit integer or string");
+				mongoc_write_concern_destroy(new_wc);
 
-			return false;
+				return false;
+			}
+
+			ignore_safe = true;
 		}
 	}
 
@@ -2654,7 +2661,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		goto cleanup;
 	}
 
-	if (!(uri = php_phongo_make_uri(uri_string, &bson_options TSRMLS_CC))) {
+	if (!(uri = php_phongo_make_uri(uri_string TSRMLS_CC))) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
