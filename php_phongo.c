@@ -67,6 +67,7 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 #include "src/BSON/functions.h"
+#include "src/MongoDB/functions.h"
 #include "src/MongoDB/Monitoring/functions.h"
 
 #undef MONGOC_LOG_DOMAIN
@@ -3344,6 +3345,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_mongodb_driver_monitoring_subscriber, 0, 0, 1)
 	ZEND_ARG_OBJ_INFO(0, subscriber, MongoDB\\Driver\\Monitoring\\Subscriber, 0)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(ai_mongodb_driver_manager, 0, 0, 1)
+	ZEND_ARG_OBJ_INFO(0, manager, MongoDB\\Driver\\Manager, 0)
+ZEND_END_ARG_INFO();
+
 static const zend_function_entry mongodb_functions[] = {
 	ZEND_NS_NAMED_FE("MongoDB\\BSON", fromPHP, PHP_FN(MongoDB_BSON_fromPHP), ai_bson_fromPHP)
 		ZEND_NS_NAMED_FE("MongoDB\\BSON", toPHP, PHP_FN(MongoDB_BSON_toPHP), ai_bson_toPHP)
@@ -3353,7 +3358,8 @@ static const zend_function_entry mongodb_functions[] = {
 						ZEND_NS_NAMED_FE("MongoDB\\BSON", fromJSON, PHP_FN(MongoDB_BSON_fromJSON), ai_bson_fromJSON)
 							ZEND_NS_NAMED_FE("MongoDB\\Driver\\Monitoring", addSubscriber, PHP_FN(MongoDB_Driver_Monitoring_addSubscriber), ai_mongodb_driver_monitoring_subscriber)
 								ZEND_NS_NAMED_FE("MongoDB\\Driver\\Monitoring", removeSubscriber, PHP_FN(MongoDB_Driver_Monitoring_removeSubscriber), ai_mongodb_driver_monitoring_subscriber)
-									PHP_FE_END
+									ZEND_NS_NAMED_FE("MongoDB\\Driver", reset, PHP_FN(MongoDB_Driver_reset), ai_mongodb_driver_manager)
+										PHP_FE_END
 };
 /* }}} */
 
