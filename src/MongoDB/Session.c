@@ -231,7 +231,7 @@ static PHP_METHOD(Session, getOperationTime)
 		RETURN_NULL();
 	}
 
-	php_phongo_new_timestamp_from_increment_and_timestamp(return_value, increment, timestamp TSRMLS_CC);
+	php_phongo_bson_new_timestamp_from_increment_and_timestamp(return_value, increment, timestamp TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Server|null MongoDB\Driver\Session::getServer()
@@ -610,13 +610,13 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 #if PHP_VERSION_ID >= 70000
 			zval ztimestamp;
 
-			php_phongo_new_timestamp_from_increment_and_timestamp(&ztimestamp, increment, timestamp TSRMLS_CC);
+			php_phongo_bson_new_timestamp_from_increment_and_timestamp(&ztimestamp, increment, timestamp TSRMLS_CC);
 			ADD_ASSOC_ZVAL_EX(&retval, "operationTime", &ztimestamp);
 #else
 			zval* ztimestamp;
 
 			MAKE_STD_ZVAL(ztimestamp);
-			php_phongo_new_timestamp_from_increment_and_timestamp(ztimestamp, increment, timestamp TSRMLS_CC);
+			php_phongo_bson_new_timestamp_from_increment_and_timestamp(ztimestamp, increment, timestamp TSRMLS_CC);
 			ADD_ASSOC_ZVAL_EX(&retval, "operationTime", ztimestamp);
 #endif
 		} else {

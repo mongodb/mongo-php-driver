@@ -108,6 +108,9 @@ void php_phongo_bson_state_dtor(php_phongo_bson_state* state);
 void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson_state* src);
 void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map);
 
+void php_phongo_bson_new_timestamp_from_increment_and_timestamp(zval* object, uint32_t increment, uint32_t timestamp TSRMLS_DC);
+void php_phongo_bson_new_int64(zval* object, int64_t integer TSRMLS_DC);
+
 php_phongo_field_path* php_phongo_field_path_alloc(bool owns_elements);
 void                   php_phongo_field_path_free(php_phongo_field_path* field_path);
 void                   php_phongo_field_path_write_item_at_current_level(php_phongo_field_path* field_path, const char* element);
