@@ -203,16 +203,20 @@ static bool php_phongo_query_init_limit_and_singlebatch(php_phongo_query_t* inte
  * which must be converted to a mongoc_read_concern_t. */
 static bool php_phongo_query_init_readconcern(php_phongo_query_t* intern, zval* options TSRMLS_DC) /* {{{ */
 {
-	if (php_array_existsc(options, "readConcern")) {
-		zval* read_concern = php_array_fetchc(options, "readConcern");
+	zval* read_concern;
 
-		if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce TSRMLS_CC)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
-			return false;
-		}
-
-		intern->read_concern = mongoc_read_concern_copy(phongo_read_concern_from_zval(read_concern TSRMLS_CC));
+	if (!php_array_existsc(options, "readConcern")) {
+		return true;
 	}
+
+	read_concern = php_array_fetchc(options, "readConcern");
+
+	if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce TSRMLS_CC)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
+		return false;
+	}
+
+	intern->read_concern = mongoc_read_concern_copy(phongo_read_concern_from_zval(read_concern TSRMLS_CC));
 
 	return true;
 } /* }}} */
@@ -224,21 +228,25 @@ static bool php_phongo_query_init_readconcern(php_phongo_query_t* intern, zval* 
  * via mongoc_cursor_set_max_await_time_ms(). */
 static bool php_phongo_query_init_max_await_time_ms(php_phongo_query_t* intern, zval* options TSRMLS_DC) /* {{{ */
 {
-	if (php_array_existsc(options, "maxAwaitTimeMS")) {
-		int64_t max_await_time_ms = php_array_fetchc_long(options, "maxAwaitTimeMS");
+	int64_t max_await_time_ms;
 
-		if (max_await_time_ms < 0) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxAwaitTimeMS\" option to be >= 0, %" PRId64 " given", max_await_time_ms);
-			return false;
-		}
-
-		if (max_await_time_ms > UINT32_MAX) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxAwaitTimeMS\" option to be <= %" PRIu32 ", %" PRId64 " given", UINT32_MAX, max_await_time_ms);
-			return false;
-		}
-
-		intern->max_await_time_ms = (uint32_t) max_await_time_ms;
+	if (!php_array_existsc(options, "maxAwaitTimeMS")) {
+		return true;
 	}
+
+	max_await_time_ms = php_array_fetchc_long(options, "maxAwaitTimeMS");
+
+	if (max_await_time_ms < 0) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxAwaitTimeMS\" option to be >= 0, %" PRId64 " given", max_await_time_ms);
+		return false;
+	}
+
+	if (max_await_time_ms > UINT32_MAX) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxAwaitTimeMS\" option to be <= %" PRIu32 ", %" PRId64 " given", UINT32_MAX, max_await_time_ms);
+		return false;
+	}
+
+	intern->max_await_time_ms = (uint32_t) max_await_time_ms;
 
 	return true;
 } /* }}} */
