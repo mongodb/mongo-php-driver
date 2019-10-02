@@ -41,7 +41,7 @@ static bool php_phongo_has_string_array_element(zval* labels, char* label TSRMLS
 	{
 		zval* z_label;
 
-		ZEND_HASH_FOREACH_VAL(ht_data, z_label)
+		ZEND_HASH_FOREACH_VAL_IND(ht_data, z_label)
 		{
 			if ((Z_TYPE_P(z_label) == IS_STRING) && (strcmp(Z_STRVAL_P(z_label), label) == 0)) {
 				return true;
