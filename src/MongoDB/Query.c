@@ -171,7 +171,7 @@ static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options
  * and default singleBatch to true. */
 static bool php_phongo_query_init_limit_and_singlebatch(php_phongo_query_t* intern, zval* options TSRMLS_DC) /* {{{ */
 {
-	if (php_array_existsc(options, "limit") && php_array_fetchc_long(options, "limit") < 0) {
+	if (php_array_fetchc_long(options, "limit") < 0) {
 		phongo_long limit = php_array_fetchc_long(options, "limit");
 
 		if (!BSON_APPEND_INT64(intern->opts, "limit", -limit)) {
