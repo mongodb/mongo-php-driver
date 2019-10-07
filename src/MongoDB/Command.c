@@ -62,7 +62,9 @@ static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, 
 	bson_iter_t iter;
 	bson_iter_t sub_iter;
 
-	intern->bson = bson_new();
+	intern->bson              = bson_new();
+	intern->batch_size        = 0;
+	intern->max_await_time_ms = 0;
 
 	php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->bson, NULL TSRMLS_CC);
 

@@ -293,11 +293,13 @@ static void phongo_cursor_init(zval* return_value, mongoc_client_t* client, mong
 
 	object_init_ex(return_value, php_phongo_cursor_ce);
 
-	intern            = Z_CURSOR_OBJ_P(return_value);
-	intern->cursor    = cursor;
-	intern->server_id = mongoc_cursor_get_hint(cursor);
-	intern->client    = client;
-	intern->advanced  = false;
+	intern               = Z_CURSOR_OBJ_P(return_value);
+	intern->cursor       = cursor;
+	intern->server_id    = mongoc_cursor_get_hint(cursor);
+	intern->client       = client;
+	intern->advanced     = false;
+	intern->got_iterator = false;
+	intern->current      = 0;
 
 	if (readPreference) {
 #if PHP_VERSION_ID >= 70000
@@ -421,6 +423,7 @@ zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_
 	object_init_ex(return_value, php_phongo_writeconcernerror_ce);
 
 	intern = Z_WRITECONCERNERROR_OBJ_P(return_value);
+	intern->code = 0;
 
 	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
 		intern->code = bson_iter_int32(&iter);
@@ -458,6 +461,8 @@ zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson TSRMLS_DC) /* 
 	object_init_ex(return_value, php_phongo_writeerror_ce);
 
 	intern = Z_WRITEERROR_OBJ_P(return_value);
+	intern->code  = 0;
+	intern->index = 0;
 
 	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
 		intern->code = bson_iter_int32(&iter);

@@ -250,8 +250,9 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 {
 	zval* modifiers = NULL;
 
-	intern->filter = bson_new();
-	intern->opts   = bson_new();
+	intern->filter            = bson_new();
+	intern->opts              = bson_new();
+	intern->max_await_time_ms = 0;
 
 	php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->filter, NULL TSRMLS_CC);
 
