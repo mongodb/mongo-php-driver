@@ -300,6 +300,34 @@ static phongo_create_object_retval php_phongo_decimal128_create_object(zend_clas
 #endif
 } /* }}} */
 
+static phongo_create_object_retval php_phongo_decimal128_clone_object(zval* object TSRMLS_DC) /* {{{ */
+{
+	php_phongo_decimal128_t* intern;
+	php_phongo_decimal128_t* new_intern;
+	phongo_create_object_retval new_object;
+
+	intern = Z_DECIMAL128_OBJ_P(object);
+	new_object = php_phongo_decimal128_create_object(Z_OBJCE_P(object) TSRMLS_CC);
+
+#if PHP_VERSION_ID >= 70000
+	new_intern = Z_OBJ_DECIMAL128(new_object);
+	zend_objects_clone_members(&new_intern->std, &intern->std TSRMLS_CC);
+#else
+	{
+		zend_object_handle handle = Z_OBJ_HANDLE_P(object);
+
+		new_intern = (php_phongo_decimal128_t*) zend_object_store_get_object_by_handle(new_object.handle TSRMLS_CC);
+		zend_objects_clone_members(&new_intern->std, new_object, &intern->std, handle TSRMLS_CC);
+	}
+#endif
+
+	// Use memcpy to copy bson value to avoid converting to string and back
+	memcpy(&new_intern->decimal, &intern->decimal, sizeof(bson_decimal128_t));
+	new_intern->initialized = true;
+
+	return new_object;
+} /* }}} */
+
 static HashTable* php_phongo_decimal128_get_gc(zval* object, phongo_get_gc_table table, int* n TSRMLS_DC) /* {{{ */
 {
 	*table = NULL;
@@ -371,6 +399,7 @@ void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_implements(php_phongo_decimal128_ce TSRMLS_CC, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_decimal128, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_decimal128.clone_obj      = php_phongo_decimal128_clone_object;
 	php_phongo_handler_decimal128.get_debug_info = php_phongo_decimal128_get_debug_info;
 	php_phongo_handler_decimal128.get_gc         = php_phongo_decimal128_get_gc;
 	php_phongo_handler_decimal128.get_properties = php_phongo_decimal128_get_properties;
