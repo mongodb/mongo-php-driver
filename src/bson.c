@@ -615,6 +615,15 @@ static void php_phongo_bson_new_javascript_from_javascript_and_scope(zval* objec
 	intern->code     = estrndup(code, code_len);
 	intern->code_len = code_len;
 	intern->scope    = scope ? bson_copy(scope) : NULL;
+
+	if (scope) {
+		php_phongo_bson_state state;
+
+		PHONGO_BSON_INIT_STATE(state);
+
+		php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state);
+		zval_ptr_dtor(&state.zchild);
+	}
 } /* }}} */
 
 static void php_phongo_bson_new_javascript_from_javascript(zval* object, const char* code, size_t code_len TSRMLS_DC) /* {{{ */
