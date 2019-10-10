@@ -29,6 +29,13 @@ var_dump($cursor->toArray()[0]);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: MongoDB\Driver\Manager::__construct(): The "context" driver option is deprecated.%s
+
+Deprecated: MongoDB\Driver\Manager::__construct(): The "allow_invalid_hostname" driver option is deprecated. Please use the "tlsAllowInvalidHostnames" URI option instead.%s
+
+Deprecated: MongoDB\Driver\Manager::__construct(): The "allow_self_signed" context driver option is deprecated. Please use the "tlsAllowInvalidCertificates" URI option instead.%s
+
+Deprecated: MongoDB\Driver\Manager::__construct(): The "cafile" context driver option is deprecated. Please use the "tlsCAFile" URI option instead.%s
 object(stdClass)#%d (%d) {
   ["ok"]=>
   float(1)

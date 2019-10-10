@@ -18,7 +18,10 @@ var_dump($driverOptions);
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: MongoDB\Driver\Manager::__construct(): The "context" driver option is deprecated.%s
+
+Deprecated: MongoDB\Driver\Manager::__construct(): The "weak_cert_validation" driver option is deprecated. Please use the "tlsAllowInvalidCertificates" URI option instead.%s
 array(2) {
   ["weak_cert_validation"]=>
   bool(true)

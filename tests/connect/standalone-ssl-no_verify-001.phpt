@@ -21,6 +21,9 @@ var_dump($cursor->toArray()[0]);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: MongoDB\Driver\Manager::__construct(): The "allow_invalid_hostname" driver option is deprecated. Please use the "tlsAllowInvalidHostnames" URI option instead.%s
+
+Deprecated: MongoDB\Driver\Manager::__construct(): The "weak_cert_validation" driver option is deprecated. Please use the "tlsAllowInvalidCertificates" URI option instead.%s
 object(stdClass)#%d (%d) {
   ["ok"]=>
   float(1)
