@@ -27,46 +27,46 @@ foreach ($tests as $test) {
 --EXPECTF--
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(2)
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(12) "customTagSet"
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(2)
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(12) "customTagSet"
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 ===DONE===

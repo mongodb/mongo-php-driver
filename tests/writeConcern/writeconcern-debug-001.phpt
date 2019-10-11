@@ -17,6 +17,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["j"]=>
   bool(true)
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 ===DONE===

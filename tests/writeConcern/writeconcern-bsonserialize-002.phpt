@@ -70,7 +70,10 @@ object(stdClass)#%d (%d) {
   ["w"]=>
   int(1)
   ["wtimeout"]=>
-  int(1000)
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(4) "1000"
+  }
 }
 object(stdClass)#%d (%d) {
   ["w"]=>
@@ -78,7 +81,10 @@ object(stdClass)#%d (%d) {
   ["j"]=>
   bool(true)
   ["wtimeout"]=>
-  int(1000)
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(4) "1000"
+  }
 }
 object(stdClass)#%d (%d) {
   ["j"]=>
@@ -86,6 +92,9 @@ object(stdClass)#%d (%d) {
 }
 object(stdClass)#%d (%d) {
   ["wtimeout"]=>
-  int(1000)
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(4) "1000"
+  }
 }
 ===DONE===

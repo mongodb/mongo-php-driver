@@ -163,6 +163,9 @@ void php_phongo_cursor_to_zval(zval* retval, const mongoc_cursor_t* cursor);
 void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions TSRMLS_DC);
 int  php_phongo_set_monitoring_callbacks(mongoc_client_t* client);
 
+void php_phongo_int64_to_zval(int64_t data, zval* zv, bool is_bson TSRMLS_DC);
+bool php_phongo_parse_int64(int64_t* retval, const char* data, phongo_zpp_char_len data_len);
+
 zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson TSRMLS_DC);
 zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_DC);
 

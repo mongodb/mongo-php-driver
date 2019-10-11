@@ -59,17 +59,17 @@ MongoDB\Driver\WriteConcern::__set_state(array(
 ))
 MongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 1,
-   'wtimeout' => 1000,
+   'wtimeout' => '1000',
 ))
 MongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 1,
    'j' => true,
-   'wtimeout' => 1000,
+   'wtimeout' => '1000',
 ))
 MongoDB\Driver\WriteConcern::__set_state(array(
    'j' => true,
 ))
 MongoDB\Driver\WriteConcern::__set_state(array(
-   'wtimeout' => 1000,
+   'wtimeout' => '1000',
 ))
 ===DONE===

@@ -137,15 +137,15 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 bool(true)
-C:27:"MongoDB\Driver\WriteConcern":40:{a:2:{s:1:"w";i:1;s:8:"wtimeout";i:1000;}}
+C:27:"MongoDB\Driver\WriteConcern":44:{a:2:{s:1:"w";i:1;s:8:"wtimeout";s:4:"1000";}}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
@@ -154,17 +154,17 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["j"]=>
   bool(true)
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 bool(true)
-C:27:"MongoDB\Driver\WriteConcern":52:{a:3:{s:1:"w";i:1;s:1:"j";b:1;s:8:"wtimeout";i:1000;}}
+C:27:"MongoDB\Driver\WriteConcern":56:{a:3:{s:1:"w";i:1;s:1:"j";b:1;s:8:"wtimeout";s:4:"1000";}}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
   ["j"]=>
   bool(true)
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
@@ -180,13 +180,13 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
 
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 bool(true)
-C:27:"MongoDB\Driver\WriteConcern":28:{a:1:{s:8:"wtimeout";i:1000;}}
+C:27:"MongoDB\Driver\WriteConcern":32:{a:1:{s:8:"wtimeout";s:4:"1000";}}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 
 ===DONE===

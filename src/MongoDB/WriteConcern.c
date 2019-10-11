@@ -66,14 +66,19 @@ static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* in
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" integer field to be >= 0", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 				goto failure;
 			}
-			if (Z_LVAL_P(wtimeout) > INT32_MAX) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" integer field to be <= %" PRId32, ZSTR_VAL(php_phongo_writeconcern_ce->name), INT32_MAX);
-				goto failure;
-			}
 
 			mongoc_write_concern_set_wtimeout_int64(intern->write_concern, (int64_t) Z_LVAL_P(wtimeout));
+		} else if (Z_TYPE_P(wtimeout) == IS_STRING) {
+			int64_t timeout;
+
+			if (!php_phongo_parse_int64(&timeout, Z_STRVAL_P(wtimeout), Z_STRLEN_P(wtimeout))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit value for %s initialization", Z_STRVAL_P(wtimeout), ZSTR_VAL(php_phongo_writeconcern_ce->name));
+				return false;
+			}
+
+			mongoc_write_concern_set_wtimeout_int64(intern->write_concern, timeout);
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" field to be integer", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" field to be integer or string", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 			goto failure;
 		}
 	}
@@ -116,14 +121,19 @@ static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* in
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" integer field to be >= 0", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 				goto failure;
 			}
-			if (Z_LVAL_PP(wtimeout) > INT32_MAX) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" integer field to be <= %" PRId32, ZSTR_VAL(php_phongo_writeconcern_ce->name), INT32_MAX);
-				goto failure;
-			}
 
 			mongoc_write_concern_set_wtimeout_int64(intern->write_concern, (int64_t) Z_LVAL_PP(wtimeout));
+		} else if (Z_TYPE_PP(wtimeout) == IS_STRING) {
+			int64_t timeout;
+
+			if (!php_phongo_parse_int64(&timeout, Z_STRVAL_PP(wtimeout), Z_STRLEN_PP(wtimeout))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit value for %s initialization", Z_STRVAL_PP(wtimeout), ZSTR_VAL(php_phongo_writeconcern_ce->name));
+				return false;
+			}
+
+			mongoc_write_concern_set_wtimeout_int64(intern->write_concern, timeout);
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" field to be integer", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" field to be integer or string", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 			goto failure;
 		}
 	}
@@ -200,11 +210,6 @@ static PHP_METHOD(WriteConcern, __construct)
 				return;
 			}
 
-			if (wtimeout > INT32_MAX) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected wtimeout to be <= %" PRId32 ", %" PHONGO_LONG_FORMAT " given", INT32_MAX, wtimeout);
-				return;
-			}
-
 			mongoc_write_concern_set_wtimeout_int64(intern->write_concern, (int64_t) wtimeout);
 	}
 } /* }}} */
@@ -271,9 +276,7 @@ static PHP_METHOD(WriteConcern, getWtimeout)
 		return;
 	}
 
-	/* Note: PHP currently enforces that wimeoutMS is a 32-bit integer, so
-	 * casting will never truncate the value. This may change with PHPC-1411. */
-	RETURN_LONG((int32_t) mongoc_write_concern_get_wtimeout_int64(intern->write_concern));
+	RETURN_LONG(mongoc_write_concern_get_wtimeout_int64(intern->write_concern));
 } /* }}} */
 
 /* {{{ proto null|boolean MongoDB\Driver\WriteConcern::getJournal()
@@ -311,13 +314,13 @@ static PHP_METHOD(WriteConcern, isDefault)
 	RETURN_BOOL(mongoc_write_concern_is_default(intern->write_concern));
 } /* }}} */
 
-static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, bool is_debug, bool is_bson TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeconcern_t* intern;
 	HashTable*                 props;
 	const char*                wtag;
 	int32_t                    w;
-	int32_t                    wtimeout;
+	int64_t                    wtimeout;
 
 	intern = Z_WRITECONCERN_OBJ_P(object);
 
@@ -329,9 +332,7 @@ static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, boo
 
 	wtag     = mongoc_write_concern_get_wtag(intern->write_concern);
 	w        = mongoc_write_concern_get_w(intern->write_concern);
-	/* Note: PHP currently enforces that wimeoutMS is a 32-bit integer, so
-	 * casting will never truncate the value. This may change with PHPC-1411. */
-	wtimeout = (int32_t) mongoc_write_concern_get_wtimeout_int64(intern->write_concern);
+	wtimeout = mongoc_write_concern_get_wtimeout_int64(intern->write_concern);
 
 #if PHP_VERSION_ID >= 70000
 	{
@@ -358,7 +359,7 @@ static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, boo
 		if (wtimeout != 0) {
 			zval z_wtimeout;
 
-			ZVAL_LONG(&z_wtimeout, wtimeout);
+			php_phongo_int64_to_zval(wtimeout, &z_wtimeout, is_bson TSRMLS_CC);
 			zend_hash_str_update(props, "wtimeout", sizeof("wtimeout") - 1, &z_wtimeout);
 		}
 #else
@@ -391,7 +392,8 @@ static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, boo
 			zval* z_wtimeout;
 
 			MAKE_STD_ZVAL(z_wtimeout);
-			ZVAL_LONG(z_wtimeout, wtimeout);
+			php_phongo_int64_to_zval(wtimeout, z_wtimeout, is_bson TSRMLS_CC);
+
 			zend_hash_update(props, "wtimeout", sizeof("wtimeout"), &z_wtimeout, sizeof(z_wtimeout), NULL);
 		}
 #endif
@@ -408,7 +410,7 @@ static PHP_METHOD(WriteConcern, bsonSerialize)
 		return;
 	}
 
-	ZVAL_ARR(return_value, php_phongo_write_concern_get_properties_hash(getThis(), true TSRMLS_CC));
+	ZVAL_ARR(return_value, php_phongo_write_concern_get_properties_hash(getThis(), true, true TSRMLS_CC));
 	convert_to_object(return_value);
 } /* }}} */
 
@@ -422,7 +424,7 @@ static PHP_METHOD(WriteConcern, serialize)
 	smart_str                  buf = { 0 };
 	const char*                wtag;
 	int32_t                    w;
-	int32_t                    wtimeout;
+	int64_t                    wtimeout;
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
@@ -436,9 +438,7 @@ static PHP_METHOD(WriteConcern, serialize)
 
 	wtag     = mongoc_write_concern_get_wtag(intern->write_concern);
 	w        = mongoc_write_concern_get_w(intern->write_concern);
-	/* Note: PHP currently enforces that wimeoutMS is a 32-bit integer, so
-	 * casting will never truncate the value. This may change with PHPC-1411. */
-	wtimeout = (int32_t) mongoc_write_concern_get_wtimeout_int64(intern->write_concern);
+	wtimeout = mongoc_write_concern_get_wtimeout_int64(intern->write_concern);
 
 #if PHP_VERSION_ID >= 70000
 	array_init_size(&retval, 3);
@@ -456,7 +456,7 @@ static PHP_METHOD(WriteConcern, serialize)
 	}
 
 	if (wtimeout != 0) {
-		ADD_ASSOC_LONG_EX(&retval, "wtimeout", wtimeout);
+		ADD_ASSOC_INT64_AS_STRING(&retval, "wtimeout", wtimeout);
 	}
 #else
 	ALLOC_INIT_ZVAL(retval);
@@ -475,7 +475,7 @@ static PHP_METHOD(WriteConcern, serialize)
 	}
 
 	if (wtimeout != 0) {
-		ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
+		ADD_ASSOC_INT64_AS_STRING(retval, "wtimeout", wtimeout);
 	}
 #endif
 
@@ -624,12 +624,12 @@ static phongo_create_object_retval php_phongo_writeconcern_create_object(zend_cl
 static HashTable* php_phongo_writeconcern_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
 {
 	*is_temp = 1;
-	return php_phongo_write_concern_get_properties_hash(object, true TSRMLS_CC);
+	return php_phongo_write_concern_get_properties_hash(object, true, false TSRMLS_CC);
 } /* }}} */
 
 static HashTable* php_phongo_writeconcern_get_properties(zval* object TSRMLS_DC) /* {{{ */
 {
-	return php_phongo_write_concern_get_properties_hash(object, false TSRMLS_CC);
+	return php_phongo_write_concern_get_properties_hash(object, false, false TSRMLS_CC);
 } /* }}} */
 
 void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */

@@ -21,7 +21,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["j"]=>
   bool(false)
   ["wtimeout"]=>
-  int(1000)
+  string(4) "1000"
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
@@ -29,6 +29,6 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["j"]=>
   bool(true)
   ["wtimeout"]=>
-  int(500)
+  string(3) "500"
 }
 ===DONE===
