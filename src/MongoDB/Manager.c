@@ -114,7 +114,7 @@ static void php_phongo_manager_prep_authmechanismproperties(zval* properties TSR
 		zend_ulong   num_key    = 0;
 		zval*        property;
 
-		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, property)
+		ZEND_HASH_FOREACH_KEY_VAL_IND(ht_data, num_key, string_key, property)
 		{
 			if (!string_key) {
 				continue;
@@ -193,7 +193,7 @@ static void php_phongo_manager_prep_uri_options(zval* options TSRMLS_DC) /* {{{ 
 		zend_ulong   num_key    = 0;
 		zval*        option;
 
-		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, option)
+		ZEND_HASH_FOREACH_KEY_VAL_IND(ht_data, num_key, string_key, option)
 		{
 			if (!string_key) {
 				continue;

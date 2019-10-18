@@ -1307,7 +1307,7 @@ void php_phongo_read_preference_prep_tagsets(zval* tagSets TSRMLS_DC) /* {{{ */
 	{
 		zval* tagSet;
 
-		ZEND_HASH_FOREACH_VAL(ht_data, tagSet)
+		ZEND_HASH_FOREACH_VAL_IND(ht_data, tagSet)
 		{
 			ZVAL_DEREF(tagSet);
 			if (Z_TYPE_P(tagSet) == IS_ARRAY) {
@@ -2300,7 +2300,7 @@ static void php_phongo_dispatch_handlers(const char* name, zval* z_event)
 #if PHP_VERSION_ID >= 70000
 	zval* value;
 
-	ZEND_HASH_FOREACH_VAL(MONGODB_G(subscribers), value)
+	ZEND_HASH_FOREACH_VAL_IND(MONGODB_G(subscribers), value)
 	{
 		if (EG(exception)) {
 			break;

@@ -399,10 +399,6 @@ try_again:
 		}
 
 #if PHP_VERSION_ID >= 70000
-		case IS_INDIRECT:
-			php_phongo_bson_append(bson, field_path, flags, key, key_len, Z_INDIRECT_P(entry) TSRMLS_DC);
-			break;
-
 		case IS_REFERENCE:
 			ZVAL_DEREF(entry);
 			goto try_again;
@@ -515,7 +511,7 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 		zend_ulong   num_key    = 0;
 		zval*        value;
 
-		ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, value)
+		ZEND_HASH_FOREACH_KEY_VAL_IND(ht_data, num_key, string_key, value)
 		{
 			if (string_key) {
 				if (ht_data_from_properties) {
