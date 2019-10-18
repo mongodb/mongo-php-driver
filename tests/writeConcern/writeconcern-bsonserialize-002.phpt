@@ -18,7 +18,7 @@ $tests = [
     new MongoDB\Driver\WriteConcern(1, 1000),
     new MongoDB\Driver\WriteConcern(1, 1000, true),
     new MongoDB\Driver\WriteConcern(-2, 0, true),
-    // Note: wtimeout is only applicable applies for w > 1
+    // Note: wtimeout is only applicable for w > 1
     new MongoDB\Driver\WriteConcern(-2, 1000),
 ];
 
