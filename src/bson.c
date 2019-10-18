@@ -515,16 +515,6 @@ static bool php_phongo_bson_visit_null(const bson_iter_t* iter ARG_UNUSED, const
 	return false;
 } /* }}} */
 
-/* qsort() compare callback for alphabetizing regex flags upon initialization */
-static int php_phongo_regex_compare_flags(const void* f1, const void* f2)
-{
-	if (*(const char*) f1 == *(const char*) f2) {
-		return 0;
-	}
-
-	return (*(const char*) f1 > *(const char*) f2) ? 1 : -1;
-}
-
 static void php_phongo_bson_new_regex_from_regex_and_options(zval* object, const char* pattern, const char* flags TSRMLS_DC) /* {{{ */
 {
 	php_phongo_regex_t* intern;
@@ -536,10 +526,6 @@ static void php_phongo_bson_new_regex_from_regex_and_options(zval* object, const
 	intern->pattern     = estrndup(pattern, intern->pattern_len);
 	intern->flags_len   = strlen(flags);
 	intern->flags       = estrndup(flags, intern->flags_len);
-
-	/* Ensure flags are alphabetized upon initialization. This may be removed
-	 * once CDRIVER-1883 is implemented. */
-	qsort((void*) intern->flags, intern->flags_len, 1, php_phongo_regex_compare_flags);
 } /* }}} */
 
 static bool php_phongo_bson_visit_regex(const bson_iter_t* iter ARG_UNUSED, const char* key, const char* v_regex, const char* v_options, void* data) /* {{{ */
