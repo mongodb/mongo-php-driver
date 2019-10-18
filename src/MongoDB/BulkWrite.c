@@ -242,12 +242,8 @@ static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zo
 	bool multi = false, upsert = false;
 
 	if (zoptions) {
-		if (php_array_existsc(zoptions, "multi")) {
-			multi = php_array_fetchc_bool(zoptions, "multi");
-		}
-		if (php_array_existsc(zoptions, "upsert")) {
-			upsert = php_array_fetchc_bool(zoptions, "upsert");
-		}
+		multi = php_array_fetchc_bool(zoptions, "multi");
+		upsert = php_array_fetchc_bool(zoptions, "upsert");
 	}
 
 	PHONGO_BULKWRITE_APPEND_BOOL("multi", multi);
@@ -264,9 +260,7 @@ static bool php_phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zo
 	int32_t limit = 0;
 
 	if (zoptions) {
-		if (php_array_existsc(zoptions, "limit")) {
-			limit = php_array_fetchc_bool(zoptions, "limit") ? 1 : 0;
-		}
+		limit = php_array_fetchc_bool(zoptions, "limit") ? 1 : 0;
 	}
 
 	PHONGO_BULKWRITE_APPEND_INT32("limit", limit);
@@ -391,7 +385,7 @@ static PHP_METHOD(BulkWrite, update)
 	}
 
 	if (php_phongo_bulkwrite_update_has_operators(&bupdate) || php_phongo_bulkwrite_update_is_pipeline(&bupdate)) {
-		if (zoptions && php_array_existsc(zoptions, "multi") && php_array_fetchc_bool(zoptions, "multi")) {
+		if (zoptions && php_array_fetchc_bool(zoptions, "multi")) {
 			if (!mongoc_bulk_operation_update_many_with_opts(intern->bulk, &bquery, &bupdate, &boptions, &error)) {
 				phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 				goto cleanup;
@@ -403,7 +397,7 @@ static PHP_METHOD(BulkWrite, update)
 			}
 		}
 	} else {
-		if (zoptions && php_array_existsc(zoptions, "multi") && php_array_fetchc_bool(zoptions, "multi")) {
+		if (zoptions && php_array_fetchc_bool(zoptions, "multi")) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Replacement document conflicts with true \"multi\" option");
 			goto cleanup;
 		}
@@ -447,7 +441,7 @@ static PHP_METHOD(BulkWrite, delete)
 		goto cleanup;
 	}
 
-	if (zoptions && php_array_existsc(zoptions, "limit") && php_array_fetchc_bool(zoptions, "limit")) {
+	if (zoptions && php_array_fetchc_bool(zoptions, "limit")) {
 		if (!mongoc_bulk_operation_remove_one_with_opts(intern->bulk, &bquery, &boptions, &error)) {
 			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
 			goto cleanup;
