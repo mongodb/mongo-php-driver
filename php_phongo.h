@@ -162,18 +162,6 @@ void php_phongo_cursor_to_zval(zval* retval, const mongoc_cursor_t* cursor);
 
 void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions TSRMLS_DC);
 int  php_phongo_set_monitoring_callbacks(mongoc_client_t* client);
-void php_phongo_objectid_new_from_oid(zval* object, const bson_oid_t* oid TSRMLS_DC);
-void php_phongo_cursor_id_new_from_id(zval* object, int64_t cursorid TSRMLS_DC);
-void php_phongo_new_utcdatetime_from_epoch(zval* object, int64_t msec_since_epoch TSRMLS_DC);
-void php_phongo_new_timestamp_from_increment_and_timestamp(zval* object, uint32_t increment, uint32_t timestamp TSRMLS_DC);
-void php_phongo_new_javascript_from_javascript(int init, zval* object, const char* code, size_t code_len TSRMLS_DC);
-void php_phongo_new_javascript_from_javascript_and_scope(int init, zval* object, const char* code, size_t code_len, const bson_t* scope TSRMLS_DC);
-void php_phongo_new_binary_from_binary_and_type(zval* object, const char* data, size_t data_len, bson_subtype_t type TSRMLS_DC);
-void php_phongo_new_decimal128(zval* object, const bson_decimal128_t* decimal TSRMLS_DC);
-void php_phongo_new_int64(zval* object, int64_t integer TSRMLS_DC);
-void php_phongo_new_regex_from_regex_and_options(zval* object, const char* pattern, const char* flags TSRMLS_DC);
-void php_phongo_new_symbol(zval* object, const char* symbol, size_t symbol_len TSRMLS_DC);
-void php_phongo_new_dbpointer(zval* object, const char* namespace, size_t namespace_len, const bson_oid_t* oid TSRMLS_DC);
 
 zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson TSRMLS_DC);
 zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_DC);
