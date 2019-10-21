@@ -16,6 +16,12 @@
 
 #include <php.h>
 #include <Zend/zend_interfaces.h>
+#include <ext/standard/php_var.h>
+#if PHP_VERSION_ID >= 70000
+#include <zend_smart_str.h>
+#else
+#include <ext/standard/php_smart_str.h>
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -406,6 +412,134 @@ static PHP_METHOD(WriteConcern, bsonSerialize)
 	convert_to_object(return_value);
 } /* }}} */
 
+/* {{{ proto string MongoDB\Driver\WriteConcern::serialize()
+*/
+static PHP_METHOD(WriteConcern, serialize)
+{
+	php_phongo_writeconcern_t* intern;
+	ZVAL_RETVAL_TYPE           retval;
+	php_serialize_data_t       var_hash;
+	smart_str                  buf = { 0 };
+	const char*                wtag;
+	int32_t                    w;
+	int32_t                    wtimeout;
+
+	intern = Z_WRITECONCERN_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if (!intern->write_concern) {
+		return;
+	}
+
+	wtag     = mongoc_write_concern_get_wtag(intern->write_concern);
+	w        = mongoc_write_concern_get_w(intern->write_concern);
+	/* Note: PHP currently enforces that wimeoutMS is a 32-bit integer, so
+	 * casting will never truncate the value. This may change with PHPC-1411. */
+	wtimeout = (int32_t) mongoc_write_concern_get_wtimeout_int64(intern->write_concern);
+
+#if PHP_VERSION_ID >= 70000
+	array_init_size(&retval, 3);
+
+	if (wtag) {
+		ADD_ASSOC_STRING(&retval, "w", wtag);
+	} else if (mongoc_write_concern_get_wmajority(intern->write_concern)) {
+		ADD_ASSOC_STRING(&retval, "w", PHONGO_WRITE_CONCERN_W_MAJORITY);
+	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
+		ADD_ASSOC_LONG_EX(&retval, "w", w);
+	}
+
+	if (mongoc_write_concern_journal_is_set(intern->write_concern)) {
+		ADD_ASSOC_BOOL_EX(&retval, "j", mongoc_write_concern_get_journal(intern->write_concern));
+	}
+
+	if (wtimeout != 0) {
+		ADD_ASSOC_LONG_EX(&retval, "wtimeout", wtimeout);
+	}
+#else
+	ALLOC_INIT_ZVAL(retval);
+	array_init_size(retval, 3);
+
+	if (wtag) {
+		ADD_ASSOC_STRING(retval, "w", wtag);
+	} else if (mongoc_write_concern_get_wmajority(intern->write_concern)) {
+		ADD_ASSOC_STRING(retval, "w", PHONGO_WRITE_CONCERN_W_MAJORITY);
+	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
+		ADD_ASSOC_LONG_EX(retval, "w", w);
+	}
+
+	if (mongoc_write_concern_journal_is_set(intern->write_concern)) {
+		ADD_ASSOC_BOOL_EX(retval, "j", mongoc_write_concern_get_journal(intern->write_concern));
+	}
+
+	if (wtimeout != 0) {
+		ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
+	}
+#endif
+
+	PHP_VAR_SERIALIZE_INIT(var_hash);
+	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
+	smart_str_0(&buf);
+	PHP_VAR_SERIALIZE_DESTROY(var_hash);
+
+	PHONGO_RETVAL_SMART_STR(buf);
+
+	smart_str_free(&buf);
+	zval_ptr_dtor(&retval);
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\WriteConcern::unserialize(string $serialized)
+*/
+static PHP_METHOD(WriteConcern, unserialize)
+{
+	php_phongo_writeconcern_t* intern;
+	zend_error_handling        error_handling;
+	char*                      serialized;
+	phongo_zpp_char_len        serialized_len;
+#if PHP_VERSION_ID >= 70000
+	zval props;
+#else
+	zval* props;
+#endif
+	php_unserialize_data_t var_hash;
+
+	intern = Z_WRITECONCERN_OBJ_P(getThis());
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &serialized, &serialized_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	if (!serialized_len) {
+		return;
+	}
+
+#if PHP_VERSION_ID < 70000
+	ALLOC_INIT_ZVAL(props);
+#endif
+	PHP_VAR_UNSERIALIZE_INIT(var_hash);
+	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
+		zval_ptr_dtor(&props);
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s unserialization failed", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+
+		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+		return;
+	}
+	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+
+#if PHP_VERSION_ID >= 70000
+	php_phongo_writeconcern_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
+#else
+	php_phongo_writeconcern_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
+#endif
+	zval_ptr_dtor(&props);
+} /* }}} */
+
 /* {{{ MongoDB\Driver\WriteConcern function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, w)
@@ -415,6 +549,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_unserialize, 0, 0, 1)
+	ZEND_ARG_INFO(0, serialized)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_void, 0, 0, 0)
@@ -429,6 +567,8 @@ static zend_function_entry php_phongo_writeconcern_me[] = {
 	PHP_ME(WriteConcern, getJournal, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, isDefault, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, bsonSerialize, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, serialize, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, unserialize, ai_WriteConcern_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
 	/* clang-format on */
 };
@@ -500,9 +640,9 @@ void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_writeconcern_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_writeconcern_ce->create_object = php_phongo_writeconcern_create_object;
 	PHONGO_CE_FINAL(php_phongo_writeconcern_ce);
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_writeconcern_ce);
 
 	zend_class_implements(php_phongo_writeconcern_ce TSRMLS_CC, 1, php_phongo_serializable_ce);
+	zend_class_implements(php_phongo_writeconcern_ce TSRMLS_CC, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_writeconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeconcern.get_debug_info = php_phongo_writeconcern_get_debug_info;

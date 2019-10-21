@@ -16,6 +16,12 @@
 
 #include <php.h>
 #include <Zend/zend_interfaces.h>
+#include <ext/standard/php_var.h>
+#if PHP_VERSION_ID >= 70000
+#include <zend_smart_str.h>
+#else
+#include <ext/standard/php_smart_str.h>
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -369,6 +375,26 @@ static PHP_METHOD(ReadPreference, getTagSets)
 	}
 } /* }}} */
 
+static const char* php_phongo_readpreference_get_mode_string(mongoc_read_mode_t mode) /* {{{ */
+{
+	switch (mode) {
+		case MONGOC_READ_PRIMARY:
+			return "primary";
+		case MONGOC_READ_PRIMARY_PREFERRED:
+			return "primaryPreferred";
+		case MONGOC_READ_SECONDARY:
+			return "secondary";
+		case MONGOC_READ_SECONDARY_PREFERRED:
+			return "secondaryPreferred";
+		case MONGOC_READ_NEAREST:
+			return "nearest";
+		default: /* Do nothing */
+			break;
+	}
+
+	return NULL;
+} /* }}} */
+
 static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readpreference_t* intern;
@@ -387,26 +413,7 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bo
 
 	tags = mongoc_read_prefs_get_tags(intern->read_preference);
 	mode = mongoc_read_prefs_get_mode(intern->read_preference);
-
-	switch (mode) {
-		case MONGOC_READ_PRIMARY:
-			modeString = "primary";
-			break;
-		case MONGOC_READ_PRIMARY_PREFERRED:
-			modeString = "primaryPreferred";
-			break;
-		case MONGOC_READ_SECONDARY:
-			modeString = "secondary";
-			break;
-		case MONGOC_READ_SECONDARY_PREFERRED:
-			modeString = "secondaryPreferred";
-			break;
-		case MONGOC_READ_NEAREST:
-			modeString = "nearest";
-			break;
-		default: /* Do nothing */
-			break;
-	}
+	modeString = php_phongo_readpreference_get_mode_string(mode);
 
 	if (modeString) {
 #if PHP_VERSION_ID >= 70000
@@ -471,6 +478,132 @@ static PHP_METHOD(ReadPreference, bsonSerialize)
 	convert_to_object(return_value);
 } /* }}} */
 
+/* {{{ proto string MongoDB\Driver\ReadPreference::serialize()
+*/
+static PHP_METHOD(ReadPreference, serialize)
+{
+	php_phongo_readpreference_t* intern;
+	ZVAL_RETVAL_TYPE             retval;
+	php_serialize_data_t         var_hash;
+	smart_str                    buf = { 0 };
+	const char*                  modeString = NULL;
+	const bson_t*                tags;
+	int64_t                      maxStalenessSeconds;
+	mongoc_read_mode_t           mode;
+
+	intern = Z_READPREFERENCE_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	if (!intern->read_preference) {
+		return;
+	}
+
+	tags                = mongoc_read_prefs_get_tags(intern->read_preference);
+	mode                = mongoc_read_prefs_get_mode(intern->read_preference);
+	modeString          = php_phongo_readpreference_get_mode_string(mode);
+	maxStalenessSeconds = mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference);
+
+#if PHP_VERSION_ID >= 70000
+	array_init_size(&retval, 3);
+#else
+	ALLOC_INIT_ZVAL(retval);
+	array_init_size(retval, 3);
+#endif
+
+	if (modeString) {
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_STRING(&retval, "mode", modeString);
+#else
+		ADD_ASSOC_STRING(retval, "mode", modeString);
+#endif
+	}
+
+	if (!bson_empty0(tags)) {
+		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+		/* Use native arrays for debugging output */
+		state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+
+		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(&retval, "tags", &state.zchild);
+#else
+		ADD_ASSOC_ZVAL_EX(retval, "tags", state.zchild);
+#endif
+	}
+
+	if (maxStalenessSeconds != MONGOC_NO_MAX_STALENESS) {
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_LONG_EX(&retval, "maxStalenessSeconds", maxStalenessSeconds);
+#else
+		ADD_ASSOC_LONG_EX(retval, "maxStalenessSeconds", maxStalenessSeconds);
+#endif
+	}
+
+	PHP_VAR_SERIALIZE_INIT(var_hash);
+	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
+	smart_str_0(&buf);
+	PHP_VAR_SERIALIZE_DESTROY(var_hash);
+
+	PHONGO_RETVAL_SMART_STR(buf);
+
+	smart_str_free(&buf);
+	zval_ptr_dtor(&retval);
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\ReadPreference::unserialize(string $serialized)
+*/
+static PHP_METHOD(ReadPreference, unserialize)
+{
+	php_phongo_readpreference_t* intern;
+	zend_error_handling          error_handling;
+	char*                        serialized;
+	phongo_zpp_char_len          serialized_len;
+#if PHP_VERSION_ID >= 70000
+	zval props;
+#else
+	zval* props;
+#endif
+	php_unserialize_data_t var_hash;
+
+	intern = Z_READPREFERENCE_OBJ_P(getThis());
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &serialized, &serialized_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	if (!serialized_len) {
+		return;
+	}
+
+#if PHP_VERSION_ID < 70000
+	ALLOC_INIT_ZVAL(props);
+#endif
+	PHP_VAR_UNSERIALIZE_INIT(var_hash);
+	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
+		zval_ptr_dtor(&props);
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s unserialization failed", ZSTR_VAL(php_phongo_readpreference_ce->name));
+
+		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+		return;
+	}
+	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+
+#if PHP_VERSION_ID >= 70000
+	php_phongo_readpreference_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
+#else
+	php_phongo_readpreference_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
+#endif
+	zval_ptr_dtor(&props);
+} /* }}} */
+
 /* {{{ MongoDB\Driver\ReadPreference function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, mode)
@@ -480,6 +613,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference_unserialize, 0, 0, 1)
+	ZEND_ARG_INFO(0, serialized)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference_void, 0, 0, 0)
@@ -493,6 +630,8 @@ static zend_function_entry php_phongo_readpreference_me[] = {
 	PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, bsonSerialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ReadPreference, serialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ReadPreference, unserialize, ai_ReadPreference_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
 	/* clang-format on */
 };
@@ -565,9 +704,9 @@ void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_readpreference_ce                = zend_register_internal_class(&ce TSRMLS_CC);
 	php_phongo_readpreference_ce->create_object = php_phongo_readpreference_create_object;
 	PHONGO_CE_FINAL(php_phongo_readpreference_ce);
-	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_readpreference_ce);
 
 	zend_class_implements(php_phongo_readpreference_ce TSRMLS_CC, 1, php_phongo_serializable_ce);
+	zend_class_implements(php_phongo_readpreference_ce TSRMLS_CC, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_readpreference, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_readpreference.get_debug_info = php_phongo_readpreference_get_debug_info;
