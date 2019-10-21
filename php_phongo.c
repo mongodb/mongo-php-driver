@@ -1583,6 +1583,11 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options T
 				return false;
 			}
 
+			if (!strcasecmp(key, MONGOC_URI_REPLICASET) && !strcmp("", bson_iter_utf8(&iter, NULL))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Value for URI option \"%s\" cannot be empty string.", key);
+				return false;
+			}
+
 			if (!mongoc_uri_set_option_as_utf8(uri, key, bson_iter_utf8(&iter, NULL))) {
 				/* Assignment uses mongoc_uri_set_appname() for the "appname"
 				 * option, which validates length in addition to UTF-8 encoding.
