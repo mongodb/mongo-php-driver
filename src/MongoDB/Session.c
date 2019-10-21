@@ -150,7 +150,9 @@ static PHP_METHOD(Session, getClusterTime)
 {
 	php_phongo_session_t* intern;
 	const bson_t*         cluster_time;
-	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+	php_phongo_bson_state state;
+
+	PHONGO_BSON_INIT_STATE(state);
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getClusterTime")
@@ -184,7 +186,9 @@ static PHP_METHOD(Session, getLogicalSessionId)
 {
 	php_phongo_session_t* intern;
 	const bson_t*         lsid;
-	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+	php_phongo_bson_state state;
+
+	PHONGO_BSON_INIT_STATE(state);
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getLogicalSessionId")
@@ -550,11 +554,9 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 
 	if (intern->client_session) {
 		const bson_t* lsid;
+		php_phongo_bson_state state;
 
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-		/* Use native arrays for debugging output */
-		state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
 
 		lsid = mongoc_client_session_get_lsid(intern->client_session);
 
@@ -572,14 +574,12 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 	if (intern->client_session) {
 		const bson_t* cluster_time;
 
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-		/* Use native arrays for debugging output */
-		state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-
 		cluster_time = mongoc_client_session_get_cluster_time(intern->client_session);
 
 		if (cluster_time) {
+			php_phongo_bson_state state;
+
+			PHONGO_BSON_INIT_DEBUG_STATE(state);
 			php_phongo_bson_to_zval_ex(bson_get_data(cluster_time), cluster_time->len, &state);
 
 #if PHP_VERSION_ID >= 70000

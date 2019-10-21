@@ -214,12 +214,11 @@ static PHP_METHOD(Server, getTags)
 		if (bson_iter_init_find(&iter, is_master, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 			const uint8_t*        bytes;
 			uint32_t              len;
-			php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+			php_phongo_bson_state state;
 
-			state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
-			state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-
+			PHONGO_BSON_INIT_DEBUG_STATE(state);
 			bson_iter_document(&iter, &len, &bytes);
+
 			if (!php_phongo_bson_to_zval_ex(bytes, len, &state)) {
 				/* Exception should already have been thrown */
 				zval_ptr_dtor(&state.zchild);
@@ -259,10 +258,9 @@ static PHP_METHOD(Server, getInfo)
 
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
 		const bson_t*         is_master = mongoc_server_description_ismaster(sd);
-		php_phongo_bson_state state     = PHONGO_BSON_STATE_INITIALIZER;
+		php_phongo_bson_state state;
 
-		state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
 
 		if (!php_phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state)) {
 			/* Exception should already have been thrown */

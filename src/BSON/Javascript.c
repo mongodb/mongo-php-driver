@@ -177,8 +177,9 @@ static PHP_METHOD(Javascript, getScope)
 	}
 
 	if (intern->scope->len) {
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+		php_phongo_bson_state state;
 
+		PHONGO_BSON_INIT_STATE(state);
 		php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state);
 #if PHP_VERSION_ID >= 70000
 		RETURN_ZVAL(&state.zchild, 0, 1);
@@ -206,8 +207,9 @@ static PHP_METHOD(Javascript, jsonSerialize)
 	ADD_ASSOC_STRINGL(return_value, "$code", intern->code, intern->code_len);
 
 	if (intern->scope && intern->scope->len) {
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+		php_phongo_bson_state state;
 
+		PHONGO_BSON_INIT_STATE(state);
 		if (php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 #if PHP_VERSION_ID >= 70000
 			Z_ADDREF(state.zchild);
@@ -228,9 +230,11 @@ static PHP_METHOD(Javascript, serialize)
 {
 	php_phongo_javascript_t* intern;
 	ZVAL_RETVAL_TYPE         retval;
-	php_phongo_bson_state    state = PHONGO_BSON_STATE_INITIALIZER;
+	php_phongo_bson_state    state;
 	php_serialize_data_t     var_hash;
 	smart_str                buf = { 0 };
+
+	PHONGO_BSON_INIT_STATE(state);
 
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
@@ -451,8 +455,9 @@ HashTable* php_phongo_javascript_get_properties_hash(zval* object, bool is_debug
 		zend_hash_str_update(props, "code", sizeof("code") - 1, &code);
 
 		if (intern->scope) {
-			php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+			php_phongo_bson_state state;
 
+			PHONGO_BSON_INIT_STATE(state);
 			if (php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 				Z_ADDREF(state.zchild);
 				zend_hash_str_update(props, "scope", sizeof("scope") - 1, &state.zchild);
@@ -480,8 +485,9 @@ HashTable* php_phongo_javascript_get_properties_hash(zval* object, bool is_debug
 		zend_hash_update(props, "code", sizeof("code"), &code, sizeof(code), NULL);
 
 		if (intern->scope) {
-			php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+			php_phongo_bson_state state;
 
+			PHONGO_BSON_INIT_STATE(state);
 			if (php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
 				Z_ADDREF_P(state.zchild);
 				zend_hash_update(props, "scope", sizeof("scope"), &state.zchild, sizeof(state.zchild), NULL);

@@ -359,11 +359,9 @@ static PHP_METHOD(ReadPreference, getTagSets)
 	tags = mongoc_read_prefs_get_tags(intern->read_preference);
 
 	if (tags->len) {
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-		/* Use native arrays for debugging output */
-		state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		php_phongo_bson_state state;
 
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
 		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
 #if PHP_VERSION_ID >= 70000
 		RETURN_ZVAL(&state.zchild, 0, 1);
@@ -431,10 +429,12 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bo
 	}
 
 	if (!bson_empty0(tags)) {
+		php_phongo_bson_state state;
+
 		/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type since tags is an
 		 * array; however, inner documents and arrays can use the default. */
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-		state.map.root_type         = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		PHONGO_BSON_INIT_STATE(state);
+		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
 #if PHP_VERSION_ID >= 70000
@@ -522,11 +522,9 @@ static PHP_METHOD(ReadPreference, serialize)
 	}
 
 	if (!bson_empty0(tags)) {
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-		/* Use native arrays for debugging output */
-		state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		php_phongo_bson_state state;
 
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
 		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "tags", &state.zchild);

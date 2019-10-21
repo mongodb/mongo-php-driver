@@ -31,7 +31,9 @@ zend_class_entry* php_phongo_commandstartedevent_ce;
 PHP_METHOD(CommandStartedEvent, getCommand)
 {
 	php_phongo_commandstartedevent_t* intern;
-	php_phongo_bson_state             state = PHONGO_BSON_STATE_INITIALIZER;
+	php_phongo_bson_state             state;
+
+	PHONGO_BSON_INIT_STATE(state);
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -204,7 +206,9 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(zval* object, in
 	php_phongo_commandstartedevent_t* intern;
 	zval                              retval = ZVAL_STATIC_INIT;
 	char                              operation_id[20], request_id[20];
-	php_phongo_bson_state             command_state = PHONGO_BSON_STATE_INITIALIZER;
+	php_phongo_bson_state             command_state;
+
+	PHONGO_BSON_INIT_STATE(command_state);
 
 	intern   = Z_COMMANDSTARTEDEVENT_OBJ_P(object);
 	*is_temp = 1;
