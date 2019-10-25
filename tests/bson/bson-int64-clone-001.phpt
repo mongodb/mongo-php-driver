@@ -8,6 +8,7 @@ MongoDB\BSON\Int64 can be cloned
 require_once __DIR__ . '/../utils/tools.php';
 
 $int64 = unserialize('C:18:"MongoDB\BSON\Int64":47:{a:1:{s:7:"integer";s:19:"9223372036854775807";}}');
+$int64->foo = 'bar';
 $clone = clone $int64;
 
 var_dump($clone == $int64);
@@ -16,6 +17,7 @@ var_dump($clone === $int64);
 unset($int64);
 
 var_dump($clone);
+var_dump($clone->foo);
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -26,4 +28,5 @@ object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(19) "9223372036854775807"
 }
+string(3) "bar"
 ===DONE===

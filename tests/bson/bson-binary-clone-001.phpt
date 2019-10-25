@@ -18,6 +18,7 @@ $types = array(
 foreach($types as $type) {
     // Use 16-byte data to satisfy UUID requirements
     $binary = new MongoDB\BSON\Binary('randomBinaryData', $type);
+    $binary->foo = 'bar';
 
     $clone = clone $binary;
 
@@ -27,6 +28,7 @@ foreach($types as $type) {
     unset($binary);
 
     var_dump($clone);
+    var_dump($clone->foo);
 }
 ?>
 ===DONE===
@@ -40,6 +42,7 @@ object(MongoDB\BSON\Binary)#%d (2) {
   ["type"]=>
   int(0)
 }
+string(3) "bar"
 bool(true)
 bool(false)
 object(MongoDB\BSON\Binary)#%d (2) {
@@ -48,6 +51,7 @@ object(MongoDB\BSON\Binary)#%d (2) {
   ["type"]=>
   int(1)
 }
+string(3) "bar"
 bool(true)
 bool(false)
 object(MongoDB\BSON\Binary)#%d (2) {
@@ -56,6 +60,7 @@ object(MongoDB\BSON\Binary)#%d (2) {
   ["type"]=>
   int(2)
 }
+string(3) "bar"
 bool(true)
 bool(false)
 object(MongoDB\BSON\Binary)#%d (2) {
@@ -64,6 +69,7 @@ object(MongoDB\BSON\Binary)#%d (2) {
   ["type"]=>
   int(3)
 }
+string(3) "bar"
 bool(true)
 bool(false)
 object(MongoDB\BSON\Binary)#%d (2) {
@@ -72,6 +78,7 @@ object(MongoDB\BSON\Binary)#%d (2) {
   ["type"]=>
   int(4)
 }
+string(3) "bar"
 bool(true)
 bool(false)
 object(MongoDB\BSON\Binary)#%d (2) {
@@ -80,6 +87,7 @@ object(MongoDB\BSON\Binary)#%d (2) {
   ["type"]=>
   int(5)
 }
+string(3) "bar"
 bool(true)
 bool(false)
 object(MongoDB\BSON\Binary)#%d (2) {
@@ -88,6 +96,7 @@ object(MongoDB\BSON\Binary)#%d (2) {
   ["type"]=>
   int(128)
 }
+string(3) "bar"
 bool(true)
 bool(false)
 object(MongoDB\BSON\Binary)#%d (2) {
@@ -96,4 +105,5 @@ object(MongoDB\BSON\Binary)#%d (2) {
   ["type"]=>
   int(133)
 }
+string(3) "bar"
 ===DONE===

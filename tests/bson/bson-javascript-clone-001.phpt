@@ -6,6 +6,7 @@ MongoDB\BSON\Javascript can be cloned
 require_once __DIR__ . '/../utils/tools.php';
 
 $javascript = new MongoDB\BSON\Javascript("function foo(bar) {var baz = bar; var bar = foo; return bar; }", ['foo' => 42]);
+$javascript->foo = 'bar';
 
 $clone = clone $javascript;
 
@@ -15,6 +16,7 @@ var_dump($clone === $javascript);
 unset($javascript);
 
 var_dump($clone);
+var_dump($clone->foo);
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -30,4 +32,5 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
     int(42)
   }
 }
+string(3) "bar"
 ===DONE===
