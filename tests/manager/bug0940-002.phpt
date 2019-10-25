@@ -14,6 +14,9 @@ var_dump(new MongoDB\Driver\Manager(null, [], ['context' => $context]));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: MongoDB\Driver\Manager::__construct(): The "context" driver option is deprecated.%s
+
+Deprecated: MongoDB\Driver\Manager::__construct(): The "cafile" context driver option is deprecated. Please use the "tlsCAFile" URI option instead.%s
 object(MongoDB\Driver\Manager)#%d (%d) {
   ["uri"]=>
   string(20) "mongodb://127.0.0.1/"

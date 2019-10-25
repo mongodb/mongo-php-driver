@@ -79,6 +79,16 @@ static bool php_phongo_manager_merge_context_options(zval* zdriverOptions TSRMLS
 		return false;
 	}
 
+	/* When running PHP in debug mode, php_error_docref duplicates the current
+	 * scope, leading to a COW violation in zend_hash_merge and
+	 * zend_symtable_str_del (called by php_array_unsetc). This macro allows
+	 * that violation in debug mode and is a NOOP when in non-debug. */
+#if PHP_VERSION_ID >= 70200
+	HT_ALLOW_COW_VIOLATION(Z_ARRVAL_P(zdriverOptions));
+#endif
+
+	php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"context\" driver option is deprecated.");
+
 	/* Perform array union (see: add_function() in zend_operators.c) */
 #if PHP_VERSION_ID >= 70000
 	zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), zval_add_ref, 0);
@@ -90,6 +100,7 @@ static bool php_phongo_manager_merge_context_options(zval* zdriverOptions TSRMLS
 #endif
 
 	php_array_unsetc(zdriverOptions, "context");
+
 	return true;
 } /* }}} */
 

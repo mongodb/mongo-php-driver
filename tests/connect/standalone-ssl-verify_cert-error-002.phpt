@@ -28,6 +28,11 @@ echo throws(function() use ($driverOptions) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: MongoDB\Driver\Manager::__construct(): The "context" driver option is deprecated.%s
+
+Deprecated: MongoDB\Driver\Manager::__construct(): The "allow_invalid_hostname" driver option is deprecated. Please use the "tlsAllowInvalidHostnames" URI option instead.%s
+
+Deprecated: MongoDB\Driver\Manager::__construct(): The "allow_self_signed" context driver option is deprecated. Please use the "tlsAllowInvalidCertificates" URI option instead.%s
 OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException thrown from executeCommand
 No suitable servers found (`serverSelectionTryOnce` set): [%s calling ismaster on '%s:%d']
 ===DONE===

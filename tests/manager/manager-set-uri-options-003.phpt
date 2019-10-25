@@ -17,4 +17,5 @@ $manager = new MongoDB\Driver\Manager(URI . '&sslclientcertificatekeypassword=do
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Deprecated: MongoDB\Driver\Manager::__construct(): The "pem_pwd" driver option is deprecated. Please use the "tlsCertificateKeyFilePassword" URI option instead.%s
 ===DONE===

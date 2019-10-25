@@ -2149,6 +2149,8 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptio
 	} else if (php_array_existsc(zoptions, "capath")) {
 		PHONGO_SSL_OPTION_SWAP_STRING(ssl_opt->ca_dir, "capath");
 		any_ssl_option_set = true;
+
+		php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"capath\" context driver option is deprecated. Please use the \"ca_dir\" driver option instead.");
 	}
 
 	if (php_array_existsc(zoptions, "crl_file")) {
@@ -2216,6 +2218,8 @@ static bool php_phongo_apply_driver_options_to_uri(mongoc_uri_t* uri, zval* zopt
 
 			return false;
 		}
+
+		php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"allow_invalid_hostname\" driver option is deprecated. Please use the \"tlsAllowInvalidHostnames\" URI option instead.");
 	}
 
 	if (php_array_existsc(zoptions, "weak_cert_validation")) {
@@ -2224,12 +2228,16 @@ static bool php_phongo_apply_driver_options_to_uri(mongoc_uri_t* uri, zval* zopt
 
 			return false;
 		}
+
+		php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"weak_cert_validation\" driver option is deprecated. Please use the \"tlsAllowInvalidCertificates\" URI option instead.");
 	} else if (php_array_existsc(zoptions, "allow_self_signed")) {
 		if (!mongoc_uri_set_option_as_bool(uri, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES, php_array_fetchc_bool(zoptions, "allow_self_signed"))) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "allow_self_signed");
 
 			return false;
 		}
+
+		php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"allow_self_signed\" context driver option is deprecated. Please use the \"tlsAllowInvalidCertificates\" URI option instead.");
 	}
 
 	if (php_array_existsc(zoptions, "pem_file")) {
@@ -2238,12 +2246,16 @@ static bool php_phongo_apply_driver_options_to_uri(mongoc_uri_t* uri, zval* zopt
 
 			return false;
 		}
+
+		php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"pem_file\" driver option is deprecated. Please use the \"tlsCertificateKeyFile\" URI option instead.");
 	} else if (php_array_existsc(zoptions, "local_cert")) {
 		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "local_cert", MONGOC_URI_TLSCERTIFICATEKEYFILE)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "local_cert");
 
 			return false;
 		}
+
+		php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"local_cert\" context driver option is deprecated. Please use the \"tlsCertificateKeyFile\" URI option instead.");
 	}
 
 	if (php_array_existsc(zoptions, "pem_pwd")) {
@@ -2252,12 +2264,16 @@ static bool php_phongo_apply_driver_options_to_uri(mongoc_uri_t* uri, zval* zopt
 
 			return false;
 		}
+
+		php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"pem_pwd\" driver option is deprecated. Please use the \"tlsCertificateKeyFilePassword\" URI option instead.");
 	} else if (php_array_existsc(zoptions, "passphrase")) {
 		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "passphrase", MONGOC_URI_TLSCERTIFICATEKEYFILEPASSWORD)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "passphrase");
 
 			return false;
 		}
+
+		php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"passphrase\" context driver option is deprecated. Please use the \"tlsCertificateKeyFilePassword\" URI option instead.");
 	}
 
 	if (php_array_existsc(zoptions, "ca_file")) {
@@ -2266,12 +2282,16 @@ static bool php_phongo_apply_driver_options_to_uri(mongoc_uri_t* uri, zval* zopt
 
 			return false;
 		}
+
+		php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"ca_file\" driver option is deprecated. Please use the \"tlsCAFile\" URI option instead.");
 	} else if (php_array_existsc(zoptions, "cafile")) {
 		if (!php_phongo_apply_driver_option_to_uri(uri, zoptions, "cafile", MONGOC_URI_TLSCAFILE)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Failed to parse \"%s\" driver option", "cafile");
 
 			return false;
 		}
+
+		php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"cafile\" context driver option is deprecated. Please use the \"tlsCAFile\" URI option instead.");
 	}
 
 	return true;

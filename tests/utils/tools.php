@@ -545,6 +545,8 @@ function destroyTemporaryMongoInstance($id = NULL)
 
 function severityToString($type) {
     switch($type) {
+    case E_DEPRECATED:
+        return "E_DEPRECATED";
     case E_RECOVERABLE_ERROR:
         return "E_RECOVERABLE_ERROR";
     case E_WARNING:
