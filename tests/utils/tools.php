@@ -593,10 +593,10 @@ function throws($function, $exceptionname, $infunction = null) {
     try {
         $function();
     } catch (Throwable $e) {
-    } catch(Exception $e) {
+    } catch (Exception $e) {
     }
 
-    if ($e === null) {
+    if (!isset($e)) {
         echo "FAILED: Expected $exceptionname thrown, but no exception thrown!\n";
         return;
     }
