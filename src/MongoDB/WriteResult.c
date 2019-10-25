@@ -248,11 +248,12 @@ static PHP_METHOD(WriteResult, getUpsertedIds)
 	if (bson_iter_init_find(&iter, intern->reply, "upserted") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
 		while (bson_iter_next(&child)) {
 			uint32_t              data_len;
-			const uint8_t*        data  = NULL;
-			php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+			const uint8_t*        data = NULL;
+			php_phongo_bson_state state;
 
 			/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type so we can
 			 * easily access the "index" and "_id" fields. */
+			PHONGO_BSON_INIT_STATE(state);
 			state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
@@ -420,12 +421,9 @@ static HashTable* php_phongo_writeresult_get_debug_info(zval* object, int* is_te
 	if (bson_iter_init_find(&iter, intern->reply, "upserted") && BSON_ITER_HOLDS_ARRAY(&iter)) {
 		uint32_t              len;
 		const uint8_t*        data;
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+		php_phongo_bson_state state;
 
-		/* Use native arrays for debugging output */
-		state.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		state.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
 		bson_iter_array(&iter, &len, &data);
 		php_phongo_bson_to_zval_ex(data, len, &state);
 #if PHP_VERSION_ID >= 70000

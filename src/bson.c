@@ -958,8 +958,9 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
 
 	if (bson_iter_init(&child, v_document)) {
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+		php_phongo_bson_state state;
 
+		PHONGO_BSON_INIT_STATE(state);
 		php_phongo_bson_state_copy_ctor(&state, parent_state);
 
 #if PHP_VERSION_ID >= 70000
@@ -1069,8 +1070,9 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_ARRAY);
 
 	if (bson_iter_init(&child, v_array)) {
-		php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+		php_phongo_bson_state state;
 
+		PHONGO_BSON_INIT_STATE(state);
 		php_phongo_bson_state_copy_ctor(&state, parent_state);
 
 		/* Note that we are visiting an array, so element visitors know to use
@@ -1179,7 +1181,9 @@ bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval** zv)
 #endif
 {
 	bool                  retval;
-	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
+	php_phongo_bson_state state;
+
+	PHONGO_BSON_INIT_STATE(state);
 
 	retval = php_phongo_bson_to_zval_ex(data, data_len, &state);
 #if PHP_VERSION_ID >= 70000

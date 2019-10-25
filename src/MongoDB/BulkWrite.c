@@ -34,9 +34,10 @@ zend_class_entry* php_phongo_bulkwrite_ce;
 /* Extracts the "_id" field of a BSON document into a return value. */
 static void php_phongo_bulkwrite_extract_id(bson_t* doc, zval** return_value) /* {{{ */
 {
-	php_phongo_bson_state state = PHONGO_BSON_STATE_INITIALIZER;
-	zval*                 id    = NULL;
+	zval*                 id = NULL;
+	php_phongo_bson_state state;
 
+	PHONGO_BSON_INIT_STATE(state);
 	state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 	if (!php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &state)) {

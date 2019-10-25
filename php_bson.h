@@ -83,17 +83,16 @@ typedef struct {
 	php_phongo_field_path*  field_path;
 } php_phongo_bson_state;
 
-#if PHP_VERSION_ID >= 70000
-#define PHONGO_BSON_STATE_INITIALIZER                                                                              \
-	{                                                                                                              \
-		{ { 0 } }, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL }, NULL, NULL \
-	}
-#else
-#define PHONGO_BSON_STATE_INITIALIZER                                                                         \
-	{                                                                                                         \
-		NULL, { PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL, PHONGO_TYPEMAP_NONE, NULL }, NULL, NULL \
-	}
-#endif
+#define PHONGO_BSON_INIT_STATE(s)                       \
+	do {                                                \
+		memset(&(s), 0, sizeof(php_phongo_bson_state)); \
+	} while (0)
+#define PHONGO_BSON_INIT_DEBUG_STATE(s)                    \
+	do {                                                   \
+		memset(&(s), 0, sizeof(php_phongo_bson_state));    \
+		s.map.root_type     = PHONGO_TYPEMAP_NATIVE_ARRAY; \
+		s.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY; \
+	} while (0)
 
 void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out TSRMLS_DC);
 bool php_phongo_bson_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state);

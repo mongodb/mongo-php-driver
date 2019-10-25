@@ -222,9 +222,11 @@ static zend_object_iterator* php_phongo_cursor_get_iterator(zend_class_entry* ce
 static PHP_METHOD(Cursor, setTypeMap)
 {
 	php_phongo_cursor_t*  intern;
-	php_phongo_bson_state state                   = PHONGO_BSON_STATE_INITIALIZER;
+	php_phongo_bson_state state;
 	zval*                 typemap                 = NULL;
 	bool                  restore_current_element = false;
+
+	PHONGO_BSON_INIT_STATE(state);
 
 	intern = Z_CURSOR_OBJ_P(getThis());
 

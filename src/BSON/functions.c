@@ -55,7 +55,9 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
 	char*                 data;
 	phongo_zpp_char_len   data_len;
 	zval*                 typemap = NULL;
-	php_phongo_bson_state state   = PHONGO_BSON_STATE_INITIALIZER;
+	php_phongo_bson_state state;
+
+	PHONGO_BSON_INIT_STATE(state);
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &data, &data_len, &typemap) == FAILURE) {
 		return;

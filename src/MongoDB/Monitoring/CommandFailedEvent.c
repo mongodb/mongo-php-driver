@@ -97,7 +97,9 @@ PHP_METHOD(CommandFailedEvent, getOperationId)
 PHP_METHOD(CommandFailedEvent, getReply)
 {
 	php_phongo_commandfailedevent_t* intern;
-	php_phongo_bson_state            state = PHONGO_BSON_STATE_INITIALIZER;
+	php_phongo_bson_state            state;
+
+	PHONGO_BSON_INIT_STATE(state);
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -226,7 +228,9 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(zval* object, int
 	php_phongo_commandfailedevent_t* intern;
 	zval                             retval = ZVAL_STATIC_INIT;
 	char                             operation_id[20], request_id[20];
-	php_phongo_bson_state            reply_state = PHONGO_BSON_STATE_INITIALIZER;
+	php_phongo_bson_state            reply_state;
+
+	PHONGO_BSON_INIT_STATE(reply_state);
 
 	intern   = Z_COMMANDFAILEDEVENT_OBJ_P(object);
 	*is_temp = 1;
