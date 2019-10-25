@@ -605,9 +605,23 @@ static bool php_phongo_bson_visit_symbol(const bson_iter_t* iter, const char* ke
 	return false;
 } /* }}} */
 
-static void php_phongo_bson_new_javascript_from_javascript_and_scope(zval* object, const char* code, size_t code_len, const bson_t* scope TSRMLS_DC) /* {{{ */
+static bool php_phongo_bson_new_javascript_from_javascript_and_scope(zval* object, const char* code, size_t code_len, const bson_t* scope TSRMLS_DC) /* {{{ */
 {
 	php_phongo_javascript_t* intern;
+
+	if (scope) {
+		php_phongo_bson_state state;
+		bool valid_scope;
+
+		PHONGO_BSON_INIT_STATE(state);
+
+		valid_scope = php_phongo_bson_to_zval_ex(bson_get_data(scope), scope->len, &state);
+		zval_ptr_dtor(&state.zchild);
+
+		if (!valid_scope) {
+			return false;
+		}
+	}
 
 	object_init_ex(object, php_phongo_javascript_ce);
 
@@ -616,19 +630,12 @@ static void php_phongo_bson_new_javascript_from_javascript_and_scope(zval* objec
 	intern->code_len = code_len;
 	intern->scope    = scope ? bson_copy(scope) : NULL;
 
-	if (scope) {
-		php_phongo_bson_state state;
-
-		PHONGO_BSON_INIT_STATE(state);
-
-		php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state);
-		zval_ptr_dtor(&state.zchild);
-	}
+	return true;
 } /* }}} */
 
-static void php_phongo_bson_new_javascript_from_javascript(zval* object, const char* code, size_t code_len TSRMLS_DC) /* {{{ */
+static bool php_phongo_bson_new_javascript_from_javascript(zval* object, const char* code, size_t code_len TSRMLS_DC) /* {{{ */
 {
-	php_phongo_bson_new_javascript_from_javascript_and_scope(object, code, code_len, NULL TSRMLS_CC);
+	return php_phongo_bson_new_javascript_from_javascript_and_scope(object, code, code_len, NULL TSRMLS_CC);
 } /* }}} */
 
 static bool php_phongo_bson_visit_code(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_code_len, const char* v_code, void* data) /* {{{ */
@@ -638,7 +645,9 @@ static bool php_phongo_bson_visit_code(const bson_iter_t* iter ARG_UNUSED, const
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
-	php_phongo_bson_new_javascript_from_javascript(&zchild, v_code, v_code_len TSRMLS_CC);
+	if (!php_phongo_bson_new_javascript_from_javascript(&zchild, v_code, v_code_len TSRMLS_CC)) {
+		return true;
+	}
 
 	if (state->is_visiting_array) {
 		add_next_index_zval(retval, &zchild);
@@ -650,7 +659,10 @@ static bool php_phongo_bson_visit_code(const bson_iter_t* iter ARG_UNUSED, const
 	TSRMLS_FETCH();
 
 	MAKE_STD_ZVAL(zchild);
-	php_phongo_bson_new_javascript_from_javascript(zchild, v_code, v_code_len TSRMLS_CC);
+	if (!php_phongo_bson_new_javascript_from_javascript(zchild, v_code, v_code_len TSRMLS_CC)) {
+		zval_ptr_dtor(&zchild);
+		return true;
+	}
 
 	if (state->is_visiting_array) {
 		add_next_index_zval(retval, zchild);
@@ -716,7 +728,9 @@ static bool php_phongo_bson_visit_codewscope(const bson_iter_t* iter ARG_UNUSED,
 #if PHP_VERSION_ID >= 70000
 	zval zchild;
 
-	php_phongo_bson_new_javascript_from_javascript_and_scope(&zchild, v_code, v_code_len, v_scope TSRMLS_CC);
+	if (!php_phongo_bson_new_javascript_from_javascript_and_scope(&zchild, v_code, v_code_len, v_scope TSRMLS_CC)) {
+		return true;
+	}
 
 	if (state->is_visiting_array) {
 		add_next_index_zval(retval, &zchild);
@@ -728,7 +742,10 @@ static bool php_phongo_bson_visit_codewscope(const bson_iter_t* iter ARG_UNUSED,
 	TSRMLS_FETCH();
 
 	MAKE_STD_ZVAL(zchild);
-	php_phongo_bson_new_javascript_from_javascript_and_scope(zchild, v_code, v_code_len, v_scope TSRMLS_CC);
+	if (!php_phongo_bson_new_javascript_from_javascript_and_scope(zchild, v_code, v_code_len, v_scope TSRMLS_CC)) {
+		zval_ptr_dtor(&zchild);
+		return true;
+	}
 
 	if (state->is_visiting_array) {
 		add_next_index_zval(retval, zchild);
