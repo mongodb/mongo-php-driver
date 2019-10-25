@@ -37,6 +37,16 @@ functions:
         working_dir: "src"
         script: |
            git submodule update --init
+    # Switch to a different version of libmongoc
+    - command: shell.exec
+      params:
+        working_dir: "src/src/libmongoc"
+        script: |
+           if [ -n "$LIBMONGOC_VERSION" ]; then
+              git fetch
+              git checkout $LIBMONGOC_VERSION
+              ../../build/calc_release_version.py
+           fi
     # Applies the submitted patch, if any
     # Deprecated. Should be removed. But still needed for certain agents (ZAP)
     - command: git.apply_patch
@@ -668,6 +678,18 @@ axes:
         variables:
            STORAGE_ENGINE: "inmemory"
 
+  - id: libmongoc-version
+    display_name: libmongoc version
+    values:
+      - id: "1.15-latest"
+        display_name: "1.15 latest"
+        variables:
+          LIBMONGOC_VERSION: "r1.15"
+      - id: "master"
+        display_name: "Upcoming release (master)"
+        variables:
+          LIBMONGOC_VERSION: "master"
+
 
 buildvariants:
 
@@ -772,3 +794,11 @@ buildvariants:
   display_name: "${versions}/${php-versions}/${os-php7} — ${storage-engine}"
   tasks:
      - name: "test-standalone"
+
+- matrix_name: "libmongoc-versions-php7"
+  matrix_spec: {"os-php7": "debian92-test", "versions": "4.2", "php-versions": "7.2", "libmongoc-version": "*"}
+  display_name: "${versions}/${php-versions}/${os-php7} — libmongoc ${libmongoc-version}"
+  tasks:
+     - name: "test-standalone"
+     - name: "test-replicaset"
+     - name: "test-sharded-rs"
