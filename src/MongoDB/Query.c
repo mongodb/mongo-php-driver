@@ -455,7 +455,11 @@ static HashTable* php_phongo_query_get_debug_info(zval* object, int* is_temp TSR
 		zval* zv;
 #endif
 
-		php_phongo_bson_to_zval(bson_get_data(intern->filter), intern->filter->len, &zv);
+		if (!php_phongo_bson_to_zval(bson_get_data(intern->filter), intern->filter->len, &zv)) {
+			zval_ptr_dtor(&zv);
+			goto done;
+		}
+
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "filter", &zv);
 #else
@@ -472,7 +476,11 @@ static HashTable* php_phongo_query_get_debug_info(zval* object, int* is_temp TSR
 		zval* zv;
 #endif
 
-		php_phongo_bson_to_zval(bson_get_data(intern->opts), intern->opts->len, &zv);
+		if (!php_phongo_bson_to_zval(bson_get_data(intern->opts), intern->opts->len, &zv)) {
+			zval_ptr_dtor(&zv);
+			goto done;
+		}
+
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "options", &zv);
 #else
@@ -499,6 +507,7 @@ static HashTable* php_phongo_query_get_debug_info(zval* object, int* is_temp TSR
 		ADD_ASSOC_NULL_EX(&retval, "readConcern");
 	}
 
+done:
 	return Z_ARRVAL(retval);
 
 } /* }}} */

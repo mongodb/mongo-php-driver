@@ -180,7 +180,12 @@ static PHP_METHOD(Javascript, getScope)
 		php_phongo_bson_state state;
 
 		PHONGO_BSON_INIT_STATE(state);
-		php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state);
+
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			return;
+		}
+
 #if PHP_VERSION_ID >= 70000
 		RETURN_ZVAL(&state.zchild, 0, 1);
 #else

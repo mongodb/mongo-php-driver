@@ -560,7 +560,10 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 
 		lsid = mongoc_client_session_get_lsid(intern->client_session);
 
-		php_phongo_bson_to_zval_ex(bson_get_data(lsid), lsid->len, &state);
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(lsid), lsid->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			goto done;
+		}
 
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "logicalSessionId", &state.zchild);
@@ -580,7 +583,11 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 			php_phongo_bson_state state;
 
 			PHONGO_BSON_INIT_DEBUG_STATE(state);
-			php_phongo_bson_to_zval_ex(bson_get_data(cluster_time), cluster_time->len, &state);
+
+			if (!php_phongo_bson_to_zval_ex(bson_get_data(cluster_time), cluster_time->len, &state)) {
+				zval_ptr_dtor(&state.zchild);
+				goto done;
+			}
 
 #if PHP_VERSION_ID >= 70000
 			ADD_ASSOC_ZVAL_EX(&retval, "clusterTime", &state.zchild);
@@ -650,6 +657,7 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 		ADD_ASSOC_NULL_EX(&retval, "server");
 	}
 
+done:
 	return Z_ARRVAL(retval);
 } /* }}} */
 /* }}} */

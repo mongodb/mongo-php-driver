@@ -244,13 +244,14 @@ void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, con
 #endif
 
 		zend_throw_exception(php_phongo_commandexception_ce, error->message, error->code TSRMLS_CC);
-		php_phongo_bson_to_zval(bson_get_data(reply), reply->len, &zv);
-
+		if (php_phongo_bson_to_zval(bson_get_data(reply), reply->len, &zv)) {
 #if PHP_VERSION_ID >= 70000
-		phongo_add_exception_prop(ZEND_STRL("resultDocument"), &zv);
+			phongo_add_exception_prop(ZEND_STRL("resultDocument"), &zv);
 #else
-		phongo_add_exception_prop(ZEND_STRL("resultDocument"), zv TSRMLS_CC);
+			phongo_add_exception_prop(ZEND_STRL("resultDocument"), zv TSRMLS_CC);
 #endif
+		}
+
 		zval_ptr_dtor(&zv);
 	} else {
 		zend_throw_exception(phongo_exception_from_mongoc_domain(error->domain, error->code), error->message, error->code TSRMLS_CC);
@@ -1186,7 +1187,10 @@ void php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
 		bson_iter_document(&iter, &len, &bytes);
-		php_phongo_bson_to_zval_ex(bytes, len, &state);
+		if (!php_phongo_bson_to_zval_ex(bytes, len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			return;
+		}
 
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
@@ -1199,7 +1203,11 @@ void php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 		php_phongo_bson_state state;
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
-		php_phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state);
+
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			return;
+		}
 
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", &state.zchild);

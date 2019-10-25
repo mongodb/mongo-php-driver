@@ -425,7 +425,11 @@ static HashTable* php_phongo_writeresult_get_debug_info(zval* object, int* is_te
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
 		bson_iter_array(&iter, &len, &data);
-		php_phongo_bson_to_zval_ex(data, len, &state);
+		if (!php_phongo_bson_to_zval_ex(data, len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			goto done;
+		}
+
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "upsertedIds", &state.zchild);
 #else
@@ -491,6 +495,7 @@ static HashTable* php_phongo_writeresult_get_debug_info(zval* object, int* is_te
 		ADD_ASSOC_NULL_EX(&retval, "writeConcern");
 	}
 
+done:
 	return Z_ARRVAL(retval);
 } /* }}} */
 /* }}} */
