@@ -194,7 +194,11 @@ static HashTable* php_phongo_command_get_debug_info(zval* object, int* is_temp T
 		zval* zv;
 #endif
 
-		php_phongo_bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &zv);
+		if (!php_phongo_bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &zv)) {
+			zval_ptr_dtor(&zv);
+			goto done;
+		}
+
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "command", &zv);
 #else
@@ -204,6 +208,7 @@ static HashTable* php_phongo_command_get_debug_info(zval* object, int* is_temp T
 		ADD_ASSOC_NULL_EX(&retval, "command");
 	}
 
+done:
 	return Z_ARRVAL(retval);
 
 } /* }}} */

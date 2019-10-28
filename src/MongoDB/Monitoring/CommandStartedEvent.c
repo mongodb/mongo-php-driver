@@ -41,7 +41,11 @@ PHP_METHOD(CommandStartedEvent, getCommand)
 		return;
 	}
 
-	php_phongo_bson_to_zval_ex(bson_get_data(intern->command), intern->command->len, &state);
+	if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->command), intern->command->len, &state)) {
+		zval_ptr_dtor(&state.zchild);
+		return;
+	}
+
 #if PHP_VERSION_ID >= 70000
 	RETURN_ZVAL(&state.zchild, 0, 1);
 #else
@@ -214,7 +218,11 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(zval* object, in
 	*is_temp = 1;
 	array_init_size(&retval, 6);
 
-	php_phongo_bson_to_zval_ex(bson_get_data(intern->command), intern->command->len, &command_state);
+	if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->command), intern->command->len, &command_state)) {
+		zval_ptr_dtor(&command_state.zchild);
+		goto done;
+	}
+
 #if PHP_VERSION_ID >= 70000
 	ADD_ASSOC_ZVAL(&retval, "command", &command_state.zchild);
 #else
@@ -245,6 +253,7 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(zval* object, in
 #endif
 	}
 
+done:
 	return Z_ARRVAL(retval);
 } /* }}} */
 /* }}} */

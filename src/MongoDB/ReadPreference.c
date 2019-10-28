@@ -362,7 +362,12 @@ static PHP_METHOD(ReadPreference, getTagSets)
 		php_phongo_bson_state state;
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
-		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
+
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			return;
+		}
+
 #if PHP_VERSION_ID >= 70000
 		RETURN_ZVAL(&state.zchild, 0, 1);
 #else
@@ -436,15 +441,16 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bo
 		PHONGO_BSON_INIT_STATE(state);
 		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			goto done;
+		}
+
 #if PHP_VERSION_ID >= 70000
-		Z_ADDREF(state.zchild);
 		zend_hash_str_update(props, "tags", sizeof("tags") - 1, &state.zchild);
 #else
-		Z_ADDREF_P(state.zchild);
 		zend_hash_update(props, "tags", sizeof("tags"), &state.zchild, sizeof(state.zchild), NULL);
 #endif
-		zval_ptr_dtor(&state.zchild);
 	}
 
 	if (mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference) != MONGOC_NO_MAX_STALENESS) {
@@ -463,6 +469,7 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bo
 #endif
 	}
 
+done:
 	return props;
 } /* }}} */
 
@@ -525,7 +532,12 @@ static PHP_METHOD(ReadPreference, serialize)
 		php_phongo_bson_state state;
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
-		php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state);
+
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(tags), tags->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			return;
+		}
+
 #if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "tags", &state.zchild);
 #else
