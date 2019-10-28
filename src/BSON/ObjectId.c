@@ -30,6 +30,9 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
+#define PHONGO_OID_SIZE sizeof(((php_phongo_objectid_t *)0)->oid)
+#define PHONGO_OID_LEN (PHONGO_OID_SIZE - 1)
+
 zend_class_entry* php_phongo_objectid_ce;
 
 /* Initialize the object with a generated value and return whether it was
@@ -163,7 +166,7 @@ static PHP_METHOD(ObjectId, __toString)
 		return;
 	}
 
-	PHONGO_RETURN_STRINGL(intern->oid, 24);
+	PHONGO_RETURN_STRINGL(intern->oid, PHONGO_OID_LEN);
 } /* }}} */
 
 /* {{{ proto array MongoDB\BSON\ObjectId::jsonSerialize()
@@ -179,7 +182,7 @@ static PHP_METHOD(ObjectId, jsonSerialize)
 	intern = Z_OBJECTID_OBJ_P(getThis());
 
 	array_init_size(return_value, 1);
-	ADD_ASSOC_STRINGL(return_value, "$oid", intern->oid, 24);
+	ADD_ASSOC_STRINGL(return_value, "$oid", intern->oid, PHONGO_OID_LEN);
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\ObjectId::serialize()
@@ -199,11 +202,11 @@ static PHP_METHOD(ObjectId, serialize)
 
 #if PHP_VERSION_ID >= 70000
 	array_init_size(&retval, 1);
-	ADD_ASSOC_STRINGL(&retval, "oid", intern->oid, 24);
+	ADD_ASSOC_STRINGL(&retval, "oid", intern->oid, PHONGO_OID_LEN);
 #else
 	ALLOC_INIT_ZVAL(retval);
 	array_init_size(retval, 1);
-	ADD_ASSOC_STRINGL(retval, "oid", intern->oid, 24);
+	ADD_ASSOC_STRINGL(retval, "oid", intern->oid, PHONGO_OID_LEN);
 #endif
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
@@ -358,7 +361,7 @@ static phongo_create_object_retval php_phongo_objectid_clone_object(zval* object
 #endif
 
 	// Use memcpy to copy bson value to avoid converting to string and back
-	memcpy(&new_intern->oid, &intern->oid, 25);
+	memcpy(&new_intern->oid, &intern->oid, PHONGO_OID_SIZE);
 	new_intern->initialized = true;
 
 	return new_object;
