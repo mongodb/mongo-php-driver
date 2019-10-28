@@ -123,7 +123,11 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator* iter T
 	}
 
 	if (mongoc_cursor_next(cursor->cursor, &doc)) {
-		php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data)) {
+			/* Free invalid result, but don't return as we want to free the
+			 * session if the cursor is exhausted. */
+			php_phongo_cursor_free_current(cursor);
+		}
 	} else {
 		bson_error_t error = { 0 };
 		const bson_t* doc = NULL;
@@ -164,7 +168,11 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator* iter TSRMLS_
 	doc = mongoc_cursor_current(cursor->cursor);
 
 	if (doc) {
-		php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data);
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data)) {
+			/* Free invalid result, but don't return as we want to free the
+			 * session if the cursor is exhausted. */
+			php_phongo_cursor_free_current(cursor);
+		}
 	}
 
 	php_phongo_cursor_free_session_if_exhausted(cursor);
@@ -254,7 +262,9 @@ static PHP_METHOD(Cursor, setTypeMap)
 	if (restore_current_element && mongoc_cursor_current(intern->cursor)) {
 		const bson_t* doc = mongoc_cursor_current(intern->cursor);
 
-		php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &intern->visitor_data);
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &intern->visitor_data)) {
+			php_phongo_cursor_free_current(intern);
+		}
 	}
 } /* }}} */
 
