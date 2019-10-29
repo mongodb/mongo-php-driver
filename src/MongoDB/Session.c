@@ -256,7 +256,7 @@ static PHP_METHOD(Session, getServer)
 
 	/* For sessions without a pinned server, 0 is returned. */
 	if (!server_id) {
-	    RETURN_NULL();
+		RETURN_NULL();
 	}
 
 	phongo_server_init(return_value, mongoc_client_session_get_client(intern->client_session), server_id TSRMLS_CC);
