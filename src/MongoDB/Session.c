@@ -262,6 +262,87 @@ static PHP_METHOD(Session, getServer)
 	phongo_server_init(return_value, mongoc_client_session_get_client(intern->client_session), server_id TSRMLS_CC);
 } /* }}} */
 
+/* {{{ proto array|null MongoDB\Driver\Session::getTransactionOptions()
+   Returns options for the currently running transaction */
+static PHP_METHOD(Session, getTransactionOptions)
+{
+	php_phongo_session_t*         intern;
+	mongoc_transaction_opt_t*     opts;
+	int64_t                       max_commit_time_ms;
+	const mongoc_read_concern_t*  read_concern;
+	const mongoc_read_prefs_t*    read_preference;
+	const mongoc_write_concern_t* write_concern;
+
+	intern = Z_SESSION_OBJ_P(getThis());
+	SESSION_CHECK_LIVELINESS(intern, "getTransactionOptions")
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	opts = mongoc_session_opts_get_transaction_opts(intern->client_session);
+
+	if (!opts) {
+		return;
+	}
+
+	max_commit_time_ms = mongoc_transaction_opts_get_max_commit_time_ms(opts);
+	read_concern = mongoc_transaction_opts_get_read_concern(opts);
+	read_preference = mongoc_transaction_opts_get_read_prefs(opts);
+	write_concern = mongoc_transaction_opts_get_write_concern(opts);
+
+	array_init_size(return_value, 4);
+
+	if (max_commit_time_ms) {
+		ADD_ASSOC_LONG_EX(return_value, "maxCommitTimeMS", max_commit_time_ms);
+	}
+
+	if (!mongoc_read_concern_is_default(read_concern)) {
+#if PHP_VERSION_ID >= 70000
+		zval zread_concern;
+
+		phongo_readconcern_init(&zread_concern, read_concern TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(return_value, "readConcern", &zread_concern);
+#else
+		zval* zread_concern = NULL;
+		MAKE_STD_ZVAL(zread_concern);
+
+		phongo_readconcern_init(zread_concern, read_concern TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(return_value, "readConcern", zread_concern);
+#endif
+	}
+
+	if (read_preference) {
+#if PHP_VERSION_ID >= 70000
+		zval zread_preference;
+
+		phongo_readpreference_init(&zread_preference, read_preference TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(return_value, "readPreference", &zread_preference);
+#else
+		zval* zread_preference = NULL;
+		MAKE_STD_ZVAL(zread_preference);
+
+		phongo_readpreference_init(zread_preference, read_preference TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(return_value, "readPreference", zread_preference);
+#endif
+	}
+
+	if (!mongoc_write_concern_is_default(write_concern)) {
+#if PHP_VERSION_ID >= 70000
+		zval zwrite_concern;
+
+		phongo_writeconcern_init(&zwrite_concern, write_concern TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(return_value, "writeConcern", &zwrite_concern);
+#else
+		zval* zwrite_concern = NULL;
+		MAKE_STD_ZVAL(zwrite_concern);
+
+		phongo_writeconcern_init(zwrite_concern, write_concern TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(return_value, "writeConcern", zwrite_concern);
+#endif
+	}
+} /* }}} */
+
 /* Creates a opts structure from an array optionally containing an RP, RC,
  * WC object, and/or maxCommitTimeMS int. Returns NULL if no options were found,
  * or there was an invalid option. If there was an invalid option or structure,
@@ -490,6 +571,7 @@ static zend_function_entry php_phongo_session_me[] = {
 	PHP_ME(Session, getLogicalSessionId, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getOperationTime, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getServer, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Session, getTransactionOptions, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, isInTransaction, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, startTransaction, ai_Session_startTransaction, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Session_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
