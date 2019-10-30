@@ -249,6 +249,32 @@ phongo_create_object_retval php_phongo_symbol_create_object(zend_class_entry* cl
 #endif
 } /* }}} */
 
+static phongo_create_object_retval php_phongo_symbol_clone_object(zval* object TSRMLS_DC) /* {{{ */
+{
+	php_phongo_symbol_t* intern;
+	php_phongo_symbol_t* new_intern;
+	phongo_create_object_retval new_object;
+
+	intern = Z_SYMBOL_OBJ_P(object);
+	new_object = php_phongo_symbol_create_object(Z_OBJCE_P(object) TSRMLS_CC);
+
+#if PHP_VERSION_ID >= 70000
+	new_intern = Z_OBJ_SYMBOL(new_object);
+	zend_objects_clone_members(&new_intern->std, &intern->std TSRMLS_CC);
+#else
+	{
+		zend_object_handle handle = Z_OBJ_HANDLE_P(object);
+
+		new_intern = (php_phongo_symbol_t*) zend_object_store_get_object_by_handle(new_object.handle TSRMLS_CC);
+		zend_objects_clone_members(&new_intern->std, new_object, &intern->std, handle TSRMLS_CC);
+	}
+#endif
+
+	php_phongo_symbol_init(new_intern, intern->symbol, intern->symbol_len TSRMLS_CC);
+
+	return new_object;
+} /* }}} */
+
 static int php_phongo_symbol_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /* {{{ */
 {
 	php_phongo_symbol_t *intern1, *intern2;
@@ -326,6 +352,7 @@ void php_phongo_symbol_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_implements(php_phongo_symbol_ce TSRMLS_CC, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_symbol, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	php_phongo_handler_symbol.clone_obj       = php_phongo_symbol_clone_object;
 	php_phongo_handler_symbol.compare_objects = php_phongo_symbol_compare_objects;
 	php_phongo_handler_symbol.get_debug_info  = php_phongo_symbol_get_debug_info;
 	php_phongo_handler_symbol.get_gc          = php_phongo_symbol_get_gc;
