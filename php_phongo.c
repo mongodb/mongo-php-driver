@@ -1163,7 +1163,7 @@ php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_s
 	return PHONGO_SERVER_UNKNOWN;
 }
 
-void php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /* {{{ */
+bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /* {{{ */
 {
 	mongoc_host_list_t* host      = mongoc_server_description_host(sd);
 	const bson_t*       is_master = mongoc_server_description_ismaster(sd);
@@ -1189,7 +1189,7 @@ void php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 		bson_iter_document(&iter, &len, &bytes);
 		if (!php_phongo_bson_to_zval_ex(bytes, len, &state)) {
 			zval_ptr_dtor(&state.zchild);
-			return;
+			return false;
 		}
 
 #if PHP_VERSION_ID >= 70000
@@ -1206,7 +1206,7 @@ void php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 
 		if (!php_phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state)) {
 			zval_ptr_dtor(&state.zchild);
-			return;
+			return false;
 		}
 
 #if PHP_VERSION_ID >= 70000
@@ -1217,6 +1217,7 @@ void php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 	}
 	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (phongo_long) mongoc_server_description_round_trip_time(sd));
 
+	return true;
 } /* }}} */
 
 void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* read_concern) /* {{{ */
