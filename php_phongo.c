@@ -2720,7 +2720,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	}
 
 #ifdef MONGOC_ENABLE_SSL
-	if (ssl_opt && mongoc_uri_get_tls(uri)) {
+	if (ssl_opt) {
 		mongoc_client_set_ssl_opts(manager->client, ssl_opt);
 	}
 #endif
