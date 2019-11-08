@@ -778,7 +778,7 @@ buildvariants:
      - name: "test-sharded-rs"
 
 - matrix_name: "mongo-40-php7-nossl"
-  matrix_spec: {"os-php7": "rhel74-zseries", "versions": ["4.0", "4.2", "latest"], "php-versions": "7.3"}
+  matrix_spec: {"os-php7": "rhel74-zseries", "versions": ["4.2", "latest"], "php-versions": "7.3"}
   display_name: "${versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone"
