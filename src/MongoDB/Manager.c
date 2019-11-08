@@ -893,7 +893,13 @@ static HashTable* php_phongo_manager_get_debug_info(zval* object, int* is_temp T
 	for (i = 0; i < n; i++) {
 		zval obj;
 
-		php_phongo_server_to_zval(&obj, sds[i]);
+		if (!php_phongo_server_to_zval(&obj, sds[i])) {
+			/* Exception already thrown */
+			zval_ptr_dtor(&obj);
+			zval_ptr_dtor(&cluster);
+			goto done;
+		}
+
 		add_next_index_zval(&cluster, &obj);
 	}
 
@@ -906,13 +912,20 @@ static HashTable* php_phongo_manager_get_debug_info(zval* object, int* is_temp T
 		zval* obj = NULL;
 
 		MAKE_STD_ZVAL(obj);
-		php_phongo_server_to_zval(obj, sds[i]);
+		if (!php_phongo_server_to_zval(obj, sds[i])) {
+			/* Exception already thrown */
+			zval_ptr_dtor(&obj);
+			zval_ptr_dtor(&cluster);
+			goto done;
+		}
+
 		add_next_index_zval(cluster, obj);
 	}
 
 	ADD_ASSOC_ZVAL_EX(&retval, "cluster", cluster);
 #endif
 
+done:
 	mongoc_server_descriptions_destroy_all(sds, n);
 
 	return Z_ARRVAL(retval);
