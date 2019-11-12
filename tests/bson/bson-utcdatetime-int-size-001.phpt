@@ -17,7 +17,7 @@ var_dump($utcdatetime->toDateTime());
 --EXPECTF--
 object(MongoDB\BSON\UTCDateTime)#%d (1) {
   ["milliseconds"]=>
-  %r(string\(13\) "|int\()%r1416445411987%r("|\))%r
+  string(13) "1416445411987"
 }
 object(DateTime)#%d (3) {
   ["date"]=>
