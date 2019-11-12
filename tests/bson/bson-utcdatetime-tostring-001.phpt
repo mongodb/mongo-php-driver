@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\BSON\UTCDateTime::__toString()
---INI--
-date.timezone=America/Los_Angeles
 --FILE--
 <?php
 

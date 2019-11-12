@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\BSON\fromPHP(): Encoding non-Serializable Type objects as a root element
---INI--
-date.timezone=America/Los_Angeles
 --FILE--
 <?php
 

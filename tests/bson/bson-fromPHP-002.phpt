@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\BSON\fromPHP(): Encoding non-Persistable objects as a document
---INI--
-date.timezone=America/Los_Angeles
 --FILE--
 <?php
 
