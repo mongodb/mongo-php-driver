@@ -34,6 +34,12 @@
 
 zend_class_entry* php_phongo_readpreference_ce;
 
+#define PHONGO_READ_PRIMARY "primary"
+#define PHONGO_READ_PRIMARY_PREFERRED "primaryPreferred"
+#define PHONGO_READ_SECONDARY "secondary"
+#define PHONGO_READ_SECONDARY_PREFERRED "secondaryPreferred"
+#define PHONGO_READ_NEAREST "nearest"
+
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
 static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t* intern, HashTable* props TSRMLS_DC) /* {{{ */
@@ -42,15 +48,15 @@ static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t
 	zval *mode, *tagSets, *maxStalenessSeconds;
 
 	if ((mode = zend_hash_str_find(props, "mode", sizeof("mode") - 1)) && Z_TYPE_P(mode) == IS_STRING) {
-		if (strcasecmp(Z_STRVAL_P(mode), "primary") == 0) {
+		if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_PRIMARY) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_PRIMARY);
-		} else if (strcasecmp(Z_STRVAL_P(mode), "primaryPreferred") == 0) {
+		} else if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_PRIMARY_PREFERRED) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_PRIMARY_PREFERRED);
-		} else if (strcasecmp(Z_STRVAL_P(mode), "secondary") == 0) {
+		} else if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_SECONDARY) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_SECONDARY);
-		} else if (strcasecmp(Z_STRVAL_P(mode), "secondaryPreferred") == 0) {
+		} else if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_SECONDARY_PREFERRED) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_SECONDARY_PREFERRED);
-		} else if (strcasecmp(Z_STRVAL_P(mode), "nearest") == 0) {
+		} else if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_NEAREST) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_NEAREST);
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires specific values for \"mode\" string field", ZSTR_VAL(php_phongo_readpreference_ce->name));
@@ -113,15 +119,15 @@ static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t
 	zval **mode, **tagSets, **maxStalenessSeconds;
 
 	if (zend_hash_find(props, "mode", sizeof("mode"), (void**) &mode) == SUCCESS && Z_TYPE_PP(mode) == IS_STRING) {
-		if (strcasecmp(Z_STRVAL_PP(mode), "primary") == 0) {
+		if (strcasecmp(Z_STRVAL_PP(mode), PHONGO_READ_PRIMARY) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_PRIMARY);
-		} else if (strcasecmp(Z_STRVAL_PP(mode), "primaryPreferred") == 0) {
+		} else if (strcasecmp(Z_STRVAL_PP(mode), PHONGO_READ_PRIMARY_PREFERRED) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_PRIMARY_PREFERRED);
-		} else if (strcasecmp(Z_STRVAL_PP(mode), "secondary") == 0) {
+		} else if (strcasecmp(Z_STRVAL_PP(mode), PHONGO_READ_SECONDARY) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_SECONDARY);
-		} else if (strcasecmp(Z_STRVAL_PP(mode), "secondaryPreferred") == 0) {
+		} else if (strcasecmp(Z_STRVAL_PP(mode), PHONGO_READ_SECONDARY_PREFERRED) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_SECONDARY_PREFERRED);
-		} else if (strcasecmp(Z_STRVAL_PP(mode), "nearest") == 0) {
+		} else if (strcasecmp(Z_STRVAL_PP(mode), PHONGO_READ_NEAREST) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_NEAREST);
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires specific values for \"mode\" string field", ZSTR_VAL(php_phongo_readpreference_ce->name));
@@ -225,15 +231,15 @@ static PHP_METHOD(ReadPreference, __construct)
 				return;
 		}
 	} else if (Z_TYPE_P(mode) == IS_STRING) {
-		if (strcasecmp(Z_STRVAL_P(mode), "primary") == 0) {
+		if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_PRIMARY) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_PRIMARY);
-		} else if (strcasecmp(Z_STRVAL_P(mode), "primaryPreferred") == 0) {
+		} else if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_PRIMARY_PREFERRED) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_PRIMARY_PREFERRED);
-		} else if (strcasecmp(Z_STRVAL_P(mode), "secondary") == 0) {
+		} else if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_SECONDARY) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_SECONDARY);
-		} else if (strcasecmp(Z_STRVAL_P(mode), "secondaryPreferred") == 0) {
+		} else if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_SECONDARY_PREFERRED) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_SECONDARY_PREFERRED);
-		} else if (strcasecmp(Z_STRVAL_P(mode), "nearest") == 0) {
+		} else if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_NEAREST) == 0) {
 			intern->read_preference = mongoc_read_prefs_new(MONGOC_READ_NEAREST);
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid mode: '%s'", Z_STRVAL_P(mode));
@@ -382,15 +388,15 @@ static const char* php_phongo_readpreference_get_mode_string(mongoc_read_mode_t 
 {
 	switch (mode) {
 		case MONGOC_READ_PRIMARY:
-			return "primary";
+			return PHONGO_READ_PRIMARY;
 		case MONGOC_READ_PRIMARY_PREFERRED:
-			return "primaryPreferred";
+			return PHONGO_READ_PRIMARY_PREFERRED;
 		case MONGOC_READ_SECONDARY:
-			return "secondary";
+			return PHONGO_READ_SECONDARY;
 		case MONGOC_READ_SECONDARY_PREFERRED:
-			return "secondaryPreferred";
+			return PHONGO_READ_SECONDARY_PREFERRED;
 		case MONGOC_READ_NEAREST:
-			return "nearest";
+			return PHONGO_READ_NEAREST;
 		default: /* Do nothing */
 			break;
 	}
