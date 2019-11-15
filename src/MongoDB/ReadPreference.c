@@ -196,6 +196,28 @@ failure:
 	return false;
 } /* }}} */
 
+static const char* php_phongo_readpreference_get_mode_string(mongoc_read_mode_t mode TSRMLS_DC) /* {{{ */
+{
+	switch (mode) {
+		case MONGOC_READ_PRIMARY:
+			return PHONGO_READ_PRIMARY;
+		case MONGOC_READ_PRIMARY_PREFERRED:
+			return PHONGO_READ_PRIMARY_PREFERRED;
+		case MONGOC_READ_SECONDARY:
+			return PHONGO_READ_SECONDARY;
+		case MONGOC_READ_SECONDARY_PREFERRED:
+			return PHONGO_READ_SECONDARY_PREFERRED;
+		case MONGOC_READ_NEAREST:
+			return PHONGO_READ_NEAREST;
+		default:
+			/* Should never happen, but if it does: exception */
+			phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Mode '%d' should never have been passed to php_phongo_readpreference_get_mode_string, please file a bug report", mode);
+			break;
+	}
+
+	return NULL;
+} /* }}} */
+
 /* {{{ proto void MongoDB\Driver\ReadPreference::__construct(int|string $mode[, array $tagSets = array()[, array $options = array()]])
    Constructs a new ReadPreference */
 static PHP_METHOD(ReadPreference, __construct)
@@ -349,6 +371,28 @@ static PHP_METHOD(ReadPreference, getMode)
 	RETURN_LONG(mongoc_read_prefs_get_mode(intern->read_preference));
 } /* }}} */
 
+/* {{{ proto string MongoDB\Driver\ReadPreference::getModeString()
+   Returns the ReadPreference mode as string */
+static PHP_METHOD(ReadPreference, getModeString)
+{
+	php_phongo_readpreference_t* intern;
+	const char*                  mode_string;
+
+	intern = Z_READPREFERENCE_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	mode_string = php_phongo_readpreference_get_mode_string(mongoc_read_prefs_get_mode(intern->read_preference) TSRMLS_CC);
+	if (!mode_string) {
+		/* Exception already thrown */
+		return;
+	}
+
+	PHONGO_RETURN_STRING(mode_string);
+} /* }}} */
+
 /* {{{ proto array MongoDB\Driver\ReadPreference::getTagSets()
    Returns the ReadPreference tag sets */
 static PHP_METHOD(ReadPreference, getTagSets)
@@ -384,26 +428,6 @@ static PHP_METHOD(ReadPreference, getTagSets)
 	}
 } /* }}} */
 
-static const char* php_phongo_readpreference_get_mode_string(mongoc_read_mode_t mode) /* {{{ */
-{
-	switch (mode) {
-		case MONGOC_READ_PRIMARY:
-			return PHONGO_READ_PRIMARY;
-		case MONGOC_READ_PRIMARY_PREFERRED:
-			return PHONGO_READ_PRIMARY_PREFERRED;
-		case MONGOC_READ_SECONDARY:
-			return PHONGO_READ_SECONDARY;
-		case MONGOC_READ_SECONDARY_PREFERRED:
-			return PHONGO_READ_SECONDARY_PREFERRED;
-		case MONGOC_READ_NEAREST:
-			return PHONGO_READ_NEAREST;
-		default: /* Do nothing */
-			break;
-	}
-
-	return NULL;
-} /* }}} */
-
 static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readpreference_t* intern;
@@ -422,7 +446,7 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bo
 
 	tags = mongoc_read_prefs_get_tags(intern->read_preference);
 	mode = mongoc_read_prefs_get_mode(intern->read_preference);
-	modeString = php_phongo_readpreference_get_mode_string(mode);
+	modeString = php_phongo_readpreference_get_mode_string(mode TSRMLS_CC);
 
 	if (modeString) {
 #if PHP_VERSION_ID >= 70000
@@ -516,7 +540,7 @@ static PHP_METHOD(ReadPreference, serialize)
 
 	tags                = mongoc_read_prefs_get_tags(intern->read_preference);
 	mode                = mongoc_read_prefs_get_mode(intern->read_preference);
-	modeString          = php_phongo_readpreference_get_mode_string(mode);
+	modeString          = php_phongo_readpreference_get_mode_string(mode TSRMLS_CC);
 	maxStalenessSeconds = mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference);
 
 #if PHP_VERSION_ID >= 70000
@@ -644,6 +668,7 @@ static zend_function_entry php_phongo_readpreference_me[] = {
 	PHP_ME(ReadPreference, __set_state, ai_ReadPreference___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME(ReadPreference, getMaxStalenessSeconds, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ReadPreference, getModeString, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, bsonSerialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, serialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
