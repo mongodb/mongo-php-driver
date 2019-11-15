@@ -764,6 +764,12 @@ void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("RP_NEAREST"), MONGOC_READ_NEAREST TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("NO_MAX_STALENESS"), MONGOC_NO_MAX_STALENESS TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("SMALLEST_MAX_STALENESS_SECONDS"), MONGOC_SMALLEST_MAX_STALENESS_SECONDS TSRMLS_CC);
+
+	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("PRIMARY"), PHONGO_READ_PRIMARY TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("PRIMARY_PREFERRED"), PHONGO_READ_PRIMARY_PREFERRED TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("SECONDARY"), PHONGO_READ_SECONDARY TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("SECONDARY_PREFERRED"), PHONGO_READ_SECONDARY_PREFERRED TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("NEAREST"), PHONGO_READ_NEAREST TSRMLS_CC);
 } /* }}} */
 
 /*
