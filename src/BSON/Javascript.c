@@ -215,17 +215,16 @@ static PHP_METHOD(Javascript, jsonSerialize)
 		php_phongo_bson_state state;
 
 		PHONGO_BSON_INIT_STATE(state);
-		if (php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
-#if PHP_VERSION_ID >= 70000
-			Z_ADDREF(state.zchild);
-			ADD_ASSOC_ZVAL_EX(return_value, "$scope", &state.zchild);
-#else
-			Z_ADDREF_P(state.zchild);
-			ADD_ASSOC_ZVAL_EX(return_value, "$scope", state.zchild);
-#endif
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			return;
 		}
 
-		zval_ptr_dtor(&state.zchild);
+#if PHP_VERSION_ID >= 70000
+		ADD_ASSOC_ZVAL_EX(return_value, "$scope", &state.zchild);
+#else
+		ADD_ASSOC_ZVAL_EX(return_value, "$scope", state.zchild);
+#endif
 	}
 } /* }}} */
 
@@ -250,22 +249,21 @@ static PHP_METHOD(Javascript, serialize)
 #if PHP_VERSION_ID >= 70000
 	if (intern->scope && intern->scope->len) {
 		if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
 			return;
 		}
-		Z_ADDREF(state.zchild);
 	} else {
 		ZVAL_NULL(&state.zchild);
 	}
 #else
 	if (intern->scope && intern->scope->len) {
 		if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
 			return;
 		}
-		Z_ADDREF_P(state.zchild);
 	} else {
 		MAKE_STD_ZVAL(state.zchild);
 		ZVAL_NULL(state.zchild);
-		Z_ADDREF_P(state.zchild);
 	}
 #endif
 
@@ -289,7 +287,6 @@ static PHP_METHOD(Javascript, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-	zval_ptr_dtor(&state.zchild);
 } /* }}} */
 
 /* {{{ proto void MongoDB\BSON\Javascript::unserialize(string $serialized)
@@ -490,17 +487,12 @@ HashTable* php_phongo_javascript_get_properties_hash(zval* object, bool is_debug
 			php_phongo_bson_state state;
 
 			PHONGO_BSON_INIT_STATE(state);
-			if (php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
-				Z_ADDREF(state.zchild);
-				zend_hash_str_update(props, "scope", sizeof("scope") - 1, &state.zchild);
-			} else {
-				zval scope;
-
-				ZVAL_NULL(&scope);
-				zend_hash_str_update(props, "scope", sizeof("scope") - 1, &scope);
+			if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+				zval_ptr_dtor(&state.zchild);
+				goto failure;
 			}
 
-			zval_ptr_dtor(&state.zchild);
+			zend_hash_str_update(props, "scope", sizeof("scope") - 1, &state.zchild);
 		} else {
 			zval scope;
 
@@ -520,18 +512,12 @@ HashTable* php_phongo_javascript_get_properties_hash(zval* object, bool is_debug
 			php_phongo_bson_state state;
 
 			PHONGO_BSON_INIT_STATE(state);
-			if (php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
-				Z_ADDREF_P(state.zchild);
-				zend_hash_update(props, "scope", sizeof("scope"), &state.zchild, sizeof(state.zchild), NULL);
-			} else {
-				zval* scope;
-
-				MAKE_STD_ZVAL(scope);
-				ZVAL_NULL(scope);
-				zend_hash_update(props, "scope", sizeof("scope"), &scope, sizeof(scope), NULL);
+			if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+				zval_ptr_dtor(&state.zchild);
+				goto failure;
 			}
 
-			zval_ptr_dtor(&state.zchild);
+			zend_hash_update(props, "scope", sizeof("scope"), &state.zchild, sizeof(state.zchild), NULL);
 		} else {
 			zval* scope;
 
@@ -543,6 +529,10 @@ HashTable* php_phongo_javascript_get_properties_hash(zval* object, bool is_debug
 #endif
 
 	return props;
+
+failure:
+	PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_debug, props);
+	return NULL;
 } /* }}} */
 
 static HashTable* php_phongo_javascript_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
