@@ -33,7 +33,8 @@ extern zend_module_entry mongodb_module_entry;
  * forking). We avoid using pid_t for Windows compatibility. */
 typedef struct {
 	mongoc_client_t* client;
-	int              pid;
+	int              created_by_pid;
+	int              last_reset_by_pid;
 } php_phongo_pclient_t;
 
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
@@ -168,6 +169,8 @@ bool php_phongo_parse_int64(int64_t* retval, const char* data, phongo_zpp_char_l
 zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson TSRMLS_DC);
 zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_DC);
 
+void php_phongo_client_reset_once(mongoc_client_t* client, int pid);
+
 #if PHP_VERSION_ID >= 70000
 #define PHONGO_CE_FINAL(ce)             \
 	do {                                \
@@ -216,6 +219,19 @@ zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_
 #else
 #define PHONGO_ZVAL_EXCEPTION_NAME(e) (ZSTR_VAL(Z_OBJCE_P(e)->name))
 #endif
+
+#define PHONGO_SET_CREATED_BY_PID(intern)          \
+	do {                                           \
+		(intern)->created_by_pid = (int) getpid(); \
+	} while (0);
+
+#define PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern)               \
+	do {                                                         \
+		int pid = (int) getpid();                                \
+		if ((intern)->created_by_pid != pid) {                   \
+			php_phongo_client_reset_once((intern)->client, pid); \
+		}                                                        \
+	} while (0);
 
 #endif /* PHONGO_H */
 

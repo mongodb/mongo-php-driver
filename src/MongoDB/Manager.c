@@ -387,6 +387,10 @@ static PHP_METHOD(Manager, executeCommand)
 		goto cleanup;
 	}
 
+	/* If the Manager was created in a different process, reset the client so
+	 * that cursors created by this process can be differentiated. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+
 	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, server_id, return_value, return_value_used TSRMLS_CC);
 
 cleanup:
@@ -430,6 +434,10 @@ static PHP_METHOD(Manager, executeReadCommand)
 		return;
 	}
 
+	/* If the Manager was created in a different process, reset the client so
+	 * that cursors created by this process can be differentiated. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+
 	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
@@ -462,6 +470,10 @@ static PHP_METHOD(Manager, executeWriteCommand)
 		return;
 	}
 
+	/* If the Manager was created in a different process, reset the client so
+	 * that cursors created by this process can be differentiated. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+
 	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
@@ -493,6 +505,10 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 		/* Exception should already have been thrown */
 		return;
 	}
+
+	/* If the Manager was created in a different process, reset the client so
+	 * that cursors created by this process can be differentiated. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
 	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
@@ -534,6 +550,10 @@ static PHP_METHOD(Manager, executeQuery)
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
+
+	/* If the Manager was created in a different process, reset the client so
+	 * that cursors created by this process can be differentiated. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
 	phongo_execute_query(intern->client, namespace, query, options, server_id, return_value, return_value_used TSRMLS_CC);
 
@@ -750,6 +770,11 @@ static PHP_METHOD(Manager, startSession)
 		}
 	}
 
+	/* If the Manager was created in a different process, reset the client so
+	 * that its session pool is cleared. This will ensure that we do not re-use
+	 * a server session (i.e. LSID) created by a parent process. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+
 	cs = mongoc_client_start_session(intern->client, cs_opts, &error);
 
 	if (cs) {
@@ -854,6 +879,8 @@ static phongo_create_object_retval php_phongo_manager_create_object(zend_class_e
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
+
+	PHONGO_SET_CREATED_BY_PID(intern);
 
 #if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_manager;

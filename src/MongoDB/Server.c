@@ -47,6 +47,10 @@ static PHP_METHOD(Server, executeCommand)
 
 	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options TSRMLS_CC);
 
+	/* If the Server was created in a different process, reset the client so
+	 * that cursors created by this process can be differentiated. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+
 	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 
 	if (free_options) {
@@ -71,6 +75,10 @@ static PHP_METHOD(Server, executeReadCommand)
 		return;
 	}
 
+	/* If the Server was created in a different process, reset the client so
+	 * that cursors created by this process can be differentiated. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+
 	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
@@ -91,6 +99,10 @@ static PHP_METHOD(Server, executeWriteCommand)
 		return;
 	}
 
+	/* If the Server was created in a different process, reset the client so
+	 * that cursors created by this process can be differentiated. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+
 	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
 
@@ -110,6 +122,10 @@ static PHP_METHOD(Server, executeReadWriteCommand)
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
 	}
+
+	/* If the Server was created in a different process, reset the client so
+	 * that cursors created by this process can be differentiated. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
 	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 } /* }}} */
@@ -133,6 +149,10 @@ static PHP_METHOD(Server, executeQuery)
 	}
 
 	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options TSRMLS_CC);
+
+	/* If the Server was created in a different process, reset the client so
+	 * that cursors created by this process can be differentiated. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
 	phongo_execute_query(intern->client, namespace, query, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
 
@@ -567,6 +587,8 @@ static phongo_create_object_retval php_phongo_server_create_object(zend_class_en
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
+
+	PHONGO_SET_CREATED_BY_PID(intern);
 
 #if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_server;

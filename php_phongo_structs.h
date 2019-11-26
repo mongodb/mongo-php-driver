@@ -55,6 +55,7 @@ typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_cursor_t*      cursor;
 	mongoc_client_t*      client;
+	int                   created_by_pid;
 	uint32_t              server_id;
 	bool                  advanced;
 	php_phongo_bson_state visitor_data;
@@ -78,6 +79,7 @@ typedef struct {
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_client_t* client;
+	int              created_by_pid;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_manager_t;
 
@@ -107,6 +109,7 @@ typedef struct {
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_client_t* client;
+	int              created_by_pid;
 	uint32_t         server_id;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_server_t;
@@ -114,6 +117,8 @@ typedef struct {
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_client_session_t* client_session;
+	mongoc_client_t*         client;
+	int                      created_by_pid;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_session_t;
 
