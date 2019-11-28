@@ -269,6 +269,7 @@ static PHP_METHOD(WriteConcern, getW)
 static PHP_METHOD(WriteConcern, getWtimeout)
 {
 	php_phongo_writeconcern_t* intern;
+	int64_t                    wtimeout;
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
@@ -276,7 +277,15 @@ static PHP_METHOD(WriteConcern, getWtimeout)
 		return;
 	}
 
-	RETURN_LONG(mongoc_write_concern_get_wtimeout_int64(intern->write_concern));
+	wtimeout = mongoc_write_concern_get_wtimeout_int64(intern->write_concern);
+
+#if SIZEOF_LONG == 4
+	if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
+		zend_error(E_WARNING, "Truncating 64-bit value for wTimeoutMS");
+	}
+#endif
+
+	RETURN_LONG(wtimeout);
 } /* }}} */
 
 /* {{{ proto null|boolean MongoDB\Driver\WriteConcern::getJournal()
