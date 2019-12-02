@@ -2720,6 +2720,129 @@ static mongoc_client_t* php_phongo_find_client(const char* hash, size_t hash_len
 	return NULL;
 }
 
+#ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
+static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manager, zval* driverOptions TSRMLS_DC) /* {{{ */
+{
+	zval*                          zAutoEncryptionOpts;
+	bson_error_t                   error                = { 0 };
+	mongoc_auto_encryption_opts_t* auto_encryption_opts = NULL;
+	bool                           retval               = false;
+
+	if (!driverOptions || !php_array_existsc(driverOptions, "autoEncryption")) {
+		return true;
+	}
+
+	zAutoEncryptionOpts = php_array_fetch(driverOptions, "autoEncryption");
+
+	if (Z_TYPE_P(zAutoEncryptionOpts) != IS_ARRAY) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"autoEncryption\" driver option to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zAutoEncryptionOpts));
+		return false;
+	}
+
+	auto_encryption_opts = mongoc_auto_encryption_opts_new();
+
+	if (php_array_existsc(zAutoEncryptionOpts, "keyVaultClient")) {
+		zval* key_vault_client = php_array_fetch(zAutoEncryptionOpts, "keyVaultClient");
+
+		if (Z_TYPE_P(key_vault_client) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(key_vault_client), php_phongo_manager_ce TSRMLS_CC)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"keyVaultClient\" encryption option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(key_vault_client));
+			goto cleanup;
+		}
+
+		mongoc_auto_encryption_opts_set_keyvault_client(auto_encryption_opts, Z_MANAGER_OBJ_P(key_vault_client)->client);
+	}
+
+	if (php_array_existsc(zAutoEncryptionOpts, "keyVaultNamespace")) {
+		char*     key_vault_ns;
+		char*     db_name;
+		char*     coll_name;
+		int       plen;
+		zend_bool pfree;
+
+		key_vault_ns = php_array_fetch_string(zAutoEncryptionOpts, "keyVaultNamespace", &plen, &pfree);
+
+		if (!phongo_split_namespace(key_vault_ns, &db_name, &coll_name)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"keyVaultNamespace\" encryption option to contain a full collection name");
+
+			if (pfree) {
+				str_efree(key_vault_ns);
+			}
+
+			goto cleanup;
+		}
+
+		mongoc_auto_encryption_opts_set_keyvault_namespace(auto_encryption_opts, db_name, coll_name);
+
+		efree(db_name);
+		efree(coll_name);
+
+		if (pfree) {
+			str_efree(key_vault_ns);
+		}
+	}
+
+	if (php_array_existsc(zAutoEncryptionOpts, "kmsProviders")) {
+		zval*  kms_providers  = php_array_fetch(zAutoEncryptionOpts, "kmsProviders");
+		bson_t bson_providers = BSON_INITIALIZER;
+
+		php_phongo_zval_to_bson(kms_providers, PHONGO_BSON_NONE, &bson_providers, NULL TSRMLS_CC);
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		mongoc_auto_encryption_opts_set_kms_providers(auto_encryption_opts, &bson_providers);
+
+		bson_destroy(&bson_providers);
+	}
+
+	if (php_array_existsc(zAutoEncryptionOpts, "schemaMap")) {
+		zval*  schema_map = php_array_fetch(zAutoEncryptionOpts, "schemaMap");
+		bson_t bson_map   = BSON_INITIALIZER;
+
+		php_phongo_zval_to_bson(schema_map, PHONGO_BSON_NONE, &bson_map, NULL TSRMLS_CC);
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		mongoc_auto_encryption_opts_set_schema_map(auto_encryption_opts, &bson_map);
+
+		bson_destroy(&bson_map);
+	}
+
+	if (php_array_existsc(zAutoEncryptionOpts, "bypassAutoEncryption")) {
+		zend_bool bypass_auto_encryption = php_array_fetch_bool(zAutoEncryptionOpts, "bypassAutoEncryption");
+
+		mongoc_auto_encryption_opts_set_bypass_auto_encryption(auto_encryption_opts, bypass_auto_encryption);
+	}
+
+	if (php_array_existsc(zAutoEncryptionOpts, "extraOptions")) {
+		zval*  extra_options = php_array_fetch(zAutoEncryptionOpts, "extraOptions");
+		bson_t bson_options  = BSON_INITIALIZER;
+
+		php_phongo_zval_to_bson(extra_options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		mongoc_auto_encryption_opts_set_extra(auto_encryption_opts, &bson_options);
+
+		bson_destroy(&bson_options);
+	}
+
+	if (!mongoc_client_enable_auto_encryption(manager->client, auto_encryption_opts, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		goto cleanup;
+	}
+
+	retval = true;
+
+cleanup:
+	mongoc_auto_encryption_opts_destroy(auto_encryption_opts);
+	return retval;
+}
+/* }}} */
+#endif
+
 void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions TSRMLS_DC) /* {{{ */
 {
 	bson_t        bson_options = BSON_INITIALIZER;
@@ -2795,6 +2918,13 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 #ifdef MONGOC_ENABLE_SSL
 	if (ssl_opt) {
 		mongoc_client_set_ssl_opts(manager->client, ssl_opt);
+	}
+#endif
+
+#ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
+	if (!phongo_manager_set_auto_encryption_opts(manager, driverOptions TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		goto cleanup;
 	}
 #endif
 
