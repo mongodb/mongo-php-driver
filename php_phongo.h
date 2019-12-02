@@ -198,6 +198,14 @@ zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_
 		}                                                                  \
 	} while (0);
 
+#define PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_debug, props) \
+	do {                                                     \
+		if (is_debug) {                                      \
+			zend_hash_destroy((props));                      \
+			FREE_HASHTABLE(props);                           \
+		}                                                    \
+	} while (0);
+
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME(zv) (Z_TYPE(zv) == IS_OBJECT ? ZSTR_VAL(Z_OBJCE(zv)->name) : zend_get_type_by_const(Z_TYPE(zv)))
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvp) PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*(zvp))
 
