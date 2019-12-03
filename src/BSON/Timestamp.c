@@ -58,21 +58,13 @@ static bool php_phongo_timestamp_init(php_phongo_timestamp_t* intern, int64_t in
 static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t* intern, const char* s_increment, phongo_zpp_char_len s_increment_len, const char* s_timestamp, phongo_zpp_char_len s_timestamp_len TSRMLS_DC) /* {{{ */
 {
 	int64_t increment, timestamp;
-	char*   endptr = NULL;
 
-	/* bson_ascii_strtoll() sets errno if conversion fails. If conversion
-	 * succeeds, we still want to ensure that the entire string was parsed. */
-
-	increment = bson_ascii_strtoll(s_increment, &endptr, 10);
-
-	if (errno || (endptr && endptr != ((const char*) s_increment + s_increment_len))) {
+	if (!php_phongo_parse_int64(&increment, s_increment, s_increment_len)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer increment for %s initialization", s_increment, ZSTR_VAL(php_phongo_timestamp_ce->name));
 		return false;
 	}
 
-	timestamp = bson_ascii_strtoll(s_timestamp, &endptr, 10);
-
-	if (errno || (endptr && endptr != ((const char*) s_timestamp + s_timestamp_len))) {
+	if (!php_phongo_parse_int64(&timestamp, s_timestamp, s_timestamp_len)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer timestamp for %s initialization", s_timestamp, ZSTR_VAL(php_phongo_timestamp_ce->name));
 		return false;
 	}

@@ -37,13 +37,8 @@ zend_class_entry* php_phongo_cursorid_ce;
 static bool php_phongo_cursorid_init_from_string(php_phongo_cursorid_t* intern, const char* s_id, phongo_zpp_char_len s_id_len TSRMLS_DC) /* {{{ */
 {
 	int64_t id;
-	char*   endptr = NULL;
 
-	/* bson_ascii_strtoll() sets errno if conversion fails. If conversion
-	 * succeeds, we still want to ensure that the entire string was parsed. */
-	id = bson_ascii_strtoll(s_id, &endptr, 10);
-
-	if (errno || (endptr && endptr != ((const char*) s_id + s_id_len))) {
+	if (!php_phongo_parse_int64(&id, s_id, s_id_len)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit id for %s initialization", s_id, ZSTR_VAL(php_phongo_cursorid_ce->name));
 		return false;
 	}
@@ -101,8 +96,6 @@ static PHP_METHOD(CursorId, serialize)
 	ZVAL_RETVAL_TYPE       retval;
 	php_serialize_data_t   var_hash;
 	smart_str              buf = { 0 };
-	char                   s_id[24];
-	int                    s_id_len;
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -110,15 +103,13 @@ static PHP_METHOD(CursorId, serialize)
 
 	intern = Z_CURSORID_OBJ_P(getThis());
 
-	s_id_len = snprintf(s_id, sizeof(s_id), "%" PRId64, intern->id);
-
 #if PHP_VERSION_ID >= 70000
 	array_init_size(&retval, 1);
-	ADD_ASSOC_STRINGL(&retval, "id", s_id, s_id_len);
+	ADD_ASSOC_INT64_AS_STRING(&retval, "id", intern->id);
 #else
 	ALLOC_INIT_ZVAL(retval);
 	array_init_size(retval, 1);
-	ADD_ASSOC_STRINGL(retval, "id", s_id, s_id_len);
+	ADD_ASSOC_INT64_AS_STRING(retval, "id", intern->id);
 #endif
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
@@ -247,13 +238,7 @@ static HashTable* php_phongo_cursorid_get_debug_info(zval* object, int* is_temp 
 	array_init(&retval);
 
 #if SIZEOF_LONG == 4
-	{
-		char tmp[24];
-		int  tmp_len;
-
-		tmp_len = snprintf(tmp, sizeof(tmp), "%" PRId64, intern->id);
-		ADD_ASSOC_STRINGL(&retval, "id", tmp, tmp_len);
-	}
+	ADD_ASSOC_INT64_AS_STRING(&retval, "id", intern->id);
 #else
 	ADD_ASSOC_LONG_EX(&retval, "id", intern->id);
 #endif
