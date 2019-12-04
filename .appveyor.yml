@@ -59,6 +59,16 @@ environment:
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PHP_BUILD_CRT: vc14
     - PHP_REL: 7.1
+      ARCHITECTURE: x64
+      ZTS_STATE: disable
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PHP_BUILD_CRT: vc14
+    - PHP_REL: 7.1
+      ARCHITECTURE: x86
+      ZTS_STATE: enable
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PHP_BUILD_CRT: vc14
+    - PHP_REL: 7.1
       ARCHITECTURE: x86
       ZTS_STATE: disable
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
