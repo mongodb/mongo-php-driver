@@ -248,8 +248,10 @@ if (PHP_MONGODB != "no") {
 
   if (typeof COMPILER_NAME === 'string') {
     mongoc_opts.MONGOC_CC = COMPILER_NAME;
-  } else if (typeof VC_VERSIONS[VCVERS] === 'string') {
+  } else if (typeof VC_VERSIONS === 'array' && typeof VC_VERSIONS[VCVERS] === 'string') {
     mongoc_opts.MONGOC_CC = VC_VERSIONS[VCVERS];
+  } else if (typeof COMPILER_NAME_LONG === 'string') {
+    mongoc_opts.MONGOC_CC = COMPILER_NAME_LONG;
   }
 
   /* MONGOC_USER_SET_CFLAGS and MONGOC_USER_SET_LDFLAGS can be left blank, as we
