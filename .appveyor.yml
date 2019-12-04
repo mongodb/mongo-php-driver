@@ -13,23 +13,33 @@ environment:
   SDK_BRANCH: php-sdk-2.1.1
 
   matrix:
-    - PHP_REL: 7.3
+    - PHP_REL: 7.4
       ARCHITECTURE: x64
       ZTS_STATE: enable
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       PHP_BUILD_CRT: vc15
-    - PHP_REL: 7.3
+    - PHP_REL: 7.4
       ARCHITECTURE: x64
       ZTS_STATE: disable
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       PHP_BUILD_CRT: vc15
-    - PHP_REL: 7.3
+    - PHP_REL: 7.4
       ARCHITECTURE: x86
       ZTS_STATE: enable
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       PHP_BUILD_CRT: vc15
-    - PHP_REL: 7.3
+    - PHP_REL: 7.4
       ARCHITECTURE: x86
+      ZTS_STATE: disable
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      PHP_BUILD_CRT: vc15
+    - PHP_REL: 7.3
+      ARCHITECTURE: x64
+      ZTS_STATE: enable
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      PHP_BUILD_CRT: vc15
+    - PHP_REL: 7.3
+      ARCHITECTURE: x64
       ZTS_STATE: disable
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       PHP_BUILD_CRT: vc15
