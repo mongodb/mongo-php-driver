@@ -80,6 +80,8 @@ typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
 	mongoc_client_t* client;
 	int              created_by_pid;
+	char*            client_hash;
+	size_t           client_hash_len;
 	PHONGO_ZEND_OBJECT_POST
 } php_phongo_manager_t;
 
