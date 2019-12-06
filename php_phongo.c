@@ -2511,6 +2511,66 @@ int php_phongo_set_monitoring_callbacks(mongoc_client_t* client)
 	return retval;
 }
 
+static zval* php_phongo_manager_prepare_manager_for_hash(zval* driverOptions, bool* free TSRMLS_DC)
+{
+	php_phongo_manager_t* manager;
+	zval*                 autoEncryptionOpts      = NULL;
+	zval*                 keyVaultClient          = NULL;
+	zval*                 driverOptionsClone      = NULL;
+	zval*                 autoEncryptionOptsClone = NULL;
+#if PHP_VERSION_ID >= 70000
+	zval stackAutoEncryptionOptsClone;
+#endif
+
+	*free = false;
+
+	if (!driverOptions) {
+		return NULL;
+	}
+
+	if (!php_array_existsc(driverOptions, "autoEncryption")) {
+		goto ref;
+	}
+
+	autoEncryptionOpts = php_array_fetchc(driverOptions, "autoEncryption");
+	if (Z_TYPE_P(autoEncryptionOpts) != IS_ARRAY) {
+		goto ref;
+	}
+
+	if (!php_array_existsc(autoEncryptionOpts, "keyVaultClient")) {
+		goto ref;
+	}
+
+	keyVaultClient = php_array_fetchc(autoEncryptionOpts, "keyVaultClient");
+	if (Z_TYPE_P(keyVaultClient) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(keyVaultClient), php_phongo_manager_ce TSRMLS_CC)) {
+		goto ref;
+	}
+
+	*free = true;
+
+	manager = Z_MANAGER_OBJ_P(keyVaultClient);
+
+#if PHP_VERSION_ID >= 70000
+	driverOptionsClone      = ecalloc(sizeof(zval), 1);
+	autoEncryptionOptsClone = &stackAutoEncryptionOptsClone;
+#else
+	ALLOC_INIT_ZVAL(driverOptionsClone);
+	MAKE_STD_ZVAL(autoEncryptionOptsClone);
+#endif
+
+	ZVAL_DUP(autoEncryptionOptsClone, autoEncryptionOpts);
+	ADD_ASSOC_STRINGL(autoEncryptionOptsClone, "keyVaultClient", manager->client_hash, manager->client_hash_len);
+
+	ZVAL_DUP(driverOptionsClone, driverOptions);
+	ADD_ASSOC_ZVAL_EX(driverOptionsClone, "autoEncryption", autoEncryptionOptsClone);
+
+	return driverOptionsClone;
+
+ref:
+	Z_ADDREF_P(driverOptions);
+	return driverOptions;
+}
+
 /* Creates a hash for a client by concatenating the URI string with serialized
  * options arrays. On success, a persistent string is returned (i.e. pefree()
  * should be used to free it) and hash_len will be set to the string's length.
@@ -2520,6 +2580,8 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	char*                hash    = NULL;
 	smart_str            var_buf = { 0 };
 	php_serialize_data_t var_hash;
+	zval*                serializable_driver_options = NULL;
+	bool                 free_driver_options         = false;
 
 #if PHP_VERSION_ID >= 70000
 	zval args;
@@ -2536,8 +2598,8 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	}
 
 	if (driverOptions) {
-		ADD_ASSOC_ZVAL_EX(&args, "driverOptions", driverOptions);
-		Z_ADDREF_P(driverOptions);
+		serializable_driver_options = php_phongo_manager_prepare_manager_for_hash(driverOptions, &free_driver_options TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(&args, "driverOptions", serializable_driver_options);
 	} else {
 		ADD_ASSOC_NULL_EX(&args, "driverOptions");
 	}
@@ -2552,6 +2614,11 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	}
 
 	zval_ptr_dtor(&args);
+
+	if (free_driver_options) {
+		efree(serializable_driver_options);
+	}
+
 #else
 	zval* args;
 
@@ -2568,8 +2635,8 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	}
 
 	if (driverOptions) {
-		ADD_ASSOC_ZVAL_EX(args, "driverOptions", driverOptions);
-		Z_ADDREF_P(driverOptions);
+		serializable_driver_options = php_phongo_manager_prepare_manager_for_hash(driverOptions, &free_driver_options TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(args, "driverOptions", serializable_driver_options);
 	} else {
 		ADD_ASSOC_NULL_EX(args, "driverOptions");
 	}
