@@ -29,6 +29,12 @@
 
 zend_class_entry* php_phongo_session_ce;
 
+#define PHONGO_TRANSACTION_NONE "none"
+#define PHONGO_TRANSACTION_STARTING "starting"
+#define PHONGO_TRANSACTION_IN_PROGRESS "in_progress"
+#define PHONGO_TRANSACTION_COMMITTED "committed"
+#define PHONGO_TRANSACTION_ABORTED "aborted"
+
 #define SESSION_CHECK_LIVELINESS(i, m)                                  \
 	if (!(i)->client_session) {                                         \
 		phongo_throw_exception(                                         \
@@ -91,6 +97,25 @@ cleanup:
 	}
 
 	return retval;
+}
+
+static const char* php_phongo_get_transaction_state_string(mongoc_transaction_state_t state TSRMLS_DC)
+{
+	switch (state) {
+		case MONGOC_TRANSACTION_NONE:
+			return PHONGO_TRANSACTION_NONE;
+		case MONGOC_TRANSACTION_STARTING:
+			return PHONGO_TRANSACTION_STARTING;
+		case MONGOC_TRANSACTION_IN_PROGRESS:
+			return PHONGO_TRANSACTION_IN_PROGRESS;
+		case MONGOC_TRANSACTION_COMMITTED:
+			return PHONGO_TRANSACTION_COMMITTED;
+		case MONGOC_TRANSACTION_ABORTED:
+			return PHONGO_TRANSACTION_ABORTED;
+		default:
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid transaction state %d given", (int) state);
+			return NULL;
+	}
 }
 
 /* {{{ proto void MongoDB\Driver\Session::advanceClusterTime(array|object $clusterTime)
@@ -343,6 +368,30 @@ static PHP_METHOD(Session, getTransactionOptions)
 	}
 } /* }}} */
 
+/* {{{ proto string MongoDB\Driver\Session::getTransactionState()
+   Returns the current transaction state for this session */
+static PHP_METHOD(Session, getTransactionState)
+{
+	php_phongo_session_t* intern;
+	const char*           state;
+
+	intern = Z_SESSION_OBJ_P(getThis());
+	SESSION_CHECK_LIVELINESS(intern, "getTransactionState")
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	state = php_phongo_get_transaction_state_string(mongoc_client_session_get_transaction_state(intern->client_session) TSRMLS_CC);
+	if (!state) {
+		/* Exception already thrown */
+		return;
+	}
+
+	PHONGO_RETURN_STRING(state);
+} /* }}} */
+
+
 /* Creates a opts structure from an array optionally containing an RP, RC,
  * WC object, and/or maxCommitTimeMS int. Returns NULL if no options were found,
  * or there was an invalid option. If there was an invalid option or structure,
@@ -572,6 +621,7 @@ static zend_function_entry php_phongo_session_me[] = {
 	PHP_ME(Session, getOperationTime, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getServer, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getTransactionOptions, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Session, getTransactionState, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, isInTransaction, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, startTransaction, ai_Session_startTransaction, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Session_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
@@ -760,6 +810,12 @@ void php_phongo_session_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_session.free_obj = php_phongo_session_free_object;
 	php_phongo_handler_session.offset   = XtOffsetOf(php_phongo_session_t, std);
 #endif
+
+	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_NONE"), PHONGO_TRANSACTION_NONE TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_STARTING"), PHONGO_TRANSACTION_STARTING TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_IN_PROGRESS"), PHONGO_TRANSACTION_IN_PROGRESS TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_COMMITTED"), PHONGO_TRANSACTION_COMMITTED TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_ABORTED"), PHONGO_TRANSACTION_ABORTED TSRMLS_CC);
 } /* }}} */
 
 /*
