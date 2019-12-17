@@ -101,6 +101,8 @@ bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval* out)
 #else
 bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval** out);
 #endif
+bool php_phongo_bson_value_to_zval(const bson_value_t* value, zval* zv);
+void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bson_value_t* value TSRMLS_DC);
 bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map TSRMLS_DC);
 void php_phongo_bson_state_ctor(php_phongo_bson_state* state);
 void php_phongo_bson_state_dtor(php_phongo_bson_state* state);
