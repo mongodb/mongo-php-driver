@@ -2947,6 +2947,163 @@ cleanup:
 		mongoc_client_encryption_opts_destroy(opts);
 	}
 } /* }}} */
+
+static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_opts_from_zval(zval* options TSRMLS_DC) /* {{{ */
+{
+	mongoc_client_encryption_datakey_opts_t* opts;
+
+	opts = mongoc_client_encryption_datakey_opts_new();
+
+	if (!options || Z_TYPE_P(options) != IS_ARRAY) {
+		return opts;
+	}
+
+	if (php_array_existsc(options, "keyAltNames")) {
+		zval*      zkeyaltnames = php_array_fetchc(options, "keyAltNames");
+		HashTable* ht_data;
+		uint32_t   keyaltnames_count;
+		char**     keyaltnames;
+		uint32_t   i      = 0;
+		uint32_t   j      = 0;
+		bool       failed = false;
+
+		if (!zkeyaltnames || Z_TYPE_P(zkeyaltnames) != IS_ARRAY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected keyAltNames to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zkeyaltnames));
+			goto cleanup;
+		}
+
+		ht_data           = HASH_OF(zkeyaltnames);
+		keyaltnames_count = ht_data ? zend_hash_num_elements(ht_data) : 0;
+		keyaltnames       = ecalloc(keyaltnames_count, sizeof(char*));
+
+#if PHP_VERSION_ID >= 70000
+		{
+			zend_string* string_key = NULL;
+			zend_ulong   num_key    = 0;
+			zval*        keyaltname;
+
+			ZEND_HASH_FOREACH_KEY_VAL(ht_data, num_key, string_key, keyaltname)
+			{
+				if (i >= keyaltnames_count) {
+					phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Iterating over too many keyAltNames. Please file a bug report");
+					failed = true;
+					break;
+				}
+
+				if (Z_TYPE_P(keyaltname) != IS_STRING) {
+					if (string_key) {
+						phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected keyAltName with index \"%s\" to be string, %s given", ZSTR_VAL(string_key), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(keyaltname));
+					} else {
+						phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected keyAltName with index \"%lu\" to be string, %s given", num_key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(keyaltname));
+					}
+
+					failed = true;
+					break;
+				}
+
+				keyaltnames[i] = estrdup(Z_STRVAL_P(keyaltname));
+				i++;
+			}
+			ZEND_HASH_FOREACH_END();
+		}
+#else
+		{
+			HashPosition pos;
+			char*        string_key     = NULL;
+			uint         string_key_len = 0;
+			ulong        num_key        = 0;
+			zval**       keyaltname;
+
+			for (
+				zend_hash_internal_pointer_reset_ex(ht_data, &pos);
+				zend_hash_get_current_data_ex(ht_data, (void**) &keyaltname, &pos) == SUCCESS;
+				zend_hash_move_forward_ex(ht_data, &pos)) {
+
+				if (i == keyaltnames_count) {
+					phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Iterating over too many keyAltNames. Please file a bug report");
+					failed = true;
+					break;
+				}
+
+				if (Z_TYPE_PP(keyaltname) != IS_STRING) {
+					if (zend_hash_get_current_key_ex(ht_data, &string_key, &string_key_len, &num_key, 0, &pos) == HASH_KEY_IS_STRING) {
+						phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected keyAltName with index \"%s\" to be string, %s given", string_key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(*keyaltname));
+					} else {
+						phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected keyAltName with index \"%lu\" to be string, %s given", num_key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(*keyaltname));
+					}
+
+					failed = true;
+					break;
+				}
+
+				keyaltnames[i] = estrdup(Z_STRVAL_PP(keyaltname));
+				i++;
+			}
+		}
+#endif
+
+		if (!failed) {
+			mongoc_client_encryption_datakey_opts_set_keyaltnames(opts, keyaltnames, keyaltnames_count);
+		}
+
+		for (j = 0; j < i; j++) {
+			efree(keyaltnames[j]);
+		}
+		efree(keyaltnames);
+
+		if (failed) {
+			goto cleanup;
+		}
+	}
+
+	if (php_array_existsc(options, "masterKey")) {
+		bson_t masterkey = BSON_INITIALIZER;
+
+		php_phongo_zval_to_bson(php_array_fetchc(options, "masterKey"), PHONGO_BSON_NONE, &masterkey, NULL TSRMLS_CC);
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_datakey_opts_set_masterkey(opts, &masterkey);
+	}
+
+	return opts;
+
+cleanup:
+	if (opts) {
+		mongoc_client_encryption_datakey_opts_destroy(opts);
+	}
+
+	return NULL;
+} /* }}} */
+
+void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options TSRMLS_DC) /* {{{ */
+{
+	mongoc_client_encryption_datakey_opts_t* opts;
+	bson_value_t                             keyid;
+	bson_error_t                             error = { 0 };
+
+	opts = phongo_clientencryption_datakey_opts_from_zval(options TSRMLS_CC);
+	if (!opts) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+	if (!mongoc_client_encryption_create_datakey(clientencryption->client_encryption, kms_provider, opts, &keyid, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		goto cleanup;
+	}
+
+	if (!php_phongo_bson_value_to_zval(&keyid, return_value)) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+cleanup:
+	if (opts) {
+		mongoc_client_encryption_datakey_opts_destroy(opts);
+	}
+} /* }}} */
 #else /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
 static void phongo_throw_exception_no_cse(php_phongo_error_domain_t domain, const char* message TSRMLS_DC) /* {{{ */
 {
@@ -2969,6 +3126,12 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryption, mongoc_client_t* client, zval* options TSRMLS_DC) /* {{{ */
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot configure clientEncryption object." TSRMLS_CC);
+}
+/* }}} */
+
+void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options TSRMLS_DC) /* {{{ */
+{
+	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot create encryption key." TSRMLS_CC);
 }
 /* }}} */
 #endif

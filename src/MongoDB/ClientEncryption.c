@@ -26,11 +26,40 @@
 
 zend_class_entry* php_phongo_clientencryption_ce;
 
+/* {{{ proto MongoDB\BSON\Binary MongoDB\Driver\ClientEncryption::createDataKey(string $kmsProvider[, array $options])
+   Creates a new key document and inserts into the key vault collection. */
+static PHP_METHOD(ClientEncryption, createDataKey)
+{
+	char*                          kms_provider     = NULL;
+	phongo_zpp_char_len            kms_provider_len = 0;
+	zval*                          options          = NULL;
+	zend_error_handling            error_handling;
+	php_phongo_clientencryption_t* intern;
+
+	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &kms_provider, &kms_provider_len, &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	phongo_clientencryption_create_datakey(intern, return_value, kms_provider, options TSRMLS_CC);
+} /* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption_createDataKey, 0, 0, 1)
+	ZEND_ARG_INFO(0, kmsProvider)
+	ZEND_ARG_ARRAY_INFO(0, options, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_clientencryption_me[] = {
 	/* clang-format off */
+	PHP_ME(ClientEncryption, createDataKey, ai_ClientEncryption_createDataKey, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_ClientEncryption_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_ClientEncryption_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
