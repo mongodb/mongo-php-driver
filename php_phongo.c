@@ -2841,16 +2841,134 @@ cleanup:
 	return retval;
 }
 /* }}} */
+
+static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(mongoc_client_t* defaultKeyVaultClient, zval* options TSRMLS_DC) /* {{{ */
+{
+	mongoc_client_encryption_opts_t* opts;
+
+	opts = mongoc_client_encryption_opts_new();
+
+	if (!options || Z_TYPE_P(options) != IS_ARRAY) {
+		return opts;
+	}
+
+	if (php_array_existsc(options, "keyVaultClient")) {
+		zval* key_vault_client = php_array_fetch(options, "keyVaultClient");
+
+		if (Z_TYPE_P(key_vault_client) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(key_vault_client), php_phongo_manager_ce TSRMLS_CC)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"keyVaultClient\" encryption option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(key_vault_client));
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_opts_set_keyvault_client(opts, Z_MANAGER_OBJ_P(key_vault_client)->client);
+	} else {
+		mongoc_client_encryption_opts_set_keyvault_client(opts, defaultKeyVaultClient);
+	}
+
+	if (php_array_existsc(options, "keyVaultNamespace")) {
+		char*     keyvault_namespace;
+		char*     db_name;
+		char*     coll_name;
+		int       plen;
+		zend_bool pfree;
+
+		keyvault_namespace = php_array_fetchc_string(options, "keyVaultNamespace", &plen, &pfree);
+
+		if (!phongo_split_namespace(keyvault_namespace, &db_name, &coll_name)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"keyVaultNamespace\" encryption option to contain a full collection name");
+
+			if (pfree) {
+				str_efree(keyvault_namespace);
+			}
+
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_opts_set_keyvault_namespace(opts, db_name, coll_name);
+		efree(db_name);
+		efree(coll_name);
+
+		if (pfree) {
+			str_efree(keyvault_namespace);
+		}
+	}
+
+	if (php_array_existsc(options, "kmsProviders")) {
+		zval*  kms_providers  = php_array_fetchc(options, "kmsProviders");
+		bson_t bson_providers = BSON_INITIALIZER;
+
+		if (Z_TYPE_P(kms_providers) != IS_ARRAY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"kmsProviders\" encryption option to be an array");
+			goto cleanup;
+		}
+
+		php_phongo_zval_to_bson(kms_providers, PHONGO_BSON_NONE, &bson_providers, NULL TSRMLS_CC);
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_opts_set_kms_providers(opts, &bson_providers);
+		bson_destroy(&bson_providers);
+	}
+
+	return opts;
+
+cleanup:
+	if (opts) {
+		mongoc_client_encryption_opts_destroy(opts);
+	}
+
+	return NULL;
+} /* }}} */
+
+void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryption, mongoc_client_t* client, zval* options TSRMLS_DC) /* {{{ */
+{
+	mongoc_client_encryption_t*      ce;
+	mongoc_client_encryption_opts_t* opts;
+	bson_error_t                     error = { 0 };
+
+	opts = phongo_clientencryption_opts_from_zval(client, options TSRMLS_CC);
+	if (!opts) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+	ce = mongoc_client_encryption_new(opts, &error);
+	if (!ce) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+
+		goto cleanup;
+	}
+
+	clientencryption->client_encryption = ce;
+
+cleanup:
+	if (opts) {
+		mongoc_client_encryption_opts_destroy(opts);
+	}
+} /* }}} */
 #else /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
+static void phongo_throw_exception_no_cse(php_phongo_error_domain_t domain, const char* message TSRMLS_DC) /* {{{ */
+{
+	phongo_throw_exception(domain TSRMLS_CC, "%s Please recompile with support for libmongocrypt using the with-mongodb-client-side-encryption configure switch.", message);
+}
+/* }}} */
+
 static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manager, zval* driverOptions TSRMLS_DC) /* {{{ */
 {
 	if (!driverOptions || !php_array_existsc(driverOptions, "autoEncryption")) {
 		return true;
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Cannot enable automatic field-level encryption. Please recompile with support for libmongocrypt using the with-mongodb-client-side-encryption configure switch.");
+	phongo_throw_exception_no_cse(PHONGO_ERROR_INVALID_ARGUMENT, "Cannot enable automatic field-level encryption." TSRMLS_CC);
 
 	return false;
+}
+/* }}} */
+
+void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryption, mongoc_client_t* client, zval* options TSRMLS_DC) /* {{{ */
+{
+	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot configure clientEncryption object." TSRMLS_CC);
 }
 /* }}} */
 #endif
@@ -3303,6 +3421,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_cursor_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_command_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_cursor_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_cursorid_init_ce(INIT_FUNC_ARGS_PASSTHRU);

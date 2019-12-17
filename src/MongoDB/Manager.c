@@ -349,6 +349,26 @@ static PHP_METHOD(Manager, __construct)
 	}
 } /* }}} */
 
+/* {{{ proto MongoDB\Driver\ClientEncryption MongoDB\Driver\Manager::createClientEncryption(array $options)
+   Return a ClientEncryption instance */
+static PHP_METHOD(Manager, createClientEncryption)
+{
+	php_phongo_manager_t*          intern;
+	php_phongo_clientencryption_t* clientencryption;
+	zval*                          options;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &options) == FAILURE) {
+		return;
+	}
+
+	intern = Z_MANAGER_OBJ_P(getThis());
+
+	object_init_ex(return_value, php_phongo_clientencryption_ce);
+	clientencryption = Z_CLIENTENCRYPTION_OBJ_P(return_value);
+
+	phongo_clientencryption_init(clientencryption, intern->client, options TSRMLS_CC);
+} /* }}} */
+
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
    Execute a Command */
 static PHP_METHOD(Manager, executeCommand)
@@ -796,6 +816,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager___construct, 0, 0, 0)
 	ZEND_ARG_ARRAY_INFO(0, driverOptions, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_createClientEncryption, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, options, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeCommand, 0, 0, 2)
 	ZEND_ARG_INFO(0, db)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
@@ -834,6 +858,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_manager_me[] = {
 	/* clang-format off */
 	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, createClientEncryption, ai_Manager_createClientEncryption, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeReadCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeWriteCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)

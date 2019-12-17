@@ -29,6 +29,10 @@ static inline php_phongo_bulkwrite_t* php_bulkwrite_fetch_object(zend_object* ob
 {
 	return (php_phongo_bulkwrite_t*) ((char*) obj - XtOffsetOf(php_phongo_bulkwrite_t, std));
 }
+static inline php_phongo_clientencryption_t* php_clientencryption_fetch_object(zend_object* obj)
+{
+	return (php_phongo_clientencryption_t*) ((char*) obj - XtOffsetOf(php_phongo_clientencryption_t, std));
+}
 static inline php_phongo_command_t* php_command_fetch_object(zend_object* obj)
 {
 	return (php_phongo_command_t*) ((char*) obj - XtOffsetOf(php_phongo_command_t, std));
@@ -146,6 +150,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 	return (php_phongo_commandsucceededevent_t*) ((char*) obj - XtOffsetOf(php_phongo_commandsucceededevent_t, std));
 }
 
+#define Z_CLIENTENCRYPTION_OBJ_P(zv) (php_clientencryption_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMAND_OBJ_P(zv) (php_command_fetch_object(Z_OBJ_P(zv)))
 #define Z_CURSOR_OBJ_P(zv) (php_cursor_fetch_object(Z_OBJ_P(zv)))
 #define Z_CURSORID_OBJ_P(zv) (php_cursorid_fetch_object(Z_OBJ_P(zv)))
@@ -177,6 +182,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_COMMANDSTARTEDEVENT_OBJ_P(zv) (php_commandstartedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMANDSUCCEEDEDEVENT_OBJ_P(zv) (php_commandsucceededevent_fetch_object(Z_OBJ_P(zv)))
 
+#define Z_OBJ_CLIENTENCRYPTION(zo) (php_clientencryption_fetch_object(zo))
 #define Z_OBJ_COMMAND(zo) (php_command_fetch_object(zo))
 #define Z_OBJ_CURSOR(zo) (php_cursor_fetch_object(zo))
 #define Z_OBJ_CURSORID(zo) (php_cursorid_fetch_object(zo))
@@ -210,6 +216,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 
 #else /* PHP_VERSION_ID >= 70000 */
 
+#define Z_CLIENTENCRYPTION_OBJ_P(zv) ((php_phongo_clientencryption_t*) zend_object_store_get_object(zv TSRMLS_CC))
 #define Z_COMMAND_OBJ_P(zv) ((php_phongo_command_t*) zend_object_store_get_object(zv TSRMLS_CC))
 #define Z_CURSOR_OBJ_P(zv) ((php_phongo_cursor_t*) zend_object_store_get_object(zv TSRMLS_CC))
 #define Z_CURSORID_OBJ_P(zv) ((php_phongo_cursorid_t*) zend_object_store_get_object(zv TSRMLS_CC))
@@ -241,6 +248,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_COMMANDSTARTEDEVENT_OBJ_P(zv) ((php_phongo_commandstartedevent_t*) zend_object_store_get_object(zv TSRMLS_CC))
 #define Z_COMMANDSUCCEEDEDEVENT_OBJ_P(zv) ((php_phongo_commandsucceededevent_t*) zend_object_store_get_object(zv TSRMLS_CC))
 
+#define Z_OBJ_CLIENTENCRYPTION(zo) ((php_phongo_clientencryption_t*) zo)
 #define Z_OBJ_COMMAND(zo) ((php_phongo_command_t*) zo)
 #define Z_OBJ_CURSOR(zo) ((php_phongo_cursor_t*) zo)
 #define Z_OBJ_CURSORID(zo) ((php_phongo_cursorid_t*) zo)
@@ -279,6 +287,7 @@ typedef struct {
 	php_phongo_cursor_t* cursor;
 } php_phongo_cursor_iterator;
 
+extern zend_class_entry* php_phongo_clientencryption_ce;
 extern zend_class_entry* php_phongo_command_ce;
 extern zend_class_entry* php_phongo_cursor_ce;
 extern zend_class_entry* php_phongo_cursorid_ce;
@@ -374,6 +383,7 @@ extern void php_phongo_timestamp_interface_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_utcdatetime_interface_init_ce(INIT_FUNC_ARGS);
 
 extern void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_command_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_cursor_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS);
