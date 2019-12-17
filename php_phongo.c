@@ -3104,6 +3104,93 @@ cleanup:
 		mongoc_client_encryption_datakey_opts_destroy(opts);
 	}
 } /* }}} */
+
+static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_opts_from_zval(zval* options TSRMLS_DC) /* {{{ */
+{
+	mongoc_client_encryption_encrypt_opts_t* opts;
+
+	opts = mongoc_client_encryption_encrypt_opts_new();
+
+	if (!options || Z_TYPE_P(options) != IS_ARRAY) {
+		return opts;
+	}
+
+	if (php_array_existsc(options, "keyId")) {
+		bson_value_t keyid;
+
+		php_phongo_zval_to_bson_value(php_array_fetchc(options, "keyId"), PHONGO_BSON_NONE, &keyid TSRMLS_CC);
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_encrypt_opts_set_keyid(opts, &keyid);
+	}
+
+	if (php_array_existsc(options, "keyAltName")) {
+		char*     keyaltname;
+		int       plen;
+		zend_bool pfree;
+
+		keyaltname = php_array_fetch_string(options, "keyAltName", &plen, &pfree);
+		mongoc_client_encryption_encrypt_opts_set_keyaltname(opts, keyaltname);
+
+		if (pfree) {
+			str_efree(keyaltname);
+		}
+	}
+
+	if (php_array_existsc(options, "algorithm")) {
+		char*     algorithm;
+		int       plen;
+		zend_bool pfree;
+
+		algorithm = php_array_fetch_string(options, "algorithm", &plen, &pfree);
+		mongoc_client_encryption_encrypt_opts_set_algorithm(opts, algorithm);
+
+		if (pfree) {
+			str_efree(algorithm);
+		}
+	}
+
+	return opts;
+
+cleanup:
+	if (opts) {
+		mongoc_client_encryption_encrypt_opts_destroy(opts);
+	}
+
+	return NULL;
+} /* }}} */
+
+void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options TSRMLS_DC) /* {{{ */
+{
+	mongoc_client_encryption_encrypt_opts_t* opts;
+	bson_value_t                             ciphertext, value;
+	bson_error_t                             error = { 0 };
+
+	php_phongo_zval_to_bson_value(zvalue, PHONGO_BSON_NONE, &value TSRMLS_CC);
+
+	opts = phongo_clientencryption_encrypt_opts_from_zval(options TSRMLS_CC);
+	if (!opts) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+	if (!mongoc_client_encryption_encrypt(clientencryption->client_encryption, &value, opts, &ciphertext, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		goto cleanup;
+	}
+
+	if (!php_phongo_bson_value_to_zval(&ciphertext, zciphertext)) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+cleanup:
+	if (opts) {
+		mongoc_client_encryption_encrypt_opts_destroy(opts);
+	}
+} /* }}} */
 #else /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
 static void phongo_throw_exception_no_cse(php_phongo_error_domain_t domain, const char* message TSRMLS_DC) /* {{{ */
 {
@@ -3132,6 +3219,12 @@ void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryptio
 void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options TSRMLS_DC) /* {{{ */
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot create encryption key." TSRMLS_CC);
+}
+/* }}} */
+
+void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options TSRMLS_DC) /* {{{ */
+{
+	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot encrypt value." TSRMLS_CC);
 }
 /* }}} */
 #endif
