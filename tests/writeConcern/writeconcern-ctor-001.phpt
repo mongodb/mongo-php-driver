@@ -28,7 +28,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
   ["wtimeout"]=>
-  string(4) "1000"
+  int(1000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
@@ -38,7 +38,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(2)
   ["wtimeout"]=>
-  string(4) "2000"
+  int(2000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
@@ -48,7 +48,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(6) "string"
   ["wtimeout"]=>
-  string(4) "3000"
+  int(3000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
@@ -56,7 +56,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["j"]=>
   bool(true)
   ["wtimeout"]=>
-  string(4) "4000"
+  int(4000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
@@ -64,12 +64,12 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["j"]=>
   bool(false)
   ["wtimeout"]=>
-  string(4) "5000"
+  int(5000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(6) "string"
   ["wtimeout"]=>
-  string(4) "6000"
+  int(6000)
 }
 ===DONE===

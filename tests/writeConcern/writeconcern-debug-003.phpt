@@ -3,8 +3,6 @@ MongoDB\Driver\WriteConcern debug output
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
-
 $tests = [
     new MongoDB\Driver\WriteConcern(-3), // MONGOC_WRITE_CONCERN_W_MAJORITY
     new MongoDB\Driver\WriteConcern(-2), // MONGOC_WRITE_CONCERN_W_DEFAULT
@@ -20,6 +18,8 @@ $tests = [
     new MongoDB\Driver\WriteConcern(-2, 0, true),
     // Note: wtimeout is only applicable for w > 1
     new MongoDB\Driver\WriteConcern(-2, 1000),
+    // 64-bit wtimeout may be reported as integer or string
+    MongoDB\Driver\WriteConcern::__set_state(['w' => 2, 'wtimeout' => '2147483648']),
 ];
 
 foreach ($tests as $test) {
@@ -70,7 +70,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
   ["wtimeout"]=>
-  string(4) "1000"
+  int(1000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
@@ -78,7 +78,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["j"]=>
   bool(true)
   ["wtimeout"]=>
-  string(4) "1000"
+  int(1000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["j"]=>
@@ -86,6 +86,12 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
-  string(4) "1000"
+  int(1000)
+}
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  int(2)
+  ["wtimeout"]=>
+  %rint\(2147483648\)|string\(10\) "2147483648"%r
 }
 ===DONE===

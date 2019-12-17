@@ -3,8 +3,6 @@ MongoDB\Driver\WriteConcern::bsonSerialize() returns an object
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
-
 $tests = [
     new MongoDB\Driver\WriteConcern(-3), // MONGOC_WRITE_CONCERN_W_MAJORITY
     new MongoDB\Driver\WriteConcern(-2), // MONGOC_WRITE_CONCERN_W_DEFAULT
@@ -70,10 +68,7 @@ object(stdClass)#%d (%d) {
   ["w"]=>
   int(1)
   ["wtimeout"]=>
-  object(MongoDB\BSON\Int64)#%d (%d) {
-    ["integer"]=>
-    string(4) "1000"
-  }
+  int(1000)
 }
 object(stdClass)#%d (%d) {
   ["w"]=>
@@ -81,10 +76,7 @@ object(stdClass)#%d (%d) {
   ["j"]=>
   bool(true)
   ["wtimeout"]=>
-  object(MongoDB\BSON\Int64)#%d (%d) {
-    ["integer"]=>
-    string(4) "1000"
-  }
+  int(1000)
 }
 object(stdClass)#%d (%d) {
   ["j"]=>
@@ -92,9 +84,6 @@ object(stdClass)#%d (%d) {
 }
 object(stdClass)#%d (%d) {
   ["wtimeout"]=>
-  object(MongoDB\BSON\Int64)#%d (%d) {
-    ["integer"]=>
-    string(4) "1000"
-  }
+  int(1000)
 }
 ===DONE===

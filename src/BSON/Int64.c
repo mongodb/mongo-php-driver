@@ -90,7 +90,7 @@ static PHP_METHOD(Int64, __toString)
 
 	intern = Z_INT64_OBJ_P(getThis());
 
-	php_phongo_int64_to_zval(intern->integer, return_value, false TSRMLS_CC);
+	ZVAL_INT64_STRING(return_value, intern->integer);
 } /* }}} */
 
 /* {{{ proto array MongoDB\BSON\Int64::jsonSerialize()
@@ -319,7 +319,7 @@ HashTable* php_phongo_int64_get_properties_hash(zval* object, bool is_debug TSRM
 	{
 		zval value;
 
-		php_phongo_int64_to_zval(intern->integer, &value, false TSRMLS_CC);
+		ZVAL_INT64_STRING(&value, intern->integer);
 		zend_hash_str_update(props, "integer", sizeof("integer") - 1, &value);
 	}
 #else
@@ -327,7 +327,7 @@ HashTable* php_phongo_int64_get_properties_hash(zval* object, bool is_debug TSRM
 		zval* value;
 
 		MAKE_STD_ZVAL(value);
-		php_phongo_int64_to_zval(intern->integer, value, false TSRMLS_CC);
+		ZVAL_INT64_STRING(value, intern->integer);
 		zend_hash_update(props, "integer", sizeof("integer"), &value, sizeof(value), NULL);
 	}
 #endif

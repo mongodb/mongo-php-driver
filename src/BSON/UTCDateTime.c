@@ -218,7 +218,7 @@ static PHP_METHOD(UTCDateTime, __toString)
 		return;
 	}
 
-	php_phongo_int64_to_zval(intern->milliseconds, return_value, false TSRMLS_CC);
+	ZVAL_INT64_STRING(return_value, intern->milliseconds);
 } /* }}} */
 
 /* {{{ proto DateTime MongoDB\BSON\UTCDateTime::toDateTime()
@@ -504,7 +504,7 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(zval* object, bool 
 	{
 		zval milliseconds;
 
-		php_phongo_int64_to_zval(intern->milliseconds, &milliseconds, false TSRMLS_CC);
+		ZVAL_INT64_STRING(&milliseconds, intern->milliseconds);
 		zend_hash_str_update(props, "milliseconds", sizeof("milliseconds") - 1, &milliseconds);
 	}
 #else
@@ -512,7 +512,7 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(zval* object, bool 
 		zval* milliseconds;
 
 		MAKE_STD_ZVAL(milliseconds);
-		php_phongo_int64_to_zval(intern->milliseconds, milliseconds, false TSRMLS_CC);
+		ZVAL_INT64_STRING(milliseconds, intern->milliseconds);
 		zend_hash_update(props, "milliseconds", sizeof("milliseconds"), &milliseconds, sizeof(milliseconds), NULL);
 	}
 #endif

@@ -368,7 +368,20 @@ static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, boo
 		if (wtimeout != 0) {
 			zval z_wtimeout;
 
-			php_phongo_int64_to_zval(wtimeout, &z_wtimeout, is_bson TSRMLS_CC);
+			if (is_bson) {
+				ZVAL_INT64(&z_wtimeout, wtimeout);
+			} else {
+#if SIZEOF_LONG == 4
+				if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
+					ZVAL_INT64_STRING(&z_wtimeout, wtimeout);
+				} else {
+					ZVAL_LONG(&z_wtimeout, wtimeout);
+				}
+#else
+				ZVAL_LONG(&z_wtimeout, wtimeout);
+#endif
+			}
+
 			zend_hash_str_update(props, "wtimeout", sizeof("wtimeout") - 1, &z_wtimeout);
 		}
 #else
@@ -401,7 +414,20 @@ static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, boo
 			zval* z_wtimeout;
 
 			MAKE_STD_ZVAL(z_wtimeout);
-			php_phongo_int64_to_zval(wtimeout, z_wtimeout, is_bson TSRMLS_CC);
+
+			if (is_bson) {
+				ZVAL_INT64(z_wtimeout, wtimeout);
+			} else {
+#if SIZEOF_LONG == 4
+				if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
+					ZVAL_INT64_STRING(z_wtimeout, wtimeout);
+				} else {
+					ZVAL_LONG(z_wtimeout, wtimeout);
+				}
+#else
+				ZVAL_LONG(z_wtimeout, wtimeout);
+#endif
+			}
 
 			zend_hash_update(props, "wtimeout", sizeof("wtimeout"), &z_wtimeout, sizeof(z_wtimeout), NULL);
 		}
@@ -465,7 +491,11 @@ static PHP_METHOD(WriteConcern, serialize)
 	}
 
 	if (wtimeout != 0) {
-		ADD_ASSOC_INT64_AS_STRING(&retval, "wtimeout", wtimeout);
+		if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
+			ADD_ASSOC_INT64_AS_STRING(&retval, "wtimeout", wtimeout);
+		} else {
+			ADD_ASSOC_LONG_EX(&retval, "wtimeout", wtimeout);
+		}
 	}
 #else
 	ALLOC_INIT_ZVAL(retval);
@@ -484,7 +514,11 @@ static PHP_METHOD(WriteConcern, serialize)
 	}
 
 	if (wtimeout != 0) {
-		ADD_ASSOC_INT64_AS_STRING(retval, "wtimeout", wtimeout);
+		if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
+			ADD_ASSOC_INT64_AS_STRING(retval, "wtimeout", wtimeout);
+		} else {
+			ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
+		}
 	}
 #endif
 

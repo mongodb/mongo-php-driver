@@ -91,11 +91,18 @@
 #define ADD_ASSOC_ZVAL(_zv, _key, _value) add_assoc_zval(_zv, _key, _value);
 #define ADD_ASSOC_NULL_EX(_zv, _key) add_assoc_null_ex(_zv, ZEND_STRL(_key));
 #define ADD_ASSOC_BOOL_EX(_zv, _key, _value) add_assoc_bool_ex(_zv, ZEND_STRL(_key), _value);
-#define ADD_ASSOC_INT64_AS_STRING(_zv, _key, _value)                 \
-	do {                                                             \
-		zval z_int;                                                  \
-		php_phongo_int64_to_zval((_value), &z_int, false TSRMLS_CC); \
-		ADD_ASSOC_ZVAL_EX((_zv), (_key), &z_int);                    \
+#define ZVAL_INT64_STRING(_zv, _value)                              \
+	do {                                                            \
+		char tmp[24];                                               \
+		int  tmp_len;                                               \
+		tmp_len = snprintf(tmp, sizeof(tmp), "%" PRId64, (_value)); \
+		ZVAL_STRINGL((_zv), tmp, tmp_len);                          \
+	} while (0)
+#define ADD_ASSOC_INT64_AS_STRING(_zv, _key, _value) \
+	do {                                             \
+		zval z_int;                                  \
+		ZVAL_INT64_STRING(&z_int, (_value));         \
+		ADD_ASSOC_ZVAL_EX((_zv), (_key), &z_int);    \
 	} while (0)
 #define ADD_NEXT_INDEX_STRINGL(_zv, _value, _len) add_next_index_stringl(_zv, _value, _len);
 #define phongo_free_object_arg zend_object
@@ -113,7 +120,7 @@
 			0            \
 		}                \
 	}
-#else
+#else /* PHP_VERSION_ID < 70000 */
 #define phongo_char char
 #define phongo_long long
 #define PHONGO_LONG_FORMAT "ld"
@@ -133,13 +140,20 @@
 #define ADD_ASSOC_ZVAL(_zv, _key, _value) add_assoc_zval(_zv, _key, _value);
 #define ADD_ASSOC_NULL_EX(_zv, _key) add_assoc_null_ex(_zv, ZEND_STRS(_key));
 #define ADD_ASSOC_BOOL_EX(_zv, _key, _value) add_assoc_bool_ex(_zv, ZEND_STRS(_key), _value);
-#define ADD_ASSOC_INT64_AS_STRING(_zv, _key, _value)                \
+#define ZVAL_INT64_STRING(_zv, _value)                              \
 	do {                                                            \
-		zval* z_int;                                                \
-		TSRMLS_FETCH();                                             \
-		MAKE_STD_ZVAL(z_int);                                       \
-		php_phongo_int64_to_zval((_value), z_int, false TSRMLS_CC); \
-		ADD_ASSOC_ZVAL_EX((_zv), (_key), z_int);                    \
+		char tmp[24];                                               \
+		int  tmp_len;                                               \
+		tmp_len = snprintf(tmp, sizeof(tmp), "%" PRId64, (_value)); \
+		ZVAL_STRINGL((_zv), tmp, tmp_len, 1);                       \
+	} while (0)
+
+#define ADD_ASSOC_INT64_AS_STRING(_zv, _key, _value) \
+	do {                                             \
+		zval* z_int;                                 \
+		MAKE_STD_ZVAL(z_int);                        \
+		ZVAL_INT64_STRING(z_int, (_value));          \
+		ADD_ASSOC_ZVAL_EX((_zv), (_key), z_int);     \
 	} while (0)
 #define ADD_NEXT_INDEX_STRINGL(_zv, _value, _len) add_next_index_stringl(_zv, _value, _len, 1);
 #define Z_PHPDATE_P(object) ((php_date_obj*) zend_object_store_get_object(object TSRMLS_CC))
@@ -174,6 +188,7 @@
 #define ADD_INDEX_INT64(_zv, _index, _value) add_index_long((_zv), (_index), (_value))
 #define ADD_NEXT_INDEX_INT64(_zv, _value) add_next_index_long((_zv), (_value))
 #define ADD_ASSOC_INT64(_zv, _key, _value) add_assoc_long((_zv), (_key), (_value))
+#define ZVAL_INT64(_zv, _value) ZVAL_LONG((_zv), (_value))
 #elif SIZEOF_PHONGO_LONG == 4
 #if PHP_VERSION_ID >= 70000
 #define ADD_INDEX_INT64(_zv, _index, _value)                    \
@@ -232,6 +247,12 @@
 		add_assoc_long((_zv), (_key), (_value));               \
 	}
 #endif /* PHP_VERSION_ID */
+#define ZVAL_INT64(_zv, _value)                               \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {       \
+		php_phongo_bson_new_int64((_zv), (_value) TSRMLS_CC); \
+	} else {                                                  \
+		ZVAL_LONG((_zv), (_value));                           \
+	}
 #else  /* SIZEOF_PHONGO_LONG != 8 && SIZEOF_PHONGO_LONG != 4 */
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif /* SIZEOF_PHONGO_LONG */

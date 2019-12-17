@@ -1,9 +1,7 @@
 --TEST--
-MongoDB\Driver\WriteConcern::bsonSerialize()
+MongoDB\Driver\WriteConcern: var_export()
 --FILE--
 <?php
-
-require_once __DIR__ . '/../utils/tools.php';
 
 $tests = [
     new MongoDB\Driver\WriteConcern(-3), // MONGOC_WRITE_CONCERN_W_MAJORITY
@@ -20,6 +18,8 @@ $tests = [
     new MongoDB\Driver\WriteConcern(-2, 0, true),
     // Note: wtimeout is only applicable for w > 1
     new MongoDB\Driver\WriteConcern(-2, 1000),
+    // 64-bit wtimeout may be reported as integer or string
+    MongoDB\Driver\WriteConcern::__set_state(['w' => 2, 'wtimeout' => '2147483648']),
 ];
 
 foreach ($tests as $test) {
@@ -29,7 +29,7 @@ foreach ($tests as $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 MongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 'majority',
 ))
@@ -59,17 +59,21 @@ MongoDB\Driver\WriteConcern::__set_state(array(
 ))
 MongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 1,
-   'wtimeout' => '1000',
+   'wtimeout' => 1000,
 ))
 MongoDB\Driver\WriteConcern::__set_state(array(
    'w' => 1,
    'j' => true,
-   'wtimeout' => '1000',
+   'wtimeout' => 1000,
 ))
 MongoDB\Driver\WriteConcern::__set_state(array(
    'j' => true,
 ))
 MongoDB\Driver\WriteConcern::__set_state(array(
-   'wtimeout' => '1000',
+   'wtimeout' => 1000,
+))
+MongoDB\Driver\WriteConcern::__set_state(array(
+   'w' => 2,
+   'wtimeout' => %r2147483648|'2147483648'%r,
 ))
 ===DONE===

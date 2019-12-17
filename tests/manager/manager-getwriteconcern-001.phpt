@@ -61,28 +61,28 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
-  string(4) "1000"
+  int(1000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
-  string(4) "1000"
+  int(1000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(2)
   ["wtimeout"]=>
-  string(4) "1000"
+  int(1000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
   ["wtimeout"]=>
-  string(4) "1000"
+  int(1000)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(12) "customTagSet"
   ["wtimeout"]=>
-  string(4) "1000"
+  int(1000)
 }
 ===DONE===

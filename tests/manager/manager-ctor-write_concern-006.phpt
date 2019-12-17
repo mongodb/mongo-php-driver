@@ -26,18 +26,18 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(2)
   ["wtimeout"]=>
-  string(10) "4294967296"
+  int(4294967296)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
   ["wtimeout"]=>
-  string(10) "4294967296"
+  int(4294967296)
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(12) "customTagSet"
   ["wtimeout"]=>
-  string(10) "4294967296"
+  int(4294967296)
 }
 ===DONE===

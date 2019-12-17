@@ -1367,11 +1367,7 @@ void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t
 	if (wtimeout != 0) {
 #if SIZEOF_LONG == 4
 		if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
-			char tmp[24];
-			int  tmp_len;
-
-			tmp_len = snprintf(tmp, sizeof(tmp), "%" PRId64, wtimeout);
-			ADD_ASSOC_STRINGL(&retval, "wtimeout", tmp, tmp_len);
+			ADD_ASSOC_INT64_AS_STRING(&retval, "wtimeout", wtimeout);
 		} else {
 			ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
 		}
@@ -2751,23 +2747,6 @@ cleanup:
 		php_phongo_free_ssl_opt(ssl_opt);
 	}
 #endif
-} /* }}} */
-
-void php_phongo_int64_to_zval(const int64_t data, zval* zv, bool is_bson TSRMLS_DC) /* {{{ */
-{
-	if (is_bson) {
-		php_phongo_bson_new_int64(zv, data TSRMLS_CC);
-	} else {
-		char tmp[24];
-		int  tmp_len;
-
-		tmp_len = snprintf(tmp, sizeof(tmp), "%" PRId64, data);
-#if PHP_VERSION_ID >= 70000
-		ZVAL_STRINGL(zv, tmp, tmp_len);
-#else
-		ZVAL_STRINGL(zv, tmp, tmp_len, 1);
-#endif
-	}
 } /* }}} */
 
 bool php_phongo_parse_int64(int64_t* retval, const char* data, phongo_zpp_char_len data_len) /* {{{ */
