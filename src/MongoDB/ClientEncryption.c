@@ -71,6 +71,27 @@ static PHP_METHOD(ClientEncryption, encrypt)
 	phongo_clientencryption_encrypt(intern, value, return_value, options TSRMLS_CC);
 } /* }}} */
 
+/* {{{ proto mixed MongoDB\Driver\ClientEncryption::decrypt(MongoDB\BSON\BinaryInterface $value)
+   Decrypts an encrypted value (BSON binary of subtype 6). Returns the original BSON value */
+static PHP_METHOD(ClientEncryption, decrypt)
+{
+	zval*                          ciphertext;
+	zend_error_handling            error_handling;
+	php_phongo_clientencryption_t* intern;
+
+	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &ciphertext, php_phongo_binary_interface_ce) == FAILURE) {
+		zend_restore_error_handling(&error_handling TSRMLS_CC);
+		return;
+	}
+
+	zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+	phongo_clientencryption_decrypt(intern, ciphertext, return_value TSRMLS_CC);
+} /* }}} */
+
 ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption_createDataKey, 0, 0, 1)
 	ZEND_ARG_INFO(0, kmsProvider)
 	ZEND_ARG_ARRAY_INFO(0, options, 1)
@@ -81,6 +102,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption_encrypt, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, options, 1)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption_decrypt, 0, 0, 1)
+	ZEND_ARG_OBJ_INFO(0, keyVaultClient, MongoDB\\BSON\\BinaryInterface, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -88,6 +113,7 @@ static zend_function_entry php_phongo_clientencryption_me[] = {
 	/* clang-format off */
 	PHP_ME(ClientEncryption, createDataKey, ai_ClientEncryption_createDataKey, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ClientEncryption, encrypt, ai_ClientEncryption_encrypt, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ClientEncryption, decrypt, ai_ClientEncryption_decrypt, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_ClientEncryption_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_ClientEncryption_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END

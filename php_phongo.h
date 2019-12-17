@@ -169,6 +169,7 @@ bool php_phongo_parse_int64(int64_t* retval, const char* data, phongo_zpp_char_l
 
 void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options TSRMLS_DC);
 void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options TSRMLS_DC);
+void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue TSRMLS_DC);
 
 zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson TSRMLS_DC);
 zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_DC);

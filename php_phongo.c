@@ -3191,6 +3191,25 @@ cleanup:
 		mongoc_client_encryption_encrypt_opts_destroy(opts);
 	}
 } /* }}} */
+
+void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue TSRMLS_DC) /* {{{ */
+{
+	bson_value_t ciphertext, value;
+	bson_error_t error = { 0 };
+
+	php_phongo_zval_to_bson_value(zciphertext, PHONGO_BSON_NONE, &ciphertext TSRMLS_CC);
+
+	if (!mongoc_client_encryption_decrypt(clientencryption->client_encryption, &ciphertext, &value, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		return;
+	}
+
+	if (!php_phongo_bson_value_to_zval(&value, zvalue)) {
+		/* Exception already thrown */
+		return;
+	}
+}
+/* }}} */
 #else /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
 static void phongo_throw_exception_no_cse(php_phongo_error_domain_t domain, const char* message TSRMLS_DC) /* {{{ */
 {
@@ -3225,6 +3244,12 @@ void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clien
 void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options TSRMLS_DC) /* {{{ */
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot encrypt value." TSRMLS_CC);
+}
+/* }}} */
+
+void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue TSRMLS_DC) /* {{{ */
+{
+	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot decrypt value." TSRMLS_CC);
 }
 /* }}} */
 #endif
