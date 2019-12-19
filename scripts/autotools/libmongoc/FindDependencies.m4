@@ -25,6 +25,11 @@ AC_CHECK_TYPE([socklen_t],
               [AC_SUBST(MONGOC_HAVE_SOCKLEN, 0)],
               [#include <sys/socket.h>])
 
+AC_CHECK_MEMBER([struct sockaddr_storage.ss_family],
+                [AC_SUBST(MONGOC_HAVE_SS_FAMILY, 0)],
+                [AC_SUBST(MONGOC_HAVE_SS_FAMILY, 1)],
+                [#include <sys/socket.h>])
+
 # Check for pthreads. libmongoc's original FindDependencies.m4 script did not
 # require pthreads, but it does appear to be necessary on non-Windows platforms
 # based on mongoc-openssl.c and mongoc-thread-private.h.
