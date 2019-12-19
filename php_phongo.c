@@ -1365,10 +1365,15 @@ void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t
 	}
 
 	if (wtimeout != 0) {
-		/* Note: PHP currently enforces that wimeoutMS is a 32-bit integer, so
-		 * casting will never truncate the value. This may change with
-		 * PHPC-1411. */
-		ADD_ASSOC_LONG_EX(retval, "wtimeout", (int32_t) wtimeout);
+#if SIZEOF_LONG == 4
+		if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
+			ADD_ASSOC_INT64_AS_STRING(&retval, "wtimeout", wtimeout);
+		} else {
+			ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
+		}
+#else
+		ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
+#endif
 	}
 } /* }}} */
 /* }}} */
@@ -1966,10 +1971,8 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 		if (!strcasecmp(key, MONGOC_URI_WTIMEOUTMS)) {
 			int64_t wtimeout;
 
-			/* Although the write concern spec defines wtimeoutMS as 64-bit, PHP has
-			 * historically required 32-bit. This may change with PHPC-1411. */
-			if (!BSON_ITER_HOLDS_INT32(&iter)) {
-				PHONGO_URI_INVALID_TYPE(iter, "32-bit integer");
+			if (!BSON_ITER_HOLDS_INT(&iter)) {
+				PHONGO_URI_INVALID_TYPE(iter, "integer");
 				mongoc_write_concern_destroy(new_wc);
 
 				return false;
@@ -2744,6 +2747,24 @@ cleanup:
 		php_phongo_free_ssl_opt(ssl_opt);
 	}
 #endif
+} /* }}} */
+
+bool php_phongo_parse_int64(int64_t* retval, const char* data, phongo_zpp_char_len data_len) /* {{{ */
+{
+	int64_t value;
+	char*   endptr = NULL;
+
+	/* bson_ascii_strtoll() sets errno if conversion fails. If conversion
+	 * succeeds, we still want to ensure that the entire string was parsed. */
+	value = bson_ascii_strtoll(data, &endptr, 10);
+
+	if (errno || (endptr && endptr != ((const char*) data + data_len))) {
+		return false;
+	}
+
+	*retval = value;
+
+	return true;
 } /* }}} */
 
 /* {{{ Memory allocation wrappers */

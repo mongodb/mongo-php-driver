@@ -21,5 +21,5 @@ echo throws(function() {
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?wtimeoutms=invalid'. Unsupported value for "wtimeoutms": "invalid".
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected 32-bit integer for "wTimeoutMS" URI option, string given
+Expected integer for "wTimeoutMS" URI option, string given
 ===DONE===

@@ -52,14 +52,8 @@ static bool php_phongo_utcdatetime_init(php_phongo_utcdatetime_t* intern, int64_
 static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t* intern, const char* s_milliseconds, phongo_zpp_char_len s_milliseconds_len TSRMLS_DC) /* {{{ */
 {
 	int64_t milliseconds;
-	char*   endptr = NULL;
 
-	/* bson_ascii_strtoll() sets errno if conversion fails. If conversion
-	 * succeeds, we still want to ensure that the entire string was parsed. */
-
-	milliseconds = bson_ascii_strtoll(s_milliseconds, &endptr, 10);
-
-	if (errno || (endptr && endptr != ((const char*) s_milliseconds + s_milliseconds_len))) {
+	if (!php_phongo_parse_int64(&milliseconds, s_milliseconds, s_milliseconds_len)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer for %s initialization", s_milliseconds, ZSTR_VAL(php_phongo_utcdatetime_ce->name));
 		return false;
 	}
@@ -217,8 +211,6 @@ static PHP_METHOD(UTCDateTime, __set_state)
 static PHP_METHOD(UTCDateTime, __toString)
 {
 	php_phongo_utcdatetime_t* intern;
-	char                      s_milliseconds[24];
-	int                       s_milliseconds_len;
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
@@ -226,9 +218,7 @@ static PHP_METHOD(UTCDateTime, __toString)
 		return;
 	}
 
-	s_milliseconds_len = snprintf(s_milliseconds, sizeof(s_milliseconds), "%" PRId64, intern->milliseconds);
-
-	PHONGO_RETVAL_STRINGL(s_milliseconds, s_milliseconds_len);
+	ZVAL_INT64_STRING(return_value, intern->milliseconds);
 } /* }}} */
 
 /* {{{ proto DateTime MongoDB\BSON\UTCDateTime::toDateTime()
@@ -266,16 +256,12 @@ static PHP_METHOD(UTCDateTime, toDateTime)
 static PHP_METHOD(UTCDateTime, jsonSerialize)
 {
 	php_phongo_utcdatetime_t* intern;
-	char                      s_milliseconds[24];
-	int                       s_milliseconds_len;
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
-
-	s_milliseconds_len = snprintf(s_milliseconds, sizeof(s_milliseconds), "%" PRId64, intern->milliseconds);
 
 	array_init_size(return_value, 1);
 
@@ -284,7 +270,7 @@ static PHP_METHOD(UTCDateTime, jsonSerialize)
 		zval udt;
 
 		array_init_size(&udt, 1);
-		ADD_ASSOC_STRINGL(&udt, "$numberLong", s_milliseconds, s_milliseconds_len);
+		ADD_ASSOC_INT64_AS_STRING(&udt, "$numberLong", intern->milliseconds);
 		ADD_ASSOC_ZVAL_EX(return_value, "$date", &udt);
 	}
 #else
@@ -293,7 +279,7 @@ static PHP_METHOD(UTCDateTime, jsonSerialize)
 
 		MAKE_STD_ZVAL(udt);
 		array_init_size(udt, 1);
-		ADD_ASSOC_STRINGL(udt, "$numberLong", s_milliseconds, s_milliseconds_len);
+		ADD_ASSOC_INT64_AS_STRING(udt, "$numberLong", intern->milliseconds);
 		ADD_ASSOC_ZVAL_EX(return_value, "$date", udt);
 	}
 #endif
@@ -307,8 +293,6 @@ static PHP_METHOD(UTCDateTime, serialize)
 	ZVAL_RETVAL_TYPE          retval;
 	php_serialize_data_t      var_hash;
 	smart_str                 buf = { 0 };
-	char                      s_milliseconds[24];
-	int                       s_milliseconds_len;
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
@@ -316,15 +300,13 @@ static PHP_METHOD(UTCDateTime, serialize)
 		return;
 	}
 
-	s_milliseconds_len = snprintf(s_milliseconds, sizeof(s_milliseconds), "%" PRId64, intern->milliseconds);
-
 #if PHP_VERSION_ID >= 70000
-	array_init_size(&retval, 2);
-	ADD_ASSOC_STRINGL(&retval, "milliseconds", s_milliseconds, s_milliseconds_len);
+	array_init_size(&retval, 1);
+	ADD_ASSOC_INT64_AS_STRING(&retval, "milliseconds", intern->milliseconds);
 #else
 	ALLOC_INIT_ZVAL(retval);
-	array_init_size(retval, 2);
-	ADD_ASSOC_STRINGL(retval, "milliseconds", s_milliseconds, s_milliseconds_len);
+	array_init_size(retval, 1);
+	ADD_ASSOC_INT64_AS_STRING(retval, "milliseconds", intern->milliseconds);
 #endif
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
@@ -509,24 +491,20 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(zval* object, bool 
 {
 	php_phongo_utcdatetime_t* intern;
 	HashTable*                props;
-	char                      s_milliseconds[24];
-	int                       s_milliseconds_len;
 
 	intern = Z_UTCDATETIME_OBJ_P(object);
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 1);
 
 	if (!intern->initialized) {
 		return props;
 	}
 
-	s_milliseconds_len = snprintf(s_milliseconds, sizeof(s_milliseconds), "%" PRId64, intern->milliseconds);
-
 #if PHP_VERSION_ID >= 70000
 	{
 		zval milliseconds;
 
-		ZVAL_STRINGL(&milliseconds, s_milliseconds, s_milliseconds_len);
+		ZVAL_INT64_STRING(&milliseconds, intern->milliseconds);
 		zend_hash_str_update(props, "milliseconds", sizeof("milliseconds") - 1, &milliseconds);
 	}
 #else
@@ -534,7 +512,7 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(zval* object, bool 
 		zval* milliseconds;
 
 		MAKE_STD_ZVAL(milliseconds);
-		ZVAL_STRINGL(milliseconds, s_milliseconds, s_milliseconds_len, 1);
+		ZVAL_INT64_STRING(milliseconds, intern->milliseconds);
 		zend_hash_update(props, "milliseconds", sizeof("milliseconds"), &milliseconds, sizeof(milliseconds), NULL);
 	}
 #endif

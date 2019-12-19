@@ -5,6 +5,8 @@ MongoDB\Driver\Manager::__construct(): write concern options (wtimeoutms)
 
 $tests = [
     ['mongodb://127.0.0.1/?wtimeoutms=1000', []],
+    // 64-bit wtimeout may be reported as integer or string
+    ['mongodb://127.0.0.1/?wtimeoutms=4294967296', []],
     ['mongodb://127.0.0.1/?w=2&wtimeoutms=1000', []],
     ['mongodb://127.0.0.1/?w=majority&wtimeoutms=1000', []],
     ['mongodb://127.0.0.1/?w=customTagSet&wtimeoutms=1000', []],
@@ -28,6 +30,10 @@ foreach ($tests as $test) {
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(1000)
+}
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["wtimeout"]=>
+  %rint\(4294967296\)|string\(10\) "4294967296"%r
 }
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>

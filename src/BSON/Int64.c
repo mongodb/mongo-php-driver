@@ -47,13 +47,8 @@ static bool php_phongo_int64_init(php_phongo_int64_t* intern, int64_t integer) /
 static bool php_phongo_int64_init_from_string(php_phongo_int64_t* intern, const char* s_integer, phongo_zpp_char_len s_integer_len TSRMLS_DC) /* {{{ */
 {
 	int64_t integer;
-	char*   endptr = NULL;
 
-	/* bson_ascii_strtoll() sets errno if conversion fails. If conversion
-	 * succeeds, we still want to ensure that the entire string was parsed. */
-	integer = bson_ascii_strtoll(s_integer, &endptr, 10);
-
-	if (errno || (endptr && endptr != ((const char*) s_integer + s_integer_len))) {
+	if (!php_phongo_parse_int64(&integer, s_integer, s_integer_len)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit integer for %s initialization", s_integer, ZSTR_VAL(php_phongo_int64_ce->name));
 		return false;
 	}
@@ -88,8 +83,6 @@ static bool php_phongo_int64_init_from_hash(php_phongo_int64_t* intern, HashTabl
 static PHP_METHOD(Int64, __toString)
 {
 	php_phongo_int64_t* intern;
-	char                s_integer[24];
-	int                 s_integer_len;
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -97,9 +90,7 @@ static PHP_METHOD(Int64, __toString)
 
 	intern = Z_INT64_OBJ_P(getThis());
 
-	s_integer_len = snprintf(s_integer, sizeof(s_integer), "%" PRId64, intern->integer);
-
-	PHONGO_RETVAL_STRINGL(s_integer, s_integer_len);
+	ZVAL_INT64_STRING(return_value, intern->integer);
 } /* }}} */
 
 /* {{{ proto array MongoDB\BSON\Int64::jsonSerialize()
@@ -107,8 +98,6 @@ static PHP_METHOD(Int64, __toString)
 static PHP_METHOD(Int64, jsonSerialize)
 {
 	php_phongo_int64_t* intern;
-	char                s_integer[24];
-	int                 s_integer_len;
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -116,11 +105,9 @@ static PHP_METHOD(Int64, jsonSerialize)
 
 	intern = Z_INT64_OBJ_P(getThis());
 
-	s_integer_len = snprintf(s_integer, sizeof(s_integer), "%" PRId64, intern->integer);
-
 	array_init_size(return_value, 1);
 
-	ADD_ASSOC_STRINGL(return_value, "$numberLong", s_integer, s_integer_len);
+	ADD_ASSOC_INT64_AS_STRING(return_value, "$numberLong", intern->integer);
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\Int64::serialize()
@@ -131,8 +118,6 @@ static PHP_METHOD(Int64, serialize)
 	ZVAL_RETVAL_TYPE     retval;
 	php_serialize_data_t var_hash;
 	smart_str            buf = { 0 };
-	char                 s_integer[24];
-	int                  s_integer_len;
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -140,15 +125,13 @@ static PHP_METHOD(Int64, serialize)
 
 	intern = Z_INT64_OBJ_P(getThis());
 
-	s_integer_len = snprintf(s_integer, sizeof(s_integer), "%" PRId64, intern->integer);
-
 #if PHP_VERSION_ID >= 70000
 	array_init_size(&retval, 1);
-	ADD_ASSOC_STRINGL(&retval, "integer", s_integer, s_integer_len);
+	ADD_ASSOC_INT64_AS_STRING(&retval, "integer", intern->integer);
 #else
 	ALLOC_INIT_ZVAL(retval);
 	array_init_size(retval, 1);
-	ADD_ASSOC_STRINGL(retval, "integer", s_integer, s_integer_len);
+	ADD_ASSOC_INT64_AS_STRING(retval, "integer", intern->integer);
 #endif
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
@@ -323,8 +306,6 @@ HashTable* php_phongo_int64_get_properties_hash(zval* object, bool is_debug TSRM
 {
 	php_phongo_int64_t* intern;
 	HashTable*          props;
-	char                s_integer[24];
-	int                 s_integer_len;
 
 	intern = Z_INT64_OBJ_P(object);
 
@@ -334,13 +315,11 @@ HashTable* php_phongo_int64_get_properties_hash(zval* object, bool is_debug TSRM
 		return props;
 	}
 
-	s_integer_len = snprintf(s_integer, sizeof(s_integer), "%" PRId64, intern->integer);
-
 #if PHP_VERSION_ID >= 70000
 	{
 		zval value;
 
-		ZVAL_STRINGL(&value, s_integer, s_integer_len);
+		ZVAL_INT64_STRING(&value, intern->integer);
 		zend_hash_str_update(props, "integer", sizeof("integer") - 1, &value);
 	}
 #else
@@ -348,7 +327,7 @@ HashTable* php_phongo_int64_get_properties_hash(zval* object, bool is_debug TSRM
 		zval* value;
 
 		MAKE_STD_ZVAL(value);
-		ZVAL_STRINGL(value, s_integer, s_integer_len, 1);
+		ZVAL_INT64_STRING(value, intern->integer);
 		zend_hash_update(props, "integer", sizeof("integer"), &value, sizeof(value), NULL);
 	}
 #endif

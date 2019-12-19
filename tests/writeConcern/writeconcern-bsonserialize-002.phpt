@@ -3,8 +3,6 @@ MongoDB\Driver\WriteConcern::bsonSerialize() returns an object
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
-
 $tests = [
     new MongoDB\Driver\WriteConcern(-3), // MONGOC_WRITE_CONCERN_W_MAJORITY
     new MongoDB\Driver\WriteConcern(-2), // MONGOC_WRITE_CONCERN_W_DEFAULT

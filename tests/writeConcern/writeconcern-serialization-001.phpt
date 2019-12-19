@@ -20,6 +20,8 @@ $tests = [
     new MongoDB\Driver\WriteConcern(-2, 0, true),
     // Note: wtimeout is only applicable for w > 1
     new MongoDB\Driver\WriteConcern(-2, 1000),
+    // 64-bit wtimeout is always encoded as as string
+    MongoDB\Driver\WriteConcern::__set_state(['w' => 2, 'wtimeout' => '2147483648']),
 ];
 
 foreach ($tests as $test) {
@@ -187,6 +189,21 @@ C:27:"MongoDB\Driver\WriteConcern":28:{a:1:{s:8:"wtimeout";i:1000;}}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(1000)
+}
+
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  int(2)
+  ["wtimeout"]=>
+  %rint\(2147483648\)|string\(10\) "2147483648"%r
+}
+bool(true)
+C:27:"MongoDB\Driver\WriteConcern":51:{a:2:{s:1:"w";i:2;s:8:"wtimeout";s:10:"2147483648";}}
+object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  ["w"]=>
+  int(2)
+  ["wtimeout"]=>
+  %rint\(2147483648\)|string\(10\) "2147483648"%r
 }
 
 ===DONE===
