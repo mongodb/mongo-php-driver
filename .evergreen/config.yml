@@ -680,10 +680,6 @@ axes:
   - id: libmongoc-version
     display_name: libmongoc version
     values:
-      - id: "1.15-latest"
-        display_name: "1.15 latest"
-        variables:
-          LIBMONGOC_VERSION: "r1.15"
       - id: "master"
         display_name: "Upcoming release (master)"
         variables:

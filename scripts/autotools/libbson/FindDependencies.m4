@@ -57,6 +57,10 @@ fi
 AC_SUBST(BSON_HAVE_SNPRINTF, 0)
 AC_CHECK_FUNC(snprintf, [AC_SUBST(BSON_HAVE_SNPRINTF, 1)])
 
+# Check for strlcpy()
+AC_SUBST(BSON_HAVE_STRLCPY, 0)
+AC_CHECK_FUNC(strlcpy, [AC_SUBST(BSON_HAVE_STRLCPY, 1)])
+
 # Check for struct timespec
 AC_SUBST(BSON_HAVE_TIMESPEC, 0)
 AC_CHECK_TYPE([struct timespec], [AC_SUBST(BSON_HAVE_TIMESPEC, 1)], [], [#include <time.h>])
