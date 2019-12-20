@@ -40,6 +40,7 @@ function get_files() {
 
         "src/*.{c,h}",
         "src/LIBMONGOC_VERSION_CURRENT",
+        "src/LIBMONGOCRYPT_VERSION_CURRENT",
 
         "src/MongoDB/*.{c,h}",
         "src/MongoDB/Exception/*.{c,h}",
@@ -54,6 +55,15 @@ function get_files() {
         "src/libmongoc/src/libmongoc/src/mongoc/*.{c,def,defs,h,h.in}",
         "src/libmongoc/src/zlib-1.2.11/*.{c,h,h.in}",
         "src/libmongoc/VERSION*",
+
+        "src/libmongocrypt-compat/*.{c,h}",
+        "src/libmongocrypt-compat/mongocrypt/*.{c,h}",
+        "src/libmongocrypt/src/*.{c,h}",
+        "src/libmongocrypt/src/crypto/*.{c,h}",
+        "src/libmongocrypt/src/os_posix/*.{c,h}",
+        "src/libmongocrypt/src/os_win/*.{c,h}",
+        "src/libmongocrypt/kms-message/src/*.{c,h}",
+        "src/libmongocrypt/kms-message/src/message/*.{c,h}",
       ),
       'test' => array(
         "Vagrantfile",

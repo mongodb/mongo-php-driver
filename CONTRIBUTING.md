@@ -172,14 +172,16 @@ If something goes awry in the test VM, you can reload it by running:
 make test-bootstrap
 ```
 
-## Updating libmongoc and libbson
+## Updating libmongoc, libbson, and libmongocrypt
 
-The PHP driver can use either system libraries or bundled versions of libmongoc
-and libbson. If a new version of libmongoc is available, the submodule and build
-configuration will need to be updated to reflect the new sources and/or package
-version.
+The PHP driver can use either system libraries or bundled versions of
+libmongoc, libbson, and libmongocrypt. If a new version of either library is
+available, the submodule and build configuration will need to be updated to
+reflect the new sources and/or package version.
 
-### Update libmongoc to the latest version
+### Updating libmongoc and libbson
+
+#### Update libmongoc to the latest version
 
 ```
 $ cd src/libmongoc
@@ -187,7 +189,7 @@ $ git fetch
 $ git checkout 1.15.0
 ```
 
-### Ensure libmongoc version information is correct
+#### Ensure libmongoc version information is correct
 
 The build process for Autotools and Windows rely on
 `src/LIBMONGOC_VERSION_CURRENT` to infer version information for libmongoc and
@@ -200,7 +202,7 @@ $ make libmongoc-version-current
 Alternatively, the `build/calc_release_version.py` script in libmongoc can be
 executed directly.
 
-### Update sources in build configurations
+#### Update sources in build configurations
 
 The Autotools and Windows build configurations (`config.m4` and `config.w32`,
 respectively) define several variables (e.g. `PHP_MONGODB_MONGOC_SOURCES`) that
@@ -212,7 +214,7 @@ should be run to regenerate that particular list of source files. In the event
 that either libmongoc or libbson introduce a new source directory, that will
 need to be manually added (follow prior art).
 
-### Update package dependencies
+#### Update package dependencies
 
 The Autotools configuration additionally includes some `pkg-config` commands for
 using libmongoc and libbson as system libraries (in lieu of a bundled build).
@@ -229,7 +231,7 @@ if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.15.0; then
 AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.15.0)
 ```
 
-### Update tested versions in evergreen configuration
+#### Update tested versions in evergreen configuration
 
 Evergreen tests against multiple versions of libmongoc. When updating to a newer
 libmongoc version, make sure to update the `libmongoc-version` build axis in
@@ -239,13 +241,13 @@ libmongoc:
   `r1.x` branch)
 - The upcoming minor release of libmongoc (e.g. the `master` branch)
 
-### Update sources in PECL package generation script
+#### Update sources in PECL package generation script
 
 If either libmongoc or libbson introduce a new source directory, that may also
 require updating the glob patterns in the `bin/prep-release.php` script to
 ensure new source files will be included in any generated PECL package.
 
-### Test and commit your changes
+#### Test and commit your changes
 
 Verify that the upgrade was successful by ensuring that the driver can compile
 using both the bundled sources and system libraries for libmongoc and libbson,
@@ -255,6 +257,20 @@ of the above files/paths. For example:
 ```
 $ git commit -m "Bump libmongoc to 1.15.0" config.m4 config.w32 src/libmongoc src/LIBMONGOC_VERSION_CURRENT
 ```
+
+### Updating libmongocrypt
+
+To update libmongocrypt, the steps are similar to the above:
+
+```
+$ cd src/libmongocrypt
+$ git fetch
+$ git checkout 1.0.1
+$ make libmongocrypt-version-current
+```
+
+Package dependencies in  `config.m4` must also be updated, as do the sources in
+the PECL generation script.
 
 ## Releasing
 
