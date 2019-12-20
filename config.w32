@@ -222,7 +222,7 @@ if (PHP_MONGODB != "no") {
     if (CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done")) {
       mongoc_opts.MONGOC_HAVE_SASL_CLIENT_DONE = 1;
     }
-  } else {
+  } else if (PHP_MONGODB_SASL != "no") {
     WARNING("mongodb libsasl support not enabled, libs not found");
   }
 
