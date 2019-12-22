@@ -6,5 +6,5 @@ if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
     exit 1
 fi
 
-PHP_BINARY=`which php`
+PHP_BINARY=`php -r 'echo PHP_BINARY;'`
 gdb -batch -ex "bt full" -ex "quit" "${PHP_BINARY}" "${1}"
