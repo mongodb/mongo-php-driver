@@ -1,3 +1,12 @@
+---
+name: Bug Report
+about: Create a report to help us improve
+title: ''
+labels: ''
+assignees: ''
+
+---
+
 <!--
 You are about to open an issue for the MongoDB PHP extension. If you instead
 intended to report an issue with the MongoDB PHP library, please do so via its
