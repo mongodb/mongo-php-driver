@@ -129,8 +129,8 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator* iter T
 			php_phongo_cursor_free_current(cursor);
 		}
 	} else {
-		bson_error_t error = { 0 };
-		const bson_t* doc = NULL;
+		bson_error_t  error = { 0 };
+		const bson_t* doc   = NULL;
 
 		if (mongoc_cursor_error_document(cursor->cursor, &error, &doc)) {
 			/* Intentionally not destroying the cursor as it will happen

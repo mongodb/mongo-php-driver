@@ -427,7 +427,7 @@ zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_
 
 	object_init_ex(return_value, php_phongo_writeconcernerror_ce);
 
-	intern = Z_WRITECONCERNERROR_OBJ_P(return_value);
+	intern       = Z_WRITECONCERNERROR_OBJ_P(return_value);
 	intern->code = 0;
 
 	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
@@ -465,7 +465,7 @@ zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson TSRMLS_DC) /* 
 
 	object_init_ex(return_value, php_phongo_writeerror_ce);
 
-	intern = Z_WRITEERROR_OBJ_P(return_value);
+	intern        = Z_WRITEERROR_OBJ_P(return_value);
 	intern->code  = 0;
 	intern->index = 0;
 
@@ -786,7 +786,7 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 		}
 
 		if (EG(exception)) {
-			char *message;
+			char* message;
 
 			(void) spprintf(&message, 0, "Bulk write failed due to previous %s: %s", PHONGO_ZVAL_EXCEPTION_NAME(EG(exception)), error.message);
 			zend_throw_exception(php_phongo_bulkwriteexception_ce, message, 0 TSRMLS_CC);
@@ -1464,7 +1464,7 @@ static bool php_phongo_uri_finalize_auth(mongoc_uri_t* uri TSRMLS_DC) /* {{{ */
 	if (mongoc_uri_get_auth_mechanism(uri)) {
 		if (!strcasecmp(mongoc_uri_get_auth_mechanism(uri), "GSSAPI") ||
 			!strcasecmp(mongoc_uri_get_auth_mechanism(uri), "MONGODB-X509")) {
-			const char *source = mongoc_uri_get_auth_source(uri);
+			const char* source = mongoc_uri_get_auth_source(uri);
 
 			if (source) {
 				if (strcasecmp(source, "$external")) {
@@ -1499,8 +1499,8 @@ static bool php_phongo_uri_finalize_auth(mongoc_uri_t* uri TSRMLS_DC) /* {{{ */
 
 static bool php_phongo_uri_finalize_tls(mongoc_uri_t* uri TSRMLS_DC) /* {{{ */
 {
-	const bson_t *options;
-	bson_iter_t iter;
+	const bson_t* options;
+	bson_iter_t   iter;
 
 	if (!(options = mongoc_uri_get_options(uri))) {
 		return true;
@@ -2075,7 +2075,7 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 
 static void php_phongo_mongoc_ssl_opts_from_uri(mongoc_ssl_opt_t* ssl_opt, mongoc_uri_t* uri, bool* any_ssl_option_set)
 {
-	bool insecure        = mongoc_uri_get_option_as_bool(uri, MONGOC_URI_TLSINSECURE, false);
+	bool        insecure = mongoc_uri_get_option_as_bool(uri, MONGOC_URI_TLSINSECURE, false);
 	const char* pem_file = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_TLSCERTIFICATEKEYFILE, NULL);
 	const char* pem_pwd  = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_TLSCERTIFICATEKEYFILEPASSWORD, NULL);
 	const char* ca_file  = mongoc_uri_get_option_as_utf8(uri, MONGOC_URI_TLSCAFILE, NULL);
@@ -2210,7 +2210,7 @@ static inline bool php_phongo_apply_driver_option_to_uri(mongoc_uri_t* uri, zval
 	char* value;
 
 	value = php_phongo_fetch_ssl_opt_string(zoptions, driverOptionKey);
-	ret = mongoc_uri_set_option_as_utf8(uri, optionKey, value);
+	ret   = mongoc_uri_set_option_as_utf8(uri, optionKey, value);
 	efree(value);
 
 	return ret;
@@ -3039,7 +3039,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_timestamp_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_undefined_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	
+
 	php_phongo_cursor_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS_PASSTHRU);

@@ -243,7 +243,7 @@ static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zo
 	bool multi = false, upsert = false;
 
 	if (zoptions) {
-		multi = php_array_fetchc_bool(zoptions, "multi");
+		multi  = php_array_fetchc_bool(zoptions, "multi");
 		upsert = php_array_fetchc_bool(zoptions, "upsert");
 	}
 

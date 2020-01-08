@@ -253,7 +253,7 @@
 	} else {                                                  \
 		ZVAL_LONG((_zv), (_value));                           \
 	}
-#else  /* SIZEOF_PHONGO_LONG != 8 && SIZEOF_PHONGO_LONG != 4 */
+#else /* SIZEOF_PHONGO_LONG != 8 && SIZEOF_PHONGO_LONG != 4 */
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif /* SIZEOF_PHONGO_LONG */
 
