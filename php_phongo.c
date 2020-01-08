@@ -40,6 +40,10 @@
 #include <ext/standard/php_smart_str.h>
 #endif
 
+#ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
+#include <mongocrypt/mongocrypt.h>
+#endif
+
 /* getpid() */
 #if HAVE_UNISTD_H
 #include <unistd.h>
@@ -3214,6 +3218,33 @@ PHP_MINFO_FUNCTION(mongodb)
 #endif
 #else /* MONGOC_ENABLE_COMPRESSION */
 	php_info_print_table_row(2, "libmongoc compression", "disabled");
+#endif
+
+#ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
+#ifdef HAVE_SYSTEM_LIBMONGOCRYPT
+	php_info_print_table_row(2, "libmongocrypt headers version", MONGOCRYPT_VERSION);
+	php_info_print_table_row(2, "libmongocrypt library version", mongocrypt_version());
+#else
+	php_info_print_table_row(2, "libmongocrypt bundled version", MONGOCRYPT_VERSION);
+#endif
+
+#ifdef MONGOCRYPT_ENABLE_CRYPTO
+	php_info_print_table_row(2, "libmongocrypt crypto", "enabled");
+
+#if defined(MONGOCRYPT_ENABLE_CRYPTO_LIBCRYPTO)
+	php_info_print_table_row(2, "libmongocrypt crypto library", "libcrypto");
+#elif defined(MONGOCRYPT_ENABLE_CRYPTO_COMMON_CRYPTO)
+	php_info_print_table_row(2, "libmongocrypt crypto library", "Common Crypto");
+#elif defined(MONGOCRYPT_ENABLE_CRYPTO_CNG)
+	php_info_print_table_row(2, "libmongocrypt crypto library", "CNG");
+#else
+	php_info_print_table_row(2, "libmongocrypt crypto library", "unknown");
+#endif
+#else /* MONGOCRYPT_ENABLE_CRYPTO */
+	php_info_print_table_row(2, "libmongocrypt crypto", "disabled");
+#endif
+#else /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
+	php_info_print_table_row(2, "libmongocrypt", "disabled");
 #endif
 
 	php_info_print_table_end();

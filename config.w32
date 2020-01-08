@@ -45,6 +45,7 @@ function mongodb_parse_version_file(inpath, prefix)
 
 ARG_ENABLE("mongodb", "MongoDB support", "no");
 ARG_WITH("mongodb-sasl", "MongoDB: Build against Cyrus-SASL", "yes");
+ARG_WITH("mongodb-client-side-encryption", "MongoDB: Enable client-side encryption", "yes");
 
 if (PHP_MONGODB != "no") {
   /* Note: ADD_EXTENSION_DEP() cannot be used to declare that we depend on the
@@ -148,7 +149,6 @@ if (PHP_MONGODB != "no") {
     MONGOC_ENABLE_SSL: 0,
     MONGOC_ENABLE_CRYPTO: 0,
     MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE: 0,
-    // TODO: Replace with detection for libmongocrypt for PHPC-1293
     MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION: 0,
     MONGOC_ENABLE_COMPRESSION_SNAPPY: 0,
     MONGOC_ENABLE_COMPRESSION_ZLIB: 0,
@@ -224,6 +224,63 @@ if (PHP_MONGODB != "no") {
     }
   } else if (PHP_MONGODB_SASL != "no") {
     WARNING("mongodb libsasl support not enabled, libs not found");
+  }
+
+  if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION != "no" && mongoc_ssl_found) {
+    mongoc_opts.MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION = 1;
+
+    ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt/src");
+    ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt/kms-message/src");
+    ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt-compat");
+    ADD_FLAG("CFLAGS_MONGODB", "/D KMS_MESSAGE_ENABLE_CRYPTO=1 /D KMS_MESSAGE_ENABLE_CRYPTO_LIBCRYPTO=1");
+
+    var mongocrypt_opts = {
+      MONGOCRYPT_ENABLE_TRACE: 1,
+      MONGOCRYPT_ENABLE_CRYPTO: 1,
+      MONGOCRYPT_ENABLE_CRYPTO_LIBCRYPTO: 1,
+      // TODO: Support building with Secure Channel on Windows
+      MONGOCRYPT_ENABLE_CRYPTO_CNG: 0,
+      // Secure Transport does not apply to Windows
+      MONGOCRYPT_ENABLE_CRYPTO_COMMON_CRYPTO: 0
+    };
+
+    // Generated with: find src/libmongocrypt/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 4- | sort -dz | tr '\000' ' '
+    var PHP_MONGODB_MONGOCRYPT_SOURCES="mongocrypt-binary.c mongocrypt-buffer.c mongocrypt.c mongocrypt-cache.c mongocrypt-cache-collinfo.c mongocrypt-cache-key.c mongocrypt-ciphertext.c mongocrypt-crypto.c mongocrypt-ctx.c mongocrypt-ctx-datakey.c mongocrypt-ctx-decrypt.c mongocrypt-ctx-encrypt.c mongocrypt-key-broker.c mongocrypt-key.c mongocrypt-kms-ctx.c mongocrypt-log.c mongocrypt-marking.c mongocrypt-opts.c mongocrypt-status.c mongocrypt-traverse-util.c";
+
+    // Generated with: find src/libmongocrypt/src/crypto -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
+    var PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES="cng.c commoncrypto.c libcrypto.c none.c";
+
+    // Generated with: find src/libmongocrypt/src/os_posix -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
+    var PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES="os_mutex.c os_once.c";
+
+    // Generated with: find src/libmongocrypt/src/os_win -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
+    var PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES="os_mutex.c os_once.c";
+
+    // Generated with: find src/libmongocrypt/kms-message/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
+    var PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES="hexlify.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_kv_list.c kms_message.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c";
+
+    ADD_SOURCES(configure_module_dirname + "/src/libmongocrypt/src", PHP_MONGODB_MONGOCRYPT_SOURCES, "mongodb");
+    ADD_SOURCES(configure_module_dirname + "/src/libmongocrypt/src/crypto", PHP_MONGODB_MONGOCRYPT_SOURCES, "mongodb");
+    ADD_SOURCES(configure_module_dirname + "/src/libmongocrypt/src/os_posix", PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES, "mongodb");
+    ADD_SOURCES(configure_module_dirname + "/src/libmongocrypt/src/os_win", PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES, "mongodb");
+    ADD_SOURCES(configure_module_dirname + "/src/libmongocrypt/kms-message/src", PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES, "mongodb");
+
+    var mongocrypt_version = mongodb_parse_version_file(configure_module_dirname + "/src/LIBMONGOCRYPT_VERSION_CURRENT", "")
+    mongocrypt_opts.MONGOCRYPT_BUILD_VERSION = mongocrypt_version.VERSION;
+
+    mongodb_generate_header(
+      configure_module_dirname + "/src/libmongocrypt/src/mongocrypt-config.h.in",
+      configure_module_dirname + "/src/libmongocrypt/src/mongocrypt-config.h",
+      mongocrypt_opts
+    );
+
+    mongodb_generate_header(
+      configure_module_dirname + "/src/libmongocrypt/src/mongocrypt.h.in",
+      configure_module_dirname + "/src/libmongocrypt/src/mongocrypt.h",
+      mongocrypt_opts
+    );
+  } else if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION != "no") {
+    WARNING("mongodb libmongocrypt support not enabled, crypto libs not found");
   }
 
   if (CHECK_LIB("dnsapi.lib", "mongodb", PHP_MONGODB) &&
