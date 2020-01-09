@@ -2841,6 +2841,18 @@ cleanup:
 	return retval;
 }
 /* }}} */
+#else /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
+static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manager, zval* driverOptions TSRMLS_DC) /* {{{ */
+{
+	if (!driverOptions || !php_array_existsc(driverOptions, "autoEncryption")) {
+		return true;
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Cannot enable automatic field-level encryption. Please recompile with support for libmongocrypt using the with-mongodb-client-side-encryption configure switch.");
+
+	return false;
+}
+/* }}} */
 #endif
 
 void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions TSRMLS_DC) /* {{{ */
@@ -2921,12 +2933,10 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	}
 #endif
 
-#ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
 	if (!phongo_manager_set_auto_encryption_opts(manager, driverOptions TSRMLS_CC)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
-#endif
 
 	MONGOC_DEBUG("Created client hash: %s\n", manager->client_hash);
 	php_phongo_persist_client(manager->client_hash, manager->client_hash_len, manager->client TSRMLS_CC);
