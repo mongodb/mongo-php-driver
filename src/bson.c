@@ -611,7 +611,7 @@ static bool php_phongo_bson_new_javascript_from_javascript_and_scope(zval* objec
 
 	if (scope) {
 		php_phongo_bson_state state;
-		bool valid_scope;
+		bool                  valid_scope;
 
 		PHONGO_BSON_INIT_STATE(state);
 

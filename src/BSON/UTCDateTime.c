@@ -441,11 +441,11 @@ static phongo_create_object_retval php_phongo_utcdatetime_create_object(zend_cla
 
 static phongo_create_object_retval php_phongo_utcdatetime_clone_object(zval* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_utcdatetime_t* intern;
-	php_phongo_utcdatetime_t* new_intern;
+	php_phongo_utcdatetime_t*   intern;
+	php_phongo_utcdatetime_t*   new_intern;
 	phongo_create_object_retval new_object;
 
-	intern = Z_UTCDATETIME_OBJ_P(object);
+	intern     = Z_UTCDATETIME_OBJ_P(object);
 	new_object = php_phongo_utcdatetime_create_object(Z_OBJCE_P(object) TSRMLS_CC);
 
 #if PHP_VERSION_ID >= 70000

@@ -30,7 +30,7 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 
-#define PHONGO_OID_SIZE sizeof(((php_phongo_objectid_t *)0)->oid)
+#define PHONGO_OID_SIZE sizeof(((php_phongo_objectid_t*) 0)->oid)
 #define PHONGO_OID_LEN (PHONGO_OID_SIZE - 1)
 
 zend_class_entry* php_phongo_objectid_ce;
@@ -341,11 +341,11 @@ static phongo_create_object_retval php_phongo_objectid_create_object(zend_class_
 
 static phongo_create_object_retval php_phongo_objectid_clone_object(zval* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_objectid_t* intern;
-	php_phongo_objectid_t* new_intern;
+	php_phongo_objectid_t*      intern;
+	php_phongo_objectid_t*      new_intern;
 	phongo_create_object_retval new_object;
 
-	intern = Z_OBJECTID_OBJ_P(object);
+	intern     = Z_OBJECTID_OBJ_P(object);
 	new_object = php_phongo_objectid_create_object(Z_OBJCE_P(object) TSRMLS_CC);
 
 #if PHP_VERSION_ID >= 70000

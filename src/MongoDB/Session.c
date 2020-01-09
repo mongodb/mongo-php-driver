@@ -312,9 +312,9 @@ static PHP_METHOD(Session, getTransactionOptions)
 	}
 
 	max_commit_time_ms = mongoc_transaction_opts_get_max_commit_time_ms(opts);
-	read_concern = mongoc_transaction_opts_get_read_concern(opts);
-	read_preference = mongoc_transaction_opts_get_read_prefs(opts);
-	write_concern = mongoc_transaction_opts_get_write_concern(opts);
+	read_concern       = mongoc_transaction_opts_get_read_concern(opts);
+	read_preference    = mongoc_transaction_opts_get_read_prefs(opts);
+	write_concern      = mongoc_transaction_opts_get_write_concern(opts);
 
 	array_init_size(return_value, 4);
 
@@ -390,7 +390,6 @@ static PHP_METHOD(Session, getTransactionState)
 
 	PHONGO_RETURN_STRING(state);
 } /* }}} */
-
 
 /* Creates a opts structure from an array optionally containing an RP, RC,
  * WC object, and/or maxCommitTimeMS int. Returns NULL if no options were found,
@@ -685,7 +684,7 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 	array_init(&retval);
 
 	if (intern->client_session) {
-		const bson_t* lsid;
+		const bson_t*         lsid;
 		php_phongo_bson_state state;
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);

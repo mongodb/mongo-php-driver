@@ -444,8 +444,8 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bo
 		return props;
 	}
 
-	tags = mongoc_read_prefs_get_tags(intern->read_preference);
-	mode = mongoc_read_prefs_get_mode(intern->read_preference);
+	tags       = mongoc_read_prefs_get_tags(intern->read_preference);
+	mode       = mongoc_read_prefs_get_mode(intern->read_preference);
 	modeString = php_phongo_readpreference_get_mode_string(mode TSRMLS_CC);
 
 	if (modeString) {
@@ -522,7 +522,7 @@ static PHP_METHOD(ReadPreference, serialize)
 	php_phongo_readpreference_t* intern;
 	ZVAL_RETVAL_TYPE             retval;
 	php_serialize_data_t         var_hash;
-	smart_str                    buf = { 0 };
+	smart_str                    buf        = { 0 };
 	const char*                  modeString = NULL;
 	const bson_t*                tags;
 	int64_t                      maxStalenessSeconds;

@@ -251,11 +251,11 @@ phongo_create_object_retval php_phongo_symbol_create_object(zend_class_entry* cl
 
 static phongo_create_object_retval php_phongo_symbol_clone_object(zval* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_symbol_t* intern;
-	php_phongo_symbol_t* new_intern;
+	php_phongo_symbol_t*        intern;
+	php_phongo_symbol_t*        new_intern;
 	phongo_create_object_retval new_object;
 
-	intern = Z_SYMBOL_OBJ_P(object);
+	intern     = Z_SYMBOL_OBJ_P(object);
 	new_object = php_phongo_symbol_create_object(Z_OBJCE_P(object) TSRMLS_CC);
 
 #if PHP_VERSION_ID >= 70000
