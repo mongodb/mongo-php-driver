@@ -384,6 +384,7 @@ void phongo_session_init(zval* return_value, mongoc_client_session_t* client_ses
 
 	session                 = Z_SESSION_OBJ_P(return_value);
 	session->client_session = client_session;
+	session->client         = mongoc_client_session_get_client(client_session);
 }
 /* }}} */
 
@@ -2623,8 +2624,8 @@ static void php_phongo_persist_client(const char* hash, size_t hash_len, mongoc_
 {
 	php_phongo_pclient_t* pclient = (php_phongo_pclient_t*) pecalloc(1, sizeof(php_phongo_pclient_t), 1);
 
-	pclient->pid    = (int) getpid();
-	pclient->client = client;
+	pclient->created_by_pid = (int) getpid();
+	pclient->client         = client;
 
 #if PHP_VERSION_ID >= 70000
 	zend_hash_str_update_ptr(&MONGODB_G(pclients), hash, hash_len, pclient);
@@ -2879,13 +2880,71 @@ PHP_INI_BEGIN()
 PHP_INI_END()
 /* }}} */
 
+static void phongo_pclient_reset_once(php_phongo_pclient_t* pclient, int pid)
+{
+	if (pclient->last_reset_by_pid != pid) {
+		mongoc_client_reset(pclient->client);
+		pclient->last_reset_by_pid = pid;
+	}
+}
+
+/* Resets the libmongoc client if it has not already been reset for the current
+ * PID (based on information in the hash table of persisted libmongoc clients).
+ * This ensures that we do not reset a client multiple times from the same child
+ * process. */
+void php_phongo_client_reset_once(mongoc_client_t* client, int pid)
+{
+	HashTable* pclients;
+
+	TSRMLS_FETCH();
+	pclients = &MONGODB_G(pclients);
+
+#if PHP_VERSION_ID >= 70000
+	{
+		zval*                 z_ptr;
+		php_phongo_pclient_t* pclient;
+
+		ZEND_HASH_FOREACH_VAL(pclients, z_ptr)
+		{
+			if ((Z_TYPE_P(z_ptr) != IS_PTR)) {
+				continue;
+			}
+
+			pclient = (php_phongo_pclient_t*) Z_PTR_P(z_ptr);
+
+			if (pclient->client == client) {
+				phongo_pclient_reset_once(pclient, pid);
+				return;
+			}
+		}
+		ZEND_HASH_FOREACH_END();
+	}
+#else
+	{
+		HashPosition pos;
+		php_phongo_pclient_t** pclient;
+
+		for (
+			zend_hash_internal_pointer_reset_ex(pclients, &pos);
+			zend_hash_get_current_data_ex(pclients, (void**) &pclient, &pos) == SUCCESS;
+			zend_hash_move_forward_ex(pclients, &pos)) {
+
+			if ((*pclient)->client == client) {
+				phongo_pclient_reset_once((*pclient), pid);
+				return;
+			}
+		}
+	}
+#endif
+}
+
 static inline void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
 {
 	/* Do not destroy mongoc_client_t objects created by other processes. This
 	 * ensures that we do not shutdown sockets that may still be in use by our
 	 * parent process (see: CDRIVER-2049). While this is a leak, we are already
 	 * in MSHUTDOWN at this point. */
-	if (pclient->pid == getpid()) {
+	if (pclient->created_by_pid == getpid()) {
 		mongoc_client_destroy(pclient->client);
 	}
 

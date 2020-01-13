@@ -405,6 +405,11 @@ static void php_phongo_cursor_free_object(phongo_free_object_arg* object TSRMLS_
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	/* If this Cursor was created in a different process, reset the client so
+	 * that mongoc_cursor_destroy does not issue a killCursors command for an
+	 * active cursor owned by a parent process. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+
 	if (intern->cursor) {
 		mongoc_cursor_destroy(intern->cursor);
 	}
@@ -450,6 +455,8 @@ static phongo_create_object_retval php_phongo_cursor_create_object(zend_class_en
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
+
+	PHONGO_SET_CREATED_BY_PID(intern);
 
 #if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_cursor;

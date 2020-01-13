@@ -284,7 +284,7 @@ static PHP_METHOD(Session, getServer)
 		RETURN_NULL();
 	}
 
-	phongo_server_init(return_value, mongoc_client_session_get_client(intern->client_session), server_id TSRMLS_CC);
+	phongo_server_init(return_value, intern->client, server_id TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto array|null MongoDB\Driver\Session::getTransactionOptions()
@@ -639,6 +639,13 @@ static void php_phongo_session_free_object(phongo_free_object_arg* object TSRMLS
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 
+	/* If this Session was created in a different process, reset the client so
+	 * that its session pool is cleared and mongoc_client_session_destroy will
+	 * destroy the corresponding server session rather than return it to the
+	 * now-empty pool. This will ensure that we do not re-use a server session
+	 * (i.e. LSID) created by a parent process. */
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+
 	if (intern->client_session) {
 		mongoc_client_session_destroy(intern->client_session);
 	}
@@ -656,6 +663,8 @@ static phongo_create_object_retval php_phongo_session_create_object(zend_class_e
 
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
+
+	PHONGO_SET_CREATED_BY_PID(intern);
 
 #if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_session;
@@ -772,13 +781,13 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 #if PHP_VERSION_ID >= 70000
 			zval server;
 
-			phongo_server_init(&server, mongoc_client_session_get_client(intern->client_session), server_id TSRMLS_CC);
+			phongo_server_init(&server, intern->client, server_id TSRMLS_CC);
 			ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
 #else
 			zval* server = NULL;
 
 			MAKE_STD_ZVAL(server);
-			phongo_server_init(server, mongoc_client_session_get_client(intern->client_session), server_id TSRMLS_CC);
+			phongo_server_init(server, intern->client, server_id TSRMLS_CC);
 			ADD_ASSOC_ZVAL_EX(&retval, "server", server);
 #endif
 		} else {
