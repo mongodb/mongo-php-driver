@@ -169,6 +169,14 @@
 		Z_ARRVAL_P(__z)  = __arr;    \
 		Z_TYPE_P(__z)    = IS_ARRAY; \
 	} while (0);
+#define ZVAL_DUP(z, v)        \
+	do {                      \
+		zval*       _z = (z); \
+		const zval* _v = (v); \
+		*_z            = *_v; \
+		INIT_PZVAL(_z);       \
+		zval_copy_ctor(_z);   \
+	} while (0);
 #define phongo_free_object_arg void
 #define phongo_zpp_char_len int
 #define ZEND_HASH_APPLY_PROTECTION(ht) 1

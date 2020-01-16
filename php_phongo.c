@@ -2511,6 +2511,66 @@ int php_phongo_set_monitoring_callbacks(mongoc_client_t* client)
 	return retval;
 }
 
+static zval* php_phongo_manager_prepare_manager_for_hash(zval* driverOptions, bool* free TSRMLS_DC)
+{
+	php_phongo_manager_t* manager;
+	zval*                 autoEncryptionOpts      = NULL;
+	zval*                 keyVaultClient          = NULL;
+	zval*                 driverOptionsClone      = NULL;
+	zval*                 autoEncryptionOptsClone = NULL;
+#if PHP_VERSION_ID >= 70000
+	zval stackAutoEncryptionOptsClone;
+#endif
+
+	*free = false;
+
+	if (!driverOptions) {
+		return NULL;
+	}
+
+	if (!php_array_existsc(driverOptions, "autoEncryption")) {
+		goto ref;
+	}
+
+	autoEncryptionOpts = php_array_fetchc(driverOptions, "autoEncryption");
+	if (Z_TYPE_P(autoEncryptionOpts) != IS_ARRAY) {
+		goto ref;
+	}
+
+	if (!php_array_existsc(autoEncryptionOpts, "keyVaultClient")) {
+		goto ref;
+	}
+
+	keyVaultClient = php_array_fetchc(autoEncryptionOpts, "keyVaultClient");
+	if (Z_TYPE_P(keyVaultClient) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(keyVaultClient), php_phongo_manager_ce TSRMLS_CC)) {
+		goto ref;
+	}
+
+	*free = true;
+
+	manager = Z_MANAGER_OBJ_P(keyVaultClient);
+
+#if PHP_VERSION_ID >= 70000
+	driverOptionsClone      = ecalloc(sizeof(zval), 1);
+	autoEncryptionOptsClone = &stackAutoEncryptionOptsClone;
+#else
+	ALLOC_INIT_ZVAL(driverOptionsClone);
+	MAKE_STD_ZVAL(autoEncryptionOptsClone);
+#endif
+
+	ZVAL_DUP(autoEncryptionOptsClone, autoEncryptionOpts);
+	ADD_ASSOC_STRINGL(autoEncryptionOptsClone, "keyVaultClient", manager->client_hash, manager->client_hash_len);
+
+	ZVAL_DUP(driverOptionsClone, driverOptions);
+	ADD_ASSOC_ZVAL_EX(driverOptionsClone, "autoEncryption", autoEncryptionOptsClone);
+
+	return driverOptionsClone;
+
+ref:
+	Z_ADDREF_P(driverOptions);
+	return driverOptions;
+}
+
 /* Creates a hash for a client by concatenating the URI string with serialized
  * options arrays. On success, a persistent string is returned (i.e. pefree()
  * should be used to free it) and hash_len will be set to the string's length.
@@ -2520,6 +2580,8 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	char*                hash    = NULL;
 	smart_str            var_buf = { 0 };
 	php_serialize_data_t var_hash;
+	zval*                serializable_driver_options = NULL;
+	bool                 free_driver_options         = false;
 
 #if PHP_VERSION_ID >= 70000
 	zval args;
@@ -2536,8 +2598,8 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	}
 
 	if (driverOptions) {
-		ADD_ASSOC_ZVAL_EX(&args, "driverOptions", driverOptions);
-		Z_ADDREF_P(driverOptions);
+		serializable_driver_options = php_phongo_manager_prepare_manager_for_hash(driverOptions, &free_driver_options TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(&args, "driverOptions", serializable_driver_options);
 	} else {
 		ADD_ASSOC_NULL_EX(&args, "driverOptions");
 	}
@@ -2548,10 +2610,15 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 
 	if (!EG(exception)) {
 		*hash_len = ZSTR_LEN(var_buf.s);
-		hash      = pestrndup(ZSTR_VAL(var_buf.s), *hash_len, 1);
+		hash      = estrndup(ZSTR_VAL(var_buf.s), *hash_len);
 	}
 
 	zval_ptr_dtor(&args);
+
+	if (free_driver_options) {
+		efree(serializable_driver_options);
+	}
+
 #else
 	zval* args;
 
@@ -2568,8 +2635,8 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	}
 
 	if (driverOptions) {
-		ADD_ASSOC_ZVAL_EX(args, "driverOptions", driverOptions);
-		Z_ADDREF_P(driverOptions);
+		serializable_driver_options = php_phongo_manager_prepare_manager_for_hash(driverOptions, &free_driver_options TSRMLS_CC);
+		ADD_ASSOC_ZVAL_EX(args, "driverOptions", serializable_driver_options);
 	} else {
 		ADD_ASSOC_NULL_EX(args, "driverOptions");
 	}
@@ -2580,7 +2647,7 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 
 	if (!EG(exception)) {
 		*hash_len = var_buf.len;
-		hash = pestrndup(var_buf.c, *hash_len, 1);
+		hash = estrndup(var_buf.c, *hash_len);
 	}
 
 	zval_ptr_dtor(&args);
@@ -2653,23 +2720,156 @@ static mongoc_client_t* php_phongo_find_client(const char* hash, size_t hash_len
 	return NULL;
 }
 
+#ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
+static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manager, zval* driverOptions TSRMLS_DC) /* {{{ */
+{
+	zval*                          zAutoEncryptionOpts;
+	bson_error_t                   error                = { 0 };
+	mongoc_auto_encryption_opts_t* auto_encryption_opts = NULL;
+	bool                           retval               = false;
+
+	if (!driverOptions || !php_array_existsc(driverOptions, "autoEncryption")) {
+		return true;
+	}
+
+	zAutoEncryptionOpts = php_array_fetch(driverOptions, "autoEncryption");
+
+	if (Z_TYPE_P(zAutoEncryptionOpts) != IS_ARRAY) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"autoEncryption\" driver option to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zAutoEncryptionOpts));
+		return false;
+	}
+
+	auto_encryption_opts = mongoc_auto_encryption_opts_new();
+
+	if (php_array_existsc(zAutoEncryptionOpts, "keyVaultClient")) {
+		zval* key_vault_client = php_array_fetch(zAutoEncryptionOpts, "keyVaultClient");
+
+		if (Z_TYPE_P(key_vault_client) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(key_vault_client), php_phongo_manager_ce TSRMLS_CC)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"keyVaultClient\" encryption option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(key_vault_client));
+			goto cleanup;
+		}
+
+		mongoc_auto_encryption_opts_set_keyvault_client(auto_encryption_opts, Z_MANAGER_OBJ_P(key_vault_client)->client);
+	}
+
+	if (php_array_existsc(zAutoEncryptionOpts, "keyVaultNamespace")) {
+		char*     key_vault_ns;
+		char*     db_name;
+		char*     coll_name;
+		int       plen;
+		zend_bool pfree;
+
+		key_vault_ns = php_array_fetch_string(zAutoEncryptionOpts, "keyVaultNamespace", &plen, &pfree);
+
+		if (!phongo_split_namespace(key_vault_ns, &db_name, &coll_name)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"keyVaultNamespace\" encryption option to contain a full collection name");
+
+			if (pfree) {
+				str_efree(key_vault_ns);
+			}
+
+			goto cleanup;
+		}
+
+		mongoc_auto_encryption_opts_set_keyvault_namespace(auto_encryption_opts, db_name, coll_name);
+
+		efree(db_name);
+		efree(coll_name);
+
+		if (pfree) {
+			str_efree(key_vault_ns);
+		}
+	}
+
+	if (php_array_existsc(zAutoEncryptionOpts, "kmsProviders")) {
+		zval*  kms_providers  = php_array_fetch(zAutoEncryptionOpts, "kmsProviders");
+		bson_t bson_providers = BSON_INITIALIZER;
+
+		php_phongo_zval_to_bson(kms_providers, PHONGO_BSON_NONE, &bson_providers, NULL TSRMLS_CC);
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		mongoc_auto_encryption_opts_set_kms_providers(auto_encryption_opts, &bson_providers);
+
+		bson_destroy(&bson_providers);
+	}
+
+	if (php_array_existsc(zAutoEncryptionOpts, "schemaMap")) {
+		zval*  schema_map = php_array_fetch(zAutoEncryptionOpts, "schemaMap");
+		bson_t bson_map   = BSON_INITIALIZER;
+
+		php_phongo_zval_to_bson(schema_map, PHONGO_BSON_NONE, &bson_map, NULL TSRMLS_CC);
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		mongoc_auto_encryption_opts_set_schema_map(auto_encryption_opts, &bson_map);
+
+		bson_destroy(&bson_map);
+	}
+
+	if (php_array_existsc(zAutoEncryptionOpts, "bypassAutoEncryption")) {
+		zend_bool bypass_auto_encryption = php_array_fetch_bool(zAutoEncryptionOpts, "bypassAutoEncryption");
+
+		mongoc_auto_encryption_opts_set_bypass_auto_encryption(auto_encryption_opts, bypass_auto_encryption);
+	}
+
+	if (php_array_existsc(zAutoEncryptionOpts, "extraOptions")) {
+		zval*  extra_options = php_array_fetch(zAutoEncryptionOpts, "extraOptions");
+		bson_t bson_options  = BSON_INITIALIZER;
+
+		php_phongo_zval_to_bson(extra_options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		mongoc_auto_encryption_opts_set_extra(auto_encryption_opts, &bson_options);
+
+		bson_destroy(&bson_options);
+	}
+
+	if (!mongoc_client_enable_auto_encryption(manager->client, auto_encryption_opts, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		goto cleanup;
+	}
+
+	retval = true;
+
+cleanup:
+	mongoc_auto_encryption_opts_destroy(auto_encryption_opts);
+	return retval;
+}
+/* }}} */
+#else /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
+static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manager, zval* driverOptions TSRMLS_DC) /* {{{ */
+{
+	if (!driverOptions || !php_array_existsc(driverOptions, "autoEncryption")) {
+		return true;
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Cannot enable automatic field-level encryption. Please recompile with support for libmongocrypt using the with-mongodb-client-side-encryption configure switch.");
+
+	return false;
+}
+/* }}} */
+#endif
+
 void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions TSRMLS_DC) /* {{{ */
 {
-	char*         hash         = NULL;
-	size_t        hash_len     = 0;
 	bson_t        bson_options = BSON_INITIALIZER;
 	mongoc_uri_t* uri          = NULL;
 #ifdef MONGOC_ENABLE_SSL
 	mongoc_ssl_opt_t* ssl_opt = NULL;
 #endif
 
-	if (!(hash = php_phongo_manager_make_client_hash(uri_string, options, driverOptions, &hash_len TSRMLS_CC))) {
+	if (!(manager->client_hash = php_phongo_manager_make_client_hash(uri_string, options, driverOptions, &manager->client_hash_len TSRMLS_CC))) {
 		/* Exception should already have been thrown and there is nothing to free */
 		return;
 	}
 
-	if ((manager->client = php_phongo_find_client(hash, hash_len TSRMLS_CC))) {
-		MONGOC_DEBUG("Found client for hash: %s\n", hash);
+	if ((manager->client = php_phongo_find_client(manager->client_hash, manager->client_hash_len TSRMLS_CC))) {
+		MONGOC_DEBUG("Found client for hash: %s\n", manager->client_hash);
 		goto cleanup;
 	}
 
@@ -2733,14 +2933,15 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	}
 #endif
 
-	MONGOC_DEBUG("Created client hash: %s\n", hash);
-	php_phongo_persist_client(hash, hash_len, manager->client TSRMLS_CC);
-
-cleanup:
-	if (hash) {
-		pefree(hash, 1);
+	if (!phongo_manager_set_auto_encryption_opts(manager, driverOptions TSRMLS_CC)) {
+		/* Exception should already have been thrown */
+		goto cleanup;
 	}
 
+	MONGOC_DEBUG("Created client hash: %s\n", manager->client_hash);
+	php_phongo_persist_client(manager->client_hash, manager->client_hash_len, manager->client TSRMLS_CC);
+
+cleanup:
 	bson_destroy(&bson_options);
 
 	if (uri) {

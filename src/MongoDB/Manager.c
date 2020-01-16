@@ -866,6 +866,10 @@ static void php_phongo_manager_free_object(phongo_free_object_arg* object TSRMLS
 		intern->client = NULL;
 	}
 
+	if (intern->client_hash) {
+		efree(intern->client_hash);
+	}
+
 #if PHP_VERSION_ID < 70000
 	efree(intern);
 #endif

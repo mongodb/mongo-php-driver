@@ -356,6 +356,30 @@ function skip_if_not_libmongoc_ssl(array $libs = [])
 }
 
 /**
+ * Skips the test if the driver was not compiled with support for FLE
+ */
+function skip_if_not_libmongocrypt()
+{
+    $lib = get_module_info('libmongocrypt');
+
+    if ($lib === 'disabled') {
+        exit('skip libmongocrypt is not enabled');
+    }
+}
+
+/**
+ * Skips the test if the driver was compiled with support for FLE
+ */
+function skip_if_libmongocrypt()
+{
+    $lib = get_module_info('libmongocrypt');
+
+    if ($lib !== 'disabled') {
+        exit('skip libmongocrypt is enabled');
+    }
+}
+
+/**
  * Skips the test if the collection cannot be dropped.
  *
  * @param string $databaseName   Database name
