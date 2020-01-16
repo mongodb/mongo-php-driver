@@ -1,8 +1,8 @@
 [submodule "src/libmongoc"]
 	path = src/libmongoc
 	url = https://github.com/mongodb/mongo-c-driver.git
-	branch = 1.2.0-dev
 	ignore = untracked
 [submodule "src/libmongocrypt"]
 	path = src/libmongocrypt
-	url = git://github.com/mongodb/libmongocrypt.git
+	url = https://github.com/mongodb/libmongocrypt.git
+	ignore = untracked
