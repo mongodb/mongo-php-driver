@@ -102,6 +102,12 @@ jobs:
       env:
         - SERVER_VERSION=4.0.12
 
+    # Test with different configure options
+    - stage: Test
+      php: 7.3
+      env:
+        - CONFIGURE_OPTS="--with-mongodb-client-side-encryption=no"
+
 before_install:
   - openssl aes-256-cbc -K $encrypted_b354efda2943_key -iv $encrypted_b354efda2943_iv -in .travis.scripts/atlas-uris.txt.enc -out .travis.scripts/atlas-uris.txt -d || true
   - pip install --user "mongo-orchestration>=0.6.7,<1.0"
