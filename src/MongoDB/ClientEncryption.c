@@ -193,6 +193,9 @@ void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_clientencryption.free_obj = php_phongo_clientencryption_free_object;
 	php_phongo_handler_clientencryption.offset   = XtOffsetOf(php_phongo_clientencryption_t, std);
 #endif
+
+	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC"), MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM"), MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM TSRMLS_CC);
 } /* }}} */
 
 /*

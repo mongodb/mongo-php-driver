@@ -16,7 +16,7 @@ $clientEncryption = $manager->createClientEncryption(['keyVaultNamespace' => 'de
 
 $key = $clientEncryption->createDataKey('local');
 
-$encrypted = $clientEncryption->encrypt('top-secret', ['keyId' => $key, 'algorithm' => 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic']);
+$encrypted = $clientEncryption->encrypt('top-secret', ['keyId' => $key, 'algorithm' => MongoDB\Driver\ClientEncryption::AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC]);
 var_dump($clientEncryption->decrypt($encrypted));
 
 ?>
