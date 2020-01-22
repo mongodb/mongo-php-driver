@@ -170,6 +170,12 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/Monitoring/functions.c \
   "
 
+  PHP_ARG_WITH([mongodb-system-libs],
+               [whether to compile against system libraries instead of bundled],
+               [AS_HELP_STRING([--with-mongodb-system-libs=@<:@yes/no@:>@],
+                               [MongoDB: Use system libraries for libbson, libmongoc, and libmongocrypt [default=no]])],
+               [no],
+               [no])
   PHP_ARG_WITH([libbson],
                [whether to use system libbson],
                [AS_HELP_STRING([--with-libbson=@<:@yes/no@:>@],
@@ -190,10 +196,26 @@ if test "$PHP_MONGODB" != "no"; then
                [no])
 
   if test "$PHP_LIBBSON" != "no"; then
+    AC_MSG_WARN(Using --with-libbson is deprecated and will be removed in a future version. Please use --with-system-libs instead)
+
     if test "$PHP_LIBMONGOC" = "no"; then
       AC_MSG_ERROR(Cannot use system libbson and bundled libmongoc)
     fi
 
+    PHP_MONGODB_SYSTEM_LIBS="yes"
+  fi
+
+  if test "$PHP_LIBMONGOC" != "no"; then
+    AC_MSG_WARN(Using --with-libmongoc is deprecated and will be removed in a future version. Please use --with-system-libs instead)
+
+    if test "$PHP_LIBBSON" = "no"; then
+      AC_MSG_ERROR(Cannot use system libmongoc and bundled libbson)
+    fi
+
+    PHP_MONGODB_SYSTEM_LIBS="yes"
+  fi
+
+  if test "$PHP_MONGODB_SYSTEM_LIBS" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
@@ -211,12 +233,6 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_BSON_CFLAGS"
     PHP_EVAL_LIBLINE($PHP_MONGODB_BSON_LIBS, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
-  fi
-
-  if test "$PHP_LIBMONGOC" != "no"; then
-    if test "$PHP_LIBBSON" = "no"; then
-      AC_MSG_ERROR(Cannot use system libmongoc and bundled libbson)
-    fi
 
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libmongoc)
@@ -235,37 +251,37 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_MONGOC_CFLAGS"
     PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOC_LIBS, MONGODB_SHARED_LIBADD)
     AC_DEFINE(HAVE_SYSTEM_LIBMONGOC, 1, [Use system libmongoc])
-  fi
 
-  if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" != "no" -a "$PHP_LIBBSON" = "yes"; then
-    AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
-    AC_MSG_CHECKING(for libmongocrypt)
+    if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" != "no"; then
+      AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+      AC_MSG_CHECKING(for libmongocrypt)
 
-    if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongocrypt-1.0; then
-      if $PKG_CONFIG libmongocrypt-1.0 --atleast-version 1.0.1; then
-        PHP_MONGODB_MONGOCRYPT_CFLAGS=`$PKG_CONFIG libmongocrypt-1.0 --cflags`
-        PHP_MONGODB_MONGOCRYPT_LIBS=`$PKG_CONFIG libmongocrypt-1.0 --libs`
-        PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt-1.0 --modversion`
-        AC_MSG_RESULT(version $PHP_MONGODB_MONGOCRYPT_VERSION found)
+      if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongocrypt-1.0; then
+        if $PKG_CONFIG libmongocrypt-1.0 --atleast-version 1.0.1; then
+          PHP_MONGODB_MONGOCRYPT_CFLAGS=`$PKG_CONFIG libmongocrypt-1.0 --cflags`
+          PHP_MONGODB_MONGOCRYPT_LIBS=`$PKG_CONFIG libmongocrypt-1.0 --libs`
+          PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt-1.0 --modversion`
+          AC_MSG_RESULT(version $PHP_MONGODB_MONGOCRYPT_VERSION found)
 
-        PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_MONGOCRYPT_CFLAGS"
-        PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
-        AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
-      elif test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
-        AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.0.1)
+          PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_MONGOCRYPT_CFLAGS"
+          PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
+          AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
+        elif test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
+          AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.0.1)
+        else
+          AC_MSG_RESULT(found an older version, compiling without client-side encryption)
+        fi
       else
-        AC_MSG_RESULT(found an older version, compiling without client-side encryption)
-      fi
-    else
-      if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
-        AC_MSG_ERROR(pkgconfig and libmongocrypt must be installed)
-      else
-        AC_MSG_RESULT(not found, compiling without client-side encryption)
+        if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
+          AC_MSG_ERROR(pkgconfig and libmongocrypt must be installed)
+        else
+          AC_MSG_RESULT(not found, compiling without client-side encryption)
+        fi
       fi
     fi
   fi
 
-  if test "$PHP_LIBBSON" = "no" -a "$PHP_LIBMONGOC" = "no"; then
+  if test "$PHP_MONGODB_SYSTEM_LIBS" = "no"; then
     PHP_MONGODB_BUNDLED_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
     dnl TODO: MONGOCRYPT-219 makes the -std argument obsolete
     PHP_MONGODB_LIBMONGOCRYPT_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS -std=gnu99"
@@ -469,9 +485,9 @@ Build configuration:
   Extra CFLAGS                                     : $STD_CFLAGS $EXTRA_CFLAGS
   Developers flags (slow)                          : $MAINTAINER_CFLAGS
   Code Coverage flags (extra slow)                 : $COVERAGE_CFLAGS
-  System mongoc                                    : $PHP_LIBMONGOC
-  System libbson                                   : $PHP_LIBBSON
-  System libmongocrypt                             : $PHP_LIBBSON
+  System libmongoc                                 : $PHP_MONGODB_SYSTEM_LIBS
+  System libbson                                   : $PHP_MONGODB_SYSTEM_LIBS
+  System libmongocrypt                             : $PHP_MONGODB_SYSTEM_LIBS
   LDFLAGS                                          : $LDFLAGS
   EXTRA_LDFLAGS                                    : $EXTRA_LDFLAGS
   MONGODB_SHARED_LIBADD                            : $MONGODB_SHARED_LIBADD
