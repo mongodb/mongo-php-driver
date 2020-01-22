@@ -648,6 +648,44 @@ void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* 
 	php_phongo_field_path_free(field_path);
 } /* }}} */
 
+/* Converts the argument to a bson_value_t. If the object is an instance of
+ * MongoDB\BSON\Serializable, the return value of bsonSerialize() will be
+ * used. */
+void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bson_value_t* value TSRMLS_DC) /* {{{ */
+{
+	bson_iter_t iter;
+	bson_t      bson = BSON_INITIALIZER;
+
+#if PHP_VERSION_ID >= 70000
+	zval* data_object = ecalloc(sizeof(zval), 1);
+#else
+	zval* data_object = NULL;
+	ALLOC_INIT_ZVAL(data_object);
+#endif
+
+	array_init_size(data_object, 1);
+	add_assoc_zval(data_object, "data", data);
+
+#if PHP_VERSION_ID >= 70000
+	Z_TRY_ADDREF_P(data);
+#else
+	Z_ADDREF_P(data);
+#endif
+
+	php_phongo_zval_to_bson(data_object, flags, &bson, NULL TSRMLS_CC);
+
+	if (bson_iter_init_find(&iter, &bson, "data")) {
+		bson_value_copy(bson_iter_value(&iter), value);
+	}
+
+#if PHP_VERSION_ID >= 70000
+	zval_ptr_dtor(data_object);
+	efree(data_object);
+#else
+	zval_ptr_dtor(&data_object);
+#endif
+} /* }}} */
+
 /*
  * Local variables:
  * tab-width: 4

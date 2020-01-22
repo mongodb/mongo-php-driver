@@ -45,6 +45,12 @@ typedef struct {
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE
+	mongoc_client_encryption_t* client_encryption;
+	PHONGO_ZEND_OBJECT_POST
+} php_phongo_clientencryption_t;
+
+typedef struct {
+	PHONGO_ZEND_OBJECT_PRE
 	bson_t*  bson;
 	uint32_t max_await_time_ms;
 	uint32_t batch_size;

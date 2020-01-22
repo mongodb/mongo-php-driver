@@ -504,6 +504,7 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_OLD_UUID"), BSON_SUBTYPE_UUID_DEPRECATED TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_UUID"), BSON_SUBTYPE_UUID TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_MD5"), BSON_SUBTYPE_MD5 TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_ENCRYPTED"), BSON_SUBTYPE_ENCRYPTED TSRMLS_CC);
 	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_USER_DEFINED"), BSON_SUBTYPE_USER TSRMLS_CC);
 } /* }}} */
 

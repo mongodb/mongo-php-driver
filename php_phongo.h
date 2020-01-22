@@ -130,6 +130,7 @@ typedef enum {
 
 zend_object_handlers* phongo_get_std_object_handlers(void);
 
+void phongo_clientencryption_init(php_phongo_clientencryption_t* ce_obj, mongoc_client_t* client, zval* options TSRMLS_DC);
 void phongo_server_init(zval* return_value, mongoc_client_t* client, uint32_t server_id TSRMLS_DC);
 void phongo_session_init(zval* return_value, mongoc_client_session_t* client_session TSRMLS_DC);
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern TSRMLS_DC);
@@ -165,6 +166,10 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 int  php_phongo_set_monitoring_callbacks(mongoc_client_t* client);
 
 bool php_phongo_parse_int64(int64_t* retval, const char* data, phongo_zpp_char_len data_len);
+
+void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options TSRMLS_DC);
+void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options TSRMLS_DC);
+void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue TSRMLS_DC);
 
 zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson TSRMLS_DC);
 zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_DC);

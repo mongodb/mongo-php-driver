@@ -12,6 +12,7 @@ $types = array(
     MongoDB\BSON\Binary::TYPE_OLD_UUID,
     MongoDB\BSON\Binary::TYPE_UUID,
     MongoDB\BSON\Binary::TYPE_MD5,
+    MongoDB\BSON\Binary::TYPE_ENCRYPTED,
     MongoDB\BSON\Binary::TYPE_USER_DEFINED,
     MongoDB\BSON\Binary::TYPE_USER_DEFINED+5,
 );
@@ -52,6 +53,8 @@ bool(true)
 bool(true)
 bool(true)
 bool(true)
+bool(true)
+bool(true)
 Test#0 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "00" } }
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "00" } }"
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "00" } }"
@@ -76,11 +79,15 @@ Test#5 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "05" } }
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "05" } }"
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "05" } }"
 bool(true)
-Test#6 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "80" } }
+Test#6 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "06" } }
+string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "06" } }"
+string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "06" } }"
+bool(true)
+Test#7 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "80" } }
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "80" } }"
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "80" } }"
 bool(true)
-Test#7 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "85" } }
+Test#8 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "85" } }
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "85" } }"
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "85" } }"
 bool(true)

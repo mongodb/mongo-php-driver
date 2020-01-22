@@ -1221,6 +1221,40 @@ bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval** zv)
 	return retval;
 } /* }}} */
 
+/* Converts a BSON value to a ZVAL. */
+bool php_phongo_bson_value_to_zval(const bson_value_t* value, zval* zv) /* {{{ */
+{
+	bson_t                bson = BSON_INITIALIZER;
+	php_phongo_bson_state state;
+	zval*                 return_value;
+	bool                  retval = false;
+
+	PHONGO_BSON_INIT_STATE(state);
+	state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+
+	bson_append_value(&bson, "data", 4, value);
+	if (!php_phongo_bson_to_zval_ex(bson_get_data(&bson), bson.len, &state)) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+	retval = true;
+
+#if PHP_VERSION_ID >= 70000
+	return_value = php_array_fetchc(&state.zchild, "data");
+#else
+	return_value = php_array_fetchc(state.zchild, "data");
+#endif
+
+	if (return_value) {
+		ZVAL_ZVAL(zv, return_value, 1, 0);
+	}
+
+cleanup:
+	zval_ptr_dtor(&state.zchild);
+	return retval;
+} /* }}} */
+
 /* Converts a BSON document to a PHP value according to the typemap specified in
  * the state argument.
  *
