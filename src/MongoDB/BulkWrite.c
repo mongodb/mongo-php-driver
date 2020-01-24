@@ -237,6 +237,36 @@ static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* 
 		}                                                                                      \
 	}
 
+/* Initialize the "hint" option. Returns true on success; otherwise, false is
+ * returned and an exception is thrown.
+ *
+ * The "hint" option must be a string or document. Check for both types and
+ * merge into BSON options accordingly. */
+static bool php_phongo_bulkwrite_opt_hint(bson_t* boptions, zval* zoptions TSRMLS_DC) /* {{{ */
+{
+	/* The "hint" option (or "$hint" modifier) must be a string or document.
+	 * Check for both types and merge into BSON options accordingly. */
+	if (zoptions && php_array_existsc(zoptions, "hint")) {
+		zend_uchar type = Z_TYPE_P(php_array_fetchc(zoptions, "hint"));
+
+		if (type == IS_STRING) {
+			zval* value = php_array_fetchc(zoptions, "hint");
+
+			if (!bson_append_utf8(boptions, "hint", 4, Z_STRVAL_P(value), Z_STRLEN_P(value))) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"hint\" option");
+				return false;
+			}
+		} else if (type == IS_OBJECT || type == IS_ARRAY) {
+			PHONGO_BULKWRITE_OPT_DOCUMENT("hint");
+		} else {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"hint\" option to be string, array, or object, %s given", zend_get_type_by_const(type));
+			return false;
+		}
+	}
+
+	return true;
+} /* }}} */
+
 /* Applies options (including defaults) for an update operation. */
 static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zoptions TSRMLS_DC) /* {{{ */
 {
@@ -251,6 +281,10 @@ static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zo
 	PHONGO_BULKWRITE_APPEND_BOOL("upsert", upsert);
 	PHONGO_BULKWRITE_OPT_ARRAY("arrayFilters");
 	PHONGO_BULKWRITE_OPT_DOCUMENT("collation");
+
+	if (!php_phongo_bulkwrite_opt_hint(boptions, zoptions TSRMLS_CC)) {
+		return false;
+	}
 
 	return true;
 } /* }}} */
