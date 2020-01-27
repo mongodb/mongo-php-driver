@@ -16,17 +16,17 @@ $tests = [
 foreach ($tests as $driverOptions) {
     echo throws(function() use ($driverOptions) {
         $manager = new MongoDB\Driver\Manager(null, [], ['autoEncryption' => $driverOptions]);
-    }, 'MongoDB\Driver\Exception\RuntimeException'), "\n\n";
+    }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n\n";
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-OK: Got MongoDB\Driver\Exception\RuntimeException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Key vault namespace option required
 
-OK: Got MongoDB\Driver\Exception\RuntimeException
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 KMS providers option required
 
 ===DONE===

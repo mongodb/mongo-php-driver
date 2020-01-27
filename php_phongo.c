@@ -138,8 +138,14 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 }
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code)
 {
-	if (domain == MONGOC_ERROR_CLIENT && code == MONGOC_ERROR_CLIENT_AUTHENTICATE) {
-		return php_phongo_authenticationexception_ce;
+	if (domain == MONGOC_ERROR_CLIENT) {
+		if (code == MONGOC_ERROR_CLIENT_AUTHENTICATE) {
+			return php_phongo_authenticationexception_ce;
+		}
+
+		if (code == MONGOC_ERROR_CLIENT_INVALID_ENCRYPTION_ARG) {
+			return php_phongo_invalidargumentexception_ce;
+		}
 	}
 
 	if (domain == MONGOC_ERROR_COMMAND && code == MONGOC_ERROR_COMMAND_INVALID_ARG) {
@@ -172,6 +178,10 @@ zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_d
 
 	if (domain == MONGOC_ERROR_PROTOCOL && code == MONGOC_ERROR_PROTOCOL_BAD_WIRE_VERSION) {
 		return php_phongo_connectionexception_ce;
+	}
+
+	if (domain == MONGOC_ERROR_CLIENT_SIDE_ENCRYPTION) {
+		return php_phongo_encryptionexception_ce;
 	}
 
 	return php_phongo_runtimeexception_ce;
@@ -3728,6 +3738,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_encryptionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_invalidargumentexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_logicexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
