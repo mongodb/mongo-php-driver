@@ -136,7 +136,7 @@ zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t 
 	MONGOC_ERROR("Resolving unknown phongo error domain: %d", domain);
 	return php_phongo_runtimeexception_ce;
 }
-zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code)
+zend_class_entry* phongo_exception_from_mongoc_domain(mongoc_error_domain_t domain, mongoc_error_code_t code)
 {
 	if (domain == MONGOC_ERROR_CLIENT) {
 		if (code == MONGOC_ERROR_CLIENT_AUTHENTICATE) {
