@@ -3551,18 +3551,6 @@ static inline void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
 	pefree(pclient, 1);
 }
 
-#if PHP_VERSION_ID >= 70000
-static void php_phongo_pclient_dtor(zval* zv)
-{
-	php_phongo_pclient_destroy((php_phongo_pclient_t*) Z_PTR_P(zv));
-}
-#else
-static void php_phongo_pclient_dtor(void* pp)
-{
-	php_phongo_pclient_destroy(*((php_phongo_pclient_t**) pp));
-}
-#endif
-
 /* {{{ PHP_RINIT_FUNCTION */
 PHP_RINIT_FUNCTION(mongodb)
 {
@@ -3595,7 +3583,7 @@ PHP_GINIT_FUNCTION(mongodb)
 	mongodb_globals->bsonMemVTable = bsonMemVTable;
 
 	/* Initialize HashTable for persistent clients */
-	zend_hash_init_ex(&mongodb_globals->pclients, 0, NULL, php_phongo_pclient_dtor, 1, 0);
+	zend_hash_init_ex(&mongodb_globals->pclients, 0, NULL, NULL, 1, 0);
 }
 /* }}} */
 
@@ -3751,10 +3739,42 @@ PHP_MINIT_FUNCTION(mongodb)
 /* {{{ PHP_MSHUTDOWN_FUNCTION */
 PHP_MSHUTDOWN_FUNCTION(mongodb)
 {
+	HashTable* pclients = &MONGODB_G(pclients);
 	(void) type; /* We don't care if we are loaded via dl() or extension= */
 
-	/* Destroy HashTable for persistent clients. The HashTable destructor will
-	 * destroy any mongoc_client_t objects that were created by this process. */
+	/* Destroy mongoc_client_t objects in reverse order. This is necessary to
+	 * prevent segmentation faults as clients may reference other clients in
+	 * encryption settings. */
+#if PHP_VERSION_ID >= 70000
+	{
+		zval* z_ptr;
+
+		ZEND_HASH_REVERSE_FOREACH_VAL(pclients, z_ptr)
+		{
+			if ((Z_TYPE_P(z_ptr) != IS_PTR)) {
+				continue;
+			}
+
+			php_phongo_pclient_destroy((php_phongo_pclient_t*) Z_PTR_P(z_ptr));
+		}
+		ZEND_HASH_FOREACH_END();
+	}
+#else
+	{
+		HashPosition pos;
+		php_phongo_pclient_t** pclient;
+
+		for (
+			zend_hash_internal_pointer_end_ex(pclients, &pos);
+			zend_hash_get_current_data_ex(pclients, (void**) &pclient, &pos) == SUCCESS;
+			zend_hash_move_backwards_ex(pclients, &pos)) {
+
+			php_phongo_pclient_destroy(*pclient);
+		}
+	}
+#endif
+
+	/* Destroy HashTable for persistent clients. mongoc_client_t objects have been destroyed earlier. */
 	zend_hash_destroy(&MONGODB_G(pclients));
 
 	bson_mem_restore_vtable();
