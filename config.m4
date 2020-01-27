@@ -153,6 +153,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/Exception/CommandException.c \
     src/MongoDB/Exception/ConnectionException.c \
     src/MongoDB/Exception/ConnectionTimeoutException.c \
+    src/MongoDB/Exception/EncryptionException.c \
     src/MongoDB/Exception/Exception.c \
     src/MongoDB/Exception/ExecutionTimeoutException.c \
     src/MongoDB/Exception/InvalidArgumentException.c \
