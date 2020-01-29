@@ -2795,6 +2795,11 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		zval*  kms_providers  = php_array_fetch(zAutoEncryptionOpts, "kmsProviders");
 		bson_t bson_providers = BSON_INITIALIZER;
 
+		if (Z_TYPE_P(kms_providers) != IS_OBJECT && Z_TYPE_P(kms_providers) != IS_ARRAY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"kmsProviders\" encryption option to be an array or object");
+			goto cleanup;
+		}
+
 		php_phongo_zval_to_bson(kms_providers, PHONGO_BSON_NONE, &bson_providers, NULL TSRMLS_CC);
 		if (EG(exception)) {
 			goto cleanup;
@@ -2808,6 +2813,11 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 	if (php_array_existsc(zAutoEncryptionOpts, "schemaMap")) {
 		zval*  schema_map = php_array_fetch(zAutoEncryptionOpts, "schemaMap");
 		bson_t bson_map   = BSON_INITIALIZER;
+
+		if (Z_TYPE_P(schema_map) != IS_OBJECT && Z_TYPE_P(schema_map) != IS_ARRAY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"schemaMap\" encryption option to be an array or object");
+			goto cleanup;
+		}
 
 		php_phongo_zval_to_bson(schema_map, PHONGO_BSON_NONE, &bson_map, NULL TSRMLS_CC);
 		if (EG(exception)) {
@@ -2907,8 +2917,8 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(m
 		zval*  kms_providers  = php_array_fetchc(options, "kmsProviders");
 		bson_t bson_providers = BSON_INITIALIZER;
 
-		if (Z_TYPE_P(kms_providers) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"kmsProviders\" encryption option to be an array");
+		if (Z_TYPE_P(kms_providers) != IS_ARRAY && Z_TYPE_P(kms_providers) != IS_OBJECT) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"kmsProviders\" encryption option to be an array or object");
 			goto cleanup;
 		}
 
