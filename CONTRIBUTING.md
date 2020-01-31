@@ -303,7 +303,7 @@ bin\phpsdk_setvars.bat
 cd C:\php-sdk\phpdev\vc11\x86\php-5.6.12-src
 nmake clean
 buildconf --force
-configure --disable-all --with-openssl --enable-cli --enable-json --enable-mongodb=shared
+configure --disable-all --with-openssl --enable-cli --enable-json --enable-mongodb=shared --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes
 nmake
 ```
 

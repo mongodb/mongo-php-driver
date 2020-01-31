@@ -285,7 +285,7 @@ if test "$PHP_MONGODB" != "no"; then
   if test "$PHP_MONGODB_SYSTEM_LIBS" = "no"; then
     PHP_MONGODB_BUNDLED_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
     dnl TODO: MONGOCRYPT-219 makes the -std argument obsolete
-    PHP_MONGODB_LIBMONGOCRYPT_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS -std=gnu99"
+    PHP_MONGODB_LIBMONGOCRYPT_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS -DKMS_MSG_STATIC -std=gnu99"
 
     dnl M4 doesn't know if we're building statically or as a shared module, so
     dnl attempt to include both paths while ignoring errors. If neither path
