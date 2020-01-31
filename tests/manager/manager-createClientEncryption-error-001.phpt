@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ClientEncryption::__construct() fails if compiled without FLE
+MongoDB\Driver\Manager::createClientEncryption() fails if compiled without FLE
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_libmongocrypt(); ?>
