@@ -2459,6 +2459,16 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	return hash;
 }
 
+static void php_phongo_set_handshake_data()
+{
+	char* php_version_string = malloc(4 + sizeof(PHP_VERSION) + 1);
+
+	snprintf(php_version_string, 4 + sizeof(PHP_VERSION) + 1, "PHP %s", PHP_VERSION);
+	mongoc_handshake_data_append("ext-mongodb:PHP", PHP_MONGODB_VERSION, php_version_string);
+
+	free(php_version_string);
+}
+
 static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri) /* {{{ */
 {
 	const char *mongoc_version, *bson_version;
@@ -2484,6 +2494,8 @@ static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri) /*
 		BSON_VERSION_S,
 		bson_version,
 		PHP_VERSION);
+
+	php_phongo_set_handshake_data();
 
 	return mongoc_client_new_from_uri(uri);
 } /* }}} */
@@ -3326,20 +3338,12 @@ static zend_class_entry* php_phongo_fetch_internal_class(const char* class_name,
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(mongodb)
 {
-	char* php_version_string;
-
 	(void) type; /* We don't care if we are loaded via dl() or extension= */
 
 	REGISTER_INI_ENTRIES();
 
 	/* Initialize libmongoc */
 	mongoc_init();
-
-	/* Set handshake options */
-	php_version_string = malloc(4 + sizeof(PHP_VERSION) + 1);
-	snprintf(php_version_string, 4 + sizeof(PHP_VERSION) + 1, "PHP %s", PHP_VERSION);
-	mongoc_handshake_data_append("ext-mongodb:PHP", PHP_MONGODB_VERSION, php_version_string);
-	free(php_version_string);
 
 	/* Initialize libbson */
 	bson_mem_set_vtable(&MONGODB_G(bsonMemVTable));
