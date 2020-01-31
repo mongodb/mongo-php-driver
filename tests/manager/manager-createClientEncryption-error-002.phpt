@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ClientEncryption::__construct() with invalid option types
+MongoDB\Driver\Manager::createClientEncryption() with invalid option types
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>

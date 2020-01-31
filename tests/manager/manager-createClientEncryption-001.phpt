@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ClientEncryption::__construct()
+MongoDB\Driver\Manager::createClientEncryption()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
