@@ -28,7 +28,6 @@ $bulk->insert(['x' => 2]);
 $result = $manager->executeBulkWrite(NS, $bulk, ['session' => $session]);
 printf("Parent inserted %d documents\n", $result->getInsertedCount());
 
-$parentPid = getmypid();
 $childPid = pcntl_fork();
 
 if ($childPid === 0) {
