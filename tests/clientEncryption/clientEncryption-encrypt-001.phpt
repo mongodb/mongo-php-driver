@@ -5,6 +5,7 @@ MongoDB\Driver\ClientEncryption::encrypt()
 <?php skip_if_not_libmongocrypt(); ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_server_version('<', '3.6'); ?>
+<?php skip_if_not_server_storage_engine('wiredTiger'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
