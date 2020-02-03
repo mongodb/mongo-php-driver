@@ -57,7 +57,6 @@ MongoDB\Driver\Monitoring\addSubscriber(new CommandLogger);
 $query = new MongoDB\Driver\Query([], ['batchSize' => 2]);
 $cursor = $manager->executeQuery(NS, $query, ['session' => $session]);
 
-$parentPid = getmypid();
 $childPid = pcntl_fork();
 
 if ($childPid === 0) {
