@@ -4,7 +4,6 @@ MongoDB\Driver\Session::startTransaction() with wrong argument for options array
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto() ?>
 <?php skip_if_no_transactions(); ?>
-<?php skip_if_php_version('<', '7.0.0'); ?>
 <?php skip_if_php_version('>=', '7.1.0'); ?>
 --FILE--
 <?php
