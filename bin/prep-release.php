@@ -58,12 +58,12 @@ function get_files() {
 
         "src/libmongocrypt-compat/*.{c,h}",
         "src/libmongocrypt-compat/mongocrypt/*.{c,h}",
-        "src/libmongocrypt/src/*.{c,h}",
+        "src/libmongocrypt/src/*.{c,h,h.in}",
         "src/libmongocrypt/src/crypto/*.{c,h}",
         "src/libmongocrypt/src/os_posix/*.{c,h}",
         "src/libmongocrypt/src/os_win/*.{c,h}",
         "src/libmongocrypt/kms-message/src/*.{c,h}",
-        "src/libmongocrypt/kms-message/src/message/*.{c,h}",
+        "src/libmongocrypt/kms-message/src/kms_message/*.{c,h}",
       ),
       'test' => array(
         "Vagrantfile",
