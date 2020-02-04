@@ -45,20 +45,10 @@ ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	HashTable*        subscribers;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
-#if PHP_VERSION_ID >= 70000
 #define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)
 #if defined(ZTS) && defined(COMPILE_DL_MONGODB)
 ZEND_TSRMLS_CACHE_EXTERN()
 #endif
-#else /* PHP_VERSION_ID >= 70000 */
-#ifdef ZTS
-#define MONGODB_G(v) TSRMG(mongodb_globals_id, zend_mongodb_globals*, v)
-#define mglo mongodb_globals_id
-#else /* ZTS */
-#define MONGODB_G(v) (mongodb_globals.v)
-#define mglo mongodb_globals
-#endif /* ZTS */
-#endif /* PHP_VERSION_ID >= 70000 */
 
 #define PHONGO_WRITE_CONCERN_W_MAJORITY "majority"
 
@@ -100,19 +90,9 @@ typedef enum {
 
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
 zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
-void              phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char* format, ...)
-#if PHP_VERSION_ID < 70000
-#ifndef PHP_WIN32
-#ifdef ZTS
-	__attribute__((format(printf, 3, 4)))
-#else
-	__attribute__((format(printf, 2, 3)))
-#endif /* ZTS */
-#endif /* PHP_WIN32 */
-#endif /* PHP_VERSION_ID < 70000 */
-	;
-void phongo_throw_exception_from_bson_error_t(bson_error_t* error TSRMLS_DC);
-void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, const bson_t* reply TSRMLS_DC);
+void              phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char* format, ...);
+void              phongo_throw_exception_from_bson_error_t(bson_error_t* error TSRMLS_DC);
+void              phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, const bson_t* reply TSRMLS_DC);
 
 /* This enum is used for processing options in phongo_execute_parse_options and
  * selecting a libmongoc function to use in phongo_execute_command. The values
@@ -176,17 +156,10 @@ zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_
 
 void php_phongo_client_reset_once(mongoc_client_t* client, int pid);
 
-#if PHP_VERSION_ID >= 70000
 #define PHONGO_CE_FINAL(ce)             \
 	do {                                \
 		ce->ce_flags |= ZEND_ACC_FINAL; \
 	} while (0);
-#else
-#define PHONGO_CE_FINAL(ce)                   \
-	do {                                      \
-		ce->ce_flags |= ZEND_ACC_FINAL_CLASS; \
-	} while (0);
-#endif
 
 #define PHONGO_CE_DISABLE_SERIALIZATION(ce)            \
 	do {                                               \
@@ -219,11 +192,7 @@ void php_phongo_client_reset_once(mongoc_client_t* client, int pid);
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME(zv) (Z_TYPE(zv) == IS_OBJECT ? ZSTR_VAL(Z_OBJCE(zv)->name) : zend_get_type_by_const(Z_TYPE(zv)))
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvp) PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*(zvp))
 
-#if PHP_VERSION_ID >= 70000
 #define PHONGO_ZVAL_EXCEPTION_NAME(e) (ZSTR_VAL(e->ce->name))
-#else
-#define PHONGO_ZVAL_EXCEPTION_NAME(e) (ZSTR_VAL(Z_OBJCE_P(e)->name))
-#endif
 
 #define PHONGO_SET_CREATED_BY_PID(intern)          \
 	do {                                           \

@@ -68,11 +68,7 @@ static bool php_phongo_manager_merge_context_options(zval* zdriverOptions TSRMLS
 		return false;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	zcontextOptions = php_array_fetchc_array(&context->options, "ssl");
-#else
-	zcontextOptions = php_array_fetchc_array(context->options, "ssl");
-#endif
 
 	if (!zcontextOptions) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Stream-Context resource does not contain \"ssl\" options array");
@@ -90,14 +86,7 @@ static bool php_phongo_manager_merge_context_options(zval* zdriverOptions TSRMLS
 	php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"context\" driver option is deprecated.");
 
 	/* Perform array union (see: add_function() in zend_operators.c) */
-#if PHP_VERSION_ID >= 70000
 	zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), zval_add_ref, 0);
-#else
-	{
-		zval* tmp;
-		zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), (void (*)(void* pData)) zval_add_ref, (void*) &tmp, sizeof(zval*), 0);
-	}
-#endif
 
 	php_array_unsetc(zdriverOptions, "context");
 
@@ -119,7 +108,6 @@ static void php_phongo_manager_prep_authmechanismproperties(zval* properties TSR
 
 	ht_data = HASH_OF(properties);
 
-#if PHP_VERSION_ID >= 70000
 	{
 		zend_string* string_key = NULL;
 		zend_ulong   num_key    = 0;
@@ -142,38 +130,6 @@ static void php_phongo_manager_prep_authmechanismproperties(zval* properties TSR
 		}
 		ZEND_HASH_FOREACH_END();
 	}
-#else
-	{
-		HashPosition pos;
-		zval**       property;
-
-		for (
-			zend_hash_internal_pointer_reset_ex(ht_data, &pos);
-			zend_hash_get_current_data_ex(ht_data, (void**) &property, &pos) == SUCCESS;
-			zend_hash_move_forward_ex(ht_data, &pos)) {
-
-			char* string_key     = NULL;
-			uint  string_key_len = 0;
-			ulong num_key        = 0;
-
-			if (HASH_KEY_IS_STRING != zend_hash_get_current_key_ex(ht_data, &string_key, &string_key_len, &num_key, 0, &pos)) {
-				continue;
-			}
-
-			/* URI options are case-insensitive */
-			if (!strcasecmp(string_key, "CANONICALIZE_HOST_NAME")) {
-				if (Z_TYPE_PP(property) != IS_STRING && zend_is_true(*property)) {
-					SEPARATE_ZVAL_IF_NOT_REF(property);
-					Z_TYPE_PP(property)   = IS_STRING;
-					Z_STRVAL_PP(property) = estrndup("true", sizeof("true") - 1);
-					Z_STRLEN_PP(property) = sizeof("true") - 1;
-				}
-			}
-		}
-	}
-#endif /* PHP_VERSION_ID >= 70000 */
-
-	return;
 } /* }}} */
 
 /* Prepare URI options for BSON encoding.
@@ -198,7 +154,6 @@ static void php_phongo_manager_prep_uri_options(zval* options TSRMLS_DC) /* {{{ 
 
 	ht_data = HASH_OF(options);
 
-#if PHP_VERSION_ID >= 70000
 	{
 		zend_string* string_key = NULL;
 		zend_ulong   num_key    = 0;
@@ -226,40 +181,6 @@ static void php_phongo_manager_prep_uri_options(zval* options TSRMLS_DC) /* {{{ 
 		}
 		ZEND_HASH_FOREACH_END();
 	}
-#else
-	{
-		HashPosition pos;
-		zval**       option;
-
-		for (
-			zend_hash_internal_pointer_reset_ex(ht_data, &pos);
-			zend_hash_get_current_data_ex(ht_data, (void**) &option, &pos) == SUCCESS;
-			zend_hash_move_forward_ex(ht_data, &pos)) {
-
-			char* string_key     = NULL;
-			uint  string_key_len = 0;
-			ulong num_key        = 0;
-
-			if (HASH_KEY_IS_STRING != zend_hash_get_current_key_ex(ht_data, &string_key, &string_key_len, &num_key, 0, &pos)) {
-				continue;
-			}
-
-			if (!strcasecmp(string_key, MONGOC_URI_READPREFERENCETAGS)) {
-				SEPARATE_ZVAL_IF_NOT_REF(option);
-				php_phongo_read_preference_prep_tagsets(*option TSRMLS_CC);
-				continue;
-			}
-
-			if (!strcasecmp(string_key, MONGOC_URI_AUTHMECHANISMPROPERTIES)) {
-				SEPARATE_ZVAL_IF_NOT_REF(option);
-				php_phongo_manager_prep_authmechanismproperties(*option TSRMLS_CC);
-				continue;
-			}
-		}
-	}
-#endif
-
-	return;
 } /* }}} */
 
 /* Selects a server for an execute method. If "for_writes" is true, a primary
@@ -688,18 +609,10 @@ static PHP_METHOD(Manager, getServers)
 	array_init_size(return_value, n);
 
 	for (i = 0; i < n; i++) {
-#if PHP_VERSION_ID >= 70000
 		zval obj;
 
 		phongo_server_init(&obj, intern->client, mongoc_server_description_id(sds[i]) TSRMLS_CC);
 		add_next_index_zval(return_value, &obj);
-#else
-		zval* obj = NULL;
-
-		MAKE_STD_ZVAL(obj);
-		phongo_server_init(obj, intern->client, mongoc_server_description_id(sds[i]) TSRMLS_CC);
-		add_next_index_zval(return_value, obj);
-#endif
 	}
 
 	mongoc_server_descriptions_destroy_all(sds, n);
@@ -903,10 +816,6 @@ static void php_phongo_manager_free_object(phongo_free_object_arg* object TSRMLS
 	if (intern->client_hash) {
 		efree(intern->client_hash);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
 static phongo_create_object_retval php_phongo_manager_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
@@ -920,19 +829,9 @@ static phongo_create_object_retval php_phongo_manager_create_object(zend_class_e
 
 	PHONGO_SET_CREATED_BY_PID(intern);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_manager;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_manager_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_manager;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
 static HashTable* php_phongo_manager_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
@@ -952,7 +851,6 @@ static HashTable* php_phongo_manager_get_debug_info(zval* object, int* is_temp T
 
 	sds = mongoc_client_get_server_descriptions(intern->client, &n);
 
-#if PHP_VERSION_ID >= 70000
 	array_init_size(&cluster, n);
 
 	for (i = 0; i < n; i++) {
@@ -969,26 +867,6 @@ static HashTable* php_phongo_manager_get_debug_info(zval* object, int* is_temp T
 	}
 
 	ADD_ASSOC_ZVAL_EX(&retval, "cluster", &cluster);
-#else
-	MAKE_STD_ZVAL(cluster);
-	array_init_size(cluster, n);
-
-	for (i = 0; i < n; i++) {
-		zval* obj = NULL;
-
-		MAKE_STD_ZVAL(obj);
-		if (!php_phongo_server_to_zval(obj, sds[i])) {
-			/* Exception already thrown */
-			zval_ptr_dtor(&obj);
-			zval_ptr_dtor(&cluster);
-			goto done;
-		}
-
-		add_next_index_zval(cluster, obj);
-	}
-
-	ADD_ASSOC_ZVAL_EX(&retval, "cluster", cluster);
-#endif
 
 done:
 	mongoc_server_descriptions_destroy_all(sds, n);
@@ -1009,10 +887,8 @@ void php_phongo_manager_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_manager, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_manager.get_debug_info = php_phongo_manager_get_debug_info;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_manager.free_obj = php_phongo_manager_free_object;
-	php_phongo_handler_manager.offset   = XtOffsetOf(php_phongo_manager_t, std);
-#endif
+	php_phongo_handler_manager.free_obj       = php_phongo_manager_free_object;
+	php_phongo_handler_manager.offset         = XtOffsetOf(php_phongo_manager_t, std);
 } /* }}} */
 
 /*

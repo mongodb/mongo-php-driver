@@ -46,8 +46,7 @@ zend_class_entry* php_phongo_session_ce;
 
 static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestamp, uint32_t* increment TSRMLS_DC)
 {
-	bool retval = false;
-#if PHP_VERSION_ID >= 70000
+	bool retval     = false;
 	zval ztimestamp = ZVAL_STATIC_INIT;
 	zval zincrement = ZVAL_STATIC_INIT;
 
@@ -65,25 +64,6 @@ static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestam
 
 	*timestamp = Z_LVAL(ztimestamp);
 	*increment = Z_LVAL(zincrement);
-#else
-	zval* ztimestamp = NULL;
-	zval* zincrement = NULL;
-
-	zend_call_method_with_0_params(&obj, NULL, NULL, "getTimestamp", &ztimestamp);
-
-	if (Z_ISUNDEF(ztimestamp) || EG(exception)) {
-		goto cleanup;
-	}
-
-	zend_call_method_with_0_params(&obj, NULL, NULL, "getIncrement", &zincrement);
-
-	if (Z_ISUNDEF(zincrement) || EG(exception)) {
-		goto cleanup;
-	}
-
-	*timestamp = Z_LVAL_P(ztimestamp);
-	*increment = Z_LVAL_P(zincrement);
-#endif
 
 	retval = true;
 
@@ -198,11 +178,7 @@ static PHP_METHOD(Session, getClusterTime)
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	RETURN_ZVAL(&state.zchild, 0, 1);
-#else
-	RETURN_ZVAL(state.zchild, 0, 1);
-#endif
 } /* }}} */
 
 /* {{{ proto object MongoDB\Driver\Session::getLogicalSessionId()
@@ -230,11 +206,7 @@ static PHP_METHOD(Session, getLogicalSessionId)
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	RETURN_ZVAL(&state.zchild, 0, 1);
-#else
-	RETURN_ZVAL(state.zchild, 0, 1);
-#endif
 } /* }}} */
 
 /* {{{ proto MongoDB\BSON\Timestamp|null MongoDB\Driver\Session::getOperationTime()
@@ -323,48 +295,24 @@ static PHP_METHOD(Session, getTransactionOptions)
 	}
 
 	if (!mongoc_read_concern_is_default(read_concern)) {
-#if PHP_VERSION_ID >= 70000
 		zval zread_concern;
 
 		phongo_readconcern_init(&zread_concern, read_concern TSRMLS_CC);
 		ADD_ASSOC_ZVAL_EX(return_value, "readConcern", &zread_concern);
-#else
-		zval* zread_concern = NULL;
-		MAKE_STD_ZVAL(zread_concern);
-
-		phongo_readconcern_init(zread_concern, read_concern TSRMLS_CC);
-		ADD_ASSOC_ZVAL_EX(return_value, "readConcern", zread_concern);
-#endif
 	}
 
 	if (read_preference) {
-#if PHP_VERSION_ID >= 70000
 		zval zread_preference;
 
 		phongo_readpreference_init(&zread_preference, read_preference TSRMLS_CC);
 		ADD_ASSOC_ZVAL_EX(return_value, "readPreference", &zread_preference);
-#else
-		zval* zread_preference = NULL;
-		MAKE_STD_ZVAL(zread_preference);
-
-		phongo_readpreference_init(zread_preference, read_preference TSRMLS_CC);
-		ADD_ASSOC_ZVAL_EX(return_value, "readPreference", zread_preference);
-#endif
 	}
 
 	if (!mongoc_write_concern_is_default(write_concern)) {
-#if PHP_VERSION_ID >= 70000
 		zval zwrite_concern;
 
 		phongo_writeconcern_init(&zwrite_concern, write_concern TSRMLS_CC);
 		ADD_ASSOC_ZVAL_EX(return_value, "writeConcern", &zwrite_concern);
-#else
-		zval* zwrite_concern = NULL;
-		MAKE_STD_ZVAL(zwrite_concern);
-
-		phongo_writeconcern_init(zwrite_concern, write_concern TSRMLS_CC);
-		ADD_ASSOC_ZVAL_EX(return_value, "writeConcern", zwrite_concern);
-#endif
 	}
 } /* }}} */
 
@@ -649,10 +597,6 @@ static void php_phongo_session_free_object(phongo_free_object_arg* object TSRMLS
 	if (intern->client_session) {
 		mongoc_client_session_destroy(intern->client_session);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
 static phongo_create_object_retval php_phongo_session_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
@@ -666,19 +610,9 @@ static phongo_create_object_retval php_phongo_session_create_object(zend_class_e
 
 	PHONGO_SET_CREATED_BY_PID(intern);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_session;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_session_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_session;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
 static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
@@ -705,11 +639,7 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 			goto done;
 		}
 
-#if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "logicalSessionId", &state.zchild);
-#else
-		ADD_ASSOC_ZVAL_EX(&retval, "logicalSessionId", state.zchild);
-#endif
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "logicalSessionId");
 	}
@@ -729,11 +659,7 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 				goto done;
 			}
 
-#if PHP_VERSION_ID >= 70000
 			ADD_ASSOC_ZVAL_EX(&retval, "clusterTime", &state.zchild);
-#else
-			ADD_ASSOC_ZVAL_EX(&retval, "clusterTime", state.zchild);
-#endif
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "clusterTime");
 		}
@@ -754,18 +680,10 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 		mongoc_client_session_get_operation_time(intern->client_session, &timestamp, &increment);
 
 		if (timestamp && increment) {
-#if PHP_VERSION_ID >= 70000
 			zval ztimestamp;
 
 			php_phongo_bson_new_timestamp_from_increment_and_timestamp(&ztimestamp, increment, timestamp TSRMLS_CC);
 			ADD_ASSOC_ZVAL_EX(&retval, "operationTime", &ztimestamp);
-#else
-			zval* ztimestamp;
-
-			MAKE_STD_ZVAL(ztimestamp);
-			php_phongo_bson_new_timestamp_from_increment_and_timestamp(ztimestamp, increment, timestamp TSRMLS_CC);
-			ADD_ASSOC_ZVAL_EX(&retval, "operationTime", ztimestamp);
-#endif
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "operationTime");
 		}
@@ -778,18 +696,10 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 
 		if (server_id) {
 
-#if PHP_VERSION_ID >= 70000
 			zval server;
 
 			phongo_server_init(&server, intern->client, server_id TSRMLS_CC);
 			ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
-#else
-			zval* server = NULL;
-
-			MAKE_STD_ZVAL(server);
-			phongo_server_init(server, intern->client, server_id TSRMLS_CC);
-			ADD_ASSOC_ZVAL_EX(&retval, "server", server);
-#endif
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "server");
 		}
@@ -814,10 +724,8 @@ void php_phongo_session_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_session, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_session.get_debug_info = php_phongo_session_get_debug_info;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_session.free_obj = php_phongo_session_free_object;
-	php_phongo_handler_session.offset   = XtOffsetOf(php_phongo_session_t, std);
-#endif
+	php_phongo_handler_session.free_obj       = php_phongo_session_free_object;
+	php_phongo_handler_session.offset         = XtOffsetOf(php_phongo_session_t, std);
 
 	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_NONE"), PHONGO_TRANSACTION_NONE TSRMLS_CC);
 	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_STARTING"), PHONGO_TRANSACTION_STARTING TSRMLS_CC);

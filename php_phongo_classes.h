@@ -23,8 +23,6 @@
 extern zend_class_entry* php_phongo_date_immutable_ce;
 extern zend_class_entry* php_phongo_json_serializable_ce;
 
-#if PHP_VERSION_ID >= 70000
-
 static inline php_phongo_bulkwrite_t* php_bulkwrite_fetch_object(zend_object* obj)
 {
 	return (php_phongo_bulkwrite_t*) ((char*) obj - XtOffsetOf(php_phongo_bulkwrite_t, std));
@@ -213,74 +211,6 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_OBJ_COMMANDFAILEDEVENT(zo) (php_commandfailedevent_fetch_object(zo))
 #define Z_OBJ_COMMANDSTARTEDEVENT(zo) (php_commandstartedevent_fetch_object(zo))
 #define Z_OBJ_COMMANDSUCCEEDEDEVENT(zo) (php_commandsucceededevent_fetch_object(zo))
-
-#else /* PHP_VERSION_ID >= 70000 */
-
-#define Z_CLIENTENCRYPTION_OBJ_P(zv) ((php_phongo_clientencryption_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_COMMAND_OBJ_P(zv) ((php_phongo_command_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_CURSOR_OBJ_P(zv) ((php_phongo_cursor_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_CURSORID_OBJ_P(zv) ((php_phongo_cursorid_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_MANAGER_OBJ_P(zv) ((php_phongo_manager_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_QUERY_OBJ_P(zv) ((php_phongo_query_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_READCONCERN_OBJ_P(zv) ((php_phongo_readconcern_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_READPREFERENCE_OBJ_P(zv) ((php_phongo_readpreference_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_SERVER_OBJ_P(zv) ((php_phongo_server_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_SESSION_OBJ_P(zv) ((php_phongo_session_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_BULKWRITE_OBJ_P(zv) ((php_phongo_bulkwrite_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_WRITECONCERN_OBJ_P(zv) ((php_phongo_writeconcern_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_WRITECONCERNERROR_OBJ_P(zv) ((php_phongo_writeconcernerror_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_WRITEERROR_OBJ_P(zv) ((php_phongo_writeerror_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_WRITERESULT_OBJ_P(zv) ((php_phongo_writeresult_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_BINARY_OBJ_P(zv) ((php_phongo_binary_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_DBPOINTER_OBJ_P(zv) ((php_phongo_dbpointer_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_DECIMAL128_OBJ_P(zv) ((php_phongo_decimal128_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_INT64_OBJ_P(zv) ((php_phongo_int64_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_JAVASCRIPT_OBJ_P(zv) ((php_phongo_javascript_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_MAXKEY_OBJ_P(zv) ((php_phongo_maxkey_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_MINKEY_OBJ_P(zv) ((php_phongo_minkey_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_OBJECTID_OBJ_P(zv) ((php_phongo_objectid_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_REGEX_OBJ_P(zv) ((php_phongo_regex_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_SYMBOL_OBJ_P(zv) ((php_phongo_symbol_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_TIMESTAMP_OBJ_P(zv) ((php_phongo_timestamp_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_UNDEFINED_OBJ_P(zv) ((php_phongo_undefined_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_UTCDATETIME_OBJ_P(zv) ((php_phongo_utcdatetime_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_COMMANDFAILEDEVENT_OBJ_P(zv) ((php_phongo_commandfailedevent_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_COMMANDSTARTEDEVENT_OBJ_P(zv) ((php_phongo_commandstartedevent_t*) zend_object_store_get_object(zv TSRMLS_CC))
-#define Z_COMMANDSUCCEEDEDEVENT_OBJ_P(zv) ((php_phongo_commandsucceededevent_t*) zend_object_store_get_object(zv TSRMLS_CC))
-
-#define Z_OBJ_CLIENTENCRYPTION(zo) ((php_phongo_clientencryption_t*) zo)
-#define Z_OBJ_COMMAND(zo) ((php_phongo_command_t*) zo)
-#define Z_OBJ_CURSOR(zo) ((php_phongo_cursor_t*) zo)
-#define Z_OBJ_CURSORID(zo) ((php_phongo_cursorid_t*) zo)
-#define Z_OBJ_MANAGER(zo) ((php_phongo_manager_t*) zo)
-#define Z_OBJ_QUERY(zo) ((php_phongo_query_t*) zo)
-#define Z_OBJ_READCONCERN(zo) ((php_phongo_readconcern_t*) zo)
-#define Z_OBJ_READPREFERENCE(zo) ((php_phongo_readpreference_t*) zo)
-#define Z_OBJ_SERVER(zo) ((php_phongo_server_t*) zo)
-#define Z_OBJ_SESSION(zo) ((php_phongo_session_t*) zo)
-#define Z_OBJ_BULKWRITE(zo) ((php_phongo_bulkwrite_t*) zo)
-#define Z_OBJ_WRITECONCERN(zo) ((php_phongo_writeconcern_t*) zo)
-#define Z_OBJ_WRITECONCERNERROR(zo) ((php_phongo_writeconcernerror_t*) zo)
-#define Z_OBJ_WRITEERROR(zo) ((php_phongo_writeerror_t*) zo)
-#define Z_OBJ_WRITERESULT(zo) ((php_phongo_writeresult_t*) zo)
-#define Z_OBJ_BINARY(zo) ((php_phongo_binary_t*) zo)
-#define Z_OBJ_DBPOINTER(zo) ((php_phongo_dbpointer_t*) zo)
-#define Z_OBJ_DECIMAL128(zo) ((php_phongo_decimal128_t*) zo)
-#define Z_OBJ_INT64(zo) ((php_phongo_int64_t*) zo)
-#define Z_OBJ_JAVASCRIPT(zo) ((php_phongo_javascript_t*) zo)
-#define Z_OBJ_MAXKEY(zo) ((php_phongo_maxkey_t*) zo)
-#define Z_OBJ_MINKEY(zo) ((php_phongo_minkey_t*) zo)
-#define Z_OBJ_OBJECTID(zo) ((php_phongo_objectid_t*) zo)
-#define Z_OBJ_REGEX(zo) ((php_phongo_regex_t*) zo)
-#define Z_OBJ_SYMBOL(zo) ((php_phongo_symbol_t*) zo)
-#define Z_OBJ_TIMESTAMP(zo) ((php_phongo_timestamp_t*) zo)
-#define Z_OBJ_UNDEFINED(zo) ((php_phongo_undefined_t*) zo)
-#define Z_OBJ_UTCDATETIME(zo) ((php_phongo_utcdatetime_t*) zo)
-#define Z_OBJ_COMMANDFAILEDEVENT(zo) ((php_phongo_commandfailedevent_t*) zo)
-#define Z_OBJ_COMMANDSTARTEDEVENT(zo) ((php_phongo_commandstartedevent_t*) zo)
-#define Z_OBJ_COMMANDSUCCEEDEDEVENT(zo) ((php_phongo_commandsucceededevent_t*) zo)
-
-#endif /* PHP_VERSION_ID >= 70000 */
 
 typedef struct {
 	zend_object_iterator intern;

@@ -17,11 +17,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/standard/php_var.h>
-#if PHP_VERSION_ID >= 70000
 #include <zend_smart_str.h>
-#else
-#include <ext/standard/php_smart_str.h>
-#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -104,10 +100,6 @@ static void php_phongo_undefined_free_object(phongo_free_object_arg* object TSRM
 	php_phongo_undefined_t* intern = Z_OBJ_UNDEFINED(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
 static phongo_create_object_retval php_phongo_undefined_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
@@ -118,19 +110,9 @@ static phongo_create_object_retval php_phongo_undefined_create_object(zend_class
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_undefined;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_undefined_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_undefined;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 /* }}} */
 
@@ -150,10 +132,8 @@ void php_phongo_undefined_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	memcpy(&php_phongo_handler_undefined, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	/* Re-assign default handler previously removed in php_phongo.c */
 	php_phongo_handler_undefined.clone_obj = zend_objects_clone_obj;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_undefined.free_obj = php_phongo_undefined_free_object;
-	php_phongo_handler_undefined.offset   = XtOffsetOf(php_phongo_undefined_t, std);
-#endif
+	php_phongo_handler_undefined.free_obj  = php_phongo_undefined_free_object;
+	php_phongo_handler_undefined.offset    = XtOffsetOf(php_phongo_undefined_t, std);
 } /* }}} */
 
 /*

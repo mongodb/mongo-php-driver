@@ -17,11 +17,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/standard/php_var.h>
-#if PHP_VERSION_ID >= 70000
 #include <zend_smart_str.h>
-#else
-#include <ext/standard/php_smart_str.h>
-#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -36,7 +32,6 @@ zend_class_entry* php_phongo_readconcern_ce;
  * An exception will be thrown on error. */
 static bool php_phongo_readconcern_init_from_hash(php_phongo_readconcern_t* intern, HashTable* props TSRMLS_DC) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
 	zval* level;
 
 	intern->read_concern = mongoc_read_concern_new();
@@ -50,21 +45,6 @@ static bool php_phongo_readconcern_init_from_hash(php_phongo_readconcern_t* inte
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"level\" string field", ZSTR_VAL(php_phongo_readconcern_ce->name));
 		goto failure;
 	}
-#else
-	zval** level;
-
-	intern->read_concern = mongoc_read_concern_new();
-
-	if (zend_hash_find(props, "level", sizeof("level"), (void**) &level) == SUCCESS) {
-		if (Z_TYPE_PP(level) == IS_STRING) {
-			mongoc_read_concern_set_level(intern->read_concern, Z_STRVAL_PP(level));
-			return true;
-		}
-
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"level\" string field", ZSTR_VAL(php_phongo_readconcern_ce->name));
-		goto failure;
-	}
-#endif
 
 	return true;
 
@@ -174,18 +154,10 @@ static HashTable* php_phongo_read_concern_get_properties_hash(zval* object, bool
 	level = mongoc_read_concern_get_level(intern->read_concern);
 
 	if (level) {
-#if PHP_VERSION_ID >= 70000
 		zval z_level;
 
 		ZVAL_STRING(&z_level, level);
 		zend_hash_str_update(props, "level", sizeof("level") - 1, &z_level);
-#else
-		zval* z_level;
-
-		MAKE_STD_ZVAL(z_level);
-		ZVAL_STRING(z_level, level, 1);
-		zend_hash_update(props, "level", sizeof("level"), &z_level, sizeof(z_level), NULL);
-#endif
 	}
 
 	return props;
@@ -229,14 +201,8 @@ static PHP_METHOD(ReadConcern, serialize)
 		PHONGO_RETURN_STRING("");
 	}
 
-#if PHP_VERSION_ID >= 70000
 	array_init_size(&retval, 1);
 	ADD_ASSOC_STRING(&retval, "level", level);
-#else
-	ALLOC_INIT_ZVAL(retval);
-	array_init_size(retval, 1);
-	ADD_ASSOC_STRING(retval, "level", level);
-#endif
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
 	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
@@ -257,12 +223,8 @@ static PHP_METHOD(ReadConcern, unserialize)
 	zend_error_handling       error_handling;
 	char*                     serialized;
 	phongo_zpp_char_len       serialized_len;
-#if PHP_VERSION_ID >= 70000
-	zval props;
-#else
-	zval* props;
-#endif
-	php_unserialize_data_t var_hash;
+	zval                      props;
+	php_unserialize_data_t    var_hash;
 
 	intern = Z_READCONCERN_OBJ_P(getThis());
 
@@ -278,9 +240,6 @@ static PHP_METHOD(ReadConcern, unserialize)
 		return;
 	}
 
-#if PHP_VERSION_ID < 70000
-	ALLOC_INIT_ZVAL(props);
-#endif
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
 	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
 		zval_ptr_dtor(&props);
@@ -291,11 +250,7 @@ static PHP_METHOD(ReadConcern, unserialize)
 	}
 	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
 
-#if PHP_VERSION_ID >= 70000
 	php_phongo_readconcern_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
-#else
-	php_phongo_readconcern_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
-#endif
 	zval_ptr_dtor(&props);
 } /* }}} */
 
@@ -346,10 +301,6 @@ static void php_phongo_readconcern_free_object(phongo_free_object_arg* object TS
 	if (intern->read_concern) {
 		mongoc_read_concern_destroy(intern->read_concern);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 }
 
 static phongo_create_object_retval php_phongo_readconcern_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
@@ -361,19 +312,9 @@ static phongo_create_object_retval php_phongo_readconcern_create_object(zend_cla
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_readconcern;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_readconcern_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_readconcern;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
 static HashTable* php_phongo_readconcern_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
@@ -402,10 +343,8 @@ void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	memcpy(&php_phongo_handler_readconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_readconcern.get_debug_info = php_phongo_readconcern_get_debug_info;
 	php_phongo_handler_readconcern.get_properties = php_phongo_readconcern_get_properties;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_readconcern.free_obj = php_phongo_readconcern_free_object;
-	php_phongo_handler_readconcern.offset   = XtOffsetOf(php_phongo_readconcern_t, std);
-#endif
+	php_phongo_handler_readconcern.free_obj       = php_phongo_readconcern_free_object;
+	php_phongo_handler_readconcern.offset         = XtOffsetOf(php_phongo_readconcern_t, std);
 
 	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("LOCAL"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_LOCAL) TSRMLS_CC);
 	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_MAJORITY) TSRMLS_CC);

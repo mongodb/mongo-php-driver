@@ -34,11 +34,7 @@
 #include "config.h"
 #endif
 
-#if PHP_VERSION_ID >= 70000
 #include <Zend/zend_smart_str.h>
-#else
-#include <ext/standard/php_smart_str.h>
-#endif
 
 #ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
 #include <mongocrypt/mongocrypt.h>
@@ -80,10 +76,8 @@
 #define PHONGO_DEBUG_INI_DEFAULT ""
 
 ZEND_DECLARE_MODULE_GLOBALS(mongodb)
-#if PHP_VERSION_ID >= 70000
 #if defined(ZTS) && defined(COMPILE_DL_MONGODB)
 ZEND_TSRMLS_CACHE_DEFINE();
-#endif
 #endif
 
 /* Declare zend_class_entry dependencies, which are initialized in MINIT */
@@ -209,16 +203,9 @@ static void phongo_exception_add_error_labels(const bson_t* reply TSRMLS_DC)
 
 	if (bson_iter_init_find(&iter, reply, "errorLabels")) {
 		bson_iter_t error_labels;
-#if PHP_VERSION_ID >= 70000
-		zval labels;
+		zval        labels;
 
 		array_init(&labels);
-#else
-		zval* labels = NULL;
-
-		ALLOC_INIT_ZVAL(labels);
-		array_init(labels);
-#endif
 
 		bson_iter_recurse(&iter, &error_labels);
 		while (bson_iter_next(&error_labels)) {
@@ -227,19 +214,11 @@ static void phongo_exception_add_error_labels(const bson_t* reply TSRMLS_DC)
 				uint32_t    error_label_len;
 
 				error_label = bson_iter_utf8(&error_labels, &error_label_len);
-#if PHP_VERSION_ID >= 70000
 				ADD_NEXT_INDEX_STRINGL(&labels, error_label, error_label_len);
-#else
-				ADD_NEXT_INDEX_STRINGL(labels, error_label, error_label_len);
-#endif
 			}
 		}
 
-#if PHP_VERSION_ID >= 70000
 		phongo_add_exception_prop(ZEND_STRL("errorLabels"), &labels);
-#else
-		phongo_add_exception_prop(ZEND_STRL("errorLabels"), labels TSRMLS_CC);
-#endif
 		zval_ptr_dtor(&labels);
 	}
 }
@@ -251,19 +230,11 @@ void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, con
 	 * failed command. For BC, ExceededTimeLimit errors will continue to use
 	 * ExcecutionTimeoutException and omit the result document. */
 	if (reply && ((error->domain == MONGOC_ERROR_SERVER && error->code != PHONGO_SERVER_ERROR_EXCEEDED_TIME_LIMIT) || error->domain == MONGOC_ERROR_WRITE_CONCERN)) {
-#if PHP_VERSION_ID >= 70000
 		zval zv;
-#else
-		zval* zv;
-#endif
 
 		zend_throw_exception(php_phongo_commandexception_ce, error->message, error->code TSRMLS_CC);
 		if (php_phongo_bson_to_zval(bson_get_data(reply), reply->len, &zv)) {
-#if PHP_VERSION_ID >= 70000
 			phongo_add_exception_prop(ZEND_STRL("resultDocument"), &zv);
-#else
-			phongo_add_exception_prop(ZEND_STRL("resultDocument"), zv TSRMLS_CC);
-#endif
 		}
 
 		zval_ptr_dtor(&zv);
@@ -317,21 +288,11 @@ static void phongo_cursor_init(zval* return_value, mongoc_client_t* client, mong
 	intern->current      = 0;
 
 	if (readPreference) {
-#if PHP_VERSION_ID >= 70000
 		ZVAL_ZVAL(&intern->read_preference, readPreference, 1, 0);
-#else
-		Z_ADDREF_P(readPreference);
-		intern->read_preference = readPreference;
-#endif
 	}
 
 	if (session) {
-#if PHP_VERSION_ID >= 70000
 		ZVAL_ZVAL(&intern->session, session, 1, 0);
-#else
-		Z_ADDREF_P(session);
-		intern->session = session;
-#endif
 	}
 } /* }}} */
 
@@ -344,12 +305,7 @@ static void phongo_cursor_init_for_command(zval* return_value, mongoc_client_t* 
 
 	intern->database = estrdup(db);
 
-#if PHP_VERSION_ID >= 70000
 	ZVAL_ZVAL(&intern->command, command, 1, 0);
-#else
-	Z_ADDREF_P(command);
-	intern->command = command;
-#endif
 } /* }}} */
 
 static void phongo_cursor_init_for_query(zval* return_value, mongoc_client_t* client, mongoc_cursor_t* cursor, const char* namespace, zval* query, zval* readPreference, zval* session TSRMLS_DC) /* {{{ */
@@ -366,12 +322,7 @@ static void phongo_cursor_init_for_query(zval* return_value, mongoc_client_t* cl
 	 * phongo_cursor_advance_and_check_for_error() */
 	intern->advanced = true;
 
-#if PHP_VERSION_ID >= 70000
 	ZVAL_ZVAL(&intern->query, query, 1, 0);
-#else
-	Z_ADDREF_P(query);
-	intern->query = query;
-#endif
 } /* }}} */
 
 void phongo_server_init(zval* return_value, mongoc_client_t* client, uint32_t server_id TSRMLS_DC) /* {{{ */
@@ -939,11 +890,7 @@ static zval* phongo_create_implicit_session(mongoc_client_t* client TSRMLS_DC) /
 		return NULL;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	zsession = ecalloc(sizeof(zval), 1);
-#else
-	ALLOC_INIT_ZVAL(zsession);
-#endif
 
 	phongo_session_init(zsession, cs TSRMLS_CC);
 
@@ -1110,12 +1057,8 @@ cleanup:
 	}
 
 	if (free_zsession) {
-#if PHP_VERSION_ID >= 70000
 		zval_ptr_dtor(zsession);
 		efree(zsession);
-#else
-		zval_ptr_dtor(&zsession);
-#endif
 	}
 
 	return result;
@@ -1207,11 +1150,7 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 			return false;
 		}
 
-#if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
-#else
-		ADD_ASSOC_ZVAL_EX(retval, "tags", state.zchild);
-#endif
 	}
 
 	{
@@ -1224,11 +1163,7 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 			return false;
 		}
 
-#if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", &state.zchild);
-#else
-		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", state.zchild);
-#endif
 	}
 	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (phongo_long) mongoc_server_description_round_trip_time(sd));
 
@@ -1258,12 +1193,7 @@ zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* alloca
 	*allocated = false;
 
 	if (options && Z_TYPE_P(options) != IS_ARRAY) {
-#if PHP_VERSION_ID >= 70000
 		zval* new_options = ecalloc(sizeof(zval), 1);
-#else
-		zval* new_options = NULL;
-		ALLOC_INIT_ZVAL(new_options);
-#endif
 
 		array_init_size(new_options, 1);
 		add_assoc_zval(new_options, key, options);
@@ -1278,12 +1208,8 @@ zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* alloca
 
 void php_phongo_prep_legacy_option_free(zval* options TSRMLS_DC) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
 	zval_ptr_dtor(options);
 	efree(options);
-#else
-	zval_ptr_dtor(&options);
-#endif
 } /* }}} */
 
 /* Prepare tagSets for BSON encoding by converting each array in the set to an
@@ -1294,6 +1220,7 @@ void php_phongo_prep_legacy_option_free(zval* options TSRMLS_DC) /* {{{ */
 void php_phongo_read_preference_prep_tagsets(zval* tagSets TSRMLS_DC) /* {{{ */
 {
 	HashTable* ht_data;
+	zval*      tagSet;
 
 	if (Z_TYPE_P(tagSets) != IS_ARRAY) {
 		return;
@@ -1301,39 +1228,15 @@ void php_phongo_read_preference_prep_tagsets(zval* tagSets TSRMLS_DC) /* {{{ */
 
 	ht_data = HASH_OF(tagSets);
 
-#if PHP_VERSION_ID >= 70000
+	ZEND_HASH_FOREACH_VAL_IND(ht_data, tagSet)
 	{
-		zval* tagSet;
-
-		ZEND_HASH_FOREACH_VAL_IND(ht_data, tagSet)
-		{
-			ZVAL_DEREF(tagSet);
-			if (Z_TYPE_P(tagSet) == IS_ARRAY) {
-				SEPARATE_ZVAL_NOREF(tagSet);
-				convert_to_object(tagSet);
-			}
-		}
-		ZEND_HASH_FOREACH_END();
-	}
-#else
-	{
-		HashPosition pos;
-		zval** tagSet;
-
-		for (
-			zend_hash_internal_pointer_reset_ex(ht_data, &pos);
-			zend_hash_get_current_data_ex(ht_data, (void**) &tagSet, &pos) == SUCCESS;
-			zend_hash_move_forward_ex(ht_data, &pos)) {
-
-			if (Z_TYPE_PP(tagSet) == IS_ARRAY) {
-				SEPARATE_ZVAL_IF_NOT_REF(tagSet);
-				convert_to_object(*tagSet);
-			}
+		ZVAL_DEREF(tagSet);
+		if (Z_TYPE_P(tagSet) == IS_ARRAY) {
+			SEPARATE_ZVAL_NOREF(tagSet);
+			convert_to_object(tagSet);
 		}
 	}
-#endif
-
-	return;
+	ZEND_HASH_FOREACH_END();
 } /* }}} */
 
 /* Checks if tags is valid to set on a mongoc_read_prefs_t. It may be null or an
@@ -2323,7 +2226,6 @@ static bool php_phongo_apply_driver_options_to_uri(mongoc_uri_t* uri, zval* zopt
 /* APM callbacks */
 static void php_phongo_dispatch_handlers(const char* name, zval* z_event)
 {
-#if PHP_VERSION_ID >= 70000
 	zval* value;
 
 	ZEND_HASH_FOREACH_VAL_IND(MONGODB_G(subscribers), value)
@@ -2338,38 +2240,12 @@ static void php_phongo_dispatch_handlers(const char* name, zval* z_event)
 		zend_call_method(value, NULL, NULL, name, strlen(name), NULL, 1, z_event, NULL TSRMLS_CC);
 	}
 	ZEND_HASH_FOREACH_END();
-#else
-	HashPosition pos;
-	TSRMLS_FETCH();
-
-	zend_hash_internal_pointer_reset_ex(MONGODB_G(subscribers), &pos);
-	for (;; zend_hash_move_forward_ex(MONGODB_G(subscribers), &pos)) {
-		zval** value;
-
-		if (zend_hash_get_current_data_ex(MONGODB_G(subscribers), (void**) &value, &pos) == FAILURE) {
-			break;
-		}
-
-		if (EG(exception)) {
-			break;
-		}
-		/* We can't use the zend_call_method_with_1_params macro here, as it
-		 * does a sizeof() on the name argument, which does only work with
-		 * constant names, but not with parameterized ones as it does
-		 * "sizeof(char*)" in that case. */
-		zend_call_method(value, NULL, NULL, name, strlen(name), NULL, 1, z_event, NULL TSRMLS_CC);
-	}
-#endif
 }
 
 static void php_phongo_command_started(const mongoc_apm_command_started_t* event)
 {
 	php_phongo_commandstartedevent_t* p_event;
-#if PHP_VERSION_ID >= 70000
-	zval z_event;
-#else
-	zval* z_event = NULL;
-#endif
+	zval                              z_event;
 	TSRMLS_FETCH();
 
 	/* Return early if there are no APM subscribers to notify */
@@ -2377,14 +2253,8 @@ static void php_phongo_command_started(const mongoc_apm_command_started_t* event
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	object_init_ex(&z_event, php_phongo_commandstartedevent_ce);
 	p_event = Z_COMMANDSTARTEDEVENT_OBJ_P(&z_event);
-#else
-	MAKE_STD_ZVAL(z_event);
-	object_init_ex(z_event, php_phongo_commandstartedevent_ce);
-	p_event = Z_COMMANDSTARTEDEVENT_OBJ_P(z_event);
-#endif
 
 	p_event->client        = mongoc_apm_command_started_get_context(event);
 	p_event->command_name  = estrdup(mongoc_apm_command_started_get_command_name(event));
@@ -2394,22 +2264,14 @@ static void php_phongo_command_started(const mongoc_apm_command_started_t* event
 	p_event->command       = bson_copy(mongoc_apm_command_started_get_command(event));
 	p_event->database_name = estrdup(mongoc_apm_command_started_get_database_name(event));
 
-#if PHP_VERSION_ID >= 70000
 	php_phongo_dispatch_handlers("commandStarted", &z_event);
-#else
-	php_phongo_dispatch_handlers("commandStarted", z_event);
-#endif
 	zval_ptr_dtor(&z_event);
 }
 
 static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t* event)
 {
 	php_phongo_commandsucceededevent_t* p_event;
-#if PHP_VERSION_ID >= 70000
-	zval z_event;
-#else
-	zval* z_event = NULL;
-#endif
+	zval                                z_event;
 	TSRMLS_FETCH();
 
 	/* Return early if there are no APM subscribers to notify */
@@ -2417,14 +2279,8 @@ static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t* e
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	object_init_ex(&z_event, php_phongo_commandsucceededevent_ce);
 	p_event = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(&z_event);
-#else
-	MAKE_STD_ZVAL(z_event);
-	object_init_ex(z_event, php_phongo_commandsucceededevent_ce);
-	p_event = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(z_event);
-#endif
 
 	p_event->client          = mongoc_apm_command_succeeded_get_context(event);
 	p_event->command_name    = estrdup(mongoc_apm_command_succeeded_get_command_name(event));
@@ -2434,24 +2290,16 @@ static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t* e
 	p_event->duration_micros = mongoc_apm_command_succeeded_get_duration(event);
 	p_event->reply           = bson_copy(mongoc_apm_command_succeeded_get_reply(event));
 
-#if PHP_VERSION_ID >= 70000
 	php_phongo_dispatch_handlers("commandSucceeded", &z_event);
-#else
-	php_phongo_dispatch_handlers("commandSucceeded", z_event);
-#endif
 	zval_ptr_dtor(&z_event);
 }
 
 static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 {
 	php_phongo_commandfailedevent_t* p_event;
-#if PHP_VERSION_ID >= 70000
-	zval z_event;
-#else
-	zval* z_event = NULL;
-#endif
-	bson_error_t      tmp_error = { 0 };
-	zend_class_entry* default_exception_ce;
+	zval                             z_event;
+	bson_error_t                     tmp_error = { 0 };
+	zend_class_entry*                default_exception_ce;
 	TSRMLS_FETCH();
 
 	default_exception_ce = zend_exception_get_default(TSRMLS_C);
@@ -2461,14 +2309,8 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	object_init_ex(&z_event, php_phongo_commandfailedevent_ce);
 	p_event = Z_COMMANDFAILEDEVENT_OBJ_P(&z_event);
-#else
-	MAKE_STD_ZVAL(z_event);
-	object_init_ex(z_event, php_phongo_commandfailedevent_ce);
-	p_event = Z_COMMANDFAILEDEVENT_OBJ_P(z_event);
-#endif
 
 	p_event->client          = mongoc_apm_command_failed_get_context(event);
 	p_event->command_name    = estrdup(mongoc_apm_command_failed_get_command_name(event));
@@ -2483,24 +2325,11 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 	 * locations */
 	mongoc_apm_command_failed_get_error(event, &tmp_error);
 
-	{
-#if PHP_VERSION_ID < 70000
-		MAKE_STD_ZVAL(p_event->z_error);
-		object_init_ex(p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
-		zend_update_property_string(default_exception_ce, p_event->z_error, ZEND_STRL("message"), tmp_error.message TSRMLS_CC);
-		zend_update_property_long(default_exception_ce, p_event->z_error, ZEND_STRL("code"), tmp_error.code TSRMLS_CC);
-#else
-		object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
-		zend_update_property_string(default_exception_ce, &p_event->z_error, ZEND_STRL("message"), tmp_error.message TSRMLS_CC);
-		zend_update_property_long(default_exception_ce, &p_event->z_error, ZEND_STRL("code"), tmp_error.code TSRMLS_CC);
-#endif
-	}
+	object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
+	zend_update_property_string(default_exception_ce, &p_event->z_error, ZEND_STRL("message"), tmp_error.message TSRMLS_CC);
+	zend_update_property_long(default_exception_ce, &p_event->z_error, ZEND_STRL("code"), tmp_error.code TSRMLS_CC);
 
-#if PHP_VERSION_ID >= 70000
 	php_phongo_dispatch_handlers("commandFailed", &z_event);
-#else
-	php_phongo_dispatch_handlers("commandFailed", z_event);
-#endif
 	zval_ptr_dtor(&z_event);
 }
 
@@ -2528,9 +2357,7 @@ static zval* php_phongo_manager_prepare_manager_for_hash(zval* driverOptions, bo
 	zval*                 keyVaultClient          = NULL;
 	zval*                 driverOptionsClone      = NULL;
 	zval*                 autoEncryptionOptsClone = NULL;
-#if PHP_VERSION_ID >= 70000
-	zval stackAutoEncryptionOptsClone;
-#endif
+	zval                  stackAutoEncryptionOptsClone;
 
 	*free = false;
 
@@ -2560,13 +2387,8 @@ static zval* php_phongo_manager_prepare_manager_for_hash(zval* driverOptions, bo
 
 	manager = Z_MANAGER_OBJ_P(keyVaultClient);
 
-#if PHP_VERSION_ID >= 70000
 	driverOptionsClone      = ecalloc(sizeof(zval), 1);
 	autoEncryptionOptsClone = &stackAutoEncryptionOptsClone;
-#else
-	ALLOC_INIT_ZVAL(driverOptionsClone);
-	MAKE_STD_ZVAL(autoEncryptionOptsClone);
-#endif
 
 	ZVAL_DUP(autoEncryptionOptsClone, autoEncryptionOpts);
 	ADD_ASSOC_STRINGL(autoEncryptionOptsClone, "keyVaultClient", manager->client_hash, manager->client_hash_len);
@@ -2593,7 +2415,6 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	zval*                serializable_driver_options = NULL;
 	bool                 free_driver_options         = false;
 
-#if PHP_VERSION_ID >= 70000
 	zval args;
 
 	array_init_size(&args, 4);
@@ -2628,40 +2449,6 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	if (free_driver_options) {
 		efree(serializable_driver_options);
 	}
-
-#else
-	zval* args;
-
-	MAKE_STD_ZVAL(args);
-	array_init_size(args, 4);
-	ADD_ASSOC_LONG_EX(args, "pid", getpid());
-	ADD_ASSOC_STRING(args, "uri", uri_string);
-
-	if (options) {
-		ADD_ASSOC_ZVAL_EX(args, "options", options);
-		Z_ADDREF_P(options);
-	} else {
-		ADD_ASSOC_NULL_EX(args, "options");
-	}
-
-	if (driverOptions) {
-		serializable_driver_options = php_phongo_manager_prepare_manager_for_hash(driverOptions, &free_driver_options TSRMLS_CC);
-		ADD_ASSOC_ZVAL_EX(args, "driverOptions", serializable_driver_options);
-	} else {
-		ADD_ASSOC_NULL_EX(args, "driverOptions");
-	}
-
-	PHP_VAR_SERIALIZE_INIT(var_hash);
-	php_var_serialize(&var_buf, &args, &var_hash TSRMLS_CC);
-	PHP_VAR_SERIALIZE_DESTROY(var_hash);
-
-	if (!EG(exception)) {
-		*hash_len = var_buf.len;
-		hash = estrndup(var_buf.c, *hash_len);
-	}
-
-	zval_ptr_dtor(&args);
-#endif
 
 	smart_str_free(&var_buf);
 
@@ -2704,28 +2491,16 @@ static void php_phongo_persist_client(const char* hash, size_t hash_len, mongoc_
 	pclient->created_by_pid = (int) getpid();
 	pclient->client         = client;
 
-#if PHP_VERSION_ID >= 70000
 	zend_hash_str_update_ptr(&MONGODB_G(pclients), hash, hash_len, pclient);
-#else
-	zend_hash_update(&MONGODB_G(pclients), hash, hash_len + 1, &pclient, sizeof(php_phongo_pclient_t*), NULL);
-#endif
 }
 
 static mongoc_client_t* php_phongo_find_client(const char* hash, size_t hash_len TSRMLS_DC)
 {
-#if PHP_VERSION_ID >= 70000
 	php_phongo_pclient_t* pclient;
 
 	if ((pclient = zend_hash_str_find_ptr(&MONGODB_G(pclients), hash, hash_len)) != NULL) {
 		return pclient->client;
 	}
-#else
-	php_phongo_pclient_t** pclient;
-
-	if (zend_hash_find(&MONGODB_G(pclients), hash, hash_len + 1, (void**) &pclient) == SUCCESS) {
-		return (*pclient)->client;
-	}
-#endif
 
 	return NULL;
 }
@@ -2996,7 +2771,6 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 		keyaltnames_count = ht_data ? zend_hash_num_elements(ht_data) : 0;
 		keyaltnames       = ecalloc(keyaltnames_count, sizeof(char*));
 
-#if PHP_VERSION_ID >= 70000
 		{
 			zend_string* string_key = NULL;
 			zend_ulong   num_key    = 0;
@@ -3026,41 +2800,6 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 			}
 			ZEND_HASH_FOREACH_END();
 		}
-#else
-		{
-			HashPosition pos;
-			char*        string_key     = NULL;
-			uint         string_key_len = 0;
-			ulong        num_key        = 0;
-			zval**       keyaltname;
-
-			for (
-				zend_hash_internal_pointer_reset_ex(ht_data, &pos);
-				zend_hash_get_current_data_ex(ht_data, (void**) &keyaltname, &pos) == SUCCESS;
-				zend_hash_move_forward_ex(ht_data, &pos)) {
-
-				if (i == keyaltnames_count) {
-					phongo_throw_exception(PHONGO_ERROR_LOGIC TSRMLS_CC, "Iterating over too many keyAltNames. Please file a bug report");
-					failed = true;
-					break;
-				}
-
-				if (Z_TYPE_PP(keyaltname) != IS_STRING) {
-					if (zend_hash_get_current_key_ex(ht_data, &string_key, &string_key_len, &num_key, 0, &pos) == HASH_KEY_IS_STRING) {
-						phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected keyAltName with index \"%s\" to be string, %s given", string_key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(*keyaltname));
-					} else {
-						phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected keyAltName with index \"%lu\" to be string, %s given", num_key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(*keyaltname));
-					}
-
-					failed = true;
-					break;
-				}
-
-				keyaltnames[i] = estrdup(Z_STRVAL_PP(keyaltname));
-				i++;
-			}
-		}
-#endif
 
 		if (!failed) {
 			mongoc_client_encryption_datakey_opts_set_keyaltnames(opts, keyaltnames, keyaltnames_count);
@@ -3438,11 +3177,7 @@ ZEND_INI_MH(OnUpdateDebug)
 		mongoc_log_trace_disable();
 		mongoc_log_set_handler(NULL, NULL);
 
-#if PHP_VERSION_ID >= 70000
 		return OnUpdateString(entry, new_value, mh_arg1, mh_arg2, mh_arg3, stage TSRMLS_CC);
-#else
-		return OnUpdateString(entry, new_value, new_value_length, mh_arg1, mh_arg2, mh_arg3, stage TSRMLS_CC);
-#endif
 	}
 
 	if (strcasecmp(ZSTR_VAL(new_value), "stderr") == 0) {
@@ -3483,20 +3218,12 @@ ZEND_INI_MH(OnUpdateDebug)
 	mongoc_log_trace_enable();
 	mongoc_log_set_handler(php_phongo_log, ctx);
 
-#if PHP_VERSION_ID >= 70000
 	return OnUpdateString(entry, new_value, mh_arg1, mh_arg2, mh_arg3, stage TSRMLS_CC);
-#else
-	return OnUpdateString(entry, new_value, new_value_length, mh_arg1, mh_arg2, mh_arg3, stage TSRMLS_CC);
-#endif
 }
 
 /* {{{ INI entries */
 PHP_INI_BEGIN()
-#if PHP_VERSION_ID >= 70000
 	STD_PHP_INI_ENTRY(PHONGO_DEBUG_INI, PHONGO_DEBUG_INI_DEFAULT, PHP_INI_ALL, OnUpdateDebug, debug, zend_mongodb_globals, mongodb_globals)
-#else
-	{ 0, PHP_INI_ALL, (char*) PHONGO_DEBUG_INI, sizeof(PHONGO_DEBUG_INI), OnUpdateDebug, (void*) XtOffsetOf(zend_mongodb_globals, debug), (void*) &mglo, NULL, (char*) PHONGO_DEBUG_INI_DEFAULT, sizeof(PHONGO_DEBUG_INI_DEFAULT) - 1, NULL, 0, 0, 0, NULL },
-#endif
 PHP_INI_END()
 /* }}} */
 
@@ -3514,48 +3241,27 @@ static void phongo_pclient_reset_once(php_phongo_pclient_t* pclient, int pid)
  * process. */
 void php_phongo_client_reset_once(mongoc_client_t* client, int pid)
 {
-	HashTable* pclients;
+	HashTable*            pclients;
+	zval*                 z_ptr;
+	php_phongo_pclient_t* pclient;
 
 	TSRMLS_FETCH();
 	pclients = &MONGODB_G(pclients);
 
-#if PHP_VERSION_ID >= 70000
+	ZEND_HASH_FOREACH_VAL(pclients, z_ptr)
 	{
-		zval*                 z_ptr;
-		php_phongo_pclient_t* pclient;
-
-		ZEND_HASH_FOREACH_VAL(pclients, z_ptr)
-		{
-			if ((Z_TYPE_P(z_ptr) != IS_PTR)) {
-				continue;
-			}
-
-			pclient = (php_phongo_pclient_t*) Z_PTR_P(z_ptr);
-
-			if (pclient->client == client) {
-				phongo_pclient_reset_once(pclient, pid);
-				return;
-			}
+		if ((Z_TYPE_P(z_ptr) != IS_PTR)) {
+			continue;
 		}
-		ZEND_HASH_FOREACH_END();
-	}
-#else
-	{
-		HashPosition pos;
-		php_phongo_pclient_t** pclient;
 
-		for (
-			zend_hash_internal_pointer_reset_ex(pclients, &pos);
-			zend_hash_get_current_data_ex(pclients, (void**) &pclient, &pos) == SUCCESS;
-			zend_hash_move_forward_ex(pclients, &pos)) {
+		pclient = (php_phongo_pclient_t*) Z_PTR_P(z_ptr);
 
-			if ((*pclient)->client == client) {
-				phongo_pclient_reset_once((*pclient), pid);
-				return;
-			}
+		if (pclient->client == client) {
+			phongo_pclient_reset_once(pclient, pid);
+			return;
 		}
 	}
-#endif
+	ZEND_HASH_FOREACH_END();
 }
 
 static inline void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
@@ -3594,10 +3300,8 @@ PHP_GINIT_FUNCTION(mongodb)
 		php_phongo_realloc,
 		php_phongo_free,
 	};
-#if PHP_VERSION_ID >= 70000
 #if defined(COMPILE_DL_MONGODB) && defined(ZTS)
 	ZEND_TSRMLS_CACHE_UPDATE();
-#endif
 #endif
 	memset(mongodb_globals, 0, sizeof(zend_mongodb_globals));
 	mongodb_globals->bsonMemVTable = bsonMemVTable;
@@ -3609,19 +3313,11 @@ PHP_GINIT_FUNCTION(mongodb)
 
 static zend_class_entry* php_phongo_fetch_internal_class(const char* class_name, size_t class_name_len TSRMLS_DC)
 {
-#if PHP_VERSION_ID >= 70000
 	zend_class_entry* pce;
 
 	if ((pce = zend_hash_str_find_ptr(CG(class_table), class_name, class_name_len))) {
 		return pce;
 	}
-#else
-	zend_class_entry** pce;
-
-	if (zend_hash_find(CG(class_table), class_name, class_name_len + 1, (void**) &pce) == SUCCESS) {
-		return *pce;
-	}
-#endif
 
 	return NULL;
 }
@@ -3761,39 +3457,21 @@ PHP_MINIT_FUNCTION(mongodb)
 PHP_MSHUTDOWN_FUNCTION(mongodb)
 {
 	HashTable* pclients = &MONGODB_G(pclients);
+	zval*      z_ptr;
 	(void) type; /* We don't care if we are loaded via dl() or extension= */
 
 	/* Destroy mongoc_client_t objects in reverse order. This is necessary to
 	 * prevent segmentation faults as clients may reference other clients in
 	 * encryption settings. */
-#if PHP_VERSION_ID >= 70000
+	ZEND_HASH_REVERSE_FOREACH_VAL(pclients, z_ptr)
 	{
-		zval* z_ptr;
-
-		ZEND_HASH_REVERSE_FOREACH_VAL(pclients, z_ptr)
-		{
-			if ((Z_TYPE_P(z_ptr) != IS_PTR)) {
-				continue;
-			}
-
-			php_phongo_pclient_destroy((php_phongo_pclient_t*) Z_PTR_P(z_ptr));
+		if ((Z_TYPE_P(z_ptr) != IS_PTR)) {
+			continue;
 		}
-		ZEND_HASH_FOREACH_END();
-	}
-#else
-	{
-		HashPosition pos;
-		php_phongo_pclient_t** pclient;
 
-		for (
-			zend_hash_internal_pointer_end_ex(pclients, &pos);
-			zend_hash_get_current_data_ex(pclients, (void**) &pclient, &pos) == SUCCESS;
-			zend_hash_move_backwards_ex(pclients, &pos)) {
-
-			php_phongo_pclient_destroy(*pclient);
-		}
+		php_phongo_pclient_destroy((php_phongo_pclient_t*) Z_PTR_P(z_ptr));
 	}
-#endif
+	ZEND_HASH_FOREACH_END();
 
 	/* Destroy HashTable for persistent clients. mongoc_client_t objects have been destroyed earlier. */
 	zend_hash_destroy(&MONGODB_G(pclients));

@@ -147,10 +147,6 @@ static void php_phongo_command_free_object(phongo_free_object_arg* object TSRMLS
 	if (intern->bson) {
 		bson_clear(&intern->bson);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
 static phongo_create_object_retval php_phongo_command_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
@@ -162,19 +158,9 @@ static phongo_create_object_retval php_phongo_command_create_object(zend_class_e
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_command;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_command_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_command;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
 static HashTable* php_phongo_command_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
@@ -188,22 +174,14 @@ static HashTable* php_phongo_command_get_debug_info(zval* object, int* is_temp T
 	array_init_size(&retval, 1);
 
 	if (intern->bson) {
-#if PHP_VERSION_ID >= 70000
 		zval zv;
-#else
-		zval* zv;
-#endif
 
 		if (!php_phongo_bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &zv)) {
 			zval_ptr_dtor(&zv);
 			goto done;
 		}
 
-#if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "command", &zv);
-#else
-		ADD_ASSOC_ZVAL_EX(&retval, "command", zv);
-#endif
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "command");
 	}
@@ -226,10 +204,8 @@ void php_phongo_command_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_command, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_command.get_debug_info = php_phongo_command_get_debug_info;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_command.free_obj = php_phongo_command_free_object;
-	php_phongo_handler_command.offset   = XtOffsetOf(php_phongo_command_t, std);
-#endif
+	php_phongo_handler_command.free_obj       = php_phongo_command_free_object;
+	php_phongo_handler_command.offset         = XtOffsetOf(php_phongo_command_t, std);
 } /* }}} */
 
 /*

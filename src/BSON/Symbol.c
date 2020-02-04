@@ -17,11 +17,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/standard/php_var.h>
-#if PHP_VERSION_ID >= 70000
 #include <zend_smart_str.h>
-#else
-#include <ext/standard/php_smart_str.h>
-#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -52,19 +48,11 @@ static bool php_phongo_symbol_init(php_phongo_symbol_t* intern, const char* symb
  * An exception will be thrown on error. */
 static bool php_phongo_symbol_init_from_hash(php_phongo_symbol_t* intern, HashTable* props TSRMLS_DC) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
 	zval* symbol;
 
 	if ((symbol = zend_hash_str_find(props, "symbol", sizeof("symbol") - 1)) && Z_TYPE_P(symbol) == IS_STRING) {
 		return php_phongo_symbol_init(intern, Z_STRVAL_P(symbol), Z_STRLEN_P(symbol) TSRMLS_CC);
 	}
-#else
-	zval** symbol;
-
-	if (zend_hash_find(props, "symbol", sizeof("symbol"), (void**) &symbol) == SUCCESS && Z_TYPE_PP(symbol) == IS_STRING) {
-		return php_phongo_symbol_init(intern, Z_STRVAL_PP(symbol), Z_STRLEN_PP(symbol) TSRMLS_CC);
-	}
-#endif
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"symbol\" string field", ZSTR_VAL(php_phongo_symbol_ce->name));
 	return false;
@@ -116,14 +104,8 @@ static PHP_METHOD(Symbol, serialize)
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	array_init_size(&retval, 1);
 	ADD_ASSOC_STRINGL(&retval, "symbol", intern->symbol, intern->symbol_len);
-#else
-	ALLOC_INIT_ZVAL(retval);
-	array_init_size(retval, 1);
-	ADD_ASSOC_STRINGL(retval, "symbol", intern->symbol, intern->symbol_len);
-#endif
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
 	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
@@ -140,15 +122,11 @@ static PHP_METHOD(Symbol, serialize)
 */
 static PHP_METHOD(Symbol, unserialize)
 {
-	php_phongo_symbol_t* intern;
-	zend_error_handling  error_handling;
-	char*                serialized;
-	phongo_zpp_char_len  serialized_len;
-#if PHP_VERSION_ID >= 70000
-	zval props;
-#else
-	zval* props;
-#endif
+	php_phongo_symbol_t*   intern;
+	zend_error_handling    error_handling;
+	char*                  serialized;
+	phongo_zpp_char_len    serialized_len;
+	zval                   props;
 	php_unserialize_data_t var_hash;
 
 	intern = Z_SYMBOL_OBJ_P(getThis());
@@ -161,9 +139,6 @@ static PHP_METHOD(Symbol, unserialize)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-#if PHP_VERSION_ID < 70000
-	ALLOC_INIT_ZVAL(props);
-#endif
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
 	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
 		zval_ptr_dtor(&props);
@@ -174,11 +149,7 @@ static PHP_METHOD(Symbol, unserialize)
 	}
 	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
 
-#if PHP_VERSION_ID >= 70000
 	php_phongo_symbol_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
-#else
-	php_phongo_symbol_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
-#endif
 	zval_ptr_dtor(&props);
 } /* }}} */
 
@@ -220,10 +191,6 @@ static void php_phongo_symbol_free_object(phongo_free_object_arg* object TSRMLS_
 		zend_hash_destroy(intern->properties);
 		FREE_HASHTABLE(intern->properties);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
 phongo_create_object_retval php_phongo_symbol_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
@@ -234,19 +201,9 @@ phongo_create_object_retval php_phongo_symbol_create_object(zend_class_entry* cl
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_symbol;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_symbol_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_symbol;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
 static phongo_create_object_retval php_phongo_symbol_clone_object(zval* object TSRMLS_DC) /* {{{ */
@@ -258,17 +215,8 @@ static phongo_create_object_retval php_phongo_symbol_clone_object(zval* object T
 	intern     = Z_SYMBOL_OBJ_P(object);
 	new_object = php_phongo_symbol_create_object(Z_OBJCE_P(object) TSRMLS_CC);
 
-#if PHP_VERSION_ID >= 70000
 	new_intern = Z_OBJ_SYMBOL(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std TSRMLS_CC);
-#else
-	{
-		zend_object_handle handle = Z_OBJ_HANDLE_P(object);
-
-		new_intern = (php_phongo_symbol_t*) zend_object_store_get_object_by_handle(new_object.handle TSRMLS_CC);
-		zend_objects_clone_members(&new_intern->std, new_object, &intern->std, handle TSRMLS_CC);
-	}
-#endif
 
 	php_phongo_symbol_init(new_intern, intern->symbol, intern->symbol_len TSRMLS_CC);
 
@@ -306,22 +254,12 @@ HashTable* php_phongo_symbol_get_properties_hash(zval* object, bool is_debug TSR
 		return props;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	{
 		zval symbol;
 
 		ZVAL_STRING(&symbol, intern->symbol);
 		zend_hash_str_update(props, "symbol", sizeof("symbol") - 1, &symbol);
 	}
-#else
-	{
-		zval* symbol;
-
-		MAKE_STD_ZVAL(symbol);
-		ZVAL_STRING(symbol, intern->symbol, 1);
-		zend_hash_update(props, "symbol", sizeof("symbol"), &symbol, sizeof(symbol), NULL);
-	}
-#endif
 
 	return props;
 } /* }}} */
@@ -357,10 +295,8 @@ void php_phongo_symbol_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_symbol.get_debug_info  = php_phongo_symbol_get_debug_info;
 	php_phongo_handler_symbol.get_gc          = php_phongo_symbol_get_gc;
 	php_phongo_handler_symbol.get_properties  = php_phongo_symbol_get_properties;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_symbol.free_obj = php_phongo_symbol_free_object;
-	php_phongo_handler_symbol.offset   = XtOffsetOf(php_phongo_symbol_t, std);
-#endif
+	php_phongo_handler_symbol.free_obj        = php_phongo_symbol_free_object;
+	php_phongo_handler_symbol.offset          = XtOffsetOf(php_phongo_symbol_t, std);
 } /* }}} */
 
 /*

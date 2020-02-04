@@ -21,15 +21,9 @@
 
 #include "php_bson.h"
 
-#if PHP_VERSION_ID >= 70000
 #define PHONGO_ZEND_OBJECT_PRE
 #define PHONGO_ZEND_OBJECT_POST zend_object std;
 #define PHONGO_STRUCT_ZVAL zval
-#else
-#define PHONGO_ZEND_OBJECT_PRE zend_object std;
-#define PHONGO_ZEND_OBJECT_POST
-#define PHONGO_STRUCT_ZVAL zval*
-#endif
 
 typedef struct {
 	PHONGO_ZEND_OBJECT_PRE

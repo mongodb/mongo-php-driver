@@ -46,11 +46,7 @@ PHP_METHOD(CommandStartedEvent, getCommand)
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	RETURN_ZVAL(&state.zchild, 0, 1);
-#else
-	RETURN_ZVAL(state.zchild, 0, 1);
-#endif
 } /* }}} */
 
 /* {{{ proto string CommandStartedEvent::getCommandName()
@@ -175,10 +171,6 @@ static void php_phongo_commandstartedevent_free_object(phongo_free_object_arg* o
 	if (intern->database_name) {
 		efree(intern->database_name);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
 static phongo_create_object_retval php_phongo_commandstartedevent_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
@@ -190,19 +182,9 @@ static phongo_create_object_retval php_phongo_commandstartedevent_create_object(
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_commandstartedevent;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_commandstartedevent_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_commandstartedevent;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
 static HashTable* php_phongo_commandstartedevent_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
@@ -223,11 +205,7 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(zval* object, in
 		goto done;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	ADD_ASSOC_ZVAL(&retval, "command", &command_state.zchild);
-#else
-	ADD_ASSOC_ZVAL(&retval, "command", command_state.zchild);
-#endif
 
 	ADD_ASSOC_STRING(&retval, "commandName", intern->command_name);
 	ADD_ASSOC_STRING(&retval, "databaseName", intern->database_name);
@@ -239,18 +217,10 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(zval* object, in
 	ADD_ASSOC_STRING(&retval, "requestId", request_id);
 
 	{
-#if PHP_VERSION_ID >= 70000
 		zval server;
 
 		phongo_server_init(&server, intern->client, intern->server_id TSRMLS_CC);
 		ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
-#else
-		zval* server = NULL;
-
-		MAKE_STD_ZVAL(server);
-		phongo_server_init(server, intern->client, intern->server_id TSRMLS_CC);
-		ADD_ASSOC_ZVAL_EX(&retval, "server", server);
-#endif
 	}
 
 done:
@@ -272,10 +242,8 @@ void php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_commandstartedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_commandstartedevent.get_debug_info = php_phongo_commandstartedevent_get_debug_info;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_commandstartedevent.free_obj = php_phongo_commandstartedevent_free_object;
-	php_phongo_handler_commandstartedevent.offset   = XtOffsetOf(php_phongo_commandstartedevent_t, std);
-#endif
+	php_phongo_handler_commandstartedevent.free_obj       = php_phongo_commandstartedevent_free_object;
+	php_phongo_handler_commandstartedevent.offset         = XtOffsetOf(php_phongo_commandstartedevent_t, std);
 
 	return;
 } /* }}} */

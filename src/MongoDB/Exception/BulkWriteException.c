@@ -36,11 +36,7 @@ void php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "BulkWriteException", php_phongo_bulkwriteexception_me);
-#if PHP_VERSION_ID >= 70000
 	php_phongo_bulkwriteexception_ce = zend_register_internal_class_ex(&ce, php_phongo_writeexception_ce);
-#else
-	php_phongo_bulkwriteexception_ce = zend_register_internal_class_ex(&ce, php_phongo_writeexception_ce, NULL TSRMLS_CC);
-#endif
 } /* }}} */
 
 /*

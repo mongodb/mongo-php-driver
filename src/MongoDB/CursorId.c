@@ -17,11 +17,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/standard/php_var.h>
-#if PHP_VERSION_ID >= 70000
 #include <zend_smart_str.h>
-#else
-#include <ext/standard/php_smart_str.h>
-#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -51,19 +47,11 @@ static bool php_phongo_cursorid_init_from_string(php_phongo_cursorid_t* intern, 
  * An exception will be thrown on error. */
 static bool php_phongo_cursorid_init_from_hash(php_phongo_cursorid_t* intern, HashTable* props TSRMLS_DC) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
 	zval* value;
 
 	if ((value = zend_hash_str_find(props, "id", sizeof("id") - 1)) && Z_TYPE_P(value) == IS_STRING) {
 		return php_phongo_cursorid_init_from_string(intern, Z_STRVAL_P(value), Z_STRLEN_P(value) TSRMLS_CC);
 	}
-#else
-	zval** value;
-
-	if (zend_hash_find(props, "id", sizeof("id"), (void**) &value) == SUCCESS && Z_TYPE_PP(value) == IS_STRING) {
-		return php_phongo_cursorid_init_from_string(intern, Z_STRVAL_PP(value), Z_STRLEN_PP(value) TSRMLS_CC);
-	}
-#endif
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"id\" string field", ZSTR_VAL(php_phongo_cursorid_ce->name));
 	return false;
@@ -103,14 +91,8 @@ static PHP_METHOD(CursorId, serialize)
 
 	intern = Z_CURSORID_OBJ_P(getThis());
 
-#if PHP_VERSION_ID >= 70000
 	array_init_size(&retval, 1);
 	ADD_ASSOC_INT64_AS_STRING(&retval, "id", intern->id);
-#else
-	ALLOC_INIT_ZVAL(retval);
-	array_init_size(retval, 1);
-	ADD_ASSOC_INT64_AS_STRING(retval, "id", intern->id);
-#endif
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
 	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
@@ -131,11 +113,7 @@ static PHP_METHOD(CursorId, unserialize)
 	zend_error_handling    error_handling;
 	char*                  serialized;
 	phongo_zpp_char_len    serialized_len;
-#if PHP_VERSION_ID >= 70000
-	zval props;
-#else
-	zval* props;
-#endif
+	zval                   props;
 	php_unserialize_data_t var_hash;
 
 	intern = Z_CURSORID_OBJ_P(getThis());
@@ -148,9 +126,6 @@ static PHP_METHOD(CursorId, unserialize)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-#if PHP_VERSION_ID < 70000
-	ALLOC_INIT_ZVAL(props);
-#endif
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
 	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
 		zval_ptr_dtor(&props);
@@ -161,11 +136,7 @@ static PHP_METHOD(CursorId, unserialize)
 	}
 	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
 
-#if PHP_VERSION_ID >= 70000
 	php_phongo_cursorid_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
-#else
-	php_phongo_cursorid_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
-#endif
 	zval_ptr_dtor(&props);
 } /* }}} */
 
@@ -197,10 +168,6 @@ static void php_phongo_cursorid_free_object(phongo_free_object_arg* object TSRML
 	php_phongo_cursorid_t* intern = Z_OBJ_CURSORID(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
 static phongo_create_object_retval php_phongo_cursorid_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
@@ -212,19 +179,9 @@ static phongo_create_object_retval php_phongo_cursorid_create_object(zend_class_
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_cursorid;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_cursorid_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_cursorid;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
 static HashTable* php_phongo_cursorid_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
@@ -260,10 +217,8 @@ void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_cursorid, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_cursorid.get_debug_info = php_phongo_cursorid_get_debug_info;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_cursorid.free_obj = php_phongo_cursorid_free_object;
-	php_phongo_handler_cursorid.offset   = XtOffsetOf(php_phongo_cursorid_t, std);
-#endif
+	php_phongo_handler_cursorid.free_obj       = php_phongo_cursorid_free_object;
+	php_phongo_handler_cursorid.offset         = XtOffsetOf(php_phongo_cursorid_t, std);
 } /* }}} */
 
 /*

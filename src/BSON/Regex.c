@@ -17,11 +17,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/standard/php_var.h>
-#if PHP_VERSION_ID >= 70000
 #include <zend_smart_str.h>
-#else
-#include <ext/standard/php_smart_str.h>
-#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -74,7 +70,6 @@ static bool php_phongo_regex_init(php_phongo_regex_t* intern, const char* patter
  * An exception will be thrown on error. */
 static bool php_phongo_regex_init_from_hash(php_phongo_regex_t* intern, HashTable* props TSRMLS_DC) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
 	zval *pattern, *flags;
 
 	if ((pattern = zend_hash_str_find(props, "pattern", sizeof("pattern") - 1)) && Z_TYPE_P(pattern) == IS_STRING &&
@@ -82,15 +77,6 @@ static bool php_phongo_regex_init_from_hash(php_phongo_regex_t* intern, HashTabl
 
 		return php_phongo_regex_init(intern, Z_STRVAL_P(pattern), Z_STRLEN_P(pattern), Z_STRVAL_P(flags), Z_STRLEN_P(flags) TSRMLS_CC);
 	}
-#else
-	zval **pattern, **flags;
-
-	if (zend_hash_find(props, "pattern", sizeof("pattern"), (void**) &pattern) == SUCCESS && Z_TYPE_PP(pattern) == IS_STRING &&
-		zend_hash_find(props, "flags", sizeof("flags"), (void**) &flags) == SUCCESS && Z_TYPE_PP(flags) == IS_STRING) {
-
-		return php_phongo_regex_init(intern, Z_STRVAL_PP(pattern), Z_STRLEN_PP(pattern), Z_STRVAL_PP(flags), Z_STRLEN_PP(flags) TSRMLS_CC);
-	}
-#endif
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"pattern\" and \"flags\" string fields", ZSTR_VAL(php_phongo_regex_ce->name));
 	return false;
@@ -220,16 +206,9 @@ static PHP_METHOD(Regex, serialize)
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	array_init_size(&retval, 2);
 	ADD_ASSOC_STRINGL(&retval, "pattern", intern->pattern, intern->pattern_len);
 	ADD_ASSOC_STRINGL(&retval, "flags", intern->flags, intern->flags_len);
-#else
-	ALLOC_INIT_ZVAL(retval);
-	array_init_size(retval, 2);
-	ADD_ASSOC_STRINGL(retval, "pattern", intern->pattern, intern->pattern_len);
-	ADD_ASSOC_STRINGL(retval, "flags", intern->flags, intern->flags_len);
-#endif
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
 	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
@@ -246,15 +225,11 @@ static PHP_METHOD(Regex, serialize)
 */
 static PHP_METHOD(Regex, unserialize)
 {
-	php_phongo_regex_t* intern;
-	zend_error_handling error_handling;
-	char*               serialized;
-	phongo_zpp_char_len serialized_len;
-#if PHP_VERSION_ID >= 70000
-	zval props;
-#else
-	zval* props;
-#endif
+	php_phongo_regex_t*    intern;
+	zend_error_handling    error_handling;
+	char*                  serialized;
+	phongo_zpp_char_len    serialized_len;
+	zval                   props;
 	php_unserialize_data_t var_hash;
 
 	intern = Z_REGEX_OBJ_P(getThis());
@@ -267,9 +242,6 @@ static PHP_METHOD(Regex, unserialize)
 	}
 	zend_restore_error_handling(&error_handling TSRMLS_CC);
 
-#if PHP_VERSION_ID < 70000
-	ALLOC_INIT_ZVAL(props);
-#endif
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
 	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
 		zval_ptr_dtor(&props);
@@ -280,11 +252,7 @@ static PHP_METHOD(Regex, unserialize)
 	}
 	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
 
-#if PHP_VERSION_ID >= 70000
 	php_phongo_regex_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
-#else
-	php_phongo_regex_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
-#endif
 	zval_ptr_dtor(&props);
 } /* }}} */
 
@@ -341,10 +309,6 @@ static void php_phongo_regex_free_object(phongo_free_object_arg* object TSRMLS_D
 		zend_hash_destroy(intern->properties);
 		FREE_HASHTABLE(intern->properties);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
 static phongo_create_object_retval php_phongo_regex_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
@@ -356,19 +320,9 @@ static phongo_create_object_retval php_phongo_regex_create_object(zend_class_ent
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_regex;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_regex_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_regex;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
 static phongo_create_object_retval php_phongo_regex_clone_object(zval* object TSRMLS_DC) /* {{{ */
@@ -380,17 +334,8 @@ static phongo_create_object_retval php_phongo_regex_clone_object(zval* object TS
 	intern     = Z_REGEX_OBJ_P(object);
 	new_object = php_phongo_regex_create_object(Z_OBJCE_P(object) TSRMLS_CC);
 
-#if PHP_VERSION_ID >= 70000
 	new_intern = Z_OBJ_REGEX(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std TSRMLS_CC);
-#else
-	{
-		zend_object_handle handle = Z_OBJ_HANDLE_P(object);
-
-		new_intern = (php_phongo_regex_t*) zend_object_store_get_object_by_handle(new_object.handle TSRMLS_CC);
-		zend_objects_clone_members(&new_intern->std, new_object, &intern->std, handle TSRMLS_CC);
-	}
-#endif
 
 	php_phongo_regex_init(new_intern, intern->pattern, intern->pattern_len, intern->flags, intern->flags_len TSRMLS_CC);
 
@@ -436,7 +381,6 @@ static HashTable* php_phongo_regex_get_properties_hash(zval* object, bool is_deb
 		return props;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	{
 		zval pattern, flags;
 
@@ -446,19 +390,6 @@ static HashTable* php_phongo_regex_get_properties_hash(zval* object, bool is_deb
 		ZVAL_STRINGL(&flags, intern->flags, intern->flags_len);
 		zend_hash_str_update(props, "flags", sizeof("flags") - 1, &flags);
 	}
-#else
-	{
-		zval *pattern, *flags;
-
-		MAKE_STD_ZVAL(pattern);
-		ZVAL_STRINGL(pattern, intern->pattern, intern->pattern_len, 1);
-		zend_hash_update(props, "pattern", sizeof("pattern"), &pattern, sizeof(pattern), NULL);
-
-		MAKE_STD_ZVAL(flags);
-		ZVAL_STRINGL(flags, intern->flags, intern->flags_len, 1);
-		zend_hash_update(props, "flags", sizeof("flags"), &flags, sizeof(flags), NULL);
-	}
-#endif
 
 	return props;
 } /* }}} */
@@ -495,10 +426,8 @@ void php_phongo_regex_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_regex.get_debug_info  = php_phongo_regex_get_debug_info;
 	php_phongo_handler_regex.get_gc          = php_phongo_regex_get_gc;
 	php_phongo_handler_regex.get_properties  = php_phongo_regex_get_properties;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_regex.free_obj = php_phongo_regex_free_object;
-	php_phongo_handler_regex.offset   = XtOffsetOf(php_phongo_regex_t, std);
-#endif
+	php_phongo_handler_regex.free_obj        = php_phongo_regex_free_object;
+	php_phongo_handler_regex.offset          = XtOffsetOf(php_phongo_regex_t, std);
 } /* }}} */
 
 /*

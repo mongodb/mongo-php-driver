@@ -30,19 +30,13 @@ zend_class_entry* php_phongo_commandexception_ce;
 static PHP_METHOD(CommandException, getResultDocument)
 {
 	zval* resultdocument;
-#if PHP_VERSION_ID >= 70000
-	zval rv;
-#endif
+	zval  rv;
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	resultdocument = zend_read_property(php_phongo_commandexception_ce, getThis(), ZEND_STRL("resultDocument"), 0, &rv TSRMLS_CC);
-#else
-	resultdocument = zend_read_property(php_phongo_commandexception_ce, getThis(), ZEND_STRL("resultDocument"), 0 TSRMLS_CC);
-#endif
 
 	RETURN_ZVAL(resultdocument, 1, 0);
 } /* }}} */
@@ -64,11 +58,7 @@ void php_phongo_commandexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "CommandException", php_phongo_commandexception_me);
-#if PHP_VERSION_ID >= 70000
 	php_phongo_commandexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce);
-#else
-	php_phongo_commandexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce, NULL TSRMLS_CC);
-#endif
 
 	zend_declare_property_null(php_phongo_commandexception_ce, ZEND_STRL("resultDocument"), ZEND_ACC_PROTECTED TSRMLS_CC);
 } /* }}} */

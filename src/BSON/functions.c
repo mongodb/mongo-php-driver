@@ -75,11 +75,7 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
 
 	php_phongo_bson_typemap_dtor(&state.map);
 
-#if PHP_VERSION_ID >= 70000
 	RETURN_ZVAL(&state.zchild, 0, 1);
-#else
-	RETURN_ZVAL(state.zchild, 0, 1);
-#endif
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\fromJSON(string $json)

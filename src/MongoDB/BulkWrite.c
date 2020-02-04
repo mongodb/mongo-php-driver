@@ -44,11 +44,7 @@ static void php_phongo_bulkwrite_extract_id(bson_t* doc, zval** return_value) /*
 		goto cleanup;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	id = php_array_fetchc(&state.zchild, "_id");
-#else
-	id = php_array_fetchc(state.zchild, "_id");
-#endif
 
 	if (id) {
 		ZVAL_ZVAL(*return_value, id, 1, 0);
@@ -566,10 +562,6 @@ static void php_phongo_bulkwrite_free_object(phongo_free_object_arg* object TSRM
 	if (intern->collection) {
 		efree(intern->collection);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
 static phongo_create_object_retval php_phongo_bulkwrite_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
@@ -581,19 +573,9 @@ static phongo_create_object_retval php_phongo_bulkwrite_create_object(zend_class
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_bulkwrite;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_bulkwrite_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_bulkwrite;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
 static HashTable* php_phongo_bulkwrite_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
@@ -629,18 +611,10 @@ static HashTable* php_phongo_bulkwrite_get_debug_info(zval* object, int* is_temp
 	ADD_ASSOC_LONG_EX(&retval, "server_id", mongoc_bulk_operation_get_hint(intern->bulk));
 
 	if (mongoc_bulk_operation_get_write_concern(intern->bulk)) {
-#if PHP_VERSION_ID >= 70000
 		zval write_concern;
 
 		php_phongo_write_concern_to_zval(&write_concern, mongoc_bulk_operation_get_write_concern(intern->bulk));
 		ADD_ASSOC_ZVAL_EX(&retval, "write_concern", &write_concern);
-#else
-		zval* write_concern = NULL;
-		MAKE_STD_ZVAL(write_concern);
-
-		php_phongo_write_concern_to_zval(write_concern, mongoc_bulk_operation_get_write_concern(intern->bulk));
-		ADD_ASSOC_ZVAL_EX(&retval, "write_concern", write_concern);
-#endif
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "write_concern");
 	}
@@ -661,10 +635,8 @@ void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_bulkwrite, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_bulkwrite.get_debug_info = php_phongo_bulkwrite_get_debug_info;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_bulkwrite.free_obj = php_phongo_bulkwrite_free_object;
-	php_phongo_handler_bulkwrite.offset   = XtOffsetOf(php_phongo_bulkwrite_t, std);
-#endif
+	php_phongo_handler_bulkwrite.free_obj       = php_phongo_bulkwrite_free_object;
+	php_phongo_handler_bulkwrite.offset         = XtOffsetOf(php_phongo_bulkwrite_t, std);
 
 	zend_class_implements(php_phongo_bulkwrite_ce TSRMLS_CC, 1, spl_ce_Countable);
 } /* }}} */

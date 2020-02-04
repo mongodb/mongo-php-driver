@@ -30,19 +30,13 @@ zend_class_entry* php_phongo_writeexception_ce;
 static PHP_METHOD(WriteException, getWriteResult)
 {
 	zval* writeresult;
-#if PHP_VERSION_ID >= 70000
-	zval rv;
-#endif
+	zval  rv;
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	writeresult = zend_read_property(php_phongo_writeexception_ce, getThis(), ZEND_STRL("writeResult"), 0, &rv TSRMLS_CC);
-#else
-	writeresult                  = zend_read_property(php_phongo_writeexception_ce, getThis(), ZEND_STRL("writeResult"), 0 TSRMLS_CC);
-#endif
 
 	RETURN_ZVAL(writeresult, 1, 0);
 } /* }}} */
@@ -64,11 +58,7 @@ void php_phongo_writeexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "WriteException", php_phongo_writeexception_me);
-#if PHP_VERSION_ID >= 70000
 	php_phongo_writeexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce);
-#else
-	php_phongo_writeexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce, NULL TSRMLS_CC);
-#endif
 	php_phongo_writeexception_ce->ce_flags |= ZEND_ACC_EXPLICIT_ABSTRACT_CLASS;
 
 	zend_declare_property_null(php_phongo_writeexception_ce, ZEND_STRL("writeResult"), ZEND_ACC_PROTECTED TSRMLS_CC);

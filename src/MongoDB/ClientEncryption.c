@@ -133,10 +133,6 @@ static void php_phongo_clientencryption_free_object(phongo_free_object_arg* obje
 	if (intern->client_encryption) {
 		mongoc_client_encryption_destroy(intern->client_encryption);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
 static phongo_create_object_retval php_phongo_clientencryption_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
@@ -148,19 +144,9 @@ static phongo_create_object_retval php_phongo_clientencryption_create_object(zen
 	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_clientencryption;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_clientencryption_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_clientencryption;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
 static HashTable* php_phongo_clientencryption_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
@@ -189,10 +175,8 @@ void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_clientencryption, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_clientencryption.get_debug_info = php_phongo_clientencryption_get_debug_info;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_clientencryption.free_obj = php_phongo_clientencryption_free_object;
-	php_phongo_handler_clientencryption.offset   = XtOffsetOf(php_phongo_clientencryption_t, std);
-#endif
+	php_phongo_handler_clientencryption.free_obj       = php_phongo_clientencryption_free_object;
+	php_phongo_handler_clientencryption.offset         = XtOffsetOf(php_phongo_clientencryption_t, std);
 
 	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC"), MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC TSRMLS_CC);
 	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM"), MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM TSRMLS_CC);

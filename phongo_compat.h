@@ -19,9 +19,7 @@
 
 #include <php.h>
 #include <Zend/zend_string.h>
-#if PHP_VERSION_ID >= 70000
 #include <Zend/zend_portability.h>
-#endif
 
 #ifdef PHP_WIN32
 #include "config.w32.h"
@@ -40,11 +38,7 @@
 #define HASH_KEY_NON_EXISTENT HASH_KEY_NON_EXISTANT
 #endif
 
-#if PHP_VERSION_ID >= 70000
 #define str_efree(s) efree((char*) s)
-#else
-#include <Zend/zend_string.h>
-#endif
 
 #if defined(__GNUC__)
 #define ARG_UNUSED __attribute__((unused))
@@ -66,7 +60,6 @@
 #define PHONGO_BREAK_INTENTIONALLY_MISSING
 #endif
 
-#if PHP_VERSION_ID >= 70000
 #define phongo_char zend_string
 #define phongo_long zend_long
 #if SIZEOF_ZEND_LONG == 8
@@ -120,77 +113,6 @@
 			0            \
 		}                \
 	}
-#else /* PHP_VERSION_ID < 70000 */
-#define phongo_char char
-#define phongo_long long
-#define PHONGO_LONG_FORMAT "ld"
-#define SIZEOF_PHONGO_LONG SIZEOF_LONG
-#define ZSTR_VAL(str) str
-#define phongo_create_object_retval zend_object_value
-#define phongo_get_gc_table zval***
-#define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t*) ecalloc(1, sizeof(_obj_t))
-#define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data) TSRMLS_FETCH_FROM_CTX(user_data)
-#define DECLARE_RETURN_VALUE_USED
-#define EXCEPTION_P(_ex, _zp) _zp = _ex
-#define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRS(_key), (char*) (_value), 1);
-#define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRS(_key), (char*) (_value), _len, 1);
-#define ADD_ASSOC_STRING_EX(_zv, _key, _key_len, _value, _value_len) add_assoc_stringl_ex(_zv, _key, _key_len + 1, (char*) (_value), _value_len, 1);
-#define ADD_ASSOC_LONG_EX(_zv, _key, _value) add_assoc_long_ex(_zv, ZEND_STRS(_key), _value);
-#define ADD_ASSOC_ZVAL_EX(_zv, _key, _value) add_assoc_zval_ex(_zv, ZEND_STRS(_key), _value);
-#define ADD_ASSOC_ZVAL(_zv, _key, _value) add_assoc_zval(_zv, _key, _value);
-#define ADD_ASSOC_NULL_EX(_zv, _key) add_assoc_null_ex(_zv, ZEND_STRS(_key));
-#define ADD_ASSOC_BOOL_EX(_zv, _key, _value) add_assoc_bool_ex(_zv, ZEND_STRS(_key), _value);
-#define ZVAL_INT64_STRING(_zv, _value)                              \
-	do {                                                            \
-		char tmp[24];                                               \
-		int  tmp_len;                                               \
-		tmp_len = snprintf(tmp, sizeof(tmp), "%" PRId64, (_value)); \
-		ZVAL_STRINGL((_zv), tmp, tmp_len, 1);                       \
-	} while (0)
-
-#define ADD_ASSOC_INT64_AS_STRING(_zv, _key, _value) \
-	do {                                             \
-		zval* z_int;                                 \
-		MAKE_STD_ZVAL(z_int);                        \
-		ZVAL_INT64_STRING(z_int, (_value));          \
-		ADD_ASSOC_ZVAL_EX((_zv), (_key), z_int);     \
-	} while (0)
-#define ADD_NEXT_INDEX_STRINGL(_zv, _value, _len) add_next_index_stringl(_zv, _value, _len, 1);
-#define Z_PHPDATE_P(object) ((php_date_obj*) zend_object_store_get_object(object TSRMLS_CC))
-#define Z_ISUNDEF(x) !x
-#define ZVAL_UNDEF(x) \
-	do {              \
-		(*x) = NULL;  \
-	} while (0)
-#define ZVAL_ARR(z, a)               \
-	do {                             \
-		HashTable* __arr = (a);      \
-		zval*      __z   = (z);      \
-		Z_ARRVAL_P(__z)  = __arr;    \
-		Z_TYPE_P(__z)    = IS_ARRAY; \
-	} while (0);
-#define ZVAL_DUP(z, v)        \
-	do {                      \
-		zval*       _z = (z); \
-		const zval* _v = (v); \
-		*_z            = *_v; \
-		INIT_PZVAL(_z);       \
-		zval_copy_ctor(_z);   \
-	} while (0);
-#define phongo_free_object_arg void
-#define phongo_zpp_char_len int
-#define ZEND_HASH_APPLY_PROTECTION(ht) 1
-#define ZEND_HASH_GET_APPLY_COUNT(ht) ((ht)->nApplyCount)
-#define ZEND_HASH_DEC_APPLY_COUNT(ht) ((ht)->nApplyCount -= 1)
-#define ZEND_HASH_INC_APPLY_COUNT(ht) ((ht)->nApplyCount += 1)
-#define PHONGO_RETVAL_STRINGL(s, slen) RETVAL_STRINGL(s, slen, 1)
-#define PHONGO_RETURN_STRINGL(s, slen) RETURN_STRINGL(s, slen, 1)
-#define PHONGO_RETVAL_STRING(s) RETVAL_STRING(s, 1)
-#define PHONGO_RETURN_STRING(s) RETURN_STRING(s, 1)
-#define PHONGO_RETVAL_SMART_STR(val) PHONGO_RETVAL_STRINGL((val).c, (val).len);
-#define ZVAL_RETVAL_TYPE zval*
-#define ZVAL_STATIC_INIT zval_used_for_init
-#endif
 
 #if SIZEOF_PHONGO_LONG == 8
 #define ADD_INDEX_INT64(_zv, _index, _value) add_index_long((_zv), (_index), (_value))
@@ -198,7 +120,6 @@
 #define ADD_ASSOC_INT64(_zv, _key, _value) add_assoc_long((_zv), (_key), (_value))
 #define ZVAL_INT64(_zv, _value) ZVAL_LONG((_zv), (_value))
 #elif SIZEOF_PHONGO_LONG == 4
-#if PHP_VERSION_ID >= 70000
 #define ADD_INDEX_INT64(_zv, _index, _value)                    \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {         \
 		zval zchild;                                            \
@@ -223,38 +144,6 @@
 	} else {                                                    \
 		add_assoc_long((_zv), (_key), (_value));                \
 	}
-#else /* PHP_VERSION_ID < 70000 */
-#define ADD_INDEX_INT64(_zv, _index, _value)                   \
-	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {        \
-		zval* zchild = NULL;                                   \
-		TSRMLS_FETCH();                                        \
-		MAKE_STD_ZVAL(zchild);                                 \
-		php_phongo_bson_new_int64(zchild, (_value) TSRMLS_CC); \
-		add_index_zval((_zv), (_index), zchild);               \
-	} else {                                                   \
-		add_index_long((_zv), (_index), (_value));             \
-	}
-#define ADD_NEXT_INDEX_INT64(_zv, _value)                      \
-	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {        \
-		zval* zchild = NULL;                                   \
-		TSRMLS_FETCH();                                        \
-		MAKE_STD_ZVAL(zchild);                                 \
-		php_phongo_bson_new_int64(zchild, (_value) TSRMLS_CC); \
-		add_next_index_zval((_zv), zchild);                    \
-	} else {                                                   \
-		add_next_index_long((_zv), (_value));                  \
-	}
-#define ADD_ASSOC_INT64(_zv, _key, _value)                     \
-	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {        \
-		zval* zchild = NULL;                                   \
-		TSRMLS_FETCH();                                        \
-		MAKE_STD_ZVAL(zchild);                                 \
-		php_phongo_bson_new_int64(zchild, (_value) TSRMLS_CC); \
-		add_assoc_zval((_zv), (_key), zchild);                 \
-	} else {                                                   \
-		add_assoc_long((_zv), (_key), (_value));               \
-	}
-#endif /* PHP_VERSION_ID */
 #define ZVAL_INT64(_zv, _value)                               \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {       \
 		php_phongo_bson_new_int64((_zv), (_value) TSRMLS_CC); \

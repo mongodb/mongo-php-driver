@@ -58,17 +58,8 @@ static void php_phongo_cursor_iterator_dtor(zend_object_iterator* iter TSRMLS_DC
 	php_phongo_cursor_iterator* cursor_it = (php_phongo_cursor_iterator*) iter;
 
 	if (!Z_ISUNDEF(cursor_it->intern.data)) {
-#if PHP_VERSION_ID >= 70000
 		zval_ptr_dtor(&cursor_it->intern.data);
-#else
-		zval_ptr_dtor((zval**) &cursor_it->intern.data);
-		cursor_it->intern.data = NULL;
-#endif
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(cursor_it);
-#endif
 } /* }}} */
 
 static int php_phongo_cursor_iterator_valid(zend_object_iterator* iter TSRMLS_DC) /* {{{ */
@@ -89,21 +80,12 @@ static void php_phongo_cursor_iterator_get_current_key(zend_object_iterator* ite
 	ZVAL_LONG(key, cursor->current);
 } /* }}} */
 
-#if PHP_VERSION_ID < 70000
-static void php_phongo_cursor_iterator_get_current_data(zend_object_iterator* iter, zval*** data TSRMLS_DC) /* {{{ */
-{
-	php_phongo_cursor_t* cursor = ((php_phongo_cursor_iterator*) iter)->cursor;
-
-	*data = &cursor->visitor_data.zchild;
-} /* }}} */
-#else
 static zval* php_phongo_cursor_iterator_get_current_data(zend_object_iterator* iter) /* {{{ */
 {
 	php_phongo_cursor_t* cursor = ((php_phongo_cursor_iterator*) iter)->cursor;
 
 	return &cursor->visitor_data.zchild;
 } /* }}} */
-#endif
 
 static void php_phongo_cursor_iterator_move_forward(zend_object_iterator* iter TSRMLS_DC) /* {{{ */
 {
@@ -205,16 +187,9 @@ static zend_object_iterator* php_phongo_cursor_get_iterator(zend_class_entry* ce
 	cursor->got_iterator = true;
 
 	cursor_it = ecalloc(1, sizeof(php_phongo_cursor_iterator));
-#if PHP_VERSION_ID >= 70000
 	zend_iterator_init(&cursor_it->intern);
-#endif
 
-#if PHP_VERSION_ID >= 70000
 	ZVAL_COPY(&cursor_it->intern.data, object);
-#else
-	Z_ADDREF_P(object);
-	cursor_it->intern.data = (void*) object;
-#endif
 	cursor_it->intern.funcs = &php_phongo_cursor_iterator_funcs;
 	cursor_it->cursor       = cursor;
 	/* cursor_it->current should already be allocated to zero */
@@ -270,7 +245,6 @@ static PHP_METHOD(Cursor, setTypeMap)
 
 static int php_phongo_cursor_to_array_apply(zend_object_iterator* iter, void* puser TSRMLS_DC) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
 	zval* data;
 	zval* return_value = (zval*) puser;
 
@@ -284,21 +258,6 @@ static int php_phongo_cursor_to_array_apply(zend_object_iterator* iter, void* pu
 	}
 	Z_TRY_ADDREF_P(data);
 	add_next_index_zval(return_value, data);
-#else
-	zval** data;
-	zval* return_value = (zval*) puser;
-
-	iter->funcs->get_current_data(iter, &data TSRMLS_CC);
-
-	if (EG(exception)) {
-		return ZEND_HASH_APPLY_STOP;
-	}
-	if (data == NULL || *data == NULL) {
-		return ZEND_HASH_APPLY_STOP;
-	}
-	Z_ADDREF_PP(data);
-	add_next_index_zval(return_value, *data);
-#endif
 
 	return ZEND_HASH_APPLY_KEEP;
 } /* }}} */
@@ -441,10 +400,6 @@ static void php_phongo_cursor_free_object(phongo_free_object_arg* object TSRMLS_
 	php_phongo_bson_typemap_dtor(&intern->visitor_data.map);
 
 	php_phongo_cursor_free_current(intern);
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
 static phongo_create_object_retval php_phongo_cursor_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
@@ -458,19 +413,9 @@ static phongo_create_object_retval php_phongo_cursor_create_object(zend_class_en
 
 	PHONGO_SET_CREATED_BY_PID(intern);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_cursor;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_cursor_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_cursor;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
 static HashTable* php_phongo_cursor_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
@@ -496,49 +441,29 @@ static HashTable* php_phongo_cursor_get_debug_info(zval* object, int* is_temp TS
 	}
 
 	if (!Z_ISUNDEF(intern->query)) {
-#if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "query", &intern->query);
 		Z_ADDREF(intern->query);
-#else
-		ADD_ASSOC_ZVAL_EX(&retval, "query", intern->query);
-		Z_ADDREF_P(intern->query);
-#endif
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "query");
 	}
 
 	if (!Z_ISUNDEF(intern->command)) {
-#if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "command", &intern->command);
 		Z_ADDREF(intern->command);
-#else
-		ADD_ASSOC_ZVAL_EX(&retval, "command", intern->command);
-		Z_ADDREF_P(intern->command);
-#endif
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "command");
 	}
 
 	if (!Z_ISUNDEF(intern->read_preference)) {
-#if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "readPreference", &intern->read_preference);
 		Z_ADDREF(intern->read_preference);
-#else
-		ADD_ASSOC_ZVAL_EX(&retval, "readPreference", intern->read_preference);
-		Z_ADDREF_P(intern->read_preference);
-#endif
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "readPreference");
 	}
 
 	if (!Z_ISUNDEF(intern->session)) {
-#if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "session", &intern->session);
 		Z_ADDREF(intern->session);
-#else
-		ADD_ASSOC_ZVAL_EX(&retval, "session", intern->session);
-		Z_ADDREF_P(intern->session);
-#endif
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "session");
 	}
@@ -548,30 +473,17 @@ static HashTable* php_phongo_cursor_get_debug_info(zval* object, int* is_temp TS
 	ADD_ASSOC_LONG_EX(&retval, "currentIndex", intern->current);
 
 	if (!Z_ISUNDEF(intern->visitor_data.zchild)) {
-#if PHP_VERSION_ID >= 70000
 		ADD_ASSOC_ZVAL_EX(&retval, "currentDocument", &intern->visitor_data.zchild);
 		Z_ADDREF(intern->visitor_data.zchild);
-#else
-		ADD_ASSOC_ZVAL_EX(&retval, "currentDocument", intern->visitor_data.zchild);
-		Z_ADDREF_P(intern->visitor_data.zchild);
-#endif
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "currentDocument");
 	}
 
 	{
-#if PHP_VERSION_ID >= 70000
 		zval server;
 
 		phongo_server_init(&server, intern->client, intern->server_id TSRMLS_CC);
 		ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
-#else
-		zval* server = NULL;
-
-		MAKE_STD_ZVAL(server);
-		phongo_server_init(server, intern->client, intern->server_id TSRMLS_CC);
-		ADD_ASSOC_ZVAL_EX(&retval, "server", server);
-#endif
 	}
 
 	return Z_ARRVAL(retval);
@@ -594,10 +506,8 @@ void php_phongo_cursor_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_cursor, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_cursor.get_debug_info = php_phongo_cursor_get_debug_info;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_cursor.free_obj = php_phongo_cursor_free_object;
-	php_phongo_handler_cursor.offset   = XtOffsetOf(php_phongo_cursor_t, std);
-#endif
+	php_phongo_handler_cursor.free_obj       = php_phongo_cursor_free_object;
+	php_phongo_handler_cursor.offset         = XtOffsetOf(php_phongo_cursor_t, std);
 } /* }}} */
 
 /*
