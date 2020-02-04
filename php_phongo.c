@@ -3924,7 +3924,7 @@ PHP_MINFO_FUNCTION(mongodb)
 #ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
 #ifdef HAVE_SYSTEM_LIBMONGOCRYPT
 	php_info_print_table_row(2, "libmongocrypt headers version", MONGOCRYPT_VERSION);
-	php_info_print_table_row(2, "libmongocrypt library version", mongocrypt_version());
+	php_info_print_table_row(2, "libmongocrypt library version", mongocrypt_version(NULL));
 #else
 	php_info_print_table_row(2, "libmongocrypt bundled version", MONGOCRYPT_VERSION);
 #endif
