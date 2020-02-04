@@ -31,7 +31,7 @@ jobs:
     - stage: Test
       php: 7.2
     - stage: Test
-      php: 7.4snapshot
+      php: 7.4
 
     # Test against various server topologies
     - stage: Test
