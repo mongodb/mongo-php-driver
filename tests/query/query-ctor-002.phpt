@@ -6,6 +6,7 @@ MongoDB\Driver\Query construction with options
 var_dump(new MongoDB\Driver\Query(
     ['x' => 1],
     [
+        'allowDiskUse' => false,
         'allowPartialResults' => false,
         'awaitData' => false,
         'batchSize' => 10,
@@ -60,6 +61,8 @@ object(MongoDB\Driver\Query)#%d (%d) {
   }
   ["options"]=>
   object(stdClass)#%d (%d) {
+    ["allowDiskUse"]=>
+    bool(false)
     ["allowPartialResults"]=>
     bool(false)
     ["awaitData"]=>
