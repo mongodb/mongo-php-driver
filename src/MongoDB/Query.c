@@ -288,6 +288,7 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 		}
 	}
 
+	PHONGO_QUERY_OPT_BOOL("allowDiskUse", options, "allowDiskUse")
 	PHONGO_QUERY_OPT_BOOL("allowPartialResults", options, "allowPartialResults")
 	else PHONGO_QUERY_OPT_BOOL("allowPartialResults", options, "partial");
 	PHONGO_QUERY_OPT_BOOL("awaitData", options, "awaitData");
