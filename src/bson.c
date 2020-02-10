@@ -1137,7 +1137,7 @@ static bool php_phongo_bson_state_parse_type(zval* options, const char* name, ph
 
 cleanup:
 	if (classname_free) {
-		str_efree(classname);
+		efree(classname);
 	}
 
 	return retval;

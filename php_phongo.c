@@ -2096,23 +2096,23 @@ static mongoc_ssl_opt_t* php_phongo_make_ssl_opt(mongoc_uri_t* uri, zval* zoptio
 static void php_phongo_free_ssl_opt(mongoc_ssl_opt_t* ssl_opt)
 {
 	if (ssl_opt->pem_file) {
-		str_efree(ssl_opt->pem_file);
+		efree((char*) ssl_opt->pem_file);
 	}
 
 	if (ssl_opt->pem_pwd) {
-		str_efree(ssl_opt->pem_pwd);
+		efree((char*) ssl_opt->pem_pwd);
 	}
 
 	if (ssl_opt->ca_file) {
-		str_efree(ssl_opt->ca_file);
+		efree((char*) ssl_opt->ca_file);
 	}
 
 	if (ssl_opt->ca_dir) {
-		str_efree(ssl_opt->ca_dir);
+		efree((char*) ssl_opt->ca_dir);
 	}
 
 	if (ssl_opt->crl_file) {
-		str_efree(ssl_opt->crl_file);
+		efree((char*) ssl_opt->crl_file);
 	}
 
 	efree(ssl_opt);
@@ -2550,7 +2550,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"keyVaultNamespace\" encryption option to contain a full collection name");
 
 			if (pfree) {
-				str_efree(key_vault_ns);
+				efree(key_vault_ns);
 			}
 
 			goto cleanup;
@@ -2562,7 +2562,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		efree(coll_name);
 
 		if (pfree) {
-			str_efree(key_vault_ns);
+			efree(key_vault_ns);
 		}
 	}
 
@@ -2673,7 +2673,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(m
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"keyVaultNamespace\" encryption option to contain a full collection name");
 
 			if (pfree) {
-				str_efree(keyvault_namespace);
+				efree(keyvault_namespace);
 			}
 
 			goto cleanup;
@@ -2684,7 +2684,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(m
 		efree(coll_name);
 
 		if (pfree) {
-			str_efree(keyvault_namespace);
+			efree(keyvault_namespace);
 		}
 	}
 
@@ -2894,7 +2894,7 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 		mongoc_client_encryption_encrypt_opts_set_keyaltname(opts, keyaltname);
 
 		if (pfree) {
-			str_efree(keyaltname);
+			efree(keyaltname);
 		}
 	}
 
@@ -2907,7 +2907,7 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 		mongoc_client_encryption_encrypt_opts_set_algorithm(opts, algorithm);
 
 		if (pfree) {
-			str_efree(algorithm);
+			efree(algorithm);
 		}
 	}
 

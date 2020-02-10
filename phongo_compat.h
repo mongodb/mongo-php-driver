@@ -38,8 +38,6 @@
 #define HASH_KEY_NON_EXISTENT HASH_KEY_NON_EXISTANT
 #endif
 
-#define str_efree(s) efree((char*) s)
-
 #if defined(__GNUC__)
 #define ARG_UNUSED __attribute__((unused))
 #else
