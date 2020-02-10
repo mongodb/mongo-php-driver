@@ -38,7 +38,7 @@ void php_phongo_invalidargumentexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "InvalidArgumentException", php_phongo_invalidargumentexception_me);
 	php_phongo_invalidargumentexception_ce = zend_register_internal_class_ex(&ce, spl_ce_InvalidArgumentException);
-	zend_class_implements(php_phongo_invalidargumentexception_ce TSRMLS_CC, 1, php_phongo_exception_ce);
+	zend_class_implements(php_phongo_invalidargumentexception_ce, 1, php_phongo_exception_ce);
 } /* }}} */
 
 /*

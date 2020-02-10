@@ -17,7 +17,7 @@
 /* Our Compatability header */
 #include "phongo_compat.h"
 
-void phongo_add_exception_prop(const char* prop, int prop_len, zval* value TSRMLS_DC)
+void phongo_add_exception_prop(const char* prop, int prop_len, zval* value)
 {
 	if (EG(exception)) {
 		zval ex;

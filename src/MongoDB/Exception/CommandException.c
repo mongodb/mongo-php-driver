@@ -36,7 +36,7 @@ static PHP_METHOD(CommandException, getResultDocument)
 		return;
 	}
 
-	resultdocument = zend_read_property(php_phongo_commandexception_ce, getThis(), ZEND_STRL("resultDocument"), 0, &rv TSRMLS_CC);
+	resultdocument = zend_read_property(php_phongo_commandexception_ce, getThis(), ZEND_STRL("resultDocument"), 0, &rv);
 
 	RETURN_ZVAL(resultdocument, 1, 0);
 } /* }}} */
@@ -60,7 +60,7 @@ void php_phongo_commandexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "CommandException", php_phongo_commandexception_me);
 	php_phongo_commandexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce);
 
-	zend_declare_property_null(php_phongo_commandexception_ce, ZEND_STRL("resultDocument"), ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(php_phongo_commandexception_ce, ZEND_STRL("resultDocument"), ZEND_ACC_PROTECTED);
 } /* }}} */
 
 /*

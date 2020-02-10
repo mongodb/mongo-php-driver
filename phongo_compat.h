@@ -102,41 +102,41 @@
 #define ADD_ASSOC_INT64(_zv, _key, _value) add_assoc_long((_zv), (_key), (_value))
 #define ZVAL_INT64(_zv, _value) ZVAL_LONG((_zv), (_value))
 #elif SIZEOF_ZEND_LONG == 4
-#define ADD_INDEX_INT64(_zv, _index, _value)                    \
-	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {         \
-		zval zchild;                                            \
-		php_phongo_bson_new_int64(&zchild, (_value) TSRMLS_CC); \
-		add_index_zval((_zv), (_index), &zchild);               \
-	} else {                                                    \
-		add_index_long((_zv), (_index), (_value));              \
+#define ADD_INDEX_INT64(_zv, _index, _value)            \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
+		zval zchild;                                    \
+		php_phongo_bson_new_int64(&zchild, (_value));   \
+		add_index_zval((_zv), (_index), &zchild);       \
+	} else {                                            \
+		add_index_long((_zv), (_index), (_value));      \
 	}
-#define ADD_NEXT_INDEX_INT64(_zv, _value)                       \
-	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {         \
-		zval zchild;                                            \
-		php_phongo_bson_new_int64(&zchild, (_value) TSRMLS_CC); \
-		add_next_index_zval((_zv), &zchild);                    \
-	} else {                                                    \
-		add_next_index_long((_zv), (_value));                   \
+#define ADD_NEXT_INDEX_INT64(_zv, _value)               \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
+		zval zchild;                                    \
+		php_phongo_bson_new_int64(&zchild, (_value));   \
+		add_next_index_zval((_zv), &zchild);            \
+	} else {                                            \
+		add_next_index_long((_zv), (_value));           \
 	}
-#define ADD_ASSOC_INT64(_zv, _key, _value)                      \
-	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {         \
-		zval zchild;                                            \
-		php_phongo_bson_new_int64(&zchild, (_value) TSRMLS_CC); \
-		add_assoc_zval((_zv), (_key), &zchild);                 \
-	} else {                                                    \
-		add_assoc_long((_zv), (_key), (_value));                \
+#define ADD_ASSOC_INT64(_zv, _key, _value)              \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
+		zval zchild;                                    \
+		php_phongo_bson_new_int64(&zchild, (_value));   \
+		add_assoc_zval((_zv), (_key), &zchild);         \
+	} else {                                            \
+		add_assoc_long((_zv), (_key), (_value));        \
 	}
-#define ZVAL_INT64(_zv, _value)                               \
-	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {       \
-		php_phongo_bson_new_int64((_zv), (_value) TSRMLS_CC); \
-	} else {                                                  \
-		ZVAL_LONG((_zv), (_value));                           \
+#define ZVAL_INT64(_zv, _value)                         \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
+		php_phongo_bson_new_int64((_zv), (_value));     \
+	} else {                                            \
+		ZVAL_LONG((_zv), (_value));                     \
 	}
 #else /* SIZEOF_ZEND_LONG != 8 && SIZEOF_ZEND_LONG != 4 */
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif /* SIZEOF_ZEND_LONG */
 
-void      phongo_add_exception_prop(const char* prop, int prop_len, zval* value TSRMLS_DC);
+void      phongo_add_exception_prop(const char* prop, int prop_len, zval* value);
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
 zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht);
 

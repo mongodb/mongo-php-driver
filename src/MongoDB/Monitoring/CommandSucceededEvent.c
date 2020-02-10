@@ -125,7 +125,7 @@ PHP_METHOD(CommandSucceededEvent, getServer)
 		return;
 	}
 
-	phongo_server_init(return_value, intern->client, intern->server_id TSRMLS_CC);
+	phongo_server_init(return_value, intern->client, intern->server_id);
 } /* }}} */
 
 /**
@@ -156,11 +156,11 @@ static zend_function_entry php_phongo_commandsucceededevent_me[] = {
 /* {{{ MongoDB\Driver\Monitoring\CommandSucceededEvent object handlers */
 static zend_object_handlers php_phongo_handler_commandsucceededevent;
 
-static void php_phongo_commandsucceededevent_free_object(zend_object* object TSRMLS_DC) /* {{{ */
+static void php_phongo_commandsucceededevent_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_commandsucceededevent_t* intern = Z_OBJ_COMMANDSUCCEEDEDEVENT(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->reply) {
 		bson_destroy(intern->reply);
@@ -170,13 +170,13 @@ static void php_phongo_commandsucceededevent_free_object(zend_object* object TSR
 	}
 } /* }}} */
 
-static zend_object* php_phongo_commandsucceededevent_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_commandsucceededevent_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_commandsucceededevent_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_commandsucceededevent_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
 	intern->std.handlers = &php_phongo_handler_commandsucceededevent;
@@ -184,7 +184,7 @@ static zend_object* php_phongo_commandsucceededevent_create_object(zend_class_en
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_commandsucceededevent_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_commandsucceededevent_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	php_phongo_commandsucceededevent_t* intern;
 	zval                                retval = ZVAL_STATIC_INIT;
@@ -216,7 +216,7 @@ static HashTable* php_phongo_commandsucceededevent_get_debug_info(zval* object, 
 	{
 		zval server;
 
-		phongo_server_init(&server, intern->client, intern->server_id TSRMLS_CC);
+		phongo_server_init(&server, intern->client, intern->server_id);
 		ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
 	}
 
@@ -232,7 +232,7 @@ void php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	(void) module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "CommandSucceededEvent", php_phongo_commandsucceededevent_me);
-	php_phongo_commandsucceededevent_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_commandsucceededevent_ce                = zend_register_internal_class(&ce);
 	php_phongo_commandsucceededevent_ce->create_object = php_phongo_commandsucceededevent_create_object;
 	PHONGO_CE_FINAL(php_phongo_commandsucceededevent_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_commandsucceededevent_ce);

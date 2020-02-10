@@ -92,11 +92,11 @@ static zend_function_entry php_phongo_writeconcernerror_me[] = {
 /* {{{ MongoDB\Driver\WriteConcernError object handlers */
 static zend_object_handlers php_phongo_handler_writeconcernerror;
 
-static void php_phongo_writeconcernerror_free_object(zend_object* object TSRMLS_DC) /* {{{ */
+static void php_phongo_writeconcernerror_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_writeconcernerror_t* intern = Z_OBJ_WRITECONCERNERROR(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->message) {
 		efree(intern->message);
@@ -107,13 +107,13 @@ static void php_phongo_writeconcernerror_free_object(zend_object* object TSRMLS_
 	}
 } /* }}} */
 
-static zend_object* php_phongo_writeconcernerror_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_writeconcernerror_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_writeconcernerror_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_writeconcernerror_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
 	intern->std.handlers = &php_phongo_handler_writeconcernerror;
@@ -121,7 +121,7 @@ static zend_object* php_phongo_writeconcernerror_create_object(zend_class_entry*
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_writeconcernerror_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_writeconcernerror_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	php_phongo_writeconcernerror_t* intern;
 	zval                            retval = ZVAL_STATIC_INIT;
@@ -148,7 +148,7 @@ void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcernError", php_phongo_writeconcernerror_me);
-	php_phongo_writeconcernerror_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_writeconcernerror_ce                = zend_register_internal_class(&ce);
 	php_phongo_writeconcernerror_ce->create_object = php_phongo_writeconcernerror_create_object;
 	PHONGO_CE_FINAL(php_phongo_writeconcernerror_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_writeconcernerror_ce);

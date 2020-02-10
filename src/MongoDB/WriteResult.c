@@ -33,7 +33,7 @@
 
 zend_class_entry* php_phongo_writeresult_ce;
 
-static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_t* intern, zval* return_value TSRMLS_DC) /* {{{ */
+static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_t* intern, zval* return_value) /* {{{ */
 {
 	bson_iter_t iter, child;
 	zval        writeconcernerror;
@@ -56,7 +56,7 @@ static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_
 				continue;
 			}
 
-			if (!phongo_writeconcernerror_init(&writeconcernerror, &cbson TSRMLS_CC)) {
+			if (!phongo_writeconcernerror_init(&writeconcernerror, &cbson)) {
 				zval_ptr_dtor(&writeconcernerror);
 				return false;
 			}
@@ -70,7 +70,7 @@ static bool php_phongo_writeresult_get_writeconcernerror(php_phongo_writeresult_
 	return true;
 } /* }}} */
 
-static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t* intern, zval* return_value TSRMLS_DC) /* {{{ */
+static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t* intern, zval* return_value) /* {{{ */
 {
 	bson_iter_t iter, child;
 
@@ -93,7 +93,7 @@ static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t* int
 				continue;
 			}
 
-			if (!phongo_writeerror_init(&writeerror, &cbson TSRMLS_CC)) {
+			if (!phongo_writeerror_init(&writeerror, &cbson)) {
 				zval_ptr_dtor(&writeerror);
 				continue;
 			}
@@ -197,7 +197,7 @@ static PHP_METHOD(WriteResult, getServer)
 		return;
 	}
 
-	phongo_server_init(return_value, intern->client, intern->server_id TSRMLS_CC);
+	phongo_server_init(return_value, intern->client, intern->server_id);
 } /* }}} */
 
 /* {{{ proto array MongoDB\Driver\WriteResult::getUpsertedIds()
@@ -255,7 +255,7 @@ static PHP_METHOD(WriteResult, getWriteConcernError)
 		return;
 	}
 
-	php_phongo_writeresult_get_writeconcernerror(intern, return_value TSRMLS_CC);
+	php_phongo_writeresult_get_writeconcernerror(intern, return_value);
 } /* }}} */
 
 /* {{{ proto WriteError[] MongoDB\Driver\WriteResult::getWriteErrors()
@@ -270,7 +270,7 @@ static PHP_METHOD(WriteResult, getWriteErrors)
 		return;
 	}
 
-	php_phongo_writeresult_get_writeerrors(intern, return_value TSRMLS_CC);
+	php_phongo_writeresult_get_writeerrors(intern, return_value);
 } /* }}} */
 
 /* {{{ proto boolean MongoDB\Driver\WriteResult::isAcknowledged()
@@ -315,11 +315,11 @@ static zend_function_entry php_phongo_writeresult_me[] = {
 /* {{{ MongoDB\Driver\WriteResult object handlers */
 static zend_object_handlers php_phongo_handler_writeresult;
 
-static void php_phongo_writeresult_free_object(zend_object* object TSRMLS_DC) /* {{{ */
+static void php_phongo_writeresult_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_writeresult_t* intern = Z_OBJ_WRITERESULT(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->reply) {
 		bson_destroy(intern->reply);
@@ -330,13 +330,13 @@ static void php_phongo_writeresult_free_object(zend_object* object TSRMLS_DC) /*
 	}
 } /* }}} */
 
-static zend_object* php_phongo_writeresult_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_writeresult_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_writeresult_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_writeresult_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
 	intern->std.handlers = &php_phongo_handler_writeresult;
@@ -344,7 +344,7 @@ static zend_object* php_phongo_writeresult_create_object(zend_class_entry* class
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_writeresult_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_writeresult_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	php_phongo_writeresult_t* intern;
 	zval                      retval = ZVAL_STATIC_INIT;
@@ -390,14 +390,14 @@ static HashTable* php_phongo_writeresult_get_debug_info(zval* object, int* is_te
 	{
 		zval writeerrors;
 
-		php_phongo_writeresult_get_writeerrors(intern, &writeerrors TSRMLS_CC);
+		php_phongo_writeresult_get_writeerrors(intern, &writeerrors);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeErrors", &writeerrors);
 	}
 
 	{
 		zval writeconcernerror;
 
-		php_phongo_writeresult_get_writeconcernerror(intern, &writeconcernerror TSRMLS_CC);
+		php_phongo_writeresult_get_writeconcernerror(intern, &writeconcernerror);
 		ADD_ASSOC_ZVAL_EX(&retval, "writeConcernError", &writeconcernerror);
 	}
 
@@ -420,7 +420,7 @@ void php_phongo_writeresult_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteResult", php_phongo_writeresult_me);
-	php_phongo_writeresult_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_writeresult_ce                = zend_register_internal_class(&ce);
 	php_phongo_writeresult_ce->create_object = php_phongo_writeresult_create_object;
 	PHONGO_CE_FINAL(php_phongo_writeresult_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_writeresult_ce);

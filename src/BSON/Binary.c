@@ -34,15 +34,15 @@ zend_class_entry* php_phongo_binary_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_binary_init(php_phongo_binary_t* intern, const char* data, size_t data_len, zend_long type TSRMLS_DC) /* {{{ */
+static bool php_phongo_binary_init(php_phongo_binary_t* intern, const char* data, size_t data_len, zend_long type) /* {{{ */
 {
 	if (type < 0 || type > UINT8_MAX) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected type to be an unsigned 8-bit integer, %" PHONGO_LONG_FORMAT " given", type);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected type to be an unsigned 8-bit integer, %" PHONGO_LONG_FORMAT " given", type);
 		return false;
 	}
 
 	if ((type == BSON_SUBTYPE_UUID_DEPRECATED || type == BSON_SUBTYPE_UUID) && data_len != PHONGO_BINARY_UUID_SIZE) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected UUID length to be %d bytes, %d given", PHONGO_BINARY_UUID_SIZE, data_len);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected UUID length to be %d bytes, %d given", PHONGO_BINARY_UUID_SIZE, data_len);
 		return false;
 	}
 
@@ -55,17 +55,17 @@ static bool php_phongo_binary_init(php_phongo_binary_t* intern, const char* data
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_binary_init_from_hash(php_phongo_binary_t* intern, HashTable* props TSRMLS_DC) /* {{{ */
+static bool php_phongo_binary_init_from_hash(php_phongo_binary_t* intern, HashTable* props) /* {{{ */
 {
 	zval *data, *type;
 
 	if ((data = zend_hash_str_find(props, "data", sizeof("data") - 1)) && Z_TYPE_P(data) == IS_STRING &&
 		(type = zend_hash_str_find(props, "type", sizeof("type") - 1)) && Z_TYPE_P(type) == IS_LONG) {
 
-		return php_phongo_binary_init(intern, Z_STRVAL_P(data), Z_STRLEN_P(data), Z_LVAL_P(type) TSRMLS_CC);
+		return php_phongo_binary_init(intern, Z_STRVAL_P(data), Z_STRLEN_P(data), Z_LVAL_P(type));
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"data\" string and \"type\" integer fields", ZSTR_VAL(php_phongo_binary_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"data\" string and \"type\" integer fields", ZSTR_VAL(php_phongo_binary_ce->name));
 	return false;
 } /* }}} */
 
@@ -79,16 +79,16 @@ static PHP_METHOD(Binary, __construct)
 	size_t               data_len;
 	zend_long            type;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	intern = Z_BINARY_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &data, &data_len, &type) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sl", &data, &data_len, &type) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
-	php_phongo_binary_init(intern, data, data_len, type TSRMLS_CC);
+	php_phongo_binary_init(intern, data, data_len, type);
 } /* }}} */
 
 /* {{{ proto void MongoDB\BSON\Binary::__set_state(array $properties)
@@ -99,7 +99,7 @@ static PHP_METHOD(Binary, __set_state)
 	HashTable*           props;
 	zval*                array;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
 		RETURN_FALSE;
 	}
 
@@ -108,7 +108,7 @@ static PHP_METHOD(Binary, __set_state)
 	intern = Z_BINARY_OBJ_P(return_value);
 	props  = Z_ARRVAL_P(array);
 
-	php_phongo_binary_init_from_hash(intern, props TSRMLS_CC);
+	php_phongo_binary_init_from_hash(intern, props);
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\Binary::__toString()
@@ -202,7 +202,7 @@ static PHP_METHOD(Binary, serialize)
 	ADD_ASSOC_LONG_EX(&retval, "type", intern->type);
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
-	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
+	php_var_serialize(&buf, &retval, &var_hash);
 	smart_str_0(&buf);
 	PHP_VAR_SERIALIZE_DESTROY(var_hash);
 
@@ -225,25 +225,25 @@ static PHP_METHOD(Binary, unserialize)
 
 	intern = Z_BINARY_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
-	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
+	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {
 		zval_ptr_dtor(&props);
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s unserialization failed", ZSTR_VAL(php_phongo_binary_ce->name));
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s unserialization failed", ZSTR_VAL(php_phongo_binary_ce->name));
 
 		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
 		return;
 	}
 	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
 
-	php_phongo_binary_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
+	php_phongo_binary_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
 } /* }}} */
 
@@ -282,11 +282,11 @@ static zend_function_entry php_phongo_binary_me[] = {
 /* {{{ MongoDB\BSON\Binary object handlers */
 static zend_object_handlers php_phongo_handler_binary;
 
-static void php_phongo_binary_free_object(zend_object* object TSRMLS_DC) /* {{{ */
+static void php_phongo_binary_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_binary_t* intern = Z_OBJ_BINARY(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->data) {
 		efree(intern->data);
@@ -298,13 +298,13 @@ static void php_phongo_binary_free_object(zend_object* object TSRMLS_DC) /* {{{ 
 	}
 } /* }}} */
 
-static zend_object* php_phongo_binary_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_binary_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_binary_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_binary_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
 	intern->std.handlers = &php_phongo_handler_binary;
@@ -312,24 +312,24 @@ static zend_object* php_phongo_binary_create_object(zend_class_entry* class_type
 	return &intern->std;
 } /* }}} */
 
-static zend_object* php_phongo_binary_clone_object(zval* object TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_binary_clone_object(zval* object) /* {{{ */
 {
 	php_phongo_binary_t* intern;
 	php_phongo_binary_t* new_intern;
 	zend_object*         new_object;
 
 	intern     = Z_BINARY_OBJ_P(object);
-	new_object = php_phongo_binary_create_object(Z_OBJCE_P(object) TSRMLS_CC);
+	new_object = php_phongo_binary_create_object(Z_OBJCE_P(object));
 
 	new_intern = Z_OBJ_BINARY(new_object);
-	zend_objects_clone_members(&new_intern->std, &intern->std TSRMLS_CC);
+	zend_objects_clone_members(&new_intern->std, &intern->std);
 
-	php_phongo_binary_init(new_intern, intern->data, intern->data_len, intern->type TSRMLS_CC);
+	php_phongo_binary_init(new_intern, intern->data, intern->data_len, intern->type);
 
 	return new_object;
 } /* }}} */
 
-static int php_phongo_binary_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /* {{{ */
+static int php_phongo_binary_compare_objects(zval* o1, zval* o2) /* {{{ */
 {
 	php_phongo_binary_t *intern1, *intern2;
 
@@ -349,7 +349,7 @@ static int php_phongo_binary_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /* {{
 	return zend_binary_strcmp(intern1->data, intern1->data_len, intern2->data, intern2->data_len);
 } /* }}} */
 
-static HashTable* php_phongo_binary_get_gc(zval* object, zval** table, int* n TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_binary_get_gc(zval* object, zval** table, int* n) /* {{{ */
 {
 	*table = NULL;
 	*n     = 0;
@@ -357,7 +357,7 @@ static HashTable* php_phongo_binary_get_gc(zval* object, zval** table, int* n TS
 	return Z_BINARY_OBJ_P(object)->properties;
 } /* }}} */
 
-static HashTable* php_phongo_binary_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_binary_get_properties_hash(zval* object, bool is_debug) /* {{{ */
 {
 	php_phongo_binary_t* intern;
 	HashTable*           props;
@@ -383,15 +383,15 @@ static HashTable* php_phongo_binary_get_properties_hash(zval* object, bool is_de
 	return props;
 } /* }}} */
 
-static HashTable* php_phongo_binary_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_binary_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	*is_temp = 1;
-	return php_phongo_binary_get_properties_hash(object, true TSRMLS_CC);
+	return php_phongo_binary_get_properties_hash(object, true);
 } /* }}} */
 
-static HashTable* php_phongo_binary_get_properties(zval* object TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_binary_get_properties(zval* object) /* {{{ */
 {
-	return php_phongo_binary_get_properties_hash(object, false TSRMLS_CC);
+	return php_phongo_binary_get_properties_hash(object, false);
 } /* }}} */
 /* }}} */
 
@@ -400,14 +400,14 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Binary", php_phongo_binary_me);
-	php_phongo_binary_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_binary_ce                = zend_register_internal_class(&ce);
 	php_phongo_binary_ce->create_object = php_phongo_binary_create_object;
 	PHONGO_CE_FINAL(php_phongo_binary_ce);
 
-	zend_class_implements(php_phongo_binary_ce TSRMLS_CC, 1, php_phongo_binary_interface_ce);
-	zend_class_implements(php_phongo_binary_ce TSRMLS_CC, 1, php_phongo_json_serializable_ce);
-	zend_class_implements(php_phongo_binary_ce TSRMLS_CC, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_binary_ce TSRMLS_CC, 1, zend_ce_serializable);
+	zend_class_implements(php_phongo_binary_ce, 1, php_phongo_binary_interface_ce);
+	zend_class_implements(php_phongo_binary_ce, 1, php_phongo_json_serializable_ce);
+	zend_class_implements(php_phongo_binary_ce, 1, php_phongo_type_ce);
+	zend_class_implements(php_phongo_binary_ce, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_binary, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_binary.clone_obj       = php_phongo_binary_clone_object;
@@ -418,14 +418,14 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_binary.free_obj        = php_phongo_binary_free_object;
 	php_phongo_handler_binary.offset          = XtOffsetOf(php_phongo_binary_t, std);
 
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_GENERIC"), BSON_SUBTYPE_BINARY TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_FUNCTION"), BSON_SUBTYPE_FUNCTION TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_OLD_BINARY"), BSON_SUBTYPE_BINARY_DEPRECATED TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_OLD_UUID"), BSON_SUBTYPE_UUID_DEPRECATED TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_UUID"), BSON_SUBTYPE_UUID TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_MD5"), BSON_SUBTYPE_MD5 TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_ENCRYPTED"), BSON_SUBTYPE_ENCRYPTED TSRMLS_CC);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_USER_DEFINED"), BSON_SUBTYPE_USER TSRMLS_CC);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_GENERIC"), BSON_SUBTYPE_BINARY);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_FUNCTION"), BSON_SUBTYPE_FUNCTION);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_OLD_BINARY"), BSON_SUBTYPE_BINARY_DEPRECATED);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_OLD_UUID"), BSON_SUBTYPE_UUID_DEPRECATED);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_UUID"), BSON_SUBTYPE_UUID);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_MD5"), BSON_SUBTYPE_MD5);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_ENCRYPTED"), BSON_SUBTYPE_ENCRYPTED);
+	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_USER_DEFINED"), BSON_SUBTYPE_USER);
 } /* }}} */
 
 /*

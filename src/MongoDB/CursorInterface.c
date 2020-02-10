@@ -51,9 +51,9 @@ void php_phongo_cursor_interface_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "CursorInterface", php_phongo_cursor_interface_me);
-	php_phongo_cursor_interface_ce = zend_register_internal_interface(&ce TSRMLS_CC);
+	php_phongo_cursor_interface_ce = zend_register_internal_interface(&ce);
 
-	zend_class_implements(php_phongo_cursor_interface_ce TSRMLS_CC, 1, zend_ce_traversable);
+	zend_class_implements(php_phongo_cursor_interface_ce, 1, zend_ce_traversable);
 } /* }}} */
 
 /*

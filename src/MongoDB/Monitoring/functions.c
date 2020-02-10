@@ -25,7 +25,7 @@
 
 ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 
-static char* php_phongo_make_subscriber_hash(zval* subscriber TSRMLS_DC)
+static char* php_phongo_make_subscriber_hash(zval* subscriber)
 {
 	char* hash;
 	int   hash_len;
@@ -43,7 +43,7 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 	char* hash;
 	zval* subscriber;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
 		return;
 	}
 
@@ -53,7 +53,7 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 		return;
 	}
 
-	hash = php_phongo_make_subscriber_hash(zSubscriber TSRMLS_CC);
+	hash = php_phongo_make_subscriber_hash(zSubscriber);
 
 	/* If we have already stored the subscriber, bail out. Otherwise, add
 	 * subscriber to list */
@@ -74,7 +74,7 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 	zval* zSubscriber = NULL;
 	char* hash;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
 		return;
 	}
 
@@ -84,7 +84,7 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 		return;
 	}
 
-	hash = php_phongo_make_subscriber_hash(zSubscriber TSRMLS_CC);
+	hash = php_phongo_make_subscriber_hash(zSubscriber);
 
 	zend_hash_str_del(MONGODB_G(subscribers), hash, strlen(hash));
 	efree(hash);

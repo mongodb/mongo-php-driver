@@ -33,7 +33,7 @@ zend_class_entry* php_phongo_command_ce;
  *
  * The "maxAwaitTimeMS" option is assigned to the cursor after query execution
  * via mongoc_cursor_set_max_await_time_ms(). */
-static bool php_phongo_command_init_max_await_time_ms(php_phongo_command_t* intern, zval* options TSRMLS_DC) /* {{{ */
+static bool php_phongo_command_init_max_await_time_ms(php_phongo_command_t* intern, zval* options) /* {{{ */
 {
 	int64_t max_await_time_ms;
 
@@ -44,12 +44,12 @@ static bool php_phongo_command_init_max_await_time_ms(php_phongo_command_t* inte
 	max_await_time_ms = php_array_fetchc_long(options, "maxAwaitTimeMS");
 
 	if (max_await_time_ms < 0) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxAwaitTimeMS\" option to be >= 0, %" PRId64 " given", max_await_time_ms);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"maxAwaitTimeMS\" option to be >= 0, %" PRId64 " given", max_await_time_ms);
 		return false;
 	}
 
 	if (max_await_time_ms > UINT32_MAX) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxAwaitTimeMS\" option to be <= %" PRIu32 ", %" PRId64 " given", UINT32_MAX, max_await_time_ms);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"maxAwaitTimeMS\" option to be <= %" PRIu32 ", %" PRId64 " given", UINT32_MAX, max_await_time_ms);
 		return false;
 	}
 
@@ -61,7 +61,7 @@ static bool php_phongo_command_init_max_await_time_ms(php_phongo_command_t* inte
 /* Initializes the php_phongo_command_init from options argument. This
  * function will fall back to a modifier in the absence of a top-level option
  * (where applicable). */
-static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, zval* options TSRMLS_DC) /* {{{ */
+static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, zval* options) /* {{{ */
 {
 	bson_iter_t iter;
 	bson_iter_t sub_iter;
@@ -70,7 +70,7 @@ static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, 
 	intern->batch_size        = 0;
 	intern->max_await_time_ms = 0;
 
-	php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->bson, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->bson, NULL);
 
 	/* Note: if any exceptions are thrown, we can simply return as PHP will
 	 * invoke php_phongo_query_free_object to destruct the object. */
@@ -90,7 +90,7 @@ static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, 
 		return true;
 	}
 
-	if (!php_phongo_command_init_max_await_time_ms(intern, options TSRMLS_CC)) {
+	if (!php_phongo_command_init_max_await_time_ms(intern, options)) {
 		return false;
 	}
 
@@ -106,16 +106,16 @@ static PHP_METHOD(Command, __construct)
 	zval*                 document;
 	zval*                 options = NULL;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	intern = Z_COMMAND_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &document, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A|a!", &document, &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
-	php_phongo_command_init(intern, document, options TSRMLS_CC);
+	php_phongo_command_init(intern, document, options);
 } /* }}} */
 
 /* {{{ MongoDB\Driver\Command function entries */
@@ -138,24 +138,24 @@ static zend_function_entry php_phongo_command_me[] = {
 /* {{{ MongoDB\Driver\Command object handlers */
 static zend_object_handlers php_phongo_handler_command;
 
-static void php_phongo_command_free_object(zend_object* object TSRMLS_DC) /* {{{ */
+static void php_phongo_command_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_command_t* intern = Z_OBJ_COMMAND(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->bson) {
 		bson_clear(&intern->bson);
 	}
 } /* }}} */
 
-static zend_object* php_phongo_command_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_command_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_command_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_command_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
 	intern->std.handlers = &php_phongo_handler_command;
@@ -163,7 +163,7 @@ static zend_object* php_phongo_command_create_object(zend_class_entry* class_typ
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_command_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_command_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	php_phongo_command_t* intern;
 	zval                  retval = ZVAL_STATIC_INIT;
@@ -197,7 +197,7 @@ void php_phongo_command_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Command", php_phongo_command_me);
-	php_phongo_command_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_command_ce                = zend_register_internal_class(&ce);
 	php_phongo_command_ce->create_object = php_phongo_command_create_object;
 	PHONGO_CE_FINAL(php_phongo_command_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_command_ce);

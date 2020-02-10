@@ -145,17 +145,17 @@ static inline bool php_phongo_bulkwrite_bson_array_has_valid_keys(bson_t* array)
 
 /* Appends an array field for the given opts document and key. Returns true on
  * success; otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_bulkwrite_opts_append_array(bson_t* opts, const char* key, zval* zarr TSRMLS_DC) /* {{{ */
+static bool php_phongo_bulkwrite_opts_append_array(bson_t* opts, const char* key, zval* zarr) /* {{{ */
 {
 	zval*  value = php_array_fetch(zarr, key);
 	bson_t b     = BSON_INITIALIZER;
 
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" option to be array or object, %s given", key, zend_get_type_by_const(Z_TYPE_P(value)));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" option to be array or object, %s given", key, zend_get_type_by_const(Z_TYPE_P(value)));
 		return false;
 	}
 
-	php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL);
 
 	if (EG(exception)) {
 		bson_destroy(&b);
@@ -163,13 +163,13 @@ static bool php_phongo_bulkwrite_opts_append_array(bson_t* opts, const char* key
 	}
 
 	if (!php_phongo_bulkwrite_bson_array_has_valid_keys(&b)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"%s\" option has invalid keys for a BSON array", key);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "\"%s\" option has invalid keys for a BSON array", key);
 		bson_destroy(&b);
 		return false;
 	}
 
 	if (!BSON_APPEND_ARRAY(opts, key, &b)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", key);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", key);
 		bson_destroy(&b);
 		return false;
 	}
@@ -180,17 +180,17 @@ static bool php_phongo_bulkwrite_opts_append_array(bson_t* opts, const char* key
 
 /* Appends a document field for the given opts document and key. Returns true on
  * success; otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* key, zval* zarr TSRMLS_DC) /* {{{ */
+static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* key, zval* zarr) /* {{{ */
 {
 	zval*  value = php_array_fetch(zarr, key);
 	bson_t b     = BSON_INITIALIZER;
 
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" option to be array or object, %s given", key, zend_get_type_by_const(Z_TYPE_P(value)));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" option to be array or object, %s given", key, zend_get_type_by_const(Z_TYPE_P(value)));
 		return false;
 	}
 
-	php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL);
 
 	if (EG(exception)) {
 		bson_destroy(&b);
@@ -198,7 +198,7 @@ static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* 
 	}
 
 	if (!BSON_APPEND_DOCUMENT(opts, key, &b)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", key);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", key);
 		bson_destroy(&b);
 		return false;
 	}
@@ -207,30 +207,30 @@ static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* 
 	return true;
 } /* }}} */
 
-#define PHONGO_BULKWRITE_APPEND_BOOL(opt, value)                                                                 \
-	if (!BSON_APPEND_BOOL(boptions, (opt), (value))) {                                                           \
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt)); \
-		return false;                                                                                            \
+#define PHONGO_BULKWRITE_APPEND_BOOL(opt, value)                                                       \
+	if (!BSON_APPEND_BOOL(boptions, (opt), (value))) {                                                 \
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", (opt)); \
+		return false;                                                                                  \
 	}
 
-#define PHONGO_BULKWRITE_APPEND_INT32(opt, value)                                                                \
-	if (!BSON_APPEND_INT32(boptions, (opt), (value))) {                                                          \
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt)); \
-		return false;                                                                                            \
+#define PHONGO_BULKWRITE_APPEND_INT32(opt, value)                                                      \
+	if (!BSON_APPEND_INT32(boptions, (opt), (value))) {                                                \
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", (opt)); \
+		return false;                                                                                  \
 	}
 
-#define PHONGO_BULKWRITE_OPT_ARRAY(opt)                                                     \
-	if (zoptions && php_array_existsc(zoptions, (opt))) {                                   \
-		if (!php_phongo_bulkwrite_opts_append_array(boptions, (opt), zoptions TSRMLS_CC)) { \
-			return false;                                                                   \
-		}                                                                                   \
+#define PHONGO_BULKWRITE_OPT_ARRAY(opt)                                           \
+	if (zoptions && php_array_existsc(zoptions, (opt))) {                         \
+		if (!php_phongo_bulkwrite_opts_append_array(boptions, (opt), zoptions)) { \
+			return false;                                                         \
+		}                                                                         \
 	}
 
-#define PHONGO_BULKWRITE_OPT_DOCUMENT(opt)                                                     \
-	if (zoptions && php_array_existsc(zoptions, (opt))) {                                      \
-		if (!php_phongo_bulkwrite_opts_append_document(boptions, (opt), zoptions TSRMLS_CC)) { \
-			return false;                                                                      \
-		}                                                                                      \
+#define PHONGO_BULKWRITE_OPT_DOCUMENT(opt)                                           \
+	if (zoptions && php_array_existsc(zoptions, (opt))) {                            \
+		if (!php_phongo_bulkwrite_opts_append_document(boptions, (opt), zoptions)) { \
+			return false;                                                            \
+		}                                                                            \
 	}
 
 /* Initialize the "hint" option. Returns true on success; otherwise, false is
@@ -238,7 +238,7 @@ static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* 
  *
  * The "hint" option must be a string or document. Check for both types and
  * merge into BSON options accordingly. */
-static bool php_phongo_bulkwrite_opt_hint(bson_t* boptions, zval* zoptions TSRMLS_DC) /* {{{ */
+static bool php_phongo_bulkwrite_opt_hint(bson_t* boptions, zval* zoptions) /* {{{ */
 {
 	/* The "hint" option (or "$hint" modifier) must be a string or document.
 	 * Check for both types and merge into BSON options accordingly. */
@@ -249,13 +249,13 @@ static bool php_phongo_bulkwrite_opt_hint(bson_t* boptions, zval* zoptions TSRML
 			zval* value = php_array_fetchc(zoptions, "hint");
 
 			if (!bson_append_utf8(boptions, "hint", 4, Z_STRVAL_P(value), Z_STRLEN_P(value))) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"hint\" option");
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"hint\" option");
 				return false;
 			}
 		} else if (type == IS_OBJECT || type == IS_ARRAY) {
 			PHONGO_BULKWRITE_OPT_DOCUMENT("hint");
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"hint\" option to be string, array, or object, %s given", zend_get_type_by_const(type));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"hint\" option to be string, array, or object, %s given", zend_get_type_by_const(type));
 			return false;
 		}
 	}
@@ -264,7 +264,7 @@ static bool php_phongo_bulkwrite_opt_hint(bson_t* boptions, zval* zoptions TSRML
 } /* }}} */
 
 /* Applies options (including defaults) for an update operation. */
-static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zoptions TSRMLS_DC) /* {{{ */
+static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zoptions) /* {{{ */
 {
 	bool multi = false, upsert = false;
 
@@ -278,7 +278,7 @@ static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zo
 	PHONGO_BULKWRITE_OPT_ARRAY("arrayFilters");
 	PHONGO_BULKWRITE_OPT_DOCUMENT("collation");
 
-	if (!php_phongo_bulkwrite_opt_hint(boptions, zoptions TSRMLS_CC)) {
+	if (!php_phongo_bulkwrite_opt_hint(boptions, zoptions)) {
 		return false;
 	}
 
@@ -286,7 +286,7 @@ static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zo
 } /* }}} */
 
 /* Applies options (including defaults) for an delete operation. */
-static bool php_phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zoptions TSRMLS_DC) /* {{{ */
+static bool php_phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zoptions) /* {{{ */
 {
 	int32_t limit = 0;
 
@@ -313,14 +313,14 @@ static PHP_METHOD(BulkWrite, __construct)
 	zval*                   options = NULL;
 	zend_bool               ordered = 1;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a!", &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "|a!", &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
 	if (options && php_array_existsc(options, "ordered")) {
 		ordered = php_array_fetchc_bool(options, "ordered");
@@ -352,20 +352,20 @@ static PHP_METHOD(BulkWrite, insert)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &zdocument) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A", &zdocument) == FAILURE) {
 		return;
 	}
 
 	bson_flags |= PHONGO_BSON_RETURN_ID;
 
-	php_phongo_zval_to_bson(zdocument, bson_flags, &bdocument, &bson_out TSRMLS_CC);
+	php_phongo_zval_to_bson(zdocument, bson_flags, &bdocument, &bson_out);
 
 	if (EG(exception)) {
 		goto cleanup;
 	}
 
 	if (!mongoc_bulk_operation_insert_with_opts(intern->bulk, &bdocument, &boptions, &error)) {
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		phongo_throw_exception_from_bson_error_t(&error);
 		goto cleanup;
 	}
 
@@ -392,46 +392,46 @@ static PHP_METHOD(BulkWrite, update)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "AA|a!", &zquery, &zupdate, &zoptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "AA|a!", &zquery, &zupdate, &zoptions) == FAILURE) {
 		return;
 	}
 
-	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, &bquery, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, &bquery, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
 	}
 
-	php_phongo_zval_to_bson(zupdate, PHONGO_BSON_NONE, &bupdate, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(zupdate, PHONGO_BSON_NONE, &bupdate, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
 	}
 
-	if (!php_phongo_bulkwrite_update_apply_options(&boptions, zoptions TSRMLS_CC)) {
+	if (!php_phongo_bulkwrite_update_apply_options(&boptions, zoptions)) {
 		goto cleanup;
 	}
 
 	if (php_phongo_bulkwrite_update_has_operators(&bupdate) || php_phongo_bulkwrite_update_is_pipeline(&bupdate)) {
 		if (zoptions && php_array_fetchc_bool(zoptions, "multi")) {
 			if (!mongoc_bulk_operation_update_many_with_opts(intern->bulk, &bquery, &bupdate, &boptions, &error)) {
-				phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+				phongo_throw_exception_from_bson_error_t(&error);
 				goto cleanup;
 			}
 		} else {
 			if (!mongoc_bulk_operation_update_one_with_opts(intern->bulk, &bquery, &bupdate, &boptions, &error)) {
-				phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+				phongo_throw_exception_from_bson_error_t(&error);
 				goto cleanup;
 			}
 		}
 	} else {
 		if (zoptions && php_array_fetchc_bool(zoptions, "multi")) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Replacement document conflicts with true \"multi\" option");
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Replacement document conflicts with true \"multi\" option");
 			goto cleanup;
 		}
 
 		if (!mongoc_bulk_operation_replace_one_with_opts(intern->bulk, &bquery, &bupdate, &boptions, &error)) {
-			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			phongo_throw_exception_from_bson_error_t(&error);
 			goto cleanup;
 		}
 	}
@@ -455,28 +455,28 @@ static PHP_METHOD(BulkWrite, delete)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &zquery, &zoptions) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A|a!", &zquery, &zoptions) == FAILURE) {
 		return;
 	}
 
-	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, &bquery, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, &bquery, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;
 	}
 
-	if (!php_phongo_bulkwrite_delete_apply_options(&boptions, zoptions TSRMLS_CC)) {
+	if (!php_phongo_bulkwrite_delete_apply_options(&boptions, zoptions)) {
 		goto cleanup;
 	}
 
 	if (zoptions && php_array_fetchc_bool(zoptions, "limit")) {
 		if (!mongoc_bulk_operation_remove_one_with_opts(intern->bulk, &bquery, &boptions, &error)) {
-			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			phongo_throw_exception_from_bson_error_t(&error);
 			goto cleanup;
 		}
 	} else {
 		if (!mongoc_bulk_operation_remove_many_with_opts(intern->bulk, &bquery, &boptions, &error)) {
-			phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+			phongo_throw_exception_from_bson_error_t(&error);
 			goto cleanup;
 		}
 	}
@@ -542,11 +542,11 @@ static zend_function_entry php_phongo_bulkwrite_me[] = {
 /* {{{ MongoDB\Driver\BulkWrite object handlers */
 static zend_object_handlers php_phongo_handler_bulkwrite;
 
-static void php_phongo_bulkwrite_free_object(zend_object* object TSRMLS_DC) /* {{{ */
+static void php_phongo_bulkwrite_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_bulkwrite_t* intern = Z_OBJ_BULKWRITE(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->bulk) {
 		mongoc_bulk_operation_destroy(intern->bulk);
@@ -561,13 +561,13 @@ static void php_phongo_bulkwrite_free_object(zend_object* object TSRMLS_DC) /* {
 	}
 } /* }}} */
 
-static zend_object* php_phongo_bulkwrite_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_bulkwrite_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_bulkwrite_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_bulkwrite_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
 	intern->std.handlers = &php_phongo_handler_bulkwrite;
@@ -575,7 +575,7 @@ static zend_object* php_phongo_bulkwrite_create_object(zend_class_entry* class_t
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_bulkwrite_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_bulkwrite_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	zval                    retval = ZVAL_STATIC_INIT;
 	php_phongo_bulkwrite_t* intern = NULL;
@@ -625,7 +625,7 @@ void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "BulkWrite", php_phongo_bulkwrite_me);
-	php_phongo_bulkwrite_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_bulkwrite_ce                = zend_register_internal_class(&ce);
 	php_phongo_bulkwrite_ce->create_object = php_phongo_bulkwrite_create_object;
 	PHONGO_CE_FINAL(php_phongo_bulkwrite_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_bulkwrite_ce);
@@ -635,7 +635,7 @@ void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_bulkwrite.free_obj       = php_phongo_bulkwrite_free_object;
 	php_phongo_handler_bulkwrite.offset         = XtOffsetOf(php_phongo_bulkwrite_t, std);
 
-	zend_class_implements(php_phongo_bulkwrite_ce TSRMLS_CC, 1, spl_ce_Countable);
+	zend_class_implements(php_phongo_bulkwrite_ce, 1, spl_ce_Countable);
 } /* }}} */
 
 /*

@@ -38,13 +38,13 @@ zend_class_entry* php_phongo_session_ce;
 #define SESSION_CHECK_LIVELINESS(i, m)                                  \
 	if (!(i)->client_session) {                                         \
 		phongo_throw_exception(                                         \
-			PHONGO_ERROR_LOGIC TSRMLS_CC,                               \
+			PHONGO_ERROR_LOGIC,                                         \
 			"Cannot call '%s', as the session has already been ended.", \
 			(m));                                                       \
 		return;                                                         \
 	}
 
-static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestamp, uint32_t* increment TSRMLS_DC)
+static bool php_phongo_session_get_timestamp_parts(zval* obj, uint32_t* timestamp, uint32_t* increment)
 {
 	bool retval     = false;
 	zval ztimestamp = ZVAL_STATIC_INIT;
@@ -79,7 +79,7 @@ cleanup:
 	return retval;
 }
 
-static const char* php_phongo_get_transaction_state_string(mongoc_transaction_state_t state TSRMLS_DC)
+static const char* php_phongo_get_transaction_state_string(mongoc_transaction_state_t state)
 {
 	switch (state) {
 		case MONGOC_TRANSACTION_NONE:
@@ -93,7 +93,7 @@ static const char* php_phongo_get_transaction_state_string(mongoc_transaction_st
 		case MONGOC_TRANSACTION_ABORTED:
 			return PHONGO_TRANSACTION_ABORTED;
 		default:
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Invalid transaction state %d given", (int) state);
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Invalid transaction state %d given", (int) state);
 			return NULL;
 	}
 }
@@ -109,11 +109,11 @@ static PHP_METHOD(Session, advanceClusterTime)
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "advanceClusterTime")
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &zcluster_time) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A", &zcluster_time) == FAILURE) {
 		return;
 	}
 
-	php_phongo_zval_to_bson(zcluster_time, PHONGO_BSON_NONE, &cluster_time, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(zcluster_time, PHONGO_BSON_NONE, &cluster_time, NULL);
 
 	/* An exception may be thrown during BSON conversion */
 	if (EG(exception)) {
@@ -138,11 +138,11 @@ static PHP_METHOD(Session, advanceOperationTime)
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "advanceOperationTime")
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &ztimestamp, php_phongo_timestamp_interface_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &ztimestamp, php_phongo_timestamp_interface_ce) == FAILURE) {
 		return;
 	}
 
-	if (!php_phongo_session_get_timestamp_parts(ztimestamp, &timestamp, &increment TSRMLS_CC)) {
+	if (!php_phongo_session_get_timestamp_parts(ztimestamp, &timestamp, &increment)) {
 		return;
 	}
 
@@ -232,7 +232,7 @@ static PHP_METHOD(Session, getOperationTime)
 		RETURN_NULL();
 	}
 
-	php_phongo_bson_new_timestamp_from_increment_and_timestamp(return_value, increment, timestamp TSRMLS_CC);
+	php_phongo_bson_new_timestamp_from_increment_and_timestamp(return_value, increment, timestamp);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Server|null MongoDB\Driver\Session::getServer()
@@ -256,7 +256,7 @@ static PHP_METHOD(Session, getServer)
 		RETURN_NULL();
 	}
 
-	phongo_server_init(return_value, intern->client, server_id TSRMLS_CC);
+	phongo_server_init(return_value, intern->client, server_id);
 } /* }}} */
 
 /* {{{ proto array|null MongoDB\Driver\Session::getTransactionOptions()
@@ -297,21 +297,21 @@ static PHP_METHOD(Session, getTransactionOptions)
 	if (!mongoc_read_concern_is_default(read_concern)) {
 		zval zread_concern;
 
-		phongo_readconcern_init(&zread_concern, read_concern TSRMLS_CC);
+		phongo_readconcern_init(&zread_concern, read_concern);
 		ADD_ASSOC_ZVAL_EX(return_value, "readConcern", &zread_concern);
 	}
 
 	if (read_preference) {
 		zval zread_preference;
 
-		phongo_readpreference_init(&zread_preference, read_preference TSRMLS_CC);
+		phongo_readpreference_init(&zread_preference, read_preference);
 		ADD_ASSOC_ZVAL_EX(return_value, "readPreference", &zread_preference);
 	}
 
 	if (!mongoc_write_concern_is_default(write_concern)) {
 		zval zwrite_concern;
 
-		phongo_writeconcern_init(&zwrite_concern, write_concern TSRMLS_CC);
+		phongo_writeconcern_init(&zwrite_concern, write_concern);
 		ADD_ASSOC_ZVAL_EX(return_value, "writeConcern", &zwrite_concern);
 	}
 } /* }}} */
@@ -330,7 +330,7 @@ static PHP_METHOD(Session, getTransactionState)
 		return;
 	}
 
-	state = php_phongo_get_transaction_state_string(mongoc_client_session_get_transaction_state(intern->client_session) TSRMLS_CC);
+	state = php_phongo_get_transaction_state_string(mongoc_client_session_get_transaction_state(intern->client_session));
 	if (!state) {
 		/* Exception already thrown */
 		return;
@@ -343,7 +343,7 @@ static PHP_METHOD(Session, getTransactionState)
  * WC object, and/or maxCommitTimeMS int. Returns NULL if no options were found,
  * or there was an invalid option. If there was an invalid option or structure,
  * an exception will be thrown too. */
-mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* options TSRMLS_DC)
+mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* options)
 {
 	mongoc_transaction_opt_t* opts = NULL;
 
@@ -351,7 +351,7 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 		int64_t max_commit_time_ms = php_array_fetchc_long(options, "maxCommitTimeMS");
 
 		if (max_commit_time_ms < 0) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxCommitTimeMS\" option to be >= 0, %" PRId64 " given", max_commit_time_ms);
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"maxCommitTimeMS\" option to be >= 0, %" PRId64 " given", max_commit_time_ms);
 			/* Freeing opts is not needed here, as it can't be set yet. The
 			 * code is here to keep it consistent with the others in case more
 			 * options are added before this one. */
@@ -362,7 +362,7 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 		}
 
 		if (max_commit_time_ms > UINT32_MAX) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxCommitTimeMS\" option to be <= %" PRIu32 ", %" PRId64 " given", UINT32_MAX, max_commit_time_ms);
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"maxCommitTimeMS\" option to be <= %" PRIu32 ", %" PRId64 " given", UINT32_MAX, max_commit_time_ms);
 			/* Freeing opts is not needed here, as it can't be set yet. The
 			 * code is here to keep it consistent with the others in case more
 			 * options are added before this one. */
@@ -382,8 +382,8 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 	if (php_array_existsc(options, "readConcern")) {
 		zval* read_concern = php_array_fetchc(options, "readConcern");
 
-		if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce TSRMLS_CC)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
+		if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
 			if (opts) {
 				mongoc_transaction_opts_destroy(opts);
 			}
@@ -394,14 +394,14 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 			opts = mongoc_transaction_opts_new();
 		}
 
-		mongoc_transaction_opts_set_read_concern(opts, phongo_read_concern_from_zval(read_concern TSRMLS_CC));
+		mongoc_transaction_opts_set_read_concern(opts, phongo_read_concern_from_zval(read_concern));
 	}
 
 	if (php_array_existsc(options, "readPreference")) {
 		zval* read_preference = php_array_fetchc(options, "readPreference");
 
-		if (Z_TYPE_P(read_preference) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_preference), php_phongo_readpreference_ce TSRMLS_CC)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readPreference\" option to be %s, %s given", ZSTR_VAL(php_phongo_readpreference_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_preference));
+		if (Z_TYPE_P(read_preference) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_preference), php_phongo_readpreference_ce)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readPreference\" option to be %s, %s given", ZSTR_VAL(php_phongo_readpreference_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_preference));
 			if (opts) {
 				mongoc_transaction_opts_destroy(opts);
 			}
@@ -412,14 +412,14 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 			opts = mongoc_transaction_opts_new();
 		}
 
-		mongoc_transaction_opts_set_read_prefs(opts, phongo_read_preference_from_zval(read_preference TSRMLS_CC));
+		mongoc_transaction_opts_set_read_prefs(opts, phongo_read_preference_from_zval(read_preference));
 	}
 
 	if (php_array_existsc(options, "writeConcern")) {
 		zval* write_concern = php_array_fetchc(options, "writeConcern");
 
-		if (Z_TYPE_P(write_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(write_concern), php_phongo_writeconcern_ce TSRMLS_CC)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_writeconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(write_concern));
+		if (Z_TYPE_P(write_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(write_concern), php_phongo_writeconcern_ce)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"writeConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_writeconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(write_concern));
 			if (opts) {
 				mongoc_transaction_opts_destroy(opts);
 			}
@@ -430,7 +430,7 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 			opts = mongoc_transaction_opts_new();
 		}
 
-		mongoc_transaction_opts_set_write_concern(opts, phongo_write_concern_from_zval(write_concern TSRMLS_CC));
+		mongoc_transaction_opts_set_write_concern(opts, phongo_write_concern_from_zval(write_concern));
 	}
 
 	return opts;
@@ -448,19 +448,19 @@ static PHP_METHOD(Session, startTransaction)
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "startTransaction")
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a!", &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "|a!", &options) == FAILURE) {
 		return;
 	}
 
 	if (options) {
-		txn_options = php_mongodb_session_parse_transaction_options(options TSRMLS_CC);
+		txn_options = php_mongodb_session_parse_transaction_options(options);
 	}
 	if (EG(exception)) {
 		return;
 	}
 
 	if (!mongoc_client_session_start_transaction(intern->client_session, txn_options, &error)) {
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		phongo_throw_exception_from_bson_error_t(&error);
 	}
 
 	if (txn_options) {
@@ -484,7 +484,7 @@ static PHP_METHOD(Session, commitTransaction)
 	}
 
 	if (!mongoc_client_session_commit_transaction(intern->client_session, &reply, &error)) {
-		phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply TSRMLS_CC);
+		phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply);
 		bson_destroy(&reply);
 	}
 } /* }}} */
@@ -504,7 +504,7 @@ static PHP_METHOD(Session, abortTransaction)
 	}
 
 	if (!mongoc_client_session_abort_transaction(intern->client_session, &error)) {
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		phongo_throw_exception_from_bson_error_t(&error);
 	}
 } /* }}} */
 
@@ -581,11 +581,11 @@ static zend_function_entry php_phongo_session_me[] = {
 /* {{{ MongoDB\Driver\Session object handlers */
 static zend_object_handlers php_phongo_handler_session;
 
-static void php_phongo_session_free_object(zend_object* object TSRMLS_DC) /* {{{ */
+static void php_phongo_session_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_session_t* intern = Z_OBJ_SESSION(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	/* If this Session was created in a different process, reset the client so
 	 * that its session pool is cleared and mongoc_client_session_destroy will
@@ -599,13 +599,13 @@ static void php_phongo_session_free_object(zend_object* object TSRMLS_DC) /* {{{
 	}
 } /* }}} */
 
-static zend_object* php_phongo_session_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_session_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_session_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_session_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
 	PHONGO_SET_CREATED_BY_PID(intern);
@@ -615,7 +615,7 @@ static zend_object* php_phongo_session_create_object(zend_class_entry* class_typ
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	php_phongo_session_t*       intern = NULL;
 	const mongoc_session_opt_t* cs_opts;
@@ -682,7 +682,7 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 		if (timestamp && increment) {
 			zval ztimestamp;
 
-			php_phongo_bson_new_timestamp_from_increment_and_timestamp(&ztimestamp, increment, timestamp TSRMLS_CC);
+			php_phongo_bson_new_timestamp_from_increment_and_timestamp(&ztimestamp, increment, timestamp);
 			ADD_ASSOC_ZVAL_EX(&retval, "operationTime", &ztimestamp);
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "operationTime");
@@ -698,7 +698,7 @@ static HashTable* php_phongo_session_get_debug_info(zval* object, int* is_temp T
 
 			zval server;
 
-			phongo_server_init(&server, intern->client, server_id TSRMLS_CC);
+			phongo_server_init(&server, intern->client, server_id);
 			ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "server");
@@ -717,7 +717,7 @@ void php_phongo_session_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Session", php_phongo_session_me);
-	php_phongo_session_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_session_ce                = zend_register_internal_class(&ce);
 	php_phongo_session_ce->create_object = php_phongo_session_create_object;
 	PHONGO_CE_FINAL(php_phongo_session_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_session_ce);
@@ -727,11 +727,11 @@ void php_phongo_session_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_session.free_obj       = php_phongo_session_free_object;
 	php_phongo_handler_session.offset         = XtOffsetOf(php_phongo_session_t, std);
 
-	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_NONE"), PHONGO_TRANSACTION_NONE TSRMLS_CC);
-	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_STARTING"), PHONGO_TRANSACTION_STARTING TSRMLS_CC);
-	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_IN_PROGRESS"), PHONGO_TRANSACTION_IN_PROGRESS TSRMLS_CC);
-	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_COMMITTED"), PHONGO_TRANSACTION_COMMITTED TSRMLS_CC);
-	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_ABORTED"), PHONGO_TRANSACTION_ABORTED TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_NONE"), PHONGO_TRANSACTION_NONE);
+	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_STARTING"), PHONGO_TRANSACTION_STARTING);
+	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_IN_PROGRESS"), PHONGO_TRANSACTION_IN_PROGRESS);
+	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_COMMITTED"), PHONGO_TRANSACTION_COMMITTED);
+	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_ABORTED"), PHONGO_TRANSACTION_ABORTED);
 } /* }}} */
 
 /*

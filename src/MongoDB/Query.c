@@ -30,17 +30,17 @@ zend_class_entry* php_phongo_query_ce;
 
 /* Appends a string field into the BSON options. Returns true on success;
  * otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_query_opts_append_string(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key TSRMLS_DC) /* {{{ */
+static bool php_phongo_query_opts_append_string(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key) /* {{{ */
 {
 	zval* value = php_array_fetch(zarr, zarr_key);
 
 	if (Z_TYPE_P(value) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" %s to be string, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" %s to be string, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
 		return false;
 	}
 
 	if (!bson_append_utf8(opts, opts_key, strlen(opts_key), Z_STRVAL_P(value), Z_STRLEN_P(value))) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", opts_key);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", opts_key);
 		return false;
 	}
 
@@ -49,17 +49,17 @@ static bool php_phongo_query_opts_append_string(bson_t* opts, const char* opts_k
 
 /* Appends a document field for the given opts document and key. Returns true on
  * success; otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key TSRMLS_DC) /* {{{ */
+static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key) /* {{{ */
 {
 	zval*  value = php_array_fetch(zarr, zarr_key);
 	bson_t b     = BSON_INITIALIZER;
 
 	if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" %s to be array or object, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" %s to be array or object, %s given", zarr_key, zarr_key[0] == '$' ? "modifier" : "option", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
 		return false;
 	}
 
-	php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL);
 
 	if (EG(exception)) {
 		bson_destroy(&b);
@@ -67,13 +67,13 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 	}
 
 	if (!bson_validate(&b, BSON_VALIDATE_EMPTY_KEYS, NULL)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Cannot use empty keys in \"%s\" %s", zarr_key, zarr_key[0] == '$' ? "modifier" : "option");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Cannot use empty keys in \"%s\" %s", zarr_key, zarr_key[0] == '$' ? "modifier" : "option");
 		bson_destroy(&b);
 		return false;
 	}
 
 	if (!BSON_APPEND_DOCUMENT(opts, opts_key, &b)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", opts_key);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", opts_key);
 		bson_destroy(&b);
 		return false;
 	}
@@ -82,49 +82,49 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 	return true;
 } /* }}} */
 
-#define PHONGO_QUERY_OPT_BOOL_EX(opt, zarr, key, deprecated)                                                                                \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                                       \
-		if ((deprecated)) {                                                                                                                 \
-			php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"%s\" option is deprecated and will be removed in a future release", key); \
-		}                                                                                                                                   \
-		if (!BSON_APPEND_BOOL(intern->opts, (opt), php_array_fetchc_bool((zarr), (key)))) {                                                 \
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt));                        \
-			return false;                                                                                                                   \
-		}                                                                                                                                   \
+#define PHONGO_QUERY_OPT_BOOL_EX(opt, zarr, key, deprecated)                                                                      \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                             \
+		if ((deprecated)) {                                                                                                       \
+			php_error_docref(NULL, E_DEPRECATED, "The \"%s\" option is deprecated and will be removed in a future release", key); \
+		}                                                                                                                         \
+		if (!BSON_APPEND_BOOL(intern->opts, (opt), php_array_fetchc_bool((zarr), (key)))) {                                       \
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", (opt));                        \
+			return false;                                                                                                         \
+		}                                                                                                                         \
 	}
 
 #define PHONGO_QUERY_OPT_BOOL(opt, zarr, key) PHONGO_QUERY_OPT_BOOL_EX((opt), (zarr), (key), 0)
 #define PHONGO_QUERY_OPT_BOOL_DEPRECATED(opt, zarr, key) PHONGO_QUERY_OPT_BOOL_EX((opt), (zarr), (key), 1)
 
-#define PHONGO_QUERY_OPT_DOCUMENT(opt, zarr, key)                                                   \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                               \
-		if (!php_phongo_query_opts_append_document(intern->opts, (opt), (zarr), (key) TSRMLS_CC)) { \
-			return false;                                                                           \
-		}                                                                                           \
+#define PHONGO_QUERY_OPT_DOCUMENT(opt, zarr, key)                                         \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                                     \
+		if (!php_phongo_query_opts_append_document(intern->opts, (opt), (zarr), (key))) { \
+			return false;                                                                 \
+		}                                                                                 \
 	}
 
 /* Note: handling of integer options will depend on SIZEOF_ZEND_LONG and we
  * are not converting strings to 64-bit integers for 32-bit platforms. */
 
-#define PHONGO_QUERY_OPT_INT64_EX(opt, zarr, key, deprecated)                                                                               \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                                       \
-		if ((deprecated)) {                                                                                                                 \
-			php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"%s\" option is deprecated and will be removed in a future release", key); \
-		}                                                                                                                                   \
-		if (!BSON_APPEND_INT64(intern->opts, (opt), php_array_fetchc_long((zarr), (key)))) {                                                \
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"%s\" option", (opt));                        \
-			return false;                                                                                                                   \
-		}                                                                                                                                   \
+#define PHONGO_QUERY_OPT_INT64_EX(opt, zarr, key, deprecated)                                                                     \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                             \
+		if ((deprecated)) {                                                                                                       \
+			php_error_docref(NULL, E_DEPRECATED, "The \"%s\" option is deprecated and will be removed in a future release", key); \
+		}                                                                                                                         \
+		if (!BSON_APPEND_INT64(intern->opts, (opt), php_array_fetchc_long((zarr), (key)))) {                                      \
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", (opt));                        \
+			return false;                                                                                                         \
+		}                                                                                                                         \
 	}
 
 #define PHONGO_QUERY_OPT_INT64(opt, zarr, key) PHONGO_QUERY_OPT_INT64_EX((opt), (zarr), (key), 0)
 #define PHONGO_QUERY_OPT_INT64_DEPRECATED(opt, zarr, key) PHONGO_QUERY_OPT_INT64_EX((opt), (zarr), (key), 1)
 
-#define PHONGO_QUERY_OPT_STRING(opt, zarr, key)                                                   \
-	if ((zarr) && php_array_existsc((zarr), (key))) {                                             \
-		if (!php_phongo_query_opts_append_string(intern->opts, (opt), (zarr), (key) TSRMLS_CC)) { \
-			return false;                                                                         \
-		}                                                                                         \
+#define PHONGO_QUERY_OPT_STRING(opt, zarr, key)                                         \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                                   \
+		if (!php_phongo_query_opts_append_string(intern->opts, (opt), (zarr), (key))) { \
+			return false;                                                               \
+		}                                                                               \
 	}
 
 /* Initialize the "hint" option. Returns true on success; otherwise, false is
@@ -132,7 +132,7 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
  *
  * The "hint" option (or "$hint" modifier) must be a string or document. Check
  * for both types and merge into BSON options accordingly. */
-static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options, zval* modifiers TSRMLS_DC) /* {{{ */
+static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options, zval* modifiers) /* {{{ */
 {
 	/* The "hint" option (or "$hint" modifier) must be a string or document.
 	 * Check for both types and merge into BSON options accordingly. */
@@ -144,7 +144,7 @@ static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options
 		} else if (type == IS_OBJECT || type == IS_ARRAY) {
 			PHONGO_QUERY_OPT_DOCUMENT("hint", options, "hint");
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"hint\" option to be string, array, or object, %s given", zend_get_type_by_const(type));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"hint\" option to be string, array, or object, %s given", zend_get_type_by_const(type));
 			return false;
 		}
 	} else if (modifiers && php_array_existsc(modifiers, "$hint")) {
@@ -155,7 +155,7 @@ static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options
 		} else if (type == IS_OBJECT || type == IS_ARRAY) {
 			PHONGO_QUERY_OPT_DOCUMENT("hint", modifiers, "$hint");
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"$hint\" modifier to be string, array, or object, %s given", zend_get_type_by_const(type));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"$hint\" modifier to be string, array, or object, %s given", zend_get_type_by_const(type));
 			return false;
 		}
 	}
@@ -169,22 +169,22 @@ static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options
  * mongoc_collection_find_with_opts() requires a non-negative limit. For
  * backwards compatibility, a negative limit should be set as a positive value
  * and default singleBatch to true. */
-static bool php_phongo_query_init_limit_and_singlebatch(php_phongo_query_t* intern, zval* options TSRMLS_DC) /* {{{ */
+static bool php_phongo_query_init_limit_and_singlebatch(php_phongo_query_t* intern, zval* options) /* {{{ */
 {
 	if (php_array_fetchc_long(options, "limit") < 0) {
 		zend_long limit = php_array_fetchc_long(options, "limit");
 
 		if (!BSON_APPEND_INT64(intern->opts, "limit", -limit)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"limit\" option");
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"limit\" option");
 			return false;
 		}
 
 		if (php_array_existsc(options, "singleBatch") && !php_array_fetchc_bool(options, "singleBatch")) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Negative \"limit\" option conflicts with false \"singleBatch\" option");
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Negative \"limit\" option conflicts with false \"singleBatch\" option");
 			return false;
 		} else {
 			if (!BSON_APPEND_BOOL(intern->opts, "singleBatch", true)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"singleBatch\" option");
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"singleBatch\" option");
 				return false;
 			}
 		}
@@ -201,7 +201,7 @@ static bool php_phongo_query_init_limit_and_singlebatch(php_phongo_query_t* inte
  *
  * The "readConcern" option should be a MongoDB\Driver\ReadConcern instance,
  * which must be converted to a mongoc_read_concern_t. */
-static bool php_phongo_query_init_readconcern(php_phongo_query_t* intern, zval* options TSRMLS_DC) /* {{{ */
+static bool php_phongo_query_init_readconcern(php_phongo_query_t* intern, zval* options) /* {{{ */
 {
 	zval* read_concern;
 
@@ -211,12 +211,12 @@ static bool php_phongo_query_init_readconcern(php_phongo_query_t* intern, zval* 
 
 	read_concern = php_array_fetchc(options, "readConcern");
 
-	if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce TSRMLS_CC)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
+	if (Z_TYPE_P(read_concern) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(read_concern), php_phongo_readconcern_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"readConcern\" option to be %s, %s given", ZSTR_VAL(php_phongo_readconcern_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(read_concern));
 		return false;
 	}
 
-	intern->read_concern = mongoc_read_concern_copy(phongo_read_concern_from_zval(read_concern TSRMLS_CC));
+	intern->read_concern = mongoc_read_concern_copy(phongo_read_concern_from_zval(read_concern));
 
 	return true;
 } /* }}} */
@@ -226,7 +226,7 @@ static bool php_phongo_query_init_readconcern(php_phongo_query_t* intern, zval* 
  *
  * The "maxAwaitTimeMS" option is assigned to the cursor after query execution
  * via mongoc_cursor_set_max_await_time_ms(). */
-static bool php_phongo_query_init_max_await_time_ms(php_phongo_query_t* intern, zval* options TSRMLS_DC) /* {{{ */
+static bool php_phongo_query_init_max_await_time_ms(php_phongo_query_t* intern, zval* options) /* {{{ */
 {
 	int64_t max_await_time_ms;
 
@@ -237,12 +237,12 @@ static bool php_phongo_query_init_max_await_time_ms(php_phongo_query_t* intern, 
 	max_await_time_ms = php_array_fetchc_long(options, "maxAwaitTimeMS");
 
 	if (max_await_time_ms < 0) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxAwaitTimeMS\" option to be >= 0, %" PRId64 " given", max_await_time_ms);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"maxAwaitTimeMS\" option to be >= 0, %" PRId64 " given", max_await_time_ms);
 		return false;
 	}
 
 	if (max_await_time_ms > UINT32_MAX) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"maxAwaitTimeMS\" option to be <= %" PRIu32 ", %" PRId64 " given", UINT32_MAX, max_await_time_ms);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"maxAwaitTimeMS\" option to be <= %" PRIu32 ", %" PRId64 " given", UINT32_MAX, max_await_time_ms);
 		return false;
 	}
 
@@ -254,7 +254,7 @@ static bool php_phongo_query_init_max_await_time_ms(php_phongo_query_t* intern, 
 /* Initializes the php_phongo_query_t from filter and options arguments. This
  * function will fall back to a modifier in the absence of a top-level option
  * (where applicable). */
-static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval* options TSRMLS_DC) /* {{{ */
+static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval* options) /* {{{ */
 {
 	zval* modifiers = NULL;
 
@@ -262,7 +262,7 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 	intern->opts              = bson_new();
 	intern->max_await_time_ms = 0;
 
-	php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->filter, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->filter, NULL);
 
 	/* Note: if any exceptions are thrown, we can simply return as PHP will
 	 * invoke php_phongo_query_free_object to destruct the object. */
@@ -271,7 +271,7 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 	}
 
 	if (!bson_validate(intern->filter, BSON_VALIDATE_EMPTY_KEYS, NULL)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Cannot use empty keys in filter document");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Cannot use empty keys in filter document");
 		return false;
 	}
 
@@ -283,7 +283,7 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 		modifiers = php_array_fetchc(options, "modifiers");
 
 		if (Z_TYPE_P(modifiers) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"modifiers\" option to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(modifiers));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"modifiers\" option to be array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(modifiers));
 			return false;
 		}
 	}
@@ -324,19 +324,19 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 	 * path. This modifier will be ignored for the find command code path. */
 	PHONGO_QUERY_OPT_BOOL("explain", modifiers, "$explain");
 
-	if (!php_phongo_query_init_hint(intern, options, modifiers TSRMLS_CC)) {
+	if (!php_phongo_query_init_hint(intern, options, modifiers)) {
 		return false;
 	}
 
-	if (!php_phongo_query_init_limit_and_singlebatch(intern, options TSRMLS_CC)) {
+	if (!php_phongo_query_init_limit_and_singlebatch(intern, options)) {
 		return false;
 	}
 
-	if (!php_phongo_query_init_readconcern(intern, options TSRMLS_CC)) {
+	if (!php_phongo_query_init_readconcern(intern, options)) {
 		return false;
 	}
 
-	if (!php_phongo_query_init_max_await_time_ms(intern, options TSRMLS_CC)) {
+	if (!php_phongo_query_init_max_await_time_ms(intern, options)) {
 		return false;
 	}
 
@@ -357,16 +357,16 @@ static PHP_METHOD(Query, __construct)
 	zval*               filter;
 	zval*               options = NULL;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	intern = Z_QUERY_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A|a!", &filter, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A|a!", &filter, &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
-	php_phongo_query_init(intern, filter, options TSRMLS_CC);
+	php_phongo_query_init(intern, filter, options);
 } /* }}} */
 
 /* {{{ MongoDB\Driver\Query function entries */
@@ -390,11 +390,11 @@ static zend_function_entry php_phongo_query_me[] = {
 /* {{{ MongoDB\Driver\Query object handlers */
 static zend_object_handlers php_phongo_handler_query;
 
-static void php_phongo_query_free_object(zend_object* object TSRMLS_DC) /* {{{ */
+static void php_phongo_query_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_query_t* intern = Z_OBJ_QUERY(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->filter) {
 		bson_clear(&intern->filter);
@@ -409,13 +409,13 @@ static void php_phongo_query_free_object(zend_object* object TSRMLS_DC) /* {{{ *
 	}
 } /* }}} */
 
-static zend_object* php_phongo_query_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_query_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_query_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_query_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
 	intern->std.handlers = &php_phongo_handler_query;
@@ -423,7 +423,7 @@ static zend_object* php_phongo_query_create_object(zend_class_entry* class_type 
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_query_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_query_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	php_phongo_query_t* intern;
 	zval                retval = ZVAL_STATIC_INIT;
@@ -481,7 +481,7 @@ void php_phongo_query_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Query", php_phongo_query_me);
-	php_phongo_query_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_query_ce                = zend_register_internal_class(&ce);
 	php_phongo_query_ce->create_object = php_phongo_query_create_object;
 	PHONGO_CE_FINAL(php_phongo_query_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_query_ce);

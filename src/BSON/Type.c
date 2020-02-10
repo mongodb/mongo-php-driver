@@ -36,7 +36,7 @@ void php_phongo_type_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Type", php_phongo_type_me);
-	php_phongo_type_ce = zend_register_internal_interface(&ce TSRMLS_CC);
+	php_phongo_type_ce = zend_register_internal_interface(&ce);
 } /* }}} */
 
 /*

@@ -94,19 +94,19 @@ typedef struct {
 		s.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY; \
 	} while (0)
 
-void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out TSRMLS_DC);
+void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out);
 bool php_phongo_bson_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state);
 bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval* out);
 bool php_phongo_bson_value_to_zval(const bson_value_t* value, zval* zv);
-void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bson_value_t* value TSRMLS_DC);
-bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map TSRMLS_DC);
+void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bson_value_t* value);
+bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map);
 void php_phongo_bson_state_ctor(php_phongo_bson_state* state);
 void php_phongo_bson_state_dtor(php_phongo_bson_state* state);
 void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson_state* src);
 void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map);
 
-void php_phongo_bson_new_timestamp_from_increment_and_timestamp(zval* object, uint32_t increment, uint32_t timestamp TSRMLS_DC);
-void php_phongo_bson_new_int64(zval* object, int64_t integer TSRMLS_DC);
+void php_phongo_bson_new_timestamp_from_increment_and_timestamp(zval* object, uint32_t increment, uint32_t timestamp);
+void php_phongo_bson_new_int64(zval* object, int64_t integer);
 
 php_phongo_field_path* php_phongo_field_path_alloc(bool owns_elements);
 void                   php_phongo_field_path_free(php_phongo_field_path* field_path);

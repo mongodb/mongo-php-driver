@@ -51,7 +51,7 @@ zend_class_entry* php_phongo_manager_ce;
  *
  * This handles the merging of any legacy SSL context options and also makes
  * driverOptions suitable for serialization by removing the resource zval. */
-static bool php_phongo_manager_merge_context_options(zval* zdriverOptions TSRMLS_DC) /* {{{ */
+static bool php_phongo_manager_merge_context_options(zval* zdriverOptions) /* {{{ */
 {
 	php_stream_context* context;
 	zval *              zcontext, *zcontextOptions;
@@ -64,14 +64,14 @@ static bool php_phongo_manager_merge_context_options(zval* zdriverOptions TSRMLS
 	context  = php_stream_context_from_zval(zcontext, 1);
 
 	if (!context) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "\"context\" driver option is not a valid Stream-Context resource");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "\"context\" driver option is not a valid Stream-Context resource");
 		return false;
 	}
 
 	zcontextOptions = php_array_fetchc_array(&context->options, "ssl");
 
 	if (!zcontextOptions) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Stream-Context resource does not contain \"ssl\" options array");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Stream-Context resource does not contain \"ssl\" options array");
 		return false;
 	}
 
@@ -83,7 +83,7 @@ static bool php_phongo_manager_merge_context_options(zval* zdriverOptions TSRMLS
 	HT_ALLOW_COW_VIOLATION(Z_ARRVAL_P(zdriverOptions));
 #endif
 
-	php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "The \"context\" driver option is deprecated.");
+	php_error_docref(NULL, E_DEPRECATED, "The \"context\" driver option is deprecated.");
 
 	/* Perform array union (see: add_function() in zend_operators.c) */
 	zend_hash_merge(Z_ARRVAL_P(zdriverOptions), Z_ARRVAL_P(zcontextOptions), zval_add_ref, 0);
@@ -98,7 +98,7 @@ static bool php_phongo_manager_merge_context_options(zval* zdriverOptions TSRMLS
  *
  * Note: URI options are case-insensitive, so we must iterate through the
  * HashTable in order to detect options. */
-static void php_phongo_manager_prep_authmechanismproperties(zval* properties TSRMLS_DC) /* {{{ */
+static void php_phongo_manager_prep_authmechanismproperties(zval* properties) /* {{{ */
 {
 	HashTable* ht_data;
 
@@ -144,7 +144,7 @@ static void php_phongo_manager_prep_authmechanismproperties(zval* properties TSR
  *
  * Note: URI options are case-insensitive, so we must iterate through the
  * HashTable in order to detect options. */
-static void php_phongo_manager_prep_uri_options(zval* options TSRMLS_DC) /* {{{ */
+static void php_phongo_manager_prep_uri_options(zval* options) /* {{{ */
 {
 	HashTable* ht_data;
 
@@ -168,14 +168,14 @@ static void php_phongo_manager_prep_uri_options(zval* options TSRMLS_DC) /* {{{ 
 			if (!strcasecmp(ZSTR_VAL(string_key), MONGOC_URI_READPREFERENCETAGS)) {
 				ZVAL_DEREF(option);
 				SEPARATE_ZVAL_NOREF(option);
-				php_phongo_read_preference_prep_tagsets(option TSRMLS_CC);
+				php_phongo_read_preference_prep_tagsets(option);
 				continue;
 			}
 
 			if (!strcasecmp(ZSTR_VAL(string_key), MONGOC_URI_AUTHMECHANISMPROPERTIES)) {
 				ZVAL_DEREF(option);
 				SEPARATE_ZVAL_NOREF(option);
-				php_phongo_manager_prep_authmechanismproperties(option TSRMLS_CC);
+				php_phongo_manager_prep_authmechanismproperties(option);
 				continue;
 			}
 		}
@@ -192,7 +192,7 @@ static void php_phongo_manager_prep_uri_options(zval* options TSRMLS_DC) /* {{{ 
  *
  * On success, server_id will be set and the function will return true;
  * otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_manager_select_server(bool for_writes, zval* zreadPreference, zval* zsession, mongoc_client_t* client, uint32_t* server_id TSRMLS_DC) /* {{{ */
+static bool php_phongo_manager_select_server(bool for_writes, zval* zreadPreference, zval* zsession, mongoc_client_t* client, uint32_t* server_id) /* {{{ */
 {
 	mongoc_server_description_t* selected_server;
 	const mongoc_read_prefs_t*   read_preference = NULL;
@@ -210,7 +210,7 @@ static bool php_phongo_manager_select_server(bool for_writes, zval* zreadPrefere
 	}
 
 	if (!for_writes) {
-		read_preference = zreadPreference ? phongo_read_preference_from_zval(zreadPreference TSRMLS_CC) : mongoc_client_get_read_prefs(client);
+		read_preference = zreadPreference ? phongo_read_preference_from_zval(zreadPreference) : mongoc_client_get_read_prefs(client);
 	}
 
 	selected_server = mongoc_client_select_server(client, for_writes, read_preference, &error);
@@ -224,7 +224,7 @@ static bool php_phongo_manager_select_server(bool for_writes, zval* zreadPrefere
 
 	/* Check for connection related exceptions */
 	if (!EG(exception)) {
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		phongo_throw_exception_from_bson_error_t(&error);
 	}
 
 	return false;
@@ -241,29 +241,29 @@ static PHP_METHOD(Manager, __construct)
 	zval*                 options        = NULL;
 	zval*                 driverOptions  = NULL;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
 	/* Separate the options and driverOptions zvals, since we may end up
 	 * modifying them in php_phongo_manager_prep_uri_options() and
 	 * php_phongo_manager_merge_context_options() below, respectively. */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s!a/!a/!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "|s!a/!a/!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
 	if (options) {
-		php_phongo_manager_prep_uri_options(options TSRMLS_CC);
+		php_phongo_manager_prep_uri_options(options);
 	}
 
-	if (driverOptions && !php_phongo_manager_merge_context_options(driverOptions TSRMLS_CC)) {
+	if (driverOptions && !php_phongo_manager_merge_context_options(driverOptions)) {
 		/* Exception should already have been thrown */
 		return;
 	}
 
-	phongo_manager_init(intern, uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, options, driverOptions TSRMLS_CC);
+	phongo_manager_init(intern, uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, options, driverOptions);
 
 	if (intern->client) {
 		php_phongo_set_monitoring_callbacks(intern->client);
@@ -278,7 +278,7 @@ static PHP_METHOD(Manager, createClientEncryption)
 	php_phongo_clientencryption_t* clientencryption;
 	zval*                          options;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &options) == FAILURE) {
 		return;
 	}
 
@@ -287,7 +287,7 @@ static PHP_METHOD(Manager, createClientEncryption)
 	object_init_ex(return_value, php_phongo_clientencryption_ce);
 	clientencryption = Z_CLIENTENCRYPTION_OBJ_P(return_value);
 
-	phongo_clientencryption_init(clientencryption, intern->client, options TSRMLS_CC);
+	phongo_clientencryption_init(clientencryption, intern->client, options);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
@@ -304,25 +304,25 @@ static PHP_METHOD(Manager, executeCommand)
 	zval*                 zsession        = NULL;
 	uint32_t              server_id       = 0;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|z!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
 	}
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options TSRMLS_CC);
+	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options);
 
-	if (!phongo_parse_session(options, intern->client, NULL, &zsession TSRMLS_CC)) {
+	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
 
-	if (!phongo_parse_read_preference(options, &zreadPreference TSRMLS_CC)) {
+	if (!phongo_parse_read_preference(options, &zreadPreference)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
 
-	if (!php_phongo_manager_select_server(false, zreadPreference, zsession, intern->client, &server_id TSRMLS_CC)) {
+	if (!php_phongo_manager_select_server(false, zreadPreference, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
@@ -332,11 +332,11 @@ static PHP_METHOD(Manager, executeCommand)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, server_id, return_value TSRMLS_CC);
+	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, server_id, return_value);
 
 cleanup:
 	if (free_options) {
-		php_phongo_prep_legacy_option_free(options TSRMLS_CC);
+		php_phongo_prep_legacy_option_free(options);
 	}
 } /* }}} */
 
@@ -353,23 +353,23 @@ static PHP_METHOD(Manager, executeReadCommand)
 	uint32_t              server_id       = 0;
 	zval*                 zsession        = NULL;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
 	}
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	if (!phongo_parse_session(options, intern->client, NULL, &zsession TSRMLS_CC)) {
+	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
 		return;
 	}
 
-	if (!phongo_parse_read_preference(options, &zreadPreference TSRMLS_CC)) {
+	if (!phongo_parse_read_preference(options, &zreadPreference)) {
 		/* Exception should already have been thrown */
 		return;
 	}
 
-	if (!php_phongo_manager_select_server(false, zreadPreference, zsession, intern->client, &server_id TSRMLS_CC)) {
+	if (!php_phongo_manager_select_server(false, zreadPreference, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		return;
 	}
@@ -379,7 +379,7 @@ static PHP_METHOD(Manager, executeReadCommand)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, server_id, return_value TSRMLS_CC);
+	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, server_id, return_value);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
@@ -394,18 +394,18 @@ static PHP_METHOD(Manager, executeWriteCommand)
 	uint32_t              server_id = 0;
 	zval*                 zsession  = NULL;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
 	}
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	if (!phongo_parse_session(options, intern->client, NULL, &zsession TSRMLS_CC)) {
+	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
 		return;
 	}
 
-	if (!php_phongo_manager_select_server(true, NULL, zsession, intern->client, &server_id TSRMLS_CC)) {
+	if (!php_phongo_manager_select_server(true, NULL, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		return;
 	}
@@ -415,7 +415,7 @@ static PHP_METHOD(Manager, executeWriteCommand)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, server_id, return_value TSRMLS_CC);
+	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, server_id, return_value);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeReadWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
@@ -430,18 +430,18 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 	uint32_t              server_id = 0;
 	zval*                 zsession  = NULL;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
 		return;
 	}
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	if (!phongo_parse_session(options, intern->client, NULL, &zsession TSRMLS_CC)) {
+	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
 		return;
 	}
 
-	if (!php_phongo_manager_select_server(true, NULL, zsession, intern->client, &server_id TSRMLS_CC)) {
+	if (!php_phongo_manager_select_server(true, NULL, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		return;
 	}
@@ -451,7 +451,7 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, server_id, return_value TSRMLS_CC);
+	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, server_id, return_value);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, array $options = null])
@@ -468,25 +468,25 @@ static PHP_METHOD(Manager, executeQuery)
 	uint32_t server_id       = 0;
 	zval*    zsession        = NULL;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &namespace, &namespace_len, &query, php_phongo_query_ce, &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|z!", &namespace, &namespace_len, &query, php_phongo_query_ce, &options) == FAILURE) {
 		return;
 	}
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options TSRMLS_CC);
+	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options);
 
-	if (!phongo_parse_session(options, intern->client, NULL, &zsession TSRMLS_CC)) {
+	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
 
-	if (!phongo_parse_read_preference(options, &zreadPreference TSRMLS_CC)) {
+	if (!phongo_parse_read_preference(options, &zreadPreference)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
 
-	if (!php_phongo_manager_select_server(false, zreadPreference, zsession, intern->client, &server_id TSRMLS_CC)) {
+	if (!php_phongo_manager_select_server(false, zreadPreference, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
@@ -496,11 +496,11 @@ static PHP_METHOD(Manager, executeQuery)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
-	phongo_execute_query(intern->client, namespace, query, options, server_id, return_value TSRMLS_CC);
+	phongo_execute_query(intern->client, namespace, query, options, server_id, return_value);
 
 cleanup:
 	if (free_options) {
-		php_phongo_prep_legacy_option_free(options TSRMLS_CC);
+		php_phongo_prep_legacy_option_free(options);
 	}
 } /* }}} */
 
@@ -518,21 +518,21 @@ static PHP_METHOD(Manager, executeBulkWrite)
 	uint32_t                server_id    = 0;
 	zval*                   zsession     = NULL;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO|z!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|z!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &options) == FAILURE) {
 		return;
 	}
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 	bulk   = Z_BULKWRITE_OBJ_P(zbulk);
 
-	options = php_phongo_prep_legacy_option(options, "writeConcern", &free_options TSRMLS_CC);
+	options = php_phongo_prep_legacy_option(options, "writeConcern", &free_options);
 
-	if (!phongo_parse_session(options, intern->client, NULL, &zsession TSRMLS_CC)) {
+	if (!phongo_parse_session(options, intern->client, NULL, &zsession)) {
 		/* Exception should already have been thrown */
 		return;
 	}
 
-	if (!php_phongo_manager_select_server(true, NULL, zsession, intern->client, &server_id TSRMLS_CC)) {
+	if (!php_phongo_manager_select_server(true, NULL, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
@@ -541,11 +541,11 @@ static PHP_METHOD(Manager, executeBulkWrite)
 	 * that its session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
-	phongo_execute_bulk_write(intern->client, namespace, bulk, options, server_id, return_value TSRMLS_CC);
+	phongo_execute_bulk_write(intern->client, namespace, bulk, options, server_id, return_value);
 
 cleanup:
 	if (free_options) {
-		php_phongo_prep_legacy_option_free(options TSRMLS_CC);
+		php_phongo_prep_legacy_option_free(options);
 	}
 } /* }}} */
 
@@ -561,7 +561,7 @@ static PHP_METHOD(Manager, getReadConcern)
 		return;
 	}
 
-	phongo_readconcern_init(return_value, mongoc_client_get_read_concern(intern->client) TSRMLS_CC);
+	phongo_readconcern_init(return_value, mongoc_client_get_read_concern(intern->client));
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\ReadPreference MongoDB\Driver\Manager::getReadPreference()
@@ -576,7 +576,7 @@ static PHP_METHOD(Manager, getReadPreference)
 		return;
 	}
 
-	phongo_readpreference_init(return_value, mongoc_client_get_read_prefs(intern->client) TSRMLS_CC);
+	phongo_readpreference_init(return_value, mongoc_client_get_read_prefs(intern->client));
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Server[] MongoDB\Driver\Manager::getServers()
@@ -599,7 +599,7 @@ static PHP_METHOD(Manager, getServers)
 	for (i = 0; i < n; i++) {
 		zval obj;
 
-		phongo_server_init(&obj, intern->client, mongoc_server_description_id(sds[i]) TSRMLS_CC);
+		phongo_server_init(&obj, intern->client, mongoc_server_description_id(sds[i]));
 		add_next_index_zval(return_value, &obj);
 	}
 
@@ -618,7 +618,7 @@ static PHP_METHOD(Manager, getWriteConcern)
 		return;
 	}
 
-	phongo_writeconcern_init(return_value, mongoc_client_get_write_concern(intern->client) TSRMLS_CC);
+	phongo_writeconcern_init(return_value, mongoc_client_get_write_concern(intern->client));
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Server MongoDB\Driver\Manager::selectServers(MongoDB\Driver\ReadPreference $readPreference)
@@ -631,16 +631,16 @@ static PHP_METHOD(Manager, selectServer)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zreadPreference, php_phongo_readpreference_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &zreadPreference, php_phongo_readpreference_ce) == FAILURE) {
 		return;
 	}
 
-	if (!php_phongo_manager_select_server(false, zreadPreference, NULL, intern->client, &server_id TSRMLS_CC)) {
+	if (!php_phongo_manager_select_server(false, zreadPreference, NULL, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		return;
 	}
 
-	phongo_server_init(return_value, intern->client, server_id TSRMLS_CC);
+	phongo_server_init(return_value, intern->client, server_id);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Session MongoDB\Driver\Manager::startSession([array $options = null])
@@ -656,7 +656,7 @@ static PHP_METHOD(Manager, startSession)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a!", &options) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "|a!", &options) == FAILURE) {
 		return;
 	}
 
@@ -671,14 +671,14 @@ static PHP_METHOD(Manager, startSession)
 		/* Thrown exception and return if the defaultTransactionOptions is not an array */
 		if (Z_TYPE_P(txn_options) != IS_ARRAY) {
 			phongo_throw_exception(
-				PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC,
+				PHONGO_ERROR_INVALID_ARGUMENT,
 				"Expected \"defaultTransactionOptions\" option to be an array, %s given",
 				PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(txn_options));
 			goto cleanup;
 		}
 
 		/* Parse transaction options */
-		txn_opts = php_mongodb_session_parse_transaction_options(txn_options TSRMLS_CC);
+		txn_opts = php_mongodb_session_parse_transaction_options(txn_options);
 
 		/* If an exception is thrown while parsing, the txn_opts struct is also
 		 * NULL, so no need to free it here */
@@ -705,9 +705,9 @@ static PHP_METHOD(Manager, startSession)
 	cs = mongoc_client_start_session(intern->client, cs_opts, &error);
 
 	if (cs) {
-		phongo_session_init(return_value, cs TSRMLS_CC);
+		phongo_session_init(return_value, cs);
 	} else {
-		phongo_throw_exception_from_bson_error_t(&error TSRMLS_CC);
+		phongo_throw_exception_from_bson_error_t(&error);
 	}
 
 cleanup:
@@ -787,11 +787,11 @@ static zend_function_entry php_phongo_manager_me[] = {
 /* {{{ MongoDB\Driver\Manager object handlers */
 static zend_object_handlers php_phongo_handler_manager;
 
-static void php_phongo_manager_free_object(zend_object* object TSRMLS_DC) /* {{{ */
+static void php_phongo_manager_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_manager_t* intern = Z_OBJ_MANAGER(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->client) {
 		MONGOC_DEBUG("Not destroying persistent client for Manager");
@@ -803,13 +803,13 @@ static void php_phongo_manager_free_object(zend_object* object TSRMLS_DC) /* {{{
 	}
 } /* }}} */
 
-static zend_object* php_phongo_manager_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_manager_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_manager_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_manager_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
 	PHONGO_SET_CREATED_BY_PID(intern);
@@ -819,7 +819,7 @@ static zend_object* php_phongo_manager_create_object(zend_class_entry* class_typ
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_manager_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_manager_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	php_phongo_manager_t*         intern;
 	mongoc_server_description_t** sds;
@@ -865,7 +865,7 @@ void php_phongo_manager_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Manager", php_phongo_manager_me);
-	php_phongo_manager_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_manager_ce                = zend_register_internal_class(&ce);
 	php_phongo_manager_ce->create_object = php_phongo_manager_create_object;
 	PHONGO_CE_FINAL(php_phongo_manager_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_manager_ce);

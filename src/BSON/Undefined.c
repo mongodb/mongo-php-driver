@@ -62,13 +62,13 @@ static PHP_METHOD(Undefined, unserialize)
 	char*               serialized;
 	size_t              serialized_len;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 } /* }}} */
 
 /* {{{ MongoDB\BSON\Undefined function entries */
@@ -95,19 +95,19 @@ static zend_function_entry php_phongo_undefined_me[] = {
 /* {{{ MongoDB\BSON\Undefined object handlers */
 static zend_object_handlers php_phongo_handler_undefined;
 
-static void php_phongo_undefined_free_object(zend_object* object TSRMLS_DC) /* {{{ */
+static void php_phongo_undefined_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_undefined_t* intern = Z_OBJ_UNDEFINED(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 } /* }}} */
 
-static zend_object* php_phongo_undefined_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_undefined_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_undefined_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_undefined_t, class_type);
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
 	intern->std.handlers = &php_phongo_handler_undefined;
@@ -121,13 +121,13 @@ void php_phongo_undefined_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Undefined", php_phongo_undefined_me);
-	php_phongo_undefined_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_undefined_ce                = zend_register_internal_class(&ce);
 	php_phongo_undefined_ce->create_object = php_phongo_undefined_create_object;
 	PHONGO_CE_FINAL(php_phongo_undefined_ce);
 
-	zend_class_implements(php_phongo_undefined_ce TSRMLS_CC, 1, php_phongo_json_serializable_ce);
-	zend_class_implements(php_phongo_undefined_ce TSRMLS_CC, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_undefined_ce TSRMLS_CC, 1, zend_ce_serializable);
+	zend_class_implements(php_phongo_undefined_ce, 1, php_phongo_json_serializable_ce);
+	zend_class_implements(php_phongo_undefined_ce, 1, php_phongo_type_ce);
+	zend_class_implements(php_phongo_undefined_ce, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_undefined, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	/* Re-assign default handler previously removed in php_phongo.c */

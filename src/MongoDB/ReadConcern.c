@@ -30,7 +30,7 @@ zend_class_entry* php_phongo_readconcern_ce;
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_readconcern_init_from_hash(php_phongo_readconcern_t* intern, HashTable* props TSRMLS_DC) /* {{{ */
+static bool php_phongo_readconcern_init_from_hash(php_phongo_readconcern_t* intern, HashTable* props) /* {{{ */
 {
 	zval* level;
 
@@ -42,7 +42,7 @@ static bool php_phongo_readconcern_init_from_hash(php_phongo_readconcern_t* inte
 			return true;
 		}
 
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"level\" string field", ZSTR_VAL(php_phongo_readconcern_ce->name));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"level\" string field", ZSTR_VAL(php_phongo_readconcern_ce->name));
 		goto failure;
 	}
 
@@ -63,14 +63,14 @@ static PHP_METHOD(ReadConcern, __construct)
 	char*                     level     = NULL;
 	size_t                    level_len = 0;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	intern = Z_READCONCERN_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s!", &level, &level_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "|s!", &level, &level_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
 	intern->read_concern = mongoc_read_concern_new();
 
@@ -87,7 +87,7 @@ static PHP_METHOD(ReadConcern, __set_state)
 	HashTable*                props;
 	zval*                     array;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
 		RETURN_FALSE;
 	}
 
@@ -96,7 +96,7 @@ static PHP_METHOD(ReadConcern, __set_state)
 	intern = Z_READCONCERN_OBJ_P(return_value);
 	props  = Z_ARRVAL_P(array);
 
-	php_phongo_readconcern_init_from_hash(intern, props TSRMLS_CC);
+	php_phongo_readconcern_init_from_hash(intern, props);
 } /* }}} */
 
 /* {{{ proto string|null MongoDB\Driver\ReadConcern::getLevel()
@@ -137,7 +137,7 @@ static PHP_METHOD(ReadConcern, isDefault)
 	RETURN_BOOL(mongoc_read_concern_is_default(intern->read_concern));
 } /* }}} */
 
-static HashTable* php_phongo_read_concern_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_read_concern_get_properties_hash(zval* object, bool is_debug) /* {{{ */
 {
 	php_phongo_readconcern_t* intern;
 	HashTable*                props;
@@ -171,7 +171,7 @@ static PHP_METHOD(ReadConcern, bsonSerialize)
 		return;
 	}
 
-	ZVAL_ARR(return_value, php_phongo_read_concern_get_properties_hash(getThis(), true TSRMLS_CC));
+	ZVAL_ARR(return_value, php_phongo_read_concern_get_properties_hash(getThis(), true));
 	convert_to_object(return_value);
 } /* }}} */
 
@@ -205,7 +205,7 @@ static PHP_METHOD(ReadConcern, serialize)
 	ADD_ASSOC_STRING(&retval, "level", level);
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
-	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
+	php_var_serialize(&buf, &retval, &var_hash);
 	smart_str_0(&buf);
 	PHP_VAR_SERIALIZE_DESTROY(var_hash);
 
@@ -228,29 +228,29 @@ static PHP_METHOD(ReadConcern, unserialize)
 
 	intern = Z_READCONCERN_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
 	if (!serialized_len) {
 		return;
 	}
 
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
-	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
+	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {
 		zval_ptr_dtor(&props);
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s unserialization failed", ZSTR_VAL(php_phongo_readconcern_ce->name));
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s unserialization failed", ZSTR_VAL(php_phongo_readconcern_ce->name));
 
 		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
 		return;
 	}
 	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
 
-	php_phongo_readconcern_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
+	php_phongo_readconcern_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
 } /* }}} */
 
@@ -287,11 +287,11 @@ static zend_function_entry php_phongo_readconcern_me[] = {
 /* {{{ MongoDB\Driver\ReadConcern object handlers */
 static zend_object_handlers php_phongo_handler_readconcern;
 
-static void php_phongo_readconcern_free_object(zend_object* object TSRMLS_DC) /* {{{ */
+static void php_phongo_readconcern_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_readconcern_t* intern = Z_OBJ_READCONCERN(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->properties) {
 		zend_hash_destroy(intern->properties);
@@ -303,13 +303,13 @@ static void php_phongo_readconcern_free_object(zend_object* object TSRMLS_DC) /*
 	}
 }
 
-static zend_object* php_phongo_readconcern_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_readconcern_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_readconcern_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_readconcern_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
 	intern->std.handlers = &php_phongo_handler_readconcern;
@@ -317,15 +317,15 @@ static zend_object* php_phongo_readconcern_create_object(zend_class_entry* class
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_readconcern_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_readconcern_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	*is_temp = 1;
-	return php_phongo_read_concern_get_properties_hash(object, true TSRMLS_CC);
+	return php_phongo_read_concern_get_properties_hash(object, true);
 } /* }}} */
 
-static HashTable* php_phongo_readconcern_get_properties(zval* object TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_readconcern_get_properties(zval* object) /* {{{ */
 {
-	return php_phongo_read_concern_get_properties_hash(object, false TSRMLS_CC);
+	return php_phongo_read_concern_get_properties_hash(object, false);
 } /* }}} */
 
 void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
@@ -333,12 +333,12 @@ void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ReadConcern", php_phongo_readconcern_me);
-	php_phongo_readconcern_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_readconcern_ce                = zend_register_internal_class(&ce);
 	php_phongo_readconcern_ce->create_object = php_phongo_readconcern_create_object;
 	PHONGO_CE_FINAL(php_phongo_readconcern_ce);
 
-	zend_class_implements(php_phongo_readconcern_ce TSRMLS_CC, 1, php_phongo_serializable_ce);
-	zend_class_implements(php_phongo_readconcern_ce TSRMLS_CC, 1, zend_ce_serializable);
+	zend_class_implements(php_phongo_readconcern_ce, 1, php_phongo_serializable_ce);
+	zend_class_implements(php_phongo_readconcern_ce, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_readconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_readconcern.get_debug_info = php_phongo_readconcern_get_debug_info;
@@ -346,10 +346,10 @@ void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_readconcern.free_obj       = php_phongo_readconcern_free_object;
 	php_phongo_handler_readconcern.offset         = XtOffsetOf(php_phongo_readconcern_t, std);
 
-	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("LOCAL"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_LOCAL) TSRMLS_CC);
-	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_MAJORITY) TSRMLS_CC);
-	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("LINEARIZABLE"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_LINEARIZABLE) TSRMLS_CC);
-	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("AVAILABLE"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_AVAILABLE) TSRMLS_CC);
+	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("LOCAL"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_LOCAL));
+	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_MAJORITY));
+	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("LINEARIZABLE"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_LINEARIZABLE));
+	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("AVAILABLE"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_AVAILABLE));
 } /* }}} */
 
 /*

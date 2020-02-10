@@ -90,9 +90,9 @@ typedef enum {
 
 zend_class_entry* phongo_exception_from_mongoc_domain(uint32_t /* mongoc_error_domain_t */ domain, uint32_t /* mongoc_error_code_t */ code);
 zend_class_entry* phongo_exception_from_phongo_domain(php_phongo_error_domain_t domain);
-void              phongo_throw_exception(php_phongo_error_domain_t domain TSRMLS_DC, const char* format, ...);
-void              phongo_throw_exception_from_bson_error_t(bson_error_t* error TSRMLS_DC);
-void              phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, const bson_t* reply TSRMLS_DC);
+void              phongo_throw_exception(php_phongo_error_domain_t domain, const char* format, ...);
+void              phongo_throw_exception_from_bson_error_t(bson_error_t* error);
+void              phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, const bson_t* reply);
 
 /* This enum is used for processing options in phongo_execute_parse_options and
  * selecting a libmongoc function to use in phongo_execute_command. The values
@@ -110,31 +110,31 @@ typedef enum {
 
 zend_object_handlers* phongo_get_std_object_handlers(void);
 
-void phongo_clientencryption_init(php_phongo_clientencryption_t* ce_obj, mongoc_client_t* client, zval* options TSRMLS_DC);
-void phongo_server_init(zval* return_value, mongoc_client_t* client, uint32_t server_id TSRMLS_DC);
-void phongo_session_init(zval* return_value, mongoc_client_session_t* client_session TSRMLS_DC);
-void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern TSRMLS_DC);
-void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs TSRMLS_DC);
-void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern TSRMLS_DC);
-bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value TSRMLS_DC);
-bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value TSRMLS_DC);
-bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value TSRMLS_DC);
+void phongo_clientencryption_init(php_phongo_clientencryption_t* ce_obj, mongoc_client_t* client, zval* options);
+void phongo_server_init(zval* return_value, mongoc_client_t* client, uint32_t server_id);
+void phongo_session_init(zval* return_value, mongoc_client_session_t* client_session);
+void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern);
+void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs);
+void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern);
+bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value);
+bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value);
+bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value);
 
-bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor TSRMLS_DC);
+bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor);
 
-const mongoc_read_concern_t*  phongo_read_concern_from_zval(zval* zread_concern TSRMLS_DC);
-const mongoc_read_prefs_t*    phongo_read_preference_from_zval(zval* zread_preference TSRMLS_DC);
-const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concern TSRMLS_DC);
+const mongoc_read_concern_t*  phongo_read_concern_from_zval(zval* zread_concern);
+const mongoc_read_prefs_t*    phongo_read_preference_from_zval(zval* zread_preference);
+const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concern);
 
 php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t* sd);
 
-bool phongo_parse_read_preference(zval* options, zval** zreadPreference TSRMLS_DC);
-bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession TSRMLS_DC);
+bool phongo_parse_read_preference(zval* options, zval** zreadPreference);
+bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession);
 
-zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* allocated TSRMLS_DC);
-void  php_phongo_prep_legacy_option_free(zval* options TSRMLS_DC);
+zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* allocated);
+void  php_phongo_prep_legacy_option_free(zval* options);
 
-void php_phongo_read_preference_prep_tagsets(zval* tagSets TSRMLS_DC);
+void php_phongo_read_preference_prep_tagsets(zval* tagSets);
 bool php_phongo_read_preference_tags_are_valid(const bson_t* tags);
 
 bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd);
@@ -142,17 +142,17 @@ void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* 
 void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern);
 void php_phongo_cursor_to_zval(zval* retval, const mongoc_cursor_t* cursor);
 
-void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions TSRMLS_DC);
+void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions);
 int  php_phongo_set_monitoring_callbacks(mongoc_client_t* client);
 
 bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len);
 
-void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options TSRMLS_DC);
-void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options TSRMLS_DC);
-void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue TSRMLS_DC);
+void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options);
+void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options);
+void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue);
 
-zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson TSRMLS_DC);
-zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson TSRMLS_DC);
+zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson);
+zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson);
 
 void php_phongo_client_reset_once(mongoc_client_t* client, int pid);
 
