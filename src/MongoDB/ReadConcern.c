@@ -61,7 +61,7 @@ static PHP_METHOD(ReadConcern, __construct)
 	php_phongo_readconcern_t* intern;
 	zend_error_handling       error_handling;
 	char*                     level     = NULL;
-	phongo_zpp_char_len       level_len = 0;
+	size_t                    level_len = 0;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_READCONCERN_OBJ_P(getThis());
@@ -115,7 +115,7 @@ static PHP_METHOD(ReadConcern, getLevel)
 	level = mongoc_read_concern_get_level(intern->read_concern);
 
 	if (level) {
-		PHONGO_RETURN_STRING(level);
+		RETURN_STRING(level);
 	}
 
 	RETURN_NULL();
@@ -180,7 +180,7 @@ static PHP_METHOD(ReadConcern, bsonSerialize)
 static PHP_METHOD(ReadConcern, serialize)
 {
 	php_phongo_readconcern_t* intern;
-	ZVAL_RETVAL_TYPE          retval;
+	zval                      retval;
 	php_serialize_data_t      var_hash;
 	smart_str                 buf = { 0 };
 	const char*               level;
@@ -198,7 +198,7 @@ static PHP_METHOD(ReadConcern, serialize)
 	level = mongoc_read_concern_get_level(intern->read_concern);
 
 	if (!level) {
-		PHONGO_RETURN_STRING("");
+		RETURN_STRING("");
 	}
 
 	array_init_size(&retval, 1);
@@ -222,7 +222,7 @@ static PHP_METHOD(ReadConcern, unserialize)
 	php_phongo_readconcern_t* intern;
 	zend_error_handling       error_handling;
 	char*                     serialized;
-	phongo_zpp_char_len       serialized_len;
+	size_t                    serialized_len;
 	zval                      props;
 	php_unserialize_data_t    var_hash;
 
@@ -287,7 +287,7 @@ static zend_function_entry php_phongo_readconcern_me[] = {
 /* {{{ MongoDB\Driver\ReadConcern object handlers */
 static zend_object_handlers php_phongo_handler_readconcern;
 
-static void php_phongo_readconcern_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_readconcern_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readconcern_t* intern = Z_OBJ_READCONCERN(object);
 
@@ -303,7 +303,7 @@ static void php_phongo_readconcern_free_object(phongo_free_object_arg* object TS
 	}
 }
 
-static phongo_create_object_retval php_phongo_readconcern_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_readconcern_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readconcern_t* intern = NULL;
 

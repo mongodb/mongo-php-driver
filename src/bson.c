@@ -645,7 +645,7 @@ static bool php_phongo_bson_visit_int64(const bson_iter_t* iter ARG_UNUSED, cons
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
-#if SIZEOF_PHONGO_LONG == 4
+#if SIZEOF_ZEND_LONG == 4
 	TSRMLS_FETCH();
 #endif
 

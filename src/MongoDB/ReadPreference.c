@@ -218,7 +218,7 @@ static PHP_METHOD(ReadPreference, __construct)
 	}
 
 	if (options && php_array_exists(options, "maxStalenessSeconds")) {
-		phongo_long maxStalenessSeconds = php_array_fetchc_long(options, "maxStalenessSeconds");
+		zend_long maxStalenessSeconds = php_array_fetchc_long(options, "maxStalenessSeconds");
 
 		if (maxStalenessSeconds != MONGOC_NO_MAX_STALENESS) {
 			if (maxStalenessSeconds < MONGOC_SMALLEST_MAX_STALENESS_SECONDS) {
@@ -313,7 +313,7 @@ static PHP_METHOD(ReadPreference, getModeString)
 		return;
 	}
 
-	PHONGO_RETURN_STRING(mode_string);
+	RETURN_STRING(mode_string);
 } /* }}} */
 
 /* {{{ proto array MongoDB\Driver\ReadPreference::getTagSets()
@@ -419,7 +419,7 @@ static PHP_METHOD(ReadPreference, bsonSerialize)
 static PHP_METHOD(ReadPreference, serialize)
 {
 	php_phongo_readpreference_t* intern;
-	ZVAL_RETVAL_TYPE             retval;
+	zval                         retval;
 	php_serialize_data_t         var_hash;
 	smart_str                    buf        = { 0 };
 	const char*                  modeString = NULL;
@@ -483,7 +483,7 @@ static PHP_METHOD(ReadPreference, unserialize)
 	php_phongo_readpreference_t* intern;
 	zend_error_handling          error_handling;
 	char*                        serialized;
-	phongo_zpp_char_len          serialized_len;
+	size_t                       serialized_len;
 	zval                         props;
 	php_unserialize_data_t       var_hash;
 
@@ -552,7 +552,7 @@ static zend_function_entry php_phongo_readpreference_me[] = {
 /* {{{ MongoDB\Driver\ReadPreference object handlers */
 static zend_object_handlers php_phongo_handler_readpreference;
 
-static void php_phongo_readpreference_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_readpreference_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readpreference_t* intern = Z_OBJ_READPREFERENCE(object);
 
@@ -568,7 +568,7 @@ static void php_phongo_readpreference_free_object(phongo_free_object_arg* object
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_readpreference_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_readpreference_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_readpreference_t* intern = NULL;
 

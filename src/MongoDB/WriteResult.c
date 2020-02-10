@@ -315,7 +315,7 @@ static zend_function_entry php_phongo_writeresult_me[] = {
 /* {{{ MongoDB\Driver\WriteResult object handlers */
 static zend_object_handlers php_phongo_handler_writeresult;
 
-static void php_phongo_writeresult_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_writeresult_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeresult_t* intern = Z_OBJ_WRITERESULT(object);
 
@@ -330,7 +330,7 @@ static void php_phongo_writeresult_free_object(phongo_free_object_arg* object TS
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_writeresult_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_writeresult_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeresult_t* intern = NULL;
 

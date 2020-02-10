@@ -40,7 +40,7 @@ static bool php_phongo_int64_init(php_phongo_int64_t* intern, int64_t integer) /
 
 /* Initialize the object from a numeric string and return whether it was
  * successful. An exception will be thrown on error. */
-static bool php_phongo_int64_init_from_string(php_phongo_int64_t* intern, const char* s_integer, phongo_zpp_char_len s_integer_len TSRMLS_DC) /* {{{ */
+static bool php_phongo_int64_init_from_string(php_phongo_int64_t* intern, const char* s_integer, size_t s_integer_len TSRMLS_DC) /* {{{ */
 {
 	int64_t integer;
 
@@ -103,7 +103,7 @@ static PHP_METHOD(Int64, jsonSerialize)
 static PHP_METHOD(Int64, serialize)
 {
 	php_phongo_int64_t*  intern;
-	ZVAL_RETVAL_TYPE     retval;
+	zval                 retval;
 	php_serialize_data_t var_hash;
 	smart_str            buf = { 0 };
 
@@ -134,7 +134,7 @@ static PHP_METHOD(Int64, unserialize)
 	php_phongo_int64_t*    intern;
 	zend_error_handling    error_handling;
 	char*                  serialized;
-	phongo_zpp_char_len    serialized_len;
+	size_t                 serialized_len;
 	zval                   props;
 	php_unserialize_data_t var_hash;
 
@@ -186,7 +186,7 @@ static zend_function_entry php_phongo_int64_me[] = {
 /* {{{ MongoDB\BSON\Int64 object handlers */
 static zend_object_handlers php_phongo_handler_int64;
 
-static void php_phongo_int64_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_int64_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_int64_t* intern = Z_OBJ_INT64(object);
 
@@ -198,7 +198,7 @@ static void php_phongo_int64_free_object(phongo_free_object_arg* object TSRMLS_D
 	}
 } /* }}} */
 
-phongo_create_object_retval php_phongo_int64_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+zend_object* php_phongo_int64_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_int64_t* intern = NULL;
 
@@ -211,11 +211,11 @@ phongo_create_object_retval php_phongo_int64_create_object(zend_class_entry* cla
 	return &intern->std;
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_int64_clone_object(zval* object TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_int64_clone_object(zval* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_int64_t*         intern;
-	php_phongo_int64_t*         new_intern;
-	phongo_create_object_retval new_object;
+	php_phongo_int64_t* intern;
+	php_phongo_int64_t* new_intern;
+	zend_object*        new_object;
 
 	intern     = Z_INT64_OBJ_P(object);
 	new_object = php_phongo_int64_create_object(Z_OBJCE_P(object) TSRMLS_CC);
@@ -242,7 +242,7 @@ static int php_phongo_int64_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /* {{{
 	return 0;
 } /* }}} */
 
-static HashTable* php_phongo_int64_get_gc(zval* object, phongo_get_gc_table table, int* n TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_int64_get_gc(zval* object, zval** table, int* n TSRMLS_DC) /* {{{ */
 {
 	*table = NULL;
 	*n     = 0;

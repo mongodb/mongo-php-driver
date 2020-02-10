@@ -44,7 +44,7 @@ PHP_FUNCTION(MongoDB_BSON_fromPHP)
 	bson = bson_new();
 	php_phongo_zval_to_bson(data, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
 
-	PHONGO_RETVAL_STRINGL((const char*) bson_get_data(bson), bson->len);
+	RETVAL_STRINGL((const char*) bson_get_data(bson), bson->len);
 	bson_destroy(bson);
 } /* }}} */
 
@@ -53,7 +53,7 @@ PHP_FUNCTION(MongoDB_BSON_fromPHP)
 PHP_FUNCTION(MongoDB_BSON_toPHP)
 {
 	char*                 data;
-	phongo_zpp_char_len   data_len;
+	size_t                data_len;
 	zval*                 typemap = NULL;
 	php_phongo_bson_state state;
 
@@ -82,17 +82,17 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
    Returns the BSON representation of a JSON value */
 PHP_FUNCTION(MongoDB_BSON_fromJSON)
 {
-	char*               json;
-	phongo_zpp_char_len json_len;
-	bson_t              bson  = BSON_INITIALIZER;
-	bson_error_t        error = { 0 };
+	char*        json;
+	size_t       json_len;
+	bson_t       bson  = BSON_INITIALIZER;
+	bson_error_t error = { 0 };
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &json, &json_len) == FAILURE) {
 		return;
 	}
 
 	if (bson_init_from_json(&bson, (const char*) json, json_len, &error)) {
-		PHONGO_RETVAL_STRINGL((const char*) bson_get_data(&bson), bson.len);
+		RETVAL_STRINGL((const char*) bson_get_data(&bson), bson.len);
 		bson_destroy(&bson);
 	} else {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s", error.domain == BSON_ERROR_JSON ? error.message : "Error parsing JSON");
@@ -101,13 +101,13 @@ PHP_FUNCTION(MongoDB_BSON_fromJSON)
 
 static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mode_t mode)
 {
-	char*               data;
-	phongo_zpp_char_len data_len;
-	const bson_t*       bson;
-	bool                eof = false;
-	bson_reader_t*      reader;
-	char*               json = NULL;
-	size_t              json_len;
+	char*          data;
+	size_t         data_len;
+	const bson_t*  bson;
+	bool           eof = false;
+	bson_reader_t* reader;
+	char*          json = NULL;
+	size_t         json_len;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &data, &data_len) == FAILURE) {
 		return;
@@ -136,7 +136,7 @@ static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mo
 		return;
 	}
 
-	PHONGO_RETVAL_STRINGL(json, json_len);
+	RETVAL_STRINGL(json, json_len);
 	bson_free(json);
 
 	if (bson_reader_read(reader, &eof) || !eof) {

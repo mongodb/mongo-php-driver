@@ -30,7 +30,7 @@ zend_class_entry* php_phongo_cursorid_ce;
 
 /* Initialize the object from a numeric string and return whether it was
  * successful. An exception will be thrown on error. */
-static bool php_phongo_cursorid_init_from_string(php_phongo_cursorid_t* intern, const char* s_id, phongo_zpp_char_len s_id_len TSRMLS_DC) /* {{{ */
+static bool php_phongo_cursorid_init_from_string(php_phongo_cursorid_t* intern, const char* s_id, size_t s_id_len TSRMLS_DC) /* {{{ */
 {
 	int64_t id;
 
@@ -72,7 +72,7 @@ static PHP_METHOD(CursorId, __toString)
 	}
 
 	tmp_len = spprintf(&tmp, 0, "%" PRId64, intern->id);
-	PHONGO_RETVAL_STRINGL(tmp, tmp_len);
+	RETVAL_STRINGL(tmp, tmp_len);
 	efree(tmp);
 } /* }}} */
 
@@ -81,7 +81,7 @@ static PHP_METHOD(CursorId, __toString)
 static PHP_METHOD(CursorId, serialize)
 {
 	php_phongo_cursorid_t* intern;
-	ZVAL_RETVAL_TYPE       retval;
+	zval                   retval;
 	php_serialize_data_t   var_hash;
 	smart_str              buf = { 0 };
 
@@ -112,7 +112,7 @@ static PHP_METHOD(CursorId, unserialize)
 	php_phongo_cursorid_t* intern;
 	zend_error_handling    error_handling;
 	char*                  serialized;
-	phongo_zpp_char_len    serialized_len;
+	size_t                 serialized_len;
 	zval                   props;
 	php_unserialize_data_t var_hash;
 
@@ -163,14 +163,14 @@ static zend_function_entry php_phongo_cursorid_me[] = {
 /* {{{ MongoDB\Driver\CursorId object handlers */
 static zend_object_handlers php_phongo_handler_cursorid;
 
-static void php_phongo_cursorid_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_cursorid_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursorid_t* intern = Z_OBJ_CURSORID(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_cursorid_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_cursorid_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursorid_t* intern = NULL;
 

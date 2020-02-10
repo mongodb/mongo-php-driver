@@ -57,7 +57,7 @@ static PHP_METHOD(MaxKey, jsonSerialize)
 */
 static PHP_METHOD(MaxKey, serialize)
 {
-	PHONGO_RETURN_STRING("");
+	RETURN_STRING("");
 } /* }}} */
 
 /* {{{ proto void MongoDB\BSON\MaxKey::unserialize(string $serialized)
@@ -66,7 +66,7 @@ static PHP_METHOD(MaxKey, unserialize)
 {
 	zend_error_handling error_handling;
 	char*               serialized;
-	phongo_zpp_char_len serialized_len;
+	size_t              serialized_len;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 
@@ -103,14 +103,14 @@ static zend_function_entry php_phongo_maxkey_me[] = {
 /* {{{ MongoDB\BSON\MaxKey object handlers */
 static zend_object_handlers php_phongo_handler_maxkey;
 
-static void php_phongo_maxkey_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_maxkey_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_maxkey_t* intern = Z_OBJ_MAXKEY(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_maxkey_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_maxkey_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_maxkey_t* intern = NULL;
 

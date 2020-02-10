@@ -349,7 +349,6 @@ static PHP_METHOD(BulkWrite, insert)
 	bson_t*                 bson_out   = NULL;
 	int                     bson_flags = PHONGO_BSON_ADD_ID;
 	bson_error_t            error      = { 0 };
-	DECLARE_RETURN_VALUE_USED
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
@@ -357,9 +356,7 @@ static PHP_METHOD(BulkWrite, insert)
 		return;
 	}
 
-	if (return_value_used) {
-		bson_flags |= PHONGO_BSON_RETURN_ID;
-	}
+	bson_flags |= PHONGO_BSON_RETURN_ID;
 
 	php_phongo_zval_to_bson(zdocument, bson_flags, &bdocument, &bson_out TSRMLS_CC);
 
@@ -374,7 +371,7 @@ static PHP_METHOD(BulkWrite, insert)
 
 	intern->num_ops++;
 
-	if (bson_out && return_value_used) {
+	if (bson_out) {
 		php_phongo_bulkwrite_extract_id(bson_out, &return_value);
 	}
 
@@ -545,7 +542,7 @@ static zend_function_entry php_phongo_bulkwrite_me[] = {
 /* {{{ MongoDB\Driver\BulkWrite object handlers */
 static zend_object_handlers php_phongo_handler_bulkwrite;
 
-static void php_phongo_bulkwrite_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_bulkwrite_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_bulkwrite_t* intern = Z_OBJ_BULKWRITE(object);
 
@@ -564,7 +561,7 @@ static void php_phongo_bulkwrite_free_object(phongo_free_object_arg* object TSRM
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_bulkwrite_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_bulkwrite_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_bulkwrite_t* intern = NULL;
 

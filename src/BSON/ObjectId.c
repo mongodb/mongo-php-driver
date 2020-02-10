@@ -47,7 +47,7 @@ static bool php_phongo_objectid_init(php_phongo_objectid_t* intern)
 
 /* Initialize the object from a hex string and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_objectid_init_from_hex_string(php_phongo_objectid_t* intern, const char* hex, phongo_zpp_char_len hex_len TSRMLS_DC) /* {{{ */
+static bool php_phongo_objectid_init_from_hex_string(php_phongo_objectid_t* intern, const char* hex, size_t hex_len TSRMLS_DC) /* {{{ */
 {
 	if (bson_oid_is_valid(hex, hex_len)) {
 		bson_oid_t oid;
@@ -87,7 +87,7 @@ static PHP_METHOD(ObjectId, __construct)
 	php_phongo_objectid_t* intern;
 	zend_error_handling    error_handling;
 	char*                  id = NULL;
-	phongo_zpp_char_len    id_len;
+	size_t                 id_len;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_OBJECTID_OBJ_P(getThis());
@@ -154,7 +154,7 @@ static PHP_METHOD(ObjectId, __toString)
 		return;
 	}
 
-	PHONGO_RETURN_STRINGL(intern->oid, PHONGO_OID_LEN);
+	RETURN_STRINGL(intern->oid, PHONGO_OID_LEN);
 } /* }}} */
 
 /* {{{ proto array MongoDB\BSON\ObjectId::jsonSerialize()
@@ -178,7 +178,7 @@ static PHP_METHOD(ObjectId, jsonSerialize)
 static PHP_METHOD(ObjectId, serialize)
 {
 	php_phongo_objectid_t* intern;
-	ZVAL_RETVAL_TYPE       retval;
+	zval                   retval;
 	php_serialize_data_t   var_hash;
 	smart_str              buf = { 0 };
 
@@ -209,7 +209,7 @@ static PHP_METHOD(ObjectId, unserialize)
 	php_phongo_objectid_t* intern;
 	zend_error_handling    error_handling;
 	char*                  serialized;
-	phongo_zpp_char_len    serialized_len;
+	size_t                 serialized_len;
 	zval                   props;
 	php_unserialize_data_t var_hash;
 
@@ -270,7 +270,7 @@ static zend_function_entry php_phongo_objectid_me[] = {
 /* {{{ MongoDB\BSON\ObjectId object handlers */
 static zend_object_handlers php_phongo_handler_objectid;
 
-static void php_phongo_objectid_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_objectid_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_objectid_t* intern = Z_OBJ_OBJECTID(object);
 
@@ -282,7 +282,7 @@ static void php_phongo_objectid_free_object(phongo_free_object_arg* object TSRML
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_objectid_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_objectid_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_objectid_t* intern = NULL;
 
@@ -296,11 +296,11 @@ static phongo_create_object_retval php_phongo_objectid_create_object(zend_class_
 	return &intern->std;
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_objectid_clone_object(zval* object TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_objectid_clone_object(zval* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_objectid_t*      intern;
-	php_phongo_objectid_t*      new_intern;
-	phongo_create_object_retval new_object;
+	php_phongo_objectid_t* intern;
+	php_phongo_objectid_t* new_intern;
+	zend_object*           new_object;
 
 	intern     = Z_OBJECTID_OBJ_P(object);
 	new_object = php_phongo_objectid_create_object(Z_OBJCE_P(object) TSRMLS_CC);
@@ -326,7 +326,7 @@ static int php_phongo_objectid_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /* 
 	return strcmp(intern1->oid, intern2->oid);
 } /* }}} */
 
-static HashTable* php_phongo_objectid_get_gc(zval* object, phongo_get_gc_table table, int* n TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_objectid_get_gc(zval* object, zval** table, int* n TSRMLS_DC) /* {{{ */
 {
 	*table = NULL;
 	*n     = 0;

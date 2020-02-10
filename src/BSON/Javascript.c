@@ -31,7 +31,7 @@ zend_class_entry* php_phongo_javascript_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_javascript_init(php_phongo_javascript_t* intern, const char* code, phongo_zpp_char_len code_len, zval* scope TSRMLS_DC) /* {{{ */
+static bool php_phongo_javascript_init(php_phongo_javascript_t* intern, const char* code, size_t code_len, zval* scope TSRMLS_DC) /* {{{ */
 {
 	if (scope && Z_TYPE_P(scope) != IS_OBJECT && Z_TYPE_P(scope) != IS_ARRAY && Z_TYPE_P(scope) != IS_NULL) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected scope to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(scope)));
@@ -81,7 +81,7 @@ static PHP_METHOD(Javascript, __construct)
 	php_phongo_javascript_t* intern;
 	zend_error_handling      error_handling;
 	char*                    code;
-	phongo_zpp_char_len      code_len;
+	size_t                   code_len;
 	zval*                    scope = NULL;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
@@ -128,7 +128,7 @@ static PHP_METHOD(Javascript, __toString)
 
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
-	PHONGO_RETURN_STRINGL(intern->code, intern->code_len);
+	RETURN_STRINGL(intern->code, intern->code_len);
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\Javascript::getCode()
@@ -143,7 +143,7 @@ static PHP_METHOD(Javascript, getCode)
 
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
-	PHONGO_RETURN_STRINGL(intern->code, intern->code_len);
+	RETURN_STRINGL(intern->code, intern->code_len);
 } /* }}} */
 
 /* {{{ proto object|null MongoDB\BSON\Javascript::getScope()
@@ -211,7 +211,7 @@ static PHP_METHOD(Javascript, jsonSerialize)
 static PHP_METHOD(Javascript, serialize)
 {
 	php_phongo_javascript_t* intern;
-	ZVAL_RETVAL_TYPE         retval;
+	zval                     retval;
 	php_phongo_bson_state    state;
 	php_serialize_data_t     var_hash;
 	smart_str                buf = { 0 };
@@ -255,7 +255,7 @@ static PHP_METHOD(Javascript, unserialize)
 	php_phongo_javascript_t* intern;
 	zend_error_handling      error_handling;
 	char*                    serialized;
-	phongo_zpp_char_len      serialized_len;
+	size_t                   serialized_len;
 	zval                     props;
 	php_unserialize_data_t   var_hash;
 
@@ -318,7 +318,7 @@ static zend_function_entry php_phongo_javascript_me[] = {
 /* {{{ MongoDB\BSON\Javascript object handlers */
 static zend_object_handlers php_phongo_handler_javascript;
 
-static void php_phongo_javascript_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_javascript_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_javascript_t* intern = Z_OBJ_JAVASCRIPT(object);
 
@@ -338,7 +338,7 @@ static void php_phongo_javascript_free_object(phongo_free_object_arg* object TSR
 	}
 } /* }}} */
 
-phongo_create_object_retval php_phongo_javascript_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+zend_object* php_phongo_javascript_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_javascript_t* intern = NULL;
 
@@ -351,11 +351,11 @@ phongo_create_object_retval php_phongo_javascript_create_object(zend_class_entry
 	return &intern->std;
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_javascript_clone_object(zval* object TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_javascript_clone_object(zval* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_javascript_t*    intern;
-	php_phongo_javascript_t*    new_intern;
-	phongo_create_object_retval new_object;
+	php_phongo_javascript_t* intern;
+	php_phongo_javascript_t* new_intern;
+	zend_object*             new_object;
 
 	intern     = Z_JAVASCRIPT_OBJ_P(object);
 	new_object = php_phongo_javascript_create_object(Z_OBJCE_P(object) TSRMLS_CC);
@@ -380,7 +380,7 @@ static int php_phongo_javascript_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /
 	return strcmp(intern1->code, intern2->code);
 } /* }}} */
 
-static HashTable* php_phongo_javascript_get_gc(zval* object, phongo_get_gc_table table, int* n TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_javascript_get_gc(zval* object, zval** table, int* n TSRMLS_DC) /* {{{ */
 {
 	*table = NULL;
 	*n     = 0;

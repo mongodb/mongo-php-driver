@@ -61,7 +61,7 @@ PHP_METHOD(CommandStartedEvent, getCommandName)
 		return;
 	}
 
-	PHONGO_RETVAL_STRING(intern->command_name);
+	RETVAL_STRING(intern->command_name);
 } /* }}} */
 
 /* {{{ proto string CommandStartedEvent::getDatabaseName()
@@ -76,7 +76,7 @@ PHP_METHOD(CommandStartedEvent, getDatabaseName)
 		return;
 	}
 
-	PHONGO_RETVAL_STRING(intern->database_name);
+	RETVAL_STRING(intern->database_name);
 } /* }}} */
 
 /* {{{ proto string CommandStartedEvent::getOperationId()
@@ -93,7 +93,7 @@ PHP_METHOD(CommandStartedEvent, getOperationId)
 	}
 
 	sprintf(int_as_string, "%" PRIu64, intern->operation_id);
-	PHONGO_RETVAL_STRING(int_as_string);
+	RETVAL_STRING(int_as_string);
 } /* }}} */
 
 /* {{{ proto string CommandStartedEvent::getRequestId()
@@ -110,7 +110,7 @@ PHP_METHOD(CommandStartedEvent, getRequestId)
 	}
 
 	sprintf(int_as_string, "%" PRIu64, intern->request_id);
-	PHONGO_RETVAL_STRING(int_as_string);
+	RETVAL_STRING(int_as_string);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Server CommandStartedEvent::getServer()
@@ -156,7 +156,7 @@ static zend_function_entry php_phongo_commandstartedevent_me[] = {
 /* {{{ MongoDB\Driver\Monitoring\CommandStartedEvent object handlers */
 static zend_object_handlers php_phongo_handler_commandstartedevent;
 
-static void php_phongo_commandstartedevent_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_commandstartedevent_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_commandstartedevent_t* intern = Z_OBJ_COMMANDSTARTEDEVENT(object);
 
@@ -173,7 +173,7 @@ static void php_phongo_commandstartedevent_free_object(phongo_free_object_arg* o
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_commandstartedevent_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_commandstartedevent_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_commandstartedevent_t* intern = NULL;
 

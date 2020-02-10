@@ -40,7 +40,7 @@ static int php_phongo_regex_compare_flags(const void* f1, const void* f2) /* {{{
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_regex_init(php_phongo_regex_t* intern, const char* pattern, phongo_zpp_char_len pattern_len, const char* flags, phongo_zpp_char_len flags_len TSRMLS_DC) /* {{{ */
+static bool php_phongo_regex_init(php_phongo_regex_t* intern, const char* pattern, size_t pattern_len, const char* flags, size_t flags_len TSRMLS_DC) /* {{{ */
 {
 	if (strlen(pattern) != (size_t) pattern_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Pattern cannot contain null bytes");
@@ -89,9 +89,9 @@ static PHP_METHOD(Regex, __construct)
 	php_phongo_regex_t* intern;
 	zend_error_handling error_handling;
 	char*               pattern;
-	phongo_zpp_char_len pattern_len;
+	size_t              pattern_len;
 	char*               flags     = NULL;
-	phongo_zpp_char_len flags_len = 0;
+	size_t              flags_len = 0;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_REGEX_OBJ_P(getThis());
@@ -117,7 +117,7 @@ static PHP_METHOD(Regex, getPattern)
 		return;
 	}
 
-	PHONGO_RETURN_STRINGL(intern->pattern, intern->pattern_len);
+	RETURN_STRINGL(intern->pattern, intern->pattern_len);
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\Regex::getFlags()
@@ -132,7 +132,7 @@ static PHP_METHOD(Regex, getFlags)
 		return;
 	}
 
-	PHONGO_RETURN_STRINGL(intern->flags, intern->flags_len);
+	RETURN_STRINGL(intern->flags, intern->flags_len);
 } /* }}} */
 
 /* {{{ proto void MongoDB\BSON\Regex::__set_state(array $properties)
@@ -170,7 +170,7 @@ static PHP_METHOD(Regex, __toString)
 	}
 
 	regex_len = spprintf(&regex, 0, "/%s/%s", intern->pattern, intern->flags);
-	PHONGO_RETVAL_STRINGL(regex, regex_len);
+	RETVAL_STRINGL(regex, regex_len);
 	efree(regex);
 } /* }}} */
 
@@ -196,7 +196,7 @@ static PHP_METHOD(Regex, jsonSerialize)
 static PHP_METHOD(Regex, serialize)
 {
 	php_phongo_regex_t*  intern;
-	ZVAL_RETVAL_TYPE     retval;
+	zval                 retval;
 	php_serialize_data_t var_hash;
 	smart_str            buf = { 0 };
 
@@ -228,7 +228,7 @@ static PHP_METHOD(Regex, unserialize)
 	php_phongo_regex_t*    intern;
 	zend_error_handling    error_handling;
 	char*                  serialized;
-	phongo_zpp_char_len    serialized_len;
+	size_t                 serialized_len;
 	zval                   props;
 	php_unserialize_data_t var_hash;
 
@@ -291,7 +291,7 @@ static zend_function_entry php_phongo_regex_me[] = {
 /* {{{ MongoDB\BSON\Regex object handlers */
 static zend_object_handlers php_phongo_handler_regex;
 
-static void php_phongo_regex_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_regex_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_regex_t* intern = Z_OBJ_REGEX(object);
 
@@ -311,7 +311,7 @@ static void php_phongo_regex_free_object(phongo_free_object_arg* object TSRMLS_D
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_regex_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_regex_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_regex_t* intern = NULL;
 
@@ -325,11 +325,11 @@ static phongo_create_object_retval php_phongo_regex_create_object(zend_class_ent
 	return &intern->std;
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_regex_clone_object(zval* object TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_regex_clone_object(zval* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_regex_t*         intern;
-	php_phongo_regex_t*         new_intern;
-	phongo_create_object_retval new_object;
+	php_phongo_regex_t* intern;
+	php_phongo_regex_t* new_intern;
+	zend_object*        new_object;
 
 	intern     = Z_REGEX_OBJ_P(object);
 	new_object = php_phongo_regex_create_object(Z_OBJCE_P(object) TSRMLS_CC);
@@ -360,7 +360,7 @@ static int php_phongo_regex_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /* {{{
 	return strcmp(intern1->flags, intern2->flags);
 } /* }}} */
 
-static HashTable* php_phongo_regex_get_gc(zval* object, phongo_get_gc_table table, int* n TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_regex_get_gc(zval* object, zval** table, int* n TSRMLS_DC) /* {{{ */
 {
 	*table = NULL;
 	*n     = 0;

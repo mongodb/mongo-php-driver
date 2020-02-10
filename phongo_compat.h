@@ -58,8 +58,6 @@
 #define PHONGO_BREAK_INTENTIONALLY_MISSING
 #endif
 
-#define phongo_char zend_string
-#define phongo_long zend_long
 #if SIZEOF_ZEND_LONG == 8
 #define PHONGO_LONG_FORMAT PRId64
 #elif SIZEOF_ZEND_LONG == 4
@@ -67,13 +65,7 @@
 #else
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif
-#define SIZEOF_PHONGO_LONG SIZEOF_ZEND_LONG
-#define phongo_create_object_retval zend_object*
-#define phongo_get_gc_table zval**
 #define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t*) ecalloc(1, sizeof(_obj_t) + zend_object_properties_size(_class_type))
-#define PHONGO_TSRMLS_FETCH_FROM_CTX(user_data)
-#define DECLARE_RETURN_VALUE_USED int return_value_used = 1;
-#define EXCEPTION_P(_ex, _zp) ZVAL_OBJ(&_zp, _ex)
 #define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRL(_key), (char*) (_value));
 #define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRL(_key), (char*) (_value), _len);
 #define ADD_ASSOC_STRING_EX(_zv, _key, _key_len, _value, _value_len) add_assoc_stringl_ex(_zv, _key, _key_len, (char*) (_value), _value_len);
@@ -96,15 +88,7 @@
 		ADD_ASSOC_ZVAL_EX((_zv), (_key), &z_int);    \
 	} while (0)
 #define ADD_NEXT_INDEX_STRINGL(_zv, _value, _len) add_next_index_stringl(_zv, _value, _len);
-#define phongo_free_object_arg zend_object
-#define phongo_zpp_char_len size_t
-#define ZEND_HASH_APPLY_COUNT(ht) (ht)->u.v.nApplyCount
-#define PHONGO_RETVAL_STRINGL(s, slen) RETVAL_STRINGL(s, slen)
-#define PHONGO_RETURN_STRINGL(s, slen) RETURN_STRINGL(s, slen)
-#define PHONGO_RETVAL_STRING(s) RETVAL_STRING(s)
-#define PHONGO_RETURN_STRING(s) RETURN_STRING(s)
-#define PHONGO_RETVAL_SMART_STR(val) PHONGO_RETVAL_STRINGL(ZSTR_VAL((val).s), ZSTR_LEN((val).s));
-#define ZVAL_RETVAL_TYPE zval
+#define PHONGO_RETVAL_SMART_STR(val) RETVAL_STRINGL(ZSTR_VAL((val).s), ZSTR_LEN((val).s));
 #define ZVAL_STATIC_INIT \
 	{                    \
 		{                \
@@ -112,12 +96,12 @@
 		}                \
 	}
 
-#if SIZEOF_PHONGO_LONG == 8
+#if SIZEOF_ZEND_LONG == 8
 #define ADD_INDEX_INT64(_zv, _index, _value) add_index_long((_zv), (_index), (_value))
 #define ADD_NEXT_INDEX_INT64(_zv, _value) add_next_index_long((_zv), (_value))
 #define ADD_ASSOC_INT64(_zv, _key, _value) add_assoc_long((_zv), (_key), (_value))
 #define ZVAL_INT64(_zv, _value) ZVAL_LONG((_zv), (_value))
-#elif SIZEOF_PHONGO_LONG == 4
+#elif SIZEOF_ZEND_LONG == 4
 #define ADD_INDEX_INT64(_zv, _index, _value)                    \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {         \
 		zval zchild;                                            \
@@ -148,9 +132,9 @@
 	} else {                                                  \
 		ZVAL_LONG((_zv), (_value));                           \
 	}
-#else /* SIZEOF_PHONGO_LONG != 8 && SIZEOF_PHONGO_LONG != 4 */
+#else /* SIZEOF_ZEND_LONG != 8 && SIZEOF_ZEND_LONG != 4 */
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)
-#endif /* SIZEOF_PHONGO_LONG */
+#endif /* SIZEOF_ZEND_LONG */
 
 void      phongo_add_exception_prop(const char* prop, int prop_len, zval* value TSRMLS_DC);
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);

@@ -253,10 +253,9 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char* log_domain,
 {
 	struct timeval tv;
 	time_t         t;
-	phongo_long    tu;
-	phongo_char*   dt;
+	zend_long      tu;
+	zend_string*   dt;
 
-	PHONGO_TSRMLS_FETCH_FROM_CTX(user_data);
 	(void) user_data;
 
 	gettimeofday(&tv, NULL);
@@ -663,7 +662,7 @@ static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval*
 	return true;
 }
 
-bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value, int return_value_used TSRMLS_DC) /* {{{ */
+bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value TSRMLS_DC) /* {{{ */
 {
 	bson_error_t                  error = { 0 };
 	int                           success;
@@ -720,12 +719,6 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 
 	success              = mongoc_bulk_operation_execute(bulk, &reply, &error);
 	bulk_write->executed = true;
-
-	/* Write succeeded and the user doesn't care for the results */
-	if (success && !return_value_used) {
-		bson_destroy(&reply);
-		return true;
-	}
 
 	writeresult                = phongo_writeresult_init(return_value, &reply, client, mongoc_bulk_operation_get_hint(bulk) TSRMLS_CC);
 	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
@@ -794,7 +787,7 @@ bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor TSRMLS_DC
 	return true;
 } /* }}} */
 
-bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* zquery, zval* options, uint32_t server_id, zval* return_value, int return_value_used TSRMLS_DC) /* {{{ */
+bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* zquery, zval* options, uint32_t server_id, zval* return_value TSRMLS_DC) /* {{{ */
 {
 	const php_phongo_query_t* query;
 	bson_t                    opts = BSON_INITIALIZER;
@@ -856,11 +849,6 @@ bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* 
 		return false;
 	}
 
-	if (!return_value_used) {
-		mongoc_cursor_destroy(cursor);
-		return true;
-	}
-
 	phongo_cursor_init_for_query(return_value, client, cursor, namespace, zquery, zreadPreference, zsession TSRMLS_CC);
 
 	return true;
@@ -897,7 +885,7 @@ static zval* phongo_create_implicit_session(mongoc_client_t* client TSRMLS_DC) /
 	return zsession;
 } /* }}} */
 
-bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* options, uint32_t server_id, zval* return_value, int return_value_used TSRMLS_DC) /* {{{ */
+bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* options, uint32_t server_id, zval* return_value TSRMLS_DC) /* {{{ */
 {
 	const php_phongo_command_t* command;
 	bson_iter_t                 iter;
@@ -1000,10 +988,6 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 
 	if (!result) {
 		phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply TSRMLS_CC);
-		goto cleanup;
-	}
-
-	if (!return_value_used) {
 		goto cleanup;
 	}
 
@@ -1165,7 +1149,7 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 
 		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", &state.zchild);
 	}
-	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (phongo_long) mongoc_server_description_round_trip_time(sd));
+	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (zend_long) mongoc_server_description_round_trip_time(sd));
 
 	return true;
 } /* }}} */
@@ -3113,7 +3097,7 @@ cleanup:
 #endif
 } /* }}} */
 
-bool php_phongo_parse_int64(int64_t* retval, const char* data, phongo_zpp_char_len data_len) /* {{{ */
+bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len) /* {{{ */
 {
 	int64_t value;
 	char*   endptr = NULL;
@@ -3200,7 +3184,7 @@ ZEND_INI_MH(OnUpdateDebug)
 		int          fd = -1;
 		char*        prefix;
 		int          len;
-		phongo_char* filename;
+		zend_string* filename;
 
 		time(&t);
 		len = spprintf(&prefix, 0, "PHONGO-%ld", t);

@@ -31,7 +31,7 @@ zend_class_entry* php_phongo_clientencryption_ce;
 static PHP_METHOD(ClientEncryption, createDataKey)
 {
 	char*                          kms_provider     = NULL;
-	phongo_zpp_char_len            kms_provider_len = 0;
+	size_t                         kms_provider_len = 0;
 	zval*                          options          = NULL;
 	zend_error_handling            error_handling;
 	php_phongo_clientencryption_t* intern;
@@ -124,7 +124,7 @@ static zend_function_entry php_phongo_clientencryption_me[] = {
 /* {{{ MongoDB\Driver\ClientEncryption object handlers */
 static zend_object_handlers php_phongo_handler_clientencryption;
 
-static void php_phongo_clientencryption_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_clientencryption_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_clientencryption_t* intern = Z_OBJ_CLIENTENCRYPTION(object);
 
@@ -135,7 +135,7 @@ static void php_phongo_clientencryption_free_object(phongo_free_object_arg* obje
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_clientencryption_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_clientencryption_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_clientencryption_t* intern = NULL;
 

@@ -70,7 +70,7 @@ static PHP_METHOD(WriteConcernError, getMessage)
 		return;
 	}
 
-	PHONGO_RETURN_STRING(intern->message);
+	RETURN_STRING(intern->message);
 } /* }}} */
 
 /* {{{ MongoDB\Driver\WriteConcernError function entries */
@@ -92,7 +92,7 @@ static zend_function_entry php_phongo_writeconcernerror_me[] = {
 /* {{{ MongoDB\Driver\WriteConcernError object handlers */
 static zend_object_handlers php_phongo_handler_writeconcernerror;
 
-static void php_phongo_writeconcernerror_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_writeconcernerror_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeconcernerror_t* intern = Z_OBJ_WRITECONCERNERROR(object);
 
@@ -107,7 +107,7 @@ static void php_phongo_writeconcernerror_free_object(phongo_free_object_arg* obj
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_writeconcernerror_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_writeconcernerror_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeconcernerror_t* intern = NULL;
 

@@ -38,7 +38,7 @@ PHP_METHOD(CommandSucceededEvent, getCommandName)
 		return;
 	}
 
-	PHONGO_RETVAL_STRING(intern->command_name);
+	RETVAL_STRING(intern->command_name);
 } /* }}} */
 
 /* {{{ proto int CommandSucceededEvent::getDurationMicros()
@@ -70,7 +70,7 @@ PHP_METHOD(CommandSucceededEvent, getOperationId)
 	}
 
 	sprintf(int_as_string, "%" PRIu64, intern->operation_id);
-	PHONGO_RETVAL_STRING(int_as_string);
+	RETVAL_STRING(int_as_string);
 } /* }}} */
 
 /* {{{ proto stdClass CommandSucceededEvent::getReply()
@@ -110,7 +110,7 @@ PHP_METHOD(CommandSucceededEvent, getRequestId)
 	}
 
 	sprintf(int_as_string, "%" PRIu64, intern->request_id);
-	PHONGO_RETVAL_STRING(int_as_string);
+	RETVAL_STRING(int_as_string);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Server CommandSucceededEvent::getServer()
@@ -156,7 +156,7 @@ static zend_function_entry php_phongo_commandsucceededevent_me[] = {
 /* {{{ MongoDB\Driver\Monitoring\CommandSucceededEvent object handlers */
 static zend_object_handlers php_phongo_handler_commandsucceededevent;
 
-static void php_phongo_commandsucceededevent_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_commandsucceededevent_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_commandsucceededevent_t* intern = Z_OBJ_COMMANDSUCCEEDEDEVENT(object);
 
@@ -170,7 +170,7 @@ static void php_phongo_commandsucceededevent_free_object(phongo_free_object_arg*
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_commandsucceededevent_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_commandsucceededevent_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_commandsucceededevent_t* intern = NULL;
 

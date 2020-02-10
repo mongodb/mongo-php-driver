@@ -102,7 +102,7 @@ static PHP_METHOD(WriteConcern, __construct)
 	php_phongo_writeconcern_t* intern;
 	zend_error_handling        error_handling;
 	zval *                     w, *journal;
-	phongo_long                wtimeout = 0;
+	zend_long                  wtimeout = 0;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
@@ -188,11 +188,11 @@ static PHP_METHOD(WriteConcern, getW)
 	wtag = mongoc_write_concern_get_wtag(intern->write_concern);
 
 	if (wtag) {
-		PHONGO_RETURN_STRING(wtag);
+		RETURN_STRING(wtag);
 	}
 
 	if (mongoc_write_concern_get_wmajority(intern->write_concern)) {
-		PHONGO_RETURN_STRING(PHONGO_WRITE_CONCERN_W_MAJORITY);
+		RETURN_STRING(PHONGO_WRITE_CONCERN_W_MAJORITY);
 	}
 
 	if (mongoc_write_concern_get_w(intern->write_concern) != MONGOC_WRITE_CONCERN_W_DEFAULT) {
@@ -343,7 +343,7 @@ static PHP_METHOD(WriteConcern, bsonSerialize)
 static PHP_METHOD(WriteConcern, serialize)
 {
 	php_phongo_writeconcern_t* intern;
-	ZVAL_RETVAL_TYPE           retval;
+	zval                       retval;
 	php_serialize_data_t       var_hash;
 	smart_str                  buf = { 0 };
 	const char*                wtag;
@@ -404,7 +404,7 @@ static PHP_METHOD(WriteConcern, unserialize)
 	php_phongo_writeconcern_t* intern;
 	zend_error_handling        error_handling;
 	char*                      serialized;
-	phongo_zpp_char_len        serialized_len;
+	size_t                     serialized_len;
 	zval                       props;
 	php_unserialize_data_t     var_hash;
 
@@ -473,7 +473,7 @@ static zend_function_entry php_phongo_writeconcern_me[] = {
 /* {{{ MongoDB\Driver\WriteConcern object handlers */
 static zend_object_handlers php_phongo_handler_writeconcern;
 
-static void php_phongo_writeconcern_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_writeconcern_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeconcern_t* intern = Z_OBJ_WRITECONCERN(object);
 
@@ -489,7 +489,7 @@ static void php_phongo_writeconcern_free_object(phongo_free_object_arg* object T
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_writeconcern_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_writeconcern_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_writeconcern_t* intern = NULL;
 

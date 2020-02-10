@@ -336,7 +336,7 @@ static PHP_METHOD(Session, getTransactionState)
 		return;
 	}
 
-	PHONGO_RETURN_STRING(state);
+	RETURN_STRING(state);
 } /* }}} */
 
 /* Creates a opts structure from an array optionally containing an RP, RC,
@@ -581,7 +581,7 @@ static zend_function_entry php_phongo_session_me[] = {
 /* {{{ MongoDB\Driver\Session object handlers */
 static zend_object_handlers php_phongo_handler_session;
 
-static void php_phongo_session_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_session_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_session_t* intern = Z_OBJ_SESSION(object);
 
@@ -599,7 +599,7 @@ static void php_phongo_session_free_object(phongo_free_object_arg* object TSRMLS
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_session_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_session_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_session_t* intern = NULL;
 

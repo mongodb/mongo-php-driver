@@ -56,10 +56,10 @@ static bool php_phongo_has_string_array_element(zval* labels, char* label TSRMLS
    Returns whether a specific error label has been set */
 static PHP_METHOD(RuntimeException, hasErrorLabel)
 {
-	char*               label;
-	phongo_zpp_char_len label_len;
-	zval*               error_labels;
-	zval                rv;
+	char*  label;
+	size_t label_len;
+	zval*  error_labels;
+	zval   rv;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &label, &label_len) == FAILURE) {
 		return;

@@ -21,7 +21,7 @@ void phongo_add_exception_prop(const char* prop, int prop_len, zval* value TSRML
 {
 	if (EG(exception)) {
 		zval ex;
-		EXCEPTION_P(EG(exception), ex);
+		ZVAL_OBJ(&ex, EG(exception));
 		zend_update_property(Z_OBJCE(ex), &ex, prop, prop_len, value);
 	}
 }

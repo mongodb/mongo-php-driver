@@ -358,7 +358,7 @@ static zend_function_entry php_phongo_cursor_me[] = {
 /* {{{ MongoDB\Driver\Cursor object handlers */
 static zend_object_handlers php_phongo_handler_cursor;
 
-static void php_phongo_cursor_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_cursor_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t* intern = Z_OBJ_CURSOR(object);
 
@@ -402,7 +402,7 @@ static void php_phongo_cursor_free_object(phongo_free_object_arg* object TSRMLS_
 	php_phongo_cursor_free_current(intern);
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_cursor_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_cursor_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_cursor_t* intern = NULL;
 

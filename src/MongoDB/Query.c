@@ -172,7 +172,7 @@ static bool php_phongo_query_init_hint(php_phongo_query_t* intern, zval* options
 static bool php_phongo_query_init_limit_and_singlebatch(php_phongo_query_t* intern, zval* options TSRMLS_DC) /* {{{ */
 {
 	if (php_array_fetchc_long(options, "limit") < 0) {
-		phongo_long limit = php_array_fetchc_long(options, "limit");
+		zend_long limit = php_array_fetchc_long(options, "limit");
 
 		if (!BSON_APPEND_INT64(intern->opts, "limit", -limit)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error appending \"limit\" option");
@@ -390,7 +390,7 @@ static zend_function_entry php_phongo_query_me[] = {
 /* {{{ MongoDB\Driver\Query object handlers */
 static zend_object_handlers php_phongo_handler_query;
 
-static void php_phongo_query_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_query_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_query_t* intern = Z_OBJ_QUERY(object);
 
@@ -409,7 +409,7 @@ static void php_phongo_query_free_object(phongo_free_object_arg* object TSRMLS_D
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_query_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_query_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_query_t* intern = NULL;
 

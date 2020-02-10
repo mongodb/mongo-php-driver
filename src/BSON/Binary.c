@@ -34,7 +34,7 @@ zend_class_entry* php_phongo_binary_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_binary_init(php_phongo_binary_t* intern, const char* data, phongo_zpp_char_len data_len, phongo_long type TSRMLS_DC) /* {{{ */
+static bool php_phongo_binary_init(php_phongo_binary_t* intern, const char* data, size_t data_len, zend_long type TSRMLS_DC) /* {{{ */
 {
 	if (type < 0 || type > UINT8_MAX) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected type to be an unsigned 8-bit integer, %" PHONGO_LONG_FORMAT " given", type);
@@ -76,8 +76,8 @@ static PHP_METHOD(Binary, __construct)
 	php_phongo_binary_t* intern;
 	zend_error_handling  error_handling;
 	char*                data;
-	phongo_zpp_char_len  data_len;
-	phongo_long          type;
+	size_t               data_len;
+	zend_long            type;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
 	intern = Z_BINARY_OBJ_P(getThis());
@@ -123,7 +123,7 @@ static PHP_METHOD(Binary, __toString)
 
 	intern = Z_BINARY_OBJ_P(getThis());
 
-	PHONGO_RETURN_STRINGL(intern->data, intern->data_len);
+	RETURN_STRINGL(intern->data, intern->data_len);
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\Binary::getData()
@@ -138,7 +138,7 @@ static PHP_METHOD(Binary, getData)
 		return;
 	}
 
-	PHONGO_RETURN_STRINGL(intern->data, intern->data_len);
+	RETURN_STRINGL(intern->data, intern->data_len);
 } /* }}} */
 
 /* {{{ proto integer MongoDB\BSON\Binary::getType()
@@ -187,7 +187,7 @@ static PHP_METHOD(Binary, jsonSerialize)
 static PHP_METHOD(Binary, serialize)
 {
 	php_phongo_binary_t* intern;
-	ZVAL_RETVAL_TYPE     retval;
+	zval                 retval;
 	php_serialize_data_t var_hash;
 	smart_str            buf = { 0 };
 
@@ -219,7 +219,7 @@ static PHP_METHOD(Binary, unserialize)
 	php_phongo_binary_t*   intern;
 	zend_error_handling    error_handling;
 	char*                  serialized;
-	phongo_zpp_char_len    serialized_len;
+	size_t                 serialized_len;
 	zval                   props;
 	php_unserialize_data_t var_hash;
 
@@ -282,7 +282,7 @@ static zend_function_entry php_phongo_binary_me[] = {
 /* {{{ MongoDB\BSON\Binary object handlers */
 static zend_object_handlers php_phongo_handler_binary;
 
-static void php_phongo_binary_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_binary_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_binary_t* intern = Z_OBJ_BINARY(object);
 
@@ -298,7 +298,7 @@ static void php_phongo_binary_free_object(phongo_free_object_arg* object TSRMLS_
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_binary_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_binary_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_binary_t* intern = NULL;
 
@@ -312,11 +312,11 @@ static phongo_create_object_retval php_phongo_binary_create_object(zend_class_en
 	return &intern->std;
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_binary_clone_object(zval* object TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_binary_clone_object(zval* object TSRMLS_DC) /* {{{ */
 {
-	php_phongo_binary_t*        intern;
-	php_phongo_binary_t*        new_intern;
-	phongo_create_object_retval new_object;
+	php_phongo_binary_t* intern;
+	php_phongo_binary_t* new_intern;
+	zend_object*         new_object;
 
 	intern     = Z_BINARY_OBJ_P(object);
 	new_object = php_phongo_binary_create_object(Z_OBJCE_P(object) TSRMLS_CC);
@@ -349,7 +349,7 @@ static int php_phongo_binary_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /* {{
 	return zend_binary_strcmp(intern1->data, intern1->data_len, intern2->data, intern2->data_len);
 } /* }}} */
 
-static HashTable* php_phongo_binary_get_gc(zval* object, phongo_get_gc_table table, int* n TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_binary_get_gc(zval* object, zval** table, int* n TSRMLS_DC) /* {{{ */
 {
 	*table = NULL;
 	*n     = 0;

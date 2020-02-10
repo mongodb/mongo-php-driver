@@ -76,7 +76,7 @@ typedef struct {
 } php_phongo_bson_typemap;
 
 typedef struct {
-	ZVAL_RETVAL_TYPE        zchild;
+	zval                    zchild;
 	php_phongo_bson_typemap map;
 	zend_class_entry*       odm;
 	bool                    is_visiting_array;

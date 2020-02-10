@@ -28,14 +28,14 @@
 #include "php_bson.h"
 #include "phongo_compat.h"
 
-#if SIZEOF_PHONGO_LONG == 8
+#if SIZEOF_ZEND_LONG == 8
 #define BSON_APPEND_INT(b, key, keylen, val)    \
 	if (val > INT32_MAX || val < INT32_MIN) {   \
 		bson_append_int64(b, key, keylen, val); \
 	} else {                                    \
 		bson_append_int32(b, key, keylen, val); \
 	}
-#elif SIZEOF_PHONGO_LONG == 4
+#elif SIZEOF_ZEND_LONG == 4
 #define BSON_APPEND_INT(b, key, keylen, val) \
 	bson_append_int32(b, key, keylen, val)
 #else

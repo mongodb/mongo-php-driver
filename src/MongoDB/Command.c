@@ -138,7 +138,7 @@ static zend_function_entry php_phongo_command_me[] = {
 /* {{{ MongoDB\Driver\Command object handlers */
 static zend_object_handlers php_phongo_handler_command;
 
-static void php_phongo_command_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_command_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_command_t* intern = Z_OBJ_COMMAND(object);
 
@@ -149,7 +149,7 @@ static void php_phongo_command_free_object(phongo_free_object_arg* object TSRMLS
 	}
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_command_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_command_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_command_t* intern = NULL;
 

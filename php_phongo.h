@@ -116,9 +116,9 @@ void phongo_session_init(zval* return_value, mongoc_client_session_t* client_ses
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern TSRMLS_DC);
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs TSRMLS_DC);
 void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern TSRMLS_DC);
-bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value, int return_value_used TSRMLS_DC);
-bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value, int return_value_used TSRMLS_DC);
-bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value, int return_value_used TSRMLS_DC);
+bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value TSRMLS_DC);
+bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value TSRMLS_DC);
+bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value TSRMLS_DC);
 
 bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor TSRMLS_DC);
 
@@ -145,7 +145,7 @@ void php_phongo_cursor_to_zval(zval* retval, const mongoc_cursor_t* cursor);
 void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions TSRMLS_DC);
 int  php_phongo_set_monitoring_callbacks(mongoc_client_t* client);
 
-bool php_phongo_parse_int64(int64_t* retval, const char* data, phongo_zpp_char_len data_len);
+bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len);
 
 void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options TSRMLS_DC);
 void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options TSRMLS_DC);

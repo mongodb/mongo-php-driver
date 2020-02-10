@@ -33,11 +33,10 @@ static PHP_METHOD(Server, executeCommand)
 {
 	php_phongo_server_t* intern;
 	char*                db;
-	phongo_zpp_char_len  db_len;
+	size_t               db_len;
 	zval*                command;
 	zval*                options      = NULL;
 	bool                 free_options = false;
-	DECLARE_RETURN_VALUE_USED
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -52,7 +51,7 @@ static PHP_METHOD(Server, executeCommand)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, intern->server_id, return_value TSRMLS_CC);
 
 	if (free_options) {
 		php_phongo_prep_legacy_option_free(options TSRMLS_CC);
@@ -65,10 +64,9 @@ static PHP_METHOD(Server, executeReadCommand)
 {
 	php_phongo_server_t* intern;
 	char*                db;
-	phongo_zpp_char_len  db_len;
+	size_t               db_len;
 	zval*                command;
 	zval*                options = NULL;
-	DECLARE_RETURN_VALUE_USED
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -81,7 +79,7 @@ static PHP_METHOD(Server, executeReadCommand)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, intern->server_id, return_value TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
@@ -90,10 +88,9 @@ static PHP_METHOD(Server, executeWriteCommand)
 {
 	php_phongo_server_t* intern;
 	char*                db;
-	phongo_zpp_char_len  db_len;
+	size_t               db_len;
 	zval*                command;
 	zval*                options = NULL;
-	DECLARE_RETURN_VALUE_USED
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -106,7 +103,7 @@ static PHP_METHOD(Server, executeWriteCommand)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, intern->server_id, return_value TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeReadWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
@@ -115,10 +112,9 @@ static PHP_METHOD(Server, executeReadWriteCommand)
 {
 	php_phongo_server_t* intern;
 	char*                db;
-	phongo_zpp_char_len  db_len;
+	size_t               db_len;
 	zval*                command;
 	zval*                options = NULL;
-	DECLARE_RETURN_VALUE_USED
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -131,7 +127,7 @@ static PHP_METHOD(Server, executeReadWriteCommand)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, intern->server_id, return_value TSRMLS_CC);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeQuery(string $namespace, MongoDB\Driver\Query $query[, array $options = null]))
@@ -140,11 +136,10 @@ static PHP_METHOD(Server, executeQuery)
 {
 	php_phongo_server_t* intern;
 	char* namespace;
-	phongo_zpp_char_len namespace_len;
-	zval*               query;
-	zval*               options      = NULL;
-	bool                free_options = false;
-	DECLARE_RETURN_VALUE_USED
+	size_t namespace_len;
+	zval*  query;
+	zval*  options      = NULL;
+	bool   free_options = false;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -159,7 +154,7 @@ static PHP_METHOD(Server, executeQuery)
 	 * session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
-	phongo_execute_query(intern->client, namespace, query, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_query(intern->client, namespace, query, options, intern->server_id, return_value TSRMLS_CC);
 
 	if (free_options) {
 		php_phongo_prep_legacy_option_free(options TSRMLS_CC);
@@ -173,12 +168,11 @@ static PHP_METHOD(Server, executeBulkWrite)
 {
 	php_phongo_server_t* intern;
 	char* namespace;
-	phongo_zpp_char_len     namespace_len;
+	size_t                  namespace_len;
 	zval*                   zbulk;
 	php_phongo_bulkwrite_t* bulk;
 	zval*                   options      = NULL;
 	bool                    free_options = false;
-	DECLARE_RETURN_VALUE_USED
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
@@ -194,7 +188,7 @@ static PHP_METHOD(Server, executeBulkWrite)
 	 * that its session pool is cleared. */
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
 
-	phongo_execute_bulk_write(intern->client, namespace, bulk, options, intern->server_id, return_value, return_value_used TSRMLS_CC);
+	phongo_execute_bulk_write(intern->client, namespace, bulk, options, intern->server_id, return_value TSRMLS_CC);
 
 	if (free_options) {
 		php_phongo_prep_legacy_option_free(options TSRMLS_CC);
@@ -215,7 +209,7 @@ static PHP_METHOD(Server, getHost)
 	}
 
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
-		PHONGO_RETVAL_STRING(mongoc_server_description_host(sd)->host);
+		RETVAL_STRING(mongoc_server_description_host(sd)->host);
 		mongoc_server_description_destroy(sd);
 		return;
 	}
@@ -316,7 +310,7 @@ static PHP_METHOD(Server, getLatency)
 	}
 
 	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
-		RETVAL_LONG((phongo_long) mongoc_server_description_round_trip_time(sd));
+		RETVAL_LONG((zend_long) mongoc_server_description_round_trip_time(sd));
 		mongoc_server_description_destroy(sd);
 		return;
 	}
@@ -569,14 +563,14 @@ static int php_phongo_server_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /* {{
 	return retval;
 } /* }}} */
 
-static void php_phongo_server_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_server_free_object(zend_object* object TSRMLS_DC) /* {{{ */
 {
 	php_phongo_server_t* intern = Z_OBJ_SERVER(object);
 
 	zend_object_std_dtor(&intern->std TSRMLS_CC);
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_server_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_server_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
 {
 	php_phongo_server_t* intern = NULL;
 
