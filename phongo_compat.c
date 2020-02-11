@@ -17,18 +17,12 @@
 /* Our Compatability header */
 #include "phongo_compat.h"
 
-void phongo_add_exception_prop(const char* prop, int prop_len, zval* value TSRMLS_DC)
+void phongo_add_exception_prop(const char* prop, int prop_len, zval* value)
 {
 	if (EG(exception)) {
-#if PHP_VERSION_ID >= 70000
 		zval ex;
-		EXCEPTION_P(EG(exception), ex);
+		ZVAL_OBJ(&ex, EG(exception));
 		zend_update_property(Z_OBJCE(ex), &ex, prop, prop_len, value);
-#else
-		zval* ex = NULL;
-		EXCEPTION_P(EG(exception), ex);
-		zend_update_property(Z_OBJCE_P(ex), ex, prop, prop_len, value TSRMLS_CC);
-#endif
 	}
 }
 

@@ -37,12 +37,8 @@ void php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "UnexpectedValueException", php_phongo_unexpectedvalueexception_me);
-#if PHP_VERSION_ID >= 70000
 	php_phongo_unexpectedvalueexception_ce = zend_register_internal_class_ex(&ce, spl_ce_UnexpectedValueException);
-#else
-	php_phongo_unexpectedvalueexception_ce = zend_register_internal_class_ex(&ce, spl_ce_UnexpectedValueException, NULL TSRMLS_CC);
-#endif
-	zend_class_implements(php_phongo_unexpectedvalueexception_ce TSRMLS_CC, 1, php_phongo_exception_ce);
+	zend_class_implements(php_phongo_unexpectedvalueexception_ce, 1, php_phongo_exception_ce);
 } /* }}} */
 
 /*

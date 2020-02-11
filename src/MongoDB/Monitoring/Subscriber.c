@@ -39,7 +39,7 @@ void php_phongo_subscriber_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	(void) module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "Subscriber", php_phongo_subscriber_me);
-	php_phongo_subscriber_ce = zend_register_internal_interface(&ce TSRMLS_CC);
+	php_phongo_subscriber_ce = zend_register_internal_interface(&ce);
 
 	return;
 } /* }}} */

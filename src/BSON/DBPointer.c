@@ -17,11 +17,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/standard/php_var.h>
-#if PHP_VERSION_ID >= 70000
 #include <zend_smart_str.h>
-#else
-#include <ext/standard/php_smart_str.h>
-#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,15 +31,15 @@ zend_class_entry* php_phongo_dbpointer_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_dbpointer_init(php_phongo_dbpointer_t* intern, const char* ref, phongo_zpp_char_len ref_len, const char* id, phongo_zpp_char_len id_len TSRMLS_DC) /* {{{ */
+static bool php_phongo_dbpointer_init(php_phongo_dbpointer_t* intern, const char* ref, size_t ref_len, const char* id, size_t id_len) /* {{{ */
 {
 	if (strlen(ref) != (size_t) ref_len) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Ref cannot contain null bytes");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Ref cannot contain null bytes");
 		return false;
 	}
 
 	if (!bson_oid_is_valid(id, id_len)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing ObjectId string: %s", id);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error parsing ObjectId string: %s", id);
 		return false;
 	}
 
@@ -57,27 +53,17 @@ static bool php_phongo_dbpointer_init(php_phongo_dbpointer_t* intern, const char
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_dbpointer_init_from_hash(php_phongo_dbpointer_t* intern, HashTable* props TSRMLS_DC) /* {{{ */
+static bool php_phongo_dbpointer_init_from_hash(php_phongo_dbpointer_t* intern, HashTable* props) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
 	zval *ref, *id;
 
 	if ((ref = zend_hash_str_find(props, "ref", sizeof("ref") - 1)) && Z_TYPE_P(ref) == IS_STRING &&
 		(id = zend_hash_str_find(props, "id", sizeof("id") - 1)) && Z_TYPE_P(id) == IS_STRING) {
 
-		return php_phongo_dbpointer_init(intern, Z_STRVAL_P(ref), Z_STRLEN_P(ref), Z_STRVAL_P(id), Z_STRLEN_P(id) TSRMLS_CC);
+		return php_phongo_dbpointer_init(intern, Z_STRVAL_P(ref), Z_STRLEN_P(ref), Z_STRVAL_P(id), Z_STRLEN_P(id));
 	}
-#else
-	zval **ref, **id;
 
-	if (zend_hash_find(props, "ref", sizeof("ref"), (void**) &ref) == SUCCESS && Z_TYPE_PP(ref) == IS_STRING &&
-		zend_hash_find(props, "id", sizeof("id"), (void**) &id) == SUCCESS && Z_TYPE_PP(id) == IS_STRING) {
-
-		return php_phongo_dbpointer_init(intern, Z_STRVAL_PP(ref), Z_STRLEN_PP(ref), Z_STRVAL_PP(id), Z_STRLEN_PP(id) TSRMLS_CC);
-	}
-#endif
-
-	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"ref\" and \"id\" string fields", ZSTR_VAL(php_phongo_dbpointer_ce->name));
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"ref\" and \"id\" string fields", ZSTR_VAL(php_phongo_dbpointer_ce->name));
 	return false;
 } /* }}} */
 
@@ -96,7 +82,7 @@ static PHP_METHOD(DBPointer, __toString)
 	intern = Z_DBPOINTER_OBJ_P(getThis());
 
 	retval_len = spprintf(&retval, 0, "[%s/%s]", intern->ref, intern->id);
-	PHONGO_RETVAL_STRINGL(retval, retval_len);
+	RETVAL_STRINGL(retval, retval_len);
 	efree(retval);
 } /* }}} */
 
@@ -105,8 +91,8 @@ static PHP_METHOD(DBPointer, __toString)
 static PHP_METHOD(DBPointer, jsonSerialize)
 {
 	php_phongo_dbpointer_t* intern;
-	ZVAL_RETVAL_TYPE        zdb_pointer;
-	ZVAL_RETVAL_TYPE        zoid;
+	zval                    zdb_pointer;
+	zval                    zoid;
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -114,7 +100,6 @@ static PHP_METHOD(DBPointer, jsonSerialize)
 
 	intern = Z_DBPOINTER_OBJ_P(getThis());
 
-#if PHP_VERSION_ID >= 70000
 	array_init_size(&zdb_pointer, 2);
 	array_init_size(&zoid, 1);
 	ADD_ASSOC_STRINGL(&zdb_pointer, "$ref", intern->ref, intern->ref_len);
@@ -123,18 +108,6 @@ static PHP_METHOD(DBPointer, jsonSerialize)
 
 	array_init_size(return_value, 1);
 	ADD_ASSOC_ZVAL(return_value, "$dbPointer", &zdb_pointer);
-#else
-	ALLOC_INIT_ZVAL(zdb_pointer);
-	ALLOC_INIT_ZVAL(zoid);
-	array_init_size(zdb_pointer, 2);
-	array_init_size(zoid, 1);
-	ADD_ASSOC_STRINGL(zdb_pointer, "$ref", intern->ref, intern->ref_len);
-	ADD_ASSOC_STRING(zoid, "$oid", intern->id);
-	ADD_ASSOC_ZVAL(zdb_pointer, "$id", zoid);
-
-	array_init_size(return_value, 1);
-	ADD_ASSOC_ZVAL(return_value, "$dbPointer", zdb_pointer);
-#endif
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\DBPointer::serialize()
@@ -142,7 +115,7 @@ static PHP_METHOD(DBPointer, jsonSerialize)
 static PHP_METHOD(DBPointer, serialize)
 {
 	php_phongo_dbpointer_t* intern;
-	ZVAL_RETVAL_TYPE        retval;
+	zval                    retval;
 	php_serialize_data_t    var_hash;
 	smart_str               buf = { 0 };
 
@@ -152,19 +125,12 @@ static PHP_METHOD(DBPointer, serialize)
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	array_init_size(&retval, 2);
 	ADD_ASSOC_STRINGL(&retval, "ref", intern->ref, intern->ref_len);
 	ADD_ASSOC_STRING(&retval, "id", intern->id);
-#else
-	ALLOC_INIT_ZVAL(retval);
-	array_init_size(retval, 2);
-	ADD_ASSOC_STRINGL(retval, "ref", intern->ref, intern->ref_len);
-	ADD_ASSOC_STRING(retval, "id", intern->id);
-#endif
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
-	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
+	php_var_serialize(&buf, &retval, &var_hash);
 	smart_str_0(&buf);
 	PHP_VAR_SERIALIZE_DESTROY(var_hash);
 
@@ -181,42 +147,31 @@ static PHP_METHOD(DBPointer, unserialize)
 	php_phongo_dbpointer_t* intern;
 	zend_error_handling     error_handling;
 	char*                   serialized;
-	phongo_zpp_char_len     serialized_len;
-#if PHP_VERSION_ID >= 70000
-	zval props;
-#else
-	zval* props;
-#endif
-	php_unserialize_data_t var_hash;
+	size_t                  serialized_len;
+	zval                    props;
+	php_unserialize_data_t  var_hash;
 
 	intern = Z_DBPOINTER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
-#if PHP_VERSION_ID < 70000
-	ALLOC_INIT_ZVAL(props);
-#endif
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
-	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
+	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {
 		zval_ptr_dtor(&props);
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s unserialization failed", ZSTR_VAL(php_phongo_dbpointer_ce->name));
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s unserialization failed", ZSTR_VAL(php_phongo_dbpointer_ce->name));
 
 		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
 		return;
 	}
 	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
 
-#if PHP_VERSION_ID >= 70000
-	php_phongo_dbpointer_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
-#else
-	php_phongo_dbpointer_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
-#endif
+	php_phongo_dbpointer_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
 } /* }}} */
 
@@ -244,11 +199,11 @@ static zend_function_entry php_phongo_dbpointer_me[] = {
 /* {{{ MongoDB\BSON\DBPointer object handlers */
 static zend_object_handlers php_phongo_handler_dbpointer;
 
-static void php_phongo_dbpointer_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_dbpointer_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_dbpointer_t* intern = Z_OBJ_DBPOINTER(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->ref) {
 		efree(intern->ref);
@@ -258,62 +213,39 @@ static void php_phongo_dbpointer_free_object(phongo_free_object_arg* object TSRM
 		zend_hash_destroy(intern->properties);
 		FREE_HASHTABLE(intern->properties);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
-phongo_create_object_retval php_phongo_dbpointer_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+zend_object* php_phongo_dbpointer_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_dbpointer_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_dbpointer_t, class_type);
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_dbpointer;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_dbpointer_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_dbpointer;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_dbpointer_clone_object(zval* object TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_dbpointer_clone_object(zval* object) /* {{{ */
 {
-	php_phongo_dbpointer_t*     intern;
-	php_phongo_dbpointer_t*     new_intern;
-	phongo_create_object_retval new_object;
+	php_phongo_dbpointer_t* intern;
+	php_phongo_dbpointer_t* new_intern;
+	zend_object*            new_object;
 
 	intern     = Z_DBPOINTER_OBJ_P(object);
-	new_object = php_phongo_dbpointer_create_object(Z_OBJCE_P(object) TSRMLS_CC);
+	new_object = php_phongo_dbpointer_create_object(Z_OBJCE_P(object));
 
-#if PHP_VERSION_ID >= 70000
 	new_intern = Z_OBJ_DBPOINTER(new_object);
-	zend_objects_clone_members(&new_intern->std, &intern->std TSRMLS_CC);
-#else
-	{
-		zend_object_handle handle = Z_OBJ_HANDLE_P(object);
+	zend_objects_clone_members(&new_intern->std, &intern->std);
 
-		new_intern = (php_phongo_dbpointer_t*) zend_object_store_get_object_by_handle(new_object.handle TSRMLS_CC);
-		zend_objects_clone_members(&new_intern->std, new_object, &intern->std, handle TSRMLS_CC);
-	}
-#endif
-
-	php_phongo_dbpointer_init(new_intern, intern->ref, intern->ref_len, intern->id, 24 TSRMLS_CC);
+	php_phongo_dbpointer_init(new_intern, intern->ref, intern->ref_len, intern->id, 24);
 
 	return new_object;
 } /* }}} */
 
-static int php_phongo_dbpointer_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /* {{{ */
+static int php_phongo_dbpointer_compare_objects(zval* o1, zval* o2) /* {{{ */
 {
 	php_phongo_dbpointer_t *intern1, *intern2;
 	int                     retval;
@@ -330,7 +262,7 @@ static int php_phongo_dbpointer_compare_objects(zval* o1, zval* o2 TSRMLS_DC) /*
 	return strcmp(intern1->id, intern2->id);
 } /* }}} */
 
-static HashTable* php_phongo_dbpointer_get_gc(zval* object, phongo_get_gc_table table, int* n TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_dbpointer_get_gc(zval* object, zval** table, int* n) /* {{{ */
 {
 	*table = NULL;
 	*n     = 0;
@@ -338,7 +270,7 @@ static HashTable* php_phongo_dbpointer_get_gc(zval* object, phongo_get_gc_table 
 	return Z_DBPOINTER_OBJ_P(object)->properties;
 } /* }}} */
 
-HashTable* php_phongo_dbpointer_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
+HashTable* php_phongo_dbpointer_get_properties_hash(zval* object, bool is_debug) /* {{{ */
 {
 	php_phongo_dbpointer_t* intern;
 	HashTable*              props;
@@ -351,7 +283,6 @@ HashTable* php_phongo_dbpointer_get_properties_hash(zval* object, bool is_debug 
 		return props;
 	}
 
-#if PHP_VERSION_ID >= 70000
 	{
 		zval ref, id;
 
@@ -360,31 +291,19 @@ HashTable* php_phongo_dbpointer_get_properties_hash(zval* object, bool is_debug 
 		zend_hash_str_update(props, "ref", sizeof("ref") - 1, &ref);
 		zend_hash_str_update(props, "id", sizeof("id") - 1, &id);
 	}
-#else
-	{
-		zval *ref, *id;
-
-		MAKE_STD_ZVAL(ref);
-		ZVAL_STRING(ref, intern->ref, 1);
-		MAKE_STD_ZVAL(id);
-		ZVAL_STRING(id, intern->id, 1);
-		zend_hash_update(props, "ref", sizeof("ref"), &ref, sizeof(ref), NULL);
-		zend_hash_update(props, "id", sizeof("id"), &id, sizeof(id), NULL);
-	}
-#endif
 
 	return props;
 } /* }}} */
 
-static HashTable* php_phongo_dbpointer_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_dbpointer_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	*is_temp = 1;
-	return php_phongo_dbpointer_get_properties_hash(object, true TSRMLS_CC);
+	return php_phongo_dbpointer_get_properties_hash(object, true);
 } /* }}} */
 
-static HashTable* php_phongo_dbpointer_get_properties(zval* object TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_dbpointer_get_properties(zval* object) /* {{{ */
 {
-	return php_phongo_dbpointer_get_properties_hash(object, false TSRMLS_CC);
+	return php_phongo_dbpointer_get_properties_hash(object, false);
 } /* }}} */
 /* }}} */
 
@@ -393,13 +312,13 @@ void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "DBPointer", php_phongo_dbpointer_me);
-	php_phongo_dbpointer_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_dbpointer_ce                = zend_register_internal_class(&ce);
 	php_phongo_dbpointer_ce->create_object = php_phongo_dbpointer_create_object;
 	PHONGO_CE_FINAL(php_phongo_dbpointer_ce);
 
-	zend_class_implements(php_phongo_dbpointer_ce TSRMLS_CC, 1, php_phongo_json_serializable_ce);
-	zend_class_implements(php_phongo_dbpointer_ce TSRMLS_CC, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_dbpointer_ce TSRMLS_CC, 1, zend_ce_serializable);
+	zend_class_implements(php_phongo_dbpointer_ce, 1, php_phongo_json_serializable_ce);
+	zend_class_implements(php_phongo_dbpointer_ce, 1, php_phongo_type_ce);
+	zend_class_implements(php_phongo_dbpointer_ce, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_dbpointer, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_dbpointer.clone_obj       = php_phongo_dbpointer_clone_object;
@@ -407,10 +326,8 @@ void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_dbpointer.get_debug_info  = php_phongo_dbpointer_get_debug_info;
 	php_phongo_handler_dbpointer.get_gc          = php_phongo_dbpointer_get_gc;
 	php_phongo_handler_dbpointer.get_properties  = php_phongo_dbpointer_get_properties;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_dbpointer.free_obj = php_phongo_dbpointer_free_object;
-	php_phongo_handler_dbpointer.offset   = XtOffsetOf(php_phongo_dbpointer_t, std);
-#endif
+	php_phongo_handler_dbpointer.free_obj        = php_phongo_dbpointer_free_object;
+	php_phongo_handler_dbpointer.offset          = XtOffsetOf(php_phongo_dbpointer_t, std);
 } /* }}} */
 
 /*

@@ -19,7 +19,6 @@ foreach ($tests as $i => $test) {
     $manager = new MongoDB\Driver\Manager($uri, $options);
     var_dump($manager->getReadPreference());
 
-    // Test for !return_value_used
     $manager->getReadPreference();
 }
 

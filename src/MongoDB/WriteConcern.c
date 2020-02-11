@@ -17,11 +17,7 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 #include <ext/standard/php_var.h>
-#if PHP_VERSION_ID >= 70000
 #include <zend_smart_str.h>
-#else
-#include <ext/standard/php_smart_str.h>
-#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -34,9 +30,8 @@ zend_class_entry* php_phongo_writeconcern_ce;
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* intern, HashTable* props TSRMLS_DC) /* {{{ */
+static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* intern, HashTable* props) /* {{{ */
 {
-#if PHP_VERSION_ID >= 70000
 	zval *w, *wtimeout, *j;
 
 	intern->write_concern = mongoc_write_concern_new();
@@ -44,7 +39,7 @@ static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* in
 	if ((w = zend_hash_str_find(props, "w", sizeof("w") - 1))) {
 		if (Z_TYPE_P(w) == IS_LONG) {
 			if (Z_LVAL_P(w) < -3) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"w\" integer field to be >= -3", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"w\" integer field to be >= -3", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 				goto failure;
 			}
 			mongoc_write_concern_set_w(intern->write_concern, Z_LVAL_P(w));
@@ -55,7 +50,7 @@ static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* in
 				mongoc_write_concern_set_wtag(intern->write_concern, Z_STRVAL_P(w));
 			}
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"w\" field to be integer or string", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"w\" field to be integer or string", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 			goto failure;
 		}
 	}
@@ -63,7 +58,7 @@ static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* in
 	if ((wtimeout = zend_hash_str_find(props, "wtimeout", sizeof("wtimeout") - 1))) {
 		if (Z_TYPE_P(wtimeout) == IS_LONG) {
 			if (Z_LVAL_P(wtimeout) < 0) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" integer field to be >= 0", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"wtimeout\" integer field to be >= 0", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 				goto failure;
 			}
 
@@ -72,13 +67,13 @@ static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* in
 			int64_t timeout;
 
 			if (!php_phongo_parse_int64(&timeout, Z_STRVAL_P(wtimeout), Z_STRLEN_P(wtimeout))) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit value for %s initialization", Z_STRVAL_P(wtimeout), ZSTR_VAL(php_phongo_writeconcern_ce->name));
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error parsing \"%s\" as 64-bit value for %s initialization", Z_STRVAL_P(wtimeout), ZSTR_VAL(php_phongo_writeconcern_ce->name));
 				return false;
 			}
 
 			mongoc_write_concern_set_wtimeout_int64(intern->write_concern, timeout);
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" field to be integer or string", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"wtimeout\" field to be integer or string", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 			goto failure;
 		}
 	}
@@ -87,67 +82,10 @@ static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* in
 		if (Z_TYPE_P(j) == IS_TRUE || Z_TYPE_P(j) == IS_FALSE) {
 			mongoc_write_concern_set_journal(intern->write_concern, zend_is_true(j));
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"j\" field to be boolean", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"j\" field to be boolean", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 			goto failure;
 		}
 	}
-#else
-	zval **w, **wtimeout, **j;
-
-	intern->write_concern = mongoc_write_concern_new();
-
-	if (zend_hash_find(props, "w", sizeof("w"), (void**) &w) == SUCCESS) {
-		if (Z_TYPE_PP(w) == IS_LONG) {
-			if (Z_LVAL_PP(w) < -3) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"w\" integer field to be >= -3", ZSTR_VAL(php_phongo_writeconcern_ce->name));
-				goto failure;
-			}
-			mongoc_write_concern_set_w(intern->write_concern, Z_LVAL_PP(w));
-		} else if (Z_TYPE_PP(w) == IS_STRING) {
-			if (strcmp(Z_STRVAL_PP(w), PHONGO_WRITE_CONCERN_W_MAJORITY) == 0) {
-				mongoc_write_concern_set_w(intern->write_concern, MONGOC_WRITE_CONCERN_W_MAJORITY);
-			} else {
-				mongoc_write_concern_set_wtag(intern->write_concern, Z_STRVAL_PP(w));
-			}
-		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"w\" field to be integer or string", ZSTR_VAL(php_phongo_writeconcern_ce->name));
-			goto failure;
-		}
-	}
-
-	if (zend_hash_find(props, "wtimeout", sizeof("wtimeout"), (void**) &wtimeout) == SUCCESS) {
-		if (Z_TYPE_PP(wtimeout) == IS_LONG) {
-			if (Z_LVAL_PP(wtimeout) < 0) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" integer field to be >= 0", ZSTR_VAL(php_phongo_writeconcern_ce->name));
-				goto failure;
-			}
-
-			mongoc_write_concern_set_wtimeout_int64(intern->write_concern, (int64_t) Z_LVAL_PP(wtimeout));
-		} else if (Z_TYPE_PP(wtimeout) == IS_STRING) {
-			int64_t timeout;
-
-			if (!php_phongo_parse_int64(&timeout, Z_STRVAL_PP(wtimeout), Z_STRLEN_PP(wtimeout))) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Error parsing \"%s\" as 64-bit value for %s initialization", Z_STRVAL_PP(wtimeout), ZSTR_VAL(php_phongo_writeconcern_ce->name));
-				return false;
-			}
-
-			mongoc_write_concern_set_wtimeout_int64(intern->write_concern, timeout);
-		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"wtimeout\" field to be integer or string", ZSTR_VAL(php_phongo_writeconcern_ce->name));
-			goto failure;
-		}
-	}
-
-	if (zend_hash_find(props, "j", sizeof("j"), (void**) &j) == SUCCESS) {
-		if (Z_TYPE_PP(j) == IS_BOOL) {
-			mongoc_write_concern_set_journal(intern->write_concern, Z_BVAL_PP(j));
-		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "%s initialization requires \"j\" field to be boolean", ZSTR_VAL(php_phongo_writeconcern_ce->name));
-			goto failure;
-		}
-	}
-
-#endif
 
 	return true;
 
@@ -164,22 +102,22 @@ static PHP_METHOD(WriteConcern, __construct)
 	php_phongo_writeconcern_t* intern;
 	zend_error_handling        error_handling;
 	zval *                     w, *journal;
-	phongo_long                wtimeout = 0;
+	zend_long                  wtimeout = 0;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|lz", &w, &wtimeout, &journal) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|lz", &w, &wtimeout, &journal) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
 	intern->write_concern = mongoc_write_concern_new();
 
 	if (Z_TYPE_P(w) == IS_LONG) {
 		if (Z_LVAL_P(w) < -3) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected w to be >= -3, %ld given", Z_LVAL_P(w));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected w to be >= -3, %ld given", Z_LVAL_P(w));
 			return;
 		}
 		mongoc_write_concern_set_w(intern->write_concern, Z_LVAL_P(w));
@@ -190,7 +128,7 @@ static PHP_METHOD(WriteConcern, __construct)
 			mongoc_write_concern_set_wtag(intern->write_concern, Z_STRVAL_P(w));
 		}
 	} else {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected w to be integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(w));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected w to be integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(w));
 		return;
 	}
 
@@ -206,7 +144,7 @@ static PHP_METHOD(WriteConcern, __construct)
 			/* fallthrough */
 		case 2:
 			if (wtimeout < 0) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected wtimeout to be >= 0, %" PHONGO_LONG_FORMAT " given", wtimeout);
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected wtimeout to be >= 0, %" PHONGO_LONG_FORMAT " given", wtimeout);
 				return;
 			}
 
@@ -222,7 +160,7 @@ static PHP_METHOD(WriteConcern, __set_state)
 	HashTable*                 props;
 	zval*                      array;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &array) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
 		RETURN_FALSE;
 	}
 
@@ -231,7 +169,7 @@ static PHP_METHOD(WriteConcern, __set_state)
 	intern = Z_WRITECONCERN_OBJ_P(return_value);
 	props  = Z_ARRVAL_P(array);
 
-	php_phongo_writeconcern_init_from_hash(intern, props TSRMLS_CC);
+	php_phongo_writeconcern_init_from_hash(intern, props);
 } /* }}} */
 
 /* {{{ proto string|integer|null MongoDB\Driver\WriteConcern::getW()
@@ -250,11 +188,11 @@ static PHP_METHOD(WriteConcern, getW)
 	wtag = mongoc_write_concern_get_wtag(intern->write_concern);
 
 	if (wtag) {
-		PHONGO_RETURN_STRING(wtag);
+		RETURN_STRING(wtag);
 	}
 
 	if (mongoc_write_concern_get_wmajority(intern->write_concern)) {
-		PHONGO_RETURN_STRING(PHONGO_WRITE_CONCERN_W_MAJORITY);
+		RETURN_STRING(PHONGO_WRITE_CONCERN_W_MAJORITY);
 	}
 
 	if (mongoc_write_concern_get_w(intern->write_concern) != MONGOC_WRITE_CONCERN_W_DEFAULT) {
@@ -323,7 +261,7 @@ static PHP_METHOD(WriteConcern, isDefault)
 	RETURN_BOOL(mongoc_write_concern_is_default(intern->write_concern));
 } /* }}} */
 
-static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, bool is_debug, bool is_bson TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, bool is_debug, bool is_bson) /* {{{ */
 {
 	php_phongo_writeconcern_t* intern;
 	HashTable*                 props;
@@ -343,7 +281,6 @@ static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, boo
 	w        = mongoc_write_concern_get_w(intern->write_concern);
 	wtimeout = mongoc_write_concern_get_wtimeout_int64(intern->write_concern);
 
-#if PHP_VERSION_ID >= 70000
 	{
 		zval z_w;
 
@@ -384,54 +321,6 @@ static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, boo
 
 			zend_hash_str_update(props, "wtimeout", sizeof("wtimeout") - 1, &z_wtimeout);
 		}
-#else
-	{
-		zval* z_w;
-
-		if (wtag) {
-			MAKE_STD_ZVAL(z_w);
-			ZVAL_STRING(z_w, wtag, 1);
-			zend_hash_update(props, "w", sizeof("w"), &z_w, sizeof(z_w), NULL);
-		} else if (mongoc_write_concern_get_wmajority(intern->write_concern)) {
-			MAKE_STD_ZVAL(z_w);
-			ZVAL_STRING(z_w, PHONGO_WRITE_CONCERN_W_MAJORITY, 1);
-			zend_hash_update(props, "w", sizeof("w"), &z_w, sizeof(z_w), NULL);
-		} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
-			MAKE_STD_ZVAL(z_w);
-			ZVAL_LONG(z_w, w);
-			zend_hash_update(props, "w", sizeof("w"), &z_w, sizeof(z_w), NULL);
-		}
-
-		if (mongoc_write_concern_journal_is_set(intern->write_concern)) {
-			zval* z_j;
-
-			MAKE_STD_ZVAL(z_j);
-			ZVAL_BOOL(z_j, mongoc_write_concern_get_journal(intern->write_concern));
-			zend_hash_update(props, "j", sizeof("j"), &z_j, sizeof(z_j), NULL);
-		}
-
-		if (wtimeout != 0) {
-			zval* z_wtimeout;
-
-			MAKE_STD_ZVAL(z_wtimeout);
-
-			if (is_bson) {
-				ZVAL_INT64(z_wtimeout, wtimeout);
-			} else {
-#if SIZEOF_LONG == 4
-				if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
-					ZVAL_INT64_STRING(z_wtimeout, wtimeout);
-				} else {
-					ZVAL_LONG(z_wtimeout, wtimeout);
-				}
-#else
-				ZVAL_LONG(z_wtimeout, wtimeout);
-#endif
-			}
-
-			zend_hash_update(props, "wtimeout", sizeof("wtimeout"), &z_wtimeout, sizeof(z_wtimeout), NULL);
-		}
-#endif
 	}
 
 	return props;
@@ -445,7 +334,7 @@ static PHP_METHOD(WriteConcern, bsonSerialize)
 		return;
 	}
 
-	ZVAL_ARR(return_value, php_phongo_write_concern_get_properties_hash(getThis(), true, true TSRMLS_CC));
+	ZVAL_ARR(return_value, php_phongo_write_concern_get_properties_hash(getThis(), true, true));
 	convert_to_object(return_value);
 } /* }}} */
 
@@ -454,7 +343,7 @@ static PHP_METHOD(WriteConcern, bsonSerialize)
 static PHP_METHOD(WriteConcern, serialize)
 {
 	php_phongo_writeconcern_t* intern;
-	ZVAL_RETVAL_TYPE           retval;
+	zval                       retval;
 	php_serialize_data_t       var_hash;
 	smart_str                  buf = { 0 };
 	const char*                wtag;
@@ -475,7 +364,6 @@ static PHP_METHOD(WriteConcern, serialize)
 	w        = mongoc_write_concern_get_w(intern->write_concern);
 	wtimeout = mongoc_write_concern_get_wtimeout_int64(intern->write_concern);
 
-#if PHP_VERSION_ID >= 70000
 	array_init_size(&retval, 3);
 
 	if (wtag) {
@@ -497,33 +385,9 @@ static PHP_METHOD(WriteConcern, serialize)
 			ADD_ASSOC_LONG_EX(&retval, "wtimeout", wtimeout);
 		}
 	}
-#else
-	ALLOC_INIT_ZVAL(retval);
-	array_init_size(retval, 3);
-
-	if (wtag) {
-		ADD_ASSOC_STRING(retval, "w", wtag);
-	} else if (mongoc_write_concern_get_wmajority(intern->write_concern)) {
-		ADD_ASSOC_STRING(retval, "w", PHONGO_WRITE_CONCERN_W_MAJORITY);
-	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
-		ADD_ASSOC_LONG_EX(retval, "w", w);
-	}
-
-	if (mongoc_write_concern_journal_is_set(intern->write_concern)) {
-		ADD_ASSOC_BOOL_EX(retval, "j", mongoc_write_concern_get_journal(intern->write_concern));
-	}
-
-	if (wtimeout != 0) {
-		if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
-			ADD_ASSOC_INT64_AS_STRING(retval, "wtimeout", wtimeout);
-		} else {
-			ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
-		}
-	}
-#endif
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
-	php_var_serialize(&buf, &retval, &var_hash TSRMLS_CC);
+	php_var_serialize(&buf, &retval, &var_hash);
 	smart_str_0(&buf);
 	PHP_VAR_SERIALIZE_DESTROY(var_hash);
 
@@ -540,46 +404,35 @@ static PHP_METHOD(WriteConcern, unserialize)
 	php_phongo_writeconcern_t* intern;
 	zend_error_handling        error_handling;
 	char*                      serialized;
-	phongo_zpp_char_len        serialized_len;
-#if PHP_VERSION_ID >= 70000
-	zval props;
-#else
-	zval* props;
-#endif
-	php_unserialize_data_t var_hash;
+	size_t                     serialized_len;
+	zval                       props;
+	php_unserialize_data_t     var_hash;
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
 	if (!serialized_len) {
 		return;
 	}
 
-#if PHP_VERSION_ID < 70000
-	ALLOC_INIT_ZVAL(props);
-#endif
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
-	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash TSRMLS_CC)) {
+	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {
 		zval_ptr_dtor(&props);
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s unserialization failed", ZSTR_VAL(php_phongo_writeconcern_ce->name));
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s unserialization failed", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 
 		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
 		return;
 	}
 	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
 
-#if PHP_VERSION_ID >= 70000
-	php_phongo_writeconcern_init_from_hash(intern, HASH_OF(&props) TSRMLS_CC);
-#else
-	php_phongo_writeconcern_init_from_hash(intern, HASH_OF(props) TSRMLS_CC);
-#endif
+	php_phongo_writeconcern_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
 } /* }}} */
 
@@ -620,11 +473,11 @@ static zend_function_entry php_phongo_writeconcern_me[] = {
 /* {{{ MongoDB\Driver\WriteConcern object handlers */
 static zend_object_handlers php_phongo_handler_writeconcern;
 
-static void php_phongo_writeconcern_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_writeconcern_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_writeconcern_t* intern = Z_OBJ_WRITECONCERN(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->properties) {
 		zend_hash_destroy(intern->properties);
@@ -634,45 +487,31 @@ static void php_phongo_writeconcern_free_object(phongo_free_object_arg* object T
 	if (intern->write_concern) {
 		mongoc_write_concern_destroy(intern->write_concern);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_writeconcern_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_writeconcern_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_writeconcern_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_writeconcern_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_writeconcern;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeconcern_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_writeconcern;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
-static HashTable* php_phongo_writeconcern_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_writeconcern_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	*is_temp = 1;
-	return php_phongo_write_concern_get_properties_hash(object, true, false TSRMLS_CC);
+	return php_phongo_write_concern_get_properties_hash(object, true, false);
 } /* }}} */
 
-static HashTable* php_phongo_writeconcern_get_properties(zval* object TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_writeconcern_get_properties(zval* object) /* {{{ */
 {
-	return php_phongo_write_concern_get_properties_hash(object, false, false TSRMLS_CC);
+	return php_phongo_write_concern_get_properties_hash(object, false, false);
 } /* }}} */
 
 void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
@@ -680,22 +519,20 @@ void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcern", php_phongo_writeconcern_me);
-	php_phongo_writeconcern_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_writeconcern_ce                = zend_register_internal_class(&ce);
 	php_phongo_writeconcern_ce->create_object = php_phongo_writeconcern_create_object;
 	PHONGO_CE_FINAL(php_phongo_writeconcern_ce);
 
-	zend_class_implements(php_phongo_writeconcern_ce TSRMLS_CC, 1, php_phongo_serializable_ce);
-	zend_class_implements(php_phongo_writeconcern_ce TSRMLS_CC, 1, zend_ce_serializable);
+	zend_class_implements(php_phongo_writeconcern_ce, 1, php_phongo_serializable_ce);
+	zend_class_implements(php_phongo_writeconcern_ce, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_writeconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeconcern.get_debug_info = php_phongo_writeconcern_get_debug_info;
 	php_phongo_handler_writeconcern.get_properties = php_phongo_writeconcern_get_properties;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_writeconcern.free_obj = php_phongo_writeconcern_free_object;
-	php_phongo_handler_writeconcern.offset   = XtOffsetOf(php_phongo_writeconcern_t, std);
-#endif
+	php_phongo_handler_writeconcern.free_obj       = php_phongo_writeconcern_free_object;
+	php_phongo_handler_writeconcern.offset         = XtOffsetOf(php_phongo_writeconcern_t, std);
 
-	zend_declare_class_constant_stringl(php_phongo_writeconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(PHONGO_WRITE_CONCERN_W_MAJORITY) TSRMLS_CC);
+	zend_declare_class_constant_stringl(php_phongo_writeconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(PHONGO_WRITE_CONCERN_W_MAJORITY));
 } /* }}} */
 
 /*

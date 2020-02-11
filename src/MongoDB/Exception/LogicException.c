@@ -37,12 +37,8 @@ void php_phongo_logicexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "LogicException", php_phongo_logicexception_me);
-#if PHP_VERSION_ID >= 70000
 	php_phongo_logicexception_ce = zend_register_internal_class_ex(&ce, spl_ce_LogicException);
-#else
-	php_phongo_logicexception_ce = zend_register_internal_class_ex(&ce, spl_ce_LogicException, NULL TSRMLS_CC);
-#endif
-	zend_class_implements(php_phongo_logicexception_ce TSRMLS_CC, 1, php_phongo_exception_ce);
+	zend_class_implements(php_phongo_logicexception_ce, 1, php_phongo_exception_ce);
 } /* }}} */
 
 /*

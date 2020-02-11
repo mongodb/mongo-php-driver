@@ -17,6 +17,6 @@
 #ifndef PHP_MONGODB_DRIVER_SESSION_H
 #define PHP_MONGODB_DRIVER_SESSION_H
 
-mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* txnOptions TSRMLS_DC);
+mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* txnOptions);
 
 #endif /* PHP_MONGODB_DRIVER_SESSION_H */

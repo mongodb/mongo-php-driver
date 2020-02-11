@@ -54,11 +54,7 @@ static PHP_METHOD(WriteConcernError, getInfo)
 	}
 
 	if (!Z_ISUNDEF(intern->info)) {
-#if PHP_VERSION_ID >= 70000
 		RETURN_ZVAL(&intern->info, 1, 0);
-#else
-		RETURN_ZVAL(intern->info, 1, 0);
-#endif
 	}
 } /* }}} */
 
@@ -74,7 +70,7 @@ static PHP_METHOD(WriteConcernError, getMessage)
 		return;
 	}
 
-	PHONGO_RETURN_STRING(intern->message);
+	RETURN_STRING(intern->message);
 } /* }}} */
 
 /* {{{ MongoDB\Driver\WriteConcernError function entries */
@@ -96,11 +92,11 @@ static zend_function_entry php_phongo_writeconcernerror_me[] = {
 /* {{{ MongoDB\Driver\WriteConcernError object handlers */
 static zend_object_handlers php_phongo_handler_writeconcernerror;
 
-static void php_phongo_writeconcernerror_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_writeconcernerror_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_writeconcernerror_t* intern = Z_OBJ_WRITECONCERNERROR(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->message) {
 		efree(intern->message);
@@ -109,37 +105,23 @@ static void php_phongo_writeconcernerror_free_object(phongo_free_object_arg* obj
 	if (!Z_ISUNDEF(intern->info)) {
 		zval_ptr_dtor(&intern->info);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_writeconcernerror_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_writeconcernerror_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_writeconcernerror_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_writeconcernerror_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_writeconcernerror;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_writeconcernerror_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_writeconcernerror;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
-static HashTable* php_phongo_writeconcernerror_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_writeconcernerror_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	php_phongo_writeconcernerror_t* intern;
 	zval                            retval = ZVAL_STATIC_INIT;
@@ -151,13 +133,8 @@ static HashTable* php_phongo_writeconcernerror_get_debug_info(zval* object, int*
 	ADD_ASSOC_STRING(&retval, "message", intern->message);
 	ADD_ASSOC_LONG_EX(&retval, "code", intern->code);
 	if (!Z_ISUNDEF(intern->info)) {
-#if PHP_VERSION_ID >= 70000
 		Z_ADDREF(intern->info);
 		ADD_ASSOC_ZVAL_EX(&retval, "info", &intern->info);
-#else
-		Z_ADDREF_P(intern->info);
-		ADD_ASSOC_ZVAL_EX(&retval, "info", intern->info);
-#endif
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "info");
 	}
@@ -171,17 +148,15 @@ void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcernError", php_phongo_writeconcernerror_me);
-	php_phongo_writeconcernerror_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_writeconcernerror_ce                = zend_register_internal_class(&ce);
 	php_phongo_writeconcernerror_ce->create_object = php_phongo_writeconcernerror_create_object;
 	PHONGO_CE_FINAL(php_phongo_writeconcernerror_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_writeconcernerror_ce);
 
 	memcpy(&php_phongo_handler_writeconcernerror, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeconcernerror.get_debug_info = php_phongo_writeconcernerror_get_debug_info;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_writeconcernerror.free_obj = php_phongo_writeconcernerror_free_object;
-	php_phongo_handler_writeconcernerror.offset   = XtOffsetOf(php_phongo_writeconcernerror_t, std);
-#endif
+	php_phongo_handler_writeconcernerror.free_obj       = php_phongo_writeconcernerror_free_object;
+	php_phongo_handler_writeconcernerror.offset         = XtOffsetOf(php_phongo_writeconcernerror_t, std);
 } /* }}} */
 
 /*

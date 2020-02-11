@@ -56,8 +56,8 @@ void php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	(void) module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "CommandSubscriber", php_phongo_commandsubscriber_me);
-	php_phongo_commandsubscriber_ce = zend_register_internal_interface(&ce TSRMLS_CC);
-	zend_class_implements(php_phongo_commandsubscriber_ce TSRMLS_CC, 1, php_phongo_subscriber_ce);
+	php_phongo_commandsubscriber_ce = zend_register_internal_interface(&ce);
+	zend_class_implements(php_phongo_commandsubscriber_ce, 1, php_phongo_subscriber_ce);
 
 	return;
 } /* }}} */

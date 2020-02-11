@@ -25,7 +25,7 @@
 
 ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 
-static char* php_phongo_make_subscriber_hash(zval* subscriber TSRMLS_DC)
+static char* php_phongo_make_subscriber_hash(zval* subscriber)
 {
 	char* hash;
 	int   hash_len;
@@ -41,13 +41,9 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 {
 	zval* zSubscriber = NULL;
 	char* hash;
-#if PHP_VERSION_ID >= 70000
 	zval* subscriber;
-#else
-	zval** subscriber;
-#endif
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
 		return;
 	}
 
@@ -57,25 +53,16 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 		return;
 	}
 
-	hash = php_phongo_make_subscriber_hash(zSubscriber TSRMLS_CC);
+	hash = php_phongo_make_subscriber_hash(zSubscriber);
 
 	/* If we have already stored the subscriber, bail out. Otherwise, add
 	 * subscriber to list */
-#if PHP_VERSION_ID >= 70000
 	if ((subscriber = zend_hash_str_find(MONGODB_G(subscribers), hash, strlen(hash)))) {
 		efree(hash);
 		return;
 	}
 
 	zend_hash_str_update(MONGODB_G(subscribers), hash, strlen(hash), zSubscriber);
-#else
-	if (zend_hash_find(MONGODB_G(subscribers), hash, strlen(hash) + 1, (void**) &subscriber) == SUCCESS) {
-		efree(hash);
-		return;
-	}
-
-	zend_hash_update(MONGODB_G(subscribers), hash, strlen(hash) + 1, (void*) &zSubscriber, sizeof(zval*), NULL);
-#endif
 	Z_ADDREF_P(zSubscriber);
 	efree(hash);
 } /* }}} */
@@ -87,7 +74,7 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 	zval* zSubscriber = NULL;
 	char* hash;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
 		return;
 	}
 
@@ -97,13 +84,9 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 		return;
 	}
 
-	hash = php_phongo_make_subscriber_hash(zSubscriber TSRMLS_CC);
+	hash = php_phongo_make_subscriber_hash(zSubscriber);
 
-#if PHP_VERSION_ID >= 70000
 	zend_hash_str_del(MONGODB_G(subscribers), hash, strlen(hash));
-#else
-	zend_hash_del(MONGODB_G(subscribers), hash, strlen(hash) + 1);
-#endif
 	efree(hash);
 } /* }}} */
 

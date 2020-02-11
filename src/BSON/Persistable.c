@@ -36,8 +36,8 @@ void php_phongo_persistable_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Persistable", php_phongo_persistable_me);
-	php_phongo_persistable_ce = zend_register_internal_interface(&ce TSRMLS_CC);
-	zend_class_implements(php_phongo_persistable_ce TSRMLS_CC, 2, php_phongo_unserializable_ce, php_phongo_serializable_ce);
+	php_phongo_persistable_ce = zend_register_internal_interface(&ce);
+	zend_class_implements(php_phongo_persistable_ce, 2, php_phongo_unserializable_ce, php_phongo_serializable_ce);
 } /* }}} */
 
 /*

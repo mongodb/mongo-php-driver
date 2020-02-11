@@ -621,23 +621,7 @@ axes:
         display_name: "PHP 7.0"
         variables:
           PHP_VERSION: "7.0.32"
-      - id: "5.6"
-        display_name: "PHP 5.6"
-        variables:
-          PHP_VERSION: "5.6.38"
 
-  - id: os-php5
-    display_name: OS
-    values:
-      - id: ubuntu1604-test
-        display_name: "Ubuntu 16.04"
-        run_on: ubuntu1604-test
-      - id: rhel70-test
-        display_name: "RHEL 7.0"
-        run_on: rhel70
-      - id: rhel71-power8
-        display_name: "RHEL 7.1 Power 8"
-        run_on: rhel71-power8-test
   - id: os-php7
     display_name: OS
     values:
@@ -693,13 +677,6 @@ axes:
 
 buildvariants:
 
-- matrix_name: "tests-php5"
-  matrix_spec: {"os-php5": "*", "versions": "4.2", "php-versions": ["5.6"] }
-  display_name: "All: ${versions}/${php-versions} — ${os-php5}"
-  tasks:
-     - name: "test-standalone-ssl"
-     - name: "test-replicaset-auth"
-
 - matrix_name: "tests-php7"
   matrix_spec: {"os-php7": "*", "versions": "4.2", "php-versions": ["7.0","7.1","7.2","7.3"] }
   exclude_spec:
@@ -709,14 +686,6 @@ buildvariants:
      - name: "test-standalone-ssl"
      - name: "test-replicaset-auth"
 
-
-- matrix_name: "mongo-30-php5"
-  matrix_spec: {"os-php5": "*", "versions": ["3.0", "3.2", "3.4"], "php-versions": "5.6" }
-  exclude_spec: {"os-php5": "rhel71-power8", "versions": "3.0", "php-versions": "5.6"}
-  display_name: "${versions}/${php-versions} — ${os-php5}"
-  tasks:
-     - name: "test-standalone-old"
-     - name: "test-replicaset-old"
 
 - matrix_name: "mongo-30-php7"
   matrix_spec: {"os-php7": "*", "versions": ["3.0", "3.2", "3.4"], "php-versions": "7.3" }
@@ -730,14 +699,6 @@ buildvariants:
      - name: "test-replicaset-old"
 
 
-- matrix_name: "mongo-36-php5"
-  matrix_spec: {"os-php5": "*", "versions": ["3.6"], "php-versions": "5.6" }
-  display_name: "${versions}/${php-versions} — ${os-php5}"
-  tasks:
-     - name: "test-standalone"
-     - name: "test-replicaset"
-     - name: "test-replicaset-auth"
-
 - matrix_name: "mongo-36-php7"
   matrix_spec: {"os-php7": "*", "versions": ["3.6"], "php-versions": "7.3" }
   exclude_spec:
@@ -748,19 +709,6 @@ buildvariants:
      - name: "test-replicaset"
      - name: "test-replicaset-auth"
 
-
-- matrix_name: "mongo-40-php5"
-  matrix_spec: {"os-php5": "*", "versions": ["4.0", "4.2", "latest"], "php-versions": "5.6" }
-  display_name: "${versions}/${php-versions} — ${os-php5}"
-  tasks:
-     - name: "test-standalone"
-     - name: "test-standalone-auth"
-     - name: "test-standalone-ssl"
-     - name: "test-replicaset"
-     - name: "test-replicaset-auth"
-     - name: "test-replicaset-single"
-     - name: "test-sharded"
-     - name: "test-sharded-rs"
 
 - matrix_name: "mongo-40-php7"
   matrix_spec: {"os-php7": "*", "versions": ["4.0", "4.2", "latest"], "php-versions": "7.3" }

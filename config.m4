@@ -20,8 +20,8 @@ if test "$PHP_MONGODB" != "no"; then
   fi
 
   AC_MSG_RESULT($PHP_MONGODB_PHP_VERSION)
-  if test "$PHP_MONGODB_PHP_VERSION_ID" -lt "50600"; then
-    AC_MSG_ERROR([not supported. Need a PHP version >= 5.6.0 (found $PHP_MONGODB_PHP_VERSION)])
+  if test "$PHP_MONGODB_PHP_VERSION_ID" -lt "70000"; then
+    AC_MSG_ERROR([not supported. Need a PHP version >= 7.0.0 (found $PHP_MONGODB_PHP_VERSION)])
   fi
 
   PHP_ARG_ENABLE([mongodb-developer-flags],

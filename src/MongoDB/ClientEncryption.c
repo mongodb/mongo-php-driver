@@ -31,22 +31,22 @@ zend_class_entry* php_phongo_clientencryption_ce;
 static PHP_METHOD(ClientEncryption, createDataKey)
 {
 	char*                          kms_provider     = NULL;
-	phongo_zpp_char_len            kms_provider_len = 0;
+	size_t                         kms_provider_len = 0;
 	zval*                          options          = NULL;
 	zend_error_handling            error_handling;
 	php_phongo_clientencryption_t* intern;
 
 	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &kms_provider, &kms_provider_len, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s|a!", &kms_provider, &kms_provider_len, &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
 
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
-	phongo_clientencryption_create_datakey(intern, return_value, kms_provider, options TSRMLS_CC);
+	phongo_clientencryption_create_datakey(intern, return_value, kms_provider, options);
 } /* }}} */
 
 /* {{{ proto MongoDB\BSON\Binary MongoDB\Driver\ClientEncryption::encrypt(mixed $value[, array $options])
@@ -59,16 +59,16 @@ static PHP_METHOD(ClientEncryption, encrypt)
 	php_phongo_clientencryption_t* intern;
 
 	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|a!", &value, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|a!", &value, &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
 
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
-	phongo_clientencryption_encrypt(intern, value, return_value, options TSRMLS_CC);
+	phongo_clientencryption_encrypt(intern, value, return_value, options);
 } /* }}} */
 
 /* {{{ proto mixed MongoDB\Driver\ClientEncryption::decrypt(MongoDB\BSON\BinaryInterface $value)
@@ -80,16 +80,16 @@ static PHP_METHOD(ClientEncryption, decrypt)
 	php_phongo_clientencryption_t* intern;
 
 	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &ciphertext, php_phongo_binary_interface_ce) == FAILURE) {
-		zend_restore_error_handling(&error_handling TSRMLS_CC);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &ciphertext, php_phongo_binary_interface_ce) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
 
-	zend_restore_error_handling(&error_handling TSRMLS_CC);
+	zend_restore_error_handling(&error_handling);
 
-	phongo_clientencryption_decrypt(intern, ciphertext, return_value TSRMLS_CC);
+	phongo_clientencryption_decrypt(intern, ciphertext, return_value);
 } /* }}} */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption_createDataKey, 0, 0, 1)
@@ -124,46 +124,32 @@ static zend_function_entry php_phongo_clientencryption_me[] = {
 /* {{{ MongoDB\Driver\ClientEncryption object handlers */
 static zend_object_handlers php_phongo_handler_clientencryption;
 
-static void php_phongo_clientencryption_free_object(phongo_free_object_arg* object TSRMLS_DC) /* {{{ */
+static void php_phongo_clientencryption_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_clientencryption_t* intern = Z_OBJ_CLIENTENCRYPTION(object);
 
-	zend_object_std_dtor(&intern->std TSRMLS_CC);
+	zend_object_std_dtor(&intern->std);
 
 	if (intern->client_encryption) {
 		mongoc_client_encryption_destroy(intern->client_encryption);
 	}
-
-#if PHP_VERSION_ID < 70000
-	efree(intern);
-#endif
 } /* }}} */
 
-static phongo_create_object_retval php_phongo_clientencryption_create_object(zend_class_entry* class_type TSRMLS_DC) /* {{{ */
+static zend_object* php_phongo_clientencryption_create_object(zend_class_entry* class_type) /* {{{ */
 {
 	php_phongo_clientencryption_t* intern = NULL;
 
 	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_clientencryption_t, class_type);
 
-	zend_object_std_init(&intern->std, class_type TSRMLS_CC);
+	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-#if PHP_VERSION_ID >= 70000
 	intern->std.handlers = &php_phongo_handler_clientencryption;
 
 	return &intern->std;
-#else
-	{
-		zend_object_value retval;
-		retval.handle   = zend_objects_store_put(intern, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_phongo_clientencryption_free_object, NULL TSRMLS_CC);
-		retval.handlers = &php_phongo_handler_clientencryption;
-
-		return retval;
-	}
-#endif
 } /* }}} */
 
-static HashTable* php_phongo_clientencryption_get_debug_info(zval* object, int* is_temp TSRMLS_DC) /* {{{ */
+static HashTable* php_phongo_clientencryption_get_debug_info(zval* object, int* is_temp) /* {{{ */
 {
 	php_phongo_clientencryption_t* intern = NULL;
 	zval                           retval = ZVAL_STATIC_INIT;
@@ -182,20 +168,18 @@ void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ClientEncryption", php_phongo_clientencryption_me);
-	php_phongo_clientencryption_ce                = zend_register_internal_class(&ce TSRMLS_CC);
+	php_phongo_clientencryption_ce                = zend_register_internal_class(&ce);
 	php_phongo_clientencryption_ce->create_object = php_phongo_clientencryption_create_object;
 	PHONGO_CE_FINAL(php_phongo_clientencryption_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_clientencryption_ce);
 
 	memcpy(&php_phongo_handler_clientencryption, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_clientencryption.get_debug_info = php_phongo_clientencryption_get_debug_info;
-#if PHP_VERSION_ID >= 70000
-	php_phongo_handler_clientencryption.free_obj = php_phongo_clientencryption_free_object;
-	php_phongo_handler_clientencryption.offset   = XtOffsetOf(php_phongo_clientencryption_t, std);
-#endif
+	php_phongo_handler_clientencryption.free_obj       = php_phongo_clientencryption_free_object;
+	php_phongo_handler_clientencryption.offset         = XtOffsetOf(php_phongo_clientencryption_t, std);
 
-	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC"), MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC TSRMLS_CC);
-	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM"), MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM TSRMLS_CC);
+	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC"), MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC);
+	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM"), MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM);
 } /* }}} */
 
 /*

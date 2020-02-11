@@ -36,11 +36,7 @@ void php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "ConnectionTimeoutException", php_phongo_connectiontimeoutexception_me);
-#if PHP_VERSION_ID >= 70000
 	php_phongo_connectiontimeoutexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce);
-#else
-	php_phongo_connectiontimeoutexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce, NULL TSRMLS_CC);
-#endif
 	PHONGO_CE_FINAL(php_phongo_connectiontimeoutexception_ce);
 } /* }}} */
 

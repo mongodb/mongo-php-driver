@@ -439,7 +439,7 @@ PHP_ARRAY_FETCH_TYPE_MAP(zval*, array)
  * zval *php_array_fetchz_resource(zval *zarr, zval *key, int le)
  */
 static inline
-void *php_array_zval_to_resource(zval *z, int le TSRMLS_DC) {
+void *php_array_zval_to_resource(zval *z, int le) {
 #ifdef ZEND_ENGINE_3
 	return zend_fetch_resource_ex(z, NULL, le);
 #else
@@ -454,17 +454,17 @@ void *php_array_zval_to_resource(zval *z, int le TSRMLS_DC) {
 #endif
 }
 #define php_array_fetch_resource(zarr, key, le) \
-	php_array_zval_to_resource(php_array_fetch(zarr, key), le TSRMLS_CC)
+	php_array_zval_to_resource(php_array_fetch(zarr, key), le)
 #define php_array_fetchl_resource(zarr, key, key_len, le) \
-	php_array_zval_to_resource(php_array_fetchl(zarr, key, key_len), le TSRMLS_CC)
+	php_array_zval_to_resource(php_array_fetchl(zarr, key, key_len), le)
 #define php_array_fetchl_safe_resource(zarr, key, key_len, le) \
-	php_array_zval_to_resource(php_array_fetchl_safe(zarr, key, key_len), le TSRMLS_CC)
+	php_array_zval_to_resource(php_array_fetchl_safe(zarr, key, key_len), le)
 #define php_array_fetchn_resource(zarr, idx, le) \
-	php_array_zval_to_resource(php_array_fetchn(zarr, idx), le TSRMLS_CC)
+	php_array_zval_to_resource(php_array_fetchn(zarr, idx), le)
 #define php_array_fetchc_resource(zarr, litstr, le) \
-	php_array_zval_to_resource(php_array_fetchc(zarr, litstr), le TSRMLS_CC)
+	php_array_zval_to_resource(php_array_fetchc(zarr, litstr), le)
 #define php_array_fetchz_resource(zarr, key, le) \
-        php_array_zval_to_resource(php_array_fetchz(zarr, key), le TSRMLS_CC)
+        php_array_zval_to_resource(php_array_fetchz(zarr, key), le)
 
 /* Fetch Object
  *
@@ -480,22 +480,22 @@ void *php_array_zval_to_resource(zval *z, int le TSRMLS_DC) {
  * zval *php_array_fetchz_object(zval *zarr, zval *key, zend_class_entry *ce)
  */
 static inline
-zval *php_array_zval_to_object(zval *z, zend_class_entry *ce TSRMLS_DC) {
+zval *php_array_zval_to_object(zval *z, zend_class_entry *ce) {
 	return (z && (Z_TYPE_P(z) == IS_OBJECT) &&
-	        ((!ce) || instanceof_function(Z_OBJCE_P(z), ce TSRMLS_CC))) ? z : NULL;
+	        ((!ce) || instanceof_function(Z_OBJCE_P(z), ce))) ? z : NULL;
 }
 #define php_array_fetch_object(zarr, key, ce) \
-	php_array_zval_to_object(php_array_fetch(zarr, key), ce TSRMLS_CC)
+	php_array_zval_to_object(php_array_fetch(zarr, key), ce)
 #define php_array_fetchl_object(zarr, key, len, ce) \
-	php_array_zval_to_object(php_array_fetchl(zarr, key, len), ce TSRMLS_CC)
+	php_array_zval_to_object(php_array_fetchl(zarr, key, len), ce)
 #define php_array_fetchl_safe_object(zarr, key, len, ce) \
-	php_array_zval_to_object(php_array_fetchl_safe(zarr, key, len), ce TSRMLS_CC)
+	php_array_zval_to_object(php_array_fetchl_safe(zarr, key, len), ce)
 #define php_array_fetchn_object(zarr, idx, ce) \
-	php_array_zval_to_object(php_array_fetchn(zarr, idx), ce TSRMLS_CC)
+	php_array_zval_to_object(php_array_fetchn(zarr, idx), ce)
 #define php_array_fetchc_object(zarr, litstr, ce) \
-	php_array_zval_to_object(php_array_fetchc(zarr, litstr), ce TSRMLS_CC)
+	php_array_zval_to_object(php_array_fetchc(zarr, litstr), ce)
 #define php_array_fetchz_object(zarr, key, ce) \
-        php_array_zval_to_object(php_array_fetchz(zarr, key), ce TSRMLS_CC)
+        php_array_zval_to_object(php_array_fetchz(zarr, key), ce)
 
 /* unset($zarr[$key]) - Erase a key from an array
  *

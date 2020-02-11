@@ -27,7 +27,7 @@
 
 zend_class_entry* php_phongo_runtimeexception_ce;
 
-static bool php_phongo_has_string_array_element(zval* labels, char* label TSRMLS_DC)
+static bool php_phongo_has_string_array_element(zval* labels, char* label)
 {
 	HashTable* ht_data;
 
@@ -37,7 +37,6 @@ static bool php_phongo_has_string_array_element(zval* labels, char* label TSRMLS
 
 	ht_data = HASH_OF(labels);
 
-#if PHP_VERSION_ID >= 70000
 	{
 		zval* z_label;
 
@@ -49,24 +48,6 @@ static bool php_phongo_has_string_array_element(zval* labels, char* label TSRMLS
 		}
 		ZEND_HASH_FOREACH_END();
 	}
-#else
-	{
-		HashPosition pos;
-		zval**       z_label;
-
-		for (
-			zend_hash_internal_pointer_reset_ex(ht_data, &pos);
-			zend_hash_get_current_data_ex(ht_data, (void**) &z_label, &pos) == SUCCESS;
-			zend_hash_move_forward_ex(ht_data, &pos)) {
-
-			if (Z_TYPE_PP(z_label) == IS_STRING) {
-				if (strcmp(Z_STRVAL_PP(z_label), label) == 0) {
-					return true;
-				}
-			}
-		}
-	}
-#endif
 
 	return false;
 }
@@ -75,24 +56,18 @@ static bool php_phongo_has_string_array_element(zval* labels, char* label TSRMLS
    Returns whether a specific error label has been set */
 static PHP_METHOD(RuntimeException, hasErrorLabel)
 {
-	char*               label;
-	phongo_zpp_char_len label_len;
-	zval*               error_labels;
-#if PHP_VERSION_ID >= 70000
-	zval rv;
-#endif
+	char*  label;
+	size_t label_len;
+	zval*  error_labels;
+	zval   rv;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &label, &label_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &label, &label_len) == FAILURE) {
 		return;
 	}
 
-#if PHP_VERSION_ID >= 70000
-	error_labels = zend_read_property(php_phongo_runtimeexception_ce, getThis(), ZEND_STRL("errorLabels"), 0, &rv TSRMLS_CC);
-#else
-	error_labels = zend_read_property(php_phongo_runtimeexception_ce, getThis(), ZEND_STRL("errorLabels"), 0 TSRMLS_CC);
-#endif
+	error_labels = zend_read_property(php_phongo_runtimeexception_ce, getThis(), ZEND_STRL("errorLabels"), 0, &rv);
 
-	RETURN_BOOL(php_phongo_has_string_array_element(error_labels, label TSRMLS_CC));
+	RETURN_BOOL(php_phongo_has_string_array_element(error_labels, label));
 } /* }}} */
 
 ZEND_BEGIN_ARG_INFO_EX(ai_RuntimeException_hasErrorLabel, 0, 0, 1)
@@ -113,14 +88,10 @@ void php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_entry ce;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "RuntimeException", php_phongo_runtimeexception_me);
-#if PHP_VERSION_ID >= 70000
 	php_phongo_runtimeexception_ce = zend_register_internal_class_ex(&ce, spl_ce_RuntimeException);
-#else
-	php_phongo_runtimeexception_ce = zend_register_internal_class_ex(&ce, spl_ce_RuntimeException, NULL TSRMLS_CC);
-#endif
-	zend_class_implements(php_phongo_runtimeexception_ce TSRMLS_CC, 1, php_phongo_exception_ce);
+	zend_class_implements(php_phongo_runtimeexception_ce, 1, php_phongo_exception_ce);
 
-	zend_declare_property_null(php_phongo_runtimeexception_ce, ZEND_STRL("errorLabels"), ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(php_phongo_runtimeexception_ce, ZEND_STRL("errorLabels"), ZEND_ACC_PROTECTED);
 } /* }}} */
 
 /*

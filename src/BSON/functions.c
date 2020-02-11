@@ -37,14 +37,14 @@ PHP_FUNCTION(MongoDB_BSON_fromPHP)
 	zval*   data;
 	bson_t* bson;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "A", &data) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A", &data) == FAILURE) {
 		return;
 	}
 
 	bson = bson_new();
-	php_phongo_zval_to_bson(data, PHONGO_BSON_NONE, bson, NULL TSRMLS_CC);
+	php_phongo_zval_to_bson(data, PHONGO_BSON_NONE, bson, NULL);
 
-	PHONGO_RETVAL_STRINGL((const char*) bson_get_data(bson), bson->len);
+	RETVAL_STRINGL((const char*) bson_get_data(bson), bson->len);
 	bson_destroy(bson);
 } /* }}} */
 
@@ -53,17 +53,17 @@ PHP_FUNCTION(MongoDB_BSON_fromPHP)
 PHP_FUNCTION(MongoDB_BSON_toPHP)
 {
 	char*                 data;
-	phongo_zpp_char_len   data_len;
+	size_t                data_len;
 	zval*                 typemap = NULL;
 	php_phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!", &data, &data_len, &typemap) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s|a!", &data, &data_len, &typemap) == FAILURE) {
 		return;
 	}
 
-	if (!php_phongo_bson_typemap_to_state(typemap, &state.map TSRMLS_CC)) {
+	if (!php_phongo_bson_typemap_to_state(typemap, &state.map)) {
 		return;
 	}
 
@@ -75,45 +75,41 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
 
 	php_phongo_bson_typemap_dtor(&state.map);
 
-#if PHP_VERSION_ID >= 70000
 	RETURN_ZVAL(&state.zchild, 0, 1);
-#else
-	RETURN_ZVAL(state.zchild, 0, 1);
-#endif
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\fromJSON(string $json)
    Returns the BSON representation of a JSON value */
 PHP_FUNCTION(MongoDB_BSON_fromJSON)
 {
-	char*               json;
-	phongo_zpp_char_len json_len;
-	bson_t              bson  = BSON_INITIALIZER;
-	bson_error_t        error = { 0 };
+	char*        json;
+	size_t       json_len;
+	bson_t       bson  = BSON_INITIALIZER;
+	bson_error_t error = { 0 };
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &json, &json_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &json, &json_len) == FAILURE) {
 		return;
 	}
 
 	if (bson_init_from_json(&bson, (const char*) json, json_len, &error)) {
-		PHONGO_RETVAL_STRINGL((const char*) bson_get_data(&bson), bson.len);
+		RETVAL_STRINGL((const char*) bson_get_data(&bson), bson.len);
 		bson_destroy(&bson);
 	} else {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "%s", error.domain == BSON_ERROR_JSON ? error.message : "Error parsing JSON");
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s", error.domain == BSON_ERROR_JSON ? error.message : "Error parsing JSON");
 	}
 } /* }}} */
 
 static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mode_t mode)
 {
-	char*               data;
-	phongo_zpp_char_len data_len;
-	const bson_t*       bson;
-	bool                eof = false;
-	bson_reader_t*      reader;
-	char*               json = NULL;
-	size_t              json_len;
+	char*          data;
+	size_t         data_len;
+	const bson_t*  bson;
+	bool           eof = false;
+	bson_reader_t* reader;
+	char*          json = NULL;
+	size_t         json_len;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &data, &data_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &data, &data_len) == FAILURE) {
 		return;
 	}
 
@@ -121,7 +117,7 @@ static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mo
 	bson   = bson_reader_read(reader, NULL);
 
 	if (!bson) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not read document from BSON reader");
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not read document from BSON reader");
 		bson_reader_destroy(reader);
 		return;
 	}
@@ -135,16 +131,16 @@ static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mo
 	}
 
 	if (!json) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Could not convert BSON document to a JSON string");
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not convert BSON document to a JSON string");
 		bson_reader_destroy(reader);
 		return;
 	}
 
-	PHONGO_RETVAL_STRINGL(json, json_len);
+	RETVAL_STRINGL(json, json_len);
 	bson_free(json);
 
 	if (bson_reader_read(reader, &eof) || !eof) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE TSRMLS_CC, "Reading document did not exhaust input buffer");
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Reading document did not exhaust input buffer");
 	}
 
 	bson_reader_destroy(reader);
