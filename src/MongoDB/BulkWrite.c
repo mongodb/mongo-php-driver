@@ -371,9 +371,12 @@ static PHP_METHOD(BulkWrite, insert)
 
 	intern->num_ops++;
 
-	if (bson_out) {
-		php_phongo_bulkwrite_extract_id(bson_out, &return_value);
+	if (!bson_out) {
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Did not receive result from bulk write. Please file a bug report.");
+		goto cleanup;
 	}
+
+	php_phongo_bulkwrite_extract_id(bson_out, &return_value);
 
 cleanup:
 	bson_destroy(&bdocument);
