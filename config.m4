@@ -390,7 +390,8 @@ if test "$PHP_MONGODB" != "no"; then
 
     dnl If compiling without libmongocrypt, use kms_message sources bundled with libmongoc.
     dnl If compiling with libmongocrypt, kms_message bundled with libmongocrypt is used as it is most likely newer.
-    if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" != "yes" && "$PHP_MONGODB_SSL" != "no"; then
+    if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" != "yes" && test "$PHP_MONGODB_SSL" != "no"; then
+      AC_SUBST(MONGOC_ENABLE_MONGODB_AWS_AUTH, 1)
       PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/kms-message/src/], $PHP_MONGODB_KMS_MESSAGE_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
       PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/kms-message/src/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/kms-message/src/])
@@ -416,6 +417,8 @@ if test "$PHP_MONGODB" != "no"; then
     fi
 
     if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
+      dnl Since libmongocrypt adds kms-message, we can enable AWS auth in this case
+      AC_SUBST(MONGOC_ENABLE_MONGODB_AWS_AUTH, 1)
       AC_SUBST(MONGOCRYPT_ENABLE_TRACE, 1)
 
       dnl Generated with: find src/libmongocrypt/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 4- | sort -dz | tr '\000' ' '
