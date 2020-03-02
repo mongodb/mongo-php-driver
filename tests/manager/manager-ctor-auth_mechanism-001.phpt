@@ -7,9 +7,11 @@ $tests = [
     ['mongodb://username@127.0.0.1/?authMechanism=MONGODB-X509', []],
     ['mongodb://127.0.0.1/?authMechanism=MONGODB-X509', []],
     ['mongodb://username@127.0.0.1/?authMechanism=GSSAPI', []],
+    ['mongodb://127.0.0.1/?authMechanism=MONGODB-AWS', []],
     [null, ['authMechanism' => 'MONGODB-X509', 'username' => 'username']],
     [null, ['authMechanism' => 'MONGODB-X509']],
     [null, ['authMechanism' => 'GSSAPI', 'username' => 'username']],
+    [null, ['authMechanism' => 'MONGODB-AWS']],
 ];
 
 foreach ($tests as $test) {
