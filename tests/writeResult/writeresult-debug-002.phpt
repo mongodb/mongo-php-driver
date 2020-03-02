@@ -108,7 +108,7 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
     ["code"]=>
     int(100)
     ["info"]=>
-    NULL
+    %a
   }
   ["writeConcern"]=>
   object(MongoDB\Driver\WriteConcern)#%d (%d) {

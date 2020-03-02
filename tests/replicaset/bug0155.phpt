@@ -30,6 +30,6 @@ object(MongoDB\Driver\WriteConcernError)#%d (%d) {
   ["code"]=>
   int(79)
   ["info"]=>
-  NULL
+  %a
 }
 ===DONE===
