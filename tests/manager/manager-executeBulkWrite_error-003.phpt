@@ -45,11 +45,11 @@ object(MongoDB\Driver\WriteConcernError)#%d (%d) {
   ["code"]=>
   int(100)
   ["info"]=>
-  NULL
+  %a
 }
 writeConcernError.message: Not enough data-bearing nodes
 writeConcernError.code: 100
-writeConcernError.info: NULL
+writeConcernError.info: %a
 
 ===> Collection
 array(1) {
