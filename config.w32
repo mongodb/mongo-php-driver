@@ -285,8 +285,11 @@ if (PHP_MONGODB != "no") {
       mongocrypt_opts
     );
   } else if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION != "no") {
+    // No SSL library found, we can't enable libmongocrypt
     WARNING("mongodb libmongocrypt support not enabled, crypto libs not found");
+  }
 
+  if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION == "no" && mongoc_ssl_found) {
     // Add kms_message sources bundled with libmongoc
     ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/kms_message/src", PHP_MONGODB_KMS_MESSAGE_SOURCES, "mongodb");
     ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongoc/src/kms-message/src");

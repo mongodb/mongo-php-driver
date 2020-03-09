@@ -390,7 +390,7 @@ if test "$PHP_MONGODB" != "no"; then
 
     dnl If compiling without libmongocrypt, use kms_message sources bundled with libmongoc.
     dnl If compiling with libmongocrypt, kms_message bundled with libmongocrypt is used as it is most likely newer.
-    if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" != "yes"; then
+    if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" != "yes" && "$PHP_MONGODB_SSL" != "no"; then
       PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/kms-message/src/], $PHP_MONGODB_KMS_MESSAGE_SOURCES, $PHP_MONGODB_BUNDLED_CFLAGS)
       PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/kms-message/src/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/kms-message/src/])
