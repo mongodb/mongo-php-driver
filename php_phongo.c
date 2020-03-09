@@ -1374,8 +1374,9 @@ static bool php_phongo_uri_finalize_auth(mongoc_uri_t* uri) /* {{{ */
 			}
 		}
 
-		/* MONGODB-X509 is the only mechanism that doesn't require username */
-		if (strcasecmp(mongoc_uri_get_auth_mechanism(uri), "MONGODB-X509")) {
+		/* Mechanisms other than MONGODB-X509 and MONGODB-AWS require a username */
+		if (strcasecmp(mongoc_uri_get_auth_mechanism(uri), "MONGODB-X509") &&
+			strcasecmp(mongoc_uri_get_auth_mechanism(uri), "MONGODB-AWS")) {
 			if (!mongoc_uri_get_username(uri) ||
 				!strcmp(mongoc_uri_get_username(uri), "")) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: '%s' authentication mechanism requires username.", mongoc_uri_get_auth_mechanism(uri));
