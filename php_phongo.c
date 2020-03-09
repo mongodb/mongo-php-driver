@@ -193,34 +193,56 @@ void phongo_throw_exception(php_phongo_error_domain_t domain, const char* format
 	va_end(args);
 }
 
+static int phongo_exception_append_error_labels(zval* labels, const bson_iter_t* iter)
+{
+	bson_iter_t error_labels;
+	uint32_t    label_count = 0;
+
+	bson_iter_recurse(iter, &error_labels);
+	while (bson_iter_next(&error_labels)) {
+		if (BSON_ITER_HOLDS_UTF8(&error_labels)) {
+			const char* error_label;
+			uint32_t    error_label_len;
+
+			error_label = bson_iter_utf8(&error_labels, &error_label_len);
+			ADD_NEXT_INDEX_STRINGL(labels, error_label, error_label_len);
+			label_count++;
+		}
+	}
+
+	return label_count;
+}
+
 static void phongo_exception_add_error_labels(const bson_t* reply)
 {
 	bson_iter_t iter;
+	zval        labels;
+	uint32_t    label_count = 0;
 
 	if (!reply) {
 		return;
 	}
 
+	array_init(&labels);
+
 	if (bson_iter_init_find(&iter, reply, "errorLabels")) {
-		bson_iter_t error_labels;
-		zval        labels;
-
-		array_init(&labels);
-
-		bson_iter_recurse(&iter, &error_labels);
-		while (bson_iter_next(&error_labels)) {
-			if (BSON_ITER_HOLDS_UTF8(&error_labels)) {
-				const char* error_label;
-				uint32_t    error_label_len;
-
-				error_label = bson_iter_utf8(&error_labels, &error_label_len);
-				ADD_NEXT_INDEX_STRINGL(&labels, error_label, error_label_len);
-			}
-		}
-
-		phongo_add_exception_prop(ZEND_STRL("errorLabels"), &labels);
-		zval_ptr_dtor(&labels);
+		label_count += phongo_exception_append_error_labels(&labels, &iter);
 	}
+
+	if (bson_iter_init_find(&iter, reply, "writeConcernError")) {
+		bson_iter_t write_concern_error_iter;
+
+		bson_iter_recurse(&iter, &write_concern_error_iter);
+		if (bson_iter_find(&write_concern_error_iter, "errorLabels")) {
+			label_count += phongo_exception_append_error_labels(&labels, &write_concern_error_iter);
+		}
+	}
+
+	if (label_count > 0) {
+		phongo_add_exception_prop(ZEND_STRL("errorLabels"), &labels);
+	}
+
+	zval_ptr_dtor(&labels);
 }
 
 void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, const bson_t* reply)
