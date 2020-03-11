@@ -74,6 +74,8 @@
 
 #define PHONGO_DEBUG_INI "mongodb.debug"
 #define PHONGO_DEBUG_INI_DEFAULT ""
+#define PHONGO_METADATA_SEPARATOR " / "
+#define PHONGO_METADATA_SEPARATOR_LEN (sizeof(PHONGO_METADATA_SEPARATOR) - 1)
 
 ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 #if defined(ZTS) && defined(COMPILE_DL_MONGODB)
@@ -2459,17 +2461,130 @@ static char* php_phongo_manager_make_client_hash(const char* uri_string, zval* o
 	return hash;
 }
 
-static void php_phongo_set_handshake_data()
+static bool php_phongo_extract_handshake_data(zval* driver, const char* key, char** value, size_t* value_len)
 {
-	char* php_version_string = malloc(4 + sizeof(PHP_VERSION) + 1);
+	zval* zvalue;
 
-	snprintf(php_version_string, 4 + sizeof(PHP_VERSION) + 1, "PHP %s", PHP_VERSION);
-	mongoc_handshake_data_append("ext-mongodb:PHP", PHP_MONGODB_VERSION, php_version_string);
+	if (!php_array_exists(driver, key)) {
+		*value = NULL;
+		*value_len = 0;
 
-	free(php_version_string);
+		return true;
+	}
+
+	zvalue = php_array_fetch(driver, key);
+
+	if (Z_TYPE_P(zvalue) != IS_STRING) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" handshake option to be a string, %s given", key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvalue));
+		return false;
+	}
+
+	*value     = estrdup(Z_STRVAL_P(zvalue));
+	*value_len = Z_STRLEN_P(zvalue);
+
+	return true;
 }
 
-static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri) /* {{{ */
+static char* php_phongo_concat_handshake_data(const char* default_value, const char* custom_value, size_t custom_value_len)
+{
+	char*  ret;
+	/* Length of the returned value needs to include the trailing null byte */
+	size_t ret_len = strlen(default_value) + 1;
+
+	if (custom_value) {
+		/* Increase the length by that of the custom value as well as one byte for the separator */
+		ret_len += custom_value_len + PHONGO_METADATA_SEPARATOR_LEN;
+	}
+
+	ret = ecalloc(sizeof(char*), ret_len);
+
+	if (custom_value) {
+		snprintf(ret, ret_len, "%s%s%s", default_value, PHONGO_METADATA_SEPARATOR, custom_value);
+	} else {
+		snprintf(ret, ret_len, "%s", default_value);
+	}
+
+	return ret;
+}
+
+static void php_phongo_handshake_data_append(const char* name, size_t name_len, const char* version, size_t version_len, const char* platform, size_t platform_len)
+{
+	char*  php_version_string;
+	size_t php_version_string_len;
+	char*  driver_name;
+	char*  driver_version;
+	char*  full_platform;
+
+	php_version_string_len = strlen(PHP_VERSION);
+	php_version_string = ecalloc(sizeof(char*), 4 + php_version_string_len);
+	snprintf(php_version_string, 4 + php_version_string_len, "PHP %s", php_version_string);
+
+	driver_name    = php_phongo_concat_handshake_data("ext-mongodb:PHP", name, name_len);
+	driver_version = php_phongo_concat_handshake_data(PHP_MONGODB_VERSION, version, version_len);
+	full_platform  = php_phongo_concat_handshake_data(php_version_string, platform, platform_len);
+
+	MONGOC_DEBUG(
+		"Setting driver handshake data: name %s, version %s, platform %s",
+		driver_name,
+		driver_version,
+		full_platform);
+
+	mongoc_handshake_data_append(driver_name, driver_version, full_platform);
+
+	efree(php_version_string);
+	efree(driver_name);
+	efree(driver_version);
+	efree(full_platform);
+}
+
+static void php_phongo_set_handshake_data(zval* driverOptions)
+{
+	char*  name         = NULL;
+	size_t name_len     = 0;
+	char*  version      = NULL;
+	size_t version_len  = 0;
+	char*  platform     = NULL;
+	size_t platform_len = 0;
+
+	if (driverOptions && php_array_existsc(driverOptions, "driver")) {
+		zval*      driver = php_array_fetchc(driverOptions, "driver");
+
+		if (Z_TYPE_P(driver) != IS_ARRAY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"driver\" driver option to be an array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(driver));
+			return;
+		}
+
+		if (!php_phongo_extract_handshake_data(driver, "name", &name, &name_len)) {
+			/* Exception already thrown */
+			goto cleanup;
+		}
+
+		if (!php_phongo_extract_handshake_data(driver, "version", &version, &version_len)) {
+			/* Exception already thrown */
+			goto cleanup;
+		}
+
+		if (!php_phongo_extract_handshake_data(driver, "platform", &platform, &platform_len)) {
+			/* Exception already thrown */
+			goto cleanup;
+		}
+	}
+
+	php_phongo_handshake_data_append(name, name_len, version, version_len, platform, platform_len);
+
+cleanup:
+	if (name) {
+		efree(name);
+	}
+	if (version) {
+		efree(version);
+	}
+	if (platform) {
+		efree(platform);
+	}
+}
+
+static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zval* driverOptions) /* {{{ */
 {
 	const char *mongoc_version, *bson_version;
 
@@ -2495,7 +2610,7 @@ static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri) /*
 		bson_version,
 		PHP_VERSION);
 
-	php_phongo_set_handshake_data();
+	php_phongo_set_handshake_data(driverOptions);
 
 	return mongoc_client_new_from_uri(uri);
 } /* }}} */
@@ -3093,7 +3208,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	}
 #endif
 
-	manager->client = php_phongo_make_mongo_client(uri);
+	manager->client = php_phongo_make_mongo_client(uri, driverOptions);
 	mongoc_client_set_error_api(manager->client, MONGOC_ERROR_API_VERSION_2);
 
 	if (!manager->client) {
