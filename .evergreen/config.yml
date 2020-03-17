@@ -50,7 +50,7 @@ functions:
     # Applies the submitted patch, if any
     # Deprecated. Should be removed. But still needed for certain agents (ZAP)
     - command: git.apply_patch
-    # Make an evergreen exapanstion file with dynamic values
+    # Make an evergreen expansion file with dynamic values
     - command: shell.exec
       params:
         working_dir: "src"
@@ -356,7 +356,7 @@ functions:
         working_dir: "src"
         script: |
           ${PREPARE_SHELL}
-          SSL=${SSL} MONGODB_URI="${MONGODB_URI}" sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
+          TESTS=${TESTS} SSL=${SSL} MONGODB_URI="${MONGODB_URI}" sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
 
   "cleanup":
     - command: shell.exec
@@ -411,6 +411,12 @@ functions:
           file="${DRIVERS_TOOLS}/.evergreen/install-dependencies.sh"
           # Don't use ${file} syntax here because evergreen treats it as an empty expansion.
           [ -f "$file" ] && sh $file || echo "$file not available, skipping"
+
+  "decrypt atlas URI list":
+    - command: shell.exec
+      params:
+        script: |
+          openssl aes-256-cbc -S "${encrypted_uris_salt}" -K "${encrypted_uris_key}" -iv "${encrypted_uris_iv}" -in ${PROJECT_DIRECTORY}/.evergreen/atlas-uris.txt.enc -out ${PROJECT_DIRECTORY}/.evergreen/atlas-uris.txt -d
 
 pre:
   - func: "fetch source"
@@ -565,6 +571,15 @@ tasks:
             TOPOLOGY: "sharded_clusters"
             CONFIG: "cluster_replset"
         - func: "run tests"
+
+    - name: "test-atlas"
+      tags: ["atlas"]
+      commands:
+        - func: "compile driver"
+        - func: "decrypt atlas URI list"
+        - func: "run tests"
+          vars:
+            TESTS: "tests/atlas.phpt"
 
 # }}}
 
@@ -757,3 +772,9 @@ buildvariants:
      - name: "test-standalone"
      - name: "test-replicaset"
      - name: "test-sharded-rs"
+
+- matrix_name: "atlas-connectivity-tests"
+  matrix_spec: { "os-php7": "debian92-test", "php-versions": "7.3" }
+  display_name: "Atlas Connectivity tests"
+  tasks:
+    - name: "test-atlas"

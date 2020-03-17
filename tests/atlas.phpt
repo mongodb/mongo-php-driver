@@ -2,13 +2,13 @@
 Atlas Connectivity Tests
 --SKIPIF--
 <?php
-if (!file_exists('.travis.scripts/atlas-uris.txt')) { echo "skip Atlas URIs not found\n"; }
-if (filesize('.travis.scripts/atlas-uris.txt') < 10) { echo "skip Atlas URI file empty\n"; }
+if (!file_exists('.evergreen/atlas-uris.txt')) { echo "skip Atlas URIs not found\n"; }
+if (filesize('.evergreen/atlas-uris.txt') < 10) { echo "skip Atlas URI file empty\n"; }
 if ($_ENV['TESTS'] !== 'tests/atlas.phpt') { echo "skip Atlas tests not wanted\n"; }
 ?>
 --FILE--
 <?php
-$urls = explode("\n", file_get_contents('.travis.scripts/atlas-uris.txt'));
+$urls = explode("\n", file_get_contents('.evergreen/atlas-uris.txt'));
 
 $isMasterCmd = new \MongoDB\Driver\Command(['isMaster' => 1]);
 $query = new \MongoDB\Driver\Query([]);
@@ -37,5 +37,11 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+FAIL: %s
 FAIL: %s
 ===DONE===
