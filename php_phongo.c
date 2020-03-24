@@ -2517,7 +2517,7 @@ static void php_phongo_handshake_data_append(const char* name, size_t name_len, 
 
 	php_version_string_len = strlen(PHP_VERSION);
 	php_version_string = ecalloc(sizeof(char*), 4 + php_version_string_len);
-	snprintf(php_version_string, 4 + php_version_string_len, "PHP %s", php_version_string);
+	snprintf(php_version_string, 4 + php_version_string_len, "PHP %s", PHP_VERSION);
 
 	driver_name    = php_phongo_concat_handshake_data("ext-mongodb:PHP", name, name_len);
 	driver_version = php_phongo_concat_handshake_data(PHP_MONGODB_VERSION, version, version_len);
