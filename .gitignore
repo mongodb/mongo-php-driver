@@ -51,6 +51,7 @@ php.ini
 !.travis.yml
 !.travis.scripts/
 !.evergreen
+.evergreen/atlas-uris.txt
 
 
 !scripts

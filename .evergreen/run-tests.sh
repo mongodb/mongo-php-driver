@@ -10,6 +10,7 @@ set -o errexit  # Exit the script with error if any of the commands fail
 AUTH=${AUTH:-noauth}
 SSL=${SSL:-nossl}
 MONGODB_URI=${MONGODB_URI:-}
+TESTS=${TESTS:-}
 
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 [ -z "$MARCH" ] && MARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
@@ -25,7 +26,7 @@ echo "Running $AUTH tests, connecting to $MONGODB_URI"
 # Run the tests, and store the results in a Evergreen compatible JSON results file
 case "$OS" in
    *)
-      TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test
+      TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test TESTS=$TESTS
       ;;
 esac
 
