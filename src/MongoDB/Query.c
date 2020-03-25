@@ -306,7 +306,7 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 	PHONGO_QUERY_OPT_DOCUMENT("min", options, "min")
 	else PHONGO_QUERY_OPT_DOCUMENT("min", modifiers, "$min");
 	PHONGO_QUERY_OPT_BOOL("noCursorTimeout", options, "noCursorTimeout");
-	PHONGO_QUERY_OPT_BOOL("oplogReplay", options, "oplogReplay");
+	PHONGO_QUERY_OPT_BOOL_DEPRECATED("oplogReplay", options, "oplogReplay");
 	PHONGO_QUERY_OPT_DOCUMENT("projection", options, "projection");
 	PHONGO_QUERY_OPT_BOOL("returnKey", options, "returnKey")
 	else PHONGO_QUERY_OPT_BOOL("returnKey", modifiers, "$returnKey");

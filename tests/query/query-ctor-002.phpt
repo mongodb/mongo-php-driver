@@ -52,6 +52,8 @@ var_dump(new MongoDB\Driver\Query(
 --EXPECTF--
 Deprecated: MongoDB\Driver\Query::__construct(): The "maxScan" option is deprecated and will be removed in a future release in %s on line %d
 
+Deprecated: MongoDB\Driver\Query::__construct(): The "oplogReplay" option is deprecated and will be removed in a future release in %s on line %d
+
 Deprecated: MongoDB\Driver\Query::__construct(): The "snapshot" option is deprecated and will be removed in a future release in %s on line %d
 object(MongoDB\Driver\Query)#%d (%d) {
   ["filter"]=>
