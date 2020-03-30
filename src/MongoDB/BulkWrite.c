@@ -297,6 +297,10 @@ static bool php_phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zo
 	PHONGO_BULKWRITE_APPEND_INT32("limit", limit);
 	PHONGO_BULKWRITE_OPT_DOCUMENT("collation");
 
+	if (!php_phongo_bulkwrite_opt_hint(boptions, zoptions)) {
+		return false;
+	}
+
 	return true;
 } /* }}} */
 
