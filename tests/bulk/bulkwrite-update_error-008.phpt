@@ -1,9 +1,10 @@
 --TEST--
-MongoDB\Driver\BulkWrite::update() hint option requires MongoDB 4.2
+MongoDB\Driver\BulkWrite::update() hint option requires MongoDB 4.2 (server-side error)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_server_version('>=', '4.2'); ?>
+<?php skip_if_server_version('<=', '3.6.0'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -22,5 +23,5 @@ echo throws(function() use ($manager, $bulk) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\BulkWriteException
-Bulk write failed due to previous MongoDB\Driver\Exception\RuntimeException: The selected server does not support hint for update
+BSON field 'update.updates.hint' is an unknown field.
 ===DONE===
