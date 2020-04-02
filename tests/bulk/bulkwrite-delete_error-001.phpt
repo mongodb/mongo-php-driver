@@ -9,6 +9,10 @@ $bulk = new MongoDB\Driver\BulkWrite;
 
 echo throws(function() use ($bulk) {
     $bulk->delete(['x' => 1], ['collation' => 1]);
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n\n";
+
+echo throws(function() use ($bulk) {
+    $bulk->delete(['x' => 1], ['hint' => 1]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
@@ -17,4 +21,7 @@ echo throws(function() use ($bulk) {
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "collation" option to be array or object, int%S given
+
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected "hint" option to be string, array, or object, int%S given
 ===DONE===

@@ -26,7 +26,7 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?tlsInsecure=true&tlsAllowInvalidCertificates=true'. tlsinsecure may not be specified with tlsallowinvalidcertificates or tlsallowinvalidhostnames.
+Failed to parse MongoDB URI: 'mongodb://localhost:27017/?tlsInsecure=true&tlsAllowInvalidCertificates=true'. tlsinsecure may not be specified with tlsallowinvalidcertificates, tlsallowinvalidhostnames, tlsdisableocspendpointcheck, or tlsdisablecertificaterevocationcheck.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: tlsinsecure may not be combined with tlsallowinvalidcertificates or tlsallowinvalidhostnames.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
