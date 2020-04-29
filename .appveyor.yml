@@ -1,81 +1,158 @@
-image: Visual Studio 2015
+image: Visual Studio 2017
 version: '{branch}.{build}'
 
+clone_folder: c:\projects\mongodb
+
 cache:
-  - c:\build-cache -> .appveyor.yml, .appveyor\*.cmd
+  - c:\build-cache -> .appveyor.yml
+
+platform:
+  - x86
+  - x64
 
 environment:
-  PHP_BUILD_CACHE_BASE_DIR: c:\build-cache
-  PHP_BUILD_OBJ_DIR: c:\obj
-  PHP_BUILD_CACHE_SDK_DIR: c:\build-cache\sdk
-  PHP_BUILD_SDK_BRANCH: php-sdk-2.1.1
-  SDK_REMOTE: https://github.com/OSTC/php-sdk-binary-tools.git
-  SDK_BRANCH: php-sdk-2.1.1
+  BIN_SDK_VER: 2.2.0
+  CONFIGURE_OPTS: --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes
 
   matrix:
-    - PHP_REL: 7.4
-      ARCHITECTURE: x64
-      ZTS_STATE: enable
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      PHP_BUILD_CRT: vc15
-    - PHP_REL: 7.4
-      ARCHITECTURE: x64
-      ZTS_STATE: disable
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      PHP_BUILD_CRT: vc15
-    - PHP_REL: 7.4
-      ARCHITECTURE: x86
-      ZTS_STATE: enable
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      PHP_BUILD_CRT: vc15
-    - PHP_REL: 7.4
-      ARCHITECTURE: x86
-      ZTS_STATE: disable
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      PHP_BUILD_CRT: vc15
-    - PHP_REL: 7.3
-      ARCHITECTURE: x64
-      ZTS_STATE: enable
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      PHP_BUILD_CRT: vc15
-    - PHP_REL: 7.3
-      ARCHITECTURE: x64
-      ZTS_STATE: disable
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      PHP_BUILD_CRT: vc15
-    - PHP_REL: 7.2
-      ARCHITECTURE: x64
-      ZTS_STATE: enable
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      PHP_BUILD_CRT: vc15
-    - PHP_REL: 7.2
-      ARCHITECTURE: x64
-      ZTS_STATE: disable
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      PHP_BUILD_CRT: vc15
-    - PHP_REL: 7.1
-      ARCHITECTURE: x64
-      ZTS_STATE: enable
+    - PHP_VER: 7.4.4
+      TS: 1
+      CRT: vc15
+    - PHP_VER: 7.4.4
+      TS: 0
+      CRT: vc15
+    - PHP_VER: 7.3.16
+      TS: 1
+      CRT: vc15
+    - PHP_VER: 7.3.16
+      TS: 0
+      CRT: vc15
+    - PHP_VER: 7.2.29
+      TS: 1
+      CRT: vc15
+    - PHP_VER: 7.2.29
+      TS: 0
+      CRT: vc15
+    - PHP_VER: 7.1.33
+      TS: 1
+      CRT: vc14
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      PHP_BUILD_CRT: vc14
-    - PHP_REL: 7.1
-      ARCHITECTURE: x64
-      ZTS_STATE: disable
+    - PHP_VER: 7.1.33
+      TS: 0
+      CRT: vc14
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      PHP_BUILD_CRT: vc14
-    - PHP_REL: 7.1
-      ARCHITECTURE: x86
-      ZTS_STATE: enable
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      PHP_BUILD_CRT: vc14
-    - PHP_REL: 7.1
-      ARCHITECTURE: x86
-      ZTS_STATE: disable
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      PHP_BUILD_CRT: vc14
+
+services:
+  - mongodb
 
 install:
-  - .appveyor\install.cmd
+  - cmd: git submodule update --init
+  - ps: |
+      if (-not (Test-Path c:\build-cache)) {
+        mkdir c:\build-cache
+      }
+
+      $sdk_dir = "c:\build-cache\php-sdk-$($env:BIN_SDK_VER)"
+
+      if (-not (Test-Path $sdk_dir)) {
+        $sdk_pkg = "php-sdk-$($env:BIN_SDK_VER).zip"
+
+        if (-not (Test-Path c:\build-cache\$sdk_pkg)) {
+          Invoke-WebRequest "https://github.com/microsoft/php-sdk-binary-tools/archive/$sdk_pkg" -OutFile "c:\build-cache\$sdk_pkg"
+        }
+
+        & 7z x c:\build-cache\$sdk_pkg -oc:\build-cache
+
+        $sdk_pkg_dir = "c:\build-cache\php-sdk-binary-tools-php-sdk-$($env:BIN_SDK_VER)"
+        Rename-Item -Path $sdk_pkg_dir -NewName $sdk_dir
+      }
+
+      # TS part is omitted in archive path, so manually include it to avoid a build cache conflict
+      $devel_dir = 'c:\build-cache\php-{0}-{1}-devel-{2}-{3}' -f $env:PHP_VER, ('nts','ts')[$env:TS], $env:CRT.toUpper(), $env:PLATFORM
+
+      if (-not (Test-Path $devel_dir)) {
+        $devel_pkg = 'php-devel-pack-{0}{1}-Win32-{2}-{3}.zip' -f $env:PHP_VER, ('-nts','')[$env:TS], $env:CRT.toUpper(), $env:PLATFORM
+
+        if (-not (Test-Path c:\build-cache\$devel_pkg)) {
+          Invoke-WebRequest "http://windows.php.net/downloads/releases/archives/$devel_pkg" -OutFile "c:\build-cache\$devel_pkg"
+
+          # Latest versions will be in releases/ instead of releases/archives
+          if (-not (Test-Path c:\build-cache\$devel_pkg)) {
+            Invoke-WebRequest "http://windows.php.net/downloads/releases/$devel_pkg" -OutFile "c:\build-cache\$devel_pkg"
+          }
+        }
+
+        & 7z x c:\build-cache\$devel_pkg -oc:\build-cache
+
+        $devel_pkg_dir = 'c:\build-cache\php-{0}-devel-{1}-{2}' -f $env:PHP_VER, $env:CRT.toUpper(), $env:PLATFORM
+        Rename-Item -Path $devel_pkg_dir -NewName $devel_dir
+      }
+
+      $sdk_runner = '{0}\phpsdk-{1}-{2}.bat' -f $sdk_dir, $env:CRT, $env:PLATFORM
+
+      # Install shared library dependencies
+      $php_branch = $env:PHP_VER.Substring(0, 3)
+      $deps_dir = 'c:\build-cache\deps-{0}-{1}-{2}' -f $php_branch, $env:CRT.toUpper(), $env:PLATFORM
+
+      if (-not (Test-Path $deps_dir)) {
+        echo "" | Out-File -Encoding "ASCII" install_deps.bat
+        echo "cmd /C $sdk_dir\bin\phpsdk_deps.bat --update --force --no-backup --branch $php_branch --stability stable --deps $deps_dir" | Out-File -Encoding "ASCII" -Append install_deps.bat
+        echo "exit %errorlevel%" | Out-File -Encoding "ASCII" -Append install_deps.bat
+
+        & $sdk_runner -t $env:APPVEYOR_BUILD_FOLDER\install_deps.bat
+      }
+
+      $env:PATH = "$devel_dir;$env:PATH"
+      $env:SDK_RUNNER = $sdk_runner
+      $env:DEPS_DIR = $deps_dir
 
 build_script:
-  - .appveyor\build.cmd
+  ps: |
+    echo "" | Out-File -Encoding "ASCII" build.bat
+    echo "call phpize 2>&1" | Out-File -Encoding "ASCII" -Append build.bat
+    echo "call configure $env:CONFIGURE_OPTS --enable-debug-pack --with-php-build=$env:DEPS_DIR 2>&1" | Out-File -Encoding "ASCII" -Append build.bat
+    echo "nmake /nologo 2>&1" | Out-File -Encoding "ASCII" -Append build.bat
+    echo "exit %errorlevel%" | Out-File -Encoding "ASCII" -Append build.bat
+
+    & $env:SDK_RUNNER -t $env:APPVEYOR_BUILD_FOLDER\build.bat
+
+after_build:
+  ps: |
+    $commit = $env:APPVEYOR_REPO_COMMIT.substring(0, 8)
+    $php_branch = $env:PHP_VER.Substring(0, 3)
+
+    $zip = '{0}\php_mongodb-{1}-{2}-{3}-{4}-{5}.zip' -f $env:APPVEYOR_BUILD_FOLDER, $commit, $php_branch, ('nts','ts')[$env:TS], $env:CRT, $env:PLATFORM
+    $dir = '{0}{1}\Release{2}' -f $env:APPVEYOR_BUILD_FOLDER, (&{If('x64' -eq $env:PLATFORM) {'\x64'} Else {''}}), ('','_TS')[$env:TS]
+
+    & 7z a $zip $dir\php_mongodb.dll $dir\php_mongodb.pdb $env:APPVEYOR_BUILD_FOLDER\LICENSE
+    Push-AppveyorArtifact $zip
+
+test_script:
+  ps: |
+    # Add TS part to runtime path for clarity, although it's not necessary to avoid a conflit like with devel packs
+    $runtime_dir = 'c:\build-cache\php-{0}-{1}-{2}-{3}' -f $env:PHP_VER, ('nts','ts')[$env:TS], $env:CRT.toUpper(), $env:PLATFORM
+
+    if (-not (Test-Path $runtime_dir)) {
+      $runtime_pkg = 'php-{0}{1}-Win32-{2}-{3}.zip' -f $env:PHP_VER, ('-nts','')[$env:TS], $env:CRT.toUpper(), $env:PLATFORM
+
+      if (-not (Test-Path c:\build-cache\$runtime_pkg)) {
+        Invoke-WebRequest "http://windows.php.net/downloads/releases/archives/$runtime_pkg" -OutFile "c:\build-cache\$runtime_pkg"
+
+        # Latest versions will be in releases/ instead of releases/archives
+        if (-not (Test-Path c:\build-cache\$runtime_pkg)) {
+          Invoke-WebRequest "http://windows.php.net/downloads/releases/$runtime_pkg" -OutFile "c:\build-cache\$runtime_pkg"
+        }
+      }
+
+      & 7z x c:\build-cache\$runtime_pkg -o"$runtime_dir"
+    }
+
+    cd $env:APPVEYOR_BUILD_FOLDER
+    echo "" | Out-File -Encoding "ASCII" test.bat
+    echo "set REPORT_EXIT_STATUS=1" | Out-File -Encoding "ASCII" -Append test.bat
+    echo "set NO_INTERACTION=1" | Out-File -Encoding "ASCII" -Append test.bat
+    echo "call configure $env:CONFIGURE_OPTS --with-prefix=$runtime_dir 2>&1" | Out-File -Encoding "ASCII" -Append test.bat
+    echo "nmake /nologo test TESTS=--show-diff 2>&1" | Out-File -Encoding "ASCII" -Append test.bat
+    echo "exit %errorlevel%" | Out-File -Encoding "ASCII" -Append test.bat
+
+    & $env:SDK_RUNNER -t $env:APPVEYOR_BUILD_FOLDER\test.bat
