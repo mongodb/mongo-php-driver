@@ -1426,7 +1426,7 @@ static bool php_phongo_uri_finalize_auth(mongoc_uri_t* uri) /* {{{ */
 			}
 		}
 	} else if (require_auth) {
-		if (!username || strcmp(username, "") == 0) {
+		if (source && strcmp(source, "$external") != 0 && (!username || strcmp(username, "") == 0)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: Default authentication mechanism requires username.");
 			return false;
 		}
