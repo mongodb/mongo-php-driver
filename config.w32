@@ -43,8 +43,20 @@ function mongodb_parse_version_file(inpath, prefix)
   return replacements;
 }
 
+function create_folder_recursive(path)
+{
+    if (FSO.FolderExists(path)) {
+      return;
+    }
+
+    create_folder_recursive(FSO.GetParentFolderName(path));
+    FSO.CreateFolder(path);
+}
+
 function MONGODB_ADD_SOURCES(dir, file_list)
 {
+  // Ensure obj_dir and all parent directories exist
+  create_folder_recursive(FSO.BuildPath(get_define('BUILD_DIR'), dir));
   ADD_SOURCES(configure_module_dirname + dir, file_list, "mongodb", dir);
 }
 
