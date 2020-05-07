@@ -194,7 +194,7 @@ static HashTable* php_phongo_cursorid_get_debug_info(zval* object, int* is_temp)
 
 	array_init(&retval);
 
-#if SIZEOF_LONG == 4
+#if SIZEOF_ZEND_LONG == 4
 	ADD_ASSOC_INT64_AS_STRING(&retval, "id", intern->id);
 #else
 	ADD_ASSOC_LONG_EX(&retval, "id", intern->id);
