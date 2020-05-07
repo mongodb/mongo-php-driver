@@ -431,3 +431,10 @@ function skip_if_no_mongo_orchestration()
         exit("skip mongo-orchestration is not accessible: '" . MONGO_ORCHESTRATION_URI . "'");
     }
 }
+
+function skip_if_appveyor()
+{
+    if (getenv('APPVEYOR')) {
+        exit('skip Test cannot be run on AppVeyor');
+    }
+}
