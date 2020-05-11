@@ -1382,11 +1382,21 @@ static const char* php_phongo_bson_type_to_string(bson_type_t type) /* {{{ */
 
 static bool php_phongo_uri_finalize_auth(mongoc_uri_t* uri) /* {{{ */
 {
+	const bson_t* credentials = mongoc_uri_get_credentials(uri);
+	bson_iter_t   iter;
+	const char*   source       = NULL;
+	const char*   username     = mongoc_uri_get_username(uri);
+	bool          require_auth = username != NULL;
+
+	if (bson_iter_init_find_case(&iter, credentials, MONGOC_URI_AUTHSOURCE)) {
+		source       = bson_iter_utf8(&iter, NULL);
+		require_auth = true;
+	}
+
 	/* authSource with GSSAPI or X509 should always be external */
 	if (mongoc_uri_get_auth_mechanism(uri)) {
 		if (!strcasecmp(mongoc_uri_get_auth_mechanism(uri), "GSSAPI") ||
 			!strcasecmp(mongoc_uri_get_auth_mechanism(uri), "MONGODB-X509")) {
-			const char* source = mongoc_uri_get_auth_source(uri);
 
 			if (source) {
 				if (strcasecmp(source, "$external")) {
@@ -1414,6 +1424,11 @@ static bool php_phongo_uri_finalize_auth(mongoc_uri_t* uri) /* {{{ */
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: X509 authentication mechanism does not accept a password.");
 				return false;
 			}
+		}
+	} else if (require_auth) {
+		if (source && strcmp(source, "$external") != 0 && (!username || strcmp(username, "") == 0)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: Default authentication mechanism requires username.");
+			return false;
 		}
 	}
 
