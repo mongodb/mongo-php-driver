@@ -3730,6 +3730,11 @@ PHP_MINFO_FUNCTION(mongodb)
 #else
 	php_info_print_table_row(2, "libmongoc compression zlib", "disabled");
 #endif
+#ifdef MONGOC_ENABLE_COMPRESSION_ZSTD
+	php_info_print_table_row(2, "libmongoc compression zstd", "enabled");
+#else
+	php_info_print_table_row(2, "libmongoc compression zstd", "disabled");
+#endif
 #else /* MONGOC_ENABLE_COMPRESSION */
 	php_info_print_table_row(2, "libmongoc compression", "disabled");
 #endif
