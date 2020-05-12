@@ -217,7 +217,7 @@ static PHP_METHOD(WriteConcern, getWtimeout)
 
 	wtimeout = mongoc_write_concern_get_wtimeout_int64(intern->write_concern);
 
-#if SIZEOF_LONG == 4
+#if SIZEOF_ZEND_LONG == 4
 	if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
 		zend_error(E_WARNING, "Truncating 64-bit value for wTimeoutMS");
 	}
@@ -308,7 +308,7 @@ static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, boo
 			if (is_bson) {
 				ZVAL_INT64(&z_wtimeout, wtimeout);
 			} else {
-#if SIZEOF_LONG == 4
+#if SIZEOF_ZEND_LONG == 4
 				if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
 					ZVAL_INT64_STRING(&z_wtimeout, wtimeout);
 				} else {

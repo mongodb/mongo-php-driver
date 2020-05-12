@@ -43,6 +43,23 @@ function mongodb_parse_version_file(inpath, prefix)
   return replacements;
 }
 
+function create_folder_recursive(path)
+{
+    if (FSO.FolderExists(path)) {
+      return;
+    }
+
+    create_folder_recursive(FSO.GetParentFolderName(path));
+    FSO.CreateFolder(path);
+}
+
+function MONGODB_ADD_SOURCES(dir, file_list)
+{
+  // Ensure obj_dir and all parent directories exist
+  create_folder_recursive(FSO.BuildPath(get_define('BUILD_DIR'), dir));
+  ADD_SOURCES(configure_module_dirname + dir, file_list, "mongodb", dir);
+}
+
 ARG_ENABLE("mongodb", "MongoDB support", "no");
 ARG_WITH("mongodb-sasl", "MongoDB: Build against Cyrus-SASL", "yes");
 ARG_WITH("mongodb-client-side-encryption", "MongoDB: Enable client-side encryption", "yes");
@@ -91,15 +108,15 @@ if (PHP_MONGODB != "no") {
   var PHP_MONGODB_MONGOC_SOURCES="mongoc-aggregate.c mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-change-stream.c mongoc-client.c mongoc-client-pool.c mongoc-client-session.c mongoc-client-side-encryption.c mongoc-cluster-aws.c mongoc-cluster.c mongoc-cluster-cyrus.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-cmd.c mongoc-collection.c mongoc-compression.c mongoc-counters.c mongoc-crypt.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-change-stream.c mongoc-cursor-cmd.c mongoc-cursor-cmd-deprecated.c mongoc-cursor-find.c mongoc-cursor-find-cmd.c mongoc-cursor-find-opquery.c mongoc-cursor-legacy.c mongoc-cyrus.c mongoc-database.c mongoc-error.c mongoc-find-and-modify.c mongoc-gridfs-bucket.c mongoc-gridfs-bucket-file.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-handshake.c mongoc-host-list.c mongoc-index.c mongoc-init.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-openssl.c mongoc-opts.c mongoc-opts-helpers.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-description.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-gridfs-download.c mongoc-stream-gridfs-upload.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-command-legacy.c mongoc-write-concern.c";
 
   EXTENSION("mongodb", "php_phongo.c phongo_compat.c", null, PHP_MONGODB_CFLAGS);
-  ADD_SOURCES(configure_module_dirname + "/src", "bson.c bson-encode.c", "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/BSON", "Binary.c BinaryInterface.c DBPointer.c Decimal128.c Decimal128Interface.c Int64.c Javascript.c JavascriptInterface.c MaxKey.c MaxKeyInterface.c MinKey.c MinKeyInterface.c ObjectId.c ObjectIdInterface.c Persistable.c Regex.c RegexInterface.c Serializable.c Symbol.c Timestamp.c TimestampInterface.c Type.c Undefined.c Unserializable.c UTCDateTime.c UTCDateTimeInterface.c functions.c", "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/MongoDB", "BulkWrite.c ClientEncryption.c Command.c Cursor.c CursorId.c CursorInterface.c Manager.c Query.c ReadConcern.c ReadPreference.c Server.c Session.c WriteConcern.c WriteConcernError.c WriteError.c WriteResult.c", "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/MongoDB/Exception", "AuthenticationException.c BulkWriteException.c CommandException.c ConnectionException.c ConnectionTimeoutException.c EncryptionException.c Exception.c ExecutionTimeoutException.c InvalidArgumentException.c LogicException.c RuntimeException.c ServerException.c SSLConnectionException.c UnexpectedValueException.c WriteException.c", "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/MongoDB/Monitoring", "CommandFailedEvent.c CommandStartedEvent.c CommandSubscriber.c CommandSucceededEvent.c Subscriber.c functions.c", "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/common", PHP_MONGODB_COMMON_SOURCES, "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/libbson/src/bson", PHP_MONGODB_BSON_SOURCES, "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/libbson/src/jsonsl", PHP_MONGODB_JSONSL_SOURCES, "mongodb");
-  ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc", PHP_MONGODB_MONGOC_SOURCES, "mongodb");
+  MONGODB_ADD_SOURCES("/src", "bson.c bson-encode.c");
+  MONGODB_ADD_SOURCES("/src/BSON", "Binary.c BinaryInterface.c DBPointer.c Decimal128.c Decimal128Interface.c Int64.c Javascript.c JavascriptInterface.c MaxKey.c MaxKeyInterface.c MinKey.c MinKeyInterface.c ObjectId.c ObjectIdInterface.c Persistable.c Regex.c RegexInterface.c Serializable.c Symbol.c Timestamp.c TimestampInterface.c Type.c Undefined.c Unserializable.c UTCDateTime.c UTCDateTimeInterface.c functions.c");
+  MONGODB_ADD_SOURCES("/src/MongoDB", "BulkWrite.c ClientEncryption.c Command.c Cursor.c CursorId.c CursorInterface.c Manager.c Query.c ReadConcern.c ReadPreference.c Server.c Session.c WriteConcern.c WriteConcernError.c WriteError.c WriteResult.c");
+  MONGODB_ADD_SOURCES("/src/MongoDB/Exception", "AuthenticationException.c BulkWriteException.c CommandException.c ConnectionException.c ConnectionTimeoutException.c EncryptionException.c Exception.c ExecutionTimeoutException.c InvalidArgumentException.c LogicException.c RuntimeException.c ServerException.c SSLConnectionException.c UnexpectedValueException.c WriteException.c");
+  MONGODB_ADD_SOURCES("/src/MongoDB/Monitoring", "CommandFailedEvent.c CommandStartedEvent.c CommandSubscriber.c CommandSucceededEvent.c Subscriber.c functions.c");
+  MONGODB_ADD_SOURCES("/src/libmongoc/src/common", PHP_MONGODB_COMMON_SOURCES);
+  MONGODB_ADD_SOURCES("/src/libmongoc/src/libbson/src/bson", PHP_MONGODB_BSON_SOURCES);
+  MONGODB_ADD_SOURCES("/src/libmongoc/src/libbson/src/jsonsl", PHP_MONGODB_JSONSL_SOURCES);
+  MONGODB_ADD_SOURCES("/src/libmongoc/src/libmongoc/src/mongoc", PHP_MONGODB_MONGOC_SOURCES);
 
   var bson_opts = {
     BSON_BYTE_ORDER: 1234,
@@ -265,11 +282,11 @@ if (PHP_MONGODB != "no") {
     // Generated with: find src/libmongocrypt/kms-message/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
     var PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES="hexlify.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_kv_list.c kms_message.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c";
 
-    ADD_SOURCES(configure_module_dirname + "/src/libmongocrypt/src", PHP_MONGODB_MONGOCRYPT_SOURCES, "mongodb");
-    ADD_SOURCES(configure_module_dirname + "/src/libmongocrypt/src/crypto", PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES, "mongodb");
-    ADD_SOURCES(configure_module_dirname + "/src/libmongocrypt/src/os_posix", PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES, "mongodb");
-    ADD_SOURCES(configure_module_dirname + "/src/libmongocrypt/src/os_win", PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES, "mongodb");
-    ADD_SOURCES(configure_module_dirname + "/src/libmongocrypt/kms-message/src", PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES, "mongodb");
+    MONGODB_ADD_SOURCES("/src/libmongocrypt/src", PHP_MONGODB_MONGOCRYPT_SOURCES);
+    MONGODB_ADD_SOURCES("/src/libmongocrypt/src/crypto", PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES);
+    MONGODB_ADD_SOURCES("/src/libmongocrypt/src/os_posix", PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES);
+    MONGODB_ADD_SOURCES("/src/libmongocrypt/src/os_win", PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES);
+    MONGODB_ADD_SOURCES("/src/libmongocrypt/kms-message/src", PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES);
 
     var mongocrypt_version = mongodb_parse_version_file(configure_module_dirname + "/src/LIBMONGOCRYPT_VERSION_CURRENT", "")
     mongocrypt_opts.MONGOCRYPT_BUILD_VERSION = mongocrypt_version.VERSION;
@@ -292,7 +309,7 @@ if (PHP_MONGODB != "no") {
 
   if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION == "no" && mongoc_ssl_found) {
     // Add kms_message sources bundled with libmongoc
-    ADD_SOURCES(configure_module_dirname + "/src/libmongoc/src/kms_message/src", PHP_MONGODB_KMS_MESSAGE_SOURCES, "mongodb");
+    MONGODB_ADD_SOURCES("/src/libmongoc/src/kms_message/src", PHP_MONGODB_KMS_MESSAGE_SOURCES);
     ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongoc/src/kms-message/src");
   }
 
