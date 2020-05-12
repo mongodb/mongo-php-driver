@@ -2,6 +2,7 @@
 MongoDB\Driver\Manager::__construct(): auto encryption options
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_appveyor(); /* AppVeyor does not have mongocryptd installed */ ?>
 <?php skip_if_not_libmongocrypt(); ?>
 --FILE--
 <?php

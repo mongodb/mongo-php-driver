@@ -2,6 +2,7 @@
 MongoDB\Driver\Monitoring\CommandSucceededEvent
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_appveyor(); /* TODO: PHPC-1613 */ ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
