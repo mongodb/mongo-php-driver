@@ -308,8 +308,8 @@ if (PHP_MONGODB != "no") {
   }
 
   if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION == "no" && mongoc_ssl_found) {
-    // Add kms_message sources bundled with libmongoc
-    MONGODB_ADD_SOURCES("/src/libmongoc/src/kms_message/src", PHP_MONGODB_KMS_MESSAGE_SOURCES);
+    // Add kms-message sources bundled with libmongoc
+    MONGODB_ADD_SOURCES("/src/libmongoc/src/kms-message/src", PHP_MONGODB_KMS_MESSAGE_SOURCES);
     ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongoc/src/kms-message/src");
   }
 
