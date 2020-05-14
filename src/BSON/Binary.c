@@ -349,14 +349,6 @@ static int php_phongo_binary_compare_objects(zval* o1, zval* o2) /* {{{ */
 	return zend_binary_strcmp(intern1->data, intern1->data_len, intern2->data, intern2->data_len);
 } /* }}} */
 
-static HashTable* php_phongo_binary_get_gc(zval* object, zval** table, int* n) /* {{{ */
-{
-	*table = NULL;
-	*n     = 0;
-
-	return Z_BINARY_OBJ_P(object)->properties;
-} /* }}} */
-
 static HashTable* php_phongo_binary_get_properties_hash(zval* object, bool is_debug) /* {{{ */
 {
 	php_phongo_binary_t* intern;
@@ -413,7 +405,6 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_binary.clone_obj       = php_phongo_binary_clone_object;
 	php_phongo_handler_binary.compare_objects = php_phongo_binary_compare_objects;
 	php_phongo_handler_binary.get_debug_info  = php_phongo_binary_get_debug_info;
-	php_phongo_handler_binary.get_gc          = php_phongo_binary_get_gc;
 	php_phongo_handler_binary.get_properties  = php_phongo_binary_get_properties;
 	php_phongo_handler_binary.free_obj        = php_phongo_binary_free_object;
 	php_phongo_handler_binary.offset          = XtOffsetOf(php_phongo_binary_t, std);

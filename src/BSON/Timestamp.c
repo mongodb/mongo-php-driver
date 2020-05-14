@@ -395,14 +395,6 @@ static int php_phongo_timestamp_compare_objects(zval* o1, zval* o2) /* {{{ */
 	return 0;
 } /* }}} */
 
-static HashTable* php_phongo_timestamp_get_gc(zval* object, zval** table, int* n) /* {{{ */
-{
-	*table = NULL;
-	*n     = 0;
-
-	return Z_TIMESTAMP_OBJ_P(object)->properties;
-} /* }}} */
-
 static HashTable* php_phongo_timestamp_get_properties_hash(zval* object, bool is_debug) /* {{{ */
 {
 	php_phongo_timestamp_t* intern;
@@ -466,7 +458,6 @@ void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_timestamp.clone_obj       = php_phongo_timestamp_clone_object;
 	php_phongo_handler_timestamp.compare_objects = php_phongo_timestamp_compare_objects;
 	php_phongo_handler_timestamp.get_debug_info  = php_phongo_timestamp_get_debug_info;
-	php_phongo_handler_timestamp.get_gc          = php_phongo_timestamp_get_gc;
 	php_phongo_handler_timestamp.get_properties  = php_phongo_timestamp_get_properties;
 	php_phongo_handler_timestamp.free_obj        = php_phongo_timestamp_free_object;
 	php_phongo_handler_timestamp.offset          = XtOffsetOf(php_phongo_timestamp_t, std);

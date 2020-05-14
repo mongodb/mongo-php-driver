@@ -233,14 +233,6 @@ static int php_phongo_symbol_compare_objects(zval* o1, zval* o2) /* {{{ */
 	return strcmp(intern1->symbol, intern2->symbol);
 } /* }}} */
 
-static HashTable* php_phongo_symbol_get_gc(zval* object, zval** table, int* n) /* {{{ */
-{
-	*table = NULL;
-	*n     = 0;
-
-	return Z_SYMBOL_OBJ_P(object)->properties;
-} /* }}} */
-
 HashTable* php_phongo_symbol_get_properties_hash(zval* object, bool is_debug) /* {{{ */
 {
 	php_phongo_symbol_t* intern;
@@ -293,7 +285,6 @@ void php_phongo_symbol_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_symbol.clone_obj       = php_phongo_symbol_clone_object;
 	php_phongo_handler_symbol.compare_objects = php_phongo_symbol_compare_objects;
 	php_phongo_handler_symbol.get_debug_info  = php_phongo_symbol_get_debug_info;
-	php_phongo_handler_symbol.get_gc          = php_phongo_symbol_get_gc;
 	php_phongo_handler_symbol.get_properties  = php_phongo_symbol_get_properties;
 	php_phongo_handler_symbol.free_obj        = php_phongo_symbol_free_object;
 	php_phongo_handler_symbol.offset          = XtOffsetOf(php_phongo_symbol_t, std);

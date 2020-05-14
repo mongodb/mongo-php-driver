@@ -276,14 +276,6 @@ static zend_object* php_phongo_decimal128_clone_object(zval* object) /* {{{ */
 	return new_object;
 } /* }}} */
 
-static HashTable* php_phongo_decimal128_get_gc(zval* object, zval** table, int* n) /* {{{ */
-{
-	*table = NULL;
-	*n     = 0;
-
-	return Z_DECIMAL128_OBJ_P(object)->properties;
-} /* }}} */
-
 static HashTable* php_phongo_decimal128_get_properties_hash(zval* object, bool is_debug) /* {{{ */
 {
 	php_phongo_decimal128_t* intern;
@@ -339,7 +331,6 @@ void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	memcpy(&php_phongo_handler_decimal128, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_decimal128.clone_obj      = php_phongo_decimal128_clone_object;
 	php_phongo_handler_decimal128.get_debug_info = php_phongo_decimal128_get_debug_info;
-	php_phongo_handler_decimal128.get_gc         = php_phongo_decimal128_get_gc;
 	php_phongo_handler_decimal128.get_properties = php_phongo_decimal128_get_properties;
 	php_phongo_handler_decimal128.free_obj       = php_phongo_decimal128_free_object;
 	php_phongo_handler_decimal128.offset         = XtOffsetOf(php_phongo_decimal128_t, std);
