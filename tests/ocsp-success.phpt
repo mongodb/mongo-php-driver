@@ -2,7 +2,7 @@
 Connection with OCSP checks successful
 --SKIPIF--
 <?php
-if ($_ENV['TESTS'] !== 'tests/ocsp-success.phpt') { echo "skip OCSP tests not wanted\n"; }
+if (getenv('TESTS') !== 'tests/ocsp-success.phpt') { echo "skip OCSP tests not wanted\n"; }
 ?>
 --FILE--
 <?php
