@@ -4,7 +4,7 @@ Atlas Connectivity Tests
 <?php
 if (!file_exists('.evergreen/atlas-uris.txt')) { echo "skip Atlas URIs not found\n"; }
 if (filesize('.evergreen/atlas-uris.txt') < 10) { echo "skip Atlas URI file empty\n"; }
-if ($_ENV['TESTS'] !== 'tests/atlas.phpt') { echo "skip Atlas tests not wanted\n"; }
+if (getenv('TESTS') !== 'tests/atlas.phpt') { echo "skip Atlas tests not wanted\n"; }
 ?>
 --FILE--
 <?php

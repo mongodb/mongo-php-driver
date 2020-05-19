@@ -1446,8 +1446,29 @@ static bool php_phongo_uri_finalize_tls(mongoc_uri_t* uri) /* {{{ */
 
 	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSINSECURE) &&
 		(bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES) ||
-		 bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSALLOWINVALIDHOSTNAMES))) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: %s may not be combined with %s or %s.", MONGOC_URI_TLSINSECURE, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES, MONGOC_URI_TLSALLOWINVALIDHOSTNAMES);
+		 bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSALLOWINVALIDHOSTNAMES) ||
+		 bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSDISABLEOCSPENDPOINTCHECK) ||
+		 bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSDISABLECERTIFICATEREVOCATIONCHECK))) {
+		phongo_throw_exception(
+			PHONGO_ERROR_INVALID_ARGUMENT,
+			"Failed to parse URI options: %s may not be combined with %s, %s, %s, or %s.",
+			MONGOC_URI_TLSINSECURE,
+			MONGOC_URI_TLSALLOWINVALIDCERTIFICATES,
+			MONGOC_URI_TLSALLOWINVALIDHOSTNAMES,
+			MONGOC_URI_TLSDISABLEOCSPENDPOINTCHECK,
+			MONGOC_URI_TLSDISABLECERTIFICATEREVOCATIONCHECK);
+		return false;
+	}
+
+	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES) &&
+		(bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSDISABLEOCSPENDPOINTCHECK) ||
+		 bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSDISABLECERTIFICATEREVOCATIONCHECK))) {
+		phongo_throw_exception(
+			PHONGO_ERROR_INVALID_ARGUMENT,
+			"Failed to parse URI options: %s may not be combined with %s or %s.",
+			MONGOC_URI_TLSALLOWINVALIDCERTIFICATES,
+			MONGOC_URI_TLSDISABLEOCSPENDPOINTCHECK,
+			MONGOC_URI_TLSDISABLECERTIFICATEREVOCATIONCHECK);
 		return false;
 	}
 

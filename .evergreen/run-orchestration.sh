@@ -5,7 +5,7 @@ set -o errexit  # Exit the script with error if any of the commands fail
 
 AUTH=${AUTH:-noauth}
 SSL=${SSL:-nossl}
-TOPOLOGY=${TOPOLOGY:-server}
+TOPOLOGY=${TOPOLOGY:-standalone}
 STORAGE_ENGINE=${STORAGE_ENGINE}
 MONGODB_VERSION=${MONGODB_VERSION:-latest}
 
