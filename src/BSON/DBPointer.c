@@ -262,14 +262,6 @@ static int php_phongo_dbpointer_compare_objects(zval* o1, zval* o2) /* {{{ */
 	return strcmp(intern1->id, intern2->id);
 } /* }}} */
 
-static HashTable* php_phongo_dbpointer_get_gc(zval* object, zval** table, int* n) /* {{{ */
-{
-	*table = NULL;
-	*n     = 0;
-
-	return Z_DBPOINTER_OBJ_P(object)->properties;
-} /* }}} */
-
 HashTable* php_phongo_dbpointer_get_properties_hash(zval* object, bool is_debug) /* {{{ */
 {
 	php_phongo_dbpointer_t* intern;
@@ -324,7 +316,6 @@ void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_dbpointer.clone_obj       = php_phongo_dbpointer_clone_object;
 	php_phongo_handler_dbpointer.compare_objects = php_phongo_dbpointer_compare_objects;
 	php_phongo_handler_dbpointer.get_debug_info  = php_phongo_dbpointer_get_debug_info;
-	php_phongo_handler_dbpointer.get_gc          = php_phongo_dbpointer_get_gc;
 	php_phongo_handler_dbpointer.get_properties  = php_phongo_dbpointer_get_properties;
 	php_phongo_handler_dbpointer.free_obj        = php_phongo_dbpointer_free_object;
 	php_phongo_handler_dbpointer.offset          = XtOffsetOf(php_phongo_dbpointer_t, std);

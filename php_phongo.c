@@ -3486,6 +3486,13 @@ static zend_class_entry* php_phongo_fetch_internal_class(const char* class_name,
 	return NULL;
 }
 
+static HashTable* php_phongo_std_get_gc(zval* object, zval** table, int* n) /* {{{ */
+{
+	*table = NULL;
+	*n = 0;
+	return zend_std_get_properties(object);
+} /* }}} */
+
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(mongodb)
 {
@@ -3501,14 +3508,12 @@ PHP_MINIT_FUNCTION(mongodb)
 
 	/* Prep default object handlers to be used when we register the classes */
 	memcpy(&phongo_std_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+	/* Disable cloning by default. Individual classes can opt in if they need to
+	 * support this (e.g. BSON objects). */
 	phongo_std_object_handlers.clone_obj = NULL;
-	/*
-	phongo_std_object_handlers.get_debug_info       = NULL;
-	phongo_std_object_handlers.compare_objects      = NULL;
-	phongo_std_object_handlers.cast_object          = NULL;
-	phongo_std_object_handlers.count_elements       = NULL;
-	phongo_std_object_handlers.get_closure          = NULL;
-	*/
+	/* Ensure that get_gc delegates to zend_std_get_properties directly in case
+	 * our class defines a get_properties handler for debugging purposes. */
+	phongo_std_object_handlers.get_gc = php_phongo_std_get_gc;
 
 	/* Initialize zend_class_entry dependencies.
 	 *

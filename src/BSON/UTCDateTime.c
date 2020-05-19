@@ -412,14 +412,6 @@ static int php_phongo_utcdatetime_compare_objects(zval* o1, zval* o2 TSRMLS_DC) 
 	return 0;
 } /* }}} */
 
-static HashTable* php_phongo_utcdatetime_get_gc(zval* object, zval** table, int* n TSRMLS_DC) /* {{{ */
-{
-	*table = NULL;
-	*n     = 0;
-
-	return Z_UTCDATETIME_OBJ_P(object)->properties;
-} /* }}} */
-
 static HashTable* php_phongo_utcdatetime_get_properties_hash(zval* object, bool is_debug TSRMLS_DC) /* {{{ */
 {
 	php_phongo_utcdatetime_t* intern;
@@ -473,7 +465,6 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_utcdatetime.clone_obj       = php_phongo_utcdatetime_clone_object;
 	php_phongo_handler_utcdatetime.compare_objects = php_phongo_utcdatetime_compare_objects;
 	php_phongo_handler_utcdatetime.get_debug_info  = php_phongo_utcdatetime_get_debug_info;
-	php_phongo_handler_utcdatetime.get_gc          = php_phongo_utcdatetime_get_gc;
 	php_phongo_handler_utcdatetime.get_properties  = php_phongo_utcdatetime_get_properties;
 	php_phongo_handler_utcdatetime.free_obj        = php_phongo_utcdatetime_free_object;
 	php_phongo_handler_utcdatetime.offset          = XtOffsetOf(php_phongo_utcdatetime_t, std);
