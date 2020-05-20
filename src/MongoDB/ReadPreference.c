@@ -40,7 +40,7 @@ zend_class_entry* php_phongo_readpreference_ce;
  * An exception will be thrown on error. */
 static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t* intern, HashTable* props) /* {{{ */
 {
-	zval *mode, *tagSets, *maxStalenessSeconds;
+	zval *mode, *tagSets, *maxStalenessSeconds, *hedge;
 
 	if ((mode = zend_hash_str_find(props, "mode", sizeof("mode") - 1)) && Z_TYPE_P(mode) == IS_STRING) {
 		if (strcasecmp(Z_STRVAL_P(mode), PHONGO_READ_PRIMARY) == 0) {
@@ -107,6 +107,31 @@ static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t
 			mongoc_read_prefs_set_max_staleness_seconds(intern->read_preference, Z_LVAL_P(maxStalenessSeconds));
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"maxStalenessSeconds\" field to be integer", ZSTR_VAL(php_phongo_readpreference_ce->name));
+			goto failure;
+		}
+	}
+
+	if ((hedge = zend_hash_str_find(props, "hedge", sizeof("hedge") - 1))) {
+		if (Z_TYPE_P(hedge) == IS_ARRAY || Z_TYPE_P(hedge) == IS_OBJECT) {
+			bson_t* hedge_doc = bson_new();
+
+			if (mongoc_read_prefs_get_mode(intern->read_preference) == MONGOC_READ_PRIMARY) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"hedge\" field to not be present with \"primary\" mode", ZSTR_VAL(php_phongo_readpreference_ce->name));
+				bson_destroy(hedge_doc);
+				goto failure;
+			}
+
+			php_phongo_zval_to_bson(hedge, PHONGO_BSON_NONE, hedge_doc, NULL);
+
+			if (EG(exception)) {
+				bson_destroy(hedge_doc);
+				goto failure;
+			}
+
+			mongoc_read_prefs_set_hedge(intern->read_preference, hedge_doc);
+			bson_destroy(hedge_doc);
+		} else {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"hedge\" field to be an array or object", ZSTR_VAL(php_phongo_readpreference_ce->name));
 			goto failure;
 		}
 	}
@@ -238,6 +263,33 @@ static PHP_METHOD(ReadPreference, __construct)
 		mongoc_read_prefs_set_max_staleness_seconds(intern->read_preference, maxStalenessSeconds);
 	}
 
+	if (options && php_array_exists(options, "hedge")) {
+		zval* hedge = php_array_fetchc(options, "hedge");
+
+		if (Z_TYPE_P(hedge) == IS_ARRAY || Z_TYPE_P(hedge) == IS_OBJECT) {
+			bson_t* hedge_doc = bson_new();
+
+			if (mongoc_read_prefs_get_mode(intern->read_preference) == MONGOC_READ_PRIMARY) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "hedge may not be used with primary mode");
+				bson_destroy(hedge_doc);
+				return;
+			}
+
+			php_phongo_zval_to_bson(hedge, PHONGO_BSON_NONE, hedge_doc, NULL);
+
+			if (EG(exception)) {
+				bson_destroy(hedge_doc);
+				return;
+			}
+
+			mongoc_read_prefs_set_hedge(intern->read_preference, hedge_doc);
+			bson_destroy(hedge_doc);
+		} else {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"hedge\" field to be an array or object", ZSTR_VAL(php_phongo_readpreference_ce->name));
+			return;
+		}
+	}
+
 	if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Read preference is not valid");
 		return;
@@ -262,6 +314,37 @@ static PHP_METHOD(ReadPreference, __set_state)
 	props  = Z_ARRVAL_P(array);
 
 	php_phongo_readpreference_init_from_hash(intern, props);
+} /* }}} */
+
+/* {{{ proto array|null MongoDB\Driver\ReadPreference::getHedge()
+   Returns the ReadPreference hedge document */
+static PHP_METHOD(ReadPreference, getHedge)
+{
+	php_phongo_readpreference_t* intern;
+	const bson_t*                hedge;
+
+	intern = Z_READPREFERENCE_OBJ_P(getThis());
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	hedge = mongoc_read_prefs_get_hedge(intern->read_preference);
+
+	if (!bson_empty0(hedge)) {
+		php_phongo_bson_state state;
+
+		PHONGO_BSON_INIT_STATE(state);
+
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(hedge), hedge->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			return;
+		}
+
+		RETURN_ZVAL(&state.zchild, 0, 1);
+	} else {
+		RETURN_NULL();
+	}
 } /* }}} */
 
 /* {{{ proto integer MongoDB\Driver\ReadPreference::getMaxStalenessSeconds()
@@ -353,11 +436,12 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bo
 	HashTable*                   props;
 	const char*                  modeString = NULL;
 	const bson_t*                tags;
+	const bson_t*                hedge;
 	mongoc_read_mode_t           mode;
 
 	intern = Z_READPREFERENCE_OBJ_P(object);
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 3);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 4);
 
 	if (!intern->read_preference) {
 		return props;
@@ -366,6 +450,7 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bo
 	tags       = mongoc_read_prefs_get_tags(intern->read_preference);
 	mode       = mongoc_read_prefs_get_mode(intern->read_preference);
 	modeString = php_phongo_readpreference_get_mode_string(mode);
+	hedge      = mongoc_read_prefs_get_hedge(intern->read_preference);
 
 	if (modeString) {
 		zval z_mode;
@@ -398,6 +483,19 @@ static HashTable* php_phongo_readpreference_get_properties_hash(zval* object, bo
 		zend_hash_str_update(props, "maxStalenessSeconds", sizeof("maxStalenessSeconds") - 1, &z_max_ss);
 	}
 
+	if (!bson_empty0(hedge)) {
+		php_phongo_bson_state state;
+
+		PHONGO_BSON_INIT_STATE(state);
+
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(hedge), hedge->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			goto done;
+		}
+
+		zend_hash_str_update(props, "hedge", sizeof("hedge") - 1, &state.zchild);
+	}
+
 done:
 	return props;
 } /* }}} */
@@ -424,6 +522,7 @@ static PHP_METHOD(ReadPreference, serialize)
 	smart_str                    buf        = { 0 };
 	const char*                  modeString = NULL;
 	const bson_t*                tags;
+	const bson_t*                hedge;
 	int64_t                      maxStalenessSeconds;
 	mongoc_read_mode_t           mode;
 
@@ -441,8 +540,9 @@ static PHP_METHOD(ReadPreference, serialize)
 	mode                = mongoc_read_prefs_get_mode(intern->read_preference);
 	modeString          = php_phongo_readpreference_get_mode_string(mode);
 	maxStalenessSeconds = mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference);
+	hedge               = mongoc_read_prefs_get_hedge(intern->read_preference);
 
-	array_init_size(&retval, 3);
+	array_init_size(&retval, 4);
 
 	if (modeString) {
 		ADD_ASSOC_STRING(&retval, "mode", modeString);
@@ -463,6 +563,19 @@ static PHP_METHOD(ReadPreference, serialize)
 
 	if (maxStalenessSeconds != MONGOC_NO_MAX_STALENESS) {
 		ADD_ASSOC_LONG_EX(&retval, "maxStalenessSeconds", maxStalenessSeconds);
+	}
+
+	if (!bson_empty0(hedge)) {
+		php_phongo_bson_state state;
+
+		PHONGO_BSON_INIT_STATE(state);
+
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(hedge), hedge->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			return;
+		}
+
+		ADD_ASSOC_ZVAL_EX(&retval, "hedge", &state.zchild);
 	}
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
@@ -537,6 +650,7 @@ static zend_function_entry php_phongo_readpreference_me[] = {
 	/* clang-format off */
 	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, __set_state, ai_ReadPreference___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(ReadPreference, getHedge, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getMaxStalenessSeconds, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getModeString, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)

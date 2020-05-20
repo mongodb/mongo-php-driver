@@ -15,6 +15,7 @@ $tests = [
     new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, [['dc' => 'ny']]),
     new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, [['dc' => 'ny'], ['dc' => 'sf', 'use' => 'reporting'], []]),
     new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, null, ['maxStalenessSeconds' => 1000]),
+    new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY, null, ['hedge' => ['enabled' => true]]),
 ];
 
 foreach ($tests as $test) {
@@ -182,6 +183,27 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   string(9) "secondary"
   ["maxStalenessSeconds"]=>
   int(1000)
+}
+
+object(MongoDB\Driver\ReadPreference)#%d (%d) {
+  ["mode"]=>
+  string(9) "secondary"
+  ["hedge"]=>
+  object(stdClass)#%d (%d) {
+    ["enabled"]=>
+    bool(true)
+  }
+}
+bool(true)
+C:29:"MongoDB\Driver\ReadPreference":82:{a:2:{s:4:"mode";s:9:"secondary";s:5:"hedge";O:8:"stdClass":1:{s:7:"enabled";b:1;}}}
+object(MongoDB\Driver\ReadPreference)#%d (%d) {
+  ["mode"]=>
+  string(9) "secondary"
+  ["hedge"]=>
+  object(stdClass)#%d (%d) {
+    ["enabled"]=>
+    bool(true)
+  }
 }
 
 ===DONE===
