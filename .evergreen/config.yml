@@ -1078,10 +1078,11 @@ axes:
   - id: libmongoc-version
     display_name: libmongoc version
     values:
-      - id: "1.17-latest"
-        display_name: "1.17 latest"
-        variables:
-          LIBMONGOC_VERSION: "r1.17"
+# TODO: re-enable once features have been backported into r1.17
+#      - id: "1.17-latest"
+#        display_name: "1.17 latest"
+#        variables:
+#          LIBMONGOC_VERSION: "r1.17"
       - id: "master"
         display_name: "Upcoming release (master)"
         variables:
