@@ -101,6 +101,10 @@ jobs:
       env:
         - CONFIGURE_OPTS="--with-mongodb-client-side-encryption=no"
 
+    # Test with upcoming PHP version
+    - stage: Test
+      php: nightly
+
 before_install:
   - pip install --user "mongo-orchestration>=0.6.7,<1.0"
   - .travis.scripts/before_install.sh
