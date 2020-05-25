@@ -814,7 +814,7 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 					zval obj;
 
 					object_init_ex(&obj, state.odm ? state.odm : state.map.document);
-					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
+					zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
 					if (((php_phongo_bson_state*) data)->is_visiting_array) {
 						add_next_index_zval(retval, &obj);
 					} else {
@@ -881,7 +881,7 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 					zval obj;
 
 					object_init_ex(&obj, state.map.array);
-					zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
+					zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
 					if (((php_phongo_bson_state*) data)->is_visiting_array) {
 						add_next_index_zval(retval, &obj);
 					} else {
@@ -1044,7 +1044,7 @@ bool php_phongo_bson_to_zval_ex(const unsigned char* data, int data_len, php_pho
 			zval obj;
 
 			object_init_ex(&obj, state->odm ? state->odm : state->map.root);
-			zend_call_method_with_1_params(&obj, NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state->zchild);
+			zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state->zchild);
 			zval_ptr_dtor(&state->zchild);
 			ZVAL_COPY_VALUE(&state->zchild, &obj);
 

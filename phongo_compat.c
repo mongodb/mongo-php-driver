@@ -22,7 +22,7 @@ void phongo_add_exception_prop(const char* prop, int prop_len, zval* value)
 	if (EG(exception)) {
 		zval ex;
 		ZVAL_OBJ(&ex, EG(exception));
-		zend_update_property(Z_OBJCE(ex), &ex, prop, prop_len, value);
+		zend_update_property(Z_OBJCE(ex), PHONGO_COMPAT_OBJ_P(&ex), prop, prop_len, value);
 	}
 }
 

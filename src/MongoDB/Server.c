@@ -540,6 +540,8 @@ static int php_phongo_server_compare_objects(zval* o1, zval* o2) /* {{{ */
 	mongoc_server_description_t *sd1, *sd2;
 	int                          retval = 0;
 
+	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
+
 	intern1 = Z_SERVER_OBJ_P(o1);
 	intern2 = Z_SERVER_OBJ_P(o2);
 
@@ -586,14 +588,14 @@ static zend_object* php_phongo_server_create_object(zend_class_entry* class_type
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_server_get_debug_info(zval* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_server_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
 	php_phongo_server_t*         intern = NULL;
 	zval                         retval = ZVAL_STATIC_INIT;
 	mongoc_server_description_t* sd;
 
 	*is_temp = 1;
-	intern   = Z_SERVER_OBJ_P(object);
+	intern   = Z_OBJ_SERVER(PHONGO_COMPAT_GET_OBJ(object));
 
 	if (!(sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
@@ -618,10 +620,10 @@ void php_phongo_server_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_server_ce);
 
 	memcpy(&php_phongo_handler_server, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_server.compare_objects = php_phongo_server_compare_objects;
-	php_phongo_handler_server.get_debug_info  = php_phongo_server_get_debug_info;
-	php_phongo_handler_server.free_obj        = php_phongo_server_free_object;
-	php_phongo_handler_server.offset          = XtOffsetOf(php_phongo_server_t, std);
+	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(server);
+	php_phongo_handler_server.get_debug_info = php_phongo_server_get_debug_info;
+	php_phongo_handler_server.free_obj       = php_phongo_server_free_object;
+	php_phongo_handler_server.offset         = XtOffsetOf(php_phongo_server_t, std);
 
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_UNKNOWN"), PHONGO_SERVER_UNKNOWN);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_STANDALONE"), PHONGO_SERVER_STANDALONE);

@@ -163,13 +163,13 @@ static zend_object* php_phongo_command_create_object(zend_class_entry* class_typ
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_command_get_debug_info(zval* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_command_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
 	php_phongo_command_t* intern;
 	zval                  retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_COMMAND_OBJ_P(object);
+	intern   = Z_OBJ_COMMAND(PHONGO_COMPAT_GET_OBJ(object));
 
 	array_init_size(&retval, 1);
 

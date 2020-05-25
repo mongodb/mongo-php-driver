@@ -65,7 +65,7 @@ static PHP_METHOD(RuntimeException, hasErrorLabel)
 		return;
 	}
 
-	error_labels = zend_read_property(php_phongo_runtimeexception_ce, getThis(), ZEND_STRL("errorLabels"), 0, &rv);
+	error_labels = zend_read_property(php_phongo_runtimeexception_ce, PHONGO_COMPAT_OBJ_P(getThis()), ZEND_STRL("errorLabels"), 0, &rv);
 
 	RETURN_BOOL(php_phongo_has_string_array_element(error_labels, label));
 } /* }}} */
