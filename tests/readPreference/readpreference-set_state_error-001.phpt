@@ -61,7 +61,7 @@ MongoDB\Driver\ReadPreference initialization requires "tags" array field to not 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 MongoDB\Driver\ReadPreference initialization requires "maxStalenessSeconds" integer field to be >= 90
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\Driver\ReadPreference initialization requires "maxStalenessSeconds" array field to not be present with "primary" mode
+MongoDB\Driver\ReadPreference initialization requires "maxStalenessSeconds" field to not be present with "primary" mode
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 MongoDB\Driver\ReadPreference initialization requires "hedge" field to be an array or object
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
