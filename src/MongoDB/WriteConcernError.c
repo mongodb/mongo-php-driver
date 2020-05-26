@@ -41,7 +41,7 @@ static PHP_METHOD(WriteConcernError, getCode)
 	RETURN_LONG(intern->code);
 } /* }}} */
 
-/* {{{ proto mixed MongoDB\Driver\WriteConcernError::getInfo()
+/* {{{ proto object|null MongoDB\Driver\WriteConcernError::getInfo()
    Returns additional metadata for the error */
 static PHP_METHOD(WriteConcernError, getInfo)
 {

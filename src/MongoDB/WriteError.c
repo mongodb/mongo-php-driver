@@ -72,7 +72,7 @@ static PHP_METHOD(WriteError, getMessage)
 	RETURN_STRING(intern->message);
 } /* }}} */
 
-/* {{{ proto mixed MongoDB\Driver\WriteError::getInfo()
+/* {{{ proto object|null MongoDB\Driver\WriteError::getInfo()
    Returns additional metadata for the error */
 static PHP_METHOD(WriteError, getInfo)
 {
