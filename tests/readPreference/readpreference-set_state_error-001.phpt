@@ -35,6 +35,15 @@ echo throws(function() {
     MongoDB\Driver\ReadPreference::__set_state(['mode' => 'primary', 'maxStalenessSeconds' => 100]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
+
+echo throws(function() {
+    MongoDB\Driver\ReadPreference::__set_state(['mode' => 'secondary', 'hedge' => 'foo']);
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
+
+echo throws(function() {
+    MongoDB\Driver\ReadPreference::__set_state(['mode' => 'primary', 'hedge' => []]);
+}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
+
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -52,5 +61,9 @@ MongoDB\Driver\ReadPreference initialization requires "tags" array field to not 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 MongoDB\Driver\ReadPreference initialization requires "maxStalenessSeconds" integer field to be >= 90
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\Driver\ReadPreference initialization requires "maxStalenessSeconds" array field to not be present with "primary" mode
+MongoDB\Driver\ReadPreference initialization requires "maxStalenessSeconds" field to not be present with "primary" mode
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+MongoDB\Driver\ReadPreference initialization requires "hedge" field to be an array or object
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+MongoDB\Driver\ReadPreference initialization requires "hedge" field to not be present with "primary" mode
 ===DONE===
