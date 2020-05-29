@@ -25,19 +25,11 @@
 #include "zend_hash.h"
 #include "zend_list.h"
 
-#ifdef ZEND_ENGINE_3
 # define PAA_LENGTH_ADJ(l) (l)
 # define PAA_SYM_EXISTS zend_symtable_str_exists
 # define PAA_SYM_DEL    zend_symtable_str_del
 # define PAA_LONG       zend_long
 # define PAA_ULONG      zend_ulong
-#else
-# define PAA_LENGTH_ADJ(l) (l+1)
-# define PAA_SYM_EXISTS zend_symtable_exists
-# define PAA_SYM_DEL    zend_symtable_del
-# define PAA_LONG       long
-# define PAA_ULONG      ulong
-#endif
 
 /**
  * All APIs in this file follow a general format:
@@ -89,15 +81,9 @@ zend_bool php_array_exists(zval *zarr, const char *key) {
 	PAA_SYM_EXISTS(Z_ARRVAL_P(zarr), key, PAA_LENGTH_ADJ(len))
 static inline
 zend_bool php_array_existsl_safe(zval *zarr, const char *key, int key_len) {
-#ifdef ZEND_ENGINE_3
 	zend_string *keystr = zend_string_init(key, key_len, 0);
 	zend_bool ret = zend_symtable_exists(Z_ARRVAL_P(zarr), keystr);
 	zend_string_release(keystr);
-#else
-	char *k = estrndup(key, key_len);
-	zend_bool ret = zend_symtable_exists(Z_ARRVAL_P(zarr), k, key_len + 1);
-	efree(k);
-#endif
 	return ret;
 }
 #define php_array_existsn(zarr, idx) \
@@ -107,14 +93,10 @@ zend_bool php_array_existsz(zval *zarr, zval *key) {
 	switch (Z_TYPE_P(key)) {
 		case IS_NULL:
 			return php_array_existsc(zarr, "");
-#ifdef ZEND_ENGINE_3
 		case IS_FALSE:
 			return zend_hash_index_exists(Z_ARRVAL_P(zarr), 0);
 		case IS_TRUE:
 			return zend_hash_index_exists(Z_ARRVAL_P(zarr), 1);
-#else
-		case IS_BOOL: /* fallthrough */
-#endif
 		case IS_LONG:
 			return zend_hash_index_exists(Z_ARRVAL_P(zarr), Z_LVAL_P(key));
 		case IS_DOUBLE:
@@ -174,17 +156,7 @@ zend_bool php_array_existsz(zval *zarr, zval *key) {
  */
 static inline
 zval *php_array_fetchl(zval *zarr, const char *key, int key_len) {
-#ifdef ZEND_ENGINE_3
 	return zend_symtable_str_find(Z_ARRVAL_P(zarr), key, key_len);
-#else
-	zval **ppzval;
-	if (FAILURE == zend_symtable_find(Z_ARRVAL_P(zarr),
-                                          key, key_len + 1,
-                                          (void**)&ppzval)) {
-		return NULL;
-	}
-	return *ppzval;
-#endif
 }
 static inline
 zval *php_array_fetch(zval *zarr, const char *key) {
@@ -193,43 +165,24 @@ zval *php_array_fetch(zval *zarr, const char *key) {
 #define php_array_fetchc(zarr, litstr) php_array_fetchl(zarr, litstr, sizeof(litstr)-1)
 static inline
 zval *php_array_fetchl_safe(zval *zarr, const char *key, int key_len) {
-#ifdef ZEND_ENGINE_3
 	zend_string *keystr = zend_string_init(key, key_len, 0);
 	zval *ret = zend_symtable_find(Z_ARRVAL_P(zarr), keystr);
 	zend_string_release(keystr);
-#else
-	char *k = estrndup(key, key_len);
-	zval *ret = php_array_fetchl(zarr, k, key_len);
-	efree(k);
-#endif
 	return ret;
 }
 static inline
 zval *php_array_fetchn(zval *zarr, PAA_ULONG idx) {
-#ifdef ZEND_ENGINE_3
 	return zend_hash_index_find(Z_ARRVAL_P(zarr), idx);
-#else
-	zval **ppzval;
-	if (FAILURE == zend_hash_index_find(Z_ARRVAL_P(zarr),
-	                                    idx, (void**)&ppzval)) {
-		return NULL;
-	}
-	return *ppzval;
-#endif
 }
 static inline
 zval *php_array_fetchz(zval *zarr, zval *key) {
 	switch (Z_TYPE_P(key)) {
 		case IS_NULL:
 			return php_array_fetchn(zarr, 0);
-#ifdef ZEND_ENGINE_3
 		case IS_FALSE:
 			return php_array_fetchn(zarr, 0);
 		case IS_TRUE:
 			return php_array_fetchn(zarr, 1);
-#else
-		case IS_BOOL: /* fallthrough */
-#endif
 		case IS_LONG:
 			return php_array_fetchn(zarr, Z_LVAL_P(key));
 		case IS_DOUBLE:
@@ -284,12 +237,8 @@ PAA_LONG php_array_zval_to_long(zval *z) {
 	if (!z) { return 0; }
 	switch(Z_TYPE_P(z)) {
 		case IS_NULL: return 0;
-#ifdef ZEND_ENGINE_3
 		case IS_FALSE: return 0;
 		case IS_TRUE: return 1;
-#else
-		case IS_BOOL: return Z_BVAL_P(z);
-#endif
 		case IS_LONG: return Z_LVAL_P(z);
 		default:
 		{
@@ -318,12 +267,8 @@ double php_array_zval_to_double(zval *z) {
 	if (!z) { return 0.0; }
 	switch (Z_TYPE_P(z)) {
 		case IS_NULL: return 0.0;
-#ifdef ZEND_ENGINE_3
 		case IS_FALSE: return 0.0;
 		case IS_TRUE: return 1.0;
-#else
-		case IS_BOOL: return (double)Z_BVAL_P(z);
-#endif
 		case IS_LONG: return (double)Z_LVAL_P(z);
 		case IS_DOUBLE: return Z_DVAL_P(z);
 		default:
@@ -369,11 +314,7 @@ char *php_array_zval_to_string(zval *z, int *plen, zend_bool *pfree) {
 			zval c = *z;
 			zval_copy_ctor(&c);
 			convert_to_string(&c);
-#ifdef ZEND_ENGINE_3
 			*pfree = ! IS_INTERNED(Z_STR(c));
-#else
-			*pfree = ! IS_INTERNED(Z_STRVAL(c));
-#endif
 			*plen = Z_STRLEN(c);
 			return Z_STRVAL(c);
 		}
@@ -440,18 +381,7 @@ PHP_ARRAY_FETCH_TYPE_MAP(zval*, array)
  */
 static inline
 void *php_array_zval_to_resource(zval *z, int le) {
-#ifdef ZEND_ENGINE_3
 	return zend_fetch_resource_ex(z, NULL, le);
-#else
-	void *ret;
-	int rtype;
- 	if (!z || Z_TYPE_P(z) != IS_RESOURCE) { return NULL; }
-	ret = zend_list_find(Z_RESVAL_P(z), &rtype);
-	if (!ret || (rtype != le)) {
-		return NULL;
-	}
-	return ret;
-#endif
 }
 #define php_array_fetch_resource(zarr, key, le) \
 	php_array_zval_to_resource(php_array_fetch(zarr, key), le)
@@ -527,16 +457,12 @@ static inline void php_array_unsetz(zval *zarr, zval *key) {
 		case IS_NULL:
 			zend_hash_index_del(Z_ARRVAL_P(zarr), 0);
 			return;
-#ifdef ZEND_ENGINE_3
 		case IS_FALSE:
 			zend_hash_index_del(Z_ARRVAL_P(zarr), 0);
 			return;
 		case IS_TRUE:
 			zend_hash_index_del(Z_ARRVAL_P(zarr), 1);
 			return;
-#else
-		case IS_BOOL: /* fallthrough */
-#endif
 		case IS_LONG:
 			zend_hash_index_del(Z_ARRVAL_P(zarr), Z_LVAL_P(key));
 			return;
