@@ -80,11 +80,21 @@ static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* in
 
 	if ((j = zend_hash_str_find(props, "j", sizeof("j") - 1))) {
 		if (Z_TYPE_P(j) == IS_TRUE || Z_TYPE_P(j) == IS_FALSE) {
+			if (zend_is_true(j) && (mongoc_write_concern_get_w(intern->write_concern) == MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED || mongoc_write_concern_get_w(intern->write_concern) == MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED)) {
+				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Cannot enable journaling when using w = 0");
+				goto failure;
+			}
+
 			mongoc_write_concern_set_journal(intern->write_concern, zend_is_true(j));
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"j\" field to be boolean", ZSTR_VAL(php_phongo_writeconcern_ce->name));
 			goto failure;
 		}
+	}
+
+	if (!mongoc_write_concern_is_valid(intern->write_concern)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Write concern is not valid");
+		goto failure;
 	}
 
 	return true;
@@ -135,11 +145,12 @@ static PHP_METHOD(WriteConcern, __construct)
 	switch (ZEND_NUM_ARGS()) {
 		case 3:
 			if (Z_TYPE_P(journal) != IS_NULL) {
-#ifdef ZEND_ENGINE_3
+				if (zend_is_true(journal) && (mongoc_write_concern_get_w(intern->write_concern) == MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED || mongoc_write_concern_get_w(intern->write_concern) == MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED)) {
+					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Cannot enable journaling when using w = 0");
+					return;
+				}
+
 				mongoc_write_concern_set_journal(intern->write_concern, zend_is_true(journal));
-#else
-				mongoc_write_concern_set_journal(intern->write_concern, Z_BVAL_P(journal));
-#endif
 			}
 			/* fallthrough */
 		case 2:
@@ -149,6 +160,11 @@ static PHP_METHOD(WriteConcern, __construct)
 			}
 
 			mongoc_write_concern_set_wtimeout_int64(intern->write_concern, (int64_t) wtimeout);
+	}
+
+	if (!mongoc_write_concern_is_valid(intern->write_concern)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Write concern is not valid");
+		return;
 	}
 } /* }}} */
 
