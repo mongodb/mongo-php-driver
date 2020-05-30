@@ -138,6 +138,11 @@ static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t
 		}
 	}
 
+	if (!mongoc_read_prefs_is_valid(intern->read_preference)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Read preference is not valid");
+		goto failure;
+	}
+
 	return true;
 
 failure:
