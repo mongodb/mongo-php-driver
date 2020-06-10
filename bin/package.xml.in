@@ -36,7 +36,7 @@ necessary to build a fully-functional MongoDB driver.
   <name>Katherine Walker</name>
   <user>kvwalker</user>
   <email>kvwalker@php.net</email>
-  <active>yes</active>
+  <active>no</active>
  </developer>
  <date>%RELEASE_DATE%</date>
  <time>%RELEASE_TIME%</time>
