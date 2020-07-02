@@ -15,4 +15,4 @@ phpinfo();
 %a
 mongodb.debug => stdout => stderr
 %a
-===DONE===
+===DONE===%A
