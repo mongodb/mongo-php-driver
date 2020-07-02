@@ -192,7 +192,7 @@ static void php_phongo_manager_prep_uri_options(zval* options) /* {{{ */
  *
  * On success, server_id will be set and the function will return true;
  * otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_manager_select_server(bool for_writes, zval* zreadPreference, zval* zsession, mongoc_client_t* client, uint32_t* server_id) /* {{{ */
+static bool php_phongo_manager_select_server(bool for_writes, bool inherit_read_preference, zval* zreadPreference, zval* zsession, mongoc_client_t* client, uint32_t* server_id) /* {{{ */
 {
 	mongoc_server_description_t* selected_server;
 	const mongoc_read_prefs_t*   read_preference = NULL;
@@ -210,7 +210,11 @@ static bool php_phongo_manager_select_server(bool for_writes, zval* zreadPrefere
 	}
 
 	if (!for_writes) {
-		read_preference = zreadPreference ? phongo_read_preference_from_zval(zreadPreference) : mongoc_client_get_read_prefs(client);
+		if (zreadPreference) {
+			read_preference = phongo_read_preference_from_zval(zreadPreference);
+		} else if (inherit_read_preference) {
+			read_preference = mongoc_client_get_read_prefs(client);
+		}
 	}
 
 	selected_server = mongoc_client_select_server(client, for_writes, read_preference, &error);
@@ -322,7 +326,7 @@ static PHP_METHOD(Manager, executeCommand)
 		goto cleanup;
 	}
 
-	if (!php_phongo_manager_select_server(false, zreadPreference, zsession, intern->client, &server_id)) {
+	if (!php_phongo_manager_select_server(false, false, zreadPreference, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
@@ -369,7 +373,7 @@ static PHP_METHOD(Manager, executeReadCommand)
 		return;
 	}
 
-	if (!php_phongo_manager_select_server(false, zreadPreference, zsession, intern->client, &server_id)) {
+	if (!php_phongo_manager_select_server(false, true, zreadPreference, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		return;
 	}
@@ -405,7 +409,7 @@ static PHP_METHOD(Manager, executeWriteCommand)
 		return;
 	}
 
-	if (!php_phongo_manager_select_server(true, NULL, zsession, intern->client, &server_id)) {
+	if (!php_phongo_manager_select_server(true, false, NULL, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		return;
 	}
@@ -441,7 +445,7 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 		return;
 	}
 
-	if (!php_phongo_manager_select_server(true, NULL, zsession, intern->client, &server_id)) {
+	if (!php_phongo_manager_select_server(true, false, NULL, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		return;
 	}
@@ -486,7 +490,7 @@ static PHP_METHOD(Manager, executeQuery)
 		goto cleanup;
 	}
 
-	if (!php_phongo_manager_select_server(false, zreadPreference, zsession, intern->client, &server_id)) {
+	if (!php_phongo_manager_select_server(false, true, zreadPreference, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
@@ -532,7 +536,7 @@ static PHP_METHOD(Manager, executeBulkWrite)
 		return;
 	}
 
-	if (!php_phongo_manager_select_server(true, NULL, zsession, intern->client, &server_id)) {
+	if (!php_phongo_manager_select_server(true, false, NULL, zsession, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
@@ -635,7 +639,7 @@ static PHP_METHOD(Manager, selectServer)
 		return;
 	}
 
-	if (!php_phongo_manager_select_server(false, zreadPreference, NULL, intern->client, &server_id)) {
+	if (!php_phongo_manager_select_server(false, true, zreadPreference, NULL, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		return;
 	}
