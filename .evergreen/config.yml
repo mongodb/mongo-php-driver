@@ -991,6 +991,10 @@ axes:
         display_name: "MongoDB latest"
         variables:
            VERSION: "latest"
+      - id: "4.4"
+        display_name: "MongoDB 4.4"
+        variables:
+           VERSION: "4.4"
       - id: "4.2"
         display_name: "MongoDB 4.2"
         variables:
@@ -1124,9 +1128,9 @@ buildvariants:
 
 
 - matrix_name: "mongo-40-php7"
-  matrix_spec: {"os-php7": "*", "versions": ["4.0", "4.2", "latest"], "php-versions": "7.3" }
+  matrix_spec: {"os-php7": "*", "versions": ["4.0", "4.2", "4.4", "latest"], "php-versions": "7.3" }
   exclude_spec:
-    - {"os-php7": "rhel74-zseries", "versions": ["4.0", "4.2", "latest"], "php-versions": "7.3"}
+    - {"os-php7": "rhel74-zseries", "versions": ["4.0", "4.2", "4.4", "latest"], "php-versions": "7.3"}
     - {"os-php7": "ubuntu1804-arm64-test", "versions": "4.0", "php-versions": "7.3"}
   display_name: "${versions}/${php-versions} — ${os-php7}"
   tasks:
@@ -1140,7 +1144,7 @@ buildvariants:
      - name: "test-sharded-rs"
 
 - matrix_name: "mongo-40-php7-nossl"
-  matrix_spec: {"os-php7": "rhel74-zseries", "versions": ["4.2", "latest"], "php-versions": "7.3"}
+  matrix_spec: {"os-php7": "rhel74-zseries", "versions": ["4.2", "4.4", "latest"], "php-versions": "7.3"}
   display_name: "${versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone"
@@ -1178,7 +1182,7 @@ buildvariants:
     - name: "test-atlas"
 
 - matrix_name: "test-ocsp"
-  matrix_spec: { "os-php7": "debian92-test", "php-versions": "7.3" }
-  display_name: "OCSP tests"
+  matrix_spec: { "os-php7": "debian92-test", "versions": ["4.4", "latest"], "php-versions": "7.3" }
+  display_name: "OCSP tests - ${versions}"
   tasks:
     - name: ".ocsp"
