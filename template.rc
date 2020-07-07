@@ -43,7 +43,7 @@ BEGIN
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "MongoDB Driver for PHP\0"
             VALUE "ProductVersion", PHP_MONGODB_VERSION "\0"
-            VALUE "URL", "https://docs.mongodb.com/ecosystem/drivers/php/"
+            VALUE "URL", "https://docs.mongodb.com/drivers/php"
         END
     END
     BLOCK "VarFileInfo"
