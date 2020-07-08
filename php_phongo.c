@@ -2532,7 +2532,7 @@ static bool php_phongo_extract_handshake_data(zval* driver, const char* key, cha
 	zval* zvalue;
 
 	if (!php_array_exists(driver, key)) {
-		*value = NULL;
+		*value     = NULL;
 		*value_len = 0;
 
 		return true;
@@ -2553,7 +2553,7 @@ static bool php_phongo_extract_handshake_data(zval* driver, const char* key, cha
 
 static char* php_phongo_concat_handshake_data(const char* default_value, const char* custom_value, size_t custom_value_len)
 {
-	char*  ret;
+	char* ret;
 	/* Length of the returned value needs to include the trailing null byte */
 	size_t ret_len = strlen(default_value) + 1;
 
@@ -2582,7 +2582,7 @@ static void php_phongo_handshake_data_append(const char* name, size_t name_len, 
 	char*  full_platform;
 
 	php_version_string_len = strlen(PHP_VERSION);
-	php_version_string = ecalloc(sizeof(char*), 4 + php_version_string_len);
+	php_version_string     = ecalloc(sizeof(char*), 4 + php_version_string_len);
 	snprintf(php_version_string, 4 + php_version_string_len, "PHP %s", PHP_VERSION);
 
 	driver_name    = php_phongo_concat_handshake_data("ext-mongodb:PHP", name, name_len);
@@ -2613,7 +2613,7 @@ static void php_phongo_set_handshake_data(zval* driverOptions)
 	size_t platform_len = 0;
 
 	if (driverOptions && php_array_existsc(driverOptions, "driver")) {
-		zval*      driver = php_array_fetchc(driverOptions, "driver");
+		zval* driver = php_array_fetchc(driverOptions, "driver");
 
 		if (Z_TYPE_P(driver) != IS_ARRAY) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"driver\" driver option to be an array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(driver));
@@ -3519,7 +3519,7 @@ static zend_class_entry* php_phongo_fetch_internal_class(const char* class_name,
 static HashTable* php_phongo_std_get_gc(zval* object, zval** table, int* n) /* {{{ */
 {
 	*table = NULL;
-	*n = 0;
+	*n     = 0;
 	return zend_std_get_properties(object);
 } /* }}} */
 
