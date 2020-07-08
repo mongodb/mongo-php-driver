@@ -83,6 +83,8 @@ function get_files() {
         "README*",
         "LICENSE",
         "CREDITS",
+        "CONTRIBUTING*",
+        "THIRD_PARTY_NOTICES",
       )
     );
     $files = array();
