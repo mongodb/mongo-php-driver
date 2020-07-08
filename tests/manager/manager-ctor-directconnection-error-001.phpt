@@ -7,6 +7,10 @@ require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     $manager = new \MongoDB\Driver\Manager('mongodb://a.example.com,b.example.com/?directConnection=true');
+}, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n\n";
+
+echo throws(function() {
+    $manager = new \MongoDB\Driver\Manager('mongodb://a.example.com,b.example.com', ['directConnection' => true]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>
@@ -15,4 +19,7 @@ echo throws(function() {
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse MongoDB URI: 'mongodb://a.example.com,b.example.com/?directConnection=true'. Multiple seeds not allowed with directConnection option.
+
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Failed to parse URI options: Multiple seeds not allowed with directConnection option.
 ===DONE===

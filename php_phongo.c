@@ -1435,6 +1435,31 @@ static bool php_phongo_uri_finalize_auth(mongoc_uri_t* uri) /* {{{ */
 	return true;
 } /* }}} */
 
+static bool php_phongo_uri_finalize_directconnection(mongoc_uri_t* uri) /* {{{ */
+{
+	const mongoc_host_list_t* hosts;
+
+	if (!mongoc_uri_get_option_as_bool(uri, MONGOC_URI_DIRECTCONNECTION, false)) {
+		return true;
+	}
+
+	/* Per the URI options spec, directConnection conflicts with multiple hosts
+	 * and SRV URIs, which may resolve to multiple hosts. */
+	if (!strncmp(mongoc_uri_get_string(uri), "mongodb+srv://", 14)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: SRV URI not allowed with directConnection option.");
+		return false;
+	}
+
+	hosts = mongoc_uri_get_hosts(uri);
+
+	if (hosts && hosts->next) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: Multiple seeds not allowed with directConnection option.");
+		return false;
+	}
+
+	return true;
+} /* }}} */
+
 static bool php_phongo_uri_finalize_tls(mongoc_uri_t* uri) /* {{{ */
 {
 	const bson_t* options;
@@ -1676,8 +1701,13 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options) 
 		}
 	}
 
-	// Finalize auth options
+	/* Validate any interactions between URI options */
 	if (!php_phongo_uri_finalize_auth(uri)) {
+		/* Exception should already have been thrown */
+		return false;
+	}
+
+	if (!php_phongo_uri_finalize_directconnection(uri)) {
 		/* Exception should already have been thrown */
 		return false;
 	}
