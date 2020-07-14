@@ -501,7 +501,9 @@ http://pecl.php.net/package/mongodb
 ```
 
 > **Note:** If this is an alpha or beta release, the installation examples
-> should append the stability to the package name (e.g. "mongodb-beta").
+> should refer to the exact version (e.g. "mongodb-1.8.0beta2"). This is necessary
+> because PECL prioritizes recent, stable releases over any stability preferences
+> (e.g. "mongodb-beta").
 
 The URL for the list of resolved JIRA issues will need to be updated with each
 release. You may obtain the list from
