@@ -14,6 +14,11 @@ $manager = new MongoDB\Driver\Manager(URI);
 $firstSession = $manager->startSession();
 $firstSessionId = $firstSession->getLogicalSessionId();
 
+/* libmongoc does not pool unused sessions (CDRIVER-3322), so we must use this
+ * session with a command to ensure it enters the pool. */
+$command = new MongoDB\Driver\Command(['ping' => 1]);
+$manager->executeCommand(DATABASE_NAME, $command, ['session' => $firstSession]);
+
 unset($firstSession);
 
 $secondSession = $manager->startSession();
