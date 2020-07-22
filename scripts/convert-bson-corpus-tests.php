@@ -146,50 +146,50 @@ function getParamsForValid(array $test, array $case)
         $code .= sprintf('$convertedExtJson = %s;', var_export($convertedExtJson, true)) . "\n";
     }
 
-    $code .= "\n// Canonical BSON -> Native -> Canonical BSON \n";
+    $code .= "\n// Canonical BSON -> Native -> Canonical BSON\n";
     $code .= 'echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";' . "\n";
     $expect .= $expectedCanonicalBson . "\n";
 
-    $code .= "\n// Canonical BSON -> Canonical extJSON \n";
+    $code .= "\n// Canonical BSON -> Canonical extJSON\n";
     $code .= 'echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";' . "\n";;
     $expect .= $expectedCanonicalExtJson . "\n";
 
     if (isset($relaxedExtJson)) {
-        $code .= "\n// Canonical BSON -> Relaxed extJSON \n";
+        $code .= "\n// Canonical BSON -> Relaxed extJSON\n";
         $code .= 'echo json_canonicalize(toRelaxedExtendedJSON($canonicalBson)), "\n";' . "\n";;
         $expect .= $expectedRelaxedExtJson . "\n";
     }
 
     if (!$lossy) {
-        $code .= "\n// Canonical extJSON -> Canonical BSON \n";
+        $code .= "\n// Canonical extJSON -> Canonical BSON\n";
         $code .= 'echo bin2hex(fromJSON($canonicalExtJson)), "\n";' . "\n";
         $expect .= $expectedCanonicalBson . "\n";
     }
 
     if (isset($degenerateBson)) {
-        $code .= "\n// Degenerate BSON -> Native -> Canonical BSON \n";
+        $code .= "\n// Degenerate BSON -> Native -> Canonical BSON\n";
         $code .= 'echo bin2hex(fromPHP(toPHP($degenerateBson))), "\n";' . "\n";
         $expect .= $expectedCanonicalBson . "\n";
 
-        $code .= "\n// Degenerate BSON -> Canonical extJSON \n";
+        $code .= "\n// Degenerate BSON -> Canonical extJSON\n";
         $code .= 'echo json_canonicalize(toCanonicalExtendedJSON($degenerateBson)), "\n";' . "\n";;
         $expect .= $expectedCanonicalExtJson . "\n";
 
         if (isset($relaxedExtJson)) {
-            $code .= "\n// Degenerate BSON -> Relaxed extJSON \n";
+            $code .= "\n// Degenerate BSON -> Relaxed extJSON\n";
             $code .= 'echo json_canonicalize(toRelaxedExtendedJSON($degenerateBson)), "\n";' . "\n";;
             $expect .= $expectedRelaxedExtJson . "\n";
         }
     }
 
     if (isset($degenerateExtJson) && !$lossy) {
-        $code .= "\n// Degenerate extJSON -> Canonical BSON \n";
+        $code .= "\n// Degenerate extJSON -> Canonical BSON\n";
         $code .= 'echo bin2hex(fromJSON($degenerateExtJson)), "\n";' . "\n";
         $expect .= $expectedCanonicalBson . "\n";
     }
 
     if (isset($relaxedExtJson)) {
-        $code .= "\n// Relaxed extJSON -> BSON -> Relaxed extJSON \n";
+        $code .= "\n// Relaxed extJSON -> BSON -> Relaxed extJSON\n";
         $code .= 'echo json_canonicalize(toRelaxedExtendedJSON(fromJSON($relaxedExtJson))), "\n";' . "\n";
         $expect .= $expectedRelaxedExtJson . "\n";
     }

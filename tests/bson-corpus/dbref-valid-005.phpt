@@ -12,13 +12,13 @@ require_once __DIR__ . '/../utils/tools.php';
 $canonicalBson = hex2bin('3e0000000224726566000c0000006e6f742d612d646272656600072469640058921b3e6e32ab156a22b59e022462616e616e6100050000007065656c0000');
 $canonicalExtJson = '{"$ref": "not-a-dbref", "$id": {"$oid": "58921b3e6e32ab156a22b59e"}, "$banana": "peel"}';
 
-// Canonical BSON -> Native -> Canonical BSON 
+// Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Canonical extJSON 
+// Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
-// Canonical extJSON -> Canonical BSON 
+// Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
 ?>

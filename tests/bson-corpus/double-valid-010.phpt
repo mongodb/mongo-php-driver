@@ -13,16 +13,16 @@ $canonicalBson = hex2bin('10000000016400120000000000F87F00');
 $canonicalExtJson = '{"d": {"$numberDouble": "NaN"}}';
 $relaxedExtJson = '{"d": {"$numberDouble": "NaN"}}';
 
-// Canonical BSON -> Native -> Canonical BSON 
+// Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Canonical extJSON 
+// Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
-// Canonical BSON -> Relaxed extJSON 
+// Canonical BSON -> Relaxed extJSON
 echo json_canonicalize(toRelaxedExtendedJSON($canonicalBson)), "\n";
 
-// Relaxed extJSON -> BSON -> Relaxed extJSON 
+// Relaxed extJSON -> BSON -> Relaxed extJSON
 echo json_canonicalize(toRelaxedExtendedJSON(fromJSON($relaxedExtJson))), "\n";
 
 ?>

@@ -13,19 +13,19 @@ $canonicalBson = hex2bin('0C0000001069000000000000');
 $canonicalExtJson = '{"i" : {"$numberInt": "0"}}';
 $relaxedExtJson = '{"i" : 0}';
 
-// Canonical BSON -> Native -> Canonical BSON 
+// Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Canonical extJSON 
+// Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
-// Canonical BSON -> Relaxed extJSON 
+// Canonical BSON -> Relaxed extJSON
 echo json_canonicalize(toRelaxedExtendedJSON($canonicalBson)), "\n";
 
-// Canonical extJSON -> Canonical BSON 
+// Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
-// Relaxed extJSON -> BSON -> Relaxed extJSON 
+// Relaxed extJSON -> BSON -> Relaxed extJSON
 echo json_canonicalize(toRelaxedExtendedJSON(fromJSON($relaxedExtJson))), "\n";
 
 ?>

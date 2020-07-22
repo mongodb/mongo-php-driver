@@ -14,13 +14,13 @@ $convertedBson = hex2bin('2B0000000361002300000002247265660003000000C3A900072469
 $canonicalExtJson = '{"a": {"$dbPointer": {"$ref": "é", "$id": {"$oid": "56e1fc72e0c917e9c4714161"}}}}';
 $convertedExtJson = '{"a": {"$ref": "é", "$id": {"$oid": "56e1fc72e0c917e9c4714161"}}}';
 
-// Canonical BSON -> Native -> Canonical BSON 
+// Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Canonical extJSON 
+// Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
-// Canonical extJSON -> Canonical BSON 
+// Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
 ?>

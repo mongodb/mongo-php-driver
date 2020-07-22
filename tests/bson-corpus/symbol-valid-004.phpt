@@ -14,13 +14,13 @@ $convertedBson = hex2bin('190000000261000D000000C3A9C3A9C3A9C3A9C3A9C3A90000');
 $canonicalExtJson = '{"a": {"$symbol": "éééééé"}}';
 $convertedExtJson = '{"a": "éééééé"}';
 
-// Canonical BSON -> Native -> Canonical BSON 
+// Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Canonical extJSON 
+// Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
-// Canonical extJSON -> Canonical BSON 
+// Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
 ?>

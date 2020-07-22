@@ -13,16 +13,16 @@ $canonicalBson = hex2bin('0F0000000B610061626300696D0000');
 $canonicalExtJson = '{"a" : {"$regularExpression" : { "pattern": "abc", "options" : "im"}}}';
 $degenerateExtJson = '{"a" : {"$regularExpression" : {"options" : "im", "pattern": "abc"}}}';
 
-// Canonical BSON -> Native -> Canonical BSON 
+// Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Canonical extJSON 
+// Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
-// Canonical extJSON -> Canonical BSON 
+// Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
-// Degenerate extJSON -> Canonical BSON 
+// Degenerate extJSON -> Canonical BSON
 echo bin2hex(fromJSON($degenerateExtJson)), "\n";
 
 ?>

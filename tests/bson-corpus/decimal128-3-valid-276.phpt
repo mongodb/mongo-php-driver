@@ -13,16 +13,16 @@ $canonicalBson = hex2bin('18000000136400F104000000000000000000000000163000');
 $canonicalExtJson = '{"d" : {"$numberDecimal" : "1.265E-18"}}';
 $degenerateExtJson = '{"d" : {"$numberDecimal" : "126.5E-20"}}';
 
-// Canonical BSON -> Native -> Canonical BSON 
+// Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Canonical extJSON 
+// Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
-// Canonical extJSON -> Canonical BSON 
+// Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
-// Degenerate extJSON -> Canonical BSON 
+// Degenerate extJSON -> Canonical BSON
 echo bin2hex(fromJSON($degenerateExtJson)), "\n";
 
 ?>
