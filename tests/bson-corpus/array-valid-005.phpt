@@ -13,19 +13,19 @@ $canonicalBson = hex2bin('1b000000046100130000001030000a000000103100140000000000
 $degenerateBson = hex2bin('1b000000046100130000001030000a000000103000140000000000');
 $canonicalExtJson = '{"a" : [{"$numberInt": "10"}, {"$numberInt": "20"}]}';
 
-// Canonical BSON -> Native -> Canonical BSON 
+// Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Canonical extJSON 
+// Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
-// Canonical extJSON -> Canonical BSON 
+// Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
-// Degenerate BSON -> Native -> Canonical BSON 
+// Degenerate BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($degenerateBson))), "\n";
 
-// Degenerate BSON -> Canonical extJSON 
+// Degenerate BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($degenerateBson)), "\n";
 
 ?>

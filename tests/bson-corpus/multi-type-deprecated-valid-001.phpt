@@ -16,13 +16,13 @@ $convertedBson = hex2bin('48020000075f69640057e193d7a9cc81b4027498b50253796d626f
 $canonicalExtJson = '{"_id": {"$oid": "57e193d7a9cc81b4027498b5"}, "Symbol": {"$symbol": "symbol"}, "String": "string", "Int32": {"$numberInt": "42"}, "Int64": {"$numberLong": "42"}, "Double": {"$numberDouble": "-1.0"}, "Binary": { "$binary" : {"base64": "o0w498Or7cijeBSpkquNtg==", "subType": "03"}}, "BinaryUserDefined": { "$binary" : {"base64": "AQIDBAU=", "subType": "80"}}, "Code": {"$code": "function() {}"}, "CodeWithScope": {"$code": "function() {}", "$scope": {}}, "Subdocument": {"foo": "bar"}, "Array": [{"$numberInt": "1"}, {"$numberInt": "2"}, {"$numberInt": "3"}, {"$numberInt": "4"}, {"$numberInt": "5"}], "Timestamp": {"$timestamp": {"t": 42, "i": 1}}, "Regex": {"$regularExpression": {"pattern": "pattern", "options": ""}}, "DatetimeEpoch": {"$date": {"$numberLong": "0"}}, "DatetimePositive": {"$date": {"$numberLong": "2147483647"}}, "DatetimeNegative": {"$date": {"$numberLong": "-2147483648"}}, "True": true, "False": false, "DBPointer": {"$dbPointer": {"$ref": "collection", "$id": {"$oid": "57e193d7a9cc81b4027498b1"}}}, "DBRef": {"$ref": "collection", "$id": {"$oid": "57fd71e96e32ab4225b723fb"}, "$db": "database"}, "Minkey": {"$minKey": 1}, "Maxkey": {"$maxKey": 1}, "Null": null, "Undefined": {"$undefined": true}}';
 $convertedExtJson = '{"_id": {"$oid": "57e193d7a9cc81b4027498b5"}, "Symbol": "symbol", "String": "string", "Int32": {"$numberInt": "42"}, "Int64": {"$numberLong": "42"}, "Double": {"$numberDouble": "-1.0"}, "Binary": { "$binary" : {"base64": "o0w498Or7cijeBSpkquNtg==", "subType": "03"}}, "BinaryUserDefined": { "$binary" : {"base64": "AQIDBAU=", "subType": "80"}}, "Code": {"$code": "function() {}"}, "CodeWithScope": {"$code": "function() {}", "$scope": {}}, "Subdocument": {"foo": "bar"}, "Array": [{"$numberInt": "1"}, {"$numberInt": "2"}, {"$numberInt": "3"}, {"$numberInt": "4"}, {"$numberInt": "5"}], "Timestamp": {"$timestamp": {"t": 42, "i": 1}}, "Regex": {"$regularExpression": {"pattern": "pattern", "options": ""}}, "DatetimeEpoch": {"$date": {"$numberLong": "0"}}, "DatetimePositive": {"$date": {"$numberLong": "2147483647"}}, "DatetimeNegative": {"$date": {"$numberLong": "-2147483648"}}, "True": true, "False": false, "DBPointer": {"$ref": "collection", "$id": {"$oid": "57e193d7a9cc81b4027498b1"}}, "DBRef": {"$ref": "collection", "$id": {"$oid": "57fd71e96e32ab4225b723fb"}, "$db": "database"}, "Minkey": {"$minKey": 1}, "Maxkey": {"$maxKey": 1}, "Null": null, "Undefined": null}';
 
-// Canonical BSON -> Native -> Canonical BSON 
+// Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Canonical extJSON 
+// Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
-// Canonical extJSON -> Canonical BSON 
+// Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
 ?>

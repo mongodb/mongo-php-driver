@@ -12,10 +12,10 @@ require_once __DIR__ . '/../utils/tools.php';
 $canonicalBson = hex2bin('18000000136400DCBA9876543210DEADBEEF00000010EC00');
 $canonicalExtJson = '{"d" : {"$numberDecimal" : "-0"}}';
 
-// Canonical BSON -> Native -> Canonical BSON 
+// Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Canonical extJSON 
+// Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
 ?>
