@@ -33,7 +33,7 @@ echo json_canonicalize(toRelaxedExtendedJSON(fromJSON($relaxedExtJson))), "\n";
 <?php exit(0); ?>
 --EXPECT--
 10000000016400000000000000000000
-{"d":{"$numberDouble":"0.0"}}
+{"d":{"$numberDouble":"0"}}
 {"d":0}
 10000000016400000000000000000000
 {"d":0}

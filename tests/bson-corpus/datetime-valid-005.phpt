@@ -13,19 +13,19 @@ $canonicalBson = hex2bin('10000000096100D1D6D6CC3B01000000');
 $canonicalExtJson = '{"a" : {"$date" : {"$numberLong" : "1356351330001"}}}';
 $relaxedExtJson = '{"a" : {"$date" : "2012-12-24T12:15:30.001Z"}}';
 
-// Canonical BSON -> Native -> Canonical BSON
+// Canonical BSON -> Native -> Canonical BSON 
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Canonical extJSON
+// Canonical BSON -> Canonical extJSON 
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
-// Canonical BSON -> Relaxed extJSON
+// Canonical BSON -> Relaxed extJSON 
 echo json_canonicalize(toRelaxedExtendedJSON($canonicalBson)), "\n";
 
-// Canonical extJSON -> Canonical BSON
+// Canonical extJSON -> Canonical BSON 
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
-// Relaxed extJSON -> BSON -> Relaxed extJSON
+// Relaxed extJSON -> BSON -> Relaxed extJSON 
 echo json_canonicalize(toRelaxedExtendedJSON(fromJSON($relaxedExtJson))), "\n";
 
 ?>

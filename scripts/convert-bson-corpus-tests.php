@@ -3,8 +3,6 @@
 require_once __DIR__ . '/../tests/utils/tools.php';
 
 $expectedFailures = [
-    'Double type: 1.23456789012345677E+18' => 'Variation in double\'s string representation (SPEC-850)',
-    'Double type: -1.23456789012345677E+18' => 'Variation in double\'s string representation (SPEC-850)',
     'Int64 type: -1' => 'PHP encodes integers as 32-bit if range allows',
     'Int64 type: 0' => 'PHP encodes integers as 32-bit if range allows',
     'Int64 type: 1' => 'PHP encodes integers as 32-bit if range allows',

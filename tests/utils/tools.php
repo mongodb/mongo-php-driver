@@ -423,7 +423,22 @@ function json_canonicalize($json)
      * decoding to a stdClass (see: https://bugs.php.net/bug.php?id=46600). Work
      * around this by replacing "_empty_" keys before returning.
      */
-    return str_replace('"_empty_":', '"":', $json);
+    $json = str_replace('"_empty_":', '"":', $json);
+
+    /* Canonicalize string values for $numberDouble to ensure they are converted
+     * the same as number literals in legacy and relaxed output. This is needed
+     * because the printf format in _bson_as_json_visit_double uses a high level
+     * of precision and may not produce the exponent notation expected by the
+     * BSON corpus tests. */
+    $json = preg_replace_callback(
+        '/{"\$numberDouble":"(-?\d+(\.\d+([eE]\+\d+)?)?)"}/',
+        function ($matches) {
+            return '{"$numberDouble":"' . json_encode(json_decode($matches[1])) . '"}';
+        },
+        $json
+    );
+
+    return $json;
 }
 
 /**
