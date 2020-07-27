@@ -216,6 +216,10 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_SYSTEM_LIBS="yes"
   fi
 
+  PHP_MONGODB_BSON_VERSION_STRING="None"
+  PHP_MONGODB_MONGOC_VERSION_STRING="None"
+  PHP_MONGODB_MONGOCRYPT_VERSION_STRING="None"
+
   if test "$PHP_MONGODB_SYSTEM_LIBS" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libbson)
@@ -224,6 +228,7 @@ if test "$PHP_MONGODB" != "no"; then
         PHP_MONGODB_BSON_CFLAGS=`$PKG_CONFIG libbson-1.0 --cflags`
         PHP_MONGODB_BSON_LIBS=`$PKG_CONFIG libbson-1.0 --libs`
         PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
+        PHP_MONGODB_BSON_VERSION_STRING="System ($PHP_MONGODB_BSON_VERSION)"
         AC_MSG_RESULT(version $PHP_MONGODB_BSON_VERSION found)
       else
         AC_MSG_ERROR(system libbson must be upgraded to version >= 1.17.0)
@@ -241,6 +246,7 @@ if test "$PHP_MONGODB" != "no"; then
         PHP_MONGODB_MONGOC_CFLAGS=`$PKG_CONFIG libmongoc-1.0 --cflags`
         PHP_MONGODB_MONGOC_LIBS=`$PKG_CONFIG libmongoc-1.0 --libs`
         PHP_MONGODB_MONGOC_VERSION=`$PKG_CONFIG libmongoc-1.0 --modversion`
+        PHP_MONGODB_MONGOC_VERSION_STRING="System ($PHP_MONGODB_MONGOC_VERSION)"
         AC_MSG_RESULT(version $PHP_MONGODB_MONGOC_VERSION found)
       else
         AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.17.0)
@@ -260,6 +266,7 @@ if test "$PHP_MONGODB" != "no"; then
           PHP_MONGODB_MONGOCRYPT_CFLAGS=`$PKG_CONFIG libmongocrypt --cflags`
           PHP_MONGODB_MONGOCRYPT_LIBS=`$PKG_CONFIG libmongocrypt --libs`
           PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt --modversion`
+          PHP_MONGODB_MONGOCRYPT_VERSION_STRING="System ($PHP_MONGODB_MONGOCRYPT_VERSION)"
           AC_MSG_RESULT(version $PHP_MONGODB_MONGOCRYPT_VERSION found)
 
           PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_MONGOCRYPT_CFLAGS"
@@ -329,6 +336,10 @@ if test "$PHP_MONGODB" != "no"; then
     dnl or "no" depending on whether dependencies for libmongocrypt are fulfilled
     _include([scripts/autotools/libmongocrypt/CheckSSL.m4])
     _include([scripts/autotools/libmongocrypt/Version.m4])
+
+    PHP_MONGODB_BSON_VERSION_STRING="Bundled ($BSON_VERSION)"
+    PHP_MONGODB_MONGOC_VERSION_STRING="Bundled ($MONGOC_VERSION)"
+    PHP_MONGODB_MONGOCRYPT_VERSION_STRING="Bundled ($MONGOCRYPT_BUILD_VERSION)"
 
     m4_popdef([_include])
 
@@ -500,9 +511,9 @@ Build configuration:
   Extra CFLAGS                                     : $STD_CFLAGS $EXTRA_CFLAGS
   Developers flags (slow)                          : $MAINTAINER_CFLAGS
   Code Coverage flags (extra slow)                 : $COVERAGE_CFLAGS
-  System libmongoc                                 : $PHP_MONGODB_SYSTEM_LIBS
-  System libbson                                   : $PHP_MONGODB_SYSTEM_LIBS
-  System libmongocrypt                             : $PHP_MONGODB_SYSTEM_LIBS
+  libmongoc                                        : $PHP_MONGODB_BSON_VERSION_STRING
+  libbson                                          : $PHP_MONGODB_MONGOC_VERSION_STRING
+  libmongocrypt                                    : $PHP_MONGODB_MONGOCRYPT_VERSION_STRING
   LDFLAGS                                          : $LDFLAGS
   EXTRA_LDFLAGS                                    : $EXTRA_LDFLAGS
   MONGODB_SHARED_LIBADD                            : $MONGODB_SHARED_LIBADD
