@@ -75,8 +75,12 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_CHECK_GCC_ARG(-Wno-unused-but-set-variable,     _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-unused-but-set-variable")
     PHP_CHECK_GCC_ARG(-Wno-missing-field-initializers,  _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-missing-field-initializers")
 
+    AC_SUBST(MONGOC_ENABLE_DEBUG_ASSERTIONS, 1)
+
     MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS"
     STD_CFLAGS="-g -O0 -Wall"
+  else
+    AC_SUBST(MONGOC_ENABLE_DEBUG_ASSERTIONS, 0)
   fi
 
 
@@ -412,6 +416,7 @@ if test "$PHP_MONGODB" != "no"; then
     ac_config_dir=PHP_EXT_SRCDIR(mongodb)
 
     AC_CONFIG_FILES([
+      ${ac_config_dir}/src/libmongoc/src/common/common-config.h
       ${ac_config_dir}/src/libmongoc/src/libbson/src/bson/bson-config.h
       ${ac_config_dir}/src/libmongoc/src/libbson/src/bson/bson-version.h
       ${ac_config_dir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h
