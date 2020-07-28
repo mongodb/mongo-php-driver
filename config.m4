@@ -365,6 +365,12 @@ if test "$PHP_MONGODB" != "no"; then
       AC_SUBST(MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION, 0)
     fi
 
+    if test "$PHP_MONGODB_DEVELOPER_FLAGS" = "yes"; then
+      AC_SUBST(MONGOC_ENABLE_DEBUG_ASSERTIONS, 1)
+    else
+      AC_SUBST(MONGOC_ENABLE_DEBUG_ASSERTIONS, 0)
+    fi
+
     dnl On MacOS, use gcut from the coreutils brew package instead of cut
     dnl Generated with: find src/libmongoc/src/common -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
     PHP_MONGODB_COMMON_SOURCES="common-b64.c common-md5.c common-thread.c"
@@ -412,6 +418,7 @@ if test "$PHP_MONGODB" != "no"; then
     ac_config_dir=PHP_EXT_SRCDIR(mongodb)
 
     AC_CONFIG_FILES([
+      ${ac_config_dir}/src/libmongoc/src/common/common-config.h
       ${ac_config_dir}/src/libmongoc/src/libbson/src/bson/bson-config.h
       ${ac_config_dir}/src/libmongoc/src/libbson/src/bson/bson-version.h
       ${ac_config_dir}/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h
