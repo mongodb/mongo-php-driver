@@ -12,7 +12,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 $manager = new MongoDB\Driver\Manager(URI);
 
 /* Create collections as that can't be (automatically) done in a transaction */
-$manager->executeReadCommand(
+$manager->executeCommand(
     DATABASE_NAME,
     new \MongoDB\Driver\Command([ 'create' => COLLECTION_NAME ]),
     [ 'writeConcern' => new \MongoDB\Driver\WriteConcern( \MongoDB\Driver\WriteConcern::MAJORITY ) ]
