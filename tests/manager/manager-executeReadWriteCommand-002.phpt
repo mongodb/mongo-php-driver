@@ -26,7 +26,11 @@ var_dump($session->getServer() instanceof \MongoDB\Driver\Server);
 
 $command = new MongoDB\Driver\Command([
     'aggregate' => COLLECTION_NAME,
-    'pipeline' => [['$group' => ['_id' => 1]]],
+    'pipeline' => [
+        ['$group' => ['_id' => 1]],
+        /* Note: $out cannot be used in a transaction. This is technically not a
+         * write command, but it works for the purposes of this test. */
+    ],
     'cursor' => (object) []
 ]);
 $manager->executeReadWriteCommand(DATABASE_NAME, $command, ['session' => $session]);
