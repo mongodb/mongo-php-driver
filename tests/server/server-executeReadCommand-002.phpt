@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Session test: Manager::executeReadCommand pins transaction to server
+MongoDB\Driver\Server::executeReadCommand() pins transaction to server
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_mongos_with_replica_set(); ?>
