@@ -75,12 +75,8 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_CHECK_GCC_ARG(-Wno-unused-but-set-variable,     _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-unused-but-set-variable")
     PHP_CHECK_GCC_ARG(-Wno-missing-field-initializers,  _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-missing-field-initializers")
 
-    AC_SUBST(MONGOC_ENABLE_DEBUG_ASSERTIONS, 1)
-
     MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS"
     STD_CFLAGS="-g -O0 -Wall"
-  else
-    AC_SUBST(MONGOC_ENABLE_DEBUG_ASSERTIONS, 0)
   fi
 
 
@@ -367,6 +363,12 @@ if test "$PHP_MONGODB" != "no"; then
       AC_SUBST(MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION, 1)
     else
       AC_SUBST(MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION, 0)
+    fi
+
+    if test "$PHP_MONGODB_DEVELOPER_FLAGS" = "yes"; then
+      AC_SUBST(MONGOC_ENABLE_DEBUG_ASSERTIONS, 1)
+    else
+      AC_SUBST(MONGOC_ENABLE_DEBUG_ASSERTIONS, 0)
     fi
 
     dnl On MacOS, use gcut from the coreutils brew package instead of cut
