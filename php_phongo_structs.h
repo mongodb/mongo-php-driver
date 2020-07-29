@@ -29,6 +29,7 @@ typedef struct {
 	char*                    database;
 	char*                    collection;
 	bool                     executed;
+	zval                     session;
 	zend_object              std;
 } php_phongo_bulkwrite_t;
 

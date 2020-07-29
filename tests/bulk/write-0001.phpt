@@ -53,6 +53,8 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   bool(false)
   ["server_id"]=>
   int(0)
+  ["session"]=>
+  NULL
   ["write_concern"]=>
   NULL
 }
@@ -69,6 +71,8 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   bool(false)
   ["server_id"]=>
   int(0)
+  ["session"]=>
+  NULL
   ["write_concern"]=>
   NULL
 }
@@ -85,6 +89,8 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   bool(false)
   ["server_id"]=>
   int(0)
+  ["session"]=>
+  NULL
   ["write_concern"]=>
   NULL
 }
@@ -101,6 +107,8 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   bool(false)
   ["server_id"]=>
   int(0)
+  ["session"]=>
+  NULL
   ["write_concern"]=>
   NULL
 }
@@ -117,6 +125,8 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   bool(true)
   ["server_id"]=>
   int(%r[1-9]\d*%r)
+  ["session"]=>
+  NULL
   ["write_concern"]=>
   NULL
 }

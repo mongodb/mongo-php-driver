@@ -566,6 +566,10 @@ static void php_phongo_bulkwrite_free_object(zend_object* object) /* {{{ */
 	if (intern->collection) {
 		efree(intern->collection);
 	}
+
+	if (!Z_ISUNDEF(intern->session)) {
+		zval_ptr_dtor(&intern->session);
+	}
 } /* }}} */
 
 static zend_object* php_phongo_bulkwrite_create_object(zend_class_entry* class_type) /* {{{ */
@@ -613,6 +617,13 @@ static HashTable* php_phongo_bulkwrite_get_debug_info(zval* object, int* is_temp
 
 	ADD_ASSOC_BOOL_EX(&retval, "executed", intern->executed);
 	ADD_ASSOC_LONG_EX(&retval, "server_id", mongoc_bulk_operation_get_hint(intern->bulk));
+
+	if (!Z_ISUNDEF(intern->session)) {
+		ADD_ASSOC_ZVAL_EX(&retval, "session", &intern->session);
+		Z_ADDREF(intern->session);
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "session");
+	}
 
 	if (mongoc_bulk_operation_get_write_concern(intern->bulk)) {
 		zval write_concern;
