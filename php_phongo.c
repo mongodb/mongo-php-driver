@@ -734,6 +734,7 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 	mongoc_bulk_operation_set_hint(bulk, server_id);
 
 	if (zsession) {
+		ZVAL_ZVAL(&bulk_write->session, zsession, 1, 0);
 		mongoc_bulk_operation_set_client_session(bulk, Z_SESSION_OBJ_P(zsession)->client_session);
 	}
 
