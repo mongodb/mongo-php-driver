@@ -200,7 +200,10 @@ static int phongo_exception_append_error_labels(zval* labels, const bson_iter_t*
 	bson_iter_t error_labels;
 	uint32_t    label_count = 0;
 
-	bson_iter_recurse(iter, &error_labels);
+	if (!BSON_ITER_HOLDS_ARRAY(iter) || !bson_iter_recurse(iter, &error_labels)) {
+		return label_count;
+	}
+
 	while (bson_iter_next(&error_labels)) {
 		if (BSON_ITER_HOLDS_UTF8(&error_labels)) {
 			const char* error_label;
@@ -217,7 +220,7 @@ static int phongo_exception_append_error_labels(zval* labels, const bson_iter_t*
 
 static void phongo_exception_add_error_labels(const bson_t* reply)
 {
-	bson_iter_t iter;
+	bson_iter_t iter, child;
 	zval        labels;
 	uint32_t    label_count = 0;
 
@@ -231,12 +234,20 @@ static void phongo_exception_add_error_labels(const bson_t* reply)
 		label_count += phongo_exception_append_error_labels(&labels, &iter);
 	}
 
-	if (bson_iter_init_find(&iter, reply, "writeConcernError")) {
-		bson_iter_t write_concern_error_iter;
+	if (bson_iter_init_find(&iter, reply, "writeConcernError") && BSON_ITER_HOLDS_DOCUMENT(&iter) &&
+		bson_iter_recurse(&iter, &child) && bson_iter_find(&child, "errorLabels")) {
+		label_count += phongo_exception_append_error_labels(&labels, &child);
+	}
 
-		bson_iter_recurse(&iter, &write_concern_error_iter);
-		if (bson_iter_find(&write_concern_error_iter, "errorLabels")) {
-			label_count += phongo_exception_append_error_labels(&labels, &write_concern_error_iter);
+	/* mongoc_write_result_t always reports writeConcernErrors in an array, so
+	 * we must iterate this to collect WCE labels for BulkWrite replies. */
+	if (bson_iter_init_find(&iter, reply, "writeConcernErrors") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
+		bson_iter_t wce;
+
+		while (bson_iter_next(&child)) {
+			if (BSON_ITER_HOLDS_DOCUMENT(&child) && bson_iter_recurse(&child, &wce) && bson_iter_find(&wce, "errorLabels")) {
+				label_count += phongo_exception_append_error_labels(&labels, &wce);
+			}
 		}
 	}
 
