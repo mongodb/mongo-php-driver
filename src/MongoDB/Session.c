@@ -485,8 +485,9 @@ static PHP_METHOD(Session, commitTransaction)
 
 	if (!mongoc_client_session_commit_transaction(intern->client_session, &reply, &error)) {
 		phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply);
-		bson_destroy(&reply);
 	}
+
+	bson_destroy(&reply);
 } /* }}} */
 
 /* {{{ proto void MongoDB\Driver\Session::abortTransaction(void)
