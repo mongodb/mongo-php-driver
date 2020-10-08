@@ -72,6 +72,7 @@ typedef struct {
 	int              created_by_pid;
 	char*            client_hash;
 	size_t           client_hash_len;
+	bool             use_persistent_client;
 	zend_object      std;
 } php_phongo_manager_t;
 
