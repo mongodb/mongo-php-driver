@@ -2697,6 +2697,8 @@ static void php_phongo_persist_client(const char* hash, size_t hash_len, mongoc_
 {
 	php_phongo_pclient_t* pclient = (php_phongo_pclient_t*) pecalloc(1, sizeof(php_phongo_pclient_t), 1);
 
+	MONGOC_DEBUG("Persisted client with hash: %s", hash);
+
 	pclient->created_by_pid = (int) getpid();
 	pclient->client         = client;
 
@@ -3235,8 +3237,14 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		return;
 	}
 
-	if ((manager->client = php_phongo_find_client(manager->client_hash, manager->client_hash_len))) {
-		MONGOC_DEBUG("Found client for hash: %s\n", manager->client_hash);
+	if (driverOptions && php_array_existsc(driverOptions, "disableClientPersistence")) {
+		manager->use_persistent_client = !php_array_fetchc_bool(driverOptions, "disableClientPersistence");
+	} else {
+		manager->use_persistent_client = true;
+	}
+
+	if (manager->use_persistent_client && (manager->client = php_phongo_find_client(manager->client_hash, manager->client_hash_len))) {
+		MONGOC_DEBUG("Found client for hash: %s", manager->client_hash);
 		goto cleanup;
 	}
 
@@ -3305,8 +3313,11 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		goto cleanup;
 	}
 
-	MONGOC_DEBUG("Created client hash: %s\n", manager->client_hash);
-	php_phongo_persist_client(manager->client_hash, manager->client_hash_len, manager->client);
+	MONGOC_DEBUG("Created client with hash: %s", manager->client_hash);
+
+	if (manager->use_persistent_client) {
+		php_phongo_persist_client(manager->client_hash, manager->client_hash_len, manager->client);
+	}
 
 cleanup:
 	bson_destroy(&bson_options);
