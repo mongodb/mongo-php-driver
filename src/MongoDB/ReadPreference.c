@@ -311,7 +311,10 @@ static PHP_METHOD(ReadPreference, __set_state)
 	HashTable*                   props;
 	zval*                        array;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
+	/* Separate the zval, since we may end up modifying the "tags" element in
+	 * php_phongo_read_preference_prep_tagsets(), which is called from
+	 * php_phongo_readpreference_init_from_hash. */
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a/", &array) == FAILURE) {
 		RETURN_FALSE;
 	}
 
