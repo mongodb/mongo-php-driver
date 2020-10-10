@@ -121,6 +121,7 @@ static PHP_METHOD(Command, __construct)
 /* {{{ MongoDB\Driver\Command function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Command___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, document)
+	ZEND_ARG_ARRAY_INFO(0, options, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Command_void, 0, 0, 0)
