@@ -573,7 +573,7 @@ function severityToString($type) {
     }
 }
 function raises($function, $type, $infunction = null) {
-    $errhandler = function($severity, $message, $file, $line, $errcontext) {
+    $errhandler = function($severity, $message, $file, $line) {
         throw new ErrorException($message, 0, $severity, $file, $line);
     };
 

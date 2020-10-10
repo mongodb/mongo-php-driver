@@ -21,7 +21,7 @@ foreach ($tests as $test) {
     var_dump($object);
 
     foreach ($properties as $property) {
-        var_dump($object->{$property});
+        printf("%s::$%s exists: %s\n", get_class($object), $property, property_exists($object, $property) ? 'yes' : 'no');
     }
 
     echo "\n";
@@ -31,26 +31,21 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
   string(3) "foo"
   ["type"]=>
   int(0)
 }
-
-Notice: Undefined property: MongoDB\BSON\Binary::$data in %s on line %d
-NULL
-
-Notice: Undefined property: MongoDB\BSON\Binary::$type in %s on line %d
-NULL
+MongoDB\BSON\Binary::$data exists: no
+MongoDB\BSON\Binary::$type exists: no
 
 object(MongoDB\BSON\Decimal128)#%d (%d) {
   ["dec"]=>
   string(4) "3.14"
 }
-
-Notice: Undefined property: MongoDB\BSON\Decimal128::$dec in %s on line %d
-NULL
+MongoDB\BSON\Decimal128::$dec exists: no
 
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
@@ -61,12 +56,8 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
     int(42)
   }
 }
-
-Notice: Undefined property: MongoDB\BSON\Javascript::$code in %s on line %d
-NULL
-
-Notice: Undefined property: MongoDB\BSON\Javascript::$scope in %s on line %d
-NULL
+MongoDB\BSON\Javascript::$code exists: no
+MongoDB\BSON\Javascript::$scope exists: no
 
 object(MongoDB\BSON\MaxKey)#%d (%d) {
 }
@@ -78,9 +69,7 @@ object(MongoDB\BSON\ObjectId)#%d (%d) {
   ["oid"]=>
   string(24) "%x"
 }
-
-Notice: Undefined property: MongoDB\BSON\ObjectId::$oid in %s on line %d
-NULL
+MongoDB\BSON\ObjectId::$oid exists: no
 
 object(MongoDB\BSON\Regex)#%d (%d) {
   ["pattern"]=>
@@ -88,12 +77,8 @@ object(MongoDB\BSON\Regex)#%d (%d) {
   ["flags"]=>
   string(1) "i"
 }
-
-Notice: Undefined property: MongoDB\BSON\Regex::$pattern in %s on line %d
-NULL
-
-Notice: Undefined property: MongoDB\BSON\Regex::$flags in %s on line %d
-NULL
+MongoDB\BSON\Regex::$pattern exists: no
+MongoDB\BSON\Regex::$flags exists: no
 
 object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["increment"]=>
@@ -101,19 +86,13 @@ object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["timestamp"]=>
   string(4) "5678"
 }
-
-Notice: Undefined property: MongoDB\BSON\Timestamp::$increment in %s on line %d
-NULL
-
-Notice: Undefined property: MongoDB\BSON\Timestamp::$timestamp in %s on line %d
-NULL
+MongoDB\BSON\Timestamp::$increment exists: no
+MongoDB\BSON\Timestamp::$timestamp exists: no
 
 object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   string(%d) "%d"
 }
-
-Notice: Undefined property: MongoDB\BSON\UTCDateTime::$milliseconds in %s on line %d
-NULL
+MongoDB\BSON\UTCDateTime::$milliseconds exists: no
 
 ===DONE===

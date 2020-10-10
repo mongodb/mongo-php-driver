@@ -2,6 +2,7 @@
 MongoDB\Driver\Server::executeQuery() with sort and empty filter
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('>=', '7.99'); ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
