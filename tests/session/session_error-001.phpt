@@ -43,6 +43,12 @@ foreach ($options as $txnOptions) {
     }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 }
 
+echo raises(function() use ($manager) {
+    $manager->startSession([
+        'defaultTransactionOptions' => [ 'maxCommitTimeMS' => new stdClass ]
+    ]);
+}, E_NOTICE | E_WARNING), "\n";
+
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -77,4 +83,6 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "defaultTransactionOptions" option to be an array, int%S given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "defaultTransactionOptions" option to be an array, stdClass given
+OK: Got %r(E_NOTICE|E_WARNING)%r
+Object of class stdClass could not be converted to int
 ===DONE===

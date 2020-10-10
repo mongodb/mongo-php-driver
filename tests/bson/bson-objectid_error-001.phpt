@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ObjectId #001 error
+MongoDB\BSON\ObjectId constructor type validation
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_php_version('>=', '7.99'); ?>
@@ -8,14 +8,14 @@ MongoDB\BSON\ObjectId #001 error
 
 require_once __DIR__ . '/../utils/tools.php';
 
-throws(function() {
+echo throws(function() {
     new MongoDB\BSON\ObjectId(new stdclass);
-}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
+}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+%SMongoDB\BSON\ObjectId::__construct()%sstring, %r(object|stdClass)%r given
 ===DONE===
-

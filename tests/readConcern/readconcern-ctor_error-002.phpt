@@ -23,7 +23,7 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\Driver\ReadConcern::__construct() expects parameter 1 to be string, array given
+%SMongoDB\Driver\ReadConcern::__construct()%sstring, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\Driver\ReadConcern::__construct() expects parameter 1 to be string, object given
+%SMongoDB\Driver\ReadConcern::__construct()%sstring, %r(object|stdClass)%r given
 ===DONE===

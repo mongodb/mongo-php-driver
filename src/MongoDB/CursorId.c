@@ -61,15 +61,19 @@ static bool php_phongo_cursorid_init_from_hash(php_phongo_cursorid_t* intern, Ha
    Returns the string representation of the CursorId */
 static PHP_METHOD(CursorId, __toString)
 {
+	zend_error_handling    error_handling;
 	php_phongo_cursorid_t* intern;
 	char*                  tmp;
 	int                    tmp_len;
 
 	intern = Z_CURSORID_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	tmp_len = spprintf(&tmp, 0, "%" PRId64, intern->id);
 	RETVAL_STRINGL(tmp, tmp_len);
@@ -80,14 +84,18 @@ static PHP_METHOD(CursorId, __toString)
 */
 static PHP_METHOD(CursorId, serialize)
 {
+	zend_error_handling    error_handling;
 	php_phongo_cursorid_t* intern;
 	zval                   retval;
 	php_serialize_data_t   var_hash;
 	smart_str              buf = { 0 };
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_CURSORID_OBJ_P(getThis());
 
@@ -109,8 +117,8 @@ static PHP_METHOD(CursorId, serialize)
 */
 static PHP_METHOD(CursorId, unserialize)
 {
-	php_phongo_cursorid_t* intern;
 	zend_error_handling    error_handling;
+	php_phongo_cursorid_t* intern;
 	char*                  serialized;
 	size_t                 serialized_len;
 	zval                   props;
@@ -119,7 +127,6 @@ static PHP_METHOD(CursorId, unserialize)
 	intern = Z_CURSORID_OBJ_P(getThis());
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;

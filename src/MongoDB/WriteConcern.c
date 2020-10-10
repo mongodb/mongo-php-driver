@@ -109,14 +109,14 @@ failure:
    Constructs a new WriteConcern */
 static PHP_METHOD(WriteConcern, __construct)
 {
-	php_phongo_writeconcern_t* intern;
 	zend_error_handling        error_handling;
+	php_phongo_writeconcern_t* intern;
 	zval *                     w, *journal;
 	zend_long                  wtimeout = 0;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|lz", &w, &wtimeout, &journal) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;
@@ -172,13 +172,17 @@ static PHP_METHOD(WriteConcern, __construct)
 */
 static PHP_METHOD(WriteConcern, __set_state)
 {
+	zend_error_handling        error_handling;
 	php_phongo_writeconcern_t* intern;
 	HashTable*                 props;
 	zval*                      array;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
-		RETURN_FALSE;
+		zend_restore_error_handling(&error_handling);
+		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	object_init_ex(return_value, php_phongo_writeconcern_ce);
 
@@ -192,14 +196,18 @@ static PHP_METHOD(WriteConcern, __set_state)
    Returns the WriteConcern "w" option */
 static PHP_METHOD(WriteConcern, getW)
 {
+	zend_error_handling        error_handling;
 	php_phongo_writeconcern_t* intern;
 	const char*                wtag;
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	wtag = mongoc_write_concern_get_wtag(intern->write_concern);
 
@@ -222,14 +230,18 @@ static PHP_METHOD(WriteConcern, getW)
    Returns the WriteConcern "wtimeout" option */
 static PHP_METHOD(WriteConcern, getWtimeout)
 {
+	zend_error_handling        error_handling;
 	php_phongo_writeconcern_t* intern;
 	int64_t                    wtimeout;
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	wtimeout = mongoc_write_concern_get_wtimeout_int64(intern->write_concern);
 
@@ -246,13 +258,17 @@ static PHP_METHOD(WriteConcern, getWtimeout)
    Returns the WriteConcern "journal" option */
 static PHP_METHOD(WriteConcern, getJournal)
 {
+	zend_error_handling        error_handling;
 	php_phongo_writeconcern_t* intern;
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	if (mongoc_write_concern_journal_is_set(intern->write_concern)) {
 		RETURN_BOOL(mongoc_write_concern_get_journal(intern->write_concern));
@@ -266,13 +282,17 @@ static PHP_METHOD(WriteConcern, getJournal)
    with no write concern URI options). */
 static PHP_METHOD(WriteConcern, isDefault)
 {
+	zend_error_handling        error_handling;
 	php_phongo_writeconcern_t* intern;
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	RETURN_BOOL(mongoc_write_concern_is_default(intern->write_concern));
 } /* }}} */
@@ -346,9 +366,14 @@ static HashTable* php_phongo_write_concern_get_properties_hash(phongo_compat_obj
 */
 static PHP_METHOD(WriteConcern, bsonSerialize)
 {
+	zend_error_handling error_handling;
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	ZVAL_ARR(return_value, php_phongo_write_concern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
 	convert_to_object(return_value);
@@ -358,6 +383,7 @@ static PHP_METHOD(WriteConcern, bsonSerialize)
 */
 static PHP_METHOD(WriteConcern, serialize)
 {
+	zend_error_handling        error_handling;
 	php_phongo_writeconcern_t* intern;
 	zval                       retval;
 	php_serialize_data_t       var_hash;
@@ -368,9 +394,12 @@ static PHP_METHOD(WriteConcern, serialize)
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	if (!intern->write_concern) {
 		return;
@@ -417,8 +446,8 @@ static PHP_METHOD(WriteConcern, serialize)
 */
 static PHP_METHOD(WriteConcern, unserialize)
 {
-	php_phongo_writeconcern_t* intern;
 	zend_error_handling        error_handling;
+	php_phongo_writeconcern_t* intern;
 	char*                      serialized;
 	size_t                     serialized_len;
 	zval                       props;
@@ -427,7 +456,6 @@ static PHP_METHOD(WriteConcern, unserialize)
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;

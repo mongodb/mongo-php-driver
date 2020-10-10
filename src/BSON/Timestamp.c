@@ -94,13 +94,13 @@ static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t* intern, 
    4-byte timestamp. */
 static PHP_METHOD(Timestamp, __construct)
 {
-	php_phongo_timestamp_t* intern;
 	zend_error_handling     error_handling;
+	php_phongo_timestamp_t* intern;
 	zval *                  increment = NULL, *timestamp = NULL;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "zz", &increment, &timestamp) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;
@@ -137,13 +137,17 @@ static PHP_METHOD(Timestamp, __construct)
 */
 static PHP_METHOD(Timestamp, getIncrement)
 {
+	zend_error_handling     error_handling;
 	php_phongo_timestamp_t* intern;
 
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	RETVAL_LONG(intern->increment);
 } /* }}} */
@@ -152,13 +156,17 @@ static PHP_METHOD(Timestamp, getIncrement)
 */
 static PHP_METHOD(Timestamp, getTimestamp)
 {
+	zend_error_handling     error_handling;
 	php_phongo_timestamp_t* intern;
 
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	RETVAL_LONG(intern->timestamp);
 } /* }}} */
@@ -167,13 +175,17 @@ static PHP_METHOD(Timestamp, getTimestamp)
 */
 static PHP_METHOD(Timestamp, __set_state)
 {
+	zend_error_handling     error_handling;
 	php_phongo_timestamp_t* intern;
 	HashTable*              props;
 	zval*                   array;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
-		RETURN_FALSE;
+		zend_restore_error_handling(&error_handling);
+		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	object_init_ex(return_value, php_phongo_timestamp_ce);
 
@@ -187,15 +199,19 @@ static PHP_METHOD(Timestamp, __set_state)
    Returns a string in the form: [increment:timestamp] */
 static PHP_METHOD(Timestamp, __toString)
 {
+	zend_error_handling     error_handling;
 	php_phongo_timestamp_t* intern;
 	char*                   retval;
 	int                     retval_len;
 
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	retval_len = spprintf(&retval, 0, "[%" PRIu32 ":%" PRIu32 "]", intern->increment, intern->timestamp);
 	RETVAL_STRINGL(retval, retval_len);
@@ -206,11 +222,15 @@ static PHP_METHOD(Timestamp, __toString)
 */
 static PHP_METHOD(Timestamp, jsonSerialize)
 {
+	zend_error_handling     error_handling;
 	php_phongo_timestamp_t* intern;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
@@ -230,6 +250,7 @@ static PHP_METHOD(Timestamp, jsonSerialize)
 */
 static PHP_METHOD(Timestamp, serialize)
 {
+	zend_error_handling     error_handling;
 	php_phongo_timestamp_t* intern;
 	zval                    retval;
 	php_serialize_data_t    var_hash;
@@ -241,9 +262,12 @@ static PHP_METHOD(Timestamp, serialize)
 
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	s_increment_len = snprintf(s_increment, sizeof(s_increment), "%" PRIu32, intern->increment);
 	s_timestamp_len = snprintf(s_timestamp, sizeof(s_timestamp), "%" PRIu32, intern->timestamp);
@@ -267,8 +291,8 @@ static PHP_METHOD(Timestamp, serialize)
 */
 static PHP_METHOD(Timestamp, unserialize)
 {
-	php_phongo_timestamp_t* intern;
 	zend_error_handling     error_handling;
+	php_phongo_timestamp_t* intern;
 	char*                   serialized;
 	size_t                  serialized_len;
 	zval                    props;
@@ -277,7 +301,6 @@ static PHP_METHOD(Timestamp, unserialize)
 	intern = Z_TIMESTAMP_OBJ_P(getThis());
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;

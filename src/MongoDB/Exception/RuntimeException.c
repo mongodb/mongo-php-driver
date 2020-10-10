@@ -56,14 +56,18 @@ static bool php_phongo_has_string_array_element(zval* labels, char* label)
    Returns whether a specific error label has been set */
 static PHP_METHOD(RuntimeException, hasErrorLabel)
 {
-	char*  label;
-	size_t label_len;
-	zval*  error_labels;
-	zval   rv;
+	zend_error_handling error_handling;
+	char*               label;
+	size_t              label_len;
+	zval*               error_labels;
+	zval                rv;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &label, &label_len) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	error_labels = zend_read_property(php_phongo_runtimeexception_ce, PHONGO_COMPAT_OBJ_P(getThis()), ZEND_STRL("errorLabels"), 0, &rv);
 

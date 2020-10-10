@@ -10,12 +10,12 @@ require_once __DIR__ . '/../utils/tools.php';
 
 echo throws(function() {
     new MongoDB\Driver\WriteConcern("string", 10000, false, 1);
-}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
+}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\Driver\WriteConcern::__construct() expects at most 3 parameters, 4 given
+MongoDB\Driver\WriteConcern::__construct() expects at most 3 %r(argument|parameter)%rs, 4 given
 ===DONE===

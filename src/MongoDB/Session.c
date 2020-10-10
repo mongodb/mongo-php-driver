@@ -102,6 +102,7 @@ static const char* php_phongo_get_transaction_state_string(mongoc_transaction_st
    Advances the cluster time for this Session */
 static PHP_METHOD(Session, advanceClusterTime)
 {
+	zend_error_handling   error_handling;
 	php_phongo_session_t* intern;
 	zval*                 zcluster_time;
 	bson_t                cluster_time = BSON_INITIALIZER;
@@ -109,9 +110,12 @@ static PHP_METHOD(Session, advanceClusterTime)
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "advanceClusterTime")
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A", &zcluster_time) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	php_phongo_zval_to_bson(zcluster_time, PHONGO_BSON_NONE, &cluster_time, NULL);
 
@@ -130,6 +134,7 @@ cleanup:
    Advances the operation time for this Session */
 static PHP_METHOD(Session, advanceOperationTime)
 {
+	zend_error_handling   error_handling;
 	php_phongo_session_t* intern;
 	zval*                 ztimestamp;
 	uint32_t              timestamp = 0;
@@ -138,9 +143,12 @@ static PHP_METHOD(Session, advanceOperationTime)
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "advanceOperationTime")
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &ztimestamp, php_phongo_timestamp_interface_ce) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	if (!php_phongo_session_get_timestamp_parts(ztimestamp, &timestamp, &increment)) {
 		return;
@@ -153,6 +161,7 @@ static PHP_METHOD(Session, advanceOperationTime)
    Returns the cluster time for this Session */
 static PHP_METHOD(Session, getClusterTime)
 {
+	zend_error_handling   error_handling;
 	php_phongo_session_t* intern;
 	const bson_t*         cluster_time;
 	php_phongo_bson_state state;
@@ -162,9 +171,12 @@ static PHP_METHOD(Session, getClusterTime)
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getClusterTime")
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	cluster_time = mongoc_client_session_get_cluster_time(intern->client_session);
 
@@ -185,6 +197,7 @@ static PHP_METHOD(Session, getClusterTime)
    Returns the logical session ID for this Session */
 static PHP_METHOD(Session, getLogicalSessionId)
 {
+	zend_error_handling   error_handling;
 	php_phongo_session_t* intern;
 	const bson_t*         lsid;
 	php_phongo_bson_state state;
@@ -194,9 +207,12 @@ static PHP_METHOD(Session, getLogicalSessionId)
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getLogicalSessionId")
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	lsid = mongoc_client_session_get_lsid(intern->client_session);
 
@@ -213,15 +229,19 @@ static PHP_METHOD(Session, getLogicalSessionId)
    Returns the operation time for this Session */
 static PHP_METHOD(Session, getOperationTime)
 {
+	zend_error_handling   error_handling;
 	php_phongo_session_t* intern;
 	uint32_t              timestamp, increment;
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getOperationTime")
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	mongoc_client_session_get_operation_time(intern->client_session, &timestamp, &increment);
 
@@ -239,15 +259,19 @@ static PHP_METHOD(Session, getOperationTime)
    Returns the server this session is pinned to */
 static PHP_METHOD(Session, getServer)
 {
+	zend_error_handling   error_handling;
 	php_phongo_session_t* intern;
 	uint32_t              server_id = 0;
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getServer")
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	server_id = mongoc_client_session_get_server_id(intern->client_session);
 
@@ -263,6 +287,7 @@ static PHP_METHOD(Session, getServer)
    Returns options for the currently running transaction */
 static PHP_METHOD(Session, getTransactionOptions)
 {
+	zend_error_handling           error_handling;
 	php_phongo_session_t*         intern;
 	mongoc_transaction_opt_t*     opts;
 	int64_t                       max_commit_time_ms;
@@ -273,9 +298,12 @@ static PHP_METHOD(Session, getTransactionOptions)
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getTransactionOptions")
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	opts = mongoc_session_opts_get_transaction_opts(intern->client_session);
 
@@ -320,15 +348,19 @@ static PHP_METHOD(Session, getTransactionOptions)
    Returns the current transaction state for this session */
 static PHP_METHOD(Session, getTransactionState)
 {
+	zend_error_handling   error_handling;
 	php_phongo_session_t* intern;
 	const char*           state;
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getTransactionState")
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	state = php_phongo_get_transaction_state_string(mongoc_client_session_get_transaction_state(intern->client_session));
 	if (!state) {
@@ -440,6 +472,7 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
    Starts a new transaction */
 static PHP_METHOD(Session, startTransaction)
 {
+	zend_error_handling       error_handling;
 	php_phongo_session_t*     intern;
 	zval*                     options     = NULL;
 	mongoc_transaction_opt_t* txn_options = NULL;
@@ -448,9 +481,12 @@ static PHP_METHOD(Session, startTransaction)
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "startTransaction")
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "|a!", &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	if (options) {
 		txn_options = php_mongodb_session_parse_transaction_options(options);
@@ -472,6 +508,7 @@ static PHP_METHOD(Session, startTransaction)
    Commits an existing transaction */
 static PHP_METHOD(Session, commitTransaction)
 {
+	zend_error_handling   error_handling;
 	php_phongo_session_t* intern;
 	bson_error_t          error;
 	bson_t                reply;
@@ -479,9 +516,12 @@ static PHP_METHOD(Session, commitTransaction)
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "commitTransaction")
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	if (!mongoc_client_session_commit_transaction(intern->client_session, &reply, &error)) {
 		phongo_throw_exception_from_bson_error_t_and_reply(&error, &reply);
@@ -494,15 +534,19 @@ static PHP_METHOD(Session, commitTransaction)
    Aborts (rolls back) an existing transaction */
 static PHP_METHOD(Session, abortTransaction)
 {
+	zend_error_handling   error_handling;
 	php_phongo_session_t* intern;
 	bson_error_t          error;
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "abortTransaction")
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	if (!mongoc_client_session_abort_transaction(intern->client_session, &error)) {
 		phongo_throw_exception_from_bson_error_t(&error);
@@ -513,13 +557,17 @@ static PHP_METHOD(Session, abortTransaction)
    Ends the session, and a running transaction if active */
 static PHP_METHOD(Session, endSession)
 {
+	zend_error_handling   error_handling;
 	php_phongo_session_t* intern;
 
 	intern = Z_SESSION_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	mongoc_client_session_destroy(intern->client_session);
 	intern->client_session = NULL;
@@ -529,14 +577,18 @@ static PHP_METHOD(Session, endSession)
    Returns whether a multi-document transaction is in progress */
 static PHP_METHOD(Session, isInTransaction)
 {
+	zend_error_handling   error_handling;
 	php_phongo_session_t* intern;
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "isInTransaction")
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	RETURN_BOOL(mongoc_client_session_in_transaction(intern->client_session));
 } /* }}} */

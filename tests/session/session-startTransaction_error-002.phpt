@@ -45,7 +45,7 @@ foreach ($options as $txnOptions) {
 
 echo raises(function() use ($session) {
     $session->startTransaction([ 'maxCommitTimeMS' => new stdClass ]);
-}, E_NOTICE), "\n";
+}, E_NOTICE | E_WARNING), "\n";
 
 ?>
 ===DONE===
@@ -77,6 +77,6 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, MongoDB\Driver\ReadPreference given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, MongoDB\Driver\ReadPreference given
-OK: Got E_NOTICE
+OK: Got %r(E_NOTICE|E_WARNING)%r
 Object of class stdClass could not be converted to int
 ===DONE===

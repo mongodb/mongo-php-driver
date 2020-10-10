@@ -1,5 +1,8 @@
 --TEST--
 MongoDB\BSON\ObjectId #001
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('>=', '7.99'); ?>
 --FILE--
 <?php
 
@@ -41,19 +44,23 @@ foreach($tests as $n => $test) {
 
 throws(function() {
     $id = new MongoDB\BSON\ObjectId("53e28b650640fd3162152de12");
-}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
+}, MongoDB\Driver\Exception\InvalidArgumentException::class);
 
 throws(function() {
     $id = new MongoDB\BSON\ObjectId("53e28b650640fd3162152dg1");
-}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
+}, MongoDB\Driver\Exception\InvalidArgumentException::class);
 
 throws(function() {
     $id = new MongoDB\BSON\ObjectId("-3e28b650640fd3162152da1");
-}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
+}, MongoDB\Driver\Exception\InvalidArgumentException::class);
 
 throws(function() {
     $id = new MongoDB\BSON\ObjectId(" 3e28b650640fd3162152da1");
-}, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
+}, MongoDB\Driver\Exception\InvalidArgumentException::class);
+
+throws(function() use ($pregenerated) {
+    $pregenerated->__toString(1);
+}, MongoDB\Driver\Exception\InvalidArgumentException::class);
 
 ?>
 ===DONE===
@@ -79,6 +86,7 @@ Test#4 { "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }
 string(60) "{ "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }"
 string(60) "{ "pregenerated" : { "$oid" : "53e28b650640fd3162152de1" } }"
 bool(true)
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

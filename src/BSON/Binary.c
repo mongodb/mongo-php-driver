@@ -73,15 +73,15 @@ static bool php_phongo_binary_init_from_hash(php_phongo_binary_t* intern, HashTa
    Construct a new BSON binary type */
 static PHP_METHOD(Binary, __construct)
 {
-	php_phongo_binary_t* intern;
 	zend_error_handling  error_handling;
+	php_phongo_binary_t* intern;
 	char*                data;
 	size_t               data_len;
 	zend_long            type;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	intern = Z_BINARY_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sl", &data, &data_len, &type) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;
@@ -95,13 +95,17 @@ static PHP_METHOD(Binary, __construct)
 */
 static PHP_METHOD(Binary, __set_state)
 {
+	zend_error_handling  error_handling;
 	php_phongo_binary_t* intern;
 	HashTable*           props;
 	zval*                array;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
-		RETURN_FALSE;
+		zend_restore_error_handling(&error_handling);
+		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	object_init_ex(return_value, php_phongo_binary_ce);
 
@@ -115,11 +119,15 @@ static PHP_METHOD(Binary, __set_state)
    Return the Binary's data string. */
 static PHP_METHOD(Binary, __toString)
 {
+	zend_error_handling  error_handling;
 	php_phongo_binary_t* intern;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_BINARY_OBJ_P(getThis());
 
@@ -130,13 +138,17 @@ static PHP_METHOD(Binary, __toString)
 */
 static PHP_METHOD(Binary, getData)
 {
+	zend_error_handling  error_handling;
 	php_phongo_binary_t* intern;
 
 	intern = Z_BINARY_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	RETURN_STRINGL(intern->data, intern->data_len);
 } /* }}} */
@@ -145,13 +157,17 @@ static PHP_METHOD(Binary, getData)
 */
 static PHP_METHOD(Binary, getType)
 {
+	zend_error_handling  error_handling;
 	php_phongo_binary_t* intern;
 
 	intern = Z_BINARY_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	RETURN_LONG(intern->type);
 } /* }}} */
@@ -160,13 +176,17 @@ static PHP_METHOD(Binary, getType)
 */
 static PHP_METHOD(Binary, jsonSerialize)
 {
+	zend_error_handling  error_handling;
 	php_phongo_binary_t* intern;
 	char                 type[3];
 	int                  type_len;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_BINARY_OBJ_P(getThis());
 
@@ -186,6 +206,7 @@ static PHP_METHOD(Binary, jsonSerialize)
 */
 static PHP_METHOD(Binary, serialize)
 {
+	zend_error_handling  error_handling;
 	php_phongo_binary_t* intern;
 	zval                 retval;
 	php_serialize_data_t var_hash;
@@ -193,9 +214,12 @@ static PHP_METHOD(Binary, serialize)
 
 	intern = Z_BINARY_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	array_init_size(&retval, 2);
 	ADD_ASSOC_STRINGL(&retval, "data", intern->data, intern->data_len);
@@ -216,8 +240,8 @@ static PHP_METHOD(Binary, serialize)
 */
 static PHP_METHOD(Binary, unserialize)
 {
-	php_phongo_binary_t*   intern;
 	zend_error_handling    error_handling;
+	php_phongo_binary_t*   intern;
 	char*                  serialized;
 	size_t                 serialized_len;
 	zval                   props;
@@ -226,7 +250,6 @@ static PHP_METHOD(Binary, unserialize)
 	intern = Z_BINARY_OBJ_P(getThis());
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;
