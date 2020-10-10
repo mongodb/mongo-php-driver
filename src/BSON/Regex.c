@@ -257,7 +257,7 @@ static PHP_METHOD(Regex, unserialize)
 } /* }}} */
 
 /* {{{ MongoDB\BSON\Regex function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_Regex___construct, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(ai_Regex___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, pattern)
 	ZEND_ARG_INFO(0, flags)
 ZEND_END_ARG_INFO()
