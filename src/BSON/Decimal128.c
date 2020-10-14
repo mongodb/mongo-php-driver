@@ -257,14 +257,14 @@ static zend_object* php_phongo_decimal128_create_object(zend_class_entry* class_
 	return &intern->std;
 } /* }}} */
 
-static zend_object* php_phongo_decimal128_clone_object(zval* object) /* {{{ */
+static zend_object* php_phongo_decimal128_clone_object(phongo_compat_object_handler_type* object) /* {{{ */
 {
 	php_phongo_decimal128_t* intern;
 	php_phongo_decimal128_t* new_intern;
 	zend_object*             new_object;
 
-	intern     = Z_DECIMAL128_OBJ_P(object);
-	new_object = php_phongo_decimal128_create_object(Z_OBJCE_P(object));
+	intern     = Z_OBJ_DECIMAL128(PHONGO_COMPAT_GET_OBJ(object));
+	new_object = php_phongo_decimal128_create_object(PHONGO_COMPAT_GET_OBJ(object)->ce);
 
 	new_intern = Z_OBJ_DECIMAL128(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
@@ -276,13 +276,13 @@ static zend_object* php_phongo_decimal128_clone_object(zval* object) /* {{{ */
 	return new_object;
 } /* }}} */
 
-static HashTable* php_phongo_decimal128_get_properties_hash(zval* object, bool is_debug) /* {{{ */
+static HashTable* php_phongo_decimal128_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
 {
 	php_phongo_decimal128_t* intern;
 	HashTable*               props;
 	char                     outbuf[BSON_DECIMAL128_STRING] = "";
 
-	intern = Z_DECIMAL128_OBJ_P(object);
+	intern = Z_OBJ_DECIMAL128(PHONGO_COMPAT_GET_OBJ(object));
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 1);
 
@@ -302,13 +302,13 @@ static HashTable* php_phongo_decimal128_get_properties_hash(zval* object, bool i
 	return props;
 } /* }}} */
 
-static HashTable* php_phongo_decimal128_get_debug_info(zval* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_decimal128_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
 	*is_temp = 1;
 	return php_phongo_decimal128_get_properties_hash(object, true);
 } /* }}} */
 
-static HashTable* php_phongo_decimal128_get_properties(zval* object) /* {{{ */
+static HashTable* php_phongo_decimal128_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
 {
 	return php_phongo_decimal128_get_properties_hash(object, false);
 } /* }}} */

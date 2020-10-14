@@ -333,6 +333,17 @@ static PHP_METHOD(Cursor, isDead)
 	RETURN_BOOL(!mongoc_cursor_more(intern->cursor));
 } /* }}} */
 
+#if PHP_VERSION_ID >= 80000
+static PHP_METHOD(Cursor, getIterator)
+{
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	zend_create_internal_iterator_zval(return_value, getThis());
+}
+#endif
+
 /* {{{ MongoDB\Driver\Cursor function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_setTypeMap, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, typemap, 0)
@@ -348,6 +359,9 @@ static zend_function_entry php_phongo_cursor_me[] = {
 	PHP_ME(Cursor, getId, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Cursor, getServer, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Cursor, isDead, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+#if PHP_VERSION_ID >= 80000
+	PHP_ME(Cursor, getIterator, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+#endif
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Cursor_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
@@ -418,13 +432,13 @@ static zend_object* php_phongo_cursor_create_object(zend_class_entry* class_type
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_cursor_get_debug_info(zval* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_cursor_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
 	php_phongo_cursor_t* intern;
 	zval                 retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
-	intern   = Z_CURSOR_OBJ_P(object);
+	intern   = Z_OBJ_CURSOR(PHONGO_COMPAT_GET_OBJ(object));
 
 	array_init_size(&retval, 10);
 
@@ -502,6 +516,9 @@ void php_phongo_cursor_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_cursor_ce);
 	php_phongo_cursor_ce->get_iterator = php_phongo_cursor_get_iterator;
 
+#if PHP_VERSION_ID >= 80000
+	zend_class_implements(php_phongo_cursor_ce, 1, zend_ce_aggregate);
+#endif
 	zend_class_implements(php_phongo_cursor_ce, 1, php_phongo_cursor_interface_ce);
 
 	memcpy(&php_phongo_handler_cursor, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

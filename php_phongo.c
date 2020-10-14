@@ -2324,7 +2324,7 @@ static void php_phongo_dispatch_handlers(const char* name, zval* z_event)
 		 * does a sizeof() on the name argument, which does only work with
 		 * constant names, but not with parameterized ones as it does
 		 * "sizeof(char*)" in that case. */
-		zend_call_method(value, NULL, NULL, name, strlen(name), NULL, 1, z_event, NULL);
+		zend_call_method(PHONGO_COMPAT_OBJ_P(value), NULL, NULL, name, strlen(name), NULL, 1, z_event, NULL);
 	}
 	ZEND_HASH_FOREACH_END();
 }
@@ -2410,8 +2410,8 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 	mongoc_apm_command_failed_get_error(event, &tmp_error);
 
 	object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
-	zend_update_property_string(default_exception_ce, &p_event->z_error, ZEND_STRL("message"), tmp_error.message);
-	zend_update_property_long(default_exception_ce, &p_event->z_error, ZEND_STRL("code"), tmp_error.code);
+	zend_update_property_string(default_exception_ce, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("message"), tmp_error.message);
+	zend_update_property_long(default_exception_ce, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("code"), tmp_error.code);
 
 	php_phongo_dispatch_handlers("commandFailed", &z_event);
 	zval_ptr_dtor(&z_event);
@@ -2553,7 +2553,7 @@ static bool php_phongo_extract_handshake_data(zval* driver, const char* key, cha
 	zvalue = php_array_fetch(driver, key);
 
 	if (Z_TYPE_P(zvalue) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"%s\" handshake option to be a string, %s given", key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvalue));
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"%s\" handshake option to be a string, %s given", key, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvalue));
 		return false;
 	}
 
@@ -2628,7 +2628,7 @@ static void php_phongo_set_handshake_data(zval* driverOptions)
 		zval* driver = php_array_fetchc(driverOptions, "driver");
 
 		if (Z_TYPE_P(driver) != IS_ARRAY) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT TSRMLS_CC, "Expected \"driver\" driver option to be an array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(driver));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"driver\" driver option to be an array, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(driver));
 			return;
 		}
 
@@ -3513,7 +3513,7 @@ PHP_GINIT_FUNCTION(mongodb)
 	mongodb_globals->bsonMemVTable = bsonMemVTable;
 
 	/* Initialize HashTable for persistent clients */
-	zend_hash_init_ex(&mongodb_globals->pclients, 0, NULL, NULL, 1, 0);
+	zend_hash_init(&mongodb_globals->pclients, 0, NULL, NULL, 1);
 }
 /* }}} */
 
@@ -3528,7 +3528,7 @@ static zend_class_entry* php_phongo_fetch_internal_class(const char* class_name,
 	return NULL;
 }
 
-static HashTable* php_phongo_std_get_gc(zval* object, zval** table, int* n) /* {{{ */
+static HashTable* php_phongo_std_get_gc(phongo_compat_object_handler_type* object, zval** table, int* n) /* {{{ */
 {
 	*table = NULL;
 	*n     = 0;

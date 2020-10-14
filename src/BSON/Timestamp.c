@@ -359,14 +359,14 @@ static zend_object* php_phongo_timestamp_create_object(zend_class_entry* class_t
 	return &intern->std;
 } /* }}} */
 
-static zend_object* php_phongo_timestamp_clone_object(zval* object) /* {{{ */
+static zend_object* php_phongo_timestamp_clone_object(phongo_compat_object_handler_type* object) /* {{{ */
 {
 	php_phongo_timestamp_t* intern;
 	php_phongo_timestamp_t* new_intern;
 	zend_object*            new_object;
 
-	intern     = Z_TIMESTAMP_OBJ_P(object);
-	new_object = php_phongo_timestamp_create_object(Z_OBJCE_P(object));
+	intern     = Z_OBJ_TIMESTAMP(PHONGO_COMPAT_GET_OBJ(object));
+	new_object = php_phongo_timestamp_create_object(PHONGO_COMPAT_GET_OBJ(object)->ce);
 
 	new_intern = Z_OBJ_TIMESTAMP(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
@@ -379,6 +379,8 @@ static zend_object* php_phongo_timestamp_clone_object(zval* object) /* {{{ */
 static int php_phongo_timestamp_compare_objects(zval* o1, zval* o2) /* {{{ */
 {
 	php_phongo_timestamp_t *intern1, *intern2;
+
+	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
 
 	intern1 = Z_TIMESTAMP_OBJ_P(o1);
 	intern2 = Z_TIMESTAMP_OBJ_P(o2);
@@ -395,7 +397,7 @@ static int php_phongo_timestamp_compare_objects(zval* o1, zval* o2) /* {{{ */
 	return 0;
 } /* }}} */
 
-static HashTable* php_phongo_timestamp_get_properties_hash(zval* object, bool is_debug) /* {{{ */
+static HashTable* php_phongo_timestamp_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
 {
 	php_phongo_timestamp_t* intern;
 	HashTable*              props;
@@ -404,7 +406,7 @@ static HashTable* php_phongo_timestamp_get_properties_hash(zval* object, bool is
 	int                     s_increment_len;
 	int                     s_timestamp_len;
 
-	intern = Z_TIMESTAMP_OBJ_P(object);
+	intern = Z_OBJ_TIMESTAMP(PHONGO_COMPAT_GET_OBJ(object));
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
 
@@ -428,13 +430,13 @@ static HashTable* php_phongo_timestamp_get_properties_hash(zval* object, bool is
 	return props;
 } /* }}} */
 
-static HashTable* php_phongo_timestamp_get_debug_info(zval* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_timestamp_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
 	*is_temp = 1;
 	return php_phongo_timestamp_get_properties_hash(object, true);
 } /* }}} */
 
-static HashTable* php_phongo_timestamp_get_properties(zval* object) /* {{{ */
+static HashTable* php_phongo_timestamp_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
 {
 	return php_phongo_timestamp_get_properties_hash(object, false);
 } /* }}} */
@@ -455,12 +457,12 @@ void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_implements(php_phongo_timestamp_ce, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_timestamp, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	php_phongo_handler_timestamp.clone_obj       = php_phongo_timestamp_clone_object;
-	php_phongo_handler_timestamp.compare_objects = php_phongo_timestamp_compare_objects;
-	php_phongo_handler_timestamp.get_debug_info  = php_phongo_timestamp_get_debug_info;
-	php_phongo_handler_timestamp.get_properties  = php_phongo_timestamp_get_properties;
-	php_phongo_handler_timestamp.free_obj        = php_phongo_timestamp_free_object;
-	php_phongo_handler_timestamp.offset          = XtOffsetOf(php_phongo_timestamp_t, std);
+	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(timestamp);
+	php_phongo_handler_timestamp.clone_obj      = php_phongo_timestamp_clone_object;
+	php_phongo_handler_timestamp.get_debug_info = php_phongo_timestamp_get_debug_info;
+	php_phongo_handler_timestamp.get_properties = php_phongo_timestamp_get_properties;
+	php_phongo_handler_timestamp.free_obj       = php_phongo_timestamp_free_object;
+	php_phongo_handler_timestamp.offset         = XtOffsetOf(php_phongo_timestamp_t, std);
 } /* }}} */
 
 /*

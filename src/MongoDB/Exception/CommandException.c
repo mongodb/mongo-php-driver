@@ -36,7 +36,7 @@ static PHP_METHOD(CommandException, getResultDocument)
 		return;
 	}
 
-	resultdocument = zend_read_property(php_phongo_commandexception_ce, getThis(), ZEND_STRL("resultDocument"), 0, &rv);
+	resultdocument = zend_read_property(php_phongo_commandexception_ce, PHONGO_COMPAT_OBJ_P(getThis()), ZEND_STRL("resultDocument"), 0, &rv);
 
 	RETURN_ZVAL(resultdocument, 1, 0);
 } /* }}} */

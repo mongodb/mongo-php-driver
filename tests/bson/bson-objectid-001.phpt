@@ -55,11 +55,6 @@ throws(function() {
     $id = new MongoDB\BSON\ObjectId(" 3e28b650640fd3162152da1");
 }, "MongoDB\\Driver\\Exception\\InvalidArgumentException");
 
-
-
-raises(function() use($pregenerated) {
-    $pregenerated->__toString(1);
-}, E_WARNING);
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -88,5 +83,4 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-OK: Got E_WARNING
 ===DONE===

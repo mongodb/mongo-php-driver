@@ -586,13 +586,13 @@ static zend_object* php_phongo_bulkwrite_create_object(zend_class_entry* class_t
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_bulkwrite_get_debug_info(zval* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_bulkwrite_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
 	zval                    retval = ZVAL_STATIC_INIT;
 	php_phongo_bulkwrite_t* intern = NULL;
 
 	*is_temp = 1;
-	intern   = Z_BULKWRITE_OBJ_P(object);
+	intern   = Z_OBJ_BULKWRITE(PHONGO_COMPAT_GET_OBJ(object));
 	array_init(&retval);
 
 	if (intern->database) {

@@ -10,6 +10,31 @@ PHPC-1050: Command cursor should not invoke getMore at execution
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
+class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
+{
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event)
+    {
+        if ($event->getCommandName() !== 'aggregate' && $event->getCommandName() !== 'getMore') {
+            return;
+        }
+
+        printf("Executing command: %s\n", $event->getCommandName());
+    }
+
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
+    {
+        if ($event->getCommandName() !== 'aggregate' && $event->getCommandName() !== 'getMore') {
+            return;
+        }
+
+        printf("Executing command took %0.6f seconds\n", $event->getDurationMicros() / 1000000);
+    }
+
+    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event)
+    {
+    }
+}
+
 $manager = new MongoDB\Driver\Manager(URI);
 
 $cmd = new MongoDB\Driver\Command(
@@ -25,25 +50,27 @@ $cmd = new MongoDB\Driver\Command(
     ]
 );
 
-$start = microtime(true);
+MongoDB\Driver\Monitoring\addSubscriber(new CommandLogger);
+
 $cursor = $manager->executeReadCommand(DATABASE_NAME, $cmd);
-printf("Executing command took %0.6f seconds\n", microtime(true) - $start);
 
 $it = new IteratorIterator($cursor);
 
-$start = microtime(true);
+printf("Current position is valid: %s\n\n", $it->valid() ? 'yes' : 'no');
+
+echo "Rewinding cursor\n";
 $it->rewind();
-printf("Rewinding cursor took %0.6f seconds\n", microtime(true) - $start);
-printf("Current position is valid: %s\n", $it->valid() ? 'yes' : 'no');
+
+printf("Current position is valid: %s\n\n", $it->valid() ? 'yes' : 'no');
 
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(['x' => 1]);
 $manager->executeBulkWrite(NS, $bulk);
 
-$start = microtime(true);
+echo "Advancing cursor\n";
 $it->next();
-printf("Advancing cursor took %0.6f seconds\n", microtime(true) - $start);
-printf("Current position is valid: %s\n", $it->valid() ? 'yes' : 'no');
+
+printf("Current position is valid: %s\n\n", $it->valid() ? 'yes' : 'no');
 
 $document = $it->current();
 
@@ -56,11 +83,20 @@ if (isset($document)) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Executing command: aggregate
 Executing command took 0.%d seconds
-Rewinding cursor took 0.%r(4|5)%r%d seconds
 Current position is valid: no
-Advancing cursor took %d.%d seconds
+
+Rewinding cursor
+Executing command: getMore
+Executing command took 0.%r(4|5)%r%d seconds
+Current position is valid: no
+
+Advancing cursor
+Executing command: getMore
+Executing command took 0.%d seconds
 Current position is valid: yes
+
 Operation type: insert
 object(stdClass)#%d (%d) {
   ["_id"]=>

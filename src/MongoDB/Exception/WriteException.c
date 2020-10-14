@@ -36,7 +36,7 @@ static PHP_METHOD(WriteException, getWriteResult)
 		return;
 	}
 
-	writeresult = zend_read_property(php_phongo_writeexception_ce, getThis(), ZEND_STRL("writeResult"), 0, &rv);
+	writeresult = zend_read_property(php_phongo_writeexception_ce, PHONGO_COMPAT_OBJ_P(getThis()), ZEND_STRL("writeResult"), 0, &rv);
 
 	RETURN_ZVAL(writeresult, 1, 0);
 } /* }}} */

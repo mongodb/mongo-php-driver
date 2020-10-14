@@ -1,5 +1,8 @@
 --TEST--
 MongoDB\Driver\Manager: Manager cannot be woken up
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('>=', '7.99'); ?>
 --FILE--
 <?php
 

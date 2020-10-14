@@ -2,11 +2,15 @@
 PHPC-950: Segfault killing cursor after subscriber HashTable is destroyed (one subscriber)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('>=', '7.99'); ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
+
+/* Note: this test is skipped on PHP 8 because the CommandSubscriber ends up
+ * observing the killCursors command invoked from the Cursor's dtor. */
 
 class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
@@ -39,7 +43,7 @@ MongoDB\Driver\Monitoring\addSubscriber(new MySubscriber);
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([], ['batchSize' => 2]));
 
 /* Exiting during iteration on a live cursor will result in
- * php_phongo_command_started() being invoked for the killCursor command after
+ * php_phongo_command_started() being invoked for the killCursors command after
  * RSHUTDOWN has already destroyed the subscriber HashTable */
 foreach ($cursor as $data) {
     echo "Exiting during first iteration on cursor\n";

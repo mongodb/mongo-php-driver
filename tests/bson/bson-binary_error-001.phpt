@@ -1,5 +1,8 @@
 --TEST--
 MongoDB\BSON\Binary #001 error
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('>=', '7.99'); ?>
 --FILE--
 <?php
 

@@ -277,7 +277,7 @@ static PHP_METHOD(WriteConcern, isDefault)
 	RETURN_BOOL(mongoc_write_concern_is_default(intern->write_concern));
 } /* }}} */
 
-static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, bool is_debug, bool is_bson) /* {{{ */
+static HashTable* php_phongo_write_concern_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug, bool is_bson) /* {{{ */
 {
 	php_phongo_writeconcern_t* intern;
 	HashTable*                 props;
@@ -285,7 +285,7 @@ static HashTable* php_phongo_write_concern_get_properties_hash(zval* object, boo
 	int32_t                    w;
 	int64_t                    wtimeout;
 
-	intern = Z_WRITECONCERN_OBJ_P(object);
+	intern = Z_OBJ_WRITECONCERN(PHONGO_COMPAT_GET_OBJ(object));
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 4);
 
@@ -350,7 +350,7 @@ static PHP_METHOD(WriteConcern, bsonSerialize)
 		return;
 	}
 
-	ZVAL_ARR(return_value, php_phongo_write_concern_get_properties_hash(getThis(), true, true));
+	ZVAL_ARR(return_value, php_phongo_write_concern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
 	convert_to_object(return_value);
 } /* }}} */
 
@@ -519,13 +519,13 @@ static zend_object* php_phongo_writeconcern_create_object(zend_class_entry* clas
 	return &intern->std;
 } /* }}} */
 
-static HashTable* php_phongo_writeconcern_get_debug_info(zval* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_writeconcern_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
 	*is_temp = 1;
 	return php_phongo_write_concern_get_properties_hash(object, true, false);
 } /* }}} */
 
-static HashTable* php_phongo_writeconcern_get_properties(zval* object) /* {{{ */
+static HashTable* php_phongo_writeconcern_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
 {
 	return php_phongo_write_concern_get_properties_hash(object, false, false);
 } /* }}} */
