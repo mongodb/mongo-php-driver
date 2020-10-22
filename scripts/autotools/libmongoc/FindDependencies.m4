@@ -26,8 +26,8 @@ AC_CHECK_TYPE([socklen_t],
               [#include <sys/socket.h>])
 
 AC_CHECK_MEMBER([struct sockaddr_storage.ss_family],
-                [AC_SUBST(MONGOC_HAVE_SS_FAMILY, 0)],
                 [AC_SUBST(MONGOC_HAVE_SS_FAMILY, 1)],
+                [AC_SUBST(MONGOC_HAVE_SS_FAMILY, 0)],
                 [#include <sys/socket.h>])
 
 # Check for pthreads. libmongoc's original FindDependencies.m4 script did not
