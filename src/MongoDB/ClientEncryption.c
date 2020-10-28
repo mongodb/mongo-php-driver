@@ -38,7 +38,6 @@ static PHP_METHOD(ClientEncryption, createDataKey)
 
 	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s|a!", &kms_provider, &kms_provider_len, &options) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;
@@ -60,7 +59,6 @@ static PHP_METHOD(ClientEncryption, encrypt)
 
 	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|a!", &value, &options) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;
@@ -81,7 +79,6 @@ static PHP_METHOD(ClientEncryption, decrypt)
 
 	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &ciphertext, php_phongo_binary_interface_ce) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;

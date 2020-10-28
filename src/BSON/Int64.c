@@ -70,11 +70,15 @@ static bool php_phongo_int64_init_from_hash(php_phongo_int64_t* intern, HashTabl
    Return the Int64's value as a string. */
 static PHP_METHOD(Int64, __toString)
 {
+	zend_error_handling error_handling;
 	php_phongo_int64_t* intern;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_INT64_OBJ_P(getThis());
 
@@ -85,11 +89,15 @@ static PHP_METHOD(Int64, __toString)
 */
 static PHP_METHOD(Int64, jsonSerialize)
 {
+	zend_error_handling error_handling;
 	php_phongo_int64_t* intern;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_INT64_OBJ_P(getThis());
 
@@ -102,14 +110,18 @@ static PHP_METHOD(Int64, jsonSerialize)
 */
 static PHP_METHOD(Int64, serialize)
 {
+	zend_error_handling  error_handling;
 	php_phongo_int64_t*  intern;
 	zval                 retval;
 	php_serialize_data_t var_hash;
 	smart_str            buf = { 0 };
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_INT64_OBJ_P(getThis());
 
@@ -131,8 +143,8 @@ static PHP_METHOD(Int64, serialize)
 */
 static PHP_METHOD(Int64, unserialize)
 {
-	php_phongo_int64_t*    intern;
 	zend_error_handling    error_handling;
+	php_phongo_int64_t*    intern;
 	char*                  serialized;
 	size_t                 serialized_len;
 	zval                   props;
@@ -141,7 +153,6 @@ static PHP_METHOD(Int64, unserialize)
 	intern = Z_INT64_OBJ_P(getThis());
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;

@@ -39,13 +39,17 @@ static char* php_phongo_make_subscriber_hash(zval* subscriber)
    Adds a monitoring subscriber to the set of subscribers */
 PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 {
-	zval* zSubscriber = NULL;
-	char* hash;
-	zval* subscriber;
+	zend_error_handling error_handling;
+	zval*               zSubscriber = NULL;
+	char*               hash;
+	zval*               subscriber;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	/* The HashTable should never be NULL, as it's initialized during RINIT and
 	 * destroyed during RSHUTDOWN. This is simply a defensive guard. */
@@ -71,12 +75,16 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
    Removes a monitoring subscriber from the set of subscribers */
 PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 {
-	zval* zSubscriber = NULL;
-	char* hash;
+	zend_error_handling error_handling;
+	zval*               zSubscriber = NULL;
+	char*               hash;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	/* The HashTable should never be NULL, as it's initialized during RINIT and
 	 * destroyed during RSHUTDOWN. This is simply a defensive guard. */

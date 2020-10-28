@@ -71,13 +71,17 @@ static bool php_phongo_dbpointer_init_from_hash(php_phongo_dbpointer_t* intern, 
    Return the DBPointer's namespace string and ObjectId. */
 static PHP_METHOD(DBPointer, __toString)
 {
+	zend_error_handling     error_handling;
 	php_phongo_dbpointer_t* intern;
 	char*                   retval;
 	int                     retval_len;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_DBPOINTER_OBJ_P(getThis());
 
@@ -90,13 +94,17 @@ static PHP_METHOD(DBPointer, __toString)
 */
 static PHP_METHOD(DBPointer, jsonSerialize)
 {
+	zend_error_handling     error_handling;
 	php_phongo_dbpointer_t* intern;
 	zval                    zdb_pointer;
 	zval                    zoid;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_DBPOINTER_OBJ_P(getThis());
 
@@ -114,6 +122,7 @@ static PHP_METHOD(DBPointer, jsonSerialize)
 */
 static PHP_METHOD(DBPointer, serialize)
 {
+	zend_error_handling     error_handling;
 	php_phongo_dbpointer_t* intern;
 	zval                    retval;
 	php_serialize_data_t    var_hash;
@@ -121,9 +130,12 @@ static PHP_METHOD(DBPointer, serialize)
 
 	intern = Z_DBPOINTER_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	array_init_size(&retval, 2);
 	ADD_ASSOC_STRINGL(&retval, "ref", intern->ref, intern->ref_len);
@@ -144,8 +156,8 @@ static PHP_METHOD(DBPointer, serialize)
 */
 static PHP_METHOD(DBPointer, unserialize)
 {
-	php_phongo_dbpointer_t* intern;
 	zend_error_handling     error_handling;
+	php_phongo_dbpointer_t* intern;
 	char*                   serialized;
 	size_t                  serialized_len;
 	zval                    props;
@@ -154,7 +166,6 @@ static PHP_METHOD(DBPointer, unserialize)
 	intern = Z_DBPOINTER_OBJ_P(getThis());
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;

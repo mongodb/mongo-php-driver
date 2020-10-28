@@ -29,12 +29,16 @@ zend_class_entry* php_phongo_commandexception_ce;
    Returns the result document from the failed command. */
 static PHP_METHOD(CommandException, getResultDocument)
 {
-	zval* resultdocument;
-	zval  rv;
+	zend_error_handling error_handling;
+	zval*               resultdocument;
+	zval                rv;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	resultdocument = zend_read_property(php_phongo_commandexception_ce, PHONGO_COMPAT_OBJ_P(getThis()), ZEND_STRL("resultDocument"), 0, &rv);
 

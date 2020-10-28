@@ -86,16 +86,16 @@ static bool php_phongo_regex_init_from_hash(php_phongo_regex_t* intern, HashTabl
    Constructs a new BSON regular expression type. */
 static PHP_METHOD(Regex, __construct)
 {
-	php_phongo_regex_t* intern;
 	zend_error_handling error_handling;
+	php_phongo_regex_t* intern;
 	char*               pattern;
 	size_t              pattern_len;
 	char*               flags     = NULL;
 	size_t              flags_len = 0;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	intern = Z_REGEX_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s|s", &pattern, &pattern_len, &flags, &flags_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;
@@ -109,13 +109,17 @@ static PHP_METHOD(Regex, __construct)
 */
 static PHP_METHOD(Regex, getPattern)
 {
+	zend_error_handling error_handling;
 	php_phongo_regex_t* intern;
 
 	intern = Z_REGEX_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	RETURN_STRINGL(intern->pattern, intern->pattern_len);
 } /* }}} */
@@ -124,13 +128,17 @@ static PHP_METHOD(Regex, getPattern)
 */
 static PHP_METHOD(Regex, getFlags)
 {
+	zend_error_handling error_handling;
 	php_phongo_regex_t* intern;
 
 	intern = Z_REGEX_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	RETURN_STRINGL(intern->flags, intern->flags_len);
 } /* }}} */
@@ -139,13 +147,17 @@ static PHP_METHOD(Regex, getFlags)
 */
 static PHP_METHOD(Regex, __set_state)
 {
+	zend_error_handling error_handling;
 	php_phongo_regex_t* intern;
 	HashTable*          props;
 	zval*               array;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
-		RETURN_FALSE;
+		zend_restore_error_handling(&error_handling);
+		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	object_init_ex(return_value, php_phongo_regex_ce);
 
@@ -159,15 +171,19 @@ static PHP_METHOD(Regex, __set_state)
    Returns a string in the form: /pattern/flags */
 static PHP_METHOD(Regex, __toString)
 {
+	zend_error_handling error_handling;
 	php_phongo_regex_t* intern;
 	char*               regex;
 	int                 regex_len;
 
 	intern = Z_REGEX_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	regex_len = spprintf(&regex, 0, "/%s/%s", intern->pattern, intern->flags);
 	RETVAL_STRINGL(regex, regex_len);
@@ -178,11 +194,15 @@ static PHP_METHOD(Regex, __toString)
 */
 static PHP_METHOD(Regex, jsonSerialize)
 {
+	zend_error_handling error_handling;
 	php_phongo_regex_t* intern;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_REGEX_OBJ_P(getThis());
 
@@ -195,6 +215,7 @@ static PHP_METHOD(Regex, jsonSerialize)
 */
 static PHP_METHOD(Regex, serialize)
 {
+	zend_error_handling  error_handling;
 	php_phongo_regex_t*  intern;
 	zval                 retval;
 	php_serialize_data_t var_hash;
@@ -202,9 +223,12 @@ static PHP_METHOD(Regex, serialize)
 
 	intern = Z_REGEX_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	array_init_size(&retval, 2);
 	ADD_ASSOC_STRINGL(&retval, "pattern", intern->pattern, intern->pattern_len);
@@ -225,8 +249,8 @@ static PHP_METHOD(Regex, serialize)
 */
 static PHP_METHOD(Regex, unserialize)
 {
-	php_phongo_regex_t*    intern;
 	zend_error_handling    error_handling;
+	php_phongo_regex_t*    intern;
 	char*                  serialized;
 	size_t                 serialized_len;
 	zval                   props;
@@ -235,7 +259,6 @@ static PHP_METHOD(Regex, unserialize)
 	intern = Z_REGEX_OBJ_P(getThis());
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;

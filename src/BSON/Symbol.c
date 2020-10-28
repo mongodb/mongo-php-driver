@@ -62,11 +62,15 @@ static bool php_phongo_symbol_init_from_hash(php_phongo_symbol_t* intern, HashTa
    Return the Symbol's symbol string. */
 static PHP_METHOD(Symbol, __toString)
 {
+	zend_error_handling  error_handling;
 	php_phongo_symbol_t* intern;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_SYMBOL_OBJ_P(getThis());
 
@@ -77,11 +81,15 @@ static PHP_METHOD(Symbol, __toString)
 */
 static PHP_METHOD(Symbol, jsonSerialize)
 {
+	zend_error_handling  error_handling;
 	php_phongo_symbol_t* intern;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_SYMBOL_OBJ_P(getThis());
 
@@ -93,6 +101,7 @@ static PHP_METHOD(Symbol, jsonSerialize)
 */
 static PHP_METHOD(Symbol, serialize)
 {
+	zend_error_handling  error_handling;
 	php_phongo_symbol_t* intern;
 	zval                 retval;
 	php_serialize_data_t var_hash;
@@ -100,9 +109,12 @@ static PHP_METHOD(Symbol, serialize)
 
 	intern = Z_SYMBOL_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	array_init_size(&retval, 1);
 	ADD_ASSOC_STRINGL(&retval, "symbol", intern->symbol, intern->symbol_len);
@@ -122,8 +134,8 @@ static PHP_METHOD(Symbol, serialize)
 */
 static PHP_METHOD(Symbol, unserialize)
 {
-	php_phongo_symbol_t*   intern;
 	zend_error_handling    error_handling;
+	php_phongo_symbol_t*   intern;
 	char*                  serialized;
 	size_t                 serialized_len;
 	zval                   props;
@@ -132,7 +144,6 @@ static PHP_METHOD(Symbol, unserialize)
 	intern = Z_SYMBOL_OBJ_P(getThis());
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;

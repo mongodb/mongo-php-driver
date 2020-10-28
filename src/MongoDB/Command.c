@@ -101,14 +101,14 @@ static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, 
    Constructs a new Command */
 static PHP_METHOD(Command, __construct)
 {
-	php_phongo_command_t* intern;
 	zend_error_handling   error_handling;
+	php_phongo_command_t* intern;
 	zval*                 document;
 	zval*                 options = NULL;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	intern = Z_COMMAND_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A|a!", &document, &options) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;

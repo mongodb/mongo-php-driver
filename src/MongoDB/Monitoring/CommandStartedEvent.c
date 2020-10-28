@@ -30,6 +30,7 @@ zend_class_entry* php_phongo_commandstartedevent_ce;
    Returns the command document associated with the event */
 PHP_METHOD(CommandStartedEvent, getCommand)
 {
+	zend_error_handling               error_handling;
 	php_phongo_commandstartedevent_t* intern;
 	php_phongo_bson_state             state;
 
@@ -37,9 +38,12 @@ PHP_METHOD(CommandStartedEvent, getCommand)
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->command), intern->command->len, &state)) {
 		zval_ptr_dtor(&state.zchild);
@@ -53,13 +57,17 @@ PHP_METHOD(CommandStartedEvent, getCommand)
    Returns the command name for this event */
 PHP_METHOD(CommandStartedEvent, getCommandName)
 {
+	zend_error_handling               error_handling;
 	php_phongo_commandstartedevent_t* intern;
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	RETVAL_STRING(intern->command_name);
 } /* }}} */
@@ -68,13 +76,17 @@ PHP_METHOD(CommandStartedEvent, getCommandName)
    Returns the database name for this event */
 PHP_METHOD(CommandStartedEvent, getDatabaseName)
 {
+	zend_error_handling               error_handling;
 	php_phongo_commandstartedevent_t* intern;
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	RETVAL_STRING(intern->database_name);
 } /* }}} */
@@ -83,14 +95,18 @@ PHP_METHOD(CommandStartedEvent, getDatabaseName)
    Returns the event's operation ID */
 PHP_METHOD(CommandStartedEvent, getOperationId)
 {
+	zend_error_handling               error_handling;
 	php_phongo_commandstartedevent_t* intern;
 	char                              int_as_string[20];
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	sprintf(int_as_string, "%" PRIu64, intern->operation_id);
 	RETVAL_STRING(int_as_string);
@@ -100,14 +116,18 @@ PHP_METHOD(CommandStartedEvent, getOperationId)
    Returns the event's request ID */
 PHP_METHOD(CommandStartedEvent, getRequestId)
 {
+	zend_error_handling               error_handling;
 	php_phongo_commandstartedevent_t* intern;
 	char                              int_as_string[20];
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	sprintf(int_as_string, "%" PRIu64, intern->request_id);
 	RETVAL_STRING(int_as_string);
@@ -117,13 +137,17 @@ PHP_METHOD(CommandStartedEvent, getRequestId)
    Returns the Server from which the event originated */
 PHP_METHOD(CommandStartedEvent, getServer)
 {
+	zend_error_handling               error_handling;
 	php_phongo_commandstartedevent_t* intern;
 
 	intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	phongo_server_init(return_value, intern->client, intern->server_id);
 } /* }}} */

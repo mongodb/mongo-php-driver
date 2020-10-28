@@ -352,14 +352,14 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
    Constructs a new Query */
 static PHP_METHOD(Query, __construct)
 {
-	php_phongo_query_t* intern;
 	zend_error_handling error_handling;
+	php_phongo_query_t* intern;
 	zval*               filter;
 	zval*               options = NULL;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	intern = Z_QUERY_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A|a!", &filter, &options) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;

@@ -238,20 +238,19 @@ static bool php_phongo_manager_select_server(bool for_writes, bool inherit_read_
    Constructs a new Manager */
 static PHP_METHOD(Manager, __construct)
 {
-	php_phongo_manager_t* intern;
 	zend_error_handling   error_handling;
+	php_phongo_manager_t* intern;
 	char*                 uri_string     = NULL;
 	size_t                uri_string_len = 0;
 	zval*                 options        = NULL;
 	zval*                 driverOptions  = NULL;
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
 	/* Separate the options and driverOptions zvals, since we may end up
 	 * modifying them in php_phongo_manager_prep_uri_options() and
 	 * php_phongo_manager_merge_context_options() below, respectively. */
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "|s!a/!a/!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
 		zend_restore_error_handling(&error_handling);
 		return;
@@ -278,13 +277,17 @@ static PHP_METHOD(Manager, __construct)
    Return a ClientEncryption instance */
 static PHP_METHOD(Manager, createClientEncryption)
 {
+	zend_error_handling            error_handling;
 	php_phongo_manager_t*          intern;
 	php_phongo_clientencryption_t* clientencryption;
 	zval*                          options;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -298,6 +301,7 @@ static PHP_METHOD(Manager, createClientEncryption)
    Execute a Command */
 static PHP_METHOD(Manager, executeCommand)
 {
+	zend_error_handling   error_handling;
 	php_phongo_manager_t* intern;
 	char*                 db;
 	size_t                db_len;
@@ -308,9 +312,12 @@ static PHP_METHOD(Manager, executeCommand)
 	zval*                 zsession        = NULL;
 	uint32_t              server_id       = 0;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|z!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -348,6 +355,7 @@ cleanup:
    Execute a ReadCommand */
 static PHP_METHOD(Manager, executeReadCommand)
 {
+	zend_error_handling   error_handling;
 	php_phongo_manager_t* intern;
 	char*                 db;
 	size_t                db_len;
@@ -357,9 +365,12 @@ static PHP_METHOD(Manager, executeReadCommand)
 	uint32_t              server_id       = 0;
 	zval*                 zsession        = NULL;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -390,6 +401,7 @@ static PHP_METHOD(Manager, executeReadCommand)
    Execute a WriteCommand */
 static PHP_METHOD(Manager, executeWriteCommand)
 {
+	zend_error_handling   error_handling;
 	php_phongo_manager_t* intern;
 	char*                 db;
 	size_t                db_len;
@@ -398,9 +410,12 @@ static PHP_METHOD(Manager, executeWriteCommand)
 	uint32_t              server_id = 0;
 	zval*                 zsession  = NULL;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -426,6 +441,7 @@ static PHP_METHOD(Manager, executeWriteCommand)
    Execute a ReadWriteCommand */
 static PHP_METHOD(Manager, executeReadWriteCommand)
 {
+	zend_error_handling   error_handling;
 	php_phongo_manager_t* intern;
 	char*                 db;
 	size_t                db_len;
@@ -434,9 +450,12 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 	uint32_t              server_id = 0;
 	zval*                 zsession  = NULL;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -462,6 +481,7 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
    Execute a Query */
 static PHP_METHOD(Manager, executeQuery)
 {
+	zend_error_handling   error_handling;
 	php_phongo_manager_t* intern;
 	char* namespace;
 	size_t   namespace_len;
@@ -472,9 +492,12 @@ static PHP_METHOD(Manager, executeQuery)
 	uint32_t server_id       = 0;
 	zval*    zsession        = NULL;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|z!", &namespace, &namespace_len, &query, php_phongo_query_ce, &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
@@ -512,6 +535,7 @@ cleanup:
    Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
 static PHP_METHOD(Manager, executeBulkWrite)
 {
+	zend_error_handling   error_handling;
 	php_phongo_manager_t* intern;
 	char* namespace;
 	size_t                  namespace_len;
@@ -522,9 +546,12 @@ static PHP_METHOD(Manager, executeBulkWrite)
 	uint32_t                server_id    = 0;
 	zval*                   zsession     = NULL;
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|z!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 	bulk   = Z_BULKWRITE_OBJ_P(zbulk);
@@ -557,13 +584,17 @@ cleanup:
    Returns the ReadConcern associated with this Manager */
 static PHP_METHOD(Manager, getReadConcern)
 {
+	zend_error_handling   error_handling;
 	php_phongo_manager_t* intern;
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	phongo_readconcern_init(return_value, mongoc_client_get_read_concern(intern->client));
 } /* }}} */
@@ -572,13 +603,17 @@ static PHP_METHOD(Manager, getReadConcern)
    Returns the ReadPreference associated with this Manager */
 static PHP_METHOD(Manager, getReadPreference)
 {
+	zend_error_handling   error_handling;
 	php_phongo_manager_t* intern;
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	phongo_readpreference_init(return_value, mongoc_client_get_read_prefs(intern->client));
 } /* }}} */
@@ -587,15 +622,19 @@ static PHP_METHOD(Manager, getReadPreference)
    Returns the Servers associated with this Manager */
 static PHP_METHOD(Manager, getServers)
 {
+	zend_error_handling           error_handling;
 	php_phongo_manager_t*         intern;
 	mongoc_server_description_t** sds;
 	size_t                        i, n = 0;
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	sds = mongoc_client_get_server_descriptions(intern->client, &n);
 	array_init_size(return_value, n);
@@ -614,13 +653,17 @@ static PHP_METHOD(Manager, getServers)
    Returns the WriteConcern associated with this Manager */
 static PHP_METHOD(Manager, getWriteConcern)
 {
+	zend_error_handling   error_handling;
 	php_phongo_manager_t* intern;
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	phongo_writeconcern_init(return_value, mongoc_client_get_write_concern(intern->client));
 } /* }}} */
@@ -629,15 +672,19 @@ static PHP_METHOD(Manager, getWriteConcern)
    Returns a suitable Server for the given ReadPreference */
 static PHP_METHOD(Manager, selectServer)
 {
+	zend_error_handling   error_handling;
 	php_phongo_manager_t* intern;
 	zval*                 zreadPreference = NULL;
 	uint32_t              server_id       = 0;
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &zreadPreference, php_phongo_readpreference_ce) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	if (!php_phongo_manager_select_server(false, true, zreadPreference, NULL, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
@@ -651,6 +698,7 @@ static PHP_METHOD(Manager, selectServer)
    Returns a new client session */
 static PHP_METHOD(Manager, startSession)
 {
+	zend_error_handling       error_handling;
 	php_phongo_manager_t*     intern;
 	zval*                     options = NULL;
 	mongoc_session_opt_t*     cs_opts = NULL;
@@ -660,9 +708,12 @@ static PHP_METHOD(Manager, startSession)
 
 	intern = Z_MANAGER_OBJ_P(getThis());
 
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "|a!", &options) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
 		return;
 	}
+	zend_restore_error_handling(&error_handling);
 
 	if (options && php_array_existsc(options, "causalConsistency")) {
 		cs_opts = mongoc_session_opts_new();

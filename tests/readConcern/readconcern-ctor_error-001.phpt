@@ -9,12 +9,12 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 echo throws(function() {
     new MongoDB\Driver\ReadConcern("string", 1);
-}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
+}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\Driver\ReadConcern::__construct() expects at most 1 parameter, 2 given
+MongoDB\Driver\ReadConcern::__construct() expects at most 1 %r(argument|parameter)%r, 2 given
 ===DONE===

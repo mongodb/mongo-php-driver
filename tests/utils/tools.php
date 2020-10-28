@@ -595,7 +595,7 @@ function raises($function, $type, $infunction = null) {
                 restore_error_handler();
                 return $e->getMessage();
             }
-            printf("OK: Got %s\n", severityToString($type));
+            printf("OK: Got %s\n", severityToString($e->getSeverity()));
         } else {
             printf("ALMOST: Got %s - expected %s\n", get_class($e), $exceptionname);
         }

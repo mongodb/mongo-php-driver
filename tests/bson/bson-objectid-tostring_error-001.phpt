@@ -10,13 +10,14 @@ require_once __DIR__ . '/../utils/tools.php';
 
 $pregenerated = new MongoDB\BSON\ObjectId("53e28b650640fd3162152de1");
 
-raises(function() use($pregenerated) {
+echo throws(function()  use($pregenerated) {
     $pregenerated->__toString(1);
-}, E_WARNING);
+}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got E_WARNING
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+MongoDB\BSON\ObjectId::__toString() expects exactly 0 parameters, 1 given
 ===DONE===
