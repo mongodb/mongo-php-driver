@@ -152,7 +152,8 @@ static PHP_METHOD(WriteConcern, __construct)
 
 				mongoc_write_concern_set_journal(intern->write_concern, zend_is_true(journal));
 			}
-			/* fallthrough */
+			PHONGO_BREAK_INTENTIONALLY_MISSING
+
 		case 2:
 			if (wtimeout < 0) {
 				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected wtimeout to be >= 0, %" PHONGO_LONG_FORMAT " given", wtimeout);
