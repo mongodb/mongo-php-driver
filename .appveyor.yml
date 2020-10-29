@@ -15,6 +15,10 @@ environment:
   CONFIGURE_OPTS: --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes
 
   matrix:
+    - PHP_VER: 8.0.0rc2
+      TS: 1
+      CRT: vs16
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
     - PHP_VER: 7.4.4
       TS: 1
       CRT: vc15
@@ -71,6 +75,14 @@ install:
           # Latest versions will be in releases/ instead of releases/archives
           if (-not (Test-Path c:\build-cache\$devel_pkg)) {
             Invoke-WebRequest "http://windows.php.net/downloads/releases/$devel_pkg" -OutFile "c:\build-cache\$devel_pkg"
+
+            if (-not (Test-Path c:\build-cache\$devel_pkg)) {
+              Invoke-WebRequest "https://windows.php.net/downloads/qa/archives/$devel_pkg" -OutFile "c:\build-cache\$devel_pkg"
+
+              if (-not (Test-Path c:\build-cache\$devel_pkg)) {
+                Invoke-WebRequest "https://windows.php.net/downloads/qa/$devel_pkg" -OutFile "c:\build-cache\$devel_pkg"
+              }
+            }
           }
         }
 
@@ -133,6 +145,14 @@ test_script:
         # Latest versions will be in releases/ instead of releases/archives
         if (-not (Test-Path c:\build-cache\$runtime_pkg)) {
           Invoke-WebRequest "http://windows.php.net/downloads/releases/$runtime_pkg" -OutFile "c:\build-cache\$runtime_pkg"
+
+          if (-not (Test-Path c:\build-cache\$runtime_pkg)) {
+            Invoke-WebRequest "https://windows.php.net/downloads/qa/archives/$runtime_pkg" -OutFile "c:\build-cache\$runtime_pkg"
+
+            if (-not (Test-Path c:\build-cache\$runtime_pkg)) {
+              Invoke-WebRequest "https://windows.php.net/downloads/qa/$runtime_pkg" -OutFile "c:\build-cache\$runtime_pkg"
+            }
+          }
         }
       }
 
