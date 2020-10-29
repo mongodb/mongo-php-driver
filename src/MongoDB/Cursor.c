@@ -53,19 +53,8 @@ static void php_phongo_cursor_free_current(php_phongo_cursor_t* cursor) /* {{{ *
 } /* }}} */
 
 /* {{{ MongoDB\Driver\Cursor iterator handlers */
-static void php_phongo_cursor_iterator_dtor(zend_object_iterator* iter) /* {{{ */
+static int php_phongo_cursor_valid(php_phongo_cursor_t* cursor) /* {{{ */
 {
-	php_phongo_cursor_iterator* cursor_it = (php_phongo_cursor_iterator*) iter;
-
-	if (!Z_ISUNDEF(cursor_it->intern.data)) {
-		zval_ptr_dtor(&cursor_it->intern.data);
-	}
-} /* }}} */
-
-static int php_phongo_cursor_iterator_valid(zend_object_iterator* iter) /* {{{ */
-{
-	php_phongo_cursor_t* cursor = ((php_phongo_cursor_iterator*) iter)->cursor;
-
 	if (!Z_ISUNDEF(cursor->visitor_data.zchild)) {
 		return SUCCESS;
 	}
@@ -73,25 +62,19 @@ static int php_phongo_cursor_iterator_valid(zend_object_iterator* iter) /* {{{ *
 	return FAILURE;
 } /* }}} */
 
-static void php_phongo_cursor_iterator_get_current_key(zend_object_iterator* iter, zval* key) /* {{{ */
+static void php_phongo_cursor_get_current_key(php_phongo_cursor_t* cursor, zval* key) /* {{{ */
 {
-	php_phongo_cursor_t* cursor = ((php_phongo_cursor_iterator*) iter)->cursor;
-
 	ZVAL_LONG(key, cursor->current);
 } /* }}} */
 
-static zval* php_phongo_cursor_iterator_get_current_data(zend_object_iterator* iter) /* {{{ */
+static zval* php_phongo_cursor_get_current_data(php_phongo_cursor_t* cursor) /* {{{ */
 {
-	php_phongo_cursor_t* cursor = ((php_phongo_cursor_iterator*) iter)->cursor;
-
 	return &cursor->visitor_data.zchild;
 } /* }}} */
 
-static void php_phongo_cursor_iterator_move_forward(zend_object_iterator* iter) /* {{{ */
+static void php_phongo_cursor_move_forward(php_phongo_cursor_t* cursor) /* {{{ */
 {
-	php_phongo_cursor_iterator* cursor_it = (php_phongo_cursor_iterator*) iter;
-	php_phongo_cursor_t*        cursor    = cursor_it->cursor;
-	const bson_t*               doc;
+	const bson_t* doc;
 
 	php_phongo_cursor_free_current(cursor);
 
@@ -124,11 +107,9 @@ static void php_phongo_cursor_iterator_move_forward(zend_object_iterator* iter) 
 	php_phongo_cursor_free_session_if_exhausted(cursor);
 } /* }}} */
 
-static void php_phongo_cursor_iterator_rewind(zend_object_iterator* iter) /* {{{ */
+static void php_phongo_cursor_rewind(php_phongo_cursor_t* cursor) /* {{{ */
 {
-	php_phongo_cursor_iterator* cursor_it = (php_phongo_cursor_iterator*) iter;
-	php_phongo_cursor_t*        cursor    = cursor_it->cursor;
-	const bson_t*               doc;
+	const bson_t* doc;
 
 	/* If the cursor was never advanced (e.g. command cursor), do so now */
 	if (!cursor->advanced) {
@@ -158,45 +139,6 @@ static void php_phongo_cursor_iterator_rewind(zend_object_iterator* iter) /* {{{
 	}
 
 	php_phongo_cursor_free_session_if_exhausted(cursor);
-} /* }}} */
-
-static zend_object_iterator_funcs php_phongo_cursor_iterator_funcs = {
-	php_phongo_cursor_iterator_dtor,
-	php_phongo_cursor_iterator_valid,
-	php_phongo_cursor_iterator_get_current_data,
-	php_phongo_cursor_iterator_get_current_key,
-	php_phongo_cursor_iterator_move_forward,
-	php_phongo_cursor_iterator_rewind,
-	NULL /* invalidate_current is not used */
-};
-
-static zend_object_iterator* php_phongo_cursor_get_iterator(zend_class_entry* ce, zval* object, int by_ref) /* {{{ */
-{
-	php_phongo_cursor_iterator* cursor_it = NULL;
-	php_phongo_cursor_t*        cursor    = Z_CURSOR_OBJ_P(object);
-
-	if (by_ref) {
-		zend_error(E_ERROR, "An iterator cannot be used with foreach by reference");
-	}
-
-	if (cursor->got_iterator) {
-		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cursors cannot yield multiple iterators");
-		return NULL;
-	}
-
-	cursor->got_iterator = true;
-
-	cursor_it = ecalloc(1, sizeof(php_phongo_cursor_iterator));
-	zend_iterator_init(&cursor_it->intern);
-
-	ZVAL_COPY(&cursor_it->intern.data, object);
-	cursor_it->intern.funcs = &php_phongo_cursor_iterator_funcs;
-	cursor_it->cursor       = cursor;
-	/* cursor_it->current should already be allocated to zero */
-
-	php_phongo_cursor_free_current(cursor_it->cursor);
-
-	return &cursor_it->intern;
 } /* }}} */
 /* }}} */
 
@@ -354,10 +296,11 @@ static PHP_METHOD(Cursor, isDead)
 	RETURN_BOOL(!mongoc_cursor_more(intern->cursor));
 } /* }}} */
 
-#if PHP_VERSION_ID >= 80000
-static PHP_METHOD(Cursor, getIterator)
+PHP_METHOD(Cursor, current)
 {
-	zend_error_handling error_handling;
+	zend_error_handling  error_handling;
+	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
+	zval*                data;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
@@ -366,9 +309,72 @@ static PHP_METHOD(Cursor, getIterator)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	zend_create_internal_iterator_zval(return_value, getThis());
+	data = php_phongo_cursor_get_current_data(intern);
+
+	if (data) {
+		ZVAL_COPY_DEREF(return_value, data);
+	}
 }
-#endif
+
+PHP_METHOD(Cursor, key)
+{
+	zend_error_handling  error_handling;
+	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
+		return;
+	}
+	zend_restore_error_handling(&error_handling);
+
+	php_phongo_cursor_get_current_key(intern, return_value);
+}
+
+PHP_METHOD(Cursor, next)
+{
+	zend_error_handling  error_handling;
+	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
+		return;
+	}
+	zend_restore_error_handling(&error_handling);
+
+	php_phongo_cursor_move_forward(intern);
+}
+
+PHP_METHOD(Cursor, valid)
+{
+	zend_error_handling  error_handling;
+	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
+		return;
+	}
+	zend_restore_error_handling(&error_handling);
+
+	RETURN_BOOL(php_phongo_cursor_valid(intern) == SUCCESS);
+}
+
+PHP_METHOD(Cursor, rewind)
+{
+	zend_error_handling  error_handling;
+	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
+	if (zend_parse_parameters_none() == FAILURE) {
+		zend_restore_error_handling(&error_handling);
+		return;
+	}
+	zend_restore_error_handling(&error_handling);
+
+	php_phongo_cursor_rewind(intern);
+}
 
 /* {{{ MongoDB\Driver\Cursor function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_setTypeMap, 0, 0, 1)
@@ -385,9 +391,13 @@ static zend_function_entry php_phongo_cursor_me[] = {
 	PHP_ME(Cursor, getId, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Cursor, getServer, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Cursor, isDead, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-#if PHP_VERSION_ID >= 80000
-	PHP_ME(Cursor, getIterator, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-#endif
+
+	PHP_ME(Cursor, current, ai_Cursor_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Cursor, key, ai_Cursor_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Cursor, next, ai_Cursor_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Cursor, valid, ai_Cursor_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Cursor, rewind, ai_Cursor_void, ZEND_ACC_PUBLIC)
+
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Cursor_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
@@ -540,11 +550,8 @@ void php_phongo_cursor_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_cursor_ce->create_object = php_phongo_cursor_create_object;
 	PHONGO_CE_FINAL(php_phongo_cursor_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_cursor_ce);
-	php_phongo_cursor_ce->get_iterator = php_phongo_cursor_get_iterator;
 
-#if PHP_VERSION_ID >= 80000
-	zend_class_implements(php_phongo_cursor_ce, 1, zend_ce_aggregate);
-#endif
+	zend_class_implements(php_phongo_cursor_ce, 1, zend_ce_iterator);
 	zend_class_implements(php_phongo_cursor_ce, 1, php_phongo_cursor_interface_ce);
 
 	memcpy(&php_phongo_handler_cursor, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

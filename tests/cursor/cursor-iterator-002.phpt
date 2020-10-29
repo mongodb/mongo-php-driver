@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Cursor get_iterator handler does not yield multiple iterators (toArray())
+MongoDB\Driver\Cursor does not allow iterating multiple times (toArray())
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -23,15 +23,13 @@ $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()));
 
 echo "\nFirst Cursor::toArray():\n";
 
-    var_dump($cursor->toArray());
+var_dump($cursor->toArray());
 
 echo "\nSecond Cursor::toArray():\n";
 
-try {
+echo throws(function () use ($cursor) {
     var_dump($cursor->toArray());
-} catch (MongoDB\Driver\Exception\LogicException $e) {
-    printf("LogicException: %s\n", $e->getMessage());
-}
+}, MongoDB\Driver\Exception\LogicException::class), "\n";
 
 ?>
 ===DONE===
@@ -59,5 +57,6 @@ array(3) {
 }
 
 Second Cursor::toArray():
-LogicException: Cursors cannot yield multiple iterators
+OK: Got MongoDB\Driver\Exception\LogicException
+Cursors cannot rewind after starting iteration
 ===DONE===

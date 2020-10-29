@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Cursor get_iterator handler does not yield multiple iterators (foreach)
+MongoDB\Driver\Cursor does not allow iterating multiple times (foreach)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -29,13 +29,11 @@ foreach ($cursor as $document) {
 
 echo "\nSecond foreach statement:\n";
 
-try {
+echo throws(function () use ($cursor) {
     foreach ($cursor as $document) {
         echo "FAILED: get_iterator should not yield multiple iterators\n";
     }
-} catch (MongoDB\Driver\Exception\LogicException $e) {
-    printf("LogicException: %s\n", $e->getMessage());
-}
+}, MongoDB\Driver\Exception\LogicException::class), "\n";
 
 ?>
 ===DONE===
@@ -58,5 +56,6 @@ object(stdClass)#%d (1) {
 }
 
 Second foreach statement:
-LogicException: Cursors cannot yield multiple iterators
+OK: Got MongoDB\Driver\Exception\LogicException
+Cursors cannot rewind after starting iteration
 ===DONE===

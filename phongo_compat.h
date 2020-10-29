@@ -149,6 +149,24 @@
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif /* SIZEOF_ZEND_LONG */
 
+#if PHP_VERSION_ID < 70300
+#define ZVAL_COPY_DEREF(z, v)                     \
+	do {                                          \
+		zval* _z3 = (v);                          \
+		if (Z_OPT_REFCOUNTED_P(_z3)) {            \
+			if (UNEXPECTED(Z_OPT_ISREF_P(_z3))) { \
+				_z3 = Z_REFVAL_P(_z3);            \
+				if (Z_OPT_REFCOUNTED_P(_z3)) {    \
+					Z_ADDREF_P(_z3);              \
+				}                                 \
+			} else {                              \
+				Z_ADDREF_P(_z3);                  \
+			}                                     \
+		}                                         \
+		ZVAL_COPY_VALUE(z, _z3);                  \
+	} while (0)
+#endif /* PHP_VERSION_ID < 70300 */
+
 void      phongo_add_exception_prop(const char* prop, int prop_len, zval* value);
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
 zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht);

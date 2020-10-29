@@ -313,13 +313,12 @@ static void phongo_cursor_init(zval* return_value, mongoc_client_t* client, mong
 
 	object_init_ex(return_value, php_phongo_cursor_ce);
 
-	intern               = Z_CURSOR_OBJ_P(return_value);
-	intern->cursor       = cursor;
-	intern->server_id    = mongoc_cursor_get_hint(cursor);
-	intern->client       = client;
-	intern->advanced     = false;
-	intern->got_iterator = false;
-	intern->current      = 0;
+	intern            = Z_CURSOR_OBJ_P(return_value);
+	intern->cursor    = cursor;
+	intern->server_id = mongoc_cursor_get_hint(cursor);
+	intern->client    = client;
+	intern->advanced  = false;
+	intern->current   = 0;
 
 	if (readPreference) {
 		ZVAL_ZVAL(&intern->read_preference, readPreference, 1, 0);
