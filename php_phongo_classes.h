@@ -212,11 +212,6 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_OBJ_COMMANDSTARTEDEVENT(zo) (php_commandstartedevent_fetch_object(zo))
 #define Z_OBJ_COMMANDSUCCEEDEDEVENT(zo) (php_commandsucceededevent_fetch_object(zo))
 
-typedef struct {
-	zend_object_iterator intern;
-	php_phongo_cursor_t* cursor;
-} php_phongo_cursor_iterator;
-
 extern zend_class_entry* php_phongo_clientencryption_ce;
 extern zend_class_entry* php_phongo_command_ce;
 extern zend_class_entry* php_phongo_cursor_ce;

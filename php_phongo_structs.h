@@ -52,7 +52,6 @@ typedef struct {
 	uint32_t              server_id;
 	bool                  advanced;
 	php_phongo_bson_state visitor_data;
-	bool                  got_iterator;
 	long                  current;
 	char*                 database;
 	char*                 collection;
