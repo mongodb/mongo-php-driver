@@ -65,8 +65,18 @@ ARG_WITH("mongodb-sasl", "MongoDB: Build against Cyrus-SASL", "yes");
 ARG_WITH("mongodb-client-side-encryption", "MongoDB: Enable client-side encryption", "yes");
 
 if (PHP_MONGODB != "no") {
-  /* Note: ADD_EXTENSION_DEP() cannot be used to declare that we depend on the
-   * date and standard extensions. Assume that they're always enabled. */
+  /* Note: ADD_EXTENSION_DEP() only reports the date and standard extensions as
+   * installed in PHP 7.3.25+, 7.4.13+, and 8.0.0+). On other versions, assume
+   * that they're always enabled. */
+  if (
+    PHP_VERSION == 8 ||
+    (PHP_VERSION == 7 && PHP_MINOR_VERSION == 3 && PHP_RELEASE_VERSION >= 25) ||
+    (PHP_VERSION == 7 && PHP_MINOR_VERSION == 4 && PHP_RELEASE_VERSION >= 13)
+  ) {
+    ADD_EXTENSION_DEP("mongodb", "date", false);
+    ADD_EXTENSION_DEP("mongodb", "standard", false);
+  }
+
   ADD_EXTENSION_DEP("mongodb", "json", false);
   ADD_EXTENSION_DEP("mongodb", "spl", false);
 
