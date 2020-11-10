@@ -184,7 +184,6 @@ if (PHP_MONGODB != "no") {
     MONGOC_ENABLE_COMPRESSION_ZLIB: 0,
     MONGOC_ENABLE_COMPRESSION_ZSTD: 0,
     MONGOC_ENABLE_COMPRESSION: 0,
-    MONGOC_ENABLE_DEBUG_ASSERTIONS: 0,
     MONGOC_ENABLE_MONGODB_AWS_AUTH: 0,
     MONGOC_ENABLE_SASL: 0,
     MONGOC_ENABLE_SASL_CYRUS: 0,
@@ -360,12 +359,6 @@ if (PHP_MONGODB != "no") {
   mongodb_generate_header(
     configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h.in",
     configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h",
-    mongoc_opts
-  );
-
-  mongodb_generate_header(
-    configure_module_dirname + "/src/libmongoc/src/common/common-config.h.in",
-    configure_module_dirname + "/src/libmongoc/src/common/common-config.h",
     mongoc_opts
   );
 
