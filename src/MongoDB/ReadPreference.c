@@ -63,8 +63,13 @@ static bool php_phongo_readpreference_init_from_hash(php_phongo_readpreference_t
 	}
 
 	if ((tagSets = zend_hash_str_find(props, "tags", sizeof("tags") - 1))) {
+		ZVAL_DEREF(tagSets);
 		if (Z_TYPE_P(tagSets) == IS_ARRAY) {
 			bson_t* tags = bson_new();
+
+			/* Separate tagSets as php_phongo_read_preference_prep_tagsets may
+			 * modify these tags. */
+			SEPARATE_ZVAL_NOREF(tagSets);
 
 			php_phongo_read_preference_prep_tagsets(tagSets);
 			php_phongo_zval_to_bson(tagSets, PHONGO_BSON_NONE, (bson_t*) tags, NULL);
