@@ -39,7 +39,7 @@ array(2) {
   ["tags"]=>
   array(1) {
     [0]=>
-    object(stdClass)#%d (1) {
+    array(1) {
       ["dc"]=>
       string(2) "ny"
     }
