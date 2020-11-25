@@ -9,6 +9,7 @@ os_linux=no
 os_solaris=no
 os_darwin=no
 os_gnu=no
+os_aix=no
 
 case "$host" in
     *-mingw*|*-*-cygwin*)
@@ -42,6 +43,10 @@ case "$host" in
         ;;
     *-*-darwin*)
         os_darwin=yes
+        TARGET_OS=unix
+        ;;
+    *-*-aix*|*-*-os400*)
+        os_aix=yes
         TARGET_OS=unix
         ;;
     gnu*|k*bsd*-gnu*)

@@ -1,10 +1,13 @@
 dnl Disable Windows DNSAPI
 AC_SUBST(MONGOC_HAVE_DNSAPI, 0)
 
-found_resolv="no"
+need_libresolv="no"
 
 old_LIBS="$LIBS"
-LIBS="$LIBS -lresolv"
+dnl On AIX, resolv functions are in libc.
+if test "x$os_aix" = "xno"; then
+  LIBS="$LIBS -lresolv"
+fi
 
 dnl Thread-safe DNS query function for _mongoc_client_get_srv.
 dnl Could be a macro, not a function, so check with AC_LINK_IFELSE.
@@ -24,7 +27,6 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
    AC_MSG_RESULT([yes])
    AC_SUBST(MONGOC_HAVE_RES_SEARCH, 0)
    AC_SUBST(MONGOC_HAVE_RES_NSEARCH, 1)
-   found_resolv="yes"
 
    dnl We have res_nsearch. Call res_ndestroy (BSD/Mac) or res_nclose (Linux)?
    AC_MSG_CHECKING([for res_ndestroy])
@@ -80,7 +82,9 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
    ]])], [
       AC_MSG_RESULT([yes])
       AC_SUBST(MONGOC_HAVE_RES_SEARCH, 1)
-      found_resolv="yes"
+      if test "x$os_aix" = "xno"; then
+        need_libresolv="yes"
+      fi
    ], [
       AC_MSG_RESULT([no])
       AC_SUBST(MONGOC_HAVE_RES_SEARCH, 0)
@@ -89,6 +93,6 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 
 LIBS="$old_LIBS"
 
-AS_IF([test "$found_resolv" = "yes"],[
+AS_IF([test "$need_libresolv" = "yes"],[
   PHP_ADD_LIBRARY([resolv],,[MONGODB_SHARED_LIBADD])
 ])
