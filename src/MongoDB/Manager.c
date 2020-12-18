@@ -852,7 +852,7 @@ static void php_phongo_manager_free_object(zend_object* object) /* {{{ */
 		if (intern->use_persistent_client) {
 			MONGOC_DEBUG("Not destroying persistent client for Manager");
 		} else {
-			MONGOC_DEBUG("Destroying private client for Manager");
+			MONGOC_DEBUG("Destroying non-persistent client for Manager");
 			mongoc_client_destroy(intern->client);
 		}
 

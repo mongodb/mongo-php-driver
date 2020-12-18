@@ -32,7 +32,7 @@ ini_set('mongodb.debug', '');
 [%s]     PHONGO: DEBUG   > Found client for hash: %s
 [%s]     mongoc: DEBUG   > Not destroying persistent client for Manager%A
 [%s]     PHONGO: DEBUG   > Created client with hash: %s
-[%s]     mongoc: DEBUG   > Destroying private client for Manager%A
+[%s]     mongoc: DEBUG   > Destroying non-persistent client for Manager%A
 [%s]     PHONGO: DEBUG   > Created client with hash: %s
-[%s]     mongoc: DEBUG   > Destroying private client for Manager%A
+[%s]     mongoc: DEBUG   > Destroying non-persistent client for Manager%A
 ===DONE===
