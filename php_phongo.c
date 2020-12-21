@@ -2692,23 +2692,35 @@ static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zv
 	return mongoc_client_new_from_uri(uri);
 } /* }}} */
 
-static void php_phongo_persist_client(const char* hash, size_t hash_len, mongoc_client_t* client)
+static php_phongo_pclient_t* php_phongo_create_pclient(mongoc_client_t* client)
 {
 	php_phongo_pclient_t* pclient = (php_phongo_pclient_t*) pecalloc(1, sizeof(php_phongo_pclient_t), 1);
-
-	MONGOC_DEBUG("Persisted client with hash: %s", hash);
 
 	pclient->created_by_pid = (int) getpid();
 	pclient->client         = client;
 
-	zend_hash_str_update_ptr(&MONGODB_G(pclients), hash, hash_len, pclient);
+	return pclient;
 }
 
-static mongoc_client_t* php_phongo_find_client(const char* hash, size_t hash_len)
+static void php_phongo_store_persistent_client(const char* hash, size_t hash_len, mongoc_client_t* client)
+{
+	MONGOC_DEBUG("Stored persistent client with hash: %s", hash);
+
+	zend_hash_str_update_ptr(&MONGODB_G(persistent_clients), hash, hash_len, php_phongo_create_pclient(client));
+}
+
+static void php_phongo_store_request_client(mongoc_client_t* client)
+{
+	MONGOC_DEBUG("Stored non-persistent client");
+
+	zend_hash_next_index_insert_ptr(MONGODB_G(request_clients), php_phongo_create_pclient(client));
+}
+
+static mongoc_client_t* php_phongo_find_persistent_client(const char* hash, size_t hash_len)
 {
 	php_phongo_pclient_t* pclient;
 
-	if ((pclient = zend_hash_str_find_ptr(&MONGODB_G(pclients), hash, hash_len)) != NULL) {
+	if ((pclient = zend_hash_str_find_ptr(&MONGODB_G(persistent_clients), hash, hash_len)) != NULL) {
 		return pclient->client;
 	}
 
@@ -3242,7 +3254,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		manager->use_persistent_client = true;
 	}
 
-	if (manager->use_persistent_client && (manager->client = php_phongo_find_client(manager->client_hash, manager->client_hash_len))) {
+	if (manager->use_persistent_client && (manager->client = php_phongo_find_persistent_client(manager->client_hash, manager->client_hash_len))) {
 		MONGOC_DEBUG("Found client for hash: %s", manager->client_hash);
 		goto cleanup;
 	}
@@ -3315,7 +3327,9 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	MONGOC_DEBUG("Created client with hash: %s", manager->client_hash);
 
 	if (manager->use_persistent_client) {
-		php_phongo_persist_client(manager->client_hash, manager->client_hash_len, manager->client);
+		php_phongo_store_persistent_client(manager->client_hash, manager->client_hash_len, manager->client);
+	} else {
+		php_phongo_store_request_client(manager->client);
 	}
 
 cleanup:
@@ -3462,7 +3476,7 @@ void php_phongo_client_reset_once(mongoc_client_t* client, int pid)
 	zval*                 z_ptr;
 	php_phongo_pclient_t* pclient;
 
-	pclients = &MONGODB_G(pclients);
+	pclients = &MONGODB_G(persistent_clients);
 
 	ZEND_HASH_FOREACH_VAL(pclients, z_ptr)
 	{
@@ -3503,6 +3517,12 @@ PHP_RINIT_FUNCTION(mongodb)
 		zend_hash_init(MONGODB_G(subscribers), 0, NULL, ZVAL_PTR_DTOR, 0);
 	}
 
+	/* Initialize HashTable for non-persistent clients. These are destroyed in RSHUTDOWN */
+	if (MONGODB_G(request_clients) == NULL) {
+		ALLOC_HASHTABLE(MONGODB_G(request_clients));
+		zend_hash_init(MONGODB_G(request_clients), 0, NULL, NULL, 0);
+	}
+
 	return SUCCESS;
 }
 /* }}} */
@@ -3523,7 +3543,7 @@ PHP_GINIT_FUNCTION(mongodb)
 	mongodb_globals->bsonMemVTable = bsonMemVTable;
 
 	/* Initialize HashTable for persistent clients */
-	zend_hash_init(&mongodb_globals->pclients, 0, NULL, NULL, 1);
+	zend_hash_init(&mongodb_globals->persistent_clients, 0, NULL, NULL, 1);
 }
 /* }}} */
 
@@ -3669,7 +3689,7 @@ PHP_MINIT_FUNCTION(mongodb)
 /* {{{ PHP_MSHUTDOWN_FUNCTION */
 PHP_MSHUTDOWN_FUNCTION(mongodb)
 {
-	HashTable* pclients = &MONGODB_G(pclients);
+	HashTable* pclients = &MONGODB_G(persistent_clients);
 	zval*      z_ptr;
 	(void) type; /* We don't care if we are loaded via dl() or extension= */
 
@@ -3687,7 +3707,7 @@ PHP_MSHUTDOWN_FUNCTION(mongodb)
 	ZEND_HASH_FOREACH_END();
 
 	/* Destroy HashTable for persistent clients. mongoc_client_t objects have been destroyed earlier. */
-	zend_hash_destroy(&MONGODB_G(pclients));
+	zend_hash_destroy(&MONGODB_G(persistent_clients));
 
 	bson_mem_restore_vtable();
 	/* Cleanup after libmongoc */
@@ -3707,6 +3727,25 @@ PHP_RSHUTDOWN_FUNCTION(mongodb)
 		zend_hash_destroy(MONGODB_G(subscribers));
 		FREE_HASHTABLE(MONGODB_G(subscribers));
 		MONGODB_G(subscribers) = NULL;
+	}
+
+	/* TODO: Destroy non-persistent clients */
+	if (MONGODB_G(request_clients)) {
+		zval* z_ptr;
+
+		ZEND_HASH_REVERSE_FOREACH_VAL(MONGODB_G(request_clients), z_ptr)
+			{
+				if ((Z_TYPE_P(z_ptr) != IS_PTR)) {
+					continue;
+				}
+
+				php_phongo_pclient_destroy((php_phongo_pclient_t*) Z_PTR_P(z_ptr));
+			}
+		ZEND_HASH_FOREACH_END();
+
+		zend_hash_destroy(MONGODB_G(request_clients));
+		FREE_HASHTABLE(MONGODB_G(request_clients));
+		MONGODB_G(request_clients) = NULL;
 	}
 
 	return SUCCESS;

@@ -41,8 +41,9 @@ ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char*             debug;
 	FILE*             debug_fd;
 	bson_mem_vtable_t bsonMemVTable;
-	HashTable         pclients;
+	HashTable         persistent_clients;
 	HashTable*        subscribers;
+	HashTable*        request_clients;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
 #define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)
