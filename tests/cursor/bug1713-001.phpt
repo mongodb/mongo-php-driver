@@ -1,9 +1,8 @@
 --TEST--
-MongoDB\Driver\Cursor PHPC-171: The cursor current method does not return anything
+PHPC-1713: MongoDB\Driver\Cursor::current() does not return anything
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
