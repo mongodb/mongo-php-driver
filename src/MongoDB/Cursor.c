@@ -311,7 +311,9 @@ PHP_METHOD(Cursor, current)
 
 	data = php_phongo_cursor_get_current_data(intern);
 
-	if (data) {
+	if (Z_ISUNDEF_P(data)) {
+		RETURN_NULL();
+	} else {
 		ZVAL_COPY_DEREF(return_value, data);
 	}
 }
