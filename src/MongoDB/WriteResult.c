@@ -221,7 +221,7 @@ static PHP_METHOD(WriteResult, getServer)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	phongo_server_init(return_value, intern->client, intern->server_id);
+	phongo_server_init(return_value, &intern->manager, intern->server_id);
 } /* }}} */
 
 /* {{{ proto array MongoDB\Driver\WriteResult::getUpsertedIds()
@@ -367,6 +367,10 @@ static void php_phongo_writeresult_free_object(zend_object* object) /* {{{ */
 
 	if (intern->write_concern) {
 		mongoc_write_concern_destroy(intern->write_concern);
+	}	
+
+	if (!Z_ISUNDEF(intern->manager)) {
+		zval_ptr_dtor(&intern->manager);
 	}
 } /* }}} */
 

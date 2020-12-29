@@ -294,7 +294,8 @@ static PHP_METHOD(Manager, createClientEncryption)
 	object_init_ex(return_value, php_phongo_clientencryption_ce);
 	clientencryption = Z_CLIENTENCRYPTION_OBJ_P(return_value);
 
-	phongo_clientencryption_init(clientencryption, intern->client, options);
+	/* An exception will be thrown on error. */
+	phongo_clientencryption_init(clientencryption, getThis(), options);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
@@ -341,9 +342,9 @@ static PHP_METHOD(Manager, executeCommand)
 	/* If the Manager was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, server_id, return_value);
+	phongo_execute_command(getThis(), PHONGO_COMMAND_RAW, db, command, options, server_id, return_value);
 
 cleanup:
 	if (free_options) {
@@ -392,9 +393,9 @@ static PHP_METHOD(Manager, executeReadCommand)
 	/* If the Manager was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, server_id, return_value);
+	phongo_execute_command(getThis(), PHONGO_COMMAND_READ, db, command, options, server_id, return_value);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
@@ -432,9 +433,9 @@ static PHP_METHOD(Manager, executeWriteCommand)
 	/* If the Manager was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, server_id, return_value);
+	phongo_execute_command(getThis(), PHONGO_COMMAND_WRITE, db, command, options, server_id, return_value);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeReadWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
@@ -472,9 +473,9 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 	/* If the Manager was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, server_id, return_value);
+	phongo_execute_command(getThis(), PHONGO_COMMAND_READ_WRITE, db, command, options, server_id, return_value);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, array $options = null])
@@ -521,9 +522,9 @@ static PHP_METHOD(Manager, executeQuery)
 	/* If the Manager was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
 
-	phongo_execute_query(intern->client, namespace, query, options, server_id, return_value);
+	phongo_execute_query(getThis(), namespace, query, options, server_id, return_value);
 
 cleanup:
 	if (free_options) {
@@ -570,9 +571,9 @@ static PHP_METHOD(Manager, executeBulkWrite)
 
 	/* If the Server was created in a different process, reset the client so
 	 * that its session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
 
-	phongo_execute_bulk_write(intern->client, namespace, bulk, options, server_id, return_value);
+	phongo_execute_bulk_write(getThis(), namespace, bulk, options, server_id, return_value);
 
 cleanup:
 	if (free_options) {
@@ -642,7 +643,7 @@ static PHP_METHOD(Manager, getServers)
 	for (i = 0; i < n; i++) {
 		zval obj;
 
-		phongo_server_init(&obj, intern->client, mongoc_server_description_id(sds[i]));
+		phongo_server_init(&obj, getThis(), mongoc_server_description_id(sds[i]));
 		add_next_index_zval(return_value, &obj);
 	}
 
@@ -691,7 +692,7 @@ static PHP_METHOD(Manager, selectServer)
 		return;
 	}
 
-	phongo_server_init(return_value, intern->client, server_id);
+	phongo_server_init(return_value, getThis(), server_id);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Session MongoDB\Driver\Manager::startSession([array $options = null])
@@ -755,12 +756,12 @@ static PHP_METHOD(Manager, startSession)
 	/* If the Manager was created in a different process, reset the client so
 	 * that its session pool is cleared. This will ensure that we do not re-use
 	 * a server session (i.e. LSID) created by a parent process. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
 
 	cs = mongoc_client_start_session(intern->client, cs_opts, &error);
 
 	if (cs) {
-		phongo_session_init(return_value, cs);
+		phongo_session_init(return_value, getThis(), cs);
 	} else {
 		phongo_throw_exception_from_bson_error_t(&error);
 	}
@@ -861,6 +862,12 @@ static void php_phongo_manager_free_object(zend_object* object) /* {{{ */
 
 	if (intern->client_hash) {
 		efree(intern->client_hash);
+	}
+
+	/* Free the keyVaultClient last to ensure that potential non-persistent
+	 * clients are destroyed in the correct order */
+	if (!Z_ISUNDEF(intern->key_vault_client_manager)) {
+		zval_ptr_dtor(&intern->key_vault_client_manager);
 	}
 } /* }}} */
 
