@@ -149,7 +149,7 @@ PHP_METHOD(CommandSucceededEvent, getServer)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	phongo_server_init(return_value, intern->client, intern->server_id);
+	phongo_server_init(return_value, &intern->manager, intern->server_id);
 } /* }}} */
 
 /**
@@ -186,9 +186,14 @@ static void php_phongo_commandsucceededevent_free_object(zend_object* object) /*
 
 	zend_object_std_dtor(&intern->std);
 
+	if (!Z_ISUNDEF(intern->manager)) {
+		zval_ptr_dtor(&intern->manager);
+	}
+
 	if (intern->reply) {
 		bson_destroy(intern->reply);
 	}
+
 	if (intern->command_name) {
 		efree(intern->command_name);
 	}
@@ -240,7 +245,7 @@ static HashTable* php_phongo_commandsucceededevent_get_debug_info(phongo_compat_
 	{
 		zval server;
 
-		phongo_server_init(&server, intern->client, intern->server_id);
+		phongo_server_init(&server, &intern->manager, intern->server_id);
 		ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
 	}
 

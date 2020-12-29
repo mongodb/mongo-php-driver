@@ -30,6 +30,9 @@
 
 #define PHONGO_MANAGER_URI_DEFAULT "mongodb://127.0.0.1/"
 
+#undef MONGOC_LOG_DOMAIN
+#define MONGOC_LOG_DOMAIN "PHONGO"
+
 /**
  * Manager abstracts a cluster of Server objects (i.e. socket connections).
  *
@@ -267,10 +270,6 @@ static PHP_METHOD(Manager, __construct)
 	}
 
 	phongo_manager_init(intern, uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, options, driverOptions);
-
-	if (intern->client) {
-		php_phongo_set_monitoring_callbacks(intern->client);
-	}
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\ClientEncryption MongoDB\Driver\Manager::createClientEncryption(array $options)
@@ -847,12 +846,24 @@ static void php_phongo_manager_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_manager_t* intern = Z_OBJ_MANAGER(object);
 
+	/* Update the request-scoped Manager registry. This is intentionally done
+	 * before destroying the Manager's zend_object. The return value is ignored
+	 * because it's possible that the Manager was never registered due to a
+	 * constructor exception. */
+	php_phongo_manager_unregister(intern);
+
 	zend_object_std_dtor(&intern->std);
 
 	if (intern->client) {
 		if (intern->use_persistent_client) {
 			MONGOC_DEBUG("Not destroying persistent client for Manager");
 		} else {
+			/* Single-threaded clients may run commands (e.g. endSessions) from
+			 * mongoc_client_destroy, so disable APM to ensure an event is not
+			 * dispatched while destroying the Manager and its client. This
+			 * means that certain shutdown commands cannot be observed unless
+			 * APM is redesigned to not reference a client (see: PHPC-1666). */
+			mongoc_client_set_apm_callbacks(intern->client, NULL, NULL);
 			MONGOC_DEBUG("Destroying non-persistent client for Manager");
 			mongoc_client_destroy(intern->client);
 		}

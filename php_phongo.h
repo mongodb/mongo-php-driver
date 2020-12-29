@@ -38,13 +38,23 @@ typedef struct {
 	int              last_reset_by_pid;
 } php_phongo_pclient_t;
 
+#if 0
+/* Structure for tracking Manager and libmongoc client relationships. This is
+ * used to provide APM event objects with a Manager reference for getServer and
+ * is needed because we can only provide a libmongoc client via the context. */
+typedef struct {
+	mongoc_client_t* client;
+	zval             manager;
+} php_phongo_client_manager_t;
+#endif
+
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char*             debug;
 	FILE*             debug_fd;
 	bson_mem_vtable_t bsonMemVTable;
 	HashTable         persistent_clients;
 	HashTable*        subscribers;
-	HashTable*        request_clients;
+	HashTable*        managers;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
 #define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)
@@ -145,7 +155,7 @@ void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t
 void php_phongo_cursor_to_zval(zval* retval, const mongoc_cursor_t* cursor);
 
 void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions);
-int  php_phongo_set_monitoring_callbacks(mongoc_client_t* client);
+bool php_phongo_set_monitoring_callbacks(mongoc_client_t* client);
 
 bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len);
 
@@ -155,6 +165,9 @@ void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryp
 
 zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson);
 zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson);
+
+bool php_phongo_manager_register(php_phongo_manager_t *manager);
+bool php_phongo_manager_unregister(php_phongo_manager_t *manager);
 
 void php_phongo_client_reset_once(mongoc_client_t* client, int pid);
 
