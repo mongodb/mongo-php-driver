@@ -20,7 +20,7 @@ $bulk->insert(['_id' => 3, 'x' => 4, 'y' => 5]);
 $manager->executeBulkWrite(NS, $bulk);
 
 echo "Creating cursor\n";
-$query = new MongoDB\Driver\Query([], ['batchSize' => 1]);
+$query = new MongoDB\Driver\Query([], ['batchSize' => 2]);
 $cursor = $manager->executeQuery(NS, $query);
 
 echo "Unsetting manager\n";
