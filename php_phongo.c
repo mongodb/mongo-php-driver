@@ -3415,11 +3415,6 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		php_phongo_store_request_client(manager->client);
 	}
 
-	/* Update the request-scoped Manager registry */
-	if (!php_phongo_manager_register(manager)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "php_phongo_manager_register failed");
-	}
-
 cleanup:
 	bson_destroy(&bson_options);
 

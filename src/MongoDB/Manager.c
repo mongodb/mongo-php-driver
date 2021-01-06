@@ -270,6 +270,15 @@ static PHP_METHOD(Manager, __construct)
 	}
 
 	phongo_manager_init(intern, uri_string ? uri_string : PHONGO_MANAGER_URI_DEFAULT, options, driverOptions);
+
+	if (EG(exception)) {
+		return;
+	}
+
+	/* Update the request-scoped Manager registry */
+	if (!php_phongo_manager_register(intern)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "php_phongo_manager_register failed");
+	}
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\ClientEncryption MongoDB\Driver\Manager::createClientEncryption(array $options)
