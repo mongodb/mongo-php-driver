@@ -123,14 +123,14 @@ typedef enum {
 zend_object_handlers* phongo_get_std_object_handlers(void);
 
 void phongo_clientencryption_init(php_phongo_clientencryption_t* ce_obj, zval* manager, zval* options);
-void phongo_server_init(zval* return_value, zval *manager, uint32_t server_id);
-void phongo_session_init(zval* return_value, zval *manager, mongoc_client_session_t* client_session);
+void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id);
+void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session);
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern);
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs);
 void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern);
-bool phongo_execute_bulk_write(zval *manager, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value);
-bool phongo_execute_command(zval *manager, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value);
-bool phongo_execute_query(zval *manager, const char* namespace, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value);
+bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value);
+bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value);
+bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value);
 
 bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor);
 
@@ -166,8 +166,8 @@ void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryp
 zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson);
 zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson);
 
-bool php_phongo_manager_register(php_phongo_manager_t *manager);
-bool php_phongo_manager_unregister(php_phongo_manager_t *manager);
+bool php_phongo_manager_register(php_phongo_manager_t* manager);
+bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
 
 void php_phongo_client_reset_once(mongoc_client_t* client, int pid);
 

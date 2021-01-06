@@ -99,10 +99,10 @@ typedef struct {
 } php_phongo_readpreference_t;
 
 typedef struct {
-	zval             manager;
-	int              created_by_pid;
-	uint32_t         server_id;
-	zend_object      std;
+	zval        manager;
+	int         created_by_pid;
+	uint32_t    server_id;
+	zend_object std;
 } php_phongo_server_t;
 
 typedef struct {
@@ -230,37 +230,37 @@ typedef struct {
 } php_phongo_utcdatetime_t;
 
 typedef struct {
-	zval             manager;
-	char*            command_name;
-	uint32_t         server_id;
-	uint64_t         operation_id;
-	uint64_t         request_id;
-	uint64_t         duration_micros;
-	bson_t*          reply;
-	zval             z_error;
-	zend_object      std;
+	zval        manager;
+	char*       command_name;
+	uint32_t    server_id;
+	uint64_t    operation_id;
+	uint64_t    request_id;
+	uint64_t    duration_micros;
+	bson_t*     reply;
+	zval        z_error;
+	zend_object std;
 } php_phongo_commandfailedevent_t;
 
 typedef struct {
-	zval             manager;
-	char*            command_name;
-	uint32_t         server_id;
-	uint64_t         operation_id;
-	uint64_t         request_id;
-	bson_t*          command;
-	char*            database_name;
-	zend_object      std;
+	zval        manager;
+	char*       command_name;
+	uint32_t    server_id;
+	uint64_t    operation_id;
+	uint64_t    request_id;
+	bson_t*     command;
+	char*       database_name;
+	zend_object std;
 } php_phongo_commandstartedevent_t;
 
 typedef struct {
-	zval             manager;
-	char*            command_name;
-	uint32_t         server_id;
-	uint64_t         operation_id;
-	uint64_t         request_id;
-	uint64_t         duration_micros;
-	bson_t*          reply;
-	zend_object      std;
+	zval        manager;
+	char*       command_name;
+	uint32_t    server_id;
+	uint64_t    operation_id;
+	uint64_t    request_id;
+	uint64_t    duration_micros;
+	bson_t*     reply;
+	zend_object std;
 } php_phongo_commandsucceededevent_t;
 
 #endif /* PHONGO_STRUCTS */

@@ -307,7 +307,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char* log_domain,
 /* }}} */
 
 /* {{{ Init objects */
-static void phongo_cursor_init(zval* return_value, zval *manager, mongoc_cursor_t* cursor, zval* readPreference, zval* session) /* {{{ */
+static void phongo_cursor_init(zval* return_value, zval* manager, mongoc_cursor_t* cursor, zval* readPreference, zval* session) /* {{{ */
 {
 	php_phongo_cursor_t* intern;
 
@@ -330,7 +330,7 @@ static void phongo_cursor_init(zval* return_value, zval *manager, mongoc_cursor_
 	}
 } /* }}} */
 
-static void phongo_cursor_init_for_command(zval* return_value, zval *manager, mongoc_cursor_t* cursor, const char* db, zval* command, zval* readPreference, zval* session) /* {{{ */
+static void phongo_cursor_init_for_command(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* db, zval* command, zval* readPreference, zval* session) /* {{{ */
 {
 	php_phongo_cursor_t* intern;
 
@@ -342,7 +342,7 @@ static void phongo_cursor_init_for_command(zval* return_value, zval *manager, mo
 	ZVAL_ZVAL(&intern->command, command, 1, 0);
 } /* }}} */
 
-static void phongo_cursor_init_for_query(zval* return_value, zval *manager, mongoc_cursor_t* cursor, const char* namespace, zval* query, zval* readPreference, zval* session) /* {{{ */
+static void phongo_cursor_init_for_query(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* namespace, zval* query, zval* readPreference, zval* session) /* {{{ */
 {
 	php_phongo_cursor_t* intern;
 
@@ -359,7 +359,7 @@ static void phongo_cursor_init_for_query(zval* return_value, zval *manager, mong
 	ZVAL_ZVAL(&intern->query, query, 1, 0);
 } /* }}} */
 
-void phongo_server_init(zval* return_value, zval *manager, uint32_t server_id) /* {{{ */
+void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id) /* {{{ */
 {
 	php_phongo_server_t* server;
 
@@ -372,7 +372,7 @@ void phongo_server_init(zval* return_value, zval *manager, uint32_t server_id) /
 }
 /* }}} */
 
-void phongo_session_init(zval* return_value, zval *manager, mongoc_client_session_t* client_session) /* {{{ */
+void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session) /* {{{ */
 {
 	php_phongo_session_t* session;
 
@@ -499,7 +499,7 @@ zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson) /* {{{ */
 	return true;
 } /* }}} */
 
-static php_phongo_writeresult_t* phongo_writeresult_init(zval* return_value, bson_t* reply, zval *manager, uint32_t server_id) /* {{{ */
+static php_phongo_writeresult_t* phongo_writeresult_init(zval* return_value, bson_t* reply, zval* manager, uint32_t server_id) /* {{{ */
 {
 	php_phongo_writeresult_t* writeresult;
 
@@ -700,10 +700,10 @@ static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval*
 	return true;
 }
 
-bool phongo_execute_bulk_write(zval *manager, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
+bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
 {
 	mongoc_client_t*              client = NULL;
-	bson_error_t                  error = { 0 };
+	bson_error_t                  error  = { 0 };
 	int                           success;
 	bson_t                        reply = BSON_INITIALIZER;
 	mongoc_bulk_operation_t*      bulk  = bulk_write->bulk;
@@ -829,7 +829,7 @@ bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor) /* {{{ *
 	return true;
 } /* }}} */
 
-bool phongo_execute_query(zval *manager, const char* namespace, zval* zquery, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
+bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
 {
 	mongoc_client_t*          client;
 	const php_phongo_query_t* query;
@@ -912,7 +912,7 @@ static bson_t* create_wrapped_command_envelope(const char* db, bson_t* reply)
 	return tmp;
 }
 
-static zval* phongo_create_implicit_session(zval *manager) /* {{{ */
+static zval* phongo_create_implicit_session(zval* manager) /* {{{ */
 {
 	mongoc_client_session_t* cs;
 	zval*                    zsession;
@@ -930,7 +930,7 @@ static zval* phongo_create_implicit_session(zval *manager) /* {{{ */
 	return zsession;
 } /* }}} */
 
-bool phongo_execute_command(zval *manager, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
+bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
 {
 	mongoc_client_t*            client;
 	const php_phongo_command_t* command;
@@ -946,7 +946,7 @@ bool phongo_execute_command(zval *manager, php_phongo_command_type_t type, const
 	bool                        free_zsession                   = false;
 	bool                        is_unacknowledged_write_concern = false;
 
-	client = Z_MANAGER_OBJ_P(manager)->client;
+	client  = Z_MANAGER_OBJ_P(manager)->client;
 	command = Z_COMMAND_OBJ_P(zcommand);
 
 	if ((type & PHONGO_OPTION_READ_CONCERN) && !phongo_parse_read_concern(options, &opts)) {
@@ -2344,9 +2344,9 @@ static void php_phongo_dispatch_handlers(const char* name, zval* z_event)
  * registry. If any Manager is found, copy it into the output parameter
  * (incrementing its ref-count) and return true; otherwise, set the output
  * parameter to undefined and return false. */
-static bool php_phongo_copy_manager_for_client(mongoc_client_t *client, zval *out)
+static bool php_phongo_copy_manager_for_client(mongoc_client_t* client, zval* out)
 {
-	php_phongo_manager_t *manager;
+	php_phongo_manager_t* manager;
 
 	ZEND_HASH_FOREACH_PTR(MONGODB_G(managers), manager)
 	{
@@ -2471,7 +2471,7 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 }
 
 /* Sets the callbacks for APM */
-bool php_phongo_set_monitoring_callbacks(mongoc_client_t *client)
+bool php_phongo_set_monitoring_callbacks(mongoc_client_t* client)
 {
 	bool retval;
 
@@ -2933,11 +2933,11 @@ cleanup:
 
 /* keyVaultClientManager is an output parameter and will be assigned the
  * keyVaultNamespace Manager (if any). */
-static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(zval* defaultKeyVaultClient, zval* options, zval **keyVaultClientManager) /* {{{ */
+static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(zval* defaultKeyVaultClient, zval* options, zval** keyVaultClientManager) /* {{{ */
 {
 	mongoc_client_encryption_opts_t* opts;
 
-	opts = mongoc_client_encryption_opts_new();
+	opts                   = mongoc_client_encryption_opts_new();
 	*keyVaultClientManager = NULL;
 
 	if (!options || Z_TYPE_P(options) != IS_ARRAY) {
@@ -3022,7 +3022,7 @@ void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryptio
 	mongoc_client_encryption_t*      ce;
 	mongoc_client_encryption_opts_t* opts;
 	zval*                            key_vault_client_manager = manager;
-	bson_error_t                     error = { 0 };
+	bson_error_t                     error                    = { 0 };
 
 	opts = phongo_clientencryption_opts_from_zval(manager, options, &key_vault_client_manager);
 	if (!opts) {
@@ -3589,10 +3589,10 @@ static inline void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
 
 /* Returns whether a Manager exists in the request-scoped registry. If found and
  * the output parameter is non-NULL, the Manager's index will be assigned. */
-static bool php_phongo_manager_exists(php_phongo_manager_t *manager, zend_ulong *index_out)
+static bool php_phongo_manager_exists(php_phongo_manager_t* manager, zend_ulong* index_out)
 {
-	zend_ulong index;
-	php_phongo_manager_t *value;
+	zend_ulong            index;
+	php_phongo_manager_t* value;
 
 	if (MONGODB_G(managers) == NULL) {
 		return false;
@@ -3618,7 +3618,7 @@ static bool php_phongo_manager_exists(php_phongo_manager_t *manager, zend_ulong 
 
 /* Adds a Manager to the request-scoped registry. Returns true if the Manager
  * did not exist and was successfully added; otherwise, returns false. */
-bool php_phongo_manager_register(php_phongo_manager_t *manager)
+bool php_phongo_manager_register(php_phongo_manager_t* manager)
 {
 	if (MONGODB_G(managers) == NULL) {
 		return false;
@@ -3633,7 +3633,7 @@ bool php_phongo_manager_register(php_phongo_manager_t *manager)
 
 /* Removes a Manager from the request-scoped registry. Returns true if the
  * Manager was found and successfully removed; otherwise, false is returned. */
-bool php_phongo_manager_unregister(php_phongo_manager_t *manager)
+bool php_phongo_manager_unregister(php_phongo_manager_t* manager)
 {
 	zend_ulong index;
 
@@ -3835,7 +3835,7 @@ PHP_MINIT_FUNCTION(mongodb)
 /* {{{ PHP_MSHUTDOWN_FUNCTION */
 PHP_MSHUTDOWN_FUNCTION(mongodb)
 {
-	zval*      z_ptr;
+	zval* z_ptr;
 	(void) type; /* We don't care if we are loaded via dl() or extension= */
 
 	/* Destroy mongoc_client_t objects in reverse order. This is necessary to

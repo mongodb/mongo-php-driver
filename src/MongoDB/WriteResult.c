@@ -367,7 +367,7 @@ static void php_phongo_writeresult_free_object(zend_object* object) /* {{{ */
 
 	if (intern->write_concern) {
 		mongoc_write_concern_destroy(intern->write_concern);
-	}	
+	}
 
 	if (!Z_ISUNDEF(intern->manager)) {
 		zval_ptr_dtor(&intern->manager);
