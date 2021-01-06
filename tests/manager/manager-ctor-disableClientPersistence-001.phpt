@@ -1,20 +1,21 @@
 --TEST--
-MongoDB\Driver\Manager::__construct() allows disabling client persistence
+MongoDB\Driver\Manager::__construct(): disableClientPersistence option
 --FILE--
 <?php
 
 ini_set('mongodb.debug', 'stderr');
 new MongoDB\Driver\Manager();
 
-// Won't reuse first client instance due to different options
-new MongoDB\Driver\Manager(null, [], ['disableClientPersistence' => false]);
-// Will reuse the previously created client
+// Won't reuse first client due to different options
 new MongoDB\Driver\Manager(null, [], ['disableClientPersistence' => false]);
 
-// Will create a new private client
+// Will reuse the previous client due to same options
+new MongoDB\Driver\Manager(null, [], ['disableClientPersistence' => false]);
+
+// Will create a non-persistent client
 new MongoDB\Driver\Manager(null, [], ['disableClientPersistence' => true]);
 
-// Will create another new private client
+// Will create another non-persistent client
 new MongoDB\Driver\Manager(null, [], ['disableClientPersistence' => true]);
 ini_set('mongodb.debug', '');
 
