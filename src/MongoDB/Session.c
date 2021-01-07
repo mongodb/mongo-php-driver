@@ -645,7 +645,7 @@ static void php_phongo_session_free_object(zend_object* object) /* {{{ */
 	 * destroy the corresponding server session rather than return it to the
 	 * now-empty pool. This will ensure that we do not re-use a server session
 	 * (i.e. LSID) created by a parent process. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager)->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	if (intern->client_session) {
 		mongoc_client_session_destroy(intern->client_session);

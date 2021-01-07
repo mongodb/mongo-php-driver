@@ -2348,6 +2348,10 @@ static bool php_phongo_copy_manager_for_client(mongoc_client_t* client, zval* ou
 {
 	php_phongo_manager_t* manager;
 
+	if (!MONGODB_G(managers) || zend_hash_num_elements(MONGODB_G(managers)) == 0) {
+		return false;
+	}
+
 	ZEND_HASH_FOREACH_PTR(MONGODB_G(managers), manager)
 	{
 		if (manager->client == client) {
@@ -2751,35 +2755,65 @@ static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zv
 	return mongoc_client_new_from_uri(uri);
 } /* }}} */
 
-static php_phongo_pclient_t* php_phongo_create_pclient(mongoc_client_t* client)
+/* Adds a client to the appropriate registry. Persistent and request-scoped
+ * clients each have their own registries (i.e. HashTables), which use different
+ * forms of memory allocation. Both registries are used for PID tracking.
+ * Returns true if the client was successfully added; otherwise, false. */
+bool php_phongo_client_register(php_phongo_manager_t* manager)
 {
-	php_phongo_pclient_t* pclient = (php_phongo_pclient_t*) pecalloc(1, sizeof(php_phongo_pclient_t), 1);
+	bool                  is_persistent = manager->use_persistent_client;
+	php_phongo_pclient_t* pclient       = pecalloc(1, sizeof(php_phongo_pclient_t), is_persistent);
 
+	pclient->client         = manager->client;
 	pclient->created_by_pid = (int) getpid();
-	pclient->client         = client;
+	pclient->is_persistent  = is_persistent;
 
-	return pclient;
+	if (is_persistent) {
+		MONGOC_DEBUG("Stored persistent client with hash: %s", manager->client_hash);
+		return zend_hash_str_update_ptr(&MONGODB_G(persistent_clients), manager->client_hash, manager->client_hash_len, pclient) != NULL;
+	} else {
+		MONGOC_DEBUG("Stored non-persistent client");
+		return zend_hash_next_index_insert_ptr(MONGODB_G(request_clients), pclient) != NULL;
+	}
 }
 
-static void php_phongo_store_persistent_client(const char* hash, size_t hash_len, mongoc_client_t* client)
+/* Removes a client from the request-scoped registry. This function is a NOP for
+ * persistent clients, since they are destroyed along with their registry (i.e.
+ * HashTable) in MSHUTDOWN. Returns true if the client was successfully removed;
+ * otherwise, false. */
+bool php_phongo_client_unregister(php_phongo_manager_t* manager)
 {
-	MONGOC_DEBUG("Stored persistent client with hash: %s", hash);
+	zend_ulong            index;
+	php_phongo_pclient_t* pclient;
 
-	zend_hash_str_update_ptr(&MONGODB_G(persistent_clients), hash, hash_len, php_phongo_create_pclient(client));
-}
+	/* Persistent clients do not get unregistered. */
+	if (manager->use_persistent_client) {
+		return false;
+	}
 
-static void php_phongo_store_request_client(mongoc_client_t* client)
-{
-	MONGOC_DEBUG("Stored non-persistent client");
+	/* Ensure the request-scoped registry is initialized. This is needed because
+	 * RSHUTDOWN may occur before a Manager's free_object handler is
+	 * executed. */
+	if (MONGODB_G(request_clients) == NULL) {
+		return false;
+	}
 
-	//zend_hash_next_index_insert_ptr(MONGODB_G(request_clients), php_phongo_create_pclient(client));
+	ZEND_HASH_FOREACH_NUM_KEY_PTR(MONGODB_G(request_clients), index, pclient)
+	{
+		if (pclient->client == manager->client) {
+			return zend_hash_index_del(MONGODB_G(request_clients), index) == SUCCESS;
+		}
+	}
+	ZEND_HASH_FOREACH_END();
+
+	return false;
 }
 
 static mongoc_client_t* php_phongo_find_persistent_client(const char* hash, size_t hash_len)
 {
-	php_phongo_pclient_t* pclient;
+	php_phongo_pclient_t* pclient = zend_hash_str_find_ptr(&MONGODB_G(persistent_clients), hash, hash_len);
 
-	if ((pclient = zend_hash_str_find_ptr(&MONGODB_G(persistent_clients), hash, hash_len)) != NULL) {
+	if (pclient) {
 		return pclient->client;
 	}
 
@@ -3409,11 +3443,9 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 
 	MONGOC_DEBUG("Created client with hash: %s", manager->client_hash);
 
-	if (manager->use_persistent_client) {
-		php_phongo_store_persistent_client(manager->client_hash, manager->client_hash_len, manager->client);
-	} else {
-		php_phongo_store_request_client(manager->client);
-	}
+	/* Register the newly created client in the appropriate registry (for either
+	 * persistent or request-scoped clients). */
+	php_phongo_client_register(manager);
 
 cleanup:
 	bson_destroy(&bson_options);
@@ -3553,20 +3585,23 @@ static void phongo_pclient_reset_once(php_phongo_pclient_t* pclient, int pid)
  * PID (based on information in the hash table of persisted libmongoc clients).
  * This ensures that we do not reset a client multiple times from the same child
  * process. */
-void php_phongo_client_reset_once(mongoc_client_t* client, int pid)
+void php_phongo_client_reset_once(php_phongo_manager_t* manager, int pid)
 {
-	zval*                 z_ptr;
 	php_phongo_pclient_t* pclient;
 
-	ZEND_HASH_FOREACH_VAL(&MONGODB_G(persistent_clients), z_ptr)
-	{
-		if ((Z_TYPE_P(z_ptr) != IS_PTR)) {
-			continue;
+	if (manager->use_persistent_client) {
+		pclient = zend_hash_str_find_ptr(&MONGODB_G(persistent_clients), manager->client_hash, manager->client_hash_len);
+
+		if (pclient) {
+			phongo_pclient_reset_once(pclient, pid);
 		}
 
-		pclient = (php_phongo_pclient_t*) Z_PTR_P(z_ptr);
+		return;
+	}
 
-		if (pclient->client == client) {
+	ZEND_HASH_FOREACH_PTR(MONGODB_G(request_clients), pclient)
+	{
+		if (pclient->client == manager->client) {
 			phongo_pclient_reset_once(pclient, pid);
 			return;
 		}
@@ -3574,17 +3609,31 @@ void php_phongo_client_reset_once(mongoc_client_t* client, int pid)
 	ZEND_HASH_FOREACH_END();
 }
 
-static inline void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
+static void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
 {
 	/* Do not destroy mongoc_client_t objects created by other processes. This
 	 * ensures that we do not shutdown sockets that may still be in use by our
-	 * parent process (see: CDRIVER-2049). While this is a leak, we are already
-	 * in MSHUTDOWN at this point. */
+	 * parent process (see: PHPC-1522).
+	 *
+	 * This is a leak; however, we are already in MSHUTDOWN for a persistent
+	 * clients. For a request-scoped client, we are either in the Manager's
+	 * free_object handler or RSHUTDOWN, but there the application is capable of
+	 * freeing its Manager and its client before forking. */
 	if (pclient->created_by_pid == getpid()) {
+		/* Single-threaded clients may run commands (e.g. endSessions) from
+		 * mongoc_client_destroy, so disable APM to ensure an event is not
+		 * dispatched while destroying the Manager and its client. This means
+		 * that certain shutdown commands cannot be observed unless APM is
+		 * redesigned to not reference a client (see: PHPC-1666).
+		 *
+		 * Note: this only relevant for request-scoped clients. APM subscribers
+		 * will not exist when persistent clients are destroyed in MSHUTDOWN. */
+		mongoc_client_set_apm_callbacks(pclient->client, NULL, NULL);
 		mongoc_client_destroy(pclient->client);
 	}
 
-	pefree(pclient, 1);
+	/* Persistent and request-scoped clients use different memory allocation */
+	pefree(pclient, pclient->is_persistent);
 }
 
 /* Returns whether a Manager exists in the request-scoped registry. If found and
@@ -3594,13 +3643,12 @@ static bool php_phongo_manager_exists(php_phongo_manager_t* manager, zend_ulong*
 	zend_ulong            index;
 	php_phongo_manager_t* value;
 
-	if (MONGODB_G(managers) == NULL) {
+	if (!MONGODB_G(managers) || zend_hash_num_elements(MONGODB_G(managers)) == 0) {
 		return false;
 	}
 
 	ZEND_HASH_FOREACH_NUM_KEY_PTR(MONGODB_G(managers), index, value)
 	{
-		// if (Z_OBJ_HANDLE(client_manager->manager) == Z_OBJ_HANDLE_P(manager)) {
 		if (value != manager) {
 			continue;
 		}
@@ -3620,7 +3668,7 @@ static bool php_phongo_manager_exists(php_phongo_manager_t* manager, zend_ulong*
  * did not exist and was successfully added; otherwise, returns false. */
 bool php_phongo_manager_register(php_phongo_manager_t* manager)
 {
-	if (MONGODB_G(managers) == NULL) {
+	if (!MONGODB_G(managers)) {
 		return false;
 	}
 
@@ -3639,7 +3687,7 @@ bool php_phongo_manager_unregister(php_phongo_manager_t* manager)
 
 	/* Ensure the registry is initialized. This is needed because RSHUTDOWN may
 	 * occur before a Manager's free_object handler is executed. */
-	if (MONGODB_G(managers) == NULL) {
+	if (!MONGODB_G(managers)) {
 		return false;
 	}
 
@@ -3650,9 +3698,21 @@ bool php_phongo_manager_unregister(php_phongo_manager_t* manager)
 	return false;
 }
 
+static void php_phongo_pclient_destroy_ptr(zval* ptr)
+{
+	php_phongo_pclient_destroy(Z_PTR_P(ptr));
+}
+
 /* {{{ PHP_RINIT_FUNCTION */
 PHP_RINIT_FUNCTION(mongodb)
 {
+	/* Initialize HashTable for non-persistent clients, which is initialized to
+	 * NULL in GINIT and destroyed and reset to NULL in RSHUTDOWN. */
+	if (MONGODB_G(request_clients) == NULL) {
+		ALLOC_HASHTABLE(MONGODB_G(request_clients));
+		zend_hash_init(MONGODB_G(request_clients), 0, NULL, php_phongo_pclient_destroy_ptr, 0);
+	}
+
 	/* Initialize HashTable for APM subscribers, which is initialized to NULL in
 	 * GINIT and destroyed and reset to NULL in RSHUTDOWN. */
 	if (MONGODB_G(subscribers) == NULL) {
@@ -3835,19 +3895,14 @@ PHP_MINIT_FUNCTION(mongodb)
 /* {{{ PHP_MSHUTDOWN_FUNCTION */
 PHP_MSHUTDOWN_FUNCTION(mongodb)
 {
-	zval* z_ptr;
-	(void) type; /* We don't care if we are loaded via dl() or extension= */
+	php_phongo_pclient_t* pclient;
 
 	/* Destroy mongoc_client_t objects in reverse order. This is necessary to
 	 * prevent segmentation faults as clients may reference other clients in
 	 * encryption settings. */
-	ZEND_HASH_REVERSE_FOREACH_VAL(&MONGODB_G(persistent_clients), z_ptr)
+	ZEND_HASH_REVERSE_FOREACH_PTR(&MONGODB_G(persistent_clients), pclient)
 	{
-		if ((Z_TYPE_P(z_ptr) != IS_PTR)) {
-			continue;
-		}
-
-		php_phongo_pclient_destroy((php_phongo_pclient_t*) Z_PTR_P(z_ptr));
+		php_phongo_pclient_destroy(pclient);
 	}
 	ZEND_HASH_FOREACH_END();
 
@@ -3868,6 +3923,15 @@ PHP_MSHUTDOWN_FUNCTION(mongodb)
 /* {{{ PHP_RSHUTDOWN_FUNCTION */
 PHP_RSHUTDOWN_FUNCTION(mongodb)
 {
+	/* Destroy HashTable for non-persistent clients, which was initialized in
+	 * RINIT. */
+	if (MONGODB_G(request_clients)) {
+		//fprintf(stderr, "RSHUTDOWN: request_clients size: %d\n", zend_hash_num_elements(MONGODB_G(request_clients)));
+		zend_hash_destroy(MONGODB_G(request_clients));
+		FREE_HASHTABLE(MONGODB_G(request_clients));
+		MONGODB_G(request_clients) = NULL;
+	}
+
 	/* Destroy HashTable for APM subscribers, which was initialized in RINIT. */
 	if (MONGODB_G(subscribers)) {
 		zend_hash_destroy(MONGODB_G(subscribers));

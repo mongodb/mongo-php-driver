@@ -53,7 +53,7 @@ static PHP_METHOD(Server, executeCommand)
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager)->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	phongo_execute_command(&intern->manager, PHONGO_COMMAND_RAW, db, command, options, intern->server_id, return_value);
 
@@ -85,7 +85,7 @@ static PHP_METHOD(Server, executeReadCommand)
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager)->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	phongo_execute_command(&intern->manager, PHONGO_COMMAND_READ, db, command, options, intern->server_id, return_value);
 } /* }}} */
@@ -113,7 +113,7 @@ static PHP_METHOD(Server, executeWriteCommand)
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated. and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager)->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	phongo_execute_command(&intern->manager, PHONGO_COMMAND_WRITE, db, command, options, intern->server_id, return_value);
 } /* }}} */
@@ -141,7 +141,7 @@ static PHP_METHOD(Server, executeReadWriteCommand)
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager)->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	phongo_execute_command(&intern->manager, PHONGO_COMMAND_READ_WRITE, db, command, options, intern->server_id, return_value);
 } /* }}} */
@@ -172,7 +172,7 @@ static PHP_METHOD(Server, executeQuery)
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager)->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	phongo_execute_query(&intern->manager, namespace, query, options, intern->server_id, return_value);
 
@@ -210,7 +210,7 @@ static PHP_METHOD(Server, executeBulkWrite)
 
 	/* If the Server was created in a different process, reset the client so
 	 * that its session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager)->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	phongo_execute_bulk_write(&intern->manager, namespace, bulk, options, intern->server_id, return_value);
 

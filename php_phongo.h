@@ -36,17 +36,8 @@ typedef struct {
 	mongoc_client_t* client;
 	int              created_by_pid;
 	int              last_reset_by_pid;
+	bool             is_persistent;
 } php_phongo_pclient_t;
-
-#if 0
-/* Structure for tracking Manager and libmongoc client relationships. This is
- * used to provide APM event objects with a Manager reference for getServer and
- * is needed because we can only provide a libmongoc client via the context. */
-typedef struct {
-	mongoc_client_t* client;
-	zval             manager;
-} php_phongo_client_manager_t;
-#endif
 
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char*             debug;
@@ -55,6 +46,7 @@ ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	HashTable         persistent_clients;
 	HashTable*        subscribers;
 	HashTable*        managers;
+	HashTable*        request_clients;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
 #define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)
@@ -166,10 +158,13 @@ void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryp
 zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson);
 zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson);
 
+bool php_phongo_client_register(php_phongo_manager_t* manager);
+bool php_phongo_client_unregister(php_phongo_manager_t* manager);
+
 bool php_phongo_manager_register(php_phongo_manager_t* manager);
 bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
 
-void php_phongo_client_reset_once(mongoc_client_t* client, int pid);
+void php_phongo_client_reset_once(php_phongo_manager_t* manager, int pid);
 
 #define PHONGO_CE_FINAL(ce)             \
 	do {                                \
@@ -214,12 +209,12 @@ void php_phongo_client_reset_once(mongoc_client_t* client, int pid);
 		(intern)->created_by_pid = (int) getpid(); \
 	} while (0);
 
-#define PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, client) \
-	do {                                                   \
-		int pid = (int) getpid();                          \
-		if ((intern)->created_by_pid != pid) {             \
-			php_phongo_client_reset_once((client), pid);   \
-		}                                                  \
+#define PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, manager) \
+	do {                                                    \
+		int pid = (int) getpid();                           \
+		if ((intern)->created_by_pid != pid) {              \
+			php_phongo_client_reset_once((manager), pid);   \
+		}                                                   \
 	} while (0);
 
 #endif /* PHONGO_H */

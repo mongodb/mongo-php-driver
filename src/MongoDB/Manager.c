@@ -277,7 +277,7 @@ static PHP_METHOD(Manager, __construct)
 
 	/* Update the request-scoped Manager registry */
 	if (!php_phongo_manager_register(intern)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "php_phongo_manager_register failed");
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Failed to add Manager to internal registry");
 	}
 } /* }}} */
 
@@ -350,7 +350,7 @@ static PHP_METHOD(Manager, executeCommand)
 	/* If the Manager was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	phongo_execute_command(getThis(), PHONGO_COMMAND_RAW, db, command, options, server_id, return_value);
 
@@ -401,7 +401,7 @@ static PHP_METHOD(Manager, executeReadCommand)
 	/* If the Manager was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	phongo_execute_command(getThis(), PHONGO_COMMAND_READ, db, command, options, server_id, return_value);
 } /* }}} */
@@ -441,7 +441,7 @@ static PHP_METHOD(Manager, executeWriteCommand)
 	/* If the Manager was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	phongo_execute_command(getThis(), PHONGO_COMMAND_WRITE, db, command, options, server_id, return_value);
 } /* }}} */
@@ -481,7 +481,7 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 	/* If the Manager was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	phongo_execute_command(getThis(), PHONGO_COMMAND_READ_WRITE, db, command, options, server_id, return_value);
 } /* }}} */
@@ -530,7 +530,7 @@ static PHP_METHOD(Manager, executeQuery)
 	/* If the Manager was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	phongo_execute_query(getThis(), namespace, query, options, server_id, return_value);
 
@@ -579,7 +579,7 @@ static PHP_METHOD(Manager, executeBulkWrite)
 
 	/* If the Server was created in a different process, reset the client so
 	 * that its session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	phongo_execute_bulk_write(getThis(), namespace, bulk, options, server_id, return_value);
 
@@ -764,7 +764,7 @@ static PHP_METHOD(Manager, startSession)
 	/* If the Manager was created in a different process, reset the client so
 	 * that its session pool is cleared. This will ensure that we do not re-use
 	 * a server session (i.e. LSID) created by a parent process. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	cs = mongoc_client_start_session(intern->client, cs_opts, &error);
 
@@ -867,14 +867,8 @@ static void php_phongo_manager_free_object(zend_object* object) /* {{{ */
 		if (intern->use_persistent_client) {
 			MONGOC_DEBUG("Not destroying persistent client for Manager");
 		} else {
-			/* Single-threaded clients may run commands (e.g. endSessions) from
-			 * mongoc_client_destroy, so disable APM to ensure an event is not
-			 * dispatched while destroying the Manager and its client. This
-			 * means that certain shutdown commands cannot be observed unless
-			 * APM is redesigned to not reference a client (see: PHPC-1666). */
-			mongoc_client_set_apm_callbacks(intern->client, NULL, NULL);
 			MONGOC_DEBUG("Destroying non-persistent client for Manager");
-			mongoc_client_destroy(intern->client);
+			php_phongo_client_unregister(intern);
 		}
 
 		intern->client = NULL;

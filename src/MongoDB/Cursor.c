@@ -417,7 +417,7 @@ static void php_phongo_cursor_free_object(zend_object* object) /* {{{ */
 	/* If this Cursor was created in a different process, reset the client so
 	 * that mongoc_cursor_destroy does not issue a killCursors command for an
 	 * active cursor owned by a parent process. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager)->client);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	if (intern->cursor) {
 		mongoc_cursor_destroy(intern->cursor);
