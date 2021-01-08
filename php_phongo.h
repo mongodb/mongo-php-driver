@@ -44,9 +44,9 @@ ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	FILE*             debug_fd;
 	bson_mem_vtable_t bsonMemVTable;
 	HashTable         persistent_clients;
+	HashTable*        request_clients;
 	HashTable*        subscribers;
 	HashTable*        managers;
-	HashTable*        request_clients;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
 #define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)
@@ -158,13 +158,13 @@ void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryp
 zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson);
 zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson);
 
+void php_phongo_client_reset_once(php_phongo_manager_t* manager, int pid);
+
 bool php_phongo_client_register(php_phongo_manager_t* manager);
 bool php_phongo_client_unregister(php_phongo_manager_t* manager);
 
 bool php_phongo_manager_register(php_phongo_manager_t* manager);
 bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
-
-void php_phongo_client_reset_once(php_phongo_manager_t* manager, int pid);
 
 #define PHONGO_CE_FINAL(ce)             \
 	do {                                \

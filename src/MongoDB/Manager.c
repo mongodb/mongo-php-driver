@@ -855,23 +855,20 @@ static void php_phongo_manager_free_object(zend_object* object) /* {{{ */
 {
 	php_phongo_manager_t* intern = Z_OBJ_MANAGER(object);
 
-	/* Update the request-scoped Manager registry. This is intentionally done
-	 * before destroying the Manager's zend_object. The return value is ignored
+	zend_object_std_dtor(&intern->std);
+
+	/* Update the request-scoped Manager registry. The return value is ignored
 	 * because it's possible that the Manager was never registered due to a
 	 * constructor exception. */
 	php_phongo_manager_unregister(intern);
 
-	zend_object_std_dtor(&intern->std);
-
 	if (intern->client) {
-		if (intern->use_persistent_client) {
-			MONGOC_DEBUG("Not destroying persistent client for Manager");
-		} else {
-			MONGOC_DEBUG("Destroying non-persistent client for Manager");
-			php_phongo_client_unregister(intern);
-		}
-
-		intern->client = NULL;
+		/* Request-scoped clients will be removed from the registry and
+		 * destroyed. This is a NOP for persistent clients. The return value is
+		 * ignored because we can't reasonably report an error here. On the off
+		 * chance any request-scoped clients are missed, they will ultimately be
+		 * destroyed in RSHUTDOWN along with the registry HashTable. */
+		php_phongo_client_unregister(intern);
 	}
 
 	if (intern->client_hash) {

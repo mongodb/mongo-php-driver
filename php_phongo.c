@@ -2788,6 +2788,8 @@ bool php_phongo_client_unregister(php_phongo_manager_t* manager)
 
 	/* Persistent clients do not get unregistered. */
 	if (manager->use_persistent_client) {
+		MONGOC_DEBUG("Not destroying persistent client for Manager");
+
 		return false;
 	}
 
@@ -2801,6 +2803,8 @@ bool php_phongo_client_unregister(php_phongo_manager_t* manager)
 	ZEND_HASH_FOREACH_NUM_KEY_PTR(MONGODB_G(request_clients), index, pclient)
 	{
 		if (pclient->client == manager->client) {
+			MONGOC_DEBUG("Destroying non-persistent client for Manager");
+
 			return zend_hash_index_del(MONGODB_G(request_clients), index) == SUCCESS;
 		}
 	}
@@ -3445,7 +3449,10 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 
 	/* Register the newly created client in the appropriate registry (for either
 	 * persistent or request-scoped clients). */
-	php_phongo_client_register(manager);
+	if (!php_phongo_client_register(manager)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Failed to add Manager client to internal registry");
+		goto cleanup;
+	}
 
 cleanup:
 	bson_destroy(&bson_options);
@@ -3923,20 +3930,22 @@ PHP_MSHUTDOWN_FUNCTION(mongodb)
 /* {{{ PHP_RSHUTDOWN_FUNCTION */
 PHP_RSHUTDOWN_FUNCTION(mongodb)
 {
-	/* Destroy HashTable for non-persistent clients, which was initialized in
-	 * RINIT. */
-	if (MONGODB_G(request_clients)) {
-		//fprintf(stderr, "RSHUTDOWN: request_clients size: %d\n", zend_hash_num_elements(MONGODB_G(request_clients)));
-		zend_hash_destroy(MONGODB_G(request_clients));
-		FREE_HASHTABLE(MONGODB_G(request_clients));
-		MONGODB_G(request_clients) = NULL;
-	}
-
 	/* Destroy HashTable for APM subscribers, which was initialized in RINIT. */
 	if (MONGODB_G(subscribers)) {
 		zend_hash_destroy(MONGODB_G(subscribers));
 		FREE_HASHTABLE(MONGODB_G(subscribers));
 		MONGODB_G(subscribers) = NULL;
+	}
+
+	/* Destroy HashTable for non-persistent clients, which was initialized in
+	 * RINIT. This is intentionally done after the APM subscribers to allow any
+	 * non-persistent clients still referenced by a subscriber (not removed
+	 * prior to RSHUTDOWN) to be naturally freed by the Manager's free_object
+	 * handler rather than the HashTable's element destructor. */
+	if (MONGODB_G(request_clients)) {
+		zend_hash_destroy(MONGODB_G(request_clients));
+		FREE_HASHTABLE(MONGODB_G(request_clients));
+		MONGODB_G(request_clients) = NULL;
 	}
 
 	/* Destroy HashTable for Managers, which was initialized in RINIT. */
