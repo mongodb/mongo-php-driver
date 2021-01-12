@@ -274,7 +274,7 @@ static PHP_METHOD(Cursor, getServer)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	phongo_server_init(return_value, intern->client, intern->server_id);
+	phongo_server_init(return_value, &intern->manager, intern->server_id);
 } /* }}} */
 
 /* {{{ proto boolean MongoDB\Driver\Cursor::isDead()
@@ -417,7 +417,7 @@ static void php_phongo_cursor_free_object(zend_object* object) /* {{{ */
 	/* If this Cursor was created in a different process, reset the client so
 	 * that mongoc_cursor_destroy does not issue a killCursors command for an
 	 * active cursor owned by a parent process. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	if (intern->cursor) {
 		mongoc_cursor_destroy(intern->cursor);
@@ -445,6 +445,10 @@ static void php_phongo_cursor_free_object(zend_object* object) /* {{{ */
 
 	if (!Z_ISUNDEF(intern->session)) {
 		zval_ptr_dtor(&intern->session);
+	}
+
+	if (!Z_ISUNDEF(intern->manager)) {
+		zval_ptr_dtor(&intern->manager);
 	}
 
 	php_phongo_bson_typemap_dtor(&intern->visitor_data.map);
@@ -532,7 +536,7 @@ static HashTable* php_phongo_cursor_get_debug_info(phongo_compat_object_handler_
 	{
 		zval server;
 
-		phongo_server_init(&server, intern->client, intern->server_id);
+		phongo_server_init(&server, &intern->manager, intern->server_id);
 		ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
 	}
 

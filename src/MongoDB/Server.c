@@ -53,9 +53,9 @@ static PHP_METHOD(Server, executeCommand)
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_RAW, db, command, options, intern->server_id, return_value);
+	phongo_execute_command(&intern->manager, PHONGO_COMMAND_RAW, db, command, options, intern->server_id, return_value);
 
 	if (free_options) {
 		php_phongo_prep_legacy_option_free(options);
@@ -85,9 +85,9 @@ static PHP_METHOD(Server, executeReadCommand)
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_READ, db, command, options, intern->server_id, return_value);
+	phongo_execute_command(&intern->manager, PHONGO_COMMAND_READ, db, command, options, intern->server_id, return_value);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
@@ -113,9 +113,9 @@ static PHP_METHOD(Server, executeWriteCommand)
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated. and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_WRITE, db, command, options, intern->server_id, return_value);
+	phongo_execute_command(&intern->manager, PHONGO_COMMAND_WRITE, db, command, options, intern->server_id, return_value);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeReadWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
@@ -141,9 +141,9 @@ static PHP_METHOD(Server, executeReadWriteCommand)
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
-	phongo_execute_command(intern->client, PHONGO_COMMAND_READ_WRITE, db, command, options, intern->server_id, return_value);
+	phongo_execute_command(&intern->manager, PHONGO_COMMAND_READ_WRITE, db, command, options, intern->server_id, return_value);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeQuery(string $namespace, MongoDB\Driver\Query $query[, array $options = null]))
@@ -172,9 +172,9 @@ static PHP_METHOD(Server, executeQuery)
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
 	 * session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
-	phongo_execute_query(intern->client, namespace, query, options, intern->server_id, return_value);
+	phongo_execute_query(&intern->manager, namespace, query, options, intern->server_id, return_value);
 
 	if (free_options) {
 		php_phongo_prep_legacy_option_free(options);
@@ -210,9 +210,9 @@ static PHP_METHOD(Server, executeBulkWrite)
 
 	/* If the Server was created in a different process, reset the client so
 	 * that its session pool is cleared. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
-	phongo_execute_bulk_write(intern->client, namespace, bulk, options, intern->server_id, return_value);
+	phongo_execute_bulk_write(&intern->manager, namespace, bulk, options, intern->server_id, return_value);
 
 	if (free_options) {
 		php_phongo_prep_legacy_option_free(options);
@@ -236,7 +236,7 @@ static PHP_METHOD(Server, getHost)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_STRING(mongoc_server_description_host(sd)->host);
 		mongoc_server_description_destroy(sd);
 		return;
@@ -262,7 +262,7 @@ static PHP_METHOD(Server, getTags)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		const bson_t* is_master = mongoc_server_description_ismaster(sd);
 		bson_iter_t   iter;
 
@@ -311,7 +311,7 @@ static PHP_METHOD(Server, getInfo)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		const bson_t*         is_master = mongoc_server_description_ismaster(sd);
 		php_phongo_bson_state state;
 
@@ -349,7 +349,7 @@ static PHP_METHOD(Server, getLatency)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_LONG((zend_long) mongoc_server_description_round_trip_time(sd));
 		mongoc_server_description_destroy(sd);
 		return;
@@ -375,7 +375,7 @@ static PHP_METHOD(Server, getPort)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_LONG(mongoc_server_description_host(sd)->port);
 		mongoc_server_description_destroy(sd);
 		return;
@@ -401,7 +401,7 @@ static PHP_METHOD(Server, getType)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_LONG(php_phongo_server_description_type(sd));
 		mongoc_server_description_destroy(sd);
 		return;
@@ -427,7 +427,7 @@ static PHP_METHOD(Server, isPrimary)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_BOOL(!strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_PRIMARY].name));
 		mongoc_server_description_destroy(sd);
 		return;
@@ -453,7 +453,7 @@ static PHP_METHOD(Server, isSecondary)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_BOOL(!strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_SECONDARY].name));
 		mongoc_server_description_destroy(sd);
 		return;
@@ -479,7 +479,7 @@ static PHP_METHOD(Server, isArbiter)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_BOOL(!strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_ARBITER].name));
 		mongoc_server_description_destroy(sd);
 		return;
@@ -505,7 +505,7 @@ static PHP_METHOD(Server, isHidden)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		bson_iter_t iter;
 
 		RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_ismaster(sd), "hidden") && bson_iter_as_bool(&iter));
@@ -533,7 +533,7 @@ static PHP_METHOD(Server, isPassive)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		bson_iter_t iter;
 
 		RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_ismaster(sd), "passive") && bson_iter_as_bool(&iter));
@@ -613,8 +613,8 @@ static int php_phongo_server_compare_objects(zval* o1, zval* o2) /* {{{ */
 	intern1 = Z_SERVER_OBJ_P(o1);
 	intern2 = Z_SERVER_OBJ_P(o2);
 
-	sd1 = mongoc_client_get_server_description(intern1->client, intern1->server_id);
-	sd2 = mongoc_client_get_server_description(intern2->client, intern2->server_id);
+	sd1 = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern1->manager)->client, intern1->server_id);
+	sd2 = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern2->manager)->client, intern2->server_id);
 
 	if (sd1 && sd2) {
 		retval = strcasecmp(mongoc_server_description_host(sd1)->host_and_port, mongoc_server_description_host(sd2)->host_and_port);
@@ -638,6 +638,10 @@ static void php_phongo_server_free_object(zend_object* object) /* {{{ */
 	php_phongo_server_t* intern = Z_OBJ_SERVER(object);
 
 	zend_object_std_dtor(&intern->std);
+
+	if (!Z_ISUNDEF(intern->manager)) {
+		zval_ptr_dtor(&intern->manager);
+	}
 } /* }}} */
 
 static zend_object* php_phongo_server_create_object(zend_class_entry* class_type) /* {{{ */
@@ -665,7 +669,7 @@ static HashTable* php_phongo_server_get_debug_info(phongo_compat_object_handler_
 	*is_temp = 1;
 	intern   = Z_OBJ_SERVER(PHONGO_COMPAT_GET_OBJ(object));
 
-	if (!(sd = mongoc_client_get_server_description(intern->client, intern->server_id))) {
+	if (!(sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 		return NULL;
 	}

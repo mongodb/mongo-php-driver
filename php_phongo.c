@@ -307,7 +307,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char* log_domain,
 /* }}} */
 
 /* {{{ Init objects */
-static void phongo_cursor_init(zval* return_value, mongoc_client_t* client, mongoc_cursor_t* cursor, zval* readPreference, zval* session) /* {{{ */
+static void phongo_cursor_init(zval* return_value, zval* manager, mongoc_cursor_t* cursor, zval* readPreference, zval* session) /* {{{ */
 {
 	php_phongo_cursor_t* intern;
 
@@ -316,9 +316,10 @@ static void phongo_cursor_init(zval* return_value, mongoc_client_t* client, mong
 	intern            = Z_CURSOR_OBJ_P(return_value);
 	intern->cursor    = cursor;
 	intern->server_id = mongoc_cursor_get_hint(cursor);
-	intern->client    = client;
 	intern->advanced  = false;
 	intern->current   = 0;
+
+	ZVAL_ZVAL(&intern->manager, manager, 1, 0);
 
 	if (readPreference) {
 		ZVAL_ZVAL(&intern->read_preference, readPreference, 1, 0);
@@ -329,11 +330,11 @@ static void phongo_cursor_init(zval* return_value, mongoc_client_t* client, mong
 	}
 } /* }}} */
 
-static void phongo_cursor_init_for_command(zval* return_value, mongoc_client_t* client, mongoc_cursor_t* cursor, const char* db, zval* command, zval* readPreference, zval* session) /* {{{ */
+static void phongo_cursor_init_for_command(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* db, zval* command, zval* readPreference, zval* session) /* {{{ */
 {
 	php_phongo_cursor_t* intern;
 
-	phongo_cursor_init(return_value, client, cursor, readPreference, session);
+	phongo_cursor_init(return_value, manager, cursor, readPreference, session);
 	intern = Z_CURSOR_OBJ_P(return_value);
 
 	intern->database = estrdup(db);
@@ -341,11 +342,11 @@ static void phongo_cursor_init_for_command(zval* return_value, mongoc_client_t* 
 	ZVAL_ZVAL(&intern->command, command, 1, 0);
 } /* }}} */
 
-static void phongo_cursor_init_for_query(zval* return_value, mongoc_client_t* client, mongoc_cursor_t* cursor, const char* namespace, zval* query, zval* readPreference, zval* session) /* {{{ */
+static void phongo_cursor_init_for_query(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* namespace, zval* query, zval* readPreference, zval* session) /* {{{ */
 {
 	php_phongo_cursor_t* intern;
 
-	phongo_cursor_init(return_value, client, cursor, readPreference, session);
+	phongo_cursor_init(return_value, manager, cursor, readPreference, session);
 	intern = Z_CURSOR_OBJ_P(return_value);
 
 	/* namespace has already been validated by phongo_execute_query() */
@@ -358,7 +359,7 @@ static void phongo_cursor_init_for_query(zval* return_value, mongoc_client_t* cl
 	ZVAL_ZVAL(&intern->query, query, 1, 0);
 } /* }}} */
 
-void phongo_server_init(zval* return_value, mongoc_client_t* client, uint32_t server_id) /* {{{ */
+void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id) /* {{{ */
 {
 	php_phongo_server_t* server;
 
@@ -366,11 +367,12 @@ void phongo_server_init(zval* return_value, mongoc_client_t* client, uint32_t se
 
 	server            = Z_SERVER_OBJ_P(return_value);
 	server->server_id = server_id;
-	server->client    = client;
+
+	ZVAL_ZVAL(&server->manager, manager, 1, 0);
 }
 /* }}} */
 
-void phongo_session_init(zval* return_value, mongoc_client_session_t* client_session) /* {{{ */
+void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session) /* {{{ */
 {
 	php_phongo_session_t* session;
 
@@ -378,7 +380,8 @@ void phongo_session_init(zval* return_value, mongoc_client_session_t* client_ses
 
 	session                 = Z_SESSION_OBJ_P(return_value);
 	session->client_session = client_session;
-	session->client         = mongoc_client_session_get_client(client_session);
+
+	ZVAL_ZVAL(&session->manager, manager, 1, 0);
 }
 /* }}} */
 
@@ -496,7 +499,7 @@ zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson) /* {{{ */
 	return true;
 } /* }}} */
 
-static php_phongo_writeresult_t* phongo_writeresult_init(zval* return_value, bson_t* reply, mongoc_client_t* client, uint32_t server_id) /* {{{ */
+static php_phongo_writeresult_t* phongo_writeresult_init(zval* return_value, bson_t* reply, zval* manager, uint32_t server_id) /* {{{ */
 {
 	php_phongo_writeresult_t* writeresult;
 
@@ -505,7 +508,8 @@ static php_phongo_writeresult_t* phongo_writeresult_init(zval* return_value, bso
 	writeresult            = Z_WRITERESULT_OBJ_P(return_value);
 	writeresult->reply     = bson_copy(reply);
 	writeresult->server_id = server_id;
-	writeresult->client    = client;
+
+	ZVAL_ZVAL(&writeresult->manager, manager, 1, 0);
 
 	return writeresult;
 } /* }}} */
@@ -696,9 +700,10 @@ static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval*
 	return true;
 }
 
-bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
+bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
 {
-	bson_error_t                  error = { 0 };
+	mongoc_client_t*              client = NULL;
+	bson_error_t                  error  = { 0 };
 	int                           success;
 	bson_t                        reply = BSON_INITIALIZER;
 	mongoc_bulk_operation_t*      bulk  = bulk_write->bulk;
@@ -706,6 +711,8 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 	zval*                         zwriteConcern = NULL;
 	zval*                         zsession      = NULL;
 	const mongoc_write_concern_t* write_concern = NULL;
+
+	client = Z_MANAGER_OBJ_P(manager)->client;
 
 	if (bulk_write->executed) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "BulkWrite objects may only be executed once and this instance has already been executed");
@@ -755,7 +762,7 @@ bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, p
 	success              = mongoc_bulk_operation_execute(bulk, &reply, &error);
 	bulk_write->executed = true;
 
-	writeresult                = phongo_writeresult_init(return_value, &reply, client, mongoc_bulk_operation_get_hint(bulk));
+	writeresult                = phongo_writeresult_init(return_value, &reply, manager, mongoc_bulk_operation_get_hint(bulk));
 	writeresult->write_concern = mongoc_write_concern_copy(write_concern);
 
 	/* A BulkWriteException is always thrown if mongoc_bulk_operation_execute()
@@ -822,8 +829,9 @@ bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor) /* {{{ *
 	return true;
 } /* }}} */
 
-bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* zquery, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
+bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
 {
+	mongoc_client_t*          client;
 	const php_phongo_query_t* query;
 	bson_t                    opts = BSON_INITIALIZER;
 	mongoc_cursor_t*          cursor;
@@ -832,6 +840,8 @@ bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* 
 	mongoc_collection_t*      collection;
 	zval*                     zreadPreference = NULL;
 	zval*                     zsession        = NULL;
+
+	client = Z_MANAGER_OBJ_P(manager)->client;
 
 	if (!phongo_split_namespace(namespace, &dbname, &collname)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s: %s", "Invalid namespace provided", namespace);
@@ -884,7 +894,7 @@ bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* 
 		return false;
 	}
 
-	phongo_cursor_init_for_query(return_value, client, cursor, namespace, zquery, zreadPreference, zsession);
+	phongo_cursor_init_for_query(return_value, manager, cursor, namespace, zquery, zreadPreference, zsession);
 
 	return true;
 } /* }}} */
@@ -902,12 +912,12 @@ static bson_t* create_wrapped_command_envelope(const char* db, bson_t* reply)
 	return tmp;
 }
 
-static zval* phongo_create_implicit_session(mongoc_client_t* client) /* {{{ */
+static zval* phongo_create_implicit_session(zval* manager) /* {{{ */
 {
 	mongoc_client_session_t* cs;
 	zval*                    zsession;
 
-	cs = mongoc_client_start_session(client, NULL, NULL);
+	cs = mongoc_client_start_session(Z_MANAGER_OBJ_P(manager)->client, NULL, NULL);
 
 	if (!cs) {
 		return NULL;
@@ -915,13 +925,14 @@ static zval* phongo_create_implicit_session(mongoc_client_t* client) /* {{{ */
 
 	zsession = ecalloc(sizeof(zval), 1);
 
-	phongo_session_init(zsession, cs);
+	phongo_session_init(zsession, manager, cs);
 
 	return zsession;
 } /* }}} */
 
-bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
+bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
 {
+	mongoc_client_t*            client;
 	const php_phongo_command_t* command;
 	bson_iter_t                 iter;
 	bson_t                      reply;
@@ -935,6 +946,7 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 	bool                        free_zsession                   = false;
 	bool                        is_unacknowledged_write_concern = false;
 
+	client  = Z_MANAGER_OBJ_P(manager)->client;
 	command = Z_COMMAND_OBJ_P(zcommand);
 
 	if ((type & PHONGO_OPTION_READ_CONCERN) && !phongo_parse_read_concern(options, &opts)) {
@@ -979,7 +991,7 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 	 * is not unacknowledged, attempt to create an implicit client session
 	 * (ignoring any errors). */
 	if (!zsession && !is_unacknowledged_write_concern) {
-		zsession = phongo_create_implicit_session(client);
+		zsession = phongo_create_implicit_session(manager);
 
 		if (zsession) {
 			free_zsession = true;
@@ -1066,7 +1078,7 @@ bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t t
 		bson_destroy(&cursor_opts);
 	}
 
-	phongo_cursor_init_for_command(return_value, client, cmd_cursor, db, zcommand, zreadPreference, zsession);
+	phongo_cursor_init_for_command(return_value, manager, cmd_cursor, db, zcommand, zreadPreference, zsession);
 
 cleanup:
 	bson_destroy(&opts);
@@ -2328,6 +2340,34 @@ static void php_phongo_dispatch_handlers(const char* name, zval* z_event)
 	ZEND_HASH_FOREACH_END();
 }
 
+/* Search for a Manager associated with the given client in the request-scoped
+ * registry. If any Manager is found, copy it into the output parameter
+ * (incrementing its ref-count) and return true; otherwise, set the output
+ * parameter to undefined and return false. */
+static bool php_phongo_copy_manager_for_client(mongoc_client_t* client, zval* out)
+{
+	php_phongo_manager_t* manager;
+
+	if (!MONGODB_G(managers) || zend_hash_num_elements(MONGODB_G(managers)) == 0) {
+		return false;
+	}
+
+	ZEND_HASH_FOREACH_PTR(MONGODB_G(managers), manager)
+	{
+		if (manager->client == client) {
+			ZVAL_OBJ(out, &manager->std);
+			Z_ADDREF_P(out);
+
+			return true;
+		}
+	}
+	ZEND_HASH_FOREACH_END();
+
+	ZVAL_UNDEF(out);
+
+	return false;
+}
+
 static void php_phongo_command_started(const mongoc_apm_command_started_t* event)
 {
 	php_phongo_commandstartedevent_t* p_event;
@@ -2341,13 +2381,19 @@ static void php_phongo_command_started(const mongoc_apm_command_started_t* event
 	object_init_ex(&z_event, php_phongo_commandstartedevent_ce);
 	p_event = Z_COMMANDSTARTEDEVENT_OBJ_P(&z_event);
 
-	p_event->client        = mongoc_apm_command_started_get_context(event);
 	p_event->command_name  = estrdup(mongoc_apm_command_started_get_command_name(event));
 	p_event->server_id     = mongoc_apm_command_started_get_server_id(event);
 	p_event->operation_id  = mongoc_apm_command_started_get_operation_id(event);
 	p_event->request_id    = mongoc_apm_command_started_get_request_id(event);
 	p_event->command       = bson_copy(mongoc_apm_command_started_get_command(event));
 	p_event->database_name = estrdup(mongoc_apm_command_started_get_database_name(event));
+
+	if (!php_phongo_copy_manager_for_client(mongoc_apm_command_started_get_context(event), &p_event->manager)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Found no Manager for client in APM event context");
+		zval_ptr_dtor(&z_event);
+
+		return;
+	}
 
 	php_phongo_dispatch_handlers("commandStarted", &z_event);
 	zval_ptr_dtor(&z_event);
@@ -2366,13 +2412,19 @@ static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t* e
 	object_init_ex(&z_event, php_phongo_commandsucceededevent_ce);
 	p_event = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(&z_event);
 
-	p_event->client          = mongoc_apm_command_succeeded_get_context(event);
 	p_event->command_name    = estrdup(mongoc_apm_command_succeeded_get_command_name(event));
 	p_event->server_id       = mongoc_apm_command_succeeded_get_server_id(event);
 	p_event->operation_id    = mongoc_apm_command_succeeded_get_operation_id(event);
 	p_event->request_id      = mongoc_apm_command_succeeded_get_request_id(event);
 	p_event->duration_micros = mongoc_apm_command_succeeded_get_duration(event);
 	p_event->reply           = bson_copy(mongoc_apm_command_succeeded_get_reply(event));
+
+	if (!php_phongo_copy_manager_for_client(mongoc_apm_command_succeeded_get_context(event), &p_event->manager)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Found no Manager for client in APM event context");
+		zval_ptr_dtor(&z_event);
+
+		return;
+	}
 
 	php_phongo_dispatch_handlers("commandSucceeded", &z_event);
 	zval_ptr_dtor(&z_event);
@@ -2395,13 +2447,19 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 	object_init_ex(&z_event, php_phongo_commandfailedevent_ce);
 	p_event = Z_COMMANDFAILEDEVENT_OBJ_P(&z_event);
 
-	p_event->client          = mongoc_apm_command_failed_get_context(event);
 	p_event->command_name    = estrdup(mongoc_apm_command_failed_get_command_name(event));
 	p_event->server_id       = mongoc_apm_command_failed_get_server_id(event);
 	p_event->operation_id    = mongoc_apm_command_failed_get_operation_id(event);
 	p_event->request_id      = mongoc_apm_command_failed_get_request_id(event);
 	p_event->duration_micros = mongoc_apm_command_failed_get_duration(event);
 	p_event->reply           = bson_copy(mongoc_apm_command_failed_get_reply(event));
+
+	if (!php_phongo_copy_manager_for_client(mongoc_apm_command_failed_get_context(event), &p_event->manager)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Found no Manager for client in APM event context");
+		zval_ptr_dtor(&z_event);
+
+		return;
+	}
 
 	/* We need to process and convert the error right here, otherwise
 	 * debug_info will turn into a recursive loop, and with the wrong trace
@@ -2417,16 +2475,21 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 }
 
 /* Sets the callbacks for APM */
-int php_phongo_set_monitoring_callbacks(mongoc_client_t* client)
+bool php_phongo_set_monitoring_callbacks(mongoc_client_t* client)
 {
-	int retval;
+	bool retval;
 
 	mongoc_apm_callbacks_t* callbacks = mongoc_apm_callbacks_new();
 
 	mongoc_apm_set_command_started_cb(callbacks, php_phongo_command_started);
 	mongoc_apm_set_command_succeeded_cb(callbacks, php_phongo_command_succeeded);
 	mongoc_apm_set_command_failed_cb(callbacks, php_phongo_command_failed);
+
 	retval = mongoc_client_set_apm_callbacks(client, callbacks, client);
+
+	if (!retval) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Failed to set APM callbacks");
+	}
 
 	mongoc_apm_callbacks_destroy(callbacks);
 
@@ -2692,21 +2755,69 @@ static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zv
 	return mongoc_client_new_from_uri(uri);
 } /* }}} */
 
-static void php_phongo_persist_client(const char* hash, size_t hash_len, mongoc_client_t* client)
+/* Adds a client to the appropriate registry. Persistent and request-scoped
+ * clients each have their own registries (i.e. HashTables), which use different
+ * forms of memory allocation. Both registries are used for PID tracking.
+ * Returns true if the client was successfully added; otherwise, false. */
+bool php_phongo_client_register(php_phongo_manager_t* manager)
 {
-	php_phongo_pclient_t* pclient = (php_phongo_pclient_t*) pecalloc(1, sizeof(php_phongo_pclient_t), 1);
+	bool                  is_persistent = manager->use_persistent_client;
+	php_phongo_pclient_t* pclient       = pecalloc(1, sizeof(php_phongo_pclient_t), is_persistent);
 
+	pclient->client         = manager->client;
 	pclient->created_by_pid = (int) getpid();
-	pclient->client         = client;
+	pclient->is_persistent  = is_persistent;
 
-	zend_hash_str_update_ptr(&MONGODB_G(pclients), hash, hash_len, pclient);
+	if (is_persistent) {
+		MONGOC_DEBUG("Stored persistent client with hash: %s", manager->client_hash);
+		return zend_hash_str_update_ptr(&MONGODB_G(persistent_clients), manager->client_hash, manager->client_hash_len, pclient) != NULL;
+	} else {
+		MONGOC_DEBUG("Stored non-persistent client");
+		return zend_hash_next_index_insert_ptr(MONGODB_G(request_clients), pclient) != NULL;
+	}
 }
 
-static mongoc_client_t* php_phongo_find_client(const char* hash, size_t hash_len)
+/* Removes a client from the request-scoped registry. This function is a NOP for
+ * persistent clients, since they are destroyed along with their registry (i.e.
+ * HashTable) in MSHUTDOWN. Returns true if the client was successfully removed;
+ * otherwise, false. */
+bool php_phongo_client_unregister(php_phongo_manager_t* manager)
 {
+	zend_ulong            index;
 	php_phongo_pclient_t* pclient;
 
-	if ((pclient = zend_hash_str_find_ptr(&MONGODB_G(pclients), hash, hash_len)) != NULL) {
+	/* Persistent clients do not get unregistered. */
+	if (manager->use_persistent_client) {
+		MONGOC_DEBUG("Not destroying persistent client for Manager");
+
+		return false;
+	}
+
+	/* Ensure the request-scoped registry is initialized. This is needed because
+	 * RSHUTDOWN may occur before a Manager's free_object handler is
+	 * executed. */
+	if (MONGODB_G(request_clients) == NULL) {
+		return false;
+	}
+
+	ZEND_HASH_FOREACH_NUM_KEY_PTR(MONGODB_G(request_clients), index, pclient)
+	{
+		if (pclient->client == manager->client) {
+			MONGOC_DEBUG("Destroying non-persistent client for Manager");
+
+			return zend_hash_index_del(MONGODB_G(request_clients), index) == SUCCESS;
+		}
+	}
+	ZEND_HASH_FOREACH_END();
+
+	return false;
+}
+
+static mongoc_client_t* php_phongo_find_persistent_client(const char* hash, size_t hash_len)
+{
+	php_phongo_pclient_t* pclient = zend_hash_str_find_ptr(&MONGODB_G(persistent_clients), hash, hash_len);
+
+	if (pclient) {
 		return pclient->client;
 	}
 
@@ -2742,7 +2853,20 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 			goto cleanup;
 		}
 
+		/* Ensure the Manager and keyVaultClient are consistent in their use of
+		 * persistent clients. A non-persistent Manager could theoretically use
+		 * a persistent keyVaultClient, but this prohibition may help prevent
+		 * users from inadvertently creating a persistent keyVaultClient. */
+		if (manager->use_persistent_client != Z_MANAGER_OBJ_P(key_vault_client)->use_persistent_client) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "The \"disableClientPersistence\" option for a Manager and its \"keyVaultClient\" must be the same");
+			goto cleanup;
+		}
+
 		mongoc_auto_encryption_opts_set_keyvault_client(auto_encryption_opts, Z_MANAGER_OBJ_P(key_vault_client)->client);
+
+		/* Copy the keyVaultClient to the Manager to allow for ref-counting (for
+		 * non-persistent clients) and reset-on-fork behavior. */
+		ZVAL_ZVAL(&manager->key_vault_client_manager, key_vault_client, 1, 0);
 	}
 
 	if (php_array_existsc(zAutoEncryptionOpts, "keyVaultNamespace")) {
@@ -2845,13 +2969,18 @@ cleanup:
 }
 /* }}} */
 
-static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(mongoc_client_t* defaultKeyVaultClient, zval* options) /* {{{ */
+/* keyVaultClientManager is an output parameter and will be assigned the
+ * keyVaultNamespace Manager (if any). */
+static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(zval* defaultKeyVaultClient, zval* options, zval** keyVaultClientManager) /* {{{ */
 {
 	mongoc_client_encryption_opts_t* opts;
 
-	opts = mongoc_client_encryption_opts_new();
+	opts                   = mongoc_client_encryption_opts_new();
+	*keyVaultClientManager = NULL;
 
 	if (!options || Z_TYPE_P(options) != IS_ARRAY) {
+		/* Returning opts as-is will defer to mongoc_client_encryption_new to
+		 * raise an error for missing required options */
 		return opts;
 	}
 
@@ -2864,8 +2993,10 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(m
 		}
 
 		mongoc_client_encryption_opts_set_keyvault_client(opts, Z_MANAGER_OBJ_P(key_vault_client)->client);
+		*keyVaultClientManager = key_vault_client;
 	} else {
-		mongoc_client_encryption_opts_set_keyvault_client(opts, defaultKeyVaultClient);
+		mongoc_client_encryption_opts_set_keyvault_client(opts, Z_MANAGER_OBJ_P(defaultKeyVaultClient)->client);
+		*keyVaultClientManager = defaultKeyVaultClient;
 	}
 
 	if (php_array_existsc(options, "keyVaultNamespace")) {
@@ -2924,13 +3055,14 @@ cleanup:
 	return NULL;
 } /* }}} */
 
-void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryption, mongoc_client_t* client, zval* options) /* {{{ */
+void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryption, zval* manager, zval* options) /* {{{ */
 {
 	mongoc_client_encryption_t*      ce;
 	mongoc_client_encryption_opts_t* opts;
-	bson_error_t                     error = { 0 };
+	zval*                            key_vault_client_manager = manager;
+	bson_error_t                     error                    = { 0 };
 
-	opts = phongo_clientencryption_opts_from_zval(client, options);
+	opts = phongo_clientencryption_opts_from_zval(manager, options, &key_vault_client_manager);
 	if (!opts) {
 		/* Exception already thrown */
 		goto cleanup;
@@ -2944,6 +3076,7 @@ void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryptio
 	}
 
 	clientencryption->client_encryption = ce;
+	ZVAL_ZVAL(&clientencryption->key_vault_client_manager, key_vault_client_manager, 1, 0);
 
 cleanup:
 	if (opts) {
@@ -3196,7 +3329,7 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 }
 /* }}} */
 
-void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryption, mongoc_client_t* client, zval* options) /* {{{ */
+void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryption, zval* manager, zval* options) /* {{{ */
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot configure clientEncryption object.");
 }
@@ -3234,8 +3367,14 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		return;
 	}
 
-	if ((manager->client = php_phongo_find_client(manager->client_hash, manager->client_hash_len))) {
-		MONGOC_DEBUG("Found client for hash: %s\n", manager->client_hash);
+	if (driverOptions && php_array_existsc(driverOptions, "disableClientPersistence")) {
+		manager->use_persistent_client = !php_array_fetchc_bool(driverOptions, "disableClientPersistence");
+	} else {
+		manager->use_persistent_client = true;
+	}
+
+	if (manager->use_persistent_client && (manager->client = php_phongo_find_persistent_client(manager->client_hash, manager->client_hash_len))) {
+		MONGOC_DEBUG("Found client for hash: %s", manager->client_hash);
 		goto cleanup;
 	}
 
@@ -3304,8 +3443,16 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		goto cleanup;
 	}
 
-	MONGOC_DEBUG("Created client hash: %s\n", manager->client_hash);
-	php_phongo_persist_client(manager->client_hash, manager->client_hash_len, manager->client);
+	php_phongo_set_monitoring_callbacks(manager->client);
+
+	MONGOC_DEBUG("Created client with hash: %s", manager->client_hash);
+
+	/* Register the newly created client in the appropriate registry (for either
+	 * persistent or request-scoped clients). */
+	if (!php_phongo_client_register(manager)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Failed to add Manager client to internal registry");
+		goto cleanup;
+	}
 
 cleanup:
 	bson_destroy(&bson_options);
@@ -3445,23 +3592,23 @@ static void phongo_pclient_reset_once(php_phongo_pclient_t* pclient, int pid)
  * PID (based on information in the hash table of persisted libmongoc clients).
  * This ensures that we do not reset a client multiple times from the same child
  * process. */
-void php_phongo_client_reset_once(mongoc_client_t* client, int pid)
+void php_phongo_client_reset_once(php_phongo_manager_t* manager, int pid)
 {
-	HashTable*            pclients;
-	zval*                 z_ptr;
 	php_phongo_pclient_t* pclient;
 
-	pclients = &MONGODB_G(pclients);
+	if (manager->use_persistent_client) {
+		pclient = zend_hash_str_find_ptr(&MONGODB_G(persistent_clients), manager->client_hash, manager->client_hash_len);
 
-	ZEND_HASH_FOREACH_VAL(pclients, z_ptr)
-	{
-		if ((Z_TYPE_P(z_ptr) != IS_PTR)) {
-			continue;
+		if (pclient) {
+			phongo_pclient_reset_once(pclient, pid);
 		}
 
-		pclient = (php_phongo_pclient_t*) Z_PTR_P(z_ptr);
+		return;
+	}
 
-		if (pclient->client == client) {
+	ZEND_HASH_FOREACH_PTR(MONGODB_G(request_clients), pclient)
+	{
+		if (pclient->client == manager->client) {
 			phongo_pclient_reset_once(pclient, pid);
 			return;
 		}
@@ -3469,27 +3616,124 @@ void php_phongo_client_reset_once(mongoc_client_t* client, int pid)
 	ZEND_HASH_FOREACH_END();
 }
 
-static inline void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
+static void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
 {
 	/* Do not destroy mongoc_client_t objects created by other processes. This
 	 * ensures that we do not shutdown sockets that may still be in use by our
-	 * parent process (see: CDRIVER-2049). While this is a leak, we are already
-	 * in MSHUTDOWN at this point. */
+	 * parent process (see: PHPC-1522).
+	 *
+	 * This is a leak; however, we are already in MSHUTDOWN for a persistent
+	 * clients. For a request-scoped client, we are either in the Manager's
+	 * free_object handler or RSHUTDOWN, but there the application is capable of
+	 * freeing its Manager and its client before forking. */
 	if (pclient->created_by_pid == getpid()) {
+		/* Single-threaded clients may run commands (e.g. endSessions) from
+		 * mongoc_client_destroy, so disable APM to ensure an event is not
+		 * dispatched while destroying the Manager and its client. This means
+		 * that certain shutdown commands cannot be observed unless APM is
+		 * redesigned to not reference a client (see: PHPC-1666).
+		 *
+		 * Note: this only relevant for request-scoped clients. APM subscribers
+		 * will not exist when persistent clients are destroyed in MSHUTDOWN. */
+		mongoc_client_set_apm_callbacks(pclient->client, NULL, NULL);
 		mongoc_client_destroy(pclient->client);
 	}
 
-	pefree(pclient, 1);
+	/* Persistent and request-scoped clients use different memory allocation */
+	pefree(pclient, pclient->is_persistent);
+}
+
+/* Returns whether a Manager exists in the request-scoped registry. If found and
+ * the output parameter is non-NULL, the Manager's index will be assigned. */
+static bool php_phongo_manager_exists(php_phongo_manager_t* manager, zend_ulong* index_out)
+{
+	zend_ulong            index;
+	php_phongo_manager_t* value;
+
+	if (!MONGODB_G(managers) || zend_hash_num_elements(MONGODB_G(managers)) == 0) {
+		return false;
+	}
+
+	ZEND_HASH_FOREACH_NUM_KEY_PTR(MONGODB_G(managers), index, value)
+	{
+		if (value != manager) {
+			continue;
+		}
+
+		if (index_out) {
+			*index_out = index;
+		}
+
+		return true;
+	}
+	ZEND_HASH_FOREACH_END();
+
+	return false;
+}
+
+/* Adds a Manager to the request-scoped registry. Returns true if the Manager
+ * did not exist and was successfully added; otherwise, returns false. */
+bool php_phongo_manager_register(php_phongo_manager_t* manager)
+{
+	if (!MONGODB_G(managers)) {
+		return false;
+	}
+
+	if (php_phongo_manager_exists(manager, NULL)) {
+		return false;
+	}
+
+	return zend_hash_next_index_insert_ptr(MONGODB_G(managers), manager) != NULL;
+}
+
+/* Removes a Manager from the request-scoped registry. Returns true if the
+ * Manager was found and successfully removed; otherwise, false is returned. */
+bool php_phongo_manager_unregister(php_phongo_manager_t* manager)
+{
+	zend_ulong index;
+
+	/* Ensure the registry is initialized. This is needed because RSHUTDOWN may
+	 * occur before a Manager's free_object handler is executed. */
+	if (!MONGODB_G(managers)) {
+		return false;
+	}
+
+	if (php_phongo_manager_exists(manager, &index)) {
+		return zend_hash_index_del(MONGODB_G(managers), index) == SUCCESS;
+	}
+
+	return false;
+}
+
+static void php_phongo_pclient_destroy_ptr(zval* ptr)
+{
+	php_phongo_pclient_destroy(Z_PTR_P(ptr));
 }
 
 /* {{{ PHP_RINIT_FUNCTION */
 PHP_RINIT_FUNCTION(mongodb)
 {
+	/* Initialize HashTable for non-persistent clients, which is initialized to
+	 * NULL in GINIT and destroyed and reset to NULL in RSHUTDOWN. */
+	if (MONGODB_G(request_clients) == NULL) {
+		ALLOC_HASHTABLE(MONGODB_G(request_clients));
+		zend_hash_init(MONGODB_G(request_clients), 0, NULL, php_phongo_pclient_destroy_ptr, 0);
+	}
+
 	/* Initialize HashTable for APM subscribers, which is initialized to NULL in
 	 * GINIT and destroyed and reset to NULL in RSHUTDOWN. */
 	if (MONGODB_G(subscribers) == NULL) {
 		ALLOC_HASHTABLE(MONGODB_G(subscribers));
 		zend_hash_init(MONGODB_G(subscribers), 0, NULL, ZVAL_PTR_DTOR, 0);
+	}
+
+	/* Initialize HashTable for registering Manager objects. This is initialized
+	 * to NULL in GINIT and destroyed and reset to NULL in RSHUTDOWN. Since this
+	 * HashTable stores pointers to existing php_phongo_manager_t objects, the
+	 * element destructor is intentionally NULL. */
+	if (MONGODB_G(managers) == NULL) {
+		ALLOC_HASHTABLE(MONGODB_G(managers));
+		zend_hash_init(MONGODB_G(managers), 0, NULL, NULL, 0);
 	}
 
 	return SUCCESS;
@@ -3512,7 +3756,7 @@ PHP_GINIT_FUNCTION(mongodb)
 	mongodb_globals->bsonMemVTable = bsonMemVTable;
 
 	/* Initialize HashTable for persistent clients */
-	zend_hash_init(&mongodb_globals->pclients, 0, NULL, NULL, 1);
+	zend_hash_init(&mongodb_globals->persistent_clients, 0, NULL, NULL, 1);
 }
 /* }}} */
 
@@ -3658,25 +3902,20 @@ PHP_MINIT_FUNCTION(mongodb)
 /* {{{ PHP_MSHUTDOWN_FUNCTION */
 PHP_MSHUTDOWN_FUNCTION(mongodb)
 {
-	HashTable* pclients = &MONGODB_G(pclients);
-	zval*      z_ptr;
-	(void) type; /* We don't care if we are loaded via dl() or extension= */
+	php_phongo_pclient_t* pclient;
 
 	/* Destroy mongoc_client_t objects in reverse order. This is necessary to
 	 * prevent segmentation faults as clients may reference other clients in
 	 * encryption settings. */
-	ZEND_HASH_REVERSE_FOREACH_VAL(pclients, z_ptr)
+	ZEND_HASH_REVERSE_FOREACH_PTR(&MONGODB_G(persistent_clients), pclient)
 	{
-		if ((Z_TYPE_P(z_ptr) != IS_PTR)) {
-			continue;
-		}
-
-		php_phongo_pclient_destroy((php_phongo_pclient_t*) Z_PTR_P(z_ptr));
+		php_phongo_pclient_destroy(pclient);
 	}
 	ZEND_HASH_FOREACH_END();
 
-	/* Destroy HashTable for persistent clients. mongoc_client_t objects have been destroyed earlier. */
-	zend_hash_destroy(&MONGODB_G(pclients));
+	/* Destroy HashTable for persistent clients. mongoc_client_t objects have
+	 * already been destroyed. */
+	zend_hash_destroy(&MONGODB_G(persistent_clients));
 
 	bson_mem_restore_vtable();
 	/* Cleanup after libmongoc */
@@ -3691,11 +3930,29 @@ PHP_MSHUTDOWN_FUNCTION(mongodb)
 /* {{{ PHP_RSHUTDOWN_FUNCTION */
 PHP_RSHUTDOWN_FUNCTION(mongodb)
 {
-	/* Destroy HashTable for APM subscribers, which was initialized in RINIT */
+	/* Destroy HashTable for APM subscribers, which was initialized in RINIT. */
 	if (MONGODB_G(subscribers)) {
 		zend_hash_destroy(MONGODB_G(subscribers));
 		FREE_HASHTABLE(MONGODB_G(subscribers));
 		MONGODB_G(subscribers) = NULL;
+	}
+
+	/* Destroy HashTable for non-persistent clients, which was initialized in
+	 * RINIT. This is intentionally done after the APM subscribers to allow any
+	 * non-persistent clients still referenced by a subscriber (not removed
+	 * prior to RSHUTDOWN) to be naturally freed by the Manager's free_object
+	 * handler rather than the HashTable's element destructor. */
+	if (MONGODB_G(request_clients)) {
+		zend_hash_destroy(MONGODB_G(request_clients));
+		FREE_HASHTABLE(MONGODB_G(request_clients));
+		MONGODB_G(request_clients) = NULL;
+	}
+
+	/* Destroy HashTable for Managers, which was initialized in RINIT. */
+	if (MONGODB_G(managers)) {
+		zend_hash_destroy(MONGODB_G(managers));
+		FREE_HASHTABLE(MONGODB_G(managers));
+		MONGODB_G(managers) = NULL;
 	}
 
 	return SUCCESS;

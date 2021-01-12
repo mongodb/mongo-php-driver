@@ -280,7 +280,7 @@ static PHP_METHOD(Session, getServer)
 		RETURN_NULL();
 	}
 
-	phongo_server_init(return_value, intern->client, server_id);
+	phongo_server_init(return_value, &intern->manager, server_id);
 } /* }}} */
 
 /* {{{ proto array|null MongoDB\Driver\Session::getTransactionOptions()
@@ -645,10 +645,14 @@ static void php_phongo_session_free_object(zend_object* object) /* {{{ */
 	 * destroy the corresponding server session rather than return it to the
 	 * now-empty pool. This will ensure that we do not re-use a server session
 	 * (i.e. LSID) created by a parent process. */
-	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern);
+	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	if (intern->client_session) {
 		mongoc_client_session_destroy(intern->client_session);
+	}
+
+	if (!Z_ISUNDEF(intern->manager)) {
+		zval_ptr_dtor(&intern->manager);
 	}
 } /* }}} */
 
@@ -751,7 +755,7 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 
 			zval server;
 
-			phongo_server_init(&server, intern->client, server_id);
+			phongo_server_init(&server, &intern->manager, server_id);
 			ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "server");

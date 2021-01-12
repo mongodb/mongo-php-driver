@@ -130,6 +130,12 @@ static void php_phongo_clientencryption_free_object(zend_object* object) /* {{{ 
 	if (intern->client_encryption) {
 		mongoc_client_encryption_destroy(intern->client_encryption);
 	}
+
+	/* Free the keyVaultClient last to ensure that a potential non-persistent
+	 * client outlives the mongoc_client_encryption_t as needed */
+	if (!Z_ISUNDEF(intern->key_vault_client_manager)) {
+		zval_ptr_dtor(&intern->key_vault_client_manager);
+	}
 } /* }}} */
 
 static zend_object* php_phongo_clientencryption_create_object(zend_class_entry* class_type) /* {{{ */

@@ -35,6 +35,7 @@ typedef struct {
 
 typedef struct {
 	mongoc_client_encryption_t* client_encryption;
+	zval                        key_vault_client_manager;
 	zend_object                 std;
 } php_phongo_clientencryption_t;
 
@@ -47,7 +48,7 @@ typedef struct {
 
 typedef struct {
 	mongoc_cursor_t*      cursor;
-	mongoc_client_t*      client;
+	zval                  manager;
 	int                   created_by_pid;
 	uint32_t              server_id;
 	bool                  advanced;
@@ -72,6 +73,8 @@ typedef struct {
 	int              created_by_pid;
 	char*            client_hash;
 	size_t           client_hash_len;
+	bool             use_persistent_client;
+	zval             key_vault_client_manager;
 	zend_object      std;
 } php_phongo_manager_t;
 
@@ -96,15 +99,15 @@ typedef struct {
 } php_phongo_readpreference_t;
 
 typedef struct {
-	mongoc_client_t* client;
-	int              created_by_pid;
-	uint32_t         server_id;
-	zend_object      std;
+	zval        manager;
+	int         created_by_pid;
+	uint32_t    server_id;
+	zend_object std;
 } php_phongo_server_t;
 
 typedef struct {
 	mongoc_client_session_t* client_session;
-	mongoc_client_t*         client;
+	zval                     manager;
 	int                      created_by_pid;
 	zend_object              std;
 } php_phongo_session_t;
@@ -133,7 +136,7 @@ typedef struct {
 typedef struct {
 	mongoc_write_concern_t* write_concern;
 	bson_t*                 reply;
-	mongoc_client_t*        client;
+	zval                    manager;
 	uint32_t                server_id;
 	zend_object             std;
 } php_phongo_writeresult_t;
@@ -227,37 +230,37 @@ typedef struct {
 } php_phongo_utcdatetime_t;
 
 typedef struct {
-	mongoc_client_t* client;
-	char*            command_name;
-	uint32_t         server_id;
-	uint64_t         operation_id;
-	uint64_t         request_id;
-	uint64_t         duration_micros;
-	bson_t*          reply;
-	zval             z_error;
-	zend_object      std;
+	zval        manager;
+	char*       command_name;
+	uint32_t    server_id;
+	uint64_t    operation_id;
+	uint64_t    request_id;
+	uint64_t    duration_micros;
+	bson_t*     reply;
+	zval        z_error;
+	zend_object std;
 } php_phongo_commandfailedevent_t;
 
 typedef struct {
-	mongoc_client_t* client;
-	char*            command_name;
-	uint32_t         server_id;
-	uint64_t         operation_id;
-	uint64_t         request_id;
-	bson_t*          command;
-	char*            database_name;
-	zend_object      std;
+	zval        manager;
+	char*       command_name;
+	uint32_t    server_id;
+	uint64_t    operation_id;
+	uint64_t    request_id;
+	bson_t*     command;
+	char*       database_name;
+	zend_object std;
 } php_phongo_commandstartedevent_t;
 
 typedef struct {
-	mongoc_client_t* client;
-	char*            command_name;
-	uint32_t         server_id;
-	uint64_t         operation_id;
-	uint64_t         request_id;
-	uint64_t         duration_micros;
-	bson_t*          reply;
-	zend_object      std;
+	zval        manager;
+	char*       command_name;
+	uint32_t    server_id;
+	uint64_t    operation_id;
+	uint64_t    request_id;
+	uint64_t    duration_micros;
+	bson_t*     reply;
+	zend_object std;
 } php_phongo_commandsucceededevent_t;
 
 #endif /* PHONGO_STRUCTS */

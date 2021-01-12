@@ -28,21 +28,25 @@
 #define phpext_mongodb_ptr &mongodb_module_entry
 extern zend_module_entry mongodb_module_entry;
 
-/* Structure for persisted libmongoc clients. The PID is included to ensure that
- * processes do not destroy clients created by other processes (relevant for
- * forking). We avoid using pid_t for Windows compatibility. */
+/* Structure for tracking libmongoc clients (both persisted and non-persisted).
+ * The PID is included to ensure that processes do not destroy clients created
+ * by other processes (relevant for forking). We avoid using pid_t for Windows
+ * compatibility. */
 typedef struct {
 	mongoc_client_t* client;
 	int              created_by_pid;
 	int              last_reset_by_pid;
+	bool             is_persistent;
 } php_phongo_pclient_t;
 
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char*             debug;
 	FILE*             debug_fd;
 	bson_mem_vtable_t bsonMemVTable;
-	HashTable         pclients;
+	HashTable         persistent_clients;
+	HashTable*        request_clients;
 	HashTable*        subscribers;
+	HashTable*        managers;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
 #define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)
@@ -110,15 +114,15 @@ typedef enum {
 
 zend_object_handlers* phongo_get_std_object_handlers(void);
 
-void phongo_clientencryption_init(php_phongo_clientencryption_t* ce_obj, mongoc_client_t* client, zval* options);
-void phongo_server_init(zval* return_value, mongoc_client_t* client, uint32_t server_id);
-void phongo_session_init(zval* return_value, mongoc_client_session_t* client_session);
+void phongo_clientencryption_init(php_phongo_clientencryption_t* ce_obj, zval* manager, zval* options);
+void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id);
+void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session);
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern);
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs);
 void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern);
-bool phongo_execute_bulk_write(mongoc_client_t* client, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value);
-bool phongo_execute_command(mongoc_client_t* client, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value);
-bool phongo_execute_query(mongoc_client_t* client, const char* namespace, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value);
+bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* zwriteConcern, uint32_t server_id, zval* return_value);
+bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* zreadPreference, uint32_t server_id, zval* return_value);
+bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zval* zreadPreference, uint32_t server_id, zval* return_value);
 
 bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor);
 
@@ -143,7 +147,7 @@ void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t
 void php_phongo_cursor_to_zval(zval* retval, const mongoc_cursor_t* cursor);
 
 void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions);
-int  php_phongo_set_monitoring_callbacks(mongoc_client_t* client);
+bool php_phongo_set_monitoring_callbacks(mongoc_client_t* client);
 
 bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len);
 
@@ -154,7 +158,13 @@ void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryp
 zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson);
 zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson);
 
-void php_phongo_client_reset_once(mongoc_client_t* client, int pid);
+void php_phongo_client_reset_once(php_phongo_manager_t* manager, int pid);
+
+bool php_phongo_client_register(php_phongo_manager_t* manager);
+bool php_phongo_client_unregister(php_phongo_manager_t* manager);
+
+bool php_phongo_manager_register(php_phongo_manager_t* manager);
+bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
 
 #define PHONGO_CE_FINAL(ce)             \
 	do {                                \
@@ -199,12 +209,12 @@ void php_phongo_client_reset_once(mongoc_client_t* client, int pid);
 		(intern)->created_by_pid = (int) getpid(); \
 	} while (0);
 
-#define PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern)               \
-	do {                                                         \
-		int pid = (int) getpid();                                \
-		if ((intern)->created_by_pid != pid) {                   \
-			php_phongo_client_reset_once((intern)->client, pid); \
-		}                                                        \
+#define PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, manager) \
+	do {                                                    \
+		int pid = (int) getpid();                           \
+		if ((intern)->created_by_pid != pid) {              \
+			php_phongo_client_reset_once((manager), pid);   \
+		}                                                   \
 	} while (0);
 
 #endif /* PHONGO_H */
