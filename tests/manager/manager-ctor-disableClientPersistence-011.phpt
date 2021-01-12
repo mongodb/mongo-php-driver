@@ -45,7 +45,7 @@ unset($manager);
 echo "Unsetting subscriber\n";
 unset($subscriber);
 
-/* Since the subscribe has not been removed, the remaining internal reference to
+/* Since the subscriber has not been removed, the remaining internal reference to
  * it will be freed during RSHUTDOWN. */
 
 ?>
