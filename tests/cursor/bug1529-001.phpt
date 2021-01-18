@@ -68,14 +68,13 @@ if ($childPid === 0) {
      * the keyVaultClient. Continuing iteration of the cursor opened on the
      * keyVaultClient before resetting it should then result in an error due to
      * the client having been reset. */
-    $childCursor = $manager->executeQuery(NS, $query);
+    $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
 
     echo throws(
         function () use ($cursor) { iterator_count($cursor); },
         MongoDB\Driver\Exception\RuntimeException::class
     ), "\n";
 
-    unset($childCursor);
     echo "Child exits\n";
     exit;
 }
@@ -95,11 +94,9 @@ if ($childPid > 0) {
 <?php exit(0); ?>
 --EXPECT--
 Parent executes find with batchSize: 2
-Child executes listCollections
-Child executes find with batchSize: 2
+Child executes ping
 OK: Got MongoDB\Driver\Exception\RuntimeException
 Cannot advance cursor after client reset
-Child executes killCursors
 Child exits
 Parent waited for child to exit
 Parent executes killCursors
