@@ -64,7 +64,7 @@ $cursor = $keyVaultClient->executeQuery(NS, $query);
 $childPid = pcntl_fork();
 
 if ($childPid === 0) {
-    /* Executing a query with the parent's client resets this client as well as
+    /* Executing any operation with the parent's client resets this client as well as
      * the keyVaultClient. Continuing iteration of the cursor opened on the
      * keyVaultClient before resetting it should then result in an error due to
      * the client having been reset. */
