@@ -42,7 +42,6 @@ typedef struct {
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char*             debug;
 	FILE*             debug_fd;
-	bson_mem_vtable_t bsonMemVTable;
 	HashTable         persistent_clients;
 	HashTable*        request_clients;
 	HashTable*        subscribers;
