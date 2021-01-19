@@ -82,6 +82,13 @@ ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 ZEND_TSRMLS_CACHE_DEFINE();
 #endif
 
+/* Initialize a thread counter, which will be atomically incremented in GINIT.
+ * In turn, GSHUTDOWN will decrement the counter and call mongoc_cleanup() when
+ * it reaches zero (i.e. last thread is shutdown). This is necessary because
+ * mongoc_cleanup() must be called after all persistent clients have been
+ * destroyed. */
+static int32_t phongo_num_threads = 0;
+
 /* Declare zend_class_entry dependencies, which are initialized in MINIT */
 zend_class_entry* php_phongo_date_immutable_ce;
 zend_class_entry* php_phongo_json_serializable_ce;
@@ -2779,7 +2786,7 @@ bool php_phongo_client_register(php_phongo_manager_t* manager)
 
 /* Removes a client from the request-scoped registry. This function is a NOP for
  * persistent clients, since they are destroyed along with their registry (i.e.
- * HashTable) in MSHUTDOWN. Returns true if the client was successfully removed;
+ * HashTable) in GSHUTDOWN. Returns true if the client was successfully removed;
  * otherwise, false. */
 bool php_phongo_client_unregister(php_phongo_manager_t* manager)
 {
@@ -3622,7 +3629,7 @@ static void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
 	 * ensures that we do not shutdown sockets that may still be in use by our
 	 * parent process (see: PHPC-1522).
 	 *
-	 * This is a leak; however, we are already in MSHUTDOWN for a persistent
+	 * This is a leak; however, we are already in GSHUTDOWN for a persistent
 	 * clients. For a request-scoped client, we are either in the Manager's
 	 * free_object handler or RSHUTDOWN, but there the application is capable of
 	 * freeing its Manager and its client before forking. */
@@ -3633,8 +3640,9 @@ static void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
 		 * that certain shutdown commands cannot be observed unless APM is
 		 * redesigned to not reference a client (see: PHPC-1666).
 		 *
-		 * Note: this only relevant for request-scoped clients. APM subscribers
-		 * will not exist when persistent clients are destroyed in MSHUTDOWN. */
+		 * Note: this is only relevant for request-scoped clients. APM
+		 * subscribers will no longer exist when persistent clients are
+		 * destroyed in GSHUTDOWN. */
 		mongoc_client_set_apm_callbacks(pclient->client, NULL, NULL);
 		mongoc_client_destroy(pclient->client);
 	}
@@ -3752,6 +3760,11 @@ PHP_GINIT_FUNCTION(mongodb)
 #if defined(COMPILE_DL_MONGODB) && defined(ZTS)
 	ZEND_TSRMLS_CACHE_UPDATE();
 #endif
+
+	/* Increment the thread counter. */
+	bson_atomic_int_add(&phongo_num_threads, 1);
+
+	/* Clear extension globals */
 	memset(mongodb_globals, 0, sizeof(zend_mongodb_globals));
 	mongodb_globals->bsonMemVTable = bsonMemVTable;
 
@@ -3902,25 +3915,6 @@ PHP_MINIT_FUNCTION(mongodb)
 /* {{{ PHP_MSHUTDOWN_FUNCTION */
 PHP_MSHUTDOWN_FUNCTION(mongodb)
 {
-	php_phongo_pclient_t* pclient;
-
-	/* Destroy mongoc_client_t objects in reverse order. This is necessary to
-	 * prevent segmentation faults as clients may reference other clients in
-	 * encryption settings. */
-	ZEND_HASH_REVERSE_FOREACH_PTR(&MONGODB_G(persistent_clients), pclient)
-	{
-		php_phongo_pclient_destroy(pclient);
-	}
-	ZEND_HASH_FOREACH_END();
-
-	/* Destroy HashTable for persistent clients. mongoc_client_t objects have
-	 * already been destroyed. */
-	zend_hash_destroy(&MONGODB_G(persistent_clients));
-
-	bson_mem_restore_vtable();
-	/* Cleanup after libmongoc */
-	mongoc_cleanup();
-
 	UNREGISTER_INI_ENTRIES();
 
 	return SUCCESS;
@@ -3962,10 +3956,34 @@ PHP_RSHUTDOWN_FUNCTION(mongodb)
 /* {{{ PHP_GSHUTDOWN_FUNCTION */
 PHP_GSHUTDOWN_FUNCTION(mongodb)
 {
+	php_phongo_pclient_t* pclient;
+
+	/* Destroy mongoc_client_t objects in reverse order. This is necessary to
+	 * prevent segmentation faults as clients may reference other clients in
+	 * encryption settings. */
+	ZEND_HASH_REVERSE_FOREACH_PTR(&mongodb_globals->persistent_clients, pclient)
+	{
+		php_phongo_pclient_destroy(pclient);
+	}
+	ZEND_HASH_FOREACH_END();
+
+	/* Destroy HashTable for persistent clients. mongoc_client_t objects have
+	 * already been destroyed. */
+	zend_hash_destroy(&mongodb_globals->persistent_clients);
+
 	mongodb_globals->debug = NULL;
 	if (mongodb_globals->debug_fd) {
 		fclose(mongodb_globals->debug_fd);
 		mongodb_globals->debug_fd = NULL;
+	}
+
+	/* Decrement the thread counter. If it reaches zero, we can infer that this
+	 * is the last thread, MSHUTDOWN has been called, persistent clients from
+	 * all threads have been destroyed, and it is now safe to shutdown libmongoc
+	 * and restore libbson's original vtable. */
+	if (bson_atomic_int_add(&phongo_num_threads, -1) == 0) {
+		bson_mem_restore_vtable();
+		mongoc_cleanup();
 	}
 }
 /* }}} */
