@@ -3504,8 +3504,8 @@ static void* php_phongo_calloc(size_t num_members, size_t num_bytes) /* {{{ */
 	return pecalloc(num_members, num_bytes, 1);
 } /* }}} */
 
-static void* php_phongo_realloc(void* mem, size_t num_bytes)
-{ /* {{{ */
+static void* php_phongo_realloc(void* mem, size_t num_bytes) /* {{{ */
+{
 	return perealloc(mem, num_bytes, 1);
 } /* }}} */
 
@@ -3751,12 +3751,6 @@ PHP_RINIT_FUNCTION(mongodb)
 /* {{{ PHP_GINIT_FUNCTION */
 PHP_GINIT_FUNCTION(mongodb)
 {
-	bson_mem_vtable_t bsonMemVTable = {
-		php_phongo_malloc,
-		php_phongo_calloc,
-		php_phongo_realloc,
-		php_phongo_free,
-	};
 #if defined(COMPILE_DL_MONGODB) && defined(ZTS)
 	ZEND_TSRMLS_CACHE_UPDATE();
 #endif
@@ -3766,7 +3760,6 @@ PHP_GINIT_FUNCTION(mongodb)
 
 	/* Clear extension globals */
 	memset(mongodb_globals, 0, sizeof(zend_mongodb_globals));
-	mongodb_globals->bsonMemVTable = bsonMemVTable;
 
 	/* Initialize HashTable for persistent clients */
 	zend_hash_init(&mongodb_globals->persistent_clients, 0, NULL, NULL, 1);
@@ -3794,6 +3787,13 @@ static HashTable* php_phongo_std_get_gc(phongo_compat_object_handler_type* objec
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(mongodb)
 {
+	bson_mem_vtable_t bson_mem_vtable = {
+		php_phongo_malloc,
+		php_phongo_calloc,
+		php_phongo_realloc,
+		php_phongo_free,
+	};
+
 	(void) type; /* We don't care if we are loaded via dl() or extension= */
 
 	REGISTER_INI_ENTRIES();
@@ -3802,7 +3802,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	mongoc_init();
 
 	/* Initialize libbson */
-	bson_mem_set_vtable(&MONGODB_G(bsonMemVTable));
+	bson_mem_set_vtable(&bson_mem_vtable);
 
 	/* Prep default object handlers to be used when we register the classes */
 	memcpy(&phongo_std_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
