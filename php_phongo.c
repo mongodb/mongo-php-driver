@@ -3798,11 +3798,12 @@ PHP_MINIT_FUNCTION(mongodb)
 
 	REGISTER_INI_ENTRIES();
 
-	/* Initialize libmongoc */
-	mongoc_init();
-
-	/* Initialize libbson */
+	/* Assign our custom vtable to libbson, so all memory allocation in libbson
+	 * (and libmongoc) will use PHP's persistent memory API. After doing so,
+	 * initialize libmongoc. Later, we will shutdown libmongoc and restore
+	 * libbson's vtable in the final GSHUTDOWN. */
 	bson_mem_set_vtable(&bson_mem_vtable);
+	mongoc_init();
 
 	/* Prep default object handlers to be used when we register the classes */
 	memcpy(&phongo_std_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
@@ -3982,8 +3983,8 @@ PHP_GSHUTDOWN_FUNCTION(mongodb)
 	 * all threads have been destroyed, and it is now safe to shutdown libmongoc
 	 * and restore libbson's original vtable. */
 	if (bson_atomic_int_add(&phongo_num_threads, -1) == 0) {
-		bson_mem_restore_vtable();
 		mongoc_cleanup();
+		bson_mem_restore_vtable();
 	}
 }
 /* }}} */
