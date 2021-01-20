@@ -3722,14 +3722,20 @@ static void php_phongo_pclient_destroy_ptr(zval* ptr)
 PHP_RINIT_FUNCTION(mongodb)
 {
 	/* Initialize HashTable for non-persistent clients, which is initialized to
-	 * NULL in GINIT and destroyed and reset to NULL in RSHUTDOWN. */
+	 * NULL in GINIT and destroyed and reset to NULL in RSHUTDOWN. Although we
+	 * specify an element destructor here, all request clients should be freed
+	 * naturally via garbage collection (i.e. the HashTable should be empty at
+	 * the time it is destroyed in RSHUTDOWN). */
 	if (MONGODB_G(request_clients) == NULL) {
 		ALLOC_HASHTABLE(MONGODB_G(request_clients));
 		zend_hash_init(MONGODB_G(request_clients), 0, NULL, php_phongo_pclient_destroy_ptr, 0);
 	}
 
 	/* Initialize HashTable for APM subscribers, which is initialized to NULL in
-	 * GINIT and destroyed and reset to NULL in RSHUTDOWN. */
+	 * GINIT and destroyed and reset to NULL in RSHUTDOWN. Since this HashTable
+	 * will store subscriber object zvals, we specify ZVAL_PTR_DTOR as its
+	 * element destructor so that any still-registered subscribers can be freed
+	 * in RSHUTDOWN. */
 	if (MONGODB_G(subscribers) == NULL) {
 		ALLOC_HASHTABLE(MONGODB_G(subscribers));
 		zend_hash_init(MONGODB_G(subscribers), 0, NULL, ZVAL_PTR_DTOR, 0);
@@ -3737,8 +3743,8 @@ PHP_RINIT_FUNCTION(mongodb)
 
 	/* Initialize HashTable for registering Manager objects. This is initialized
 	 * to NULL in GINIT and destroyed and reset to NULL in RSHUTDOWN. Since this
-	 * HashTable stores pointers to existing php_phongo_manager_t objects, the
-	 * element destructor is intentionally NULL. */
+	 * HashTable stores pointers to existing php_phongo_manager_t objects (not
+	 * counted references), the element destructor is intentionally NULL. */
 	if (MONGODB_G(managers) == NULL) {
 		ALLOC_HASHTABLE(MONGODB_G(managers));
 		zend_hash_init(MONGODB_G(managers), 0, NULL, NULL, 0);
@@ -3938,9 +3944,11 @@ PHP_RSHUTDOWN_FUNCTION(mongodb)
 
 	/* Destroy HashTable for non-persistent clients, which was initialized in
 	 * RINIT. This is intentionally done after the APM subscribers to allow any
-	 * non-persistent clients still referenced by a subscriber (not removed
-	 * prior to RSHUTDOWN) to be naturally freed by the Manager's free_object
-	 * handler rather than the HashTable's element destructor. */
+	 * non-persistent clients still referenced by a subscriber (not freed prior
+	 * to RSHUTDOWN) to be naturally garbage collected and freed by the Manager
+	 * free_object handler rather than the HashTable's element destructor. There
+	 * is no need to use zend_hash_graceful_reverse_destroy here like we do for
+	 * persistent clients; moreover, the HashTable should already be empty. */
 	if (MONGODB_G(request_clients)) {
 		zend_hash_destroy(MONGODB_G(request_clients));
 		FREE_HASHTABLE(MONGODB_G(request_clients));
