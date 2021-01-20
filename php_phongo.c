@@ -3761,8 +3761,12 @@ PHP_GINIT_FUNCTION(mongodb)
 	/* Clear extension globals */
 	memset(mongodb_globals, 0, sizeof(zend_mongodb_globals));
 
-	/* Initialize HashTable for persistent clients */
-	zend_hash_init(&mongodb_globals->persistent_clients, 0, NULL, NULL, 1);
+	/* Initialize HashTable for persistent clients, which will be destroyed in
+	 * GSHUTDOWN. We specify an element destructor so that persistent clients
+	 * can be destroyed along with the HashTable. The HashTable's struct is
+	 * nested within globals, so no allocation is needed (unlike the HashTables
+	 * allocated in RINIT). */
+	zend_hash_init(&mongodb_globals->persistent_clients, 0, NULL, php_phongo_pclient_destroy_ptr, 1);
 }
 /* }}} */
 
@@ -3957,20 +3961,10 @@ PHP_RSHUTDOWN_FUNCTION(mongodb)
 /* {{{ PHP_GSHUTDOWN_FUNCTION */
 PHP_GSHUTDOWN_FUNCTION(mongodb)
 {
-	php_phongo_pclient_t* pclient;
-
-	/* Destroy mongoc_client_t objects in reverse order. This is necessary to
-	 * prevent segmentation faults as clients may reference other clients in
+	/* Destroy persistent client HashTable in reverse order. This is necessary
+	 * to prevent segmentation faults as clients may reference other clients in
 	 * encryption settings. */
-	ZEND_HASH_REVERSE_FOREACH_PTR(&mongodb_globals->persistent_clients, pclient)
-	{
-		php_phongo_pclient_destroy(pclient);
-	}
-	ZEND_HASH_FOREACH_END();
-
-	/* Destroy HashTable for persistent clients. mongoc_client_t objects have
-	 * already been destroyed. */
-	zend_hash_destroy(&mongodb_globals->persistent_clients);
+	zend_hash_graceful_reverse_destroy(&mongodb_globals->persistent_clients);
 
 	mongodb_globals->debug = NULL;
 	if (mongodb_globals->debug_fd) {
