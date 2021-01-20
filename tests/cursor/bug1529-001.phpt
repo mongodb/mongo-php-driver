@@ -5,6 +5,7 @@ PHPC-1529: Resetting a client should also reset the keyVaultClient
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
+<?php skip_if_server_version('<', '4.2'); ?>
 <?php skip_if_not_libmongocrypt(); ?>
 --FILE--
 <?php
@@ -55,7 +56,7 @@ $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(['x' => 1]);
 $bulk->insert(['x' => 2]);
 $bulk->insert(['x' => 3]);
-$manager->executeBulkWrite(NS, $bulk);
+$keyVaultClient->executeBulkWrite(NS, $bulk);
 
 MongoDB\Driver\Monitoring\addSubscriber(new CommandLogger);
 
