@@ -5,6 +5,7 @@ PHPC-1529: Resetting a client should also reset the keyVaultClient
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
+<?php skip_if_not_libmongocrypt(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
