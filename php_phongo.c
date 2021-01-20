@@ -3603,6 +3603,11 @@ void php_phongo_client_reset_once(php_phongo_manager_t* manager, int pid)
 {
 	php_phongo_pclient_t* pclient;
 
+	/* Reset associated key vault client */
+	if (!Z_ISUNDEF(manager->key_vault_client_manager)) {
+		php_phongo_client_reset_once(Z_MANAGER_OBJ_P(&manager->key_vault_client_manager), pid);
+	}
+
 	if (manager->use_persistent_client) {
 		pclient = zend_hash_str_find_ptr(&MONGODB_G(persistent_clients), manager->client_hash, manager->client_hash_len);
 
