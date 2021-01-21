@@ -64,6 +64,11 @@ static int php_phongo_cursor_valid(php_phongo_cursor_t* cursor) /* {{{ */
 
 static void php_phongo_cursor_get_current_key(php_phongo_cursor_t* cursor, zval* key) /* {{{ */
 {
+	if (Z_ISUNDEF(cursor->visitor_data.zchild)) {
+		ZVAL_NULL(key);
+		return;
+	}
+
 	ZVAL_LONG(key, cursor->current);
 } /* }}} */
 
