@@ -52,101 +52,6 @@ static void php_phongo_cursor_free_current(php_phongo_cursor_t* cursor) /* {{{ *
 	}
 } /* }}} */
 
-/* {{{ MongoDB\Driver\Cursor iterator handlers */
-static int php_phongo_cursor_valid(php_phongo_cursor_t* cursor) /* {{{ */
-{
-	if (!Z_ISUNDEF(cursor->visitor_data.zchild)) {
-		return SUCCESS;
-	}
-
-	return FAILURE;
-} /* }}} */
-
-static void php_phongo_cursor_get_current_key(php_phongo_cursor_t* cursor, zval* key) /* {{{ */
-{
-	if (Z_ISUNDEF(cursor->visitor_data.zchild)) {
-		ZVAL_NULL(key);
-		return;
-	}
-
-	ZVAL_LONG(key, cursor->current);
-} /* }}} */
-
-static zval* php_phongo_cursor_get_current_data(php_phongo_cursor_t* cursor) /* {{{ */
-{
-	return &cursor->visitor_data.zchild;
-} /* }}} */
-
-static void php_phongo_cursor_move_forward(php_phongo_cursor_t* cursor) /* {{{ */
-{
-	const bson_t* doc;
-
-	php_phongo_cursor_free_current(cursor);
-
-	/* If the cursor has already advanced, increment its position. Otherwise,
-	 * the first call to mongoc_cursor_next() will be made below and we should
-	 * leave its position at zero. */
-	if (cursor->advanced) {
-		cursor->current++;
-	} else {
-		cursor->advanced = true;
-	}
-
-	if (mongoc_cursor_next(cursor->cursor, &doc)) {
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data)) {
-			/* Free invalid result, but don't return as we want to free the
-			 * session if the cursor is exhausted. */
-			php_phongo_cursor_free_current(cursor);
-		}
-	} else {
-		bson_error_t  error = { 0 };
-		const bson_t* doc   = NULL;
-
-		if (mongoc_cursor_error_document(cursor->cursor, &error, &doc)) {
-			/* Intentionally not destroying the cursor as it will happen
-			 * naturally now that there are no more results */
-			phongo_throw_exception_from_bson_error_t_and_reply(&error, doc);
-		}
-	}
-
-	php_phongo_cursor_free_session_if_exhausted(cursor);
-} /* }}} */
-
-static void php_phongo_cursor_rewind(php_phongo_cursor_t* cursor) /* {{{ */
-{
-	const bson_t* doc;
-
-	/* If the cursor was never advanced (e.g. command cursor), do so now */
-	if (!cursor->advanced) {
-		cursor->advanced = true;
-
-		if (!phongo_cursor_advance_and_check_for_error(cursor->cursor)) {
-			/* Exception should already have been thrown */
-			return;
-		}
-	}
-
-	if (cursor->current > 0) {
-		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cursors cannot rewind after starting iteration");
-		return;
-	}
-
-	php_phongo_cursor_free_current(cursor);
-
-	doc = mongoc_cursor_current(cursor->cursor);
-
-	if (doc) {
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &cursor->visitor_data)) {
-			/* Free invalid result, but don't return as we want to free the
-			 * session if the cursor is exhausted. */
-			php_phongo_cursor_free_current(cursor);
-		}
-	}
-
-	php_phongo_cursor_free_session_if_exhausted(cursor);
-} /* }}} */
-/* }}} */
-
 /* {{{ proto void MongoDB\Driver\Cursor::setTypeMap(array $typemap)
    Sets a type map to use for BSON unserialization */
 static PHP_METHOD(Cursor, setTypeMap)
@@ -314,7 +219,7 @@ PHP_METHOD(Cursor, current)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	data = php_phongo_cursor_get_current_data(intern);
+	data = &intern->visitor_data.zchild;
 
 	if (Z_ISUNDEF_P(data)) {
 		RETURN_NULL();
@@ -335,13 +240,18 @@ PHP_METHOD(Cursor, key)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	php_phongo_cursor_get_current_key(intern, return_value);
+	if (Z_ISUNDEF(intern->visitor_data.zchild)) {
+		RETURN_NULL();
+	}
+
+	RETURN_LONG(intern->current);
 }
 
 PHP_METHOD(Cursor, next)
 {
 	zend_error_handling  error_handling;
 	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
+	const bson_t*        doc;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
@@ -350,7 +260,35 @@ PHP_METHOD(Cursor, next)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	php_phongo_cursor_move_forward(intern);
+	php_phongo_cursor_free_current(intern);
+
+	/* If the intern has already advanced, increment its position. Otherwise,
+	 * the first call to mongoc_cursor_next() will be made below and we should
+	 * leave its position at zero. */
+	if (intern->advanced) {
+		intern->current++;
+	} else {
+		intern->advanced = true;
+	}
+
+	if (mongoc_cursor_next(intern->cursor, &doc)) {
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &intern->visitor_data)) {
+			/* Free invalid result, but don't return as we want to free the
+			 * session if the intern is exhausted. */
+			php_phongo_cursor_free_current(intern);
+		}
+	} else {
+		bson_error_t  error = { 0 };
+		const bson_t* doc   = NULL;
+
+		if (mongoc_cursor_error_document(intern->cursor, &error, &doc)) {
+			/* Intentionally not destroying the intern as it will happen
+			 * naturally now that there are no more results */
+			phongo_throw_exception_from_bson_error_t_and_reply(&error, doc);
+		}
+	}
+
+	php_phongo_cursor_free_session_if_exhausted(intern);
 }
 
 PHP_METHOD(Cursor, valid)
@@ -365,13 +303,14 @@ PHP_METHOD(Cursor, valid)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	RETURN_BOOL(php_phongo_cursor_valid(intern) == SUCCESS);
+	RETURN_BOOL(!Z_ISUNDEF(intern->visitor_data.zchild));
 }
 
 PHP_METHOD(Cursor, rewind)
 {
 	zend_error_handling  error_handling;
 	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
+	const bson_t*        doc;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters_none() == FAILURE) {
@@ -380,7 +319,34 @@ PHP_METHOD(Cursor, rewind)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	php_phongo_cursor_rewind(intern);
+	/* If the intern was never advanced (e.g. command intern), do so now */
+	if (!intern->advanced) {
+		intern->advanced = true;
+
+		if (!phongo_cursor_advance_and_check_for_error(intern->cursor)) {
+			/* Exception should already have been thrown */
+			return;
+		}
+	}
+
+	if (intern->current > 0) {
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cursors cannot rewind after starting iteration");
+		return;
+	}
+
+	php_phongo_cursor_free_current(intern);
+
+	doc = mongoc_cursor_current(intern->cursor);
+
+	if (doc) {
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &intern->visitor_data)) {
+			/* Free invalid result, but don't return as we want to free the
+			 * session if the intern is exhausted. */
+			php_phongo_cursor_free_current(intern);
+		}
+	}
+
+	php_phongo_cursor_free_session_if_exhausted(intern);
 }
 
 /* {{{ MongoDB\Driver\Cursor function entries */
