@@ -54,6 +54,8 @@
 
 #if PHONGO_GNUC_CHECK_VERSION(7, 0)
 #define PHONGO_BREAK_INTENTIONALLY_MISSING __attribute__((fallthrough));
+#elif defined(__clang__) && __clang_major__ >= 12
+#define PHONGO_BREAK_INTENTIONALLY_MISSING __attribute__((fallthrough));
 #else
 #define PHONGO_BREAK_INTENTIONALLY_MISSING
 #endif
