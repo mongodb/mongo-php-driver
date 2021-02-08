@@ -66,8 +66,6 @@ echo "PHP_VERSION: $PHP_VERSION"
 OLD_PATH=$PATH
 PATH=/opt/php/${PHP_VERSION}-64bit/bin:$OLD_PATH
 
-#cat `which phpize` | sed 's@/data/mci/.*/src@/opt@' > ./phpize
-#chmod +x ./phpize
 phpize
 ./configure --enable-mongodb-developer-flags
 make
