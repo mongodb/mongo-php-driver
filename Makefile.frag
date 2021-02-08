@@ -1,4 +1,4 @@
-.PHONY: coverage test-clean package package.xml format format-changed
+.PHONY: coverage test-clean package package.xml format format-changed format-check
 
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 MONGODB_VERSION=$(shell php -n -dextension=modules/mongodb.so -r 'echo MONGODB_VERSION;')
@@ -69,6 +69,9 @@ format:
 
 format-changed:
 	$(top_srcdir)/scripts/clang-format.sh changed
+
+format-check:
+	$(top_srcdir)/scripts/clang-format.sh check
 
 distcheck: package test-virtual
 
