@@ -3432,12 +3432,13 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 #endif
 
 	manager->client = php_phongo_make_mongo_client(uri, driverOptions);
-	mongoc_client_set_error_api(manager->client, MONGOC_ERROR_API_VERSION_2);
 
 	if (!manager->client) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to create Manager from URI: '%s'", uri_string);
 		goto cleanup;
 	}
+
+	mongoc_client_set_error_api(manager->client, MONGOC_ERROR_API_VERSION_2);
 
 #ifdef MONGOC_ENABLE_SSL
 	if (ssl_opt) {
