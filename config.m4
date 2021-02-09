@@ -262,7 +262,7 @@ if test "$PHP_MONGODB" != "no"; then
       AC_MSG_CHECKING(for libmongocrypt)
 
       if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongocrypt; then
-        if $PKG_CONFIG libmongocrypt --atleast-version 1.0.4; then
+        if $PKG_CONFIG libmongocrypt --atleast-version 1.2.1; then
           PHP_MONGODB_MONGOCRYPT_CFLAGS=`$PKG_CONFIG libmongocrypt --cflags`
           PHP_MONGODB_MONGOCRYPT_LIBS=`$PKG_CONFIG libmongocrypt --libs`
           PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt --modversion`
@@ -273,7 +273,7 @@ if test "$PHP_MONGODB" != "no"; then
           PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
           AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
         elif test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
-          AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.0.4)
+          AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.2.1)
         else
           AC_MSG_RESULT(found an older version, compiling without client-side encryption)
         fi
@@ -440,7 +440,7 @@ if test "$PHP_MONGODB" != "no"; then
       AC_SUBST(MONGOCRYPT_ENABLE_TRACE, 1)
 
       dnl Generated with: find src/libmongocrypt/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 4- | sort -dz | tr '\000' ' '
-      PHP_MONGODB_MONGOCRYPT_SOURCES="mongocrypt-binary.c mongocrypt-buffer.c mongocrypt.c mongocrypt-cache.c mongocrypt-cache-collinfo.c mongocrypt-cache-key.c mongocrypt-ciphertext.c mongocrypt-crypto.c mongocrypt-ctx.c mongocrypt-ctx-datakey.c mongocrypt-ctx-decrypt.c mongocrypt-ctx-encrypt.c mongocrypt-key-broker.c mongocrypt-key.c mongocrypt-kms-ctx.c mongocrypt-log.c mongocrypt-marking.c mongocrypt-opts.c mongocrypt-status.c mongocrypt-traverse-util.c"
+      PHP_MONGODB_MONGOCRYPT_SOURCES="mongocrypt-binary.c mongocrypt-buffer.c mongocrypt.c mongocrypt-cache.c mongocrypt-cache-collinfo.c mongocrypt-cache-key.c mongocrypt-cache-oauth.c mongocrypt-ciphertext.c mongocrypt-crypto.c mongocrypt-ctx.c mongocrypt-ctx-datakey.c mongocrypt-ctx-decrypt.c mongocrypt-ctx-encrypt.c mongocrypt-endpoint.c mongocrypt-kek.c mongocrypt-key-broker.c mongocrypt-key.c mongocrypt-kms-ctx.c mongocrypt-log.c mongocrypt-marking.c mongocrypt-opts.c mongocrypt-status.c mongocrypt-traverse-util.c"
 
       dnl Generated with: find src/libmongocrypt/src/crypto -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
       PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES="cng.c commoncrypto.c libcrypto.c none.c"
@@ -452,7 +452,7 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES="os_mutex.c os_once.c"
 
       dnl Generated with: find src/libmongocrypt/kms-message/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
-      PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES="hexlify.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c"
+      PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES="hexlify.c kms_azure_request.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_gcp_request.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c"
 
       PHP_MONGODB_LIBMONGOCRYPT_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS"
       PHP_MONGODB_ADD_SOURCES([src/libmongocrypt/src/], $PHP_MONGODB_MONGOCRYPT_SOURCES, $PHP_MONGODB_LIBMONGOCRYPT_CFLAGS)
