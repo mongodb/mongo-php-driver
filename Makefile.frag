@@ -1,5 +1,10 @@
 .PHONY: coverage test-clean package package.xml format format-changed format-check
 
+ifneq (,$(realpath $(EXTENSION_DIR)/json.so))
+PHP_TEST_SHARED_EXTENSIONS := "-d" "extension=$(EXTENSION_DIR)/json.so" $(PHP_TEST_SHARED_EXTENSIONS)
+PHP_TEST_SETTINGS := "-d" "extension=$(EXTENSION_DIR)/json.so" $(PHP_TEST_SETTINGS)
+endif
+
 DATE=`date +%Y-%m-%d--%H-%M-%S`
 MONGODB_VERSION=$(shell php -n -dextension=modules/mongodb.so -r 'echo MONGODB_VERSION;')
 MONGODB_MINOR=$(shell echo $(MONGODB_VERSION) | cut -d. -f1,2)
