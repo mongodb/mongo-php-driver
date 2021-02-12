@@ -89,14 +89,15 @@ run in as many environments as possible. To paraphrase the
 Consider that a well-crafted `EXPECTF` section may allow a `SKIPIF` section to
 be less restrictive.
 
-### Local Mongo Orchestration (and Travis CI)
+### Local Mongo Orchestration (and CI platforms)
 
 The test suite depends on [Mongo Orchestration](https://github.com/10gen/mongo-orchestration).
 Mongo Orchestration is an HTTP server that provides a REST API for maintaining
-MongoDB configurations. These configurations are located in ``scripts/presets``
-and for Travis CI in ``scripts/presets/travis``. The presets for Travis CI can
-also be spun-up locally, and that is the preferred testing method. An older way
-using a specific VM is also still available (see further down).
+MongoDB configurations. These configurations are provided by the
+[drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools)
+repository. These configurations can be run locally. Alternatively, you can use
+the GitHub Actions workflow if you don't want to set up a local development
+environment.
 
 Mongo Orchestration expects that the ``mongod`` (and ``mongos``) binaries are
 available in the ``PATH``.
@@ -107,70 +108,11 @@ Once installed, Mongo Orchestration can be started with
 ~/.local/bin/mongo-orchestration start --no-fork --enable-majority-read-concern
 ```
 
-The Travis CI setup uses
-[deployments](https://github.com/mongodb/mongo-php-driver/blob/master/.travis.scripts/setup_mo.sh)
-to test different topologies. Currently, it supports ``STANDALONE``,
-``STANDALONE_OLD`` (for MongoDB versions before 3.6), ``STANDALONE_SSL``,
-``REPLICASET`` and ``SHARDED_CLUSTER``.
-
 The test suite uses the ``MONGODB_URI`` environment variable as connection
-string to run all tests. In order to make the URI available to the test suite,
-you can run the following for a "deployment" in the *root* of the MongoDB
-Driver GIT checkout:
-
-```
-export TRAVIS_BUILD_DIR=`pwd`
-DEPLOYMENT=STANDALONE_AUTH .travis.scripts/setup_mo.sh
-export MONGODB_URI=`cat /tmp/uri.txt`
-```
+string to run all tests. If not set, tests assume MongoDB is listening on the
+default MongoDB port (27017) on localhost.
 
 With this set-up, the tests can be run with `make test`.
-
-### VM-based Mongo Orchestration (legacy set-up)
-
-Alternative to the Travis CI set-up, our test suite also includes scripts to configure test environments
-with [Vagrant](https://www.vagrantup.com/) and
-[Mongo Orchestration](https://github.com/10gen/mongo-orchestration).
-The deployments started in this Vagrant image have hard coded URLs to be used
-with the ``MONGODB_URI`` environment variable:
-
-Deployment                  | URI
---------------------------- | ---
-Standalone (MongoDB 4.0)    | `mongodb://192.168.112.10:2000`
-Standalone (MongoDB 3.0)    | `mongodb://192.168.112.10:2700`
-Standalone with SSL         | `mongodb://192.168.112.10:2100`
-Standalone with Auth        | `mongodb://root:toor@192.168.112.10:2200/?authSource=admin`
-Standalone with X509 Auth   | `mongodb://C=US,ST=New York,L=New York City,O=MongoDB,OU=KernelUser,CN=client@192.168.112.10:2300/?authSource=$external&authMechanism=MONGODB-X509`
-Standalone with Plain Auth  | `mongodb://root:toor@192.168.112.10:2400/?authSource=admin`
-Replicaset (MongoDB 4.0)    | `mongodb://192.168.112.10:3000,192.168.112.10:3001,192.168.112.10:3002/?replicaSet=REPLICASET`
-Replicaset (MongoDB 3.0)    | `mongodb://192.168.112.10:3100,192.168.112.10:3101,192.168.112.10:3102/?replicaSet=REPLICASET_30`
-Replicaset (MongoDB 3.6)    | `mongodb://192.168.112.10:3200,192.168.112.10:3201,192.168.112.10:3202/?replicaSet=REPLICASET_36`
-
-The Vagrant images can be started by using:
-
-```
-$ make vm             # Starts the test VMs with Vagrant
-$ make test-bootstrap # Starts the mongod servers within the test VM
-```
-
-After this set-up is completed, you need to export the `MONGODB_URI`
-environment variables with one of the values from the table above. The `test`
-make target may be used to execute the test suite:
-
-```
-$ make test # Executes the test suite against the VMs
-```
-
-To find out which VM servers are running at a later point in time, you can run
-`make test-bootstrap` to obtain a list of deployments and their URIs.
-
-#### Restarting Mongo Orchestration
-
-If something goes awry in the test VM, you can reload it by running:
-
-```
-make test-bootstrap
-```
 
 ## Updating libmongoc, libbson, and libmongocrypt
 
