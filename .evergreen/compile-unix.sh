@@ -61,13 +61,8 @@ esac
 echo "MARCH: $MARCH"
 echo "RELEASE: $RELEASE"
 echo "OS: $OS"
-echo "PHP_VERSION: $PHP_VERSION"
+echo "PHP: $PHP_VERSION (`php --version | head -1`)"
 
-OLD_PATH=$PATH
-PATH=/opt/php/${PHP_VERSION}-64bit/bin:$OLD_PATH
-
-#cat `which phpize` | sed 's@/data/mci/.*/src@/opt@' > ./phpize
-#chmod +x ./phpize
 phpize
 ./configure --enable-mongodb-developer-flags
 make
