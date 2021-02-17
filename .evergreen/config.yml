@@ -341,9 +341,11 @@ functions:
         display_name: "drivers-dir.tar.gz"
 
   "upload test results":
-    - command: attach.results
+    - command: attach.xunit_results
       params:
-        file_location: "${PROJECT_DIRECTORY}/test-results.json"
+        # Uploading test results does not work when using ${PROJECT_DIRECTORY},
+        # so we use an absolute path to work around this
+        file: "src/test-results.xml"
     - command: attach.results
       params:
         file_location: "${DRIVERS_TOOLS}/results.json"

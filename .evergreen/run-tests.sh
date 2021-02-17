@@ -23,10 +23,10 @@ fi
 
 echo "Running $AUTH tests, connecting to $MONGODB_URI"
 
-# Run the tests, and store the results in a Evergreen compatible JSON results file
+# Run the tests, and store the results in a junit result file
 case "$OS" in
    *)
-      TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test TESTS=$TESTS
+      TEST_PHP_JUNIT="${PROJECT_DIRECTORY}/test-results.xml" TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test TESTS=$TESTS
       ;;
 esac
 
