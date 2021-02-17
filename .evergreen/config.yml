@@ -71,9 +71,23 @@ functions:
               export PROJECT_DIRECTORY=$(cygpath -m $PROJECT_DIRECTORY)
            fi
 
+           if [ -d "/opt/php/${PHP_VERSION}-64bit/bin" ]; then
+              PHP_PATH="/opt/php/${PHP_VERSION}-64bit/bin"
+           else
+              # Try to find the newest version matching our constant
+              PHP_PATH=`find /opt/php/ -maxdepth 1 -type d -name '${PHP_VERSION}*-64bit' -print | sort -V -r | head -1`/bin
+           fi
+
+           if [ ! -d "$PHP_PATH" ]; then
+              echo "Could not find PHP binaries for version ${PHP_VERSION}. Listing available versions..."
+              ls -1 /opt/php
+              exit 1
+           fi
+
            export MONGO_ORCHESTRATION_HOME="$DRIVERS_TOOLS/.evergreen/orchestration"
            export MONGODB_BINARIES="$DRIVERS_TOOLS/mongodb/bin"
            export UPLOAD_BUCKET="${project}"
+           export PHP_VERSION="${PHP_VERSION}"
 
            cat <<EOT > expansion.yml
            CURRENT_VERSION: "$CURRENT_VERSION"
@@ -82,6 +96,7 @@ functions:
            MONGODB_BINARIES: "$MONGODB_BINARIES"
            UPLOAD_BUCKET: "$UPLOAD_BUCKET"
            PROJECT_DIRECTORY: "$PROJECT_DIRECTORY"
+
            PREPARE_SHELL: |
               set -o errexit
               set -o xtrace
@@ -92,8 +107,10 @@ functions:
               export PROJECT_DIRECTORY="$PROJECT_DIRECTORY"
 
               export TMPDIR="$MONGO_ORCHESTRATION_HOME/db"
-              export PATH="$MONGODB_BINARIES:$PATH"
+              export PATH="$PHP_PATH:$MONGODB_BINARIES:$PATH"
               export PROJECT="${project}"
+
+              export PHP_VERSION="$PHP_VERSION"
            EOT
            # See what we've done
            cat expansion.yml
@@ -185,7 +202,7 @@ functions:
         working_dir: "src"
         script: |
           ${PREPARE_SHELL}
-          PHP_VERSION=${PHP_VERSION} sh ${PROJECT_DIRECTORY}/.evergreen/compile-unix.sh
+          sh ${PROJECT_DIRECTORY}/.evergreen/compile-unix.sh
 
   "exec script" :
     - command: shell.exec
@@ -1023,22 +1040,26 @@ axes:
   - id: php-versions
     display_name: PHP Version
     values:
+      - id: "7.4"
+        display_name: "PHP 7.4"
+        variables:
+          PHP_VERSION: "7.4"
       - id: "7.3"
         display_name: "PHP 7.3"
         variables:
-          PHP_VERSION: "7.3.8"
+          PHP_VERSION: "7.3"
       - id: "7.2"
         display_name: "PHP 7.2"
         variables:
-          PHP_VERSION: "7.2.10"
+          PHP_VERSION: "7.2"
       - id: "7.1"
         display_name: "PHP 7.1"
         variables:
-          PHP_VERSION: "7.1.22"
+          PHP_VERSION: "7.1"
       - id: "7.0"
         display_name: "PHP 7.0"
         variables:
-          PHP_VERSION: "7.0.32"
+          PHP_VERSION: "7.0"
 
   - id: os-php7
     display_name: OS
