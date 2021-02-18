@@ -2567,8 +2567,8 @@ static bool php_phongo_extract_handshake_data(zval* driver, const char* key, cha
 static char* php_phongo_concat_handshake_data(const char* default_value, const char* custom_value, size_t custom_value_len)
 {
 	char* ret;
-	/* Length of the returned value needs to include the trailing null byte */
-	size_t ret_len = strlen(default_value) + 1;
+	/* Length of the returned value needs to include a trailing space and null byte */
+	size_t ret_len = strlen(default_value) + 2;
 
 	if (custom_value) {
 		/* Increase the length by that of the custom value as well as the separator length */
@@ -2578,9 +2578,9 @@ static char* php_phongo_concat_handshake_data(const char* default_value, const c
 	ret = ecalloc(sizeof(char*), ret_len);
 
 	if (custom_value) {
-		snprintf(ret, ret_len, "%s%s%s", default_value, PHONGO_METADATA_SEPARATOR, custom_value);
+		snprintf(ret, ret_len, "%s%s%s ", default_value, PHONGO_METADATA_SEPARATOR, custom_value);
 	} else {
-		snprintf(ret, ret_len, "%s", default_value);
+		snprintf(ret, ret_len, "%s ", default_value);
 	}
 
 	return ret;
@@ -2603,7 +2603,7 @@ static void php_phongo_handshake_data_append(const char* name, size_t name_len, 
 	full_platform  = php_phongo_concat_handshake_data(php_version_string, platform, platform_len);
 
 	MONGOC_DEBUG(
-		"Setting driver handshake data: name %s, version %s, platform %s",
+		"Setting driver handshake data: { name: '%s', version: '%s', platform: '%s' }",
 		driver_name,
 		driver_version,
 		full_platform);
