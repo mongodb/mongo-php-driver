@@ -16,8 +16,7 @@
                     "ordinal": "one",
                     "dc": "ny"
                 }
-            },
-            "server_id": "RS-OLD-one"
+            }
         },
         {
             "procParams": {
@@ -33,8 +32,7 @@
                     "ordinal": "two",
                     "dc": "pa"
                 }
-            },
-            "server_id": "RS-OLD-two"
+            }
         },
         {
             "procParams": {
@@ -48,8 +46,7 @@
             "rsParams": {
                 "arbiterOnly": true
 
-            },
-            "server_id": "RS-OLD-arbiter"
+            }
         }
     ]
 }
