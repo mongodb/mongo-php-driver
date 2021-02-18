@@ -64,6 +64,6 @@ jobs:
         run: "make all"
 
       - name: "Run Tests"
-        run: TEST_PHP_ARGS="-q -x --show-diff -g FAIL,BORK,WARN,LEAK,SKIP" make test
+        run: TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test
         env:
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
