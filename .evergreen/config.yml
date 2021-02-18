@@ -97,6 +97,7 @@ functions:
               export TMPDIR="$MONGO_ORCHESTRATION_HOME/db"
               export PATH="$MONGODB_BINARIES:$PATH"
               export PROJECT="${project}"
+              export SSL_DIR="$DRIVERS_TOOLS/.evergreen/x509gen"
            EOT
            # See what we've done
            cat expansion.yml
@@ -393,8 +394,6 @@ functions:
             cat $i | tr -d '\r' > $i.new
             mv $i.new $i
           done
-          # Copy client certificate because symlinks do not work on Windows.
-          cp ${PROJECT_DIRECTORY}/scripts/ssl/client.pem ${MONGO_ORCHESTRATION_HOME}/lib/client.pem
 
   "make files executable":
     - command: shell.exec

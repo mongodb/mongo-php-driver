@@ -71,7 +71,6 @@ function get_files() {
         "Vagrantfile",
 
         "scripts/*/*.{sh}",
-        "scripts/ssl/*.pem",
         "scripts/*.{json,php,py,sh}",
         "tests/utils/*.{inc,json.gz,php}",
         "tests/**/*.{phpt}",
