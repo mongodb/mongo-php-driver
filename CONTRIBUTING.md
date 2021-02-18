@@ -114,6 +114,14 @@ default MongoDB port (27017) on localhost.
 
 With this set-up, the tests can be run with `make test`.
 
+If Mongo Orchestration is running on non-default settings, the
+``MONGO_ORCHESTRATION_URI`` environment variable can be used to specify where
+mongo-orchestration is listening:
+
+```
+MONGO_ORCHESTRATION_URI=http://some-host:1234/v1 make test
+```
+
 ## Updating libmongoc, libbson, and libmongocrypt
 
 The PHP driver can use either system libraries or bundled versions of
