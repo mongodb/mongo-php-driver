@@ -106,6 +106,17 @@ typedef struct {
 } php_phongo_server_t;
 
 typedef struct {
+	mongoc_server_api_t* server_api;
+	zend_string*         version;
+	zend_bool            strict;
+	zend_bool            strict_null;
+	zend_bool            deprecation_errors;
+	zend_bool            deprecation_errors_null;
+	HashTable*           properties;
+	zend_object          std;
+} php_phongo_serverapi_t;
+
+typedef struct {
 	mongoc_client_session_t* client_session;
 	zval                     manager;
 	int                      created_by_pid;
