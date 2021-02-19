@@ -2833,6 +2833,33 @@ static mongoc_client_t* php_phongo_find_persistent_client(const char* hash, size
 	return NULL;
 }
 
+static bool phongo_manager_set_serverapi_opts(php_phongo_manager_t* manager, zval* driverOptions) /* {{{ */
+{
+	zval*                   zServerApi;
+	php_phongo_serverapi_t* server_api;
+	bson_error_t            error = { 0 };
+
+	if (!driverOptions || !php_array_existsc(driverOptions, "serverApi")) {
+		return true;
+	}
+
+	zServerApi = php_array_fetch(driverOptions, "serverApi");
+
+	if (Z_TYPE_P(zServerApi) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(zServerApi), php_phongo_serverapi_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"serverApi\" driver option to be %s, %s given", ZSTR_VAL(php_phongo_serverapi_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zServerApi));
+		return false;
+	}
+
+	server_api = Z_SERVERAPI_OBJ_P(zServerApi);
+
+	if (!mongoc_client_set_server_api(manager->client, server_api->server_api, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error);
+		return false;
+	}
+
+	return true;
+} /* }}} */
+
 #ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
 static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manager, zval* driverOptions) /* {{{ */
 {
@@ -3449,6 +3476,11 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 #endif
 
 	if (!phongo_manager_set_auto_encryption_opts(manager, driverOptions)) {
+		/* Exception should already have been thrown */
+		goto cleanup;
+	}
+
+	if (!phongo_manager_set_serverapi_opts(manager, driverOptions)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}
