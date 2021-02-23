@@ -76,6 +76,8 @@
 #define PHONGO_DEBUG_INI_DEFAULT ""
 #define PHONGO_METADATA_SEPARATOR " / "
 #define PHONGO_METADATA_SEPARATOR_LEN (sizeof(PHONGO_METADATA_SEPARATOR) - 1)
+#define PHONGO_METADATA_PHP_VERSION_PREFIX "PHP "
+#define PHONGO_METADATA_PHP_VERSION_PREFIX_LEN (sizeof(PHONGO_METADATA_PHP_VERSION_PREFIX) - 1)
 
 ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 #if defined(ZTS) && defined(COMPILE_DL_MONGODB)
@@ -2635,20 +2637,20 @@ static bool php_phongo_extract_handshake_data(zval* driver, const char* key, cha
 static char* php_phongo_concat_handshake_data(const char* default_value, const char* custom_value, size_t custom_value_len)
 {
 	char* ret;
-	/* Length of the returned value needs to include the trailing null byte */
-	size_t ret_len = strlen(default_value) + 1;
+	/* Length of the returned value needs to include a trailing space and null byte */
+	size_t ret_len = strlen(default_value) + 2;
 
 	if (custom_value) {
-		/* Increase the length by that of the custom value as well as one byte for the separator */
+		/* Increase the length by that of the custom value as well as the separator length */
 		ret_len += custom_value_len + PHONGO_METADATA_SEPARATOR_LEN;
 	}
 
 	ret = ecalloc(sizeof(char*), ret_len);
 
 	if (custom_value) {
-		snprintf(ret, ret_len, "%s%s%s", default_value, PHONGO_METADATA_SEPARATOR, custom_value);
+		snprintf(ret, ret_len, "%s%s%s ", default_value, PHONGO_METADATA_SEPARATOR, custom_value);
 	} else {
-		snprintf(ret, ret_len, "%s", default_value);
+		snprintf(ret, ret_len, "%s ", default_value);
 	}
 
 	return ret;
@@ -2662,16 +2664,16 @@ static void php_phongo_handshake_data_append(const char* name, size_t name_len, 
 	char*  driver_version;
 	char*  full_platform;
 
-	php_version_string_len = strlen(PHP_VERSION);
-	php_version_string     = ecalloc(sizeof(char*), 4 + php_version_string_len);
-	snprintf(php_version_string, 4 + php_version_string_len, "PHP %s", PHP_VERSION);
+	php_version_string_len = strlen(PHP_VERSION) + PHONGO_METADATA_PHP_VERSION_PREFIX_LEN + 1;
+	php_version_string     = ecalloc(sizeof(char*), php_version_string_len);
+	snprintf(php_version_string, php_version_string_len, "%s%s", PHONGO_METADATA_PHP_VERSION_PREFIX, PHP_VERSION);
 
 	driver_name    = php_phongo_concat_handshake_data("ext-mongodb:PHP", name, name_len);
 	driver_version = php_phongo_concat_handshake_data(PHP_MONGODB_VERSION, version, version_len);
 	full_platform  = php_phongo_concat_handshake_data(php_version_string, platform, platform_len);
 
 	MONGOC_DEBUG(
-		"Setting driver handshake data: name %s, version %s, platform %s",
+		"Setting driver handshake data: { name: '%s', version: '%s', platform: '%s' }",
 		driver_name,
 		driver_version,
 		full_platform);

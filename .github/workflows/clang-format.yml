@@ -1,0 +1,40 @@
+name: "Coding Standards"
+
+on:
+  pull_request:
+    branches:
+      - "v*.*"
+      - "master"
+  push:
+    branches:
+      - "v*.*"
+      - "master"
+
+jobs:
+  coding-standards:
+    name: "Coding Standards"
+    runs-on: "ubuntu-20.04"
+
+    strategy:
+      matrix:
+        php-version:
+          - "7.4"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          submodules: true
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          extensions: ":mongodb"
+          tools: "phpize"
+
+      - name: "Configure driver"
+        run: .github/workflows/configure.sh
+
+      - name: "Run clang-format"
+        run: "make format-check"

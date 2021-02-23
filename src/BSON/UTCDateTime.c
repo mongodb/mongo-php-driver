@@ -103,7 +103,7 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t* inte
 #if PHP_VERSION_ID >= 70200
 	usec = (int64_t) floor(datetime_obj->time->us);
 #else
-	usec = (int64_t) floor(datetime_obj->time->f * 1000000 + 0.5);
+	usec                  = (int64_t) floor(datetime_obj->time->f * 1000000 + 0.5);
 #endif
 
 	intern->milliseconds = (sec * 1000) + (usec / 1000);

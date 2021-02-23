@@ -49,8 +49,6 @@ php.ini
 .*
 !.github/
 !tests/utils/*.php
-!.travis.yml
-!.travis.scripts/
 !.evergreen
 .evergreen/atlas-uris.txt
 

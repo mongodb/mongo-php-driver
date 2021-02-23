@@ -1,5 +1,5 @@
 {
-    "id": "REPLICASET_OLD",
+    "id": "repl0",
     "name": "mongod",
     "members": [
         {
@@ -12,13 +12,11 @@
                 "bind_ip": "::,0.0.0.0"
             },
             "rsParams": {
-                "priority": 99,
                 "tags": {
                     "ordinal": "one",
-                    "dc": "pa"
+                    "dc": "ny"
                 }
-            },
-            "server_id": "RS-OLD-one"
+            }
         },
         {
             "procParams": {
@@ -30,13 +28,11 @@
                 "bind_ip": "::,0.0.0.0"
             },
             "rsParams": {
-                "priority": 1.1,
                 "tags": {
                     "ordinal": "two",
-                    "dc": "nyc"
+                    "dc": "pa"
                 }
-            },
-            "server_id": "RS-OLD-two"
+            }
         },
         {
             "procParams": {
@@ -50,8 +46,7 @@
             "rsParams": {
                 "arbiterOnly": true
 
-            },
-            "server_id": "RS-OLD-arbiter"
+            }
         }
     ]
 }

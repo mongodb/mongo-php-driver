@@ -1,15 +1,19 @@
 #!/bin/sh
 
-if test x"$1" = x; then 
+CLANG_ARGS="-Werror"
+
+if test x"$1" = xchanged; then
+  FILES1=`git ls-files | grep -v "src/contrib" | grep '\.[ch]$'`
+  FILES2=`git ls-files --others --exclude-standard | grep -v "src/contrib" | grep '\.[ch]$'`
+  FILES="$FILES1 $FILES2"
+else
 	FILES1=`git ls-files | grep -v "src/contrib" | grep '\.[ch]$'`
 	FILES2=`git ls-files --others --exclude-standard | grep -v "src/contrib" | grep '\.[ch]$'`
 	FILES="$FILES1 $FILES2"
 fi
-if test x"$1" = xchanged; then 
-	FILES1=`git diff --name-only | grep -v "src/contrib" | grep '\.[ch]$'`
-	FILES2=`git diff --cached --name-only | grep -v "src/contrib" | grep '\.[ch]$'`
-	FILES3=`git ls-files --others --exclude-standard | grep '\.[ch]$'`
-	FILES="$FILES1 $FILES2 $FILES3"
+
+if test x"$1" = xcheck; then
+	CLANG_ARGS="$CLANG_ARGS -n"
 fi
 
 # Find clang-format, we prefer -6.0, but also allow binaries without -suffix as
@@ -33,7 +37,16 @@ if [ $VERSION_MAJOR -lt 6 ]; then
 	exit
 fi
 
+FAILURE=""
+
 # Run formatter
 for i in $FILES; do
-	$CLANG_FORMAT -i $i
+	$CLANG_FORMAT $CLANG_ARGS -i $i
+	[ $? -eq 0 ] || FAILURE="yes"
 done
+
+if [ -z "$FAILURE" ]; then
+  exit 0
+fi
+
+exit 1

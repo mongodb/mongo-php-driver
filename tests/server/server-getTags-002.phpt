@@ -22,8 +22,8 @@ echo "ordinal: ", array_key_exists('ordinal', $tags) ? $tags['ordinal'] : 'not s
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-dc: pa
+dc: ny
 ordinal: one
-dc: nyc
+dc: pa
 ordinal: two
 ===DONE===

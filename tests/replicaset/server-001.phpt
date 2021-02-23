@@ -48,7 +48,7 @@ var_dump($info["me"] == $server->getHost() . ":" . $server->getPort());
 <?php exit(0); ?>
 --EXPECTF--
 string(%d) "%s"
-dc: pa
+dc: ny
 ordinal: one
 int(%d)
 int(%d)
@@ -58,7 +58,7 @@ bool(false)
 bool(false)
 bool(false)
 bool(false)
-string(%d) "REPLICASET%S"
+string(%d) "repl0%S"
 array(2) {
   [0]=>
   string(%d) "%s:%d"
