@@ -744,14 +744,6 @@ function failMaxTimeMS(Server $server)
     configureTargetedFailPoint($server, 'maxTimeAlwaysTimeOut', [ 'times' => 1 ]);
 }
 
-function getMOPresetBase() {
-    if (!($BASE = getenv("mongodb_orchestration_base"))) {
-        $BASE = "/phongo/";
-    }
-
-    return $BASE;
-}
-
 function toPHP($var, $typemap = array()) {
     return MongoDB\BSON\toPHP($var, $typemap);
 }
