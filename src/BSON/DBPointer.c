@@ -46,7 +46,8 @@ static bool php_phongo_dbpointer_init(php_phongo_dbpointer_t* intern, const char
 	intern->ref     = estrndup(ref, ref_len);
 	intern->ref_len = ref_len;
 
-	strncpy(intern->id, id, sizeof(intern->id));
+	memset(intern->id, 0, sizeof(intern->id));
+	strncpy(intern->id, id, sizeof(intern->id) - 1);
 
 	return true;
 } /* }}} */
