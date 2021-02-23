@@ -206,7 +206,7 @@ function skip_if_not_ssl()
 function skip_if_no_ssl_dir()
 {
     $sslDir = getenv('SSL_DIR');
-    $sslDir !== false or exit('skip SSL_DIR environment not set');
+    $sslDir !== false or exit('skip SSL_DIR environment variable not set');
 
     $sslDir = realpath($sslDir);
     ($sslDir !== false && is_dir($sslDir)) or exit('skip SSL_DIR is not a valid directory');

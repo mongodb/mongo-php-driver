@@ -119,7 +119,7 @@ If Mongo Orchestration is running on non-default settings, the
 mongo-orchestration is listening:
 
 ```
-MONGO_ORCHESTRATION_URI=http://some-host:1234/v1 make test
+MONGO_ORCHESTRATION_URI=http://localhost:1234/v1 make test
 ```
 
 ## Updating libmongoc, libbson, and libmongocrypt
