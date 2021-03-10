@@ -3,13 +3,13 @@ MongoDB\Driver\Manager::__construct(): invalid write concern (w)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 /* Note: libmongoc doesn't check w's type in the URI string. Numeric strings are
  * parsed as 32-bit integers with strtol() and other values are used as-is. */
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['w' => 1.0]);
+    create_test_manager(null, ['w' => 1.0]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 /* Note: Values of w < -1 are invalid, but libmongoc's URI string parsing only
@@ -17,7 +17,7 @@ echo throws(function() {
  * test for this. */
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['w' => -2]);
+    create_test_manager(null, ['w' => -2]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>

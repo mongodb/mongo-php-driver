@@ -29,7 +29,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 
 $subscriber = new MySubscriber();
 
-$manager = new MongoDB\Driver\Manager(URI, [], ['serverApi' => new MongoDB\Driver\ServerApi('1')]);
+$manager = create_test_manager(URI, [], ['serverApi' => new MongoDB\Driver\ServerApi('1')]);
 
 MongoDB\Driver\Monitoring\addSubscriber($subscriber);
 

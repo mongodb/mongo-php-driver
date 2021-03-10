@@ -6,7 +6,7 @@ MongoDB\BSON\Binary argument count errors
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $binary = new MongoDB\BSON\Binary("random binary data", MongoDB\BSON\Binary::TYPE_GENERIC);
 

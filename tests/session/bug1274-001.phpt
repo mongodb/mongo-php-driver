@@ -10,7 +10,7 @@ PHPC-1274: Session destruct should not abort transaction from parent process
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 /* Create collections as that can't be (automatically) done in a transaction */
 $manager->executeCommand(

@@ -12,7 +12,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 /* Note: PHP 7 throws a non-array TypeError based on arginfo, which happens
  * before zpp and our proxying of errors with InvalidArgumentExceptions. */
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $session = $manager->startSession();
 
 $options = [

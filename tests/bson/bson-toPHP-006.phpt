@@ -3,7 +3,7 @@ MongoDB\BSON\toPHP(): Decodes Binary UUID types with any data length
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 /* Note: PHPC-895 requires Binary UUID types to have 16-byte data lengths during
  * construction and initialization from unserialize() and __set_state(), but the

@@ -3,7 +3,7 @@ MongoDB\Driver\ServerApi serialization
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     new MongoDB\Driver\ServerApi('1'),

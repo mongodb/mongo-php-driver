@@ -8,7 +8,7 @@ MongoDB\Driver\Manager: Invalid namespace
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(array("my" => "value"));
 

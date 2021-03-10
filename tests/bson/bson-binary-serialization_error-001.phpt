@@ -3,7 +3,7 @@ MongoDB\BSON\Binary unserialization requires "data" string and "type" integer fi
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     unserialize('C:19:"MongoDB\BSON\Binary":30:{a:1:{s:4:"data";s:6:"foobar";}}');

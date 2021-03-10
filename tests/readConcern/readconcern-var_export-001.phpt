@@ -3,7 +3,7 @@ MongoDB\Driver\ReadConcern: var_export()
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     new MongoDB\Driver\ReadConcern(),

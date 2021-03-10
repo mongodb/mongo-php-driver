@@ -13,7 +13,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 $EMPLOYEES_COL = COLLECTION_NAME . '_employees';
 $EVENTS_COL =    COLLECTION_NAME . '_events';
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 /* Create collections as that can't be (automatically) done in a transaction */
 $manager->executeCommand(

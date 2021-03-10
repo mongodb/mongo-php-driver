@@ -3,7 +3,7 @@ MongoDB\BSON\Regex unserialization does not allow pattern or flags to contain nu
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     unserialize('C:18:"MongoDB\BSON\Regex":54:{a:2:{s:7:"pattern";s:7:"regexp' . "\0" . '";s:5:"flags";s:1:"i";}}');

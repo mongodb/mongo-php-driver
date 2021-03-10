@@ -7,7 +7,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 echo throws(function () {
     // Using a stream context without SSL options causes an exception in the constructor, triggering the potential leak
-    new MongoDB\Driver\Manager(
+    create_test_manager(
             null,
             ['username' => 'username', 'authMechanism' => 'GSSAPI', 'authMechanismProperties' => ['canonicalize_host_name' => true]],
             ['context' => stream_context_create([])]

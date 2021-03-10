@@ -3,7 +3,7 @@ BSON encoding: Encoding objects into BSON representation
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 class AssociativeArray implements MongoDB\BSON\Serializable, MongoDB\BSON\Unserializable
 {

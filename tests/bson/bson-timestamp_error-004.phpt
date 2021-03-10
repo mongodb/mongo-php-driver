@@ -5,7 +5,7 @@ MongoDB\BSON\Timestamp constructor requires 64-bit integers to be positive unsig
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\BSON\Timestamp(4294967296, 0);

@@ -5,10 +5,10 @@ MongoDB\Driver\Manager::__construct(): invalid write concern (wtimeoutms range)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['wTimeoutMS' => -1]);
+    create_test_manager(null, ['wTimeoutMS' => -1]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>

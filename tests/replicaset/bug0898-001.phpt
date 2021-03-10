@@ -9,7 +9,7 @@ PHPC-898: readConcern option should not be included in getMore commands (URI opt
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI, ['readConcernLevel' => 'local']);
+$manager = create_test_manager(URI, ['readConcernLevel' => 'local']);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(['_id' => 1]);

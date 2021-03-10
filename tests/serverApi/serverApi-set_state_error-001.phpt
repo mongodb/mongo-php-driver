@@ -3,7 +3,7 @@ MongoDB\Driver\ServerApi::__set_state() requires correct data types and values
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     MongoDB\Driver\ServerApi::__set_state([]);

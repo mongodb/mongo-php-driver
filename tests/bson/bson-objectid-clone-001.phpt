@@ -3,7 +3,7 @@ MongoDB\BSON\ObjectId can be cloned
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $objectId = new MongoDB\BSON\ObjectId("53e2a1c40640fd72175d4603");
 $objectId->foo = 'bar';

@@ -3,10 +3,10 @@ MongoDB\Driver\Manager::__construct(): invalid URI
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager("not a valid connection string");
+    $manager = create_test_manager("not a valid connection string");
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>

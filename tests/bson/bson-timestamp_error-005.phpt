@@ -3,7 +3,7 @@ MongoDB\BSON\Timestamp constructor requires strings to parse as 64-bit integers
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\BSON\Timestamp('1.23', '5678');

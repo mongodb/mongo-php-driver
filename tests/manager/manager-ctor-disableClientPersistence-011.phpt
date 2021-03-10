@@ -30,7 +30,7 @@ $subscriber = new MySubscriber;
 
 
 ini_set('mongodb.debug', 'stderr');
-$manager = new MongoDB\Driver\Manager(URI, [], ['disableClientPersistence' => true]);
+$manager = create_test_manager(URI, [], ['disableClientPersistence' => true]);
 ini_set('mongodb.debug', '');
 
 MongoDB\Driver\Monitoring\addSubscriber($subscriber);

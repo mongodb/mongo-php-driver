@@ -3,7 +3,7 @@ MongoDB\BSON\MaxKey can be cloned
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $maxKey = new MongoDB\BSON\MaxKey;
 $maxKey->foo = 'bar';

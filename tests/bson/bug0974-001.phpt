@@ -3,7 +3,7 @@ PHPC-974: Converting JSON to BSON to PHP introduces gaps in array indexes
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     '{"myArray": [{"$oid": "2017-06-13T11:21:26.906Z"}]}',

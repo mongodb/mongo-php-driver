@@ -16,7 +16,7 @@ $tests = [
     ['keyAltNames' => ['foo' => []]],
 ];
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $clientEncryption = $manager->createClientEncryption(['keyVaultNamespace' => 'default.keys', 'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary($key, 0)]]]);
 
 foreach ($tests as $opts) {

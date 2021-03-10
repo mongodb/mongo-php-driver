@@ -19,7 +19,7 @@ try {
     var_dump(false);
 }
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 throws(function() use ($manager) {
     serialize($manager);
 }, "Exception");

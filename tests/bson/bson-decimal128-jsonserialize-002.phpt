@@ -5,7 +5,7 @@ MongoDB\BSON\Decimal128::jsonSerialize() with json_encode()
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $doc = ['foo' => new MongoDB\BSON\Decimal128('12389719287312')];
 $json = json_encode($doc);

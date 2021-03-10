@@ -10,8 +10,8 @@ MongoDB\Driver\Session spec test: session cannot be used for different clients
 require_once __DIR__ . "/../utils/basic.inc";
 
 // Vary heartbeatFrequencyMS to ensure each Manager gets a different client
-$manager = new MongoDB\Driver\Manager(URI, ['heartbeatFrequencyMS' => 60000]);
-$otherManager = new MongoDB\Driver\Manager(URI, ['heartbeatFrequencyMS' => 90000]);
+$manager = create_test_manager(URI, ['heartbeatFrequencyMS' => 60000]);
+$otherManager = create_test_manager(URI, ['heartbeatFrequencyMS' => 90000]);
 
 // Create a session with the second Manager (associated with different client)
 $session = $otherManager->startSession();

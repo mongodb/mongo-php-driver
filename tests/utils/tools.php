@@ -88,6 +88,11 @@ function get_module_info($row)
     return $matches[1];
 }
 
+function create_test_manager(string $uri = null, array $options = [], array $driverOptions = [])
+{
+    return new MongoDB\Driver\Manager($uri ?? URI, $options, $driverOptions);
+}
+
 /**
  * Returns the primary server.
  *
@@ -97,7 +102,7 @@ function get_module_info($row)
  */
 function get_primary_server($uri)
 {
-    return (new Manager($uri))->selectServer(new ReadPreference('primary'));
+    return create_test_manager($uri)->selectServer(new ReadPreference('primary'));
 }
 
 /**
@@ -109,7 +114,7 @@ function get_primary_server($uri)
  */
 function get_secondary_server($uri)
 {
-    return (new Manager($uri))->selectServer(new ReadPreference('secondary'));
+    return create_test_manager($uri)->selectServer(new ReadPreference('secondary'));
 }
 
 /**

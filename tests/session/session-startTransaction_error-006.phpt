@@ -10,7 +10,7 @@ MongoDB\Driver\Session::startTransaction() throws an error on replicasets < 4.0
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $session = $manager->startSession();
 
 echo throws(function () use ($session) {

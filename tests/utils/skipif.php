@@ -26,7 +26,7 @@ function skip_if_mongos()
  */
 function skip_if_multiple_mongos()
 {
-    $manager = new Manager(URI);
+    $manager = create_test_manager();
 
     // Ensure SDAM is initialized before calling Manager::getServers()
     $manager->selectServer(new ReadPreference('nearest'));

@@ -10,7 +10,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $key = base64_decode('Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk');
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $clientEncryption = $manager->createClientEncryption(['keyVaultNamespace' => 'default.keys', 'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary($key, 0)]]]);
 
 var_dump($clientEncryption->createDataKey('local'));

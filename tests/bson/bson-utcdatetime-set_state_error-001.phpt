@@ -3,7 +3,7 @@ MongoDB\BSON\UTCDateTime::__set_state() requires "milliseconds" integer or numer
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     MongoDB\BSON\UTCDateTime::__set_state(['milliseconds' => 1.0]);

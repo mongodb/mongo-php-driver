@@ -7,14 +7,14 @@ require_once __DIR__ . "/../utils/basic.inc";
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 
 // Invalid host cannot be resolved
-$manager = new MongoDB\Driver\Manager('mongodb://invalid.host:27017', ['serverSelectionTimeoutMS' => 1]);
+$manager = create_test_manager('mongodb://invalid.host:27017', ['serverSelectionTimeoutMS' => 1]);
 
 echo throws(function() use ($manager, $command) {
     $manager->executeCommand(DATABASE_NAME, $command);
 }, 'MongoDB\Driver\Exception\ConnectionTimeoutException'), "\n";
 
 // Valid host refuses connection
-$manager = new MongoDB\Driver\Manager('mongodb://localhost:54321', ['serverSelectionTimeoutMS' => 1]);
+$manager = create_test_manager('mongodb://localhost:54321', ['serverSelectionTimeoutMS' => 1]);
 
 echo throws(function() use ($manager, $command) {
     $manager->executeCommand(DATABASE_NAME, $command);

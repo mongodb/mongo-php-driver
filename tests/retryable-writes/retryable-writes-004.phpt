@@ -32,7 +32,7 @@ class TransactionIdObserver implements MongoDB\Driver\Monitoring\CommandSubscrib
 $observer = new TransactionIdObserver;
 MongoDB\Driver\Monitoring\addSubscriber($observer);
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $writeConcern = new MongoDB\Driver\WriteConcern(0);
 
 echo "Testing unacknowledged deleteOne\n";

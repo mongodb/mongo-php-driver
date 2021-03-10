@@ -3,7 +3,7 @@ PHPC-528: Cannot append reference to BSON
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $embedded = ['foo'];
 $data = ['embedded' => &$embedded];

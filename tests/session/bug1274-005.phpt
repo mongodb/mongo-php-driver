@@ -43,7 +43,7 @@ class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
     }
 }
 
-$manager = new MongoDB\Driver\Manager(URI, [], ['disableClientPersistence' => true]);
+$manager = create_test_manager(URI, [], ['disableClientPersistence' => true]);
 $session = $manager->startSession();
 
 $bulk = new MongoDB\Driver\BulkWrite();

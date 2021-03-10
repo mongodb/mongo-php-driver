@@ -3,7 +3,7 @@ MongoDB\Driver\WriteConcern serialization errors
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     unserialize('C:27:"MongoDB\Driver\WriteConcern":30:{a:2:{s:1:"w";i:0;s:1:"j";b:1;}}');

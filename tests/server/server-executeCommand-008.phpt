@@ -11,7 +11,7 @@ MongoDB\Driver\Server::executeCommand() does not send read preference to standal
 require_once __DIR__ . "/../utils/basic.inc";
 require_once __DIR__ . "/../utils/observer.php";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
 
 (new CommandObserver)->observe(

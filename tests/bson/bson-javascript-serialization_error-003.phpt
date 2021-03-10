@@ -3,7 +3,7 @@ MongoDB\BSON\Javascript unserialization does not allow code to contain null byte
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     unserialize('C:23:"MongoDB\BSON\Javascript":55:{a:1:{s:4:"code";s:30:"function foo() { return ' . "'\0'" . '; }";}}');

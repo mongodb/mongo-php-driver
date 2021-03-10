@@ -2,9 +2,9 @@
 MongoDB\Driver\Manager::executeCommand() connection error
 --FILE--
 <?php
-require_once __DIR__ . "/../utils/tools.php";
+require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager("mongodb://localhost:44444/?serverselectiontimeoutms=10");
+$manager = create_test_manager("mongodb://localhost:44444/?serverselectiontimeoutms=10");
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 

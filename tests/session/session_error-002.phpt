@@ -7,7 +7,7 @@ MongoDB\Driver\Session with wrong defaultTransactionOptions
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager();
+$manager = create_test_manager();
 
 echo raises(function() use ($manager) {
     $manager->startSession([

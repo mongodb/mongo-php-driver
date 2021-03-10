@@ -3,7 +3,7 @@ MongoDB\BSON\Javascript can be cloned
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $javascript = new MongoDB\BSON\Javascript("function foo(bar) {var baz = bar; var bar = foo; return bar; }", ['foo' => 42]);
 $javascript->foo = 'bar';

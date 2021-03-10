@@ -11,7 +11,7 @@ MongoDB\Driver\Manager::executeCommand() does not inherit read or write concern
 require_once __DIR__ . "/../utils/basic.inc";
 require_once __DIR__ . "/../utils/observer.php";
 
-$manager = new MongoDB\Driver\Manager(URI, ['readConcernLevel' => 'local', 'w' => 2, 'wtimeoutms' => 1000]);
+$manager = create_test_manager(URI, ['readConcernLevel' => 'local', 'w' => 2, 'wtimeoutms' => 1000]);
 
 $command = new MongoDB\Driver\Command([
     'aggregate' => COLLECTION_NAME,

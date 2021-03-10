@@ -6,7 +6,7 @@ MongoDB\Driver\Manager::__construct(): invalid option types
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     ['kmsProviders' => 'string'],
@@ -24,7 +24,7 @@ foreach ($tests as $test) {
     echo throws(function() use ($test) {
         $autoEncryptionOptions = ['keyVaultNamespace' => 'admin.dataKeys'];
 
-        $manager = new MongoDB\Driver\Manager(null, [], ['autoEncryption' => $autoEncryptionOptions + $test]);
+        $manager = create_test_manager(null, [], ['autoEncryption' => $autoEncryptionOptions + $test]);
     }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n\n";
 }
 

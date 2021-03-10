@@ -9,7 +9,7 @@ Cursor::setTypeMap() error does not alter current element
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(['_id' => 1]);

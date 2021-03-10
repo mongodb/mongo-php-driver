@@ -8,7 +8,7 @@ MongoDB\Driver\Manager: Connecting with invalid compressor values
 require_once __DIR__ . "/../utils/basic.inc";
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(URI, [ 'compressors' => "foo\xFEbar"] );
+    $manager = create_test_manager(URI, [ 'compressors' => "foo\xFEbar"] );
 }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 ?>
 ===DONE===

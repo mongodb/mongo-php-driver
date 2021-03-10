@@ -3,7 +3,7 @@ MongoDB\BSON\toCanonicalExtendedJSON(): Encoding extended JSON types
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     [ '_id' => new MongoDB\BSON\ObjectId('56315a7c6118fd1b920270b1') ],

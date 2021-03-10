@@ -8,7 +8,7 @@ Sorting single field, descending
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 loadFixtures($manager);
 
 $query = new MongoDB\Driver\Query(array(), array(

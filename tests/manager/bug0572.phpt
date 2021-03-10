@@ -16,7 +16,7 @@ $closure = function() {
             'allow_self_signed' => true,
         ],
     ]);
-    return new MongoDB\Driver\Manager(URI, [], ['context' => $context]);
+    return create_test_manager(URI, [], ['context' => $context]);
 };
 
 $manager = $closure();

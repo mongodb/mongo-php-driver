@@ -10,7 +10,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 echo throws(function() {
     // URI may or may not support auth, but that is not necessary for the test
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/', ['authMechanism' => 'SCRAM-SHA-1']);
+    create_test_manager('mongodb://127.0.0.1/', ['authMechanism' => 'SCRAM-SHA-1']);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

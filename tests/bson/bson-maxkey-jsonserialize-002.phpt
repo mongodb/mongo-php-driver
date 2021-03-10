@@ -3,7 +3,7 @@ MongoDB\BSON\MaxKey::jsonSerialize() with json_encode()
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $doc = ['foo' => new MongoDB\BSON\MaxKey];
 $json = json_encode($doc);

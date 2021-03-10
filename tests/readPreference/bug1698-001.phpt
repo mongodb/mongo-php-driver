@@ -3,7 +3,7 @@ PHPC-1698: php_phongo_read_preference_prep_tagsets may leak in convert_to_object
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $args = ['mode' => 'secondary', 'tags' => [['dc' => 'ny']]];
 var_dump(MongoDB\Driver\ReadPreference::__set_state($args));
@@ -14,7 +14,7 @@ var_dump(new MongoDB\Driver\ReadPreference('secondary', $tagSets));
 var_dump($tagSets);
 
 $uriTagSets = [['dc' => 'ny']];
-var_dump((new MongoDB\Driver\Manager(null, ['readPreference' => 'secondary', 'readPreferenceTags' => $uriTagSets]))->getReadPreference());
+var_dump((create_test_manager(null, ['readPreference' => 'secondary', 'readPreferenceTags' => $uriTagSets]))->getReadPreference());
 var_dump($uriTagSets);
 
 ?>

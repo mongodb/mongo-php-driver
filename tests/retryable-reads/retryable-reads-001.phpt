@@ -25,7 +25,7 @@ class Observer implements MongoDB\Driver\Monitoring\CommandSubscriber
     }
 }
 
-$manager = new MongoDB\Driver\Manager(URI, ['retryReads' => true]);
+$manager = create_test_manager(URI, ['retryReads' => true]);
 
 // Select a specific server for future operations to avoid mongos switching in sharded clusters
 $server = $manager->selectServer(new \MongoDB\Driver\ReadPreference('primary'));

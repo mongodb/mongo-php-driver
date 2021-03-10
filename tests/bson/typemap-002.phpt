@@ -9,7 +9,7 @@ MongoDB\Driver\Cursor::setTypeMap(): Setting using type "object"
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array('_id' => 1, 'bson_array' => array(1, 2, 3), 'bson_object' => array("string" => "keys", "for" => "ever")));

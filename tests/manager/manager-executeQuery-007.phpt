@@ -10,7 +10,7 @@ MongoDB\Driver\Manager::executeQuery() read concern inheritance
 require_once __DIR__ . "/../utils/basic.inc";
 require_once __DIR__ . "/../utils/observer.php";
 
-$manager = new MongoDB\Driver\Manager(URI, ['readConcernLevel' => 'local']);
+$manager = create_test_manager(URI, ['readConcernLevel' => 'local']);
 
 (new CommandObserver)->observe(
     function() use ($manager) {

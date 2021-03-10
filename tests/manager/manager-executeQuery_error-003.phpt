@@ -8,7 +8,7 @@ MongoDB\Driver\Manager::executeQuery() exposes error document via CommandExcepti
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $query = new MongoDB\Driver\Query(['$foo' => 1]);
 
 try {

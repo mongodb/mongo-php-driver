@@ -39,7 +39,7 @@ $documents = [
     ['_id' => new MyPersistableId('bar')],
 ];
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $bulk = new MongoDB\Driver\BulkWrite();
 

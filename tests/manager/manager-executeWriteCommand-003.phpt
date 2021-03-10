@@ -11,7 +11,7 @@ MongoDB\Driver\Manager::executeWriteCommand() write concern inheritance
 require_once __DIR__ . "/../utils/basic.inc";
 require_once __DIR__ . "/../utils/observer.php";
 
-$manager = new MongoDB\Driver\Manager(URI, ['w' => 2, 'wtimeoutms' => 1000]);
+$manager = create_test_manager(URI, ['w' => 2, 'wtimeoutms' => 1000]);
 
 $command = new MongoDB\Driver\Command([
     'findAndModify' => COLLECTION_NAME,

@@ -3,7 +3,7 @@ MongoDB\BSON\fromPHP(): Null type map values imply default behavior
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 class MyDocument implements MongoDB\BSON\Persistable
 {

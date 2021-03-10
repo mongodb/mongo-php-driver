@@ -3,7 +3,7 @@ MongoDB\Driver\Query construction (invalid maxAwaitTimeMS range)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\Driver\Query([], ['maxAwaitTimeMS' => -1]);

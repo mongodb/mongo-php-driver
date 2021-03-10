@@ -11,7 +11,7 @@ MongoDB\Driver\Manager::executeBulkWrite() BulkWriteException inherits labels fr
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 // Select a specific server for future operations to avoid mongos switching in sharded clusters
 $server = $manager->selectServer(new \MongoDB\Driver\ReadPreference('primary'));

@@ -3,7 +3,7 @@ MongoDB\Driver\BulkWrite::update() with invalid replacement document
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $bulk = new MongoDB\Driver\BulkWrite;
 

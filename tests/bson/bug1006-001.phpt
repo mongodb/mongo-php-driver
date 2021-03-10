@@ -3,7 +3,7 @@ PHPC-1006: Do not modify memory of Persistable::bsonSerialize() return value
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 class MyClass implements MongoDB\BSON\Persistable
 {

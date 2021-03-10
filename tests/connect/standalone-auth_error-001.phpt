@@ -15,7 +15,7 @@ $database = "admin";
 
 $parsed = parse_url(URI);
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s", $username, $password, $parsed["host"], $parsed["port"], $database);
-$manager = new MongoDB\Driver\Manager($dsn);
+$manager = create_test_manager($dsn);
 
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(array("my" => "value"));

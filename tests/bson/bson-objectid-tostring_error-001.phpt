@@ -6,7 +6,7 @@ MongoDB\BSON\ObjectId raises warning on invalid arguments
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $pregenerated = new MongoDB\BSON\ObjectId("53e28b650640fd3162152de1");
 

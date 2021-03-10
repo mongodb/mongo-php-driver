@@ -3,14 +3,14 @@ MongoDB\Driver\Manager::__construct(): directConnection=true conflicts with mult
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    $manager = new \MongoDB\Driver\Manager('mongodb://a.example.com,b.example.com/?directConnection=true');
+    $manager = create_test_manager('mongodb://a.example.com,b.example.com/?directConnection=true');
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n\n";
 
 echo throws(function() {
-    $manager = new \MongoDB\Driver\Manager('mongodb://a.example.com,b.example.com', ['directConnection' => true]);
+    $manager = create_test_manager('mongodb://a.example.com,b.example.com', ['directConnection' => true]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>

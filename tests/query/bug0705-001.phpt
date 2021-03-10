@@ -10,7 +10,7 @@ PHPC-705: Do not unnecessarily wrap filters in $query (profiled query)
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $command = new MongoDB\Driver\Command(['profile' => 2]);
 $cursor = $manager->executeCommand(DATABASE_NAME, $command);

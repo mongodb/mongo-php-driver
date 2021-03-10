@@ -8,7 +8,7 @@ MongoDB\Driver\Cursor handles invalid positions gracefully
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $bulkWrite = new MongoDB\Driver\BulkWrite;
 $bulkWrite->insert(array('_id' => 0));

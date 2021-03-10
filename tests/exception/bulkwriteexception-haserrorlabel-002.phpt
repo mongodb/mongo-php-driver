@@ -10,7 +10,7 @@ MongoDB\Driver\Exception\BulkWriteException::hasErrorLabel() with writeConcernEr
 require_once __DIR__ . "/../utils/basic.inc";
 
 // Disable retryWrites since we want to check for a RetryableWriteError error label
-$manager = new MongoDB\Driver\Manager(URI, ['retryWrites' => false]);
+$manager = create_test_manager(URI, ['retryWrites' => false]);
 
 // Select a specific server for future operations to avoid mongos switching in sharded clusters
 $server = $manager->selectServer(new \MongoDB\Driver\ReadPreference('primary'));

@@ -5,7 +5,7 @@ PHPC-544: Consult SIZEOF_ZEND_LONG for 64-bit integer support
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     ['x' => -2147483648],

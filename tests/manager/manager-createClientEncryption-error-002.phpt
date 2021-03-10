@@ -6,7 +6,7 @@ MongoDB\Driver\Manager::createClientEncryption() with invalid option types
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     ['kmsProviders' => 'string'],
@@ -18,7 +18,7 @@ $tests = [
 
 foreach ($tests as $test) {
     echo throws(function () use ($test) {
-        $manager = new MongoDB\Driver\Manager();
+        $manager = create_test_manager();
         $clientEncryption = $manager->createClientEncryption(['keyVaultNamespace' => 'default.keys'] + $test);
     }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n\n";
 }

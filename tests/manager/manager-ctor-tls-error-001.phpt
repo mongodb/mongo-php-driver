@@ -3,7 +3,7 @@ MongoDB\Driver\Manager::__construct(): Test invalid URI option combinations
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $invalidCombinations = [
     ['tlsInsecure', 'tlsAllowInvalidHostnames'],
@@ -18,7 +18,7 @@ foreach ($invalidCombinations as list($optionA, $optionB)) {
     foreach ([false, true] as $valueA) {
         foreach ([false, true] as $valueB) {
             echo throws(function() use ($optionA, $valueA, $optionB, $valueB) {
-                new MongoDB\Driver\Manager(sprintf(
+                create_test_manager(sprintf(
                     'mongodb://localhost:27017/?%s=%s&%s=%s',
                     $optionA,
                     $valueA ? 'true' : 'false',
@@ -28,7 +28,7 @@ foreach ($invalidCombinations as list($optionA, $optionB)) {
             }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
             echo throws(function() use ($optionA, $valueA, $optionB, $valueB) {
-                new MongoDB\Driver\Manager(
+                create_test_manager(
                     sprintf(
                         'mongodb://localhost:27017/?%s=%s',
                         $optionA,

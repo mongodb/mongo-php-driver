@@ -3,7 +3,7 @@ MongoDB\BSON\MaxKey #001
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $maxkey = new MongoDB\BSON\MaxKey;
 $tests = array(

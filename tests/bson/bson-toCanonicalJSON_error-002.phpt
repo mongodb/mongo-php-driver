@@ -3,7 +3,7 @@ MongoDB\BSON\toCanonicalExtendedJSON(): BSON decoding exceptions for malformed d
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     pack('Vx', 4), // Empty document with invalid length (too small)

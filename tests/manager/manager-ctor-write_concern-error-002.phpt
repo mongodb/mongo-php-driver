@@ -5,13 +5,13 @@ MongoDB\Driver\Manager::__construct(): invalid write concern (w range)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 /* Note: libmongoc does not check w's range in the URI string. 64-bit integers
  * will be truncated by strtol() */
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['w' => 2147483648]);
+    create_test_manager(null, ['w' => 2147483648]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>

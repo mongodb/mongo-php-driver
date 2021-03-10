@@ -3,7 +3,7 @@ BSON encoding: Object Document Mapper
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 require_once __DIR__ . "/../utils/classes.inc";
 
 $hannes = new Person("Hannes", 42);

@@ -3,7 +3,7 @@ MongoDB\BSON\ObjectId::__construct() requires valid hex string
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\BSON\ObjectId('0123456789abcdefghijklmn');

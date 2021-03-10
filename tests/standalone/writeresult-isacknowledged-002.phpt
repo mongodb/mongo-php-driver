@@ -11,7 +11,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 /* We use w:0 here because libmongoc detects w:1 as the server's default and
  * omits it. */
 $uri = append_uri_option(URI, 'w=0');
-$manager = new MongoDB\Driver\Manager($uri);
+$manager = create_test_manager($uri);
 
 $bulk = new \MongoDB\Driver\BulkWrite;
 $bulk->insert(array('x' => 1));

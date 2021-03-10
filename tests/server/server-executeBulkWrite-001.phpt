@@ -8,7 +8,7 @@ MongoDB\Driver\Server::executeBulkWrite()
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $server = $manager->executeQuery(NS, new MongoDB\Driver\Query(array()))->getServer();
 
 $bulk = new MongoDB\Driver\BulkWrite();

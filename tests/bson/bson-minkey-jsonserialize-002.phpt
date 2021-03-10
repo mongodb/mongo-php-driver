@@ -3,7 +3,7 @@ MongoDB\BSON\MinKey::jsonSerialize() with json_encode()
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $doc = ['foo' => new MongoDB\BSON\MinKey];
 $json = json_encode($doc);

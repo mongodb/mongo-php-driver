@@ -5,7 +5,7 @@ PHPC-592: Property name corrupted when unserializing 64-bit integer on 32-bit pl
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     '{ "x": { "$numberLong": "-2147483648" }}',

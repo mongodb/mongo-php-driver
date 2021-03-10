@@ -3,7 +3,7 @@ MongoDB\Driver\ReadPreference construction (invalid maxStalenessSeconds)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY, null, ['maxStalenessSeconds' => 1000]);

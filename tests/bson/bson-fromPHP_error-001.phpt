@@ -3,7 +3,7 @@ MongoDB\BSON\fromPHP(): bsonSerialize() must return an array or stdClass
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 class MyDocument implements MongoDB\BSON\Serializable
 {

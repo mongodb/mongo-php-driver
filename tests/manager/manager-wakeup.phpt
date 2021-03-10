@@ -6,9 +6,9 @@ MongoDB\Driver\Manager: Manager cannot be woken up
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
-$manager = new MongoDB\Driver\Manager();
+$manager = create_test_manager();
 
 echo throws(function() use ($manager) {
     $manager->__wakeup();

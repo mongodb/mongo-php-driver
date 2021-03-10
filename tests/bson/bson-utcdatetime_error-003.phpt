@@ -3,7 +3,7 @@ MongoDB\BSON\UTCDateTime constructor requires strings to parse as 64-bit integer
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\BSON\UTCDateTime('1234.5678');

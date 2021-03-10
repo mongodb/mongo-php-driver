@@ -7,7 +7,7 @@ MONGODB_URI=invalid
 require_once __DIR__ . "/../utils/basic.inc";
 
 echo throws(function() {
-    $manager = new MongoDB\Driver\Manager(URI);
+    $manager = create_test_manager();
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 ?>
 ===DONE===

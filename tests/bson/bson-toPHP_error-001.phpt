@@ -3,7 +3,7 @@ MongoDB\BSON\toPHP(): Type classes must be instantiatable and implement Unserial
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 abstract class MyAbstractDocument implements MongoDB\BSON\Unserializable {}
 

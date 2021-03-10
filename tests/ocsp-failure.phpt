@@ -11,17 +11,17 @@ require_once __DIR__ . "/utils/basic.inc";
 $ping = new \MongoDB\Driver\Command(['ping' => 1]);
 
 // Expect command to fail with the provided options
-$m = new \MongoDB\Driver\Manager(URI);
+$m = create_test_manager();
 echo throws (function () use ($m, $ping) {
     $m->executeCommand('admin', $ping);
 }, "MongoDB\Driver\Exception\ConnectionTimeoutException"), "\n";
 
 // Always expect command to pass when using insecure option
-$m = new \MongoDB\Driver\Manager(URI, ['tlsInsecure' => true]);
+$m = create_test_manager(URI, ['tlsInsecure' => true]);
 $m->executeCommand('admin', $ping);
 
 // Always expect command to pass when allowing invalid certificates
-$m = new \MongoDB\Driver\Manager(URI, ['tlsAllowInvalidCertificates' => true]);
+$m = create_test_manager(URI, ['tlsAllowInvalidCertificates' => true]);
 $m->executeCommand('admin', $ping);
 
 ?>

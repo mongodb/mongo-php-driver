@@ -3,7 +3,7 @@ MongoDB\BSON\Binary::__set_state() requires "data" string and "type" integer fie
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     MongoDB\BSON\Binary::__set_state(['data' => 'foobar']);

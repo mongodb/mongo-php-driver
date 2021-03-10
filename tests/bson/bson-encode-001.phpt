@@ -3,7 +3,7 @@ BSON encoding: Encoding data into BSON representation, and BSON into Extended JS
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = array(
     array("hello" => "world"),

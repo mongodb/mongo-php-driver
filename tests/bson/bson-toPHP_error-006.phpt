@@ -3,7 +3,7 @@ MongoDB\BSON\toPHP(): BSON decoding exception with unknown BSON type
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $bson = fromPHP(["hello" => ["cruel" => "world"]]);
 $bson[15] = chr(0x42);

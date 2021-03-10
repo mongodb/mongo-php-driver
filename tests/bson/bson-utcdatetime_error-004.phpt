@@ -3,7 +3,7 @@ MongoDB\BSON\UTCDateTime constructor requires integer or string argument
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 /* UTCDateTime::__construct() internally converts floats to integers, so we will
  * not use a float to test for an invalid value. We also don't test an object,

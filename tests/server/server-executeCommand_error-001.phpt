@@ -7,7 +7,7 @@ MongoDB\Driver\Server::executeCommand() with invalid options (MONGOC_CMD_RAW)
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY));
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);

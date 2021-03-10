@@ -10,7 +10,7 @@ MongoDB\Driver\Manager::selectServer() select a server from SDAM based on ReadPr
 require_once __DIR__ . "/../utils/basic.inc";
 
 // Disable retryWrites since the test writes to the unreplicated "local" database
-$manager = new MongoDB\Driver\Manager(URI, ['retryWrites' => false]);
+$manager = create_test_manager(URI, ['retryWrites' => false]);
 
 $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
 $server = $manager->selectServer($rp);

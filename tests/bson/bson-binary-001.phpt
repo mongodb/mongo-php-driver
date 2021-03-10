@@ -3,7 +3,7 @@ MongoDB\BSON\Binary #001
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $types = array(
     MongoDB\BSON\Binary::TYPE_GENERIC,

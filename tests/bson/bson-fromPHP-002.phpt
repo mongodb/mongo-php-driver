@@ -3,7 +3,7 @@ MongoDB\BSON\fromPHP(): Encoding non-Persistable objects as a document
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 class MyDocument {
     private $foo = 1;

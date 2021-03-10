@@ -3,7 +3,7 @@ MongoDB\BSON\Regex can be cloned
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $regexp = new MongoDB\BSON\Regex("regexp", "i");
 $regexp->foo = 'bar';

@@ -6,10 +6,10 @@ MongoDB\Driver\Manager::createClientEncryption() fails if compiled without FLE
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function () {
-    $manager = new MongoDB\Driver\Manager();
+    $manager = create_test_manager();
     $clientEncryption = $manager->createClientEncryption([]);
 }, MongoDB\Driver\Exception\RuntimeException::class), "\n";
 

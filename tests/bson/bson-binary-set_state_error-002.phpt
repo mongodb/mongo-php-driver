@@ -3,7 +3,7 @@ MongoDB\BSON\Binary::__set_state() requires unsigned 8-bit integer for type
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     MongoDB\BSON\Binary::__set_state(['data' => 'foobar', 'type' => -1]);

@@ -3,7 +3,7 @@ MongoDB\BSON\toCanonicalExtendedJSON(): BSON decoding exceptions for bson_as_can
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     // Invalid UTF-8 characters (i.e. 0xFE, 0xFF) in field name

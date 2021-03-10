@@ -8,9 +8,9 @@ MongoDB\Driver\Manager and keyVaultClient must have same disableClientPersistenc
 require_once __DIR__ . "/../utils/basic.inc";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, [], [
+    create_test_manager(null, [], [
         'autoEncryption' => [
-            'keyVaultClient' => new MongoDB\Driver\Manager(null),
+            'keyVaultClient' => create_test_manager(null),
             'keyVaultNamespace' => 'default.keys',
             'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(str_repeat('0', 96), 0)]],
         ],
@@ -19,9 +19,9 @@ echo throws(function() {
 }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, [], [
+    create_test_manager(null, [], [
         'autoEncryption' => [
-            'keyVaultClient' => new MongoDB\Driver\Manager(null, [], ['disableClientPersistence' => true]),
+            'keyVaultClient' => create_test_manager(null, [], ['disableClientPersistence' => true]),
             'keyVaultNamespace' => 'default.keys',
             'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(str_repeat('0', 96), 0)]],
         ]

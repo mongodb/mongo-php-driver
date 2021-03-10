@@ -9,14 +9,14 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 echo raises(
     function () {
-        new MongoDB\Driver\Manager('mongodb://127.0.0.1/', [], ['capath' => 'foo']);
+        create_test_manager('mongodb://127.0.0.1/', [], ['capath' => 'foo']);
     },
     E_DEPRECATED
 ), "\n";
 
 echo raises(
     function () {
-        new MongoDB\Driver\Manager('mongodb://127.0.0.1/', [], ['context' => stream_context_create(['ssl' => ['capath' => 'foo']])]);
+        create_test_manager('mongodb://127.0.0.1/', [], ['context' => stream_context_create(['ssl' => ['capath' => 'foo']])]);
     },
     E_DEPRECATED
 ), "\n";

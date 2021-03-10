@@ -3,7 +3,7 @@ MongoDB\Driver\Manager::__construct(): invalid types in URI options arrays
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 /* Note: generic boolean options (e.g. "ssl") are not tested because the driver
  * uses bson_iter_as_bool() to cast the value to a boolean for assignment.
@@ -34,7 +34,7 @@ $invalidIntegerValues = [
 foreach ($integerOptions as $option) {
     foreach ($invalidIntegerValues as $value) {
         echo throws(function() use ($option, $value) {
-            new MongoDB\Driver\Manager(null, [$option => $value]);
+            create_test_manager(null, [$option => $value]);
         }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
     }
 }
@@ -63,7 +63,7 @@ $invalidStringValues = [
 foreach ($stringOptions as $option) {
     foreach ($invalidStringValues as $value) {
         echo throws(function() use ($option, $value) {
-            new MongoDB\Driver\Manager(null, [$option => $value]);
+            create_test_manager(null, [$option => $value]);
         }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
     }
 }
@@ -81,7 +81,7 @@ $invalidDocumentValues = [
 
 foreach ($invalidDocumentValues as $value) {
     echo throws(function() use ($value) {
-        new MongoDB\Driver\Manager(null, ['authMechanismProperties' => $value]);
+        create_test_manager(null, ['authMechanismProperties' => $value]);
     }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 }
 

@@ -3,7 +3,7 @@ PHPC-341: fromJSON() leaks when JSON contains array or object fields
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = array(
     '{ "foo": "yes", "bar" : false }',
