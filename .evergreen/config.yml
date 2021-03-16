@@ -513,7 +513,7 @@ tasks:
         - func: "bootstrap mongo-orchestration"
           vars:
             TOPOLOGY: "server"
-            AUTH: "yes"
+            AUTH: "auth"
         - func: "run tests"
 
     - name: "test-standalone-ssl"
@@ -554,7 +554,7 @@ tasks:
         - func: "bootstrap mongo-orchestration"
           vars:
             TOPOLOGY: "replica_set"
-            AUTH: "yes"
+            AUTH: "auth"
         - func: "run tests"
 
     - name: "test-replicaset-old"

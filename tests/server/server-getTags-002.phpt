@@ -9,21 +9,23 @@ MongoDB\Driver\Server::getTags() with replica set
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(URI);
+$command = new MongoDB\Driver\Command(['ping' => 1]);
+$manager->executeCommand(DATABASE_NAME, $command);
 
-$tags = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY))->getTags();
-echo "dc: ", array_key_exists('dc', $tags) ? $tags['dc'] : 'not set', "\n";
-echo "ordinal: ", array_key_exists('ordinal', $tags) ? $tags['ordinal'] : 'not set', "\n";
-
-$tags = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY))->getTags();
-echo "dc: ", array_key_exists('dc', $tags) ? $tags['dc'] : 'not set', "\n";
-echo "ordinal: ", array_key_exists('ordinal', $tags) ? $tags['ordinal'] : 'not set', "\n";
+foreach ($manager->getServers() as $server) {
+    $tags = $server->getTags();
+    echo "dc: ", array_key_exists('dc', $tags) ? $tags['dc'] : 'not set', "\n";
+    echo "ordinal: ", array_key_exists('ordinal', $tags) ? $tags['ordinal'] : 'not set', "\n";
+}
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 dc: ny
 ordinal: one
 dc: pa
 ordinal: two
+dc: not set
+ordinal: not set
 ===DONE===
