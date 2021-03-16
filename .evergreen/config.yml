@@ -592,7 +592,7 @@ tasks:
         - func: "bootstrap mongo-orchestration"
           vars:
             TOPOLOGY: "server"
-            AUTH: "yes"
+            AUTH: "auth"
             REQUIRE_API_VERSION: "yes"
         - func: "run tests"
           vars:
