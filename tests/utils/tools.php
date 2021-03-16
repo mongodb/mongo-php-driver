@@ -90,6 +90,10 @@ function get_module_info($row)
 
 function create_test_manager(string $uri = null, array $options = [], array $driverOptions = [])
 {
+    if (getenv('API_VERSION') && ! isset($driverOptions['serverApi'])) {
+        $driverOptions['serverApi'] = new \MongoDB\Driver\ServerApi(getenv('API_VERSION'));
+    }
+
     return new MongoDB\Driver\Manager($uri ?? URI, $options, $driverOptions);
 }
 
