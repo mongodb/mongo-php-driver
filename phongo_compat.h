@@ -169,6 +169,13 @@
 	} while (0)
 #endif /* PHP_VERSION_ID < 70300 */
 
+/* For compatibility with older PHP versions */
+#ifndef ZEND_PARSE_PARAMETERS_NONE
+#define ZEND_PARSE_PARAMETERS_NONE() \
+	ZEND_PARSE_PARAMETERS_START(0, 0) \
+	ZEND_PARSE_PARAMETERS_END()
+#endif
+
 void      phongo_add_exception_prop(const char* prop, int prop_len, zval* value);
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
 zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht);
