@@ -238,6 +238,7 @@ function getParamsForParseError(array $test, array $case)
 
     switch ($test['bson_type']) {
         case '0x00': // Top-level document
+        case '0x05': // Binary
             $code = "throws(function() {\n";
             $code .= sprintf("    fromJSON(%s);\n", var_export($case['string'], true));
             $code .= "}, 'MongoDB\Driver\Exception\UnexpectedValueException');";
