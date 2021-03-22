@@ -107,11 +107,6 @@ typedef struct {
 
 typedef struct {
 	mongoc_server_api_t* server_api;
-	zend_string*         version;
-	zend_bool            strict;
-	zend_bool            strict_null;
-	zend_bool            deprecation_errors;
-	zend_bool            deprecation_errors_null;
 	HashTable*           properties;
 	zend_object          std;
 } php_phongo_serverapi_t;

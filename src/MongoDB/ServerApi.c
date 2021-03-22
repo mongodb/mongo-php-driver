@@ -28,27 +28,27 @@
 
 zend_class_entry* php_phongo_serverapi_ce;
 
-static bool php_phongo_serverapi_create_libmongoc_object(php_phongo_serverapi_t* intern) /* {{{ */
+static bool php_phongo_serverapi_create_libmongoc_object(mongoc_server_api_t **server_api, zend_string* version, bool strict_set, bool strict, bool deprecation_errors_set, bool deprecation_errors) /* {{{ */
 {
 	mongoc_server_api_version_t server_api_version;
 
-	if (!mongoc_server_api_version_from_string(ZSTR_VAL(intern->version), &server_api_version)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Server API version \"%s\" is not supported in this driver version", ZSTR_VAL(intern->version));
+	if (!mongoc_server_api_version_from_string(ZSTR_VAL(version), &server_api_version)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Server API version \"%s\" is not supported in this driver version", ZSTR_VAL(version));
 		return false;
 	}
 
-	if (intern->server_api) {
-		mongoc_server_api_destroy(intern->server_api);
+	if (*server_api) {
+		mongoc_server_api_destroy(*server_api);
 	}
 
-	intern->server_api = mongoc_server_api_new(server_api_version);
+	*server_api = mongoc_server_api_new(server_api_version);
 
-	if (!intern->strict_null) {
-		mongoc_server_api_strict(intern->server_api, intern->strict);
+	if (strict_set) {
+		mongoc_server_api_strict(*server_api, strict);
 	}
 
-	if (!intern->deprecation_errors_null) {
-		mongoc_server_api_deprecation_errors(intern->server_api, intern->deprecation_errors);
+	if (deprecation_errors_set) {
+		mongoc_server_api_deprecation_errors(*server_api, deprecation_errors);
 	}
 
 	return true;
@@ -62,9 +62,8 @@ static bool php_phongo_serverapi_init_from_hash(php_phongo_serverapi_t* intern, 
 	zval* strict;
 	zval* deprecation_errors;
 
-	if ((version = zend_hash_str_find(props, ZEND_STRL("version"))) && Z_TYPE_P(version) == IS_STRING) {
-		intern->version = Z_STR_P(version);
-	} else {
+	version = zend_hash_str_find(props, ZEND_STRL("version"));
+	if (!version || Z_TYPE_P(version) != IS_STRING) {
 		// Exception
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"version\" field to be string", ZSTR_VAL(php_phongo_serverapi_ce->name));
 		return false;
@@ -75,9 +74,6 @@ static bool php_phongo_serverapi_init_from_hash(php_phongo_serverapi_t* intern, 
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"strict\" field to be bool or null", ZSTR_VAL(php_phongo_serverapi_ce->name));
 			return false;
 		}
-
-		intern->strict_null = 0;
-		intern->strict      = zval_is_true(strict);
 	}
 
 	if ((deprecation_errors = zend_hash_str_find(props, ZEND_STRL("deprecationErrors"))) && !ZVAL_IS_NULL(deprecation_errors)) {
@@ -85,17 +81,16 @@ static bool php_phongo_serverapi_init_from_hash(php_phongo_serverapi_t* intern, 
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"deprecationErrors\" field to be bool or null", ZSTR_VAL(php_phongo_serverapi_ce->name));
 			return false;
 		}
-
-		intern->deprecation_errors_null = 0;
-		intern->deprecation_errors      = zval_is_true(deprecation_errors);
 	}
 
-	if (!php_phongo_serverapi_create_libmongoc_object(intern)) {
-		// Exception already thrown
-		return false;
-	}
-
-	return true;
+	return php_phongo_serverapi_create_libmongoc_object(
+		&intern->server_api,
+		Z_STR_P(version),
+		strict && !ZVAL_IS_NULL(strict),
+		strict && zval_is_true(strict),
+		deprecation_errors && !ZVAL_IS_NULL(deprecation_errors),
+		deprecation_errors && zval_is_true(deprecation_errors)
+	);
 } /* }}} */
 
 /* {{{ proto void MongoDB\Driver\ServerApi::__construct(string $version, [?bool $strict], [?bool $deprecationErrors])
@@ -104,16 +99,21 @@ static PHP_METHOD(ServerApi, __construct)
 {
 	zend_error_handling     error_handling;
 	php_phongo_serverapi_t* intern;
+	zend_string             *version;
+	zend_bool               strict = 0;
+	zend_bool               strict_null = 1;
+	zend_bool               deprecation_errors = 0;
+	zend_bool               deprecation_errors_null = 1;
 
 	intern = Z_SERVERAPI_OBJ_P(getThis());
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 
 	ZEND_PARSE_PARAMETERS_START(1, 3)
-	Z_PARAM_STR(intern->version)
+	Z_PARAM_STR(version)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_BOOL_EX(intern->strict, intern->strict_null, 1, 0)
-	Z_PARAM_BOOL_EX(intern->deprecation_errors, intern->deprecation_errors_null, 1, 0)
+	Z_PARAM_BOOL_EX(strict, strict_null, 1, 0)
+	Z_PARAM_BOOL_EX(deprecation_errors, deprecation_errors_null, 1, 0)
 	ZEND_PARSE_PARAMETERS_END_EX(
 		zend_restore_error_handling(&error_handling);
 		return );
@@ -121,7 +121,14 @@ static PHP_METHOD(ServerApi, __construct)
 	zend_restore_error_handling(&error_handling);
 
 	// Will throw on failure
-	php_phongo_serverapi_create_libmongoc_object(intern);
+	php_phongo_serverapi_create_libmongoc_object(
+		&intern->server_api,
+		version,
+		(bool) !strict_null,
+		(bool) strict,
+		(bool) !deprecation_errors_null,
+		(bool) deprecation_errors
+	);
 } /* }}} */
 
 /* {{{ proto void MongoDB\BSON\ServerApi::__set_state(array $properties)
@@ -156,32 +163,35 @@ static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_
 	php_phongo_serverapi_t* intern;
 	HashTable*              props;
 	zval                    version, strict, deprecation_errors;
+	bool                    is_set;
 
 	intern = Z_OBJ_SERVERAPI(PHONGO_COMPAT_GET_OBJ(object));
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 1);
 
-	ZVAL_STR(&version, intern->version);
-	zend_hash_str_add(props, "version", sizeof("version") - 1, &version);
+	ZVAL_STRING(&version, mongoc_server_api_version_to_string(mongoc_server_api_get_version(intern->server_api)));
+	zend_hash_str_add(props, ZEND_STRL("version"), &version);
 
-	if (intern->strict_null) {
+	is_set = mongoc_optional_is_set(mongoc_server_api_get_strict(intern->server_api));
+	if (is_set) {
+		ZVAL_BOOL(&strict, mongoc_optional_value(mongoc_server_api_get_strict(intern->server_api)));
+	} else {
 		ZVAL_NULL(&strict);
+	}
+
+	if (include_null || is_set) {
+		zend_hash_str_add(props, ZEND_STRL("strict"), &strict);
+	}
+
+	is_set = mongoc_optional_is_set(mongoc_server_api_get_deprecation_errors(intern->server_api));
+	if (is_set) {
+		ZVAL_BOOL(&deprecation_errors, mongoc_optional_value(mongoc_server_api_get_deprecation_errors(intern->server_api)));
 	} else {
-		ZVAL_BOOL(&strict, intern->strict);
-	}
-
-	if (include_null || !intern->strict_null) {
-		zend_hash_str_add(props, "strict", sizeof("strict") - 1, &strict);
-	}
-
-	if (intern->deprecation_errors_null) {
 		ZVAL_NULL(&deprecation_errors);
-	} else {
-		ZVAL_BOOL(&deprecation_errors, intern->deprecation_errors);
 	}
 
-	if (include_null || !intern->deprecation_errors_null) {
-		zend_hash_str_add(props, "deprecationErrors", sizeof("deprecationErrors") - 1, &deprecation_errors);
+	if (include_null || is_set) {
+		zend_hash_str_add(props, ZEND_STRL("deprecationErrors"), &deprecation_errors);
 	}
 
 	return props;
@@ -212,18 +222,18 @@ static PHP_METHOD(ServerApi, serialize)
 
 	array_init_size(&retval, 3);
 
-	ADD_ASSOC_STRING(&retval, "version", ZSTR_VAL(intern->version));
+	ADD_ASSOC_STRING(&retval, "version", mongoc_server_api_version_to_string(mongoc_server_api_get_version(intern->server_api)));
 
-	if (intern->strict_null) {
-		ADD_ASSOC_NULL_EX(&retval, "strict");
+	if (mongoc_optional_is_set(mongoc_server_api_get_strict(intern->server_api))) {
+		ADD_ASSOC_BOOL_EX(&retval, "strict", mongoc_optional_value(mongoc_server_api_get_strict(intern->server_api)));
 	} else {
-		ADD_ASSOC_BOOL_EX(&retval, "strict", intern->strict);
+		ADD_ASSOC_NULL_EX(&retval, "strict");
 	}
 
-	if (intern->deprecation_errors_null) {
-		ADD_ASSOC_NULL_EX(&retval, "deprecationErrors");
+	if (mongoc_optional_is_set(mongoc_server_api_get_deprecation_errors(intern->server_api))) {
+		ADD_ASSOC_BOOL_EX(&retval, "deprecationErrors", mongoc_optional_value(mongoc_server_api_get_deprecation_errors(intern->server_api)));
 	} else {
-		ADD_ASSOC_BOOL_EX(&retval, "deprecationErrors", intern->deprecation_errors);
+		ADD_ASSOC_NULL_EX(&retval, "deprecationErrors");
 	}
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
@@ -335,8 +345,6 @@ static zend_object* php_phongo_serverapi_create_object(zend_class_entry* class_t
 	object_properties_init(&intern->std, class_type);
 
 	intern->std.handlers            = &php_phongo_handler_serverapi;
-	intern->strict_null             = 1;
-	intern->deprecation_errors_null = 1;
 
 	return &intern->std;
 } /* }}} */
