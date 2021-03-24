@@ -38,7 +38,8 @@ static bool php_phongo_serverapi_create_libmongoc_object(mongoc_server_api_t** s
 	}
 
 	if (*server_api) {
-		mongoc_server_api_destroy(*server_api);
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Server API object already initialised. Please file a bug report as this should not happen.");
+		return false;
 	}
 
 	*server_api = mongoc_server_api_new(server_api_version);
