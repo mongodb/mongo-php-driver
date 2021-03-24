@@ -12,20 +12,29 @@ $manager = new MongoDB\Driver\Manager(URI);
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 $manager->executeCommand(DATABASE_NAME, $command);
 
-foreach ($manager->getServers() as $server) {
-    $tags = $server->getTags();
-    echo "dc: ", array_key_exists('dc', $tags) ? $tags['dc'] : 'not set', "\n";
-    echo "ordinal: ", array_key_exists('ordinal', $tags) ? $tags['ordinal'] : 'not set', "\n";
+function assertSomeServerHasTags(array $servers, array $expectedTags) {
+    foreach ($servers as $server) {
+        /* Using a non-strict comparison guards against tags being returned in
+         * a different order than expected. */
+        if ($expectedTags == $server->getTags()) {
+            printf("Found server with tags: %s\n", json_encode($expectedTags));
+            return;
+        }
+    }
+
+    printf("No server has tags: %s\n", json_encode($expectedTags));
 }
+
+$servers = $manager->getServers();
+assertSomeServerHasTags($servers, ['dc' => 'ny', 'ordinal' => 'one']);
+assertSomeServerHasTags($servers, ['dc' => 'pa', 'ordinal' => 'two']);
+assertSomeServerHasTags($servers, []);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-dc: ny
-ordinal: one
-dc: pa
-ordinal: two
-dc: not set
-ordinal: not set
+Found server with tags: {"dc":"ny","ordinal":"one"}
+Found server with tags: {"dc":"pa","ordinal":"two"}
+Found server with tags: []
 ===DONE===
