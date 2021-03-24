@@ -176,6 +176,14 @@
 	ZEND_PARSE_PARAMETERS_END()
 #endif
 
+/* Compatibility macro to override error handling logic */
+#define PHONGO_PARSE_PARAMETERS_NONE_EX(failure) do { \
+	if (UNEXPECTED(ZEND_NUM_ARGS() != 0)) { \
+		zend_wrong_parameters_none_error(); \
+		failure; \
+	} \
+} while (0)
+
 void      phongo_add_exception_prop(const char* prop, int prop_len, zval* value);
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
 zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht);

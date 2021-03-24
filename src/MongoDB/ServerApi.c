@@ -203,7 +203,13 @@ static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_
 */
 static PHP_METHOD(ServerApi, bsonSerialize)
 {
-	ZEND_PARSE_PARAMETERS_NONE();
+	zend_error_handling error_handling;
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE_EX(
+		zend_restore_error_handling(&error_handling);
+		return;
+	);
 
 	ZVAL_ARR(return_value, php_phongo_serverapi_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false));
 	convert_to_object(return_value);
@@ -213,6 +219,7 @@ static PHP_METHOD(ServerApi, bsonSerialize)
 */
 static PHP_METHOD(ServerApi, serialize)
 {
+	zend_error_handling     error_handling;
 	php_phongo_serverapi_t* intern;
 	zval                    retval;
 	php_serialize_data_t    var_hash;
@@ -220,7 +227,11 @@ static PHP_METHOD(ServerApi, serialize)
 
 	intern = Z_SERVERAPI_OBJ_P(getThis());
 
-	ZEND_PARSE_PARAMETERS_NONE();
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE_EX(
+		zend_restore_error_handling(&error_handling);
+		return;
+	);
 
 	array_init_size(&retval, 3);
 
