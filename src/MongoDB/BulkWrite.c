@@ -16,7 +16,6 @@
 
 #include <php.h>
 #include <Zend/zend_interfaces.h>
-#include <ext/spl/spl_iterators.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -26,6 +25,11 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
+
+#if PHP_VERSION_ID < 70200
+#include <ext/spl/spl_iterators.h>
+#define zend_ce_countable spl_ce_Countable
+#endif /* PHP_VERSION_ID < 70200 */
 
 #define PHONGO_BULKWRITE_BYPASS_UNSET -1
 
@@ -669,7 +673,7 @@ void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_bulkwrite.free_obj       = php_phongo_bulkwrite_free_object;
 	php_phongo_handler_bulkwrite.offset         = XtOffsetOf(php_phongo_bulkwrite_t, std);
 
-	zend_class_implements(php_phongo_bulkwrite_ce, 1, spl_ce_Countable);
+	zend_class_implements(php_phongo_bulkwrite_ce, 1, zend_ce_countable);
 } /* }}} */
 
 /*
