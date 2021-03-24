@@ -171,18 +171,41 @@
 
 /* For compatibility with older PHP versions */
 #ifndef ZEND_PARSE_PARAMETERS_NONE
-#define ZEND_PARSE_PARAMETERS_NONE() \
+#define ZEND_PARSE_PARAMETERS_NONE()  \
 	ZEND_PARSE_PARAMETERS_START(0, 0) \
 	ZEND_PARSE_PARAMETERS_END()
 #endif
 
-/* Compatibility macro to override error handling logic */
-#define PHONGO_PARSE_PARAMETERS_NONE_EX(failure) do { \
-	if (UNEXPECTED(ZEND_NUM_ARGS() != 0)) { \
-		zend_wrong_parameters_none_error(); \
-		failure; \
-	} \
-} while (0)
+/* Compatibility macros to override error handling logic */
+#define PHONGO_PARSE_PARAMETERS_START(min_num_args, max_num_args)               \
+	do {                                                                        \
+		zend_error_handling error_handling;                                     \
+		zend_replace_error_handling(                                            \
+			EH_THROW,                                                           \
+			phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), \
+			&error_handling);                                                   \
+	ZEND_PARSE_PARAMETERS_START(min_num_args, max_num_args)
+
+#define PHONGO_PARSE_PARAMETERS_END                   \
+	ZEND_PARSE_PARAMETERS_END_EX(                     \
+		zend_restore_error_handling(&error_handling); \
+		return );                                     \
+	}                                                 \
+	while (0)
+
+#define PHONGO_PARSE_PARAMETERS_NONE                                            \
+	do {                                                                        \
+		zend_error_handling error_handling;                                     \
+		zend_replace_error_handling(                                            \
+			EH_THROW,                                                           \
+			phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), \
+			&error_handling);                                                   \
+		if (UNEXPECTED(ZEND_NUM_ARGS() != 0)) {                                 \
+			zend_wrong_parameters_none_error();                                 \
+			zend_restore_error_handling(&error_handling);                       \
+			return;                                                             \
+		}                                                                       \
+	} while (0)
 
 void      phongo_add_exception_prop(const char* prop, int prop_len, zval* value);
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);

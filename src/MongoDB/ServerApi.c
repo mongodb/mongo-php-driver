@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2021-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@
 
 zend_class_entry* php_phongo_serverapi_ce;
 
-static bool php_phongo_serverapi_create_libmongoc_object(mongoc_server_api_t **server_api, zend_string* version, bool strict_set, bool strict, bool deprecation_errors_set, bool deprecation_errors) /* {{{ */
+static bool php_phongo_serverapi_create_libmongoc_object(mongoc_server_api_t** server_api, zend_string* version, bool strict_set, bool strict, bool deprecation_errors_set, bool deprecation_errors) /* {{{ */
 {
 	mongoc_server_api_version_t server_api_version;
 
@@ -89,37 +89,28 @@ static bool php_phongo_serverapi_init_from_hash(php_phongo_serverapi_t* intern, 
 		strict && !ZVAL_IS_NULL(strict),
 		strict && zval_is_true(strict),
 		deprecation_errors && !ZVAL_IS_NULL(deprecation_errors),
-		deprecation_errors && zval_is_true(deprecation_errors)
-	);
+		deprecation_errors && zval_is_true(deprecation_errors));
 } /* }}} */
 
 /* {{{ proto void MongoDB\Driver\ServerApi::__construct(string $version, [?bool $strict], [?bool $deprecationErrors])
    Constructs a new ServerApi object */
 static PHP_METHOD(ServerApi, __construct)
 {
-	zend_error_handling     error_handling;
 	php_phongo_serverapi_t* intern;
-	zend_string             *version;
-	zend_bool               strict = 0;
-	zend_bool               strict_null = 1;
-	zend_bool               deprecation_errors = 0;
+	zend_string*            version;
+	zend_bool               strict                  = 0;
+	zend_bool               strict_null             = 1;
+	zend_bool               deprecation_errors      = 0;
 	zend_bool               deprecation_errors_null = 1;
 
 	intern = Z_SERVERAPI_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
-	ZEND_PARSE_PARAMETERS_START(1, 3)
+	PHONGO_PARSE_PARAMETERS_START(1, 3)
 	Z_PARAM_STR(version)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_BOOL_EX(strict, strict_null, 1, 0)
 	Z_PARAM_BOOL_EX(deprecation_errors, deprecation_errors_null, 1, 0)
-	ZEND_PARSE_PARAMETERS_END_EX(
-		zend_restore_error_handling(&error_handling);
-		return;
-	);
-
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_END;
 
 	// Will throw on failure
 	php_phongo_serverapi_create_libmongoc_object(
@@ -128,29 +119,20 @@ static PHP_METHOD(ServerApi, __construct)
 		(bool) !strict_null,
 		(bool) strict,
 		(bool) !deprecation_errors_null,
-		(bool) deprecation_errors
-	);
+		(bool) deprecation_errors);
 } /* }}} */
 
 /* {{{ proto void MongoDB\BSON\ServerApi::__set_state(array $properties)
 */
 static PHP_METHOD(ServerApi, __set_state)
 {
-	zend_error_handling     error_handling;
 	php_phongo_serverapi_t* intern;
 	HashTable*              props;
 	zval*                   array;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
-	ZEND_PARSE_PARAMETERS_START(1, 1)
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
-	ZEND_PARSE_PARAMETERS_END_EX(
-		zend_restore_error_handling(&error_handling);
-		return;
-	);
-
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_END;
 
 	object_init_ex(return_value, php_phongo_serverapi_ce);
 
@@ -203,13 +185,7 @@ static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_
 */
 static PHP_METHOD(ServerApi, bsonSerialize)
 {
-	zend_error_handling error_handling;
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	PHONGO_PARSE_PARAMETERS_NONE_EX(
-		zend_restore_error_handling(&error_handling);
-		return;
-	);
+	PHONGO_PARSE_PARAMETERS_NONE;
 
 	ZVAL_ARR(return_value, php_phongo_serverapi_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false));
 	convert_to_object(return_value);
@@ -219,7 +195,6 @@ static PHP_METHOD(ServerApi, bsonSerialize)
 */
 static PHP_METHOD(ServerApi, serialize)
 {
-	zend_error_handling     error_handling;
 	php_phongo_serverapi_t* intern;
 	zval                    retval;
 	php_serialize_data_t    var_hash;
@@ -227,11 +202,7 @@ static PHP_METHOD(ServerApi, serialize)
 
 	intern = Z_SERVERAPI_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	PHONGO_PARSE_PARAMETERS_NONE_EX(
-		zend_restore_error_handling(&error_handling);
-		return;
-	);
+	PHONGO_PARSE_PARAMETERS_NONE;
 
 	array_init_size(&retval, 3);
 
@@ -264,7 +235,6 @@ static PHP_METHOD(ServerApi, serialize)
 */
 static PHP_METHOD(ServerApi, unserialize)
 {
-	zend_error_handling     error_handling;
 	php_phongo_serverapi_t* intern;
 	char*                   serialized;
 	size_t                  serialized_len;
@@ -273,16 +243,9 @@ static PHP_METHOD(ServerApi, unserialize)
 
 	intern = Z_SERVERAPI_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-
-	ZEND_PARSE_PARAMETERS_START(1, 1)
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STRING(serialized, serialized_len)
-	ZEND_PARSE_PARAMETERS_END_EX(
-		zend_restore_error_handling(&error_handling);
-		return;
-	);
-
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_END;
 
 	if (!serialized_len) {
 		return;
@@ -358,7 +321,7 @@ static zend_object* php_phongo_serverapi_create_object(zend_class_entry* class_t
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers            = &php_phongo_handler_serverapi;
+	intern->std.handlers = &php_phongo_handler_serverapi;
 
 	return &intern->std;
 } /* }}} */
