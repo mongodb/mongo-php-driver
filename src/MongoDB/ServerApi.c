@@ -116,7 +116,8 @@ static PHP_METHOD(ServerApi, __construct)
 	Z_PARAM_BOOL_EX(deprecation_errors, deprecation_errors_null, 1, 0)
 	ZEND_PARSE_PARAMETERS_END_EX(
 		zend_restore_error_handling(&error_handling);
-		return );
+		return;
+	);
 
 	zend_restore_error_handling(&error_handling);
 
@@ -146,7 +147,8 @@ static PHP_METHOD(ServerApi, __set_state)
 	Z_PARAM_ARRAY(array)
 	ZEND_PARSE_PARAMETERS_END_EX(
 		zend_restore_error_handling(&error_handling);
-		return );
+		return;
+	);
 
 	zend_restore_error_handling(&error_handling);
 
@@ -266,7 +268,8 @@ static PHP_METHOD(ServerApi, unserialize)
 	Z_PARAM_STRING(serialized, serialized_len)
 	ZEND_PARSE_PARAMETERS_END_EX(
 		zend_restore_error_handling(&error_handling);
-		return );
+		return;
+	);
 
 	zend_restore_error_handling(&error_handling);
 
