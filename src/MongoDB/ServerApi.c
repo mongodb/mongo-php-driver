@@ -155,7 +155,7 @@ static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 1);
 
 	ZVAL_STRING(&version, mongoc_server_api_version_to_string(mongoc_server_api_get_version(intern->server_api)));
-	zend_hash_str_add(props, ZEND_STRL("version"), &version);
+	zend_hash_str_add(props, "version", sizeof("version") - 1, &version);
 
 	is_set = mongoc_optional_is_set(mongoc_server_api_get_strict(intern->server_api));
 	if (is_set) {
@@ -165,7 +165,7 @@ static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_
 	}
 
 	if (include_null || is_set) {
-		zend_hash_str_add(props, ZEND_STRL("strict"), &strict);
+		zend_hash_str_add(props, "strict", sizeof("strict") - 1, &strict);
 	}
 
 	is_set = mongoc_optional_is_set(mongoc_server_api_get_deprecation_errors(intern->server_api));
@@ -176,7 +176,7 @@ static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_
 	}
 
 	if (include_null || is_set) {
-		zend_hash_str_add(props, ZEND_STRL("deprecationErrors"), &deprecation_errors);
+		zend_hash_str_add(props, "deprecationErrors", sizeof("deprecationErrors") - 1, &deprecation_errors);
 	}
 
 	return props;
