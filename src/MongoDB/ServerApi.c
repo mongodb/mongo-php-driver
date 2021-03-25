@@ -268,7 +268,9 @@ static PHP_METHOD(ServerApi, unserialize)
 
 /* {{{ MongoDB\Driver\ServerApi function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, version)
+	ZEND_ARG_TYPE_INFO(0, version, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, strict, _IS_BOOL, 1)
+	ZEND_ARG_TYPE_INFO(0, deprecationErrors, _IS_BOOL, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi___set_state, 0, 0, 1)
@@ -276,7 +278,7 @@ ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi___set_state, 0, 0, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
+	ZEND_ARG_TYPE_INFO(0, serialized, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi_void, 0, 0, 0)
