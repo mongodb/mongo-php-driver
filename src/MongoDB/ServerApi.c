@@ -38,7 +38,7 @@ static bool php_phongo_serverapi_create_libmongoc_object(mongoc_server_api_t** s
 	}
 
 	if (*server_api) {
-		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Server API object already initialised. Please file a bug report as this should not happen.");
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Server API object already initialized. Please file a bug report as this should not happen.");
 		return false;
 	}
 
