@@ -9,21 +9,32 @@ MongoDB\Driver\Server::getTags() with replica set
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = new MongoDB\Driver\Manager(URI);
+$command = new MongoDB\Driver\Command(['ping' => 1]);
+$manager->executeCommand(DATABASE_NAME, $command);
 
-$tags = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY))->getTags();
-echo "dc: ", array_key_exists('dc', $tags) ? $tags['dc'] : 'not set', "\n";
-echo "ordinal: ", array_key_exists('ordinal', $tags) ? $tags['ordinal'] : 'not set', "\n";
+function assertSomeServerHasTags(array $servers, array $expectedTags) {
+    foreach ($servers as $server) {
+        /* Using a non-strict comparison guards against tags being returned in
+         * a different order than expected. */
+        if ($expectedTags == $server->getTags()) {
+            printf("Found server with tags: %s\n", json_encode($expectedTags));
+            return;
+        }
+    }
 
-$tags = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY))->getTags();
-echo "dc: ", array_key_exists('dc', $tags) ? $tags['dc'] : 'not set', "\n";
-echo "ordinal: ", array_key_exists('ordinal', $tags) ? $tags['ordinal'] : 'not set', "\n";
+    printf("No server has tags: %s\n", json_encode($expectedTags));
+}
+
+$servers = $manager->getServers();
+assertSomeServerHasTags($servers, ['dc' => 'ny', 'ordinal' => 'one']);
+assertSomeServerHasTags($servers, ['dc' => 'pa', 'ordinal' => 'two']);
+assertSomeServerHasTags($servers, []);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-dc: ny
-ordinal: one
-dc: pa
-ordinal: two
+--EXPECT--
+Found server with tags: {"dc":"ny","ordinal":"one"}
+Found server with tags: {"dc":"pa","ordinal":"two"}
+Found server with tags: []
 ===DONE===

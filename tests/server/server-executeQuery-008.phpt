@@ -13,10 +13,11 @@ $manager = new MongoDB\Driver\Manager(URI);
 
 $primaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
 $primary = $manager->selectServer($primaryRp);
+$serverCount = count($manager->getServers());
 
 $bulk = new \MongoDB\Driver\BulkWrite;
 $bulk->insert(['_id' => 1, 'x' => 1]);
-$primary->executeBulkWrite(NS, $bulk, new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY));
+$primary->executeBulkWrite(NS, $bulk, new MongoDB\Driver\WriteConcern($serverCount));
 
 $secondaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY);
 $secondary = $manager->selectServer($secondaryRp);
