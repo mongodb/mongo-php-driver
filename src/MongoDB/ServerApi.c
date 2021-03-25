@@ -278,7 +278,11 @@ ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi___set_state, 0, 0, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi_unserialize, 0, 0, 1)
+#if PHP_VERSION_ID >= 80000
 	ZEND_ARG_TYPE_INFO(0, serialized, IS_STRING, 0)
+#else
+	ZEND_ARG_INFO(0, serialized)
+#endif
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi_void, 0, 0, 0)
