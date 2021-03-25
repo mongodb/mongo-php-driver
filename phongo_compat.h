@@ -169,13 +169,6 @@
 	} while (0)
 #endif /* PHP_VERSION_ID < 70300 */
 
-/* For compatibility with older PHP versions */
-#ifndef ZEND_PARSE_PARAMETERS_NONE
-#define ZEND_PARSE_PARAMETERS_NONE()  \
-	ZEND_PARSE_PARAMETERS_START(0, 0) \
-	ZEND_PARSE_PARAMETERS_END()
-#endif
-
 /* Compatibility macros to override error handling logic */
 #define PHONGO_PARSE_PARAMETERS_START(min_num_args, max_num_args)               \
 	do {                                                                        \
@@ -193,6 +186,21 @@
 	}                                                 \
 	while (0)
 
+#ifndef ZEND_PARSE_PARAMETERS_NONE
+#define PHONGO_PARSE_PARAMETERS_NONE                                            \
+	do {                                                                        \
+		zend_error_handling error_handling;                                     \
+		zend_replace_error_handling(                                            \
+			EH_THROW,                                                           \
+			phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), \
+			&error_handling);                                                   \
+		if (zend_parse_parameters_none() == FAILURE) {                          \
+			zend_restore_error_handling(&error_handling);                       \
+			return;                                                             \
+		}                                                                       \
+		zend_restore_error_handling(&error_handling);                           \
+	} while (0)
+#else
 #define PHONGO_PARSE_PARAMETERS_NONE                                            \
 	do {                                                                        \
 		zend_error_handling error_handling;                                     \
@@ -206,6 +214,7 @@
 			return;                                                             \
 		}                                                                       \
 	} while (0)
+#endif
 
 void      phongo_add_exception_prop(const char* prop, int prop_len, zval* value);
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
