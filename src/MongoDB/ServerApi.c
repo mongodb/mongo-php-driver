@@ -111,7 +111,7 @@ static PHP_METHOD(ServerApi, __construct)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_BOOL_EX(strict, strict_null, 1, 0)
 	Z_PARAM_BOOL_EX(deprecation_errors, deprecation_errors_null, 1, 0)
-	PHONGO_PARSE_PARAMETERS_END;
+	PHONGO_PARSE_PARAMETERS_END();
 
 	// Will throw on failure
 	php_phongo_serverapi_create_libmongoc_object(
@@ -133,7 +133,7 @@ static PHP_METHOD(ServerApi, __set_state)
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(array)
-	PHONGO_PARSE_PARAMETERS_END;
+	PHONGO_PARSE_PARAMETERS_END();
 
 	object_init_ex(return_value, php_phongo_serverapi_ce);
 
@@ -186,7 +186,7 @@ static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_
 */
 static PHP_METHOD(ServerApi, bsonSerialize)
 {
-	PHONGO_PARSE_PARAMETERS_NONE;
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	ZVAL_ARR(return_value, php_phongo_serverapi_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false));
 	convert_to_object(return_value);
@@ -203,7 +203,7 @@ static PHP_METHOD(ServerApi, serialize)
 
 	intern = Z_SERVERAPI_OBJ_P(getThis());
 
-	PHONGO_PARSE_PARAMETERS_NONE;
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	array_init_size(&retval, 3);
 
@@ -246,7 +246,7 @@ static PHP_METHOD(ServerApi, unserialize)
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STRING(serialized, serialized_len)
-	PHONGO_PARSE_PARAMETERS_END;
+	PHONGO_PARSE_PARAMETERS_END();
 
 	if (!serialized_len) {
 		return;

@@ -179,15 +179,16 @@
 			&error_handling);                                                   \
 	ZEND_PARSE_PARAMETERS_START(min_num_args, max_num_args)
 
-#define PHONGO_PARSE_PARAMETERS_END                   \
+#define PHONGO_PARSE_PARAMETERS_END()                 \
 	ZEND_PARSE_PARAMETERS_END_EX(                     \
 		zend_restore_error_handling(&error_handling); \
 		return );                                     \
+	zend_restore_error_handling(&error_handling);     \
 	}                                                 \
 	while (0)
 
 #ifndef ZEND_PARSE_PARAMETERS_NONE
-#define PHONGO_PARSE_PARAMETERS_NONE                                            \
+#define PHONGO_PARSE_PARAMETERS_NONE()                                          \
 	do {                                                                        \
 		zend_error_handling error_handling;                                     \
 		zend_replace_error_handling(                                            \
@@ -201,7 +202,7 @@
 		zend_restore_error_handling(&error_handling);                           \
 	} while (0)
 #else
-#define PHONGO_PARSE_PARAMETERS_NONE                                            \
+#define PHONGO_PARSE_PARAMETERS_NONE()                                          \
 	do {                                                                        \
 		zend_error_handling error_handling;                                     \
 		zend_replace_error_handling(                                            \
@@ -213,6 +214,7 @@
 			zend_restore_error_handling(&error_handling);                       \
 			return;                                                             \
 		}                                                                       \
+		zend_restore_error_handling(&error_handling);                           \
 	} while (0)
 #endif
 
