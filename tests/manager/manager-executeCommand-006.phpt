@@ -9,7 +9,7 @@ MongoDB\Driver\Manager::executeCommand() does not inherit read preference
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI, ['readPreference' => 'secondary']);
+$manager = create_test_manager(URI, ['readPreference' => 'secondary']);
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 $cursor = $manager->executeCommand(DATABASE_NAME, $command);

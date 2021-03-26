@@ -7,7 +7,7 @@ PHPC-1713: MongoDB\Driver\Cursor::current() does not return anything
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([]));
 

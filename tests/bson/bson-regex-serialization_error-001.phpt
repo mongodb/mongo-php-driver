@@ -3,7 +3,7 @@ MongoDB\BSON\Regex unserialization requires "pattern" and "flags" string fields
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     unserialize('C:18:"MongoDB\BSON\Regex":33:{a:1:{s:7:"pattern";s:6:"regexp";}}');

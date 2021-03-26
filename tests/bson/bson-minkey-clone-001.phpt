@@ -3,7 +3,7 @@ MongoDB\BSON\MinKey can be cloned
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $minKey = new MongoDB\BSON\MinKey;
 $minKey->foo = 'bar';

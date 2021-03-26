@@ -3,7 +3,7 @@ MongoDB\BSON\Javascript #001
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $js = new MongoDB\BSON\Javascript("function foo(bar) {var baz = bar; var bar = foo; return bar; }");
 $jswscope = new MongoDB\BSON\Javascript("function foo(bar) {var baz = bar; var bar = foo; return bar; }", array("foo" => 42));

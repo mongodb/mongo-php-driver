@@ -17,7 +17,7 @@ class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
     }
 }
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $document = [
     '_id' => 1,

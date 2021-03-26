@@ -386,7 +386,7 @@ functions:
         working_dir: "src"
         script: |
           ${PREPARE_SHELL}
-          TESTS=${TESTS} SSL=${SSL} MONGODB_URI="${MONGODB_URI}${APPEND_URI}" sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
+          API_VERSION=${API_VERSION} TESTS=${TESTS} SSL=${SSL} MONGODB_URI="${MONGODB_URI}${APPEND_URI}" sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
 
   "cleanup":
     - command: shell.exec
@@ -584,6 +584,19 @@ tasks:
         - func: "run tests"
           vars:
             TESTS: "tests/atlas.phpt"
+
+    - name: "test-requireApiVersion"
+      tags: ["versioned_api"]
+      commands:
+        - func: "compile driver"
+        - func: "bootstrap mongo-orchestration"
+          vars:
+            TOPOLOGY: "server"
+            AUTH: "auth"
+            REQUIRE_API_VERSION: "yes"
+        - func: "run tests"
+          vars:
+            API_VERSION: "1"
 
     - name: "ocsp-test_1-rsa-delegate"
       tags: ["ocsp"]
@@ -1180,3 +1193,9 @@ buildvariants:
   display_name: "OCSP tests - ${versions}"
   tasks:
     - name: ".ocsp"
+
+- matrix_name: "test-requireApiVersion"
+  matrix_spec: { "os-php7": "debian92-test", "php-versions": "7.3", "versions": "latest" }
+  display_name: "Versioned API - ${versions}"
+  tasks:
+    - name: "test-requireApiVersion"

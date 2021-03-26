@@ -15,7 +15,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
 
     public function __construct()
     {
-        $this->manager = new MongoDB\Driver\Manager(URI);
+        $this->manager = create_test_manager();
 
         $this->manager->executeCommand(
             DATABASE_NAME,

@@ -70,7 +70,7 @@ class SessionLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
     }
 }
 
-$manager = new MongoDB\Driver\Manager(URI, [], ['disableClientPersistence' => true]);
+$manager = create_test_manager(URI, [], ['disableClientPersistence' => true]);
 $logNamespace = NS . '_sessions';
 $sessionLogger = new SessionLogger($manager, $logNamespace);
 

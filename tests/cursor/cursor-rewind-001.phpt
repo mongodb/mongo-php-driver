@@ -28,7 +28,7 @@ class MyIteratorIterator extends IteratorIterator
     }
 }
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $bulkWrite = new MongoDB\Driver\BulkWrite;
 

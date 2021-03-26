@@ -25,7 +25,7 @@ $uriOptions = ['authMechanism' => 'MONGODB-X509', 'ssl' => true];
 $parsed = parse_url(URI);
 $uri = sprintf('mongodb://%s:%d', $parsed['host'], $parsed['port']);
 
-$manager = new MongoDB\Driver\Manager($uri, $uriOptions, $driverOptions);
+$manager = create_test_manager($uri, $uriOptions, $driverOptions);
 $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
 var_dump($cursor->toArray()[0]);
 

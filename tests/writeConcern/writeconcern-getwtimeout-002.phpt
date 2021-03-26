@@ -5,9 +5,9 @@ MongoDB\Driver\WriteConcern::getWtimeout() emits warning on truncation of 64-bit
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
-$manager = new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=2&wtimeoutms=4294967296');
+$manager = create_test_manager('mongodb://127.0.0.1/?w=2&wtimeoutms=4294967296');
 
 echo raises(function() use ($manager) {
     var_dump($manager->getWriteConcern()->getWtimeout());

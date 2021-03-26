@@ -6,7 +6,7 @@ MongoDB\BSON\ObjectId constructor type validation
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\BSON\ObjectId(new stdclass);

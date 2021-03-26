@@ -3,7 +3,7 @@ MongoDB\BSON\toPHP(): BSON decoding exceptions
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 /* We can't really test for bson_iter_init() failure within libbson, since
  * bson_reader_read() already checks that the buffer is at least 5 bytes. */

@@ -5,7 +5,7 @@ MongoDB\Driver\ReadPreference::__set_state() requires correct data types and val
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     MongoDB\Driver\ReadPreference::__set_state(['mode' => 'secondary', 'maxStalenessSeconds' => 2147483648]);

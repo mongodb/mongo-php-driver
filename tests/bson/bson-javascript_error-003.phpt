@@ -3,7 +3,7 @@ MongoDB\BSON\Javascript::__construct() does not allow code to contain null bytes
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\BSON\Javascript("function foo() { return '\0'; }");

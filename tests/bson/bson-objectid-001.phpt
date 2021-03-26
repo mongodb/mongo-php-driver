@@ -6,7 +6,7 @@ MongoDB\BSON\ObjectId #001
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $sameid = new MongoDB\BSON\ObjectId("53e2a1c40640fd72175d4603");
 $samestd = new stdClass;

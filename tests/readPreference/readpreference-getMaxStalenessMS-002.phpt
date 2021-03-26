@@ -3,7 +3,7 @@ MongoDB\Driver\ReadPreference::getMaxStalenessSeconds() with string mode
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     MongoDB\Driver\ReadPreference::NO_MAX_STALENESS,

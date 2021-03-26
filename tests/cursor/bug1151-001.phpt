@@ -10,7 +10,7 @@ PHPC-1151: Segfault if session unset before first getMore (find)
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(['_id' => 1]);

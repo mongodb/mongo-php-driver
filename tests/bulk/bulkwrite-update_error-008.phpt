@@ -9,7 +9,7 @@ MongoDB\Driver\BulkWrite::update() hint option requires MongoDB 4.2 (server-side
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->update(['_id' => 1], ['$set' => ['x' => 11]], ['hint' => '_id_']);

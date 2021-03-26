@@ -3,7 +3,7 @@ MongoDB\BSON\Timestamp::__set_state() requires strings to parse as 64-bit intege
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     MongoDB\BSON\Timestamp::__set_state(['increment' => '1.23', 'timestamp' => '5678']);

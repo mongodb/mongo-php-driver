@@ -3,7 +3,7 @@ MongoDB\Driver\WriteConcern construction (journaling with unacknowledged w)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\Driver\WriteConcern(0, 0, true);

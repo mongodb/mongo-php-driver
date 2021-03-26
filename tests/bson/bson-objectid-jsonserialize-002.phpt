@@ -3,7 +3,7 @@ MongoDB\BSON\ObjectId::jsonSerialize() with json_encode()
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $doc = ['foo' => new MongoDB\BSON\ObjectId('5820ca4bef62d52d9924d0d8')];
 $json = json_encode($doc);

@@ -6,7 +6,7 @@ MongoDB\Driver\WriteConcern construction (invalid arguments)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\Driver\WriteConcern("string", 10000, false, 1);

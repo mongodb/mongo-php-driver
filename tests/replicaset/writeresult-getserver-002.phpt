@@ -11,7 +11,7 @@ MongoDB\Driver\Server: Manager->getServer() returning correct server
 require_once __DIR__ . "/../utils/basic.inc";
 
 // Disable retryWrites since the test writes to the unreplicated "local" database
-$manager = new MongoDB\Driver\Manager(URI, ['retryWrites' => false]);
+$manager = create_test_manager(URI, ['retryWrites' => false]);
 
 
 $doc = array("example" => "document");

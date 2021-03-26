@@ -25,7 +25,7 @@ $fieldPaths = [
     ['foo..bar' => 'MyDocument'],
 ];
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([]));
 
 foreach ($fieldPaths as $fieldPath) {

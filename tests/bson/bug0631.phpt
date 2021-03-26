@@ -5,7 +5,7 @@ date.timezone=UTC
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $utcdatetime = new MongoDB\BSON\UTCDateTime('1466540755123');
 $datetime = $utcdatetime->toDateTime();

@@ -3,7 +3,7 @@ MongoDB\BSON\Timestamp can be cloned
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $timestamp = new MongoDB\BSON\Timestamp(1234, 5678);
 $timestamp->foo = 'bar';

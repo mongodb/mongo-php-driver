@@ -17,7 +17,7 @@ $options = array(
     "username" => $url["user"],
     "password" => $url["pass"],
 ) + $args;
-$manager = new MongoDB\Driver\Manager($dsn, $options);
+$manager = create_test_manager($dsn, $options);
 
 
 $bulk = new MongoDB\Driver\BulkWrite;
@@ -29,7 +29,7 @@ printf("Inserted: %d\n", $inserted);
 
 
 $options["username"]      = "not-found-user";
-$manager = new MongoDB\Driver\Manager($dsn, $options);
+$manager = create_test_manager($dsn, $options);
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(array("my" => "value"));
 

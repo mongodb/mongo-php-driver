@@ -9,7 +9,7 @@ ReadConcern: MongoDB\Driver\Manager::executeQuery() with readConcern option (OP_
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(['_id' => 1, 'x' => 1]);

@@ -43,14 +43,14 @@ class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
     }
 }
 
-$keyVaultClient = new MongoDB\Driver\Manager(URI, [], ['disableClientPersistence' => true]);
+$keyVaultClient = create_test_manager(URI, [], ['disableClientPersistence' => true]);
 $autoEncryptionOpts = [
     'keyVaultClient' => $keyVaultClient,
     'keyVaultNamespace' => 'default.keys',
     'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(str_repeat('0', 96), 0)]],
 ];
 
-$manager = new MongoDB\Driver\Manager(URI, [], ['autoEncryption' => $autoEncryptionOpts, 'disableClientPersistence' => true]);
+$manager = create_test_manager(URI, [], ['autoEncryption' => $autoEncryptionOpts, 'disableClientPersistence' => true]);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(['x' => 1]);

@@ -5,7 +5,7 @@ MongoDB\BSON\UTCDateTime construction from 64-bit integer
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $utcdatetime = new MongoDB\BSON\UTCDateTime(1416445411987);
 

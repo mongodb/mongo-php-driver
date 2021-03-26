@@ -5,12 +5,12 @@ MongoDB\Driver\Manager::__construct(): empty replicaSet argument
 require_once __DIR__ . "/../utils/basic.inc";
 
 echo throws(function () {
-    $manager = new MongoDB\Driver\Manager('mongodb://localhost:27017/?replicaSet=');
+    $manager = create_test_manager('mongodb://localhost:27017/?replicaSet=');
     $manager->executeQuery(NS, new MongoDB\Driver\Query([]));
 }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 echo throws(function () {
-    $manager = new MongoDB\Driver\Manager('mongodb://localhost:27017', ['replicaSet' => '']);
+    $manager = create_test_manager('mongodb://localhost:27017', ['replicaSet' => '']);
     $manager->executeQuery(NS, new MongoDB\Driver\Query([]));
 }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 

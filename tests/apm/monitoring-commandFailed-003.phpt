@@ -8,7 +8,7 @@ MongoDB\Driver\Monitoring\CommandFailedEvent
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {

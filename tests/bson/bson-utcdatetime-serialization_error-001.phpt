@@ -3,7 +3,7 @@ MongoDB\BSON\UTCDateTime unserialization requires "milliseconds" integer or nume
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     unserialize('C:24:"MongoDB\BSON\UTCDateTime":30:{a:1:{s:12:"milliseconds";d:1;}}');

@@ -3,44 +3,44 @@ MongoDB\Driver\Manager::__construct(): invalid read preference (mode and tags)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 // Invalid types in URI string
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?readPreference=1');
+    create_test_manager('mongodb://127.0.0.1/?readPreference=1');
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?readPreference=secondary&readPreferenceTags=invalid');
+    create_test_manager('mongodb://127.0.0.1/?readPreference=secondary&readPreferenceTags=invalid');
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 // Invalid types in URI options array
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['readPreference' => 1]);
+    create_test_manager(null, ['readPreference' => 1]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['readPreference' => 'primary', 'readPreferenceTags' => 'invalid']);
+    create_test_manager(null, ['readPreference' => 'primary', 'readPreferenceTags' => 'invalid']);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 // Invalid values
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?readPreference=primary&readPreferenceTags=dc:ny');
+    create_test_manager('mongodb://127.0.0.1/?readPreference=primary&readPreferenceTags=dc:ny');
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['readPreference' => 'nothing']);
+    create_test_manager(null, ['readPreference' => 'nothing']);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?readPreference=primary', ['readPreferenceTags' => [[]]]);
+    create_test_manager('mongodb://127.0.0.1/?readPreference=primary', ['readPreferenceTags' => [[]]]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?readPreference=primary', ['readPreferenceTags' => ['invalid']]);
+    create_test_manager('mongodb://127.0.0.1/?readPreference=primary', ['readPreferenceTags' => ['invalid']]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>

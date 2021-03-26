@@ -11,7 +11,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 /* Note: PHP 8 throws a TypeError during zpp (vs. arginfo in PHP 7) */
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $session = $manager->startSession();
 
 $options = [

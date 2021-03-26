@@ -14,7 +14,7 @@ $tests = [
 
 foreach ($tests as $driver) {
     echo throws(function () use ($driver) {
-        $manager = new MongoDB\Driver\Manager(null, [], ['driver' => $driver]);
+        $manager = create_test_manager(null, [], ['driver' => $driver]);
     }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 }
 

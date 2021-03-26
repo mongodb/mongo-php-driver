@@ -3,7 +3,7 @@ MongoDB\BSON\toPHP(): BSON decoding exceptions for bson_iter_visit_all() failure
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = array(
     // Invalid UTF-8 character in root document's field name

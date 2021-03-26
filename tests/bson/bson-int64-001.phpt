@@ -5,7 +5,7 @@ MongoDB\BSON\Int64 roundtripped through BSON on 32-bit platforms
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 /* Omit testing values in the range of 32-bit integers. They will come back from
  * BSON as a PHP integer type, as Int64 is only used when necessary. */

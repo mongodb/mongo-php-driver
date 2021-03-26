@@ -3,13 +3,13 @@ MongoDB\Driver\Manager::__construct(): invalid appname
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     $name1 = str_repeat('PHONGO', 20);
     $name2 = str_repeat('PHONGO', 200);
 
-    $manager = new \MongoDB\Driver\Manager("mongodb://127.0.0.1/?appname={$name1}", ['appname' => "2-{$name2}"]);
+    $manager = create_test_manager("mongodb://127.0.0.1/?appname={$name1}", ['appname' => "2-{$name2}"]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>

@@ -3,7 +3,7 @@ BSON Serializing a PHP resource should throw exception
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 throws(function() {
     $a = array("stderr" => STDERR);

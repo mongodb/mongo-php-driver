@@ -3,50 +3,50 @@ MongoDB\Driver\Manager::__construct(): invalid write concern (journal)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 // Invalid types
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?journal=invalid');
+    create_test_manager('mongodb://127.0.0.1/?journal=invalid');
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['journal' => 'invalid']);
+    create_test_manager(null, ['journal' => 'invalid']);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 // Invalid values (journal conflicts with unacknowledged write concerns)
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=-1&journal=true');
+    create_test_manager('mongodb://127.0.0.1/?w=-1&journal=true');
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=0&journal=true');
+    create_test_manager('mongodb://127.0.0.1/?w=0&journal=true');
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=-1', ['journal' => true]);
+    create_test_manager('mongodb://127.0.0.1/?w=-1', ['journal' => true]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?w=0', ['journal' => true]);
+    create_test_manager('mongodb://127.0.0.1/?w=0', ['journal' => true]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?journal=true', ['w' => -1]);
+    create_test_manager('mongodb://127.0.0.1/?journal=true', ['w' => -1]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?journal=true', ['w' => 0]);
+    create_test_manager('mongodb://127.0.0.1/?journal=true', ['w' => 0]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['w' => -1, 'journal' => true]);
+    create_test_manager(null, ['w' => -1, 'journal' => true]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['w' => 0, 'journal' => true]);
+    create_test_manager(null, ['w' => 0, 'journal' => true]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>

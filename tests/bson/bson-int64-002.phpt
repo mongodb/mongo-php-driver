@@ -5,7 +5,7 @@ MongoDB\BSON\Int64 wraps 64-bit integers on 32-bit platforms
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     MongoDB\BSON\toPHP(MongoDB\BSON\fromJSON('{"max64": {"$numberLong": "9223372036854775807"}}')),

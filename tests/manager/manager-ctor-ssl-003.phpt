@@ -11,10 +11,10 @@ MongoDB\Driver\Manager::__construct(): Specifying a driver option implicitly ena
 require_once __DIR__ . "/../utils/basic.inc";
 
 // Ensure that the server is up to ensure we're not hitting a different failure below
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
 
-$manager = new MongoDB\Driver\Manager(URI, [], ['ca_dir' => 'foo']);
+$manager = create_test_manager(URI, [], ['ca_dir' => 'foo']);
 
 echo throws(function () use ($manager) {
     // Note that this command will not fail if the server was configured with allowSSL or preferSSL for net.ssl.mode.

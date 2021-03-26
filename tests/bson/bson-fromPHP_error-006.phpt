@@ -3,7 +3,7 @@ MongoDB\BSON\fromPHP(): PHP documents with null bytes in field name
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo "\nTesting array with one leading null byte in field name\n";
 echo throws(function() {

@@ -8,8 +8,8 @@ Multiple managers sharing streams: Using stream after closing manager
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager  = new MongoDB\Driver\Manager(URI);
-$manager2 = new MongoDB\Driver\Manager(URI);
+$manager  = create_test_manager();
+$manager2 = create_test_manager();
 
 
 $listdatabases = new MongoDB\Driver\Command(array("listDatabases" => 1));

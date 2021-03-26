@@ -3,7 +3,7 @@ PHPC-923: Use zend_string_release() to free class names (type map)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 /* Register an autoloader that does nothing more than append the class name to
  * an array. This adds a reference to the zend_string in PHP 7, which exposes an

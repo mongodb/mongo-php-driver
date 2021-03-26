@@ -27,7 +27,7 @@ $deprecatedDriverOptions = [
 foreach ($deprecatedDriverOptions as $driverOptions) {
     echo raises(
         function () use ($driverOptions) {
-            new MongoDB\Driver\Manager('mongodb://127.0.0.1/', [], $driverOptions);
+            create_test_manager('mongodb://127.0.0.1/', [], $driverOptions);
         },
         E_DEPRECATED
     ), "\n";

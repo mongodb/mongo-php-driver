@@ -9,13 +9,13 @@ MongoDB\Driver\Manager::__construct(): directConnection option
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new \MongoDB\Driver\Manager(URI, ['directConnection' => false]);
+$manager = create_test_manager(URI, ['directConnection' => false]);
 $server = $manager->selectServer(new \MongoDB\Driver\ReadPreference('primaryPreferred'));
 
 printf("Topology has multiple nodes when directConnection=false: %s\n", count($manager->getServers()) > 1 ? 'true' : 'false');
 
 $uri = sprintf('mongodb://%s:%d', $server->getHost(), $server->getPort());
-$manager2 = new \MongoDB\Driver\Manager($uri, ['directConnection' => true]);
+$manager2 = create_test_manager($uri, ['directConnection' => true]);
 $server2 = $manager2->selectServer(new \MongoDB\Driver\ReadPreference('primaryPreferred'));
 
 printf("Topology has single node when directConnection=true: %s\n", count($manager2->getServers()) == 1 ? 'true' : 'false');

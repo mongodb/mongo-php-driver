@@ -3,7 +3,7 @@ MongoDB\BSON\Regex::jsonSerialize() with json_encode() (with flags)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $doc = ['foo' => new MongoDB\BSON\Regex('pattern', 'i')];
 $json = json_encode($doc);

@@ -34,7 +34,7 @@ class MyClass implements MongoDB\BSON\Persistable
     }
 }
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $document = new MyClass('foo', new MyClass('bar', new MyClass('baz')));
 

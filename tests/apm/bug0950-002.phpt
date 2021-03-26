@@ -30,7 +30,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
     }
 }
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(['_id' => 1]);

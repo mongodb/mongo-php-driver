@@ -13,7 +13,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
     public function run()
     {
-        $manager = new MongoDB\Driver\Manager(URI, ['w' => 0]);
+        $manager = create_test_manager(URI, ['w' => 0]);
 
         MongoDB\Driver\Monitoring\addSubscriber($this);
 

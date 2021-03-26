@@ -3,7 +3,7 @@ MongoDB\BSON\toPHP(): Field path values with bson_iter_visit_all() failures
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = array(
     str_replace('INVALID!', "INVALID\xFE", fromPHP(['foo' => ['INVALID!' => 'bar'] ])),

@@ -9,7 +9,7 @@ MongoDB\Driver\Manager::selectServer() select a server from SDAM based on ReadPr
 require_once __DIR__ . "/../utils/basic.inc";
 
 $rp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 $server = $manager->selectServer($rp);
 $rp2 = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
 $server2 = $manager->selectServer($rp2);

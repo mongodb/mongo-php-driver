@@ -9,7 +9,7 @@ MongoDB\Driver\Server::executeQuery() takes a read preference as legacy option
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 // load fixtures for test
 $bulk = new MongoDB\Driver\BulkWrite();

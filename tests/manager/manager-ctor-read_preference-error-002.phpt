@@ -3,52 +3,52 @@ MongoDB\Driver\Manager::__construct(): invalid read preference (maxStalenessSeco
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 // Invalid types
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=invalid');
+    create_test_manager('mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=invalid');
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['maxStalenessSeconds' => 'invalid']);
+    create_test_manager(null, ['maxStalenessSeconds' => 'invalid']);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 // Invalid range in URI string (array option is tested in 64-bit error test)
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=2147483648');
+    create_test_manager('mongodb://127.0.0.1/?readPreference=secondary&maxStalenessSeconds=2147483648');
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 // Invalid values
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?maxstalenessseconds=1231');
+    create_test_manager('mongodb://127.0.0.1/?maxstalenessseconds=1231');
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager('mongodb://127.0.0.1/?maxStalenessSeconds=1231');
+    create_test_manager('mongodb://127.0.0.1/?maxStalenessSeconds=1231');
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['maxstalenessseconds' => 1231]);
+    create_test_manager(null, ['maxstalenessseconds' => 1231]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['maxStalenessSeconds' => 1231]);
+    create_test_manager(null, ['maxStalenessSeconds' => 1231]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['readPreference' => 'secondary', 'maxStalenessSeconds' => -2]);
+    create_test_manager(null, ['readPreference' => 'secondary', 'maxStalenessSeconds' => -2]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['readPreference' => 'secondary', 'maxStalenessSeconds' => 0]);
+    create_test_manager(null, ['readPreference' => 'secondary', 'maxStalenessSeconds' => 0]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['readPreference' => 'secondary', 'maxStalenessSeconds' => 42]);
+    create_test_manager(null, ['readPreference' => 'secondary', 'maxStalenessSeconds' => 42]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>

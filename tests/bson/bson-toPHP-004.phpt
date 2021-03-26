@@ -3,7 +3,7 @@ MongoDB\BSON\toPHP(): BSON array keys should be disregarded during visitation
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
 {

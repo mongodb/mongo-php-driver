@@ -21,7 +21,7 @@ if (array_key_exists('user', $url) && array_key_exists('pass', $url)) {
     $dsn = 'mongodb://' . $info['arbiters'][0];
 }
 
-$manager = new MongoDB\Driver\Manager($dsn, ['replicaSet' => $info['setName']]);
+$manager = create_test_manager($dsn, ['replicaSet' => $info['setName']]);
 
 // load fixtures for test
 $bulk = new \MongoDB\Driver\BulkWrite();

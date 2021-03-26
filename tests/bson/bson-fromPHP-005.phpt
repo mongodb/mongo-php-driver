@@ -3,7 +3,7 @@ BSON\fromPHP(): PHP document with public property whose name is an empty string
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     ['' => 1],

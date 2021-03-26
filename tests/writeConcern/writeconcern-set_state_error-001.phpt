@@ -3,7 +3,7 @@ MongoDB\Driver\WriteConcern::__set_state() requires correct data types and value
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     MongoDB\Driver\WriteConcern::__set_state(['w' => -4]);

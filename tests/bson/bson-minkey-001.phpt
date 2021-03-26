@@ -3,7 +3,7 @@ MongoDB\BSON\MinKey #001
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $minkey = new MongoDB\BSON\MinKey;
 $tests = array(

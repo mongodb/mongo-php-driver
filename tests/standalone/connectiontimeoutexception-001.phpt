@@ -12,7 +12,7 @@ require_once __DIR__ . "/" . "../utils/basic.inc";
 /* A 500ms socket timeout will ensure that SDAM and any authentication can
  * complete before executing a sleep command to trigger a network error. */
 $uri = append_uri_option(URI, 'sockettimeoutms=500');
-$manager = new MongoDB\Driver\Manager($uri);
+$manager = create_test_manager($uri);
 
 $command = new MongoDB\Driver\Command([
     'sleep' => 1,

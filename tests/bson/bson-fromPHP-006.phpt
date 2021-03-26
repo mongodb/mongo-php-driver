@@ -3,7 +3,7 @@ BSON\fromPHP(): PHP documents with null bytes in field name
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 /* Per PHPC-884, field names with a leading null byte are ignored when encoding
  * a document from an object's property hash table, since PHP uses leading bytes

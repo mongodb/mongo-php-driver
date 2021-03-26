@@ -16,7 +16,7 @@ $database = "admin";
 
 $parsed = parse_url(URI);
 $dsn = sprintf("mongodb://%s:%s@%s:%d/%s", $username, $password, $parsed["host"], $parsed["port"], $database);
-$adminmanager = new MongoDB\Driver\Manager($dsn);
+$adminmanager = create_test_manager($dsn);
 
 $cmd = array(
     "createUser" => "bugs",
@@ -37,7 +37,7 @@ $password = "wrong-password";
 $database = '$external';
 
 $dsn = sprintf("mongodb://%s:%s@%s:%d/?authSource=%s&authMechanism=PLAIN", $username, $password, $parsed["host"], $parsed["port"], $database);
-$manager = new MongoDB\Driver\Manager($dsn);
+$manager = create_test_manager($dsn);
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $bulk->insert(array("very" => "important"));

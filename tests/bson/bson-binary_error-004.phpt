@@ -3,7 +3,7 @@ MongoDB\BSON\Binary constructor requires 16-byte data length for UUID types
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\BSON\Binary('0123456789abcde', MongoDB\BSON\Binary::TYPE_OLD_UUID);

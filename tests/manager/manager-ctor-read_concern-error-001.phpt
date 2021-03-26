@@ -3,10 +3,10 @@ MongoDB\Driver\Manager::__construct(): invalid read concern
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    new MongoDB\Driver\Manager(null, ['readConcernLevel' => 1]);
+    create_test_manager(null, ['readConcernLevel' => 1]);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
 ?>

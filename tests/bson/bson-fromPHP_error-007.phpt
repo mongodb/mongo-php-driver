@@ -3,7 +3,7 @@ MongoDB\BSON\fromPHP(): Serializable returns document with null bytes in field n
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 class MySerializable implements MongoDB\BSON\Serializable
 {

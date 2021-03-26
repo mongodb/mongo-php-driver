@@ -3,7 +3,7 @@ Test for PHPC-274: zval_to_bson() should process BSON\Serializable instances
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 class AssociativeArray implements MongoDB\BSON\Serializable
 {

@@ -3,7 +3,7 @@ MongoDB\BSON\Timestamp::__set_state() requires positive unsigned 32-bit integers
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     MongoDB\BSON\Timestamp::__set_state(['increment' => -1, 'timestamp' => 5678]);

@@ -17,7 +17,7 @@ class Database {
     private static $Instance;
  
     public function __construct() {
-        $Manager = new Manager(URI, array(), array());
+        $Manager = create_test_manager(URI, array(), array());
         $this->Database = $Manager;
     }
  

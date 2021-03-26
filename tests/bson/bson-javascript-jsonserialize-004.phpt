@@ -3,7 +3,7 @@ MongoDB\BSON\Javascript::jsonSerialize() with json_encode() (with scope)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $doc = ['foo' => new MongoDB\BSON\Javascript('function foo(bar) { return bar; }', ['foo' => 42])];
 $json = json_encode($doc);

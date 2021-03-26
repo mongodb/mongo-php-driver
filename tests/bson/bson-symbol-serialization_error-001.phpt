@@ -3,7 +3,7 @@ MongoDB\BSON\Symbol unserialization requires "symbol" string field
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     unserialize('C:19:"MongoDB\BSON\Symbol":23:{a:1:{s:6:"symbol";i:0;}}');

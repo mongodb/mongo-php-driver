@@ -10,7 +10,7 @@ MongoDB\Driver\Manager::executeReadWriteCommand()
 require_once __DIR__ . "/../utils/basic.inc";
 require_once __DIR__ . "/../utils/observer.php";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $command = new MongoDB\Driver\Command([
     'aggregate' => COLLECTION_NAME,

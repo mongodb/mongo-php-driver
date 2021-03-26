@@ -3,7 +3,7 @@ MongoDB\BSON\ObjectId unserialization requires valid hex string
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     unserialize('C:21:"MongoDB\BSON\ObjectId":48:{a:1:{s:3:"oid";s:24:"0123456789abcdefghijklmn";}}');

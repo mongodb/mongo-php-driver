@@ -3,7 +3,7 @@ MongoDB\BSON\Javascript::__set_state() requires "code" string field
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     MongoDB\BSON\Javascript::__set_state(['code' => 0]);

@@ -12,7 +12,7 @@ $options = array(
     "pem_pwd" => "does-not-matter",
 );
 
-$manager = new MongoDB\Driver\Manager(URI . '&sslclientcertificatekeypassword=does-also-not-matter', [], $options);
+$manager = create_test_manager(URI . '&sslclientcertificatekeypassword=does-also-not-matter', [], $options);
 ?>
 ===DONE===
 <?php exit(0); ?>

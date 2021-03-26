@@ -3,7 +3,7 @@ Test for PHPC-347: Memory leak decoding empty buffer
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 try {
     var_dump(toPHP(''));

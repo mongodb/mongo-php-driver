@@ -8,7 +8,7 @@ MongoDB\Driver\Session::endSession() Calling methods after session has been ende
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $sessionA = $manager->startSession();
 $sessionA->endSession();

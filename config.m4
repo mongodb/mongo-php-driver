@@ -143,6 +143,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/ReadConcern.c \
     src/MongoDB/ReadPreference.c \
     src/MongoDB/Server.c \
+    src/MongoDB/ServerApi.c \
     src/MongoDB/Session.c \
     src/MongoDB/WriteConcern.c \
     src/MongoDB/WriteConcernError.c \

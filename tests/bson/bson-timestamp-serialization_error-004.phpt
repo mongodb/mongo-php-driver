@@ -3,7 +3,7 @@ MongoDB\BSON\Timestamp unserialization requires strings to parse as 64-bit integ
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     unserialize('C:22:"MongoDB\BSON\Timestamp":60:{a:2:{s:9:"increment";s:4:"1.23";s:9:"timestamp";s:4:"5678";}}');

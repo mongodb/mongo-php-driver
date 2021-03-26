@@ -13,7 +13,7 @@ require_once __DIR__ . "/../utils/observer.php";
 
 (new CommandObserver)->observe(
     function() {
-        $manager = new MongoDB\Driver\Manager(URI);
+        $manager = create_test_manager();
         $session = $manager->startSession();
 
         $query = new MongoDB\Driver\Query([]);

@@ -3,7 +3,7 @@ PHPC-531: Segfault due to double free by corrupt BSON visitor (top-level)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $bson = fromPHP(["hello" => "world"]);
 $bson[4] = 1;

@@ -26,7 +26,7 @@ $dsn = sprintf('mongodb://username@%s:%d/?ssl=true&authMechanism=MONGODB-X509', 
 // Both should fail with auth failure, without reusing the previous stream
 for ($i = 0; $i < 2; $i++) {
     echo throws(function() use ($dsn, $driverOptions) {
-        $manager = new MongoDB\Driver\Manager($dsn, [], $driverOptions);
+        $manager = create_test_manager($dsn, [], $driverOptions);
         $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
         var_dump($cursor->toArray()[0]);
     }, 'MongoDB\Driver\Exception\AuthenticationException', 'executeCommand'), "\n";

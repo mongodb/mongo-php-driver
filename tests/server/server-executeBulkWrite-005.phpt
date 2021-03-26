@@ -10,7 +10,7 @@ MongoDB\Driver\Server::executeBulkWrite() with write concern (replica set second
 require_once __DIR__ . "/../utils/basic.inc";
 
 // Disable retryWrites since the test writes to the unreplicated "local" database
-$manager = new MongoDB\Driver\Manager(URI, ['retryWrites' => false]);
+$manager = create_test_manager(URI, ['retryWrites' => false]);
 $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY));
 
 /* The server ignores write concerns with w>2 for writes to the local database,

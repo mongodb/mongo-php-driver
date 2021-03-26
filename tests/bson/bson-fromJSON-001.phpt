@@ -3,7 +3,7 @@ MongoDB\BSON\fromJSON(): Decoding JSON
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     '{}',

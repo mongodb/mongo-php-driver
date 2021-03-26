@@ -3,7 +3,7 @@ MongoDB\BSON\UTCDateTime::jsonSerialize() with json_encode()
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $doc = ['foo' => new MongoDB\BSON\UTCDateTime(new DateTime('2016-10-11 13:34:26.817 UTC'))];
 $json = json_encode($doc);

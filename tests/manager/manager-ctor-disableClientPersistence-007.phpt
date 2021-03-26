@@ -8,8 +8,8 @@ MongoDB\Driver\Manager with disableClientPersistence=true referenced by ClientEn
 require_once __DIR__ . "/../utils/basic.inc";
 
 ini_set('mongodb.debug', 'stderr');
-$manager = new MongoDB\Driver\Manager(null, [], ['disableClientPersistence' => true]);
-$keyVaultClient = new MongoDB\Driver\Manager(null, [], ['disableClientPersistence' => true]);
+$manager = create_test_manager(null, [], ['disableClientPersistence' => true]);
+$keyVaultClient = create_test_manager(null, [], ['disableClientPersistence' => true]);
 ini_set('mongodb.debug', '');
 
 echo "Creating clientEncryption\n";

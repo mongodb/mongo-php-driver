@@ -3,7 +3,7 @@ MongoDB\Driver\ReadConcern::__set_state() requires "level" string field
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     MongoDB\Driver\ReadConcern::__set_state(['level' => 0]);

@@ -8,7 +8,7 @@ MongoDB\Driver\BulkWrite: #002 Get the generated ID
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $hannes = array("name" => "Hannes", "country" => "USA", "gender" => "male");
 $hayley = array("name" => "Bayley", "country" => "USA", "gender" => "female");

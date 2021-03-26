@@ -3,7 +3,7 @@ MongoDB\BSON\fromPHP(): Serializable with circular references
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 class MyRecursiveSerializable implements MongoDB\BSON\Serializable
 {

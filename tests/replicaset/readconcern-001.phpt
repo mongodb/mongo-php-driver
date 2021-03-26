@@ -9,7 +9,7 @@ ReadConcern: MongoDB\Driver\Manager::executeQuery() with readConcern option (fin
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $wc = new MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY);
 

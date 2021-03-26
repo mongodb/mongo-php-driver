@@ -3,7 +3,7 @@ MongoDB\BSON\DBPointer unserialization requires "ref" and "id" string fields
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 
 echo throws(function() {

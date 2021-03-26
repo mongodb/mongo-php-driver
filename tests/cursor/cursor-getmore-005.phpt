@@ -18,7 +18,7 @@ MongoDB\Driver\Cursor query result iteration with getmore failure
 require_once __DIR__ . "/../utils/basic.inc";
 
 $uri = createTemporaryMongoInstance();
-$manager = new MongoDB\Driver\Manager($uri);
+$manager = create_test_manager($uri);
 
 $bulkWrite = new MongoDB\Driver\BulkWrite;
 

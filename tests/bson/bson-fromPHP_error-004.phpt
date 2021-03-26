@@ -3,7 +3,7 @@ MongoDB\BSON\fromPHP(): PHP documents with circular references
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo "\nTesting packed array with circular reference\n";
 

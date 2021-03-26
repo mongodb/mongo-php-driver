@@ -13,7 +13,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 $uri = is_replica_set(URI) ? get_primary_server(URI)->getInfo()['me'] : URI;
 $parsed = parse_url($uri);
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $bulk = new \MongoDB\Driver\BulkWrite();
 $bulk->insert(array('foo' => 'bar'));

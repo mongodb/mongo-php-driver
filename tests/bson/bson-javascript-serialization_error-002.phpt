@@ -3,7 +3,7 @@ MongoDB\BSON\Javascript unserialization expects optional scope to be array or ob
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     unserialize('C:23:"MongoDB\BSON\Javascript":68:{a:2:{s:4:"code";s:17:"function foo() {}";s:5:"scope";s:7:"INVALID";}}');

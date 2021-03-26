@@ -3,7 +3,7 @@ MongoDB\BSON\Timestamp constructor requires integer or string arguments
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/tools.php';
+require_once __DIR__ . '/../utils/basic.inc';
 
 $invalidValues = [null, 1234.5, true, [], new stdClass];
 

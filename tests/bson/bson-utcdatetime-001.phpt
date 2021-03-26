@@ -9,7 +9,7 @@ MongoDB\BSON\UTCDateTime #001
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = new MongoDB\Driver\Manager(URI);
+$manager = create_test_manager();
 
 $utcdatetime = new MongoDB\BSON\UTCDateTime("1416445411987");
 

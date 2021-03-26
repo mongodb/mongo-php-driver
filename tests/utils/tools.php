@@ -5,6 +5,7 @@ use MongoDB\Driver\Command;
 use MongoDB\Driver\Manager;
 use MongoDB\Driver\ReadPreference;
 use MongoDB\Driver\Server;
+use MongoDB\Driver\ServerApi;
 use MongoDB\Driver\WriteConcern;
 use MongoDB\Driver\WriteConcernError;
 use MongoDB\Driver\WriteError;
@@ -88,6 +89,15 @@ function get_module_info($row)
     return $matches[1];
 }
 
+function create_test_manager(string $uri = null, array $options = [], array $driverOptions = [])
+{
+    if (getenv('API_VERSION') && ! isset($driverOptions['serverApi'])) {
+        $driverOptions['serverApi'] = new ServerApi(getenv('API_VERSION'));
+    }
+
+    return new Manager($uri ?? URI, $options, $driverOptions);
+}
+
 /**
  * Returns the primary server.
  *
@@ -97,7 +107,7 @@ function get_module_info($row)
  */
 function get_primary_server($uri)
 {
-    return (new Manager($uri))->selectServer(new ReadPreference('primary'));
+    return create_test_manager($uri)->selectServer(new ReadPreference('primary'));
 }
 
 /**
@@ -109,7 +119,7 @@ function get_primary_server($uri)
  */
 function get_secondary_server($uri)
 {
-    return (new Manager($uri))->selectServer(new ReadPreference('secondary'));
+    return create_test_manager($uri)->selectServer(new ReadPreference('secondary'));
 }
 
 /**
