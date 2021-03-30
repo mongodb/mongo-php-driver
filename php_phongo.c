@@ -2444,9 +2444,6 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 	php_phongo_commandfailedevent_t* p_event;
 	zval                             z_event;
 	bson_error_t                     tmp_error = { 0 };
-	zend_class_entry*                default_exception_ce;
-
-	default_exception_ce = zend_exception_get_default();
 
 	/* Return early if there are no APM subscribers to notify */
 	if (!MONGODB_G(subscribers) || zend_hash_num_elements(MONGODB_G(subscribers)) == 0) {
@@ -2476,8 +2473,8 @@ static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
 	mongoc_apm_command_failed_get_error(event, &tmp_error);
 
 	object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
-	zend_update_property_string(default_exception_ce, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("message"), tmp_error.message);
-	zend_update_property_long(default_exception_ce, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("code"), tmp_error.code);
+	zend_update_property_string(zend_ce_exception, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("message"), tmp_error.message);
+	zend_update_property_long(zend_ce_exception, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("code"), tmp_error.code);
 
 	php_phongo_dispatch_handlers("commandFailed", &z_event);
 	zval_ptr_dtor(&z_event);
