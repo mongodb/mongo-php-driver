@@ -3482,7 +3482,10 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		goto cleanup;
 	}
 
-	php_phongo_set_monitoring_callbacks(manager->client);
+	if (!php_phongo_set_monitoring_callbacks(manager->client)) {
+		/* Exception should already have been thrown */
+		goto cleanup;
+	}
 
 	MONGOC_DEBUG("Created client with hash: %s", manager->client_hash);
 
