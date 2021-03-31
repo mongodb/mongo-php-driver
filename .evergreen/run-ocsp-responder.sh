@@ -24,7 +24,6 @@
 
 # Fail on any command returning a non-zero exit status.
 set -o errexit
-set -o xtrace
 
 USE_DELEGATE=${USE_DELEGATE:-OFF}
 
