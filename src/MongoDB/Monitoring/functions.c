@@ -25,31 +25,15 @@
 
 ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 
-static char* php_phongo_make_subscriber_hash(zval* subscriber)
-{
-	char* hash;
-	int   hash_len;
-
-	hash_len = spprintf(&hash, 0, "SUBS-%09d", Z_OBJ_HANDLE_P(subscriber));
-
-	return hash;
-}
-
 /* {{{ proto void MongoDB\Driver\Monitoring\addSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
    Adds a monitoring subscriber to the set of subscribers */
 PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 {
-	zend_error_handling error_handling;
-	zval*               zSubscriber = NULL;
-	char*               hash;
-	zval*               subscriber;
+	zval* subscriber;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_OBJECT_OF_CLASS(subscriber, php_phongo_subscriber_ce)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	/* The HashTable should never be NULL, as it's initialized during RINIT and
 	 * destroyed during RSHUTDOWN. This is simply a defensive guard. */
@@ -57,34 +41,24 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 		return;
 	}
 
-	hash = php_phongo_make_subscriber_hash(zSubscriber);
-
-	/* If we have already stored the subscriber, bail out. Otherwise, add
-	 * subscriber to list */
-	if ((subscriber = zend_hash_str_find(MONGODB_G(subscribers), hash, strlen(hash)))) {
-		efree(hash);
+	/* NOP if the subscriber was already registered */
+	if (zend_hash_index_exists(MONGODB_G(subscribers), Z_OBJ_HANDLE_P(subscriber))) {
 		return;
 	}
 
-	zend_hash_str_update(MONGODB_G(subscribers), hash, strlen(hash), zSubscriber);
-	Z_ADDREF_P(zSubscriber);
-	efree(hash);
+	zend_hash_index_update(MONGODB_G(subscribers), Z_OBJ_HANDLE_P(subscriber), subscriber);
+	Z_ADDREF_P(subscriber);
 } /* }}} */
 
 /* {{{ proto void MongoDB\Driver\Monitoring\removeSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
    Removes a monitoring subscriber from the set of subscribers */
 PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 {
-	zend_error_handling error_handling;
-	zval*               zSubscriber = NULL;
-	char*               hash;
+	zval* subscriber;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &zSubscriber, php_phongo_subscriber_ce) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_OBJECT_OF_CLASS(subscriber, php_phongo_subscriber_ce)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	/* The HashTable should never be NULL, as it's initialized during RINIT and
 	 * destroyed during RSHUTDOWN. This is simply a defensive guard. */
@@ -92,10 +66,9 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 		return;
 	}
 
-	hash = php_phongo_make_subscriber_hash(zSubscriber);
-
-	zend_hash_str_del(MONGODB_G(subscribers), hash, strlen(hash));
-	efree(hash);
+	/* Note: the HashTable specifies ZVAL_PTR_DTOR as its element destructor so
+	 * there is no need to decrement the subscriber's reference count here. */
+	zend_hash_index_del(MONGODB_G(subscribers), Z_OBJ_HANDLE_P(subscriber));
 } /* }}} */
 
 /*
