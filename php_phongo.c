@@ -66,6 +66,7 @@
 /* Our stuffz */
 #include "php_phongo.h"
 #include "php_bson.h"
+#include "src/phongo_apm.h"
 #include "src/BSON/functions.h"
 #include "src/MongoDB/Monitoring/functions.h"
 
@@ -2330,178 +2331,6 @@ static bool php_phongo_apply_driver_options_to_uri(mongoc_uri_t* uri, zval* zopt
 }
 #endif
 
-/* APM callbacks */
-static void php_phongo_dispatch_handlers(const char* name, zval* z_event)
-{
-	zval* value;
-
-	ZEND_HASH_FOREACH_VAL_IND(MONGODB_G(subscribers), value)
-	{
-		if (EG(exception)) {
-			break;
-		}
-		/* We can't use the zend_call_method_with_1_params macro here, as it
-		 * does a sizeof() on the name argument, which does only work with
-		 * constant names, but not with parameterized ones as it does
-		 * "sizeof(char*)" in that case. */
-		zend_call_method(PHONGO_COMPAT_OBJ_P(value), NULL, NULL, name, strlen(name), NULL, 1, z_event, NULL);
-	}
-	ZEND_HASH_FOREACH_END();
-}
-
-/* Search for a Manager associated with the given client in the request-scoped
- * registry. If any Manager is found, copy it into the output parameter
- * (incrementing its ref-count) and return true; otherwise, set the output
- * parameter to undefined and return false. */
-static bool php_phongo_copy_manager_for_client(mongoc_client_t* client, zval* out)
-{
-	php_phongo_manager_t* manager;
-
-	if (!MONGODB_G(managers) || zend_hash_num_elements(MONGODB_G(managers)) == 0) {
-		return false;
-	}
-
-	ZEND_HASH_FOREACH_PTR(MONGODB_G(managers), manager)
-	{
-		if (manager->client == client) {
-			ZVAL_OBJ(out, &manager->std);
-			Z_ADDREF_P(out);
-
-			return true;
-		}
-	}
-	ZEND_HASH_FOREACH_END();
-
-	ZVAL_UNDEF(out);
-
-	return false;
-}
-
-static void php_phongo_command_started(const mongoc_apm_command_started_t* event)
-{
-	php_phongo_commandstartedevent_t* p_event;
-	zval                              z_event;
-
-	/* Return early if there are no APM subscribers to notify */
-	if (!MONGODB_G(subscribers) || zend_hash_num_elements(MONGODB_G(subscribers)) == 0) {
-		return;
-	}
-
-	object_init_ex(&z_event, php_phongo_commandstartedevent_ce);
-	p_event = Z_COMMANDSTARTEDEVENT_OBJ_P(&z_event);
-
-	p_event->command_name  = estrdup(mongoc_apm_command_started_get_command_name(event));
-	p_event->server_id     = mongoc_apm_command_started_get_server_id(event);
-	p_event->operation_id  = mongoc_apm_command_started_get_operation_id(event);
-	p_event->request_id    = mongoc_apm_command_started_get_request_id(event);
-	p_event->command       = bson_copy(mongoc_apm_command_started_get_command(event));
-	p_event->database_name = estrdup(mongoc_apm_command_started_get_database_name(event));
-
-	if (!php_phongo_copy_manager_for_client(mongoc_apm_command_started_get_context(event), &p_event->manager)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Found no Manager for client in APM event context");
-		zval_ptr_dtor(&z_event);
-
-		return;
-	}
-
-	php_phongo_dispatch_handlers("commandStarted", &z_event);
-	zval_ptr_dtor(&z_event);
-}
-
-static void php_phongo_command_succeeded(const mongoc_apm_command_succeeded_t* event)
-{
-	php_phongo_commandsucceededevent_t* p_event;
-	zval                                z_event;
-
-	/* Return early if there are no APM subscribers to notify */
-	if (!MONGODB_G(subscribers) || zend_hash_num_elements(MONGODB_G(subscribers)) == 0) {
-		return;
-	}
-
-	object_init_ex(&z_event, php_phongo_commandsucceededevent_ce);
-	p_event = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(&z_event);
-
-	p_event->command_name    = estrdup(mongoc_apm_command_succeeded_get_command_name(event));
-	p_event->server_id       = mongoc_apm_command_succeeded_get_server_id(event);
-	p_event->operation_id    = mongoc_apm_command_succeeded_get_operation_id(event);
-	p_event->request_id      = mongoc_apm_command_succeeded_get_request_id(event);
-	p_event->duration_micros = mongoc_apm_command_succeeded_get_duration(event);
-	p_event->reply           = bson_copy(mongoc_apm_command_succeeded_get_reply(event));
-
-	if (!php_phongo_copy_manager_for_client(mongoc_apm_command_succeeded_get_context(event), &p_event->manager)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Found no Manager for client in APM event context");
-		zval_ptr_dtor(&z_event);
-
-		return;
-	}
-
-	php_phongo_dispatch_handlers("commandSucceeded", &z_event);
-	zval_ptr_dtor(&z_event);
-}
-
-static void php_phongo_command_failed(const mongoc_apm_command_failed_t* event)
-{
-	php_phongo_commandfailedevent_t* p_event;
-	zval                             z_event;
-	bson_error_t                     tmp_error = { 0 };
-
-	/* Return early if there are no APM subscribers to notify */
-	if (!MONGODB_G(subscribers) || zend_hash_num_elements(MONGODB_G(subscribers)) == 0) {
-		return;
-	}
-
-	object_init_ex(&z_event, php_phongo_commandfailedevent_ce);
-	p_event = Z_COMMANDFAILEDEVENT_OBJ_P(&z_event);
-
-	p_event->command_name    = estrdup(mongoc_apm_command_failed_get_command_name(event));
-	p_event->server_id       = mongoc_apm_command_failed_get_server_id(event);
-	p_event->operation_id    = mongoc_apm_command_failed_get_operation_id(event);
-	p_event->request_id      = mongoc_apm_command_failed_get_request_id(event);
-	p_event->duration_micros = mongoc_apm_command_failed_get_duration(event);
-	p_event->reply           = bson_copy(mongoc_apm_command_failed_get_reply(event));
-
-	if (!php_phongo_copy_manager_for_client(mongoc_apm_command_failed_get_context(event), &p_event->manager)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Found no Manager for client in APM event context");
-		zval_ptr_dtor(&z_event);
-
-		return;
-	}
-
-	/* We need to process and convert the error right here, otherwise
-	 * debug_info will turn into a recursive loop, and with the wrong trace
-	 * locations */
-	mongoc_apm_command_failed_get_error(event, &tmp_error);
-
-	object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
-	zend_update_property_string(zend_ce_exception, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("message"), tmp_error.message);
-	zend_update_property_long(zend_ce_exception, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("code"), tmp_error.code);
-
-	php_phongo_dispatch_handlers("commandFailed", &z_event);
-	zval_ptr_dtor(&z_event);
-}
-
-/* Sets the callbacks for APM */
-bool php_phongo_set_monitoring_callbacks(mongoc_client_t* client)
-{
-	bool retval;
-
-	mongoc_apm_callbacks_t* callbacks = mongoc_apm_callbacks_new();
-
-	mongoc_apm_set_command_started_cb(callbacks, php_phongo_command_started);
-	mongoc_apm_set_command_succeeded_cb(callbacks, php_phongo_command_succeeded);
-	mongoc_apm_set_command_failed_cb(callbacks, php_phongo_command_failed);
-
-	retval = mongoc_client_set_apm_callbacks(client, callbacks, client);
-
-	if (!retval) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Failed to set APM callbacks");
-	}
-
-	mongoc_apm_callbacks_destroy(callbacks);
-
-	return retval;
-}
-
 static zval* php_phongo_manager_prepare_manager_for_hash(zval* driverOptions, bool* free)
 {
 	php_phongo_manager_t* manager;
@@ -3482,7 +3311,7 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 		goto cleanup;
 	}
 
-	if (!php_phongo_set_monitoring_callbacks(manager->client)) {
+	if (!phongo_apm_set_callbacks(manager->client)) {
 		/* Exception should already have been thrown */
 		goto cleanup;
 	}

@@ -22,11 +22,12 @@
 
 #include "phongo_compat.h"
 #include "php_phongo.h"
+#include "src/phongo_apm.h"
 
 ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 
 /* {{{ proto void MongoDB\Driver\Monitoring\addSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
-   Adds a monitoring subscriber to the set of subscribers */
+   Registers a global event subscriber */
 PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 {
 	zval* subscriber;
@@ -35,23 +36,11 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 	Z_PARAM_OBJECT_OF_CLASS(subscriber, php_phongo_subscriber_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	/* The HashTable should never be NULL, as it's initialized during RINIT and
-	 * destroyed during RSHUTDOWN. This is simply a defensive guard. */
-	if (!MONGODB_G(subscribers)) {
-		return;
-	}
-
-	/* NOP if the subscriber was already registered */
-	if (zend_hash_index_exists(MONGODB_G(subscribers), Z_OBJ_HANDLE_P(subscriber))) {
-		return;
-	}
-
-	zend_hash_index_update(MONGODB_G(subscribers), Z_OBJ_HANDLE_P(subscriber), subscriber);
-	Z_ADDREF_P(subscriber);
+	phongo_apm_add_subscriber(MONGODB_G(subscribers), subscriber);
 } /* }}} */
 
 /* {{{ proto void MongoDB\Driver\Monitoring\removeSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
-   Removes a monitoring subscriber from the set of subscribers */
+   Unregisters a global event subscriber */
 PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 {
 	zval* subscriber;
@@ -60,15 +49,7 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 	Z_PARAM_OBJECT_OF_CLASS(subscriber, php_phongo_subscriber_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	/* The HashTable should never be NULL, as it's initialized during RINIT and
-	 * destroyed during RSHUTDOWN. This is simply a defensive guard. */
-	if (!MONGODB_G(subscribers)) {
-		return;
-	}
-
-	/* Note: the HashTable specifies ZVAL_PTR_DTOR as its element destructor so
-	 * there is no need to decrement the subscriber's reference count here. */
-	zend_hash_index_del(MONGODB_G(subscribers), Z_OBJ_HANDLE_P(subscriber));
+	phongo_apm_remove_subscriber(MONGODB_G(subscribers), subscriber);
 } /* }}} */
 
 /*
