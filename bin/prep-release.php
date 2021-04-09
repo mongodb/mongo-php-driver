@@ -48,7 +48,7 @@ function get_files() {
         "src/BSON/*.{c,h}",
         "src/contrib/*.{c,h}",
 
-        "src/libmongoc/src/common/*.{c,h}",
+        "src/libmongoc/src/common/*.{c,h,h.in}",
         "src/libmongoc/src/kms-message/src/*.{c,h}",
         "src/libmongoc/src/kms-message/src/kms_message/*.{c,h}",
         "src/libmongoc/src/libbson/src/bson/*.{c,h,h.in}",
