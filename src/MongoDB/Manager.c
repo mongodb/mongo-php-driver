@@ -27,6 +27,7 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 #include "Session.h"
+#include "src/phongo_apm.h"
 
 #define PHONGO_MANAGER_URI_DEFAULT "mongodb://127.0.0.1/"
 
@@ -279,6 +280,28 @@ static PHP_METHOD(Manager, __construct)
 	if (!php_phongo_manager_register(intern)) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Failed to add Manager to internal registry");
 	}
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\Manager::addSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
+   Registers an event subscriber for this Manager */
+static PHP_METHOD(Manager, addSubscriber)
+{
+	php_phongo_manager_t* intern;
+	zval*                 subscriber;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_OBJECT_OF_CLASS(subscriber, php_phongo_subscriber_ce)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	intern = Z_MANAGER_OBJ_P(getThis());
+
+	/* Lazily initialize the subscriber HashTable */
+	if (!intern->subscribers) {
+		ALLOC_HASHTABLE(intern->subscribers);
+		zend_hash_init(intern->subscribers, 0, NULL, ZVAL_PTR_DTOR, 0);
+	}
+
+	phongo_apm_add_subscriber(intern->subscribers, subscriber);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\ClientEncryption MongoDB\Driver\Manager::createClientEncryption(array $options)
@@ -677,6 +700,27 @@ static PHP_METHOD(Manager, getWriteConcern)
 	phongo_writeconcern_init(return_value, mongoc_client_get_write_concern(intern->client));
 } /* }}} */
 
+/* {{{ proto void MongoDB\Driver\Manager::removeSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
+   Unregisters an event subscriber for this Manager */
+static PHP_METHOD(Manager, removeSubscriber)
+{
+	php_phongo_manager_t* intern;
+	zval*                 subscriber;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_OBJECT_OF_CLASS(subscriber, php_phongo_subscriber_ce)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	intern = Z_MANAGER_OBJ_P(getThis());
+
+	/* NOP if subscribers HashTable was never initialized by addSubscriber */
+	if (!intern->subscribers) {
+		return;
+	}
+
+	phongo_apm_remove_subscriber(intern->subscribers, subscriber);
+} /* }}} */
+
 /* {{{ proto MongoDB\Driver\Server MongoDB\Driver\Manager::selectServers(MongoDB\Driver\ReadPreference $readPreference)
    Returns a suitable Server for the given ReadPreference */
 static PHP_METHOD(Manager, selectServer)
@@ -787,6 +831,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager___construct, 0, 0, 0)
 	ZEND_ARG_ARRAY_INFO(0, driverOptions, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_addSubscriber, 0, 0, 1)
+	ZEND_ARG_OBJ_INFO(0, subscriber, MongoDB\\Driver\\Monitoring\\Subscriber, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_createClientEncryption, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, options, 0)
 ZEND_END_ARG_INFO()
@@ -815,6 +863,10 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeBulkWrite, 0, 0, 2)
 	ZEND_ARG_INFO(0, options)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_removeSubscriber, 0, 0, 1)
+	ZEND_ARG_OBJ_INFO(0, subscriber, MongoDB\\Driver\\Monitoring\\Subscriber, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_selectServer, 0, 0, 1)
 	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 0)
 ZEND_END_ARG_INFO()
@@ -829,6 +881,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_manager_me[] = {
 	/* clang-format off */
 	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, addSubscriber, ai_Manager_addSubscriber, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, createClientEncryption, ai_Manager_createClientEncryption, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeReadCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -840,6 +893,7 @@ static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, getReadPreference, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, getServers, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, getWriteConcern, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, removeSubscriber, ai_Manager_removeSubscriber, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, selectServer, ai_Manager_selectServer, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, startSession, ai_Manager_startSession, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -879,6 +933,11 @@ static void php_phongo_manager_free_object(zend_object* object) /* {{{ */
 	 * clients are destroyed in the correct order */
 	if (!Z_ISUNDEF(intern->key_vault_client_manager)) {
 		zval_ptr_dtor(&intern->key_vault_client_manager);
+	}
+
+	if (intern->subscribers) {
+		zend_hash_destroy(intern->subscribers);
+		FREE_HASHTABLE(intern->subscribers);
 	}
 } /* }}} */
 

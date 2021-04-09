@@ -75,6 +75,7 @@ typedef struct {
 	size_t           client_hash_len;
 	bool             use_persistent_client;
 	zval             key_vault_client_manager;
+	HashTable*       subscribers;
 	zend_object      std;
 } php_phongo_manager_t;
 
