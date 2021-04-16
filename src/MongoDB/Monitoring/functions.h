@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 MongoDB, Inc.
+ * Copyright 2016-Present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
