@@ -38,7 +38,7 @@ BEGIN
             VALUE "FileDescription", FILE_DESCRIPTION
             VALUE "FileVersion", PHP_MONGODB_VERSION
             VALUE "InternalName", FILE_NAME
-            VALUE "LegalCopyright", "Copyright © 2014-present MongoDB, Inc."
+            VALUE "LegalCopyright", "Copyright 2014-Present MongoDB, Inc."
             VALUE "OriginalFilename", FILE_NAME
             VALUE "ProductName", "MongoDB Driver for PHP"
             VALUE "ProductVersion", PHP_MONGODB_VERSION
