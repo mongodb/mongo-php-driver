@@ -27,7 +27,7 @@ foreach ($tests as $value) {
 <?php exit(0); ?>
 --EXPECT--
 { "_id" : { "$oid" : "56315a7c6118fd1b920270b1" } }
-{ "binary" : { "$binary" : { "base64": "Zm9v", "subType" : "00" } } }
+{ "binary" : { "$binary" : { "base64" : "Zm9v", "subType" : "00" } } }
 { "date" : { "$date" : { "$numberLong" : "1445990400000" } } }
 { "timestamp" : { "$timestamp" : { "t" : 5678, "i" : 1234 } } }
 { "regex" : { "$regularExpression" : { "pattern" : "pattern", "options" : "i" } } }
