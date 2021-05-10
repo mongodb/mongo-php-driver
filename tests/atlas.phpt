@@ -10,7 +10,7 @@ if (getenv('TESTS') !== 'tests/atlas.phpt') { echo "skip Atlas tests not wanted\
 <?php
 $urls = explode("\n", file_get_contents('.evergreen/atlas-uris.txt'));
 
-$isMasterCmd = new \MongoDB\Driver\Command(['isMaster' => 1]);
+$command = new \MongoDB\Driver\Command(['ping' => 1]);
 $query = new \MongoDB\Driver\Query([]);
 
 foreach ($urls as $url) {
@@ -21,7 +21,7 @@ foreach ($urls as $url) {
 
 	try {
 		$m = new \MongoDB\Driver\Manager($url);
-		$m->executeCommand('admin', $isMasterCmd);
+		$m->executeCommand('admin', $command);
 		iterator_to_array($m->executeQuery('test.test', $query));
 		echo "PASS\n";
 	} catch(Exception $e) {
