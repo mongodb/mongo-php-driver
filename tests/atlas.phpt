@@ -15,7 +15,13 @@ $query = new \MongoDB\Driver\Query([]);
 
 foreach ($urls as $url) {
 	$url = trim($url);
+
 	if ($url == '') {
+		continue;
+	}
+
+	if (strpos($url, '#') === 0) {
+		echo trim(substr($url, 1)), "\n";
 		continue;
 	}
 
@@ -32,16 +38,22 @@ foreach ($urls as $url) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+Atlas replica set (3.4)
 PASS
 PASS
+Atlas sharded cluster (3.4)
 PASS
 PASS
+Atlas free tier replica set (4.4)
 PASS
 PASS
+Atlas with only TLSv1.1 enabled (3.4)
 PASS
 PASS
+Atlas with only TLSv1.2 enabled (3.4)
 PASS
 PASS
+Atlas with only TLSv1.2 enabled (3.4) and bad credentials
 FAIL: %s
 FAIL: %s
 ===DONE===
