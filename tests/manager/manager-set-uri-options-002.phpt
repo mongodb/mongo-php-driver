@@ -50,7 +50,7 @@ Deprecated: MongoDB\Driver\Manager::__construct(): The "context" driver option i
 
 Deprecated: MongoDB\Driver\Manager::__construct(): The "allow_self_signed" context driver option is deprecated. Please use the "tlsAllowInvalidCertificates" URI option instead.%s
 OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
-No suitable servers found (`serverSelectionTryOnce` set): [%scalling ismaster on '%s']
+No suitable servers found (`serverSelectionTryOnce` set): [%scalling %s on '%s']
 
 Deprecated: MongoDB\Driver\Manager::__construct(): The "context" driver option is deprecated.%s
 

@@ -9,7 +9,7 @@ MongoDB\Driver\Server::executeBulkWrite() with write concern (replica set second
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-/* Disable retryWrites since the test expects to receive a "not master" error,
+/* Disable retryWrites since the test expects to receive a "not primary" error,
  * which retryable writes would otherwise use to retry against the primary. */
 $manager = create_test_manager(URI, ['retryWrites' => false]);
 $server = $manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY));
@@ -32,11 +32,11 @@ foreach ($writeConcerns as $wc) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 OK: Got MongoDB\Driver\Exception\RuntimeException
-not master
+not %s
 OK: Got MongoDB\Driver\Exception\RuntimeException
-not master
+not %s
 OK: Got MongoDB\Driver\Exception\RuntimeException
-not master
+not %s
 ===DONE===

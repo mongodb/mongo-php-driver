@@ -1165,7 +1165,7 @@ php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_s
 bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /* {{{ */
 {
 	mongoc_host_list_t* host      = mongoc_server_description_host(sd);
-	const bson_t*       is_master = mongoc_server_description_hello_response(sd);
+	const bson_t*       hello_response = mongoc_server_description_hello_response(sd);
 	bson_iter_t         iter;
 
 	array_init(retval);
@@ -1176,10 +1176,10 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 	ADD_ASSOC_BOOL_EX(retval, "is_primary", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_PRIMARY].name));
 	ADD_ASSOC_BOOL_EX(retval, "is_secondary", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_SECONDARY].name));
 	ADD_ASSOC_BOOL_EX(retval, "is_arbiter", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_ARBITER].name));
-	ADD_ASSOC_BOOL_EX(retval, "is_hidden", bson_iter_init_find_case(&iter, is_master, "hidden") && bson_iter_as_bool(&iter));
-	ADD_ASSOC_BOOL_EX(retval, "is_passive", bson_iter_init_find_case(&iter, is_master, "passive") && bson_iter_as_bool(&iter));
+	ADD_ASSOC_BOOL_EX(retval, "is_hidden", bson_iter_init_find_case(&iter, hello_response, "hidden") && bson_iter_as_bool(&iter));
+	ADD_ASSOC_BOOL_EX(retval, "is_passive", bson_iter_init_find_case(&iter, hello_response, "passive") && bson_iter_as_bool(&iter));
 
-	if (bson_iter_init_find(&iter, is_master, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+	if (bson_iter_init_find(&iter, hello_response, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 		const uint8_t*        bytes;
 		uint32_t              len;
 		php_phongo_bson_state state;
@@ -1199,12 +1199,12 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
 
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
 			zval_ptr_dtor(&state.zchild);
 			return false;
 		}
 
-		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", &state.zchild);
+		ADD_ASSOC_ZVAL_EX(retval, "last_hello_response", &state.zchild);
 	}
 	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (zend_long) mongoc_server_description_round_trip_time(sd));
 

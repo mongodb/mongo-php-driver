@@ -29,5 +29,5 @@ $m->executeCommand('admin', $ping);
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
-No suitable servers found (`serverSelectionTryOnce` set): [%s calling ismaster on '%s:%d']
+No suitable servers found (`serverSelectionTryOnce` set): [%s calling %s on '%s:%d']
 ===DONE===
