@@ -23,7 +23,7 @@ $secondaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::
 $secondary = $manager->selectServer($secondaryRp);
 
 /* Note: this is testing that the read preference (even a conflicting one) has
- * no effect when directly querying a server, since the slaveOk flag is always
+ * no effect when directly querying a server, since the secondaryOk flag is always
  * set for hinted queries. */
 $cursor = $secondary->executeQuery(NS, new MongoDB\Driver\Query(['x' => 1]), $primaryRp);
 

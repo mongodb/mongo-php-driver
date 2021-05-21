@@ -1553,7 +1553,7 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options) 
 			!strcasecmp(key, MONGOC_URI_READPREFERENCE) ||
 			!strcasecmp(key, MONGOC_URI_READPREFERENCETAGS) ||
 			!strcasecmp(key, MONGOC_URI_SAFE) ||
-			!strcasecmp(key, MONGOC_URI_SLAVEOK) ||
+			!strcasecmp(key, MONGOC_URI_SECONDARYOK) ||
 			!strcasecmp(key, MONGOC_URI_W) ||
 			!strcasecmp(key, MONGOC_URI_WTIMEOUTMS)) {
 
@@ -1793,7 +1793,6 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	bson_iter_t                iter;
 	mongoc_read_prefs_t*       new_rp;
 	const mongoc_read_prefs_t* old_rp;
-	bool                       ignore_slaveok = false;
 
 	if (!(old_rp = mongoc_uri_get_read_prefs_t(uri))) {
 		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED, "mongoc_uri_t does not have a read preference");
@@ -1810,19 +1809,6 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 
 	while (bson_iter_next(&iter)) {
 		const char* key = bson_iter_key(&iter);
-
-		if (!ignore_slaveok && !strcasecmp(key, MONGOC_URI_SLAVEOK)) {
-			if (!BSON_ITER_HOLDS_BOOL(&iter)) {
-				PHONGO_URI_INVALID_TYPE(iter, "boolean");
-				mongoc_read_prefs_destroy(new_rp);
-
-				return false;
-			}
-
-			if (bson_iter_bool(&iter)) {
-				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
-			}
-		}
 
 		if (!strcasecmp(key, MONGOC_URI_READPREFERENCE)) {
 			const char* str;
@@ -1852,8 +1838,6 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 
 				return false;
 			}
-
-			ignore_slaveok = true;
 		}
 
 		if (!strcasecmp(key, MONGOC_URI_READPREFERENCETAGS)) {
