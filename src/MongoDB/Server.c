@@ -263,7 +263,7 @@ static PHP_METHOD(Server, getTags)
 	zend_restore_error_handling(&error_handling);
 
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
-		const bson_t* is_master = mongoc_server_description_ismaster(sd);
+		const bson_t* is_master = mongoc_server_description_hello_response(sd);
 		bson_iter_t   iter;
 
 		if (bson_iter_init_find(&iter, is_master, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
@@ -312,7 +312,7 @@ static PHP_METHOD(Server, getInfo)
 	zend_restore_error_handling(&error_handling);
 
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
-		const bson_t*         is_master = mongoc_server_description_ismaster(sd);
+		const bson_t*         is_master = mongoc_server_description_hello_response(sd);
 		php_phongo_bson_state state;
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
@@ -508,7 +508,7 @@ static PHP_METHOD(Server, isHidden)
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		bson_iter_t iter;
 
-		RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_ismaster(sd), "hidden") && bson_iter_as_bool(&iter));
+		RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_hello_response(sd), "hidden") && bson_iter_as_bool(&iter));
 		mongoc_server_description_destroy(sd);
 		return;
 	}
@@ -536,7 +536,7 @@ static PHP_METHOD(Server, isPassive)
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		bson_iter_t iter;
 
-		RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_ismaster(sd), "passive") && bson_iter_as_bool(&iter));
+		RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_hello_response(sd), "passive") && bson_iter_as_bool(&iter));
 		mongoc_server_description_destroy(sd);
 		return;
 	}
