@@ -34,9 +34,9 @@ foreach ($writeConcerns as $wc) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\RuntimeException
-not %s
+not %r(primary|master)%r
 OK: Got MongoDB\Driver\Exception\RuntimeException
-not %s
+not %r(primary|master)%r
 OK: Got MongoDB\Driver\Exception\RuntimeException
-not %s
+not %r(primary|master)%r
 ===DONE===
