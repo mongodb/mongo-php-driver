@@ -1553,7 +1553,6 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options) 
 			!strcasecmp(key, MONGOC_URI_READPREFERENCE) ||
 			!strcasecmp(key, MONGOC_URI_READPREFERENCETAGS) ||
 			!strcasecmp(key, MONGOC_URI_SAFE) ||
-			!strcasecmp(key, MONGOC_URI_SECONDARYOK) ||
 			!strcasecmp(key, MONGOC_URI_W) ||
 			!strcasecmp(key, MONGOC_URI_WTIMEOUTMS)) {
 
