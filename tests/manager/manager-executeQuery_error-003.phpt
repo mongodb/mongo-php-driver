@@ -9,7 +9,7 @@ MongoDB\Driver\Manager::executeQuery() exposes error document via CommandExcepti
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
-$query = new MongoDB\Driver\Query(['$foo' => 1]);
+$query = new MongoDB\Driver\Query(['field' => ['$unsupportedOperator' => true]]);
 
 try {
     $manager->executeQuery(NS, $query);
@@ -24,7 +24,7 @@ try {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-MongoDB\Driver\Exception\CommandException(2): unknown top level operator: $foo
+MongoDB\Driver\Exception\CommandException(2): unknown operator: $unsupportedOperator
 bool(true)
 bool(true)
 ===DONE===
