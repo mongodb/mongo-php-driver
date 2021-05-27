@@ -15,7 +15,7 @@ $bulk->insert(array('_id' => 1, 'x' => 1));
 $manager->executeBulkWrite(NS, $bulk);
 
 $bulk = new MongoDB\Driver\BulkWrite();
-$bulk->delete(['$foo' => 1], ['limit' => 1]);
+$bulk->delete(['field' => ['$unsupportedOperator' => true]], ['limit' => 1]);
 
 try {
     $manager->executeBulkWrite(NS, $bulk);
@@ -34,7 +34,7 @@ var_dump(iterator_to_array($cursor));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-BulkWriteException: unknown top level operator: $foo
+BulkWriteException: unknown operator: $unsupportedOperator
 
 ===> WriteResult
 server: %s:%d
@@ -45,7 +45,7 @@ upsertedCount: 0
 deletedCount: 0
 object(MongoDB\Driver\WriteError)#%d (%d) {
   ["message"]=>
-  string(32) "unknown top level operator: $foo"
+  string(38) "unknown operator: $unsupportedOperator"
   ["code"]=>
   int(2)
   ["index"]=>
@@ -53,7 +53,7 @@ object(MongoDB\Driver\WriteError)#%d (%d) {
   ["info"]=>
   NULL
 }
-writeError[0].message: unknown top level operator: $foo
+writeError[0].message: unknown operator: $unsupportedOperator
 writeError[0].code: 2
 
 ===> Collection

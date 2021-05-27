@@ -996,6 +996,10 @@ axes:
         display_name: "MongoDB latest"
         variables:
            VERSION: "latest"
+      - id: "5.0"
+        display_name: "MongoDB 5.0"
+        variables:
+           VERSION: "5.0"
       - id: "4.4"
         display_name: "MongoDB 4.4"
         variables:
@@ -1024,6 +1028,18 @@ axes:
         display_name: "MongoDB 3.0"
         variables:
            VERSION: "3.0"
+
+  - id: edge-versions
+    display_name: MongoDB Version
+    values:
+      - id: "latest-stable"
+        display_name: "MongoDB 4.4"
+        variables:
+          VERSION: "4.4"
+      - id: "oldest-supported"
+        display_name: "MongoDB 3.0"
+        variables:
+          VERSION: "3.0"
 
   - id: php-versions
     display_name: PHP Version
@@ -1104,10 +1120,10 @@ axes:
 buildvariants:
 
 - matrix_name: "tests-php7"
-  matrix_spec: {"os-php7": "*", "versions": "4.2", "php-versions": ["7.0","7.1","7.2","7.3"] }
+  matrix_spec: {"os-php7": "*", "edge-versions": "latest-stable", "php-versions": ["7.0","7.1","7.2","7.3"] }
   exclude_spec:
-    - {"os-php7": "ubuntu1804-arm64-test", "versions": "4.2", "php-versions": ["7.0","7.1","7.2"]}
-  display_name: "All: ${versions}/${php-versions} — ${os-php7}"
+    - {"os-php7": "ubuntu1804-arm64-test", "edge-versions": "latest-stable", "php-versions": ["7.0","7.1","7.2"]}
+  display_name: "All: ${edge-versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone-ssl"
      - name: "test-replicaset-auth"
@@ -1136,10 +1152,10 @@ buildvariants:
      - name: "test-replicaset-auth"
 
 
-- matrix_name: "mongo-40-php7"
-  matrix_spec: {"os-php7": "*", "versions": ["4.0", "4.2", "4.4", "latest"], "php-versions": "7.3" }
+- matrix_name: "mongo-php7"
+  matrix_spec: {"os-php7": "*", "versions": ["4.0", "4.2", "4.4", "5.0", "latest"], "php-versions": "7.3" }
   exclude_spec:
-    - {"os-php7": "rhel74-zseries", "versions": ["4.0", "4.2", "4.4", "latest"], "php-versions": "7.3"}
+    - {"os-php7": "rhel74-zseries", "versions": ["4.0", "4.2", "4.4", "5.0", "latest"], "php-versions": "7.3"}
     - {"os-php7": "ubuntu1804-arm64-test", "versions": "4.0", "php-versions": "7.3"}
   display_name: "${versions}/${php-versions} — ${os-php7}"
   tasks:
@@ -1150,8 +1166,8 @@ buildvariants:
      - name: "test-replicaset-auth"
      - name: "test-sharded"
 
-- matrix_name: "mongo-40-php7-nossl"
-  matrix_spec: {"os-php7": "rhel74-zseries", "versions": ["4.2", "4.4", "latest"], "php-versions": "7.3"}
+- matrix_name: "mongo-php7-nossl"
+  matrix_spec: {"os-php7": "rhel74-zseries", "versions": ["4.2", "4.4", "5.0", "latest"], "php-versions": "7.3"}
   display_name: "${versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone"
@@ -1173,8 +1189,8 @@ buildvariants:
      - name: "test-standalone"
 
 - matrix_name: "libmongoc-versions-php7"
-  matrix_spec: {"os-php7": "debian92-test", "versions": "4.2", "php-versions": "7.2", "libmongoc-version": "*"}
-  display_name: "${versions}/${php-versions}/${os-php7} — libmongoc ${libmongoc-version}"
+  matrix_spec: {"os-php7": "debian92-test", "edge-versions": "latest-stable", "php-versions": "7.2", "libmongoc-version": "*"}
+  display_name: "${edge-versions}/${php-versions}/${os-php7} — libmongoc ${libmongoc-version}"
   tasks:
      - name: "test-standalone"
      - name: "test-replicaset"
@@ -1187,13 +1203,13 @@ buildvariants:
     - name: "test-atlas"
 
 - matrix_name: "test-ocsp"
-  matrix_spec: { "os-php7": "debian92-test", "versions": ["4.4", "latest"], "php-versions": "7.3" }
+  matrix_spec: { "os-php7": "debian92-test", "versions": ["4.4", "5.0", "latest"], "php-versions": "7.3" }
   display_name: "OCSP tests - ${versions}"
   tasks:
     - name: ".ocsp"
 
 - matrix_name: "test-requireApiVersion"
-  matrix_spec: { "os-php7": "debian92-test", "php-versions": "7.3", "versions": "latest" }
+  matrix_spec: { "os-php7": "debian92-test", "versions": ["5.0", "latest"], "php-versions": "7.3" }
   display_name: "Versioned API - ${versions}"
   tasks:
     - name: "test-requireApiVersion"
