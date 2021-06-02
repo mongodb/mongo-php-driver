@@ -285,7 +285,7 @@ try_again:
 	if (!z) { return 0; }
 	switch(Z_TYPE_P(z)) {
 		case IS_REFERENCE:
-			z = Z_REFVAL_P(z);
+			ZVAL_DEREF(z);
 			goto try_again;
 		case IS_NULL: return 0;
 #ifdef ZEND_ENGINE_3
@@ -323,7 +323,7 @@ try_again:
 	if (!z) { return 0.0; }
 	switch (Z_TYPE_P(z)) {
 		case IS_REFERENCE:
-			z = Z_REFVAL_P(z);
+			ZVAL_DEREF(z);
 			goto try_again;
 		case IS_NULL: return 0.0;
 #ifdef ZEND_ENGINE_3
@@ -371,7 +371,7 @@ try_again:
 		case IS_NULL:
 			return (char *)"";
 		case IS_REFERENCE:
-			z = Z_REFVAL_P(z);
+			ZVAL_DEREF(z);
 			goto try_again;
 		case IS_STRING:
 			*plen = Z_STRLEN_P(z);
