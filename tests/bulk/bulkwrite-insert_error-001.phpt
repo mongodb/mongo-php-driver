@@ -12,14 +12,6 @@ echo throws(function() use ($bulk) {
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n\n";
 
 echo throws(function() use ($bulk) {
-    $bulk->insert(['x.y' => 1]);
-}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n\n";
-
-echo throws(function() use ($bulk) {
-    $bulk->insert(['$x' => 1]);
-}, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n\n";
-
-echo throws(function() use ($bulk) {
     $bulk->insert(["\xc3\x28" => 1]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
@@ -29,12 +21,6 @@ echo throws(function() use ($bulk) {
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 invalid document for insert: empty key
-
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-invalid document for insert: keys cannot contain ".": "x.y"
-
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-invalid document for insert: keys cannot begin with "$": "$x"
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 invalid document for insert: corrupt BSON
