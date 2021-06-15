@@ -1,9 +1,5 @@
 --TEST--
-PHPC-1839: Non-referenced interned string in typeMap
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_not_live(); ?>
-<?php skip_if_not_clean(); ?>
+PHPC-1839: Referenced, local, interned string in typeMap
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -12,14 +8,12 @@ $rootValue = 'array';
 $documentValue = 'array';
 
 $typemap = ['root' => &$rootValue, 'document' => &$documentValue];
-
-$manager = new MongoDB\Driver\Manager(URI);
-$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([]));
+$bson    = MongoDB\BSON\fromPhp((object) []);
 
 echo "Before:\n";
 debug_zval_dump($typemap);
 
-$cursor->setTypemap($typemap);
+MongoDB\BSON\toPhp($bson, $typemap);
 
 echo "After:\n";
 debug_zval_dump($typemap);
