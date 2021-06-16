@@ -281,8 +281,12 @@ PHP_ARRAY_FETCH_TYPE_MAP(zend_bool, bool)
  */
 static inline
 PAA_LONG php_array_zval_to_long(zval *z) {
+try_again:
 	if (!z) { return 0; }
 	switch(Z_TYPE_P(z)) {
+		case IS_REFERENCE:
+			ZVAL_DEREF(z);
+			goto try_again;
 		case IS_NULL: return 0;
 #ifdef ZEND_ENGINE_3
 		case IS_FALSE: return 0;
@@ -315,8 +319,12 @@ PHP_ARRAY_FETCH_TYPE_MAP(PAA_LONG, long)
  */
 static inline
 double php_array_zval_to_double(zval *z) {
+try_again:
 	if (!z) { return 0.0; }
 	switch (Z_TYPE_P(z)) {
+		case IS_REFERENCE:
+			ZVAL_DEREF(z);
+			goto try_again;
 		case IS_NULL: return 0.0;
 #ifdef ZEND_ENGINE_3
 		case IS_FALSE: return 0.0;
@@ -357,10 +365,14 @@ static inline
 char *php_array_zval_to_string(zval *z, int *plen, zend_bool *pfree) {
 	*plen = 0;
 	*pfree = 0;
+try_again:
 	if (!z) { return NULL; }
 	switch (Z_TYPE_P(z)) {
 		case IS_NULL:
 			return (char *)"";
+		case IS_REFERENCE:
+			ZVAL_DEREF(z);
+			goto try_again;
 		case IS_STRING:
 			*plen = Z_STRLEN_P(z);
 			return Z_STRVAL_P(z);
