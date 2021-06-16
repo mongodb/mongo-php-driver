@@ -22,7 +22,7 @@ $bson    = MongoDB\BSON\fromPhp((object) []);
 echo "Before:\n";
 debug_zval_dump($typemap);
 
-MongoDB\BSON\toPhp($bson, $typemap);
+MongoDB\BSON\toPHP($bson, $typemap);
 
 echo "After:\n";
 debug_zval_dump($typemap);
