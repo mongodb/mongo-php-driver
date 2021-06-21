@@ -123,7 +123,7 @@ static PHP_METHOD(ServerApi, __construct)
 		(bool) deprecation_errors);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\ServerApi::__set_state(array $properties)
+/* {{{ proto MongoDB\Driver\ServerApi MongoDB\Driver\ServerApi::__set_state(array $properties)
 */
 static PHP_METHOD(ServerApi, __set_state)
 {

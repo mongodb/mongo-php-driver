@@ -91,7 +91,7 @@ static PHP_METHOD(Binary, __construct)
 	php_phongo_binary_init(intern, data, data_len, type);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Binary::__set_state(array $properties)
+/* {{{ proto MongoDB\BSON\Binary MongoDB\BSON\Binary::__set_state(array $properties)
 */
 static PHP_METHOD(Binary, __set_state)
 {

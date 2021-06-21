@@ -169,7 +169,7 @@ static PHP_METHOD(WriteConcern, __construct)
 	}
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\WriteConcern::__set_state(array $properties)
+/* {{{ proto MongoDB\Driver\WriteConcern MongoDB\Driver\WriteConcern::__set_state(array $properties)
 */
 static PHP_METHOD(WriteConcern, __set_state)
 {

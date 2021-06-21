@@ -77,7 +77,7 @@ static PHP_METHOD(Decimal128, __construct)
 	php_phongo_decimal128_init(intern, value);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Decimal128::__set_state(array $properties)
+/* {{{ proto MongoDB\BSON\Decimal128 MongoDB\BSON\Decimal128::__set_state(array $properties)
 */
 static PHP_METHOD(Decimal128, __set_state)
 {

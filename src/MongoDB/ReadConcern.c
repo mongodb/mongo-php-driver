@@ -79,7 +79,7 @@ static PHP_METHOD(ReadConcern, __construct)
 	}
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\ReadConcern::__set_state(array $properties)
+/* {{{ proto MongoDB\Driver\ReadConcern MongoDB\Driver\ReadConcern::__set_state(array $properties)
 */
 static PHP_METHOD(ReadConcern, __set_state)
 {

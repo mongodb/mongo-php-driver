@@ -126,7 +126,7 @@ static PHP_METHOD(ObjectId, getTimestamp)
 	RETVAL_LONG(bson_oid_get_time_t(&tmp_oid));
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\ObjectId::__set_state(array $properties)
+/* {{{ proto MongoDB\BSON\ObjectId MongoDB\BSON\ObjectId::__set_state(array $properties)
 */
 static PHP_METHOD(ObjectId, __set_state)
 {

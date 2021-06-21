@@ -28,7 +28,7 @@
 
 zend_class_entry* php_phongo_maxkey_ce;
 
-/* {{{ proto void MongoDB\BSON\MaxKey::__set_state(array $properties)
+/* {{{ proto MongoDB\BSON\MaxKey MongoDB\BSON\MaxKey::__set_state(array $properties)
 */
 static PHP_METHOD(MaxKey, __set_state)
 {
