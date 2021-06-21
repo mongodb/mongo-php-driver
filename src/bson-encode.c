@@ -503,7 +503,7 @@ void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bs
 	bson_iter_t iter;
 	bson_t      bson = BSON_INITIALIZER;
 
-	zval* data_object = ecalloc(sizeof(zval), 1);
+	zval* data_object = ecalloc(1, sizeof(zval));
 
 	array_init_size(data_object, 1);
 	add_assoc_zval(data_object, "data", data);

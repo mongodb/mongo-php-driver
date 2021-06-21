@@ -933,7 +933,7 @@ static zval* phongo_create_implicit_session(zval* manager) /* {{{ */
 		return NULL;
 	}
 
-	zsession = ecalloc(sizeof(zval), 1);
+	zsession = ecalloc(1, sizeof(zval));
 
 	phongo_session_init(zsession, manager, cs);
 
@@ -1234,7 +1234,7 @@ zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* alloca
 	*allocated = false;
 
 	if (options && Z_TYPE_P(options) != IS_ARRAY) {
-		zval* new_options = ecalloc(sizeof(zval), 1);
+		zval* new_options = ecalloc(1, sizeof(zval));
 
 		array_init_size(new_options, 1);
 		add_assoc_zval(new_options, key, options);
@@ -2368,7 +2368,7 @@ static zval* php_phongo_manager_prepare_manager_for_hash(zval* driverOptions, bo
 
 	manager = Z_MANAGER_OBJ_P(keyVaultClient);
 
-	driverOptionsClone      = ecalloc(sizeof(zval), 1);
+	driverOptionsClone      = ecalloc(1, sizeof(zval));
 	autoEncryptionOptsClone = &stackAutoEncryptionOptsClone;
 
 	ZVAL_DUP(autoEncryptionOptsClone, autoEncryptionOpts);
@@ -2471,7 +2471,7 @@ static char* php_phongo_concat_handshake_data(const char* default_value, const c
 		ret_len += custom_value_len + PHONGO_METADATA_SEPARATOR_LEN;
 	}
 
-	ret = ecalloc(sizeof(char*), ret_len);
+	ret = ecalloc(ret_len, sizeof(char*));
 
 	if (custom_value) {
 		snprintf(ret, ret_len, "%s%s%s ", default_value, PHONGO_METADATA_SEPARATOR, custom_value);
@@ -2491,7 +2491,7 @@ static void php_phongo_handshake_data_append(const char* name, size_t name_len, 
 	char*  full_platform;
 
 	php_version_string_len = strlen(PHP_VERSION) + PHONGO_METADATA_PHP_VERSION_PREFIX_LEN + 1;
-	php_version_string     = ecalloc(sizeof(char*), php_version_string_len);
+	php_version_string     = ecalloc(php_version_string_len, sizeof(char*));
 	snprintf(php_version_string, php_version_string_len, "%s%s", PHONGO_METADATA_PHP_VERSION_PREFIX, PHP_VERSION);
 
 	driver_name    = php_phongo_concat_handshake_data("ext-mongodb:PHP", name, name_len);
