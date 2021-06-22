@@ -308,7 +308,7 @@ static PHP_METHOD(ReadPreference, __construct)
 	}
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\ReadPreference::__set_state(array $properties)
+/* {{{ proto MongoDB\Driver\ReadPreference MongoDB\Driver\ReadPreference::__set_state(array $properties)
 */
 static PHP_METHOD(ReadPreference, __set_state)
 {

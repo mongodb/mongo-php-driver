@@ -143,7 +143,7 @@ static PHP_METHOD(Regex, getFlags)
 	RETURN_STRINGL(intern->flags, intern->flags_len);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Regex::__set_state(array $properties)
+/* {{{ proto MongoDB\BSON\Regex MongoDB\BSON\Regex::__set_state(array $properties)
 */
 static PHP_METHOD(Regex, __set_state)
 {

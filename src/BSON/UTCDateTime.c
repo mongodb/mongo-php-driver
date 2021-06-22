@@ -170,7 +170,7 @@ static PHP_METHOD(UTCDateTime, __construct)
 	php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_P(milliseconds), Z_STRLEN_P(milliseconds));
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\UTCDateTime::__set_state(array $properties)
+/* {{{ proto MongoDB\BSON\UTCDateTime MongoDB\BSON\UTCDateTime::__set_state(array $properties)
 */
 static PHP_METHOD(UTCDateTime, __set_state)
 {

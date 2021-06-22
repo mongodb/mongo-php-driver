@@ -28,7 +28,7 @@
 
 zend_class_entry* php_phongo_minkey_ce;
 
-/* {{{ proto void MongoDB\BSON\MinKey::__set_state(array $properties)
+/* {{{ proto MongoDB\BSON\MinKey MongoDB\BSON\MinKey::__set_state(array $properties)
 */
 static PHP_METHOD(MinKey, __set_state)
 {
