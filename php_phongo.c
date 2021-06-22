@@ -2471,7 +2471,7 @@ static char* php_phongo_concat_handshake_data(const char* default_value, const c
 		ret_len += custom_value_len + PHONGO_METADATA_SEPARATOR_LEN;
 	}
 
-	ret = ecalloc(ret_len, sizeof(char*));
+	ret = ecalloc(ret_len, sizeof(char));
 
 	if (custom_value) {
 		snprintf(ret, ret_len, "%s%s%s ", default_value, PHONGO_METADATA_SEPARATOR, custom_value);
