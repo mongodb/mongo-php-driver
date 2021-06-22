@@ -1164,8 +1164,8 @@ php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_s
 
 bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /* {{{ */
 {
-	mongoc_host_list_t* host      = mongoc_server_description_host(sd);
-	const bson_t*       is_master = mongoc_server_description_ismaster(sd);
+	mongoc_host_list_t* host           = mongoc_server_description_host(sd);
+	const bson_t*       hello_response = mongoc_server_description_hello_response(sd);
 	bson_iter_t         iter;
 
 	array_init(retval);
@@ -1176,10 +1176,10 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 	ADD_ASSOC_BOOL_EX(retval, "is_primary", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_PRIMARY].name));
 	ADD_ASSOC_BOOL_EX(retval, "is_secondary", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_SECONDARY].name));
 	ADD_ASSOC_BOOL_EX(retval, "is_arbiter", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_ARBITER].name));
-	ADD_ASSOC_BOOL_EX(retval, "is_hidden", bson_iter_init_find_case(&iter, is_master, "hidden") && bson_iter_as_bool(&iter));
-	ADD_ASSOC_BOOL_EX(retval, "is_passive", bson_iter_init_find_case(&iter, is_master, "passive") && bson_iter_as_bool(&iter));
+	ADD_ASSOC_BOOL_EX(retval, "is_hidden", bson_iter_init_find_case(&iter, hello_response, "hidden") && bson_iter_as_bool(&iter));
+	ADD_ASSOC_BOOL_EX(retval, "is_passive", bson_iter_init_find_case(&iter, hello_response, "passive") && bson_iter_as_bool(&iter));
 
-	if (bson_iter_init_find(&iter, is_master, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+	if (bson_iter_init_find(&iter, hello_response, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 		const uint8_t*        bytes;
 		uint32_t              len;
 		php_phongo_bson_state state;
@@ -1199,12 +1199,12 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
 
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(is_master), is_master->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
 			zval_ptr_dtor(&state.zchild);
 			return false;
 		}
 
-		ADD_ASSOC_ZVAL_EX(retval, "last_is_master", &state.zchild);
+		ADD_ASSOC_ZVAL_EX(retval, "last_hello_response", &state.zchild);
 	}
 	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (zend_long) mongoc_server_description_round_trip_time(sd));
 
@@ -1553,7 +1553,6 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options) 
 			!strcasecmp(key, MONGOC_URI_READPREFERENCE) ||
 			!strcasecmp(key, MONGOC_URI_READPREFERENCETAGS) ||
 			!strcasecmp(key, MONGOC_URI_SAFE) ||
-			!strcasecmp(key, MONGOC_URI_SLAVEOK) ||
 			!strcasecmp(key, MONGOC_URI_W) ||
 			!strcasecmp(key, MONGOC_URI_WTIMEOUTMS)) {
 
@@ -1793,7 +1792,6 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	bson_iter_t                iter;
 	mongoc_read_prefs_t*       new_rp;
 	const mongoc_read_prefs_t* old_rp;
-	bool                       ignore_slaveok = false;
 
 	if (!(old_rp = mongoc_uri_get_read_prefs_t(uri))) {
 		phongo_throw_exception(PHONGO_ERROR_MONGOC_FAILED, "mongoc_uri_t does not have a read preference");
@@ -1810,19 +1808,6 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 
 	while (bson_iter_next(&iter)) {
 		const char* key = bson_iter_key(&iter);
-
-		if (!ignore_slaveok && !strcasecmp(key, MONGOC_URI_SLAVEOK)) {
-			if (!BSON_ITER_HOLDS_BOOL(&iter)) {
-				PHONGO_URI_INVALID_TYPE(iter, "boolean");
-				mongoc_read_prefs_destroy(new_rp);
-
-				return false;
-			}
-
-			if (bson_iter_bool(&iter)) {
-				mongoc_read_prefs_set_mode(new_rp, MONGOC_READ_SECONDARY_PREFERRED);
-			}
-		}
 
 		if (!strcasecmp(key, MONGOC_URI_READPREFERENCE)) {
 			const char* str;
@@ -1852,8 +1837,6 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 
 				return false;
 			}
-
-			ignore_slaveok = true;
 		}
 
 		if (!strcasecmp(key, MONGOC_URI_READPREFERENCETAGS)) {

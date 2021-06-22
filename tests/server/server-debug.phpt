@@ -34,7 +34,7 @@ object(MongoDB\Driver\Server)#%d (%d) {
   bool(false)
   ["is_passive"]=>
   bool(false)%A
-  ["last_is_master"]=>
+  ["last_hello_response"]=>
   array(%d) {
     %a
   }

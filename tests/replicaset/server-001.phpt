@@ -40,7 +40,7 @@ var_dump(
     $server->isHidden(),
     $server->isPassive()
 );
-$info = $server->getInfo(); // isMaster output changes between mongod versions
+$info = $server->getInfo(); // hello response changes between mongod versions
 var_dump($info["setName"], $info["hosts"]);
 var_dump($info["me"] == $server->getHost() . ":" . $server->getPort());
 ?>
