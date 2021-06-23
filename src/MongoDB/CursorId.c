@@ -40,6 +40,7 @@ static bool php_phongo_cursorid_init_from_string(php_phongo_cursorid_t* intern, 
 	}
 
 	intern->id = id;
+	intern->initialized = true;
 	return true;
 } /* }}} */
 
@@ -55,6 +56,29 @@ static bool php_phongo_cursorid_init_from_hash(php_phongo_cursorid_t* intern, Ha
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"id\" string field", ZSTR_VAL(php_phongo_cursorid_ce->name));
 	return false;
+} /* }}} */
+
+static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
+{
+	php_phongo_cursorid_t* intern;
+	HashTable*                props;
+
+	intern = Z_OBJ_CURSORID(PHONGO_COMPAT_GET_OBJ(object));
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
+
+	if (!intern->initialized) {
+		return props;
+	}
+
+	{
+		zval value;
+
+		ZVAL_INT64_STRING(&value, intern->id);
+		zend_hash_str_update(props, "id", sizeof("id") - 1, &value);
+	}
+
+	return props;
 } /* }}} */
 
 /* {{{ proto string MongoDB\Driver\CursorId::__toString()
@@ -175,6 +199,11 @@ static void php_phongo_cursorid_free_object(zend_object* object) /* {{{ */
 	php_phongo_cursorid_t* intern = Z_OBJ_CURSORID(object);
 
 	zend_object_std_dtor(&intern->std);
+
+	if (intern->properties) {
+		zend_hash_destroy(intern->properties);
+		FREE_HASHTABLE(intern->properties);
+	}
 } /* }}} */
 
 static zend_object* php_phongo_cursorid_create_object(zend_class_entry* class_type) /* {{{ */
@@ -193,23 +222,15 @@ static zend_object* php_phongo_cursorid_create_object(zend_class_entry* class_ty
 
 static HashTable* php_phongo_cursorid_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
-	php_phongo_cursorid_t* intern;
-	zval                   retval = ZVAL_STATIC_INIT;
-
 	*is_temp = 1;
-	intern   = Z_OBJ_CURSORID(PHONGO_COMPAT_GET_OBJ(object));
-
-	array_init(&retval);
-
-#if SIZEOF_ZEND_LONG == 4
-	ADD_ASSOC_INT64_AS_STRING(&retval, "id", intern->id);
-#else
-	ADD_ASSOC_LONG_EX(&retval, "id", intern->id);
-#endif
-
-	return Z_ARRVAL(retval);
+	return php_phongo_cursorid_get_properties_hash(object, true);
 } /* }}} */
 /* }}} */
+
+static HashTable* php_phongo_cursorid_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+{
+	return php_phongo_cursorid_get_properties_hash(object, false);
+} /* }}} */
 
 void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
@@ -224,6 +245,7 @@ void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	memcpy(&php_phongo_handler_cursorid, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_cursorid.get_debug_info = php_phongo_cursorid_get_debug_info;
+	php_phongo_handler_cursorid.get_properties = php_phongo_cursorid_get_properties;
 	php_phongo_handler_cursorid.free_obj       = php_phongo_cursorid_free_object;
 	php_phongo_handler_cursorid.offset         = XtOffsetOf(php_phongo_cursorid_t, std);
 } /* }}} */

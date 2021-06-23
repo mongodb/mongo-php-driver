@@ -64,7 +64,9 @@ typedef struct {
 } php_phongo_cursor_t;
 
 typedef struct {
+	bool        initialized;
 	int64_t     id;
+	HashTable*  properties;
 	zend_object std;
 } php_phongo_cursorid_t;
 
