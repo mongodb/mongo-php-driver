@@ -124,8 +124,8 @@ static void php_phongo_cursor_id_new_from_id(zval* object, int64_t cursorid) /* 
 
 	object_init_ex(object, php_phongo_cursorid_ce);
 
-	intern     = Z_CURSORID_OBJ_P(object);
-	intern->id = cursorid;
+	intern              = Z_CURSORID_OBJ_P(object);
+	intern->id          = cursorid;
 	intern->initialized = true;
 } /* }}} */
 
