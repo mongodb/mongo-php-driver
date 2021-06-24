@@ -39,7 +39,7 @@ static bool php_phongo_cursorid_init_from_string(php_phongo_cursorid_t* intern, 
 		return false;
 	}
 
-	intern->id = id;
+	intern->id          = id;
 	intern->initialized = true;
 	return true;
 } /* }}} */
@@ -61,7 +61,7 @@ static bool php_phongo_cursorid_init_from_hash(php_phongo_cursorid_t* intern, Ha
 static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
 {
 	php_phongo_cursorid_t* intern;
-	HashTable*                props;
+	HashTable*             props;
 
 	intern = Z_OBJ_CURSORID(PHONGO_COMPAT_GET_OBJ(object));
 
@@ -75,19 +75,42 @@ static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_h
 		zval value;
 
 		if (is_debug) {
-			#if SIZEOF_ZEND_LONG == 4
-				ZVAL_INT64_STRING(&value, intern->id);
-			#else
-				ZVAL_LONG(&value, intern->id);
-			#endif
-		}
-		else {
+#if SIZEOF_ZEND_LONG == 4
+			ZVAL_INT64_STRING(&value, intern->id);
+#else
+			ZVAL_LONG(&value, intern->id);
+#endif
+		} else {
 			ZVAL_INT64_STRING(&value, intern->id);
 		}
 		zend_hash_str_update(props, "id", sizeof("id") - 1, &value);
 	}
 
 	return props;
+} /* }}} */
+
+/* {{{ proto MongoDB\Driver\CursorId MongoDB\Driver\CursorId::__set_state(array $properties)
+*/
+static PHP_METHOD(CursorId, __set_state)
+{
+	zend_error_handling    error_handling;
+	php_phongo_cursorid_t* intern;
+	HashTable*             props;
+	zval*                  array;
+
+	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
+		zend_restore_error_handling(&error_handling);
+		return;
+	}
+	zend_restore_error_handling(&error_handling);
+
+	object_init_ex(return_value, php_phongo_cursorid_ce);
+
+	intern = Z_CURSORID_OBJ_P(return_value);
+	props  = Z_ARRVAL_P(array);
+
+	php_phongo_cursorid_init_from_hash(intern, props);
 } /* }}} */
 
 /* {{{ proto string MongoDB\Driver\CursorId::__toString()
@@ -181,6 +204,10 @@ static PHP_METHOD(CursorId, unserialize)
 } /* }}} */
 
 /* {{{ MongoDB\Driver\CursorId function entries */
+ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___set_state, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_CursorId_unserialize, 0, 0, 1)
 	ZEND_ARG_INFO(0, serialized)
 ZEND_END_ARG_INFO()
@@ -190,6 +217,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_cursorid_me[] = {
 	/* clang-format off */
+	PHP_ME(CursorId, __set_state, ai_CursorId___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME(CursorId, __toString, ai_CursorId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CursorId, serialize, ai_CursorId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CursorId, unserialize, ai_CursorId_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
