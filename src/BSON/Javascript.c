@@ -96,7 +96,7 @@ static PHP_METHOD(Javascript, __construct)
 	php_phongo_javascript_init(intern, code, code_len, scope);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Javascript::__set_state(array $properties)
+/* {{{ proto MongoDB\BSON\Javascript MongoDB\BSON\Javascript::__set_state(array $properties)
 */
 static PHP_METHOD(Javascript, __set_state)
 {

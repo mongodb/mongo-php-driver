@@ -3,6 +3,7 @@ MongoDB\Driver\Manager::__construct(): serverApi driver option
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
+<?php skip_if_server_version('<', '5.0'); ?>
 --FILE--
 <?php
 

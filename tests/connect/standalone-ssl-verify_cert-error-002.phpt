@@ -34,5 +34,5 @@ Deprecated: MongoDB\Driver\Manager::__construct(): The "allow_invalid_hostname" 
 
 Deprecated: MongoDB\Driver\Manager::__construct(): The "allow_self_signed" context driver option is deprecated. Please use the "tlsAllowInvalidCertificates" URI option instead.%s
 OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException thrown from executeCommand
-No suitable servers found (`serverSelectionTryOnce` set): [%s calling ismaster on '%s:%d']
+No suitable servers found (`serverSelectionTryOnce` set): [%s calling %s on '%s:%d']
 ===DONE===

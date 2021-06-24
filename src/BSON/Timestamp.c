@@ -171,7 +171,7 @@ static PHP_METHOD(Timestamp, getTimestamp)
 	RETVAL_LONG(intern->timestamp);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Timestamp::__set_state(array $properties)
+/* {{{ proto MongoDB\BSON\Timestamp MongoDB\BSON\Timestamp::__set_state(array $properties)
 */
 static PHP_METHOD(Timestamp, __set_state)
 {

@@ -143,7 +143,6 @@ bool php_phongo_read_preference_tags_are_valid(const bson_t* tags);
 bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd);
 void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* read_concern);
 void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern);
-void php_phongo_cursor_to_zval(zval* retval, const mongoc_cursor_t* cursor);
 
 void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions);
 bool php_phongo_set_monitoring_callbacks(mongoc_client_t* client);
