@@ -1,5 +1,7 @@
 --TEST--
-MongoDB\Driver\CursorID debug output
+MongoDB\Driver\CursorID debug output on 64-bit platform
+--SKIPIF--
+<?php if (4 == PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
 --FILE--
 <?php
 
@@ -15,6 +17,6 @@ var_dump($cursorId);
 --EXPECTF--
 object(MongoDB\Driver\CursorId)#%d (%d) {
   ["id"]=>
-  %rint\(7250031947823432848\)|string\(1\) "7250031947823432848"%r
+  int(7250031947823432848)
 }
 ===DONE===

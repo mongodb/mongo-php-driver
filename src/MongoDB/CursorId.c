@@ -74,7 +74,16 @@ static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_h
 	{
 		zval value;
 
-		ZVAL_INT64_STRING(&value, intern->id);
+		if (is_debug) {
+			#if SIZEOF_ZEND_LONG == 4
+				ZVAL_INT64_STRING(&value, intern->id);
+			#else
+				ZVAL_LONG(&value, intern->id);
+			#endif
+		}
+		else {
+			ZVAL_INT64_STRING(&value, intern->id);
+		}
 		zend_hash_str_update(props, "id", sizeof("id") - 1, &value);
 	}
 
