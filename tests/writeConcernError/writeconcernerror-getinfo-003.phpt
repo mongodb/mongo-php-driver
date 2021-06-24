@@ -2,6 +2,7 @@
 MongoDB\Driver\WriteConcernError::getInfo() exposes writeConcernError.errInfo
 --DESCRIPTION--
 CRUD spec prose test #1
+https://github.com/mongodb/specifications/blob/master/source/crud/tests/README.rst#writeconcernerror-details-exposes-writeconcernerror-errinfo
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_no_failcommand_failpoint(); ?>
