@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\CursorID: var_export()
+MongoDB\Driver\CursorId: var_export()
 --FILE--
 <?php
 

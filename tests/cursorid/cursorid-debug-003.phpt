@@ -1,7 +1,7 @@
 --TEST--
-MongoDB\Driver\CursorID debug output on 64-bit platform
+MongoDB\Driver\CursorId debug output on 64-bit platform
 --SKIPIF--
-<?php if (4 == PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
+<?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
 --FILE--
 <?php
 

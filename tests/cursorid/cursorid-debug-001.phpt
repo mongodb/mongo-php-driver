@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\CursorID debug output
+MongoDB\Driver\CursorId debug output
 --FILE--
 <?php
 
@@ -15,6 +15,6 @@ var_dump($cursorId);
 --EXPECTF--
 object(MongoDB\Driver\CursorId)#%d (%d) {
   ["id"]=>
-  %rint\(7250031947823432848\)|string\(1\) "7250031947823432848"%r
+  %rint\(|string\(19\) "|%r7250031947823432848%r"|\)%r
 }
 ===DONE===
