@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "bson/bson.h"
 #include "mongoc/mongoc.h"
 
@@ -25,6 +21,10 @@
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_interfaces.h>
 #include <Zend/zend_operators.h>
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "phongo_compat.h"
 #include "php_phongo.h"
