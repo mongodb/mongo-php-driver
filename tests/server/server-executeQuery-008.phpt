@@ -13,11 +13,15 @@ $manager = create_test_manager();
 
 $primaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY);
 $primary = $manager->selectServer($primaryRp);
-$serverCount = count($manager->getServers());
+
+// Count all data-bearing members to use for the write concern
+$dataBearingNodes = count(array_filter($manager->getServers(), function (MongoDB\Driver\Server $server) {
+    return ($server->isPrimary() || $server->isSecondary());
+}));
 
 $bulk = new \MongoDB\Driver\BulkWrite;
 $bulk->insert(['_id' => 1, 'x' => 1]);
-$primary->executeBulkWrite(NS, $bulk, new MongoDB\Driver\WriteConcern($serverCount));
+$primary->executeBulkWrite(NS, $bulk, new MongoDB\Driver\WriteConcern($dataBearingNodes));
 
 $secondaryRp = new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_SECONDARY);
 $secondary = $manager->selectServer($secondaryRp);
