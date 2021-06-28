@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\CursorID serialization
+MongoDB\Driver\CursorId serialization
 --FILE--
 <?php
 

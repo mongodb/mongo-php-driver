@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\CursorID BSON serialization for killCursors command
+MongoDB\Driver\CursorId BSON serialization for killCursors command
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
