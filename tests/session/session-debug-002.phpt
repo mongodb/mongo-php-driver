@@ -55,5 +55,11 @@ object(MongoDB\Driver\Session)#%d (%d) {
   }
   ["server"]=>
   NULL
+  ["inTransaction"]=>
+  bool(false)
+  ["transactionState"]=>
+  string(4) "none"
+  ["transactionOptions"]=>
+  NULL
 }
 ===DONE===

@@ -34,5 +34,11 @@ object(MongoDB\Driver\Session)#%d (%d) {
   NULL
   ["server"]=>
   NULL
+  ["inTransaction"]=>
+  NULL
+  ["transactionState"]=>
+  NULL
+  ["transactionOptions"]=>
+  NULL
 }
 ===DONE===

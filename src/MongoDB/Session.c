@@ -98,6 +98,51 @@ static const char* php_phongo_get_transaction_state_string(mongoc_transaction_st
 	}
 }
 
+static void php_phongo_transaction_options_to_zval(mongoc_transaction_opt_t* opts, zval* retval)
+{
+	int64_t                       max_commit_time_ms;
+	const mongoc_read_concern_t*  read_concern;
+	const mongoc_read_prefs_t*    read_preference;
+	const mongoc_write_concern_t* write_concern;
+
+	if (!opts) {
+		ZVAL_NULL(retval);
+		return;
+	}
+
+	max_commit_time_ms = mongoc_transaction_opts_get_max_commit_time_ms(opts);
+	read_concern       = mongoc_transaction_opts_get_read_concern(opts);
+	read_preference    = mongoc_transaction_opts_get_read_prefs(opts);
+	write_concern      = mongoc_transaction_opts_get_write_concern(opts);
+
+	array_init_size(retval, 4);
+
+	if (max_commit_time_ms) {
+		ADD_ASSOC_LONG_EX(retval, "maxCommitTimeMS", max_commit_time_ms);
+	}
+
+	if (!mongoc_read_concern_is_default(read_concern)) {
+		zval zread_concern;
+
+		phongo_readconcern_init(&zread_concern, read_concern);
+		ADD_ASSOC_ZVAL_EX(retval, "readConcern", &zread_concern);
+	}
+
+	if (read_preference) {
+		zval zread_preference;
+
+		phongo_readpreference_init(&zread_preference, read_preference);
+		ADD_ASSOC_ZVAL_EX(retval, "readPreference", &zread_preference);
+	}
+
+	if (!mongoc_write_concern_is_default(write_concern)) {
+		zval zwrite_concern;
+
+		phongo_writeconcern_init(&zwrite_concern, write_concern);
+		ADD_ASSOC_ZVAL_EX(retval, "writeConcern", &zwrite_concern);
+	}
+}
+
 /* {{{ proto void MongoDB\Driver\Session::advanceClusterTime(array|object $clusterTime)
    Advances the cluster time for this Session */
 static PHP_METHOD(Session, advanceClusterTime)
@@ -287,13 +332,8 @@ static PHP_METHOD(Session, getServer)
    Returns options for the currently running transaction */
 static PHP_METHOD(Session, getTransactionOptions)
 {
-	zend_error_handling           error_handling;
-	php_phongo_session_t*         intern;
-	mongoc_transaction_opt_t*     opts;
-	int64_t                       max_commit_time_ms;
-	const mongoc_read_concern_t*  read_concern;
-	const mongoc_read_prefs_t*    read_preference;
-	const mongoc_write_concern_t* write_concern;
+	zend_error_handling       error_handling;
+	php_phongo_session_t*     intern;
 
 	intern = Z_SESSION_OBJ_P(getThis());
 	SESSION_CHECK_LIVELINESS(intern, "getTransactionOptions")
@@ -305,43 +345,7 @@ static PHP_METHOD(Session, getTransactionOptions)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	opts = mongoc_session_opts_get_transaction_opts(intern->client_session);
-
-	if (!opts) {
-		return;
-	}
-
-	max_commit_time_ms = mongoc_transaction_opts_get_max_commit_time_ms(opts);
-	read_concern       = mongoc_transaction_opts_get_read_concern(opts);
-	read_preference    = mongoc_transaction_opts_get_read_prefs(opts);
-	write_concern      = mongoc_transaction_opts_get_write_concern(opts);
-
-	array_init_size(return_value, 4);
-
-	if (max_commit_time_ms) {
-		ADD_ASSOC_LONG_EX(return_value, "maxCommitTimeMS", max_commit_time_ms);
-	}
-
-	if (!mongoc_read_concern_is_default(read_concern)) {
-		zval zread_concern;
-
-		phongo_readconcern_init(&zread_concern, read_concern);
-		ADD_ASSOC_ZVAL_EX(return_value, "readConcern", &zread_concern);
-	}
-
-	if (read_preference) {
-		zval zread_preference;
-
-		phongo_readpreference_init(&zread_preference, read_preference);
-		ADD_ASSOC_ZVAL_EX(return_value, "readPreference", &zread_preference);
-	}
-
-	if (!mongoc_write_concern_is_default(write_concern)) {
-		zval zwrite_concern;
-
-		phongo_writeconcern_init(&zwrite_concern, write_concern);
-		ADD_ASSOC_ZVAL_EX(return_value, "writeConcern", &zwrite_concern);
-	}
+	php_phongo_transaction_options_to_zval(mongoc_session_opts_get_transaction_opts(intern->client_session), return_value);
 } /* }}} */
 
 /* {{{ proto string MongoDB\Driver\Session::getTransactionState()
@@ -674,9 +678,8 @@ static zend_object* php_phongo_session_create_object(zend_class_entry* class_typ
 
 static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
-	php_phongo_session_t*       intern = NULL;
-	const mongoc_session_opt_t* cs_opts;
-	zval                        retval = ZVAL_STATIC_INIT;
+	php_phongo_session_t* intern = NULL;
+	zval                  retval = ZVAL_STATIC_INIT;
 
 	*is_temp = 1;
 	intern   = Z_OBJ_SESSION(PHONGO_COMPAT_GET_OBJ(object));
@@ -725,6 +728,7 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 	}
 
 	if (intern->client_session) {
+		const mongoc_session_opt_t* cs_opts;
 		cs_opts = mongoc_client_session_get_opts(intern->client_session);
 		ADD_ASSOC_BOOL_EX(&retval, "causalConsistency", mongoc_session_opts_get_causal_consistency(cs_opts));
 	} else {
@@ -762,6 +766,41 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 		}
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "server");
+	}
+
+	if (intern->client_session) {
+		ADD_ASSOC_BOOL_EX(&retval, "inTransaction", mongoc_client_session_in_transaction(intern->client_session));
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "inTransaction");
+	}
+
+	if (intern->client_session) {
+		const char* state = php_phongo_get_transaction_state_string(mongoc_client_session_get_transaction_state(intern->client_session));
+		
+		if (!state) {
+			/* Exception should already have been thrown */
+    		goto done;
+		}
+
+		ADD_ASSOC_STRING(&retval, "transactionState", state);
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "transactionState");
+	}
+
+	if (intern->client_session) {
+		mongoc_transaction_opt_t* txn_opts = mongoc_session_opts_get_transaction_opts(intern->client_session);
+		
+		if (txn_opts) {
+
+			zval transaction;
+
+			php_phongo_transaction_options_to_zval(txn_opts, &transaction);
+			ADD_ASSOC_ZVAL_EX(&retval, "transactionOptions", &transaction);
+		} else {
+			ADD_ASSOC_NULL_EX(&retval, "transactionOptions");
+		}
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "transactionOptions");
 	}
 
 done:

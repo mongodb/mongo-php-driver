@@ -2,6 +2,7 @@
 MongoDB\Driver\Session debug output (during a pinned transaction)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_not_libmongoc_crypto(); ?>
 <?php skip_if_not_mongos_with_replica_set(); ?>
 <?php skip_if_server_version('<', '4.1.6'); ?>
 <?php skip_if_not_clean(); ?>
@@ -62,6 +63,18 @@ object(MongoDB\Driver\Session)#%d (%d) {
   ["server"]=>
   object(MongoDB\Driver\Server)#%d (%d) {
     %a
+  }
+  ["inTransaction"]=>
+  bool(true)
+  ["transactionState"]=>
+  string(11) "in_progress"
+  ["transactionOptions"]=>
+  array(1) {
+    ["readPreference"]=>
+    object(MongoDB\Driver\ReadPreference)#%d (%d) {
+      ["mode"]=>
+      string(7) "primary"
+    }
   }
 }
 ===DONE===
