@@ -1060,10 +1060,6 @@ axes:
         display_name: "PHP 7.1"
         variables:
           PHP_VERSION: "7.1"
-      - id: "7.0"
-        display_name: "PHP 7.0"
-        variables:
-          PHP_VERSION: "7.0"
 
   - id: os-php7
     display_name: OS
@@ -1120,9 +1116,9 @@ axes:
 buildvariants:
 
 - matrix_name: "tests-php7"
-  matrix_spec: {"os-php7": "*", "edge-versions": "latest-stable", "php-versions": ["7.0","7.1","7.2","7.3"] }
+  matrix_spec: {"os-php7": "*", "edge-versions": "latest-stable", "php-versions": ["7.1","7.2","7.3"] }
   exclude_spec:
-    - {"os-php7": "ubuntu1804-arm64-test", "edge-versions": "latest-stable", "php-versions": ["7.0","7.1","7.2"]}
+    - {"os-php7": "ubuntu1804-arm64-test", "edge-versions": "latest-stable", "php-versions": ["7.1","7.2"]}
   display_name: "All: ${edge-versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone-ssl"
