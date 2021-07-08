@@ -1151,6 +1151,7 @@ buildvariants:
 - matrix_name: "mongo-php7"
   matrix_spec: {"os-php7": "*", "versions": ["4.0", "4.2", "4.4", "5.0", "latest"], "php-versions": "7.3" }
   exclude_spec:
+    - {"os-php7": "rhel71-power8", "versions": ["5.0", "latest"], "php-versions": "7.3"}
     - {"os-php7": "rhel74-zseries", "versions": ["4.0", "4.2", "4.4", "5.0", "latest"], "php-versions": "7.3"}
     - {"os-php7": "ubuntu1804-arm64-test", "versions": "4.0", "php-versions": "7.3"}
   display_name: "${versions}/${php-versions} — ${os-php7}"
