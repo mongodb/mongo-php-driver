@@ -1032,6 +1032,7 @@ axes:
   - id: edge-versions
     display_name: MongoDB Version
     values:
+      # TODO: Exclude rhel74-zseries and rhel71-power8 in tests-php7 once latest-stable is bumped from 4.4 to 5.0
       - id: "latest-stable"
         display_name: "MongoDB 4.4"
         variables:
@@ -1118,6 +1119,7 @@ buildvariants:
 - matrix_name: "tests-php7"
   matrix_spec: {"os-php7": "*", "edge-versions": "latest-stable", "php-versions": ["7.1","7.2","7.3"] }
   exclude_spec:
+    # TODO: Exclude rhel74-zseries and rhel71-power8 once latest-stable is bumped from 4.4 to 5.0
     - {"os-php7": "ubuntu1804-arm64-test", "edge-versions": "latest-stable", "php-versions": ["7.1","7.2"]}
   display_name: "All: ${edge-versions}/${php-versions} — ${os-php7}"
   tasks:
@@ -1165,6 +1167,8 @@ buildvariants:
 
 - matrix_name: "mongo-php7-nossl"
   matrix_spec: {"os-php7": "rhel74-zseries", "versions": ["4.2", "4.4", "5.0", "latest"], "php-versions": "7.3"}
+  exclude_spec:
+    - {"os-php7": "rhel74-zseries", "versions": ["5.0", "latest"], "php-versions": "7.3"}
   display_name: "${versions}/${php-versions} — ${os-php7}"
   tasks:
      - name: "test-standalone"
