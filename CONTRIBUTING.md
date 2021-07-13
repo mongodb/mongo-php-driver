@@ -431,11 +431,6 @@ $JIRA_URL
 Documentation is available on PHP.net:
 http://php.net/set.mongodb
 
-**Feedback**
-
-We would appreciate any feedback you might have on the project:
-https://jira.mongodb.org/secure/CreateIssue.jspa?pid=12484&issuetype=6
-
 **Installation**
 
 You can either download and install the source manually, or you can install the extension with:
