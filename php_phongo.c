@@ -382,6 +382,17 @@ void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id) /
 }
 /* }}} */
 
+void phongo_serverdescription_init(zval* return_value, const mongoc_server_description_t* serverDescription) /* {{{ */
+{
+	php_phongo_serverdescription_t* intern;
+
+	object_init_ex(return_value, php_phongo_serverdescription_ce);
+
+	intern                     = Z_SERVERDESCRIPTION_OBJ_P(return_value);
+	intern->server_description = serverDescription;
+}
+/* }}} */
+
 void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session) /* {{{ */
 {
 	php_phongo_session_t* session;
@@ -3737,6 +3748,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_readconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_readpreference_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_server_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_serverapi_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_session_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);

@@ -109,6 +109,12 @@ typedef struct {
 } php_phongo_server_t;
 
 typedef struct {
+	mongoc_server_description_t* server_description;
+	HashTable*             		 properties;
+	zend_object            		 std;
+} php_phongo_serverdescription_t;
+
+typedef struct {
 	mongoc_server_api_t* server_api;
 	HashTable*           properties;
 	zend_object          std;
