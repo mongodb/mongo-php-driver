@@ -387,17 +387,9 @@ static PHP_METHOD(Server, getPort)
 
 static PHP_METHOD(Server, getServerDescription)
 {
-	zend_error_handling  error_handling;
-	php_phongo_server_t* intern;
+	php_phongo_server_t* intern = Z_SERVER_OBJ_P(getThis());
 
-	intern = Z_SERVER_OBJ_P(getThis());
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_serverdescription_init(return_value, mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id));
 } /* }}} */

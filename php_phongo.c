@@ -3748,8 +3748,8 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_readconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_readpreference_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_server_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_serverapi_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_session_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);
