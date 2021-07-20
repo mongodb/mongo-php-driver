@@ -38,12 +38,7 @@ static PHP_METHOD(ServerDescription, getHelloResponse)
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	getHelloResponse = mongoc_server_description_hello_response(intern->server_description);
 

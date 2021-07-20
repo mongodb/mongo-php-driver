@@ -382,14 +382,14 @@ void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id) /
 }
 /* }}} */
 
-void phongo_serverdescription_init(zval* return_value, const mongoc_server_description_t* serverDescription) /* {{{ */
+void phongo_serverdescription_init(zval* return_value, mongoc_server_description_t* server_description) /* {{{ */
 {
 	php_phongo_serverdescription_t* intern;
 
 	object_init_ex(return_value, php_phongo_serverdescription_ce);
 
 	intern                     = Z_SERVERDESCRIPTION_OBJ_P(return_value);
-	intern->server_description = serverDescription;
+	intern->server_description = server_description;
 }
 /* }}} */
 

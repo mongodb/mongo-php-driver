@@ -2,62 +2,62 @@
 
 function mongodb_generate_header(inpath, outpath, replacements)
 {
-  STDOUT.WriteLine("Generating " + outpath);
+	STDOUT.WriteLine("Generating " + outpath);
 
-  var infile = FSO.OpenTextFile(inpath, 1);
-  var outdata = infile.ReadAll();
-  infile.Close();
+	var infile  = FSO.OpenTextFile(inpath, 1);
+	var outdata = infile.ReadAll();
+	infile.Close();
 
-  for (var key in replacements) {
-    var replacement = replacements[key];
+	for (var key in replacements) {
+		var replacement = replacements[key];
 
-    if (typeof replacement === 'string') {
-      replacement = replacement.replace(/"/g, '\\"');
-    }
+		if (typeof replacement == = 'string') {
+	  replacement = replacement.replace(/"/g, '\\"');
+		}
 
-    outdata = outdata.replace(new RegExp('@' + key + '@', 'g'), replacement);
-  }
+		outdata = outdata.replace(new RegExp('@' + key + '@', 'g'), replacement);
+	}
 
-  var outfile = FSO.CreateTextFile(outpath, true);
-  outfile.Write(outdata);
-  outfile.Close();
+	var outfile = FSO.CreateTextFile(outpath, true);
+	outfile.Write(outdata);
+	outfile.Close();
 }
 
 function mongodb_parse_version_file(inpath, prefix)
 {
-  var infile = FSO.OpenTextFile(inpath, 1);
-  var version = infile.ReadLine();
-  infile.Close();
+	var infile  = FSO.OpenTextFile(inpath, 1);
+	var version = infile.ReadLine();
+	infile.Close();
 
-  var xyz_pre = version.split("-");
-  var xyz = xyz_pre[0].split(".");
-  var pre = xyz_pre.length > 1 ? xyz_pre[1] : "";
+	var xyz_pre = version.split("-");
+	var xyz     = xyz_pre[0].split(".");
+	var pre     = xyz_pre.length > 1 ? xyz_pre[1] : "";
 
-  var replacements = {};
-  replacements[prefix + "VERSION"] = version;
-  replacements[prefix + "MAJOR_VERSION"] = xyz[0];
-  replacements[prefix + "MINOR_VERSION"] = xyz[1];
-  replacements[prefix + "MICRO_VERSION"] = xyz[2];
-  replacements[prefix + "PRERELEASE_VERSION"] = pre;
+	var replacements                            = {};
+	replacements[prefix + "VERSION"]            = version;
+	replacements[prefix + "MAJOR_VERSION"]      = xyz[0];
+	replacements[prefix + "MINOR_VERSION"]      = xyz[1];
+	replacements[prefix + "MICRO_VERSION"]      = xyz[2];
+	replacements[prefix + "PRERELEASE_VERSION"] = pre;
 
-  return replacements;
+	return replacements;
 }
 
 function create_folder_recursive(path)
 {
-    if (FSO.FolderExists(path)) {
-      return;
-    }
+	if (FSO.FolderExists(path)) {
+		return;
+	}
 
-    create_folder_recursive(FSO.GetParentFolderName(path));
-    FSO.CreateFolder(path);
+	create_folder_recursive(FSO.GetParentFolderName(path));
+	FSO.CreateFolder(path);
 }
 
 function MONGODB_ADD_SOURCES(dir, file_list)
 {
-  // Ensure obj_dir and all parent directories exist
-  create_folder_recursive(FSO.BuildPath(get_define('BUILD_DIR'), dir));
-  ADD_SOURCES(configure_module_dirname + dir, file_list, "mongodb", dir);
+	// Ensure obj_dir and all parent directories exist
+	create_folder_recursive(FSO.BuildPath(get_define('BUILD_DIR'), dir));
+	ADD_SOURCES(configure_module_dirname + dir, file_list, "mongodb", dir);
 }
 
 ARG_ENABLE("mongodb", "MongoDB support", "no");
@@ -65,313 +65,314 @@ ARG_WITH("mongodb-sasl", "MongoDB: Build against Cyrus-SASL", "yes");
 ARG_WITH("mongodb-client-side-encryption", "MongoDB: Enable client-side encryption", "yes");
 
 if (PHP_MONGODB != "no") {
-  /* Note: ADD_EXTENSION_DEP() only reports the date and standard extensions as
+	/* Note: ADD_EXTENSION_DEP() only reports the date and standard extensions as
    * installed in PHP 7.3.25+, 7.4.13+, and 8.0.0+). On other versions, assume
    * that they're always enabled. */
-  if (
-    PHP_VERSION >= 8 ||
-    (PHP_VERSION == 7 && PHP_MINOR_VERSION == 3 && PHP_RELEASE_VERSION >= 25) ||
-    (PHP_VERSION == 7 && PHP_MINOR_VERSION == 4 && PHP_RELEASE_VERSION >= 13)
-  ) {
-    ADD_EXTENSION_DEP("mongodb", "date", false);
-    ADD_EXTENSION_DEP("mongodb", "standard", false);
-  }
+	if (
+		PHP_VERSION >= 8 ||
+		(PHP_VERSION == 7 && PHP_MINOR_VERSION == 3 && PHP_RELEASE_VERSION >= 25) ||
+		(PHP_VERSION == 7 && PHP_MINOR_VERSION == 4 && PHP_RELEASE_VERSION >= 13)) {
+		ADD_EXTENSION_DEP("mongodb", "date", false);
+		ADD_EXTENSION_DEP("mongodb", "standard", false);
+	}
 
-  ADD_EXTENSION_DEP("mongodb", "json", false);
-  ADD_EXTENSION_DEP("mongodb", "spl", false);
+	ADD_EXTENSION_DEP("mongodb", "json", false);
+	ADD_EXTENSION_DEP("mongodb", "spl", false);
 
-  /* MongoDB does not actually depend on PHP's OpenSSL extension, but this is in
+	/* MongoDB does not actually depend on PHP's OpenSSL extension, but this is in
    * place to ensure that later SSL library checks succeed. This can be removed
    * once we support building with Secure Channel. */
-  ADD_EXTENSION_DEP("mongodb", "openssl", false);
+	ADD_EXTENSION_DEP("mongodb", "openssl", false);
 
-  var PHP_MONGODB_CFLAGS="\
+	var PHP_MONGODB_CFLAGS = "\
     /D BSON_COMPILATION /D MONGOC_COMPILATION \
-    /I" + configure_module_dirname + " \
-    /I" + configure_module_dirname + "/src/BSON \
-    /I" + configure_module_dirname + "/src/MongoDB \
-    /I" + configure_module_dirname + "/src/MongoDB/Exception \
-    /I" + configure_module_dirname + "/src/contrib \
-    /I" + configure_module_dirname + "/src/libmongoc/src/common \
-    /I" + configure_module_dirname + "/src/libmongoc/src/libbson/src \
-    /I" + configure_module_dirname + "/src/libmongoc/src/libbson/src/jsonsl \
-    /I" + configure_module_dirname + "/src/libmongoc/src/libmongoc/src \
+    /I" +
+		configure_module_dirname + " \
+    /I" +
+		configure_module_dirname + "/src/BSON \
+    /I" +
+		configure_module_dirname + "/src/MongoDB \
+    /I" +
+		configure_module_dirname + "/src/MongoDB/Exception \
+    /I" +
+		configure_module_dirname + "/src/contrib \
+    /I" +
+		configure_module_dirname + "/src/libmongoc/src/common \
+    /I" +
+		configure_module_dirname + "/src/libmongoc/src/libbson/src \
+    /I" +
+		configure_module_dirname + "/src/libmongoc/src/libbson/src/jsonsl \
+    /I" +
+		configure_module_dirname + "/src/libmongoc/src/libmongoc/src \
   ";
 
-  // Condense whitespace in CFLAGS
-  PHP_MONGODB_CFLAGS = PHP_MONGODB_CFLAGS.replace(/\s+/g, ' ');
+	// Condense whitespace in CFLAGS
+	PHP_MONGODB_CFLAGS = PHP_MONGODB_CFLAGS.replace(/\s + / g, ' ');
 
-  // On MacOS, use gcut from the coreutils brew package instead of cut
-  // Generated with: find src/libmongoc/src/common -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
-  var PHP_MONGODB_COMMON_SOURCES="common-b64.c common-md5.c common-thread.c"
+	// On MacOS, use gcut from the coreutils brew package instead of cut
+	// Generated with: find src/libmongoc/src/common -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
+	var PHP_MONGODB_COMMON_SOURCES = "common-b64.c common-md5.c common-thread.c"
 
-  // Generated with: find src/libmongoc/src/kms-message/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 6- | sort -dz | tr '\000' ' '
-  var PHP_MONGODB_KMS_MESSAGE_SOURCES="hexlify.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c";
+		// Generated with: find src/libmongoc/src/kms-message/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 6- | sort -dz | tr '\000' ' '
+		var PHP_MONGODB_KMS_MESSAGE_SOURCES = "hexlify.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c";
 
-  // Generated with: find src/libmongoc/src/libbson/src/bson -name '*.c' -print0 | cut -sz -d / -f 7- | sort -dz | tr '\000' ' '
-  var PHP_MONGODB_BSON_SOURCES="bcon.c bson-atomic.c bson.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-iso8601.c bson-iter.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c";
+	// Generated with: find src/libmongoc/src/libbson/src/bson -name '*.c' -print0 | cut -sz -d / -f 7- | sort -dz | tr '\000' ' '
+	var PHP_MONGODB_BSON_SOURCES = "bcon.c bson-atomic.c bson.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-iso8601.c bson-iter.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c";
 
-  // Generated with: find src/libmongoc/src/libbson/src/jsonsl -name '*.c' -print0 | cut -sz -d / -f 7- | sort -dz | tr '\000' ' '
-  var PHP_MONGODB_JSONSL_SOURCES="jsonsl.c";
+	// Generated with: find src/libmongoc/src/libbson/src/jsonsl -name '*.c' -print0 | cut -sz -d / -f 7- | sort -dz | tr '\000' ' '
+	var PHP_MONGODB_JSONSL_SOURCES = "jsonsl.c";
 
-  // Generated with: find src/libmongoc/src/libmongoc/src/mongoc -name '*.c' -print0 | cut -sz -d / -f 7- | sort -dz | tr '\000' ' '
-  var PHP_MONGODB_MONGOC_SOURCES="mongoc-aggregate.c mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-change-stream.c mongoc-client.c mongoc-client-pool.c mongoc-client-session.c mongoc-client-side-encryption.c mongoc-cluster-aws.c mongoc-cluster.c mongoc-cluster-cyrus.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-cmd.c mongoc-collection.c mongoc-compression.c mongoc-counters.c mongoc-crypt.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-change-stream.c mongoc-cursor-cmd.c mongoc-cursor-cmd-deprecated.c mongoc-cursor-find.c mongoc-cursor-find-cmd.c mongoc-cursor-find-opquery.c mongoc-cursor-legacy.c mongoc-cyrus.c mongoc-database.c mongoc-error.c mongoc-find-and-modify.c mongoc-gridfs-bucket.c mongoc-gridfs-bucket-file.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-handshake.c mongoc-host-list.c mongoc-http.c mongoc-index.c mongoc-init.c mongoc-interrupt.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-ocsp-cache.c mongoc-openssl.c mongoc-optional.c mongoc-opts.c mongoc-opts-helpers.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-api.c mongoc-server-description.c mongoc-server-monitor.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-gridfs-download.c mongoc-stream-gridfs-upload.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-timeout.c mongoc-topology-background-monitoring.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-command-legacy.c mongoc-write-concern.c";
+	// Generated with: find src/libmongoc/src/libmongoc/src/mongoc -name '*.c' -print0 | cut -sz -d / -f 7- | sort -dz | tr '\000' ' '
+	var PHP_MONGODB_MONGOC_SOURCES = "mongoc-aggregate.c mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-change-stream.c mongoc-client.c mongoc-client-pool.c mongoc-client-session.c mongoc-client-side-encryption.c mongoc-cluster-aws.c mongoc-cluster.c mongoc-cluster-cyrus.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-cmd.c mongoc-collection.c mongoc-compression.c mongoc-counters.c mongoc-crypt.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-change-stream.c mongoc-cursor-cmd.c mongoc-cursor-cmd-deprecated.c mongoc-cursor-find.c mongoc-cursor-find-cmd.c mongoc-cursor-find-opquery.c mongoc-cursor-legacy.c mongoc-cyrus.c mongoc-database.c mongoc-error.c mongoc-find-and-modify.c mongoc-gridfs-bucket.c mongoc-gridfs-bucket-file.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-handshake.c mongoc-host-list.c mongoc-http.c mongoc-index.c mongoc-init.c mongoc-interrupt.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-ocsp-cache.c mongoc-openssl.c mongoc-optional.c mongoc-opts.c mongoc-opts-helpers.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-api.c mongoc-server-description.c mongoc-server-monitor.c mongoc-server-stream.c mongoc-set.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-gridfs-download.c mongoc-stream-gridfs-upload.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-timeout.c mongoc-topology-background-monitoring.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-command-legacy.c mongoc-write-concern.c";
 
-  EXTENSION("mongodb", "php_phongo.c phongo_compat.c", null, PHP_MONGODB_CFLAGS);
-  MONGODB_ADD_SOURCES("/src", "bson.c bson-encode.c phongo_apm.c");
-  MONGODB_ADD_SOURCES("/src/BSON", "Binary.c BinaryInterface.c DBPointer.c Decimal128.c Decimal128Interface.c Int64.c Javascript.c JavascriptInterface.c MaxKey.c MaxKeyInterface.c MinKey.c MinKeyInterface.c ObjectId.c ObjectIdInterface.c Persistable.c Regex.c RegexInterface.c Serializable.c Symbol.c Timestamp.c TimestampInterface.c Type.c Undefined.c Unserializable.c UTCDateTime.c UTCDateTimeInterface.c functions.c");
-  MONGODB_ADD_SOURCES("/src/MongoDB", "BulkWrite.c ClientEncryption.c Command.c Cursor.c CursorId.c CursorInterface.c Manager.c Query.c ReadConcern.c ReadPreference.c Server.c ServerApi.c ServerDescription.c Session.c WriteConcern.c WriteConcernError.c WriteError.c WriteResult.c");
-  MONGODB_ADD_SOURCES("/src/MongoDB/Exception", "AuthenticationException.c BulkWriteException.c CommandException.c ConnectionException.c ConnectionTimeoutException.c EncryptionException.c Exception.c ExecutionTimeoutException.c InvalidArgumentException.c LogicException.c RuntimeException.c ServerException.c SSLConnectionException.c UnexpectedValueException.c WriteException.c");
-  MONGODB_ADD_SOURCES("/src/MongoDB/Monitoring", "CommandFailedEvent.c CommandStartedEvent.c CommandSubscriber.c CommandSucceededEvent.c Subscriber.c functions.c");
-  MONGODB_ADD_SOURCES("/src/libmongoc/src/common", PHP_MONGODB_COMMON_SOURCES);
-  MONGODB_ADD_SOURCES("/src/libmongoc/src/libbson/src/bson", PHP_MONGODB_BSON_SOURCES);
-  MONGODB_ADD_SOURCES("/src/libmongoc/src/libbson/src/jsonsl", PHP_MONGODB_JSONSL_SOURCES);
-  MONGODB_ADD_SOURCES("/src/libmongoc/src/libmongoc/src/mongoc", PHP_MONGODB_MONGOC_SOURCES);
+	EXTENSION("mongodb", "php_phongo.c phongo_compat.c", null, PHP_MONGODB_CFLAGS);
+	MONGODB_ADD_SOURCES("/src", "bson.c bson-encode.c phongo_apm.c");
+	MONGODB_ADD_SOURCES("/src/BSON", "Binary.c BinaryInterface.c DBPointer.c Decimal128.c Decimal128Interface.c Int64.c Javascript.c JavascriptInterface.c MaxKey.c MaxKeyInterface.c MinKey.c MinKeyInterface.c ObjectId.c ObjectIdInterface.c Persistable.c Regex.c RegexInterface.c Serializable.c Symbol.c Timestamp.c TimestampInterface.c Type.c Undefined.c Unserializable.c UTCDateTime.c UTCDateTimeInterface.c functions.c");
+	MONGODB_ADD_SOURCES("/src/MongoDB", "BulkWrite.c ClientEncryption.c Command.c Cursor.c CursorId.c CursorInterface.c Manager.c Query.c ReadConcern.c ReadPreference.c Server.c ServerApi.c ServerDescription.c Session.c WriteConcern.c WriteConcernError.c WriteError.c WriteResult.c");
+	MONGODB_ADD_SOURCES("/src/MongoDB/Exception", "AuthenticationException.c BulkWriteException.c CommandException.c ConnectionException.c ConnectionTimeoutException.c EncryptionException.c Exception.c ExecutionTimeoutException.c InvalidArgumentException.c LogicException.c RuntimeException.c ServerException.c SSLConnectionException.c UnexpectedValueException.c WriteException.c");
+	MONGODB_ADD_SOURCES("/src/MongoDB/Monitoring", "CommandFailedEvent.c CommandStartedEvent.c CommandSubscriber.c CommandSucceededEvent.c Subscriber.c functions.c");
+	MONGODB_ADD_SOURCES("/src/libmongoc/src/common", PHP_MONGODB_COMMON_SOURCES);
+	MONGODB_ADD_SOURCES("/src/libmongoc/src/libbson/src/bson", PHP_MONGODB_BSON_SOURCES);
+	MONGODB_ADD_SOURCES("/src/libmongoc/src/libbson/src/jsonsl", PHP_MONGODB_JSONSL_SOURCES);
+	MONGODB_ADD_SOURCES("/src/libmongoc/src/libmongoc/src/mongoc", PHP_MONGODB_MONGOC_SOURCES);
 
-  var bson_opts = {
-    BSON_BYTE_ORDER: 1234,
-    BSON_OS: 2,
-    BSON_HAVE_STDBOOL_H: 0,
-    BSON_HAVE_STRINGS_H: 0,
-    BSON_HAVE_ATOMIC_32_ADD_AND_FETCH: 0,
-    BSON_HAVE_ATOMIC_64_ADD_AND_FETCH: 0,
-    BSON_PTHREAD_ONCE_INIT_NEEDS_BRACES: 0,
-    BSON_HAVE_CLOCK_GETTIME: 0,
-    BSON_HAVE_STRNLEN: 0,
-    BSON_HAVE_SNPRINTF: 0,
-    BSON_HAVE_STRLCPY: 0,
-    BSON_HAVE_REALLOCF: 0,
-    BSON_NEEDS_SET_OUTPUT_FORMAT: 0,
-    BSON_HAVE_TIMESPEC: 0,
-    BSON_EXTRA_ALIGN: 0,
-    BSON_HAVE_SYSCALL_TID: 0,
-    BSON_HAVE_DECIMAL128: 0,
-    BSON_HAVE_GMTIME_R: 0,
-    BSON_HAVE_RAND_R: 0
-  };
+	var bson_opts = {
+		BSON_BYTE_ORDER: 1234,
+		BSON_OS: 2,
+		BSON_HAVE_STDBOOL_H: 0,
+		BSON_HAVE_STRINGS_H: 0,
+		BSON_HAVE_ATOMIC_32_ADD_AND_FETCH: 0,
+		BSON_HAVE_ATOMIC_64_ADD_AND_FETCH: 0,
+		BSON_PTHREAD_ONCE_INIT_NEEDS_BRACES: 0,
+		BSON_HAVE_CLOCK_GETTIME: 0,
+		BSON_HAVE_STRNLEN: 0,
+		BSON_HAVE_SNPRINTF: 0,
+		BSON_HAVE_STRLCPY: 0,
+		BSON_HAVE_REALLOCF: 0,
+		BSON_NEEDS_SET_OUTPUT_FORMAT: 0,
+		BSON_HAVE_TIMESPEC: 0,
+		BSON_EXTRA_ALIGN: 0,
+		BSON_HAVE_SYSCALL_TID: 0,
+		BSON_HAVE_DECIMAL128: 0,
+		BSON_HAVE_GMTIME_R: 0,
+		BSON_HAVE_RAND_R: 0
+	};
 
-  if (CHECK_FUNC_IN_HEADER("stdio.h", "_set_output_format")) {
-    bson_opts.BSON_NEEDS_SET_OUTPUT_FORMAT = 1;
-  }
+	if (CHECK_FUNC_IN_HEADER("stdio.h", "_set_output_format")) {
+		bson_opts.BSON_NEEDS_SET_OUTPUT_FORMAT = 1;
+	}
 
-  mongodb_generate_header(
-    configure_module_dirname + "/src/libmongoc/src/libbson/src/bson/bson-config.h.in",
-    configure_module_dirname + "/src/libmongoc/src/libbson/src/bson/bson-config.h",
-    bson_opts
-  );
+	mongodb_generate_header(
+		configure_module_dirname + "/src/libmongoc/src/libbson/src/bson/bson-config.h.in",
+		configure_module_dirname + "/src/libmongoc/src/libbson/src/bson/bson-config.h",
+		bson_opts);
 
-  mongodb_generate_header(
-    configure_module_dirname + "/src/libmongoc/src/libbson/src/bson/bson-version.h.in",
-    configure_module_dirname + "/src/libmongoc/src/libbson/src/bson/bson-version.h",
-    mongodb_parse_version_file(configure_module_dirname + "/src/LIBMONGOC_VERSION_CURRENT", "BSON_")
-  );
+	mongodb_generate_header(
+		configure_module_dirname + "/src/libmongoc/src/libbson/src/bson/bson-version.h.in",
+		configure_module_dirname + "/src/libmongoc/src/libbson/src/bson/bson-version.h",
+		mongodb_parse_version_file(configure_module_dirname + "/src/LIBMONGOC_VERSION_CURRENT", "BSON_"));
 
-  var mongoc_opts = {
-    // TODO: Support building with Secure Channel on Windows
-    MONGOC_ENABLE_SSL_SECURE_CHANNEL: 0,
-    MONGOC_ENABLE_CRYPTO_CNG: 0,
-    // Secure Transport does not apply to Windows
-    MONGOC_ENABLE_SSL_SECURE_TRANSPORT: 0,
-    MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO: 0,
-    MONGOC_ENABLE_SSL_LIBRESSL: 0,
-    MONGOC_ENABLE_SSL_OPENSSL: 0,
-    MONGOC_ENABLE_CRYPTO_LIBCRYPTO: 0,
-    MONGOC_ENABLE_SSL: 0,
-    MONGOC_ENABLE_CRYPTO: 0,
-    MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE: 0,
-    MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION: 0,
-    MONGOC_ENABLE_COMPRESSION_SNAPPY: 0,
-    MONGOC_ENABLE_COMPRESSION_ZLIB: 0,
-    MONGOC_ENABLE_COMPRESSION_ZSTD: 0,
-    MONGOC_ENABLE_COMPRESSION: 0,
-    MONGOC_ENABLE_DEBUG_ASSERTIONS: 0,
-    MONGOC_ENABLE_MONGODB_AWS_AUTH: 0,
-    MONGOC_ENABLE_SASL: 0,
-    MONGOC_ENABLE_SASL_CYRUS: 0,
-    MONGOC_ENABLE_SASL_GSSAPI: 0,
-    MONGOC_ENABLE_SASL_SSPI: 0,
-    MONGOC_ENABLE_ICU: 0,
-    MONGOC_ENABLE_RDTSCP: 0,
-    MONGOC_ENABLE_SHM_COUNTERS: 0,
-    MONGOC_HAVE_ASN1_STRING_GET0_DATA: 0,
-    MONGOC_HAVE_SASL_CLIENT_DONE: 0,
-    MONGOC_HAVE_SCHED_GETCPU: 0,
-    MONGOC_HAVE_SOCKLEN: 1,
-    MONGOC_HAVE_WEAK_SYMBOLS: 0,
-    MONGOC_NO_AUTOMATIC_GLOBALS: 1,
-    MONGOC_SOCKET_ARG2: "struct sockaddr",
-    MONGOC_SOCKET_ARG3: "socklen_t",
-    MONGOC_TRACE: 1,
-    MONGOC_HAVE_DNSAPI: 0,
-    MONGOC_HAVE_RES_NSEARCH: 0,
-    MONGOC_HAVE_RES_NDESTROY: 0,
-    MONGOC_HAVE_RES_NCLOSE: 0,
-    MONGOC_HAVE_RES_SEARCH: 0,
-    MONGOC_HAVE_SS_FAMILY: 0,
-    MONGOC_CC: "",
-    MONGOC_USER_SET_CFLAGS: "",
-    MONGOC_USER_SET_LDFLAGS: ""
-  };
+	var mongoc_opts = {
+		// TODO: Support building with Secure Channel on Windows
+		MONGOC_ENABLE_SSL_SECURE_CHANNEL: 0,
+		MONGOC_ENABLE_CRYPTO_CNG: 0,
+		// Secure Transport does not apply to Windows
+		MONGOC_ENABLE_SSL_SECURE_TRANSPORT: 0,
+		MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO: 0,
+		MONGOC_ENABLE_SSL_LIBRESSL: 0,
+		MONGOC_ENABLE_SSL_OPENSSL: 0,
+		MONGOC_ENABLE_CRYPTO_LIBCRYPTO: 0,
+		MONGOC_ENABLE_SSL: 0,
+		MONGOC_ENABLE_CRYPTO: 0,
+		MONGOC_ENABLE_CRYPTO_SYSTEM_PROFILE: 0,
+		MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION: 0,
+		MONGOC_ENABLE_COMPRESSION_SNAPPY: 0,
+		MONGOC_ENABLE_COMPRESSION_ZLIB: 0,
+		MONGOC_ENABLE_COMPRESSION_ZSTD: 0,
+		MONGOC_ENABLE_COMPRESSION: 0,
+		MONGOC_ENABLE_DEBUG_ASSERTIONS: 0,
+		MONGOC_ENABLE_MONGODB_AWS_AUTH: 0,
+		MONGOC_ENABLE_SASL: 0,
+		MONGOC_ENABLE_SASL_CYRUS: 0,
+		MONGOC_ENABLE_SASL_GSSAPI: 0,
+		MONGOC_ENABLE_SASL_SSPI: 0,
+		MONGOC_ENABLE_ICU: 0,
+		MONGOC_ENABLE_RDTSCP: 0,
+		MONGOC_ENABLE_SHM_COUNTERS: 0,
+		MONGOC_HAVE_ASN1_STRING_GET0_DATA: 0,
+		MONGOC_HAVE_SASL_CLIENT_DONE: 0,
+		MONGOC_HAVE_SCHED_GETCPU: 0,
+		MONGOC_HAVE_SOCKLEN: 1,
+		MONGOC_HAVE_WEAK_SYMBOLS: 0,
+		MONGOC_NO_AUTOMATIC_GLOBALS: 1,
+		MONGOC_SOCKET_ARG2: "struct sockaddr",
+		MONGOC_SOCKET_ARG3: "socklen_t",
+		MONGOC_TRACE: 1,
+		MONGOC_HAVE_DNSAPI: 0,
+		MONGOC_HAVE_RES_NSEARCH: 0,
+		MONGOC_HAVE_RES_NDESTROY: 0,
+		MONGOC_HAVE_RES_NCLOSE: 0,
+		MONGOC_HAVE_RES_SEARCH: 0,
+		MONGOC_HAVE_SS_FAMILY: 0,
+		MONGOC_CC: "",
+		MONGOC_USER_SET_CFLAGS: "",
+		MONGOC_USER_SET_LDFLAGS: ""
+	};
 
-  var mongoc_ssl_path_to_check = PHP_MONGODB;
+	var mongoc_ssl_path_to_check = PHP_MONGODB;
 
-  if (typeof PHP_OPENSSL === 'string') {
-    mongoc_ssl_path_to_check += ";" + PHP_OPENSSL;
-  }
+	if (typeof PHP_OPENSSL == = 'string') {
+		mongoc_ssl_path_to_check += ";" + PHP_OPENSSL;
+	}
 
-  var mongoc_ssl_found = false;
+	var mongoc_ssl_found = false;
 
-  /* PHP 7.1.2 introduced SETUP_OPENSSL(), which supports OpenSSL 1.1.x. Earlier
+	/* PHP 7.1.2 introduced SETUP_OPENSSL(), which supports OpenSSL 1.1.x. Earlier
    * versions will use the legacy check for OpenSSL 1.0.x and lower. */
-  if (typeof SETUP_OPENSSL === 'function') {
-    openssl_type = SETUP_OPENSSL("mongodb", mongoc_ssl_path_to_check);
-    mongoc_ssl_found = openssl_type > 0;
-    if (openssl_type >= 2) {
-      mongoc_opts.MONGOC_HAVE_ASN1_STRING_GET0_DATA = 1;
-    }
-  } else if (CHECK_LIB("ssleay32.lib", "mongodb", mongoc_ssl_path_to_check) &&
-             CHECK_LIB("libeay32.lib", "mongodb", mongoc_ssl_path_to_check) &&
-             CHECK_LIB("crypt32.lib", "mongodb", mongoc_ssl_path_to_check) &&
-             CHECK_HEADER_ADD_INCLUDE("openssl/ssl.h", "CFLAGS_MONGODB")) {
-    mongoc_ssl_found = true;
-  }
+	if (typeof SETUP_OPENSSL == = 'function') {
+		openssl_type     = SETUP_OPENSSL("mongodb", mongoc_ssl_path_to_check);
+		mongoc_ssl_found = openssl_type > 0;
+		if (openssl_type >= 2) {
+			mongoc_opts.MONGOC_HAVE_ASN1_STRING_GET0_DATA = 1;
+		}
+	} else if (CHECK_LIB("ssleay32.lib", "mongodb", mongoc_ssl_path_to_check) &&
+			   CHECK_LIB("libeay32.lib", "mongodb", mongoc_ssl_path_to_check) &&
+			   CHECK_LIB("crypt32.lib", "mongodb", mongoc_ssl_path_to_check) &&
+			   CHECK_HEADER_ADD_INCLUDE("openssl/ssl.h", "CFLAGS_MONGODB")) {
+		mongoc_ssl_found = true;
+	}
 
-  if (mongoc_ssl_found) {
-    mongoc_opts.MONGOC_ENABLE_SSL_OPENSSL = 1;
-    mongoc_opts.MONGOC_ENABLE_CRYPTO_LIBCRYPTO = 1;
-    mongoc_opts.MONGOC_ENABLE_SSL = 1;
-    mongoc_opts.MONGOC_ENABLE_CRYPTO = 1;
-    mongoc_opts.MONGOC_ENABLE_MONGODB_AWS_AUTH = 1;
+	if (mongoc_ssl_found) {
+		mongoc_opts.MONGOC_ENABLE_SSL_OPENSSL      = 1;
+		mongoc_opts.MONGOC_ENABLE_CRYPTO_LIBCRYPTO = 1;
+		mongoc_opts.MONGOC_ENABLE_SSL              = 1;
+		mongoc_opts.MONGOC_ENABLE_CRYPTO           = 1;
+		mongoc_opts.MONGOC_ENABLE_MONGODB_AWS_AUTH = 1;
 
-    ADD_FLAG("CFLAGS_MONGODB", "/D KMS_MSG_STATIC=1 /D KMS_MESSAGE_ENABLE_CRYPTO=1 /D KMS_MESSAGE_ENABLE_CRYPTO_LIBCRYPTO=1");
-  } else {
-    WARNING("mongodb libopenssl support not enabled, libs not found");
-  }
+		ADD_FLAG("CFLAGS_MONGODB", "/D KMS_MSG_STATIC=1 /D KMS_MESSAGE_ENABLE_CRYPTO=1 /D KMS_MESSAGE_ENABLE_CRYPTO_LIBCRYPTO=1");
+	} else {
+		WARNING("mongodb libopenssl support not enabled, libs not found");
+	}
 
-  // TODO: Support building with native GSSAPI (SSPI) on Windows
-  if (PHP_MONGODB_SASL != "no" &&
-      CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB) &&
-      CHECK_HEADER_ADD_INCLUDE("sasl/sasl.h", "CFLAGS_MONGODB")) {
-    mongoc_opts.MONGOC_ENABLE_SASL = 1;
-    mongoc_opts.MONGOC_ENABLE_SASL_CYRUS = 1;
-    if (CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done")) {
-      mongoc_opts.MONGOC_HAVE_SASL_CLIENT_DONE = 1;
-    }
-  } else if (PHP_MONGODB_SASL != "no") {
-    WARNING("mongodb libsasl support not enabled, libs not found");
-  }
+	// TODO: Support building with native GSSAPI (SSPI) on Windows
+	if (PHP_MONGODB_SASL != "no" &&
+		CHECK_LIB("libsasl.lib", "mongodb", PHP_MONGODB) &&
+		CHECK_HEADER_ADD_INCLUDE("sasl/sasl.h", "CFLAGS_MONGODB")) {
+		mongoc_opts.MONGOC_ENABLE_SASL       = 1;
+		mongoc_opts.MONGOC_ENABLE_SASL_CYRUS = 1;
+		if (CHECK_FUNC_IN_HEADER("sasl/sasl.h", "sasl_client_done")) {
+			mongoc_opts.MONGOC_HAVE_SASL_CLIENT_DONE = 1;
+		}
+	} else if (PHP_MONGODB_SASL != "no") {
+		WARNING("mongodb libsasl support not enabled, libs not found");
+	}
 
-  if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION != "no" && mongoc_ssl_found) {
-    mongoc_opts.MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION = 1;
+	if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION != "no" && mongoc_ssl_found) {
+		mongoc_opts.MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION = 1;
 
-    ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt/src");
-    ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt/kms-message/src");
-    ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt-compat");
+		ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt/src");
+		ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt/kms-message/src");
+		ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt-compat");
 
-    var mongocrypt_opts = {
-      MONGOCRYPT_ENABLE_TRACE: 1,
-      MONGOCRYPT_ENABLE_CRYPTO: 1,
-      MONGOCRYPT_ENABLE_CRYPTO_LIBCRYPTO: 1,
-      // TODO: Support building with Secure Channel on Windows
-      MONGOCRYPT_ENABLE_CRYPTO_CNG: 0,
-      // Secure Transport does not apply to Windows
-      MONGOCRYPT_ENABLE_CRYPTO_COMMON_CRYPTO: 0
-    };
+		var mongocrypt_opts = {
+			MONGOCRYPT_ENABLE_TRACE: 1,
+			MONGOCRYPT_ENABLE_CRYPTO: 1,
+			MONGOCRYPT_ENABLE_CRYPTO_LIBCRYPTO: 1,
+			// TODO: Support building with Secure Channel on Windows
+			MONGOCRYPT_ENABLE_CRYPTO_CNG: 0,
+			// Secure Transport does not apply to Windows
+			MONGOCRYPT_ENABLE_CRYPTO_COMMON_CRYPTO: 0
+		};
 
-    // Generated with: find src/libmongocrypt/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 4- | sort -dz | tr '\000' ' '
-    var PHP_MONGODB_MONGOCRYPT_SOURCES="mongocrypt-binary.c mongocrypt-buffer.c mongocrypt.c mongocrypt-cache.c mongocrypt-cache-collinfo.c mongocrypt-cache-key.c mongocrypt-cache-oauth.c mongocrypt-ciphertext.c mongocrypt-crypto.c mongocrypt-ctx.c mongocrypt-ctx-datakey.c mongocrypt-ctx-decrypt.c mongocrypt-ctx-encrypt.c mongocrypt-endpoint.c mongocrypt-kek.c mongocrypt-key-broker.c mongocrypt-key.c mongocrypt-kms-ctx.c mongocrypt-log.c mongocrypt-marking.c mongocrypt-opts.c mongocrypt-status.c mongocrypt-traverse-util.c";
+		// Generated with: find src/libmongocrypt/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 4- | sort -dz | tr '\000' ' '
+		var PHP_MONGODB_MONGOCRYPT_SOURCES = "mongocrypt-binary.c mongocrypt-buffer.c mongocrypt.c mongocrypt-cache.c mongocrypt-cache-collinfo.c mongocrypt-cache-key.c mongocrypt-cache-oauth.c mongocrypt-ciphertext.c mongocrypt-crypto.c mongocrypt-ctx.c mongocrypt-ctx-datakey.c mongocrypt-ctx-decrypt.c mongocrypt-ctx-encrypt.c mongocrypt-endpoint.c mongocrypt-kek.c mongocrypt-key-broker.c mongocrypt-key.c mongocrypt-kms-ctx.c mongocrypt-log.c mongocrypt-marking.c mongocrypt-opts.c mongocrypt-status.c mongocrypt-traverse-util.c";
 
-    // Generated with: find src/libmongocrypt/src/crypto -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
-    var PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES="cng.c commoncrypto.c libcrypto.c none.c";
+		// Generated with: find src/libmongocrypt/src/crypto -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
+		var PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES = "cng.c commoncrypto.c libcrypto.c none.c";
 
-    // Generated with: find src/libmongocrypt/src/os_posix -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
-    var PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES="os_mutex.c os_once.c";
+		// Generated with: find src/libmongocrypt/src/os_posix -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
+		var PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES = "os_mutex.c os_once.c";
 
-    // Generated with: find src/libmongocrypt/src/os_win -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
-    var PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES="os_mutex.c os_once.c";
+		// Generated with: find src/libmongocrypt/src/os_win -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
+		var PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES = "os_mutex.c os_once.c";
 
-    // Generated with: find src/libmongocrypt/kms-message/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
-    var PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES="hexlify.c kms_azure_request.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_gcp_request.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c";
+		// Generated with: find src/libmongocrypt/kms-message/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
+		var PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES = "hexlify.c kms_azure_request.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_gcp_request.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c";
 
-    MONGODB_ADD_SOURCES("/src/libmongocrypt/src", PHP_MONGODB_MONGOCRYPT_SOURCES);
-    MONGODB_ADD_SOURCES("/src/libmongocrypt/src/crypto", PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES);
-    MONGODB_ADD_SOURCES("/src/libmongocrypt/src/os_posix", PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES);
-    MONGODB_ADD_SOURCES("/src/libmongocrypt/src/os_win", PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES);
-    MONGODB_ADD_SOURCES("/src/libmongocrypt/kms-message/src", PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES);
+		MONGODB_ADD_SOURCES("/src/libmongocrypt/src", PHP_MONGODB_MONGOCRYPT_SOURCES);
+		MONGODB_ADD_SOURCES("/src/libmongocrypt/src/crypto", PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES);
+		MONGODB_ADD_SOURCES("/src/libmongocrypt/src/os_posix", PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES);
+		MONGODB_ADD_SOURCES("/src/libmongocrypt/src/os_win", PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES);
+		MONGODB_ADD_SOURCES("/src/libmongocrypt/kms-message/src", PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES);
 
-    var mongocrypt_version = mongodb_parse_version_file(configure_module_dirname + "/src/LIBMONGOCRYPT_VERSION_CURRENT", "")
-    mongocrypt_opts.MONGOCRYPT_BUILD_VERSION = mongocrypt_version.VERSION;
+		var mongocrypt_version                                                = mongodb_parse_version_file(configure_module_dirname + "/src/LIBMONGOCRYPT_VERSION_CURRENT", "")
+									 mongocrypt_opts.MONGOCRYPT_BUILD_VERSION = mongocrypt_version.VERSION;
 
-    mongodb_generate_header(
-      configure_module_dirname + "/src/libmongocrypt/src/mongocrypt-config.h.in",
-      configure_module_dirname + "/src/libmongocrypt/src/mongocrypt-config.h",
-      mongocrypt_opts
-    );
+		mongodb_generate_header(
+			configure_module_dirname + "/src/libmongocrypt/src/mongocrypt-config.h.in",
+			configure_module_dirname + "/src/libmongocrypt/src/mongocrypt-config.h",
+			mongocrypt_opts);
 
-    mongodb_generate_header(
-      configure_module_dirname + "/src/libmongocrypt/src/mongocrypt.h.in",
-      configure_module_dirname + "/src/libmongocrypt/src/mongocrypt.h",
-      mongocrypt_opts
-    );
-  } else if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION != "no") {
-    // No SSL library found, we can't enable libmongocrypt
-    WARNING("mongodb libmongocrypt support not enabled, crypto libs not found");
-  }
+		mongodb_generate_header(
+			configure_module_dirname + "/src/libmongocrypt/src/mongocrypt.h.in",
+			configure_module_dirname + "/src/libmongocrypt/src/mongocrypt.h",
+			mongocrypt_opts);
+	} else if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION != "no") {
+		// No SSL library found, we can't enable libmongocrypt
+		WARNING("mongodb libmongocrypt support not enabled, crypto libs not found");
+	}
 
-  if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION == "no" && mongoc_ssl_found) {
-    // Add kms-message sources bundled with libmongoc
-    MONGODB_ADD_SOURCES("/src/libmongoc/src/kms-message/src", PHP_MONGODB_KMS_MESSAGE_SOURCES);
-    ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongoc/src/kms-message/src");
-  }
+	if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION == "no" && mongoc_ssl_found) {
+		// Add kms-message sources bundled with libmongoc
+		MONGODB_ADD_SOURCES("/src/libmongoc/src/kms-message/src", PHP_MONGODB_KMS_MESSAGE_SOURCES);
+		ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongoc/src/kms-message/src");
+	}
 
-  if (CHECK_LIB("dnsapi.lib", "mongodb", PHP_MONGODB) &&
-      CHECK_HEADER_ADD_INCLUDE("windns.h", "CFLAGS_MONGODB")) {
-    mongoc_opts.MONGOC_HAVE_DNSAPI = 1;
-  }
+	if (CHECK_LIB("dnsapi.lib", "mongodb", PHP_MONGODB) &&
+		CHECK_HEADER_ADD_INCLUDE("windns.h", "CFLAGS_MONGODB")) {
+		mongoc_opts.MONGOC_HAVE_DNSAPI = 1;
+	}
 
-  if (CHECK_LIB("icuuc.lib", "mongodb", PHP_MONGODB) &&
-      CHECK_HEADER_ADD_INCLUDE("unicode/utf.h", "CFLAGS_MONGODB")) {
-    mongoc_opts.MONGODB_ENABLE_ICU = 1;
+	if (CHECK_LIB("icuuc.lib", "mongodb", PHP_MONGODB) &&
+		CHECK_HEADER_ADD_INCLUDE("unicode/utf.h", "CFLAGS_MONGODB")) {
+		mongoc_opts.MONGODB_ENABLE_ICU = 1;
 
-    ADD_FLAG("LIBS_MONGODB", "icudt.lib icuin.lib icuio.lib");
+		ADD_FLAG("LIBS_MONGODB", "icudt.lib icuin.lib icuio.lib");
 
-    /* Compat for ICU before 58.1.*/
-    if (CHECK_LIB("icule.lib", "mongodb", PHP_MONGODB)) {
-      ADD_FLAG("LIBS_MONGODB", "icule.lib");
-    }
-    if (CHECK_LIB("iculx.lib", "mongodb", PHP_MONGODB)) {
-      ADD_FLAG("LIBS_MONGODB", "iculx.lib");
-    }
+		/* Compat for ICU before 58.1.*/
+		if (CHECK_LIB("icule.lib", "mongodb", PHP_MONGODB)) {
+			ADD_FLAG("LIBS_MONGODB", "icule.lib");
+		}
+		if (CHECK_LIB("iculx.lib", "mongodb", PHP_MONGODB)) {
+			ADD_FLAG("LIBS_MONGODB", "iculx.lib");
+		}
 
-    ADD_FLAG("CFLAGS_MONGODB", "/EHsc /D U_USING_ICU_NAMESPACE=1");
-  }
+		ADD_FLAG("CFLAGS_MONGODB", "/EHsc /D U_USING_ICU_NAMESPACE=1");
+	}
 
-  if (typeof COMPILER_NAME === 'string') {
-    mongoc_opts.MONGOC_CC = COMPILER_NAME;
-  } else if (typeof VC_VERSIONS === 'array' && typeof VC_VERSIONS[VCVERS] === 'string') {
-    mongoc_opts.MONGOC_CC = VC_VERSIONS[VCVERS];
-  } else if (typeof COMPILER_NAME_LONG === 'string') {
-    mongoc_opts.MONGOC_CC = COMPILER_NAME_LONG;
-  }
+	if (typeof COMPILER_NAME == = 'string') {
+		mongoc_opts.MONGOC_CC = COMPILER_NAME;
+	} else if (typeof VC_VERSIONS == = 'array' && typeof VC_VERSIONS[VCVERS] == = 'string') {
+		mongoc_opts.MONGOC_CC = VC_VERSIONS[VCVERS];
+	} else if (typeof COMPILER_NAME_LONG == = 'string') {
+		mongoc_opts.MONGOC_CC = COMPILER_NAME_LONG;
+	}
 
-  /* MONGOC_USER_SET_CFLAGS and MONGOC_USER_SET_LDFLAGS can be left blank, as we
+	/* MONGOC_USER_SET_CFLAGS and MONGOC_USER_SET_LDFLAGS can be left blank, as we
    * do not expect CFLAGS or LDFLAGS to be customized at build time. */
 
-  mongodb_generate_header(
-    configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h.in",
-    configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h",
-    mongoc_opts
-  );
+	mongodb_generate_header(
+		configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h.in",
+		configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-config.h",
+		mongoc_opts);
 
-  mongodb_generate_header(
-    configure_module_dirname + "/src/libmongoc/src/common/common-config.h.in",
-    configure_module_dirname + "/src/libmongoc/src/common/common-config.h",
-    mongoc_opts
-  );
+	mongodb_generate_header(
+		configure_module_dirname + "/src/libmongoc/src/common/common-config.h.in",
+		configure_module_dirname + "/src/libmongoc/src/common/common-config.h",
+		mongoc_opts);
 
-  mongodb_generate_header(
-    configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h.in",
-    configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h",
-    mongodb_parse_version_file(configure_module_dirname + "/src/LIBMONGOC_VERSION_CURRENT", "MONGOC_")
-  );
+	mongodb_generate_header(
+		configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h.in",
+		configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h",
+		mongodb_parse_version_file(configure_module_dirname + "/src/LIBMONGOC_VERSION_CURRENT", "MONGOC_"));
 }

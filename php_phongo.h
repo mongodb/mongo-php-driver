@@ -115,7 +115,7 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 
 void phongo_clientencryption_init(php_phongo_clientencryption_t* ce_obj, zval* manager, zval* options);
 void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id);
-void phongo_serverdescription_init(zval* return_value, const mongoc_server_description_t* serverDescription);
+void phongo_serverdescription_init(zval* return_value, mongoc_server_description_t* serverDescription);
 void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session);
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern);
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs);
