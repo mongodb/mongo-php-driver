@@ -28,7 +28,7 @@
 
 zend_class_entry* php_phongo_serverdescription_ce;
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::getHelloResponse()
+/* {{{ proto array MongoDB\Driver\ServerDescription::getHelloResponse()
    Returns the most recent “hello” response */
 static PHP_METHOD(ServerDescription, getHelloResponse)
 {
@@ -57,7 +57,7 @@ static PHP_METHOD(ServerDescription, getHelloResponse)
 	}
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::getHost()
+/* {{{ proto string MongoDB\Driver\ServerDescription::getHost()
    Returns the server’s hostname */
 static PHP_METHOD(ServerDescription, getHost)
 {
@@ -70,7 +70,7 @@ static PHP_METHOD(ServerDescription, getHost)
 	RETVAL_STRING(mongoc_server_description_host(intern->server_description)->host);
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::getId()
+/* {{{ proto integer MongoDB\Driver\ServerDescription::getId()
    Returns the server’s id */
 static PHP_METHOD(ServerDescription, getId)
 {
@@ -83,7 +83,7 @@ static PHP_METHOD(ServerDescription, getId)
 	RETVAL_LONG((zend_long) mongoc_server_description_id(intern->server_description));
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::getLastUpdateTime()
+/* {{{ proto integer MongoDB\Driver\ServerDescription::getLastUpdateTime()
    Returns the server’s last update time, in microseconds */
 static PHP_METHOD(ServerDescription, getLastUpdateTime)
 {
@@ -96,7 +96,7 @@ static PHP_METHOD(ServerDescription, getLastUpdateTime)
 	RETVAL_LONG((zend_long) mongoc_server_description_last_update_time(intern->server_description));
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::getPort()
+/* {{{ proto integer MongoDB\Driver\ServerDescription::getPort()
    Returns the server’s port */
 static PHP_METHOD(ServerDescription, getPort)
 {
@@ -109,7 +109,7 @@ static PHP_METHOD(ServerDescription, getPort)
 	RETVAL_LONG(mongoc_server_description_host(intern->server_description)->port);
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::getRoundTripTime()
+/* {{{ proto integer MongoDB\Driver\ServerDescription::getRoundTripTime()
    Returns the server’s round trip time, in milliseconds */
 static PHP_METHOD(ServerDescription, getRoundTripTime)
 {
@@ -122,7 +122,7 @@ static PHP_METHOD(ServerDescription, getRoundTripTime)
 	RETVAL_LONG((zend_long) mongoc_server_description_round_trip_time(intern->server_description));
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::getTags()
+/* {{{ proto array MongoDB\Driver\ServerDescription::getTags()
    Returns the server's currently configured tags */
 static PHP_METHOD(ServerDescription, getTags)
 {
@@ -158,7 +158,7 @@ static PHP_METHOD(ServerDescription, getTags)
 	}
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::getType()
+/* {{{ proto integer MongoDB\Driver\ServerDescription::getType()
    Returns the server’s node type */
 static PHP_METHOD(ServerDescription, getType)
 {
@@ -171,7 +171,7 @@ static PHP_METHOD(ServerDescription, getType)
 	RETVAL_LONG(php_phongo_server_description_type(intern->server_description));
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::isArbiter()
+/* {{{ proto boolean MongoDB\Driver\ServerDescription::isArbiter()
    Returns whether the server is an arbiter member of a replica set */
 static PHP_METHOD(ServerDescription, isArbiter)
 {
@@ -184,7 +184,7 @@ static PHP_METHOD(ServerDescription, isArbiter)
 	RETVAL_BOOL(!strcmp(mongoc_server_description_type(intern->server_description), php_phongo_server_description_type_map[PHONGO_SERVER_RS_ARBITER].name));
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::isHidden()
+/* {{{ proto boolean MongoDB\Driver\ServerDescription::isHidden()
    Returns whether the server is a hidden member of a replica set */
 static PHP_METHOD(ServerDescription, isHidden)
 {
@@ -198,7 +198,7 @@ static PHP_METHOD(ServerDescription, isHidden)
 	RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_hello_response(intern->server_description), "hidden") && bson_iter_as_bool(&iter));
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::isPassive()
+/* {{{ proto boolean MongoDB\Driver\ServerDescription::isPassive()
    Returns whether the server is a passive member of a replica set */
 static PHP_METHOD(ServerDescription, isPassive)
 {
@@ -212,7 +212,7 @@ static PHP_METHOD(ServerDescription, isPassive)
 	RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_hello_response(intern->server_description), "passive") && bson_iter_as_bool(&iter));
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::isPrimary()
+/* {{{ proto boolean MongoDB\Driver\ServerDescription::isPrimary()
    Returns whether the server is a primary member of a replica set */
 static PHP_METHOD(ServerDescription, isPrimary)
 {
@@ -225,7 +225,7 @@ static PHP_METHOD(ServerDescription, isPrimary)
 	RETVAL_BOOL(!strcmp(mongoc_server_description_type(intern->server_description), php_phongo_server_description_type_map[PHONGO_SERVER_RS_PRIMARY].name));
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ServerDescription::isSecondary()
+/* {{{ proto boolean MongoDB\Driver\ServerDescription::isSecondary()
    Returns whether the server is a secondary member of a replica set */
 static PHP_METHOD(ServerDescription, isSecondary)
 {
