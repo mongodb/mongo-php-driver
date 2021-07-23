@@ -167,19 +167,19 @@ bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
 #define PHONGO_CE_FINAL(ce)             \
 	do {                                \
 		ce->ce_flags |= ZEND_ACC_FINAL; \
-	} while (0);
+	} while (0)
 
 #if PHP_VERSION_ID < 80100
 #define PHONGO_CE_DISABLE_SERIALIZATION(ce)            \
 	do {                                               \
 		ce->serialize   = zend_class_serialize_deny;   \
 		ce->unserialize = zend_class_unserialize_deny; \
-	} while (0);
+	} while (0)
 #else
 #define PHONGO_CE_DISABLE_SERIALIZATION(ce)            \
 	do {                                               \
 		ce->ce_flags |= ZEND_ACC_NOT_SERIALIZABLE;     \
-	} while (0);
+	} while (0)
 #endif
 
 #define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, size) \
@@ -194,7 +194,7 @@ bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
 			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);       \
 			(intern)->properties = (props);                                \
 		}                                                                  \
-	} while (0);
+	} while (0)
 
 #define PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_debug, props) \
 	do {                                                     \
@@ -202,7 +202,7 @@ bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
 			zend_hash_destroy((props));                      \
 			FREE_HASHTABLE(props);                           \
 		}                                                    \
-	} while (0);
+	} while (0)
 
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME(zv) (Z_TYPE(zv) == IS_OBJECT ? ZSTR_VAL(Z_OBJCE(zv)->name) : zend_get_type_by_const(Z_TYPE(zv)))
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zvp) PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*(zvp))
@@ -212,7 +212,7 @@ bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
 #define PHONGO_SET_CREATED_BY_PID(intern)          \
 	do {                                           \
 		(intern)->created_by_pid = (int) getpid(); \
-	} while (0);
+	} while (0)
 
 #define PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, manager) \
 	do {                                                    \
@@ -220,7 +220,7 @@ bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
 		if ((intern)->created_by_pid != pid) {              \
 			php_phongo_client_reset_once((manager), pid);   \
 		}                                                   \
-	} while (0);
+	} while (0)
 
 #endif /* PHONGO_H */
 
