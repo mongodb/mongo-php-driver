@@ -296,23 +296,27 @@ static zend_object* php_phongo_serverdescription_create_object(zend_class_entry*
 	return &intern->std;
 } /* }}} */
 
+HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
+{
+	php_phongo_serverdescription_t* intern;
+	HashTable*                      props;
+
+	intern = Z_OBJ_SERVERDESCRIPTION(PHONGO_COMPAT_GET_OBJ(object));
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 0);
+
+	return props;
+} /* }}} */
+
 static HashTable* php_phongo_serverdescription_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
-	php_phongo_serverdescription_t* intern = NULL;
-	zval                            retval = ZVAL_STATIC_INIT;
-
 	*is_temp = 1;
-	intern   = Z_OBJ_SERVERDESCRIPTION(PHONGO_COMPAT_GET_OBJ(object));
-
-	php_phongo_server_to_zval(&retval, intern->server_description);
-
-	return Z_ARRVAL(retval);
+	return php_phongo_serverdescription_get_properties_hash(object, true);
 } /* }}} */
 
 static HashTable* php_phongo_serverdescription_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
 {
-	// return php_phongo_serverdescription_get_properties_hash(object, false);
-	return NULL;
+	return php_phongo_serverdescription_get_properties_hash(object, false);
 } /* }}} */
 /* }}} */
 
@@ -325,8 +329,6 @@ void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_serverdescription_ce->create_object = php_phongo_serverdescription_create_object;
 	PHONGO_CE_FINAL(php_phongo_serverdescription_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_serverdescription_ce);
-
-	zend_class_implements(php_phongo_serverdescription_ce, 1, zend_ce_iterator);
 
 	memcpy(&php_phongo_handler_serverdescription, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serverdescription.get_debug_info = php_phongo_serverdescription_get_debug_info;

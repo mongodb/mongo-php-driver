@@ -385,15 +385,18 @@ static PHP_METHOD(Server, getPort)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\Server::getServerDescription()
+/* {{{ proto MongoDB\Driver\ServerDescription MongoDB\Driver\Server::getServerDescription()
    Returns the server description for this Server */
 static PHP_METHOD(Server, getServerDescription)
 {
-	php_phongo_server_t* intern = Z_SERVER_OBJ_P(getThis());
+	mongoc_server_description_t* server_description;
+	php_phongo_server_t*         intern = Z_SERVER_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	phongo_serverdescription_init(return_value, mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id));
+	server_description = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id);
+
+	phongo_serverdescription_init(return_value, server_description);
 } /* }}} */
 
 /* {{{ proto integer MongoDB\Driver\Server::getType()
