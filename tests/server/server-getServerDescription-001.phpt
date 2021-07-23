@@ -15,7 +15,6 @@ var_dump($manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-array(%d) {
-  %a
+object(MongoDB\Driver\ServerDescription)#%d (%d) {
 }
 ===DONE===
