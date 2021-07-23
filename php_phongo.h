@@ -169,11 +169,18 @@ bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
 		ce->ce_flags |= ZEND_ACC_FINAL; \
 	} while (0);
 
+#if PHP_VERSION_ID < 80100
 #define PHONGO_CE_DISABLE_SERIALIZATION(ce)            \
 	do {                                               \
 		ce->serialize   = zend_class_serialize_deny;   \
 		ce->unserialize = zend_class_unserialize_deny; \
 	} while (0);
+#else
+#define PHONGO_CE_DISABLE_SERIALIZATION(ce)            \
+	do {                                               \
+		ce->ce_flags |= ZEND_ACC_NOT_SERIALIZABLE;     \
+	} while (0);
+#endif
 
 #define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, size) \
 	do {                                                                   \
