@@ -32,7 +32,6 @@ zend_class_entry* php_phongo_serverdescription_ce;
    Returns the most recent “hello” response */
 static PHP_METHOD(ServerDescription, getHelloResponse)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 	const bson_t*                   helloResponse;
 
@@ -62,7 +61,6 @@ static PHP_METHOD(ServerDescription, getHelloResponse)
    Returns the server’s hostname */
 static PHP_METHOD(ServerDescription, getHost)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
@@ -76,7 +74,6 @@ static PHP_METHOD(ServerDescription, getHost)
    Returns the server’s id */
 static PHP_METHOD(ServerDescription, getId)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
@@ -90,7 +87,6 @@ static PHP_METHOD(ServerDescription, getId)
    Returns the server’s last update time, in microseconds */
 static PHP_METHOD(ServerDescription, getLastUpdateTime)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
@@ -104,7 +100,6 @@ static PHP_METHOD(ServerDescription, getLastUpdateTime)
    Returns the server’s port */
 static PHP_METHOD(ServerDescription, getPort)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
@@ -118,7 +113,6 @@ static PHP_METHOD(ServerDescription, getPort)
    Returns the server’s round trip time, in milliseconds */
 static PHP_METHOD(ServerDescription, getRoundTripTime)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
@@ -132,7 +126,6 @@ static PHP_METHOD(ServerDescription, getRoundTripTime)
    Returns the server's currently configured tags */
 static PHP_METHOD(ServerDescription, getTags)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 	const bson_t*                   helloResponse;
 
@@ -169,7 +162,6 @@ static PHP_METHOD(ServerDescription, getTags)
    Returns the server’s node type */
 static PHP_METHOD(ServerDescription, getType)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
@@ -183,7 +175,6 @@ static PHP_METHOD(ServerDescription, getType)
    Returns whether the server is an arbiter member of a replica set */
 static PHP_METHOD(ServerDescription, isArbiter)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
@@ -197,7 +188,6 @@ static PHP_METHOD(ServerDescription, isArbiter)
    Returns whether the server is a hidden member of a replica set */
 static PHP_METHOD(ServerDescription, isHidden)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
@@ -212,7 +202,6 @@ static PHP_METHOD(ServerDescription, isHidden)
    Returns whether the server is a passive member of a replica set */
 static PHP_METHOD(ServerDescription, isPassive)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
@@ -227,7 +216,6 @@ static PHP_METHOD(ServerDescription, isPassive)
    Returns whether the server is a primary member of a replica set */
 static PHP_METHOD(ServerDescription, isPrimary)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
@@ -241,7 +229,6 @@ static PHP_METHOD(ServerDescription, isPrimary)
    Returns whether the server is a secondary member of a replica set */
 static PHP_METHOD(ServerDescription, isSecondary)
 {
-	zend_error_handling             error_handling;
 	php_phongo_serverdescription_t* intern;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
@@ -325,6 +312,7 @@ static HashTable* php_phongo_serverdescription_get_debug_info(phongo_compat_obje
 static HashTable* php_phongo_serverdescription_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
 {
 	// return php_phongo_serverdescription_get_properties_hash(object, false);
+	return NULL;
 } /* }}} */
 /* }}} */
 
