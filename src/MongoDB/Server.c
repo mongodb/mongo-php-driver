@@ -24,7 +24,6 @@
 #include "phongo_compat.h"
 #include "php_phongo.h"
 #include "php_bson.h"
-// #include "ServerDescription.c"
 
 zend_class_entry* php_phongo_server_ce;
 

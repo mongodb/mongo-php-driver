@@ -189,12 +189,12 @@ static PHP_METHOD(ServerDescription, isArbiter)
 static PHP_METHOD(ServerDescription, isHidden)
 {
 	php_phongo_serverdescription_t* intern;
+	bson_iter_t                     iter;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	bson_iter_t iter;
 	RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_hello_response(intern->server_description), "hidden") && bson_iter_as_bool(&iter));
 } /* }}} */
 
@@ -203,12 +203,12 @@ static PHP_METHOD(ServerDescription, isHidden)
 static PHP_METHOD(ServerDescription, isPassive)
 {
 	php_phongo_serverdescription_t* intern;
+	bson_iter_t                     iter;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	bson_iter_t iter;
 	RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_hello_response(intern->server_description), "passive") && bson_iter_as_bool(&iter));
 } /* }}} */
 
