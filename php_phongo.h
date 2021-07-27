@@ -176,9 +176,9 @@ bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
 		ce->unserialize = zend_class_unserialize_deny; \
 	} while (0)
 #else
-#define PHONGO_CE_DISABLE_SERIALIZATION(ce)            \
-	do {                                               \
-		ce->ce_flags |= ZEND_ACC_NOT_SERIALIZABLE;     \
+#define PHONGO_CE_DISABLE_SERIALIZATION(ce)        \
+	do {                                           \
+		ce->ce_flags |= ZEND_ACC_NOT_SERIALIZABLE; \
 	} while (0)
 #endif
 
