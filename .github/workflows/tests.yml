@@ -23,7 +23,8 @@ jobs:
         php-version:
           - "7.4"
           - "8.0"
-          - "8.1"
+          # Re-enable after PHPC-1849 is resolved
+          # - "8.1"
         mongodb-version:
           - "4.4"
         topology:
