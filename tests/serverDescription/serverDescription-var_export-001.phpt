@@ -16,7 +16,16 @@ echo var_export($server->getServerDescription(), true), "\n";
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 MongoDB\Driver\ServerDescription::__set_state(array(
+   'host' => '%s',
+   'port' => %d,
+   'type' => %d,
+   'hello_response' => 
+  array (
+    %a
+  ),
+   'last_update_time' => %d,
+   'round_trip_time' => %d,
 ))
 ===DONE===

@@ -70,19 +70,6 @@ static PHP_METHOD(ServerDescription, getHost)
 	RETVAL_STRING(mongoc_server_description_host(intern->server_description)->host);
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\ServerDescription::getId()
-   Returns the server’s id */
-static PHP_METHOD(ServerDescription, getId)
-{
-	php_phongo_serverdescription_t* intern;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETVAL_LONG((zend_long) mongoc_server_description_id(intern->server_description));
-} /* }}} */
-
 /* {{{ proto integer MongoDB\Driver\ServerDescription::getLastUpdateTime()
    Returns the server’s last update time, in microseconds */
 static PHP_METHOD(ServerDescription, getLastUpdateTime)
@@ -122,42 +109,6 @@ static PHP_METHOD(ServerDescription, getRoundTripTime)
 	RETVAL_LONG((zend_long) mongoc_server_description_round_trip_time(intern->server_description));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\ServerDescription::getTags()
-   Returns the server's currently configured tags */
-static PHP_METHOD(ServerDescription, getTags)
-{
-	php_phongo_serverdescription_t* intern;
-	const bson_t*                   helloResponse;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	helloResponse = mongoc_server_description_hello_response(intern->server_description);
-
-	if (helloResponse->len) {
-		bson_iter_t iter;
-
-		if (bson_iter_init_find(&iter, helloResponse, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
-			const uint8_t*        bytes;
-			uint32_t              len;
-			php_phongo_bson_state state;
-
-			PHONGO_BSON_INIT_DEBUG_STATE(state);
-			bson_iter_document(&iter, &len, &bytes);
-
-			if (!php_phongo_bson_to_zval_ex(bytes, len, &state)) {
-				zval_ptr_dtor(&state.zchild);
-				return;
-			}
-
-			RETURN_ZVAL(&state.zchild, 0, 1);
-		}
-
-		array_init(return_value);
-	}
-} /* }}} */
-
 /* {{{ proto integer MongoDB\Driver\ServerDescription::getType()
    Returns the server’s node type */
 static PHP_METHOD(ServerDescription, getType)
@@ -171,73 +122,6 @@ static PHP_METHOD(ServerDescription, getType)
 	RETVAL_LONG(php_phongo_server_description_type(intern->server_description));
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\ServerDescription::isArbiter()
-   Returns whether the server is an arbiter member of a replica set */
-static PHP_METHOD(ServerDescription, isArbiter)
-{
-	php_phongo_serverdescription_t* intern;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETVAL_BOOL(!strcmp(mongoc_server_description_type(intern->server_description), php_phongo_server_description_type_map[PHONGO_SERVER_RS_ARBITER].name));
-} /* }}} */
-
-/* {{{ proto boolean MongoDB\Driver\ServerDescription::isHidden()
-   Returns whether the server is a hidden member of a replica set */
-static PHP_METHOD(ServerDescription, isHidden)
-{
-	php_phongo_serverdescription_t* intern;
-	bson_iter_t                     iter;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_hello_response(intern->server_description), "hidden") && bson_iter_as_bool(&iter));
-} /* }}} */
-
-/* {{{ proto boolean MongoDB\Driver\ServerDescription::isPassive()
-   Returns whether the server is a passive member of a replica set */
-static PHP_METHOD(ServerDescription, isPassive)
-{
-	php_phongo_serverdescription_t* intern;
-	bson_iter_t                     iter;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETVAL_BOOL(bson_iter_init_find_case(&iter, mongoc_server_description_hello_response(intern->server_description), "passive") && bson_iter_as_bool(&iter));
-} /* }}} */
-
-/* {{{ proto boolean MongoDB\Driver\ServerDescription::isPrimary()
-   Returns whether the server is a primary member of a replica set */
-static PHP_METHOD(ServerDescription, isPrimary)
-{
-	php_phongo_serverdescription_t* intern;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETVAL_BOOL(!strcmp(mongoc_server_description_type(intern->server_description), php_phongo_server_description_type_map[PHONGO_SERVER_RS_PRIMARY].name));
-} /* }}} */
-
-/* {{{ proto boolean MongoDB\Driver\ServerDescription::isSecondary()
-   Returns whether the server is a secondary member of a replica set */
-static PHP_METHOD(ServerDescription, isSecondary)
-{
-	php_phongo_serverdescription_t* intern;
-
-	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	RETVAL_BOOL(!strcmp(mongoc_server_description_type(intern->server_description), php_phongo_server_description_type_map[PHONGO_SERVER_RS_SECONDARY].name));
-} /* }}} */
-
 /* {{{ MongoDB\Driver\ServerDescription function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_ServerDescription_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -246,17 +130,10 @@ static zend_function_entry php_phongo_serverdescription_me[] = {
 	/* clang-format off */
 	PHP_ME(ServerDescription, getHelloResponse, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ServerDescription, getHost, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerDescription, getId, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ServerDescription, getLastUpdateTime, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ServerDescription, getPort, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ServerDescription, getRoundTripTime, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerDescription, getTags, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ServerDescription, getType, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerDescription, isArbiter, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerDescription, isHidden, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerDescription, isPassive, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerDescription, isPrimary, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerDescription, isSecondary, ai_ServerDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_ServerDescription_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	PHP_FE_END
 	/* clang-format on */
@@ -298,14 +175,14 @@ static zend_object* php_phongo_serverdescription_create_object(zend_class_entry*
 
 HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
 {
-	php_phongo_serverdescription_t* intern;
-	HashTable*                      props;
+	php_phongo_serverdescription_t* intern = NULL;
+	zval                            retval = ZVAL_STATIC_INIT;
 
 	intern = Z_OBJ_SERVERDESCRIPTION(PHONGO_COMPAT_GET_OBJ(object));
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 0);
+	php_phongo_server_description_to_zval(&retval, intern->server_description);
 
-	return props;
+	return Z_ARRVAL(retval);
 } /* }}} */
 
 static HashTable* php_phongo_serverdescription_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
@@ -335,6 +212,16 @@ void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_serverdescription.get_properties = php_phongo_serverdescription_get_properties;
 	php_phongo_handler_serverdescription.free_obj       = php_phongo_serverdescription_free_object;
 	php_phongo_handler_serverdescription.offset         = XtOffsetOf(php_phongo_serverdescription_t, std);
+
+	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_UNKNOWN"), PHONGO_SERVER_UNKNOWN);
+	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_STANDALONE"), PHONGO_SERVER_STANDALONE);
+	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_MONGOS"), PHONGO_SERVER_MONGOS);
+	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_POSSIBLE_PRIMARY"), PHONGO_SERVER_POSSIBLE_PRIMARY);
+	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_PRIMARY"), PHONGO_SERVER_RS_PRIMARY);
+	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_SECONDARY"), PHONGO_SERVER_RS_SECONDARY);
+	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_ARBITER"), PHONGO_SERVER_RS_ARBITER);
+	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_OTHER"), PHONGO_SERVER_RS_OTHER);
+	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_GHOST"), PHONGO_SERVER_RS_GHOST);
 } /* }}} */
 
 /*
