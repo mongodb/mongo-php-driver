@@ -176,13 +176,48 @@ static zend_object* php_phongo_serverdescription_create_object(zend_class_entry*
 HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
 {
 	php_phongo_serverdescription_t* intern = NULL;
-	zval                            retval = ZVAL_STATIC_INIT;
+	HashTable*                      props;
 
 	intern = Z_OBJ_SERVERDESCRIPTION(PHONGO_COMPAT_GET_OBJ(object));
 
-	php_phongo_server_description_to_zval(&retval, intern->server_description);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
 
-	return Z_ARRVAL(retval);
+	{
+		zval                host, port, type;
+		mongoc_host_list_t* host_list = mongoc_server_description_host(intern->server_description);
+
+		ZVAL_STRING(&host, host_list->host);
+		zend_hash_str_update(props, "host", sizeof("host") - 1, &host);
+
+		ZVAL_LONG(&port, host_list->port);
+		zend_hash_str_update(props, "port", sizeof("port") - 1, &port);
+
+		ZVAL_LONG(&type, php_phongo_server_description_type(intern->server_description));
+		zend_hash_str_update(props, "type", sizeof("type") - 1, &type);
+	}
+
+	{
+		const bson_t*         hello_response = mongoc_server_description_hello_response(intern->server_description);
+		php_phongo_bson_state state;
+
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
+
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
+			return false;
+		}
+		zend_hash_str_update(props, "hello_response", sizeof("hello_response") - 1, &state.zchild);
+	}
+
+	{
+		zval last_update_time, round_trip_time;
+
+		ZVAL_LONG(&last_update_time, (zend_long) mongoc_server_description_last_update_time(intern->server_description));
+		zend_hash_str_update(props, "last_update_time", sizeof("last_update_time") - 1, &last_update_time);
+		ZVAL_LONG(&round_trip_time, (zend_long) mongoc_server_description_round_trip_time(intern->server_description));
+		zend_hash_str_update(props, "round_trip_time", sizeof("round_trip_time") - 1, &round_trip_time);
+	}
+
+	return props;
 } /* }}} */
 
 static HashTable* php_phongo_serverdescription_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
