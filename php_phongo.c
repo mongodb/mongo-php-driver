@@ -1177,7 +1177,6 @@ bool php_phongo_server_description_to_zval(zval* retval, mongoc_server_descripti
 {
 	mongoc_host_list_t* host           = mongoc_server_description_host(sd);
 	const bson_t*       hello_response = mongoc_server_description_hello_response(sd);
-	bson_iter_t         iter;
 
 	array_init(retval);
 
