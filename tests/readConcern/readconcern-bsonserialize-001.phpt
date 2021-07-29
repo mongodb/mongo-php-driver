@@ -11,6 +11,7 @@ $tests = [
     new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::LOCAL),
     new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::MAJORITY),
     new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::AVAILABLE),
+    new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::SNAPSHOT),
 ];
 
 foreach ($tests as $test) {
@@ -26,4 +27,5 @@ foreach ($tests as $test) {
 { "level" : "local" }
 { "level" : "majority" }
 { "level" : "available" }
+{ "level" : "snapshot" }
 ===DONE===

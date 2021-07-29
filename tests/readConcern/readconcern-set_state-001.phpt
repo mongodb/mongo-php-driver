@@ -8,6 +8,7 @@ $tests = [
     MongoDB\Driver\ReadConcern::LINEARIZABLE,
     MongoDB\Driver\ReadConcern::LOCAL,
     MongoDB\Driver\ReadConcern::MAJORITY,
+    MongoDB\Driver\ReadConcern::SNAPSHOT,
 ];
 
 foreach ($tests as $level) {
@@ -40,6 +41,10 @@ MongoDB\Driver\ReadConcern::__set_state(array(
 
 MongoDB\Driver\ReadConcern::__set_state(array(
 %w'level' => 'majority',
+))
+
+MongoDB\Driver\ReadConcern::__set_state(array(
+%w'level' => 'snapshot',
 ))
 
 MongoDB\Driver\ReadConcern::__set_state(array(
