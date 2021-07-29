@@ -29,11 +29,12 @@
 zend_class_entry* php_phongo_serverdescription_ce;
 
 /* {{{ proto array MongoDB\Driver\ServerDescription::getHelloResponse()
-   Returns the most recent “hello” response */
+   Returns the most recent "hello" response */
 static PHP_METHOD(ServerDescription, getHelloResponse)
 {
 	php_phongo_serverdescription_t* intern;
 	const bson_t*                   helloResponse;
+	php_phongo_bson_state           state;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
 
@@ -41,24 +42,19 @@ static PHP_METHOD(ServerDescription, getHelloResponse)
 
 	helloResponse = mongoc_server_description_hello_response(intern->server_description);
 
-	if (helloResponse->len) {
-		php_phongo_bson_state state;
+	PHONGO_BSON_INIT_DEBUG_STATE(state);
 
-		PHONGO_BSON_INIT_DEBUG_STATE(state);
-
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(helloResponse), helloResponse->len, &state)) {
-			zval_ptr_dtor(&state.zchild);
-			return;
-		}
-
-		RETURN_ZVAL(&state.zchild, 0, 1);
-	} else {
-		RETURN_NULL();
+	if (!php_phongo_bson_to_zval_ex(bson_get_data(helloResponse), helloResponse->len, &state)) {
+		/* Exception should already have been thrown */
+		zval_ptr_dtor(&state.zchild);
+		return;
 	}
+
+	RETURN_ZVAL(&state.zchild, 0, 1);
 } /* }}} */
 
 /* {{{ proto string MongoDB\Driver\ServerDescription::getHost()
-   Returns the server’s hostname */
+   Returns the server's hostname */
 static PHP_METHOD(ServerDescription, getHost)
 {
 	php_phongo_serverdescription_t* intern;
@@ -80,7 +76,7 @@ static PHP_METHOD(ServerDescription, getLastUpdateTime)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_LONG((zend_long) mongoc_server_description_last_update_time(intern->server_description));
+	RETVAL_LONG(mongoc_server_description_last_update_time(intern->server_description));
 } /* }}} */
 
 /* {{{ proto integer MongoDB\Driver\ServerDescription::getPort()
@@ -106,7 +102,7 @@ static PHP_METHOD(ServerDescription, getRoundTripTime)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_LONG((zend_long) mongoc_server_description_round_trip_time(intern->server_description));
+	RETVAL_LONG(mongoc_server_description_round_trip_time(intern->server_description));
 } /* }}} */
 
 /* {{{ proto integer MongoDB\Driver\ServerDescription::getType()
@@ -180,7 +176,7 @@ HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object
 
 	intern = Z_OBJ_SERVERDESCRIPTION(PHONGO_COMPAT_GET_OBJ(object));
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 6);
 
 	{
 		zval                host, port, type;
@@ -203,7 +199,8 @@ HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
 
 		if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
-			return false;
+			zval_ptr_dtor(&state.zchild);
+			goto done;
 		}
 		zend_hash_str_update(props, "hello_response", sizeof("hello_response") - 1, &state.zchild);
 	}
@@ -211,12 +208,13 @@ HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object
 	{
 		zval last_update_time, round_trip_time;
 
-		ZVAL_LONG(&last_update_time, (zend_long) mongoc_server_description_last_update_time(intern->server_description));
+		ZVAL_LONG(&last_update_time, mongoc_server_description_last_update_time(intern->server_description));
 		zend_hash_str_update(props, "last_update_time", sizeof("last_update_time") - 1, &last_update_time);
-		ZVAL_LONG(&round_trip_time, (zend_long) mongoc_server_description_round_trip_time(intern->server_description));
+		ZVAL_LONG(&round_trip_time, mongoc_server_description_round_trip_time(intern->server_description));
 		zend_hash_str_update(props, "round_trip_time", sizeof("round_trip_time") - 1, &round_trip_time);
 	}
 
+done:
 	return props;
 } /* }}} */
 

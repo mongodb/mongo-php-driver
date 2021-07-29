@@ -13,24 +13,15 @@ $expected_types = array(
     MongoDB\Driver\ServerDescription::TYPE_RS_PRIMARY
 );
 
-function isExpectedType(int $type, array $expected_types) {
-    foreach ($expected_types as $expected_type) {
-        if ($expected_type == $type) {
-            return true;
-        }
-    }
-    return false;
-}
-
 $manager = create_test_manager();
 $server = $manager->selectServer(new MongoDB\Driver\ReadPreference('primary'));
 $type = $server->getServerDescription()->getType();
 
-var_dump(isExpectedType($type, $expected_types));
+var_dump(in_array($type, $expected_types));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 bool(true)
 ===DONE===
