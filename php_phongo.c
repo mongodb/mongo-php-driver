@@ -1173,35 +1173,6 @@ php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_s
 	return PHONGO_SERVER_UNKNOWN;
 }
 
-bool php_phongo_server_description_to_zval(zval* retval, mongoc_server_description_t* sd) /* {{{ */
-{
-	mongoc_host_list_t* host           = mongoc_server_description_host(sd);
-	const bson_t*       hello_response = mongoc_server_description_hello_response(sd);
-
-	array_init(retval);
-
-	ADD_ASSOC_STRING(retval, "host", host->host);
-	ADD_ASSOC_LONG_EX(retval, "port", host->port);
-	ADD_ASSOC_LONG_EX(retval, "type", php_phongo_server_description_type(sd));
-
-	{
-		php_phongo_bson_state state;
-
-		PHONGO_BSON_INIT_DEBUG_STATE(state);
-
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
-			zval_ptr_dtor(&state.zchild);
-			return false;
-		}
-
-		ADD_ASSOC_ZVAL_EX(retval, "hello_response", &state.zchild);
-	}
-	ADD_ASSOC_LONG_EX(retval, "last_update_time", (zend_long) mongoc_server_description_last_update_time(sd));
-	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (zend_long) mongoc_server_description_round_trip_time(sd));
-
-	return true;
-} /* }}} */
-
 bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /* {{{ */
 {
 	mongoc_host_list_t* host           = mongoc_server_description_host(sd);
