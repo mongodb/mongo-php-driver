@@ -63,6 +63,10 @@ static inline php_phongo_server_t* php_server_fetch_object(zend_object* obj)
 {
 	return (php_phongo_server_t*) ((char*) obj - XtOffsetOf(php_phongo_server_t, std));
 }
+static inline php_phongo_serverdescription_t* php_serverdescription_fetch_object(zend_object* obj)
+{
+	return (php_phongo_serverdescription_t*) ((char*) obj - XtOffsetOf(php_phongo_serverdescription_t, std));
+}
 static inline php_phongo_serverapi_t* php_serverapi_fetch_object(zend_object* obj)
 {
 	return (php_phongo_serverapi_t*) ((char*) obj - XtOffsetOf(php_phongo_serverapi_t, std));
@@ -162,6 +166,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_READPREFERENCE_OBJ_P(zv) (php_readpreference_fetch_object(Z_OBJ_P(zv)))
 #define Z_SERVER_OBJ_P(zv) (php_server_fetch_object(Z_OBJ_P(zv)))
 #define Z_SERVERAPI_OBJ_P(zv) (php_serverapi_fetch_object(Z_OBJ_P(zv)))
+#define Z_SERVERDESCRIPTION_OBJ_P(zv) (php_serverdescription_fetch_object(Z_OBJ_P(zv)))
 #define Z_SESSION_OBJ_P(zv) (php_session_fetch_object(Z_OBJ_P(zv)))
 #define Z_BULKWRITE_OBJ_P(zv) (php_bulkwrite_fetch_object(Z_OBJ_P(zv)))
 #define Z_WRITECONCERN_OBJ_P(zv) (php_writeconcern_fetch_object(Z_OBJ_P(zv)))
@@ -195,6 +200,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_OBJ_READPREFERENCE(zo) (php_readpreference_fetch_object(zo))
 #define Z_OBJ_SERVER(zo) (php_server_fetch_object(zo))
 #define Z_OBJ_SERVERAPI(zo) (php_serverapi_fetch_object(zo))
+#define Z_OBJ_SERVERDESCRIPTION(zo) (php_serverdescription_fetch_object(zo))
 #define Z_OBJ_SESSION(zo) (php_session_fetch_object(zo))
 #define Z_OBJ_BULKWRITE(zo) (php_bulkwrite_fetch_object(zo))
 #define Z_OBJ_WRITECONCERN(zo) (php_writeconcern_fetch_object(zo))
@@ -228,6 +234,7 @@ extern zend_class_entry* php_phongo_readconcern_ce;
 extern zend_class_entry* php_phongo_readpreference_ce;
 extern zend_class_entry* php_phongo_server_ce;
 extern zend_class_entry* php_phongo_serverapi_ce;
+extern zend_class_entry* php_phongo_serverdescription_ce;
 extern zend_class_entry* php_phongo_session_ce;
 extern zend_class_entry* php_phongo_bulkwrite_ce;
 extern zend_class_entry* php_phongo_writeconcern_ce;
@@ -326,6 +333,7 @@ extern void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_server_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_session_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS);
