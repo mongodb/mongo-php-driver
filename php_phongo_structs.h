@@ -115,6 +115,12 @@ typedef struct {
 } php_phongo_serverapi_t;
 
 typedef struct {
+	mongoc_server_description_t* server_description;
+	HashTable*                   properties;
+	zend_object                  std;
+} php_phongo_serverdescription_t;
+
+typedef struct {
 	mongoc_client_session_t* client_session;
 	zval                     manager;
 	int                      created_by_pid;
