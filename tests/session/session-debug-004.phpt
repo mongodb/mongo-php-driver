@@ -30,6 +30,8 @@ object(MongoDB\Driver\Session)#%d (%d) {
   NULL
   ["causalConsistency"]=>
   NULL
+  ["snapshot"]=>
+  NULL
   ["operationTime"]=>
   NULL
   ["server"]=>
