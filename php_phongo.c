@@ -406,6 +406,17 @@ void phongo_session_init(zval* return_value, zval* manager, mongoc_client_sessio
 }
 /* }}} */
 
+void phongo_topologydescription_init(zval* return_value, mongoc_topology_description_t* topology_description) /* {{{ */
+{
+	php_phongo_topologydescription_t* intern;
+
+	object_init_ex(return_value, php_phongo_topologydescription_ce);
+
+	intern                       = Z_TOPOLOGYDESCRIPTION_OBJ_P(return_value);
+	intern->topology_description = topology_description;
+}
+/* }}} */
+
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern) /* {{{ */
 {
 	php_phongo_readconcern_t* intern;
@@ -1159,6 +1170,35 @@ const mongoc_read_prefs_t* phongo_read_preference_from_zval(zval* zread_preferen
 /* }}} */
 
 /* {{{ phongo zval from mongoc types */
+bool php_phongo_server_description_to_zval(zval* retval, mongoc_server_description_t* sd) /* {{{ */
+{
+	mongoc_host_list_t* host           = mongoc_server_description_host(sd);
+	const bson_t*       hello_response = mongoc_server_description_hello_response(sd);
+
+	array_init(retval);
+
+	ADD_ASSOC_STRING(retval, "host", host->host);
+	ADD_ASSOC_LONG_EX(retval, "port", host->port);
+	ADD_ASSOC_LONG_EX(retval, "type", php_phongo_server_description_type(sd));
+
+	{
+		php_phongo_bson_state state;
+
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
+
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			return false;
+		}
+
+		ADD_ASSOC_ZVAL_EX(retval, "hello_response", &state.zchild);
+	}
+	ADD_ASSOC_LONG_EX(retval, "last_update_time", (zend_long) mongoc_server_description_last_update_time(sd));
+	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (zend_long) mongoc_server_description_round_trip_time(sd));
+
+	return true;
+} /* }}} */
+
 php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t* sd)
 {
 	const char* name = mongoc_server_description_type(sd);
@@ -1219,6 +1259,13 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 	}
 	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (zend_long) mongoc_server_description_round_trip_time(sd));
 
+	return true;
+} /* }}} */
+
+bool php_phongo_topology_description_to_zval(zval* retval, mongoc_topology_description_t* td) /* {{{ */
+{
+	array_init(retval);
+	// TODO
 	return true;
 } /* }}} */
 
@@ -3750,6 +3797,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_server_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_serverapi_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_session_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS_PASSTHRU);

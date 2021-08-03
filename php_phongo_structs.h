@@ -128,6 +128,12 @@ typedef struct {
 } php_phongo_session_t;
 
 typedef struct {
+	mongoc_topology_description_t* topology_description;
+	HashTable*                     properties;
+	zend_object                    std;
+} php_phongo_topologydescription_t;
+
+typedef struct {
 	HashTable*              properties;
 	mongoc_write_concern_t* write_concern;
 	zend_object             std;

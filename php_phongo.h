@@ -117,6 +117,7 @@ void phongo_clientencryption_init(php_phongo_clientencryption_t* ce_obj, zval* m
 void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id);
 void phongo_serverdescription_init(zval* return_value, mongoc_server_description_t* serverDescription);
 void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session);
+void phongo_topologydescription_init(zval* return_value, mongoc_topology_description_t* topologyDescription);
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern);
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs);
 void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern);
@@ -130,7 +131,7 @@ const mongoc_read_concern_t*  phongo_read_concern_from_zval(zval* zread_concern)
 const mongoc_read_prefs_t*    phongo_read_preference_from_zval(zval* zread_preference);
 const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concern);
 
-php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t* sd);
+php_phongo_server_description_type_t   php_phongo_server_description_type(mongoc_server_description_t* sd);
 
 bool phongo_parse_read_preference(zval* options, zval** zreadPreference);
 bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession);
@@ -143,6 +144,7 @@ bool php_phongo_read_preference_tags_are_valid(const bson_t* tags);
 
 bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd);
 bool php_phongo_server_description_to_zval(zval* retval, mongoc_server_description_t* sd);
+bool php_phongo_topology_description_to_zval(zval* retval, mongoc_topology_description_t* td);
 void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* read_concern);
 void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern);
 
