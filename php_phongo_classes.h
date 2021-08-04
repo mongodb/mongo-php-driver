@@ -159,6 +159,10 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 {
 	return (php_phongo_commandsucceededevent_t*) ((char*) obj - XtOffsetOf(php_phongo_commandsucceededevent_t, std));
 }
+static inline php_phongo_topologychangedevent_t* php_topologychangedevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_topologychangedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_topologychangedevent_t, std));
+}
 
 #define Z_CLIENTENCRYPTION_OBJ_P(zv) (php_clientencryption_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMAND_OBJ_P(zv) (php_command_fetch_object(Z_OBJ_P(zv)))
@@ -194,6 +198,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_COMMANDFAILEDEVENT_OBJ_P(zv) (php_commandfailedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMANDSTARTEDEVENT_OBJ_P(zv) (php_commandstartedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMANDSUCCEEDEDEVENT_OBJ_P(zv) (php_commandsucceededevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_TOPOLOGYCHANGEDEVENT_OBJ_P(zv) (php_topologychangedevent_fetch_object(Z_OBJ_P(zv)))
 
 #define Z_OBJ_CLIENTENCRYPTION(zo) (php_clientencryption_fetch_object(zo))
 #define Z_OBJ_COMMAND(zo) (php_command_fetch_object(zo))
@@ -229,6 +234,7 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_OBJ_COMMANDFAILEDEVENT(zo) (php_commandfailedevent_fetch_object(zo))
 #define Z_OBJ_COMMANDSTARTEDEVENT(zo) (php_commandstartedevent_fetch_object(zo))
 #define Z_OBJ_COMMANDSUCCEEDEDEVENT(zo) (php_commandsucceededevent_fetch_object(zo))
+#define Z_OBJ_TOPOLOGYCHANGEDEVENT(zo) (php_topologychangedevent_fetch_object(zo))
 
 extern zend_class_entry* php_phongo_clientencryption_ce;
 extern zend_class_entry* php_phongo_command_ce;
@@ -299,7 +305,9 @@ extern zend_class_entry* php_phongo_commandfailedevent_ce;
 extern zend_class_entry* php_phongo_commandstartedevent_ce;
 extern zend_class_entry* php_phongo_commandsubscriber_ce;
 extern zend_class_entry* php_phongo_commandsucceededevent_ce;
+extern zend_class_entry* php_phongo_sdamsubscriber_ce;
 extern zend_class_entry* php_phongo_subscriber_ce;
+extern zend_class_entry* php_phongo_topologychangedevent_ce;
 
 extern void php_phongo_binary_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS);
@@ -370,7 +378,9 @@ extern void php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_subscriber_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS);
 
 /* Shared function entries for disabling constructors and unserialize() */
 PHP_FUNCTION(MongoDB_disabled___construct);

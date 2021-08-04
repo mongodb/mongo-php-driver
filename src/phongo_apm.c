@@ -262,6 +262,36 @@ cleanup:
 	FREE_HASHTABLE(subscribers);
 }
 
+static void phongo_apm_topology_changed(const mongoc_apm_topology_changed_t* event)
+{
+	mongoc_client_t*                  client;
+	HashTable*                        subscribers;
+	php_phongo_topologychangedevent_t* 	  p_event;
+	zval                              z_event;
+
+	client      = mongoc_apm_topology_changed_get_context(event);
+	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+
+	/* Return early if there are no APM subscribers to notify */
+	if (zend_hash_num_elements(subscribers) == 0) {
+		goto cleanup;
+	}
+
+	object_init_ex(&z_event, php_phongo_topologychangedevent_ce); // todo
+	p_event = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(&z_event); // todo
+
+	mongoc_apm_topology_changed_get_topology_id(event, &p_event->topology_id);
+	p_event->new_topology_description = mongoc_topology_description_new_copy(mongoc_apm_topology_changed_get_new_description(event));
+	p_event->new_topology_description = mongoc_topology_description_new_copy(mongoc_apm_topology_changed_get_previous_description(event));
+
+	phongo_apm_dispatch_event(subscribers, "topologyChanged", &z_event);
+	zval_ptr_dtor(&z_event);
+
+cleanup:
+	zend_hash_destroy(subscribers);
+	FREE_HASHTABLE(subscribers);
+}
+
 /* Assigns APM callbacks to a client, which will notify any global or per-client
  * subscribers. This should be called for all clients created by the driver.
  * Returns true on success; otherwise, throws an exception and returns false. */
@@ -274,6 +304,7 @@ bool phongo_apm_set_callbacks(mongoc_client_t* client)
 	mongoc_apm_set_command_started_cb(callbacks, phongo_apm_command_started);
 	mongoc_apm_set_command_succeeded_cb(callbacks, phongo_apm_command_succeeded);
 	mongoc_apm_set_command_failed_cb(callbacks, phongo_apm_command_failed);
+	mongoc_apm_set_topology_changed_cb(callbacks, phongo_apm_topology_changed);
 
 	retval = mongoc_client_set_apm_callbacks(client, callbacks, client);
 

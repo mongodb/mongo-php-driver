@@ -1265,7 +1265,32 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd) /*
 bool php_phongo_topology_description_to_zval(zval* retval, mongoc_topology_description_t* td) /* {{{ */
 {
 	array_init(retval);
-	// TODO
+
+	{
+		zval                          servers;
+		size_t                        i, n = 0;
+		mongoc_server_description_t** sds = mongoc_topology_description_get_servers(td, &n);
+
+		array_init_size(&servers, n);
+
+		for (i = 0; i < n; i++) {
+			zval obj;
+
+			if (!php_phongo_server_description_to_zval(&obj, sds[i])) {
+				/* Exception already thrown */
+				zval_ptr_dtor(&obj);
+				zval_ptr_dtor(&servers);
+				mongoc_server_descriptions_destroy_all(sds, n);
+				return false;
+			}
+
+			add_next_index_zval(&servers, &obj);
+		}
+
+		ADD_ASSOC_ZVAL_EX(retval, "servers", &servers);
+	}
+	ADD_ASSOC_STRING(retval, "type", mongoc_topology_description_type(td));
+
 	return true;
 } /* }}} */
 
@@ -3828,6 +3853,8 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char*) PHP_MONGODB_VERSION, CONST_CS | CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("MONGODB_STABILITY", (char*) PHP_MONGODB_STABILITY, CONST_CS | CONST_PERSISTENT);

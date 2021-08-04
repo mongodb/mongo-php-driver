@@ -171,7 +171,9 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/Monitoring/CommandStartedEvent.c \
     src/MongoDB/Monitoring/CommandSubscriber.c \
     src/MongoDB/Monitoring/CommandSucceededEvent.c \
+    src/MongoDB/Monitoring/SDAMSubscriber.c \
     src/MongoDB/Monitoring/Subscriber.c \
+    src/MongoDB/Monitoring/TopologyChangedEvent.c \
     src/MongoDB/Monitoring/functions.c \
   "
 
