@@ -46,6 +46,8 @@ object(MongoDB\Driver\Session)#%d (%d) {
   }
   ["causalConsistency"]=>
   bool(true)
+  ["snapshot"]=>
+  bool(false)
   ["operationTime"]=>
   object(MongoDB\BSON\Timestamp)#%d (%d) {
     ["increment"]=>

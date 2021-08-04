@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Session debug output (before an operation)
+MongoDB\Driver\Session debug output (snapshot=true)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
@@ -10,7 +10,7 @@ MongoDB\Driver\Session debug output (before an operation)
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
-$session = $manager->startSession();
+$session = $manager->startSession(['snapshot' => true]);
 
 var_dump($session);
 
@@ -32,9 +32,9 @@ object(MongoDB\Driver\Session)#%d (%d) {
   ["clusterTime"]=>
   NULL
   ["causalConsistency"]=>
-  bool(true)
-  ["snapshot"]=>
   bool(false)
+  ["snapshot"]=>
+  bool(true)
   ["operationTime"]=>
   NULL
   ["server"]=>

@@ -33,6 +33,8 @@ object(MongoDB\Driver\Session)#%d (%d) {
   NULL
   ["causalConsistency"]=>
   bool(false)
+  ["snapshot"]=>
+  bool(false)
   ["operationTime"]=>
   NULL
   ["server"]=>

@@ -131,13 +131,22 @@ reflect the new sources and/or package version.
 
 ### Updating libmongoc and libbson
 
-#### Update libmongoc to the latest version
+#### Update libmongoc submodule
 
 ```
 $ cd src/libmongoc
 $ git fetch
 $ git checkout 1.15.0
 ```
+
+During development, it may be necessary to temporarily point the libmongoc
+submodule to a commit on the developer's fork of libmongoc. For instance, the
+developer may be working on a PHP driver feature that depends on an unmerged
+pull request to libmongoc. In this case, `git remote add` can be used to add
+the fork before fetching and checking out the target commit. Additionally, the
+submodule path in
+[`.gitmodules`](https://github.com/mongodb/mongo-php-driver/blob/master/.gitmodules)
+must also be updated to refer to the fork.
 
 #### Ensure libmongoc version information is correct
 
@@ -151,6 +160,12 @@ $ make libmongoc-version-current
 
 Alternatively, the `build/calc_release_version.py` script in libmongoc can be
 executed directly.
+
+Note: If the libmongoc submodule points to a non-release, non-master branch, the
+script may fail to correctly detect the version. This issue is being tracked in
+[CDRIVER-3315](https://jira.mongodb.org/browse/CDRIVER-3315) and can be safely
+ignored since this should only happen during development (any PHP driver release
+should point to a tagged libmongoc release).
 
 #### Update sources in build configurations
 
@@ -181,12 +196,13 @@ if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.15.0; then
 AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.15.0)
 ```
 
-#### Update tested versions in evergreen configuration
+#### Update tested versions in Evergreen configuration
 
 Evergreen tests against multiple versions of libmongoc. When updating to a newer
 libmongoc version, make sure to update the `libmongoc-version` build axis in
 `.evergreen/config.yml`. In general, we test against two additional versions of
 libmongoc:
+
 - The upcoming patch release of the current libmongoc minor version (e.g. the
   `r1.x` branch)
 - The upcoming minor release of libmongoc (e.g. the `master` branch)
