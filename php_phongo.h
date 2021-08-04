@@ -131,7 +131,7 @@ const mongoc_read_concern_t*  phongo_read_concern_from_zval(zval* zread_concern)
 const mongoc_read_prefs_t*    phongo_read_preference_from_zval(zval* zread_preference);
 const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concern);
 
-php_phongo_server_description_type_t   php_phongo_server_description_type(mongoc_server_description_t* sd);
+php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t* sd);
 
 bool phongo_parse_read_preference(zval* options, zval** zreadPreference);
 bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession);

@@ -30,7 +30,7 @@ zend_class_entry* php_phongo_topologychangedevent_ce;
    Returns this event's new description */
 PHP_METHOD(TopologyChangedEvent, getNewDescription)
 {
-	mongoc_topology_description_t* topology_description;
+	mongoc_topology_description_t*     topology_description;
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -44,7 +44,7 @@ PHP_METHOD(TopologyChangedEvent, getNewDescription)
    Returns this event's previous description */
 PHP_METHOD(TopologyChangedEvent, getPreviousDescription)
 {
-	mongoc_topology_description_t* topology_description;
+	mongoc_topology_description_t*     topology_description;
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();

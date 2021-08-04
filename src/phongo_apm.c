@@ -264,10 +264,10 @@ cleanup:
 
 static void phongo_apm_topology_changed(const mongoc_apm_topology_changed_t* event)
 {
-	mongoc_client_t*                  client;
-	HashTable*                        subscribers;
-	php_phongo_topologychangedevent_t* 	  p_event;
-	zval                              z_event;
+	mongoc_client_t*                   client;
+	HashTable*                         subscribers;
+	php_phongo_topologychangedevent_t* p_event;
+	zval                               z_event;
 
 	client      = mongoc_apm_topology_changed_get_context(event);
 	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
@@ -278,7 +278,7 @@ static void phongo_apm_topology_changed(const mongoc_apm_topology_changed_t* eve
 	}
 
 	object_init_ex(&z_event, php_phongo_topologychangedevent_ce); // todo
-	p_event = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(&z_event); // todo
+	p_event = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(&z_event);             // todo
 
 	mongoc_apm_topology_changed_get_topology_id(event, &p_event->topology_id);
 	p_event->new_topology_description = mongoc_topology_description_new_copy(mongoc_apm_topology_changed_get_new_description(event));

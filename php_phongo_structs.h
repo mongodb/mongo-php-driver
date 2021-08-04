@@ -285,10 +285,10 @@ typedef struct {
 } php_phongo_commandsucceededevent_t;
 
 typedef struct {
-	bson_oid_t topology_id;
+	bson_oid_t                     topology_id;
 	mongoc_topology_description_t* new_topology_description;
 	mongoc_topology_description_t* old_topology_description;
-	zend_object std;
+	zend_object                    std;
 } php_phongo_topologychangedevent_t;
 
 #endif /* PHONGO_STRUCTS */
