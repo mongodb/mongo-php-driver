@@ -740,8 +740,10 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 	if (intern->client_session) {
 		const mongoc_session_opt_t* cs_opts = mongoc_client_session_get_opts(intern->client_session);
 		ADD_ASSOC_BOOL_EX(&retval, "causalConsistency", mongoc_session_opts_get_causal_consistency(cs_opts));
+		ADD_ASSOC_BOOL_EX(&retval, "snapshot", mongoc_session_opts_get_snapshot(cs_opts));
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "causalConsistency");
+		ADD_ASSOC_NULL_EX(&retval, "snapshot");
 	}
 
 	if (intern->client_session) {

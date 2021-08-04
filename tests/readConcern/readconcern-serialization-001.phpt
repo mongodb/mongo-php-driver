@@ -11,6 +11,7 @@ $tests = [
     new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::LOCAL),
     new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::MAJORITY),
     new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::AVAILABLE),
+    new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::SNAPSHOT),
 ];
 
 foreach ($tests as $test) {
@@ -74,6 +75,17 @@ C:26:"MongoDB\Driver\ReadConcern":34:{a:1:{s:5:"level";s:9:"available";}}
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>
   string(9) "available"
+}
+
+object(MongoDB\Driver\ReadConcern)#%d (%d) {
+  ["level"]=>
+  string(8) "snapshot"
+}
+bool(true)
+C:26:"MongoDB\Driver\ReadConcern":33:{a:1:{s:5:"level";s:8:"snapshot";}}
+object(MongoDB\Driver\ReadConcern)#%d (%d) {
+  ["level"]=>
+  string(8) "snapshot"
 }
 
 ===DONE===

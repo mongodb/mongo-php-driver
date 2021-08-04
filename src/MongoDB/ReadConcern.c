@@ -370,6 +370,7 @@ void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_MAJORITY));
 	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("LINEARIZABLE"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_LINEARIZABLE));
 	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("AVAILABLE"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_AVAILABLE));
+	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("SNAPSHOT"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_SNAPSHOT));
 } /* }}} */
 
 /*

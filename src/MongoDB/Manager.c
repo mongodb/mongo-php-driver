@@ -805,6 +805,18 @@ static PHP_METHOD(Manager, startSession)
 		}
 	}
 
+	if (options && php_array_existsc(options, "snapshot")) {
+		if (!cs_opts) {
+			cs_opts = mongoc_session_opts_new();
+		}
+		mongoc_session_opts_set_snapshot(cs_opts, php_array_fetchc_bool(options, "snapshot"));
+	}
+
+	if (cs_opts && mongoc_session_opts_get_causal_consistency(cs_opts) && mongoc_session_opts_get_snapshot(cs_opts)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Only one of \"causalConsistency\" and \"snapshot\" can be enabled");
+		goto cleanup;
+	}
+
 	/* If the Manager was created in a different process, reset the client so
 	 * that its session pool is cleared. This will ensure that we do not re-use
 	 * a server session (i.e. LSID) created by a parent process. */
