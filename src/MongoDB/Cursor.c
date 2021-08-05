@@ -351,6 +351,22 @@ PHP_METHOD(Cursor, rewind)
 }
 
 /* {{{ MongoDB\Driver\Cursor function entries */
+/* clang-format off */
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Cursor_current, 0, 0, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Cursor_key, 0, 0, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Cursor_next, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Cursor_valid, 0, 0, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Cursor_rewind, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_setTypeMap, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, typemap, 0)
 ZEND_END_ARG_INFO()
@@ -359,24 +375,23 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_cursor_me[] = {
-	/* clang-format off */
 	PHP_ME(Cursor, setTypeMap, ai_Cursor_setTypeMap, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Cursor, toArray, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Cursor, getId, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Cursor, getServer, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Cursor, isDead, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 
-	PHP_ME(Cursor, current, ai_Cursor_void, ZEND_ACC_PUBLIC)
-	PHP_ME(Cursor, key, ai_Cursor_void, ZEND_ACC_PUBLIC)
-	PHP_ME(Cursor, next, ai_Cursor_void, ZEND_ACC_PUBLIC)
-	PHP_ME(Cursor, valid, ai_Cursor_void, ZEND_ACC_PUBLIC)
-	PHP_ME(Cursor, rewind, ai_Cursor_void, ZEND_ACC_PUBLIC)
+	PHP_ME(Cursor, current, ai_Cursor_current, ZEND_ACC_PUBLIC)
+	PHP_ME(Cursor, key, ai_Cursor_key, ZEND_ACC_PUBLIC)
+	PHP_ME(Cursor, next, ai_Cursor_next, ZEND_ACC_PUBLIC)
+	PHP_ME(Cursor, valid, ai_Cursor_valid, ZEND_ACC_PUBLIC)
+	PHP_ME(Cursor, rewind, ai_Cursor_rewind, ZEND_ACC_PUBLIC)
 
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Cursor_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 /* {{{ MongoDB\Driver\Cursor object handlers */
