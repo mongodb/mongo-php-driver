@@ -60,6 +60,29 @@ static PHP_METHOD(TopologyDescription, getServers)
 	mongoc_server_descriptions_destroy_all(sds, n);
 } /* }}} */
 
+/* {{{ proto boolean MongoDB\Driver\TopologyDescription::hasReadableServer()
+    Returns whether the topology has a readable server available */
+static PHP_METHOD(TopologyDescription, hasReadableServer)
+{
+	php_phongo_topologydescription_t* intern          = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
+	const mongoc_read_prefs_t*        read_preference = NULL;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETVAL_BOOL(mongoc_topology_description_has_readable_server(intern->topology_description, read_preference));
+} /* }}} */
+
+/* {{{ proto boolean MongoDB\Driver\TopologyDescription::hasWritableServer()
+    Returns whether the topology has a writable server available */
+static PHP_METHOD(TopologyDescription, hasWritableServer)
+{
+	php_phongo_topologydescription_t* intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETVAL_BOOL(mongoc_topology_description_has_writable_server(intern->topology_description));
+} /* }}} */
+
 /* {{{ proto string MongoDB\Driver\TopologyDescription::getType()
     Returns the topology type */
 static PHP_METHOD(TopologyDescription, getType)
@@ -78,6 +101,8 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_topologydescription_me[] = {
 	/* clang-format off */
 	PHP_ME(TopologyDescription, getServers, ai_TopologyDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(TopologyDescription, hasReadableServer, ai_TopologyDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(TopologyDescription, hasWritableServer, ai_TopologyDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(TopologyDescription, getType, ai_TopologyDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_TopologyDescription_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	PHP_FE_END
