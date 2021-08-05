@@ -35,7 +35,7 @@ zend_class_entry* php_phongo_topologydescription_ce;
 #define PHONGO_TOPOLOGY_REPLICA_SET_WITH_PRIMARY "ReplicaSetWithPrimary"
 
 /* {{{ proto array MongoDB\Driver\TopologyDescription::getServers()
-   Returns an array of mongoc_server_description_t structs for all known servers in the topology */
+   Returns an array of ServerDescription objects for all known servers in the topology */
 static PHP_METHOD(TopologyDescription, getServers)
 {
 	php_phongo_topologydescription_t* intern;
@@ -53,7 +53,7 @@ static PHP_METHOD(TopologyDescription, getServers)
 	for (i = 0; i < n; i++) {
 		zval obj;
 
-		phongo_server_init(&obj, getThis(), mongoc_server_description_id(sds[i]));
+		php_phongo_server_description_to_zval(&obj, sds[i]);
 		add_next_index_zval(return_value, &obj);
 	}
 
@@ -126,6 +126,10 @@ HashTable* php_phongo_topologydescription_get_properties_hash(phongo_compat_obje
 	intern = Z_OBJ_TOPOLOGYDESCRIPTION(PHONGO_COMPAT_GET_OBJ(object));
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
+
+	if (!intern->topology_description) {
+		return props;
+	}
 
 	{
 		zval                          servers;

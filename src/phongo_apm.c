@@ -277,12 +277,12 @@ static void phongo_apm_topology_changed(const mongoc_apm_topology_changed_t* eve
 		goto cleanup;
 	}
 
-	object_init_ex(&z_event, php_phongo_topologychangedevent_ce); // todo
-	p_event = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(&z_event);             // todo
+	object_init_ex(&z_event, php_phongo_topologychangedevent_ce);
+	p_event = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(&z_event);
 
 	mongoc_apm_topology_changed_get_topology_id(event, &p_event->topology_id);
 	p_event->new_topology_description = mongoc_topology_description_new_copy(mongoc_apm_topology_changed_get_new_description(event));
-	p_event->new_topology_description = mongoc_topology_description_new_copy(mongoc_apm_topology_changed_get_previous_description(event));
+	p_event->old_topology_description = mongoc_topology_description_new_copy(mongoc_apm_topology_changed_get_previous_description(event));
 
 	phongo_apm_dispatch_event(subscribers, "topologyChanged", &z_event);
 	zval_ptr_dtor(&z_event);

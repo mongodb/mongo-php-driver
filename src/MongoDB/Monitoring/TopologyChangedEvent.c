@@ -28,7 +28,7 @@ zend_class_entry* php_phongo_topologychangedevent_ce;
 
 /* {{{ proto MongoDB\Driver\Monitoring\TopologyChangedEvent TopologyChangedEvent::getNewDescription()
    Returns this event's new description */
-PHP_METHOD(TopologyChangedEvent, getNewDescription)
+static PHP_METHOD(TopologyChangedEvent, getNewDescription)
 {
 	mongoc_topology_description_t*     topology_description;
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
@@ -42,7 +42,7 @@ PHP_METHOD(TopologyChangedEvent, getNewDescription)
 
 /* {{{ proto MongoDB\Driver\Monitoring\TopologyChangedEvent TopologyChangedEvent::getPreviousDescription()
    Returns this event's previous description */
-PHP_METHOD(TopologyChangedEvent, getPreviousDescription)
+static PHP_METHOD(TopologyChangedEvent, getPreviousDescription)
 {
 	mongoc_topology_description_t*     topology_description;
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
@@ -54,25 +54,21 @@ PHP_METHOD(TopologyChangedEvent, getPreviousDescription)
 	phongo_topologydescription_init(return_value, topology_description);
 } /* }}} */
 
-/* {{{ proto string TopologyChangedEvent::getTopologyId()
+/* {{{ proto MongoDB\BSON\ObjectId TopologyChangedEvent::getTopologyId()
    Returns this event's topology id */
-PHP_METHOD(TopologyChangedEvent, getTopologyId)
+static PHP_METHOD(TopologyChangedEvent, getTopologyId)
 {
+	php_phongo_objectid_t*             topology_id;
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
-	char                               topology_id[25];
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	bson_oid_to_string(&intern->topology_id, topology_id);
-	RETVAL_STRING(topology_id);
-} /* }}} */
+	object_init_ex(return_value, php_phongo_objectid_ce);
 
-/**
- * Event thrown when the driver observes a change in any of the servers
- * it is connected to or a change in the overall server topology.
- *
- * This class is only constructed internally.
- */
+	topology_id = Z_OBJECTID_OBJ_P(return_value);
+	bson_oid_to_string(&intern->topology_id, topology_id->oid);
+	topology_id->initialized = true;
+} /* }}} */
 
 /* {{{ MongoDB\Driver\Monitoring\TopologyChangedEvent function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_TopologyChangedEvent_void, 0, 0, 0)
