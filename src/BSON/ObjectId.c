@@ -257,12 +257,16 @@ static PHP_METHOD(ObjectId, unserialize)
 } /* }}} */
 
 /* {{{ MongoDB\BSON\ObjectId function entries */
+/* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_ObjectId___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, id)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ObjectId___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_ObjectId_jsonSerialize, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ObjectId_unserialize, 0, 0, 1)
@@ -273,17 +277,16 @@ ZEND_BEGIN_ARG_INFO_EX(ai_ObjectId_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_objectid_me[] = {
-	/* clang-format off */
 	PHP_ME(ObjectId, __construct, ai_ObjectId___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ObjectId, getTimestamp, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ObjectId, __set_state, ai_ObjectId___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME(ObjectId, __toString, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ObjectId, jsonSerialize, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, jsonSerialize, ai_ObjectId_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ObjectId, serialize, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ObjectId, unserialize, ai_ObjectId_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 /* {{{ MongoDB\BSON\ObjectId object handlers */

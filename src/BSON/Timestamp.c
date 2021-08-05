@@ -322,6 +322,7 @@ static PHP_METHOD(Timestamp, unserialize)
 } /* }}} */
 
 /* {{{ MongoDB\BSON\Timestamp function entries */
+/* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, increment)
 	ZEND_ARG_INFO(0, timestamp)
@@ -329,6 +330,9 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Timestamp_jsonSerialize, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp_unserialize, 0, 0, 1)
@@ -339,18 +343,17 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_timestamp_me[] = {
-	/* clang-format off */
 	PHP_ME(Timestamp, __construct, ai_Timestamp___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, __set_state, ai_Timestamp___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME(Timestamp, __toString, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, jsonSerialize, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Timestamp, jsonSerialize, ai_Timestamp_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, serialize, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, unserialize, ai_Timestamp_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, getIncrement, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, getTimestamp, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 /* {{{ MongoDB\BSON\Timestamp object handlers */

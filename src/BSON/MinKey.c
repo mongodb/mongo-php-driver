@@ -95,8 +95,12 @@ static PHP_METHOD(MinKey, unserialize)
 } /* }}} */
 
 /* {{{ MongoDB\BSON\MinKey function entries */
+/* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_MinKey___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_MinKey_jsonSerialize, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_MinKey_unserialize, 0, 0, 1)
@@ -107,14 +111,13 @@ ZEND_BEGIN_ARG_INFO_EX(ai_MinKey_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_minkey_me[] = {
-	/* clang-format off */
 	PHP_ME(MinKey, __set_state, ai_MinKey___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(MinKey, jsonSerialize, ai_MinKey_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(MinKey, jsonSerialize, ai_MinKey_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(MinKey, serialize, ai_MinKey_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(MinKey, unserialize, ai_MinKey_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 /* {{{ MongoDB\BSON\MinKey object handlers */
