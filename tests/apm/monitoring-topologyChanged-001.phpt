@@ -12,13 +12,17 @@ $m = create_test_manager();
 
 class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
+    private $topologyDescription;
+
     public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event)
     {
-        echo "- getTopologyId() returns an object: ", is_object( $event->getTopologyId() ) ? 'yes' : 'no', "\n";
-
-        $topologyDescription = $event->getNewDescription();
-        echo "- topologyDescription->getType() type returns a string: ", is_string( $topologyDescription->getType() ) ? 'yes' : 'no', "\n";
-        echo "- topologyDescription->getServers() returns an array: ", is_array( $topologyDescription->getServers() ) ? 'yes' : 'no', "\n";
+        if (! $this->topologyDescription) {
+            echo "- getTopologyId() returns an object: ", is_object( $event->getTopologyId() ) ? 'yes' : 'no', "\n";
+            
+            $this->topologyDescription = $event->getNewDescription();
+            echo "- topologyDescription->getType() type returns a string: ", is_string( $this->topologyDescription->getType() ) ? 'yes' : 'no', "\n";
+            echo "- topologyDescription->getServers() returns an array: ", is_array( $this->topologyDescription->getServers() ) ? 'yes' : 'no', "\n";
+        }
     }
 }
 
@@ -32,12 +36,6 @@ $m->executeCommand(DATABASE_NAME, $command);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-- getTopologyId() returns an object: yes
-- topologyDescription->getType() type returns a string: yes
-- topologyDescription->getServers() returns an array: yes
-- getTopologyId() returns an object: yes
-- topologyDescription->getType() type returns a string: yes
-- topologyDescription->getServers() returns an array: yes
 - getTopologyId() returns an object: yes
 - topologyDescription->getType() type returns a string: yes
 - topologyDescription->getServers() returns an array: yes

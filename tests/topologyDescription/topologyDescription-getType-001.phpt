@@ -11,6 +11,8 @@ $manager = create_test_manager();
 
 class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
+    private $topologyDescription;
+
     public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event)
     {
         $expected_types = array(
@@ -21,13 +23,15 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
             MongoDB\Driver\TopologyDescription::TYPE_REPLICA_SET_WITH_PRIMARY
         );
 
-        $topologyDescription = $event->getNewDescription();
-        var_dump(in_array($topologyDescription->getType(), $expected_types));
+        if (! $this->topologyDescription) {
+            $this->topologyDescription = $event->getNewDescription();
+            var_dump(in_array($this->topologyDescription->getType(), $expected_types));
+        }
     }
 }
 
 $subscriber = new MySubscriber;
-MongoDB\Driver\Monitoring\addSubscriber($subscriber);
+$manager->addSubscriber($subscriber);
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 $manager->executeCommand(DATABASE_NAME, $command);
@@ -36,7 +40,5 @@ $manager->executeCommand(DATABASE_NAME, $command);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-bool(true)
-bool(true)
 bool(true)
 ===DONE===

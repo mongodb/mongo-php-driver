@@ -11,15 +11,19 @@ $manager = create_test_manager();
 
 class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
+    private $topologyDescription;
+
     public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event)
     {
-        $topologyDescription = $event->getNewDescription();
-        var_dump($topologyDescription->getServers());
+        if (! $this->topologyDescription) {
+            $this->topologyDescription = $event->getNewDescription();
+            var_dump($this->topologyDescription->getServers());
+        }
     }
 }
 
 $subscriber = new MySubscriber;
-MongoDB\Driver\Monitoring\addSubscriber($subscriber);
+$manager->addSubscriber($subscriber);
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 $manager->executeCommand(DATABASE_NAME, $command);
@@ -28,10 +32,6 @@ $manager->executeCommand(DATABASE_NAME, $command);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-array(%d) {%A
-}
-array(%d) {%A
-}
 array(%d) {%A
 }
 ===DONE===

@@ -11,23 +11,19 @@ $manager = create_test_manager();
 
 class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
+    private $topologyDescription;
+
     public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event)
     {
-        $expected_types = array(
-            MongoDB\Driver\TopologyDescription::TYPE_UNKNOWN,
-            MongoDB\Driver\TopologyDescription::TYPE_SINGLE,
-            MongoDB\Driver\TopologyDescription::TYPE_SHARDED,
-            MongoDB\Driver\TopologyDescription::TYPE_REPLICA_SET_NO_PRIMARY,
-            MongoDB\Driver\TopologyDescription::TYPE_REPLICA_SET_WITH_PRIMARY
-        );
-
-        $topologyDescription = $event->getNewDescription();
-        var_dump($topologyDescription->hasReadableServer());
+        if (! $this->topologyDescription) {
+            $this->topologyDescription = $event->getNewDescription();
+            var_dump($this->topologyDescription->hasReadableServer());
+        }
     }
 }
 
 $subscriber = new MySubscriber;
-MongoDB\Driver\Monitoring\addSubscriber($subscriber);
+$manager->addSubscriber($subscriber);
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 $manager->executeCommand(DATABASE_NAME, $command);
@@ -36,7 +32,5 @@ $manager->executeCommand(DATABASE_NAME, $command);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-bool(%s)
-bool(%s)
 bool(%s)
 ===DONE===
