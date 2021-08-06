@@ -60,14 +60,24 @@ static PHP_METHOD(TopologyDescription, getServers)
 	mongoc_server_descriptions_destroy_all(sds, n);
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\TopologyDescription::hasReadableServer()
+/* {{{ proto boolean MongoDB\Driver\TopologyDescription::hasReadableServer([?MongoDB\Driver\ReadPreference $readPreference])
     Returns whether the topology has a readable server available */
 static PHP_METHOD(TopologyDescription, hasReadableServer)
 {
-	php_phongo_topologydescription_t* intern          = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
-	const mongoc_read_prefs_t*        read_preference = NULL;
+	php_phongo_topologydescription_t* intern;
+	const mongoc_read_prefs_t*        read_preference   = NULL;
+	zval*                             z_read_preference = NULL;
 
-	PHONGO_PARSE_PARAMETERS_NONE();
+	intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_START(0, 1)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ZVAL_EX(z_read_preference, 1, 0)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	if (z_read_preference) {
+		read_preference = phongo_read_preference_from_zval(z_read_preference);
+	}
 
 	RETVAL_BOOL(mongoc_topology_description_has_readable_server(intern->topology_description, read_preference));
 } /* }}} */
