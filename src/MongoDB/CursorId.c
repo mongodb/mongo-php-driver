@@ -58,14 +58,14 @@ static bool php_phongo_cursorid_init_from_hash(php_phongo_cursorid_t* intern, Ha
 	return false;
 } /* }}} */
 
-static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
+static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool is_debug) /* {{{ */
 {
 	php_phongo_cursorid_t* intern;
 	HashTable*             props;
 
 	intern = Z_OBJ_CURSORID(PHONGO_COMPAT_GET_OBJ(object));
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
 	if (!intern->initialized) {
 		return props;
@@ -203,9 +203,35 @@ static PHP_METHOD(CursorId, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\CursorId::__serialize()
+*/
+static PHP_METHOD(CursorId, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETURN_ARR(php_phongo_cursorid_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false));
+} /* }}} */
+
+/* {{{ proto array MongoDB\Driver\CursorId::__unserialize()
+*/
+static PHP_METHOD(CursorId, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_cursorid_init_from_hash(Z_CURSORID_OBJ_P(getThis()), Z_ARRVAL_P(data));
+} /* }}} */
+
 /* {{{ MongoDB\Driver\CursorId function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_CursorId_unserialize, 0, 0, 1)
@@ -217,8 +243,10 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_cursorid_me[] = {
 	/* clang-format off */
+	PHP_ME(CursorId, __serialize, ai_CursorId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CursorId, __set_state, ai_CursorId___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME(CursorId, __toString, ai_CursorId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CursorId, __unserialize, ai_CursorId___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CursorId, serialize, ai_CursorId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CursorId, unserialize, ai_CursorId_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CursorId_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
@@ -260,13 +288,13 @@ static zend_object* php_phongo_cursorid_create_object(zend_class_entry* class_ty
 static HashTable* php_phongo_cursorid_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
 	*is_temp = 1;
-	return php_phongo_cursorid_get_properties_hash(object, true);
+	return php_phongo_cursorid_get_properties_hash(object, true, true);
 } /* }}} */
 /* }}} */
 
 static HashTable* php_phongo_cursorid_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
 {
-	return php_phongo_cursorid_get_properties_hash(object, false);
+	return php_phongo_cursorid_get_properties_hash(object, false, false);
 } /* }}} */
 
 void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS) /* {{{ */

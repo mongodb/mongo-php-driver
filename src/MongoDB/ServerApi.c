@@ -143,7 +143,7 @@ static PHP_METHOD(ServerApi, __set_state)
 	php_phongo_serverapi_init_from_hash(intern, props);
 } /* }}} */
 
-static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug, bool include_null) /* {{{ */
+static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool include_null) /* {{{ */
 {
 	php_phongo_serverapi_t* intern;
 	HashTable*              props;
@@ -152,7 +152,7 @@ static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_
 
 	intern = Z_OBJ_SERVERAPI(PHONGO_COMPAT_GET_OBJ(object));
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 1);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
 	ZVAL_STRING(&version, mongoc_server_api_version_to_string(mongoc_server_api_get_version(intern->server_api)));
 	zend_hash_str_add(props, "version", sizeof("version") - 1, &version);
@@ -266,6 +266,28 @@ static PHP_METHOD(ServerApi, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\ServerApi::__serialize()
+*/
+static PHP_METHOD(ServerApi, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETURN_ARR(php_phongo_serverapi_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
+} /* }}} */
+
+/* {{{ proto array MongoDB\Driver\ServerApi::__unserialize()
+*/
+static PHP_METHOD(ServerApi, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_serverapi_init_from_hash(Z_SERVERAPI_OBJ_P(getThis()), Z_ARRVAL_P(data));
+} /* }}} */
+
 /* {{{ MongoDB\Driver\ServerApi function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, version, IS_STRING, 0)
@@ -275,6 +297,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi_unserialize, 0, 0, 1)
@@ -291,7 +317,9 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_serverapi_me[] = {
 	/* clang-format off */
 	PHP_ME(ServerApi, __construct, ai_ServerApi___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ServerApi, __serialize, ai_ServerApi_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ServerApi, __set_state, ai_ServerApi___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(ServerApi, __unserialize, ai_ServerApi___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ServerApi, bsonSerialize, ai_ServerApi_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ServerApi, serialize, ai_ServerApi_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ServerApi, unserialize, ai_ServerApi_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)

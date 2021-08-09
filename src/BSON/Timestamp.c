@@ -89,6 +89,39 @@ static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t* intern, 
 	return false;
 } /* }}} */
 
+static HashTable* php_phongo_timestamp_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+{
+	php_phongo_timestamp_t* intern;
+	HashTable*              props;
+	char                    s_increment[24];
+	char                    s_timestamp[24];
+	int                     s_increment_len;
+	int                     s_timestamp_len;
+
+	intern = Z_OBJ_TIMESTAMP(PHONGO_COMPAT_GET_OBJ(object));
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
+
+	if (!intern->initialized) {
+		return props;
+	}
+
+	s_increment_len = snprintf(s_increment, sizeof(s_increment), "%" PRIu32, intern->increment);
+	s_timestamp_len = snprintf(s_timestamp, sizeof(s_timestamp), "%" PRIu32, intern->timestamp);
+
+	{
+		zval increment, timestamp;
+
+		ZVAL_STRINGL(&increment, s_increment, s_increment_len);
+		zend_hash_str_update(props, "increment", sizeof("increment") - 1, &increment);
+
+		ZVAL_STRINGL(&timestamp, s_timestamp, s_timestamp_len);
+		zend_hash_str_update(props, "timestamp", sizeof("timestamp") - 1, &timestamp);
+	}
+
+	return props;
+} /* }}} */
+
 /* {{{ proto void MongoDB\BSON\Timestamp::__construct(int|string $increment, int|string $timestamp)
    Construct a new BSON timestamp type, which consists of a 4-byte increment and
    4-byte timestamp. */
@@ -321,6 +354,28 @@ static PHP_METHOD(Timestamp, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\Timestamp::__serialize()
+*/
+static PHP_METHOD(Timestamp, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETURN_ARR(php_phongo_timestamp_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+} /* }}} */
+
+/* {{{ proto array MongoDB\Driver\Timestamp::__unserialize()
+*/
+static PHP_METHOD(Timestamp, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_timestamp_init_from_hash(Z_TIMESTAMP_OBJ_P(getThis()), Z_ARRVAL_P(data));
+} /* }}} */
+
 /* {{{ MongoDB\BSON\Timestamp function entries */
 /* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___construct, 0, 0, 2)
@@ -330,6 +385,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Timestamp_jsonSerialize, 0, 0, IS_ARRAY, 0)
@@ -344,8 +403,10 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_timestamp_me[] = {
 	PHP_ME(Timestamp, __construct, ai_Timestamp___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Timestamp, __serialize, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, __set_state, ai_Timestamp___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME(Timestamp, __toString, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Timestamp, __unserialize, ai_Timestamp___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, jsonSerialize, ai_Timestamp_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, serialize, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Timestamp, unserialize, ai_Timestamp_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -421,39 +482,6 @@ static int php_phongo_timestamp_compare_objects(zval* o1, zval* o2) /* {{{ */
 	}
 
 	return 0;
-} /* }}} */
-
-static HashTable* php_phongo_timestamp_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
-{
-	php_phongo_timestamp_t* intern;
-	HashTable*              props;
-	char                    s_increment[24];
-	char                    s_timestamp[24];
-	int                     s_increment_len;
-	int                     s_timestamp_len;
-
-	intern = Z_OBJ_TIMESTAMP(PHONGO_COMPAT_GET_OBJ(object));
-
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
-
-	if (!intern->initialized) {
-		return props;
-	}
-
-	s_increment_len = snprintf(s_increment, sizeof(s_increment), "%" PRIu32, intern->increment);
-	s_timestamp_len = snprintf(s_timestamp, sizeof(s_timestamp), "%" PRIu32, intern->timestamp);
-
-	{
-		zval increment, timestamp;
-
-		ZVAL_STRINGL(&increment, s_increment, s_increment_len);
-		zend_hash_str_update(props, "increment", sizeof("increment") - 1, &increment);
-
-		ZVAL_STRINGL(&timestamp, s_timestamp, s_timestamp_len);
-		zend_hash_str_update(props, "timestamp", sizeof("timestamp") - 1, &timestamp);
-	}
-
-	return props;
 } /* }}} */
 
 static HashTable* php_phongo_timestamp_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */

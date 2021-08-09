@@ -82,6 +82,32 @@ static bool php_phongo_regex_init_from_hash(php_phongo_regex_t* intern, HashTabl
 	return false;
 } /* }}} */
 
+static HashTable* php_phongo_regex_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+{
+	php_phongo_regex_t* intern;
+	HashTable*          props;
+
+	intern = Z_OBJ_REGEX(PHONGO_COMPAT_GET_OBJ(object));
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
+
+	if (!intern->pattern) {
+		return props;
+	}
+
+	{
+		zval pattern, flags;
+
+		ZVAL_STRINGL(&pattern, intern->pattern, intern->pattern_len);
+		zend_hash_str_update(props, "pattern", sizeof("pattern") - 1, &pattern);
+
+		ZVAL_STRINGL(&flags, intern->flags, intern->flags_len);
+		zend_hash_str_update(props, "flags", sizeof("flags") - 1, &flags);
+	}
+
+	return props;
+} /* }}} */
+
 /* {{{ proto void MongoDB\BSON\Regex::__construct(string $pattern [, string $flags])
    Constructs a new BSON regular expression type. */
 static PHP_METHOD(Regex, __construct)
@@ -279,6 +305,28 @@ static PHP_METHOD(Regex, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\Regex::__serialize()
+*/
+static PHP_METHOD(Regex, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETURN_ARR(php_phongo_regex_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+} /* }}} */
+
+/* {{{ proto array MongoDB\Driver\Regex::__unserialize()
+*/
+static PHP_METHOD(Regex, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_regex_init_from_hash(Z_REGEX_OBJ_P(getThis()), Z_ARRVAL_P(data));
+} /* }}} */
+
 /* {{{ MongoDB\BSON\Regex function entries */
 /* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_Regex___construct, 0, 0, 1)
@@ -288,6 +336,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Regex___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Regex___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Regex_jsonSerialize, 0, 0, IS_ARRAY, 0)
@@ -302,8 +354,10 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_regex_me[] = {
 	PHP_ME(Regex, __construct, ai_Regex___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Regex, __serialize, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Regex, __set_state, ai_Regex___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME(Regex, __toString, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Regex, __unserialize, ai_Regex___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Regex, jsonSerialize, ai_Regex_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Regex, serialize, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Regex, unserialize, ai_Regex_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -386,32 +440,6 @@ static int php_phongo_regex_compare_objects(zval* o1, zval* o2) /* {{{ */
 	}
 
 	return strcmp(intern1->flags, intern2->flags);
-} /* }}} */
-
-static HashTable* php_phongo_regex_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
-{
-	php_phongo_regex_t* intern;
-	HashTable*          props;
-
-	intern = Z_OBJ_REGEX(PHONGO_COMPAT_GET_OBJ(object));
-
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
-
-	if (!intern->pattern) {
-		return props;
-	}
-
-	{
-		zval pattern, flags;
-
-		ZVAL_STRINGL(&pattern, intern->pattern, intern->pattern_len);
-		zend_hash_str_update(props, "pattern", sizeof("pattern") - 1, &pattern);
-
-		ZVAL_STRINGL(&flags, intern->flags, intern->flags_len);
-		zend_hash_str_update(props, "flags", sizeof("flags") - 1, &flags);
-	}
-
-	return props;
 } /* }}} */
 
 static HashTable* php_phongo_regex_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */

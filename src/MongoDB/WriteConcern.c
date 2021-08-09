@@ -298,7 +298,7 @@ static PHP_METHOD(WriteConcern, isDefault)
 	RETURN_BOOL(mongoc_write_concern_is_default(intern->write_concern));
 } /* }}} */
 
-static HashTable* php_phongo_write_concern_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug, bool is_bson) /* {{{ */
+static HashTable* php_phongo_writeconcern_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool is_bson) /* {{{ */
 {
 	php_phongo_writeconcern_t* intern;
 	HashTable*                 props;
@@ -308,7 +308,7 @@ static HashTable* php_phongo_write_concern_get_properties_hash(phongo_compat_obj
 
 	intern = Z_OBJ_WRITECONCERN(PHONGO_COMPAT_GET_OBJ(object));
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 4);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 4);
 
 	if (!intern->write_concern) {
 		return props;
@@ -376,7 +376,7 @@ static PHP_METHOD(WriteConcern, bsonSerialize)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	ZVAL_ARR(return_value, php_phongo_write_concern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
+	ZVAL_ARR(return_value, php_phongo_writeconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
 	convert_to_object(return_value);
 } /* }}} */
 
@@ -481,6 +481,28 @@ static PHP_METHOD(WriteConcern, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\WriteConcern::__serialize()
+*/
+static PHP_METHOD(WriteConcern, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETURN_ARR(php_phongo_writeconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false));
+} /* }}} */
+
+/* {{{ proto array MongoDB\Driver\WriteConcern::__unserialize()
+*/
+static PHP_METHOD(WriteConcern, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_writeconcern_init_from_hash(Z_WRITECONCERN_OBJ_P(getThis()), Z_ARRVAL_P(data));
+} /* }}} */
+
 /* {{{ MongoDB\Driver\WriteConcern function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, w)
@@ -490,6 +512,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_unserialize, 0, 0, 1)
@@ -502,7 +528,9 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_writeconcern_me[] = {
 	/* clang-format off */
 	PHP_ME(WriteConcern, __construct, ai_WriteConcern___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(WriteConcern, __serialize, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, __set_state, ai_WriteConcern___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(WriteConcern, __unserialize, ai_WriteConcern___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, getW, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(WriteConcern, getJournal, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -551,12 +579,12 @@ static zend_object* php_phongo_writeconcern_create_object(zend_class_entry* clas
 static HashTable* php_phongo_writeconcern_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
 	*is_temp = 1;
-	return php_phongo_write_concern_get_properties_hash(object, true, false);
+	return php_phongo_writeconcern_get_properties_hash(object, true, false);
 } /* }}} */
 
 static HashTable* php_phongo_writeconcern_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
 {
-	return php_phongo_write_concern_get_properties_hash(object, false, false);
+	return php_phongo_writeconcern_get_properties_hash(object, false, false);
 } /* }}} */
 
 void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */

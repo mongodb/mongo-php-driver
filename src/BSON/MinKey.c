@@ -94,10 +94,34 @@ static PHP_METHOD(MinKey, unserialize)
 	zend_restore_error_handling(&error_handling);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\MinKey::__serialize()
+*/
+static PHP_METHOD(MinKey, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	array_init_size(return_value, 0);
+} /* }}} */
+
+/* {{{ proto array MongoDB\Driver\MinKey::__unserialize()
+*/
+static PHP_METHOD(MinKey, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+} /* }}} */
+
 /* {{{ MongoDB\BSON\MinKey function entries */
 /* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_MinKey___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_MinKey___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_MinKey_jsonSerialize, 0, 0, IS_ARRAY, 0)
@@ -111,7 +135,9 @@ ZEND_BEGIN_ARG_INFO_EX(ai_MinKey_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_minkey_me[] = {
+	PHP_ME(MinKey, __serialize, ai_MinKey_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(MinKey, __set_state, ai_MinKey___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(MinKey, __unserialize, ai_MinKey___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(MinKey, jsonSerialize, ai_MinKey_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(MinKey, serialize, ai_MinKey_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(MinKey, unserialize, ai_MinKey_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)

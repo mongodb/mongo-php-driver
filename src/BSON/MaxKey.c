@@ -94,10 +94,34 @@ static PHP_METHOD(MaxKey, unserialize)
 	zend_restore_error_handling(&error_handling);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\MaxKey::__serialize()
+*/
+static PHP_METHOD(MaxKey, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	array_init_size(return_value, 0);
+} /* }}} */
+
+/* {{{ proto array MongoDB\Driver\MaxKey::__unserialize()
+*/
+static PHP_METHOD(MaxKey, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+} /* }}} */
+
 /* {{{ MongoDB\BSON\MaxKey function entries */
 /* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_MaxKey_jsonSerialize, 0, 0, IS_ARRAY, 0)
@@ -111,7 +135,9 @@ ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_maxkey_me[] = {
+	PHP_ME(MaxKey, __serialize, ai_MaxKey_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(MaxKey, __set_state, ai_MaxKey___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(MaxKey, __unserialize, ai_MaxKey___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(MaxKey, jsonSerialize, ai_MaxKey_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(MaxKey, serialize, ai_MaxKey_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(MaxKey, unserialize, ai_MaxKey_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)

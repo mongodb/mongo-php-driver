@@ -80,6 +80,29 @@ static bool php_phongo_objectid_init_from_hash(php_phongo_objectid_t* intern, Ha
 	return false;
 } /* }}} */
 
+static HashTable* php_phongo_objectid_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+{
+	php_phongo_objectid_t* intern;
+	HashTable*             props;
+
+	intern = Z_OBJ_OBJECTID(PHONGO_COMPAT_GET_OBJ(object));
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
+
+	if (!intern->initialized) {
+		return props;
+	}
+
+	{
+		zval zv;
+
+		ZVAL_STRING(&zv, intern->oid);
+		zend_hash_str_update(props, "oid", sizeof("oid") - 1, &zv);
+	}
+
+	return props;
+} /* }}} */
+
 /* {{{ proto void MongoDB\BSON\ObjectId::__construct([string $id])
    Constructs a new BSON ObjectId type, optionally from a hex string. */
 static PHP_METHOD(ObjectId, __construct)
@@ -256,6 +279,28 @@ static PHP_METHOD(ObjectId, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\ObjectId::__serialize()
+*/
+static PHP_METHOD(ObjectId, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETURN_ARR(php_phongo_objectid_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+} /* }}} */
+
+/* {{{ proto array MongoDB\Driver\ObjectId::__unserialize()
+*/
+static PHP_METHOD(ObjectId, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_objectid_init_from_hash(Z_OBJECTID_OBJ_P(getThis()), Z_ARRVAL_P(data));
+} /* }}} */
+
 /* {{{ MongoDB\BSON\ObjectId function entries */
 /* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_ObjectId___construct, 0, 0, 0)
@@ -264,6 +309,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ObjectId___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_ObjectId___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_ObjectId_jsonSerialize, 0, 0, IS_ARRAY, 0)
@@ -279,8 +328,10 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_objectid_me[] = {
 	PHP_ME(ObjectId, __construct, ai_ObjectId___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ObjectId, getTimestamp, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, __serialize, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ObjectId, __set_state, ai_ObjectId___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME(ObjectId, __toString, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ObjectId, __unserialize, ai_ObjectId___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ObjectId, jsonSerialize, ai_ObjectId_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ObjectId, serialize, ai_ObjectId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ObjectId, unserialize, ai_ObjectId_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -348,29 +399,6 @@ static int php_phongo_objectid_compare_objects(zval* o1, zval* o2) /* {{{ */
 	intern2 = Z_OBJECTID_OBJ_P(o2);
 
 	return strcmp(intern1->oid, intern2->oid);
-} /* }}} */
-
-static HashTable* php_phongo_objectid_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
-{
-	php_phongo_objectid_t* intern;
-	HashTable*             props;
-
-	intern = Z_OBJ_OBJECTID(PHONGO_COMPAT_GET_OBJ(object));
-
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 1);
-
-	if (!intern->initialized) {
-		return props;
-	}
-
-	{
-		zval zv;
-
-		ZVAL_STRING(&zv, intern->oid);
-		zend_hash_str_update(props, "oid", sizeof("oid") - 1, &zv);
-	}
-
-	return props;
 } /* }}} */
 
 static HashTable* php_phongo_objectid_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
