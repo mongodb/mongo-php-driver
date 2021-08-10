@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\Binary serialization (Serializable interface)
+MongoDB\BSON\Binary serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -33,7 +33,7 @@ object(MongoDB\BSON\Binary)#%d (%d) {
   ["type"]=>
   int(0)
 }
-string(77) "C:19:"MongoDB\BSON\Binary":45:{a:2:{s:4:"data";s:6:"foobar";s:4:"type";i:0;}}"
+string(70) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:6:"foobar";s:4:"type";i:0;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
   string(6) "foobar"
@@ -47,7 +47,7 @@ object(MongoDB\BSON\Binary)#%d (%d) {
   ["type"]=>
   int(0)
 }
-string(71) "C:19:"MongoDB\BSON\Binary":39:{a:2:{s:4:"data";s:0:"";s:4:"type";i:0;}}"
+string(64) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:0:"";s:4:"type";i:0;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
   string(0) ""
@@ -61,7 +61,7 @@ object(MongoDB\BSON\Binary)#%d (%d) {
   ["type"]=>
   int(0)
 }
-string(75) "C:19:"MongoDB\BSON\Binary":43:{a:2:{s:4:"data";s:4:"%sfoo";s:4:"type";i:0;}}"
+string(68) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:4:"%sfoo";s:4:"type";i:0;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
   string(4) "%sfoo"
@@ -75,7 +75,7 @@ object(MongoDB\BSON\Binary)#%d (%d) {
   ["type"]=>
   int(4)
 }
-string(88) "C:19:"MongoDB\BSON\Binary":56:{a:2:{s:4:"data";s:16:"%s";s:4:"type";i:4;}}"
+string(81) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:16:"%s";s:4:"type";i:4;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
   string(16) "%s"
@@ -89,7 +89,7 @@ object(MongoDB\BSON\Binary)#%d (%d) {
   ["type"]=>
   int(5)
 }
-string(88) "C:19:"MongoDB\BSON\Binary":56:{a:2:{s:4:"data";s:16:"%s";s:4:"type";i:5;}}"
+string(81) "O:19:"MongoDB\BSON\Binary":2:{s:4:"data";s:16:"%s";s:4:"type";i:5;}"
 object(MongoDB\BSON\Binary)#%d (%d) {
   ["data"]=>
   string(16) "%s"
