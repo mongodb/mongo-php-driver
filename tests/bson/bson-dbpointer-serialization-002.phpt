@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\DBPointer serialization (Serializable interface)
+MongoDB\BSON\DBPointer serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -23,7 +23,7 @@ object(MongoDB\BSON\DBPointer)#1 (2) {
   ["id"]=>
   string(24) "5a2e78accd485d55b4050000"
 }
-string(111) "C:22:"MongoDB\BSON\DBPointer":76:{a:2:{s:3:"ref";s:11:"phongo.test";s:2:"id";s:24:"5a2e78accd485d55b4050000";}}"
+string(104) "O:22:"MongoDB\BSON\DBPointer":2:{s:3:"ref";s:11:"phongo.test";s:2:"id";s:24:"5a2e78accd485d55b4050000";}"
 object(MongoDB\BSON\DBPointer)#2 (2) {
   ["ref"]=>
   string(11) "phongo.test"
