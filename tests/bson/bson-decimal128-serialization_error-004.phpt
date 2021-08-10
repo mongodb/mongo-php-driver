@@ -1,12 +1,15 @@
 --TEST--
-MongoDB\BSON\Decimal128 unserialization requires valid decimal string (Serializable interface)
+MongoDB\BSON\Decimal128 unserialization requires valid decimal string (__serialize and __unserialize)
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    unserialize('C:23:"MongoDB\BSON\Decimal128":30:{a:1:{s:3:"dec";s:7:"INVALID";}}');
+    unserialize('O:23:"MongoDB\BSON\Decimal128":1:{s:3:"dec";s:7:"INVALID";}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
