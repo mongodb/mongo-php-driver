@@ -271,6 +271,7 @@ static PHP_METHOD(Binary, unserialize)
 } /* }}} */
 
 /* {{{ MongoDB\BSON\Binary function entries */
+/* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary___construct, 0, 0, 2)
 	ZEND_ARG_INFO(0, data)
 	ZEND_ARG_INFO(0, type)
@@ -278,6 +279,9 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Binary_jsonSerialize, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary_unserialize, 0, 0, 1)
@@ -288,18 +292,17 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Binary_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_binary_me[] = {
-	/* clang-format off */
 	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, __set_state, ai_Binary___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME(Binary, __toString, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Binary, jsonSerialize, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Binary, jsonSerialize, ai_Binary_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, serialize, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, unserialize, ai_Binary_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, getData, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, getType, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 /* {{{ MongoDB\BSON\Binary object handlers */

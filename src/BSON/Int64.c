@@ -174,6 +174,10 @@ static PHP_METHOD(Int64, unserialize)
 } /* }}} */
 
 /* {{{ MongoDB\BSON\Int64 function entries */
+/* clang-format off */
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Int64_jsonSerialize, 0, 0, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Int64_unserialize, 0, 0, 1)
 	ZEND_ARG_INFO(0, serialized)
 ZEND_END_ARG_INFO()
@@ -182,16 +186,15 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Int64_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_int64_me[] = {
-	/* clang-format off */
 	/* __set_state intentionally missing */
 	PHP_ME(Int64, __toString, ai_Int64_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Int64, jsonSerialize, ai_Int64_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Int64, jsonSerialize, ai_Int64_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Int64, serialize, ai_Int64_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Int64, unserialize, ai_Int64_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Int64_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 /* {{{ MongoDB\BSON\Int64 object handlers */

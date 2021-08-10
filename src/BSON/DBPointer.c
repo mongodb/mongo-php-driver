@@ -188,6 +188,10 @@ static PHP_METHOD(DBPointer, unserialize)
 } /* }}} */
 
 /* {{{ MongoDB\BSON\DBPointer function entries */
+/* clang-format off */
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_DBPointer_jsonSerialize, 0, 0, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_DBPointer_unserialize, 0, 0, 1)
 	ZEND_ARG_INFO(0, serialized)
 ZEND_END_ARG_INFO()
@@ -196,16 +200,15 @@ ZEND_BEGIN_ARG_INFO_EX(ai_DBPointer_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_dbpointer_me[] = {
-	/* clang-format off */
 	/* __set_state intentionally missing */
 	PHP_ME(DBPointer, __toString, ai_DBPointer_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(DBPointer, jsonSerialize, ai_DBPointer_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(DBPointer, jsonSerialize, ai_DBPointer_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(DBPointer, serialize, ai_DBPointer_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(DBPointer, unserialize, ai_DBPointer_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_DBPointer_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 /* {{{ MongoDB\BSON\DBPointer object handlers */

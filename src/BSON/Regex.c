@@ -280,6 +280,7 @@ static PHP_METHOD(Regex, unserialize)
 } /* }}} */
 
 /* {{{ MongoDB\BSON\Regex function entries */
+/* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_Regex___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, pattern)
 	ZEND_ARG_INFO(0, flags)
@@ -287,6 +288,9 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Regex___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Regex_jsonSerialize, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Regex_unserialize, 0, 0, 1)
@@ -297,18 +301,17 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Regex_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_regex_me[] = {
-	/* clang-format off */
 	PHP_ME(Regex, __construct, ai_Regex___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Regex, __set_state, ai_Regex___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME(Regex, __toString, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Regex, jsonSerialize, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Regex, jsonSerialize, ai_Regex_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Regex, serialize, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Regex, unserialize, ai_Regex_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Regex, getPattern, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Regex, getFlags, ai_Regex_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 /* {{{ MongoDB\BSON\Regex object handlers */

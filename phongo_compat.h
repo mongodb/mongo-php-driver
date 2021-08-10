@@ -218,6 +218,15 @@
 	} while (0)
 #endif
 
+/* Per https://wiki.php.net/rfc/internal_method_return_types, "Non-final
+ * internal method return types - when possible - are declared tentatively in
+ * PHP 8.1, and they will become enforced in PHP 9.0." This can be revisited
+ * when more general typing improvements are made in PHPC-1709. */
+#ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX
+#define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(name, return_reference, required_num_args, type, allow_null) \
+	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
+#endif
+
 void      phongo_add_exception_prop(const char* prop, int prop_len, zval* value);
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
 zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht);
