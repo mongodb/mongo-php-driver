@@ -177,6 +177,10 @@ HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object
 	intern = Z_OBJ_SERVERDESCRIPTION(PHONGO_COMPAT_GET_OBJ(object));
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 6);
+	
+	if (!intern->server_description) {
+		return props;
+	}
 
 	{
 		zval                host, port, type;
