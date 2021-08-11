@@ -7,31 +7,44 @@ MongoDB\Driver\TopologyDescription::getServers()
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = create_test_manager();
-
-class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
+class TopologyDescriptionProvider implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
     private $topologyDescription;
 
     public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event)
     {
-        if (! $this->topologyDescription) {
-            $this->topologyDescription = $event->getNewDescription();
-            var_dump($this->topologyDescription->getServers());
-        }
+        $this->topologyDescription = $event->getNewDescription();
+    }
+
+    public function getTopologyDescription()
+    {
+        $manager = create_test_manager();
+        $manager->addSubscriber($this);
+        $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
+        $manager->removeSubscriber($this);
+
+        return $this->topologyDescription;
     }
 }
 
-$subscriber = new MySubscriber;
-$manager->addSubscriber($subscriber);
+function assertIsServerDescriptionsArray(array $sds) {
+    foreach ($sds as $sd) {
+        if (! $sd instanceof MongoDB\Driver\ServerDescription) {
+            return false;
+        }
+    }
+    return true;
+}
 
-$command = new MongoDB\Driver\Command(['ping' => 1]);
-$manager->executeCommand(DATABASE_NAME, $command);
+$subscriber = new TopologyDescriptionProvider;
+$topologyDescription = $subscriber->getTopologyDescription();
+$serverDescriptions = $topologyDescription->getServers();
+
+var_dump(assertIsServerDescriptionsArray($serverDescriptions));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-array(%d) {%A
-}
+--EXPECT--
+bool(true)
 ===DONE===

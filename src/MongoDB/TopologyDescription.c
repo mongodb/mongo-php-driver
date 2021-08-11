@@ -53,11 +53,9 @@ static PHP_METHOD(TopologyDescription, getServers)
 	for (i = 0; i < n; i++) {
 		zval obj;
 
-		php_phongo_server_description_to_zval(&obj, sds[i]);
+		phongo_serverdescription_init(&obj, sds[i]);
 		add_next_index_zval(return_value, &obj);
 	}
-
-	mongoc_server_descriptions_destroy_all(sds, n);
 } /* }}} */
 
 /* {{{ proto boolean MongoDB\Driver\TopologyDescription::hasReadableServer([?MongoDB\Driver\ReadPreference $readPreference])
@@ -72,7 +70,7 @@ static PHP_METHOD(TopologyDescription, hasReadableServer)
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ZVAL_EX(z_read_preference, 1, 0)
+	Z_PARAM_OBJECT_OF_CLASS(z_read_preference, php_phongo_readpreference_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (z_read_preference) {
@@ -105,19 +103,23 @@ static PHP_METHOD(TopologyDescription, getType)
 } /* }}} */
 
 /* {{{ MongoDB\Driver\TopologyDescription function entries */
+/* clang-format off */
+ZEND_BEGIN_ARG_INFO_EX(ai_TopologyDescription_hasReadableServer, 0, 0, 0)
+	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_TopologyDescription_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_topologydescription_me[] = {
-	/* clang-format off */
 	PHP_ME(TopologyDescription, getServers, ai_TopologyDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(TopologyDescription, hasReadableServer, ai_TopologyDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(TopologyDescription, hasReadableServer, ai_TopologyDescription_hasReadableServer, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(TopologyDescription, hasWritableServer, ai_TopologyDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(TopologyDescription, getType, ai_TopologyDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_TopologyDescription_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 /* {{{ MongoDB\Driver\TopologyDescription object handlers */
