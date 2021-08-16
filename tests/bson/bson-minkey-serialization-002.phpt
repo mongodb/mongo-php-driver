@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\MinKey serialization (Serializable interface)
+MongoDB\BSON\MinKey serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -16,7 +16,7 @@ var_dump(unserialize($s));
 --EXPECTF--
 object(MongoDB\BSON\MinKey)#%d (%d) {
 }
-string(31) "C:19:"MongoDB\BSON\MinKey":0:{}"
+string(31) "O:19:"MongoDB\BSON\MinKey":0:{}"
 object(MongoDB\BSON\MinKey)#%d (%d) {
 }
 ===DONE===
