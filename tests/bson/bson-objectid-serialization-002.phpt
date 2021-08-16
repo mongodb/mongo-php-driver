@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\ObjectId serialization (Serializable interface)
+MongoDB\BSON\ObjectId serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -18,7 +18,7 @@ object(MongoDB\BSON\ObjectId)#%d (%d) {
   ["oid"]=>
   string(24) "576c25db6118fd406e6e6471"
 }
-string(82) "C:21:"MongoDB\BSON\ObjectId":48:{a:1:{s:3:"oid";s:24:"576c25db6118fd406e6e6471";}}"
+string(75) "O:21:"MongoDB\BSON\ObjectId":1:{s:3:"oid";s:24:"576c25db6118fd406e6e6471";}"
 object(MongoDB\BSON\ObjectId)#%d (%d) {
   ["oid"]=>
   string(24) "576c25db6118fd406e6e6471"
