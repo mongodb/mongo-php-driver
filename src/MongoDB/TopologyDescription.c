@@ -105,7 +105,7 @@ static PHP_METHOD(TopologyDescription, getType)
 /* {{{ MongoDB\Driver\TopologyDescription function entries */
 /* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_TopologyDescription_hasReadableServer, 0, 0, 0)
-	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
+	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_TopologyDescription_void, 0, 0, 0)

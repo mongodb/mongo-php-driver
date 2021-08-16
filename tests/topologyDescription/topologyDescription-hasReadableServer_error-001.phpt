@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\TopologyDescription::getServers()
+MongoDB\Driver\TopologyDescription::hasReadableServer() (argument with bad type)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -27,29 +27,29 @@ class TopologyDescriptionProvider implements MongoDB\Driver\Monitoring\SDAMSubsc
     }
 }
 
-function isArrayOfServerDescriptions(array $sds) {
-    if (count($sds) < 1) {
-        return false;
-    }
-
-    foreach ($sds as $sd) {
-        if (! $sd instanceof MongoDB\Driver\ServerDescription) {
-            return false;
-        }
-    }
-    
-    return true;
-}
+$tests = [
+    null,
+    1,
+    [],
+];
 
 $subscriber = new TopologyDescriptionProvider;
 $topologyDescription = $subscriber->getTopologyDescription();
-$serverDescriptions = $topologyDescription->getServers();
 
-var_dump(isArrayOfServerDescriptions($serverDescriptions));
+foreach ($tests as $test) {
+    echo throws(function() use ($topologyDescription, $test) {
+        $topologyDescription->hasReadableServer($test);
+    }, TypeError::class), "\n";
+}
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-bool(true)
+OK: Got TypeError
+MongoDB\Driver\TopologyDescription::hasReadableServer(): Argument #1 ($readPreference) must be of type MongoDB\Driver\ReadPreference, null given
+OK: Got TypeError
+MongoDB\Driver\TopologyDescription::hasReadableServer(): Argument #1 ($readPreference) must be of type MongoDB\Driver\ReadPreference, int given
+OK: Got TypeError
+MongoDB\Driver\TopologyDescription::hasReadableServer(): Argument #1 ($readPreference) must be of type MongoDB\Driver\ReadPreference, array given
 ===DONE===
