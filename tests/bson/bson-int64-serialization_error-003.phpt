@@ -1,12 +1,15 @@
 --TEST--
-MongoDB\BSON\Int64 unserialization requires "int" string field (Serializable interface)
+MongoDB\BSON\Int64 unserialization requires "int" string field (__serialize and __unserialize)
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    unserialize('C:18:"MongoDB\BSON\Int64":24:{a:1:{s:7:"integer";i:0;}}');
+    unserialize('O:18:"MongoDB\BSON\Int64":1:{s:7:"integer";i:0;}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
