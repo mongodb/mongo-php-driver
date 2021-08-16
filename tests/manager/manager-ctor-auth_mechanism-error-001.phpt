@@ -33,10 +33,7 @@ echo throws(function() {
     create_test_manager('mongodb://localhost:27017/', ['password' => 'password', 'authMechanism' => 'MONGODB-X509']);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
 
-echo throws(function() {
-    create_test_manager('mongodb://localhost:27017/?authSource=foo');
-}, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
-
+// TODO: This test case should be removed by PHPC-1950
 echo throws(function() {
     create_test_manager('mongodb://localhost:27017/', ['authSource' => 'foo']);
 }, "MongoDB\Driver\Exception\InvalidArgumentException"), "\n";
@@ -59,8 +56,6 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: 'SCRAM-SHA-1' authentication mechanism requires username.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: X509 authentication mechanism does not accept a password.
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://localhost:27017/?authSource=foo'. Default authentication mechanism requires username.
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse URI options: Default authentication mechanism requires username.
 ===DONE===
