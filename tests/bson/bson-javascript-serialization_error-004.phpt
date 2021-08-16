@@ -1,12 +1,15 @@
 --TEST--
-MongoDB\BSON\Javascript unserialization requires "code" string field (Serializable interface)
+MongoDB\BSON\Javascript unserialization requires "code" string field (__serialize and __unserialize)
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    unserialize('C:23:"MongoDB\BSON\Javascript":21:{a:1:{s:4:"code";i:0;}}');
+    unserialize('O:23:"MongoDB\BSON\Javascript":1:{s:4:"code";i:0;}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

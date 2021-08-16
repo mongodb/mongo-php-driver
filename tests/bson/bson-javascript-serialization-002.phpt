@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\Javascript serialization (Serializable interface)
+MongoDB\BSON\Javascript serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -32,7 +32,7 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
   ["scope"]=>
   NULL
 }
-string(108) "C:23:"MongoDB\BSON\Javascript":72:{a:2:{s:4:"code";s:33:"function foo(bar) { return bar; }";s:5:"scope";N;}}"
+string(101) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:33:"function foo(bar) { return bar; }";s:5:"scope";N;}"
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
   string(33) "function foo(bar) { return bar; }"
@@ -47,7 +47,7 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
   object(stdClass)#%d (%d) {
   }
 }
-string(125) "C:23:"MongoDB\BSON\Javascript":89:{a:2:{s:4:"code";s:33:"function foo(bar) { return bar; }";s:5:"scope";O:8:"stdClass":0:{}}}"
+string(118) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:33:"function foo(bar) { return bar; }";s:5:"scope";O:8:"stdClass":0:{}}"
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
   string(33) "function foo(bar) { return bar; }"
@@ -65,7 +65,7 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
     int(42)
   }
 }
-string(138) "C:23:"MongoDB\BSON\Javascript":101:{a:2:{s:4:"code";s:30:"function foo() { return foo; }";s:5:"scope";O:8:"stdClass":1:{s:3:"foo";i:42;}}}"
+string(130) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:30:"function foo() { return foo; }";s:5:"scope";O:8:"stdClass":1:{s:3:"foo";i:42;}}"
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
   string(30) "function foo() { return foo; }"
@@ -88,7 +88,7 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
     }
   }
 }
-string(213) "C:23:"MongoDB\BSON\Javascript":176:{a:2:{s:4:"code";s:29:"function foo() { return id; }";s:5:"scope";O:8:"stdClass":1:{s:2:"id";C:21:"MongoDB\BSON\ObjectId":48:{a:1:{s:3:"oid";s:24:"53e2a1c40640fd72175d4603";}}}}}"
+string(198) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:29:"function foo() { return id; }";s:5:"scope";O:8:"stdClass":1:{s:2:"id";O:21:"MongoDB\BSON\ObjectId":1:{s:3:"oid";s:24:"53e2a1c40640fd72175d4603";}}}"
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
   string(29) "function foo() { return id; }"

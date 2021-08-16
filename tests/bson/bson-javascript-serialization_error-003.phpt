@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Javascript unserialization does not allow code to contain null bytes
+MongoDB\BSON\Javascript unserialization does not allow code to contain null bytes (Serializable interface)
 --FILE--
 <?php
 
