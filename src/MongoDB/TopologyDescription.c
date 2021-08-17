@@ -53,12 +53,14 @@ static PHP_METHOD(TopologyDescription, getServers)
 	for (i = 0; i < n; i++) {
 		zval obj;
 
-		phongo_serverdescription_init(&obj, sds[i]);
+		phongo_serverdescription_init(&obj, mongoc_server_description_new_copy(sds[i]));
 		add_next_index_zval(return_value, &obj);
 	}
+
+	mongoc_server_descriptions_destroy_all(sds, n);
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\TopologyDescription::hasReadableServer([?MongoDB\Driver\ReadPreference $readPreference])
+/* {{{ proto boolean MongoDB\Driver\TopologyDescription::hasReadableServer([MongoDB\Driver\ReadPreference $readPreference])
     Returns whether the topology has a readable server available */
 static PHP_METHOD(TopologyDescription, hasReadableServer)
 {
@@ -190,6 +192,7 @@ HashTable* php_phongo_topologydescription_get_properties_hash(phongo_compat_obje
 		}
 
 		zend_hash_str_update(props, "servers", sizeof("servers") - 1, &servers);
+		mongoc_server_descriptions_destroy_all(sds, n);
 	}
 
 	{

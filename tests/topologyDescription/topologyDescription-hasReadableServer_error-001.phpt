@@ -37,9 +37,9 @@ $subscriber = new TopologyDescriptionProvider;
 $topologyDescription = $subscriber->getTopologyDescription();
 
 foreach ($tests as $test) {
-    echo throws(function() use ($topologyDescription, $test) {
+    throws(function() use ($topologyDescription, $test) {
         $topologyDescription->hasReadableServer($test);
-    }, TypeError::class), "\n";
+    }, TypeError::class);
 }
 
 ?>
@@ -47,9 +47,6 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got TypeError
-MongoDB\Driver\TopologyDescription::hasReadableServer(): Argument #1 ($readPreference) must be of type MongoDB\Driver\ReadPreference, null given
 OK: Got TypeError
-MongoDB\Driver\TopologyDescription::hasReadableServer(): Argument #1 ($readPreference) must be of type MongoDB\Driver\ReadPreference, int given
 OK: Got TypeError
-MongoDB\Driver\TopologyDescription::hasReadableServer(): Argument #1 ($readPreference) must be of type MongoDB\Driver\ReadPreference, array given
 ===DONE===
