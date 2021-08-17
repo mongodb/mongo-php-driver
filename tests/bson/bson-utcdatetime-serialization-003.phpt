@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\UTCDateTime serialization (Serializable interface)
+MongoDB\BSON\UTCDateTime serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -27,7 +27,7 @@ object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   string(1) "0"
 }
-string(71) "C:24:"MongoDB\BSON\UTCDateTime":34:{a:1:{s:12:"milliseconds";s:1:"0";}}"
+string(64) "O:24:"MongoDB\BSON\UTCDateTime":1:{s:12:"milliseconds";s:1:"0";}"
 object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   string(1) "0"
@@ -37,7 +37,7 @@ object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   string(14) "-1416445411987"
 }
-string(85) "C:24:"MongoDB\BSON\UTCDateTime":48:{a:1:{s:12:"milliseconds";s:14:"-1416445411987";}}"
+string(78) "O:24:"MongoDB\BSON\UTCDateTime":1:{s:12:"milliseconds";s:14:"-1416445411987";}"
 object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   string(14) "-1416445411987"
@@ -47,7 +47,7 @@ object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   string(13) "1416445411987"
 }
-string(84) "C:24:"MongoDB\BSON\UTCDateTime":47:{a:1:{s:12:"milliseconds";s:13:"1416445411987";}}"
+string(77) "O:24:"MongoDB\BSON\UTCDateTime":1:{s:12:"milliseconds";s:13:"1416445411987";}"
 object(MongoDB\BSON\UTCDateTime)#%d (%d) {
   ["milliseconds"]=>
   string(13) "1416445411987"
