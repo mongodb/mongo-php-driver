@@ -128,6 +128,12 @@ typedef struct {
 } php_phongo_session_t;
 
 typedef struct {
+	mongoc_topology_description_t* topology_description;
+	HashTable*                     properties;
+	zend_object                    std;
+} php_phongo_topologydescription_t;
+
+typedef struct {
 	HashTable*              properties;
 	mongoc_write_concern_t* write_concern;
 	zend_object             std;
@@ -277,6 +283,13 @@ typedef struct {
 	bson_t*     reply;
 	zend_object std;
 } php_phongo_commandsucceededevent_t;
+
+typedef struct {
+	bson_oid_t                     topology_id;
+	mongoc_topology_description_t* new_topology_description;
+	mongoc_topology_description_t* old_topology_description;
+	zend_object                    std;
+} php_phongo_topologychangedevent_t;
 
 #endif /* PHONGO_STRUCTS */
 
