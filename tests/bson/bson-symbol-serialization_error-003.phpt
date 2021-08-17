@@ -1,12 +1,15 @@
 --TEST--
-MongoDB\BSON\Symbol unserialization requires "symbol" string field (Serializable interface)
+MongoDB\BSON\Symbol unserialization requires "symbol" string field (__serialize and __unserialize)
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    unserialize('C:19:"MongoDB\BSON\Symbol":23:{a:1:{s:6:"symbol";i:0;}}');
+    unserialize('O:19:"MongoDB\BSON\Symbol":1:{s:6:"symbol";i:0;}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Symbol unserialization does not allow code to contain null bytes
+MongoDB\BSON\Symbol unserialization does not allow code to contain null bytes (Serializable interface)
 --FILE--
 <?php
 
