@@ -1,14 +1,14 @@
 --TEST--
-MongoDB\Driver\CursorId serialization (Serializable interface)
+MongoDB\Driver\CursorId serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-$serialized = 'C:23:"MongoDB\Driver\CursorId":42:{a:1:{s:2:"id";s:19:"7250031947823432848";}}';
+$serialized = 'O:23:"MongoDB\Driver\CursorId":1:{s:2:"id";s:19:"7250031947823432848";}';
 
 $cursorId = unserialize($serialized);
 
@@ -25,5 +25,5 @@ object(MongoDB\Driver\CursorId)#%d (%d) {
   %rint\(\d+\)|string\(\d+\) "\d+"%r
 }
 bool(true)
-C:23:"MongoDB\Driver\CursorId":42:{a:1:{s:2:"id";s:19:"7250031947823432848";}}
+O:23:"MongoDB\Driver\CursorId":1:{s:2:"id";s:19:"7250031947823432848";}
 ===DONE===
