@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\Driver\ReadPreference serialization (Serializable interface)
+MongoDB\Driver\ReadPreference serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -23,7 +23,6 @@ $tests = [
 
 foreach ($tests as $test) {
     var_dump($test);
-    var_dump($test instanceof Serializable);
     echo $s = serialize($test), "\n";
     var_dump(unserialize($s));
     echo "\n";
@@ -37,8 +36,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(7) "primary"
 }
-bool(true)
-C:29:"MongoDB\Driver\ReadPreference":31:{a:1:{s:4:"mode";s:7:"primary";}}
+O:29:"MongoDB\Driver\ReadPreference":1:{s:4:"mode";s:7:"primary";}
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(7) "primary"
@@ -48,8 +46,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(16) "primaryPreferred"
 }
-bool(true)
-C:29:"MongoDB\Driver\ReadPreference":41:{a:1:{s:4:"mode";s:16:"primaryPreferred";}}
+O:29:"MongoDB\Driver\ReadPreference":1:{s:4:"mode";s:16:"primaryPreferred";}
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(16) "primaryPreferred"
@@ -59,8 +56,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
 }
-bool(true)
-C:29:"MongoDB\Driver\ReadPreference":33:{a:1:{s:4:"mode";s:9:"secondary";}}
+O:29:"MongoDB\Driver\ReadPreference":1:{s:4:"mode";s:9:"secondary";}
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
@@ -70,8 +66,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(18) "secondaryPreferred"
 }
-bool(true)
-C:29:"MongoDB\Driver\ReadPreference":43:{a:1:{s:4:"mode";s:18:"secondaryPreferred";}}
+O:29:"MongoDB\Driver\ReadPreference":1:{s:4:"mode";s:18:"secondaryPreferred";}
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(18) "secondaryPreferred"
@@ -81,8 +76,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(7) "nearest"
 }
-bool(true)
-C:29:"MongoDB\Driver\ReadPreference":31:{a:1:{s:4:"mode";s:7:"nearest";}}
+O:29:"MongoDB\Driver\ReadPreference":1:{s:4:"mode";s:7:"nearest";}
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(7) "nearest"
@@ -92,8 +86,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
 }
-bool(true)
-C:29:"MongoDB\Driver\ReadPreference":33:{a:1:{s:4:"mode";s:9:"secondary";}}
+O:29:"MongoDB\Driver\ReadPreference":1:{s:4:"mode";s:9:"secondary";}
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
@@ -111,8 +104,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
     }
   }
 }
-bool(true)
-C:29:"MongoDB\Driver\ReadPreference":78:{a:2:{s:4:"mode";s:9:"secondary";s:4:"tags";a:1:{i:0;a:1:{s:2:"dc";s:2:"ny";}}}}
+O:29:"MongoDB\Driver\ReadPreference":2:{s:4:"mode";s:9:"secondary";s:4:"tags";a:1:{i:0;O:8:"stdClass":1:{s:2:"dc";s:2:"ny";}}}
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
@@ -148,8 +140,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
     }
   }
 }
-bool(true)
-C:29:"MongoDB\Driver\ReadPreference":142:{a:2:{s:4:"mode";s:9:"secondary";s:4:"tags";a:3:{i:0;a:1:{s:2:"dc";s:2:"ny";}i:1;a:2:{s:2:"dc";s:2:"sf";s:3:"use";s:9:"reporting";}i:2;a:0:{}}}}
+O:29:"MongoDB\Driver\ReadPreference":2:{s:4:"mode";s:9:"secondary";s:4:"tags";a:3:{i:0;O:8:"stdClass":1:{s:2:"dc";s:2:"ny";}i:1;O:8:"stdClass":2:{s:2:"dc";s:2:"sf";s:3:"use";s:9:"reporting";}i:2;O:8:"stdClass":0:{}}}
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
@@ -179,8 +170,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["maxStalenessSeconds"]=>
   int(1000)
 }
-bool(true)
-C:29:"MongoDB\Driver\ReadPreference":67:{a:2:{s:4:"mode";s:9:"secondary";s:19:"maxStalenessSeconds";i:1000;}}
+O:29:"MongoDB\Driver\ReadPreference":2:{s:4:"mode";s:9:"secondary";s:19:"maxStalenessSeconds";i:1000;}
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
@@ -197,8 +187,7 @@ object(MongoDB\Driver\ReadPreference)#%d (%d) {
     bool(true)
   }
 }
-bool(true)
-C:29:"MongoDB\Driver\ReadPreference":82:{a:2:{s:4:"mode";s:9:"secondary";s:5:"hedge";O:8:"stdClass":1:{s:7:"enabled";b:1;}}}
+O:29:"MongoDB\Driver\ReadPreference":2:{s:4:"mode";s:9:"secondary";s:5:"hedge";O:8:"stdClass":1:{s:7:"enabled";b:1;}}
 object(MongoDB\Driver\ReadPreference)#%d (%d) {
   ["mode"]=>
   string(9) "secondary"
