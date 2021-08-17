@@ -515,6 +515,8 @@ static HashTable* php_phongo_readpreference_get_properties_hash(phongo_compat_ob
 	}
 
 	if (mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference) != MONGOC_NO_MAX_STALENESS) {
+		/* Note: valid values for maxStalesnessSeconds will not exceed the range
+		 * of 32-bit signed integers, so conditional encoding is not necessary. */
 		long maxStalenessSeconds = mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference);
 		zval z_max_ss;
 
