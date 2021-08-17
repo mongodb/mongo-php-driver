@@ -20,7 +20,7 @@ echo var_export($server->getServerDescription(), true), "\n";
 MongoDB\Driver\ServerDescription::__set_state(array(
    'host' => '%s',
    'port' => %d,
-   'type' => %d,
+   'type' => '%r(Standalone|Mongos|RSPrimary)%r',
    'hello_response' => 
   array (
     %a

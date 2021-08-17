@@ -202,7 +202,7 @@ HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object
 		ZVAL_LONG(&port, host_list->port);
 		zend_hash_str_update(props, "port", sizeof("port") - 1, &port);
 
-		ZVAL_LONG(&type, php_phongo_server_description_type(intern->server_description));
+		ZVAL_STRING(&type, mongoc_server_description_type(intern->server_description));
 		zend_hash_str_update(props, "type", sizeof("type") - 1, &type);
 	}
 

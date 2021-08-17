@@ -17,11 +17,11 @@ $manager = create_test_manager();
 $server = $manager->selectServer(new MongoDB\Driver\ReadPreference('primary'));
 $type = $server->getServerDescription()->getType();
 
-var_dump(in_array($type, $expected_types));
+var_dump($type);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-bool(true)
+--EXPECTF--
+string(%d) "%r(Standalone|Mongos|RSPrimary)%r"
 ===DONE===
