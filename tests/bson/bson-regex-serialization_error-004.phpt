@@ -1,16 +1,19 @@
 --TEST--
-MongoDB\BSON\Regex unserialization does not allow pattern or flags to contain null bytes (Serializable interface)
+MongoDB\BSON\Regex unserialization does not allow pattern or flags to contain null bytes (__serialize and __unserialize)
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    unserialize('C:18:"MongoDB\BSON\Regex":54:{a:2:{s:7:"pattern";s:7:"regexp' . "\0" . '";s:5:"flags";s:1:"i";}}');
+    unserialize('O:18:"MongoDB\BSON\Regex":2:{s:7:"pattern";s:7:"regexp' . "\0" . '";s:5:"flags";s:1:"i";}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-    unserialize('C:18:"MongoDB\BSON\Regex":54:{a:2:{s:7:"pattern";s:6:"regexp";s:5:"flags";s:2:"i' . "\0" . '";}}');
+    unserialize('O:18:"MongoDB\BSON\Regex":2:{s:7:"pattern";s:6:"regexp";s:5:"flags";s:2:"i' . "\0" . '";}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

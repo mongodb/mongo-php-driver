@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\Regex serialization with flags omitted (Serializable interface)
+MongoDB\BSON\Regex serialization with flags omitted (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -20,7 +20,7 @@ object(MongoDB\BSON\Regex)#%d (%d) {
   ["flags"]=>
   string(0) ""
 }
-string(83) "C:18:"MongoDB\BSON\Regex":52:{a:2:{s:7:"pattern";s:6:"regexp";s:5:"flags";s:0:"";}}"
+string(76) "O:18:"MongoDB\BSON\Regex":2:{s:7:"pattern";s:6:"regexp";s:5:"flags";s:0:"";}"
 object(MongoDB\BSON\Regex)#%d (%d) {
   ["pattern"]=>
   string(6) "regexp"

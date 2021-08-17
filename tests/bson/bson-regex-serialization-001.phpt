@@ -1,5 +1,8 @@
 --TEST--
-MongoDB\BSON\Regex serialization
+MongoDB\BSON\Regex serialization (Serializable interface)
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('>=', '7.4.0'); ?>
 --FILE--
 <?php
 
