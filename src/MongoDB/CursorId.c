@@ -58,7 +58,7 @@ static bool php_phongo_cursorid_init_from_hash(php_phongo_cursorid_t* intern, Ha
 	return false;
 } /* }}} */
 
-static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool is_debug) /* {{{ */
+static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool is_serialize) /* {{{ */
 {
 	php_phongo_cursorid_t* intern;
 	HashTable*             props;
@@ -74,14 +74,22 @@ static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_h
 	{
 		zval value;
 
-		if (is_debug) {
+		if (is_serialize) {
+			if (intern->id > INT32_MAX || intern->id < INT32_MIN) {
+				ZVAL_INT64_STRING(&value, intern->id);
+			} else {
+				ZVAL_LONG(&value, intern->id);
+			}
+		} else {
 #if SIZEOF_ZEND_LONG == 4
-			ZVAL_INT64_STRING(&value, intern->id);
+			if (intern->id > INT32_MAX || intern->id < INT32_MIN) {
+				ZVAL_INT64_STRING(&value, intern->id);
+			} else {
+				ZVAL_LONG(&value, intern->id);
+			}
 #else
 			ZVAL_LONG(&value, intern->id);
 #endif
-		} else {
-			ZVAL_INT64_STRING(&value, intern->id);
 		}
 		zend_hash_str_update(props, "id", sizeof("id") - 1, &value);
 	}
@@ -209,7 +217,7 @@ static PHP_METHOD(CursorId, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_cursorid_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false));
+	RETURN_ARR(php_phongo_cursorid_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
 } /* }}} */
 
 /* {{{ proto array MongoDB\Driver\CursorId::__unserialize()
@@ -288,7 +296,7 @@ static zend_object* php_phongo_cursorid_create_object(zend_class_entry* class_ty
 static HashTable* php_phongo_cursorid_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
 	*is_temp = 1;
-	return php_phongo_cursorid_get_properties_hash(object, true, true);
+	return php_phongo_cursorid_get_properties_hash(object, true, false);
 } /* }}} */
 /* }}} */
 
