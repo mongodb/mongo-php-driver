@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\Driver\WriteConcern serialization (Serializable interface)
+MongoDB\Driver\WriteConcern serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -29,7 +29,6 @@ $tests = [
 
 foreach ($tests as $test) {
     var_dump($test);
-    var_dump($test instanceof Serializable);
     echo $s = serialize($test), "\n";
     var_dump(unserialize($s));
     echo "\n";
@@ -43,8 +42,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":29:{a:1:{s:1:"w";s:8:"majority";}}
+O:27:"MongoDB\Driver\WriteConcern":1:{s:1:"w";s:8:"majority";}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
@@ -52,8 +50,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
 
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":6:{a:0:{}}
+O:27:"MongoDB\Driver\WriteConcern":0:{}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
 }
 
@@ -61,8 +58,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(-1)
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":19:{a:1:{s:1:"w";i:-1;}}
+O:27:"MongoDB\Driver\WriteConcern":1:{s:1:"w";i:-1;}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(-1)
@@ -72,8 +68,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(0)
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":18:{a:1:{s:1:"w";i:0;}}
+O:27:"MongoDB\Driver\WriteConcern":1:{s:1:"w";i:0;}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(0)
@@ -83,8 +78,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":18:{a:1:{s:1:"w";i:1;}}
+O:27:"MongoDB\Driver\WriteConcern":1:{s:1:"w";i:1;}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
@@ -94,8 +88,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":29:{a:1:{s:1:"w";s:8:"majority";}}
+O:27:"MongoDB\Driver\WriteConcern":1:{s:1:"w";s:8:"majority";}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(8) "majority"
@@ -105,8 +98,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(3) "tag"
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":24:{a:1:{s:1:"w";s:3:"tag";}}
+O:27:"MongoDB\Driver\WriteConcern":1:{s:1:"w";s:3:"tag";}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   string(3) "tag"
@@ -116,8 +108,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":18:{a:1:{s:1:"w";i:1;}}
+O:27:"MongoDB\Driver\WriteConcern":1:{s:1:"w";i:1;}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
@@ -129,8 +120,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["j"]=>
   bool(false)
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":30:{a:2:{s:1:"w";i:1;s:1:"j";b:0;}}
+O:27:"MongoDB\Driver\WriteConcern":2:{s:1:"w";i:1;s:1:"j";b:0;}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
@@ -144,8 +134,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(1000)
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":40:{a:2:{s:1:"w";i:1;s:8:"wtimeout";i:1000;}}
+O:27:"MongoDB\Driver\WriteConcern":2:{s:1:"w";i:1;s:8:"wtimeout";i:1000;}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
@@ -161,8 +150,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(1000)
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":52:{a:3:{s:1:"w";i:1;s:1:"j";b:1;s:8:"wtimeout";i:1000;}}
+O:27:"MongoDB\Driver\WriteConcern":3:{s:1:"w";i:1;s:1:"j";b:1;s:8:"wtimeout";i:1000;}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(1)
@@ -176,8 +164,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["j"]=>
   bool(true)
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":18:{a:1:{s:1:"j";b:1;}}
+O:27:"MongoDB\Driver\WriteConcern":1:{s:1:"j";b:1;}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["j"]=>
   bool(true)
@@ -187,8 +174,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(1000)
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":28:{a:1:{s:8:"wtimeout";i:1000;}}
+O:27:"MongoDB\Driver\WriteConcern":1:{s:8:"wtimeout";i:1000;}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   int(1000)
@@ -200,8 +186,7 @@ object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["wtimeout"]=>
   %rint\(2147483648\)|string\(10\) "2147483648"%r
 }
-bool(true)
-C:27:"MongoDB\Driver\WriteConcern":51:{a:2:{s:1:"w";i:2;s:8:"wtimeout";s:10:"2147483648";}}
+O:27:"MongoDB\Driver\WriteConcern":2:{s:1:"w";i:2;s:8:"wtimeout";s:10:"2147483648";}
 object(MongoDB\Driver\WriteConcern)#%d (%d) {
   ["w"]=>
   int(2)

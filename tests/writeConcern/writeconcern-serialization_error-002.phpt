@@ -1,5 +1,8 @@
 --TEST--
-MongoDB\Driver\WriteConcern unserialization errors (Serializable interface)
+MongoDB\Driver\WriteConcern unserialization errors (__serialize and __unserialize)
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -10,7 +13,7 @@ require_once __DIR__ . '/../utils/basic.inc';
  * tests for ReadPreference::__set_state() */
 
 echo throws(function() {
-    unserialize('C:27:"MongoDB\Driver\WriteConcern":30:{a:2:{s:1:"w";i:0;s:1:"j";b:1;}}');
+    unserialize('O:27:"MongoDB\Driver\WriteConcern":2:{s:1:"w";i:0;s:1:"j";b:1;}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
