@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\Undefined serialization (Serializable interface)
+MongoDB\BSON\Undefined serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -16,7 +16,7 @@ var_dump(unserialize($s));
 --EXPECTF--
 object(MongoDB\BSON\Undefined)#%d (%d) {
 }
-string(34) "C:22:"MongoDB\BSON\Undefined":0:{}"
+string(34) "O:22:"MongoDB\BSON\Undefined":0:{}"
 object(MongoDB\BSON\Undefined)#%d (%d) {
 }
 ===DONE===
