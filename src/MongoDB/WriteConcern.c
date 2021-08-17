@@ -298,7 +298,7 @@ static PHP_METHOD(WriteConcern, isDefault)
 	RETURN_BOOL(mongoc_write_concern_is_default(intern->write_concern));
 } /* }}} */
 
-static HashTable* php_phongo_writeconcern_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool is_bson) /* {{{ */
+static HashTable* php_phongo_writeconcern_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool is_bson, bool is_serialize) /* {{{ */
 {
 	php_phongo_writeconcern_t* intern;
 	HashTable*                 props;
@@ -344,6 +344,12 @@ static HashTable* php_phongo_writeconcern_get_properties_hash(phongo_compat_obje
 
 			if (is_bson) {
 				ZVAL_INT64(&z_wtimeout, wtimeout);
+			} else if (is_serialize) {
+				if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
+					ZVAL_INT64_STRING(&z_wtimeout, wtimeout);
+				} else {
+					ZVAL_LONG(&z_wtimeout, wtimeout);
+				}
 			} else {
 #if SIZEOF_ZEND_LONG == 4
 				if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
@@ -376,7 +382,7 @@ static PHP_METHOD(WriteConcern, bsonSerialize)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	ZVAL_ARR(return_value, php_phongo_writeconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
+	ZVAL_ARR(return_value, php_phongo_writeconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true, false));
 	convert_to_object(return_value);
 } /* }}} */
 
@@ -487,7 +493,7 @@ static PHP_METHOD(WriteConcern, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_writeconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false));
+	RETURN_ARR(php_phongo_writeconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false, true));
 } /* }}} */
 
 /* {{{ proto array MongoDB\Driver\WriteConcern::__unserialize()
@@ -579,12 +585,12 @@ static zend_object* php_phongo_writeconcern_create_object(zend_class_entry* clas
 static HashTable* php_phongo_writeconcern_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
 	*is_temp = 1;
-	return php_phongo_writeconcern_get_properties_hash(object, true, false);
+	return php_phongo_writeconcern_get_properties_hash(object, true, false, false);
 } /* }}} */
 
 static HashTable* php_phongo_writeconcern_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
 {
-	return php_phongo_writeconcern_get_properties_hash(object, false, false);
+	return php_phongo_writeconcern_get_properties_hash(object, false, false, false);
 } /* }}} */
 
 void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
