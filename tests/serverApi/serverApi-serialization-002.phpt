@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\Driver\ServerApi serialization (Serializable interface)
+MongoDB\Driver\ServerApi serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -17,7 +17,6 @@ $tests = [
 
 foreach ($tests as $test) {
     var_dump($test);
-    var_dump($test instanceof Serializable);
     echo $s = serialize($test), "\n";
     var_dump(unserialize($s));
     echo "\n";
@@ -35,8 +34,7 @@ object(MongoDB\Driver\ServerApi)#%d (%d) {
   ["deprecationErrors"]=>
   NULL
 }
-bool(true)
-C:24:"MongoDB\Driver\ServerApi":70:{a:3:{s:7:"version";s:1:"1";s:6:"strict";N;s:17:"deprecationErrors";N;}}
+O:24:"MongoDB\Driver\ServerApi":3:{s:7:"version";s:1:"1";s:6:"strict";N;s:17:"deprecationErrors";N;}
 object(MongoDB\Driver\ServerApi)#5 (3) {
   ["version"]=>
   string(1) "1"
@@ -54,8 +52,7 @@ object(MongoDB\Driver\ServerApi)#%d (%d) {
   ["deprecationErrors"]=>
   NULL
 }
-bool(true)
-C:24:"MongoDB\Driver\ServerApi":72:{a:3:{s:7:"version";s:1:"1";s:6:"strict";b:1;s:17:"deprecationErrors";N;}}
+O:24:"MongoDB\Driver\ServerApi":3:{s:7:"version";s:1:"1";s:6:"strict";b:1;s:17:"deprecationErrors";N;}
 object(MongoDB\Driver\ServerApi)#5 (3) {
   ["version"]=>
   string(1) "1"
@@ -73,8 +70,7 @@ object(MongoDB\Driver\ServerApi)#%d (%d) {
   ["deprecationErrors"]=>
   bool(true)
 }
-bool(true)
-C:24:"MongoDB\Driver\ServerApi":72:{a:3:{s:7:"version";s:1:"1";s:6:"strict";N;s:17:"deprecationErrors";b:1;}}
+O:24:"MongoDB\Driver\ServerApi":3:{s:7:"version";s:1:"1";s:6:"strict";N;s:17:"deprecationErrors";b:1;}
 object(MongoDB\Driver\ServerApi)#5 (3) {
   ["version"]=>
   string(1) "1"
@@ -92,8 +88,7 @@ object(MongoDB\Driver\ServerApi)#%d (%d) {
   ["deprecationErrors"]=>
   bool(false)
 }
-bool(true)
-C:24:"MongoDB\Driver\ServerApi":74:{a:3:{s:7:"version";s:1:"1";s:6:"strict";b:0;s:17:"deprecationErrors";b:0;}}
+O:24:"MongoDB\Driver\ServerApi":3:{s:7:"version";s:1:"1";s:6:"strict";b:0;s:17:"deprecationErrors";b:0;}
 object(MongoDB\Driver\ServerApi)#5 (3) {
   ["version"]=>
   string(1) "1"
