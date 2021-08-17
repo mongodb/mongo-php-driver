@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\Timestamp serialization (Serializable interface)
+MongoDB\BSON\Timestamp serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -31,7 +31,7 @@ object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["timestamp"]=>
   string(4) "5678"
 }
-string(95) "C:22:"MongoDB\BSON\Timestamp":60:{a:2:{s:9:"increment";s:4:"1234";s:9:"timestamp";s:4:"5678";}}"
+string(88) "O:22:"MongoDB\BSON\Timestamp":2:{s:9:"increment";s:4:"1234";s:9:"timestamp";s:4:"5678";}"
 object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["increment"]=>
   string(4) "1234"
@@ -45,7 +45,7 @@ object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["timestamp"]=>
   string(1) "0"
 }
-string(99) "C:22:"MongoDB\BSON\Timestamp":64:{a:2:{s:9:"increment";s:10:"2147483647";s:9:"timestamp";s:1:"0";}}"
+string(92) "O:22:"MongoDB\BSON\Timestamp":2:{s:9:"increment";s:10:"2147483647";s:9:"timestamp";s:1:"0";}"
 object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["increment"]=>
   string(10) "2147483647"
@@ -59,7 +59,7 @@ object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["timestamp"]=>
   string(10) "2147483647"
 }
-string(99) "C:22:"MongoDB\BSON\Timestamp":64:{a:2:{s:9:"increment";s:1:"0";s:9:"timestamp";s:10:"2147483647";}}"
+string(92) "O:22:"MongoDB\BSON\Timestamp":2:{s:9:"increment";s:1:"0";s:9:"timestamp";s:10:"2147483647";}"
 object(MongoDB\BSON\Timestamp)#%d (%d) {
   ["increment"]=>
   string(1) "0"
