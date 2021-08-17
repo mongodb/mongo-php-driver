@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\Driver\ReadConcern serialization (Serializable interface)
+MongoDB\Driver\ReadConcern serialization (__serialize and __unserialize)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '7.4.0'); ?>
+<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
@@ -19,7 +19,6 @@ $tests = [
 
 foreach ($tests as $test) {
     var_dump($test);
-    var_dump($test instanceof Serializable);
     echo $s = serialize($test), "\n";
     var_dump(unserialize($s));
     echo "\n";
@@ -31,8 +30,7 @@ foreach ($tests as $test) {
 --EXPECTF--
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
 }
-bool(true)
-C:26:"MongoDB\Driver\ReadConcern":0:{}
+O:26:"MongoDB\Driver\ReadConcern":0:{}
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
 }
 
@@ -40,8 +38,7 @@ object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>
   string(12) "linearizable"
 }
-bool(true)
-C:26:"MongoDB\Driver\ReadConcern":38:{a:1:{s:5:"level";s:12:"linearizable";}}
+O:26:"MongoDB\Driver\ReadConcern":1:{s:5:"level";s:12:"linearizable";}
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>
   string(12) "linearizable"
@@ -51,8 +48,7 @@ object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>
   string(5) "local"
 }
-bool(true)
-C:26:"MongoDB\Driver\ReadConcern":30:{a:1:{s:5:"level";s:5:"local";}}
+O:26:"MongoDB\Driver\ReadConcern":1:{s:5:"level";s:5:"local";}
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>
   string(5) "local"
@@ -62,8 +58,7 @@ object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>
   string(8) "majority"
 }
-bool(true)
-C:26:"MongoDB\Driver\ReadConcern":33:{a:1:{s:5:"level";s:8:"majority";}}
+O:26:"MongoDB\Driver\ReadConcern":1:{s:5:"level";s:8:"majority";}
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>
   string(8) "majority"
@@ -73,8 +68,7 @@ object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>
   string(9) "available"
 }
-bool(true)
-C:26:"MongoDB\Driver\ReadConcern":34:{a:1:{s:5:"level";s:9:"available";}}
+O:26:"MongoDB\Driver\ReadConcern":1:{s:5:"level";s:9:"available";}
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>
   string(9) "available"
@@ -84,8 +78,7 @@ object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>
   string(8) "snapshot"
 }
-bool(true)
-C:26:"MongoDB\Driver\ReadConcern":33:{a:1:{s:5:"level";s:8:"snapshot";}}
+O:26:"MongoDB\Driver\ReadConcern":1:{s:5:"level";s:8:"snapshot";}
 object(MongoDB\Driver\ReadConcern)#%d (%d) {
   ["level"]=>
   string(8) "snapshot"
