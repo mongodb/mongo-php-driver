@@ -24,6 +24,8 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
         echo "- getNewDescription() returns a TopologyDescription: ", ($event->getNewDescription() instanceof MongoDB\Driver\TopologyDescription) ? 'yes' : 'no', "\n";
         echo "- getPreviousDescription() returns a TopologyDescription: ", ($event->getPreviousDescription() instanceof MongoDB\Driver\TopologyDescription) ? 'yes' : 'no', "\n";
     }
+
+    public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event) {}
 }
 
 $subscriber = new MySubscriber;
