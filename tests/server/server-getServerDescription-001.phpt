@@ -21,7 +21,7 @@ object(MongoDB\Driver\ServerDescription)#%d (%d) {
   ["port"]=>
   int(%d)
   ["type"]=>
-  int(%d)
+  string(%d) "%r(Standalone|Mongos|RSPrimary)%r"
   ["hello_response"]=>
   array(%d) {
     %a

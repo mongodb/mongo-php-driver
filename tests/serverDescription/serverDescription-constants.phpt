@@ -17,13 +17,13 @@ var_dump(MongoDB\Driver\ServerDescription::TYPE_RS_GHOST);
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-int(0)
-int(1)
-int(2)
-int(3)
-int(4)
-int(5)
-int(6)
-int(7)
-int(8)
+string(7) "Unknown"
+string(10) "Standalone"
+string(6) "Mongos"
+string(15) "PossiblePrimary"
+string(9) "RSPrimary"
+string(11) "RSSecondary"
+string(9) "RSArbiter"
+string(7) "RSOther"
+string(7) "RSGhost"
 ===DONE===
