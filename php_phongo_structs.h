@@ -297,6 +297,11 @@ typedef struct {
 	zend_object                    std;
 } php_phongo_topologychangedevent_t;
 
+typedef struct {
+	bson_oid_t  topology_id;
+	zend_object std;
+} php_phongo_topologyopeningevent_t;
+
 #endif /* PHONGO_STRUCTS */
 
 /*
