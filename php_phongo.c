@@ -3858,6 +3858,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_serverclosedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);

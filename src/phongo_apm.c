@@ -297,6 +297,39 @@ cleanup:
 	FREE_HASHTABLE(subscribers);
 }
 
+static void phongo_apm_server_closed(const mongoc_apm_server_closed_t* event)
+{
+	mongoc_client_t*                client;
+	HashTable*                      subscribers;
+	php_phongo_serverclosedevent_t* p_event;
+	zval                            z_event;
+	const mongoc_host_list_t*       host_list;
+
+	client      = mongoc_apm_server_closed_get_context(event);
+	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+
+	/* Return early if there are no APM subscribers to notify */
+	if (zend_hash_num_elements(subscribers) == 0) {
+		goto cleanup;
+	}
+
+	object_init_ex(&z_event, php_phongo_serverclosedevent_ce);
+	p_event = Z_SERVERCLOSEDEVENT_OBJ_P(&z_event);
+
+	host_list = mongoc_apm_server_closed_get_host(event);
+	memcpy(&p_event->host, &host_list->host, BSON_HOST_NAME_MAX + 1);
+	p_event->port = host_list->port;
+
+	mongoc_apm_server_closed_get_topology_id(event, &p_event->topology_id);
+
+	phongo_apm_dispatch_event(subscribers, "serverClosed", &z_event);
+	zval_ptr_dtor(&z_event);
+
+cleanup:
+	zend_hash_destroy(subscribers);
+	FREE_HASHTABLE(subscribers);
+}
+
 static void phongo_apm_server_opening(const mongoc_apm_server_opening_t* event)
 {
 	mongoc_client_t*                 client;
@@ -401,6 +434,7 @@ bool phongo_apm_set_callbacks(mongoc_client_t* client)
 	mongoc_apm_set_command_succeeded_cb(callbacks, phongo_apm_command_succeeded);
 	mongoc_apm_set_command_failed_cb(callbacks, phongo_apm_command_failed);
 	mongoc_apm_set_server_changed_cb(callbacks, phongo_apm_server_changed);
+	mongoc_apm_set_server_closed_cb(callbacks, phongo_apm_server_closed);
 	mongoc_apm_set_server_opening_cb(callbacks, phongo_apm_server_opening);
 	mongoc_apm_set_topology_changed_cb(callbacks, phongo_apm_topology_changed);
 	mongoc_apm_set_topology_opening_cb(callbacks, phongo_apm_topology_opening);

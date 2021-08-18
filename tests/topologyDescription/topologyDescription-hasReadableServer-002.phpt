@@ -13,6 +13,8 @@ class TopologyDescriptionProvider implements MongoDB\Driver\Monitoring\SDAMSubsc
 
     public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event) {}
 
+    public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event) {}
+
     public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event) {}
 
     public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event)
