@@ -291,11 +291,48 @@ typedef struct {
 } php_phongo_commandsucceededevent_t;
 
 typedef struct {
+	bson_oid_t                   topology_id;
+	char                         host[BSON_HOST_NAME_MAX + 1];
+	uint16_t                     port;
+	mongoc_server_description_t* new_server_description;
+	mongoc_server_description_t* old_server_description;
+	zend_object                  std;
+} php_phongo_serverchangedevent_t;
+
+typedef struct {
+	bson_oid_t  topology_id;
+	char        host[BSON_HOST_NAME_MAX + 1];
+	uint16_t    port;
+	zend_object std;
+} php_phongo_serverclosedevent_t;
+
+typedef struct {
+	bool          awaited;
+	int64_t       duration;
+	bson_error_t* error;
+	char          host[BSON_HOST_NAME_MAX + 1];
+	uint16_t      port;
+	zend_object   std;
+} php_phongo_serverheartbeatfailedevent_t;
+
+typedef struct {
+	bson_oid_t  topology_id;
+	char        host[BSON_HOST_NAME_MAX + 1];
+	uint16_t    port;
+	zend_object std;
+} php_phongo_serveropeningevent_t;
+
+typedef struct {
 	bson_oid_t                     topology_id;
 	mongoc_topology_description_t* new_topology_description;
 	mongoc_topology_description_t* old_topology_description;
 	zend_object                    std;
 } php_phongo_topologychangedevent_t;
+
+typedef struct {
+	bson_oid_t  topology_id;
+	zend_object std;
+} php_phongo_topologyclosedevent_t;
 
 typedef struct {
 	bson_oid_t  topology_id;

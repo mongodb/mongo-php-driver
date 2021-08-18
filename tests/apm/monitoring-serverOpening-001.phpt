@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Monitoring\TopologyChangedEvent
+MongoDB\Driver\Monitoring\ServerOpeningEvent
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -11,7 +11,7 @@ $m = create_test_manager();
 
 class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
-    private $topologyDescription;
+    private $serverOpened = false;
 
     public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event) {}
 
@@ -19,19 +19,19 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 
     public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event) {}
 
-    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event) {}
-
-    public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event)
+    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event)
     {
-        if (isset($this->topologyDescription)) {
+        if ($this->serverOpened) {
             return;
         }
 
-        $this->topologyDescription = $event->getNewDescription();
+        $this->serverOpened = true;
+        echo "- getHost() returns a string: ", is_string($event->getHost()) ? 'yes' : 'no', "\n";
+        echo "- getPort() returns an integer: ", is_integer($event->getPort()) ? 'yes' : 'no', "\n";
         echo "- getTopologyId() returns an ObjectId: ", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no', "\n";
-        echo "- getNewDescription() returns a TopologyDescription: ", ($event->getNewDescription() instanceof MongoDB\Driver\TopologyDescription) ? 'yes' : 'no', "\n";
-        echo "- getPreviousDescription() returns a TopologyDescription: ", ($event->getPreviousDescription() instanceof MongoDB\Driver\TopologyDescription) ? 'yes' : 'no', "\n";
     }
+    
+    public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event) {}
 
     public function topologyClosed(MongoDB\Driver\Monitoring\TopologyClosedEvent $event) {}
 
@@ -48,7 +48,7 @@ $m->executeCommand(DATABASE_NAME, $command);
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+- getHost() returns a string: yes
+- getPort() returns an integer: yes
 - getTopologyId() returns an ObjectId: yes
-- getNewDescription() returns a TopologyDescription: yes
-- getPreviousDescription() returns a TopologyDescription: yes
 ===DONE===

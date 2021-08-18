@@ -1307,8 +1307,6 @@ bool php_phongo_topology_description_to_zval(zval* retval, mongoc_topology_descr
 			}
 
 			add_next_index_zval(&servers, &obj);
-			zval_ptr_dtor(&obj);
-			zval_ptr_dtor(&servers);
 		}
 		mongoc_server_descriptions_destroy_all(sds, n);
 
@@ -3719,7 +3717,12 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_serverclosedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_serverheartbeatfailedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_topologyclosedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char*) PHP_MONGODB_VERSION, CONST_CS | CONST_PERSISTENT);
