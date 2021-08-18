@@ -249,7 +249,7 @@ static PHP_METHOD(Decimal128, __serialize)
 	RETURN_ARR(php_phongo_decimal128_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Decimal128::__unserialize()
+/* {{{ proto void MongoDB\Driver\Decimal128::__unserialize(array $data)
 */
 static PHP_METHOD(Decimal128, __unserialize)
 {

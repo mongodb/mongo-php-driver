@@ -102,7 +102,7 @@ static PHP_METHOD(Undefined, __serialize)
 	array_init_size(return_value, 0);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Undefined::__unserialize()
+/* {{{ proto void MongoDB\Driver\Undefined::__unserialize(array $data)
 */
 static PHP_METHOD(Undefined, __unserialize)
 {

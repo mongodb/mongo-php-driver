@@ -363,7 +363,7 @@ static PHP_METHOD(Timestamp, __serialize)
 	RETURN_ARR(php_phongo_timestamp_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Timestamp::__unserialize()
+/* {{{ proto void MongoDB\Driver\Timestamp::__unserialize(array $data)
 */
 static PHP_METHOD(Timestamp, __unserialize)
 {

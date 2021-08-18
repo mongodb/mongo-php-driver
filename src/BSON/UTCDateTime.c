@@ -373,7 +373,7 @@ static PHP_METHOD(UTCDateTime, __serialize)
 	RETURN_ARR(php_phongo_utcdatetime_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\UTCDateTime::__unserialize()
+/* {{{ proto void MongoDB\Driver\UTCDateTime::__unserialize(array $data)
 */
 static PHP_METHOD(UTCDateTime, __unserialize)
 {

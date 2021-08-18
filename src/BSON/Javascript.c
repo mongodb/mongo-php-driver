@@ -359,7 +359,7 @@ static PHP_METHOD(Javascript, __serialize)
 	RETURN_ARR(php_phongo_javascript_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Javascript::__unserialize()
+/* {{{ proto void MongoDB\Driver\Javascript::__unserialize(array $data)
 */
 static PHP_METHOD(Javascript, __unserialize)
 {

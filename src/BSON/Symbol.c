@@ -196,7 +196,7 @@ static PHP_METHOD(Symbol, __serialize)
 	ZVAL_ARR(return_value, php_phongo_symbol_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Symbol::__unserialize()
+/* {{{ proto void MongoDB\Driver\Symbol::__unserialize(array $data)
 */
 static PHP_METHOD(Symbol, __unserialize)
 {

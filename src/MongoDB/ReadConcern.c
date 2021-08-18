@@ -283,7 +283,7 @@ static PHP_METHOD(ReadConcern, __serialize)
 	RETURN_ARR(php_phongo_readconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\ReadConcern::__unserialize()
+/* {{{ proto void MongoDB\Driver\ReadConcern::__unserialize(array $data)
 */
 static PHP_METHOD(ReadConcern, __unserialize)
 {

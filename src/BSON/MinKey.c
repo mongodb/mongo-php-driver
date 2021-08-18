@@ -103,7 +103,7 @@ static PHP_METHOD(MinKey, __serialize)
 	array_init_size(return_value, 0);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\MinKey::__unserialize()
+/* {{{ proto void MongoDB\Driver\MinKey::__unserialize(array $data)
 */
 static PHP_METHOD(MinKey, __unserialize)
 {

@@ -686,7 +686,7 @@ static PHP_METHOD(ReadPreference, __serialize)
 	RETURN_ARR(php_phongo_readpreference_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\ReadPreference::__unserialize()
+/* {{{ proto void MongoDB\Driver\ReadPreference::__unserialize(array $data)
 */
 static PHP_METHOD(ReadPreference, __unserialize)
 {

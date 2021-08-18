@@ -221,7 +221,7 @@ static PHP_METHOD(DBPointer, __serialize)
 	RETURN_ARR(php_phongo_dbpointer_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\DBPointer::__unserialize()
+/* {{{ proto void MongoDB\Driver\DBPointer::__unserialize(array $data)
 */
 static PHP_METHOD(DBPointer, __unserialize)
 {

@@ -103,7 +103,7 @@ static PHP_METHOD(MaxKey, __serialize)
 	array_init_size(return_value, 0);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\MaxKey::__unserialize()
+/* {{{ proto void MongoDB\Driver\MaxKey::__unserialize(array $data)
 */
 static PHP_METHOD(MaxKey, __unserialize)
 {

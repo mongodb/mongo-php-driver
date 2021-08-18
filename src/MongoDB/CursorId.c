@@ -220,7 +220,7 @@ static PHP_METHOD(CursorId, __serialize)
 	RETURN_ARR(php_phongo_cursorid_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\CursorId::__unserialize()
+/* {{{ proto void MongoDB\Driver\CursorId::__unserialize(array $data)
 */
 static PHP_METHOD(CursorId, __unserialize)
 {

@@ -314,7 +314,7 @@ static PHP_METHOD(Regex, __serialize)
 	RETURN_ARR(php_phongo_regex_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Regex::__unserialize()
+/* {{{ proto void MongoDB\Driver\Regex::__unserialize(array $data)
 */
 static PHP_METHOD(Regex, __unserialize)
 {

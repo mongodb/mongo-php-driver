@@ -496,7 +496,7 @@ static PHP_METHOD(WriteConcern, __serialize)
 	RETURN_ARR(php_phongo_writeconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false, true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\WriteConcern::__unserialize()
+/* {{{ proto void MongoDB\Driver\WriteConcern::__unserialize(array $data)
 */
 static PHP_METHOD(WriteConcern, __unserialize)
 {

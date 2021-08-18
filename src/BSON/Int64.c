@@ -205,7 +205,7 @@ static PHP_METHOD(Int64, __serialize)
 	RETURN_ARR(php_phongo_int64_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Int64::__unserialize()
+/* {{{ proto void MongoDB\Driver\Int64::__unserialize(array $data)
 */
 static PHP_METHOD(Int64, __unserialize)
 {

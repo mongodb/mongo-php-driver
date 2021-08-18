@@ -275,7 +275,7 @@ static PHP_METHOD(ServerApi, __serialize)
 	RETURN_ARR(php_phongo_serverapi_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\ServerApi::__unserialize()
+/* {{{ proto void MongoDB\Driver\ServerApi::__unserialize(array $data)
 */
 static PHP_METHOD(ServerApi, __unserialize)
 {
