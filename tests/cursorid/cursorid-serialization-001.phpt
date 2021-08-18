@@ -8,13 +8,18 @@ MongoDB\Driver\CursorId serialization (Serializable interface)
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-$serialized = 'C:23:"MongoDB\Driver\CursorId":42:{a:1:{s:2:"id";s:19:"7250031947823432848";}}';
+$tests = [
+    unserialize('C:23:"MongoDB\Driver\CursorId":42:{a:1:{s:2:"id";s:19:"7250031947823432848";}}'),
+    unserialize('C:23:"MongoDB\Driver\CursorId":23:{a:1:{s:2:"id";s:1:"0";}}'),
+];
 
-$cursorId = unserialize($serialized);
-
-var_dump($cursorId);
-var_dump($cursorId instanceof Serializable);
-echo serialize($cursorId), "\n";
+foreach ($tests as $test) {
+    var_dump($test);
+    var_dump($test instanceof Serializable);
+    echo $s = serialize($test), "\n";
+    var_dump(unserialize($s));
+    echo "\n";
+}
 
 ?>
 ===DONE===
@@ -22,8 +27,24 @@ echo serialize($cursorId), "\n";
 --EXPECTF--
 object(MongoDB\Driver\CursorId)#%d (%d) {
   ["id"]=>
-  %rint\(\d+\)|string\(\d+\) "\d+"%r
+  %rint\(7250031947823432848\)|string\(19\) "7250031947823432848"%r
 }
 bool(true)
 C:23:"MongoDB\Driver\CursorId":42:{a:1:{s:2:"id";s:19:"7250031947823432848";}}
+object(MongoDB\Driver\CursorId)#%d (%d) {
+  ["id"]=>
+  %rint\(7250031947823432848\)|string\(19\) "7250031947823432848"%r
+}
+
+object(MongoDB\Driver\CursorId)#%d (%d) {
+  ["id"]=>
+  int(0)
+}
+bool(true)
+C:23:"MongoDB\Driver\CursorId":23:{a:1:{s:2:"id";s:1:"0";}}
+object(MongoDB\Driver\CursorId)#%d (%d) {
+  ["id"]=>
+  int(0)
+}
+
 ===DONE===

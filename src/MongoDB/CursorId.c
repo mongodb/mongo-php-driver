@@ -75,11 +75,7 @@ static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_h
 		zval value;
 
 		if (is_serialize) {
-			if (intern->id > INT32_MAX || intern->id < INT32_MIN) {
-				ZVAL_INT64_STRING(&value, intern->id);
-			} else {
-				ZVAL_LONG(&value, intern->id);
-			}
+			ZVAL_INT64_STRING(&value, intern->id);
 		} else {
 #if SIZEOF_ZEND_LONG == 4
 			if (intern->id > INT32_MAX || intern->id < INT32_MIN) {
