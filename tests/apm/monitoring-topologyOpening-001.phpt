@@ -11,6 +11,8 @@ $m = create_test_manager();
 
 class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
+    public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event) {}
+    
     public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event) {}
     
     public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event) {}

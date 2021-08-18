@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Monitoring\ServerOpeningEvent
+MongoDB\Driver\Monitoring\ServerChangedEvent
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -11,22 +11,24 @@ $m = create_test_manager();
 
 class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
-    private $serverOpened = false;
+    private $serverDescription;
 
-    public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event) {}
-
-    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event)
+    public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event)
     {
-        if ($this->serverOpened) {
+        if (isset($this->serverDescription)) {
             return;
         }
 
-        $this->serverOpened = true;
+        $this->serverDescription = $event->getNewDescription();
         echo "- getHost() returns a string: ", is_string($event->getHost()) ? 'yes' : 'no', "\n";
         echo "- getPort() returns an integer: ", is_integer($event->getPort()) ? 'yes' : 'no', "\n";
         echo "- getTopologyId() returns an ObjectId: ", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no', "\n";
+        echo "- getNewDescription() returns a ServerDescription: ", ($event->getNewDescription() instanceof MongoDB\Driver\ServerDescription) ? 'yes' : 'no', "\n";
+        echo "- getPreviousDescription() returns a ServerDescription: ", ($event->getPreviousDescription() instanceof MongoDB\Driver\ServerDescription) ? 'yes' : 'no', "\n";
     }
-    
+
+    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event) {}
+
     public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event) {}
 
     public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event) {}
@@ -45,4 +47,6 @@ $m->executeCommand(DATABASE_NAME, $command);
 - getHost() returns a string: yes
 - getPort() returns an integer: yes
 - getTopologyId() returns an ObjectId: yes
+- getNewDescription() returns a ServerDescription: yes
+- getPreviousDescription() returns a ServerDescription: yes
 ===DONE===
