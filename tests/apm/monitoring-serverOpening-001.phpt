@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Monitoring\TopologyOpeningEvent
+MongoDB\Driver\Monitoring\ServerOpeningEvent
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -11,14 +11,22 @@ $m = create_test_manager();
 
 class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
-    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event) {}
+    private $serverOpened = false;
+
+    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event)
+    {
+        if ($this->serverOpened) {
+            return;
+        }
+
+        $this->serverOpened = true;
+        echo "- getHost() returns a string: ", is_string($event->getHost()) ? 'yes' : 'no', "\n";
+        echo "- getTopologyId() returns an ObjectId: ", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no', "\n";
+    }
     
     public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event) {}
 
-    public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event)
-    {
-        echo "- getTopologyId() returns an ObjectId: ", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no', "\n";
-    }
+    public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event) {}
 }
 
 $subscriber = new MySubscriber;
@@ -31,5 +39,6 @@ $m->executeCommand(DATABASE_NAME, $command);
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+- getHost() returns a string: yes
 - getTopologyId() returns an ObjectId: yes
 ===DONE===

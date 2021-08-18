@@ -159,6 +159,10 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 {
 	return (php_phongo_commandsucceededevent_t*) ((char*) obj - XtOffsetOf(php_phongo_commandsucceededevent_t, std));
 }
+static inline php_phongo_serveropeningevent_t* php_serveropeningevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_serveropeningevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serveropeningevent_t, std));
+}
 static inline php_phongo_topologychangedevent_t* php_topologychangedevent_fetch_object(zend_object* obj)
 {
 	return (php_phongo_topologychangedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_topologychangedevent_t, std));
@@ -202,6 +206,7 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_COMMANDFAILEDEVENT_OBJ_P(zv) (php_commandfailedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMANDSTARTEDEVENT_OBJ_P(zv) (php_commandstartedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMANDSUCCEEDEDEVENT_OBJ_P(zv) (php_commandsucceededevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_SERVEROPENINGEVENT_OBJ_P(zv) (php_serveropeningevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_TOPOLOGYCHANGEDEVENT_OBJ_P(zv) (php_topologychangedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_TOPOLOGYOPENINGEVENT_OBJ_P(zv) (php_topologyopeningevent_fetch_object(Z_OBJ_P(zv)))
 
@@ -239,6 +244,7 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_OBJ_COMMANDFAILEDEVENT(zo) (php_commandfailedevent_fetch_object(zo))
 #define Z_OBJ_COMMANDSTARTEDEVENT(zo) (php_commandstartedevent_fetch_object(zo))
 #define Z_OBJ_COMMANDSUCCEEDEDEVENT(zo) (php_commandsucceededevent_fetch_object(zo))
+#define Z_OBJ_SERVEROPENINGEVENT(zo) (php_serveropeningevent_fetch_object(zo))
 #define Z_OBJ_TOPOLOGYCHANGEDEVENT(zo) (php_topologychangedevent_fetch_object(zo))
 #define Z_OBJ_TOPOLOGYOPENINGEVENT(zo) (php_topologyopeningevent_fetch_object(zo))
 
@@ -313,6 +319,7 @@ extern zend_class_entry* php_phongo_commandsubscriber_ce;
 extern zend_class_entry* php_phongo_commandsucceededevent_ce;
 extern zend_class_entry* php_phongo_sdamsubscriber_ce;
 extern zend_class_entry* php_phongo_subscriber_ce;
+extern zend_class_entry* php_phongo_serveropeningevent_ce;
 extern zend_class_entry* php_phongo_topologychangedevent_ce;
 extern zend_class_entry* php_phongo_topologyopeningevent_ce;
 
@@ -387,6 +394,7 @@ extern void php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_subscriber_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS);
 

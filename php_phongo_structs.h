@@ -285,6 +285,12 @@ typedef struct {
 } php_phongo_commandsucceededevent_t;
 
 typedef struct {
+	bson_oid_t                topology_id;
+	const mongoc_host_list_t* host;
+	zend_object               std;
+} php_phongo_serveropeningevent_t;
+
+typedef struct {
 	bson_oid_t                     topology_id;
 	mongoc_topology_description_t* new_topology_description;
 	mongoc_topology_description_t* old_topology_description;

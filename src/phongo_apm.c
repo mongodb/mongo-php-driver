@@ -262,6 +262,35 @@ cleanup:
 	FREE_HASHTABLE(subscribers);
 }
 
+static void phongo_apm_server_opening(const mongoc_apm_server_opening_t* event)
+{
+	mongoc_client_t*                 client;
+	HashTable*                       subscribers;
+	php_phongo_serveropeningevent_t* p_event;
+	zval                             z_event;
+
+	client      = mongoc_apm_server_opening_get_context(event);
+	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+
+	/* Return early if there are no APM subscribers to notify */
+	if (zend_hash_num_elements(subscribers) == 0) {
+		goto cleanup;
+	}
+
+	object_init_ex(&z_event, php_phongo_serveropeningevent_ce);
+	p_event = Z_SERVEROPENINGEVENT_OBJ_P(&z_event);
+
+	mongoc_apm_server_opening_get_topology_id(event, &p_event->topology_id);
+	p_event->host = mongoc_apm_server_opening_get_host(event);
+
+	phongo_apm_dispatch_event(subscribers, "serverOpening", &z_event);
+	zval_ptr_dtor(&z_event);
+
+cleanup:
+	zend_hash_destroy(subscribers);
+	FREE_HASHTABLE(subscribers);
+}
+
 static void phongo_apm_topology_changed(const mongoc_apm_topology_changed_t* event)
 {
 	mongoc_client_t*                   client;
@@ -311,7 +340,6 @@ static void phongo_apm_topology_opening(const mongoc_apm_topology_opening_t* eve
 	p_event = Z_TOPOLOGYOPENINGEVENT_OBJ_P(&z_event);
 
 	mongoc_apm_topology_opening_get_topology_id(event, &p_event->topology_id);
-	;
 
 	phongo_apm_dispatch_event(subscribers, "topologyOpening", &z_event);
 	zval_ptr_dtor(&z_event);
@@ -333,6 +361,7 @@ bool phongo_apm_set_callbacks(mongoc_client_t* client)
 	mongoc_apm_set_command_started_cb(callbacks, phongo_apm_command_started);
 	mongoc_apm_set_command_succeeded_cb(callbacks, phongo_apm_command_succeeded);
 	mongoc_apm_set_command_failed_cb(callbacks, phongo_apm_command_failed);
+	mongoc_apm_set_server_opening_cb(callbacks, phongo_apm_server_opening);
 	mongoc_apm_set_topology_changed_cb(callbacks, phongo_apm_topology_changed);
 	mongoc_apm_set_topology_opening_cb(callbacks, phongo_apm_topology_opening);
 
