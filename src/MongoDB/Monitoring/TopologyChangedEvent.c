@@ -26,7 +26,7 @@
 
 zend_class_entry* php_phongo_topologychangedevent_ce;
 
-/* {{{ proto MongoDB\Driver\Monitoring\TopologyChangedEvent TopologyChangedEvent::getNewDescription()
+/* {{{ proto MongoDB\Driver\TopologyDescription TopologyChangedEvent::getNewDescription()
    Returns this event's new description */
 static PHP_METHOD(TopologyChangedEvent, getNewDescription)
 {
@@ -40,7 +40,7 @@ static PHP_METHOD(TopologyChangedEvent, getNewDescription)
 	phongo_topologydescription_init(return_value, topology_description);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Monitoring\TopologyChangedEvent TopologyChangedEvent::getPreviousDescription()
+/* {{{ proto MongoDB\Driver\TopologyDescription TopologyChangedEvent::getPreviousDescription()
    Returns this event's previous description */
 static PHP_METHOD(TopologyChangedEvent, getPreviousDescription)
 {
