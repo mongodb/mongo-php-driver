@@ -268,6 +268,7 @@ static void phongo_apm_server_opening(const mongoc_apm_server_opening_t* event)
 	HashTable*                       subscribers;
 	php_phongo_serveropeningevent_t* p_event;
 	zval                             z_event;
+	const mongoc_host_list_t*        host_list;
 
 	client      = mongoc_apm_server_opening_get_context(event);
 	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
@@ -280,8 +281,11 @@ static void phongo_apm_server_opening(const mongoc_apm_server_opening_t* event)
 	object_init_ex(&z_event, php_phongo_serveropeningevent_ce);
 	p_event = Z_SERVEROPENINGEVENT_OBJ_P(&z_event);
 
+	host_list = mongoc_apm_server_opening_get_host(event);
+	memcpy(&p_event->host, &host_list->host, BSON_HOST_NAME_MAX + 1);
+	p_event->port = host_list->port;
+
 	mongoc_apm_server_opening_get_topology_id(event, &p_event->topology_id);
-	p_event->host = mongoc_apm_server_opening_get_host(event);
 
 	phongo_apm_dispatch_event(subscribers, "serverOpening", &z_event);
 	zval_ptr_dtor(&z_event);

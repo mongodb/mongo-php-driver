@@ -21,6 +21,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 
         $this->serverOpened = true;
         echo "- getHost() returns a string: ", is_string($event->getHost()) ? 'yes' : 'no', "\n";
+        echo "- getPort() returns an integer: ", is_integer($event->getPort()) ? 'yes' : 'no', "\n";
         echo "- getTopologyId() returns an ObjectId: ", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no', "\n";
     }
     
@@ -40,5 +41,6 @@ $m->executeCommand(DATABASE_NAME, $command);
 <?php exit(0); ?>
 --EXPECT--
 - getHost() returns a string: yes
+- getPort() returns an integer: yes
 - getTopologyId() returns an ObjectId: yes
 ===DONE===

@@ -34,7 +34,18 @@ static PHP_METHOD(ServerOpeningEvent, getHost)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_STRING((intern->host)->host);
+	RETVAL_STRING(intern->host);
+} /* }}} */
+
+/* {{{ proto integer ServerOpeningEvent::getPort()
+   Returns this event's port */
+static PHP_METHOD(ServerOpeningEvent, getPort)
+{
+	php_phongo_serveropeningevent_t* intern = Z_SERVEROPENINGEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETVAL_LONG(intern->port);
 } /* }}} */
 
 /* {{{ proto MongoDB\BSON\ObjectId ServerOpeningEvent::getTopologyId()
@@ -61,6 +72,7 @@ static zend_function_entry php_phongo_serveropeningevent_me[] = {
 	/* clang-format off */
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_ServerOpeningEvent_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	PHP_ME(ServerOpeningEvent, getHost, ai_ServerOpeningEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ServerOpeningEvent, getPort, ai_ServerOpeningEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ServerOpeningEvent, getTopologyId, ai_ServerOpeningEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_ServerOpeningEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
@@ -100,9 +112,10 @@ static HashTable* php_phongo_serveropeningevent_get_debug_info(phongo_compat_obj
 
 	intern   = Z_OBJ_SERVEROPENINGEVENT(PHONGO_COMPAT_GET_OBJ(object));
 	*is_temp = 1;
-	array_init_size(&retval, 2);
+	array_init_size(&retval, 3);
 
-	ADD_ASSOC_STRING(&retval, "host", (intern->host)->host);
+	ADD_ASSOC_STRING(&retval, "host", intern->host);
+	ADD_ASSOC_LONG_EX(&retval, "port", intern->port);
 
 	bson_oid_to_string(&intern->topology_id, topology_id);
 	ADD_ASSOC_STRING(&retval, "topologyId", topology_id);
