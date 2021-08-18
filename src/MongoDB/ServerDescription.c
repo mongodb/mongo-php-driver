@@ -28,6 +28,16 @@
 
 zend_class_entry* php_phongo_serverdescription_ce;
 
+#define PHONGO_SERVER_UNKNOWN "Unknown"
+#define PHONGO_SERVER_STANDALONE "Standalone"
+#define PHONGO_SERVER_MONGOS "Mongos"
+#define PHONGO_SERVER_POSSIBLE_PRIMARY "PossiblePrimary"
+#define PHONGO_SERVER_RS_PRIMARY "RSPrimary"
+#define PHONGO_SERVER_RS_SECONDARY "RSSecondary"
+#define PHONGO_SERVER_RS_ARBITER "RSArbiter"
+#define PHONGO_SERVER_RS_OTHER "RSOther"
+#define PHONGO_SERVER_RS_GHOST "RSGhost"
+
 /* {{{ proto array MongoDB\Driver\ServerDescription::getHelloResponse()
    Returns the most recent "hello" response */
 static PHP_METHOD(ServerDescription, getHelloResponse)
@@ -105,7 +115,7 @@ static PHP_METHOD(ServerDescription, getRoundTripTime)
 	RETVAL_LONG(mongoc_server_description_round_trip_time(intern->server_description));
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\ServerDescription::getType()
+/* {{{ proto string MongoDB\Driver\ServerDescription::getType()
    Returns the server’s node type */
 static PHP_METHOD(ServerDescription, getType)
 {
@@ -115,7 +125,7 @@ static PHP_METHOD(ServerDescription, getType)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_LONG(php_phongo_server_description_type(intern->server_description));
+	RETVAL_STRING(mongoc_server_description_type(intern->server_description));
 } /* }}} */
 
 /* {{{ MongoDB\Driver\ServerDescription function entries */
@@ -192,7 +202,7 @@ HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object
 		ZVAL_LONG(&port, host_list->port);
 		zend_hash_str_update(props, "port", sizeof("port") - 1, &port);
 
-		ZVAL_LONG(&type, php_phongo_server_description_type(intern->server_description));
+		ZVAL_STRING(&type, mongoc_server_description_type(intern->server_description));
 		zend_hash_str_update(props, "type", sizeof("type") - 1, &type);
 	}
 
@@ -250,15 +260,15 @@ void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_serverdescription.free_obj       = php_phongo_serverdescription_free_object;
 	php_phongo_handler_serverdescription.offset         = XtOffsetOf(php_phongo_serverdescription_t, std);
 
-	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_UNKNOWN"), PHONGO_SERVER_UNKNOWN);
-	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_STANDALONE"), PHONGO_SERVER_STANDALONE);
-	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_MONGOS"), PHONGO_SERVER_MONGOS);
-	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_POSSIBLE_PRIMARY"), PHONGO_SERVER_POSSIBLE_PRIMARY);
-	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_PRIMARY"), PHONGO_SERVER_RS_PRIMARY);
-	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_SECONDARY"), PHONGO_SERVER_RS_SECONDARY);
-	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_ARBITER"), PHONGO_SERVER_RS_ARBITER);
-	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_OTHER"), PHONGO_SERVER_RS_OTHER);
-	zend_declare_class_constant_long(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_GHOST"), PHONGO_SERVER_RS_GHOST);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_UNKNOWN"), PHONGO_SERVER_UNKNOWN);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_STANDALONE"), PHONGO_SERVER_STANDALONE);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_MONGOS"), PHONGO_SERVER_MONGOS);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_POSSIBLE_PRIMARY"), PHONGO_SERVER_POSSIBLE_PRIMARY);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_PRIMARY"), PHONGO_SERVER_RS_PRIMARY);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_SECONDARY"), PHONGO_SERVER_RS_SECONDARY);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_ARBITER"), PHONGO_SERVER_RS_ARBITER);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_OTHER"), PHONGO_SERVER_RS_OTHER);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_GHOST"), PHONGO_SERVER_RS_GHOST);
 } /* }}} */
 
 /*
