@@ -317,7 +317,8 @@ static void phongo_apm_server_closed(const mongoc_apm_server_closed_t* event)
 	p_event = Z_SERVERCLOSEDEVENT_OBJ_P(&z_event);
 
 	host_list = mongoc_apm_server_closed_get_host(event);
-	memcpy(&p_event->host, &host_list->host, BSON_HOST_NAME_MAX + 1);
+	memset(p_event->host, 0, sizeof(p_event->host));
+	bson_strncpy(p_event->host, host_list->host, sizeof(p_event->host));
 	p_event->port = host_list->port;
 
 	mongoc_apm_server_closed_get_topology_id(event, &p_event->topology_id);
@@ -350,7 +351,8 @@ static void phongo_apm_server_opening(const mongoc_apm_server_opening_t* event)
 	p_event = Z_SERVEROPENINGEVENT_OBJ_P(&z_event);
 
 	host_list = mongoc_apm_server_opening_get_host(event);
-	memcpy(&p_event->host, &host_list->host, BSON_HOST_NAME_MAX + 1);
+	memset(p_event->host, 0, sizeof(p_event->host));
+	bson_strncpy(p_event->host, host_list->host, sizeof(p_event->host));
 	p_event->port = host_list->port;
 
 	mongoc_apm_server_opening_get_topology_id(event, &p_event->topology_id);

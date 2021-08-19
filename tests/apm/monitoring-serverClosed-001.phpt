@@ -7,7 +7,7 @@ MongoDB\Driver\Monitoring\ServerClosedEvent
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$m = create_test_manager();
+$m = create_test_manager(URI, [], ['disableClientPersistence' => true]);
 
 class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
@@ -35,7 +35,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 }
 
 $subscriber = new MySubscriber;
-MongoDB\Driver\Monitoring\addSubscriber($subscriber);
+$m->addSubscriber($subscriber);
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 $m->executeCommand(DATABASE_NAME, $command);
