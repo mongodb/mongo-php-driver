@@ -1285,8 +1285,6 @@ bool php_phongo_topology_description_to_zval(zval* retval, mongoc_topology_descr
 			}
 
 			add_next_index_zval(&servers, &obj);
-			zval_ptr_dtor(&obj);
-			zval_ptr_dtor(&servers);
 		}
 		mongoc_server_descriptions_destroy_all(sds, n);
 
