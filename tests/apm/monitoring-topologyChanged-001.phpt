@@ -17,6 +17,8 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 
     public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event) {}
 
+    public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event) {}
+
     public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event) {}
 
     public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event)

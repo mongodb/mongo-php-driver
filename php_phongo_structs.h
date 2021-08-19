@@ -301,6 +301,15 @@ typedef struct {
 } php_phongo_serverclosedevent_t;
 
 typedef struct {
+	bool          awaited;
+	int64_t       duration;
+	bson_error_t* error;
+	char          host[BSON_HOST_NAME_MAX + 1];
+	uint16_t      port;
+	zend_object   std;
+} php_phongo_serverheartbeatfailedevent_t;
+
+typedef struct {
 	bson_oid_t  topology_id;
 	char        host[BSON_HOST_NAME_MAX + 1];
 	uint16_t    port;

@@ -167,6 +167,10 @@ static inline php_phongo_serverclosedevent_t* php_serverclosedevent_fetch_object
 {
 	return (php_phongo_serverclosedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serverclosedevent_t, std));
 }
+static inline php_phongo_serverheartbeatfailedevent_t* php_serverheartbeatfailedevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_serverheartbeatfailedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serverheartbeatfailedevent_t, std));
+}
 static inline php_phongo_serveropeningevent_t* php_serveropeningevent_fetch_object(zend_object* obj)
 {
 	return (php_phongo_serveropeningevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serveropeningevent_t, std));
@@ -220,6 +224,7 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_COMMANDSUCCEEDEDEVENT_OBJ_P(zv) (php_commandsucceededevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_SERVERCHANGEDEVENT_OBJ_P(zv) (php_serverchangedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_SERVERCLOSEDEVENT_OBJ_P(zv) (php_serverclosedevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(zv) (php_serverheartbeatfailedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_SERVEROPENINGEVENT_OBJ_P(zv) (php_serveropeningevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_TOPOLOGYCHANGEDEVENT_OBJ_P(zv) (php_topologychangedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_TOPOLOGYCLOSEDEVENT_OBJ_P(zv) (php_topologyclosedevent_fetch_object(Z_OBJ_P(zv)))
@@ -261,6 +266,7 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_OBJ_COMMANDSUCCEEDEDEVENT(zo) (php_commandsucceededevent_fetch_object(zo))
 #define Z_OBJ_SERVERCHANGEDEVENT(zo) (php_serverchangedevent_fetch_object(zo))
 #define Z_OBJ_SERVERCLOSEDEVENT(zo) (php_serverclosedevent_fetch_object(zo))
+#define Z_OBJ_SERVERHEARTBEATFAILEDEVENT(zo) (php_serverheartbeatfailedevent_fetch_object(zo))
 #define Z_OBJ_SERVEROPENINGEVENT(zo) (php_serveropeningevent_fetch_object(zo))
 #define Z_OBJ_TOPOLOGYCHANGEDEVENT(zo) (php_topologychangedevent_fetch_object(zo))
 #define Z_OBJ_TOPOLOGYCLOSEDEVENT(zo) (php_topologyclosedevent_fetch_object(zo))
@@ -339,6 +345,7 @@ extern zend_class_entry* php_phongo_sdamsubscriber_ce;
 extern zend_class_entry* php_phongo_subscriber_ce;
 extern zend_class_entry* php_phongo_serverchangedevent_ce;
 extern zend_class_entry* php_phongo_serverclosedevent_ce;
+extern zend_class_entry* php_phongo_serverheartbeatfailedevent_ce;
 extern zend_class_entry* php_phongo_serveropeningevent_ce;
 extern zend_class_entry* php_phongo_topologychangedevent_ce;
 extern zend_class_entry* php_phongo_topologyclosedevent_ce;
@@ -417,6 +424,7 @@ extern void php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_subscriber_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_serverclosedevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_serverheartbeatfailedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_topologyclosedevent_init_ce(INIT_FUNC_ARGS);

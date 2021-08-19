@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Monitoring\ServerClosedEvent
+MongoDB\Driver\Monitoring\ServerHeartbeatFailed
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
@@ -7,27 +7,21 @@ MongoDB\Driver\Monitoring\ServerClosedEvent
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$m = create_test_manager(URI, [], ['disableClientPersistence' => true]);
+$m = create_test_manager();
 
 class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
-    private $serverClosed = false;
-
     public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event) {}
 
-    public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event)
-    {
-        if ($this->serverClosed) {
-            return;
-        }
+    public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event) {}
 
-        $this->serverClosed = true;
+    public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event)
+    {
+        echo "- getAwaited() returns a boolean: ", is_bool($event->getAwaited()) ? 'yes' : 'no', "\n";
+        echo "- getDuration() returns an integer: ", is_integer($event->getDuration()) ? 'yes' : 'no', "\n";
         echo "- getHost() returns a string: ", is_string($event->getHost()) ? 'yes' : 'no', "\n";
         echo "- getPort() returns an integer: ", is_integer($event->getPort()) ? 'yes' : 'no', "\n";
-        echo "- getTopologyId() returns an ObjectId: ", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no', "\n";
     }
-
-    public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event) {}
 
     public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event) {}
     
@@ -48,7 +42,8 @@ $m->executeCommand(DATABASE_NAME, $command);
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+- getAwaited() returns a boolean: yes
+- getDuration() returns an integer: yes
 - getHost() returns a string: yes
 - getPort() returns an integer: yes
-- getTopologyId() returns an ObjectId: yes
 ===DONE===
