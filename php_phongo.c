@@ -3861,6 +3861,7 @@ PHP_MINIT_FUNCTION(mongodb)
 	php_phongo_serverclosedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_topologyclosedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
 	REGISTER_STRING_CONSTANT("MONGODB_VERSION", (char*) PHP_MONGODB_VERSION, CONST_CS | CONST_PERSISTENT);

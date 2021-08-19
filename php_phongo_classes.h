@@ -175,6 +175,10 @@ static inline php_phongo_topologychangedevent_t* php_topologychangedevent_fetch_
 {
 	return (php_phongo_topologychangedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_topologychangedevent_t, std));
 }
+static inline php_phongo_topologyclosedevent_t* php_topologyclosedevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_topologyclosedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_topologyclosedevent_t, std));
+}
 static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_object(zend_object* obj)
 {
 	return (php_phongo_topologyopeningevent_t*) ((char*) obj - XtOffsetOf(php_phongo_topologyopeningevent_t, std));
@@ -218,6 +222,7 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_SERVERCLOSEDEVENT_OBJ_P(zv) (php_serverclosedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_SERVEROPENINGEVENT_OBJ_P(zv) (php_serveropeningevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_TOPOLOGYCHANGEDEVENT_OBJ_P(zv) (php_topologychangedevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_TOPOLOGYCLOSEDEVENT_OBJ_P(zv) (php_topologyclosedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_TOPOLOGYOPENINGEVENT_OBJ_P(zv) (php_topologyopeningevent_fetch_object(Z_OBJ_P(zv)))
 
 #define Z_OBJ_CLIENTENCRYPTION(zo) (php_clientencryption_fetch_object(zo))
@@ -258,6 +263,7 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_OBJ_SERVERCLOSEDEVENT(zo) (php_serverclosedevent_fetch_object(zo))
 #define Z_OBJ_SERVEROPENINGEVENT(zo) (php_serveropeningevent_fetch_object(zo))
 #define Z_OBJ_TOPOLOGYCHANGEDEVENT(zo) (php_topologychangedevent_fetch_object(zo))
+#define Z_OBJ_TOPOLOGYCLOSEDEVENT(zo) (php_topologyclosedevent_fetch_object(zo))
 #define Z_OBJ_TOPOLOGYOPENINGEVENT(zo) (php_topologyopeningevent_fetch_object(zo))
 
 extern zend_class_entry* php_phongo_clientencryption_ce;
@@ -335,6 +341,7 @@ extern zend_class_entry* php_phongo_serverchangedevent_ce;
 extern zend_class_entry* php_phongo_serverclosedevent_ce;
 extern zend_class_entry* php_phongo_serveropeningevent_ce;
 extern zend_class_entry* php_phongo_topologychangedevent_ce;
+extern zend_class_entry* php_phongo_topologyclosedevent_ce;
 extern zend_class_entry* php_phongo_topologyopeningevent_ce;
 
 extern void php_phongo_binary_init_ce(INIT_FUNC_ARGS);
@@ -412,6 +419,7 @@ extern void php_phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_serverclosedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_topologyclosedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS);
 
 /* Shared function entries for disabling constructors and unserialize() */

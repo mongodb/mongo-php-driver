@@ -22,6 +22,8 @@ class TopologyDescriptionProvider implements MongoDB\Driver\Monitoring\SDAMSubsc
         $this->topologyDescription = $event->getNewDescription();
     }
 
+    public function topologyClosed(MongoDB\Driver\Monitoring\TopologyClosedEvent $event) {}
+
     public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event) {}
 
     public function getTopologyDescription()
