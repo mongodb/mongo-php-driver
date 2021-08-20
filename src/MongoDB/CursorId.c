@@ -222,7 +222,6 @@ static zend_function_entry php_phongo_cursorid_me[] = {
 	PHP_ME(CursorId, serialize, ai_CursorId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CursorId, unserialize, ai_CursorId_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CursorId_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CursorId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
 	/* clang-format on */
 };
