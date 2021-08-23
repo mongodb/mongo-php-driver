@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\BSON\Regex unserialization does not allow pattern or flags to contain null bytes (__serialize and __unserialize)
+--DESCRIPTION--
+BSON Corpus spec prose test #1
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_php_version('<', '7.4.0'); ?>

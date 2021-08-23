@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\BSON\fromPHP(): PHP documents with null bytes in field name
+--DESCRIPTION--
+BSON Corpus spec prose test #1
 --FILE--
 <?php
 
@@ -25,6 +27,11 @@ echo throws(function() {
     fromPHP((object) ["a\0" => 1]);
 }, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
 
+echo "\nTesting nested array with one trailing null byte in field name\n";
+echo throws(function() {
+    fromPHP(['a' => ["b\0" => 1]]);
+}, 'MongoDB\Driver\Exception\UnexpectedValueException'), "\n";
+
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -44,4 +51,8 @@ BSON keys cannot contain null bytes. Unexpected null byte after "".
 Testing object with one trailing null byte in field name
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
 BSON keys cannot contain null bytes. Unexpected null byte after "a".
+
+Testing nested array with one trailing null byte in field name
+OK: Got MongoDB\Driver\Exception\UnexpectedValueException
+BSON keys cannot contain null bytes. Unexpected null byte after "b".
 ===DONE===
