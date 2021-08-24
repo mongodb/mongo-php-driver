@@ -6,6 +6,7 @@ $expectedFailures = [
     'Int64 type: -1' => 'PHP encodes integers as 32-bit if range allows',
     'Int64 type: 0' => 'PHP encodes integers as 32-bit if range allows',
     'Int64 type: 1' => 'PHP encodes integers as 32-bit if range allows',
+    'Javascript Code: Embedded nulls' => 'Embedded null in code string is not supported in libbson (CDRIVER-1879)',
     'Javascript Code with Scope: Unicode and embedded null in code string, empty scope' => 'Embedded null in code string is not supported in libbson (CDRIVER-1879)',
     'Multiple types within the same document: All BSON types' => 'PHP encodes integers as 32-bit if range allows',
     'Top-level document validity: Bad $date (number, not string or hash)' => 'Legacy extended JSON $date syntax uses numbers (CDRIVER-2223)',
