@@ -568,84 +568,120 @@ function destroyTemporaryMongoInstance($id = NULL)
     $json = file_get_contents(MONGO_ORCHESTRATION_URI . "/servers/$id", false, $ctx);
 }
 
-function severityToString($type) {
-    switch($type) {
-    case E_DEPRECATED:
-        return "E_DEPRECATED";
-    case E_RECOVERABLE_ERROR:
-        return "E_RECOVERABLE_ERROR";
-    case E_WARNING:
-        return "E_WARNING";
-    case E_NOTICE:
-        return "E_NOTICE";
-    default:
-        return "Some other #_$type";
+/**
+ * Converts an error level (constant or bitmask) to a string description.
+ */
+function severityToString(int $severity): string {
+    static $constants = [
+        'E_ERROR' => E_ERROR,
+        'E_WARNING' => E_WARNING,
+        'E_PARSE' => E_PARSE,
+        'E_NOTICE' => E_NOTICE,
+        'E_CORE_ERROR' => E_CORE_ERROR,
+        'E_CORE_WARNING' => E_CORE_WARNING,
+        'E_COMPILE_ERROR' => E_COMPILE_ERROR,
+        'E_COMPILE_WARNING' => E_COMPILE_WARNING,
+        'E_USER_ERROR' => E_USER_ERROR,
+        'E_USER_WARNING' => E_USER_WARNING,
+        'E_USER_NOTICE' => E_USER_NOTICE,
+        'E_STRICT' => E_STRICT,
+        'E_RECOVERABLE_ERROR' => E_RECOVERABLE_ERROR,
+        'E_DEPRECATED' => E_DEPRECATED,
+        'E_USER_DEPRECATED' => E_USER_DEPRECATED,
+        // E_ALL is handled separately
+    ];
+
+    if ($severity === E_ALL) {
+        return 'E_ALL';
     }
-}
-function raises($function, $type, $infunction = null) {
-    $errhandler = function($severity, $message, $file, $line) {
-        throw new ErrorException($message, 0, $severity, $file, $line);
-    };
 
-    set_error_handler($errhandler, $type);
-    try {
-        $function();
-    } catch(Exception $e) {
-        $exceptionname = get_class($e);
-
-        if ($e instanceof ErrorException && $e->getSeverity() & $type) {
-            if ($infunction) {
-                $trace = $e->getTrace();
-                $function = $trace[0]["function"];
-                if (strcasecmp($function, $infunction) == 0) {
-                    printf("OK: Got %s thrown from %s\n", $exceptionname, $infunction);
-                } else {
-                    printf("ALMOST: Got %s - but was thrown in %s, not %s\n", $exceptionname, $function, $infunction);
-                }
-                restore_error_handler();
-                return $e->getMessage();
-            }
-            printf("OK: Got %s\n", severityToString($e->getSeverity()));
-        } else {
-            printf("ALMOST: Got %s - expected %s\n", get_class($e), ErrorException::class);
+    foreach ($constants as $constant => $value) {
+        if ($severity & $value) {
+            $matches[] = $constant;
         }
+    }
+
+    return empty($matches) ? 'UNKNOWN' : implode('|', $matches);
+}
+
+/**
+ * Expects the callable to raise an error matching the expected severity, which
+ * may be a constant or bitmask. May optionally expect the error to be raised
+ * from a particular function. Returns the message from the raised error or
+ * exception, or an empty string if neither was thrown.
+ */
+function raises(callable $callable, int $expectedSeverity, string $expectedFromFunction = null): string
+{
+    set_error_handler(function(int $severity, string $message, string $file, int $line) {
+        throw new ErrorException($message, 0, $severity, $file, $line);
+    });
+
+    try {
+        call_user_func($callable);
+    } catch (ErrorException $e) {
+        if (!($e->getSeverity() & $expectedSeverity)) {
+            printf("ALMOST: Got %s - expected %s\n", severityToString($e->getSeverity()), severityToString($expectedSeverity));
+            return $e->getMessage();
+        }
+
+        if ($expectedFromFunction === null) {
+            printf("OK: Got %s\n", severityToString($e->getSeverity()));
+            return $e->getMessage();
+        }
+
+        $fromFunction = $e->getTrace()[0]['function'];
+
+        if (strcasecmp($fromFunction, $expectedFromFunction) !== 0) {
+            printf("ALMOST: Got %s - but was raised from %s, not %s\n", errorLevelToString($e->getSeverity()), $fromFunction, $expectedFromFunction);
+            return $e->getMessage();
+        }
+
+        printf("OK: Got %s raised from %s\n", severityToString($e->getSeverity()), $fromFunction);
+        return $e->getMessage();
+    } catch (Throwable $e) {
+        printf("ALMOST: Got %s - expected %s\n", get_class($e), ErrorException::class);
+        return $e->getMessage();
+    } finally {
         restore_error_handler();
+    }
+
+    printf("FAILED: Expected %s, but no error raised!\n", ErrorException::class);
+    return '';
+}
+
+/**
+ * Expects the callable to throw an expected exception. May optionally expect
+ * the exception to be thrown from a particular function. Returns the message
+ * from the thrown exception, or an empty string if one was not thrown.
+ */
+function throws(callable $callable, string $expectedException, string $expectedFromFunction = null): string
+{
+    try {
+        call_user_func($callable);
+    } catch (Throwable $e) {
+        if (!($e instanceof $expectedException)) {
+            printf("ALMOST: Got %s - expected %s\n", get_class($e), $expectedException);
+            return $e->getMessage();
+        }
+
+        if ($expectedFromFunction === null) {
+            printf("OK: Got %s\n", $expectedException);
+            return $e->getMessage();
+        }
+
+        $fromFunction = $e->getTrace()[0]['function'];
+
+        if (strcasecmp($fromFunction, $expectedFromFunction) !== 0) {
+            printf("ALMOST: Got %s - but was thrown from %s, not %s\n", $expectedException, $fromFunction, $expectedFromFunction);
+            return $e->getMessage();
+        }
+
+        printf("OK: Got %s thrown from %s\n", $expectedException, $fromFunction);
         return $e->getMessage();
     }
 
-    printf("FAILED: Expected %s thrown!\n", ErrorException::class);
-    restore_error_handler();
-}
-function throws($function, $exceptionname, $infunction = null) {
-    try {
-        $function();
-    } catch (Throwable $e) {
-    } catch (Exception $e) {
-    }
-
-    if (!isset($e)) {
-        echo "FAILED: Expected $exceptionname thrown, but no exception thrown!\n";
-        return;
-    }
-
-    $message = str_replace(array("\n", "\r"), ' ', $e->getMessage());
-    if ($e instanceof $exceptionname) {
-        if ($infunction) {
-            $trace = $e->getTrace();
-            $function = $trace[0]["function"];
-            if (strcasecmp($function, $infunction) == 0) {
-                printf("OK: Got %s thrown from %s\n", $exceptionname, $infunction);
-            } else {
-                printf("ALMOST: Got %s - but was thrown in %s, not %s (%s)\n", $exceptionname, $function, $infunction, $message);
-            }
-            return $e->getMessage();
-        }
-        printf("OK: Got %s\n", $exceptionname);
-    } else {
-        printf("ALMOST: Got %s (%s) - expected %s\n", get_class($e), $message, $exceptionname);
-    }
-
-    return $e->getMessage();
+    printf("FAILED: Expected %s, but no exception thrown!\n", $expectedException);
+    return '';
 }
 
 function printServer(Server $server)
