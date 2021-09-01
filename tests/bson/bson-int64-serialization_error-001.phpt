@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Int64 unserialization requires "int" string field
+MongoDB\BSON\Int64 unserialization requires "int" string field (Serializable interface)
 --FILE--
 <?php
 

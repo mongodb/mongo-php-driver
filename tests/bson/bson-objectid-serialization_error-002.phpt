@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ObjectId unserialization requires valid hex string
+MongoDB\BSON\ObjectId unserialization requires valid hex string (Serializable interface)
 --FILE--
 <?php
 

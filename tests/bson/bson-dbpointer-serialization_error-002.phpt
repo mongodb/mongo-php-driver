@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\DBPointer unserialization requires "id" string field to be valid
+MongoDB\BSON\DBPointer unserialization requires "id" string field to be valid (Serializable interface)
 --FILE--
 <?php
 

@@ -182,26 +182,26 @@ bool php_phongo_manager_unregister(php_phongo_manager_t* manager);
 	} while (0)
 #endif
 
-#define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, size) \
-	do {                                                                   \
-		if (is_debug) {                                                    \
-			ALLOC_HASHTABLE(props);                                        \
-			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);       \
-		} else if ((intern)->properties) {                                 \
-			(props) = (intern)->properties;                                \
-		} else {                                                           \
-			ALLOC_HASHTABLE(props);                                        \
-			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);       \
-			(intern)->properties = (props);                                \
-		}                                                                  \
+#define PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size) \
+	do {                                                                  \
+		if (is_temp) {                                                    \
+			ALLOC_HASHTABLE(props);                                       \
+			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);      \
+		} else if ((intern)->properties) {                                \
+			(props) = (intern)->properties;                               \
+		} else {                                                          \
+			ALLOC_HASHTABLE(props);                                       \
+			zend_hash_init((props), (size), NULL, ZVAL_PTR_DTOR, 0);      \
+			(intern)->properties = (props);                               \
+		}                                                                 \
 	} while (0)
 
-#define PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_debug, props) \
-	do {                                                     \
-		if (is_debug) {                                      \
-			zend_hash_destroy((props));                      \
-			FREE_HASHTABLE(props);                           \
-		}                                                    \
+#define PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props) \
+	do {                                                    \
+		if (is_temp) {                                      \
+			zend_hash_destroy((props));                     \
+			FREE_HASHTABLE(props);                          \
+		}                                                   \
 	} while (0)
 
 #define PHONGO_ZVAL_CLASS_OR_TYPE_NAME(zv) (Z_TYPE(zv) == IS_OBJECT ? ZSTR_VAL(Z_OBJCE(zv)->name) : zend_get_type_by_const(Z_TYPE(zv)))

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\UTCDateTime unserialization requires "milliseconds" integer or numeric string field
+MongoDB\BSON\UTCDateTime unserialization requires "milliseconds" integer or numeric string field (Serializable interface)
 --FILE--
 <?php
 

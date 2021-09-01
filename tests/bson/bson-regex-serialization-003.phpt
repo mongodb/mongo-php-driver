@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Regex unserialization will alphabetize flags
+MongoDB\BSON\Regex unserialization will alphabetize flags (Serializable interface)
 --FILE--
 <?php
 

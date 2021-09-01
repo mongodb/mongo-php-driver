@@ -149,7 +149,7 @@ static PHP_METHOD(ReadConcern, isDefault)
 	RETURN_BOOL(mongoc_read_concern_is_default(intern->read_concern));
 } /* }}} */
 
-static HashTable* php_phongo_read_concern_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
+static HashTable* php_phongo_readconcern_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
 {
 	php_phongo_readconcern_t* intern;
 	HashTable*                props;
@@ -157,7 +157,7 @@ static HashTable* php_phongo_read_concern_get_properties_hash(phongo_compat_obje
 
 	intern = Z_OBJ_READCONCERN(PHONGO_COMPAT_GET_OBJ(object));
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 1);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
 	if (!intern->read_concern) {
 		return props;
@@ -188,7 +188,7 @@ static PHP_METHOD(ReadConcern, bsonSerialize)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	ZVAL_ARR(return_value, php_phongo_read_concern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+	ZVAL_ARR(return_value, php_phongo_readconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 	convert_to_object(return_value);
 } /* }}} */
 
@@ -274,6 +274,28 @@ static PHP_METHOD(ReadConcern, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\ReadConcern::__serialize()
+*/
+static PHP_METHOD(ReadConcern, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETURN_ARR(php_phongo_readconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\ReadConcern::__unserialize(array $data)
+*/
+static PHP_METHOD(ReadConcern, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_readconcern_init_from_hash(Z_READCONCERN_OBJ_P(getThis()), Z_ARRVAL_P(data));
+} /* }}} */
+
 /* {{{ MongoDB\Driver\ReadConcern function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern___construct, 0, 0, 0)
 	ZEND_ARG_INFO(0, level)
@@ -281,6 +303,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadConcern_unserialize, 0, 0, 1)
@@ -293,7 +319,9 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_readconcern_me[] = {
 	/* clang-format off */
 	PHP_ME(ReadConcern, __construct, ai_ReadConcern___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ReadConcern, __serialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadConcern, __set_state, ai_ReadConcern___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(ReadConcern, __unserialize, ai_ReadConcern___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadConcern, getLevel, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadConcern, isDefault, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadConcern, bsonSerialize, ai_ReadConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -340,12 +368,12 @@ static zend_object* php_phongo_readconcern_create_object(zend_class_entry* class
 static HashTable* php_phongo_readconcern_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
 {
 	*is_temp = 1;
-	return php_phongo_read_concern_get_properties_hash(object, true);
+	return php_phongo_readconcern_get_properties_hash(object, true);
 } /* }}} */
 
 static HashTable* php_phongo_readconcern_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
 {
-	return php_phongo_read_concern_get_properties_hash(object, false);
+	return php_phongo_readconcern_get_properties_hash(object, false);
 } /* }}} */
 
 void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */

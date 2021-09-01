@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Binary unserialization requires unsigned 8-bit integer for type
+MongoDB\BSON\Binary unserialization requires unsigned 8-bit integer for type (Serializable interface)
 --FILE--
 <?php
 

@@ -66,6 +66,29 @@ static bool php_phongo_int64_init_from_hash(php_phongo_int64_t* intern, HashTabl
 	return false;
 } /* }}} */
 
+HashTable* php_phongo_int64_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+{
+	php_phongo_int64_t* intern;
+	HashTable*          props;
+
+	intern = Z_OBJ_INT64(PHONGO_COMPAT_GET_OBJ(object));
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
+
+	if (!intern->initialized) {
+		return props;
+	}
+
+	{
+		zval value;
+
+		ZVAL_INT64_STRING(&value, intern->integer);
+		zend_hash_str_update(props, "integer", sizeof("integer") - 1, &value);
+	}
+
+	return props;
+} /* }}} */
+
 /* {{{ proto string MongoDB\BSON\Int64::__toString()
    Return the Int64's value as a string. */
 static PHP_METHOD(Int64, __toString)
@@ -173,8 +196,34 @@ static PHP_METHOD(Int64, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\Int64::__serialize()
+*/
+static PHP_METHOD(Int64, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETURN_ARR(php_phongo_int64_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\Int64::__unserialize(array $data)
+*/
+static PHP_METHOD(Int64, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_int64_init_from_hash(Z_INT64_OBJ_P(getThis()), Z_ARRVAL_P(data));
+} /* }}} */
+
 /* {{{ MongoDB\BSON\Int64 function entries */
 /* clang-format off */
+ZEND_BEGIN_ARG_INFO_EX(ai_Int64___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Int64_jsonSerialize, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
@@ -187,7 +236,9 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_int64_me[] = {
 	/* __set_state intentionally missing */
+	PHP_ME(Int64, __serialize, ai_Int64_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Int64, __toString, ai_Int64_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Int64, __unserialize, ai_Int64___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Int64, jsonSerialize, ai_Int64_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Int64, serialize, ai_Int64_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Int64, unserialize, ai_Int64_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -256,29 +307,6 @@ static int php_phongo_int64_compare_objects(zval* o1, zval* o2) /* {{{ */
 	}
 
 	return 0;
-} /* }}} */
-
-HashTable* php_phongo_int64_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
-{
-	php_phongo_int64_t* intern;
-	HashTable*          props;
-
-	intern = Z_OBJ_INT64(PHONGO_COMPAT_GET_OBJ(object));
-
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
-
-	if (!intern->initialized) {
-		return props;
-	}
-
-	{
-		zval value;
-
-		ZVAL_INT64_STRING(&value, intern->integer);
-		zend_hash_str_update(props, "integer", sizeof("integer") - 1, &value);
-	}
-
-	return props;
 } /* }}} */
 
 static HashTable* php_phongo_int64_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */

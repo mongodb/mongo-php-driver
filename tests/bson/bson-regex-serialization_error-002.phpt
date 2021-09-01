@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Regex unserialization does not allow pattern or flags to contain null bytes
+MongoDB\BSON\Regex unserialization does not allow pattern or flags to contain null bytes (Serializable interface)
 --FILE--
 <?php
 

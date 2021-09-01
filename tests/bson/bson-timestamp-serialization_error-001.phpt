@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Timestamp unserialization requires "increment" and "timestamp" integer fields
+MongoDB\BSON\Timestamp unserialization requires "increment" and "timestamp" integer fields (Serializable interface)
 --FILE--
 <?php
 

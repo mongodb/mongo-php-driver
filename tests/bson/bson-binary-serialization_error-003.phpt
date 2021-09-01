@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Binary unserialization requires 16-byte data length for UUID types
+MongoDB\BSON\Binary unserialization requires 16-byte data length for UUID types (Serializable interface)
 --FILE--
 <?php
 

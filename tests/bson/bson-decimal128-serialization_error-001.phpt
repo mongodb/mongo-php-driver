@@ -1,7 +1,5 @@
 --TEST--
-MongoDB\BSON\Decimal128 unserialization requires "dec" string field
---SKIPIF--
-<?php if (!class_exists('MongoDB\BSON\Decimal128')) { die('skip MongoDB\BSON\Decimal128 is not available'); } ?>
+MongoDB\BSON\Decimal128 unserialization requires "dec" string field (Serializable interface)
 --FILE--
 <?php
 

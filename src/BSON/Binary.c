@@ -69,6 +69,32 @@ static bool php_phongo_binary_init_from_hash(php_phongo_binary_t* intern, HashTa
 	return false;
 } /* }}} */
 
+static HashTable* php_phongo_binary_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+{
+	php_phongo_binary_t* intern;
+	HashTable*           props;
+
+	intern = Z_OBJ_BINARY(PHONGO_COMPAT_GET_OBJ(object));
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
+
+	if (!intern->data) {
+		return props;
+	}
+
+	{
+		zval data, type;
+
+		ZVAL_STRINGL(&data, intern->data, intern->data_len);
+		zend_hash_str_update(props, "data", sizeof("data") - 1, &data);
+
+		ZVAL_LONG(&type, intern->type);
+		zend_hash_str_update(props, "type", sizeof("type") - 1, &type);
+	}
+
+	return props;
+} /* }}} */
+
 /* {{{ proto void MongoDB\BSON\Binary::__construct(string $data, int $type)
    Construct a new BSON binary type */
 static PHP_METHOD(Binary, __construct)
@@ -270,6 +296,28 @@ static PHP_METHOD(Binary, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\Binary::__serialize()
+*/
+static PHP_METHOD(Binary, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETURN_ARR(php_phongo_binary_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\Binary::__unserialize(array $data)
+*/
+static PHP_METHOD(Binary, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_binary_init_from_hash(Z_BINARY_OBJ_P(getThis()), Z_ARRVAL_P(data));
+} /* }}} */
+
 /* {{{ MongoDB\BSON\Binary function entries */
 /* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary___construct, 0, 0, 2)
@@ -279,6 +327,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Binary___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Binary_jsonSerialize, 0, 0, IS_ARRAY, 0)
@@ -293,8 +345,10 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_binary_me[] = {
 	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Binary, __serialize, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, __set_state, ai_Binary___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	PHP_ME(Binary, __toString, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Binary, __unserialize, ai_Binary___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, jsonSerialize, ai_Binary_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, serialize, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, unserialize, ai_Binary_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -375,32 +429,6 @@ static int php_phongo_binary_compare_objects(zval* o1, zval* o2) /* {{{ */
 	}
 
 	return zend_binary_strcmp(intern1->data, intern1->data_len, intern2->data, intern2->data_len);
-} /* }}} */
-
-static HashTable* php_phongo_binary_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
-{
-	php_phongo_binary_t* intern;
-	HashTable*           props;
-
-	intern = Z_OBJ_BINARY(PHONGO_COMPAT_GET_OBJ(object));
-
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
-
-	if (!intern->data) {
-		return props;
-	}
-
-	{
-		zval data, type;
-
-		ZVAL_STRINGL(&data, intern->data, intern->data_len);
-		zend_hash_str_update(props, "data", sizeof("data") - 1, &data);
-
-		ZVAL_LONG(&type, intern->type);
-		zend_hash_str_update(props, "type", sizeof("type") - 1, &type);
-	}
-
-	return props;
 } /* }}} */
 
 static HashTable* php_phongo_binary_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */

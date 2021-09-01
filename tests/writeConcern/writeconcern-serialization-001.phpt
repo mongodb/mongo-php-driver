@@ -1,5 +1,8 @@
 --TEST--
-MongoDB\Driver\WriteConcern serialization
+MongoDB\Driver\WriteConcern serialization (Serializable interface)
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('>=', '7.4.0'); ?>
 --FILE--
 <?php
 

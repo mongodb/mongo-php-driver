@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ObjectId unserialization requires "oid" string field
+MongoDB\BSON\ObjectId unserialization requires "oid" string field (Serializable interface)
 --FILE--
 <?php
 

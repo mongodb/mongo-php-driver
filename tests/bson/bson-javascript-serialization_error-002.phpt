@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Javascript unserialization expects optional scope to be array or object
+MongoDB\BSON\Javascript unserialization expects optional scope to be array or object (Serializable interface)
 --FILE--
 <?php
 

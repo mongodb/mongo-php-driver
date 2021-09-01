@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\UTCDateTime unserialization requires "milliseconds" string to parse as 64-bit integer
+MongoDB\BSON\UTCDateTime unserialization requires "milliseconds" string to parse as 64-bit integer (Serializable interface)
 --FILE--
 <?php
 

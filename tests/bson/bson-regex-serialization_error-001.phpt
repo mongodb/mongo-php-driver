@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Regex unserialization requires "pattern" and "flags" string fields
+MongoDB\BSON\Regex unserialization requires "pattern" and "flags" string fields (Serializable interface)
 --FILE--
 <?php
 

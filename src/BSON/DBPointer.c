@@ -68,6 +68,31 @@ static bool php_phongo_dbpointer_init_from_hash(php_phongo_dbpointer_t* intern, 
 	return false;
 } /* }}} */
 
+HashTable* php_phongo_dbpointer_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+{
+	php_phongo_dbpointer_t* intern;
+	HashTable*              props;
+
+	intern = Z_OBJ_DBPOINTER(PHONGO_COMPAT_GET_OBJ(object));
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
+
+	if (!intern->ref) {
+		return props;
+	}
+
+	{
+		zval ref, id;
+
+		ZVAL_STRING(&ref, intern->ref);
+		ZVAL_STRING(&id, intern->id);
+		zend_hash_str_update(props, "ref", sizeof("ref") - 1, &ref);
+		zend_hash_str_update(props, "id", sizeof("id") - 1, &id);
+	}
+
+	return props;
+} /* }}} */
+
 /* {{{ proto string MongoDB\BSON\DBPointer::__toString()
    Return the DBPointer's namespace string and ObjectId. */
 static PHP_METHOD(DBPointer, __toString)
@@ -187,8 +212,34 @@ static PHP_METHOD(DBPointer, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\DBPointer::__serialize()
+*/
+static PHP_METHOD(DBPointer, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETURN_ARR(php_phongo_dbpointer_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\DBPointer::__unserialize(array $data)
+*/
+static PHP_METHOD(DBPointer, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_dbpointer_init_from_hash(Z_DBPOINTER_OBJ_P(getThis()), Z_ARRVAL_P(data));
+} /* }}} */
+
 /* {{{ MongoDB\BSON\DBPointer function entries */
 /* clang-format off */
+ZEND_BEGIN_ARG_INFO_EX(ai_DBPointer___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_DBPointer_jsonSerialize, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
@@ -201,7 +252,9 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_dbpointer_me[] = {
 	/* __set_state intentionally missing */
+	PHP_ME(DBPointer, __serialize, ai_DBPointer_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(DBPointer, __toString, ai_DBPointer_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(DBPointer, __unserialize, ai_DBPointer___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(DBPointer, jsonSerialize, ai_DBPointer_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(DBPointer, serialize, ai_DBPointer_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(DBPointer, unserialize, ai_DBPointer_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -277,31 +330,6 @@ static int php_phongo_dbpointer_compare_objects(zval* o1, zval* o2) /* {{{ */
 	}
 
 	return strcmp(intern1->id, intern2->id);
-} /* }}} */
-
-HashTable* php_phongo_dbpointer_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
-{
-	php_phongo_dbpointer_t* intern;
-	HashTable*              props;
-
-	intern = Z_OBJ_DBPOINTER(PHONGO_COMPAT_GET_OBJ(object));
-
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 2);
-
-	if (!intern->ref) {
-		return props;
-	}
-
-	{
-		zval ref, id;
-
-		ZVAL_STRING(&ref, intern->ref);
-		ZVAL_STRING(&id, intern->id);
-		zend_hash_str_update(props, "ref", sizeof("ref") - 1, &ref);
-		zend_hash_str_update(props, "id", sizeof("id") - 1, &id);
-	}
-
-	return props;
 } /* }}} */
 
 static HashTable* php_phongo_dbpointer_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */

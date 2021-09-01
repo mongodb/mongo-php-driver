@@ -12,8 +12,8 @@ echo var_export($cursorId, true), "\n";
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 MongoDB\Driver\CursorId::__set_state(array(
-   'id' => '7250031947823432848',
+   'id' => %r(7250031947823432848|'7250031947823432848')%r,
 ))
 ===DONE===

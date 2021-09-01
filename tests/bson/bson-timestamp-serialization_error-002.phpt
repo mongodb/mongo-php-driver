@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Timestamp unserialization requires positive unsigned 32-bit integers
+MongoDB\BSON\Timestamp unserialization requires positive unsigned 32-bit integers (Serializable interface)
 --FILE--
 <?php
 

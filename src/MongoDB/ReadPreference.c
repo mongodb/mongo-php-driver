@@ -469,7 +469,7 @@ static PHP_METHOD(ReadPreference, getTagSets)
 	}
 } /* }}} */
 
-static HashTable* php_phongo_readpreference_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
+static HashTable* php_phongo_readpreference_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
 {
 	php_phongo_readpreference_t* intern;
 	HashTable*                   props;
@@ -480,7 +480,7 @@ static HashTable* php_phongo_readpreference_get_properties_hash(phongo_compat_ob
 
 	intern = Z_OBJ_READPREFERENCE(PHONGO_COMPAT_GET_OBJ(object));
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_debug, intern, props, 4);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 4);
 
 	if (!intern->read_preference) {
 		return props;
@@ -515,6 +515,8 @@ static HashTable* php_phongo_readpreference_get_properties_hash(phongo_compat_ob
 	}
 
 	if (mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference) != MONGOC_NO_MAX_STALENESS) {
+		/* Note: valid values for maxStalesnessSeconds will not exceed the range
+		 * of 32-bit signed integers, so conditional encoding is not necessary. */
 		long maxStalenessSeconds = mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference);
 		zval z_max_ss;
 
@@ -675,6 +677,28 @@ static PHP_METHOD(ReadPreference, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
+/* {{{ proto array MongoDB\Driver\ReadPreference::__serialize()
+*/
+static PHP_METHOD(ReadPreference, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETURN_ARR(php_phongo_readpreference_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+} /* }}} */
+
+/* {{{ proto void MongoDB\Driver\ReadPreference::__unserialize(array $data)
+*/
+static PHP_METHOD(ReadPreference, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_readpreference_init_from_hash(Z_READPREFERENCE_OBJ_P(getThis()), Z_ARRVAL_P(data));
+} /* }}} */
+
 /* {{{ MongoDB\Driver\ReadPreference function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, mode)
@@ -684,6 +708,10 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___unserialize, 0, 0, 1)
+	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference_unserialize, 0, 0, 1)
@@ -696,7 +724,9 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_readpreference_me[] = {
 	/* clang-format off */
 	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ReadPreference, __serialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, __set_state, ai_ReadPreference___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(ReadPreference, __unserialize, ai_ReadPreference___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getHedge, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getMaxStalenessSeconds, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)

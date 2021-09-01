@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Binary unserialization requires "data" string and "type" integer fields
+MongoDB\BSON\Binary unserialization requires "data" string and "type" integer fields (Serializable interface)
 --FILE--
 <?php
 

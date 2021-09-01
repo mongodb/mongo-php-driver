@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Symbol unserialization requires "symbol" string field
+MongoDB\BSON\Symbol unserialization requires "symbol" string field (Serializable interface)
 --FILE--
 <?php
 

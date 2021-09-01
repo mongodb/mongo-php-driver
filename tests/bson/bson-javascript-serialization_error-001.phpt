@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Javascript unserialization requires "code" string field
+MongoDB\BSON\Javascript unserialization requires "code" string field (Serializable interface)
 --FILE--
 <?php
 

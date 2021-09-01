@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Timestamp unserialization requires strings to parse as 64-bit integers
+MongoDB\BSON\Timestamp unserialization requires strings to parse as 64-bit integers (Serializable interface)
 --FILE--
 <?php
 

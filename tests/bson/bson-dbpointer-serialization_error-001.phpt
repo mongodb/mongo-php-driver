@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\DBPointer unserialization requires "ref" and "id" string fields
+MongoDB\BSON\DBPointer unserialization requires "ref" and "id" string fields (Serializable interface)
 --FILE--
 <?php
 
@@ -7,11 +7,11 @@ require_once __DIR__ . '/../utils/basic.inc';
 
 
 echo throws(function() {
-	unserialize('C:22:"MongoDB\BSON\DBPointer":35:{a:1:{s:3:"ref";s:11:"phongo.test";}}');
+    unserialize('C:22:"MongoDB\BSON\DBPointer":35:{a:1:{s:3:"ref";s:11:"phongo.test";}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 echo throws(function() {
-	unserialize('C:22:"MongoDB\BSON\DBPointer":34:{a:1:{s:2:"id";s:11:"phongo.test";}}');
+    unserialize('C:22:"MongoDB\BSON\DBPointer":34:{a:1:{s:2:"id";s:11:"phongo.test";}}');
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>
