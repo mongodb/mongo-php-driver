@@ -1,5 +1,8 @@
 --TEST--
-PHPC-1839: Referenced, out-of-scope, non-interned string in typeMap
+PHPC-1839: Referenced, out-of-scope, non-interned string in typeMap (PHP < 8.1)
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('>=', '8.1'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
