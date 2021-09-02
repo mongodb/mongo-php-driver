@@ -9,4 +9,4 @@ class MyMinKey extends MongoDB\BSON\MinKey {}
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyMinKey may not inherit from final class (MongoDB\BSON\MinKey) in %s on line %d
+Fatal error: Class MyMinKey %s final class %SMongoDB\BSON\MinKey%S in %s on line %d

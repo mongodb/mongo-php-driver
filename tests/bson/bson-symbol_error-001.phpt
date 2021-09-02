@@ -9,4 +9,4 @@ class MySymbol extends MongoDB\BSON\Symbol {}
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MySymbol may not inherit from final class (MongoDB\BSON\Symbol) in %s on line %d
+Fatal error: Class MySymbol %s final class %SMongoDB\BSON\Symbol%S in %s on line %d

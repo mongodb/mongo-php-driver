@@ -9,4 +9,4 @@ class MyReadPreference extends MongoDB\Driver\ReadPreference {}
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyReadPreference may not inherit from final class (MongoDB\Driver\ReadPreference) in %s on line %d
+Fatal error: Class MyReadPreference %s final class %SMongoDB\Driver\ReadPreference%S in %s on line %d

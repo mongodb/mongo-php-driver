@@ -9,4 +9,4 @@ class MyDBPointer extends MongoDB\BSON\DBPointer {}
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyDBPointer may not inherit from final class (MongoDB\BSON\DBPointer) in %s on line %d
+Fatal error: Class MyDBPointer %s final class %SMongoDB\BSON\DBPointer%S in %s on line %d

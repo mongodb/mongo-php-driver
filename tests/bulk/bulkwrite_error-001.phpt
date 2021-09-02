@@ -9,4 +9,4 @@ class MyBulkWrite extends MongoDB\Driver\BulkWrite {}
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyBulkWrite may not inherit from final class (MongoDB\Driver\BulkWrite) in %s on line %d
+Fatal error: Class MyBulkWrite %s final class %SMongoDB\Driver\BulkWrite%S in %s on line %d

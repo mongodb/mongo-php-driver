@@ -9,4 +9,4 @@ class MyUTCDateTime extends MongoDB\BSON\UTCDateTime {}
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyUTCDateTime may not inherit from final class (MongoDB\BSON\UTCDateTime) in %s on line %d
+Fatal error: Class MyUTCDateTime %s final class %SMongoDB\BSON\UTCDateTime%S in %s on line %d
