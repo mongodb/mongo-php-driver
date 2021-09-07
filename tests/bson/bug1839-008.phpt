@@ -1,15 +1,14 @@
 --TEST--
-PHPC-1839: Referenced, local, non-interned string in typeMap (PHP < 8.1)
+PHPC-1839: Referenced, local, interned string in typeMap (PHP >= 8.1)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '8.1'); ?>
+<?php skip_if_php_version('<', '8.1'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-// Assemble the string so as to not have an interned string
-$rootValue = chr(ord('a')) . 'rray';
-$documentValue = chr(ord('a')) . 'rray';
+$rootValue = 'array';
+$documentValue = 'array';
 
 $typemap = ['root' => &$rootValue, 'document' => &$documentValue];
 $bson    = MongoDB\BSON\fromPhp((object) []);
@@ -29,15 +28,23 @@ debug_zval_dump($typemap);
 Before:
 array(2) refcount(2){
   ["root"]=>
-  &string(5) "array" refcount(1)
+  reference refcount(2) {
+    string(5) "array" interned
+  }
   ["document"]=>
-  &string(5) "array" refcount(1)
+  reference refcount(2) {
+    string(5) "array" interned
+  }
 }
 After:
 array(2) refcount(2){
   ["root"]=>
-  &string(5) "array" refcount(1)
+  reference refcount(2) {
+    string(5) "array" interned
+  }
   ["document"]=>
-  &string(5) "array" refcount(1)
+  reference refcount(2) {
+    string(5) "array" interned
+  }
 }
 ===DONE===

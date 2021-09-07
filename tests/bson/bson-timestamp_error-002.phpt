@@ -9,4 +9,4 @@ class MyTimestamp extends MongoDB\BSON\Timestamp {}
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyTimestamp may not inherit from final class (MongoDB\BSON\Timestamp) in %s on line %d
+Fatal error: Class MyTimestamp %s final class %SMongoDB\BSON\Timestamp%S in %s on line %d

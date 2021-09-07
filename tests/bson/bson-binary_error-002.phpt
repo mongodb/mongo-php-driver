@@ -9,4 +9,4 @@ class MyBinary extends MongoDB\BSON\Binary {}
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyBinary may not inherit from final class (MongoDB\BSON\Binary) in %s on line %d
+Fatal error: Class MyBinary %s final class %SMongoDB\BSON\Binary%S in %s on line %d

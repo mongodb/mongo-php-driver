@@ -1,8 +1,8 @@
 --TEST--
-PHPC-1839: Referenced, local, non-interned string in typeMap (PHP < 8.1)
+PHPC-1839: Referenced, local, non-interned string in typeMap (PHP >= 8.1)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '8.1'); ?>
+<?php skip_if_php_version('<', '8.1'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -29,15 +29,23 @@ debug_zval_dump($typemap);
 Before:
 array(2) refcount(2){
   ["root"]=>
-  &string(5) "array" refcount(1)
+  reference refcount(2) {
+    string(5) "array" refcount(1)
+  }
   ["document"]=>
-  &string(5) "array" refcount(1)
+  reference refcount(2) {
+    string(5) "array" refcount(1)
+  }
 }
 After:
 array(2) refcount(2){
   ["root"]=>
-  &string(5) "array" refcount(1)
+  reference refcount(2) {
+    string(5) "array" refcount(1)
+  }
   ["document"]=>
-  &string(5) "array" refcount(1)
+  reference refcount(2) {
+    string(5) "array" refcount(1)
+  }
 }
 ===DONE===

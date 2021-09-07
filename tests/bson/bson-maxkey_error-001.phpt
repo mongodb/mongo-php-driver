@@ -9,4 +9,4 @@ class MyMaxKey extends MongoDB\BSON\MaxKey {}
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyMaxKey may not inherit from final class (MongoDB\BSON\MaxKey) in %s on line %d
+Fatal error: Class MyMaxKey %s final class %SMongoDB\BSON\MaxKey%S in %s on line %d

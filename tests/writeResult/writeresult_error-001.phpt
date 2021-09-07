@@ -9,4 +9,4 @@ class MyWriteResult extends MongoDB\Driver\WriteResult {}
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyWriteResult may not inherit from final class (MongoDB\Driver\WriteResult) in %s on line %d
+Fatal error: Class MyWriteResult %s final class %SMongoDB\Driver\WriteResult%S in %s on line %d

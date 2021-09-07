@@ -9,4 +9,4 @@ class MyWriteConcernError extends MongoDB\Driver\WriteConcernError {}
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyWriteConcernError may not inherit from final class (MongoDB\Driver\WriteConcernError) in %s on line %d
+Fatal error: Class MyWriteConcernError %s final class %SMongoDB\Driver\WriteConcernError%S in %s on line %d

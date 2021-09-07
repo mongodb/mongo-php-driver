@@ -9,4 +9,4 @@ class MyCursor extends MongoDB\Driver\Cursor {}
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Fatal error: Class MyCursor may not inherit from final class (MongoDB\Driver\Cursor) in %s on line %d
+Fatal error: Class MyCursor %s final class %SMongoDB\Driver\Cursor%S in %s on line %d
