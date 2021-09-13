@@ -245,43 +245,13 @@ releasing the `vX.Y` branch as X.Y.Z).
 
 ### Ensure PHP version compatibility
 
-Ensure that the extension compiles on PHP 5.6 through the latest PHP 7.x
-release. Be sure to test both ZTS and non-ZTS builds for PHP 5.x.
+Ensure that the library test suite completes on supported versions of PHP.
 
 ### Ensure Windows compatibility
 
 PECL will create Windows DLLs for new releases; however, you must ensure that
-the extension successfully builds on Windows before releasing. Note that PHP 5.6
-requires VS2012, while PHP 7.x requires VS2015.
-
-Given the following assumptions:
-
- * Build directory is `C:\php-sdk\`
- * Compiling for PHP 5.6 (VS2012 x86 Native Tools Command Prompt is running)
- * Extension branch checked out in `C:\php-sdk\phpdev\vc11\x86\pecl\mongodb`
-
-The build process will resemble:
-
-```
-cd c:\php-sdk\
-bin\phpsdk_setvars.bat
-
-cd C:\php-sdk\phpdev\vc11\x86\php-5.6.12-src
-nmake clean
-buildconf --force
-configure --disable-all --with-openssl --enable-cli --enable-json --enable-mongodb=shared --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes
-nmake
-```
-
-If the extension was successfully compiled, a `php_mongodb.dll` file should be
-generated in the build directory (e.g. `Release_TS`). You should then verify
-that the extension loads and executes properly:
-
-```
-cd Release_TS
-php.exe -d extension=./php_mongodb.dll -m
-php.exe -d extension=./php_mongodb.dll -r "var_dump(new MongoDB\Driver\Manager);"
-```
+the extension successfully builds on Windows before releasing. Windows builds
+are tested by [AppVeyor](.appveyor.yml).
 
 See the [internals wiki](https://wiki.php.net/internals/windows/stepbystepbuild)
 for more information.
