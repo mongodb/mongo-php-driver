@@ -11,6 +11,18 @@ require_once __DIR__ . '/basic.inc';
 require_once __DIR__ . '/tools.php';
 
 /**
+ * Disables SKIPIF caching (PHP 8.1+).
+ */
+function disable_skipif_caching()
+{
+    if (PHP_VERSION_ID < 80100) {
+        return;
+    }
+
+    echo "nocache\n";
+}
+
+/**
  * Skips the test if the topology is a sharded cluster.
  */
 function skip_if_mongos()
@@ -404,6 +416,10 @@ function skip_if_not_clean($databaseName = DATABASE_NAME, $collectionName = COLL
     } catch (RuntimeException $e) {
         exit("skip Could not drop '$databaseName.$collectionName': " . $e->getMessage());
     }
+
+    /* Since this function modifies the state of the database, we need it to run
+     * each time before a test. */
+    disable_skipif_caching();
 }
 
 function skip_if_no_getmore_failpoint()
