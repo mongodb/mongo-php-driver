@@ -371,6 +371,18 @@ void phongo_session_init(zval* return_value, zval* manager, mongoc_client_sessio
 }
 /* }}} */
 
+void phongo_objectid_init(zval* return_value, const bson_oid_t* oid) /* {{{ */
+{
+	php_phongo_objectid_t* intern;
+
+	object_init_ex(return_value, php_phongo_objectid_ce);
+
+	intern = Z_OBJECTID_OBJ_P(return_value);
+	bson_oid_to_string(oid, intern->oid);
+	intern->initialized = true;
+}
+/* }}} */
+
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern) /* {{{ */
 {
 	php_phongo_readconcern_t* intern;

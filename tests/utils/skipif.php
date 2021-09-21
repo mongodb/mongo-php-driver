@@ -31,6 +31,14 @@ function skip_if_load_balanced()
 }
 
 /**
+ * Skips the test if the topology is not load balanced.
+ */
+function skip_if_not_load_balanced()
+{
+    is_load_balanced(URI) or exit('skip topology is not load balanced');
+}
+
+/**
  * Skips the test if the topology is a sharded cluster.
  */
 function skip_if_mongos()

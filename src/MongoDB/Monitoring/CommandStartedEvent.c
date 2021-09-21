@@ -152,6 +152,21 @@ PHP_METHOD(CommandStartedEvent, getServer)
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
 } /* }}} */
 
+/* {{{ proto MongoDB\BSON\ObjectId|null CommandStartedEvent::getServiceId()
+   Returns the event's service ID */
+PHP_METHOD(CommandStartedEvent, getServiceId)
+{
+	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	if (!intern->has_service_id) {
+		RETURN_NULL();
+	}
+
+	phongo_objectid_init(return_value, &intern->service_id);
+} /* }}} */
+
 /**
  * Event thrown when a command has started to execute.
  *
@@ -171,6 +186,7 @@ static zend_function_entry php_phongo_commandstartedevent_me[] = {
 	PHP_ME(CommandStartedEvent, getOperationId, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CommandStartedEvent, getRequestId, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CommandStartedEvent, getServer, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandStartedEvent, getServiceId, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
 	/* clang-format on */
@@ -251,6 +267,15 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(phongo_compat_ob
 
 		phongo_server_init(&server, &intern->manager, intern->server_id);
 		ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
+	}
+
+	if (intern->has_service_id) {
+		zval service_id;
+
+		phongo_objectid_init(&service_id, &intern->service_id);
+		ADD_ASSOC_ZVAL_EX(&retval, "serviceId", &service_id);
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "serviceId");
 	}
 
 done:

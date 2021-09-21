@@ -247,6 +247,8 @@ typedef struct {
 	uint64_t    duration_micros;
 	bson_t*     reply;
 	zval        z_error;
+	bool        has_service_id;
+	bson_oid_t  service_id;
 	zend_object std;
 } php_phongo_commandfailedevent_t;
 
@@ -258,6 +260,8 @@ typedef struct {
 	uint64_t    request_id;
 	bson_t*     command;
 	char*       database_name;
+	bool        has_service_id;
+	bson_oid_t  service_id;
 	zend_object std;
 } php_phongo_commandstartedevent_t;
 
@@ -269,6 +273,8 @@ typedef struct {
 	uint64_t    request_id;
 	uint64_t    duration_micros;
 	bson_t*     reply;
+	bool        has_service_id;
+	bson_oid_t  service_id;
 	zend_object std;
 } php_phongo_commandsucceededevent_t;
 

@@ -171,6 +171,21 @@ PHP_METHOD(CommandFailedEvent, getServer)
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
 } /* }}} */
 
+/* {{{ proto MongoDB\BSON\ObjectId|null CommandFailedEvent::getServiceId()
+   Returns the event's service ID */
+PHP_METHOD(CommandFailedEvent, getServiceId)
+{
+	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	if (!intern->has_service_id) {
+		RETURN_NULL();
+	}
+
+	phongo_objectid_init(return_value, &intern->service_id);
+} /* }}} */
+
 /**
  * Event thrown when a command has failed to execute.
  *
@@ -191,6 +206,7 @@ static zend_function_entry php_phongo_commandfailedevent_me[] = {
 	PHP_ME(CommandFailedEvent, getReply, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CommandFailedEvent, getRequestId, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CommandFailedEvent, getServer, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandFailedEvent, getServiceId, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
 	/* clang-format on */
@@ -274,6 +290,15 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(phongo_compat_obj
 
 		phongo_server_init(&server, &intern->manager, intern->server_id);
 		ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
+	}
+
+	if (intern->has_service_id) {
+		zval service_id;
+
+		phongo_objectid_init(&service_id, &intern->service_id);
+		ADD_ASSOC_ZVAL_EX(&retval, "serviceId", &service_id);
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "serviceId");
 	}
 
 done:
