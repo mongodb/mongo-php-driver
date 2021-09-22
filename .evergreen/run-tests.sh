@@ -17,8 +17,15 @@ OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 
 export REPORT_EXIT_STATUS=1
 
+# Determine if MONGODB_URI already has a query string
+SUFFIX=$(echo "$MONGODB_URI" | grep -Eo "\?(.*)" | cat)
+
 if [ "$SSL" = "yes" ]; then
-   MONGODB_URI="${MONGODB_URI}/?ssl=true&sslallowinvalidcertificates=true"
+   if [ -z "$SUFFIX" ]; then
+      MONGODB_URI="${MONGODB_URI}/?ssl=true&sslallowinvalidcertificates=true"
+   else
+      MONGODB_URI="${MONGODB_URI}&ssl=true&sslallowinvalidcertificates=true"
+   fi
 fi
 
 echo "Running tests with URI: $MONGODB_URI"
