@@ -42,6 +42,7 @@ typedef struct {
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char*      debug;
 	FILE*      debug_fd;
+	bool       mock_service_id;
 	HashTable  persistent_clients;
 	HashTable* request_clients;
 	HashTable* subscribers;

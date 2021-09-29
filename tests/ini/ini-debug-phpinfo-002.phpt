@@ -1,11 +1,11 @@
 --TEST--
-phpinfo() reports mongodb.debug (default and overridden)
+phpinfo() reports mongodb.debug (master and local)
 --INI--
 mongodb.debug=stderr
 --FILE--
 <?php
 
-ini_set("mongodb.debug", "stdout");
+ini_set('mongodb.debug', 'stdout');
 phpinfo();
 
 ?>

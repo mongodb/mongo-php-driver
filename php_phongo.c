@@ -51,10 +51,6 @@
 /* Stream wrapper */
 #include <main/php_streams.h>
 #include <main/php_network.h>
-/* Debug log writing */
-#include <main/php_open_temporary_file.h>
-/* For formating timestamp in the log */
-#include <ext/date/php_date.h>
 /* String manipulation */
 #include <Zend/zend_string.h>
 /* PHP array helpers */
@@ -67,14 +63,13 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 #include "src/phongo_apm.h"
+#include "src/phongo_ini.h"
 #include "src/BSON/functions.h"
 #include "src/MongoDB/Monitoring/functions.h"
 
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO"
 
-#define PHONGO_DEBUG_INI "mongodb.debug"
-#define PHONGO_DEBUG_INI_DEFAULT ""
 #define PHONGO_METADATA_SEPARATOR " / "
 #define PHONGO_METADATA_SEPARATOR_LEN (sizeof(PHONGO_METADATA_SEPARATOR) - 1)
 #define PHONGO_METADATA_PHP_VERSION_PREFIX "PHP "
@@ -292,26 +287,6 @@ void phongo_throw_exception_from_bson_error_t_and_reply(bson_error_t* error, con
 void phongo_throw_exception_from_bson_error_t(bson_error_t* error)
 {
 	phongo_throw_exception_from_bson_error_t_and_reply(error, NULL);
-}
-
-static void php_phongo_log(mongoc_log_level_t log_level, const char* log_domain, const char* message, void* user_data)
-{
-	struct timeval tv;
-	time_t         t;
-	zend_long      tu;
-	zend_string*   dt;
-
-	(void) user_data;
-
-	bson_gettimeofday(&tv);
-	t  = tv.tv_sec;
-	tu = tv.tv_usec;
-
-	dt = php_format_date((char*) ZEND_STRL("Y-m-d\\TH:i:s"), t, 0);
-
-	fprintf(MONGODB_G(debug_fd), "[%s.%06" PHONGO_LONG_FORMAT "+00:00] %10s: %-8s> %s\n", ZSTR_VAL(dt), tu, log_domain, mongoc_log_level_str(log_level), message);
-	fflush(MONGODB_G(debug_fd));
-	efree(dt);
 }
 
 /* }}} */
@@ -3367,73 +3342,6 @@ static void php_phongo_free(void* mem) /* {{{ */
 
 /* {{{ M[INIT|SHUTDOWN] R[INIT|SHUTDOWN] G[INIT|SHUTDOWN] MINFO INI */
 
-ZEND_INI_MH(OnUpdateDebug)
-{
-	void*** ctx     = NULL;
-	char*   tmp_dir = NULL;
-
-	/* Close any previously open log files */
-	if (MONGODB_G(debug_fd)) {
-		if (MONGODB_G(debug_fd) != stderr && MONGODB_G(debug_fd) != stdout) {
-			fclose(MONGODB_G(debug_fd));
-		}
-		MONGODB_G(debug_fd) = NULL;
-	}
-
-	if (!new_value || (new_value && !ZSTR_VAL(new_value)[0]) || strcasecmp("0", ZSTR_VAL(new_value)) == 0 || strcasecmp("off", ZSTR_VAL(new_value)) == 0 || strcasecmp("no", ZSTR_VAL(new_value)) == 0 || strcasecmp("false", ZSTR_VAL(new_value)) == 0) {
-		mongoc_log_trace_disable();
-		mongoc_log_set_handler(NULL, NULL);
-
-		return OnUpdateString(entry, new_value, mh_arg1, mh_arg2, mh_arg3, stage);
-	}
-
-	if (strcasecmp(ZSTR_VAL(new_value), "stderr") == 0) {
-		MONGODB_G(debug_fd) = stderr;
-	} else if (strcasecmp(ZSTR_VAL(new_value), "stdout") == 0) {
-		MONGODB_G(debug_fd) = stdout;
-	} else if (
-		strcasecmp("1", ZSTR_VAL(new_value)) == 0 ||
-		strcasecmp("on", ZSTR_VAL(new_value)) == 0 ||
-		strcasecmp("yes", ZSTR_VAL(new_value)) == 0 ||
-		strcasecmp("true", ZSTR_VAL(new_value)) == 0) {
-
-		tmp_dir = NULL;
-	} else {
-		tmp_dir = ZSTR_VAL(new_value);
-	}
-
-	if (!MONGODB_G(debug_fd)) {
-		time_t       t;
-		int          fd = -1;
-		char*        prefix;
-		int          len;
-		zend_string* filename;
-
-		time(&t);
-		len = spprintf(&prefix, 0, "PHONGO-%ld", t);
-
-		fd = php_open_temporary_fd(tmp_dir, prefix, &filename);
-		if (fd != -1) {
-			const char* path    = ZSTR_VAL(filename);
-			MONGODB_G(debug_fd) = VCWD_FOPEN(path, "a");
-		}
-		efree(filename);
-		efree(prefix);
-		close(fd);
-	}
-
-	mongoc_log_trace_enable();
-	mongoc_log_set_handler(php_phongo_log, ctx);
-
-	return OnUpdateString(entry, new_value, mh_arg1, mh_arg2, mh_arg3, stage);
-}
-
-/* {{{ INI entries */
-PHP_INI_BEGIN()
-	STD_PHP_INI_ENTRY(PHONGO_DEBUG_INI, PHONGO_DEBUG_INI_DEFAULT, PHP_INI_ALL, OnUpdateDebug, debug, zend_mongodb_globals, mongodb_globals)
-PHP_INI_END()
-/* }}} */
-
 static void phongo_pclient_reset_once(php_phongo_pclient_t* pclient, int pid)
 {
 	if (pclient->last_reset_by_pid != pid) {
@@ -3658,7 +3566,7 @@ PHP_MINIT_FUNCTION(mongodb)
 
 	(void) type; /* We don't care if we are loaded via dl() or extension= */
 
-	REGISTER_INI_ENTRIES();
+	phongo_register_ini_entries(INIT_FUNC_ARGS_PASSTHRU);
 
 	/* Assign our custom vtable to libbson, so all memory allocation in libbson
 	 * (and libmongoc) will use PHP's persistent memory API. After doing so,
@@ -3779,7 +3687,7 @@ PHP_MINIT_FUNCTION(mongodb)
 /* {{{ PHP_MSHUTDOWN_FUNCTION */
 PHP_MSHUTDOWN_FUNCTION(mongodb)
 {
-	UNREGISTER_INI_ENTRIES();
+	phongo_unregister_ini_entries(SHUTDOWN_FUNC_ARGS_PASSTHRU);
 
 	return SUCCESS;
 }
@@ -3827,11 +3735,8 @@ PHP_GSHUTDOWN_FUNCTION(mongodb)
 	 * encryption settings. */
 	zend_hash_graceful_reverse_destroy(&mongodb_globals->persistent_clients);
 
-	mongodb_globals->debug = NULL;
-	if (mongodb_globals->debug_fd) {
-		fclose(mongodb_globals->debug_fd);
-		mongodb_globals->debug_fd = NULL;
-	}
+	phongo_log_disable(mongodb_globals->debug_fd);
+	mongodb_globals->debug_fd = NULL;
 
 	/* Decrement the thread counter. If it reaches zero, we can infer that this
 	 * is the last thread, MSHUTDOWN has been called, persistent clients from
@@ -3966,7 +3871,7 @@ PHP_MINFO_FUNCTION(mongodb)
 
 	php_info_print_table_end();
 
-	DISPLAY_INI_ENTRIES();
+	phongo_display_ini_entries(ZEND_MODULE_INFO_FUNC_ARGS_PASSTHRU);
 }
 /* }}} */
 /* }}} */
