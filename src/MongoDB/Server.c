@@ -706,6 +706,7 @@ void php_phongo_server_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_ARBITER"), PHONGO_SERVER_RS_ARBITER);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_OTHER"), PHONGO_SERVER_RS_OTHER);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_GHOST"), PHONGO_SERVER_RS_GHOST);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_LOAD_BALANCER"), PHONGO_SERVER_LOAD_BALANCER);
 } /* }}} */
 
 /*

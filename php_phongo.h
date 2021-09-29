@@ -69,7 +69,8 @@ typedef enum {
 	PHONGO_SERVER_RS_ARBITER        = 6,
 	PHONGO_SERVER_RS_OTHER          = 7,
 	PHONGO_SERVER_RS_GHOST          = 8,
-	PHONGO_SERVER_DESCRIPTION_TYPES = 9,
+	PHONGO_SERVER_LOAD_BALANCER     = 9,
+	PHONGO_SERVER_DESCRIPTION_TYPES = 10,
 } php_phongo_server_description_type_t;
 
 typedef struct {

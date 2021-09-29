@@ -102,6 +102,7 @@ php_phongo_server_description_type_map_t
 		{ PHONGO_SERVER_RS_ARBITER, "RSArbiter" },
 		{ PHONGO_SERVER_RS_OTHER, "RSOther" },
 		{ PHONGO_SERVER_RS_GHOST, "RSGhost" },
+		{ PHONGO_SERVER_LOAD_BALANCER, "LoadBalancer" },
 	};
 
 /* {{{ phongo_std_object_handlers */
