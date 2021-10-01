@@ -7,6 +7,7 @@ PHPC-1875: Disable writes on snapshot sessions
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_server_version('<', '5.0'); ?>
+<?php skip_if_not_replica_set(); /* TODO: SERVER-58176 */ ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
