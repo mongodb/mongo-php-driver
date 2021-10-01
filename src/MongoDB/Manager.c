@@ -991,7 +991,7 @@ static HashTable* php_phongo_manager_get_debug_info(phongo_compat_object_handler
 	for (i = 0; i < n; i++) {
 		zval obj;
 
-		if (!php_phongo_server_to_zval(&obj, sds[i])) {
+		if (!php_phongo_server_to_zval(&obj, intern->client, sds[i])) {
 			/* Exception already thrown */
 			zval_ptr_dtor(&obj);
 			zval_ptr_dtor(&cluster);

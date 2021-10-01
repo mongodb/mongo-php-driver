@@ -142,7 +142,7 @@ void  php_phongo_prep_legacy_option_free(zval* options);
 void php_phongo_read_preference_prep_tagsets(zval* tagSets);
 bool php_phongo_read_preference_tags_are_valid(const bson_t* tags);
 
-bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd);
+bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_server_description_t* sd);
 void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* read_concern);
 void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern);
 
