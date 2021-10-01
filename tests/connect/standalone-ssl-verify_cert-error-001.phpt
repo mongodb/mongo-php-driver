@@ -18,7 +18,7 @@ echo throws(function() use ($driverOptions) {
     $manager = create_test_manager(URI, [], $driverOptions);
     $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
     var_dump($cursor->toArray()[0]);
-}, 'MongoDB\Driver\Exception\ConnectionTimeoutException', 'executeCommand'), "\n";
+}, MongoDB\Driver\Exception\ConnectionException::class, 'executeCommand'), "\n";
 
 ?>
 ===DONE===
@@ -27,6 +27,6 @@ echo throws(function() use ($driverOptions) {
 Deprecated: MongoDB\Driver\Manager::__construct(): The "allow_invalid_hostname" driver option is deprecated. Please use the "tlsAllowInvalidHostnames" URI option instead.%s
 
 Deprecated: MongoDB\Driver\Manager::__construct(): The "weak_cert_validation" driver option is deprecated. Please use the "tlsAllowInvalidCertificates" URI option instead.%s
-OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException thrown from executeCommand
-No suitable servers found (`serverSelectionTryOnce` set): [%s calling %s on '%s:%d']
+OK: Got MongoDB\Driver\Exception\ConnectionException thrown from executeCommand
+%sTLS handshake failed%s
 ===DONE===

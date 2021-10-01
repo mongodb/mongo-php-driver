@@ -220,6 +220,17 @@ function get_uri_option($uri, $option)
 }
 
 /**
+ * Checks that the topology is load balanced.
+ *
+ * @param string $uri
+ * @return boolean
+ */
+function is_load_balanced($uri)
+{
+    return get_primary_server($uri)->getType() === Server::TYPE_LOAD_BALANCER;
+}
+
+/**
  * Checks that the topology is a sharded cluster.
  *
  * @param string $uri
@@ -231,19 +242,19 @@ function is_mongos($uri)
 }
 
 /**
- * Checks that the topology is a sharded cluster using a replica set
+ * Checks that the topology is a sharded cluster using a replica set.
+ *
+ * Note: only the first shard is checked.
  */
-function is_mongos_with_replica_set($uri)
+function is_sharded_cluster_with_replica_set($uri)
 {
-    if (! is_mongos($uri)) {
+    $server = get_primary_server($uri);
+
+    if ($server->getType() !== Server::TYPE_MONGOS && $server->getType() !== Server::TYPE_LOAD_BALANCER) {
         return false;
     }
 
-    $cursor = get_primary_server($uri)->executeQuery(
-        'config.shards',
-        new \MongoDB\Driver\Query([], ['limit' => 1])
-    );
-
+    $cursor = $server->executeQuery('config.shards', new \MongoDB\Driver\Query([], ['limit' => 1]));
     $cursor->setTypeMap(['root' => 'array', 'document' => 'array']);
     $document = current($cursor->toArray());
 
@@ -271,6 +282,8 @@ function is_replica_set($uri)
         return false;
     }
 
+    /* Note: this may return a false negative if replicaSet is specified through
+     * a TXT record for a mongodb+srv connection string. */
     if (get_uri_option($uri, 'replicaSet') === NULL) {
         return false;
     }

@@ -18,7 +18,7 @@ $driverOptions = [
 
 $manager = create_test_manager(URI, [], $driverOptions);
 $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
-var_dump($cursor->toArray()[0]);
+printf("ping: %d\n", $cursor->toArray()[0]->ok);
 
 ?>
 ===DONE===
@@ -29,8 +29,5 @@ Deprecated: MongoDB\Driver\Manager::__construct(): The "allow_invalid_hostname" 
 Deprecated: MongoDB\Driver\Manager::__construct(): The "weak_cert_validation" driver option is deprecated. Please use the "tlsAllowInvalidCertificates" URI option instead.%s
 
 Deprecated: MongoDB\Driver\Manager::__construct(): The "ca_file" driver option is deprecated. Please use the "tlsCAFile" URI option instead.%s
-object(stdClass)#%d (%d) {
-  ["ok"]=>
-  float(1)
-}
+ping: 1
 ===DONE===

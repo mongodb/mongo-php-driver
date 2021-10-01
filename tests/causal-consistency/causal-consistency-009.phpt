@@ -3,7 +3,7 @@ Causal consistency: custom read concern merges afterClusterTime and level
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
-<?php skip_if_not_replica_set_or_mongos_with_replica_set(); ?>
+<?php skip_if_not_replica_set_or_sharded_cluster_with_replica_set(); ?>
 <?php skip_if_server_version('<', '3.6'); ?>
 --FILE--
 <?php

@@ -23,6 +23,14 @@ function disable_skipif_caching()
 }
 
 /**
+ * Skips the test if the topology is load balanced.
+ */
+function skip_if_load_balanced()
+{
+    is_load_balanced(URI) and exit('skip topology is load balanced');
+}
+
+/**
  * Skips the test if the topology is a sharded cluster.
  */
 function skip_if_mongos()
@@ -60,9 +68,9 @@ function skip_if_not_mongos()
     is_mongos(URI) or exit('skip topology is not a sharded cluster');
 }
 
-function skip_if_not_mongos_with_replica_set()
+function skip_if_not_sharded_cluster_with_replica_set()
 {
-    is_mongos_with_replica_set(URI) or exit('skip topology is not a sharded cluster with replica set');
+    is_sharded_cluster_with_replica_set(URI) or exit('skip topology is not a sharded cluster with replica set');
 }
 
 /**
@@ -84,14 +92,14 @@ function skip_if_not_replica_set()
 /**
  * Skips the test if the topology is not a replica set or sharded cluster backed by replica sets
  */
-function skip_if_not_replica_set_or_mongos_with_replica_set()
+function skip_if_not_replica_set_or_sharded_cluster_with_replica_set()
 {
-    is_replica_set(URI) or is_mongos_with_replica_set(URI) or exit('skip topology is not a replica set or sharded cluster with replica set');
+    is_replica_set(URI) or is_sharded_cluster_with_replica_set(URI) or exit('skip topology is not a replica set or sharded cluster with replica set');
 }
 
 function skip_if_no_transactions()
 {
-    if (is_mongos_with_replica_set(URI)) {
+    if (is_sharded_cluster_with_replica_set(URI)) {
         skip_if_server_version('<', '4.2');
     } elseif (is_replica_set(URI)) {
         skip_if_server_version('<', '4.0');
