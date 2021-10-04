@@ -303,7 +303,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char* log_domain,
 
 	(void) user_data;
 
-	gettimeofday(&tv, NULL);
+	bson_gettimeofday(&tv);
 	t  = tv.tv_sec;
 	tu = tv.tv_usec;
 

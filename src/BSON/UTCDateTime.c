@@ -82,7 +82,7 @@ static bool php_phongo_utcdatetime_init_from_current_time(php_phongo_utcdatetime
 	int64_t        sec, usec;
 	struct timeval cur_time;
 
-	gettimeofday(&cur_time, NULL);
+	bson_gettimeofday(&cur_time);
 	sec  = cur_time.tv_sec;
 	usec = cur_time.tv_usec;
 
