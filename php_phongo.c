@@ -303,7 +303,7 @@ static void php_phongo_log(mongoc_log_level_t log_level, const char* log_domain,
 
 	(void) user_data;
 
-	gettimeofday(&tv, NULL);
+	bson_gettimeofday(&tv);
 	t  = tv.tv_sec;
 	tu = tv.tv_usec;
 
@@ -1326,7 +1326,7 @@ void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t
 	if (wtimeout != 0) {
 #if SIZEOF_ZEND_LONG == 4
 		if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
-			ADD_ASSOC_INT64_AS_STRING(&retval, "wtimeout", wtimeout);
+			ADD_ASSOC_INT64_AS_STRING(retval, "wtimeout", wtimeout);
 		} else {
 			ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
 		}
