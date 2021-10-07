@@ -350,30 +350,31 @@ cleanup:
 	mongoc_server_description_destroy(sd);
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\Server::getLatency()
-   Returns the last measured latency for this Server */
+/* {{{ proto integer|null MongoDB\Driver\Server::getLatency()
+   Returns the measured latency (i.e. round trip time in milliseconds) for
+   this Server, or null if unset. */
 static PHP_METHOD(Server, getLatency)
 {
-	zend_error_handling          error_handling;
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
 
+	PHONGO_PARSE_PARAMETERS_NONE();
+
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
+	if (!(sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 		return;
 	}
-	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
+	/* TODO: Use MONGOC_RTT_UNSET once it is added to libmongoc's public API (CDRIVER-4176) */
+	if (mongoc_server_description_round_trip_time(sd) == -1) {
+		RETVAL_NULL();
+	} else {
 		RETVAL_LONG((zend_long) mongoc_server_description_round_trip_time(sd));
-		mongoc_server_description_destroy(sd);
-		return;
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
+	mongoc_server_description_destroy(sd);
 } /* }}} */
 
 /* {{{ proto integer MongoDB\Driver\Server::getPort()
