@@ -42,6 +42,7 @@ typedef struct {
 ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	char*      debug;
 	FILE*      debug_fd;
+	bool       mock_service_id;
 	HashTable  persistent_clients;
 	HashTable* request_clients;
 	HashTable* subscribers;
@@ -68,7 +69,8 @@ typedef enum {
 	PHONGO_SERVER_RS_ARBITER        = 6,
 	PHONGO_SERVER_RS_OTHER          = 7,
 	PHONGO_SERVER_RS_GHOST          = 8,
-	PHONGO_SERVER_DESCRIPTION_TYPES = 9,
+	PHONGO_SERVER_LOAD_BALANCER     = 9,
+	PHONGO_SERVER_DESCRIPTION_TYPES = 10,
 } php_phongo_server_description_type_t;
 
 typedef struct {
@@ -116,6 +118,7 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 void phongo_clientencryption_init(php_phongo_clientencryption_t* ce_obj, zval* manager, zval* options);
 void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id);
 void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session);
+void phongo_objectid_init(zval* return_value, const bson_oid_t* oid);
 void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern);
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs);
 void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern);
@@ -140,7 +143,7 @@ void  php_phongo_prep_legacy_option_free(zval* options);
 void php_phongo_read_preference_prep_tagsets(zval* tagSets);
 bool php_phongo_read_preference_tags_are_valid(const bson_t* tags);
 
-bool php_phongo_server_to_zval(zval* retval, mongoc_server_description_t* sd);
+bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_server_description_t* sd);
 void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* read_concern);
 void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern);
 

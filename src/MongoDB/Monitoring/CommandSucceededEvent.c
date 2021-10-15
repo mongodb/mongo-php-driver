@@ -152,6 +152,21 @@ PHP_METHOD(CommandSucceededEvent, getServer)
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
 } /* }}} */
 
+/* {{{ proto MongoDB\BSON\ObjectId|null CommandSucceededEvent::getServiceId()
+   Returns the event's service ID */
+PHP_METHOD(CommandSucceededEvent, getServiceId)
+{
+	php_phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	if (!intern->has_service_id) {
+		RETURN_NULL();
+	}
+
+	phongo_objectid_init(return_value, &intern->service_id);
+} /* }}} */
+
 /**
  * Event thrown when a command has succeeded to execute.
  *
@@ -171,6 +186,7 @@ static zend_function_entry php_phongo_commandsucceededevent_me[] = {
 	PHP_ME(CommandSucceededEvent, getReply, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CommandSucceededEvent, getRequestId, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CommandSucceededEvent, getServer, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandSucceededEvent, getServiceId, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
 	/* clang-format on */
@@ -247,6 +263,15 @@ static HashTable* php_phongo_commandsucceededevent_get_debug_info(phongo_compat_
 
 		phongo_server_init(&server, &intern->manager, intern->server_id);
 		ADD_ASSOC_ZVAL_EX(&retval, "server", &server);
+	}
+
+	if (intern->has_service_id) {
+		zval service_id;
+
+		phongo_objectid_init(&service_id, &intern->service_id);
+		ADD_ASSOC_ZVAL_EX(&retval, "serviceId", &service_id);
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "serviceId");
 	}
 
 done:

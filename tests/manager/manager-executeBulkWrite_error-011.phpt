@@ -3,7 +3,7 @@ MongoDB\Driver\Manager::executeBulkWrite() BulkWriteException inherits labels fr
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
-<?php skip_if_not_replica_set_or_mongos_with_replica_set(); ?>
+<?php skip_if_not_replica_set_or_sharded_cluster_with_replica_set(); ?>
 <?php skip_if_server_version('<', '4.0'); ?>
 <?php skip_if_no_failcommand_failpoint(); ?>
 <?php skip_if_not_clean(); ?>

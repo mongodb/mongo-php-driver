@@ -26,12 +26,11 @@ $manager = create_test_manager(URI, $options, array("context" => $context));
 
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(array("my" => "value"));
-echo throws(function() use ($manager, $bulk) {
+
+throws(function() use ($manager, $bulk) {
     $inserted = $manager->executeBulkWrite(NS, $bulk)->getInsertedCount();
     printf("Inserted incorrectly: %d\n", $inserted);
-}, "MongoDB\Driver\Exception\ConnectionTimeoutException"), "\n";
-
-
+}, MongoDB\Driver\Exception\ConnectionException::class);
 
 $options = array(
     "ssl" => true,
@@ -49,8 +48,7 @@ printf("Inserted: %d\n", $inserted);
 Deprecated: MongoDB\Driver\Manager::__construct(): The "context" driver option is deprecated.%s
 
 Deprecated: MongoDB\Driver\Manager::__construct(): The "allow_self_signed" context driver option is deprecated. Please use the "tlsAllowInvalidCertificates" URI option instead.%s
-OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
-No suitable servers found (`serverSelectionTryOnce` set): [%s calling %s on '%s']
+OK: Got MongoDB\Driver\Exception\ConnectionException
 
 Deprecated: MongoDB\Driver\Manager::__construct(): The "context" driver option is deprecated.%s
 

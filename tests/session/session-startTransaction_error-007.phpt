@@ -3,7 +3,7 @@ MongoDB\Driver\Session::startTransaction() throws an error on sharded clusters <
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto() ?>
-<?php skip_if_not_mongos_with_replica_set(); ?>
+<?php skip_if_not_sharded_cluster_with_replica_set(); ?>
 <?php skip_if_server_version('<', '3.6'); ?>
 <?php skip_if_server_version('>=', '4.2'); ?>
 --FILE--

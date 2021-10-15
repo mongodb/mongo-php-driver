@@ -106,6 +106,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/bson.c \
     src/bson-encode.c \
     src/phongo_apm.c \
+    src/phongo_ini.c \
     src/BSON/Binary.c \
     src/BSON/BinaryInterface.c \
     src/BSON/DBPointer.c \

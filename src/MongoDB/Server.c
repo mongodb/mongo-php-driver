@@ -295,67 +295,86 @@ static PHP_METHOD(Server, getTags)
 } /* }}} */
 
 /* {{{ proto array MongoDB\Driver\Server::getInfo()
-   Returns the last hello response for this Server */
+   Returns the last hello response for this Server or, in the case of a load
+   balancer, the initial handshake response. */
 static PHP_METHOD(Server, getInfo)
 {
-	zend_error_handling          error_handling;
 	php_phongo_server_t*         intern;
+	mongoc_client_t*             client;
 	mongoc_server_description_t* sd;
+	mongoc_server_description_t* handshake_sd = NULL;
+	const bson_t*                hello_response;
+	php_phongo_bson_state        state;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_SERVER_OBJ_P(getThis());
+	client = Z_MANAGER_OBJ_P(&intern->manager)->client;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
+	if (!(sd = mongoc_client_get_server_description(client, intern->server_id))) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 		return;
 	}
-	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
-		const bson_t*         hello_response = mongoc_server_description_hello_response(sd);
-		php_phongo_bson_state state;
+	hello_response = mongoc_server_description_hello_response(sd);
 
-		PHONGO_BSON_INIT_DEBUG_STATE(state);
+	/* If the server description is a load balancer, its hello_response will be
+	 * empty. Instead, report the hello_response from the handshake description
+	 * (i.e. backing server). */
+	if (!strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_LOAD_BALANCER].name)) {
+		bson_error_t error = { 0 };
 
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
-			/* Exception should already have been thrown */
-			zval_ptr_dtor(&state.zchild);
-			mongoc_server_description_destroy(sd);
-			return;
+		if (!(handshake_sd = mongoc_client_get_handshake_description(client, intern->server_id, NULL, &error))) {
+			phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get handshake server description: %s", error.message);
+			goto cleanup;
 		}
 
-		mongoc_server_description_destroy(sd);
-
-		RETURN_ZVAL(&state.zchild, 0, 1);
+		hello_response = mongoc_server_description_hello_response(handshake_sd);
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
+	PHONGO_BSON_INIT_DEBUG_STATE(state);
+
+	if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
+		/* Exception should already have been thrown */
+		zval_ptr_dtor(&state.zchild);
+		goto cleanup;
+	}
+
+	RETVAL_ZVAL(&state.zchild, 0, 1);
+
+cleanup:
+	if (handshake_sd) {
+		mongoc_server_description_destroy(handshake_sd);
+	}
+
+	mongoc_server_description_destroy(sd);
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\Server::getLatency()
-   Returns the last measured latency for this Server */
+/* {{{ proto integer|null MongoDB\Driver\Server::getLatency()
+   Returns the measured latency (i.e. round trip time in milliseconds) for
+   this Server, or null if unset. */
 static PHP_METHOD(Server, getLatency)
 {
-	zend_error_handling          error_handling;
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
 
+	PHONGO_PARSE_PARAMETERS_NONE();
+
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
+	if (!(sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 		return;
 	}
-	zend_restore_error_handling(&error_handling);
 
-	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
+	/* TODO: Use MONGOC_RTT_UNSET once it is added to libmongoc's public API (CDRIVER-4176) */
+	if (mongoc_server_description_round_trip_time(sd) == -1) {
+		RETVAL_NULL();
+	} else {
 		RETVAL_LONG((zend_long) mongoc_server_description_round_trip_time(sd));
-		mongoc_server_description_destroy(sd);
-		return;
 	}
 
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
+	mongoc_server_description_destroy(sd);
 } /* }}} */
 
 /* {{{ proto integer MongoDB\Driver\Server::getPort()
@@ -664,17 +683,19 @@ static HashTable* php_phongo_server_get_debug_info(phongo_compat_object_handler_
 {
 	php_phongo_server_t*         intern = NULL;
 	zval                         retval = ZVAL_STATIC_INIT;
+	mongoc_client_t*             client;
 	mongoc_server_description_t* sd;
 
 	*is_temp = 1;
 	intern   = Z_OBJ_SERVER(PHONGO_COMPAT_GET_OBJ(object));
+	client   = Z_MANAGER_OBJ_P(&intern->manager)->client;
 
-	if (!(sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
+	if (!(sd = mongoc_client_get_server_description(client, intern->server_id))) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 		return NULL;
 	}
 
-	php_phongo_server_to_zval(&retval, sd);
+	php_phongo_server_to_zval(&retval, client, sd);
 	mongoc_server_description_destroy(sd);
 
 	return Z_ARRVAL(retval);
@@ -706,6 +727,7 @@ void php_phongo_server_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_ARBITER"), PHONGO_SERVER_RS_ARBITER);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_OTHER"), PHONGO_SERVER_RS_OTHER);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_GHOST"), PHONGO_SERVER_RS_GHOST);
+	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_LOAD_BALANCER"), PHONGO_SERVER_LOAD_BALANCER);
 } /* }}} */
 
 /*

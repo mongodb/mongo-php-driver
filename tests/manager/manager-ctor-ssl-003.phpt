@@ -16,14 +16,13 @@ $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]
 
 $manager = create_test_manager(URI, [], ['ca_dir' => 'foo']);
 
-echo throws(function () use ($manager) {
+throws(function () use ($manager) {
     // Note that this command will not fail if the server was configured with allowSSL or preferSSL for net.ssl.mode.
     $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => true]));
-}, MongoDB\Driver\Exception\ConnectionTimeoutException::class), "\n";
+}, MongoDB\Driver\Exception\ConnectionException::class);
 
 ?>
 ===DONE===
 --EXPECTF--
-OK: Got MongoDB\Driver\Exception\ConnectionTimeoutException
-No suitable servers found (`serverSelectionTryOnce` set): %s
+OK: Got MongoDB\Driver\Exception\ConnectionException
 ===DONE===

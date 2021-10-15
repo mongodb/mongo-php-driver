@@ -2,8 +2,8 @@
 MongoDB\Driver\Manager::executeReadCommand() pins transaction to server
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_not_mongos_with_replica_set(); ?>
-<?php skip_if_server_version('<', '4.1.6'); ?>
+<?php skip_if_not_mongos(); ?>
+<?php skip_if_no_transactions(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

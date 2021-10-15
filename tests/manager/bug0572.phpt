@@ -21,7 +21,7 @@ $closure = function() {
 
 $manager = $closure();
 $cursor = $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
-var_dump($cursor->toArray()[0]);
+printf("ping: %d\n", $cursor->toArray()[0]->ok);
 
 ?>
 ===DONE===
@@ -30,8 +30,5 @@ var_dump($cursor->toArray()[0]);
 Deprecated: MongoDB\Driver\Manager::__construct(): The "context" driver option is deprecated.%s
 
 Deprecated: MongoDB\Driver\Manager::__construct(): The "allow_self_signed" context driver option is deprecated. Please use the "tlsAllowInvalidCertificates" URI option instead.%s
-object(stdClass)#%d (%d) {
-  ["ok"]=>
-  float(1)
-}
+ping: 1
 ===DONE===

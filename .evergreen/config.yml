@@ -385,7 +385,7 @@ functions:
         working_dir: "src"
         script: |
           ${PREPARE_SHELL}
-          API_VERSION=${API_VERSION} TESTS=${TESTS} SSL=${SSL} MONGODB_URI="${MONGODB_URI}${APPEND_URI}" sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
+          MOCK_SERVICE_ID=${MOCK_SERVICE_ID} API_VERSION=${API_VERSION} TESTS=${TESTS} SSL=${SSL} MONGODB_URI="${MONGODB_URI}${APPEND_URI}" sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
 
   "cleanup":
     - command: shell.exec
@@ -445,6 +445,24 @@ functions:
         script: |
           openssl aes-256-cbc -S "${encrypted_uris_salt}" -K "${encrypted_uris_key}" -iv "${encrypted_uris_iv}" -in ${PROJECT_DIRECTORY}/.evergreen/atlas-uris.txt.enc -out ${PROJECT_DIRECTORY}/.evergreen/atlas-uris.txt -d
 
+  "start load balancer":
+    - command: shell.exec
+      params:
+        script: |
+          MONGODB_URI="${MONGODB_URI}" ${DRIVERS_TOOLS}/.evergreen/run-load-balancer.sh start
+    - command: expansions.update
+      params:
+        file: lb-expansion.yml
+
+  "stop load balancer":
+    - command: shell.exec
+      params:
+        script: |
+          # Only run if a load balancer was started
+          if [ -n "${SINGLE_MONGOS_LB_URI}" ]; then
+            ${DRIVERS_TOOLS}/.evergreen/run-load-balancer.sh stop
+          fi
+
 pre:
   - func: "fetch source"
   - func: "prepare resources"
@@ -458,6 +476,7 @@ post:
   - func: "upload working dir"
   - func: "upload mo artifacts"
   - func: "upload test results"
+  - func: "stop load balancer"
   - func: "stop mongo-orchestration"
   - func: "cleanup"
 
@@ -582,6 +601,24 @@ tasks:
         - func: "run tests"
           vars:
             TESTS: "tests/atlas.phpt"
+
+    - name: "test-loadBalanced"
+      tags: ["loadbalanced"]
+      commands:
+        - func: "compile driver"
+        - func: "bootstrap mongo-orchestration"
+          vars:
+            TOPOLOGY: "sharded_cluster"
+            SSL: "yes"
+        - func: "start load balancer"
+        - func: "run tests"
+          vars:
+            # Testing with HAProxy requires service ID mocking
+            MOCK_SERVICE_ID: 1
+            # Note: loadBalanced=true should already be appended to SINGLE_MONGOS_LB_URI
+            MONGODB_URI: "${SINGLE_MONGOS_LB_URI}"
+            SSL: "yes"
+        # Note: "stop load balancer" will be called from "post"
 
     - name: "test-requireApiVersion"
       tags: ["versioned_api"]
@@ -1218,3 +1255,9 @@ buildvariants:
   display_name: "Versioned API - ${versions}"
   tasks:
     - name: "test-requireApiVersion"
+
+- matrix_name: "test-loadBalanced"
+  matrix_spec: { "os-php7": "debian92-test", "versions": ["5.0", "latest"], "php-versions": "7.3" }
+  display_name: "Load balanced - ${versions}"
+  tasks:
+    - name: "test-loadBalanced"

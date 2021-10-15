@@ -169,6 +169,19 @@
 	} while (0)
 #endif /* PHP_VERSION_ID < 70300 */
 
+#if PHP_VERSION_ID < 70300
+static inline zend_bool zend_ini_parse_bool(zend_string* str)
+{
+	if (zend_string_equals_literal_ci(str, "true") ||
+		zend_string_equals_literal_ci(str, "yes") ||
+		zend_string_equals_literal_ci(str, "on")) {
+		return 1;
+	} else {
+		return atoi(ZSTR_VAL(str)) != 0;
+	}
+}
+#endif /* PHP_VERSION_ID < 70300 */
+
 /* Compatibility macros to override error handling logic */
 #define PHONGO_PARSE_PARAMETERS_START(min_num_args, max_num_args)               \
 	do {                                                                        \

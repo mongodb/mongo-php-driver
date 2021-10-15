@@ -1,5 +1,5 @@
 --TEST--
-phpinfo() reports mongodb.debug (no value)
+phpinfo() reports mongodb.mock_service_id (default)
 --FILE--
 <?php
 
@@ -10,6 +10,6 @@ phpinfo();
 <?php exit(0); ?>
 --EXPECTF--
 %a
-mongodb.debug => no value => no value
+mongodb.mock_service_id => Off => Off
 %a
 ===DONE===

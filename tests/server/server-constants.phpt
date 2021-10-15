@@ -12,6 +12,7 @@ var_dump(MongoDB\Driver\Server::TYPE_RS_SECONDARY);
 var_dump(MongoDB\Driver\Server::TYPE_RS_ARBITER);
 var_dump(MongoDB\Driver\Server::TYPE_RS_OTHER);
 var_dump(MongoDB\Driver\Server::TYPE_RS_GHOST);
+var_dump(MongoDB\Driver\Server::TYPE_LOAD_BALANCER);
 
 ?>
 ===DONE===
@@ -26,4 +27,5 @@ int(5)
 int(6)
 int(7)
 int(8)
+int(9)
 ===DONE===
