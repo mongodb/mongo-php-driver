@@ -1223,7 +1223,12 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_ser
 		ADD_ASSOC_ZVAL_EX(retval, "last_hello_response", &state.zchild);
 	}
 
-	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (zend_long) mongoc_server_description_round_trip_time(sd));
+	/* TODO: Use MONGOC_RTT_UNSET once it is added to libmongoc's public API (CDRIVER-4176) */
+	if (mongoc_server_description_round_trip_time(sd) == -1) {
+		ADD_ASSOC_NULL_EX(retval, "round_trip_time");
+	} else {
+		ADD_ASSOC_LONG_EX(retval, "round_trip_time", (zend_long) mongoc_server_description_round_trip_time(sd));
+	}
 
 	return true;
 } /* }}} */
