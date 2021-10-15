@@ -38,6 +38,6 @@ object(MongoDB\Driver\Server)#%d (%d) {
     %a
   }
   ["round_trip_time"]=>
-  int(%i)
+  %r(NULL|int\(\d+\))%r
 }
 ===DONE===
