@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Monitoring\CommandFailedEvent
+MongoDB\Driver\Monitoring\CommandFailedEvent::getReply()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
