@@ -7,7 +7,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 
 // Invalid host cannot be resolved
-$manager = create_test_manager('mongodb://invalid.host:27017', ['serverSelectionTimeoutMS' => 1]);
+$manager = create_test_manager('mongodb://example.invalid:27017', ['serverSelectionTimeoutMS' => 1]);
 
 echo throws(function() use ($manager, $command) {
     $manager->executeCommand(DATABASE_NAME, $command);

@@ -7,7 +7,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 $query = new MongoDB\Driver\Query([]);
 
 // Invalid host cannot be resolved
-$manager = create_test_manager('mongodb://invalid.host:27017', ['serverSelectionTimeoutMS' => 1]);
+$manager = create_test_manager('mongodb://example.invalid:27017', ['serverSelectionTimeoutMS' => 1]);
 
 echo throws(function() use ($manager, $query) {
     $manager->executeQuery(NS, $query);
