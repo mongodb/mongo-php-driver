@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\BSON\Regex::__construct() does not allow pattern or flags to contain null bytes
+--DESCRIPTION--
+BSON Corpus spec prose test #1
 --FILE--
 <?php
 

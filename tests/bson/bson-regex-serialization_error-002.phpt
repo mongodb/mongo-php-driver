@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\BSON\Regex unserialization does not allow pattern or flags to contain null bytes (Serializable interface)
+--DESCRIPTION--
+BSON Corpus spec prose test #1
 --FILE--
 <?php
 
