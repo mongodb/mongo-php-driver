@@ -38,22 +38,25 @@ foreach ($urls as $url) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Atlas replica set (3.4)
+Atlas Serverless
 PASS
 PASS
-Atlas sharded cluster (3.4)
+Atlas replica set (4.0)
 PASS
 PASS
-Atlas free tier replica set (4.4)
+Atlas sharded cluster (4.0)
 PASS
 PASS
-Atlas with only TLSv1.1 enabled (3.4)
+Atlas free tier replica set
 PASS
 PASS
-Atlas with only TLSv1.2 enabled (3.4)
+Atlas with only TLSv1.1 enabled (4.0)
 PASS
 PASS
-Atlas with only TLSv1.2 enabled (3.4) and bad credentials
+Atlas with only TLSv1.2 enabled (4.0)
+PASS
+PASS
+Atlas with only TLSv1.2 enabled (4.0) and bad credentials
 FAIL: %s
 FAIL: %s
 ===DONE===
