@@ -231,6 +231,13 @@ static inline zend_bool zend_ini_parse_bool(zend_string* str)
 	} while (0)
 #endif
 
+/* Z_PARAM_OBJECT_OF_CLASS_OR_NULL was introduced in PHP 8.0.
+ * See: https://github.com/php/php-src/commit/e93d20ad7ebc1075ef1248a663935ee5ea69f1cd */
+#ifndef Z_PARAM_OBJECT_OF_CLASS_OR_NULL
+#define Z_PARAM_OBJECT_OF_CLASS_OR_NULL(dest, _ce) \
+	Z_PARAM_OBJECT_OF_CLASS_EX(dest, _ce, 1, 0)
+#endif
+
 /* Per https://wiki.php.net/rfc/internal_method_return_types, "Non-final
  * internal method return types - when possible - are declared tentatively in
  * PHP 8.1, and they will become enforced in PHP 9.0." This can be revisited

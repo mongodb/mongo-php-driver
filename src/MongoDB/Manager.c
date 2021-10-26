@@ -721,25 +721,22 @@ static PHP_METHOD(Manager, removeSubscriber)
 	phongo_apm_remove_subscriber(intern->subscribers, subscriber);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Server MongoDB\Driver\Manager::selectServers(MongoDB\Driver\ReadPreference $readPreference)
-   Returns a suitable Server for the given ReadPreference */
+/* {{{ proto MongoDB\Driver\Server MongoDB\Driver\Manager::selectServers([MongoDB\Driver\ReadPreference $readPreference = null])
+   Selects a Server for the given ReadPreference (default: primary). */
 static PHP_METHOD(Manager, selectServer)
 {
-	zend_error_handling   error_handling;
 	php_phongo_manager_t* intern;
 	zval*                 zreadPreference = NULL;
 	uint32_t              server_id       = 0;
 
+	PHONGO_PARSE_PARAMETERS_START(0, 1)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_OBJECT_OF_CLASS_OR_NULL(zreadPreference, php_phongo_readpreference_ce)
+	PHONGO_PARSE_PARAMETERS_END();
+
 	intern = Z_MANAGER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &zreadPreference, php_phongo_readpreference_ce) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
-
-	if (!php_phongo_manager_select_server(false, true, zreadPreference, NULL, intern->client, &server_id)) {
+	if (!php_phongo_manager_select_server(false, false, zreadPreference, NULL, intern->client, &server_id)) {
 		/* Exception should already have been thrown */
 		return;
 	}
@@ -879,8 +876,8 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Manager_removeSubscriber, 0, 0, 1)
 	ZEND_ARG_OBJ_INFO(0, subscriber, MongoDB\\Driver\\Monitoring\\Subscriber, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_selectServer, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 0)
+ZEND_BEGIN_ARG_INFO_EX(ai_Manager_selectServer, 0, 0, 0)
+	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_Manager_startSession, 0, 0, 0)
