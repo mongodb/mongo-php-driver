@@ -403,7 +403,7 @@ The following template should be used for creating GitHub release notes via
 package may also be attached to the release notes.
 
 ```
-The PHP team is happy to announce that version X.Y.Z of the [mongodb](http://pecl.php.net/package/mongodb) PHP extension is now available on PECL.
+The PHP team is happy to announce that version X.Y.Z of the [mongodb](https://pecl.php.net/package/mongodb) PHP extension is now available on PECL.
 
 **Release Highlights**
 
@@ -415,20 +415,20 @@ $JIRA_URL
 **Documentation**
 
 Documentation is available on PHP.net:
-http://php.net/set.mongodb
+https://www.php.net/set.mongodb
 
 **Installation**
 
 You can either download and install the source manually, or you can install the extension with:
 
-    pecl install mongodb
+    pecl install mongodb-X.Y.Z
 
 or update with:
 
-    pecl upgrade mongodb
+    pecl upgrade mongodb-X.Y.Z
 
 Windows binaries are available on PECL:
-http://pecl.php.net/package/mongodb
+https://pecl.php.net/package/mongodb
 ```
 
 > **Note:** If this is an alpha or beta release, the installation examples
@@ -451,10 +451,7 @@ Thanks for our community contributors for X.Y.Z:
  * [$CONTRIBUTOR_NAME](https://github.com/$GITHUB_USERNAME)
 ```
 
-Release announcements should also be sent to the [MongoDB Product & Driver Announcements](https://community.mongodb.com/tags/c/community/release-notes/35/php-driver).
-
-Consider announcing each release on Twitter. Significant releases should also be
-announced via [@MongoDB](http://twitter.com/mongodb) as well.
+Release announcements should also be posted in the [MongoDB Product & Driver Announcements: Driver Releases](https://www.mongodb.com/community/forums/tags/c/announcements/driver-releases/110/php) forum and shared on Twitter.
 
 ### Update compatibility tables in MongoDB docs
 
