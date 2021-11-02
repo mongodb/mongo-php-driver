@@ -2,29 +2,13 @@
 set -o errexit  # Exit the script with error if any of the commands fail
 
 # Supported/used environment variables:
-#       MARCH                   Machine Architecture. Defaults to lowercase uname -m
-#       RELEASE                 Use the fully qualified release archive
-
-RELEASE=${RELEASE:-no}
-
+#   MARCH             Machine Architecture. Defaults to lowercase uname -m
+#   LIBMONGOC_VERSION Optional libmongoc version (regenerate version file if set)
 
 # Automatically retrieve the machine architecture, lowercase, unless provided
 # as an environment variable (e.g. to force 32bit)
 [ -z "$MARCH" ] && MARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
-
-# Get the kernel name, lowercased
-OS=$(uname -s | tr '[:upper:]' '[:lower:]')
-echo "OS: $OS"
-
-# --strip-components is an GNU tar extension. Check if the platform
-# (e.g. Solaris) has GNU tar installed as `gtar`, otherwise we assume to be on
-# platform that supports it
-# command -v returns success error code if found and prints the path to it
-if command -v gtar 2>/dev/null; then
-   TAR=gtar
-else
-   TAR=tar
-fi
+echo "MARCH: $MARCH"
 
 # Any architecture specific configuration here
 case "$MARCH" in
@@ -39,6 +23,9 @@ case "$MARCH" in
    ;;
 esac
 
+# Get the kernel name, lowercased
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+echo "OS: $OS"
 
 # Operating system specific tweaks
 case "$OS" in
@@ -57,11 +44,15 @@ case "$OS" in
    ;;
 esac
 
-echo "MARCH: $MARCH"
-echo "RELEASE: $RELEASE"
-echo "OS: $OS"
-echo "PHP: $PHP_VERSION (`php --version | head -1`)"
+# Report the current PHP version
+echo "PHP: `php --version | head -1`"
 
 phpize
 ./configure --enable-mongodb-developer-flags
+
+# If we're testing a specific version of libmongoc, regenerate the version file
+if [ -n "$LIBMONGOC_VERSION" ]; then
+   make libmongoc-version-current
+fi
+
 make

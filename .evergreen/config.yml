@@ -42,10 +42,11 @@ functions:
       params:
         working_dir: "src/src/libmongoc"
         script: |
-           if [ -n "$LIBMONGOC_VERSION" ]; then
+           if [ -n "${LIBMONGOC_VERSION}" ]; then
+              echo "Checking out libmongoc version: ${LIBMONGOC_VERSION}"
               git fetch
-              git checkout $LIBMONGOC_VERSION
-              ../../build/calc_release_version.py
+              git checkout ${LIBMONGOC_VERSION}
+              # Note: compile-unix.sh will run `make libmongoc-version-current`
            fi
     # Applies the submitted patch, if any
     # Deprecated. Should be removed. But still needed for certain agents (ZAP)
@@ -114,6 +115,7 @@ functions:
 
               export PHP_VERSION="$PHP_VERSION"
               export SSL_DIR="$DRIVERS_TOOLS/.evergreen/x509gen"
+              export LIBMONGOC_VERSION="${LIBMONGOC_VERSION}"
            EOT
            # See what we've done
            cat expansion.yml
@@ -1142,15 +1144,15 @@ axes:
     display_name: libmongoc version
     values:
       - id: "lowest-supported"
-        display_name: "Lowest (1.18.0)"
+        display_name: "Lowest (1.19.1)"
         variables:
-          LIBMONGOC_VERSION: "1.18.0"
-      - id: "upccoming-stable"
-        display_name: "latest (1.18-dev)"
+          LIBMONGOC_VERSION: "1.19.1"
+      - id: "upcoming-stable"
+        display_name: "latest (1.19-dev)"
         variables:
-          LIBMONGOC_VERSION: "r1.18"
+          LIBMONGOC_VERSION: "r1.19"
       - id: "latest-dev"
-        display_name: "Upcoming release (1.19)"
+        display_name: "Upcoming release (1.20)"
         variables:
           LIBMONGOC_VERSION: "master"
 
