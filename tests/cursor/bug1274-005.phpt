@@ -101,5 +101,5 @@ Child exits
 Parent waited for child to exit
 Parent executes getMore with batchSize: 2
 OK: Got MongoDB\Driver\Exception\RuntimeException
-%r(Cursor not found, cursor id: \d+|cursor id \d+ not found|Cursor not found \(namespace: '.*', id: \d+\)\.)%r
+%r(Cursor not found, cursor id: \d+|cursor id \d+ not found|Cursor not found \(.*id: \d+\)\.)%r
 ===DONE===
