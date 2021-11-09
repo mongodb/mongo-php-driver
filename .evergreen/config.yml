@@ -1154,14 +1154,17 @@ axes:
   - id: libmongoc-version
     display_name: libmongoc version
     values:
-      - id: "lowest-supported"
-        display_name: "1.19.1"
-        variables:
-          LIBMONGOC_VERSION: "1.19.1"
-      - id: "upcoming-stable"
-        display_name: "1.19-dev"
-        variables:
-          LIBMONGOC_VERSION: "r1.19"
+      # TODO: enable lowest-supported and upcoming-stable after 1.20.0 is
+      # released and r1.20 is branched. As-is, r1.19 cannot be compiled because
+      # PHP_MONGODB_MONGOC_SOURCES conflicts with 1.20-dev (see: PHPC-2006).
+      #- id: "lowest-supported"
+      #  display_name: "1.19.1"
+      #  variables:
+      #    LIBMONGOC_VERSION: "1.19.1"
+      #- id: "upcoming-stable"
+      #  display_name: "1.19-dev"
+      #  variables:
+      #    LIBMONGOC_VERSION: "r1.19"
       - id: "latest-dev"
         display_name: "1.20-dev (master)"
         variables:
