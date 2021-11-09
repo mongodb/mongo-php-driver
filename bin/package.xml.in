@@ -58,7 +58,7 @@ necessary to build a fully-functional MongoDB driver.
  <dependencies>
   <required>
    <php>
-    <min>7.1.0</min>
+    <min>7.2.0</min>
     <max>8.99.99</max>
    </php>
    <pearinstaller>

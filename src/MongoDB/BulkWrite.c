@@ -26,11 +26,6 @@
 #include "php_phongo.h"
 #include "php_bson.h"
 
-#if PHP_VERSION_ID < 70200
-#include <ext/spl/spl_iterators.h>
-#define zend_ce_countable spl_ce_Countable
-#endif /* PHP_VERSION_ID < 70200 */
-
 #define PHONGO_BULKWRITE_BYPASS_UNSET -1
 
 zend_class_entry* php_phongo_bulkwrite_ce;
