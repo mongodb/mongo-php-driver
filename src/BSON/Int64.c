@@ -220,6 +220,9 @@ static PHP_METHOD(Int64, __unserialize)
 
 /* {{{ MongoDB\BSON\Int64 function entries */
 /* clang-format off */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_Int64___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Int64___unserialize, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
@@ -237,7 +240,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_int64_me[] = {
 	/* __set_state intentionally missing */
 	PHP_ME(Int64, __serialize, ai_Int64_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Int64, __toString, ai_Int64_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Int64, __toString, ai_Int64___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Int64, __unserialize, ai_Int64___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Int64, jsonSerialize, ai_Int64_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Int64, serialize, ai_Int64_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)

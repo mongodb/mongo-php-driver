@@ -26,15 +26,15 @@
 zend_class_entry* php_phongo_decimal128_interface_ce;
 
 /* {{{ MongoDB\BSON\Decimal128Interface function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128Interface_void, 0, 0, 0)
+/* clang-format off */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_Decimal128Interface___toString, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_decimal128_interface_me[] = {
-	/* clang-format off */
-	ZEND_ABSTRACT_ME(Decimal128Interface, __toString, ai_Decimal128Interface_void)
+	ZEND_ABSTRACT_ME(Decimal128Interface, __toString, ai_Decimal128Interface___toString)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 void php_phongo_decimal128_interface_init_ce(INIT_FUNC_ARGS) /* {{{ */

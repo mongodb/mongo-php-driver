@@ -230,8 +230,12 @@ static PHP_METHOD(CursorId, __unserialize)
 } /* }}} */
 
 /* {{{ MongoDB\Driver\CursorId function entries */
+/* clang-format off */
 ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_CursorId___toString, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___unserialize, 0, 0, 1)
@@ -246,17 +250,16 @@ ZEND_BEGIN_ARG_INFO_EX(ai_CursorId_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_cursorid_me[] = {
-	/* clang-format off */
 	PHP_ME(CursorId, __serialize, ai_CursorId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CursorId, __set_state, ai_CursorId___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(CursorId, __toString, ai_CursorId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CursorId, __toString, ai_CursorId___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CursorId, __unserialize, ai_CursorId___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CursorId, serialize, ai_CursorId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CursorId, unserialize, ai_CursorId_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CursorId_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 /* {{{ MongoDB\Driver\CursorId object handlers */

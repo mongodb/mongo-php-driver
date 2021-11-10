@@ -26,16 +26,19 @@
 zend_class_entry* php_phongo_utcdatetime_interface_ce;
 
 /* {{{ MongoDB\BSON\UTCDateTimeInterface function entries */
+/* clang-format off */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_UTCDateTimeInterface___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTimeInterface_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_utcdatetime_interface_me[] = {
-	/* clang-format off */
 	ZEND_ABSTRACT_ME(UTCDateTimeInterface, toDateTime, ai_UTCDateTimeInterface_void)
-	ZEND_ABSTRACT_ME(UTCDateTimeInterface, __toString, ai_UTCDateTimeInterface_void)
+	ZEND_ABSTRACT_ME(UTCDateTimeInterface, __toString, ai_UTCDateTimeInterface___toString)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 void php_phongo_utcdatetime_interface_init_ce(INIT_FUNC_ARGS) /* {{{ */

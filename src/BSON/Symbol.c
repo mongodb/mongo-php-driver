@@ -211,6 +211,9 @@ static PHP_METHOD(Symbol, __unserialize)
 
 /* {{{ MongoDB\BSON\Symbol function entries */
 /* clang-format off */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_Symbol___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Symbol___unserialize, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
@@ -228,7 +231,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_symbol_me[] = {
 	/* __set_state intentionally missing */
 	PHP_ME(Symbol, __serialize, ai_Symbol_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Symbol, __toString, ai_Symbol_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Symbol, __toString, ai_Symbol___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Symbol, __unserialize, ai_Symbol___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Symbol, jsonSerialize, ai_Symbol_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Symbol, serialize, ai_Symbol_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
