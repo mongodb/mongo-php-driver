@@ -1071,9 +1071,8 @@ axes:
   - id: edge-versions
     display_name: MongoDB Version
     values:
-      # TODO: Exclude rhel74-zseries and rhel71-power8 in tests-php7 once latest-stable is bumped from 4.4 to 5.0
       - id: "latest-stable"
-        display_name: "MongoDB 4.4"
+        display_name: "MongoDB 5.0"
         variables:
           VERSION: "4.4"
       - id: "oldest-supported"
@@ -1084,6 +1083,10 @@ axes:
   - id: php-versions
     display_name: PHP Version
     values:
+      - id: "8.0"
+        display_name: "PHP 8.0"
+        variables:
+          PHP_VERSION: "8.0"
       - id: "7.4"
         display_name: "PHP 7.4"
         variables:
@@ -1096,12 +1099,20 @@ axes:
         display_name: "PHP 7.2"
         variables:
           PHP_VERSION: "7.2"
-      - id: "7.1"
-        display_name: "PHP 7.1"
-        variables:
-          PHP_VERSION: "7.1"
 
-  - id: os-php7
+  - id: php-edge-versions
+    display_name: PHP Version
+    values:
+      - id: "latest-stable"
+        display_name: "PHP 8.0"
+        variables:
+          PHP_VERSION: "8.0"
+      - id: "oldest-supported"
+        display_name: "PHP 7.2"
+        variables:
+          PHP_VERSION: "7.2"
+
+  - id: os
     display_name: OS
     values:
       - id: debian92-test
@@ -1143,123 +1154,131 @@ axes:
   - id: libmongoc-version
     display_name: libmongoc version
     values:
-      - id: "lowest-supported"
-        display_name: "Lowest (1.19.1)"
-        variables:
-          LIBMONGOC_VERSION: "1.19.1"
-      - id: "upcoming-stable"
-        display_name: "latest (1.19-dev)"
-        variables:
-          LIBMONGOC_VERSION: "r1.19"
+      # TODO: enable lowest-supported and upcoming-stable after 1.20.0 is
+      # released and r1.20 is branched. As-is, r1.19 cannot be compiled because
+      # PHP_MONGODB_MONGOC_SOURCES conflicts with 1.20-dev (see: PHPC-2006).
+      #- id: "lowest-supported"
+      #  display_name: "1.19.1"
+      #  variables:
+      #    LIBMONGOC_VERSION: "1.19.1"
+      #- id: "upcoming-stable"
+      #  display_name: "1.19-dev"
+      #  variables:
+      #    LIBMONGOC_VERSION: "r1.19"
       - id: "latest-dev"
-        display_name: "Upcoming release (1.20)"
+        display_name: "1.20-dev (master)"
         variables:
           LIBMONGOC_VERSION: "master"
 
 
 buildvariants:
 
-- matrix_name: "tests-php7"
-  matrix_spec: {"os-php7": "*", "edge-versions": "latest-stable", "php-versions": ["7.1","7.2","7.3"] }
+# Tests all PHP versions on all operating systems and latest MongoDB version
+- matrix_name: "test-php-versions"
+  matrix_spec: { "os": "*", "edge-versions": "latest-stable", "php-versions": "*" }
   exclude_spec:
-    # TODO: Exclude rhel74-zseries and rhel71-power8 once latest-stable is bumped from 4.4 to 5.0
-    - {"os-php7": "ubuntu1804-arm64-test", "edge-versions": "latest-stable", "php-versions": ["7.1","7.2"]}
-  display_name: "All: ${edge-versions}/${php-versions} — ${os-php7}"
+    - { "os": "ubuntu1804-arm64-test", "edge-versions": "latest-stable", "php-versions": "7.2" }
+    # MongoDB 5.0+ is not available for rhel74-zseries and rhel71-power8
+    - { "os": "rhel74-zseries", "edge-versions": "latest-stable", "php-versions": "*" }
+    - { "os": "rhel71-power8", "edge-versions": "latest-stable", "php-versions": "*" }
+  display_name: "${os}, ${edge-versions}, ${php-versions}"
   tasks:
-     - name: "test-standalone-ssl"
-     - name: "test-replicaset-auth"
+    - name: "test-standalone-ssl"
+    - name: "test-replicaset-auth"
 
-
-- matrix_name: "mongo-30-php7"
-  matrix_spec: {"os-php7": "*", "versions": ["3.0", "3.2", "3.4"], "php-versions": "7.3" }
+# Tests pre-3.6 MongoDB versions with oldest supported PHP version
+- matrix_name: "test-old-mongodb-versions"
+  matrix_spec: { "os": "*", "versions": ["3.0", "3.2", "3.4"], "php-edge-versions": "oldest-supported" }
   exclude_spec:
-    - {"os-php7": "ubuntu1804-arm64-test", "versions": ["3.0", "3.2", "3.4"], "php-versions": "7.3"}
-    - {"os-php7": "rhel71-power8", "versions": "3.0", "php-versions": "7.3"}
-    - {"os-php7": "rhel74-zseries", "versions": ["3.0", "3.2"], "php-versions": "7.3"}
-  display_name: "${versions}/${php-versions} — ${os-php7}"
+    - { "os": "ubuntu1804-arm64-test", "versions": "*", "php-edge-versions": "oldest-supported" }
+    - { "os": "rhel71-power8", "versions": "3.0", "php-edge-versions": "oldest-supported" }
+    - { "os": "rhel74-zseries", "versions": ["3.0", "3.2"], "php-edge-versions": "oldest-supported" }
+  display_name: "${os}, ${versions}, ${php-edge-versions}"
   tasks:
-     - name: "test-standalone-old"
-     - name: "test-replicaset-old"
+    - name: "test-standalone-old"
+    - name: "test-replicaset-old"
 
-
-- matrix_name: "mongo-36-php7"
-  matrix_spec: {"os-php7": "*", "versions": ["3.6"], "php-versions": "7.3" }
+# Tests MongoDB 3.6 with oldest supported PHP version
+- matrix_name: "test-mongodb-36"
+  matrix_spec: { "os": "*", "versions": ["3.6"], "php-edge-versions": "oldest-supported" }
   exclude_spec:
-    - {"os-php7": "ubuntu1804-arm64-test", "versions": "3.6", "php-versions": "7.3"}
-  display_name: "${versions}/${php-versions} — ${os-php7}"
+    - { "os": "ubuntu1804-arm64-test", "versions": "*", "php-edge-versions": "oldest-supported" }
+  display_name: "${os}, ${versions}, ${php-edge-versions}"
   tasks:
-     - name: "test-standalone"
-     - name: "test-replicaset"
-     - name: "test-replicaset-auth"
+    - name: "test-standalone"
+    - name: "test-replicaset"
+    - name: "test-replicaset-auth"
 
-
-- matrix_name: "mongo-php7"
-  matrix_spec: {"os-php7": "*", "versions": ["4.0", "4.2", "4.4", "5.0", "latest"], "php-versions": "7.3" }
+# Tests 4.0+ MongoDB versions with oldest supported PHP version
+- matrix_name: "test-mongodb-versions"
+  matrix_spec: { "os": "*", "versions": ["4.0", "4.2", "4.4", "5.0", "latest"], "php-edge-versions": "oldest-supported" }
   exclude_spec:
-    - {"os-php7": "rhel71-power8", "versions": ["5.0", "latest"], "php-versions": "7.3"}
-    - {"os-php7": "rhel74-zseries", "versions": ["4.0", "4.2", "4.4", "5.0", "latest"], "php-versions": "7.3"}
-    - {"os-php7": "ubuntu1804-arm64-test", "versions": "4.0", "php-versions": "7.3"}
-  display_name: "${versions}/${php-versions} — ${os-php7}"
+    - { "os": "ubuntu1804-arm64-test", "versions": "4.0", "php-edge-versions": "oldest-supported" }
+    - { "os": "rhel71-power8", "versions": ["5.0", "latest"], "php-edge-versions": "oldest-supported" }
+    # rhel74-zseries will be covered by test-mongodb-versions-nossl
+    - { "os": "rhel74-zseries", "versions": "*", "php-edge-versions": "oldest-supported" }
+    # Avoid duplicate build variants from test-php-versions (assumes edge-versions:latest-stable is 5.0)
+    - { "os": "*", "versions": "5.0", "php-edge-versions": "oldest-supported" }
+  display_name: "${os}, ${versions}, ${php-edge-versions}"
   tasks:
-     - name: "test-standalone"
-     - name: "test-standalone-auth"
-     - name: "test-standalone-ssl"
-     - name: "test-replicaset"
-     - name: "test-replicaset-auth"
-     - name: "test-sharded"
+    - name: "test-standalone"
+    - name: "test-standalone-auth"
+    - name: "test-standalone-ssl"
+    - name: "test-replicaset"
+    - name: "test-replicaset-auth"
+    - name: "test-sharded"
 
-- matrix_name: "mongo-php7-nossl"
-  matrix_spec: {"os-php7": "rhel74-zseries", "versions": ["4.2", "4.4", "5.0", "latest"], "php-versions": "7.3"}
-  exclude_spec:
-    - {"os-php7": "rhel74-zseries", "versions": ["5.0", "latest"], "php-versions": "7.3"}
-  display_name: "${versions}/${php-versions} — ${os-php7}"
+# Tests MongoDB 4.2 and 4.4 on zSeries with oldest supported PHP version
+- matrix_name: "test-mongodb-versions-nossl"
+  matrix_spec: { "os": "rhel74-zseries", "versions": ["4.2", "4.4"], "php-edge-versions": "oldest-supported" }
+  display_name: "${os}, ${versions}, ${php-edge-versions}"
   tasks:
-     - name: "test-standalone"
-     - name: "test-standalone-auth"
-     - name: "test-replicaset"
-     - name: "test-replicaset-auth"
-     - name: "test-sharded"
+    - name: "test-standalone"
+    - name: "test-standalone-auth"
+    - name: "test-replicaset"
+    - name: "test-replicaset-auth"
+    - name: "test-sharded"
 
 - matrix_name: "mongo-42-storage-engines"
-  matrix_spec: {"os-php7": "debian92-test", "versions": "4.2", "php-versions": "7.3", "storage-engine": ["wiredtiger", "inmemory"]}
-  display_name: "${versions}/${php-versions}/${os-php7} — ${storage-engine}"
+  matrix_spec: { "os": "debian92-test", "versions": "4.2", "php-edge-versions": "latest-stable", "storage-engine": "inmemory" }
+  display_name: "${storage-engine}: ${os}, ${versions}, ${php-edge-versions}"
   tasks:
-     - name: "test-standalone"
+    - name: "test-standalone"
 
 - matrix_name: "mongo-40-storage-engines"
-  matrix_spec: {"os-php7": "debian92-test", "versions": "4.0", "php-versions": "7.3", "storage-engine": "mmapv1"}
-  display_name: "${versions}/${php-versions}/${os-php7} — ${storage-engine}"
+  matrix_spec: { "os": "debian92-test", "versions": "4.0", "php-edge-versions": "latest-stable", "storage-engine": "mmapv1" }
+  display_name: "${storage-engine}: ${os}, ${versions}, ${php-edge-versions}"
   tasks:
-     - name: "test-standalone"
+    - name: "test-standalone"
 
-- matrix_name: "libmongoc-versions-php7"
-  matrix_spec: {"os-php7": "debian92-test", "edge-versions": "latest-stable", "php-versions": "7.2", "libmongoc-version": "*"}
-  display_name: "${edge-versions}/${php-versions}/${os-php7} — libmongoc ${libmongoc-version}"
+- matrix_name: "libmongoc-versions"
+  matrix_spec: { "os": "debian92-test", "edge-versions": "latest-stable", "php-edge-versions": "latest-stable", "libmongoc-version": "*" }
+  display_name: "libmongoc ${libmongoc-version}: ${os}, ${edge-versions}, ${php-edge-versions}"
   tasks:
-     - name: "test-standalone"
-     - name: "test-replicaset"
-     - name: "test-sharded"
+    - name: "test-standalone"
+    - name: "test-replicaset"
+    - name: "test-sharded"
 
 - matrix_name: "atlas-connectivity-tests"
-  matrix_spec: { "os-php7": "debian92-test", "php-versions": "7.3" }
-  display_name: "Atlas Connectivity tests"
+  matrix_spec: { "os": "debian92-test", "php-edge-versions": "latest-stable" }
+  display_name: "Atlas Connectivity"
   tasks:
     - name: "test-atlas"
 
 - matrix_name: "test-ocsp"
-  matrix_spec: { "os-php7": "debian92-test", "versions": ["4.4", "5.0", "latest"], "php-versions": "7.3" }
+  matrix_spec: { "os": "debian92-test", "versions": ["4.4", "5.0", "latest"], "php-edge-versions": "latest-stable" }
   display_name: "OCSP tests - ${versions}"
   tasks:
     - name: ".ocsp"
 
 - matrix_name: "test-requireApiVersion"
-  matrix_spec: { "os-php7": "debian92-test", "versions": ["5.0", "latest"], "php-versions": "7.3" }
+  matrix_spec: { "os": "debian92-test", "versions": ["5.0", "latest"], "php-edge-versions": "latest-stable" }
   display_name: "Versioned API - ${versions}"
   tasks:
     - name: "test-requireApiVersion"
 
 - matrix_name: "test-loadBalanced"
-  matrix_spec: { "os-php7": "debian92-test", "versions": ["5.0", "latest"], "php-versions": "7.3" }
+  matrix_spec: { "os": "debian92-test", "versions": ["5.0", "latest"], "php-edge-versions": "latest-stable" }
   display_name: "Load balanced - ${versions}"
   tasks:
     - name: "test-loadBalanced"
