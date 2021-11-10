@@ -377,6 +377,10 @@ void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_implements(php_phongo_decimal128_ce, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_decimal128_ce, 1, zend_ce_serializable);
 
+#if PHP_VERSION_ID >= 80000
+	zend_class_implements(php_phongo_decimal128_ce, 1, zend_ce_stringable);
+#endif
+
 	memcpy(&php_phongo_handler_decimal128, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_decimal128.clone_obj      = php_phongo_decimal128_clone_object;
 	php_phongo_handler_decimal128.get_debug_info = php_phongo_decimal128_get_debug_info;

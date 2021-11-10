@@ -314,6 +314,10 @@ void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	zend_class_implements(php_phongo_cursorid_ce, 1, zend_ce_serializable);
 
+#if PHP_VERSION_ID >= 80000
+	zend_class_implements(php_phongo_cursorid_ce, 1, zend_ce_stringable);
+#endif
+
 	memcpy(&php_phongo_handler_cursorid, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_cursorid.get_debug_info = php_phongo_cursorid_get_debug_info;
 	php_phongo_handler_cursorid.get_properties = php_phongo_cursorid_get_properties;

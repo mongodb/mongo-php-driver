@@ -337,6 +337,10 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_implements(php_phongo_int64_ce, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_int64_ce, 1, zend_ce_serializable);
 
+#if PHP_VERSION_ID >= 80000
+	zend_class_implements(php_phongo_int64_ce, 1, zend_ce_stringable);
+#endif
+
 	memcpy(&php_phongo_handler_int64, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(int64);
 	php_phongo_handler_int64.clone_obj      = php_phongo_int64_clone_object;

@@ -513,6 +513,10 @@ void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_implements(php_phongo_timestamp_ce, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_timestamp_ce, 1, zend_ce_serializable);
 
+#if PHP_VERSION_ID >= 80000
+	zend_class_implements(php_phongo_timestamp_ce, 1, zend_ce_stringable);
+#endif
+
 	memcpy(&php_phongo_handler_timestamp, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(timestamp);
 	php_phongo_handler_timestamp.clone_obj      = php_phongo_timestamp_clone_object;
