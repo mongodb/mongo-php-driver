@@ -99,7 +99,7 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t* inte
 	int64_t sec, usec;
 
 	/* The following assignments use the same logic as date_format() in php_date.c */
-	sec = datetime_obj->time->sse;
+	sec  = datetime_obj->time->sse;
 	usec = (int64_t) floor(datetime_obj->time->us);
 
 	intern->milliseconds = (sec * 1000) + (usec / 1000);
