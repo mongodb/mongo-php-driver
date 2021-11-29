@@ -272,6 +272,9 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_Decimal128___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___unserialize, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
@@ -290,7 +293,7 @@ static zend_function_entry php_phongo_decimal128_me[] = {
 	PHP_ME(Decimal128, __construct, ai_Decimal128___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Decimal128, __serialize, ai_Decimal128_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Decimal128, __set_state, ai_Decimal128___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(Decimal128, __toString, ai_Decimal128_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Decimal128, __toString, ai_Decimal128___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Decimal128, __unserialize, ai_Decimal128___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Decimal128, jsonSerialize, ai_Decimal128_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Decimal128, serialize, ai_Decimal128_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -373,6 +376,10 @@ void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_implements(php_phongo_decimal128_ce, 1, php_phongo_json_serializable_ce);
 	zend_class_implements(php_phongo_decimal128_ce, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_decimal128_ce, 1, zend_ce_serializable);
+
+#if PHP_VERSION_ID >= 80000
+	zend_class_implements(php_phongo_decimal128_ce, 1, zend_ce_stringable);
+#endif
 
 	memcpy(&php_phongo_handler_decimal128, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_decimal128.clone_obj      = php_phongo_decimal128_clone_object;

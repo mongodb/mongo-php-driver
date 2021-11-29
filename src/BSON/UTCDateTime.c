@@ -99,7 +99,7 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t* inte
 	int64_t sec, usec;
 
 	/* The following assignments use the same logic as date_format() in php_date.c */
-	sec = datetime_obj->time->sse;
+	sec  = datetime_obj->time->sse;
 	usec = (int64_t) floor(datetime_obj->time->us);
 
 	intern->milliseconds = (sec * 1000) + (usec / 1000);
@@ -388,6 +388,9 @@ ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_UTCDateTime___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime___unserialize, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
@@ -406,7 +409,7 @@ static zend_function_entry php_phongo_utcdatetime_me[] = {
 	PHP_ME(UTCDateTime, __construct, ai_UTCDateTime___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, __serialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, __set_state, ai_UTCDateTime___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(UTCDateTime, __toString, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(UTCDateTime, __toString, ai_UTCDateTime___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, __unserialize, ai_UTCDateTime___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, jsonSerialize, ai_UTCDateTime_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(UTCDateTime, serialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -504,6 +507,10 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_implements(php_phongo_utcdatetime_ce, 1, php_phongo_json_serializable_ce);
 	zend_class_implements(php_phongo_utcdatetime_ce, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_utcdatetime_ce, 1, zend_ce_serializable);
+
+#if PHP_VERSION_ID >= 80000
+	zend_class_implements(php_phongo_utcdatetime_ce, 1, zend_ce_stringable);
+#endif
 
 	memcpy(&php_phongo_handler_utcdatetime, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(utcdatetime);

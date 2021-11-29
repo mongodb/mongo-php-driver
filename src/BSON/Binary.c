@@ -329,6 +329,9 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Binary___set_state, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, properties, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_Binary___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Binary___unserialize, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
@@ -347,7 +350,7 @@ static zend_function_entry php_phongo_binary_me[] = {
 	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, __serialize, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, __set_state, ai_Binary___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(Binary, __toString, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Binary, __toString, ai_Binary___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, __unserialize, ai_Binary___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, jsonSerialize, ai_Binary_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Binary, serialize, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -456,6 +459,10 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_implements(php_phongo_binary_ce, 1, php_phongo_json_serializable_ce);
 	zend_class_implements(php_phongo_binary_ce, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_binary_ce, 1, zend_ce_serializable);
+
+#if PHP_VERSION_ID >= 80000
+	zend_class_implements(php_phongo_binary_ce, 1, zend_ce_stringable);
+#endif
 
 	memcpy(&php_phongo_handler_binary, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(binary);

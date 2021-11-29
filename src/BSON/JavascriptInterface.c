@@ -26,17 +26,20 @@
 zend_class_entry* php_phongo_javascript_interface_ce;
 
 /* {{{ MongoDB\BSON\JavascriptInterface function entries */
+/* clang-format off */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_JavascriptInterface___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_JavascriptInterface_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_javascript_interface_me[] = {
-	/* clang-format off */
 	ZEND_ABSTRACT_ME(JavascriptInterface, getCode, ai_JavascriptInterface_void)
 	ZEND_ABSTRACT_ME(JavascriptInterface, getScope, ai_JavascriptInterface_void)
-	ZEND_ABSTRACT_ME(JavascriptInterface, __toString, ai_JavascriptInterface_void)
+	ZEND_ABSTRACT_ME(JavascriptInterface, __toString, ai_JavascriptInterface___toString)
 	PHP_FE_END
-	/* clang-format on */
 };
+/* clang-format on */
 /* }}} */
 
 void php_phongo_javascript_interface_init_ce(INIT_FUNC_ARGS) /* {{{ */

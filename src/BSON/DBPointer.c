@@ -236,6 +236,9 @@ static PHP_METHOD(DBPointer, __unserialize)
 
 /* {{{ MongoDB\BSON\DBPointer function entries */
 /* clang-format off */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_DBPointer___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_DBPointer___unserialize, 0, 0, 1)
 	ZEND_ARG_ARRAY_INFO(0, data, 0)
 ZEND_END_ARG_INFO()
@@ -253,7 +256,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_dbpointer_me[] = {
 	/* __set_state intentionally missing */
 	PHP_ME(DBPointer, __serialize, ai_DBPointer_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(DBPointer, __toString, ai_DBPointer_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(DBPointer, __toString, ai_DBPointer___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(DBPointer, __unserialize, ai_DBPointer___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(DBPointer, jsonSerialize, ai_DBPointer_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(DBPointer, serialize, ai_DBPointer_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -356,6 +359,10 @@ void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_class_implements(php_phongo_dbpointer_ce, 1, php_phongo_json_serializable_ce);
 	zend_class_implements(php_phongo_dbpointer_ce, 1, php_phongo_type_ce);
 	zend_class_implements(php_phongo_dbpointer_ce, 1, zend_ce_serializable);
+
+#if PHP_VERSION_ID >= 80000
+	zend_class_implements(php_phongo_dbpointer_ce, 1, zend_ce_stringable);
+#endif
 
 	memcpy(&php_phongo_handler_dbpointer, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(dbpointer);
