@@ -16,8 +16,7 @@ APIs, such as query builders, individual command helper methods, and GridFS.
 Application developers should consider using this extension in conjunction with
 the [MongoDB PHP library](https://github.com/mongodb/mongo-php-library), which
 implements the same higher level APIs found in MongoDB drivers for other
-languages (as well as the
-[legacy PHP driver](https://php.net/manual/en/book.mongo.php)).
+languages.
 
 ## Documentation
 
