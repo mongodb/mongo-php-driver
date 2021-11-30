@@ -11,8 +11,8 @@ MongoDB\Driver\Server: Manager->getServer() returning correct server
 require_once __DIR__ . "/../utils/basic.inc";
 
 // Disable retryWrites since the test writes to the unreplicated "local" database
-$manager = create_test_manager(URI, ['retryWrites' => false]);
-
+// Explicitly use w:1 to work around MongoDB 5.0 applying w:majority (SERVER-61790)
+$manager = create_test_manager(URI, ['retryWrites' => false, 'w' => 1]);
 
 $doc = array("example" => "document");
 $bulk = new \MongoDB\Driver\BulkWrite();
@@ -80,6 +80,8 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   NULL
   ["writeConcern"]=>
   object(MongoDB\Driver\WriteConcern)#%d (%d) {
+    ["w"]=>
+    int(1)
   }
 }
 string(%d) "%s"
