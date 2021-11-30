@@ -51,15 +51,18 @@ function drop_collection($uri, $databaseName, $collectionName)
     $command = new Command(['drop' => $collectionName]);
 
     try {
-        /* We need to use WriteConcern::MAJORITY here due to the issue
-         * explained in SERVER-35613: "drop" uses a two phase commit, and due
-         * to that, it is possible that a lock can't be acquired for a
-         * transaction that gets quickly started as the "drop" reaper hasn't
-         * completed yet. */
+        /* Unless we are dropping a collection within the "local" database,
+         * which does not support a write concern, we need to use w:majority due
+         * to the issue explained in SERVER-35613: "drop" uses a two phase
+         * commit, and due to that, it is possible that a lock can't be acquired
+         * for a transaction that gets quickly started as the "drop" reaper
+         * hasn't completed yet. */
+        $wc = $databaseName === 'local' ? new WriteConcern(1) : new WriteConcern(WriteConcern::MAJORITY);
+
         $server->executeCommand(
             $databaseName,
             $command,
-            ['writeConcern' => new WriteConcern(WriteConcern::MAJORITY)]
+            ['writeConcern' => $wc]
         );
     } catch (RuntimeException $e) {
         if ($e->getMessage() !== 'ns not found') {
