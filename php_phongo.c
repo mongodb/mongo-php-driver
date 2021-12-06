@@ -2803,6 +2803,25 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		bson_destroy(&bson_map);
 	}
 
+	if (php_array_existsc(zAutoEncryptionOpts, "tlsOptions")) {
+		zval*  tls_options  = php_array_fetch(zAutoEncryptionOpts, "tlsOptions");
+		bson_t bson_options = BSON_INITIALIZER;
+
+		if (Z_TYPE_P(tls_options) != IS_OBJECT && Z_TYPE_P(tls_options) != IS_ARRAY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"tlsOptions\" encryption option to be an array or object");
+			goto cleanup;
+		}
+
+		php_phongo_zval_to_bson(tls_options, PHONGO_BSON_NONE, &bson_options, NULL);
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		mongoc_auto_encryption_opts_set_tls_opts(auto_encryption_opts, &bson_options);
+
+		bson_destroy(&bson_options);
+	}
+
 	if (php_array_existsc(zAutoEncryptionOpts, "bypassAutoEncryption")) {
 		zend_bool bypass_auto_encryption = php_array_fetch_bool(zAutoEncryptionOpts, "bypassAutoEncryption");
 
@@ -2910,6 +2929,24 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 
 		mongoc_client_encryption_opts_set_kms_providers(opts, &bson_providers);
 		bson_destroy(&bson_providers);
+	}
+
+	if (php_array_existsc(options, "tlsOptions")) {
+		zval*  tls_options  = php_array_fetchc(options, "tlsOptions");
+		bson_t bson_options = BSON_INITIALIZER;
+
+		if (Z_TYPE_P(tls_options) != IS_ARRAY && Z_TYPE_P(tls_options) != IS_OBJECT) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"tlsOptions\" encryption option to be an array or object");
+			goto cleanup;
+		}
+
+		php_phongo_zval_to_bson(tls_options, PHONGO_BSON_NONE, &bson_options, NULL);
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_opts_set_tls_opts(opts, &bson_options);
+		bson_destroy(&bson_options);
 	}
 
 	return opts;
