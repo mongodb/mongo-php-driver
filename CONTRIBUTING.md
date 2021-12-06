@@ -136,7 +136,7 @@ reflect the new sources and/or package version.
 ```
 $ cd src/libmongoc
 $ git fetch
-$ git checkout 1.15.0
+$ git checkout 1.20.0
 ```
 
 During development, it may be necessary to temporarily point the libmongoc
@@ -175,9 +175,10 @@ collectively enumerate all of the the sources within the libmongoc submodule to
 include in a bundled build.
 
 These variables should each have a shell command in a preceding comment, which
-should be run to regenerate that particular list of source files. In the event
-that either libmongoc or libbson introduce a new source directory, that will
-need to be manually added (follow prior art).
+should be run to regenerate that particular list of source files. Each command
+may be run manually or `scripts/update-submodule-sources.php` may be used to
+update all variables. In the event that either libmongoc or libbson introduce a
+new source directory, that will need to be manually added (follow prior art).
 
 #### Update package dependencies
 
@@ -189,11 +190,11 @@ error message in the `pkg-config` blocks for both libmongoc and libbson.
 For example, the following lines might be updated for libmongoc:
 
 ```
-if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.15.0; then
+if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.20.0; then
 
 ...
 
-AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.15.0)
+AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.20.0)
 ```
 
 #### Update tested versions in Evergreen configuration
@@ -221,7 +222,7 @@ and by ensuring that the test suite passes. Once done, commit the changes to all
 of the above files/paths. For example:
 
 ```
-$ git commit -m "Bump libmongoc to 1.15.0" config.m4 config.w32 src/libmongoc src/LIBMONGOC_VERSION_CURRENT
+$ git commit -m "Bump libmongoc to 1.20.0" config.m4 config.w32 src/libmongoc src/LIBMONGOC_VERSION_CURRENT
 ```
 
 ### Updating libmongocrypt
@@ -231,12 +232,13 @@ To update libmongocrypt, the steps are similar to the above:
 ```
 $ cd src/libmongocrypt
 $ git fetch
-$ git checkout 1.0.1
+$ git checkout 1.3.0
 $ make libmongocrypt-version-current
 ```
 
-Package dependencies in  `config.m4` must also be updated, as do the sources in
-the PECL generation script.
+Package dependencies in  `config.m4` must also be updated (either manually or
+with `scripts/update-submodule-sources.php`), as do the sources in the PECL
+generation script.
 
 ## Releasing
 
