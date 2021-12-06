@@ -19,6 +19,7 @@ $tests = [
     ['kmsProviders' => 'not_an_array_or_object'],
     ['schemaMap' => 'not_an_array_or_object'],
     ['tlsOptions' => 'not_an_array_or_object'],
+    ['extraOptions' => 'not_an_array_or_object'],
 ];
 
 foreach ($tests as $test) {
@@ -48,5 +49,8 @@ Expected "schemaMap" encryption option to be an array or object
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "tlsOptions" encryption option to be an array or object
+
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected "extraOptions" encryption option to be an array or object
 
 ===DONE===

@@ -2832,6 +2832,11 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		zval*  extra_options = php_array_fetch(zAutoEncryptionOpts, "extraOptions");
 		bson_t bson_options  = BSON_INITIALIZER;
 
+		if (Z_TYPE_P(extra_options) != IS_OBJECT && Z_TYPE_P(extra_options) != IS_ARRAY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"extraOptions\" encryption option to be an array or object");
+			goto cleanup;
+		}
+
 		php_phongo_zval_to_bson(extra_options, PHONGO_BSON_NONE, &bson_options, NULL);
 		if (EG(exception)) {
 			goto cleanup;
