@@ -67,7 +67,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getHelloResponse)
 
 	PHONGO_BSON_INIT_DEBUG_STATE(state);
 
-	if (!php_phongo_bson_to_zval_ex(bson_get_data(helloResponse), helloResponse->len, &state)) {
+	if (!php_phongo_bson_to_zval_ex(helloResponse, &state)) {
 		/* Exception should already have been thrown */
 		zval_ptr_dtor(&state.zchild);
 		return;
@@ -214,7 +214,7 @@ HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
 
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(hello_response, &state)) {
 			zval_ptr_dtor(&state.zchild);
 			goto done;
 		}

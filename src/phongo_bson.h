@@ -95,8 +95,10 @@ void                   php_phongo_field_path_write_type_at_current_level(php_pho
 bool                   php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element, php_phongo_bson_field_path_item_types element_type);
 bool                   php_phongo_field_path_pop(php_phongo_field_path* field_path);
 
-bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval* out);
-bool php_phongo_bson_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state);
+bool php_phongo_bson_to_zval(const bson_t* b, zval* zv);
+bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state);
+bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval* zv);
+bool php_phongo_bson_data_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state);
 
 bool php_phongo_bson_value_to_zval(const bson_value_t* value, zval* zv);
 

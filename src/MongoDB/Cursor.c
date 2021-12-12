@@ -90,7 +90,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, setTypeMap)
 	if (restore_current_element && mongoc_cursor_current(intern->cursor)) {
 		const bson_t* doc = mongoc_cursor_current(intern->cursor);
 
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &intern->visitor_data)) {
+		if (!php_phongo_bson_to_zval_ex(doc, &intern->visitor_data)) {
 			php_phongo_cursor_free_current(intern);
 		}
 	}
@@ -223,7 +223,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, next)
 	}
 
 	if (mongoc_cursor_next(intern->cursor, &doc)) {
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &intern->visitor_data)) {
+		if (!php_phongo_bson_to_zval_ex(doc, &intern->visitor_data)) {
 			/* Free invalid result, but don't return as we want to free the
 			 * session if the intern is exhausted. */
 			php_phongo_cursor_free_current(intern);
@@ -278,7 +278,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, rewind)
 	doc = mongoc_cursor_current(intern->cursor);
 
 	if (doc) {
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(doc), doc->len, &intern->visitor_data)) {
+		if (!php_phongo_bson_to_zval_ex(doc, &intern->visitor_data)) {
 			/* Free invalid result, but don't return as we want to free the
 			 * session if the intern is exhausted. */
 			php_phongo_cursor_free_current(intern);

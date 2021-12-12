@@ -173,7 +173,7 @@ zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson)
 
 		bson_iter_document(&iter, &len, &data);
 
-		if (!php_phongo_bson_to_zval(data, len, &intern->info)) {
+		if (!php_phongo_bson_data_to_zval(data, len, &intern->info)) {
 			zval_ptr_dtor(&intern->info);
 			ZVAL_UNDEF(&intern->info);
 

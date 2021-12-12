@@ -502,7 +502,7 @@ static bool php_phongo_bson_new_javascript_from_javascript_and_scope(zval* objec
 
 		PHONGO_BSON_INIT_STATE(state);
 
-		valid_scope = php_phongo_bson_to_zval_ex(bson_get_data(scope), scope->len, &state);
+		valid_scope = php_phongo_bson_to_zval_ex(scope, &state);
 		zval_ptr_dtor(&state.zchild);
 
 		if (!valid_scope) {
@@ -1011,14 +1011,28 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 }
 
 /* Converts a BSON document to a PHP value using the default typemap. */
-bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval* zv)
+bool php_phongo_bson_to_zval(const bson_t* b, zval* zv)
 {
 	bool                  retval;
 	php_phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
 
-	retval = php_phongo_bson_to_zval_ex(data, data_len, &state);
+	retval = php_phongo_bson_to_zval_ex(b, &state);
+	ZVAL_ZVAL(zv, &state.zchild, 1, 1);
+
+	return retval;
+}
+
+/* Converts BSON data to a PHP value using the default typemap. */
+bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval* zv)
+{
+	bool                  retval;
+	php_phongo_bson_state state;
+
+	PHONGO_BSON_INIT_STATE(state);
+
+	retval = php_phongo_bson_data_to_zval_ex(data, data_len, &state);
 	ZVAL_ZVAL(zv, &state.zchild, 1, 1);
 
 	return retval;
@@ -1036,7 +1050,7 @@ bool php_phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
 	state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 	bson_append_value(&bson, "data", 4, value);
-	if (!php_phongo_bson_to_zval_ex(bson_get_data(&bson), bson.len, &state)) {
+	if (!php_phongo_bson_to_zval_ex(&bson, &state)) {
 		/* Exception already thrown */
 		goto cleanup;
 	}
@@ -1066,26 +1080,15 @@ cleanup:
  * as-is on PHP 7; however, it should have the type undefined if the state
  * was initialized to zero.
  */
-bool php_phongo_bson_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state)
+bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 {
-	bson_reader_t* reader = NULL;
-	bson_iter_t    iter;
-	const bson_t*  b;
-	bool           eof             = false;
-	bool           retval          = false;
-	bool           must_dtor_state = false;
+	bson_iter_t iter;
+	bool        retval          = false;
+	bool        must_dtor_state = false;
 
 	if (!php_phongo_bson_state_is_initialized(state)) {
 		php_phongo_bson_state_ctor(state);
 		must_dtor_state = true;
-	}
-
-	reader = bson_reader_new_from_data(data, data_len);
-
-	if (!(b = bson_reader_read(reader, NULL))) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not read document from BSON reader");
-
-		goto cleanup;
 	}
 
 	if (!bson_iter_init(&iter, b)) {
@@ -1176,20 +1179,55 @@ bool php_phongo_bson_to_zval_ex(const unsigned char* data, int data_len, php_pho
 			convert_to_object(&state->zchild);
 	}
 
-	if (bson_reader_read(reader, &eof) || !eof) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Reading document did not exhaust input buffer");
+	retval = true;
+
+cleanup:
+	if (must_dtor_state) {
+		php_phongo_bson_state_dtor(state);
+	}
+
+	return retval;
+}
+
+/* Converts a BSON document to a PHP value according to the typemap specified in
+ * the state argument.
+ *
+ * On success, the result will be set on the state argument and true will be
+ * returned. On error, an exception will have been thrown and false will be
+ * returned.
+ *
+ * Note: the result zval in the state argument will always be initialized for
+ * PHP 5.x so that the caller may always zval_ptr_dtor() it. The zval is left
+ * as-is on PHP 7; however, it should have the type undefined if the state
+ * was initialized to zero.
+ */
+bool php_phongo_bson_data_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state)
+{
+	bson_reader_t* reader = NULL;
+	const bson_t*  b;
+	bool           eof    = false;
+	bool           retval = false;
+
+	reader = bson_reader_new_from_data(data, data_len);
+
+	if (!(b = bson_reader_read(reader, NULL))) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not read document from BSON reader");
 
 		goto cleanup;
 	}
 
-	retval = true;
+	retval = php_phongo_bson_to_zval_ex(b, state);
+
+	if (bson_reader_read(reader, &eof) || !eof) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Reading document did not exhaust input buffer");
+		retval = false;
+
+		goto cleanup;
+	}
 
 cleanup:
 	if (reader) {
 		bson_reader_destroy(reader);
-	}
-	if (must_dtor_state) {
-		php_phongo_bson_state_dtor(state);
 	}
 
 	return retval;

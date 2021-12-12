@@ -257,7 +257,7 @@ static PHP_METHOD(MongoDB_Driver_Server, getTags)
 			PHONGO_BSON_INIT_DEBUG_STATE(state);
 			bson_iter_document(&iter, &len, &bytes);
 
-			if (!php_phongo_bson_to_zval_ex(bytes, len, &state)) {
+			if (!php_phongo_bson_data_to_zval_ex(bytes, len, &state)) {
 				/* Exception should already have been thrown */
 				zval_ptr_dtor(&state.zchild);
 				mongoc_server_description_destroy(sd);
@@ -316,7 +316,7 @@ static PHP_METHOD(MongoDB_Driver_Server, getInfo)
 
 	PHONGO_BSON_INIT_DEBUG_STATE(state);
 
-	if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
+	if (!php_phongo_bson_to_zval_ex(hello_response, &state)) {
 		/* Exception should already have been thrown */
 		zval_ptr_dtor(&state.zchild);
 		goto cleanup;
@@ -640,7 +640,7 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_ser
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
 		bson_iter_document(&iter, &len, &bytes);
-		if (!php_phongo_bson_to_zval_ex(bytes, len, &state)) {
+		if (!php_phongo_bson_data_to_zval_ex(bytes, len, &state)) {
 			/* Exception already thrown */
 			zval_ptr_dtor(&state.zchild);
 			return false;
@@ -666,7 +666,7 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_ser
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
 		handshake_response = mongoc_server_description_hello_response(handshake_sd);
 
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(handshake_response), handshake_response->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(handshake_response, &state)) {
 			/* Exception already thrown */
 			mongoc_server_description_destroy(handshake_sd);
 			zval_ptr_dtor(&state.zchild);
@@ -680,7 +680,7 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_ser
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
 
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(hello_response, &state)) {
 			/* Exception already thrown */
 			zval_ptr_dtor(&state.zchild);
 			return false;

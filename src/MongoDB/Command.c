@@ -156,7 +156,7 @@ static HashTable* php_phongo_command_get_debug_info(phongo_compat_object_handler
 	if (intern->bson) {
 		zval zv;
 
-		if (!php_phongo_bson_to_zval(bson_get_data(intern->bson), intern->bson->len, &zv)) {
+		if (!php_phongo_bson_to_zval(intern->bson, &zv)) {
 			zval_ptr_dtor(&zv);
 			goto done;
 		}

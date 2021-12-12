@@ -471,7 +471,7 @@ static HashTable* php_phongo_query_get_debug_info(phongo_compat_object_handler_t
 	if (intern->filter) {
 		zval zv;
 
-		if (!php_phongo_bson_to_zval(bson_get_data(intern->filter), intern->filter->len, &zv)) {
+		if (!php_phongo_bson_to_zval(intern->filter, &zv)) {
 			zval_ptr_dtor(&zv);
 			goto done;
 		}
@@ -484,7 +484,7 @@ static HashTable* php_phongo_query_get_debug_info(phongo_compat_object_handler_t
 	if (intern->opts) {
 		zval zv;
 
-		if (!php_phongo_bson_to_zval(bson_get_data(intern->opts), intern->opts->len, &zv)) {
+		if (!php_phongo_bson_to_zval(intern->opts, &zv)) {
 			zval_ptr_dtor(&zv);
 			goto done;
 		}

@@ -238,7 +238,7 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getUpsertedIds)
 
 			bson_iter_document(&child, &data_len, &data);
 
-			if (php_phongo_bson_to_zval_ex(data, data_len, &state)) {
+			if (php_phongo_bson_data_to_zval_ex(data, data_len, &state)) {
 				zval* zid = php_array_fetchc(&state.zchild, "_id");
 				add_index_zval(return_value, php_array_fetchc_long(&state.zchild, "index"), zid);
 				zval_add_ref(zid);
@@ -351,7 +351,7 @@ static HashTable* php_phongo_writeresult_get_debug_info(phongo_compat_object_han
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
 		bson_iter_array(&iter, &len, &data);
-		if (!php_phongo_bson_to_zval_ex(data, len, &state)) {
+		if (!php_phongo_bson_data_to_zval_ex(data, len, &state)) {
 			zval_ptr_dtor(&state.zchild);
 			goto done;
 		}
