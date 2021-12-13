@@ -770,6 +770,7 @@ static void php_phongo_handle_field_path_entry_for_compound_type(php_phongo_bson
 		switch (entry->node.type) {
 			case PHONGO_TYPEMAP_NATIVE_ARRAY:
 			case PHONGO_TYPEMAP_NATIVE_OBJECT:
+			case PHONGO_TYPEMAP_BSON:
 				element->type = entry->node.type;
 				break;
 			case PHONGO_TYPEMAP_CLASS:
@@ -790,29 +791,33 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 	php_phongo_bson_state* parent_state = (php_phongo_bson_state*) data;
 	php_phongo_bson_state  state;
 
-	if (!bson_iter_init(&child, v_document)) {
-		return false;
-	}
-
 	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
 
 	PHONGO_BSON_INIT_STATE(state);
 	php_phongo_bson_state_copy_ctor(&state, parent_state);
 
-	array_init(&state.zchild);
-
-	if (bson_iter_visit_all(&child, &php_bson_visitors, &state) || child.err_off) {
-		/* Iteration stopped prematurely due to corruption or a failed
-		 * visitor. Free state.zchild, which we just initialized, and return
-		 * true to stop iteration for our parent context. */
-		zval_ptr_dtor(&state.zchild);
-		php_phongo_bson_state_dtor(&state);
-		return true;
-	}
-
 	/* Check for entries in the fieldPath type map key, and use them to
 	 * override the default ones for this type */
 	php_phongo_handle_field_path_entry_for_compound_type(&state, &state.map.document);
+
+	/* Only traverse BSON document if we're not returning a raw BSON structure */
+	if (state.map.document.type != PHONGO_TYPEMAP_BSON) {
+		if (!bson_iter_init(&child, v_document)) {
+			php_phongo_bson_state_dtor(&state);
+			return false;
+		}
+
+		array_init(&state.zchild);
+
+		if (bson_iter_visit_all(&child, &php_bson_visitors, &state) || child.err_off) {
+			/* Iteration stopped prematurely due to corruption or a failed
+			 * visitor. Free state.zchild, which we just initialized, and return
+			 * true to stop iteration for our parent context. */
+			zval_ptr_dtor(&state.zchild);
+			php_phongo_bson_state_dtor(&state);
+			return true;
+		}
+	}
 
 	/* If php_phongo_bson_visit_binary() finds an ODM class, it should
 	 * supersede a default type map and named document class. */
@@ -821,6 +826,16 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 	}
 
 	switch (state.map.document.type) {
+		case PHONGO_TYPEMAP_BSON: {
+			php_phongo_bsondocument_t* intern;
+
+			object_init_ex(&state.zchild, php_phongo_bsondocument_ce);
+
+			intern       = Z_BSONDOCUMENT_OBJ_P(&state.zchild);
+			intern->bson = bson_copy(v_document);
+			break;
+		}
+
 		case PHONGO_TYPEMAP_NATIVE_ARRAY:
 			/* Do nothing, item will be added later */
 			break;
@@ -862,37 +877,51 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 	php_phongo_bson_state* parent_state = (php_phongo_bson_state*) data;
 	php_phongo_bson_state  state;
 
-	if (!bson_iter_init(&child, v_array)) {
-		return false;
-	}
-
 	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_ARRAY);
 
 	PHONGO_BSON_INIT_STATE(state);
 	php_phongo_bson_state_copy_ctor(&state, parent_state);
 
-	/* Note that we are visiting an array, so element visitors know to use
-	 * add_next_index() (i.e. disregard BSON keys) instead of add_assoc()
-	 * when building the PHP array.
-	 */
-	state.is_visiting_array = true;
-
-	array_init(&state.zchild);
-
-	if (bson_iter_visit_all(&child, &php_bson_visitors, &state) || child.err_off) {
-		/* Iteration stopped prematurely due to corruption or a failed
-		 * visitor. Free state.zchild, which we just initialized, and return
-		 * true to stop iteration for our parent context. */
-		zval_ptr_dtor(&state.zchild);
-		php_phongo_bson_state_dtor(&state);
-		return true;
-	}
-
 	/* Check for entries in the fieldPath type map key, and use them to
 	 * override the default ones for this type */
 	php_phongo_handle_field_path_entry_for_compound_type(&state, &state.map.array);
 
+	/* Only traverse BSON array if we're not returning a raw BSON structure */
+	if (state.map.array.type != PHONGO_TYPEMAP_BSON) {
+		if (!bson_iter_init(&child, v_array)) {
+			php_phongo_bson_state_dtor(&state);
+			return false;
+		}
+
+		/* Note that we are visiting an array, so element visitors know to use
+		 * add_next_index() (i.e. disregard BSON keys) instead of add_assoc()
+		 * when building the PHP array.
+		 */
+		state.is_visiting_array = true;
+
+		array_init(&state.zchild);
+
+		if (bson_iter_visit_all(&child, &php_bson_visitors, &state) || child.err_off) {
+			/* Iteration stopped prematurely due to corruption or a failed
+			 * visitor. Free state.zchild, which we just initialized, and return
+			 * true to stop iteration for our parent context. */
+			zval_ptr_dtor(&state.zchild);
+			php_phongo_bson_state_dtor(&state);
+			return true;
+		}
+	}
+
 	switch (state.map.array.type) {
+		case PHONGO_TYPEMAP_BSON: {
+			php_phongo_bsonarray_t* intern;
+
+			object_init_ex(&state.zchild, php_phongo_bsonarray_ce);
+
+			intern       = Z_BSONARRAY_OBJ_P(&state.zchild);
+			intern->bson = bson_copy(v_array);
+			break;
+		}
+
 		case PHONGO_TYPEMAP_CLASS: {
 			zval obj;
 
@@ -1004,6 +1033,22 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 	if (!php_phongo_bson_state_is_initialized(state)) {
 		php_phongo_bson_state_ctor(state);
 		must_dtor_state = true;
+	}
+
+	// Handle raw root type early to avoid creating an iterator and visiting elements
+	if (state->map.root.type == PHONGO_TYPEMAP_BSON) {
+		zval                       obj;
+		php_phongo_bsondocument_t* intern;
+
+		object_init_ex(&obj, php_phongo_bsondocument_ce);
+
+		intern       = Z_BSONDOCUMENT_OBJ_P(&obj);
+		intern->bson = bson_copy(b);
+		zval_ptr_dtor(&state->zchild);
+		ZVAL_COPY_VALUE(&state->zchild, &obj);
+
+		retval = true;
+		goto cleanup;
 	}
 
 	if (!bson_iter_init(&iter, b)) {
@@ -1155,6 +1200,9 @@ static bool php_phongo_bson_state_parse_type(zval* options, const char* name, ph
 
 	if (!strcasecmp(classname, "array")) {
 		element->type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		element->ce   = NULL;
+	} else if (!strcasecmp(classname, "bson")) {
+		element->type = PHONGO_TYPEMAP_BSON;
 		element->ce   = NULL;
 	} else if (!strcasecmp(classname, "stdclass") || !strcasecmp(classname, "object")) {
 		element->type = PHONGO_TYPEMAP_NATIVE_OBJECT;
