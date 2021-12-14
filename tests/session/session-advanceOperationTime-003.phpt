@@ -21,7 +21,7 @@ class MyTimestamp implements MongoDB\BSON\TimestampInterface
         return 1234;
     }
 
-    public function __toString(): string
+    public function __toString()
     {
         return sprintf('[%d:%d]', $this->getIncrement(), $this->getTimestamp());
     }
