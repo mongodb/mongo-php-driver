@@ -41,7 +41,7 @@ if test "$PHP_MONGODB" != "no"; then
     dnl logical not of a non-boolean expression
     AX_CHECK_COMPILE_FLAG(-Wlogical-not-parentheses,        _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wlogical-not-parentheses"      ,, -Werror)
     dnl Warn about suspicious uses of logical operators in expressions
-    AX_CHECK_COMPILE_FLAG(-Wlogical-op,                     _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wlogical-op",, -Werror         ,, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wlogical-op,                     _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wlogical-op"                   ,, -Werror)
     dnl memory error detector.
     dnl FIXME: -fsanitize=address,undefined for clang. The AX_CHECK_COMPILE_FLAG macro isn't happy about that string :(
     AX_CHECK_COMPILE_FLAG(-fsanitize-address,               _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -fsanitize-address"             ,, -Werror)
