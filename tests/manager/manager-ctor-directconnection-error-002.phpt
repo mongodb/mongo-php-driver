@@ -21,5 +21,5 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse MongoDB URI: 'mongodb+srv://a.example.com/?directConnection=true'. SRV URI not allowed with directConnection option.
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse URI options: SRV URI not allowed with directConnection option.
+Failed to parse URI options: SRV URI not allowed with directConnection option
 ===DONE===

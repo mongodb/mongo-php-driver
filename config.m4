@@ -294,6 +294,7 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_BUNDLED_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
     dnl TODO: MONGOCRYPT-219 makes the -std argument obsolete
     PHP_MONGODB_LIBMONGOCRYPT_CFLAGS="-DKMS_MSG_STATIC -std=gnu99"
+    PHP_MONGODB_ZLIB_CFLAGS=""
 
     dnl M4 doesn't know if we're building statically or as a shared module, so
     dnl attempt to include both paths while ignoring errors. If neither path
@@ -430,8 +431,7 @@ if test "$PHP_MONGODB" != "no"; then
     ])
 
     if test "x$bundled_zlib" = "xyes"; then
-      PHP_MONGODB_ZLIB_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS"
-      AC_CHECK_HEADER([unistd.h], [PHP_MONGODB_ZLIB_CFLAGS="$PHP_MONGODB_ZLIB_CFLAGS -DHAVE_UNISTD_H=1"], [])
+      PHP_MONGODB_ZLIB_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS $PHP_MONGODB_ZLIB_CFLAGS"
       PHP_MONGODB_ADD_SOURCES([src/libmongoc/src/zlib-1.2.11/], $PHP_MONGODB_ZLIB_SOURCES, $PHP_MONGODB_ZLIB_CFLAGS)
       PHP_MONGODB_ADD_INCLUDE([src/libmongoc/src/zlib-1.2.11/])
       PHP_MONGODB_ADD_BUILD_DIR([src/libmongoc/src/zlib-1.2.11/])

@@ -45,6 +45,8 @@ PKG_CHECK_MODULES([PHP_MONGODB_ZLIB],[zlib],[
 
 dnl If zlib was not found, use libmongoc's bundled version
 AS_IF([test "$found_zlib" != "yes"],[
+  AC_CHECK_HEADER([unistd.h],[PHP_MONGODB_ZLIB_CFLAGS="$PHP_MONGODB_ZLIB_CFLAGS -DHAVE_UNISTD_H"])
+  AC_CHECK_HEADER([stdarg.h],[PHP_MONGODB_ZLIB_CFLAGS="$PHP_MONGODB_ZLIB_CFLAGS -DHAVE_STDARG_H"])
   bundled_zlib="yes"
 ])
 
