@@ -21,5 +21,5 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse MongoDB URI: 'mongodb://a.example.com,b.example.com/?directConnection=true'. Multiple seeds not allowed with directConnection option.
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse URI options: Multiple seeds not allowed with directConnection option.
+Failed to parse URI options: Multiple seeds not allowed with directConnection option
 ===DONE===

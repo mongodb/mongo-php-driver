@@ -1,3 +1,12 @@
+if test "$os_win32" != "yes"; then
+    PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS -D_DEFAULT_SOURCE"
+fi
+
+# Enable macOS extensions for strlcpy and arc4random
+if test "$os_darwin" = "yes"; then
+    PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS -D_DARWIN_C_SOURCE=1"
+fi
+
 # Check for strnlen()
 dnl AC_CHECK_FUNC isn't properly respecting _XOPEN_SOURCE for strnlen for unknown reason
 AC_SUBST(BSON_HAVE_STRNLEN, 0)
@@ -78,6 +87,10 @@ AC_CHECK_FUNC(gmtime_r, [AC_SUBST(BSON_HAVE_GMTIME_R, 1)])
 # Check for rand_r()
 AC_SUBST(BSON_HAVE_RAND_R, 0)
 AC_CHECK_FUNC(rand_r, [AC_SUBST(BSON_HAVE_RAND_R, 1)])
+
+# Check for arc4random_buf()
+AC_SUBST(BSON_HAVE_ARC4RANDOM_BUF, 0)
+AC_CHECK_FUNC(arc4random_buf, [AC_SUBST(BSON_HAVE_ARC4RANDOM_BUF, 1)])
 
 # Check for pthreads. We might need to make this better to handle mingw,
 # but I actually think it is okay to just check for it even though we will

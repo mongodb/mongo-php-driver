@@ -1435,126 +1435,6 @@ static const char* php_phongo_bson_type_to_string(bson_type_t type) /* {{{ */
 		bson_iter_key(&(iter)),                        \
 		php_phongo_bson_type_to_string(bson_iter_type(&(iter))))
 
-static bool php_phongo_uri_finalize_auth(mongoc_uri_t* uri) /* {{{ */
-{
-	const bson_t* credentials = mongoc_uri_get_credentials(uri);
-	bson_iter_t   iter;
-	const char*   source       = NULL;
-	const char*   username     = mongoc_uri_get_username(uri);
-	bool          require_auth = username != NULL;
-
-	if (bson_iter_init_find_case(&iter, credentials, MONGOC_URI_AUTHSOURCE)) {
-		source       = bson_iter_utf8(&iter, NULL);
-		require_auth = true;
-	}
-
-	/* authSource with GSSAPI or X509 should always be external */
-	if (mongoc_uri_get_auth_mechanism(uri)) {
-		if (!strcasecmp(mongoc_uri_get_auth_mechanism(uri), "GSSAPI") ||
-			!strcasecmp(mongoc_uri_get_auth_mechanism(uri), "MONGODB-X509")) {
-
-			if (source) {
-				if (strcasecmp(source, "$external")) {
-					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: GSSAPI and X509 require \"$external\" authSource.");
-					return false;
-				}
-			} else {
-				mongoc_uri_set_auth_source(uri, "$external");
-			}
-		}
-
-		/* Mechanisms other than MONGODB-X509 and MONGODB-AWS require a username */
-		if (strcasecmp(mongoc_uri_get_auth_mechanism(uri), "MONGODB-X509") &&
-			strcasecmp(mongoc_uri_get_auth_mechanism(uri), "MONGODB-AWS")) {
-			if (!mongoc_uri_get_username(uri) ||
-				!strcmp(mongoc_uri_get_username(uri), "")) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: '%s' authentication mechanism requires username.", mongoc_uri_get_auth_mechanism(uri));
-				return false;
-			}
-		}
-
-		/* MONGODB-X509 errors if a password is supplied. */
-		if (!strcasecmp(mongoc_uri_get_auth_mechanism(uri), "MONGODB-X509")) {
-			if (mongoc_uri_get_password(uri)) {
-				phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: X509 authentication mechanism does not accept a password.");
-				return false;
-			}
-		}
-	} else if (require_auth) {
-		if (source && strcmp(source, "$external") != 0 && (!username || strcmp(username, "") == 0)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: Default authentication mechanism requires username.");
-			return false;
-		}
-	}
-
-	return true;
-} /* }}} */
-
-static bool php_phongo_uri_finalize_directconnection(mongoc_uri_t* uri) /* {{{ */
-{
-	const mongoc_host_list_t* hosts;
-
-	if (!mongoc_uri_get_option_as_bool(uri, MONGOC_URI_DIRECTCONNECTION, false)) {
-		return true;
-	}
-
-	/* Per the URI options spec, directConnection conflicts with multiple hosts
-	 * and SRV URIs, which may resolve to multiple hosts. */
-	if (!strncmp(mongoc_uri_get_string(uri), "mongodb+srv://", 14)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: SRV URI not allowed with directConnection option.");
-		return false;
-	}
-
-	hosts = mongoc_uri_get_hosts(uri);
-
-	if (hosts && hosts->next) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: Multiple seeds not allowed with directConnection option.");
-		return false;
-	}
-
-	return true;
-} /* }}} */
-
-static bool php_phongo_uri_finalize_tls(mongoc_uri_t* uri) /* {{{ */
-{
-	const bson_t* options;
-	bson_iter_t   iter;
-
-	if (!(options = mongoc_uri_get_options(uri))) {
-		return true;
-	}
-
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSINSECURE) &&
-		(bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES) ||
-		 bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSALLOWINVALIDHOSTNAMES) ||
-		 bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSDISABLEOCSPENDPOINTCHECK) ||
-		 bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSDISABLECERTIFICATEREVOCATIONCHECK))) {
-		phongo_throw_exception(
-			PHONGO_ERROR_INVALID_ARGUMENT,
-			"Failed to parse URI options: %s may not be combined with %s, %s, %s, or %s.",
-			MONGOC_URI_TLSINSECURE,
-			MONGOC_URI_TLSALLOWINVALIDCERTIFICATES,
-			MONGOC_URI_TLSALLOWINVALIDHOSTNAMES,
-			MONGOC_URI_TLSDISABLEOCSPENDPOINTCHECK,
-			MONGOC_URI_TLSDISABLECERTIFICATEREVOCATIONCHECK);
-		return false;
-	}
-
-	if (bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSALLOWINVALIDCERTIFICATES) &&
-		(bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSDISABLEOCSPENDPOINTCHECK) ||
-		 bson_iter_init_find_case(&iter, options, MONGOC_URI_TLSDISABLECERTIFICATEREVOCATIONCHECK))) {
-		phongo_throw_exception(
-			PHONGO_ERROR_INVALID_ARGUMENT,
-			"Failed to parse URI options: %s may not be combined with %s or %s.",
-			MONGOC_URI_TLSALLOWINVALIDCERTIFICATES,
-			MONGOC_URI_TLSDISABLEOCSPENDPOINTCHECK,
-			MONGOC_URI_TLSDISABLECERTIFICATEREVOCATIONCHECK);
-		return false;
-	}
-
-	return true;
-} /* }}} */
-
 static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options) /* {{{ */
 {
 	bson_iter_t iter;
@@ -1753,17 +1633,6 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options) 
 
 			continue;
 		}
-	}
-
-	/* Validate any interactions between URI options */
-	if (!php_phongo_uri_finalize_auth(uri)) {
-		/* Exception should already have been thrown */
-		return false;
-	}
-
-	if (!php_phongo_uri_finalize_directconnection(uri)) {
-		/* Exception should already have been thrown */
-		return false;
 	}
 
 	return true;
@@ -2566,7 +2435,9 @@ cleanup:
 
 static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zval* driverOptions) /* {{{ */
 {
-	const char *mongoc_version, *bson_version;
+	const char *     mongoc_version, *bson_version;
+	mongoc_client_t* client;
+	bson_error_t     error = { 0 };
 
 #ifdef HAVE_SYSTEM_LIBMONGOC
 	mongoc_version = mongoc_get_version();
@@ -2592,7 +2463,11 @@ static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zv
 
 	php_phongo_set_handshake_data(driverOptions);
 
-	return mongoc_client_new_from_uri(uri);
+	if (!(client = mongoc_client_new_from_uri_with_error(uri, &error))) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Failed to parse URI options: %s", error.message);
+	}
+
+	return client;
 } /* }}} */
 
 /* Adds a client to the appropriate registry. Persistent and request-scoped
@@ -3321,22 +3196,12 @@ void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, 
 	if (EG(exception)) {
 		goto cleanup;
 	}
-
-	if (!php_phongo_uri_finalize_tls(uri)) {
-		/* Exception should already have been thrown */
-		goto cleanup;
-	}
-#else
-	if (mongoc_uri_get_tls(uri)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Cannot create SSL client. SSL is not enabled in this build.");
-		goto cleanup;
-	}
 #endif
 
 	manager->client = php_phongo_make_mongo_client(uri, driverOptions);
 
 	if (!manager->client) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to create Manager from URI: '%s'", uri_string);
+		/* Exception should already have been thrown */
 		goto cleanup;
 	}
 

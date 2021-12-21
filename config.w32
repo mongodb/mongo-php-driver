@@ -147,7 +147,8 @@ if (PHP_MONGODB != "no") {
     BSON_HAVE_SYSCALL_TID: 0,
     BSON_HAVE_DECIMAL128: 0,
     BSON_HAVE_GMTIME_R: 0,
-    BSON_HAVE_RAND_R: 0
+    BSON_HAVE_RAND_R: 0,
+    BSON_HAVE_ARC4RANDOM_BUF: 0
   };
 
   if (CHECK_FUNC_IN_HEADER("stdio.h", "_set_output_format")) {
