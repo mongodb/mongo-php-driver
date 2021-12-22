@@ -18,5 +18,5 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse URI options: 'SCRAM-SHA-1' authentication mechanism requires username.
+Failed to parse URI options: 'SCRAM-SHA-1' authentication mechanism requires username
 ===DONE===
