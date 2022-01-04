@@ -30,16 +30,11 @@ zend_class_entry* php_phongo_topologyopeningevent_ce;
    Returns this event's topology id */
 static PHP_METHOD(TopologyOpeningEvent, getTopologyId)
 {
-	php_phongo_objectid_t*             topology_id;
 	php_phongo_topologyopeningevent_t* intern = Z_TOPOLOGYOPENINGEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	object_init_ex(return_value, php_phongo_objectid_ce);
-
-	topology_id = Z_OBJECTID_OBJ_P(return_value);
-	bson_oid_to_string(&intern->topology_id, topology_id->oid);
-	topology_id->initialized = true;
+	phongo_objectid_init(return_value, &intern->topology_id);
 } /* }}} */
 
 /* {{{ MongoDB\Driver\Monitoring\TopologyOpeningEvent function entries */
@@ -84,14 +79,16 @@ static HashTable* php_phongo_topologyopeningevent_get_debug_info(phongo_compat_o
 {
 	php_phongo_topologyopeningevent_t* intern;
 	zval                               retval = ZVAL_STATIC_INIT;
-	char                               topology_id[25];
 
 	intern   = Z_OBJ_TOPOLOGYOPENINGEVENT(PHONGO_COMPAT_GET_OBJ(object));
 	*is_temp = 1;
 	array_init_size(&retval, 1);
 
-	bson_oid_to_string(&intern->topology_id, topology_id);
-	ADD_ASSOC_STRING(&retval, "topologyId", topology_id);
+	{
+		zval topology_id;
+		phongo_objectid_init(&topology_id, &intern->topology_id);
+		ADD_ASSOC_ZVAL_EX(&retval, "topologyId", &topology_id);
+	}
 
 	return Z_ARRVAL(retval);
 } /* }}} */
@@ -100,8 +97,6 @@ static HashTable* php_phongo_topologyopeningevent_get_debug_info(phongo_compat_o
 void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
-	(void) type;
-	(void) module_number;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "TopologyOpeningEvent", php_phongo_topologyopeningevent_me);
 	php_phongo_topologyopeningevent_ce                = zend_register_internal_class(&ce);
@@ -113,8 +108,6 @@ void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_topologyopeningevent.get_debug_info = php_phongo_topologyopeningevent_get_debug_info;
 	php_phongo_handler_topologyopeningevent.free_obj       = php_phongo_topologyopeningevent_free_object;
 	php_phongo_handler_topologyopeningevent.offset         = XtOffsetOf(php_phongo_topologyopeningevent_t, std);
-
-	return;
 } /* }}} */
 
 /*

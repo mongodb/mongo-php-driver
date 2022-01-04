@@ -51,10 +51,9 @@ static PHP_METHOD(TopologyDescription, getServers)
 	array_init_size(return_value, n);
 
 	for (i = 0; i < n; i++) {
-		zval obj;
-
-		phongo_serverdescription_init(&obj, mongoc_server_description_new_copy(sds[i]));
-		add_next_index_zval(return_value, &obj);
+		zval sd;
+		phongo_serverdescription_init(&sd, sds[i]);
+		add_next_index_zval(return_value, &sd);
 	}
 
 	mongoc_server_descriptions_destroy_all(sds, n);
@@ -178,17 +177,9 @@ HashTable* php_phongo_topologydescription_get_properties_hash(phongo_compat_obje
 		array_init_size(&servers, n);
 
 		for (i = 0; i < n; i++) {
-			zval obj;
-
-			if (!php_phongo_server_description_to_zval(&obj, sds[i])) {
-				/* Exception already thrown */
-				zval_ptr_dtor(&obj);
-				zval_ptr_dtor(&servers);
-				mongoc_server_descriptions_destroy_all(sds, n);
-				goto done;
-			}
-
-			add_next_index_zval(&servers, &obj);
+			zval sd;
+			phongo_serverdescription_init(&sd, sds[i]);
+			add_next_index_zval(&servers, &sd);
 		}
 
 		zend_hash_str_update(props, "servers", sizeof("servers") - 1, &servers);
@@ -202,7 +193,6 @@ HashTable* php_phongo_topologydescription_get_properties_hash(phongo_compat_obje
 		zend_hash_str_update(props, "type", sizeof("type") - 1, &type);
 	}
 
-done:
 	return props;
 } /* }}} */
 

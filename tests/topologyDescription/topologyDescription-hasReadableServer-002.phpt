@@ -17,6 +17,10 @@ class TopologyDescriptionProvider implements MongoDB\Driver\Monitoring\SDAMSubsc
 
     public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event) {}
 
+    public function serverHeartbeatStarted(MongoDB\Driver\Monitoring\ServerHeartbeatStartedEvent $event) {}
+
+    public function serverHeartbeatSucceeded(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent $event) {}
+
     public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event) {}
 
     public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event)

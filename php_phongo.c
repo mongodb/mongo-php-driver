@@ -358,14 +358,14 @@ void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id) /
 }
 /* }}} */
 
-void phongo_serverdescription_init(zval* return_value, mongoc_server_description_t* server_description) /* {{{ */
+void phongo_serverdescription_init_ex(zval* return_value, mongoc_server_description_t* server_description, bool copy) /* {{{ */
 {
 	php_phongo_serverdescription_t* intern;
 
 	object_init_ex(return_value, php_phongo_serverdescription_ce);
 
 	intern                     = Z_SERVERDESCRIPTION_OBJ_P(return_value);
-	intern->server_description = server_description;
+	intern->server_description = copy ? mongoc_server_description_new_copy(server_description) : server_description;
 }
 /* }}} */
 
@@ -401,7 +401,7 @@ void phongo_topologydescription_init(zval* return_value, mongoc_topology_descrip
 	object_init_ex(return_value, php_phongo_topologydescription_ce);
 
 	intern                       = Z_TOPOLOGYDESCRIPTION_OBJ_P(return_value);
-	intern->topology_description = topology_description;
+	intern->topology_description = mongoc_topology_description_new_copy(topology_description);
 }
 /* }}} */
 
