@@ -177,6 +177,8 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/Monitoring/ServerChangedEvent.c \
     src/MongoDB/Monitoring/ServerClosedEvent.c \
     src/MongoDB/Monitoring/ServerHeartbeatFailedEvent.c \
+    src/MongoDB/Monitoring/ServerHeartbeatStartedEvent.c \
+    src/MongoDB/Monitoring/ServerHeartbeatSucceededEvent.c \
     src/MongoDB/Monitoring/ServerOpeningEvent.c \
     src/MongoDB/Monitoring/TopologyChangedEvent.c \
     src/MongoDB/Monitoring/TopologyClosedEvent.c \
