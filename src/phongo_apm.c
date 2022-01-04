@@ -353,6 +353,7 @@ static void phongo_apm_server_heartbeat_failed(const mongoc_apm_server_heartbeat
 	php_phongo_serverheartbeatfailedevent_t* p_event;
 	zval                                     z_event;
 	const mongoc_host_list_t*                host_list;
+	bson_error_t                             tmp_error = { 0 };
 
 	client      = mongoc_apm_server_heartbeat_failed_get_context(event);
 	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
@@ -370,11 +371,89 @@ static void phongo_apm_server_heartbeat_failed(const mongoc_apm_server_heartbeat
 	bson_strncpy(p_event->host, host_list->host, sizeof(p_event->host));
 	p_event->port = host_list->port;
 
-	p_event->awaited  = mongoc_apm_server_heartbeat_failed_get_awaited(event);
-	p_event->duration = mongoc_apm_server_heartbeat_failed_get_duration(event);
-	mongoc_apm_server_heartbeat_failed_get_error(event, p_event->error);
+	p_event->awaited         = mongoc_apm_server_heartbeat_failed_get_awaited(event);
+	p_event->duration_micros = mongoc_apm_server_heartbeat_failed_get_duration(event);
 
-	phongo_apm_dispatch_event(subscribers, "serverClosed", &z_event);
+	/* We need to process and convert the error right here, otherwise
+	 * debug_info will turn into a recursive loop, and with the wrong trace
+	 * locations */
+	mongoc_apm_server_heartbeat_failed_get_error(event, &tmp_error);
+
+	object_init_ex(&p_event->z_error, phongo_exception_from_mongoc_domain(tmp_error.domain, tmp_error.code));
+	zend_update_property_string(zend_ce_exception, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("message"), tmp_error.message);
+	zend_update_property_long(zend_ce_exception, PHONGO_COMPAT_OBJ_P(&p_event->z_error), ZEND_STRL("code"), tmp_error.code);
+
+	phongo_apm_dispatch_event(subscribers, "serverHeartbeatFailed", &z_event);
+	zval_ptr_dtor(&z_event);
+
+cleanup:
+	zend_hash_destroy(subscribers);
+	FREE_HASHTABLE(subscribers);
+}
+
+static void phongo_apm_server_heartbeat_succeeded(const mongoc_apm_server_heartbeat_succeeded_t* event)
+{
+	mongoc_client_t*                            client;
+	HashTable*                                  subscribers;
+	php_phongo_serverheartbeatsucceededevent_t* p_event;
+	zval                                        z_event;
+	const mongoc_host_list_t*                   host_list;
+
+	client      = mongoc_apm_server_heartbeat_succeeded_get_context(event);
+	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+
+	/* Return early if there are no APM subscribers to notify */
+	if (zend_hash_num_elements(subscribers) == 0) {
+		goto cleanup;
+	}
+
+	object_init_ex(&z_event, php_phongo_serverheartbeatsucceededevent_ce);
+	p_event = Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(&z_event);
+
+	host_list = mongoc_apm_server_heartbeat_succeeded_get_host(event);
+	memset(p_event->host, 0, sizeof(p_event->host));
+	bson_strncpy(p_event->host, host_list->host, sizeof(p_event->host));
+	p_event->port = host_list->port;
+
+	p_event->awaited         = mongoc_apm_server_heartbeat_succeeded_get_awaited(event);
+	p_event->duration_micros = mongoc_apm_server_heartbeat_succeeded_get_duration(event);
+	p_event->reply           = bson_copy(mongoc_apm_server_heartbeat_succeeded_get_reply(event));
+
+	phongo_apm_dispatch_event(subscribers, "serverHeartbeatSucceeded", &z_event);
+	zval_ptr_dtor(&z_event);
+
+cleanup:
+	zend_hash_destroy(subscribers);
+	FREE_HASHTABLE(subscribers);
+}
+
+static void phongo_apm_server_heartbeat_started(const mongoc_apm_server_heartbeat_started_t* event)
+{
+	mongoc_client_t*                          client;
+	HashTable*                                subscribers;
+	php_phongo_serverheartbeatstartedevent_t* p_event;
+	zval                                      z_event;
+	const mongoc_host_list_t*                 host_list;
+
+	client      = mongoc_apm_server_heartbeat_started_get_context(event);
+	subscribers = phongo_apm_get_subscribers_to_notify(php_phongo_sdamsubscriber_ce, client);
+
+	/* Return early if there are no APM subscribers to notify */
+	if (zend_hash_num_elements(subscribers) == 0) {
+		goto cleanup;
+	}
+
+	object_init_ex(&z_event, php_phongo_serverheartbeatstartedevent_ce);
+	p_event = Z_SERVERHEARTBEATSTARTEDEVENT_OBJ_P(&z_event);
+
+	host_list = mongoc_apm_server_heartbeat_started_get_host(event);
+	memset(p_event->host, 0, sizeof(p_event->host));
+	bson_strncpy(p_event->host, host_list->host, sizeof(p_event->host));
+	p_event->port = host_list->port;
+
+	p_event->awaited = mongoc_apm_server_heartbeat_started_get_awaited(event);
+
+	phongo_apm_dispatch_event(subscribers, "serverHeartbeatStarted", &z_event);
 	zval_ptr_dtor(&z_event);
 
 cleanup:
@@ -517,6 +596,8 @@ bool phongo_apm_set_callbacks(mongoc_client_t* client)
 	mongoc_apm_set_server_changed_cb(callbacks, phongo_apm_server_changed);
 	mongoc_apm_set_server_closed_cb(callbacks, phongo_apm_server_closed);
 	mongoc_apm_set_server_heartbeat_failed_cb(callbacks, phongo_apm_server_heartbeat_failed);
+	mongoc_apm_set_server_heartbeat_succeeded_cb(callbacks, phongo_apm_server_heartbeat_succeeded);
+	mongoc_apm_set_server_heartbeat_started_cb(callbacks, phongo_apm_server_heartbeat_started);
 	mongoc_apm_set_server_opening_cb(callbacks, phongo_apm_server_opening);
 	mongoc_apm_set_topology_changed_cb(callbacks, phongo_apm_topology_changed);
 	mongoc_apm_set_topology_closed_cb(callbacks, phongo_apm_topology_closed);

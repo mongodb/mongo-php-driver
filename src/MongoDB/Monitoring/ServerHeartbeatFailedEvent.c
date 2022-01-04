@@ -26,26 +26,26 @@
 
 zend_class_entry* php_phongo_serverheartbeatfailedevent_ce;
 
-/* {{{ proto boolean ServerHeartbeatFailedEvent::getAwaited()
-   Returns whether this event came from an awaitable hello */
-static PHP_METHOD(ServerHeartbeatFailedEvent, getAwaited)
+/* {{{ proto integer ServerHeartbeatFailedEvent::getDurationMicros()
+   Returns this event's duration in microseconds */
+static PHP_METHOD(ServerHeartbeatFailedEvent, getDurationMicros)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_BOOL(intern->awaited);
+	RETVAL_LONG(intern->duration_micros);
 } /* }}} */
 
-/* {{{ proto integer ServerHeartbeatFailedEvent::getDuration()
-   Returns this event's duration in microseconds */
-static PHP_METHOD(ServerHeartbeatFailedEvent, getDuration)
+/* {{{ proto Exception ServerHeartbeatFailedEvent::getError()
+   Returns the error associated with the event */
+PHP_METHOD(ServerHeartbeatFailedEvent, getError)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_LONG(intern->duration);
+	RETURN_ZVAL(&intern->z_error, 1, 0);
 } /* }}} */
 
 /* {{{ proto string ServerHeartbeatFailedEvent::getHost()
@@ -70,6 +70,17 @@ static PHP_METHOD(ServerHeartbeatFailedEvent, getPort)
 	RETVAL_LONG(intern->port);
 } /* }}} */
 
+/* {{{ proto boolean ServerHeartbeatFailedEvent::isAwaited()
+   Returns whether this event came from an awaitable hello */
+static PHP_METHOD(ServerHeartbeatFailedEvent, isAwaited)
+{
+	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETVAL_BOOL(intern->awaited);
+} /* }}} */
+
 /* {{{ MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent function entries */
 ZEND_BEGIN_ARG_INFO_EX(ai_ServerHeartbeatFailedEvent_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -77,10 +88,11 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_phongo_serverheartbeatfailedevent_me[] = {
 	/* clang-format off */
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_ServerHeartbeatFailedEvent_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	PHP_ME(ServerHeartbeatFailedEvent, getAwaited, ai_ServerHeartbeatFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerHeartbeatFailedEvent, getDuration, ai_ServerHeartbeatFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ServerHeartbeatFailedEvent, getDurationMicros, ai_ServerHeartbeatFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ServerHeartbeatFailedEvent, getError, ai_ServerHeartbeatFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ServerHeartbeatFailedEvent, getHost, ai_ServerHeartbeatFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ServerHeartbeatFailedEvent, getPort, ai_ServerHeartbeatFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(ServerHeartbeatFailedEvent, isAwaited, ai_ServerHeartbeatFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_ServerHeartbeatFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
 	/* clang-format on */
@@ -95,6 +107,10 @@ static void php_phongo_serverheartbeatfailedevent_free_object(zend_object* objec
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_OBJ_SERVERHEARTBEATFAILEDEVENT(object);
 
 	zend_object_std_dtor(&intern->std);
+
+	if (!Z_ISUNDEF(intern->z_error)) {
+		zval_ptr_dtor(&intern->z_error);
+	}
 } /* }}} */
 
 static zend_object* php_phongo_serverheartbeatfailedevent_create_object(zend_class_entry* class_type) /* {{{ */
@@ -118,12 +134,15 @@ static HashTable* php_phongo_serverheartbeatfailedevent_get_debug_info(phongo_co
 
 	intern   = Z_OBJ_SERVERHEARTBEATFAILEDEVENT(PHONGO_COMPAT_GET_OBJ(object));
 	*is_temp = 1;
-	array_init_size(&retval, 4);
+	array_init_size(&retval, 5);
 
 	ADD_ASSOC_STRING(&retval, "host", intern->host);
 	ADD_ASSOC_LONG_EX(&retval, "port", intern->port);
 	ADD_ASSOC_BOOL_EX(&retval, "awaited", intern->awaited);
-	ADD_ASSOC_LONG_EX(&retval, "duration", intern->duration);
+	ADD_ASSOC_INT64(&retval, "durationMicros", intern->duration_micros);
+
+	ADD_ASSOC_ZVAL_EX(&retval, "error", &intern->z_error);
+	Z_ADDREF(intern->z_error);
 
 	return Z_ARRVAL(retval);
 } /* }}} */

@@ -307,13 +307,29 @@ typedef struct {
 } php_phongo_serverclosedevent_t;
 
 typedef struct {
-	bool          awaited;
-	int64_t       duration;
-	bson_error_t* error;
-	char          host[BSON_HOST_NAME_MAX + 1];
-	uint16_t      port;
-	zend_object   std;
+	bool        awaited;
+	uint64_t    duration_micros;
+	zval        z_error;
+	char        host[BSON_HOST_NAME_MAX + 1];
+	uint16_t    port;
+	zend_object std;
 } php_phongo_serverheartbeatfailedevent_t;
+
+typedef struct {
+	bool        awaited;
+	char        host[BSON_HOST_NAME_MAX + 1];
+	uint16_t    port;
+	zend_object std;
+} php_phongo_serverheartbeatstartedevent_t;
+
+typedef struct {
+	bool        awaited;
+	uint64_t    duration_micros;
+	char        host[BSON_HOST_NAME_MAX + 1];
+	uint16_t    port;
+	bson_t*     reply;
+	zend_object std;
+} php_phongo_serverheartbeatsucceededevent_t;
 
 typedef struct {
 	bson_oid_t  topology_id;
