@@ -52,44 +52,33 @@ static PHP_METHOD(ServerChangedEvent, getPort)
    Returns this event's new description */
 static PHP_METHOD(ServerChangedEvent, getNewDescription)
 {
-	mongoc_server_description_t*     server_description;
 	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	server_description = mongoc_server_description_new_copy(intern->new_server_description);
-
-	phongo_serverdescription_init(return_value, server_description);
+	phongo_serverdescription_init(return_value, intern->new_server_description);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\ServerDescription ServerChangedEvent::getPreviousDescription()
    Returns this event's previous description */
 static PHP_METHOD(ServerChangedEvent, getPreviousDescription)
 {
-	mongoc_server_description_t*     server_description;
 	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	server_description = mongoc_server_description_new_copy(intern->old_server_description);
-
-	phongo_serverdescription_init(return_value, server_description);
+	phongo_serverdescription_init(return_value, intern->old_server_description);
 } /* }}} */
 
 /* {{{ proto MongoDB\BSON\ObjectId ServerChangedEvent::getTopologyId()
    Returns this event's topology id */
 static PHP_METHOD(ServerChangedEvent, getTopologyId)
 {
-	php_phongo_objectid_t*           topology_id;
 	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	object_init_ex(return_value, php_phongo_objectid_ce);
-
-	topology_id = Z_OBJECTID_OBJ_P(return_value);
-	bson_oid_to_string(&intern->topology_id, topology_id->oid);
-	topology_id->initialized = true;
+	phongo_objectid_init(return_value, &intern->topology_id);
 } /* }}} */
 
 /* {{{ MongoDB\Driver\Monitoring\ServerChangedEvent function entries */
@@ -146,7 +135,6 @@ static HashTable* php_phongo_serverchangedevent_get_debug_info(phongo_compat_obj
 {
 	php_phongo_serverchangedevent_t* intern;
 	zval                             retval = ZVAL_STATIC_INIT;
-	char                             topology_id[25];
 
 	intern   = Z_OBJ_SERVERCHANGEDEVENT(PHONGO_COMPAT_GET_OBJ(object));
 	*is_temp = 1;
@@ -155,19 +143,22 @@ static HashTable* php_phongo_serverchangedevent_get_debug_info(phongo_compat_obj
 	ADD_ASSOC_STRING(&retval, "host", intern->host);
 	ADD_ASSOC_LONG_EX(&retval, "port", intern->port);
 
-	bson_oid_to_string(&intern->topology_id, topology_id);
-	ADD_ASSOC_STRING(&retval, "topologyId", topology_id);
-
 	{
-		zval new_server_description;
-		php_phongo_server_description_to_zval(&new_server_description, intern->new_server_description);
-		ADD_ASSOC_ZVAL_EX(&retval, "newServerDescription", &new_server_description);
+		zval topology_id;
+		phongo_objectid_init(&topology_id, &intern->topology_id);
+		ADD_ASSOC_ZVAL_EX(&retval, "topologyId", &topology_id);
 	}
 
 	{
-		zval old_server_description;
-		php_phongo_server_description_to_zval(&old_server_description, intern->old_server_description);
-		ADD_ASSOC_ZVAL_EX(&retval, "oldServerDescription", &old_server_description);
+		zval new_sd;
+		phongo_serverdescription_init(&new_sd, intern->new_server_description);
+		ADD_ASSOC_ZVAL_EX(&retval, "newDescription", &new_sd);
+	}
+
+	{
+		zval old_sd;
+		phongo_serverdescription_init(&old_sd, intern->old_server_description);
+		ADD_ASSOC_ZVAL_EX(&retval, "oldDescription", &old_sd);
 	}
 
 	return Z_ARRVAL(retval);

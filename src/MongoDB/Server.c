@@ -414,7 +414,8 @@ static PHP_METHOD(Server, getServerDescription)
 
 	server_description = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id);
 
-	phongo_serverdescription_init(return_value, server_description);
+	/* Avoid making another copy in phongo_serverdescription_init */
+	phongo_serverdescription_init_ex(return_value, server_description, false);
 } /* }}} */
 
 /* {{{ proto integer MongoDB\Driver\Server::getType()

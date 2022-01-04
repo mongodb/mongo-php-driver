@@ -7,8 +7,6 @@ MongoDB\Driver\Monitoring\TopologyOpeningEvent
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$m = create_test_manager();
-
 class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
     public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event) {}
@@ -16,6 +14,10 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
     public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event) {}
 
     public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event) {}
+
+    public function serverHeartbeatStarted(MongoDB\Driver\Monitoring\serverHeartbeatStartedEvent $event) {}
+
+    public function serverHeartbeatSucceeded(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent $event) {}
 
     public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event) {}
     
@@ -25,12 +27,14 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 
     public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event)
     {
-        echo "- getTopologyId() returns an ObjectId: ", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no', "\n";
+        printf("getTopologyId() returns an ObjectId: %s\n", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no');
+
+        var_dump($event);
     }
 }
 
-$subscriber = new MySubscriber;
-MongoDB\Driver\Monitoring\addSubscriber($subscriber);
+$m = create_test_manager();
+$m->addSubscriber(new MySubscriber);
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 $m->executeCommand(DATABASE_NAME, $command);
@@ -38,6 +42,13 @@ $m->executeCommand(DATABASE_NAME, $command);
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-- getTopologyId() returns an ObjectId: yes
+--EXPECTF--
+getTopologyId() returns an ObjectId: yes
+object(MongoDB\Driver\Monitoring\TopologyOpeningEvent)#%d (%d) {
+  ["topologyId"]=>
+  object(MongoDB\BSON\ObjectId)#%d (%d) {
+    ["oid"]=>
+    string(24) "%x"
+  }
+}
 ===DONE===

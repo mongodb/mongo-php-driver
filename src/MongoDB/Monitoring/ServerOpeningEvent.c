@@ -52,16 +52,11 @@ static PHP_METHOD(ServerOpeningEvent, getPort)
    Returns this event's topology id */
 static PHP_METHOD(ServerOpeningEvent, getTopologyId)
 {
-	php_phongo_objectid_t*           topology_id;
 	php_phongo_serveropeningevent_t* intern = Z_SERVEROPENINGEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	object_init_ex(return_value, php_phongo_objectid_ce);
-
-	topology_id = Z_OBJECTID_OBJ_P(return_value);
-	bson_oid_to_string(&intern->topology_id, topology_id->oid);
-	topology_id->initialized = true;
+	phongo_objectid_init(return_value, &intern->topology_id);
 } /* }}} */
 
 /* {{{ MongoDB\Driver\Monitoring\ServerOpeningEvent function entries */
@@ -108,7 +103,6 @@ static HashTable* php_phongo_serveropeningevent_get_debug_info(phongo_compat_obj
 {
 	php_phongo_serveropeningevent_t* intern;
 	zval                             retval = ZVAL_STATIC_INIT;
-	char                             topology_id[25];
 
 	intern   = Z_OBJ_SERVEROPENINGEVENT(PHONGO_COMPAT_GET_OBJ(object));
 	*is_temp = 1;
@@ -117,8 +111,11 @@ static HashTable* php_phongo_serveropeningevent_get_debug_info(phongo_compat_obj
 	ADD_ASSOC_STRING(&retval, "host", intern->host);
 	ADD_ASSOC_LONG_EX(&retval, "port", intern->port);
 
-	bson_oid_to_string(&intern->topology_id, topology_id);
-	ADD_ASSOC_STRING(&retval, "topologyId", topology_id);
+	{
+		zval topology_id;
+		phongo_objectid_init(&topology_id, &intern->topology_id);
+		ADD_ASSOC_ZVAL_EX(&retval, "topologyId", &topology_id);
+	}
 
 	return Z_ARRVAL(retval);
 } /* }}} */
