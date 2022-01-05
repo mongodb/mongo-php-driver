@@ -1,5 +1,5 @@
 --TEST--
-Connect to MongoDB with SSL and no host/cert verification
+Connect to MongoDB with SSL and no host/cert verification (driver options)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_ssl(); ?>
