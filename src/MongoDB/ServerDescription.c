@@ -28,6 +28,8 @@
 
 zend_class_entry* php_phongo_serverdescription_ce;
 
+/* Note: these constants are derived from _mongoc_topology_description_type,
+ * since mongoc_server_description_type_t is private. */
 #define PHONGO_SERVER_UNKNOWN "Unknown"
 #define PHONGO_SERVER_STANDALONE "Standalone"
 #define PHONGO_SERVER_MONGOS "Mongos"
@@ -37,6 +39,7 @@ zend_class_entry* php_phongo_serverdescription_ce;
 #define PHONGO_SERVER_RS_ARBITER "RSArbiter"
 #define PHONGO_SERVER_RS_OTHER "RSOther"
 #define PHONGO_SERVER_RS_GHOST "RSGhost"
+#define PHONGO_SERVER_LOAD_BALANCER "LoadBalancer"
 
 /* {{{ proto array MongoDB\Driver\ServerDescription::getHelloResponse()
    Returns the most recent "hello" response */
@@ -269,6 +272,7 @@ void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_ARBITER"), PHONGO_SERVER_RS_ARBITER);
 	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_OTHER"), PHONGO_SERVER_RS_OTHER);
 	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_GHOST"), PHONGO_SERVER_RS_GHOST);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_LOAD_BALANCER"), PHONGO_SERVER_LOAD_BALANCER);
 } /* }}} */
 
 /*
