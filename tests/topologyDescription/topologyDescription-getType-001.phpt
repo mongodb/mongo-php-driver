@@ -51,5 +51,5 @@ var_dump($topologyDescription->getType());
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-string(%d) "%r(Single|Sharded|ReplicaSetWithPrimary)%r"
+string(%d) "%r(Single|Sharded|ReplicaSetWithPrimary|LoadBalanced)%r"
 ===DONE===

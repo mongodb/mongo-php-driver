@@ -1157,36 +1157,6 @@ const mongoc_read_prefs_t* phongo_read_preference_from_zval(zval* zread_preferen
 } /* }}} */
 /* }}} */
 
-/* {{{ phongo zval from mongoc types */
-bool php_phongo_server_description_to_zval(zval* retval, mongoc_server_description_t* sd) /* {{{ */
-{
-	mongoc_host_list_t* host           = mongoc_server_description_host(sd);
-	const bson_t*       hello_response = mongoc_server_description_hello_response(sd);
-
-	array_init(retval);
-
-	ADD_ASSOC_STRING(retval, "host", host->host);
-	ADD_ASSOC_LONG_EX(retval, "port", host->port);
-	ADD_ASSOC_LONG_EX(retval, "type", php_phongo_server_description_type(sd));
-
-	{
-		php_phongo_bson_state state;
-
-		PHONGO_BSON_INIT_DEBUG_STATE(state);
-
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
-			zval_ptr_dtor(&state.zchild);
-			return false;
-		}
-
-		ADD_ASSOC_ZVAL_EX(retval, "hello_response", &state.zchild);
-	}
-	ADD_ASSOC_LONG_EX(retval, "last_update_time", (zend_long) mongoc_server_description_last_update_time(sd));
-	ADD_ASSOC_LONG_EX(retval, "round_trip_time", (zend_long) mongoc_server_description_round_trip_time(sd));
-
-	return true;
-} /* }}} */
-
 php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t* sd)
 {
 	const char* name = mongoc_server_description_type(sd);
@@ -1280,39 +1250,6 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_ser
 	} else {
 		ADD_ASSOC_LONG_EX(retval, "round_trip_time", (zend_long) mongoc_server_description_round_trip_time(sd));
 	}
-
-	return true;
-} /* }}} */
-
-bool php_phongo_topology_description_to_zval(zval* retval, mongoc_topology_description_t* td) /* {{{ */
-{
-	array_init(retval);
-
-	{
-		zval                          servers;
-		size_t                        i, n = 0;
-		mongoc_server_description_t** sds = mongoc_topology_description_get_servers(td, &n);
-
-		array_init_size(&servers, n);
-
-		for (i = 0; i < n; i++) {
-			zval obj;
-
-			if (!php_phongo_server_description_to_zval(&obj, sds[i])) {
-				/* Exception already thrown */
-				zval_ptr_dtor(&obj);
-				zval_ptr_dtor(&servers);
-				mongoc_server_descriptions_destroy_all(sds, n);
-				return false;
-			}
-
-			add_next_index_zval(&servers, &obj);
-		}
-		mongoc_server_descriptions_destroy_all(sds, n);
-
-		ADD_ASSOC_ZVAL_EX(retval, "servers", &servers);
-	}
-	ADD_ASSOC_STRING(retval, "type", mongoc_topology_description_type(td));
 
 	return true;
 } /* }}} */

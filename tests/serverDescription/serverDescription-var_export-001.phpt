@@ -20,12 +20,11 @@ echo var_export($server->getServerDescription(), true), "\n";
 MongoDB\Driver\ServerDescription::__set_state(array(
    'host' => '%s',
    'port' => %d,
-   'type' => '%r(Standalone|Mongos|RSPrimary)%r',
+   'type' => '%r(Standalone|Mongos|RSPrimary|LoadBalancer)%r',
    'hello_response' => 
-  array (
-    %a
+  array (%A
   ),
    'last_update_time' => %d,
-   'round_trip_time' => %d,
+   'round_trip_time' => %r(NULL|\d+)%r,
 ))
 ===DONE===

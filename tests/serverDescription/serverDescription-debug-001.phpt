@@ -9,7 +9,6 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
 $server = $manager->selectServer(new MongoDB\Driver\ReadPreference('primary'));
-
 var_dump($server->getServerDescription());
 
 ?>
@@ -22,14 +21,13 @@ object(MongoDB\Driver\ServerDescription)#%d (%d) {
   ["port"]=>
   int(%d)
   ["type"]=>
-  string(%d) "%r(Standalone|Mongos|RSPrimary)%r"
+  string(%d) "%r(Standalone|Mongos|RSPrimary|LoadBalancer)%r"
   ["hello_response"]=>
-  array(%d) {
-    %a
+  array(%d) {%A
   }
   ["last_update_time"]=>
   int(%d)
   ["round_trip_time"]=>
-  int(%d)
+  %r(NULL|int\(\d+\))%r
 }
 ===DONE===

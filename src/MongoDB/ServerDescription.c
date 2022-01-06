@@ -28,6 +28,8 @@
 
 zend_class_entry* php_phongo_serverdescription_ce;
 
+/* Note: these constants are derived from _mongoc_topology_description_type,
+ * since mongoc_server_description_type_t is private. */
 #define PHONGO_SERVER_UNKNOWN "Unknown"
 #define PHONGO_SERVER_STANDALONE "Standalone"
 #define PHONGO_SERVER_MONGOS "Mongos"
@@ -37,6 +39,7 @@ zend_class_entry* php_phongo_serverdescription_ce;
 #define PHONGO_SERVER_RS_ARBITER "RSArbiter"
 #define PHONGO_SERVER_RS_OTHER "RSOther"
 #define PHONGO_SERVER_RS_GHOST "RSGhost"
+#define PHONGO_SERVER_LOAD_BALANCER "LoadBalancer"
 
 /* {{{ proto array MongoDB\Driver\ServerDescription::getHelloResponse()
    Returns the most recent "hello" response */
@@ -50,6 +53,11 @@ static PHP_METHOD(ServerDescription, getHelloResponse)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
+	/* Note: the hello response will be empty for load balancers since they are
+	 * not monitored. Unlike Server::getInfo(), we do not attempt to fetch the
+	 * corresponding handshake description, as that would require holding a
+	 * reference to the libmongoc client (and likely a Manager object) on the
+	 * ServerDescription and TopologyDescription classes. */
 	helloResponse = mongoc_server_description_hello_response(intern->server_description);
 
 	PHONGO_BSON_INIT_DEBUG_STATE(state);
@@ -112,7 +120,12 @@ static PHP_METHOD(ServerDescription, getRoundTripTime)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_LONG(mongoc_server_description_round_trip_time(intern->server_description));
+	/* TODO: Use MONGOC_RTT_UNSET once it is added to libmongoc's public API (CDRIVER-4176) */
+	if (mongoc_server_description_round_trip_time(intern->server_description) == -1) {
+		RETVAL_NULL();
+	} else {
+		RETVAL_LONG((zend_long) mongoc_server_description_round_trip_time(intern->server_description));
+	}
 } /* }}} */
 
 /* {{{ proto string MongoDB\Driver\ServerDescription::getType()
@@ -220,11 +233,22 @@ HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object
 	}
 
 	{
-		zval last_update_time, round_trip_time;
+		zval last_update_time;
 
 		ZVAL_LONG(&last_update_time, mongoc_server_description_last_update_time(intern->server_description));
 		zend_hash_str_update(props, "last_update_time", sizeof("last_update_time") - 1, &last_update_time);
-		ZVAL_LONG(&round_trip_time, mongoc_server_description_round_trip_time(intern->server_description));
+	}
+
+	{
+		zval round_trip_time;
+
+		/* TODO: Use MONGOC_RTT_UNSET once it is added to libmongoc's public API (CDRIVER-4176) */
+		if (mongoc_server_description_round_trip_time(intern->server_description) == -1) {
+			ZVAL_NULL(&round_trip_time);
+		} else {
+			ZVAL_LONG(&round_trip_time, (zend_long) mongoc_server_description_round_trip_time(intern->server_description));
+		}
+
 		zend_hash_str_update(props, "round_trip_time", sizeof("round_trip_time") - 1, &round_trip_time);
 	}
 
@@ -269,6 +293,7 @@ void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_ARBITER"), PHONGO_SERVER_RS_ARBITER);
 	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_OTHER"), PHONGO_SERVER_RS_OTHER);
 	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_GHOST"), PHONGO_SERVER_RS_GHOST);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_LOAD_BALANCER"), PHONGO_SERVER_LOAD_BALANCER);
 } /* }}} */
 
 /*

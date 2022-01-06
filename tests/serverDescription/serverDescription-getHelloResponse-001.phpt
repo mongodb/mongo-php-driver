@@ -9,13 +9,13 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
 $server = $manager->selectServer(new MongoDB\Driver\ReadPreference('primary'));
-$helloResponse = $server->getServerDescription()->getHelloResponse();
 
-var_dump(array_key_exists('ismaster', $helloResponse) || array_key_exists('isWritablePrimary', $helloResponse));
+var_dump($server->getServerDescription()->getHelloResponse());
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-bool(true)
+--EXPECTF--
+array(%d) {%A
+}
 ===DONE===

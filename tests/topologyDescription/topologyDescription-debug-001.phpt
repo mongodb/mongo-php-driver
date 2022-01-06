@@ -59,6 +59,6 @@ object(MongoDB\Driver\TopologyDescription)#%d (%d) {
     }%A
   }
   ["type"]=>
-  string(%d) "%r(Single|Sharded|ReplicaSetWithPrimary)%r"
+  string(%d) "%r(Single|Sharded|ReplicaSetWithPrimary|LoadBalanced)%r"
 }
 ===DONE===

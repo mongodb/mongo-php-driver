@@ -8,27 +8,12 @@ MongoDB\Driver\Server::getServerDescription()
 require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
-
-var_dump($manager->selectServer(new MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY))->getServerDescription());
+$server = $manager->selectServer(new MongoDB\Driver\ReadPreference('primary'));
+var_dump($server->getServerDescription() instanceof MongoDB\Driver\ServerDescription);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-object(MongoDB\Driver\ServerDescription)#%d (%d) {
-  ["host"]=>
-  string(%d) "%s"
-  ["port"]=>
-  int(%d)
-  ["type"]=>
-  string(%d) "%r(Standalone|Mongos|RSPrimary)%r"
-  ["hello_response"]=>
-  array(%d) {
-    %a
-  }
-  ["last_update_time"]=>
-  int(%d)
-  ["round_trip_time"]=>
-  int(%d)
-}
+--EXPECT--
+bool(true)
 ===DONE===

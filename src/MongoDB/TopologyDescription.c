@@ -28,11 +28,14 @@
 
 zend_class_entry* php_phongo_topologydescription_ce;
 
+/* Note: these constants are derived from _mongoc_topology_description_type,
+ * since mongoc_topology_description_t is private. */
 #define PHONGO_TOPOLOGY_UNKNOWN "Unknown"
 #define PHONGO_TOPOLOGY_SINGLE "Single"
 #define PHONGO_TOPOLOGY_SHARDED "Sharded"
 #define PHONGO_TOPOLOGY_REPLICA_SET_NO_PRIMARY "ReplicaSetNoPrimary"
 #define PHONGO_TOPOLOGY_REPLICA_SET_WITH_PRIMARY "ReplicaSetWithPrimary"
+#define PHONGO_TOPOLOGY_LOAD_BALANCED "LoadBalanced"
 
 /* {{{ proto array MongoDB\Driver\TopologyDescription::getServers()
    Returns an array of ServerDescription objects for all known servers in the topology */
@@ -229,6 +232,7 @@ void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_string(php_phongo_topologydescription_ce, ZEND_STRL("TYPE_SHARDED"), PHONGO_TOPOLOGY_SHARDED);
 	zend_declare_class_constant_string(php_phongo_topologydescription_ce, ZEND_STRL("TYPE_REPLICA_SET_NO_PRIMARY"), PHONGO_TOPOLOGY_REPLICA_SET_NO_PRIMARY);
 	zend_declare_class_constant_string(php_phongo_topologydescription_ce, ZEND_STRL("TYPE_REPLICA_SET_WITH_PRIMARY"), PHONGO_TOPOLOGY_REPLICA_SET_WITH_PRIMARY);
+	zend_declare_class_constant_string(php_phongo_topologydescription_ce, ZEND_STRL("TYPE_LOAD_BALANCED"), PHONGO_TOPOLOGY_LOAD_BALANCED);
 } /* }}} */
 
 /*

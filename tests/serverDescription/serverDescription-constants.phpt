@@ -12,6 +12,7 @@ var_dump(MongoDB\Driver\ServerDescription::TYPE_RS_SECONDARY);
 var_dump(MongoDB\Driver\ServerDescription::TYPE_RS_ARBITER);
 var_dump(MongoDB\Driver\ServerDescription::TYPE_RS_OTHER);
 var_dump(MongoDB\Driver\ServerDescription::TYPE_RS_GHOST);
+var_dump(MongoDB\Driver\ServerDescription::TYPE_LOAD_BALANCER);
 
 ?>
 ===DONE===
@@ -26,4 +27,5 @@ string(11) "RSSecondary"
 string(9) "RSArbiter"
 string(7) "RSOther"
 string(7) "RSGhost"
+string(12) "LoadBalancer"
 ===DONE===
