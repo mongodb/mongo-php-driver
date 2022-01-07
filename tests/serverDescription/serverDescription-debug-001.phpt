@@ -26,7 +26,7 @@ object(MongoDB\Driver\ServerDescription)#%d (%d) {
   array(%d) {%A
   }
   ["last_update_time"]=>
-  int(%d)
+  %r(string\(\d+\) "\d+"|int\(\d+\))%r
   ["round_trip_time"]=>
   %r(NULL|int\(\d+\))%r
 }

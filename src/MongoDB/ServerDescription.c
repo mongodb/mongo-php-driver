@@ -89,12 +89,21 @@ static PHP_METHOD(ServerDescription, getHost)
 static PHP_METHOD(ServerDescription, getLastUpdateTime)
 {
 	php_phongo_serverdescription_t* intern;
+	int64_t                         last_update_time;
 
 	intern = Z_SERVERDESCRIPTION_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_LONG(mongoc_server_description_last_update_time(intern->server_description));
+	last_update_time = mongoc_server_description_last_update_time(intern->server_description);
+
+#if SIZEOF_ZEND_LONG == 4
+	if (last_update_time > INT32_MAX || last_update_time < INT32_MIN) {
+		zend_error(E_WARNING, "Truncating 64-bit value for lastUpdateTime");
+	}
+#endif
+
+	RETVAL_LONG(last_update_time);
 } /* }}} */
 
 /* {{{ proto integer MongoDB\Driver\ServerDescription::getPort()
@@ -233,10 +242,22 @@ HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object
 	}
 
 	{
-		zval last_update_time;
+		int64_t last_update_time;
+		zval    z_last_update_time;
 
-		ZVAL_LONG(&last_update_time, mongoc_server_description_last_update_time(intern->server_description));
-		zend_hash_str_update(props, "last_update_time", sizeof("last_update_time") - 1, &last_update_time);
+		last_update_time = mongoc_server_description_last_update_time(intern->server_description);
+
+#if SIZEOF_ZEND_LONG == 4
+		if (last_update_time > INT32_MAX || last_update_time < INT32_MIN) {
+			ZVAL_INT64_STRING(&z_last_update_time, last_update_time);
+		} else {
+			ZVAL_LONG(&z_last_update_time, last_update_time);
+		}
+#else
+		ZVAL_LONG(&z_last_update_time, last_update_time);
+#endif
+
+		zend_hash_str_update(props, "last_update_time", sizeof("last_update_time") - 1, &z_last_update_time);
 	}
 
 	{

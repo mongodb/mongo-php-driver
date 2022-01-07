@@ -2,6 +2,7 @@
 MongoDB\Driver\ServerDescription::getLastUpdateTime()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
 <?php skip_if_not_live(); ?>
 --FILE--
 <?php

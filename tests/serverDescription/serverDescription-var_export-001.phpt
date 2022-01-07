@@ -24,7 +24,7 @@ MongoDB\Driver\ServerDescription::__set_state(array(
    'hello_response' => 
   array (%A
   ),
-   'last_update_time' => %d,
+   'last_update_time' => %r('\d+'|\d+)%r,
    'round_trip_time' => %r(NULL|\d+)%r,
 ))
 ===DONE===
