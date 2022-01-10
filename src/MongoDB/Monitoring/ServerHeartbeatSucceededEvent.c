@@ -45,7 +45,7 @@ static PHP_METHOD(ServerHeartbeatSucceededEvent, getHost)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_STRING(intern->host);
+	RETVAL_STRING(intern->host.host);
 } /* }}} */
 
 /* {{{ proto integer ServerHeartbeatSucceededEvent::getPort()
@@ -56,7 +56,7 @@ static PHP_METHOD(ServerHeartbeatSucceededEvent, getPort)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_LONG(intern->port);
+	RETVAL_LONG(intern->host.port);
 } /* }}} */
 
 /* {{{ proto integer ServerHeartbeatSucceededEvent::getReply()
@@ -147,8 +147,8 @@ static HashTable* php_phongo_serverheartbeatsucceededevent_get_debug_info(phongo
 	*is_temp = 1;
 	array_init_size(&retval, 4);
 
-	ADD_ASSOC_STRING(&retval, "host", intern->host);
-	ADD_ASSOC_LONG_EX(&retval, "port", intern->port);
+	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
+	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
 	ADD_ASSOC_BOOL_EX(&retval, "awaited", intern->awaited);
 
 	if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->reply), intern->reply->len, &reply_state)) {

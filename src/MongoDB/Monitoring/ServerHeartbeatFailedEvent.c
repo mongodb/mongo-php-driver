@@ -56,7 +56,7 @@ static PHP_METHOD(ServerHeartbeatFailedEvent, getHost)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_STRING(intern->host);
+	RETVAL_STRING(intern->host.host);
 } /* }}} */
 
 /* {{{ proto integer ServerHeartbeatFailedEvent::getPort()
@@ -67,7 +67,7 @@ static PHP_METHOD(ServerHeartbeatFailedEvent, getPort)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_LONG(intern->port);
+	RETVAL_LONG(intern->host.port);
 } /* }}} */
 
 /* {{{ proto boolean ServerHeartbeatFailedEvent::isAwaited()
@@ -136,8 +136,8 @@ static HashTable* php_phongo_serverheartbeatfailedevent_get_debug_info(phongo_co
 	*is_temp = 1;
 	array_init_size(&retval, 5);
 
-	ADD_ASSOC_STRING(&retval, "host", intern->host);
-	ADD_ASSOC_LONG_EX(&retval, "port", intern->port);
+	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
+	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
 	ADD_ASSOC_BOOL_EX(&retval, "awaited", intern->awaited);
 	ADD_ASSOC_INT64(&retval, "durationMicros", intern->duration_micros);
 
