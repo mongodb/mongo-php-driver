@@ -146,7 +146,9 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/ReadPreference.c \
     src/MongoDB/Server.c \
     src/MongoDB/ServerApi.c \
+    src/MongoDB/ServerDescription.c \
     src/MongoDB/Session.c \
+    src/MongoDB/TopologyDescription.c \
     src/MongoDB/WriteConcern.c \
     src/MongoDB/WriteConcernError.c \
     src/MongoDB/WriteError.c \
@@ -170,7 +172,17 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/Monitoring/CommandStartedEvent.c \
     src/MongoDB/Monitoring/CommandSubscriber.c \
     src/MongoDB/Monitoring/CommandSucceededEvent.c \
+    src/MongoDB/Monitoring/SDAMSubscriber.c \
     src/MongoDB/Monitoring/Subscriber.c \
+    src/MongoDB/Monitoring/ServerChangedEvent.c \
+    src/MongoDB/Monitoring/ServerClosedEvent.c \
+    src/MongoDB/Monitoring/ServerHeartbeatFailedEvent.c \
+    src/MongoDB/Monitoring/ServerHeartbeatStartedEvent.c \
+    src/MongoDB/Monitoring/ServerHeartbeatSucceededEvent.c \
+    src/MongoDB/Monitoring/ServerOpeningEvent.c \
+    src/MongoDB/Monitoring/TopologyChangedEvent.c \
+    src/MongoDB/Monitoring/TopologyClosedEvent.c \
+    src/MongoDB/Monitoring/TopologyOpeningEvent.c \
     src/MongoDB/Monitoring/functions.c \
   "
 

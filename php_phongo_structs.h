@@ -115,11 +115,23 @@ typedef struct {
 } php_phongo_serverapi_t;
 
 typedef struct {
+	mongoc_server_description_t* server_description;
+	HashTable*                   properties;
+	zend_object                  std;
+} php_phongo_serverdescription_t;
+
+typedef struct {
 	mongoc_client_session_t* client_session;
 	zval                     manager;
 	int                      created_by_pid;
 	zend_object              std;
 } php_phongo_session_t;
+
+typedef struct {
+	mongoc_topology_description_t* topology_description;
+	HashTable*                     properties;
+	zend_object                    std;
+} php_phongo_topologydescription_t;
 
 typedef struct {
 	HashTable*              properties;
@@ -277,6 +289,71 @@ typedef struct {
 	bson_oid_t  service_id;
 	zend_object std;
 } php_phongo_commandsucceededevent_t;
+
+typedef struct {
+	bson_oid_t                   topology_id;
+	char                         host[BSON_HOST_NAME_MAX + 1];
+	uint16_t                     port;
+	mongoc_server_description_t* new_server_description;
+	mongoc_server_description_t* old_server_description;
+	zend_object                  std;
+} php_phongo_serverchangedevent_t;
+
+typedef struct {
+	bson_oid_t  topology_id;
+	char        host[BSON_HOST_NAME_MAX + 1];
+	uint16_t    port;
+	zend_object std;
+} php_phongo_serverclosedevent_t;
+
+typedef struct {
+	bool        awaited;
+	uint64_t    duration_micros;
+	zval        z_error;
+	char        host[BSON_HOST_NAME_MAX + 1];
+	uint16_t    port;
+	zend_object std;
+} php_phongo_serverheartbeatfailedevent_t;
+
+typedef struct {
+	bool        awaited;
+	char        host[BSON_HOST_NAME_MAX + 1];
+	uint16_t    port;
+	zend_object std;
+} php_phongo_serverheartbeatstartedevent_t;
+
+typedef struct {
+	bool        awaited;
+	uint64_t    duration_micros;
+	char        host[BSON_HOST_NAME_MAX + 1];
+	uint16_t    port;
+	bson_t*     reply;
+	zend_object std;
+} php_phongo_serverheartbeatsucceededevent_t;
+
+typedef struct {
+	bson_oid_t  topology_id;
+	char        host[BSON_HOST_NAME_MAX + 1];
+	uint16_t    port;
+	zend_object std;
+} php_phongo_serveropeningevent_t;
+
+typedef struct {
+	bson_oid_t                     topology_id;
+	mongoc_topology_description_t* new_topology_description;
+	mongoc_topology_description_t* old_topology_description;
+	zend_object                    std;
+} php_phongo_topologychangedevent_t;
+
+typedef struct {
+	bson_oid_t  topology_id;
+	zend_object std;
+} php_phongo_topologyclosedevent_t;
+
+typedef struct {
+	bson_oid_t  topology_id;
+	zend_object std;
+} php_phongo_topologyopeningevent_t;
 
 #endif /* PHONGO_STRUCTS */
 

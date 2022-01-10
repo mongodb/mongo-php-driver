@@ -63,6 +63,14 @@ static inline php_phongo_server_t* php_server_fetch_object(zend_object* obj)
 {
 	return (php_phongo_server_t*) ((char*) obj - XtOffsetOf(php_phongo_server_t, std));
 }
+static inline php_phongo_serverdescription_t* php_serverdescription_fetch_object(zend_object* obj)
+{
+	return (php_phongo_serverdescription_t*) ((char*) obj - XtOffsetOf(php_phongo_serverdescription_t, std));
+}
+static inline php_phongo_topologydescription_t* php_topologydescription_fetch_object(zend_object* obj)
+{
+	return (php_phongo_topologydescription_t*) ((char*) obj - XtOffsetOf(php_phongo_topologydescription_t, std));
+}
 static inline php_phongo_serverapi_t* php_serverapi_fetch_object(zend_object* obj)
 {
 	return (php_phongo_serverapi_t*) ((char*) obj - XtOffsetOf(php_phongo_serverapi_t, std));
@@ -151,6 +159,42 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 {
 	return (php_phongo_commandsucceededevent_t*) ((char*) obj - XtOffsetOf(php_phongo_commandsucceededevent_t, std));
 }
+static inline php_phongo_serverchangedevent_t* php_serverchangedevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_serverchangedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serverchangedevent_t, std));
+}
+static inline php_phongo_serverclosedevent_t* php_serverclosedevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_serverclosedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serverclosedevent_t, std));
+}
+static inline php_phongo_serverheartbeatfailedevent_t* php_serverheartbeatfailedevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_serverheartbeatfailedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serverheartbeatfailedevent_t, std));
+}
+static inline php_phongo_serverheartbeatstartedevent_t* php_serverheartbeatstartedevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_serverheartbeatstartedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serverheartbeatstartedevent_t, std));
+}
+static inline php_phongo_serverheartbeatsucceededevent_t* php_serverheartbeatsucceededevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_serverheartbeatsucceededevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serverheartbeatsucceededevent_t, std));
+}
+static inline php_phongo_serveropeningevent_t* php_serveropeningevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_serveropeningevent_t*) ((char*) obj - XtOffsetOf(php_phongo_serveropeningevent_t, std));
+}
+static inline php_phongo_topologychangedevent_t* php_topologychangedevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_topologychangedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_topologychangedevent_t, std));
+}
+static inline php_phongo_topologyclosedevent_t* php_topologyclosedevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_topologyclosedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_topologyclosedevent_t, std));
+}
+static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_object(zend_object* obj)
+{
+	return (php_phongo_topologyopeningevent_t*) ((char*) obj - XtOffsetOf(php_phongo_topologyopeningevent_t, std));
+}
 
 #define Z_CLIENTENCRYPTION_OBJ_P(zv) (php_clientencryption_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMAND_OBJ_P(zv) (php_command_fetch_object(Z_OBJ_P(zv)))
@@ -162,7 +206,9 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_READPREFERENCE_OBJ_P(zv) (php_readpreference_fetch_object(Z_OBJ_P(zv)))
 #define Z_SERVER_OBJ_P(zv) (php_server_fetch_object(Z_OBJ_P(zv)))
 #define Z_SERVERAPI_OBJ_P(zv) (php_serverapi_fetch_object(Z_OBJ_P(zv)))
+#define Z_SERVERDESCRIPTION_OBJ_P(zv) (php_serverdescription_fetch_object(Z_OBJ_P(zv)))
 #define Z_SESSION_OBJ_P(zv) (php_session_fetch_object(Z_OBJ_P(zv)))
+#define Z_TOPOLOGYDESCRIPTION_OBJ_P(zv) (php_topologydescription_fetch_object(Z_OBJ_P(zv)))
 #define Z_BULKWRITE_OBJ_P(zv) (php_bulkwrite_fetch_object(Z_OBJ_P(zv)))
 #define Z_WRITECONCERN_OBJ_P(zv) (php_writeconcern_fetch_object(Z_OBJ_P(zv)))
 #define Z_WRITECONCERNERROR_OBJ_P(zv) (php_writeconcernerror_fetch_object(Z_OBJ_P(zv)))
@@ -184,6 +230,15 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_COMMANDFAILEDEVENT_OBJ_P(zv) (php_commandfailedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMANDSTARTEDEVENT_OBJ_P(zv) (php_commandstartedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMANDSUCCEEDEDEVENT_OBJ_P(zv) (php_commandsucceededevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_SERVERCHANGEDEVENT_OBJ_P(zv) (php_serverchangedevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_SERVERCLOSEDEVENT_OBJ_P(zv) (php_serverclosedevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(zv) (php_serverheartbeatfailedevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_SERVERHEARTBEATSTARTEDEVENT_OBJ_P(zv) (php_serverheartbeatstartedevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_SERVERHEARTBEATSUCCEEDEDEVENT_OBJ_P(zv) (php_serverheartbeatsucceededevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_SERVEROPENINGEVENT_OBJ_P(zv) (php_serveropeningevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_TOPOLOGYCHANGEDEVENT_OBJ_P(zv) (php_topologychangedevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_TOPOLOGYCLOSEDEVENT_OBJ_P(zv) (php_topologyclosedevent_fetch_object(Z_OBJ_P(zv)))
+#define Z_TOPOLOGYOPENINGEVENT_OBJ_P(zv) (php_topologyopeningevent_fetch_object(Z_OBJ_P(zv)))
 
 #define Z_OBJ_CLIENTENCRYPTION(zo) (php_clientencryption_fetch_object(zo))
 #define Z_OBJ_COMMAND(zo) (php_command_fetch_object(zo))
@@ -195,7 +250,9 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_OBJ_READPREFERENCE(zo) (php_readpreference_fetch_object(zo))
 #define Z_OBJ_SERVER(zo) (php_server_fetch_object(zo))
 #define Z_OBJ_SERVERAPI(zo) (php_serverapi_fetch_object(zo))
+#define Z_OBJ_SERVERDESCRIPTION(zo) (php_serverdescription_fetch_object(zo))
 #define Z_OBJ_SESSION(zo) (php_session_fetch_object(zo))
+#define Z_OBJ_TOPOLOGYDESCRIPTION(zo) (php_topologydescription_fetch_object(zo))
 #define Z_OBJ_BULKWRITE(zo) (php_bulkwrite_fetch_object(zo))
 #define Z_OBJ_WRITECONCERN(zo) (php_writeconcern_fetch_object(zo))
 #define Z_OBJ_WRITECONCERNERROR(zo) (php_writeconcernerror_fetch_object(zo))
@@ -217,6 +274,15 @@ static inline php_phongo_commandsucceededevent_t* php_commandsucceededevent_fetc
 #define Z_OBJ_COMMANDFAILEDEVENT(zo) (php_commandfailedevent_fetch_object(zo))
 #define Z_OBJ_COMMANDSTARTEDEVENT(zo) (php_commandstartedevent_fetch_object(zo))
 #define Z_OBJ_COMMANDSUCCEEDEDEVENT(zo) (php_commandsucceededevent_fetch_object(zo))
+#define Z_OBJ_SERVERCHANGEDEVENT(zo) (php_serverchangedevent_fetch_object(zo))
+#define Z_OBJ_SERVERCLOSEDEVENT(zo) (php_serverclosedevent_fetch_object(zo))
+#define Z_OBJ_SERVERHEARTBEATFAILEDEVENT(zo) (php_serverheartbeatfailedevent_fetch_object(zo))
+#define Z_OBJ_SERVERHEARTBEATSTARTEDEVENT(zo) (php_serverheartbeatstartedevent_fetch_object(zo))
+#define Z_OBJ_SERVERHEARTBEATSUCCEEDEDEVENT(zo) (php_serverheartbeatsucceededevent_fetch_object(zo))
+#define Z_OBJ_SERVEROPENINGEVENT(zo) (php_serveropeningevent_fetch_object(zo))
+#define Z_OBJ_TOPOLOGYCHANGEDEVENT(zo) (php_topologychangedevent_fetch_object(zo))
+#define Z_OBJ_TOPOLOGYCLOSEDEVENT(zo) (php_topologyclosedevent_fetch_object(zo))
+#define Z_OBJ_TOPOLOGYOPENINGEVENT(zo) (php_topologyopeningevent_fetch_object(zo))
 
 extern zend_class_entry* php_phongo_clientencryption_ce;
 extern zend_class_entry* php_phongo_command_ce;
@@ -228,7 +294,9 @@ extern zend_class_entry* php_phongo_readconcern_ce;
 extern zend_class_entry* php_phongo_readpreference_ce;
 extern zend_class_entry* php_phongo_server_ce;
 extern zend_class_entry* php_phongo_serverapi_ce;
+extern zend_class_entry* php_phongo_serverdescription_ce;
 extern zend_class_entry* php_phongo_session_ce;
+extern zend_class_entry* php_phongo_topologydescription_ce;
 extern zend_class_entry* php_phongo_bulkwrite_ce;
 extern zend_class_entry* php_phongo_writeconcern_ce;
 extern zend_class_entry* php_phongo_writeconcernerror_ce;
@@ -285,7 +353,17 @@ extern zend_class_entry* php_phongo_commandfailedevent_ce;
 extern zend_class_entry* php_phongo_commandstartedevent_ce;
 extern zend_class_entry* php_phongo_commandsubscriber_ce;
 extern zend_class_entry* php_phongo_commandsucceededevent_ce;
+extern zend_class_entry* php_phongo_sdamsubscriber_ce;
 extern zend_class_entry* php_phongo_subscriber_ce;
+extern zend_class_entry* php_phongo_serverchangedevent_ce;
+extern zend_class_entry* php_phongo_serverclosedevent_ce;
+extern zend_class_entry* php_phongo_serverheartbeatfailedevent_ce;
+extern zend_class_entry* php_phongo_serverheartbeatstartedevent_ce;
+extern zend_class_entry* php_phongo_serverheartbeatsucceededevent_ce;
+extern zend_class_entry* php_phongo_serveropeningevent_ce;
+extern zend_class_entry* php_phongo_topologychangedevent_ce;
+extern zend_class_entry* php_phongo_topologyclosedevent_ce;
+extern zend_class_entry* php_phongo_topologyopeningevent_ce;
 
 extern void php_phongo_binary_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS);
@@ -326,7 +404,9 @@ extern void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_server_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_session_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS);
@@ -354,7 +434,17 @@ extern void php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_subscriber_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_serverclosedevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_serverheartbeatfailedevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_serverheartbeatstartedevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_serverheartbeatsucceededevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_topologyclosedevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS);
 
 /* Shared function entries for disabling constructors and unserialize() */
 PHP_FUNCTION(MongoDB_disabled___construct);
