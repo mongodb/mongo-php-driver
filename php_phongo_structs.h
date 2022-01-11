@@ -292,50 +292,44 @@ typedef struct {
 
 typedef struct {
 	bson_oid_t                   topology_id;
-	char                         host[BSON_HOST_NAME_MAX + 1];
-	uint16_t                     port;
+	mongoc_host_list_t           host;
 	mongoc_server_description_t* new_server_description;
 	mongoc_server_description_t* old_server_description;
 	zend_object                  std;
 } php_phongo_serverchangedevent_t;
 
 typedef struct {
-	bson_oid_t  topology_id;
-	char        host[BSON_HOST_NAME_MAX + 1];
-	uint16_t    port;
-	zend_object std;
+	bson_oid_t         topology_id;
+	mongoc_host_list_t host;
+	zend_object        std;
 } php_phongo_serverclosedevent_t;
 
 typedef struct {
-	bool        awaited;
-	uint64_t    duration_micros;
-	zval        z_error;
-	char        host[BSON_HOST_NAME_MAX + 1];
-	uint16_t    port;
-	zend_object std;
+	bool               awaited;
+	uint64_t           duration_micros;
+	zval               z_error;
+	mongoc_host_list_t host;
+	zend_object        std;
 } php_phongo_serverheartbeatfailedevent_t;
 
 typedef struct {
-	bool        awaited;
-	char        host[BSON_HOST_NAME_MAX + 1];
-	uint16_t    port;
-	zend_object std;
+	bool               awaited;
+	mongoc_host_list_t host;
+	zend_object        std;
 } php_phongo_serverheartbeatstartedevent_t;
 
 typedef struct {
-	bool        awaited;
-	uint64_t    duration_micros;
-	char        host[BSON_HOST_NAME_MAX + 1];
-	uint16_t    port;
-	bson_t*     reply;
-	zend_object std;
+	bool               awaited;
+	uint64_t           duration_micros;
+	mongoc_host_list_t host;
+	bson_t*            reply;
+	zend_object        std;
 } php_phongo_serverheartbeatsucceededevent_t;
 
 typedef struct {
-	bson_oid_t  topology_id;
-	char        host[BSON_HOST_NAME_MAX + 1];
-	uint16_t    port;
-	zend_object std;
+	bson_oid_t         topology_id;
+	mongoc_host_list_t host;
+	zend_object        std;
 } php_phongo_serveropeningevent_t;
 
 typedef struct {

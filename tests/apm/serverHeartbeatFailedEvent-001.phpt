@@ -4,8 +4,8 @@ MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_no_failcommand_failpoint(); ?>
-<?php skip_if_multiple_mongos(); ?>
-<?php skip_if_load_balanced(); ?>
+<?php skip_if_not_standalone(); ?>
+<?php skip_if_auth(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

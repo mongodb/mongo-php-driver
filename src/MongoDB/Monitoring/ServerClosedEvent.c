@@ -34,7 +34,7 @@ static PHP_METHOD(ServerClosedEvent, getHost)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_STRING(intern->host);
+	RETVAL_STRING(intern->host.host);
 } /* }}} */
 
 /* {{{ proto integer ServerClosedEvent::getPort()
@@ -45,7 +45,7 @@ static PHP_METHOD(ServerClosedEvent, getPort)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETVAL_LONG(intern->port);
+	RETVAL_LONG(intern->host.port);
 } /* }}} */
 
 /* {{{ proto MongoDB\BSON\ObjectId ServerClosedEvent::getTopologyId()
@@ -108,8 +108,8 @@ static HashTable* php_phongo_serverclosedevent_get_debug_info(phongo_compat_obje
 	*is_temp = 1;
 	array_init_size(&retval, 3);
 
-	ADD_ASSOC_STRING(&retval, "host", intern->host);
-	ADD_ASSOC_LONG_EX(&retval, "port", intern->port);
+	ADD_ASSOC_STRING(&retval, "host", intern->host.host);
+	ADD_ASSOC_LONG_EX(&retval, "port", intern->host.port);
 
 	{
 		zval topology_id;
