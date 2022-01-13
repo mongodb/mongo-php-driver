@@ -1,9 +1,8 @@
 --TEST--
 MongoDB\Driver\Monitoring\ServerClosedEvent
 --SKIPIF--
-<?php echo "skip ServerClosedEvent may not be reliably observed"; /* TODO: PHPC-2023 */ ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_not_live(); ?>
+<?php skip_if_not_load_balanced(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -45,21 +44,18 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
     public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event) {}
 }
 
-/* Note: using a global subscriber works around the issue of Manager and client
- * unregistration in php_phongo_manager_free_object, but ServerClosedEvent
- * may still not be observed due to clearing APM callbacks before
- * mongoc_client_destroy in php_phongo_pclient_destroy (see: PHPC-2023) */
-MongoDB\Driver\Monitoring\addSubscriber(new MySubscriber);
-
-/* Note: ServerClosedEvent may be observed if the host in the URI does not
- * match what is reported in the hello response; however, using a non-persistent
- * client is more reliable since the event can be observed when the Manager and
- * client are freed. */
+/* Note: load balanced topologies will always emit ServerClosedEvent before
+ * TopologyClosedEvent. That is easier than adding a non-member to a replica set
+ * URI. A non-persistent client is used to make observation possible. */
 $m = create_test_manager(URI, [], ['disableClientPersistence' => true]);
+$m->addSubscriber(new MySubscriber);
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 $m->executeCommand(DATABASE_NAME, $command);
 
+/* Events dispatched during mongoc_client_destroy can only be observed before
+ * RSHUTDOWN. This means that we must use a non-persistent client and free it
+ * before the script ends. */
 unset($m);
 
 ?>

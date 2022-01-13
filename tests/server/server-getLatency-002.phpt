@@ -2,7 +2,6 @@
 MongoDB\Driver\Server::getLatency() returns null when unset (e.g. load balancer)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_not_live(); ?>
 <?php skip_if_not_load_balanced(); ?>
 --FILE--
 <?php

@@ -1,7 +1,6 @@
 --TEST--
 MongoDB\Driver\Monitoring\TopologyClosedEvent
 --SKIPIF--
-<?php echo "skip TopologyClosedEvent cannot be observed"; /* TODO: PHPC-2023 */ ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
 --FILE--
@@ -34,20 +33,18 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
     public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event) {}
 }
 
-/* Note: using a global subscriber works around the issue of Manager and client
- * unregistration in php_phongo_manager_free_object, but TopologyClosedEvent
- * still cannot be observed due to clearing APM callbacks before
- * mongoc_client_destroy in php_phongo_pclient_destroy (see: PHPC-2023) */
-MongoDB\Driver\Monitoring\addSubscriber(new MySubscriber);
-
 /* Note: TopologyChangedEvent can only be observed for non-persistent clients.
  * Persistent clients are destroyed in GSHUTDOWN, long after any PHP objects
  * (including subscribers) are freed. */
 $m = create_test_manager(URI, [], ['disableClientPersistence' => true]);
+$m->addSubscriber(new MySubscriber);
 
 $command = new MongoDB\Driver\Command(['ping' => 1]);
 $m->executeCommand(DATABASE_NAME, $command);
 
+/* Events dispatched during mongoc_client_destroy can only be observed before
+ * RSHUTDOWN. This means that we must use a non-persistent client and free it
+ * before the script ends. */
 unset($m);
 
 ?>
