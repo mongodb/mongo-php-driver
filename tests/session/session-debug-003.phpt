@@ -39,6 +39,8 @@ object(MongoDB\Driver\Session)#%d (%d) {
   NULL
   ["server"]=>
   NULL
+  ["dirty"]=>
+  bool(false)
   ["inTransaction"]=>
   bool(false)
   ["transactionState"]=>

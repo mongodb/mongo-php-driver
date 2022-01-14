@@ -587,6 +587,21 @@ static PHP_METHOD(Session, endSession)
 	intern->client_session = NULL;
 } /* }}} */
 
+/* {{{ proto bool MongoDB\Driver\Session::isDirty()
+   Returns whether the session is dirty (i.e. was used with a command that
+   encountered a network error) and will be discarded when returned to the
+   server session pool. */
+static PHP_METHOD(Session, isDirty)
+{
+	php_phongo_session_t* intern = Z_SESSION_OBJ_P(getThis());
+
+	SESSION_CHECK_LIVELINESS(intern, "isDirty")
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETVAL_BOOL(mongoc_client_session_get_dirty(intern->client_session));
+} /* }}} */
+
 /* {{{ proto void MongoDB\Driver\Session::isInTransaction(void)
    Returns whether a multi-document transaction is in progress */
 static PHP_METHOD(Session, isInTransaction)
@@ -636,6 +651,7 @@ static zend_function_entry php_phongo_session_me[] = {
 	PHP_ME(Session, getServer, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getTransactionOptions, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, getTransactionState, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Session, isDirty, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, isInTransaction, ai_Session_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Session, startTransaction, ai_Session_startTransaction, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Session_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
@@ -777,6 +793,12 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 		}
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "server");
+	}
+
+	if (intern->client_session) {
+		ADD_ASSOC_BOOL_EX(&retval, "dirty", mongoc_client_session_get_dirty(intern->client_session));
+	} else {
+		ADD_ASSOC_NULL_EX(&retval, "dirty");
 	}
 
 	if (intern->client_session) {
