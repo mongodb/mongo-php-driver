@@ -3352,6 +3352,9 @@ void php_phongo_client_reset_once(php_phongo_manager_t* manager, int pid)
 	{
 		if (pclient->client == manager->client) {
 			phongo_pclient_reset_once(pclient, pid);
+
+			/* Request-scoped clients are only used by a single Manager, so we
+			 * can return early after finding a match. */
 			return;
 		}
 	}
@@ -3369,16 +3372,12 @@ static void php_phongo_pclient_destroy(php_phongo_pclient_t* pclient)
 	 * free_object handler or RSHUTDOWN, but there the application is capable of
 	 * freeing its Manager and its client before forking. */
 	if (pclient->created_by_pid == getpid()) {
-		/* Single-threaded clients may run commands (e.g. endSessions) from
-		 * mongoc_client_destroy, so disable APM to ensure an event is not
-		 * dispatched while destroying the Manager and its client. This means
-		 * that certain shutdown commands cannot be observed unless APM is
-		 * redesigned to not reference a client (see: PHPC-1666).
-		 *
-		 * Note: this is only relevant for request-scoped clients. APM
-		 * subscribers will no longer exist when persistent clients are
-		 * destroyed in GSHUTDOWN. */
-		mongoc_client_set_apm_callbacks(pclient->client, NULL, NULL);
+		/* If we are in request shutdown, disable APM to avoid dispatching more
+		 * events. This means that certain events (e.g. TopologyClosedEvent,
+		 * command monitoring for endSessions) may not be observed. */
+		if (EG(flags) & EG_FLAGS_IN_SHUTDOWN) {
+			mongoc_client_set_apm_callbacks(pclient->client, NULL, NULL);
+		}
 		mongoc_client_destroy(pclient->client);
 	}
 

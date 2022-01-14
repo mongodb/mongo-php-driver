@@ -918,11 +918,6 @@ static void php_phongo_manager_free_object(zend_object* object) /* {{{ */
 
 	zend_object_std_dtor(&intern->std);
 
-	/* Update the request-scoped Manager registry. The return value is ignored
-	 * because it's possible that the Manager was never registered due to a
-	 * constructor exception. */
-	php_phongo_manager_unregister(intern);
-
 	if (intern->client) {
 		/* Request-scoped clients will be removed from the registry and
 		 * destroyed. This is a NOP for persistent clients. The return value is
@@ -931,6 +926,15 @@ static void php_phongo_manager_free_object(zend_object* object) /* {{{ */
 		 * destroyed in RSHUTDOWN along with the registry HashTable. */
 		php_phongo_client_unregister(intern);
 	}
+
+	/* Update the request-scoped Manager registry. The return value is ignored
+	 * because it's possible that the Manager was never registered due to a
+	 * constructor exception.
+	 *
+	 * Note: this is done after unregistering a request-scoped client to ensure
+	 * APM events can be observed by per-client subscribers, which are collected
+	 * in phongo_apm_get_subscribers_to_notify. */
+	php_phongo_manager_unregister(intern);
 
 	if (intern->client_hash) {
 		efree(intern->client_hash);
