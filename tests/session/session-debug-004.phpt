@@ -24,25 +24,7 @@ var_dump($session);
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\Driver\Session)#%d (%d) {
-  ["logicalSessionId"]=>
-  NULL
-  ["clusterTime"]=>
-  NULL
-  ["causalConsistency"]=>
-  NULL
-  ["snapshot"]=>
-  NULL
-  ["operationTime"]=>
-  NULL
-  ["server"]=>
-  NULL
-  ["dirty"]=>
-  NULL
-  ["inTransaction"]=>
-  NULL
-  ["transactionState"]=>
-  NULL
-  ["transactionOptions"]=>
-  NULL
+  ["ended"]=>
+  bool(true)
 }
 ===DONE===
