@@ -87,9 +87,7 @@ static void php_phongo_serverheartbeatstartedevent_free_object(zend_object* obje
 
 static zend_object* php_phongo_serverheartbeatstartedevent_create_object(zend_class_entry* class_type) /* {{{ */
 {
-	php_phongo_serverheartbeatstartedevent_t* intern = NULL;
-
-	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_serverheartbeatstartedevent_t, class_type);
+	php_phongo_serverheartbeatstartedevent_t* intern = zend_object_alloc(sizeof(php_phongo_serverheartbeatstartedevent_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
