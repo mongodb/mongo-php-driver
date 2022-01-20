@@ -80,7 +80,11 @@
 #else
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif
-#define PHONGO_ALLOC_OBJECT_T(_obj_t, _class_type) (_obj_t*) ecalloc(1, sizeof(_obj_t) + zend_object_properties_size(_class_type))
+
+#if PHP_VERSION_ID < 70300
+#define zend_object_alloc(obj_size, ce) ecalloc(1, obj_size + zend_object_properties_size(ce))
+#endif
+
 #define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRL(_key), (char*) (_value));
 #define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRL(_key), (char*) (_value), _len);
 #define ADD_ASSOC_STRING_EX(_zv, _key, _key_len, _value, _value_len) add_assoc_stringl_ex(_zv, _key, _key_len, (char*) (_value), _value_len);

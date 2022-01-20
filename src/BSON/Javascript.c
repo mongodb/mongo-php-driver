@@ -441,9 +441,8 @@ static void php_phongo_javascript_free_object(zend_object* object) /* {{{ */
 
 zend_object* php_phongo_javascript_create_object(zend_class_entry* class_type) /* {{{ */
 {
-	php_phongo_javascript_t* intern = NULL;
+	php_phongo_javascript_t* intern = zend_object_alloc(sizeof(php_phongo_javascript_t), class_type);
 
-	intern = PHONGO_ALLOC_OBJECT_T(php_phongo_javascript_t, class_type);
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
