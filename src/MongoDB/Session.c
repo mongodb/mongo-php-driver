@@ -712,13 +712,17 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 
 	array_init(&retval);
 
-	if (intern->client_session) {
-		const bson_t*         lsid;
+	if (!intern->client_session) {
+		ADD_ASSOC_BOOL_EX(&retval, "ended", true);
+
+		goto done;
+	}
+
+	{
+		const bson_t*         lsid = mongoc_client_session_get_lsid(intern->client_session);
 		php_phongo_bson_state state;
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
-
-		lsid = mongoc_client_session_get_lsid(intern->client_session);
 
 		if (!php_phongo_bson_to_zval_ex(bson_get_data(lsid), lsid->len, &state)) {
 			zval_ptr_dtor(&state.zchild);
@@ -726,14 +730,10 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 		}
 
 		ADD_ASSOC_ZVAL_EX(&retval, "logicalSessionId", &state.zchild);
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "logicalSessionId");
 	}
 
-	if (intern->client_session) {
-		const bson_t* cluster_time;
-
-		cluster_time = mongoc_client_session_get_cluster_time(intern->client_session);
+	{
+		const bson_t* cluster_time = mongoc_client_session_get_cluster_time(intern->client_session);
 
 		if (cluster_time) {
 			php_phongo_bson_state state;
@@ -749,20 +749,15 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "clusterTime");
 		}
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "clusterTime");
 	}
 
-	if (intern->client_session) {
+	{
 		const mongoc_session_opt_t* cs_opts = mongoc_client_session_get_opts(intern->client_session);
 		ADD_ASSOC_BOOL_EX(&retval, "causalConsistency", mongoc_session_opts_get_causal_consistency(cs_opts));
 		ADD_ASSOC_BOOL_EX(&retval, "snapshot", mongoc_session_opts_get_snapshot(cs_opts));
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "causalConsistency");
-		ADD_ASSOC_NULL_EX(&retval, "snapshot");
 	}
 
-	if (intern->client_session) {
+	{
 		uint32_t timestamp, increment;
 
 		mongoc_client_session_get_operation_time(intern->client_session, &timestamp, &increment);
@@ -775,15 +770,12 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "operationTime");
 		}
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "operationTime");
 	}
 
-	if (intern->client_session) {
+	{
 		uint32_t server_id = mongoc_client_session_get_server_id(intern->client_session);
 
 		if (server_id) {
-
 			zval server;
 
 			phongo_server_init(&server, &intern->manager, server_id);
@@ -791,23 +783,12 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "server");
 		}
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "server");
 	}
 
-	if (intern->client_session) {
-		ADD_ASSOC_BOOL_EX(&retval, "dirty", mongoc_client_session_get_dirty(intern->client_session));
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "dirty");
-	}
+	ADD_ASSOC_BOOL_EX(&retval, "dirty", mongoc_client_session_get_dirty(intern->client_session));
+	ADD_ASSOC_BOOL_EX(&retval, "inTransaction", mongoc_client_session_in_transaction(intern->client_session));
 
-	if (intern->client_session) {
-		ADD_ASSOC_BOOL_EX(&retval, "inTransaction", mongoc_client_session_in_transaction(intern->client_session));
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "inTransaction");
-	}
-
-	if (intern->client_session) {
+	{
 		const char* state = php_phongo_get_transaction_state_string(mongoc_client_session_get_transaction_state(intern->client_session));
 
 		if (!state) {
@@ -816,16 +797,13 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 		}
 
 		ADD_ASSOC_STRING(&retval, "transactionState", state);
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "transactionState");
 	}
 
-	if (intern->client_session) {
+	{
 		zval txn_opts;
+
 		php_phongo_transaction_options_to_zval(intern->client_session, &txn_opts);
 		ADD_ASSOC_ZVAL_EX(&retval, "transactionOptions", &txn_opts);
-	} else {
-		ADD_ASSOC_NULL_EX(&retval, "transactionOptions");
 	}
 
 done:
