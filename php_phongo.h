@@ -151,7 +151,6 @@ void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* 
 void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern);
 
 void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions);
-bool php_phongo_set_monitoring_callbacks(mongoc_client_t* client);
 
 bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len);
 
