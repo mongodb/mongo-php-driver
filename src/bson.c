@@ -29,8 +29,6 @@
 #include "phongo_compat.h"
 #include "php_array_api.h"
 
-#define DEBUG 0
-
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO-BSON"
 
@@ -1283,46 +1281,6 @@ bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bson_typem
 	return true;
 } /* }}} */
 
-#if DEBUG
-static void print_node_info(php_phongo_field_path_node* ptr, int level)
-{
-	printf("%*sNAME: %s\n", level * 4, "", ptr->name);
-	printf("%*s- type:", level * 4, "");
-	switch (ptr->node_type) {
-		case PHONGO_TYPEMAP_NONE:
-			printf(" none (unset)\n");
-			break;
-		case PHONGO_TYPEMAP_CLASS:
-			printf(" class (%s)\n", ZSTR_VAL(ptr->node_ce->name));
-			break;
-		case PHONGO_TYPEMAP_NATIVE_ARRAY:
-			printf(" array\n");
-			break;
-		case PHONGO_TYPEMAP_NATIVE_OBJECT:
-			printf(" stdClass\n");
-			break;
-	}
-}
-
-static void print_map_list(php_phongo_field_path_node* node, int level)
-{
-	php_phongo_field_path_node* ptr = node->children;
-
-	if (!ptr) {
-		return;
-	}
-
-	do {
-		print_node_info(ptr, level);
-		if (ptr->children) {
-			printf("%*s- children:\n", level * 4, "");
-			print_map_list(ptr, level + 1);
-		}
-		ptr = ptr->next;
-	} while (ptr);
-}
-#endif
-
 /* Applies the array argument to a typemap struct. Returns true on success;
  * otherwise, false is returned an an exception is thrown. */
 bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map) /* {{{ */
@@ -1339,9 +1297,7 @@ bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* ma
 		/* Exception should already have been thrown */
 		return false;
 	}
-#if DEBUG
-	print_map_list(&map->field_path_map, 0);
-#endif
+
 	return true;
 } /* }}} */
 
