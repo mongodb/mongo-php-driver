@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-#include <bson/bson.h>
+#include "bson/bson.h"
 
 #include <php.h>
-#include <Zend/zend_hash.h>
 #include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "php_array_api.h"
 
 #include "php_phongo.h"
-#include "php_bson.h"
-#include "phongo_compat.h"
-#include "php_array_api.h"
+#include "phongo_bson.h"
+#include "phongo_error.h"
 
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO-BSON"
@@ -173,12 +169,12 @@ inline static bool php_phongo_bson_state_is_initialized(php_phongo_bson_state* s
 	return state->field_path != NULL;
 }
 
-void php_phongo_bson_state_ctor(php_phongo_bson_state* state)
+static void php_phongo_bson_state_ctor(php_phongo_bson_state* state)
 {
 	state->field_path = php_phongo_field_path_alloc(false);
 }
 
-void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson_state* src)
+static void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson_state* src)
 {
 	dst->map = src->map;
 	if (src->field_path) {
@@ -187,7 +183,7 @@ void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson
 	dst->field_path = src->field_path;
 }
 
-void php_phongo_bson_state_dtor(php_phongo_bson_state* state)
+static void php_phongo_bson_state_dtor(php_phongo_bson_state* state)
 {
 	if (state->field_path) {
 		state->field_path->ref_count--;
@@ -1166,7 +1162,7 @@ static void field_path_map_element_dtor(php_phongo_field_path_map_element* eleme
 	efree(element);
 }
 
-bool php_phongo_bson_state_add_field_path(php_phongo_bson_typemap* map, char* field_path_original, php_phongo_bson_typemap_types type, zend_class_entry* ce)
+static bool php_phongo_bson_state_add_field_path(php_phongo_bson_typemap* map, char* field_path_original, php_phongo_bson_typemap_types type, zend_class_entry* ce)
 {
 	char*                              ptr         = NULL;
 	char*                              segment_end = NULL;
@@ -1229,7 +1225,7 @@ void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map)
 
 /* Loops over each element in the fieldPaths array (if exists, and is an
  * array), and then checks whether each element is a valid type mapping */
-bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bson_typemap* map) /* {{{ */
+static bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bson_typemap* map) /* {{{ */
 {
 	zval*      fieldpaths = NULL;
 	HashTable* ht_data;

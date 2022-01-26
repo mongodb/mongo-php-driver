@@ -14,17 +14,7 @@
  * limitations under the License.
  */
 
-/* Our Compatability header */
-#include "phongo_compat.h"
-
-void phongo_add_exception_prop(const char* prop, int prop_len, zval* value)
-{
-	if (EG(exception)) {
-		zval ex;
-		ZVAL_OBJ(&ex, EG(exception));
-		zend_update_property(Z_OBJCE(ex), PHONGO_COMPAT_OBJ_P(&ex), prop, prop_len, value);
-	}
-}
+#include <php.h>
 
 #ifdef ZEND_HASH_GET_APPLY_COUNT /* PHP 7.2 or earlier recursion protection */
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht)

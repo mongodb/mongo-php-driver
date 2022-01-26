@@ -14,25 +14,30 @@
  * limitations under the License.
  */
 
-#include <php.h>
-#include <Zend/zend_hash.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/standard/file.h>
+#include "bson/bson.h"
+#include "mongoc/mongoc.h"
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include <php.h>
+#include <ext/standard/file.h>
+#include <Zend/zend_interfaces.h>
 
 #include "php_array_api.h"
-#include "phongo_compat.h"
+
 #include "php_phongo.h"
-#include "Session.h"
-#include "src/phongo_apm.h"
+#include "phongo_apm.h"
+#include "phongo_client.h"
+#include "phongo_error.h"
+#include "phongo_execute.h"
+#include "phongo_util.h"
+
+#include "MongoDB/ClientEncryption.h"
+#include "MongoDB/ReadConcern.h"
+#include "MongoDB/ReadPreference.h"
+#include "MongoDB/Server.h"
+#include "MongoDB/Session.h"
+#include "MongoDB/WriteConcern.h"
 
 #define PHONGO_MANAGER_URI_DEFAULT "mongodb://127.0.0.1/"
-
-#undef MONGOC_LOG_DOMAIN
-#define MONGOC_LOG_DOMAIN "PHONGO"
 
 /**
  * Manager abstracts a cluster of Server objects (i.e. socket connections).

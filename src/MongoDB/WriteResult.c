@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
+#include "bson/bson.h"
+#include "mongoc/mongoc.h"
+
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "php_array_api.h"
-#include "phongo_compat.h"
+
 #include "php_phongo.h"
-#include "php_bson.h"
+#include "phongo_error.h"
+
+#include "MongoDB/Server.h"
+#include "MongoDB/WriteConcern.h"
+#include "MongoDB/WriteConcernError.h"
+#include "MongoDB/WriteError.h"
 
 #define PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(iter, bson, key)                \
 	if (bson_iter_init_find((iter), (bson), (key)) && BSON_ITER_HOLDS_INT32((iter))) { \
@@ -471,6 +475,21 @@ void php_phongo_writeresult_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_writeresult.get_debug_info = php_phongo_writeresult_get_debug_info;
 	php_phongo_handler_writeresult.free_obj       = php_phongo_writeresult_free_object;
 	php_phongo_handler_writeresult.offset         = XtOffsetOf(php_phongo_writeresult_t, std);
+} /* }}} */
+
+php_phongo_writeresult_t* phongo_writeresult_init(zval* return_value, bson_t* reply, zval* manager, uint32_t server_id) /* {{{ */
+{
+	php_phongo_writeresult_t* writeresult;
+
+	object_init_ex(return_value, php_phongo_writeresult_ce);
+
+	writeresult            = Z_WRITERESULT_OBJ_P(return_value);
+	writeresult->reply     = bson_copy(reply);
+	writeresult->server_id = server_id;
+
+	ZVAL_ZVAL(&writeresult->manager, manager, 1, 0);
+
+	return writeresult;
 } /* }}} */
 
 /*

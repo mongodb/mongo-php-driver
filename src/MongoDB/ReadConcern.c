@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
+#include "mongoc/mongoc.h"
+
 #include <php.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/standard/php_var.h>
 #include <zend_smart_str.h>
+#include <ext/standard/php_var.h>
+#include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
+#include "phongo_error.h"
 
 zend_class_entry* php_phongo_readconcern_ce;
 
@@ -397,6 +395,41 @@ void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("LINEARIZABLE"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_LINEARIZABLE));
 	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("AVAILABLE"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_AVAILABLE));
 	zend_declare_class_constant_stringl(php_phongo_readconcern_ce, ZEND_STRL("SNAPSHOT"), ZEND_STRL(MONGOC_READ_CONCERN_LEVEL_SNAPSHOT));
+} /* }}} */
+
+void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern) /* {{{ */
+{
+	php_phongo_readconcern_t* intern;
+
+	object_init_ex(return_value, php_phongo_readconcern_ce);
+
+	intern               = Z_READCONCERN_OBJ_P(return_value);
+	intern->read_concern = mongoc_read_concern_copy(read_concern);
+}
+/* }}} */
+
+const mongoc_read_concern_t* phongo_read_concern_from_zval(zval* zread_concern) /* {{{ */
+{
+	if (zread_concern) {
+		php_phongo_readconcern_t* intern = Z_READCONCERN_OBJ_P(zread_concern);
+
+		if (intern) {
+			return intern->read_concern;
+		}
+	}
+
+	return NULL;
+} /* }}} */
+
+void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* read_concern) /* {{{ */
+{
+	const char* level = mongoc_read_concern_get_level(read_concern);
+
+	array_init_size(retval, 1);
+
+	if (level) {
+		ADD_ASSOC_STRING(retval, "level", level);
+	}
 } /* }}} */
 
 /*

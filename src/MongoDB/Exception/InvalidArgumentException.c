@@ -17,11 +17,6 @@
 #include <php.h>
 #include <ext/spl/spl_exceptions.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
 
 zend_class_entry* php_phongo_invalidargumentexception_ce;

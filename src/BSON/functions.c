@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
+#include "bson/bson.h"
+
 #include <php.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
-#include "php_bson.h"
+#include "phongo_bson_encode.h"
+#include "phongo_error.h"
 
 typedef enum {
 	PHONGO_JSON_MODE_LEGACY,

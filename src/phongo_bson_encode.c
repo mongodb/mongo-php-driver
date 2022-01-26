@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-#include <bson/bson.h>
+#include "bson/bson.h"
 
 #include <php.h>
-#include <Zend/zend_hash.h>
 #include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "php_phongo.h"
-#include "php_bson.h"
+#include "phongo_bson.h"
+#include "phongo_bson_encode.h"
 #include "phongo_compat.h"
+#include "phongo_error.h"
+
+#undef MONGOC_LOG_DOMAIN
+#define MONGOC_LOG_DOMAIN "PHONGO-BSON"
 
 #if SIZEOF_ZEND_LONG == 8
 #define BSON_APPEND_INT(b, key, keylen, val)    \
@@ -41,9 +41,6 @@
 #else
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif
-
-#undef MONGOC_LOG_DOMAIN
-#define MONGOC_LOG_DOMAIN "PHONGO-BSON"
 
 /* Forwards declarations */
 static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out);

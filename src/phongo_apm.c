@@ -22,16 +22,9 @@
 #include <Zend/zend_interfaces.h>
 #include <Zend/zend_operators.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
 #include "phongo_apm.h"
-
-#undef MONGOC_LOG_DOMAIN
-#define MONGOC_LOG_DOMAIN "PHONGO"
+#include "phongo_error.h"
 
 ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 

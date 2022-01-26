@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
+#include "bson/bson.h"
+#include "mongoc/mongoc.h"
+
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "php_array_api.h"
-#include "phongo_compat.h"
+
 #include "php_phongo.h"
-#include "php_bson.h"
+#include "phongo_bson_encode.h"
+#include "phongo_error.h"
+
+#include "MongoDB/WriteConcern.h"
 
 #define PHONGO_BULKWRITE_BYPASS_UNSET -1
 

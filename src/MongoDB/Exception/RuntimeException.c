@@ -17,13 +17,10 @@
 #include <php.h>
 #include <ext/spl/spl_exceptions.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
-#include "php_phongo.h"
 #include "php_array_api.h"
+
+#include "php_phongo.h"
+#include "phongo_error.h"
 
 zend_class_entry* php_phongo_runtimeexception_ce;
 

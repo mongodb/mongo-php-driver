@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
+#include "mongoc/mongoc.h"
+
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
+#include "phongo_error.h"
+
+#include "BSON/ObjectId.h"
+#include "MongoDB/Server.h"
+#include "MongoDB/ServerDescription.h"
 
 zend_class_entry* php_phongo_serverchangedevent_ce;
 

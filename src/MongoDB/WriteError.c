@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
+#include "bson/bson.h"
+
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
+#include "phongo_error.h"
+
+#include "MongoDB/WriteError.h"
 
 zend_class_entry* php_phongo_writeerror_ce;
 
@@ -189,6 +189,49 @@ void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_writeerror.get_debug_info = php_phongo_writeerror_get_debug_info;
 	php_phongo_handler_writeerror.free_obj       = php_phongo_writeerror_free_object;
 	php_phongo_handler_writeerror.offset         = XtOffsetOf(php_phongo_writeerror_t, std);
+} /* }}} */
+
+zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson) /* {{{ */
+{
+	bson_iter_t              iter;
+	php_phongo_writeerror_t* intern;
+
+	object_init_ex(return_value, php_phongo_writeerror_ce);
+
+	intern        = Z_WRITEERROR_OBJ_P(return_value);
+	intern->code  = 0;
+	intern->index = 0;
+
+	if (bson_iter_init_find(&iter, bson, "code") && BSON_ITER_HOLDS_INT32(&iter)) {
+		intern->code = bson_iter_int32(&iter);
+	}
+
+	if (bson_iter_init_find(&iter, bson, "errmsg") && BSON_ITER_HOLDS_UTF8(&iter)) {
+		uint32_t    errmsg_len;
+		const char* err_msg = bson_iter_utf8(&iter, &errmsg_len);
+
+		intern->message = estrndup(err_msg, errmsg_len);
+	}
+
+	if (bson_iter_init_find(&iter, bson, "errInfo") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+		uint32_t       len;
+		const uint8_t* data = NULL;
+
+		bson_iter_document(&iter, &len, &data);
+
+		if (!php_phongo_bson_to_zval(data, len, &intern->info)) {
+			zval_ptr_dtor(&intern->info);
+			ZVAL_UNDEF(&intern->info);
+
+			return false;
+		}
+	}
+
+	if (bson_iter_init_find(&iter, bson, "index") && BSON_ITER_HOLDS_INT32(&iter)) {
+		intern->index = bson_iter_int32(&iter);
+	}
+
+	return true;
 } /* }}} */
 
 /*

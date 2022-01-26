@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-present MongoDB, Inc.
+ * Copyright 2022-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,28 +17,13 @@
 #ifndef PHONGO_BSON_H
 #define PHONGO_BSON_H
 
-#include <bson/bson.h>
+#include "bson/bson.h"
 
-/* PHP Core stuff */
 #include <php.h>
 
 #define BSON_UNSERIALIZE_FUNC_NAME "bsonUnserialize"
 #define BSON_SERIALIZE_FUNC_NAME "bsonSerialize"
-
 #define PHONGO_ODM_FIELD_NAME "__pclass"
-
-typedef enum {
-	PHONGO_BSON_NONE      = 0x00,
-	PHONGO_BSON_ADD_ID    = 0x01,
-	PHONGO_BSON_RETURN_ID = 0x02
-} php_phongo_bson_flags_t;
-
-typedef enum {
-	PHONGO_TYPEMAP_NONE,
-	PHONGO_TYPEMAP_NATIVE_ARRAY,
-	PHONGO_TYPEMAP_NATIVE_OBJECT,
-	PHONGO_TYPEMAP_CLASS
-} php_phongo_bson_typemap_types;
 
 typedef enum {
 	PHONGO_FIELD_PATH_ITEM_NONE,
@@ -55,7 +40,14 @@ typedef struct {
 	bool                                   owns_elements;
 } php_phongo_field_path;
 
-typedef struct _php_phongo_field_path_map_element {
+typedef enum {
+	PHONGO_TYPEMAP_NONE,
+	PHONGO_TYPEMAP_NATIVE_ARRAY,
+	PHONGO_TYPEMAP_NATIVE_OBJECT,
+	PHONGO_TYPEMAP_CLASS
+} php_phongo_bson_typemap_types;
+
+typedef struct {
 	php_phongo_field_path*        entry;
 	php_phongo_bson_typemap_types node_type;
 	zend_class_entry*             node_ce;
@@ -87,6 +79,7 @@ typedef struct {
 	do {                                                \
 		memset(&(s), 0, sizeof(php_phongo_bson_state)); \
 	} while (0)
+
 #define PHONGO_BSON_INIT_DEBUG_STATE(s)                    \
 	do {                                                   \
 		memset(&(s), 0, sizeof(php_phongo_bson_state));    \
@@ -94,20 +87,7 @@ typedef struct {
 		s.map.document_type = PHONGO_TYPEMAP_NATIVE_ARRAY; \
 	} while (0)
 
-void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out);
-bool php_phongo_bson_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state);
-bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval* out);
-bool php_phongo_bson_value_to_zval(const bson_value_t* value, zval* zv);
-void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bson_value_t* value);
-bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map);
-void php_phongo_bson_state_ctor(php_phongo_bson_state* state);
-void php_phongo_bson_state_dtor(php_phongo_bson_state* state);
-void php_phongo_bson_state_copy_ctor(php_phongo_bson_state* dst, php_phongo_bson_state* src);
-void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map);
-
-void php_phongo_bson_new_timestamp_from_increment_and_timestamp(zval* object, uint32_t increment, uint32_t timestamp);
-void php_phongo_bson_new_int64(zval* object, int64_t integer);
-
+char*                  php_phongo_field_path_as_string(php_phongo_field_path* field_path);
 php_phongo_field_path* php_phongo_field_path_alloc(bool owns_elements);
 void                   php_phongo_field_path_free(php_phongo_field_path* field_path);
 void                   php_phongo_field_path_write_item_at_current_level(php_phongo_field_path* field_path, const char* element);
@@ -115,15 +95,15 @@ void                   php_phongo_field_path_write_type_at_current_level(php_pho
 bool                   php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element, php_phongo_bson_field_path_item_types element_type);
 bool                   php_phongo_field_path_pop(php_phongo_field_path* field_path);
 
-char* php_phongo_field_path_as_string(php_phongo_field_path* field_path);
+bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval* out);
+bool php_phongo_bson_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state);
+
+bool php_phongo_bson_value_to_zval(const bson_value_t* value, zval* zv);
+
+bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map);
+void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map);
+
+void php_phongo_bson_new_timestamp_from_increment_and_timestamp(zval* object, uint32_t increment, uint32_t timestamp);
+void php_phongo_bson_new_int64(zval* object, int64_t integer);
 
 #endif /* PHONGO_BSON_H */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

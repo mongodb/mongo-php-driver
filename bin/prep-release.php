@@ -31,8 +31,7 @@ function verify_version($version, $stability) {
 function get_files() {
     $dirs = array(
       'src' => array(
-        "php_*.{h,c}",
-        "phongo_*.{h,c}",
+        "php_phongo.{c,h}",
         "config.{m4,w32}",
         "Makefile.frag",
         "scripts/autotools/*.{m4}",

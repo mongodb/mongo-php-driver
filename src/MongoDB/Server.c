@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
+#include "bson/bson.h"
+#include "mongoc/mongoc.h"
+
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
-#include "php_bson.h"
+#include "phongo_bson_encode.h"
+#include "phongo_client.h"
+#include "phongo_error.h"
+#include "phongo_execute.h"
+#include "phongo_util.h"
+
+#include "MongoDB/Server.h"
+#include "MongoDB/ServerDescription.h"
 
 zend_class_entry* php_phongo_server_ce;
 
@@ -742,6 +747,102 @@ void php_phongo_server_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_OTHER"), PHONGO_SERVER_RS_OTHER);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_RS_GHOST"), PHONGO_SERVER_RS_GHOST);
 	zend_declare_class_constant_long(php_phongo_server_ce, ZEND_STRL("TYPE_LOAD_BALANCER"), PHONGO_SERVER_LOAD_BALANCER);
+} /* }}} */
+
+void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id) /* {{{ */
+{
+	php_phongo_server_t* server;
+
+	object_init_ex(return_value, php_phongo_server_ce);
+
+	server            = Z_SERVER_OBJ_P(return_value);
+	server->server_id = server_id;
+
+	ZVAL_ZVAL(&server->manager, manager, 1, 0);
+}
+/* }}} */
+
+bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_server_description_t* sd) /* {{{ */
+{
+	mongoc_host_list_t* host           = mongoc_server_description_host(sd);
+	const bson_t*       hello_response = mongoc_server_description_hello_response(sd);
+	bson_iter_t         iter;
+
+	array_init(retval);
+
+	ADD_ASSOC_STRING(retval, "host", host->host);
+	ADD_ASSOC_LONG_EX(retval, "port", host->port);
+	ADD_ASSOC_LONG_EX(retval, "type", php_phongo_server_description_type(sd));
+	ADD_ASSOC_BOOL_EX(retval, "is_primary", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_PRIMARY].name));
+	ADD_ASSOC_BOOL_EX(retval, "is_secondary", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_SECONDARY].name));
+	ADD_ASSOC_BOOL_EX(retval, "is_arbiter", !strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_ARBITER].name));
+	ADD_ASSOC_BOOL_EX(retval, "is_hidden", bson_iter_init_find_case(&iter, hello_response, "hidden") && bson_iter_as_bool(&iter));
+	ADD_ASSOC_BOOL_EX(retval, "is_passive", bson_iter_init_find_case(&iter, hello_response, "passive") && bson_iter_as_bool(&iter));
+
+	if (bson_iter_init_find(&iter, hello_response, "tags") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+		const uint8_t*        bytes;
+		uint32_t              len;
+		php_phongo_bson_state state;
+
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
+		bson_iter_document(&iter, &len, &bytes);
+		if (!php_phongo_bson_to_zval_ex(bytes, len, &state)) {
+			/* Exception already thrown */
+			zval_ptr_dtor(&state.zchild);
+			return false;
+		}
+
+		ADD_ASSOC_ZVAL_EX(retval, "tags", &state.zchild);
+	}
+
+	/* If the server description is a load balancer, its hello_response will be
+	 * empty. Instead, report the hello_response from the handshake description
+	 * (i.e. backing server). */
+	if (!strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_LOAD_BALANCER].name)) {
+		const bson_t*                handshake_response;
+		mongoc_server_description_t* handshake_sd;
+		bson_error_t                 error = { 0 };
+		php_phongo_bson_state        state;
+
+		if (!(handshake_sd = mongoc_client_get_handshake_description(client, mongoc_server_description_id(sd), NULL, &error))) {
+			phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get handshake server description: %s", error.message);
+			return false;
+		}
+
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
+		handshake_response = mongoc_server_description_hello_response(handshake_sd);
+
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(handshake_response), handshake_response->len, &state)) {
+			/* Exception already thrown */
+			mongoc_server_description_destroy(handshake_sd);
+			zval_ptr_dtor(&state.zchild);
+			return false;
+		}
+
+		ADD_ASSOC_ZVAL_EX(retval, "last_hello_response", &state.zchild);
+		mongoc_server_description_destroy(handshake_sd);
+	} else {
+		php_phongo_bson_state state;
+
+		PHONGO_BSON_INIT_DEBUG_STATE(state);
+
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(hello_response), hello_response->len, &state)) {
+			/* Exception already thrown */
+			zval_ptr_dtor(&state.zchild);
+			return false;
+		}
+
+		ADD_ASSOC_ZVAL_EX(retval, "last_hello_response", &state.zchild);
+	}
+
+	/* TODO: Use MONGOC_RTT_UNSET once it is added to libmongoc's public API (CDRIVER-4176) */
+	if (mongoc_server_description_round_trip_time(sd) == -1) {
+		ADD_ASSOC_NULL_EX(retval, "round_trip_time");
+	} else {
+		ADD_ASSOC_LONG_EX(retval, "round_trip_time", (zend_long) mongoc_server_description_round_trip_time(sd));
+	}
+
+	return true;
 } /* }}} */
 
 /*

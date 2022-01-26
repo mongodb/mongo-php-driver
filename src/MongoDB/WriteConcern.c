@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
+#include "mongoc/mongoc.h"
+
 #include <php.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/standard/php_var.h>
 #include <zend_smart_str.h>
+#include <ext/standard/php_var.h>
+#include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
+#include "phongo_error.h"
+#include "phongo_util.h"
+
+#include "MongoDB/WriteConcern.h"
 
 zend_class_entry* php_phongo_writeconcern_ce;
 
@@ -610,6 +611,63 @@ void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_writeconcern.offset         = XtOffsetOf(php_phongo_writeconcern_t, std);
 
 	zend_declare_class_constant_stringl(php_phongo_writeconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(PHONGO_WRITE_CONCERN_W_MAJORITY));
+} /* }}} */
+
+void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern) /* {{{ */
+{
+	php_phongo_writeconcern_t* intern;
+
+	object_init_ex(return_value, php_phongo_writeconcern_ce);
+
+	intern                = Z_WRITECONCERN_OBJ_P(return_value);
+	intern->write_concern = mongoc_write_concern_copy(write_concern);
+}
+/* }}} */
+
+const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concern) /* {{{ */
+{
+	if (zwrite_concern) {
+		php_phongo_writeconcern_t* intern = Z_WRITECONCERN_OBJ_P(zwrite_concern);
+
+		if (intern) {
+			return intern->write_concern;
+		}
+	}
+
+	return NULL;
+} /* }}} */
+
+void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern) /* {{{ */
+{
+	const char*   wtag     = mongoc_write_concern_get_wtag(write_concern);
+	const int32_t w        = mongoc_write_concern_get_w(write_concern);
+	const int64_t wtimeout = mongoc_write_concern_get_wtimeout_int64(write_concern);
+
+	array_init_size(retval, 4);
+
+	if (wtag) {
+		ADD_ASSOC_STRING(retval, "w", wtag);
+	} else if (mongoc_write_concern_get_wmajority(write_concern)) {
+		ADD_ASSOC_STRING(retval, "w", PHONGO_WRITE_CONCERN_W_MAJORITY);
+	} else if (w != MONGOC_WRITE_CONCERN_W_DEFAULT) {
+		ADD_ASSOC_LONG_EX(retval, "w", w);
+	}
+
+	if (mongoc_write_concern_journal_is_set(write_concern)) {
+		ADD_ASSOC_BOOL_EX(retval, "j", mongoc_write_concern_get_journal(write_concern));
+	}
+
+	if (wtimeout != 0) {
+#if SIZEOF_ZEND_LONG == 4
+		if (wtimeout > INT32_MAX || wtimeout < INT32_MIN) {
+			ADD_ASSOC_INT64_AS_STRING(retval, "wtimeout", wtimeout);
+		} else {
+			ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
+		}
+#else
+		ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
+#endif
+	}
 } /* }}} */
 
 /*

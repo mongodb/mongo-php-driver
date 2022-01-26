@@ -17,20 +17,18 @@
 #include <math.h>
 
 #include <php.h>
-#include <Zend/zend_interfaces.h>
+#include <zend_smart_str.h>
 #include <ext/date/php_date.h>
 #include <ext/standard/php_var.h>
-#include <zend_smart_str.h>
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include <Zend/zend_interfaces.h>
 
 #ifdef PHP_WIN32
-#include "win32/time.h"
+#include <win32/time.h>
 #endif
-#include "phongo_compat.h"
+
 #include "php_phongo.h"
+#include "phongo_error.h"
+#include "phongo_util.h"
 
 zend_class_entry* php_phongo_utcdatetime_ce;
 

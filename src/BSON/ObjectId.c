@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
+#include "bson/bson.h"
+
 #include <php.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/standard/php_var.h>
 #include <zend_smart_str.h>
+#include <ext/standard/php_var.h>
+#include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
+#include "phongo_error.h"
 
 #define PHONGO_OID_SIZE sizeof(((php_phongo_objectid_t*) 0)->oid)
 #define PHONGO_OID_LEN (PHONGO_OID_SIZE - 1)
@@ -440,6 +438,18 @@ void php_phongo_objectid_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_objectid.free_obj       = php_phongo_objectid_free_object;
 	php_phongo_handler_objectid.offset         = XtOffsetOf(php_phongo_objectid_t, std);
 } /* }}} */
+
+void phongo_objectid_init(zval* return_value, const bson_oid_t* oid) /* {{{ */
+{
+	php_phongo_objectid_t* intern;
+
+	object_init_ex(return_value, php_phongo_objectid_ce);
+
+	intern = Z_OBJECTID_OBJ_P(return_value);
+	bson_oid_to_string(oid, intern->oid);
+	intern->initialized = true;
+}
+/* }}} */
 
 /*
  * Local variables:
