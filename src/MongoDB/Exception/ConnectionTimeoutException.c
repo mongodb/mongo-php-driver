@@ -34,12 +34,3 @@ void php_phongo_connectiontimeoutexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_connectiontimeoutexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce);
 	PHONGO_CE_FINAL(php_phongo_connectiontimeoutexception_ce);
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

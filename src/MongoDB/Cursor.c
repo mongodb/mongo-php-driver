@@ -574,12 +574,3 @@ bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor) /* {{{ *
 
 	return true;
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

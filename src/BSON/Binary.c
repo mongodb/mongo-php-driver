@@ -475,12 +475,3 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_COLUMN"), BSON_SUBTYPE_COLUMN);
 	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_USER_DEFINED"), BSON_SUBTYPE_USER);
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

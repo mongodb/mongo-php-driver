@@ -447,12 +447,3 @@ extern void php_phongo_topologyclosedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS);
 
 #endif /* PHONGO_CLASSES_H */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

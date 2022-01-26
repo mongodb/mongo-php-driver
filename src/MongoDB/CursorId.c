@@ -319,12 +319,3 @@ void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_cursorid.free_obj       = php_phongo_cursorid_free_object;
 	php_phongo_handler_cursorid.offset         = XtOffsetOf(php_phongo_cursorid_t, std);
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

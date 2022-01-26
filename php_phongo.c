@@ -564,12 +564,3 @@ zend_module_entry mongodb_module_entry = {
 #ifdef COMPILE_DL_MONGODB
 ZEND_GET_MODULE(mongodb)
 #endif
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

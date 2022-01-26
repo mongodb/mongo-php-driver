@@ -47,12 +47,3 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
 
 	phongo_apm_remove_subscriber(MONGODB_G(subscribers), subscriber);
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

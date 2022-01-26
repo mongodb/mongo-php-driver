@@ -575,12 +575,3 @@ static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clien
 }
 /* }}} */
 #endif /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

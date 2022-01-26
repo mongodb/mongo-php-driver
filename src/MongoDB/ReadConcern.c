@@ -431,12 +431,3 @@ void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* 
 		ADD_ASSOC_STRING(retval, "level", level);
 	}
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */
