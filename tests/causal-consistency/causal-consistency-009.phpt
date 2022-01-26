@@ -1,5 +1,8 @@
 --TEST--
-Causal consistency: custom read concern merges afterClusterTime and level
+Causal consistency: default read concern includes afterClusterTime but not level
+--DESCRIPTION--
+Causal consistency spec prose test #8
+https://github.com/mongodb/specifications/blob/master/source/causal-consistency/causal-consistency.rst#test-plan
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
@@ -15,8 +18,7 @@ require_once __DIR__ . "/../utils/observer.php";
         $manager = create_test_manager();
         $session = $manager->startSession();
 
-        $readConcern = new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::MAJORITY);
-        $query = new MongoDB\Driver\Query([], ['readConcern' => $readConcern]);
+        $query = new MongoDB\Driver\Query([]);
         $manager->executeQuery(NS, $query, ['session' => $session]);
         $manager->executeQuery(NS, $query, ['session' => $session]);
     },
@@ -35,7 +37,7 @@ require_once __DIR__ . "/../utils/observer.php";
 <?php exit(0); ?>
 --EXPECT--
 Read concern includes afterClusterTime: no
-Read concern includes level: yes
+Read concern includes level: no
 Read concern includes afterClusterTime: yes
-Read concern includes level: yes
+Read concern includes level: no
 ===DONE===
