@@ -450,12 +450,3 @@ void phongo_objectid_init(zval* return_value, const bson_oid_t* oid) /* {{{ */
 	intern->initialized = true;
 }
 /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

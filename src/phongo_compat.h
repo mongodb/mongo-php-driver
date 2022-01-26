@@ -255,12 +255,3 @@ zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
 zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht);
 
 #endif /* PHONGO_COMPAT_H */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

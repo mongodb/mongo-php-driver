@@ -518,12 +518,3 @@ void php_phongo_javascript_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_javascript.free_obj       = php_phongo_javascript_free_object;
 	php_phongo_handler_javascript.offset         = XtOffsetOf(php_phongo_javascript_t, std);
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

@@ -516,12 +516,3 @@ void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bs
 	zval_ptr_dtor(data_object);
 	efree(data_object);
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

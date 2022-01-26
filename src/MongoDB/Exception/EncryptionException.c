@@ -33,12 +33,3 @@ void php_phongo_encryptionexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "EncryptionException", php_phongo_encryptionexception_me);
 	php_phongo_encryptionexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce);
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

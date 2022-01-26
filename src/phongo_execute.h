@@ -44,12 +44,3 @@ bool phongo_parse_read_preference(zval* options, zval** zreadPreference);
 bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession);
 
 #endif /* PHONGO_EXECUTE_H */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

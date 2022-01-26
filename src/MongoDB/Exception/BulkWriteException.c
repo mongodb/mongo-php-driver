@@ -33,12 +33,3 @@ void php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "BulkWriteException", php_phongo_bulkwriteexception_me);
 	php_phongo_bulkwriteexception_ce = zend_register_internal_class_ex(&ce, php_phongo_writeexception_ce);
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

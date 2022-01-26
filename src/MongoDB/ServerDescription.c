@@ -354,12 +354,3 @@ php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_s
 
 	return PHONGO_SERVER_UNKNOWN;
 }
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

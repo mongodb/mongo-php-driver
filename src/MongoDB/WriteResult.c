@@ -491,12 +491,3 @@ php_phongo_writeresult_t* phongo_writeresult_init(zval* return_value, bson_t* re
 
 	return writeresult;
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

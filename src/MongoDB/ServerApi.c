@@ -388,12 +388,3 @@ void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	zend_declare_class_constant_stringl(php_phongo_serverapi_ce, ZEND_STRL("V1"), ZEND_STRL("1"));
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

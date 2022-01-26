@@ -39,12 +39,3 @@ void php_phongo_decimal128_interface_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Decimal128Interface", php_phongo_decimal128_interface_me);
 	php_phongo_decimal128_interface_ce = zend_register_internal_interface(&ce);
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

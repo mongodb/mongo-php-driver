@@ -233,12 +233,3 @@ zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson) /* {{{ */
 
 	return true;
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

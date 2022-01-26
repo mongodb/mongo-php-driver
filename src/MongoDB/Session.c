@@ -849,12 +849,3 @@ void phongo_session_init(zval* return_value, zval* manager, mongoc_client_sessio
 	ZVAL_ZVAL(&session->manager, manager, 1, 0);
 }
 /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

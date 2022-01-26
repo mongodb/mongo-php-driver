@@ -34,12 +34,3 @@ void php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_executiontimeoutexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce);
 	PHONGO_CE_FINAL(php_phongo_executiontimeoutexception_ce);
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

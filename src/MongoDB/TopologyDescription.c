@@ -245,12 +245,3 @@ void phongo_topologydescription_init(zval* return_value, mongoc_topology_descrip
 	intern->topology_description = mongoc_topology_description_new_copy(topology_description);
 }
 /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

@@ -26,12 +26,3 @@ void phongo_register_ini_entries(INIT_FUNC_ARGS);
 void phongo_unregister_ini_entries(SHUTDOWN_FUNC_ARGS);
 
 #endif /* PHONGO_INI_H */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

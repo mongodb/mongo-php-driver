@@ -50,12 +50,3 @@ void php_phongo_cursor_interface_init_ce(INIT_FUNC_ARGS) /* {{{ */
 
 	zend_class_implements(php_phongo_cursor_interface_ce, 1, zend_ce_traversable);
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

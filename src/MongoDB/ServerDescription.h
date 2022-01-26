@@ -51,12 +51,3 @@ void phongo_serverdescription_init_ex(zval* return_value, mongoc_server_descript
 php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t* sd);
 
 #endif /* PHONGO_SERVERDESCRIPTION_H */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

@@ -33,12 +33,3 @@ void php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "AuthenticationException", php_phongo_authenticationexception_me);
 	php_phongo_authenticationexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce);
 } /* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */
