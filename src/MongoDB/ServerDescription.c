@@ -14,32 +14,47 @@
  * limitations under the License.
  */
 
+#include "bson/bson.h"
+#include "mongoc/mongoc.h"
+
 #include <php.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/standard/php_var.h>
 #include <zend_smart_str.h>
+#include <ext/standard/php_var.h>
+#include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
+#include "phongo_error.h"
+
+#include "MongoDB/ServerDescription.h"
 
 zend_class_entry* php_phongo_serverdescription_ce;
 
-/* Note: these constants are derived from _mongoc_topology_description_type,
+/* Note: these constants are derived from mongoc_server_description_type, since
  * since mongoc_server_description_type_t is private. */
-#define PHONGO_SERVER_UNKNOWN "Unknown"
-#define PHONGO_SERVER_STANDALONE "Standalone"
-#define PHONGO_SERVER_MONGOS "Mongos"
-#define PHONGO_SERVER_POSSIBLE_PRIMARY "PossiblePrimary"
-#define PHONGO_SERVER_RS_PRIMARY "RSPrimary"
-#define PHONGO_SERVER_RS_SECONDARY "RSSecondary"
-#define PHONGO_SERVER_RS_ARBITER "RSArbiter"
-#define PHONGO_SERVER_RS_OTHER "RSOther"
-#define PHONGO_SERVER_RS_GHOST "RSGhost"
-#define PHONGO_SERVER_LOAD_BALANCER "LoadBalancer"
+#define PHONGO_SERVER_TYPE_UNKNOWN "Unknown"
+#define PHONGO_SERVER_TYPE_STANDALONE "Standalone"
+#define PHONGO_SERVER_TYPE_MONGOS "Mongos"
+#define PHONGO_SERVER_TYPE_POSSIBLE_PRIMARY "PossiblePrimary"
+#define PHONGO_SERVER_TYPE_RS_PRIMARY "RSPrimary"
+#define PHONGO_SERVER_TYPE_RS_SECONDARY "RSSecondary"
+#define PHONGO_SERVER_TYPE_RS_ARBITER "RSArbiter"
+#define PHONGO_SERVER_TYPE_RS_OTHER "RSOther"
+#define PHONGO_SERVER_TYPE_RS_GHOST "RSGhost"
+#define PHONGO_SERVER_TYPE_LOAD_BALANCER "LoadBalancer"
+
+php_phongo_server_description_type_map_t
+	php_phongo_server_description_type_map[PHONGO_SERVER_DESCRIPTION_TYPES] = {
+		{ PHONGO_SERVER_UNKNOWN, PHONGO_SERVER_TYPE_UNKNOWN },
+		{ PHONGO_SERVER_STANDALONE, PHONGO_SERVER_TYPE_STANDALONE },
+		{ PHONGO_SERVER_MONGOS, PHONGO_SERVER_TYPE_MONGOS },
+		{ PHONGO_SERVER_POSSIBLE_PRIMARY, PHONGO_SERVER_TYPE_POSSIBLE_PRIMARY },
+		{ PHONGO_SERVER_RS_PRIMARY, PHONGO_SERVER_TYPE_RS_PRIMARY },
+		{ PHONGO_SERVER_RS_SECONDARY, PHONGO_SERVER_TYPE_RS_SECONDARY },
+		{ PHONGO_SERVER_RS_ARBITER, PHONGO_SERVER_TYPE_RS_ARBITER },
+		{ PHONGO_SERVER_RS_OTHER, PHONGO_SERVER_TYPE_RS_OTHER },
+		{ PHONGO_SERVER_RS_GHOST, PHONGO_SERVER_TYPE_RS_GHOST },
+		{ PHONGO_SERVER_LOAD_BALANCER, PHONGO_SERVER_TYPE_LOAD_BALANCER },
+	};
 
 /* {{{ proto array MongoDB\Driver\ServerDescription::getHelloResponse()
    Returns the most recent "hello" response */
@@ -303,17 +318,42 @@ void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_serverdescription.free_obj       = php_phongo_serverdescription_free_object;
 	php_phongo_handler_serverdescription.offset         = XtOffsetOf(php_phongo_serverdescription_t, std);
 
-	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_UNKNOWN"), PHONGO_SERVER_UNKNOWN);
-	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_STANDALONE"), PHONGO_SERVER_STANDALONE);
-	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_MONGOS"), PHONGO_SERVER_MONGOS);
-	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_POSSIBLE_PRIMARY"), PHONGO_SERVER_POSSIBLE_PRIMARY);
-	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_PRIMARY"), PHONGO_SERVER_RS_PRIMARY);
-	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_SECONDARY"), PHONGO_SERVER_RS_SECONDARY);
-	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_ARBITER"), PHONGO_SERVER_RS_ARBITER);
-	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_OTHER"), PHONGO_SERVER_RS_OTHER);
-	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_GHOST"), PHONGO_SERVER_RS_GHOST);
-	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_LOAD_BALANCER"), PHONGO_SERVER_LOAD_BALANCER);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_UNKNOWN"), PHONGO_SERVER_TYPE_UNKNOWN);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_STANDALONE"), PHONGO_SERVER_TYPE_STANDALONE);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_MONGOS"), PHONGO_SERVER_TYPE_MONGOS);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_POSSIBLE_PRIMARY"), PHONGO_SERVER_TYPE_POSSIBLE_PRIMARY);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_PRIMARY"), PHONGO_SERVER_TYPE_RS_PRIMARY);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_SECONDARY"), PHONGO_SERVER_TYPE_RS_SECONDARY);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_ARBITER"), PHONGO_SERVER_TYPE_RS_ARBITER);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_OTHER"), PHONGO_SERVER_TYPE_RS_OTHER);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_RS_GHOST"), PHONGO_SERVER_TYPE_RS_GHOST);
+	zend_declare_class_constant_string(php_phongo_serverdescription_ce, ZEND_STRL("TYPE_LOAD_BALANCER"), PHONGO_SERVER_TYPE_LOAD_BALANCER);
 } /* }}} */
+
+void phongo_serverdescription_init_ex(zval* return_value, mongoc_server_description_t* server_description, bool copy) /* {{{ */
+{
+	php_phongo_serverdescription_t* intern;
+
+	object_init_ex(return_value, php_phongo_serverdescription_ce);
+
+	intern                     = Z_SERVERDESCRIPTION_OBJ_P(return_value);
+	intern->server_description = copy ? mongoc_server_description_new_copy(server_description) : server_description;
+}
+/* }}} */
+
+php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t* sd)
+{
+	const char* name = mongoc_server_description_type(sd);
+	int         i;
+
+	for (i = 0; i < PHONGO_SERVER_DESCRIPTION_TYPES; i++) {
+		if (!strcmp(name, php_phongo_server_description_type_map[i].name)) {
+			return php_phongo_server_description_type_map[i].type;
+		}
+	}
+
+	return PHONGO_SERVER_UNKNOWN;
+}
 
 /*
  * Local variables:

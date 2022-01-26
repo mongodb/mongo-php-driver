@@ -102,11 +102,15 @@ if test "$PHP_MONGODB" != "no"; then
 
   PHP_MONGODB_SOURCES="\
     php_phongo.c \
-    phongo_compat.c \
-    src/bson.c \
-    src/bson-encode.c \
     src/phongo_apm.c \
+    src/phongo_bson.c \
+    src/phongo_bson_encode.c \
+    src/phongo_client.c \
+    src/phongo_compat.c \
+    src/phongo_error.c \
+    src/phongo_execute.c \
     src/phongo_ini.c \
+    src/phongo_util.c \
     src/BSON/Binary.c \
     src/BSON/BinaryInterface.c \
     src/BSON/DBPointer.c \
@@ -503,12 +507,14 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_ADD_EXTENSION_DEP(mongodb, spl)
   PHP_ADD_EXTENSION_DEP(mongodb, standard)
 
+  PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/BSON/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/Exception/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/Monitoring/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/contrib/])
 
+  PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/BSON/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/Exception/])

@@ -16,13 +16,9 @@
 
 #include <php.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
-#include "src/phongo_apm.h"
+#include "phongo_apm.h"
+#include "phongo_error.h"
 
 ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 

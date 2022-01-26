@@ -15,16 +15,16 @@
  */
 
 #include <php.h>
-#include <Zend/zend_interfaces.h>
 #include <ext/spl/spl_iterators.h>
+#include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
-#include "php_bson.h"
+#include "phongo_bson.h"
+#include "phongo_client.h"
+#include "phongo_error.h"
+
+#include "MongoDB/Cursor.h"
+#include "MongoDB/Server.h"
 
 zend_class_entry* php_phongo_cursor_ce;
 
@@ -549,6 +549,30 @@ void php_phongo_cursor_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_cursor.get_debug_info = php_phongo_cursor_get_debug_info;
 	php_phongo_handler_cursor.free_obj       = php_phongo_cursor_free_object;
 	php_phongo_handler_cursor.offset         = XtOffsetOf(php_phongo_cursor_t, std);
+} /* }}} */
+
+/* Advance the cursor and return whether there is an error. On error, false is
+ * returned and an exception is thrown. */
+bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor) /* {{{ */
+{
+	const bson_t* doc = NULL;
+
+	if (!mongoc_cursor_next(cursor, &doc)) {
+		bson_error_t error = { 0 };
+
+		/* Check for connection related exceptions */
+		if (EG(exception)) {
+			return false;
+		}
+
+		/* Could simply be no docs, which is not an error */
+		if (mongoc_cursor_error_document(cursor, &error, &doc)) {
+			phongo_throw_exception_from_bson_error_t_and_reply(&error, doc);
+			return false;
+		}
+	}
+
+	return true;
 } /* }}} */
 
 /*

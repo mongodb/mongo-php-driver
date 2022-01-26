@@ -16,11 +16,6 @@
 
 #include <php.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
 
 zend_class_entry* php_phongo_regex_interface_ce;

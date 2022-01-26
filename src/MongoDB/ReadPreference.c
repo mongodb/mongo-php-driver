@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-#include <php.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/standard/php_var.h>
-#include <zend_smart_str.h>
+#include "bson/bson.h"
+#include "mongoc/mongoc.h"
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include <php.h>
+#include <zend_smart_str.h>
+#include <ext/standard/php_var.h>
+#include <Zend/zend_interfaces.h>
 
 #include "php_array_api.h"
-#include "phongo_compat.h"
+
 #include "php_phongo.h"
-#include "php_bson.h"
+#include "phongo_bson_encode.h"
+#include "phongo_error.h"
+
+#include "MongoDB/ReadPreference.h"
 
 zend_class_entry* php_phongo_readpreference_ce;
 
@@ -814,6 +816,81 @@ void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("SECONDARY"), PHONGO_READ_SECONDARY);
 	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("SECONDARY_PREFERRED"), PHONGO_READ_SECONDARY_PREFERRED);
 	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("NEAREST"), PHONGO_READ_NEAREST);
+} /* }}} */
+
+void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs) /* {{{ */
+{
+	php_phongo_readpreference_t* intern;
+
+	object_init_ex(return_value, php_phongo_readpreference_ce);
+
+	intern                  = Z_READPREFERENCE_OBJ_P(return_value);
+	intern->read_preference = mongoc_read_prefs_copy(read_prefs);
+}
+/* }}} */
+
+const mongoc_read_prefs_t* phongo_read_preference_from_zval(zval* zread_preference) /* {{{ */
+{
+	if (zread_preference) {
+		php_phongo_readpreference_t* intern = Z_READPREFERENCE_OBJ_P(zread_preference);
+
+		if (intern) {
+			return intern->read_preference;
+		}
+	}
+
+	return NULL;
+} /* }}} */
+/* }}} */
+
+/* Prepare tagSets for BSON encoding by converting each array in the set to an
+ * object. This ensures that empty arrays will serialize as empty documents.
+ *
+ * php_phongo_read_preference_tags_are_valid() handles actual validation of the
+ * tag set structure. */
+void php_phongo_read_preference_prep_tagsets(zval* tagSets) /* {{{ */
+{
+	HashTable* ht_data;
+	zval*      tagSet;
+
+	if (Z_TYPE_P(tagSets) != IS_ARRAY) {
+		return;
+	}
+
+	ht_data = HASH_OF(tagSets);
+
+	ZEND_HASH_FOREACH_VAL_IND(ht_data, tagSet)
+	{
+		ZVAL_DEREF(tagSet);
+		if (Z_TYPE_P(tagSet) == IS_ARRAY) {
+			SEPARATE_ZVAL_NOREF(tagSet);
+			convert_to_object(tagSet);
+		}
+	}
+	ZEND_HASH_FOREACH_END();
+} /* }}} */
+
+/* Checks if tags is valid to set on a mongoc_read_prefs_t. It may be null or an
+ * array of one or more documents. */
+bool php_phongo_read_preference_tags_are_valid(const bson_t* tags) /* {{{ */
+{
+	bson_iter_t iter;
+
+	if (bson_empty0(tags)) {
+		return true;
+	}
+
+	if (!bson_iter_init(&iter, tags)) {
+		return false;
+	}
+
+	while (bson_iter_next(&iter)) {
+		if (!BSON_ITER_HOLDS_DOCUMENT(&iter)) {
+			return false;
+		}
+	}
+
+	return true;
 } /* }}} */
 
 /*

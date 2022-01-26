@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
+#include "mongoc/mongoc.h"
+
 #include <php.h>
-#include <Zend/zend_interfaces.h>
-#include <ext/standard/php_var.h>
 #include <zend_smart_str.h>
+#include <ext/standard/php_var.h>
+#include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
+#include "phongo_error.h"
+
+#include "MongoDB/ReadPreference.h"
+#include "MongoDB/ServerDescription.h"
+#include "MongoDB/TopologyDescription.h"
 
 zend_class_entry* php_phongo_topologydescription_ce;
 
@@ -232,6 +234,17 @@ void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_string(php_phongo_topologydescription_ce, ZEND_STRL("TYPE_REPLICA_SET_WITH_PRIMARY"), PHONGO_TOPOLOGY_REPLICA_SET_WITH_PRIMARY);
 	zend_declare_class_constant_string(php_phongo_topologydescription_ce, ZEND_STRL("TYPE_LOAD_BALANCED"), PHONGO_TOPOLOGY_LOAD_BALANCED);
 } /* }}} */
+
+void phongo_topologydescription_init(zval* return_value, mongoc_topology_description_t* topology_description) /* {{{ */
+{
+	php_phongo_topologydescription_t* intern;
+
+	object_init_ex(return_value, php_phongo_topologydescription_ce);
+
+	intern                       = Z_TOPOLOGYDESCRIPTION_OBJ_P(return_value);
+	intern->topology_description = mongoc_topology_description_new_copy(topology_description);
+}
+/* }}} */
 
 /*
  * Local variables:

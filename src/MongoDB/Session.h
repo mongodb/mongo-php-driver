@@ -17,6 +17,12 @@
 #ifndef PHP_MONGODB_DRIVER_SESSION_H
 #define PHP_MONGODB_DRIVER_SESSION_H
 
+#include "mongoc/mongoc.h"
+
+#include <php.h>
+
 mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* txnOptions);
+
+void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session);
 
 #endif /* PHP_MONGODB_DRIVER_SESSION_H */

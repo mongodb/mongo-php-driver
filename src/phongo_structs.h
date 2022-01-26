@@ -17,9 +17,12 @@
 #ifndef PHONGO_STRUCTS_H
 #define PHONGO_STRUCTS_H
 
+#include "bson/bson.h"
+#include "mongoc/mongoc.h"
+
 #include <php.h>
 
-#include "php_bson.h"
+#include "phongo_bson.h"
 
 typedef struct {
 	mongoc_bulk_operation_t* bulk;

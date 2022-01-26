@@ -17,12 +17,8 @@
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
+#include "phongo_error.h"
 
 zend_class_entry* php_phongo_serverheartbeatstartedevent_ce;
 

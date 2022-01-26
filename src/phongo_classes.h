@@ -17,7 +17,7 @@
 #ifndef PHONGO_CLASSES_H
 #define PHONGO_CLASSES_H
 
-#include "php_phongo_structs.h"
+#include "phongo_structs.h"
 
 /* Export zend_class_entry dependencies, which are initialized in MINIT */
 extern zend_class_entry* php_phongo_date_immutable_ce;
@@ -445,10 +445,6 @@ extern void php_phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_topologyclosedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS);
-
-/* Shared function entries for disabling constructors and unserialize() */
-PHP_FUNCTION(MongoDB_disabled___construct);
-PHP_FUNCTION(MongoDB_disabled___wakeup);
 
 #endif /* PHONGO_CLASSES_H */
 

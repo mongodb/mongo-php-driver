@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
+#include "bson/bson.h"
+#include "mongoc/mongoc.h"
+
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
-#include "php_phongo.h"
-#include "php_bson.h"
 #include "php_array_api.h"
-#include "Session.h"
+
+#include "php_phongo.h"
+#include "phongo_bson_encode.h"
+#include "phongo_client.h"
+#include "phongo_error.h"
+
+#include "MongoDB/ReadConcern.h"
+#include "MongoDB/ReadPreference.h"
+#include "MongoDB/Server.h"
+#include "MongoDB/Session.h"
+#include "MongoDB/WriteConcern.h"
 
 zend_class_entry* php_phongo_session_ce;
 
@@ -830,6 +836,19 @@ void php_phongo_session_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_COMMITTED"), PHONGO_TRANSACTION_COMMITTED);
 	zend_declare_class_constant_string(php_phongo_session_ce, ZEND_STRL("TRANSACTION_ABORTED"), PHONGO_TRANSACTION_ABORTED);
 } /* }}} */
+
+void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session) /* {{{ */
+{
+	php_phongo_session_t* session;
+
+	object_init_ex(return_value, php_phongo_session_ce);
+
+	session                 = Z_SESSION_OBJ_P(return_value);
+	session->client_session = client_session;
+
+	ZVAL_ZVAL(&session->manager, manager, 1, 0);
+}
+/* }}} */
 
 /*
  * Local variables:

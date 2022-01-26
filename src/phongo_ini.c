@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
+#include "bson/bson.h"
 #include "mongoc/mongoc.h"
 
 #include <php.h>
 #include <main/php_open_temporary_file.h>
 #include <ext/date/php_date.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "phongo_compat.h"
 #include "php_phongo.h"
 #include "phongo_ini.h"
-
-#undef MONGOC_LOG_DOMAIN
-#define MONGOC_LOG_DOMAIN "PHONGO"
 
 extern bool mongoc_global_mock_service_id;
 
