@@ -1,5 +1,8 @@
 --TEST--
 Causal consistency: reads in non-causally consistent session never include afterClusterTime
+--DESCRIPTION--
+Causal consistency spec prose test #6
+https://github.com/mongodb/specifications/blob/master/source/causal-consistency/causal-consistency.rst#test-plan
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>

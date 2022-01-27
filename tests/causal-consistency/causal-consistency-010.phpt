@@ -1,41 +1,44 @@
 --TEST--
-Causal consistency: unacknowledged write does not update operationTime
+Causal consistency: custom read concern merges afterClusterTime and level
+--DESCRIPTION--
+Causal consistency spec prose test #9
+https://github.com/mongodb/specifications/blob/master/source/causal-consistency/causal-consistency.rst#test-plan
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php skip_if_not_replica_set_or_sharded_cluster_with_replica_set(); ?>
 <?php skip_if_server_version('<', '3.6'); ?>
-<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
+require_once __DIR__ . "/../utils/observer.php";
 
-$manager = create_test_manager();
-$session = $manager->startSession();
+(new CommandObserver)->observe(
+    function() {
+        $manager = create_test_manager();
+        $session = $manager->startSession();
 
-echo "Initial operation time:\n";
-var_dump($session->getOperationTime());
+        $readConcern = new MongoDB\Driver\ReadConcern(MongoDB\Driver\ReadConcern::MAJORITY);
+        $query = new MongoDB\Driver\Query([], ['readConcern' => $readConcern]);
+        $manager->executeQuery(NS, $query, ['session' => $session]);
+        $manager->executeQuery(NS, $query, ['session' => $session]);
+    },
+    function(stdClass $command)
+    {
+        $hasAfterClusterTime = isset($command->readConcern->afterClusterTime);
+        printf("Read concern includes afterClusterTime: %s\n", ($hasAfterClusterTime ? 'yes' : 'no'));
 
-$bulk = new MongoDB\Driver\BulkWrite;
-$bulk->insert(['x' => 1]);
-$writeConcern = new MongoDB\Driver\WriteConcern(0);
-
-/* Ignore the InvalidArgumentException for trying to combine an unacknowledged
- * write concern with an explicit session. */
-try {
-    $manager->executeBulkWrite(NS, $bulk, ['session' => $session, 'writeConcern' => $writeConcern]);
-} catch (MongoDB\Driver\Exception\InvalidArgumentException $e) {}
-
-echo "\nOperation time after unacknowledged write:\n";
-var_dump($session->getOperationTime());
+        $hasLevel = isset($command->readConcern->level);
+        printf("Read concern includes level: %s\n", ($hasLevel ? 'yes' : 'no'));
+    }
+);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-Initial operation time:
-NULL
-
-Operation time after unacknowledged write:
-NULL
+Read concern includes afterClusterTime: no
+Read concern includes level: yes
+Read concern includes afterClusterTime: yes
+Read concern includes level: yes
 ===DONE===
