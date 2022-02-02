@@ -22,10 +22,6 @@
 #include <ext/standard/php_var.h>
 #include <Zend/zend_interfaces.h>
 
-#ifdef PHP_WIN32
-#include <win32/time.h>
-#endif
-
 #include "php_phongo.h"
 #include "phongo_error.h"
 #include "phongo_util.h"
