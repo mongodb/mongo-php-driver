@@ -5,6 +5,7 @@ Connect to MongoDB with SSL and cert verification (URI options)
 <?php skip_if_not_libmongoc_ssl(); ?>
 <?php skip_if_not_ssl(); ?>
 <?php skip_if_no_ssl_dir(); ?>
+<?php skip_if_not_live(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
