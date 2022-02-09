@@ -4,8 +4,8 @@ MongoDB\Driver\Server::executeCommand() does not send read preference to standal
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_standalone(); ?>
-<?php skip_if_not_clean(); ?>
 <?php skip_if_server_version('<', '3.6'); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

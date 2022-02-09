@@ -3,8 +3,8 @@ MongoDB\Driver\Cursor tailable iteration with awaitData and maxAwaitTimeMS optio
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_not_clean(); ?>
 <?php skip_if_server_version('<', '3.2'); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
