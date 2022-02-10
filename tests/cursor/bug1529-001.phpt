@@ -4,9 +4,9 @@ PHPC-1529: Resetting a client should also reset the keyVaultClient
 <?php if (!function_exists('pcntl_fork')) { die('skip pcntl_fork() not available'); } ?>
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_not_clean(); ?>
 <?php skip_if_server_version('<', '4.2'); ?>
 <?php skip_if_not_libmongocrypt(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
