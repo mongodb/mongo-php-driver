@@ -25,3 +25,5 @@ register_shutdown_function(function() {
         exit(sprintf('skip %s: %s', errno_as_string($lastError['type']), $lastError['message']));
     }
 });
+
+disable_skipif_caching_if_necessary();
