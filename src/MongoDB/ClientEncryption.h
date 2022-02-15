@@ -19,8 +19,6 @@
 
 #include <php.h>
 
-#include "php_phongo.h"
-
-void phongo_clientencryption_init(php_phongo_clientencryption_t* ce_obj, zval* manager, zval* options);
+void phongo_clientencryption_init(zval* return_value, zval* manager, zval* options);
 
 #endif /* PHONGO_CLIENTENCRYPTION_H */

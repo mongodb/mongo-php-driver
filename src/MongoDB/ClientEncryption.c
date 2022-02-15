@@ -296,9 +296,10 @@ cleanup:
 	return NULL;
 } /* }}} */
 
-void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryption, zval* manager, zval* options) /* {{{ */
+void phongo_clientencryption_init(zval* return_value, zval* manager, zval* options) /* {{{ */
 {
-	mongoc_client_encryption_t*      ce;
+	php_phongo_clientencryption_t*   intern;
+	mongoc_client_encryption_t*      client_encryption;
 	mongoc_client_encryption_opts_t* opts;
 	zval*                            key_vault_client_manager = manager;
 	bson_error_t                     error                    = { 0 };
@@ -309,15 +310,18 @@ void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryptio
 		goto cleanup;
 	}
 
-	ce = mongoc_client_encryption_new(opts, &error);
-	if (!ce) {
+	client_encryption = mongoc_client_encryption_new(opts, &error);
+	if (!client_encryption) {
 		phongo_throw_exception_from_bson_error_t(&error);
 
 		goto cleanup;
 	}
 
-	clientencryption->client_encryption = ce;
-	ZVAL_ZVAL(&clientencryption->key_vault_client_manager, key_vault_client_manager, 1, 0);
+	object_init_ex(return_value, php_phongo_clientencryption_ce);
+
+	intern                    = Z_CLIENTENCRYPTION_OBJ_P(return_value);
+	intern->client_encryption = client_encryption;
+	ZVAL_ZVAL(&intern->key_vault_client_manager, key_vault_client_manager, 1, 0);
 
 cleanup:
 	if (opts) {
