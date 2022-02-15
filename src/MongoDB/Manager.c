@@ -311,10 +311,8 @@ static PHP_METHOD(Manager, addSubscriber)
    Return a ClientEncryption instance */
 static PHP_METHOD(Manager, createClientEncryption)
 {
-	zend_error_handling            error_handling;
-	php_phongo_manager_t*          intern;
-	php_phongo_clientencryption_t* clientencryption;
-	zval*                          options;
+	zend_error_handling error_handling;
+	zval*               options;
 
 	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
 	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &options) == FAILURE) {
@@ -323,13 +321,8 @@ static PHP_METHOD(Manager, createClientEncryption)
 	}
 	zend_restore_error_handling(&error_handling);
 
-	intern = Z_MANAGER_OBJ_P(getThis());
-
-	object_init_ex(return_value, php_phongo_clientencryption_ce);
-	clientencryption = Z_CLIENTENCRYPTION_OBJ_P(return_value);
-
 	/* An exception will be thrown on error. */
-	phongo_clientencryption_init(clientencryption, getThis(), options);
+	phongo_clientencryption_init(return_value, getThis(), options);
 } /* }}} */
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
