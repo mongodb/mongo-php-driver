@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::executeQuery() one document (find command)
+MongoDB\Driver\Manager::executeQuery() one document
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>

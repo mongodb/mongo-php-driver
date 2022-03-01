@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Cursor::isDead() with basic iteration (find command)
+MongoDB\Driver\Cursor::isDead() with basic iteration
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>

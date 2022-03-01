@@ -7,7 +7,6 @@ https://github.com/mongodb/specifications/blob/master/source/causal-consistency/
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php skip_if_not_replica_set_or_sharded_cluster_with_replica_set(); ?>
-<?php skip_if_server_version('<', '3.6'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

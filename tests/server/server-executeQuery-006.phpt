@@ -1,10 +1,9 @@
 --TEST--
-MongoDB\Driver\Server::executeQuery() takes a read preference (find command)
+MongoDB\Driver\Server::executeQuery() takes a read preference
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
 <?php skip_if_no_secondary(); ?>
-<?php skip_if_server_version('<', '3.6'); ?>
 <?php skip_if_not_clean(DATABASE_NAME, 'system.profile'); ?>
 --FILE--
 <?php

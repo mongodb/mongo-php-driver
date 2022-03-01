@@ -442,10 +442,7 @@ function skip_if_no_getmore_failpoint()
 {
     $serverVersion = get_server_version(URI);
 
-    if (
-        version_compare($serverVersion, '3.2', '>=') &&
-        version_compare($serverVersion, '4.0', '<')
-    ) {
+    if (version_compare($serverVersion, '4.0', '<')) {
         exit("skip Server version '$serverVersion' does not support a getMore failpoint'");
     }
 }

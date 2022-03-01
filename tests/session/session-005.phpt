@@ -6,7 +6,6 @@ PHPC-1876: Raise client error for snapshot sessions on <5.0 servers
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_server_version('<', '3.6'); ?>
 <?php skip_if_server_version('>=', '5.0'); ?>
 --FILE--
 <?php

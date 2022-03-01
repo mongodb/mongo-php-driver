@@ -3,7 +3,6 @@ PHPC-1163: Unacknowledged write concern should omit implicit session
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_server_version('<', '3.4'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

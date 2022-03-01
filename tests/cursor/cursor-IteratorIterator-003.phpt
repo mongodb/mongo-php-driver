@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Cursor iteration beyond last document (find command)
+MongoDB\Driver\Cursor iteration beyond last document
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>

@@ -4,7 +4,6 @@ MongoDB\Driver\BulkWrite::delete() hint option requires MongoDB 4.4 (server-side
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_server_version('>=', '4.3.4'); ?>
-<?php skip_if_server_version('<=', '3.6.0'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

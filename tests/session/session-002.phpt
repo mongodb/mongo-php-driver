@@ -5,7 +5,6 @@ MongoDB\Driver\Session spec test: $clusterTime in commands
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php skip_if_load_balanced(); /* TODO: CDRIVER-4174 */ ?>
 <?php skip_if_not_replica_set_or_sharded_cluster_with_replica_set(); ?>
-<?php skip_if_server_version('<', '3.6'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

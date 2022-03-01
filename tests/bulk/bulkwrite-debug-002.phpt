@@ -3,7 +3,6 @@ MongoDB\Driver\BulkWrite debug output after execution
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_server_version('<', '3.6'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

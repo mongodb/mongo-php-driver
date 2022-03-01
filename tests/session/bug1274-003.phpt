@@ -5,7 +5,6 @@ PHPC-1274: Implicit sessions are not reused from parent process
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
 <?php skip_if_not_replica_set(); ?>
-<?php skip_if_server_version('<', '3.6'); ?>
 <?php skip_if_not_clean(); ?>
 <?php skip_if_not_clean(DATABASE_NAME, COLLECTION_NAME . '_sessions'); ?>
 --FILE--

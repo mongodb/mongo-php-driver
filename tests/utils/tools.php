@@ -833,11 +833,6 @@ function failGetMore(Manager $manager)
     $primary = $manager->selectServer(new ReadPreference('primary'));
     $version = get_server_version_from_server($primary);
 
-    if (version_compare($version, "3.2", "<")) {
-        configureFailPoint($manager, 'failReceivedGetmore', 'alwaysOn');
-        return;
-    }
-
     if (version_compare($version, "4.0", ">=")) {
         /* We use 237 here, as that's the same original code that MongoD would
          * throw if a cursor had already gone by the time we call getMore. This

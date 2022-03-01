@@ -3,7 +3,6 @@ MongoDB\Driver\WriteConcernError debug output
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
-<?php skip_if_server_version('>=', '3.1'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php
@@ -31,6 +30,6 @@ object(MongoDB\Driver\WriteConcernError)#%d (%d) {
   ["code"]=>
   int(100)
   ["info"]=>
-  NULL
+  %A
 }
 ===DONE===
