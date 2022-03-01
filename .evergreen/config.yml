@@ -86,6 +86,7 @@ functions:
            fi
 
            export MONGO_ORCHESTRATION_HOME="$DRIVERS_TOOLS/.evergreen/orchestration"
+           # Note: PHPC no longer has any custom MO configs, but they can be stored here if needed
            export PROJECT_ORCHESTRATION_HOME="$PROJECT_DIRECTORY/.evergreen/orchestration"
            export MONGODB_BINARIES="$DRIVERS_TOOLS/mongodb/bin"
            export UPLOAD_BUCKET="${project}"
@@ -547,16 +548,6 @@ tasks:
           vars:
             SSL: "yes"
 
-    - name: "test-standalone-old"
-      tags: ["standalone"]
-      commands:
-        - func: "compile driver"
-        - func: "bootstrap mongo-orchestration"
-          vars:
-            TOPOLOGY: "server"
-            ORCHESTRATION_FILE: "standalone-old.json"
-        - func: "run tests"
-
     - name: "test-replicaset"
       tags: ["replicaset"]
       commands:
@@ -574,16 +565,6 @@ tasks:
           vars:
             TOPOLOGY: "replica_set"
             AUTH: "auth"
-        - func: "run tests"
-
-    - name: "test-replicaset-old"
-      tags: ["replicaset"]
-      commands:
-        - func: "compile driver"
-        - func: "bootstrap mongo-orchestration"
-          vars:
-            TOPOLOGY: "replica_set"
-            ORCHESTRATION_FILE: "replicaset-old.json"
         - func: "run tests"
 
     - name: "test-sharded"
