@@ -1054,18 +1054,6 @@ axes:
         display_name: "MongoDB 3.6"
         variables:
            VERSION: "3.6"
-      - id: "3.4"
-        display_name: "MongoDB 3.4"
-        variables:
-           VERSION: "3.4"
-      - id: "3.2"
-        display_name: "MongoDB 3.2"
-        variables:
-           VERSION: "3.2"
-      - id: "3.0"
-        display_name: "MongoDB 3.0"
-        variables:
-           VERSION: "3.0"
 
   - id: edge-versions
     display_name: MongoDB Version
@@ -1075,9 +1063,9 @@ axes:
         variables:
           VERSION: "4.4"
       - id: "oldest-supported"
-        display_name: "MongoDB 3.0"
+        display_name: "MongoDB 3.6"
         variables:
-          VERSION: "3.0"
+          VERSION: "3.6"
 
   - id: php-versions
     display_name: PHP Version
@@ -1188,18 +1176,6 @@ buildvariants:
   tasks:
     - name: "test-standalone-ssl"
     - name: "test-replicaset-auth"
-
-# Tests pre-3.6 MongoDB versions with oldest supported PHP version
-- matrix_name: "test-old-mongodb-versions"
-  matrix_spec: { "os": "*", "versions": ["3.0", "3.2", "3.4"], "php-edge-versions": "oldest-supported" }
-  exclude_spec:
-    - { "os": "ubuntu1804-arm64", "versions": "*", "php-edge-versions": "oldest-supported" }
-    - { "os": "rhel71-power8", "versions": "3.0", "php-edge-versions": "oldest-supported" }
-    - { "os": "rhel74-zseries", "versions": ["3.0", "3.2"], "php-edge-versions": "oldest-supported" }
-  display_name: "${os}, ${versions}, ${php-edge-versions}"
-  tasks:
-    - name: "test-standalone-old"
-    - name: "test-replicaset-old"
 
 # Tests MongoDB 3.6 with oldest supported PHP version
 - matrix_name: "test-mongodb-36"
