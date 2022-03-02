@@ -37,7 +37,7 @@ throws(function() use ($cursor) {
     foreach ($cursor as $i => $document) {
         printf("%d => {_id: %d}\n", $i, $document->_id);
     }
-}, "MongoDB\Driver\Exception\ServerException");
+}, MongoDB\Driver\Exception\ServerException::class);
 ?>
 ===DONE===
 <?php destroyTemporaryMongoInstance(); ?>
