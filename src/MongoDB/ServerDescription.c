@@ -100,7 +100,7 @@ static PHP_METHOD(ServerDescription, getHost)
 } /* }}} */
 
 /* {{{ proto integer MongoDB\Driver\ServerDescription::getLastUpdateTime()
-   Returns the server’s last update time, in microseconds */
+   Returns the server's last update time, in microseconds */
 static PHP_METHOD(ServerDescription, getLastUpdateTime)
 {
 	php_phongo_serverdescription_t* intern;
@@ -122,7 +122,7 @@ static PHP_METHOD(ServerDescription, getLastUpdateTime)
 } /* }}} */
 
 /* {{{ proto integer MongoDB\Driver\ServerDescription::getPort()
-   Returns the server’s port */
+   Returns the server's port */
 static PHP_METHOD(ServerDescription, getPort)
 {
 	php_phongo_serverdescription_t* intern;
@@ -135,7 +135,7 @@ static PHP_METHOD(ServerDescription, getPort)
 } /* }}} */
 
 /* {{{ proto integer MongoDB\Driver\ServerDescription::getRoundTripTime()
-   Returns the server’s round trip time, in milliseconds */
+   Returns the server's round trip time, in milliseconds */
 static PHP_METHOD(ServerDescription, getRoundTripTime)
 {
 	php_phongo_serverdescription_t* intern;
@@ -153,7 +153,7 @@ static PHP_METHOD(ServerDescription, getRoundTripTime)
 } /* }}} */
 
 /* {{{ proto string MongoDB\Driver\ServerDescription::getType()
-   Returns the server’s node type */
+   Returns the server's node type */
 static PHP_METHOD(ServerDescription, getType)
 {
 	php_phongo_serverdescription_t* intern;
