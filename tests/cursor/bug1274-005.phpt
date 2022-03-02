@@ -5,7 +5,6 @@ PHPC-1274: Child process can still iterate cursor from parent process (disableCl
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_ssl(); ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_server_version('<', '3.2'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php

@@ -1,9 +1,11 @@
 --TEST--
-PHPC-146: ReadPreference primaryPreferred and secondary swapped (OP_QUERY)
+PHPC-146: ReadPreference primaryPreferred and secondary swapped
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_server_version('>=', '3.1'); ?>
+<?php skip_if_not_replica_set(); ?>
+<?php skip_if_no_secondary(); ?>
+<?php skip_if_not_clean(); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";

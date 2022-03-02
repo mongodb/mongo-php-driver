@@ -9,7 +9,6 @@ MongoDB\Driver\Cursor command result iteration with getmore failure
 ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_standalone(); ?>
-<?php skip_if_server_version(">=", "3.6"); ?>
 <?php skip_if_no_getmore_failpoint(); ?>
 <?php skip_if_auth(); ?>
 <?php skip_if_no_mongo_orchestration(); ?>
@@ -45,7 +44,7 @@ throws(function() use ($cursor) {
     foreach ($cursor as $i => $document) {
         printf("%d => {_id: %d}\n", $i, $document->_id);
     }
-}, "MongoDB\Driver\Exception\ConnectionException");
+}, MongoDB\Driver\Exception\ServerException::class);
 
 ?>
 ===DONE===
@@ -58,5 +57,5 @@ throws(function() use ($cursor) {
 Inserted: 5
 0 => {_id: 0}
 1 => {_id: 1}
-OK: Got MongoDB\Driver\Exception\ConnectionException
+OK: Got MongoDB\Driver\Exception\ServerException
 ===DONE===

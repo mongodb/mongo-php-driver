@@ -4,7 +4,6 @@ MongoDB\Driver\Server::executeCommand() takes a read preference
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_replica_set(); ?>
 <?php skip_if_no_secondary(); ?>
-<?php skip_if_server_version('<', '3.2'); ?>
 <?php skip_if_not_clean(DATABASE_NAME, 'system.profile'); ?>
 --FILE--
 <?php
