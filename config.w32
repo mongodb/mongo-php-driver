@@ -267,7 +267,7 @@ if (PHP_MONGODB != "no") {
   if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION != "no" && mongoc_ssl_found) {
     mongoc_opts.MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION = 1;
 
-    ADD_FLAG("CFLAGS_MONGODB", "/D KMS_MESSAGE_LITTLE_ENDIAN=1");
+    ADD_FLAG("CFLAGS_MONGODB", "/D KMS_MESSAGE_LITTLE_ENDIAN=1 /D MLIB_USER=1");
     ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt/src");
     ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt/kms-message/src");
     ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt-compat");
@@ -288,11 +288,13 @@ if (PHP_MONGODB != "no") {
     // Generated with: find src/libmongocrypt/src/crypto -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
     var PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES="cng.c commoncrypto.c libcrypto.c none.c";
 
+    // Note: src/libmongocrypt/src/mlib/ does not contain source files (as of libmongocrypt 1.3.2)
+
     // Generated with: find src/libmongocrypt/src/os_posix -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
-    var PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES="os_mutex.c os_once.c";
+    var PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES="os_dll.c os_mutex.c";
 
     // Generated with: find src/libmongocrypt/src/os_win -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
-    var PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES="os_mutex.c os_once.c";
+    var PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES="os_dll.c os_mutex.c";
 
     // Generated with: find src/libmongocrypt/kms-message/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
     var PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES="hexlify.c kms_azure_request.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_gcp_request.c kms_kmip_reader_writer.c kms_kmip_request.c kms_kmip_response.c kms_kmip_response_parser.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c";

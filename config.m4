@@ -281,7 +281,7 @@ if test "$PHP_MONGODB" != "no"; then
       AC_MSG_CHECKING(for libmongocrypt)
 
       if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongocrypt; then
-        if $PKG_CONFIG libmongocrypt --atleast-version 1.3.0; then
+        if $PKG_CONFIG libmongocrypt --atleast-version 1.3.2; then
           PHP_MONGODB_MONGOCRYPT_CFLAGS=`$PKG_CONFIG libmongocrypt --cflags`
           PHP_MONGODB_MONGOCRYPT_LIBS=`$PKG_CONFIG libmongocrypt --libs`
           PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt --modversion`
@@ -292,7 +292,7 @@ if test "$PHP_MONGODB" != "no"; then
           PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
           AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
         elif test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
-          AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.2.1)
+          AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.3.2)
         else
           AC_MSG_RESULT(found an older version, compiling without client-side encryption)
         fi
@@ -309,7 +309,7 @@ if test "$PHP_MONGODB" != "no"; then
   if test "$PHP_MONGODB_SYSTEM_LIBS" = "no"; then
     PHP_MONGODB_BUNDLED_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
     dnl TODO: MONGOCRYPT-219 makes the -std argument obsolete
-    PHP_MONGODB_LIBMONGOCRYPT_CFLAGS="-DKMS_MSG_STATIC -std=gnu99"
+    PHP_MONGODB_LIBMONGOCRYPT_CFLAGS="-DKMS_MSG_STATIC -DMLIB_USER -std=gnu99"
     PHP_MONGODB_ZLIB_CFLAGS=""
 
     dnl M4 doesn't know if we're building statically or as a shared module, so
@@ -465,11 +465,13 @@ if test "$PHP_MONGODB" != "no"; then
       dnl Generated with: find src/libmongocrypt/src/crypto -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
       PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES="cng.c commoncrypto.c libcrypto.c none.c"
 
+      dnl Note: src/libmongocrypt/src/mlib/ does not contain source files (as of libmongocrypt 1.3.2)
+
       dnl Generated with: find src/libmongocrypt/src/os_posix -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
-      PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES="os_mutex.c os_once.c"
+      PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES="os_dll.c os_mutex.c"
 
       dnl Generated with: find src/libmongocrypt/src/os_win -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
-      PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES="os_mutex.c os_once.c"
+      PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES="os_dll.c os_mutex.c"
 
       dnl Generated with: find src/libmongocrypt/kms-message/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
       PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES="hexlify.c kms_azure_request.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_gcp_request.c kms_kmip_reader_writer.c kms_kmip_request.c kms_kmip_response.c kms_kmip_response_parser.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c"
