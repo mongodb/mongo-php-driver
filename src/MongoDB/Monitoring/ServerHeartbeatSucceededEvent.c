@@ -55,7 +55,7 @@ static PHP_METHOD(ServerHeartbeatSucceededEvent, getPort)
 	RETVAL_LONG(intern->host.port);
 } /* }}} */
 
-/* {{{ proto integer ServerHeartbeatSucceededEvent::getReply()
+/* {{{ proto stdClass ServerHeartbeatSucceededEvent::getReply()
    Returns this event's reply */
 static PHP_METHOD(ServerHeartbeatSucceededEvent, getReply)
 {
