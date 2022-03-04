@@ -89,38 +89,42 @@ run in as many environments as possible. To paraphrase the
 Consider that a well-crafted `EXPECTF` section may allow a `SKIPIF` section to
 be less restrictive.
 
-### Local Mongo Orchestration (and CI platforms)
+### Environment Variables
 
-The test suite depends on [Mongo Orchestration](https://github.com/10gen/mongo-orchestration).
-Mongo Orchestration is an HTTP server that provides a REST API for maintaining
-MongoDB configurations. These configurations are provided by the
+The test suite references the following environment variables:
+
+ * `MONGODB_URI`: Connection string. Defaults to `mongodb://127.0.0.1/`, which
+   assumes a MongoDB server is listening localhost port 27017.
+ * `MONGO_ORCHESTRATION_URI`: API endpoint for Mongo Orchestration. Defaults to
+   `http://localhost:8889/v1`. This is only used by a few tests that start
+   temporary servers, and those tests will be skipped if Mongo Orchestration is
+   inaccessible.
+ * `MONGODB_DATABASE`: Default database to use in tests. Defaults to `phongo`.
+ * `SSL_DIR`: Path to directory containing certificate files. On Evergreen, this
+   will be set to the
+   [.evergreen/x509gen](https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/x509gen)
+   directory within
+   [drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools).
+   If undefined or inaccessible, tests requiring certificates will be skipped.
+ * `API_VERSION`: If defined, this value will be used to construct a
+   [`MongoDB\Driver\ServerApi`](https://www.php.net/manual/en/mongodb-driver-serverapi.construct.php),
+   which will then be specified as the `serverApi` driver option for
+   [`MongoDB\Driver\Manager`](https://www.php.net/manual/en/class.mongodb-driver-manager.php)
+   objects created by the test suite.
+
+### Mongo Orchestration
+
+[Mongo Orchestration](https://github.com/10gen/mongo-orchestration) is an HTTP
+server that provides a REST API for managing MongoDB servers and clusters.
+Evergreen CI and GitHub Actions use configurations provided by the
 [drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools)
-repository. These configurations can be run locally. Alternatively, you can use
-the GitHub Actions workflow if you don't want to set up a local development
-environment.
+repository. These configurations are loaded by Mongo Orchestration, which then
+provides a connection string to assign to `MONGODB_URI` and run the test suite.
+Additionally, some tests start temporary servers and interact directly with
+Mongo Orchestration (via `MONGO_ORCHESTRATION_URI`).
 
-Mongo Orchestration expects that the ``mongod`` (and ``mongos``) binaries are
-available in the ``PATH``.
-
-Once installed, Mongo Orchestration can be started with
-
-```
-~/.local/bin/mongo-orchestration start --no-fork --enable-majority-read-concern
-```
-
-The test suite uses the ``MONGODB_URI`` environment variable as connection
-string to run all tests. If not set, tests assume MongoDB is listening on the
-default MongoDB port (27017) on localhost.
-
-With this set-up, the tests can be run with `make test`.
-
-If Mongo Orchestration is running on non-default settings, the
-``MONGO_ORCHESTRATION_URI`` environment variable can be used to specify where
-mongo-orchestration is listening:
-
-```
-MONGO_ORCHESTRATION_URI=http://localhost:1234/v1 make test
-```
+For local development, running Mongo Orchestration is not required and it is
+generally sufficient to test against a single-node replica set.
 
 ## Updating libmongoc, libbson, and libmongocrypt
 
