@@ -334,6 +334,7 @@ static PHP_METHOD(BulkWrite, __construct)
 	intern->bulk     = mongoc_bulk_operation_new(ordered);
 	intern->ordered  = ordered;
 	intern->bypass   = PHONGO_BULKWRITE_BYPASS_UNSET;
+	intern->let      = NULL;
 	intern->num_ops  = 0;
 	intern->executed = false;
 
@@ -341,6 +342,24 @@ static PHP_METHOD(BulkWrite, __construct)
 		zend_bool bypass = php_array_fetchc_bool(options, "bypassDocumentValidation");
 		mongoc_bulk_operation_set_bypass_document_validation(intern->bulk, bypass);
 		intern->bypass = bypass;
+	}
+
+	if (options && php_array_existsc(options, "let")) {
+		zval* value = php_array_fetch(options, "let");
+
+		if (Z_TYPE_P(value) != IS_OBJECT && Z_TYPE_P(value) != IS_ARRAY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"let\" option to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(value)));
+			return;
+		}
+
+		intern->let = bson_new();
+		php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, intern->let, NULL);
+
+		if (EG(exception)) {
+			return;
+		}
+
+		mongoc_bulk_operation_set_let(intern->bulk, intern->let);
 	}
 } /* }}} */
 
@@ -579,6 +598,10 @@ static void php_phongo_bulkwrite_free_object(zend_object* object) /* {{{ */
 		mongoc_bulk_operation_destroy(intern->bulk);
 	}
 
+	if (intern->let) {
+		bson_clear(&intern->let);
+	}
+
 	if (intern->database) {
 		efree(intern->database);
 	}
@@ -633,6 +656,17 @@ static HashTable* php_phongo_bulkwrite_get_debug_info(phongo_compat_object_handl
 		ADD_ASSOC_NULL_EX(&retval, "bypassDocumentValidation");
 	}
 
+	if (intern->let) {
+		zval zv;
+
+		if (!php_phongo_bson_to_zval(bson_get_data(intern->let), intern->let->len, &zv)) {
+			zval_ptr_dtor(&zv);
+			goto done;
+		}
+
+		ADD_ASSOC_ZVAL_EX(&retval, "let", &zv);
+	}
+
 	ADD_ASSOC_BOOL_EX(&retval, "executed", intern->executed);
 	ADD_ASSOC_LONG_EX(&retval, "server_id", mongoc_bulk_operation_get_hint(intern->bulk));
 
@@ -652,6 +686,7 @@ static HashTable* php_phongo_bulkwrite_get_debug_info(phongo_compat_object_handl
 		ADD_ASSOC_NULL_EX(&retval, "write_concern");
 	}
 
+done:
 	return Z_ARRVAL(retval);
 } /* }}} */
 /* }}} */

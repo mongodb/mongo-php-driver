@@ -299,6 +299,7 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 	PHONGO_QUERY_OPT_STRING("comment", options, "comment")
 	else PHONGO_QUERY_OPT_STRING("comment", modifiers, "$comment");
 	PHONGO_QUERY_OPT_BOOL("exhaust", options, "exhaust");
+	PHONGO_QUERY_OPT_DOCUMENT("let", options, "let");
 	PHONGO_QUERY_OPT_DOCUMENT("max", options, "max")
 	else PHONGO_QUERY_OPT_DOCUMENT("max", modifiers, "$max");
 	PHONGO_QUERY_OPT_INT64_DEPRECATED("maxScan", options, "maxScan")

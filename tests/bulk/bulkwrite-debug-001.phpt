@@ -9,6 +9,7 @@ $tests = [
     ['ordered' => false],
     ['bypassDocumentValidation' => true],
     ['bypassDocumentValidation' => false],
+    ['let' => ['id' => 1, 'x' => 'foo']],
 ];
 
 foreach ($tests as $options) {
@@ -100,6 +101,31 @@ object(MongoDB\Driver\BulkWrite)#%d (%d) {
   bool(true)
   ["bypassDocumentValidation"]=>
   bool(false)
+  ["executed"]=>
+  bool(false)
+  ["server_id"]=>
+  int(0)
+  ["session"]=>
+  NULL
+  ["write_concern"]=>
+  NULL
+}
+object(MongoDB\Driver\BulkWrite)#%d (%d) {
+  ["database"]=>
+  NULL
+  ["collection"]=>
+  NULL
+  ["ordered"]=>
+  bool(true)
+  ["bypassDocumentValidation"]=>
+  NULL
+  ["let"]=>
+  object(stdClass)#%d (%d) {
+    ["id"]=>
+    int(1)
+    ["x"]=>
+    string(3) "foo"
+  }
   ["executed"]=>
   bool(false)
   ["server_id"]=>
