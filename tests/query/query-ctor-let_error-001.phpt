@@ -5,14 +5,24 @@ MongoDB\Driver\Query::__construct(): let option
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-echo throws(function() {
-    new MongoDB\Driver\Query([], ['let' => 'invalid']);
-}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
+$invalidValues = [true, 1, 'string', null];
+
+foreach ($invalidValues as $invalidValue) {
+    echo throws(function() use ($invalidValue) {
+        new MongoDB\Driver\Query([], ['let' => $invalidValue]);
+    }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
+}
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected "let" option to be array or object, %r(bool|boolean)%r given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected "let" option to be array or object, %r(int|integer)%r given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "let" option to be array or object, string given
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected "let" option to be array or object, null given
 ===DONE===
