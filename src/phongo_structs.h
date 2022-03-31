@@ -29,6 +29,7 @@ typedef struct {
 	size_t                   num_ops;
 	bool                     ordered;
 	int                      bypass;
+	bson_t*                  let;
 	char*                    database;
 	char*                    collection;
 	bool                     executed;
