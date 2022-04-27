@@ -61,6 +61,8 @@ object(MongoDB\Driver\Monitoring\CommandFailedEvent)#%d (%d) {
   }
   ["serviceId"]=>
   %r(NULL|object\(MongoDB\\BSON\\ObjectId\).*)%r
+  ["serverConnectionId"]=>
+  %r(NULL|int\(\d+\))%r
 }
 OK: Got MongoDB\Driver\Exception\CommandException
 ===DONE===

@@ -49,5 +49,7 @@ object(MongoDB\Driver\Monitoring\CommandSucceededEvent)#%d (%d) {
   }
   ["serviceId"]=>
   %r(NULL|object\(MongoDB\\BSON\\ObjectId\).*)%r
+  ["serverConnectionId"]=>
+  %r(NULL|int\(\d+\))%r
 }
 ===DONE===

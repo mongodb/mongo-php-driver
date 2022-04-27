@@ -1,8 +1,9 @@
 --TEST--
-MongoDB\Driver\Monitoring\CommandStartedEvent debug output
+MongoDB\Driver\Monitoring\CommandStartedEvent omits serverConnectionId for pre-4.2 server
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
+<?php skip_if_server_version('>=', '4.2'); ?>
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -11,7 +12,8 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
     public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event)
     {
-        var_dump($event);
+        printf("commandStarted: %s\n", $event->getCommandName());
+        var_dump($event->getServerConnectionId());
     }
 
     public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
@@ -29,27 +31,6 @@ $manager->addSubscriber(new MySubscriber);
 $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
 
 ?>
-===DONE===
-<?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\Monitoring\CommandStartedEvent)#%d (%d) {
-  ["command"]=>
-  object(stdClass)#%d (%d) {%A
-  }
-  ["commandName"]=>
-  string(4) "ping"
-  ["databaseName"]=>
-  string(%d) "%s"
-  ["operationId"]=>
-  string(%d) "%d"
-  ["requestId"]=>
-  string(%d) "%d"
-  ["server"]=>
-  object(MongoDB\Driver\Server)#%d (%d) {%A
-  }
-  ["serviceId"]=>
-  %r(NULL|object\(MongoDB\\BSON\\ObjectId\).*)%r
-  ["serverConnectionId"]=>
-  %r(NULL|int\(\d+\))%r
-}
-===DONE===
+commandStarted: ping
+NULL
