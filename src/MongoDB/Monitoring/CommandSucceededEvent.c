@@ -169,6 +169,22 @@ PHP_METHOD(CommandSucceededEvent, getServiceId)
 	phongo_objectid_init(return_value, &intern->service_id);
 } /* }}} */
 
+/* {{{ proto int|null CommandSucceededEvent::getServerConnectionId()
+   Returns the event's server connection ID */
+PHP_METHOD(CommandSucceededEvent, getServerConnectionId)
+{
+	php_phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	/* TODO: Use MONGOC_NO_SERVER_CONNECTION_ID once it is added to libmongoc's public API (CDRIVER-4176) */
+	if (intern->server_connection_id == -1) {
+		RETURN_NULL();
+	}
+
+	RETURN_LONG(intern->server_connection_id);
+} /* }}} */
+
 /**
  * Event thrown when a command has succeeded to execute.
  *
@@ -189,6 +205,7 @@ static zend_function_entry php_phongo_commandsucceededevent_me[] = {
 	PHP_ME(CommandSucceededEvent, getRequestId, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CommandSucceededEvent, getServer, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(CommandSucceededEvent, getServiceId, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(CommandSucceededEvent, getServerConnectionId, ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandSucceededEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
 	/* clang-format on */
@@ -272,6 +289,13 @@ static HashTable* php_phongo_commandsucceededevent_get_debug_info(phongo_compat_
 		ADD_ASSOC_ZVAL_EX(&retval, "serviceId", &service_id);
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "serviceId");
+	}
+
+	/* TODO: Use MONGOC_NO_SERVER_CONNECTION_ID once it is added to libmongoc's public API (CDRIVER-4176) */
+	if (intern->server_connection_id == -1) {
+		ADD_ASSOC_NULL_EX(&retval, "serverConnectionId");
+	} else {
+		ADD_ASSOC_LONG_EX(&retval, "serverConnectionId", intern->server_connection_id);
 	}
 
 done:
