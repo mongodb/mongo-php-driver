@@ -177,7 +177,7 @@ PHP_METHOD(CommandSucceededEvent, getServerConnectionId)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	/* TODO: Use MONGOC_NO_SERVER_CONNECTION_ID once it is added to libmongoc's public API (CDRIVER-4085) */
+	/* TODO: Use MONGOC_NO_SERVER_CONNECTION_ID once it is added to libmongoc's public API (CDRIVER-4176) */
 	if (intern->server_connection_id == -1) {
 		RETURN_NULL();
 	}
@@ -291,7 +291,7 @@ static HashTable* php_phongo_commandsucceededevent_get_debug_info(phongo_compat_
 		ADD_ASSOC_NULL_EX(&retval, "serviceId");
 	}
 
-	/* TODO: Use MONGOC_NO_SERVER_CONNECTION_ID once it is added to libmongoc's public API (CDRIVER-4085) */
+	/* TODO: Use MONGOC_NO_SERVER_CONNECTION_ID once it is added to libmongoc's public API (CDRIVER-4176) */
 	if (intern->server_connection_id == -1) {
 		ADD_ASSOC_NULL_EX(&retval, "serverConnectionId");
 	} else {
