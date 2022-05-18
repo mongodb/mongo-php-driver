@@ -425,10 +425,11 @@ cleanup:
 static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options) /* {{{ */
 {
 	mongoc_client_encryption_datakey_opts_t* opts;
-	bson_value_t                             keyid;
+	bson_value_t                             keyid = { 0 };
 	bson_error_t                             error = { 0 };
 
 	opts = phongo_clientencryption_datakey_opts_from_zval(options);
+
 	if (!opts) {
 		/* Exception already thrown */
 		goto cleanup;
@@ -448,6 +449,8 @@ cleanup:
 	if (opts) {
 		mongoc_client_encryption_datakey_opts_destroy(opts);
 	}
+
+	bson_value_destroy(&keyid);
 } /* }}} */
 
 static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_opts_from_zval(zval* options) /* {{{ */
@@ -461,14 +464,17 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 	}
 
 	if (php_array_existsc(options, "keyId")) {
-		bson_value_t keyid;
+		bson_value_t keyid = { 0 };
 
 		php_phongo_zval_to_bson_value(php_array_fetchc(options, "keyId"), PHONGO_BSON_NONE, &keyid);
+
 		if (EG(exception)) {
+			bson_value_destroy(&keyid);
 			goto cleanup;
 		}
 
 		mongoc_client_encryption_encrypt_opts_set_keyid(opts, &keyid);
+		bson_value_destroy(&keyid);
 	}
 
 	if (php_array_existsc(options, "keyAltName")) {
@@ -510,12 +516,14 @@ cleanup:
 static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options) /* {{{ */
 {
 	mongoc_client_encryption_encrypt_opts_t* opts;
-	bson_value_t                             ciphertext, value;
-	bson_error_t                             error = { 0 };
+	bson_value_t                             ciphertext = { 0 };
+	bson_value_t                             value      = { 0 };
+	bson_error_t                             error      = { 0 };
 
 	php_phongo_zval_to_bson_value(zvalue, PHONGO_BSON_NONE, &value);
 
 	opts = phongo_clientencryption_encrypt_opts_from_zval(options);
+
 	if (!opts) {
 		/* Exception already thrown */
 		goto cleanup;
@@ -535,24 +543,32 @@ cleanup:
 	if (opts) {
 		mongoc_client_encryption_encrypt_opts_destroy(opts);
 	}
+
+	bson_value_destroy(&ciphertext);
+	bson_value_destroy(&value);
 } /* }}} */
 
 static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue) /* {{{ */
 {
-	bson_value_t ciphertext, value;
-	bson_error_t error = { 0 };
+	bson_value_t ciphertext = { 0 };
+	bson_value_t value      = { 0 };
+	bson_error_t error      = { 0 };
 
 	php_phongo_zval_to_bson_value(zciphertext, PHONGO_BSON_NONE, &ciphertext);
 
 	if (!mongoc_client_encryption_decrypt(clientencryption->client_encryption, &ciphertext, &value, &error)) {
 		phongo_throw_exception_from_bson_error_t(&error);
-		return;
+		goto cleanup;
 	}
 
 	if (!php_phongo_bson_value_to_zval(&value, zvalue)) {
 		/* Exception already thrown */
-		return;
+		goto cleanup;
 	}
+
+cleanup:
+	bson_value_destroy(&ciphertext);
+	bson_value_destroy(&value);
 } /* }}} */
 #else  /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
 void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryption, zval* manager, zval* options) /* {{{ */
