@@ -30,6 +30,7 @@ typedef struct {
 	bool                     ordered;
 	int                      bypass;
 	bson_t*                  let;
+	bson_value_t*            comment;
 	char*                    database;
 	char*                    collection;
 	bool                     executed;

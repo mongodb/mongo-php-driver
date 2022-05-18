@@ -361,6 +361,20 @@ static PHP_METHOD(BulkWrite, __construct)
 
 		mongoc_bulk_operation_set_let(intern->bulk, intern->let);
 	}
+
+	if (options && php_array_existsc(options, "comment")) {
+		zval* value = php_array_fetch(options, "comment");
+
+		intern->comment = ecalloc(1, sizeof(bson_value_t));
+		php_phongo_zval_to_bson_value(value, PHONGO_BSON_NONE, intern->comment);
+
+		if (EG(exception)) {
+			/* Exception should already have been thrown */
+			return;
+		}
+
+		mongoc_bulk_operation_set_comment(intern->bulk, intern->comment);
+	}
 } /* }}} */
 
 /* {{{ proto mixed MongoDB\Driver\BulkWrite::insert(array|object $document)
@@ -602,6 +616,11 @@ static void php_phongo_bulkwrite_free_object(zend_object* object) /* {{{ */
 		bson_clear(&intern->let);
 	}
 
+	if (intern->comment) {
+		bson_value_destroy(intern->comment);
+		efree(intern->comment);
+	}
+
 	if (intern->database) {
 		efree(intern->database);
 	}
@@ -654,6 +673,17 @@ static HashTable* php_phongo_bulkwrite_get_debug_info(phongo_compat_object_handl
 		ADD_ASSOC_BOOL_EX(&retval, "bypassDocumentValidation", intern->bypass);
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "bypassDocumentValidation");
+	}
+
+	if (intern->comment) {
+		zval zv;
+
+		if (!php_phongo_bson_value_to_zval(intern->comment, &zv)) {
+			zval_ptr_dtor(&zv);
+			goto done;
+		}
+
+		ADD_ASSOC_ZVAL_EX(&retval, "comment", &zv);
 	}
 
 	if (intern->let) {
