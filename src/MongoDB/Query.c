@@ -377,10 +377,14 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 	return true;
 } /* }}} */
 
+#undef PHONGO_QUERY_OPT_BOOL_EX
 #undef PHONGO_QUERY_OPT_BOOL
+#undef PHONGO_QUERY_OPT_BOOL_DEPRECATED
 #undef PHONGO_QUERY_OPT_BSON_VALUE
 #undef PHONGO_QUERY_OPT_DOCUMENT
+#undef PHONGO_QUERY_OPT_INT64_EX
 #undef PHONGO_QUERY_OPT_INT64
+#undef PHONGO_QUERY_OPT_INT64_DEPRECATED
 #undef PHONGO_QUERY_OPT_STRING
 
 /* {{{ proto void MongoDB\Driver\Query::__construct(array|object $filter[, array $options = array()])
