@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Query::__construct(): let option
+MongoDB\Driver\Query::__construct(): let option invalid type
 --FILE--
 <?php
 
