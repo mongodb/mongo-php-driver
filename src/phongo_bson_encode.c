@@ -494,25 +494,24 @@ void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* 
 
 /* Converts the argument to a bson_value_t. If the object is an instance of
  * MongoDB\BSON\Serializable, the return value of bsonSerialize() will be
- * used. */
+ * used. It is the caller's responsibility to call bson_value_destroy. */
 void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bson_value_t* value) /* {{{ */
 {
 	bson_iter_t iter;
 	bson_t      bson = BSON_INITIALIZER;
+	zval        data_object;
 
-	zval* data_object = ecalloc(1, sizeof(zval));
-
-	array_init_size(data_object, 1);
-	add_assoc_zval(data_object, "data", data);
+	array_init_size(&data_object, 1);
+	add_assoc_zval(&data_object, "data", data);
 
 	Z_TRY_ADDREF_P(data);
 
-	php_phongo_zval_to_bson(data_object, flags, &bson, NULL);
+	php_phongo_zval_to_bson(&data_object, flags, &bson, NULL);
 
 	if (bson_iter_init_find(&iter, &bson, "data")) {
 		bson_value_copy(bson_iter_value(&iter), value);
 	}
 
-	zval_ptr_dtor(data_object);
-	efree(data_object);
+	bson_destroy(&bson);
+	zval_ptr_dtor(&data_object);
 } /* }}} */
