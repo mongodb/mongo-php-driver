@@ -1239,8 +1239,7 @@ buildvariants:
     - name: "test-requireApiVersion"
 
 - matrix_name: "test-loadBalanced"
-  # TODO: Add "5.2" server version alongside "latest" following its GA release
-  matrix_spec: { "os": "debian92", "versions": "latest", "php-edge-versions": "latest-stable" }
+  matrix_spec: { "os": "debian92", "versions": ["5.0", "latest"], "php-edge-versions": "latest-stable" }
   display_name: "Load balanced - ${versions}"
   tasks:
     - name: "test-loadBalanced"
