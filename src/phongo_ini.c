@@ -24,8 +24,6 @@
 #include "php_phongo.h"
 #include "phongo_ini.h"
 
-extern bool mongoc_global_mock_service_id;
-
 ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 
 static void phongo_log(mongoc_log_level_t log_level, const char* log_domain, const char* message, void* user_data)
@@ -109,22 +107,6 @@ static PHP_INI_MH(OnUpdateDebug)
 	return OnUpdateString(entry, new_value, mh_arg1, mh_arg2, mh_arg3, stage);
 }
 
-static PHP_INI_MH(OnUpdateMockServiceId)
-{
-	mongoc_global_mock_service_id = zend_ini_parse_bool(new_value);
-
-	return SUCCESS;
-}
-
-static PHP_INI_DISP(DisplayMockServiceId)
-{
-	if (mongoc_global_mock_service_id) {
-		ZEND_PUTS("On");
-	} else {
-		ZEND_PUTS("Off");
-	}
-}
-
 void phongo_display_ini_entries(ZEND_MODULE_INFO_FUNC_ARGS)
 {
 	DISPLAY_INI_ENTRIES();
@@ -134,7 +116,6 @@ void phongo_register_ini_entries(INIT_FUNC_ARGS)
 {
 	PHP_INI_BEGIN()
 		STD_PHP_INI_ENTRY("mongodb.debug", "", PHP_INI_ALL, OnUpdateDebug, debug, zend_mongodb_globals, mongodb_globals)
-		PHP_INI_ENTRY_EX("mongodb.mock_service_id", "0", PHP_INI_ALL, OnUpdateMockServiceId, DisplayMockServiceId)
 	PHP_INI_END()
 
 	REGISTER_INI_ENTRIES();

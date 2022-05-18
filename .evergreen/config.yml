@@ -388,7 +388,7 @@ functions:
         working_dir: "src"
         script: |
           ${PREPARE_SHELL}
-          MOCK_SERVICE_ID=${MOCK_SERVICE_ID} API_VERSION=${API_VERSION} TESTS=${TESTS} SSL=${SSL} MONGODB_URI="${MONGODB_URI}${APPEND_URI}" sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
+          API_VERSION=${API_VERSION} TESTS=${TESTS} SSL=${SSL} MONGODB_URI="${MONGODB_URI}${APPEND_URI}" sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
 
   "cleanup":
     - command: shell.exec
