@@ -286,7 +286,7 @@ static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zo
 	return true;
 } /* }}} */
 
-/* Applies options (including defaults) for an delete operation. */
+/* Applies options (including defaults) for a delete operation. */
 static bool php_phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zoptions) /* {{{ */
 {
 	int32_t limit = 0;
