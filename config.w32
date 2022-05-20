@@ -267,7 +267,7 @@ if (PHP_MONGODB != "no") {
   if (PHP_MONGODB_CLIENT_SIDE_ENCRYPTION != "no" && mongoc_ssl_found) {
     mongoc_opts.MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION = 1;
 
-    ADD_FLAG("CFLAGS_MONGODB", "/D KMS_MESSAGE_LITTLE_ENDIAN=1 /D MLIB_USER=1");
+    ADD_FLAG("CFLAGS_MONGODB", "/D KMS_MESSAGE_LITTLE_ENDIAN=1 /D MONGOCRYPT_LITTLE_ENDIAN=1 /D MLIB_USER=1");
     ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt/src");
     ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt/kms-message/src");
     ADD_FLAG("CFLAGS_MONGODB", "/I" + configure_module_dirname + "/src/libmongocrypt-compat");
