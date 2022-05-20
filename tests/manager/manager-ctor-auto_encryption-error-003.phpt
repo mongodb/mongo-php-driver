@@ -10,6 +10,7 @@ require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     'not_an_array',
+    ['encryptedFieldsMap' => 'not_an_array_or_object'],
     ['keyVaultClient' => 'not_an_array_or_object'],
     [
         'keyVaultNamespace' => 'not_a_namespace',
@@ -34,6 +35,9 @@ foreach ($tests as $test) {
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "autoEncryption" driver option to be array, string given
+
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected "encryptedFieldsMap" encryption option to be an array or object
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "keyVaultClient" encryption option to be MongoDB\Driver\Manager, string given

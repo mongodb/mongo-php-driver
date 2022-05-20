@@ -1278,6 +1278,33 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 
 	auto_encryption_opts = mongoc_auto_encryption_opts_new();
 
+	if (php_array_existsc(zAutoEncryptionOpts, "bypassAutoEncryption")) {
+		mongoc_auto_encryption_opts_set_bypass_auto_encryption(auto_encryption_opts, php_array_fetch_bool(zAutoEncryptionOpts, "bypassAutoEncryption"));
+	}
+
+	if (php_array_existsc(zAutoEncryptionOpts, "bypassQueryAnalysis")) {
+		mongoc_auto_encryption_opts_set_bypass_query_analysis(auto_encryption_opts, php_array_fetch_bool(zAutoEncryptionOpts, "bypassQueryAnalysis"));
+	}
+
+	if (php_array_existsc(zAutoEncryptionOpts, "encryptedFieldsMap")) {
+		zval*  enc_fields_map = php_array_fetch(zAutoEncryptionOpts, "encryptedFieldsMap");
+		bson_t bson_map       = BSON_INITIALIZER;
+
+		if (Z_TYPE_P(enc_fields_map) != IS_OBJECT && Z_TYPE_P(enc_fields_map) != IS_ARRAY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"encryptedFieldsMap\" encryption option to be an array or object");
+			goto cleanup;
+		}
+
+		php_phongo_zval_to_bson(enc_fields_map, PHONGO_BSON_NONE, &bson_map, NULL);
+		if (EG(exception)) {
+			goto cleanup;
+		}
+
+		mongoc_auto_encryption_opts_set_encrypted_fields_map(auto_encryption_opts, &bson_map);
+
+		bson_destroy(&bson_map);
+	}
+
 	if (php_array_existsc(zAutoEncryptionOpts, "keyVaultClient")) {
 		zval* key_vault_client = php_array_fetch(zAutoEncryptionOpts, "keyVaultClient");
 
@@ -1386,12 +1413,6 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		mongoc_auto_encryption_opts_set_tls_opts(auto_encryption_opts, &bson_options);
 
 		bson_destroy(&bson_options);
-	}
-
-	if (php_array_existsc(zAutoEncryptionOpts, "bypassAutoEncryption")) {
-		zend_bool bypass_auto_encryption = php_array_fetch_bool(zAutoEncryptionOpts, "bypassAutoEncryption");
-
-		mongoc_auto_encryption_opts_set_bypass_auto_encryption(auto_encryption_opts, bypass_auto_encryption);
 	}
 
 	if (php_array_existsc(zAutoEncryptionOpts, "extraOptions")) {

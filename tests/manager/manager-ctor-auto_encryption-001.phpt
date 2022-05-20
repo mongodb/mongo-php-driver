@@ -14,6 +14,8 @@ $baseOptions = [
 
 $tests = [
     [],
+    ['bypassAutoEncryption' => true],
+    ['bypassQueryAnalysis' => true],
     ['keyVaultClient' => new MongoDB\Driver\Manager()],
     ['schemaMap' => [
         'default.default' => [
@@ -36,7 +38,6 @@ $tests = [
             'bsonType' => 'object',
         ],
     ]],
-    ['bypassAutoEncryption' => true],
     ['extraOptions' => ['mongocryptdBypassSpawn' => true]],
 ];
 
