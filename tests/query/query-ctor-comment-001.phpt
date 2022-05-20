@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\Driver\Query::__construct(): let option
+MongoDB\Driver\Query::__construct(): comment option
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_server_version('<', '5.0'); ?>
+<?php skip_if_server_version('<', '4.4'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php
@@ -16,13 +16,13 @@ class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
     {
         $command = $event->getCommand();
 
-        if (!isset($command->let)) {
-            printf("%s does not include let option\n", $event->getCommandName());
+        if (!isset($command->comment)) {
+            printf("%s does not include comment option\n", $event->getCommandName());
 
             return;
         }
 
-        printf("%s included let: %s\n", $event->getCommandName(), json_encode($command->let));
+        printf("%s included comment: %s\n", $event->getCommandName(), json_encode($command->comment));
     }
 
     public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
@@ -42,8 +42,8 @@ $bulk->insert(['_id' => 2]);
 $manager->executeBulkWrite(NS, $bulk);
 
 $query = new MongoDB\Driver\Query(
-    ['$expr' => ['$eq' => ['$_id', '$$id']]],
-    ['let' => ['id' => 1]]
+    ['_id' => 1],
+    ['comment' => ['foo' => 1]]
 );
 
 $manager->addSubscriber(new CommandLogger);
@@ -54,7 +54,7 @@ var_dump($cursor->toArray());
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-find included let: {"id":1}
+find included comment: {"foo":1}
 array(1) {
   [0]=>
   object(stdClass)#%d (%d) {

@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\Driver\Query::__construct(): let option
+MongoDB\Driver\BulkWrite::__construct(): comment option
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_server_version('<', '5.0'); ?>
+<?php skip_if_server_version('<', '4.4'); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
 <?php
@@ -16,13 +16,13 @@ class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
     {
         $command = $event->getCommand();
 
-        if (!isset($command->let)) {
-            printf("%s does not include let option\n", $event->getCommandName());
+        if (!isset($command->comment)) {
+            printf("%s does not include comment option\n", $event->getCommandName());
 
             return;
         }
 
-        printf("%s included let: %s\n", $event->getCommandName(), json_encode($command->let));
+        printf("%s included comment: %s\n", $event->getCommandName(), json_encode($command->comment));
     }
 
     public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
@@ -36,29 +36,32 @@ class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
 
 $manager = create_test_manager();
 
-$bulk = new MongoDB\Driver\BulkWrite;
+$bulk = new MongoDB\Driver\BulkWrite(['comment' => ['foo' => 1]]);
 $bulk->insert(['_id' => 1]);
 $bulk->insert(['_id' => 2]);
-$manager->executeBulkWrite(NS, $bulk);
-
-$query = new MongoDB\Driver\Query(
-    ['$expr' => ['$eq' => ['$_id', '$$id']]],
-    ['let' => ['id' => 1]]
-);
+$bulk->delete(['_id' => 1]);
+$bulk->update(['_id' => 2], ['$set' => ['x' => 1]]);
 
 $manager->addSubscriber(new CommandLogger);
-$cursor = $manager->executeQuery(NS, $query);
+$manager->executeBulkWrite(NS, $bulk);
+
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([]));
 var_dump($cursor->toArray());
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-find included let: {"id":1}
+insert included comment: {"foo":1}
+delete included comment: {"foo":1}
+update included comment: {"foo":1}
+find does not include comment option
 array(1) {
   [0]=>
   object(stdClass)#%d (%d) {
     ["_id"]=>
+    int(2)
+    ["x"]=>
     int(1)
   }
 }

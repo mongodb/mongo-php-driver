@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\BulkWrite::__construct(): let option
+MongoDB\Driver\BulkWrite::__construct(): let option invalid type
 --FILE--
 <?php
 

@@ -84,6 +84,30 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 	return true;
 } /* }}} */
 
+/* Appends an arbitrary BSON value for the given opts document and key. Returns
+ * true on success; otherwise, false is returned and an exception is thrown. */
+static bool php_phongo_query_opts_append_value(bson_t* opts, const char* opts_key, zval* zarr, const char* zarr_key) /* {{{ */
+{
+	bson_value_t value = { 0 };
+
+	php_phongo_zval_to_bson_value(php_array_fetch(zarr, zarr_key), PHONGO_BSON_NONE, &value);
+
+	if (EG(exception)) {
+		/* Exception should already have been thrown */
+		bson_value_destroy(&value);
+		return false;
+	}
+
+	if (!BSON_APPEND_VALUE(opts, opts_key, &value)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error appending \"%s\" option", opts_key);
+		bson_value_destroy(&value);
+		return false;
+	}
+
+	bson_value_destroy(&value);
+	return true;
+} /* }}} */
+
 #define PHONGO_QUERY_OPT_BOOL_EX(opt, zarr, key, deprecated)                                                                      \
 	if ((zarr) && php_array_existsc((zarr), (key))) {                                                                             \
 		if ((deprecated)) {                                                                                                       \
@@ -97,6 +121,13 @@ static bool php_phongo_query_opts_append_document(bson_t* opts, const char* opts
 
 #define PHONGO_QUERY_OPT_BOOL(opt, zarr, key) PHONGO_QUERY_OPT_BOOL_EX((opt), (zarr), (key), 0)
 #define PHONGO_QUERY_OPT_BOOL_DEPRECATED(opt, zarr, key) PHONGO_QUERY_OPT_BOOL_EX((opt), (zarr), (key), 1)
+
+#define PHONGO_QUERY_OPT_BSON_VALUE(opt, zarr, key)                                    \
+	if ((zarr) && php_array_existsc((zarr), (key))) {                                  \
+		if (!php_phongo_query_opts_append_value(intern->opts, (opt), (zarr), (key))) { \
+			return false;                                                              \
+		}                                                                              \
+	}
 
 #define PHONGO_QUERY_OPT_DOCUMENT(opt, zarr, key)                                         \
 	if ((zarr) && php_array_existsc((zarr), (key))) {                                     \
@@ -296,8 +327,8 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 	PHONGO_QUERY_OPT_BOOL("awaitData", options, "awaitData");
 	PHONGO_QUERY_OPT_INT64("batchSize", options, "batchSize");
 	PHONGO_QUERY_OPT_DOCUMENT("collation", options, "collation");
-	PHONGO_QUERY_OPT_STRING("comment", options, "comment")
-	else PHONGO_QUERY_OPT_STRING("comment", modifiers, "$comment");
+	PHONGO_QUERY_OPT_BSON_VALUE("comment", options, "comment")
+	else PHONGO_QUERY_OPT_BSON_VALUE("comment", modifiers, "$comment");
 	PHONGO_QUERY_OPT_BOOL("exhaust", options, "exhaust");
 	PHONGO_QUERY_OPT_DOCUMENT("let", options, "let");
 	PHONGO_QUERY_OPT_DOCUMENT("max", options, "max")
@@ -346,9 +377,14 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 	return true;
 } /* }}} */
 
+#undef PHONGO_QUERY_OPT_BOOL_EX
 #undef PHONGO_QUERY_OPT_BOOL
+#undef PHONGO_QUERY_OPT_BOOL_DEPRECATED
+#undef PHONGO_QUERY_OPT_BSON_VALUE
 #undef PHONGO_QUERY_OPT_DOCUMENT
+#undef PHONGO_QUERY_OPT_INT64_EX
 #undef PHONGO_QUERY_OPT_INT64
+#undef PHONGO_QUERY_OPT_INT64_DEPRECATED
 #undef PHONGO_QUERY_OPT_STRING
 
 /* {{{ proto void MongoDB\Driver\Query::__construct(array|object $filter[, array $options = array()])

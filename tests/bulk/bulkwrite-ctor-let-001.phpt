@@ -22,7 +22,7 @@ class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
             return;
         }
 
-        printf("%s included let: %s\n", $event->getCommandName(), json_encode($event->getCommand()->let));
+        printf("%s included let: %s\n", $event->getCommandName(), json_encode($command->let));
     }
 
     public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
