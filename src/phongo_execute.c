@@ -498,7 +498,8 @@ bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const
 	if (bson_iter_init_find(&iter, &reply, "cursor") && BSON_ITER_HOLDS_DOCUMENT(&iter)) {
 		bson_t       initial_reply = BSON_INITIALIZER;
 		bson_t       cursor_opts   = BSON_INITIALIZER;
-		bson_error_t error         = { 0 };
+		bson_iter_t  iter;
+		bson_error_t error = { 0 };
 
 		bson_copy_to(&reply, &initial_reply);
 
@@ -512,6 +513,10 @@ bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const
 
 		if (command->batch_size) {
 			bson_append_int64(&cursor_opts, "batchSize", -1, command->batch_size);
+		}
+
+		if (bson_iter_init(&iter, command->bson) && bson_iter_find(&iter, "comment")) {
+			bson_append_value(&cursor_opts, "comment", -1, bson_iter_value(&iter));
 		}
 
 		if (zsession && !mongoc_client_session_append(Z_SESSION_OBJ_P(zsession)->client_session, &cursor_opts, &error)) {
