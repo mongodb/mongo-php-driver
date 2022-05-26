@@ -81,6 +81,7 @@ typedef struct {
 	char*            client_hash;
 	size_t           client_hash_len;
 	bool             use_persistent_client;
+	zval             enc_fields_map;
 	zval             key_vault_client_manager;
 	HashTable*       subscribers;
 	zend_object      std;
