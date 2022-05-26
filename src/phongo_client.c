@@ -1303,6 +1303,10 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 		mongoc_auto_encryption_opts_set_encrypted_fields_map(auto_encryption_opts, &bson_map);
 
 		bson_destroy(&bson_map);
+
+		/* Copy the encryptedFieldsMap to the Manager since PHPLIB may need to
+		 * access it for createCollection and dropCollection helpers. */
+		ZVAL_ZVAL(&manager->enc_fields_map, enc_fields_map, 1, 0);
 	}
 
 	if (php_array_existsc(zAutoEncryptionOpts, "keyVaultClient")) {

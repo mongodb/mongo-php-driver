@@ -608,6 +608,21 @@ cleanup:
 	}
 } /* }}} */
 
+/* {{{ proto array|object|null MongoDB\Driver\Manager::getEncryptedFieldsMap()
+   Returns the autoEncryption.encryptedFieldsMap driver option */
+static PHP_METHOD(Manager, getEncryptedFieldsMap)
+{
+	php_phongo_manager_t* intern;
+
+	intern = Z_MANAGER_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	if (!Z_ISUNDEF(intern->enc_fields_map)) {
+		RETURN_ZVAL(&intern->enc_fields_map, 1, 0);
+	}
+} /* }}} */
+
 /* {{{ proto MongoDB\Driver\ReadConcern MongoDB\Driver\Manager::getReadConcern()
    Returns the ReadConcern associated with this Manager */
 static PHP_METHOD(Manager, getReadConcern)
@@ -894,6 +909,7 @@ static zend_function_entry php_phongo_manager_me[] = {
 	PHP_ME(Manager, executeReadWriteCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
+	PHP_ME(Manager, getEncryptedFieldsMap, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, getReadConcern, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, getReadPreference, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(Manager, getServers, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
@@ -936,6 +952,10 @@ static void php_phongo_manager_free_object(zend_object* object) /* {{{ */
 
 	if (intern->client_hash) {
 		efree(intern->client_hash);
+	}
+
+	if (!Z_ISUNDEF(intern->enc_fields_map)) {
+		zval_ptr_dtor(&intern->enc_fields_map);
 	}
 
 	/* Free the keyVaultClient last to ensure that potential non-persistent
