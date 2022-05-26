@@ -214,7 +214,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 		zval* key_vault_client = php_array_fetch(options, "keyVaultClient");
 
 		if (Z_TYPE_P(key_vault_client) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(key_vault_client), php_phongo_manager_ce)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultClient\" encryption option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(key_vault_client));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultClient\" option to be %s, %s given", ZSTR_VAL(php_phongo_manager_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(key_vault_client));
 			goto cleanup;
 		}
 
@@ -235,7 +235,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 		keyvault_namespace = php_array_fetchc_string(options, "keyVaultNamespace", &plen, &pfree);
 
 		if (!phongo_split_namespace(keyvault_namespace, &db_name, &coll_name)) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultNamespace\" encryption option to contain a full collection name");
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultNamespace\" option to contain a full collection namespace");
 
 			if (pfree) {
 				efree(keyvault_namespace);
@@ -258,7 +258,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 		bson_t bson_providers = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(kms_providers) != IS_ARRAY && Z_TYPE_P(kms_providers) != IS_OBJECT) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"kmsProviders\" encryption option to be an array or object");
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"kmsProviders\" option to be an array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(kms_providers));
 			goto cleanup;
 		}
 
@@ -276,7 +276,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 		bson_t bson_options = BSON_INITIALIZER;
 
 		if (Z_TYPE_P(tls_options) != IS_ARRAY && Z_TYPE_P(tls_options) != IS_OBJECT) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"tlsOptions\" encryption option to be an array or object");
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"tlsOptions\" option to be an array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(tls_options));
 			goto cleanup;
 		}
 

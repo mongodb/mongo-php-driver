@@ -37,24 +37,24 @@ OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "autoEncryption" driver option to be array, string given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "encryptedFieldsMap" encryption option to be an array or object
+Expected "encryptedFieldsMap" autoEncryption option to be an array or object, string given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "keyVaultClient" encryption option to be MongoDB\Driver\Manager, string given
+Expected "keyVaultClient" autoEncryption option to be MongoDB\Driver\Manager, string given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "keyVaultNamespace" encryption option to contain a full collection name
+Expected "keyVaultNamespace" autoEncryption option to contain a full collection namespace
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "kmsProviders" encryption option to be an array or object
+Expected "kmsProviders" autoEncryption option to be an array or object, string given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "schemaMap" encryption option to be an array or object
+Expected "schemaMap" autoEncryption option to be an array or object, string given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "tlsOptions" encryption option to be an array or object
+Expected "tlsOptions" autoEncryption option to be an array or object, string given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "extraOptions" encryption option to be an array or object
+Expected "extraOptions" autoEncryption option to be an array or object, string given
 
 ===DONE===

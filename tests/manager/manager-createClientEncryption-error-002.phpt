@@ -31,15 +31,15 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "keyVaultClient" encryption option to be MongoDB\Driver\Manager, string given
+Expected "keyVaultClient" option to be MongoDB\Driver\Manager, string given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "keyVaultNamespace" encryption option to contain a full collection name
+Expected "keyVaultNamespace" option to contain a full collection namespace
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "kmsProviders" encryption option to be an array or object
+Expected "kmsProviders" option to be an array or object, string given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "tlsOptions" encryption option to be an array or object
+Expected "tlsOptions" option to be an array or object, string given
 
 ===DONE===
