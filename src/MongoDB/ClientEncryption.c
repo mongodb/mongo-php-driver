@@ -36,6 +36,20 @@ static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t
 static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options);
 static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue);
 
+/* {{{ proto void MongoDB\Driver\ClientEncryption::__construct(array $options)
+   Constructs a new ClientEncryption */
+static PHP_METHOD(ClientEncryption, __construct)
+{
+	zval* options;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(options)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	/* An exception will be thrown on error. */
+	phongo_clientencryption_init(Z_CLIENTENCRYPTION_OBJ_P(getThis()), options, NULL);
+} /* }}} */
+
 /* {{{ proto MongoDB\BSON\Binary MongoDB\Driver\ClientEncryption::createDataKey(string $kmsProvider[, array $options])
    Creates a new key document and inserts into the key vault collection. */
 static PHP_METHOD(ClientEncryption, createDataKey)
@@ -99,6 +113,10 @@ static PHP_METHOD(ClientEncryption, decrypt)
 	phongo_clientencryption_decrypt(intern, ciphertext, return_value);
 } /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption___construct, 0, 0, 0)
+	ZEND_ARG_ARRAY_INFO(0, options, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption_createDataKey, 0, 0, 1)
 	ZEND_ARG_INFO(0, kmsProvider)
 	ZEND_ARG_ARRAY_INFO(0, options, 1)
@@ -118,10 +136,10 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_phongo_clientencryption_me[] = {
 	/* clang-format off */
+	PHP_ME(ClientEncryption, __construct, ai_ClientEncryption___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ClientEncryption, createDataKey, ai_ClientEncryption_createDataKey, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ClientEncryption, encrypt, ai_ClientEncryption_encrypt, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_ME(ClientEncryption, decrypt, ai_ClientEncryption_decrypt, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_ClientEncryption_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
 	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_ClientEncryption_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
 	PHP_FE_END
 	/* clang-format on */
@@ -197,14 +215,13 @@ void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS) /* {{{ */
 } /* }}} */
 
 #ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
-/* keyVaultClientManager is an output parameter and will be assigned the
- * keyVaultNamespace Manager (if any). */
-static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(zval* defaultKeyVaultClient, zval* options, zval** keyVaultClientManager) /* {{{ */
+/* key_vault_client_manager is an output parameter and will be assigned to the
+ * effective keyVaultClient. */
+static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(zval* options, zval* default_key_vault_client_manager, zval** key_vault_client_manager) /* {{{ */
 {
-	mongoc_client_encryption_opts_t* opts;
+	mongoc_client_encryption_opts_t* opts = mongoc_client_encryption_opts_new();
 
-	opts                   = mongoc_client_encryption_opts_new();
-	*keyVaultClientManager = NULL;
+	*key_vault_client_manager = NULL;
 
 	if (!options || Z_TYPE_P(options) != IS_ARRAY) {
 		/* Returning opts as-is will defer to mongoc_client_encryption_new to
@@ -221,10 +238,15 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 		}
 
 		mongoc_client_encryption_opts_set_keyvault_client(opts, Z_MANAGER_OBJ_P(key_vault_client)->client);
-		*keyVaultClientManager = key_vault_client;
+		*key_vault_client_manager = key_vault_client;
+	} else if (default_key_vault_client_manager) {
+		mongoc_client_encryption_opts_set_keyvault_client(opts, Z_MANAGER_OBJ_P(default_key_vault_client_manager)->client);
+		*key_vault_client_manager = default_key_vault_client_manager;
 	} else {
-		mongoc_client_encryption_opts_set_keyvault_client(opts, Z_MANAGER_OBJ_P(defaultKeyVaultClient)->client);
-		*keyVaultClientManager = defaultKeyVaultClient;
+		/* If the ClientEncryption object is being constructed directly, the
+		 * "keyVaultClient" option must be explicitly provided. */
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "The \"keyVaultClient\" option is required when constructing a ClientEncryption object directly");
+		goto cleanup;
 	}
 
 	if (php_array_existsc(options, "keyVaultNamespace")) {
@@ -301,32 +323,35 @@ cleanup:
 	return NULL;
 } /* }}} */
 
-void phongo_clientencryption_init(zval* return_value, zval* manager, zval* options) /* {{{ */
+void phongo_clientencryption_init(php_phongo_clientencryption_t* intern, zval* options, zval* default_key_vault_client_manager) /* {{{ */
 {
-	php_phongo_clientencryption_t*   intern;
 	mongoc_client_encryption_t*      client_encryption;
 	mongoc_client_encryption_opts_t* opts;
-	zval*                            key_vault_client_manager = manager;
+	zval*                            key_vault_client_manager = NULL;
 	bson_error_t                     error                    = { 0 };
 
-	opts = phongo_clientencryption_opts_from_zval(manager, options, &key_vault_client_manager);
+	opts = phongo_clientencryption_opts_from_zval(options, default_key_vault_client_manager, &key_vault_client_manager);
+
 	if (!opts) {
 		/* Exception already thrown */
 		goto cleanup;
 	}
 
 	client_encryption = mongoc_client_encryption_new(opts, &error);
+
 	if (!client_encryption) {
 		phongo_throw_exception_from_bson_error_t(&error);
-
 		goto cleanup;
 	}
 
-	object_init_ex(return_value, php_phongo_clientencryption_ce);
-
-	intern                    = Z_CLIENTENCRYPTION_OBJ_P(return_value);
 	intern->client_encryption = client_encryption;
-	ZVAL_ZVAL(&intern->key_vault_client_manager, key_vault_client_manager, 1, 0);
+
+	/* Note: key_vault_client_manager should always be assigned if options were
+	 * successfully parsed by phongo_clientencryption_opts_from_zval, but let's
+	 * be defensive. */
+	if (key_vault_client_manager) {
+		ZVAL_ZVAL(&intern->key_vault_client_manager, key_vault_client_manager, 1, 0);
+	}
 
 cleanup:
 	if (opts) {
@@ -584,7 +609,7 @@ cleanup:
 	bson_value_destroy(&value);
 } /* }}} */
 #else  /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
-void phongo_clientencryption_init(zval* return_value, zval* manager, zval* options) /* {{{ */
+void phongo_clientencryption_init(php_phongo_clientencryption_t* intern, zval* options, zval* default_key_vault_client_manager) /* {{{ */
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot configure clientEncryption object.");
 }
