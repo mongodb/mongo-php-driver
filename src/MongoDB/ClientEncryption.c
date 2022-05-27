@@ -27,6 +27,8 @@
 #include "phongo_error.h"
 #include "phongo_util.h"
 
+#include "MongoDB/ClientEncryption.h"
+
 zend_class_entry* php_phongo_clientencryption_ce;
 
 /* Forward declarations */
@@ -582,7 +584,7 @@ cleanup:
 	bson_value_destroy(&value);
 } /* }}} */
 #else  /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
-void phongo_clientencryption_init(php_phongo_clientencryption_t* clientencryption, zval* manager, zval* options) /* {{{ */
+void phongo_clientencryption_init(zval* return_value, zval* manager, zval* options) /* {{{ */
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot configure clientEncryption object.");
 }
