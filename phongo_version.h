@@ -17,6 +17,10 @@
 #ifndef PHONGO_VERSION_H
 #define PHONGO_VERSION_H
 
+/* Note: this file should remain in the repository's root directory so that
+ * PECL's release-upload.php script can verify the version information when
+ * publishing a release. */
+
 /* clang-format off */
 #define PHP_MONGODB_VERSION "1.14.0-dev"
 #define PHP_MONGODB_STABILITY "devel"
