@@ -6,7 +6,7 @@
 
 #include "winres.h"
 #include "main/php_version.h"
-#include "src/phongo_version.h"
+#include "phongo_version.h"
 
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
