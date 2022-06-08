@@ -32,6 +32,7 @@ function get_files() {
     $dirs = array(
       'src' => array(
         "php_phongo.{c,h}",
+        "phongo_version.h",
         "config.{m4,w32}",
         "Makefile.frag",
         "scripts/autotools/*.{m4}",
