@@ -1008,13 +1008,17 @@ tasks:
 
 
 axes:
-  - id: versions
+  - id: mongodb-versions
     display_name: MongoDB Version
     values:
       - id: "latest"
         display_name: "MongoDB latest"
         variables:
            VERSION: "latest"
+      - id: "6.0"
+        display_name: "MongoDB 6.0"
+        variables:
+           VERSION: "6.0"
       - id: "5.0"
         display_name: "MongoDB 5.0"
         variables:
@@ -1036,13 +1040,13 @@ axes:
         variables:
            VERSION: "3.6"
 
-  - id: edge-versions
+  - id: mongodb-edge-versions
     display_name: MongoDB Version
     values:
       - id: "latest-stable"
         display_name: "MongoDB 5.0"
         variables:
-          VERSION: "4.4"
+          VERSION: "5.0"
       - id: "oldest-supported"
         display_name: "MongoDB 3.6"
         variables:
@@ -1076,9 +1080,9 @@ axes:
     display_name: PHP Version
     values:
       - id: "latest-stable"
-        display_name: "PHP 8.0"
+        display_name: "PHP 8.1"
         variables:
-          PHP_VERSION: "8.0"
+          PHP_VERSION: "8.1"
       - id: "oldest-supported"
         display_name: "PHP 7.2"
         variables:
@@ -1087,18 +1091,24 @@ axes:
   - id: os
     display_name: OS
     values:
+      - id: debian11
+        display_name: "Debian 11"
+        run_on: debian11
+      - id: debian10
+        display_name: "Debian 10"
+        run_on: debian10
       - id: debian92
         display_name: "Debian 9.2"
-        run_on: debian92-test
+        run_on: debian92
       - id: rhel70
         display_name: "RHEL 7.0"
         run_on: rhel70
       - id: rhel71-power8
         display_name: "RHEL 7.1 Power 8"
-        run_on: rhel71-power8-test
-      - id: rhel74-zseries
-        display_name: "RHEL 7.4 zSeries"
-        run_on: rhel72-zseries-test
+        run_on: rhel71-power8-build
+      - id: rhel72-zseries
+        display_name: "RHEL 7.2 zSeries"
+        run_on: rhel72-zseries-build
       - id: ubuntu1804-arm64
         display_name: "Ubuntu 18.04 ARM64"
         run_on: ubuntu1804-arm64-test
@@ -1142,45 +1152,28 @@ axes:
 
 
 buildvariants:
-
-# Tests all PHP versions on all operating systems and latest MongoDB version
+# Test all PHP versions with latest-stable MongoDB on Debian 11 and RHEL 7.0
 - matrix_name: "test-php-versions"
-  matrix_spec: { "os": "*", "edge-versions": "latest-stable", "php-versions": "*" }
+  matrix_spec: { "os": ["rhel70", "debian11"], "mongodb-edge-versions": "latest-stable", "php-versions": "*" }
+  display_name: "${os}, ${mongodb-edge-versions}, ${php-versions}"
   exclude_spec:
-    - { "os": "ubuntu1804-arm64", "edge-versions": "latest-stable", "php-versions": "7.2" }
-    # MongoDB 5.0+ is not available for rhel74-zseries and rhel71-power8
-    - { "os": "rhel74-zseries", "edge-versions": "latest-stable", "php-versions": "*" }
-    - { "os": "rhel71-power8", "edge-versions": "latest-stable", "php-versions": "*" }
-    # PHP 8.1 is only available on debian92
-    - { "os": "rhel70", "edge-versions": "latest-stable", "php-versions": "8.1" }
-    - { "os": "ubuntu1804-arm64", "edge-versions": "latest-stable", "php-versions": "8.1" }
-  display_name: "${os}, ${edge-versions}, ${php-versions}"
+    # Exclude "latest-stable" PHP version for Debian 11 (see: test-mongodb-versions matrix)
+    - { "os": "debian11", "mongodb-edge-versions": "*", "php-versions": "8.1" }
+    # PHP 8.1+ is not available on rhel70
+    - { "os": "rhel70", "mongodb-edge-versions": "*", "php-versions": "8.1" }
   tasks:
     - name: "test-standalone-ssl"
     - name: "test-replicaset-auth"
+    - name: "test-sharded"
 
-# Tests MongoDB 3.6 with oldest supported PHP version
-- matrix_name: "test-mongodb-36"
-  matrix_spec: { "os": "*", "versions": ["3.6"], "php-edge-versions": "oldest-supported" }
-  exclude_spec:
-    - { "os": "ubuntu1804-arm64", "versions": "*", "php-edge-versions": "oldest-supported" }
-  display_name: "${os}, ${versions}, ${php-edge-versions}"
-  tasks:
-    - name: "test-standalone"
-    - name: "test-replicaset"
-    - name: "test-replicaset-auth"
-
-# Tests 4.0+ MongoDB versions with oldest supported PHP version
+# Test all topologies and MongoDB versions with latest-stable PHP version on Debian
 - matrix_name: "test-mongodb-versions"
-  matrix_spec: { "os": "*", "versions": ["4.0", "4.2", "4.4", "5.0", "latest"], "php-edge-versions": "oldest-supported" }
+  matrix_spec: { "os": ["debian92", "debian11"], "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
+  display_name: "${os}, ${mongodb-versions}, ${php-edge-versions}"
   exclude_spec:
-    - { "os": "ubuntu1804-arm64", "versions": "4.0", "php-edge-versions": "oldest-supported" }
-    - { "os": "rhel71-power8", "versions": ["5.0", "latest"], "php-edge-versions": "oldest-supported" }
-    # rhel74-zseries will be covered by test-mongodb-versions-nossl
-    - { "os": "rhel74-zseries", "versions": "*", "php-edge-versions": "oldest-supported" }
-    # Avoid duplicate build variants from test-php-versions (assumes edge-versions:latest-stable is 5.0)
-    - { "os": "*", "versions": "5.0", "php-edge-versions": "oldest-supported" }
-  display_name: "${os}, ${versions}, ${php-edge-versions}"
+    # Debian 9.2 only supports up to MongoDB 5.0
+    - { "os": "debian92", "mongodb-versions": ["6.0", "latest"], "php-edge-versions": "latest-stable" }
+    - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4", "5.0"], "php-edge-versions": "latest-stable" }
   tasks:
     - name: "test-standalone"
     - name: "test-standalone-auth"
@@ -1189,57 +1182,54 @@ buildvariants:
     - name: "test-replicaset-auth"
     - name: "test-sharded"
 
-# Tests MongoDB 4.2 and 4.4 on zSeries with oldest supported PHP version
-- matrix_name: "test-mongodb-versions-nossl"
-  matrix_spec: { "os": "rhel74-zseries", "versions": ["4.2", "4.4"], "php-edge-versions": "oldest-supported" }
-  display_name: "${os}, ${versions}, ${php-edge-versions}"
+# Test ARM64, Power8, and zSeries architectures with MongoDB 4.4
+- matrix_name: "test-alt-archs"
+  matrix_spec: { "os": ["rhel71-power8", "rhel72-zseries", "ubuntu1804-arm64"], "mongodb-versions": ["4.4"], "php-edge-versions": "oldest-supported" }
+  display_name: "${os}, ${mongodb-versions}, ${php-edge-versions}"
   tasks:
-    - name: "test-standalone"
-    - name: "test-standalone-auth"
-    - name: "test-replicaset"
+    - name: "test-standalone-ssl"
     - name: "test-replicaset-auth"
     - name: "test-sharded"
 
-- matrix_name: "mongo-42-storage-engines"
-  matrix_spec: { "os": "debian92", "versions": "4.2", "php-edge-versions": "latest-stable", "storage-engine": "inmemory" }
-  display_name: "${storage-engine}: ${os}, ${versions}, ${php-edge-versions}"
-  tasks:
-    - name: "test-standalone"
-
-- matrix_name: "mongo-40-storage-engines"
-  matrix_spec: { "os": "debian92", "versions": "4.0", "php-edge-versions": "latest-stable", "storage-engine": "mmapv1" }
-  display_name: "${storage-engine}: ${os}, ${versions}, ${php-edge-versions}"
+# Test alternative storage engines on MongoDB 4.0
+- matrix_name: "test-storage-engines"
+  matrix_spec: { "os": "debian92", "mongodb-versions": "4.0", "php-edge-versions": "latest-stable", "storage-engine": ["inmemory", "mmapv1"] }
+  display_name: "${storage-engine}: ${os}, ${mongodb-edge-versions}, ${php-edge-versions}"
   tasks:
     - name: "test-standalone"
 
 - matrix_name: "libmongoc-versions"
-  matrix_spec: { "os": "debian92", "edge-versions": "latest-stable", "php-edge-versions": "latest-stable", "libmongoc-version": "*" }
-  display_name: "libmongoc ${libmongoc-version}: ${os}, ${edge-versions}, ${php-edge-versions}"
+  matrix_spec: { "os": "debian11", "mongodb-edge-versions": "latest-stable", "php-edge-versions": "latest-stable", "libmongoc-version": "*" }
+  display_name: "libmongoc ${libmongoc-version}: ${os}, ${mongodb-edge-versions}, ${php-edge-versions}"
   tasks:
-    - name: "test-standalone"
-    - name: "test-replicaset"
+    - name: "test-standalone-ssl"
+    - name: "test-replicaset-auth"
     - name: "test-sharded"
 
 - matrix_name: "atlas-connectivity-tests"
-  matrix_spec: { "os": "debian92", "php-edge-versions": "latest-stable" }
+  matrix_spec: { "os": "debian11", "php-edge-versions": "latest-stable" }
   display_name: "Atlas Connectivity"
   tasks:
     - name: "test-atlas"
 
+# OCSP is available from MongoDB 4.4+ (Debian 10 has MongoDB 4.4+)
 - matrix_name: "test-ocsp"
-  matrix_spec: { "os": "debian92", "versions": ["4.4", "5.0", "latest"], "php-edge-versions": "latest-stable" }
-  display_name: "OCSP tests - ${versions}"
+  matrix_spec: { "os": "debian10", "mongodb-versions": ["4.4", "5.0", "6.0"], "php-edge-versions": "latest-stable" }
+  display_name: "OCSP tests - ${mongodb-versions}"
   tasks:
     - name: ".ocsp"
 
+# Stable API is available from MongoDB 5.0+
 - matrix_name: "test-requireApiVersion"
-  matrix_spec: { "os": "debian92", "versions": ["5.0", "latest"], "php-edge-versions": "latest-stable" }
-  display_name: "Versioned API - ${versions}"
+  matrix_spec: { "os": "debian11", "mongodb-versions": ["5.0", "6.0"], "php-edge-versions": "latest-stable" }
+  display_name: "Versioned API - ${mongodb-versions}"
   tasks:
     - name: "test-requireApiVersion"
 
+# Load balancer is available from MongoDB 5.0+
 - matrix_name: "test-loadBalanced"
-  matrix_spec: { "os": "debian92", "versions": ["5.0", "latest"], "php-edge-versions": "latest-stable" }
-  display_name: "Load balanced - ${versions}"
+  # TODO: Add MongoDB 6.0 and use Debian 11 once BUILD-15237 is resolved
+  matrix_spec: { "os": "debian92", "mongodb-versions": "5.0", "php-edge-versions": "latest-stable" }
+  display_name: "Load balanced - ${mongodb-versions}"
   tasks:
     - name: "test-loadBalanced"
