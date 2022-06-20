@@ -1107,10 +1107,10 @@ axes:
         display_name: "RHEL 7.1 Power 8"
         run_on: rhel71-power8-build
       - id: rhel72-zseries
-        display_name: "RHEL 7.2 zSeries"
+        display_name: "RHEL 7.2 zSeries"
         run_on: rhel72-zseries-build
       - id: ubuntu1804-arm64
-        display_name: "Ubuntu 18.04 ARM64"
+        display_name: "Ubuntu 18.04 ARM64"
         run_on: ubuntu1804-arm64-test
       # Pending installation of PHP toolchain on macOS hosts (see: PHPC-869)
       # - id: macos-1014
