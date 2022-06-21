@@ -5,12 +5,11 @@ MongoDB\Driver\Manager::__construct(): incomplete auto encryption options
 <?php skip_if_not_libmongocrypt(); ?>
 --FILE--
 <?php
-
 require_once __DIR__ . '/../utils/basic.inc';
 
 $tests = [
     [],
-    ['keyVaultNamespace' => 'admin.keys'],
+    ['keyVaultNamespace' => CSFLE_KEY_VAULT_NS],
 ];
 
 foreach ($tests as $driverOptions) {

@@ -11,8 +11,8 @@ echo throws(function() {
     create_test_manager(null, [], [
         'autoEncryption' => [
             'keyVaultClient' => create_test_manager(null),
-            'keyVaultNamespace' => 'default.keys',
-            'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(str_repeat('0', 96), 0)]],
+            'keyVaultNamespace' => CSFLE_KEY_VAULT_NS,
+            'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
         ],
         'disableClientPersistence' => true,
     ]);
@@ -22,8 +22,8 @@ echo throws(function() {
     create_test_manager(null, [], [
         'autoEncryption' => [
             'keyVaultClient' => create_test_manager(null, [], ['disableClientPersistence' => true]),
-            'keyVaultNamespace' => 'default.keys',
-            'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(str_repeat('0', 96), 0)]],
+            'keyVaultNamespace' => CSFLE_KEY_VAULT_NS,
+            'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
         ]
     ]);
 }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";

@@ -19,7 +19,7 @@ $tests = [
     [
         'keyVaultNamespace' => 'not_a_namespace',
         // keyVaultNamespace requires a valid kmsProviders option
-        'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary('', 0)]],
+        'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
     ] + $baseOptions,
     ['kmsProviders' => 'not_an_array_or_object'] + $baseOptions,
     ['tlsOptions' => 'not_an_array_or_object'] + $baseOptions,

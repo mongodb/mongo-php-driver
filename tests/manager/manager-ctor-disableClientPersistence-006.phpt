@@ -13,8 +13,8 @@ ini_set('mongodb.debug', '');
 
 echo "Creating clientEncryption\n";
 $clientEncryption = $manager->createClientEncryption([
-    'keyVaultNamespace' => 'default.keys',
-    'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(str_repeat('0', 96), 0)]],
+    'keyVaultNamespace' => CSFLE_KEY_VAULT_NS,
+    'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
 ]);
 
 echo "Unsetting manager\n";

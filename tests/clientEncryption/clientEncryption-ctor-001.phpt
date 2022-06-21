@@ -6,12 +6,12 @@ MongoDB\Driver\ClientEncryption::__construct()
 --FILE--
 <?php
 
-$key = base64_decode('Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk');
+require_once __DIR__ . "/../utils/basic.inc";
 
 $clientEncryption = new MongoDB\Driver\ClientEncryption([
-    'keyVaultClient' => new MongoDB\Driver\Manager(),
-    'keyVaultNamespace' => 'default.keys',
-    'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary($key, 0)]]
+    'keyVaultClient' => create_test_manager(),
+    'keyVaultNamespace' => CSFLE_KEY_VAULT_NS,
+    'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
 ]);
 
 var_dump($clientEncryption);

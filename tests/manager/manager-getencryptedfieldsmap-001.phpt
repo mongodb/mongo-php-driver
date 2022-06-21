@@ -3,11 +3,13 @@ MongoDB\Driver\Manager::getEncryptedFieldsMap()
 --FILE--
 <?php
 
+require_once __DIR__ . "/../utils/basic.inc";
+
 /* autoEncryption requires keyVaultNamespace and a kmsProvider. Additionally,
  * disable mongocryptd spawning since it is not required for this test. */
 $baseOptions = [
-    'keyVaultNamespace' => 'encryption.__keyVault',
-    'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(str_repeat('0', 96), 0)]],
+    'keyVaultNamespace' => CSFLE_KEY_VAULT_NS,
+    'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
     'extraOptions' => ['mongocryptdBypassSpawn' => true],
 ];
 
@@ -33,7 +35,7 @@ $tests = [
 ];
 
 foreach ($tests as $i => $driverOptions) {
-    $manager = new MongoDB\Driver\Manager(null, [], $driverOptions);
+    $manager = create_test_manager(null, [], $driverOptions);
     var_dump($manager->getEncryptedFieldsMap());
 }
 
