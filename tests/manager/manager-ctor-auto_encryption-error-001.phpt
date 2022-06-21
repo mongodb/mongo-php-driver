@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::__construct(): incomplete auto encryption options
+MongoDB\Driver\Manager::__construct(): incomplete autoEncryption options
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
@@ -12,9 +12,9 @@ $tests = [
     ['keyVaultNamespace' => CSFLE_KEY_VAULT_NS],
 ];
 
-foreach ($tests as $driverOptions) {
-    echo throws(function() use ($driverOptions) {
-        $manager = create_test_manager(null, [], ['autoEncryption' => $driverOptions]);
+foreach ($tests as $autoEncryptionOptions) {
+    echo throws(function() use ($autoEncryptionOptions) {
+        create_test_manager(null, [], ['autoEncryption' => $autoEncryptionOptions]);
     }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n\n";
 }
 

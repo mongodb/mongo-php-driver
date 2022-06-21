@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::__construct(): invalid option types
+MongoDB\Driver\Manager::__construct(): invalid types in autoEncryption options
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
@@ -23,9 +23,9 @@ $tests = [
     ['extraOptions' => 'not_an_array_or_object'],
 ];
 
-foreach ($tests as $test) {
-    echo throws(function() use ($test) {
-        $manager = create_test_manager(null, [], ['autoEncryption' => $test]);
+foreach ($tests as $autoEncryptionOptions) {
+    echo throws(function() use ($autoEncryptionOptions) {
+        create_test_manager(null, [], ['autoEncryption' => $autoEncryptionOptions]);
     }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n\n";
 }
 

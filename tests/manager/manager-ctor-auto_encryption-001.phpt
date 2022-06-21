@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::__construct(): auto encryption options
+MongoDB\Driver\Manager::__construct(): autoEncryption options
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_appveyor(); /* AppVeyor does not have mongocryptd installed */ ?>
@@ -44,7 +44,7 @@ $tests = [
 ];
 
 foreach ($tests as $autoEncryptionOptions) {
-    $manager = create_test_manager(null, [], ['autoEncryption' => $autoEncryptionOptions + $baseOptions]);
+    create_test_manager(null, [], ['autoEncryption' => $autoEncryptionOptions + $baseOptions]);
 }
 
 ?>

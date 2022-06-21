@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::__construct(): auto encryption when compiling without libmongocrypt
+MongoDB\Driver\Manager::__construct(): autoEncryption when compiling without libmongocrypt
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_libmongocrypt(); ?>
@@ -9,7 +9,7 @@ MongoDB\Driver\Manager::__construct(): auto encryption when compiling without li
 require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function () {
-    $manager = create_test_manager(null, [], ['autoEncryption' => []]);
+    create_test_manager(null, [], ['autoEncryption' => []]);
 }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 ?>
