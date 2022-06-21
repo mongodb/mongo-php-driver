@@ -111,6 +111,10 @@ The test suite references the following environment variables:
    which will then be specified as the `serverApi` driver option for
    [`MongoDB\Driver\Manager`](https://www.php.net/manual/en/class.mongodb-driver-manager.php)
    objects created by the test suite.
+ * `CRYPT_SHARED_LIB_PATH`: If defined, this value will be used to set the
+   `cryptSharedLibPath` autoEncryption driver option for
+   [`MongoDB\Driver\Manager`](https://www.php.net/manual/en/class.mongodb-driver-manager.php)
+   objects created by the test suite.
 
 ### Mongo Orchestration
 

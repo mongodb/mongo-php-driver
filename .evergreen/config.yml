@@ -466,6 +466,18 @@ functions:
             ${DRIVERS_TOOLS}/.evergreen/run-load-balancer.sh stop
           fi
 
+  "fetch crypt_shared":
+    - command: shell.exec
+      params:
+        script: |
+          # TODO: Specify same version provisioned by download-mongodb.sh (see: DRIVERS-2355)
+          python3 ${DRIVERS_TOOLS}/.evergreen/mongodl.py --component crypt_shared --version latest --only "**/mongo_crypt_v1.so" --out ${DRIVERS_TOOLS}/.evergreen/csfle --strip-path-components 1
+    - command: expansions.update
+      params:
+        updates:
+          - key: client_side_encryption_crypt_shared_lib_path
+            value: ${DRIVERS_TOOLS}/.evergreen/csfle/mongo_crypt_v1.so
+
 pre:
   - func: "fetch source"
   - func: "prepare resources"
@@ -584,6 +596,17 @@ tasks:
         - func: "run tests"
           vars:
             TESTS: "tests/atlas.phpt"
+
+    - name: "test-crypt_shared"
+      commands:
+        - func: "compile driver"
+        - func: "bootstrap mongo-orchestration"
+          vars:
+            TOPOLOGY: "replica_set"
+        - func: "fetch crypt_shared"
+        - func: "run tests"
+          vars:
+            CRYPT_SHARED_LIB_PATH: "${client_side_encryption_crypt_shared_lib_path}"
 
     - name: "test-loadBalanced"
       tags: ["loadbalanced"]
@@ -1233,3 +1256,10 @@ buildvariants:
   display_name: "Load balanced - ${mongodb-versions}"
   tasks:
     - name: "test-loadBalanced"
+
+# CSFLE crypt_shared is available from MongoDB 6.0+
+- matrix_name: "test-csfle-crypt_shared"
+  matrix_spec: { "os": "debian11", "mongodb-versions": "6.0", "php-edge-versions": "latest-stable" }
+  display_name: "CSFLE crypt_shared - ${mongodb-versions}"
+  tasks:
+    - name: "test-crypt_shared"

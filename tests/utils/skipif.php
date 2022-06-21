@@ -479,3 +479,19 @@ function skip_if_appveyor()
         exit('skip Test cannot be run on AppVeyor');
     }
 }
+
+function skip_if_crypt_shared()
+{
+    // Intentionally ignore empty values for CRYPT_SHARED_LIB_PATH
+    if (getenv('CRYPT_SHARED_LIB_PATH')) {
+        exit('skip crypt_shared is available');
+    }
+}
+
+function skip_if_no_crypt_shared()
+{
+    // Intentionally consider empty values for CRYPT_SHARED_LIB_PATH
+    if ( ! getenv('CRYPT_SHARED_LIB_PATH')) {
+        exit('skip crypt_shared is not available');
+    }
+}
