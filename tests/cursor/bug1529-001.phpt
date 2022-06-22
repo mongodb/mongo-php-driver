@@ -46,8 +46,8 @@ class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
 $keyVaultClient = create_test_manager(URI, [], ['disableClientPersistence' => true]);
 $autoEncryptionOpts = [
     'keyVaultClient' => $keyVaultClient,
-    'keyVaultNamespace' => 'default.keys',
-    'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(str_repeat('0', 96), 0)]],
+    'keyVaultNamespace' => CSFLE_KEY_VAULT_NS,
+    'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
 ];
 
 $manager = create_test_manager(URI, [], ['autoEncryption' => $autoEncryptionOpts, 'disableClientPersistence' => true]);

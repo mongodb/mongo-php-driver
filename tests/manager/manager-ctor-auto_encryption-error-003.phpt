@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::__construct(): invalid option types
+MongoDB\Driver\Manager::__construct(): invalid types in autoEncryption options
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
@@ -15,7 +15,7 @@ $tests = [
     [
         'keyVaultNamespace' => 'not_a_namespace',
         // keyVaultNamespace requires a valid kmsProviders option
-        'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary('', 0)]],
+        'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
     ],
     ['kmsProviders' => 'not_an_array_or_object'],
     ['schemaMap' => 'not_an_array_or_object'],
@@ -23,9 +23,9 @@ $tests = [
     ['extraOptions' => 'not_an_array_or_object'],
 ];
 
-foreach ($tests as $test) {
-    echo throws(function() use ($test) {
-        $manager = create_test_manager(null, [], ['autoEncryption' => $test]);
+foreach ($tests as $autoEncryptionOptions) {
+    echo throws(function() use ($autoEncryptionOptions) {
+        create_test_manager(null, [], ['autoEncryption' => $autoEncryptionOptions]);
     }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n\n";
 }
 

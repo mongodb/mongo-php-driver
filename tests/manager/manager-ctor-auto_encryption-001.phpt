@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Manager::__construct(): auto encryption options
+MongoDB\Driver\Manager::__construct(): autoEncryption options
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_appveyor(); /* AppVeyor does not have mongocryptd installed */ ?>
@@ -7,16 +7,18 @@ MongoDB\Driver\Manager::__construct(): auto encryption options
 --FILE--
 <?php
 
+require_once __DIR__ . '/../utils/basic.inc';
+
 $baseOptions = [
-    'keyVaultNamespace' => 'admin.dataKeys',
-    'kmsProviders' => ['aws' => (object) ['accessKeyId' => 'abc', 'secretAccessKey' => 'def']]
+    'keyVaultNamespace' => CSFLE_KEY_VAULT_NS,
+    'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
 ];
 
 $tests = [
     [],
     ['bypassAutoEncryption' => true],
     ['bypassQueryAnalysis' => true],
-    ['keyVaultClient' => new MongoDB\Driver\Manager()],
+    ['keyVaultClient' => create_test_manager()],
     ['schemaMap' => [
         'default.default' => [
             'properties' => [
@@ -42,7 +44,7 @@ $tests = [
 ];
 
 foreach ($tests as $autoEncryptionOptions) {
-    $manager = new MongoDB\Driver\Manager(null, [], ['autoEncryption' => $autoEncryptionOptions + $baseOptions]);
+    create_test_manager(null, [], ['autoEncryption' => $autoEncryptionOptions + $baseOptions]);
 }
 
 ?>
