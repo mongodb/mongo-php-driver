@@ -17,5 +17,5 @@ string(43) "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
 string(36) "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 string(7) "Indexed"
 string(9) "Unindexed"
-int(0)
+string(8) "equality"
 ===DONE===

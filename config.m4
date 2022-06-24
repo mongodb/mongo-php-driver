@@ -495,7 +495,6 @@ if test "$PHP_MONGODB" != "no"; then
 
       AC_CONFIG_FILES([
         ${ac_config_dir}/src/libmongocrypt/src/mongocrypt-config.h
-        ${ac_config_dir}/src/libmongocrypt/src/mongocrypt.h
       ])
     fi
   fi

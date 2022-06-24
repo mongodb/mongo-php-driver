@@ -211,7 +211,7 @@ void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM"), MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM);
 	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("ALGORITHM_INDEXED"), MONGOC_ENCRYPT_ALGORITHM_INDEXED);
 	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("ALGORITHM_UNINDEXED"), MONGOC_ENCRYPT_ALGORITHM_UNINDEXED);
-	zend_declare_class_constant_long(php_phongo_clientencryption_ce, ZEND_STRL("QUERY_TYPE_EQUALITY"), MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY);
+	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("QUERY_TYPE_EQUALITY"), MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY);
 } /* }}} */
 
 #ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
@@ -538,7 +538,16 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 	}
 
 	if (php_array_existsc(options, "queryType")) {
-		mongoc_client_encryption_encrypt_opts_set_query_type(opts, php_array_fetch_long(options, "queryType"));
+		char*     querytype;
+		int       plen;
+		zend_bool pfree;
+
+		querytype = php_array_fetch_string(options, "queryType", &plen, &pfree);
+		mongoc_client_encryption_encrypt_opts_set_query_type(opts, querytype);
+
+		if (pfree) {
+			efree(querytype);
+		}
 	}
 
 	return opts;
