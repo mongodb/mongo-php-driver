@@ -32,58 +32,6 @@
 #include "MongoDB/Session.h"
 #include "MongoDB/WriteResult.h"
 
-static void phongo_cursor_init(zval* return_value, zval* manager, mongoc_cursor_t* cursor, zval* readPreference, zval* session) /* {{{ */
-{
-	php_phongo_cursor_t* intern;
-
-	object_init_ex(return_value, php_phongo_cursor_ce);
-
-	intern            = Z_CURSOR_OBJ_P(return_value);
-	intern->cursor    = cursor;
-	intern->server_id = mongoc_cursor_get_hint(cursor);
-	intern->advanced  = false;
-	intern->current   = 0;
-
-	ZVAL_ZVAL(&intern->manager, manager, 1, 0);
-
-	if (readPreference) {
-		ZVAL_ZVAL(&intern->read_preference, readPreference, 1, 0);
-	}
-
-	if (session) {
-		ZVAL_ZVAL(&intern->session, session, 1, 0);
-	}
-} /* }}} */
-
-static void phongo_cursor_init_for_command(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* db, zval* command, zval* readPreference, zval* session) /* {{{ */
-{
-	php_phongo_cursor_t* intern;
-
-	phongo_cursor_init(return_value, manager, cursor, readPreference, session);
-	intern = Z_CURSOR_OBJ_P(return_value);
-
-	intern->database = estrdup(db);
-
-	ZVAL_ZVAL(&intern->command, command, 1, 0);
-} /* }}} */
-
-static void phongo_cursor_init_for_query(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* namespace, zval* query, zval* readPreference, zval* session) /* {{{ */
-{
-	php_phongo_cursor_t* intern;
-
-	phongo_cursor_init(return_value, manager, cursor, readPreference, session);
-	intern = Z_CURSOR_OBJ_P(return_value);
-
-	/* namespace has already been validated by phongo_execute_query() */
-	phongo_split_namespace(namespace, &intern->database, &intern->collection);
-
-	/* cursor has already been advanced by phongo_execute_query() calling
-	 * phongo_cursor_advance_and_check_for_error() */
-	intern->advanced = true;
-
-	ZVAL_ZVAL(&intern->query, query, 1, 0);
-} /* }}} */
-
 static bson_t* create_wrapped_command_envelope(const char* db, bson_t* reply)
 {
 	bson_t* tmp;
@@ -615,12 +563,12 @@ bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zv
 		mongoc_cursor_set_max_await_time_ms(cursor, query->max_await_time_ms);
 	}
 
-	if (!phongo_cursor_advance_and_check_for_error(cursor)) {
+	/* Initialize the cursor and advance it once */
+	if (!phongo_cursor_init_for_query(return_value, manager, cursor, namespace, zquery, zreadPreference, zsession)) {
+		/* Exception should already have been thrown */
 		mongoc_cursor_destroy(cursor);
 		return false;
 	}
-
-	phongo_cursor_init_for_query(return_value, manager, cursor, namespace, zquery, zreadPreference, zsession);
 
 	return true;
 } /* }}} */

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ClientEncryption::createDataKey()
+MongoDB\Driver\ClientEncryption::deleteKey()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
@@ -19,21 +19,14 @@ $clientEncryption = $manager->createClientEncryption([
 
 $keyId = $clientEncryption->createDataKey('local');
 
-var_dump($keyId);
-
-$key = $clientEncryption->getKey($keyId);
-
-var_dump($key->_id == $keyId);
+var_dump($clientEncryption->deleteKey($keyId));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\BSON\Binary)#%d (%d) {
-  ["data"]=>
-  string(16) "%a"
-  ["type"]=>
-  int(4)
+object(stdClass)#%d (%d) {
+  ["deletedCount"]=>
+  int(1)
 }
-bool(true)
 ===DONE===

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ClientEncryption::createDataKey()
+MongoDB\Driver\ClientEncryption::createDataKey() "keyAltNames" option
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
@@ -17,23 +17,18 @@ $clientEncryption = $manager->createClientEncryption([
   'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
 ]);
 
-$keyId = $clientEncryption->createDataKey('local');
-
-var_dump($keyId);
-
+$keyId = $clientEncryption->createDataKey('local', ['keyAltNames' => ['foo', 'bar']]);
 $key = $clientEncryption->getKey($keyId);
 
 var_dump($key->_id == $keyId);
+var_dump(in_array('foo', $key->keyAltNames));
+var_dump(in_array('bar', $key->keyAltNames));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-object(MongoDB\BSON\Binary)#%d (%d) {
-  ["data"]=>
-  string(16) "%a"
-  ["type"]=>
-  int(4)
-}
+--EXPECT--
+bool(true)
+bool(true)
 bool(true)
 ===DONE===

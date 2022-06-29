@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ClientEncryption::createDataKey()
+MongoDB\Driver\ClientEncryption::addKeyAltName()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
@@ -18,22 +18,23 @@ $clientEncryption = $manager->createClientEncryption([
 ]);
 
 $keyId = $clientEncryption->createDataKey('local');
+$keyBeforeUpdate = $clientEncryption->addKeyAltName($keyId, 'foo');
+$keyAfterUpdate = $clientEncryption->getKey($keyId);
 
-var_dump($keyId);
+var_dump($keyBeforeUpdate->_id == $keyId);
+var_dump(empty($keyBeforeUpdate->keyAltNames));
 
-$key = $clientEncryption->getKey($keyId);
-
-var_dump($key->_id == $keyId);
+var_dump($keyAfterUpdate->_id == $keyId);
+var_dump(isset($keyAfterUpdate->keyAltNames) && is_array($keyAfterUpdate->keyAltNames));
+var_dump(in_array('foo', $keyAfterUpdate->keyAltNames));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-object(MongoDB\BSON\Binary)#%d (%d) {
-  ["data"]=>
-  string(16) "%a"
-  ["type"]=>
-  int(4)
-}
+--EXPECT--
+bool(true)
+bool(true)
+bool(true)
+bool(true)
 bool(true)
 ===DONE===
