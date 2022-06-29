@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ClientEncryption::createDataKey() with invalid keyAltNames
+MongoDB\Driver\ClientEncryption::createDataKey() with invalid keyAltNames option
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>

@@ -383,6 +383,17 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 		}
 	}
 
+	if (php_array_existsc(options, "keyMaterial")) {
+		zval* keyMaterial = php_array_fetchc(options, "keyMaterial");
+
+		if (Z_TYPE_P(keyMaterial) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(keyMaterial), php_phongo_binary_ce)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyMaterial\" option to be %s, %s given", ZSTR_VAL(php_phongo_binary_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(keyMaterial));
+			return false;
+		}
+
+		mongoc_client_encryption_datakey_opts_set_keymaterial(opts, (uint8_t*) Z_BINARY_OBJ_P(keyMaterial)->data, Z_BINARY_OBJ_P(keyMaterial)->data_len);
+	}
+
 	if (php_array_existsc(options, "masterKey")) {
 		bson_t masterkey = BSON_INITIALIZER;
 
