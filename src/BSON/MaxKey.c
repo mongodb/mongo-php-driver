@@ -21,12 +21,13 @@
 
 #include "php_phongo.h"
 #include "phongo_error.h"
+#include "MaxKey_arginfo.h"
 
 zend_class_entry* php_phongo_maxkey_ce;
 
 /* {{{ proto MongoDB\BSON\MaxKey MongoDB\BSON\MaxKey::__set_state(array $properties)
 */
-static PHP_METHOD(MaxKey, __set_state)
+PHP_METHOD(MongoDB_BSON_MaxKey, __set_state)
 {
 	zval* array;
 
@@ -39,7 +40,7 @@ static PHP_METHOD(MaxKey, __set_state)
 
 /* {{{ proto array MongoDB\BSON\MaxKey::jsonSerialize()
 */
-static PHP_METHOD(MaxKey, jsonSerialize)
+PHP_METHOD(MongoDB_BSON_MaxKey, jsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -49,7 +50,7 @@ static PHP_METHOD(MaxKey, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\MaxKey::serialize()
 */
-static PHP_METHOD(MaxKey, serialize)
+PHP_METHOD(MongoDB_BSON_MaxKey, serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -58,7 +59,7 @@ static PHP_METHOD(MaxKey, serialize)
 
 /* {{{ proto void MongoDB\BSON\MaxKey::unserialize(string $serialized)
 */
-static PHP_METHOD(MaxKey, unserialize)
+PHP_METHOD(MongoDB_BSON_MaxKey, unserialize)
 {
 	char*  serialized;
 	size_t serialized_len;
@@ -70,7 +71,7 @@ static PHP_METHOD(MaxKey, unserialize)
 
 /* {{{ proto array MongoDB\Driver\MaxKey::__serialize()
 */
-static PHP_METHOD(MaxKey, __serialize)
+PHP_METHOD(MongoDB_BSON_MaxKey, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -79,7 +80,7 @@ static PHP_METHOD(MaxKey, __serialize)
 
 /* {{{ proto void MongoDB\Driver\MaxKey::__unserialize(array $data)
 */
-static PHP_METHOD(MaxKey, __unserialize)
+PHP_METHOD(MongoDB_BSON_MaxKey, __unserialize)
 {
 	zval* data;
 
@@ -87,38 +88,6 @@ static PHP_METHOD(MaxKey, __unserialize)
 	Z_PARAM_ARRAY(data)
 	PHONGO_PARSE_PARAMETERS_END();
 } /* }}} */
-
-/* {{{ MongoDB\BSON\MaxKey function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey___set_state, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_MaxKey_jsonSerialize, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_MaxKey_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_maxkey_me[] = {
-	PHP_ME(MaxKey, __serialize, ai_MaxKey_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(MaxKey, __set_state, ai_MaxKey___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(MaxKey, __unserialize, ai_MaxKey___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(MaxKey, jsonSerialize, ai_MaxKey_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(MaxKey, serialize, ai_MaxKey_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(MaxKey, unserialize, ai_MaxKey_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
 
 /* {{{ MongoDB\BSON\MaxKey object handlers */
 static zend_object_handlers php_phongo_handler_maxkey;
@@ -147,7 +116,7 @@ void php_phongo_maxkey_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MaxKey", php_phongo_maxkey_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MaxKey", class_MongoDB_BSON_MaxKey_methods);
 	php_phongo_maxkey_ce                = zend_register_internal_class(&ce);
 	php_phongo_maxkey_ce->create_object = php_phongo_maxkey_create_object;
 	PHONGO_CE_FINAL(php_phongo_maxkey_ce);

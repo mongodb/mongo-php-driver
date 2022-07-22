@@ -24,6 +24,7 @@
 #include "php_phongo.h"
 #include "phongo_bson_encode.h"
 #include "phongo_error.h"
+#include "Javascript_arginfo.h"
 
 zend_class_entry* php_phongo_javascript_ce;
 
@@ -118,7 +119,7 @@ failure:
    Construct a new BSON Javascript type. The scope is a document mapping
    identifiers and values, representing the scope in which the code string will
    be evaluated. Note that this type cannot be represented as Extended JSON. */
-static PHP_METHOD(Javascript, __construct)
+PHP_METHOD(MongoDB_BSON_Javascript, __construct)
 {
 	php_phongo_javascript_t* intern;
 	char*                    code;
@@ -138,7 +139,7 @@ static PHP_METHOD(Javascript, __construct)
 
 /* {{{ proto MongoDB\BSON\Javascript MongoDB\BSON\Javascript::__set_state(array $properties)
 */
-static PHP_METHOD(Javascript, __set_state)
+PHP_METHOD(MongoDB_BSON_Javascript, __set_state)
 {
 	php_phongo_javascript_t* intern;
 	HashTable*               props;
@@ -158,7 +159,7 @@ static PHP_METHOD(Javascript, __set_state)
 
 /* {{{ proto string MongoDB\BSON\Javascript::__toString()
    Return the Javascript's code string. */
-static PHP_METHOD(Javascript, __toString)
+PHP_METHOD(MongoDB_BSON_Javascript, __toString)
 {
 	php_phongo_javascript_t* intern;
 
@@ -171,7 +172,7 @@ static PHP_METHOD(Javascript, __toString)
 
 /* {{{ proto string MongoDB\BSON\Javascript::getCode()
 */
-static PHP_METHOD(Javascript, getCode)
+PHP_METHOD(MongoDB_BSON_Javascript, getCode)
 {
 	php_phongo_javascript_t* intern;
 
@@ -184,7 +185,7 @@ static PHP_METHOD(Javascript, getCode)
 
 /* {{{ proto object|null MongoDB\BSON\Javascript::getScope()
 */
-static PHP_METHOD(Javascript, getScope)
+PHP_METHOD(MongoDB_BSON_Javascript, getScope)
 {
 	php_phongo_javascript_t* intern;
 
@@ -214,7 +215,7 @@ static PHP_METHOD(Javascript, getScope)
 
 /* {{{ proto array MongoDB\BSON\Javascript::jsonSerialize()
 */
-static PHP_METHOD(Javascript, jsonSerialize)
+PHP_METHOD(MongoDB_BSON_Javascript, jsonSerialize)
 {
 	php_phongo_javascript_t* intern;
 
@@ -240,7 +241,7 @@ static PHP_METHOD(Javascript, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\Javascript::serialize()
 */
-static PHP_METHOD(Javascript, serialize)
+PHP_METHOD(MongoDB_BSON_Javascript, serialize)
 {
 	php_phongo_javascript_t* intern;
 	zval                     retval;
@@ -280,7 +281,7 @@ static PHP_METHOD(Javascript, serialize)
 
 /* {{{ proto void MongoDB\BSON\Javascript::unserialize(string $serialized)
 */
-static PHP_METHOD(Javascript, unserialize)
+PHP_METHOD(MongoDB_BSON_Javascript, unserialize)
 {
 	php_phongo_javascript_t* intern;
 	char*                    serialized;
@@ -310,7 +311,7 @@ static PHP_METHOD(Javascript, unserialize)
 
 /* {{{ proto array MongoDB\Driver\Javascript::__serialize()
 */
-static PHP_METHOD(Javascript, __serialize)
+PHP_METHOD(MongoDB_BSON_Javascript, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -319,7 +320,7 @@ static PHP_METHOD(Javascript, __serialize)
 
 /* {{{ proto void MongoDB\Driver\Javascript::__unserialize(array $data)
 */
-static PHP_METHOD(Javascript, __unserialize)
+PHP_METHOD(MongoDB_BSON_Javascript, __unserialize)
 {
 	zval* data;
 
@@ -329,50 +330,6 @@ static PHP_METHOD(Javascript, __unserialize)
 
 	php_phongo_javascript_init_from_hash(Z_JAVASCRIPT_OBJ_P(getThis()), Z_ARRVAL_P(data));
 } /* }}} */
-
-/* {{{ MongoDB\BSON\Javascript function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_INFO_EX(ai_Javascript___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, javascript)
-	ZEND_ARG_INFO(0, scope)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Javascript___set_state, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_Javascript___toString, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Javascript___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Javascript_jsonSerialize, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Javascript_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Javascript_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_javascript_me[] = {
-	PHP_ME(Javascript, __construct, ai_Javascript___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Javascript, __serialize, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Javascript, __set_state, ai_Javascript___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(Javascript, __toString, ai_Javascript___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Javascript, __unserialize, ai_Javascript___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Javascript, jsonSerialize, ai_Javascript_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Javascript, serialize, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Javascript, unserialize, ai_Javascript_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Javascript, getCode, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Javascript, getScope, ai_Javascript_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
 
 /* {{{ MongoDB\BSON\Javascript object handlers */
 static zend_object_handlers php_phongo_handler_javascript;
@@ -456,7 +413,7 @@ void php_phongo_javascript_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Javascript", php_phongo_javascript_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Javascript", class_MongoDB_BSON_Javascript_methods);
 	php_phongo_javascript_ce                = zend_register_internal_class(&ce);
 	php_phongo_javascript_ce->create_object = php_phongo_javascript_create_object;
 	PHONGO_CE_FINAL(php_phongo_javascript_ce);

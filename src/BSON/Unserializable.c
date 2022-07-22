@@ -17,26 +17,14 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "Unserializable_arginfo.h"
 
 zend_class_entry* php_phongo_unserializable_ce;
-
-/* {{{ MongoDB\BSON\Unserializable function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_Unserializable_bsonUnserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_unserializable_me[] = {
-	/* clang-format off */
-	ZEND_ABSTRACT_ME(Unserializable, bsonUnserialize, ai_Unserializable_bsonUnserialize)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
 
 void php_phongo_unserializable_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Unserializable", php_phongo_unserializable_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Unserializable", class_MongoDB_BSON_Unserializable_methods);
 	php_phongo_unserializable_ce = zend_register_internal_interface(&ce);
 } /* }}} */

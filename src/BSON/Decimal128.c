@@ -23,6 +23,7 @@
 
 #include "php_phongo.h"
 #include "phongo_error.h"
+#include "Decimal128_arginfo.h"
 
 zend_class_entry* php_phongo_decimal128_ce;
 
@@ -82,7 +83,7 @@ static HashTable* php_phongo_decimal128_get_properties_hash(phongo_compat_object
 
 /* {{{ proto void MongoDB\BSON\Decimal128::__construct(string $value)
    Construct a new BSON Decimal128 type */
-static PHP_METHOD(Decimal128, __construct)
+PHP_METHOD(MongoDB_BSON_Decimal128, __construct)
 {
 	php_phongo_decimal128_t* intern;
 	char*                    value;
@@ -99,7 +100,7 @@ static PHP_METHOD(Decimal128, __construct)
 
 /* {{{ proto MongoDB\BSON\Decimal128 MongoDB\BSON\Decimal128::__set_state(array $properties)
 */
-static PHP_METHOD(Decimal128, __set_state)
+PHP_METHOD(MongoDB_BSON_Decimal128, __set_state)
 {
 	php_phongo_decimal128_t* intern;
 	HashTable*               props;
@@ -119,7 +120,7 @@ static PHP_METHOD(Decimal128, __set_state)
 
 /* {{{ proto string MongoDB\BSON\Decimal128::__toString()
 */
-static PHP_METHOD(Decimal128, __toString)
+PHP_METHOD(MongoDB_BSON_Decimal128, __toString)
 {
 	php_phongo_decimal128_t* intern;
 	char                     outbuf[BSON_DECIMAL128_STRING];
@@ -135,7 +136,7 @@ static PHP_METHOD(Decimal128, __toString)
 
 /* {{{ proto array MongoDB\BSON\Decimal128::jsonSerialize()
 */
-static PHP_METHOD(Decimal128, jsonSerialize)
+PHP_METHOD(MongoDB_BSON_Decimal128, jsonSerialize)
 {
 	php_phongo_decimal128_t* intern;
 	char                     outbuf[BSON_DECIMAL128_STRING] = "";
@@ -151,7 +152,7 @@ static PHP_METHOD(Decimal128, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\Decimal128::serialize()
 */
-static PHP_METHOD(Decimal128, serialize)
+PHP_METHOD(MongoDB_BSON_Decimal128, serialize)
 {
 	php_phongo_decimal128_t* intern;
 	zval                     retval;
@@ -180,7 +181,7 @@ static PHP_METHOD(Decimal128, serialize)
 
 /* {{{ proto void MongoDB\BSON\Decimal128::unserialize(string $serialized)
 */
-static PHP_METHOD(Decimal128, unserialize)
+PHP_METHOD(MongoDB_BSON_Decimal128, unserialize)
 {
 	php_phongo_decimal128_t* intern;
 	char*                    serialized;
@@ -210,7 +211,7 @@ static PHP_METHOD(Decimal128, unserialize)
 
 /* {{{ proto array MongoDB\Driver\Decimal128::__serialize()
 */
-static PHP_METHOD(Decimal128, __serialize)
+PHP_METHOD(MongoDB_BSON_Decimal128, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -219,7 +220,7 @@ static PHP_METHOD(Decimal128, __serialize)
 
 /* {{{ proto void MongoDB\Driver\Decimal128::__unserialize(array $data)
 */
-static PHP_METHOD(Decimal128, __unserialize)
+PHP_METHOD(MongoDB_BSON_Decimal128, __unserialize)
 {
 	zval* data;
 
@@ -229,47 +230,6 @@ static PHP_METHOD(Decimal128, __unserialize)
 
 	php_phongo_decimal128_init_from_hash(Z_DECIMAL128_OBJ_P(getThis()), Z_ARRVAL_P(data));
 } /* }}} */
-
-/* {{{ MongoDB\BSON\Decimal128 function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, value)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___set_state, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_Decimal128___toString, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Decimal128_jsonSerialize, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Decimal128_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_decimal128_me[] = {
-	PHP_ME(Decimal128, __construct, ai_Decimal128___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Decimal128, __serialize, ai_Decimal128_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Decimal128, __set_state, ai_Decimal128___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(Decimal128, __toString, ai_Decimal128___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Decimal128, __unserialize, ai_Decimal128___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Decimal128, jsonSerialize, ai_Decimal128_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Decimal128, serialize, ai_Decimal128_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Decimal128, unserialize, ai_Decimal128_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
 
 /* {{{ MongoDB\BSON\Decimal128 object handlers */
 static zend_object_handlers php_phongo_handler_decimal128;
@@ -333,7 +293,7 @@ void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Decimal128", php_phongo_decimal128_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Decimal128", class_MongoDB_BSON_Decimal128_methods);
 	php_phongo_decimal128_ce                = zend_register_internal_class(&ce);
 	php_phongo_decimal128_ce->create_object = php_phongo_decimal128_create_object;
 	PHONGO_CE_FINAL(php_phongo_decimal128_ce);

@@ -1,0 +1,19 @@
+/* This is a generated file, edit the .stub.php file instead.
+ * Stub hash: 94e9712be580cfdfb00e3dc1495a02f21c0776f2 */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_BinaryInterface_getData, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_MongoDB_BSON_BinaryInterface_getType arginfo_class_MongoDB_BSON_BinaryInterface_getData
+
+#define arginfo_class_MongoDB_BSON_BinaryInterface___toString arginfo_class_MongoDB_BSON_BinaryInterface_getData
+
+
+
+
+static const zend_function_entry class_MongoDB_BSON_BinaryInterface_methods[] = {
+	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_BSON_BinaryInterface, getData, arginfo_class_MongoDB_BSON_BinaryInterface_getData, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_BSON_BinaryInterface, getType, arginfo_class_MongoDB_BSON_BinaryInterface_getType, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_BSON_BinaryInterface, __toString, arginfo_class_MongoDB_BSON_BinaryInterface___toString, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+	ZEND_FE_END
+};

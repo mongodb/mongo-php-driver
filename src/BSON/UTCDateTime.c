@@ -25,6 +25,7 @@
 #include "php_phongo.h"
 #include "phongo_error.h"
 #include "phongo_util.h"
+#include "UTCDateTime_arginfo.h"
 
 zend_class_entry* php_phongo_utcdatetime_ce;
 
@@ -129,7 +130,7 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(phongo_compat_objec
    Construct a new BSON UTCDateTime type from either the current time,
    milliseconds since the epoch, or a DateTimeInterface object. Defaults to the
    current time. */
-static PHP_METHOD(UTCDateTime, __construct)
+PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 {
 	php_phongo_utcdatetime_t* intern;
 	zval*                     milliseconds = NULL;
@@ -182,7 +183,7 @@ static PHP_METHOD(UTCDateTime, __construct)
 
 /* {{{ proto MongoDB\BSON\UTCDateTime MongoDB\BSON\UTCDateTime::__set_state(array $properties)
 */
-static PHP_METHOD(UTCDateTime, __set_state)
+PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
 {
 	php_phongo_utcdatetime_t* intern;
 	HashTable*                props;
@@ -202,7 +203,7 @@ static PHP_METHOD(UTCDateTime, __set_state)
 
 /* {{{ proto string MongoDB\BSON\UTCDateTime::__toString()
    Returns the UTCDateTime's milliseconds as a string */
-static PHP_METHOD(UTCDateTime, __toString)
+PHP_METHOD(MongoDB_BSON_UTCDateTime, __toString)
 {
 	php_phongo_utcdatetime_t* intern;
 
@@ -215,7 +216,7 @@ static PHP_METHOD(UTCDateTime, __toString)
 
 /* {{{ proto DateTime MongoDB\BSON\UTCDateTime::toDateTime()
    Returns a DateTime object representing this UTCDateTime */
-static PHP_METHOD(UTCDateTime, toDateTime)
+PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTime)
 {
 	php_phongo_utcdatetime_t* intern;
 	php_date_obj*             datetime_obj;
@@ -239,7 +240,7 @@ static PHP_METHOD(UTCDateTime, toDateTime)
 
 /* {{{ proto array MongoDB\BSON\UTCDateTime::jsonSerialize()
 */
-static PHP_METHOD(UTCDateTime, jsonSerialize)
+PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
 {
 	php_phongo_utcdatetime_t* intern;
 
@@ -260,7 +261,7 @@ static PHP_METHOD(UTCDateTime, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\UTCDateTime::serialize()
 */
-static PHP_METHOD(UTCDateTime, serialize)
+PHP_METHOD(MongoDB_BSON_UTCDateTime, serialize)
 {
 	php_phongo_utcdatetime_t* intern;
 	zval                      retval;
@@ -287,7 +288,7 @@ static PHP_METHOD(UTCDateTime, serialize)
 
 /* {{{ proto void MongoDB\BSON\UTCDateTime::unserialize(string $serialized)
 */
-static PHP_METHOD(UTCDateTime, unserialize)
+PHP_METHOD(MongoDB_BSON_UTCDateTime, unserialize)
 {
 	php_phongo_utcdatetime_t* intern;
 	char*                     serialized;
@@ -317,7 +318,7 @@ static PHP_METHOD(UTCDateTime, unserialize)
 
 /* {{{ proto array MongoDB\Driver\UTCDateTime::__serialize()
 */
-static PHP_METHOD(UTCDateTime, __serialize)
+PHP_METHOD(MongoDB_BSON_UTCDateTime, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -326,7 +327,7 @@ static PHP_METHOD(UTCDateTime, __serialize)
 
 /* {{{ proto void MongoDB\Driver\UTCDateTime::__unserialize(array $data)
 */
-static PHP_METHOD(UTCDateTime, __unserialize)
+PHP_METHOD(MongoDB_BSON_UTCDateTime, __unserialize)
 {
 	zval* data;
 
@@ -336,48 +337,6 @@ static PHP_METHOD(UTCDateTime, __unserialize)
 
 	php_phongo_utcdatetime_init_from_hash(Z_UTCDATETIME_OBJ_P(getThis()), Z_ARRVAL_P(data));
 } /* }}} */
-
-/* {{{ MongoDB\BSON\UTCDateTime function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime___construct, 0, 0, 0)
-	ZEND_ARG_INFO(0, milliseconds)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime___set_state, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_UTCDateTime___toString, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_UTCDateTime_jsonSerialize, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTime_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_utcdatetime_me[] = {
-	PHP_ME(UTCDateTime, __construct, ai_UTCDateTime___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, __serialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, __set_state, ai_UTCDateTime___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(UTCDateTime, __toString, ai_UTCDateTime___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, __unserialize, ai_UTCDateTime___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, jsonSerialize, ai_UTCDateTime_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, serialize, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, unserialize, ai_UTCDateTime_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(UTCDateTime, toDateTime, ai_UTCDateTime_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
 
 /* {{{ MongoDB\BSON\UTCDateTime object handlers */
 static zend_object_handlers php_phongo_handler_utcdatetime;
@@ -455,7 +414,7 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "UTCDateTime", php_phongo_utcdatetime_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "UTCDateTime", class_MongoDB_BSON_UTCDateTime_methods);
 	php_phongo_utcdatetime_ce                = zend_register_internal_class(&ce);
 	php_phongo_utcdatetime_ce->create_object = php_phongo_utcdatetime_create_object;
 	PHONGO_CE_FINAL(php_phongo_utcdatetime_ce);

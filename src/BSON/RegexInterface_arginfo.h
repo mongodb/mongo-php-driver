@@ -1,0 +1,19 @@
+/* This is a generated file, edit the .stub.php file instead.
+ * Stub hash: 721f3456663248c393ef810ca6ef8f78fb6237c1 */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_RegexInterface_getPattern, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_MongoDB_BSON_RegexInterface_getFlags arginfo_class_MongoDB_BSON_RegexInterface_getPattern
+
+#define arginfo_class_MongoDB_BSON_RegexInterface___toString arginfo_class_MongoDB_BSON_RegexInterface_getPattern
+
+
+
+
+static const zend_function_entry class_MongoDB_BSON_RegexInterface_methods[] = {
+	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_BSON_RegexInterface, getPattern, arginfo_class_MongoDB_BSON_RegexInterface_getPattern, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_BSON_RegexInterface, getFlags, arginfo_class_MongoDB_BSON_RegexInterface_getFlags, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_BSON_RegexInterface, __toString, arginfo_class_MongoDB_BSON_RegexInterface___toString, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
+	ZEND_FE_END
+};

@@ -3,12 +3,12 @@
 CLANG_ARGS="-Werror"
 
 if test x"$1" = xchanged; then
-  FILES1=`git ls-files | grep -v "src/contrib" | grep '\.[ch]$'`
-  FILES2=`git ls-files --others --exclude-standard | grep -v "src/contrib" | grep '\.[ch]$'`
+  FILES1=`git ls-files | grep -v "src/contrib" | grep -v "_arginfo.h" | grep '\.[ch]$'`
+  FILES2=`git ls-files --others --exclude-standard | grep -v "src/contrib" | grep -v "_arginfo.h" | grep '\.[ch]$'`
   FILES="$FILES1 $FILES2"
 else
-	FILES1=`git ls-files | grep -v "src/contrib" | grep '\.[ch]$'`
-	FILES2=`git ls-files --others --exclude-standard | grep -v "src/contrib" | grep '\.[ch]$'`
+	FILES1=`git ls-files | grep -v "src/contrib" | grep -v "_arginfo.h" | grep '\.[ch]$'`
+	FILES2=`git ls-files --others --exclude-standard | grep -v "src/contrib" | grep -v "_arginfo.h" | grep '\.[ch]$'`
 	FILES="$FILES1 $FILES2"
 fi
 

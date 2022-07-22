@@ -22,6 +22,7 @@
 
 #include "php_phongo.h"
 #include "phongo_error.h"
+#include "Binary_arginfo.h"
 
 #define PHONGO_BINARY_UUID_SIZE 16
 
@@ -92,7 +93,7 @@ static HashTable* php_phongo_binary_get_properties_hash(phongo_compat_object_han
 
 /* {{{ proto void MongoDB\BSON\Binary::__construct(string $data, int $type)
    Construct a new BSON binary type */
-static PHP_METHOD(Binary, __construct)
+PHP_METHOD(MongoDB_BSON_Binary, __construct)
 {
 	php_phongo_binary_t* intern;
 	char*                data;
@@ -111,7 +112,7 @@ static PHP_METHOD(Binary, __construct)
 
 /* {{{ proto MongoDB\BSON\Binary MongoDB\BSON\Binary::__set_state(array $properties)
 */
-static PHP_METHOD(Binary, __set_state)
+PHP_METHOD(MongoDB_BSON_Binary, __set_state)
 {
 	php_phongo_binary_t* intern;
 	HashTable*           props;
@@ -131,7 +132,7 @@ static PHP_METHOD(Binary, __set_state)
 
 /* {{{ proto string MongoDB\BSON\Binary::__toString()
    Return the Binary's data string. */
-static PHP_METHOD(Binary, __toString)
+PHP_METHOD(MongoDB_BSON_Binary, __toString)
 {
 	php_phongo_binary_t* intern;
 
@@ -144,7 +145,7 @@ static PHP_METHOD(Binary, __toString)
 
 /* {{{ proto string MongoDB\BSON\Binary::getData()
 */
-static PHP_METHOD(Binary, getData)
+PHP_METHOD(MongoDB_BSON_Binary, getData)
 {
 	php_phongo_binary_t* intern;
 
@@ -157,7 +158,7 @@ static PHP_METHOD(Binary, getData)
 
 /* {{{ proto integer MongoDB\BSON\Binary::getType()
 */
-static PHP_METHOD(Binary, getType)
+PHP_METHOD(MongoDB_BSON_Binary, getType)
 {
 	php_phongo_binary_t* intern;
 
@@ -170,7 +171,7 @@ static PHP_METHOD(Binary, getType)
 
 /* {{{ proto array MongoDB\BSON\Binary::jsonSerialize()
 */
-static PHP_METHOD(Binary, jsonSerialize)
+PHP_METHOD(MongoDB_BSON_Binary, jsonSerialize)
 {
 	php_phongo_binary_t* intern;
 	char                 type[3];
@@ -194,7 +195,7 @@ static PHP_METHOD(Binary, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\Binary::serialize()
 */
-static PHP_METHOD(Binary, serialize)
+PHP_METHOD(MongoDB_BSON_Binary, serialize)
 {
 	php_phongo_binary_t* intern;
 	zval                 retval;
@@ -222,7 +223,7 @@ static PHP_METHOD(Binary, serialize)
 
 /* {{{ proto void MongoDB\BSON\Binary::unserialize(string $serialized)
 */
-static PHP_METHOD(Binary, unserialize)
+PHP_METHOD(MongoDB_BSON_Binary, unserialize)
 {
 	php_phongo_binary_t*   intern;
 	char*                  serialized;
@@ -252,7 +253,7 @@ static PHP_METHOD(Binary, unserialize)
 
 /* {{{ proto array MongoDB\Driver\Binary::__serialize()
 */
-static PHP_METHOD(Binary, __serialize)
+PHP_METHOD(MongoDB_BSON_Binary, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -261,7 +262,7 @@ static PHP_METHOD(Binary, __serialize)
 
 /* {{{ proto void MongoDB\Driver\Binary::__unserialize(array $data)
 */
-static PHP_METHOD(Binary, __unserialize)
+PHP_METHOD(MongoDB_BSON_Binary, __unserialize)
 {
 	zval* data;
 
@@ -271,50 +272,6 @@ static PHP_METHOD(Binary, __unserialize)
 
 	php_phongo_binary_init_from_hash(Z_BINARY_OBJ_P(getThis()), Z_ARRVAL_P(data));
 } /* }}} */
-
-/* {{{ MongoDB\BSON\Binary function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_INFO_EX(ai_Binary___construct, 0, 0, 2)
-	ZEND_ARG_INFO(0, data)
-	ZEND_ARG_INFO(0, type)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Binary___set_state, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_Binary___toString, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Binary___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Binary_jsonSerialize, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Binary_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Binary_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_binary_me[] = {
-	PHP_ME(Binary, __construct, ai_Binary___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Binary, __serialize, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Binary, __set_state, ai_Binary___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(Binary, __toString, ai_Binary___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Binary, __unserialize, ai_Binary___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Binary, jsonSerialize, ai_Binary_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Binary, serialize, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Binary, unserialize, ai_Binary_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Binary, getData, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Binary, getType, ai_Binary_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
 
 /* {{{ MongoDB\BSON\Binary object handlers */
 static zend_object_handlers php_phongo_handler_binary;
@@ -402,7 +359,7 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Binary", php_phongo_binary_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Binary", class_MongoDB_BSON_Binary_methods);
 	php_phongo_binary_ce                = zend_register_internal_class(&ce);
 	php_phongo_binary_ce->create_object = php_phongo_binary_create_object;
 	PHONGO_CE_FINAL(php_phongo_binary_ce);

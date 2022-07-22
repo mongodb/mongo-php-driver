@@ -17,29 +17,14 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "UTCDateTimeInterface_arginfo.h"
 
 zend_class_entry* php_phongo_utcdatetime_interface_ce;
-
-/* {{{ MongoDB\BSON\UTCDateTimeInterface function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_UTCDateTimeInterface___toString, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_UTCDateTimeInterface_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_utcdatetime_interface_me[] = {
-	ZEND_ABSTRACT_ME(UTCDateTimeInterface, toDateTime, ai_UTCDateTimeInterface_void)
-	ZEND_ABSTRACT_ME(UTCDateTimeInterface, __toString, ai_UTCDateTimeInterface___toString)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
 
 void php_phongo_utcdatetime_interface_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "UTCDateTimeInterface", php_phongo_utcdatetime_interface_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "UTCDateTimeInterface", class_MongoDB_BSON_UTCDateTimeInterface_methods);
 	php_phongo_utcdatetime_interface_ce = zend_register_internal_interface(&ce);
 } /* }}} */

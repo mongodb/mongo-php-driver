@@ -21,12 +21,15 @@
 
 #include "php_phongo.h"
 #include "phongo_error.h"
+#include "Undefined_arginfo.h"
 
 zend_class_entry* php_phongo_undefined_ce;
 
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Undefined)
+
 /* {{{ proto string MongoDB\BSON\Undefined::__toString()
    Return the empty string. */
-static PHP_METHOD(Undefined, __toString)
+PHP_METHOD(MongoDB_BSON_Undefined, __toString)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -35,7 +38,7 @@ static PHP_METHOD(Undefined, __toString)
 
 /* {{{ proto array MongoDB\BSON\Undefined::jsonSerialize()
 */
-static PHP_METHOD(Undefined, jsonSerialize)
+PHP_METHOD(MongoDB_BSON_Undefined, jsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -45,7 +48,7 @@ static PHP_METHOD(Undefined, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\Undefined::serialize()
 */
-static PHP_METHOD(Undefined, serialize)
+PHP_METHOD(MongoDB_BSON_Undefined, serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -54,7 +57,7 @@ static PHP_METHOD(Undefined, serialize)
 
 /* {{{ proto void MongoDB\BSON\Undefined::unserialize(string $serialized)
 */
-static PHP_METHOD(Undefined, unserialize)
+PHP_METHOD(MongoDB_BSON_Undefined, unserialize)
 {
 	char*  serialized;
 	size_t serialized_len;
@@ -66,7 +69,7 @@ static PHP_METHOD(Undefined, unserialize)
 
 /* {{{ proto array MongoDB\Driver\Undefined::__serialize()
 */
-static PHP_METHOD(Undefined, __serialize)
+PHP_METHOD(MongoDB_BSON_Undefined, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -75,7 +78,7 @@ static PHP_METHOD(Undefined, __serialize)
 
 /* {{{ proto void MongoDB\Driver\Undefined::__unserialize(array $data)
 */
-static PHP_METHOD(Undefined, __unserialize)
+PHP_METHOD(MongoDB_BSON_Undefined, __unserialize)
 {
 	zval* data;
 
@@ -83,39 +86,6 @@ static PHP_METHOD(Undefined, __unserialize)
 	Z_PARAM_ARRAY(data)
 	PHONGO_PARSE_PARAMETERS_END();
 } /* }}} */
-
-/* {{{ MongoDB\BSON\Undefined function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_Undefined___toString, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Undefined___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Undefined_jsonSerialize, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Undefined_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Undefined_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_undefined_me[] = {
-	/* __set_state intentionally missing */
-	PHP_ME(Undefined, __serialize, ai_Undefined_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Undefined, __toString, ai_Undefined___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Undefined, __unserialize, ai_Undefined___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Undefined, jsonSerialize, ai_Undefined_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Undefined, serialize, ai_Undefined_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Undefined, unserialize, ai_Undefined_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Undefined_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
 
 /* {{{ MongoDB\BSON\Undefined object handlers */
 static zend_object_handlers php_phongo_handler_undefined;
@@ -144,7 +114,7 @@ void php_phongo_undefined_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Undefined", php_phongo_undefined_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Undefined", class_MongoDB_BSON_Undefined_methods);
 	php_phongo_undefined_ce                = zend_register_internal_class(&ce);
 	php_phongo_undefined_ce->create_object = php_phongo_undefined_create_object;
 	PHONGO_CE_FINAL(php_phongo_undefined_ce);

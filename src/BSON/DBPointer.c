@@ -23,6 +23,7 @@
 
 #include "php_phongo.h"
 #include "phongo_error.h"
+#include "DBPointer_arginfo.h"
 
 zend_class_entry* php_phongo_dbpointer_ce;
 
@@ -90,9 +91,11 @@ HashTable* php_phongo_dbpointer_get_properties_hash(phongo_compat_object_handler
 	return props;
 } /* }}} */
 
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_DBPointer)
+
 /* {{{ proto string MongoDB\BSON\DBPointer::__toString()
    Return the DBPointer's namespace string and ObjectId. */
-static PHP_METHOD(DBPointer, __toString)
+PHP_METHOD(MongoDB_BSON_DBPointer, __toString)
 {
 	php_phongo_dbpointer_t* intern;
 	char*                   retval;
@@ -109,7 +112,7 @@ static PHP_METHOD(DBPointer, __toString)
 
 /* {{{ proto array MongoDB\BSON\Symbol::jsonSerialize()
 */
-static PHP_METHOD(DBPointer, jsonSerialize)
+PHP_METHOD(MongoDB_BSON_DBPointer, jsonSerialize)
 {
 	php_phongo_dbpointer_t* intern;
 	zval                    zdb_pointer;
@@ -131,7 +134,7 @@ static PHP_METHOD(DBPointer, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\DBPointer::serialize()
 */
-static PHP_METHOD(DBPointer, serialize)
+PHP_METHOD(MongoDB_BSON_DBPointer, serialize)
 {
 	php_phongo_dbpointer_t* intern;
 	zval                    retval;
@@ -159,7 +162,7 @@ static PHP_METHOD(DBPointer, serialize)
 
 /* {{{ proto void MongoDB\BSON\DBPointer::unserialize(string $serialized)
 */
-static PHP_METHOD(DBPointer, unserialize)
+PHP_METHOD(MongoDB_BSON_DBPointer, unserialize)
 {
 	php_phongo_dbpointer_t* intern;
 	char*                   serialized;
@@ -189,7 +192,7 @@ static PHP_METHOD(DBPointer, unserialize)
 
 /* {{{ proto array MongoDB\Driver\DBPointer::__serialize()
 */
-static PHP_METHOD(DBPointer, __serialize)
+PHP_METHOD(MongoDB_BSON_DBPointer, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -198,7 +201,7 @@ static PHP_METHOD(DBPointer, __serialize)
 
 /* {{{ proto void MongoDB\Driver\DBPointer::__unserialize(array $data)
 */
-static PHP_METHOD(DBPointer, __unserialize)
+PHP_METHOD(MongoDB_BSON_DBPointer, __unserialize)
 {
 	zval* data;
 
@@ -208,39 +211,6 @@ static PHP_METHOD(DBPointer, __unserialize)
 
 	php_phongo_dbpointer_init_from_hash(Z_DBPOINTER_OBJ_P(getThis()), Z_ARRVAL_P(data));
 } /* }}} */
-
-/* {{{ MongoDB\BSON\DBPointer function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_DBPointer___toString, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_DBPointer___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_DBPointer_jsonSerialize, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_DBPointer_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_DBPointer_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_dbpointer_me[] = {
-	/* __set_state intentionally missing */
-	PHP_ME(DBPointer, __serialize, ai_DBPointer_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(DBPointer, __toString, ai_DBPointer___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(DBPointer, __unserialize, ai_DBPointer___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(DBPointer, jsonSerialize, ai_DBPointer_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(DBPointer, serialize, ai_DBPointer_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(DBPointer, unserialize, ai_DBPointer_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_DBPointer_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
 
 /* {{{ MongoDB\BSON\DBPointer object handlers */
 static zend_object_handlers php_phongo_handler_dbpointer;
@@ -325,7 +295,7 @@ void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
 	zend_class_entry ce;
 
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "DBPointer", php_phongo_dbpointer_me);
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "DBPointer", class_MongoDB_BSON_DBPointer_methods);
 	php_phongo_dbpointer_ce                = zend_register_internal_class(&ce);
 	php_phongo_dbpointer_ce->create_object = php_phongo_dbpointer_create_object;
 	PHONGO_CE_FINAL(php_phongo_dbpointer_ce);
