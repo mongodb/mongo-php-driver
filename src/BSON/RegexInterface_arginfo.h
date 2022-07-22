@@ -1,7 +1,7 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 721f3456663248c393ef810ca6ef8f78fb6237c1 */
+ * Stub hash: d7caad936945e20c44c665682b946fe9cdc769a5 */
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_RegexInterface_getPattern, 0, 0, 0)
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_RegexInterface_getPattern, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_RegexInterface_getFlags arginfo_class_MongoDB_BSON_RegexInterface_getPattern

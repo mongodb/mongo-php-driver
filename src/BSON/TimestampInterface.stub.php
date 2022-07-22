@@ -6,13 +6,13 @@ namespace MongoDB\BSON
 {
     interface TimestampInterface
     {
-        /** @return int */
-        public function getTimestamp();
+        /** @tentative-return-type */
+        public function getTimestamp(): int;
 
-        /** @return int */
-        public function getIncrement();
+        /** @tentative-return-type */
+        public function getIncrement(): int;
 
-        /** @return string */
-        public function __toString();
+        /** @tentative-return-type */
+        public function __toString(): string;
     }
 }

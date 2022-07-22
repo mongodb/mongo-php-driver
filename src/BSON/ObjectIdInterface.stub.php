@@ -6,10 +6,10 @@ namespace MongoDB\BSON
 {
     interface ObjectIdInterface
     {
-        /** @return int */
-        public function getTimestamp();
+        /** @tentative-return-type */
+        public function getTimestamp(): int;
 
-        /** @return string */
-        public function __toString();
+        /** @tentative-return-type */
+        public function __toString(): string;
     }
 }

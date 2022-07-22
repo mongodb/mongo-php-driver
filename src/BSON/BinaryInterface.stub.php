@@ -6,13 +6,12 @@ namespace MongoDB\BSON
 {
     interface BinaryInterface
     {
-        /** @return string */
-        public function getData();
+        /** @tentative-return-type */
+        public function getData(): string;
 
-        /** @return int */
-        public function getType();
+        /** @tentative-return-type */
+        public function getType(): int;
 
-        /** @return string */
-        public function __toString();
+        public function __toString(): string;
     }
 }

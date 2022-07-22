@@ -1,10 +1,11 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: fed93e737f61211a869f684f5a47cf59b8289d38 */
+ * Stub hash: c7f05d054ca5c6cef6c1e8c7be5d25f97f88cabb */
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_JavascriptInterface_getCode, 0, 0, 0)
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_JavascriptInterface_getCode, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_JavascriptInterface_getScope arginfo_class_MongoDB_BSON_JavascriptInterface_getCode
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_JavascriptInterface_getScope, 0, 0, IS_OBJECT, 1)
+ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_JavascriptInterface___toString arginfo_class_MongoDB_BSON_JavascriptInterface_getCode
 

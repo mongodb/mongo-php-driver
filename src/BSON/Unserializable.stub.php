@@ -6,7 +6,7 @@ namespace MongoDB\BSON
 {
     interface Unserializable
     {
-        /** @return void */
-        public function bsonUnserialize(array $data);
+        /** @tentative-return-type */
+        public function bsonUnserialize(array $data): void;
     }
 }

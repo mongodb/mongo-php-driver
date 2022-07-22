@@ -6,13 +6,13 @@ namespace MongoDB\BSON
 {
     interface RegexInterface
     {
-        /** @return string */
-        public function getPattern();
+        /** @tentative-return-type */
+        public function getPattern(): string;
 
-        /** @return string */
-        public function getFlags();
+        /** @tentative-return-type */
+        public function getFlags(): string;
 
-        /** @return string */
-        public function __toString();
+        /** @tentative-return-type */
+        public function __toString(): string;
     }
 }

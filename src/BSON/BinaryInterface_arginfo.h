@@ -1,12 +1,14 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 94e9712be580cfdfb00e3dc1495a02f21c0776f2 */
+ * Stub hash: f473cfa60d45e1bc8105562cd69d5520ada009a6 */
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_BinaryInterface_getData, 0, 0, 0)
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_BinaryInterface_getData, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_BinaryInterface_getType arginfo_class_MongoDB_BSON_BinaryInterface_getData
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_BinaryInterface_getType, 0, 0, IS_LONG, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_BinaryInterface___toString arginfo_class_MongoDB_BSON_BinaryInterface_getData
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_BinaryInterface___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
 
 
 

@@ -6,10 +6,10 @@ namespace MongoDB\BSON
 {
     interface UTCDateTimeInterface
     {
-        /** @return \DateTime */
-        public function toDateTime();
+        /** @tentative-return-type */
+        public function toDateTime(): \DateTime;
 
-        /** @return string */
-        public function __toString();
+        /** @tentative-return-type */
+        public function __toString(): string;
     }
 }

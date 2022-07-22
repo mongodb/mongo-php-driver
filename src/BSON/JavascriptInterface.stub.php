@@ -6,13 +6,13 @@ namespace MongoDB\BSON
 {
     interface JavascriptInterface
     {
-        /** @return string */
-        public function getCode();
+        /** @tentative-return-type */
+        public function getCode(): string;
 
-        /** @return object|null */
-        public function getScope();
+        /** @tentative-return-type */
+        public function getScope(): ?object;
 
-        /** @return string */
-        public function __toString();
+        /** @tentative-return-type */
+        public function __toString(): string;
     }
 }

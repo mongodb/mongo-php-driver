@@ -6,7 +6,7 @@ namespace MongoDB\BSON
 {
     interface Decimal128Interface
     {
-        /** @return string **/
-        public function __toString() {}
+        /** @tentative-return-type */
+        public function __toString(): string;
     }
 }

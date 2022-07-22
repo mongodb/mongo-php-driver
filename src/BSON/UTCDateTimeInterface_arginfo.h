@@ -1,10 +1,11 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 14b398d2dda9345fe17e6c8d11e505ddc4fcba00 */
+ * Stub hash: 1e892540102b36a2493090eb2fb021345ce54f73 */
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_UTCDateTimeInterface_toDateTime, 0, 0, 0)
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_UTCDateTimeInterface_toDateTime, 0, 0, DateTime, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_UTCDateTimeInterface___toString arginfo_class_MongoDB_BSON_UTCDateTimeInterface_toDateTime
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_UTCDateTimeInterface___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
 
 
 
