@@ -273,6 +273,23 @@ static inline zend_bool zend_ini_parse_bool(zend_string* str)
 	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
 #endif
 
+/* ZEND_ABSTRACT_ME_WITH_FLAGS was introduced in PHP 8.0. */
+#ifndef ZEND_ABSTRACT_ME_WITH_FLAGS
+#define ZEND_ABSTRACT_ME_WITH_FLAGS(classname, name, arg_info, flags) ZEND_RAW_FENTRY(#name, NULL, arg_info, flags)
+#endif
+
+/* ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE was introduced in PHP 8.0. */
+#ifndef ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE
+#define ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(pass_by_ref, name, type_hint, allow_null, default_value) \
+	ZEND_ARG_TYPE_INFO(pass_by_ref, name, type_hint, allow_null)
+#endif
+
+/* ZEND_ARG_INFO_WITH_DEFAULT_VALUE was introduced in PHP 8.0. */
+#ifndef ZEND_ARG_INFO_WITH_DEFAULT_VALUE
+#define ZEND_ARG_INFO_WITH_DEFAULT_VALUE(pass_by_ref, name, default_value) \
+	ZEND_ARG_INFO(pass_by_ref, name)
+#endif
+
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
 zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht);
 
