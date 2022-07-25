@@ -235,11 +235,23 @@ static inline zend_bool zend_ini_parse_bool(zend_string* str)
 	} while (0)
 #endif
 
-/* Z_PARAM_OBJECT_OF_CLASS_OR_NULL was introduced in PHP 8.0.
+/* Z_PARAM_*_OR_NULL macros were introduced in PHP 8.0.
  * See: https://github.com/php/php-src/commit/e93d20ad7ebc1075ef1248a663935ee5ea69f1cd */
 #ifndef Z_PARAM_OBJECT_OF_CLASS_OR_NULL
 #define Z_PARAM_OBJECT_OF_CLASS_OR_NULL(dest, _ce) \
 	Z_PARAM_OBJECT_OF_CLASS_EX(dest, _ce, 1, 0)
+#endif
+#ifndef Z_PARAM_STRING_OR_NULL
+#define Z_PARAM_STRING_OR_NULL(dest, dest_len) \
+	Z_PARAM_STRING_EX(dest, dest_len, 1, 0)
+#endif
+#ifndef Z_PARAM_ARRAY_OR_NULL
+#define Z_PARAM_ARRAY_OR_NULL(dest) \
+	Z_PARAM_ARRAY_EX(dest, 1, 0)
+#endif
+#ifndef Z_PARAM_ZVAL_OR_NULL
+#define Z_PARAM_ZVAL_OR_NULL(dest) \
+	Z_PARAM_ZVAL_EX(dest, 1, 0)
 #endif
 
 /* Per https://wiki.php.net/rfc/internal_method_return_types, "Non-final

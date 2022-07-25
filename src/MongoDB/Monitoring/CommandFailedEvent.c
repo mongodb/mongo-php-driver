@@ -32,17 +32,11 @@ zend_class_entry* php_phongo_commandfailedevent_ce;
    Returns the command name for this event */
 PHP_METHOD(CommandFailedEvent, getCommandName)
 {
-	zend_error_handling              error_handling;
 	php_phongo_commandfailedevent_t* intern;
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETVAL_STRING(intern->command_name);
 } /* }}} */
@@ -51,17 +45,11 @@ PHP_METHOD(CommandFailedEvent, getCommandName)
    Returns the event's duration in microseconds */
 PHP_METHOD(CommandFailedEvent, getDurationMicros)
 {
-	zend_error_handling              error_handling;
 	php_phongo_commandfailedevent_t* intern;
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_LONG(intern->duration_micros);
 } /* }}} */
@@ -70,17 +58,11 @@ PHP_METHOD(CommandFailedEvent, getDurationMicros)
    Returns the error document associated with the event */
 PHP_METHOD(CommandFailedEvent, getError)
 {
-	zend_error_handling              error_handling;
 	php_phongo_commandfailedevent_t* intern;
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ZVAL(&intern->z_error, 1, 0);
 } /* }}} */
@@ -89,18 +71,12 @@ PHP_METHOD(CommandFailedEvent, getError)
    Returns the event's operation ID */
 PHP_METHOD(CommandFailedEvent, getOperationId)
 {
-	zend_error_handling              error_handling;
 	php_phongo_commandfailedevent_t* intern;
 	char                             int_as_string[20];
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	sprintf(int_as_string, "%" PRIu64, intern->operation_id);
 	RETVAL_STRING(int_as_string);
@@ -110,7 +86,6 @@ PHP_METHOD(CommandFailedEvent, getOperationId)
    Returns the reply document associated with the event */
 PHP_METHOD(CommandFailedEvent, getReply)
 {
-	zend_error_handling              error_handling;
 	php_phongo_commandfailedevent_t* intern;
 	php_phongo_bson_state            state;
 
@@ -118,12 +93,7 @@ PHP_METHOD(CommandFailedEvent, getReply)
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->reply), intern->reply->len, &state)) {
 		zval_ptr_dtor(&state.zchild);
@@ -137,18 +107,12 @@ PHP_METHOD(CommandFailedEvent, getReply)
    Returns the event's request ID */
 PHP_METHOD(CommandFailedEvent, getRequestId)
 {
-	zend_error_handling              error_handling;
 	php_phongo_commandfailedevent_t* intern;
 	char                             int_as_string[20];
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	sprintf(int_as_string, "%" PRIu64, intern->request_id);
 	RETVAL_STRING(int_as_string);
@@ -158,17 +122,11 @@ PHP_METHOD(CommandFailedEvent, getRequestId)
    Returns the Server from which the event originated */
 PHP_METHOD(CommandFailedEvent, getServer)
 {
-	zend_error_handling              error_handling;
 	php_phongo_commandfailedevent_t* intern;
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
 } /* }}} */

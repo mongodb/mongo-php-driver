@@ -25,16 +25,10 @@ zend_class_entry* php_phongo_writeexception_ce;
    Returns the WriteResult from the failed write operation. */
 static PHP_METHOD(WriteException, getWriteResult)
 {
-	zend_error_handling error_handling;
-	zval*               writeresult;
-	zval                rv;
+	zval* writeresult;
+	zval  rv;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	writeresult = zend_read_property(php_phongo_writeexception_ce, PHONGO_COMPAT_OBJ_P(getThis()), ZEND_STRL("writeResult"), 0, &rv);
 

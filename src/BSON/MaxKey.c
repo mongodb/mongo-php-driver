@@ -28,15 +28,11 @@ zend_class_entry* php_phongo_maxkey_ce;
 */
 static PHP_METHOD(MaxKey, __set_state)
 {
-	zend_error_handling error_handling;
-	zval*               array;
+	zval* array;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	object_init_ex(return_value, php_phongo_maxkey_ce);
 } /* }}} */
@@ -45,14 +41,7 @@ static PHP_METHOD(MaxKey, __set_state)
 */
 static PHP_METHOD(MaxKey, jsonSerialize)
 {
-	zend_error_handling error_handling;
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	array_init_size(return_value, 1);
 	ADD_ASSOC_LONG_EX(return_value, "$maxKey", 1);
@@ -62,14 +51,7 @@ static PHP_METHOD(MaxKey, jsonSerialize)
 */
 static PHP_METHOD(MaxKey, serialize)
 {
-	zend_error_handling error_handling;
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_STRING("");
 } /* }}} */
@@ -78,16 +60,12 @@ static PHP_METHOD(MaxKey, serialize)
 */
 static PHP_METHOD(MaxKey, unserialize)
 {
-	zend_error_handling error_handling;
-	char*               serialized;
-	size_t              serialized_len;
+	char*  serialized;
+	size_t serialized_len;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(serialized, serialized_len)
+	PHONGO_PARSE_PARAMETERS_END();
 } /* }}} */
 
 /* {{{ proto array MongoDB\Driver\MaxKey::__serialize()

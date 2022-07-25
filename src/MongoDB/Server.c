@@ -36,7 +36,6 @@ zend_class_entry* php_phongo_server_ce;
    Executes a Command on this Server */
 static PHP_METHOD(Server, executeCommand)
 {
-	zend_error_handling  error_handling;
 	php_phongo_server_t* intern;
 	char*                db;
 	size_t               db_len;
@@ -46,12 +45,12 @@ static PHP_METHOD(Server, executeCommand)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|z!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(2, 3)
+	Z_PARAM_STRING(db, db_len)
+	Z_PARAM_OBJECT_OF_CLASS(command, php_phongo_command_ce)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ZVAL_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options);
 
@@ -71,7 +70,6 @@ static PHP_METHOD(Server, executeCommand)
    Executes a ReadCommand on this Server */
 static PHP_METHOD(Server, executeReadCommand)
 {
-	zend_error_handling  error_handling;
 	php_phongo_server_t* intern;
 	char*                db;
 	size_t               db_len;
@@ -80,12 +78,12 @@ static PHP_METHOD(Server, executeReadCommand)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(2, 3)
+	Z_PARAM_STRING(db, db_len)
+	Z_PARAM_OBJECT_OF_CLASS(command, php_phongo_command_ce)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
@@ -99,7 +97,6 @@ static PHP_METHOD(Server, executeReadCommand)
    Executes a WriteCommand on this Server */
 static PHP_METHOD(Server, executeWriteCommand)
 {
-	zend_error_handling  error_handling;
 	php_phongo_server_t* intern;
 	char*                db;
 	size_t               db_len;
@@ -108,12 +105,12 @@ static PHP_METHOD(Server, executeWriteCommand)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(2, 3)
+	Z_PARAM_STRING(db, db_len)
+	Z_PARAM_OBJECT_OF_CLASS(command, php_phongo_command_ce)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated. and its
@@ -127,7 +124,6 @@ static PHP_METHOD(Server, executeWriteCommand)
    Executes a ReadWriteCommand on this Server */
 static PHP_METHOD(Server, executeReadWriteCommand)
 {
-	zend_error_handling  error_handling;
 	php_phongo_server_t* intern;
 	char*                db;
 	size_t               db_len;
@@ -136,12 +132,12 @@ static PHP_METHOD(Server, executeReadWriteCommand)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|a!", &db, &db_len, &command, php_phongo_command_ce, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(2, 3)
+	Z_PARAM_STRING(db, db_len)
+	Z_PARAM_OBJECT_OF_CLASS(command, php_phongo_command_ce)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	/* If the Server was created in a different process, reset the client so
 	 * that cursors created by this process can be differentiated and its
@@ -155,7 +151,6 @@ static PHP_METHOD(Server, executeReadWriteCommand)
    Executes a Query on this Server */
 static PHP_METHOD(Server, executeQuery)
 {
-	zend_error_handling  error_handling;
 	php_phongo_server_t* intern;
 	char* namespace;
 	size_t namespace_len;
@@ -165,12 +160,12 @@ static PHP_METHOD(Server, executeQuery)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|z!", &namespace, &namespace_len, &query, php_phongo_query_ce, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(2, 3)
+	Z_PARAM_STRING(namespace, namespace_len)
+	Z_PARAM_OBJECT_OF_CLASS(query, php_phongo_query_ce)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ZVAL_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options);
 
@@ -191,7 +186,6 @@ static PHP_METHOD(Server, executeQuery)
    this Server */
 static PHP_METHOD(Server, executeBulkWrite)
 {
-	zend_error_handling  error_handling;
 	php_phongo_server_t* intern;
 	char* namespace;
 	size_t                  namespace_len;
@@ -202,12 +196,12 @@ static PHP_METHOD(Server, executeBulkWrite)
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sO|z!", &namespace, &namespace_len, &zbulk, php_phongo_bulkwrite_ce, &options, php_phongo_writeconcern_ce) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(2, 3)
+	Z_PARAM_STRING(namespace, namespace_len)
+	Z_PARAM_OBJECT_OF_CLASS(zbulk, php_phongo_bulkwrite_ce)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
 
@@ -228,18 +222,12 @@ static PHP_METHOD(Server, executeBulkWrite)
    Returns the hostname for this Server */
 static PHP_METHOD(Server, getHost)
 {
-	zend_error_handling          error_handling;
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_STRING(mongoc_server_description_host(sd)->host);
@@ -254,18 +242,12 @@ static PHP_METHOD(Server, getHost)
    Returns the currently configured tags for this Server */
 static PHP_METHOD(Server, getTags)
 {
-	zend_error_handling          error_handling;
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		const bson_t* hello_response = mongoc_server_description_hello_response(sd);
@@ -386,18 +368,12 @@ static PHP_METHOD(Server, getLatency)
    Returns the port for this Server */
 static PHP_METHOD(Server, getPort)
 {
-	zend_error_handling          error_handling;
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_LONG(mongoc_server_description_host(sd)->port);
@@ -427,18 +403,12 @@ static PHP_METHOD(Server, getServerDescription)
    Returns the node type of this Server */
 static PHP_METHOD(Server, getType)
 {
-	zend_error_handling          error_handling;
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_LONG(php_phongo_server_description_type(sd));
@@ -453,18 +423,12 @@ static PHP_METHOD(Server, getType)
    Returns whether this Server is a primary member of a replica set */
 static PHP_METHOD(Server, isPrimary)
 {
-	zend_error_handling          error_handling;
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_BOOL(!strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_PRIMARY].name));
@@ -479,18 +443,12 @@ static PHP_METHOD(Server, isPrimary)
    Returns whether this Server is a secondary member of a replica set */
 static PHP_METHOD(Server, isSecondary)
 {
-	zend_error_handling          error_handling;
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_BOOL(!strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_SECONDARY].name));
@@ -505,18 +463,12 @@ static PHP_METHOD(Server, isSecondary)
    Returns whether this Server is an arbiter member of a replica set */
 static PHP_METHOD(Server, isArbiter)
 {
-	zend_error_handling          error_handling;
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		RETVAL_BOOL(!strcmp(mongoc_server_description_type(sd), php_phongo_server_description_type_map[PHONGO_SERVER_RS_ARBITER].name));
@@ -531,18 +483,12 @@ static PHP_METHOD(Server, isArbiter)
    Returns whether this Server is a hidden member of a replica set */
 static PHP_METHOD(Server, isHidden)
 {
-	zend_error_handling          error_handling;
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		bson_iter_t iter;
@@ -559,18 +505,12 @@ static PHP_METHOD(Server, isHidden)
    Returns whether this Server is a passive member of a replica set */
 static PHP_METHOD(Server, isPassive)
 {
-	zend_error_handling          error_handling;
 	php_phongo_server_t*         intern;
 	mongoc_server_description_t* sd;
 
 	intern = Z_SERVER_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if ((sd = mongoc_client_get_server_description(Z_MANAGER_OBJ_P(&intern->manager)->client, intern->server_id))) {
 		bson_iter_t iter;

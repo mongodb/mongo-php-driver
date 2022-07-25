@@ -30,17 +30,11 @@ zend_class_entry* php_phongo_writeconcernerror_ce;
    Returns the MongoDB error code */
 static PHP_METHOD(WriteConcernError, getCode)
 {
-	zend_error_handling             error_handling;
 	php_phongo_writeconcernerror_t* intern;
 
 	intern = Z_WRITECONCERNERROR_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_LONG(intern->code);
 } /* }}} */
@@ -49,17 +43,11 @@ static PHP_METHOD(WriteConcernError, getCode)
    Returns additional metadata for the error */
 static PHP_METHOD(WriteConcernError, getInfo)
 {
-	zend_error_handling             error_handling;
 	php_phongo_writeconcernerror_t* intern;
 
 	intern = Z_WRITECONCERNERROR_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if (!Z_ISUNDEF(intern->info)) {
 		RETURN_ZVAL(&intern->info, 1, 0);
@@ -70,17 +58,11 @@ static PHP_METHOD(WriteConcernError, getInfo)
    Returns the actual error message from the server */
 static PHP_METHOD(WriteConcernError, getMessage)
 {
-	zend_error_handling             error_handling;
 	php_phongo_writeconcernerror_t* intern;
 
 	intern = Z_WRITECONCERNERROR_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_STRING(intern->message);
 } /* }}} */
