@@ -200,7 +200,7 @@ static PHP_METHOD(Server, executeBulkWrite)
 	Z_PARAM_STRING(namespace, namespace_len)
 	Z_PARAM_OBJECT_OF_CLASS(zbulk, php_phongo_bulkwrite_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ZVAL_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);
