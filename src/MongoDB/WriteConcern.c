@@ -111,7 +111,7 @@ failure:
 static PHP_METHOD(WriteConcern, __construct)
 {
 	php_phongo_writeconcern_t* intern;
-	zval *                     w, *journal;
+	zval *                     w, *journal = NULL;
 	zend_long                  wtimeout = 0;
 
 	intern = Z_WRITECONCERN_OBJ_P(getThis());
@@ -144,7 +144,7 @@ static PHP_METHOD(WriteConcern, __construct)
 
 	switch (ZEND_NUM_ARGS()) {
 		case 3:
-			if (Z_TYPE_P(journal) != IS_NULL) {
+			if (journal && Z_TYPE_P(journal) != IS_NULL) {
 				if (zend_is_true(journal) && (mongoc_write_concern_get_w(intern->write_concern) == MONGOC_WRITE_CONCERN_W_UNACKNOWLEDGED || mongoc_write_concern_get_w(intern->write_concern) == MONGOC_WRITE_CONCERN_W_ERRORS_IGNORED)) {
 					phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Cannot enable journaling when using w = 0");
 					return;
