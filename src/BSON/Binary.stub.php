@@ -12,7 +12,7 @@ namespace MongoDB\BSON
 
         final public function getType(): int {}
 
-        public static function __set_state(array $properties): object {}
+        public static function __set_state(array $properties): Binary {}
 
         final public function __toString(): string {}
 

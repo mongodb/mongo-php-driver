@@ -13,7 +13,7 @@ namespace MongoDB\BSON
         final public function __construct(string $code, $scope = null) {}
 #endif
 
-        public static function __set_state(array $properties): object {}
+        public static function __set_state(array $properties): Javascript {}
 
         final public function getCode(): string {}
 

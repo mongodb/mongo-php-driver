@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3c30cc271533707c24d41525d6a2241803e819b2 */
+ * Stub hash: c8158191698e96df756d9aa5767c598e6c4258bf */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_ObjectId___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, id, IS_STRING, 1, "null")
@@ -11,7 +11,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_ObjectId___toString, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_ObjectId___set_state, 0, 1, IS_OBJECT, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_ObjectId___set_state, 0, 1, MongoDB\\BSON\\ObjectId, 0)
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 

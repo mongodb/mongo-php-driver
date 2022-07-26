@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c566aa463b811fdc8f93a620d66ee19271fc12ec */
+ * Stub hash: 8eaa3f85a84e77e54cae626f83b2f05967931afb */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Timestamp___construct, 0, 0, 2)
@@ -23,7 +23,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Timestamp___toString, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Timestamp___set_state, 0, 1, IS_OBJECT, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Timestamp___set_state, 0, 1, MongoDB\\BSON\\Timestamp, 0)
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 

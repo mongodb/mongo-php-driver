@@ -6,7 +6,7 @@ namespace MongoDB\BSON
 {
     final class MinKey
     {
-        public static function __set_state(array $properties): object {}
+        public static function __set_state(array $properties): MinKey {}
 
         final public function serialize(): string {}
 

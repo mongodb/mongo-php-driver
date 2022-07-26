@@ -6,7 +6,7 @@ namespace MongoDB\BSON
 {
     final class MaxKey
     {
-        public static function __set_state(array $properties): object {}
+        public static function __set_state(array $properties): MaxKey {}
 
         final public function serialize(): string {}
 

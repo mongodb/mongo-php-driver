@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 4112f399f1c724b346a431a7d15e29e700549317 */
+ * Stub hash: 76a05a27305d859539e9bc82818e7b37aeddeabf */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Regex___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, pattern, IS_STRING, 0)
@@ -13,7 +13,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_Regex___toString arginfo_class_MongoDB_BSON_Regex_getPattern
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Regex___set_state, 0, 1, IS_OBJECT, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Regex___set_state, 0, 1, MongoDB\\BSON\\Regex, 0)
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 

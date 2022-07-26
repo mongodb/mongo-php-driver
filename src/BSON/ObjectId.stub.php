@@ -12,7 +12,7 @@ namespace MongoDB\BSON
 
         public final function __toString(): string {}
 
-        public static function __set_state(array $properties): object {}
+        public static function __set_state(array $properties): ObjectId {}
 
         final public function serialize(): string {}
 

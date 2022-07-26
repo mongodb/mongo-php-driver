@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 230f7c3390a65253d29bf9afa7df2a909d67cdf3 */
+ * Stub hash: c291523fccb2bef4eacbcb422acc3025d6400946 */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Javascript___construct, 0, 0, 1)
@@ -15,7 +15,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Javascript___construct, 0, 0, 
 ZEND_END_ARG_INFO()
 #endif
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Javascript___set_state, 0, 1, IS_OBJECT, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Javascript___set_state, 0, 1, MongoDB\\BSON\\Javascript, 0)
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
