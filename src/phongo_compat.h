@@ -254,6 +254,16 @@ static inline zend_bool zend_ini_parse_bool(zend_string* str)
 	Z_PARAM_ZVAL_EX(dest, 1, 0)
 #endif
 
+/* Z_PARAM_ARRAY_OR_OBJECT requires 3 arguments in PHP < 7.3.
+ * See: https://github.com/php/php-src/commit/a595b0f75bf8bc0d3da8ca5cb03f8b1a694d26b2 */
+#if PHP_VERSION_ID < 70300
+#define PHONGO_PARAM_ARRAY_OR_OBJECT(dest) \
+	Z_PARAM_ARRAY_OR_OBJECT(dest, 0, 0)
+#else
+#define PHONGO_PARAM_ARRAY_OR_OBJECT(dest) \
+	Z_PARAM_ARRAY_OR_OBJECT(dest)
+#endif
+
 /* Per https://wiki.php.net/rfc/internal_method_return_types, "Non-final
  * internal method return types - when possible - are declared tentatively in
  * PHP 8.1, and they will become enforced in PHP 9.0." This can be revisited

@@ -171,7 +171,7 @@ static PHP_METHOD(Session, advanceClusterTime)
 	SESSION_CHECK_LIVELINESS(intern, "advanceClusterTime")
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_ARRAY_OR_OBJECT(zcluster_time)
+	PHONGO_PARAM_ARRAY_OR_OBJECT(zcluster_time)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_zval_to_bson(zcluster_time, PHONGO_BSON_NONE, &cluster_time, NULL);
