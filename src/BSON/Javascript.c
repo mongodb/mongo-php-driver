@@ -120,7 +120,6 @@ failure:
    be evaluated. Note that this type cannot be represented as Extended JSON. */
 static PHP_METHOD(Javascript, __construct)
 {
-	zend_error_handling      error_handling;
 	php_phongo_javascript_t* intern;
 	char*                    code;
 	size_t                   code_len;
@@ -128,12 +127,11 @@ static PHP_METHOD(Javascript, __construct)
 
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s|A!", &code, &code_len, &scope) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 2)
+	Z_PARAM_STRING(code, code_len)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_OBJECT_EX(scope, 1, 0)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_javascript_init(intern, code, code_len, scope);
 } /* }}} */
@@ -142,17 +140,13 @@ static PHP_METHOD(Javascript, __construct)
 */
 static PHP_METHOD(Javascript, __set_state)
 {
-	zend_error_handling      error_handling;
 	php_phongo_javascript_t* intern;
 	HashTable*               props;
 	zval*                    array;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	object_init_ex(return_value, php_phongo_javascript_ce);
 
@@ -166,15 +160,9 @@ static PHP_METHOD(Javascript, __set_state)
    Return the Javascript's code string. */
 static PHP_METHOD(Javascript, __toString)
 {
-	zend_error_handling      error_handling;
 	php_phongo_javascript_t* intern;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
@@ -185,15 +173,9 @@ static PHP_METHOD(Javascript, __toString)
 */
 static PHP_METHOD(Javascript, getCode)
 {
-	zend_error_handling      error_handling;
 	php_phongo_javascript_t* intern;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
@@ -204,15 +186,9 @@ static PHP_METHOD(Javascript, getCode)
 */
 static PHP_METHOD(Javascript, getScope)
 {
-	zend_error_handling      error_handling;
 	php_phongo_javascript_t* intern;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
@@ -240,15 +216,9 @@ static PHP_METHOD(Javascript, getScope)
 */
 static PHP_METHOD(Javascript, jsonSerialize)
 {
-	zend_error_handling      error_handling;
 	php_phongo_javascript_t* intern;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
@@ -272,7 +242,6 @@ static PHP_METHOD(Javascript, jsonSerialize)
 */
 static PHP_METHOD(Javascript, serialize)
 {
-	zend_error_handling      error_handling;
 	php_phongo_javascript_t* intern;
 	zval                     retval;
 	php_phongo_bson_state    state;
@@ -283,12 +252,7 @@ static PHP_METHOD(Javascript, serialize)
 
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if (intern->scope && intern->scope->len) {
 		if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
@@ -318,7 +282,6 @@ static PHP_METHOD(Javascript, serialize)
 */
 static PHP_METHOD(Javascript, unserialize)
 {
-	zend_error_handling      error_handling;
 	php_phongo_javascript_t* intern;
 	char*                    serialized;
 	size_t                   serialized_len;
@@ -327,12 +290,9 @@ static PHP_METHOD(Javascript, unserialize)
 
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(serialized, serialized_len)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
 	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {

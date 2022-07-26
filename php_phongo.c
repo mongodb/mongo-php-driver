@@ -482,14 +482,7 @@ PHP_FUNCTION(MongoDB_disabled___construct) /* {{{ */
 
 PHP_FUNCTION(MongoDB_disabled___wakeup) /* {{{ */
 {
-	zend_error_handling error_handling;
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "%s", "MongoDB\\Driver objects cannot be serialized");
 } /* }}} */

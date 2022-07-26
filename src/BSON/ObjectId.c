@@ -105,19 +105,16 @@ static HashTable* php_phongo_objectid_get_properties_hash(phongo_compat_object_h
    Constructs a new BSON ObjectId type, optionally from a hex string. */
 static PHP_METHOD(ObjectId, __construct)
 {
-	zend_error_handling    error_handling;
 	php_phongo_objectid_t* intern;
 	char*                  id = NULL;
 	size_t                 id_len;
 
 	intern = Z_OBJECTID_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "|s!", &id, &id_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(0, 1)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_STRING_OR_NULL(id, id_len)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	if (id) {
 		php_phongo_objectid_init_from_hex_string(intern, id, id_len);
@@ -130,18 +127,12 @@ static PHP_METHOD(ObjectId, __construct)
 */
 static PHP_METHOD(ObjectId, getTimestamp)
 {
-	zend_error_handling    error_handling;
 	php_phongo_objectid_t* intern;
 	bson_oid_t             tmp_oid;
 
 	intern = Z_OBJECTID_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	bson_oid_init_from_string(&tmp_oid, intern->oid);
 	RETVAL_LONG(bson_oid_get_time_t(&tmp_oid));
@@ -151,17 +142,13 @@ static PHP_METHOD(ObjectId, getTimestamp)
 */
 static PHP_METHOD(ObjectId, __set_state)
 {
-	zend_error_handling    error_handling;
 	php_phongo_objectid_t* intern;
 	HashTable*             props;
 	zval*                  array;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	object_init_ex(return_value, php_phongo_objectid_ce);
 
@@ -175,17 +162,11 @@ static PHP_METHOD(ObjectId, __set_state)
 */
 static PHP_METHOD(ObjectId, __toString)
 {
-	zend_error_handling    error_handling;
 	php_phongo_objectid_t* intern;
 
 	intern = Z_OBJECTID_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_STRINGL(intern->oid, PHONGO_OID_LEN);
 } /* }}} */
@@ -194,15 +175,9 @@ static PHP_METHOD(ObjectId, __toString)
 */
 static PHP_METHOD(ObjectId, jsonSerialize)
 {
-	zend_error_handling    error_handling;
 	php_phongo_objectid_t* intern;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_OBJECTID_OBJ_P(getThis());
 
@@ -214,7 +189,6 @@ static PHP_METHOD(ObjectId, jsonSerialize)
 */
 static PHP_METHOD(ObjectId, serialize)
 {
-	zend_error_handling    error_handling;
 	php_phongo_objectid_t* intern;
 	zval                   retval;
 	php_serialize_data_t   var_hash;
@@ -222,12 +196,7 @@ static PHP_METHOD(ObjectId, serialize)
 
 	intern = Z_OBJECTID_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	array_init_size(&retval, 1);
 	ADD_ASSOC_STRINGL(&retval, "oid", intern->oid, PHONGO_OID_LEN);
@@ -247,7 +216,6 @@ static PHP_METHOD(ObjectId, serialize)
 */
 static PHP_METHOD(ObjectId, unserialize)
 {
-	zend_error_handling    error_handling;
 	php_phongo_objectid_t* intern;
 	char*                  serialized;
 	size_t                 serialized_len;
@@ -256,12 +224,9 @@ static PHP_METHOD(ObjectId, unserialize)
 
 	intern = Z_OBJECTID_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(serialized, serialized_len)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
 	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {

@@ -184,7 +184,6 @@ static const char* php_phongo_readpreference_get_mode_string(mongoc_read_mode_t 
    Constructs a new ReadPreference */
 static PHP_METHOD(ReadPreference, __construct)
 {
-	zend_error_handling          error_handling;
 	php_phongo_readpreference_t* intern;
 	zval*                        mode;
 	zval*                        tagSets = NULL;
@@ -194,12 +193,12 @@ static PHP_METHOD(ReadPreference, __construct)
 
 	/* Separate the tagSets zval, since we may end up modifying it in
 	 * php_phongo_read_preference_prep_tagsets() below. */
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|a/!a!", &mode, &tagSets, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 3)
+	Z_PARAM_ZVAL(mode)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_EX(tagSets, 1, 1)
+	Z_PARAM_ARRAY_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	if (Z_TYPE_P(mode) == IS_LONG) {
 		switch (Z_LVAL_P(mode)) {
@@ -314,7 +313,6 @@ static PHP_METHOD(ReadPreference, __construct)
 */
 static PHP_METHOD(ReadPreference, __set_state)
 {
-	zend_error_handling          error_handling;
 	php_phongo_readpreference_t* intern;
 	HashTable*                   props;
 	zval*                        array;
@@ -322,12 +320,9 @@ static PHP_METHOD(ReadPreference, __set_state)
 	/* Separate the zval, since we may end up modifying the "tags" element in
 	 * php_phongo_read_preference_prep_tagsets(), which is called from
 	 * php_phongo_readpreference_init_from_hash. */
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a/", &array) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY_EX(array, 0, 1)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	object_init_ex(return_value, php_phongo_readpreference_ce);
 
@@ -341,18 +336,12 @@ static PHP_METHOD(ReadPreference, __set_state)
    Returns the ReadPreference hedge document */
 static PHP_METHOD(ReadPreference, getHedge)
 {
-	zend_error_handling          error_handling;
 	php_phongo_readpreference_t* intern;
 	const bson_t*                hedge;
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	hedge = mongoc_read_prefs_get_hedge(intern->read_preference);
 
@@ -376,17 +365,11 @@ static PHP_METHOD(ReadPreference, getHedge)
    Returns the ReadPreference maxStalenessSeconds value */
 static PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 {
-	zend_error_handling          error_handling;
 	php_phongo_readpreference_t* intern;
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_LONG(mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference));
 } /* }}} */
@@ -395,17 +378,11 @@ static PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
    Returns the ReadPreference mode */
 static PHP_METHOD(ReadPreference, getMode)
 {
-	zend_error_handling          error_handling;
 	php_phongo_readpreference_t* intern;
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_LONG(mongoc_read_prefs_get_mode(intern->read_preference));
 } /* }}} */
@@ -414,18 +391,12 @@ static PHP_METHOD(ReadPreference, getMode)
    Returns the ReadPreference mode as string */
 static PHP_METHOD(ReadPreference, getModeString)
 {
-	zend_error_handling          error_handling;
 	php_phongo_readpreference_t* intern;
 	const char*                  mode_string;
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	mode_string = php_phongo_readpreference_get_mode_string(mongoc_read_prefs_get_mode(intern->read_preference));
 	if (!mode_string) {
@@ -440,18 +411,12 @@ static PHP_METHOD(ReadPreference, getModeString)
    Returns the ReadPreference tag sets */
 static PHP_METHOD(ReadPreference, getTagSets)
 {
-	zend_error_handling          error_handling;
 	php_phongo_readpreference_t* intern;
 	const bson_t*                tags;
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	tags = mongoc_read_prefs_get_tags(intern->read_preference);
 
@@ -547,14 +512,7 @@ done:
 */
 static PHP_METHOD(ReadPreference, bsonSerialize)
 {
-	zend_error_handling error_handling;
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	ZVAL_ARR(return_value, php_phongo_readpreference_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 	convert_to_object(return_value);
@@ -564,7 +522,6 @@ static PHP_METHOD(ReadPreference, bsonSerialize)
 */
 static PHP_METHOD(ReadPreference, serialize)
 {
-	zend_error_handling          error_handling;
 	php_phongo_readpreference_t* intern;
 	zval                         retval;
 	php_serialize_data_t         var_hash;
@@ -577,12 +534,7 @@ static PHP_METHOD(ReadPreference, serialize)
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if (!intern->read_preference) {
 		return;
@@ -645,7 +597,6 @@ static PHP_METHOD(ReadPreference, serialize)
 */
 static PHP_METHOD(ReadPreference, unserialize)
 {
-	zend_error_handling          error_handling;
 	php_phongo_readpreference_t* intern;
 	char*                        serialized;
 	size_t                       serialized_len;
@@ -654,12 +605,9 @@ static PHP_METHOD(ReadPreference, unserialize)
 
 	intern = Z_READPREFERENCE_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(serialized, serialized_len)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	if (!serialized_len) {
 		return;

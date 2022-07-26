@@ -313,19 +313,16 @@ static bool php_phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zo
    Constructs a new BulkWrite */
 static PHP_METHOD(BulkWrite, __construct)
 {
-	zend_error_handling     error_handling;
 	php_phongo_bulkwrite_t* intern;
 	zval*                   options = NULL;
 	zend_bool               ordered = 1;
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "|a!", &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(0, 1)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	if (options && php_array_existsc(options, "ordered")) {
 		ordered = php_array_fetchc_bool(options, "ordered");
@@ -381,7 +378,6 @@ static PHP_METHOD(BulkWrite, __construct)
    Adds an insert operation to the BulkWrite */
 static PHP_METHOD(BulkWrite, insert)
 {
-	zend_error_handling     error_handling;
 	php_phongo_bulkwrite_t* intern;
 	zval*                   zdocument;
 	bson_t                  bdocument = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
@@ -391,12 +387,9 @@ static PHP_METHOD(BulkWrite, insert)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A", &zdocument) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	PHONGO_PARAM_ARRAY_OR_OBJECT(zdocument)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	bson_flags |= PHONGO_BSON_RETURN_ID;
 
@@ -430,7 +423,6 @@ cleanup:
    Adds an update operation to the BulkWrite */
 static PHP_METHOD(BulkWrite, update)
 {
-	zend_error_handling     error_handling;
 	php_phongo_bulkwrite_t* intern;
 	zval *                  zquery, *zupdate, *zoptions = NULL;
 	bson_t                  bquery = BSON_INITIALIZER, bupdate = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
@@ -438,12 +430,12 @@ static PHP_METHOD(BulkWrite, update)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "AA|a!", &zquery, &zupdate, &zoptions) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(2, 3)
+	PHONGO_PARAM_ARRAY_OR_OBJECT(zquery)
+	PHONGO_PARAM_ARRAY_OR_OBJECT(zupdate)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(zoptions)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, &bquery, NULL);
 
@@ -497,7 +489,6 @@ cleanup:
    Adds a delete operation to the BulkWrite */
 static PHP_METHOD(BulkWrite, delete)
 {
-	zend_error_handling     error_handling;
 	php_phongo_bulkwrite_t* intern;
 	zval *                  zquery, *zoptions = NULL;
 	bson_t                  bquery = BSON_INITIALIZER, boptions = BSON_INITIALIZER;
@@ -505,12 +496,11 @@ static PHP_METHOD(BulkWrite, delete)
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A|a!", &zquery, &zoptions) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 2)
+	PHONGO_PARAM_ARRAY_OR_OBJECT(zquery)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(zoptions)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, &bquery, NULL);
 
@@ -545,17 +535,11 @@ cleanup:
    Returns the number of operations that have been added to the BulkWrite */
 static PHP_METHOD(BulkWrite, count)
 {
-	zend_error_handling     error_handling;
 	php_phongo_bulkwrite_t* intern;
 
 	intern = Z_BULKWRITE_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_LONG(intern->num_ops);
 } /* }}} */

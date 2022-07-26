@@ -32,16 +32,12 @@ typedef enum {
    Returns the BSON representation of a PHP value */
 PHP_FUNCTION(MongoDB_BSON_fromPHP)
 {
-	zend_error_handling error_handling;
-	zval*               data;
-	bson_t*             bson;
+	zval*   data;
+	bson_t* bson;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A", &data) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	PHONGO_PARAM_ARRAY_OR_OBJECT(data)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	bson = bson_new();
 	php_phongo_zval_to_bson(data, PHONGO_BSON_NONE, bson, NULL);
@@ -54,7 +50,6 @@ PHP_FUNCTION(MongoDB_BSON_fromPHP)
    Returns the PHP representation of a BSON value, optionally converting it into a custom class */
 PHP_FUNCTION(MongoDB_BSON_toPHP)
 {
-	zend_error_handling   error_handling;
 	char*                 data;
 	size_t                data_len;
 	zval*                 typemap = NULL;
@@ -62,12 +57,11 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
 
 	PHONGO_BSON_INIT_STATE(state);
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s|a!", &data, &data_len, &typemap) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 2)
+	Z_PARAM_STRING(data, data_len)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(typemap)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	if (!php_phongo_bson_typemap_to_state(typemap, &state.map)) {
 		return;
@@ -88,18 +82,14 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
    Returns the BSON representation of a JSON value */
 PHP_FUNCTION(MongoDB_BSON_fromJSON)
 {
-	zend_error_handling error_handling;
-	char*               json;
-	size_t              json_len;
-	bson_t              bson  = BSON_INITIALIZER;
-	bson_error_t        error = { 0 };
+	char*        json;
+	size_t       json_len;
+	bson_t       bson  = BSON_INITIALIZER;
+	bson_error_t error = { 0 };
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &json, &json_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(json, json_len)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	if (bson_init_from_json(&bson, (const char*) json, json_len, &error)) {
 		RETVAL_STRINGL((const char*) bson_get_data(&bson), bson.len);
@@ -111,21 +101,17 @@ PHP_FUNCTION(MongoDB_BSON_fromJSON)
 
 static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mode_t mode)
 {
-	zend_error_handling error_handling;
-	char*               data;
-	size_t              data_len;
-	const bson_t*       bson;
-	bool                eof = false;
-	bson_reader_t*      reader;
-	char*               json = NULL;
-	size_t              json_len;
+	char*          data;
+	size_t         data_len;
+	const bson_t*  bson;
+	bool           eof = false;
+	bson_reader_t* reader;
+	char*          json = NULL;
+	size_t         json_len;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &data, &data_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(data, data_len)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	reader = bson_reader_new_from_data((const unsigned char*) data, data_len);
 	bson   = bson_reader_read(reader, NULL);

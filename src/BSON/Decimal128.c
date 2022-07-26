@@ -84,19 +84,15 @@ static HashTable* php_phongo_decimal128_get_properties_hash(phongo_compat_object
    Construct a new BSON Decimal128 type */
 static PHP_METHOD(Decimal128, __construct)
 {
-	zend_error_handling      error_handling;
 	php_phongo_decimal128_t* intern;
 	char*                    value;
 	size_t                   value_len;
 
 	intern = Z_DECIMAL128_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &value, &value_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(value, value_len)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_decimal128_init(intern, value);
 } /* }}} */
@@ -105,17 +101,13 @@ static PHP_METHOD(Decimal128, __construct)
 */
 static PHP_METHOD(Decimal128, __set_state)
 {
-	zend_error_handling      error_handling;
 	php_phongo_decimal128_t* intern;
 	HashTable*               props;
 	zval*                    array;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	object_init_ex(return_value, php_phongo_decimal128_ce);
 
@@ -129,18 +121,12 @@ static PHP_METHOD(Decimal128, __set_state)
 */
 static PHP_METHOD(Decimal128, __toString)
 {
-	zend_error_handling      error_handling;
 	php_phongo_decimal128_t* intern;
 	char                     outbuf[BSON_DECIMAL128_STRING];
 
 	intern = Z_DECIMAL128_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	bson_decimal128_to_string(&intern->decimal, outbuf);
 
@@ -151,16 +137,10 @@ static PHP_METHOD(Decimal128, __toString)
 */
 static PHP_METHOD(Decimal128, jsonSerialize)
 {
-	zend_error_handling      error_handling;
 	php_phongo_decimal128_t* intern;
 	char                     outbuf[BSON_DECIMAL128_STRING] = "";
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_DECIMAL128_OBJ_P(getThis());
 
@@ -173,7 +153,6 @@ static PHP_METHOD(Decimal128, jsonSerialize)
 */
 static PHP_METHOD(Decimal128, serialize)
 {
-	zend_error_handling      error_handling;
 	php_phongo_decimal128_t* intern;
 	zval                     retval;
 	php_serialize_data_t     var_hash;
@@ -182,12 +161,7 @@ static PHP_METHOD(Decimal128, serialize)
 
 	intern = Z_DECIMAL128_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	bson_decimal128_to_string(&intern->decimal, outbuf);
 	array_init_size(&retval, 1);
@@ -208,7 +182,6 @@ static PHP_METHOD(Decimal128, serialize)
 */
 static PHP_METHOD(Decimal128, unserialize)
 {
-	zend_error_handling      error_handling;
 	php_phongo_decimal128_t* intern;
 	char*                    serialized;
 	size_t                   serialized_len;
@@ -217,12 +190,9 @@ static PHP_METHOD(Decimal128, unserialize)
 
 	intern = Z_DECIMAL128_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(serialized, serialized_len)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
 	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {

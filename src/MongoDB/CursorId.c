@@ -94,17 +94,13 @@ static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_h
 */
 static PHP_METHOD(CursorId, __set_state)
 {
-	zend_error_handling    error_handling;
 	php_phongo_cursorid_t* intern;
 	HashTable*             props;
 	zval*                  array;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	object_init_ex(return_value, php_phongo_cursorid_ce);
 
@@ -118,19 +114,13 @@ static PHP_METHOD(CursorId, __set_state)
    Returns the string representation of the CursorId */
 static PHP_METHOD(CursorId, __toString)
 {
-	zend_error_handling    error_handling;
 	php_phongo_cursorid_t* intern;
 	char*                  tmp;
 	int                    tmp_len;
 
 	intern = Z_CURSORID_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	tmp_len = spprintf(&tmp, 0, "%" PRId64, intern->id);
 	RETVAL_STRINGL(tmp, tmp_len);
@@ -141,18 +131,12 @@ static PHP_METHOD(CursorId, __toString)
 */
 static PHP_METHOD(CursorId, serialize)
 {
-	zend_error_handling    error_handling;
 	php_phongo_cursorid_t* intern;
 	zval                   retval;
 	php_serialize_data_t   var_hash;
 	smart_str              buf = { 0 };
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_CURSORID_OBJ_P(getThis());
 
@@ -174,7 +158,6 @@ static PHP_METHOD(CursorId, serialize)
 */
 static PHP_METHOD(CursorId, unserialize)
 {
-	zend_error_handling    error_handling;
 	php_phongo_cursorid_t* intern;
 	char*                  serialized;
 	size_t                 serialized_len;
@@ -183,12 +166,9 @@ static PHP_METHOD(CursorId, unserialize)
 
 	intern = Z_CURSORID_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(serialized, serialized_len)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
 	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {

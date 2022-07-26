@@ -100,19 +100,17 @@ static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, 
    Constructs a new Command */
 static PHP_METHOD(Command, __construct)
 {
-	zend_error_handling   error_handling;
 	php_phongo_command_t* intern;
 	zval*                 document;
 	zval*                 options = NULL;
 
 	intern = Z_COMMAND_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "A|a!", &document, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 2)
+	PHONGO_PARAM_ARRAY_OR_OBJECT(document)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_command_init(intern, document, options);
 } /* }}} */

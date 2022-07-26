@@ -131,18 +131,15 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(phongo_compat_objec
    current time. */
 static PHP_METHOD(UTCDateTime, __construct)
 {
-	zend_error_handling       error_handling;
 	php_phongo_utcdatetime_t* intern;
 	zval*                     milliseconds = NULL;
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "|z!", &milliseconds) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(0, 1)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ZVAL_OR_NULL(milliseconds)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	if (milliseconds == NULL) {
 		php_phongo_utcdatetime_init_from_current_time(intern);
@@ -187,17 +184,13 @@ static PHP_METHOD(UTCDateTime, __construct)
 */
 static PHP_METHOD(UTCDateTime, __set_state)
 {
-	zend_error_handling       error_handling;
 	php_phongo_utcdatetime_t* intern;
 	HashTable*                props;
 	zval*                     array;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a", &array) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	object_init_ex(return_value, php_phongo_utcdatetime_ce);
 
@@ -211,17 +204,11 @@ static PHP_METHOD(UTCDateTime, __set_state)
    Returns the UTCDateTime's milliseconds as a string */
 static PHP_METHOD(UTCDateTime, __toString)
 {
-	zend_error_handling       error_handling;
 	php_phongo_utcdatetime_t* intern;
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	ZVAL_INT64_STRING(return_value, intern->milliseconds);
 } /* }}} */
@@ -230,7 +217,6 @@ static PHP_METHOD(UTCDateTime, __toString)
    Returns a DateTime object representing this UTCDateTime */
 static PHP_METHOD(UTCDateTime, toDateTime)
 {
-	zend_error_handling       error_handling;
 	php_phongo_utcdatetime_t* intern;
 	php_date_obj*             datetime_obj;
 	char*                     sec;
@@ -238,12 +224,7 @@ static PHP_METHOD(UTCDateTime, toDateTime)
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	object_init_ex(return_value, php_date_get_date_ce());
 	datetime_obj = Z_PHPDATE_P(return_value);
@@ -260,15 +241,9 @@ static PHP_METHOD(UTCDateTime, toDateTime)
 */
 static PHP_METHOD(UTCDateTime, jsonSerialize)
 {
-	zend_error_handling       error_handling;
 	php_phongo_utcdatetime_t* intern;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
@@ -287,7 +262,6 @@ static PHP_METHOD(UTCDateTime, jsonSerialize)
 */
 static PHP_METHOD(UTCDateTime, serialize)
 {
-	zend_error_handling       error_handling;
 	php_phongo_utcdatetime_t* intern;
 	zval                      retval;
 	php_serialize_data_t      var_hash;
@@ -295,12 +269,7 @@ static PHP_METHOD(UTCDateTime, serialize)
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	array_init_size(&retval, 1);
 	ADD_ASSOC_INT64_AS_STRING(&retval, "milliseconds", intern->milliseconds);
@@ -320,7 +289,6 @@ static PHP_METHOD(UTCDateTime, serialize)
 */
 static PHP_METHOD(UTCDateTime, unserialize)
 {
-	zend_error_handling       error_handling;
 	php_phongo_utcdatetime_t* intern;
 	char*                     serialized;
 	size_t                    serialized_len;
@@ -329,12 +297,9 @@ static PHP_METHOD(UTCDateTime, unserialize)
 
 	intern = Z_UTCDATETIME_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(serialized, serialized_len)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
 	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {

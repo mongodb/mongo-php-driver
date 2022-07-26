@@ -89,15 +89,9 @@ HashTable* php_phongo_int64_get_properties_hash(phongo_compat_object_handler_typ
    Return the Int64's value as a string. */
 static PHP_METHOD(Int64, __toString)
 {
-	zend_error_handling error_handling;
 	php_phongo_int64_t* intern;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_INT64_OBJ_P(getThis());
 
@@ -108,15 +102,9 @@ static PHP_METHOD(Int64, __toString)
 */
 static PHP_METHOD(Int64, jsonSerialize)
 {
-	zend_error_handling error_handling;
 	php_phongo_int64_t* intern;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_INT64_OBJ_P(getThis());
 
@@ -129,18 +117,12 @@ static PHP_METHOD(Int64, jsonSerialize)
 */
 static PHP_METHOD(Int64, serialize)
 {
-	zend_error_handling  error_handling;
 	php_phongo_int64_t*  intern;
 	zval                 retval;
 	php_serialize_data_t var_hash;
 	smart_str            buf = { 0 };
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	intern = Z_INT64_OBJ_P(getThis());
 
@@ -162,7 +144,6 @@ static PHP_METHOD(Int64, serialize)
 */
 static PHP_METHOD(Int64, unserialize)
 {
-	zend_error_handling    error_handling;
 	php_phongo_int64_t*    intern;
 	char*                  serialized;
 	size_t                 serialized_len;
@@ -171,12 +152,9 @@ static PHP_METHOD(Int64, unserialize)
 
 	intern = Z_INT64_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &serialized, &serialized_len) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(serialized, serialized_len)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	PHP_VAR_UNSERIALIZE_INIT(var_hash);
 	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {

@@ -56,7 +56,6 @@ static void php_phongo_cursor_free_current(php_phongo_cursor_t* cursor) /* {{{ *
    Sets a type map to use for BSON unserialization */
 static PHP_METHOD(Cursor, setTypeMap)
 {
-	zend_error_handling   error_handling;
 	php_phongo_cursor_t*  intern;
 	php_phongo_bson_state state;
 	zval*                 typemap                 = NULL;
@@ -66,12 +65,9 @@ static PHP_METHOD(Cursor, setTypeMap)
 
 	intern = Z_CURSOR_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "a!", &typemap) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY_OR_NULL(typemap)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	if (!php_phongo_bson_typemap_to_state(typemap, &state.map)) {
 		return;
@@ -133,14 +129,7 @@ static void php_phongo_cursor_id_new_from_id(zval* object, int64_t cursorid) /* 
    Returns an array of all result documents for this cursor */
 static PHP_METHOD(Cursor, toArray)
 {
-	zend_error_handling error_handling;
-
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	array_init(return_value);
 
@@ -154,17 +143,11 @@ static PHP_METHOD(Cursor, toArray)
    Returns the CursorId for this cursor */
 static PHP_METHOD(Cursor, getId)
 {
-	zend_error_handling  error_handling;
 	php_phongo_cursor_t* intern;
 
 	intern = Z_CURSOR_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->cursor));
 } /* }}} */
@@ -173,17 +156,11 @@ static PHP_METHOD(Cursor, getId)
    Returns the Server object to which this cursor is attached */
 static PHP_METHOD(Cursor, getServer)
 {
-	zend_error_handling  error_handling;
 	php_phongo_cursor_t* intern;
 
 	intern = Z_CURSOR_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
 } /* }}} */
@@ -192,33 +169,21 @@ static PHP_METHOD(Cursor, getServer)
    Checks if a cursor is still alive */
 static PHP_METHOD(Cursor, isDead)
 {
-	zend_error_handling  error_handling;
 	php_phongo_cursor_t* intern;
 
 	intern = Z_CURSOR_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_BOOL(!mongoc_cursor_more(intern->cursor));
 } /* }}} */
 
 PHP_METHOD(Cursor, current)
 {
-	zend_error_handling  error_handling;
 	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
 	zval*                data;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	data = &intern->visitor_data.zchild;
 
@@ -231,15 +196,9 @@ PHP_METHOD(Cursor, current)
 
 PHP_METHOD(Cursor, key)
 {
-	zend_error_handling  error_handling;
 	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if (Z_ISUNDEF(intern->visitor_data.zchild)) {
 		RETURN_NULL();
@@ -250,16 +209,10 @@ PHP_METHOD(Cursor, key)
 
 PHP_METHOD(Cursor, next)
 {
-	zend_error_handling  error_handling;
 	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
 	const bson_t*        doc;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	php_phongo_cursor_free_current(intern);
 
@@ -294,31 +247,19 @@ PHP_METHOD(Cursor, next)
 
 PHP_METHOD(Cursor, valid)
 {
-	zend_error_handling  error_handling;
 	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_BOOL(!Z_ISUNDEF(intern->visitor_data.zchild));
 }
 
 PHP_METHOD(Cursor, rewind)
 {
-	zend_error_handling  error_handling;
 	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
 	const bson_t*        doc;
 
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters_none() == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_NONE();
 
 	/* If the intern was never advanced (e.g. command intern), do so now */
 	if (!intern->advanced) {

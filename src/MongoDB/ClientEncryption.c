@@ -57,17 +57,15 @@ static PHP_METHOD(ClientEncryption, createDataKey)
 	char*                          kms_provider     = NULL;
 	size_t                         kms_provider_len = 0;
 	zval*                          options          = NULL;
-	zend_error_handling            error_handling;
 	php_phongo_clientencryption_t* intern;
 
 	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "s|a!", &kms_provider, &kms_provider_len, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
 
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 2)
+	Z_PARAM_STRING(kms_provider, kms_provider_len)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_clientencryption_create_datakey(intern, return_value, kms_provider, options);
 } /* }}} */
@@ -78,17 +76,15 @@ static PHP_METHOD(ClientEncryption, encrypt)
 {
 	zval*                          value   = NULL;
 	zval*                          options = NULL;
-	zend_error_handling            error_handling;
 	php_phongo_clientencryption_t* intern;
 
 	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|a!", &value, &options) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
 
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 2)
+	Z_PARAM_ZVAL(value)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_clientencryption_encrypt(intern, value, return_value, options);
 } /* }}} */
@@ -98,17 +94,13 @@ static PHP_METHOD(ClientEncryption, encrypt)
 static PHP_METHOD(ClientEncryption, decrypt)
 {
 	zval*                          ciphertext;
-	zend_error_handling            error_handling;
 	php_phongo_clientencryption_t* intern;
 
 	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
-	zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling);
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &ciphertext, php_phongo_binary_interface_ce) == FAILURE) {
-		zend_restore_error_handling(&error_handling);
-		return;
-	}
 
-	zend_restore_error_handling(&error_handling);
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_OBJECT_OF_CLASS(ciphertext, php_phongo_binary_interface_ce)
+	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_clientencryption_decrypt(intern, ciphertext, return_value);
 } /* }}} */
