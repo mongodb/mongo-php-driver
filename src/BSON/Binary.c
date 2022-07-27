@@ -371,14 +371,4 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_binary.get_properties = php_phongo_binary_get_properties;
 	php_phongo_handler_binary.free_obj       = php_phongo_binary_free_object;
 	php_phongo_handler_binary.offset         = XtOffsetOf(php_phongo_binary_t, std);
-
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_GENERIC"), BSON_SUBTYPE_BINARY);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_FUNCTION"), BSON_SUBTYPE_FUNCTION);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_OLD_BINARY"), BSON_SUBTYPE_BINARY_DEPRECATED);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_OLD_UUID"), BSON_SUBTYPE_UUID_DEPRECATED);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_UUID"), BSON_SUBTYPE_UUID);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_MD5"), BSON_SUBTYPE_MD5);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_ENCRYPTED"), BSON_SUBTYPE_ENCRYPTED);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_COLUMN"), BSON_SUBTYPE_COLUMN);
-	zend_declare_class_constant_long(php_phongo_binary_ce, ZEND_STRL("TYPE_USER_DEFINED"), BSON_SUBTYPE_USER);
 } /* }}} */

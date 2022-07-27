@@ -9,6 +9,60 @@ namespace MongoDB\BSON
 {
     final class Binary implements BinaryInterface, JsonSerializable, Type, \Serializable
     {
+        /**
+          * @var int
+          * @cvalue BSON_SUBTYPE_BINARY
+          */
+        public const TYPE_GENERIC = UNKNOWN;
+
+        /**
+          * @var int
+          * @cvalue BSON_SUBTYPE_FUNCTION
+          */
+        public const TYPE_FUNCTION = UNKNOWN;
+
+        /**
+          * @var int
+          * @cvalue BSON_SUBTYPE_BINARY_DEPRECATED
+          */
+        public const TYPE_OLD_BINARY = UNKNOWN;
+
+        /**
+          * @var int
+          * @cvalue BSON_SUBTYPE_UUID_DEPRECATED
+          */
+        public const TYPE_OLD_UUID = UNKNOWN;
+
+        /**
+          * @var int
+          * @cvalue BSON_SUBTYPE_UUID
+          */
+        public const TYPE_UUID = UNKNOWN;
+
+        /**
+          * @var int
+          * @cvalue BSON_SUBTYPE_MD5
+          */
+        public const TYPE_MD5 = UNKNOWN;
+
+        /**
+          * @var int
+          * @cvalue BSON_SUBTYPE_ENCRYPTED
+          */
+        public const TYPE_ENCRYPTED = UNKNOWN;
+
+        /**
+          * @var int
+          * @cvalue BSON_SUBTYPE_COLUMN
+          */
+        public const TYPE_COLUMN = UNKNOWN;
+
+        /**
+          * @var int
+          * @cvalue BSON_SUBTYPE_USER
+          */
+        public const TYPE_USER_DEFINED = UNKNOWN;
+
         public final function __construct(string $data, int $type) {}
 
         final public function getData(): string {}
