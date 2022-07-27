@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON
 {
-    final class Timestamp implements TimestampInterface, JsonSerializable, Type, \Serializable
+    final class Timestamp implements TimestampInterface, \JsonSerializable, Type, \Serializable
     {
 #if PHP_VERSION_ID >= 80000
         public final function __construct(int|string $increment, int|string $timestamp) {}

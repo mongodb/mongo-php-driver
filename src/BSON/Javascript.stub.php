@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON
 {
-    final class Javascript implements JavascriptInterface, JsonSerializable, Type, \Serializable
+    final class Javascript implements JavascriptInterface, \JsonSerializable, Type, \Serializable
     {
 #if PHP_VERSION_ID >= 80000
         final public function __construct(string $code, array|object|null $scope = null) {}

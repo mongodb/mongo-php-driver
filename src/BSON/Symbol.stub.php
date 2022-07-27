@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON
 {
-    final class Symbol implements JsonSerializable, Type, \Serializable
+    final class Symbol implements \JsonSerializable, Type, \Serializable
     {
         final private function __construct() {}
 

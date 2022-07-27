@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ffb74d37076682939a327888c60d4d401f32e49d */
+ * Stub hash: f6764f122c47c9071ba8fce92e46ba862f695a4e */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Regex___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, pattern, IS_STRING, 0)
@@ -77,14 +77,14 @@ static const zend_function_entry class_MongoDB_BSON_Regex_methods[] = {
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_BSON_Regex(zend_class_entry *class_entry_MongoDB_BSON_RegexInterface, zend_class_entry *class_entry_MongoDB_BSON_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
+static zend_class_entry *register_class_MongoDB_BSON_Regex(zend_class_entry *class_entry_MongoDB_BSON_RegexInterface, zend_class_entry *class_entry_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Regex", class_MongoDB_BSON_Regex_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
-	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_RegexInterface, class_entry_MongoDB_BSON_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
+	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_RegexInterface, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
 
 	return class_entry;
 }

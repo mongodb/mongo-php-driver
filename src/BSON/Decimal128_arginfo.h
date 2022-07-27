@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 4c1e3632473dbcaefb87254e586aa38be2a080b1 */
+ * Stub hash: db92ad0b12a6766c9d1fd5591e296f1686b4f613 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Decimal128___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, value, IS_STRING, 0, "\'\'")
@@ -68,14 +68,14 @@ static const zend_function_entry class_MongoDB_BSON_Decimal128_methods[] = {
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_BSON_Decimal128(zend_class_entry *class_entry_MongoDB_BSON_Decimal128Interface, zend_class_entry *class_entry_MongoDB_BSON_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
+static zend_class_entry *register_class_MongoDB_BSON_Decimal128(zend_class_entry *class_entry_MongoDB_BSON_Decimal128Interface, zend_class_entry *class_entry_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Decimal128", class_MongoDB_BSON_Decimal128_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
-	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_Decimal128Interface, class_entry_MongoDB_BSON_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
+	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_Decimal128Interface, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
 
 	return class_entry;
 }

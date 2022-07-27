@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 20b80ad0636d3d0726362f2183eceb560c169f4c */
+ * Stub hash: dede7bbc4a90386a2fe9b891d1c3c7f1d19d4de9 */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_UTCDateTime___construct, 0, 0, 0)
@@ -91,14 +91,14 @@ static const zend_function_entry class_MongoDB_BSON_UTCDateTime_methods[] = {
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_BSON_UTCDateTime(zend_class_entry *class_entry_MongoDB_BSON_UTCDateTimeInterface, zend_class_entry *class_entry_MongoDB_BSON_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
+static zend_class_entry *register_class_MongoDB_BSON_UTCDateTime(zend_class_entry *class_entry_MongoDB_BSON_UTCDateTimeInterface, zend_class_entry *class_entry_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "UTCDateTime", class_MongoDB_BSON_UTCDateTime_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
-	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_UTCDateTimeInterface, class_entry_MongoDB_BSON_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
+	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_UTCDateTimeInterface, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
 
 	return class_entry;
 }

@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON
 {
-    final class Binary implements BinaryInterface, JsonSerializable, Type, \Serializable
+    final class Binary implements BinaryInterface, \JsonSerializable, Type, \Serializable
     {
         /**
           * @var int

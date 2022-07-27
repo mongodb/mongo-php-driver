@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON
 {
-    final class Decimal128 implements Decimal128Interface, JsonSerializable, Type, \Serializable
+    final class Decimal128 implements Decimal128Interface, \JsonSerializable, Type, \Serializable
     {
         final public function __construct(string $value = '') {}
 

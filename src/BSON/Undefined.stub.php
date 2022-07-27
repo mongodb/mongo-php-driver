@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON
 {
-    final class Undefined implements JsonSerializable, Type, \Serializable
+    final class Undefined implements \JsonSerializable, Type, \Serializable
     {
         final private function __construct() {}
 

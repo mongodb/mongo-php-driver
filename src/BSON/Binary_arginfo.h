@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: f39a96c515f56320c10cf27cdd6d94b008bfaf13 */
+ * Stub hash: 068e51189d6dcd1e5ff0a50d0f0195b0a93f36da */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Binary___construct, 0, 0, 2)
 	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
@@ -78,14 +78,14 @@ static const zend_function_entry class_MongoDB_BSON_Binary_methods[] = {
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_BSON_Binary(zend_class_entry *class_entry_MongoDB_BSON_BinaryInterface, zend_class_entry *class_entry_MongoDB_BSON_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
+static zend_class_entry *register_class_MongoDB_BSON_Binary(zend_class_entry *class_entry_MongoDB_BSON_BinaryInterface, zend_class_entry *class_entry_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Binary", class_MongoDB_BSON_Binary_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
-	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_BinaryInterface, class_entry_MongoDB_BSON_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
+	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_BinaryInterface, class_entry_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
 
 	zval const_TYPE_GENERIC_value;
 	ZVAL_LONG(&const_TYPE_GENERIC_value, BSON_SUBTYPE_BINARY);
