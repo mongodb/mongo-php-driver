@@ -17,20 +17,11 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "SSLConnectionException_arginfo.h"
 
 zend_class_entry* php_phongo_sslconnectionexception_ce;
 
-/* {{{ MongoDB\Driver\Exception\SSLConnectionException function entries */
-static zend_function_entry php_phongo_sslconnectionexception_me[] = {
-	PHP_FE_END
-};
-/* }}} */
-
 void php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "SSLConnectionException", php_phongo_sslconnectionexception_me);
-	php_phongo_sslconnectionexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce);
-	PHONGO_CE_FINAL(php_phongo_sslconnectionexception_ce);
+	php_phongo_sslconnectionexception_ce = register_class_MongoDB_Driver_Exception_SSLConnectionException(php_phongo_connectionexception_ce);
 } /* }}} */

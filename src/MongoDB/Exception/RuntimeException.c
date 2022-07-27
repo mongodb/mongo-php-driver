@@ -21,6 +21,7 @@
 
 #include "php_phongo.h"
 #include "phongo_error.h"
+#include "RuntimeException_arginfo.h"
 
 zend_class_entry* php_phongo_runtimeexception_ce;
 
@@ -51,7 +52,7 @@ static bool php_phongo_has_string_array_element(zval* labels, char* label)
 
 /* {{{ proto bool MongoDB\Driver\Exception\RuntimeException::hasErrorLabel(string $label)
    Returns whether a specific error label has been set */
-static PHP_METHOD(RuntimeException, hasErrorLabel)
+static PHP_METHOD(MongoDB_Driver_Exception_RuntimeException, hasErrorLabel)
 {
 	char*  label;
 	size_t label_len;
@@ -67,26 +68,7 @@ static PHP_METHOD(RuntimeException, hasErrorLabel)
 	RETURN_BOOL(php_phongo_has_string_array_element(error_labels, label));
 } /* }}} */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_RuntimeException_hasErrorLabel, 0, 0, 1)
-	ZEND_ARG_INFO(0, label)
-ZEND_END_ARG_INFO()
-
-/* {{{ MongoDB\Driver\Exception\RuntimeException function entries */
-static zend_function_entry php_phongo_runtimeexception_me[] = {
-	/* clang-format off */
-	PHP_ME(RuntimeException, hasErrorLabel, ai_RuntimeException_hasErrorLabel, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
-
 void php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "RuntimeException", php_phongo_runtimeexception_me);
-	php_phongo_runtimeexception_ce = zend_register_internal_class_ex(&ce, spl_ce_RuntimeException);
-	zend_class_implements(php_phongo_runtimeexception_ce, 1, php_phongo_exception_ce);
-
-	zend_declare_property_null(php_phongo_runtimeexception_ce, ZEND_STRL("errorLabels"), ZEND_ACC_PROTECTED);
+	php_phongo_runtimeexception_ce = register_class_MongoDB_Driver_Exception_RuntimeException(spl_ce_RuntimeException, php_phongo_exception_ce);
 } /* }}} */

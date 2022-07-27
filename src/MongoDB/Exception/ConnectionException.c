@@ -17,19 +17,11 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "ConnectionException_arginfo.h"
 
 zend_class_entry* php_phongo_connectionexception_ce;
 
-/* {{{ MongoDB\Driver\Exception\ConnectionException function entries */
-static zend_function_entry php_phongo_connectionexception_me[] = {
-	PHP_FE_END
-};
-/* }}} */
-
 void php_phongo_connectionexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "ConnectionException", php_phongo_connectionexception_me);
-	php_phongo_connectionexception_ce = zend_register_internal_class_ex(&ce, php_phongo_runtimeexception_ce);
+	php_phongo_connectionexception_ce = register_class_MongoDB_Driver_Exception_ConnectionException(php_phongo_runtimeexception_ce);
 } /* }}} */

@@ -17,19 +17,11 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "AuthenticationException_arginfo.h"
 
 zend_class_entry* php_phongo_authenticationexception_ce;
 
-/* {{{ MongoDB\Driver\Exception\AuthenticationException function entries */
-static zend_function_entry php_phongo_authenticationexception_me[] = {
-	PHP_FE_END
-};
-/* }}} */
-
 void php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "AuthenticationException", php_phongo_authenticationexception_me);
-	php_phongo_authenticationexception_ce = zend_register_internal_class_ex(&ce, php_phongo_connectionexception_ce);
+	php_phongo_authenticationexception_ce = register_class_MongoDB_Driver_Exception_AuthenticationException(php_phongo_connectionexception_ce);
 } /* }}} */
