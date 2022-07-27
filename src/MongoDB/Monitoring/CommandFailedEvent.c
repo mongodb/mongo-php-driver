@@ -25,12 +25,16 @@
 
 #include "BSON/ObjectId.h"
 #include "MongoDB/Server.h"
+#include "CommandFailedEvent_arginfo.h"
 
 zend_class_entry* php_phongo_commandfailedevent_ce;
 
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandFailedEvent)
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_CommandFailedEvent)
+
 /* {{{ proto string CommandFailedEvent::getCommandName()
    Returns the command name for this event */
-PHP_METHOD(CommandFailedEvent, getCommandName)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getCommandName)
 {
 	php_phongo_commandfailedevent_t* intern;
 
@@ -43,7 +47,7 @@ PHP_METHOD(CommandFailedEvent, getCommandName)
 
 /* {{{ proto int CommandFailedEvent::getDurationMicros()
    Returns the event's duration in microseconds */
-PHP_METHOD(CommandFailedEvent, getDurationMicros)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDurationMicros)
 {
 	php_phongo_commandfailedevent_t* intern;
 
@@ -56,7 +60,7 @@ PHP_METHOD(CommandFailedEvent, getDurationMicros)
 
 /* {{{ proto Exception CommandFailedEvent::getError()
    Returns the error document associated with the event */
-PHP_METHOD(CommandFailedEvent, getError)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getError)
 {
 	php_phongo_commandfailedevent_t* intern;
 
@@ -69,7 +73,7 @@ PHP_METHOD(CommandFailedEvent, getError)
 
 /* {{{ proto string CommandFailedEvent::getOperationId()
    Returns the event's operation ID */
-PHP_METHOD(CommandFailedEvent, getOperationId)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
 {
 	php_phongo_commandfailedevent_t* intern;
 	char                             int_as_string[20];
@@ -84,7 +88,7 @@ PHP_METHOD(CommandFailedEvent, getOperationId)
 
 /* {{{ proto stdClass CommandFailedEvent::getReply()
    Returns the reply document associated with the event */
-PHP_METHOD(CommandFailedEvent, getReply)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getReply)
 {
 	php_phongo_commandfailedevent_t* intern;
 	php_phongo_bson_state            state;
@@ -105,7 +109,7 @@ PHP_METHOD(CommandFailedEvent, getReply)
 
 /* {{{ proto string CommandFailedEvent::getRequestId()
    Returns the event's request ID */
-PHP_METHOD(CommandFailedEvent, getRequestId)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId)
 {
 	php_phongo_commandfailedevent_t* intern;
 	char                             int_as_string[20];
@@ -120,7 +124,7 @@ PHP_METHOD(CommandFailedEvent, getRequestId)
 
 /* {{{ proto MongoDB\Driver\Server CommandFailedEvent::getServer()
    Returns the Server from which the event originated */
-PHP_METHOD(CommandFailedEvent, getServer)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServer)
 {
 	php_phongo_commandfailedevent_t* intern;
 
@@ -133,7 +137,7 @@ PHP_METHOD(CommandFailedEvent, getServer)
 
 /* {{{ proto MongoDB\BSON\ObjectId|null CommandFailedEvent::getServiceId()
    Returns the event's service ID */
-PHP_METHOD(CommandFailedEvent, getServiceId)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId)
 {
 	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -148,7 +152,7 @@ PHP_METHOD(CommandFailedEvent, getServiceId)
 
 /* {{{ proto int|null CommandFailedEvent::getServerConnectionId()
    Returns the event's server connection ID */
-PHP_METHOD(CommandFailedEvent, getServerConnectionId)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnectionId)
 {
 	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
@@ -167,28 +171,6 @@ PHP_METHOD(CommandFailedEvent, getServerConnectionId)
  *
  * This class is only constructed internally.
  */
-
-/* {{{ MongoDB\Driver\Monitoring\CommandFailedEvent function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_CommandFailedEvent_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_commandfailedevent_me[] = {
-	/* clang-format off */
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CommandFailedEvent_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getCommandName, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getError, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getDurationMicros, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getOperationId, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getReply, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getRequestId, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getServer, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getServiceId, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandFailedEvent, getServerConnectionId, ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandFailedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
 
 /* {{{ MongoDB\Driver\Monitoring\CommandFailedEvent object handlers */
 static zend_object_handlers php_phongo_handler_commandfailedevent;
@@ -290,14 +272,8 @@ done:
 
 void php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-	(void) type;
-	(void) module_number;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "CommandFailedEvent", php_phongo_commandfailedevent_me);
-	php_phongo_commandfailedevent_ce                = zend_register_internal_class(&ce);
+	php_phongo_commandfailedevent_ce                = register_class_MongoDB_Driver_Monitoring_CommandFailedEvent();
 	php_phongo_commandfailedevent_ce->create_object = php_phongo_commandfailedevent_create_object;
-	PHONGO_CE_FINAL(php_phongo_commandfailedevent_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_commandfailedevent_ce);
 
 	memcpy(&php_phongo_handler_commandfailedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

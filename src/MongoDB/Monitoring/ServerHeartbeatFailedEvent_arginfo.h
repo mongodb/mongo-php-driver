@@ -1,0 +1,54 @@
+/* This is a generated file, edit the .stub.php file instead.
+ * Stub hash: e2534b685e4173cb232ad7c46ad0ba269ac6dcdf */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent___construct, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getDurationMicros, 0, 0, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getError, 0, 0, Throwable, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getPort arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getDurationMicros
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getHost, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_isAwaited, 0, 0, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent___wakeup, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+
+static ZEND_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, __construct);
+static ZEND_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getDurationMicros);
+static ZEND_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getError);
+static ZEND_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getPort);
+static ZEND_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getHost);
+static ZEND_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, isAwaited);
+static ZEND_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, __wakeup);
+
+
+static const zend_function_entry class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_methods[] = {
+	ZEND_ME(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, __construct, arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getDurationMicros, arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getDurationMicros, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getError, arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getError, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getPort, arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getPort, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getHost, arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getHost, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, isAwaited, arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_isAwaited, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, __wakeup, arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_FE_END
+};
+
+static zend_class_entry *register_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "ServerHeartbeatFailedEvent", class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_methods);
+	class_entry = zend_register_internal_class_ex(&ce, NULL);
+	class_entry->ce_flags |= ZEND_ACC_FINAL;
+
+	return class_entry;
+}

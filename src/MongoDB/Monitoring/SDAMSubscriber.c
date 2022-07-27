@@ -17,71 +17,11 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "SDAMSubscriber_arginfo.h"
 
 zend_class_entry* php_phongo_sdamsubscriber_ce;
 
-/* {{{ MongoDB\Driver\Monitoring\SDAMSubscriber function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_SDAMSubscriber_serverChanged, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerChangedEvent, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_SDAMSubscriber_serverClosed, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerClosedEvent, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_SDAMSubscriber_serverOpening, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerOpeningEvent, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_SDAMSubscriber_serverHeartbeatFailed, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerHeartbeatFailedEvent, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_SDAMSubscriber_serverHeartbeatStarted, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerHeartbeatStartedEvent, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_SDAMSubscriber_serverHeartbeatSucceeded, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerHeartbeatSucceededEvent, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_SDAMSubscriber_topologyChanged, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\TopologyChangedEvent, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_SDAMSubscriber_topologyClosed, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\TopologyClosedEvent, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_SDAMSubscriber_topologyOpening, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\TopologyOpeningEvent, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_sdamsubscriber_me[] = {
-	/* clang-format off */
-	ZEND_ABSTRACT_ME(SDAMSubscriber, serverChanged, ai_SDAMSubscriber_serverChanged)
-	ZEND_ABSTRACT_ME(SDAMSubscriber, serverClosed, ai_SDAMSubscriber_serverClosed)
-	ZEND_ABSTRACT_ME(SDAMSubscriber, serverOpening, ai_SDAMSubscriber_serverOpening)
-	ZEND_ABSTRACT_ME(SDAMSubscriber, serverHeartbeatFailed, ai_SDAMSubscriber_serverHeartbeatFailed)
-	ZEND_ABSTRACT_ME(SDAMSubscriber, serverHeartbeatStarted, ai_SDAMSubscriber_serverHeartbeatStarted)
-	ZEND_ABSTRACT_ME(SDAMSubscriber, serverHeartbeatSucceeded, ai_SDAMSubscriber_serverHeartbeatSucceeded)
-	ZEND_ABSTRACT_ME(SDAMSubscriber, topologyChanged, ai_SDAMSubscriber_topologyChanged)
-	ZEND_ABSTRACT_ME(SDAMSubscriber, topologyClosed, ai_SDAMSubscriber_topologyClosed)
-	ZEND_ABSTRACT_ME(SDAMSubscriber, topologyOpening, ai_SDAMSubscriber_topologyOpening)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
-
 void php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-	(void) type;
-	(void) module_number;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "SDAMSubscriber", php_phongo_sdamsubscriber_me);
-	php_phongo_sdamsubscriber_ce = zend_register_internal_interface(&ce);
-	zend_class_implements(php_phongo_sdamsubscriber_ce, 1, php_phongo_subscriber_ce);
-
-	return;
+	php_phongo_sdamsubscriber_ce = register_class_MongoDB_Driver_Monitoring_SDAMSubscriber(php_phongo_subscriber_ce);
 } /* }}} */
