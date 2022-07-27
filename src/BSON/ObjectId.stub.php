@@ -1,10 +1,13 @@
 <?php
 
-/** @generate-function-entries */
+/**
+  * @generate-class-entries static
+  * @generate-function-entries static
+  */
 
 namespace MongoDB\BSON
 {
-    final class ObjectId
+    final class ObjectId implements ObjectIdInterface, JsonSerializable, Type, \Serializable
     {
         public final function __construct(?string $id = null) {}
 

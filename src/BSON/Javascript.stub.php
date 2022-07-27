@@ -1,10 +1,13 @@
 <?php
 
-/** @generate-function-entries */
+/**
+  * @generate-class-entries static
+  * @generate-function-entries static
+  */
 
 namespace MongoDB\BSON
 {
-    final class Javascript
+    final class Javascript implements JavascriptInterface, JsonSerializable, Type, \Serializable
     {
 #if PHP_VERSION_ID >= 80000
         final public function __construct(string $code, array|object|null $scope = null) {}

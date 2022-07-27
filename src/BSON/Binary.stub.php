@@ -1,10 +1,13 @@
 <?php
 
-/** @generate-function-entries */
+/**
+  * @generate-class-entries static
+  * @generate-function-entries static
+  */
 
 namespace MongoDB\BSON
 {
-    final class Binary
+    final class Binary implements BinaryInterface, JsonSerializable, Type, \Serializable
     {
         public final function __construct(string $data, int $type) {}
 

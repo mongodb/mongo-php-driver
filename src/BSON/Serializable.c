@@ -23,9 +23,5 @@ zend_class_entry* php_phongo_serializable_ce;
 
 void php_phongo_serializable_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Serializable", class_MongoDB_BSON_Serializable_methods);
-	php_phongo_serializable_ce = zend_register_internal_interface(&ce);
-	zend_class_implements(php_phongo_serializable_ce, 1, php_phongo_type_ce);
+	php_phongo_serializable_ce = register_class_MongoDB_BSON_Serializable(php_phongo_type_ce);
 } /* }}} */

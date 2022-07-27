@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: f0ecc0b0ccfd6b0fceaa13cea21306a337022994 */
+ * Stub hash: d396a5052e0f0ae59adcc382ae0d4fd255d26a45 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Binary___construct, 0, 0, 2)
 	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
@@ -42,20 +42,20 @@ ZEND_END_ARG_INFO()
 #endif
 
 
-ZEND_METHOD(MongoDB_BSON_Binary, __construct);
-ZEND_METHOD(MongoDB_BSON_Binary, getData);
-ZEND_METHOD(MongoDB_BSON_Binary, getType);
-ZEND_METHOD(MongoDB_BSON_Binary, __set_state);
-ZEND_METHOD(MongoDB_BSON_Binary, __toString);
-ZEND_METHOD(MongoDB_BSON_Binary, serialize);
-ZEND_METHOD(MongoDB_BSON_Binary, unserialize);
-ZEND_METHOD(MongoDB_BSON_Binary, __unserialize);
-ZEND_METHOD(MongoDB_BSON_Binary, __serialize);
+static ZEND_METHOD(MongoDB_BSON_Binary, __construct);
+static ZEND_METHOD(MongoDB_BSON_Binary, getData);
+static ZEND_METHOD(MongoDB_BSON_Binary, getType);
+static ZEND_METHOD(MongoDB_BSON_Binary, __set_state);
+static ZEND_METHOD(MongoDB_BSON_Binary, __toString);
+static ZEND_METHOD(MongoDB_BSON_Binary, serialize);
+static ZEND_METHOD(MongoDB_BSON_Binary, unserialize);
+static ZEND_METHOD(MongoDB_BSON_Binary, __unserialize);
+static ZEND_METHOD(MongoDB_BSON_Binary, __serialize);
 #if PHP_VERSION_ID >= 80000
-ZEND_METHOD(MongoDB_BSON_Binary, jsonSerialize);
+static ZEND_METHOD(MongoDB_BSON_Binary, jsonSerialize);
 #endif
 #if !(PHP_VERSION_ID >= 80000)
-ZEND_METHOD(MongoDB_BSON_Binary, jsonSerialize);
+static ZEND_METHOD(MongoDB_BSON_Binary, jsonSerialize);
 #endif
 
 
@@ -77,3 +77,15 @@ static const zend_function_entry class_MongoDB_BSON_Binary_methods[] = {
 #endif
 	ZEND_FE_END
 };
+
+static zend_class_entry *register_class_MongoDB_BSON_Binary(zend_class_entry *class_entry_MongoDB_BSON_BinaryInterface, zend_class_entry *class_entry_MongoDB_BSON_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Binary", class_MongoDB_BSON_Binary_methods);
+	class_entry = zend_register_internal_class_ex(&ce, NULL);
+	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_BinaryInterface, class_entry_MongoDB_BSON_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
+
+	return class_entry;
+}

@@ -27,7 +27,7 @@ zend_class_entry* php_phongo_maxkey_ce;
 
 /* {{{ proto MongoDB\BSON\MaxKey MongoDB\BSON\MaxKey::__set_state(array $properties)
 */
-PHP_METHOD(MongoDB_BSON_MaxKey, __set_state)
+static PHP_METHOD(MongoDB_BSON_MaxKey, __set_state)
 {
 	zval* array;
 
@@ -40,7 +40,7 @@ PHP_METHOD(MongoDB_BSON_MaxKey, __set_state)
 
 /* {{{ proto array MongoDB\BSON\MaxKey::jsonSerialize()
 */
-PHP_METHOD(MongoDB_BSON_MaxKey, jsonSerialize)
+static PHP_METHOD(MongoDB_BSON_MaxKey, jsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -50,7 +50,7 @@ PHP_METHOD(MongoDB_BSON_MaxKey, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\MaxKey::serialize()
 */
-PHP_METHOD(MongoDB_BSON_MaxKey, serialize)
+static PHP_METHOD(MongoDB_BSON_MaxKey, serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -59,7 +59,7 @@ PHP_METHOD(MongoDB_BSON_MaxKey, serialize)
 
 /* {{{ proto void MongoDB\BSON\MaxKey::unserialize(string $serialized)
 */
-PHP_METHOD(MongoDB_BSON_MaxKey, unserialize)
+static PHP_METHOD(MongoDB_BSON_MaxKey, unserialize)
 {
 	char*  serialized;
 	size_t serialized_len;
@@ -71,7 +71,7 @@ PHP_METHOD(MongoDB_BSON_MaxKey, unserialize)
 
 /* {{{ proto array MongoDB\Driver\MaxKey::__serialize()
 */
-PHP_METHOD(MongoDB_BSON_MaxKey, __serialize)
+static PHP_METHOD(MongoDB_BSON_MaxKey, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -80,7 +80,7 @@ PHP_METHOD(MongoDB_BSON_MaxKey, __serialize)
 
 /* {{{ proto void MongoDB\Driver\MaxKey::__unserialize(array $data)
 */
-PHP_METHOD(MongoDB_BSON_MaxKey, __unserialize)
+static PHP_METHOD(MongoDB_BSON_MaxKey, __unserialize)
 {
 	zval* data;
 
@@ -114,17 +114,8 @@ static zend_object* php_phongo_maxkey_create_object(zend_class_entry* class_type
 
 void php_phongo_maxkey_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MaxKey", class_MongoDB_BSON_MaxKey_methods);
-	php_phongo_maxkey_ce                = zend_register_internal_class(&ce);
+	php_phongo_maxkey_ce                = register_class_MongoDB_BSON_MaxKey(php_phongo_maxkey_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_maxkey_ce->create_object = php_phongo_maxkey_create_object;
-	PHONGO_CE_FINAL(php_phongo_maxkey_ce);
-
-	zend_class_implements(php_phongo_maxkey_ce, 1, php_phongo_maxkey_interface_ce);
-	zend_class_implements(php_phongo_maxkey_ce, 1, php_phongo_json_serializable_ce);
-	zend_class_implements(php_phongo_maxkey_ce, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_maxkey_ce, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_maxkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	/* Re-assign default handler previously removed in php_phongo.c */

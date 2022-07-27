@@ -29,7 +29,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Undefined)
 
 /* {{{ proto string MongoDB\BSON\Undefined::__toString()
    Return the empty string. */
-PHP_METHOD(MongoDB_BSON_Undefined, __toString)
+static PHP_METHOD(MongoDB_BSON_Undefined, __toString)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -38,7 +38,7 @@ PHP_METHOD(MongoDB_BSON_Undefined, __toString)
 
 /* {{{ proto array MongoDB\BSON\Undefined::jsonSerialize()
 */
-PHP_METHOD(MongoDB_BSON_Undefined, jsonSerialize)
+static PHP_METHOD(MongoDB_BSON_Undefined, jsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -48,7 +48,7 @@ PHP_METHOD(MongoDB_BSON_Undefined, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\Undefined::serialize()
 */
-PHP_METHOD(MongoDB_BSON_Undefined, serialize)
+static PHP_METHOD(MongoDB_BSON_Undefined, serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -57,7 +57,7 @@ PHP_METHOD(MongoDB_BSON_Undefined, serialize)
 
 /* {{{ proto void MongoDB\BSON\Undefined::unserialize(string $serialized)
 */
-PHP_METHOD(MongoDB_BSON_Undefined, unserialize)
+static PHP_METHOD(MongoDB_BSON_Undefined, unserialize)
 {
 	char*  serialized;
 	size_t serialized_len;
@@ -69,7 +69,7 @@ PHP_METHOD(MongoDB_BSON_Undefined, unserialize)
 
 /* {{{ proto array MongoDB\Driver\Undefined::__serialize()
 */
-PHP_METHOD(MongoDB_BSON_Undefined, __serialize)
+static PHP_METHOD(MongoDB_BSON_Undefined, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -78,7 +78,7 @@ PHP_METHOD(MongoDB_BSON_Undefined, __serialize)
 
 /* {{{ proto void MongoDB\Driver\Undefined::__unserialize(array $data)
 */
-PHP_METHOD(MongoDB_BSON_Undefined, __unserialize)
+static PHP_METHOD(MongoDB_BSON_Undefined, __unserialize)
 {
 	zval* data;
 
@@ -112,16 +112,8 @@ static zend_object* php_phongo_undefined_create_object(zend_class_entry* class_t
 
 void php_phongo_undefined_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Undefined", class_MongoDB_BSON_Undefined_methods);
-	php_phongo_undefined_ce                = zend_register_internal_class(&ce);
+	php_phongo_undefined_ce                = register_class_MongoDB_BSON_Undefined(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_undefined_ce->create_object = php_phongo_undefined_create_object;
-	PHONGO_CE_FINAL(php_phongo_undefined_ce);
-
-	zend_class_implements(php_phongo_undefined_ce, 1, php_phongo_json_serializable_ce);
-	zend_class_implements(php_phongo_undefined_ce, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_undefined_ce, 1, zend_ce_serializable);
 
 #if PHP_VERSION_ID >= 80000
 	zend_class_implements(php_phongo_undefined_ce, 1, zend_ce_stringable);

@@ -81,7 +81,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Symbol)
 
 /* {{{ proto string MongoDB\BSON\Symbol::__toString()
    Return the Symbol's symbol string. */
-PHP_METHOD(MongoDB_BSON_Symbol, __toString)
+static PHP_METHOD(MongoDB_BSON_Symbol, __toString)
 {
 	php_phongo_symbol_t* intern;
 
@@ -94,7 +94,7 @@ PHP_METHOD(MongoDB_BSON_Symbol, __toString)
 
 /* {{{ proto array MongoDB\BSON\Symbol::jsonSerialize()
 */
-PHP_METHOD(MongoDB_BSON_Symbol, jsonSerialize)
+static PHP_METHOD(MongoDB_BSON_Symbol, jsonSerialize)
 {
 	php_phongo_symbol_t* intern;
 
@@ -108,7 +108,7 @@ PHP_METHOD(MongoDB_BSON_Symbol, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\Symbol::serialize()
 */
-PHP_METHOD(MongoDB_BSON_Symbol, serialize)
+static PHP_METHOD(MongoDB_BSON_Symbol, serialize)
 {
 	php_phongo_symbol_t* intern;
 	zval                 retval;
@@ -135,7 +135,7 @@ PHP_METHOD(MongoDB_BSON_Symbol, serialize)
 
 /* {{{ proto void MongoDB\BSON\Symbol::unserialize(string $serialized)
 */
-PHP_METHOD(MongoDB_BSON_Symbol, unserialize)
+static PHP_METHOD(MongoDB_BSON_Symbol, unserialize)
 {
 	php_phongo_symbol_t*   intern;
 	char*                  serialized;
@@ -165,7 +165,7 @@ PHP_METHOD(MongoDB_BSON_Symbol, unserialize)
 
 /* {{{ proto array MongoDB\Driver\Symbol::__serialize()
 */
-PHP_METHOD(MongoDB_BSON_Symbol, __serialize)
+static PHP_METHOD(MongoDB_BSON_Symbol, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -174,7 +174,7 @@ PHP_METHOD(MongoDB_BSON_Symbol, __serialize)
 
 /* {{{ proto void MongoDB\Driver\Symbol::__unserialize(array $data)
 */
-PHP_METHOD(MongoDB_BSON_Symbol, __unserialize)
+static PHP_METHOD(MongoDB_BSON_Symbol, __unserialize)
 {
 	zval* data;
 
@@ -259,16 +259,8 @@ static HashTable* php_phongo_symbol_get_properties(phongo_compat_object_handler_
 
 void php_phongo_symbol_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Symbol", class_MongoDB_BSON_Symbol_methods);
-	php_phongo_symbol_ce                = zend_register_internal_class(&ce);
+	php_phongo_symbol_ce                = register_class_MongoDB_BSON_Symbol(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_symbol_ce->create_object = php_phongo_symbol_create_object;
-	PHONGO_CE_FINAL(php_phongo_symbol_ce);
-
-	zend_class_implements(php_phongo_symbol_ce, 1, php_phongo_json_serializable_ce);
-	zend_class_implements(php_phongo_symbol_ce, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_symbol_ce, 1, zend_ce_serializable);
 
 #if PHP_VERSION_ID >= 80000
 	zend_class_implements(php_phongo_symbol_ce, 1, zend_ce_stringable);

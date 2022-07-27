@@ -1,10 +1,13 @@
 <?php
 
-/** @generate-function-entries */
+/**
+  * @generate-class-entries static
+  * @generate-function-entries static
+  */
 
 namespace MongoDB\BSON
 {
-    final class Int64
+    final class Int64 implements JsonSerializable, Type, \Serializable
     {
         private final function __construct() {}
 

@@ -23,8 +23,5 @@ zend_class_entry* php_phongo_unserializable_ce;
 
 void php_phongo_unserializable_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Unserializable", class_MongoDB_BSON_Unserializable_methods);
-	php_phongo_unserializable_ce = zend_register_internal_interface(&ce);
+	php_phongo_unserializable_ce = register_class_MongoDB_BSON_Unserializable();
 } /* }}} */

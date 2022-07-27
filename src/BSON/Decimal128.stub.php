@@ -1,10 +1,13 @@
 <?php
 
-/** @generate-function-entries */
+/**
+  * @generate-class-entries static
+  * @generate-function-entries static
+  */
 
 namespace MongoDB\BSON
 {
-    final class Decimal128
+    final class Decimal128 implements Decimal128Interface, JsonSerializable, Type, \Serializable
     {
         final public function __construct(string $value = '') {}
 

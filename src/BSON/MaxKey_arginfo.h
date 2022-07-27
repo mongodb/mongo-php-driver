@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 5c51e348f96c975a78829ad85b37ca679d8f303c */
+ * Stub hash: 2579462a1a642d39121225a30e4ef68c08678b2b */
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_MaxKey___set_state, 0, 1, MongoDB\\BSON\\MaxKey, 0)
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
@@ -30,16 +30,16 @@ ZEND_END_ARG_INFO()
 #endif
 
 
-ZEND_METHOD(MongoDB_BSON_MaxKey, __set_state);
-ZEND_METHOD(MongoDB_BSON_MaxKey, serialize);
-ZEND_METHOD(MongoDB_BSON_MaxKey, unserialize);
-ZEND_METHOD(MongoDB_BSON_MaxKey, __unserialize);
-ZEND_METHOD(MongoDB_BSON_MaxKey, __serialize);
+static ZEND_METHOD(MongoDB_BSON_MaxKey, __set_state);
+static ZEND_METHOD(MongoDB_BSON_MaxKey, serialize);
+static ZEND_METHOD(MongoDB_BSON_MaxKey, unserialize);
+static ZEND_METHOD(MongoDB_BSON_MaxKey, __unserialize);
+static ZEND_METHOD(MongoDB_BSON_MaxKey, __serialize);
 #if PHP_VERSION_ID >= 80000
-ZEND_METHOD(MongoDB_BSON_MaxKey, jsonSerialize);
+static ZEND_METHOD(MongoDB_BSON_MaxKey, jsonSerialize);
 #endif
 #if !(PHP_VERSION_ID >= 80000)
-ZEND_METHOD(MongoDB_BSON_MaxKey, jsonSerialize);
+static ZEND_METHOD(MongoDB_BSON_MaxKey, jsonSerialize);
 #endif
 
 
@@ -57,3 +57,15 @@ static const zend_function_entry class_MongoDB_BSON_MaxKey_methods[] = {
 #endif
 	ZEND_FE_END
 };
+
+static zend_class_entry *register_class_MongoDB_BSON_MaxKey(zend_class_entry *class_entry_MongoDB_BSON_MaxKeyInterface, zend_class_entry *class_entry_MongoDB_BSON_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MaxKey", class_MongoDB_BSON_MaxKey_methods);
+	class_entry = zend_register_internal_class_ex(&ce, NULL);
+	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	zend_class_implements(class_entry, 4, class_entry_MongoDB_BSON_MaxKeyInterface, class_entry_MongoDB_BSON_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
+
+	return class_entry;
+}

@@ -95,7 +95,7 @@ PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_DBPointer)
 
 /* {{{ proto string MongoDB\BSON\DBPointer::__toString()
    Return the DBPointer's namespace string and ObjectId. */
-PHP_METHOD(MongoDB_BSON_DBPointer, __toString)
+static PHP_METHOD(MongoDB_BSON_DBPointer, __toString)
 {
 	php_phongo_dbpointer_t* intern;
 	char*                   retval;
@@ -112,7 +112,7 @@ PHP_METHOD(MongoDB_BSON_DBPointer, __toString)
 
 /* {{{ proto array MongoDB\BSON\Symbol::jsonSerialize()
 */
-PHP_METHOD(MongoDB_BSON_DBPointer, jsonSerialize)
+static PHP_METHOD(MongoDB_BSON_DBPointer, jsonSerialize)
 {
 	php_phongo_dbpointer_t* intern;
 	zval                    zdb_pointer;
@@ -134,7 +134,7 @@ PHP_METHOD(MongoDB_BSON_DBPointer, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\DBPointer::serialize()
 */
-PHP_METHOD(MongoDB_BSON_DBPointer, serialize)
+static PHP_METHOD(MongoDB_BSON_DBPointer, serialize)
 {
 	php_phongo_dbpointer_t* intern;
 	zval                    retval;
@@ -162,7 +162,7 @@ PHP_METHOD(MongoDB_BSON_DBPointer, serialize)
 
 /* {{{ proto void MongoDB\BSON\DBPointer::unserialize(string $serialized)
 */
-PHP_METHOD(MongoDB_BSON_DBPointer, unserialize)
+static PHP_METHOD(MongoDB_BSON_DBPointer, unserialize)
 {
 	php_phongo_dbpointer_t* intern;
 	char*                   serialized;
@@ -192,7 +192,7 @@ PHP_METHOD(MongoDB_BSON_DBPointer, unserialize)
 
 /* {{{ proto array MongoDB\Driver\DBPointer::__serialize()
 */
-PHP_METHOD(MongoDB_BSON_DBPointer, __serialize)
+static PHP_METHOD(MongoDB_BSON_DBPointer, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -201,7 +201,7 @@ PHP_METHOD(MongoDB_BSON_DBPointer, __serialize)
 
 /* {{{ proto void MongoDB\Driver\DBPointer::__unserialize(array $data)
 */
-PHP_METHOD(MongoDB_BSON_DBPointer, __unserialize)
+static PHP_METHOD(MongoDB_BSON_DBPointer, __unserialize)
 {
 	zval* data;
 
@@ -293,16 +293,8 @@ static HashTable* php_phongo_dbpointer_get_properties(phongo_compat_object_handl
 
 void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "DBPointer", class_MongoDB_BSON_DBPointer_methods);
-	php_phongo_dbpointer_ce                = zend_register_internal_class(&ce);
+	php_phongo_dbpointer_ce                = register_class_MongoDB_BSON_DBPointer(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_dbpointer_ce->create_object = php_phongo_dbpointer_create_object;
-	PHONGO_CE_FINAL(php_phongo_dbpointer_ce);
-
-	zend_class_implements(php_phongo_dbpointer_ce, 1, php_phongo_json_serializable_ce);
-	zend_class_implements(php_phongo_dbpointer_ce, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_dbpointer_ce, 1, zend_ce_serializable);
 
 #if PHP_VERSION_ID >= 80000
 	zend_class_implements(php_phongo_dbpointer_ce, 1, zend_ce_stringable);

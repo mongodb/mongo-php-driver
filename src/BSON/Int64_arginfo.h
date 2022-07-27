@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 23a49399030aec0b31a2a2136032866c40962842 */
+ * Stub hash: 2196fd5c38e59b30587dc65cb69dba383754fc3e */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Int64___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -31,17 +31,17 @@ ZEND_END_ARG_INFO()
 #endif
 
 
-ZEND_METHOD(MongoDB_BSON_Int64, __construct);
-ZEND_METHOD(MongoDB_BSON_Int64, __toString);
-ZEND_METHOD(MongoDB_BSON_Int64, serialize);
-ZEND_METHOD(MongoDB_BSON_Int64, unserialize);
-ZEND_METHOD(MongoDB_BSON_Int64, __unserialize);
-ZEND_METHOD(MongoDB_BSON_Int64, __serialize);
+static ZEND_METHOD(MongoDB_BSON_Int64, __construct);
+static ZEND_METHOD(MongoDB_BSON_Int64, __toString);
+static ZEND_METHOD(MongoDB_BSON_Int64, serialize);
+static ZEND_METHOD(MongoDB_BSON_Int64, unserialize);
+static ZEND_METHOD(MongoDB_BSON_Int64, __unserialize);
+static ZEND_METHOD(MongoDB_BSON_Int64, __serialize);
 #if PHP_VERSION_ID >= 80000
-ZEND_METHOD(MongoDB_BSON_Int64, jsonSerialize);
+static ZEND_METHOD(MongoDB_BSON_Int64, jsonSerialize);
 #endif
 #if !(PHP_VERSION_ID >= 80000)
-ZEND_METHOD(MongoDB_BSON_Int64, jsonSerialize);
+static ZEND_METHOD(MongoDB_BSON_Int64, jsonSerialize);
 #endif
 
 
@@ -60,3 +60,15 @@ static const zend_function_entry class_MongoDB_BSON_Int64_methods[] = {
 #endif
 	ZEND_FE_END
 };
+
+static zend_class_entry *register_class_MongoDB_BSON_Int64(zend_class_entry *class_entry_MongoDB_BSON_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Int64", class_MongoDB_BSON_Int64_methods);
+	class_entry = zend_register_internal_class_ex(&ce, NULL);
+	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	zend_class_implements(class_entry, 3, class_entry_MongoDB_BSON_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
+
+	return class_entry;
+}

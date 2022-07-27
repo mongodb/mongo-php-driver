@@ -1,10 +1,13 @@
 <?php
 
-/** @generate-function-entries */
+/**
+  * @generate-class-entries static
+  * @generate-function-entries static
+  */
 
 namespace MongoDB\BSON
 {
-    final class MaxKey
+    final class MaxKey implements MaxKeyInterface, JsonSerializable, Type, \Serializable
     {
         public static function __set_state(array $properties): MaxKey {}
 

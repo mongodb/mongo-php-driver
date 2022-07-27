@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 78669572ebbe92cabbefacd145fca8332bc7cb75 */
+ * Stub hash: 1cc6cb289e6976eb093f98a98ed0a2b5c11ee098 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Undefined___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -31,17 +31,17 @@ ZEND_END_ARG_INFO()
 #endif
 
 
-ZEND_METHOD(MongoDB_BSON_Undefined, __construct);
-ZEND_METHOD(MongoDB_BSON_Undefined, __toString);
-ZEND_METHOD(MongoDB_BSON_Undefined, serialize);
-ZEND_METHOD(MongoDB_BSON_Undefined, unserialize);
-ZEND_METHOD(MongoDB_BSON_Undefined, __unserialize);
-ZEND_METHOD(MongoDB_BSON_Undefined, __serialize);
+static ZEND_METHOD(MongoDB_BSON_Undefined, __construct);
+static ZEND_METHOD(MongoDB_BSON_Undefined, __toString);
+static ZEND_METHOD(MongoDB_BSON_Undefined, serialize);
+static ZEND_METHOD(MongoDB_BSON_Undefined, unserialize);
+static ZEND_METHOD(MongoDB_BSON_Undefined, __unserialize);
+static ZEND_METHOD(MongoDB_BSON_Undefined, __serialize);
 #if PHP_VERSION_ID >= 80000
-ZEND_METHOD(MongoDB_BSON_Undefined, jsonSerialize);
+static ZEND_METHOD(MongoDB_BSON_Undefined, jsonSerialize);
 #endif
 #if !(PHP_VERSION_ID >= 80000)
-ZEND_METHOD(MongoDB_BSON_Undefined, jsonSerialize);
+static ZEND_METHOD(MongoDB_BSON_Undefined, jsonSerialize);
 #endif
 
 
@@ -60,3 +60,15 @@ static const zend_function_entry class_MongoDB_BSON_Undefined_methods[] = {
 #endif
 	ZEND_FE_END
 };
+
+static zend_class_entry *register_class_MongoDB_BSON_Undefined(zend_class_entry *class_entry_MongoDB_BSON_JsonSerializable, zend_class_entry *class_entry_MongoDB_BSON_Type, zend_class_entry *class_entry_Serializable)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Undefined", class_MongoDB_BSON_Undefined_methods);
+	class_entry = zend_register_internal_class_ex(&ce, NULL);
+	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	zend_class_implements(class_entry, 3, class_entry_MongoDB_BSON_JsonSerializable, class_entry_MongoDB_BSON_Type, class_entry_Serializable);
+
+	return class_entry;
+}

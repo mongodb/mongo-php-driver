@@ -27,7 +27,7 @@ zend_class_entry* php_phongo_minkey_ce;
 
 /* {{{ proto MongoDB\BSON\MinKey MongoDB\BSON\MinKey::__set_state(array $properties)
 */
-PHP_METHOD(MongoDB_BSON_MinKey, __set_state)
+static PHP_METHOD(MongoDB_BSON_MinKey, __set_state)
 {
 	zval* array;
 
@@ -40,7 +40,7 @@ PHP_METHOD(MongoDB_BSON_MinKey, __set_state)
 
 /* {{{ proto array MongoDB\BSON\MinKey::jsonSerialize()
 */
-PHP_METHOD(MongoDB_BSON_MinKey, jsonSerialize)
+static PHP_METHOD(MongoDB_BSON_MinKey, jsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -50,7 +50,7 @@ PHP_METHOD(MongoDB_BSON_MinKey, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\MinKey::serialize()
 */
-PHP_METHOD(MongoDB_BSON_MinKey, serialize)
+static PHP_METHOD(MongoDB_BSON_MinKey, serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -59,7 +59,7 @@ PHP_METHOD(MongoDB_BSON_MinKey, serialize)
 
 /* {{{ proto void MongoDB\BSON\MinKey::unserialize(string $serialized)
 */
-PHP_METHOD(MongoDB_BSON_MinKey, unserialize)
+static PHP_METHOD(MongoDB_BSON_MinKey, unserialize)
 {
 	char*  serialized;
 	size_t serialized_len;
@@ -71,7 +71,7 @@ PHP_METHOD(MongoDB_BSON_MinKey, unserialize)
 
 /* {{{ proto array MongoDB\Driver\MinKey::__serialize()
 */
-PHP_METHOD(MongoDB_BSON_MinKey, __serialize)
+static PHP_METHOD(MongoDB_BSON_MinKey, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -80,7 +80,7 @@ PHP_METHOD(MongoDB_BSON_MinKey, __serialize)
 
 /* {{{ proto void MongoDB\Driver\MinKey::__unserialize(array $data)
 */
-PHP_METHOD(MongoDB_BSON_MinKey, __unserialize)
+static PHP_METHOD(MongoDB_BSON_MinKey, __unserialize)
 {
 	zval* data;
 
@@ -114,17 +114,8 @@ static zend_object* php_phongo_minkey_create_object(zend_class_entry* class_type
 
 void php_phongo_minkey_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MinKey", class_MongoDB_BSON_MinKey_methods);
-	php_phongo_minkey_ce                = zend_register_internal_class(&ce);
+	php_phongo_minkey_ce                = register_class_MongoDB_BSON_MinKey(php_phongo_minkey_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_minkey_ce->create_object = php_phongo_minkey_create_object;
-	PHONGO_CE_FINAL(php_phongo_minkey_ce);
-
-	zend_class_implements(php_phongo_minkey_ce, 1, php_phongo_minkey_interface_ce);
-	zend_class_implements(php_phongo_minkey_ce, 1, php_phongo_json_serializable_ce);
-	zend_class_implements(php_phongo_minkey_ce, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_minkey_ce, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_minkey, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	/* Re-assign default handler previously removed in php_phongo.c */

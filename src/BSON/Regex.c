@@ -107,7 +107,7 @@ static HashTable* php_phongo_regex_get_properties_hash(phongo_compat_object_hand
 
 /* {{{ proto void MongoDB\BSON\Regex::__construct(string $pattern [, string $flags])
    Constructs a new BSON regular expression type. */
-PHP_METHOD(MongoDB_BSON_Regex, __construct)
+static PHP_METHOD(MongoDB_BSON_Regex, __construct)
 {
 	php_phongo_regex_t* intern;
 	char*               pattern;
@@ -128,7 +128,7 @@ PHP_METHOD(MongoDB_BSON_Regex, __construct)
 
 /* {{{ proto string MongoDB\BSON\Regex::getPattern()
 */
-PHP_METHOD(MongoDB_BSON_Regex, getPattern)
+static PHP_METHOD(MongoDB_BSON_Regex, getPattern)
 {
 	php_phongo_regex_t* intern;
 
@@ -141,7 +141,7 @@ PHP_METHOD(MongoDB_BSON_Regex, getPattern)
 
 /* {{{ proto string MongoDB\BSON\Regex::getFlags()
 */
-PHP_METHOD(MongoDB_BSON_Regex, getFlags)
+static PHP_METHOD(MongoDB_BSON_Regex, getFlags)
 {
 	php_phongo_regex_t* intern;
 
@@ -154,7 +154,7 @@ PHP_METHOD(MongoDB_BSON_Regex, getFlags)
 
 /* {{{ proto MongoDB\BSON\Regex MongoDB\BSON\Regex::__set_state(array $properties)
 */
-PHP_METHOD(MongoDB_BSON_Regex, __set_state)
+static PHP_METHOD(MongoDB_BSON_Regex, __set_state)
 {
 	php_phongo_regex_t* intern;
 	HashTable*          props;
@@ -174,7 +174,7 @@ PHP_METHOD(MongoDB_BSON_Regex, __set_state)
 
 /* {{{ proto string MongoDB\BSON\Regex::__toString()
    Returns a string in the form: /pattern/flags */
-PHP_METHOD(MongoDB_BSON_Regex, __toString)
+static PHP_METHOD(MongoDB_BSON_Regex, __toString)
 {
 	php_phongo_regex_t* intern;
 	char*               regex;
@@ -191,7 +191,7 @@ PHP_METHOD(MongoDB_BSON_Regex, __toString)
 
 /* {{{ proto array MongoDB\BSON\Regex::jsonSerialize()
 */
-PHP_METHOD(MongoDB_BSON_Regex, jsonSerialize)
+static PHP_METHOD(MongoDB_BSON_Regex, jsonSerialize)
 {
 	php_phongo_regex_t* intern;
 
@@ -206,7 +206,7 @@ PHP_METHOD(MongoDB_BSON_Regex, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\Regex::serialize()
 */
-PHP_METHOD(MongoDB_BSON_Regex, serialize)
+static PHP_METHOD(MongoDB_BSON_Regex, serialize)
 {
 	php_phongo_regex_t*  intern;
 	zval                 retval;
@@ -234,7 +234,7 @@ PHP_METHOD(MongoDB_BSON_Regex, serialize)
 
 /* {{{ proto void MongoDB\BSON\Regex::unserialize(string $serialized)
 */
-PHP_METHOD(MongoDB_BSON_Regex, unserialize)
+static PHP_METHOD(MongoDB_BSON_Regex, unserialize)
 {
 	php_phongo_regex_t*    intern;
 	char*                  serialized;
@@ -264,7 +264,7 @@ PHP_METHOD(MongoDB_BSON_Regex, unserialize)
 
 /* {{{ proto array MongoDB\Driver\Regex::__serialize()
 */
-PHP_METHOD(MongoDB_BSON_Regex, __serialize)
+static PHP_METHOD(MongoDB_BSON_Regex, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -273,7 +273,7 @@ PHP_METHOD(MongoDB_BSON_Regex, __serialize)
 
 /* {{{ proto void MongoDB\Driver\Regex::__unserialize(array $data)
 */
-PHP_METHOD(MongoDB_BSON_Regex, __unserialize)
+static PHP_METHOD(MongoDB_BSON_Regex, __unserialize)
 {
 	zval* data;
 
@@ -370,17 +370,8 @@ static HashTable* php_phongo_regex_get_properties(phongo_compat_object_handler_t
 
 void php_phongo_regex_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Regex", class_MongoDB_BSON_Regex_methods);
-	php_phongo_regex_ce                = zend_register_internal_class(&ce);
+	php_phongo_regex_ce                = register_class_MongoDB_BSON_Regex(php_phongo_regex_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_regex_ce->create_object = php_phongo_regex_create_object;
-	PHONGO_CE_FINAL(php_phongo_regex_ce);
-
-	zend_class_implements(php_phongo_regex_ce, 1, php_phongo_regex_interface_ce);
-	zend_class_implements(php_phongo_regex_ce, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_regex_ce, 1, zend_ce_serializable);
-	zend_class_implements(php_phongo_regex_ce, 1, php_phongo_json_serializable_ce);
 
 #if PHP_VERSION_ID >= 80000
 	zend_class_implements(php_phongo_regex_ce, 1, zend_ce_stringable);

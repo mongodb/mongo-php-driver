@@ -1,10 +1,13 @@
 <?php
 
-/** @generate-function-entries */
+/**
+  * @generate-class-entries static
+  * @generate-function-entries static
+  */
 
 namespace MongoDB\BSON
 {
-    final class UTCDateTime
+    final class UTCDateTime implements UTCDateTimeInterface, JsonSerializable, Type, \Serializable
     {
 #if PHP_VERSION_ID >= 80000
         public final function __construct(int|string|float|\DateTime|\DateTimeImmutable|null $milliseconds = null) {}

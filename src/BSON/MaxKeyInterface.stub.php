@@ -7,9 +7,7 @@
 
 namespace MongoDB\BSON
 {
-    interface Decimal128Interface
+    interface MaxKeyInterface
     {
-        /** @tentative-return-type */
-        public function __toString(): string;
     }
 }

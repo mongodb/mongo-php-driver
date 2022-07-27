@@ -1,10 +1,13 @@
 <?php
 
-/** @generate-function-entries */
+/**
+  * @generate-class-entries static
+  * @generate-function-entries
+  */
 
 namespace MongoDB\BSON
 {
-    interface Persistable
+    interface Persistable extends Serializable, Unserializable
     {
     }
 }

@@ -130,7 +130,7 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(phongo_compat_objec
    Construct a new BSON UTCDateTime type from either the current time,
    milliseconds since the epoch, or a DateTimeInterface object. Defaults to the
    current time. */
-PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
+static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 {
 	php_phongo_utcdatetime_t* intern;
 	zval*                     milliseconds = NULL;
@@ -183,7 +183,7 @@ PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 
 /* {{{ proto MongoDB\BSON\UTCDateTime MongoDB\BSON\UTCDateTime::__set_state(array $properties)
 */
-PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
+static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
 {
 	php_phongo_utcdatetime_t* intern;
 	HashTable*                props;
@@ -203,7 +203,7 @@ PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
 
 /* {{{ proto string MongoDB\BSON\UTCDateTime::__toString()
    Returns the UTCDateTime's milliseconds as a string */
-PHP_METHOD(MongoDB_BSON_UTCDateTime, __toString)
+static PHP_METHOD(MongoDB_BSON_UTCDateTime, __toString)
 {
 	php_phongo_utcdatetime_t* intern;
 
@@ -216,7 +216,7 @@ PHP_METHOD(MongoDB_BSON_UTCDateTime, __toString)
 
 /* {{{ proto DateTime MongoDB\BSON\UTCDateTime::toDateTime()
    Returns a DateTime object representing this UTCDateTime */
-PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTime)
+static PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTime)
 {
 	php_phongo_utcdatetime_t* intern;
 	php_date_obj*             datetime_obj;
@@ -240,7 +240,7 @@ PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTime)
 
 /* {{{ proto array MongoDB\BSON\UTCDateTime::jsonSerialize()
 */
-PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
+static PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
 {
 	php_phongo_utcdatetime_t* intern;
 
@@ -261,7 +261,7 @@ PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\UTCDateTime::serialize()
 */
-PHP_METHOD(MongoDB_BSON_UTCDateTime, serialize)
+static PHP_METHOD(MongoDB_BSON_UTCDateTime, serialize)
 {
 	php_phongo_utcdatetime_t* intern;
 	zval                      retval;
@@ -288,7 +288,7 @@ PHP_METHOD(MongoDB_BSON_UTCDateTime, serialize)
 
 /* {{{ proto void MongoDB\BSON\UTCDateTime::unserialize(string $serialized)
 */
-PHP_METHOD(MongoDB_BSON_UTCDateTime, unserialize)
+static PHP_METHOD(MongoDB_BSON_UTCDateTime, unserialize)
 {
 	php_phongo_utcdatetime_t* intern;
 	char*                     serialized;
@@ -318,7 +318,7 @@ PHP_METHOD(MongoDB_BSON_UTCDateTime, unserialize)
 
 /* {{{ proto array MongoDB\Driver\UTCDateTime::__serialize()
 */
-PHP_METHOD(MongoDB_BSON_UTCDateTime, __serialize)
+static PHP_METHOD(MongoDB_BSON_UTCDateTime, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -327,7 +327,7 @@ PHP_METHOD(MongoDB_BSON_UTCDateTime, __serialize)
 
 /* {{{ proto void MongoDB\Driver\UTCDateTime::__unserialize(array $data)
 */
-PHP_METHOD(MongoDB_BSON_UTCDateTime, __unserialize)
+static PHP_METHOD(MongoDB_BSON_UTCDateTime, __unserialize)
 {
 	zval* data;
 
@@ -412,17 +412,8 @@ static HashTable* php_phongo_utcdatetime_get_properties(phongo_compat_object_han
 
 void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "UTCDateTime", class_MongoDB_BSON_UTCDateTime_methods);
-	php_phongo_utcdatetime_ce                = zend_register_internal_class(&ce);
+	php_phongo_utcdatetime_ce                = register_class_MongoDB_BSON_UTCDateTime(php_phongo_utcdatetime_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_utcdatetime_ce->create_object = php_phongo_utcdatetime_create_object;
-	PHONGO_CE_FINAL(php_phongo_utcdatetime_ce);
-
-	zend_class_implements(php_phongo_utcdatetime_ce, 1, php_phongo_utcdatetime_interface_ce);
-	zend_class_implements(php_phongo_utcdatetime_ce, 1, php_phongo_json_serializable_ce);
-	zend_class_implements(php_phongo_utcdatetime_ce, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_utcdatetime_ce, 1, zend_ce_serializable);
 
 #if PHP_VERSION_ID >= 80000
 	zend_class_implements(php_phongo_utcdatetime_ce, 1, zend_ce_stringable);

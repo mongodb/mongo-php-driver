@@ -119,7 +119,7 @@ failure:
    Construct a new BSON Javascript type. The scope is a document mapping
    identifiers and values, representing the scope in which the code string will
    be evaluated. Note that this type cannot be represented as Extended JSON. */
-PHP_METHOD(MongoDB_BSON_Javascript, __construct)
+static PHP_METHOD(MongoDB_BSON_Javascript, __construct)
 {
 	php_phongo_javascript_t* intern;
 	char*                    code;
@@ -139,7 +139,7 @@ PHP_METHOD(MongoDB_BSON_Javascript, __construct)
 
 /* {{{ proto MongoDB\BSON\Javascript MongoDB\BSON\Javascript::__set_state(array $properties)
 */
-PHP_METHOD(MongoDB_BSON_Javascript, __set_state)
+static PHP_METHOD(MongoDB_BSON_Javascript, __set_state)
 {
 	php_phongo_javascript_t* intern;
 	HashTable*               props;
@@ -159,7 +159,7 @@ PHP_METHOD(MongoDB_BSON_Javascript, __set_state)
 
 /* {{{ proto string MongoDB\BSON\Javascript::__toString()
    Return the Javascript's code string. */
-PHP_METHOD(MongoDB_BSON_Javascript, __toString)
+static PHP_METHOD(MongoDB_BSON_Javascript, __toString)
 {
 	php_phongo_javascript_t* intern;
 
@@ -172,7 +172,7 @@ PHP_METHOD(MongoDB_BSON_Javascript, __toString)
 
 /* {{{ proto string MongoDB\BSON\Javascript::getCode()
 */
-PHP_METHOD(MongoDB_BSON_Javascript, getCode)
+static PHP_METHOD(MongoDB_BSON_Javascript, getCode)
 {
 	php_phongo_javascript_t* intern;
 
@@ -185,7 +185,7 @@ PHP_METHOD(MongoDB_BSON_Javascript, getCode)
 
 /* {{{ proto object|null MongoDB\BSON\Javascript::getScope()
 */
-PHP_METHOD(MongoDB_BSON_Javascript, getScope)
+static PHP_METHOD(MongoDB_BSON_Javascript, getScope)
 {
 	php_phongo_javascript_t* intern;
 
@@ -215,7 +215,7 @@ PHP_METHOD(MongoDB_BSON_Javascript, getScope)
 
 /* {{{ proto array MongoDB\BSON\Javascript::jsonSerialize()
 */
-PHP_METHOD(MongoDB_BSON_Javascript, jsonSerialize)
+static PHP_METHOD(MongoDB_BSON_Javascript, jsonSerialize)
 {
 	php_phongo_javascript_t* intern;
 
@@ -241,7 +241,7 @@ PHP_METHOD(MongoDB_BSON_Javascript, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\Javascript::serialize()
 */
-PHP_METHOD(MongoDB_BSON_Javascript, serialize)
+static PHP_METHOD(MongoDB_BSON_Javascript, serialize)
 {
 	php_phongo_javascript_t* intern;
 	zval                     retval;
@@ -281,7 +281,7 @@ PHP_METHOD(MongoDB_BSON_Javascript, serialize)
 
 /* {{{ proto void MongoDB\BSON\Javascript::unserialize(string $serialized)
 */
-PHP_METHOD(MongoDB_BSON_Javascript, unserialize)
+static PHP_METHOD(MongoDB_BSON_Javascript, unserialize)
 {
 	php_phongo_javascript_t* intern;
 	char*                    serialized;
@@ -311,7 +311,7 @@ PHP_METHOD(MongoDB_BSON_Javascript, unserialize)
 
 /* {{{ proto array MongoDB\Driver\Javascript::__serialize()
 */
-PHP_METHOD(MongoDB_BSON_Javascript, __serialize)
+static PHP_METHOD(MongoDB_BSON_Javascript, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -320,7 +320,7 @@ PHP_METHOD(MongoDB_BSON_Javascript, __serialize)
 
 /* {{{ proto void MongoDB\Driver\Javascript::__unserialize(array $data)
 */
-PHP_METHOD(MongoDB_BSON_Javascript, __unserialize)
+static PHP_METHOD(MongoDB_BSON_Javascript, __unserialize)
 {
 	zval* data;
 
@@ -411,17 +411,8 @@ static HashTable* php_phongo_javascript_get_properties(phongo_compat_object_hand
 
 void php_phongo_javascript_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Javascript", class_MongoDB_BSON_Javascript_methods);
-	php_phongo_javascript_ce                = zend_register_internal_class(&ce);
+	php_phongo_javascript_ce                = register_class_MongoDB_BSON_Javascript(php_phongo_javascript_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_javascript_ce->create_object = php_phongo_javascript_create_object;
-	PHONGO_CE_FINAL(php_phongo_javascript_ce);
-
-	zend_class_implements(php_phongo_javascript_ce, 1, php_phongo_javascript_interface_ce);
-	zend_class_implements(php_phongo_javascript_ce, 1, php_phongo_json_serializable_ce);
-	zend_class_implements(php_phongo_javascript_ce, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_javascript_ce, 1, zend_ce_serializable);
 
 #if PHP_VERSION_ID >= 80000
 	zend_class_implements(php_phongo_javascript_ce, 1, zend_ce_stringable);

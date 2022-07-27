@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 1e892540102b36a2493090eb2fb021345ce54f73 */
+ * Stub hash: c249307889b5e9cd4cab6449b9c8101fe6a7fc29 */
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_UTCDateTimeInterface_toDateTime, 0, 0, DateTime, 0)
 ZEND_END_ARG_INFO()
@@ -15,3 +15,13 @@ static const zend_function_entry class_MongoDB_BSON_UTCDateTimeInterface_methods
 	ZEND_ABSTRACT_ME_WITH_FLAGS(MongoDB_BSON_UTCDateTimeInterface, __toString, arginfo_class_MongoDB_BSON_UTCDateTimeInterface___toString, ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT)
 	ZEND_FE_END
 };
+
+static zend_class_entry *register_class_MongoDB_BSON_UTCDateTimeInterface(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "UTCDateTimeInterface", class_MongoDB_BSON_UTCDateTimeInterface_methods);
+	class_entry = zend_register_internal_interface(&ce);
+
+	return class_entry;
+}
