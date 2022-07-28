@@ -21,6 +21,15 @@
 
 #include <php.h>
 
+/* Note: these constants are derived from _mongoc_topology_description_type,
+ * since mongoc_topology_description_t is private. */
+#define PHONGO_TOPOLOGY_UNKNOWN "Unknown"
+#define PHONGO_TOPOLOGY_SINGLE "Single"
+#define PHONGO_TOPOLOGY_SHARDED "Sharded"
+#define PHONGO_TOPOLOGY_REPLICA_SET_NO_PRIMARY "ReplicaSetNoPrimary"
+#define PHONGO_TOPOLOGY_REPLICA_SET_WITH_PRIMARY "ReplicaSetWithPrimary"
+#define PHONGO_TOPOLOGY_LOAD_BALANCED "LoadBalanced"
+
 void phongo_topologydescription_init(zval* return_value, mongoc_topology_description_t* topology_description);
 
 #endif /* PHONGO_TOPOLOGYDESCRIPTION_H */

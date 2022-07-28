@@ -29,14 +29,9 @@
 #include "phongo_error.h"
 
 #include "MongoDB/ReadPreference.h"
+#include "ReadPreference_arginfo.h"
 
 zend_class_entry* php_phongo_readpreference_ce;
-
-#define PHONGO_READ_PRIMARY "primary"
-#define PHONGO_READ_PRIMARY_PREFERRED "primaryPreferred"
-#define PHONGO_READ_SECONDARY "secondary"
-#define PHONGO_READ_SECONDARY_PREFERRED "secondaryPreferred"
-#define PHONGO_READ_NEAREST "nearest"
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
@@ -182,7 +177,7 @@ static const char* php_phongo_readpreference_get_mode_string(mongoc_read_mode_t 
 
 /* {{{ proto void MongoDB\Driver\ReadPreference::__construct(int|string $mode[, array $tagSets = array()[, array $options = array()]])
    Constructs a new ReadPreference */
-static PHP_METHOD(ReadPreference, __construct)
+static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 {
 	php_phongo_readpreference_t* intern;
 	zval*                        mode;
@@ -311,7 +306,7 @@ static PHP_METHOD(ReadPreference, __construct)
 
 /* {{{ proto MongoDB\Driver\ReadPreference MongoDB\Driver\ReadPreference::__set_state(array $properties)
 */
-static PHP_METHOD(ReadPreference, __set_state)
+static PHP_METHOD(MongoDB_Driver_ReadPreference, __set_state)
 {
 	php_phongo_readpreference_t* intern;
 	HashTable*                   props;
@@ -334,7 +329,7 @@ static PHP_METHOD(ReadPreference, __set_state)
 
 /* {{{ proto array|null MongoDB\Driver\ReadPreference::getHedge()
    Returns the ReadPreference hedge document */
-static PHP_METHOD(ReadPreference, getHedge)
+static PHP_METHOD(MongoDB_Driver_ReadPreference, getHedge)
 {
 	php_phongo_readpreference_t* intern;
 	const bson_t*                hedge;
@@ -363,7 +358,7 @@ static PHP_METHOD(ReadPreference, getHedge)
 
 /* {{{ proto integer MongoDB\Driver\ReadPreference::getMaxStalenessSeconds()
    Returns the ReadPreference maxStalenessSeconds value */
-static PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
+static PHP_METHOD(MongoDB_Driver_ReadPreference, getMaxStalenessSeconds)
 {
 	php_phongo_readpreference_t* intern;
 
@@ -376,7 +371,7 @@ static PHP_METHOD(ReadPreference, getMaxStalenessSeconds)
 
 /* {{{ proto integer MongoDB\Driver\ReadPreference::getMode()
    Returns the ReadPreference mode */
-static PHP_METHOD(ReadPreference, getMode)
+static PHP_METHOD(MongoDB_Driver_ReadPreference, getMode)
 {
 	php_phongo_readpreference_t* intern;
 
@@ -389,7 +384,7 @@ static PHP_METHOD(ReadPreference, getMode)
 
 /* {{{ proto string MongoDB\Driver\ReadPreference::getModeString()
    Returns the ReadPreference mode as string */
-static PHP_METHOD(ReadPreference, getModeString)
+static PHP_METHOD(MongoDB_Driver_ReadPreference, getModeString)
 {
 	php_phongo_readpreference_t* intern;
 	const char*                  mode_string;
@@ -409,7 +404,7 @@ static PHP_METHOD(ReadPreference, getModeString)
 
 /* {{{ proto array MongoDB\Driver\ReadPreference::getTagSets()
    Returns the ReadPreference tag sets */
-static PHP_METHOD(ReadPreference, getTagSets)
+static PHP_METHOD(MongoDB_Driver_ReadPreference, getTagSets)
 {
 	php_phongo_readpreference_t* intern;
 	const bson_t*                tags;
@@ -510,7 +505,7 @@ done:
 
 /* {{{ proto array MongoDB\Driver\ReadPreference::bsonSerialize()
 */
-static PHP_METHOD(ReadPreference, bsonSerialize)
+static PHP_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -520,7 +515,7 @@ static PHP_METHOD(ReadPreference, bsonSerialize)
 
 /* {{{ proto string MongoDB\Driver\ReadPreference::serialize()
 */
-static PHP_METHOD(ReadPreference, serialize)
+static PHP_METHOD(MongoDB_Driver_ReadPreference, serialize)
 {
 	php_phongo_readpreference_t* intern;
 	zval                         retval;
@@ -595,7 +590,7 @@ static PHP_METHOD(ReadPreference, serialize)
 
 /* {{{ proto void MongoDB\Driver\ReadPreference::unserialize(string $serialized)
 */
-static PHP_METHOD(ReadPreference, unserialize)
+static PHP_METHOD(MongoDB_Driver_ReadPreference, unserialize)
 {
 	php_phongo_readpreference_t* intern;
 	char*                        serialized;
@@ -629,7 +624,7 @@ static PHP_METHOD(ReadPreference, unserialize)
 
 /* {{{ proto array MongoDB\Driver\ReadPreference::__serialize()
 */
-static PHP_METHOD(ReadPreference, __serialize)
+static PHP_METHOD(MongoDB_Driver_ReadPreference, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -638,7 +633,7 @@ static PHP_METHOD(ReadPreference, __serialize)
 
 /* {{{ proto void MongoDB\Driver\ReadPreference::__unserialize(array $data)
 */
-static PHP_METHOD(ReadPreference, __unserialize)
+static PHP_METHOD(MongoDB_Driver_ReadPreference, __unserialize)
 {
 	zval* data;
 
@@ -648,47 +643,6 @@ static PHP_METHOD(ReadPreference, __unserialize)
 
 	php_phongo_readpreference_init_from_hash(Z_READPREFERENCE_OBJ_P(getThis()), Z_ARRVAL_P(data));
 } /* }}} */
-
-/* {{{ MongoDB\Driver\ReadPreference function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, mode)
-	ZEND_ARG_ARRAY_INFO(0, tagSets, 1)
-	ZEND_ARG_ARRAY_INFO(0, options, 1)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___set_state, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ReadPreference_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_readpreference_me[] = {
-	/* clang-format off */
-	PHP_ME(ReadPreference, __construct, ai_ReadPreference___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, __serialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, __set_state, ai_ReadPreference___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(ReadPreference, __unserialize, ai_ReadPreference___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, getHedge, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, getMaxStalenessSeconds, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, getMode, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, getModeString, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, getTagSets, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, bsonSerialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, serialize, ai_ReadPreference_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ReadPreference, unserialize, ai_ReadPreference_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
 
 /* {{{ MongoDB\Driver\ReadPreference object handlers */
 static zend_object_handlers php_phongo_handler_readpreference;
@@ -735,35 +689,14 @@ static HashTable* php_phongo_readpreference_get_properties(phongo_compat_object_
 
 void php_phongo_readpreference_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ReadPreference", php_phongo_readpreference_me);
-	php_phongo_readpreference_ce                = zend_register_internal_class(&ce);
+	php_phongo_readpreference_ce                = register_class_MongoDB_Driver_ReadPreference(php_phongo_serializable_ce, zend_ce_serializable);
 	php_phongo_readpreference_ce->create_object = php_phongo_readpreference_create_object;
-	PHONGO_CE_FINAL(php_phongo_readpreference_ce);
-
-	zend_class_implements(php_phongo_readpreference_ce, 1, php_phongo_serializable_ce);
-	zend_class_implements(php_phongo_readpreference_ce, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_readpreference, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_readpreference.get_debug_info = php_phongo_readpreference_get_debug_info;
 	php_phongo_handler_readpreference.get_properties = php_phongo_readpreference_get_properties;
 	php_phongo_handler_readpreference.free_obj       = php_phongo_readpreference_free_object;
 	php_phongo_handler_readpreference.offset         = XtOffsetOf(php_phongo_readpreference_t, std);
-
-	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("RP_PRIMARY"), MONGOC_READ_PRIMARY);
-	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("RP_PRIMARY_PREFERRED"), MONGOC_READ_PRIMARY_PREFERRED);
-	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("RP_SECONDARY"), MONGOC_READ_SECONDARY);
-	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("RP_SECONDARY_PREFERRED"), MONGOC_READ_SECONDARY_PREFERRED);
-	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("RP_NEAREST"), MONGOC_READ_NEAREST);
-	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("NO_MAX_STALENESS"), MONGOC_NO_MAX_STALENESS);
-	zend_declare_class_constant_long(php_phongo_readpreference_ce, ZEND_STRL("SMALLEST_MAX_STALENESS_SECONDS"), MONGOC_SMALLEST_MAX_STALENESS_SECONDS);
-
-	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("PRIMARY"), PHONGO_READ_PRIMARY);
-	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("PRIMARY_PREFERRED"), PHONGO_READ_PRIMARY_PREFERRED);
-	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("SECONDARY"), PHONGO_READ_SECONDARY);
-	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("SECONDARY_PREFERRED"), PHONGO_READ_SECONDARY_PREFERRED);
-	zend_declare_class_constant_string(php_phongo_readpreference_ce, ZEND_STRL("NEAREST"), PHONGO_READ_NEAREST);
 } /* }}} */
 
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs) /* {{{ */

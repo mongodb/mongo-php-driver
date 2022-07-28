@@ -27,21 +27,15 @@
 #include "MongoDB/ReadPreference.h"
 #include "MongoDB/ServerDescription.h"
 #include "MongoDB/TopologyDescription.h"
+#include "TopologyDescription_arginfo.h"
 
 zend_class_entry* php_phongo_topologydescription_ce;
 
-/* Note: these constants are derived from _mongoc_topology_description_type,
- * since mongoc_topology_description_t is private. */
-#define PHONGO_TOPOLOGY_UNKNOWN "Unknown"
-#define PHONGO_TOPOLOGY_SINGLE "Single"
-#define PHONGO_TOPOLOGY_SHARDED "Sharded"
-#define PHONGO_TOPOLOGY_REPLICA_SET_NO_PRIMARY "ReplicaSetNoPrimary"
-#define PHONGO_TOPOLOGY_REPLICA_SET_WITH_PRIMARY "ReplicaSetWithPrimary"
-#define PHONGO_TOPOLOGY_LOAD_BALANCED "LoadBalanced"
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_TopologyDescription)
 
 /* {{{ proto array MongoDB\Driver\TopologyDescription::getServers()
    Returns an array of ServerDescription objects for all known servers in the topology */
-static PHP_METHOD(TopologyDescription, getServers)
+static PHP_METHOD(MongoDB_Driver_TopologyDescription, getServers)
 {
 	php_phongo_topologydescription_t* intern;
 	mongoc_server_description_t**     sds;
@@ -66,7 +60,7 @@ static PHP_METHOD(TopologyDescription, getServers)
 
 /* {{{ proto boolean MongoDB\Driver\TopologyDescription::hasReadableServer([MongoDB\Driver\ReadPreference $readPreference])
     Returns whether the topology has a readable server available */
-static PHP_METHOD(TopologyDescription, hasReadableServer)
+static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasReadableServer)
 {
 	php_phongo_topologydescription_t* intern;
 	const mongoc_read_prefs_t*        read_preference   = NULL;
@@ -88,7 +82,7 @@ static PHP_METHOD(TopologyDescription, hasReadableServer)
 
 /* {{{ proto boolean MongoDB\Driver\TopologyDescription::hasWritableServer()
     Returns whether the topology has a writable server available */
-static PHP_METHOD(TopologyDescription, hasWritableServer)
+static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasWritableServer)
 {
 	php_phongo_topologydescription_t* intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
 
@@ -99,7 +93,7 @@ static PHP_METHOD(TopologyDescription, hasWritableServer)
 
 /* {{{ proto string MongoDB\Driver\TopologyDescription::getType()
     Returns the topology type */
-static PHP_METHOD(TopologyDescription, getType)
+static PHP_METHOD(MongoDB_Driver_TopologyDescription, getType)
 {
 	php_phongo_topologydescription_t* intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
 
@@ -107,26 +101,6 @@ static PHP_METHOD(TopologyDescription, getType)
 
 	RETVAL_STRING(mongoc_topology_description_type(intern->topology_description));
 } /* }}} */
-
-/* {{{ MongoDB\Driver\TopologyDescription function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_INFO_EX(ai_TopologyDescription_hasReadableServer, 0, 0, 0)
-	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_TopologyDescription_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_topologydescription_me[] = {
-	PHP_ME(TopologyDescription, getServers, ai_TopologyDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(TopologyDescription, hasReadableServer, ai_TopologyDescription_hasReadableServer, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(TopologyDescription, hasWritableServer, ai_TopologyDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(TopologyDescription, getType, ai_TopologyDescription_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_TopologyDescription_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
 
 /* {{{ MongoDB\Driver\TopologyDescription object handlers */
 static zend_object_handlers php_phongo_handler_topologydescription;
@@ -213,12 +187,8 @@ static HashTable* php_phongo_topologydescription_get_properties(phongo_compat_ob
 
 void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "TopologyDescription", php_phongo_topologydescription_me);
-	php_phongo_topologydescription_ce                = zend_register_internal_class(&ce);
+	php_phongo_topologydescription_ce                = register_class_MongoDB_Driver_TopologyDescription();
 	php_phongo_topologydescription_ce->create_object = php_phongo_topologydescription_create_object;
-	PHONGO_CE_FINAL(php_phongo_topologydescription_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_topologydescription_ce);
 
 	memcpy(&php_phongo_handler_topologydescription, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
@@ -226,13 +196,6 @@ void php_phongo_topologydescription_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_topologydescription.get_properties = php_phongo_topologydescription_get_properties;
 	php_phongo_handler_topologydescription.free_obj       = php_phongo_topologydescription_free_object;
 	php_phongo_handler_topologydescription.offset         = XtOffsetOf(php_phongo_topologydescription_t, std);
-
-	zend_declare_class_constant_string(php_phongo_topologydescription_ce, ZEND_STRL("TYPE_UNKNOWN"), PHONGO_TOPOLOGY_UNKNOWN);
-	zend_declare_class_constant_string(php_phongo_topologydescription_ce, ZEND_STRL("TYPE_SINGLE"), PHONGO_TOPOLOGY_SINGLE);
-	zend_declare_class_constant_string(php_phongo_topologydescription_ce, ZEND_STRL("TYPE_SHARDED"), PHONGO_TOPOLOGY_SHARDED);
-	zend_declare_class_constant_string(php_phongo_topologydescription_ce, ZEND_STRL("TYPE_REPLICA_SET_NO_PRIMARY"), PHONGO_TOPOLOGY_REPLICA_SET_NO_PRIMARY);
-	zend_declare_class_constant_string(php_phongo_topologydescription_ce, ZEND_STRL("TYPE_REPLICA_SET_WITH_PRIMARY"), PHONGO_TOPOLOGY_REPLICA_SET_WITH_PRIMARY);
-	zend_declare_class_constant_string(php_phongo_topologydescription_ce, ZEND_STRL("TYPE_LOAD_BALANCED"), PHONGO_TOPOLOGY_LOAD_BALANCED);
 } /* }}} */
 
 void phongo_topologydescription_init(zval* return_value, mongoc_topology_description_t* topology_description) /* {{{ */

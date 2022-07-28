@@ -23,12 +23,16 @@
 #include "phongo_error.h"
 
 #include "MongoDB/WriteConcernError.h"
+#include "WriteConcernError_arginfo.h"
 
 zend_class_entry* php_phongo_writeconcernerror_ce;
 
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteConcernError)
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_WriteConcernError)
+
 /* {{{ proto integer MongoDB\Driver\WriteConcernError::getCode()
    Returns the MongoDB error code */
-static PHP_METHOD(WriteConcernError, getCode)
+static PHP_METHOD(MongoDB_Driver_WriteConcernError, getCode)
 {
 	php_phongo_writeconcernerror_t* intern;
 
@@ -41,7 +45,7 @@ static PHP_METHOD(WriteConcernError, getCode)
 
 /* {{{ proto object|null MongoDB\Driver\WriteConcernError::getInfo()
    Returns additional metadata for the error */
-static PHP_METHOD(WriteConcernError, getInfo)
+static PHP_METHOD(MongoDB_Driver_WriteConcernError, getInfo)
 {
 	php_phongo_writeconcernerror_t* intern;
 
@@ -56,7 +60,7 @@ static PHP_METHOD(WriteConcernError, getInfo)
 
 /* {{{ proto string MongoDB\Driver\WriteConcernError::getMessage()
    Returns the actual error message from the server */
-static PHP_METHOD(WriteConcernError, getMessage)
+static PHP_METHOD(MongoDB_Driver_WriteConcernError, getMessage)
 {
 	php_phongo_writeconcernerror_t* intern;
 
@@ -66,22 +70,6 @@ static PHP_METHOD(WriteConcernError, getMessage)
 
 	RETURN_STRING(intern->message);
 } /* }}} */
-
-/* {{{ MongoDB\Driver\WriteConcernError function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcernError_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_writeconcernerror_me[] = {
-	/* clang-format off */
-	PHP_ME(WriteConcernError, getCode, ai_WriteConcernError_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(WriteConcernError, getInfo, ai_WriteConcernError_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(WriteConcernError, getMessage, ai_WriteConcernError_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_WriteConcernError_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_WriteConcernError_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
 
 /* {{{ MongoDB\Driver\WriteConcernError object handlers */
 static zend_object_handlers php_phongo_handler_writeconcernerror;
@@ -137,12 +125,8 @@ static HashTable* php_phongo_writeconcernerror_get_debug_info(phongo_compat_obje
 
 void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcernError", php_phongo_writeconcernerror_me);
-	php_phongo_writeconcernerror_ce                = zend_register_internal_class(&ce);
+	php_phongo_writeconcernerror_ce                = register_class_MongoDB_Driver_WriteConcernError();
 	php_phongo_writeconcernerror_ce->create_object = php_phongo_writeconcernerror_create_object;
-	PHONGO_CE_FINAL(php_phongo_writeconcernerror_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_writeconcernerror_ce);
 
 	memcpy(&php_phongo_handler_writeconcernerror, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

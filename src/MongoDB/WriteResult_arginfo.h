@@ -1,0 +1,75 @@
+/* This is a generated file, edit the .stub.php file instead.
+ * Stub hash: b64ce8c4020c5ee5c9384229008d0f29b9637a82 */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult___construct, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult_getInsertedCount, 0, 0, IS_LONG, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_MongoDB_Driver_WriteResult_getMatchedCount arginfo_class_MongoDB_Driver_WriteResult_getInsertedCount
+
+#define arginfo_class_MongoDB_Driver_WriteResult_getModifiedCount arginfo_class_MongoDB_Driver_WriteResult_getInsertedCount
+
+#define arginfo_class_MongoDB_Driver_WriteResult_getDeletedCount arginfo_class_MongoDB_Driver_WriteResult_getInsertedCount
+
+#define arginfo_class_MongoDB_Driver_WriteResult_getUpsertedCount arginfo_class_MongoDB_Driver_WriteResult_getInsertedCount
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult_getServer, 0, 0, MongoDB\\Driver\\Server, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult_getUpsertedIds, 0, 0, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult_getWriteConcernError, 0, 0, MongoDB\\Driver\\WriteConcernError, 1)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_MongoDB_Driver_WriteResult_getWriteErrors arginfo_class_MongoDB_Driver_WriteResult_getUpsertedIds
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult_isAcknowledged, 0, 0, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult___wakeup, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+
+static ZEND_METHOD(MongoDB_Driver_WriteResult, __construct);
+static ZEND_METHOD(MongoDB_Driver_WriteResult, getInsertedCount);
+static ZEND_METHOD(MongoDB_Driver_WriteResult, getMatchedCount);
+static ZEND_METHOD(MongoDB_Driver_WriteResult, getModifiedCount);
+static ZEND_METHOD(MongoDB_Driver_WriteResult, getDeletedCount);
+static ZEND_METHOD(MongoDB_Driver_WriteResult, getUpsertedCount);
+static ZEND_METHOD(MongoDB_Driver_WriteResult, getServer);
+static ZEND_METHOD(MongoDB_Driver_WriteResult, getUpsertedIds);
+static ZEND_METHOD(MongoDB_Driver_WriteResult, getWriteConcernError);
+static ZEND_METHOD(MongoDB_Driver_WriteResult, getWriteErrors);
+static ZEND_METHOD(MongoDB_Driver_WriteResult, isAcknowledged);
+static ZEND_METHOD(MongoDB_Driver_WriteResult, __wakeup);
+
+
+static const zend_function_entry class_MongoDB_Driver_WriteResult_methods[] = {
+	ZEND_ME(MongoDB_Driver_WriteResult, __construct, arginfo_class_MongoDB_Driver_WriteResult___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_WriteResult, getInsertedCount, arginfo_class_MongoDB_Driver_WriteResult_getInsertedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_WriteResult, getMatchedCount, arginfo_class_MongoDB_Driver_WriteResult_getMatchedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_WriteResult, getModifiedCount, arginfo_class_MongoDB_Driver_WriteResult_getModifiedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_WriteResult, getDeletedCount, arginfo_class_MongoDB_Driver_WriteResult_getDeletedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_WriteResult, getUpsertedCount, arginfo_class_MongoDB_Driver_WriteResult_getUpsertedCount, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_WriteResult, getServer, arginfo_class_MongoDB_Driver_WriteResult_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_WriteResult, getUpsertedIds, arginfo_class_MongoDB_Driver_WriteResult_getUpsertedIds, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_WriteResult, getWriteConcernError, arginfo_class_MongoDB_Driver_WriteResult_getWriteConcernError, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_WriteResult, getWriteErrors, arginfo_class_MongoDB_Driver_WriteResult_getWriteErrors, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_WriteResult, isAcknowledged, arginfo_class_MongoDB_Driver_WriteResult_isAcknowledged, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_WriteResult, __wakeup, arginfo_class_MongoDB_Driver_WriteResult___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_FE_END
+};
+
+static zend_class_entry *register_class_MongoDB_Driver_WriteResult(void)
+{
+	zend_class_entry ce, *class_entry;
+
+	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteResult", class_MongoDB_Driver_WriteResult_methods);
+	class_entry = zend_register_internal_class_ex(&ce, NULL);
+	class_entry->ce_flags |= ZEND_ACC_FINAL;
+
+	return class_entry;
+}

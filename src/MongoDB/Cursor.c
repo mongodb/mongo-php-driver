@@ -25,6 +25,7 @@
 
 #include "MongoDB/Cursor.h"
 #include "MongoDB/Server.h"
+#include "Cursor_arginfo.h"
 
 zend_class_entry* php_phongo_cursor_ce;
 
@@ -54,7 +55,7 @@ static void php_phongo_cursor_free_current(php_phongo_cursor_t* cursor) /* {{{ *
 
 /* {{{ proto void MongoDB\Driver\Cursor::setTypeMap(array $typemap)
    Sets a type map to use for BSON unserialization */
-static PHP_METHOD(Cursor, setTypeMap)
+static PHP_METHOD(MongoDB_Driver_Cursor, setTypeMap)
 {
 	php_phongo_cursor_t*  intern;
 	php_phongo_bson_state state;
@@ -127,7 +128,7 @@ static void php_phongo_cursor_id_new_from_id(zval* object, int64_t cursorid) /* 
 
 /* {{{ proto array MongoDB\Driver\Cursor::toArray()
    Returns an array of all result documents for this cursor */
-static PHP_METHOD(Cursor, toArray)
+static PHP_METHOD(MongoDB_Driver_Cursor, toArray)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -141,7 +142,7 @@ static PHP_METHOD(Cursor, toArray)
 
 /* {{{ proto MongoDB\Driver\CursorId MongoDB\Driver\Cursor::getId()
    Returns the CursorId for this cursor */
-static PHP_METHOD(Cursor, getId)
+static PHP_METHOD(MongoDB_Driver_Cursor, getId)
 {
 	php_phongo_cursor_t* intern;
 
@@ -154,7 +155,7 @@ static PHP_METHOD(Cursor, getId)
 
 /* {{{ proto MongoDB\Driver\Server MongoDB\Driver\Cursor::getServer()
    Returns the Server object to which this cursor is attached */
-static PHP_METHOD(Cursor, getServer)
+static PHP_METHOD(MongoDB_Driver_Cursor, getServer)
 {
 	php_phongo_cursor_t* intern;
 
@@ -167,7 +168,7 @@ static PHP_METHOD(Cursor, getServer)
 
 /* {{{ proto boolean MongoDB\Driver\Cursor::isDead()
    Checks if a cursor is still alive */
-static PHP_METHOD(Cursor, isDead)
+static PHP_METHOD(MongoDB_Driver_Cursor, isDead)
 {
 	php_phongo_cursor_t* intern;
 
@@ -178,7 +179,7 @@ static PHP_METHOD(Cursor, isDead)
 	RETURN_BOOL(!mongoc_cursor_more(intern->cursor));
 } /* }}} */
 
-PHP_METHOD(Cursor, current)
+static PHP_METHOD(MongoDB_Driver_Cursor, current)
 {
 	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
 	zval*                data;
@@ -194,7 +195,7 @@ PHP_METHOD(Cursor, current)
 	}
 }
 
-PHP_METHOD(Cursor, key)
+static PHP_METHOD(MongoDB_Driver_Cursor, key)
 {
 	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
 
@@ -207,7 +208,7 @@ PHP_METHOD(Cursor, key)
 	RETURN_LONG(intern->current);
 }
 
-PHP_METHOD(Cursor, next)
+static PHP_METHOD(MongoDB_Driver_Cursor, next)
 {
 	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
 	const bson_t*        doc;
@@ -245,7 +246,7 @@ PHP_METHOD(Cursor, next)
 	php_phongo_cursor_free_session_if_exhausted(intern);
 }
 
-PHP_METHOD(Cursor, valid)
+static PHP_METHOD(MongoDB_Driver_Cursor, valid)
 {
 	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
 
@@ -254,7 +255,7 @@ PHP_METHOD(Cursor, valid)
 	RETURN_BOOL(!Z_ISUNDEF(intern->visitor_data.zchild));
 }
 
-PHP_METHOD(Cursor, rewind)
+static PHP_METHOD(MongoDB_Driver_Cursor, rewind)
 {
 	php_phongo_cursor_t* intern = Z_CURSOR_OBJ_P(getThis());
 	const bson_t*        doc;
@@ -291,49 +292,8 @@ PHP_METHOD(Cursor, rewind)
 	php_phongo_cursor_free_session_if_exhausted(intern);
 }
 
-/* {{{ MongoDB\Driver\Cursor function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Cursor_current, 0, 0, IS_MIXED, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Cursor_key, 0, 0, IS_MIXED, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Cursor_next, 0, 0, IS_VOID, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Cursor_valid, 0, 0, _IS_BOOL, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Cursor_rewind, 0, 0, IS_VOID, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_setTypeMap, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, typemap, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Cursor_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_cursor_me[] = {
-	PHP_ME(Cursor, setTypeMap, ai_Cursor_setTypeMap, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Cursor, toArray, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Cursor, getId, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Cursor, getServer, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Cursor, isDead, ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-
-	PHP_ME(Cursor, current, ai_Cursor_current, ZEND_ACC_PUBLIC)
-	PHP_ME(Cursor, key, ai_Cursor_key, ZEND_ACC_PUBLIC)
-	PHP_ME(Cursor, next, ai_Cursor_next, ZEND_ACC_PUBLIC)
-	PHP_ME(Cursor, valid, ai_Cursor_valid, ZEND_ACC_PUBLIC)
-	PHP_ME(Cursor, rewind, ai_Cursor_rewind, ZEND_ACC_PUBLIC)
-
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Cursor_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Cursor_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Cursor)
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Cursor)
 
 /* {{{ MongoDB\Driver\Cursor object handlers */
 static zend_object_handlers php_phongo_handler_cursor;
@@ -475,16 +435,9 @@ static HashTable* php_phongo_cursor_get_debug_info(phongo_compat_object_handler_
 
 void php_phongo_cursor_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Cursor", php_phongo_cursor_me);
-	php_phongo_cursor_ce                = zend_register_internal_class(&ce);
+	php_phongo_cursor_ce                = register_class_MongoDB_Driver_Cursor(zend_ce_iterator, php_phongo_cursor_interface_ce);
 	php_phongo_cursor_ce->create_object = php_phongo_cursor_create_object;
-	PHONGO_CE_FINAL(php_phongo_cursor_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_cursor_ce);
-
-	zend_class_implements(php_phongo_cursor_ce, 1, zend_ce_iterator);
-	zend_class_implements(php_phongo_cursor_ce, 1, php_phongo_cursor_interface_ce);
 
 	memcpy(&php_phongo_handler_cursor, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_cursor.get_debug_info = php_phongo_cursor_get_debug_info;

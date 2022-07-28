@@ -25,6 +25,7 @@
 #include "php_phongo.h"
 #include "phongo_bson_encode.h"
 #include "phongo_error.h"
+#include "BulkWrite_arginfo.h"
 
 #include "MongoDB/WriteConcern.h"
 
@@ -311,7 +312,7 @@ static bool php_phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zo
 
 /* {{{ proto void MongoDB\Driver\BulkWrite::__construct([array $options = array()])
    Constructs a new BulkWrite */
-static PHP_METHOD(BulkWrite, __construct)
+static PHP_METHOD(MongoDB_Driver_BulkWrite, __construct)
 {
 	php_phongo_bulkwrite_t* intern;
 	zval*                   options = NULL;
@@ -376,7 +377,7 @@ static PHP_METHOD(BulkWrite, __construct)
 
 /* {{{ proto mixed MongoDB\Driver\BulkWrite::insert(array|object $document)
    Adds an insert operation to the BulkWrite */
-static PHP_METHOD(BulkWrite, insert)
+static PHP_METHOD(MongoDB_Driver_BulkWrite, insert)
 {
 	php_phongo_bulkwrite_t* intern;
 	zval*                   zdocument;
@@ -421,7 +422,7 @@ cleanup:
 
 /* {{{ proto void MongoDB\Driver\BulkWrite::update(array|object $query, array|object $newObj[, array $updateOptions = array()])
    Adds an update operation to the BulkWrite */
-static PHP_METHOD(BulkWrite, update)
+static PHP_METHOD(MongoDB_Driver_BulkWrite, update)
 {
 	php_phongo_bulkwrite_t* intern;
 	zval *                  zquery, *zupdate, *zoptions = NULL;
@@ -487,7 +488,7 @@ cleanup:
 
 /* {{{ proto void MongoDB\Driver\BulkWrite::delete(array|object $query[, array $deleteOptions = array()])
    Adds a delete operation to the BulkWrite */
-static PHP_METHOD(BulkWrite, delete)
+static PHP_METHOD(MongoDB_Driver_BulkWrite, delete)
 {
 	php_phongo_bulkwrite_t* intern;
 	zval *                  zquery, *zoptions = NULL;
@@ -533,7 +534,7 @@ cleanup:
 
 /* {{{ proto integer MongoDB\Driver\BulkWrite::count()
    Returns the number of operations that have been added to the BulkWrite */
-static PHP_METHOD(BulkWrite, count)
+static PHP_METHOD(MongoDB_Driver_BulkWrite, count)
 {
 	php_phongo_bulkwrite_t* intern;
 
@@ -544,44 +545,7 @@ static PHP_METHOD(BulkWrite, count)
 	RETURN_LONG(intern->num_ops);
 } /* }}} */
 
-/* {{{ MongoDB\Driver\BulkWrite function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite___construct, 0, 0, 0)
-	ZEND_ARG_ARRAY_INFO(0, options, 1)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_BulkWrite_count, 0, 0, IS_LONG, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite_insert, 0, 0, 1)
-	ZEND_ARG_INFO(0, document)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite_update, 0, 0, 2)
-	ZEND_ARG_INFO(0, query)
-	ZEND_ARG_INFO(0, newObj)
-	ZEND_ARG_ARRAY_INFO(0, updateOptions, 1)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite_delete, 0, 0, 1)
-	ZEND_ARG_INFO(0, query)
-	ZEND_ARG_ARRAY_INFO(0, deleteOptions, 1)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_BulkWrite_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_bulkwrite_me[] = {
-	PHP_ME(BulkWrite, __construct, ai_BulkWrite___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(BulkWrite, insert, ai_BulkWrite_insert, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(BulkWrite, update, ai_BulkWrite_update, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(BulkWrite, delete, ai_BulkWrite_delete, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(BulkWrite, count, ai_BulkWrite_count, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_BulkWrite_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_BulkWrite)
 
 /* {{{ MongoDB\Driver\BulkWrite object handlers */
 static zend_object_handlers php_phongo_handler_bulkwrite;
@@ -707,18 +671,12 @@ done:
 
 void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "BulkWrite", php_phongo_bulkwrite_me);
-	php_phongo_bulkwrite_ce                = zend_register_internal_class(&ce);
+	php_phongo_bulkwrite_ce                = register_class_MongoDB_Driver_BulkWrite(zend_ce_countable);
 	php_phongo_bulkwrite_ce->create_object = php_phongo_bulkwrite_create_object;
-	PHONGO_CE_FINAL(php_phongo_bulkwrite_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_bulkwrite_ce);
 
 	memcpy(&php_phongo_handler_bulkwrite, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_bulkwrite.get_debug_info = php_phongo_bulkwrite_get_debug_info;
 	php_phongo_handler_bulkwrite.free_obj       = php_phongo_bulkwrite_free_object;
 	php_phongo_handler_bulkwrite.offset         = XtOffsetOf(php_phongo_bulkwrite_t, std);
-
-	zend_class_implements(php_phongo_bulkwrite_ce, 1, zend_ce_countable);
 } /* }}} */

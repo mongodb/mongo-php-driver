@@ -24,6 +24,7 @@
 #include "php_phongo.h"
 #include "phongo_bson_encode.h"
 #include "phongo_error.h"
+#include "Command_arginfo.h"
 
 zend_class_entry* php_phongo_command_ce;
 
@@ -98,7 +99,7 @@ static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, 
 
 /* {{{ proto void MongoDB\Driver\Command::__construct(array|object $document[, array $options = array()])
    Constructs a new Command */
-static PHP_METHOD(Command, __construct)
+static PHP_METHOD(MongoDB_Driver_Command, __construct)
 {
 	php_phongo_command_t* intern;
 	zval*                 document;
@@ -115,23 +116,7 @@ static PHP_METHOD(Command, __construct)
 	php_phongo_command_init(intern, document, options);
 } /* }}} */
 
-/* {{{ MongoDB\Driver\Command function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_Command___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, document)
-	ZEND_ARG_ARRAY_INFO(0, options, 1)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Command_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_command_me[] = {
-	/* clang-format off */
-	PHP_ME(Command, __construct, ai_Command___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Command_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Command)
 
 /* {{{ MongoDB\Driver\Command object handlers */
 static zend_object_handlers php_phongo_handler_command;
@@ -190,12 +175,8 @@ done:
 
 void php_phongo_command_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Command", php_phongo_command_me);
-	php_phongo_command_ce                = zend_register_internal_class(&ce);
+	php_phongo_command_ce                = register_class_MongoDB_Driver_Command();
 	php_phongo_command_ce->create_object = php_phongo_command_create_object;
-	PHONGO_CE_FINAL(php_phongo_command_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_command_ce);
 
 	memcpy(&php_phongo_handler_command, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

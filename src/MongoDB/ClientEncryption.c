@@ -28,6 +28,7 @@
 #include "phongo_util.h"
 
 #include "MongoDB/ClientEncryption.h"
+#include "ClientEncryption_arginfo.h"
 
 zend_class_entry* php_phongo_clientencryption_ce;
 
@@ -38,7 +39,7 @@ static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clien
 
 /* {{{ proto void MongoDB\Driver\ClientEncryption::__construct(array $options)
    Constructs a new ClientEncryption */
-static PHP_METHOD(ClientEncryption, __construct)
+static PHP_METHOD(MongoDB_Driver_ClientEncryption, __construct)
 {
 	zval* options;
 
@@ -52,7 +53,7 @@ static PHP_METHOD(ClientEncryption, __construct)
 
 /* {{{ proto MongoDB\BSON\Binary MongoDB\Driver\ClientEncryption::createDataKey(string $kmsProvider[, array $options])
    Creates a new key document and inserts into the key vault collection. */
-static PHP_METHOD(ClientEncryption, createDataKey)
+static PHP_METHOD(MongoDB_Driver_ClientEncryption, createDataKey)
 {
 	char*                          kms_provider     = NULL;
 	size_t                         kms_provider_len = 0;
@@ -72,7 +73,7 @@ static PHP_METHOD(ClientEncryption, createDataKey)
 
 /* {{{ proto MongoDB\BSON\Binary MongoDB\Driver\ClientEncryption::encrypt(mixed $value[, array $options])
    Encrypts a value with a given key and algorithm */
-static PHP_METHOD(ClientEncryption, encrypt)
+static PHP_METHOD(MongoDB_Driver_ClientEncryption, encrypt)
 {
 	zval*                          value   = NULL;
 	zval*                          options = NULL;
@@ -91,7 +92,7 @@ static PHP_METHOD(ClientEncryption, encrypt)
 
 /* {{{ proto mixed MongoDB\Driver\ClientEncryption::decrypt(MongoDB\BSON\BinaryInterface $value)
    Decrypts an encrypted value (BSON binary of subtype 6). Returns the original BSON value */
-static PHP_METHOD(ClientEncryption, decrypt)
+static PHP_METHOD(MongoDB_Driver_ClientEncryption, decrypt)
 {
 	zval*                          ciphertext;
 	php_phongo_clientencryption_t* intern;
@@ -105,38 +106,7 @@ static PHP_METHOD(ClientEncryption, decrypt)
 	phongo_clientencryption_decrypt(intern, ciphertext, return_value);
 } /* }}} */
 
-ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption___construct, 0, 0, 0)
-	ZEND_ARG_ARRAY_INFO(0, options, 1)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption_createDataKey, 0, 0, 1)
-	ZEND_ARG_INFO(0, kmsProvider)
-	ZEND_ARG_ARRAY_INFO(0, options, 1)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption_encrypt, 0, 0, 1)
-	ZEND_ARG_INFO(0, value)
-	ZEND_ARG_ARRAY_INFO(0, options, 1)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption_decrypt, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, keyVaultClient, MongoDB\\BSON\\BinaryInterface, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ClientEncryption_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_clientencryption_me[] = {
-	/* clang-format off */
-	PHP_ME(ClientEncryption, __construct, ai_ClientEncryption___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ClientEncryption, createDataKey, ai_ClientEncryption_createDataKey, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ClientEncryption, encrypt, ai_ClientEncryption_encrypt, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ClientEncryption, decrypt, ai_ClientEncryption_decrypt, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_ClientEncryption_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_ClientEncryption)
 
 /* {{{ MongoDB\Driver\ClientEncryption object handlers */
 static zend_object_handlers php_phongo_handler_clientencryption;
@@ -186,24 +156,14 @@ static HashTable* php_phongo_clientencryption_get_debug_info(phongo_compat_objec
 
 void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ClientEncryption", php_phongo_clientencryption_me);
-	php_phongo_clientencryption_ce                = zend_register_internal_class(&ce);
+	php_phongo_clientencryption_ce                = register_class_MongoDB_Driver_ClientEncryption();
 	php_phongo_clientencryption_ce->create_object = php_phongo_clientencryption_create_object;
-	PHONGO_CE_FINAL(php_phongo_clientencryption_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_clientencryption_ce);
 
 	memcpy(&php_phongo_handler_clientencryption, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_clientencryption.get_debug_info = php_phongo_clientencryption_get_debug_info;
 	php_phongo_handler_clientencryption.free_obj       = php_phongo_clientencryption_free_object;
 	php_phongo_handler_clientencryption.offset         = XtOffsetOf(php_phongo_clientencryption_t, std);
-
-	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC"), MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC);
-	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM"), MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM);
-	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("ALGORITHM_INDEXED"), MONGOC_ENCRYPT_ALGORITHM_INDEXED);
-	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("ALGORITHM_UNINDEXED"), MONGOC_ENCRYPT_ALGORITHM_UNINDEXED);
-	zend_declare_class_constant_string(php_phongo_clientencryption_ce, ZEND_STRL("QUERY_TYPE_EQUALITY"), MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY);
 } /* }}} */
 
 #ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION

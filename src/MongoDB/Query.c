@@ -27,6 +27,7 @@
 #include "phongo_error.h"
 
 #include "MongoDB/ReadConcern.h"
+#include "Query_arginfo.h"
 
 zend_class_entry* php_phongo_query_ce;
 
@@ -387,9 +388,11 @@ static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval
 #undef PHONGO_QUERY_OPT_INT64_DEPRECATED
 #undef PHONGO_QUERY_OPT_STRING
 
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Query)
+
 /* {{{ proto void MongoDB\Driver\Query::__construct(array|object $filter[, array $options = array()])
    Constructs a new Query */
-static PHP_METHOD(Query, __construct)
+static PHP_METHOD(MongoDB_Driver_Query, __construct)
 {
 	php_phongo_query_t* intern;
 	zval*               filter;
@@ -405,24 +408,6 @@ static PHP_METHOD(Query, __construct)
 
 	php_phongo_query_init(intern, filter, options);
 } /* }}} */
-
-/* {{{ MongoDB\Driver\Query function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_Query___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, filter)
-	ZEND_ARG_ARRAY_INFO(0, options, 1)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Query_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_query_me[] = {
-	/* clang-format off */
-	PHP_ME(Query, __construct, ai_Query___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Query_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
 
 /* {{{ MongoDB\Driver\Query object handlers */
 static zend_object_handlers php_phongo_handler_query;
@@ -513,12 +498,8 @@ done:
 
 void php_phongo_query_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Query", php_phongo_query_me);
-	php_phongo_query_ce                = zend_register_internal_class(&ce);
+	php_phongo_query_ce                = register_class_MongoDB_Driver_Query();
 	php_phongo_query_ce->create_object = php_phongo_query_create_object;
-	PHONGO_CE_FINAL(php_phongo_query_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_query_ce);
 
 	memcpy(&php_phongo_handler_query, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

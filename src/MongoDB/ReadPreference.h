@@ -22,6 +22,12 @@
 
 #include <php.h>
 
+#define PHONGO_READ_PRIMARY "primary"
+#define PHONGO_READ_PRIMARY_PREFERRED "primaryPreferred"
+#define PHONGO_READ_SECONDARY "secondary"
+#define PHONGO_READ_SECONDARY_PREFERRED "secondaryPreferred"
+#define PHONGO_READ_NEAREST "nearest"
+
 void phongo_readpreference_init(zval* return_value, const mongoc_read_prefs_t* read_prefs);
 
 const mongoc_read_prefs_t* phongo_read_preference_from_zval(zval* zread_preference);

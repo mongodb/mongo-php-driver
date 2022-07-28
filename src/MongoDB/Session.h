@@ -21,6 +21,12 @@
 
 #include <php.h>
 
+#define PHONGO_TRANSACTION_NONE "none"
+#define PHONGO_TRANSACTION_STARTING "starting"
+#define PHONGO_TRANSACTION_IN_PROGRESS "in_progress"
+#define PHONGO_TRANSACTION_COMMITTED "committed"
+#define PHONGO_TRANSACTION_ABORTED "aborted"
+
 mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* txnOptions);
 
 void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session);
