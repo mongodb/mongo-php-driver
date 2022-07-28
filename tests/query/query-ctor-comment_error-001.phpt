@@ -7,6 +7,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 class Comment implements MongoDB\BSON\Serializable
 {
+    #[\ReturnTypeWillChange]
     public function bsonSerialize(): array
     {
         throw new Exception('php_phongo_zval_to_bson_value fails');

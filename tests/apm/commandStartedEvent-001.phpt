@@ -12,7 +12,7 @@ $m = create_test_manager();
 
 class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
-    public function commandStarted( \MongoDB\Driver\Monitoring\CommandStartedEvent $event )
+    public function commandStarted( \MongoDB\Driver\Monitoring\CommandStartedEvent $event ): void
     {
         echo "started: ", $event->getCommandName(), "\n";
         echo "- getCommand() returns an object: ", is_object( $event->getCommand() ) ? 'yes' : 'no', "\n";
@@ -27,11 +27,11 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
         echo "- getRequestId() returns a string: ", is_string( $event->getRequestId() ) ? 'yes' : 'no', "\n";
     }
 
-    public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event )
+    public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event ): void
     {
     }
 
-    public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event )
+    public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event ): void
     {
     }
 }

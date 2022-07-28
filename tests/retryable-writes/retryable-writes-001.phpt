@@ -11,7 +11,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 class TransactionIdObserver implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
-    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event)
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
         $command = $event->getCommand();
         $hasTransactionId = isset($command->lsid) && isset($command->txnNumber);
@@ -19,11 +19,11 @@ class TransactionIdObserver implements MongoDB\Driver\Monitoring\CommandSubscrib
         printf("%s command includes transaction ID: %s\n", $event->getCommandName(), $hasTransactionId ? 'yes' : 'no');
     }
 
-    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void
     {
     }
 
-    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event)
+    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event): void
     {
     }
 }

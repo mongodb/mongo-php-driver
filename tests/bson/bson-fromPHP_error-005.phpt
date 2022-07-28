@@ -9,6 +9,7 @@ class MyRecursiveSerializable implements MongoDB\BSON\Serializable
 {
     public $child = 1;
 
+    #[\ReturnTypeWillChange]
     public function bsonSerialize()
     {
         return $this;
@@ -17,6 +18,7 @@ class MyRecursiveSerializable implements MongoDB\BSON\Serializable
 
 class MyIndirectlyRecursiveSerializable extends MyRecursiveSerializable
 {
+    #[\ReturnTypeWillChange]
     public function bsonSerialize()
     {
         return ['parent' => $this];

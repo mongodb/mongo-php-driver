@@ -46,7 +46,7 @@ class SessionLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
         $this->manager->executeBulkWrite($this->logNamespace, $bulk);
     }
 
-    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event)
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
         $command = $event->getCommand();
 
@@ -60,11 +60,11 @@ class SessionLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
         printf("%s executes %s\n", $process, $commandName);
     }
 
-    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void
     {
     }
 
-    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event)
+    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event): void
     {
     }
 }

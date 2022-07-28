@@ -10,14 +10,14 @@ require_once __DIR__ . "/../utils/basic.inc";
  
 class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 { 
-    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event)
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
         printf("Observed commandStarted for %s\n", $event->getCommandName());
     }
  
-    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event) {}
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void {}
  
-    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event) {}
+    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event): void {}
 }
  
 $manager = create_test_manager(URI, [], ['disableClientPersistence' => true]);

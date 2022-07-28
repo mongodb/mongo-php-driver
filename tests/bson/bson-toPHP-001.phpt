@@ -11,7 +11,7 @@ abstract class MyAbstractDocument implements MongoDB\BSON\Persistable
 
 class MyDocument implements MongoDB\BSON\Unserializable
 {
-    public function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
         $this->unserialized = true;
     }

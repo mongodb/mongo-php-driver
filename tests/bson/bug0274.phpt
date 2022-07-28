@@ -7,6 +7,7 @@ require_once __DIR__ . '/../utils/basic.inc';
 
 class AssociativeArray implements MongoDB\BSON\Serializable
 {
+    #[\ReturnTypeWillChange]
     public function bsonSerialize()
     {
         return array("random" => "class", "data");
@@ -15,6 +16,7 @@ class AssociativeArray implements MongoDB\BSON\Serializable
 
 class NumericArray implements MongoDB\BSON\Serializable
 {
+    #[\ReturnTypeWillChange]
     public function bsonSerialize()
     {
         return array(1, 2, 3);

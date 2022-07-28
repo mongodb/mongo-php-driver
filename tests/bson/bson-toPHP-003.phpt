@@ -11,7 +11,7 @@ class MyClass
 
 class YourClass implements MongoDB\BSON\Unserializable
 {
-    function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
         foreach ($data as $key => $value) {
             $this->$key = $value;
@@ -22,13 +22,14 @@ class YourClass implements MongoDB\BSON\Unserializable
 
 class OurClass implements MongoDB\BSON\Persistable
 {
-    function bsonSerialize()
+    #[\ReturnTypeWillChange]
+    public function bsonSerialize()
     {
         // Not tested with this test, so return empty array
         return array();
     }
 
-    function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
         foreach ($data as $key => $value) {
             $this->$key = $value;

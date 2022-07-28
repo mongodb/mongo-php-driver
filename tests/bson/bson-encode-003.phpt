@@ -6,23 +6,25 @@ BSON encoding: Encoding objects into BSON representation
 require_once __DIR__ . '/../utils/basic.inc';
 
 class MyClass implements MongoDB\BSON\Persistable {
-    function bsonSerialize() {
+    #[\ReturnTypeWillChange]
+    public function bsonSerialize() {
         return array(
             "random" => "class",
             "data"
         );
     }
-    function bsonUnserialize(array $data) {
+    public function bsonUnserialize(array $data): void {
         $this->props = $data;
     }
 }
 class MyClass2 implements MongoDB\BSON\Persistable {
-    function bsonSerialize() {
+    #[\ReturnTypeWillChange]
+    public function bsonSerialize() {
         return array(
             1, 2, 3,
         );
     }
-    function bsonUnserialize(array $data) {
+    public function bsonUnserialize(array $data): void {
         $this->props = $data;
     }
 }

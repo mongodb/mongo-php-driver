@@ -19,6 +19,7 @@ class MyClass implements MongoDB\BSON\Persistable
         $this->child = $child;
     }
 
+    #[\ReturnTypeWillChange]
     public function bsonSerialize()
     {
         return [
@@ -27,7 +28,7 @@ class MyClass implements MongoDB\BSON\Persistable
         ];
     }
 
-    public function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
         $this->id = $data['_id'];
         $this->child = $data['child'];

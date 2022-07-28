@@ -7,7 +7,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
 {
-    function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
         parent::__construct($data, ArrayObject::ARRAY_AS_PROPS);
     }
@@ -15,7 +15,7 @@ class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
 
 class MyWildcardArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
 {
-    function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
         parent::__construct($data, ArrayObject::ARRAY_AS_PROPS);
     }

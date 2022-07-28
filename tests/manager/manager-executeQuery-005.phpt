@@ -10,7 +10,7 @@ MongoDB\Driver\Manager::executeQuery() with filter and projection
 require_once __DIR__ . "/../utils/basic.inc";
 
 class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable {
-    function bsonUnserialize(array $data) {
+    public function bsonUnserialize(array $data): void {
         parent::__construct($data);
     }
 }

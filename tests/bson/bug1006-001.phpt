@@ -17,12 +17,13 @@ class MyClass implements MongoDB\BSON\Persistable
         ];
     }
 
-    function bsonSerialize()
+    #[\ReturnTypeWillChange]
+    public function bsonSerialize()
     {
         return $this->data;
     }
 
-    function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
     }
 }

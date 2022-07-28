@@ -11,9 +11,9 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
     private $isObserved = false;
 
-    public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event) {}
+    public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event): void {}
 
-    public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event)
+    public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event): void
     {
         // Ignore multiple events for the purpose of this test
         if ($this->isObserved) {
@@ -29,19 +29,19 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
         var_dump($event);
     }
 
-    public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event) {}
+    public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event): void {}
 
-    public function serverHeartbeatStarted(MongoDB\Driver\Monitoring\serverHeartbeatStartedEvent $event) {}
+    public function serverHeartbeatStarted(MongoDB\Driver\Monitoring\serverHeartbeatStartedEvent $event): void {}
 
-    public function serverHeartbeatSucceeded(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent $event) {}
+    public function serverHeartbeatSucceeded(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent $event): void {}
 
-    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event) {}
+    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event): void {}
     
-    public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event) {}
+    public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event): void {}
 
-    public function topologyClosed(MongoDB\Driver\Monitoring\TopologyClosedEvent $event) {}
+    public function topologyClosed(MongoDB\Driver\Monitoring\TopologyClosedEvent $event): void {}
 
-    public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event) {}
+    public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event): void {}
 }
 
 /* Note: load balanced topologies will always emit ServerClosedEvent before

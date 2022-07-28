@@ -19,7 +19,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
-    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event)
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
         if ($event->getCommandName() !== 'aggregate' && $event->getCommandName() !== 'getMore') {
             return;
@@ -28,7 +28,7 @@ class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
         printf("Executing command: %s\n", $event->getCommandName());
     }
 
-    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void
     {
         if ($event->getCommandName() !== 'aggregate' && $event->getCommandName() !== 'getMore') {
             return;
@@ -37,7 +37,7 @@ class CommandLogger implements MongoDB\Driver\Monitoring\CommandSubscriber
         printf("Executing command took %0.6f seconds\n", $event->getDurationMicros() / 1000000);
     }
 
-    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event)
+    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event): void
     {
     }
 }

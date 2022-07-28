@@ -41,7 +41,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
         MongoDB\Driver\Monitoring\removeSubscriber($this);
     }
 
-    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event)
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
         if ($event->getCommandName() === 'insert') {
             $command = $event->getCommand();
@@ -53,11 +53,11 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
         }
     }
 
-    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void
     {
     }
 
-    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event)
+    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event): void
     {
     }
 }
