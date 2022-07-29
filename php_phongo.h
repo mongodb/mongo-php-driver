@@ -112,12 +112,14 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 #define PHONGO_DISABLED_CONSTRUCTOR(classname)                                         \
 	PHP_METHOD(classname, __construct)                                                 \
 	{                                                                                  \
+		PHONGO_PARSE_PARAMETERS_NONE();                                                \
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Accessing private constructor"); \
 	}
 
 #define PHONGO_DISABLED_WAKEUP(classname)                                                             \
 	PHP_METHOD(classname, __wakeup)                                                                   \
 	{                                                                                                 \
+		PHONGO_PARSE_PARAMETERS_NONE();                                                               \
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "MongoDB\\Driver objects cannot be serialized"); \
 	}
 
