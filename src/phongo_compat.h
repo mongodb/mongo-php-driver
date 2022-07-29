@@ -290,6 +290,12 @@ static inline zend_bool zend_ini_parse_bool(zend_string* str)
 	ZEND_ARG_INFO(pass_by_ref, name)
 #endif
 
+/* ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE was introduced in PHP 8.0. */
+#ifndef ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE
+#define ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(pass_by_ref, name, classname, allow_null, default_value) \
+	ZEND_ARG_OBJ_INFO(pass_by_ref, name, classname, allow_null)
+#endif
+
 /* The ZEND_BEGIN_ARG_WITH_TENTATIVE_* set of macros was introduced in PHP 8.1 */
 #ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX
 #define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(name, return_reference, required_num_args, type, allow_null) \
