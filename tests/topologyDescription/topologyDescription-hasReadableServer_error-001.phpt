@@ -44,7 +44,6 @@ class TopologyDescriptionProvider implements MongoDB\Driver\Monitoring\SDAMSubsc
 }
 
 $tests = [
-    null,
     1,
     [],
 ];
@@ -62,7 +61,6 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-OK: Got TypeError
 OK: Got TypeError
 OK: Got TypeError
 ===DONE===

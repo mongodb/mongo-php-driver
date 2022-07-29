@@ -15,15 +15,15 @@ $tests = [
 foreach ($tests as $test) {
     echo throws(function() use ($test) {
         new MongoDB\Driver\ReadConcern($test);
-    }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
+    }, TypeError::class), "\n";
 }
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-%SMongoDB\Driver\ReadConcern::__construct()%sstring, array given
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-%SMongoDB\Driver\ReadConcern::__construct()%sstring, %r(object|stdClass)%r given
+OK: Got TypeError
+%SMongoDB\Driver\ReadConcern::__construct()%sstring or null, array given
+OK: Got TypeError
+%SMongoDB\Driver\ReadConcern::__construct()%sstring or null, %r(object|stdClass)%r given
 ===DONE===
