@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\Int64 can be cloned (PHP < 8.2)
+MongoDB\BSON\Int64 can be cloned (PHP >= 8.2)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '8.2'); ?>
+<?php skip_if_php_version('<', '8.2'); ?>
 <?php if (4 !== PHP_INT_SIZE) { die('skip Only for 32-bit platform'); } ?>
 --FILE--
 <?php

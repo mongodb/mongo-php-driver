@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\Decimal128 can be cloned (PHP < 8.2)
+MongoDB\BSON\Decimal128 can be cloned (PHP >= 8.2)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('>=', '8.2'); ?>
+<?php skip_if_php_version('<', '8.2'); ?>
 <?php if (!class_exists('MongoDB\BSON\Decimal128')) { die('skip MongoDB\BSON\Decimal128 is not available'); } ?>
 --FILE--
 <?php
