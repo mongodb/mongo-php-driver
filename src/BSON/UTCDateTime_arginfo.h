@@ -1,9 +1,9 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: dede7bbc4a90386a2fe9b891d1c3c7f1d19d4de9 */
+ * Stub hash: 840ad5e10557cbc8d74bcd4c398581f69fd0b484 */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_UTCDateTime___construct, 0, 0, 0)
-	ZEND_ARG_OBJ_TYPE_MASK(0, milliseconds, DateTime|DateTimeImmutable, MAY_BE_LONG|MAY_BE_STRING|MAY_BE_DOUBLE|MAY_BE_NULL, "null")
+	ZEND_ARG_OBJ_TYPE_MASK(0, milliseconds, DateTimeInterface, MAY_BE_LONG|MAY_BE_STRING|MAY_BE_DOUBLE|MAY_BE_NULL, "null")
 ZEND_END_ARG_INFO()
 #endif
 

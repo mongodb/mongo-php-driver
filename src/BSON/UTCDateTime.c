@@ -126,7 +126,7 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(phongo_compat_objec
 	return props;
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\UTCDateTime::__construct([int|float|string|DateTimeInterface $milliseconds = null])
+/* {{{ proto void MongoDB\BSON\UTCDateTime::__construct([int|float|string|DateTimeInterface|null $milliseconds = null])
    Construct a new BSON UTCDateTime type from either the current time,
    milliseconds since the epoch, or a DateTimeInterface object. Defaults to the
    current time. */
@@ -148,9 +148,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 	}
 
 	if (Z_TYPE_P(milliseconds) == IS_OBJECT) {
-		if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_date_ce()) ||
-			(php_phongo_date_immutable_ce && instanceof_function(Z_OBJCE_P(milliseconds), php_phongo_date_immutable_ce))) {
-
+		if (instanceof_function(Z_OBJCE_P(milliseconds), php_date_get_interface_ce())) {
 			php_phongo_utcdatetime_init_from_date(intern, Z_PHPDATE_P(milliseconds));
 		} else {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected instance of DateTimeInterface, %s given", ZSTR_VAL(Z_OBJCE_P(milliseconds)->name));

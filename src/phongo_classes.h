@@ -20,7 +20,6 @@
 #include "phongo_structs.h"
 
 /* Export zend_class_entry dependencies, which are initialized in MINIT */
-extern zend_class_entry* php_phongo_date_immutable_ce;
 extern zend_class_entry* php_phongo_json_serializable_ce;
 
 static inline php_phongo_bulkwrite_t* php_bulkwrite_fetch_object(zend_object* obj)
