@@ -17,7 +17,7 @@ echo var_export($server->getServerDescription(), true), "\n";
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-MongoDB\Driver\ServerDescription::__set_state(array(
+%r\\?%rMongoDB\Driver\ServerDescription::__set_state(array(
    'host' => '%s',
    'port' => %d,
    'type' => '%r(Standalone|Mongos|RSPrimary|LoadBalancer)%r',

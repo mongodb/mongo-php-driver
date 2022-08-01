@@ -25,25 +25,25 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-MongoDB\Driver\ReadPreference::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'primary',
 ))
-MongoDB\Driver\ReadPreference::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'primaryPreferred',
 ))
-MongoDB\Driver\ReadPreference::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondary',
 ))
-MongoDB\Driver\ReadPreference::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondaryPreferred',
 ))
-MongoDB\Driver\ReadPreference::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'nearest',
 ))
-MongoDB\Driver\ReadPreference::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'primary',
 ))
-MongoDB\Driver\ReadPreference::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondary',
    'tags' => 
   array (
@@ -53,7 +53,7 @@ MongoDB\Driver\ReadPreference::__set_state(array(
     %S),
   ),
 ))
-MongoDB\Driver\ReadPreference::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondary',
    'tags' => 
   array (
@@ -71,7 +71,7 @@ MongoDB\Driver\ReadPreference::__set_state(array(
     %S),
   ),
 ))
-MongoDB\Driver\ReadPreference::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondary',
    'maxStalenessSeconds' => 1000,
 ))

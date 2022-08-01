@@ -22,31 +22,31 @@ foreach ($tests as $fields) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-MongoDB\Driver\ServerApi::__set_state(array(
+%r\\?%rMongoDB\Driver\ServerApi::__set_state(array(
    'version' => '1',
    'strict' => NULL,
    'deprecationErrors' => NULL,
 ))
 
-MongoDB\Driver\ServerApi::__set_state(array(
+%r\\?%rMongoDB\Driver\ServerApi::__set_state(array(
    'version' => '1',
    'strict' => true,
    'deprecationErrors' => NULL,
 ))
 
-MongoDB\Driver\ServerApi::__set_state(array(
+%r\\?%rMongoDB\Driver\ServerApi::__set_state(array(
    'version' => '1',
    'strict' => NULL,
    'deprecationErrors' => true,
 ))
 
-MongoDB\Driver\ServerApi::__set_state(array(
+%r\\?%rMongoDB\Driver\ServerApi::__set_state(array(
    'version' => '1',
    'strict' => false,
    'deprecationErrors' => false,
 ))
 
-MongoDB\Driver\ServerApi::__set_state(array(
+%r\\?%rMongoDB\Driver\ServerApi::__set_state(array(
    'version' => '1',
    'strict' => NULL,
    'deprecationErrors' => NULL,

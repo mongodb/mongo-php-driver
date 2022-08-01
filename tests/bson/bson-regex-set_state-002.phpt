@@ -13,7 +13,7 @@ echo "\n";
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-MongoDB\BSON\Regex::__set_state(array(
+%r\\?%rMongoDB\BSON\Regex::__set_state(array(
 %w'pattern' => 'regexp',
 %w'flags' => 'ilmsux',
 ))

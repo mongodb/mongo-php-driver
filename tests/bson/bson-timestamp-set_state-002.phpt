@@ -24,12 +24,12 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-MongoDB\BSON\Timestamp::__set_state(array(
+%r\\?%rMongoDB\BSON\Timestamp::__set_state(array(
 %w'increment' => '4294967295',
 %w'timestamp' => '0',
 ))
 
-MongoDB\BSON\Timestamp::__set_state(array(
+%r\\?%rMongoDB\BSON\Timestamp::__set_state(array(
 %w'increment' => '0',
 %w'timestamp' => '4294967295',
 ))
