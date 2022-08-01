@@ -1,0 +1,45 @@
+name: "Check generated arginfo files"
+
+on:
+  pull_request:
+    branches:
+      - "v*.*"
+      - "master"
+      - "feature/*"
+  push:
+    branches:
+      - "v*.*"
+      - "master"
+      - "feature/*"
+
+jobs:
+  check-arginfo:
+    name: "Check generated arginfo files"
+    runs-on: "ubuntu-20.04"
+
+    strategy:
+      matrix:
+        php-version:
+          - "8.2"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          submodules: true
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          extensions: ":mongodb"
+          tools: "phpize"
+
+      - name: "Run phpize"
+        run: phpize
+
+      - name: "Rebuild arginfo files from stubs"
+        run: "php ./build/gen_stub.php"
+
+      - name: "Check arginfo file diff"
+        run: git add . -N && git diff --exit-code
