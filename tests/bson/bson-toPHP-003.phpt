@@ -9,6 +9,7 @@ class MyClass
 {
 }
 
+#[\AllowDynamicProperties]
 class YourClass implements MongoDB\BSON\Unserializable
 {
     public function bsonUnserialize(array $data): void
@@ -20,6 +21,7 @@ class YourClass implements MongoDB\BSON\Unserializable
     }
 }
 
+#[\AllowDynamicProperties]
 class OurClass implements MongoDB\BSON\Persistable
 {
     #[\ReturnTypeWillChange]
