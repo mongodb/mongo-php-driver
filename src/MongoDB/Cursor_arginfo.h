@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: b94c509926df512855559d2c0ab4263b9d7dec63 */
+ * Stub hash: 2cbb89ebb247f650b26458f40f3cdc196cff386b */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Cursor___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -40,6 +40,8 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_Cursor_valid arginfo_class_MongoDB_Driver_Cursor_isDead
 
+#define arginfo_class_MongoDB_Driver_Cursor___wakeup arginfo_class_MongoDB_Driver_Cursor_next
+
 
 static ZEND_METHOD(MongoDB_Driver_Cursor, __construct);
 #if PHP_VERSION_ID >= 80000
@@ -57,6 +59,7 @@ static ZEND_METHOD(MongoDB_Driver_Cursor, rewind);
 static ZEND_METHOD(MongoDB_Driver_Cursor, setTypeMap);
 static ZEND_METHOD(MongoDB_Driver_Cursor, toArray);
 static ZEND_METHOD(MongoDB_Driver_Cursor, valid);
+static ZEND_METHOD(MongoDB_Driver_Cursor, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_Cursor_methods[] = {
@@ -76,6 +79,7 @@ static const zend_function_entry class_MongoDB_Driver_Cursor_methods[] = {
 	ZEND_ME(MongoDB_Driver_Cursor, setTypeMap, arginfo_class_MongoDB_Driver_Cursor_setTypeMap, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Cursor, toArray, arginfo_class_MongoDB_Driver_Cursor_toArray, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Cursor, valid, arginfo_class_MongoDB_Driver_Cursor_valid, ZEND_ACC_PUBLIC)
+	ZEND_ME(MongoDB_Driver_Cursor, __wakeup, arginfo_class_MongoDB_Driver_Cursor___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

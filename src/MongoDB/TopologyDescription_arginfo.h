@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 7c61addf17e525496c8755d437b4db423f6be59d */
+ * Stub hash: 6981655ece74ddf6f2cac7e5704c5f764bb0a2ef */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_TopologyDescription___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -17,12 +17,16 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_TopologyDescription_hasWritableServer, 0, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_TopologyDescription___wakeup, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
 
 static ZEND_METHOD(MongoDB_Driver_TopologyDescription, __construct);
 static ZEND_METHOD(MongoDB_Driver_TopologyDescription, getServers);
 static ZEND_METHOD(MongoDB_Driver_TopologyDescription, getType);
 static ZEND_METHOD(MongoDB_Driver_TopologyDescription, hasReadableServer);
 static ZEND_METHOD(MongoDB_Driver_TopologyDescription, hasWritableServer);
+static ZEND_METHOD(MongoDB_Driver_TopologyDescription, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_TopologyDescription_methods[] = {
@@ -31,6 +35,7 @@ static const zend_function_entry class_MongoDB_Driver_TopologyDescription_method
 	ZEND_ME(MongoDB_Driver_TopologyDescription, getType, arginfo_class_MongoDB_Driver_TopologyDescription_getType, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_TopologyDescription, hasReadableServer, arginfo_class_MongoDB_Driver_TopologyDescription_hasReadableServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_TopologyDescription, hasWritableServer, arginfo_class_MongoDB_Driver_TopologyDescription_hasWritableServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_TopologyDescription, __wakeup, arginfo_class_MongoDB_Driver_TopologyDescription___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

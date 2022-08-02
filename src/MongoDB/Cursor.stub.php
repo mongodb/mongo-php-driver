@@ -35,4 +35,6 @@ final class Cursor implements \Iterator, CursorInterface
     final public function toArray(): array {}
 
     public function valid(): bool {}
+
+    final public function __wakeup(): void {}
 }

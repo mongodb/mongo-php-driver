@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 85cce1e6824dec5cb0d659b841d893a849948eeb */
+ * Stub hash: f08f0c45a9719ff708a03b5470cb6b0822f8f908 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ServerDescription___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -20,6 +20,9 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_ServerDescription_getType arginfo_class_MongoDB_Driver_ServerDescription_getHost
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ServerDescription___wakeup, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
 
 static ZEND_METHOD(MongoDB_Driver_ServerDescription, __construct);
 static ZEND_METHOD(MongoDB_Driver_ServerDescription, getHelloResponse);
@@ -28,6 +31,7 @@ static ZEND_METHOD(MongoDB_Driver_ServerDescription, getLastUpdateTime);
 static ZEND_METHOD(MongoDB_Driver_ServerDescription, getPort);
 static ZEND_METHOD(MongoDB_Driver_ServerDescription, getRoundTripTime);
 static ZEND_METHOD(MongoDB_Driver_ServerDescription, getType);
+static ZEND_METHOD(MongoDB_Driver_ServerDescription, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_ServerDescription_methods[] = {
@@ -38,6 +42,7 @@ static const zend_function_entry class_MongoDB_Driver_ServerDescription_methods[
 	ZEND_ME(MongoDB_Driver_ServerDescription, getPort, arginfo_class_MongoDB_Driver_ServerDescription_getPort, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ServerDescription, getRoundTripTime, arginfo_class_MongoDB_Driver_ServerDescription_getRoundTripTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ServerDescription, getType, arginfo_class_MongoDB_Driver_ServerDescription_getType, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_ServerDescription, __wakeup, arginfo_class_MongoDB_Driver_ServerDescription___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

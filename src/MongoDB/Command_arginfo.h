@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 7d4cd783815b6655add5530cfb6e4b085560687d */
+ * Stub hash: 3902d0f3c6602053c90a7ee4bc97ece0d6534157 */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Command___construct, 0, 0, 1)
@@ -15,6 +15,9 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Command___construct, 0, 0, 1
 ZEND_END_ARG_INFO()
 #endif
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Command___wakeup, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
 
 #if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_Command, __construct);
@@ -22,6 +25,7 @@ static ZEND_METHOD(MongoDB_Driver_Command, __construct);
 #if !(PHP_VERSION_ID >= 80000)
 static ZEND_METHOD(MongoDB_Driver_Command, __construct);
 #endif
+static ZEND_METHOD(MongoDB_Driver_Command, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_Command_methods[] = {
@@ -31,6 +35,7 @@ static const zend_function_entry class_MongoDB_Driver_Command_methods[] = {
 #if !(PHP_VERSION_ID >= 80000)
 	ZEND_ME(MongoDB_Driver_Command, __construct, arginfo_class_MongoDB_Driver_Command___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
+	ZEND_ME(MongoDB_Driver_Command, __wakeup, arginfo_class_MongoDB_Driver_Command___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

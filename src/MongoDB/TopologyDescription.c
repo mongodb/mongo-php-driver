@@ -32,6 +32,7 @@
 zend_class_entry* php_phongo_topologydescription_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_TopologyDescription)
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_TopologyDescription)
 
 /* {{{ proto array MongoDB\Driver\TopologyDescription::getServers()
    Returns an array of ServerDescription objects for all known servers in the topology */

@@ -39,4 +39,6 @@ final class BulkWrite implements \Countable
      */
     public function update($filter, $newObj, array $updateOptions = []): void {}
 #endif
+
+    final public function __wakeup(): void {}
 }

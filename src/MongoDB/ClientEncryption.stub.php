@@ -56,4 +56,6 @@ final class ClientEncryption
     /** @param mixed $value */
     final public function encrypt($value, array $options = []): \MongoDB\BSON\Binary {}
 #endif
+
+    final public function __wakeup(): void {}
 }

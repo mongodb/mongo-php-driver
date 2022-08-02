@@ -45,6 +45,7 @@ php_phongo_server_description_type_map_t
 	};
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_ServerDescription)
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_ServerDescription)
 
 /* {{{ proto array MongoDB\Driver\ServerDescription::getHelloResponse()
    Returns the most recent "hello" response */

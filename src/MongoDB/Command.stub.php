@@ -15,4 +15,6 @@ final class Command
     /** @param array|object $document */
     final public function __construct($document, array $commandOptions = []) {}
 #endif
+
+    final public function __wakeup(): void {}
 }

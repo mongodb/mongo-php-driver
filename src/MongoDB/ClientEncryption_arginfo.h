@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: d8e3bd42058296c2e67ff7107d08694de7164fdd */
+ * Stub hash: 169e941e986be2158c89ddba5d5f930cb8fa6bfe */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, options, IS_ARRAY, 0)
@@ -36,6 +36,9 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryp
 ZEND_END_ARG_INFO()
 #endif
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption___wakeup, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
 
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, __construct);
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, createDataKey);
@@ -51,6 +54,7 @@ static ZEND_METHOD(MongoDB_Driver_ClientEncryption, encrypt);
 #if !(PHP_VERSION_ID >= 80000)
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, encrypt);
 #endif
+static ZEND_METHOD(MongoDB_Driver_ClientEncryption, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_ClientEncryption_methods[] = {
@@ -68,6 +72,7 @@ static const zend_function_entry class_MongoDB_Driver_ClientEncryption_methods[]
 #if !(PHP_VERSION_ID >= 80000)
 	ZEND_ME(MongoDB_Driver_ClientEncryption, encrypt, arginfo_class_MongoDB_Driver_ClientEncryption_encrypt, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
+	ZEND_ME(MongoDB_Driver_ClientEncryption, __wakeup, arginfo_class_MongoDB_Driver_ClientEncryption___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

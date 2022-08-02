@@ -82,4 +82,6 @@ final class ServerDescription
     final public function getRoundTripTime(): ?int {}
 
     final public function getType(): string {}
+
+    final public function __wakeup(): void {}
 }
