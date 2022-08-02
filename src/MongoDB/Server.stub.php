@@ -73,17 +73,21 @@ final class Server
 
 #if PHP_VERSION_ID >= 80000
     final public function executeBulkWrite(string $namespace, BulkWrite $zwrite, array|WriteConcern|null $options = null): WriteResult {}
-
-    final public function executeCommand(string $db, Command $command, array|ReadPreference|null $options = null): Cursor {}
-
-    final public function executeQuery(string $namespace, Query $query, array|ReadPreference|null $options = null): Cursor {}
 #else
     /** @param array|WriteConcern|null $options */
     final public function executeBulkWrite(string $namespace, BulkWrite $zwrite, $options = null): WriteResult {}
+#endif
 
+#if PHP_VERSION_ID >= 80000
+    final public function executeCommand(string $db, Command $command, array|ReadPreference|null $options = null): Cursor {}
+#else
     /** @param array|ReadPreference|null $options */
     final public function executeCommand(string $db, Command $command, $options = null): Cursor {}
+#endif
 
+#if PHP_VERSION_ID >= 80000
+    final public function executeQuery(string $namespace, Query $query, array|ReadPreference|null $options = null): Cursor {}
+#else
     /** @param array|ReadPreference|null $options */
     final public function executeQuery(string $namespace, Query $query, $options = null): Cursor {}
 #endif

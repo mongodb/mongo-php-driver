@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c1c455c0a5c5622aa3ef8972f7911e653d01c997 */
+ * Stub hash: 516a26c70864397ba986d9855f4f876fe84bceb9 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Manager___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, uri, IS_STRING, 1, "null")
@@ -23,22 +23,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Manager_exec
 ZEND_END_ARG_INFO()
 #endif
 
-#if PHP_VERSION_ID >= 80000
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Manager_executeCommand, 0, 2, MongoDB\\Driver\\Cursor, 0)
-	ZEND_ARG_TYPE_INFO(0, db, IS_STRING, 0)
-	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
-	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\ReadPreference, MAY_BE_ARRAY|MAY_BE_NULL, "null")
-ZEND_END_ARG_INFO()
-#endif
-
-#if PHP_VERSION_ID >= 80000
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Manager_executeQuery, 0, 2, MongoDB\\Driver\\Cursor, 0)
-	ZEND_ARG_TYPE_INFO(0, namespace, IS_STRING, 0)
-	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Driver\\Query, 0)
-	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\ReadPreference, MAY_BE_ARRAY|MAY_BE_NULL, "null")
-ZEND_END_ARG_INFO()
-#endif
-
 #if !(PHP_VERSION_ID >= 80000)
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Manager_executeBulkWrite, 0, 2, MongoDB\\Driver\\WriteResult, 0)
 	ZEND_ARG_TYPE_INFO(0, namespace, IS_STRING, 0)
@@ -47,11 +31,27 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Manager_exec
 ZEND_END_ARG_INFO()
 #endif
 
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Manager_executeCommand, 0, 2, MongoDB\\Driver\\Cursor, 0)
+	ZEND_ARG_TYPE_INFO(0, db, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
+	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\ReadPreference, MAY_BE_ARRAY|MAY_BE_NULL, "null")
+ZEND_END_ARG_INFO()
+#endif
+
 #if !(PHP_VERSION_ID >= 80000)
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Manager_executeCommand, 0, 2, MongoDB\\Driver\\Cursor, 0)
 	ZEND_ARG_TYPE_INFO(0, db, IS_STRING, 0)
 	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
 	ZEND_ARG_INFO_WITH_DEFAULT_VALUE(0, options, "null")
+ZEND_END_ARG_INFO()
+#endif
+
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Manager_executeQuery, 0, 2, MongoDB\\Driver\\Cursor, 0)
+	ZEND_ARG_TYPE_INFO(0, namespace, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, query, MongoDB\\Driver\\Query, 0)
+	ZEND_ARG_OBJ_TYPE_MASK(0, options, MongoDB\\Driver\\ReadPreference, MAY_BE_ARRAY|MAY_BE_NULL, "null")
 ZEND_END_ARG_INFO()
 #endif
 
@@ -115,17 +115,17 @@ static ZEND_METHOD(MongoDB_Driver_Manager, createClientEncryption);
 #if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_Manager, executeBulkWrite);
 #endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_Driver_Manager, executeBulkWrite);
+#endif
 #if PHP_VERSION_ID >= 80000
+static ZEND_METHOD(MongoDB_Driver_Manager, executeCommand);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
 static ZEND_METHOD(MongoDB_Driver_Manager, executeCommand);
 #endif
 #if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_Manager, executeQuery);
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-static ZEND_METHOD(MongoDB_Driver_Manager, executeBulkWrite);
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-static ZEND_METHOD(MongoDB_Driver_Manager, executeCommand);
 #endif
 #if !(PHP_VERSION_ID >= 80000)
 static ZEND_METHOD(MongoDB_Driver_Manager, executeQuery);
@@ -156,17 +156,17 @@ static const zend_function_entry class_MongoDB_Driver_Manager_methods[] = {
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_Manager, executeBulkWrite, arginfo_class_MongoDB_Driver_Manager_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_Driver_Manager, executeBulkWrite, arginfo_class_MongoDB_Driver_Manager_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
 #if PHP_VERSION_ID >= 80000
+	ZEND_ME(MongoDB_Driver_Manager, executeCommand, arginfo_class_MongoDB_Driver_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
 	ZEND_ME(MongoDB_Driver_Manager, executeCommand, arginfo_class_MongoDB_Driver_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_Manager, executeQuery, arginfo_class_MongoDB_Driver_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-	ZEND_ME(MongoDB_Driver_Manager, executeBulkWrite, arginfo_class_MongoDB_Driver_Manager_executeBulkWrite, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-	ZEND_ME(MongoDB_Driver_Manager, executeCommand, arginfo_class_MongoDB_Driver_Manager_executeCommand, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
 #if !(PHP_VERSION_ID >= 80000)
 	ZEND_ME(MongoDB_Driver_Manager, executeQuery, arginfo_class_MongoDB_Driver_Manager_executeQuery, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

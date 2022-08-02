@@ -45,12 +45,14 @@ final class ClientEncryption
 
 #if PHP_VERSION_ID >= 80000
     final public function decrypt(\MongoDB\BSON\Binary $value): mixed {}
-
-    final public function encrypt(mixed $value, array $options = []): \MongoDB\BSON\Binary {}
 #else
     /** @return mixed */
     final public function decrypt(\MongoDB\BSON\Binary $value) {}
+#endif
 
+#if PHP_VERSION_ID >= 80000
+    final public function encrypt(mixed $value, array $options = []): \MongoDB\BSON\Binary {}
+#else
     /** @param mixed $value */
     final public function encrypt($value, array $options = []): \MongoDB\BSON\Binary {}
 #endif
