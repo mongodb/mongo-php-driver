@@ -40,17 +40,22 @@ static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t
 static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options);
 static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue);
 
-#define RETVAL_OPTIONAL_BSON_T(reply)                                                        \
-	do {                                                                                     \
-		RETVAL_NULL();                                                                       \
-		if (!bson_empty(&(reply))) {                                                         \
-			php_phongo_bson_state state = { 0 };                                             \
-			if (!php_phongo_bson_to_zval_ex(bson_get_data(&(reply)), (reply).len, &state)) { \
-				zval_ptr_dtor(&state.zchild);                                                \
-				goto cleanup;                                                                \
-			}                                                                                \
-			RETVAL_ZVAL(&state.zchild, 0, 1);                                                \
-		}                                                                                    \
+#define RETVAL_BSON_T(reply)                                                             \
+	do {                                                                                 \
+		php_phongo_bson_state state = { 0 };                                             \
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(&(reply)), (reply).len, &state)) { \
+			zval_ptr_dtor(&state.zchild);                                                \
+			goto cleanup;                                                                \
+		}                                                                                \
+		RETVAL_ZVAL(&state.zchild, 0, 1);                                                \
+	} while (0)
+
+#define RETVAL_OPTIONAL_BSON_T(reply) \
+	do {                              \
+		RETVAL_NULL();                \
+		if (!bson_empty(&(reply))) {  \
+			RETVAL_BSON_T(reply);     \
+		}                             \
 	} while (0)
 
 /* Returns true if keyid is a UUID Binary value with an appropriate data length;
@@ -133,7 +138,8 @@ cleanup:
 } /* }}} */
 
 /* {{{ proto MongoDB\BSON\Binary MongoDB\Driver\ClientEncryption::createDataKey(string $kmsProvider[, array $options])
-   Creates a new key document and inserts into the key vault collection. */
+   Creates a new key document and inserts into the key vault collection and
+   returns its identifier (UUID as a BSON binary with subtype 0x04). */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, createDataKey)
 {
 	char*                          kms_provider     = NULL;
@@ -183,7 +189,12 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, deleteKey)
 		goto cleanup;
 	}
 
-	RETVAL_OPTIONAL_BSON_T(reply);
+	if (bson_empty(&reply)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "mongoc_client_encryption_delete_key returned an empty document");
+		goto cleanup;
+	}
+
+	RETVAL_BSON_T(reply);
 
 cleanup:
 	bson_value_destroy(&keyid);
