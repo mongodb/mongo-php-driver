@@ -23,7 +23,7 @@ try {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\Driver\WriteResult)#%d (9) {
+object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["nInserted"]=>
   int(1)
   ["nMatched"]=>
@@ -40,7 +40,7 @@ object(MongoDB\Driver\WriteResult)#%d (9) {
   ["writeErrors"]=>
   array(1) {
     [0]=>
-    object(MongoDB\Driver\WriteError)#%d (4) {
+    object(MongoDB\Driver\WriteError)#%d (%d) {
       ["message"]=>
       string(%d) %s
       ["code"]=>
@@ -54,7 +54,7 @@ object(MongoDB\Driver\WriteResult)#%d (9) {
   ["writeConcernError"]=>
   NULL
   ["writeConcern"]=>
-  object(MongoDB\Driver\WriteConcern)#%d (0) {
+  object(MongoDB\Driver\WriteConcern)#%d (%d) {
   }
 }
 ===DONE===
