@@ -72,10 +72,10 @@ final class Server
     final private function __construct() {}
 
 #if PHP_VERSION_ID >= 80000
-    final public function executeBulkWrite(string $namespace, BulkWrite $zwrite, array|WriteConcern|null $options = null): WriteResult {}
+    final public function executeBulkWrite(string $namespace, BulkWrite $bulkWrite, array|WriteConcern|null $options = null): WriteResult {}
 #else
     /** @param array|WriteConcern|null $options */
-    final public function executeBulkWrite(string $namespace, BulkWrite $zwrite, $options = null): WriteResult {}
+    final public function executeBulkWrite(string $namespace, BulkWrite $bulkWrite, $options = null): WriteResult {}
 #endif
 
 #if PHP_VERSION_ID >= 80000
