@@ -5,9 +5,8 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Exception
+namespace MongoDB\Driver\Exception;
+
+class UnexpectedValueException extends \UnexpectedValueException implements Exception
 {
-    class UnexpectedValueException extends \UnexpectedValueException implements Exception
-    {
-    }
 }

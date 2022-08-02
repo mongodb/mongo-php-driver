@@ -5,28 +5,27 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Monitoring
+namespace MongoDB\Driver\Monitoring;
+
+final class CommandSucceededEvent
 {
-    final class CommandSucceededEvent
-    {
-        final private function __construct() {}
+    final private function __construct() {}
 
-        final public function getCommandName(): string {}
+    final public function getCommandName(): string {}
 
-        final public function getDurationMicros(): int {}
+    final public function getDurationMicros(): int {}
 
-        final public function getOperationId(): string {}
+    final public function getOperationId(): string {}
 
-        final public function getReply(): object {}
+    final public function getReply(): object {}
 
-        final public function getRequestId(): string {}
+    final public function getRequestId(): string {}
 
-        final public function getServer(): \MongoDB\Driver\Server {}
+    final public function getServer(): \MongoDB\Driver\Server {}
 
-        final public function getServiceId(): ?\MongoDB\BSON\ObjectId {}
+    final public function getServiceId(): ?\MongoDB\BSON\ObjectId {}
 
-        final public function getServerConnectionId(): ?int {}
+    final public function getServerConnectionId(): ?int {}
 
-        final public function __wakeup(): void {}
-    }
+    final public function __wakeup(): void {}
 }

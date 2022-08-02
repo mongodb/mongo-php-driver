@@ -5,9 +5,8 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Exception
+namespace MongoDB\Driver\Exception;
+
+final class ExecutionTimeoutException extends ServerException
 {
-    final class ExecutionTimeoutException extends ServerException
-    {
-    }
 }

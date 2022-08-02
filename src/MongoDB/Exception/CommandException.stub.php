@@ -5,13 +5,12 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Exception
-{
-    class CommandException extends ServerException
-    {
-        /** @var object */
-        protected $resultDocument;
+namespace MongoDB\Driver\Exception;
 
-        final public function getResultDocument(): object {}
-    }
+class CommandException extends ServerException
+{
+    /** @var object */
+    protected $resultDocument;
+
+    final public function getResultDocument(): object {}
 }

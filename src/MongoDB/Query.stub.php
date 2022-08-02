@@ -5,17 +5,16 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver
+namespace MongoDB\Driver;
+
+final class Query
 {
-    final class Query
-    {
 #if PHP_VERSION_ID >= 80000
-        final public function __construct(array|object $filter, array $queryOptions = []) {}
+    final public function __construct(array|object $filter, array $queryOptions = []) {}
 #else
-        /** @param array|object $filter */
-        final public function __construct($filter, array $queryOptions = []) {}
+    /** @param array|object $filter */
+    final public function __construct($filter, array $queryOptions = []) {}
 #endif
 
-        final public function __wakeup(): void {}
-    }
+    final public function __wakeup(): void {}
 }

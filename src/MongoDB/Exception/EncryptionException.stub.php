@@ -5,9 +5,9 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Exception
+namespace MongoDB\Driver\Exception;
+
+class EncryptionException extends RuntimeException
 {
-    class EncryptionException extends RuntimeException
-    {
-    }
 }
+

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: d09806b8d63899e3ea2d561f46cf16e173e3d968 */
+ * Stub hash: 93ac52bdf35d69310a30f335be70489ba52edd51 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Exception_WriteException_getWriteResult, 0, 0, MongoDB\\Driver\\WriteResult, 0)
 ZEND_END_ARG_INFO()

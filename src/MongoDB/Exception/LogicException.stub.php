@@ -5,9 +5,8 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Exception
+namespace MongoDB\Driver\Exception;
+
+class LogicException extends \LogicException implements Exception
 {
-    class LogicException extends \LogicException implements Exception
-    {
-    }
 }

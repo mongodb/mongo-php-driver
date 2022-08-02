@@ -5,22 +5,21 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Monitoring
+namespace MongoDB\Driver\Monitoring;
+
+final class ServerChangedEvent
 {
-    final class ServerChangedEvent
-    {
-        final private function __construct() {}
+    final private function __construct() {}
 
-        final public function getPort(): int {}
+    final public function getPort(): int {}
 
-        final public function getHost(): string {}
+    final public function getHost(): string {}
 
-        final public function getNewDescription(): \MongoDB\Driver\ServerDescription {}
+    final public function getNewDescription(): \MongoDB\Driver\ServerDescription {}
 
-        final public function getPreviousDescription(): \MongoDB\Driver\ServerDescription {}
+    final public function getPreviousDescription(): \MongoDB\Driver\ServerDescription {}
 
-        final public function getTopologyId(): \MongoDB\BSON\ObjectId {}
+    final public function getTopologyId(): \MongoDB\BSON\ObjectId {}
 
-        final public function __wakeup(): void {}
-    }
+    final public function __wakeup(): void {}
 }

@@ -5,9 +5,8 @@
  * @generate-function-entries
  */
 
-namespace MongoDB\Driver\Exception
+namespace MongoDB\Driver\Exception;
+
+interface Exception extends \Throwable
 {
-    interface Exception extends \Throwable
-    {
-    }
 }

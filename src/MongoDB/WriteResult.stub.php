@@ -5,32 +5,31 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver
+namespace MongoDB\Driver;
+
+final class WriteResult
 {
-    final class WriteResult
-    {
-        final private function __construct() {}
+    final private function __construct() {}
 
-        final public function getInsertedCount(): ?int {}
+    final public function getInsertedCount(): ?int {}
 
-        final public function getMatchedCount(): ?int {}
+    final public function getMatchedCount(): ?int {}
 
-        final public function getModifiedCount(): ?int {}
+    final public function getModifiedCount(): ?int {}
 
-        final public function getDeletedCount(): ?int {}
+    final public function getDeletedCount(): ?int {}
 
-        final public function getUpsertedCount(): ?int {}
+    final public function getUpsertedCount(): ?int {}
 
-        final public function getServer(): Server {}
+    final public function getServer(): Server {}
 
-        final public function getUpsertedIds(): array {}
+    final public function getUpsertedIds(): array {}
 
-        final public function getWriteConcernError(): ?WriteConcernError {}
+    final public function getWriteConcernError(): ?WriteConcernError {}
 
-        final public function getWriteErrors(): array {}
+    final public function getWriteErrors(): array {}
 
-        final public function isAcknowledged(): bool {}
+    final public function isAcknowledged(): bool {}
 
-        final public function __wakeup(): void {}
-    }
+    final public function __wakeup(): void {}
 }

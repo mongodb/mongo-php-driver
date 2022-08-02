@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c369196418ec5b97da5b9780db7ca59d8a56e247 */
+ * Stub hash: 3df3433fd4acd7a35329f4d91f6f33b1a80fc360 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandSucceededEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()

@@ -5,9 +5,8 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Exception
+namespace MongoDB\Driver\Exception;
+
+class AuthenticationException extends ConnectionException
 {
-    class AuthenticationException extends ConnectionException
-    {
-    }
 }

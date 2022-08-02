@@ -5,9 +5,8 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Exception
+namespace MongoDB\Driver\Exception;
+
+class ConnectionException extends RuntimeException
 {
-    class ConnectionException extends RuntimeException
-    {
-    }
 }

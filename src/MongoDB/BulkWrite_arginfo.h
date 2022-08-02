@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ec9c23a8afe93c3ae9cd3c78733e67f808b48bcb */
+ * Stub hash: 5b71b311ea4be170595b7616bf02af21b1379b1c */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_BulkWrite___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 0, "[]")

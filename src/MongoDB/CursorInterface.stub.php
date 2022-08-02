@@ -5,23 +5,22 @@
  * @generate-function-entries
  */
 
-namespace MongoDB\Driver
+namespace MongoDB\Driver;
+
+interface CursorInterface extends \Traversable
 {
-    interface CursorInterface extends \Traversable
-    {
-        /** @tentative-return-type */
-        public function getId(): CursorId;
+    /** @tentative-return-type */
+    public function getId(): CursorId;
 
-        /** @tentative-return-type */
-        public function getServer(): Server;
+    /** @tentative-return-type */
+    public function getServer(): Server;
 
-        /** @tentative-return-type */
-        public function isDead(): bool;
+    /** @tentative-return-type */
+    public function isDead(): bool;
 
-        /** @tentative-return-type */
-        public function setTypeMap(array $typemap): void;
+    /** @tentative-return-type */
+    public function setTypeMap(array $typemap): void;
 
-        /** @tentative-return-type */
-        public function toArray(): array;
-    }
+    /** @tentative-return-type */
+    public function toArray(): array;
 }

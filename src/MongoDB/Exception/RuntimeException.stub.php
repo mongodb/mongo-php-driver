@@ -5,13 +5,12 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Exception
-{
-    class RuntimeException extends \RuntimeException implements Exception
-    {
-        /** @var bool */
-        protected $errorLabels;
+namespace MongoDB\Driver\Exception;
 
-        final public function hasErrorLabel(string $errorLabel): bool {}
-    }
+class RuntimeException extends \RuntimeException implements Exception
+{
+    /** @var bool */
+    protected $errorLabels;
+
+    final public function hasErrorLabel(string $errorLabel): bool {}
 }

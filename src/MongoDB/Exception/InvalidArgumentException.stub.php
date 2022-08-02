@@ -5,9 +5,8 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Exception
+namespace MongoDB\Driver\Exception;
+
+class InvalidArgumentException extends \InvalidArgumentException implements Exception
 {
-    class InvalidArgumentException extends \InvalidArgumentException implements Exception
-    {
-    }
 }

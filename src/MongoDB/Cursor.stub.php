@@ -5,35 +5,34 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver
+namespace MongoDB\Driver;
+
+final class Cursor implements \Iterator, CursorInterface
 {
-    final class Cursor implements \Iterator, CursorInterface
-    {
-        final private function __construct() {}
+    final private function __construct() {}
 
 #if PHP_VERSION_ID >= 80000
-        public function current(): array|object|null {}
+    public function current(): array|object|null {}
 #else
-        /** @return array|object|null */
-        public function current() {}
+    /** @return array|object|null */
+    public function current() {}
 #endif
 
-        final public function getId(): CursorId {}
+    final public function getId(): CursorId {}
 
-        final public function getServer(): Server {}
+    final public function getServer(): Server {}
 
-        final public function isDead(): bool {}
+    final public function isDead(): bool {}
 
-        public function key(): ?int {}
+    public function key(): ?int {}
 
-        public function next(): void {}
+    public function next(): void {}
 
-        public function rewind(): void {}
+    public function rewind(): void {}
 
-        final public function setTypeMap(array $typemap): void {}
+    final public function setTypeMap(array $typemap): void {}
 
-        final public function toArray(): array {}
+    final public function toArray(): array {}
 
-        public function valid(): bool {}
-    }
+    public function valid(): bool {}
 }

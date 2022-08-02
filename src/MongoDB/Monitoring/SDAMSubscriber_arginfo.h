@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c3d297c7fa4e1baa82b69be11838921fad519816 */
+ * Stub hash: 19ae065e2a8ad6c8f4945262d6cf58ea723e5aed */
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_SDAMSubscriber_serverChanged, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\ServerChangedEvent, 0)

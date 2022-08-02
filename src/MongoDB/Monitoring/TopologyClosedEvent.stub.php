@@ -5,14 +5,13 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Monitoring
+namespace MongoDB\Driver\Monitoring;
+
+final class TopologyClosedEvent
 {
-    final class TopologyClosedEvent
-    {
-        final private function __construct() {}
+    final private function __construct() {}
 
-        final public function getTopologyId(): \MongoDB\BSON\ObjectId {}
+    final public function getTopologyId(): \MongoDB\BSON\ObjectId {}
 
-        final public function __wakeup(): void {}
-    }
+    final public function __wakeup(): void {}
 }

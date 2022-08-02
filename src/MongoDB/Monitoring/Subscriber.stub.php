@@ -5,9 +5,8 @@
  * @generate-function-entries
  */
 
-namespace MongoDB\Driver\Monitoring
+namespace MongoDB\Driver\Monitoring;
+
+interface Subscriber
 {
-    interface Subscriber
-    {
-    }
 }

@@ -5,9 +5,8 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Exception
+namespace MongoDB\Driver\Exception;
+
+class BulkWriteException extends WriteException
 {
-    class BulkWriteException extends WriteException
-    {
-    }
 }

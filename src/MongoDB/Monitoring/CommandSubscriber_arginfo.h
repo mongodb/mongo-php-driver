@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: a0616fdba5c6bed6bd8a185ff493711483a6714d */
+ * Stub hash: 3fb67ff709c10a3a2769af8572075da08cb100b4 */
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandSubscriber_commandStarted, 0, 1, IS_VOID, 0)
 	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\CommandStartedEvent, 0)

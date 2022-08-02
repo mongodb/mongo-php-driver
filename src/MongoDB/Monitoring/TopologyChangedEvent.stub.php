@@ -5,18 +5,17 @@
  * @generate-function-entries static
  */
 
-namespace MongoDB\Driver\Monitoring
+namespace MongoDB\Driver\Monitoring;
+
+final class TopologyChangedEvent
 {
-    final class TopologyChangedEvent
-    {
-        final private function __construct() {}
+    final private function __construct() {}
 
-        final public function getNewDescription(): \MongoDB\Driver\TopologyDescription {}
+    final public function getNewDescription(): \MongoDB\Driver\TopologyDescription {}
 
-        final public function getPreviousDescription(): \MongoDB\Driver\TopologyDescription {}
+    final public function getPreviousDescription(): \MongoDB\Driver\TopologyDescription {}
 
-        final public function getTopologyId(): \MongoDB\BSON\ObjectId {}
+    final public function getTopologyId(): \MongoDB\BSON\ObjectId {}
 
-        final public function __wakeup(): void {}
-    }
+    final public function __wakeup(): void {}
 }

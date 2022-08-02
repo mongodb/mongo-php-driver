@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 54bb649a2d68fff4d9b05bae9a8e4f21d051cc86 */
+ * Stub hash: 001f88edb710125420178d78e291fffc10bbfa1b */
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_CursorInterface_getId, 0, 0, MongoDB\\Driver\\CursorId, 0)
 ZEND_END_ARG_INFO()

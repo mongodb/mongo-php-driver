@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 87eef4019fdd539328d318869783f4b341caa792 */
+ * Stub hash: c895df47a65fcadec95e6f0d4e3f98a0dae827d6 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Exception_RuntimeException_hasErrorLabel, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_TYPE_INFO(0, errorLabel, IS_STRING, 0)
