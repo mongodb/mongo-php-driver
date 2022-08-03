@@ -5,9 +5,8 @@
   * @generate-function-entries
   */
 
-namespace MongoDB\BSON
+namespace MongoDB\BSON;
+
+interface MinKeyInterface
 {
-    interface MinKeyInterface
-    {
-    }
 }

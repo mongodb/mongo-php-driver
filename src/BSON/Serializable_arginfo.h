@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 22bef071736dda02427583bb0f259a8a3f2ccffe */
+ * Stub hash: 197f9b0284b024f5a88c425e5e55758da0b77cfd */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_MASK_EX(arginfo_class_MongoDB_BSON_Serializable_bsonSerialize, 0, 0, MAY_BE_ARRAY|MAY_BE_OBJECT)

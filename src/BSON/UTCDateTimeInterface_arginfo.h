@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c249307889b5e9cd4cab6449b9c8101fe6a7fc29 */
+ * Stub hash: c7562146623b30619f3fd3199e9318338451b5e4 */
 
 ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_UTCDateTimeInterface_toDateTime, 0, 0, DateTime, 0)
 ZEND_END_ARG_INFO()

@@ -5,9 +5,8 @@
   * @generate-function-entries
   */
 
-namespace MongoDB\BSON
+namespace MongoDB\BSON;
+
+interface Persistable extends Serializable, Unserializable
 {
-    interface Persistable extends Serializable, Unserializable
-    {
-    }
 }
