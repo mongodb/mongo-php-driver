@@ -22,6 +22,7 @@
 #include "php_phongo.h"
 #include "phongo_error.h"
 #include "phongo_util.h"
+#include "Timestamp_arginfo.h"
 
 zend_class_entry* php_phongo_timestamp_ce;
 
@@ -122,7 +123,7 @@ static HashTable* php_phongo_timestamp_get_properties_hash(phongo_compat_object_
 /* {{{ proto void MongoDB\BSON\Timestamp::__construct(int|string $increment, int|string $timestamp)
    Construct a new BSON timestamp type, which consists of a 4-byte increment and
    4-byte timestamp. */
-static PHP_METHOD(Timestamp, __construct)
+static PHP_METHOD(MongoDB_BSON_Timestamp, __construct)
 {
 	php_phongo_timestamp_t* intern;
 	zval *                  increment = NULL, *timestamp = NULL;
@@ -162,7 +163,7 @@ static PHP_METHOD(Timestamp, __construct)
 
 /* {{{ proto integer MongoDB\BSON\Timestamp::getIncrement()
 */
-static PHP_METHOD(Timestamp, getIncrement)
+static PHP_METHOD(MongoDB_BSON_Timestamp, getIncrement)
 {
 	php_phongo_timestamp_t* intern;
 
@@ -175,7 +176,7 @@ static PHP_METHOD(Timestamp, getIncrement)
 
 /* {{{ proto integer MongoDB\BSON\Timestamp::getTimestamp()
 */
-static PHP_METHOD(Timestamp, getTimestamp)
+static PHP_METHOD(MongoDB_BSON_Timestamp, getTimestamp)
 {
 	php_phongo_timestamp_t* intern;
 
@@ -188,7 +189,7 @@ static PHP_METHOD(Timestamp, getTimestamp)
 
 /* {{{ proto MongoDB\BSON\Timestamp MongoDB\BSON\Timestamp::__set_state(array $properties)
 */
-static PHP_METHOD(Timestamp, __set_state)
+static PHP_METHOD(MongoDB_BSON_Timestamp, __set_state)
 {
 	php_phongo_timestamp_t* intern;
 	HashTable*              props;
@@ -208,7 +209,7 @@ static PHP_METHOD(Timestamp, __set_state)
 
 /* {{{ proto string MongoDB\BSON\Timestamp::__toString()
    Returns a string in the form: [increment:timestamp] */
-static PHP_METHOD(Timestamp, __toString)
+static PHP_METHOD(MongoDB_BSON_Timestamp, __toString)
 {
 	php_phongo_timestamp_t* intern;
 	char*                   retval;
@@ -225,7 +226,7 @@ static PHP_METHOD(Timestamp, __toString)
 
 /* {{{ proto array MongoDB\BSON\Timestamp::jsonSerialize()
 */
-static PHP_METHOD(Timestamp, jsonSerialize)
+static PHP_METHOD(MongoDB_BSON_Timestamp, jsonSerialize)
 {
 	php_phongo_timestamp_t* intern;
 
@@ -247,7 +248,7 @@ static PHP_METHOD(Timestamp, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\Timestamp::serialize()
 */
-static PHP_METHOD(Timestamp, serialize)
+static PHP_METHOD(MongoDB_BSON_Timestamp, serialize)
 {
 	php_phongo_timestamp_t* intern;
 	zval                    retval;
@@ -282,7 +283,7 @@ static PHP_METHOD(Timestamp, serialize)
 
 /* {{{ proto void MongoDB\BSON\Timestamp::unserialize(string $serialized)
 */
-static PHP_METHOD(Timestamp, unserialize)
+static PHP_METHOD(MongoDB_BSON_Timestamp, unserialize)
 {
 	php_phongo_timestamp_t* intern;
 	char*                   serialized;
@@ -312,7 +313,7 @@ static PHP_METHOD(Timestamp, unserialize)
 
 /* {{{ proto array MongoDB\Driver\Timestamp::__serialize()
 */
-static PHP_METHOD(Timestamp, __serialize)
+static PHP_METHOD(MongoDB_BSON_Timestamp, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -321,7 +322,7 @@ static PHP_METHOD(Timestamp, __serialize)
 
 /* {{{ proto void MongoDB\Driver\Timestamp::__unserialize(array $data)
 */
-static PHP_METHOD(Timestamp, __unserialize)
+static PHP_METHOD(MongoDB_BSON_Timestamp, __unserialize)
 {
 	zval* data;
 
@@ -331,50 +332,6 @@ static PHP_METHOD(Timestamp, __unserialize)
 
 	php_phongo_timestamp_init_from_hash(Z_TIMESTAMP_OBJ_P(getThis()), Z_ARRVAL_P(data));
 } /* }}} */
-
-/* {{{ MongoDB\BSON\Timestamp function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___construct, 0, 0, 2)
-	ZEND_ARG_INFO(0, increment)
-	ZEND_ARG_INFO(0, timestamp)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___set_state, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_Timestamp___toString, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Timestamp_jsonSerialize, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Timestamp_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_timestamp_me[] = {
-	PHP_ME(Timestamp, __construct, ai_Timestamp___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, __serialize, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, __set_state, ai_Timestamp___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(Timestamp, __toString, ai_Timestamp___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, __unserialize, ai_Timestamp___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, jsonSerialize, ai_Timestamp_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, serialize, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, unserialize, ai_Timestamp_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, getIncrement, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Timestamp, getTimestamp, ai_Timestamp_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
 
 /* {{{ MongoDB\BSON\Timestamp object handlers */
 static zend_object_handlers php_phongo_handler_timestamp;
@@ -455,17 +412,8 @@ static HashTable* php_phongo_timestamp_get_properties(phongo_compat_object_handl
 
 void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Timestamp", php_phongo_timestamp_me);
-	php_phongo_timestamp_ce                = zend_register_internal_class(&ce);
+	php_phongo_timestamp_ce                = register_class_MongoDB_BSON_Timestamp(php_phongo_timestamp_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_timestamp_ce->create_object = php_phongo_timestamp_create_object;
-	PHONGO_CE_FINAL(php_phongo_timestamp_ce);
-
-	zend_class_implements(php_phongo_timestamp_ce, 1, php_phongo_timestamp_interface_ce);
-	zend_class_implements(php_phongo_timestamp_ce, 1, php_phongo_json_serializable_ce);
-	zend_class_implements(php_phongo_timestamp_ce, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_timestamp_ce, 1, zend_ce_serializable);
 
 #if PHP_VERSION_ID >= 80000
 	zend_class_implements(php_phongo_timestamp_ce, 1, zend_ce_stringable);

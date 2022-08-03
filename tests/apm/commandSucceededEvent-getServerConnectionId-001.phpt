@@ -12,7 +12,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
     private $commandStartedServerConnectionId;
 
-    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event)
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
         printf("commandStarted: %s\n", $event->getCommandName());
 
@@ -20,14 +20,14 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
         var_dump($this->commandStartedServerConnectionId);
     }
 
-    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void
     {
         printf("commandSucceeded: %s\n", $event->getCommandName());
         printf("same serverConnectionId as last commandStarted: %s\n", $event->getServerConnectionId() == $this->commandStartedServerConnectionId ? 'yes' : 'no');
         var_dump($event->getServerConnectionId());
     }
 
-    public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event )
+    public function commandFailed( \MongoDB\Driver\Monitoring\CommandFailedEvent $event ): void
     {
     }
 }

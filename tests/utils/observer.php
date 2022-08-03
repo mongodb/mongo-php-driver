@@ -22,14 +22,14 @@ class CommandObserver implements CommandSubscriber
             }
         }
     }
-    public function commandStarted(CommandStartedEvent $event)
+    public function commandStarted(CommandStartedEvent $event): void
     {
         $this->commands[] = $event->getCommand();
     }
-    public function commandSucceeded(CommandSucceededEvent $event)
+    public function commandSucceeded(CommandSucceededEvent $event): void
     {
     }
-    public function commandFailed(CommandFailedEvent $event)
+    public function commandFailed(CommandFailedEvent $event): void
     {
     }
 }

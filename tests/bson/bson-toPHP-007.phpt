@@ -5,7 +5,7 @@ MongoDB\BSON\toPHP(): fieldPath typemaps without server
 
 class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
 {
-    function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
         parent::__construct($data, ArrayObject::ARRAY_AS_PROPS);
     }

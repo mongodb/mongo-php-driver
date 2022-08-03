@@ -10,12 +10,12 @@ require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\BSON\ObjectId(new stdclass);
-}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
+}, TypeError::class), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-%SMongoDB\BSON\ObjectId::__construct()%sstring, %r(object|stdClass)%r given
+OK: Got TypeError
+%SMongoDB\BSON\ObjectId::__construct()%sstring or null, %r(object|stdClass)%r given
 ===DONE===

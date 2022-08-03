@@ -7,12 +7,13 @@ require_once __DIR__ . '/../utils/basic.inc';
 
 class AssociativeArray implements MongoDB\BSON\Serializable, MongoDB\BSON\Unserializable
 {
+    #[\ReturnTypeWillChange]
     public function bsonSerialize()
     {
         return array("random" => "class", "data");
     }
 
-    public function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
         echo __METHOD__, "() was called with data:\n";
         var_dump($data);
@@ -21,12 +22,13 @@ class AssociativeArray implements MongoDB\BSON\Serializable, MongoDB\BSON\Unseri
 
 class NumericArray implements MongoDB\BSON\Serializable, MongoDB\BSON\Unserializable
 {
+    #[\ReturnTypeWillChange]
     public function bsonSerialize()
     {
         return array(1, 2, 3);
     }
 
-    public function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
         echo __METHOD__, "() was called with data:\n";
         var_dump($data);

@@ -21,12 +21,16 @@
 #include "phongo_error.h"
 
 #include "BSON/ObjectId.h"
+#include "TopologyOpeningEvent_arginfo.h"
 
 zend_class_entry* php_phongo_topologyopeningevent_ce;
 
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_TopologyOpeningEvent)
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_TopologyOpeningEvent)
+
 /* {{{ proto MongoDB\BSON\ObjectId TopologyOpeningEvent::getTopologyId()
    Returns this event's topology id */
-static PHP_METHOD(TopologyOpeningEvent, getTopologyId)
+static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyOpeningEvent, getTopologyId)
 {
 	php_phongo_topologyopeningevent_t* intern = Z_TOPOLOGYOPENINGEVENT_OBJ_P(getThis());
 
@@ -34,20 +38,6 @@ static PHP_METHOD(TopologyOpeningEvent, getTopologyId)
 
 	phongo_objectid_init(return_value, &intern->topology_id);
 } /* }}} */
-
-/* {{{ MongoDB\Driver\Monitoring\TopologyOpeningEvent function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_TopologyOpeningEvent_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_topologyopeningevent_me[] = {
-	/* clang-format off */
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_TopologyOpeningEvent_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	PHP_ME(TopologyOpeningEvent, getTopologyId, ai_TopologyOpeningEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_TopologyOpeningEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
 
 /* {{{ MongoDB\Driver\Monitoring\TopologyOpeningEvent object handlers */
 static zend_object_handlers php_phongo_handler_topologyopeningevent;
@@ -92,12 +82,8 @@ static HashTable* php_phongo_topologyopeningevent_get_debug_info(phongo_compat_o
 
 void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "TopologyOpeningEvent", php_phongo_topologyopeningevent_me);
-	php_phongo_topologyopeningevent_ce                = zend_register_internal_class(&ce);
+	php_phongo_topologyopeningevent_ce                = register_class_MongoDB_Driver_Monitoring_TopologyOpeningEvent();
 	php_phongo_topologyopeningevent_ce->create_object = php_phongo_topologyopeningevent_create_object;
-	PHONGO_CE_FINAL(php_phongo_topologyopeningevent_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_topologyopeningevent_ce);
 
 	memcpy(&php_phongo_handler_topologyopeningevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

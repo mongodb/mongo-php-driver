@@ -68,11 +68,11 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
         MongoDB\Driver\Monitoring\removeSubscriber($this);
     }
 
-    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event)
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
     }
 
-    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void
     {
         $reply = $event->getReply();
         $hasOperationTime = isset($reply->{'operationTime'});
@@ -84,7 +84,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
         }
     }
 
-    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event)
+    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event): void
     {
     }
 }

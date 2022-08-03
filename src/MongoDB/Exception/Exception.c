@@ -18,20 +18,11 @@
 #include <zend_exceptions.h>
 
 #include "php_phongo.h"
+#include "Exception_arginfo.h"
 
 zend_class_entry* php_phongo_exception_ce;
 
-/* {{{ MongoDB\Driver\Exception\Exception function entries */
-static zend_function_entry php_phongo_exception_me[] = {
-	PHP_FE_END
-};
-/* }}} */
-
 void php_phongo_exception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "Exception", php_phongo_exception_me);
-	php_phongo_exception_ce = zend_register_internal_interface(&ce);
-	zend_class_implements(php_phongo_exception_ce, 1, zend_ce_throwable);
+	php_phongo_exception_ce = register_class_MongoDB_Driver_Exception_Exception(zend_ce_throwable);
 } /* }}} */

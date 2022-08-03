@@ -18,20 +18,11 @@
 #include <ext/spl/spl_exceptions.h>
 
 #include "php_phongo.h"
+#include "UnexpectedValueException_arginfo.h"
 
 zend_class_entry* php_phongo_unexpectedvalueexception_ce;
 
-/* {{{ MongoDB\Driver\Exception\UnexpectedValueException function entries */
-static zend_function_entry php_phongo_unexpectedvalueexception_me[] = {
-	PHP_FE_END
-};
-/* }}} */
-
 void php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "UnexpectedValueException", php_phongo_unexpectedvalueexception_me);
-	php_phongo_unexpectedvalueexception_ce = zend_register_internal_class_ex(&ce, spl_ce_UnexpectedValueException);
-	zend_class_implements(php_phongo_unexpectedvalueexception_ce, 1, php_phongo_exception_ce);
+	php_phongo_unexpectedvalueexception_ce = register_class_MongoDB_Driver_Exception_UnexpectedValueException(spl_ce_UnexpectedValueException, php_phongo_exception_ce);
 } /* }}} */

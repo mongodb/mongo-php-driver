@@ -17,41 +17,11 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "CommandSubscriber_arginfo.h"
 
 zend_class_entry* php_phongo_commandsubscriber_ce;
 
-/* {{{ MongoDB\Driver\Monitoring\CommandSubscriber function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_CommandSubscriber_commandStarted, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\CommandStartedEvent, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_CommandSubscriber_commandSucceeded, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\CommandSucceededEvent, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_CommandSubscriber_commandFailed, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, event, MongoDB\\Driver\\Monitoring\\CommandFailedEvent, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_commandsubscriber_me[] = {
-	/* clang-format off */
-	ZEND_ABSTRACT_ME(CommandSubscriber, commandStarted, ai_CommandSubscriber_commandStarted)
-	ZEND_ABSTRACT_ME(CommandSubscriber, commandSucceeded, ai_CommandSubscriber_commandSucceeded)
-	ZEND_ABSTRACT_ME(CommandSubscriber, commandFailed, ai_CommandSubscriber_commandFailed)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
-
 void php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-	(void) type;
-	(void) module_number;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "CommandSubscriber", php_phongo_commandsubscriber_me);
-	php_phongo_commandsubscriber_ce = zend_register_internal_interface(&ce);
-	zend_class_implements(php_phongo_commandsubscriber_ce, 1, php_phongo_subscriber_ce);
-
-	return;
+	php_phongo_commandsubscriber_ce = register_class_MongoDB_Driver_Monitoring_CommandSubscriber(php_phongo_subscriber_ce);
 } /* }}} */

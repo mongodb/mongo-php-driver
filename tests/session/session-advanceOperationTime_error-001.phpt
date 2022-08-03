@@ -19,7 +19,7 @@ class MyTimestamp implements MongoDB\BSON\TimestampInterface
         $this->failTimestamp = $failTimestamp;
     }
 
-    public function getIncrement()
+    public function getIncrement(): int
     {
         if ($this->failIncrement) {
             throw new Exception('getIncrement() failed');
@@ -28,7 +28,7 @@ class MyTimestamp implements MongoDB\BSON\TimestampInterface
         return 5678;
     }
 
-    public function getTimestamp()
+    public function getTimestamp(): int
     {
         if ($this->failTimestamp) {
             throw new Exception('getTimestamp() failed');
@@ -37,7 +37,7 @@ class MyTimestamp implements MongoDB\BSON\TimestampInterface
         return 1234;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf('[%d:%d]', $this->getIncrement(), $this->getTimestamp());
     }

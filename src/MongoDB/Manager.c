@@ -36,6 +36,7 @@
 #include "MongoDB/Server.h"
 #include "MongoDB/Session.h"
 #include "MongoDB/WriteConcern.h"
+#include "Manager_arginfo.h"
 
 #define PHONGO_MANAGER_URI_DEFAULT "mongodb://127.0.0.1/"
 
@@ -241,9 +242,11 @@ static bool php_phongo_manager_select_server(bool for_writes, bool inherit_read_
 	return false;
 } /* }}} */
 
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Manager)
+
 /* {{{ proto void MongoDB\Driver\Manager::__construct([string $uri = "mongodb://127.0.0.1/"[, array $options = array()[, array $driverOptions = array()]]])
    Constructs a new Manager */
-static PHP_METHOD(Manager, __construct)
+static PHP_METHOD(MongoDB_Driver_Manager, __construct)
 {
 	php_phongo_manager_t* intern;
 	char*                 uri_string     = NULL;
@@ -286,7 +289,7 @@ static PHP_METHOD(Manager, __construct)
 
 /* {{{ proto void MongoDB\Driver\Manager::addSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
    Registers an event subscriber for this Manager */
-static PHP_METHOD(Manager, addSubscriber)
+static PHP_METHOD(MongoDB_Driver_Manager, addSubscriber)
 {
 	php_phongo_manager_t* intern;
 	zval*                 subscriber;
@@ -308,7 +311,7 @@ static PHP_METHOD(Manager, addSubscriber)
 
 /* {{{ proto MongoDB\Driver\ClientEncryption MongoDB\Driver\Manager::createClientEncryption(array $options)
    Return a ClientEncryption instance */
-static PHP_METHOD(Manager, createClientEncryption)
+static PHP_METHOD(MongoDB_Driver_Manager, createClientEncryption)
 {
 	zval* options;
 
@@ -324,7 +327,7 @@ static PHP_METHOD(Manager, createClientEncryption)
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
    Execute a Command */
-static PHP_METHOD(Manager, executeCommand)
+static PHP_METHOD(MongoDB_Driver_Manager, executeCommand)
 {
 	php_phongo_manager_t* intern;
 	char*                 db;
@@ -377,7 +380,7 @@ cleanup:
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeReadCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
    Execute a ReadCommand */
-static PHP_METHOD(Manager, executeReadCommand)
+static PHP_METHOD(MongoDB_Driver_Manager, executeReadCommand)
 {
 	php_phongo_manager_t* intern;
 	char*                 db;
@@ -422,7 +425,7 @@ static PHP_METHOD(Manager, executeReadCommand)
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
    Execute a WriteCommand */
-static PHP_METHOD(Manager, executeWriteCommand)
+static PHP_METHOD(MongoDB_Driver_Manager, executeWriteCommand)
 {
 	php_phongo_manager_t* intern;
 	char*                 db;
@@ -461,7 +464,7 @@ static PHP_METHOD(Manager, executeWriteCommand)
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeReadWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
    Execute a ReadWriteCommand */
-static PHP_METHOD(Manager, executeReadWriteCommand)
+static PHP_METHOD(MongoDB_Driver_Manager, executeReadWriteCommand)
 {
 	php_phongo_manager_t* intern;
 	char*                 db;
@@ -500,7 +503,7 @@ static PHP_METHOD(Manager, executeReadWriteCommand)
 
 /* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, array $options = null])
    Execute a Query */
-static PHP_METHOD(Manager, executeQuery)
+static PHP_METHOD(MongoDB_Driver_Manager, executeQuery)
 {
 	php_phongo_manager_t* intern;
 	char* namespace;
@@ -553,7 +556,7 @@ cleanup:
 
 /* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, array $options = null])
    Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
-static PHP_METHOD(Manager, executeBulkWrite)
+static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 {
 	php_phongo_manager_t* intern;
 	char* namespace;
@@ -601,7 +604,7 @@ cleanup:
 
 /* {{{ proto array|object|null MongoDB\Driver\Manager::getEncryptedFieldsMap()
    Returns the autoEncryption.encryptedFieldsMap driver option */
-static PHP_METHOD(Manager, getEncryptedFieldsMap)
+static PHP_METHOD(MongoDB_Driver_Manager, getEncryptedFieldsMap)
 {
 	php_phongo_manager_t* intern;
 
@@ -616,7 +619,7 @@ static PHP_METHOD(Manager, getEncryptedFieldsMap)
 
 /* {{{ proto MongoDB\Driver\ReadConcern MongoDB\Driver\Manager::getReadConcern()
    Returns the ReadConcern associated with this Manager */
-static PHP_METHOD(Manager, getReadConcern)
+static PHP_METHOD(MongoDB_Driver_Manager, getReadConcern)
 {
 	php_phongo_manager_t* intern;
 
@@ -629,7 +632,7 @@ static PHP_METHOD(Manager, getReadConcern)
 
 /* {{{ proto MongoDB\Driver\ReadPreference MongoDB\Driver\Manager::getReadPreference()
    Returns the ReadPreference associated with this Manager */
-static PHP_METHOD(Manager, getReadPreference)
+static PHP_METHOD(MongoDB_Driver_Manager, getReadPreference)
 {
 	php_phongo_manager_t* intern;
 
@@ -642,7 +645,7 @@ static PHP_METHOD(Manager, getReadPreference)
 
 /* {{{ proto MongoDB\Driver\Server[] MongoDB\Driver\Manager::getServers()
    Returns the Servers associated with this Manager */
-static PHP_METHOD(Manager, getServers)
+static PHP_METHOD(MongoDB_Driver_Manager, getServers)
 {
 	php_phongo_manager_t*         intern;
 	mongoc_server_description_t** sds;
@@ -667,7 +670,7 @@ static PHP_METHOD(Manager, getServers)
 
 /* {{{ proto MongoDB\Driver\WriteConcern MongoDB\Driver\Manager::getWriteConcern()
    Returns the WriteConcern associated with this Manager */
-static PHP_METHOD(Manager, getWriteConcern)
+static PHP_METHOD(MongoDB_Driver_Manager, getWriteConcern)
 {
 	php_phongo_manager_t* intern;
 
@@ -680,7 +683,7 @@ static PHP_METHOD(Manager, getWriteConcern)
 
 /* {{{ proto void MongoDB\Driver\Manager::removeSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
    Unregisters an event subscriber for this Manager */
-static PHP_METHOD(Manager, removeSubscriber)
+static PHP_METHOD(MongoDB_Driver_Manager, removeSubscriber)
 {
 	php_phongo_manager_t* intern;
 	zval*                 subscriber;
@@ -699,9 +702,9 @@ static PHP_METHOD(Manager, removeSubscriber)
 	phongo_apm_remove_subscriber(intern->subscribers, subscriber);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Server MongoDB\Driver\Manager::selectServers([MongoDB\Driver\ReadPreference $readPreference = null])
+/* {{{ proto MongoDB\Driver\Server MongoDB\Driver\Manager::selectServer([MongoDB\Driver\ReadPreference $readPreference = null])
    Selects a Server for the given ReadPreference (default: primary). */
-static PHP_METHOD(Manager, selectServer)
+static PHP_METHOD(MongoDB_Driver_Manager, selectServer)
 {
 	php_phongo_manager_t* intern;
 	zval*                 zreadPreference = NULL;
@@ -724,7 +727,7 @@ static PHP_METHOD(Manager, selectServer)
 
 /* {{{ proto MongoDB\Driver\Session MongoDB\Driver\Manager::startSession([array $options = null])
    Returns a new client session */
-static PHP_METHOD(Manager, startSession)
+static PHP_METHOD(MongoDB_Driver_Manager, startSession)
 {
 	php_phongo_manager_t*     intern;
 	zval*                     options = NULL;
@@ -807,85 +810,6 @@ cleanup:
 		mongoc_session_opts_destroy(cs_opts);
 	}
 } /* }}} */
-
-/* {{{ MongoDB\Driver\Manager function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager___construct, 0, 0, 0)
-	ZEND_ARG_INFO(0, uri)
-	ZEND_ARG_ARRAY_INFO(0, options, 0)
-	ZEND_ARG_ARRAY_INFO(0, driverOptions, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_addSubscriber, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, subscriber, MongoDB\\Driver\\Monitoring\\Subscriber, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_createClientEncryption, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, options, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeCommand, 0, 0, 2)
-	ZEND_ARG_INFO(0, db)
-	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
-	ZEND_ARG_INFO(0, options)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeRWCommand, 0, 0, 2)
-	ZEND_ARG_INFO(0, db)
-	ZEND_ARG_OBJ_INFO(0, command, MongoDB\\Driver\\Command, 0)
-	ZEND_ARG_ARRAY_INFO(0, options, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeQuery, 0, 0, 2)
-	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, zquery, MongoDB\\Driver\\Query, 0)
-	ZEND_ARG_INFO(0, options)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_executeBulkWrite, 0, 0, 2)
-	ZEND_ARG_INFO(0, namespace)
-	ZEND_ARG_OBJ_INFO(0, zbulk, MongoDB\\Driver\\BulkWrite, 0)
-	ZEND_ARG_INFO(0, options)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_removeSubscriber, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, subscriber, MongoDB\\Driver\\Monitoring\\Subscriber, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_selectServer, 0, 0, 0)
-	ZEND_ARG_OBJ_INFO(0, readPreference, MongoDB\\Driver\\ReadPreference, 1)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_startSession, 0, 0, 0)
-	ZEND_ARG_ARRAY_INFO(0, options, 1)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Manager_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_manager_me[] = {
-	/* clang-format off */
-	PHP_ME(Manager, __construct, ai_Manager___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, addSubscriber, ai_Manager_addSubscriber, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, createClientEncryption, ai_Manager_createClientEncryption, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeReadCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeWriteCommand, ai_Manager_executeRWCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeReadWriteCommand, ai_Manager_executeCommand, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeQuery, ai_Manager_executeQuery, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, executeBulkWrite, ai_Manager_executeBulkWrite, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, getEncryptedFieldsMap, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, getReadConcern, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, getReadPreference, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, getServers, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, getWriteConcern, ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, removeSubscriber, ai_Manager_removeSubscriber, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, selectServer, ai_Manager_selectServer, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Manager, startSession, ai_Manager_startSession, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_Manager_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
 
 /* {{{ MongoDB\Driver\Manager object handlers */
 static zend_object_handlers php_phongo_handler_manager;
@@ -991,12 +915,8 @@ done:
 
 void php_phongo_manager_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "Manager", php_phongo_manager_me);
-	php_phongo_manager_ce                = zend_register_internal_class(&ce);
+	php_phongo_manager_ce                = register_class_MongoDB_Driver_Manager();
 	php_phongo_manager_ce->create_object = php_phongo_manager_create_object;
-	PHONGO_CE_FINAL(php_phongo_manager_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_manager_ce);
 
 	memcpy(&php_phongo_handler_manager, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

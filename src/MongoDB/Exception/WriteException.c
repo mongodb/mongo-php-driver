@@ -18,12 +18,13 @@
 
 #include "php_phongo.h"
 #include "phongo_error.h"
+#include "WriteException_arginfo.h"
 
 zend_class_entry* php_phongo_writeexception_ce;
 
 /* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Exception\WriteException::getWriteResult()
    Returns the WriteResult from the failed write operation. */
-static PHP_METHOD(WriteException, getWriteResult)
+static PHP_METHOD(MongoDB_Driver_Exception_WriteException, getWriteResult)
 {
 	zval* writeresult;
 	zval  rv;
@@ -35,25 +36,7 @@ static PHP_METHOD(WriteException, getWriteResult)
 	RETURN_ZVAL(writeresult, 1, 0);
 } /* }}} */
 
-/* {{{ MongoDB\Driver\Exception\WriteException function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteException_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_writeexception_me[] = {
-	/* clang-format off */
-	PHP_ME(WriteException, getWriteResult, ai_WriteException_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
-
 void php_phongo_writeexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "WriteException", php_phongo_writeexception_me);
-	php_phongo_writeexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce);
-	php_phongo_writeexception_ce->ce_flags |= ZEND_ACC_EXPLICIT_ABSTRACT_CLASS;
-
-	zend_declare_property_null(php_phongo_writeexception_ce, ZEND_STRL("writeResult"), ZEND_ACC_PROTECTED);
+	php_phongo_writeexception_ce = register_class_MongoDB_Driver_Exception_WriteException(php_phongo_serverexception_ce);
 } /* }}} */

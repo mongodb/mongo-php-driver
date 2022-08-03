@@ -22,6 +22,7 @@
 #include "php_phongo.h"
 #include "phongo_error.h"
 #include "phongo_util.h"
+#include "Int64_arginfo.h"
 
 zend_class_entry* php_phongo_int64_ce;
 
@@ -85,9 +86,11 @@ HashTable* php_phongo_int64_get_properties_hash(phongo_compat_object_handler_typ
 	return props;
 } /* }}} */
 
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Int64)
+
 /* {{{ proto string MongoDB\BSON\Int64::__toString()
    Return the Int64's value as a string. */
-static PHP_METHOD(Int64, __toString)
+static PHP_METHOD(MongoDB_BSON_Int64, __toString)
 {
 	php_phongo_int64_t* intern;
 
@@ -100,7 +103,7 @@ static PHP_METHOD(Int64, __toString)
 
 /* {{{ proto array MongoDB\BSON\Int64::jsonSerialize()
 */
-static PHP_METHOD(Int64, jsonSerialize)
+static PHP_METHOD(MongoDB_BSON_Int64, jsonSerialize)
 {
 	php_phongo_int64_t* intern;
 
@@ -115,7 +118,7 @@ static PHP_METHOD(Int64, jsonSerialize)
 
 /* {{{ proto string MongoDB\BSON\Int64::serialize()
 */
-static PHP_METHOD(Int64, serialize)
+static PHP_METHOD(MongoDB_BSON_Int64, serialize)
 {
 	php_phongo_int64_t*  intern;
 	zval                 retval;
@@ -142,7 +145,7 @@ static PHP_METHOD(Int64, serialize)
 
 /* {{{ proto void MongoDB\BSON\Int64::unserialize(string $serialized)
 */
-static PHP_METHOD(Int64, unserialize)
+static PHP_METHOD(MongoDB_BSON_Int64, unserialize)
 {
 	php_phongo_int64_t*    intern;
 	char*                  serialized;
@@ -172,7 +175,7 @@ static PHP_METHOD(Int64, unserialize)
 
 /* {{{ proto array MongoDB\Driver\Int64::__serialize()
 */
-static PHP_METHOD(Int64, __serialize)
+static PHP_METHOD(MongoDB_BSON_Int64, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -181,7 +184,7 @@ static PHP_METHOD(Int64, __serialize)
 
 /* {{{ proto void MongoDB\Driver\Int64::__unserialize(array $data)
 */
-static PHP_METHOD(Int64, __unserialize)
+static PHP_METHOD(MongoDB_BSON_Int64, __unserialize)
 {
 	zval* data;
 
@@ -191,39 +194,6 @@ static PHP_METHOD(Int64, __unserialize)
 
 	php_phongo_int64_init_from_hash(Z_INT64_OBJ_P(getThis()), Z_ARRVAL_P(data));
 } /* }}} */
-
-/* {{{ MongoDB\BSON\Int64 function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_Int64___toString, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Int64___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_Int64_jsonSerialize, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Int64_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_Int64_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_int64_me[] = {
-	/* __set_state intentionally missing */
-	PHP_ME(Int64, __serialize, ai_Int64_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Int64, __toString, ai_Int64___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Int64, __unserialize, ai_Int64___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Int64, jsonSerialize, ai_Int64_jsonSerialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Int64, serialize, ai_Int64_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(Int64, unserialize, ai_Int64_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_Int64_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
 
 /* {{{ MongoDB\BSON\Int64 object handlers */
 static zend_object_handlers php_phongo_handler_int64;
@@ -299,16 +269,8 @@ static HashTable* php_phongo_int64_get_properties(phongo_compat_object_handler_t
 
 void php_phongo_int64_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Int64", php_phongo_int64_me);
-	php_phongo_int64_ce                = zend_register_internal_class(&ce);
+	php_phongo_int64_ce                = register_class_MongoDB_BSON_Int64(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_int64_ce->create_object = php_phongo_int64_create_object;
-	PHONGO_CE_FINAL(php_phongo_int64_ce);
-
-	zend_class_implements(php_phongo_int64_ce, 1, php_phongo_json_serializable_ce);
-	zend_class_implements(php_phongo_int64_ce, 1, php_phongo_type_ce);
-	zend_class_implements(php_phongo_int64_ce, 1, zend_ce_serializable);
 
 #if PHP_VERSION_ID >= 80000
 	zend_class_implements(php_phongo_int64_ce, 1, zend_ce_stringable);

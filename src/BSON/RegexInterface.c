@@ -17,30 +17,11 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "RegexInterface_arginfo.h"
 
 zend_class_entry* php_phongo_regex_interface_ce;
 
-/* {{{ MongoDB\BSON\RegexInterface function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(ai_RegexInterface___toString, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_RegexInterface_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_regex_interface_me[] = {
-	ZEND_ABSTRACT_ME(RegexInterface, getFlags, ai_RegexInterface_void)
-	ZEND_ABSTRACT_ME(RegexInterface, getPattern, ai_RegexInterface_void)
-	ZEND_ABSTRACT_ME(RegexInterface, __toString, ai_RegexInterface___toString)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
-
 void php_phongo_regex_interface_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "RegexInterface", php_phongo_regex_interface_me);
-	php_phongo_regex_interface_ce = zend_register_internal_interface(&ce);
+	php_phongo_regex_interface_ce = register_class_MongoDB_BSON_RegexInterface();
 } /* }}} */

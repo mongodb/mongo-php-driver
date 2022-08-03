@@ -21,12 +21,16 @@
 #include "phongo_error.h"
 
 #include "BSON/ObjectId.h"
+#include "ServerOpeningEvent_arginfo.h"
 
 zend_class_entry* php_phongo_serveropeningevent_ce;
 
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerOpeningEvent)
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_ServerOpeningEvent)
+
 /* {{{ proto string ServerOpeningEvent::getHost()
    Returns this event's host */
-static PHP_METHOD(ServerOpeningEvent, getHost)
+static PHP_METHOD(MongoDB_Driver_Monitoring_ServerOpeningEvent, getHost)
 {
 	php_phongo_serveropeningevent_t* intern = Z_SERVEROPENINGEVENT_OBJ_P(getThis());
 
@@ -37,7 +41,7 @@ static PHP_METHOD(ServerOpeningEvent, getHost)
 
 /* {{{ proto integer ServerOpeningEvent::getPort()
    Returns this event's port */
-static PHP_METHOD(ServerOpeningEvent, getPort)
+static PHP_METHOD(MongoDB_Driver_Monitoring_ServerOpeningEvent, getPort)
 {
 	php_phongo_serveropeningevent_t* intern = Z_SERVEROPENINGEVENT_OBJ_P(getThis());
 
@@ -48,7 +52,7 @@ static PHP_METHOD(ServerOpeningEvent, getPort)
 
 /* {{{ proto MongoDB\BSON\ObjectId ServerOpeningEvent::getTopologyId()
    Returns this event's topology id */
-static PHP_METHOD(ServerOpeningEvent, getTopologyId)
+static PHP_METHOD(MongoDB_Driver_Monitoring_ServerOpeningEvent, getTopologyId)
 {
 	php_phongo_serveropeningevent_t* intern = Z_SERVEROPENINGEVENT_OBJ_P(getThis());
 
@@ -56,22 +60,6 @@ static PHP_METHOD(ServerOpeningEvent, getTopologyId)
 
 	phongo_objectid_init(return_value, &intern->topology_id);
 } /* }}} */
-
-/* {{{ MongoDB\Driver\Monitoring\ServerOpeningEvent function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_ServerOpeningEvent_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_serveropeningevent_me[] = {
-	/* clang-format off */
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_ServerOpeningEvent_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	PHP_ME(ServerOpeningEvent, getHost, ai_ServerOpeningEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerOpeningEvent, getPort, ai_ServerOpeningEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerOpeningEvent, getTopologyId, ai_ServerOpeningEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_ServerOpeningEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
 
 /* {{{ MongoDB\Driver\Monitoring\ServerOpeningEvent object handlers */
 static zend_object_handlers php_phongo_handler_serveropeningevent;
@@ -119,20 +107,12 @@ static HashTable* php_phongo_serveropeningevent_get_debug_info(phongo_compat_obj
 
 void php_phongo_serveropeningevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-	(void) type;
-	(void) module_number;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "ServerOpeningEvent", php_phongo_serveropeningevent_me);
-	php_phongo_serveropeningevent_ce                = zend_register_internal_class(&ce);
+	php_phongo_serveropeningevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerOpeningEvent();
 	php_phongo_serveropeningevent_ce->create_object = php_phongo_serveropeningevent_create_object;
-	PHONGO_CE_FINAL(php_phongo_serveropeningevent_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_serveropeningevent_ce);
 
 	memcpy(&php_phongo_handler_serveropeningevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serveropeningevent.get_debug_info = php_phongo_serveropeningevent_get_debug_info;
 	php_phongo_handler_serveropeningevent.free_obj       = php_phongo_serveropeningevent_free_object;
 	php_phongo_handler_serveropeningevent.offset         = XtOffsetOf(php_phongo_serveropeningevent_t, std);
-
-	return;
 } /* }}} */

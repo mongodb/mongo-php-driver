@@ -11,7 +11,7 @@ require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
     new MongoDB\BSON\Decimal128([]);
-}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
+}, TypeError::class), "\n";
 
 echo throws(function() {
     new MongoDB\BSON\Decimal128('foo');
@@ -21,7 +21,7 @@ echo throws(function() {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+OK: Got TypeError
 %SMongoDB\BSON\Decimal128::__construct()%sstring, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Error parsing Decimal128 string: foo

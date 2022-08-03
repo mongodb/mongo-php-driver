@@ -44,7 +44,6 @@ ZEND_TSRMLS_CACHE_DEFINE();
 static int32_t phongo_num_threads = 0;
 
 /* Declare zend_class_entry dependencies, which are initialized in MINIT */
-zend_class_entry* php_phongo_date_immutable_ce;
 zend_class_entry* php_phongo_json_serializable_ce;
 
 /* {{{ phongo_std_object_handlers */
@@ -182,16 +181,11 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 
 	/* Initialize zend_class_entry dependencies.
 	 *
-	 * Although DateTimeImmutable was introduced in PHP 5.5.0,
-	 * php_date_get_immutable_ce() is not available in PHP versions before
-	 * 5.5.24 and 5.6.8.
-	 *
 	 * Although JsonSerializable was introduced in PHP 5.4.0,
 	 * php_json_serializable_ce is not exported in PHP versions before 5.4.26
 	 * and 5.5.10. For later PHP versions, looking up the class manually also
 	 * helps with distros that disable LTDL_LAZY for dlopen() (e.g. Fedora).
 	 */
-	php_phongo_date_immutable_ce    = php_phongo_fetch_internal_class(ZEND_STRL("datetimeimmutable"));
 	php_phongo_json_serializable_ce = php_phongo_fetch_internal_class(ZEND_STRL("jsonserializable"));
 
 	if (php_phongo_json_serializable_ce == NULL) {

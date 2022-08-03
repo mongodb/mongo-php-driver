@@ -17,23 +17,11 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "Subscriber_arginfo.h"
 
 zend_class_entry* php_phongo_subscriber_ce;
 
-/* {{{ MongoDB\Driver\Monitoring\Subscriber function entries */
-static zend_function_entry php_phongo_subscriber_me[] = {
-	PHP_FE_END
-};
-/* }}} */
-
 void php_phongo_subscriber_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-	(void) type;
-	(void) module_number;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "Subscriber", php_phongo_subscriber_me);
-	php_phongo_subscriber_ce = zend_register_internal_interface(&ce);
-
-	return;
+	php_phongo_subscriber_ce = register_class_MongoDB_Driver_Monitoring_Subscriber();
 } /* }}} */

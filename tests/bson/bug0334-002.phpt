@@ -6,13 +6,14 @@ PHPC-334: Encoded BSON should never have multiple __pclass keys
 require_once __DIR__ . '/../utils/basic.inc';
 
 class MyClass implements MongoDB\BSON\Persistable {
-    function bsonSerialize() {
+    #[\ReturnTypeWillChange]
+    public function bsonSerialize() {
         return array(
             "__pclass" => "baz",
             "foo" => "bar",
         );
     }
-    function bsonUnserialize(array $data) {
+    public function bsonUnserialize(array $data): void {
     }
 }
 

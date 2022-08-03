@@ -23,6 +23,7 @@
 
 #include "php_phongo.h"
 #include "phongo_error.h"
+#include "ServerApi_arginfo.h"
 
 zend_class_entry* php_phongo_serverapi_ce;
 
@@ -93,7 +94,7 @@ static bool php_phongo_serverapi_init_from_hash(php_phongo_serverapi_t* intern, 
 
 /* {{{ proto void MongoDB\Driver\ServerApi::__construct(string $version, [?bool $strict], [?bool $deprecationErrors])
    Constructs a new ServerApi object */
-static PHP_METHOD(ServerApi, __construct)
+static PHP_METHOD(MongoDB_Driver_ServerApi, __construct)
 {
 	php_phongo_serverapi_t* intern;
 	zend_string*            version;
@@ -123,7 +124,7 @@ static PHP_METHOD(ServerApi, __construct)
 
 /* {{{ proto MongoDB\Driver\ServerApi MongoDB\Driver\ServerApi::__set_state(array $properties)
 */
-static PHP_METHOD(ServerApi, __set_state)
+static PHP_METHOD(MongoDB_Driver_ServerApi, __set_state)
 {
 	php_phongo_serverapi_t* intern;
 	HashTable*              props;
@@ -182,7 +183,7 @@ static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_
 
 /* {{{ proto array MongoDB\Driver\ServerApi::bsonSerialize()
 */
-static PHP_METHOD(ServerApi, bsonSerialize)
+static PHP_METHOD(MongoDB_Driver_ServerApi, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -192,7 +193,7 @@ static PHP_METHOD(ServerApi, bsonSerialize)
 
 /* {{{ proto string MongoDB\Driver\ServerApi::serialize()
 */
-static PHP_METHOD(ServerApi, serialize)
+static PHP_METHOD(MongoDB_Driver_ServerApi, serialize)
 {
 	php_phongo_serverapi_t* intern;
 	zval                    retval;
@@ -232,7 +233,7 @@ static PHP_METHOD(ServerApi, serialize)
 
 /* {{{ proto void MongoDB\Driver\ServerApi::unserialize(string $serialized)
 */
-static PHP_METHOD(ServerApi, unserialize)
+static PHP_METHOD(MongoDB_Driver_ServerApi, unserialize)
 {
 	php_phongo_serverapi_t* intern;
 	char*                   serialized;
@@ -266,7 +267,7 @@ static PHP_METHOD(ServerApi, unserialize)
 
 /* {{{ proto array MongoDB\Driver\ServerApi::__serialize()
 */
-static PHP_METHOD(ServerApi, __serialize)
+static PHP_METHOD(MongoDB_Driver_ServerApi, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -275,7 +276,7 @@ static PHP_METHOD(ServerApi, __serialize)
 
 /* {{{ proto void MongoDB\Driver\ServerApi::__unserialize(array $data)
 */
-static PHP_METHOD(ServerApi, __unserialize)
+static PHP_METHOD(MongoDB_Driver_ServerApi, __unserialize)
 {
 	zval* data;
 
@@ -285,46 +286,6 @@ static PHP_METHOD(ServerApi, __unserialize)
 
 	php_phongo_serverapi_init_from_hash(Z_SERVERAPI_OBJ_P(getThis()), Z_ARRVAL_P(data));
 } /* }}} */
-
-/* {{{ MongoDB\Driver\ServerApi function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi___construct, 0, 0, 1)
-	ZEND_ARG_TYPE_INFO(0, version, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, strict, _IS_BOOL, 1)
-	ZEND_ARG_TYPE_INFO(0, deprecationErrors, _IS_BOOL, 1)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi___set_state, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi_unserialize, 0, 0, 1)
-#if PHP_VERSION_ID >= 80000
-	ZEND_ARG_TYPE_INFO(0, serialized, IS_STRING, 0)
-#else
-	ZEND_ARG_INFO(0, serialized)
-#endif
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_ServerApi_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_serverapi_me[] = {
-	/* clang-format off */
-	PHP_ME(ServerApi, __construct, ai_ServerApi___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerApi, __serialize, ai_ServerApi_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerApi, __set_state, ai_ServerApi___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(ServerApi, __unserialize, ai_ServerApi___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerApi, bsonSerialize, ai_ServerApi_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerApi, serialize, ai_ServerApi_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(ServerApi, unserialize, ai_ServerApi_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
 
 /* {{{ MongoDB\Driver\ServerApi object handlers */
 static zend_object_handlers php_phongo_handler_serverapi;
@@ -370,21 +331,12 @@ static HashTable* php_phongo_serverapi_get_properties(phongo_compat_object_handl
 
 void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "ServerApi", php_phongo_serverapi_me);
-	php_phongo_serverapi_ce                = zend_register_internal_class(&ce);
+	php_phongo_serverapi_ce                = register_class_MongoDB_Driver_ServerApi(php_phongo_serializable_ce, zend_ce_serializable);
 	php_phongo_serverapi_ce->create_object = php_phongo_serverapi_create_object;
-	PHONGO_CE_FINAL(php_phongo_serverapi_ce);
-
-	zend_class_implements(php_phongo_serverapi_ce, 1, php_phongo_serializable_ce);
-	zend_class_implements(php_phongo_serverapi_ce, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_serverapi, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_serverapi.get_debug_info = php_phongo_serverapi_get_debug_info;
 	php_phongo_handler_serverapi.get_properties = php_phongo_serverapi_get_properties;
 	php_phongo_handler_serverapi.free_obj       = php_phongo_serverapi_free_object;
 	php_phongo_handler_serverapi.offset         = XtOffsetOf(php_phongo_serverapi_t, std);
-
-	zend_declare_class_constant_stringl(php_phongo_serverapi_ce, ZEND_STRL("V1"), ZEND_STRL("1"));
 } /* }}} */

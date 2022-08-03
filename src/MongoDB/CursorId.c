@@ -22,6 +22,7 @@
 #include "php_phongo.h"
 #include "phongo_error.h"
 #include "phongo_util.h"
+#include "CursorId_arginfo.h"
 
 zend_class_entry* php_phongo_cursorid_ce;
 
@@ -92,7 +93,7 @@ static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_h
 
 /* {{{ proto MongoDB\Driver\CursorId MongoDB\Driver\CursorId::__set_state(array $properties)
 */
-static PHP_METHOD(CursorId, __set_state)
+PHP_METHOD(MongoDB_Driver_CursorId, __set_state)
 {
 	php_phongo_cursorid_t* intern;
 	HashTable*             props;
@@ -112,7 +113,7 @@ static PHP_METHOD(CursorId, __set_state)
 
 /* {{{ proto string MongoDB\Driver\CursorId::__toString()
    Returns the string representation of the CursorId */
-static PHP_METHOD(CursorId, __toString)
+PHP_METHOD(MongoDB_Driver_CursorId, __toString)
 {
 	php_phongo_cursorid_t* intern;
 	char*                  tmp;
@@ -129,7 +130,7 @@ static PHP_METHOD(CursorId, __toString)
 
 /* {{{ proto string MongoDB\Driver\CursorId::serialize()
 */
-static PHP_METHOD(CursorId, serialize)
+PHP_METHOD(MongoDB_Driver_CursorId, serialize)
 {
 	php_phongo_cursorid_t* intern;
 	zval                   retval;
@@ -156,7 +157,7 @@ static PHP_METHOD(CursorId, serialize)
 
 /* {{{ proto void MongoDB\Driver\CursorId::unserialize(string $serialized)
 */
-static PHP_METHOD(CursorId, unserialize)
+PHP_METHOD(MongoDB_Driver_CursorId, unserialize)
 {
 	php_phongo_cursorid_t* intern;
 	char*                  serialized;
@@ -186,7 +187,7 @@ static PHP_METHOD(CursorId, unserialize)
 
 /* {{{ proto array MongoDB\Driver\CursorId::__serialize()
 */
-static PHP_METHOD(CursorId, __serialize)
+PHP_METHOD(MongoDB_Driver_CursorId, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -195,7 +196,7 @@ static PHP_METHOD(CursorId, __serialize)
 
 /* {{{ proto void MongoDB\Driver\CursorId::__unserialize(array $data)
 */
-static PHP_METHOD(CursorId, __unserialize)
+PHP_METHOD(MongoDB_Driver_CursorId, __unserialize)
 {
 	zval* data;
 
@@ -206,38 +207,7 @@ static PHP_METHOD(CursorId, __unserialize)
 	php_phongo_cursorid_init_from_hash(Z_CURSORID_OBJ_P(getThis()), Z_ARRVAL_P(data));
 } /* }}} */
 
-/* {{{ MongoDB\Driver\CursorId function entries */
-/* clang-format off */
-ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___set_state, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(ai_CursorId___toString, 0, 0, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_CursorId___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_CursorId_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_CursorId_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_cursorid_me[] = {
-	PHP_ME(CursorId, __serialize, ai_CursorId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CursorId, __set_state, ai_CursorId___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(CursorId, __toString, ai_CursorId___toString, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CursorId, __unserialize, ai_CursorId___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CursorId, serialize, ai_CursorId_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CursorId, unserialize, ai_CursorId_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CursorId_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	PHP_FE_END
-};
-/* clang-format on */
-/* }}} */
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_CursorId)
 
 /* {{{ MongoDB\Driver\CursorId object handlers */
 static zend_object_handlers php_phongo_handler_cursorid;
@@ -280,14 +250,8 @@ static HashTable* php_phongo_cursorid_get_properties(phongo_compat_object_handle
 
 void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "CursorId", php_phongo_cursorid_me);
-	php_phongo_cursorid_ce                = zend_register_internal_class(&ce);
+	php_phongo_cursorid_ce                = register_class_MongoDB_Driver_CursorId(zend_ce_serializable);
 	php_phongo_cursorid_ce->create_object = php_phongo_cursorid_create_object;
-	PHONGO_CE_FINAL(php_phongo_cursorid_ce);
-
-	zend_class_implements(php_phongo_cursorid_ce, 1, zend_ce_serializable);
 
 #if PHP_VERSION_ID >= 80000
 	zend_class_implements(php_phongo_cursorid_ce, 1, zend_ce_stringable);

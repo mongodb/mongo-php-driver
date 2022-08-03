@@ -17,12 +17,13 @@ class MyDocument implements MongoDB\BSON\Serializable, MongoDB\BSON\Unserializab
         $this->data['_id'] = $id;
     }
 
+    #[\ReturnTypeWillChange]
     public function bsonSerialize()
     {
         return (object) $this->data;
     }
 
-    public function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
         printf("%s called for ID: %s\n", __METHOD__, $data['_id']);
         $this->data = $data;

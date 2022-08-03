@@ -10,17 +10,17 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 class MyTimestamp implements MongoDB\BSON\TimestampInterface
 {
-    public function getIncrement()
+    public function getIncrement(): int
     {
         return 5678;
     }
 
-    public function getTimestamp()
+    public function getTimestamp(): int
     {
         return 1234;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf('[%d:%d]', $this->getIncrement(), $this->getTimestamp());
     }

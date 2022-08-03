@@ -9,28 +9,28 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
 {
-    public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event) {}
+    public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event): void {}
 
-    public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event) {}
+    public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event): void {}
 
-    public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event) {}
+    public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event): void {}
 
-    public function serverHeartbeatStarted(MongoDB\Driver\Monitoring\serverHeartbeatStartedEvent $event) {}
+    public function serverHeartbeatStarted(MongoDB\Driver\Monitoring\serverHeartbeatStartedEvent $event): void {}
 
-    public function serverHeartbeatSucceeded(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent $event) {}
+    public function serverHeartbeatSucceeded(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent $event): void {}
 
-    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event) {}
+    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event): void {}
     
-    public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event) {}
+    public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event): void {}
 
-    public function topologyClosed(MongoDB\Driver\Monitoring\TopologyClosedEvent $event)
+    public function topologyClosed(MongoDB\Driver\Monitoring\TopologyClosedEvent $event): void
     {
         printf("getTopologyId() returns an ObjectId: %s\n", ($event->getTopologyId() instanceof MongoDB\BSON\ObjectId) ? 'yes' : 'no');
 
         var_dump($event);
     }
 
-    public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event) {}
+    public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event): void {}
 }
 
 /* Note: TopologyChangedEvent can only be observed for non-persistent clients.

@@ -17,19 +17,11 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "MinKeyInterface_arginfo.h"
 
 zend_class_entry* php_phongo_minkey_interface_ce;
 
-/* {{{ MongoDB\BSON\MinKeyInterface function entries */
-static zend_function_entry php_phongo_minkey_interface_me[] = {
-	PHP_FE_END
-};
-/* }}} */
-
 void php_phongo_minkey_interface_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "MinKeyInterface", php_phongo_minkey_interface_me);
-	php_phongo_minkey_interface_ce = zend_register_internal_interface(&ce);
+	php_phongo_minkey_interface_ce = register_class_MongoDB_BSON_MinKeyInterface();
 } /* }}} */

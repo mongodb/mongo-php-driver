@@ -41,6 +41,7 @@ mongocryptd.pid
 *.out
 *.mem
 *.php
+!*.stub.php
 tests/*/*.sh
 tests/*/*/*/*.sh
 tests/*/*/*/*/*.sh

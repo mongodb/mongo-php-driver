@@ -11,26 +11,26 @@ class TopologyDescriptionProvider implements MongoDB\Driver\Monitoring\SDAMSubsc
 {
     private $topologyDescription;
 
-    public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event) {}
+    public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event): void {}
 
-    public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event) {}
+    public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event): void {}
 
-    public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event) {}
+    public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event): void {}
 
-    public function serverHeartbeatStarted(MongoDB\Driver\Monitoring\ServerHeartbeatStartedEvent $event) {}
+    public function serverHeartbeatStarted(MongoDB\Driver\Monitoring\ServerHeartbeatStartedEvent $event): void {}
 
-    public function serverHeartbeatSucceeded(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent $event) {}
+    public function serverHeartbeatSucceeded(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent $event): void {}
 
-    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event) {}
+    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event): void {}
 
-    public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event)
+    public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event): void
     {
         $this->topologyDescription = $event->getNewDescription();
     }
 
-    public function topologyClosed(MongoDB\Driver\Monitoring\TopologyClosedEvent $event) {}
+    public function topologyClosed(MongoDB\Driver\Monitoring\TopologyClosedEvent $event): void {}
 
-    public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event) {}
+    public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event): void {}
 
     public function getTopologyDescription()
     {
@@ -44,7 +44,6 @@ class TopologyDescriptionProvider implements MongoDB\Driver\Monitoring\SDAMSubsc
 }
 
 $tests = [
-    null,
     1,
     [],
 ];
@@ -62,7 +61,6 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-OK: Got TypeError
 OK: Got TypeError
 OK: Got TypeError
 ===DONE===

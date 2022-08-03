@@ -10,13 +10,14 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 class Book implements MongoDB\BSON\Persistable
 {
+    #[\ReturnTypeWillChange]
     public function bsonSerialize()
     {
         $data = get_object_vars($this);
         return $data;
     }
 
-    public function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
         foreach ($data as $name => $value) {
             $this->{$name} = $value;
@@ -26,13 +27,14 @@ class Book implements MongoDB\BSON\Persistable
 
 class Page implements MongoDB\BSON\Persistable
 {
+    #[\ReturnTypeWillChange]
     public function bsonSerialize()
     {
         $data = get_object_vars($this);
         return $data;
     }
 
-    public function bsonUnserialize(array $data)
+    public function bsonUnserialize(array $data): void
     {
         foreach ($data as $name => $value) {
             $this->{$name} = $value;

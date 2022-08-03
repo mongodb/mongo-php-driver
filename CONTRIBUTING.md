@@ -21,6 +21,13 @@ phpize > /dev/null && \
 make clean > /dev/null && make all > /dev/null && make install
 ```
 
+## Generating arginfo from stub files
+
+Arginfo structures are generated from stub files using the `gen_stub.php`
+file. Note that this requires `phpize` to be run for PHP 8.2 to make use
+of all features. After changing a stub file, run `./build/gen_stub.php`
+to regenerate the corresponding arginfo files and commit the results.
+
 ## Testing
 
 The extension's test use the PHPT format from PHP internals. This format is

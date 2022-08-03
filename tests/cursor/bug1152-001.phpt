@@ -56,7 +56,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
         printf("Unique session IDs used: %d\n", count(array_unique($this->lsidByRequestId)));
     }
 
-    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event)
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
         $requestId = $event->getRequestId();
         $sessionId = bin2hex((string) $event->getCommand()->lsid->id);
@@ -92,7 +92,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
         }
     }
 
-    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void
     {
         /* Associate the aggregate's session ID with its cursor ID so it can be
          * looked up by the subsequent getMore or killCursors */
@@ -104,7 +104,7 @@ class Test implements MongoDB\Driver\Monitoring\CommandSubscriber
         }
     }
 
-    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event)
+    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event): void
     {
     }
 }

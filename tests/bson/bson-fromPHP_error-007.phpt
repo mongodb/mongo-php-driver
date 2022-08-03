@@ -14,6 +14,7 @@ class MySerializable implements MongoDB\BSON\Serializable
         $this->data = $data;
     }
 
+    #[\ReturnTypeWillChange]
     public function bsonSerialize()
     {
         return $this->data;

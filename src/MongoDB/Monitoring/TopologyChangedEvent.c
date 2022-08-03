@@ -24,12 +24,16 @@
 
 #include "BSON/ObjectId.h"
 #include "MongoDB/TopologyDescription.h"
+#include "TopologyChangedEvent_arginfo.h"
 
 zend_class_entry* php_phongo_topologychangedevent_ce;
 
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_TopologyChangedEvent)
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_TopologyChangedEvent)
+
 /* {{{ proto MongoDB\Driver\TopologyDescription TopologyChangedEvent::getNewDescription()
    Returns this event's new description */
-static PHP_METHOD(TopologyChangedEvent, getNewDescription)
+static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getNewDescription)
 {
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
 
@@ -40,7 +44,7 @@ static PHP_METHOD(TopologyChangedEvent, getNewDescription)
 
 /* {{{ proto MongoDB\Driver\TopologyDescription TopologyChangedEvent::getPreviousDescription()
    Returns this event's previous description */
-static PHP_METHOD(TopologyChangedEvent, getPreviousDescription)
+static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getPreviousDescription)
 {
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
 
@@ -51,7 +55,7 @@ static PHP_METHOD(TopologyChangedEvent, getPreviousDescription)
 
 /* {{{ proto MongoDB\BSON\ObjectId TopologyChangedEvent::getTopologyId()
    Returns this event's topology id */
-static PHP_METHOD(TopologyChangedEvent, getTopologyId)
+static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getTopologyId)
 {
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
 
@@ -59,22 +63,6 @@ static PHP_METHOD(TopologyChangedEvent, getTopologyId)
 
 	phongo_objectid_init(return_value, &intern->topology_id);
 } /* }}} */
-
-/* {{{ MongoDB\Driver\Monitoring\TopologyChangedEvent function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_TopologyChangedEvent_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_topologychangedevent_me[] = {
-	/* clang-format off */
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_TopologyChangedEvent_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	PHP_ME(TopologyChangedEvent, getNewDescription, ai_TopologyChangedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(TopologyChangedEvent, getPreviousDescription, ai_TopologyChangedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(TopologyChangedEvent, getTopologyId, ai_TopologyChangedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_TopologyChangedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
 
 /* {{{ MongoDB\Driver\Monitoring\TopologyChangedEvent object handlers */
 static zend_object_handlers php_phongo_handler_topologychangedevent;
@@ -139,12 +127,8 @@ static HashTable* php_phongo_topologychangedevent_get_debug_info(phongo_compat_o
 
 void php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "TopologyChangedEvent", php_phongo_topologychangedevent_me);
-	php_phongo_topologychangedevent_ce                = zend_register_internal_class(&ce);
+	php_phongo_topologychangedevent_ce                = register_class_MongoDB_Driver_Monitoring_TopologyChangedEvent();
 	php_phongo_topologychangedevent_ce->create_object = php_phongo_topologychangedevent_create_object;
-	PHONGO_CE_FINAL(php_phongo_topologychangedevent_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_topologychangedevent_ce);
 
 	memcpy(&php_phongo_handler_topologychangedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));

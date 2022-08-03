@@ -18,12 +18,13 @@
 
 #include "php_phongo.h"
 #include "phongo_error.h"
+#include "CommandException_arginfo.h"
 
 zend_class_entry* php_phongo_commandexception_ce;
 
 /* {{{ proto document MongoDB\Driver\Exception\CommandException::getResultDocument()
    Returns the result document from the failed command. */
-static PHP_METHOD(CommandException, getResultDocument)
+static PHP_METHOD(MongoDB_Driver_Exception_CommandException, getResultDocument)
 {
 	zval* resultdocument;
 	zval  rv;
@@ -35,24 +36,7 @@ static PHP_METHOD(CommandException, getResultDocument)
 	RETURN_ZVAL(resultdocument, 1, 0);
 } /* }}} */
 
-/* {{{ MongoDB\Driver\Exception\CommandException function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_CommandException_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_commandexception_me[] = {
-	/* clang-format off */
-	PHP_ME(CommandException, getResultDocument, ai_CommandException_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
-
 void php_phongo_commandexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "CommandException", php_phongo_commandexception_me);
-	php_phongo_commandexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce);
-
-	zend_declare_property_null(php_phongo_commandexception_ce, ZEND_STRL("resultDocument"), ZEND_ACC_PROTECTED);
+	php_phongo_commandexception_ce = register_class_MongoDB_Driver_Exception_CommandException(php_phongo_serverexception_ce);
 } /* }}} */

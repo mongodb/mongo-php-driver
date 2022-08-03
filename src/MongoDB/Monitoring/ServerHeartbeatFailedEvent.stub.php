@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @generate-class-entries static
+ * @generate-function-entries static
+ */
+
+namespace MongoDB\Driver\Monitoring;
+
+final class ServerHeartbeatFailedEvent
+{
+    final private function __construct() {}
+
+    final public function getDurationMicros() : int{}
+
+    final public function getError(): \Throwable {}
+
+    final public function getPort(): int {}
+
+    final public function getHost(): string {}
+
+    final public function isAwaited(): bool {}
+
+    final public function __wakeup(): void {}
+}

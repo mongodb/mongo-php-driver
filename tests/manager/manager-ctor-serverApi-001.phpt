@@ -11,7 +11,7 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
-    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event)
+    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
     {
         $command = $event->getCommand();
         var_dump($command->apiVersion);
@@ -19,11 +19,11 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
         var_dump(isset($command->apiDeprecationErrors));
     }
 
-    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event)
+    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void
     {
     }
 
-    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event)
+    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event): void
     {
     }
 }

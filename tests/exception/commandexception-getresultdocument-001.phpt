@@ -4,7 +4,7 @@ MongoDB\Driver\Exception\CommandException::getResultDocument()
 <?php
 
 $exception = new MongoDB\Driver\Exception\CommandException();
-$resultDocument = ['x' => 1];
+$resultDocument = (object) ['x' => 1];
 
 $reflection = new ReflectionClass($exception);
 

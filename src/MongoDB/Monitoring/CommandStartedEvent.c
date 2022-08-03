@@ -25,12 +25,16 @@
 
 #include "BSON/ObjectId.h"
 #include "MongoDB/Server.h"
+#include "CommandStartedEvent_arginfo.h"
 
 zend_class_entry* php_phongo_commandstartedevent_ce;
 
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandStartedEvent)
+PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_CommandStartedEvent)
+
 /* {{{ proto stdClass CommandStartedEvent::getCommand()
    Returns the command document associated with the event */
-PHP_METHOD(CommandStartedEvent, getCommand)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommand)
 {
 	php_phongo_commandstartedevent_t* intern;
 	php_phongo_bson_state             state;
@@ -51,7 +55,7 @@ PHP_METHOD(CommandStartedEvent, getCommand)
 
 /* {{{ proto string CommandStartedEvent::getCommandName()
    Returns the command name for this event */
-PHP_METHOD(CommandStartedEvent, getCommandName)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommandName)
 {
 	php_phongo_commandstartedevent_t* intern;
 
@@ -64,7 +68,7 @@ PHP_METHOD(CommandStartedEvent, getCommandName)
 
 /* {{{ proto string CommandStartedEvent::getDatabaseName()
    Returns the database name for this event */
-PHP_METHOD(CommandStartedEvent, getDatabaseName)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getDatabaseName)
 {
 	php_phongo_commandstartedevent_t* intern;
 
@@ -77,7 +81,7 @@ PHP_METHOD(CommandStartedEvent, getDatabaseName)
 
 /* {{{ proto string CommandStartedEvent::getOperationId()
    Returns the event's operation ID */
-PHP_METHOD(CommandStartedEvent, getOperationId)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getOperationId)
 {
 	php_phongo_commandstartedevent_t* intern;
 	char                              int_as_string[20];
@@ -92,7 +96,7 @@ PHP_METHOD(CommandStartedEvent, getOperationId)
 
 /* {{{ proto string CommandStartedEvent::getRequestId()
    Returns the event's request ID */
-PHP_METHOD(CommandStartedEvent, getRequestId)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getRequestId)
 {
 	php_phongo_commandstartedevent_t* intern;
 	char                              int_as_string[20];
@@ -107,7 +111,7 @@ PHP_METHOD(CommandStartedEvent, getRequestId)
 
 /* {{{ proto MongoDB\Driver\Server CommandStartedEvent::getServer()
    Returns the Server from which the event originated */
-PHP_METHOD(CommandStartedEvent, getServer)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServer)
 {
 	php_phongo_commandstartedevent_t* intern;
 
@@ -120,7 +124,7 @@ PHP_METHOD(CommandStartedEvent, getServer)
 
 /* {{{ proto MongoDB\BSON\ObjectId|null CommandStartedEvent::getServiceId()
    Returns the event's service ID */
-PHP_METHOD(CommandStartedEvent, getServiceId)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServiceId)
 {
 	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -135,7 +139,7 @@ PHP_METHOD(CommandStartedEvent, getServiceId)
 
 /* {{{ proto int|null CommandStartedEvent::getServerConnectionId()
    Returns the event's server connection ID */
-PHP_METHOD(CommandStartedEvent, getServerConnectionId)
+static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServerConnectionId)
 {
 	php_phongo_commandstartedevent_t* intern = Z_COMMANDSTARTEDEVENT_OBJ_P(getThis());
 
@@ -154,27 +158,6 @@ PHP_METHOD(CommandStartedEvent, getServerConnectionId)
  *
  * This class is only constructed internally.
  */
-
-/* {{{ MongoDB\Driver\Monitoring\CommandStartedEvent function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_CommandStartedEvent_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_commandstartedevent_me[] = {
-	/* clang-format off */
-	ZEND_NAMED_ME(__construct, PHP_FN(MongoDB_disabled___construct), ai_CommandStartedEvent_void, ZEND_ACC_PRIVATE | ZEND_ACC_FINAL)
-	PHP_ME(CommandStartedEvent, getCommand, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandStartedEvent, getCommandName, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandStartedEvent, getDatabaseName, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandStartedEvent, getOperationId, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandStartedEvent, getRequestId, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandStartedEvent, getServer, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandStartedEvent, getServiceId, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(CommandStartedEvent, getServerConnectionId, ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	ZEND_NAMED_ME(__wakeup, PHP_FN(MongoDB_disabled___wakeup), ai_CommandStartedEvent_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
 
 /* {{{ MongoDB\Driver\Monitoring\CommandStartedEvent object handlers */
 static zend_object_handlers php_phongo_handler_commandstartedevent;
@@ -273,20 +256,12 @@ done:
 
 void php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-	(void) type;
-	(void) module_number;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Monitoring", "CommandStartedEvent", php_phongo_commandstartedevent_me);
-	php_phongo_commandstartedevent_ce                = zend_register_internal_class(&ce);
+	php_phongo_commandstartedevent_ce                = register_class_MongoDB_Driver_Monitoring_CommandStartedEvent();
 	php_phongo_commandstartedevent_ce->create_object = php_phongo_commandstartedevent_create_object;
-	PHONGO_CE_FINAL(php_phongo_commandstartedevent_ce);
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_commandstartedevent_ce);
 
 	memcpy(&php_phongo_handler_commandstartedevent, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_commandstartedevent.get_debug_info = php_phongo_commandstartedevent_get_debug_info;
 	php_phongo_handler_commandstartedevent.free_obj       = php_phongo_commandstartedevent_free_object;
 	php_phongo_handler_commandstartedevent.offset         = XtOffsetOf(php_phongo_commandstartedevent_t, std);
-
-	return;
 } /* }}} */

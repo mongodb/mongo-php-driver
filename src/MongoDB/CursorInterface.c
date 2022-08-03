@@ -18,35 +18,11 @@
 #include <Zend/zend_interfaces.h>
 
 #include "php_phongo.h"
+#include "CursorInterface_arginfo.h"
 
 zend_class_entry* php_phongo_cursor_interface_ce;
 
-/* {{{ MongoDB\BSON\CursorInterface function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_CursorInterface_setTypeMap, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, typemap, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_CursorInterface_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_cursor_interface_me[] = {
-	/* clang-format off */
-	ZEND_ABSTRACT_ME(CursorInterface, getId, ai_CursorInterface_void)
-	ZEND_ABSTRACT_ME(CursorInterface, getServer, ai_CursorInterface_void)
-	ZEND_ABSTRACT_ME(CursorInterface, isDead, ai_CursorInterface_void)
-	ZEND_ABSTRACT_ME(CursorInterface, setTypeMap, ai_CursorInterface_setTypeMap)
-	ZEND_ABSTRACT_ME(CursorInterface, toArray, ai_CursorInterface_void)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
-
 void php_phongo_cursor_interface_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "CursorInterface", php_phongo_cursor_interface_me);
-	php_phongo_cursor_interface_ce = zend_register_internal_interface(&ce);
-
-	zend_class_implements(php_phongo_cursor_interface_ce, 1, zend_ce_traversable);
+	php_phongo_cursor_interface_ce = register_class_MongoDB_Driver_CursorInterface(zend_ce_traversable);
 } /* }}} */

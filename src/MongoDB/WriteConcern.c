@@ -26,6 +26,7 @@
 #include "phongo_util.h"
 
 #include "MongoDB/WriteConcern.h"
+#include "WriteConcern_arginfo.h"
 
 zend_class_entry* php_phongo_writeconcern_ce;
 
@@ -108,7 +109,7 @@ failure:
 
 /* {{{ proto void MongoDB\Driver\WriteConcern::__construct(integer|string $w[, integer $wtimeout[, boolean $journal]])
    Constructs a new WriteConcern */
-static PHP_METHOD(WriteConcern, __construct)
+static PHP_METHOD(MongoDB_Driver_WriteConcern, __construct)
 {
 	php_phongo_writeconcern_t* intern;
 	zval *                     w, *journal = NULL;
@@ -171,7 +172,7 @@ static PHP_METHOD(WriteConcern, __construct)
 
 /* {{{ proto MongoDB\Driver\WriteConcern MongoDB\Driver\WriteConcern::__set_state(array $properties)
 */
-static PHP_METHOD(WriteConcern, __set_state)
+static PHP_METHOD(MongoDB_Driver_WriteConcern, __set_state)
 {
 	php_phongo_writeconcern_t* intern;
 	HashTable*                 props;
@@ -191,7 +192,7 @@ static PHP_METHOD(WriteConcern, __set_state)
 
 /* {{{ proto string|integer|null MongoDB\Driver\WriteConcern::getW()
    Returns the WriteConcern "w" option */
-static PHP_METHOD(WriteConcern, getW)
+static PHP_METHOD(MongoDB_Driver_WriteConcern, getW)
 {
 	php_phongo_writeconcern_t* intern;
 	const char*                wtag;
@@ -219,7 +220,7 @@ static PHP_METHOD(WriteConcern, getW)
 
 /* {{{ proto integer MongoDB\Driver\WriteConcern::getWtimeout()
    Returns the WriteConcern "wtimeout" option */
-static PHP_METHOD(WriteConcern, getWtimeout)
+static PHP_METHOD(MongoDB_Driver_WriteConcern, getWtimeout)
 {
 	php_phongo_writeconcern_t* intern;
 	int64_t                    wtimeout;
@@ -241,7 +242,7 @@ static PHP_METHOD(WriteConcern, getWtimeout)
 
 /* {{{ proto null|boolean MongoDB\Driver\WriteConcern::getJournal()
    Returns the WriteConcern "journal" option */
-static PHP_METHOD(WriteConcern, getJournal)
+static PHP_METHOD(MongoDB_Driver_WriteConcern, getJournal)
 {
 	php_phongo_writeconcern_t* intern;
 
@@ -259,7 +260,7 @@ static PHP_METHOD(WriteConcern, getJournal)
 /* {{{ proto boolean MongoDB\Driver\WriteConcern::isDefault()
    Returns whether the write concern has not been modified (i.e. from a Manager
    with no write concern URI options). */
-static PHP_METHOD(WriteConcern, isDefault)
+static PHP_METHOD(MongoDB_Driver_WriteConcern, isDefault)
 {
 	php_phongo_writeconcern_t* intern;
 
@@ -343,7 +344,7 @@ static HashTable* php_phongo_writeconcern_get_properties_hash(phongo_compat_obje
 
 /* {{{ proto array MongoDB\Driver\WriteConcern::bsonSerialize()
 */
-static PHP_METHOD(WriteConcern, bsonSerialize)
+static PHP_METHOD(MongoDB_Driver_WriteConcern, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -353,7 +354,7 @@ static PHP_METHOD(WriteConcern, bsonSerialize)
 
 /* {{{ proto string MongoDB\Driver\WriteConcern::serialize()
 */
-static PHP_METHOD(WriteConcern, serialize)
+static PHP_METHOD(MongoDB_Driver_WriteConcern, serialize)
 {
 	php_phongo_writeconcern_t* intern;
 	zval                       retval;
@@ -410,7 +411,7 @@ static PHP_METHOD(WriteConcern, serialize)
 
 /* {{{ proto void MongoDB\Driver\WriteConcern::unserialize(string $serialized)
 */
-static PHP_METHOD(WriteConcern, unserialize)
+static PHP_METHOD(MongoDB_Driver_WriteConcern, unserialize)
 {
 	php_phongo_writeconcern_t* intern;
 	char*                      serialized;
@@ -444,7 +445,7 @@ static PHP_METHOD(WriteConcern, unserialize)
 
 /* {{{ proto array MongoDB\Driver\WriteConcern::__serialize()
 */
-static PHP_METHOD(WriteConcern, __serialize)
+static PHP_METHOD(MongoDB_Driver_WriteConcern, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
@@ -453,7 +454,7 @@ static PHP_METHOD(WriteConcern, __serialize)
 
 /* {{{ proto void MongoDB\Driver\WriteConcern::__unserialize(array $data)
 */
-static PHP_METHOD(WriteConcern, __unserialize)
+static PHP_METHOD(MongoDB_Driver_WriteConcern, __unserialize)
 {
 	zval* data;
 
@@ -463,46 +464,6 @@ static PHP_METHOD(WriteConcern, __unserialize)
 
 	php_phongo_writeconcern_init_from_hash(Z_WRITECONCERN_OBJ_P(getThis()), Z_ARRVAL_P(data));
 } /* }}} */
-
-/* {{{ MongoDB\Driver\WriteConcern function entries */
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___construct, 0, 0, 1)
-	ZEND_ARG_INFO(0, w)
-	ZEND_ARG_INFO(0, wtimeout)
-	ZEND_ARG_INFO(0, journal)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___set_state, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, properties, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern___unserialize, 0, 0, 1)
-	ZEND_ARG_ARRAY_INFO(0, data, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_unserialize, 0, 0, 1)
-	ZEND_ARG_INFO(0, serialized)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(ai_WriteConcern_void, 0, 0, 0)
-ZEND_END_ARG_INFO()
-
-static zend_function_entry php_phongo_writeconcern_me[] = {
-	/* clang-format off */
-	PHP_ME(WriteConcern, __construct, ai_WriteConcern___construct, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, __serialize, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, __set_state, ai_WriteConcern___set_state, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(WriteConcern, __unserialize, ai_WriteConcern___unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, getW, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, getWtimeout, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, getJournal, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, isDefault, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, bsonSerialize, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, serialize, ai_WriteConcern_void, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_ME(WriteConcern, unserialize, ai_WriteConcern_unserialize, ZEND_ACC_PUBLIC | ZEND_ACC_FINAL)
-	PHP_FE_END
-	/* clang-format on */
-};
-/* }}} */
 
 /* {{{ MongoDB\Driver\WriteConcern object handlers */
 static zend_object_handlers php_phongo_handler_writeconcern;
@@ -548,23 +509,14 @@ static HashTable* php_phongo_writeconcern_get_properties(phongo_compat_object_ha
 
 void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver", "WriteConcern", php_phongo_writeconcern_me);
-	php_phongo_writeconcern_ce                = zend_register_internal_class(&ce);
+	php_phongo_writeconcern_ce                = register_class_MongoDB_Driver_WriteConcern(php_phongo_serializable_ce, zend_ce_serializable);
 	php_phongo_writeconcern_ce->create_object = php_phongo_writeconcern_create_object;
-	PHONGO_CE_FINAL(php_phongo_writeconcern_ce);
-
-	zend_class_implements(php_phongo_writeconcern_ce, 1, php_phongo_serializable_ce);
-	zend_class_implements(php_phongo_writeconcern_ce, 1, zend_ce_serializable);
 
 	memcpy(&php_phongo_handler_writeconcern, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_phongo_handler_writeconcern.get_debug_info = php_phongo_writeconcern_get_debug_info;
 	php_phongo_handler_writeconcern.get_properties = php_phongo_writeconcern_get_properties;
 	php_phongo_handler_writeconcern.free_obj       = php_phongo_writeconcern_free_object;
 	php_phongo_handler_writeconcern.offset         = XtOffsetOf(php_phongo_writeconcern_t, std);
-
-	zend_declare_class_constant_stringl(php_phongo_writeconcern_ce, ZEND_STRL("MAJORITY"), ZEND_STRL(PHONGO_WRITE_CONCERN_W_MAJORITY));
 } /* }}} */
 
 void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern) /* {{{ */

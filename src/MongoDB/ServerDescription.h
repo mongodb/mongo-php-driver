@@ -21,6 +21,19 @@
 
 #include <php.h>
 
+/* Note: these constants are derived from mongoc_server_description_type, since
+ * since mongoc_server_description_type_t is private. */
+#define PHONGO_SERVER_TYPE_UNKNOWN "Unknown"
+#define PHONGO_SERVER_TYPE_STANDALONE "Standalone"
+#define PHONGO_SERVER_TYPE_MONGOS "Mongos"
+#define PHONGO_SERVER_TYPE_POSSIBLE_PRIMARY "PossiblePrimary"
+#define PHONGO_SERVER_TYPE_RS_PRIMARY "RSPrimary"
+#define PHONGO_SERVER_TYPE_RS_SECONDARY "RSSecondary"
+#define PHONGO_SERVER_TYPE_RS_ARBITER "RSArbiter"
+#define PHONGO_SERVER_TYPE_RS_OTHER "RSOther"
+#define PHONGO_SERVER_TYPE_RS_GHOST "RSGhost"
+#define PHONGO_SERVER_TYPE_LOAD_BALANCER "LoadBalancer"
+
 /* This enum is necessary since mongoc_server_description_type_t is private and
  * we need to translate strings returned by mongoc_server_description_type() to
  * Server integer constants. */

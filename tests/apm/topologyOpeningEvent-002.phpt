@@ -12,38 +12,38 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
     private $topologyId;
     public $numAssertions = 0;
 
-    public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event)
+    public function serverChanged(MongoDB\Driver\Monitoring\ServerChangedEvent $event): void
     {
         $this->assertSameTopologyId($event);
     }
 
-    public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event)
+    public function serverClosed(MongoDB\Driver\Monitoring\ServerClosedEvent $event): void
     {
         $this->assertSameTopologyId($event);
     }
 
-    public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event) {}
+    public function serverHeartbeatFailed(MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent $event): void {}
 
-    public function serverHeartbeatStarted(MongoDB\Driver\Monitoring\serverHeartbeatStartedEvent $event) {}
+    public function serverHeartbeatStarted(MongoDB\Driver\Monitoring\serverHeartbeatStartedEvent $event): void {}
 
-    public function serverHeartbeatSucceeded(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent $event) {}
+    public function serverHeartbeatSucceeded(MongoDB\Driver\Monitoring\ServerHeartbeatSucceededEvent $event): void {}
 
-    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event)
-    {
-        $this->assertSameTopologyId($event);
-    }
-    
-    public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event)
+    public function serverOpening(MongoDB\Driver\Monitoring\ServerOpeningEvent $event): void
     {
         $this->assertSameTopologyId($event);
     }
     
-    public function topologyClosed(MongoDB\Driver\Monitoring\TopologyClosedEvent $event)
+    public function topologyChanged(MongoDB\Driver\Monitoring\TopologyChangedEvent $event): void
+    {
+        $this->assertSameTopologyId($event);
+    }
+    
+    public function topologyClosed(MongoDB\Driver\Monitoring\TopologyClosedEvent $event): void
     {
         $this->assertSameTopologyId($event);
     }
 
-    public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event)
+    public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event): void
     {
         $this->topologyId = $event->getTopologyId();
     }

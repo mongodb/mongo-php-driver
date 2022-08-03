@@ -17,20 +17,11 @@
 #include <php.h>
 
 #include "php_phongo.h"
+#include "ExecutionTimeoutException_arginfo.h"
 
 zend_class_entry* php_phongo_executiontimeoutexception_ce;
 
-/* {{{ MongoDB\Driver\Exception\ExecutionTimeoutException function entries */
-static zend_function_entry php_phongo_executiontimeoutexception_me[] = {
-	PHP_FE_END
-};
-/* }}} */
-
 void php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
 {
-	zend_class_entry ce;
-
-	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\Driver\\Exception", "ExecutionTimeoutException", php_phongo_executiontimeoutexception_me);
-	php_phongo_executiontimeoutexception_ce = zend_register_internal_class_ex(&ce, php_phongo_serverexception_ce);
-	PHONGO_CE_FINAL(php_phongo_executiontimeoutexception_ce);
+	php_phongo_executiontimeoutexception_ce = register_class_MongoDB_Driver_Exception_ExecutionTimeoutException(php_phongo_serverexception_ce);
 } /* }}} */
