@@ -393,8 +393,10 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
 	zend_bool    free_provider = false;
 	bson_t*      masterkey     = NULL;
 	bson_error_t error         = { 0 };
+	bson_t       reply         = BSON_INITIALIZER;
 
 	mongoc_client_encryption_rewrap_many_datakey_result_t* result = NULL;
+	const bson_t*                                          bulk_write_result;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_ARRAY_OR_OBJECT(zfilter)
@@ -431,9 +433,15 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
 		goto cleanup;
 	}
 
-	RETVAL_NULL();
+	bulk_write_result = mongoc_client_encryption_rewrap_many_datakey_result_get_bulk_write_result(result);
 
-	/* TODO: mongoc_client_encryption_rewrap_many_datakey_result_t return value */
+	if (bson_empty0(bulk_write_result)) {
+		BSON_APPEND_NULL(&reply, "bulkWriteResult");
+	} else {
+		BSON_APPEND_DOCUMENT(&reply, "bulkWriteResult", bulk_write_result);
+	}
+
+	RETVAL_BSON_T(reply);
 
 cleanup:
 	if (free_provider) {
