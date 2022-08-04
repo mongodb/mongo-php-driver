@@ -5,11 +5,10 @@
   * @generate-function-entries
   */
 
-namespace MongoDB\BSON
+namespace MongoDB\BSON;
+
+interface Decimal128Interface
 {
-    interface Decimal128Interface
-    {
-        /** @tentative-return-type */
-        public function __toString(): string;
-    }
+    /** @tentative-return-type */
+    public function __toString(): string;
 }

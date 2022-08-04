@@ -5,17 +5,16 @@
   * @generate-function-entries
   */
 
-namespace MongoDB\BSON
+namespace MongoDB\BSON;
+
+interface TimestampInterface
 {
-    interface TimestampInterface
-    {
-        /** @tentative-return-type */
-        public function getTimestamp(): int;
+    /** @tentative-return-type */
+    public function getTimestamp(): int;
 
-        /** @tentative-return-type */
-        public function getIncrement(): int;
+    /** @tentative-return-type */
+    public function getIncrement(): int;
 
-        /** @tentative-return-type */
-        public function __toString(): string;
-    }
+    /** @tentative-return-type */
+    public function __toString(): string;
 }

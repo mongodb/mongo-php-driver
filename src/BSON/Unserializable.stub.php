@@ -5,11 +5,10 @@
   * @generate-function-entries
   */
 
-namespace MongoDB\BSON
+namespace MongoDB\BSON;
+
+interface Unserializable
 {
-    interface Unserializable
-    {
-        /** @tentative-return-type */
-        public function bsonUnserialize(array $data): void;
-    }
+    /** @tentative-return-type */
+    public function bsonUnserialize(array $data): void;
 }

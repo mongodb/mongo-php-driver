@@ -5,16 +5,15 @@
   * @generate-function-entries
   */
 
-namespace MongoDB\BSON
+namespace MongoDB\BSON;
+
+interface Serializable extends Type
 {
-    interface Serializable extends Type
-    {
 #if PHP_VERSION_ID >= 80000
-        /** @tentative-return-type */
-        public function bsonSerialize(): array|object;
+    /** @tentative-return-type */
+    public function bsonSerialize(): array|object;
 #else
-        /** @return array|object */
-        public function bsonSerialize();
+    /** @return array|object */
+    public function bsonSerialize();
 #endif
-    }
 }

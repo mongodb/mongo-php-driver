@@ -5,16 +5,15 @@
   * @generate-function-entries
   */
 
-namespace MongoDB\BSON
+namespace MongoDB\BSON;
+
+interface BinaryInterface
 {
-    interface BinaryInterface
-    {
-        /** @tentative-return-type */
-        public function getData(): string;
+    /** @tentative-return-type */
+    public function getData(): string;
 
-        /** @tentative-return-type */
-        public function getType(): int;
+    /** @tentative-return-type */
+    public function getType(): int;
 
-        public function __toString(): string;
-    }
+    public function __toString(): string;
 }

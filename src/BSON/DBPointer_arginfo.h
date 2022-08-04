@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 9f87f398d061bfa61312f34693a7e1a47a6803d5 */
+ * Stub hash: 93eae6546a9e300831dedd1a1912685657e8bc00 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_DBPointer___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
