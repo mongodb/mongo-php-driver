@@ -30,7 +30,7 @@ foreach ($options as $txnOptions) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got TypeError
-%SMongoDB\Driver\Session::startTransaction()%sarray, int given
+%r\\?%rMongoDB\Driver\Session::startTransaction()%sarray, int given
 OK: Got TypeError
-%SMongoDB\Driver\Session::startTransaction()%sarray, %r(object|stdClass)%r given
+%r\\?%rMongoDB\Driver\Session::startTransaction()%sarray, %r(object|stdClass)%r given
 ===DONE===

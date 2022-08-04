@@ -21,22 +21,22 @@ foreach ($tests as $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-MongoDB\Driver\ReadConcern::__set_state(array(
+--EXPECTF--
+%r\\?%rMongoDB\Driver\ReadConcern::__set_state(array(
 ))
-MongoDB\Driver\ReadConcern::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadConcern::__set_state(array(
    'level' => 'linearizable',
 ))
-MongoDB\Driver\ReadConcern::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadConcern::__set_state(array(
    'level' => 'local',
 ))
-MongoDB\Driver\ReadConcern::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadConcern::__set_state(array(
    'level' => 'majority',
 ))
-MongoDB\Driver\ReadConcern::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadConcern::__set_state(array(
    'level' => 'available',
 ))
-MongoDB\Driver\ReadConcern::__set_state(array(
+%r\\?%rMongoDB\Driver\ReadConcern::__set_state(array(
    'level' => 'snapshot',
 ))
 ===DONE===

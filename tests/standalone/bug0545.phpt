@@ -8,6 +8,7 @@ PHPC-545: Update does not serialize embedded Persistable's __pclass field
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
+#[\AllowDynamicProperties]
 class Book implements MongoDB\BSON\Persistable
 {
     #[\ReturnTypeWillChange]
@@ -25,6 +26,7 @@ class Book implements MongoDB\BSON\Persistable
     }
 }
 
+#[\AllowDynamicProperties]
 class Page implements MongoDB\BSON\Persistable
 {
     #[\ReturnTypeWillChange]

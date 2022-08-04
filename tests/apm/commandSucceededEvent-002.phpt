@@ -12,6 +12,9 @@ $m = create_test_manager();
 
 class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
 {
+    private $startRequestId;
+    private $startOperationId;
+
     public function commandStarted( \MongoDB\Driver\Monitoring\CommandStartedEvent $event ): void
     {
         echo "started: ", $event->getCommandName(), "\n";

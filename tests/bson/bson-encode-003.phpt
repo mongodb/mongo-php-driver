@@ -6,6 +6,8 @@ BSON encoding: Encoding objects into BSON representation
 require_once __DIR__ . '/../utils/basic.inc';
 
 class MyClass implements MongoDB\BSON\Persistable {
+    private $props;
+
     #[\ReturnTypeWillChange]
     public function bsonSerialize() {
         return array(
@@ -18,6 +20,8 @@ class MyClass implements MongoDB\BSON\Persistable {
     }
 }
 class MyClass2 implements MongoDB\BSON\Persistable {
+    private $props;
+
     #[\ReturnTypeWillChange]
     public function bsonSerialize() {
         return array(
@@ -55,7 +59,7 @@ Test#0 { "stuff" : { "__pclass" : { "$binary" : "TXlDbGFzcw==", "$type" : "80" }
 object(stdClass)#%d (1) {
   ["stuff"]=>
   object(MyClass)#%d (1) {
-    ["props"]=>
+    ["props":"MyClass":private]=>
     array(3) {
       ["__pclass"]=>
       object(MongoDB\BSON\Binary)#%d (2) {
@@ -79,7 +83,7 @@ Test#1 { "stuff" : { "__pclass" : { "$binary" : "TXlDbGFzczI=", "$type" : "80" }
 object(stdClass)#%d (1) {
   ["stuff"]=>
   object(MyClass2)#%d (1) {
-    ["props"]=>
+    ["props":"MyClass2":private]=>
     array(4) {
       ["__pclass"]=>
       object(MongoDB\BSON\Binary)#%d (2) {
@@ -112,7 +116,7 @@ object(stdClass)#%d (1) {
   array(2) {
     [0]=>
     object(MyClass)#%d (1) {
-      ["props"]=>
+      ["props":"MyClass":private]=>
       array(3) {
         ["__pclass"]=>
         object(MongoDB\BSON\Binary)#%d (2) {
@@ -129,7 +133,7 @@ object(stdClass)#%d (1) {
     }
     [1]=>
     object(MyClass2)#%d (1) {
-      ["props"]=>
+      ["props":"MyClass2":private]=>
       array(4) {
         ["__pclass"]=>
         object(MongoDB\BSON\Binary)#%d (2) {

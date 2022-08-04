@@ -30,19 +30,19 @@ echo "\n\n";
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-MongoDB\BSON\Javascript::__set_state(array(
+%r\\?%rMongoDB\BSON\Javascript::__set_state(array(
 %w'code' => 'function foo(bar) { return bar; }',
 %w'scope' => NULL,
 ))
 
-MongoDB\BSON\Javascript::__set_state(array(
+%r\\?%rMongoDB\BSON\Javascript::__set_state(array(
 %w'code' => 'function foo(bar) { return bar; }',
 %w'scope' => 
   %Sarray(
   %S),
 ))
 
-MongoDB\BSON\Javascript::__set_state(array(
+%r\\?%rMongoDB\BSON\Javascript::__set_state(array(
 %w'code' => 'function foo() { return foo; }',
 %w'scope' => 
   %Sarray(
@@ -50,18 +50,18 @@ MongoDB\BSON\Javascript::__set_state(array(
   %S),
 ))
 
-MongoDB\BSON\Javascript::__set_state(array(
+%r\\?%rMongoDB\BSON\Javascript::__set_state(array(
 %w'code' => 'function foo() { return id; }',
 %w'scope' => 
   %Sarray(
   %w'id' => 
-    MongoDB\BSON\ObjectId::__set_state(array(
+    %r\\?%rMongoDB\BSON\ObjectId::__set_state(array(
     %w'oid' => '53e2a1c40640fd72175d4603',
     )),
   %S),
 ))
 
-MongoDB\BSON\Javascript::__set_state(array(
+%r\\?%rMongoDB\BSON\Javascript::__set_state(array(
 %w'code' => 'function foo(bar) { return bar; }',
 %w'scope' => NULL,
 ))

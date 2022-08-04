@@ -25,27 +25,27 @@ foreach ($tests as $value) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-MongoDB\BSON\Decimal128::__set_state(array(
+%r\\?%rMongoDB\BSON\Decimal128::__set_state(array(
 %w'dec' => '1234.5678',
 ))
 
-MongoDB\BSON\Decimal128::__set_state(array(
+%r\\?%rMongoDB\BSON\Decimal128::__set_state(array(
 %w'dec' => '-1234.5678',
 ))
 
-MongoDB\BSON\Decimal128::__set_state(array(
+%r\\?%rMongoDB\BSON\Decimal128::__set_state(array(
 %w'dec' => 'Infinity',
 ))
 
-MongoDB\BSON\Decimal128::__set_state(array(
+%r\\?%rMongoDB\BSON\Decimal128::__set_state(array(
 %w'dec' => 'Infinity',
 ))
 
-MongoDB\BSON\Decimal128::__set_state(array(
+%r\\?%rMongoDB\BSON\Decimal128::__set_state(array(
 %w'dec' => 'NaN',
 ))
 
-MongoDB\BSON\Decimal128::__set_state(array(
+%r\\?%rMongoDB\BSON\Decimal128::__set_state(array(
 %w'dec' => 'NaN',
 ))
 

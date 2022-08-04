@@ -9,7 +9,7 @@ echo "\n";
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-MongoDB\BSON\MinKey::__set_state(array(
+--EXPECTF--
+%r\\?%rMongoDB\BSON\MinKey::__set_state(array(
 ))
 ===DONE===
