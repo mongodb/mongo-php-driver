@@ -42,7 +42,8 @@ static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clien
 
 #define RETVAL_BSON_T(reply)                                                             \
 	do {                                                                                 \
-		php_phongo_bson_state state = { 0 };                                             \
+		php_phongo_bson_state state;                                                     \
+		PHONGO_BSON_INIT_STATE(state);                                                   \
 		if (!php_phongo_bson_to_zval_ex(bson_get_data(&(reply)), (reply).len, &state)) { \
 			zval_ptr_dtor(&state.zchild);                                                \
 			goto cleanup;                                                                \
