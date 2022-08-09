@@ -4,6 +4,7 @@ MongoDB\Driver\ClientEncryption::decrypt()
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
 <?php skip_if_not_live(); ?>
+<?php skip_if_server_version('<', '4.2'); ?>
 <?php skip_if_not_server_storage_engine('wiredTiger'); ?>
 <?php skip_if_not_clean(CSFLE_KEY_VAULT_DATABASE_NAME, CSFLE_KEY_VAULT_COLLECTION_NAME);
 --FILE--
