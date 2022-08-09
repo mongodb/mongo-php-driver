@@ -400,7 +400,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
 	const bson_t*                                          bulk_write_result;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
-	Z_PARAM_ARRAY_OR_OBJECT(zfilter)
+	PHONGO_PARAM_ARRAY_OR_OBJECT(zfilter)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
