@@ -1,7 +1,5 @@
 --TEST--
 MongoDB\BSON\Decimal128 Infinity values
---SKIPIF--
-<?php if (!class_exists('MongoDB\BSON\Decimal128')) { die('skip MongoDB\BSON\Decimal128 is not available'); } ?>
 --FILE--
 <?php
 
