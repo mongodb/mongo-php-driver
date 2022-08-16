@@ -53,7 +53,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeCommand)
 	Z_PARAM_STRING(db, db_len)
 	Z_PARAM_OBJECT_OF_CLASS(command, php_phongo_command_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ZVAL_OR_NULL(options)
+	Z_PARAM_ZVAL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options);
@@ -86,7 +86,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeReadCommand)
 	Z_PARAM_STRING(db, db_len)
 	Z_PARAM_OBJECT_OF_CLASS(command, php_phongo_command_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	/* If the Server was created in a different process, reset the client so
@@ -113,7 +113,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeWriteCommand)
 	Z_PARAM_STRING(db, db_len)
 	Z_PARAM_OBJECT_OF_CLASS(command, php_phongo_command_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	/* If the Server was created in a different process, reset the client so
@@ -140,7 +140,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeReadWriteCommand)
 	Z_PARAM_STRING(db, db_len)
 	Z_PARAM_OBJECT_OF_CLASS(command, php_phongo_command_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	/* If the Server was created in a different process, reset the client so
@@ -168,7 +168,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeQuery)
 	Z_PARAM_STRING(namespace, namespace_len)
 	Z_PARAM_OBJECT_OF_CLASS(query, php_phongo_query_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ZVAL_OR_NULL(options)
+	Z_PARAM_ZVAL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	options = php_phongo_prep_legacy_option(options, "readPreference", &free_options);
@@ -204,7 +204,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeBulkWrite)
 	Z_PARAM_STRING(namespace, namespace_len)
 	Z_PARAM_OBJECT_OF_CLASS(zbulk, php_phongo_bulkwrite_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ZVAL_OR_NULL(options)
+	Z_PARAM_ZVAL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	bulk = Z_BULKWRITE_OBJ_P(zbulk);

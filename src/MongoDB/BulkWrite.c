@@ -322,7 +322,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, __construct)
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (options && php_array_existsc(options, "ordered")) {
@@ -435,7 +435,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, update)
 	PHONGO_PARAM_ARRAY_OR_OBJECT(zquery)
 	PHONGO_PARAM_ARRAY_OR_OBJECT(zupdate)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(zoptions)
+	Z_PARAM_ARRAY(zoptions)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, &bquery, NULL);
@@ -500,7 +500,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, delete)
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	PHONGO_PARAM_ARRAY_OR_OBJECT(zquery)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(zoptions)
+	Z_PARAM_ARRAY(zoptions)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_zval_to_bson(zquery, PHONGO_BSON_NONE, &bquery, NULL);

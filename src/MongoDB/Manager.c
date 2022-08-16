@@ -262,8 +262,8 @@ static PHP_METHOD(MongoDB_Driver_Manager, __construct)
 	PHONGO_PARSE_PARAMETERS_START(0, 3)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_STRING_OR_NULL(uri_string, uri_string_len)
-	Z_PARAM_ARRAY_EX(options, 1, 1)
-	Z_PARAM_ARRAY_EX(driverOptions, 1, 1)
+	Z_PARAM_ARRAY_EX(options, 0, 1)
+	Z_PARAM_ARRAY_EX(driverOptions, 0, 1)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (options) {
@@ -340,10 +340,10 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeCommand)
 	uint32_t              server_id       = 0;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
-	Z_PARAM_STRING_OR_NULL(db, db_len)
+	Z_PARAM_STRING(db, db_len)
 	Z_PARAM_OBJECT_OF_CLASS(command, php_phongo_command_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ZVAL_OR_NULL(options)
+	Z_PARAM_ZVAL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	intern = Z_MANAGER_OBJ_P(getThis());
@@ -392,10 +392,10 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeReadCommand)
 	zval*                 zsession        = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
-	Z_PARAM_STRING_OR_NULL(db, db_len)
+	Z_PARAM_STRING(db, db_len)
 	Z_PARAM_OBJECT_OF_CLASS(command, php_phongo_command_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	intern = Z_MANAGER_OBJ_P(getThis());
@@ -436,10 +436,10 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeWriteCommand)
 	zval*                 zsession  = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
-	Z_PARAM_STRING_OR_NULL(db, db_len)
+	Z_PARAM_STRING(db, db_len)
 	Z_PARAM_OBJECT_OF_CLASS(command, php_phongo_command_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	intern = Z_MANAGER_OBJ_P(getThis());
@@ -475,10 +475,10 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeReadWriteCommand)
 	zval*                 zsession  = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
-	Z_PARAM_STRING_OR_NULL(db, db_len)
+	Z_PARAM_STRING(db, db_len)
 	Z_PARAM_OBJECT_OF_CLASS(command, php_phongo_command_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	intern = Z_MANAGER_OBJ_P(getThis());
@@ -516,10 +516,10 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeQuery)
 	zval*    zsession        = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
-	Z_PARAM_STRING_OR_NULL(namespace, namespace_len)
+	Z_PARAM_STRING(namespace, namespace_len)
 	Z_PARAM_OBJECT_OF_CLASS(query, php_phongo_query_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ZVAL_OR_NULL(options)
+	Z_PARAM_ZVAL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	intern = Z_MANAGER_OBJ_P(getThis());
@@ -569,10 +569,10 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 	zval*                   zsession     = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(2, 3)
-	Z_PARAM_STRING_OR_NULL(namespace, namespace_len)
+	Z_PARAM_STRING(namespace, namespace_len)
 	Z_PARAM_OBJECT_OF_CLASS(zbulk, php_phongo_bulkwrite_ce)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ZVAL_OR_NULL(options)
+	Z_PARAM_ZVAL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	intern = Z_MANAGER_OBJ_P(getThis());
@@ -740,7 +740,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, startSession)
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (options && php_array_existsc(options, "causalConsistency")) {

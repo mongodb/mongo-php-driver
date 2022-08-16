@@ -1,19 +1,19 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ed8a570b0c805aec5562830088257ff92068a721 */
+ * Stub hash: 220449250c143480bc7278468a26a45f1733fb35 */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_MASK(0, mode, MAY_BE_STRING|MAY_BE_LONG, NULL)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, tagSets, IS_ARRAY, 1, "null")
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, tagSets, IS_ARRAY, 1, "[]")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 0, "[]")
 ZEND_END_ARG_INFO()
 #endif
 
 #if !(PHP_VERSION_ID >= 80000)
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference___construct, 0, 0, 1)
 	ZEND_ARG_INFO(0, mode)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, tagSets, IS_ARRAY, 1, "null")
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, tagSets, IS_ARRAY, 1, "[]")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 0, "[]")
 ZEND_END_ARG_INFO()
 #endif
 

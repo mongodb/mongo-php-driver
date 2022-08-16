@@ -60,7 +60,7 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_STRING(data, data_len)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(typemap)
+	Z_PARAM_ARRAY(typemap)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (!php_phongo_bson_typemap_to_state(typemap, &state.map)) {

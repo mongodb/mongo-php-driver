@@ -9,31 +9,31 @@ namespace MongoDB\Driver;
 
 final class Manager
 {
-    final public function __construct(?string $uri = null, ?array $uriOptions = null, ?array $driverOptions = null) {}
+    final public function __construct(?string $uri = null, array $uriOptions = [], array $driverOptions = []) {}
 
     final public function addSubscriber(Monitoring\Subscriber $subscriber): void {}
 
     final public function createClientEncryption(array $options): ClientEncryption {}
 
 #if PHP_VERSION_ID >= 80000
-    final public function executeBulkWrite(string $namespace, BulkWrite $bulk, array|WriteConcern|null $options = null): WriteResult {}
+    final public function executeBulkWrite(string $namespace, BulkWrite $bulk, array|WriteConcern $options = []): WriteResult {}
 #else
-    /** @param array|WriteConcern|null $options */
-    final public function executeBulkWrite(string $namespace, BulkWrite $bulk, $options = null): WriteResult {}
+    /** @param array|WriteConcern $options */
+    final public function executeBulkWrite(string $namespace, BulkWrite $bulk, $options = []): WriteResult {}
 #endif
 
 #if PHP_VERSION_ID >= 80000
-    final public function executeCommand(string $db, Command $command, array|ReadPreference|null $options = null): Cursor {}
+    final public function executeCommand(string $db, Command $command, array|ReadPreference $options = []): Cursor {}
 #else
-    /** @param array|ReadPreference|null $options */
-    final public function executeCommand(string $db, Command $command, $options = null): Cursor {}
+    /** @param array|ReadPreference $options */
+    final public function executeCommand(string $db, Command $command, $options = []): Cursor {}
 #endif
 
 #if PHP_VERSION_ID >= 80000
-    final public function executeQuery(string $namespace, Query $query, array|ReadPreference|null $options = null): Cursor {}
+    final public function executeQuery(string $namespace, Query $query, array|ReadPreference $options = []): Cursor {}
 #else
-    /** @param array|ReadPreference|null $options */
-    final public function executeQuery(string $namespace, Query $query, $options = null): Cursor {}
+    /** @param array|ReadPreference $options */
+    final public function executeQuery(string $namespace, Query $query, $options = []): Cursor {}
 #endif
 
     final public function executeReadCommand(string $db, Command $command, array $options = []): Cursor {}

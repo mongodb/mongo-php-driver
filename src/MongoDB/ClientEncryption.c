@@ -65,7 +65,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, createDataKey)
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_STRING(kms_provider, kms_provider_len)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_clientencryption_create_datakey(intern, return_value, kms_provider, options);
@@ -84,7 +84,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, encrypt)
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_ZVAL(value)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_clientencryption_encrypt(intern, value, return_value, options);

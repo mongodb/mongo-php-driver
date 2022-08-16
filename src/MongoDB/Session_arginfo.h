@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: fbf742d6b12a1bf6e04201a81b08e3b26b8e261c */
+ * Stub hash: 89590ea11ca0d5a4f60fe36bb53813cdcbe418d7 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Session___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -51,7 +51,7 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_MongoDB_Driver_Session_isInTransaction arginfo_class_MongoDB_Driver_Session_isDirty
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Session_startTransaction, 0, 0, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "[]")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 0, "[]")
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_Session___wakeup arginfo_class_MongoDB_Driver_Session_abortTransaction

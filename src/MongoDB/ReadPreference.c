@@ -192,7 +192,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 	Z_PARAM_ZVAL(mode)
 	Z_PARAM_OPTIONAL
 	Z_PARAM_ARRAY_EX(tagSets, 1, 1)
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (Z_TYPE_P(mode) == IS_LONG) {

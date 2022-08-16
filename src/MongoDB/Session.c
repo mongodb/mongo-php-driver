@@ -456,7 +456,7 @@ static PHP_METHOD(MongoDB_Driver_Session, startTransaction)
 
 	PHONGO_PARSE_PARAMETERS_START(0, 1)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (options) {

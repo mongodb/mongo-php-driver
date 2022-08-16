@@ -67,7 +67,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, setTypeMap)
 	intern = Z_CURSOR_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_ARRAY_OR_NULL(typemap)
+	Z_PARAM_ARRAY(typemap)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (!php_phongo_bson_typemap_to_state(typemap, &state.map)) {

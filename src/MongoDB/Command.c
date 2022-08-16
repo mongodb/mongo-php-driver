@@ -110,7 +110,7 @@ static PHP_METHOD(MongoDB_Driver_Command, __construct)
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	PHONGO_PARAM_ARRAY_OR_OBJECT(document)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY_OR_NULL(options)
+	Z_PARAM_ARRAY(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_command_init(intern, document, options);
