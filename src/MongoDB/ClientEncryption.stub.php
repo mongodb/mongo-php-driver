@@ -70,10 +70,10 @@ final class ClientEncryption
     final public function removeKeyAltName(\MongoDB\BSON\Binary $keyId, string $keyAltName): ?object {}
 
 #if PHP_VERSION_ID >= 80000
-    final public function rewrapManyDataKey(array|object $filter, array $options = []): object {}
+    final public function rewrapManyDataKey(array|object $filter, ?array $options = null): object {}
 #else
     /** @param array|object $filter */
-    final public function rewrapManyDataKey($filter, array $options = []): object {}
+    final public function rewrapManyDataKey($filter, ?array $options = null): object {}
 #endif
 
     final public function __wakeup(): void {}

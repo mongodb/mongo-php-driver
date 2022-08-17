@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 9b64f6db2b6c568fb134f8512968262b25ab0e78 */
+ * Stub hash: 706125ea8c95ec1b3720909c8351585e03aa4836 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, options, IS_ARRAY, 0)
@@ -61,14 +61,14 @@ ZEND_END_ARG_INFO()
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_rewrapManyDataKey, 0, 1, IS_OBJECT, 0)
 	ZEND_ARG_TYPE_MASK(0, filter, MAY_BE_ARRAY|MAY_BE_OBJECT, NULL)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 0, "[]")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 #endif
 
 #if !(PHP_VERSION_ID >= 80000)
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_rewrapManyDataKey, 0, 1, IS_OBJECT, 0)
 	ZEND_ARG_INFO(0, filter)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 0, "[]")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 #endif
 

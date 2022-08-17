@@ -402,7 +402,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	PHONGO_PARAM_ARRAY_OR_OBJECT(zfilter)
 	Z_PARAM_OPTIONAL
-	Z_PARAM_ARRAY(options)
+	Z_PARAM_ARRAY_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &filter, NULL);
