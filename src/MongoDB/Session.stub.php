@@ -72,7 +72,7 @@ final class Session
 
     final public function isInTransaction(): bool {}
 
-    final public function startTransaction(?array $options = []): void {}
+    final public function startTransaction(?array $options = null): void {}
 
     final public function __wakeup(): void {}
 }

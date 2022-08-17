@@ -92,11 +92,11 @@ final class Server
     final public function executeQuery(string $namespace, Query $query, $options = null): Cursor {}
 #endif
 
-    final public function executeReadCommand(string $db, Command $command, array $options = []): Cursor {}
+    final public function executeReadCommand(string $db, Command $command, ?array $options = null): Cursor {}
 
-    final public function executeReadWriteCommand(string $db, Command $command, array $options = []): Cursor {}
+    final public function executeReadWriteCommand(string $db, Command $command, ?array $options = null): Cursor {}
 
-    final public function executeWriteCommand(string $db, Command $command, array $options = []): Cursor {}
+    final public function executeWriteCommand(string $db, Command $command, ?array $options = null): Cursor {}
 
     final public function getHost(): string {}
 
