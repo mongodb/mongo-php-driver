@@ -26,9 +26,12 @@
 #include "phongo_bson_encode.h"
 #include "phongo_error.h"
 #include "phongo_util.h"
-
-#include "MongoDB/ClientEncryption.h"
 #include "ClientEncryption_arginfo.h"
+
+#include "BSON/Binary.h"
+#include "MongoDB/ClientEncryption.h"
+#include "MongoDB/Cursor.h"
+#include "MongoDB/Query.h"
 
 zend_class_entry* php_phongo_clientencryption_ce;
 
@@ -36,6 +39,49 @@ zend_class_entry* php_phongo_clientencryption_ce;
 static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options);
 static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options);
 static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue);
+
+#define RETVAL_BSON_T(reply)                                                             \
+	do {                                                                                 \
+		php_phongo_bson_state state;                                                     \
+		PHONGO_BSON_INIT_STATE(state);                                                   \
+		if (!php_phongo_bson_to_zval_ex(bson_get_data(&(reply)), (reply).len, &state)) { \
+			zval_ptr_dtor(&state.zchild);                                                \
+			goto cleanup;                                                                \
+		}                                                                                \
+		RETVAL_ZVAL(&state.zchild, 0, 1);                                                \
+	} while (0)
+
+#define RETVAL_OPTIONAL_BSON_T(reply) \
+	do {                              \
+		RETVAL_NULL();                \
+		if (!bson_empty(&(reply))) {  \
+			RETVAL_BSON_T(reply);     \
+		}                             \
+	} while (0)
+
+/* Returns true if keyid is a UUID Binary value with an appropriate data length;
+ * otherwise, throws an exception and returns false. */
+static bool validate_keyid(bson_value_t* keyid)
+{
+	if (keyid->value_type != BSON_TYPE_BINARY) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected keyid to have Binary BSON type, %s given", php_phongo_bson_type_to_string(keyid->value_type));
+		return false;
+	}
+
+	if (keyid->value.v_binary.subtype != BSON_SUBTYPE_UUID) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected keyid to have UUID Binary subtype (%d), %d given", BSON_SUBTYPE_UUID, keyid->value.v_binary.subtype);
+		return false;
+	}
+
+	/* php_phongo_binary_init already enforces the data length for Binary objects
+	 * with UUID subtypes so we throw a different exception here. */
+	if (keyid->value.v_binary.data_len != PHONGO_BINARY_UUID_SIZE) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected keyid to have data length of %d bytes, %d given", PHONGO_BINARY_UUID_SIZE, keyid->value.v_binary.data_len);
+		return false;
+	}
+
+	return true;
+}
 
 /* {{{ proto void MongoDB\Driver\ClientEncryption::__construct(array $options)
    Constructs a new ClientEncryption */
@@ -51,8 +97,50 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, __construct)
 	phongo_clientencryption_init(Z_CLIENTENCRYPTION_OBJ_P(getThis()), options, NULL);
 } /* }}} */
 
+/* {{{ proto object|null MongoDB\Driver\ClientEncryption::addKeyAltName(MongoDB\BSON\Binary $id, string $keyAltName)
+   Adds a keyAltName to the keyAltNames array of the key document in the key
+   vault collection with the given UUID (BSON binary subtype 0x04). Returns the
+   previous version of the key document, or null if no document matched. */
+static PHP_METHOD(MongoDB_Driver_ClientEncryption, addKeyAltName)
+{
+	zval*        zkeyid         = NULL;
+	char*        keyaltname     = NULL;
+	size_t       keyaltname_len = 0;
+	bson_value_t keyid          = { 0 };
+	bson_t       key_doc        = BSON_INITIALIZER;
+	bson_error_t error          = { 0 };
+
+	PHONGO_PARSE_PARAMETERS_START(2, 2)
+	Z_PARAM_OBJECT_OF_CLASS(zkeyid, php_phongo_binary_ce)
+	Z_PARAM_STRING(keyaltname, keyaltname_len);
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_zval_to_bson_value(zkeyid, PHONGO_BSON_NONE, &keyid);
+
+	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	if (!validate_keyid(&keyid)) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+	if (!mongoc_client_encryption_add_key_alt_name(Z_CLIENTENCRYPTION_OBJ_P(getThis())->client_encryption, &keyid, keyaltname, &key_doc, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error);
+		goto cleanup;
+	}
+
+	RETVAL_OPTIONAL_BSON_T(key_doc);
+
+cleanup:
+	bson_value_destroy(&keyid);
+	bson_destroy(&key_doc);
+} /* }}} */
+
 /* {{{ proto MongoDB\BSON\Binary MongoDB\Driver\ClientEncryption::createDataKey(string $kmsProvider[, array $options])
-   Creates a new key document and inserts into the key vault collection. */
+   Creates a new key document and inserts into the key vault collection and
+   returns its identifier (UUID as a BSON binary with subtype 0x04). */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, createDataKey)
 {
 	char*                          kms_provider     = NULL;
@@ -69,6 +157,49 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, createDataKey)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_clientencryption_create_datakey(intern, return_value, kms_provider, options);
+} /* }}} */
+
+/* {{{ proto object MongoDB\Driver\ClientEncryption::deleteKey(MongoDB\BSON\Binary $id)
+   Removes the key document with the given UUID (BSON binary subtype 0x04) from
+   the key vault collection. Returns the result of the internal deleteOne()
+   operation on the key vault collection. */
+static PHP_METHOD(MongoDB_Driver_ClientEncryption, deleteKey)
+{
+	zval*        zkeyid = NULL;
+	bson_value_t keyid  = { 0 };
+	bson_t       reply  = BSON_INITIALIZER;
+	bson_error_t error  = { 0 };
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_OBJECT_OF_CLASS(zkeyid, php_phongo_binary_ce)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_zval_to_bson_value(zkeyid, PHONGO_BSON_NONE, &keyid);
+
+	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	if (!validate_keyid(&keyid)) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+	if (!mongoc_client_encryption_delete_key(Z_CLIENTENCRYPTION_OBJ_P(getThis())->client_encryption, &keyid, &reply, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error);
+		goto cleanup;
+	}
+
+	if (bson_empty(&reply)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "mongoc_client_encryption_delete_key returned an empty document");
+		goto cleanup;
+	}
+
+	RETVAL_BSON_T(reply);
+
+cleanup:
+	bson_value_destroy(&keyid);
+	bson_destroy(&reply);
 } /* }}} */
 
 /* {{{ proto MongoDB\BSON\Binary MongoDB\Driver\ClientEncryption::encrypt(mixed $value[, array $options])
@@ -106,6 +237,223 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, decrypt)
 	phongo_clientencryption_decrypt(intern, ciphertext, return_value);
 } /* }}} */
 
+/* {{{ proto object|null MongoDB\Driver\ClientEncryption::getKey(MongoDB\BSON\Binary $id)
+   Finds a single key document with the given UUID (BSON binary subtype 0x04).
+   Returns the result of the internal find() operation on the key vault
+   collection, or null if no document matched. */
+static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKey)
+{
+	zval*        zkeyid  = NULL;
+	bson_value_t keyid   = { 0 };
+	bson_t       key_doc = BSON_INITIALIZER;
+	bson_error_t error   = { 0 };
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_OBJECT_OF_CLASS(zkeyid, php_phongo_binary_ce)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_zval_to_bson_value(zkeyid, PHONGO_BSON_NONE, &keyid);
+
+	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	if (!validate_keyid(&keyid)) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+	if (!mongoc_client_encryption_get_key(Z_CLIENTENCRYPTION_OBJ_P(getThis())->client_encryption, &keyid, &key_doc, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error);
+		goto cleanup;
+	}
+
+	RETVAL_OPTIONAL_BSON_T(key_doc);
+
+cleanup:
+	bson_value_destroy(&keyid);
+	bson_destroy(&key_doc);
+} /* }}} */
+
+/* {{{ proto object|null MongoDB\Driver\ClientEncryption::getKey(string $keyAltName)
+   Returns a key document in the key vault collection with the given keyAltName,
+   or null if no document matched. */
+static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKeyByAltName)
+{
+	char*        keyaltname     = NULL;
+	size_t       keyaltname_len = 0;
+	bson_t       key_doc        = BSON_INITIALIZER;
+	bson_error_t error          = { 0 };
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(keyaltname, keyaltname_len);
+	PHONGO_PARSE_PARAMETERS_END();
+
+	if (!mongoc_client_encryption_get_key_by_alt_name(Z_CLIENTENCRYPTION_OBJ_P(getThis())->client_encryption, keyaltname, &key_doc, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error);
+		goto cleanup;
+	}
+
+	RETVAL_OPTIONAL_BSON_T(key_doc);
+
+cleanup:
+	bson_destroy(&key_doc);
+} /* }}} */
+
+/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\ClientEncryption::getKeys()
+   Finds all documents in the key vault collection. Returns the result of the
+   internal find() operation on the key vault collection as a cursor. */
+static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKeys)
+{
+	mongoc_cursor_t*               cursor;
+	bson_error_t                   error = { 0 };
+	php_phongo_clientencryption_t* intern;
+	zval                           query = ZVAL_STATIC_INIT;
+
+	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	/* mongoc_client_encryption_get_keys executes a query against its internal
+	 * key vault collection. The collection has a majority read concern, but the
+	 * query itself specifies no filter or options. Create an empty query object
+	 * and attach it to the cursor for the benefit of debugging. */
+	if (!phongo_query_init(&query, NULL, NULL)) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+	cursor = mongoc_client_encryption_get_keys(intern->client_encryption, &error);
+
+	if (!cursor) {
+		phongo_throw_exception_from_bson_error_t(&error);
+		goto cleanup;
+	}
+
+	if (!phongo_cursor_init_for_query(return_value, &intern->key_vault_client_manager, cursor, intern->key_vault_namespace, &query, NULL, NULL)) {
+		/* Exception already thrown */
+		mongoc_cursor_destroy(cursor);
+		goto cleanup;
+	}
+
+cleanup:
+	zval_ptr_dtor(&query);
+} /* }}} */
+
+/* {{{ proto object|null MongoDB\Driver\ClientEncryption::removeKeyAltName(MongoDB\BSON\Binary $id, string $keyAltName)
+   Removes a keyAltName from the keyAltNames array of the key document in the
+   key vault collection with the given UUID (BSON binary subtype 0x04). Returns
+   the previous version of the key document, or null if no document matched. */
+static PHP_METHOD(MongoDB_Driver_ClientEncryption, removeKeyAltName)
+{
+	zval*        zkeyid         = NULL;
+	char*        keyaltname     = NULL;
+	size_t       keyaltname_len = 0;
+	bson_value_t keyid          = { 0 };
+	bson_t       key_doc        = BSON_INITIALIZER;
+	bson_error_t error          = { 0 };
+
+	PHONGO_PARSE_PARAMETERS_START(2, 2)
+	Z_PARAM_OBJECT_OF_CLASS(zkeyid, php_phongo_binary_ce)
+	Z_PARAM_STRING(keyaltname, keyaltname_len);
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_zval_to_bson_value(zkeyid, PHONGO_BSON_NONE, &keyid);
+
+	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	if (!validate_keyid(&keyid)) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+	if (!mongoc_client_encryption_remove_key_alt_name(Z_CLIENTENCRYPTION_OBJ_P(getThis())->client_encryption, &keyid, keyaltname, &key_doc, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error);
+		goto cleanup;
+	}
+
+	RETVAL_OPTIONAL_BSON_T(key_doc);
+
+cleanup:
+	bson_value_destroy(&keyid);
+	bson_destroy(&key_doc);
+} /* }}} */
+
+/* {{{ proto object MongoDB\Driver\ClientEncryption::rewrapManyDataKey(array|object $filter[, array $options = array()])
+   Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or
+   with their current masterKey if a new one is not given. Returns an object
+   corresponding to the internal libmongoc result. */
+static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
+{
+	zval*        zfilter       = NULL;
+	zval*        options       = NULL;
+	bson_t       filter        = BSON_INITIALIZER;
+	char*        provider      = NULL;
+	zend_bool    free_provider = false;
+	bson_t*      masterkey     = NULL;
+	bson_error_t error         = { 0 };
+	bson_t       reply         = BSON_INITIALIZER;
+
+	mongoc_client_encryption_rewrap_many_datakey_result_t* result = NULL;
+	const bson_t*                                          bulk_write_result;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 2)
+	PHONGO_PARAM_ARRAY_OR_OBJECT(zfilter)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_zval_to_bson(zfilter, PHONGO_BSON_NONE, &filter, NULL);
+
+	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	if (options && php_array_existsc(options, "provider")) {
+		int provider_len;
+
+		provider = php_array_fetchc_string(options, "provider", &provider_len, &free_provider);
+	}
+
+	if (options && php_array_existsc(options, "masterKey")) {
+		masterkey = bson_new();
+
+		php_phongo_zval_to_bson(php_array_fetchc(options, "masterKey"), PHONGO_BSON_NONE, masterkey, NULL);
+
+		if (EG(exception)) {
+			goto cleanup;
+		}
+	}
+
+	result = mongoc_client_encryption_rewrap_many_datakey_result_new();
+
+	if (!mongoc_client_encryption_rewrap_many_datakey(Z_CLIENTENCRYPTION_OBJ_P(getThis())->client_encryption, &filter, provider, masterkey, result, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error);
+		goto cleanup;
+	}
+
+	bulk_write_result = mongoc_client_encryption_rewrap_many_datakey_result_get_bulk_write_result(result);
+
+	if (bson_empty0(bulk_write_result)) {
+		BSON_APPEND_NULL(&reply, "bulkWriteResult");
+	} else {
+		BSON_APPEND_DOCUMENT(&reply, "bulkWriteResult", bulk_write_result);
+	}
+
+	RETVAL_BSON_T(reply);
+
+cleanup:
+	if (free_provider) {
+		efree(provider);
+	}
+
+	bson_destroy(&filter);
+	bson_destroy(masterkey);
+	mongoc_client_encryption_rewrap_many_datakey_result_destroy(result);
+} /* }}} */
+
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_ClientEncryption)
 
 /* {{{ MongoDB\Driver\ClientEncryption object handlers */
@@ -125,6 +473,10 @@ static void php_phongo_clientencryption_free_object(zend_object* object) /* {{{ 
 	 * client outlives the mongoc_client_encryption_t as needed */
 	if (!Z_ISUNDEF(intern->key_vault_client_manager)) {
 		zval_ptr_dtor(&intern->key_vault_client_manager);
+	}
+
+	if (intern->key_vault_namespace) {
+		efree(intern->key_vault_namespace);
 	}
 } /* }}} */
 
@@ -202,19 +554,19 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 	}
 
 	if (php_array_existsc(options, "keyVaultNamespace")) {
-		char*     keyvault_namespace;
+		char*     key_vault_namespace;
 		char*     db_name;
 		char*     coll_name;
 		int       plen;
 		zend_bool pfree;
 
-		keyvault_namespace = php_array_fetchc_string(options, "keyVaultNamespace", &plen, &pfree);
+		key_vault_namespace = php_array_fetchc_string(options, "keyVaultNamespace", &plen, &pfree);
 
-		if (!phongo_split_namespace(keyvault_namespace, &db_name, &coll_name)) {
+		if (!phongo_split_namespace(key_vault_namespace, &db_name, &coll_name)) {
 			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyVaultNamespace\" option to contain a full collection namespace");
 
 			if (pfree) {
-				efree(keyvault_namespace);
+				efree(key_vault_namespace);
 			}
 
 			goto cleanup;
@@ -225,7 +577,7 @@ static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(z
 		efree(coll_name);
 
 		if (pfree) {
-			efree(keyvault_namespace);
+			efree(key_vault_namespace);
 		}
 	}
 
@@ -305,6 +657,23 @@ void phongo_clientencryption_init(php_phongo_clientencryption_t* intern, zval* o
 		ZVAL_ZVAL(&intern->key_vault_client_manager, key_vault_client_manager, 1, 0);
 	}
 
+	/* Copy the key vault namespace, since it may be referenced later by
+	 * ClientEncryption::getKeys(). The namespace will already have been
+	 * validated by phongo_clientencryption_opts_from_zval. */
+	if (php_array_existsc(options, "keyVaultNamespace")) {
+		char*     key_vault_namespace;
+		int       plen;
+		zend_bool pfree;
+
+		key_vault_namespace = php_array_fetchc_string(options, "keyVaultNamespace", &plen, &pfree);
+
+		intern->key_vault_namespace = estrdup(key_vault_namespace);
+
+		if (pfree) {
+			efree(key_vault_namespace);
+		}
+	}
+
 cleanup:
 	if (opts) {
 		mongoc_client_encryption_opts_destroy(opts);
@@ -381,6 +750,17 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 		if (failed) {
 			goto cleanup;
 		}
+	}
+
+	if (php_array_existsc(options, "keyMaterial")) {
+		zval* keyMaterial = php_array_fetchc(options, "keyMaterial");
+
+		if (Z_TYPE_P(keyMaterial) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(keyMaterial), php_phongo_binary_ce)) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"keyMaterial\" option to be %s, %s given", ZSTR_VAL(php_phongo_binary_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(keyMaterial));
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_datakey_opts_set_keymaterial(opts, (uint8_t*) Z_BINARY_OBJ_P(keyMaterial)->data, Z_BINARY_OBJ_P(keyMaterial)->data_len);
 	}
 
 	if (php_array_existsc(options, "masterKey")) {

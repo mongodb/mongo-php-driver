@@ -26,6 +26,7 @@
 #include "phongo_bson_encode.h"
 #include "phongo_error.h"
 
+#include "MongoDB/Query.h"
 #include "MongoDB/ReadConcern.h"
 #include "Query_arginfo.h"
 
@@ -285,18 +286,34 @@ static bool php_phongo_query_init_max_await_time_ms(php_phongo_query_t* intern, 
 	return true;
 } /* }}} */
 
-/* Initializes the php_phongo_query_t from filter and options arguments. This
- * function will fall back to a modifier in the absence of a top-level option
- * (where applicable). */
-static bool php_phongo_query_init(php_phongo_query_t* intern, zval* filter, zval* options) /* {{{ */
+/* Initializes the query from filter and options arguments and returns whether
+ * an error occurred. If query is undefined, it will be initialized.
+ *
+ * This function will fall back to a modifier in the absence of a top-level
+ * option (where applicable). */
+bool phongo_query_init(zval* return_value, zval* filter, zval* options) /* {{{ */
 {
-	zval* modifiers = NULL;
+	php_phongo_query_t* intern;
+	zval*               modifiers = NULL;
+
+	if (Z_ISUNDEF_P(return_value)) {
+		object_init_ex(return_value, php_phongo_query_ce);
+	}
+
+	if (Z_TYPE_P(return_value) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(return_value), php_phongo_query_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected initialization object to be %s, %s given", ZSTR_VAL(php_phongo_query_ce->name), PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(return_value));
+		return false;
+	}
+
+	intern = Z_QUERY_OBJ_P(return_value);
 
 	intern->filter            = bson_new();
 	intern->opts              = bson_new();
 	intern->max_await_time_ms = 0;
 
-	php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->filter, NULL);
+	if (filter) {
+		php_phongo_zval_to_bson(filter, PHONGO_BSON_NONE, intern->filter, NULL);
+	}
 
 	/* Note: if any exceptions are thrown, we can simply return as PHP will
 	 * invoke php_phongo_query_free_object to destruct the object. */
@@ -394,11 +411,8 @@ PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Query)
    Constructs a new Query */
 static PHP_METHOD(MongoDB_Driver_Query, __construct)
 {
-	php_phongo_query_t* intern;
-	zval*               filter;
-	zval*               options = NULL;
-
-	intern = Z_QUERY_OBJ_P(getThis());
+	zval* filter;
+	zval* options = NULL;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	PHONGO_PARAM_ARRAY_OR_OBJECT(filter)
@@ -406,7 +420,7 @@ static PHP_METHOD(MongoDB_Driver_Query, __construct)
 	Z_PARAM_ARRAY_OR_NULL(options)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_query_init(intern, filter, options);
+	phongo_query_init(getThis(), filter, options);
 } /* }}} */
 
 /* {{{ MongoDB\Driver\Query object handlers */

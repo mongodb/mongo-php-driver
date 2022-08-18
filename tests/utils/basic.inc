@@ -8,5 +8,7 @@ define('DATABASE_NAME', getenv('MONGODB_DATABASE') ?: 'phongo');
 define('COLLECTION_NAME', makeCollectionNameFromFilename($_SERVER['SCRIPT_FILENAME']));
 define('NS', DATABASE_NAME . '.' . COLLECTION_NAME);
 define('SSL_DIR', realpath(getenv('SSL_DIR')));
-define('CSFLE_KEY_VAULT_NS', 'encryption.__keyVault');
+define('CSFLE_KEY_VAULT_DATABASE_NAME', 'encryption');
+define('CSFLE_KEY_VAULT_COLLECTION_NAME', '__keyVault');
+define('CSFLE_KEY_VAULT_NS', CSFLE_KEY_VAULT_DATABASE_NAME . '.' . CSFLE_KEY_VAULT_COLLECTION_NAME);
 define('CSFLE_LOCAL_KEY', base64_decode('Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk'));

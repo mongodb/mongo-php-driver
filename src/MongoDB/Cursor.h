@@ -19,6 +19,11 @@
 
 #include "mongoc/mongoc.h"
 
+#include <php.h>
+
+bool phongo_cursor_init_for_command(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* db, zval* command, zval* readPreference, zval* session);
+bool phongo_cursor_init_for_query(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* namespace, zval* query, zval* readPreference, zval* session);
+
 bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor);
 
 #endif /* PHONGO_CURSOR_H */

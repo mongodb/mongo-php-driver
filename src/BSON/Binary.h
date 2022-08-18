@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHONGO_UTIL_H
-#define PHONGO_UTIL_H
+#ifndef PHONGO_BSON_BINARY_H
+#define PHONGO_BSON_BINARY_H
 
-#include "bson/bson.h"
+#define PHONGO_BINARY_UUID_SIZE 16
 
-const char* php_phongo_bson_type_to_string(bson_type_t type);
-
-zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* allocated);
-void  php_phongo_prep_legacy_option_free(zval* options);
-
-bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len);
-
-bool phongo_split_namespace(const char* namespace, char** dbname, char** cname);
-
-#endif /* PHONGO_UTIL_H */
+#endif /* PHONGO_BSON_BINARY_H */

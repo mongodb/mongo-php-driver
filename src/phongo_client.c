@@ -67,58 +67,6 @@ static mongoc_uri_t* php_phongo_make_uri(const char* uri_string) /* {{{ */
 	return uri;
 } /* }}} */
 
-static const char* php_phongo_bson_type_to_string(bson_type_t type) /* {{{ */
-{
-	switch (type) {
-		case BSON_TYPE_EOD:
-			return "EOD";
-		case BSON_TYPE_DOUBLE:
-			return "double";
-		case BSON_TYPE_UTF8:
-			return "string";
-		case BSON_TYPE_DOCUMENT:
-			return "document";
-		case BSON_TYPE_ARRAY:
-			return "array";
-		case BSON_TYPE_BINARY:
-			return "Binary";
-		case BSON_TYPE_UNDEFINED:
-			return "undefined";
-		case BSON_TYPE_OID:
-			return "ObjectId";
-		case BSON_TYPE_BOOL:
-			return "boolean";
-		case BSON_TYPE_DATE_TIME:
-			return "UTCDateTime";
-		case BSON_TYPE_NULL:
-			return "null";
-		case BSON_TYPE_REGEX:
-			return "Regex";
-		case BSON_TYPE_DBPOINTER:
-			return "DBPointer";
-		case BSON_TYPE_CODE:
-			return "Javascript";
-		case BSON_TYPE_SYMBOL:
-			return "symbol";
-		case BSON_TYPE_CODEWSCOPE:
-			return "Javascript with scope";
-		case BSON_TYPE_INT32:
-			return "32-bit integer";
-		case BSON_TYPE_TIMESTAMP:
-			return "Timestamp";
-		case BSON_TYPE_INT64:
-			return "64-bit integer";
-		case BSON_TYPE_DECIMAL128:
-			return "Decimal128";
-		case BSON_TYPE_MAXKEY:
-			return "MaxKey";
-		case BSON_TYPE_MINKEY:
-			return "MinKey";
-		default:
-			return "unknown";
-	}
-} /* }}} */
-
 #define PHONGO_URI_INVALID_TYPE(iter, expected)        \
 	phongo_throw_exception(                            \
 		PHONGO_ERROR_INVALID_ARGUMENT,                 \

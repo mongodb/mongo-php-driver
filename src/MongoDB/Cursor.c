@@ -22,6 +22,7 @@
 #include "phongo_bson.h"
 #include "phongo_client.h"
 #include "phongo_error.h"
+#include "phongo_util.h"
 
 #include "MongoDB/Cursor.h"
 #include "MongoDB/Server.h"
@@ -262,7 +263,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, rewind)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	/* If the intern was never advanced (e.g. command intern), do so now */
+	/* If the cursor was never advanced (e.g. command cursor), do so now */
 	if (!intern->advanced) {
 		intern->advanced = true;
 
@@ -443,6 +444,78 @@ void php_phongo_cursor_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_cursor.get_debug_info = php_phongo_cursor_get_debug_info;
 	php_phongo_handler_cursor.free_obj       = php_phongo_cursor_free_object;
 	php_phongo_handler_cursor.offset         = XtOffsetOf(php_phongo_cursor_t, std);
+} /* }}} */
+
+static void phongo_cursor_init(zval* return_value, zval* manager, mongoc_cursor_t* cursor, zval* readPreference, zval* session) /* {{{ */
+{
+	php_phongo_cursor_t* intern;
+
+	object_init_ex(return_value, php_phongo_cursor_ce);
+
+	intern            = Z_CURSOR_OBJ_P(return_value);
+	intern->cursor    = cursor;
+	intern->server_id = mongoc_cursor_get_hint(cursor);
+	intern->advanced  = false;
+	intern->current   = 0;
+
+	ZVAL_ZVAL(&intern->manager, manager, 1, 0);
+
+	if (readPreference) {
+		ZVAL_ZVAL(&intern->read_preference, readPreference, 1, 0);
+	}
+
+	if (session) {
+		ZVAL_ZVAL(&intern->session, session, 1, 0);
+	}
+} /* }}} */
+
+/* Initialize the cursor for a query and return whether there is an error. This
+ * function always returns true. */
+bool phongo_cursor_init_for_command(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* db, zval* command, zval* readPreference, zval* session) /* {{{ */
+{
+	php_phongo_cursor_t* intern;
+
+	phongo_cursor_init(return_value, manager, cursor, readPreference, session);
+
+	intern           = Z_CURSOR_OBJ_P(return_value);
+	intern->database = estrdup(db);
+
+	ZVAL_ZVAL(&intern->command, command, 1, 0);
+
+	return true;
+} /* }}} */
+
+/* Initialize the cursor for a query and return whether there is an error. The
+ * libmongoc cursor will be advanced once. On error, false is returned and an
+ * exception is thrown. */
+bool phongo_cursor_init_for_query(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* namespace, zval* query, zval* readPreference, zval* session) /* {{{ */
+{
+	php_phongo_cursor_t* intern;
+
+	/* Advancing the cursor before phongo_cursor_init ensures that a server
+	 * stream is obtained before mongoc_cursor_get_hint() is called. */
+	if (!phongo_cursor_advance_and_check_for_error(cursor)) {
+		/* Exception should already have been thrown */
+		return false;
+	}
+
+	phongo_cursor_init(return_value, manager, cursor, readPreference, session);
+
+	intern           = Z_CURSOR_OBJ_P(return_value);
+	intern->advanced = true;
+
+	/* The namespace should already have been validated, but we'll still check
+	 * for an error and throw accordingly. */
+	if (!phongo_split_namespace(namespace, &intern->database, &intern->collection)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Cannot initialize cursor with invalid namespace: %s", namespace);
+		zval_ptr_dtor(return_value);
+
+		return false;
+	}
+
+	ZVAL_ZVAL(&intern->query, query, 1, 0);
+
+	return true;
 } /* }}} */
 
 /* Advance the cursor and return whether there is an error. On error, false is

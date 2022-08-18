@@ -41,6 +41,7 @@ typedef struct {
 typedef struct {
 	mongoc_client_encryption_t* client_encryption;
 	zval                        key_vault_client_manager;
+	char*                       key_vault_namespace;
 	zend_object                 std;
 } php_phongo_clientencryption_t;
 

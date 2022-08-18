@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ClientEncryption::createDataKey()
+MongoDB\Driver\ClientEncryption::rewrapManyDataKey() when filter matches no keys
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
@@ -20,21 +20,25 @@ $clientEncryption = $manager->createClientEncryption([
 
 $keyId = $clientEncryption->createDataKey('local');
 
-var_dump($keyId);
+$orignalKey = $clientEncryption->getKey($keyId);
 
-$key = $clientEncryption->getKey($keyId);
+var_dump($clientEncryption->rewrapManyDataKey(['_id' => 'no-matching-key']));
 
-var_dump($key->_id == $keyId);
+$modifiedKey = $clientEncryption->getKey($keyId);
+
+var_dump($orignalKey->creationDate == $modifiedKey->creationDate);
+var_dump($orignalKey->updateDate == $modifiedKey->updateDate);
+var_dump($orignalKey->keyMaterial == $modifiedKey->keyMaterial);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\BSON\Binary)#%d (%d) {
-  ["data"]=>
-  string(16) "%a"
-  ["type"]=>
-  int(4)
+object(stdClass)#%d (%d) {
+  ["bulkWriteResult"]=>
+  NULL
 }
+bool(true)
+bool(true)
 bool(true)
 ===DONE===

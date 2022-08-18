@@ -1,11 +1,9 @@
 --TEST--
-MongoDB\Driver\ClientEncryption::createDataKey()
+MongoDB\Driver\ClientEncryption::addKeyAltName() with invalid keyId
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
 <?php skip_if_not_live(); ?>
-<?php skip_if_server_version('<', '4.2'); ?>
-<?php skip_if_not_clean(CSFLE_KEY_VAULT_DATABASE_NAME, CSFLE_KEY_VAULT_COLLECTION_NAME);
 --FILE--
 <?php
 
@@ -18,23 +16,16 @@ $clientEncryption = $manager->createClientEncryption([
   'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
 ]);
 
-$keyId = $clientEncryption->createDataKey('local');
+$invalidKeyId = new MongoDB\BSON\Binary('', MongoDB\BSON\Binary::TYPE_GENERIC);
 
-var_dump($keyId);
-
-$key = $clientEncryption->getKey($keyId);
-
-var_dump($key->_id == $keyId);
+echo throws(function () use ($clientEncryption, $invalidKeyId) {
+    $clientEncryption->addKeyAltName($invalidKeyId, 'foo');
+}, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-object(MongoDB\BSON\Binary)#%d (%d) {
-  ["data"]=>
-  string(16) "%a"
-  ["type"]=>
-  int(4)
-}
-bool(true)
+--EXPECT--
+OK: Got MongoDB\Driver\Exception\InvalidArgumentException
+Expected keyid to have UUID Binary subtype (4), 0 given
 ===DONE===

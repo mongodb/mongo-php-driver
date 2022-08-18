@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ClientEncryption::createDataKey()
+MongoDB\Driver\ClientEncryption::removeKeyAltName() when keyAltName does not exist
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
@@ -18,23 +18,16 @@ $clientEncryption = $manager->createClientEncryption([
   'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
 ]);
 
-$keyId = $clientEncryption->createDataKey('local');
+$keyId = $clientEncryption->createDataKey('local', ['keyAltNames' => ['foo', 'bar']]);
 
-var_dump($keyId);
+$keyBeforeRemoval = $clientEncryption->removeKeyAltName($keyId, 'baz');
+$keyAfterRemoval = $clientEncryption->getKey($keyId);
 
-$key = $clientEncryption->getKey($keyId);
-
-var_dump($key->_id == $keyId);
+var_dump($keyBeforeRemoval == $keyAfterRemoval);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-object(MongoDB\BSON\Binary)#%d (%d) {
-  ["data"]=>
-  string(16) "%a"
-  ["type"]=>
-  int(4)
-}
+--EXPECT--
 bool(true)
 ===DONE===

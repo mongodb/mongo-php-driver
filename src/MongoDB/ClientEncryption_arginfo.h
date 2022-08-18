@@ -1,8 +1,13 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 09ec24f8af5aba4c88dc3ee4bcc77022d7cc0b9c */
+ * Stub hash: 706125ea8c95ec1b3720909c8351585e03aa4836 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, options, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_addKeyAltName, 0, 2, IS_OBJECT, 1)
+	ZEND_ARG_OBJ_INFO(0, keyId, MongoDB\\BSON\\Binary, 0)
+	ZEND_ARG_TYPE_INFO(0, keyAltName, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_createDataKey, 0, 1, MongoDB\\BSON\\Binary, 0)
@@ -22,6 +27,10 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_decrypt, 0,
 ZEND_END_ARG_INFO()
 #endif
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_deleteKey, 0, 1, IS_OBJECT, 0)
+	ZEND_ARG_OBJ_INFO(0, keyId, MongoDB\\BSON\\Binary, 0)
+ZEND_END_ARG_INFO()
+
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_encrypt, 0, 1, MongoDB\\BSON\\Binary, 0)
 	ZEND_ARG_TYPE_INFO(0, value, IS_MIXED, 0)
@@ -36,11 +45,39 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryp
 ZEND_END_ARG_INFO()
 #endif
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_getKey, 0, 1, IS_OBJECT, 1)
+	ZEND_ARG_OBJ_INFO(0, keyId, MongoDB\\BSON\\Binary, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_getKeyByAltName, 0, 1, IS_OBJECT, 1)
+	ZEND_ARG_TYPE_INFO(0, keyAltName, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_getKeys, 0, 0, MongoDB\\Driver\\Cursor, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_MongoDB_Driver_ClientEncryption_removeKeyAltName arginfo_class_MongoDB_Driver_ClientEncryption_addKeyAltName
+
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_rewrapManyDataKey, 0, 1, IS_OBJECT, 0)
+	ZEND_ARG_TYPE_MASK(0, filter, MAY_BE_ARRAY|MAY_BE_OBJECT, NULL)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
+#endif
+
+#if !(PHP_VERSION_ID >= 80000)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_rewrapManyDataKey, 0, 1, IS_OBJECT, 0)
+	ZEND_ARG_INFO(0, filter)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
+#endif
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption___wakeup, 0, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
 
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, __construct);
+static ZEND_METHOD(MongoDB_Driver_ClientEncryption, addKeyAltName);
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, createDataKey);
 #if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, decrypt);
@@ -48,17 +85,29 @@ static ZEND_METHOD(MongoDB_Driver_ClientEncryption, decrypt);
 #if !(PHP_VERSION_ID >= 80000)
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, decrypt);
 #endif
+static ZEND_METHOD(MongoDB_Driver_ClientEncryption, deleteKey);
 #if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, encrypt);
 #endif
 #if !(PHP_VERSION_ID >= 80000)
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, encrypt);
 #endif
+static ZEND_METHOD(MongoDB_Driver_ClientEncryption, getKey);
+static ZEND_METHOD(MongoDB_Driver_ClientEncryption, getKeyByAltName);
+static ZEND_METHOD(MongoDB_Driver_ClientEncryption, getKeys);
+static ZEND_METHOD(MongoDB_Driver_ClientEncryption, removeKeyAltName);
+#if PHP_VERSION_ID >= 80000
+static ZEND_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey);
+#endif
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_ClientEncryption_methods[] = {
 	ZEND_ME(MongoDB_Driver_ClientEncryption, __construct, arginfo_class_MongoDB_Driver_ClientEncryption___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_ClientEncryption, addKeyAltName, arginfo_class_MongoDB_Driver_ClientEncryption_addKeyAltName, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ClientEncryption, createDataKey, arginfo_class_MongoDB_Driver_ClientEncryption_createDataKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_ClientEncryption, decrypt, arginfo_class_MongoDB_Driver_ClientEncryption_decrypt, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -66,11 +115,22 @@ static const zend_function_entry class_MongoDB_Driver_ClientEncryption_methods[]
 #if !(PHP_VERSION_ID >= 80000)
 	ZEND_ME(MongoDB_Driver_ClientEncryption, decrypt, arginfo_class_MongoDB_Driver_ClientEncryption_decrypt, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
+	ZEND_ME(MongoDB_Driver_ClientEncryption, deleteKey, arginfo_class_MongoDB_Driver_ClientEncryption_deleteKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_ClientEncryption, encrypt, arginfo_class_MongoDB_Driver_ClientEncryption_encrypt, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
 #if !(PHP_VERSION_ID >= 80000)
 	ZEND_ME(MongoDB_Driver_ClientEncryption, encrypt, arginfo_class_MongoDB_Driver_ClientEncryption_encrypt, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
+	ZEND_ME(MongoDB_Driver_ClientEncryption, getKey, arginfo_class_MongoDB_Driver_ClientEncryption_getKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_ClientEncryption, getKeyByAltName, arginfo_class_MongoDB_Driver_ClientEncryption_getKeyByAltName, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_ClientEncryption, getKeys, arginfo_class_MongoDB_Driver_ClientEncryption_getKeys, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_ClientEncryption, removeKeyAltName, arginfo_class_MongoDB_Driver_ClientEncryption_removeKeyAltName, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#if PHP_VERSION_ID >= 80000
+	ZEND_ME(MongoDB_Driver_ClientEncryption, rewrapManyDataKey, arginfo_class_MongoDB_Driver_ClientEncryption_rewrapManyDataKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_Driver_ClientEncryption, rewrapManyDataKey, arginfo_class_MongoDB_Driver_ClientEncryption_rewrapManyDataKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
 	ZEND_ME(MongoDB_Driver_ClientEncryption, __wakeup, arginfo_class_MongoDB_Driver_ClientEncryption___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END

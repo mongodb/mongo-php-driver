@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\ClientEncryption::createDataKey()
+MongoDB\Driver\ClientEncryption::getKeys()
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
@@ -18,23 +18,24 @@ $clientEncryption = $manager->createClientEncryption([
   'kmsProviders' => ['local' => ['key' => new MongoDB\BSON\Binary(CSFLE_LOCAL_KEY, 0)]],
 ]);
 
-$keyId = $clientEncryption->createDataKey('local');
+$key1Id = $clientEncryption->createDataKey('local');
+$key2Id = $clientEncryption->createDataKey('local');
 
-var_dump($keyId);
+$keyIds = [];
 
-$key = $clientEncryption->getKey($keyId);
+foreach ($clientEncryption->getKeys() as $key) {
+    $keyIds[] = $key->_id;
+}
 
-var_dump($key->_id == $keyId);
+var_dump(count($keyIds));
+var_dump(in_array($key1Id, $keyIds));
+var_dump(in_array($key2Id, $keyIds));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
-object(MongoDB\BSON\Binary)#%d (%d) {
-  ["data"]=>
-  string(16) "%a"
-  ["type"]=>
-  int(4)
-}
+--EXPECT--
+int(2)
+bool(true)
 bool(true)
 ===DONE===
