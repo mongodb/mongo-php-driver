@@ -36,11 +36,11 @@ final class Manager
     final public function executeQuery(string $namespace, Query $query, $options = null): Cursor {}
 #endif
 
-    final public function executeReadCommand(string $db, Command $command, array $options = []): Cursor {}
+    final public function executeReadCommand(string $db, Command $command, ?array $options = null): Cursor {}
 
-    final public function executeReadWriteCommand(string $db, Command $command, array $options = []): Cursor {}
+    final public function executeReadWriteCommand(string $db, Command $command, ?array $options = null): Cursor {}
 
-    final public function executeWriteCommand(string $db, Command $command, array $options = []): Cursor {}
+    final public function executeWriteCommand(string $db, Command $command, ?array $options = null): Cursor {}
 
 #if PHP_VERSION_ID >= 80000
     final public function getEncryptedFieldsMap(): array|object|null {}
@@ -61,7 +61,7 @@ final class Manager
 
     final public function selectServer(?ReadPreference $readPreference = null): Server {}
 
-    final public function startSession(array $options = []): Session {}
+    final public function startSession(?array $options = null): Session {}
 
     final public function __wakeup(): void {}
 }

@@ -41,7 +41,7 @@ final class ClientEncryption
 
     final public function __construct(array $options) {}
 
-    final public function createDataKey(string $kmsProvider, array $options = []): \MongoDB\BSON\Binary {}
+    final public function createDataKey(string $kmsProvider, ?array $options = null): \MongoDB\BSON\Binary {}
 
 #if PHP_VERSION_ID >= 80000
     final public function decrypt(\MongoDB\BSON\Binary $value): mixed {}
@@ -51,10 +51,10 @@ final class ClientEncryption
 #endif
 
 #if PHP_VERSION_ID >= 80000
-    final public function encrypt(mixed $value, array $options = []): \MongoDB\BSON\Binary {}
+    final public function encrypt(mixed $value, ?array $options = null): \MongoDB\BSON\Binary {}
 #else
     /** @param mixed $value */
-    final public function encrypt($value, array $options = []): \MongoDB\BSON\Binary {}
+    final public function encrypt($value, ?array $options = null): \MongoDB\BSON\Binary {}
 #endif
 
     final public function __wakeup(): void {}

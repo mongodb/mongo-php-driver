@@ -1,8 +1,8 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3325b767b4321a1837fa7a8aef924a39e6e6816d */
+ * Stub hash: 179d375c7c122723254e7b19dd97f8ef33caf38c */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_BulkWrite___construct, 0, 0, 0)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 0, "[]")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_BulkWrite_count, 0, 0, IS_LONG, 0)
@@ -11,14 +11,14 @@ ZEND_END_ARG_INFO()
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_BulkWrite_delete, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_MASK(0, filter, MAY_BE_ARRAY|MAY_BE_OBJECT, NULL)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, deleteOptions, IS_ARRAY, 0, "[]")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, deleteOptions, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 #endif
 
 #if !(PHP_VERSION_ID >= 80000)
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_BulkWrite_delete, 0, 1, IS_VOID, 0)
 	ZEND_ARG_INFO(0, filter)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, deleteOptions, IS_ARRAY, 0, "[]")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, deleteOptions, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 #endif
 
@@ -38,7 +38,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_BulkWrite_update, 0, 2, IS_VOID, 0)
 	ZEND_ARG_TYPE_MASK(0, filter, MAY_BE_ARRAY|MAY_BE_OBJECT, NULL)
 	ZEND_ARG_TYPE_MASK(0, newObj, MAY_BE_ARRAY|MAY_BE_OBJECT, NULL)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, updateOptions, IS_ARRAY, 0, "[]")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, updateOptions, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 #endif
 
@@ -46,7 +46,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_BulkWrite_update, 0, 2, IS_VOID, 0)
 	ZEND_ARG_INFO(0, filter)
 	ZEND_ARG_INFO(0, newObj)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, updateOptions, IS_ARRAY, 0, "[]")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, updateOptions, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 #endif
 
