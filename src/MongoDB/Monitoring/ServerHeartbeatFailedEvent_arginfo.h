@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: b8fb8dfe7e269cc0737210f5f2e92fd5359728eb */
+ * Stub hash: 110a67ba94066498759282d2f7ca4b865068dbb0 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -7,7 +7,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getDurationMicros, 0, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getError, 0, 0, Throwable, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getError, 0, 0, Exception, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getPort arginfo_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent_getDurationMicros

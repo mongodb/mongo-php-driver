@@ -31,7 +31,7 @@ final class WriteConcern implements \MongoDB\BSON\Serializable, \Serializable
     final public function getW() {}
 #endif
 
-    final public function getWtimeout(): ?int {}
+    final public function getWtimeout(): int {}
 
     final public function isDefault(): bool {}
 
