@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 93e23af417425d45e8222ae0fd89b02ef5eb25a2 */
+ * Stub hash: 008d718040430e0251e01cf2fa8da4e1ed4370d6 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -10,7 +10,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent_getDurationMicros, 0, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent_getError, 0, 0, Throwable, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent_getError, 0, 0, Exception, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent_getOperationId arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent_getCommandName

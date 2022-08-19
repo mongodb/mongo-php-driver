@@ -15,7 +15,7 @@ final class CommandFailedEvent
 
     final public function getDurationMicros(): int {}
 
-    final public function getError(): \Throwable {}
+    final public function getError(): \Exception {}
 
     final public function getOperationId(): string {}
 
