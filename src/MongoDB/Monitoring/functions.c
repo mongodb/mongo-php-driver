@@ -24,7 +24,7 @@ ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 
 /* {{{ proto void MongoDB\Driver\Monitoring\addSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
    Registers a global event subscriber */
-PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
+PHP_FUNCTION(addSubscriber)
 {
 	zval* subscriber;
 
@@ -37,7 +37,7 @@ PHP_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber)
 
 /* {{{ proto void MongoDB\Driver\Monitoring\removeSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
    Unregisters a global event subscriber */
-PHP_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber)
+PHP_FUNCTION(removeSubscriber)
 {
 	zval* subscriber;
 
