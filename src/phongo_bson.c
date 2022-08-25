@@ -776,7 +776,7 @@ static void php_phongo_handle_field_path_entry_for_compound_type(php_phongo_bson
 static zval* resolve_enum_case(zend_class_entry* ce, const char* case_name)
 {
 	zval*                return_value = NULL;
-	zend_string*         c_str = NULL;
+	zend_string*         c_str        = NULL;
 	zend_class_constant* c;
 
 	if (!(ce->ce_flags & ZEND_ACC_ENUM)) {
