@@ -891,7 +891,7 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 							return true;
 						}
 
-						ZVAL_COPY_VALUE(&obj, enum_case);
+						ZVAL_COPY(&obj, enum_case);
 					} else {
 						object_init_ex(&obj, obj_ce);
 					}
@@ -1156,7 +1156,7 @@ bool php_phongo_bson_to_zval_ex(const unsigned char* data, int data_len, php_pho
 					goto cleanup;
 				}
 
-				ZVAL_COPY_VALUE(&obj, enum_case);
+				ZVAL_COPY(&obj, enum_case);
 			} else {
 				object_init_ex(&obj, obj_ce);
 			}
