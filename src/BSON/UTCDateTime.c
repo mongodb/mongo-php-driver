@@ -126,8 +126,7 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(phongo_compat_objec
 	return props;
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\UTCDateTime::__construct([int|float|string|DateTimeInterface|null $milliseconds = null])
-   Construct a new BSON UTCDateTime type from either the current time,
+/* {{{ Construct a new BSON UTCDateTime type from either the current time,
    milliseconds since the epoch, or a DateTimeInterface object. Defaults to the
    current time. */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
@@ -179,8 +178,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 	php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_P(milliseconds), Z_STRLEN_P(milliseconds));
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\UTCDateTime MongoDB\BSON\UTCDateTime::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -199,8 +197,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
 	php_phongo_utcdatetime_init_from_hash(intern, props);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\UTCDateTime::__toString()
-   Returns the UTCDateTime's milliseconds as a string */
+/* {{{ Returns the UTCDateTime's milliseconds as a string */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __toString)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -212,8 +209,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __toString)
 	ZVAL_INT64_STRING(return_value, intern->milliseconds);
 } /* }}} */
 
-/* {{{ proto DateTime MongoDB\BSON\UTCDateTime::toDateTime()
-   Returns a DateTime object representing this UTCDateTime */
+/* {{{ Returns a DateTime object representing this UTCDateTime */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTime)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -236,8 +232,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTime)
 }
 /* }}} */
 
-/* {{{ proto array MongoDB\BSON\UTCDateTime::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -257,8 +252,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
 	}
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\UTCDateTime::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, serialize)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -284,8 +278,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\UTCDateTime::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, unserialize)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -314,8 +307,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\UTCDateTime::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -323,8 +315,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __serialize)
 	RETURN_ARR(php_phongo_utcdatetime_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\UTCDateTime::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __unserialize)
 {
 	zval* data;

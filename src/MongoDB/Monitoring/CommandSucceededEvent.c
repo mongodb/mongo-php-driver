@@ -32,8 +32,7 @@ zend_class_entry* php_phongo_commandsucceededevent_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandSucceededEvent)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_CommandSucceededEvent)
 
-/* {{{ proto string CommandSucceededEvent::getCommandName()
-   Returns the command name for this event */
+/* {{{ Returns the command name for this event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getCommandName)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -45,8 +44,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getCommandNam
 	RETVAL_STRING(intern->command_name);
 } /* }}} */
 
-/* {{{ proto int CommandSucceededEvent::getDurationMicros()
-   Returns the event's duration in microseconds */
+/* {{{ Returns the event's duration in microseconds */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDurationMicros)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -58,8 +56,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getDurationMi
 	RETURN_LONG(intern->duration_micros);
 } /* }}} */
 
-/* {{{ proto string CommandSucceededEvent::getOperationId()
-   Returns the event's operation ID */
+/* {{{ Returns the event's operation ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getOperationId)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -73,8 +70,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getOperationI
 	RETVAL_STRING(int_as_string);
 } /* }}} */
 
-/* {{{ proto stdClass CommandSucceededEvent::getReply()
-   Returns the reply document associated with the event */
+/* {{{ Returns the reply document associated with the event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getReply)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -94,8 +90,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getReply)
 	RETURN_ZVAL(&state.zchild, 0, 1);
 } /* }}} */
 
-/* {{{ proto string CommandsucceededEvent::getRequestId()
-   Returns the event's request ID */
+/* {{{ Returns the event's request ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getRequestId)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -109,8 +104,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getRequestId)
 	RETVAL_STRING(int_as_string);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Server CommandSucceededEvent::getServer()
-   Returns the Server from which the event originated */
+/* {{{ Returns the Server from which the event originated */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServer)
 {
 	php_phongo_commandsucceededevent_t* intern;
@@ -122,8 +116,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServer)
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\ObjectId|null CommandSucceededEvent::getServiceId()
-   Returns the event's service ID */
+/* {{{ Returns the event's service ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServiceId)
 {
 	php_phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());
@@ -137,8 +130,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServiceId)
 	phongo_objectid_init(return_value, &intern->service_id);
 } /* }}} */
 
-/* {{{ proto int|null CommandSucceededEvent::getServerConnectionId()
-   Returns the event's server connection ID */
+/* {{{ Returns the event's server connection ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandSucceededEvent, getServerConnectionId)
 {
 	php_phongo_commandsucceededevent_t* intern = Z_COMMANDSUCCEEDEDEVENT_OBJ_P(getThis());

@@ -92,8 +92,7 @@ static bool php_phongo_serverapi_init_from_hash(php_phongo_serverapi_t* intern, 
 		deprecation_errors && zval_is_true(deprecation_errors));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\ServerApi::__construct(string $version, [?bool $strict], [?bool $deprecationErrors])
-   Constructs a new ServerApi object */
+/* {{{ Constructs a new ServerApi object */
 static PHP_METHOD(MongoDB_Driver_ServerApi, __construct)
 {
 	php_phongo_serverapi_t* intern;
@@ -122,8 +121,7 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __construct)
 		(bool) deprecation_errors);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\ServerApi MongoDB\Driver\ServerApi::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ServerApi, __set_state)
 {
 	php_phongo_serverapi_t* intern;
@@ -181,8 +179,7 @@ static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_
 	return props;
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\ServerApi::bsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ServerApi, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -191,8 +188,7 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, bsonSerialize)
 	convert_to_object(return_value);
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\ServerApi::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ServerApi, serialize)
 {
 	php_phongo_serverapi_t* intern;
@@ -231,8 +227,7 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\ServerApi::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ServerApi, unserialize)
 {
 	php_phongo_serverapi_t* intern;
@@ -265,8 +260,7 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\ServerApi::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ServerApi, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -274,8 +268,7 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __serialize)
 	RETURN_ARR(php_phongo_serverapi_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\ServerApi::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ServerApi, __unserialize)
 {
 	zval* data;

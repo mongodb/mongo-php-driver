@@ -28,8 +28,7 @@ typedef enum {
 	PHONGO_JSON_MODE_RELAXED,
 } php_phongo_json_mode_t;
 
-/* {{{ proto string MongoDB\BSON\fromPHP(array|object $value)
-   Returns the BSON representation of a PHP value */
+/* {{{ Returns the BSON representation of a PHP value */
 PHP_FUNCTION(fromPHP)
 {
 	zval*   data;
@@ -46,8 +45,7 @@ PHP_FUNCTION(fromPHP)
 	bson_destroy(bson);
 } /* }}} */
 
-/* {{{ proto array|object MongoDB\BSON\toPHP(string $bson [, array $typemap = array()])
-   Returns the PHP representation of a BSON value, optionally converting it into a custom class */
+/* {{{ Returns the PHP representation of a BSON value, optionally converting it into a custom class */
 PHP_FUNCTION(toPHP)
 {
 	char*                 data;
@@ -78,8 +76,7 @@ PHP_FUNCTION(toPHP)
 	RETURN_ZVAL(&state.zchild, 0, 1);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\fromJSON(string $json)
-   Returns the BSON representation of a JSON value */
+/* {{{ Returns the BSON representation of a JSON value */
 PHP_FUNCTION(fromJSON)
 {
 	char*        json;
@@ -146,22 +143,19 @@ static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mo
 	bson_reader_destroy(reader);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\toJSON(string $bson)
-   Returns the legacy extended JSON representation of a BSON value */
+/* {{{ Returns the legacy extended JSON representation of a BSON value */
 PHP_FUNCTION(toJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_LEGACY);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\toCanonicalExtendedJSON(string $bson)
-   Returns the canonical extended JSON representation of a BSON value */
+/* {{{ Returns the canonical extended JSON representation of a BSON value */
 PHP_FUNCTION(toCanonicalExtendedJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_CANONICAL);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\toRelaxedExtendedJSON(string $bson)
-   Returns the relaxed extended JSON representation of a BSON value */
+/* {{{ Returns the relaxed extended JSON representation of a BSON value */
 PHP_FUNCTION(toRelaxedExtendedJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_RELAXED);

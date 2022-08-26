@@ -54,8 +54,7 @@ static void php_phongo_cursor_free_current(php_phongo_cursor_t* cursor) /* {{{ *
 	}
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Cursor::setTypeMap(array $typemap)
-   Sets a type map to use for BSON unserialization */
+/* {{{ Sets a type map to use for BSON unserialization */
 static PHP_METHOD(MongoDB_Driver_Cursor, setTypeMap)
 {
 	php_phongo_cursor_t*  intern;
@@ -127,8 +126,7 @@ static void php_phongo_cursor_id_new_from_id(zval* object, int64_t cursorid) /* 
 	intern->initialized = true;
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Cursor::toArray()
-   Returns an array of all result documents for this cursor */
+/* {{{ Returns an array of all result documents for this cursor */
 static PHP_METHOD(MongoDB_Driver_Cursor, toArray)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -141,8 +139,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, toArray)
 	}
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\CursorId MongoDB\Driver\Cursor::getId()
-   Returns the CursorId for this cursor */
+/* {{{ Returns the CursorId for this cursor */
 static PHP_METHOD(MongoDB_Driver_Cursor, getId)
 {
 	php_phongo_cursor_t* intern;
@@ -154,8 +151,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, getId)
 	php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->cursor));
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Server MongoDB\Driver\Cursor::getServer()
-   Returns the Server object to which this cursor is attached */
+/* {{{ Returns the Server object to which this cursor is attached */
 static PHP_METHOD(MongoDB_Driver_Cursor, getServer)
 {
 	php_phongo_cursor_t* intern;
@@ -167,8 +163,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, getServer)
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\Cursor::isDead()
-   Checks if a cursor is still alive */
+/* {{{ Checks if a cursor is still alive */
 static PHP_METHOD(MongoDB_Driver_Cursor, isDead)
 {
 	php_phongo_cursor_t* intern;

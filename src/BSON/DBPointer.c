@@ -93,8 +93,7 @@ HashTable* php_phongo_dbpointer_get_properties_hash(phongo_compat_object_handler
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_DBPointer)
 
-/* {{{ proto string MongoDB\BSON\DBPointer::__toString()
-   Return the DBPointer's namespace string and ObjectId. */
+/* {{{ Return the DBPointer's namespace string and ObjectId. */
 static PHP_METHOD(MongoDB_BSON_DBPointer, __toString)
 {
 	php_phongo_dbpointer_t* intern;
@@ -110,8 +109,7 @@ static PHP_METHOD(MongoDB_BSON_DBPointer, __toString)
 	efree(retval);
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\Symbol::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_DBPointer, jsonSerialize)
 {
 	php_phongo_dbpointer_t* intern;
@@ -132,8 +130,7 @@ static PHP_METHOD(MongoDB_BSON_DBPointer, jsonSerialize)
 	ADD_ASSOC_ZVAL(return_value, "$dbPointer", &zdb_pointer);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\DBPointer::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_DBPointer, serialize)
 {
 	php_phongo_dbpointer_t* intern;
@@ -160,8 +157,7 @@ static PHP_METHOD(MongoDB_BSON_DBPointer, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\DBPointer::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_DBPointer, unserialize)
 {
 	php_phongo_dbpointer_t* intern;
@@ -190,8 +186,7 @@ static PHP_METHOD(MongoDB_BSON_DBPointer, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\DBPointer::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_DBPointer, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -199,8 +194,7 @@ static PHP_METHOD(MongoDB_BSON_DBPointer, __serialize)
 	RETURN_ARR(php_phongo_dbpointer_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\DBPointer::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_DBPointer, __unserialize)
 {
 	zval* data;

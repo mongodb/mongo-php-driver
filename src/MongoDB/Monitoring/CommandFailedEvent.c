@@ -32,8 +32,7 @@ zend_class_entry* php_phongo_commandfailedevent_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandFailedEvent)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_CommandFailedEvent)
 
-/* {{{ proto string CommandFailedEvent::getCommandName()
-   Returns the command name for this event */
+/* {{{ Returns the command name for this event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getCommandName)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -45,8 +44,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getCommandName)
 	RETVAL_STRING(intern->command_name);
 } /* }}} */
 
-/* {{{ proto int CommandFailedEvent::getDurationMicros()
-   Returns the event's duration in microseconds */
+/* {{{ Returns the event's duration in microseconds */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDurationMicros)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -58,8 +56,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDurationMicro
 	RETURN_LONG(intern->duration_micros);
 } /* }}} */
 
-/* {{{ proto Exception CommandFailedEvent::getError()
-   Returns the error document associated with the event */
+/* {{{ Returns the error document associated with the event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getError)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -71,8 +68,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getError)
 	RETURN_ZVAL(&intern->z_error, 1, 0);
 } /* }}} */
 
-/* {{{ proto string CommandFailedEvent::getOperationId()
-   Returns the event's operation ID */
+/* {{{ Returns the event's operation ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -86,8 +82,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
 	RETVAL_STRING(int_as_string);
 } /* }}} */
 
-/* {{{ proto stdClass CommandFailedEvent::getReply()
-   Returns the reply document associated with the event */
+/* {{{ Returns the reply document associated with the event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getReply)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -107,8 +102,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getReply)
 	RETURN_ZVAL(&state.zchild, 0, 1);
 } /* }}} */
 
-/* {{{ proto string CommandFailedEvent::getRequestId()
-   Returns the event's request ID */
+/* {{{ Returns the event's request ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -122,8 +116,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId)
 	RETVAL_STRING(int_as_string);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Server CommandFailedEvent::getServer()
-   Returns the Server from which the event originated */
+/* {{{ Returns the Server from which the event originated */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServer)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -135,8 +128,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServer)
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\ObjectId|null CommandFailedEvent::getServiceId()
-   Returns the event's service ID */
+/* {{{ Returns the event's service ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId)
 {
 	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
@@ -150,8 +142,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId)
 	phongo_objectid_init(return_value, &intern->service_id);
 } /* }}} */
 
-/* {{{ proto int|null CommandFailedEvent::getServerConnectionId()
-   Returns the event's server connection ID */
+/* {{{ Returns the event's server connection ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnectionId)
 {
 	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());

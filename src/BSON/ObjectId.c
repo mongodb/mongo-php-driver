@@ -102,8 +102,7 @@ static HashTable* php_phongo_objectid_get_properties_hash(phongo_compat_object_h
 	return props;
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\ObjectId::__construct([string $id])
-   Constructs a new BSON ObjectId type, optionally from a hex string. */
+/* {{{ Constructs a new BSON ObjectId type, optionally from a hex string. */
 static PHP_METHOD(MongoDB_BSON_ObjectId, __construct)
 {
 	php_phongo_objectid_t* intern;
@@ -124,8 +123,7 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, __construct)
 	}
 } /* }}} */
 
-/* {{{ proto integer MongoDB\BSON\ObjectId::getTimestamp()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_ObjectId, getTimestamp)
 {
 	php_phongo_objectid_t* intern;
@@ -139,8 +137,7 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, getTimestamp)
 	RETVAL_LONG(bson_oid_get_time_t(&tmp_oid));
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\ObjectId MongoDB\BSON\ObjectId::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_ObjectId, __set_state)
 {
 	php_phongo_objectid_t* intern;
@@ -159,8 +156,7 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, __set_state)
 	php_phongo_objectid_init_from_hash(intern, props);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\ObjectId::__toString()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_ObjectId, __toString)
 {
 	php_phongo_objectid_t* intern;
@@ -172,8 +168,7 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, __toString)
 	RETURN_STRINGL(intern->oid, PHONGO_OID_LEN);
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\ObjectId::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_ObjectId, jsonSerialize)
 {
 	php_phongo_objectid_t* intern;
@@ -186,8 +181,7 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, jsonSerialize)
 	ADD_ASSOC_STRINGL(return_value, "$oid", intern->oid, PHONGO_OID_LEN);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\ObjectId::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_ObjectId, serialize)
 {
 	php_phongo_objectid_t* intern;
@@ -213,8 +207,7 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\ObjectId::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_ObjectId, unserialize)
 {
 	php_phongo_objectid_t* intern;
@@ -243,8 +236,7 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\ObjectId::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_ObjectId, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -252,8 +244,7 @@ static PHP_METHOD(MongoDB_BSON_ObjectId, __serialize)
 	RETURN_ARR(php_phongo_objectid_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\ObjectId::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_ObjectId, __unserialize)
 {
 	zval* data;

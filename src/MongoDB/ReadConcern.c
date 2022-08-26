@@ -53,8 +53,7 @@ failure:
 	return false;
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\ReadConcern::__construct([string $level])
-   Constructs a new ReadConcern */
+/* {{{ Constructs a new ReadConcern */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __construct)
 {
 	php_phongo_readconcern_t* intern;
@@ -75,8 +74,7 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, __construct)
 	}
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\ReadConcern MongoDB\Driver\ReadConcern::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __set_state)
 {
 	php_phongo_readconcern_t* intern;
@@ -95,8 +93,7 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, __set_state)
 	php_phongo_readconcern_init_from_hash(intern, props);
 } /* }}} */
 
-/* {{{ proto string|null MongoDB\Driver\ReadConcern::getLevel()
-   Returns the ReadConcern "level" option */
+/* {{{ Returns the ReadConcern "level" option */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, getLevel)
 {
 	php_phongo_readconcern_t* intern;
@@ -115,8 +112,7 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, getLevel)
 	RETURN_NULL();
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\ReadConcern::isDefault()
-   Returns whether the read concern has not been modified (i.e. constructed
+/* {{{ Returns whether the read concern has not been modified (i.e. constructed
    without a level or from a Manager with no read concern URI options). */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, isDefault)
 {
@@ -155,8 +151,7 @@ static HashTable* php_phongo_readconcern_get_properties_hash(phongo_compat_objec
 	return props;
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\ReadConcern::bsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -165,8 +160,7 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, bsonSerialize)
 	convert_to_object(return_value);
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\ReadConcern::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, serialize)
 {
 	php_phongo_readconcern_t* intern;
@@ -203,8 +197,7 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\ReadConcern::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, unserialize)
 {
 	php_phongo_readconcern_t* intern;
@@ -237,8 +230,7 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\ReadConcern::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -246,8 +238,7 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, __serialize)
 	RETURN_ARR(php_phongo_readconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\ReadConcern::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __unserialize)
 {
 	zval* data;

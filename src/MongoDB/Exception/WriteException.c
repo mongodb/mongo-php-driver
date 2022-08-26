@@ -22,8 +22,7 @@
 
 zend_class_entry* php_phongo_writeexception_ce;
 
-/* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Exception\WriteException::getWriteResult()
-   Returns the WriteResult from the failed write operation. */
+/* {{{ Returns the WriteResult from the failed write operation. */
 static PHP_METHOD(MongoDB_Driver_Exception_WriteException, getWriteResult)
 {
 	zval* writeresult;

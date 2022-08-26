@@ -47,8 +47,7 @@ php_phongo_server_description_type_map_t
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_ServerDescription)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_ServerDescription)
 
-/* {{{ proto array MongoDB\Driver\ServerDescription::getHelloResponse()
-   Returns the most recent "hello" response */
+/* {{{ Returns the most recent "hello" response */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getHelloResponse)
 {
 	php_phongo_serverdescription_t* intern;
@@ -77,8 +76,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getHelloResponse)
 	RETURN_ZVAL(&state.zchild, 0, 1);
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\ServerDescription::getHost()
-   Returns the server's hostname */
+/* {{{ Returns the server's hostname */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getHost)
 {
 	php_phongo_serverdescription_t* intern;
@@ -90,8 +88,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getHost)
 	RETVAL_STRING(mongoc_server_description_host(intern->server_description)->host);
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\ServerDescription::getLastUpdateTime()
-   Returns the server's last update time, in microseconds */
+/* {{{ Returns the server's last update time, in microseconds */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getLastUpdateTime)
 {
 	php_phongo_serverdescription_t* intern;
@@ -112,8 +109,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getLastUpdateTime)
 	RETVAL_LONG(last_update_time);
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\ServerDescription::getPort()
-   Returns the server's port */
+/* {{{ Returns the server's port */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getPort)
 {
 	php_phongo_serverdescription_t* intern;
@@ -125,8 +121,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getPort)
 	RETVAL_LONG(mongoc_server_description_host(intern->server_description)->port);
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\ServerDescription::getRoundTripTime()
-   Returns the server's round trip time, in milliseconds */
+/* {{{ Returns the server's round trip time, in milliseconds */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getRoundTripTime)
 {
 	php_phongo_serverdescription_t* intern;
@@ -143,8 +138,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getRoundTripTime)
 	}
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\ServerDescription::getType()
-   Returns the server's node type */
+/* {{{ Returns the server's node type */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getType)
 {
 	php_phongo_serverdescription_t* intern;

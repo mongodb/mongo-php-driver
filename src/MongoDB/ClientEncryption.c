@@ -83,8 +83,7 @@ static bool validate_keyid(bson_value_t* keyid)
 	return true;
 }
 
-/* {{{ proto void MongoDB\Driver\ClientEncryption::__construct(array $options)
-   Constructs a new ClientEncryption */
+/* {{{ Constructs a new ClientEncryption */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, __construct)
 {
 	zval* options;
@@ -97,8 +96,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, __construct)
 	phongo_clientencryption_init(Z_CLIENTENCRYPTION_OBJ_P(getThis()), options, NULL);
 } /* }}} */
 
-/* {{{ proto object|null MongoDB\Driver\ClientEncryption::addKeyAltName(MongoDB\BSON\Binary $id, string $keyAltName)
-   Adds a keyAltName to the keyAltNames array of the key document in the key
+/* {{{ Adds a keyAltName to the keyAltNames array of the key document in the key
    vault collection with the given UUID (BSON binary subtype 0x04). Returns the
    previous version of the key document, or null if no document matched. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, addKeyAltName)
@@ -138,8 +136,7 @@ cleanup:
 	bson_destroy(&key_doc);
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\Binary MongoDB\Driver\ClientEncryption::createDataKey(string $kmsProvider[, array $options])
-   Creates a new key document and inserts into the key vault collection and
+/* {{{ Creates a new key document and inserts into the key vault collection and
    returns its identifier (UUID as a BSON binary with subtype 0x04). */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, createDataKey)
 {
@@ -159,8 +156,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, createDataKey)
 	phongo_clientencryption_create_datakey(intern, return_value, kms_provider, options);
 } /* }}} */
 
-/* {{{ proto object MongoDB\Driver\ClientEncryption::deleteKey(MongoDB\BSON\Binary $id)
-   Removes the key document with the given UUID (BSON binary subtype 0x04) from
+/* {{{ Removes the key document with the given UUID (BSON binary subtype 0x04) from
    the key vault collection. Returns the result of the internal deleteOne()
    operation on the key vault collection. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, deleteKey)
@@ -202,8 +198,7 @@ cleanup:
 	bson_destroy(&reply);
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\Binary MongoDB\Driver\ClientEncryption::encrypt(mixed $value[, array $options])
-   Encrypts a value with a given key and algorithm */
+/* {{{ Encrypts a value with a given key and algorithm */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, encrypt)
 {
 	zval*                          value   = NULL;
@@ -221,8 +216,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, encrypt)
 	phongo_clientencryption_encrypt(intern, value, return_value, options);
 } /* }}} */
 
-/* {{{ proto mixed MongoDB\Driver\ClientEncryption::decrypt(MongoDB\BSON\BinaryInterface $value)
-   Decrypts an encrypted value (BSON binary of subtype 6). Returns the original BSON value */
+/* {{{ Decrypts an encrypted value (BSON binary of subtype 6). Returns the original BSON value */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, decrypt)
 {
 	zval*                          ciphertext;
@@ -237,8 +231,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, decrypt)
 	phongo_clientencryption_decrypt(intern, ciphertext, return_value);
 } /* }}} */
 
-/* {{{ proto object|null MongoDB\Driver\ClientEncryption::getKey(MongoDB\BSON\Binary $id)
-   Finds a single key document with the given UUID (BSON binary subtype 0x04).
+/* {{{ Finds a single key document with the given UUID (BSON binary subtype 0x04).
    Returns the result of the internal find() operation on the key vault
    collection, or null if no document matched. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKey)
@@ -275,8 +268,7 @@ cleanup:
 	bson_destroy(&key_doc);
 } /* }}} */
 
-/* {{{ proto object|null MongoDB\Driver\ClientEncryption::getKey(string $keyAltName)
-   Returns a key document in the key vault collection with the given keyAltName,
+/* {{{ Returns a key document in the key vault collection with the given keyAltName,
    or null if no document matched. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKeyByAltName)
 {
@@ -300,8 +292,7 @@ cleanup:
 	bson_destroy(&key_doc);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\ClientEncryption::getKeys()
-   Finds all documents in the key vault collection. Returns the result of the
+/* {{{ Finds all documents in the key vault collection. Returns the result of the
    internal find() operation on the key vault collection as a cursor. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKeys)
 {
@@ -340,8 +331,7 @@ cleanup:
 	zval_ptr_dtor(&query);
 } /* }}} */
 
-/* {{{ proto object|null MongoDB\Driver\ClientEncryption::removeKeyAltName(MongoDB\BSON\Binary $id, string $keyAltName)
-   Removes a keyAltName from the keyAltNames array of the key document in the
+/* {{{ Removes a keyAltName from the keyAltNames array of the key document in the
    key vault collection with the given UUID (BSON binary subtype 0x04). Returns
    the previous version of the key document, or null if no document matched. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, removeKeyAltName)
@@ -381,8 +371,7 @@ cleanup:
 	bson_destroy(&key_doc);
 } /* }}} */
 
-/* {{{ proto object MongoDB\Driver\ClientEncryption::rewrapManyDataKey(array|object $filter[, array $options = array()])
-   Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or
+/* {{{ Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or
    with their current masterKey if a new one is not given. Returns an object
    corresponding to the internal libmongoc result. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)

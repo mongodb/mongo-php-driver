@@ -407,8 +407,7 @@ bool phongo_query_init(zval* return_value, zval* filter, zval* options) /* {{{ *
 
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Query)
 
-/* {{{ proto void MongoDB\Driver\Query::__construct(array|object $filter[, array $options = array()])
-   Constructs a new Query */
+/* {{{ Constructs a new Query */
 static PHP_METHOD(MongoDB_Driver_Query, __construct)
 {
 	zval* filter;

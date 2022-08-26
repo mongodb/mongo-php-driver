@@ -107,8 +107,7 @@ failure:
 	return false;
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\WriteConcern::__construct(integer|string $w[, integer $wtimeout[, boolean $journal]])
-   Constructs a new WriteConcern */
+/* {{{ Constructs a new WriteConcern */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __construct)
 {
 	php_phongo_writeconcern_t* intern;
@@ -170,8 +169,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __construct)
 	}
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\WriteConcern MongoDB\Driver\WriteConcern::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __set_state)
 {
 	php_phongo_writeconcern_t* intern;
@@ -190,8 +188,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __set_state)
 	php_phongo_writeconcern_init_from_hash(intern, props);
 } /* }}} */
 
-/* {{{ proto string|integer|null MongoDB\Driver\WriteConcern::getW()
-   Returns the WriteConcern "w" option */
+/* {{{ Returns the WriteConcern "w" option */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, getW)
 {
 	php_phongo_writeconcern_t* intern;
@@ -218,8 +215,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, getW)
 	RETURN_NULL();
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\WriteConcern::getWtimeout()
-   Returns the WriteConcern "wtimeout" option */
+/* {{{ Returns the WriteConcern "wtimeout" option */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, getWtimeout)
 {
 	php_phongo_writeconcern_t* intern;
@@ -240,8 +236,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, getWtimeout)
 	RETURN_LONG(wtimeout);
 } /* }}} */
 
-/* {{{ proto null|boolean MongoDB\Driver\WriteConcern::getJournal()
-   Returns the WriteConcern "journal" option */
+/* {{{ Returns the WriteConcern "journal" option */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, getJournal)
 {
 	php_phongo_writeconcern_t* intern;
@@ -257,8 +252,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, getJournal)
 	RETURN_NULL();
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\WriteConcern::isDefault()
-   Returns whether the write concern has not been modified (i.e. from a Manager
+/* {{{ Returns whether the write concern has not been modified (i.e. from a Manager
    with no write concern URI options). */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, isDefault)
 {
@@ -342,8 +336,7 @@ static HashTable* php_phongo_writeconcern_get_properties_hash(phongo_compat_obje
 	return props;
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\WriteConcern::bsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -352,8 +345,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, bsonSerialize)
 	convert_to_object(return_value);
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\WriteConcern::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, serialize)
 {
 	php_phongo_writeconcern_t* intern;
@@ -409,8 +401,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\WriteConcern::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, unserialize)
 {
 	php_phongo_writeconcern_t* intern;
@@ -443,8 +434,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\WriteConcern::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -452,8 +442,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __serialize)
 	RETURN_ARR(php_phongo_writeconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false, true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\WriteConcern::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __unserialize)
 {
 	zval* data;

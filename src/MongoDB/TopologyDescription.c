@@ -34,8 +34,7 @@ zend_class_entry* php_phongo_topologydescription_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_TopologyDescription)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_TopologyDescription)
 
-/* {{{ proto array MongoDB\Driver\TopologyDescription::getServers()
-   Returns an array of ServerDescription objects for all known servers in the topology */
+/* {{{ Returns an array of ServerDescription objects for all known servers in the topology */
 static PHP_METHOD(MongoDB_Driver_TopologyDescription, getServers)
 {
 	php_phongo_topologydescription_t* intern;
@@ -59,8 +58,7 @@ static PHP_METHOD(MongoDB_Driver_TopologyDescription, getServers)
 	mongoc_server_descriptions_destroy_all(sds, n);
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\TopologyDescription::hasReadableServer([MongoDB\Driver\ReadPreference $readPreference])
-    Returns whether the topology has a readable server available */
+/* {{{ Returns whether the topology has a readable server available */
 static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasReadableServer)
 {
 	php_phongo_topologydescription_t* intern;
@@ -81,8 +79,7 @@ static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasReadableServer)
 	RETVAL_BOOL(mongoc_topology_description_has_readable_server(intern->topology_description, read_preference));
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\TopologyDescription::hasWritableServer()
-    Returns whether the topology has a writable server available */
+/* {{{ Returns whether the topology has a writable server available */
 static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasWritableServer)
 {
 	php_phongo_topologydescription_t* intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());
@@ -92,8 +89,7 @@ static PHP_METHOD(MongoDB_Driver_TopologyDescription, hasWritableServer)
 	RETVAL_BOOL(mongoc_topology_description_has_writable_server(intern->topology_description));
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\TopologyDescription::getType()
-    Returns the topology type */
+/* {{{ Returns the topology type */
 static PHP_METHOD(MongoDB_Driver_TopologyDescription, getType)
 {
 	php_phongo_topologydescription_t* intern = Z_TOPOLOGYDESCRIPTION_OBJ_P(getThis());

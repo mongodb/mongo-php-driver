@@ -310,8 +310,7 @@ static bool php_phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zo
 #undef PHONGO_BULKWRITE_APPEND_INT32
 #undef PHONGO_BULKWRITE_OPT_DOCUMENT
 
-/* {{{ proto void MongoDB\Driver\BulkWrite::__construct([array $options = array()])
-   Constructs a new BulkWrite */
+/* {{{ Constructs a new BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, __construct)
 {
 	php_phongo_bulkwrite_t* intern;
@@ -375,8 +374,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, __construct)
 	}
 } /* }}} */
 
-/* {{{ proto mixed MongoDB\Driver\BulkWrite::insert(array|object $document)
-   Adds an insert operation to the BulkWrite */
+/* {{{ Adds an insert operation to the BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, insert)
 {
 	php_phongo_bulkwrite_t* intern;
@@ -420,8 +418,7 @@ cleanup:
 	bson_clear(&bson_out);
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\BulkWrite::update(array|object $query, array|object $newObj[, array $updateOptions = array()])
-   Adds an update operation to the BulkWrite */
+/* {{{ Adds an update operation to the BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, update)
 {
 	php_phongo_bulkwrite_t* intern;
@@ -486,8 +483,7 @@ cleanup:
 	bson_destroy(&boptions);
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\BulkWrite::delete(array|object $query[, array $deleteOptions = array()])
-   Adds a delete operation to the BulkWrite */
+/* {{{ Adds a delete operation to the BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, delete)
 {
 	php_phongo_bulkwrite_t* intern;
@@ -532,8 +528,7 @@ cleanup:
 	bson_destroy(&boptions);
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\BulkWrite::count()
-   Returns the number of operations that have been added to the BulkWrite */
+/* {{{ Returns the number of operations that have been added to the BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, count)
 {
 	php_phongo_bulkwrite_t* intern;

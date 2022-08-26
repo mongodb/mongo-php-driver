@@ -91,8 +91,7 @@ static HashTable* php_phongo_binary_get_properties_hash(phongo_compat_object_han
 	return props;
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Binary::__construct(string $data, int $type)
-   Construct a new BSON binary type */
+/* {{{ Construct a new BSON binary type */
 static PHP_METHOD(MongoDB_BSON_Binary, __construct)
 {
 	php_phongo_binary_t* intern;
@@ -110,8 +109,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, __construct)
 	php_phongo_binary_init(intern, data, data_len, type);
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\Binary MongoDB\BSON\Binary::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, __set_state)
 {
 	php_phongo_binary_t* intern;
@@ -130,8 +128,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, __set_state)
 	php_phongo_binary_init_from_hash(intern, props);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Binary::__toString()
-   Return the Binary's data string. */
+/* {{{ Return the Binary's data string. */
 static PHP_METHOD(MongoDB_BSON_Binary, __toString)
 {
 	php_phongo_binary_t* intern;
@@ -143,8 +140,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, __toString)
 	RETURN_STRINGL(intern->data, intern->data_len);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Binary::getData()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, getData)
 {
 	php_phongo_binary_t* intern;
@@ -156,8 +152,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, getData)
 	RETURN_STRINGL(intern->data, intern->data_len);
 } /* }}} */
 
-/* {{{ proto integer MongoDB\BSON\Binary::getType()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, getType)
 {
 	php_phongo_binary_t* intern;
@@ -169,8 +164,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, getType)
 	RETURN_LONG(intern->type);
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\Binary::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, jsonSerialize)
 {
 	php_phongo_binary_t* intern;
@@ -193,8 +187,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, jsonSerialize)
 	ADD_ASSOC_STRINGL(return_value, "$type", type, type_len);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Binary::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, serialize)
 {
 	php_phongo_binary_t* intern;
@@ -221,8 +214,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Binary::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, unserialize)
 {
 	php_phongo_binary_t*   intern;
@@ -251,8 +243,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Binary::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -260,8 +251,7 @@ static PHP_METHOD(MongoDB_BSON_Binary, __serialize)
 	RETURN_ARR(php_phongo_binary_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Binary::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, __unserialize)
 {
 	zval* data;

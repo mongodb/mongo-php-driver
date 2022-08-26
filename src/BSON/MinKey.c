@@ -25,8 +25,7 @@
 
 zend_class_entry* php_phongo_minkey_ce;
 
-/* {{{ proto MongoDB\BSON\MinKey MongoDB\BSON\MinKey::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_MinKey, __set_state)
 {
 	zval* array;
@@ -38,8 +37,7 @@ static PHP_METHOD(MongoDB_BSON_MinKey, __set_state)
 	object_init_ex(return_value, php_phongo_minkey_ce);
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\MinKey::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_MinKey, jsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -48,8 +46,7 @@ static PHP_METHOD(MongoDB_BSON_MinKey, jsonSerialize)
 	ADD_ASSOC_LONG_EX(return_value, "$minKey", 1);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\MinKey::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_MinKey, serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -57,8 +54,7 @@ static PHP_METHOD(MongoDB_BSON_MinKey, serialize)
 	RETURN_STRING("");
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\MinKey::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_MinKey, unserialize)
 {
 	char*  serialized;
@@ -69,8 +65,7 @@ static PHP_METHOD(MongoDB_BSON_MinKey, unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\MinKey::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_MinKey, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -78,8 +73,7 @@ static PHP_METHOD(MongoDB_BSON_MinKey, __serialize)
 	array_init_size(return_value, 0);
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\MinKey::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_MinKey, __unserialize)
 {
 	zval* data;

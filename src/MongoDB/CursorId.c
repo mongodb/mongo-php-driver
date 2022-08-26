@@ -91,8 +91,7 @@ static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_h
 	return props;
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\CursorId MongoDB\Driver\CursorId::__set_state(array $properties)
-*/
+/* {{{ */
 PHP_METHOD(MongoDB_Driver_CursorId, __set_state)
 {
 	php_phongo_cursorid_t* intern;
@@ -111,8 +110,7 @@ PHP_METHOD(MongoDB_Driver_CursorId, __set_state)
 	php_phongo_cursorid_init_from_hash(intern, props);
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\CursorId::__toString()
-   Returns the string representation of the CursorId */
+/* {{{ Returns the string representation of the CursorId */
 PHP_METHOD(MongoDB_Driver_CursorId, __toString)
 {
 	php_phongo_cursorid_t* intern;
@@ -128,8 +126,7 @@ PHP_METHOD(MongoDB_Driver_CursorId, __toString)
 	efree(tmp);
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\CursorId::serialize()
-*/
+/* {{{ */
 PHP_METHOD(MongoDB_Driver_CursorId, serialize)
 {
 	php_phongo_cursorid_t* intern;
@@ -155,8 +152,7 @@ PHP_METHOD(MongoDB_Driver_CursorId, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\CursorId::unserialize(string $serialized)
-*/
+/* {{{ */
 PHP_METHOD(MongoDB_Driver_CursorId, unserialize)
 {
 	php_phongo_cursorid_t* intern;
@@ -185,8 +181,7 @@ PHP_METHOD(MongoDB_Driver_CursorId, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\CursorId::__serialize()
-*/
+/* {{{ */
 PHP_METHOD(MongoDB_Driver_CursorId, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -194,8 +189,7 @@ PHP_METHOD(MongoDB_Driver_CursorId, __serialize)
 	RETURN_ARR(php_phongo_cursorid_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\CursorId::__unserialize(array $data)
-*/
+/* {{{ */
 PHP_METHOD(MongoDB_Driver_CursorId, __unserialize)
 {
 	zval* data;

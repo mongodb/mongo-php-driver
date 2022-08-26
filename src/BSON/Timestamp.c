@@ -120,8 +120,7 @@ static HashTable* php_phongo_timestamp_get_properties_hash(phongo_compat_object_
 	return props;
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Timestamp::__construct(int|string $increment, int|string $timestamp)
-   Construct a new BSON timestamp type, which consists of a 4-byte increment and
+/* {{{ Construct a new BSON timestamp type, which consists of a 4-byte increment and
    4-byte timestamp. */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __construct)
 {
@@ -161,8 +160,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __construct)
 	php_phongo_timestamp_init_from_string(intern, Z_STRVAL_P(increment), Z_STRLEN_P(increment), Z_STRVAL_P(timestamp), Z_STRLEN_P(timestamp));
 } /* }}} */
 
-/* {{{ proto integer MongoDB\BSON\Timestamp::getIncrement()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, getIncrement)
 {
 	php_phongo_timestamp_t* intern;
@@ -174,8 +172,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, getIncrement)
 	RETVAL_LONG(intern->increment);
 } /* }}} */
 
-/* {{{ proto integer MongoDB\BSON\Timestamp::getTimestamp()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, getTimestamp)
 {
 	php_phongo_timestamp_t* intern;
@@ -187,8 +184,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, getTimestamp)
 	RETVAL_LONG(intern->timestamp);
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\Timestamp MongoDB\BSON\Timestamp::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __set_state)
 {
 	php_phongo_timestamp_t* intern;
@@ -207,8 +203,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __set_state)
 	php_phongo_timestamp_init_from_hash(intern, props);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Timestamp::__toString()
-   Returns a string in the form: [increment:timestamp] */
+/* {{{ Returns a string in the form: [increment:timestamp] */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __toString)
 {
 	php_phongo_timestamp_t* intern;
@@ -224,8 +219,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __toString)
 	efree(retval);
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\Timestamp::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, jsonSerialize)
 {
 	php_phongo_timestamp_t* intern;
@@ -246,8 +240,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, jsonSerialize)
 	}
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Timestamp::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, serialize)
 {
 	php_phongo_timestamp_t* intern;
@@ -281,8 +274,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Timestamp::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, unserialize)
 {
 	php_phongo_timestamp_t* intern;
@@ -311,8 +303,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Timestamp::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -320,8 +311,7 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __serialize)
 	RETURN_ARR(php_phongo_timestamp_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Timestamp::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __unserialize)
 {
 	zval* data;

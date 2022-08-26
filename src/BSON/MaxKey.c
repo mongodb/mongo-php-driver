@@ -25,8 +25,7 @@
 
 zend_class_entry* php_phongo_maxkey_ce;
 
-/* {{{ proto MongoDB\BSON\MaxKey MongoDB\BSON\MaxKey::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_MaxKey, __set_state)
 {
 	zval* array;
@@ -38,8 +37,7 @@ static PHP_METHOD(MongoDB_BSON_MaxKey, __set_state)
 	object_init_ex(return_value, php_phongo_maxkey_ce);
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\MaxKey::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_MaxKey, jsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -48,8 +46,7 @@ static PHP_METHOD(MongoDB_BSON_MaxKey, jsonSerialize)
 	ADD_ASSOC_LONG_EX(return_value, "$maxKey", 1);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\MaxKey::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_MaxKey, serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -57,8 +54,7 @@ static PHP_METHOD(MongoDB_BSON_MaxKey, serialize)
 	RETURN_STRING("");
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\MaxKey::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_MaxKey, unserialize)
 {
 	char*  serialized;
@@ -69,8 +65,7 @@ static PHP_METHOD(MongoDB_BSON_MaxKey, unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\MaxKey::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_MaxKey, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -78,8 +73,7 @@ static PHP_METHOD(MongoDB_BSON_MaxKey, __serialize)
 	array_init_size(return_value, 0);
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\MaxKey::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_MaxKey, __unserialize)
 {
 	zval* data;

@@ -36,8 +36,7 @@ zend_class_entry* php_phongo_server_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Server)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Server)
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
-   Executes a Command on this Server */
+/* {{{ Executes a Command on this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeCommand)
 {
 	php_phongo_server_t* intern;
@@ -70,8 +69,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeCommand)
 	}
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeReadCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
-   Executes a ReadCommand on this Server */
+/* {{{ Executes a ReadCommand on this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeReadCommand)
 {
 	php_phongo_server_t* intern;
@@ -97,8 +95,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeReadCommand)
 	phongo_execute_command(&intern->manager, PHONGO_COMMAND_READ, db, command, options, intern->server_id, return_value);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
-   Executes a WriteCommand on this Server */
+/* {{{ Executes a WriteCommand on this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeWriteCommand)
 {
 	php_phongo_server_t* intern;
@@ -124,8 +121,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeWriteCommand)
 	phongo_execute_command(&intern->manager, PHONGO_COMMAND_WRITE, db, command, options, intern->server_id, return_value);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeReadWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null]))
-   Executes a ReadWriteCommand on this Server */
+/* {{{ Executes a ReadWriteCommand on this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeReadWriteCommand)
 {
 	php_phongo_server_t* intern;
@@ -151,8 +147,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeReadWriteCommand)
 	phongo_execute_command(&intern->manager, PHONGO_COMMAND_READ_WRITE, db, command, options, intern->server_id, return_value);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Server::executeQuery(string $namespace, MongoDB\Driver\Query $query[, array $options = null]))
-   Executes a Query on this Server */
+/* {{{ Executes a Query on this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeQuery)
 {
 	php_phongo_server_t* intern;
@@ -185,8 +180,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeQuery)
 	}
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Server::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, array $options = null])
-   Executes a BulkWrite (i.e. any number of insert, update, and delete ops) on
+/* {{{ Executes a BulkWrite (i.e. any number of insert, update, and delete ops) on
    this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeBulkWrite)
 {
@@ -222,8 +216,7 @@ static PHP_METHOD(MongoDB_Driver_Server, executeBulkWrite)
 	}
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\Server::getHost()
-   Returns the hostname for this Server */
+/* {{{ Returns the hostname for this Server */
 static PHP_METHOD(MongoDB_Driver_Server, getHost)
 {
 	php_phongo_server_t*         intern;
@@ -242,8 +235,7 @@ static PHP_METHOD(MongoDB_Driver_Server, getHost)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Server::getTags()
-   Returns the currently configured tags for this Server */
+/* {{{ Returns the currently configured tags for this Server */
 static PHP_METHOD(MongoDB_Driver_Server, getTags)
 {
 	php_phongo_server_t*         intern;
@@ -285,8 +277,7 @@ static PHP_METHOD(MongoDB_Driver_Server, getTags)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Server::getInfo()
-   Returns the last hello response for this Server or, in the case of a load
+/* {{{ Returns the last hello response for this Server or, in the case of a load
    balancer, the initial handshake response. */
 static PHP_METHOD(MongoDB_Driver_Server, getInfo)
 {
@@ -341,8 +332,7 @@ cleanup:
 	mongoc_server_description_destroy(sd);
 } /* }}} */
 
-/* {{{ proto integer|null MongoDB\Driver\Server::getLatency()
-   Returns the measured latency (i.e. round trip time in milliseconds) for
+/* {{{ Returns the measured latency (i.e. round trip time in milliseconds) for
    this Server, or null if unset. */
 static PHP_METHOD(MongoDB_Driver_Server, getLatency)
 {
@@ -368,8 +358,7 @@ static PHP_METHOD(MongoDB_Driver_Server, getLatency)
 	mongoc_server_description_destroy(sd);
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\Server::getPort()
-   Returns the port for this Server */
+/* {{{ Returns the port for this Server */
 static PHP_METHOD(MongoDB_Driver_Server, getPort)
 {
 	php_phongo_server_t*         intern;
@@ -388,8 +377,7 @@ static PHP_METHOD(MongoDB_Driver_Server, getPort)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\ServerDescription MongoDB\Driver\Server::getServerDescription()
-   Returns the server description for this Server */
+/* {{{ Returns the server description for this Server */
 static PHP_METHOD(MongoDB_Driver_Server, getServerDescription)
 {
 	mongoc_server_description_t* server_description;
@@ -403,8 +391,7 @@ static PHP_METHOD(MongoDB_Driver_Server, getServerDescription)
 	phongo_serverdescription_init_ex(return_value, server_description, false);
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\Server::getType()
-   Returns the node type of this Server */
+/* {{{ Returns the node type of this Server */
 static PHP_METHOD(MongoDB_Driver_Server, getType)
 {
 	php_phongo_server_t*         intern;
@@ -423,8 +410,7 @@ static PHP_METHOD(MongoDB_Driver_Server, getType)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\Server::isPrimary()
-   Returns whether this Server is a primary member of a replica set */
+/* {{{ Returns whether this Server is a primary member of a replica set */
 static PHP_METHOD(MongoDB_Driver_Server, isPrimary)
 {
 	php_phongo_server_t*         intern;
@@ -443,8 +429,7 @@ static PHP_METHOD(MongoDB_Driver_Server, isPrimary)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\Server::isSecondary()
-   Returns whether this Server is a secondary member of a replica set */
+/* {{{ Returns whether this Server is a secondary member of a replica set */
 static PHP_METHOD(MongoDB_Driver_Server, isSecondary)
 {
 	php_phongo_server_t*         intern;
@@ -463,8 +448,7 @@ static PHP_METHOD(MongoDB_Driver_Server, isSecondary)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\Server::isArbiter()
-   Returns whether this Server is an arbiter member of a replica set */
+/* {{{ Returns whether this Server is an arbiter member of a replica set */
 static PHP_METHOD(MongoDB_Driver_Server, isArbiter)
 {
 	php_phongo_server_t*         intern;
@@ -483,8 +467,7 @@ static PHP_METHOD(MongoDB_Driver_Server, isArbiter)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\Server::isHidden()
-   Returns whether this Server is a hidden member of a replica set */
+/* {{{ Returns whether this Server is a hidden member of a replica set */
 static PHP_METHOD(MongoDB_Driver_Server, isHidden)
 {
 	php_phongo_server_t*         intern;
@@ -505,8 +488,7 @@ static PHP_METHOD(MongoDB_Driver_Server, isHidden)
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
 } /* }}} */
 
-/* {{{ proto boolean MongoDB\Driver\Server::isPassive()
-   Returns whether this Server is a passive member of a replica set */
+/* {{{ Returns whether this Server is a passive member of a replica set */
 static PHP_METHOD(MongoDB_Driver_Server, isPassive)
 {
 	php_phongo_server_t*         intern;

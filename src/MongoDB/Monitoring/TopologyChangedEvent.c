@@ -31,8 +31,7 @@ zend_class_entry* php_phongo_topologychangedevent_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_TopologyChangedEvent)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_TopologyChangedEvent)
 
-/* {{{ proto MongoDB\Driver\TopologyDescription TopologyChangedEvent::getNewDescription()
-   Returns this event's new description */
+/* {{{ Returns this event's new description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getNewDescription)
 {
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
@@ -42,8 +41,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getNewDescript
 	phongo_topologydescription_init(return_value, intern->new_topology_description);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\TopologyDescription TopologyChangedEvent::getPreviousDescription()
-   Returns this event's previous description */
+/* {{{ Returns this event's previous description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getPreviousDescription)
 {
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
@@ -53,8 +51,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getPreviousDes
 	phongo_topologydescription_init(return_value, intern->old_topology_description);
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\ObjectId TopologyChangedEvent::getTopologyId()
-   Returns this event's topology id */
+/* {{{ Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getTopologyId)
 {
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());

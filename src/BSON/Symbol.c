@@ -79,8 +79,7 @@ HashTable* php_phongo_symbol_get_properties_hash(phongo_compat_object_handler_ty
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Symbol)
 
-/* {{{ proto string MongoDB\BSON\Symbol::__toString()
-   Return the Symbol's symbol string. */
+/* {{{ Return the Symbol's symbol string. */
 static PHP_METHOD(MongoDB_BSON_Symbol, __toString)
 {
 	php_phongo_symbol_t* intern;
@@ -92,8 +91,7 @@ static PHP_METHOD(MongoDB_BSON_Symbol, __toString)
 	RETURN_STRINGL(intern->symbol, intern->symbol_len);
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\Symbol::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Symbol, jsonSerialize)
 {
 	php_phongo_symbol_t* intern;
@@ -106,8 +104,7 @@ static PHP_METHOD(MongoDB_BSON_Symbol, jsonSerialize)
 	ADD_ASSOC_STRINGL(return_value, "$symbol", intern->symbol, intern->symbol_len);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Symbol::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Symbol, serialize)
 {
 	php_phongo_symbol_t* intern;
@@ -133,8 +130,7 @@ static PHP_METHOD(MongoDB_BSON_Symbol, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Symbol::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Symbol, unserialize)
 {
 	php_phongo_symbol_t*   intern;
@@ -163,8 +159,7 @@ static PHP_METHOD(MongoDB_BSON_Symbol, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Symbol::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Symbol, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -172,8 +167,7 @@ static PHP_METHOD(MongoDB_BSON_Symbol, __serialize)
 	ZVAL_ARR(return_value, php_phongo_symbol_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Symbol::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Symbol, __unserialize)
 {
 	zval* data;

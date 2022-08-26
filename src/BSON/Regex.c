@@ -105,8 +105,7 @@ static HashTable* php_phongo_regex_get_properties_hash(phongo_compat_object_hand
 	return props;
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Regex::__construct(string $pattern [, string $flags])
-   Constructs a new BSON regular expression type. */
+/* {{{ Constructs a new BSON regular expression type. */
 static PHP_METHOD(MongoDB_BSON_Regex, __construct)
 {
 	php_phongo_regex_t* intern;
@@ -126,8 +125,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, __construct)
 	php_phongo_regex_init(intern, pattern, pattern_len, flags, flags_len);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Regex::getPattern()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Regex, getPattern)
 {
 	php_phongo_regex_t* intern;
@@ -139,8 +137,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, getPattern)
 	RETURN_STRINGL(intern->pattern, intern->pattern_len);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Regex::getFlags()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Regex, getFlags)
 {
 	php_phongo_regex_t* intern;
@@ -152,8 +149,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, getFlags)
 	RETURN_STRINGL(intern->flags, intern->flags_len);
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\Regex MongoDB\BSON\Regex::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Regex, __set_state)
 {
 	php_phongo_regex_t* intern;
@@ -172,8 +168,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, __set_state)
 	php_phongo_regex_init_from_hash(intern, props);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Regex::__toString()
-   Returns a string in the form: /pattern/flags */
+/* {{{ Returns a string in the form: /pattern/flags */
 static PHP_METHOD(MongoDB_BSON_Regex, __toString)
 {
 	php_phongo_regex_t* intern;
@@ -189,8 +184,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, __toString)
 	efree(regex);
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\Regex::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Regex, jsonSerialize)
 {
 	php_phongo_regex_t* intern;
@@ -204,8 +198,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, jsonSerialize)
 	ADD_ASSOC_STRINGL(return_value, "$options", intern->flags, intern->flags_len);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Regex::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Regex, serialize)
 {
 	php_phongo_regex_t*  intern;
@@ -232,8 +225,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Regex::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Regex, unserialize)
 {
 	php_phongo_regex_t*    intern;
@@ -262,8 +254,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Regex::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Regex, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -271,8 +262,7 @@ static PHP_METHOD(MongoDB_BSON_Regex, __serialize)
 	RETURN_ARR(php_phongo_regex_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Regex::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Regex, __unserialize)
 {
 	zval* data;

@@ -81,8 +81,7 @@ static HashTable* php_phongo_decimal128_get_properties_hash(phongo_compat_object
 	return props;
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Decimal128::__construct(string $value)
-   Construct a new BSON Decimal128 type */
+/* {{{ Construct a new BSON Decimal128 type */
 static PHP_METHOD(MongoDB_BSON_Decimal128, __construct)
 {
 	php_phongo_decimal128_t* intern;
@@ -98,8 +97,7 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __construct)
 	php_phongo_decimal128_init(intern, value);
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\Decimal128 MongoDB\BSON\Decimal128::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, __set_state)
 {
 	php_phongo_decimal128_t* intern;
@@ -118,8 +116,7 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __set_state)
 	php_phongo_decimal128_init_from_hash(intern, props);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Decimal128::__toString()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, __toString)
 {
 	php_phongo_decimal128_t* intern;
@@ -134,8 +131,7 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __toString)
 	RETURN_STRING(outbuf);
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\Decimal128::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, jsonSerialize)
 {
 	php_phongo_decimal128_t* intern;
@@ -150,8 +146,7 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, jsonSerialize)
 	ADD_ASSOC_STRING(return_value, "$numberDecimal", outbuf);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Decimal128::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, serialize)
 {
 	php_phongo_decimal128_t* intern;
@@ -179,8 +174,7 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Decimal128::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, unserialize)
 {
 	php_phongo_decimal128_t* intern;
@@ -209,8 +203,7 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Decimal128::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -218,8 +211,7 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __serialize)
 	RETURN_ARR(php_phongo_decimal128_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Decimal128::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, __unserialize)
 {
 	zval* data;

@@ -27,8 +27,7 @@ zend_class_entry* php_phongo_undefined_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Undefined)
 
-/* {{{ proto string MongoDB\BSON\Undefined::__toString()
-   Return the empty string. */
+/* {{{ Return the empty string. */
 static PHP_METHOD(MongoDB_BSON_Undefined, __toString)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -36,8 +35,7 @@ static PHP_METHOD(MongoDB_BSON_Undefined, __toString)
 	RETURN_STRINGL("", 0);
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\Undefined::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Undefined, jsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -46,8 +44,7 @@ static PHP_METHOD(MongoDB_BSON_Undefined, jsonSerialize)
 	ADD_ASSOC_BOOL_EX(return_value, "$undefined", 1);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Undefined::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Undefined, serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -55,8 +52,7 @@ static PHP_METHOD(MongoDB_BSON_Undefined, serialize)
 	RETURN_STRING("");
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Undefined::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Undefined, unserialize)
 {
 	char*  serialized;
@@ -67,8 +63,7 @@ static PHP_METHOD(MongoDB_BSON_Undefined, unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Undefined::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Undefined, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -76,8 +71,7 @@ static PHP_METHOD(MongoDB_BSON_Undefined, __serialize)
 	array_init_size(return_value, 0);
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Undefined::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Undefined, __unserialize)
 {
 	zval* data;

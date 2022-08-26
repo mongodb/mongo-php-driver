@@ -244,8 +244,7 @@ static bool php_phongo_manager_select_server(bool for_writes, bool inherit_read_
 
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Manager)
 
-/* {{{ proto void MongoDB\Driver\Manager::__construct([string $uri = "mongodb://127.0.0.1/"[, array $options = array()[, array $driverOptions = array()]]])
-   Constructs a new Manager */
+/* {{{ Constructs a new Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, __construct)
 {
 	php_phongo_manager_t* intern;
@@ -287,8 +286,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, __construct)
 	}
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Manager::addSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
-   Registers an event subscriber for this Manager */
+/* {{{ Registers an event subscriber for this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, addSubscriber)
 {
 	php_phongo_manager_t* intern;
@@ -309,8 +307,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, addSubscriber)
 	phongo_apm_add_subscriber(intern->subscribers, subscriber);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\ClientEncryption MongoDB\Driver\Manager::createClientEncryption(array $options)
-   Return a ClientEncryption instance */
+/* {{{ Return a ClientEncryption instance */
 static PHP_METHOD(MongoDB_Driver_Manager, createClientEncryption)
 {
 	zval* options;
@@ -325,8 +322,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, createClientEncryption)
 	phongo_clientencryption_init(Z_CLIENTENCRYPTION_OBJ_P(return_value), options, getThis());
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
-   Execute a Command */
+/* {{{ Execute a Command */
 static PHP_METHOD(MongoDB_Driver_Manager, executeCommand)
 {
 	php_phongo_manager_t* intern;
@@ -378,8 +374,7 @@ cleanup:
 	}
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeReadCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
-   Execute a ReadCommand */
+/* {{{ Execute a ReadCommand */
 static PHP_METHOD(MongoDB_Driver_Manager, executeReadCommand)
 {
 	php_phongo_manager_t* intern;
@@ -423,8 +418,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeReadCommand)
 	phongo_execute_command(getThis(), PHONGO_COMMAND_READ, db, command, options, server_id, return_value);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
-   Execute a WriteCommand */
+/* {{{ Execute a WriteCommand */
 static PHP_METHOD(MongoDB_Driver_Manager, executeWriteCommand)
 {
 	php_phongo_manager_t* intern;
@@ -462,8 +456,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeWriteCommand)
 	phongo_execute_command(getThis(), PHONGO_COMMAND_WRITE, db, command, options, server_id, return_value);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeReadWriteCommand(string $db, MongoDB\Driver\Command $command[, array $options = null])
-   Execute a ReadWriteCommand */
+/* {{{ Execute a ReadWriteCommand */
 static PHP_METHOD(MongoDB_Driver_Manager, executeReadWriteCommand)
 {
 	php_phongo_manager_t* intern;
@@ -501,8 +494,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeReadWriteCommand)
 	phongo_execute_command(getThis(), PHONGO_COMMAND_READ_WRITE, db, command, options, server_id, return_value);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\Manager::executeQuery(string $namespace, MongoDB\Driver\Query $query[, array $options = null])
-   Execute a Query */
+/* {{{ Execute a Query */
 static PHP_METHOD(MongoDB_Driver_Manager, executeQuery)
 {
 	php_phongo_manager_t* intern;
@@ -554,8 +546,7 @@ cleanup:
 	}
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\WriteResult MongoDB\Driver\Manager::executeBulkWrite(string $namespace, MongoDB\Driver\BulkWrite $zbulk[, array $options = null])
-   Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
+/* {{{ Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
 static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 {
 	php_phongo_manager_t* intern;
@@ -602,8 +593,7 @@ cleanup:
 	}
 } /* }}} */
 
-/* {{{ proto array|object|null MongoDB\Driver\Manager::getEncryptedFieldsMap()
-   Returns the autoEncryption.encryptedFieldsMap driver option */
+/* {{{ Returns the autoEncryption.encryptedFieldsMap driver option */
 static PHP_METHOD(MongoDB_Driver_Manager, getEncryptedFieldsMap)
 {
 	php_phongo_manager_t* intern;
@@ -617,8 +607,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, getEncryptedFieldsMap)
 	}
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\ReadConcern MongoDB\Driver\Manager::getReadConcern()
-   Returns the ReadConcern associated with this Manager */
+/* {{{ Returns the ReadConcern associated with this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, getReadConcern)
 {
 	php_phongo_manager_t* intern;
@@ -630,8 +619,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, getReadConcern)
 	phongo_readconcern_init(return_value, mongoc_client_get_read_concern(intern->client));
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\ReadPreference MongoDB\Driver\Manager::getReadPreference()
-   Returns the ReadPreference associated with this Manager */
+/* {{{ Returns the ReadPreference associated with this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, getReadPreference)
 {
 	php_phongo_manager_t* intern;
@@ -643,8 +631,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, getReadPreference)
 	phongo_readpreference_init(return_value, mongoc_client_get_read_prefs(intern->client));
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Server[] MongoDB\Driver\Manager::getServers()
-   Returns the Servers associated with this Manager */
+/* {{{ Returns the Servers associated with this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, getServers)
 {
 	php_phongo_manager_t*         intern;
@@ -668,8 +655,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, getServers)
 	mongoc_server_descriptions_destroy_all(sds, n);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\WriteConcern MongoDB\Driver\Manager::getWriteConcern()
-   Returns the WriteConcern associated with this Manager */
+/* {{{ Returns the WriteConcern associated with this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, getWriteConcern)
 {
 	php_phongo_manager_t* intern;
@@ -681,8 +667,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, getWriteConcern)
 	phongo_writeconcern_init(return_value, mongoc_client_get_write_concern(intern->client));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Manager::removeSubscriber(MongoDB\Driver\Monitoring\Subscriber $subscriber)
-   Unregisters an event subscriber for this Manager */
+/* {{{ Unregisters an event subscriber for this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, removeSubscriber)
 {
 	php_phongo_manager_t* intern;
@@ -702,8 +687,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, removeSubscriber)
 	phongo_apm_remove_subscriber(intern->subscribers, subscriber);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Server MongoDB\Driver\Manager::selectServer([MongoDB\Driver\ReadPreference $readPreference = null])
-   Selects a Server for the given ReadPreference (default: primary). */
+/* {{{ Selects a Server for the given ReadPreference (default: primary). */
 static PHP_METHOD(MongoDB_Driver_Manager, selectServer)
 {
 	php_phongo_manager_t* intern;
@@ -725,8 +709,7 @@ static PHP_METHOD(MongoDB_Driver_Manager, selectServer)
 	phongo_server_init(return_value, getThis(), server_id);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\Session MongoDB\Driver\Manager::startSession([array $options = null])
-   Returns a new client session */
+/* {{{ Returns a new client session */
 static PHP_METHOD(MongoDB_Driver_Manager, startSession)
 {
 	php_phongo_manager_t*     intern;

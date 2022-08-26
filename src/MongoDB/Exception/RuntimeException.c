@@ -50,8 +50,7 @@ static bool php_phongo_has_string_array_element(zval* labels, char* label)
 	return false;
 }
 
-/* {{{ proto bool MongoDB\Driver\Exception\RuntimeException::hasErrorLabel(string $label)
-   Returns whether a specific error label has been set */
+/* {{{ Returns whether a specific error label has been set */
 static PHP_METHOD(MongoDB_Driver_Exception_RuntimeException, hasErrorLabel)
 {
 	char*  label;

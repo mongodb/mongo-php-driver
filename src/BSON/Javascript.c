@@ -115,8 +115,7 @@ failure:
 	return NULL;
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Javascript::__construct(string $code[, array|object $scope])
-   Construct a new BSON Javascript type. The scope is a document mapping
+/* {{{ Construct a new BSON Javascript type. The scope is a document mapping
    identifiers and values, representing the scope in which the code string will
    be evaluated. Note that this type cannot be represented as Extended JSON. */
 static PHP_METHOD(MongoDB_BSON_Javascript, __construct)
@@ -137,8 +136,7 @@ static PHP_METHOD(MongoDB_BSON_Javascript, __construct)
 	php_phongo_javascript_init(intern, code, code_len, scope);
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\Javascript MongoDB\BSON\Javascript::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Javascript, __set_state)
 {
 	php_phongo_javascript_t* intern;
@@ -157,8 +155,7 @@ static PHP_METHOD(MongoDB_BSON_Javascript, __set_state)
 	php_phongo_javascript_init_from_hash(intern, props);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Javascript::__toString()
-   Return the Javascript's code string. */
+/* {{{ Return the Javascript's code string. */
 static PHP_METHOD(MongoDB_BSON_Javascript, __toString)
 {
 	php_phongo_javascript_t* intern;
@@ -170,8 +167,7 @@ static PHP_METHOD(MongoDB_BSON_Javascript, __toString)
 	RETURN_STRINGL(intern->code, intern->code_len);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Javascript::getCode()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Javascript, getCode)
 {
 	php_phongo_javascript_t* intern;
@@ -183,8 +179,7 @@ static PHP_METHOD(MongoDB_BSON_Javascript, getCode)
 	RETURN_STRINGL(intern->code, intern->code_len);
 } /* }}} */
 
-/* {{{ proto object|null MongoDB\BSON\Javascript::getScope()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Javascript, getScope)
 {
 	php_phongo_javascript_t* intern;
@@ -213,8 +208,7 @@ static PHP_METHOD(MongoDB_BSON_Javascript, getScope)
 	}
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\Javascript::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Javascript, jsonSerialize)
 {
 	php_phongo_javascript_t* intern;
@@ -239,8 +233,7 @@ static PHP_METHOD(MongoDB_BSON_Javascript, jsonSerialize)
 	}
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Javascript::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Javascript, serialize)
 {
 	php_phongo_javascript_t* intern;
@@ -279,8 +272,7 @@ static PHP_METHOD(MongoDB_BSON_Javascript, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Javascript::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Javascript, unserialize)
 {
 	php_phongo_javascript_t* intern;
@@ -309,8 +301,7 @@ static PHP_METHOD(MongoDB_BSON_Javascript, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Javascript::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Javascript, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -318,8 +309,7 @@ static PHP_METHOD(MongoDB_BSON_Javascript, __serialize)
 	RETURN_ARR(php_phongo_javascript_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Javascript::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Javascript, __unserialize)
 {
 	zval* data;

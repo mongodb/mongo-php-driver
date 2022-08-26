@@ -32,8 +32,7 @@ zend_class_entry* php_phongo_serverchangedevent_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerChangedEvent)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_ServerChangedEvent)
 
-/* {{{ proto string ServerChangedEvent::getHost()
-   Returns this event's host */
+/* {{{ Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getHost)
 {
 	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
@@ -43,8 +42,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getHost)
 	RETVAL_STRING(intern->host.host);
 } /* }}} */
 
-/* {{{ proto integer ServerChangedEvent::getPort()
-   Returns this event's port */
+/* {{{ Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getPort)
 {
 	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
@@ -54,8 +52,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getPort)
 	RETVAL_LONG(intern->host.port);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\ServerDescription ServerChangedEvent::getNewDescription()
-   Returns this event's new description */
+/* {{{ Returns this event's new description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getNewDescription)
 {
 	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
@@ -65,8 +62,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getNewDescriptio
 	phongo_serverdescription_init(return_value, intern->new_server_description);
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\ServerDescription ServerChangedEvent::getPreviousDescription()
-   Returns this event's previous description */
+/* {{{ Returns this event's previous description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getPreviousDescription)
 {
 	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());
@@ -76,8 +72,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getPreviousDescr
 	phongo_serverdescription_init(return_value, intern->old_server_description);
 } /* }}} */
 
-/* {{{ proto MongoDB\BSON\ObjectId ServerChangedEvent::getTopologyId()
-   Returns this event's topology id */
+/* {{{ Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getTopologyId)
 {
 	php_phongo_serverchangedevent_t* intern = Z_SERVERCHANGEDEVENT_OBJ_P(getThis());

@@ -28,8 +28,7 @@ zend_class_entry* php_phongo_topologyclosedevent_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_TopologyClosedEvent)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_TopologyClosedEvent)
 
-/* {{{ proto MongoDB\BSON\ObjectId TopologyClosedEvent::getTopologyId()
-   Returns this event's topology id */
+/* {{{ Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyClosedEvent, getTopologyId)
 {
 	php_phongo_topologyclosedevent_t* intern = Z_TOPOLOGYCLOSEDEVENT_OBJ_P(getThis());

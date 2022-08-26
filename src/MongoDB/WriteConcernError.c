@@ -30,8 +30,7 @@ zend_class_entry* php_phongo_writeconcernerror_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteConcernError)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_WriteConcernError)
 
-/* {{{ proto integer MongoDB\Driver\WriteConcernError::getCode()
-   Returns the MongoDB error code */
+/* {{{ Returns the MongoDB error code */
 static PHP_METHOD(MongoDB_Driver_WriteConcernError, getCode)
 {
 	php_phongo_writeconcernerror_t* intern;
@@ -43,8 +42,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcernError, getCode)
 	RETURN_LONG(intern->code);
 } /* }}} */
 
-/* {{{ proto object|null MongoDB\Driver\WriteConcernError::getInfo()
-   Returns additional metadata for the error */
+/* {{{ Returns additional metadata for the error */
 static PHP_METHOD(MongoDB_Driver_WriteConcernError, getInfo)
 {
 	php_phongo_writeconcernerror_t* intern;
@@ -58,8 +56,7 @@ static PHP_METHOD(MongoDB_Driver_WriteConcernError, getInfo)
 	}
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\WriteConcernError::getMessage()
-   Returns the actual error message from the server */
+/* {{{ Returns the actual error message from the server */
 static PHP_METHOD(MongoDB_Driver_WriteConcernError, getMessage)
 {
 	php_phongo_writeconcernerror_t* intern;

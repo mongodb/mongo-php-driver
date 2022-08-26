@@ -175,8 +175,7 @@ static const char* php_phongo_readpreference_get_mode_string(mongoc_read_mode_t 
 	return NULL;
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\ReadPreference::__construct(int|string $mode[, array $tagSets = array()[, array $options = array()]])
-   Constructs a new ReadPreference */
+/* {{{ Constructs a new ReadPreference */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 {
 	php_phongo_readpreference_t* intern;
@@ -304,8 +303,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __construct)
 	}
 } /* }}} */
 
-/* {{{ proto MongoDB\Driver\ReadPreference MongoDB\Driver\ReadPreference::__set_state(array $properties)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __set_state)
 {
 	php_phongo_readpreference_t* intern;
@@ -327,8 +325,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __set_state)
 	php_phongo_readpreference_init_from_hash(intern, props);
 } /* }}} */
 
-/* {{{ proto array|null MongoDB\Driver\ReadPreference::getHedge()
-   Returns the ReadPreference hedge document */
+/* {{{ Returns the ReadPreference hedge document */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getHedge)
 {
 	php_phongo_readpreference_t* intern;
@@ -356,8 +353,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getHedge)
 	}
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\ReadPreference::getMaxStalenessSeconds()
-   Returns the ReadPreference maxStalenessSeconds value */
+/* {{{ Returns the ReadPreference maxStalenessSeconds value */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getMaxStalenessSeconds)
 {
 	php_phongo_readpreference_t* intern;
@@ -369,8 +365,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getMaxStalenessSeconds)
 	RETURN_LONG(mongoc_read_prefs_get_max_staleness_seconds(intern->read_preference));
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\ReadPreference::getMode()
-   Returns the ReadPreference mode */
+/* {{{ Returns the ReadPreference mode */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getMode)
 {
 	php_phongo_readpreference_t* intern;
@@ -382,8 +377,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getMode)
 	RETURN_LONG(mongoc_read_prefs_get_mode(intern->read_preference));
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\ReadPreference::getModeString()
-   Returns the ReadPreference mode as string */
+/* {{{ Returns the ReadPreference mode as string */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getModeString)
 {
 	php_phongo_readpreference_t* intern;
@@ -402,8 +396,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, getModeString)
 	RETURN_STRING(mode_string);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\ReadPreference::getTagSets()
-   Returns the ReadPreference tag sets */
+/* {{{ Returns the ReadPreference tag sets */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, getTagSets)
 {
 	php_phongo_readpreference_t* intern;
@@ -503,8 +496,7 @@ done:
 	return props;
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\ReadPreference::bsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -513,8 +505,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize)
 	convert_to_object(return_value);
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\ReadPreference::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, serialize)
 {
 	php_phongo_readpreference_t* intern;
@@ -588,8 +579,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\ReadPreference::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, unserialize)
 {
 	php_phongo_readpreference_t* intern;
@@ -622,8 +612,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\ReadPreference::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -631,8 +620,7 @@ static PHP_METHOD(MongoDB_Driver_ReadPreference, __serialize)
 	RETURN_ARR(php_phongo_readpreference_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\ReadPreference::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadPreference, __unserialize)
 {
 	zval* data;

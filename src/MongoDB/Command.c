@@ -97,8 +97,7 @@ static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, 
 	return true;
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Command::__construct(array|object $document[, array $options = array()])
-   Constructs a new Command */
+/* {{{ Constructs a new Command */
 static PHP_METHOD(MongoDB_Driver_Command, __construct)
 {
 	php_phongo_command_t* intern;

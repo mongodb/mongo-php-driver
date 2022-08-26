@@ -26,8 +26,7 @@ zend_class_entry* php_phongo_serverheartbeatfailedevent_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent)
 
-/* {{{ proto integer ServerHeartbeatFailedEvent::getDurationMicros()
-   Returns this event's duration in microseconds */
+/* {{{ Returns this event's duration in microseconds */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getDurationMicros)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
@@ -37,8 +36,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getDurat
 	RETVAL_LONG(intern->duration_micros);
 } /* }}} */
 
-/* {{{ proto Exception ServerHeartbeatFailedEvent::getError()
-   Returns the error associated with the event */
+/* {{{ Returns the error associated with the event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getError)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
@@ -48,8 +46,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getError
 	RETURN_ZVAL(&intern->z_error, 1, 0);
 } /* }}} */
 
-/* {{{ proto string ServerHeartbeatFailedEvent::getHost()
-   Returns this event's host */
+/* {{{ Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getHost)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
@@ -59,8 +56,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getHost)
 	RETVAL_STRING(intern->host.host);
 } /* }}} */
 
-/* {{{ proto integer ServerHeartbeatFailedEvent::getPort()
-   Returns this event's port */
+/* {{{ Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getPort)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
@@ -70,8 +66,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getPort)
 	RETVAL_LONG(intern->host.port);
 } /* }}} */
 
-/* {{{ proto boolean ServerHeartbeatFailedEvent::isAwaited()
-   Returns whether this event came from an awaitable hello */
+/* {{{ Returns whether this event came from an awaitable hello */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, isAwaited)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());

@@ -22,8 +22,7 @@
 
 zend_class_entry* php_phongo_commandexception_ce;
 
-/* {{{ proto document MongoDB\Driver\Exception\CommandException::getResultDocument()
-   Returns the result document from the failed command. */
+/* {{{ Returns the result document from the failed command. */
 static PHP_METHOD(MongoDB_Driver_Exception_CommandException, getResultDocument)
 {
 	zval* resultdocument;

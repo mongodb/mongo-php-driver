@@ -88,8 +88,7 @@ HashTable* php_phongo_int64_get_properties_hash(phongo_compat_object_handler_typ
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Int64)
 
-/* {{{ proto string MongoDB\BSON\Int64::__toString()
-   Return the Int64's value as a string. */
+/* {{{ Return the Int64's value as a string. */
 static PHP_METHOD(MongoDB_BSON_Int64, __toString)
 {
 	php_phongo_int64_t* intern;
@@ -101,8 +100,7 @@ static PHP_METHOD(MongoDB_BSON_Int64, __toString)
 	ZVAL_INT64_STRING(return_value, intern->integer);
 } /* }}} */
 
-/* {{{ proto array MongoDB\BSON\Int64::jsonSerialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Int64, jsonSerialize)
 {
 	php_phongo_int64_t* intern;
@@ -116,8 +114,7 @@ static PHP_METHOD(MongoDB_BSON_Int64, jsonSerialize)
 	ADD_ASSOC_INT64_AS_STRING(return_value, "$numberLong", intern->integer);
 } /* }}} */
 
-/* {{{ proto string MongoDB\BSON\Int64::serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Int64, serialize)
 {
 	php_phongo_int64_t*  intern;
@@ -143,8 +140,7 @@ static PHP_METHOD(MongoDB_BSON_Int64, serialize)
 	zval_ptr_dtor(&retval);
 } /* }}} */
 
-/* {{{ proto void MongoDB\BSON\Int64::unserialize(string $serialized)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Int64, unserialize)
 {
 	php_phongo_int64_t*    intern;
@@ -173,8 +169,7 @@ static PHP_METHOD(MongoDB_BSON_Int64, unserialize)
 	zval_ptr_dtor(&props);
 } /* }}} */
 
-/* {{{ proto array MongoDB\Driver\Int64::__serialize()
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Int64, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -182,8 +177,7 @@ static PHP_METHOD(MongoDB_BSON_Int64, __serialize)
 	RETURN_ARR(php_phongo_int64_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 } /* }}} */
 
-/* {{{ proto void MongoDB\Driver\Int64::__unserialize(array $data)
-*/
+/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Int64, __unserialize)
 {
 	zval* data;

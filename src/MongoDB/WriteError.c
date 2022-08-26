@@ -30,8 +30,7 @@ zend_class_entry* php_phongo_writeerror_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteError)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_WriteError)
 
-/* {{{ proto integer MongoDB\Driver\WriteError::getCode()
-   Returns the MongoDB error code */
+/* {{{ Returns the MongoDB error code */
 static PHP_METHOD(MongoDB_Driver_WriteError, getCode)
 {
 	php_phongo_writeerror_t* intern;
@@ -43,8 +42,7 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getCode)
 	RETURN_LONG(intern->code);
 } /* }}} */
 
-/* {{{ proto integer MongoDB\Driver\WriteError::getIndex()
-   Returns the index of the operation in the BulkWrite to which this WriteError
+/* {{{ Returns the index of the operation in the BulkWrite to which this WriteError
    corresponds. */
 static PHP_METHOD(MongoDB_Driver_WriteError, getIndex)
 {
@@ -57,8 +55,7 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getIndex)
 	RETURN_LONG(intern->index);
 } /* }}} */
 
-/* {{{ proto string MongoDB\Driver\WriteError::getMessage()
-   Returns the actual error message from the server */
+/* {{{ Returns the actual error message from the server */
 static PHP_METHOD(MongoDB_Driver_WriteError, getMessage)
 {
 	php_phongo_writeerror_t* intern;
@@ -70,8 +67,7 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getMessage)
 	RETURN_STRING(intern->message);
 } /* }}} */
 
-/* {{{ proto object|null MongoDB\Driver\WriteError::getInfo()
-   Returns additional metadata for the error */
+/* {{{ Returns additional metadata for the error */
 static PHP_METHOD(MongoDB_Driver_WriteError, getInfo)
 {
 	php_phongo_writeerror_t* intern;
