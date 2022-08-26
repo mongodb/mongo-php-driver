@@ -50,7 +50,7 @@ static bool php_phongo_has_string_array_element(zval* labels, char* label)
 	return false;
 }
 
-/* {{{ Returns whether a specific error label has been set */
+/* Returns whether a specific error label has been set */
 static PHP_METHOD(MongoDB_Driver_Exception_RuntimeException, hasErrorLabel)
 {
 	char*  label;
@@ -65,9 +65,9 @@ static PHP_METHOD(MongoDB_Driver_Exception_RuntimeException, hasErrorLabel)
 	error_labels = zend_read_property(php_phongo_runtimeexception_ce, PHONGO_COMPAT_OBJ_P(getThis()), ZEND_STRL("errorLabels"), 0, &rv);
 
 	RETURN_BOOL(php_phongo_has_string_array_element(error_labels, label));
-} /* }}} */
+}
 
-void php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_runtimeexception_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_runtimeexception_ce = register_class_MongoDB_Driver_Exception_RuntimeException(spl_ce_RuntimeException, php_phongo_exception_ce);
-} /* }}} */
+}

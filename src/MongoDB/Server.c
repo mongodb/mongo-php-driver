@@ -36,7 +36,7 @@ zend_class_entry* php_phongo_server_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Server)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Server)
 
-/* {{{ Executes a Command on this Server */
+/* Executes a Command on this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeCommand)
 {
 	php_phongo_server_t* intern;
@@ -67,9 +67,9 @@ static PHP_METHOD(MongoDB_Driver_Server, executeCommand)
 	if (free_options) {
 		php_phongo_prep_legacy_option_free(options);
 	}
-} /* }}} */
+}
 
-/* {{{ Executes a ReadCommand on this Server */
+/* Executes a ReadCommand on this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeReadCommand)
 {
 	php_phongo_server_t* intern;
@@ -93,9 +93,9 @@ static PHP_METHOD(MongoDB_Driver_Server, executeReadCommand)
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	phongo_execute_command(&intern->manager, PHONGO_COMMAND_READ, db, command, options, intern->server_id, return_value);
-} /* }}} */
+}
 
-/* {{{ Executes a WriteCommand on this Server */
+/* Executes a WriteCommand on this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeWriteCommand)
 {
 	php_phongo_server_t* intern;
@@ -119,9 +119,9 @@ static PHP_METHOD(MongoDB_Driver_Server, executeWriteCommand)
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	phongo_execute_command(&intern->manager, PHONGO_COMMAND_WRITE, db, command, options, intern->server_id, return_value);
-} /* }}} */
+}
 
-/* {{{ Executes a ReadWriteCommand on this Server */
+/* Executes a ReadWriteCommand on this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeReadWriteCommand)
 {
 	php_phongo_server_t* intern;
@@ -145,9 +145,9 @@ static PHP_METHOD(MongoDB_Driver_Server, executeReadWriteCommand)
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, Z_MANAGER_OBJ_P(&intern->manager));
 
 	phongo_execute_command(&intern->manager, PHONGO_COMMAND_READ_WRITE, db, command, options, intern->server_id, return_value);
-} /* }}} */
+}
 
-/* {{{ Executes a Query on this Server */
+/* Executes a Query on this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeQuery)
 {
 	php_phongo_server_t* intern;
@@ -178,9 +178,9 @@ static PHP_METHOD(MongoDB_Driver_Server, executeQuery)
 	if (free_options) {
 		php_phongo_prep_legacy_option_free(options);
 	}
-} /* }}} */
+}
 
-/* {{{ Executes a BulkWrite (i.e. any number of insert, update, and delete ops) on
+/* Executes a BulkWrite (i.e. any number of insert, update, and delete ops) on
    this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeBulkWrite)
 {
@@ -214,9 +214,9 @@ static PHP_METHOD(MongoDB_Driver_Server, executeBulkWrite)
 	if (free_options) {
 		php_phongo_prep_legacy_option_free(options);
 	}
-} /* }}} */
+}
 
-/* {{{ Returns the hostname for this Server */
+/* Returns the hostname for this Server */
 static PHP_METHOD(MongoDB_Driver_Server, getHost)
 {
 	php_phongo_server_t*         intern;
@@ -233,9 +233,9 @@ static PHP_METHOD(MongoDB_Driver_Server, getHost)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
-} /* }}} */
+}
 
-/* {{{ Returns the currently configured tags for this Server */
+/* Returns the currently configured tags for this Server */
 static PHP_METHOD(MongoDB_Driver_Server, getTags)
 {
 	php_phongo_server_t*         intern;
@@ -275,9 +275,9 @@ static PHP_METHOD(MongoDB_Driver_Server, getTags)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
-} /* }}} */
+}
 
-/* {{{ Returns the last hello response for this Server or, in the case of a load
+/* Returns the last hello response for this Server or, in the case of a load
    balancer, the initial handshake response. */
 static PHP_METHOD(MongoDB_Driver_Server, getInfo)
 {
@@ -330,9 +330,9 @@ cleanup:
 	}
 
 	mongoc_server_description_destroy(sd);
-} /* }}} */
+}
 
-/* {{{ Returns the measured latency (i.e. round trip time in milliseconds) for
+/* Returns the measured latency (i.e. round trip time in milliseconds) for
    this Server, or null if unset. */
 static PHP_METHOD(MongoDB_Driver_Server, getLatency)
 {
@@ -356,9 +356,9 @@ static PHP_METHOD(MongoDB_Driver_Server, getLatency)
 	}
 
 	mongoc_server_description_destroy(sd);
-} /* }}} */
+}
 
-/* {{{ Returns the port for this Server */
+/* Returns the port for this Server */
 static PHP_METHOD(MongoDB_Driver_Server, getPort)
 {
 	php_phongo_server_t*         intern;
@@ -375,9 +375,9 @@ static PHP_METHOD(MongoDB_Driver_Server, getPort)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
-} /* }}} */
+}
 
-/* {{{ Returns the server description for this Server */
+/* Returns the server description for this Server */
 static PHP_METHOD(MongoDB_Driver_Server, getServerDescription)
 {
 	mongoc_server_description_t* server_description;
@@ -389,9 +389,9 @@ static PHP_METHOD(MongoDB_Driver_Server, getServerDescription)
 
 	/* Avoid making another copy in phongo_serverdescription_init */
 	phongo_serverdescription_init_ex(return_value, server_description, false);
-} /* }}} */
+}
 
-/* {{{ Returns the node type of this Server */
+/* Returns the node type of this Server */
 static PHP_METHOD(MongoDB_Driver_Server, getType)
 {
 	php_phongo_server_t*         intern;
@@ -408,9 +408,9 @@ static PHP_METHOD(MongoDB_Driver_Server, getType)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
-} /* }}} */
+}
 
-/* {{{ Returns whether this Server is a primary member of a replica set */
+/* Returns whether this Server is a primary member of a replica set */
 static PHP_METHOD(MongoDB_Driver_Server, isPrimary)
 {
 	php_phongo_server_t*         intern;
@@ -427,9 +427,9 @@ static PHP_METHOD(MongoDB_Driver_Server, isPrimary)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
-} /* }}} */
+}
 
-/* {{{ Returns whether this Server is a secondary member of a replica set */
+/* Returns whether this Server is a secondary member of a replica set */
 static PHP_METHOD(MongoDB_Driver_Server, isSecondary)
 {
 	php_phongo_server_t*         intern;
@@ -446,9 +446,9 @@ static PHP_METHOD(MongoDB_Driver_Server, isSecondary)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
-} /* }}} */
+}
 
-/* {{{ Returns whether this Server is an arbiter member of a replica set */
+/* Returns whether this Server is an arbiter member of a replica set */
 static PHP_METHOD(MongoDB_Driver_Server, isArbiter)
 {
 	php_phongo_server_t*         intern;
@@ -465,9 +465,9 @@ static PHP_METHOD(MongoDB_Driver_Server, isArbiter)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
-} /* }}} */
+}
 
-/* {{{ Returns whether this Server is a hidden member of a replica set */
+/* Returns whether this Server is a hidden member of a replica set */
 static PHP_METHOD(MongoDB_Driver_Server, isHidden)
 {
 	php_phongo_server_t*         intern;
@@ -486,9 +486,9 @@ static PHP_METHOD(MongoDB_Driver_Server, isHidden)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
-} /* }}} */
+}
 
-/* {{{ Returns whether this Server is a passive member of a replica set */
+/* Returns whether this Server is a passive member of a replica set */
 static PHP_METHOD(MongoDB_Driver_Server, isPassive)
 {
 	php_phongo_server_t*         intern;
@@ -507,12 +507,12 @@ static PHP_METHOD(MongoDB_Driver_Server, isPassive)
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Failed to get server description");
-} /* }}} */
+}
 
-/* {{{ MongoDB\Driver\Server object handlers */
+/* MongoDB\Driver\Server object handlers */
 static zend_object_handlers php_phongo_handler_server;
 
-static int php_phongo_server_compare_objects(zval* o1, zval* o2) /* {{{ */
+static int php_phongo_server_compare_objects(zval* o1, zval* o2)
 {
 	php_phongo_server_t*         intern1;
 	php_phongo_server_t*         intern2;
@@ -542,9 +542,9 @@ static int php_phongo_server_compare_objects(zval* o1, zval* o2) /* {{{ */
 	}
 
 	return retval;
-} /* }}} */
+}
 
-static void php_phongo_server_free_object(zend_object* object) /* {{{ */
+static void php_phongo_server_free_object(zend_object* object)
 {
 	php_phongo_server_t* intern = Z_OBJ_SERVER(object);
 
@@ -553,9 +553,9 @@ static void php_phongo_server_free_object(zend_object* object) /* {{{ */
 	if (!Z_ISUNDEF(intern->manager)) {
 		zval_ptr_dtor(&intern->manager);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_server_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_server_create_object(zend_class_entry* class_type)
 {
 	php_phongo_server_t* intern = zend_object_alloc(sizeof(php_phongo_server_t), class_type);
 
@@ -567,9 +567,9 @@ static zend_object* php_phongo_server_create_object(zend_class_entry* class_type
 	intern->std.handlers = &php_phongo_handler_server;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_server_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_server_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	php_phongo_server_t*         intern = NULL;
 	zval                         retval = ZVAL_STATIC_INIT;
@@ -589,10 +589,9 @@ static HashTable* php_phongo_server_get_debug_info(phongo_compat_object_handler_
 	mongoc_server_description_destroy(sd);
 
 	return Z_ARRVAL(retval);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_server_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_server_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_server_ce                = register_class_MongoDB_Driver_Server();
 	php_phongo_server_ce->create_object = php_phongo_server_create_object;
@@ -603,9 +602,9 @@ void php_phongo_server_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_server.get_debug_info = php_phongo_server_get_debug_info;
 	php_phongo_handler_server.free_obj       = php_phongo_server_free_object;
 	php_phongo_handler_server.offset         = XtOffsetOf(php_phongo_server_t, std);
-} /* }}} */
+}
 
-void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id) /* {{{ */
+void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id)
 {
 	php_phongo_server_t* server;
 
@@ -616,9 +615,8 @@ void phongo_server_init(zval* return_value, zval* manager, uint32_t server_id) /
 
 	ZVAL_ZVAL(&server->manager, manager, 1, 0);
 }
-/* }}} */
 
-bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_server_description_t* sd) /* {{{ */
+bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_server_description_t* sd)
 {
 	mongoc_host_list_t* host           = mongoc_server_description_host(sd);
 	const bson_t*       hello_response = mongoc_server_description_hello_response(sd);
@@ -699,4 +697,4 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_ser
 	}
 
 	return true;
-} /* }}} */
+}

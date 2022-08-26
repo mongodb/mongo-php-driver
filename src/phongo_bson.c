@@ -193,14 +193,14 @@ static void php_phongo_bson_state_dtor(php_phongo_bson_state* state)
 		}
 		state->field_path = NULL;
 	}
-} /* }}} */
+}
 
-static void php_phongo_bson_visit_corrupt(const bson_iter_t* iter ARG_UNUSED, void* data ARG_UNUSED) /* {{{ */
+static void php_phongo_bson_visit_corrupt(const bson_iter_t* iter ARG_UNUSED, void* data ARG_UNUSED)
 {
 	mongoc_log(MONGOC_LOG_LEVEL_WARNING, MONGOC_LOG_DOMAIN, "Corrupt BSON data detected!");
-} /* }}} */
+}
 
-static void php_phongo_bson_visit_unsupported_type(const bson_iter_t* iter ARG_UNUSED, const char* key, uint32_t v_type_code, void* data ARG_UNUSED) /* {{{ */
+static void php_phongo_bson_visit_unsupported_type(const bson_iter_t* iter ARG_UNUSED, const char* key, uint32_t v_type_code, void* data ARG_UNUSED)
 {
 	php_phongo_bson_state* state = (php_phongo_bson_state*) data;
 	char*                  path_string;
@@ -211,9 +211,9 @@ static void php_phongo_bson_visit_unsupported_type(const bson_iter_t* iter ARG_U
 	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected unknown BSON type 0x%02hhx for field path \"%s\". Are you using the latest driver?", (unsigned char) v_type_code, path_string);
 
 	efree(path_string);
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_double(const bson_iter_t* iter ARG_UNUSED, const char* key, double v_double, void* data) /* {{{ */
+static bool php_phongo_bson_visit_double(const bson_iter_t* iter ARG_UNUSED, const char* key, double v_double, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -227,9 +227,9 @@ static bool php_phongo_bson_visit_double(const bson_iter_t* iter ARG_UNUSED, con
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_utf8(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_utf8_len, const char* v_utf8, void* data) /* {{{ */
+static bool php_phongo_bson_visit_utf8(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_utf8_len, const char* v_utf8, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -243,9 +243,9 @@ static bool php_phongo_bson_visit_utf8(const bson_iter_t* iter ARG_UNUSED, const
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static void php_phongo_bson_new_binary_from_binary_and_type(zval* object, const char* data, size_t data_len, bson_subtype_t type) /* {{{ */
+static void php_phongo_bson_new_binary_from_binary_and_type(zval* object, const char* data, size_t data_len, bson_subtype_t type)
 {
 	php_phongo_binary_t* intern;
 
@@ -255,9 +255,9 @@ static void php_phongo_bson_new_binary_from_binary_and_type(zval* object, const 
 	intern->data     = estrndup(data, data_len);
 	intern->data_len = data_len;
 	intern->type     = (uint8_t) type;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_binary(const bson_iter_t* iter ARG_UNUSED, const char* key, bson_subtype_t v_subtype, size_t v_binary_len, const uint8_t* v_binary, void* data) /* {{{ */
+static bool php_phongo_bson_visit_binary(const bson_iter_t* iter ARG_UNUSED, const char* key, bson_subtype_t v_subtype, size_t v_binary_len, const uint8_t* v_binary, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -287,9 +287,9 @@ static bool php_phongo_bson_visit_binary(const bson_iter_t* iter ARG_UNUSED, con
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_undefined(const bson_iter_t* iter, const char* key, void* data) /* {{{ */
+static bool php_phongo_bson_visit_undefined(const bson_iter_t* iter, const char* key, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -306,9 +306,9 @@ static bool php_phongo_bson_visit_undefined(const bson_iter_t* iter, const char*
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static void php_phongo_objectid_new_from_oid(zval* object, const bson_oid_t* oid) /* {{{ */
+static void php_phongo_objectid_new_from_oid(zval* object, const bson_oid_t* oid)
 {
 	php_phongo_objectid_t* intern;
 
@@ -317,9 +317,9 @@ static void php_phongo_objectid_new_from_oid(zval* object, const bson_oid_t* oid
 	intern = Z_OBJECTID_OBJ_P(object);
 	bson_oid_to_string(oid, intern->oid);
 	intern->initialized = true;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_oid(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_oid_t* v_oid, void* data) /* {{{ */
+static bool php_phongo_bson_visit_oid(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_oid_t* v_oid, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -336,9 +336,9 @@ static bool php_phongo_bson_visit_oid(const bson_iter_t* iter ARG_UNUSED, const 
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_bool(const bson_iter_t* iter ARG_UNUSED, const char* key, bool v_bool, void* data) /* {{{ */
+static bool php_phongo_bson_visit_bool(const bson_iter_t* iter ARG_UNUSED, const char* key, bool v_bool, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -352,9 +352,9 @@ static bool php_phongo_bson_visit_bool(const bson_iter_t* iter ARG_UNUSED, const
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static void php_phongo_bson_new_utcdatetime_from_epoch(zval* object, int64_t msec_since_epoch) /* {{{ */
+static void php_phongo_bson_new_utcdatetime_from_epoch(zval* object, int64_t msec_since_epoch)
 {
 	php_phongo_utcdatetime_t* intern;
 
@@ -363,9 +363,9 @@ static void php_phongo_bson_new_utcdatetime_from_epoch(zval* object, int64_t mse
 	intern               = Z_UTCDATETIME_OBJ_P(object);
 	intern->milliseconds = msec_since_epoch;
 	intern->initialized  = true;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_date_time(const bson_iter_t* iter ARG_UNUSED, const char* key, int64_t msec_since_epoch, void* data) /* {{{ */
+static bool php_phongo_bson_visit_date_time(const bson_iter_t* iter ARG_UNUSED, const char* key, int64_t msec_since_epoch, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -382,9 +382,9 @@ static bool php_phongo_bson_visit_date_time(const bson_iter_t* iter ARG_UNUSED, 
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static void php_phongo_bson_new_decimal128(zval* object, const bson_decimal128_t* decimal) /* {{{ */
+static void php_phongo_bson_new_decimal128(zval* object, const bson_decimal128_t* decimal)
 {
 	php_phongo_decimal128_t* intern;
 
@@ -393,9 +393,9 @@ static void php_phongo_bson_new_decimal128(zval* object, const bson_decimal128_t
 	intern = Z_DECIMAL128_OBJ_P(object);
 	memcpy(&intern->decimal, decimal, sizeof(bson_decimal128_t));
 	intern->initialized = true;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_decimal128(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_decimal128_t* decimal, void* data) /* {{{ */
+static bool php_phongo_bson_visit_decimal128(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_decimal128_t* decimal, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -412,9 +412,9 @@ static bool php_phongo_bson_visit_decimal128(const bson_iter_t* iter ARG_UNUSED,
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_null(const bson_iter_t* iter ARG_UNUSED, const char* key, void* data) /* {{{ */
+static bool php_phongo_bson_visit_null(const bson_iter_t* iter ARG_UNUSED, const char* key, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -428,9 +428,9 @@ static bool php_phongo_bson_visit_null(const bson_iter_t* iter ARG_UNUSED, const
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static void php_phongo_bson_new_regex_from_regex_and_options(zval* object, const char* pattern, const char* flags) /* {{{ */
+static void php_phongo_bson_new_regex_from_regex_and_options(zval* object, const char* pattern, const char* flags)
 {
 	php_phongo_regex_t* intern;
 
@@ -441,9 +441,9 @@ static void php_phongo_bson_new_regex_from_regex_and_options(zval* object, const
 	intern->pattern     = estrndup(pattern, intern->pattern_len);
 	intern->flags_len   = strlen(flags);
 	intern->flags       = estrndup(flags, intern->flags_len);
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_regex(const bson_iter_t* iter ARG_UNUSED, const char* key, const char* v_regex, const char* v_options, void* data) /* {{{ */
+static bool php_phongo_bson_visit_regex(const bson_iter_t* iter ARG_UNUSED, const char* key, const char* v_regex, const char* v_options, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -460,9 +460,9 @@ static bool php_phongo_bson_visit_regex(const bson_iter_t* iter ARG_UNUSED, cons
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static void php_phongo_bson_new_symbol(zval* object, const char* symbol, size_t symbol_len) /* {{{ */
+static void php_phongo_bson_new_symbol(zval* object, const char* symbol, size_t symbol_len)
 {
 	php_phongo_symbol_t* intern;
 
@@ -471,9 +471,9 @@ static void php_phongo_bson_new_symbol(zval* object, const char* symbol, size_t 
 	intern             = Z_SYMBOL_OBJ_P(object);
 	intern->symbol     = estrndup(symbol, symbol_len);
 	intern->symbol_len = symbol_len;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_symbol(const bson_iter_t* iter, const char* key, size_t v_symbol_len, const char* v_symbol, void* data) /* {{{ */
+static bool php_phongo_bson_visit_symbol(const bson_iter_t* iter, const char* key, size_t v_symbol_len, const char* v_symbol, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -490,9 +490,9 @@ static bool php_phongo_bson_visit_symbol(const bson_iter_t* iter, const char* ke
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static bool php_phongo_bson_new_javascript_from_javascript_and_scope(zval* object, const char* code, size_t code_len, const bson_t* scope) /* {{{ */
+static bool php_phongo_bson_new_javascript_from_javascript_and_scope(zval* object, const char* code, size_t code_len, const bson_t* scope)
 {
 	php_phongo_javascript_t* intern;
 
@@ -518,14 +518,14 @@ static bool php_phongo_bson_new_javascript_from_javascript_and_scope(zval* objec
 	intern->scope    = scope ? bson_copy(scope) : NULL;
 
 	return true;
-} /* }}} */
+}
 
-static bool php_phongo_bson_new_javascript_from_javascript(zval* object, const char* code, size_t code_len) /* {{{ */
+static bool php_phongo_bson_new_javascript_from_javascript(zval* object, const char* code, size_t code_len)
 {
 	return php_phongo_bson_new_javascript_from_javascript_and_scope(object, code, code_len, NULL);
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_code(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_code_len, const char* v_code, void* data) /* {{{ */
+static bool php_phongo_bson_visit_code(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_code_len, const char* v_code, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -544,9 +544,9 @@ static bool php_phongo_bson_visit_code(const bson_iter_t* iter ARG_UNUSED, const
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static void php_phongo_bson_new_dbpointer(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid) /* {{{ */
+static void php_phongo_bson_new_dbpointer(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid)
 {
 	php_phongo_dbpointer_t* intern;
 
@@ -556,9 +556,9 @@ static void php_phongo_bson_new_dbpointer(zval* object, const char* ref, size_t 
 	intern->ref     = estrndup(ref, ref_len);
 	intern->ref_len = ref_len;
 	bson_oid_to_string(oid, intern->id);
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_dbpointer(const bson_iter_t* iter, const char* key, size_t namespace_len, const char* namespace, const bson_oid_t* oid, void* data) /* {{{ */
+static bool php_phongo_bson_visit_dbpointer(const bson_iter_t* iter, const char* key, size_t namespace_len, const char* namespace, const bson_oid_t* oid, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -575,9 +575,9 @@ static bool php_phongo_bson_visit_dbpointer(const bson_iter_t* iter, const char*
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_codewscope(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_code_len, const char* v_code, const bson_t* v_scope, void* data) /* {{{ */
+static bool php_phongo_bson_visit_codewscope(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_code_len, const char* v_code, const bson_t* v_scope, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -596,9 +596,9 @@ static bool php_phongo_bson_visit_codewscope(const bson_iter_t* iter ARG_UNUSED,
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_int32(const bson_iter_t* iter ARG_UNUSED, const char* key, int32_t v_int32, void* data) /* {{{ */
+static bool php_phongo_bson_visit_int32(const bson_iter_t* iter ARG_UNUSED, const char* key, int32_t v_int32, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -612,9 +612,9 @@ static bool php_phongo_bson_visit_int32(const bson_iter_t* iter ARG_UNUSED, cons
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_timestamp(const bson_iter_t* iter ARG_UNUSED, const char* key, uint32_t v_timestamp, uint32_t v_increment, void* data) /* {{{ */
+static bool php_phongo_bson_visit_timestamp(const bson_iter_t* iter ARG_UNUSED, const char* key, uint32_t v_timestamp, uint32_t v_increment, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -631,9 +631,9 @@ static bool php_phongo_bson_visit_timestamp(const bson_iter_t* iter ARG_UNUSED, 
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_int64(const bson_iter_t* iter ARG_UNUSED, const char* key, int64_t v_int64, void* data) /* {{{ */
+static bool php_phongo_bson_visit_int64(const bson_iter_t* iter ARG_UNUSED, const char* key, int64_t v_int64, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -647,9 +647,9 @@ static bool php_phongo_bson_visit_int64(const bson_iter_t* iter ARG_UNUSED, cons
 	}
 
 	return false;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_maxkey(const bson_iter_t* iter ARG_UNUSED, const char* key, void* data) /* {{{ */
+static bool php_phongo_bson_visit_maxkey(const bson_iter_t* iter ARG_UNUSED, const char* key, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -666,9 +666,9 @@ static bool php_phongo_bson_visit_maxkey(const bson_iter_t* iter ARG_UNUSED, con
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_minkey(const bson_iter_t* iter ARG_UNUSED, const char* key, void* data) /* {{{ */
+static bool php_phongo_bson_visit_minkey(const bson_iter_t* iter ARG_UNUSED, const char* key, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
@@ -685,7 +685,7 @@ static bool php_phongo_bson_visit_minkey(const bson_iter_t* iter ARG_UNUSED, con
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-} /* }}} */
+}
 
 static const bson_visitor_t php_bson_visitors = {
 	NULL /* php_phongo_bson_visit_before*/,
@@ -817,7 +817,7 @@ cleanup:
 }
 #endif /* PHP_VERSION_ID >= 80100 */
 
-static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data) /* {{{ */
+static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	bson_iter_t            child;
@@ -932,9 +932,9 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 	}
 
 	return false;
-} /* }}} */
+}
 
-static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_array, void* data) /* {{{ */
+static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_array, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	bson_iter_t            child;
@@ -1008,10 +1008,10 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 	}
 
 	return false;
-} /* }}} */
+}
 
 /* Converts a BSON document to a PHP value using the default typemap. */
-bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval* zv) /* {{{ */
+bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval* zv)
 {
 	bool                  retval;
 	php_phongo_bson_state state;
@@ -1022,10 +1022,10 @@ bool php_phongo_bson_to_zval(const unsigned char* data, int data_len, zval* zv) 
 	ZVAL_ZVAL(zv, &state.zchild, 1, 1);
 
 	return retval;
-} /* }}} */
+}
 
 /* Converts a BSON value to a ZVAL. */
-bool php_phongo_bson_value_to_zval(const bson_value_t* value, zval* zv) /* {{{ */
+bool php_phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
 {
 	bson_t                bson = BSON_INITIALIZER;
 	php_phongo_bson_state state;
@@ -1052,7 +1052,7 @@ bool php_phongo_bson_value_to_zval(const bson_value_t* value, zval* zv) /* {{{ *
 cleanup:
 	zval_ptr_dtor(&state.zchild);
 	return retval;
-} /* }}} */
+}
 
 /* Converts a BSON document to a PHP value according to the typemap specified in
  * the state argument.
@@ -1066,7 +1066,7 @@ cleanup:
  * as-is on PHP 7; however, it should have the type undefined if the state
  * was initialized to zero.
  */
-bool php_phongo_bson_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state) /* {{{ */
+bool php_phongo_bson_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state)
 {
 	bson_reader_t* reader = NULL;
 	bson_iter_t    iter;
@@ -1193,12 +1193,12 @@ cleanup:
 	}
 
 	return retval;
-} /* }}} */
+}
 
 /* Fetches a zend_class_entry for the given class name and checks that it is
  * also instantiatable and implements a specified interface. Returns the class
  * on success; otherwise, NULL is returned and an exception is thrown. */
-static zend_class_entry* php_phongo_bson_state_fetch_class(const char* classname, int classname_len, zend_class_entry* interface_ce) /* {{{ */
+static zend_class_entry* php_phongo_bson_state_fetch_class(const char* classname, int classname_len, zend_class_entry* interface_ce)
 {
 	zend_string*      zs_classname = zend_string_init(classname, classname_len, 0);
 	zend_class_entry* found_ce     = zend_fetch_class(zs_classname, ZEND_FETCH_CLASS_AUTO | ZEND_FETCH_CLASS_SILENT);
@@ -1215,12 +1215,12 @@ static zend_class_entry* php_phongo_bson_state_fetch_class(const char* classname
 	}
 
 	return NULL;
-} /* }}} */
+}
 
 /* Parses a BSON type (i.e. array, document, or root). On success, the type and
  * type_ce output arguments will be assigned and true will be returned;
  * otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_bson_state_parse_type(zval* options, const char* name, php_phongo_bson_typemap_types* type, zend_class_entry** type_ce) /* {{{ */
+static bool php_phongo_bson_state_parse_type(zval* options, const char* name, php_phongo_bson_typemap_types* type, zend_class_entry** type_ce)
 {
 	char*     classname;
 	int       classname_len;
@@ -1253,7 +1253,7 @@ cleanup:
 	}
 
 	return retval;
-} /* }}} */
+}
 
 static void field_path_map_element_set_info(php_phongo_field_path_map_element* element, php_phongo_bson_typemap_types type, zend_class_entry* ce)
 {
@@ -1351,7 +1351,7 @@ void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map)
 
 /* Loops over each element in the fieldPaths array (if exists, and is an
  * array), and then checks whether each element is a valid type mapping */
-static bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bson_typemap* map) /* {{{ */
+static bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bson_typemap* map)
 {
 	zval*      fieldpaths = NULL;
 	HashTable* ht_data;
@@ -1401,11 +1401,11 @@ static bool php_phongo_bson_state_parse_fieldpaths(zval* typemap, php_phongo_bso
 	}
 
 	return true;
-} /* }}} */
+}
 
 /* Applies the array argument to a typemap struct. Returns true on success;
  * otherwise, false is returned an an exception is thrown. */
-bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map) /* {{{ */
+bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map)
 {
 	if (!typemap) {
 		return true;
@@ -1421,9 +1421,9 @@ bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* ma
 	}
 
 	return true;
-} /* }}} */
+}
 
-void php_phongo_bson_new_timestamp_from_increment_and_timestamp(zval* object, uint32_t increment, uint32_t timestamp) /* {{{ */
+void php_phongo_bson_new_timestamp_from_increment_and_timestamp(zval* object, uint32_t increment, uint32_t timestamp)
 {
 	php_phongo_timestamp_t* intern;
 
@@ -1433,9 +1433,9 @@ void php_phongo_bson_new_timestamp_from_increment_and_timestamp(zval* object, ui
 	intern->increment   = increment;
 	intern->timestamp   = timestamp;
 	intern->initialized = true;
-} /* }}} */
+}
 
-void php_phongo_bson_new_int64(zval* object, int64_t integer) /* {{{ */
+void php_phongo_bson_new_int64(zval* object, int64_t integer)
 {
 	php_phongo_int64_t* intern;
 
@@ -1444,4 +1444,4 @@ void php_phongo_bson_new_int64(zval* object, int64_t integer) /* {{{ */
 	intern              = Z_INT64_OBJ_P(object);
 	intern->integer     = integer;
 	intern->initialized = true;
-} /* }}} */
+}

@@ -28,7 +28,7 @@ typedef enum {
 	PHONGO_JSON_MODE_RELAXED,
 } php_phongo_json_mode_t;
 
-/* {{{ Returns the BSON representation of a PHP value */
+/* Returns the BSON representation of a PHP value */
 PHP_FUNCTION(fromPHP)
 {
 	zval*   data;
@@ -43,9 +43,9 @@ PHP_FUNCTION(fromPHP)
 
 	RETVAL_STRINGL((const char*) bson_get_data(bson), bson->len);
 	bson_destroy(bson);
-} /* }}} */
+}
 
-/* {{{ Returns the PHP representation of a BSON value, optionally converting it into a custom class */
+/* Returns the PHP representation of a BSON value, optionally converting it into a custom class */
 PHP_FUNCTION(toPHP)
 {
 	char*                 data;
@@ -74,9 +74,9 @@ PHP_FUNCTION(toPHP)
 	php_phongo_bson_typemap_dtor(&state.map);
 
 	RETURN_ZVAL(&state.zchild, 0, 1);
-} /* }}} */
+}
 
-/* {{{ Returns the BSON representation of a JSON value */
+/* Returns the BSON representation of a JSON value */
 PHP_FUNCTION(fromJSON)
 {
 	char*        json;
@@ -94,7 +94,7 @@ PHP_FUNCTION(fromJSON)
 	} else {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s", error.domain == BSON_ERROR_JSON ? error.message : "Error parsing JSON");
 	}
-} /* }}} */
+}
 
 static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mode_t mode)
 {
@@ -141,22 +141,22 @@ static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mo
 	}
 
 	bson_reader_destroy(reader);
-} /* }}} */
+}
 
-/* {{{ Returns the legacy extended JSON representation of a BSON value */
+/* Returns the legacy extended JSON representation of a BSON value */
 PHP_FUNCTION(toJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_LEGACY);
-} /* }}} */
+}
 
-/* {{{ Returns the canonical extended JSON representation of a BSON value */
+/* Returns the canonical extended JSON representation of a BSON value */
 PHP_FUNCTION(toCanonicalExtendedJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_CANONICAL);
-} /* }}} */
+}
 
-/* {{{ Returns the relaxed extended JSON representation of a BSON value */
+/* Returns the relaxed extended JSON representation of a BSON value */
 PHP_FUNCTION(toRelaxedExtendedJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_RELAXED);
-} /* }}} */
+}

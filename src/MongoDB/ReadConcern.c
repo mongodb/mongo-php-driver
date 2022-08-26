@@ -29,7 +29,7 @@ zend_class_entry* php_phongo_readconcern_ce;
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_readconcern_init_from_hash(php_phongo_readconcern_t* intern, HashTable* props) /* {{{ */
+static bool php_phongo_readconcern_init_from_hash(php_phongo_readconcern_t* intern, HashTable* props)
 {
 	zval* level;
 
@@ -51,9 +51,9 @@ failure:
 	mongoc_read_concern_destroy(intern->read_concern);
 	intern->read_concern = NULL;
 	return false;
-} /* }}} */
+}
 
-/* {{{ Constructs a new ReadConcern */
+/* Constructs a new ReadConcern */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __construct)
 {
 	php_phongo_readconcern_t* intern;
@@ -72,9 +72,8 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, __construct)
 	if (level) {
 		mongoc_read_concern_set_level(intern->read_concern, level);
 	}
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __set_state)
 {
 	php_phongo_readconcern_t* intern;
@@ -91,9 +90,9 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, __set_state)
 	props  = Z_ARRVAL_P(array);
 
 	php_phongo_readconcern_init_from_hash(intern, props);
-} /* }}} */
+}
 
-/* {{{ Returns the ReadConcern "level" option */
+/* Returns the ReadConcern "level" option */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, getLevel)
 {
 	php_phongo_readconcern_t* intern;
@@ -110,9 +109,9 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, getLevel)
 	}
 
 	RETURN_NULL();
-} /* }}} */
+}
 
-/* {{{ Returns whether the read concern has not been modified (i.e. constructed
+/* Returns whether the read concern has not been modified (i.e. constructed
    without a level or from a Manager with no read concern URI options). */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, isDefault)
 {
@@ -123,9 +122,9 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, isDefault)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_BOOL(mongoc_read_concern_is_default(intern->read_concern));
-} /* }}} */
+}
 
-static HashTable* php_phongo_readconcern_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+static HashTable* php_phongo_readconcern_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
 	php_phongo_readconcern_t* intern;
 	HashTable*                props;
@@ -149,18 +148,16 @@ static HashTable* php_phongo_readconcern_get_properties_hash(phongo_compat_objec
 	}
 
 	return props;
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	ZVAL_ARR(return_value, php_phongo_readconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
 	convert_to_object(return_value);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, serialize)
 {
 	php_phongo_readconcern_t* intern;
@@ -195,9 +192,8 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, unserialize)
 {
 	php_phongo_readconcern_t* intern;
@@ -228,17 +224,15 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, unserialize)
 
 	php_phongo_readconcern_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ARR(php_phongo_readconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_Driver_ReadConcern, __unserialize)
 {
 	zval* data;
@@ -248,12 +242,12 @@ static PHP_METHOD(MongoDB_Driver_ReadConcern, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_readconcern_init_from_hash(Z_READCONCERN_OBJ_P(getThis()), Z_ARRVAL_P(data));
-} /* }}} */
+}
 
-/* {{{ MongoDB\Driver\ReadConcern object handlers */
+/* MongoDB\Driver\ReadConcern object handlers */
 static zend_object_handlers php_phongo_handler_readconcern;
 
-static void php_phongo_readconcern_free_object(zend_object* object) /* {{{ */
+static void php_phongo_readconcern_free_object(zend_object* object)
 {
 	php_phongo_readconcern_t* intern = Z_OBJ_READCONCERN(object);
 
@@ -269,7 +263,7 @@ static void php_phongo_readconcern_free_object(zend_object* object) /* {{{ */
 	}
 }
 
-static zend_object* php_phongo_readconcern_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_readconcern_create_object(zend_class_entry* class_type)
 {
 	php_phongo_readconcern_t* intern = zend_object_alloc(sizeof(php_phongo_readconcern_t), class_type);
 
@@ -279,20 +273,20 @@ static zend_object* php_phongo_readconcern_create_object(zend_class_entry* class
 	intern->std.handlers = &php_phongo_handler_readconcern;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_readconcern_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_readconcern_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_readconcern_get_properties_hash(object, true);
-} /* }}} */
+}
 
-static HashTable* php_phongo_readconcern_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+static HashTable* php_phongo_readconcern_get_properties(phongo_compat_object_handler_type* object)
 {
 	return php_phongo_readconcern_get_properties_hash(object, false);
-} /* }}} */
+}
 
-void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_readconcern_ce                = register_class_MongoDB_Driver_ReadConcern(php_phongo_serializable_ce, zend_ce_serializable);
 	php_phongo_readconcern_ce->create_object = php_phongo_readconcern_create_object;
@@ -302,9 +296,9 @@ void php_phongo_readconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_readconcern.get_properties = php_phongo_readconcern_get_properties;
 	php_phongo_handler_readconcern.free_obj       = php_phongo_readconcern_free_object;
 	php_phongo_handler_readconcern.offset         = XtOffsetOf(php_phongo_readconcern_t, std);
-} /* }}} */
+}
 
-void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern) /* {{{ */
+void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* read_concern)
 {
 	php_phongo_readconcern_t* intern;
 
@@ -313,9 +307,8 @@ void phongo_readconcern_init(zval* return_value, const mongoc_read_concern_t* re
 	intern               = Z_READCONCERN_OBJ_P(return_value);
 	intern->read_concern = mongoc_read_concern_copy(read_concern);
 }
-/* }}} */
 
-const mongoc_read_concern_t* phongo_read_concern_from_zval(zval* zread_concern) /* {{{ */
+const mongoc_read_concern_t* phongo_read_concern_from_zval(zval* zread_concern)
 {
 	if (zread_concern) {
 		php_phongo_readconcern_t* intern = Z_READCONCERN_OBJ_P(zread_concern);
@@ -326,9 +319,9 @@ const mongoc_read_concern_t* phongo_read_concern_from_zval(zval* zread_concern) 
 	}
 
 	return NULL;
-} /* }}} */
+}
 
-void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* read_concern) /* {{{ */
+void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* read_concern)
 {
 	const char* level = mongoc_read_concern_get_level(read_concern);
 
@@ -337,4 +330,4 @@ void php_phongo_read_concern_to_zval(zval* retval, const mongoc_read_concern_t* 
 	if (level) {
 		ADD_ASSOC_STRING(retval, "level", level);
 	}
-} /* }}} */
+}

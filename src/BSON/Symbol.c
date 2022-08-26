@@ -27,7 +27,7 @@ zend_class_entry* php_phongo_symbol_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_symbol_init(php_phongo_symbol_t* intern, const char* symbol, size_t symbol_len) /* {{{ */
+static bool php_phongo_symbol_init(php_phongo_symbol_t* intern, const char* symbol, size_t symbol_len)
 {
 	if (strlen(symbol) != (size_t) symbol_len) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Symbol cannot contain null bytes");
@@ -38,11 +38,11 @@ static bool php_phongo_symbol_init(php_phongo_symbol_t* intern, const char* symb
 	intern->symbol_len = symbol_len;
 
 	return true;
-} /* }}} */
+}
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_symbol_init_from_hash(php_phongo_symbol_t* intern, HashTable* props) /* {{{ */
+static bool php_phongo_symbol_init_from_hash(php_phongo_symbol_t* intern, HashTable* props)
 {
 	zval* symbol;
 
@@ -52,9 +52,9 @@ static bool php_phongo_symbol_init_from_hash(php_phongo_symbol_t* intern, HashTa
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"symbol\" string field", ZSTR_VAL(php_phongo_symbol_ce->name));
 	return false;
-} /* }}} */
+}
 
-HashTable* php_phongo_symbol_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+HashTable* php_phongo_symbol_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
 	php_phongo_symbol_t* intern;
 	HashTable*           props;
@@ -75,11 +75,11 @@ HashTable* php_phongo_symbol_get_properties_hash(phongo_compat_object_handler_ty
 	}
 
 	return props;
-} /* }}} */
+}
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Symbol)
 
-/* {{{ Return the Symbol's symbol string. */
+/* Return the Symbol's symbol string. */
 static PHP_METHOD(MongoDB_BSON_Symbol, __toString)
 {
 	php_phongo_symbol_t* intern;
@@ -89,9 +89,8 @@ static PHP_METHOD(MongoDB_BSON_Symbol, __toString)
 	intern = Z_SYMBOL_OBJ_P(getThis());
 
 	RETURN_STRINGL(intern->symbol, intern->symbol_len);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Symbol, jsonSerialize)
 {
 	php_phongo_symbol_t* intern;
@@ -102,9 +101,8 @@ static PHP_METHOD(MongoDB_BSON_Symbol, jsonSerialize)
 
 	array_init_size(return_value, 1);
 	ADD_ASSOC_STRINGL(return_value, "$symbol", intern->symbol, intern->symbol_len);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Symbol, serialize)
 {
 	php_phongo_symbol_t* intern;
@@ -128,9 +126,8 @@ static PHP_METHOD(MongoDB_BSON_Symbol, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Symbol, unserialize)
 {
 	php_phongo_symbol_t*   intern;
@@ -157,17 +154,15 @@ static PHP_METHOD(MongoDB_BSON_Symbol, unserialize)
 
 	php_phongo_symbol_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Symbol, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	ZVAL_ARR(return_value, php_phongo_symbol_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Symbol, __unserialize)
 {
 	zval* data;
@@ -177,12 +172,12 @@ static PHP_METHOD(MongoDB_BSON_Symbol, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_symbol_init_from_hash(Z_SYMBOL_OBJ_P(getThis()), Z_ARRVAL_P(data));
-} /* }}} */
+}
 
-/* {{{ MongoDB\BSON\Symbol object handlers */
+/* MongoDB\BSON\Symbol object handlers */
 static zend_object_handlers php_phongo_handler_symbol;
 
-static void php_phongo_symbol_free_object(zend_object* object) /* {{{ */
+static void php_phongo_symbol_free_object(zend_object* object)
 {
 	php_phongo_symbol_t* intern = Z_OBJ_SYMBOL(object);
 
@@ -196,9 +191,9 @@ static void php_phongo_symbol_free_object(zend_object* object) /* {{{ */
 		zend_hash_destroy(intern->properties);
 		FREE_HASHTABLE(intern->properties);
 	}
-} /* }}} */
+}
 
-zend_object* php_phongo_symbol_create_object(zend_class_entry* class_type) /* {{{ */
+zend_object* php_phongo_symbol_create_object(zend_class_entry* class_type)
 {
 	php_phongo_symbol_t* intern = zend_object_alloc(sizeof(php_phongo_symbol_t), class_type);
 
@@ -208,9 +203,9 @@ zend_object* php_phongo_symbol_create_object(zend_class_entry* class_type) /* {{
 	intern->std.handlers = &php_phongo_handler_symbol;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static zend_object* php_phongo_symbol_clone_object(phongo_compat_object_handler_type* object) /* {{{ */
+static zend_object* php_phongo_symbol_clone_object(phongo_compat_object_handler_type* object)
 {
 	php_phongo_symbol_t* intern;
 	php_phongo_symbol_t* new_intern;
@@ -225,9 +220,9 @@ static zend_object* php_phongo_symbol_clone_object(phongo_compat_object_handler_
 	php_phongo_symbol_init(new_intern, intern->symbol, intern->symbol_len);
 
 	return new_object;
-} /* }}} */
+}
 
-static int php_phongo_symbol_compare_objects(zval* o1, zval* o2) /* {{{ */
+static int php_phongo_symbol_compare_objects(zval* o1, zval* o2)
 {
 	php_phongo_symbol_t *intern1, *intern2;
 
@@ -237,21 +232,20 @@ static int php_phongo_symbol_compare_objects(zval* o1, zval* o2) /* {{{ */
 	intern2 = Z_SYMBOL_OBJ_P(o2);
 
 	return strcmp(intern1->symbol, intern2->symbol);
-} /* }}} */
+}
 
-static HashTable* php_phongo_symbol_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_symbol_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_symbol_get_properties_hash(object, true);
-} /* }}} */
+}
 
-static HashTable* php_phongo_symbol_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+static HashTable* php_phongo_symbol_get_properties(phongo_compat_object_handler_type* object)
 {
 	return php_phongo_symbol_get_properties_hash(object, false);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_symbol_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_symbol_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_symbol_ce                = register_class_MongoDB_BSON_Symbol(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_symbol_ce->create_object = php_phongo_symbol_create_object;
@@ -267,4 +261,4 @@ void php_phongo_symbol_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_symbol.get_properties = php_phongo_symbol_get_properties;
 	php_phongo_handler_symbol.free_obj       = php_phongo_symbol_free_object;
 	php_phongo_handler_symbol.offset         = XtOffsetOf(php_phongo_symbol_t, std);
-} /* }}} */
+}

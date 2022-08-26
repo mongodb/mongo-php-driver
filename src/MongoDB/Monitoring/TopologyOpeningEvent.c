@@ -28,7 +28,7 @@ zend_class_entry* php_phongo_topologyopeningevent_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_TopologyOpeningEvent)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_TopologyOpeningEvent)
 
-/* {{{ Returns this event's topology id */
+/* Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyOpeningEvent, getTopologyId)
 {
 	php_phongo_topologyopeningevent_t* intern = Z_TOPOLOGYOPENINGEVENT_OBJ_P(getThis());
@@ -36,19 +36,19 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyOpeningEvent, getTopologyId)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_objectid_init(return_value, &intern->topology_id);
-} /* }}} */
+}
 
-/* {{{ MongoDB\Driver\Monitoring\TopologyOpeningEvent object handlers */
+/* MongoDB\Driver\Monitoring\TopologyOpeningEvent object handlers */
 static zend_object_handlers php_phongo_handler_topologyopeningevent;
 
-static void php_phongo_topologyopeningevent_free_object(zend_object* object) /* {{{ */
+static void php_phongo_topologyopeningevent_free_object(zend_object* object)
 {
 	php_phongo_topologyopeningevent_t* intern = Z_OBJ_TOPOLOGYOPENINGEVENT(object);
 
 	zend_object_std_dtor(&intern->std);
-} /* }}} */
+}
 
-static zend_object* php_phongo_topologyopeningevent_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_topologyopeningevent_create_object(zend_class_entry* class_type)
 {
 	php_phongo_topologyopeningevent_t* intern = zend_object_alloc(sizeof(php_phongo_topologyopeningevent_t), class_type);
 
@@ -58,9 +58,9 @@ static zend_object* php_phongo_topologyopeningevent_create_object(zend_class_ent
 	intern->std.handlers = &php_phongo_handler_topologyopeningevent;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_topologyopeningevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_topologyopeningevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	php_phongo_topologyopeningevent_t* intern;
 	zval                               retval = ZVAL_STATIC_INIT;
@@ -76,10 +76,9 @@ static HashTable* php_phongo_topologyopeningevent_get_debug_info(phongo_compat_o
 	}
 
 	return Z_ARRVAL(retval);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_topologyopeningevent_ce                = register_class_MongoDB_Driver_Monitoring_TopologyOpeningEvent();
 	php_phongo_topologyopeningevent_ce->create_object = php_phongo_topologyopeningevent_create_object;
@@ -89,4 +88,4 @@ void php_phongo_topologyopeningevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_topologyopeningevent.get_debug_info = php_phongo_topologyopeningevent_get_debug_info;
 	php_phongo_handler_topologyopeningevent.free_obj       = php_phongo_topologyopeningevent_free_object;
 	php_phongo_handler_topologyopeningevent.offset         = XtOffsetOf(php_phongo_topologyopeningevent_t, std);
-} /* }}} */
+}

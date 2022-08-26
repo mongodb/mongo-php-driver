@@ -33,7 +33,7 @@ zend_class_entry* php_phongo_command_ce;
  *
  * The "maxAwaitTimeMS" option is assigned to the cursor after query execution
  * via mongoc_cursor_set_max_await_time_ms(). */
-static bool php_phongo_command_init_max_await_time_ms(php_phongo_command_t* intern, zval* options) /* {{{ */
+static bool php_phongo_command_init_max_await_time_ms(php_phongo_command_t* intern, zval* options)
 {
 	int64_t max_await_time_ms;
 
@@ -56,12 +56,12 @@ static bool php_phongo_command_init_max_await_time_ms(php_phongo_command_t* inte
 	intern->max_await_time_ms = (uint32_t) max_await_time_ms;
 
 	return true;
-} /* }}} */
+}
 
 /* Initializes the php_phongo_command_init from options argument. This
  * function will fall back to a modifier in the absence of a top-level option
  * (where applicable). */
-static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, zval* options) /* {{{ */
+static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, zval* options)
 {
 	bson_iter_t iter;
 	bson_iter_t sub_iter;
@@ -95,9 +95,9 @@ static bool php_phongo_command_init(php_phongo_command_t* intern, zval* filter, 
 	}
 
 	return true;
-} /* }}} */
+}
 
-/* {{{ Constructs a new Command */
+/* Constructs a new Command */
 static PHP_METHOD(MongoDB_Driver_Command, __construct)
 {
 	php_phongo_command_t* intern;
@@ -113,14 +113,14 @@ static PHP_METHOD(MongoDB_Driver_Command, __construct)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_command_init(intern, document, options);
-} /* }}} */
+}
 
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Command)
 
-/* {{{ MongoDB\Driver\Command object handlers */
+/* MongoDB\Driver\Command object handlers */
 static zend_object_handlers php_phongo_handler_command;
 
-static void php_phongo_command_free_object(zend_object* object) /* {{{ */
+static void php_phongo_command_free_object(zend_object* object)
 {
 	php_phongo_command_t* intern = Z_OBJ_COMMAND(object);
 
@@ -129,9 +129,9 @@ static void php_phongo_command_free_object(zend_object* object) /* {{{ */
 	if (intern->bson) {
 		bson_clear(&intern->bson);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_command_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_command_create_object(zend_class_entry* class_type)
 {
 	php_phongo_command_t* intern = zend_object_alloc(sizeof(php_phongo_command_t), class_type);
 
@@ -141,9 +141,9 @@ static zend_object* php_phongo_command_create_object(zend_class_entry* class_typ
 	intern->std.handlers = &php_phongo_handler_command;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_command_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_command_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	php_phongo_command_t* intern;
 	zval                  retval = ZVAL_STATIC_INIT;
@@ -168,11 +168,9 @@ static HashTable* php_phongo_command_get_debug_info(phongo_compat_object_handler
 
 done:
 	return Z_ARRVAL(retval);
+}
 
-} /* }}} */
-/* }}} */
-
-void php_phongo_command_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_command_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_command_ce                = register_class_MongoDB_Driver_Command();
 	php_phongo_command_ce->create_object = php_phongo_command_create_object;
@@ -182,4 +180,4 @@ void php_phongo_command_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_command.get_debug_info = php_phongo_command_get_debug_info;
 	php_phongo_handler_command.free_obj       = php_phongo_command_free_object;
 	php_phongo_handler_command.offset         = XtOffsetOf(php_phongo_command_t, std);
-} /* }}} */
+}

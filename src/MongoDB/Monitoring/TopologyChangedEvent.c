@@ -31,7 +31,7 @@ zend_class_entry* php_phongo_topologychangedevent_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_TopologyChangedEvent)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_TopologyChangedEvent)
 
-/* {{{ Returns this event's new description */
+/* Returns this event's new description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getNewDescription)
 {
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
@@ -39,9 +39,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getNewDescript
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_topologydescription_init(return_value, intern->new_topology_description);
-} /* }}} */
+}
 
-/* {{{ Returns this event's previous description */
+/* Returns this event's previous description */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getPreviousDescription)
 {
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
@@ -49,9 +49,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getPreviousDes
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_topologydescription_init(return_value, intern->old_topology_description);
-} /* }}} */
+}
 
-/* {{{ Returns this event's topology id */
+/* Returns this event's topology id */
 static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getTopologyId)
 {
 	php_phongo_topologychangedevent_t* intern = Z_TOPOLOGYCHANGEDEVENT_OBJ_P(getThis());
@@ -59,12 +59,12 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getTopologyId)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_objectid_init(return_value, &intern->topology_id);
-} /* }}} */
+}
 
-/* {{{ MongoDB\Driver\Monitoring\TopologyChangedEvent object handlers */
+/* MongoDB\Driver\Monitoring\TopologyChangedEvent object handlers */
 static zend_object_handlers php_phongo_handler_topologychangedevent;
 
-static void php_phongo_topologychangedevent_free_object(zend_object* object) /* {{{ */
+static void php_phongo_topologychangedevent_free_object(zend_object* object)
 {
 	php_phongo_topologychangedevent_t* intern = Z_OBJ_TOPOLOGYCHANGEDEVENT(object);
 
@@ -77,9 +77,9 @@ static void php_phongo_topologychangedevent_free_object(zend_object* object) /* 
 	if (intern->old_topology_description) {
 		mongoc_topology_description_destroy(intern->old_topology_description);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_topologychangedevent_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_topologychangedevent_create_object(zend_class_entry* class_type)
 {
 	php_phongo_topologychangedevent_t* intern = zend_object_alloc(sizeof(php_phongo_topologychangedevent_t), class_type);
 
@@ -89,9 +89,9 @@ static zend_object* php_phongo_topologychangedevent_create_object(zend_class_ent
 	intern->std.handlers = &php_phongo_handler_topologychangedevent;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_topologychangedevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_topologychangedevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	php_phongo_topologychangedevent_t* intern;
 	zval                               retval = ZVAL_STATIC_INIT;
@@ -119,10 +119,9 @@ static HashTable* php_phongo_topologychangedevent_get_debug_info(phongo_compat_o
 	}
 
 	return Z_ARRVAL(retval);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_topologychangedevent_ce                = register_class_MongoDB_Driver_Monitoring_TopologyChangedEvent();
 	php_phongo_topologychangedevent_ce->create_object = php_phongo_topologychangedevent_create_object;
@@ -132,4 +131,4 @@ void php_phongo_topologychangedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_topologychangedevent.get_debug_info = php_phongo_topologychangedevent_get_debug_info;
 	php_phongo_handler_topologychangedevent.free_obj       = php_phongo_topologychangedevent_free_object;
 	php_phongo_handler_topologychangedevent.offset         = XtOffsetOf(php_phongo_topologychangedevent_t, std);
-} /* }}} */
+}

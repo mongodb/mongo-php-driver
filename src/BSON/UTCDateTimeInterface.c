@@ -21,7 +21,7 @@
 
 zend_class_entry* php_phongo_utcdatetime_interface_ce;
 
-void php_phongo_utcdatetime_interface_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_utcdatetime_interface_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_utcdatetime_interface_ce = register_class_MongoDB_BSON_UTCDateTimeInterface();
-} /* }}} */
+}

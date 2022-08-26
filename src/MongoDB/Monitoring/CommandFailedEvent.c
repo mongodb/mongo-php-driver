@@ -32,7 +32,7 @@ zend_class_entry* php_phongo_commandfailedevent_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandFailedEvent)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_CommandFailedEvent)
 
-/* {{{ Returns the command name for this event */
+/* Returns the command name for this event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getCommandName)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -42,9 +42,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getCommandName)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETVAL_STRING(intern->command_name);
-} /* }}} */
+}
 
-/* {{{ Returns the event's duration in microseconds */
+/* Returns the event's duration in microseconds */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDurationMicros)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -54,9 +54,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getDurationMicro
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_LONG(intern->duration_micros);
-} /* }}} */
+}
 
-/* {{{ Returns the error document associated with the event */
+/* Returns the error document associated with the event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getError)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -66,9 +66,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getError)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ZVAL(&intern->z_error, 1, 0);
-} /* }}} */
+}
 
-/* {{{ Returns the event's operation ID */
+/* Returns the event's operation ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -80,9 +80,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
 
 	sprintf(int_as_string, "%" PRIu64, intern->operation_id);
 	RETVAL_STRING(int_as_string);
-} /* }}} */
+}
 
-/* {{{ Returns the reply document associated with the event */
+/* Returns the reply document associated with the event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getReply)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -100,9 +100,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getReply)
 	}
 
 	RETURN_ZVAL(&state.zchild, 0, 1);
-} /* }}} */
+}
 
-/* {{{ Returns the event's request ID */
+/* Returns the event's request ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -114,9 +114,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId)
 
 	sprintf(int_as_string, "%" PRIu64, intern->request_id);
 	RETVAL_STRING(int_as_string);
-} /* }}} */
+}
 
-/* {{{ Returns the Server from which the event originated */
+/* Returns the Server from which the event originated */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServer)
 {
 	php_phongo_commandfailedevent_t* intern;
@@ -126,9 +126,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServer)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
-} /* }}} */
+}
 
-/* {{{ Returns the event's service ID */
+/* Returns the event's service ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId)
 {
 	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
@@ -140,9 +140,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId)
 	}
 
 	phongo_objectid_init(return_value, &intern->service_id);
-} /* }}} */
+}
 
-/* {{{ Returns the event's server connection ID */
+/* Returns the event's server connection ID */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnectionId)
 {
 	php_phongo_commandfailedevent_t* intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
@@ -155,7 +155,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnect
 	}
 
 	RETURN_LONG(intern->server_connection_id);
-} /* }}} */
+}
 
 /**
  * Event thrown when a command has failed to execute.
@@ -163,10 +163,10 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnect
  * This class is only constructed internally.
  */
 
-/* {{{ MongoDB\Driver\Monitoring\CommandFailedEvent object handlers */
+/* MongoDB\Driver\Monitoring\CommandFailedEvent object handlers */
 static zend_object_handlers php_phongo_handler_commandfailedevent;
 
-static void php_phongo_commandfailedevent_free_object(zend_object* object) /* {{{ */
+static void php_phongo_commandfailedevent_free_object(zend_object* object)
 {
 	php_phongo_commandfailedevent_t* intern = Z_OBJ_COMMANDFAILEDEVENT(object);
 
@@ -187,9 +187,9 @@ static void php_phongo_commandfailedevent_free_object(zend_object* object) /* {{
 	if (intern->command_name) {
 		efree(intern->command_name);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_commandfailedevent_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_commandfailedevent_create_object(zend_class_entry* class_type)
 {
 	php_phongo_commandfailedevent_t* intern = zend_object_alloc(sizeof(php_phongo_commandfailedevent_t), class_type);
 
@@ -199,9 +199,9 @@ static zend_object* php_phongo_commandfailedevent_create_object(zend_class_entry
 	intern->std.handlers = &php_phongo_handler_commandfailedevent;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_commandfailedevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_commandfailedevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	php_phongo_commandfailedevent_t* intern;
 	zval                             retval = ZVAL_STATIC_INIT;
@@ -258,10 +258,9 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(phongo_compat_obj
 
 done:
 	return Z_ARRVAL(retval);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_commandfailedevent_ce                = register_class_MongoDB_Driver_Monitoring_CommandFailedEvent();
 	php_phongo_commandfailedevent_ce->create_object = php_phongo_commandfailedevent_create_object;
@@ -271,4 +270,4 @@ void php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_commandfailedevent.get_debug_info = php_phongo_commandfailedevent_get_debug_info;
 	php_phongo_handler_commandfailedevent.free_obj       = php_phongo_commandfailedevent_free_object;
 	php_phongo_handler_commandfailedevent.offset         = XtOffsetOf(php_phongo_commandfailedevent_t, std);
-} /* }}} */
+}

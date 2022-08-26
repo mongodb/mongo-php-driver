@@ -30,7 +30,7 @@ zend_class_entry* php_phongo_binary_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_binary_init(php_phongo_binary_t* intern, const char* data, size_t data_len, zend_long type) /* {{{ */
+static bool php_phongo_binary_init(php_phongo_binary_t* intern, const char* data, size_t data_len, zend_long type)
 {
 	if (type < 0 || type > UINT8_MAX) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected type to be an unsigned 8-bit integer, %" PHONGO_LONG_FORMAT " given", type);
@@ -47,11 +47,11 @@ static bool php_phongo_binary_init(php_phongo_binary_t* intern, const char* data
 	intern->type     = (uint8_t) type;
 
 	return true;
-} /* }}} */
+}
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_binary_init_from_hash(php_phongo_binary_t* intern, HashTable* props) /* {{{ */
+static bool php_phongo_binary_init_from_hash(php_phongo_binary_t* intern, HashTable* props)
 {
 	zval *data, *type;
 
@@ -63,9 +63,9 @@ static bool php_phongo_binary_init_from_hash(php_phongo_binary_t* intern, HashTa
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"data\" string and \"type\" integer fields", ZSTR_VAL(php_phongo_binary_ce->name));
 	return false;
-} /* }}} */
+}
 
-static HashTable* php_phongo_binary_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+static HashTable* php_phongo_binary_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
 	php_phongo_binary_t* intern;
 	HashTable*           props;
@@ -89,9 +89,9 @@ static HashTable* php_phongo_binary_get_properties_hash(phongo_compat_object_han
 	}
 
 	return props;
-} /* }}} */
+}
 
-/* {{{ Construct a new BSON binary type */
+/* Construct a new BSON binary type */
 static PHP_METHOD(MongoDB_BSON_Binary, __construct)
 {
 	php_phongo_binary_t* intern;
@@ -107,9 +107,8 @@ static PHP_METHOD(MongoDB_BSON_Binary, __construct)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_binary_init(intern, data, data_len, type);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, __set_state)
 {
 	php_phongo_binary_t* intern;
@@ -126,9 +125,9 @@ static PHP_METHOD(MongoDB_BSON_Binary, __set_state)
 	props  = Z_ARRVAL_P(array);
 
 	php_phongo_binary_init_from_hash(intern, props);
-} /* }}} */
+}
 
-/* {{{ Return the Binary's data string. */
+/* Return the Binary's data string. */
 static PHP_METHOD(MongoDB_BSON_Binary, __toString)
 {
 	php_phongo_binary_t* intern;
@@ -138,9 +137,8 @@ static PHP_METHOD(MongoDB_BSON_Binary, __toString)
 	intern = Z_BINARY_OBJ_P(getThis());
 
 	RETURN_STRINGL(intern->data, intern->data_len);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, getData)
 {
 	php_phongo_binary_t* intern;
@@ -150,9 +148,8 @@ static PHP_METHOD(MongoDB_BSON_Binary, getData)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_STRINGL(intern->data, intern->data_len);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, getType)
 {
 	php_phongo_binary_t* intern;
@@ -162,9 +159,8 @@ static PHP_METHOD(MongoDB_BSON_Binary, getType)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_LONG(intern->type);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, jsonSerialize)
 {
 	php_phongo_binary_t* intern;
@@ -185,9 +181,8 @@ static PHP_METHOD(MongoDB_BSON_Binary, jsonSerialize)
 
 	type_len = snprintf(type, sizeof(type), "%02x", intern->type);
 	ADD_ASSOC_STRINGL(return_value, "$type", type, type_len);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, serialize)
 {
 	php_phongo_binary_t* intern;
@@ -212,9 +207,8 @@ static PHP_METHOD(MongoDB_BSON_Binary, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, unserialize)
 {
 	php_phongo_binary_t*   intern;
@@ -241,17 +235,15 @@ static PHP_METHOD(MongoDB_BSON_Binary, unserialize)
 
 	php_phongo_binary_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ARR(php_phongo_binary_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Binary, __unserialize)
 {
 	zval* data;
@@ -261,12 +253,12 @@ static PHP_METHOD(MongoDB_BSON_Binary, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_binary_init_from_hash(Z_BINARY_OBJ_P(getThis()), Z_ARRVAL_P(data));
-} /* }}} */
+}
 
-/* {{{ MongoDB\BSON\Binary object handlers */
+/* MongoDB\BSON\Binary object handlers */
 static zend_object_handlers php_phongo_handler_binary;
 
-static void php_phongo_binary_free_object(zend_object* object) /* {{{ */
+static void php_phongo_binary_free_object(zend_object* object)
 {
 	php_phongo_binary_t* intern = Z_OBJ_BINARY(object);
 
@@ -280,9 +272,9 @@ static void php_phongo_binary_free_object(zend_object* object) /* {{{ */
 		zend_hash_destroy(intern->properties);
 		FREE_HASHTABLE(intern->properties);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_binary_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_binary_create_object(zend_class_entry* class_type)
 {
 	php_phongo_binary_t* intern = zend_object_alloc(sizeof(php_phongo_binary_t), class_type);
 
@@ -292,9 +284,9 @@ static zend_object* php_phongo_binary_create_object(zend_class_entry* class_type
 	intern->std.handlers = &php_phongo_handler_binary;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static zend_object* php_phongo_binary_clone_object(phongo_compat_object_handler_type* object) /* {{{ */
+static zend_object* php_phongo_binary_clone_object(phongo_compat_object_handler_type* object)
 {
 	php_phongo_binary_t* intern;
 	php_phongo_binary_t* new_intern;
@@ -309,9 +301,9 @@ static zend_object* php_phongo_binary_clone_object(phongo_compat_object_handler_
 	php_phongo_binary_init(new_intern, intern->data, intern->data_len, intern->type);
 
 	return new_object;
-} /* }}} */
+}
 
-static int php_phongo_binary_compare_objects(zval* o1, zval* o2) /* {{{ */
+static int php_phongo_binary_compare_objects(zval* o1, zval* o2)
 {
 	php_phongo_binary_t *intern1, *intern2;
 
@@ -331,21 +323,20 @@ static int php_phongo_binary_compare_objects(zval* o1, zval* o2) /* {{{ */
 	}
 
 	return zend_binary_strcmp(intern1->data, intern1->data_len, intern2->data, intern2->data_len);
-} /* }}} */
+}
 
-static HashTable* php_phongo_binary_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_binary_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_binary_get_properties_hash(object, true);
-} /* }}} */
+}
 
-static HashTable* php_phongo_binary_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+static HashTable* php_phongo_binary_get_properties(phongo_compat_object_handler_type* object)
 {
 	return php_phongo_binary_get_properties_hash(object, false);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_binary_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_binary_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_binary_ce                = register_class_MongoDB_BSON_Binary(php_phongo_binary_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_binary_ce->create_object = php_phongo_binary_create_object;
@@ -361,4 +352,4 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_binary.get_properties = php_phongo_binary_get_properties;
 	php_phongo_handler_binary.free_obj       = php_phongo_binary_free_object;
 	php_phongo_handler_binary.offset         = XtOffsetOf(php_phongo_binary_t, std);
-} /* }}} */
+}

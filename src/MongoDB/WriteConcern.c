@@ -32,7 +32,7 @@ zend_class_entry* php_phongo_writeconcern_ce;
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* intern, HashTable* props) /* {{{ */
+static bool php_phongo_writeconcern_init_from_hash(php_phongo_writeconcern_t* intern, HashTable* props)
 {
 	zval *w, *wtimeout, *j;
 
@@ -105,9 +105,9 @@ failure:
 	mongoc_write_concern_destroy(intern->write_concern);
 	intern->write_concern = NULL;
 	return false;
-} /* }}} */
+}
 
-/* {{{ Constructs a new WriteConcern */
+/* Constructs a new WriteConcern */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __construct)
 {
 	php_phongo_writeconcern_t* intern;
@@ -167,9 +167,8 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __construct)
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Write concern is not valid");
 		return;
 	}
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __set_state)
 {
 	php_phongo_writeconcern_t* intern;
@@ -186,9 +185,9 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __set_state)
 	props  = Z_ARRVAL_P(array);
 
 	php_phongo_writeconcern_init_from_hash(intern, props);
-} /* }}} */
+}
 
-/* {{{ Returns the WriteConcern "w" option */
+/* Returns the WriteConcern "w" option */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, getW)
 {
 	php_phongo_writeconcern_t* intern;
@@ -213,9 +212,9 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, getW)
 	}
 
 	RETURN_NULL();
-} /* }}} */
+}
 
-/* {{{ Returns the WriteConcern "wtimeout" option */
+/* Returns the WriteConcern "wtimeout" option */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, getWtimeout)
 {
 	php_phongo_writeconcern_t* intern;
@@ -234,9 +233,9 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, getWtimeout)
 #endif
 
 	RETURN_LONG(wtimeout);
-} /* }}} */
+}
 
-/* {{{ Returns the WriteConcern "journal" option */
+/* Returns the WriteConcern "journal" option */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, getJournal)
 {
 	php_phongo_writeconcern_t* intern;
@@ -250,9 +249,9 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, getJournal)
 	}
 
 	RETURN_NULL();
-} /* }}} */
+}
 
-/* {{{ Returns whether the write concern has not been modified (i.e. from a Manager
+/* Returns whether the write concern has not been modified (i.e. from a Manager
    with no write concern URI options). */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, isDefault)
 {
@@ -263,9 +262,9 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, isDefault)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_BOOL(mongoc_write_concern_is_default(intern->write_concern));
-} /* }}} */
+}
 
-static HashTable* php_phongo_writeconcern_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool is_bson, bool is_serialize) /* {{{ */
+static HashTable* php_phongo_writeconcern_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool is_bson, bool is_serialize)
 {
 	php_phongo_writeconcern_t* intern;
 	HashTable*                 props;
@@ -334,18 +333,16 @@ static HashTable* php_phongo_writeconcern_get_properties_hash(phongo_compat_obje
 	}
 
 	return props;
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	ZVAL_ARR(return_value, php_phongo_writeconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true, false));
 	convert_to_object(return_value);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, serialize)
 {
 	php_phongo_writeconcern_t* intern;
@@ -399,9 +396,8 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, unserialize)
 {
 	php_phongo_writeconcern_t* intern;
@@ -432,17 +428,15 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, unserialize)
 
 	php_phongo_writeconcern_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ARR(php_phongo_writeconcern_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false, true));
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_Driver_WriteConcern, __unserialize)
 {
 	zval* data;
@@ -452,12 +446,12 @@ static PHP_METHOD(MongoDB_Driver_WriteConcern, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_writeconcern_init_from_hash(Z_WRITECONCERN_OBJ_P(getThis()), Z_ARRVAL_P(data));
-} /* }}} */
+}
 
-/* {{{ MongoDB\Driver\WriteConcern object handlers */
+/* MongoDB\Driver\WriteConcern object handlers */
 static zend_object_handlers php_phongo_handler_writeconcern;
 
-static void php_phongo_writeconcern_free_object(zend_object* object) /* {{{ */
+static void php_phongo_writeconcern_free_object(zend_object* object)
 {
 	php_phongo_writeconcern_t* intern = Z_OBJ_WRITECONCERN(object);
 
@@ -471,9 +465,9 @@ static void php_phongo_writeconcern_free_object(zend_object* object) /* {{{ */
 	if (intern->write_concern) {
 		mongoc_write_concern_destroy(intern->write_concern);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_writeconcern_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_writeconcern_create_object(zend_class_entry* class_type)
 {
 	php_phongo_writeconcern_t* intern = zend_object_alloc(sizeof(php_phongo_writeconcern_t), class_type);
 
@@ -483,20 +477,20 @@ static zend_object* php_phongo_writeconcern_create_object(zend_class_entry* clas
 	intern->std.handlers = &php_phongo_handler_writeconcern;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_writeconcern_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_writeconcern_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_writeconcern_get_properties_hash(object, true, false, false);
-} /* }}} */
+}
 
-static HashTable* php_phongo_writeconcern_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+static HashTable* php_phongo_writeconcern_get_properties(phongo_compat_object_handler_type* object)
 {
 	return php_phongo_writeconcern_get_properties_hash(object, false, false, false);
-} /* }}} */
+}
 
-void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_writeconcern_ce                = register_class_MongoDB_Driver_WriteConcern(php_phongo_serializable_ce, zend_ce_serializable);
 	php_phongo_writeconcern_ce->create_object = php_phongo_writeconcern_create_object;
@@ -506,9 +500,9 @@ void php_phongo_writeconcern_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_writeconcern.get_properties = php_phongo_writeconcern_get_properties;
 	php_phongo_handler_writeconcern.free_obj       = php_phongo_writeconcern_free_object;
 	php_phongo_handler_writeconcern.offset         = XtOffsetOf(php_phongo_writeconcern_t, std);
-} /* }}} */
+}
 
-void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern) /* {{{ */
+void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* write_concern)
 {
 	php_phongo_writeconcern_t* intern;
 
@@ -517,9 +511,8 @@ void phongo_writeconcern_init(zval* return_value, const mongoc_write_concern_t* 
 	intern                = Z_WRITECONCERN_OBJ_P(return_value);
 	intern->write_concern = mongoc_write_concern_copy(write_concern);
 }
-/* }}} */
 
-const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concern) /* {{{ */
+const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concern)
 {
 	if (zwrite_concern) {
 		php_phongo_writeconcern_t* intern = Z_WRITECONCERN_OBJ_P(zwrite_concern);
@@ -530,9 +523,9 @@ const mongoc_write_concern_t* phongo_write_concern_from_zval(zval* zwrite_concer
 	}
 
 	return NULL;
-} /* }}} */
+}
 
-void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern) /* {{{ */
+void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t* write_concern)
 {
 	const char*   wtag     = mongoc_write_concern_get_wtag(write_concern);
 	const int32_t w        = mongoc_write_concern_get_w(write_concern);
@@ -563,4 +556,4 @@ void php_phongo_write_concern_to_zval(zval* retval, const mongoc_write_concern_t
 		ADD_ASSOC_LONG_EX(retval, "wtimeout", wtimeout);
 #endif
 	}
-} /* }}} */
+}

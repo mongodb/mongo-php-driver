@@ -61,7 +61,7 @@ zend_class_entry* php_phongo_manager_ce;
  *
  * This handles the merging of any legacy SSL context options and also makes
  * driverOptions suitable for serialization by removing the resource zval. */
-static bool php_phongo_manager_merge_context_options(zval* zdriverOptions) /* {{{ */
+static bool php_phongo_manager_merge_context_options(zval* zdriverOptions)
 {
 	php_stream_context* context;
 	zval *              zcontext, *zcontextOptions;
@@ -99,14 +99,14 @@ static bool php_phongo_manager_merge_context_options(zval* zdriverOptions) /* {{
 	php_array_unsetc(zdriverOptions, "context");
 
 	return true;
-} /* }}} */
+}
 
 /* Prepare authMechanismProperties for BSON encoding by converting a boolean
  * value for the "CANONICALIZE_HOST_NAME" option to a string.
  *
  * Note: URI options are case-insensitive, so we must iterate through the
  * HashTable in order to detect options. */
-static void php_phongo_manager_prep_authmechanismproperties(zval* properties) /* {{{ */
+static void php_phongo_manager_prep_authmechanismproperties(zval* properties)
 {
 	HashTable* ht_data;
 
@@ -138,7 +138,7 @@ static void php_phongo_manager_prep_authmechanismproperties(zval* properties) /*
 		}
 		ZEND_HASH_FOREACH_END();
 	}
-} /* }}} */
+}
 
 /* Prepare URI options for BSON encoding.
  *
@@ -152,7 +152,7 @@ static void php_phongo_manager_prep_authmechanismproperties(zval* properties) /*
  *
  * Note: URI options are case-insensitive, so we must iterate through the
  * HashTable in order to detect options. */
-static void php_phongo_manager_prep_uri_options(zval* options) /* {{{ */
+static void php_phongo_manager_prep_uri_options(zval* options)
 {
 	HashTable* ht_data;
 
@@ -189,7 +189,7 @@ static void php_phongo_manager_prep_uri_options(zval* options) /* {{{ */
 		}
 		ZEND_HASH_FOREACH_END();
 	}
-} /* }}} */
+}
 
 /* Selects a server for an execute method. If "for_writes" is true, a primary
  * will be selected. Otherwise, a read preference will be used to select the
@@ -200,7 +200,7 @@ static void php_phongo_manager_prep_uri_options(zval* options) /* {{{ */
  *
  * On success, server_id will be set and the function will return true;
  * otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_manager_select_server(bool for_writes, bool inherit_read_preference, zval* zreadPreference, zval* zsession, mongoc_client_t* client, uint32_t* server_id) /* {{{ */
+static bool php_phongo_manager_select_server(bool for_writes, bool inherit_read_preference, zval* zreadPreference, zval* zsession, mongoc_client_t* client, uint32_t* server_id)
 {
 	mongoc_server_description_t* selected_server;
 	const mongoc_read_prefs_t*   read_preference = NULL;
@@ -240,11 +240,11 @@ static bool php_phongo_manager_select_server(bool for_writes, bool inherit_read_
 	}
 
 	return false;
-} /* }}} */
+}
 
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Manager)
 
-/* {{{ Constructs a new Manager */
+/* Constructs a new Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, __construct)
 {
 	php_phongo_manager_t* intern;
@@ -284,9 +284,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, __construct)
 	if (!php_phongo_manager_register(intern)) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Failed to add Manager to internal registry");
 	}
-} /* }}} */
+}
 
-/* {{{ Registers an event subscriber for this Manager */
+/* Registers an event subscriber for this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, addSubscriber)
 {
 	php_phongo_manager_t* intern;
@@ -305,9 +305,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, addSubscriber)
 	}
 
 	phongo_apm_add_subscriber(intern->subscribers, subscriber);
-} /* }}} */
+}
 
-/* {{{ Return a ClientEncryption instance */
+/* Return a ClientEncryption instance */
 static PHP_METHOD(MongoDB_Driver_Manager, createClientEncryption)
 {
 	zval* options;
@@ -320,9 +320,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, createClientEncryption)
 
 	/* An exception will be thrown on error. */
 	phongo_clientencryption_init(Z_CLIENTENCRYPTION_OBJ_P(return_value), options, getThis());
-} /* }}} */
+}
 
-/* {{{ Execute a Command */
+/* Execute a Command */
 static PHP_METHOD(MongoDB_Driver_Manager, executeCommand)
 {
 	php_phongo_manager_t* intern;
@@ -372,9 +372,9 @@ cleanup:
 	if (free_options) {
 		php_phongo_prep_legacy_option_free(options);
 	}
-} /* }}} */
+}
 
-/* {{{ Execute a ReadCommand */
+/* Execute a ReadCommand */
 static PHP_METHOD(MongoDB_Driver_Manager, executeReadCommand)
 {
 	php_phongo_manager_t* intern;
@@ -416,9 +416,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeReadCommand)
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	phongo_execute_command(getThis(), PHONGO_COMMAND_READ, db, command, options, server_id, return_value);
-} /* }}} */
+}
 
-/* {{{ Execute a WriteCommand */
+/* Execute a WriteCommand */
 static PHP_METHOD(MongoDB_Driver_Manager, executeWriteCommand)
 {
 	php_phongo_manager_t* intern;
@@ -454,9 +454,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeWriteCommand)
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	phongo_execute_command(getThis(), PHONGO_COMMAND_WRITE, db, command, options, server_id, return_value);
-} /* }}} */
+}
 
-/* {{{ Execute a ReadWriteCommand */
+/* Execute a ReadWriteCommand */
 static PHP_METHOD(MongoDB_Driver_Manager, executeReadWriteCommand)
 {
 	php_phongo_manager_t* intern;
@@ -492,9 +492,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, executeReadWriteCommand)
 	PHONGO_RESET_CLIENT_IF_PID_DIFFERS(intern, intern);
 
 	phongo_execute_command(getThis(), PHONGO_COMMAND_READ_WRITE, db, command, options, server_id, return_value);
-} /* }}} */
+}
 
-/* {{{ Execute a Query */
+/* Execute a Query */
 static PHP_METHOD(MongoDB_Driver_Manager, executeQuery)
 {
 	php_phongo_manager_t* intern;
@@ -544,9 +544,9 @@ cleanup:
 	if (free_options) {
 		php_phongo_prep_legacy_option_free(options);
 	}
-} /* }}} */
+}
 
-/* {{{ Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
+/* Executes a BulkWrite (i.e. any number of insert, update, and delete ops) */
 static PHP_METHOD(MongoDB_Driver_Manager, executeBulkWrite)
 {
 	php_phongo_manager_t* intern;
@@ -591,9 +591,9 @@ cleanup:
 	if (free_options) {
 		php_phongo_prep_legacy_option_free(options);
 	}
-} /* }}} */
+}
 
-/* {{{ Returns the autoEncryption.encryptedFieldsMap driver option */
+/* Returns the autoEncryption.encryptedFieldsMap driver option */
 static PHP_METHOD(MongoDB_Driver_Manager, getEncryptedFieldsMap)
 {
 	php_phongo_manager_t* intern;
@@ -605,9 +605,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, getEncryptedFieldsMap)
 	if (!Z_ISUNDEF(intern->enc_fields_map)) {
 		RETURN_ZVAL(&intern->enc_fields_map, 1, 0);
 	}
-} /* }}} */
+}
 
-/* {{{ Returns the ReadConcern associated with this Manager */
+/* Returns the ReadConcern associated with this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, getReadConcern)
 {
 	php_phongo_manager_t* intern;
@@ -617,9 +617,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, getReadConcern)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_readconcern_init(return_value, mongoc_client_get_read_concern(intern->client));
-} /* }}} */
+}
 
-/* {{{ Returns the ReadPreference associated with this Manager */
+/* Returns the ReadPreference associated with this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, getReadPreference)
 {
 	php_phongo_manager_t* intern;
@@ -629,9 +629,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, getReadPreference)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_readpreference_init(return_value, mongoc_client_get_read_prefs(intern->client));
-} /* }}} */
+}
 
-/* {{{ Returns the Servers associated with this Manager */
+/* Returns the Servers associated with this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, getServers)
 {
 	php_phongo_manager_t*         intern;
@@ -653,9 +653,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, getServers)
 	}
 
 	mongoc_server_descriptions_destroy_all(sds, n);
-} /* }}} */
+}
 
-/* {{{ Returns the WriteConcern associated with this Manager */
+/* Returns the WriteConcern associated with this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, getWriteConcern)
 {
 	php_phongo_manager_t* intern;
@@ -665,9 +665,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, getWriteConcern)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_writeconcern_init(return_value, mongoc_client_get_write_concern(intern->client));
-} /* }}} */
+}
 
-/* {{{ Unregisters an event subscriber for this Manager */
+/* Unregisters an event subscriber for this Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, removeSubscriber)
 {
 	php_phongo_manager_t* intern;
@@ -685,9 +685,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, removeSubscriber)
 	}
 
 	phongo_apm_remove_subscriber(intern->subscribers, subscriber);
-} /* }}} */
+}
 
-/* {{{ Selects a Server for the given ReadPreference (default: primary). */
+/* Selects a Server for the given ReadPreference (default: primary). */
 static PHP_METHOD(MongoDB_Driver_Manager, selectServer)
 {
 	php_phongo_manager_t* intern;
@@ -707,9 +707,9 @@ static PHP_METHOD(MongoDB_Driver_Manager, selectServer)
 	}
 
 	phongo_server_init(return_value, getThis(), server_id);
-} /* }}} */
+}
 
-/* {{{ Returns a new client session */
+/* Returns a new client session */
 static PHP_METHOD(MongoDB_Driver_Manager, startSession)
 {
 	php_phongo_manager_t*     intern;
@@ -792,12 +792,12 @@ cleanup:
 	if (cs_opts) {
 		mongoc_session_opts_destroy(cs_opts);
 	}
-} /* }}} */
+}
 
-/* {{{ MongoDB\Driver\Manager object handlers */
+/* MongoDB\Driver\Manager object handlers */
 static zend_object_handlers php_phongo_handler_manager;
 
-static void php_phongo_manager_free_object(zend_object* object) /* {{{ */
+static void php_phongo_manager_free_object(zend_object* object)
 {
 	php_phongo_manager_t* intern = Z_OBJ_MANAGER(object);
 
@@ -839,9 +839,9 @@ static void php_phongo_manager_free_object(zend_object* object) /* {{{ */
 		zend_hash_destroy(intern->subscribers);
 		FREE_HASHTABLE(intern->subscribers);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_manager_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_manager_create_object(zend_class_entry* class_type)
 {
 	php_phongo_manager_t* intern = zend_object_alloc(sizeof(php_phongo_manager_t), class_type);
 
@@ -853,9 +853,9 @@ static zend_object* php_phongo_manager_create_object(zend_class_entry* class_typ
 	intern->std.handlers = &php_phongo_handler_manager;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_manager_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_manager_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	php_phongo_manager_t*         intern;
 	mongoc_server_description_t** sds;
@@ -893,10 +893,9 @@ done:
 	mongoc_server_descriptions_destroy_all(sds, n);
 
 	return Z_ARRVAL(retval);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_manager_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_manager_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_manager_ce                = register_class_MongoDB_Driver_Manager();
 	php_phongo_manager_ce->create_object = php_phongo_manager_create_object;
@@ -906,4 +905,4 @@ void php_phongo_manager_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_manager.get_debug_info = php_phongo_manager_get_debug_info;
 	php_phongo_handler_manager.free_obj       = php_phongo_manager_free_object;
 	php_phongo_handler_manager.offset         = XtOffsetOf(php_phongo_manager_t, std);
-} /* }}} */
+}

@@ -21,7 +21,7 @@
 
 zend_class_entry* php_phongo_bulkwriteexception_ce;
 
-void php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_bulkwriteexception_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_bulkwriteexception_ce = register_class_MongoDB_Driver_Exception_BulkWriteException(php_phongo_writeexception_ce);
-} /* }}} */
+}

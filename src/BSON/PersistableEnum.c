@@ -41,9 +41,9 @@ PHP_METHOD(MongoDB_BSON_PersistableEnum, bsonUnserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	return;
-} /* }}} */
+}
 
-void php_phongo_persistableenum_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_persistableenum_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_persistableenum_ce = register_class_MongoDB_BSON_PersistableEnum();
-} /* }}} */
+}

@@ -29,7 +29,7 @@ zend_class_entry* php_phongo_decimal128_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_decimal128_init(php_phongo_decimal128_t* intern, const char* value) /* {{{ */
+static bool php_phongo_decimal128_init(php_phongo_decimal128_t* intern, const char* value)
 {
 	if (!bson_decimal128_from_string(value, &intern->decimal)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error parsing Decimal128 string: %s", value);
@@ -39,11 +39,11 @@ static bool php_phongo_decimal128_init(php_phongo_decimal128_t* intern, const ch
 	intern->initialized = true;
 
 	return true;
-} /* }}} */
+}
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_decimal128_init_from_hash(php_phongo_decimal128_t* intern, HashTable* props) /* {{{ */
+static bool php_phongo_decimal128_init_from_hash(php_phongo_decimal128_t* intern, HashTable* props)
 {
 	zval* dec;
 
@@ -53,9 +53,9 @@ static bool php_phongo_decimal128_init_from_hash(php_phongo_decimal128_t* intern
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"dec\" string field", ZSTR_VAL(php_phongo_decimal128_ce->name));
 	return false;
-} /* }}} */
+}
 
-static HashTable* php_phongo_decimal128_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+static HashTable* php_phongo_decimal128_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
 	php_phongo_decimal128_t* intern;
 	HashTable*               props;
@@ -79,9 +79,9 @@ static HashTable* php_phongo_decimal128_get_properties_hash(phongo_compat_object
 	}
 
 	return props;
-} /* }}} */
+}
 
-/* {{{ Construct a new BSON Decimal128 type */
+/* Construct a new BSON Decimal128 type */
 static PHP_METHOD(MongoDB_BSON_Decimal128, __construct)
 {
 	php_phongo_decimal128_t* intern;
@@ -95,9 +95,8 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __construct)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_decimal128_init(intern, value);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, __set_state)
 {
 	php_phongo_decimal128_t* intern;
@@ -114,9 +113,8 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __set_state)
 	props  = Z_ARRVAL_P(array);
 
 	php_phongo_decimal128_init_from_hash(intern, props);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, __toString)
 {
 	php_phongo_decimal128_t* intern;
@@ -129,9 +127,8 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __toString)
 	bson_decimal128_to_string(&intern->decimal, outbuf);
 
 	RETURN_STRING(outbuf);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, jsonSerialize)
 {
 	php_phongo_decimal128_t* intern;
@@ -144,9 +141,8 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, jsonSerialize)
 	array_init_size(return_value, 1);
 	bson_decimal128_to_string(&intern->decimal, outbuf);
 	ADD_ASSOC_STRING(return_value, "$numberDecimal", outbuf);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, serialize)
 {
 	php_phongo_decimal128_t* intern;
@@ -172,9 +168,8 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, unserialize)
 {
 	php_phongo_decimal128_t* intern;
@@ -201,17 +196,15 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, unserialize)
 
 	php_phongo_decimal128_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ARR(php_phongo_decimal128_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Decimal128, __unserialize)
 {
 	zval* data;
@@ -221,12 +214,12 @@ static PHP_METHOD(MongoDB_BSON_Decimal128, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_decimal128_init_from_hash(Z_DECIMAL128_OBJ_P(getThis()), Z_ARRVAL_P(data));
-} /* }}} */
+}
 
-/* {{{ MongoDB\BSON\Decimal128 object handlers */
+/* MongoDB\BSON\Decimal128 object handlers */
 static zend_object_handlers php_phongo_handler_decimal128;
 
-static void php_phongo_decimal128_free_object(zend_object* object) /* {{{ */
+static void php_phongo_decimal128_free_object(zend_object* object)
 {
 	php_phongo_decimal128_t* intern = Z_OBJ_DECIMAL128(object);
 
@@ -236,9 +229,9 @@ static void php_phongo_decimal128_free_object(zend_object* object) /* {{{ */
 		zend_hash_destroy(intern->properties);
 		FREE_HASHTABLE(intern->properties);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_decimal128_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_decimal128_create_object(zend_class_entry* class_type)
 {
 	php_phongo_decimal128_t* intern = zend_object_alloc(sizeof(php_phongo_decimal128_t), class_type);
 
@@ -248,9 +241,9 @@ static zend_object* php_phongo_decimal128_create_object(zend_class_entry* class_
 	intern->std.handlers = &php_phongo_handler_decimal128;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static zend_object* php_phongo_decimal128_clone_object(phongo_compat_object_handler_type* object) /* {{{ */
+static zend_object* php_phongo_decimal128_clone_object(phongo_compat_object_handler_type* object)
 {
 	php_phongo_decimal128_t* intern;
 	php_phongo_decimal128_t* new_intern;
@@ -267,21 +260,20 @@ static zend_object* php_phongo_decimal128_clone_object(phongo_compat_object_hand
 	new_intern->initialized = true;
 
 	return new_object;
-} /* }}} */
+}
 
-static HashTable* php_phongo_decimal128_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_decimal128_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_decimal128_get_properties_hash(object, true);
-} /* }}} */
+}
 
-static HashTable* php_phongo_decimal128_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+static HashTable* php_phongo_decimal128_get_properties(phongo_compat_object_handler_type* object)
 {
 	return php_phongo_decimal128_get_properties_hash(object, false);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_decimal128_ce                = register_class_MongoDB_BSON_Decimal128(php_phongo_decimal128_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_decimal128_ce->create_object = php_phongo_decimal128_create_object;
@@ -296,4 +288,4 @@ void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_decimal128.get_properties = php_phongo_decimal128_get_properties;
 	php_phongo_handler_decimal128.free_obj       = php_phongo_decimal128_free_object;
 	php_phongo_handler_decimal128.offset         = XtOffsetOf(php_phongo_decimal128_t, std);
-} /* }}} */
+}

@@ -28,7 +28,7 @@ zend_class_entry* php_phongo_timestamp_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_timestamp_init(php_phongo_timestamp_t* intern, int64_t increment, int64_t timestamp) /* {{{ */
+static bool php_phongo_timestamp_init(php_phongo_timestamp_t* intern, int64_t increment, int64_t timestamp)
 {
 	if (increment < 0 || increment > UINT32_MAX) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected increment to be an unsigned 32-bit integer, %" PRId64 " given", increment);
@@ -45,11 +45,11 @@ static bool php_phongo_timestamp_init(php_phongo_timestamp_t* intern, int64_t in
 	intern->initialized = true;
 
 	return true;
-} /* }}} */
+}
 
 /* Initialize the object from numeric strings and return whether it was
  * successful. An exception will be thrown on error. */
-static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t* intern, const char* s_increment, size_t s_increment_len, const char* s_timestamp, size_t s_timestamp_len) /* {{{ */
+static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t* intern, const char* s_increment, size_t s_increment_len, const char* s_timestamp, size_t s_timestamp_len)
 {
 	int64_t increment, timestamp;
 
@@ -64,11 +64,11 @@ static bool php_phongo_timestamp_init_from_string(php_phongo_timestamp_t* intern
 	}
 
 	return php_phongo_timestamp_init(intern, increment, timestamp);
-} /* }}} */
+}
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t* intern, HashTable* props) /* {{{ */
+static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t* intern, HashTable* props)
 {
 	zval *increment, *timestamp;
 
@@ -85,9 +85,9 @@ static bool php_phongo_timestamp_init_from_hash(php_phongo_timestamp_t* intern, 
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"increment\" and \"timestamp\" integer or numeric string fields", ZSTR_VAL(php_phongo_timestamp_ce->name));
 	return false;
-} /* }}} */
+}
 
-static HashTable* php_phongo_timestamp_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+static HashTable* php_phongo_timestamp_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
 	php_phongo_timestamp_t* intern;
 	HashTable*              props;
@@ -118,9 +118,9 @@ static HashTable* php_phongo_timestamp_get_properties_hash(phongo_compat_object_
 	}
 
 	return props;
-} /* }}} */
+}
 
-/* {{{ Construct a new BSON timestamp type, which consists of a 4-byte increment and
+/* Construct a new BSON timestamp type, which consists of a 4-byte increment and
    4-byte timestamp. */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __construct)
 {
@@ -158,9 +158,8 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __construct)
 	}
 
 	php_phongo_timestamp_init_from_string(intern, Z_STRVAL_P(increment), Z_STRLEN_P(increment), Z_STRVAL_P(timestamp), Z_STRLEN_P(timestamp));
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, getIncrement)
 {
 	php_phongo_timestamp_t* intern;
@@ -170,9 +169,8 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, getIncrement)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETVAL_LONG(intern->increment);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, getTimestamp)
 {
 	php_phongo_timestamp_t* intern;
@@ -182,9 +180,8 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, getTimestamp)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETVAL_LONG(intern->timestamp);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __set_state)
 {
 	php_phongo_timestamp_t* intern;
@@ -201,9 +198,9 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __set_state)
 	props  = Z_ARRVAL_P(array);
 
 	php_phongo_timestamp_init_from_hash(intern, props);
-} /* }}} */
+}
 
-/* {{{ Returns a string in the form: [increment:timestamp] */
+/* Returns a string in the form: [increment:timestamp] */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __toString)
 {
 	php_phongo_timestamp_t* intern;
@@ -217,9 +214,8 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __toString)
 	retval_len = spprintf(&retval, 0, "[%" PRIu32 ":%" PRIu32 "]", intern->increment, intern->timestamp);
 	RETVAL_STRINGL(retval, retval_len);
 	efree(retval);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, jsonSerialize)
 {
 	php_phongo_timestamp_t* intern;
@@ -238,9 +234,8 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, jsonSerialize)
 		ADD_ASSOC_LONG_EX(&ts, "i", intern->increment);
 		ADD_ASSOC_ZVAL_EX(return_value, "$timestamp", &ts);
 	}
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, serialize)
 {
 	php_phongo_timestamp_t* intern;
@@ -272,9 +267,8 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, unserialize)
 {
 	php_phongo_timestamp_t* intern;
@@ -301,17 +295,15 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, unserialize)
 
 	php_phongo_timestamp_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ARR(php_phongo_timestamp_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
-} /* }}} */
+}
 
-/* {{{ */
 static PHP_METHOD(MongoDB_BSON_Timestamp, __unserialize)
 {
 	zval* data;
@@ -321,12 +313,12 @@ static PHP_METHOD(MongoDB_BSON_Timestamp, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_timestamp_init_from_hash(Z_TIMESTAMP_OBJ_P(getThis()), Z_ARRVAL_P(data));
-} /* }}} */
+}
 
-/* {{{ MongoDB\BSON\Timestamp object handlers */
+/* MongoDB\BSON\Timestamp object handlers */
 static zend_object_handlers php_phongo_handler_timestamp;
 
-static void php_phongo_timestamp_free_object(zend_object* object) /* {{{ */
+static void php_phongo_timestamp_free_object(zend_object* object)
 {
 	php_phongo_timestamp_t* intern = Z_OBJ_TIMESTAMP(object);
 
@@ -336,9 +328,9 @@ static void php_phongo_timestamp_free_object(zend_object* object) /* {{{ */
 		zend_hash_destroy(intern->properties);
 		FREE_HASHTABLE(intern->properties);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_timestamp_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_timestamp_create_object(zend_class_entry* class_type)
 {
 	php_phongo_timestamp_t* intern = zend_object_alloc(sizeof(php_phongo_timestamp_t), class_type);
 
@@ -348,9 +340,9 @@ static zend_object* php_phongo_timestamp_create_object(zend_class_entry* class_t
 	intern->std.handlers = &php_phongo_handler_timestamp;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static zend_object* php_phongo_timestamp_clone_object(phongo_compat_object_handler_type* object) /* {{{ */
+static zend_object* php_phongo_timestamp_clone_object(phongo_compat_object_handler_type* object)
 {
 	php_phongo_timestamp_t* intern;
 	php_phongo_timestamp_t* new_intern;
@@ -365,9 +357,9 @@ static zend_object* php_phongo_timestamp_clone_object(phongo_compat_object_handl
 	php_phongo_timestamp_init(new_intern, intern->increment, intern->timestamp);
 
 	return new_object;
-} /* }}} */
+}
 
-static int php_phongo_timestamp_compare_objects(zval* o1, zval* o2) /* {{{ */
+static int php_phongo_timestamp_compare_objects(zval* o1, zval* o2)
 {
 	php_phongo_timestamp_t *intern1, *intern2;
 
@@ -386,21 +378,20 @@ static int php_phongo_timestamp_compare_objects(zval* o1, zval* o2) /* {{{ */
 	}
 
 	return 0;
-} /* }}} */
+}
 
-static HashTable* php_phongo_timestamp_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_timestamp_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_timestamp_get_properties_hash(object, true);
-} /* }}} */
+}
 
-static HashTable* php_phongo_timestamp_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+static HashTable* php_phongo_timestamp_get_properties(phongo_compat_object_handler_type* object)
 {
 	return php_phongo_timestamp_get_properties_hash(object, false);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_timestamp_ce                = register_class_MongoDB_BSON_Timestamp(php_phongo_timestamp_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_timestamp_ce->create_object = php_phongo_timestamp_create_object;
@@ -416,4 +407,4 @@ void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_timestamp.get_properties = php_phongo_timestamp_get_properties;
 	php_phongo_handler_timestamp.free_obj       = php_phongo_timestamp_free_object;
 	php_phongo_handler_timestamp.offset         = XtOffsetOf(php_phongo_timestamp_t, std);
-} /* }}} */
+}

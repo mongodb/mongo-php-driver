@@ -47,7 +47,7 @@ php_phongo_server_description_type_map_t
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_ServerDescription)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_ServerDescription)
 
-/* {{{ Returns the most recent "hello" response */
+/* Returns the most recent "hello" response */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getHelloResponse)
 {
 	php_phongo_serverdescription_t* intern;
@@ -74,9 +74,9 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getHelloResponse)
 	}
 
 	RETURN_ZVAL(&state.zchild, 0, 1);
-} /* }}} */
+}
 
-/* {{{ Returns the server's hostname */
+/* Returns the server's hostname */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getHost)
 {
 	php_phongo_serverdescription_t* intern;
@@ -86,9 +86,9 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getHost)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETVAL_STRING(mongoc_server_description_host(intern->server_description)->host);
-} /* }}} */
+}
 
-/* {{{ Returns the server's last update time, in microseconds */
+/* Returns the server's last update time, in microseconds */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getLastUpdateTime)
 {
 	php_phongo_serverdescription_t* intern;
@@ -107,9 +107,9 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getLastUpdateTime)
 #endif
 
 	RETVAL_LONG(last_update_time);
-} /* }}} */
+}
 
-/* {{{ Returns the server's port */
+/* Returns the server's port */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getPort)
 {
 	php_phongo_serverdescription_t* intern;
@@ -119,9 +119,9 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getPort)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETVAL_LONG(mongoc_server_description_host(intern->server_description)->port);
-} /* }}} */
+}
 
-/* {{{ Returns the server's round trip time, in milliseconds */
+/* Returns the server's round trip time, in milliseconds */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getRoundTripTime)
 {
 	php_phongo_serverdescription_t* intern;
@@ -136,9 +136,9 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getRoundTripTime)
 	} else {
 		RETVAL_LONG((zend_long) mongoc_server_description_round_trip_time(intern->server_description));
 	}
-} /* }}} */
+}
 
-/* {{{ Returns the server's node type */
+/* Returns the server's node type */
 static PHP_METHOD(MongoDB_Driver_ServerDescription, getType)
 {
 	php_phongo_serverdescription_t* intern;
@@ -148,12 +148,12 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getType)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETVAL_STRING(mongoc_server_description_type(intern->server_description));
-} /* }}} */
+}
 
-/* {{{ MongoDB\Driver\ServerDescription object handlers */
+/* MongoDB\Driver\ServerDescription object handlers */
 static zend_object_handlers php_phongo_handler_serverdescription;
 
-static void php_phongo_serverdescription_free_object(zend_object* object) /* {{{ */
+static void php_phongo_serverdescription_free_object(zend_object* object)
 {
 	php_phongo_serverdescription_t* intern = Z_OBJ_SERVERDESCRIPTION(object);
 
@@ -169,7 +169,7 @@ static void php_phongo_serverdescription_free_object(zend_object* object) /* {{{
 	}
 }
 
-static zend_object* php_phongo_serverdescription_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_serverdescription_create_object(zend_class_entry* class_type)
 {
 	php_phongo_serverdescription_t* intern = zend_object_alloc(sizeof(php_phongo_serverdescription_t), class_type);
 
@@ -179,9 +179,9 @@ static zend_object* php_phongo_serverdescription_create_object(zend_class_entry*
 	intern->std.handlers = &php_phongo_handler_serverdescription;
 
 	return &intern->std;
-} /* }}} */
+}
 
-HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug) /* {{{ */
+HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object_handler_type* object, bool is_debug)
 {
 	php_phongo_serverdescription_t* intern = NULL;
 	HashTable*                      props;
@@ -255,21 +255,20 @@ HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object
 
 done:
 	return props;
-} /* }}} */
+}
 
-static HashTable* php_phongo_serverdescription_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_serverdescription_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_serverdescription_get_properties_hash(object, true);
-} /* }}} */
+}
 
-static HashTable* php_phongo_serverdescription_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+static HashTable* php_phongo_serverdescription_get_properties(phongo_compat_object_handler_type* object)
 {
 	return php_phongo_serverdescription_get_properties_hash(object, false);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_serverdescription_ce                = register_class_MongoDB_Driver_ServerDescription();
 	php_phongo_serverdescription_ce->create_object = php_phongo_serverdescription_create_object;
@@ -280,9 +279,9 @@ void php_phongo_serverdescription_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_serverdescription.get_properties = php_phongo_serverdescription_get_properties;
 	php_phongo_handler_serverdescription.free_obj       = php_phongo_serverdescription_free_object;
 	php_phongo_handler_serverdescription.offset         = XtOffsetOf(php_phongo_serverdescription_t, std);
-} /* }}} */
+}
 
-void phongo_serverdescription_init_ex(zval* return_value, mongoc_server_description_t* server_description, bool copy) /* {{{ */
+void phongo_serverdescription_init_ex(zval* return_value, mongoc_server_description_t* server_description, bool copy)
 {
 	php_phongo_serverdescription_t* intern;
 
@@ -291,7 +290,6 @@ void phongo_serverdescription_init_ex(zval* return_value, mongoc_server_descript
 	intern                     = Z_SERVERDESCRIPTION_OBJ_P(return_value);
 	intern->server_description = copy ? mongoc_server_description_new_copy(server_description) : server_description;
 }
-/* }}} */
 
 php_phongo_server_description_type_t php_phongo_server_description_type(mongoc_server_description_t* sd)
 {
