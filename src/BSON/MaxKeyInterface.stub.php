@@ -1,9 +1,9 @@
 <?php
 
 /**
-  * @generate-class-entries static
-  * @generate-function-entries
-  */
+ * @generate-class-entries static
+ * @generate-function-entries
+ */
 
 namespace MongoDB\BSON;
 

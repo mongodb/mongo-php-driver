@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: d51b2b42e3bcce4fc655379f5b97ca8aec7a7b06 */
+ * Stub hash: 846934164a9297c9f8ce4ac61862d8fe62ec1594 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_MaxKey___set_state, 0, 1, MongoDB\\BSON\\MaxKey, 0)
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)

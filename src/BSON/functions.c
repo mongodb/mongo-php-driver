@@ -30,7 +30,7 @@ typedef enum {
 
 /* {{{ proto string MongoDB\BSON\fromPHP(array|object $value)
    Returns the BSON representation of a PHP value */
-PHP_FUNCTION(MongoDB_BSON_fromPHP)
+PHP_FUNCTION(fromPHP)
 {
 	zval*   data;
 	bson_t* bson;
@@ -48,7 +48,7 @@ PHP_FUNCTION(MongoDB_BSON_fromPHP)
 
 /* {{{ proto array|object MongoDB\BSON\toPHP(string $bson [, array $typemap = array()])
    Returns the PHP representation of a BSON value, optionally converting it into a custom class */
-PHP_FUNCTION(MongoDB_BSON_toPHP)
+PHP_FUNCTION(toPHP)
 {
 	char*                 data;
 	size_t                data_len;
@@ -80,7 +80,7 @@ PHP_FUNCTION(MongoDB_BSON_toPHP)
 
 /* {{{ proto string MongoDB\BSON\fromJSON(string $json)
    Returns the BSON representation of a JSON value */
-PHP_FUNCTION(MongoDB_BSON_fromJSON)
+PHP_FUNCTION(fromJSON)
 {
 	char*        json;
 	size_t       json_len;
@@ -148,21 +148,21 @@ static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mo
 
 /* {{{ proto string MongoDB\BSON\toJSON(string $bson)
    Returns the legacy extended JSON representation of a BSON value */
-PHP_FUNCTION(MongoDB_BSON_toJSON)
+PHP_FUNCTION(toJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_LEGACY);
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\toCanonicalExtendedJSON(string $bson)
    Returns the canonical extended JSON representation of a BSON value */
-PHP_FUNCTION(MongoDB_BSON_toCanonicalExtendedJSON)
+PHP_FUNCTION(toCanonicalExtendedJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_CANONICAL);
 } /* }}} */
 
 /* {{{ proto string MongoDB\BSON\toRelaxedExtendedJSON(string $bson)
    Returns the relaxed extended JSON representation of a BSON value */
-PHP_FUNCTION(MongoDB_BSON_toRelaxedExtendedJSON)
+PHP_FUNCTION(toRelaxedExtendedJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_RELAXED);
 } /* }}} */

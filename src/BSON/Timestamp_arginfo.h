@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 39cc2f31b3d2677c3f5d660502b7510b4e3335fa */
+ * Stub hash: 889b889b453597881e7eba0badb824335143070a */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Timestamp___construct, 0, 0, 2)

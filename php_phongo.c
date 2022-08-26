@@ -28,8 +28,7 @@
 #include "src/phongo_client.h"
 #include "src/phongo_error.h"
 #include "src/phongo_ini.h"
-#include "src/BSON/functions.h"
-#include "src/MongoDB/Monitoring/functions.h"
+#include "src/functions_arginfo.h"
 
 ZEND_DECLARE_MODULE_GLOBALS(mongodb)
 #if defined(ZTS) && defined(COMPILE_DL_MONGODB)
@@ -483,42 +482,7 @@ PHP_FUNCTION(MongoDB_disabled___wakeup) /* {{{ */
 } /* }}} */
 /* }}} */
 
-/* {{{ Extension functions, module dependencies, and module entry */
-ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromPHP, 0, 0, 1)
-	ZEND_ARG_INFO(0, value)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_bson_toPHP, 0, 0, 1)
-	ZEND_ARG_INFO(0, bson)
-	ZEND_ARG_ARRAY_INFO(0, typemap, 0)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_bson_toJSON, 0, 0, 1)
-	ZEND_ARG_INFO(0, bson)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_bson_fromJSON, 0, 0, 1)
-	ZEND_ARG_INFO(0, json)
-ZEND_END_ARG_INFO();
-
-ZEND_BEGIN_ARG_INFO_EX(ai_mongodb_driver_monitoring_subscriber, 0, 0, 1)
-	ZEND_ARG_OBJ_INFO(0, subscriber, MongoDB\\Driver\\Monitoring\\Subscriber, 0)
-ZEND_END_ARG_INFO();
-
-static const zend_function_entry mongodb_functions[] = {
-	/* clang-format off */
-	ZEND_NS_NAMED_FE("MongoDB\\BSON", fromPHP, PHP_FN(MongoDB_BSON_fromPHP), ai_bson_fromPHP)
-	ZEND_NS_NAMED_FE("MongoDB\\BSON", toPHP, PHP_FN(MongoDB_BSON_toPHP), ai_bson_toPHP)
-	ZEND_NS_NAMED_FE("MongoDB\\BSON", toJSON, PHP_FN(MongoDB_BSON_toJSON), ai_bson_toJSON)
-	ZEND_NS_NAMED_FE("MongoDB\\BSON", toCanonicalExtendedJSON, PHP_FN(MongoDB_BSON_toCanonicalExtendedJSON), ai_bson_toJSON)
-	ZEND_NS_NAMED_FE("MongoDB\\BSON", toRelaxedExtendedJSON, PHP_FN(MongoDB_BSON_toRelaxedExtendedJSON), ai_bson_toJSON)
-	ZEND_NS_NAMED_FE("MongoDB\\BSON", fromJSON, PHP_FN(MongoDB_BSON_fromJSON), ai_bson_fromJSON)
-	ZEND_NS_NAMED_FE("MongoDB\\Driver\\Monitoring", addSubscriber, PHP_FN(MongoDB_Driver_Monitoring_addSubscriber), ai_mongodb_driver_monitoring_subscriber)
-	ZEND_NS_NAMED_FE("MongoDB\\Driver\\Monitoring", removeSubscriber, PHP_FN(MongoDB_Driver_Monitoring_removeSubscriber), ai_mongodb_driver_monitoring_subscriber)
-	PHP_FE_END
-	/* clang-format on */
-};
-
+/* {{{ Module dependencies and module entry */
 static const zend_module_dep mongodb_deps[] = {
 	/* clang-format off */
 	ZEND_MOD_REQUIRED("date")
@@ -534,7 +498,7 @@ zend_module_entry mongodb_module_entry = {
 	NULL,
 	mongodb_deps,
 	"mongodb",
-	mongodb_functions,
+	ext_functions,
 	PHP_MINIT(mongodb),
 	PHP_MSHUTDOWN(mongodb),
 	PHP_RINIT(mongodb),
