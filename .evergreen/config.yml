@@ -388,6 +388,7 @@ functions:
         working_dir: "src"
         script: |
           ${PREPARE_SHELL}
+          export CRYPT_SHARED_LIB_PATH="${client_side_encryption_crypt_shared_lib_path}"
           API_VERSION=${API_VERSION} TESTS=${TESTS} SSL=${SSL} MONGODB_URI="${MONGODB_URI}${APPEND_URI}" sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
 
   "cleanup":
@@ -605,8 +606,6 @@ tasks:
             TOPOLOGY: "replica_set"
         - func: "fetch crypt_shared"
         - func: "run tests"
-          vars:
-            CRYPT_SHARED_LIB_PATH: "${client_side_encryption_crypt_shared_lib_path}"
 
     - name: "test-loadBalanced"
       tags: ["loadbalanced"]
