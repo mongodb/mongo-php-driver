@@ -459,6 +459,17 @@ PHP_MINFO_FUNCTION(mongodb) /* {{{ */
 #else /* MONGOCRYPT_ENABLE_CRYPTO */
 	php_info_print_table_row(2, "libmongocrypt crypto", "disabled");
 #endif
+
+	{
+		const char* crypt_shared_version = php_phongo_crypt_shared_version();
+
+		if (crypt_shared_version) {
+			php_info_print_table_row(2, "crypt_shared library version", crypt_shared_version);
+		} else {
+			php_info_print_table_row(2, "crypt_shared library version", "unknown");
+		}
+	}
+
 #else /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
 	php_info_print_table_row(2, "libmongocrypt", "disabled");
 #endif
