@@ -98,8 +98,12 @@ function create_test_manager(string $uri = null, array $options = [], array $dri
         $driverOptions['serverApi'] = new ServerApi(getenv('API_VERSION'));
     }
 
-    if (getenv('CRYPT_SHARED_LIB_PATH') && ! isset($driverOptions['autoEncryption']['extraOptions']['cryptSharedLibPath'])) {
-        $driverOptions['autoEncryption']['extraOptions']['cryptSharedLibPath'] = getenv('CRYPT_SHARED_LIB_PATH');
+    if (getenv('CRYPT_SHARED_LIB_PATH') && isset($driverOptions['autoEncryption'])) {
+        if (is_array($driverOptions['autoEncryption']) &&
+            (! isset($driverOptions['autoEncryption']['extraOptions']) || is_array($driverOptions['autoEncryption']['extraOptions'])) &&
+            ! isset($driverOptions['autoEncryption']['extraOptions']['cryptSharedLibPath'])) {
+            $driverOptions['autoEncryption']['extraOptions']['cryptSharedLibPath'] = getenv('CRYPT_SHARED_LIB_PATH');
+        }
     }
 
     return new Manager($uri ?? URI, $options, $driverOptions);
