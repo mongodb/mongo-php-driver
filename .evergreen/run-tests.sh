@@ -1,16 +1,14 @@
 #!/bin/sh
 set -o errexit  # Exit the script with error if any of the commands fail
 
-# Supported/used environment variables:
-#   SSL             Set to "yes" to enable SSL. Defaults to "nossl"
-#   MONGODB_URI     Set the suggested connection MONGODB_URI (including credentials and topology info)
-#   TESTS           Optional TESTS environment variable for run-tests.php
-#   API_VERSION     Optional API_VERSION environment variable for run-tests.php
-
-SSL=${SSL:-nossl}
-MONGODB_URI=${MONGODB_URI:-}
-TESTS=${TESTS:-}
-API_VERSION=${API_VERSION:-}
+# Supported environment variables
+API_VERSION=${API_VERSION:-} # Optional API_VERSION environment variable for run-tests.php
+CRYPT_SHARED_LIB_PATH="${CRYPT_SHARED_LIB_PATH:-}" # Optional path to crypt_shared library
+MONGODB_URI=${MONGODB_URI:-} # Connection string (including credentials and topology info)
+SKIP_CRYPT_SHARED="${SKIP_CRYPT_SHARED:-no}" # Specify "yes" to ignore CRYPT_SHARED_LIB_PATH. Defaults to "no"
+SSL=${SSL:-no} # Specify "yes" to enable SSL. Defaults to "no"
+SSL_DIR=${SSL_DIR-} # Optional SSL_DIR environment variable for run-tests.php
+TESTS=${TESTS:-} # Optional TESTS environment variable for run-tests.php
 
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 [ -z "$MARCH" ] && MARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
@@ -28,12 +26,23 @@ if [ "$SSL" = "yes" ]; then
    fi
 fi
 
+if [ "${SKIP_CRYPT_SHARED}" = "yes" ]; then
+   CRYPT_SHARED_LIB_PATH=""
+   echo "crypt_shared library is skipped"
+elif [ -z "${CRYPT_SHARED_LIB_PATH}" ]; then
+   echo "crypt_shared library path is empty"
+else
+   echo "crypt_shared library will be loaded from path: $CRYPT_SHARED_LIB_PATH"
+fi
+
 echo "Running tests with URI: $MONGODB_URI"
 
 # Run the tests, and store the results in a junit result file
-case "$OS" in
-   *)
-      API_VERSION="${API_VERSION}" TEST_PHP_JUNIT="${PROJECT_DIRECTORY}/test-results.xml" TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test TESTS=$TESTS
-      ;;
-esac
-
+API_VERSION="${API_VERSION}" \
+CRYPT_SHARED_LIB_PATH="${CRYPT_SHARED_LIB_PATH}" \
+MONGODB_URI="${MONGODB_URI}" \
+SSL_DIR="${SSL_DIR}" \
+TEST_PHP_JUNIT="${PROJECT_DIRECTORY}/test-results.xml" \
+TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" \
+TESTS="$TESTS" \
+make test
