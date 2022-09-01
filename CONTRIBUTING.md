@@ -100,24 +100,31 @@ be less restrictive.
 
 The test suite references the following environment variables:
 
- * `MONGODB_URI`: Connection string. Defaults to `mongodb://127.0.0.1/`, which
-   assumes a MongoDB server is listening localhost port 27017.
- * `MONGO_ORCHESTRATION_URI`: API endpoint for Mongo Orchestration. Defaults to
-   `http://localhost:8889/v1`. This is only used by a few tests that start
+ * `MONGODB_DATABASE`: Default database to use in tests. Defaults to `phongo`.
+ * `MONGO_ORCHESTRATION_URI`: API endpoint for
+   [Mongo Orchestration](https://github.com/10gen/mongo-orchestration). Defaults
+   to `http://localhost:8889/v1`. This is only used by a few tests that start
    temporary servers, and those tests will be skipped if Mongo Orchestration is
    inaccessible.
- * `MONGODB_DATABASE`: Default database to use in tests. Defaults to `phongo`.
+ * `MONGODB_URI`: Connection string. Defaults to `mongodb://127.0.0.1/`, which
+   assumes a MongoDB server is listening on localhost port 27017.
  * `SSL_DIR`: Path to directory containing certificate files. On Evergreen, this
    will be set to the
    [.evergreen/x509gen](https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/x509gen)
    directory within
    [drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools).
    If undefined or inaccessible, tests requiring certificates will be skipped.
+
+The following environment variable is used for [stable API testing](https://github.com/mongodb/specifications/blob/master/source/versioned-api/tests/README.rst):
+
  * `API_VERSION`: If defined, this value will be used to construct a
    [`MongoDB\Driver\ServerApi`](https://www.php.net/manual/en/mongodb-driver-serverapi.construct.php),
    which will then be specified as the `serverApi` driver option for
    [`MongoDB\Driver\Manager`](https://www.php.net/manual/en/class.mongodb-driver-manager.php)
    objects created by the test suite.
+
+The following environment variables are used for [CSFLE testing](https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/tests/README.rst):
+
  * `CRYPT_SHARED_LIB_PATH`: If defined, this value will be used to set the
    `cryptSharedLibPath` autoEncryption driver option for
    [`MongoDB\Driver\Manager`](https://www.php.net/manual/en/class.mongodb-driver-manager.php)
