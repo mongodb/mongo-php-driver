@@ -139,7 +139,7 @@ static PHP_METHOD(MongoDB_Driver_ServerDescription, getRoundTripTime)
 	if (mongoc_server_description_round_trip_time(intern->server_description) == -1) {
 		RETVAL_NULL();
 	} else {
-		RETVAL_LONG((zend_long) mongoc_server_description_round_trip_time(intern->server_description));
+		RETVAL_LONG(mongoc_server_description_round_trip_time(intern->server_description));
 	}
 } /* }}} */
 
@@ -253,7 +253,7 @@ HashTable* php_phongo_serverdescription_get_properties_hash(phongo_compat_object
 		if (mongoc_server_description_round_trip_time(intern->server_description) == -1) {
 			ZVAL_NULL(&round_trip_time);
 		} else {
-			ZVAL_LONG(&round_trip_time, (zend_long) mongoc_server_description_round_trip_time(intern->server_description));
+			ZVAL_LONG(&round_trip_time, mongoc_server_description_round_trip_time(intern->server_description));
 		}
 
 		zend_hash_str_update(props, "round_trip_time", sizeof("round_trip_time") - 1, &round_trip_time);
