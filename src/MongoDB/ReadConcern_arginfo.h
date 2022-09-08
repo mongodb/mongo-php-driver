@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 6b585fffb9a004ecfafc46c9e1fb60a73f8536a9 */
+ * Stub hash: a017ad20fa8005cedbf7305aae5b45dd558356aa */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadConcern___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, level, IS_STRING, 1, "null")
@@ -60,7 +60,7 @@ static const zend_function_entry class_MongoDB_Driver_ReadConcern_methods[] = {
 	ZEND_ME(MongoDB_Driver_ReadConcern, __construct, arginfo_class_MongoDB_Driver_ReadConcern___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadConcern, getLevel, arginfo_class_MongoDB_Driver_ReadConcern_getLevel, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadConcern, isDefault, arginfo_class_MongoDB_Driver_ReadConcern_isDefault, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_ReadConcern, __set_state, arginfo_class_MongoDB_Driver_ReadConcern___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(MongoDB_Driver_ReadConcern, __set_state, arginfo_class_MongoDB_Driver_ReadConcern___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_ReadConcern, bsonSerialize, arginfo_class_MongoDB_Driver_ReadConcern_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif

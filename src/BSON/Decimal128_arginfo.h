@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: b26119e42fe5a51a4f6eec2c9876c8129c275a15 */
+ * Stub hash: 7a4bde2dfe8793610977f97c6bc1337d5238b0bc */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Decimal128___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, value, IS_STRING, 0)
@@ -54,7 +54,7 @@ static ZEND_METHOD(MongoDB_BSON_Decimal128, jsonSerialize);
 static const zend_function_entry class_MongoDB_BSON_Decimal128_methods[] = {
 	ZEND_ME(MongoDB_BSON_Decimal128, __construct, arginfo_class_MongoDB_BSON_Decimal128___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Decimal128, __toString, arginfo_class_MongoDB_BSON_Decimal128___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_Decimal128, __set_state, arginfo_class_MongoDB_BSON_Decimal128___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(MongoDB_BSON_Decimal128, __set_state, arginfo_class_MongoDB_BSON_Decimal128___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Decimal128, serialize, arginfo_class_MongoDB_BSON_Decimal128_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Decimal128, unserialize, arginfo_class_MongoDB_BSON_Decimal128_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Decimal128, __unserialize, arginfo_class_MongoDB_BSON_Decimal128___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

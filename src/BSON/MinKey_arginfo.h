@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 4e88611e3a9becb0c24acee79f1bfc7004b912b5 */
+ * Stub hash: e0cecac78204d3f892c33bd0921b5af8b3cffc11 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_MinKey___set_state, 0, 1, MongoDB\\BSON\\MinKey, 0)
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
@@ -44,7 +44,7 @@ static ZEND_METHOD(MongoDB_BSON_MinKey, jsonSerialize);
 
 
 static const zend_function_entry class_MongoDB_BSON_MinKey_methods[] = {
-	ZEND_ME(MongoDB_BSON_MinKey, __set_state, arginfo_class_MongoDB_BSON_MinKey___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(MongoDB_BSON_MinKey, __set_state, arginfo_class_MongoDB_BSON_MinKey___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_MinKey, serialize, arginfo_class_MongoDB_BSON_MinKey_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_MinKey, unserialize, arginfo_class_MongoDB_BSON_MinKey_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_MinKey, __unserialize, arginfo_class_MongoDB_BSON_MinKey___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

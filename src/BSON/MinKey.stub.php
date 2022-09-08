@@ -9,7 +9,7 @@ namespace MongoDB\BSON;
 
 final class MinKey implements MinKeyInterface, \JsonSerializable, Type, \Serializable
 {
-    public static function __set_state(array $properties): MinKey {}
+    final public static function __set_state(array $properties): MinKey {}
 
     final public function serialize(): string {}
 

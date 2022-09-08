@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 561937975ec62eaa627924f744d3e4426a903851 */
+ * Stub hash: 11bb54c6ca6c5d8dedd66b7d77b89779b1e81614 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ServerApi___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, version, IS_STRING, 0)
@@ -52,7 +52,7 @@ static ZEND_METHOD(MongoDB_Driver_ServerApi, __serialize);
 
 static const zend_function_entry class_MongoDB_Driver_ServerApi_methods[] = {
 	ZEND_ME(MongoDB_Driver_ServerApi, __construct, arginfo_class_MongoDB_Driver_ServerApi___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_ServerApi, __set_state, arginfo_class_MongoDB_Driver_ServerApi___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(MongoDB_Driver_ServerApi, __set_state, arginfo_class_MongoDB_Driver_ServerApi___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_ServerApi, bsonSerialize, arginfo_class_MongoDB_Driver_ServerApi_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif

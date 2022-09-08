@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: fac819b0ca7564fd16a3a7f972a5b3cbee650c04 */
+ * Stub hash: 7b9fd21a206d97f242415b2b2f0fc1ca847524ca */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Binary___construct, 0, 0, 2)
 	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
@@ -63,7 +63,7 @@ static const zend_function_entry class_MongoDB_BSON_Binary_methods[] = {
 	ZEND_ME(MongoDB_BSON_Binary, __construct, arginfo_class_MongoDB_BSON_Binary___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, getData, arginfo_class_MongoDB_BSON_Binary_getData, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, getType, arginfo_class_MongoDB_BSON_Binary_getType, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_Binary, __set_state, arginfo_class_MongoDB_BSON_Binary___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(MongoDB_BSON_Binary, __set_state, arginfo_class_MongoDB_BSON_Binary___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, __toString, arginfo_class_MongoDB_BSON_Binary___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, serialize, arginfo_class_MongoDB_BSON_Binary_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, unserialize, arginfo_class_MongoDB_BSON_Binary_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

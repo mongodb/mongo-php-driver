@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 93a9d4c9533665bb2153b9c2f0c9a7ae7e0f4063 */
+ * Stub hash: a26f3f81298ed3571f27bad3ade4a8540ca986f7 */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Javascript___construct, 0, 0, 1)
@@ -80,7 +80,7 @@ static const zend_function_entry class_MongoDB_BSON_Javascript_methods[] = {
 #if !(PHP_VERSION_ID >= 80000)
 	ZEND_ME(MongoDB_BSON_Javascript, __construct, arginfo_class_MongoDB_BSON_Javascript___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
-	ZEND_ME(MongoDB_BSON_Javascript, __set_state, arginfo_class_MongoDB_BSON_Javascript___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(MongoDB_BSON_Javascript, __set_state, arginfo_class_MongoDB_BSON_Javascript___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Javascript, getCode, arginfo_class_MongoDB_BSON_Javascript_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Javascript, getScope, arginfo_class_MongoDB_BSON_Javascript_getScope, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Javascript, __toString, arginfo_class_MongoDB_BSON_Javascript___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

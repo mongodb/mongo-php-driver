@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 846934164a9297c9f8ce4ac61862d8fe62ec1594 */
+ * Stub hash: 2c46622b8d9c8a1c600bb5384a1a56de1150f4d5 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_MaxKey___set_state, 0, 1, MongoDB\\BSON\\MaxKey, 0)
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
@@ -44,7 +44,7 @@ static ZEND_METHOD(MongoDB_BSON_MaxKey, jsonSerialize);
 
 
 static const zend_function_entry class_MongoDB_BSON_MaxKey_methods[] = {
-	ZEND_ME(MongoDB_BSON_MaxKey, __set_state, arginfo_class_MongoDB_BSON_MaxKey___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(MongoDB_BSON_MaxKey, __set_state, arginfo_class_MongoDB_BSON_MaxKey___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_MaxKey, serialize, arginfo_class_MongoDB_BSON_MaxKey_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_MaxKey, unserialize, arginfo_class_MongoDB_BSON_MaxKey_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_MaxKey, __unserialize, arginfo_class_MongoDB_BSON_MaxKey___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

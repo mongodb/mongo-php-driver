@@ -17,7 +17,7 @@ final class Regex implements RegexInterface, \JsonSerializable, Type, \Serializa
 
     public final function __toString(): string {}
 
-    public static function __set_state(array $properties): Regex {}
+    final public static function __set_state(array $properties): Regex {}
 
     final public function serialize(): string {}
 
