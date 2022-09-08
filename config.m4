@@ -243,14 +243,14 @@ if test "$PHP_MONGODB" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
-      if $PKG_CONFIG libbson-1.0 --atleast-version 1.22.0; then
+      if $PKG_CONFIG libbson-1.0 --atleast-version 1.22.1; then
         PHP_MONGODB_BSON_CFLAGS=`$PKG_CONFIG libbson-1.0 --cflags`
         PHP_MONGODB_BSON_LIBS=`$PKG_CONFIG libbson-1.0 --libs`
         PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
         PHP_MONGODB_BSON_VERSION_STRING="System ($PHP_MONGODB_BSON_VERSION)"
         AC_MSG_RESULT(version $PHP_MONGODB_BSON_VERSION found)
       else
-        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.22.0)
+        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.22.1)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libbson must be installed)
@@ -261,14 +261,14 @@ if test "$PHP_MONGODB" != "no"; then
 
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0; then
-      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.22.0; then
+      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.22.1; then
         PHP_MONGODB_MONGOC_CFLAGS=`$PKG_CONFIG libmongoc-1.0 --cflags`
         PHP_MONGODB_MONGOC_LIBS=`$PKG_CONFIG libmongoc-1.0 --libs`
         PHP_MONGODB_MONGOC_VERSION=`$PKG_CONFIG libmongoc-1.0 --modversion`
         PHP_MONGODB_MONGOC_VERSION_STRING="System ($PHP_MONGODB_MONGOC_VERSION)"
         AC_MSG_RESULT(version $PHP_MONGODB_MONGOC_VERSION found)
       else
-        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.22.0)
+        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.22.1)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libmongoc must be installed)
@@ -281,7 +281,7 @@ if test "$PHP_MONGODB" != "no"; then
       AC_MSG_CHECKING(for libmongocrypt)
 
       if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongocrypt; then
-        if $PKG_CONFIG libmongocrypt --atleast-version 1.5.0; then
+        if $PKG_CONFIG libmongocrypt --atleast-version 1.5.2; then
           PHP_MONGODB_MONGOCRYPT_CFLAGS=`$PKG_CONFIG libmongocrypt --cflags`
           PHP_MONGODB_MONGOCRYPT_LIBS=`$PKG_CONFIG libmongocrypt --libs`
           PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt --modversion`
@@ -292,7 +292,7 @@ if test "$PHP_MONGODB" != "no"; then
           PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
           AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
         elif test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
-          AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.5.0)
+          AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.5.2)
         else
           AC_MSG_RESULT(found an older version, compiling without client-side encryption)
         fi
