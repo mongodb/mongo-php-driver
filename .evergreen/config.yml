@@ -1153,17 +1153,16 @@ axes:
   - id: libmongoc-version
     display_name: libmongoc version
     values:
-      # TODO: enable lowest-supported and upcoming-stable after 1.22.0 is released and r1.22 is branched.
-      #- id: "lowest-supported"
-      #  display_name: "1.22.0"
-      #  variables:
-      #    LIBMONGOC_VERSION: "1.22.0"
-      #- id: "upcoming-stable"
-      #  display_name: "1.22-dev"
-      #  variables:
-      #    LIBMONGOC_VERSION: "r1.22"
+      - id: "lowest-supported"
+        display_name: "1.22.1"
+        variables:
+          LIBMONGOC_VERSION: "1.22.1"
+      - id: "upcoming-stable"
+        display_name: "1.22-dev"
+        variables:
+          LIBMONGOC_VERSION: "r1.22"
       - id: "latest-dev"
-        display_name: "1.22-dev (master)"
+        display_name: "master"
         variables:
           LIBMONGOC_VERSION: "master"
 
