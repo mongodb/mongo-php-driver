@@ -1158,9 +1158,9 @@ axes:
         variables:
           LIBMONGOC_VERSION: "1.22.1"
       - id: "upcoming-stable"
-        display_name: "1.22-dev"
+        display_name: "1.23-dev"
         variables:
-          LIBMONGOC_VERSION: "r1.22"
+          LIBMONGOC_VERSION: "r1.23"
       - id: "latest-dev"
         display_name: "master"
         variables:
