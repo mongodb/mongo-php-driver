@@ -362,7 +362,7 @@ static PHP_METHOD(MongoDB_Driver_Server, getLatency)
 	if (mongoc_server_description_round_trip_time(sd) == -1) {
 		RETVAL_NULL();
 	} else {
-		RETVAL_LONG((zend_long) mongoc_server_description_round_trip_time(sd));
+		RETVAL_LONG(mongoc_server_description_round_trip_time(sd));
 	}
 
 	mongoc_server_description_destroy(sd);
@@ -713,7 +713,7 @@ bool php_phongo_server_to_zval(zval* retval, mongoc_client_t* client, mongoc_ser
 	if (mongoc_server_description_round_trip_time(sd) == -1) {
 		ADD_ASSOC_NULL_EX(retval, "round_trip_time");
 	} else {
-		ADD_ASSOC_LONG_EX(retval, "round_trip_time", (zend_long) mongoc_server_description_round_trip_time(sd));
+		ADD_ASSOC_LONG_EX(retval, "round_trip_time", mongoc_server_description_round_trip_time(sd));
 	}
 
 	return true;
