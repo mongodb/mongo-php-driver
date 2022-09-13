@@ -34,7 +34,7 @@
 zend_class_entry* php_phongo_bulkwrite_ce;
 
 /* Extracts the "_id" field of a BSON document into a return value. */
-static void php_phongo_bulkwrite_extract_id(bson_t* doc, zval** return_value) /* {{{ */
+static void php_phongo_bulkwrite_extract_id(bson_t* doc, zval** return_value)
 {
 	zval*                 id = NULL;
 	php_phongo_bson_state state;
@@ -54,10 +54,10 @@ static void php_phongo_bulkwrite_extract_id(bson_t* doc, zval** return_value) /*
 
 cleanup:
 	zval_ptr_dtor(&state.zchild);
-} /* }}} */
+}
 
 /* Returns whether any top-level field names in the document contain a "$". */
-static inline bool php_phongo_bulkwrite_update_has_operators(bson_t* bupdate) /* {{{ */
+static inline bool php_phongo_bulkwrite_update_has_operators(bson_t* bupdate)
 {
 	bson_iter_t iter;
 
@@ -70,10 +70,10 @@ static inline bool php_phongo_bulkwrite_update_has_operators(bson_t* bupdate) /*
 	}
 
 	return false;
-} /* }}} */
+}
 
 /* Returns whether the update document is considered an aggregation pipeline */
-static inline bool php_phongo_bulkwrite_update_is_pipeline(bson_t* bupdate) /* {{{ */
+static inline bool php_phongo_bulkwrite_update_is_pipeline(bson_t* bupdate)
 {
 	bson_iter_t iter;
 	bson_iter_t child;
@@ -114,12 +114,12 @@ static inline bool php_phongo_bulkwrite_update_is_pipeline(bson_t* bupdate) /* {
 
 	/* should return false when the document is empty */
 	return i != 0;
-} /* }}} */
+}
 
 /* Returns whether the BSON array's keys are a sequence of integer strings
  * starting with "0". BSON_APPEND_ARRAY considers it the caller's responsibility
  * to ensure that the array's keys are properly formatted. */
-static inline bool php_phongo_bulkwrite_bson_array_has_valid_keys(bson_t* array) /* {{{ */
+static inline bool php_phongo_bulkwrite_bson_array_has_valid_keys(bson_t* array)
 {
 	bson_iter_t iter;
 
@@ -143,11 +143,11 @@ static inline bool php_phongo_bulkwrite_bson_array_has_valid_keys(bson_t* array)
 	}
 
 	return true;
-} /* }}} */
+}
 
 /* Appends an array field for the given opts document and key. Returns true on
  * success; otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_bulkwrite_opts_append_array(bson_t* opts, const char* key, zval* zarr) /* {{{ */
+static bool php_phongo_bulkwrite_opts_append_array(bson_t* opts, const char* key, zval* zarr)
 {
 	zval*  value = php_array_fetch(zarr, key);
 	bson_t b     = BSON_INITIALIZER;
@@ -178,11 +178,11 @@ static bool php_phongo_bulkwrite_opts_append_array(bson_t* opts, const char* key
 
 	bson_destroy(&b);
 	return true;
-} /* }}} */
+}
 
 /* Appends a document field for the given opts document and key. Returns true on
  * success; otherwise, false is returned and an exception is thrown. */
-static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* key, zval* zarr) /* {{{ */
+static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* key, zval* zarr)
 {
 	zval*  value = php_array_fetch(zarr, key);
 	bson_t b     = BSON_INITIALIZER;
@@ -207,7 +207,7 @@ static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* 
 
 	bson_destroy(&b);
 	return true;
-} /* }}} */
+}
 
 #define PHONGO_BULKWRITE_APPEND_BOOL(opt, value)                                                       \
 	if (!BSON_APPEND_BOOL(boptions, (opt), (value))) {                                                 \
@@ -240,7 +240,7 @@ static bool php_phongo_bulkwrite_opts_append_document(bson_t* opts, const char* 
  *
  * The "hint" option must be a string or document. Check for both types and
  * merge into BSON options accordingly. */
-static bool php_phongo_bulkwrite_opt_hint(bson_t* boptions, zval* zoptions) /* {{{ */
+static bool php_phongo_bulkwrite_opt_hint(bson_t* boptions, zval* zoptions)
 {
 	/* The "hint" option (or "$hint" modifier) must be a string or document.
 	 * Check for both types and merge into BSON options accordingly. */
@@ -263,10 +263,10 @@ static bool php_phongo_bulkwrite_opt_hint(bson_t* boptions, zval* zoptions) /* {
 	}
 
 	return true;
-} /* }}} */
+}
 
 /* Applies options (including defaults) for an update operation. */
-static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zoptions) /* {{{ */
+static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zoptions)
 {
 	bool multi = false, upsert = false;
 
@@ -285,10 +285,10 @@ static bool php_phongo_bulkwrite_update_apply_options(bson_t* boptions, zval* zo
 	}
 
 	return true;
-} /* }}} */
+}
 
 /* Applies options (including defaults) for a delete operation. */
-static bool php_phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zoptions) /* {{{ */
+static bool php_phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zoptions)
 {
 	int32_t limit = 0;
 
@@ -304,14 +304,13 @@ static bool php_phongo_bulkwrite_delete_apply_options(bson_t* boptions, zval* zo
 	}
 
 	return true;
-} /* }}} */
+}
 
 #undef PHONGO_BULKWRITE_APPEND_BOOL
 #undef PHONGO_BULKWRITE_APPEND_INT32
 #undef PHONGO_BULKWRITE_OPT_DOCUMENT
 
-/* {{{ proto void MongoDB\Driver\BulkWrite::__construct([array $options = array()])
-   Constructs a new BulkWrite */
+/* Constructs a new BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, __construct)
 {
 	php_phongo_bulkwrite_t* intern;
@@ -373,10 +372,9 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, __construct)
 
 		mongoc_bulk_operation_set_comment(intern->bulk, intern->comment);
 	}
-} /* }}} */
+}
 
-/* {{{ proto mixed MongoDB\Driver\BulkWrite::insert(array|object $document)
-   Adds an insert operation to the BulkWrite */
+/* Adds an insert operation to the BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, insert)
 {
 	php_phongo_bulkwrite_t* intern;
@@ -418,10 +416,9 @@ cleanup:
 	bson_destroy(&bdocument);
 	bson_destroy(&boptions);
 	bson_clear(&bson_out);
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\BulkWrite::update(array|object $query, array|object $newObj[, array $updateOptions = array()])
-   Adds an update operation to the BulkWrite */
+/* Adds an update operation to the BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, update)
 {
 	php_phongo_bulkwrite_t* intern;
@@ -484,10 +481,9 @@ cleanup:
 	bson_destroy(&bquery);
 	bson_destroy(&bupdate);
 	bson_destroy(&boptions);
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\BulkWrite::delete(array|object $query[, array $deleteOptions = array()])
-   Adds a delete operation to the BulkWrite */
+/* Adds a delete operation to the BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, delete)
 {
 	php_phongo_bulkwrite_t* intern;
@@ -530,10 +526,9 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, delete)
 cleanup:
 	bson_destroy(&bquery);
 	bson_destroy(&boptions);
-} /* }}} */
+}
 
-/* {{{ proto integer MongoDB\Driver\BulkWrite::count()
-   Returns the number of operations that have been added to the BulkWrite */
+/* Returns the number of operations that have been added to the BulkWrite */
 static PHP_METHOD(MongoDB_Driver_BulkWrite, count)
 {
 	php_phongo_bulkwrite_t* intern;
@@ -543,14 +538,14 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, count)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_LONG(intern->num_ops);
-} /* }}} */
+}
 
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_BulkWrite)
 
-/* {{{ MongoDB\Driver\BulkWrite object handlers */
+/* MongoDB\Driver\BulkWrite object handlers */
 static zend_object_handlers php_phongo_handler_bulkwrite;
 
-static void php_phongo_bulkwrite_free_object(zend_object* object) /* {{{ */
+static void php_phongo_bulkwrite_free_object(zend_object* object)
 {
 	php_phongo_bulkwrite_t* intern = Z_OBJ_BULKWRITE(object);
 
@@ -580,9 +575,9 @@ static void php_phongo_bulkwrite_free_object(zend_object* object) /* {{{ */
 	if (!Z_ISUNDEF(intern->session)) {
 		zval_ptr_dtor(&intern->session);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_bulkwrite_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_bulkwrite_create_object(zend_class_entry* class_type)
 {
 	php_phongo_bulkwrite_t* intern = zend_object_alloc(sizeof(php_phongo_bulkwrite_t), class_type);
 
@@ -592,9 +587,9 @@ static zend_object* php_phongo_bulkwrite_create_object(zend_class_entry* class_t
 	intern->std.handlers = &php_phongo_handler_bulkwrite;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_bulkwrite_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_bulkwrite_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	zval                    retval = ZVAL_STATIC_INIT;
 	php_phongo_bulkwrite_t* intern = NULL;
@@ -666,10 +661,9 @@ static HashTable* php_phongo_bulkwrite_get_debug_info(phongo_compat_object_handl
 
 done:
 	return Z_ARRVAL(retval);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_bulkwrite_ce                = register_class_MongoDB_Driver_BulkWrite(zend_ce_countable);
 	php_phongo_bulkwrite_ce->create_object = php_phongo_bulkwrite_create_object;
@@ -679,4 +673,4 @@ void php_phongo_bulkwrite_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_bulkwrite.get_debug_info = php_phongo_bulkwrite_get_debug_info;
 	php_phongo_handler_bulkwrite.free_obj       = php_phongo_bulkwrite_free_object;
 	php_phongo_handler_bulkwrite.offset         = XtOffsetOf(php_phongo_bulkwrite_t, std);
-} /* }}} */
+}

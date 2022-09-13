@@ -34,7 +34,7 @@ zend_class_entry* php_phongo_cursor_ce;
  * the session. Calling this function during iteration will allow an implicit
  * session to return to the pool immediately after a getMore indicates that the
  * server has no more results to return. */
-static void php_phongo_cursor_free_session_if_exhausted(php_phongo_cursor_t* cursor) /* {{{ */
+static void php_phongo_cursor_free_session_if_exhausted(php_phongo_cursor_t* cursor)
 {
 	if (mongoc_cursor_get_id(cursor->cursor)) {
 		return;
@@ -44,18 +44,17 @@ static void php_phongo_cursor_free_session_if_exhausted(php_phongo_cursor_t* cur
 		zval_ptr_dtor(&cursor->session);
 		ZVAL_UNDEF(&cursor->session);
 	}
-} /* }}} */
+}
 
-static void php_phongo_cursor_free_current(php_phongo_cursor_t* cursor) /* {{{ */
+static void php_phongo_cursor_free_current(php_phongo_cursor_t* cursor)
 {
 	if (!Z_ISUNDEF(cursor->visitor_data.zchild)) {
 		zval_ptr_dtor(&cursor->visitor_data.zchild);
 		ZVAL_UNDEF(&cursor->visitor_data.zchild);
 	}
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\Cursor::setTypeMap(array $typemap)
-   Sets a type map to use for BSON unserialization */
+/* Sets a type map to use for BSON unserialization */
 static PHP_METHOD(MongoDB_Driver_Cursor, setTypeMap)
 {
 	php_phongo_cursor_t*  intern;
@@ -95,9 +94,9 @@ static PHP_METHOD(MongoDB_Driver_Cursor, setTypeMap)
 			php_phongo_cursor_free_current(intern);
 		}
 	}
-} /* }}} */
+}
 
-static int php_phongo_cursor_to_array_apply(zend_object_iterator* iter, void* puser) /* {{{ */
+static int php_phongo_cursor_to_array_apply(zend_object_iterator* iter, void* puser)
 {
 	zval* data;
 	zval* return_value = (zval*) puser;
@@ -114,9 +113,9 @@ static int php_phongo_cursor_to_array_apply(zend_object_iterator* iter, void* pu
 	add_next_index_zval(return_value, data);
 
 	return ZEND_HASH_APPLY_KEEP;
-} /* }}} */
+}
 
-static void php_phongo_cursor_id_new_from_id(zval* object, int64_t cursorid) /* {{{ */
+static void php_phongo_cursor_id_new_from_id(zval* object, int64_t cursorid)
 {
 	php_phongo_cursorid_t* intern;
 
@@ -125,10 +124,9 @@ static void php_phongo_cursor_id_new_from_id(zval* object, int64_t cursorid) /* 
 	intern              = Z_CURSORID_OBJ_P(object);
 	intern->id          = cursorid;
 	intern->initialized = true;
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\Driver\Cursor::toArray()
-   Returns an array of all result documents for this cursor */
+/* Returns an array of all result documents for this cursor */
 static PHP_METHOD(MongoDB_Driver_Cursor, toArray)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -139,10 +137,9 @@ static PHP_METHOD(MongoDB_Driver_Cursor, toArray)
 		zval_dtor(return_value);
 		RETURN_NULL();
 	}
-} /* }}} */
+}
 
-/* {{{ proto MongoDB\Driver\CursorId MongoDB\Driver\Cursor::getId()
-   Returns the CursorId for this cursor */
+/* Returns the CursorId for this cursor */
 static PHP_METHOD(MongoDB_Driver_Cursor, getId)
 {
 	php_phongo_cursor_t* intern;
@@ -152,10 +149,9 @@ static PHP_METHOD(MongoDB_Driver_Cursor, getId)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	php_phongo_cursor_id_new_from_id(return_value, mongoc_cursor_get_id(intern->cursor));
-} /* }}} */
+}
 
-/* {{{ proto MongoDB\Driver\Server MongoDB\Driver\Cursor::getServer()
-   Returns the Server object to which this cursor is attached */
+/* Returns the Server object to which this cursor is attached */
 static PHP_METHOD(MongoDB_Driver_Cursor, getServer)
 {
 	php_phongo_cursor_t* intern;
@@ -165,10 +161,9 @@ static PHP_METHOD(MongoDB_Driver_Cursor, getServer)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_server_init(return_value, &intern->manager, intern->server_id);
-} /* }}} */
+}
 
-/* {{{ proto boolean MongoDB\Driver\Cursor::isDead()
-   Checks if a cursor is still alive */
+/* Checks if a cursor is still alive */
 static PHP_METHOD(MongoDB_Driver_Cursor, isDead)
 {
 	php_phongo_cursor_t* intern;
@@ -178,7 +173,7 @@ static PHP_METHOD(MongoDB_Driver_Cursor, isDead)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_BOOL(!mongoc_cursor_more(intern->cursor));
-} /* }}} */
+}
 
 static PHP_METHOD(MongoDB_Driver_Cursor, current)
 {
@@ -296,10 +291,10 @@ static PHP_METHOD(MongoDB_Driver_Cursor, rewind)
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Cursor)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Cursor)
 
-/* {{{ MongoDB\Driver\Cursor object handlers */
+/* MongoDB\Driver\Cursor object handlers */
 static zend_object_handlers php_phongo_handler_cursor;
 
-static void php_phongo_cursor_free_object(zend_object* object) /* {{{ */
+static void php_phongo_cursor_free_object(zend_object* object)
 {
 	php_phongo_cursor_t* intern = Z_OBJ_CURSOR(object);
 
@@ -345,9 +340,9 @@ static void php_phongo_cursor_free_object(zend_object* object) /* {{{ */
 	php_phongo_bson_typemap_dtor(&intern->visitor_data.map);
 
 	php_phongo_cursor_free_current(intern);
-} /* }}} */
+}
 
-static zend_object* php_phongo_cursor_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_cursor_create_object(zend_class_entry* class_type)
 {
 	php_phongo_cursor_t* intern = zend_object_alloc(sizeof(php_phongo_cursor_t), class_type);
 
@@ -359,9 +354,9 @@ static zend_object* php_phongo_cursor_create_object(zend_class_entry* class_type
 	intern->std.handlers = &php_phongo_handler_cursor;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_cursor_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_cursor_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	php_phongo_cursor_t* intern;
 	zval                 retval = ZVAL_STATIC_INIT;
@@ -430,11 +425,9 @@ static HashTable* php_phongo_cursor_get_debug_info(phongo_compat_object_handler_
 	}
 
 	return Z_ARRVAL(retval);
+}
 
-} /* }}} */
-/* }}} */
-
-void php_phongo_cursor_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_cursor_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_cursor_ce                = register_class_MongoDB_Driver_Cursor(zend_ce_iterator, php_phongo_cursor_interface_ce);
 	php_phongo_cursor_ce->create_object = php_phongo_cursor_create_object;
@@ -444,9 +437,9 @@ void php_phongo_cursor_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_cursor.get_debug_info = php_phongo_cursor_get_debug_info;
 	php_phongo_handler_cursor.free_obj       = php_phongo_cursor_free_object;
 	php_phongo_handler_cursor.offset         = XtOffsetOf(php_phongo_cursor_t, std);
-} /* }}} */
+}
 
-static void phongo_cursor_init(zval* return_value, zval* manager, mongoc_cursor_t* cursor, zval* readPreference, zval* session) /* {{{ */
+static void phongo_cursor_init(zval* return_value, zval* manager, mongoc_cursor_t* cursor, zval* readPreference, zval* session)
 {
 	php_phongo_cursor_t* intern;
 
@@ -467,11 +460,11 @@ static void phongo_cursor_init(zval* return_value, zval* manager, mongoc_cursor_
 	if (session) {
 		ZVAL_ZVAL(&intern->session, session, 1, 0);
 	}
-} /* }}} */
+}
 
 /* Initialize the cursor for a query and return whether there is an error. This
  * function always returns true. */
-bool phongo_cursor_init_for_command(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* db, zval* command, zval* readPreference, zval* session) /* {{{ */
+bool phongo_cursor_init_for_command(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* db, zval* command, zval* readPreference, zval* session)
 {
 	php_phongo_cursor_t* intern;
 
@@ -483,12 +476,12 @@ bool phongo_cursor_init_for_command(zval* return_value, zval* manager, mongoc_cu
 	ZVAL_ZVAL(&intern->command, command, 1, 0);
 
 	return true;
-} /* }}} */
+}
 
 /* Initialize the cursor for a query and return whether there is an error. The
  * libmongoc cursor will be advanced once. On error, false is returned and an
  * exception is thrown. */
-bool phongo_cursor_init_for_query(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* namespace, zval* query, zval* readPreference, zval* session) /* {{{ */
+bool phongo_cursor_init_for_query(zval* return_value, zval* manager, mongoc_cursor_t* cursor, const char* namespace, zval* query, zval* readPreference, zval* session)
 {
 	php_phongo_cursor_t* intern;
 
@@ -516,11 +509,11 @@ bool phongo_cursor_init_for_query(zval* return_value, zval* manager, mongoc_curs
 	ZVAL_ZVAL(&intern->query, query, 1, 0);
 
 	return true;
-} /* }}} */
+}
 
 /* Advance the cursor and return whether there is an error. On error, false is
  * returned and an exception is thrown. */
-bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor) /* {{{ */
+bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor)
 {
 	const bson_t* doc = NULL;
 
@@ -540,4 +533,4 @@ bool phongo_cursor_advance_and_check_for_error(mongoc_cursor_t* cursor) /* {{{ *
 	}
 
 	return true;
-} /* }}} */
+}

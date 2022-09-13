@@ -25,8 +25,6 @@
 
 zend_class_entry* php_phongo_minkey_ce;
 
-/* {{{ proto MongoDB\BSON\MinKey MongoDB\BSON\MinKey::__set_state(array $properties)
-*/
 static PHP_METHOD(MongoDB_BSON_MinKey, __set_state)
 {
 	zval* array;
@@ -36,29 +34,23 @@ static PHP_METHOD(MongoDB_BSON_MinKey, __set_state)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	object_init_ex(return_value, php_phongo_minkey_ce);
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\BSON\MinKey::jsonSerialize()
-*/
 static PHP_METHOD(MongoDB_BSON_MinKey, jsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	array_init_size(return_value, 1);
 	ADD_ASSOC_LONG_EX(return_value, "$minKey", 1);
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\BSON\MinKey::serialize()
-*/
 static PHP_METHOD(MongoDB_BSON_MinKey, serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_STRING("");
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\BSON\MinKey::unserialize(string $serialized)
-*/
 static PHP_METHOD(MongoDB_BSON_MinKey, unserialize)
 {
 	char*  serialized;
@@ -67,19 +59,15 @@ static PHP_METHOD(MongoDB_BSON_MinKey, unserialize)
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STRING(serialized, serialized_len)
 	PHONGO_PARSE_PARAMETERS_END();
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\Driver\MinKey::__serialize()
-*/
 static PHP_METHOD(MongoDB_BSON_MinKey, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	array_init_size(return_value, 0);
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\MinKey::__unserialize(array $data)
-*/
 static PHP_METHOD(MongoDB_BSON_MinKey, __unserialize)
 {
 	zval* data;
@@ -87,19 +75,19 @@ static PHP_METHOD(MongoDB_BSON_MinKey, __unserialize)
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(data)
 	PHONGO_PARSE_PARAMETERS_END();
-} /* }}} */
+}
 
-/* {{{ MongoDB\BSON\MinKey object handlers */
+/* MongoDB\BSON\MinKey object handlers */
 static zend_object_handlers php_phongo_handler_minkey;
 
-static void php_phongo_minkey_free_object(zend_object* object) /* {{{ */
+static void php_phongo_minkey_free_object(zend_object* object)
 {
 	php_phongo_minkey_t* intern = Z_OBJ_MINKEY(object);
 
 	zend_object_std_dtor(&intern->std);
-} /* }}} */
+}
 
-static zend_object* php_phongo_minkey_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_minkey_create_object(zend_class_entry* class_type)
 {
 	php_phongo_minkey_t* intern = zend_object_alloc(sizeof(php_phongo_minkey_t), class_type);
 
@@ -109,10 +97,9 @@ static zend_object* php_phongo_minkey_create_object(zend_class_entry* class_type
 	intern->std.handlers = &php_phongo_handler_minkey;
 
 	return &intern->std;
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_minkey_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_minkey_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_minkey_ce                = register_class_MongoDB_BSON_MinKey(php_phongo_minkey_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_minkey_ce->create_object = php_phongo_minkey_create_object;
@@ -122,4 +109,4 @@ void php_phongo_minkey_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_minkey.clone_obj = zend_objects_clone_obj;
 	php_phongo_handler_minkey.free_obj  = php_phongo_minkey_free_object;
 	php_phongo_handler_minkey.offset    = XtOffsetOf(php_phongo_minkey_t, std);
-} /* }}} */
+}

@@ -28,7 +28,7 @@ zend_class_entry* php_phongo_cursorid_ce;
 
 /* Initialize the object from a numeric string and return whether it was
  * successful. An exception will be thrown on error. */
-static bool php_phongo_cursorid_init_from_string(php_phongo_cursorid_t* intern, const char* s_id, size_t s_id_len) /* {{{ */
+static bool php_phongo_cursorid_init_from_string(php_phongo_cursorid_t* intern, const char* s_id, size_t s_id_len)
 {
 	int64_t id;
 
@@ -40,11 +40,11 @@ static bool php_phongo_cursorid_init_from_string(php_phongo_cursorid_t* intern, 
 	intern->id          = id;
 	intern->initialized = true;
 	return true;
-} /* }}} */
+}
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_cursorid_init_from_hash(php_phongo_cursorid_t* intern, HashTable* props) /* {{{ */
+static bool php_phongo_cursorid_init_from_hash(php_phongo_cursorid_t* intern, HashTable* props)
 {
 	zval* value;
 
@@ -54,9 +54,9 @@ static bool php_phongo_cursorid_init_from_hash(php_phongo_cursorid_t* intern, Ha
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"id\" string field", ZSTR_VAL(php_phongo_cursorid_ce->name));
 	return false;
-} /* }}} */
+}
 
-static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool is_serialize) /* {{{ */
+static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool is_serialize)
 {
 	php_phongo_cursorid_t* intern;
 	HashTable*             props;
@@ -89,10 +89,8 @@ static HashTable* php_phongo_cursorid_get_properties_hash(phongo_compat_object_h
 	}
 
 	return props;
-} /* }}} */
+}
 
-/* {{{ proto MongoDB\Driver\CursorId MongoDB\Driver\CursorId::__set_state(array $properties)
-*/
 PHP_METHOD(MongoDB_Driver_CursorId, __set_state)
 {
 	php_phongo_cursorid_t* intern;
@@ -109,10 +107,9 @@ PHP_METHOD(MongoDB_Driver_CursorId, __set_state)
 	props  = Z_ARRVAL_P(array);
 
 	php_phongo_cursorid_init_from_hash(intern, props);
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\Driver\CursorId::__toString()
-   Returns the string representation of the CursorId */
+/* Returns the string representation of the CursorId */
 PHP_METHOD(MongoDB_Driver_CursorId, __toString)
 {
 	php_phongo_cursorid_t* intern;
@@ -126,10 +123,8 @@ PHP_METHOD(MongoDB_Driver_CursorId, __toString)
 	tmp_len = spprintf(&tmp, 0, "%" PRId64, intern->id);
 	RETVAL_STRINGL(tmp, tmp_len);
 	efree(tmp);
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\Driver\CursorId::serialize()
-*/
 PHP_METHOD(MongoDB_Driver_CursorId, serialize)
 {
 	php_phongo_cursorid_t* intern;
@@ -153,10 +148,8 @@ PHP_METHOD(MongoDB_Driver_CursorId, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\CursorId::unserialize(string $serialized)
-*/
 PHP_METHOD(MongoDB_Driver_CursorId, unserialize)
 {
 	php_phongo_cursorid_t* intern;
@@ -183,19 +176,15 @@ PHP_METHOD(MongoDB_Driver_CursorId, unserialize)
 
 	php_phongo_cursorid_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\Driver\CursorId::__serialize()
-*/
 PHP_METHOD(MongoDB_Driver_CursorId, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ARR(php_phongo_cursorid_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\CursorId::__unserialize(array $data)
-*/
 PHP_METHOD(MongoDB_Driver_CursorId, __unserialize)
 {
 	zval* data;
@@ -205,14 +194,14 @@ PHP_METHOD(MongoDB_Driver_CursorId, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_cursorid_init_from_hash(Z_CURSORID_OBJ_P(getThis()), Z_ARRVAL_P(data));
-} /* }}} */
+}
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_CursorId)
 
-/* {{{ MongoDB\Driver\CursorId object handlers */
+/* MongoDB\Driver\CursorId object handlers */
 static zend_object_handlers php_phongo_handler_cursorid;
 
-static void php_phongo_cursorid_free_object(zend_object* object) /* {{{ */
+static void php_phongo_cursorid_free_object(zend_object* object)
 {
 	php_phongo_cursorid_t* intern = Z_OBJ_CURSORID(object);
 
@@ -222,9 +211,9 @@ static void php_phongo_cursorid_free_object(zend_object* object) /* {{{ */
 		zend_hash_destroy(intern->properties);
 		FREE_HASHTABLE(intern->properties);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_cursorid_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_cursorid_create_object(zend_class_entry* class_type)
 {
 	php_phongo_cursorid_t* intern = zend_object_alloc(sizeof(php_phongo_cursorid_t), class_type);
 
@@ -234,21 +223,20 @@ static zend_object* php_phongo_cursorid_create_object(zend_class_entry* class_ty
 	intern->std.handlers = &php_phongo_handler_cursorid;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_cursorid_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_cursorid_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_cursorid_get_properties_hash(object, true, false);
-} /* }}} */
-/* }}} */
+}
 
-static HashTable* php_phongo_cursorid_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+static HashTable* php_phongo_cursorid_get_properties(phongo_compat_object_handler_type* object)
 {
 	return php_phongo_cursorid_get_properties_hash(object, false, false);
-} /* }}} */
+}
 
-void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_cursorid_ce                = register_class_MongoDB_Driver_CursorId(zend_ce_serializable);
 	php_phongo_cursorid_ce->create_object = php_phongo_cursorid_create_object;
@@ -262,4 +250,4 @@ void php_phongo_cursorid_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_cursorid.get_properties = php_phongo_cursorid_get_properties;
 	php_phongo_handler_cursorid.free_obj       = php_phongo_cursorid_free_object;
 	php_phongo_handler_cursorid.offset         = XtOffsetOf(php_phongo_cursorid_t, std);
-} /* }}} */
+}

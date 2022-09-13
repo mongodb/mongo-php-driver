@@ -211,7 +211,7 @@ void phongo_throw_exception_from_bson_error_t(bson_error_t* error)
 }
 
 #ifndef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
-void phongo_throw_exception_no_cse(php_phongo_error_domain_t domain, const char* message) /* {{{ */
+void phongo_throw_exception_no_cse(php_phongo_error_domain_t domain, const char* message)
 {
 	phongo_throw_exception(domain, "%s Please recompile with support for libmongocrypt using the with-mongodb-client-side-encryption configure switch.", message);
 }

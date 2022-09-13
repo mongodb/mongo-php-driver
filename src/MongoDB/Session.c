@@ -157,8 +157,7 @@ static void php_phongo_transaction_options_to_zval(mongoc_client_session_t* cs, 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Session)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Session)
 
-/* {{{ proto void MongoDB\Driver\Session::advanceClusterTime(array|object $clusterTime)
-   Advances the cluster time for this Session */
+/* Advances the cluster time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, advanceClusterTime)
 {
 	php_phongo_session_t* intern;
@@ -183,10 +182,9 @@ static PHP_METHOD(MongoDB_Driver_Session, advanceClusterTime)
 
 cleanup:
 	bson_destroy(&cluster_time);
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\Session::advanceOperationTime(MongoDB\BSON\TimestampInterface $timestamp)
-   Advances the operation time for this Session */
+/* Advances the operation time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, advanceOperationTime)
 {
 	php_phongo_session_t* intern;
@@ -206,10 +204,9 @@ static PHP_METHOD(MongoDB_Driver_Session, advanceOperationTime)
 	}
 
 	mongoc_client_session_advance_operation_time(intern->client_session, timestamp, increment);
-} /* }}} */
+}
 
-/* {{{ proto object|null MongoDB\Driver\Session::getClusterTime()
-   Returns the cluster time for this Session */
+/* Returns the cluster time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, getClusterTime)
 {
 	php_phongo_session_t* intern;
@@ -236,10 +233,9 @@ static PHP_METHOD(MongoDB_Driver_Session, getClusterTime)
 	}
 
 	RETURN_ZVAL(&state.zchild, 0, 1);
-} /* }}} */
+}
 
-/* {{{ proto object MongoDB\Driver\Session::getLogicalSessionId()
-   Returns the logical session ID for this Session */
+/* Returns the logical session ID for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, getLogicalSessionId)
 {
 	php_phongo_session_t* intern;
@@ -262,10 +258,9 @@ static PHP_METHOD(MongoDB_Driver_Session, getLogicalSessionId)
 	}
 
 	RETURN_ZVAL(&state.zchild, 0, 1);
-} /* }}} */
+}
 
-/* {{{ proto MongoDB\BSON\Timestamp|null MongoDB\Driver\Session::getOperationTime()
-   Returns the operation time for this Session */
+/* Returns the operation time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, getOperationTime)
 {
 	php_phongo_session_t* intern;
@@ -286,10 +281,9 @@ static PHP_METHOD(MongoDB_Driver_Session, getOperationTime)
 	}
 
 	php_phongo_bson_new_timestamp_from_increment_and_timestamp(return_value, increment, timestamp);
-} /* }}} */
+}
 
-/* {{{ proto MongoDB\Driver\Server|null MongoDB\Driver\Session::getServer()
-   Returns the server this session is pinned to */
+/* Returns the server this session is pinned to */
 static PHP_METHOD(MongoDB_Driver_Session, getServer)
 {
 	php_phongo_session_t* intern;
@@ -308,10 +302,9 @@ static PHP_METHOD(MongoDB_Driver_Session, getServer)
 	}
 
 	phongo_server_init(return_value, &intern->manager, server_id);
-} /* }}} */
+}
 
-/* {{{ proto array|null MongoDB\Driver\Session::getTransactionOptions()
-   Returns options for the currently running transaction */
+/* Returns options for the currently running transaction */
 static PHP_METHOD(MongoDB_Driver_Session, getTransactionOptions)
 {
 	php_phongo_session_t* intern;
@@ -322,10 +315,9 @@ static PHP_METHOD(MongoDB_Driver_Session, getTransactionOptions)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	php_phongo_transaction_options_to_zval(intern->client_session, return_value);
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\Driver\Session::getTransactionState()
-   Returns the current transaction state for this session */
+/* Returns the current transaction state for this session */
 static PHP_METHOD(MongoDB_Driver_Session, getTransactionState)
 {
 	php_phongo_session_t* intern;
@@ -343,7 +335,7 @@ static PHP_METHOD(MongoDB_Driver_Session, getTransactionState)
 	}
 
 	RETURN_STRING(state);
-} /* }}} */
+}
 
 /* Creates a opts structure from an array optionally containing an RP, RC,
  * WC object, and/or maxCommitTimeMS int. Returns NULL if no options were found,
@@ -442,8 +434,7 @@ mongoc_transaction_opt_t* php_mongodb_session_parse_transaction_options(zval* op
 	return opts;
 }
 
-/* {{{ proto void MongoDB\Driver\Session::startTransaction([array $options = null])
-   Starts a new transaction */
+/* Starts a new transaction */
 static PHP_METHOD(MongoDB_Driver_Session, startTransaction)
 {
 	php_phongo_session_t*     intern;
@@ -473,10 +464,9 @@ static PHP_METHOD(MongoDB_Driver_Session, startTransaction)
 	if (txn_options) {
 		mongoc_transaction_opts_destroy(txn_options);
 	}
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\Session::commitTransaction(void)
-   Commits an existing transaction */
+/* Commits an existing transaction */
 static PHP_METHOD(MongoDB_Driver_Session, commitTransaction)
 {
 	php_phongo_session_t* intern;
@@ -493,10 +483,9 @@ static PHP_METHOD(MongoDB_Driver_Session, commitTransaction)
 	}
 
 	bson_destroy(&reply);
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\Session::abortTransaction(void)
-   Aborts (rolls back) an existing transaction */
+/* Aborts (rolls back) an existing transaction */
 static PHP_METHOD(MongoDB_Driver_Session, abortTransaction)
 {
 	php_phongo_session_t* intern;
@@ -510,10 +499,9 @@ static PHP_METHOD(MongoDB_Driver_Session, abortTransaction)
 	if (!mongoc_client_session_abort_transaction(intern->client_session, &error)) {
 		phongo_throw_exception_from_bson_error_t(&error);
 	}
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\Session::endSession(void)
-   Ends the session, and a running transaction if active */
+/* Ends the session, and a running transaction if active */
 static PHP_METHOD(MongoDB_Driver_Session, endSession)
 {
 	php_phongo_session_t* intern;
@@ -524,10 +512,9 @@ static PHP_METHOD(MongoDB_Driver_Session, endSession)
 
 	mongoc_client_session_destroy(intern->client_session);
 	intern->client_session = NULL;
-} /* }}} */
+}
 
-/* {{{ proto bool MongoDB\Driver\Session::isDirty()
-   Returns whether the session is dirty (i.e. was used with a command that
+/* Returns whether the session is dirty (i.e. was used with a command that
    encountered a network error) and will be discarded when returned to the
    server session pool. */
 static PHP_METHOD(MongoDB_Driver_Session, isDirty)
@@ -539,10 +526,9 @@ static PHP_METHOD(MongoDB_Driver_Session, isDirty)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETVAL_BOOL(mongoc_client_session_get_dirty(intern->client_session));
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\Session::isInTransaction(void)
-   Returns whether a multi-document transaction is in progress */
+/* Returns whether a multi-document transaction is in progress */
 static PHP_METHOD(MongoDB_Driver_Session, isInTransaction)
 {
 	php_phongo_session_t* intern;
@@ -553,12 +539,12 @@ static PHP_METHOD(MongoDB_Driver_Session, isInTransaction)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_BOOL(mongoc_client_session_in_transaction(intern->client_session));
-} /* }}} */
+}
 
-/* {{{ MongoDB\Driver\Session object handlers */
+/* MongoDB\Driver\Session object handlers */
 static zend_object_handlers php_phongo_handler_session;
 
-static void php_phongo_session_free_object(zend_object* object) /* {{{ */
+static void php_phongo_session_free_object(zend_object* object)
 {
 	php_phongo_session_t* intern = Z_OBJ_SESSION(object);
 
@@ -578,9 +564,9 @@ static void php_phongo_session_free_object(zend_object* object) /* {{{ */
 	if (!Z_ISUNDEF(intern->manager)) {
 		zval_ptr_dtor(&intern->manager);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_session_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_session_create_object(zend_class_entry* class_type)
 {
 	php_phongo_session_t* intern = zend_object_alloc(sizeof(php_phongo_session_t), class_type);
 
@@ -592,9 +578,9 @@ static zend_object* php_phongo_session_create_object(zend_class_entry* class_typ
 	intern->std.handlers = &php_phongo_handler_session;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	php_phongo_session_t* intern = NULL;
 	zval                  retval = ZVAL_STATIC_INIT;
@@ -700,10 +686,9 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 
 done:
 	return Z_ARRVAL(retval);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_session_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_session_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_session_ce                = register_class_MongoDB_Driver_Session();
 	php_phongo_session_ce->create_object = php_phongo_session_create_object;
@@ -713,9 +698,9 @@ void php_phongo_session_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_session.get_debug_info = php_phongo_session_get_debug_info;
 	php_phongo_handler_session.free_obj       = php_phongo_session_free_object;
 	php_phongo_handler_session.offset         = XtOffsetOf(php_phongo_session_t, std);
-} /* }}} */
+}
 
-void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session) /* {{{ */
+void phongo_session_init(zval* return_value, zval* manager, mongoc_client_session_t* client_session)
 {
 	php_phongo_session_t* session;
 
@@ -726,4 +711,3 @@ void phongo_session_init(zval* return_value, zval* manager, mongoc_client_sessio
 
 	ZVAL_ZVAL(&session->manager, manager, 1, 0);
 }
-/* }}} */

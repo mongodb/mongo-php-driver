@@ -21,7 +21,7 @@
 
 zend_class_entry* php_phongo_sdamsubscriber_ce;
 
-void php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_sdamsubscriber_ce = register_class_MongoDB_Driver_Monitoring_SDAMSubscriber(php_phongo_subscriber_ce);
-} /* }}} */
+}

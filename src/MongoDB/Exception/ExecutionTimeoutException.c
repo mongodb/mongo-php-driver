@@ -21,7 +21,7 @@
 
 zend_class_entry* php_phongo_executiontimeoutexception_ce;
 
-void php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_executiontimeoutexception_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_executiontimeoutexception_ce = register_class_MongoDB_Driver_Exception_ExecutionTimeoutException(php_phongo_serverexception_ce);
-} /* }}} */
+}

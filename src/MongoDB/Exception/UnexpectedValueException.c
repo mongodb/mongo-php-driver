@@ -22,7 +22,7 @@
 
 zend_class_entry* php_phongo_unexpectedvalueexception_ce;
 
-void php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_unexpectedvalueexception_ce = register_class_MongoDB_Driver_Exception_UnexpectedValueException(spl_ce_UnexpectedValueException, php_phongo_exception_ce);
-} /* }}} */
+}

@@ -30,8 +30,7 @@ zend_class_entry* php_phongo_writeerror_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteError)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_WriteError)
 
-/* {{{ proto integer MongoDB\Driver\WriteError::getCode()
-   Returns the MongoDB error code */
+/* Returns the MongoDB error code */
 static PHP_METHOD(MongoDB_Driver_WriteError, getCode)
 {
 	php_phongo_writeerror_t* intern;
@@ -41,10 +40,9 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getCode)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_LONG(intern->code);
-} /* }}} */
+}
 
-/* {{{ proto integer MongoDB\Driver\WriteError::getIndex()
-   Returns the index of the operation in the BulkWrite to which this WriteError
+/* Returns the index of the operation in the BulkWrite to which this WriteError
    corresponds. */
 static PHP_METHOD(MongoDB_Driver_WriteError, getIndex)
 {
@@ -55,10 +53,9 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getIndex)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_LONG(intern->index);
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\Driver\WriteError::getMessage()
-   Returns the actual error message from the server */
+/* Returns the actual error message from the server */
 static PHP_METHOD(MongoDB_Driver_WriteError, getMessage)
 {
 	php_phongo_writeerror_t* intern;
@@ -68,10 +65,9 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getMessage)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_STRING(intern->message);
-} /* }}} */
+}
 
-/* {{{ proto object|null MongoDB\Driver\WriteError::getInfo()
-   Returns additional metadata for the error */
+/* Returns additional metadata for the error */
 static PHP_METHOD(MongoDB_Driver_WriteError, getInfo)
 {
 	php_phongo_writeerror_t* intern;
@@ -83,12 +79,12 @@ static PHP_METHOD(MongoDB_Driver_WriteError, getInfo)
 	if (!Z_ISUNDEF(intern->info)) {
 		RETURN_ZVAL(&intern->info, 1, 0);
 	}
-} /* }}} */
+}
 
-/* {{{ MongoDB\Driver\WriteError object handlers */
+/* MongoDB\Driver\WriteError object handlers */
 static zend_object_handlers php_phongo_handler_writeerror;
 
-static void php_phongo_writeerror_free_object(zend_object* object) /* {{{ */
+static void php_phongo_writeerror_free_object(zend_object* object)
 {
 	php_phongo_writeerror_t* intern = Z_OBJ_WRITEERROR(object);
 
@@ -101,9 +97,9 @@ static void php_phongo_writeerror_free_object(zend_object* object) /* {{{ */
 	if (!Z_ISUNDEF(intern->info)) {
 		zval_ptr_dtor(&intern->info);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_writeerror_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_writeerror_create_object(zend_class_entry* class_type)
 {
 	php_phongo_writeerror_t* intern = zend_object_alloc(sizeof(php_phongo_writeerror_t), class_type);
 
@@ -113,9 +109,9 @@ static zend_object* php_phongo_writeerror_create_object(zend_class_entry* class_
 	intern->std.handlers = &php_phongo_handler_writeerror;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_writeerror_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_writeerror_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	php_phongo_writeerror_t* intern;
 	zval                     retval = ZVAL_STATIC_INIT;
@@ -135,10 +131,9 @@ static HashTable* php_phongo_writeerror_get_debug_info(phongo_compat_object_hand
 	}
 
 	return Z_ARRVAL(retval);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_writeerror_ce                = register_class_MongoDB_Driver_WriteError();
 	php_phongo_writeerror_ce->create_object = php_phongo_writeerror_create_object;
@@ -148,9 +143,9 @@ void php_phongo_writeerror_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_writeerror.get_debug_info = php_phongo_writeerror_get_debug_info;
 	php_phongo_handler_writeerror.free_obj       = php_phongo_writeerror_free_object;
 	php_phongo_handler_writeerror.offset         = XtOffsetOf(php_phongo_writeerror_t, std);
-} /* }}} */
+}
 
-zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson) /* {{{ */
+zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson)
 {
 	bson_iter_t              iter;
 	php_phongo_writeerror_t* intern;
@@ -191,4 +186,4 @@ zend_bool phongo_writeerror_init(zval* return_value, bson_t* bson) /* {{{ */
 	}
 
 	return true;
-} /* }}} */
+}

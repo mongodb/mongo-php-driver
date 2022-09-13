@@ -27,17 +27,17 @@
 zend_class_entry* php_phongo_int64_ce;
 
 /* Initialize the object and return whether it was successful. */
-static bool php_phongo_int64_init(php_phongo_int64_t* intern, int64_t integer) /* {{{ */
+static bool php_phongo_int64_init(php_phongo_int64_t* intern, int64_t integer)
 {
 	intern->integer     = integer;
 	intern->initialized = true;
 
 	return true;
-} /* }}} */
+}
 
 /* Initialize the object from a numeric string and return whether it was
  * successful. An exception will be thrown on error. */
-static bool php_phongo_int64_init_from_string(php_phongo_int64_t* intern, const char* s_integer, size_t s_integer_len) /* {{{ */
+static bool php_phongo_int64_init_from_string(php_phongo_int64_t* intern, const char* s_integer, size_t s_integer_len)
 {
 	int64_t integer;
 
@@ -47,11 +47,11 @@ static bool php_phongo_int64_init_from_string(php_phongo_int64_t* intern, const 
 	}
 
 	return php_phongo_int64_init(intern, integer);
-} /* }}} */
+}
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_int64_init_from_hash(php_phongo_int64_t* intern, HashTable* props) /* {{{ */
+static bool php_phongo_int64_init_from_hash(php_phongo_int64_t* intern, HashTable* props)
 {
 	zval* value;
 
@@ -61,9 +61,9 @@ static bool php_phongo_int64_init_from_hash(php_phongo_int64_t* intern, HashTabl
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"integer\" string field", ZSTR_VAL(php_phongo_int64_ce->name));
 	return false;
-} /* }}} */
+}
 
-HashTable* php_phongo_int64_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+HashTable* php_phongo_int64_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
 	php_phongo_int64_t* intern;
 	HashTable*          props;
@@ -84,12 +84,11 @@ HashTable* php_phongo_int64_get_properties_hash(phongo_compat_object_handler_typ
 	}
 
 	return props;
-} /* }}} */
+}
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Int64)
 
-/* {{{ proto string MongoDB\BSON\Int64::__toString()
-   Return the Int64's value as a string. */
+/* Return the Int64's value as a string. */
 static PHP_METHOD(MongoDB_BSON_Int64, __toString)
 {
 	php_phongo_int64_t* intern;
@@ -99,10 +98,8 @@ static PHP_METHOD(MongoDB_BSON_Int64, __toString)
 	intern = Z_INT64_OBJ_P(getThis());
 
 	ZVAL_INT64_STRING(return_value, intern->integer);
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\BSON\Int64::jsonSerialize()
-*/
 static PHP_METHOD(MongoDB_BSON_Int64, jsonSerialize)
 {
 	php_phongo_int64_t* intern;
@@ -114,10 +111,8 @@ static PHP_METHOD(MongoDB_BSON_Int64, jsonSerialize)
 	array_init_size(return_value, 1);
 
 	ADD_ASSOC_INT64_AS_STRING(return_value, "$numberLong", intern->integer);
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\BSON\Int64::serialize()
-*/
 static PHP_METHOD(MongoDB_BSON_Int64, serialize)
 {
 	php_phongo_int64_t*  intern;
@@ -141,10 +136,8 @@ static PHP_METHOD(MongoDB_BSON_Int64, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\BSON\Int64::unserialize(string $serialized)
-*/
 static PHP_METHOD(MongoDB_BSON_Int64, unserialize)
 {
 	php_phongo_int64_t*    intern;
@@ -171,19 +164,15 @@ static PHP_METHOD(MongoDB_BSON_Int64, unserialize)
 
 	php_phongo_int64_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\Driver\Int64::__serialize()
-*/
 static PHP_METHOD(MongoDB_BSON_Int64, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ARR(php_phongo_int64_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\Int64::__unserialize(array $data)
-*/
 static PHP_METHOD(MongoDB_BSON_Int64, __unserialize)
 {
 	zval* data;
@@ -193,12 +182,12 @@ static PHP_METHOD(MongoDB_BSON_Int64, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_int64_init_from_hash(Z_INT64_OBJ_P(getThis()), Z_ARRVAL_P(data));
-} /* }}} */
+}
 
-/* {{{ MongoDB\BSON\Int64 object handlers */
+/* MongoDB\BSON\Int64 object handlers */
 static zend_object_handlers php_phongo_handler_int64;
 
-static void php_phongo_int64_free_object(zend_object* object) /* {{{ */
+static void php_phongo_int64_free_object(zend_object* object)
 {
 	php_phongo_int64_t* intern = Z_OBJ_INT64(object);
 
@@ -208,9 +197,9 @@ static void php_phongo_int64_free_object(zend_object* object) /* {{{ */
 		zend_hash_destroy(intern->properties);
 		FREE_HASHTABLE(intern->properties);
 	}
-} /* }}} */
+}
 
-zend_object* php_phongo_int64_create_object(zend_class_entry* class_type) /* {{{ */
+zend_object* php_phongo_int64_create_object(zend_class_entry* class_type)
 {
 	php_phongo_int64_t* intern = zend_object_alloc(sizeof(php_phongo_int64_t), class_type);
 
@@ -220,9 +209,9 @@ zend_object* php_phongo_int64_create_object(zend_class_entry* class_type) /* {{{
 	intern->std.handlers = &php_phongo_handler_int64;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static zend_object* php_phongo_int64_clone_object(phongo_compat_object_handler_type* object) /* {{{ */
+static zend_object* php_phongo_int64_clone_object(phongo_compat_object_handler_type* object)
 {
 	php_phongo_int64_t* intern;
 	php_phongo_int64_t* new_intern;
@@ -237,9 +226,9 @@ static zend_object* php_phongo_int64_clone_object(phongo_compat_object_handler_t
 	php_phongo_int64_init(new_intern, intern->integer);
 
 	return new_object;
-} /* }}} */
+}
 
-static int php_phongo_int64_compare_objects(zval* o1, zval* o2) /* {{{ */
+static int php_phongo_int64_compare_objects(zval* o1, zval* o2)
 {
 	php_phongo_int64_t *intern1, *intern2;
 
@@ -253,21 +242,20 @@ static int php_phongo_int64_compare_objects(zval* o1, zval* o2) /* {{{ */
 	}
 
 	return 0;
-} /* }}} */
+}
 
-static HashTable* php_phongo_int64_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_int64_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_int64_get_properties_hash(object, true);
-} /* }}} */
+}
 
-static HashTable* php_phongo_int64_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+static HashTable* php_phongo_int64_get_properties(phongo_compat_object_handler_type* object)
 {
 	return php_phongo_int64_get_properties_hash(object, false);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_int64_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_int64_ce                = register_class_MongoDB_BSON_Int64(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_int64_ce->create_object = php_phongo_int64_create_object;
@@ -283,4 +271,4 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_int64.get_properties = php_phongo_int64_get_properties;
 	php_phongo_handler_int64.free_obj       = php_phongo_int64_free_object;
 	php_phongo_handler_int64.offset         = XtOffsetOf(php_phongo_int64_t, std);
-} /* }}} */
+}

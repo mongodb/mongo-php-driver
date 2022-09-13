@@ -30,8 +30,7 @@ zend_class_entry* php_phongo_writeconcernerror_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteConcernError)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_WriteConcernError)
 
-/* {{{ proto integer MongoDB\Driver\WriteConcernError::getCode()
-   Returns the MongoDB error code */
+/* Returns the MongoDB error code */
 static PHP_METHOD(MongoDB_Driver_WriteConcernError, getCode)
 {
 	php_phongo_writeconcernerror_t* intern;
@@ -41,10 +40,9 @@ static PHP_METHOD(MongoDB_Driver_WriteConcernError, getCode)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_LONG(intern->code);
-} /* }}} */
+}
 
-/* {{{ proto object|null MongoDB\Driver\WriteConcernError::getInfo()
-   Returns additional metadata for the error */
+/* Returns additional metadata for the error */
 static PHP_METHOD(MongoDB_Driver_WriteConcernError, getInfo)
 {
 	php_phongo_writeconcernerror_t* intern;
@@ -56,10 +54,9 @@ static PHP_METHOD(MongoDB_Driver_WriteConcernError, getInfo)
 	if (!Z_ISUNDEF(intern->info)) {
 		RETURN_ZVAL(&intern->info, 1, 0);
 	}
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\Driver\WriteConcernError::getMessage()
-   Returns the actual error message from the server */
+/* Returns the actual error message from the server */
 static PHP_METHOD(MongoDB_Driver_WriteConcernError, getMessage)
 {
 	php_phongo_writeconcernerror_t* intern;
@@ -69,12 +66,12 @@ static PHP_METHOD(MongoDB_Driver_WriteConcernError, getMessage)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_STRING(intern->message);
-} /* }}} */
+}
 
-/* {{{ MongoDB\Driver\WriteConcernError object handlers */
+/* MongoDB\Driver\WriteConcernError object handlers */
 static zend_object_handlers php_phongo_handler_writeconcernerror;
 
-static void php_phongo_writeconcernerror_free_object(zend_object* object) /* {{{ */
+static void php_phongo_writeconcernerror_free_object(zend_object* object)
 {
 	php_phongo_writeconcernerror_t* intern = Z_OBJ_WRITECONCERNERROR(object);
 
@@ -87,9 +84,9 @@ static void php_phongo_writeconcernerror_free_object(zend_object* object) /* {{{
 	if (!Z_ISUNDEF(intern->info)) {
 		zval_ptr_dtor(&intern->info);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_writeconcernerror_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_writeconcernerror_create_object(zend_class_entry* class_type)
 {
 	php_phongo_writeconcernerror_t* intern = zend_object_alloc(sizeof(php_phongo_writeconcernerror_t), class_type);
 
@@ -99,9 +96,9 @@ static zend_object* php_phongo_writeconcernerror_create_object(zend_class_entry*
 	intern->std.handlers = &php_phongo_handler_writeconcernerror;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_writeconcernerror_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_writeconcernerror_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	php_phongo_writeconcernerror_t* intern;
 	zval                            retval = ZVAL_STATIC_INIT;
@@ -120,10 +117,9 @@ static HashTable* php_phongo_writeconcernerror_get_debug_info(phongo_compat_obje
 	}
 
 	return Z_ARRVAL(retval);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_writeconcernerror_ce                = register_class_MongoDB_Driver_WriteConcernError();
 	php_phongo_writeconcernerror_ce->create_object = php_phongo_writeconcernerror_create_object;
@@ -133,9 +129,9 @@ void php_phongo_writeconcernerror_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_writeconcernerror.get_debug_info = php_phongo_writeconcernerror_get_debug_info;
 	php_phongo_handler_writeconcernerror.free_obj       = php_phongo_writeconcernerror_free_object;
 	php_phongo_handler_writeconcernerror.offset         = XtOffsetOf(php_phongo_writeconcernerror_t, std);
-} /* }}} */
+}
 
-zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson) /* {{{ */
+zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson)
 {
 	bson_iter_t                     iter;
 	php_phongo_writeconcernerror_t* intern;
@@ -171,4 +167,4 @@ zend_bool phongo_writeconcernerror_init(zval* return_value, bson_t* bson) /* {{{
 	}
 
 	return true;
-} /* }}} */
+}

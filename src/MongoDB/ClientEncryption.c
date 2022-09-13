@@ -83,8 +83,7 @@ static bool validate_keyid(bson_value_t* keyid)
 	return true;
 }
 
-/* {{{ proto void MongoDB\Driver\ClientEncryption::__construct(array $options)
-   Constructs a new ClientEncryption */
+/* Constructs a new ClientEncryption */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, __construct)
 {
 	zval* options;
@@ -95,10 +94,9 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, __construct)
 
 	/* An exception will be thrown on error. */
 	phongo_clientencryption_init(Z_CLIENTENCRYPTION_OBJ_P(getThis()), options, NULL);
-} /* }}} */
+}
 
-/* {{{ proto object|null MongoDB\Driver\ClientEncryption::addKeyAltName(MongoDB\BSON\Binary $id, string $keyAltName)
-   Adds a keyAltName to the keyAltNames array of the key document in the key
+/* Adds a keyAltName to the keyAltNames array of the key document in the key
    vault collection with the given UUID (BSON binary subtype 0x04). Returns the
    previous version of the key document, or null if no document matched. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, addKeyAltName)
@@ -136,10 +134,9 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, addKeyAltName)
 cleanup:
 	bson_value_destroy(&keyid);
 	bson_destroy(&key_doc);
-} /* }}} */
+}
 
-/* {{{ proto MongoDB\BSON\Binary MongoDB\Driver\ClientEncryption::createDataKey(string $kmsProvider[, array $options])
-   Creates a new key document and inserts into the key vault collection and
+/* Creates a new key document and inserts into the key vault collection and
    returns its identifier (UUID as a BSON binary with subtype 0x04). */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, createDataKey)
 {
@@ -157,10 +154,9 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, createDataKey)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_clientencryption_create_datakey(intern, return_value, kms_provider, options);
-} /* }}} */
+}
 
-/* {{{ proto object MongoDB\Driver\ClientEncryption::deleteKey(MongoDB\BSON\Binary $id)
-   Removes the key document with the given UUID (BSON binary subtype 0x04) from
+/* Removes the key document with the given UUID (BSON binary subtype 0x04) from
    the key vault collection. Returns the result of the internal deleteOne()
    operation on the key vault collection. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, deleteKey)
@@ -200,10 +196,9 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, deleteKey)
 cleanup:
 	bson_value_destroy(&keyid);
 	bson_destroy(&reply);
-} /* }}} */
+}
 
-/* {{{ proto MongoDB\BSON\Binary MongoDB\Driver\ClientEncryption::encrypt(mixed $value[, array $options])
-   Encrypts a value with a given key and algorithm */
+/* Encrypts a value with a given key and algorithm */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, encrypt)
 {
 	zval*                          value   = NULL;
@@ -219,10 +214,9 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, encrypt)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_clientencryption_encrypt(intern, value, return_value, options);
-} /* }}} */
+}
 
-/* {{{ proto mixed MongoDB\Driver\ClientEncryption::decrypt(MongoDB\BSON\BinaryInterface $value)
-   Decrypts an encrypted value (BSON binary of subtype 6). Returns the original BSON value */
+/* Decrypts an encrypted value (BSON binary of subtype 6). Returns the original BSON value */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, decrypt)
 {
 	zval*                          ciphertext;
@@ -235,10 +229,9 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, decrypt)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_clientencryption_decrypt(intern, ciphertext, return_value);
-} /* }}} */
+}
 
-/* {{{ proto object|null MongoDB\Driver\ClientEncryption::getKey(MongoDB\BSON\Binary $id)
-   Finds a single key document with the given UUID (BSON binary subtype 0x04).
+/* Finds a single key document with the given UUID (BSON binary subtype 0x04).
    Returns the result of the internal find() operation on the key vault
    collection, or null if no document matched. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKey)
@@ -273,10 +266,9 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKey)
 cleanup:
 	bson_value_destroy(&keyid);
 	bson_destroy(&key_doc);
-} /* }}} */
+}
 
-/* {{{ proto object|null MongoDB\Driver\ClientEncryption::getKey(string $keyAltName)
-   Returns a key document in the key vault collection with the given keyAltName,
+/* Returns a key document in the key vault collection with the given keyAltName,
    or null if no document matched. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKeyByAltName)
 {
@@ -298,10 +290,9 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKeyByAltName)
 
 cleanup:
 	bson_destroy(&key_doc);
-} /* }}} */
+}
 
-/* {{{ proto MongoDB\Driver\Cursor MongoDB\Driver\ClientEncryption::getKeys()
-   Finds all documents in the key vault collection. Returns the result of the
+/* Finds all documents in the key vault collection. Returns the result of the
    internal find() operation on the key vault collection as a cursor. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKeys)
 {
@@ -338,10 +329,9 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKeys)
 
 cleanup:
 	zval_ptr_dtor(&query);
-} /* }}} */
+}
 
-/* {{{ proto object|null MongoDB\Driver\ClientEncryption::removeKeyAltName(MongoDB\BSON\Binary $id, string $keyAltName)
-   Removes a keyAltName from the keyAltNames array of the key document in the
+/* Removes a keyAltName from the keyAltNames array of the key document in the
    key vault collection with the given UUID (BSON binary subtype 0x04). Returns
    the previous version of the key document, or null if no document matched. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, removeKeyAltName)
@@ -379,10 +369,9 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, removeKeyAltName)
 cleanup:
 	bson_value_destroy(&keyid);
 	bson_destroy(&key_doc);
-} /* }}} */
+}
 
-/* {{{ proto object MongoDB\Driver\ClientEncryption::rewrapManyDataKey(array|object $filter[, array $options = array()])
-   Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or
+/* Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or
    with their current masterKey if a new one is not given. Returns an object
    corresponding to the internal libmongoc result. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
@@ -452,14 +441,14 @@ cleanup:
 	bson_destroy(&filter);
 	bson_destroy(masterkey);
 	mongoc_client_encryption_rewrap_many_datakey_result_destroy(result);
-} /* }}} */
+}
 
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_ClientEncryption)
 
-/* {{{ MongoDB\Driver\ClientEncryption object handlers */
+/* MongoDB\Driver\ClientEncryption object handlers */
 static zend_object_handlers php_phongo_handler_clientencryption;
 
-static void php_phongo_clientencryption_free_object(zend_object* object) /* {{{ */
+static void php_phongo_clientencryption_free_object(zend_object* object)
 {
 	php_phongo_clientencryption_t* intern = Z_OBJ_CLIENTENCRYPTION(object);
 
@@ -478,9 +467,9 @@ static void php_phongo_clientencryption_free_object(zend_object* object) /* {{{ 
 	if (intern->key_vault_namespace) {
 		efree(intern->key_vault_namespace);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_clientencryption_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_clientencryption_create_object(zend_class_entry* class_type)
 {
 	php_phongo_clientencryption_t* intern = zend_object_alloc(sizeof(php_phongo_clientencryption_t), class_type);
 
@@ -490,9 +479,9 @@ static zend_object* php_phongo_clientencryption_create_object(zend_class_entry* 
 	intern->std.handlers = &php_phongo_handler_clientencryption;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_clientencryption_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_clientencryption_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	php_phongo_clientencryption_t* intern = NULL;
 	zval                           retval = ZVAL_STATIC_INIT;
@@ -503,10 +492,9 @@ static HashTable* php_phongo_clientencryption_get_debug_info(phongo_compat_objec
 	array_init(&retval);
 
 	return Z_ARRVAL(retval);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_clientencryption_ce                = register_class_MongoDB_Driver_ClientEncryption();
 	php_phongo_clientencryption_ce->create_object = php_phongo_clientencryption_create_object;
@@ -516,12 +504,12 @@ void php_phongo_clientencryption_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_clientencryption.get_debug_info = php_phongo_clientencryption_get_debug_info;
 	php_phongo_handler_clientencryption.free_obj       = php_phongo_clientencryption_free_object;
 	php_phongo_handler_clientencryption.offset         = XtOffsetOf(php_phongo_clientencryption_t, std);
-} /* }}} */
+}
 
 #ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
 /* key_vault_client_manager is an output parameter and will be assigned to the
  * effective keyVaultClient. */
-static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(zval* options, zval* default_key_vault_client_manager, zval** key_vault_client_manager) /* {{{ */
+static mongoc_client_encryption_opts_t* phongo_clientencryption_opts_from_zval(zval* options, zval* default_key_vault_client_manager, zval** key_vault_client_manager)
 {
 	mongoc_client_encryption_opts_t* opts = mongoc_client_encryption_opts_new();
 
@@ -625,9 +613,9 @@ cleanup:
 	}
 
 	return NULL;
-} /* }}} */
+}
 
-void phongo_clientencryption_init(php_phongo_clientencryption_t* intern, zval* options, zval* default_key_vault_client_manager) /* {{{ */
+void phongo_clientencryption_init(php_phongo_clientencryption_t* intern, zval* options, zval* default_key_vault_client_manager)
 {
 	mongoc_client_encryption_t*      client_encryption;
 	mongoc_client_encryption_opts_t* opts;
@@ -678,9 +666,9 @@ cleanup:
 	if (opts) {
 		mongoc_client_encryption_opts_destroy(opts);
 	}
-} /* }}} */
+}
 
-static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_opts_from_zval(zval* options) /* {{{ */
+static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_opts_from_zval(zval* options)
 {
 	mongoc_client_encryption_datakey_opts_t* opts;
 
@@ -782,9 +770,9 @@ cleanup:
 	}
 
 	return NULL;
-} /* }}} */
+}
 
-static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options) /* {{{ */
+static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options)
 {
 	mongoc_client_encryption_datakey_opts_t* opts;
 	bson_value_t                             keyid = { 0 };
@@ -813,9 +801,9 @@ cleanup:
 	}
 
 	bson_value_destroy(&keyid);
-} /* }}} */
+}
 
-static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_opts_from_zval(zval* options) /* {{{ */
+static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_opts_from_zval(zval* options)
 {
 	mongoc_client_encryption_encrypt_opts_t* opts;
 
@@ -890,9 +878,9 @@ cleanup:
 	}
 
 	return NULL;
-} /* }}} */
+}
 
-static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options) /* {{{ */
+static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options)
 {
 	mongoc_client_encryption_encrypt_opts_t* opts;
 	bson_value_t                             ciphertext = { 0 };
@@ -925,9 +913,9 @@ cleanup:
 
 	bson_value_destroy(&ciphertext);
 	bson_value_destroy(&value);
-} /* }}} */
+}
 
-static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue) /* {{{ */
+static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue)
 {
 	bson_value_t ciphertext = { 0 };
 	bson_value_t value      = { 0 };
@@ -948,29 +936,25 @@ static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clien
 cleanup:
 	bson_value_destroy(&ciphertext);
 	bson_value_destroy(&value);
-} /* }}} */
+}
 #else  /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
-void phongo_clientencryption_init(php_phongo_clientencryption_t* intern, zval* options, zval* default_key_vault_client_manager) /* {{{ */
+void phongo_clientencryption_init(php_phongo_clientencryption_t* intern, zval* options, zval* default_key_vault_client_manager)
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot configure clientEncryption object.");
 }
-/* }}} */
 
-static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options) /* {{{ */
+static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options)
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot create encryption key.");
 }
-/* }}} */
 
-static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options) /* {{{ */
+static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options)
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot encrypt value.");
 }
-/* }}} */
 
-static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue) /* {{{ */
+static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue)
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot decrypt value.");
 }
-/* }}} */
 #endif /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */

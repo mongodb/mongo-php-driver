@@ -51,7 +51,7 @@ typedef struct {
 	bool             is_persistent;
 } php_phongo_pclient_t;
 
-static mongoc_uri_t* php_phongo_make_uri(const char* uri_string) /* {{{ */
+static mongoc_uri_t* php_phongo_make_uri(const char* uri_string)
 {
 	mongoc_uri_t* uri;
 	bson_error_t  error = { 0 };
@@ -65,7 +65,7 @@ static mongoc_uri_t* php_phongo_make_uri(const char* uri_string) /* {{{ */
 	}
 
 	return uri;
-} /* }}} */
+}
 
 #define PHONGO_URI_INVALID_TYPE(iter, expected)        \
 	phongo_throw_exception(                            \
@@ -75,7 +75,7 @@ static mongoc_uri_t* php_phongo_make_uri(const char* uri_string) /* {{{ */
 		bson_iter_key(&(iter)),                        \
 		php_phongo_bson_type_to_string(bson_iter_type(&(iter))))
 
-static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options) /* {{{ */
+static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 {
 	bson_iter_t iter;
 
@@ -276,9 +276,9 @@ static bool php_phongo_apply_options_to_uri(mongoc_uri_t* uri, bson_t* options) 
 	}
 
 	return true;
-} /* }}} */
+}
 
-static bool php_phongo_apply_rc_options_to_uri(mongoc_uri_t* uri, bson_t* options) /* {{{ */
+static bool php_phongo_apply_rc_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 {
 	bson_iter_t                  iter;
 	mongoc_read_concern_t*       new_rc;
@@ -316,9 +316,9 @@ static bool php_phongo_apply_rc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	mongoc_read_concern_destroy(new_rc);
 
 	return true;
-} /* }}} */
+}
 
-static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* options) /* {{{ */
+static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 {
 	bson_iter_t                iter;
 	mongoc_read_prefs_t*       new_rp;
@@ -472,9 +472,9 @@ static bool php_phongo_apply_rp_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	mongoc_read_prefs_destroy(new_rp);
 
 	return true;
-} /* }}} */
+}
 
-static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* options) /* {{{ */
+static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* options)
 {
 	bson_iter_t                   iter;
 	mongoc_write_concern_t*       new_wc;
@@ -605,7 +605,7 @@ static bool php_phongo_apply_wc_options_to_uri(mongoc_uri_t* uri, bson_t* option
 	mongoc_write_concern_destroy(new_wc);
 
 	return true;
-} /* }}} */
+}
 
 #ifdef MONGOC_ENABLE_SSL
 static void php_phongo_mongoc_ssl_opts_from_uri(mongoc_ssl_opt_t* ssl_opt, mongoc_uri_t* uri, bool* any_ssl_option_set)
@@ -1072,7 +1072,7 @@ cleanup:
 	}
 }
 
-static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zval* driverOptions) /* {{{ */
+static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zval* driverOptions)
 {
 	const char *     mongoc_version, *bson_version;
 	mongoc_client_t* client;
@@ -1107,7 +1107,7 @@ static mongoc_client_t* php_phongo_make_mongo_client(const mongoc_uri_t* uri, zv
 	}
 
 	return client;
-} /* }}} */
+}
 
 /* Adds a client to the appropriate registry. Persistent and request-scoped
  * clients each have their own registries (i.e. HashTables), which use different
@@ -1178,7 +1178,7 @@ static mongoc_client_t* php_phongo_find_persistent_client(const char* hash, size
 	return NULL;
 }
 
-static bool phongo_manager_set_serverapi_opts(php_phongo_manager_t* manager, zval* driverOptions) /* {{{ */
+static bool phongo_manager_set_serverapi_opts(php_phongo_manager_t* manager, zval* driverOptions)
 {
 	zval*                   zServerApi;
 	php_phongo_serverapi_t* server_api;
@@ -1203,10 +1203,10 @@ static bool phongo_manager_set_serverapi_opts(php_phongo_manager_t* manager, zva
 	}
 
 	return true;
-} /* }}} */
+}
 
 #ifdef MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION
-static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manager, zval* driverOptions) /* {{{ */
+static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manager, zval* driverOptions)
 {
 	zval*                          zAutoEncryptionOpts;
 	bson_error_t                   error                = { 0 };
@@ -1397,9 +1397,8 @@ cleanup:
 	mongoc_auto_encryption_opts_destroy(auto_encryption_opts);
 	return retval;
 }
-/* }}} */
 #else  /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
-static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manager, zval* driverOptions) /* {{{ */
+static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manager, zval* driverOptions)
 {
 	if (!driverOptions || !php_array_existsc(driverOptions, "autoEncryption")) {
 		return true;
@@ -1409,10 +1408,9 @@ static bool phongo_manager_set_auto_encryption_opts(php_phongo_manager_t* manage
 
 	return false;
 }
-/* }}} */
 #endif /* MONGOC_ENABLE_CLIENT_SIDE_ENCRYPTION */
 
-void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions) /* {{{ */
+void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions)
 {
 	bson_t        bson_options = BSON_INITIALIZER;
 	mongoc_uri_t* uri          = NULL;
@@ -1523,7 +1521,7 @@ cleanup:
 		php_phongo_free_ssl_opt(ssl_opt);
 	}
 #endif
-} /* }}} */
+}
 
 static void phongo_pclient_reset_once(php_phongo_pclient_t* pclient, int pid)
 {

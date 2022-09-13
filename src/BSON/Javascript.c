@@ -30,7 +30,7 @@ zend_class_entry* php_phongo_javascript_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_javascript_init(php_phongo_javascript_t* intern, const char* code, size_t code_len, zval* scope) /* {{{ */
+static bool php_phongo_javascript_init(php_phongo_javascript_t* intern, const char* code, size_t code_len, zval* scope)
 {
 	if (scope && Z_TYPE_P(scope) != IS_OBJECT && Z_TYPE_P(scope) != IS_ARRAY && Z_TYPE_P(scope) != IS_NULL) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected scope to be array or object, %s given", zend_get_type_by_const(Z_TYPE_P(scope)));
@@ -53,11 +53,11 @@ static bool php_phongo_javascript_init(php_phongo_javascript_t* intern, const ch
 	}
 
 	return true;
-} /* }}} */
+}
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_javascript_init_from_hash(php_phongo_javascript_t* intern, HashTable* props) /* {{{ */
+static bool php_phongo_javascript_init_from_hash(php_phongo_javascript_t* intern, HashTable* props)
 {
 	zval *code, *scope;
 
@@ -69,9 +69,9 @@ static bool php_phongo_javascript_init_from_hash(php_phongo_javascript_t* intern
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"code\" string field", ZSTR_VAL(php_phongo_javascript_ce->name));
 	return false;
-} /* }}} */
+}
 
-HashTable* php_phongo_javascript_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+HashTable* php_phongo_javascript_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
 	php_phongo_javascript_t* intern;
 	HashTable*               props;
@@ -113,10 +113,9 @@ HashTable* php_phongo_javascript_get_properties_hash(phongo_compat_object_handle
 failure:
 	PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props);
 	return NULL;
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\BSON\Javascript::__construct(string $code[, array|object $scope])
-   Construct a new BSON Javascript type. The scope is a document mapping
+/* Construct a new BSON Javascript type. The scope is a document mapping
    identifiers and values, representing the scope in which the code string will
    be evaluated. Note that this type cannot be represented as Extended JSON. */
 static PHP_METHOD(MongoDB_BSON_Javascript, __construct)
@@ -135,10 +134,8 @@ static PHP_METHOD(MongoDB_BSON_Javascript, __construct)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_javascript_init(intern, code, code_len, scope);
-} /* }}} */
+}
 
-/* {{{ proto MongoDB\BSON\Javascript MongoDB\BSON\Javascript::__set_state(array $properties)
-*/
 static PHP_METHOD(MongoDB_BSON_Javascript, __set_state)
 {
 	php_phongo_javascript_t* intern;
@@ -155,10 +152,9 @@ static PHP_METHOD(MongoDB_BSON_Javascript, __set_state)
 	props  = Z_ARRVAL_P(array);
 
 	php_phongo_javascript_init_from_hash(intern, props);
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\BSON\Javascript::__toString()
-   Return the Javascript's code string. */
+/* Return the Javascript's code string. */
 static PHP_METHOD(MongoDB_BSON_Javascript, __toString)
 {
 	php_phongo_javascript_t* intern;
@@ -168,10 +164,8 @@ static PHP_METHOD(MongoDB_BSON_Javascript, __toString)
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
 	RETURN_STRINGL(intern->code, intern->code_len);
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\BSON\Javascript::getCode()
-*/
 static PHP_METHOD(MongoDB_BSON_Javascript, getCode)
 {
 	php_phongo_javascript_t* intern;
@@ -181,10 +175,8 @@ static PHP_METHOD(MongoDB_BSON_Javascript, getCode)
 	intern = Z_JAVASCRIPT_OBJ_P(getThis());
 
 	RETURN_STRINGL(intern->code, intern->code_len);
-} /* }}} */
+}
 
-/* {{{ proto object|null MongoDB\BSON\Javascript::getScope()
-*/
 static PHP_METHOD(MongoDB_BSON_Javascript, getScope)
 {
 	php_phongo_javascript_t* intern;
@@ -211,10 +203,8 @@ static PHP_METHOD(MongoDB_BSON_Javascript, getScope)
 	} else {
 		RETURN_NULL();
 	}
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\BSON\Javascript::jsonSerialize()
-*/
 static PHP_METHOD(MongoDB_BSON_Javascript, jsonSerialize)
 {
 	php_phongo_javascript_t* intern;
@@ -237,10 +227,8 @@ static PHP_METHOD(MongoDB_BSON_Javascript, jsonSerialize)
 
 		ADD_ASSOC_ZVAL_EX(return_value, "$scope", &state.zchild);
 	}
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\BSON\Javascript::serialize()
-*/
 static PHP_METHOD(MongoDB_BSON_Javascript, serialize)
 {
 	php_phongo_javascript_t* intern;
@@ -277,10 +265,8 @@ static PHP_METHOD(MongoDB_BSON_Javascript, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\BSON\Javascript::unserialize(string $serialized)
-*/
 static PHP_METHOD(MongoDB_BSON_Javascript, unserialize)
 {
 	php_phongo_javascript_t* intern;
@@ -307,19 +293,15 @@ static PHP_METHOD(MongoDB_BSON_Javascript, unserialize)
 
 	php_phongo_javascript_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\Driver\Javascript::__serialize()
-*/
 static PHP_METHOD(MongoDB_BSON_Javascript, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ARR(php_phongo_javascript_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\Javascript::__unserialize(array $data)
-*/
 static PHP_METHOD(MongoDB_BSON_Javascript, __unserialize)
 {
 	zval* data;
@@ -329,12 +311,12 @@ static PHP_METHOD(MongoDB_BSON_Javascript, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_javascript_init_from_hash(Z_JAVASCRIPT_OBJ_P(getThis()), Z_ARRVAL_P(data));
-} /* }}} */
+}
 
-/* {{{ MongoDB\BSON\Javascript object handlers */
+/* MongoDB\BSON\Javascript object handlers */
 static zend_object_handlers php_phongo_handler_javascript;
 
-static void php_phongo_javascript_free_object(zend_object* object) /* {{{ */
+static void php_phongo_javascript_free_object(zend_object* object)
 {
 	php_phongo_javascript_t* intern = Z_OBJ_JAVASCRIPT(object);
 
@@ -352,9 +334,9 @@ static void php_phongo_javascript_free_object(zend_object* object) /* {{{ */
 		zend_hash_destroy(intern->properties);
 		FREE_HASHTABLE(intern->properties);
 	}
-} /* }}} */
+}
 
-zend_object* php_phongo_javascript_create_object(zend_class_entry* class_type) /* {{{ */
+zend_object* php_phongo_javascript_create_object(zend_class_entry* class_type)
 {
 	php_phongo_javascript_t* intern = zend_object_alloc(sizeof(php_phongo_javascript_t), class_type);
 
@@ -364,9 +346,9 @@ zend_object* php_phongo_javascript_create_object(zend_class_entry* class_type) /
 	intern->std.handlers = &php_phongo_handler_javascript;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static zend_object* php_phongo_javascript_clone_object(phongo_compat_object_handler_type* object) /* {{{ */
+static zend_object* php_phongo_javascript_clone_object(phongo_compat_object_handler_type* object)
 {
 	php_phongo_javascript_t* intern;
 	php_phongo_javascript_t* new_intern;
@@ -382,9 +364,9 @@ static zend_object* php_phongo_javascript_clone_object(phongo_compat_object_hand
 	new_intern->scope = bson_copy(intern->scope);
 
 	return new_object;
-} /* }}} */
+}
 
-static int php_phongo_javascript_compare_objects(zval* o1, zval* o2) /* {{{ */
+static int php_phongo_javascript_compare_objects(zval* o1, zval* o2)
 {
 	php_phongo_javascript_t *intern1, *intern2;
 
@@ -395,21 +377,20 @@ static int php_phongo_javascript_compare_objects(zval* o1, zval* o2) /* {{{ */
 
 	/* Do not consider the scope document for comparisons */
 	return strcmp(intern1->code, intern2->code);
-} /* }}} */
+}
 
-static HashTable* php_phongo_javascript_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_javascript_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_javascript_get_properties_hash(object, true);
-} /* }}} */
+}
 
-static HashTable* php_phongo_javascript_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+static HashTable* php_phongo_javascript_get_properties(phongo_compat_object_handler_type* object)
 {
 	return php_phongo_javascript_get_properties_hash(object, false);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_javascript_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_javascript_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_javascript_ce                = register_class_MongoDB_BSON_Javascript(php_phongo_javascript_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_javascript_ce->create_object = php_phongo_javascript_create_object;
@@ -425,4 +406,4 @@ void php_phongo_javascript_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_javascript.get_properties = php_phongo_javascript_get_properties;
 	php_phongo_handler_javascript.free_obj       = php_phongo_javascript_free_object;
 	php_phongo_handler_javascript.offset         = XtOffsetOf(php_phongo_javascript_t, std);
-} /* }}} */
+}

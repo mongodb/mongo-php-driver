@@ -30,17 +30,17 @@
 zend_class_entry* php_phongo_utcdatetime_ce;
 
 /* Initialize the object and return whether it was successful. */
-static bool php_phongo_utcdatetime_init(php_phongo_utcdatetime_t* intern, int64_t milliseconds) /* {{{ */
+static bool php_phongo_utcdatetime_init(php_phongo_utcdatetime_t* intern, int64_t milliseconds)
 {
 	intern->milliseconds = milliseconds;
 	intern->initialized  = true;
 
 	return true;
-} /* }}} */
+}
 
 /* Initialize the object from a numeric string and return whether it was
  * successful. An exception will be thrown on error. */
-static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t* intern, const char* s_milliseconds, size_t s_milliseconds_len) /* {{{ */
+static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t* intern, const char* s_milliseconds, size_t s_milliseconds_len)
 {
 	int64_t milliseconds;
 
@@ -50,11 +50,11 @@ static bool php_phongo_utcdatetime_init_from_string(php_phongo_utcdatetime_t* in
 	}
 
 	return php_phongo_utcdatetime_init(intern, milliseconds);
-} /* }}} */
+}
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_utcdatetime_init_from_hash(php_phongo_utcdatetime_t* intern, HashTable* props) /* {{{ */
+static bool php_phongo_utcdatetime_init_from_hash(php_phongo_utcdatetime_t* intern, HashTable* props)
 {
 	zval* milliseconds;
 
@@ -68,11 +68,11 @@ static bool php_phongo_utcdatetime_init_from_hash(php_phongo_utcdatetime_t* inte
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"milliseconds\" integer or numeric string field", ZSTR_VAL(php_phongo_utcdatetime_ce->name));
 	return false;
-} /* }}} */
+}
 
 /* Initialize the object from the current time and return whether it was
  * successful. */
-static bool php_phongo_utcdatetime_init_from_current_time(php_phongo_utcdatetime_t* intern) /* {{{ */
+static bool php_phongo_utcdatetime_init_from_current_time(php_phongo_utcdatetime_t* intern)
 {
 	int64_t        sec, usec;
 	struct timeval cur_time;
@@ -85,11 +85,11 @@ static bool php_phongo_utcdatetime_init_from_current_time(php_phongo_utcdatetime
 	intern->initialized  = true;
 
 	return true;
-} /* }}} */
+}
 
 /* Initialize the object from a DateTime object and return whether it was
  * successful. */
-static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t* intern, php_date_obj* datetime_obj) /* {{{ */
+static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t* intern, php_date_obj* datetime_obj)
 {
 	int64_t sec, usec;
 
@@ -101,9 +101,9 @@ static bool php_phongo_utcdatetime_init_from_date(php_phongo_utcdatetime_t* inte
 	intern->initialized  = true;
 
 	return true;
-} /* }}} */
+}
 
-static HashTable* php_phongo_utcdatetime_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp) /* {{{ */
+static HashTable* php_phongo_utcdatetime_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
 	php_phongo_utcdatetime_t* intern;
 	HashTable*                props;
@@ -124,10 +124,9 @@ static HashTable* php_phongo_utcdatetime_get_properties_hash(phongo_compat_objec
 	}
 
 	return props;
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\BSON\UTCDateTime::__construct([int|float|string|DateTimeInterface|null $milliseconds = null])
-   Construct a new BSON UTCDateTime type from either the current time,
+/* Construct a new BSON UTCDateTime type from either the current time,
    milliseconds since the epoch, or a DateTimeInterface object. Defaults to the
    current time. */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
@@ -177,10 +176,8 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __construct)
 	}
 
 	php_phongo_utcdatetime_init_from_string(intern, Z_STRVAL_P(milliseconds), Z_STRLEN_P(milliseconds));
-} /* }}} */
+}
 
-/* {{{ proto MongoDB\BSON\UTCDateTime MongoDB\BSON\UTCDateTime::__set_state(array $properties)
-*/
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -197,10 +194,9 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __set_state)
 	props  = Z_ARRVAL_P(array);
 
 	php_phongo_utcdatetime_init_from_hash(intern, props);
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\BSON\UTCDateTime::__toString()
-   Returns the UTCDateTime's milliseconds as a string */
+/* Returns the UTCDateTime's milliseconds as a string */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __toString)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -210,10 +206,9 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __toString)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	ZVAL_INT64_STRING(return_value, intern->milliseconds);
-} /* }}} */
+}
 
-/* {{{ proto DateTime MongoDB\BSON\UTCDateTime::toDateTime()
-   Returns a DateTime object representing this UTCDateTime */
+/* Returns a DateTime object representing this UTCDateTime */
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTime)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -234,10 +229,7 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, toDateTime)
 
 	datetime_obj->time->us = (intern->milliseconds % 1000) * 1000;
 }
-/* }}} */
 
-/* {{{ proto array MongoDB\BSON\UTCDateTime::jsonSerialize()
-*/
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -255,10 +247,8 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, jsonSerialize)
 		ADD_ASSOC_INT64_AS_STRING(&udt, "$numberLong", intern->milliseconds);
 		ADD_ASSOC_ZVAL_EX(return_value, "$date", &udt);
 	}
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\BSON\UTCDateTime::serialize()
-*/
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, serialize)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -282,10 +272,8 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\BSON\UTCDateTime::unserialize(string $serialized)
-*/
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, unserialize)
 {
 	php_phongo_utcdatetime_t* intern;
@@ -312,19 +300,15 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, unserialize)
 
 	php_phongo_utcdatetime_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\Driver\UTCDateTime::__serialize()
-*/
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ARR(php_phongo_utcdatetime_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\UTCDateTime::__unserialize(array $data)
-*/
 static PHP_METHOD(MongoDB_BSON_UTCDateTime, __unserialize)
 {
 	zval* data;
@@ -334,12 +318,12 @@ static PHP_METHOD(MongoDB_BSON_UTCDateTime, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_utcdatetime_init_from_hash(Z_UTCDATETIME_OBJ_P(getThis()), Z_ARRVAL_P(data));
-} /* }}} */
+}
 
-/* {{{ MongoDB\BSON\UTCDateTime object handlers */
+/* MongoDB\BSON\UTCDateTime object handlers */
 static zend_object_handlers php_phongo_handler_utcdatetime;
 
-static void php_phongo_utcdatetime_free_object(zend_object* object) /* {{{ */
+static void php_phongo_utcdatetime_free_object(zend_object* object)
 {
 	php_phongo_utcdatetime_t* intern = Z_OBJ_UTCDATETIME(object);
 
@@ -349,9 +333,9 @@ static void php_phongo_utcdatetime_free_object(zend_object* object) /* {{{ */
 		zend_hash_destroy(intern->properties);
 		FREE_HASHTABLE(intern->properties);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_utcdatetime_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_utcdatetime_create_object(zend_class_entry* class_type)
 {
 	php_phongo_utcdatetime_t* intern = zend_object_alloc(sizeof(php_phongo_utcdatetime_t), class_type);
 
@@ -361,9 +345,9 @@ static zend_object* php_phongo_utcdatetime_create_object(zend_class_entry* class
 	intern->std.handlers = &php_phongo_handler_utcdatetime;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static zend_object* php_phongo_utcdatetime_clone_object(phongo_compat_object_handler_type* object) /* {{{ */
+static zend_object* php_phongo_utcdatetime_clone_object(phongo_compat_object_handler_type* object)
 {
 	php_phongo_utcdatetime_t* intern;
 	php_phongo_utcdatetime_t* new_intern;
@@ -378,9 +362,9 @@ static zend_object* php_phongo_utcdatetime_clone_object(phongo_compat_object_han
 	php_phongo_utcdatetime_init(new_intern, intern->milliseconds);
 
 	return new_object;
-} /* }}} */
+}
 
-static int php_phongo_utcdatetime_compare_objects(zval* o1, zval* o2) /* {{{ */
+static int php_phongo_utcdatetime_compare_objects(zval* o1, zval* o2)
 {
 	php_phongo_utcdatetime_t *intern1, *intern2;
 
@@ -394,21 +378,20 @@ static int php_phongo_utcdatetime_compare_objects(zval* o1, zval* o2) /* {{{ */
 	}
 
 	return 0;
-} /* }}} */
+}
 
-static HashTable* php_phongo_utcdatetime_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_utcdatetime_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_utcdatetime_get_properties_hash(object, true);
-} /* }}} */
+}
 
-static HashTable* php_phongo_utcdatetime_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+static HashTable* php_phongo_utcdatetime_get_properties(phongo_compat_object_handler_type* object)
 {
 	return php_phongo_utcdatetime_get_properties_hash(object, false);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_utcdatetime_ce                = register_class_MongoDB_BSON_UTCDateTime(php_phongo_utcdatetime_interface_ce, php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_utcdatetime_ce->create_object = php_phongo_utcdatetime_create_object;
@@ -424,4 +407,4 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_utcdatetime.get_properties = php_phongo_utcdatetime_get_properties;
 	php_phongo_handler_utcdatetime.free_obj       = php_phongo_utcdatetime_free_object;
 	php_phongo_handler_utcdatetime.offset         = XtOffsetOf(php_phongo_utcdatetime_t, std);
-} /* }}} */
+}

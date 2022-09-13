@@ -27,7 +27,7 @@
 
 zend_class_entry* php_phongo_serverapi_ce;
 
-static bool php_phongo_serverapi_create_libmongoc_object(mongoc_server_api_t** server_api, zend_string* version, bool strict_set, bool strict, bool deprecation_errors_set, bool deprecation_errors) /* {{{ */
+static bool php_phongo_serverapi_create_libmongoc_object(mongoc_server_api_t** server_api, zend_string* version, bool strict_set, bool strict, bool deprecation_errors_set, bool deprecation_errors)
 {
 	mongoc_server_api_version_t server_api_version;
 
@@ -52,11 +52,11 @@ static bool php_phongo_serverapi_create_libmongoc_object(mongoc_server_api_t** s
 	}
 
 	return true;
-} /* }}} */
+}
 
 /* Initialize the object from a HashTable and return whether it was successful.
  * An exception will be thrown on error. */
-static bool php_phongo_serverapi_init_from_hash(php_phongo_serverapi_t* intern, HashTable* props) /* {{{ */
+static bool php_phongo_serverapi_init_from_hash(php_phongo_serverapi_t* intern, HashTable* props)
 {
 	zval* version;
 	zval* strict;
@@ -90,10 +90,9 @@ static bool php_phongo_serverapi_init_from_hash(php_phongo_serverapi_t* intern, 
 		strict && zval_is_true(strict),
 		deprecation_errors && !ZVAL_IS_NULL(deprecation_errors),
 		deprecation_errors && zval_is_true(deprecation_errors));
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\ServerApi::__construct(string $version, [?bool $strict], [?bool $deprecationErrors])
-   Constructs a new ServerApi object */
+/* Constructs a new ServerApi object */
 static PHP_METHOD(MongoDB_Driver_ServerApi, __construct)
 {
 	php_phongo_serverapi_t* intern;
@@ -120,10 +119,8 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __construct)
 		(bool) strict,
 		(bool) !deprecation_errors_null,
 		(bool) deprecation_errors);
-} /* }}} */
+}
 
-/* {{{ proto MongoDB\Driver\ServerApi MongoDB\Driver\ServerApi::__set_state(array $properties)
-*/
 static PHP_METHOD(MongoDB_Driver_ServerApi, __set_state)
 {
 	php_phongo_serverapi_t* intern;
@@ -140,9 +137,9 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __set_state)
 	props  = Z_ARRVAL_P(array);
 
 	php_phongo_serverapi_init_from_hash(intern, props);
-} /* }}} */
+}
 
-static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool include_null) /* {{{ */
+static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, bool include_null)
 {
 	php_phongo_serverapi_t* intern;
 	HashTable*              props;
@@ -179,20 +176,16 @@ static HashTable* php_phongo_serverapi_get_properties_hash(phongo_compat_object_
 	}
 
 	return props;
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\Driver\ServerApi::bsonSerialize()
-*/
 static PHP_METHOD(MongoDB_Driver_ServerApi, bsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	ZVAL_ARR(return_value, php_phongo_serverapi_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, false));
 	convert_to_object(return_value);
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\Driver\ServerApi::serialize()
-*/
 static PHP_METHOD(MongoDB_Driver_ServerApi, serialize)
 {
 	php_phongo_serverapi_t* intern;
@@ -229,10 +222,8 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, serialize)
 
 	smart_str_free(&buf);
 	zval_ptr_dtor(&retval);
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\ServerApi::unserialize(string $serialized)
-*/
 static PHP_METHOD(MongoDB_Driver_ServerApi, unserialize)
 {
 	php_phongo_serverapi_t* intern;
@@ -263,19 +254,15 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, unserialize)
 
 	php_phongo_serverapi_init_from_hash(intern, HASH_OF(&props));
 	zval_ptr_dtor(&props);
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\Driver\ServerApi::__serialize()
-*/
 static PHP_METHOD(MongoDB_Driver_ServerApi, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ARR(php_phongo_serverapi_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, true));
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\ServerApi::__unserialize(array $data)
-*/
 static PHP_METHOD(MongoDB_Driver_ServerApi, __unserialize)
 {
 	zval* data;
@@ -285,12 +272,12 @@ static PHP_METHOD(MongoDB_Driver_ServerApi, __unserialize)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	php_phongo_serverapi_init_from_hash(Z_SERVERAPI_OBJ_P(getThis()), Z_ARRVAL_P(data));
-} /* }}} */
+}
 
-/* {{{ MongoDB\Driver\ServerApi object handlers */
+/* MongoDB\Driver\ServerApi object handlers */
 static zend_object_handlers php_phongo_handler_serverapi;
 
-static void php_phongo_serverapi_free_object(zend_object* object) /* {{{ */
+static void php_phongo_serverapi_free_object(zend_object* object)
 {
 	php_phongo_serverapi_t* intern = Z_OBJ_SERVERAPI(object);
 
@@ -306,7 +293,7 @@ static void php_phongo_serverapi_free_object(zend_object* object) /* {{{ */
 	}
 }
 
-static zend_object* php_phongo_serverapi_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_serverapi_create_object(zend_class_entry* class_type)
 {
 	php_phongo_serverapi_t* intern = zend_object_alloc(sizeof(php_phongo_serverapi_t), class_type);
 
@@ -316,20 +303,20 @@ static zend_object* php_phongo_serverapi_create_object(zend_class_entry* class_t
 	intern->std.handlers = &php_phongo_handler_serverapi;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_serverapi_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_serverapi_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
 	return php_phongo_serverapi_get_properties_hash(object, true, true);
-} /* }}} */
+}
 
-static HashTable* php_phongo_serverapi_get_properties(phongo_compat_object_handler_type* object) /* {{{ */
+static HashTable* php_phongo_serverapi_get_properties(phongo_compat_object_handler_type* object)
 {
 	return php_phongo_serverapi_get_properties_hash(object, false, true);
-} /* }}} */
+}
 
-void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_serverapi_ce                = register_class_MongoDB_Driver_ServerApi(php_phongo_serializable_ce, zend_ce_serializable);
 	php_phongo_serverapi_ce->create_object = php_phongo_serverapi_create_object;
@@ -339,4 +326,4 @@ void php_phongo_serverapi_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_serverapi.get_properties = php_phongo_serverapi_get_properties;
 	php_phongo_handler_serverapi.free_obj       = php_phongo_serverapi_free_object;
 	php_phongo_handler_serverapi.offset         = XtOffsetOf(php_phongo_serverapi_t, std);
-} /* }}} */
+}

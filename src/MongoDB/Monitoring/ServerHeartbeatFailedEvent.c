@@ -26,8 +26,7 @@ zend_class_entry* php_phongo_serverheartbeatfailedevent_ce;
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent)
 
-/* {{{ proto integer ServerHeartbeatFailedEvent::getDurationMicros()
-   Returns this event's duration in microseconds */
+/* Returns this event's duration in microseconds */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getDurationMicros)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
@@ -35,10 +34,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getDurat
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETVAL_LONG(intern->duration_micros);
-} /* }}} */
+}
 
-/* {{{ proto Exception ServerHeartbeatFailedEvent::getError()
-   Returns the error associated with the event */
+/* Returns the error associated with the event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getError)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
@@ -46,10 +44,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getError
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_ZVAL(&intern->z_error, 1, 0);
-} /* }}} */
+}
 
-/* {{{ proto string ServerHeartbeatFailedEvent::getHost()
-   Returns this event's host */
+/* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getHost)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
@@ -57,10 +54,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getHost)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETVAL_STRING(intern->host.host);
-} /* }}} */
+}
 
-/* {{{ proto integer ServerHeartbeatFailedEvent::getPort()
-   Returns this event's port */
+/* Returns this event's port */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getPort)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
@@ -68,10 +64,9 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, getPort)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETVAL_LONG(intern->host.port);
-} /* }}} */
+}
 
-/* {{{ proto boolean ServerHeartbeatFailedEvent::isAwaited()
-   Returns whether this event came from an awaitable hello */
+/* Returns whether this event came from an awaitable hello */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, isAwaited)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_SERVERHEARTBEATFAILEDEVENT_OBJ_P(getThis());
@@ -79,12 +74,12 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent, isAwaite
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETVAL_BOOL(intern->awaited);
-} /* }}} */
+}
 
-/* {{{ MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent object handlers */
+/* MongoDB\Driver\Monitoring\ServerHeartbeatFailedEvent object handlers */
 static zend_object_handlers php_phongo_handler_serverheartbeatfailedevent;
 
-static void php_phongo_serverheartbeatfailedevent_free_object(zend_object* object) /* {{{ */
+static void php_phongo_serverheartbeatfailedevent_free_object(zend_object* object)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = Z_OBJ_SERVERHEARTBEATFAILEDEVENT(object);
 
@@ -93,9 +88,9 @@ static void php_phongo_serverheartbeatfailedevent_free_object(zend_object* objec
 	if (!Z_ISUNDEF(intern->z_error)) {
 		zval_ptr_dtor(&intern->z_error);
 	}
-} /* }}} */
+}
 
-static zend_object* php_phongo_serverheartbeatfailedevent_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_serverheartbeatfailedevent_create_object(zend_class_entry* class_type)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern = zend_object_alloc(sizeof(php_phongo_serverheartbeatfailedevent_t), class_type);
 
@@ -105,9 +100,9 @@ static zend_object* php_phongo_serverheartbeatfailedevent_create_object(zend_cla
 	intern->std.handlers = &php_phongo_handler_serverheartbeatfailedevent;
 
 	return &intern->std;
-} /* }}} */
+}
 
-static HashTable* php_phongo_serverheartbeatfailedevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp) /* {{{ */
+static HashTable* php_phongo_serverheartbeatfailedevent_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	php_phongo_serverheartbeatfailedevent_t* intern;
 	zval                                     retval = ZVAL_STATIC_INIT;
@@ -125,10 +120,9 @@ static HashTable* php_phongo_serverheartbeatfailedevent_get_debug_info(phongo_co
 	Z_ADDREF(intern->z_error);
 
 	return Z_ARRVAL(retval);
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_serverheartbeatfailedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_serverheartbeatfailedevent_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_serverheartbeatfailedevent_ce                = register_class_MongoDB_Driver_Monitoring_ServerHeartbeatFailedEvent();
 	php_phongo_serverheartbeatfailedevent_ce->create_object = php_phongo_serverheartbeatfailedevent_create_object;
@@ -138,4 +132,4 @@ void php_phongo_serverheartbeatfailedevent_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_serverheartbeatfailedevent.get_debug_info = php_phongo_serverheartbeatfailedevent_get_debug_info;
 	php_phongo_handler_serverheartbeatfailedevent.free_obj       = php_phongo_serverheartbeatfailedevent_free_object;
 	php_phongo_handler_serverheartbeatfailedevent.offset         = XtOffsetOf(php_phongo_serverheartbeatfailedevent_t, std);
-} /* }}} */
+}

@@ -27,36 +27,29 @@ zend_class_entry* php_phongo_undefined_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Undefined)
 
-/* {{{ proto string MongoDB\BSON\Undefined::__toString()
-   Return the empty string. */
+/* Return the empty string. */
 static PHP_METHOD(MongoDB_BSON_Undefined, __toString)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_STRINGL("", 0);
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\BSON\Undefined::jsonSerialize()
-*/
 static PHP_METHOD(MongoDB_BSON_Undefined, jsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	array_init_size(return_value, 1);
 	ADD_ASSOC_BOOL_EX(return_value, "$undefined", 1);
-} /* }}} */
+}
 
-/* {{{ proto string MongoDB\BSON\Undefined::serialize()
-*/
 static PHP_METHOD(MongoDB_BSON_Undefined, serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	RETURN_STRING("");
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\BSON\Undefined::unserialize(string $serialized)
-*/
 static PHP_METHOD(MongoDB_BSON_Undefined, unserialize)
 {
 	char*  serialized;
@@ -65,19 +58,15 @@ static PHP_METHOD(MongoDB_BSON_Undefined, unserialize)
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STRING(serialized, serialized_len)
 	PHONGO_PARSE_PARAMETERS_END();
-} /* }}} */
+}
 
-/* {{{ proto array MongoDB\Driver\Undefined::__serialize()
-*/
 static PHP_METHOD(MongoDB_BSON_Undefined, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	array_init_size(return_value, 0);
-} /* }}} */
+}
 
-/* {{{ proto void MongoDB\Driver\Undefined::__unserialize(array $data)
-*/
 static PHP_METHOD(MongoDB_BSON_Undefined, __unserialize)
 {
 	zval* data;
@@ -85,19 +74,19 @@ static PHP_METHOD(MongoDB_BSON_Undefined, __unserialize)
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ARRAY(data)
 	PHONGO_PARSE_PARAMETERS_END();
-} /* }}} */
+}
 
-/* {{{ MongoDB\BSON\Undefined object handlers */
+/* MongoDB\BSON\Undefined object handlers */
 static zend_object_handlers php_phongo_handler_undefined;
 
-static void php_phongo_undefined_free_object(zend_object* object) /* {{{ */
+static void php_phongo_undefined_free_object(zend_object* object)
 {
 	php_phongo_undefined_t* intern = Z_OBJ_UNDEFINED(object);
 
 	zend_object_std_dtor(&intern->std);
-} /* }}} */
+}
 
-static zend_object* php_phongo_undefined_create_object(zend_class_entry* class_type) /* {{{ */
+static zend_object* php_phongo_undefined_create_object(zend_class_entry* class_type)
 {
 	php_phongo_undefined_t* intern = zend_object_alloc(sizeof(php_phongo_undefined_t), class_type);
 
@@ -107,10 +96,9 @@ static zend_object* php_phongo_undefined_create_object(zend_class_entry* class_t
 	intern->std.handlers = &php_phongo_handler_undefined;
 
 	return &intern->std;
-} /* }}} */
-/* }}} */
+}
 
-void php_phongo_undefined_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_undefined_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_undefined_ce                = register_class_MongoDB_BSON_Undefined(php_phongo_json_serializable_ce, php_phongo_type_ce, zend_ce_serializable);
 	php_phongo_undefined_ce->create_object = php_phongo_undefined_create_object;
@@ -124,4 +112,4 @@ void php_phongo_undefined_init_ce(INIT_FUNC_ARGS) /* {{{ */
 	php_phongo_handler_undefined.clone_obj = zend_objects_clone_obj;
 	php_phongo_handler_undefined.free_obj  = php_phongo_undefined_free_object;
 	php_phongo_handler_undefined.offset    = XtOffsetOf(php_phongo_undefined_t, std);
-} /* }}} */
+}

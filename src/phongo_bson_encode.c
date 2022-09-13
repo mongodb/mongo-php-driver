@@ -48,7 +48,7 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 /* Determines whether the argument should be serialized as a BSON array or
  * document. IS_ARRAY is returned if the argument's keys are a sequence of
  * integers starting at zero; otherwise, IS_OBJECT is returned. */
-static int php_phongo_is_array_or_document(zval* val) /* {{{ */
+static int php_phongo_is_array_or_document(zval* val)
 {
 	HashTable* ht_data = HASH_OF(val);
 	int        count;
@@ -80,14 +80,14 @@ static int php_phongo_is_array_or_document(zval* val) /* {{{ */
 	}
 
 	return IS_ARRAY;
-} /* }}} */
+}
 
 /* Appends the array or object argument to the BSON document. If the object is
  * an instance of MongoDB\BSON\Serializable, the return value of bsonSerialize()
  * will be appended as an embedded document. Other MongoDB\BSON\Type instances
  * will be appended as the appropriate BSON type. Other array or object values
  * will be appended as an embedded document. */
-static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, long key_len, zval* object) /* {{{ */
+static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, long key_len, zval* object)
 {
 	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_cursorid_ce)) {
 		bson_append_int64(bson, key, key_len, Z_CURSORID_OBJ_P(object)->id);
@@ -244,12 +244,12 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		php_phongo_zval_to_bson_internal(object, field_path, flags, &child, NULL);
 		bson_append_document_end(bson, &child);
 	}
-} /* }}} */
+}
 
 /* Appends the zval argument to the BSON document. If the argument is an object,
  * or an array that should be serialized as an embedded document, this function
  * will defer to php_phongo_bson_append_object(). */
-static void php_phongo_bson_append(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, long key_len, zval* entry) /* {{{ */
+static void php_phongo_bson_append(bson_t* bson, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, const char* key, long key_len, zval* entry)
 {
 	php_phongo_field_path_write_item_at_current_level(field_path, key);
 
@@ -337,9 +337,9 @@ try_again:
 			efree(path_string);
 		}
 	}
-} /* }}} */
+}
 
-static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out) /* {{{ */
+static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out)
 {
 	HashTable* ht_data = NULL;
 	zval       obj_data;
@@ -478,24 +478,24 @@ cleanup:
 	if (!Z_ISUNDEF(obj_data)) {
 		zval_ptr_dtor(&obj_data);
 	}
-} /* }}} */
+}
 
 /* Converts the array or object argument to a BSON document. If the object is an
  * instance of MongoDB\BSON\Serializable, the return value of bsonSerialize()
  * will be used. */
-void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out) /* {{{ */
+void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out)
 {
 	php_phongo_field_path* field_path = php_phongo_field_path_alloc(false);
 
 	php_phongo_zval_to_bson_internal(data, field_path, flags, bson, bson_out);
 
 	php_phongo_field_path_free(field_path);
-} /* }}} */
+}
 
 /* Converts the argument to a bson_value_t. If the object is an instance of
  * MongoDB\BSON\Serializable, the return value of bsonSerialize() will be
  * used. It is the caller's responsibility to call bson_value_destroy. */
-void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bson_value_t* value) /* {{{ */
+void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bson_value_t* value)
 {
 	bson_iter_t iter;
 	bson_t      bson = BSON_INITIALIZER;
@@ -514,4 +514,4 @@ void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bs
 
 	bson_destroy(&bson);
 	zval_ptr_dtor(&data_object);
-} /* }}} */
+}

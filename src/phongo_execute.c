@@ -45,7 +45,7 @@ static bson_t* create_wrapped_command_envelope(const char* db, bson_t* reply)
 	return tmp;
 }
 
-static zval* phongo_create_implicit_session(zval* manager) /* {{{ */
+static zval* phongo_create_implicit_session(zval* manager)
 {
 	mongoc_client_session_t* cs;
 	zval*                    zsession;
@@ -61,12 +61,12 @@ static zval* phongo_create_implicit_session(zval* manager) /* {{{ */
 	phongo_session_init(zsession, manager, cs);
 
 	return zsession;
-} /* }}} */
+}
 
 /* Parses the "readConcern" option for an execute method. If mongoc_opts is not
  * NULL, the option will be appended. On error, false is returned and an
  * exception is thrown. */
-static bool phongo_parse_read_concern(zval* options, bson_t* mongoc_opts) /* {{{ */
+static bool phongo_parse_read_concern(zval* options, bson_t* mongoc_opts)
 {
 	zval*                  option = NULL;
 	mongoc_read_concern_t* read_concern;
@@ -99,12 +99,12 @@ static bool phongo_parse_read_concern(zval* options, bson_t* mongoc_opts) /* {{{
 	}
 
 	return true;
-} /* }}} */
+}
 
 /* Parses the "readPreference" option for an execute method. If zreadPreference
  * is not NULL, it will be assigned to the option. On error, false is returned
  * and an exception is thrown. */
-bool phongo_parse_read_preference(zval* options, zval** zreadPreference) /* {{{ */
+bool phongo_parse_read_preference(zval* options, zval** zreadPreference)
 {
 	zval* option = NULL;
 
@@ -133,7 +133,7 @@ bool phongo_parse_read_preference(zval* options, zval** zreadPreference) /* {{{ 
 	}
 
 	return true;
-} /* }}} */
+}
 
 /* Parses the "session" option for an execute method. The client object should
  * correspond to the Manager executing the operation and will be used to ensure
@@ -141,7 +141,7 @@ bool phongo_parse_read_preference(zval* options, zval** zreadPreference) /* {{{ 
  * not NULL, the option will be appended. If zsession is not NULL, it will be
  * assigned to the option. On error, false is returned and an exception is
  * thrown. */
-bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession) /* {{{ */
+bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc_opts, zval** zsession)
 {
 	zval*                          option = NULL;
 	const mongoc_client_session_t* client_session;
@@ -183,13 +183,13 @@ bool phongo_parse_session(zval* options, mongoc_client_t* client, bson_t* mongoc
 	}
 
 	return true;
-} /* }}} */
+}
 
 /* Parses the "writeConcern" option for an execute method. If mongoc_opts is not
  * NULL, the option will be appended. If zwriteConcern is not NULL, it will be
  * assigned to the option. On error, false is returned and an exception is
  * thrown. */
-static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval** zwriteConcern) /* {{{ */
+static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval** zwriteConcern)
 {
 	zval*                   option = NULL;
 	mongoc_write_concern_t* write_concern;
@@ -228,7 +228,7 @@ static bool phongo_parse_write_concern(zval* options, bson_t* mongoc_opts, zval*
 	return true;
 }
 
-bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
+bool phongo_execute_bulk_write(zval* manager, const char* namespace, php_phongo_bulkwrite_t* bulk_write, zval* options, uint32_t server_id, zval* return_value)
 {
 	mongoc_client_t*              client = NULL;
 	bson_error_t                  error  = { 0 };
@@ -331,9 +331,9 @@ cleanup:
 	bson_destroy(&reply);
 
 	return success;
-} /* }}} */
+}
 
-bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
+bool phongo_execute_command(zval* manager, php_phongo_command_type_t type, const char* db, zval* zcommand, zval* options, uint32_t server_id, zval* return_value)
 {
 	mongoc_client_t*            client;
 	const php_phongo_command_t* command;
@@ -501,9 +501,9 @@ cleanup:
 	}
 
 	return result;
-} /* }}} */
+}
 
-bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zval* options, uint32_t server_id, zval* return_value) /* {{{ */
+bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zval* options, uint32_t server_id, zval* return_value)
 {
 	mongoc_client_t*          client;
 	const php_phongo_query_t* query;
@@ -571,4 +571,4 @@ bool phongo_execute_query(zval* manager, const char* namespace, zval* zquery, zv
 	}
 
 	return true;
-} /* }}} */
+}

@@ -21,7 +21,7 @@
 
 zend_class_entry* php_phongo_authenticationexception_ce;
 
-void php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS) /* {{{ */
+void php_phongo_authenticationexception_init_ce(INIT_FUNC_ARGS)
 {
 	php_phongo_authenticationexception_ce = register_class_MongoDB_Driver_Exception_AuthenticationException(php_phongo_connectionexception_ce);
-} /* }}} */
+}

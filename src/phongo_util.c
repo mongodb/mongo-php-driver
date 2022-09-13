@@ -21,7 +21,7 @@
 
 #include "phongo_util.h"
 
-const char* php_phongo_bson_type_to_string(bson_type_t type) /* {{{ */
+const char* php_phongo_bson_type_to_string(bson_type_t type)
 {
 	switch (type) {
 		case BSON_TYPE_EOD:
@@ -71,7 +71,7 @@ const char* php_phongo_bson_type_to_string(bson_type_t type) /* {{{ */
 		default:
 			return "unknown";
 	}
-} /* }}} */
+}
 
 /* If options is not an array, insert it as a field in a newly allocated array.
  * This may be used to convert legacy options (e.g. ReadPreference option for
@@ -80,7 +80,7 @@ const char* php_phongo_bson_type_to_string(bson_type_t type) /* {{{ */
  * A pointer to the array zval will always be returned. If allocated is set to
  * true, php_phongo_prep_legacy_option_free() should be used to free the array
  * zval later. */
-zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* allocated) /* {{{ */
+zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* allocated)
 {
 	*allocated = false;
 
@@ -96,15 +96,15 @@ zval* php_phongo_prep_legacy_option(zval* options, const char* key, bool* alloca
 	}
 
 	return options;
-} /* }}} */
+}
 
-void php_phongo_prep_legacy_option_free(zval* options) /* {{{ */
+void php_phongo_prep_legacy_option_free(zval* options)
 {
 	zval_ptr_dtor(options);
 	efree(options);
-} /* }}} */
+}
 
-bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len) /* {{{ */
+bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len)
 {
 	int64_t value;
 	char*   endptr = NULL;
@@ -120,10 +120,10 @@ bool php_phongo_parse_int64(int64_t* retval, const char* data, size_t data_len) 
 	*retval = value;
 
 	return true;
-} /* }}} */
+}
 
 /* Splits a namespace name into the database and collection names, allocated with estrdup. */
-bool phongo_split_namespace(const char* namespace, char** dbname, char** cname) /* {{{ */
+bool phongo_split_namespace(const char* namespace, char** dbname, char** cname)
 {
 	char* dot = strchr(namespace, '.');
 
@@ -139,4 +139,4 @@ bool phongo_split_namespace(const char* namespace, char** dbname, char** cname) 
 	}
 
 	return true;
-} /* }}} */
+}
