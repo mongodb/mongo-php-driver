@@ -11,7 +11,7 @@ final class CursorId implements \Serializable
 {
     private final function __construct() {}
 
-    public static function __set_state(array $properties): CursorId {}
+    final public static function __set_state(array $properties): CursorId {}
 
     final public function __toString(): string {}
 

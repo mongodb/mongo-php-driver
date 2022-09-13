@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: b5c797e41b64764dc3b9392110c68a44bcd94932 */
+ * Stub hash: 697b55c640ce07590e4fdb8bbc9d12d316ecf412 */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_WriteConcern___construct, 0, 0, 1)
@@ -108,7 +108,7 @@ static const zend_function_entry class_MongoDB_Driver_WriteConcern_methods[] = {
 #endif
 	ZEND_ME(MongoDB_Driver_WriteConcern, getWtimeout, arginfo_class_MongoDB_Driver_WriteConcern_getWtimeout, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_WriteConcern, isDefault, arginfo_class_MongoDB_Driver_WriteConcern_isDefault, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_WriteConcern, __set_state, arginfo_class_MongoDB_Driver_WriteConcern___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(MongoDB_Driver_WriteConcern, __set_state, arginfo_class_MongoDB_Driver_WriteConcern___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_WriteConcern, bsonSerialize, arginfo_class_MongoDB_Driver_WriteConcern_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif

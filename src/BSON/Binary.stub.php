@@ -69,7 +69,7 @@ final class Binary implements BinaryInterface, \JsonSerializable, Type, \Seriali
 
     final public function getType(): int {}
 
-    public static function __set_state(array $properties): Binary {}
+    final public static function __set_state(array $properties): Binary {}
 
     final public function __toString(): string {}
 

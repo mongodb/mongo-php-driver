@@ -9,7 +9,7 @@ namespace MongoDB\BSON;
 
 final class MaxKey implements MaxKeyInterface, \JsonSerializable, Type, \Serializable
 {
-    public static function __set_state(array $properties): MaxKey {}
+    final public static function __set_state(array $properties): MaxKey {}
 
     final public function serialize(): string {}
 

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 889b889b453597881e7eba0badb824335143070a */
+ * Stub hash: 17b79d50ca648f6aa64d7a5596833b08e4e841b4 */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Timestamp___construct, 0, 0, 2)
@@ -83,7 +83,7 @@ static const zend_function_entry class_MongoDB_BSON_Timestamp_methods[] = {
 	ZEND_ME(MongoDB_BSON_Timestamp, getTimestamp, arginfo_class_MongoDB_BSON_Timestamp_getTimestamp, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Timestamp, getIncrement, arginfo_class_MongoDB_BSON_Timestamp_getIncrement, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Timestamp, __toString, arginfo_class_MongoDB_BSON_Timestamp___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_Timestamp, __set_state, arginfo_class_MongoDB_BSON_Timestamp___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(MongoDB_BSON_Timestamp, __set_state, arginfo_class_MongoDB_BSON_Timestamp___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Timestamp, serialize, arginfo_class_MongoDB_BSON_Timestamp_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Timestamp, unserialize, arginfo_class_MongoDB_BSON_Timestamp_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Timestamp, __unserialize, arginfo_class_MongoDB_BSON_Timestamp___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

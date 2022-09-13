@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 7a5ff8ba8699e4874e755a2694daadc098cf158d */
+ * Stub hash: 542391934fa2e97e850d269b30636bdfc4aa4e65 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_ObjectId___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, id, IS_STRING, 1, "null")
@@ -59,7 +59,7 @@ static const zend_function_entry class_MongoDB_BSON_ObjectId_methods[] = {
 	ZEND_ME(MongoDB_BSON_ObjectId, __construct, arginfo_class_MongoDB_BSON_ObjectId___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_ObjectId, getTimestamp, arginfo_class_MongoDB_BSON_ObjectId_getTimestamp, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_ObjectId, __toString, arginfo_class_MongoDB_BSON_ObjectId___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_ObjectId, __set_state, arginfo_class_MongoDB_BSON_ObjectId___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(MongoDB_BSON_ObjectId, __set_state, arginfo_class_MongoDB_BSON_ObjectId___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_ObjectId, serialize, arginfo_class_MongoDB_BSON_ObjectId_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_ObjectId, unserialize, arginfo_class_MongoDB_BSON_ObjectId_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_ObjectId, __unserialize, arginfo_class_MongoDB_BSON_ObjectId___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

@@ -14,7 +14,7 @@ final class ServerApi implements \MongoDB\BSON\Serializable, \Serializable
 
     final public function __construct(string $version, ?bool $strict = null, ?bool $deprecationErrors = null) {}
 
-    public static function __set_state(array $properties): ServerApi {}
+    final public static function __set_state(array $properties): ServerApi {}
 
 #if PHP_VERSION_ID >= 80000
     final public function bsonSerialize(): array|object {}

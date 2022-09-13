@@ -35,7 +35,7 @@ final class WriteConcern implements \MongoDB\BSON\Serializable, \Serializable
 
     final public function isDefault(): bool {}
 
-    public static function __set_state(array $properties): WriteConcern {}
+    final public static function __set_state(array $properties): WriteConcern {}
 
 #if PHP_VERSION_ID >= 80000
     final public function bsonSerialize(): array|object {}

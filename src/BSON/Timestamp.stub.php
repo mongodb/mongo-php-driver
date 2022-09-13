@@ -25,7 +25,7 @@ final class Timestamp implements TimestampInterface, \JsonSerializable, Type, \S
 
     public final function __toString(): string {}
 
-    public static function __set_state(array $properties): Timestamp {}
+    final public static function __set_state(array $properties): Timestamp {}
 
     final public function serialize(): string {}
 

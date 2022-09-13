@@ -45,7 +45,7 @@ final class ReadConcern implements \MongoDB\BSON\Serializable, \Serializable
 
     final public function isDefault(): bool {}
 
-    public static function __set_state(array $properties): ReadConcern {}
+    final public static function __set_state(array $properties): ReadConcern {}
 
 #if PHP_VERSION_ID >= 80000
     final public function bsonSerialize(): array|object {}

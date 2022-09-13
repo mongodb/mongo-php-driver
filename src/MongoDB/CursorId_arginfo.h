@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: da0685e03cb26f923e8fee5c93a7cf6f82641f40 */
+ * Stub hash: 4a60dfaa9c42a5c5ea1a1b1b6e318d3e472f134d */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_CursorId___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -36,7 +36,7 @@ static ZEND_METHOD(MongoDB_Driver_CursorId, __serialize);
 
 static const zend_function_entry class_MongoDB_Driver_CursorId_methods[] = {
 	ZEND_ME(MongoDB_Driver_CursorId, __construct, arginfo_class_MongoDB_Driver_CursorId___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_CursorId, __set_state, arginfo_class_MongoDB_Driver_CursorId___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(MongoDB_Driver_CursorId, __set_state, arginfo_class_MongoDB_Driver_CursorId___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_CursorId, __toString, arginfo_class_MongoDB_Driver_CursorId___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_CursorId, serialize, arginfo_class_MongoDB_Driver_CursorId_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_CursorId, unserialize, arginfo_class_MongoDB_Driver_CursorId_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

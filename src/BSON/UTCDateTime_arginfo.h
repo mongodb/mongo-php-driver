@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: f3bd2552db311ddb34ac708404749322f7fec341 */
+ * Stub hash: 05ae6837c7f219cbe713be1b5edc6e35eb932b5c */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_UTCDateTime___construct, 0, 0, 0)
@@ -77,7 +77,7 @@ static const zend_function_entry class_MongoDB_BSON_UTCDateTime_methods[] = {
 #endif
 	ZEND_ME(MongoDB_BSON_UTCDateTime, toDateTime, arginfo_class_MongoDB_BSON_UTCDateTime_toDateTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_UTCDateTime, __toString, arginfo_class_MongoDB_BSON_UTCDateTime___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_UTCDateTime, __set_state, arginfo_class_MongoDB_BSON_UTCDateTime___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	ZEND_ME(MongoDB_BSON_UTCDateTime, __set_state, arginfo_class_MongoDB_BSON_UTCDateTime___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_UTCDateTime, serialize, arginfo_class_MongoDB_BSON_UTCDateTime_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_UTCDateTime, unserialize, arginfo_class_MongoDB_BSON_UTCDateTime_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_UTCDateTime, __unserialize, arginfo_class_MongoDB_BSON_UTCDateTime___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

@@ -16,7 +16,7 @@ final class Javascript implements JavascriptInterface, \JsonSerializable, Type, 
     final public function __construct(string $code, $scope = null) {}
 #endif
 
-    public static function __set_state(array $properties): Javascript {}
+    final public static function __set_state(array $properties): Javascript {}
 
     final public function getCode(): string {}
 
