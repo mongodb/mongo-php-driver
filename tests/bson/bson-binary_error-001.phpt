@@ -19,7 +19,7 @@ echo throws(function() use ($binary) {
 }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 echo throws(function() {
-    new MongoDB\BSON\Binary("random binary data without type");
+    new MongoDB\BSON\Binary();
 }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 ?>
@@ -31,6 +31,6 @@ MongoDB\BSON\Binary::getData() expects exactly 0 %r(argument|parameter)%rs, 1 gi
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 MongoDB\BSON\Binary::getType() expects exactly 0 %r(argument|parameter)%rs, 1 given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\BSON\Binary::__construct() expects exactly 2 %r(argument|parameter)%rs, 1 given
+MongoDB\BSON\Binary::__construct() expects at least 1 %r(argument|parameter)%r, 0 given
 ===DONE===
 
