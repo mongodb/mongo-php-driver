@@ -97,12 +97,13 @@ static PHP_METHOD(MongoDB_BSON_Binary, __construct)
 	php_phongo_binary_t* intern;
 	char*                data;
 	size_t               data_len;
-	zend_long            type;
+	zend_long            type = BSON_SUBTYPE_BINARY;
 
 	intern = Z_BINARY_OBJ_P(getThis());
 
-	PHONGO_PARSE_PARAMETERS_START(2, 2)
+	PHONGO_PARSE_PARAMETERS_START(1, 2)
 	Z_PARAM_STRING(data, data_len)
+	Z_PARAM_OPTIONAL
 	Z_PARAM_LONG(type)
 	PHONGO_PARSE_PARAMETERS_END();
 
