@@ -51,6 +51,47 @@ typedef struct {
 	bool             is_persistent;
 } php_phongo_pclient_t;
 
+static const mongoc_client_t* get_first_pclient_client(HashTable* ht)
+{
+	if (ht) {
+		php_phongo_pclient_t* pclient = NULL;
+
+		zend_hash_internal_pointer_reset(ht);
+		pclient = zend_hash_get_current_data_ptr(ht);
+
+		if (pclient) {
+			return pclient->client;
+		}
+	}
+
+	return NULL;
+}
+
+/* Returns the version of the crypt_shared library, or NULL if it's unavailable.
+ * Querying the version requires a mongoc_client_t pointer. Since the shared
+ * library can only be loaded once, any client will return the same result so we
+ * consult the first persistent or request-scoped client we can find.
+ *
+ * Note: this may incorrectly return NULL if crypt_shared was loaded through a
+ * mongoc_client_t since destroyed (e.g. single requested-scoped client);
+ * however, that's the best can do with libmongoc's API. */
+const char* php_phongo_crypt_shared_version()
+{
+	const mongoc_client_t* client = NULL;
+
+	client = get_first_pclient_client(&MONGODB_G(persistent_clients));
+
+	if (!client) {
+		client = get_first_pclient_client(MONGODB_G(request_clients));
+	}
+
+	if (client) {
+		return mongoc_client_get_crypt_shared_version(client);
+	}
+
+	return NULL;
+}
+
 static mongoc_uri_t* php_phongo_make_uri(const char* uri_string)
 {
 	mongoc_uri_t* uri;

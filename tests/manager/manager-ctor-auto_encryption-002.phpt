@@ -17,8 +17,11 @@ $autoEncryptionOptions = [
 
 create_test_manager(null, [], ['autoEncryption' => $autoEncryptionOptions]);
 
+var_dump(get_module_info('crypt_shared library version'));
+
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+string(%d) "mongo_crypt%a"
 ===DONE===

@@ -21,6 +21,8 @@
 
 #include "phongo_classes.h"
 
+const char* php_phongo_crypt_shared_version();
+
 void phongo_manager_init(php_phongo_manager_t* manager, const char* uri_string, zval* options, zval* driverOptions);
 
 void php_phongo_client_reset_once(php_phongo_manager_t* manager, int pid);
