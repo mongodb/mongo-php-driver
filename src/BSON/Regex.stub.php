@@ -9,13 +9,13 @@ namespace MongoDB\BSON;
 
 final class Regex implements RegexInterface, \JsonSerializable, Type, \Serializable
 {
-    public final function __construct(string $pattern, string $flags = '') {}
+    final public function __construct(string $pattern, string $flags = '') {}
 
-    public final function getPattern(): string {}
+    final public function getPattern(): string {}
 
-    public final function getFlags(): string {}
+    final public function getFlags(): string {}
 
-    public final function __toString(): string {}
+    final public function __toString(): string {}
 
     final public static function __set_state(array $properties): Regex {}
 

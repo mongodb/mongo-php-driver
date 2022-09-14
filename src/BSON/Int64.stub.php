@@ -9,7 +9,7 @@ namespace MongoDB\BSON;
 
 final class Int64 implements \JsonSerializable, Type, \Serializable
 {
-    private final function __construct() {}
+    final private function __construct() {}
 
     final public function __toString(): string {}
 

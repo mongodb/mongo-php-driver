@@ -9,7 +9,7 @@ namespace MongoDB\Driver;
 
 final class BulkWrite implements \Countable
 {
-    public final function __construct(?array $options = null) {}
+    final public function __construct(?array $options = null) {}
 
     public function count(): int {}
 
@@ -21,13 +21,13 @@ final class BulkWrite implements \Countable
 #endif
 
 #if PHP_VERSION_ID >= 80000
-    public final function insert(array|object $document): mixed {}
+    final public function insert(array|object $document): mixed {}
 #else
     /**
      * @param array|object $document
      * @return mixed
      */
-    public final function insert($document) {}
+    final public function insert($document) {}
 #endif
 
 #if PHP_VERSION_ID >= 80000

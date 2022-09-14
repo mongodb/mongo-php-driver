@@ -9,7 +9,7 @@ namespace MongoDB\BSON;
 
 trait PersistableEnum
 {
-    public final function bsonSerialize(): array {}
+    final public function bsonSerialize(): array {}
 
-    public final function bsonUnserialize(array $data): void {}
+    final public function bsonUnserialize(array $data): void {}
 }

@@ -10,20 +10,20 @@ namespace MongoDB\BSON;
 final class Timestamp implements TimestampInterface, \JsonSerializable, Type, \Serializable
 {
 #if PHP_VERSION_ID >= 80000
-    public final function __construct(int|string $increment, int|string $timestamp) {}
+    final public function __construct(int|string $increment, int|string $timestamp) {}
 #else
     /**
      * @param int|string $increment
      * @param int|string $timestamp
      */
-    public final function __construct($increment, $timestamp) {}
+    final public function __construct($increment, $timestamp) {}
 #endif
 
-    public final function getTimestamp(): int {}
+    final public function getTimestamp(): int {}
 
-    public final function getIncrement(): int {}
+    final public function getIncrement(): int {}
 
-    public final function __toString(): string {}
+    final public function __toString(): string {}
 
     final public static function __set_state(array $properties): Timestamp {}
 
