@@ -2,6 +2,7 @@
 MongoDB\Driver\Server::executeBulkWrite() with write concern (replica set secondary, local DB)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_server_version('>=', '6.2'); ?>
 <?php skip_if_not_replica_set(); ?>
 <?php skip_if_no_secondary(); ?>
 <?php skip_if_not_clean('local', COLLECTION_NAME); ?>
