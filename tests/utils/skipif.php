@@ -15,11 +15,17 @@ require_once __DIR__ . '/tools.php';
  */
 function disable_skipif_caching()
 {
+    static $skipifCachingDisabled;
+
     if (PHP_VERSION_ID < 80100) {
         return;
     }
 
-    echo "nocache\n";
+    if (! isset($skipifCachingDisabled)) {
+        $skipifCachingDisabled = true;
+
+        register_shutdown_function(function() { echo "nocache\n"; });
+    }
 }
 
 /**
