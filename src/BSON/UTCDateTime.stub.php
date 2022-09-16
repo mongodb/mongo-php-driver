@@ -10,15 +10,15 @@ namespace MongoDB\BSON;
 final class UTCDateTime implements UTCDateTimeInterface, \JsonSerializable, Type, \Serializable
 {
 #if PHP_VERSION_ID >= 80000
-    public final function __construct(int|string|float|\DateTimeInterface|null $milliseconds = null) {}
+    final public function __construct(int|string|float|\DateTimeInterface|null $milliseconds = null) {}
 #else
     /** @param int|string|float|\DateTimeInterface|null $milliseconds */
-    public final function __construct($milliseconds = null) {}
+    final public function __construct($milliseconds = null) {}
 #endif
 
-    public final function toDateTime(): \DateTime {}
+    final public function toDateTime(): \DateTime {}
 
-    public final function __toString(): string {}
+    final public function __toString(): string {}
 
     final public static function __set_state(array $properties): UTCDateTime {}
 

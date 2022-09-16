@@ -9,7 +9,7 @@ namespace MongoDB\Driver;
 
 final class CursorId implements \Serializable
 {
-    private final function __construct() {}
+    final private function __construct() {}
 
     final public static function __set_state(array $properties): CursorId {}
 

@@ -9,11 +9,11 @@ namespace MongoDB\BSON;
 
 final class ObjectId implements ObjectIdInterface, \JsonSerializable, Type, \Serializable
 {
-    public final function __construct(?string $id = null) {}
+    final public function __construct(?string $id = null) {}
 
-    public final function getTimestamp(): int {}
+    final public function getTimestamp(): int {}
 
-    public final function __toString(): string {}
+    final public function __toString(): string {}
 
     final public static function __set_state(array $properties): ObjectId {}
 

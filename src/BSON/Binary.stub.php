@@ -63,7 +63,7 @@ final class Binary implements BinaryInterface, \JsonSerializable, Type, \Seriali
      */
     public const TYPE_USER_DEFINED = UNKNOWN;
 
-    public final function __construct(string $data, int $type = Binary::TYPE_GENERIC) {}
+    final public function __construct(string $data, int $type = Binary::TYPE_GENERIC) {}
 
     final public function getData(): string {}
 
