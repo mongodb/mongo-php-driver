@@ -545,3 +545,12 @@ void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bs
 	bson_destroy(&bson);
 	zval_ptr_dtor(&data_object);
 }
+
+void php_phongo_bson_append_zval(bson_t* bson, const char* key, long key_len, zval* value)
+{
+	php_phongo_field_path* field_path = php_phongo_field_path_alloc(false);
+
+	php_phongo_bson_append(bson, field_path, PHONGO_BSON_NONE, key, key_len, value);
+
+	php_phongo_field_path_free(field_path);
+}
