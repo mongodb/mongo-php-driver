@@ -106,6 +106,10 @@ static inline php_phongo_bsondocument_t* php_bsondocument_fetch_object(zend_obje
 {
 	return (php_phongo_bsondocument_t*) ((char*) obj - XtOffsetOf(php_phongo_bsondocument_t, std));
 }
+static inline php_phongo_bsoniterator_t* php_bsoniterator_fetch_object(zend_object* obj)
+{
+	return (php_phongo_bsoniterator_t*) ((char*) obj - XtOffsetOf(php_phongo_bsoniterator_t, std));
+}
 static inline php_phongo_dbpointer_t* php_dbpointer_fetch_object(zend_object* obj)
 {
 	return (php_phongo_dbpointer_t*) ((char*) obj - XtOffsetOf(php_phongo_dbpointer_t, std));
@@ -224,6 +228,7 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_BINARY_OBJ_P(zv) (php_binary_fetch_object(Z_OBJ_P(zv)))
 #define Z_BSONARRAY_OBJ_P(zv) (php_bsonarray_fetch_object(Z_OBJ_P(zv)))
 #define Z_BSONDOCUMENT_OBJ_P(zv) (php_bsondocument_fetch_object(Z_OBJ_P(zv)))
+#define Z_BSONITERATOR_OBJ_P(zv) (php_bsoniterator_fetch_object(Z_OBJ_P(zv)))
 #define Z_DBPOINTER_OBJ_P(zv) (php_dbpointer_fetch_object(Z_OBJ_P(zv)))
 #define Z_DECIMAL128_OBJ_P(zv) (php_decimal128_fetch_object(Z_OBJ_P(zv)))
 #define Z_INT64_OBJ_P(zv) (php_int64_fetch_object(Z_OBJ_P(zv)))
@@ -270,6 +275,7 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_OBJ_BINARY(zo) (php_binary_fetch_object(zo))
 #define Z_OBJ_BSONARRAY(zo) (php_bsonarray_fetch_object(zo))
 #define Z_OBJ_BSONDOCUMENT(zo) (php_bsondocument_fetch_object(zo))
+#define Z_OBJ_BSONITERATOR(zo) (php_bsoniterator_fetch_object(zo))
 #define Z_OBJ_DBPOINTER(zo) (php_dbpointer_fetch_object(zo))
 #define Z_OBJ_DECIMAL128(zo) (php_decimal128_fetch_object(zo))
 #define Z_OBJ_INT64(zo) (php_int64_fetch_object(zo))
@@ -339,6 +345,7 @@ extern zend_class_entry* php_phongo_serializable_ce;
 extern zend_class_entry* php_phongo_binary_ce;
 extern zend_class_entry* php_phongo_bsonarray_ce;
 extern zend_class_entry* php_phongo_bsondocument_ce;
+extern zend_class_entry* php_phongo_bsoniterator_ce;
 extern zend_class_entry* php_phongo_dbpointer_ce;
 extern zend_class_entry* php_phongo_decimal128_ce;
 extern zend_class_entry* php_phongo_int64_ce;
@@ -381,6 +388,7 @@ extern zend_class_entry* php_phongo_topologyopeningevent_ce;
 extern void php_phongo_binary_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_bsonarray_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_bsondocument_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_bsoniterator_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_int64_init_ce(INIT_FUNC_ARGS);

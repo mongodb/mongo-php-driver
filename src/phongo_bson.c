@@ -1436,3 +1436,123 @@ bool php_phongo_bson_to_json(zval* return_value, const bson_t* bson, php_phongo_
 
 	return true;
 }
+
+void php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
+{
+	const char*                data;
+	const char*                options;
+	uint32_t                   data_len;
+	uint32_t                   options_len;
+	bson_subtype_t             subtype;
+	const bson_oid_t*          oid;
+	bson_decimal128_t          decimal;
+	bson_t                     bson = BSON_INITIALIZER;
+	php_phongo_bsondocument_t* bsondocument_intern;
+	php_phongo_bsonarray_t*    bsonarray_intern;
+
+	switch (bson_iter_type(iter)) {
+		case BSON_TYPE_UTF8:
+			ZVAL_STRING(zv, bson_iter_utf8(iter, NULL));
+			return;
+
+		case BSON_TYPE_EOD:
+			ZVAL_UNDEF(zv);
+			return;
+
+		case BSON_TYPE_DOCUMENT:
+			bson_iter_document(iter, &data_len, (const uint8_t**) &data);
+
+			object_init_ex(zv, php_phongo_bsondocument_ce);
+			bsondocument_intern       = Z_BSONDOCUMENT_OBJ_P(zv);
+			bsondocument_intern->bson = bson_new();
+			bson_init_static(bsondocument_intern->bson, (const uint8_t*) data, data_len);
+			return;
+
+		case BSON_TYPE_DOUBLE:
+			ZVAL_DOUBLE(zv, bson_iter_double(iter));
+			return;
+
+		case BSON_TYPE_ARRAY:
+			bson_iter_array(iter, &data_len, (const uint8_t**) &data);
+
+			object_init_ex(zv, php_phongo_bsonarray_ce);
+			bsonarray_intern       = Z_BSONARRAY_OBJ_P(zv);
+			bsonarray_intern->bson = bson_new();
+			bson_init_static(bsonarray_intern->bson, (const uint8_t*) data, data_len);
+			return;
+
+		case BSON_TYPE_BINARY:
+			bson_iter_binary(iter, (bson_subtype_t*) &subtype, &data_len, (const uint8_t**) &data);
+			php_phongo_bson_new_binary_from_binary_and_type(zv, data, data_len, subtype);
+			return;
+
+		case BSON_TYPE_UNDEFINED:
+			object_init_ex(zv, php_phongo_undefined_ce);
+			return;
+
+		case BSON_TYPE_OID:
+			php_phongo_objectid_new_from_oid(zv, bson_iter_oid(iter));
+			return;
+
+		case BSON_TYPE_BOOL:
+			ZVAL_BOOL(zv, bson_iter_bool(iter));
+			return;
+
+		case BSON_TYPE_DATE_TIME:
+			php_phongo_bson_new_utcdatetime_from_epoch(zv, bson_iter_date_time(iter));
+			return;
+
+		case BSON_TYPE_NULL:
+			ZVAL_NULL(zv);
+			return;
+
+		case BSON_TYPE_REGEX:
+			data = bson_iter_regex(iter, &options);
+			php_phongo_bson_new_regex_from_regex_and_options(zv, data, options);
+			return;
+
+		case BSON_TYPE_DBPOINTER:
+			bson_iter_dbpointer(iter, &data_len, &data, &oid);
+			php_phongo_bson_new_dbpointer(zv, data, data_len, oid);
+			return;
+
+		case BSON_TYPE_CODE:
+			data = bson_iter_code(iter, &data_len);
+			php_phongo_bson_new_javascript_from_javascript(zv, data, data_len);
+			return;
+
+		case BSON_TYPE_SYMBOL:
+			data = bson_iter_symbol(iter, &data_len);
+			php_phongo_bson_new_symbol(zv, data, data_len);
+			return;
+
+		case BSON_TYPE_CODEWSCOPE:
+			data = bson_iter_codewscope(iter, &data_len, &options_len, (const uint8_t**) &options);
+			bson_init_from_json(&bson, options, options_len, NULL);
+			php_phongo_bson_new_javascript_from_javascript_and_scope(zv, data, data_len, &bson);
+			return;
+
+		case BSON_TYPE_INT32:
+		case BSON_TYPE_INT64:
+			ZVAL_INT64(zv, bson_iter_as_int64(iter));
+			return;
+
+		case BSON_TYPE_TIMESTAMP:
+			bson_iter_timestamp(iter, &data_len, &options_len);
+			php_phongo_bson_new_timestamp_from_increment_and_timestamp(zv, options_len, data_len);
+			return;
+
+		case BSON_TYPE_DECIMAL128:
+			bson_iter_decimal128(iter, &decimal);
+			php_phongo_bson_new_decimal128(zv, &decimal);
+			return;
+
+		case BSON_TYPE_MAXKEY:
+			object_init_ex(zv, php_phongo_maxkey_ce);
+			return;
+
+		case BSON_TYPE_MINKEY:
+			object_init_ex(zv, php_phongo_minkey_ce);
+			return;
+	}
+}

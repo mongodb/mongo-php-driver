@@ -29,6 +29,7 @@
 #include "phongo_error.h"
 #include "phongo_bson_encode.h"
 #include "BSON/BSONDocument_arginfo.h"
+#include "BSON/BSONIterator.h"
 
 zend_class_entry* php_phongo_bsondocument_ce;
 
@@ -111,6 +112,13 @@ static PHP_METHOD(MongoDB_BSON_BSONDocument, fromPHP)
 	php_phongo_zval_to_bson(data, PHONGO_BSON_NONE, intern->bson, NULL);
 
 	RETURN_ZVAL(&zv, 1, 1);
+}
+
+static PHP_METHOD(MongoDB_BSON_BSONDocument, getIterator)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	phongo_bsoniterator_init(return_value, getThis());
 }
 
 static PHP_METHOD(MongoDB_BSON_BSONDocument, toCanonicalExtendedJSON)
@@ -249,7 +257,7 @@ static HashTable* php_phongo_bsondocument_get_properties(phongo_compat_object_ha
 
 void php_phongo_bsondocument_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_bsondocument_ce                = register_class_MongoDB_BSON_BSONDocument();
+	php_phongo_bsondocument_ce                = register_class_MongoDB_BSON_BSONDocument(zend_ce_aggregate);
 	php_phongo_bsondocument_ce->create_object = php_phongo_bsondocument_create_object;
 
 #if PHP_VERSION_ID >= 80000

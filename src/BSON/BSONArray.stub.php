@@ -7,11 +7,13 @@
 
 namespace MongoDB\BSON;
 
-final class BSONArray
+final class BSONArray implements \IteratorAggregate
 {
     private function __construct() {}
 
     final static public function fromPHP(array $value): BSONArray {}
+
+    final public function getIterator(): BSONIterator {}
 
     final public function toPHP(?array $typeMap = null): array {}
 

@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class BSONDocument
+final class BSONDocument implements \IteratorAggregate
 {
     private function __construct() {}
 
@@ -19,6 +19,8 @@ final class BSONDocument
     /** @param mixed $value */
     final static public function fromPHP($value): BSONDocument {}
 #endif
+
+    final public function getIterator(): BSONIterator {}
 
 #if PHP_VERSION_ID >= 80000
     final public function toPHP(?array $typeMap = null): mixed {}
