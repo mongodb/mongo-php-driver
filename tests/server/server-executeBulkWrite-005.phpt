@@ -35,8 +35,10 @@ $server->executeBulkWrite('local.' . COLLECTION_NAME, $bulk);
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 bool(false)
+
+Deprecated: MongoDB\Driver\WriteResult::getInsertedCount(): Calling MongoDB\Driver\WriteResult::getInsertedCount() for an unacknowledged write is deprecated and will throw an exception in ext-mongodb 2.0 in %s
 NULL
 bool(true)
 int(1)
