@@ -24,6 +24,7 @@ var_dump($result->getUpsertedCount());
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: MongoDB\Driver\WriteResult::getUpsertedCount(): Calling MongoDB\Driver\WriteResult::getUpsertedCount() for an unacknowledged write is deprecated and will throw an exception in ext-mongodb 2.0 in %s
 NULL
 ===DONE===

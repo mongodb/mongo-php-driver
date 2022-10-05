@@ -31,10 +31,17 @@
 #include "MongoDB/WriteError.h"
 #include "WriteResult_arginfo.h"
 
+#define PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED(method)                                                                                                                                        \
+	if (!mongoc_write_concern_is_acknowledged(intern->write_concern)) {                                                                                                                      \
+		php_error_docref(NULL, E_DEPRECATED, "Calling MongoDB\\Driver\\WriteResult::" method "() for an unacknowledged write is deprecated and will throw an exception in ext-mongodb 2.0"); \
+		RETURN_NULL();                                                                                                                                                                       \
+	}
+
 #define PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(iter, bson, key)                \
 	if (bson_iter_init_find((iter), (bson), (key)) && BSON_ITER_HOLDS_INT32((iter))) { \
 		RETURN_LONG(bson_iter_int32((iter)));                                          \
-	}
+	}                                                                                  \
+	RETURN_LONG(0);
 
 zend_class_entry* php_phongo_writeresult_ce;
 
@@ -123,6 +130,8 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getInsertedCount)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
+	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getInsertedCount");
+
 	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nInserted");
 }
 
@@ -135,6 +144,8 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getMatchedCount)
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
+
+	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getMatchedCount");
 
 	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nMatched");
 }
@@ -149,6 +160,8 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getModifiedCount)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
+	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getModifiedCount");
+
 	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nModified");
 }
 
@@ -162,6 +175,8 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getDeletedCount)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
+	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getDeletedCount");
+
 	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nRemoved");
 }
 
@@ -174,6 +189,8 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getUpsertedCount)
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
+
+	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getUpsertedCount");
 
 	PHONGO_WRITERESULT_RETURN_LONG_FROM_BSON_INT32(&iter, intern->reply, "nUpserted");
 }
@@ -199,6 +216,8 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getUpsertedIds)
 	intern = Z_WRITERESULT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
+
+	PHONGO_WRITERESULT_CHECK_ACKNOWLEDGED("getUpsertedIds");
 
 	array_init(return_value);
 

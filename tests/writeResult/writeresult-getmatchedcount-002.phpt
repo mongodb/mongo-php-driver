@@ -24,6 +24,7 @@ var_dump($result->getMatchedCount());
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: MongoDB\Driver\WriteResult::getMatchedCount(): Calling MongoDB\Driver\WriteResult::getMatchedCount() for an unacknowledged write is deprecated and will throw an exception in %s
 NULL
 ===DONE===

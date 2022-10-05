@@ -24,6 +24,7 @@ var_dump($result->getDeletedCount());
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
+Deprecated: MongoDB\Driver\WriteResult::getDeletedCount(): Calling MongoDB\Driver\WriteResult::getDeletedCount() for an unacknowledged write is deprecated and will throw an exception in ext-mongodb 2.0 in %s
 NULL
 ===DONE===
