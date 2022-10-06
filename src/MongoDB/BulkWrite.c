@@ -40,7 +40,7 @@ static void php_phongo_bulkwrite_extract_id(bson_t* doc, zval** return_value)
 	php_phongo_bson_state state;
 
 	PHONGO_BSON_INIT_STATE(state);
-	state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+	state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 	if (!php_phongo_bson_to_zval_ex(doc, &state)) {
 		goto cleanup;

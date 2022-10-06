@@ -230,7 +230,7 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getUpsertedIds)
 			/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type so we can
 			 * easily access the "index" and "_id" fields. */
 			PHONGO_BSON_INIT_STATE(state);
-			state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+			state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
 				continue;

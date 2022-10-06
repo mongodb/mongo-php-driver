@@ -458,7 +458,7 @@ static HashTable* php_phongo_readpreference_get_properties_hash(phongo_compat_ob
 		/* Use PHONGO_TYPEMAP_NATIVE_ARRAY for the root type since tags is an
 		 * array; however, inner documents and arrays can use the default. */
 		PHONGO_BSON_INIT_STATE(state);
-		state.map.root_type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
 		if (!php_phongo_bson_to_zval_ex(tags, &state)) {
 			zval_ptr_dtor(&state.zchild);
