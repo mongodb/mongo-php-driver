@@ -37,7 +37,7 @@
 
 /* Forward declarations */
 static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data);
-static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data);
+static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_array, void* data);
 
 /* Path builder */
 char* php_phongo_field_path_as_string(php_phongo_field_path* field_path)
