@@ -817,6 +817,45 @@ cleanup:
 }
 #endif /* PHP_VERSION_ID >= 80100 */
 
+static bool php_phongo_bson_init_document_object(zval* src, zend_class_entry* obj_ce, zval* obj)
+{
+#if PHP_VERSION_ID >= 80100
+	/* Enums require special handling for instantiation */
+	if (obj_ce->ce_flags & ZEND_ACC_ENUM) {
+		int       plen;
+		zend_bool pfree;
+		char*     case_name;
+		zval*     enum_case;
+
+		case_name = php_array_fetchc_string(src, "name", &plen, &pfree);
+
+		if (!case_name) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Missing 'name' field to infer enum case for %s", ZSTR_VAL(obj_ce->name));
+
+			return false;
+		}
+
+		enum_case = resolve_enum_case(obj_ce, case_name);
+
+		if (pfree) {
+			efree(case_name);
+		}
+
+		if (!enum_case) {
+			return false;
+		}
+
+		ZVAL_COPY(obj, enum_case);
+	} else {
+		object_init_ex(obj, obj_ce);
+	}
+#else  /* PHP_VERSION_ID < 80100 */
+	object_init_ex(obj, obj_ce);
+#endif /* PHP_VERSION_ID */
+
+	return true;
+}
+
 static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
@@ -857,47 +896,13 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 					zval              obj;
 					zend_class_entry* obj_ce = state.odm ? state.odm : state.map.document.class;
 
-#if PHP_VERSION_ID >= 80100
-					/* Enums require special handling for instantiation */
-					if (obj_ce->ce_flags & ZEND_ACC_ENUM) {
-						int       plen;
-						zend_bool pfree;
-						char*     case_name;
-						zval*     enum_case;
-
-						case_name = php_array_fetchc_string(&state.zchild, "name", &plen, &pfree);
-
-						if (!case_name) {
-							phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Missing 'name' field to infer enum case for %s", ZSTR_VAL(obj_ce->name));
-
-							/* Clean up and return true to stop iteration for
-							 * our parent context. */
-							zval_ptr_dtor(&state.zchild);
-							php_phongo_bson_state_dtor(&state);
-							return true;
-						}
-
-						enum_case = resolve_enum_case(obj_ce, case_name);
-
-						if (pfree) {
-							efree(case_name);
-						}
-
-						if (!enum_case) {
-							/* Exception already thrown. Clean up and return
-							 * true to stop iteration for our parent context. */
-							zval_ptr_dtor(&state.zchild);
-							php_phongo_bson_state_dtor(&state);
-							return true;
-						}
-
-						ZVAL_COPY(&obj, enum_case);
-					} else {
-						object_init_ex(&obj, obj_ce);
+					if (!php_phongo_bson_init_document_object(&state.zchild, obj_ce, &obj)) {
+						/* Exception already thrown. Clean up and return
+						 * true to stop iteration for our parent context. */
+						zval_ptr_dtor(&state.zchild);
+						php_phongo_bson_state_dtor(&state);
+						return true;
 					}
-#else  /* PHP_VERSION_ID < 80100 */
-					object_init_ex(&obj, obj_ce);
-#endif /* PHP_VERSION_ID */
 
 					zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
 					if (((php_phongo_bson_state*) data)->is_visiting_array) {
