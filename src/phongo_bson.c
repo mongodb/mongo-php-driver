@@ -861,80 +861,75 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	bson_iter_t            child;
 	php_phongo_bson_state* parent_state = (php_phongo_bson_state*) data;
+	php_phongo_bson_state  state;
+
+	if (!bson_iter_init(&child, v_document)) {
+		return false;
+	}
 
 	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
 
-	if (bson_iter_init(&child, v_document)) {
-		php_phongo_bson_state state;
+	PHONGO_BSON_INIT_STATE(state);
+	php_phongo_bson_state_copy_ctor(&state, parent_state);
 
-		PHONGO_BSON_INIT_STATE(state);
-		php_phongo_bson_state_copy_ctor(&state, parent_state);
+	array_init(&state.zchild);
 
-		array_init(&state.zchild);
+	if (bson_iter_visit_all(&child, &php_bson_visitors, &state) || child.err_off) {
+		/* Iteration stopped prematurely due to corruption or a failed
+		 * visitor. Free state.zchild, which we just initialized, and return
+		 * true to stop iteration for our parent context. */
+		zval_ptr_dtor(&state.zchild);
+		php_phongo_bson_state_dtor(&state);
+		return true;
+	}
 
-		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state) && !child.err_off) {
-			/* Check for entries in the fieldPath type map key, and use them to
-			 * override the default ones for this type */
-			php_phongo_handle_field_path_entry_for_compound_type(&state, &state.map.document);
+	/* Check for entries in the fieldPath type map key, and use them to
+	 * override the default ones for this type */
+	php_phongo_handle_field_path_entry_for_compound_type(&state, &state.map.document);
 
-			/* If php_phongo_bson_visit_binary() finds an ODM class, it should
-			 * supersede a default type map and named document class. */
-			if (state.odm && state.map.document.type == PHONGO_TYPEMAP_NONE) {
-				state.map.document.type = PHONGO_TYPEMAP_CLASS;
+	/* If php_phongo_bson_visit_binary() finds an ODM class, it should
+	 * supersede a default type map and named document class. */
+	if (state.odm && state.map.document.type == PHONGO_TYPEMAP_NONE) {
+		state.map.document.type = PHONGO_TYPEMAP_CLASS;
+	}
+
+	switch (state.map.document.type) {
+		case PHONGO_TYPEMAP_NATIVE_ARRAY:
+			/* Do nothing, item will be added later */
+			break;
+
+		case PHONGO_TYPEMAP_CLASS: {
+			zval              obj;
+			zend_class_entry* obj_ce = state.odm ? state.odm : state.map.document.class;
+
+			if (!php_phongo_bson_init_document_object(&state.zchild, obj_ce, &obj)) {
+				/* Exception already thrown. Clean up and return
+				 * true to stop iteration for our parent context. */
+				zval_ptr_dtor(&state.zchild);
+				php_phongo_bson_state_dtor(&state);
+				return true;
 			}
 
-			switch (state.map.document.type) {
-				case PHONGO_TYPEMAP_NATIVE_ARRAY:
-					if (((php_phongo_bson_state*) data)->is_visiting_array) {
-						add_next_index_zval(retval, &state.zchild);
-					} else {
-						ADD_ASSOC_ZVAL(retval, key, &state.zchild);
-					}
-					break;
+			zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
 
-				case PHONGO_TYPEMAP_CLASS: {
-					zval              obj;
-					zend_class_entry* obj_ce = state.odm ? state.odm : state.map.document.class;
-
-					if (!php_phongo_bson_init_document_object(&state.zchild, obj_ce, &obj)) {
-						/* Exception already thrown. Clean up and return
-						 * true to stop iteration for our parent context. */
-						zval_ptr_dtor(&state.zchild);
-						php_phongo_bson_state_dtor(&state);
-						return true;
-					}
-
-					zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
-					if (((php_phongo_bson_state*) data)->is_visiting_array) {
-						add_next_index_zval(retval, &obj);
-					} else {
-						ADD_ASSOC_ZVAL(retval, key, &obj);
-					}
-					zval_ptr_dtor(&state.zchild);
-					break;
-				}
-
-				case PHONGO_TYPEMAP_NATIVE_OBJECT:
-				default:
-					convert_to_object(&state.zchild);
-					if (((php_phongo_bson_state*) data)->is_visiting_array) {
-						add_next_index_zval(retval, &state.zchild);
-					} else {
-						ADD_ASSOC_ZVAL(retval, key, &state.zchild);
-					}
-			}
-		} else {
-			/* Iteration stopped prematurely due to corruption or a failed
-			 * visitor. Free state.zchild, which we just initialized, and return
-			 * true to stop iteration for our parent context. */
 			zval_ptr_dtor(&state.zchild);
-			php_phongo_bson_state_dtor(&state);
-			return true;
+			ZVAL_COPY_VALUE(&state.zchild, &obj);
+			break;
 		}
 
-		php_phongo_bson_state_dtor(&state);
-		php_phongo_field_path_pop(parent_state->field_path);
+		case PHONGO_TYPEMAP_NATIVE_OBJECT:
+		default:
+			convert_to_object(&state.zchild);
 	}
+
+	if (parent_state->is_visiting_array) {
+		add_next_index_zval(retval, &state.zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &state.zchild);
+	}
+
+	php_phongo_bson_state_dtor(&state);
+	php_phongo_field_path_pop(parent_state->field_path);
 
 	return false;
 }
@@ -944,73 +939,67 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	bson_iter_t            child;
 	php_phongo_bson_state* parent_state = (php_phongo_bson_state*) data;
+	php_phongo_bson_state  state;
+
+	if (!bson_iter_init(&child, v_array)) {
+		return false;
+	}
 
 	php_phongo_field_path_push(parent_state->field_path, key, PHONGO_FIELD_PATH_ITEM_ARRAY);
 
-	if (bson_iter_init(&child, v_array)) {
-		php_phongo_bson_state state;
+	PHONGO_BSON_INIT_STATE(state);
+	php_phongo_bson_state_copy_ctor(&state, parent_state);
 
-		PHONGO_BSON_INIT_STATE(state);
-		php_phongo_bson_state_copy_ctor(&state, parent_state);
+	/* Note that we are visiting an array, so element visitors know to use
+	 * add_next_index() (i.e. disregard BSON keys) instead of add_assoc()
+	 * when building the PHP array.
+	 */
+	state.is_visiting_array = true;
 
-		/* Note that we are visiting an array, so element visitors know to use
-		 * add_next_index() (i.e. disregard BSON keys) instead of add_assoc()
-		 * when building the PHP array.
-		 */
-		state.is_visiting_array = true;
+	array_init(&state.zchild);
 
-		array_init(&state.zchild);
+	if (bson_iter_visit_all(&child, &php_bson_visitors, &state) || child.err_off) {
+		/* Iteration stopped prematurely due to corruption or a failed
+		 * visitor. Free state.zchild, which we just initialized, and return
+		 * true to stop iteration for our parent context. */
+		zval_ptr_dtor(&state.zchild);
+		php_phongo_bson_state_dtor(&state);
+		return true;
+	}
 
-		if (!bson_iter_visit_all(&child, &php_bson_visitors, &state) && !child.err_off) {
-			/* Check for entries in the fieldPath type map key, and use them to
-			 * override the default ones for this type */
-			php_phongo_handle_field_path_entry_for_compound_type(&state, &state.map.array);
+	/* Check for entries in the fieldPath type map key, and use them to
+	 * override the default ones for this type */
+	php_phongo_handle_field_path_entry_for_compound_type(&state, &state.map.array);
 
-			switch (state.map.array.type) {
-				case PHONGO_TYPEMAP_CLASS: {
-					zval obj;
+	switch (state.map.array.type) {
+		case PHONGO_TYPEMAP_CLASS: {
+			zval obj;
 
-					object_init_ex(&obj, state.map.array.class);
-					zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
-					if (((php_phongo_bson_state*) data)->is_visiting_array) {
-						add_next_index_zval(retval, &obj);
-					} else {
-						ADD_ASSOC_ZVAL(retval, key, &obj);
-					}
-					zval_ptr_dtor(&state.zchild);
-					break;
-				}
-
-				case PHONGO_TYPEMAP_NATIVE_OBJECT:
-					convert_to_object(&state.zchild);
-					if (((php_phongo_bson_state*) data)->is_visiting_array) {
-						add_next_index_zval(retval, &state.zchild);
-					} else {
-						ADD_ASSOC_ZVAL(retval, key, &state.zchild);
-					}
-					break;
-
-				case PHONGO_TYPEMAP_NATIVE_ARRAY:
-				default:
-					if (((php_phongo_bson_state*) data)->is_visiting_array) {
-						add_next_index_zval(retval, &state.zchild);
-					} else {
-						ADD_ASSOC_ZVAL(retval, key, &state.zchild);
-					}
-					break;
-			}
-		} else {
-			/* Iteration stopped prematurely due to corruption or a failed
-			 * visitor. Free state.zchild, which we just initialized, and return
-			 * true to stop iteration for our parent context. */
+			object_init_ex(&obj, state.map.array.class);
+			zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
 			zval_ptr_dtor(&state.zchild);
-			php_phongo_bson_state_dtor(&state);
-			return true;
+			ZVAL_COPY_VALUE(&state.zchild, &obj);
+			break;
 		}
 
-		php_phongo_bson_state_dtor(&state);
-		php_phongo_field_path_pop(parent_state->field_path);
+		case PHONGO_TYPEMAP_NATIVE_OBJECT:
+			convert_to_object(&state.zchild);
+			break;
+
+		case PHONGO_TYPEMAP_NATIVE_ARRAY:
+		default:
+			/* Do nothing, will be added later */
+			break;
 	}
+
+	if (parent_state->is_visiting_array) {
+		add_next_index_zval(retval, &state.zchild);
+	} else {
+		ADD_ASSOC_ZVAL(retval, key, &state.zchild);
+	}
+
+	php_phongo_bson_state_dtor(&state);
+	php_phongo_field_path_pop(parent_state->field_path);
 
 	return false;
 }
