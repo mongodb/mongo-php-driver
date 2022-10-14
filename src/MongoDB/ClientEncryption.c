@@ -407,9 +407,15 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
 	}
 
 	if (options && php_array_existsc(options, "masterKey")) {
-		masterkey = bson_new();
+		zval* zmasterkey = php_array_fetchc(options, "masterKey");
 
-		php_phongo_zval_to_bson(php_array_fetchc(options, "masterKey"), PHONGO_BSON_NONE, masterkey, NULL);
+		if (Z_TYPE_P(zmasterkey) != IS_OBJECT && Z_TYPE_P(zmasterkey) != IS_ARRAY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"masterKey\" option to be array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zmasterkey));
+			goto cleanup;
+		}
+
+		masterkey = bson_new();
+		php_phongo_zval_to_bson(zmasterkey, PHONGO_BSON_NONE, masterkey, NULL);
 
 		if (EG(exception)) {
 			goto cleanup;
@@ -752,9 +758,16 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 	}
 
 	if (php_array_existsc(options, "masterKey")) {
-		bson_t masterkey = BSON_INITIALIZER;
+		zval*  zmasterkey = php_array_fetchc(options, "masterKey");
+		bson_t masterkey  = BSON_INITIALIZER;
 
-		php_phongo_zval_to_bson(php_array_fetchc(options, "masterKey"), PHONGO_BSON_NONE, &masterkey, NULL);
+		if (Z_TYPE_P(zmasterkey) != IS_OBJECT && Z_TYPE_P(zmasterkey) != IS_ARRAY) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"masterKey\" option to be array or object, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zmasterkey));
+			goto cleanup;
+		}
+
+		php_phongo_zval_to_bson(zmasterkey, PHONGO_BSON_NONE, &masterkey, NULL);
+
 		if (EG(exception)) {
 			bson_destroy(&masterkey);
 			goto cleanup;
