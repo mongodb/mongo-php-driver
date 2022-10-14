@@ -371,9 +371,9 @@ cleanup:
 	bson_destroy(&key_doc);
 }
 
-/* Decrypts multiple data keys and (re-)encrypts them with a new masterKey, or
-   with their current masterKey if a new one is not given. Returns an object
-   corresponding to the internal libmongoc result. */
+/* Decrypts multiple data keys and (re-)encrypts them with a new provider (and
+   masterKey if applicable), or with their current provider if a new one is not
+   given. Returns an object corresponding to the internal libmongoc result. */
 static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
 {
 	zval*        zfilter       = NULL;
