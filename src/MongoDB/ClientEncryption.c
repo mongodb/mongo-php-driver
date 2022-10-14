@@ -414,6 +414,11 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, rewrapManyDataKey)
 			goto cleanup;
 		}
 
+		if (!provider) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "The \"masterKey\" option should not be specified without \"provider\"");
+			goto cleanup;
+		}
+
 		masterkey = bson_new();
 		php_phongo_zval_to_bson(zmasterkey, PHONGO_BSON_NONE, masterkey, NULL);
 
