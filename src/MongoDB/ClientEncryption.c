@@ -756,10 +756,12 @@ static mongoc_client_encryption_datakey_opts_t* phongo_clientencryption_datakey_
 
 		php_phongo_zval_to_bson(php_array_fetchc(options, "masterKey"), PHONGO_BSON_NONE, &masterkey, NULL);
 		if (EG(exception)) {
+			bson_destroy(&masterkey);
 			goto cleanup;
 		}
 
 		mongoc_client_encryption_datakey_opts_set_masterkey(opts, &masterkey);
+		bson_destroy(&masterkey);
 	}
 
 	return opts;
