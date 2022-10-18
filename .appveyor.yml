@@ -15,6 +15,12 @@ environment:
   CONFIGURE_OPTS: --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes
 
   matrix:
+    - PHP_VER: 8.2.0RC4
+      TS: 1
+      CRT: vs16
+    - PHP_VER: 8.2.0RC4
+      TS: 0
+      CRT: vs16
     - PHP_VER: 8.1.11
       TS: 1
       CRT: vs16
