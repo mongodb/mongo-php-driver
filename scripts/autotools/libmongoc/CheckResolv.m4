@@ -1,11 +1,12 @@
 dnl Disable Windows DNSAPI
 AC_SUBST(MONGOC_HAVE_DNSAPI, 0)
 
-need_libresolv="no"
+found_resolv="no"
 
 old_LIBS="$LIBS"
-dnl On AIX, resolv functions are in libc.
-if test "x$os_aix" = "xno"; then
+
+dnl Link libresolv for detection (note: on AIX, resolv functions are in libc)
+if test "$os_aix" != "yes"; then
   LIBS="$LIBS -lresolv"
 fi
 
@@ -27,6 +28,8 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
    AC_MSG_RESULT([yes])
    AC_SUBST(MONGOC_HAVE_RES_SEARCH, 0)
    AC_SUBST(MONGOC_HAVE_RES_NSEARCH, 1)
+
+   found_resolv="yes"
 
    dnl We have res_nsearch. Call res_ndestroy (BSD/Mac) or res_nclose (Linux)?
    AC_MSG_CHECKING([for res_ndestroy])
@@ -82,9 +85,8 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
    ]])], [
       AC_MSG_RESULT([yes])
       AC_SUBST(MONGOC_HAVE_RES_SEARCH, 1)
-      if test "x$os_aix" = "xno"; then
-        need_libresolv="yes"
-      fi
+
+      found_resolv="yes"
    ], [
       AC_MSG_RESULT([no])
       AC_SUBST(MONGOC_HAVE_RES_SEARCH, 0)
@@ -93,6 +95,7 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 
 LIBS="$old_LIBS"
 
-AS_IF([test "$need_libresolv" = "yes"],[
+dnl Link libresolv if needed (note: on AIX, resolv functions are in libc)
+AS_IF([test "$found_resolv" = "yes" -a "$os_aix" != "yes"],[
   PHP_ADD_LIBRARY([resolv],,[MONGODB_SHARED_LIBADD])
 ])
