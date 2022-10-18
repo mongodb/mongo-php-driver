@@ -15,23 +15,23 @@ environment:
   CONFIGURE_OPTS: --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes
 
   matrix:
-    - PHP_VER: 8.1.1
+    - PHP_VER: 8.1.11
       TS: 1
       CRT: vs16
-    - PHP_VER: 8.1.1
+    - PHP_VER: 8.1.11
       TS: 0
       CRT: vs16
-    - PHP_VER: 8.0.14
+    - PHP_VER: 8.0.24
       TS: 1
       CRT: vs16
-    - PHP_VER: 8.0.14
+    - PHP_VER: 8.0.24
       TS: 0
       CRT: vs16
-    - PHP_VER: 7.4.27
+    - PHP_VER: 7.4.32
       TS: 1
       CRT: vc15
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - PHP_VER: 7.4.27
+    - PHP_VER: 7.4.32
       TS: 0
       CRT: vc15
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
