@@ -151,6 +151,23 @@ libmongoc, libbson, and libmongocrypt. If a new version of either library is
 available, the submodule and build configuration will need to be updated to
 reflect the new sources and/or package version.
 
+### Resolving Submodule Conflicts When Merging Maintenance Branches
+
+When merging a maintenance branch up to master, it is quite possible for there
+to be a submodule conflict (and in related files). Resolving a merge conflict
+should never result in downgrading a submodule to an older version. Rather, the
+submodule should be conservatively advanced and satisfy any requirements for
+incoming changes from the maintenance branch.
+
+For example, the 1.14.2 release bumped libmongoc from 1.22.1 to 1.22.2. When
+merging v1.14 into master (1.15-dev), a conflict arose because the libmongoc
+submodule in master pointed to a 1.23-dev commit (before the 1.23.0 release).
+In this case, there were no particular requirements for incoming changes from
+the v1.14 branch and the libmongoc submodule was bumped to 1.23.0 even though
+a 1.23.1 tag also existed at the time. The bump to libmongoc 1.23.1 was left to
+another PHPC ticket in the 1.15.0 milestone, which actually depended on the
+libmongoc changes therein.
+
 ### Updating libmongoc and libbson
 
 #### Update libmongoc submodule
