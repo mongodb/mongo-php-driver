@@ -294,13 +294,13 @@ if test "$PHP_MONGODB" != "no"; then
         elif test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
           AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.5.2)
         else
-          AC_MSG_RESULT(found an older version, compiling without client-side encryption)
+          AC_MSG_RESULT([found an older version, compiling without client-side encryption])
         fi
       else
         if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
           AC_MSG_ERROR(pkgconfig and libmongocrypt must be installed)
         else
-          AC_MSG_RESULT(not found, compiling without client-side encryption)
+          AC_MSG_RESULT([not found, compiling without client-side encryption])
         fi
       fi
     fi
