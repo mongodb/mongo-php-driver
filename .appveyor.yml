@@ -74,7 +74,7 @@ install:
         $sdk_pkg = "php-sdk-$($env:BIN_SDK_VER).zip"
 
         if (-not (Test-Path c:\build-cache\$sdk_pkg)) {
-          Invoke-WebRequest "https://github.com/microsoft/php-sdk-binary-tools/archive/$sdk_pkg" -OutFile "c:\build-cache\$sdk_pkg"
+          Invoke-WebRequest "https://github.com/php/php-sdk-binary-tools/archive/$sdk_pkg" -OutFile "c:\build-cache\$sdk_pkg"
         }
 
         & 7z x c:\build-cache\$sdk_pkg -oc:\build-cache
