@@ -44,7 +44,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommand)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->command), intern->command->len, &state)) {
+	if (!php_phongo_bson_to_zval_ex(intern->command, &state)) {
 		zval_ptr_dtor(&state.zchild);
 		return;
 	}
@@ -202,7 +202,7 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(phongo_compat_ob
 	*is_temp = 1;
 	array_init_size(&retval, 6);
 
-	if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->command), intern->command->len, &command_state)) {
+	if (!php_phongo_bson_to_zval_ex(intern->command, &command_state)) {
 		zval_ptr_dtor(&command_state.zchild);
 		goto done;
 	}

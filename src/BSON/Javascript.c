@@ -94,7 +94,7 @@ HashTable* php_phongo_javascript_get_properties_hash(phongo_compat_object_handle
 			php_phongo_bson_state state;
 
 			PHONGO_BSON_INIT_STATE(state);
-			if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+			if (!php_phongo_bson_to_zval_ex(intern->scope, &state)) {
 				zval_ptr_dtor(&state.zchild);
 				goto failure;
 			}
@@ -194,7 +194,7 @@ static PHP_METHOD(MongoDB_BSON_Javascript, getScope)
 
 		PHONGO_BSON_INIT_STATE(state);
 
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(intern->scope, &state)) {
 			zval_ptr_dtor(&state.zchild);
 			return;
 		}
@@ -220,7 +220,7 @@ static PHP_METHOD(MongoDB_BSON_Javascript, jsonSerialize)
 		php_phongo_bson_state state;
 
 		PHONGO_BSON_INIT_STATE(state);
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(intern->scope, &state)) {
 			zval_ptr_dtor(&state.zchild);
 			return;
 		}
@@ -244,7 +244,7 @@ static PHP_METHOD(MongoDB_BSON_Javascript, serialize)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if (intern->scope && intern->scope->len) {
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(intern->scope), intern->scope->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(intern->scope, &state)) {
 			zval_ptr_dtor(&state.zchild);
 			return;
 		}

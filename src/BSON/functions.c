@@ -65,7 +65,7 @@ PHP_FUNCTION(toPHP)
 		return;
 	}
 
-	if (!php_phongo_bson_to_zval_ex((const unsigned char*) data, data_len, &state)) {
+	if (!php_phongo_bson_data_to_zval_ex((const unsigned char*) data, data_len, &state)) {
 		zval_ptr_dtor(&state.zchild);
 		php_phongo_bson_typemap_dtor(&state.map);
 		RETURN_NULL();

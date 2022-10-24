@@ -226,7 +226,7 @@ static PHP_METHOD(MongoDB_Driver_Session, getClusterTime)
 		RETURN_NULL();
 	}
 
-	if (!php_phongo_bson_to_zval_ex(bson_get_data(cluster_time), cluster_time->len, &state)) {
+	if (!php_phongo_bson_to_zval_ex(cluster_time, &state)) {
 		/* Exception should already have been thrown */
 		zval_ptr_dtor(&state.zchild);
 		return;
@@ -251,7 +251,7 @@ static PHP_METHOD(MongoDB_Driver_Session, getLogicalSessionId)
 
 	lsid = mongoc_client_session_get_lsid(intern->client_session);
 
-	if (!php_phongo_bson_to_zval_ex(bson_get_data(lsid), lsid->len, &state)) {
+	if (!php_phongo_bson_to_zval_ex(lsid, &state)) {
 		/* Exception should already have been thrown */
 		zval_ptr_dtor(&state.zchild);
 		return;
@@ -602,7 +602,7 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 
 		PHONGO_BSON_INIT_DEBUG_STATE(state);
 
-		if (!php_phongo_bson_to_zval_ex(bson_get_data(lsid), lsid->len, &state)) {
+		if (!php_phongo_bson_to_zval_ex(lsid, &state)) {
 			zval_ptr_dtor(&state.zchild);
 			goto done;
 		}
@@ -618,7 +618,7 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 
 			PHONGO_BSON_INIT_DEBUG_STATE(state);
 
-			if (!php_phongo_bson_to_zval_ex(bson_get_data(cluster_time), cluster_time->len, &state)) {
+			if (!php_phongo_bson_to_zval_ex(cluster_time, &state)) {
 				zval_ptr_dtor(&state.zchild);
 				goto done;
 			}
