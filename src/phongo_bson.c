@@ -842,6 +842,7 @@ static bool php_phongo_bson_init_document_object(zval* src, zend_class_entry* ob
 		}
 
 		if (!enum_case) {
+			/* Exception already thrown */
 			return false;
 		}
 
