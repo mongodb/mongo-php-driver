@@ -758,8 +758,8 @@ static void php_phongo_handle_field_path_entry_for_compound_type(php_phongo_bson
 				element->type = entry->node.type;
 				break;
 			case PHONGO_TYPEMAP_CLASS:
-				element->type  = entry->node.type;
-				element->ce    = entry->node.ce;
+				element->type = entry->node.type;
+				element->ce   = entry->node.ce;
 				break;
 			default:
 				/* Do nothing - pacify compiler */
@@ -1267,11 +1267,11 @@ static bool php_phongo_bson_state_parse_type(zval* options, const char* name, ph
 	}
 
 	if (!strcasecmp(classname, "array")) {
-		element->type  = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		element->ce    = NULL;
+		element->type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		element->ce   = NULL;
 	} else if (!strcasecmp(classname, "stdclass") || !strcasecmp(classname, "object")) {
-		element->type  = PHONGO_TYPEMAP_NATIVE_OBJECT;
-		element->ce    = NULL;
+		element->type = PHONGO_TYPEMAP_NATIVE_OBJECT;
+		element->ce   = NULL;
 	} else {
 		if ((element->ce = php_phongo_bson_state_fetch_class(classname, classname_len, php_phongo_unserializable_ce))) {
 			element->type = PHONGO_TYPEMAP_CLASS;
@@ -1290,8 +1290,8 @@ cleanup:
 
 static void field_path_map_element_set_info(php_phongo_field_path_map_element* element, php_phongo_bson_typemap_element* typemap_element)
 {
-	element->node.type  = typemap_element->type;
-	element->node.ce    = typemap_element->ce;
+	element->node.type = typemap_element->type;
+	element->node.ce   = typemap_element->ce;
 }
 
 static void map_add_field_path_element(php_phongo_bson_typemap* map, php_phongo_field_path_map_element* element)
