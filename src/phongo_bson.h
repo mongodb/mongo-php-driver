@@ -49,7 +49,7 @@ typedef enum {
 
 typedef struct {
 	php_phongo_bson_typemap_types type;
-	zend_class_entry* class;
+	zend_class_entry*             ce;
 } php_phongo_bson_typemap_element;
 
 typedef struct {

@@ -759,7 +759,7 @@ static void php_phongo_handle_field_path_entry_for_compound_type(php_phongo_bson
 				break;
 			case PHONGO_TYPEMAP_CLASS:
 				element->type  = entry->node.type;
-				element->class = entry->node.class;
+				element->ce    = entry->node.ce;
 				break;
 			default:
 				/* Do nothing - pacify compiler */
@@ -900,7 +900,7 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 
 		case PHONGO_TYPEMAP_CLASS: {
 			zval              obj;
-			zend_class_entry* obj_ce = state.odm ? state.odm : state.map.document.class;
+			zend_class_entry* obj_ce = state.odm ? state.odm : state.map.document.ce;
 
 			if (!php_phongo_bson_init_document_object(&state.zchild, obj_ce, &obj)) {
 				/* Exception already thrown. Clean up and return
@@ -975,7 +975,7 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 		case PHONGO_TYPEMAP_CLASS: {
 			zval obj;
 
-			object_init_ex(&obj, state.map.array.class);
+			object_init_ex(&obj, state.map.array.ce);
 			zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
 			zval_ptr_dtor(&state.zchild);
 			ZVAL_COPY_VALUE(&state.zchild, &obj);
@@ -1124,7 +1124,7 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 
 		case PHONGO_TYPEMAP_CLASS: {
 			zval              obj;
-			zend_class_entry* obj_ce = state->odm ? state->odm : state->map.root.class;
+			zend_class_entry* obj_ce = state->odm ? state->odm : state->map.root.ce;
 
 #if PHP_VERSION_ID >= 80100
 			/* Enums require special handling for instantiation */
@@ -1267,12 +1267,12 @@ static bool php_phongo_bson_state_parse_type(zval* options, const char* name, ph
 
 	if (!strcasecmp(classname, "array")) {
 		element->type  = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		element->class = NULL;
+		element->ce    = NULL;
 	} else if (!strcasecmp(classname, "stdclass") || !strcasecmp(classname, "object")) {
 		element->type  = PHONGO_TYPEMAP_NATIVE_OBJECT;
-		element->class = NULL;
+		element->ce    = NULL;
 	} else {
-		if ((element->class = php_phongo_bson_state_fetch_class(classname, classname_len, php_phongo_unserializable_ce))) {
+		if ((element->ce = php_phongo_bson_state_fetch_class(classname, classname_len, php_phongo_unserializable_ce))) {
 			element->type = PHONGO_TYPEMAP_CLASS;
 		} else {
 			retval = false;
@@ -1290,7 +1290,7 @@ cleanup:
 static void field_path_map_element_set_info(php_phongo_field_path_map_element* element, php_phongo_bson_typemap_element* typemap_element)
 {
 	element->node.type  = typemap_element->type;
-	element->node.class = typemap_element->class;
+	element->node.ce    = typemap_element->ce;
 }
 
 static void map_add_field_path_element(php_phongo_bson_typemap* map, php_phongo_field_path_map_element* element)
