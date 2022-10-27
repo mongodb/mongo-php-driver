@@ -16,6 +16,8 @@
 
 #include <php.h>
 
+#include "phongo_compat.h"
+
 #ifdef ZEND_HASH_GET_APPLY_COUNT /* PHP 7.2 or earlier recursion protection */
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht)
 {
@@ -44,7 +46,7 @@ zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht)
 	}
 	return 1;
 }
-#else /* PHP 7.3 or later */
+#else  /* PHP 7.3 or later */
 zend_bool php_phongo_zend_hash_apply_protection_begin(zend_array* ht)
 {
 	if (GC_IS_RECURSIVE(ht)) {
@@ -66,4 +68,22 @@ zend_bool php_phongo_zend_hash_apply_protection_end(zend_array* ht)
 	}
 	return 1;
 }
-#endif
+#endif /* ZEND_HASH_GET_APPLY_COUNT */
+
+#if PHP_VERSION_ID < 80200
+const char* zend_get_object_type_case(const zend_class_entry* ce, zend_bool upper_case)
+{
+	if (ce->ce_flags & ZEND_ACC_TRAIT) {
+		return upper_case ? "Trait" : "trait";
+	}
+	if (ce->ce_flags & ZEND_ACC_INTERFACE) {
+		return upper_case ? "Interface" : "interface";
+	}
+#if PHP_VERSION_ID >= 80100
+	if (ce->ce_flags & ZEND_ACC_ENUM) {
+		return upper_case ? "Enum" : "enum";
+	}
+#endif /* PHP_VERSION_ID > 80100 */
+	return upper_case ? "Class" : "class";
+}
+#endif /* PHP_VERSION_ID < 80200 */

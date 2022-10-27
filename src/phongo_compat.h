@@ -315,4 +315,11 @@ static inline zend_bool zend_ini_parse_bool(zend_string* str)
 zend_bool php_phongo_zend_hash_apply_protection_begin(HashTable* ht);
 zend_bool php_phongo_zend_hash_apply_protection_end(HashTable* ht);
 
+/* zend_get_object_type_case functions were introduced in PHP 8.2 */
+#if PHP_VERSION_ID < 80200
+const char* zend_get_object_type_case(const zend_class_entry* ce, zend_bool upper_case);
+#define zend_get_object_type(ce) zend_get_object_type_case((ce), false)
+#define zend_get_object_type_uc(ce) zend_get_object_type_case((ce), true)
+#endif /* PHP_VERSION_ID < 80200 */
+
 #endif /* PHONGO_COMPAT_H */
