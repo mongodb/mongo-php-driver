@@ -9,25 +9,15 @@ Cursor::setTypeMap(): fieldPaths must be an array, with single key/string elemen
 
 require_once __DIR__ . "/../utils/basic.inc";
 
-abstract class MyAbstractDocument implements MongoDB\BSON\Unserializable {}
-
-class MyDocument {}
-
-$fieldPaths = [
-    'notAnArray',
-    ['notAssociative'],
-    ['missing' => 'MissingClass'],
-    ['abstract' => 'MyAbstractDocument'],
-    ['my' => 'MyDocument'],
-    ['unserialize' => 'MongoDB\BSON\Unserializable'],
+$typeMaps = [
+    ['fieldPaths' => 'notAnArray'],
+    ['fieldPaths' => ['notAssociative']],
 ];
 
 $manager = create_test_manager();
 $cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query([]));
 
-foreach ($fieldPaths as $fieldPath) {
-    $typeMap = ['fieldPaths' => $fieldPath];
-
+foreach ($typeMaps as $typeMap) {
     printf("Test typeMap: %s\n", json_encode($typeMap));
 
     echo throws(function() use ($cursor, $typeMap) {
@@ -46,21 +36,5 @@ The 'fieldPaths' element is not an array
 Test typeMap: {"fieldPaths":["notAssociative"]}
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 The 'fieldPaths' element is not an associative array
-
-Test typeMap: {"fieldPaths":{"missing":"MissingClass"}}
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Class MissingClass does not exist
-
-Test typeMap: {"fieldPaths":{"abstract":"MyAbstractDocument"}}
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Class MyAbstractDocument is not instantiatable
-
-Test typeMap: {"fieldPaths":{"my":"MyDocument"}}
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Class MyDocument does not implement MongoDB\BSON\Unserializable
-
-Test typeMap: {"fieldPaths":{"unserialize":"MongoDB\\BSON\\Unserializable"}}
-OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Class MongoDB\BSON\Unserializable is not instantiatable
 
 ===DONE===

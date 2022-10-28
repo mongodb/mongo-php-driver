@@ -268,7 +268,7 @@ Class MyClass does not implement MongoDB\BSON\Unserializable
 === IS NOT A CONCRETE CLASS ===
 
 { "foo": "yes" }
-Class MongoDB\BSON\Unserializable is not instantiatable
+Interface MongoDB\BSON\Unserializable is not instantiatable
 
 
 === IS NOT A CONCRETE CLASS VIA PCLASS ===

@@ -17,6 +17,9 @@
 #include "bson/bson.h"
 
 #include <php.h>
+#if PHP_VERSION_ID >= 80100
+#include <Zend/zend_enum.h>
+#endif
 #include <Zend/zend_interfaces.h>
 
 #include "php_array_api.h"
@@ -28,9 +31,6 @@
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO-BSON"
 
-#define PHONGO_IS_CLASS_INSTANTIATABLE(ce) \
-	(!(ce->ce_flags & (ZEND_ACC_INTERFACE | ZEND_ACC_IMPLICIT_ABSTRACT_CLASS | ZEND_ACC_EXPLICIT_ABSTRACT_CLASS)))
-
 #define PHONGO_BSON_STATE_ZCHILD(state) (&((php_phongo_bson_state*) (state))->zchild)
 
 #define PHONGO_FIELD_PATH_EXPANSION 8
@@ -38,6 +38,21 @@
 /* Forward declarations */
 static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data);
 static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_array, void* data);
+
+static inline bool phongo_is_class_instantiatable(const zend_class_entry* ce)
+{
+	if (ce->ce_flags & (ZEND_ACC_EXPLICIT_ABSTRACT_CLASS | ZEND_ACC_IMPLICIT_ABSTRACT_CLASS | ZEND_ACC_INTERFACE | ZEND_ACC_TRAIT)) {
+		return false;
+	}
+
+#if PHP_VERSION_ID >= 80100
+	if (ce->ce_flags & ZEND_ACC_ENUM) {
+		return false;
+	}
+#endif /* PHP_VERSION_ID < 80100 */
+
+	return true;
+}
 
 /* Path builder */
 char* php_phongo_field_path_as_string(php_phongo_field_path* field_path)
@@ -267,7 +282,7 @@ static bool php_phongo_bson_visit_binary(const bson_iter_t* iter ARG_UNUSED, con
 		zend_class_entry* found_ce     = zend_fetch_class(zs_classname, ZEND_FETCH_CLASS_AUTO | ZEND_FETCH_CLASS_SILENT);
 		zend_string_release(zs_classname);
 
-		if (found_ce && PHONGO_IS_CLASS_INSTANTIATABLE(found_ce) && instanceof_function(found_ce, php_phongo_persistable_ce)) {
+		if (found_ce && phongo_is_class_instantiatable(found_ce) && instanceof_function(found_ce, php_phongo_persistable_ce)) {
 			((php_phongo_bson_state*) data)->odm = found_ce;
 		}
 	}
@@ -1239,8 +1254,8 @@ static zend_class_entry* php_phongo_bson_state_fetch_class(const char* classname
 
 	if (!found_ce) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Class %s does not exist", classname);
-	} else if (!PHONGO_IS_CLASS_INSTANTIATABLE(found_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Class %s is not instantiatable", classname);
+	} else if (!phongo_is_class_instantiatable(found_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s %s is not instantiatable", zend_get_object_type_uc(found_ce), classname);
 	} else if (!instanceof_function(found_ce, interface_ce)) {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Class %s does not implement %s", classname, ZSTR_VAL(interface_ce->name));
 	} else {
@@ -1276,6 +1291,7 @@ static bool php_phongo_bson_state_parse_type(zval* options, const char* name, ph
 		if ((element->ce = php_phongo_bson_state_fetch_class(classname, classname_len, php_phongo_unserializable_ce))) {
 			element->type = PHONGO_TYPEMAP_CLASS;
 		} else {
+			/* Exception already thrown */
 			retval = false;
 		}
 	}
