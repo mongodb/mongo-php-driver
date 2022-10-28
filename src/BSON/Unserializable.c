@@ -21,7 +21,20 @@
 
 zend_class_entry* php_phongo_unserializable_ce;
 
+static int php_phongo_implement_unserializable(zend_class_entry* interface, zend_class_entry* class_type)
+{
+#if PHP_VERSION_ID >= 80100
+	if (class_type->ce_flags & ZEND_ACC_ENUM) {
+		zend_error_noreturn(E_ERROR, "Enum class %s cannot implement interface %s", ZSTR_VAL(class_type->name), ZSTR_VAL(interface->name));
+		return FAILURE;
+	}
+#endif /* PHP_VERSION_ID >= 80100 */
+
+	return SUCCESS;
+}
+
 void php_phongo_unserializable_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_unserializable_ce = register_class_MongoDB_BSON_Unserializable();
+	php_phongo_unserializable_ce                             = register_class_MongoDB_BSON_Unserializable();
+	php_phongo_unserializable_ce->interface_gets_implemented = php_phongo_implement_unserializable;
 }

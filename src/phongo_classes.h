@@ -322,7 +322,6 @@ extern zend_class_entry* php_phongo_bulkwriteexception_ce;
 
 extern zend_class_entry* php_phongo_type_ce;
 extern zend_class_entry* php_phongo_persistable_ce;
-extern zend_class_entry* php_phongo_persistableenum_ce;
 extern zend_class_entry* php_phongo_unserializable_ce;
 extern zend_class_entry* php_phongo_serializable_ce;
 extern zend_class_entry* php_phongo_binary_ce;
@@ -374,7 +373,6 @@ extern void php_phongo_maxkey_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_minkey_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_objectid_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_persistable_init_ce(INIT_FUNC_ARGS);
-extern void php_phongo_persistableenum_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_regex_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_serializable_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_symbol_init_ce(INIT_FUNC_ARGS);

@@ -125,7 +125,6 @@ if test "$PHP_MONGODB" != "no"; then
     src/BSON/ObjectId.c \
     src/BSON/ObjectIdInterface.c \
     src/BSON/Persistable.c \
-    src/BSON/PersistableEnum.c \
     src/BSON/Regex.c \
     src/BSON/RegexInterface.c \
     src/BSON/Serializable.c \

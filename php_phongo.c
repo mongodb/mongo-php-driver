@@ -216,7 +216,6 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	php_phongo_minkey_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_objectid_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_persistable_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-	php_phongo_persistableenum_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_regex_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_symbol_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_timestamp_init_ce(INIT_FUNC_ARGS_PASSTHRU);

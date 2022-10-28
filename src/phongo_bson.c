@@ -783,95 +783,6 @@ static void php_phongo_handle_field_path_entry_for_compound_type(php_phongo_bson
 	}
 }
 
-#if PHP_VERSION_ID >= 80100
-/* Resolves an enum class and case name to a zval. On error, an exception will
- * have been thrown and NULL will be returned.
- *
- * This function is modeled after php_var_unserialize_internal in php-src. */
-static zval* resolve_enum_case(zend_class_entry* ce, const char* case_name)
-{
-	zval*                return_value = NULL;
-	zend_string*         c_str        = NULL;
-	zend_class_constant* c;
-
-	if (!(ce->ce_flags & ZEND_ACC_ENUM)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Class '%s' is not an enum", ZSTR_VAL(ce->name));
-		goto cleanup;
-	}
-
-	c_str = zend_string_init(case_name, strlen(case_name), 0);
-	c     = zend_hash_find_ptr(CE_CONSTANTS_TABLE(ce), c_str);
-
-	if (!c) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Undefined constant %s::%s", ZSTR_VAL(ce->name), case_name);
-		goto cleanup;
-	}
-
-	if (!(ZEND_CLASS_CONST_FLAGS(c) & ZEND_CLASS_CONST_IS_CASE)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s::%s is not an enum case", ZSTR_VAL(ce->name), case_name);
-		goto cleanup;
-	}
-
-	if (Z_TYPE(c->value) == IS_CONSTANT_AST && zval_update_constant_ex(&c->value, ce) == FAILURE) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Failed to evaluate constant expression AST for %s::%s", ZSTR_VAL(ce->name), case_name);
-		goto cleanup;
-	}
-
-	if (Z_TYPE(c->value) != IS_OBJECT) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Expected %s::%s to be an object, but it is: %s", ZSTR_VAL(ce->name), case_name, PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(&c->value));
-	}
-
-	return_value = &c->value;
-
-cleanup:
-	if (c_str) {
-		zend_string_release_ex(c_str, 0);
-	}
-
-	return return_value;
-}
-#endif /* PHP_VERSION_ID >= 80100 */
-
-static bool php_phongo_bson_init_document_object(zval* src, zend_class_entry* obj_ce, zval* obj)
-{
-#if PHP_VERSION_ID >= 80100
-	/* Enums require special handling for instantiation */
-	if (obj_ce->ce_flags & ZEND_ACC_ENUM) {
-		int       plen;
-		zend_bool pfree;
-		char*     case_name;
-		zval*     enum_case;
-
-		case_name = php_array_fetchc_string(src, "name", &plen, &pfree);
-
-		if (!case_name) {
-			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Missing 'name' field to infer enum case for %s", ZSTR_VAL(obj_ce->name));
-
-			return false;
-		}
-
-		enum_case = resolve_enum_case(obj_ce, case_name);
-
-		if (pfree) {
-			efree(case_name);
-		}
-
-		if (!enum_case) {
-			/* Exception already thrown */
-			return false;
-		}
-
-		ZVAL_COPY(obj, enum_case);
-	} else {
-		object_init_ex(obj, obj_ce);
-	}
-#else  /* PHP_VERSION_ID < 80100 */
-	object_init_ex(obj, obj_ce);
-#endif /* PHP_VERSION_ID */
-
-	return true;
-}
-
 static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
@@ -918,18 +829,12 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 			zval              obj;
 			zend_class_entry* obj_ce = state.odm ? state.odm : state.map.document.ce;
 
-			if (!php_phongo_bson_init_document_object(&state.zchild, obj_ce, &obj)) {
-				/* Exception already thrown. Clean up and return
-				 * true to stop iteration for our parent context. */
-				zval_ptr_dtor(&state.zchild);
-				php_phongo_bson_state_dtor(&state);
-				return true;
-			}
+			object_init_ex(&obj, obj_ce);
 
 			zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
-
 			zval_ptr_dtor(&state.zchild);
 			ZVAL_COPY_VALUE(&state.zchild, &obj);
+
 			break;
 		}
 
@@ -1142,40 +1047,7 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 			zval              obj;
 			zend_class_entry* obj_ce = state->odm ? state->odm : state->map.root.ce;
 
-#if PHP_VERSION_ID >= 80100
-			/* Enums require special handling for instantiation */
-			if (obj_ce->ce_flags & ZEND_ACC_ENUM) {
-				int       plen;
-				zend_bool pfree;
-				char*     case_name;
-				zval*     enum_case;
-
-				case_name = php_array_fetchc_string(&state->zchild, "name", &plen, &pfree);
-
-				if (!case_name) {
-					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Missing 'name' field to infer enum case for %s", ZSTR_VAL(obj_ce->name));
-
-					goto cleanup;
-				}
-
-				enum_case = resolve_enum_case(obj_ce, case_name);
-
-				if (pfree) {
-					efree(case_name);
-				}
-
-				if (!enum_case) {
-					/* Exception already thrown */
-					goto cleanup;
-				}
-
-				ZVAL_COPY(&obj, enum_case);
-			} else {
-				object_init_ex(&obj, obj_ce);
-			}
-#else  /* PHP_VERSION_ID < 80100 */
 			object_init_ex(&obj, obj_ce);
-#endif /* PHP_VERSION_ID */
 
 			zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state->zchild);
 			zval_ptr_dtor(&state->zchild);
