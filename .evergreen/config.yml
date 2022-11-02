@@ -1072,6 +1072,10 @@ axes:
   - id: php-versions
     display_name: PHP Version
     values:
+      - id: "8.2"
+        display_name: "PHP 8.2"
+        variables:
+          PHP_VERSION: "8.2"
       - id: "8.1"
         display_name: "PHP 8.1"
         variables:
@@ -1176,7 +1180,7 @@ buildvariants:
     # Exclude "latest-stable" PHP version for Debian 11 (see: test-mongodb-versions matrix)
     - { "os": "debian11", "mongodb-edge-versions": "*", "php-versions": "8.1" }
     # PHP 8.1+ is not available on rhel70
-    - { "os": "rhel70", "mongodb-edge-versions": "*", "php-versions": "8.1" }
+    - { "os": "rhel70", "mongodb-edge-versions": "*", "php-versions": ["8.1", "8.2"] }
   tasks:
     - name: "test-standalone-ssl"
     - name: "test-replicaset-auth"
