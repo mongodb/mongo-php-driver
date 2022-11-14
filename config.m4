@@ -73,6 +73,7 @@ if test "$PHP_MONGODB" != "no"; then
     AX_CHECK_COMPILE_FLAG(-Wno-unused-parameter,            _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-unused-parameter"          ,, -Werror)
     AX_CHECK_COMPILE_FLAG(-Wno-unused-but-set-variable,     _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-unused-but-set-variable"   ,, -Werror)
     AX_CHECK_COMPILE_FLAG(-Wno-missing-field-initializers,  _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wno-missing-field-initializers",, -Werror)
+    AX_CHECK_COMPILE_FLAG(-Wstrict-prototypes,              _MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS -Wstrict-prototypes"            ,, -Werror)
 
     MAINTAINER_CFLAGS="$_MAINTAINER_CFLAGS"
     STD_CFLAGS="-g -O0 -Wall"
