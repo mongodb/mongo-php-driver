@@ -72,14 +72,14 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getError)
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getOperationId)
 {
 	php_phongo_commandfailedevent_t* intern;
-	char                             int_as_string[20];
+	char                             operation_id[24];
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	sprintf(int_as_string, "%" PRIu64, intern->operation_id);
-	RETVAL_STRING(int_as_string);
+	snprintf(operation_id, sizeof(operation_id), "%" PRId64, intern->operation_id);
+	RETVAL_STRING(operation_id);
 }
 
 /* Returns the reply document associated with the event */
@@ -106,14 +106,14 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getReply)
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId)
 {
 	php_phongo_commandfailedevent_t* intern;
-	char                             int_as_string[20];
+	char                             request_id[24];
 
 	intern = Z_COMMANDFAILEDEVENT_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	sprintf(int_as_string, "%" PRIu64, intern->request_id);
-	RETVAL_STRING(int_as_string);
+	snprintf(request_id, sizeof(request_id), "%" PRId64, intern->request_id);
+	RETVAL_STRING(request_id);
 }
 
 /* Returns the Server from which the event originated */
@@ -205,7 +205,7 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(phongo_compat_obj
 {
 	php_phongo_commandfailedevent_t* intern;
 	zval                             retval = ZVAL_STATIC_INIT;
-	char                             operation_id[20], request_id[20];
+	char                             operation_id[24], request_id[24];
 	php_phongo_bson_state            reply_state;
 
 	PHONGO_BSON_INIT_STATE(reply_state);
@@ -215,12 +215,12 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(phongo_compat_obj
 	array_init_size(&retval, 6);
 
 	ADD_ASSOC_STRING(&retval, "commandName", intern->command_name);
-	ADD_ASSOC_INT64(&retval, "durationMicros", (int64_t) intern->duration_micros);
+	ADD_ASSOC_INT64(&retval, "durationMicros", intern->duration_micros);
 
 	ADD_ASSOC_ZVAL_EX(&retval, "error", &intern->z_error);
 	Z_ADDREF(intern->z_error);
 
-	sprintf(operation_id, "%" PRIu64, intern->operation_id);
+	snprintf(operation_id, sizeof(operation_id), "%" PRId64, intern->operation_id);
 	ADD_ASSOC_STRING(&retval, "operationId", operation_id);
 
 	if (!php_phongo_bson_to_zval_ex(intern->reply, &reply_state)) {
@@ -230,7 +230,7 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(phongo_compat_obj
 
 	ADD_ASSOC_ZVAL(&retval, "reply", &reply_state.zchild);
 
-	sprintf(request_id, "%" PRIu64, intern->request_id);
+	snprintf(request_id, sizeof(request_id), "%" PRId64, intern->request_id);
 	ADD_ASSOC_STRING(&retval, "requestId", request_id);
 
 	{

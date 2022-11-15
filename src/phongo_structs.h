@@ -261,9 +261,9 @@ typedef struct {
 	zval        manager;
 	char*       command_name;
 	uint32_t    server_id;
-	uint64_t    operation_id;
-	uint64_t    request_id;
-	uint64_t    duration_micros;
+	int64_t     operation_id;
+	int64_t     request_id;
+	int64_t     duration_micros;
 	bson_t*     reply;
 	zval        z_error;
 	bool        has_service_id;
@@ -276,8 +276,8 @@ typedef struct {
 	zval        manager;
 	char*       command_name;
 	uint32_t    server_id;
-	uint64_t    operation_id;
-	uint64_t    request_id;
+	int64_t     operation_id;
+	int64_t     request_id;
 	bson_t*     command;
 	char*       database_name;
 	bool        has_service_id;
@@ -290,9 +290,9 @@ typedef struct {
 	zval        manager;
 	char*       command_name;
 	uint32_t    server_id;
-	uint64_t    operation_id;
-	uint64_t    request_id;
-	uint64_t    duration_micros;
+	int64_t     operation_id;
+	int64_t     request_id;
+	int64_t     duration_micros;
 	bson_t*     reply;
 	bool        has_service_id;
 	bson_oid_t  service_id;
