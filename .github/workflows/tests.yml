@@ -14,6 +14,8 @@ on:
 
 jobs:
   tests:
+    # TODO: Remove this before merging
+    if: ${{ false }}
     name: "Tests"
     runs-on: "${{ matrix.os }}"
 
@@ -51,7 +53,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v3"
         with:
           fetch-depth: 2
           submodules: true
@@ -78,3 +80,90 @@ jobs:
         run: TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" make test
         env:
           MONGODB_URI: ${{ steps.setup-mongodb.outputs.cluster-uri }}
+
+  windows-tests:
+    name: "Windows Tests"
+    runs-on: ${{matrix.os}}
+    defaults:
+      run:
+        shell: cmd
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-2019, windows-2022 ]
+        # TODO: Replace this before merging
+        php: [ "7.2", "8.2" ] # [ "7.2", "7.3", "8.0", "8.1", "8.2" ]
+        arch: [ x64, x86 ]
+        ts: [ ts, nts ]
+        exclude:
+          - { os: windows-2019, php: "8.2" }
+          - { os: windows-2019, php: "8.1" }
+          - { os: windows-2019, php: "8.0" }
+          - { os: windows-2019, php: "7.4" }
+          - { os: windows-2019, php: "7.3" }
+          - { os: windows-2022, php: "7.2" }
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+          submodules: true
+
+      - name: Setup PHP SDK
+        id: setup-php
+        uses: cmb69/setup-php-sdk@v0.6
+        with:
+          version: ${{matrix.php}}
+          arch: ${{matrix.arch}}
+          ts: ${{matrix.ts}}
+          deps: openssl
+
+      - name: Enable Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{matrix.arch}}
+          toolset: ${{steps.setup-php.outputs.toolset}}
+
+      - name: phpize
+        run: phpize
+
+      - name: configure
+        run: configure --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes --with-prefix=${{steps.setup-php.outputs.prefix}}
+
+      - name: nmake
+        run: nmake /nologo
+
+      - name: Start MongoDB
+        run: |
+          sc config MongoDB start= auto
+          sc start MongoDB
+
+      - name: Wait until MongoDB is available
+        run: .github/workflows/wait-for-mongodb.bat
+
+      - name: Run Tests
+        run: nmake /nologo test
+        env:
+          NO_INTERACTION: 1
+          REPORT_EXIT_STATUS: 1
+          TESTS: --show-diff
+
+      - name: Copy DLL and PDB files to CWD
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          cp .github/workflows/get-build-dir.bat .
+          for /F "usebackq tokens=*" %%i in (`get-build-dir.bat`) do set BUILD_DIR=%%i
+          echo BUILD_DIR=%BUILD_DIR%
+          cp %BUILD_DIR%\php_mongodb.dll .
+          cp %BUILD_DIR%\php_mongodb.pdb .
+
+      - name: Upload DLL and PDB files as build artifacts
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: php_mongodb-${{github.sha}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}
+          path: |
+            php_mongodb.dll
+            php_mongodb.pdb
+          retention-days: 3

@@ -1,0 +1,58 @@
+name: "Releases"
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  windows-release-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        # Note: keep this in sync with the Windows matrix in tests.yml
+        php: [ "7.2", "7.3", "8.0", "8.1", "8.2" ]
+        arch: [ x64, x86 ]
+        ts: [ ts, nts ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      #- name: Get tag commit
+      #  id: get-tag-commit
+      #  run: |
+      #    COMMIT="$(git rev-parse HEAD)"
+      #    echo "COMMIT=$COMMIT" >> $GITHUB_OUTPUT
+
+      #- name: Get artifact name
+      #  id: get-artifact-name
+      #  run: echo "NAME=php_mongodb-${GITHUB_SHA}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}" >> $GITHUB_OUTPUT
+
+      - name: Download DLL and PDB files
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: tests.yml
+          workflow_conclusion: success
+          commit: ${{github.sha}} # ${{steps.get-tag-commit.outputs.COMMIT}}
+          # Note: keep this in sync with the artifact name in tests.yml
+          name: php_mongodb-${{github.sha}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}} # ${{steps.get-artifact-name.outputs.NAME}}
+
+      #- name: Get the release version
+      #  id: get-release-version
+      #  run: |
+      #    VERSION="$(cat phongo_version.h | grep "PHP_MONGODB_VERSION" | head -n 1 | awk '{print $3}' | tr -d '"')"
+      #    echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      #- name: Get artifact name
+      #  id: get-artifact-name
+      #  run: echo "NAME=php_mongodb-${{github.ref_name}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}" >> $GITHUB_OUTPUT
+
+      - name: Create release archive
+        run: zip ${{steps.get-artifact-name.outputs.NAME}}.zip php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
+
+      - name: Upload release archive as build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{steps.get-artifact-name.outputs.NAME}}
+          path: ${{steps.get-artifact-name.outputs.NAME}}.zip
