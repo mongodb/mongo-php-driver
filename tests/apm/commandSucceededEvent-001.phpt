@@ -2,7 +2,6 @@
 MongoDB\Driver\Monitoring\CommandSucceededEvent
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_appveyor(); /* TODO: PHPC-1613 */ ?>
 <?php skip_if_not_live(); ?>
 <?php skip_if_not_clean(); ?>
 --FILE--
@@ -16,6 +15,13 @@ class MySubscriber implements MongoDB\Driver\Monitoring\CommandSubscriber
     public function commandStarted( \MongoDB\Driver\Monitoring\CommandStartedEvent $event ): void
     {
         echo "started: ", $event->getCommandName(), "\n";
+
+        /* bson_get_monotonic_time() may only have 10-16 millisecond precision
+         * on Windows. Sleep to ensure that a non-zero value is reported for
+         * CommandSucceededEvent's duration. */
+        if (PHP_OS_FAMILY === 'Windows') {
+            usleep(25000);
+        }
     }
 
     public function commandSucceeded( \MongoDB\Driver\Monitoring\CommandSucceededEvent $event ): void
