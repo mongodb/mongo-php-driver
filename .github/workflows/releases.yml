@@ -36,15 +36,10 @@ jobs:
           VERSION="$(cat phongo_version.h | grep "PHP_MONGODB_VERSION" | head -n 1 | awk '{print $3}' | tr -d '"')"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create artifact name
-        id: create-artifact-name
-        run: echo "NAME=php_mongodb-${{steps.get-release-version.outputs.VERSION}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}" >> $GITHUB_OUTPUT
-
-      - name: Create release archive
-        run: zip ${{steps.create-artifact-name.outputs.NAME}}.zip php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
-
-      - name: Upload release archive as build artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{steps.create-artifact-name.outputs.NAME}}
-          path: ${{steps.create-artifact-name.outputs.NAME}}.zip
+      - name: Create and attach release archive
+        run: |
+          ARCHIVE=php_mongodb-${{steps.get-release-version.outputs.VERSION}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}.zip
+          zip $ARCHIVE php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
+          hub release edit -a $ARCHIVE -m "" $GITHUB_REF
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
