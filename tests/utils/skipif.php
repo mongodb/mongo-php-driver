@@ -479,13 +479,6 @@ function skip_if_no_mongo_orchestration()
     }
 }
 
-function skip_if_appveyor()
-{
-    if (getenv('APPVEYOR')) {
-        exit('skip Test cannot be run on AppVeyor');
-    }
-}
-
 function skip_if_crypt_shared()
 {
     // Intentionally ignore empty values for CRYPT_SHARED_LIB_PATH

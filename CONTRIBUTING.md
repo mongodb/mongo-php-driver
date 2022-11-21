@@ -284,19 +284,6 @@ generation script.
 The follow steps outline the release process for a maintenance branch (e.g.
 releasing the `vX.Y` branch as X.Y.Z).
 
-### Ensure PHP version compatibility
-
-Ensure that the library test suite completes on supported versions of PHP.
-
-### Ensure Windows compatibility
-
-PECL will create Windows DLLs for new releases; however, you must ensure that
-the extension successfully builds on Windows before releasing. Windows builds
-are tested by [AppVeyor](.appveyor.yml).
-
-See the [internals wiki](https://wiki.php.net/internals/windows/stepbystepbuild)
-for more information.
-
 ### Transition JIRA issues and version
 
 All issues associated with the release version should be in the "Closed" state
@@ -420,6 +407,21 @@ $ git push
 $ git push --tags
 ```
 
+### Ensure Windows build artifacts exist
+
+Windows builds are tested by GitHub Actions. Each successful build for a pushed
+commit will produce a build artifact consisting of DLL and PDB files for that
+environment (e.g. 8.0-nts-x64). These build artifacts are later used to create
+release assets (see:
+[windows-release-build.yml])(.github/workflows/windows-release-build.yml).
+Before publishing a release in GitHub, ensure that all Windows builds for the
+tag's commit have succeeded and that the necessary build artifacts have been
+created.
+
+Note: the "published" event applies to both releases and pre-releases. See
+[Events that trigger workflows: release](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#release)
+for more details.
+
 ### Release PECL package
 
 The PECL package may be published via the
@@ -468,8 +470,7 @@ or update with:
 
     pecl upgrade mongodb-X.Y.Z
 
-Windows binaries are available on PECL:
-https://pecl.php.net/package/mongodb
+Windows binaries are attached to the GitHub release notes.
 ```
 
 > **Note:** If this is an alpha or beta release, the installation examples
@@ -492,7 +493,8 @@ Thanks for our community contributors for X.Y.Z:
  * [$CONTRIBUTOR_NAME](https://github.com/$GITHUB_USERNAME)
 ```
 
-Release announcements should also be posted in the [MongoDB Product & Driver Announcements: Driver Releases](https://www.mongodb.com/community/forums/tags/c/announcements/driver-releases/110/php) forum and shared on Twitter.
+Significant release announcements should also be posted in the
+[MongoDB Product & Driver Announcements: Driver Releases](https://www.mongodb.com/community/forums/tags/c/announcements/driver-releases/110/php) forum.
 
 ### Update compatibility tables in MongoDB docs
 
