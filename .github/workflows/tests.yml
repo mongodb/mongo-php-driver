@@ -135,14 +135,20 @@ jobs:
         run: nmake /nologo
 
       - name: Start MongoDB
+        # TODO: Remove this before merging
+        if: ${{ false }}
         run: |
           sc config MongoDB start= auto
           sc start MongoDB
 
       - name: Wait until MongoDB is available
+        # TODO: Remove this before merging
+        if: ${{ false }}
         run: .github/workflows/wait-for-mongodb.bat
 
       - name: Run Tests
+        # TODO: Remove this before merging
+        if: ${{ false }}
         run: nmake /nologo test
         env:
           NO_INTERACTION: 1
