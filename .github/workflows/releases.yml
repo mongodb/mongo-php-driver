@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         # Note: keep this in sync with the Windows matrix in tests.yml
-        php: [ "7.2", "7.3", "8.0", "8.1", "8.2" ]
+        php: [ "7.2", "8.2" ] # [ "7.2", "7.3", "8.0", "8.1", "8.2" ]
         arch: [ x64, x86 ]
         ts: [ ts, nts ]
     runs-on: ubuntu-latest
@@ -19,40 +19,32 @@ jobs:
         with:
           fetch-depth: 0
 
-      #- name: Get tag commit
-      #  id: get-tag-commit
-      #  run: |
-      #    COMMIT="$(git rev-parse HEAD)"
-      #    echo "COMMIT=$COMMIT" >> $GITHUB_OUTPUT
-
-      #- name: Get artifact name
-      #  id: get-artifact-name
-      #  run: echo "NAME=php_mongodb-${GITHUB_SHA}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}" >> $GITHUB_OUTPUT
-
       - name: Download DLL and PDB files
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: tests.yml
           workflow_conclusion: success
-          commit: ${{github.sha}} # ${{steps.get-tag-commit.outputs.COMMIT}}
-          # Note: keep this in sync with the artifact name in tests.yml
-          name: php_mongodb-${{github.sha}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}} # ${{steps.get-artifact-name.outputs.NAME}}
+          commit: ${{github.sha}}
+          # Note: keep this in sync with the uploaded artifact name in tests.yml
+          name: php_mongodb-${{github.sha}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}
 
-      #- name: Get the release version
-      #  id: get-release-version
-      #  run: |
-      #    VERSION="$(cat phongo_version.h | grep "PHP_MONGODB_VERSION" | head -n 1 | awk '{print $3}' | tr -d '"')"
-      #    echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+      # Note: release version could also be inferred from ${{github.ref_name}}
+      # but this ensures that it is consistent with the source code.
+      - name: Get release version
+        id: get-release-version
+        run: |
+          VERSION="$(cat phongo_version.h | grep "PHP_MONGODB_VERSION" | head -n 1 | awk '{print $3}' | tr -d '"')"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-      #- name: Get artifact name
-      #  id: get-artifact-name
-      #  run: echo "NAME=php_mongodb-${{github.ref_name}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}" >> $GITHUB_OUTPUT
+      - name: Create artifact name
+        id: create-artifact-name
+        run: echo "NAME=php_mongodb-${{steps.get-release-version.outputs.VERSION}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}" >> $GITHUB_OUTPUT
 
       - name: Create release archive
-        run: zip ${{steps.get-artifact-name.outputs.NAME}}.zip php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
+        run: zip ${{steps.create-artifact-name.outputs.NAME}}.zip php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
 
       - name: Upload release archive as build artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{steps.get-artifact-name.outputs.NAME}}
-          path: ${{steps.get-artifact-name.outputs.NAME}}.zip
+          name: ${{steps.create-artifact-name.outputs.NAME}}
+          path: ${{steps.create-artifact-name.outputs.NAME}}.zip
