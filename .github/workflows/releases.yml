@@ -40,6 +40,6 @@ jobs:
         run: |
           ARCHIVE=php_mongodb-${{steps.get-release-version.outputs.VERSION}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}.zip
           zip $ARCHIVE php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
-          hub release edit -a $ARCHIVE -m "" $GITHUB_REF
+          hub release edit -a $ARCHIVE -m "" $GITHUB_REF_NAME
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
