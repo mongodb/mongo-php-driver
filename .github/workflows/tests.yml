@@ -14,8 +14,6 @@ on:
 
 jobs:
   tests:
-    # TODO: Remove this before merging
-    if: ${{ false }}
     name: "Tests"
     runs-on: "${{ matrix.os }}"
 
@@ -83,17 +81,16 @@ jobs:
 
   windows-tests:
     name: "Windows Tests"
-    runs-on: ${{matrix.os}}
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         shell: cmd
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         os: [ windows-2019, windows-2022 ]
-        # TODO: Replace this before merging
-        php: [ "7.2", "8.2" ] # [ "7.2", "7.3", "8.0", "8.1", "8.2" ]
+        php: [ "7.2", "7.3", "8.0", "8.1", "8.2" ]
         arch: [ x64, x86 ]
         ts: [ ts, nts ]
         exclude:
@@ -114,41 +111,35 @@ jobs:
         id: setup-php
         uses: cmb69/setup-php-sdk@v0.6
         with:
-          version: ${{matrix.php}}
-          arch: ${{matrix.arch}}
-          ts: ${{matrix.ts}}
+          version: ${{ matrix.php }}
+          arch: ${{ matrix.arch }}
+          ts: ${{ matrix.ts }}
           deps: openssl
 
       - name: Enable Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: ${{matrix.arch}}
-          toolset: ${{steps.setup-php.outputs.toolset}}
+          arch: ${{ matrix.arch }}
+          toolset: ${{ steps.setup-php.outputs.toolset }}
 
       - name: phpize
         run: phpize
 
       - name: configure
-        run: configure --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes --enable-debug-pack --with-prefix=${{steps.setup-php.outputs.prefix}}
+        run: configure --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes --enable-debug-pack --with-prefix=${{ steps.setup-php.outputs.prefix }}
 
       - name: nmake
         run: nmake /nologo
 
       - name: Start MongoDB
-        # TODO: Remove this before merging
-        if: ${{ false }}
         run: |
           sc config MongoDB start= auto
           sc start MongoDB
 
       - name: Wait until MongoDB is available
-        # TODO: Remove this before merging
-        if: ${{ false }}
         run: .github/workflows/wait-for-mongodb.bat
 
       - name: Run Tests
-        # TODO: Remove this before merging
-        if: ${{ false }}
         run: nmake /nologo test
         env:
           NO_INTERACTION: 1
@@ -168,7 +159,7 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         uses: actions/upload-artifact@v3
         with:
-          name: php_mongodb-${{github.sha}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}
+          name: php_mongodb-${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
           path: |
             php_mongodb.dll
             php_mongodb.pdb

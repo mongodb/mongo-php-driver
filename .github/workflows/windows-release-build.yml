@@ -1,4 +1,4 @@
-name: "Releases"
+name: "Windows Release Build"
 
 on:
   release:
@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         # Note: keep this in sync with the Windows matrix in tests.yml
-        php: [ "7.2", "8.2" ] # [ "7.2", "7.3", "8.0", "8.1", "8.2" ]
+        php: [ "7.2", "7.3", "8.0", "8.1", "8.2" ]
         arch: [ x64, x86 ]
         ts: [ ts, nts ]
     runs-on: ubuntu-latest
@@ -24,21 +24,13 @@ jobs:
         with:
           workflow: tests.yml
           workflow_conclusion: success
-          commit: ${{github.sha}}
+          commit: ${{ github.sha }}
           # Note: keep this in sync with the uploaded artifact name in tests.yml
-          name: php_mongodb-${{github.sha}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}
-
-      # Note: release version could also be inferred from ${{github.ref_name}}
-      # but this ensures that it is consistent with the source code.
-      - name: Get release version
-        id: get-release-version
-        run: |
-          VERSION="$(cat phongo_version.h | grep "PHP_MONGODB_VERSION" | head -n 1 | awk '{print $3}' | tr -d '"')"
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          name: php_mongodb-${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
 
       - name: Create and attach release archive
         run: |
-          ARCHIVE=php_mongodb-${{steps.get-release-version.outputs.VERSION}}-${{matrix.php}}-${{matrix.ts}}-${{matrix.arch}}.zip
+          ARCHIVE=php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
           zip $ARCHIVE php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
           hub release edit -a $ARCHIVE -m "" $GITHUB_REF_NAME
         env:
