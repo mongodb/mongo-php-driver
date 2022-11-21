@@ -493,7 +493,8 @@ Thanks for our community contributors for X.Y.Z:
  * [$CONTRIBUTOR_NAME](https://github.com/$GITHUB_USERNAME)
 ```
 
-Release announcements should also be posted in the [MongoDB Product & Driver Announcements: Driver Releases](https://www.mongodb.com/community/forums/tags/c/announcements/driver-releases/110/php) forum and shared on Twitter.
+Significant release announcements should also be posted in the
+[MongoDB Product & Driver Announcements: Driver Releases](https://www.mongodb.com/community/forums/tags/c/announcements/driver-releases/110/php) forum.
 
 ### Update compatibility tables in MongoDB docs
 
