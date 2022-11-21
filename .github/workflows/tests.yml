@@ -129,7 +129,7 @@ jobs:
         run: phpize
 
       - name: configure
-        run: configure --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes --with-prefix=${{steps.setup-php.outputs.prefix}}
+        run: configure --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes --enable-debug-pack --with-prefix=${{steps.setup-php.outputs.prefix}}
 
       - name: nmake
         run: nmake /nologo
