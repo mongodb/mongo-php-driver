@@ -1365,3 +1365,26 @@ void php_phongo_bson_new_int64(zval* object, int64_t integer)
 	intern->integer     = integer;
 	intern->initialized = true;
 }
+
+bool php_phongo_bson_to_json(zval* return_value, const bson_t* bson, php_phongo_json_mode_t mode)
+{
+	char*  json = NULL;
+	size_t json_len;
+
+	if (mode == PHONGO_JSON_MODE_LEGACY) {
+		json = bson_as_json(bson, &json_len);
+	} else if (mode == PHONGO_JSON_MODE_CANONICAL) {
+		json = bson_as_canonical_extended_json(bson, &json_len);
+	} else if (mode == PHONGO_JSON_MODE_RELAXED) {
+		json = bson_as_relaxed_extended_json(bson, &json_len);
+	}
+
+	if (!json) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not convert BSON document to a JSON string");
+		return false;
+	}
+
+	ZVAL_STRINGL(return_value, json, json_len);
+
+	return true;
+}

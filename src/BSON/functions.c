@@ -22,12 +22,6 @@
 #include "phongo_bson_encode.h"
 #include "phongo_error.h"
 
-typedef enum {
-	PHONGO_JSON_MODE_LEGACY,
-	PHONGO_JSON_MODE_CANONICAL,
-	PHONGO_JSON_MODE_RELAXED,
-} php_phongo_json_mode_t;
-
 /* Returns the BSON representation of a PHP value */
 PHP_FUNCTION(fromPHP)
 {
@@ -103,8 +97,6 @@ static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mo
 	const bson_t*  bson;
 	bool           eof = false;
 	bson_reader_t* reader;
-	char*          json = NULL;
-	size_t         json_len;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_STRING(data, data_len)
@@ -119,22 +111,11 @@ static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mo
 		return;
 	}
 
-	if (mode == PHONGO_JSON_MODE_LEGACY) {
-		json = bson_as_json(bson, &json_len);
-	} else if (mode == PHONGO_JSON_MODE_CANONICAL) {
-		json = bson_as_canonical_extended_json(bson, &json_len);
-	} else if (mode == PHONGO_JSON_MODE_RELAXED) {
-		json = bson_as_relaxed_extended_json(bson, &json_len);
-	}
-
-	if (!json) {
+	if (!php_phongo_bson_to_json(return_value, bson, mode)) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not convert BSON document to a JSON string");
 		bson_reader_destroy(reader);
 		return;
 	}
-
-	RETVAL_STRINGL(json, json_len);
-	bson_free(json);
 
 	if (bson_reader_read(reader, &eof) || !eof) {
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Reading document did not exhaust input buffer");
