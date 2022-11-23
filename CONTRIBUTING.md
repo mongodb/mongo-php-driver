@@ -281,8 +281,18 @@ generation script.
 
 ## Releasing
 
-The follow steps outline the release process for a maintenance branch (e.g.
-releasing the `vX.Y` branch as X.Y.Z).
+The following steps outline the release process for both new minor versions (e.g.
+releasing the `master` branch as X.Y.0) and patch versions (e.g. releasing the
+`vX.Y` branch as X.Y.Z).
+
+The command examples below assume that the canonical "mongodb" repository has
+the remote name "mongodb". You may need to adjust these commands if you've given
+the remote another name (e.g. "upstream"). The "origin" remote name was not used
+as it likely refers to your personal fork.
+
+It helps to keep your own fork in sync with the "mongodb" repository (i.e. any
+branches and tags on the main repository should also exist in your fork). This
+is left as an exercise to the reader.
 
 ### Transition JIRA issues and version
 
@@ -312,18 +322,13 @@ Update the version and stability constants in `phongo_version.h`. This should
 entail removing the version's "-dev" suffix, changing the stability to
 "stable", and increasing the last digit for `PHP_MONGO_VERSION_DESC`:
 
-```
-#define PHP_MONGODB_VERSION "1.1.8-dev"
-#define PHP_MONGODB_STABILITY "devel"
-#define PHP_MONGODB_VERSION_DESC 1,1,8,0
-```
-
-The above would be changed to:
-
-```
-#define PHP_MONGODB_VERSION "1.1.8"
-#define PHP_MONGODB_STABILITY "stable"
-#define PHP_MONGODB_VERSION_DESC 1,1,8,1
+```diff
+-#define PHP_MONGODB_VERSION "1.1.8-dev"
+-#define PHP_MONGODB_STABILITY "devel"
+-#define PHP_MONGODB_VERSION_DESC 1,1,8,0
++#define PHP_MONGODB_VERSION "1.1.8"
++#define PHP_MONGODB_STABILITY "stable"
++#define PHP_MONGODB_VERSION_DESC 1,1,8,1
 ```
 
 The Makefile targets for creating the PECL package depend on these constants, so
@@ -352,46 +357,70 @@ After copying release notes, use `make package` to create the package file (e.g.
 $ pecl install -f mongodb-X.Y.Z.tgz
 ```
 
-### Commit version update and release notes
+### Update version info
 
-Commit the modified `phongo_version.h` file as "Package X.Y.Z"
+Commit the modified `phongo_version.h` file and push this change:
 
 ```
 $ git add phongo_version.h
 $ git commit -m "Package X.Y.Z"
+$ git push mongodb
 ```
 
-### Tag release
+> **Note:** Pushing this commit independently from the subsequent "Back to -dev"
+> commit will ensure that Windows build artifacts are created for the release.
 
-The previous commit will be the target for our release tag:
+### Ensure Windows build artifacts exist
+
+Windows builds are tested by GitHub Actions. Each successful build for a pushed
+commit will produce a build artifact consisting of DLL and PDB files for that
+environment (e.g. 8.0-nts-x64). These build artifacts are later used to create
+release assets (see:
+[windows-release-build.yml](.github/workflows/windows-release-build.yml)).
+
+Before publishing a release in GitHub, ensure that all Windows builds for the
+tag's commit have succeeded and that the necessary build artifacts have been
+created. This can be done by examining the build artifacts in the workflow run
+summary for the "Package X.Y.Z" commit (i.e. tag target).
+
+> **Note:** the "published" event applies to both releases and pre-releases. See
+> [Events that trigger workflows: release](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#release)
+> for more details.
+
+### Tag the release
+
+Create a tag for the release and push:
 
 ```
 $ git tag -a -m "Release X.Y.Z" X.Y.Z
+$ git push mongodb --tags
 ```
+
+### Release PECL package
+
+The PECL package may be published via the
+[Release Upload](https://pecl.php.net/release-upload.php) form. You will have
+one chance to confirm the package information after uploading.
 
 ### Update version info back to dev
 
-After tagging, the version and stability constants in `phongo_version.h` should be
-updated back to development status.
+After tagging, the version and stability constants in `phongo_version.h` should
+be updated back to development status.
 
-```
-#define PHP_MONGODB_VERSION "1.1.8"
-#define PHP_MONGODB_STABILITY "stable"
-#define PHP_MONGODB_VERSION_DESC 1,1,8,1
-```
-
-The above would be changed to:
-
-```
-#define PHP_MONGODB_VERSION "1.1.9-dev"
-#define PHP_MONGODB_STABILITY "devel"
-#define PHP_MONGODB_VERSION_DESC 1,1,9,0
+```diff
+-#define PHP_MONGODB_VERSION "1.1.8"
+-#define PHP_MONGODB_STABILITY "stable"
+-#define PHP_MONGODB_VERSION_DESC 1,1,8,1
++#define PHP_MONGODB_VERSION "1.1.9-dev"
++#define PHP_MONGODB_STABILITY "devel"
++#define PHP_MONGODB_VERSION_DESC 1,1,9,0
 ```
 
-Commit this change:
+Commit and push this change:
 
 ```
 $ git commit -m "Back to -dev" phongo_version.h
+$ git push mongodb
 ```
 
 > **Note:** If this is an alpha, beta, or RC release, the version string should
@@ -400,44 +429,50 @@ $ git commit -m "Back to -dev" phongo_version.h
 > "1.4.0beta1" and "beta" for the first beta release, this step would see them
 > ultimately changed to "1.4.0beta2-dev" and "devel".
 
-### Push commits and tags
+### Branch management
+
+#### After releasing a new minor version
+
+After a new minor version is released (i.e. `master` was tagged), a maintenance
+branch should be created for future patch releases:
 
 ```
-$ git push
-$ git push --tags
+$ git checkout -b vX.Y
+$ git push mongodb vX.Y
 ```
 
-### Ensure Windows build artifacts exist
+Update `phongo_version.h` for the `master` branch:
 
-Windows builds are tested by GitHub Actions. Each successful build for a pushed
-commit will produce a build artifact consisting of DLL and PDB files for that
-environment (e.g. 8.0-nts-x64). These build artifacts are later used to create
-release assets (see:
-[windows-release-build.yml])(.github/workflows/windows-release-build.yml).
-Before publishing a release in GitHub, ensure that all Windows builds for the
-tag's commit have succeeded and that the necessary build artifacts have been
-created.
+```diff
+-#define PHP_MONGODB_VERSION "1.15.1-dev"
++#define PHP_MONGODB_VERSION "1.16.0-dev"
+ #define PHP_MONGODB_STABILITY "devel"
+-#define PHP_MONGODB_VERSION_DESC 1,15,1,0
++#define PHP_MONGODB_VERSION_DESC 1,16,0,0
+```
 
-Note: the "published" event applies to both releases and pre-releases. See
-[Events that trigger workflows: release](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#release)
-for more details.
+Commit and push this change:
 
-### Release PECL package
+```
+$ git commit -m "Master is now X.Y-dev" phongo_version.h
+$ git push mongodb
+```
 
-The PECL package may be published via the
-[Release Upload](https://pecl.php.net/release-upload.php) form. You will have
-one chance to confirm the package information after uploading.
+#### After releasing a patch version
 
-### Merge the maintenance branch up to master
+If this was a patch release, the maintenance branch must be merged up to master:
 
 ```
 $ git checkout master
+$ git pull mongodb master
 $ git merge vX.Y --strategy=ours
-$ git push
+$ git push mongodb
 ```
 
 The `--strategy=ours` option ensures that all changes from the merged commits
-will be ignored.
+will be ignored. This is OK because we previously ensured that the `master`
+branch was up-to-date with all code changes in this maintenance branch before
+tagging.
 
 ### Publish release notes
 
@@ -445,20 +480,18 @@ The following template should be used for creating GitHub release notes via
 [this form](https://github.com/mongodb/mongo-php-driver/releases/new). The PECL
 package may also be attached to the release notes.
 
-```
+```markdown
 The PHP team is happy to announce that version X.Y.Z of the [mongodb](https://pecl.php.net/package/mongodb) PHP extension is now available on PECL.
 
 **Release Highlights**
 
 <one or more paragraphs describing important changes in this release>
 
-A complete list of resolved issues in this release may be found at:
-$JIRA_URL
+A complete list of resolved issues in this release may be found in [JIRA]($JIRA_URL).
 
 **Documentation**
 
-Documentation is available on PHP.net:
-https://www.php.net/set.mongodb
+Documentation is available on [PHP.net](https://php.net/set.mongodb).
 
 **Installation**
 
@@ -485,7 +518,7 @@ release. You may obtain the list from
 If commits from community contributors were included in this release, append the
 following section:
 
-```
+```markdown
 **Thanks**
 
 Thanks for our community contributors for X.Y.Z:
