@@ -470,8 +470,9 @@ $ git push mongodb
 ```
 
 The `--strategy=ours` option ensures that all changes from the merged commits
-will be ignored. This is OK because previously ensured that the `master` branch
-was up-to-date with all code changes in this maintenance branch before tagging.
+will be ignored. This is OK because we previously ensured that the `master`
+branch was up-to-date with all code changes in this maintenance branch before
+tagging.
 
 ### Publish release notes
 
@@ -486,13 +487,11 @@ The PHP team is happy to announce that version X.Y.Z of the [mongodb](https://pe
 
 <one or more paragraphs describing important changes in this release>
 
-A complete list of resolved issues in this release may be found at:
-$JIRA_URL
+A complete list of resolved issues in this release may be found in [JIRA]($JIRA_URL).
 
 **Documentation**
 
-Documentation is available on PHP.net:
-https://www.php.net/set.mongodb
+Documentation is available on [PHP.net](https://php.net/set.mongodb).
 
 **Installation**
 
@@ -519,7 +518,7 @@ release. You may obtain the list from
 If commits from community contributors were included in this release, append the
 following section:
 
-```
+```markdown
 **Thanks**
 
 Thanks for our community contributors for X.Y.Z:
