@@ -370,6 +370,23 @@ $ git push mongodb
 > **Note:** Pushing this commit independently from the subsequent "Back to -dev"
 > commit will ensure that Windows build artifacts are created for the release.
 
+### Ensure Windows build artifacts exist
+
+Windows builds are tested by GitHub Actions. Each successful build for a pushed
+commit will produce a build artifact consisting of DLL and PDB files for that
+environment (e.g. 8.0-nts-x64). These build artifacts are later used to create
+release assets (see:
+[windows-release-build.yml](.github/workflows/windows-release-build.yml)).
+
+Before publishing a release in GitHub, ensure that all Windows builds for the
+tag's commit have succeeded and that the necessary build artifacts have been
+created. This can be done by examining the build artifacts in the workflow run
+summary for the "Package X.Y.Z" commit (i.e. tag target).
+
+> **Note:** the "published" event applies to both releases and pre-releases. See
+> [Events that trigger workflows: release](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#release)
+> for more details.
+
 ### Tag the release
 
 Create a tag for the release and push:
@@ -378,6 +395,12 @@ Create a tag for the release and push:
 $ git tag -a -m "Release X.Y.Z" X.Y.Z
 $ git push mongodb --tags
 ```
+
+### Release PECL package
+
+The PECL package may be published via the
+[Release Upload](https://pecl.php.net/release-upload.php) form. You will have
+one chance to confirm the package information after uploading.
 
 ### Update version info back to dev
 
@@ -405,29 +428,6 @@ $ git push mongodb
 > if the constants were originally "1.4.0-dev" and "devel" and then changed to
 > "1.4.0beta1" and "beta" for the first beta release, this step would see them
 > ultimately changed to "1.4.0beta2-dev" and "devel".
-
-### Ensure Windows build artifacts exist
-
-Windows builds are tested by GitHub Actions. Each successful build for a pushed
-commit will produce a build artifact consisting of DLL and PDB files for that
-environment (e.g. 8.0-nts-x64). These build artifacts are later used to create
-release assets (see:
-[windows-release-build.yml](.github/workflows/windows-release-build.yml)).
-
-Before publishing a release in GitHub, ensure that all Windows builds for the
-tag's commit have succeeded and that the necessary build artifacts have been
-created. This can be done by examining the build artifacts in the workflow run
-summary for the "Package X.Y.Z" commit (i.e. tag target).
-
-> **Note:** the "published" event applies to both releases and pre-releases. See
-> [Events that trigger workflows: release](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#release)
-> for more details.
-
-### Release PECL package
-
-The PECL package may be published via the
-[Release Upload](https://pecl.php.net/release-upload.php) form. You will have
-one chance to confirm the package information after uploading.
 
 ### Branch management
 
