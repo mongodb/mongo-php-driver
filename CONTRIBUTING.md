@@ -322,18 +322,13 @@ Update the version and stability constants in `phongo_version.h`. This should
 entail removing the version's "-dev" suffix, changing the stability to
 "stable", and increasing the last digit for `PHP_MONGO_VERSION_DESC`:
 
-```
-#define PHP_MONGODB_VERSION "1.1.8-dev"
-#define PHP_MONGODB_STABILITY "devel"
-#define PHP_MONGODB_VERSION_DESC 1,1,8,0
-```
-
-The above would be changed to:
-
-```
-#define PHP_MONGODB_VERSION "1.1.8"
-#define PHP_MONGODB_STABILITY "stable"
-#define PHP_MONGODB_VERSION_DESC 1,1,8,1
+```diff
+-#define PHP_MONGODB_VERSION "1.1.8-dev"
+-#define PHP_MONGODB_STABILITY "devel"
+-#define PHP_MONGODB_VERSION_DESC 1,1,8,0
++#define PHP_MONGODB_VERSION "1.1.8"
++#define PHP_MONGODB_STABILITY "stable"
++#define PHP_MONGODB_VERSION_DESC 1,1,8,1
 ```
 
 The Makefile targets for creating the PECL package depend on these constants, so
