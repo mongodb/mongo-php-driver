@@ -480,7 +480,7 @@ The following template should be used for creating GitHub release notes via
 [this form](https://github.com/mongodb/mongo-php-driver/releases/new). The PECL
 package may also be attached to the release notes.
 
-```
+```markdown
 The PHP team is happy to announce that version X.Y.Z of the [mongodb](https://pecl.php.net/package/mongodb) PHP extension is now available on PECL.
 
 **Release Highlights**
