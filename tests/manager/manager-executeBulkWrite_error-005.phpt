@@ -39,7 +39,7 @@ try {
 --EXPECTF--
 MongoDB\Driver\Exception\BulkWriteException(0): Bulk write failed due to previous MongoDB\Driver\Exception\ConnectionTimeoutException: Failed to send "delete" command with database "%s": Failed to read 4 bytes: socket error or timeout
 MongoDB\Driver\Exception\ConnectionTimeoutException(%d): Failed to send "delete" command with database "%s": Failed to read 4 bytes: socket error or timeout
-object(MongoDB\Driver\WriteResult)#%d (9) {
+object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["nInserted"]=>
   int(1)
   ["nMatched"]=>
@@ -59,7 +59,10 @@ object(MongoDB\Driver\WriteResult)#%d (9) {
   ["writeConcernError"]=>
   NULL
   ["writeConcern"]=>
-  object(MongoDB\Driver\WriteConcern)#%d (0) {
+  object(MongoDB\Driver\WriteConcern)#%d (%d) {
+  }
+  ["errorReplies"]=>
+  array(0) {
   }
 }
 ===DONE===

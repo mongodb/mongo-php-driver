@@ -29,6 +29,8 @@ final class WriteResult
 
     final public function getWriteErrors(): array {}
 
+    final public function getErrorReplies(): array {}
+
     final public function isAcknowledged(): bool {}
 
     final public function __wakeup(): void {}

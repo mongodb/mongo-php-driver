@@ -49,5 +49,8 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
     ["w"]=>
     int(0)
   }
+  ["errorReplies"]=>
+  array(0) {
+  }
 }
 ===DONE===
