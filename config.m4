@@ -243,14 +243,14 @@ if test "$PHP_MONGODB" != "no"; then
     AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
     AC_MSG_CHECKING(for libbson)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
-      if $PKG_CONFIG libbson-1.0 --atleast-version 1.23.1; then
+      if $PKG_CONFIG libbson-1.0 --atleast-version 1.24.0; then
         PHP_MONGODB_BSON_CFLAGS=`$PKG_CONFIG libbson-1.0 --cflags`
         PHP_MONGODB_BSON_LIBS=`$PKG_CONFIG libbson-1.0 --libs`
         PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
         PHP_MONGODB_BSON_VERSION_STRING="System ($PHP_MONGODB_BSON_VERSION)"
         AC_MSG_RESULT(version $PHP_MONGODB_BSON_VERSION found)
       else
-        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.23.1)
+        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.24.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libbson must be installed)
@@ -261,14 +261,14 @@ if test "$PHP_MONGODB" != "no"; then
 
     AC_MSG_CHECKING(for libmongoc)
     if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0; then
-      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.23.1; then
+      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.24.0; then
         PHP_MONGODB_MONGOC_CFLAGS=`$PKG_CONFIG libmongoc-1.0 --cflags`
         PHP_MONGODB_MONGOC_LIBS=`$PKG_CONFIG libmongoc-1.0 --libs`
         PHP_MONGODB_MONGOC_VERSION=`$PKG_CONFIG libmongoc-1.0 --modversion`
         PHP_MONGODB_MONGOC_VERSION_STRING="System ($PHP_MONGODB_MONGOC_VERSION)"
         AC_MSG_RESULT(version $PHP_MONGODB_MONGOC_VERSION found)
       else
-        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.23.1)
+        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.24.0)
       fi
     else
       AC_MSG_ERROR(pkgconfig and libmongoc must be installed)
@@ -406,7 +406,7 @@ if test "$PHP_MONGODB" != "no"; then
     PHP_MONGODB_JSONSL_SOURCES="jsonsl.c"
 
     dnl Generated with: find src/libmongoc/src/libmongoc/src/mongoc -name '*.c' -print0 | cut -sz -d / -f 7- | sort -dz | tr '\000' ' '
-    PHP_MONGODB_MONGOC_SOURCES="mongoc-aggregate.c mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-change-stream.c mongoc-client.c mongoc-client-pool.c mongoc-client-session.c mongoc-client-side-encryption.c mongoc-cluster-aws.c mongoc-cluster.c mongoc-cluster-cyrus.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-cmd.c mongoc-collection.c mongoc-compression.c mongoc-counters.c mongoc-crypt.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-change-stream.c mongoc-cursor-cmd.c mongoc-cursor-cmd-deprecated.c mongoc-cursor-find.c mongoc-cursor-find-cmd.c mongoc-cursor-find-opquery.c mongoc-cursor-legacy.c mongoc-cyrus.c mongoc-database.c mongoc-error.c mongoc-find-and-modify.c mongoc-generation-map.c mongoc-gridfs-bucket.c mongoc-gridfs-bucket-file.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-handshake.c mongoc-host-list.c mongoc-http.c mongoc-index.c mongoc-init.c mongoc-interrupt.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-ocsp-cache.c mongoc-openssl.c mongoc-optional.c mongoc-opts.c mongoc-opts-helpers.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-api.c mongoc-server-description.c mongoc-server-monitor.c mongoc-server-stream.c mongoc-set.c mongoc-shared.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-gridfs-download.c mongoc-stream-gridfs-upload.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-timeout.c mongoc-topology-background-monitoring.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-ts-pool.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-command-legacy.c mongoc-write-concern.c"
+    PHP_MONGODB_MONGOC_SOURCES="mcd-azure.c mongoc-aggregate.c mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-change-stream.c mongoc-client.c mongoc-client-pool.c mongoc-client-session.c mongoc-client-side-encryption.c mongoc-cluster-aws.c mongoc-cluster.c mongoc-cluster-cyrus.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-cmd.c mongoc-collection.c mongoc-compression.c mongoc-counters.c mongoc-crypt.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-change-stream.c mongoc-cursor-cmd.c mongoc-cursor-cmd-deprecated.c mongoc-cursor-find.c mongoc-cursor-find-cmd.c mongoc-cursor-find-opquery.c mongoc-cursor-legacy.c mongoc-cyrus.c mongoc-database.c mongoc-error.c mongoc-find-and-modify.c mongoc-generation-map.c mongoc-gridfs-bucket.c mongoc-gridfs-bucket-file.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-handshake.c mongoc-host-list.c mongoc-http.c mongoc-index.c mongoc-init.c mongoc-interrupt.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-ocsp-cache.c mongoc-openssl.c mongoc-optional.c mongoc-opts.c mongoc-opts-helpers.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-api.c mongoc-server-description.c mongoc-server-monitor.c mongoc-server-stream.c mongoc-set.c mongoc-shared.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-gridfs-download.c mongoc-stream-gridfs-upload.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-timeout.c mongoc-topology-background-monitoring.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-ts-pool.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-command-legacy.c mongoc-write-concern.c service-gcp.c"
 
     dnl Generated with: find src/libmongoc/src/zlib-1.2.12 -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
     PHP_MONGODB_ZLIB_SOURCES="adler32.c compress.c crc32.c deflate.c gzclose.c gzlib.c gzread.c gzwrite.c infback.c inffast.c inflate.c inftrees.c trees.c uncompr.c zutil.c"
