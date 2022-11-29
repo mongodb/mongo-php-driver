@@ -322,4 +322,8 @@ const char* zend_get_object_type_case(const zend_class_entry* ce, zend_bool uppe
 #define zend_get_object_type_uc(ce) zend_get_object_type_case((ce), true)
 #endif /* PHP_VERSION_ID < 80200 */
 
+#if PHP_VERSION_ID < 80100
+zend_bool zend_array_is_list(zend_array* array);
+#endif /* PHP_VERSION_ID < 80100 */
+
 #endif /* PHONGO_COMPAT_H */

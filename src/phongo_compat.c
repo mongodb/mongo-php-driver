@@ -87,3 +87,26 @@ const char* zend_get_object_type_case(const zend_class_entry* ce, zend_bool uppe
 	return upper_case ? "Class" : "class";
 }
 #endif /* PHP_VERSION_ID < 80200 */
+
+#if PHP_VERSION_ID < 80100
+zend_bool zend_array_is_list(zend_array* array)
+{
+	zend_ulong   expected_idx = 0;
+	zend_ulong   num_idx;
+	zend_string* str_idx;
+	/* Empty arrays are lists */
+	if (zend_hash_num_elements(array) == 0) {
+		return 1;
+	}
+
+	ZEND_HASH_FOREACH_KEY(array, num_idx, str_idx)
+	{
+		if (str_idx != NULL || num_idx != expected_idx++) {
+			return 0;
+		}
+	}
+	ZEND_HASH_FOREACH_END();
+
+	return 1;
+}
+#endif /* PHP_VERSION_ID < 80100 */
