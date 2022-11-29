@@ -5,6 +5,13 @@ PHP_ARG_ENABLE([mongodb],
                                [Enable MongoDB support])])
 
 if test "$PHP_MONGODB" != "no"; then
+  dnl Enable C99 (required for libmongoc 1.24+)
+  AC_PROG_CC_C99
+
+  if test "$ac_cv_prog_cc_c99" = no; then
+    AC_MSG_ERROR([Compiler does not support C99])
+  fi
+
   dnl Check PHP version is compatible with this extension
   AC_MSG_CHECKING([PHP version])
 
@@ -308,8 +315,7 @@ if test "$PHP_MONGODB" != "no"; then
 
   if test "$PHP_MONGODB_SYSTEM_LIBS" = "no"; then
     PHP_MONGODB_BUNDLED_CFLAGS="$STD_CFLAGS -DBSON_COMPILATION -DMONGOC_COMPILATION"
-    dnl TODO: MONGOCRYPT-219 makes the -std argument obsolete
-    PHP_MONGODB_LIBMONGOCRYPT_CFLAGS="-DKMS_MSG_STATIC -DMLIB_USER -std=gnu99"
+    PHP_MONGODB_LIBMONGOCRYPT_CFLAGS="-DKMS_MSG_STATIC -DMLIB_USER"
     PHP_MONGODB_ZLIB_CFLAGS=""
 
     dnl M4 doesn't know if we're building statically or as a shared module, so
@@ -537,6 +543,7 @@ if test "$PHP_MONGODB" != "no"; then
 mongodb was configured with the following options:
 
 Build configuration:
+  CC                                               : $CC
   CFLAGS                                           : $CFLAGS
   Extra CFLAGS                                     : $STD_CFLAGS $EXTRA_CFLAGS
   Developers flags (slow)                          : $MAINTAINER_CFLAGS

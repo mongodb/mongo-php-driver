@@ -11,6 +11,10 @@ fi
 AC_PROG_CC
 AC_PROG_CXX
 
+dnl AC_PROG_CC_C99 is previously called in config.m4, but AC_PROG_CC resets CC
+dnl so call it once more to ensure C99 remains enabled
+AC_PROG_CC_C99
+
 # Check that an appropriate C compiler is available.
 c_compiler="unknown"
 AC_LANG_PUSH([C])
