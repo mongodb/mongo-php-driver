@@ -48,7 +48,7 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?readPreference=1'. Unsupported readPreference value [readPreference=1].
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?readPreference=1'. Error while assigning URI read preference: Unsupported readPreference value [readPreference=1].
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?readPreference=secondary&readPreferenceTags=invalid'. Unsupported value for "readPreferenceTags": "invalid".
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
