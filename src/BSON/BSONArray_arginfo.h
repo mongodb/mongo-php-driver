@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 40c6e724a7102bdcb149dfd3483b835c71d6ed32 */
+ * Stub hash: d1b66ddfb49985fe0f81874d868bf3c807d64713 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_BSONArray___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -8,7 +8,23 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_BSONArray_from
 	ZEND_ARG_TYPE_INFO(0, value, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_BSONArray_get, 0, 1, IS_MIXED, 0)
+	ZEND_ARG_TYPE_INFO(0, index, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+#endif
+
+#if !(PHP_VERSION_ID >= 80000)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_BSONArray_get, 0, 0, 1)
+	ZEND_ARG_TYPE_INFO(0, index, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+#endif
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_BSONArray_getIterator, 0, 0, MongoDB\\BSON\\BSONIterator, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_BSONArray_has, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, index, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_BSONArray_toPHP, 0, 0, IS_ARRAY, 0)
@@ -21,7 +37,14 @@ ZEND_END_ARG_INFO()
 
 static ZEND_METHOD(MongoDB_BSON_BSONArray, __construct);
 static ZEND_METHOD(MongoDB_BSON_BSONArray, fromPHP);
+#if PHP_VERSION_ID >= 80000
+static ZEND_METHOD(MongoDB_BSON_BSONArray, get);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_BSON_BSONArray, get);
+#endif
 static ZEND_METHOD(MongoDB_BSON_BSONArray, getIterator);
+static ZEND_METHOD(MongoDB_BSON_BSONArray, has);
 static ZEND_METHOD(MongoDB_BSON_BSONArray, toPHP);
 static ZEND_METHOD(MongoDB_BSON_BSONArray, __toString);
 
@@ -29,7 +52,14 @@ static ZEND_METHOD(MongoDB_BSON_BSONArray, __toString);
 static const zend_function_entry class_MongoDB_BSON_BSONArray_methods[] = {
 	ZEND_ME(MongoDB_BSON_BSONArray, __construct, arginfo_class_MongoDB_BSON_BSONArray___construct, ZEND_ACC_PRIVATE)
 	ZEND_ME(MongoDB_BSON_BSONArray, fromPHP, arginfo_class_MongoDB_BSON_BSONArray_fromPHP, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
+#if PHP_VERSION_ID >= 80000
+	ZEND_ME(MongoDB_BSON_BSONArray, get, arginfo_class_MongoDB_BSON_BSONArray_get, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_BSON_BSONArray, get, arginfo_class_MongoDB_BSON_BSONArray_get, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
 	ZEND_ME(MongoDB_BSON_BSONArray, getIterator, arginfo_class_MongoDB_BSON_BSONArray_getIterator, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_BSONArray, has, arginfo_class_MongoDB_BSON_BSONArray_has, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_BSONArray, toPHP, arginfo_class_MongoDB_BSON_BSONArray_toPHP, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_BSONArray, __toString, arginfo_class_MongoDB_BSON_BSONArray___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END

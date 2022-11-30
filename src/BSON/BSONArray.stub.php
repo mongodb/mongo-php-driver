@@ -13,7 +13,16 @@ final class BSONArray implements \IteratorAggregate
 
     final static public function fromPHP(array $value): BSONArray {}
 
+#if PHP_VERSION_ID >= 80000
+    final public function get(int $index): mixed {}
+#else
+    /** @return mixed */
+    final public function get(int $index) {}
+#endif
+
     final public function getIterator(): BSONIterator {}
+
+    final public function has(int $index): bool {}
 
     final public function toPHP(?array $typeMap = null): array {}
 
