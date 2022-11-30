@@ -58,9 +58,9 @@ Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?journal=invalid'. Unsupported
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected boolean for "journal" URI option, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?w=-1&journal=true'. Journal conflicts with w value [w=-1].
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?w=-1&journal=true'. Error while parsing the 'w' URI option: Journal conflicts with w value [w=-1].
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?w=0&journal=true'. Journal conflicts with w value [w=0].
+Failed to parse MongoDB URI: 'mongodb://127.0.0.1/?w=0&journal=true'. Error while parsing the 'w' URI option: Journal conflicts with w value [w=0].
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Journal conflicts with w value: -1
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

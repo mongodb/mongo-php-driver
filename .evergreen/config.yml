@@ -1158,17 +1158,17 @@ axes:
     display_name: libmongoc version
     values:
       - id: "lowest-supported"
-        display_name: "1.23.1"
-        variables:
-          LIBMONGOC_VERSION: "1.23.1"
-      - id: "upcoming-stable"
-        display_name: "1.23-dev"
-        variables:
-          LIBMONGOC_VERSION: "r1.23"
-      - id: "latest-dev"
-        display_name: "master"
+        display_name: "1.24-dev"
         variables:
           LIBMONGOC_VERSION: "master"
+#      - id: "upcoming-stable"
+#        display_name: "1.24-dev"
+#        variables:
+#          LIBMONGOC_VERSION: "r1.24"
+#      - id: "latest-dev"
+#        display_name: "master"
+#        variables:
+#          LIBMONGOC_VERSION: "master"
 
 
 buildvariants:
