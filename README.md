@@ -1,7 +1,6 @@
 # MongoDB PHP Driver
 
 [![Tests](https://github.com/mongodb/mongo-php-driver/actions/workflows/tests.yml/badge.svg)](https://github.com/mongodb/mongo-php-driver/actions/workflows/tests.yml)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/gbd3t99ucib5n8sf?svg=true)](https://ci.appveyor.com/project/jmikola/mongo-php-driver)
 [![Coverage Status](https://coveralls.io/repos/github/mongodb/mongo-php-driver/badge.svg?branch=master)](https://coveralls.io/github/mongodb/mongo-php-driver?branch=master)
 [![Coding Standards](https://github.com/mongodb/mongo-php-driver/actions/workflows/clang-format.yml/badge.svg)](https://github.com/mongodb/mongo-php-driver/actions/workflows/clang-format.yml)
 
