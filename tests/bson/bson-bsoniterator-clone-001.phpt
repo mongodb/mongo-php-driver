@@ -18,7 +18,7 @@ var_dump($clone);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-bool(false)
+bool(true)
 bool(false)
 object(MongoDB\BSON\BSONIterator)#%d (%d) {
   ["bson"]=>

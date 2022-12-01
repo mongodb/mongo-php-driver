@@ -226,12 +226,6 @@ static zend_object* php_phongo_bsoniterator_clone_object(phongo_compat_object_ha
 	return new_object;
 }
 
-static int php_phongo_bsoniterator_compare_objects(zval* o1, zval* o2)
-{
-	/* TODO: do we want to compare iterators with one another? */
-	return -1;
-}
-
 static HashTable* php_phongo_bsoniterator_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
@@ -250,7 +244,6 @@ void php_phongo_bsoniterator_init_ce(INIT_FUNC_ARGS)
 	PHONGO_CE_DISABLE_SERIALIZATION(php_phongo_bsoniterator_ce);
 
 	memcpy(&php_phongo_handler_bsoniterator, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(bsoniterator);
 	php_phongo_handler_bsoniterator.clone_obj      = php_phongo_bsoniterator_clone_object;
 	php_phongo_handler_bsoniterator.get_debug_info = php_phongo_bsoniterator_get_debug_info;
 	php_phongo_handler_bsoniterator.get_properties = php_phongo_bsoniterator_get_properties;
