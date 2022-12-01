@@ -35,16 +35,16 @@ zend_class_entry* php_phongo_bsoniterator_ce;
 static bool php_phongo_bsoniterator_init_with_zval(php_phongo_bsoniterator_t* iterator, zval* zbson)
 {
 	php_phongo_bsondocument_t* bsondocument_intern;
-	php_phongo_bsonarray_t*    bsonarray_intern;
+	php_phongo_arraylist_t*    arraylist_intern;
 	const bson_t*              bson;
 
 	ZVAL_COPY(&iterator->bson, zbson);
 	if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_bsondocument_ce)) {
 		bsondocument_intern = Z_BSONDOCUMENT_OBJ_P(&iterator->bson);
 		bson                = bsondocument_intern->bson;
-	} else if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_bsonarray_ce)) {
-		bsonarray_intern   = Z_BSONARRAY_OBJ_P(&iterator->bson);
-		bson               = bsonarray_intern->bson;
+	} else if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_arraylist_ce)) {
+		arraylist_intern   = Z_ARRAYLIST_OBJ_P(&iterator->bson);
+		bson               = arraylist_intern->bson;
 		iterator->is_array = true;
 	} else {
 		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Could not create iterator for %s instance.", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zbson));

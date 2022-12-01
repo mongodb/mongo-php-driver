@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\BSON\BSONArray::get tests
+MongoDB\BSON\ArrayList::get tests
 --FILE--
 <?php
 
-$child = MongoDB\BSON\BSONArray::fromPHP([(object) ['foo' => 'bar']])->get(0);
+$child = MongoDB\BSON\ArrayList::fromPHP([(object) ['foo' => 'bar']])->get(0);
 var_dump($child);
 
 ?>

@@ -1,10 +1,10 @@
 --TEST--
-MongoDB\BSON\BSONArray comparisons
+MongoDB\BSON\ArrayList comparisons
 --FILE--
 <?php
 
-$foobar = MongoDB\BSON\BSONArray::fromPHP([1, 2, 3]);
-$barfoo = MongoDB\BSON\BSONArray::fromPHP([2, 3, 4]);
+$foobar = MongoDB\BSON\ArrayList::fromPHP([1, 2, 3]);
+$barfoo = MongoDB\BSON\ArrayList::fromPHP([2, 3, 4]);
 
 var_dump($foobar == $barfoo);
 var_dump($foobar < $barfoo);

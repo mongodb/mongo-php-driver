@@ -7,11 +7,11 @@
 
 namespace MongoDB\BSON;
 
-final class BSONArray implements \IteratorAggregate
+final class ArrayList implements \IteratorAggregate
 {
     private function __construct() {}
 
-    final static public function fromPHP(array $value): BSONArray {}
+    final static public function fromPHP(array $value): ArrayList {}
 
 #if PHP_VERSION_ID >= 80000
     final public function get(int $index): mixed {}

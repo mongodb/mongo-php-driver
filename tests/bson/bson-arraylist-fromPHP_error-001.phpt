@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONArray::fromPHP(): create with non-sequential, 0-based arrays
+MongoDB\BSON\ArrayList::fromPHP(): create with non-sequential, 0-based arrays
 --FILE--
 <?php
 
@@ -13,7 +13,7 @@ $tests = [
 
 foreach ($tests as $test) {
     echo throws(function() use ($test) {
-        MongoDB\BSON\BSONArray::fromPHP($test);
+        MongoDB\BSON\ArrayList::fromPHP($test);
     }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 }
 

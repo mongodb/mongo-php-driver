@@ -28,26 +28,26 @@
 #include "php_phongo.h"
 #include "phongo_error.h"
 #include "phongo_bson_encode.h"
-#include "BSON/BSONArray_arginfo.h"
+#include "BSON/ArrayList_arginfo.h"
 #include "BSON/BSONIterator.h"
 
-zend_class_entry* php_phongo_bsonarray_ce;
+zend_class_entry* php_phongo_arraylist_ce;
 
 /* Initialize the object and return whether it was successful. An exception will
  * be thrown on error. */
-static bool php_phongo_bsonarray_init(php_phongo_bsonarray_t* intern, bson_t* bson)
+static bool php_phongo_arraylist_init(php_phongo_arraylist_t* intern, bson_t* bson)
 {
 	intern->bson = bson;
 
 	return true;
 }
 
-static HashTable* php_phongo_bsonarray_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
+static HashTable* php_phongo_arraylist_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
-	php_phongo_bsonarray_t* intern;
+	php_phongo_arraylist_t* intern;
 	HashTable*              props;
 
-	intern = Z_OBJ_BSONARRAY(PHONGO_COMPAT_GET_OBJ(object));
+	intern = Z_OBJ_ARRAYLIST(PHONGO_COMPAT_GET_OBJ(object));
 
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
@@ -68,12 +68,12 @@ static HashTable* php_phongo_bsonarray_get_properties_hash(phongo_compat_object_
 	return props;
 }
 
-PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_BSONArray)
+PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_ArrayList)
 
-static PHP_METHOD(MongoDB_BSON_BSONArray, fromPHP)
+static PHP_METHOD(MongoDB_BSON_ArrayList, fromPHP)
 {
 	zval                    zv;
-	php_phongo_bsonarray_t* intern;
+	php_phongo_arraylist_t* intern;
 	zval*                   data;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
@@ -85,8 +85,8 @@ static PHP_METHOD(MongoDB_BSON_BSONArray, fromPHP)
 		return;
 	}
 
-	object_init_ex(&zv, php_phongo_bsonarray_ce);
-	intern = Z_BSONARRAY_OBJ_P(&zv);
+	object_init_ex(&zv, php_phongo_arraylist_ce);
+	intern = Z_ARRAYLIST_OBJ_P(&zv);
 
 	intern->bson = bson_new();
 	php_phongo_zval_to_bson(data, PHONGO_BSON_NONE, intern->bson, NULL);
@@ -94,9 +94,9 @@ static PHP_METHOD(MongoDB_BSON_BSONArray, fromPHP)
 	RETURN_ZVAL(&zv, 1, 1);
 }
 
-static PHP_METHOD(MongoDB_BSON_BSONArray, get)
+static PHP_METHOD(MongoDB_BSON_ArrayList, get)
 {
-	php_phongo_bsonarray_t* intern;
+	php_phongo_arraylist_t* intern;
 	zend_long               index;
 	char                    key[24];
 	size_t                  key_len;
@@ -106,7 +106,7 @@ static PHP_METHOD(MongoDB_BSON_BSONArray, get)
 	Z_PARAM_LONG(index)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	intern = Z_BSONARRAY_OBJ_P(getThis());
+	intern = Z_ARRAYLIST_OBJ_P(getThis());
 	if (!bson_iter_init(&iter, intern->bson)) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator.");
 	}
@@ -120,16 +120,16 @@ static PHP_METHOD(MongoDB_BSON_BSONArray, get)
 	php_phongo_bson_iter_to_zval(return_value, &iter);
 }
 
-static PHP_METHOD(MongoDB_BSON_BSONArray, getIterator)
+static PHP_METHOD(MongoDB_BSON_ArrayList, getIterator)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	phongo_bsoniterator_init(return_value, getThis());
 }
 
-static PHP_METHOD(MongoDB_BSON_BSONArray, has)
+static PHP_METHOD(MongoDB_BSON_ArrayList, has)
 {
-	php_phongo_bsonarray_t* intern;
+	php_phongo_arraylist_t* intern;
 	zend_long               index;
 	char                    key[24];
 	size_t                  key_len;
@@ -139,7 +139,7 @@ static PHP_METHOD(MongoDB_BSON_BSONArray, has)
 	Z_PARAM_LONG(index)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	intern = Z_BSONARRAY_OBJ_P(getThis());
+	intern = Z_ARRAYLIST_OBJ_P(getThis());
 	if (!bson_iter_init(&iter, intern->bson)) {
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator.");
 	}
@@ -149,9 +149,9 @@ static PHP_METHOD(MongoDB_BSON_BSONArray, has)
 	RETURN_BOOL(bson_iter_find_w_len(&iter, key, key_len));
 }
 
-static PHP_METHOD(MongoDB_BSON_BSONArray, toPHP)
+static PHP_METHOD(MongoDB_BSON_ArrayList, toPHP)
 {
-	php_phongo_bsonarray_t* intern;
+	php_phongo_arraylist_t* intern;
 	zval*                   typemap = NULL;
 	php_phongo_bson_state   state;
 
@@ -166,7 +166,7 @@ static PHP_METHOD(MongoDB_BSON_BSONArray, toPHP)
 		return;
 	}
 
-	intern = Z_BSONARRAY_OBJ_P(getThis());
+	intern = Z_ARRAYLIST_OBJ_P(getThis());
 
 	/* Force array type for root since we're dealing with an array */
 	state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
@@ -182,23 +182,23 @@ static PHP_METHOD(MongoDB_BSON_BSONArray, toPHP)
 	RETURN_ZVAL(&state.zchild, 0, 1);
 }
 
-static PHP_METHOD(MongoDB_BSON_BSONArray, __toString)
+static PHP_METHOD(MongoDB_BSON_ArrayList, __toString)
 {
-	php_phongo_bsonarray_t* intern;
+	php_phongo_arraylist_t* intern;
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	intern = Z_BSONARRAY_OBJ_P(getThis());
+	intern = Z_ARRAYLIST_OBJ_P(getThis());
 
 	RETVAL_STRINGL((const char*) bson_get_data(intern->bson), intern->bson->len);
 }
 
 /* MongoDB\BSON\BSON object handlers */
-static zend_object_handlers php_phongo_handler_bsonarray;
+static zend_object_handlers php_phongo_handler_arraylist;
 
-static void php_phongo_bsonarray_free_object(zend_object* object)
+static void php_phongo_arraylist_free_object(zend_object* object)
 {
-	php_phongo_bsonarray_t* intern = Z_OBJ_BSONARRAY(object);
+	php_phongo_arraylist_t* intern = Z_OBJ_ARRAYLIST(object);
 
 	zend_object_std_dtor(&intern->std);
 
@@ -212,72 +212,72 @@ static void php_phongo_bsonarray_free_object(zend_object* object)
 	}
 }
 
-static zend_object* php_phongo_bsonarray_create_object(zend_class_entry* class_type)
+static zend_object* php_phongo_arraylist_create_object(zend_class_entry* class_type)
 {
-	php_phongo_bsonarray_t* intern = zend_object_alloc(sizeof(php_phongo_bsonarray_t), class_type);
+	php_phongo_arraylist_t* intern = zend_object_alloc(sizeof(php_phongo_arraylist_t), class_type);
 
 	zend_object_std_init(&intern->std, class_type);
 	object_properties_init(&intern->std, class_type);
 
-	intern->std.handlers = &php_phongo_handler_bsonarray;
+	intern->std.handlers = &php_phongo_handler_arraylist;
 
 	return &intern->std;
 }
 
-static zend_object* php_phongo_bsonarray_clone_object(phongo_compat_object_handler_type* object)
+static zend_object* php_phongo_arraylist_clone_object(phongo_compat_object_handler_type* object)
 {
-	php_phongo_bsonarray_t* intern;
-	php_phongo_bsonarray_t* new_intern;
+	php_phongo_arraylist_t* intern;
+	php_phongo_arraylist_t* new_intern;
 	zend_object*            new_object;
 
-	intern     = Z_OBJ_BSONARRAY(PHONGO_COMPAT_GET_OBJ(object));
-	new_object = php_phongo_bsonarray_create_object(PHONGO_COMPAT_GET_OBJ(object)->ce);
+	intern     = Z_OBJ_ARRAYLIST(PHONGO_COMPAT_GET_OBJ(object));
+	new_object = php_phongo_arraylist_create_object(PHONGO_COMPAT_GET_OBJ(object)->ce);
 
-	new_intern = Z_OBJ_BSONARRAY(new_object);
+	new_intern = Z_OBJ_ARRAYLIST(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
 
-	php_phongo_bsonarray_init(new_intern, bson_copy(intern->bson));
+	php_phongo_arraylist_init(new_intern, bson_copy(intern->bson));
 
 	return new_object;
 }
 
-static int php_phongo_bsonarray_compare_objects(zval* o1, zval* o2)
+static int php_phongo_arraylist_compare_objects(zval* o1, zval* o2)
 {
-	php_phongo_bsonarray_t *intern1, *intern2;
+	php_phongo_arraylist_t *intern1, *intern2;
 
 	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
 
-	intern1 = Z_BSONARRAY_OBJ_P(o1);
-	intern2 = Z_BSONARRAY_OBJ_P(o2);
+	intern1 = Z_ARRAYLIST_OBJ_P(o1);
+	intern2 = Z_ARRAYLIST_OBJ_P(o2);
 
 	return bson_compare(intern1->bson, intern2->bson);
 }
 
-static HashTable* php_phongo_bsonarray_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
+static HashTable* php_phongo_arraylist_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
-	return php_phongo_bsonarray_get_properties_hash(object, true);
+	return php_phongo_arraylist_get_properties_hash(object, true);
 }
 
-static HashTable* php_phongo_bsonarray_get_properties(phongo_compat_object_handler_type* object)
+static HashTable* php_phongo_arraylist_get_properties(phongo_compat_object_handler_type* object)
 {
-	return php_phongo_bsonarray_get_properties_hash(object, false);
+	return php_phongo_arraylist_get_properties_hash(object, false);
 }
 
-void php_phongo_bsonarray_init_ce(INIT_FUNC_ARGS)
+void php_phongo_arraylist_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_bsonarray_ce                = register_class_MongoDB_BSON_BSONArray(zend_ce_aggregate);
-	php_phongo_bsonarray_ce->create_object = php_phongo_bsonarray_create_object;
+	php_phongo_arraylist_ce                = register_class_MongoDB_BSON_ArrayList(zend_ce_aggregate);
+	php_phongo_arraylist_ce->create_object = php_phongo_arraylist_create_object;
 
 #if PHP_VERSION_ID >= 80000
-	zend_class_implements(php_phongo_bsonarray_ce, 1, zend_ce_stringable);
+	zend_class_implements(php_phongo_arraylist_ce, 1, zend_ce_stringable);
 #endif
 
-	memcpy(&php_phongo_handler_bsonarray, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(bsonarray);
-	php_phongo_handler_bsonarray.clone_obj      = php_phongo_bsonarray_clone_object;
-	php_phongo_handler_bsonarray.get_debug_info = php_phongo_bsonarray_get_debug_info;
-	php_phongo_handler_bsonarray.get_properties = php_phongo_bsonarray_get_properties;
-	php_phongo_handler_bsonarray.free_obj       = php_phongo_bsonarray_free_object;
-	php_phongo_handler_bsonarray.offset         = XtOffsetOf(php_phongo_bsonarray_t, std);
+	memcpy(&php_phongo_handler_arraylist, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
+	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(arraylist);
+	php_phongo_handler_arraylist.clone_obj      = php_phongo_arraylist_clone_object;
+	php_phongo_handler_arraylist.get_debug_info = php_phongo_arraylist_get_debug_info;
+	php_phongo_handler_arraylist.get_properties = php_phongo_arraylist_get_properties;
+	php_phongo_handler_arraylist.free_obj       = php_phongo_arraylist_free_object;
+	php_phongo_handler_arraylist.offset         = XtOffsetOf(php_phongo_arraylist_t, std);
 }

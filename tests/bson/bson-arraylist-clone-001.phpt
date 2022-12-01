@@ -1,11 +1,11 @@
 --TEST--
-MongoDB\BSON\BSONArray can be cloned
+MongoDB\BSON\ArrayList can be cloned
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$bson = MongoDB\BSON\BSONArray::fromPHP([1, 2, 3]);
+$bson = MongoDB\BSON\ArrayList::fromPHP([1, 2, 3]);
 $clone = clone $bson;
 
 var_dump($clone == $bson);
@@ -20,7 +20,7 @@ var_dump($clone);
 --EXPECTF--
 bool(true)
 bool(false)
-object(MongoDB\BSON\BSONArray)#%d (%d) {
+object(MongoDB\BSON\ArrayList)#%d (%d) {
   ["data"]=>
   string(26) "%s"
   ["length"]=>

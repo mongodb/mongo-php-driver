@@ -52,14 +52,14 @@ object(stdClass)#%d (%d) {
     ["parent1"]=>
     object(stdClass)#%d (%d) {
       ["child1"]=>
-      object(MongoDB\BSON\BSONArray)#%d (%d) {
+      object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
         string(26) "%a"
         ["length"]=>
         int(26)
       }
       ["child2"]=>
-      object(MongoDB\BSON\BSONArray)#%d (%d) {
+      object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
         string(26) "%a"
         ["length"]=>
@@ -69,14 +69,14 @@ object(stdClass)#%d (%d) {
     ["parent2"]=>
     object(stdClass)#%d (%d) {
       ["child1"]=>
-      object(MongoDB\BSON\BSONArray)#%d (%d) {
+      object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
         string(26) "%a"
         ["length"]=>
         int(26)
       }
       ["child2"]=>
-      object(MongoDB\BSON\BSONArray)#%d (%d) {
+      object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
         string(26) "%a"
         ["length"]=>
@@ -108,7 +108,7 @@ object(stdClass)#%d (%d) {
     ["parent1"]=>
     object(stdClass)#%d (%d) {
       ["child1"]=>
-      object(MongoDB\BSON\BSONArray)#%d (%d) {
+      object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
         string(26) "%a"
         ["length"]=>

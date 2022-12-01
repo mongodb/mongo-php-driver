@@ -1,17 +1,17 @@
 --TEST--
-MongoDB\BSON\BSONArray debug output
+MongoDB\BSON\ArrayList debug output
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-var_dump(MongoDB\BSON\BSONArray::fromPHP([]));
+var_dump(MongoDB\BSON\ArrayList::fromPHP([]));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\BSON\BSONArray)#%d (%d) {
+object(MongoDB\BSON\ArrayList)#%d (%d) {
   ["data"]=>
   string(5) "%s"
   ["length"]=>

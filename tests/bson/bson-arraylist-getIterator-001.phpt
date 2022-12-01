@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONArray::getIterator tests
+MongoDB\BSON\ArrayList::getIterator tests
 --FILE--
 <?php
 
@@ -15,15 +15,15 @@ $array = [
     MongoDB\BSON\BSONDocument::fromJSON('{ "long": { "$numberLong": "1234" }}'),
     MongoDB\BSON\BSONDocument::fromJSON('{ "document": { "foo": "bar"}}'),
     [1, 2, "foo"],
-    MongoDB\BSON\BSONArray::fromPHP([1, 2, "foo"]),
+    MongoDB\BSON\ArrayList::fromPHP([1, 2, "foo"]),
 ];
 
-$iterator = $bsonArray = MongoDB\BSON\BSONArray::fromPHP($array)->getIterator();
+$iterator = MongoDB\BSON\ArrayList::fromPHP($array)->getIterator();
 
 foreach ($iterator as $key => $value) {
     var_dump($key);
 
-    if ($value instanceof MongoDB\BSON\BSONDocument || $value instanceof MongoDB\BSON\BSONArray) {
+    if ($value instanceof MongoDB\BSON\BSONDocument || $value instanceof MongoDB\BSON\ArrayList) {
         var_dump(get_class($value));
         var_dump($value->toPHP());
     } else {
@@ -123,7 +123,7 @@ object(stdClass)#%d (%d) {
   }
 }
 int(10)
-string(22) "MongoDB\BSON\BSONArray"
+string(22) "MongoDB\BSON\ArrayList"
 array(3) {
   [0]=>
   int(1)
@@ -133,7 +133,7 @@ array(3) {
   string(3) "foo"
 }
 int(11)
-string(22) "MongoDB\BSON\BSONArray"
+string(22) "MongoDB\BSON\ArrayList"
 array(3) {
   [0]=>
   int(1)

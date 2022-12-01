@@ -913,11 +913,11 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 
 	switch (state.map.array.type) {
 		case PHONGO_TYPEMAP_BSON: {
-			php_phongo_bsonarray_t* intern;
+			php_phongo_arraylist_t* intern;
 
-			object_init_ex(&state.zchild, php_phongo_bsonarray_ce);
+			object_init_ex(&state.zchild, php_phongo_arraylist_ce);
 
-			intern       = Z_BSONARRAY_OBJ_P(&state.zchild);
+			intern       = Z_ARRAYLIST_OBJ_P(&state.zchild);
 			intern->bson = bson_copy(v_array);
 			break;
 		}
@@ -1448,7 +1448,7 @@ void php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 	bson_decimal128_t          decimal;
 	bson_t                     bson = BSON_INITIALIZER;
 	php_phongo_bsondocument_t* bsondocument_intern;
-	php_phongo_bsonarray_t*    bsonarray_intern;
+	php_phongo_arraylist_t*    arraylist_intern;
 
 	switch (bson_iter_type(iter)) {
 		case BSON_TYPE_UTF8:
@@ -1475,10 +1475,10 @@ void php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 		case BSON_TYPE_ARRAY:
 			bson_iter_array(iter, &data_len, (const uint8_t**) &data);
 
-			object_init_ex(zv, php_phongo_bsonarray_ce);
-			bsonarray_intern       = Z_BSONARRAY_OBJ_P(zv);
-			bsonarray_intern->bson = bson_new();
-			bson_init_static(bsonarray_intern->bson, (const uint8_t*) data, data_len);
+			object_init_ex(zv, php_phongo_arraylist_ce);
+			arraylist_intern       = Z_ARRAYLIST_OBJ_P(zv);
+			arraylist_intern->bson = bson_new();
+			bson_init_static(arraylist_intern->bson, (const uint8_t*) data, data_len);
 			return;
 
 		case BSON_TYPE_BINARY:
