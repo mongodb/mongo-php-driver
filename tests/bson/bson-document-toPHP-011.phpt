@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONDocument::toPHP(): Setting fieldPath typemaps for compound types with wildcard keys (nested)
+MongoDB\BSON\Document::toPHP(): Setting fieldPath typemaps for compound types with wildcard keys (nested)
 --FILE--
 <?php
 
@@ -15,7 +15,7 @@ class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
 
 class MyWildcardArrayObject extends MyArrayObject {};
 
-$bson = \MongoDB\BSON\BSONDocument::fromPHP( [
+$bson = \MongoDB\BSON\Document::fromPHP( [
     '_id' => 1,
     'object' => [
         'parent1' => [

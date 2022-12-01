@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONDocument::toPHP(): Setting fieldPath typemaps for compound types with string keys
+MongoDB\BSON\Document::toPHP(): Setting fieldPath typemaps for compound types with string keys
 --FILE--
 <?php
 
@@ -13,7 +13,7 @@ class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
     }
 }
 
-$bson = \MongoDB\BSON\BSONDocument::fromPHP( [
+$bson = \MongoDB\BSON\Document::fromPHP( [
     '_id' => 1,
     'array' => [1, 2, 3],
     'object' => ['string' => 'keys', 'for' => 'ever']

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONDocument::toCanonicalExtendedJSON(): Encoding extended JSON types
+MongoDB\BSON\Document::toCanonicalExtendedJSON(): Encoding extended JSON types
 --FILE--
 <?php
 
@@ -18,7 +18,7 @@ $tests = [
 ];
 
 foreach ($tests as $value) {
-    echo MongoDB\BSON\BSONDocument::fromPHP($value)->toCanonicalExtendedJSON(), "\n";
+    echo MongoDB\BSON\Document::fromPHP($value)->toCanonicalExtendedJSON(), "\n";
 }
 
 ?>

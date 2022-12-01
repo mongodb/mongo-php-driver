@@ -1,11 +1,9 @@
 --TEST--
-MongoDB\BSON\ArrayList::get tests
+MongoDB\BSON\Document::get tests
 --FILE--
 <?php
 
-$document = MongoDB\BSON\ArrayList::fromPHP([(object) ['foo' => 'bar']]);
-$child = $document->get(0);
-unset($document);
+$child = MongoDB\BSON\Document::fromPHP(['document' => (object) ['foo' => 'bar']])->get('document');
 var_dump($child);
 
 ?>

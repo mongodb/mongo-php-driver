@@ -43,19 +43,19 @@ echo throws(function () use ($cursor) {
 Inserted: 3
 
 First foreach statement:
-object(MongoDB\BSON\BSONDocument)#%d (%d) {
+object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(14) "%s"
   ["length"]=>
   int(14)
 }
-object(MongoDB\BSON\BSONDocument)#%d (%d) {
+object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(14) "%s"
   ["length"]=>
   int(14)
 }
-object(MongoDB\BSON\BSONDocument)#%d (%d) {
+object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(14) "%s"
   ["length"]=>

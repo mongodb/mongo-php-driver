@@ -7,17 +7,17 @@
 
 namespace MongoDB\BSON;
 
-final class BSONDocument implements \IteratorAggregate
+final class Document implements \IteratorAggregate
 {
     private function __construct() {}
 
-    final static public function fromJSON(string $json): BSONDocument {}
+    final static public function fromJSON(string $json): Document {}
 
 #if PHP_VERSION_ID >= 80000
-    final static public function fromPHP(mixed $value): BSONDocument {}
+    final static public function fromPHP(mixed $value): Document {}
 #else
     /** @param mixed $value */
-    final static public function fromPHP($value): BSONDocument {}
+    final static public function fromPHP($value): Document {}
 #endif
 
 #if PHP_VERSION_ID >= 80000

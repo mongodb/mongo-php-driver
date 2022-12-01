@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\BSON\BSONDocument::get tests
+MongoDB\BSON\Document::get tests
 --FILE--
 <?php
 
-$document = MongoDB\BSON\BSONDocument::fromPHP(['foo' => 'bar', 'bar' => 'baz']);
+$document = MongoDB\BSON\Document::fromPHP(['foo' => 'bar', 'bar' => 'baz']);
 var_dump($document->get('foo'));
 var_dump($document->get('bar'));
 var_dump($document->get('baz'));

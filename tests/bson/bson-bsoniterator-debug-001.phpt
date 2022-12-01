@@ -5,7 +5,7 @@ MongoDB\BSON\BSONIterator debug output
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-var_dump(MongoDB\BSON\BSONDocument::fromJSON('{ }')->getIterator());
+var_dump(MongoDB\BSON\Document::fromJSON('{ }')->getIterator());
 
 ?>
 ===DONE===
@@ -13,7 +13,7 @@ var_dump(MongoDB\BSON\BSONDocument::fromJSON('{ }')->getIterator());
 --EXPECTF--
 object(MongoDB\BSON\BSONIterator)#%d (%d) {
   ["bson"]=>
-  object(MongoDB\BSON\BSONDocument)#%d (%d) {
+  object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(5) "%s"
     ["length"]=>

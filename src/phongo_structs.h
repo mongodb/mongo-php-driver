@@ -187,7 +187,7 @@ typedef struct {
 	bson_t*     bson;
 	HashTable*  properties;
 	zend_object std;
-} php_phongo_bsondocument_t;
+} php_phongo_document_t;
 
 typedef struct {
 	zval        bson;

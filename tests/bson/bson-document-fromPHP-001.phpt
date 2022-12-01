@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONDocument::fromPHP(): bsonSerialize() allows array and stdClass
+MongoDB\BSON\Document::fromPHP(): bsonSerialize() allows array and stdClass
 --FILE--
 <?php
 
@@ -32,7 +32,7 @@ echo "Testing top-level objects\n";
 
 foreach ($tests as $test) {
     try {
-        echo MongoDB\BSON\BSONDocument::fromPHP(new MyDocument($test))->toRelaxedExtendedJson(), "\n";
+        echo MongoDB\BSON\Document::fromPHP(new MyDocument($test))->toRelaxedExtendedJson(), "\n";
     } catch (MongoDB\Driver\Exception\UnexpectedValueException $e) {
         echo $e->getMessage(), "\n";
     }
@@ -42,7 +42,7 @@ echo "\nTesting nested objects\n";
 
 foreach ($tests as $test) {
     try {
-        echo MongoDB\BSON\BSONDocument::fromPHP(new MyDocument(array('nested' => new MyDocument($test))))->toRelaxedExtendedJson(), "\n";
+        echo MongoDB\BSON\Document::fromPHP(new MyDocument(array('nested' => new MyDocument($test))))->toRelaxedExtendedJson(), "\n";
     } catch (MongoDB\Driver\Exception\UnexpectedValueException $e) {
         echo $e->getMessage(), "\n";
     }

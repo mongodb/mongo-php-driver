@@ -1,11 +1,11 @@
 --TEST--
-MongoDB\BSON\BSONDocument can be cloned
+MongoDB\BSON\Document can be cloned
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$bson = MongoDB\BSON\BSONDocument::fromJSON('{ "foo": [ 1, 2, 3 ]}');
+$bson = MongoDB\BSON\Document::fromJSON('{ "foo": [ 1, 2, 3 ]}');
 $clone = clone $bson;
 
 var_dump($clone == $bson);
@@ -20,7 +20,7 @@ var_dump($clone);
 --EXPECTF--
 bool(true)
 bool(false)
-object(MongoDB\BSON\BSONDocument)#%d (%d) {
+object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(36) "%s"
   ["length"]=>

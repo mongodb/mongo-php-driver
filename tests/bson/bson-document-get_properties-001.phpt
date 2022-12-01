@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\BSON\BSONDocument get_properties handler (get_object_vars)
+MongoDB\BSON\Document get_properties handler (get_object_vars)
 --FILE--
 <?php
 
-$bson = MongoDB\BSON\BSONDocument::fromJSON('{}');
+$bson = MongoDB\BSON\Document::fromJSON('{}');
 
 var_dump(get_object_vars($bson));
 

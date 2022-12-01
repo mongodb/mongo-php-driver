@@ -4,16 +4,16 @@ MongoDB\BSON\ArrayList::getIterator tests
 <?php
 
 $array = [
-    MongoDB\BSON\BSONDocument::fromJSON('{ "_id": { "$oid": "56315a7c6118fd1b920270b1" }}'),
-    MongoDB\BSON\BSONDocument::fromJSON('{ "binary": { "$binary": "Zm9v", "$type": "00" }}'),
-    MongoDB\BSON\BSONDocument::fromJSON('{ "date": { "$date": "2015-10-28T00:00:00Z" }}'),
-    MongoDB\BSON\BSONDocument::fromJSON('{ "timestamp": { "$timestamp": { "t": 1446084619, "i": 0 }}}'),
-    MongoDB\BSON\BSONDocument::fromJSON('{ "regex": { "$regex": "pattern", "$options": "i" }}'),
-    MongoDB\BSON\BSONDocument::fromJSON('{ "undef": { "$undefined": true }}'),
-    MongoDB\BSON\BSONDocument::fromJSON('{ "minkey": { "$minKey": 1 }}'),
-    MongoDB\BSON\BSONDocument::fromJSON('{ "maxkey": { "$maxKey": 1 }}'),
-    MongoDB\BSON\BSONDocument::fromJSON('{ "long": { "$numberLong": "1234" }}'),
-    MongoDB\BSON\BSONDocument::fromJSON('{ "document": { "foo": "bar"}}'),
+    MongoDB\BSON\Document::fromJSON('{ "_id": { "$oid": "56315a7c6118fd1b920270b1" }}'),
+    MongoDB\BSON\Document::fromJSON('{ "binary": { "$binary": "Zm9v", "$type": "00" }}'),
+    MongoDB\BSON\Document::fromJSON('{ "date": { "$date": "2015-10-28T00:00:00Z" }}'),
+    MongoDB\BSON\Document::fromJSON('{ "timestamp": { "$timestamp": { "t": 1446084619, "i": 0 }}}'),
+    MongoDB\BSON\Document::fromJSON('{ "regex": { "$regex": "pattern", "$options": "i" }}'),
+    MongoDB\BSON\Document::fromJSON('{ "undef": { "$undefined": true }}'),
+    MongoDB\BSON\Document::fromJSON('{ "minkey": { "$minKey": 1 }}'),
+    MongoDB\BSON\Document::fromJSON('{ "maxkey": { "$maxKey": 1 }}'),
+    MongoDB\BSON\Document::fromJSON('{ "long": { "$numberLong": "1234" }}'),
+    MongoDB\BSON\Document::fromJSON('{ "document": { "foo": "bar"}}'),
     [1, 2, "foo"],
     MongoDB\BSON\ArrayList::fromPHP([1, 2, "foo"]),
 ];
@@ -23,7 +23,7 @@ $iterator = MongoDB\BSON\ArrayList::fromPHP($array)->getIterator();
 foreach ($iterator as $key => $value) {
     var_dump($key);
 
-    if ($value instanceof MongoDB\BSON\BSONDocument || $value instanceof MongoDB\BSON\ArrayList) {
+    if ($value instanceof MongoDB\BSON\Document || $value instanceof MongoDB\BSON\ArrayList) {
         var_dump(get_class($value));
         var_dump($value->toPHP());
     } else {
@@ -36,7 +36,7 @@ foreach ($iterator as $key => $value) {
 <?php exit(0); ?>
 --EXPECTF--
 int(0)
-string(25) "MongoDB\BSON\BSONDocument"
+string(21) "MongoDB\BSON\Document"
 object(stdClass)#%d (%d) {
   ["_id"]=>
   object(MongoDB\BSON\ObjectId)#%d (%d) {
@@ -45,7 +45,7 @@ object(stdClass)#%d (%d) {
   }
 }
 int(1)
-string(25) "MongoDB\BSON\BSONDocument"
+string(21) "MongoDB\BSON\Document"
 object(stdClass)#%d (%d) {
   ["binary"]=>
   object(MongoDB\BSON\Binary)#%d (%d) {
@@ -56,7 +56,7 @@ object(stdClass)#%d (%d) {
   }
 }
 int(2)
-string(25) "MongoDB\BSON\BSONDocument"
+string(21) "MongoDB\BSON\Document"
 object(stdClass)#%d (%d) {
   ["date"]=>
   object(MongoDB\BSON\UTCDateTime)#%d (%d) {
@@ -65,7 +65,7 @@ object(stdClass)#%d (%d) {
   }
 }
 int(3)
-string(25) "MongoDB\BSON\BSONDocument"
+string(21) "MongoDB\BSON\Document"
 object(stdClass)#%d (%d) {
   ["timestamp"]=>
   object(MongoDB\BSON\Timestamp)#%d (2) {
@@ -76,7 +76,7 @@ object(stdClass)#%d (%d) {
   }
 }
 int(4)
-string(25) "MongoDB\BSON\BSONDocument"
+string(21) "MongoDB\BSON\Document"
 object(stdClass)#%d (%d) {
   ["regex"]=>
   object(MongoDB\BSON\Regex)#%d (2) {
@@ -87,34 +87,34 @@ object(stdClass)#%d (%d) {
   }
 }
 int(5)
-string(25) "MongoDB\BSON\BSONDocument"
+string(21) "MongoDB\BSON\Document"
 object(stdClass)#%d (%d) {
   ["undef"]=>
   object(MongoDB\BSON\Undefined)#%d (%d) {
   }
 }
 int(6)
-string(25) "MongoDB\BSON\BSONDocument"
+string(21) "MongoDB\BSON\Document"
 object(stdClass)#%d (%d) {
   ["minkey"]=>
   object(MongoDB\BSON\MinKey)#%d (%d) {
   }
 }
 int(7)
-string(25) "MongoDB\BSON\BSONDocument"
+string(21) "MongoDB\BSON\Document"
 object(stdClass)#%d (%d) {
   ["maxkey"]=>
   object(MongoDB\BSON\MaxKey)#%d (%d) {
   }
 }
 int(8)
-string(25) "MongoDB\BSON\BSONDocument"
+string(21) "MongoDB\BSON\Document"
 object(stdClass)#%d (%d) {
   ["long"]=>
   int(1234)
 }
 int(9)
-string(25) "MongoDB\BSON\BSONDocument"
+string(21) "MongoDB\BSON\Document"
 object(stdClass)#%d (%d) {
   ["document"]=>
   object(stdClass)#%d (%d) {

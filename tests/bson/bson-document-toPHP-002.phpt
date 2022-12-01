@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONDocument::fromPHP(): Null type map values imply default behavior
+MongoDB\BSON\Document::fromPHP(): Null type map values imply default behavior
 --FILE--
 <?php
 
@@ -32,7 +32,7 @@ class MyDocument implements MongoDB\BSON\Persistable
     }
 }
 
-$bson = MongoDB\BSON\BSONDocument::fromPHP(new MyDocument);
+$bson = MongoDB\BSON\Document::fromPHP(new MyDocument);
 echo "Test ", $bson->toRelaxedExtendedJSON(), "\n";
 
 $typeMap = array(

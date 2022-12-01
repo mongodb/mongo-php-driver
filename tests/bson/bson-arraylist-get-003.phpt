@@ -10,7 +10,7 @@ var_dump($child);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\BSON\BSONDocument)#%d (%d) {
+object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(18) "%s"
   ["length"]=>

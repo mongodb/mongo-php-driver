@@ -15,7 +15,7 @@ $tests = [
 
 foreach ($tests as $test) {
     printf("Test %s\n", $test);
-    $iterator = MongoDB\BSON\BSONDocument::fromJSON($test)->getIterator();
+    $iterator = MongoDB\BSON\Document::fromJSON($test)->getIterator();
     var_dump(iterator_to_array($iterator));
 }
 

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONDocument::toPHP(): Tests from serialization specification
+MongoDB\BSON\Document::toPHP(): Tests from serialization specification
 --FILE--
 <?php
 
@@ -138,7 +138,7 @@ foreach ($testGroups as $testGroup) {
     foreach ($testGroup['tests'] as $test) {
         echo $test, "\n";
 
-        $bson = MongoDB\BSON\BSONDocument::fromJSON($test);
+        $bson = MongoDB\BSON\Document::fromJSON($test);
         try {
             var_dump($bson->toPHP($testGroup['typemap']));
         } catch (MongoDB\Driver\Exception\Exception $e) {

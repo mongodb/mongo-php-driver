@@ -3,12 +3,12 @@ MongoDB\BSON\BSONIterator can work with discarded objects
 --FILE--
 <?php
 
-$document = MongoDB\BSON\BSONDocument::fromPHP(['document' => (object) ['foo' => 'bar']]);
+$document = MongoDB\BSON\Document::fromPHP(['document' => (object) ['foo' => 'bar']]);
 $iterator = $document->getIterator();
 unset($document);
 var_dump(iterator_to_array($iterator));
 
-$array = MongoDB\BSON\BSONDocument::fromPHP([0, 1, "foo"]);
+$array = MongoDB\BSON\Document::fromPHP([0, 1, "foo"]);
 $iterator = $array->getIterator();
 unset($array);
 var_dump(iterator_to_array($iterator));
@@ -19,7 +19,7 @@ var_dump(iterator_to_array($iterator));
 --EXPECTF--
 array(1) {
   ["document"]=>
-  object(MongoDB\BSON\BSONDocument)#%d (%d) {
+  object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(18) "%s"
     ["length"]=>

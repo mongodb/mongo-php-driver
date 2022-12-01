@@ -34,14 +34,14 @@ zend_class_entry* php_phongo_bsoniterator_ce;
 
 static bool php_phongo_bsoniterator_init_with_zval(php_phongo_bsoniterator_t* iterator, zval* zbson)
 {
-	php_phongo_bsondocument_t* bsondocument_intern;
-	php_phongo_arraylist_t*    arraylist_intern;
-	const bson_t*              bson;
+	php_phongo_document_t*  document_intern;
+	php_phongo_arraylist_t* arraylist_intern;
+	const bson_t*           bson;
 
 	ZVAL_COPY(&iterator->bson, zbson);
-	if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_bsondocument_ce)) {
-		bsondocument_intern = Z_BSONDOCUMENT_OBJ_P(&iterator->bson);
-		bson                = bsondocument_intern->bson;
+	if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_document_ce)) {
+		document_intern = Z_DOCUMENT_OBJ_P(&iterator->bson);
+		bson            = document_intern->bson;
 	} else if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_arraylist_ce)) {
 		arraylist_intern   = Z_ARRAYLIST_OBJ_P(&iterator->bson);
 		bson               = arraylist_intern->bson;

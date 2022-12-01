@@ -1,12 +1,12 @@
 --TEST--
-MongoDB\BSON\BSONDocument::fromJSON(): invalid JSON
+MongoDB\BSON\Document::fromJSON(): invalid JSON
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
 throws(function() {
-    MongoDB\BSON\BSONDocument::fromJSON('foo');
+    MongoDB\BSON\Document::fromJSON('foo');
 }, 'MongoDB\Driver\Exception\UnexpectedValueException');
 
 ?>

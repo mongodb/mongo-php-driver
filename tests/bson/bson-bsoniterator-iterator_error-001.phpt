@@ -5,7 +5,7 @@ MongoDB\BSON\BSONIterator cannot be rewound
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$array = MongoDB\BSON\BSONDocument::fromPHP([0, 1, "foo"]);
+$array = MongoDB\BSON\Document::fromPHP([0, 1, "foo"]);
 $iterator = $array->getIterator();
 // No error as long as the iterator wasn't advanced
 var_dump($iterator->current());

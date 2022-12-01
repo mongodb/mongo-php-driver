@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONDocument::toPHP(): __pclass must be both instantiatable and Persistable
+MongoDB\BSON\Document::toPHP(): __pclass must be both instantiatable and Persistable
 --FILE--
 <?php
 
@@ -32,7 +32,7 @@ $tests = array(
 
 foreach ($tests as $test) {
     echo $test, "\n";
-    var_dump(MongoDB\BSON\BSONDocument::fromJSON($test)->toPHP());
+    var_dump(MongoDB\BSON\Document::fromJSON($test)->toPHP());
     echo "\n";
 }
 

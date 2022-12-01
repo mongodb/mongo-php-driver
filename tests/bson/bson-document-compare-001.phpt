@@ -1,10 +1,10 @@
 --TEST--
-MongoDB\BSON\BSONDocument comparisons
+MongoDB\BSON\Document comparisons
 --FILE--
 <?php
 
-$foobar = MongoDB\BSON\BSONDocument::fromPHP(['foo' => 1, 'bar' => 2]);
-$barfoo = MongoDB\BSON\BSONDocument::fromPHP(['bar' => 1, 'foo' => 2]);
+$foobar = MongoDB\BSON\Document::fromPHP(['foo' => 1, 'bar' => 2]);
+$barfoo = MongoDB\BSON\Document::fromPHP(['bar' => 1, 'foo' => 2]);
 
 var_dump($foobar == $barfoo);
 var_dump($foobar < $barfoo);

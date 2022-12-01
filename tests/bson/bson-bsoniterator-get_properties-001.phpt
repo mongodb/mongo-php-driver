@@ -3,7 +3,7 @@ MongoDB\BSON\BSONIterator get_properties handler (get_object_vars)
 --FILE--
 <?php
 
-$iterator = MongoDB\BSON\BSONDocument::fromJSON('{}')->getIterator();
+$iterator = MongoDB\BSON\Document::fromJSON('{}')->getIterator();
 
 var_dump(get_object_vars($iterator));
 
@@ -13,7 +13,7 @@ var_dump(get_object_vars($iterator));
 --EXPECTF--
 array(%d) {
   ["bson"]=>
-  object(MongoDB\BSON\BSONDocument)#%d (%d) {
+  object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(5) "%s"
     ["length"]=>

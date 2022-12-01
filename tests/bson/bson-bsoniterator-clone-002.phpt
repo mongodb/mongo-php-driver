@@ -5,7 +5,7 @@ MongoDB\BSON\BSONIterator is rewound when cloning
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$iterator = MongoDB\BSON\BSONDocument::fromJSON('[ 1, 2, 3 ]')->getIterator();
+$iterator = MongoDB\BSON\Document::fromJSON('[ 1, 2, 3 ]')->getIterator();
 $iterator->next();
 
 $clone = clone $iterator;

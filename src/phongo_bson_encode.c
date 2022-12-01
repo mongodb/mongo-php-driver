@@ -88,7 +88,7 @@ static int php_phongo_is_array_or_document(zval* val)
 
 /* Appends the array or object argument to the BSON document.
  *
- * If the object is an instance of MongoDB\BSON\BSONDocument, the raw BSON data
+ * If the object is an instance of MongoDB\BSON\Document, the raw BSON data
  * will be appended as either document or array.
  * If the object is an instance of MongoDB\BSON\Serializable, the return value
  * of bsonSerialize() will be appended as an embedded document.
@@ -103,9 +103,9 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		return;
 	}
 
-	if (Z_TYPE_P(object) == IS_OBJECT && (instanceof_function(Z_OBJCE_P(object), php_phongo_bsondocument_ce) || instanceof_function(Z_OBJCE_P(object), php_phongo_arraylist_ce))) {
-		if (instanceof_function(Z_OBJCE_P(object), php_phongo_bsondocument_ce)) {
-			php_phongo_bsondocument_t* intern = Z_BSONDOCUMENT_OBJ_P(object);
+	if (Z_TYPE_P(object) == IS_OBJECT && (instanceof_function(Z_OBJCE_P(object), php_phongo_document_ce) || instanceof_function(Z_OBJCE_P(object), php_phongo_arraylist_ce))) {
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_document_ce)) {
+			php_phongo_document_t* intern = Z_DOCUMENT_OBJ_P(object);
 			bson_append_document(bson, key, key_len, intern->bson);
 		} else {
 			php_phongo_arraylist_t* intern = Z_ARRAYLIST_OBJ_P(object);
@@ -399,9 +399,9 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 
 	switch (Z_TYPE_P(data)) {
 		case IS_OBJECT:
-			/* Short-circuit MongoDB\BSON\BSONDocument and MongoDB\BSON\ArrayList instance - copy the data */
-			if (instanceof_function(Z_OBJCE_P(data), php_phongo_bsondocument_ce)) {
-				php_phongo_bsondocument_t* intern = Z_BSONDOCUMENT_OBJ_P(data);
+			/* Short-circuit MongoDB\BSON\Document and MongoDB\BSON\ArrayList instance - copy the data */
+			if (instanceof_function(Z_OBJCE_P(data), php_phongo_document_ce)) {
+				php_phongo_document_t* intern = Z_DOCUMENT_OBJ_P(data);
 
 				bson_destroy(bson);
 				bson_copy_to(intern->bson, bson);

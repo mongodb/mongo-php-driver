@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONDocument::fromPHP(): Encoding non-Persistable objects as a document
+MongoDB\BSON\Document::fromPHP(): Encoding non-Persistable objects as a document
 --FILE--
 <?php
 
@@ -11,7 +11,7 @@ class MyDocument {
     public $baz = 3;
 }
 
-$bson = MongoDB\BSON\BSONDocument::fromPHP(new MyDocument);
+$bson = MongoDB\BSON\Document::fromPHP(new MyDocument);
 echo $bson->toRelaxedExtendedJSON(), "\n";
 
 ?>

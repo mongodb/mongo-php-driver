@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\BSON\BSONDocument::get tests
+MongoDB\BSON\Document::get tests
 --FILE--
 <?php
 
-$document = MongoDB\BSON\BSONDocument::fromPHP(['document' => (object) ['foo' => 'bar']]);
+$document = MongoDB\BSON\Document::fromPHP(['document' => (object) ['foo' => 'bar']]);
 $child = $document->get('document');
 unset($document);
 var_dump($child);
@@ -12,7 +12,7 @@ var_dump($child);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\BSON\BSONDocument)#%d (%d) {
+object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(18) "%s"
   ["length"]=>

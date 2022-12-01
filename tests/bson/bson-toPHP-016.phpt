@@ -36,7 +36,7 @@ foreach ($tests as $name => $typeMap) {
 <?php exit(0); ?>
 --EXPECTF--
 Root as BSON
-object(MongoDB\BSON\BSONDocument)#%d (%d) {
+object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(191) "%a"
   ["length"]=>
@@ -91,7 +91,7 @@ object(stdClass)#%d (%d) {
   ["_id"]=>
   int(1)
   ["object"]=>
-  object(MongoDB\BSON\BSONDocument)#%d (%d) {
+  object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(169) "%a"
     ["length"]=>
@@ -125,7 +125,7 @@ object(stdClass)#%d (%d) {
       }
     }
     ["parent2"]=>
-    object(MongoDB\BSON\BSONDocument)#%d (%d) {
+    object(MongoDB\BSON\Document)#%d (%d) {
       ["data"]=>
       string(73) "%a"
       ["length"]=>

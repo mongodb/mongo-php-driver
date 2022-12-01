@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONDocument::toRelaxedExtendedJSON(): Encoding JSON
+MongoDB\BSON\Document::toCanonicalExtendedJSON(): Encoding JSON
 --FILE--
 <?php
 
@@ -20,7 +20,7 @@ $tests = [
 ];
 
 foreach ($tests as $value) {
-    echo MongoDB\BSON\BSONDocument::fromPHP($value)->toRelaxedExtendedJSON(), "\n";
+    echo MongoDB\BSON\Document::fromPHP($value)->toCanonicalExtendedJSON(), "\n";
 }
 
 ?>
@@ -31,8 +31,8 @@ foreach ($tests as $value) {
 { "null" : null }
 { "boolean" : true }
 { "string" : "foo" }
-{ "integer" : 123 }
-{ "double" : 1.0 }
+{ "integer" : { "$numberInt" : "123" } }
+{ "double" : { "$numberDouble" : "1.0" } }
 { "nan" : { "$numberDouble" : "NaN" } }
 { "pos_inf" : { "$numberDouble" : "Infinity" } }
 { "neg_inf" : { "$numberDouble" : "-Infinity" } }

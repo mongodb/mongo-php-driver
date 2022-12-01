@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONDocument::toPHP(): fieldPath typemaps without server
+MongoDB\BSON\Document::toPHP(): fieldPath typemaps without server
 --FILE--
 <?php
 
@@ -13,7 +13,7 @@ class MyArrayObject extends ArrayObject implements MongoDB\BSON\Unserializable
 
 class MyWildCardArrayObject extends MyArrayObject {};
 
-$bson = \MongoDB\BSON\BSONDocument::fromPHP( [
+$bson = \MongoDB\BSON\Document::fromPHP( [
     '_id' => 1,
     'object' => [
         'parent1' => [

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONDocument::fromJSON(): Decoding JSON
+MongoDB\BSON\Document::fromJSON(): Decoding JSON
 --FILE--
 <?php
 
@@ -15,7 +15,7 @@ $tests = [
 
 foreach ($tests as $json) {
     printf("Test %s\n", $json);
-    $bson = MongoDB\BSON\BSONDocument::fromJSON($json);
+    $bson = MongoDB\BSON\Document::fromJSON($json);
     hex_dump((string) $bson);
 }
 
