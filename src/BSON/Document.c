@@ -70,6 +70,45 @@ static HashTable* php_phongo_document_get_properties_hash(phongo_compat_object_h
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Document)
 
+static PHP_METHOD(MongoDB_BSON_Document, fromBSONString)
+{
+	zval                   zv;
+	php_phongo_document_t* intern = NULL;
+	zend_string*           bson_string;
+	const bson_t*          bson;
+	bson_reader_t*         reader;
+	bool                   eof = false;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STR(bson_string)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	reader = bson_reader_new_from_data((const uint8_t*) ZSTR_VAL(bson_string), ZSTR_LEN(bson_string));
+	if (!(bson = bson_reader_read(reader, NULL))) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not read document from BSON reader");
+
+		goto cleanup;
+	}
+
+	object_init_ex(&zv, php_phongo_document_ce);
+	intern       = Z_DOCUMENT_OBJ_P(&zv);
+	intern->bson = bson_copy(bson);
+
+	if (bson_reader_read(reader, &eof) || !eof) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Reading document did not exhaust input buffer");
+		zval_ptr_dtor(&zv);
+
+		goto cleanup;
+	}
+
+	RETVAL_ZVAL(&zv, 1, 1);
+
+cleanup:
+	if (reader) {
+		bson_reader_destroy(reader);
+	}
+}
+
 static PHP_METHOD(MongoDB_BSON_Document, fromJSON)
 {
 	zval                   zv;

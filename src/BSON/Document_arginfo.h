@@ -1,7 +1,11 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: b573bcd3e744fa2b82ed287d6994d179c3f29619 */
+ * Stub hash: dba113ae0898b9e21ada43d2fd6f50741a56c577 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Document___construct, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Document_fromBSONString, 0, 1, MongoDB\\BSON\\Document, 0)
+	ZEND_ARG_TYPE_INFO(0, bson, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Document_fromJSON, 0, 1, MongoDB\\BSON\\Document, 0)
@@ -60,6 +64,7 @@ ZEND_END_ARG_INFO()
 
 
 static ZEND_METHOD(MongoDB_BSON_Document, __construct);
+static ZEND_METHOD(MongoDB_BSON_Document, fromBSONString);
 static ZEND_METHOD(MongoDB_BSON_Document, fromJSON);
 #if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_BSON_Document, fromPHP);
@@ -88,6 +93,7 @@ static ZEND_METHOD(MongoDB_BSON_Document, __toString);
 
 static const zend_function_entry class_MongoDB_BSON_Document_methods[] = {
 	ZEND_ME(MongoDB_BSON_Document, __construct, arginfo_class_MongoDB_BSON_Document___construct, ZEND_ACC_PRIVATE)
+	ZEND_ME(MongoDB_BSON_Document, fromBSONString, arginfo_class_MongoDB_BSON_Document_fromBSONString, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Document, fromJSON, arginfo_class_MongoDB_BSON_Document_fromJSON, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_BSON_Document, fromPHP, arginfo_class_MongoDB_BSON_Document_fromPHP, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)

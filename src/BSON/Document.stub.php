@@ -11,6 +11,8 @@ final class Document implements \IteratorAggregate
 {
     private function __construct() {}
 
+    final static public function fromBSONString(string $bson): Document {}
+
     final static public function fromJSON(string $json): Document {}
 
 #if PHP_VERSION_ID >= 80000
