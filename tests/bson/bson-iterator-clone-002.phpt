@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONIterator is rewound when cloning
+MongoDB\BSON\Iterator is rewound when cloning
 --FILE--
 <?php
 

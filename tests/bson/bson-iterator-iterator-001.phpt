@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONIterator iterating objects and arrays
+MongoDB\BSON\Iterator iterating objects and arrays
 --FILE--
 <?php
 

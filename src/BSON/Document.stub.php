@@ -27,7 +27,7 @@ final class Document implements \IteratorAggregate
     final public function get(string $key) {}
 #endif
 
-    final public function getIterator(): BSONIterator {}
+    final public function getIterator(): Iterator {}
 
     final public function has(string $key): bool {}
 

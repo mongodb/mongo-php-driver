@@ -29,7 +29,7 @@
 #include "phongo_error.h"
 #include "phongo_bson_encode.h"
 #include "BSON/ArrayList_arginfo.h"
-#include "BSON/BSONIterator.h"
+#include "BSON/Iterator.h"
 
 zend_class_entry* php_phongo_arraylist_ce;
 
@@ -124,7 +124,7 @@ static PHP_METHOD(MongoDB_BSON_ArrayList, getIterator)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	phongo_bsoniterator_init(return_value, getThis());
+	phongo_iterator_init(return_value, getThis());
 }
 
 static PHP_METHOD(MongoDB_BSON_ArrayList, has)

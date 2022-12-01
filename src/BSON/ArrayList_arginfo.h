@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 37187f43467da4a7ea6fb68ae796748794427e53 */
+ * Stub hash: d8beb2fc73058457fd8e835500b13249583d413a */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_ArrayList___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -20,7 +20,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_ArrayList_get, 0, 0, 1)
 ZEND_END_ARG_INFO()
 #endif
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_ArrayList_getIterator, 0, 0, MongoDB\\BSON\\BSONIterator, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_ArrayList_getIterator, 0, 0, MongoDB\\BSON\\Iterator, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_ArrayList_has, 0, 1, _IS_BOOL, 0)

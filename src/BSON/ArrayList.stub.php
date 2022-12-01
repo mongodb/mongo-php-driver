@@ -20,7 +20,7 @@ final class ArrayList implements \IteratorAggregate
     final public function get(int $index) {}
 #endif
 
-    final public function getIterator(): BSONIterator {}
+    final public function getIterator(): Iterator {}
 
     final public function has(int $index): bool {}
 

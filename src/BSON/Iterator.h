@@ -14,11 +14,11 @@
 * limitations under the License.
 */
 
-#ifndef PHONGO_BSONITERATOR_H
-#define PHONGO_BSONITERATOR_H
+#ifndef PHONGO_ITERATOR_H
+#define PHONGO_ITERATOR_H
 
 #include <php.h>
 
-void phongo_bsoniterator_init(zval* return_value, zval* bson);
+void phongo_iterator_init(zval* return_value, zval* bson);
 
-#endif /* PHONGO_BSONITERATOR_H */
+#endif /* PHONGO_ITERATOR_H */

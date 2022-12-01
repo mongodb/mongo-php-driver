@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONIterator can work with discarded objects
+MongoDB\BSON\Iterator can work with discarded objects
 --FILE--
 <?php
 

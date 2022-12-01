@@ -1,17 +1,17 @@
 --TEST--
-MongoDB\BSON\BSONIterator debug output
+MongoDB\BSON\Iterator get_properties handler (get_object_vars)
 --FILE--
 <?php
 
-require_once __DIR__ . '/../utils/basic.inc';
+$iterator = MongoDB\BSON\Document::fromJSON('{}')->getIterator();
 
-var_dump(MongoDB\BSON\Document::fromJSON('{ }')->getIterator());
+var_dump(get_object_vars($iterator));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\BSON\BSONIterator)#%d (%d) {
+array(%d) {
   ["bson"]=>
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>

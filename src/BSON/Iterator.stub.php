@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class BSONIterator implements \Iterator
+final class Iterator implements \Iterator
 {
     final private function __construct() {}
 

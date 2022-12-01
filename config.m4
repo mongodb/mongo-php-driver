@@ -122,7 +122,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/BSON/BinaryInterface.c \
     src/BSON/ArrayList.c \
     src/BSON/Document.c \
-    src/BSON/BSONIterator.c \
+    src/BSON/Iterator.c \
     src/BSON/DBPointer.c \
     src/BSON/Decimal128.c \
     src/BSON/Decimal128Interface.c \

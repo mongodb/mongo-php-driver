@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONIterator can be cloned
+MongoDB\BSON\Iterator can be cloned
 --FILE--
 <?php
 
@@ -20,7 +20,7 @@ var_dump($clone);
 --EXPECTF--
 bool(true)
 bool(false)
-object(MongoDB\BSON\BSONIterator)#%d (%d) {
+object(MongoDB\BSON\Iterator)#%d (%d) {
   ["bson"]=>
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\BSONIterator cannot be rewound
+MongoDB\BSON\Iterator cannot be rewound
 --FILE--
 <?php
 

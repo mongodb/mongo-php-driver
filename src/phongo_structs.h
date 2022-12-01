@@ -198,7 +198,7 @@ typedef struct {
 	zval        current;
 	HashTable*  properties;
 	zend_object std;
-} php_phongo_bsoniterator_t;
+} php_phongo_iterator_t;
 
 typedef struct {
 	char*       ref;
