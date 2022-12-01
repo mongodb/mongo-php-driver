@@ -15,17 +15,29 @@ $canonicalExtJson = '{"$regex" : {"$regularExpression" : { "pattern": "pattern",
 // Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
+// Canonical BSON -> Native -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";
+
 // Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
+// Canonical BSON -> BSON object -> Canonical extJSON
+echo json_canonicalize(MongoDB\BSON\Document::fromBSONString($canonicalBson)->toCanonicalExtendedJSON()), "\n";
+
 // Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
+
+// Canonical extJSON -> BSON object -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 270000000b247265676578007061747465726e000002246f7074696f6e73000300000069780000
+270000000b247265676578007061747465726e000002246f7074696f6e73000300000069780000
 {"$regex":{"$regularExpression":{"pattern":"pattern","options":""}},"$options":"ix"}
+{"$regex":{"$regularExpression":{"pattern":"pattern","options":""}},"$options":"ix"}
+270000000b247265676578007061747465726e000002246f7074696f6e73000300000069780000
 270000000b247265676578007061747465726e000002246f7074696f6e73000300000069780000
 ===DONE===

@@ -16,21 +16,37 @@ $degenerateExtJson = '{"d" : {"$numberDecimal" : "1E+6141"}}';
 // Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
+// Canonical BSON -> Native -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";
+
 // Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
+
+// Canonical BSON -> BSON object -> Canonical extJSON
+echo json_canonicalize(MongoDB\BSON\Document::fromBSONString($canonicalBson)->toCanonicalExtendedJSON()), "\n";
 
 // Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
+// Canonical extJSON -> BSON object -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
+
 // Degenerate extJSON -> Canonical BSON
 echo bin2hex(fromJSON($degenerateExtJson)), "\n";
+
+// Degenerate extJSON -> BSON object -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromJSON($degenerateExtJson)), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 1800000013640000000040eaed7446d09c2c9f0c00fe5f00
+1800000013640000000040eaed7446d09c2c9f0c00fe5f00
 {"d":{"$numberDecimal":"1.000000000000000000000000000000E+6141"}}
+{"d":{"$numberDecimal":"1.000000000000000000000000000000E+6141"}}
+1800000013640000000040eaed7446d09c2c9f0c00fe5f00
+1800000013640000000040eaed7446d09c2c9f0c00fe5f00
 1800000013640000000040eaed7446d09c2c9f0c00fe5f00
 1800000013640000000040eaed7446d09c2c9f0c00fe5f00
 ===DONE===

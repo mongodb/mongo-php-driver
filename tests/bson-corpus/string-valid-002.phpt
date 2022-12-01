@@ -15,17 +15,29 @@ $canonicalExtJson = '{"a" : "b"}';
 // Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
+// Canonical BSON -> Native -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";
+
 // Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
+// Canonical BSON -> BSON object -> Canonical extJSON
+echo json_canonicalize(MongoDB\BSON\Document::fromBSONString($canonicalBson)->toCanonicalExtendedJSON()), "\n";
+
 // Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
+
+// Canonical extJSON -> BSON object -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 0e00000002610002000000620000
+0e00000002610002000000620000
 {"a":"b"}
+{"a":"b"}
+0e00000002610002000000620000
 0e00000002610002000000620000
 ===DONE===

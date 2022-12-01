@@ -15,17 +15,29 @@ $canonicalExtJson = '{"d" : {"$numberDecimal" : "7E+99"}}';
 // Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
+// Canonical BSON -> Native -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";
+
 // Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
+// Canonical BSON -> BSON object -> Canonical extJSON
+echo json_canonicalize(MongoDB\BSON\Document::fromBSONString($canonicalBson)->toCanonicalExtendedJSON()), "\n";
+
 // Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
+
+// Canonical extJSON -> BSON object -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 180000001364000700000000000000000000000000063100
+180000001364000700000000000000000000000000063100
 {"d":{"$numberDecimal":"7E+99"}}
+{"d":{"$numberDecimal":"7E+99"}}
+180000001364000700000000000000000000000000063100
 180000001364000700000000000000000000000000063100
 ===DONE===

@@ -15,17 +15,29 @@ $canonicalExtJson = '{"a" : {"$regularExpression" : { "pattern": "ab\\\\\\"ab", 
 // Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
+// Canonical BSON -> Native -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";
+
 // Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
+// Canonical BSON -> BSON object -> Canonical extJSON
+echo json_canonicalize(MongoDB\BSON\Document::fromBSONString($canonicalBson)->toCanonicalExtendedJSON()), "\n";
+
 // Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
+
+// Canonical extJSON -> BSON object -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 100000000b610061625c226162000000
+100000000b610061625c226162000000
 {"a":{"$regularExpression":{"pattern":"ab\\\"ab","options":""}}}
+{"a":{"$regularExpression":{"pattern":"ab\\\"ab","options":""}}}
+100000000b610061625c226162000000
 100000000b610061625c226162000000
 ===DONE===

@@ -16,25 +16,45 @@ $relaxedExtJson = '{"d" : -1.0001220703125}';
 // Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
+// Canonical BSON -> Native -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";
+
 // Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
+
+// Canonical BSON -> BSON object -> Canonical extJSON
+echo json_canonicalize(MongoDB\BSON\Document::fromBSONString($canonicalBson)->toCanonicalExtendedJSON()), "\n";
 
 // Canonical BSON -> Relaxed extJSON
 echo json_canonicalize(toRelaxedExtendedJSON($canonicalBson)), "\n";
 
+// Canonical BSON -> BSON object -> Relaxed extJSON
+echo json_canonicalize(MongoDB\BSON\Document::fromBSONString($canonicalBson)->toRelaxedExtendedJSON()), "\n";
+
 // Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
 
+// Canonical extJSON -> BSON object -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
+
 // Relaxed extJSON -> BSON -> Relaxed extJSON
 echo json_canonicalize(toRelaxedExtendedJSON(fromJSON($relaxedExtJson))), "\n";
+
+// Relaxed extJSON -> BSON object -> Relaxed extJSON
+echo json_canonicalize(MongoDB\BSON\Document::fromJSON($relaxedExtJson)->toRelaxedExtendedJSON()), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 10000000016400000000008000f0bf00
+10000000016400000000008000f0bf00
+{"d":{"$numberDouble":"-1.0001220703125"}}
 {"d":{"$numberDouble":"-1.0001220703125"}}
 {"d":-1.0001220703125}
+{"d":-1.0001220703125}
 10000000016400000000008000f0bf00
+10000000016400000000008000f0bf00
+{"d":-1.0001220703125}
 {"d":-1.0001220703125}
 ===DONE===
