@@ -94,12 +94,21 @@ static PHP_METHOD(MongoDB_BSON_ArrayList, fromPHP)
 	RETURN_ZVAL(&zv, 1, 1);
 }
 
+static bool seek_iter_to_index(bson_iter_t* iter, zend_long index)
+{
+	for (zend_long i = 0; i <= index; i++) {
+		if (!bson_iter_next(iter)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 static PHP_METHOD(MongoDB_BSON_ArrayList, get)
 {
 	php_phongo_arraylist_t* intern;
 	zend_long               index;
-	char                    key[24];
-	size_t                  key_len;
 	bson_iter_t             iter;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
@@ -111,9 +120,7 @@ static PHP_METHOD(MongoDB_BSON_ArrayList, get)
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator.");
 	}
 
-	key_len = snprintf(key, sizeof(key), "%" PRId64, index);
-
-	if (!bson_iter_find_w_len(&iter, key, key_len)) {
+	if (!seek_iter_to_index(&iter, index)) {
 		RETURN_NULL();
 	}
 
@@ -131,8 +138,6 @@ static PHP_METHOD(MongoDB_BSON_ArrayList, has)
 {
 	php_phongo_arraylist_t* intern;
 	zend_long               index;
-	char                    key[24];
-	size_t                  key_len;
 	bson_iter_t             iter;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
@@ -144,9 +149,7 @@ static PHP_METHOD(MongoDB_BSON_ArrayList, has)
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator.");
 	}
 
-	key_len = snprintf(key, sizeof(key), "%" PRId64, index);
-
-	RETURN_BOOL(bson_iter_find_w_len(&iter, key, key_len));
+	RETURN_BOOL(seek_iter_to_index(&iter, index));
 }
 
 static PHP_METHOD(MongoDB_BSON_ArrayList, toPHP)
@@ -169,7 +172,8 @@ static PHP_METHOD(MongoDB_BSON_ArrayList, toPHP)
 	intern = Z_ARRAYLIST_OBJ_P(getThis());
 
 	/* Force array type for root since we're dealing with an array */
-	state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+	state.map.root.type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
+	state.is_visiting_array = true;
 
 	if (!php_phongo_bson_to_zval_ex(intern->bson, &state)) {
 		zval_ptr_dtor(&state.zchild);
