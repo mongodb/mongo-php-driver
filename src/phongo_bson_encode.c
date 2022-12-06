@@ -88,10 +88,10 @@ static int php_phongo_is_array_or_document(zval* val)
 
 /* Appends the array or object argument to the BSON document.
  *
- * If the object is an instance of MongoDB\BSON\Document, the raw BSON data
- * will be appended as either document or array.
- * If the object is an instance of MongoDB\BSON\Serializable, the return value
- * of bsonSerialize() will be appended as an embedded document.
+ * For instances of MongoDB\BSON\Document, raw BSON data is appended as document.
+ * For instances of MongoDB\BSON\ArrayList, raw BSON data is appended as array.
+ * For instances of MongoDB\BSON\Serializable, the return value of bsonSerialize()
+ * will be appended as an embedded document.
  * Other MongoDB\BSON\Type instances will be appended as the appropriate BSON
  * type.
  * Other array or object values will be appended as an embedded document.
