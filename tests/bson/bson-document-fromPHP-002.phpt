@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Document::fromPHP(): Encoding non-Persistable objects as a document
+MongoDB\BSON\Document::fromPHP(): Encodes non-Serializable objects as a document
 --FILE--
 <?php
 

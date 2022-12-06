@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Document::fromPHP(): bsonSerialize() allows array and stdClass
+MongoDB\BSON\Document::fromPHP(): Serializable::bsonSerialize() returns array or stdClass
 --FILE--
 <?php
 

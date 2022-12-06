@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Document::fromPHP(): Null type map values imply default behavior
+MongoDB\BSON\Document::toPHP(): Null type map values imply default behavior
 --FILE--
 <?php
 

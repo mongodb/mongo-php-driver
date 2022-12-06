@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Iterator can work with discarded objects
+MongoDB\BSON\Iterator maintains reference to its yielding Document or ArrayList
 --FILE--
 <?php
 
