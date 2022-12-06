@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Document::fromBSONString(): Field path values with bson_iter_visit_all() failures
+MongoDB\BSON\Document::fromBSON(): Field path values with bson_iter_visit_all() failures
 --FILE--
 <?php
 
@@ -15,7 +15,7 @@ $tests = array(
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {
-        MongoDB\BSON\Document::fromBSONString($bson)->toPHP();
+        MongoDB\BSON\Document::fromBSON($bson)->toPHP();
     }, MongoDB\Driver\Exception\UnexpectedValueException::class), "\n";
 }
 

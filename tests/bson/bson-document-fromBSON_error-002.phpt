@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Document::fromBSONString(): BSON decoding exceptions for malformed documents
+MongoDB\BSON\Document::fromBSON(): BSON decoding exceptions for malformed documents
 --FILE--
 <?php
 
@@ -12,7 +12,7 @@ $tests = array(
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {
-        MongoDB\BSON\Document::fromBSONString($bson);
+        MongoDB\BSON\Document::fromBSON($bson);
     }, MongoDB\Driver\Exception\UnexpectedValueException::class), "\n";
 }
 

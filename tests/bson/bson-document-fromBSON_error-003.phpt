@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Document::fromBSONString(): BSON decoding exceptions for bson_iter_visit_all() failure
+MongoDB\BSON\Document::fromBSON(): BSON decoding exceptions for bson_iter_visit_all() failure
 --FILE--
 <?php
 
@@ -25,7 +25,7 @@ $tests = array(
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {
-        MongoDB\BSON\Document::fromBSONString($bson)->toPHP();
+        MongoDB\BSON\Document::fromBSON($bson)->toPHP();
     }, MongoDB\Driver\Exception\UnexpectedValueException::class), "\n";
 }
 

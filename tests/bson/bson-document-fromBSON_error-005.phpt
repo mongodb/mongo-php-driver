@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Document::fromBSONString(): BSON decoding exception with unknown BSON type
+MongoDB\BSON\Document::fromBSON(): BSON decoding exception with unknown BSON type
 --FILE--
 <?php
 
@@ -9,7 +9,7 @@ $bson = fromPHP(["hello" => ["cruel" => "world"]]);
 $bson[15] = chr(0x42);
 
 echo throws(function() use ($bson) {
-    MongoDB\BSON\Document::fromBSONString($bson)->toPHP();
+    MongoDB\BSON\Document::fromBSON($bson)->toPHP();
 }, MongoDB\Driver\Exception\UnexpectedValueException::class), "\n";
 
 ?>

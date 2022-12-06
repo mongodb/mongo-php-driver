@@ -33,15 +33,6 @@
 
 zend_class_entry* php_phongo_document_ce;
 
-/* Initialize the object and return whether it was successful. An exception will
- * be thrown on error. */
-static bool php_phongo_document_init(php_phongo_document_t* intern, bson_t* bson)
-{
-	intern->bson = bson;
-
-	return true;
-}
-
 static HashTable* php_phongo_document_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
 	php_phongo_document_t* intern;
@@ -70,7 +61,7 @@ static HashTable* php_phongo_document_get_properties_hash(phongo_compat_object_h
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Document)
 
-static PHP_METHOD(MongoDB_BSON_Document, fromBSONString)
+static PHP_METHOD(MongoDB_BSON_Document, fromBSON)
 {
 	zval                   zv;
 	php_phongo_document_t* intern = NULL;
@@ -308,7 +299,7 @@ static zend_object* php_phongo_document_clone_object(phongo_compat_object_handle
 	new_intern = Z_OBJ_DOCUMENT(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
 
-	php_phongo_document_init(new_intern, bson_copy(intern->bson));
+	new_intern->bson = bson_copy(intern->bson);
 
 	return new_object;
 }

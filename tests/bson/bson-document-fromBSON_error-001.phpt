@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Document::fromBSONString(): BSON decoding exceptions
+MongoDB\BSON\Document::fromBSON(): BSON decoding exceptions
 --FILE--
 <?php
 
@@ -14,7 +14,7 @@ $invalidBson = array(
 
 foreach ($invalidBson as $bson) {
     echo throws(function () use ($bson) {
-        MongoDB\BSON\Document::fromBSONString($bson);
+        MongoDB\BSON\Document::fromBSON($bson);
     }, MongoDB\Driver\Exception\UnexpectedValueException::class), "\n";
 }
 

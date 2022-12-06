@@ -1,12 +1,12 @@
 --TEST--
-MongoDB\BSON\Document::fromBSONString(): Decoding from BSON string
+MongoDB\BSON\Document::fromBSON(): Decoding from BSON string
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
 $bson = hex2bin('1200000002666f6f00040000006261720000');
-$document = MongoDB\BSON\Document::fromBSONString($bson);
+$document = MongoDB\BSON\Document::fromBSON($bson);
 hex_dump((string) $document);
 
 ?>

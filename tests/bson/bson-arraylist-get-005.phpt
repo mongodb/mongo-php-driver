@@ -5,7 +5,7 @@ MongoDB\BSON\ArrayList::get tests with duplicate key
 
 $degenerateBson = hex2bin('1b000000046100130000001030000a000000103000140000000000');
 
-$arrayList = MongoDB\BSON\Document::fromBSONString($degenerateBson)->get('a');
+$arrayList = MongoDB\BSON\Document::fromBSON($degenerateBson)->get('a');
 var_dump($arrayList->has(0));
 var_dump($arrayList->get(0));
 var_dump($arrayList->has(1));

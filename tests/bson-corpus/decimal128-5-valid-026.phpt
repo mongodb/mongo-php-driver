@@ -17,13 +17,13 @@ $degenerateExtJson = '{"d" : {"$numberDecimal" : "0E-6177"}}';
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
 // Canonical BSON -> BSON object -> Canonical BSON
-echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";
+echo bin2hex((string) MongoDB\BSON\Document::fromBSON($canonicalBson)), "\n";
 
 // Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
 // Canonical BSON -> BSON object -> Canonical extJSON
-echo json_canonicalize(MongoDB\BSON\Document::fromBSONString($canonicalBson)->toCanonicalExtendedJSON()), "\n";
+echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toCanonicalExtendedJSON()), "\n";
 
 // Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";

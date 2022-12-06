@@ -5,7 +5,7 @@ MongoDB\BSON\ArrayList::get tests with invalid key
 
 $degenerateBson = hex2bin('150000000461000D000000106162000A0000000000');
 
-$arrayList = MongoDB\BSON\Document::fromBSONString($degenerateBson)->get('a');
+$arrayList = MongoDB\BSON\Document::fromBSON($degenerateBson)->get('a');
 var_dump($arrayList->has(0));
 var_dump($arrayList->get(0));
 var_dump($arrayList->toPHP());

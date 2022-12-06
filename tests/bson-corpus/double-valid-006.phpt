@@ -17,19 +17,19 @@ $relaxedExtJson = '{"d" : -1.2345678921232E+18}';
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
 // Canonical BSON -> BSON object -> Canonical BSON
-echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";
+echo bin2hex((string) MongoDB\BSON\Document::fromBSON($canonicalBson)), "\n";
 
 // Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
 // Canonical BSON -> BSON object -> Canonical extJSON
-echo json_canonicalize(MongoDB\BSON\Document::fromBSONString($canonicalBson)->toCanonicalExtendedJSON()), "\n";
+echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toCanonicalExtendedJSON()), "\n";
 
 // Canonical BSON -> Relaxed extJSON
 echo json_canonicalize(toRelaxedExtendedJSON($canonicalBson)), "\n";
 
 // Canonical BSON -> BSON object -> Relaxed extJSON
-echo json_canonicalize(MongoDB\BSON\Document::fromBSONString($canonicalBson)->toRelaxedExtendedJSON()), "\n";
+echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toRelaxedExtendedJSON()), "\n";
 
 // Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";

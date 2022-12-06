@@ -11,14 +11,14 @@ final class Document implements \IteratorAggregate
 {
     private function __construct() {}
 
-    final static public function fromBSONString(string $bson): Document {}
+    final static public function fromBSON(string $bson): Document {}
 
     final static public function fromJSON(string $json): Document {}
 
 #if PHP_VERSION_ID >= 80000
-    final static public function fromPHP(mixed $value): Document {}
+    final static public function fromPHP(array|object $value): Document {}
 #else
-    /** @param mixed $value */
+    /** @param array|object $value */
     final static public function fromPHP($value): Document {}
 #endif
 
@@ -34,9 +34,9 @@ final class Document implements \IteratorAggregate
     final public function has(string $key): bool {}
 
 #if PHP_VERSION_ID >= 80000
-    final public function toPHP(?array $typeMap = null): mixed {}
+    final public function toPHP(?array $typeMap = null): array|object {}
 #else
-    /** @return mixed */
+    /** @return array|object */
     final public function toPHP(?array $typeMap = null) {}
 #endif
 
