@@ -34,26 +34,23 @@ zend_class_entry* php_phongo_iterator_ce;
 
 static bool php_phongo_iterator_init_with_zval(php_phongo_iterator_t* iterator, zval* zbson)
 {
-	php_phongo_document_t*  document_intern;
-	php_phongo_arraylist_t* arraylist_intern;
-	const bson_t*           bson;
+	const bson_t* bson;
 
 	ZVAL_COPY(&iterator->bson, zbson);
 	if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_document_ce)) {
-		document_intern = Z_DOCUMENT_OBJ_P(&iterator->bson);
-		bson            = document_intern->bson;
+		bson = Z_DOCUMENT_OBJ_P(&iterator->bson)->bson;
 	} else if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_arraylist_ce)) {
-		arraylist_intern   = Z_ARRAYLIST_OBJ_P(&iterator->bson);
-		bson               = arraylist_intern->bson;
+		bson               = Z_ARRAYLIST_OBJ_P(&iterator->bson)->bson;
 		iterator->is_array = true;
 	} else {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Could not create iterator for %s instance.", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zbson));
+		/* Should never happen, but if it does: exception */
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Could not create iterator for %s instance", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zbson));
 
 		return false;
 	}
 
 	if (!bson_iter_init(&iterator->iter, bson)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not create iterator for BSON instance.");
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not create iterator for BSON instance");
 
 		return false;
 	}
@@ -169,14 +166,14 @@ static PHP_METHOD(MongoDB_BSON_Iterator, rewind)
 	php_phongo_iterator_free_current(intern);
 }
 
-void phongo_iterator_init(zval* return_value, zval* bson)
+void phongo_iterator_init(zval* return_value, zval* document_or_arraylist)
 {
 	php_phongo_iterator_t* intern;
 
 	object_init_ex(return_value, php_phongo_iterator_ce);
 	intern = Z_ITERATOR_OBJ_P(return_value);
 
-	php_phongo_iterator_init_with_zval(intern, bson);
+	php_phongo_iterator_init_with_zval(intern, document_or_arraylist);
 }
 
 /* MongoDB\BSON\Iterator object handlers */
