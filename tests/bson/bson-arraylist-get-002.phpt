@@ -1,11 +1,11 @@
 --TEST--
-MongoDB\BSON\ArrayList::get tests
+MongoDB\BSON\ArrayList::get() index access returns BSON structures
 --FILE--
 <?php
 
-$document = MongoDB\BSON\ArrayList::fromPHP([(object) ['foo' => 'bar']]);
-$child = $document->get(0);
-unset($document);
+$array = MongoDB\BSON\ArrayList::fromPHP([(object) ['foo' => 'bar']]);
+$child = $array->get(0);
+unset($array);
 var_dump($child);
 
 ?>

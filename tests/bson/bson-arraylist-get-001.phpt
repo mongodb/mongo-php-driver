@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ArrayList::get tests
+MongoDB\BSON\ArrayList::get() index access
 --FILE--
 <?php
 

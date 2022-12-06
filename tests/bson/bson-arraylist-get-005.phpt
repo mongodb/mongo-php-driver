@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ArrayList::get tests with duplicate key
+MongoDB\BSON\ArrayList::get() fixes duplicate keys
 --FILE--
 <?php
 
@@ -11,7 +11,6 @@ var_dump($arrayList->get(0));
 var_dump($arrayList->has(1));
 var_dump($arrayList->get(1));
 var_dump($arrayList->toPHP());
-var_dump(iterator_to_array($arrayList));
 
 ?>
 ===DONE===
@@ -21,12 +20,6 @@ bool(true)
 int(10)
 bool(true)
 int(20)
-array(2) {
-  [0]=>
-  int(10)
-  [1]=>
-  int(20)
-}
 array(2) {
   [0]=>
   int(10)

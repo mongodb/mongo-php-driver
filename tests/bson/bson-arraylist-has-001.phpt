@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ArrayList::has tests
+MongoDB\BSON\ArrayList::has() checks if index exists
 --FILE--
 <?php
 

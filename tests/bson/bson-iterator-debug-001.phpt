@@ -5,7 +5,7 @@ MongoDB\BSON\Iterator debug output
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-var_dump(MongoDB\BSON\Document::fromJSON('{ }')->getIterator());
+var_dump(MongoDB\BSON\Document::fromJSON('{}')->getIterator());
 
 ?>
 ===DONE===

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ArrayList::fromPHP(): create with non-sequential, 0-based arrays
+MongoDB\BSON\ArrayList::fromPHP(): requires a packed array
 --FILE--
 <?php
 

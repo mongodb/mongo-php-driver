@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Document::get tests
+MongoDB\BSON\Document::get() key access
 --FILE--
 <?php
 

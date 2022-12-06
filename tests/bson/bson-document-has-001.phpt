@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Document::has tests
+MongoDB\BSON\Document::has() checks if key exists
 --FILE--
 <?php
 

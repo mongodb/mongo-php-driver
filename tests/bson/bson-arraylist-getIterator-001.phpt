@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ArrayList::getIterator tests
+MongoDB\BSON\ArrayList::getIterator() tests
 --FILE--
 <?php
 
@@ -14,7 +14,7 @@ $array = [
     MongoDB\BSON\Document::fromJSON('{ "maxkey": { "$maxKey": 1 }}'),
     MongoDB\BSON\Document::fromJSON('{ "long": { "$numberLong": "1234" }}'),
     MongoDB\BSON\Document::fromJSON('{ "document": { "foo": "bar"}}'),
-    [1, 2, "foo"],
+    [0, 1, "bar"],
     MongoDB\BSON\ArrayList::fromPHP([1, 2, "foo"]),
 ];
 
@@ -126,11 +126,11 @@ int(10)
 string(22) "MongoDB\BSON\ArrayList"
 array(3) {
   [0]=>
-  int(1)
+  int(0)
   [1]=>
-  int(2)
+  int(1)
   [2]=>
-  string(3) "foo"
+  string(3) "bar"
 }
 int(11)
 string(22) "MongoDB\BSON\ArrayList"

@@ -5,7 +5,7 @@ MongoDB\BSON\Document debug output
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-var_dump(MongoDB\BSON\Document::fromJSON('{ }'));
+var_dump(MongoDB\BSON\Document::fromJSON('{}'));
 
 ?>
 ===DONE===
