@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: eae27215b994b4941296f69331abd6d1a3173df7 */
+ * Stub hash: 279a9a00d54bf67c310f7b8802a5868bf1d507eb */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -26,6 +26,8 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_WriteResult_getWriteErrors arginfo_class_MongoDB_Driver_WriteResult_getUpsertedIds
 
+#define arginfo_class_MongoDB_Driver_WriteResult_getErrorReplies arginfo_class_MongoDB_Driver_WriteResult_getUpsertedIds
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult_isAcknowledged, 0, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
@@ -43,6 +45,7 @@ static ZEND_METHOD(MongoDB_Driver_WriteResult, getServer);
 static ZEND_METHOD(MongoDB_Driver_WriteResult, getUpsertedIds);
 static ZEND_METHOD(MongoDB_Driver_WriteResult, getWriteConcernError);
 static ZEND_METHOD(MongoDB_Driver_WriteResult, getWriteErrors);
+static ZEND_METHOD(MongoDB_Driver_WriteResult, getErrorReplies);
 static ZEND_METHOD(MongoDB_Driver_WriteResult, isAcknowledged);
 static ZEND_METHOD(MongoDB_Driver_WriteResult, __wakeup);
 
@@ -58,6 +61,7 @@ static const zend_function_entry class_MongoDB_Driver_WriteResult_methods[] = {
 	ZEND_ME(MongoDB_Driver_WriteResult, getUpsertedIds, arginfo_class_MongoDB_Driver_WriteResult_getUpsertedIds, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_WriteResult, getWriteConcernError, arginfo_class_MongoDB_Driver_WriteResult_getWriteConcernError, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_WriteResult, getWriteErrors, arginfo_class_MongoDB_Driver_WriteResult_getWriteErrors, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_Driver_WriteResult, getErrorReplies, arginfo_class_MongoDB_Driver_WriteResult_getErrorReplies, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_WriteResult, isAcknowledged, arginfo_class_MongoDB_Driver_WriteResult_isAcknowledged, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_WriteResult, __wakeup, arginfo_class_MongoDB_Driver_WriteResult___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END

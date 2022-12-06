@@ -83,6 +83,9 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
     ["w"]=>
     int(1)
   }
+  ["errorReplies"]=>
+  array(0) {
+  }
 }
 string(%d) "%s"
 int(%d)

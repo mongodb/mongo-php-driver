@@ -73,6 +73,9 @@ object(MongoDB\Driver\WriteResult)#%d (%d) {
   ["writeConcern"]=>
   object(MongoDB\Driver\WriteConcern)#%d (%d) {
   }
+  ["errorReplies"]=>
+  array(0) {
+  }
 }
 
 ===> Collection

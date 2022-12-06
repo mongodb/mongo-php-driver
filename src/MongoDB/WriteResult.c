@@ -117,6 +117,32 @@ static bool php_phongo_writeresult_get_writeerrors(php_phongo_writeresult_t* int
 	return true;
 }
 
+static bool php_phongo_writeresult_get_error_replies(php_phongo_writeresult_t* intern, zval* return_value)
+{
+	bson_iter_t iter, child;
+
+	array_init(return_value);
+
+	if (bson_iter_init_find(&iter, intern->reply, "errorReplies") && BSON_ITER_HOLDS_ARRAY(&iter) && bson_iter_recurse(&iter, &child)) {
+		while (bson_iter_next(&child)) {
+			uint32_t       len;
+			const uint8_t* data;
+			zval           error_reply;
+
+			if (!BSON_ITER_HOLDS_DOCUMENT(&child)) {
+				continue;
+			}
+
+			bson_iter_document(&child, &len, &data);
+			php_phongo_bson_data_to_zval(data, len, &error_reply);
+
+			add_next_index_zval(return_value, &error_reply);
+		}
+	}
+
+	return true;
+}
+
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteResult)
 PHONGO_DISABLED_WAKEUP(MongoDB_Driver_WriteResult)
 
@@ -273,6 +299,17 @@ static PHP_METHOD(MongoDB_Driver_WriteResult, getWriteErrors)
 	php_phongo_writeresult_get_writeerrors(intern, return_value);
 }
 
+static PHP_METHOD(MongoDB_Driver_WriteResult, getErrorReplies)
+{
+	php_phongo_writeresult_t* intern;
+
+	intern = Z_WRITERESULT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	php_phongo_writeresult_get_error_replies(intern, return_value);
+}
+
 /* Returns whether the write operation was acknowledged (based on the write
    concern). */
 static PHP_METHOD(MongoDB_Driver_WriteResult, isAcknowledged)
@@ -328,7 +365,7 @@ static HashTable* php_phongo_writeresult_get_debug_info(phongo_compat_object_han
 
 	intern   = Z_OBJ_WRITERESULT(PHONGO_COMPAT_GET_OBJ(object));
 	*is_temp = 1;
-	array_init_size(&retval, 9);
+	array_init_size(&retval, 10);
 
 #define PHONGO_WRITERESULT_SCP(field)                                                         \
 	if (bson_iter_init_find(&iter, intern->reply, (field)) && BSON_ITER_HOLDS_INT32(&iter)) { \
@@ -384,6 +421,13 @@ static HashTable* php_phongo_writeresult_get_debug_info(phongo_compat_object_han
 		ADD_ASSOC_ZVAL_EX(&retval, "writeConcern", &write_concern);
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "writeConcern");
+	}
+
+	{
+		zval error_replies;
+
+		php_phongo_writeresult_get_error_replies(intern, &error_replies);
+		ADD_ASSOC_ZVAL_EX(&retval, "errorReplies", &error_replies);
 	}
 
 done:
