@@ -32,17 +32,27 @@
 
 zend_class_entry* php_phongo_iterator_ce;
 
+static const bson_t* php_phongo_iterator_get_bson_from_zval(zval* zbson)
+{
+	if (Z_TYPE_P(zbson) != IS_OBJECT) {
+		return NULL;
+	}
+
+	if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_document_ce)) {
+		return Z_DOCUMENT_OBJ_P(zbson)->bson;
+	} else if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_arraylist_ce)) {
+		return Z_ARRAYLIST_OBJ_P(zbson)->bson;
+	} else {
+		return NULL;
+	}
+}
+
 static bool php_phongo_iterator_init_with_zval(php_phongo_iterator_t* iterator, zval* zbson)
 {
 	const bson_t* bson;
 
-	ZVAL_COPY(&iterator->bson, zbson);
-	if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_document_ce)) {
-		bson = Z_DOCUMENT_OBJ_P(&iterator->bson)->bson;
-	} else if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_arraylist_ce)) {
-		bson               = Z_ARRAYLIST_OBJ_P(&iterator->bson)->bson;
-		iterator->is_array = true;
-	} else {
+	bson = php_phongo_iterator_get_bson_from_zval(zbson);
+	if (!bson) {
 		/* Should never happen, but if it does: exception */
 		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Could not create iterator for %s instance", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zbson));
 
@@ -53,6 +63,11 @@ static bool php_phongo_iterator_init_with_zval(php_phongo_iterator_t* iterator, 
 		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not create iterator for BSON instance");
 
 		return false;
+	}
+
+	ZVAL_COPY(&iterator->bson, zbson);
+	if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_arraylist_ce)) {
+		iterator->is_array = true;
 	}
 
 	iterator->valid = bson_iter_next(&iterator->iter);
@@ -158,12 +173,16 @@ static PHP_METHOD(MongoDB_BSON_Iterator, rewind)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	if (intern->key > 0) {
-		phongo_throw_exception(PHONGO_ERROR_LOGIC, "BSON iterators cannot rewind after starting iteration");
+	/* Don't re-initialise iterator if we're still on the first item */
+	if (intern->key == 0) {
 		return;
 	}
 
 	php_phongo_iterator_free_current(intern);
+
+	bson_iter_init(&intern->iter, php_phongo_iterator_get_bson_from_zval(&intern->bson));
+	intern->key   = 0;
+	intern->valid = bson_iter_next(&intern->iter);
 }
 
 void phongo_iterator_init(zval* return_value, zval* document_or_arraylist)

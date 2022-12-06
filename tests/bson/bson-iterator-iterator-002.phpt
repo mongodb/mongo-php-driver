@@ -8,7 +8,7 @@ $iterator = $document->getIterator();
 unset($document);
 var_dump(iterator_to_array($iterator));
 
-$array = MongoDB\BSON\Document::fromPHP([0, 1, "foo"]);
+$array = MongoDB\BSON\ArrayList::fromPHP([0, 1, "foo"]);
 $iterator = $array->getIterator();
 unset($array);
 var_dump(iterator_to_array($iterator));
