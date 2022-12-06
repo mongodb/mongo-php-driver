@@ -33,15 +33,6 @@
 
 zend_class_entry* php_phongo_arraylist_ce;
 
-/* Initialize the object and return whether it was successful. An exception will
- * be thrown on error. */
-static bool php_phongo_arraylist_init(php_phongo_arraylist_t* intern, bson_t* bson)
-{
-	intern->bson = bson;
-
-	return true;
-}
-
 static HashTable* php_phongo_arraylist_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
 	php_phongo_arraylist_t* intern;
@@ -77,7 +68,7 @@ static PHP_METHOD(MongoDB_BSON_ArrayList, fromPHP)
 	zval*                   data;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	PHONGO_PARAM_ARRAY_OR_OBJECT(data)
+	Z_PARAM_ARRAY(data)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (!zend_array_is_list(Z_ARRVAL_P(data))) {
@@ -197,7 +188,7 @@ static PHP_METHOD(MongoDB_BSON_ArrayList, __toString)
 	RETVAL_STRINGL((const char*) bson_get_data(intern->bson), intern->bson->len);
 }
 
-/* MongoDB\BSON\BSON object handlers */
+/* MongoDB\BSON\ArrayList object handlers */
 static zend_object_handlers php_phongo_handler_arraylist;
 
 static void php_phongo_arraylist_free_object(zend_object* object)
@@ -240,7 +231,7 @@ static zend_object* php_phongo_arraylist_clone_object(phongo_compat_object_handl
 	new_intern = Z_OBJ_ARRAYLIST(new_object);
 	zend_objects_clone_members(&new_intern->std, &intern->std);
 
-	php_phongo_arraylist_init(new_intern, bson_copy(intern->bson));
+	new_intern->bson = bson_copy(intern->bson);
 
 	return new_object;
 }
