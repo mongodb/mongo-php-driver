@@ -15,7 +15,7 @@ $canonicalExtJson = '{"d" : {"$numberDecimal" : "0.123456789012345"}}';
 // Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Native -> Canonical BSON
+// Canonical BSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";
 
 // Canonical BSON -> Canonical extJSON

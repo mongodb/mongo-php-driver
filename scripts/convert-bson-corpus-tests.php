@@ -151,7 +151,7 @@ function getParamsForValid(array $test, array $case)
     $code .= 'echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";' . "\n";
     $expect .= $expectedCanonicalBson . "\n";
 
-    $code .= "\n// Canonical BSON -> Native -> Canonical BSON\n";
+    $code .= "\n// Canonical BSON -> BSON object -> Canonical BSON\n";
     $code .= 'echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";' . "\n";
     $expect .= $expectedCanonicalBson . "\n";
 
@@ -188,7 +188,7 @@ function getParamsForValid(array $test, array $case)
         $code .= 'echo bin2hex(fromPHP(toPHP($degenerateBson))), "\n";' . "\n";
         $expect .= $expectedCanonicalBson . "\n";
 
-        $code .= "\n// Degenerate BSON -> Native -> Canonical BSON\n";
+        $code .= "\n// Degenerate BSON -> BSON object -> Canonical BSON\n";
         $code .= 'echo bin2hex(fromPHP(MongoDB\BSON\Document::fromBSONString($degenerateBson)->toPHP())), "\n";' . "\n";
         $expect .= $expectedCanonicalBson . "\n";
 
@@ -201,11 +201,11 @@ function getParamsForValid(array $test, array $case)
         $expect .= $expectedCanonicalExtJson . "\n";
 
         if (isset($relaxedExtJson)) {
-            $code .= "\n// Degenerate BSON -> BSON object -> Relaxed extJSON\n";
+            $code .= "\n// Degenerate BSON -> Relaxed extJSON\n";
             $code .= 'echo json_canonicalize(toRelaxedExtendedJSON($degenerateBson)), "\n";' . "\n";
             $expect .= $expectedRelaxedExtJson . "\n";
 
-            $code .= "\n// Degenerate BSON -> Relaxed extJSON\n";
+            $code .= "\n// Degenerate BSON -> BSON object -> Relaxed extJSON\n";
             $code .= 'echo json_canonicalize(MongoDB\BSON\Document::fromBSONString($degenerateBson)->toRelaxedExtendedJSON()), "\n";' . "\n";
             $expect .= $expectedRelaxedExtJson . "\n";
         }

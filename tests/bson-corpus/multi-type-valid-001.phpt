@@ -17,7 +17,7 @@ $canonicalExtJson = '{"_id": {"$oid": "57e193d7a9cc81b4027498b5"}, "String": "st
 // Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Native -> Canonical BSON
+// Canonical BSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";
 
 // Canonical BSON -> Canonical extJSON

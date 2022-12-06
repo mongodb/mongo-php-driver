@@ -16,7 +16,7 @@ $degenerateExtJson = '{"x" : { "$uuid" : "73ffd264-44b3-4c69-90e8-e7d1dfc035d4"}
 // Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Native -> Canonical BSON
+// Canonical BSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";
 
 // Canonical BSON -> Canonical extJSON

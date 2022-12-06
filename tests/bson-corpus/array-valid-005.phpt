@@ -16,7 +16,7 @@ $canonicalExtJson = '{"a" : [{"$numberInt": "10"}, {"$numberInt": "20"}]}';
 // Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
-// Canonical BSON -> Native -> Canonical BSON
+// Canonical BSON -> BSON object -> Canonical BSON
 echo bin2hex((string) MongoDB\BSON\Document::fromBSONString($canonicalBson)), "\n";
 
 // Canonical BSON -> Canonical extJSON
@@ -34,7 +34,7 @@ echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
 // Degenerate BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($degenerateBson))), "\n";
 
-// Degenerate BSON -> Native -> Canonical BSON
+// Degenerate BSON -> BSON object -> Canonical BSON
 echo bin2hex(fromPHP(MongoDB\BSON\Document::fromBSONString($degenerateBson)->toPHP())), "\n";
 
 // Degenerate BSON -> Canonical extJSON
