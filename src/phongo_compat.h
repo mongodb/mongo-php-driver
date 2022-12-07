@@ -85,6 +85,7 @@
 #define zend_object_alloc(obj_size, ce) ecalloc(1, obj_size + zend_object_properties_size(ce))
 #endif
 
+#define ADD_ASSOC_STR(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRL(_key), (char*) ZSTR_VAL(_value));
 #define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRL(_key), (char*) (_value));
 #define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRL(_key), (char*) (_value), _len);
 #define ADD_ASSOC_STRING_EX(_zv, _key, _key_len, _value, _value_len) add_assoc_stringl_ex(_zv, _key, _key_len, (char*) (_value), _value_len);

@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class Document implements \IteratorAggregate
+final class Document implements \IteratorAggregate, \Serializable
 {
     private function __construct() {}
 
@@ -45,4 +45,15 @@ final class Document implements \IteratorAggregate
     final public function toRelaxedExtendedJSON(): string {}
 
     final public function __toString(): string {}
+
+    final public static function __set_state(array $properties): Document {}
+
+    final public function serialize(): string {}
+
+    /** @param string $serialized */
+    final public function unserialize($serialized): void {}
+
+    final public function __unserialize(array $data): void {}
+
+    final public function __serialize(): array {}
 }

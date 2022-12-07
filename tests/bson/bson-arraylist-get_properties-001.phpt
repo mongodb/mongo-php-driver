@@ -13,7 +13,7 @@ var_dump(get_object_vars($bson));
 --EXPECTF--
 array(2) {
   ["data"]=>
-  string(5) "%s"
+  string(8) "BQAAAAA="
   ["length"]=>
   int(5)
 }

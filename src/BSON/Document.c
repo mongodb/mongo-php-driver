@@ -33,6 +33,25 @@
 
 zend_class_entry* php_phongo_document_ce;
 
+/* Initialize the object from a HashTable and return whether it was successful.
+ * An exception will be thrown on error. */
+static bool php_phongo_document_init_from_hash(php_phongo_document_t* intern, HashTable* props)
+{
+	zval* data;
+
+	if ((data = zend_hash_str_find(props, "data", sizeof("data") - 1)) && Z_TYPE_P(data) == IS_STRING) {
+		zend_string* decoded = php_base64_decode_str(Z_STR_P(data));
+
+		intern->bson = bson_new_from_data((const uint8_t*) ZSTR_VAL(decoded), ZSTR_LEN(decoded));
+		zend_string_free(decoded);
+
+		return intern->bson != NULL;
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"data\" string field", ZSTR_VAL(php_phongo_document_ce->name));
+	return false;
+}
+
 static HashTable* php_phongo_document_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
 	php_phongo_document_t* intern;
@@ -49,12 +68,7 @@ static HashTable* php_phongo_document_get_properties_hash(phongo_compat_object_h
 	{
 		zval data, length;
 
-		if (is_temp) {
-			ZVAL_STR(&data, php_base64_encode((const unsigned char*) bson_get_data(intern->bson), intern->bson->len));
-		} else {
-			ZVAL_STRINGL(&data, (const char*) bson_get_data(intern->bson), intern->bson->len);
-		}
-
+		ZVAL_STR(&data, php_base64_encode((const unsigned char*) bson_get_data(intern->bson), intern->bson->len));
 		zend_hash_str_update(props, "data", sizeof("data") - 1, &data);
 
 		ZVAL_LONG(&length, intern->bson->len);
@@ -261,6 +275,99 @@ static PHP_METHOD(MongoDB_BSON_Document, __toString)
 	RETVAL_STRINGL((const char*) bson_get_data(intern->bson), intern->bson->len);
 }
 
+static PHP_METHOD(MongoDB_BSON_Document, __set_state)
+{
+	php_phongo_document_t* intern;
+	HashTable*             props;
+	zval*                  array;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	object_init_ex(return_value, php_phongo_document_ce);
+
+	intern = Z_DOCUMENT_OBJ_P(return_value);
+	props  = Z_ARRVAL_P(array);
+
+	php_phongo_document_init_from_hash(intern, props);
+}
+
+static PHP_METHOD(MongoDB_BSON_Document, serialize)
+{
+	php_phongo_document_t* intern;
+	zval                   retval;
+	php_serialize_data_t   var_hash;
+	smart_str              buf = { 0 };
+	zend_string*           str;
+
+	intern = Z_DOCUMENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	array_init_size(&retval, 2);
+	str = php_base64_encode(bson_get_data(intern->bson), intern->bson->len);
+	ADD_ASSOC_STR(&retval, "data", str);
+	ADD_ASSOC_LONG_EX(&retval, "length", intern->bson->len);
+
+	PHP_VAR_SERIALIZE_INIT(var_hash);
+	php_var_serialize(&buf, &retval, &var_hash);
+	smart_str_0(&buf);
+	PHP_VAR_SERIALIZE_DESTROY(var_hash);
+
+	PHONGO_RETVAL_SMART_STR(buf);
+
+	zend_string_free(str);
+	smart_str_free(&buf);
+	zval_ptr_dtor(&retval);
+}
+
+static PHP_METHOD(MongoDB_BSON_Document, unserialize)
+{
+	php_phongo_document_t* intern;
+	char*                  serialized;
+	size_t                 serialized_len;
+	zval                   props;
+	php_unserialize_data_t var_hash;
+
+	intern = Z_DOCUMENT_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_STRING(serialized, serialized_len)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	PHP_VAR_UNSERIALIZE_INIT(var_hash);
+	if (!php_var_unserialize(&props, (const unsigned char**) &serialized, (unsigned char*) serialized + serialized_len, &var_hash)) {
+		zval_ptr_dtor(&props);
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s unserialization failed", ZSTR_VAL(php_phongo_document_ce->name));
+
+		PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+		return;
+	}
+	PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+
+	php_phongo_document_init_from_hash(intern, HASH_OF(&props));
+	zval_ptr_dtor(&props);
+}
+
+static PHP_METHOD(MongoDB_BSON_Document, __serialize)
+{
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	RETURN_ARR(php_phongo_document_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+}
+
+static PHP_METHOD(MongoDB_BSON_Document, __unserialize)
+{
+	zval* data;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(data)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	php_phongo_document_init_from_hash(Z_DOCUMENT_OBJ_P(getThis()), Z_ARRVAL_P(data));
+}
+
 /* MongoDB\BSON\BSON object handlers */
 static zend_object_handlers php_phongo_handler_document;
 
@@ -334,7 +441,7 @@ static HashTable* php_phongo_document_get_properties(phongo_compat_object_handle
 
 void php_phongo_document_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_document_ce                = register_class_MongoDB_BSON_Document(zend_ce_aggregate);
+	php_phongo_document_ce                = register_class_MongoDB_BSON_Document(zend_ce_aggregate, zend_ce_serializable);
 	php_phongo_document_ce->create_object = php_phongo_document_create_object;
 
 #if PHP_VERSION_ID >= 80000
