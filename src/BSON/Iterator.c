@@ -60,7 +60,7 @@ static bool php_phongo_iterator_init_with_zval(php_phongo_iterator_t* iterator, 
 	}
 
 	if (!bson_iter_init(&iterator->iter, bson)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not create iterator for BSON instance");
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Could not create iterator for %s instance", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(zbson));
 
 		return false;
 	}
