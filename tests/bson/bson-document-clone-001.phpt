@@ -22,7 +22,7 @@ bool(true)
 bool(false)
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
-  string(36) "%s"
+  string(48) "JAAAAARmb28AGgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAAA"
   ["length"]=>
   int(36)
 }

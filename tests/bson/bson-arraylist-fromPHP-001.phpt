@@ -13,7 +13,7 @@ var_dump(MongoDB\BSON\ArrayList::fromPHP([1, 2, 3]));
 --EXPECTF--
 object(MongoDB\BSON\ArrayList)#%d (%d) {
   ["data"]=>
-  string(26) "%s"
+  string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
   ["length"]=>
   int(26)
 }

@@ -22,7 +22,7 @@ bool(true)
 bool(false)
 object(MongoDB\BSON\ArrayList)#%d (%d) {
   ["data"]=>
-  string(26) "%s"
+  string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
   ["length"]=>
   int(26)
 }

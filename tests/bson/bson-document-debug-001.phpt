@@ -13,7 +13,7 @@ var_dump(MongoDB\BSON\Document::fromJSON('{}'));
 --EXPECTF--
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
-  string(5) "%s"
+  string(8) "BQAAAAA="
   ["length"]=>
   int(5)
 }

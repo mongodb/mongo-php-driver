@@ -15,7 +15,7 @@ array(%d) {
   ["bson"]=>
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
-    string(5) "%s"
+    string(8) "BQAAAAA="
     ["length"]=>
     int(5)
   }

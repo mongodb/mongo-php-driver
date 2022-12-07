@@ -12,7 +12,7 @@ var_dump($child);
 --EXPECTF--
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
-  string(18) "%s"
+  string(24) "AAAAAAJmb28ABAAAAGJhcgAA"
   ["length"]=>
   int(18)
 }

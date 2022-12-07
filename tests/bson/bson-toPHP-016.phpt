@@ -38,7 +38,7 @@ foreach ($tests as $name => $typeMap) {
 Root as BSON
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
-  string(191) "%a"
+  string(256) "%a"
   ["length"]=>
   int(191)
 }
@@ -54,14 +54,14 @@ object(stdClass)#%d (%d) {
       ["child1"]=>
       object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
-        string(26) "%a"
+        string(36) "%a"
         ["length"]=>
         int(26)
       }
       ["child2"]=>
       object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
-        string(26) "%a"
+        string(36) "%a"
         ["length"]=>
         int(26)
       }
@@ -71,14 +71,14 @@ object(stdClass)#%d (%d) {
       ["child1"]=>
       object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
-        string(26) "%a"
+        string(36) "%a"
         ["length"]=>
         int(26)
       }
       ["child2"]=>
       object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
-        string(26) "%a"
+        string(36) "%a"
         ["length"]=>
         int(26)
       }
@@ -93,7 +93,7 @@ object(stdClass)#%d (%d) {
   ["object"]=>
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
-    string(169) "%a"
+    string(228) "%a"
     ["length"]=>
     int(169)
   }
@@ -110,7 +110,7 @@ object(stdClass)#%d (%d) {
       ["child1"]=>
       object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
-        string(26) "%a"
+        string(36) "%a"
         ["length"]=>
         int(26)
       }
@@ -127,7 +127,7 @@ object(stdClass)#%d (%d) {
     ["parent2"]=>
     object(MongoDB\BSON\Document)#%d (%d) {
       ["data"]=>
-      string(73) "%a"
+      string(100) "%a"
       ["length"]=>
       int(73)
     }

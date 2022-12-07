@@ -49,7 +49,11 @@ static HashTable* php_phongo_arraylist_get_properties_hash(phongo_compat_object_
 	{
 		zval data, length;
 
-		ZVAL_STRINGL(&data, (const char*) bson_get_data(intern->bson), intern->bson->len);
+		if (is_temp) {
+			ZVAL_STR(&data, php_base64_encode((const unsigned char*) bson_get_data(intern->bson), intern->bson->len));
+		} else {
+			ZVAL_STRINGL(&data, (const char*) bson_get_data(intern->bson), intern->bson->len);
+		}
 		zend_hash_str_update(props, "data", sizeof("data") - 1, &data);
 
 		ZVAL_LONG(&length, intern->bson->len);
