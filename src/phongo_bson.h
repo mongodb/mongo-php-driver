@@ -70,11 +70,12 @@ typedef struct {
 } php_phongo_bson_typemap;
 
 typedef struct {
-	zval                    zchild;
-	php_phongo_bson_typemap map;
-	zend_class_entry*       odm;
-	bool                    is_visiting_array;
-	php_phongo_field_path*  field_path;
+	zval                            zchild;
+	php_phongo_bson_typemap         map;
+	zend_class_entry*               odm;
+	bool                            is_visiting_array;
+	php_phongo_field_path*          field_path;
+	php_phongo_bson_typemap_element field_type;
 } php_phongo_bson_state;
 
 typedef enum {

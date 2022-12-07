@@ -767,20 +767,11 @@ static void php_phongo_handle_field_path_entry_for_compound_type(php_phongo_bson
 	php_phongo_field_path_map_element* entry = map_find_field_path_entry(state);
 
 	if (entry) {
-		switch (entry->node.type) {
-			case PHONGO_TYPEMAP_NATIVE_ARRAY:
-			case PHONGO_TYPEMAP_NATIVE_OBJECT:
-			case PHONGO_TYPEMAP_BSON:
-				element->type = entry->node.type;
-				break;
-			case PHONGO_TYPEMAP_CLASS:
-				element->type = entry->node.type;
-				element->ce   = entry->node.ce;
-				break;
-			default:
-				/* Do nothing - pacify compiler */
-				break;
-		}
+		state->field_type.type = entry->node.type;
+		state->field_type.ce   = entry->node.ce;
+	} else {
+		state->field_type.type = element->type;
+		state->field_type.ce   = element->ce;
 	}
 }
 
@@ -801,7 +792,7 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 	php_phongo_handle_field_path_entry_for_compound_type(&state, &state.map.document);
 
 	/* Only traverse BSON document if we're not returning a raw BSON structure */
-	if (state.map.document.type != PHONGO_TYPEMAP_BSON) {
+	if (state.field_type.type != PHONGO_TYPEMAP_BSON) {
 		if (!bson_iter_init(&child, v_document)) {
 			php_phongo_bson_state_dtor(&state);
 			return false;
@@ -821,11 +812,11 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 
 	/* If php_phongo_bson_visit_binary() finds an ODM class, it should
 	 * supersede a default type map and named document class. */
-	if (state.odm && state.map.document.type == PHONGO_TYPEMAP_NONE) {
-		state.map.document.type = PHONGO_TYPEMAP_CLASS;
+	if (state.odm && state.field_type.type == PHONGO_TYPEMAP_NONE) {
+		state.field_type.type = PHONGO_TYPEMAP_CLASS;
 	}
 
-	switch (state.map.document.type) {
+	switch (state.field_type.type) {
 		case PHONGO_TYPEMAP_BSON: {
 			php_phongo_document_t* intern;
 
@@ -842,7 +833,7 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 
 		case PHONGO_TYPEMAP_CLASS: {
 			zval              obj;
-			zend_class_entry* obj_ce = state.odm ? state.odm : state.map.document.ce;
+			zend_class_entry* obj_ce = state.odm ? state.odm : state.field_type.ce;
 
 			object_init_ex(&obj, obj_ce);
 
@@ -887,7 +878,7 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 	php_phongo_handle_field_path_entry_for_compound_type(&state, &state.map.array);
 
 	/* Only traverse BSON array if we're not returning a raw BSON structure */
-	if (state.map.array.type != PHONGO_TYPEMAP_BSON) {
+	if (state.field_type.type != PHONGO_TYPEMAP_BSON) {
 		if (!bson_iter_init(&child, v_array)) {
 			php_phongo_bson_state_dtor(&state);
 			return false;
@@ -911,7 +902,7 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 		}
 	}
 
-	switch (state.map.array.type) {
+	switch (state.field_type.type) {
 		case PHONGO_TYPEMAP_BSON: {
 			php_phongo_arraylist_t* intern;
 
@@ -925,7 +916,7 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 		case PHONGO_TYPEMAP_CLASS: {
 			zval obj;
 
-			object_init_ex(&obj, state.map.array.ce);
+			object_init_ex(&obj, state.field_type.ce);
 			zend_call_method_with_1_params(PHONGO_COMPAT_OBJ_P(&obj), NULL, NULL, BSON_UNSERIALIZE_FUNC_NAME, NULL, &state.zchild);
 			zval_ptr_dtor(&state.zchild);
 			ZVAL_COPY_VALUE(&state.zchild, &obj);
