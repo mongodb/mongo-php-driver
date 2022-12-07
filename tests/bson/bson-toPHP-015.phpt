@@ -34,17 +34,41 @@ class MyDocument implements MongoDB\BSON\Persistable
 }
 
 $tests = [
-    'root document' => [
+    'root document as object' => [
         new MyDocument,
         ['root' => 'object'],
     ],
-    'embedded document' => [
+    'root document as array' => [
+        new MyDocument,
+        ['root' => 'array'],
+    ],
+    'root document as bson' => [
+        new MyDocument,
+        ['root' => 'bson'],
+    ],
+    'embedded document as object' => [
         ['embedded' => new MyDocument],
         ['document' => 'object'],
     ],
-    'fieldPath document' => [
+    'embedded document as array' => [
+        ['embedded' => new MyDocument],
+        ['document' => 'array'],
+    ],
+    'embedded document as bson' => [
+        ['embedded' => new MyDocument],
+        ['document' => 'bson'],
+    ],
+    'fieldPath document as object' => [
         ['embedded' => new MyDocument],
         ['fieldPaths' => ['embedded' => 'object']],
+    ],
+    'fieldPath document as array' => [
+        ['embedded' => new MyDocument],
+        ['fieldPaths' => ['embedded' => 'array']],
+    ],
+    'fieldPath document as bson' => [
+        ['embedded' => new MyDocument],
+        ['fieldPaths' => ['embedded' => 'bson']],
     ],
 ];
 
@@ -59,7 +83,7 @@ foreach ($tests as $test => [$document, $typeMap]) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-Test root document
+Test root document as object
 object(stdClass)#%d (%d) {
   ["__pclass"]=>
   object(MongoDB\BSON\Binary)#%d (%d) {
@@ -83,7 +107,38 @@ object(stdClass)#%d (%d) {
     string(3) "bar"
   }
 }
-Test embedded document
+Test root document as array
+array(3) {
+  ["__pclass"]=>
+  object(MongoDB\BSON\Binary)#%d (%d) {
+    ["data"]=>
+    string(10) "MyDocument"
+    ["type"]=>
+    int(128)
+  }
+  ["list"]=>
+  array(3) {
+    [0]=>
+    int(1)
+    [1]=>
+    int(2)
+    [2]=>
+    int(3)
+  }
+  ["map"]=>
+  object(stdClass)#%d (%d) {
+    ["foo"]=>
+    string(3) "bar"
+  }
+}
+Test root document as bson
+object(MongoDB\BSON\Document)#%d (%d) {
+  ["data"]=>
+  string(116) "VQAAAAVfX3BjbGFzcwAKAAAAgE15RG9jdW1lbnQEbGlzdAAaAAAAEDAAAQAAABAxAAIAAAAQMgADAAAAAANtYXAAEgAAAAJmb28ABAAAAGJhcgAAAA=="
+  ["length"]=>
+  int(85)
+}
+Test embedded document as object
 object(stdClass)#%d (%d) {
   ["embedded"]=>
   object(stdClass)#%d (%d) {
@@ -110,7 +165,44 @@ object(stdClass)#%d (%d) {
     }
   }
 }
-Test fieldPath document
+Test embedded document as array
+object(stdClass)#%d (%d) {
+  ["embedded"]=>
+  array(3) {
+    ["__pclass"]=>
+    object(MongoDB\BSON\Binary)#%d (%d) {
+      ["data"]=>
+      string(10) "MyDocument"
+      ["type"]=>
+      int(128)
+    }
+    ["list"]=>
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      int(3)
+    }
+    ["map"]=>
+    array(1) {
+      ["foo"]=>
+      string(3) "bar"
+    }
+  }
+}
+Test embedded document as bson
+object(stdClass)#%d (%d) {
+  ["embedded"]=>
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(116) "VQAAAAVfX3BjbGFzcwAKAAAAgE15RG9jdW1lbnQEbGlzdAAaAAAAEDAAAQAAABAxAAIAAAAQMgADAAAAAANtYXAAEgAAAAJmb28ABAAAAGJhcgAAAA=="
+    ["length"]=>
+    int(85)
+  }
+}
+Test fieldPath document as object
 object(stdClass)#%d (%d) {
   ["embedded"]=>
   object(stdClass)#%d (%d) {
@@ -135,6 +227,43 @@ object(stdClass)#%d (%d) {
       ["foo"]=>
       string(3) "bar"
     }
+  }
+}
+Test fieldPath document as array
+object(stdClass)#%d (%d) {
+  ["embedded"]=>
+  array(3) {
+    ["__pclass"]=>
+    object(MongoDB\BSON\Binary)#%d (%d) {
+      ["data"]=>
+      string(10) "MyDocument"
+      ["type"]=>
+      int(128)
+    }
+    ["list"]=>
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      int(3)
+    }
+    ["map"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
+  }
+}
+Test fieldPath document as bson
+object(stdClass)#%d (%d) {
+  ["embedded"]=>
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(116) "VQAAAAVfX3BjbGFzcwAKAAAAgE15RG9jdW1lbnQEbGlzdAAaAAAAEDAAAQAAABAxAAIAAAAQMgADAAAAAANtYXAAEgAAAAJmb28ABAAAAGJhcgAAAA=="
+    ["length"]=>
+    int(85)
   }
 }
 ===DONE===
