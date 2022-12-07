@@ -1455,8 +1455,7 @@ void php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 
 			object_init_ex(zv, php_phongo_document_ce);
 			document_intern       = Z_DOCUMENT_OBJ_P(zv);
-			document_intern->bson = bson_new();
-			bson_init_static(document_intern->bson, (const uint8_t*) data, data_len);
+			document_intern->bson = bson_new_from_data((const uint8_t*) data, data_len);
 			return;
 
 		case BSON_TYPE_DOUBLE:
@@ -1468,8 +1467,7 @@ void php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 
 			object_init_ex(zv, php_phongo_arraylist_ce);
 			arraylist_intern       = Z_ARRAYLIST_OBJ_P(zv);
-			arraylist_intern->bson = bson_new();
-			bson_init_static(arraylist_intern->bson, (const uint8_t*) data, data_len);
+			arraylist_intern->bson = bson_new_from_data((const uint8_t*) data, data_len);
 			return;
 
 		case BSON_TYPE_BINARY:

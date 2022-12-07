@@ -6,16 +6,14 @@ MongoDB\BSON\ArrayList::get() index access returns BSON structures
 $array = MongoDB\BSON\ArrayList::fromPHP([(object) ['foo' => 'bar']]);
 $child = $array->get(0);
 unset($array);
-var_dump($child);
+var_dump($child->toPHP());
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\BSON\Document)#%d (%d) {
-  ["data"]=>
-  string(24) "APsHAAAAAAAABAAAAGJhcgAA"
-  ["length"]=>
-  int(18)
+object(stdClass)#%d (%d) {
+  ["foo"]=>
+  string(3) "bar"
 }
 ===DONE===
