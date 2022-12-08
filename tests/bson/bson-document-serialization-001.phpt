@@ -18,14 +18,10 @@ var_dump(unserialize($s));
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(108) "TwAAABBfaWQAAQAAAARhcnJheQAeAAAAEDAAAAAAABAxAAEAAAACMgAEAAAAZm9vAAADZG9jdW1lbnQAEgAAAAJmb28ABAAAAGJhcgAAAA=="
-  ["length"]=>
-  int(79)
 }
-string(187) "C:21:"MongoDB\BSON\Document":152:{a:2:{s:4:"data";s:108:"TwAAABBfaWQAAQAAAARhcnJheQAeAAAAEDAAAAAAABAxAAEAAAACMgAEAAAAZm9vAAADZG9jdW1lbnQAEgAAAAJmb28ABAAAAGJhcgAAAA==";s:6:"length";i:79;}}"
+string(169) "C:21:"MongoDB\BSON\Document":134:{a:1:{s:4:"data";s:108:"TwAAABBfaWQAAQAAAARhcnJheQAeAAAAEDAAAAAAABAxAAEAAAACMgAEAAAAZm9vAAADZG9jdW1lbnQAEgAAAAJmb28ABAAAAGJhcgAAAA==";}}"
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(108) "TwAAABBfaWQAAQAAAARhcnJheQAeAAAAEDAAAAAAABAxAAEAAAACMgAEAAAAZm9vAAADZG9jdW1lbnQAEgAAAAJmb28ABAAAAGJhcgAAAA=="
-  ["length"]=>
-  int(79)
 }
 ===DONE===

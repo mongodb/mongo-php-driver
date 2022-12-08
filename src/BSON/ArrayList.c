@@ -59,20 +59,17 @@ static HashTable* php_phongo_arraylist_get_properties_hash(phongo_compat_object_
 
 	intern = Z_OBJ_ARRAYLIST(PHONGO_COMPAT_GET_OBJ(object));
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
 
 	if (!intern->bson) {
 		return props;
 	}
 
 	{
-		zval data, length;
+		zval data;
 
 		ZVAL_STR(&data, php_base64_encode((const unsigned char*) bson_get_data(intern->bson), intern->bson->len));
 		zend_hash_str_update(props, "data", sizeof("data") - 1, &data);
-
-		ZVAL_LONG(&length, intern->bson->len);
-		zend_hash_str_update(props, "length", sizeof("length") - 1, &length);
 	}
 
 	return props;
@@ -236,10 +233,9 @@ static PHP_METHOD(MongoDB_BSON_ArrayList, serialize)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	array_init_size(&retval, 2);
+	array_init_size(&retval, 1);
 	str = php_base64_encode(bson_get_data(intern->bson), intern->bson->len);
 	ADD_ASSOC_STR(&retval, "data", str);
-	ADD_ASSOC_LONG_EX(&retval, "length", intern->bson->len);
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
 	php_var_serialize(&buf, &retval, &var_hash);

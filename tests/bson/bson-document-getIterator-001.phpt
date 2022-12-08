@@ -89,8 +89,6 @@ string(5) "array"
 object(MongoDB\BSON\ArrayList)#%d (%d) {
   ["data"]=>
   string(40) "HgAAABAwAAEAAAAQMQACAAAAAjIABAAAAGZvbwAA"
-  ["length"]=>
-  int(30)
 }
 array(3) {
   [0]=>
@@ -105,8 +103,6 @@ string(8) "document"
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
-  ["length"]=>
-  int(18)
 }
 object(stdClass)#%d (%d) {
   ["foo"]=>

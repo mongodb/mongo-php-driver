@@ -46,20 +46,14 @@ First foreach statement:
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(20) "DgAAABBfaWQAAAAAAAA="
-  ["length"]=>
-  int(14)
 }
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(20) "DgAAABBfaWQAAQAAAAA="
-  ["length"]=>
-  int(14)
 }
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(20) "DgAAABBfaWQAAgAAAAA="
-  ["length"]=>
-  int(14)
 }
 
 Second foreach statement:

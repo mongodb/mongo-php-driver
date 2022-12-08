@@ -14,7 +14,5 @@ var_dump(MongoDB\BSON\Document::fromJSON('{}'));
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(8) "BQAAAAA="
-  ["length"]=>
-  int(5)
 }
 ===DONE===

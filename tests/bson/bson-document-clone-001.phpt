@@ -23,7 +23,5 @@ bool(false)
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(48) "JAAAAARmb28AGgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAAA"
-  ["length"]=>
-  int(36)
 }
 ===DONE===

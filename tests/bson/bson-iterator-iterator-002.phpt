@@ -22,8 +22,6 @@ array(1) {
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
-    ["length"]=>
-    int(18)
   }
 }
 array(3) {

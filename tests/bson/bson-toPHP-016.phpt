@@ -39,8 +39,6 @@ Root as BSON
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(256) "%a"
-  ["length"]=>
-  int(191)
 }
 
 Arrays as BSON
@@ -55,15 +53,11 @@ object(stdClass)#%d (%d) {
       object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
         string(36) "%a"
-        ["length"]=>
-        int(26)
       }
       ["child2"]=>
       object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
         string(36) "%a"
-        ["length"]=>
-        int(26)
       }
     }
     ["parent2"]=>
@@ -72,15 +66,11 @@ object(stdClass)#%d (%d) {
       object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
         string(36) "%a"
-        ["length"]=>
-        int(26)
       }
       ["child2"]=>
       object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
         string(36) "%a"
-        ["length"]=>
-        int(26)
       }
     }
   }
@@ -94,8 +84,6 @@ object(stdClass)#%d (%d) {
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(228) "%a"
-    ["length"]=>
-    int(169)
   }
 }
 
@@ -111,8 +99,6 @@ object(stdClass)#%d (%d) {
       object(MongoDB\BSON\ArrayList)#%d (%d) {
         ["data"]=>
         string(36) "%a"
-        ["length"]=>
-        int(26)
       }
       ["child2"]=>
       array(3) {
@@ -128,8 +114,6 @@ object(stdClass)#%d (%d) {
     object(MongoDB\BSON\Document)#%d (%d) {
       ["data"]=>
       string(100) "%a"
-      ["length"]=>
-      int(73)
     }
   }
 }

@@ -14,12 +14,9 @@ var_dump(eval('return ' . $s . ';'));
 --EXPECTF--
 %r\\?%rMongoDB\BSON\Document::__set_state(array(
 %w'data' => 'TwAAABBfaWQAAQAAAARhcnJheQAeAAAAEDAAAAAAABAxAAEAAAACMgAEAAAAZm9vAAADZG9jdW1lbnQAEgAAAAJmb28ABAAAAGJhcgAAAA==',
-%w'length' => 79,
 ))
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(108) "TwAAABBfaWQAAQAAAARhcnJheQAeAAAAEDAAAAAAABAxAAEAAAACMgAEAAAAZm9vAAADZG9jdW1lbnQAEgAAAAJmb28ABAAAAGJhcgAAAA=="
-  ["length"]=>
-  int(79)
 }
 ===DONE===

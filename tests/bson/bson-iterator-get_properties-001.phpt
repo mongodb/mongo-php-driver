@@ -16,8 +16,6 @@ array(%d) {
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(8) "BQAAAAA="
-    ["length"]=>
-    int(5)
   }
 }
 ===DONE===

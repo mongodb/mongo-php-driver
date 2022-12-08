@@ -18,14 +18,10 @@ var_dump(unserialize($s));
 object(MongoDB\BSON\ArrayList)#%d (%d) {
   ["data"]=>
   string(68) "MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA"
-  ["length"]=>
-  int(51)
 }
-string(139) "O:22:"MongoDB\BSON\ArrayList":2:{s:4:"data";s:68:"MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA";s:6:"length";i:51;}"
+string(121) "O:22:"MongoDB\BSON\ArrayList":1:{s:4:"data";s:68:"MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA";}"
 object(MongoDB\BSON\ArrayList)#%d (%d) {
   ["data"]=>
   string(68) "MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA"
-  ["length"]=>
-  int(51)
 }
 ===DONE===

@@ -14,12 +14,9 @@ var_dump(eval('return ' . $s . ';'));
 --EXPECTF--
 %r\\?%rMongoDB\BSON\ArrayList::__set_state(array(
 %w'data' => 'MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA',
-%w'length' => 51,
 ))
 object(MongoDB\BSON\ArrayList)#%d (%d) {
   ["data"]=>
   string(68) "MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA"
-  ["length"]=>
-  int(51)
 }
 ===DONE===

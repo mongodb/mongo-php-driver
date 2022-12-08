@@ -25,8 +25,6 @@ object(MongoDB\BSON\Iterator)#%d (%d) {
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(48) "JAAAAARmb28AGgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAAA"
-    ["length"]=>
-    int(36)
   }
 }
 ===DONE===

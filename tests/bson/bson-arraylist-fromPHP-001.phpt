@@ -14,7 +14,5 @@ var_dump(MongoDB\BSON\ArrayList::fromPHP([1, 2, 3]));
 object(MongoDB\BSON\ArrayList)#%d (%d) {
   ["data"]=>
   string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
-  ["length"]=>
-  int(26)
 }
 ===DONE===

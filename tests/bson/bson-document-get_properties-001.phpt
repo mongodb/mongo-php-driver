@@ -11,10 +11,8 @@ var_dump(get_object_vars($bson));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-array(2) {
+array(1) {
   ["data"]=>
   string(8) "BQAAAAA="
-  ["length"]=>
-  int(5)
 }
 ===DONE===

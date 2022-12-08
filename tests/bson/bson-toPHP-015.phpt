@@ -135,8 +135,6 @@ Test root document as bson
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(116) "VQAAAAVfX3BjbGFzcwAKAAAAgE15RG9jdW1lbnQEbGlzdAAaAAAAEDAAAQAAABAxAAIAAAAQMgADAAAAAANtYXAAEgAAAAJmb28ABAAAAGJhcgAAAA=="
-  ["length"]=>
-  int(85)
 }
 Test embedded document as object
 object(stdClass)#%d (%d) {
@@ -198,8 +196,6 @@ object(stdClass)#%d (%d) {
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(116) "VQAAAAVfX3BjbGFzcwAKAAAAgE15RG9jdW1lbnQEbGlzdAAaAAAAEDAAAQAAABAxAAIAAAAQMgADAAAAAANtYXAAEgAAAAJmb28ABAAAAGJhcgAAAA=="
-    ["length"]=>
-    int(85)
   }
 }
 Test fieldPath document as object
@@ -262,8 +258,6 @@ object(stdClass)#%d (%d) {
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(116) "VQAAAAVfX3BjbGFzcwAKAAAAgE15RG9jdW1lbnQEbGlzdAAaAAAAEDAAAQAAABAxAAIAAAAQMgADAAAAAANtYXAAEgAAAAJmb28ABAAAAGJhcgAAAA=="
-    ["length"]=>
-    int(85)
   }
 }
 ===DONE===
