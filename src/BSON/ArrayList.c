@@ -131,6 +131,7 @@ static PHP_METHOD(MongoDB_BSON_ArrayList, get)
 	}
 
 	if (!seek_iter_to_index(&iter, index)) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index \"%d\" in BSON data", index);
 		RETURN_NULL();
 	}
 

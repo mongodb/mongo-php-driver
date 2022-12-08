@@ -180,6 +180,7 @@ static PHP_METHOD(MongoDB_BSON_Document, get)
 	}
 
 	if (!bson_iter_find_w_len(&iter, key, key_len)) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key \"%s\" in BSON data", key);
 		RETURN_NULL();
 	}
 
