@@ -1068,10 +1068,15 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 		goto cleanup;
 	}
 
-	/* If php_phongo_bson_visit_binary() finds an ODM class, it should supersede
+	/* If the root document is an array, default to a native array type.
+	 * If php_phongo_bson_visit_binary() found an ODM class, it should supersede
 	 * a default type map and named root class. */
-	if (state->odm && state->map.root.type == PHONGO_TYPEMAP_NONE) {
-		state->map.root.type = PHONGO_TYPEMAP_CLASS;
+	if (state->map.root.type == PHONGO_TYPEMAP_NONE) {
+		if (state->is_visiting_array) {
+			state->map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		} else if (state->odm) {
+			state->map.root.type = PHONGO_TYPEMAP_CLASS;
+		}
 	}
 
 	switch (state->map.root.type) {

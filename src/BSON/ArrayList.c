@@ -181,8 +181,6 @@ static PHP_METHOD(MongoDB_BSON_ArrayList, toPHP)
 
 	intern = Z_ARRAYLIST_OBJ_P(getThis());
 
-	/* Force array type for root since we're dealing with an array */
-	state.map.root.type     = PHONGO_TYPEMAP_NATIVE_ARRAY;
 	state.is_visiting_array = true;
 
 	if (!php_phongo_bson_to_zval_ex(intern->bson, &state)) {

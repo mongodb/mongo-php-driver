@@ -24,7 +24,12 @@ final class ArrayList implements \IteratorAggregate, \Serializable
 
     final public function has(int $index): bool {}
 
-    final public function toPHP(?array $typeMap = null): array {}
+#if PHP_VERSION_ID >= 80000
+    final public function toPHP(?array $typeMap = null): array|object {}
+#else
+    /** @return array|object */
+    final public function toPHP(?array $typeMap = null) {}
+#endif
 
     final public function __toString(): string {}
 
