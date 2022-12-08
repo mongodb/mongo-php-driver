@@ -5,13 +5,13 @@ MongoDB\BSON\Document::fromBSON(): Field path values with bson_iter_visit_all() 
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$tests = array(
+$tests = [
     str_replace('INVALID!', "INVALID\xFE", fromPHP(['foo' => ['INVALID!' => 'bar'] ])),
     str_replace('INVALID!', "INVALID\xFE", fromPHP(['foo' => ['bar' => ['INVALID!' => 'bar']]])),
     str_replace('INVALID!', "INVALID\xFE", fromPHP(['foo' => ['bar' => ['INVALID!']]])),
     str_replace('INVALID!', "INVALID\xFE", fromPHP(['foo' => [['INVALID!']]])),
     str_replace('INVALID!', "INVALID\xFE", fromPHP(['foo' => [ ['bar' => ['INVALID!' => 'bar']], 6 ]])),
-);
+];
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {

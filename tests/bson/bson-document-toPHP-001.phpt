@@ -23,12 +23,12 @@ $bMyDocument = base64_encode('MyDocument');
 $bUnserializable = base64_encode('MongoDB\BSON\Unserializable');
 $bPersistable = base64_encode('MongoDB\BSON\Persistable');
 
-$tests = array(
+$tests = [
     '{ "foo": "yes", "__pclass": { "$binary": "' . $bMyAbstractDocument . '", "$type": "80" } }',
     '{ "foo": "yes", "__pclass": { "$binary": "' . $bMyDocument . '", "$type": "80" } }',
     '{ "foo": "yes", "__pclass": { "$binary": "' . $bUnserializable . '", "$type": "80" } }',
     '{ "foo": "yes", "__pclass": { "$binary": "' . $bPersistable . '", "$type": "44" } }',
-);
+];
 
 foreach ($tests as $test) {
     echo $test, "\n";

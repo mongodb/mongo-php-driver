@@ -27,7 +27,7 @@ class OurClass implements MongoDB\BSON\Persistable
     function bsonSerialize(): array
     {
         // Not tested with this test, so return empty array
-        return array();
+        return [];
     }
 
     function bsonUnserialize(array $data): void
@@ -50,11 +50,11 @@ $bOurClass = base64_encode('OurClass');
 $bTheirClass = base64_encode('TheirClass');
 $bInterface = base64_encode('MongoDB\BSON\Unserializable');
 
-$testGroups = array(
-    array(
+$testGroups = [
+    [
         'name' => 'DEFAULT TYPEMAP',
-        'typemap' => array(),
-        'tests' => array(
+        'typemap' => [],
+        'tests' => [
             '{ "foo": "yes", "bar" : false }',
             '{ "foo": "no", "array" : [ 5, 6 ] }',
             '{ "foo": "no", "obj" : { "embedded" : 4.125 } }',
@@ -63,74 +63,74 @@ $testGroups = array(
             '{ "foo": "yes", "__pclass": { "$binary": "' . $bYourClass . '", "$type": "80" } }',
             '{ "foo": "yes", "__pclass": { "$binary": "' . $bOurClass . '", "$type": "80" } }',
             '{ "foo": "yes", "__pclass": { "$binary": "' . $bYourClass . '", "$type": "44" } }',
-        ),
-    ),
-    array(
+        ],
+    ],
+    [
         'name' => 'NONEXISTING CLASS',
-        'typemap' => array('root' => 'MissingClass'),
-        'tests' => array(
+        'typemap' => ['root' => 'MissingClass'],
+        'tests' => [
             '{ "foo": "yes" }',
-        ),
-    ),
-    array(
+        ],
+    ],
+    [
         'name' => 'DOES NOT IMPLEMENT UNSERIALIZABLE',
-        'typemap' => array('root' => 'MyClass'),
-        'tests' => array(
+        'typemap' => ['root' => 'MyClass'],
+        'tests' => [
             '{ "foo": "yes", "__pclass": { "$binary": "' . $bMyClass . '", "$type": "80" } }',
-        ),
-    ),
-    array(
+        ],
+    ],
+    [
         'name' => 'IS NOT A CONCRETE CLASS',
-        'typemap' => array('root' => 'MongoDB\BSON\Unserializable'),
-        'tests' => array(
+        'typemap' => ['root' => 'MongoDB\BSON\Unserializable'],
+        'tests' => [
             '{ "foo": "yes" }',
-        ),
-    ),
-    array(
+        ],
+    ],
+    [
         'name' => 'IS NOT A CONCRETE CLASS VIA PCLASS',
-        'typemap' => array('root' => 'YourClass'),
-        'tests' => array(
+        'typemap' => ['root' => 'YourClass'],
+        'tests' => [
             '{ "foo": "yes", "__pclass" : { "$binary": "' . $bInterface . '", "$type": "80" } }',
-        ),
-    ),
-    array(
+        ],
+    ],
+    [
         'name' => 'PCLASS OVERRIDES TYPEMAP (1)',
-        'typemap' => array('root' => 'YourClass'),
-        'tests' => array(
+        'typemap' => ['root' => 'YourClass'],
+        'tests' => [
             '{ "foo": "yes", "__pclass" : { "$binary": "' . $bMyClass . '", "$type": "80" } }',
             '{ "foo": "yes", "__pclass" : { "$binary": "' . $bOurClass . '", "$type": "80" } }',
             '{ "foo": "yes", "__pclass" : { "$binary": "' . $bTheirClass . '", "$type": "80" } }',
             '{ "foo": "yes", "__pclass" : { "$binary": "' . $bYourClass . '", "$type": "80" } }',
-        ),
-    ),
-    array(
+        ],
+    ],
+    [
         'name' => 'PCLASS OVERRIDES TYPEMAP (2)',
-        'typemap' => array('root' => 'OurClass'),
-        'tests' => array(
+        'typemap' => ['root' => 'OurClass'],
+        'tests' => [
             '{ "foo": "yes", "__pclass" : { "$binary": "' . $bTheirClass . '", "$type": "80" } }',
-        ),
-    ),
-    array(
+        ],
+    ],
+    [
         'name' => 'OBJECTS AS ARRAY',
-        'typemap' => array('root' => 'array', 'document' => 'array'),
-        'tests' => array(
+        'typemap' => ['root' => 'array', 'document' => 'array'],
+        'tests' => [
             '{ "foo": "yes", "bar" : false }',
             '{ "foo": "no", "array" : [ 5, 6 ] }',
             '{ "foo": "no", "obj" : { "embedded" : 4.125 } }',
             '{ "foo": "yes", "__pclass": "MyClass" }',
             '{ "foo": "yes", "__pclass" : { "$binary": "' . $bMyClass . '", "$type": "80" } }',
             '{ "foo": "yes", "__pclass" : { "$binary": "' . $bOurClass . '", "$type": "80" } }',
-        ),
-    ),
-    array(
+        ],
+    ],
+    [
         'name' => 'OBJECTS AS STDCLASS',
-        'typemap' => array('root' => 'object', 'document' => 'object'),
-        'tests' => array(
+        'typemap' => ['root' => 'object', 'document' => 'object'],
+        'tests' => [
             '{ "foo": "yes", "__pclass" : { "$binary": "' . $bMyClass . '", "$type": "80" } }',
             '{ "foo": "yes", "__pclass" : { "$binary": "' . $bOurClass . '", "$type": "80" } }',
-        ),
-    ),
-);
+        ],
+    ],
+];
 
 foreach ($testGroups as $testGroup) {
     printf("=== %s ===\n\n", $testGroup['name']);

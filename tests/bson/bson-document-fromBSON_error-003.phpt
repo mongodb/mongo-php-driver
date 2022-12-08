@@ -5,7 +5,7 @@ MongoDB\BSON\Document::fromBSON(): BSON decoding exceptions for bson_iter_visit_
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$tests = array(
+$tests = [
     // Invalid UTF-8 character in root document's field name
     str_replace('INVALID!', "INVALID\xFE", fromPHP(['INVALID!' => 'bar'])),
     // Invalid UTF-8 character in embedded document's field name
@@ -21,7 +21,7 @@ $tests = array(
      */
     pack('VCa*xVa*xx', 17, 1, 'foo', 3, 'ab'), // Invalid field type (underflow)
     pack('VCa*xVa*xx', 20, 1, 'foo', 6, 'abcde'), // Invalid field type (overflow)
-);
+];
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {

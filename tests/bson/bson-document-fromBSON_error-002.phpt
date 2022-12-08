@@ -5,10 +5,10 @@ MongoDB\BSON\Document::fromBSON(): BSON decoding exceptions for malformed docume
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$tests = array(
+$tests = [
     pack('Vx', 4), // Empty document with invalid length (too small)
     pack('Vx', 6), // Empty document with invalid length (too large)
-);
+];
 
 foreach ($tests as $bson) {
     echo throws(function() use ($bson) {

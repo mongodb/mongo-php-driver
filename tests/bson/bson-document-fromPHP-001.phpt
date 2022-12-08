@@ -21,12 +21,12 @@ class MyDocument implements MongoDB\BSON\Serializable
     }
 }
 
-$tests = array(
-    array(1, 2, 3),
-    array('foo' => 'bar'),
-    (object) array(1, 2, 3),
-    (object) array('foo' => 'bar'),
-);
+$tests = [
+    [1, 2, 3],
+    ['foo' => 'bar'],
+    (object) [1, 2, 3],
+    (object) ['foo' => 'bar'],
+];
 
 echo "Testing top-level objects\n";
 
@@ -42,7 +42,7 @@ echo "\nTesting nested objects\n";
 
 foreach ($tests as $test) {
     try {
-        echo MongoDB\BSON\Document::fromPHP(new MyDocument(array('nested' => new MyDocument($test))))->toRelaxedExtendedJson(), "\n";
+        echo MongoDB\BSON\Document::fromPHP(new MyDocument(['nested' => new MyDocument($test)]))->toRelaxedExtendedJson(), "\n";
     } catch (MongoDB\Driver\Exception\UnexpectedValueException $e) {
         echo $e->getMessage(), "\n";
     }

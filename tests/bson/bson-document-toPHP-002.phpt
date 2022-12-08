@@ -11,10 +11,10 @@ class MyDocument implements MongoDB\BSON\Persistable
 
     public function __construct()
     {
-        $this->data = array(
-            'list' => array(1, 2, 3),
-            'map' => (object) array('foo' => 'bar'),
-        );
+        $this->data = [
+            'list' => [1, 2, 3],
+            'map' => (object) ['foo' => 'bar'],
+        ];
     }
 
     public function bsonSerialize(): array
@@ -24,7 +24,7 @@ class MyDocument implements MongoDB\BSON\Persistable
 
     public function bsonUnserialize(array $data): void
     {
-        foreach (array('list', 'map') as $key) {
+        foreach (['list', 'map'] as $key) {
             if (isset($data[$key])) {
                 $this->data[$key] = $data[$key];
             }
@@ -35,11 +35,11 @@ class MyDocument implements MongoDB\BSON\Persistable
 $bson = MongoDB\BSON\Document::fromPHP(new MyDocument);
 echo "Test ", $bson->toRelaxedExtendedJSON(), "\n";
 
-$typeMap = array(
+$typeMap = [
     'array' => null,
     'document' => null,
     'root' => null,
-);
+];
 
 var_dump($bson->toPHP($typeMap));
 
