@@ -118,6 +118,6 @@ void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map);
 void php_phongo_bson_new_timestamp_from_increment_and_timestamp(zval* object, uint32_t increment, uint32_t timestamp);
 void php_phongo_bson_new_int64(zval* object, int64_t integer);
 
-void php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter);
+bool php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter);
 
 #endif /* PHONGO_BSON_H */

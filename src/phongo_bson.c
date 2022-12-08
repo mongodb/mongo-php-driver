@@ -1428,7 +1428,7 @@ bool php_phongo_bson_to_json(zval* return_value, const bson_t* bson, php_phongo_
 	return true;
 }
 
-void php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
+bool php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 {
 	const char*             data;
 	const char*             options;
@@ -1443,12 +1443,18 @@ void php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 
 	switch (bson_iter_type(iter)) {
 		case BSON_TYPE_UTF8:
-			ZVAL_STRING(zv, bson_iter_utf8(iter, NULL));
-			return;
+			data = bson_iter_utf8(iter, &data_len);
+			if (!bson_utf8_validate(data, data_len, true)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected corrupt BSON data at offset %d", iter->err_off);
+				return false;
+			}
+
+			ZVAL_STRINGL(zv, data, data_len);
+			return true;
 
 		case BSON_TYPE_EOD:
 			ZVAL_UNDEF(zv);
-			return;
+			return true;
 
 		case BSON_TYPE_DOCUMENT:
 			bson_iter_document(iter, &data_len, (const uint8_t**) &data);
@@ -1456,11 +1462,11 @@ void php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 			object_init_ex(zv, php_phongo_document_ce);
 			document_intern       = Z_DOCUMENT_OBJ_P(zv);
 			document_intern->bson = bson_new_from_data((const uint8_t*) data, data_len);
-			return;
+			return true;
 
 		case BSON_TYPE_DOUBLE:
 			ZVAL_DOUBLE(zv, bson_iter_double(iter));
-			return;
+			return true;
 
 		case BSON_TYPE_ARRAY:
 			bson_iter_array(iter, &data_len, (const uint8_t**) &data);
@@ -1468,80 +1474,109 @@ void php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 			object_init_ex(zv, php_phongo_arraylist_ce);
 			arraylist_intern       = Z_ARRAYLIST_OBJ_P(zv);
 			arraylist_intern->bson = bson_new_from_data((const uint8_t*) data, data_len);
-			return;
+			return true;
 
 		case BSON_TYPE_BINARY:
 			bson_iter_binary(iter, (bson_subtype_t*) &subtype, &data_len, (const uint8_t**) &data);
 			php_phongo_bson_new_binary_from_binary_and_type(zv, data, data_len, subtype);
-			return;
+			return true;
 
 		case BSON_TYPE_UNDEFINED:
 			object_init_ex(zv, php_phongo_undefined_ce);
-			return;
+			return true;
 
 		case BSON_TYPE_OID:
 			php_phongo_objectid_new_from_oid(zv, bson_iter_oid(iter));
-			return;
+			return true;
 
 		case BSON_TYPE_BOOL:
 			ZVAL_BOOL(zv, bson_iter_bool(iter));
-			return;
+			return true;
 
 		case BSON_TYPE_DATE_TIME:
 			php_phongo_bson_new_utcdatetime_from_epoch(zv, bson_iter_date_time(iter));
-			return;
+			return true;
 
 		case BSON_TYPE_NULL:
 			ZVAL_NULL(zv);
-			return;
+			return true;
 
 		case BSON_TYPE_REGEX:
 			data = bson_iter_regex(iter, &options);
+			if (!bson_utf8_validate(data, strlen(data), true)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected corrupt BSON data at offset %d", iter->err_off);
+				return false;
+			}
+
 			php_phongo_bson_new_regex_from_regex_and_options(zv, data, options);
-			return;
+			return true;
 
 		case BSON_TYPE_DBPOINTER:
 			bson_iter_dbpointer(iter, &data_len, &data, &oid);
+			if (!bson_utf8_validate(data, data_len, true)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected corrupt BSON data at offset %d", iter->err_off);
+				return false;
+			}
+
 			php_phongo_bson_new_dbpointer(zv, data, data_len, oid);
-			return;
+			return true;
 
 		case BSON_TYPE_CODE:
 			data = bson_iter_code(iter, &data_len);
+			if (!bson_utf8_validate(data, data_len, true)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected corrupt BSON data at offset %d", iter->err_off);
+				return false;
+			}
+
 			php_phongo_bson_new_javascript_from_javascript(zv, data, data_len);
-			return;
+			return true;
 
 		case BSON_TYPE_SYMBOL:
 			data = bson_iter_symbol(iter, &data_len);
+			if (!bson_utf8_validate(data, data_len, true)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected corrupt BSON data at offset %d", iter->err_off);
+				return false;
+			}
+
 			php_phongo_bson_new_symbol(zv, data, data_len);
-			return;
+			return true;
 
 		case BSON_TYPE_CODEWSCOPE:
 			data = bson_iter_codewscope(iter, &data_len, &options_len, (const uint8_t**) &options);
+			if (!bson_utf8_validate(data, data_len, true)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected corrupt BSON data at offset %d", iter->err_off);
+				return false;
+			}
+
 			bson_init_from_json(&bson, options, options_len, NULL);
 			php_phongo_bson_new_javascript_from_javascript_and_scope(zv, data, data_len, &bson);
-			return;
+			return true;
 
 		case BSON_TYPE_INT32:
 		case BSON_TYPE_INT64:
 			ZVAL_INT64(zv, bson_iter_as_int64(iter));
-			return;
+			return true;
 
 		case BSON_TYPE_TIMESTAMP:
 			bson_iter_timestamp(iter, &data_len, &options_len);
 			php_phongo_bson_new_timestamp_from_increment_and_timestamp(zv, options_len, data_len);
-			return;
+			return true;
 
 		case BSON_TYPE_DECIMAL128:
 			bson_iter_decimal128(iter, &decimal);
 			php_phongo_bson_new_decimal128(zv, &decimal);
-			return;
+			return true;
 
 		case BSON_TYPE_MAXKEY:
 			object_init_ex(zv, php_phongo_maxkey_ce);
-			return;
+			return true;
 
 		case BSON_TYPE_MINKEY:
 			object_init_ex(zv, php_phongo_minkey_ce);
-			return;
+			return true;
+
+		default:
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected unsupported BSON type %d at offset %d", iter->type, iter->off);
+			return false;
 	}
 }

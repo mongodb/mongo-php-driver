@@ -132,6 +132,7 @@ static PHP_METHOD(MongoDB_BSON_Iterator, current)
 
 static PHP_METHOD(MongoDB_BSON_Iterator, key)
 {
+	const char*            key;
 	php_phongo_iterator_t* intern = Z_ITERATOR_OBJ_P(getThis());
 
 	PHONGO_PARSE_PARAMETERS_NONE();
@@ -147,6 +148,12 @@ static PHP_METHOD(MongoDB_BSON_Iterator, key)
 
 	if (intern->is_array) {
 		RETURN_LONG(intern->key);
+	}
+
+	key = bson_iter_key(&intern->iter);
+	if (!bson_utf8_validate(key, strlen(key), false)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected corrupt BSON data at offset %d", intern->iter.off);
+		return;
 	}
 
 	RETURN_STRING(bson_iter_key(&intern->iter));
