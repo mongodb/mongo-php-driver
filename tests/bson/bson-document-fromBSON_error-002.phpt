@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\BSON\Document::fromBSON(): BSON decoding exceptions for malformed documents
+--DESCRIPTION--
+This test was adapted from bson-toPHP_error-003.phpt
 --FILE--
 <?php
 

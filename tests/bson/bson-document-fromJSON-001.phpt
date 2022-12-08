@@ -10,7 +10,7 @@ $tests = [
     '{ "foo": "bar" }',
     '{ "foo": [ 1, 2, 3 ]}',
     '{ "foo": { "bar": 1 }}',
-    '[ 1, 2, 3 ]',
+    '[ 1, 2, 3 ]', // This will be interpreted as an object, i.e. { "0": 1, "1": 2, "2": 3 }
 ];
 
 foreach ($tests as $json) {

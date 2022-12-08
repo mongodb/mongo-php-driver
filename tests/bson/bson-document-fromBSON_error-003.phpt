@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\BSON\Document::fromBSON(): BSON decoding exceptions for bson_iter_visit_all() failure
+--DESCRIPTION--
+This test was adapted from bson-toPHP_error-004.phpt
 --FILE--
 <?php
 

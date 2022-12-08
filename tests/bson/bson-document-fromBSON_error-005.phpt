@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\BSON\Document::fromBSON(): BSON decoding exception with unknown BSON type
+--DESCRIPTION--
+This test was adapted from bson-toPHP_error-006.phpt
 --FILE--
 <?php
 

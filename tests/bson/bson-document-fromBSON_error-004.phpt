@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\BSON\Document::fromBSON(): Field path values with bson_iter_visit_all() failures
+--DESCRIPTION--
+This test was adapted from bson-toPHP_error-005.phpt
 --FILE--
 <?php
 

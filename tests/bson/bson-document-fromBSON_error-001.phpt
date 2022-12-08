@@ -1,5 +1,7 @@
 --TEST--
 MongoDB\BSON\Document::fromBSON(): BSON decoding exceptions
+--DESCRIPTION--
+This test was adapted from bson-toPHP_error-002.phpt
 --FILE--
 <?php
 
