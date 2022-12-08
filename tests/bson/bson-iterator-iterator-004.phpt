@@ -1,8 +1,8 @@
 --TEST--
-MongoDB\BSON\Iterator does not extend past the last element in a structure (PHP >= 8.0)
+MongoDB\BSON\Iterator does not extend past the last element in a structure (PHP < 8.0)
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('<', '8.0'); ?>
+<?php skip_if_php_version('>=', '8.0'); ?>
 --FILE--
 <?php
 
@@ -21,8 +21,6 @@ $iterator->next();
 showIteratorStatus($iterator);
 $iterator->next();
 showIteratorStatus($iterator);
-
-// Will never be executed as the code errors earlier
 $iterator->next();
 showIteratorStatus($iterator);
 
@@ -38,5 +36,8 @@ int(20)
 int(1)
 bool(false)
 NULL
-
-Fatal error: MongoDB\BSON\Iterator::key(): Return value must be of type string|int, null returned%s
+NULL
+bool(false)
+NULL
+NULL
+===DONE===

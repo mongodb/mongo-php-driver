@@ -138,12 +138,7 @@ static PHP_METHOD(MongoDB_BSON_Iterator, key)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if (!intern->valid) {
-#if PHP_VERSION_ID < 80000
-		/* Simulate behaviour of returning null on PHP 8 */
-		zend_error_noreturn(E_ERROR, "MongoDB\\BSON\\Iterator::key(): Return value must be of type string|int, null returned");
-#else
 		RETURN_NULL();
-#endif
 	}
 
 	if (intern->is_array) {
