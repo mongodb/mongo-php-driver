@@ -35,6 +35,15 @@
 
 #define PHONGO_FIELD_PATH_EXPANSION 8
 
+#define PHONGO_TYPEMAP_FIELD_STR_ARRAY "array"
+#define PHONGO_TYPEMAP_FIELD_STR_DOCUMENT "document"
+#define PHONGO_TYPEMAP_FIELD_STR_ROOT "root"
+
+#define PHONGO_TYPEMAP_TYPE_STR_ARRAY "array"
+#define PHONGO_TYPEMAP_TYPE_STR_BSON "bson"
+#define PHONGO_TYPEMAP_TYPE_STR_OBJECT "object"
+#define PHONGO_TYPEMAP_TYPE_STR_STDCLASS "stdclass"
+
 /* Forward declarations */
 static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_document, void* data);
 static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_t* v_array, void* data);
@@ -283,7 +292,7 @@ static bool php_phongo_bson_visit_binary(const bson_iter_t* iter ARG_UNUSED, con
 		zend_string_release(zs_classname);
 
 		if (found_ce && phongo_is_class_instantiatable(found_ce) && instanceof_function(found_ce, php_phongo_persistable_ce)) {
-			((php_phongo_bson_state*) data)->odm = found_ce;
+			((php_phongo_bson_state*) data)->odm_ce = found_ce;
 		}
 	}
 
@@ -812,7 +821,7 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 
 	/* If php_phongo_bson_visit_binary() finds an ODM class, it should
 	 * supersede a default type map and named document class. */
-	if (state.odm && state.field_type.type == PHONGO_TYPEMAP_NONE) {
+	if (state.odm_ce && state.field_type.type == PHONGO_TYPEMAP_NONE) {
 		state.field_type.type = PHONGO_TYPEMAP_CLASS;
 	}
 
@@ -833,7 +842,7 @@ static bool php_phongo_bson_visit_document(const bson_iter_t* iter ARG_UNUSED, c
 
 		case PHONGO_TYPEMAP_CLASS: {
 			zval              obj;
-			zend_class_entry* obj_ce = state.odm ? state.odm : state.field_type.ce;
+			zend_class_entry* obj_ce = state.odm_ce ? state.odm_ce : state.field_type.ce;
 
 			object_init_ex(&obj, obj_ce);
 
@@ -1074,7 +1083,7 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 	if (state->map.root.type == PHONGO_TYPEMAP_NONE) {
 		if (state->is_visiting_array) {
 			state->map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
-		} else if (state->odm) {
+		} else if (state->odm_ce) {
 			state->map.root.type = PHONGO_TYPEMAP_CLASS;
 		}
 	}
@@ -1086,7 +1095,7 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 
 		case PHONGO_TYPEMAP_CLASS: {
 			zval              obj;
-			zend_class_entry* obj_ce = state->odm ? state->odm : state->map.root.ce;
+			zend_class_entry* obj_ce = state->odm_ce ? state->odm_ce : state->map.root.ce;
 
 			object_init_ex(&obj, obj_ce);
 
@@ -1183,28 +1192,28 @@ static zend_class_entry* php_phongo_bson_state_fetch_class(const char* classname
  * otherwise, false is returned and an exception is thrown. */
 static bool php_phongo_bson_state_parse_type(zval* options, const char* name, php_phongo_bson_typemap_element* element)
 {
-	char*     classname;
-	int       classname_len;
-	zend_bool classname_free = 0;
-	bool      retval         = true;
+	char*     type;
+	int       type_len;
+	zend_bool type_free = 0;
+	bool      retval    = true;
 
-	classname = php_array_fetch_string(options, name, &classname_len, &classname_free);
+	type = php_array_fetch_string(options, name, &type_len, &type_free);
 
-	if (!classname_len) {
+	if (!type_len) {
 		goto cleanup;
 	}
 
-	if (!strcasecmp(classname, "array")) {
+	if (!strcasecmp(type, PHONGO_TYPEMAP_TYPE_STR_ARRAY)) {
 		element->type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 		element->ce   = NULL;
-	} else if (!strcasecmp(classname, "bson")) {
+	} else if (!strcasecmp(type, PHONGO_TYPEMAP_TYPE_STR_BSON)) {
 		element->type = PHONGO_TYPEMAP_BSON;
 		element->ce   = NULL;
-	} else if (!strcasecmp(classname, "stdclass") || !strcasecmp(classname, "object")) {
+	} else if (!strcasecmp(type, PHONGO_TYPEMAP_TYPE_STR_STDCLASS) || !strcasecmp(type, PHONGO_TYPEMAP_TYPE_STR_OBJECT)) {
 		element->type = PHONGO_TYPEMAP_NATIVE_OBJECT;
 		element->ce   = NULL;
 	} else {
-		if ((element->ce = php_phongo_bson_state_fetch_class(classname, classname_len, php_phongo_unserializable_ce))) {
+		if ((element->ce = php_phongo_bson_state_fetch_class(type, type_len, php_phongo_unserializable_ce))) {
 			element->type = PHONGO_TYPEMAP_CLASS;
 		} else {
 			/* Exception already thrown */
@@ -1213,8 +1222,8 @@ static bool php_phongo_bson_state_parse_type(zval* options, const char* name, ph
 	}
 
 cleanup:
-	if (classname_free) {
-		efree(classname);
+	if (type_free) {
+		efree(type);
 	}
 
 	return retval;
@@ -1375,9 +1384,9 @@ bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* ma
 		return true;
 	}
 
-	if (!php_phongo_bson_state_parse_type(typemap, "array", &map->array) ||
-		!php_phongo_bson_state_parse_type(typemap, "document", &map->document) ||
-		!php_phongo_bson_state_parse_type(typemap, "root", &map->root) ||
+	if (!php_phongo_bson_state_parse_type(typemap, PHONGO_TYPEMAP_FIELD_STR_ARRAY, &map->array) ||
+		!php_phongo_bson_state_parse_type(typemap, PHONGO_TYPEMAP_FIELD_STR_DOCUMENT, &map->document) ||
+		!php_phongo_bson_state_parse_type(typemap, PHONGO_TYPEMAP_FIELD_STR_ROOT, &map->root) ||
 		!php_phongo_bson_state_parse_fieldpaths(typemap, map)) {
 
 		/* Exception should already have been thrown */

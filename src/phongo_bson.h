@@ -72,7 +72,7 @@ typedef struct {
 typedef struct {
 	zval                            zchild;
 	php_phongo_bson_typemap         map;
-	zend_class_entry*               odm;
+	zend_class_entry*               odm_ce;
 	bool                            is_visiting_array;
 	php_phongo_field_path*          field_path;
 	php_phongo_bson_typemap_element field_type;
