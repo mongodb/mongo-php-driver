@@ -45,7 +45,12 @@ static bool php_phongo_arraylist_init_from_hash(php_phongo_arraylist_t* intern, 
 		intern->bson = bson_new_from_data((const uint8_t*) ZSTR_VAL(decoded), ZSTR_LEN(decoded));
 		zend_string_free(decoded);
 
-		return intern->bson != NULL;
+		if (intern->bson == NULL) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires valid BSON", ZSTR_VAL(php_phongo_arraylist_ce->name));
+			return false;
+		}
+
+		return true;
 	}
 
 	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "%s initialization requires \"data\" string field", ZSTR_VAL(php_phongo_arraylist_ce->name));

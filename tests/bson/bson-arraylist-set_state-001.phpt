@@ -3,10 +3,17 @@ MongoDB\BSON\ArrayList::__set_state()
 --FILE--
 <?php
 
-$s = var_export(MongoDB\BSON\ArrayList::fromPHP([0, 1, 'foo', (object) ['foo' => 'bar']]), true);
+$array = MongoDB\BSON\ArrayList::fromPHP([
+    0,
+    1,
+    'foo',
+    (object) ['foo' => 'bar']
+]);
+$s = var_export($array, true);
 echo $s, "\n";
 
-var_dump(eval('return ' . $s . ';'));
+var_dump($a = eval('return ' . $s . ';'));
+var_dump($a == $array);
 
 ?>
 ===DONE===
@@ -19,4 +26,5 @@ object(MongoDB\BSON\ArrayList)#%d (%d) {
   ["data"]=>
   string(68) "MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA"
 }
+bool(true)
 ===DONE===
