@@ -1,10 +1,9 @@
 --TEST--
-MongoDB\BSON\Iterator does not extend past the last element in a structure (PHP >= 8.0)
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('<', '8.0'); ?>
+MongoDB\BSON\Iterator does not extend past the last element in a structure
 --FILE--
 <?php
+
+require __DIR__ . "/../utils/basic.inc";
 
 function showIteratorStatus(MongoDB\BSON\Iterator $iterator): void
 {
@@ -19,12 +18,19 @@ $iterator = $array->getIterator();
 showIteratorStatus($iterator);
 $iterator->next();
 showIteratorStatus($iterator);
-$iterator->next();
-showIteratorStatus($iterator);
 
-// Will never be executed as the code errors earlier
+// Will take the iterator to an invalid state
 $iterator->next();
-showIteratorStatus($iterator);
+
+var_dump($iterator->valid());
+
+echo throws(function () use ($iterator) {
+    $iterator->current();
+}, MongoDB\Driver\Exception\LogicException::class), "\n";
+
+echo throws(function () use ($iterator) {
+    $iterator->key();
+}, MongoDB\Driver\Exception\LogicException::class), "\n";
 
 ?>
 ===DONE===
@@ -37,6 +43,8 @@ bool(true)
 int(20)
 int(1)
 bool(false)
-NULL
-
-Fatal error: MongoDB\BSON\Iterator::key(): Return value must be of type string|int, null returned%s
+OK: Got MongoDB\Driver\Exception\LogicException
+Cannot call current() on an exhausted iterator
+OK: Got MongoDB\Driver\Exception\LogicException
+Cannot call key() on an exhausted iterator
+===DONE===

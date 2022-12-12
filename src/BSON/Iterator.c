@@ -116,7 +116,8 @@ static PHP_METHOD(MongoDB_BSON_Iterator, current)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if (!intern->valid) {
-		RETURN_NULL();
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot call current() on an exhausted iterator");
+		return;
 	}
 
 	if (Z_ISUNDEF(intern->current)) {
@@ -138,7 +139,8 @@ static PHP_METHOD(MongoDB_BSON_Iterator, key)
 	PHONGO_PARSE_PARAMETERS_NONE();
 
 	if (!intern->valid) {
-		RETURN_NULL();
+		phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot call key() on an exhausted iterator");
+		return;
 	}
 
 	if (intern->is_array) {
