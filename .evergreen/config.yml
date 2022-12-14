@@ -377,9 +377,13 @@ functions:
   "run OCSP responder":
     - command: shell.exec
       params:
+        shell: bash
         script: |
           ${PREPARE_SHELL}
-          TEST_COLUMN=${TEST_COLUMN} CERT_TYPE=${CERT_TYPE} USE_DELEGATE=${USE_DELEGATE} sh ${PROJECT_DIRECTORY}/.evergreen/run-ocsp-responder.sh
+          TEST_COLUMN=${TEST_COLUMN} \
+          CERT_TYPE=${CERT_TYPE} \
+          USE_DELEGATE=${USE_DELEGATE} \
+          ${PROJECT_DIRECTORY}/.evergreen/run-ocsp-responder.sh
 
   "run tests":
     - command: shell.exec
