@@ -12,14 +12,14 @@ $data = [
     'float' => 3.1415926,
     'document' => MongoDB\BSON\Document::fromJSON('{ "foo": "bar" }'),
     'object' => (object) ['foo' => 'bar'],
-    'bson_array' => MongoDB\BSON\ArrayList::fromPHP([1, 2, 'foo']),
+    'bson_array' => MongoDB\BSON\PackedArray::fromPHP([1, 2, 'foo']),
     'array' => [0, 1, 'bar'],
 ];
 
 $iterator = MongoDB\BSON\Document::fromPHP($data)->getIterator();
 var_dump(iterator_to_array($iterator));
 
-$iterator = MongoDB\BSON\ArrayList::fromPHP(array_values($data))->getIterator();
+$iterator = MongoDB\BSON\PackedArray::fromPHP(array_values($data))->getIterator();
 var_dump(iterator_to_array($iterator));
 
 ?>
@@ -49,12 +49,12 @@ array(8) {
     string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
   }
   ["bson_array"]=>
-  object(MongoDB\BSON\ArrayList)#%d (%d) {
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
     ["data"]=>
     string(40) "HgAAABAwAAEAAAAQMQACAAAAAjIABAAAAGZvbwAA"
   }
   ["array"]=>
-  object(MongoDB\BSON\ArrayList)#%d (%d) {
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
     ["data"]=>
     string(40) "HgAAABAwAAAAAAAQMQABAAAAAjIABAAAAGJhcgAA"
   }
@@ -82,12 +82,12 @@ array(8) {
     string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
   }
   [6]=>
-  object(MongoDB\BSON\ArrayList)#%d (%d) {
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
     ["data"]=>
     string(40) "HgAAABAwAAEAAAAQMQACAAAAAjIABAAAAGZvbwAA"
   }
   [7]=>
-  object(MongoDB\BSON\ArrayList)#%d (%d) {
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
     ["data"]=>
     string(40) "HgAAABAwAAAAAAAQMQABAAAAAjIABAAAAGJhcgAA"
   }

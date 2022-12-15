@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\BSON\ArrayList::get() index access returns BSON structures
+MongoDB\BSON\PackedArray::get() index access returns BSON structures
 --FILE--
 <?php
 
-$array = MongoDB\BSON\ArrayList::fromPHP([(object) ['foo' => 'bar']]);
+$array = MongoDB\BSON\PackedArray::fromPHP([(object) ['foo' => 'bar']]);
 $child = $array->get(0);
 unset($array);
 var_dump($child->toPHP());

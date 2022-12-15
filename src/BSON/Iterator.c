@@ -40,8 +40,8 @@ static const bson_t* php_phongo_iterator_get_bson_from_zval(zval* zbson)
 
 	if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_document_ce)) {
 		return Z_DOCUMENT_OBJ_P(zbson)->bson;
-	} else if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_arraylist_ce)) {
-		return Z_ARRAYLIST_OBJ_P(zbson)->bson;
+	} else if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_packedarray_ce)) {
+		return Z_PACKEDARRAY_OBJ_P(zbson)->bson;
 	} else {
 		return NULL;
 	}
@@ -66,7 +66,7 @@ static bool php_phongo_iterator_init_with_zval(php_phongo_iterator_t* iterator, 
 	}
 
 	ZVAL_COPY(&iterator->bson, zbson);
-	if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_arraylist_ce)) {
+	if (instanceof_function(Z_OBJCE_P(zbson), php_phongo_packedarray_ce)) {
 		iterator->is_array = true;
 	}
 
@@ -194,14 +194,14 @@ static PHP_METHOD(MongoDB_BSON_Iterator, rewind)
 	intern->valid = bson_iter_next(&intern->iter);
 }
 
-void phongo_iterator_init(zval* return_value, zval* document_or_arraylist)
+void phongo_iterator_init(zval* return_value, zval* document_or_packedarray)
 {
 	php_phongo_iterator_t* intern;
 
 	object_init_ex(return_value, php_phongo_iterator_ce);
 	intern = Z_ITERATOR_OBJ_P(return_value);
 
-	php_phongo_iterator_init_with_zval(intern, document_or_arraylist);
+	php_phongo_iterator_init_with_zval(intern, document_or_packedarray);
 }
 
 /* MongoDB\BSON\Iterator object handlers */

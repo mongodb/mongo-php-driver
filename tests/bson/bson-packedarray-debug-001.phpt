@@ -1,17 +1,17 @@
 --TEST--
-MongoDB\BSON\ArrayList debug output
+MongoDB\BSON\PackedArray debug output
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-var_dump(MongoDB\BSON\ArrayList::fromPHP([]));
+var_dump(MongoDB\BSON\PackedArray::fromPHP([]));
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\BSON\ArrayList)#%d (%d) {
+object(MongoDB\BSON\PackedArray)#%d (%d) {
   ["data"]=>
   string(8) "BQAAAAA="
 }

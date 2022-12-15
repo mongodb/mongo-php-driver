@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ArrayList::toPHP(): Unserializable as root type
+MongoDB\BSON\PackedArray::toPHP(): Unserializable as root type
 --FILE--
 <?php
 
@@ -15,8 +15,8 @@ class MyArray implements MongoDB\BSON\Unserializable
     }
 }
 
-$arrayList = MongoDB\BSON\ArrayList::fromPHP([1, 2, 3]);
-var_dump($arrayList->toPHP(['root' => MyArray::class]));
+$packedArray = MongoDB\BSON\PackedArray::fromPHP([1, 2, 3]);
+var_dump($packedArray->toPHP(['root' => MyArray::class]));
 
 ?>
 ===DONE===

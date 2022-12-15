@@ -1,11 +1,11 @@
 --TEST--
-MongoDB\BSON\ArrayList can be cloned
+MongoDB\BSON\PackedArray can be cloned
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$bson = MongoDB\BSON\ArrayList::fromPHP([1, 2, 3]);
+$bson = MongoDB\BSON\PackedArray::fromPHP([1, 2, 3]);
 $clone = clone $bson;
 
 var_dump($clone == $bson);
@@ -20,7 +20,7 @@ var_dump($clone);
 --EXPECTF--
 bool(true)
 bool(false)
-object(MongoDB\BSON\ArrayList)#%d (%d) {
+object(MongoDB\BSON\PackedArray)#%d (%d) {
   ["data"]=>
   string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
 }

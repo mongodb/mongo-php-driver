@@ -12,7 +12,7 @@ function showIteratorStatus(MongoDB\BSON\Iterator $iterator): void
     var_dump($iterator->key());
 }
 
-$array = MongoDB\BSON\ArrayList::fromPHP([10, 20]);
+$array = MongoDB\BSON\PackedArray::fromPHP([10, 20]);
 $iterator = $array->getIterator();
 
 showIteratorStatus($iterator);

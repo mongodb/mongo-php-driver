@@ -5,7 +5,7 @@ MongoDB\BSON\Iterator cannot be serialized
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$array = MongoDB\BSON\ArrayList::fromPHP([0, 1, 'foo', (object) ['foo' => 'bar']]);
+$array = MongoDB\BSON\PackedArray::fromPHP([0, 1, 'foo', (object) ['foo' => 'bar']]);
 echo throws(function () use ($array) {
     serialize($array->getIterator());
 }, \Exception::class), "\n";

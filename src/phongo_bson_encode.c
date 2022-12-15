@@ -89,7 +89,7 @@ static int php_phongo_is_array_or_document(zval* val)
 /* Appends the array or object argument to the BSON document.
  *
  * For instances of MongoDB\BSON\Document, raw BSON data is appended as document.
- * For instances of MongoDB\BSON\ArrayList, raw BSON data is appended as array.
+ * For instances of MongoDB\BSON\PackedArray, raw BSON data is appended as array.
  * For instances of MongoDB\BSON\Serializable, the return value of bsonSerialize()
  * will be appended as an embedded document.
  * Other MongoDB\BSON\Type instances will be appended as the appropriate BSON
@@ -103,12 +103,12 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		return;
 	}
 
-	if (Z_TYPE_P(object) == IS_OBJECT && (instanceof_function(Z_OBJCE_P(object), php_phongo_document_ce) || instanceof_function(Z_OBJCE_P(object), php_phongo_arraylist_ce))) {
+	if (Z_TYPE_P(object) == IS_OBJECT && (instanceof_function(Z_OBJCE_P(object), php_phongo_document_ce) || instanceof_function(Z_OBJCE_P(object), php_phongo_packedarray_ce))) {
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_document_ce)) {
 			php_phongo_document_t* intern = Z_DOCUMENT_OBJ_P(object);
 			bson_append_document(bson, key, key_len, intern->bson);
 		} else {
-			php_phongo_arraylist_t* intern = Z_ARRAYLIST_OBJ_P(object);
+			php_phongo_packedarray_t* intern = Z_PACKEDARRAY_OBJ_P(object);
 			bson_append_array(bson, key, key_len, intern->bson);
 		}
 
@@ -355,7 +355,7 @@ try_again:
 				break;
 			}
 
-			if (Z_TYPE_P(entry) == IS_OBJECT && instanceof_function(Z_OBJCE_P(entry), php_phongo_arraylist_ce)) {
+			if (Z_TYPE_P(entry) == IS_OBJECT && instanceof_function(Z_OBJCE_P(entry), php_phongo_packedarray_ce)) {
 				php_phongo_field_path_write_type_at_current_level(field_path, PHONGO_FIELD_PATH_ITEM_ARRAY);
 			} else {
 				php_phongo_field_path_write_type_at_current_level(field_path, PHONGO_FIELD_PATH_ITEM_DOCUMENT);
@@ -399,7 +399,7 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 
 	switch (Z_TYPE_P(data)) {
 		case IS_OBJECT:
-			/* Short-circuit MongoDB\BSON\Document and MongoDB\BSON\ArrayList instance - copy the data */
+			/* Short-circuit MongoDB\BSON\Document and MongoDB\BSON\PackedArray instances - copy the data */
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_document_ce)) {
 				php_phongo_document_t* intern = Z_DOCUMENT_OBJ_P(data);
 
@@ -409,8 +409,8 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 				goto done;
 			}
 
-			if (instanceof_function(Z_OBJCE_P(data), php_phongo_arraylist_ce)) {
-				php_phongo_arraylist_t* intern = Z_ARRAYLIST_OBJ_P(data);
+			if (instanceof_function(Z_OBJCE_P(data), php_phongo_packedarray_ce)) {
+				php_phongo_packedarray_t* intern = Z_PACKEDARRAY_OBJ_P(data);
 
 				bson_destroy(bson);
 				bson_copy_to(intern->bson, bson);

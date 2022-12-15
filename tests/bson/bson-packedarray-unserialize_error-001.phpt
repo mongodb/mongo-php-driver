@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ArrayList::unserialize() throws on errors
+MongoDB\BSON\PackedArray::unserialize() throws on errors
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_php_version('>=', '7.4.0'); ?>
@@ -28,8 +28,8 @@ foreach ($tests as $test) {
 
         $payload = sprintf(
             'C:%d:"%s":%d:{a:1:{s:4:"data";s:%d:"%s";}}',
-            strlen(MongoDB\BSON\ArrayList::class),
-            MongoDB\BSON\ArrayList::class,
+            strlen(MongoDB\BSON\PackedArray::class),
+            MongoDB\BSON\PackedArray::class,
             $dataLength + 23 + strlen((string) $dataLength), // 23 characters for everything besides the number of bytes in the payload
             $dataLength,
             $data
@@ -44,9 +44,9 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\BSON\ArrayList initialization requires valid BSON
+MongoDB\BSON\PackedArray initialization requires valid BSON
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\BSON\ArrayList initialization requires valid BSON
+MongoDB\BSON\PackedArray initialization requires valid BSON
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\BSON\ArrayList initialization requires valid BSON
+MongoDB\BSON\PackedArray initialization requires valid BSON
 ===DONE===

@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Iterator maintains reference to its yielding Document or ArrayList
+MongoDB\BSON\Iterator maintains reference to its yielding Document or PackedArray
 --FILE--
 <?php
 
@@ -8,7 +8,7 @@ $iterator = $document->getIterator();
 unset($document);
 var_dump(iterator_to_array($iterator));
 
-$array = MongoDB\BSON\ArrayList::fromPHP([0, 1, "foo"]);
+$array = MongoDB\BSON\PackedArray::fromPHP([0, 1, "foo"]);
 $iterator = $array->getIterator();
 unset($array);
 var_dump(iterator_to_array($iterator));

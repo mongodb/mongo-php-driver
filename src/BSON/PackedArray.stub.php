@@ -7,11 +7,11 @@
 
 namespace MongoDB\BSON;
 
-final class ArrayList implements \IteratorAggregate, \Serializable
+final class PackedArray implements \IteratorAggregate, \Serializable
 {
     private function __construct() {}
 
-    final static public function fromPHP(array $value): ArrayList {}
+    final static public function fromPHP(array $value): PackedArray {}
 
 #if PHP_VERSION_ID >= 80000
     final public function get(int $index): mixed {}
@@ -33,7 +33,7 @@ final class ArrayList implements \IteratorAggregate, \Serializable
 
     final public function __toString(): string {}
 
-    final public static function __set_state(array $properties): ArrayList {}
+    final public static function __set_state(array $properties): PackedArray {}
 
     final public function serialize(): string {}
 

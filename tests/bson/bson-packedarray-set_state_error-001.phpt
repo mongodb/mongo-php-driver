@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ArrayList::__set_state() handles invalid BSON payload correctly
+MongoDB\BSON\PackedArray::__set_state() handles invalid BSON payload correctly
 --FILE--
 <?php
 
@@ -20,7 +20,7 @@ $tests = [
 
 foreach ($tests as $test) {
     echo throws(function() use ($test) {
-        MongoDB\BSON\ArrayList::__set_state([
+        MongoDB\BSON\PackedArray::__set_state([
             'data' => base64_encode($test),
         ]);
     }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
@@ -31,9 +31,9 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\BSON\ArrayList initialization requires valid BSON
+MongoDB\BSON\PackedArray initialization requires valid BSON
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\BSON\ArrayList initialization requires valid BSON
+MongoDB\BSON\PackedArray initialization requires valid BSON
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-MongoDB\BSON\ArrayList initialization requires valid BSON
+MongoDB\BSON\PackedArray initialization requires valid BSON
 ===DONE===

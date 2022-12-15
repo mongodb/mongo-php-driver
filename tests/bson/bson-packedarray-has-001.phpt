@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\BSON\ArrayList::has() checks if index exists
+MongoDB\BSON\PackedArray::has() checks if index exists
 --FILE--
 <?php
 
-$document = MongoDB\BSON\ArrayList::fromPHP([0, 1, "foo"]);
+$document = MongoDB\BSON\PackedArray::fromPHP([0, 1, "foo"]);
 var_dump($document->has(0));
 var_dump($document->has(2));
 var_dump($document->has(3));

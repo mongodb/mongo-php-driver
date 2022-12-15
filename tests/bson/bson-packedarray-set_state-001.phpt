@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\BSON\ArrayList::__set_state()
+MongoDB\BSON\PackedArray::__set_state()
 --FILE--
 <?php
 
-$array = MongoDB\BSON\ArrayList::fromPHP([
+$array = MongoDB\BSON\PackedArray::fromPHP([
     0,
     1,
     'foo',
@@ -19,10 +19,10 @@ var_dump($a == $array);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-%r\\?%rMongoDB\BSON\ArrayList::__set_state(array(
+%r\\?%rMongoDB\BSON\PackedArray::__set_state(array(
 %w'data' => 'MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA',
 ))
-object(MongoDB\BSON\ArrayList)#%d (%d) {
+object(MongoDB\BSON\PackedArray)#%d (%d) {
   ["data"]=>
   string(68) "MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA"
 }

@@ -1,11 +1,11 @@
 --TEST--
-MongoDB\BSON\ArrayList::get() index access
+MongoDB\BSON\PackedArray::get() index access
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$document = MongoDB\BSON\ArrayList::fromPHP([0, 1, "foo"]);
+$document = MongoDB\BSON\PackedArray::fromPHP([0, 1, "foo"]);
 var_dump($document->get(0));
 var_dump($document->get(2));
 

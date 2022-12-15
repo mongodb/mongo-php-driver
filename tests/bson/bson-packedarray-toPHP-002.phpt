@@ -1,12 +1,12 @@
 --TEST--
-MongoDB\BSON\ArrayList::toPHP(): Use object as root type
+MongoDB\BSON\PackedArray::toPHP(): Use object as root type
 --FILE--
 <?php
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$arrayList = MongoDB\BSON\ArrayList::fromPHP([1, 2, 3]);
-var_dump($arrayList->toPHP(['root' => 'object']));
+$packedArray = MongoDB\BSON\PackedArray::fromPHP([1, 2, 3]);
+var_dump($packedArray->toPHP(['root' => 'object']));
 
 ?>
 ===DONE===

@@ -19,6 +19,6 @@
 
 #include <php.h>
 
-void phongo_iterator_init(zval* return_value, zval* document_or_arraylist);
+void phongo_iterator_init(zval* return_value, zval* document_or_packedarray);
 
 #endif /* PHONGO_ITERATOR_H */

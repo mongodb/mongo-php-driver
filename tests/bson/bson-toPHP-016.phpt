@@ -50,12 +50,12 @@ object(stdClass)#%d (%d) {
     ["parent1"]=>
     object(stdClass)#%d (%d) {
       ["child1"]=>
-      object(MongoDB\BSON\ArrayList)#%d (%d) {
+      object(MongoDB\BSON\PackedArray)#%d (%d) {
         ["data"]=>
         string(36) "%a"
       }
       ["child2"]=>
-      object(MongoDB\BSON\ArrayList)#%d (%d) {
+      object(MongoDB\BSON\PackedArray)#%d (%d) {
         ["data"]=>
         string(36) "%a"
       }
@@ -63,12 +63,12 @@ object(stdClass)#%d (%d) {
     ["parent2"]=>
     object(stdClass)#%d (%d) {
       ["child1"]=>
-      object(MongoDB\BSON\ArrayList)#%d (%d) {
+      object(MongoDB\BSON\PackedArray)#%d (%d) {
         ["data"]=>
         string(36) "%a"
       }
       ["child2"]=>
-      object(MongoDB\BSON\ArrayList)#%d (%d) {
+      object(MongoDB\BSON\PackedArray)#%d (%d) {
         ["data"]=>
         string(36) "%a"
       }
@@ -96,7 +96,7 @@ object(stdClass)#%d (%d) {
     ["parent1"]=>
     object(stdClass)#%d (%d) {
       ["child1"]=>
-      object(MongoDB\BSON\ArrayList)#%d (%d) {
+      object(MongoDB\BSON\PackedArray)#%d (%d) {
         ["data"]=>
         string(36) "%a"
       }

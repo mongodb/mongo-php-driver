@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\BSON\ArrayList get_properties handler (get_object_vars)
+MongoDB\BSON\PackedArray get_properties handler (get_object_vars)
 --FILE--
 <?php
 
-$bson = MongoDB\BSON\ArrayList::fromPHP([]);
+$bson = MongoDB\BSON\PackedArray::fromPHP([]);
 
 var_dump(get_object_vars($bson));
 

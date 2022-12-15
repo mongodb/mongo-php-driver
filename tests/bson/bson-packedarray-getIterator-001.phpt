@@ -1,9 +1,9 @@
 --TEST--
-MongoDB\BSON\ArrayList::getIterator() tests
+MongoDB\BSON\PackedArray::getIterator() tests
 --FILE--
 <?php
 
-$iterator = MongoDB\BSON\ArrayList::fromPHP([1, 2])->getIterator();
+$iterator = MongoDB\BSON\PackedArray::fromPHP([1, 2])->getIterator();
 
 echo get_class($iterator), "\n";
 

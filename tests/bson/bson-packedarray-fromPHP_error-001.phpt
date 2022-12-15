@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\ArrayList::fromPHP(): requires a packed array
+MongoDB\BSON\PackedArray::fromPHP(): requires a packed array
 --FILE--
 <?php
 
@@ -13,7 +13,7 @@ $tests = [
 
 foreach ($tests as $test) {
     echo throws(function() use ($test) {
-        MongoDB\BSON\ArrayList::fromPHP($test);
+        MongoDB\BSON\PackedArray::fromPHP($test);
     }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 }
 

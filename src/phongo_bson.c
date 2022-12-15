@@ -913,11 +913,11 @@ static bool php_phongo_bson_visit_array(const bson_iter_t* iter ARG_UNUSED, cons
 
 	switch (state.field_type.type) {
 		case PHONGO_TYPEMAP_BSON: {
-			php_phongo_arraylist_t* intern;
+			php_phongo_packedarray_t* intern;
 
-			object_init_ex(&state.zchild, php_phongo_arraylist_ce);
+			object_init_ex(&state.zchild, php_phongo_packedarray_ce);
 
-			intern       = Z_ARRAYLIST_OBJ_P(&state.zchild);
+			intern       = Z_PACKEDARRAY_OBJ_P(&state.zchild);
 			intern->bson = bson_copy(v_array);
 			break;
 		}
@@ -1444,16 +1444,16 @@ bool php_phongo_bson_to_json(zval* return_value, const bson_t* bson, php_phongo_
 
 bool php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 {
-	const char*             data;
-	const char*             options;
-	uint32_t                data_len;
-	uint32_t                options_len;
-	bson_subtype_t          subtype;
-	const bson_oid_t*       oid;
-	bson_decimal128_t       decimal;
-	bson_t                  bson = BSON_INITIALIZER;
-	php_phongo_document_t*  document_intern;
-	php_phongo_arraylist_t* arraylist_intern;
+	const char*               data;
+	const char*               options;
+	uint32_t                  data_len;
+	uint32_t                  options_len;
+	bson_subtype_t            subtype;
+	const bson_oid_t*         oid;
+	bson_decimal128_t         decimal;
+	bson_t                    bson = BSON_INITIALIZER;
+	php_phongo_document_t*    document_intern;
+	php_phongo_packedarray_t* array_intern;
 
 	switch (bson_iter_type(iter)) {
 		case BSON_TYPE_UTF8:
@@ -1485,9 +1485,9 @@ bool php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 		case BSON_TYPE_ARRAY:
 			bson_iter_array(iter, &data_len, (const uint8_t**) &data);
 
-			object_init_ex(zv, php_phongo_arraylist_ce);
-			arraylist_intern       = Z_ARRAYLIST_OBJ_P(zv);
-			arraylist_intern->bson = bson_new_from_data((const uint8_t*) data, data_len);
+			object_init_ex(zv, php_phongo_packedarray_ce);
+			array_intern       = Z_PACKEDARRAY_OBJ_P(zv);
+			array_intern->bson = bson_new_from_data((const uint8_t*) data, data_len);
 			return true;
 
 		case BSON_TYPE_BINARY:
