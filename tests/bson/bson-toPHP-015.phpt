@@ -1,5 +1,10 @@
 --TEST--
-MongoDB\BSON\toPHP(): Assigning a type map value other than default disables persistable behaviour
+MongoDB\BSON\toPHP(): Type map values can override Persistable behavior
+--DESCRIPTION--
+The special type map values below always override Persistable behavior. Note
+that an Unserializable class name will only override Persistable behavior if
+the class specified in __pclass does not exist or does not implement
+MongoDB\BSON\Persistable.
 --FILE--
 <?php
 
