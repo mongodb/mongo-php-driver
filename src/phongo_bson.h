@@ -44,7 +44,8 @@ typedef enum {
 	PHONGO_TYPEMAP_NONE,
 	PHONGO_TYPEMAP_NATIVE_ARRAY,
 	PHONGO_TYPEMAP_NATIVE_OBJECT,
-	PHONGO_TYPEMAP_CLASS
+	PHONGO_TYPEMAP_CLASS,
+	PHONGO_TYPEMAP_BSON
 } php_phongo_bson_typemap_types;
 
 typedef struct {
@@ -69,12 +70,19 @@ typedef struct {
 } php_phongo_bson_typemap;
 
 typedef struct {
-	zval                    zchild;
-	php_phongo_bson_typemap map;
-	zend_class_entry*       odm;
-	bool                    is_visiting_array;
-	php_phongo_field_path*  field_path;
+	zval                            zchild;
+	php_phongo_bson_typemap         map;
+	zend_class_entry*               odm_ce;
+	bool                            is_visiting_array;
+	php_phongo_field_path*          field_path;
+	php_phongo_bson_typemap_element field_type;
 } php_phongo_bson_state;
+
+typedef enum {
+	PHONGO_JSON_MODE_LEGACY,
+	PHONGO_JSON_MODE_CANONICAL,
+	PHONGO_JSON_MODE_RELAXED,
+} php_phongo_json_mode_t;
 
 #define PHONGO_BSON_INIT_STATE(s)                       \
 	do {                                                \
@@ -96,6 +104,7 @@ void                   php_phongo_field_path_write_type_at_current_level(php_pho
 bool                   php_phongo_field_path_push(php_phongo_field_path* field_path, const char* element, php_phongo_bson_field_path_item_types element_type);
 bool                   php_phongo_field_path_pop(php_phongo_field_path* field_path);
 
+bool php_phongo_bson_to_json(zval* return_value, const bson_t* bson, php_phongo_json_mode_t mode);
 bool php_phongo_bson_to_zval(const bson_t* b, zval* zv);
 bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state);
 bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval* zv);
@@ -108,5 +117,7 @@ void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map);
 
 void php_phongo_bson_new_timestamp_from_increment_and_timestamp(zval* object, uint32_t increment, uint32_t timestamp);
 void php_phongo_bson_new_int64(zval* object, int64_t integer);
+
+bool php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter);
 
 #endif /* PHONGO_BSON_H */

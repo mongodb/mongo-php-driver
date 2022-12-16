@@ -17,17 +17,29 @@ $convertedExtJson = '{"a": {"$ref": "é", "$id": {"$oid": "56e1fc72e0c917e9c4714
 // Canonical BSON -> Native -> Canonical BSON
 echo bin2hex(fromPHP(toPHP($canonicalBson))), "\n";
 
+// Canonical BSON -> BSON object -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromBSON($canonicalBson)), "\n";
+
 // Canonical BSON -> Canonical extJSON
 echo json_canonicalize(toCanonicalExtendedJSON($canonicalBson)), "\n";
 
+// Canonical BSON -> BSON object -> Canonical extJSON
+echo json_canonicalize(MongoDB\BSON\Document::fromBSON($canonicalBson)->toCanonicalExtendedJSON()), "\n";
+
 // Canonical extJSON -> Canonical BSON
 echo bin2hex(fromJSON($canonicalExtJson)), "\n";
+
+// Canonical extJSON -> BSON object -> Canonical BSON
+echo bin2hex((string) MongoDB\BSON\Document::fromJSON($canonicalExtJson)), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 1b0000000c610003000000c3a90056e1fc72e0c917e9c471416100
+1b0000000c610003000000c3a90056e1fc72e0c917e9c471416100
 {"a":{"$dbPointer":{"$ref":"\u00e9","$id":{"$oid":"56e1fc72e0c917e9c4714161"}}}}
+{"a":{"$dbPointer":{"$ref":"\u00e9","$id":{"$oid":"56e1fc72e0c917e9c4714161"}}}}
+1b0000000c610003000000c3a90056e1fc72e0c917e9c471416100
 1b0000000c610003000000c3a90056e1fc72e0c917e9c471416100
 ===DONE===

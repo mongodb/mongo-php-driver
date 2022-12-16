@@ -120,6 +120,8 @@ if test "$PHP_MONGODB" != "no"; then
     src/phongo_util.c \
     src/BSON/Binary.c \
     src/BSON/BinaryInterface.c \
+    src/BSON/Document.c \
+    src/BSON/Iterator.c \
     src/BSON/DBPointer.c \
     src/BSON/Decimal128.c \
     src/BSON/Decimal128Interface.c \
@@ -132,6 +134,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/BSON/MinKeyInterface.c \
     src/BSON/ObjectId.c \
     src/BSON/ObjectIdInterface.c \
+    src/BSON/PackedArray.c \
     src/BSON/Persistable.c \
     src/BSON/Regex.c \
     src/BSON/RegexInterface.c \

@@ -10,13 +10,13 @@ require_once __DIR__ . "/../utils/basic.inc";
 
 $manager = create_test_manager();
 
-$user = array(
+$user = [
     "username" => "bob",
-    "address" => array(
+    "address" => [
         "street" => "Main St.",
         "city" => "New York",
-    ),
-);
+    ],
+];
 
 $bulk = new MongoDB\Driver\BulkWrite();
 $user["_id"] = $bulk->insert($user);
@@ -25,7 +25,7 @@ $result = $manager->executeBulkWrite(NS, $bulk);
 echo "Dumping inserted user document with injected _id:\n";
 var_dump($user);
 
-$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(array("_id" => $user["_id"])));
+$cursor = $manager->executeQuery(NS, new MongoDB\Driver\Query(["_id" => $user["_id"]]));
 
 echo "\nDumping fetched user document:\n";
 $array = $cursor->toArray();

@@ -178,6 +178,29 @@ typedef struct {
 } php_phongo_binary_t;
 
 typedef struct {
+	bson_t*     bson;
+	HashTable*  properties;
+	zend_object std;
+} php_phongo_packedarray_t;
+
+typedef struct {
+	bson_t*     bson;
+	HashTable*  properties;
+	zend_object std;
+} php_phongo_document_t;
+
+typedef struct {
+	zval        bson;
+	bson_iter_t iter;
+	bool        valid;
+	bool        is_array;
+	size_t      key;
+	zval        current;
+	HashTable*  properties;
+	zend_object std;
+} php_phongo_iterator_t;
+
+typedef struct {
 	char*       ref;
 	size_t      ref_len;
 	char        id[25];
