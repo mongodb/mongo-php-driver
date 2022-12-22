@@ -1,5 +1,8 @@
 --TEST--
 MongoDB\Driver\Session spec test: session cannot be used for different clients
+--DESCRIPTION--
+Session spec prose test #5: Session argument is for the right client
+https://github.com/mongodb/specifications/blob/master/source/sessions/tests/README.rst#session-argument-is-for-the-right-client
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
@@ -8,9 +11,8 @@ MongoDB\Driver\Session spec test: session cannot be used for different clients
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-// Vary heartbeatFrequencyMS to ensure each Manager gets a different client
-$manager = create_test_manager(URI, ['heartbeatFrequencyMS' => 60000]);
-$otherManager = create_test_manager(URI, ['heartbeatFrequencyMS' => 90000]);
+$manager = create_test_manager(URI, [], ['disableClientPersistence' => true]);
+$otherManager = create_test_manager(URI, [], ['disableClientPersistence' => true]);
 
 // Create a session with the second Manager (associated with different client)
 $session = $otherManager->startSession();

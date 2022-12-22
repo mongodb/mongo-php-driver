@@ -7,7 +7,7 @@ PHPC-1239: Passing SSL driverOptions overrides SSL options from URI
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-$manager = create_test_manager(URI, array(), array());
+$manager = create_test_manager(URI);
 
 $manager->executeCommand(DATABASE_NAME, new MongoDB\Driver\Command(['ping' => 1]));
 ?>
