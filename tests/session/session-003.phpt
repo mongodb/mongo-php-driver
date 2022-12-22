@@ -11,9 +11,8 @@ https://github.com/mongodb/specifications/blob/master/source/sessions/tests/READ
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
 
-// Vary heartbeatFrequencyMS to ensure each Manager gets a different client
-$manager = create_test_manager(URI, ['heartbeatFrequencyMS' => 60000]);
-$otherManager = create_test_manager(URI, ['heartbeatFrequencyMS' => 90000]);
+$manager = create_test_manager(URI, [], ['disableClientPersistence' => true]);
+$otherManager = create_test_manager(URI, [], ['disableClientPersistence' => true]);
 
 // Create a session with the second Manager (associated with different client)
 $session = $otherManager->startSession();
