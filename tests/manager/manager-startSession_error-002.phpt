@@ -1,8 +1,8 @@
 --TEST--
 MongoDB\Driver\Manager::startSession() snapshot and causalConsistency cannot both be true
 --DESCRIPTION--
-Session spec prose test #1
-https://github.com/mongodb/specifications/blob/master/source/sessions/tests/README.rst#prose-tests
+Session spec prose test #1: Setting both snapshot and causalConsistency to true is not allowed
+https://github.com/mongodb/specifications/blob/master/source/sessions/tests/README.rst#setting-both-snapshot-and-causalconsistency-to-true-is-not-allowed
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>

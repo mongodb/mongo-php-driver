@@ -1,5 +1,8 @@
 --TEST--
 MongoDB\Driver\Session spec test: session cannot be used for different clients
+--DESCRIPTION--
+Session spec prose test #5: Session argument is for the right client
+https://github.com/mongodb/specifications/blob/master/source/sessions/tests/README.rst#session-argument-is-for-the-right-client
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>

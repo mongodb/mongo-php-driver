@@ -1,5 +1,8 @@
 --TEST--
 MongoDB\Driver\Session spec test: $clusterTime in commands
+--DESCRIPTION--
+Session spec prose test #3: $clusterTime in commands
+https://github.com/mongodb/specifications/blob/master/source/sessions/tests/README.rst#clustertime-in-commands
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongoc_crypto(); ?>
