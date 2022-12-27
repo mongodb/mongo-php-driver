@@ -65,4 +65,4 @@ libmongoc-version-current:
 	cd src/libmongoc/ && python build/calc_release_version.py > ../LIBMONGOC_VERSION_CURRENT
 
 libmongocrypt-version-current:
-	cd src/libmongocrypt/ && cmake -P ./cmake/GetVersion.cmake 2> ../LIBMONGOCRYPT_VERSION_CURRENT
+	cd src/libmongocrypt/ && python etc/calc_release_version.py > ../LIBMONGOCRYPT_VERSION_CURRENT
