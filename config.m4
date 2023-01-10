@@ -291,7 +291,7 @@ if test "$PHP_MONGODB" != "no"; then
       AC_MSG_CHECKING(for libmongocrypt)
 
       if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongocrypt; then
-        if $PKG_CONFIG libmongocrypt --atleast-version 1.6.2; then
+        if $PKG_CONFIG libmongocrypt --atleast-version 1.7.0; then
           PHP_MONGODB_MONGOCRYPT_CFLAGS=`$PKG_CONFIG libmongocrypt --cflags`
           PHP_MONGODB_MONGOCRYPT_LIBS=`$PKG_CONFIG libmongocrypt --libs`
           PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt --modversion`
@@ -302,7 +302,7 @@ if test "$PHP_MONGODB" != "no"; then
           PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
           AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
         elif test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
-          AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.6.2)
+          AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.7.0)
         else
           AC_MSG_RESULT([found an older version, compiling without client-side encryption])
         fi
@@ -469,7 +469,7 @@ if test "$PHP_MONGODB" != "no"; then
       AC_SUBST(MONGOCRYPT_ENABLE_TRACE, 1)
 
       dnl Generated with: find src/libmongocrypt/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 4- | sort -dz | tr '\000' ' '
-      PHP_MONGODB_MONGOCRYPT_SOURCES="mc-array.c mc-efc.c mc-fle2-encryption-placeholder.c mc-fle2-find-equality-payload.c mc-fle2-insert-update-payload.c mc-fle2-payload-ieev.c mc-fle2-payload-uev.c mc-range-edge-generation.c mc-range-encoding.c mc-tokens.c mongocrypt-binary.c mongocrypt-buffer.c mongocrypt.c mongocrypt-cache.c mongocrypt-cache-collinfo.c mongocrypt-cache-key.c mongocrypt-cache-oauth.c mongocrypt-ciphertext.c mongocrypt-crypto.c mongocrypt-ctx.c mongocrypt-ctx-datakey.c mongocrypt-ctx-decrypt.c mongocrypt-ctx-encrypt.c mongocrypt-ctx-rewrap-many-datakey.c mongocrypt-endpoint.c mongocrypt-kek.c mongocrypt-key-broker.c mongocrypt-key.c mongocrypt-kms-ctx.c mongocrypt-log.c mongocrypt-marking.c mongocrypt-opts.c mongocrypt-status.c mongocrypt-traverse-util.c mongocrypt-util.c"
+      PHP_MONGODB_MONGOCRYPT_SOURCES="mc-array.c mc-efc.c mc-fle2-encryption-placeholder.c mc-fle2-find-equality-payload.c mc-fle2-find-range-payload.c mc-fle2-insert-update-payload.c mc-fle2-payload-iev.c mc-fle2-payload-uev.c mc-fle2-rfds.c mc-range-edge-generation.c mc-range-encoding.c mc-range-mincover.c mc-rangeopts.c mc-reader.c mc-tokens.c mongocrypt-binary.c mongocrypt-buffer.c mongocrypt.c mongocrypt-cache.c mongocrypt-cache-collinfo.c mongocrypt-cache-key.c mongocrypt-cache-oauth.c mongocrypt-ciphertext.c mongocrypt-crypto.c mongocrypt-ctx.c mongocrypt-ctx-datakey.c mongocrypt-ctx-decrypt.c mongocrypt-ctx-encrypt.c mongocrypt-ctx-rewrap-many-datakey.c mongocrypt-endpoint.c mongocrypt-kek.c mongocrypt-key-broker.c mongocrypt-key.c mongocrypt-kms-ctx.c mongocrypt-log.c mongocrypt-marking.c mongocrypt-opts.c mongocrypt-status.c mongocrypt-traverse-util.c mongocrypt-util.c"
 
       dnl Generated with: find src/libmongocrypt/src/crypto -name '*.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
       PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES="cng.c commoncrypto.c libcrypto.c none.c"
