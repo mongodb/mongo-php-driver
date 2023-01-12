@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         # Note: keep this in sync with the Windows matrix in tests.yml
-        php: [ "7.2", "7.3", "8.0", "8.1", "8.2" ]
+        php: [ "7.2", "7.3", "7.4", "8.0", "8.1", "8.2" ]
         arch: [ x64, x86 ]
         ts: [ ts, nts ]
     runs-on: ubuntu-latest
