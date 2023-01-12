@@ -90,7 +90,7 @@ jobs:
       fail-fast: true
       matrix:
         os: [ windows-2019, windows-2022 ]
-        php: [ "7.2", "7.3", "8.0", "8.1", "8.2" ]
+        php: [ "7.2", "7.3", "7.4", "8.0", "8.1", "8.2" ]
         arch: [ x64, x86 ]
         ts: [ ts, nts ]
         exclude:
