@@ -65,6 +65,10 @@ static PHP_METHOD(MongoDB_Driver_WriteConcernError, getMessage)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
+	if (!intern->message) {
+		RETURN_STRING("");
+	}
+
 	RETURN_STRING(intern->message);
 }
 
@@ -107,7 +111,7 @@ static HashTable* php_phongo_writeconcernerror_get_debug_info(phongo_compat_obje
 	intern   = Z_OBJ_WRITECONCERNERROR(PHONGO_COMPAT_GET_OBJ(object));
 
 	array_init_size(&retval, 3);
-	ADD_ASSOC_STRING(&retval, "message", intern->message);
+	ADD_ASSOC_STRING(&retval, "message", intern->message ? intern->message : "");
 	ADD_ASSOC_LONG_EX(&retval, "code", intern->code);
 	if (!Z_ISUNDEF(intern->info)) {
 		Z_ADDREF(intern->info);
