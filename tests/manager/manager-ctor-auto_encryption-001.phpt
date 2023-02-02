@@ -3,6 +3,7 @@ MongoDB\Driver\Manager::__construct(): autoEncryption options
 --SKIPIF--
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
+<?php skip_if_crypt_shared(); // Build fails due to SERVER-71049 ?>
 --FILE--
 <?php
 

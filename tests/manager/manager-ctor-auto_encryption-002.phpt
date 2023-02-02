@@ -4,6 +4,8 @@ MongoDB\Driver\Manager::__construct(): crypt_shared is required
 <?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php skip_if_not_libmongocrypt(); ?>
 <?php skip_if_no_crypt_shared(); ?>
+--XFAIL--
+crypt_shared log output breaks build (PHPC-2156)
 --FILE--
 <?php
 
