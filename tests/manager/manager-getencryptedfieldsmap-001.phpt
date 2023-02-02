@@ -1,5 +1,8 @@
 --TEST--
 MongoDB\Driver\Manager::getEncryptedFieldsMap()
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_crypt_shared(); // Build fails due to SERVER-71049 ?>
 --FILE--
 <?php
 
