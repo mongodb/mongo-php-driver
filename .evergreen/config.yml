@@ -1240,24 +1240,30 @@ buildvariants:
   tasks:
     - name: "test-atlas"
 
-# OCSP is available from MongoDB 4.4+ (Debian 10 has MongoDB 4.4+)
 - matrix_name: "test-ocsp"
-  matrix_spec: { "os": "debian10", "mongodb-versions": ["4.4", "5.0", "6.0"], "php-edge-versions": "latest-stable" }
+  matrix_spec: { "os": "debian10", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
   display_name: "OCSP tests - ${mongodb-versions}"
+  exclude_spec:
+    # OCSP is available from MongoDB 4.4+ (Debian 10 has MongoDB 4.4+)
+    - { "os": "debian10", "mongodb-versions": ["3.6", "4.0", "4.2"], "php-edge-versions": "latest-stable" }
   tasks:
     - name: ".ocsp"
 
-# Stable API is available from MongoDB 5.0+
 - matrix_name: "test-requireApiVersion"
-  matrix_spec: { "os": "debian11", "mongodb-versions": ["5.0", "6.0"], "php-edge-versions": "latest-stable" }
+  matrix_spec: { "os": "debian11", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
   display_name: "Versioned API - ${mongodb-versions}"
+  exclude_spec:
+    # Stable API is available from MongoDB 5.0+
+    - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4"], "php-edge-versions": "latest-stable" }
   tasks:
     - name: "test-requireApiVersion"
 
-# Load balancer is available from MongoDB 5.0+
 - matrix_name: "test-loadBalanced"
-  matrix_spec: { "os": "debian11", "mongodb-versions": ["5.0", "6.0"], "php-edge-versions": "latest-stable" }
+  matrix_spec: { "os": "debian11", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
   display_name: "Load balanced - ${mongodb-versions}"
+  exclude_spec:
+    # Load balancer is available from MongoDB 5.0+
+    - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4"], "php-edge-versions": "latest-stable" }
   tasks:
     - name: "test-loadBalanced"
 
