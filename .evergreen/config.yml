@@ -1212,7 +1212,7 @@ buildvariants:
 
 # Test ARM64, Power8, and zSeries architectures with MongoDB 4.4
 - matrix_name: "test-alt-archs"
-  matrix_spec: { "os": ["rhel71-power8", "rhel72-zseries", "ubuntu1804-arm64"], "mongodb-versions": ["4.4"], "php-edge-versions": "oldest-supported" }
+  matrix_spec: { "os": ["rhel71-power8", "rhel72-zseries", "ubuntu1804-arm64"], "mongodb-versions": "4.4", "php-edge-versions": "oldest-supported" }
   display_name: "${os}, ${mongodb-versions}, ${php-edge-versions}"
   tasks:
     - name: "test-standalone-ssl"
