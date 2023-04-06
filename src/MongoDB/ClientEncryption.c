@@ -38,6 +38,7 @@ zend_class_entry* php_phongo_clientencryption_ce;
 /* Forward declarations */
 static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t* clientencryption, zval* return_value, char* kms_provider, zval* options);
 static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options);
+static void phongo_clientencryption_encrypt_expression(php_phongo_clientencryption_t* clientencryption, zval* zexpr, zval* return_value, zval* options);
 static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue);
 
 #define RETVAL_BSON_T(reply)                                 \
@@ -214,6 +215,24 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, encrypt)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	phongo_clientencryption_encrypt(intern, value, return_value, options);
+}
+
+/* Encrypts a value with a given key and algorithm */
+static PHP_METHOD(MongoDB_Driver_ClientEncryption, encryptExpression)
+{
+	zval*                          expr    = NULL;
+	zval*                          options = NULL;
+	php_phongo_clientencryption_t* intern;
+
+	intern = Z_CLIENTENCRYPTION_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_START(1, 2)
+	Z_PARAM_ZVAL(expr)
+	Z_PARAM_OPTIONAL
+	Z_PARAM_ARRAY_OR_NULL(options)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	phongo_clientencryption_encrypt_expression(intern, expr, return_value, options);
 }
 
 /* Decrypts an encrypted value (BSON binary of subtype 6). Returns the original BSON value */
@@ -823,6 +842,76 @@ cleanup:
 	bson_value_destroy(&keyid);
 }
 
+static mongoc_client_encryption_encrypt_range_opts_t* phongo_clientencryption_encrypt_range_opts_from_zval(zval* options)
+{
+	mongoc_client_encryption_encrypt_range_opts_t* opts;
+
+	opts = mongoc_client_encryption_encrypt_range_opts_new();
+
+	if (!options || Z_TYPE_P(options) != IS_ARRAY) {
+		return opts;
+	}
+
+	if (php_array_existsc(options, "sparsity")) {
+		int64_t sparsity = php_array_fetchc_long(options, "sparsity");
+
+		if (sparsity < 0 || sparsity > INT64_MAX) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"sparsity\" range option to be a positive 64-bit integer, %" PRId64 " given", sparsity);
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_encrypt_range_opts_set_sparsity(opts, sparsity);
+	}
+
+	if (php_array_existsc(options, "precision")) {
+		int64_t precision = php_array_fetchc_long(options, "precision");
+
+		if (precision < 0 || precision > INT32_MAX) {
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected \"precision\" range option to be a positive 32-bit integer, %" PRId64 " given", precision);
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_encrypt_range_opts_set_precision(opts, (int32_t) precision);
+	}
+
+	if (php_array_existsc(options, "min")) {
+		bson_value_t min = { 0 };
+
+		php_phongo_zval_to_bson_value(php_array_fetchc(options, "min"), PHONGO_BSON_NONE, &min);
+
+		if (EG(exception)) {
+			bson_value_destroy(&min);
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_encrypt_range_opts_set_min(opts, &min);
+		bson_value_destroy(&min);
+	}
+
+	if (php_array_existsc(options, "max")) {
+		bson_value_t max = { 0 };
+
+		php_phongo_zval_to_bson_value(php_array_fetchc(options, "max"), PHONGO_BSON_NONE, &max);
+
+		if (EG(exception)) {
+			bson_value_destroy(&max);
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_encrypt_range_opts_set_max(opts, &max);
+		bson_value_destroy(&max);
+	}
+
+	return opts;
+
+cleanup:
+	if (opts) {
+		mongoc_client_encryption_encrypt_range_opts_destroy(opts);
+	}
+
+	return NULL;
+}
+
 static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_opts_from_zval(zval* options)
 {
 	mongoc_client_encryption_encrypt_opts_t* opts;
@@ -890,6 +979,20 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 		}
 	}
 
+	if (php_array_existsc(options, "rangeOpts")) {
+		mongoc_client_encryption_encrypt_range_opts_t* range_opts;
+
+		range_opts = phongo_clientencryption_encrypt_range_opts_from_zval(php_array_fetchc(options, "rangeOpts"));
+
+		if (!range_opts) {
+			/* Exception already thrown */
+			goto cleanup;
+		}
+
+		mongoc_client_encryption_encrypt_opts_set_range_opts(opts, range_opts);
+		mongoc_client_encryption_encrypt_range_opts_destroy(range_opts);
+	}
+
 	return opts;
 
 cleanup:
@@ -902,7 +1005,7 @@ cleanup:
 
 static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options)
 {
-	mongoc_client_encryption_encrypt_opts_t* opts;
+	mongoc_client_encryption_encrypt_opts_t* opts       = NULL;
 	bson_value_t                             ciphertext = { 0 };
 	bson_value_t                             value      = { 0 };
 	bson_error_t                             error      = { 0 };
@@ -933,6 +1036,45 @@ cleanup:
 
 	bson_value_destroy(&ciphertext);
 	bson_value_destroy(&value);
+}
+
+static void phongo_clientencryption_encrypt_expression(php_phongo_clientencryption_t* clientencryption, zval* zexpr, zval* return_value, zval* options)
+{
+	mongoc_client_encryption_encrypt_opts_t* opts           = NULL;
+	bson_t                                   expr           = BSON_INITIALIZER;
+	bson_t                                   expr_encrypted = BSON_INITIALIZER;
+	bson_error_t                             error          = { 0 };
+
+	php_phongo_zval_to_bson(zexpr, PHONGO_BSON_NONE, &expr, NULL);
+
+	if (EG(exception)) {
+		goto cleanup;
+	}
+
+	opts = phongo_clientencryption_encrypt_opts_from_zval(options);
+
+	if (!opts) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+	if (!mongoc_client_encryption_encrypt_expression(clientencryption->client_encryption, &expr, opts, &expr_encrypted, &error)) {
+		phongo_throw_exception_from_bson_error_t(&error);
+		goto cleanup;
+	}
+
+	if (!php_phongo_bson_to_zval(&expr_encrypted, return_value)) {
+		/* Exception already thrown */
+		goto cleanup;
+	}
+
+cleanup:
+	if (opts) {
+		mongoc_client_encryption_encrypt_opts_destroy(opts);
+	}
+
+	bson_destroy(&expr);
+	bson_destroy(&expr_encrypted);
 }
 
 static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue)
@@ -971,6 +1113,11 @@ static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t
 static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clientencryption, zval* zvalue, zval* zciphertext, zval* options)
 {
 	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot encrypt value.");
+}
+
+static void phongo_clientencryption_encrypt_expression(php_phongo_clientencryption_t* clientencryption, zval* zexpr, zval* return_value, zval* options)
+{
+	phongo_throw_exception_no_cse(PHONGO_ERROR_RUNTIME, "Cannot encrypt expression.");
 }
 
 static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clientencryption, zval* zciphertext, zval* zvalue)

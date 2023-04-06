@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 706125ea8c95ec1b3720909c8351585e03aa4836 */
+ * Stub hash: cb36443aeb49b72044a915964006559b4beba4ab */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, options, IS_ARRAY, 0)
@@ -41,6 +41,20 @@ ZEND_END_ARG_INFO()
 #if !(PHP_VERSION_ID >= 80000)
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_encrypt, 0, 1, MongoDB\\BSON\\Binary, 0)
 	ZEND_ARG_INFO(0, value)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
+#endif
+
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_encryptExpression, 0, 1, IS_OBJECT, 0)
+	ZEND_ARG_TYPE_MASK(0, expr, MAY_BE_ARRAY|MAY_BE_OBJECT, NULL)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
+ZEND_END_ARG_INFO()
+#endif
+
+#if !(PHP_VERSION_ID >= 80000)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ClientEncryption_encryptExpression, 0, 1, IS_OBJECT, 0)
+	ZEND_ARG_INFO(0, expr)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 #endif
@@ -92,6 +106,12 @@ static ZEND_METHOD(MongoDB_Driver_ClientEncryption, encrypt);
 #if !(PHP_VERSION_ID >= 80000)
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, encrypt);
 #endif
+#if PHP_VERSION_ID >= 80000
+static ZEND_METHOD(MongoDB_Driver_ClientEncryption, encryptExpression);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_Driver_ClientEncryption, encryptExpression);
+#endif
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, getKey);
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, getKeyByAltName);
 static ZEND_METHOD(MongoDB_Driver_ClientEncryption, getKeys);
@@ -122,6 +142,12 @@ static const zend_function_entry class_MongoDB_Driver_ClientEncryption_methods[]
 #if !(PHP_VERSION_ID >= 80000)
 	ZEND_ME(MongoDB_Driver_ClientEncryption, encrypt, arginfo_class_MongoDB_Driver_ClientEncryption_encrypt, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
+#if PHP_VERSION_ID >= 80000
+	ZEND_ME(MongoDB_Driver_ClientEncryption, encryptExpression, arginfo_class_MongoDB_Driver_ClientEncryption_encryptExpression, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_Driver_ClientEncryption, encryptExpression, arginfo_class_MongoDB_Driver_ClientEncryption_encryptExpression, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
 	ZEND_ME(MongoDB_Driver_ClientEncryption, getKey, arginfo_class_MongoDB_Driver_ClientEncryption_getKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ClientEncryption, getKeyByAltName, arginfo_class_MongoDB_Driver_ClientEncryption_getKeyByAltName, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ClientEncryption, getKeys, arginfo_class_MongoDB_Driver_ClientEncryption_getKeys, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -145,39 +171,53 @@ static zend_class_entry *register_class_MongoDB_Driver_ClientEncryption(void)
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
 
 	zval const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_value;
-	zend_string *const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_value_str = zend_string_init(MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC, sizeof(MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC) - 1, 1);
+	zend_string *const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_value_str = zend_string_init(MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC, strlen(MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC), 1);
 	ZVAL_STR(&const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_value, const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_value_str);
 	zend_string *const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_name = zend_string_init_interned("AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC", sizeof("AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_name, &const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_AEAD_AES_256_CBC_HMAC_SHA_512_DETERMINISTIC_name);
 
 	zval const_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM_value;
-	zend_string *const_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM_value_str = zend_string_init(MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM, sizeof(MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM) - 1, 1);
+	zend_string *const_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM_value_str = zend_string_init(MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM, strlen(MONGOC_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM), 1);
 	ZVAL_STR(&const_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM_value, const_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM_value_str);
 	zend_string *const_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM_name = zend_string_init_interned("AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM", sizeof("AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM_name, &const_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_AEAD_AES_256_CBC_HMAC_SHA_512_RANDOM_name);
 
 	zval const_ALGORITHM_INDEXED_value;
-	zend_string *const_ALGORITHM_INDEXED_value_str = zend_string_init(MONGOC_ENCRYPT_ALGORITHM_INDEXED, sizeof(MONGOC_ENCRYPT_ALGORITHM_INDEXED) - 1, 1);
+	zend_string *const_ALGORITHM_INDEXED_value_str = zend_string_init(MONGOC_ENCRYPT_ALGORITHM_INDEXED, strlen(MONGOC_ENCRYPT_ALGORITHM_INDEXED), 1);
 	ZVAL_STR(&const_ALGORITHM_INDEXED_value, const_ALGORITHM_INDEXED_value_str);
 	zend_string *const_ALGORITHM_INDEXED_name = zend_string_init_interned("ALGORITHM_INDEXED", sizeof("ALGORITHM_INDEXED") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_ALGORITHM_INDEXED_name, &const_ALGORITHM_INDEXED_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_ALGORITHM_INDEXED_name);
 
 	zval const_ALGORITHM_UNINDEXED_value;
-	zend_string *const_ALGORITHM_UNINDEXED_value_str = zend_string_init(MONGOC_ENCRYPT_ALGORITHM_UNINDEXED, sizeof(MONGOC_ENCRYPT_ALGORITHM_UNINDEXED) - 1, 1);
+	zend_string *const_ALGORITHM_UNINDEXED_value_str = zend_string_init(MONGOC_ENCRYPT_ALGORITHM_UNINDEXED, strlen(MONGOC_ENCRYPT_ALGORITHM_UNINDEXED), 1);
 	ZVAL_STR(&const_ALGORITHM_UNINDEXED_value, const_ALGORITHM_UNINDEXED_value_str);
 	zend_string *const_ALGORITHM_UNINDEXED_name = zend_string_init_interned("ALGORITHM_UNINDEXED", sizeof("ALGORITHM_UNINDEXED") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_ALGORITHM_UNINDEXED_name, &const_ALGORITHM_UNINDEXED_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_ALGORITHM_UNINDEXED_name);
 
+	zval const_ALGORITHM_RANGE_PREVIEW_value;
+	zend_string *const_ALGORITHM_RANGE_PREVIEW_value_str = zend_string_init(MONGOC_ENCRYPT_ALGORITHM_RANGEPREVIEW, strlen(MONGOC_ENCRYPT_ALGORITHM_RANGEPREVIEW), 1);
+	ZVAL_STR(&const_ALGORITHM_RANGE_PREVIEW_value, const_ALGORITHM_RANGE_PREVIEW_value_str);
+	zend_string *const_ALGORITHM_RANGE_PREVIEW_name = zend_string_init_interned("ALGORITHM_RANGE_PREVIEW", sizeof("ALGORITHM_RANGE_PREVIEW") - 1, 1);
+	zend_declare_class_constant_ex(class_entry, const_ALGORITHM_RANGE_PREVIEW_name, &const_ALGORITHM_RANGE_PREVIEW_value, ZEND_ACC_PUBLIC, NULL);
+	zend_string_release(const_ALGORITHM_RANGE_PREVIEW_name);
+
 	zval const_QUERY_TYPE_EQUALITY_value;
-	zend_string *const_QUERY_TYPE_EQUALITY_value_str = zend_string_init(MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY, sizeof(MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY) - 1, 1);
+	zend_string *const_QUERY_TYPE_EQUALITY_value_str = zend_string_init(MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY, strlen(MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY), 1);
 	ZVAL_STR(&const_QUERY_TYPE_EQUALITY_value, const_QUERY_TYPE_EQUALITY_value_str);
 	zend_string *const_QUERY_TYPE_EQUALITY_name = zend_string_init_interned("QUERY_TYPE_EQUALITY", sizeof("QUERY_TYPE_EQUALITY") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_QUERY_TYPE_EQUALITY_name, &const_QUERY_TYPE_EQUALITY_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_QUERY_TYPE_EQUALITY_name);
+
+	zval const_QUERY_TYPE_RANGE_PREVIEW_value;
+	zend_string *const_QUERY_TYPE_RANGE_PREVIEW_value_str = zend_string_init(MONGOC_ENCRYPT_QUERY_TYPE_RANGEPREVIEW, strlen(MONGOC_ENCRYPT_QUERY_TYPE_RANGEPREVIEW), 1);
+	ZVAL_STR(&const_QUERY_TYPE_RANGE_PREVIEW_value, const_QUERY_TYPE_RANGE_PREVIEW_value_str);
+	zend_string *const_QUERY_TYPE_RANGE_PREVIEW_name = zend_string_init_interned("QUERY_TYPE_RANGE_PREVIEW", sizeof("QUERY_TYPE_RANGE_PREVIEW") - 1, 1);
+	zend_declare_class_constant_ex(class_entry, const_QUERY_TYPE_RANGE_PREVIEW_name, &const_QUERY_TYPE_RANGE_PREVIEW_value, ZEND_ACC_PUBLIC, NULL);
+	zend_string_release(const_QUERY_TYPE_RANGE_PREVIEW_name);
 
 	return class_entry;
 }

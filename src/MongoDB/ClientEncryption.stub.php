@@ -35,9 +35,21 @@ final class ClientEncryption
 
     /**
      * @var string
+     * @cvalue MONGOC_ENCRYPT_ALGORITHM_RANGEPREVIEW
+     */
+    public const ALGORITHM_RANGE_PREVIEW = UNKNOWN;
+
+    /**
+     * @var string
      * @cvalue MONGOC_ENCRYPT_QUERY_TYPE_EQUALITY
      */
     public const QUERY_TYPE_EQUALITY = UNKNOWN;
+
+    /**
+     * @var string
+     * @cvalue MONGOC_ENCRYPT_QUERY_TYPE_RANGEPREVIEW
+     */
+    public const QUERY_TYPE_RANGE_PREVIEW = UNKNOWN;
 
     final public function __construct(array $options) {}
 
@@ -59,6 +71,13 @@ final class ClientEncryption
 #else
     /** @param mixed $value */
     final public function encrypt($value, ?array $options = null): \MongoDB\BSON\Binary {}
+#endif
+
+#if PHP_VERSION_ID >= 80000
+    final public function encryptExpression(array|object $expr, ?array $options = null): object {}
+#else
+    /** @param array|object $expr */
+    final public function encryptExpression($expr, ?array $options = null): object {}
 #endif
 
     final public function getKey(\MongoDB\BSON\Binary $keyId): ?object {}
