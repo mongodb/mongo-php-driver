@@ -1267,9 +1267,11 @@ buildvariants:
   tasks:
     - name: "test-loadBalanced"
 
-# CSFLE crypt_shared is available from MongoDB 6.0+, so explicitly test without it to allow use of mongocryptd
 - matrix_name: "test-csfle-skip_crypt_shared"
-  matrix_spec: { "os": "debian11", "mongodb-versions": "6.0", "php-edge-versions": "latest-stable" }
+  matrix_spec: { "os": "debian11", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
   display_name: "CSFLE skip_crypt_shared - ${mongodb-versions}"
+  exclude_spec:
+    # CSFLE crypt_shared is available from MongoDB 6.0+
+    - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4", "5.0"], "php-edge-versions": "latest-stable" }
   tasks:
     - name: "test-skip_crypt_shared"
