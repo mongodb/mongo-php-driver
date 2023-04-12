@@ -75,7 +75,7 @@ static const mongoc_client_t* get_first_pclient_client(HashTable* ht)
  * Note: this may incorrectly return NULL if crypt_shared was loaded through a
  * mongoc_client_t since destroyed (e.g. single requested-scoped client);
  * however, that's the best can do with libmongoc's API. */
-const char* php_phongo_crypt_shared_version()
+const char* php_phongo_crypt_shared_version(void)
 {
 	const mongoc_client_t* client = NULL;
 
