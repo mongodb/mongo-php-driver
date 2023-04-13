@@ -1158,9 +1158,9 @@ axes:
     display_name: libmongoc version
     values:
       - id: "lowest-supported"
-        display_name: "1.23.1"
+        display_name: "1.23.3"
         variables:
-          LIBMONGOC_VERSION: "1.23.1"
+          LIBMONGOC_VERSION: "1.23.3"
       - id: "upcoming-stable"
         display_name: "1.23-dev"
         variables:
