@@ -159,6 +159,35 @@ final class Value
     final static public function fromPHP($value): Value {}
 #endif
 
+    /** Accessors */
+    final public function getArray(): PackedArray {}
+    final public function getBinary(): Binary {}
+    final public function getBool(): bool {}
+    final public function getCode(): Javascript {}
+    final public function getDBPointer(): DBPointer {}
+    final public function getDecimal128(): Decimal128 {}
+    final public function getDocument(): Document {}
+    final public function getDouble(): float {}
+    final public function getInt(): int {}
+    final public function getInt32(): int {}
+    final public function getInt64(): int {}
+    final public function getMaxKey(): MaxKey {}
+    final public function getMinKey(): MinKey {}
+#if PHP_VERSION_ID >= 80000
+    final public function getNumber(): int|float {}
+#else
+    /** @return int|float */
+    final public function getNumber() {}
+#endif
+    final public function getNull(): null {}
+    final public function getObjectId(): ObjectId {}
+    final public function getRegex(): Regex {}
+    final public function getSymbol(): Symbol {}
+    final public function getTimestamp(): Timestamp {}
+    final public function getUndefined(): Undefined {}
+    final public function getUTCDateTime(): UTCDateTime {}
+    final public function getUtf8(): string {}
+
     /** Type checkers */
     final public function isArray(): bool {}
     final public function isBinary(): bool {}
@@ -182,15 +211,4 @@ final class Value
     final public function isUndefined(): bool {}
     final public function isUTCDateTime(): bool {}
     final public function isUtf8(): bool {}
-
-    /** @throws UnexpectedValueException */
-//    final public function getArray(): PackedArray {}
-//    final public function getDocument(): Document {}
-//    final public function getInt(): int {}
-//    final public function getInt32(): int {}
-//    final public function getInt64(): int|Int64 {}
-//    final public function getNumber(): int|float {}
-//    final public function getObjectId(): ObjectId {}
-//    final public function getUTCDateTime(): UTCDateTime {}
-    // TODO: Other types
 }

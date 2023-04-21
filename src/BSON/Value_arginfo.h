@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 995186f86af6cd309bb91f7165aac5d84b174284 */
+ * Stub hash: 3ba0985100b1691e8edf6469309f1474edfcf0b5 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Value___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -29,50 +29,118 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_fromPHP,
 ZEND_END_ARG_INFO()
 #endif
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Value_isArray, 0, 0, _IS_BOOL, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getArray, 0, 0, MongoDB\\BSON\\PackedArray, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isBinary arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getBinary, 0, 0, MongoDB\\BSON\\Binary, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isBool arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Value_getBool, 0, 0, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isCode arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getCode, 0, 0, MongoDB\\BSON\\Javascript, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isDBPointer arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getDBPointer, 0, 0, MongoDB\\BSON\\DBPointer, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isDecimal128 arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getDecimal128, 0, 0, MongoDB\\BSON\\Decimal128, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isDocument arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getDocument, 0, 0, MongoDB\\BSON\\Document, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isDouble arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Value_getDouble, 0, 0, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isInt arginfo_class_MongoDB_BSON_Value_isArray
+#define arginfo_class_MongoDB_BSON_Value_getInt arginfo_class_MongoDB_BSON_Value_getType
 
-#define arginfo_class_MongoDB_BSON_Value_isInt32 arginfo_class_MongoDB_BSON_Value_isArray
+#define arginfo_class_MongoDB_BSON_Value_getInt32 arginfo_class_MongoDB_BSON_Value_getType
 
-#define arginfo_class_MongoDB_BSON_Value_isInt64 arginfo_class_MongoDB_BSON_Value_isArray
+#define arginfo_class_MongoDB_BSON_Value_getInt64 arginfo_class_MongoDB_BSON_Value_getType
 
-#define arginfo_class_MongoDB_BSON_Value_isMaxKey arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getMaxKey, 0, 0, MongoDB\\BSON\\MaxKey, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isMinKey arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getMinKey, 0, 0, MongoDB\\BSON\\MinKey, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isNumber arginfo_class_MongoDB_BSON_Value_isArray
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_MASK_EX(arginfo_class_MongoDB_BSON_Value_getNumber, 0, 0, MAY_BE_LONG|MAY_BE_DOUBLE)
+ZEND_END_ARG_INFO()
+#endif
 
-#define arginfo_class_MongoDB_BSON_Value_isNull arginfo_class_MongoDB_BSON_Value_isArray
+#if !(PHP_VERSION_ID >= 80000)
+#define arginfo_class_MongoDB_BSON_Value_getNumber arginfo_class_MongoDB_BSON_Value_getValue
+#endif
 
-#define arginfo_class_MongoDB_BSON_Value_isObjectId arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Value_getNull, 0, 0, IS_NULL, 1)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isRegex arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getObjectId, 0, 0, MongoDB\\BSON\\ObjectId, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isSymbol arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getRegex, 0, 0, MongoDB\\BSON\\Regex, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isTimestamp arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getSymbol, 0, 0, MongoDB\\BSON\\Symbol, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isUndefined arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getTimestamp, 0, 0, MongoDB\\BSON\\Timestamp, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isUTCDateTime arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getUndefined, 0, 0, MongoDB\\BSON\\\125ndefined, 0)
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_isUtf8 arginfo_class_MongoDB_BSON_Value_isArray
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getUTCDateTime, 0, 0, MongoDB\\BSON\\\125TCDateTime, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Value_getUtf8, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_MongoDB_BSON_Value_isArray arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isBinary arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isBool arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isCode arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isDBPointer arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isDecimal128 arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isDocument arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isDouble arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isInt arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isInt32 arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isInt64 arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isMaxKey arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isMinKey arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isNumber arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isNull arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isObjectId arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isRegex arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isSymbol arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isTimestamp arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isUndefined arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isUTCDateTime arginfo_class_MongoDB_BSON_Value_getBool
+
+#define arginfo_class_MongoDB_BSON_Value_isUtf8 arginfo_class_MongoDB_BSON_Value_getBool
 
 
 static ZEND_METHOD(MongoDB_BSON_Value, __construct);
@@ -89,6 +157,33 @@ static ZEND_METHOD(MongoDB_BSON_Value, fromPHP);
 #if !(PHP_VERSION_ID >= 80000)
 static ZEND_METHOD(MongoDB_BSON_Value, fromPHP);
 #endif
+static ZEND_METHOD(MongoDB_BSON_Value, getArray);
+static ZEND_METHOD(MongoDB_BSON_Value, getBinary);
+static ZEND_METHOD(MongoDB_BSON_Value, getBool);
+static ZEND_METHOD(MongoDB_BSON_Value, getCode);
+static ZEND_METHOD(MongoDB_BSON_Value, getDBPointer);
+static ZEND_METHOD(MongoDB_BSON_Value, getDecimal128);
+static ZEND_METHOD(MongoDB_BSON_Value, getDocument);
+static ZEND_METHOD(MongoDB_BSON_Value, getDouble);
+static ZEND_METHOD(MongoDB_BSON_Value, getInt);
+static ZEND_METHOD(MongoDB_BSON_Value, getInt32);
+static ZEND_METHOD(MongoDB_BSON_Value, getInt64);
+static ZEND_METHOD(MongoDB_BSON_Value, getMaxKey);
+static ZEND_METHOD(MongoDB_BSON_Value, getMinKey);
+#if PHP_VERSION_ID >= 80000
+static ZEND_METHOD(MongoDB_BSON_Value, getNumber);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_BSON_Value, getNumber);
+#endif
+static ZEND_METHOD(MongoDB_BSON_Value, getNull);
+static ZEND_METHOD(MongoDB_BSON_Value, getObjectId);
+static ZEND_METHOD(MongoDB_BSON_Value, getRegex);
+static ZEND_METHOD(MongoDB_BSON_Value, getSymbol);
+static ZEND_METHOD(MongoDB_BSON_Value, getTimestamp);
+static ZEND_METHOD(MongoDB_BSON_Value, getUndefined);
+static ZEND_METHOD(MongoDB_BSON_Value, getUTCDateTime);
+static ZEND_METHOD(MongoDB_BSON_Value, getUtf8);
 static ZEND_METHOD(MongoDB_BSON_Value, isArray);
 static ZEND_METHOD(MongoDB_BSON_Value, isBinary);
 static ZEND_METHOD(MongoDB_BSON_Value, isBool);
@@ -128,6 +223,33 @@ static const zend_function_entry class_MongoDB_BSON_Value_methods[] = {
 #if !(PHP_VERSION_ID >= 80000)
 	ZEND_ME(MongoDB_BSON_Value, fromPHP, arginfo_class_MongoDB_BSON_Value_fromPHP, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 #endif
+	ZEND_ME(MongoDB_BSON_Value, getArray, arginfo_class_MongoDB_BSON_Value_getArray, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getBinary, arginfo_class_MongoDB_BSON_Value_getBinary, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getBool, arginfo_class_MongoDB_BSON_Value_getBool, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getCode, arginfo_class_MongoDB_BSON_Value_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getDBPointer, arginfo_class_MongoDB_BSON_Value_getDBPointer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getDecimal128, arginfo_class_MongoDB_BSON_Value_getDecimal128, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getDocument, arginfo_class_MongoDB_BSON_Value_getDocument, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getDouble, arginfo_class_MongoDB_BSON_Value_getDouble, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getInt, arginfo_class_MongoDB_BSON_Value_getInt, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getInt32, arginfo_class_MongoDB_BSON_Value_getInt32, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getInt64, arginfo_class_MongoDB_BSON_Value_getInt64, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getMaxKey, arginfo_class_MongoDB_BSON_Value_getMaxKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getMinKey, arginfo_class_MongoDB_BSON_Value_getMinKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#if PHP_VERSION_ID >= 80000
+	ZEND_ME(MongoDB_BSON_Value, getNumber, arginfo_class_MongoDB_BSON_Value_getNumber, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_BSON_Value, getNumber, arginfo_class_MongoDB_BSON_Value_getNumber, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
+	ZEND_ME(MongoDB_BSON_Value, getNull, arginfo_class_MongoDB_BSON_Value_getNull, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getObjectId, arginfo_class_MongoDB_BSON_Value_getObjectId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getRegex, arginfo_class_MongoDB_BSON_Value_getRegex, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getSymbol, arginfo_class_MongoDB_BSON_Value_getSymbol, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getTimestamp, arginfo_class_MongoDB_BSON_Value_getTimestamp, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getUndefined, arginfo_class_MongoDB_BSON_Value_getUndefined, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getUTCDateTime, arginfo_class_MongoDB_BSON_Value_getUTCDateTime, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getUtf8, arginfo_class_MongoDB_BSON_Value_getUtf8, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isArray, arginfo_class_MongoDB_BSON_Value_isArray, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isBinary, arginfo_class_MongoDB_BSON_Value_isBinary, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isBool, arginfo_class_MongoDB_BSON_Value_isBool, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
