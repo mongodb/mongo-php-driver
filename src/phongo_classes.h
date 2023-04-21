@@ -158,6 +158,10 @@ static inline php_phongo_utcdatetime_t* php_utcdatetime_fetch_object(zend_object
 {
 	return (php_phongo_utcdatetime_t*) ((char*) obj - XtOffsetOf(php_phongo_utcdatetime_t, std));
 }
+static inline php_phongo_value_t* php_value_fetch_object(zend_object* obj)
+{
+	return (php_phongo_value_t*) ((char*) obj - XtOffsetOf(php_phongo_value_t, std));
+}
 static inline php_phongo_commandfailedevent_t* php_commandfailedevent_fetch_object(zend_object* obj)
 {
 	return (php_phongo_commandfailedevent_t*) ((char*) obj - XtOffsetOf(php_phongo_commandfailedevent_t, std));
@@ -241,6 +245,7 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_TIMESTAMP_OBJ_P(zv) (php_timestamp_fetch_object(Z_OBJ_P(zv)))
 #define Z_UNDEFINED_OBJ_P(zv) (php_undefined_fetch_object(Z_OBJ_P(zv)))
 #define Z_UTCDATETIME_OBJ_P(zv) (php_utcdatetime_fetch_object(Z_OBJ_P(zv)))
+#define Z_VALUE_OBJ_P(zv) (php_value_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMANDFAILEDEVENT_OBJ_P(zv) (php_commandfailedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMANDSTARTEDEVENT_OBJ_P(zv) (php_commandstartedevent_fetch_object(Z_OBJ_P(zv)))
 #define Z_COMMANDSUCCEEDEDEVENT_OBJ_P(zv) (php_commandsucceededevent_fetch_object(Z_OBJ_P(zv)))
@@ -288,6 +293,7 @@ static inline php_phongo_topologyopeningevent_t* php_topologyopeningevent_fetch_
 #define Z_OBJ_TIMESTAMP(zo) (php_timestamp_fetch_object(zo))
 #define Z_OBJ_UNDEFINED(zo) (php_undefined_fetch_object(zo))
 #define Z_OBJ_UTCDATETIME(zo) (php_utcdatetime_fetch_object(zo))
+#define Z_OBJ_VALUE(zo) (php_value_fetch_object(zo))
 #define Z_OBJ_COMMANDFAILEDEVENT(zo) (php_commandfailedevent_fetch_object(zo))
 #define Z_OBJ_COMMANDSTARTEDEVENT(zo) (php_commandstartedevent_fetch_object(zo))
 #define Z_OBJ_COMMANDSUCCEEDEDEVENT(zo) (php_commandsucceededevent_fetch_object(zo))
@@ -358,6 +364,7 @@ extern zend_class_entry* php_phongo_symbol_ce;
 extern zend_class_entry* php_phongo_timestamp_ce;
 extern zend_class_entry* php_phongo_undefined_ce;
 extern zend_class_entry* php_phongo_utcdatetime_ce;
+extern zend_class_entry* php_phongo_value_ce;
 
 extern zend_class_entry* php_phongo_binary_interface_ce;
 extern zend_class_entry* php_phongo_decimal128_interface_ce;
@@ -405,6 +412,7 @@ extern void php_phongo_type_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_undefined_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_unserializable_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_value_init_ce(INIT_FUNC_ARGS);
 
 extern void php_phongo_binary_interface_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_decimal128_interface_init_ce(INIT_FUNC_ARGS);

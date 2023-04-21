@@ -184,6 +184,12 @@ typedef struct {
 } php_phongo_packedarray_t;
 
 typedef struct {
+	bson_value_t value;
+	HashTable*   properties;
+	zend_object  std;
+} php_phongo_value_t;
+
+typedef struct {
 	bson_t*     bson;
 	HashTable*  properties;
 	zend_object std;
