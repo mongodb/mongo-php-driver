@@ -160,13 +160,28 @@ final class Value
 #endif
 
     /** Type checkers */
-//    final public function isArray(): bool {}
-//    final public function isDocument(): bool {}
-//    final public function isInt(): bool {}
-//    final public function isInt32(): bool {}
-//    final public function isInt64(): bool {}
-//    final public function isNumber(): bool {}
-    // TODO: Other types
+    final public function isArray(): bool {}
+    final public function isBinary(): bool {}
+    final public function isBool(): bool {}
+    final public function isCode(): bool {}
+    final public function isDBPointer(): bool {}
+    final public function isDecimal128(): bool {}
+    final public function isDocument(): bool {}
+    final public function isDouble(): bool {}
+    final public function isInt(): bool {}
+    final public function isInt32(): bool {}
+    final public function isInt64(): bool {}
+    final public function isMaxKey(): bool {}
+    final public function isMinKey(): bool {}
+    final public function isNumber(): bool {}
+    final public function isNull(): bool {}
+    final public function isObjectId(): bool {}
+    final public function isRegex(): bool {}
+    final public function isSymbol(): bool {}
+    final public function isTimestamp(): bool {}
+    final public function isUndefined(): bool {}
+    final public function isUTCDateTime(): bool {}
+    final public function isUtf8(): bool {}
 
     /** @throws UnexpectedValueException */
 //    final public function getArray(): PackedArray {}

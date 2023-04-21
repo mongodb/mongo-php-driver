@@ -30,6 +30,13 @@
 #include "phongo_bson_encode.h"
 #include "BSON/Value_arginfo.h"
 
+#define PHONGO_VALUE_TYPE_ISSER(name, type)                              \
+	static PHP_METHOD(MongoDB_BSON_Value, name)                          \
+	{                                                                    \
+		PHONGO_PARSE_PARAMETERS_NONE();                                  \
+		RETURN_BOOL(Z_VALUE_OBJ_P(getThis())->value.value_type == type); \
+	}
+
 zend_class_entry* php_phongo_value_ce;
 
 static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
@@ -163,6 +170,59 @@ static PHP_METHOD(MongoDB_BSON_Value, getValue)
 	intern = Z_VALUE_OBJ_P(getThis());
 
 	php_phongo_bson_value_to_zval(&intern->value, return_value);
+}
+
+PHONGO_VALUE_TYPE_ISSER(isArray, BSON_TYPE_ARRAY);
+PHONGO_VALUE_TYPE_ISSER(isBinary, BSON_TYPE_BINARY);
+PHONGO_VALUE_TYPE_ISSER(isBool, BSON_TYPE_BOOL);
+PHONGO_VALUE_TYPE_ISSER(isDBPointer, BSON_TYPE_DBPOINTER);
+PHONGO_VALUE_TYPE_ISSER(isDecimal128, BSON_TYPE_DECIMAL128);
+PHONGO_VALUE_TYPE_ISSER(isDouble, BSON_TYPE_DOUBLE);
+PHONGO_VALUE_TYPE_ISSER(isDocument, BSON_TYPE_DOCUMENT);
+PHONGO_VALUE_TYPE_ISSER(isInt32, BSON_TYPE_INT32);
+PHONGO_VALUE_TYPE_ISSER(isInt64, BSON_TYPE_INT64);
+PHONGO_VALUE_TYPE_ISSER(isMaxKey, BSON_TYPE_MAXKEY);
+PHONGO_VALUE_TYPE_ISSER(isMinKey, BSON_TYPE_MINKEY);
+PHONGO_VALUE_TYPE_ISSER(isNull, BSON_TYPE_NULL);
+PHONGO_VALUE_TYPE_ISSER(isObjectId, BSON_TYPE_OID);
+PHONGO_VALUE_TYPE_ISSER(isRegex, BSON_TYPE_REGEX);
+PHONGO_VALUE_TYPE_ISSER(isSymbol, BSON_TYPE_SYMBOL);
+PHONGO_VALUE_TYPE_ISSER(isTimestamp, BSON_TYPE_TIMESTAMP);
+PHONGO_VALUE_TYPE_ISSER(isUndefined, BSON_TYPE_UNDEFINED);
+PHONGO_VALUE_TYPE_ISSER(isUTCDateTime, BSON_TYPE_DATE_TIME);
+PHONGO_VALUE_TYPE_ISSER(isUtf8, BSON_TYPE_UTF8);
+
+static PHP_METHOD(MongoDB_BSON_Value, isCode)
+{
+	php_phongo_value_t* intern;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	intern = Z_VALUE_OBJ_P(getThis());
+
+	RETURN_BOOL(intern->value.value_type == BSON_TYPE_CODE || intern->value.value_type == BSON_TYPE_CODEWSCOPE);
+}
+
+static PHP_METHOD(MongoDB_BSON_Value, isInt)
+{
+	php_phongo_value_t* intern;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	intern = Z_VALUE_OBJ_P(getThis());
+
+	RETURN_BOOL(intern->value.value_type == BSON_TYPE_INT32 || intern->value.value_type == BSON_TYPE_INT64);
+}
+
+static PHP_METHOD(MongoDB_BSON_Value, isNumber)
+{
+	php_phongo_value_t* intern;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	intern = Z_VALUE_OBJ_P(getThis());
+
+	RETURN_BOOL(intern->value.value_type == BSON_TYPE_INT32 || intern->value.value_type == BSON_TYPE_INT64 || intern->value.value_type == BSON_TYPE_DOUBLE);
 }
 
 /* MongoDB\BSON\Value object handlers */
