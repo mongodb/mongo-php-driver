@@ -27,6 +27,16 @@
 #include "php_phongo.h"
 #include "phongo_bson.h"
 #include "phongo_error.h"
+#include "BSON/Binary.h"
+#include "BSON/DBPointer.h"
+#include "BSON/Decimal128.h"
+#include "BSON/Int64.h"
+#include "BSON/Javascript.h"
+#include "BSON/ObjectId.h"
+#include "BSON/Regex.h"
+#include "BSON/Symbol.h"
+#include "BSON/Timestamp.h"
+#include "BSON/UTCDateTime.h"
 
 #undef MONGOC_LOG_DOMAIN
 #define MONGOC_LOG_DOMAIN "PHONGO-BSON"
@@ -269,18 +279,6 @@ static bool php_phongo_bson_visit_utf8(const bson_iter_t* iter ARG_UNUSED, const
 	return false;
 }
 
-static void php_phongo_bson_new_binary_from_binary_and_type(zval* object, const char* data, size_t data_len, bson_subtype_t type)
-{
-	php_phongo_binary_t* intern;
-
-	object_init_ex(object, php_phongo_binary_ce);
-
-	intern           = Z_BINARY_OBJ_P(object);
-	intern->data     = estrndup(data, data_len);
-	intern->data_len = data_len;
-	intern->type     = (uint8_t) type;
-}
-
 static bool php_phongo_bson_visit_binary(const bson_iter_t* iter ARG_UNUSED, const char* key, bson_subtype_t v_subtype, size_t v_binary_len, const uint8_t* v_binary, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
@@ -299,7 +297,7 @@ static bool php_phongo_bson_visit_binary(const bson_iter_t* iter ARG_UNUSED, con
 	{
 		zval zchild;
 
-		php_phongo_bson_new_binary_from_binary_and_type(&zchild, (const char*) v_binary, v_binary_len, v_subtype);
+		php_phongo_bson_new_binary(&zchild, (const char*) v_binary, v_binary_len, v_subtype);
 
 		if (state->is_visiting_array) {
 			add_next_index_zval(retval, &zchild);
@@ -332,24 +330,13 @@ static bool php_phongo_bson_visit_undefined(const bson_iter_t* iter, const char*
 	return false;
 }
 
-static void php_phongo_objectid_new_from_oid(zval* object, const bson_oid_t* oid)
-{
-	php_phongo_objectid_t* intern;
-
-	object_init_ex(object, php_phongo_objectid_ce);
-
-	intern = Z_OBJECTID_OBJ_P(object);
-	bson_oid_to_string(oid, intern->oid);
-	intern->initialized = true;
-}
-
 static bool php_phongo_bson_visit_oid(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_oid_t* v_oid, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
 	zval                   zchild;
 
-	php_phongo_objectid_new_from_oid(&zchild, v_oid);
+	php_phongo_bson_new_objectid(&zchild, v_oid);
 
 	if (state->is_visiting_array) {
 		add_next_index_zval(retval, &zchild);
@@ -378,24 +365,13 @@ static bool php_phongo_bson_visit_bool(const bson_iter_t* iter ARG_UNUSED, const
 	return false;
 }
 
-static void php_phongo_bson_new_utcdatetime_from_epoch(zval* object, int64_t msec_since_epoch)
-{
-	php_phongo_utcdatetime_t* intern;
-
-	object_init_ex(object, php_phongo_utcdatetime_ce);
-
-	intern               = Z_UTCDATETIME_OBJ_P(object);
-	intern->milliseconds = msec_since_epoch;
-	intern->initialized  = true;
-}
-
 static bool php_phongo_bson_visit_date_time(const bson_iter_t* iter ARG_UNUSED, const char* key, int64_t msec_since_epoch, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
 	zval                   zchild;
 
-	php_phongo_bson_new_utcdatetime_from_epoch(&zchild, msec_since_epoch);
+	php_phongo_bson_new_utcdatetime(&zchild, msec_since_epoch);
 
 	if (state->is_visiting_array) {
 		add_next_index_zval(retval, &zchild);
@@ -406,17 +382,6 @@ static bool php_phongo_bson_visit_date_time(const bson_iter_t* iter ARG_UNUSED, 
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-}
-
-static void php_phongo_bson_new_decimal128(zval* object, const bson_decimal128_t* decimal)
-{
-	php_phongo_decimal128_t* intern;
-
-	object_init_ex(object, php_phongo_decimal128_ce);
-
-	intern = Z_DECIMAL128_OBJ_P(object);
-	memcpy(&intern->decimal, decimal, sizeof(bson_decimal128_t));
-	intern->initialized = true;
 }
 
 static bool php_phongo_bson_visit_decimal128(const bson_iter_t* iter ARG_UNUSED, const char* key, const bson_decimal128_t* decimal, void* data)
@@ -454,26 +419,13 @@ static bool php_phongo_bson_visit_null(const bson_iter_t* iter ARG_UNUSED, const
 	return false;
 }
 
-static void php_phongo_bson_new_regex_from_regex_and_options(zval* object, const char* pattern, const char* flags)
-{
-	php_phongo_regex_t* intern;
-
-	object_init_ex(object, php_phongo_regex_ce);
-
-	intern              = Z_REGEX_OBJ_P(object);
-	intern->pattern_len = strlen(pattern);
-	intern->pattern     = estrndup(pattern, intern->pattern_len);
-	intern->flags_len   = strlen(flags);
-	intern->flags       = estrndup(flags, intern->flags_len);
-}
-
 static bool php_phongo_bson_visit_regex(const bson_iter_t* iter ARG_UNUSED, const char* key, const char* v_regex, const char* v_options, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
 	zval                   zchild;
 
-	php_phongo_bson_new_regex_from_regex_and_options(&zchild, v_regex, v_options);
+	php_phongo_bson_new_regex(&zchild, v_regex, v_options);
 
 	if (state->is_visiting_array) {
 		add_next_index_zval(retval, &zchild);
@@ -484,17 +436,6 @@ static bool php_phongo_bson_visit_regex(const bson_iter_t* iter ARG_UNUSED, cons
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-}
-
-static void php_phongo_bson_new_symbol(zval* object, const char* symbol, size_t symbol_len)
-{
-	php_phongo_symbol_t* intern;
-
-	object_init_ex(object, php_phongo_symbol_ce);
-
-	intern             = Z_SYMBOL_OBJ_P(object);
-	intern->symbol     = estrndup(symbol, symbol_len);
-	intern->symbol_len = symbol_len;
 }
 
 static bool php_phongo_bson_visit_symbol(const bson_iter_t* iter, const char* key, size_t v_symbol_len, const char* v_symbol, void* data)
@@ -516,46 +457,13 @@ static bool php_phongo_bson_visit_symbol(const bson_iter_t* iter, const char* ke
 	return false;
 }
 
-static bool php_phongo_bson_new_javascript_from_javascript_and_scope(zval* object, const char* code, size_t code_len, const bson_t* scope)
-{
-	php_phongo_javascript_t* intern;
-
-	if (scope) {
-		php_phongo_bson_state state;
-		bool                  valid_scope;
-
-		PHONGO_BSON_INIT_STATE(state);
-
-		valid_scope = php_phongo_bson_to_zval_ex(scope, &state);
-		zval_ptr_dtor(&state.zchild);
-
-		if (!valid_scope) {
-			return false;
-		}
-	}
-
-	object_init_ex(object, php_phongo_javascript_ce);
-
-	intern           = Z_JAVASCRIPT_OBJ_P(object);
-	intern->code     = estrndup(code, code_len);
-	intern->code_len = code_len;
-	intern->scope    = scope ? bson_copy(scope) : NULL;
-
-	return true;
-}
-
-static bool php_phongo_bson_new_javascript_from_javascript(zval* object, const char* code, size_t code_len)
-{
-	return php_phongo_bson_new_javascript_from_javascript_and_scope(object, code, code_len, NULL);
-}
-
 static bool php_phongo_bson_visit_code(const bson_iter_t* iter ARG_UNUSED, const char* key, size_t v_code_len, const char* v_code, void* data)
 {
 	zval*                  retval = PHONGO_BSON_STATE_ZCHILD(data);
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
 	zval                   zchild;
 
-	if (!php_phongo_bson_new_javascript_from_javascript(&zchild, v_code, v_code_len)) {
+	if (!php_phongo_bson_new_javascript(&zchild, v_code, v_code_len, NULL)) {
 		return true;
 	}
 
@@ -568,18 +476,6 @@ static bool php_phongo_bson_visit_code(const bson_iter_t* iter ARG_UNUSED, const
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	return false;
-}
-
-static void php_phongo_bson_new_dbpointer(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid)
-{
-	php_phongo_dbpointer_t* intern;
-
-	object_init_ex(object, php_phongo_dbpointer_ce);
-
-	intern          = Z_DBPOINTER_OBJ_P(object);
-	intern->ref     = estrndup(ref, ref_len);
-	intern->ref_len = ref_len;
-	bson_oid_to_string(oid, intern->id);
 }
 
 static bool php_phongo_bson_visit_dbpointer(const bson_iter_t* iter, const char* key, size_t namespace_len, const char* namespace, const bson_oid_t* oid, void* data)
@@ -607,7 +503,7 @@ static bool php_phongo_bson_visit_codewscope(const bson_iter_t* iter ARG_UNUSED,
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
 	zval                   zchild;
 
-	if (!php_phongo_bson_new_javascript_from_javascript_and_scope(&zchild, v_code, v_code_len, v_scope)) {
+	if (!php_phongo_bson_new_javascript(&zchild, v_code, v_code_len, v_scope)) {
 		return true;
 	}
 
@@ -644,7 +540,7 @@ static bool php_phongo_bson_visit_timestamp(const bson_iter_t* iter ARG_UNUSED, 
 	php_phongo_bson_state* state  = (php_phongo_bson_state*) data;
 	zval                   zchild;
 
-	php_phongo_bson_new_timestamp_from_increment_and_timestamp(&zchild, v_increment, v_timestamp);
+	php_phongo_bson_new_timestamp(&zchild, v_increment, v_timestamp);
 
 	if (state->is_visiting_array) {
 		add_next_index_zval(retval, &zchild);
@@ -1401,29 +1297,6 @@ bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* ma
 	return true;
 }
 
-void php_phongo_bson_new_timestamp_from_increment_and_timestamp(zval* object, uint32_t increment, uint32_t timestamp)
-{
-	php_phongo_timestamp_t* intern;
-
-	object_init_ex(object, php_phongo_timestamp_ce);
-
-	intern              = Z_TIMESTAMP_OBJ_P(object);
-	intern->increment   = increment;
-	intern->timestamp   = timestamp;
-	intern->initialized = true;
-}
-
-void php_phongo_bson_new_int64(zval* object, int64_t integer)
-{
-	php_phongo_int64_t* intern;
-
-	object_init_ex(object, php_phongo_int64_ce);
-
-	intern              = Z_INT64_OBJ_P(object);
-	intern->integer     = integer;
-	intern->initialized = true;
-}
-
 bool php_phongo_bson_to_json(zval* return_value, const bson_t* bson, php_phongo_json_mode_t mode)
 {
 	char*  json = NULL;
@@ -1498,7 +1371,7 @@ bool php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 
 		case BSON_TYPE_BINARY:
 			bson_iter_binary(iter, (bson_subtype_t*) &subtype, &data_len, (const uint8_t**) &data);
-			php_phongo_bson_new_binary_from_binary_and_type(zv, data, data_len, subtype);
+			php_phongo_bson_new_binary(zv, data, data_len, subtype);
 			return true;
 
 		case BSON_TYPE_UNDEFINED:
@@ -1506,7 +1379,7 @@ bool php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 			return true;
 
 		case BSON_TYPE_OID:
-			php_phongo_objectid_new_from_oid(zv, bson_iter_oid(iter));
+			php_phongo_bson_new_objectid(zv, bson_iter_oid(iter));
 			return true;
 
 		case BSON_TYPE_BOOL:
@@ -1514,7 +1387,7 @@ bool php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 			return true;
 
 		case BSON_TYPE_DATE_TIME:
-			php_phongo_bson_new_utcdatetime_from_epoch(zv, bson_iter_date_time(iter));
+			php_phongo_bson_new_utcdatetime(zv, bson_iter_date_time(iter));
 			return true;
 
 		case BSON_TYPE_NULL:
@@ -1528,7 +1401,7 @@ bool php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 				return false;
 			}
 
-			php_phongo_bson_new_regex_from_regex_and_options(zv, data, options);
+			php_phongo_bson_new_regex(zv, data, options);
 			return true;
 
 		case BSON_TYPE_DBPOINTER:
@@ -1548,7 +1421,7 @@ bool php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 				return false;
 			}
 
-			php_phongo_bson_new_javascript_from_javascript(zv, data, data_len);
+			php_phongo_bson_new_javascript(zv, data, data_len, NULL);
 			return true;
 
 		case BSON_TYPE_SYMBOL:
@@ -1569,7 +1442,7 @@ bool php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 			}
 
 			bson_init_from_json(&bson, options, options_len, NULL);
-			php_phongo_bson_new_javascript_from_javascript_and_scope(zv, data, data_len, &bson);
+			php_phongo_bson_new_javascript(zv, data, data_len, &bson);
 			return true;
 
 		case BSON_TYPE_INT32:
@@ -1579,7 +1452,7 @@ bool php_phongo_bson_iter_to_zval(zval* zv, bson_iter_t* iter)
 
 		case BSON_TYPE_TIMESTAMP:
 			bson_iter_timestamp(iter, &data_len, &options_len);
-			php_phongo_bson_new_timestamp_from_increment_and_timestamp(zv, options_len, data_len);
+			php_phongo_bson_new_timestamp(zv, options_len, data_len);
 			return true;
 
 		case BSON_TYPE_DECIMAL128:

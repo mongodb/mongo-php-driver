@@ -123,6 +123,7 @@
 #define ADD_NEXT_INDEX_INT64(_zv, _value) add_next_index_long((_zv), (_value))
 #define ADD_ASSOC_INT64(_zv, _key, _value) add_assoc_long((_zv), (_key), (_value))
 #define ZVAL_INT64(_zv, _value) ZVAL_LONG((_zv), (_value))
+#define RETURN_INT64(_value) RETURN_LONG((_value))
 #elif SIZEOF_ZEND_LONG == 4
 #define ADD_INDEX_INT64(_zv, _index, _value)            \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
@@ -153,6 +154,13 @@
 		php_phongo_bson_new_int64((_zv), (_value));     \
 	} else {                                            \
 		ZVAL_LONG((_zv), (_value));                     \
+	}
+#define RETURN_INT64(_value)                               \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {    \
+		php_phongo_bson_new_int64(return_value, (_value)); \
+		return;                                            \
+	} else {                                               \
+		RETURN_LONG((_value));                             \
 	}
 #else /* SIZEOF_ZEND_LONG != 8 && SIZEOF_ZEND_LONG != 4 */
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)

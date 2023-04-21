@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHONGO_BSON_OBJECTID_H
-#define PHONGO_BSON_OBJECTID_H
+#ifndef PHONGO_BSON_TIMESTAMP_H
+#define PHONGO_BSON_TIMESTAMP_H
 
-#include "bson/bson.h"
+void php_phongo_bson_new_timestamp(zval* object, uint32_t increment, uint32_t timestamp);
 
-#include <php.h>
-
-void php_phongo_bson_new_objectid(zval* return_value, const bson_oid_t* oid);
-
-#endif /* PHONGO_BSON_OBJECTID_H */
+#endif /* PHONGO_BSON_TIMESTAMP_H */

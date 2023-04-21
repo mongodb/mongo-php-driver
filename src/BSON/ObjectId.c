@@ -336,7 +336,7 @@ void php_phongo_objectid_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_objectid.offset         = XtOffsetOf(php_phongo_objectid_t, std);
 }
 
-void phongo_objectid_init(zval* return_value, const bson_oid_t* oid)
+void php_phongo_bson_new_objectid(zval* return_value, const bson_oid_t* oid)
 {
 	php_phongo_objectid_t* intern;
 

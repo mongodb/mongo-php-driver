@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHONGO_BSON_OBJECTID_H
-#define PHONGO_BSON_OBJECTID_H
+#ifndef PHONGO_BSON_REGEX_H
+#define PHONGO_BSON_REGEX_H
 
-#include "bson/bson.h"
+void php_phongo_bson_new_regex(zval* object, const char* pattern, const char* flags);
 
-#include <php.h>
-
-void php_phongo_bson_new_objectid(zval* return_value, const bson_oid_t* oid);
-
-#endif /* PHONGO_BSON_OBJECTID_H */
+#endif /* PHONGO_BSON_REGEX_H */

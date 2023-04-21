@@ -262,3 +262,14 @@ void php_phongo_symbol_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_symbol.free_obj       = php_phongo_symbol_free_object;
 	php_phongo_handler_symbol.offset         = XtOffsetOf(php_phongo_symbol_t, std);
 }
+
+void php_phongo_bson_new_symbol(zval* object, const char* symbol, size_t symbol_len)
+{
+	php_phongo_symbol_t* intern;
+
+	object_init_ex(object, php_phongo_symbol_ce);
+
+	intern             = Z_SYMBOL_OBJ_P(object);
+	intern->symbol     = estrndup(symbol, symbol_len);
+	intern->symbol_len = symbol_len;
+}

@@ -35,7 +35,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_TopologyClosedEvent, getTopologyId)
 
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	phongo_objectid_init(return_value, &intern->topology_id);
+	php_phongo_bson_new_objectid(return_value, &intern->topology_id);
 }
 
 /* MongoDB\Driver\Monitoring\TopologyClosedEvent object handlers */
@@ -71,7 +71,7 @@ static HashTable* php_phongo_topologyclosedevent_get_debug_info(phongo_compat_ob
 
 	{
 		zval topology_id;
-		phongo_objectid_init(&topology_id, &intern->topology_id);
+		php_phongo_bson_new_objectid(&topology_id, &intern->topology_id);
 		ADD_ASSOC_ZVAL_EX(&retval, "topologyId", &topology_id);
 	}
 

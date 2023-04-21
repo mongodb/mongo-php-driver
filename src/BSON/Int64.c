@@ -548,3 +548,14 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_int64.cast_object    = php_phongo_int64_cast_object;
 	php_phongo_handler_int64.do_operation   = php_phongo_int64_do_operation;
 }
+
+void php_phongo_bson_new_int64(zval* object, int64_t integer)
+{
+	php_phongo_int64_t* intern;
+
+	object_init_ex(object, php_phongo_int64_ce);
+
+	intern              = Z_INT64_OBJ_P(object);
+	intern->integer     = integer;
+	intern->initialized = true;
+}

@@ -19,4 +19,6 @@
 
 #define PHONGO_BINARY_UUID_SIZE 16
 
+void php_phongo_bson_new_binary(zval* object, const char* data, size_t data_len, bson_subtype_t type);
+
 #endif /* PHONGO_BSON_BINARY_H */

@@ -19,6 +19,7 @@
 
 #include "php_phongo.h"
 #include "phongo_error.h"
+#include "BSON/Int64.h"
 #include "ServerHeartbeatFailedEvent_arginfo.h"
 
 zend_class_entry* php_phongo_serverheartbeatfailedevent_ce;

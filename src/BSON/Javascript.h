@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHONGO_BSON_OBJECTID_H
-#define PHONGO_BSON_OBJECTID_H
+#ifndef PHONGO_BSON_JAVASCRIPT_H
+#define PHONGO_BSON_JAVASCRIPT_H
 
-#include "bson/bson.h"
+bool php_phongo_bson_new_javascript(zval* object, const char* code, size_t code_len, const bson_t* scope);
 
-#include <php.h>
-
-void php_phongo_bson_new_objectid(zval* return_value, const bson_oid_t* oid);
-
-#endif /* PHONGO_BSON_OBJECTID_H */
+#endif /* PHONGO_BSON_JAVASCRIPT_H */
