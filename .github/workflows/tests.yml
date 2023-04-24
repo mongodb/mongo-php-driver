@@ -109,7 +109,7 @@ jobs:
 
       - name: Setup PHP SDK
         id: setup-php
-        uses: cmb69/setup-php-sdk@v0.6
+        uses: cmb69/setup-php-sdk@v0.7
         with:
           version: ${{ matrix.php }}
           arch: ${{ matrix.arch }}
