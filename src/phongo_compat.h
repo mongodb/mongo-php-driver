@@ -128,7 +128,7 @@
 #define ADD_INDEX_INT64(_zv, _index, _value)            \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
 		zval zchild;                                    \
-		php_phongo_bson_new_int64(&zchild, (_value));   \
+		phongo_int64_new(&zchild, (_value));            \
 		add_index_zval((_zv), (_index), &zchild);       \
 	} else {                                            \
 		add_index_long((_zv), (_index), (_value));      \
@@ -136,7 +136,7 @@
 #define ADD_NEXT_INDEX_INT64(_zv, _value)               \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
 		zval zchild;                                    \
-		php_phongo_bson_new_int64(&zchild, (_value));   \
+		phongo_int64_new(&zchild, (_value));            \
 		add_next_index_zval((_zv), &zchild);            \
 	} else {                                            \
 		add_next_index_long((_zv), (_value));           \
@@ -144,23 +144,23 @@
 #define ADD_ASSOC_INT64(_zv, _key, _value)              \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
 		zval zchild;                                    \
-		php_phongo_bson_new_int64(&zchild, (_value));   \
+		phongo_int64_new(&zchild, (_value));            \
 		add_assoc_zval((_zv), (_key), &zchild);         \
 	} else {                                            \
 		add_assoc_long((_zv), (_key), (_value));        \
 	}
 #define ZVAL_INT64(_zv, _value)                         \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
-		php_phongo_bson_new_int64((_zv), (_value));     \
+		phongo_int64_new((_zv), (_value));              \
 	} else {                                            \
 		ZVAL_LONG((_zv), (_value));                     \
 	}
-#define RETURN_INT64(_value)                               \
-	if ((_value) > INT32_MAX || (_value) < INT32_MIN) {    \
-		php_phongo_bson_new_int64(return_value, (_value)); \
-		return;                                            \
-	} else {                                               \
-		RETURN_LONG((_value));                             \
+#define RETURN_INT64(_value)                            \
+	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
+		phongo_int64_new(return_value, (_value));       \
+		return;                                         \
+	} else {                                            \
+		RETURN_LONG((_value));                          \
 	}
 #else /* SIZEOF_ZEND_LONG != 8 && SIZEOF_ZEND_LONG != 4 */
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)

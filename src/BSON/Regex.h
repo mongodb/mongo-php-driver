@@ -17,6 +17,6 @@
 #ifndef PHONGO_BSON_REGEX_H
 #define PHONGO_BSON_REGEX_H
 
-void php_phongo_bson_new_regex(zval* object, const char* pattern, const char* flags);
+void phongo_regex_new(zval* object, const char* pattern, const char* flags);
 
 #endif /* PHONGO_BSON_REGEX_H */

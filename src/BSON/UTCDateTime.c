@@ -409,7 +409,7 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_utcdatetime.offset         = XtOffsetOf(php_phongo_utcdatetime_t, std);
 }
 
-void php_phongo_bson_new_utcdatetime(zval* object, int64_t msec_since_epoch)
+void phongo_utcdatetime_new(zval* object, int64_t msec_since_epoch)
 {
 	php_phongo_utcdatetime_t* intern;
 

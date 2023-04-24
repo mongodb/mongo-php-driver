@@ -409,7 +409,7 @@ void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_timestamp.offset         = XtOffsetOf(php_phongo_timestamp_t, std);
 }
 
-void php_phongo_bson_new_timestamp(zval* object, uint32_t increment, uint32_t timestamp)
+void phongo_timestamp_new(zval* object, uint32_t increment, uint32_t timestamp)
 {
 	php_phongo_timestamp_t* intern;
 

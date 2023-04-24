@@ -127,7 +127,7 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getServiceId)
 		RETURN_NULL();
 	}
 
-	php_phongo_bson_new_objectid(return_value, &intern->service_id);
+	phongo_objectid_new(return_value, &intern->service_id);
 }
 
 /* Returns the event's server connection ID */
@@ -234,7 +234,7 @@ static HashTable* php_phongo_commandstartedevent_get_debug_info(phongo_compat_ob
 	if (intern->has_service_id) {
 		zval service_id;
 
-		php_phongo_bson_new_objectid(&service_id, &intern->service_id);
+		phongo_objectid_new(&service_id, &intern->service_id);
 		ADD_ASSOC_ZVAL_EX(&retval, "serviceId", &service_id);
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "serviceId");

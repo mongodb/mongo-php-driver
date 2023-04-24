@@ -17,6 +17,6 @@
 #ifndef PHONGO_BSON_SYMBOL_H
 #define PHONGO_BSON_SYMBOL_H
 
-void php_phongo_bson_new_symbol(zval* object, const char* symbol, size_t symbol_len);
+void phongo_symbol_new(zval* object, const char* symbol, size_t symbol_len);
 
 #endif /* PHONGO_BSON_SYMBOL_H */

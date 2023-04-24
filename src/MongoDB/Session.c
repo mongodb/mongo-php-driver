@@ -281,7 +281,7 @@ static PHP_METHOD(MongoDB_Driver_Session, getOperationTime)
 		RETURN_NULL();
 	}
 
-	php_phongo_bson_new_timestamp(return_value, increment, timestamp);
+	phongo_timestamp_new(return_value, increment, timestamp);
 }
 
 /* Returns the server this session is pinned to */
@@ -644,7 +644,7 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 		if (timestamp && increment) {
 			zval ztimestamp;
 
-			php_phongo_bson_new_timestamp(&ztimestamp, increment, timestamp);
+			phongo_timestamp_new(&ztimestamp, increment, timestamp);
 			ADD_ASSOC_ZVAL_EX(&retval, "operationTime", &ztimestamp);
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "operationTime");

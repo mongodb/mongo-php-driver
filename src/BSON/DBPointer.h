@@ -17,6 +17,6 @@
 #ifndef PHONGO_BSON_DBPOINTER_H
 #define PHONGO_BSON_DBPOINTER_H
 
-void php_phongo_bson_new_dbpointer(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid);
+void phongo_dbpointer_new(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid);
 
 #endif /* PHONGO_BSON_DBPOINTER_H */

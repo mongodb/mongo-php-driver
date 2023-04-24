@@ -17,6 +17,6 @@
 #ifndef PHONGO_BSON_UTCDATETIME_H
 #define PHONGO_BSON_UTCDATETIME_H
 
-void php_phongo_bson_new_utcdatetime(zval* object, int64_t msec_since_epoch);
+void phongo_utcdatetime_new(zval* object, int64_t msec_since_epoch);
 
 #endif /* PHONGO_BSON_UTCDATETIME_H */

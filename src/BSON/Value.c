@@ -180,7 +180,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getArray)
 
 	bson = bson_new_from_data(intern->value.value.v_doc.data, intern->value.value.v_doc.data_len);
 
-	php_phongo_bson_new_packed_array(return_value, bson, false);
+	phongo_packedarray_new(return_value, bson, false);
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, getBinary)
@@ -193,7 +193,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getBinary)
 
 	PHONGO_VALUE_CHECK_TYPE(intern->value, BSON_TYPE_BINARY);
 
-	php_phongo_bson_new_binary(return_value, (const char*) intern->value.value.v_binary.data, intern->value.value.v_binary.data_len, intern->value.value.v_binary.subtype);
+	phongo_binary_new(return_value, (const char*) intern->value.value.v_binary.data, intern->value.value.v_binary.data_len, intern->value.value.v_binary.subtype);
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, getBool)
@@ -220,12 +220,12 @@ static PHP_METHOD(MongoDB_BSON_Value, getCode)
 
 	switch (intern->value.value_type) {
 		case BSON_TYPE_CODE:
-			php_phongo_bson_new_javascript(return_value, intern->value.value.v_code.code, intern->value.value.v_code.code_len, NULL);
+			phongo_javascript_new(return_value, intern->value.value.v_code.code, intern->value.value.v_code.code_len, NULL);
 			return;
 
 		case BSON_TYPE_CODEWSCOPE:
 			scope = bson_new_from_data(intern->value.value.v_codewscope.scope_data, intern->value.value.v_codewscope.scope_len);
-			php_phongo_bson_new_javascript(return_value, intern->value.value.v_codewscope.code, intern->value.value.v_codewscope.code_len, scope);
+			phongo_javascript_new(return_value, intern->value.value.v_codewscope.code, intern->value.value.v_codewscope.code_len, scope);
 			return;
 
 		default:
@@ -243,7 +243,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getDBPointer)
 
 	PHONGO_VALUE_CHECK_TYPE(intern->value, BSON_TYPE_DBPOINTER);
 
-	php_phongo_bson_new_dbpointer(return_value, intern->value.value.v_dbpointer.collection, intern->value.value.v_dbpointer.collection_len, &intern->value.value.v_dbpointer.oid);
+	phongo_dbpointer_new(return_value, intern->value.value.v_dbpointer.collection, intern->value.value.v_dbpointer.collection_len, &intern->value.value.v_dbpointer.oid);
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, getDecimal128)
@@ -256,7 +256,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getDecimal128)
 
 	PHONGO_VALUE_CHECK_TYPE(intern->value, BSON_TYPE_DECIMAL128);
 
-	php_phongo_bson_new_decimal128(return_value, &intern->value.value.v_decimal128);
+	phongo_decimal128_new(return_value, &intern->value.value.v_decimal128);
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, getDocument)
@@ -272,7 +272,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getDocument)
 
 	bson = bson_new_from_data(intern->value.value.v_doc.data, intern->value.value.v_doc.data_len);
 
-	php_phongo_bson_new_document(return_value, bson, false);
+	phongo_document_new(return_value, bson, false);
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, getDouble)
@@ -383,7 +383,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getObjectId)
 
 	PHONGO_VALUE_CHECK_TYPE(intern->value, BSON_TYPE_OID);
 
-	php_phongo_bson_new_objectid(return_value, &intern->value.value.v_oid);
+	phongo_objectid_new(return_value, &intern->value.value.v_oid);
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, getRegex)
@@ -396,7 +396,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getRegex)
 
 	PHONGO_VALUE_CHECK_TYPE(intern->value, BSON_TYPE_REGEX);
 
-	php_phongo_bson_new_regex(return_value, intern->value.value.v_regex.regex, intern->value.value.v_regex.options);
+	phongo_regex_new(return_value, intern->value.value.v_regex.regex, intern->value.value.v_regex.options);
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, getSymbol)
@@ -409,7 +409,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getSymbol)
 
 	PHONGO_VALUE_CHECK_TYPE(intern->value, BSON_TYPE_SYMBOL);
 
-	php_phongo_bson_new_symbol(return_value, intern->value.value.v_symbol.symbol, intern->value.value.v_symbol.len);
+	phongo_symbol_new(return_value, intern->value.value.v_symbol.symbol, intern->value.value.v_symbol.len);
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, getTimestamp)
@@ -422,7 +422,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getTimestamp)
 
 	PHONGO_VALUE_CHECK_TYPE(intern->value, BSON_TYPE_TIMESTAMP);
 
-	php_phongo_bson_new_timestamp(return_value, intern->value.value.v_timestamp.increment, intern->value.value.v_timestamp.timestamp);
+	phongo_timestamp_new(return_value, intern->value.value.v_timestamp.increment, intern->value.value.v_timestamp.timestamp);
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, getUndefined)
@@ -448,7 +448,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getUTCDateTime)
 
 	PHONGO_VALUE_CHECK_TYPE(intern->value, BSON_TYPE_DATE_TIME);
 
-	php_phongo_bson_new_utcdatetime(return_value, intern->value.value.v_datetime);
+	phongo_utcdatetime_new(return_value, intern->value.value.v_datetime);
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, getUtf8)

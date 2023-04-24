@@ -290,7 +290,7 @@ void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_decimal128.offset         = XtOffsetOf(php_phongo_decimal128_t, std);
 }
 
-void php_phongo_bson_new_decimal128(zval* object, const bson_decimal128_t* decimal)
+void phongo_decimal128_new(zval* object, const bson_decimal128_t* decimal)
 {
 	php_phongo_decimal128_t* intern;
 

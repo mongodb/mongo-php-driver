@@ -17,6 +17,6 @@
 #ifndef PHONGO_BSON_INT64_H
 #define PHONGO_BSON_INT64_H
 
-void php_phongo_bson_new_int64(zval* object, int64_t integer);
+void phongo_int64_new(zval* object, int64_t integer);
 
 #endif /* PHONGO_BSON_INT64_H */

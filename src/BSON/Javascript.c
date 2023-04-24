@@ -408,7 +408,7 @@ void php_phongo_javascript_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_javascript.offset         = XtOffsetOf(php_phongo_javascript_t, std);
 }
 
-bool php_phongo_bson_new_javascript(zval* object, const char* code, size_t code_len, const bson_t* scope)
+bool phongo_javascript_new(zval* object, const char* code, size_t code_len, const bson_t* scope)
 {
 	php_phongo_javascript_t* intern;
 
