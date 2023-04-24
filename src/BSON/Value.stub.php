@@ -11,12 +11,6 @@ final class Value
 {
     /**
      * @var int
-     * @cvalue BSON_TYPE_EOD
-     */
-    public const TYPE_EOD = 0x00;
-
-    /**
-     * @var int
      * @cvalue BSON_TYPE_DOUBLE
      */
     public const TYPE_DOUBLE = 0x01;
@@ -170,15 +164,14 @@ final class Value
     final public function getDouble(): float {}
     final public function getInt(): int {}
     final public function getInt32(): int {}
-    final public function getInt64(): int {}
+#if PHP_VERSION_ID >= 80000
+    final public function getInt64(): int|Int64 {}
+#else
+    /** @return int|Int64 */
+    final public function getInt64() {}
+#endif
     final public function getMaxKey(): MaxKey {}
     final public function getMinKey(): MinKey {}
-#if PHP_VERSION_ID >= 80000
-    final public function getNumber(): int|float {}
-#else
-    /** @return int|float */
-    final public function getNumber() {}
-#endif
     final public function getNull(): null {}
     final public function getObjectId(): ObjectId {}
     final public function getRegex(): Regex {}
@@ -202,7 +195,6 @@ final class Value
     final public function isInt64(): bool {}
     final public function isMaxKey(): bool {}
     final public function isMinKey(): bool {}
-    final public function isNumber(): bool {}
     final public function isNull(): bool {}
     final public function isObjectId(): bool {}
     final public function isRegex(): bool {}

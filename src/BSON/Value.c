@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-present MongoDB, Inc.
+ * Copyright 2023-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,19 +42,6 @@
 #include "BSON/Timestamp.h"
 #include "BSON/UTCDateTime.h"
 
-#define PHONGO_VALUE_TYPE_ISSER(name, type)                              \
-	static PHP_METHOD(MongoDB_BSON_Value, name)                          \
-	{                                                                    \
-		PHONGO_PARSE_PARAMETERS_NONE();                                  \
-		RETURN_BOOL(Z_VALUE_OBJ_P(getThis())->value.value_type == type); \
-	}
-
-#define PHONGO_VALUE_CHECK_TYPE(bson_value, expected_type)                                                       \
-	if (bson_value.value_type != expected_type) {                                                                \
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Unexpected BSON type %d", bson_value.value_type); \
-		return;                                                                                                  \
-	}
-
 zend_class_entry* php_phongo_value_ce;
 
 static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
@@ -92,6 +79,8 @@ static PHP_METHOD(MongoDB_BSON_Value, fromPHP)
 
 	object_init_ex(&zv, php_phongo_value_ce);
 	intern = Z_VALUE_OBJ_P(&zv);
+
+	ZVAL_DEREF(data);
 
 	switch (Z_TYPE_P(data)) {
 		case IS_UNDEF:
@@ -144,7 +133,7 @@ static PHP_METHOD(MongoDB_BSON_Value, fromPHP)
 
 		default:
 			// Unsupported
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Received unsupported type %s for initialiser", zend_zval_type_name(data));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Unsupported type %s", zend_zval_type_name(data));
 	}
 
 	RETURN_ZVAL(&zv, 1, 1);
@@ -171,6 +160,12 @@ static PHP_METHOD(MongoDB_BSON_Value, getValue)
 
 	php_phongo_bson_value_to_zval(&intern->value, return_value);
 }
+
+#define PHONGO_VALUE_CHECK_TYPE(bson_value, expected_type)                                                       \
+	if (bson_value.value_type != expected_type) {                                                                \
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Unexpected BSON type %d", bson_value.value_type); \
+		return;                                                                                                  \
+	}
 
 static PHP_METHOD(MongoDB_BSON_Value, getArray)
 {
@@ -378,29 +373,6 @@ static PHP_METHOD(MongoDB_BSON_Value, getNull)
 	RETURN_NULL();
 }
 
-static PHP_METHOD(MongoDB_BSON_Value, getNumber)
-{
-	php_phongo_value_t* intern;
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_VALUE_OBJ_P(getThis());
-
-	switch (intern->value.value_type) {
-		case BSON_TYPE_DOUBLE:
-			RETURN_DOUBLE(intern->value.value.v_double);
-
-		case BSON_TYPE_INT32:
-			RETURN_LONG(intern->value.value.v_int32);
-
-		case BSON_TYPE_INT64:
-			RETURN_INT64(intern->value.value.v_int64);
-
-		default:
-			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Unexpected BSON type %d", intern->value.value_type);
-	}
-}
-
 static PHP_METHOD(MongoDB_BSON_Value, getObjectId)
 {
 	php_phongo_value_t* intern;
@@ -492,25 +464,36 @@ static PHP_METHOD(MongoDB_BSON_Value, getUtf8)
 	RETURN_STRINGL(intern->value.value.v_utf8.str, intern->value.value.v_utf8.len);
 }
 
-PHONGO_VALUE_TYPE_ISSER(isArray, BSON_TYPE_ARRAY);
-PHONGO_VALUE_TYPE_ISSER(isBinary, BSON_TYPE_BINARY);
-PHONGO_VALUE_TYPE_ISSER(isBool, BSON_TYPE_BOOL);
-PHONGO_VALUE_TYPE_ISSER(isDBPointer, BSON_TYPE_DBPOINTER);
-PHONGO_VALUE_TYPE_ISSER(isDecimal128, BSON_TYPE_DECIMAL128);
-PHONGO_VALUE_TYPE_ISSER(isDouble, BSON_TYPE_DOUBLE);
-PHONGO_VALUE_TYPE_ISSER(isDocument, BSON_TYPE_DOCUMENT);
-PHONGO_VALUE_TYPE_ISSER(isInt32, BSON_TYPE_INT32);
-PHONGO_VALUE_TYPE_ISSER(isInt64, BSON_TYPE_INT64);
-PHONGO_VALUE_TYPE_ISSER(isMaxKey, BSON_TYPE_MAXKEY);
-PHONGO_VALUE_TYPE_ISSER(isMinKey, BSON_TYPE_MINKEY);
-PHONGO_VALUE_TYPE_ISSER(isNull, BSON_TYPE_NULL);
-PHONGO_VALUE_TYPE_ISSER(isObjectId, BSON_TYPE_OID);
-PHONGO_VALUE_TYPE_ISSER(isRegex, BSON_TYPE_REGEX);
-PHONGO_VALUE_TYPE_ISSER(isSymbol, BSON_TYPE_SYMBOL);
-PHONGO_VALUE_TYPE_ISSER(isTimestamp, BSON_TYPE_TIMESTAMP);
-PHONGO_VALUE_TYPE_ISSER(isUndefined, BSON_TYPE_UNDEFINED);
-PHONGO_VALUE_TYPE_ISSER(isUTCDateTime, BSON_TYPE_DATE_TIME);
-PHONGO_VALUE_TYPE_ISSER(isUtf8, BSON_TYPE_UTF8);
+#undef PHONGO_VALUE_CHECK_TYPE
+
+#define PHONGO_VALUE_IS_TYPE(name, type)                                 \
+	static PHP_METHOD(MongoDB_BSON_Value, name)                          \
+	{                                                                    \
+		PHONGO_PARSE_PARAMETERS_NONE();                                  \
+		RETURN_BOOL(Z_VALUE_OBJ_P(getThis())->value.value_type == type); \
+	}
+
+PHONGO_VALUE_IS_TYPE(isArray, BSON_TYPE_ARRAY);
+PHONGO_VALUE_IS_TYPE(isBinary, BSON_TYPE_BINARY);
+PHONGO_VALUE_IS_TYPE(isBool, BSON_TYPE_BOOL);
+PHONGO_VALUE_IS_TYPE(isDBPointer, BSON_TYPE_DBPOINTER);
+PHONGO_VALUE_IS_TYPE(isDecimal128, BSON_TYPE_DECIMAL128);
+PHONGO_VALUE_IS_TYPE(isDouble, BSON_TYPE_DOUBLE);
+PHONGO_VALUE_IS_TYPE(isDocument, BSON_TYPE_DOCUMENT);
+PHONGO_VALUE_IS_TYPE(isInt32, BSON_TYPE_INT32);
+PHONGO_VALUE_IS_TYPE(isInt64, BSON_TYPE_INT64);
+PHONGO_VALUE_IS_TYPE(isMaxKey, BSON_TYPE_MAXKEY);
+PHONGO_VALUE_IS_TYPE(isMinKey, BSON_TYPE_MINKEY);
+PHONGO_VALUE_IS_TYPE(isNull, BSON_TYPE_NULL);
+PHONGO_VALUE_IS_TYPE(isObjectId, BSON_TYPE_OID);
+PHONGO_VALUE_IS_TYPE(isRegex, BSON_TYPE_REGEX);
+PHONGO_VALUE_IS_TYPE(isSymbol, BSON_TYPE_SYMBOL);
+PHONGO_VALUE_IS_TYPE(isTimestamp, BSON_TYPE_TIMESTAMP);
+PHONGO_VALUE_IS_TYPE(isUndefined, BSON_TYPE_UNDEFINED);
+PHONGO_VALUE_IS_TYPE(isUTCDateTime, BSON_TYPE_DATE_TIME);
+PHONGO_VALUE_IS_TYPE(isUtf8, BSON_TYPE_UTF8);
+
+#undef PHONGO_VALUE_IS_TYPE
 
 static PHP_METHOD(MongoDB_BSON_Value, isCode)
 {
@@ -532,17 +515,6 @@ static PHP_METHOD(MongoDB_BSON_Value, isInt)
 	intern = Z_VALUE_OBJ_P(getThis());
 
 	RETURN_BOOL(intern->value.value_type == BSON_TYPE_INT32 || intern->value.value_type == BSON_TYPE_INT64);
-}
-
-static PHP_METHOD(MongoDB_BSON_Value, isNumber)
-{
-	php_phongo_value_t* intern;
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_VALUE_OBJ_P(getThis());
-
-	RETURN_BOOL(intern->value.value_type == BSON_TYPE_INT32 || intern->value.value_type == BSON_TYPE_INT64 || intern->value.value_type == BSON_TYPE_DOUBLE);
 }
 
 /* MongoDB\BSON\Value object handlers */

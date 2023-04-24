@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3ba0985100b1691e8edf6469309f1474edfcf0b5 */
+ * Stub hash: 3d5f80e948185e15005dbc43996ddfa88438f1c4 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Value___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -57,22 +57,20 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_Value_getInt32 arginfo_class_MongoDB_BSON_Value_getType
 
-#define arginfo_class_MongoDB_BSON_Value_getInt64 arginfo_class_MongoDB_BSON_Value_getType
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_TYPE_MASK_EX(arginfo_class_MongoDB_BSON_Value_getInt64, 0, 0, MongoDB\\BSON\\Int64, MAY_BE_LONG)
+ZEND_END_ARG_INFO()
+#endif
+
+#if !(PHP_VERSION_ID >= 80000)
+#define arginfo_class_MongoDB_BSON_Value_getInt64 arginfo_class_MongoDB_BSON_Value_getValue
+#endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getMaxKey, 0, 0, MongoDB\\BSON\\MaxKey, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getMinKey, 0, 0, MongoDB\\BSON\\MinKey, 0)
 ZEND_END_ARG_INFO()
-
-#if PHP_VERSION_ID >= 80000
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_MASK_EX(arginfo_class_MongoDB_BSON_Value_getNumber, 0, 0, MAY_BE_LONG|MAY_BE_DOUBLE)
-ZEND_END_ARG_INFO()
-#endif
-
-#if !(PHP_VERSION_ID >= 80000)
-#define arginfo_class_MongoDB_BSON_Value_getNumber arginfo_class_MongoDB_BSON_Value_getValue
-#endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Value_getNull, 0, 0, IS_NULL, 1)
 ZEND_END_ARG_INFO()
@@ -124,8 +122,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_Value_isMinKey arginfo_class_MongoDB_BSON_Value_getBool
 
-#define arginfo_class_MongoDB_BSON_Value_isNumber arginfo_class_MongoDB_BSON_Value_getBool
-
 #define arginfo_class_MongoDB_BSON_Value_isNull arginfo_class_MongoDB_BSON_Value_getBool
 
 #define arginfo_class_MongoDB_BSON_Value_isObjectId arginfo_class_MongoDB_BSON_Value_getBool
@@ -167,15 +163,14 @@ static ZEND_METHOD(MongoDB_BSON_Value, getDocument);
 static ZEND_METHOD(MongoDB_BSON_Value, getDouble);
 static ZEND_METHOD(MongoDB_BSON_Value, getInt);
 static ZEND_METHOD(MongoDB_BSON_Value, getInt32);
-static ZEND_METHOD(MongoDB_BSON_Value, getInt64);
-static ZEND_METHOD(MongoDB_BSON_Value, getMaxKey);
-static ZEND_METHOD(MongoDB_BSON_Value, getMinKey);
 #if PHP_VERSION_ID >= 80000
-static ZEND_METHOD(MongoDB_BSON_Value, getNumber);
+static ZEND_METHOD(MongoDB_BSON_Value, getInt64);
 #endif
 #if !(PHP_VERSION_ID >= 80000)
-static ZEND_METHOD(MongoDB_BSON_Value, getNumber);
+static ZEND_METHOD(MongoDB_BSON_Value, getInt64);
 #endif
+static ZEND_METHOD(MongoDB_BSON_Value, getMaxKey);
+static ZEND_METHOD(MongoDB_BSON_Value, getMinKey);
 static ZEND_METHOD(MongoDB_BSON_Value, getNull);
 static ZEND_METHOD(MongoDB_BSON_Value, getObjectId);
 static ZEND_METHOD(MongoDB_BSON_Value, getRegex);
@@ -197,7 +192,6 @@ static ZEND_METHOD(MongoDB_BSON_Value, isInt32);
 static ZEND_METHOD(MongoDB_BSON_Value, isInt64);
 static ZEND_METHOD(MongoDB_BSON_Value, isMaxKey);
 static ZEND_METHOD(MongoDB_BSON_Value, isMinKey);
-static ZEND_METHOD(MongoDB_BSON_Value, isNumber);
 static ZEND_METHOD(MongoDB_BSON_Value, isNull);
 static ZEND_METHOD(MongoDB_BSON_Value, isObjectId);
 static ZEND_METHOD(MongoDB_BSON_Value, isRegex);
@@ -233,15 +227,14 @@ static const zend_function_entry class_MongoDB_BSON_Value_methods[] = {
 	ZEND_ME(MongoDB_BSON_Value, getDouble, arginfo_class_MongoDB_BSON_Value_getDouble, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, getInt, arginfo_class_MongoDB_BSON_Value_getInt, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, getInt32, arginfo_class_MongoDB_BSON_Value_getInt32, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_Value, getInt64, arginfo_class_MongoDB_BSON_Value_getInt64, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_Value, getMaxKey, arginfo_class_MongoDB_BSON_Value_getMaxKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_Value, getMinKey, arginfo_class_MongoDB_BSON_Value_getMinKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
-	ZEND_ME(MongoDB_BSON_Value, getNumber, arginfo_class_MongoDB_BSON_Value_getNumber, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getInt64, arginfo_class_MongoDB_BSON_Value_getInt64, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
 #if !(PHP_VERSION_ID >= 80000)
-	ZEND_ME(MongoDB_BSON_Value, getNumber, arginfo_class_MongoDB_BSON_Value_getNumber, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getInt64, arginfo_class_MongoDB_BSON_Value_getInt64, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
+	ZEND_ME(MongoDB_BSON_Value, getMaxKey, arginfo_class_MongoDB_BSON_Value_getMaxKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, getMinKey, arginfo_class_MongoDB_BSON_Value_getMinKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, getNull, arginfo_class_MongoDB_BSON_Value_getNull, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, getObjectId, arginfo_class_MongoDB_BSON_Value_getObjectId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, getRegex, arginfo_class_MongoDB_BSON_Value_getRegex, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -263,7 +256,6 @@ static const zend_function_entry class_MongoDB_BSON_Value_methods[] = {
 	ZEND_ME(MongoDB_BSON_Value, isInt64, arginfo_class_MongoDB_BSON_Value_isInt64, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isMaxKey, arginfo_class_MongoDB_BSON_Value_isMaxKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isMinKey, arginfo_class_MongoDB_BSON_Value_isMinKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_Value, isNumber, arginfo_class_MongoDB_BSON_Value_isNumber, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isNull, arginfo_class_MongoDB_BSON_Value_isNull, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isObjectId, arginfo_class_MongoDB_BSON_Value_isObjectId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isRegex, arginfo_class_MongoDB_BSON_Value_isRegex, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -282,13 +274,6 @@ static zend_class_entry *register_class_MongoDB_BSON_Value(void)
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Value", class_MongoDB_BSON_Value_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
-
-	zval const_TYPE_EOD_value;
-	ZVAL_LONG(&const_TYPE_EOD_value, BSON_TYPE_EOD);
-	zend_string *const_TYPE_EOD_name = zend_string_init_interned("TYPE_EOD", sizeof("TYPE_EOD") - 1, 1);
-	zend_declare_class_constant_ex(class_entry, const_TYPE_EOD_name, &const_TYPE_EOD_value, ZEND_ACC_PUBLIC, NULL);
-	zend_string_release(const_TYPE_EOD_name);
-	ZEND_ASSERT(BSON_TYPE_EOD == 0);
 
 	zval const_TYPE_DOUBLE_value;
 	ZVAL_LONG(&const_TYPE_DOUBLE_value, BSON_TYPE_DOUBLE);
