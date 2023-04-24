@@ -644,7 +644,11 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 		if (timestamp && increment) {
 			zval ztimestamp;
 
-			phongo_timestamp_new(&ztimestamp, increment, timestamp);
+			if (!phongo_timestamp_new(&ztimestamp, increment, timestamp)) {
+				/* Exception should already have been thrown */
+				goto done;
+			}
+
 			ADD_ASSOC_ZVAL_EX(&retval, "operationTime", &ztimestamp);
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "operationTime");

@@ -17,6 +17,6 @@
 #ifndef PHONGO_BSON_INT64_H
 #define PHONGO_BSON_INT64_H
 
-void phongo_int64_new(zval* object, int64_t integer);
+bool phongo_int64_new(zval* object, int64_t integer);
 
 #endif /* PHONGO_BSON_INT64_H */

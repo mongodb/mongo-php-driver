@@ -459,7 +459,7 @@ void php_phongo_document_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_document.offset         = XtOffsetOf(php_phongo_document_t, std);
 }
 
-void phongo_document_new(zval* object, bson_t* bson, bool copy)
+bool phongo_document_new(zval* object, bson_t* bson, bool copy)
 {
 	php_phongo_document_t* intern;
 
@@ -467,4 +467,6 @@ void phongo_document_new(zval* object, bson_t* bson, bool copy)
 
 	intern       = Z_DOCUMENT_OBJ_P(object);
 	intern->bson = copy ? bson_copy(bson) : bson;
+
+	return true;
 }

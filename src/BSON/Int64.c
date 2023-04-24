@@ -549,7 +549,7 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_int64.do_operation   = php_phongo_int64_do_operation;
 }
 
-void phongo_int64_new(zval* object, int64_t integer)
+bool phongo_int64_new(zval* object, int64_t integer)
 {
 	php_phongo_int64_t* intern;
 
@@ -558,4 +558,6 @@ void phongo_int64_new(zval* object, int64_t integer)
 	intern              = Z_INT64_OBJ_P(object);
 	intern->integer     = integer;
 	intern->initialized = true;
+
+	return true;
 }

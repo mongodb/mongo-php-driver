@@ -355,7 +355,7 @@ void php_phongo_binary_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_binary.offset         = XtOffsetOf(php_phongo_binary_t, std);
 }
 
-void phongo_binary_new(zval* object, const char* data, size_t data_len, bson_subtype_t type)
+bool phongo_binary_new(zval* object, const char* data, size_t data_len, bson_subtype_t type)
 {
 	php_phongo_binary_t* intern;
 
@@ -365,4 +365,6 @@ void phongo_binary_new(zval* object, const char* data, size_t data_len, bson_sub
 	intern->data     = estrndup(data, data_len);
 	intern->data_len = data_len;
 	intern->type     = (uint8_t) type;
+
+	return true;
 }

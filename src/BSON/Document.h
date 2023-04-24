@@ -17,6 +17,6 @@
 #ifndef PHONGO_BSON_DOCUMENT_H
 #define PHONGO_BSON_DOCUMENT_H
 
-void phongo_document_new(zval* object, bson_t* bson, bool copy);
+bool phongo_document_new(zval* object, bson_t* bson, bool copy);
 
 #endif /* PHONGO_BSON_DOCUMENT_H */

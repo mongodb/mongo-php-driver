@@ -263,7 +263,7 @@ void php_phongo_symbol_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_symbol.offset         = XtOffsetOf(php_phongo_symbol_t, std);
 }
 
-void phongo_symbol_new(zval* object, const char* symbol, size_t symbol_len)
+bool phongo_symbol_new(zval* object, const char* symbol, size_t symbol_len)
 {
 	php_phongo_symbol_t* intern;
 
@@ -272,4 +272,6 @@ void phongo_symbol_new(zval* object, const char* symbol, size_t symbol_len)
 	intern             = Z_SYMBOL_OBJ_P(object);
 	intern->symbol     = estrndup(symbol, symbol_len);
 	intern->symbol_len = symbol_len;
+
+	return true;
 }

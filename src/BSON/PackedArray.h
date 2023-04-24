@@ -17,6 +17,6 @@
 #ifndef PHONGO_BSON_PACKEDARRAY_H
 #define PHONGO_BSON_PACKEDARRAY_H
 
-void phongo_packedarray_new(zval* object, bson_t* bson, bool copy);
+bool phongo_packedarray_new(zval* object, bson_t* bson, bool copy);
 
 #endif /* PHONGO_BSON_PACKEDARRAY_H */

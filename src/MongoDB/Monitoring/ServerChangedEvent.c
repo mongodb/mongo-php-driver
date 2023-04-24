@@ -126,7 +126,12 @@ static HashTable* php_phongo_serverchangedevent_get_debug_info(phongo_compat_obj
 
 	{
 		zval topology_id;
-		phongo_objectid_new(&topology_id, &intern->topology_id);
+
+		if (!phongo_objectid_new(&topology_id, &intern->topology_id)) {
+			/* Exception should already have been thrown */
+			goto done;
+		}
+
 		ADD_ASSOC_ZVAL_EX(&retval, "topologyId", &topology_id);
 	}
 
@@ -142,6 +147,7 @@ static HashTable* php_phongo_serverchangedevent_get_debug_info(phongo_compat_obj
 		ADD_ASSOC_ZVAL_EX(&retval, "oldDescription", &old_sd);
 	}
 
+done:
 	return Z_ARRVAL(retval);
 }
 

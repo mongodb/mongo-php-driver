@@ -290,7 +290,7 @@ void php_phongo_decimal128_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_decimal128.offset         = XtOffsetOf(php_phongo_decimal128_t, std);
 }
 
-void phongo_decimal128_new(zval* object, const bson_decimal128_t* decimal)
+bool phongo_decimal128_new(zval* object, const bson_decimal128_t* decimal)
 {
 	php_phongo_decimal128_t* intern;
 
@@ -299,4 +299,6 @@ void phongo_decimal128_new(zval* object, const bson_decimal128_t* decimal)
 	intern = Z_DECIMAL128_OBJ_P(object);
 	memcpy(&intern->decimal, decimal, sizeof(bson_decimal128_t));
 	intern->initialized = true;
+
+	return true;
 }

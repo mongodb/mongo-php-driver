@@ -409,7 +409,7 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_utcdatetime.offset         = XtOffsetOf(php_phongo_utcdatetime_t, std);
 }
 
-void phongo_utcdatetime_new(zval* object, int64_t msec_since_epoch)
+bool phongo_utcdatetime_new(zval* object, int64_t msec_since_epoch)
 {
 	php_phongo_utcdatetime_t* intern;
 
@@ -418,4 +418,6 @@ void phongo_utcdatetime_new(zval* object, int64_t msec_since_epoch)
 	intern               = Z_UTCDATETIME_OBJ_P(object);
 	intern->milliseconds = msec_since_epoch;
 	intern->initialized  = true;
+
+	return true;
 }

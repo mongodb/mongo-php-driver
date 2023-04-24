@@ -94,10 +94,16 @@ static HashTable* php_phongo_serverclosedevent_get_debug_info(phongo_compat_obje
 
 	{
 		zval topology_id;
-		phongo_objectid_new(&topology_id, &intern->topology_id);
+
+		if (!phongo_objectid_new(&topology_id, &intern->topology_id)) {
+			/* Exception should already have been thrown */
+			goto done;
+		}
+
 		ADD_ASSOC_ZVAL_EX(&retval, "topologyId", &topology_id);
 	}
 
+done:
 	return Z_ARRVAL(retval);
 }
 

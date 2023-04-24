@@ -250,7 +250,11 @@ static HashTable* php_phongo_commandfailedevent_get_debug_info(phongo_compat_obj
 	if (intern->has_service_id) {
 		zval service_id;
 
-		phongo_objectid_new(&service_id, &intern->service_id);
+		if (!phongo_objectid_new(&service_id, &intern->service_id)) {
+			/* Exception should already have been thrown */
+			goto done;
+		}
+
 		ADD_ASSOC_ZVAL_EX(&retval, "serviceId", &service_id);
 	} else {
 		ADD_ASSOC_NULL_EX(&retval, "serviceId");

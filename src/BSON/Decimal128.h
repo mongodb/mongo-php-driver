@@ -17,6 +17,6 @@
 #ifndef PHONGO_BSON_DECIMAL128_H
 #define PHONGO_BSON_DECIMAL128_H
 
-void phongo_decimal128_new(zval* object, const bson_decimal128_t* decimal);
+bool phongo_decimal128_new(zval* object, const bson_decimal128_t* decimal);
 
 #endif /* PHONGO_BSON_DECIMAL128_H */

@@ -17,6 +17,6 @@
 #ifndef PHONGO_BSON_SYMBOL_H
 #define PHONGO_BSON_SYMBOL_H
 
-void phongo_symbol_new(zval* object, const char* symbol, size_t symbol_len);
+bool phongo_symbol_new(zval* object, const char* symbol, size_t symbol_len);
 
 #endif /* PHONGO_BSON_SYMBOL_H */

@@ -17,6 +17,6 @@
 #ifndef PHONGO_BSON_TIMESTAMP_H
 #define PHONGO_BSON_TIMESTAMP_H
 
-void phongo_timestamp_new(zval* object, uint32_t increment, uint32_t timestamp);
+bool phongo_timestamp_new(zval* object, uint32_t increment, uint32_t timestamp);
 
 #endif /* PHONGO_BSON_TIMESTAMP_H */

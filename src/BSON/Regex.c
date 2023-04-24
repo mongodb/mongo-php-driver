@@ -367,7 +367,7 @@ void php_phongo_regex_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_regex.offset         = XtOffsetOf(php_phongo_regex_t, std);
 }
 
-void phongo_regex_new(zval* object, const char* pattern, const char* flags)
+bool phongo_regex_new(zval* object, const char* pattern, const char* flags)
 {
 	php_phongo_regex_t* intern;
 
@@ -378,4 +378,6 @@ void phongo_regex_new(zval* object, const char* pattern, const char* flags)
 	intern->pattern     = estrndup(pattern, intern->pattern_len);
 	intern->flags_len   = strlen(flags);
 	intern->flags       = estrndup(flags, intern->flags_len);
+
+	return true;
 }

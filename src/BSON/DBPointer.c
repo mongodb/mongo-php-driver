@@ -297,7 +297,7 @@ void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_dbpointer.offset         = XtOffsetOf(php_phongo_dbpointer_t, std);
 }
 
-void phongo_dbpointer_new(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid)
+bool phongo_dbpointer_new(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid)
 {
 	php_phongo_dbpointer_t* intern;
 
@@ -307,4 +307,6 @@ void phongo_dbpointer_new(zval* object, const char* ref, size_t ref_len, const b
 	intern->ref     = estrndup(ref, ref_len);
 	intern->ref_len = ref_len;
 	bson_oid_to_string(oid, intern->id);
+
+	return true;
 }

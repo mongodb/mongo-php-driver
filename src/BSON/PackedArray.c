@@ -389,7 +389,7 @@ void php_phongo_packedarray_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_packedarray.offset         = XtOffsetOf(php_phongo_packedarray_t, std);
 }
 
-void phongo_packedarray_new(zval* object, bson_t* bson, bool copy)
+bool phongo_packedarray_new(zval* object, bson_t* bson, bool copy)
 {
 	php_phongo_packedarray_t* intern;
 
@@ -397,4 +397,6 @@ void phongo_packedarray_new(zval* object, bson_t* bson, bool copy)
 
 	intern       = Z_PACKEDARRAY_OBJ_P(object);
 	intern->bson = copy ? bson_copy(bson) : bson;
+
+	return true;
 }
