@@ -548,3 +548,15 @@ void php_phongo_value_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_value.free_obj       = php_phongo_value_free_object;
 	php_phongo_handler_value.offset         = XtOffsetOf(php_phongo_value_t, std);
 }
+
+bool phongo_value_new(zval* object, const bson_value_t* value)
+{
+	php_phongo_value_t* intern;
+
+	object_init_ex(object, php_phongo_value_ce);
+
+	intern = Z_VALUE_OBJ_P(object);
+	bson_value_copy(value, &intern->value);
+
+	return true;
+}

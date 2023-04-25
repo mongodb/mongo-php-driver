@@ -28,68 +28,164 @@ var_dump(iterator_to_array($iterator));
 --EXPECTF--
 array(8) {
   ["objectId"]=>
-  object(MongoDB\BSON\ObjectId)#%d (%d) {
-    ["oid"]=>
-    string(24) "56315a7c6118fd1b920270b1"
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(8) "ObjectId"
+    ["value"]=>
+    object(MongoDB\BSON\ObjectId)#%d (%d) {
+      ["oid"]=>
+      string(24) "56315a7c6118fd1b920270b1"
+    }
   }
   ["string"]=>
-  string(3) "foo"
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(6) "string"
+    ["value"]=>
+    string(3) "foo"
+  }
   ["int"]=>
-  int(123)
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(14) "32-bit integer"
+    ["value"]=>
+    int(123)
+  }
   ["float"]=>
-  float(3.1415926)
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(6) "double"
+    ["value"]=>
+    float(3.1415926)
+  }
   ["document"]=>
-  object(MongoDB\BSON\Document)#%d (%d) {
-    ["data"]=>
-    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(8) "document"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
   }
   ["object"]=>
-  object(MongoDB\BSON\Document)#%d (%d) {
-    ["data"]=>
-    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(8) "document"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
   }
   ["bson_array"]=>
-  object(MongoDB\BSON\PackedArray)#%d (%d) {
-    ["data"]=>
-    string(40) "HgAAABAwAAEAAAAQMQACAAAAAjIABAAAAGZvbwAA"
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(5) "array"
+    ["value"]=>
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      string(3) "foo"
+    }
   }
   ["array"]=>
-  object(MongoDB\BSON\PackedArray)#%d (%d) {
-    ["data"]=>
-    string(40) "HgAAABAwAAAAAAAQMQABAAAAAjIABAAAAGJhcgAA"
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(5) "array"
+    ["value"]=>
+    array(3) {
+      [0]=>
+      int(0)
+      [1]=>
+      int(1)
+      [2]=>
+      string(3) "bar"
+    }
   }
 }
 array(8) {
   [0]=>
-  object(MongoDB\BSON\ObjectId)#%d (%d) {
-    ["oid"]=>
-    string(24) "56315a7c6118fd1b920270b1"
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(8) "ObjectId"
+    ["value"]=>
+    object(MongoDB\BSON\ObjectId)#%d (%d) {
+      ["oid"]=>
+      string(24) "56315a7c6118fd1b920270b1"
+    }
   }
   [1]=>
-  string(3) "foo"
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(6) "string"
+    ["value"]=>
+    string(3) "foo"
+  }
   [2]=>
-  int(123)
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(14) "32-bit integer"
+    ["value"]=>
+    int(123)
+  }
   [3]=>
-  float(3.1415926)
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(6) "double"
+    ["value"]=>
+    float(3.1415926)
+  }
   [4]=>
-  object(MongoDB\BSON\Document)#%d (%d) {
-    ["data"]=>
-    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(8) "document"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
   }
   [5]=>
-  object(MongoDB\BSON\Document)#%d (%d) {
-    ["data"]=>
-    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(8) "document"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
   }
   [6]=>
-  object(MongoDB\BSON\PackedArray)#%d (%d) {
-    ["data"]=>
-    string(40) "HgAAABAwAAEAAAAQMQACAAAAAjIABAAAAGZvbwAA"
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(5) "array"
+    ["value"]=>
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      string(3) "foo"
+    }
   }
   [7]=>
-  object(MongoDB\BSON\PackedArray)#%d (%d) {
-    ["data"]=>
-    string(40) "HgAAABAwAAAAAAAQMQABAAAAAjIABAAAAGJhcgAA"
+  object(MongoDB\BSON\Value)#%d (%d) {
+    ["type"]=>
+    string(5) "array"
+    ["value"]=>
+    array(3) {
+      [0]=>
+      int(0)
+      [1]=>
+      int(1)
+      [2]=>
+      string(3) "bar"
+    }
   }
 }
 ===DONE===
