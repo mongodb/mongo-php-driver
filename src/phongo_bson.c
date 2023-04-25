@@ -896,33 +896,40 @@ bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval*
 	return retval;
 }
 
-static bool phongo_bson_value_to_zval_ex(const bson_value_t* value, zval* zv)
+/** Converts a BSON value to a ZVAL, returning BSON objects and arrays as
+ * standard PHP types instead of Document or PackedArray instances */
+bool phongo_bson_value_to_zval_legacy(const bson_value_t* value, zval* zv)
 {
-	bson_t                bson = BSON_INITIALIZER;
-	php_phongo_bson_state state;
-	zval*                 return_value;
-	bool                  retval = false;
+	if (value->value_type == BSON_TYPE_ARRAY || value->value_type == BSON_TYPE_DOCUMENT) {
+		bson_t                bson = BSON_INITIALIZER;
+		php_phongo_bson_state state;
+		zval*                 return_value;
+		bool                  retval = false;
 
-	PHONGO_BSON_INIT_STATE(state);
-	state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
+		/* Use php_phongo_bson_to_zval_ex internally to convert arrays and documents */
+		PHONGO_BSON_INIT_STATE(state);
+		state.map.root.type = PHONGO_TYPEMAP_NATIVE_ARRAY;
 
-	bson_append_value(&bson, "data", 4, value);
-	if (!php_phongo_bson_to_zval_ex(&bson, &state)) {
-		/* Exception already thrown */
-		goto cleanup;
+		bson_append_value(&bson, "data", 4, value);
+		if (!php_phongo_bson_to_zval_ex(&bson, &state)) {
+			/* Exception already thrown */
+			goto cleanup;
+		}
+
+		retval = true;
+
+		return_value = php_array_fetchc(&state.zchild, "data");
+
+		if (return_value) {
+			ZVAL_ZVAL(zv, return_value, 1, 0);
+		}
+
+	cleanup:
+		zval_ptr_dtor(&state.zchild);
+		return retval;
 	}
 
-	retval = true;
-
-	return_value = php_array_fetchc(&state.zchild, "data");
-
-	if (return_value) {
-		ZVAL_ZVAL(zv, return_value, 1, 0);
-	}
-
-cleanup:
-	zval_ptr_dtor(&state.zchild);
-	return retval;
+	return phongo_bson_value_to_zval(value, zv);
 }
 
 /* Converts a BSON value to a ZVAL. */
@@ -1004,9 +1011,20 @@ bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
 			return object_init_ex(zv, php_phongo_undefined_ce) == SUCCESS;
 
 		case BSON_TYPE_ARRAY:
+			if (!bson_init_static(&bson, value->value.v_doc.data, value->value.v_doc.data_len)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Invalid BSON received for BSON_TYPE_ARRAY");
+				return false;
+			}
+
+			return phongo_packedarray_new(zv, &bson, true);
+
 		case BSON_TYPE_DOCUMENT:
-			/* Use php_phongo_bson_to_zval_ex internally to convert arrays and documents */
-			return phongo_bson_value_to_zval_ex(value, zv);
+			if (!bson_init_static(&bson, value->value.v_doc.data, value->value.v_doc.data_len)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Invalid BSON received for BSON_TYPE_DOCUMENT");
+				return false;
+			}
+
+			return phongo_document_new(zv, &bson, true);
 	}
 
 	/* Throw exception? */

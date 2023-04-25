@@ -621,7 +621,7 @@ static HashTable* php_phongo_bulkwrite_get_debug_info(phongo_compat_object_handl
 	if (intern->comment) {
 		zval zv;
 
-		if (!phongo_bson_value_to_zval(intern->comment, &zv)) {
+		if (!phongo_bson_value_to_zval_legacy(intern->comment, &zv)) {
 			zval_ptr_dtor(&zv);
 			goto done;
 		}

@@ -1028,7 +1028,8 @@ static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clien
 		goto cleanup;
 	}
 
-	if (!phongo_bson_value_to_zval(&ciphertext, zciphertext)) {
+	/** Use the legacy decoder to return PHP types instead of BSON types */
+	if (!phongo_bson_value_to_zval_legacy(&ciphertext, zciphertext)) {
 		/* Exception already thrown */
 		goto cleanup;
 	}
@@ -1098,7 +1099,8 @@ static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clien
 		goto cleanup;
 	}
 
-	if (!phongo_bson_value_to_zval(&value, zvalue)) {
+	/** Use the legacy decoder to return PHP types instead of BSON types */
+	if (!phongo_bson_value_to_zval_legacy(&value, zvalue)) {
 		/* Exception already thrown */
 		goto cleanup;
 	}

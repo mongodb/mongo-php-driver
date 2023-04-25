@@ -111,6 +111,7 @@ bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval*
 bool php_phongo_bson_data_to_zval_ex(const unsigned char* data, int data_len, php_phongo_bson_state* state);
 
 bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv);
+bool phongo_bson_value_to_zval_legacy(const bson_value_t* value, zval* zv);
 
 bool php_phongo_bson_typemap_to_state(zval* typemap, php_phongo_bson_typemap* map);
 void php_phongo_bson_typemap_dtor(php_phongo_bson_typemap* map);
