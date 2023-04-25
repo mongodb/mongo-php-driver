@@ -16,9 +16,19 @@ echo throws(function() use ($document) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-string(3) "bar"
-string(3) "baz"
+--EXPECTF--
+object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(6) "string"
+  ["value"]=>
+  string(3) "bar"
+}
+object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(6) "string"
+  ["value"]=>
+  string(3) "baz"
+}
 OK: Got MongoDB\Driver\Exception\RuntimeException
 Could not find key "baz" in BSON data
 ===DONE===
