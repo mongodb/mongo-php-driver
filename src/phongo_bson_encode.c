@@ -588,10 +588,7 @@ void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* 
 	php_phongo_field_path_free(field_path);
 }
 
-/* Converts the argument to a bson_value_t. If the object is an instance of
- * MongoDB\BSON\Serializable, the return value of bsonSerialize() will be
- * used. It is the caller's responsibility to call bson_value_destroy. */
-void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bson_value_t* value)
+static void phongo_zval_to_bson_value_ex(zval* data, php_phongo_bson_flags_t flags, bson_value_t* value)
 {
 	bson_iter_t iter;
 	bson_t      bson = BSON_INITIALIZER;
@@ -610,4 +607,68 @@ void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bs
 
 	bson_destroy(&bson);
 	zval_ptr_dtor(&data_object);
+}
+
+/* Converts the argument to a bson_value_t. If the object is an instance of
+ * MongoDB\BSON\Serializable, the return value of bsonSerialize() will be
+ * used. It is the caller's responsibility to call bson_value_destroy. */
+bool phongo_zval_to_bson_value(zval* data, bson_value_t* value)
+{
+	zend_long lvalue;
+
+	ZVAL_DEREF(data);
+
+	switch (Z_TYPE_P(data)) {
+		case IS_UNDEF:
+		case IS_NULL:
+			value->value_type = BSON_TYPE_NULL;
+			return true;
+
+		case IS_FALSE:
+			value->value_type   = BSON_TYPE_BOOL;
+			value->value.v_bool = false;
+			return true;
+
+		case IS_TRUE:
+			value->value_type   = BSON_TYPE_BOOL;
+			value->value.v_bool = true;
+			return true;
+
+		case IS_LONG:
+			lvalue = Z_LVAL_P(data);
+
+			if (lvalue > INT32_MAX || lvalue < INT32_MIN) {
+				value->value_type    = BSON_TYPE_INT64;
+				value->value.v_int64 = lvalue;
+			} else {
+				value->value_type    = BSON_TYPE_INT32;
+				value->value.v_int32 = (int32_t) lvalue;
+			}
+
+			return true;
+
+		case IS_DOUBLE:
+			value->value_type     = BSON_TYPE_DOUBLE;
+			value->value.v_double = Z_DVAL_P(data);
+			return true;
+
+		case IS_STRING:
+			value->value_type       = BSON_TYPE_UTF8;
+			value->value.v_utf8.len = Z_STRLEN_P(data);
+
+			/* Duplicate string as bson_value_t is expected to own values */
+			value->value.v_utf8.str = bson_malloc(value->value.v_utf8.len + 1);
+			memcpy(value->value.v_utf8.str, Z_STRVAL_P(data), value->value.v_utf8.len);
+			value->value.v_utf8.str[value->value.v_utf8.len] = '\0';
+			return true;
+
+		case IS_ARRAY:
+		case IS_OBJECT:
+			/* Use php_phongo_zval_to_bson internally to convert arrays and documents */
+			phongo_zval_to_bson_value_ex(data, PHONGO_BSON_NONE, value);
+			return true;
+	}
+
+	phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Unsupported type %s", zend_zval_type_name(data));
+	return false;
 }

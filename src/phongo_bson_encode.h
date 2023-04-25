@@ -28,7 +28,7 @@ typedef enum {
 } php_phongo_bson_flags_t;
 
 void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out);
-void php_phongo_zval_to_bson_value(zval* data, php_phongo_bson_flags_t flags, bson_value_t* value);
+bool phongo_zval_to_bson_value(zval* data, bson_value_t* value);
 void php_phongo_bson_append_zval(bson_t* bson, const char* key, long key_len, zval* value);
 
 #endif /* PHONGO_BSON_ENCODE_H */

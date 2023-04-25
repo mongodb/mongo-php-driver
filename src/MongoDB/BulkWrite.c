@@ -363,7 +363,7 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, __construct)
 		zval* value = php_array_fetch(options, "comment");
 
 		intern->comment = ecalloc(1, sizeof(bson_value_t));
-		php_phongo_zval_to_bson_value(value, PHONGO_BSON_NONE, intern->comment);
+		phongo_zval_to_bson_value(value, intern->comment);
 
 		if (EG(exception)) {
 			/* Exception should already have been thrown */

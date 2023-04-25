@@ -114,7 +114,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, addKeyAltName)
 	Z_PARAM_STRING(keyaltname, keyaltname_len);
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_zval_to_bson_value(zkeyid, PHONGO_BSON_NONE, &keyid);
+	phongo_zval_to_bson_value(zkeyid, &keyid);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -171,7 +171,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, deleteKey)
 	Z_PARAM_OBJECT_OF_CLASS(zkeyid, php_phongo_binary_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_zval_to_bson_value(zkeyid, PHONGO_BSON_NONE, &keyid);
+	phongo_zval_to_bson_value(zkeyid, &keyid);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -264,7 +264,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, getKey)
 	Z_PARAM_OBJECT_OF_CLASS(zkeyid, php_phongo_binary_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_zval_to_bson_value(zkeyid, PHONGO_BSON_NONE, &keyid);
+	phongo_zval_to_bson_value(zkeyid, &keyid);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -367,7 +367,7 @@ static PHP_METHOD(MongoDB_Driver_ClientEncryption, removeKeyAltName)
 	Z_PARAM_STRING(keyaltname, keyaltname_len);
 	PHONGO_PARSE_PARAMETERS_END();
 
-	php_phongo_zval_to_bson_value(zkeyid, PHONGO_BSON_NONE, &keyid);
+	phongo_zval_to_bson_value(zkeyid, &keyid);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -877,7 +877,7 @@ static mongoc_client_encryption_encrypt_range_opts_t* phongo_clientencryption_en
 	if (php_array_existsc(options, "min")) {
 		bson_value_t min = { 0 };
 
-		php_phongo_zval_to_bson_value(php_array_fetchc(options, "min"), PHONGO_BSON_NONE, &min);
+		phongo_zval_to_bson_value(php_array_fetchc(options, "min"), &min);
 
 		if (EG(exception)) {
 			bson_value_destroy(&min);
@@ -891,7 +891,7 @@ static mongoc_client_encryption_encrypt_range_opts_t* phongo_clientencryption_en
 	if (php_array_existsc(options, "max")) {
 		bson_value_t max = { 0 };
 
-		php_phongo_zval_to_bson_value(php_array_fetchc(options, "max"), PHONGO_BSON_NONE, &max);
+		phongo_zval_to_bson_value(php_array_fetchc(options, "max"), &max);
 
 		if (EG(exception)) {
 			bson_value_destroy(&max);
@@ -929,7 +929,7 @@ static mongoc_client_encryption_encrypt_opts_t* phongo_clientencryption_encrypt_
 	if (php_array_existsc(options, "keyId")) {
 		bson_value_t keyid = { 0 };
 
-		php_phongo_zval_to_bson_value(php_array_fetchc(options, "keyId"), PHONGO_BSON_NONE, &keyid);
+		phongo_zval_to_bson_value(php_array_fetchc(options, "keyId"), &keyid);
 
 		if (EG(exception)) {
 			bson_value_destroy(&keyid);
@@ -1010,7 +1010,7 @@ static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clien
 	bson_value_t                             value      = { 0 };
 	bson_error_t                             error      = { 0 };
 
-	php_phongo_zval_to_bson_value(zvalue, PHONGO_BSON_NONE, &value);
+	phongo_zval_to_bson_value(zvalue, &value);
 
 	if (EG(exception)) {
 		goto cleanup;
@@ -1087,7 +1087,7 @@ static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clien
 	bson_value_t value      = { 0 };
 	bson_error_t error      = { 0 };
 
-	php_phongo_zval_to_bson_value(zciphertext, PHONGO_BSON_NONE, &ciphertext);
+	phongo_zval_to_bson_value(zciphertext, &ciphertext);
 
 	if (EG(exception)) {
 		goto cleanup;

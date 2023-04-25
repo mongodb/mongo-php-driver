@@ -82,7 +82,6 @@ static PHP_METHOD(MongoDB_BSON_Value, fromPHP)
 	php_phongo_value_t* intern;
 	zval                zv;
 	zval*               data;
-	zend_long           lvalue;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_ZVAL(data);
@@ -91,60 +90,10 @@ static PHP_METHOD(MongoDB_BSON_Value, fromPHP)
 	object_init_ex(&zv, php_phongo_value_ce);
 	intern = Z_VALUE_OBJ_P(&zv);
 
-	ZVAL_DEREF(data);
-
-	switch (Z_TYPE_P(data)) {
-		case IS_UNDEF:
-		case IS_NULL:
-			intern->value.value_type = BSON_TYPE_NULL;
-			break;
-
-		case IS_FALSE:
-			intern->value.value_type   = BSON_TYPE_BOOL;
-			intern->value.value.v_bool = false;
-			break;
-
-		case IS_TRUE:
-			intern->value.value_type   = BSON_TYPE_BOOL;
-			intern->value.value.v_bool = true;
-			break;
-
-		case IS_LONG:
-			lvalue = Z_LVAL_P(data);
-
-			if (lvalue > INT32_MAX || lvalue < INT32_MIN) {
-				intern->value.value_type    = BSON_TYPE_INT64;
-				intern->value.value.v_int64 = lvalue;
-			} else {
-				intern->value.value_type    = BSON_TYPE_INT32;
-				intern->value.value.v_int32 = (int32_t) lvalue;
-			}
-
-			break;
-
-		case IS_DOUBLE:
-			intern->value.value_type     = BSON_TYPE_DOUBLE;
-			intern->value.value.v_double = Z_DVAL_P(data);
-			break;
-
-		case IS_STRING:
-			intern->value.value_type       = BSON_TYPE_UTF8;
-			intern->value.value.v_utf8.len = Z_STRLEN_P(data);
-
-			// Duplicate string as bson_value_t is expected to own values
-			intern->value.value.v_utf8.str = bson_malloc(intern->value.value.v_utf8.len + 1);
-			memcpy(intern->value.value.v_utf8.str, Z_STRVAL_P(data), intern->value.value.v_utf8.len);
-			intern->value.value.v_utf8.str[intern->value.value.v_utf8.len] = '\0';
-			break;
-
-		case IS_ARRAY:
-		case IS_OBJECT:
-			php_phongo_zval_to_bson_value(data, PHONGO_BSON_NONE, &intern->value);
-			break;
-
-		default:
-			// Unsupported
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Unsupported type %s", zend_zval_type_name(data));
+	if (!phongo_zval_to_bson_value(data, &intern->value)) {
+		/* Exception already thrown */
+		zval_ptr_dtor(&zv);
+		return;
 	}
 
 	RETURN_ZVAL(&zv, 1, 1);
