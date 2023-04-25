@@ -829,7 +829,7 @@ static void phongo_clientencryption_create_datakey(php_phongo_clientencryption_t
 		goto cleanup;
 	}
 
-	if (!php_phongo_bson_value_to_zval(&keyid, return_value)) {
+	if (!phongo_bson_value_to_zval(&keyid, return_value)) {
 		/* Exception already thrown */
 		goto cleanup;
 	}
@@ -1028,7 +1028,7 @@ static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clien
 		goto cleanup;
 	}
 
-	if (!php_phongo_bson_value_to_zval(&ciphertext, zciphertext)) {
+	if (!phongo_bson_value_to_zval(&ciphertext, zciphertext)) {
 		/* Exception already thrown */
 		goto cleanup;
 	}
@@ -1098,7 +1098,7 @@ static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clien
 		goto cleanup;
 	}
 
-	if (!php_phongo_bson_value_to_zval(&value, zvalue)) {
+	if (!phongo_bson_value_to_zval(&value, zvalue)) {
 		/* Exception already thrown */
 		goto cleanup;
 	}

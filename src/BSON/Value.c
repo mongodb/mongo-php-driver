@@ -67,7 +67,7 @@ static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_hand
 	{
 		zval value;
 
-		php_phongo_bson_value_to_zval(&intern->value, &value);
+		phongo_bson_value_to_zval(&intern->value, &value);
 
 		zend_hash_str_update(props, "value", sizeof("value") - 1, &value);
 	}
@@ -169,7 +169,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getValue)
 
 	intern = Z_VALUE_OBJ_P(getThis());
 
-	php_phongo_bson_value_to_zval(&intern->value, return_value);
+	phongo_bson_value_to_zval(&intern->value, return_value);
 }
 
 #define PHONGO_VALUE_CHECK_TYPE(bson_value, expected_type)     \

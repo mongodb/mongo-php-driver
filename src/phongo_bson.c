@@ -30,9 +30,11 @@
 #include "BSON/Binary.h"
 #include "BSON/DBPointer.h"
 #include "BSON/Decimal128.h"
+#include "BSON/Document.h"
 #include "BSON/Int64.h"
 #include "BSON/Javascript.h"
 #include "BSON/ObjectId.h"
+#include "BSON/PackedArray.h"
 #include "BSON/Regex.h"
 #include "BSON/Symbol.h"
 #include "BSON/Timestamp.h"
@@ -894,8 +896,7 @@ bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval*
 	return retval;
 }
 
-/* Converts a BSON value to a ZVAL. */
-bool php_phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
+static bool phongo_bson_value_to_zval_ex(const bson_value_t* value, zval* zv)
 {
 	bson_t                bson = BSON_INITIALIZER;
 	php_phongo_bson_state state;
@@ -922,6 +923,95 @@ bool php_phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
 cleanup:
 	zval_ptr_dtor(&state.zchild);
 	return retval;
+}
+
+/* Converts a BSON value to a ZVAL. */
+bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
+{
+	bson_t bson = BSON_INITIALIZER;
+
+	switch (value->value_type) {
+		case BSON_TYPE_INT32:
+			ZVAL_LONG(zv, value->value.v_int32);
+			return true;
+
+		case BSON_TYPE_INT64:
+			ZVAL_INT64(zv, value->value.v_int64);
+			return true;
+
+		case BSON_TYPE_DOUBLE:
+			ZVAL_DOUBLE(zv, value->value.v_double);
+			return true;
+
+		case BSON_TYPE_BOOL:
+			ZVAL_BOOL(zv, value->value.v_bool);
+			return true;
+
+		case BSON_TYPE_NULL:
+			ZVAL_NULL(zv);
+			return true;
+
+		case BSON_TYPE_UTF8:
+			ZVAL_STRINGL(zv, value->value.v_utf8.str, value->value.v_utf8.len);
+			return true;
+
+		case BSON_TYPE_BINARY:
+			return phongo_binary_new(zv, (char*) value->value.v_binary.data, value->value.v_binary.data_len, value->value.v_binary.subtype);
+
+		case BSON_TYPE_OID:
+			return phongo_objectid_new(zv, &value->value.v_oid);
+
+		case BSON_TYPE_DATE_TIME:
+			return phongo_utcdatetime_new(zv, value->value.v_datetime);
+
+		case BSON_TYPE_REGEX:
+			return phongo_regex_new(zv, value->value.v_regex.regex, value->value.v_regex.options);
+
+		case BSON_TYPE_DBPOINTER:
+			return phongo_dbpointer_new(zv, value->value.v_dbpointer.collection, value->value.v_dbpointer.collection_len, &value->value.v_dbpointer.oid);
+
+		case BSON_TYPE_CODE:
+			return phongo_javascript_new(zv, value->value.v_code.code, value->value.v_code.code_len, NULL);
+
+		case BSON_TYPE_CODEWSCOPE:
+			if (!bson_init_static(&bson, value->value.v_codewscope.scope_data, value->value.v_codewscope.scope_len)) {
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Invalid BSON received for BSON_TYPE_CODEWSCOPE");
+				return false;
+			}
+
+			return phongo_javascript_new(zv, value->value.v_codewscope.code, value->value.v_codewscope.code_len, &bson);
+
+		case BSON_TYPE_SYMBOL:
+			return phongo_symbol_new(zv, value->value.v_symbol.symbol, value->value.v_symbol.len);
+
+		case BSON_TYPE_TIMESTAMP:
+			return phongo_timestamp_new(zv, value->value.v_timestamp.increment, value->value.v_timestamp.timestamp);
+
+		case BSON_TYPE_DECIMAL128:
+			return phongo_decimal128_new(zv, &value->value.v_decimal128);
+
+		case BSON_TYPE_MAXKEY:
+			return object_init_ex(zv, php_phongo_maxkey_ce) == SUCCESS;
+
+		case BSON_TYPE_MINKEY:
+			return object_init_ex(zv, php_phongo_minkey_ce) == SUCCESS;
+
+		case BSON_TYPE_EOD:
+			ZVAL_NULL(zv);
+			return true;
+
+		case BSON_TYPE_UNDEFINED:
+			return object_init_ex(zv, php_phongo_undefined_ce) == SUCCESS;
+
+		case BSON_TYPE_ARRAY:
+		case BSON_TYPE_DOCUMENT:
+			/* Use php_phongo_bson_to_zval_ex internally to convert arrays and documents */
+			return phongo_bson_value_to_zval_ex(value, zv);
+	}
+
+	/* Throw exception? */
+	ZVAL_NULL(zv);
+	return false;
 }
 
 /* Converts a BSON document to a PHP value according to the typemap specified in
