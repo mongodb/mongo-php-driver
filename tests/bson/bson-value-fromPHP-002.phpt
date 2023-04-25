@@ -20,6 +20,10 @@ var_dump($bsonValue->isInt64());
 <?php exit(0); ?>
 --EXPECTF--
 object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(14) "64-bit integer"
+  ["value"]=>
+  int(2147483648)
 }
 int(2147483648)
 int(2147483648)

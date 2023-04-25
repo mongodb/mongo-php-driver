@@ -83,6 +83,10 @@ foreach ($tests as $name => [$value, $type, $successfulIsser, $getter]) {
 --EXPECTF--
 Testing null:
 object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(4) "null"
+  ["value"]=>
+  NULL
 }
 NULL
 NULL
@@ -90,6 +94,10 @@ bool(true)
 bool(true)
 Testing int32:
 object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(14) "32-bit integer"
+  ["value"]=>
+  int(2)
 }
 int(2)
 int(2)
@@ -97,6 +105,10 @@ bool(true)
 bool(true)
 Testing float:
 object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(6) "double"
+  ["value"]=>
+  float(3.14)
 }
 float(3.14)
 float(3.14)
@@ -104,6 +116,10 @@ bool(true)
 bool(true)
 Testing string:
 object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(6) "string"
+  ["value"]=>
+  string(3) "foo"
 }
 string(3) "foo"
 string(3) "foo"
@@ -111,6 +127,10 @@ bool(true)
 bool(true)
 Testing true:
 object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(7) "boolean"
+  ["value"]=>
+  bool(true)
 }
 bool(true)
 bool(true)
@@ -118,6 +138,10 @@ bool(true)
 bool(true)
 Testing false:
 object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(7) "boolean"
+  ["value"]=>
+  bool(false)
 }
 bool(false)
 bool(false)
@@ -125,6 +149,17 @@ bool(true)
 bool(true)
 Testing list:
 object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(5) "array"
+  ["value"]=>
+  array(3) {
+    [0]=>
+    int(1)
+    [1]=>
+    int(2)
+    [2]=>
+    int(3)
+  }
 }
 array(3) {
   [0]=>
@@ -142,6 +177,13 @@ bool(true)
 bool(true)
 Testing struct:
 object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(8) "document"
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["foo"]=>
+    string(3) "bar"
+  }
 }
 object(stdClass)#%d (%d) {
   ["foo"]=>
@@ -155,6 +197,13 @@ bool(true)
 bool(true)
 Testing object:
 object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(8) "document"
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["foo"]=>
+    string(3) "bar"
+  }
 }
 object(stdClass)#%d (%d) {
   ["foo"]=>

@@ -28,6 +28,7 @@
 #include "php_phongo.h"
 #include "phongo_error.h"
 #include "phongo_bson_encode.h"
+#include "phongo_util.h"
 #include "BSON/Value_arginfo.h"
 #include "BSON/Binary.h"
 #include "BSON/DBPointer.h"
@@ -53,15 +54,23 @@ static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_hand
 
 	intern = Z_OBJ_VALUE(PHONGO_COMPAT_GET_OBJ(object));
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
-	// TODO: Print value (somehow)
-	//{
-	//	zval data;
-	//
-	//	ZVAL_STR(&data, php_base64_encode((const unsigned char*) bson_get_data(intern->bson), intern->bson->len));
-	//	zend_hash_str_update(props, "data", sizeof("data") - 1, &data);
-	//}
+	{
+		zval type;
+
+		ZVAL_STRING(&type, php_phongo_bson_type_to_string(intern->value.value_type));
+
+		zend_hash_str_update(props, "type", sizeof("type") - 1, &type);
+	}
+
+	{
+		zval value;
+
+		php_phongo_bson_value_to_zval(&intern->value, &value);
+
+		zend_hash_str_update(props, "value", sizeof("value") - 1, &value);
+	}
 
 	return props;
 }
