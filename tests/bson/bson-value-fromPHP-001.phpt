@@ -18,12 +18,7 @@ $tests = [
         'isInt32',
         'getInt32',
     ],
-    'int64' => [
-        2**33,
-        MongoDB\BSON\Value::TYPE_INT64,
-        'isInt64',
-        'getInt64',
-    ],
+    // Int64 omitted, tested separately to account for 32-bit platforms
     'float' => [
         3.14,
         MongoDB\BSON\Value::TYPE_DOUBLE,
@@ -98,13 +93,6 @@ object(MongoDB\BSON\Value)#%d (%d) {
 }
 int(2)
 int(2)
-bool(true)
-bool(true)
-Testing int64:
-object(MongoDB\BSON\Value)#%d (%d) {
-}
-int(8589934592)
-int(8589934592)
 bool(true)
 bool(true)
 Testing float:
