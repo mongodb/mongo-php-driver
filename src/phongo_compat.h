@@ -22,6 +22,8 @@
 #include <Zend/zend_string.h>
 #include <Zend/zend_portability.h>
 
+/* Include stdbool.h as it might not have been implicitly loaded yet */
+#include <stdbool.h>
 #include "BSON/Int64.h"
 
 #ifdef PHP_WIN32
