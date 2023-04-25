@@ -44,6 +44,8 @@
 
 zend_class_entry* php_phongo_value_ce;
 
+#define UNEXPECTED_BSON_TYPE_EXCEPTION(type) phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Unexpected BSON type 0x%02hhx", (type));
+
 static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
 {
 	php_phongo_value_t* intern;
@@ -161,10 +163,10 @@ static PHP_METHOD(MongoDB_BSON_Value, getValue)
 	php_phongo_bson_value_to_zval(&intern->value, return_value);
 }
 
-#define PHONGO_VALUE_CHECK_TYPE(bson_value, expected_type)                                                       \
-	if (bson_value.value_type != expected_type) {                                                                \
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Unexpected BSON type %d", bson_value.value_type); \
-		return;                                                                                                  \
+#define PHONGO_VALUE_CHECK_TYPE(bson_value, expected_type)     \
+	if (bson_value.value_type != expected_type) {              \
+		UNEXPECTED_BSON_TYPE_EXCEPTION(bson_value.value_type); \
+		return;                                                \
 	}
 
 static PHP_METHOD(MongoDB_BSON_Value, getArray)
@@ -229,7 +231,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getCode)
 			return;
 
 		default:
-			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Unexpected BSON type %d", intern->value.value_type);
+			UNEXPECTED_BSON_TYPE_EXCEPTION(intern->value.value_type);
 	}
 }
 
@@ -304,7 +306,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getInt)
 			RETURN_INT64(intern->value.value.v_int64);
 
 		default:
-			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Unexpected BSON type %d", intern->value.value_type);
+			UNEXPECTED_BSON_TYPE_EXCEPTION(intern->value.value_type);
 	}
 }
 
@@ -516,6 +518,8 @@ static PHP_METHOD(MongoDB_BSON_Value, isInt)
 
 	RETURN_BOOL(intern->value.value_type == BSON_TYPE_INT32 || intern->value.value_type == BSON_TYPE_INT64);
 }
+
+#undef UNEXPECTED_BSON_TYPE_EXCEPTION
 
 /* MongoDB\BSON\Value object handlers */
 static zend_object_handlers php_phongo_handler_value;
