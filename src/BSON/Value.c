@@ -576,20 +576,6 @@ static zend_object* php_phongo_value_clone_object(phongo_compat_object_handler_t
 	return new_object;
 }
 
-// TODO: can we even compare values?
-static int php_phongo_value_compare_objects(zval* o1, zval* o2)
-{
-	//	php_phongo_value_t *intern1, *intern2;
-
-	ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2);
-
-	//	intern1 = Z_VALUE_OBJ_P(o1);
-	//	intern2 = Z_VALUE_OBJ_P(o2);
-	//
-	//	return bson_compare(intern1->bson, intern2->bson);
-	return 0;
-}
-
 static HashTable* php_phongo_value_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
@@ -607,7 +593,6 @@ void php_phongo_value_init_ce(INIT_FUNC_ARGS)
 	php_phongo_value_ce->create_object = php_phongo_value_create_object;
 
 	memcpy(&php_phongo_handler_value, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
-	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(value);
 	php_phongo_handler_value.clone_obj      = php_phongo_value_clone_object;
 	php_phongo_handler_value.get_debug_info = php_phongo_value_get_debug_info;
 	php_phongo_handler_value.get_properties = php_phongo_value_get_properties;
