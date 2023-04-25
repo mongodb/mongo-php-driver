@@ -25,7 +25,6 @@
 #include "phongo_error.h"
 #include "phongo_util.h"
 
-#include "BSON/Int64.h"
 #include "MongoDB/WriteConcern.h"
 #include "WriteConcern_arginfo.h"
 

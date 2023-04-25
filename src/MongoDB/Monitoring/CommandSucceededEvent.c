@@ -23,7 +23,6 @@
 #include "phongo_bson_encode.h"
 #include "phongo_error.h"
 
-#include "BSON/Int64.h"
 #include "BSON/ObjectId.h"
 #include "MongoDB/Server.h"
 #include "CommandSucceededEvent_arginfo.h"

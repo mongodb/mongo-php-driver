@@ -22,6 +22,8 @@
 #include <Zend/zend_string.h>
 #include <Zend/zend_portability.h>
 
+#include "BSON/Int64.h"
+
 #ifdef PHP_WIN32
 #include "config.w32.h"
 #else
@@ -125,6 +127,9 @@
 #define ZVAL_INT64(_zv, _value) ZVAL_LONG((_zv), (_value))
 #define RETURN_INT64(_value) RETURN_LONG((_value))
 #elif SIZEOF_ZEND_LONG == 4
+/* The following macros do not handle a false return value for phongo_int64_new.
+ * As the function currently does not return false this works fine, but will
+ * need updating if that changes. */
 #define ADD_INDEX_INT64(_zv, _index, _value)            \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
 		zval zchild;                                    \
