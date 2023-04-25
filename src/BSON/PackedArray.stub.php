@@ -13,12 +13,7 @@ final class PackedArray implements \IteratorAggregate, \Serializable
 
     final static public function fromPHP(array $value): PackedArray {}
 
-#if PHP_VERSION_ID >= 80000
-    final public function get(int $index): mixed {}
-#else
-    /** @return mixed */
-    final public function get(int $index) {}
-#endif
+    final public function get(int $index): Value {}
 
     final public function getIterator(): Iterator {}
 

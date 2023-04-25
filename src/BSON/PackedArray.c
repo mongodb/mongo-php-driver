@@ -30,6 +30,7 @@
 #include "phongo_bson_encode.h"
 #include "BSON/PackedArray_arginfo.h"
 #include "BSON/Iterator.h"
+#include "BSON/Value.h"
 
 zend_class_entry* php_phongo_packedarray_ce;
 
@@ -137,7 +138,7 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, get)
 		RETURN_NULL();
 	}
 
-	php_phongo_bson_iter_to_zval(return_value, &iter);
+	phongo_value_new(return_value, bson_iter_value(&iter));
 }
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, getIterator)

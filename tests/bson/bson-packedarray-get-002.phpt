@@ -6,14 +6,19 @@ MongoDB\BSON\PackedArray::get() index access returns BSON structures
 $array = MongoDB\BSON\PackedArray::fromPHP([(object) ['foo' => 'bar']]);
 $child = $array->get(0);
 unset($array);
-var_dump($child->toPHP());
+var_dump($child);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(stdClass)#%d (%d) {
-  ["foo"]=>
-  string(3) "bar"
+object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(8) "document"
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["foo"]=>
+    string(3) "bar"
+  }
 }
 ===DONE===

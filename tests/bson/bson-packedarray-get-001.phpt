@@ -16,9 +16,19 @@ echo throws(function() use ($document) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-int(0)
-string(3) "foo"
+--EXPECTF--
+object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(14) "32-bit integer"
+  ["value"]=>
+  int(0)
+}
+object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(6) "string"
+  ["value"]=>
+  string(3) "foo"
+}
 OK: Got MongoDB\Driver\Exception\RuntimeException
 Could not find index "3" in BSON data
 ===DONE===
