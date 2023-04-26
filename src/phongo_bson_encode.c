@@ -381,6 +381,24 @@ try_again:
 	}
 }
 
+/* This is based on bson_copy_to_excluding_noinit() and is necessary because
+ * bson_copy_to() cannot be used with a bson_t allocated with bson_new(). */
+static void phongo_bson_copy_to_noinit (const bson_t *src, bson_t *dst)
+{
+	bson_iter_t iter;
+
+	if (bson_iter_init (&iter, src)) {
+		while (bson_iter_next (&iter)) {
+			if (!bson_append_iter (dst, NULL, 0, &iter)) {
+				/* This should not be able to happen since we are copying from
+				 * within a valid bson_t. */
+				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Error copying \"%s\" field from source document", bson_iter_key(&iter));
+				return;
+			}
+		}
+	}
+}
+
 static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* field_path, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out)
 {
 	HashTable* ht_data = NULL;
@@ -403,8 +421,7 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_document_ce)) {
 				php_phongo_document_t* intern = Z_DOCUMENT_OBJ_P(data);
 
-				bson_destroy(bson);
-				bson_copy_to(intern->bson, bson);
+				phongo_bson_copy_to_noinit(intern->bson, bson);
 
 				goto done;
 			}
@@ -412,8 +429,7 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_packedarray_ce)) {
 				php_phongo_packedarray_t* intern = Z_PACKEDARRAY_OBJ_P(data);
 
-				bson_destroy(bson);
-				bson_copy_to(intern->bson, bson);
+				phongo_bson_copy_to_noinit(intern->bson, bson);
 
 				goto done;
 			}
