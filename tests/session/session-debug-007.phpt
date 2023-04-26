@@ -23,7 +23,7 @@ object(MongoDB\Driver\Session)#%d (%d) {
     ["id"]=>
     object(MongoDB\BSON\Binary)#%d (%d) {
       ["data"]=>
-      string(16) "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c"
+      string(16) "%a"
       ["type"]=>
       int(4)
     }
