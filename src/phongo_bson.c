@@ -1438,6 +1438,7 @@ bool php_phongo_bson_to_json(zval* return_value, const bson_t* bson, php_phongo_
 	}
 
 	ZVAL_STRINGL(return_value, json, json_len);
+	bson_free(json);
 
 	return true;
 }
