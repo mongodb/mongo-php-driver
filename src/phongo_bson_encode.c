@@ -383,13 +383,13 @@ try_again:
 
 /* This is based on bson_copy_to_excluding_noinit() and is necessary because
  * bson_copy_to() cannot be used with a bson_t allocated with bson_new(). */
-static void phongo_bson_copy_to_noinit (const bson_t *src, bson_t *dst)
+static void phongo_bson_copy_to_noinit(const bson_t* src, bson_t* dst)
 {
 	bson_iter_t iter;
 
-	if (bson_iter_init (&iter, src)) {
-		while (bson_iter_next (&iter)) {
-			if (!bson_append_iter (dst, NULL, 0, &iter)) {
+	if (bson_iter_init(&iter, src)) {
+		while (bson_iter_next(&iter)) {
+			if (!bson_append_iter(dst, NULL, 0, &iter)) {
 				/* This should not be able to happen since we are copying from
 				 * within a valid bson_t. */
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Error copying \"%s\" field from source document", bson_iter_key(&iter));
