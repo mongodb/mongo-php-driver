@@ -59,7 +59,7 @@ static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_hand
 	{
 		zval type;
 
-		ZVAL_STRING(&type, php_phongo_bson_type_to_string(intern->value.value_type));
+		ZVAL_LONG(&type, intern->value.value_type);
 
 		zend_hash_str_update(props, "type", sizeof("type") - 1, &type);
 	}
@@ -191,6 +191,19 @@ static PHP_METHOD(MongoDB_BSON_Value, getCode)
 		default:
 			UNEXPECTED_BSON_TYPE_EXCEPTION(intern->value.value_type);
 	}
+}
+
+static PHP_METHOD(MongoDB_BSON_Value, getDateTime)
+{
+	php_phongo_value_t* intern;
+
+	PHONGO_PARSE_PARAMETERS_NONE();
+
+	intern = Z_VALUE_OBJ_P(getThis());
+
+	PHONGO_VALUE_CHECK_TYPE(intern->value, BSON_TYPE_DATE_TIME);
+
+	phongo_utcdatetime_new(return_value, intern->value.value.v_datetime);
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, getDBPointer)
@@ -398,19 +411,6 @@ static PHP_METHOD(MongoDB_BSON_Value, getUndefined)
 	object_init_ex(return_value, php_phongo_undefined_ce);
 }
 
-static PHP_METHOD(MongoDB_BSON_Value, getUTCDateTime)
-{
-	php_phongo_value_t* intern;
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_VALUE_OBJ_P(getThis());
-
-	PHONGO_VALUE_CHECK_TYPE(intern->value, BSON_TYPE_DATE_TIME);
-
-	phongo_utcdatetime_new(return_value, intern->value.value.v_datetime);
-}
-
 static PHP_METHOD(MongoDB_BSON_Value, getUtf8)
 {
 	php_phongo_value_t* intern;
@@ -437,6 +437,7 @@ PHONGO_VALUE_IS_TYPE(isArray, BSON_TYPE_ARRAY);
 PHONGO_VALUE_IS_TYPE(isBinary, BSON_TYPE_BINARY);
 PHONGO_VALUE_IS_TYPE(isBool, BSON_TYPE_BOOL);
 PHONGO_VALUE_IS_TYPE(isDBPointer, BSON_TYPE_DBPOINTER);
+PHONGO_VALUE_IS_TYPE(isDateTime, BSON_TYPE_DATE_TIME);
 PHONGO_VALUE_IS_TYPE(isDecimal128, BSON_TYPE_DECIMAL128);
 PHONGO_VALUE_IS_TYPE(isDouble, BSON_TYPE_DOUBLE);
 PHONGO_VALUE_IS_TYPE(isDocument, BSON_TYPE_DOCUMENT);
@@ -450,7 +451,6 @@ PHONGO_VALUE_IS_TYPE(isRegex, BSON_TYPE_REGEX);
 PHONGO_VALUE_IS_TYPE(isSymbol, BSON_TYPE_SYMBOL);
 PHONGO_VALUE_IS_TYPE(isTimestamp, BSON_TYPE_TIMESTAMP);
 PHONGO_VALUE_IS_TYPE(isUndefined, BSON_TYPE_UNDEFINED);
-PHONGO_VALUE_IS_TYPE(isUTCDateTime, BSON_TYPE_DATE_TIME);
 PHONGO_VALUE_IS_TYPE(isUtf8, BSON_TYPE_UTF8);
 
 #undef PHONGO_VALUE_IS_TYPE

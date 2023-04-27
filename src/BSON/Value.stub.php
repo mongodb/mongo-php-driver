@@ -158,6 +158,7 @@ final class Value
     final public function getBinary(): Binary {}
     final public function getBool(): bool {}
     final public function getCode(): Javascript {}
+    final public function getDateTime(): UTCDateTime {}
     final public function getDBPointer(): DBPointer {}
     final public function getDecimal128(): Decimal128 {}
     final public function getDocument(): Document {}
@@ -178,7 +179,6 @@ final class Value
     final public function getSymbol(): Symbol {}
     final public function getTimestamp(): Timestamp {}
     final public function getUndefined(): Undefined {}
-    final public function getUTCDateTime(): UTCDateTime {}
     final public function getUtf8(): string {}
 
     /** Type checkers */
@@ -186,6 +186,7 @@ final class Value
     final public function isBinary(): bool {}
     final public function isBool(): bool {}
     final public function isCode(): bool {}
+    final public function isDateTime(): bool {}
     final public function isDBPointer(): bool {}
     final public function isDecimal128(): bool {}
     final public function isDocument(): bool {}
@@ -201,6 +202,5 @@ final class Value
     final public function isSymbol(): bool {}
     final public function isTimestamp(): bool {}
     final public function isUndefined(): bool {}
-    final public function isUTCDateTime(): bool {}
     final public function isUtf8(): bool {}
 }
