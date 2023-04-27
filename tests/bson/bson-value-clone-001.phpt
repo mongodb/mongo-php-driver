@@ -78,9 +78,13 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(5) "array"
   ["value"]=>
-  object(MongoDB\BSON\PackedArray)#%d (%d) {
-    ["data"]=>
-    string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+  array(3) {
+    [0]=>
+    int(1)
+    [1]=>
+    int(2)
+    [2]=>
+    int(3)
   }
 }
 Testing struct:
@@ -88,9 +92,9 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(8) "document"
   ["value"]=>
-  object(MongoDB\BSON\Document)#%d (%d) {
-    ["data"]=>
-    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+  object(stdClass)#%d (%d) {
+    ["foo"]=>
+    string(3) "bar"
   }
 }
 Testing object:
@@ -98,9 +102,9 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(8) "document"
   ["value"]=>
-  object(MongoDB\BSON\Document)#%d (%d) {
-    ["data"]=>
-    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+  object(stdClass)#%d (%d) {
+    ["foo"]=>
+    string(3) "bar"
   }
 }
 ===DONE===

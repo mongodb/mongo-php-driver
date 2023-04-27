@@ -527,8 +527,32 @@ static zend_object* php_phongo_value_clone_object(phongo_compat_object_handler_t
 
 static HashTable* php_phongo_value_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
+	php_phongo_value_t* intern;
+	HashTable*          props;
+
 	*is_temp = 1;
-	return php_phongo_value_get_properties_hash(object, true);
+
+	intern = Z_OBJ_VALUE(PHONGO_COMPAT_GET_OBJ(object));
+
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(*is_temp, intern, props, 2);
+
+	{
+		zval type;
+
+		ZVAL_STRING(&type, php_phongo_bson_type_to_string(intern->value.value_type));
+
+		zend_hash_str_update(props, "type", sizeof("type") - 1, &type);
+	}
+
+	{
+		zval value;
+
+		phongo_bson_value_to_zval_legacy(&intern->value, &value);
+
+		zend_hash_str_update(props, "value", sizeof("value") - 1, &value);
+	}
+
+	return props;
 }
 
 static HashTable* php_phongo_value_get_properties(phongo_compat_object_handler_type* object)

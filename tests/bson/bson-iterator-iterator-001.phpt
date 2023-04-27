@@ -63,9 +63,9 @@ array(8) {
     ["type"]=>
     string(8) "document"
     ["value"]=>
-    object(MongoDB\BSON\Document)#%d (%d) {
-      ["data"]=>
-      string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
     }
   }
   ["object"]=>
@@ -73,9 +73,9 @@ array(8) {
     ["type"]=>
     string(8) "document"
     ["value"]=>
-    object(MongoDB\BSON\Document)#%d (%d) {
-      ["data"]=>
-      string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
     }
   }
   ["bson_array"]=>
@@ -83,9 +83,13 @@ array(8) {
     ["type"]=>
     string(5) "array"
     ["value"]=>
-    object(MongoDB\BSON\PackedArray)#%d (%d) {
-      ["data"]=>
-      string(40) "HgAAABAwAAEAAAAQMQACAAAAAjIABAAAAGZvbwAA"
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      string(3) "foo"
     }
   }
   ["array"]=>
@@ -93,9 +97,13 @@ array(8) {
     ["type"]=>
     string(5) "array"
     ["value"]=>
-    object(MongoDB\BSON\PackedArray)#%d (%d) {
-      ["data"]=>
-      string(40) "HgAAABAwAAAAAAAQMQABAAAAAjIABAAAAGJhcgAA"
+    array(3) {
+      [0]=>
+      int(0)
+      [1]=>
+      int(1)
+      [2]=>
+      string(3) "bar"
     }
   }
 }
@@ -136,9 +144,9 @@ array(8) {
     ["type"]=>
     string(8) "document"
     ["value"]=>
-    object(MongoDB\BSON\Document)#%d (%d) {
-      ["data"]=>
-      string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
     }
   }
   [5]=>
@@ -146,9 +154,9 @@ array(8) {
     ["type"]=>
     string(8) "document"
     ["value"]=>
-    object(MongoDB\BSON\Document)#%d (%d) {
-      ["data"]=>
-      string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
     }
   }
   [6]=>
@@ -156,9 +164,13 @@ array(8) {
     ["type"]=>
     string(5) "array"
     ["value"]=>
-    object(MongoDB\BSON\PackedArray)#%d (%d) {
-      ["data"]=>
-      string(40) "HgAAABAwAAEAAAAQMQACAAAAAjIABAAAAGZvbwAA"
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      string(3) "foo"
     }
   }
   [7]=>
@@ -166,9 +178,13 @@ array(8) {
     ["type"]=>
     string(5) "array"
     ["value"]=>
-    object(MongoDB\BSON\PackedArray)#%d (%d) {
-      ["data"]=>
-      string(40) "HgAAABAwAAAAAAAQMQABAAAAAjIABAAAAGJhcgAA"
+    array(3) {
+      [0]=>
+      int(0)
+      [1]=>
+      int(1)
+      [2]=>
+      string(3) "bar"
     }
   }
 }

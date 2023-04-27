@@ -16,9 +16,9 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(8) "document"
   ["value"]=>
-  object(MongoDB\BSON\Document)#%d (%d) {
-    ["data"]=>
-    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+  object(stdClass)#%d (%d) {
+    ["foo"]=>
+    string(3) "bar"
   }
 }
 ===DONE===
