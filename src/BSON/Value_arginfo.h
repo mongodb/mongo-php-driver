@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: d36ca02cd80936843a9b1bf77704ab2c58111e71 */
+ * Stub hash: 2bae4efd62e658fdf65b9d361063bdde6ab92569 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Value___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -138,6 +138,23 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_Value_isUtf8 arginfo_class_MongoDB_BSON_Value_getBool
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value___set_state, 0, 1, MongoDB\\BSON\\Regex, 0)
+	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_class_MongoDB_BSON_Value_serialize arginfo_class_MongoDB_BSON_Value_getUtf8
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Value_unserialize, 0, 1, IS_VOID, 0)
+	ZEND_ARG_INFO(0, serialized)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Value___unserialize, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Value___serialize, 0, 0, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
 
 static ZEND_METHOD(MongoDB_BSON_Value, __construct);
 static ZEND_METHOD(MongoDB_BSON_Value, getType);
@@ -200,6 +217,11 @@ static ZEND_METHOD(MongoDB_BSON_Value, isSymbol);
 static ZEND_METHOD(MongoDB_BSON_Value, isTimestamp);
 static ZEND_METHOD(MongoDB_BSON_Value, isUndefined);
 static ZEND_METHOD(MongoDB_BSON_Value, isUtf8);
+static ZEND_METHOD(MongoDB_BSON_Value, __set_state);
+static ZEND_METHOD(MongoDB_BSON_Value, serialize);
+static ZEND_METHOD(MongoDB_BSON_Value, unserialize);
+static ZEND_METHOD(MongoDB_BSON_Value, __unserialize);
+static ZEND_METHOD(MongoDB_BSON_Value, __serialize);
 
 
 static const zend_function_entry class_MongoDB_BSON_Value_methods[] = {
@@ -264,16 +286,22 @@ static const zend_function_entry class_MongoDB_BSON_Value_methods[] = {
 	ZEND_ME(MongoDB_BSON_Value, isTimestamp, arginfo_class_MongoDB_BSON_Value_isTimestamp, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isUndefined, arginfo_class_MongoDB_BSON_Value_isUndefined, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isUtf8, arginfo_class_MongoDB_BSON_Value_isUtf8, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, __set_state, arginfo_class_MongoDB_BSON_Value___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, serialize, arginfo_class_MongoDB_BSON_Value_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, unserialize, arginfo_class_MongoDB_BSON_Value_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, __unserialize, arginfo_class_MongoDB_BSON_Value___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Value, __serialize, arginfo_class_MongoDB_BSON_Value___serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_BSON_Value(void)
+static zend_class_entry *register_class_MongoDB_BSON_Value(zend_class_entry *class_entry_Serializable)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Value", class_MongoDB_BSON_Value_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
+	zend_class_implements(class_entry, 1, class_entry_Serializable);
 
 	zval const_TYPE_DOUBLE_value;
 	ZVAL_LONG(&const_TYPE_DOUBLE_value, BSON_TYPE_DOUBLE);

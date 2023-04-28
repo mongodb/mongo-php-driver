@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class Value
+final class Value implements \Serializable
 {
     /**
      * @var int
@@ -203,4 +203,15 @@ final class Value
     final public function isTimestamp(): bool {}
     final public function isUndefined(): bool {}
     final public function isUtf8(): bool {}
+
+    final public static function __set_state(array $properties): Regex {}
+
+    final public function serialize(): string {}
+
+    /** @param string $serialized */
+    final public function unserialize($serialized): void {}
+
+    final public function __unserialize(array $data): void {}
+
+    final public function __serialize(): array {}
 }
