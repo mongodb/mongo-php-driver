@@ -262,6 +262,37 @@ static int php_phongo_int64_compare_objects(zval* o1, zval* o2)
 	return 0;
 }
 
+static zend_result php_phongo_int64_cast_object(phongo_compat_object_handler_type* readobj, zval* retval, int type)
+{
+	php_phongo_int64_t* intern;
+
+	intern = Z_OBJ_INT64(PHONGO_COMPAT_GET_OBJ(readobj));
+
+	switch (type) {
+		case IS_LONG:
+#if PHP_VERSION_ID >= 70300
+		case _IS_NUMBER:
+#endif
+#if SIZEOF_ZEND_LONG == 4
+			if (intern->integer > INT32_MAX || intern->integer < INT32_MIN) {
+				zend_error(E_WARNING, "Truncating 64-bit integer value %" PRId64 " to 32 bits", intern->integer);
+			}
+#endif
+
+			ZVAL_LONG(retval, intern->integer);
+
+			return SUCCESS;
+
+		case _IS_BOOL:
+			ZVAL_BOOL(retval, intern->integer != 0);
+
+			return SUCCESS;
+
+		default:
+			return zend_std_cast_object_tostring(readobj, retval, type);
+	}
+}
+
 static HashTable* php_phongo_int64_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
@@ -289,4 +320,5 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_int64.get_properties = php_phongo_int64_get_properties;
 	php_phongo_handler_int64.free_obj       = php_phongo_int64_free_object;
 	php_phongo_handler_int64.offset         = XtOffsetOf(php_phongo_int64_t, std);
+	php_phongo_handler_int64.cast_object    = php_phongo_int64_cast_object;
 }
