@@ -9,7 +9,7 @@ MongoDB\BSON\Int64 can be cloned (PHP >= 8.2)
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$int64 = unserialize('C:18:"MongoDB\BSON\Int64":47:{a:1:{s:7:"integer";s:19:"9223372036854775807";}}');
+$int64 = new MongoDB\BSON\Int64('9223372036854775807');
 $clone = clone $int64;
 
 var_dump($clone == $int64);

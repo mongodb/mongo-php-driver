@@ -10,10 +10,10 @@ require_once __DIR__ . '/../utils/basic.inc';
 /* Omit testing values in the range of 32-bit integers. They will come back from
  * BSON as a PHP integer type, as Int64 is only used when necessary. */
 $tests = [
-    (object) ['int64' => unserialize('C:18:"MongoDB\BSON\Int64":47:{a:1:{s:7:"integer";s:19:"9223372036854775807";}}')],
-    (object) ['int64' => unserialize('C:18:"MongoDB\BSON\Int64":48:{a:1:{s:7:"integer";s:20:"-9223372036854775808";}}')],
-    (object) ['int64' => unserialize('C:18:"MongoDB\BSON\Int64":38:{a:1:{s:7:"integer";s:10:"2147483648";}}')],
-    (object) ['int64' => unserialize('C:18:"MongoDB\BSON\Int64":39:{a:1:{s:7:"integer";s:11:"-2147483649";}}')],
+    (object) ['int64' => new MongoDB\BSON\Int64('9223372036854775807')],
+    (object) ['int64' => new MongoDB\BSON\Int64('-9223372036854775808')],
+    (object) ['int64' => new MongoDB\BSON\Int64('2147483648')],
+    (object) ['int64' => new MongoDB\BSON\Int64('-2147483649')],
 ];
 
 foreach($tests as $test) {

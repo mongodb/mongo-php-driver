@@ -1,8 +1,17 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: a0fc48411f2ce18661e1e837b79f878f2d80ebd3 */
+ * Stub hash: 68e80f37219bd526046f559b0c00d55dd6727a37 */
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Int64___construct, 0, 0, 0)
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Int64___construct, 0, 0, 1)
+	ZEND_ARG_TYPE_MASK(0, value, MAY_BE_LONG|MAY_BE_STRING, NULL)
 ZEND_END_ARG_INFO()
+#endif
+
+#if !(PHP_VERSION_ID >= 80000)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Int64___construct, 0, 0, 1)
+	ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+#endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Int64___toString, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
@@ -31,7 +40,12 @@ ZEND_END_ARG_INFO()
 #endif
 
 
+#if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_BSON_Int64, __construct);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_BSON_Int64, __construct);
+#endif
 static ZEND_METHOD(MongoDB_BSON_Int64, __toString);
 static ZEND_METHOD(MongoDB_BSON_Int64, serialize);
 static ZEND_METHOD(MongoDB_BSON_Int64, unserialize);
@@ -46,7 +60,12 @@ static ZEND_METHOD(MongoDB_BSON_Int64, jsonSerialize);
 
 
 static const zend_function_entry class_MongoDB_BSON_Int64_methods[] = {
-	ZEND_ME(MongoDB_BSON_Int64, __construct, arginfo_class_MongoDB_BSON_Int64___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
+#if PHP_VERSION_ID >= 80000
+	ZEND_ME(MongoDB_BSON_Int64, __construct, arginfo_class_MongoDB_BSON_Int64___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_BSON_Int64, __construct, arginfo_class_MongoDB_BSON_Int64___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
 	ZEND_ME(MongoDB_BSON_Int64, __toString, arginfo_class_MongoDB_BSON_Int64___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Int64, serialize, arginfo_class_MongoDB_BSON_Int64_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Int64, unserialize, arginfo_class_MongoDB_BSON_Int64_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

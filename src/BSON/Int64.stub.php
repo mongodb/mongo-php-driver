@@ -9,7 +9,12 @@ namespace MongoDB\BSON;
 
 final class Int64 implements \JsonSerializable, Type, \Serializable
 {
-    final private function __construct() {}
+#if PHP_VERSION_ID >= 80000
+    final public function __construct(int|string $value) {}
+#else
+    /** @param int|string $value */
+    final public function __construct($value) {}
+#endif
 
     final public function __toString(): string {}
 

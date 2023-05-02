@@ -3,9 +3,9 @@ MongoDB\BSON\Int64 comparisons
 --FILE--
 <?php
 
-$max = unserialize('C:18:"MongoDB\BSON\Int64":47:{a:1:{s:7:"integer";s:19:"9223372036854775807";}}');
-$min = unserialize('C:18:"MongoDB\BSON\Int64":48:{a:1:{s:7:"integer";s:20:"-9223372036854775808";}}');
-$zero = unserialize('C:18:"MongoDB\BSON\Int64":28:{a:1:{s:7:"integer";s:1:"0";}}');
+$max = new MongoDB\BSON\Int64('9223372036854775807');
+$min = new MongoDB\BSON\Int64('-9223372036854775808');
+$zero = new MongoDB\BSON\Int64(0);
 
 var_dump($max == $max);
 var_dump($max > $min);

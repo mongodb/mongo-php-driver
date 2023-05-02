@@ -4,13 +4,14 @@ MongoDB\BSON\Int64::jsonSerialize() return value
 <?php
 
 $tests = [
-    unserialize('C:18:"MongoDB\BSON\Int64":47:{a:1:{s:7:"integer";s:19:"9223372036854775807";}}'),
-    unserialize('C:18:"MongoDB\BSON\Int64":48:{a:1:{s:7:"integer";s:20:"-9223372036854775808";}}'),
-    unserialize('C:18:"MongoDB\BSON\Int64":28:{a:1:{s:7:"integer";s:1:"0";}}'),
+    '9223372036854775807',
+    '-9223372036854775808',
+    0,
 ];
 
 foreach ($tests as $test) {
-    var_dump($test->jsonSerialize());
+    $int64 = new MongoDB\BSON\Int64($test);
+    var_dump($int64->jsonSerialize());
 }
 
 ?>

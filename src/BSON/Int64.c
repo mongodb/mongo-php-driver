@@ -86,7 +86,25 @@ HashTable* php_phongo_int64_get_properties_hash(phongo_compat_object_handler_typ
 	return props;
 }
 
-PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Int64)
+static PHP_METHOD(MongoDB_BSON_Int64, __construct)
+{
+	php_phongo_int64_t* intern;
+	zval*               value;
+
+	intern = Z_INT64_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ZVAL(value);
+	PHONGO_PARSE_PARAMETERS_END();
+
+	if (Z_TYPE_P(value) == IS_STRING) {
+		php_phongo_int64_init_from_string(intern, Z_STRVAL_P(value), Z_STRLEN_P(value));
+	} else if (Z_TYPE_P(value) == IS_LONG) {
+		php_phongo_int64_init(intern, Z_LVAL_P(value));
+	} else {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected increment to be integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
+	}
+}
 
 /* Return the Int64's value as a string. */
 static PHP_METHOD(MongoDB_BSON_Int64, __toString)

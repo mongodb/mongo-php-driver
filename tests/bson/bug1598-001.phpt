@@ -8,7 +8,7 @@ $tests = [
     // Use serialized strings to construct types with disabled constructors
     [ 'dbpointer' => unserialize('C:22:"MongoDB\BSON\DBPointer":76:{a:2:{s:3:"ref";s:11:"phongo.test";s:2:"id";s:24:"5a2e78accd485d55b4050000";}}') ],
     [ 'decimal128' => new MongoDB\BSON\Decimal128('1234.5678') ],
-    [ 'int64' => unserialize('C:18:"MongoDB\BSON\Int64":47:{a:1:{s:7:"integer";s:19:"9223372036854775807";}}') ],
+    [ 'int64' => new MongoDB\BSON\Int64('9223372036854775807') ],
     // JavaScript w/ scope may not be necessary (same code path as w/o scope), but we'll test it anyway
     [ 'javascript' => new MongoDB\BSON\Javascript('function() { return 1; }') ],
     [ 'javascript_ws' => new MongoDB\BSON\Javascript('function() { return a; }', ['a' => 1]) ],
