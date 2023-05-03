@@ -18,6 +18,7 @@
 #define PHONGO_COMPAT_H
 
 #include <php.h>
+#include <Zend/zend_types.h>
 #include <Zend/zend_string.h>
 #include <Zend/zend_portability.h>
 
@@ -327,5 +328,9 @@ const char* zend_get_object_type_case(const zend_class_entry* ce, zend_bool uppe
 #if PHP_VERSION_ID < 80100
 zend_bool zend_array_is_list(zend_array* array);
 #endif /* PHP_VERSION_ID < 80100 */
+
+#if PHP_VERSION_ID < 80000
+typedef ZEND_RESULT_CODE zend_result;
+#endif
 
 #endif /* PHONGO_COMPAT_H */
