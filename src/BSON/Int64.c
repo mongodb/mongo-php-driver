@@ -18,6 +18,7 @@
 #include <zend_smart_str.h>
 #include <ext/standard/php_var.h>
 #include <Zend/zend_interfaces.h>
+#include <Zend/zend_exceptions.h>
 
 #include "php_phongo.h"
 #include "phongo_error.h"
@@ -293,6 +294,69 @@ static zend_result php_phongo_int64_cast_object(phongo_compat_object_handler_typ
 	}
 }
 
+static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result, zval* op1, zval* op2)
+{
+	int64_t value1, value2;
+
+	if (Z_TYPE_P(op1) == IS_LONG) {
+		value1 = Z_LVAL_P(op1);
+	} else if (Z_TYPE_P(op1) == IS_OBJECT && Z_OBJCE_P(op1) == php_phongo_int64_ce) {
+		value1 = Z_INT64_OBJ_P(op1)->integer;
+	} else {
+		return FAILURE;
+	}
+
+	if (Z_TYPE_P(op2) == IS_LONG) {
+		value2 = Z_LVAL_P(op2);
+	} else if (Z_TYPE_P(op2) == IS_OBJECT && Z_OBJCE_P(op2) == php_phongo_int64_ce) {
+		value2 = Z_INT64_OBJ_P(op2)->integer;
+	} else {
+		return FAILURE;
+	}
+
+	switch (opcode) {
+		case ZEND_ADD:
+			ZVAL_INT64_OBJ(result, value1 + value2);
+			return SUCCESS;
+
+		case ZEND_SUB:
+			ZVAL_INT64_OBJ(result, value1 - value2);
+			return SUCCESS;
+
+		case ZEND_MUL:
+			ZVAL_INT64_OBJ(result, value1 * value2);
+			return SUCCESS;
+
+		case ZEND_DIV:
+			if (value2 == 0) {
+				zend_throw_exception(zend_ce_division_by_zero_error, "Division by zero", 0);
+				return FAILURE;
+			}
+
+			ZVAL_INT64_OBJ(result, value1 / value2);
+			return SUCCESS;
+
+		case ZEND_MOD:
+			ZVAL_INT64_OBJ(result, value1 % value2);
+			return SUCCESS;
+
+		case ZEND_SL:
+			ZVAL_INT64_OBJ(result, value1 << value2);
+			return SUCCESS;
+
+		case ZEND_SR:
+			ZVAL_INT64_OBJ(result, value1 >> value2);
+			return SUCCESS;
+
+		case ZEND_POW:
+			ZVAL_INT64_OBJ(result, pow(value1, value2));
+			return SUCCESS;
+
+		default:
+			return FAILURE;
+	}
+}
+
 static HashTable* php_phongo_int64_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
@@ -321,4 +385,5 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_int64.free_obj       = php_phongo_int64_free_object;
 	php_phongo_handler_int64.offset         = XtOffsetOf(php_phongo_int64_t, std);
 	php_phongo_handler_int64.cast_object    = php_phongo_int64_cast_object;
+	php_phongo_handler_int64.do_operation   = php_phongo_int64_do_operation;
 }
