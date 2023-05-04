@@ -420,8 +420,14 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 			/* Short-circuit MongoDB\BSON\Document and MongoDB\BSON\PackedArray instances - copy the data */
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_document_ce)) {
 				php_phongo_document_t* intern = Z_DOCUMENT_OBJ_P(data);
+				bson_iter_t            iter;
 
 				phongo_bson_copy_to_noinit(intern->bson, bson);
+
+				// Check if the document instance already has an _id field
+				if (flags & PHONGO_BSON_ADD_ID && bson_iter_init_find(&iter, bson, "_id")) {
+					flags &= ~PHONGO_BSON_ADD_ID;
+				}
 
 				goto done;
 			}
@@ -541,6 +547,7 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 		ZEND_HASH_FOREACH_END();
 	}
 
+done:
 	if (flags & PHONGO_BSON_ADD_ID) {
 		bson_oid_t oid;
 
@@ -549,7 +556,6 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 		mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "Added new _id");
 	}
 
-done:
 	if (flags & PHONGO_BSON_RETURN_ID && bson_out) {
 		bson_iter_t iter;
 
