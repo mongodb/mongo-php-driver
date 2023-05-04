@@ -267,6 +267,24 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(5) "array"
   ["value"]=>
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
+    ["data"]=>
+    string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+    ["value"]=>
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      int(3)
+    }
+  }
+}
+object(MongoDB\BSON\PackedArray)#%d (%d) {
+  ["data"]=>
+  string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+  ["value"]=>
   array(3) {
     [0]=>
     int(1)
@@ -279,10 +297,15 @@ object(MongoDB\BSON\Value)#%d (%d) {
 object(MongoDB\BSON\PackedArray)#%d (%d) {
   ["data"]=>
   string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
-}
-object(MongoDB\BSON\PackedArray)#%d (%d) {
-  ["data"]=>
-  string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+  ["value"]=>
+  array(3) {
+    [0]=>
+    int(1)
+    [1]=>
+    int(2)
+    [2]=>
+    int(3)
+  }
 }
 bool(true)
 bool(true)
@@ -291,6 +314,24 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(5) "array"
   ["value"]=>
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
+    ["data"]=>
+    string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+    ["value"]=>
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      int(3)
+    }
+  }
+}
+object(MongoDB\BSON\PackedArray)#%d (%d) {
+  ["data"]=>
+  string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+  ["value"]=>
   array(3) {
     [0]=>
     int(1)
@@ -303,10 +344,15 @@ object(MongoDB\BSON\Value)#%d (%d) {
 object(MongoDB\BSON\PackedArray)#%d (%d) {
   ["data"]=>
   string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
-}
-object(MongoDB\BSON\PackedArray)#%d (%d) {
-  ["data"]=>
-  string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+  ["value"]=>
+  array(3) {
+    [0]=>
+    int(1)
+    [1]=>
+    int(2)
+    [2]=>
+    int(3)
+  }
 }
 bool(true)
 bool(true)
@@ -315,6 +361,20 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(8) "document"
   ["value"]=>
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
+  }
+}
+object(MongoDB\BSON\Document)#%d (%d) {
+  ["data"]=>
+  string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+  ["value"]=>
   object(stdClass)#%d (%d) {
     ["foo"]=>
     string(3) "bar"
@@ -323,10 +383,11 @@ object(MongoDB\BSON\Value)#%d (%d) {
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
-}
-object(MongoDB\BSON\Document)#%d (%d) {
-  ["data"]=>
-  string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["foo"]=>
+    string(3) "bar"
+  }
 }
 bool(true)
 bool(true)
@@ -335,25 +396,19 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(8) "document"
   ["value"]=>
-  object(stdClass)#%d (%d) {
-    ["foo"]=>
-    string(3) "bar"
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
   }
 }
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
-}
-object(MongoDB\BSON\Document)#%d (%d) {
-  ["data"]=>
-  string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
-}
-bool(true)
-bool(true)
-Testing document:
-object(MongoDB\BSON\Value)#%d (%d) {
-  ["type"]=>
-  string(8) "document"
   ["value"]=>
   object(stdClass)#%d (%d) {
     ["foo"]=>
@@ -363,10 +418,46 @@ object(MongoDB\BSON\Value)#%d (%d) {
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["foo"]=>
+    string(3) "bar"
+  }
+}
+bool(true)
+bool(true)
+Testing document:
+object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(8) "document"
+  ["value"]=>
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
+  }
 }
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["foo"]=>
+    string(3) "bar"
+  }
+}
+object(MongoDB\BSON\Document)#%d (%d) {
+  ["data"]=>
+  string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["foo"]=>
+    string(3) "bar"
+  }
 }
 bool(true)
 bool(true)

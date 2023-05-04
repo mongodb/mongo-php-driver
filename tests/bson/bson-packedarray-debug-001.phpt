@@ -14,5 +14,8 @@ var_dump(MongoDB\BSON\PackedArray::fromPHP([]));
 object(MongoDB\BSON\PackedArray)#%d (%d) {
   ["data"]=>
   string(8) "BQAAAAA="
+  ["value"]=>
+  array(0) {
+  }
 }
 ===DONE===

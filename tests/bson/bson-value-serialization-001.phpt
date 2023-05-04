@@ -85,7 +85,7 @@ object(MongoDB\BSON\Value)#%d (%d) {
     string(1) "2"
   }
 }
-string(73) "C:18:"MongoDB\BSON\Value":42:{a:2:{s:4:"type";i:18;s:5:"value";s:1:"2";}}"
+string(124) "C:18:"MongoDB\BSON\Value":93:{a:2:{s:4:"type";i:18;s:5:"value";C:18:"MongoDB\BSON\Int64":28:{a:1:{s:7:"integer";s:1:"2";}}}}"
 object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(14) "64-bit integer"
@@ -156,13 +156,18 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(5) "array"
   ["value"]=>
-  array(3) {
-    [0]=>
-    int(1)
-    [1]=>
-    int(2)
-    [2]=>
-    int(3)
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
+    ["data"]=>
+    string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+    ["value"]=>
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      int(3)
+    }
   }
 }
 string(163) "C:18:"MongoDB\BSON\Value":131:{a:2:{s:4:"type";i:4;s:5:"value";C:24:"MongoDB\BSON\PackedArray":61:{a:1:{s:4:"data";s:36:"GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA=";}}}}"
@@ -170,13 +175,18 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(5) "array"
   ["value"]=>
-  array(3) {
-    [0]=>
-    int(1)
-    [1]=>
-    int(2)
-    [2]=>
-    int(3)
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
+    ["data"]=>
+    string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+    ["value"]=>
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      int(3)
+    }
   }
 }
 Testing packedArray:
@@ -184,13 +194,18 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(5) "array"
   ["value"]=>
-  array(3) {
-    [0]=>
-    int(1)
-    [1]=>
-    int(2)
-    [2]=>
-    int(3)
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
+    ["data"]=>
+    string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+    ["value"]=>
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      int(3)
+    }
   }
 }
 string(163) "C:18:"MongoDB\BSON\Value":131:{a:2:{s:4:"type";i:4;s:5:"value";C:24:"MongoDB\BSON\PackedArray":61:{a:1:{s:4:"data";s:36:"GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA=";}}}}"
@@ -198,13 +213,18 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(5) "array"
   ["value"]=>
-  array(3) {
-    [0]=>
-    int(1)
-    [1]=>
-    int(2)
-    [2]=>
-    int(3)
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
+    ["data"]=>
+    string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+    ["value"]=>
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      int(3)
+    }
   }
 }
 Testing struct:
@@ -212,9 +232,14 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(8) "document"
   ["value"]=>
-  object(stdClass)#%d (%d) {
-    ["foo"]=>
-    string(3) "bar"
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
   }
 }
 string(148) "C:18:"MongoDB\BSON\Value":116:{a:2:{s:4:"type";i:3;s:5:"value";C:21:"MongoDB\BSON\Document":49:{a:1:{s:4:"data";s:24:"EgAAAAJmb28ABAAAAGJhcgAA";}}}}"
@@ -222,9 +247,14 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(8) "document"
   ["value"]=>
-  object(stdClass)#%d (%d) {
-    ["foo"]=>
-    string(3) "bar"
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
   }
 }
 Testing object:
@@ -232,9 +262,14 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(8) "document"
   ["value"]=>
-  object(stdClass)#%d (%d) {
-    ["foo"]=>
-    string(3) "bar"
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
   }
 }
 string(148) "C:18:"MongoDB\BSON\Value":116:{a:2:{s:4:"type";i:3;s:5:"value";C:21:"MongoDB\BSON\Document":49:{a:1:{s:4:"data";s:24:"EgAAAAJmb28ABAAAAGJhcgAA";}}}}"
@@ -242,9 +277,14 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(8) "document"
   ["value"]=>
-  object(stdClass)#%d (%d) {
-    ["foo"]=>
-    string(3) "bar"
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
   }
 }
 Testing document:
@@ -252,9 +292,14 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(8) "document"
   ["value"]=>
-  object(stdClass)#%d (%d) {
-    ["foo"]=>
-    string(3) "bar"
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
   }
 }
 string(148) "C:18:"MongoDB\BSON\Value":116:{a:2:{s:4:"type";i:3;s:5:"value";C:21:"MongoDB\BSON\Document":49:{a:1:{s:4:"data";s:24:"EgAAAAJmb28ABAAAAGJhcgAA";}}}}"
@@ -262,9 +307,14 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(8) "document"
   ["value"]=>
-  object(stdClass)#%d (%d) {
-    ["foo"]=>
-    string(3) "bar"
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
+    }
   }
 }
 Testing binary:

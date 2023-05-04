@@ -25,6 +25,25 @@ var_dump($a == $array);
 object(MongoDB\BSON\PackedArray)#%d (%d) {
   ["data"]=>
   string(68) "MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA"
+  ["value"]=>
+  array(4) {
+    [0]=>
+    int(0)
+    [1]=>
+    int(1)
+    [2]=>
+    string(3) "foo"
+    [3]=>
+    object(MongoDB\BSON\Document)#%d (%d) {
+      ["data"]=>
+      string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+      ["value"]=>
+      object(stdClass)#%d (%d) {
+        ["foo"]=>
+        string(3) "bar"
+      }
+    }
+  }
 }
 bool(true)
 ===DONE===

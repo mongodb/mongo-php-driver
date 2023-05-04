@@ -122,7 +122,9 @@
 	}
 
 #define ZVAL_INT64_OBJ(_zv, _value) phongo_int64_new((_zv), (_value))
-#define RETURN_INT64_OBJ(_value) phongo_int64_new(return_value, (_value)); return
+#define RETURN_INT64_OBJ(_value)              \
+	phongo_int64_new(return_value, (_value)); \
+	return
 #if SIZEOF_ZEND_LONG == 8
 #define ADD_INDEX_INT64(_zv, _index, _value) add_index_long((_zv), (_index), (_value))
 #define ADD_NEXT_INDEX_INT64(_zv, _value) add_next_index_long((_zv), (_value))

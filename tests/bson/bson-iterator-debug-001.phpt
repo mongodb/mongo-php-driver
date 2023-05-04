@@ -16,6 +16,9 @@ object(MongoDB\BSON\Iterator)#%d (%d) {
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(8) "BQAAAAA="
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+    }
   }
 }
 ===DONE===

@@ -18,10 +18,48 @@ var_dump(unserialize($s));
 object(MongoDB\BSON\PackedArray)#%d (%d) {
   ["data"]=>
   string(68) "MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA"
+  ["value"]=>
+  array(4) {
+    [0]=>
+    int(0)
+    [1]=>
+    int(1)
+    [2]=>
+    string(3) "foo"
+    [3]=>
+    object(MongoDB\BSON\Document)#%d (%d) {
+      ["data"]=>
+      string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+      ["value"]=>
+      object(stdClass)#%d (%d) {
+        ["foo"]=>
+        string(3) "bar"
+      }
+    }
+  }
 }
 string(123) "O:24:"MongoDB\BSON\PackedArray":1:{s:4:"data";s:68:"MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA";}"
 object(MongoDB\BSON\PackedArray)#%d (%d) {
   ["data"]=>
   string(68) "MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA"
+  ["value"]=>
+  array(4) {
+    [0]=>
+    int(0)
+    [1]=>
+    int(1)
+    [2]=>
+    string(3) "foo"
+    [3]=>
+    object(MongoDB\BSON\Document)#%d (%d) {
+      ["data"]=>
+      string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+      ["value"]=>
+      object(stdClass)#%d (%d) {
+        ["foo"]=>
+        string(3) "bar"
+      }
+    }
+  }
 }
 ===DONE===

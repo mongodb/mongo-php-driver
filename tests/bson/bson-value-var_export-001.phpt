@@ -58,7 +58,10 @@ Testing int32:
 Testing int64:
 %r\\?%rMongoDB\BSON\Value::__set_state(array(
    'type' => 18,
-   'value' => '2',
+   'value' =>%w
+  %r\\?%rMongoDB\BSON\Int64::__set_state(array(
+     'integer' => '2',
+  )),
 ))
 Testing float:
 %r\\?%rMongoDB\BSON\Value::__set_state(array(

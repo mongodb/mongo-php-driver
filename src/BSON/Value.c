@@ -62,14 +62,7 @@ static bool php_phongo_value_init_from_hash(php_phongo_value_t* intern, HashTabl
 		return false;
 	}
 
-	if (Z_LVAL_P(type) == BSON_TYPE_INT64) {
-		/* Special handling for int64: unserialise from string until it's serialised as Int64 */
-		intern->value.value_type = BSON_TYPE_INT64;
-		if (!php_phongo_parse_int64(&intern->value.value.v_int64, Z_STRVAL_P(value), Z_STRLEN_P(value))) {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Error parsing value string as int64_t for type int64");
-			return false;
-		}
-	} else if (!phongo_zval_to_bson_value(value, &intern->value)) {
+	if (!phongo_zval_to_bson_value(value, &intern->value)) {
 		/* Exception already thrown */
 		return false;
 	}
@@ -88,7 +81,7 @@ static bool php_phongo_value_init_from_hash(php_phongo_value_t* intern, HashTabl
 	return true;
 }
 
-static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_handler_type* object, zval* type, zval* value, bool is_temp)
+static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_handler_type* object, zval* type, bool is_temp)
 {
 	php_phongo_value_t* intern;
 	HashTable*          props;
@@ -96,8 +89,22 @@ static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_hand
 	intern = Z_OBJ_VALUE(PHONGO_COMPAT_GET_OBJ(object));
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
-	zend_hash_str_update(props, "type", sizeof("type") - 1, type);
-	zend_hash_str_update(props, "value", sizeof("value") - 1, value);
+	/* get_debug_info will pass its own type. If it isn't given, use the type constant */
+	if (!type) {
+		zval value_type;
+
+		ZVAL_LONG(&value_type, intern->value.value_type);
+		zend_hash_str_update(props, "type", sizeof("type") - 1, &value_type);
+	} else {
+		zend_hash_str_update(props, "type", sizeof("type") - 1, type);
+	}
+
+	{
+		zval value;
+
+		phongo_bson_value_to_zval(&intern->value, &value);
+		zend_hash_str_update(props, "value", sizeof("value") - 1, &value);
+	}
 
 	return props;
 }
@@ -508,13 +515,8 @@ static PHP_METHOD(MongoDB_BSON_Value, serialize)
 	array_init_size(&retval, 2);
 	add_assoc_long(&retval, "type", intern->value.value_type);
 
-	if (intern->value.value_type == BSON_TYPE_INT64) {
-		/* Always output int64 as string for compatibility to 32-bit platforms */
-		ADD_ASSOC_INT64_AS_STRING(&retval, "value", intern->value.value.v_int64);
-	} else {
-		phongo_bson_value_to_zval(&intern->value, &value);
-		ADD_ASSOC_ZVAL(&retval, "value", &value);
-	}
+	phongo_bson_value_to_zval(&intern->value, &value);
+	ADD_ASSOC_ZVAL(&retval, "value", &value);
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
 	php_var_serialize(&buf, &retval, &var_hash);
@@ -557,23 +559,9 @@ static PHP_METHOD(MongoDB_BSON_Value, unserialize)
 
 static PHP_METHOD(MongoDB_BSON_Value, __serialize)
 {
-	php_phongo_value_t* intern;
-	zval                type;
-	zval                value;
-
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	intern = Z_VALUE_OBJ_P(getThis());
-
-	ZVAL_LONG(&type, intern->value.value_type);
-	if (intern->value.value_type == BSON_TYPE_INT64) {
-		/* Always output int64 as string for compatibility to 32-bit platforms */
-		ZVAL_INT64_STRING(&value, intern->value.value.v_int64);
-	} else {
-		phongo_bson_value_to_zval(&intern->value, &value);
-	}
-
-	RETURN_ARR(php_phongo_value_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), &type, &value, true));
+	RETURN_ARR(php_phongo_value_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), NULL, true));
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, __unserialize)
@@ -637,34 +625,18 @@ static HashTable* php_phongo_value_get_debug_info(phongo_compat_object_handler_t
 {
 	php_phongo_value_t* intern;
 	zval                type;
-	zval                value;
 
 	*is_temp = 1;
 	intern   = Z_OBJ_VALUE(PHONGO_COMPAT_GET_OBJ(object));
 
 	ZVAL_STRING(&type, php_phongo_bson_type_to_string(intern->value.value_type));
-	phongo_bson_value_to_zval_legacy(&intern->value, &value);
 
-	return php_phongo_value_get_properties_hash(object, &type, &value, true);
+	return php_phongo_value_get_properties_hash(object, &type, true);
 }
 
 static HashTable* php_phongo_value_get_properties(phongo_compat_object_handler_type* object)
 {
-	php_phongo_value_t* intern;
-	zval                type;
-	zval                value;
-
-	intern = Z_OBJ_VALUE(PHONGO_COMPAT_GET_OBJ(object));
-
-	ZVAL_LONG(&type, intern->value.value_type);
-	if (intern->value.value_type == BSON_TYPE_INT64) {
-		/* Always output int64 as string for compatibility to 32-bit platforms */
-		ZVAL_INT64_STRING(&value, intern->value.value.v_int64);
-	} else {
-		phongo_bson_value_to_zval(&intern->value, &value);
-	}
-
-	return php_phongo_value_get_properties_hash(object, &type, &value, false);
+	return php_phongo_value_get_properties_hash(object, NULL, false);
 }
 
 void php_phongo_value_init_ce(INIT_FUNC_ARGS)
