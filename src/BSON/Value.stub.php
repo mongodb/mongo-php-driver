@@ -163,7 +163,6 @@ final class Value implements \Serializable
     final public function getDecimal128(): Decimal128 {}
     final public function getDocument(): Document {}
     final public function getDouble(): float {}
-    final public function getInt(): int {}
     final public function getInt32(): int {}
 #if PHP_VERSION_ID >= 80000
     final public function getInt64(): int|Int64 {}
@@ -191,7 +190,6 @@ final class Value implements \Serializable
     final public function isDecimal128(): bool {}
     final public function isDocument(): bool {}
     final public function isDouble(): bool {}
-    final public function isInt(): bool {}
     final public function isInt32(): bool {}
     final public function isInt64(): bool {}
     final public function isMaxKey(): bool {}

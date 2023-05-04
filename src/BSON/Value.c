@@ -288,26 +288,6 @@ static PHP_METHOD(MongoDB_BSON_Value, getDouble)
 	RETURN_DOUBLE(intern->value.value.v_double);
 }
 
-static PHP_METHOD(MongoDB_BSON_Value, getInt)
-{
-	php_phongo_value_t* intern;
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_VALUE_OBJ_P(getThis());
-
-	switch (intern->value.value_type) {
-		case BSON_TYPE_INT32:
-			RETURN_LONG(intern->value.value.v_int32);
-
-		case BSON_TYPE_INT64:
-			RETURN_INT64(intern->value.value.v_int64);
-
-		default:
-			UNEXPECTED_BSON_TYPE_EXCEPTION(intern->value.value_type);
-	}
-}
-
 static PHP_METHOD(MongoDB_BSON_Value, getInt32)
 {
 	php_phongo_value_t* intern;
@@ -491,17 +471,6 @@ static PHP_METHOD(MongoDB_BSON_Value, isCode)
 	intern = Z_VALUE_OBJ_P(getThis());
 
 	RETURN_BOOL(intern->value.value_type == BSON_TYPE_CODE || intern->value.value_type == BSON_TYPE_CODEWSCOPE);
-}
-
-static PHP_METHOD(MongoDB_BSON_Value, isInt)
-{
-	php_phongo_value_t* intern;
-
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	intern = Z_VALUE_OBJ_P(getThis());
-
-	RETURN_BOOL(intern->value.value_type == BSON_TYPE_INT32 || intern->value.value_type == BSON_TYPE_INT64);
 }
 
 #undef UNEXPECTED_BSON_TYPE_EXCEPTION

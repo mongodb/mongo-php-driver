@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 2bae4efd62e658fdf65b9d361063bdde6ab92569 */
+ * Stub hash: 687f8c84072dce9bd54beae4a85dff719ebd44c8 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Value___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -56,8 +56,6 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Value_getDouble, 0, 0, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Value_getInt arginfo_class_MongoDB_BSON_Value_getType
-
 #define arginfo_class_MongoDB_BSON_Value_getInt32 arginfo_class_MongoDB_BSON_Value_getType
 
 #if PHP_VERSION_ID >= 80000
@@ -113,8 +111,6 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_MongoDB_BSON_Value_isDocument arginfo_class_MongoDB_BSON_Value_getBool
 
 #define arginfo_class_MongoDB_BSON_Value_isDouble arginfo_class_MongoDB_BSON_Value_getBool
-
-#define arginfo_class_MongoDB_BSON_Value_isInt arginfo_class_MongoDB_BSON_Value_getBool
 
 #define arginfo_class_MongoDB_BSON_Value_isInt32 arginfo_class_MongoDB_BSON_Value_getBool
 
@@ -179,7 +175,6 @@ static ZEND_METHOD(MongoDB_BSON_Value, getDBPointer);
 static ZEND_METHOD(MongoDB_BSON_Value, getDecimal128);
 static ZEND_METHOD(MongoDB_BSON_Value, getDocument);
 static ZEND_METHOD(MongoDB_BSON_Value, getDouble);
-static ZEND_METHOD(MongoDB_BSON_Value, getInt);
 static ZEND_METHOD(MongoDB_BSON_Value, getInt32);
 #if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_BSON_Value, getInt64);
@@ -205,7 +200,6 @@ static ZEND_METHOD(MongoDB_BSON_Value, isDBPointer);
 static ZEND_METHOD(MongoDB_BSON_Value, isDecimal128);
 static ZEND_METHOD(MongoDB_BSON_Value, isDocument);
 static ZEND_METHOD(MongoDB_BSON_Value, isDouble);
-static ZEND_METHOD(MongoDB_BSON_Value, isInt);
 static ZEND_METHOD(MongoDB_BSON_Value, isInt32);
 static ZEND_METHOD(MongoDB_BSON_Value, isInt64);
 static ZEND_METHOD(MongoDB_BSON_Value, isMaxKey);
@@ -248,7 +242,6 @@ static const zend_function_entry class_MongoDB_BSON_Value_methods[] = {
 	ZEND_ME(MongoDB_BSON_Value, getDecimal128, arginfo_class_MongoDB_BSON_Value_getDecimal128, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, getDocument, arginfo_class_MongoDB_BSON_Value_getDocument, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, getDouble, arginfo_class_MongoDB_BSON_Value_getDouble, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_Value, getInt, arginfo_class_MongoDB_BSON_Value_getInt, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, getInt32, arginfo_class_MongoDB_BSON_Value_getInt32, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_BSON_Value, getInt64, arginfo_class_MongoDB_BSON_Value_getInt64, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -274,7 +267,6 @@ static const zend_function_entry class_MongoDB_BSON_Value_methods[] = {
 	ZEND_ME(MongoDB_BSON_Value, isDecimal128, arginfo_class_MongoDB_BSON_Value_isDecimal128, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isDocument, arginfo_class_MongoDB_BSON_Value_isDocument, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isDouble, arginfo_class_MongoDB_BSON_Value_isDouble, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_Value, isInt, arginfo_class_MongoDB_BSON_Value_isInt, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isInt32, arginfo_class_MongoDB_BSON_Value_isInt32, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isInt64, arginfo_class_MongoDB_BSON_Value_isInt64, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, isMaxKey, arginfo_class_MongoDB_BSON_Value_isMaxKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
