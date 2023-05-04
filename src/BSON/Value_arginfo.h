@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 687f8c84072dce9bd54beae4a85dff719ebd44c8 */
+ * Stub hash: a389ad37757fb92ed492da3fa675faa17d734e84 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Value___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -58,14 +58,8 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_Value_getInt32 arginfo_class_MongoDB_BSON_Value_getType
 
-#if PHP_VERSION_ID >= 80000
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_TYPE_MASK_EX(arginfo_class_MongoDB_BSON_Value_getInt64, 0, 0, MongoDB\\BSON\\Int64, MAY_BE_LONG)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getInt64, 0, 0, MongoDB\\BSON\\Int64, 0)
 ZEND_END_ARG_INFO()
-#endif
-
-#if !(PHP_VERSION_ID >= 80000)
-#define arginfo_class_MongoDB_BSON_Value_getInt64 arginfo_class_MongoDB_BSON_Value_getValue
-#endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value_getMaxKey, 0, 0, MongoDB\\BSON\\MaxKey, 0)
 ZEND_END_ARG_INFO()
@@ -176,12 +170,7 @@ static ZEND_METHOD(MongoDB_BSON_Value, getDecimal128);
 static ZEND_METHOD(MongoDB_BSON_Value, getDocument);
 static ZEND_METHOD(MongoDB_BSON_Value, getDouble);
 static ZEND_METHOD(MongoDB_BSON_Value, getInt32);
-#if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_BSON_Value, getInt64);
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-static ZEND_METHOD(MongoDB_BSON_Value, getInt64);
-#endif
 static ZEND_METHOD(MongoDB_BSON_Value, getMaxKey);
 static ZEND_METHOD(MongoDB_BSON_Value, getMinKey);
 static ZEND_METHOD(MongoDB_BSON_Value, getNull);
@@ -243,12 +232,7 @@ static const zend_function_entry class_MongoDB_BSON_Value_methods[] = {
 	ZEND_ME(MongoDB_BSON_Value, getDocument, arginfo_class_MongoDB_BSON_Value_getDocument, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, getDouble, arginfo_class_MongoDB_BSON_Value_getDouble, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, getInt32, arginfo_class_MongoDB_BSON_Value_getInt32, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_BSON_Value, getInt64, arginfo_class_MongoDB_BSON_Value_getInt64, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-	ZEND_ME(MongoDB_BSON_Value, getInt64, arginfo_class_MongoDB_BSON_Value_getInt64, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
 	ZEND_ME(MongoDB_BSON_Value, getMaxKey, arginfo_class_MongoDB_BSON_Value_getMaxKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, getMinKey, arginfo_class_MongoDB_BSON_Value_getMinKey, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Value, getNull, arginfo_class_MongoDB_BSON_Value_getNull, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

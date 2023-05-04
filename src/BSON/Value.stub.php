@@ -164,12 +164,7 @@ final class Value implements \Serializable
     final public function getDocument(): Document {}
     final public function getDouble(): float {}
     final public function getInt32(): int {}
-#if PHP_VERSION_ID >= 80000
-    final public function getInt64(): int|Int64 {}
-#else
-    /** @return int|Int64 */
-    final public function getInt64() {}
-#endif
+    final public function getInt64(): Int64 {}
     final public function getMaxKey(): MaxKey {}
     final public function getMinKey(): MinKey {}
     final public function getNull(): null {}

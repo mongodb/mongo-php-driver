@@ -66,7 +66,10 @@ object(MongoDB\BSON\Value)#%d (%d) {
   ["type"]=>
   string(14) "64-bit integer"
   ["value"]=>
-  int(2)
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(1) "2"
+  }
 }
 Testing float:
 object(MongoDB\BSON\Value)#%d (%d) {

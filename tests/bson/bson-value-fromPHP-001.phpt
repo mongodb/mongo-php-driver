@@ -18,7 +18,12 @@ $tests = [
         'isInt32',
         'getInt32',
     ],
-    // Int64 omitted, tested separately to account for 32-bit platforms
+    'int64' => [
+        unserialize('C:18:"MongoDB\BSON\Int64":28:{a:1:{s:7:"integer";s:1:"2";}}'),
+        MongoDB\BSON\Value::TYPE_INT64,
+        'isInt64',
+        'getInt64',
+    ],
     'float' => [
         3.14,
         MongoDB\BSON\Value::TYPE_DOUBLE,
@@ -191,6 +196,26 @@ object(MongoDB\BSON\Value)#%d (%d) {
 }
 int(2)
 int(2)
+bool(true)
+bool(true)
+Testing int64:
+object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(14) "64-bit integer"
+  ["value"]=>
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(1) "2"
+  }
+}
+object(MongoDB\BSON\Int64)#%d (%d) {
+  ["integer"]=>
+  string(1) "2"
+}
+object(MongoDB\BSON\Int64)#%d (%d) {
+  ["integer"]=>
+  string(1) "2"
+}
 bool(true)
 bool(true)
 Testing float:
