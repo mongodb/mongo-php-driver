@@ -19,6 +19,9 @@ echo throws(function() use ($value) {
 echo throws(function() use ($value) {
     var_dump($value / 0);
 }, DivisionByZeroError::class), "\n";
+echo throws(function() use ($value) {
+    var_dump($value % 0);
+}, DivisionByZeroError::class), "\n";
 
 ?>
 ===DONE===
@@ -26,6 +29,8 @@ echo throws(function() use ($value) {
 --EXPECT--
 OK: Got TypeError
 Unsupported operand types: MongoDB\BSON\Int64 + string
+OK: Got DivisionByZeroError
+Division by zero
 OK: Got DivisionByZeroError
 Division by zero
 ===DONE===

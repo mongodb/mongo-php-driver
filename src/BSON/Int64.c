@@ -337,6 +337,11 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 			return SUCCESS;
 
 		case ZEND_MOD:
+			if (value2 == 0) {
+				zend_throw_exception(zend_ce_division_by_zero_error, "Division by zero", 0);
+				return FAILURE;
+			}
+
 			ZVAL_INT64_OBJ(result, value1 % value2);
 			return SUCCESS;
 
