@@ -367,6 +367,25 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 			OPERATION_RESULT_INT64(result, pow(value1, value2));
 			return SUCCESS;
 
+		case ZEND_BW_AND:
+			PHONGO_GET_INT64(value2, op2);
+			OPERATION_RESULT_INT64(result, value1 & value2);
+			return SUCCESS;
+
+		case ZEND_BW_OR:
+			PHONGO_GET_INT64(value2, op2);
+			OPERATION_RESULT_INT64(result, value1 | value2);
+			return SUCCESS;
+
+		case ZEND_BW_XOR:
+			PHONGO_GET_INT64(value2, op2);
+			OPERATION_RESULT_INT64(result, value1 ^ value2);
+			return SUCCESS;
+
+		case ZEND_BW_NOT:
+			OPERATION_RESULT_INT64(result, ~value1);
+			return SUCCESS;
+
 		default:
 			return FAILURE;
 	}

@@ -15,6 +15,11 @@ var_dump($value << 3);
 var_dump($value >> 1);
 var_dump($value ** 3);
 
+var_dump($value | 1); // 11
+var_dump($value & 8); // 8
+var_dump($value ^ 2); // 8
+var_dump(~$value); // -11
+
 // Testing single operation to ensure op1 and op2 can be an int64
 var_dump(2 + $value);
 
@@ -62,6 +67,22 @@ object(MongoDB\BSON\Int64)#%d (%d) {
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(4) "1000"
+}
+object(MongoDB\BSON\Int64)#%d (%d) {
+  ["integer"]=>
+  string(2) "11"
+}
+object(MongoDB\BSON\Int64)#%d (%d) {
+  ["integer"]=>
+  string(1) "8"
+}
+object(MongoDB\BSON\Int64)#%d (%d) {
+  ["integer"]=>
+  string(1) "8"
+}
+object(MongoDB\BSON\Int64)#%d (%d) {
+  ["integer"]=>
+  string(3) "-11"
 }
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
