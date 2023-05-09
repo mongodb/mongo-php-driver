@@ -16,6 +16,11 @@ var_dump($value >> 1);
 
 echo "\nTesting pow()\n";
 var_dump($value ** 3);
+var_dump($value ** 0);
+var_dump($value ** -3);
+var_dump($value ** 13);
+var_dump(new MongoDB\BSON\Int64(2) ** 65);
+var_dump(new MongoDB\BSON\Int64(0) ** 3);
 
 echo "\nTesting increment/decrement operators\n";
 var_dump($value++); // This will print 11 instead of 10 due to PHP not implementing operator overloading for increment
@@ -83,6 +88,20 @@ Testing pow()
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(4) "1000"
+}
+object(MongoDB\BSON\Int64)#%d (%d) {
+  ["integer"]=>
+  string(1) "1"
+}
+float(0.001)
+object(MongoDB\BSON\Int64)#%d (%d) {
+  ["integer"]=>
+  string(14) "10000000000000"
+}
+float(3.68%dE+19)
+object(MongoDB\BSON\Int64)#%d (%d) {
+  ["integer"]=>
+  string(1) "0"
 }
 
 Testing increment/decrement operators
