@@ -154,6 +154,12 @@ static PHP_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnect
 		RETURN_NULL();
 	}
 
+#if SIZEOF_ZEND_LONG == 4
+	if (intern->server_connection_id > INT32_MAX || intern->server_connection_id < INT32_MIN) {
+		zend_error(E_WARNING, "Truncating 64-bit value %" PRId64 " for serverConnectionId", intern->server_connection_id);
+	}
+#endif
+
 	RETURN_LONG(intern->server_connection_id);
 }
 

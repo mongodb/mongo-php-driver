@@ -149,7 +149,7 @@ static void phongo_apm_command_started(const mongoc_apm_command_started_t* event
 	p_event->request_id           = mongoc_apm_command_started_get_request_id(event);
 	p_event->command              = bson_copy(mongoc_apm_command_started_get_command(event));
 	p_event->database_name        = estrdup(mongoc_apm_command_started_get_database_name(event));
-	p_event->server_connection_id = mongoc_apm_command_started_get_server_connection_id(event);
+	p_event->server_connection_id = mongoc_apm_command_started_get_server_connection_id_int64(event);
 	p_event->has_service_id       = mongoc_apm_command_started_get_service_id(event) != NULL;
 
 	if (p_event->has_service_id) {
@@ -195,7 +195,7 @@ static void phongo_apm_command_succeeded(const mongoc_apm_command_succeeded_t* e
 	p_event->request_id           = mongoc_apm_command_succeeded_get_request_id(event);
 	p_event->duration_micros      = mongoc_apm_command_succeeded_get_duration(event);
 	p_event->reply                = bson_copy(mongoc_apm_command_succeeded_get_reply(event));
-	p_event->server_connection_id = mongoc_apm_command_succeeded_get_server_connection_id(event);
+	p_event->server_connection_id = mongoc_apm_command_succeeded_get_server_connection_id_int64(event);
 	p_event->has_service_id       = mongoc_apm_command_succeeded_get_service_id(event) != NULL;
 
 	if (p_event->has_service_id) {
@@ -242,7 +242,7 @@ static void phongo_apm_command_failed(const mongoc_apm_command_failed_t* event)
 	p_event->request_id           = mongoc_apm_command_failed_get_request_id(event);
 	p_event->duration_micros      = mongoc_apm_command_failed_get_duration(event);
 	p_event->reply                = bson_copy(mongoc_apm_command_failed_get_reply(event));
-	p_event->server_connection_id = mongoc_apm_command_failed_get_server_connection_id(event);
+	p_event->server_connection_id = mongoc_apm_command_failed_get_server_connection_id_int64(event);
 	p_event->has_service_id       = mongoc_apm_command_failed_get_service_id(event) != NULL;
 
 	if (p_event->has_service_id) {
