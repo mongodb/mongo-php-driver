@@ -4,14 +4,13 @@ MongoDB\BSON\Int64 get_properties handler (foreach)
 <?php
 
 $tests = [
-    '9223372036854775807',
-    '-9223372036854775808',
-    0,
+    new MongoDB\BSON\Int64('9223372036854775807'),
+    new MongoDB\BSON\Int64('-9223372036854775808'),
+    new MongoDB\BSON\Int64(0),
 ];
 
 foreach ($tests as $test) {
-    $int64 = new MongoDB\BSON\Int64($test);
-    foreach ($int64 as $key => $value) {
+    foreach ($test as $key => $value) {
         var_dump($key);
         var_dump($value);
     }

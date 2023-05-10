@@ -7,6 +7,7 @@ $tests = [
     2,
     '2',
     '9223372036854775807',
+    '-9223372036854775808',
 ];
 
 foreach($tests as $test) {
@@ -28,5 +29,9 @@ object(MongoDB\BSON\Int64)#%d (%d) {
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(19) "9223372036854775807"
+}
+object(MongoDB\BSON\Int64)#%d (%d) {
+  ["integer"]=>
+  string(20) "-9223372036854775808"
 }
 ===DONE===

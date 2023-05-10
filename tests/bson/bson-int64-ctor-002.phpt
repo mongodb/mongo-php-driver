@@ -6,6 +6,7 @@ MongoDB\BSON\Int64 constructor (64-bit int value)
 <?php
 
 var_dump(new MongoDB\BSON\Int64(9223372036854775807));
+var_dump(new MongoDB\BSON\Int64(~9223372036854775807));
 
 ?>
 ===DONE===
@@ -14,5 +15,9 @@ var_dump(new MongoDB\BSON\Int64(9223372036854775807));
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(19) "9223372036854775807"
+}
+object(MongoDB\BSON\Int64)#%d (%d) {
+  ["integer"]=>
+  string(20) "-9223372036854775808"
 }
 ===DONE===

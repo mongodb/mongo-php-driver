@@ -1,8 +1,5 @@
 --TEST--
-MongoDB\BSON\Int64 casting errors (PHP 8)
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('<', '8.0'); ?>
+MongoDB\BSON\Int64 casting errors
 --FILE--
 <?php
 
@@ -12,12 +9,12 @@ $int64 = new MongoDB\BSON\Int64(2);
 
 echo raises(function () use ($int64) {
     var_dump((float) $int64);
-}, E_WARNING), "\n";
+}, E_NOTICE | E_WARNING), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
-OK: Got E_WARNING
+--EXPECTF--
+OK: Got %r(E_NOTICE|E_WARNING)%r
 Object of class MongoDB\BSON\Int64 could not be converted to float
 ===DONE===

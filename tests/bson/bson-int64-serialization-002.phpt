@@ -13,9 +13,7 @@ $tests = [
 ];
 
 foreach ($tests as $test) {
-    $int64 = new MongoDB\BSON\Int64($test);
-
-    var_dump($int64);
+    var_dump($int64 = new MongoDB\BSON\Int64($test));
     var_dump($s = serialize($int64));
     var_dump(unserialize($s));
     echo "\n";
