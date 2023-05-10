@@ -342,24 +342,55 @@ static int64_t phongo_pow_int64(int64_t base, int64_t exp)
  * leading to a difference in behaviour compared to int values. */
 static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result, zval* op1, zval* op2)
 {
-	int64_t value1, value2;
+	int64_t value1, value2, lresult;
 
 	PHONGO_GET_INT64(value1, op1);
 
 	switch (opcode) {
 		case ZEND_ADD:
 			PHONGO_GET_INT64(value2, op2);
-			OPERATION_RESULT_INT64(result, value1 + value2);
+
+			lresult = value1 + value2;
+
+			// Check for overflow by comparing the sign bits of the operands and the result
+			if ((value1 & INT64_MIN) == (value2 & INT64_MIN) && (value1 & INT64_MIN) != (lresult & INT64_MIN)) {
+				ZVAL_DOUBLE(result, (double) value1 + (double) value2);
+			} else {
+				OPERATION_RESULT_INT64(result, lresult);
+			}
+
 			return SUCCESS;
 
 		case ZEND_SUB:
 			PHONGO_GET_INT64(value2, op2);
-			OPERATION_RESULT_INT64(result, value1 - value2);
+
+			lresult = value1 - value2;
+
+			// Check for overflow by comparing the sign bits of the operands and the result
+			if ((value1 & INT64_MIN) != (value2 & INT64_MIN) && (value1 & INT64_MIN) != (lresult & INT64_MIN)) {
+				ZVAL_DOUBLE(result, (double) value1 - (double) value2);
+			} else {
+				OPERATION_RESULT_INT64(result, lresult);
+			}
+
 			return SUCCESS;
 
 		case ZEND_MUL:
 			PHONGO_GET_INT64(value2, op2);
-			OPERATION_RESULT_INT64(result, value1 * value2);
+
+			{
+				int64_t     lres  = value1 * value2;
+				long double dres  = (long double) value1 * (long double) value2;
+				long double delta = (long double) lres - dres;
+
+				// Guard against overflow, return double if so
+				if ((dres + delta) != dres) {
+					ZVAL_DOUBLE(result, dres);
+				} else {
+					OPERATION_RESULT_INT64(result, lres);
+				}
+			}
+
 			return SUCCESS;
 
 		case ZEND_DIV:
@@ -369,7 +400,14 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 				return FAILURE;
 			}
 
-			OPERATION_RESULT_INT64(result, value1 / value2);
+			// INT64_MIN / 1 exceeds the int64 range, return double in that case.
+			// Same goes for any other division that would not yield an integer.
+			if ((value1 == INT64_MIN && value2 == -1) || (value1 % value2 != 0)) {
+				ZVAL_DOUBLE(result, (double) value1 / value2);
+			} else {
+				OPERATION_RESULT_INT64(result, value1 / value2);
+			}
+
 			return SUCCESS;
 
 		case ZEND_MOD:

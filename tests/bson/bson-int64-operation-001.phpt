@@ -1,60 +1,36 @@
 --TEST--
-MongoDB\BSON\Int64 operations
+MongoDB\BSON\Int64 operations: arithmetics
 --FILE--
 <?php
 
 $value = new MongoDB\BSON\Int64(10);
+$int64Max = new MongoDB\BSON\Int64('9223372036854775807');
+$int64Min = new MongoDB\BSON\Int64('-9223372036854775808');
 
-var_dump($value);
 var_dump($value + 2);
 var_dump($value - 2);
 var_dump($value * 2);
 var_dump($value / 2);
 var_dump($value % 3);
-var_dump($value << 3);
-var_dump($value >> 1);
 
-echo "\nTesting pow()\n";
-var_dump($value ** 3);
-var_dump($value ** 0);
-var_dump($value ** -3);
-var_dump($value ** 13);
-var_dump(new MongoDB\BSON\Int64(2) ** 65);
-var_dump(new MongoDB\BSON\Int64(0) ** 3);
+var_dump($int64Max + 1);
+var_dump($int64Min - 1);
+var_dump($int64Max * 2);
 
-echo "\nTesting increment/decrement operators\n";
-var_dump($value++); // This will print 11 instead of 10 due to PHP not implementing operator overloading for increment
-var_dump($value);
-var_dump(++$value);
-var_dump($value--); // This will print 11 instead of 12 due to PHP not implementing operator overloading for decrement
-var_dump($value);
-var_dump(--$value);
+// This division produces a float
+var_dump($int64Max / 2);
 
-echo "\nTesting bitwise operators\n";
-var_dump($value | 1); // 11
-var_dump($value & 8); // 8
-var_dump($value ^ 2); // 8
-var_dump(~$value); // -11
+// This division produces an int
+var_dump(($int64Max - 1) / 2);
 
-echo "\nTesting other operations\n";
-
-// Testing single operation to ensure op1 and op2 can be an int64
-var_dump(2 + $value);
-
-// Testing addition with unsupported numeric values
-// This results in PHP casting the Int64 to a number and adding it to a float
-var_dump($value + 3.14);
-var_dump(3.14 + $value);
-var_dump($value + 3.0);
+// This produces overflows
+var_dump($int64Min * -1);
+var_dump($int64Min / -1);
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(2) "10"
-}
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(2) "12"
@@ -75,85 +51,14 @@ object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(1) "1"
 }
+float(9.22%dE+18)
+float(-9.22%dE+18)
+float(1.844%dE+19)
+float(4.61%dE+18)
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
-  string(2) "80"
+  string(19) "4611686018427387903"
 }
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(1) "5"
-}
-
-Testing pow()
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(4) "1000"
-}
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(1) "1"
-}
-float(0.001)
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(14) "10000000000000"
-}
-float(3.68%dE+19)
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(1) "0"
-}
-
-Testing increment/decrement operators
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(2) "11"
-}
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(2) "11"
-}
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(2) "12"
-}
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(2) "11"
-}
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(2) "11"
-}
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(2) "10"
-}
-
-Testing bitwise operators
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(2) "11"
-}
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(1) "8"
-}
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(1) "8"
-}
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(3) "-11"
-}
-
-Testing other operations
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(2) "12"
-}
-float(13.14)
-float(13.14)
-float(13)
+float(9.22%dE+18)
+float(9.22%dE+18)
 ===DONE===
