@@ -5,6 +5,14 @@ MongoDB\BSON\Int64 operations: other operations
 
 $value = new MongoDB\BSON\Int64(10);
 
+// Implicit conversion to bool
+var_dump(!$value);
+var_dump(!!$value);
+
+// Boolean xor
+var_dump($value xor 2);
+var_dump($value xor 0);
+
 // Testing single operation to ensure op1 and op2 can be an int64
 var_dump(2 + $value);
 
@@ -18,6 +26,10 @@ var_dump($value + 3.0);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+bool(false)
+bool(true)
+bool(false)
+bool(true)
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(2) "12"
