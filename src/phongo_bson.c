@@ -1042,10 +1042,10 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 
 		if (state->is_visiting_array) {
 			object_init_ex(&obj, php_phongo_packedarray_ce);
-			bson = &Z_DOCUMENT_OBJ_P(&obj)->bson;
+			bson = &Z_PACKEDARRAY_OBJ_P(&obj)->bson;
 		} else {
 			object_init_ex(&obj, php_phongo_document_ce);
-			bson = &Z_PACKEDARRAY_OBJ_P(&obj)->bson;
+			bson = &Z_DOCUMENT_OBJ_P(&obj)->bson;
 		}
 
 		*bson = bson_copy(b);
