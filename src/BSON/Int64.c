@@ -270,6 +270,11 @@ static zend_result php_phongo_int64_cast_object(phongo_compat_object_handler_typ
 	intern = Z_OBJ_INT64(PHONGO_COMPAT_GET_OBJ(readobj));
 
 	switch (type) {
+		case IS_DOUBLE:
+			ZVAL_DOUBLE(retval, (double) intern->integer);
+
+			return SUCCESS;
+
 		case IS_LONG:
 #if PHP_VERSION_ID >= 70300
 		case _IS_NUMBER:
