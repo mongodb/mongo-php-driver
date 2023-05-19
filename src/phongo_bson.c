@@ -1035,15 +1035,20 @@ bool php_phongo_bson_to_zval_ex(const bson_t* b, php_phongo_bson_state* state)
 		must_dtor_state = true;
 	}
 
-	// Handle raw root type early to avoid creating an iterator and visiting elements
+	// Handle BSON root type early to avoid creating an iterator and visiting elements
 	if (state->map.root.type == PHONGO_TYPEMAP_BSON) {
-		zval                   obj;
-		php_phongo_document_t* intern;
+		zval     obj;
+		bson_t** bson;
 
-		object_init_ex(&obj, php_phongo_document_ce);
+		if (state->is_visiting_array) {
+			object_init_ex(&obj, php_phongo_packedarray_ce);
+			bson = &Z_PACKEDARRAY_OBJ_P(&obj)->bson;
+		} else {
+			object_init_ex(&obj, php_phongo_document_ce);
+			bson = &Z_DOCUMENT_OBJ_P(&obj)->bson;
+		}
 
-		intern       = Z_DOCUMENT_OBJ_P(&obj);
-		intern->bson = bson_copy(b);
+		*bson = bson_copy(b);
 		zval_ptr_dtor(&state->zchild);
 		ZVAL_COPY_VALUE(&state->zchild, &obj);
 
