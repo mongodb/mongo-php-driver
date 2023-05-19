@@ -330,6 +330,8 @@ static int64_t phongo_pow_int64(int64_t base, int64_t exp)
 		return FAILURE;                                                                     \
 	}
 
+#define INT64_SIGN_MASK INT64_MIN
+
 /* Overload arithmetic operators for computation on int64_t values.
  * This ensures that any computation involving at least one php_phongo_int64_t
  * results in a php_phongo_int64_t value, regardless of whether the result
@@ -352,8 +354,11 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 
 			lresult = value1 + value2;
 
-			// Check for overflow by comparing the sign bits of the operands and the result
-			if ((value1 & INT64_MIN) == (value2 & INT64_MIN) && (value1 & INT64_MIN) != (lresult & INT64_MIN)) {
+			/* The following is based on the logic in fast_long_add_function() in PHP.
+			 * If the result sign differs from the first operand sign, we have an overflow if:
+			 * - adding a positive to a positive yields a negative, or
+			 * - adding a negative to a negative (i.e. subtraction) yields a positive */
+			if ((value1 & INT64_SIGN_MASK) != (lresult & INT64_SIGN_MASK) && (value1 & INT64_SIGN_MASK) == (value2 & INT64_SIGN_MASK)) {
 				ZVAL_DOUBLE(result, (double) value1 + (double) value2);
 			} else {
 				OPERATION_RESULT_INT64(result, lresult);
@@ -366,8 +371,11 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 
 			lresult = value1 - value2;
 
-			// Check for overflow by comparing the sign bits of the operands and the result
-			if ((value1 & INT64_MIN) != (value2 & INT64_MIN) && (value1 & INT64_MIN) != (lresult & INT64_MIN)) {
+			/* The following is based on the logic in fast_long_sub_function() in PHP.
+			 * If the result sign differs from the first operand sign, we have an overflow if:
+			 * - subtracting a positive from a negative yields a positive, or
+			 * - subtracting a negative from a positive (i.e. addition) yields a negative */
+			if ((value1 & INT64_SIGN_MASK) != (lresult & INT64_SIGN_MASK) && (value1 & INT64_SIGN_MASK) != (value2 & INT64_SIGN_MASK)) {
 				ZVAL_DOUBLE(result, (double) value1 - (double) value2);
 			} else {
 				OPERATION_RESULT_INT64(result, lresult);
@@ -378,12 +386,14 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 		case ZEND_MUL:
 			PHONGO_GET_INT64(value2, op2);
 
+			/* The following is based on the C-native implementation of
+			 * ZEND_SIGNED_MULTIPLY_LONG() in PHP if no other methods (e.g. ASM
+			 * or _builtin_smull_overflow) can be used. */
 			{
 				int64_t     lres  = value1 * value2;
 				long double dres  = (long double) value1 * (long double) value2;
 				long double delta = (long double) lres - dres;
 
-				// Guard against overflow, return double if so
 				if ((dres + delta) != dres) {
 					ZVAL_DOUBLE(result, dres);
 				} else {
@@ -400,8 +410,10 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 				return FAILURE;
 			}
 
-			// INT64_MIN / 1 exceeds the int64 range, return double in that case.
-			// Same goes for any other division that would not yield an integer.
+			/* The following is based on div_function_base() in PHP.
+			 * - INT64_MIN / 1 exceeds the int64 range -> return double
+			 * - if division has a remainder, return double as result can't be
+			 *   an int */
 			if ((value1 == INT64_MIN && value2 == -1) || (value1 % value2 != 0)) {
 				ZVAL_DOUBLE(result, (double) value1 / value2);
 			} else {
@@ -485,6 +497,7 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 
 #undef OPERATION_RESULT_INT64
 #undef PHONGO_GET_INT64
+#undef INT64_SIGN_MASK
 
 static HashTable* php_phongo_int64_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
