@@ -51,14 +51,14 @@ object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(1) "1"
 }
-float(9.22%dE+18)
-float(-9.22%dE+18)
-float(1.844%dE+19)
-float(4.61%dE+18)
+float(9.22%d%r[eE]%r+18)
+float(-9.22%d%r[eE]%r+18)
+float(1.844%d%r[eE]%r+19)
+float(4.61%d%r[eE]%r+18)
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(19) "4611686018427387903"
 }
-float(9.22%dE+18)
-float(9.22%dE+18)
+float(9.22%d%r[eE]%r+18)
+float(9.22%d%r[eE]%r+18)
 ===DONE===

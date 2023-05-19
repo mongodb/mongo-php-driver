@@ -29,7 +29,7 @@ object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(14) "10000000000000"
 }
-float(3.68%dE+19)
+float(3.68%d%r[eE]%r+19)
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(1) "0"
