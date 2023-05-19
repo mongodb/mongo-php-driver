@@ -6,8 +6,8 @@ MongoDB\BSON\Int64 casting (64-bit platform)
 <?php
 
 $tests = [
-    new MongoDB\BSON\Int64(9223372036854775807),
-    new MongoDB\BSON\Int64(~9223372036854775807),
+    new MongoDB\BSON\Int64(PHP_INT_MAX),
+    new MongoDB\BSON\Int64(PHP_INT_MIN),
 ];
 
 foreach ($tests as $test) {

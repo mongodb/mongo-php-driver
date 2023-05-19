@@ -5,8 +5,8 @@ MongoDB\BSON\Int64 constructor (64-bit int value)
 --FILE--
 <?php
 
-var_dump(new MongoDB\BSON\Int64(9223372036854775807));
-var_dump(new MongoDB\BSON\Int64(~9223372036854775807));
+var_dump(new MongoDB\BSON\Int64(PHP_INT_MAX));
+var_dump(new MongoDB\BSON\Int64(PHP_INT_MIN));
 
 ?>
 ===DONE===
