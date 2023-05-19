@@ -7,14 +7,14 @@ MongoDB\BSON\Int64 serialization (__serialize and __unserialize)
 <?php
 
 $tests = [
-    '9223372036854775807',
-    '-9223372036854775808',
-    0,
+    new MongoDB\BSON\Int64('9223372036854775807'),
+    new MongoDB\BSON\Int64('-9223372036854775808'),
+    new MongoDB\BSON\Int64(0),
 ];
 
 foreach ($tests as $test) {
-    var_dump($int64 = new MongoDB\BSON\Int64($test));
-    var_dump($s = serialize($int64));
+    var_dump($test);
+    var_dump($s = serialize($test));
     var_dump(unserialize($s));
     echo "\n";
 }
