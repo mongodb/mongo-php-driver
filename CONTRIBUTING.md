@@ -21,6 +21,13 @@ phpize > /dev/null && \
 make clean > /dev/null && make all > /dev/null && make install
 ```
 
+To verify that the installation was successful, run the following command, which
+will report `phpinfo()` output for the extension:
+
+```
+$ php --ri mongodb
+```
+
 ## Generating arginfo from stub files
 
 Arginfo structures are generated from stub files using the `gen_stub.php`
