@@ -4,9 +4,9 @@ MongoDB\BSON\Int64 get_properties handler (foreach)
 <?php
 
 $tests = [
-    unserialize('C:18:"MongoDB\BSON\Int64":47:{a:1:{s:7:"integer";s:19:"9223372036854775807";}}'),
-    unserialize('C:18:"MongoDB\BSON\Int64":48:{a:1:{s:7:"integer";s:20:"-9223372036854775808";}}'),
-    unserialize('C:18:"MongoDB\BSON\Int64":28:{a:1:{s:7:"integer";s:1:"0";}}'),
+    new MongoDB\BSON\Int64('9223372036854775807'),
+    new MongoDB\BSON\Int64('-9223372036854775808'),
+    new MongoDB\BSON\Int64(0),
 ];
 
 foreach ($tests as $test) {

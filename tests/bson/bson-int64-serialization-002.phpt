@@ -7,9 +7,9 @@ MongoDB\BSON\Int64 serialization (__serialize and __unserialize)
 <?php
 
 $tests = [
-    unserialize('O:18:"MongoDB\BSON\Int64":1:{s:7:"integer";s:19:"9223372036854775807";}'),
-    unserialize('O:18:"MongoDB\BSON\Int64":1:{s:7:"integer";s:20:"-9223372036854775808";}'),
-    unserialize('O:18:"MongoDB\BSON\Int64":1:{s:7:"integer";s:1:"0";}'),
+    new MongoDB\BSON\Int64('9223372036854775807'),
+    new MongoDB\BSON\Int64('-9223372036854775808'),
+    new MongoDB\BSON\Int64(0),
 ];
 
 foreach ($tests as $test) {

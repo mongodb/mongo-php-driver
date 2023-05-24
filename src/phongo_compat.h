@@ -18,6 +18,7 @@
 #define PHONGO_COMPAT_H
 
 #include <php.h>
+#include <Zend/zend_types.h>
 #include <Zend/zend_string.h>
 #include <Zend/zend_portability.h>
 
@@ -116,6 +117,7 @@
 		}                \
 	}
 
+#define ZVAL_INT64_OBJ(_zv, _value) php_phongo_bson_new_int64((_zv), (_value))
 #if SIZEOF_ZEND_LONG == 8
 #define ADD_INDEX_INT64(_zv, _index, _value) add_index_long((_zv), (_index), (_value))
 #define ADD_NEXT_INDEX_INT64(_zv, _value) add_next_index_long((_zv), (_value))
@@ -326,5 +328,9 @@ const char* zend_get_object_type_case(const zend_class_entry* ce, zend_bool uppe
 #if PHP_VERSION_ID < 80100
 zend_bool zend_array_is_list(zend_array* array);
 #endif /* PHP_VERSION_ID < 80100 */
+
+#if PHP_VERSION_ID < 80000
+typedef ZEND_RESULT_CODE zend_result;
+#endif
 
 #endif /* PHONGO_COMPAT_H */

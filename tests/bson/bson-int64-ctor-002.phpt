@@ -1,17 +1,12 @@
 --TEST--
-MongoDB\BSON\Int64 debug output
+MongoDB\BSON\Int64 constructor (64-bit int value)
+--SKIPIF--
+<?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
 --FILE--
 <?php
 
-$tests = [
-    '9223372036854775807',
-    '-9223372036854775808',
-    '0',
-];
-
-foreach ($tests as $test) {
-    var_dump(new MongoDB\BSON\Int64($test));
-}
+var_dump(new MongoDB\BSON\Int64(PHP_INT_MAX));
+var_dump(new MongoDB\BSON\Int64(PHP_INT_MIN));
 
 ?>
 ===DONE===
@@ -24,9 +19,5 @@ object(MongoDB\BSON\Int64)#%d (%d) {
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(20) "-9223372036854775808"
-}
-object(MongoDB\BSON\Int64)#%d (%d) {
-  ["integer"]=>
-  string(1) "0"
 }
 ===DONE===

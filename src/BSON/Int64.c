@@ -18,6 +18,7 @@
 #include <zend_smart_str.h>
 #include <ext/standard/php_var.h>
 #include <Zend/zend_interfaces.h>
+#include <Zend/zend_exceptions.h>
 
 #include "php_phongo.h"
 #include "phongo_error.h"
@@ -86,7 +87,25 @@ HashTable* php_phongo_int64_get_properties_hash(phongo_compat_object_handler_typ
 	return props;
 }
 
-PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Int64)
+static PHP_METHOD(MongoDB_BSON_Int64, __construct)
+{
+	php_phongo_int64_t* intern;
+	zval*               value;
+
+	intern = Z_INT64_OBJ_P(getThis());
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ZVAL(value);
+	PHONGO_PARSE_PARAMETERS_END();
+
+	if (Z_TYPE_P(value) == IS_STRING) {
+		php_phongo_int64_init_from_string(intern, Z_STRVAL_P(value), Z_STRLEN_P(value));
+	} else if (Z_TYPE_P(value) == IS_LONG) {
+		php_phongo_int64_init(intern, Z_LVAL_P(value));
+	} else {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected value to be integer or string, %s given", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(value));
+	}
+}
 
 /* Return the Int64's value as a string. */
 static PHP_METHOD(MongoDB_BSON_Int64, __toString)
@@ -244,6 +263,261 @@ static int php_phongo_int64_compare_objects(zval* o1, zval* o2)
 	return 0;
 }
 
+static zend_result php_phongo_int64_cast_object(phongo_compat_object_handler_type* readobj, zval* retval, int type)
+{
+	php_phongo_int64_t* intern;
+
+	intern = Z_OBJ_INT64(PHONGO_COMPAT_GET_OBJ(readobj));
+
+	switch (type) {
+		case IS_DOUBLE:
+			ZVAL_DOUBLE(retval, (double) intern->integer);
+
+			return SUCCESS;
+
+		case IS_LONG:
+#if PHP_VERSION_ID >= 70300
+		case _IS_NUMBER:
+#endif
+#if SIZEOF_ZEND_LONG == 4
+			if (intern->integer > INT32_MAX || intern->integer < INT32_MIN) {
+				zend_error(E_WARNING, "Truncating 64-bit integer value %" PRId64 " to 32 bits", intern->integer);
+			}
+#endif
+
+			ZVAL_LONG(retval, intern->integer);
+
+			return SUCCESS;
+
+		case _IS_BOOL:
+			ZVAL_BOOL(retval, intern->integer != 0);
+
+			return SUCCESS;
+
+		default:
+			return zend_std_cast_object_tostring(readobj, retval, type);
+	}
+}
+
+/* Computes the power of two int64_t values by using the exponentiation by
+ * squaring algorithm. This is necessary because in case the result exceeds
+ * the range of a int64_t, we want PHP to return a float as it would when
+ * using 64-bit values directly. We can't use anything involving zend_long
+ * here as this would limit us to 32 bits on a 32-bit platform. This also
+ * prohibits us from falling back to PHP's default functions after unwrapping
+ * the int64_t from the php_phongo_int64_t instance. */
+static int64_t phongo_pow_int64(int64_t base, int64_t exp)
+{
+	if (exp == 0) {
+		return 1;
+	}
+
+	if (exp % 2) {
+		return base * phongo_pow_int64(base * base, (exp - 1) / 2);
+	}
+
+	return phongo_pow_int64(base * base, exp / 2);
+}
+
+#define OPERATION_RESULT_INT64(value) ZVAL_INT64_OBJ(result, value);
+
+#define PHONGO_GET_INT64(int64, zval)                                                       \
+	if (Z_TYPE_P((zval)) == IS_LONG) {                                                      \
+		(int64) = Z_LVAL_P((zval));                                                         \
+	} else if (Z_TYPE_P((zval)) == IS_OBJECT && Z_OBJCE_P((zval)) == php_phongo_int64_ce) { \
+		(int64) = Z_INT64_OBJ_P((zval))->integer;                                           \
+	} else {                                                                                \
+		return FAILURE;                                                                     \
+	}
+
+#define INT64_SIGN_MASK INT64_MIN
+
+/* Overload arithmetic operators for computation on int64_t values.
+ * This ensures that any computation involving at least one php_phongo_int64_t
+ * results in a php_phongo_int64_t value, regardless of whether the result
+ * would fit in an int32_t or not. Results that exceed the 64-bit integer
+ * range are returned as float as PHP would do when using 64-bit integers.
+ * Note that ZEND_(PRE|POST)_(INC|DEC) are not handled here: when checking for
+ * a do_operation handler for inc/dec, PHP calls the handler with a ZEND_ADD
+ * or ZEND_SUB opcode and the same pointer for result and op1, and a ZVAL_LONG
+ * of 1 for op2. */
+static zend_result php_phongo_int64_do_operation_ex(zend_uchar opcode, zval* result, zval* op1, zval* op2)
+{
+	int64_t value1, value2, lresult;
+
+	PHONGO_GET_INT64(value1, op1);
+
+	switch (opcode) {
+		case ZEND_ADD:
+			PHONGO_GET_INT64(value2, op2);
+
+			lresult = value1 + value2;
+
+			/* The following is based on the logic in fast_long_add_function() in PHP.
+			 * If the result sign differs from the first operand sign, we have an overflow if:
+			 * - adding a positive to a positive yields a negative, or
+			 * - adding a negative to a negative (i.e. subtraction) yields a positive */
+			if ((value1 & INT64_SIGN_MASK) != (lresult & INT64_SIGN_MASK) && (value1 & INT64_SIGN_MASK) == (value2 & INT64_SIGN_MASK)) {
+				ZVAL_DOUBLE(result, (double) value1 + (double) value2);
+			} else {
+				OPERATION_RESULT_INT64(lresult);
+			}
+
+			return SUCCESS;
+
+		case ZEND_SUB:
+			PHONGO_GET_INT64(value2, op2);
+
+			lresult = value1 - value2;
+
+			/* The following is based on the logic in fast_long_sub_function() in PHP.
+			 * If the result sign differs from the first operand sign, we have an overflow if:
+			 * - subtracting a positive from a negative yields a positive, or
+			 * - subtracting a negative from a positive (i.e. addition) yields a negative */
+			if ((value1 & INT64_SIGN_MASK) != (lresult & INT64_SIGN_MASK) && (value1 & INT64_SIGN_MASK) != (value2 & INT64_SIGN_MASK)) {
+				ZVAL_DOUBLE(result, (double) value1 - (double) value2);
+			} else {
+				OPERATION_RESULT_INT64(lresult);
+			}
+
+			return SUCCESS;
+
+		case ZEND_MUL:
+			PHONGO_GET_INT64(value2, op2);
+
+			/* The following is based on the C-native implementation of
+			 * ZEND_SIGNED_MULTIPLY_LONG() in PHP if no other methods (e.g. ASM
+			 * or _builtin_smull_overflow) can be used. */
+			{
+				int64_t     lres  = value1 * value2;
+				long double dres  = (long double) value1 * (long double) value2;
+				long double delta = (long double) lres - dres;
+
+				if ((dres + delta) != dres) {
+					ZVAL_DOUBLE(result, dres);
+				} else {
+					OPERATION_RESULT_INT64(lres);
+				}
+			}
+
+			return SUCCESS;
+
+		case ZEND_DIV:
+			PHONGO_GET_INT64(value2, op2);
+			if (value2 == 0) {
+				zend_throw_exception(zend_ce_division_by_zero_error, "Division by zero", 0);
+				return FAILURE;
+			}
+
+			/* The following is based on div_function_base() in PHP.
+			 * - INT64_MIN / 1 exceeds the int64 range -> return double
+			 * - if division has a remainder, return double as result can't be
+			 *   an int */
+			if ((value1 == INT64_MIN && value2 == -1) || (value1 % value2 != 0)) {
+				ZVAL_DOUBLE(result, (double) value1 / value2);
+			} else {
+				OPERATION_RESULT_INT64(value1 / value2);
+			}
+
+			return SUCCESS;
+
+		case ZEND_MOD:
+			PHONGO_GET_INT64(value2, op2);
+			if (value2 == 0) {
+				zend_throw_exception(zend_ce_division_by_zero_error, "Division by zero", 0);
+				return FAILURE;
+			}
+
+			OPERATION_RESULT_INT64(value1 % value2);
+			return SUCCESS;
+
+		case ZEND_SL:
+			PHONGO_GET_INT64(value2, op2);
+			OPERATION_RESULT_INT64(value1 << value2);
+			return SUCCESS;
+
+		case ZEND_SR:
+			PHONGO_GET_INT64(value2, op2);
+			OPERATION_RESULT_INT64(value1 >> value2);
+			return SUCCESS;
+
+		case ZEND_POW:
+			PHONGO_GET_INT64(value2, op2);
+
+			// Negative exponents always yield floats, leave them for PHP to handle
+			if (value2 < 0) {
+				return FAILURE;
+			}
+
+			// Handle 0 separately to distinguish between base 0 and
+			// phongo_pow_int64 overflowing
+			if (value1 == 0) {
+				OPERATION_RESULT_INT64(0);
+				return SUCCESS;
+			}
+
+			{
+				int64_t pow_result = phongo_pow_int64(value1, value2);
+
+				// If the result would overflow an int64_t, we let PHP fall back
+				// to its default pow() implementation which returns a float.
+				if (pow_result == 0) {
+					return FAILURE;
+				}
+
+				OPERATION_RESULT_INT64(pow_result);
+			}
+
+			return SUCCESS;
+
+		case ZEND_BW_AND:
+			PHONGO_GET_INT64(value2, op2);
+			OPERATION_RESULT_INT64(value1 & value2);
+			return SUCCESS;
+
+		case ZEND_BW_OR:
+			PHONGO_GET_INT64(value2, op2);
+			OPERATION_RESULT_INT64(value1 | value2);
+			return SUCCESS;
+
+		case ZEND_BW_XOR:
+			PHONGO_GET_INT64(value2, op2);
+			OPERATION_RESULT_INT64(value1 ^ value2);
+			return SUCCESS;
+
+		case ZEND_BW_NOT:
+			OPERATION_RESULT_INT64(~value1);
+			return SUCCESS;
+
+		default:
+			return FAILURE;
+	}
+}
+
+static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result, zval* op1, zval* op2)
+{
+	zval op1_copy;
+	int  retval;
+
+	// Copy op1 for unary operations (e.g. $int64++) to ensure correct return values
+	if (result == op1) {
+		ZVAL_COPY_VALUE(&op1_copy, op1);
+		op1 = &op1_copy;
+	}
+
+	retval = php_phongo_int64_do_operation_ex(opcode, result, op1, op2);
+
+	if (retval == SUCCESS && op1 == &op1_copy) {
+		zval_ptr_dtor(op1);
+	}
+
+	return retval;
+}
+
+#undef OPERATION_RESULT_INT64
+#undef PHONGO_GET_INT64
+#undef INT64_SIGN_MASK
+
 static HashTable* php_phongo_int64_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
 	*is_temp = 1;
@@ -271,4 +545,6 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_int64.get_properties = php_phongo_int64_get_properties;
 	php_phongo_handler_int64.free_obj       = php_phongo_int64_free_object;
 	php_phongo_handler_int64.offset         = XtOffsetOf(php_phongo_int64_t, std);
+	php_phongo_handler_int64.cast_object    = php_phongo_int64_cast_object;
+	php_phongo_handler_int64.do_operation   = php_phongo_int64_do_operation;
 }
