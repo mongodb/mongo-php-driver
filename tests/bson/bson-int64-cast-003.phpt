@@ -15,6 +15,7 @@ $tests = [
 foreach ($tests as $test) {
     var_dump($test);
     var_dump((int) $test);
+    var_dump((float) $test);
     var_dump((string) $test);
     var_dump((bool) $test);
 }
@@ -30,6 +31,7 @@ object(MongoDB\BSON\Int64)#%d (%d) {
 
 Warning: Truncating 64-bit integer value 9223372036854775807 to 32 bits %s
 int(-1)
+float(9.22%d%r[eE]%r+18)
 string(19) "9223372036854775807"
 bool(true)
 object(MongoDB\BSON\Int64)#%d (%d) {
@@ -39,6 +41,7 @@ object(MongoDB\BSON\Int64)#%d (%d) {
 
 Warning: Truncating 64-bit integer value -9223372036854775808 to 32 bits %s
 int(0)
+float(-9.22%d%r[eE]%r+18)
 string(20) "-9223372036854775808"
 bool(true)
 ===DONE===
