@@ -8,8 +8,7 @@ require_once __DIR__ . '/../utils/basic.inc';
 $tests = [
     'null' => null,
     'int32' => 2,
-    // Using an Int64 instance will ensure an int64 type regardless of platform
-    'int64' => unserialize('C:18:"MongoDB\BSON\Int64":28:{a:1:{s:7:"integer";s:1:"2";}}'),
+    'int64' => new MongoDB\BSON\Int64(2),
     'float' => 3.14,
     'string' => 'foo',
     'true' => true,

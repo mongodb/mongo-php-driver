@@ -19,7 +19,7 @@ $tests = [
         'getInt32',
     ],
     'int64' => [
-        unserialize('C:18:"MongoDB\BSON\Int64":28:{a:1:{s:7:"integer";s:1:"2";}}'),
+        new MongoDB\BSON\Int64(2),
         MongoDB\BSON\Value::TYPE_INT64,
         'isInt64',
         'getInt64',
