@@ -319,12 +319,7 @@ static int64_t phongo_pow_int64(int64_t base, int64_t exp)
 	return phongo_pow_int64(base * base, exp / 2);
 }
 
-#define OPERATION_RESULT_INT64(zval, value)                                          \
-	if (Z_TYPE_P((zval)) == IS_OBJECT && Z_OBJCE_P((zval)) == php_phongo_int64_ce) { \
-		Z_INT64_OBJ_P((zval))->integer = (value);                                    \
-	} else {                                                                         \
-		ZVAL_INT64_OBJ((zval), value);                                               \
-	}
+#define OPERATION_RESULT_INT64(value) ZVAL_INT64_OBJ(result, value);
 
 #define PHONGO_GET_INT64(int64, zval)                                                       \
 	if (Z_TYPE_P((zval)) == IS_LONG) {                                                      \
@@ -340,14 +335,13 @@ static int64_t phongo_pow_int64(int64_t base, int64_t exp)
 /* Overload arithmetic operators for computation on int64_t values.
  * This ensures that any computation involving at least one php_phongo_int64_t
  * results in a php_phongo_int64_t value, regardless of whether the result
- * would fit in an int32_t or not.
+ * would fit in an int32_t or not. Results that exceed the 64-bit integer
+ * range are returned as float as PHP would do when using 64-bit integers.
  * Note that ZEND_(PRE|POST)_(INC|DEC) are not handled here: when checking for
  * a do_operation handler for inc/dec, PHP calls the handler with a ZEND_ADD
  * or ZEND_SUB opcode and the same pointer for result and op1, and a ZVAL_LONG
- * of 1 for op2. This means that we can neither specially handle inc/dec
- * operators, nor can we ensure correct behaviour for pre/post operators,
- * leading to a difference in behaviour compared to int values. */
-static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result, zval* op1, zval* op2)
+ * of 1 for op2. */
+static zend_result php_phongo_int64_do_operation_ex(zend_uchar opcode, zval* result, zval* op1, zval* op2)
 {
 	int64_t value1, value2, lresult;
 
@@ -366,7 +360,7 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 			if ((value1 & INT64_SIGN_MASK) != (lresult & INT64_SIGN_MASK) && (value1 & INT64_SIGN_MASK) == (value2 & INT64_SIGN_MASK)) {
 				ZVAL_DOUBLE(result, (double) value1 + (double) value2);
 			} else {
-				OPERATION_RESULT_INT64(result, lresult);
+				OPERATION_RESULT_INT64(lresult);
 			}
 
 			return SUCCESS;
@@ -383,7 +377,7 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 			if ((value1 & INT64_SIGN_MASK) != (lresult & INT64_SIGN_MASK) && (value1 & INT64_SIGN_MASK) != (value2 & INT64_SIGN_MASK)) {
 				ZVAL_DOUBLE(result, (double) value1 - (double) value2);
 			} else {
-				OPERATION_RESULT_INT64(result, lresult);
+				OPERATION_RESULT_INT64(lresult);
 			}
 
 			return SUCCESS;
@@ -402,7 +396,7 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 				if ((dres + delta) != dres) {
 					ZVAL_DOUBLE(result, dres);
 				} else {
-					OPERATION_RESULT_INT64(result, lres);
+					OPERATION_RESULT_INT64(lres);
 				}
 			}
 
@@ -422,7 +416,7 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 			if ((value1 == INT64_MIN && value2 == -1) || (value1 % value2 != 0)) {
 				ZVAL_DOUBLE(result, (double) value1 / value2);
 			} else {
-				OPERATION_RESULT_INT64(result, value1 / value2);
+				OPERATION_RESULT_INT64(value1 / value2);
 			}
 
 			return SUCCESS;
@@ -434,17 +428,17 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 				return FAILURE;
 			}
 
-			OPERATION_RESULT_INT64(result, value1 % value2);
+			OPERATION_RESULT_INT64(value1 % value2);
 			return SUCCESS;
 
 		case ZEND_SL:
 			PHONGO_GET_INT64(value2, op2);
-			OPERATION_RESULT_INT64(result, value1 << value2);
+			OPERATION_RESULT_INT64(value1 << value2);
 			return SUCCESS;
 
 		case ZEND_SR:
 			PHONGO_GET_INT64(value2, op2);
-			OPERATION_RESULT_INT64(result, value1 >> value2);
+			OPERATION_RESULT_INT64(value1 >> value2);
 			return SUCCESS;
 
 		case ZEND_POW:
@@ -458,7 +452,7 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 			// Handle 0 separately to distinguish between base 0 and
 			// phongo_pow_int64 overflowing
 			if (value1 == 0) {
-				OPERATION_RESULT_INT64(result, 0);
+				OPERATION_RESULT_INT64(0);
 				return SUCCESS;
 			}
 
@@ -471,33 +465,53 @@ static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result
 					return FAILURE;
 				}
 
-				OPERATION_RESULT_INT64(result, pow_result);
+				OPERATION_RESULT_INT64(pow_result);
 			}
 
 			return SUCCESS;
 
 		case ZEND_BW_AND:
 			PHONGO_GET_INT64(value2, op2);
-			OPERATION_RESULT_INT64(result, value1 & value2);
+			OPERATION_RESULT_INT64(value1 & value2);
 			return SUCCESS;
 
 		case ZEND_BW_OR:
 			PHONGO_GET_INT64(value2, op2);
-			OPERATION_RESULT_INT64(result, value1 | value2);
+			OPERATION_RESULT_INT64(value1 | value2);
 			return SUCCESS;
 
 		case ZEND_BW_XOR:
 			PHONGO_GET_INT64(value2, op2);
-			OPERATION_RESULT_INT64(result, value1 ^ value2);
+			OPERATION_RESULT_INT64(value1 ^ value2);
 			return SUCCESS;
 
 		case ZEND_BW_NOT:
-			OPERATION_RESULT_INT64(result, ~value1);
+			OPERATION_RESULT_INT64(~value1);
 			return SUCCESS;
 
 		default:
 			return FAILURE;
 	}
+}
+
+static zend_result php_phongo_int64_do_operation(zend_uchar opcode, zval* result, zval* op1, zval* op2)
+{
+	zval op1_copy;
+	int  retval;
+
+	// Copy op1 for unary operations (e.g. $int64++) to ensure correct return values
+	if (result == op1) {
+		ZVAL_COPY_VALUE(&op1_copy, op1);
+		op1 = &op1_copy;
+	}
+
+	retval = php_phongo_int64_do_operation_ex(opcode, result, op1, op2);
+
+	if (retval == SUCCESS && op1 == &op1_copy) {
+		zval_ptr_dtor(op1);
+	}
+
+	return retval;
 }
 
 #undef OPERATION_RESULT_INT64
