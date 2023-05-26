@@ -197,7 +197,7 @@ final class Value implements \Serializable
     final public function isUndefined(): bool {}
     final public function isUtf8(): bool {}
 
-    final public static function __set_state(array $properties): Regex {}
+    final public static function __set_state(array $properties): Value {}
 
     final public function serialize(): string {}
 

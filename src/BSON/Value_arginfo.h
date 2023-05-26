@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: a389ad37757fb92ed492da3fa675faa17d734e84 */
+ * Stub hash: 357b3cddc0acc3afdee4eb1a6c4c0e77c2c80a18 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Value___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -128,7 +128,7 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_Value_isUtf8 arginfo_class_MongoDB_BSON_Value_getBool
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value___set_state, 0, 1, MongoDB\\BSON\\Regex, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Value___set_state, 0, 1, MongoDB\\BSON\\Value, 0)
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
