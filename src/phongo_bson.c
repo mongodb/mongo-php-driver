@@ -949,7 +949,7 @@ bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
 			return true;
 
 		case BSON_TYPE_INT64:
-			ZVAL_INT64_OBJ(zv, value->value.v_int64);
+			phongo_int64_new(zv, value->value.v_int64);
 			return true;
 
 		case BSON_TYPE_DOUBLE:

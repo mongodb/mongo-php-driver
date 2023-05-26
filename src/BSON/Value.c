@@ -325,7 +325,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getInt64)
 
 	PHONGO_VALUE_CHECK_TYPE(intern->value, BSON_TYPE_INT64);
 
-	RETURN_INT64_OBJ(intern->value.value.v_int64);
+	phongo_int64_new(return_value, intern->value.value.v_int64);
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, getMaxKey)

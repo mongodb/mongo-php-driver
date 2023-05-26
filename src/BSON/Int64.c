@@ -319,7 +319,7 @@ static int64_t phongo_pow_int64(int64_t base, int64_t exp)
 	return phongo_pow_int64(base * base, exp / 2);
 }
 
-#define OPERATION_RESULT_INT64(value) ZVAL_INT64_OBJ(result, value);
+#define OPERATION_RESULT_INT64(value) phongo_int64_new(result, (value));
 
 #define PHONGO_GET_INT64(int64, zval)                                                       \
 	if (Z_TYPE_P((zval)) == IS_LONG) {                                                      \
