@@ -81,7 +81,7 @@ static bool php_phongo_value_init_from_hash(php_phongo_value_t* intern, HashTabl
 	return true;
 }
 
-static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_handler_type* object, zval* type, bool is_temp)
+static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_handler_type* object, bool type_as_string, bool is_temp)
 {
 	php_phongo_value_t* intern;
 	HashTable*          props;
@@ -89,14 +89,16 @@ static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_hand
 	intern = Z_OBJ_VALUE(PHONGO_COMPAT_GET_OBJ(object));
 	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 2);
 
-	/* get_debug_info will pass its own type. If it isn't given, use the type constant */
-	if (!type) {
-		zval value_type;
+	{
+		zval type;
 
-		ZVAL_LONG(&value_type, intern->value.value_type);
-		zend_hash_str_update(props, "type", sizeof("type") - 1, &value_type);
-	} else {
-		zend_hash_str_update(props, "type", sizeof("type") - 1, type);
+		if (type_as_string) {
+			ZVAL_STRING(&type, php_phongo_bson_type_to_string(intern->value.value_type));
+		} else {
+			ZVAL_LONG(&type, intern->value.value_type);
+		}
+
+		zend_hash_str_update(props, "type", sizeof("type") - 1, &type);
 	}
 
 	{
@@ -561,7 +563,7 @@ static PHP_METHOD(MongoDB_BSON_Value, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_value_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), NULL, true));
+	RETURN_ARR(php_phongo_value_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), false, true));
 }
 
 static PHP_METHOD(MongoDB_BSON_Value, __unserialize)
@@ -623,20 +625,14 @@ static zend_object* php_phongo_value_clone_object(phongo_compat_object_handler_t
 
 static HashTable* php_phongo_value_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
-	php_phongo_value_t* intern;
-	zval                type;
-
 	*is_temp = 1;
-	intern   = Z_OBJ_VALUE(PHONGO_COMPAT_GET_OBJ(object));
 
-	ZVAL_STRING(&type, php_phongo_bson_type_to_string(intern->value.value_type));
-
-	return php_phongo_value_get_properties_hash(object, &type, true);
+	return php_phongo_value_get_properties_hash(object, true, true);
 }
 
 static HashTable* php_phongo_value_get_properties(phongo_compat_object_handler_type* object)
 {
-	return php_phongo_value_get_properties_hash(object, NULL, false);
+	return php_phongo_value_get_properties_hash(object, false, false);
 }
 
 void php_phongo_value_init_ce(INIT_FUNC_ARGS)
