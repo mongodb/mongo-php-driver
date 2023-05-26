@@ -438,7 +438,11 @@ static HashTable* php_phongo_document_get_debug_info(phongo_compat_object_handle
 
 	*is_temp = 1;
 	intern   = Z_OBJ_DOCUMENT(PHONGO_COMPAT_GET_OBJ(object));
-	props    = php_phongo_document_get_properties_hash(object, true, 2);
+
+	/* This get_debug_info handler reports an additional property. This does not
+	 * conflict with other uses of php_phongo_document_get_properties_hash since
+	 * we always allocated a new HashTable with is_temp=true. */
+	props = php_phongo_document_get_properties_hash(object, true, 2);
 
 	{
 		php_phongo_bson_state state;
