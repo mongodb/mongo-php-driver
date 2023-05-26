@@ -158,6 +158,7 @@ static PHP_METHOD(MongoDB_BSON_Value, getValue)
 
 	intern = Z_VALUE_OBJ_P(getThis());
 
+	/* Will set EG(exception) when encountering a conversion error. */
 	phongo_bson_value_to_zval(&intern->value, return_value);
 }
 
