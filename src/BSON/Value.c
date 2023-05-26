@@ -522,7 +522,10 @@ static PHP_METHOD(MongoDB_BSON_Value, serialize)
 	array_init_size(&retval, 2);
 	add_assoc_long(&retval, "type", intern->value.value_type);
 
-	phongo_bson_value_to_zval(&intern->value, &value);
+	if (!phongo_bson_value_to_zval(&intern->value, &value)) {
+		goto cleanup;
+	}
+
 	ADD_ASSOC_ZVAL(&retval, "value", &value);
 
 	PHP_VAR_SERIALIZE_INIT(var_hash);
@@ -533,6 +536,8 @@ static PHP_METHOD(MongoDB_BSON_Value, serialize)
 	PHONGO_RETVAL_SMART_STR(buf);
 
 	smart_str_free(&buf);
+
+cleanup:
 	zval_ptr_dtor(&retval);
 }
 
