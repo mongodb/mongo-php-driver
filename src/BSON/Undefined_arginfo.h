@@ -1,10 +1,14 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 512f00c95c403414c5edb95ca98634a92ddc23cf */
+ * Stub hash: 25e10ed435dd89bbfbb49da077a37abcc79ef2d5 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Undefined___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Undefined___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Undefined___set_state, 0, 1, MongoDB\\BSON\\\125ndefined, 0)
+	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_Undefined_serialize arginfo_class_MongoDB_BSON_Undefined___toString
@@ -33,6 +37,7 @@ ZEND_END_ARG_INFO()
 
 static ZEND_METHOD(MongoDB_BSON_Undefined, __construct);
 static ZEND_METHOD(MongoDB_BSON_Undefined, __toString);
+static ZEND_METHOD(MongoDB_BSON_Undefined, __set_state);
 static ZEND_METHOD(MongoDB_BSON_Undefined, serialize);
 static ZEND_METHOD(MongoDB_BSON_Undefined, unserialize);
 static ZEND_METHOD(MongoDB_BSON_Undefined, __unserialize);
@@ -48,6 +53,7 @@ static ZEND_METHOD(MongoDB_BSON_Undefined, jsonSerialize);
 static const zend_function_entry class_MongoDB_BSON_Undefined_methods[] = {
 	ZEND_ME(MongoDB_BSON_Undefined, __construct, arginfo_class_MongoDB_BSON_Undefined___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Undefined, __toString, arginfo_class_MongoDB_BSON_Undefined___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Undefined, __set_state, arginfo_class_MongoDB_BSON_Undefined___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Undefined, serialize, arginfo_class_MongoDB_BSON_Undefined_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Undefined, unserialize, arginfo_class_MongoDB_BSON_Undefined_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Undefined, __unserialize, arginfo_class_MongoDB_BSON_Undefined___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

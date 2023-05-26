@@ -1,10 +1,14 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 281ddd40ebad9841e086d756983b77c64cd1a371 */
+ * Stub hash: 4b1e0dec72d27036b3bdb3838dd7bee506f1dc38 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Symbol___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Symbol___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Symbol___set_state, 0, 1, MongoDB\\BSON\\Symbol, 0)
+	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_Symbol_serialize arginfo_class_MongoDB_BSON_Symbol___toString
@@ -33,6 +37,7 @@ ZEND_END_ARG_INFO()
 
 static ZEND_METHOD(MongoDB_BSON_Symbol, __construct);
 static ZEND_METHOD(MongoDB_BSON_Symbol, __toString);
+static ZEND_METHOD(MongoDB_BSON_Symbol, __set_state);
 static ZEND_METHOD(MongoDB_BSON_Symbol, serialize);
 static ZEND_METHOD(MongoDB_BSON_Symbol, unserialize);
 static ZEND_METHOD(MongoDB_BSON_Symbol, __unserialize);
@@ -48,6 +53,7 @@ static ZEND_METHOD(MongoDB_BSON_Symbol, jsonSerialize);
 static const zend_function_entry class_MongoDB_BSON_Symbol_methods[] = {
 	ZEND_ME(MongoDB_BSON_Symbol, __construct, arginfo_class_MongoDB_BSON_Symbol___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Symbol, __toString, arginfo_class_MongoDB_BSON_Symbol___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Symbol, __set_state, arginfo_class_MongoDB_BSON_Symbol___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Symbol, serialize, arginfo_class_MongoDB_BSON_Symbol_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Symbol, unserialize, arginfo_class_MongoDB_BSON_Symbol_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Symbol, __unserialize, arginfo_class_MongoDB_BSON_Symbol___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

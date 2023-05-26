@@ -91,6 +91,24 @@ static PHP_METHOD(MongoDB_BSON_Symbol, __toString)
 	RETURN_STRINGL(intern->symbol, intern->symbol_len);
 }
 
+static PHP_METHOD(MongoDB_BSON_Symbol, __set_state)
+{
+	php_phongo_symbol_t* intern;
+	HashTable*           props;
+	zval*                array;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	object_init_ex(return_value, php_phongo_symbol_ce);
+
+	intern = Z_SYMBOL_OBJ_P(return_value);
+	props  = Z_ARRVAL_P(array);
+
+	php_phongo_symbol_init_from_hash(intern, props);
+}
+
 static PHP_METHOD(MongoDB_BSON_Symbol, jsonSerialize)
 {
 	php_phongo_symbol_t* intern;

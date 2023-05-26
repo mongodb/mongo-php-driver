@@ -119,6 +119,24 @@ static PHP_METHOD(MongoDB_BSON_Int64, __toString)
 	ZVAL_INT64_STRING(return_value, intern->integer);
 }
 
+static PHP_METHOD(MongoDB_BSON_Int64, __set_state)
+{
+	php_phongo_int64_t* intern;
+	HashTable*          props;
+	zval*               array;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	object_init_ex(return_value, php_phongo_int64_ce);
+
+	intern = Z_INT64_OBJ_P(return_value);
+	props  = Z_ARRVAL_P(array);
+
+	php_phongo_int64_init_from_hash(intern, props);
+}
+
 static PHP_METHOD(MongoDB_BSON_Int64, jsonSerialize)
 {
 	php_phongo_int64_t* intern;

@@ -10,6 +10,8 @@ final class DBPointer implements \JsonSerializable, Type, \Serializable
 {
     final private function __construct() {}
 
+    final public static function __set_state(array $properties): DBPointer {}
+
     final public function __toString(): string {}
 
     final public function serialize(): string {}

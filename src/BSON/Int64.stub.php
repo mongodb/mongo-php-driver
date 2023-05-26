@@ -18,6 +18,8 @@ final class Int64 implements \JsonSerializable, Type, \Serializable
 
     final public function __toString(): string {}
 
+    final public static function __set_state(array $properties): Int64 {}
+
     final public function serialize(): string {}
 
     /** @param string $serialized */

@@ -35,6 +35,17 @@ static PHP_METHOD(MongoDB_BSON_Undefined, __toString)
 	RETURN_STRINGL("", 0);
 }
 
+static PHP_METHOD(MongoDB_BSON_Undefined, __set_state)
+{
+	zval* array;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	object_init_ex(return_value, php_phongo_undefined_ce);
+}
+
 static PHP_METHOD(MongoDB_BSON_Undefined, jsonSerialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();

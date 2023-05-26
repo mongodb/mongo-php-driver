@@ -13,6 +13,8 @@ final class Symbol implements \JsonSerializable, Type, \Serializable
 
     final public function __toString(): string {}
 
+    final public static function __set_state(array $properties): Symbol {}
+
     final public function serialize(): string {}
 
     /** @param string $serialized */

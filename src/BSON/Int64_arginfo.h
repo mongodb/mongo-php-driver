@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 68e80f37219bd526046f559b0c00d55dd6727a37 */
+ * Stub hash: 550f788abef6e985ed78953b6aae044cabb56b0f */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Int64___construct, 0, 0, 1)
@@ -14,6 +14,10 @@ ZEND_END_ARG_INFO()
 #endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Int64___toString, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Int64___set_state, 0, 1, MongoDB\\BSON\\Int64, 0)
+	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_Int64_serialize arginfo_class_MongoDB_BSON_Int64___toString
@@ -47,6 +51,7 @@ static ZEND_METHOD(MongoDB_BSON_Int64, __construct);
 static ZEND_METHOD(MongoDB_BSON_Int64, __construct);
 #endif
 static ZEND_METHOD(MongoDB_BSON_Int64, __toString);
+static ZEND_METHOD(MongoDB_BSON_Int64, __set_state);
 static ZEND_METHOD(MongoDB_BSON_Int64, serialize);
 static ZEND_METHOD(MongoDB_BSON_Int64, unserialize);
 static ZEND_METHOD(MongoDB_BSON_Int64, __unserialize);
@@ -67,6 +72,7 @@ static const zend_function_entry class_MongoDB_BSON_Int64_methods[] = {
 	ZEND_ME(MongoDB_BSON_Int64, __construct, arginfo_class_MongoDB_BSON_Int64___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
 	ZEND_ME(MongoDB_BSON_Int64, __toString, arginfo_class_MongoDB_BSON_Int64___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_Int64, __set_state, arginfo_class_MongoDB_BSON_Int64___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Int64, serialize, arginfo_class_MongoDB_BSON_Int64_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Int64, unserialize, arginfo_class_MongoDB_BSON_Int64_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Int64, __unserialize, arginfo_class_MongoDB_BSON_Int64___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

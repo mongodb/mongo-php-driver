@@ -109,6 +109,24 @@ static PHP_METHOD(MongoDB_BSON_DBPointer, __toString)
 	efree(retval);
 }
 
+static PHP_METHOD(MongoDB_BSON_DBPointer, __set_state)
+{
+	php_phongo_dbpointer_t* intern;
+	HashTable*              props;
+	zval*                   array;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	object_init_ex(return_value, php_phongo_dbpointer_ce);
+
+	intern = Z_DBPOINTER_OBJ_P(return_value);
+	props  = Z_ARRVAL_P(array);
+
+	php_phongo_dbpointer_init_from_hash(intern, props);
+}
+
 static PHP_METHOD(MongoDB_BSON_DBPointer, jsonSerialize)
 {
 	php_phongo_dbpointer_t* intern;
