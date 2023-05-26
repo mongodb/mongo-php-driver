@@ -73,7 +73,7 @@ static bool php_phongo_value_init_from_hash(php_phongo_value_t* intern, HashTabl
 		if (intern->value.value_type == BSON_TYPE_INT32 && Z_LVAL_P(type) == BSON_TYPE_INT64) {
 			intern->value.value_type = BSON_TYPE_INT64;
 		} else {
-			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Detected type %s does not match indicated type %s", php_phongo_bson_type_to_string(intern->value.value_type), php_phongo_bson_type_to_string(Z_LVAL_P(type)));
+			phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Type %s detected from \"value\" field does not match indicated type %s", php_phongo_bson_type_to_string(intern->value.value_type), php_phongo_bson_type_to_string(Z_LVAL_P(type)));
 			return false;
 		}
 	}
