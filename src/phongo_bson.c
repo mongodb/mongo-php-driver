@@ -896,7 +896,7 @@ bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval*
 	return retval;
 }
 
-/** Converts a BSON value to a ZVAL, returning BSON objects and arrays as
+/** Converts a BSON value to a zval, returning BSON objects and arrays as
  * standard PHP types instead of Document or PackedArray instances */
 bool phongo_bson_value_to_zval_legacy(const bson_value_t* value, zval* zv)
 {
@@ -932,7 +932,7 @@ bool phongo_bson_value_to_zval_legacy(const bson_value_t* value, zval* zv)
 	return phongo_bson_value_to_zval(value, zv);
 }
 
-/* Converts a BSON value to a ZVAL. */
+/* Converts a BSON value to a zval. */
 bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
 {
 	bson_t bson = BSON_INITIALIZER;
