@@ -104,10 +104,14 @@ static HashTable* php_phongo_value_get_properties_hash(phongo_compat_object_hand
 	{
 		zval value;
 
-		phongo_bson_value_to_zval(&intern->value, &value);
+		if (!phongo_bson_value_to_zval(&intern->value, &value)) {
+			goto done;
+		}
+
 		zend_hash_str_update(props, "value", sizeof("value") - 1, &value);
 	}
 
+done:
 	return props;
 }
 
