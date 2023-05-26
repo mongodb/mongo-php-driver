@@ -291,7 +291,7 @@ if test "$PHP_MONGODB" != "no"; then
       AC_MSG_CHECKING(for libmongocrypt)
 
       if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongocrypt; then
-        if $PKG_CONFIG libmongocrypt --atleast-version 1.8.0; then
+        if $PKG_CONFIG libmongocrypt --atleast-version 1.8.1; then
           PHP_MONGODB_MONGOCRYPT_CFLAGS=`$PKG_CONFIG libmongocrypt --cflags`
           PHP_MONGODB_MONGOCRYPT_LIBS=`$PKG_CONFIG libmongocrypt --libs`
           PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt --modversion`
@@ -302,7 +302,7 @@ if test "$PHP_MONGODB" != "no"; then
           PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
           AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
         elif test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
-          AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.8.0)
+          AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.8.1)
         else
           AC_MSG_RESULT([found an older version, compiling without client-side encryption])
         fi
