@@ -897,7 +897,10 @@ bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval*
 }
 
 /** Converts a BSON value to a zval, returning BSON objects and arrays as
- * standard PHP types instead of Document or PackedArray instances */
+ * standard PHP types instead of Document or PackedArray instances.
+ *
+ * On success, the zval will be populated and true will be returned. On error,
+ * an exception will have been thrown and false will be returned. */
 bool phongo_bson_value_to_zval_legacy(const bson_value_t* value, zval* zv)
 {
 	if (value->value_type == BSON_TYPE_ARRAY || value->value_type == BSON_TYPE_DOCUMENT) {
@@ -932,7 +935,10 @@ bool phongo_bson_value_to_zval_legacy(const bson_value_t* value, zval* zv)
 	return phongo_bson_value_to_zval(value, zv);
 }
 
-/* Converts a BSON value to a zval. */
+/* Converts a BSON value to a zval.
+ *
+ * On success, the zval will be populated and true will be returned. On error,
+ * an exception will have been thrown and false will be returned. */
 bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
 {
 	bson_t bson = BSON_INITIALIZER;
@@ -1025,11 +1031,12 @@ bool phongo_bson_value_to_zval(const bson_value_t* value, zval* zv)
 			}
 
 			return phongo_document_new(zv, &bson, true);
-	}
 
-	/* Throw exception? */
-	ZVAL_NULL(zv);
-	return false;
+		default:
+			ZVAL_UNDEF(zv);
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Detected unsupported BSON type %d", value->value_type);
+			return false;
+	}
 }
 
 /* Converts a BSON document to a PHP value according to the typemap specified in

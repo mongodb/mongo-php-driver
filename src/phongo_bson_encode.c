@@ -611,7 +611,10 @@ static void phongo_zval_to_bson_value_ex(zval* data, php_phongo_bson_flags_t fla
 
 /* Converts the argument to a bson_value_t. If the object is an instance of
  * MongoDB\BSON\Serializable, the return value of bsonSerialize() will be
- * used. It is the caller's responsibility to call bson_value_destroy. */
+ * used. It is the caller's responsibility to call bson_value_destroy.
+ *
+ * On success, the zval will be populated and true will be returned. On error,
+ * an exception will have been thrown and false will be returned. */
 bool phongo_zval_to_bson_value(zval* data, bson_value_t* value)
 {
 	zend_long lvalue;
