@@ -32,7 +32,7 @@ var_dump(get_module_info('crypt_shared library version'));
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got MongoDB\Driver\Exception\EncryptionException
-A crypt_shared override path was specified [/not/found], but we failed to open a dynamic library at that location
+A crypt_shared override path was specified [/not/found], but we failed to open a dynamic library at that location%A
 
 OK: Got MongoDB\Driver\Exception\EncryptionException
 Option 'cryptSharedLibRequired' is 'true', but failed to load the crypt_shared runtime library
