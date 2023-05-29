@@ -133,6 +133,7 @@ jobs:
 
       - name: Start MongoDB
         run: |
+          reg add HKLM\System\CurrentControlSet\Control /v ServicesPipeTimeout /t REG_DWORD /d 300000 /f
           sc config MongoDB start= auto
           sc start MongoDB
 
