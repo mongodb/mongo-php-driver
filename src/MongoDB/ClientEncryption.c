@@ -1012,6 +1012,10 @@ static void phongo_clientencryption_encrypt(php_phongo_clientencryption_t* clien
 
 	php_phongo_zval_to_bson_value(zvalue, PHONGO_BSON_NONE, &value);
 
+	if (EG(exception)) {
+		goto cleanup;
+	}
+
 	opts = phongo_clientencryption_encrypt_opts_from_zval(options);
 
 	if (!opts) {
@@ -1084,6 +1088,10 @@ static void phongo_clientencryption_decrypt(php_phongo_clientencryption_t* clien
 	bson_error_t error      = { 0 };
 
 	php_phongo_zval_to_bson_value(zciphertext, PHONGO_BSON_NONE, &ciphertext);
+
+	if (EG(exception)) {
+		goto cleanup;
+	}
 
 	if (!mongoc_client_encryption_decrypt(clientencryption->client_encryption, &ciphertext, &value, &error)) {
 		phongo_throw_exception_from_bson_error_t(&error);
