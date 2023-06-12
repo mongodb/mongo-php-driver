@@ -1,5 +1,8 @@
 --TEST--
 MongoDB\BSON\Value::__set_state()
+--SKIPIF--
+<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
+<?php skip_if_php_version('<', '7.3.0'); ?>
 --FILE--
 <?php
 
