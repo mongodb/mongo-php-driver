@@ -2,12 +2,16 @@ dnl Disable Windows DNSAPI
 AC_SUBST(MONGOC_HAVE_DNSAPI, 0)
 
 found_resolv="no"
+libc_has_resolv="no"
 
-old_LIBS="$LIBS"
+if test "$os_aix" = "yes" -o "$os_freebsd" = "yes"; then
+   libc_has_resolv="yes"
+fi
 
-dnl Link libresolv for detection (note: on AIX, resolv functions are in libc)
-if test "$os_aix" != "yes"; then
-  LIBS="$LIBS -lresolv"
+dnl Temporarily link libresolv for detection if necessary
+if test "$libc_has_resolv" = "no"; then
+   old_LIBS="$LIBS"
+   LIBS="$LIBS -lresolv"
 fi
 
 dnl Thread-safe DNS query function for _mongoc_client_get_srv.
@@ -93,9 +97,10 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
    ])
 ])
 
-LIBS="$old_LIBS"
+if test "$libc_has_resolv" = "no"; then
+   LIBS="$old_LIBS"
 
-dnl Link libresolv if needed (note: on AIX, resolv functions are in libc)
-AS_IF([test "$found_resolv" = "yes" -a "$os_aix" != "yes"],[
-  PHP_ADD_LIBRARY([resolv],,[MONGODB_SHARED_LIBADD])
-])
+   AS_IF([test "$found_resolv" = "yes"],[
+      PHP_ADD_LIBRARY([resolv],,[MONGODB_SHARED_LIBADD])
+   ])
+fi
