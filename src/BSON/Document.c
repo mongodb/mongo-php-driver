@@ -30,6 +30,7 @@
 #include "phongo_bson_encode.h"
 #include "BSON/Document_arginfo.h"
 #include "BSON/Iterator.h"
+#include "BSON/Value.h"
 
 zend_class_entry* php_phongo_document_ce;
 
@@ -57,14 +58,14 @@ static bool php_phongo_document_init_from_hash(php_phongo_document_t* intern, Ha
 	return false;
 }
 
-static HashTable* php_phongo_document_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)
+static HashTable* php_phongo_document_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp, int size)
 {
 	php_phongo_document_t* intern;
 	HashTable*             props;
 
 	intern = Z_OBJ_DOCUMENT(PHONGO_COMPAT_GET_OBJ(object));
 
-	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, 1);
+	PHONGO_GET_PROPERTY_HASH_INIT_PROPS(is_temp, intern, props, size);
 
 	if (!intern->bson) {
 		return props;
@@ -186,7 +187,7 @@ static PHP_METHOD(MongoDB_BSON_Document, get)
 		RETURN_NULL();
 	}
 
-	php_phongo_bson_iter_to_zval(return_value, &iter);
+	phongo_value_new(return_value, bson_iter_value(&iter));
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, getIterator)
@@ -356,7 +357,7 @@ static PHP_METHOD(MongoDB_BSON_Document, __serialize)
 {
 	PHONGO_PARSE_PARAMETERS_NONE();
 
-	RETURN_ARR(php_phongo_document_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true));
+	RETURN_ARR(php_phongo_document_get_properties_hash(PHONGO_COMPAT_OBJ_P(getThis()), true, 1));
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, __unserialize)
@@ -432,13 +433,41 @@ static int php_phongo_document_compare_objects(zval* o1, zval* o2)
 
 static HashTable* php_phongo_document_get_debug_info(phongo_compat_object_handler_type* object, int* is_temp)
 {
+	php_phongo_document_t* intern;
+	HashTable*             props;
+
 	*is_temp = 1;
-	return php_phongo_document_get_properties_hash(object, true);
+	intern   = Z_OBJ_DOCUMENT(PHONGO_COMPAT_GET_OBJ(object));
+
+	/* This get_debug_info handler reports an additional property. This does not
+	 * conflict with other uses of php_phongo_document_get_properties_hash since
+	 * we always allocated a new HashTable with is_temp=true. */
+	props = php_phongo_document_get_properties_hash(object, true, 2);
+
+	{
+		php_phongo_bson_state state;
+
+		PHONGO_BSON_INIT_STATE(state);
+		state.map.array.type    = PHONGO_TYPEMAP_BSON;
+		state.map.document.type = PHONGO_TYPEMAP_BSON;
+		if (!php_phongo_bson_to_zval_ex(intern->bson, &state)) {
+			zval_ptr_dtor(&state.zchild);
+			goto failure;
+		}
+
+		zend_hash_str_update(props, "value", sizeof("value") - 1, &state.zchild);
+	}
+
+	return props;
+
+failure:
+	PHONGO_GET_PROPERTY_HASH_FREE_PROPS(is_temp, props);
+	return NULL;
 }
 
 static HashTable* php_phongo_document_get_properties(phongo_compat_object_handler_type* object)
 {
-	return php_phongo_document_get_properties_hash(object, false);
+	return php_phongo_document_get_properties_hash(object, false, 1);
 }
 
 void php_phongo_document_init_ce(INIT_FUNC_ARGS)
@@ -457,4 +486,16 @@ void php_phongo_document_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_document.get_properties = php_phongo_document_get_properties;
 	php_phongo_handler_document.free_obj       = php_phongo_document_free_object;
 	php_phongo_handler_document.offset         = XtOffsetOf(php_phongo_document_t, std);
+}
+
+bool phongo_document_new(zval* object, bson_t* bson, bool copy)
+{
+	php_phongo_document_t* intern;
+
+	object_init_ex(object, php_phongo_document_ce);
+
+	intern       = Z_DOCUMENT_OBJ_P(object);
+	intern->bson = copy ? bson_copy(bson) : bson;
+
+	return true;
 }

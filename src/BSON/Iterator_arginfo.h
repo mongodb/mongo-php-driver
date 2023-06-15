@@ -1,18 +1,11 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3c935268e2187085468340004c8dc67052d5c19b */
+ * Stub hash: 97a4909ec6d6a3815686576310306dbb449ffb3b */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Iterator___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-#if PHP_VERSION_ID >= 80000
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Iterator_current, 0, 0, IS_MIXED, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Iterator_current, 0, 0, MongoDB\\BSON\\Value, 0)
 ZEND_END_ARG_INFO()
-#endif
-
-#if !(PHP_VERSION_ID >= 80000)
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Iterator_current, 0, 0, 0)
-ZEND_END_ARG_INFO()
-#endif
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_MASK_EX(arginfo_class_MongoDB_BSON_Iterator_key, 0, 0, MAY_BE_STRING|MAY_BE_LONG)
@@ -20,7 +13,8 @@ ZEND_END_ARG_INFO()
 #endif
 
 #if !(PHP_VERSION_ID >= 80000)
-#define arginfo_class_MongoDB_BSON_Iterator_key arginfo_class_MongoDB_BSON_Iterator_current
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Iterator_key, 0, 0, 0)
+ZEND_END_ARG_INFO()
 #endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Iterator_next, 0, 0, IS_VOID, 0)
@@ -35,12 +29,7 @@ ZEND_END_ARG_INFO()
 
 
 static ZEND_METHOD(MongoDB_BSON_Iterator, __construct);
-#if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_BSON_Iterator, current);
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-static ZEND_METHOD(MongoDB_BSON_Iterator, current);
-#endif
 #if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_BSON_Iterator, key);
 #endif
@@ -55,12 +44,7 @@ static ZEND_METHOD(MongoDB_BSON_Iterator, __wakeup);
 
 static const zend_function_entry class_MongoDB_BSON_Iterator_methods[] = {
 	ZEND_ME(MongoDB_BSON_Iterator, __construct, arginfo_class_MongoDB_BSON_Iterator___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
-#if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_BSON_Iterator, current, arginfo_class_MongoDB_BSON_Iterator_current, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-	ZEND_ME(MongoDB_BSON_Iterator, current, arginfo_class_MongoDB_BSON_Iterator_current, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_BSON_Iterator, key, arginfo_class_MongoDB_BSON_Iterator_key, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif

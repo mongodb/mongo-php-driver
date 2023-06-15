@@ -147,6 +147,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/BSON/Unserializable.c \
     src/BSON/UTCDateTime.c \
     src/BSON/UTCDateTimeInterface.c \
+    src/BSON/Value.c \
     src/BSON/functions.c \
     src/MongoDB/BulkWrite.c \
     src/MongoDB/ClientEncryption.c \

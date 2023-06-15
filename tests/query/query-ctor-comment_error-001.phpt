@@ -10,7 +10,7 @@ class Comment implements MongoDB\BSON\Serializable
     #[\ReturnTypeWillChange]
     public function bsonSerialize(): array
     {
-        throw new Exception('php_phongo_zval_to_bson_value fails');
+        throw new Exception('phongo_zval_to_bson_value fails');
     }
 }
 
@@ -23,5 +23,5 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got Exception
-php_phongo_zval_to_bson_value fails
+phongo_zval_to_bson_value fails
 ===DONE===

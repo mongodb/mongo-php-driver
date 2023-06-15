@@ -408,3 +408,17 @@ void php_phongo_timestamp_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_timestamp.free_obj       = php_phongo_timestamp_free_object;
 	php_phongo_handler_timestamp.offset         = XtOffsetOf(php_phongo_timestamp_t, std);
 }
+
+bool phongo_timestamp_new(zval* object, uint32_t increment, uint32_t timestamp)
+{
+	php_phongo_timestamp_t* intern;
+
+	object_init_ex(object, php_phongo_timestamp_ce);
+
+	intern              = Z_TIMESTAMP_OBJ_P(object);
+	intern->increment   = increment;
+	intern->timestamp   = timestamp;
+	intern->initialized = true;
+
+	return true;
+}

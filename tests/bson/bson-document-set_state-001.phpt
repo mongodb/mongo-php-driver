@@ -25,6 +25,35 @@ var_dump($o == $document);
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(108) "TwAAABBfaWQAAQAAAARhcnJheQAeAAAAEDAAAAAAABAxAAEAAAACMgAEAAAAZm9vAAADZG9jdW1lbnQAEgAAAAJmb28ABAAAAGJhcgAAAA=="
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["_id"]=>
+    int(1)
+    ["array"]=>
+    object(MongoDB\BSON\PackedArray)#%d (%d) {
+      ["data"]=>
+      string(40) "HgAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwAA"
+      ["value"]=>
+      array(3) {
+        [0]=>
+        int(0)
+        [1]=>
+        int(1)
+        [2]=>
+        string(3) "foo"
+      }
+    }
+    ["document"]=>
+    object(MongoDB\BSON\Document)#%d (%d) {
+      ["data"]=>
+      string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+      ["value"]=>
+      object(stdClass)#%d (%d) {
+        ["foo"]=>
+        string(3) "bar"
+      }
+    }
+  }
 }
 bool(true)
 ===DONE===

@@ -140,6 +140,36 @@ Test root document as bson
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(116) "VQAAAAVfX3BjbGFzcwAKAAAAgE15RG9jdW1lbnQEbGlzdAAaAAAAEDAAAQAAABAxAAIAAAAQMgADAAAAAANtYXAAEgAAAAJmb28ABAAAAGJhcgAAAA=="
+  ["value"]=>
+  object(MyDocument)#%d (%d) {
+    ["data"]=>
+    array(2) {
+      ["list"]=>
+      object(MongoDB\BSON\PackedArray)#%d (%d) {
+        ["data"]=>
+        string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+        ["value"]=>
+        array(3) {
+          [0]=>
+          int(1)
+          [1]=>
+          int(2)
+          [2]=>
+          int(3)
+        }
+      }
+      ["map"]=>
+      object(MongoDB\BSON\Document)#%d (%d) {
+        ["data"]=>
+        string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+        ["value"]=>
+        object(stdClass)#%d (%d) {
+          ["foo"]=>
+          string(3) "bar"
+        }
+      }
+    }
+  }
 }
 Test embedded document as object
 object(stdClass)#%d (%d) {
@@ -201,6 +231,36 @@ object(stdClass)#%d (%d) {
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(116) "VQAAAAVfX3BjbGFzcwAKAAAAgE15RG9jdW1lbnQEbGlzdAAaAAAAEDAAAQAAABAxAAIAAAAQMgADAAAAAANtYXAAEgAAAAJmb28ABAAAAGJhcgAAAA=="
+    ["value"]=>
+    object(MyDocument)#%d (%d) {
+      ["data"]=>
+      array(2) {
+        ["list"]=>
+        object(MongoDB\BSON\PackedArray)#%d (%d) {
+          ["data"]=>
+          string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+          ["value"]=>
+          array(3) {
+            [0]=>
+            int(1)
+            [1]=>
+            int(2)
+            [2]=>
+            int(3)
+          }
+        }
+        ["map"]=>
+        object(MongoDB\BSON\Document)#%d (%d) {
+          ["data"]=>
+          string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+          ["value"]=>
+          object(stdClass)#%d (%d) {
+            ["foo"]=>
+            string(3) "bar"
+          }
+        }
+      }
+    }
   }
 }
 Test fieldPath document as object
@@ -263,6 +323,36 @@ object(stdClass)#%d (%d) {
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(116) "VQAAAAVfX3BjbGFzcwAKAAAAgE15RG9jdW1lbnQEbGlzdAAaAAAAEDAAAQAAABAxAAIAAAAQMgADAAAAAANtYXAAEgAAAAJmb28ABAAAAGJhcgAAAA=="
+    ["value"]=>
+    object(MyDocument)#%d (%d) {
+      ["data"]=>
+      array(2) {
+        ["list"]=>
+        object(MongoDB\BSON\PackedArray)#%d (%d) {
+          ["data"]=>
+          string(36) "GgAAABAwAAEAAAAQMQACAAAAEDIAAwAAAAA="
+          ["value"]=>
+          array(3) {
+            [0]=>
+            int(1)
+            [1]=>
+            int(2)
+            [2]=>
+            int(3)
+          }
+        }
+        ["map"]=>
+        object(MongoDB\BSON\Document)#%d (%d) {
+          ["data"]=>
+          string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
+          ["value"]=>
+          object(stdClass)#%d (%d) {
+            ["foo"]=>
+            string(3) "bar"
+          }
+        }
+      }
+    }
   }
 }
 ===DONE===

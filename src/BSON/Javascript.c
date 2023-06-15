@@ -407,3 +407,31 @@ void php_phongo_javascript_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_javascript.free_obj       = php_phongo_javascript_free_object;
 	php_phongo_handler_javascript.offset         = XtOffsetOf(php_phongo_javascript_t, std);
 }
+
+bool phongo_javascript_new(zval* object, const char* code, size_t code_len, const bson_t* scope)
+{
+	php_phongo_javascript_t* intern;
+
+	if (scope) {
+		php_phongo_bson_state state;
+		bool                  valid_scope;
+
+		PHONGO_BSON_INIT_STATE(state);
+
+		valid_scope = php_phongo_bson_to_zval_ex(scope, &state);
+		zval_ptr_dtor(&state.zchild);
+
+		if (!valid_scope) {
+			return false;
+		}
+	}
+
+	object_init_ex(object, php_phongo_javascript_ce);
+
+	intern           = Z_JAVASCRIPT_OBJ_P(object);
+	intern->code     = estrndup(code, code_len);
+	intern->code_len = code_len;
+	intern->scope    = scope ? bson_copy(scope) : NULL;
+
+	return true;
+}

@@ -15,10 +15,20 @@ foreach ($iterator as $key => $value) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECT--
+--EXPECTF--
 MongoDB\BSON\Iterator
 int(0)
+object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(14) "32-bit integer"
+  ["value"]=>
+  int(1)
+}
 int(1)
-int(1)
-int(2)
+object(MongoDB\BSON\Value)#%d (%d) {
+  ["type"]=>
+  string(14) "32-bit integer"
+  ["value"]=>
+  int(2)
+}
 ===DONE===

@@ -22,6 +22,10 @@
 #include <Zend/zend_string.h>
 #include <Zend/zend_portability.h>
 
+/* Include stdbool.h as it might not have been implicitly loaded yet */
+#include <stdbool.h>
+#include "BSON/Int64.h"
+
 #ifdef PHP_WIN32
 #include "config.w32.h"
 #else
@@ -117,17 +121,19 @@
 		}                \
 	}
 
-#define ZVAL_INT64_OBJ(_zv, _value) php_phongo_bson_new_int64((_zv), (_value))
 #if SIZEOF_ZEND_LONG == 8
 #define ADD_INDEX_INT64(_zv, _index, _value) add_index_long((_zv), (_index), (_value))
 #define ADD_NEXT_INDEX_INT64(_zv, _value) add_next_index_long((_zv), (_value))
 #define ADD_ASSOC_INT64(_zv, _key, _value) add_assoc_long((_zv), (_key), (_value))
 #define ZVAL_INT64(_zv, _value) ZVAL_LONG((_zv), (_value))
 #elif SIZEOF_ZEND_LONG == 4
+/* The following macros do not handle a false return value for phongo_int64_new.
+ * As the function currently does not return false this works fine, but will
+ * need updating if that changes. */
 #define ADD_INDEX_INT64(_zv, _index, _value)            \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
 		zval zchild;                                    \
-		php_phongo_bson_new_int64(&zchild, (_value));   \
+		phongo_int64_new(&zchild, (_value));            \
 		add_index_zval((_zv), (_index), &zchild);       \
 	} else {                                            \
 		add_index_long((_zv), (_index), (_value));      \
@@ -135,7 +141,7 @@
 #define ADD_NEXT_INDEX_INT64(_zv, _value)               \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
 		zval zchild;                                    \
-		php_phongo_bson_new_int64(&zchild, (_value));   \
+		phongo_int64_new(&zchild, (_value));            \
 		add_next_index_zval((_zv), &zchild);            \
 	} else {                                            \
 		add_next_index_long((_zv), (_value));           \
@@ -143,14 +149,14 @@
 #define ADD_ASSOC_INT64(_zv, _key, _value)              \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
 		zval zchild;                                    \
-		php_phongo_bson_new_int64(&zchild, (_value));   \
+		phongo_int64_new(&zchild, (_value));            \
 		add_assoc_zval((_zv), (_key), &zchild);         \
 	} else {                                            \
 		add_assoc_long((_zv), (_key), (_value));        \
 	}
 #define ZVAL_INT64(_zv, _value)                         \
 	if ((_value) > INT32_MAX || (_value) < INT32_MIN) { \
-		php_phongo_bson_new_int64((_zv), (_value));     \
+		phongo_int64_new((_zv), (_value));              \
 	} else {                                            \
 		ZVAL_LONG((_zv), (_value));                     \
 	}

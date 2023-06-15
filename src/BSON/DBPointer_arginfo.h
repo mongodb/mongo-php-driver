@@ -1,7 +1,11 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 715bc228895c936eb673a93d58750c38fe83f210 */
+ * Stub hash: 2e26331e12fe64ef077d0d2b37433d291cb87943 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_DBPointer___construct, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_DBPointer___set_state, 0, 1, MongoDB\\BSON\\DBPointer, 0)
+	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_DBPointer___toString, 0, 0, IS_STRING, 0)
@@ -32,6 +36,7 @@ ZEND_END_ARG_INFO()
 
 
 static ZEND_METHOD(MongoDB_BSON_DBPointer, __construct);
+static ZEND_METHOD(MongoDB_BSON_DBPointer, __set_state);
 static ZEND_METHOD(MongoDB_BSON_DBPointer, __toString);
 static ZEND_METHOD(MongoDB_BSON_DBPointer, serialize);
 static ZEND_METHOD(MongoDB_BSON_DBPointer, unserialize);
@@ -47,6 +52,7 @@ static ZEND_METHOD(MongoDB_BSON_DBPointer, jsonSerialize);
 
 static const zend_function_entry class_MongoDB_BSON_DBPointer_methods[] = {
 	ZEND_ME(MongoDB_BSON_DBPointer, __construct, arginfo_class_MongoDB_BSON_DBPointer___construct, ZEND_ACC_PRIVATE|ZEND_ACC_FINAL)
+	ZEND_ME(MongoDB_BSON_DBPointer, __set_state, arginfo_class_MongoDB_BSON_DBPointer___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_DBPointer, __toString, arginfo_class_MongoDB_BSON_DBPointer___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_DBPointer, serialize, arginfo_class_MongoDB_BSON_DBPointer_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_DBPointer, unserialize, arginfo_class_MongoDB_BSON_DBPointer_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

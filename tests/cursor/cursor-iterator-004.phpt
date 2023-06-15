@@ -46,14 +46,29 @@ First foreach statement:
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(20) "DgAAABBfaWQAAAAAAAA="
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["_id"]=>
+    int(0)
+  }
 }
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(20) "DgAAABBfaWQAAQAAAAA="
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["_id"]=>
+    int(1)
+  }
 }
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(20) "DgAAABBfaWQAAgAAAAA="
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["_id"]=>
+    int(2)
+  }
 }
 
 Second foreach statement:

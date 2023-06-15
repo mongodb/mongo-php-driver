@@ -39,6 +39,91 @@ Root as BSON
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>
   string(256) "%a"
+  ["value"]=>
+  object(stdClass)#%d (%d) {
+    ["_id"]=>
+    int(1)
+    ["object"]=>
+    object(MongoDB\BSON\Document)#%d (%d) {
+      ["data"]=>
+      string(228) "%a"
+      ["value"]=>
+      object(stdClass)#%d (%d) {
+        ["parent1"]=>
+        object(MongoDB\BSON\Document)#%d (%d) {
+          ["data"]=>
+          string(100) "%a"
+          ["value"]=>
+          object(stdClass)#%d (%d) {
+            ["child1"]=>
+            object(MongoDB\BSON\PackedArray)#%d (%d) {
+              ["data"]=>
+              string(36) "%a"
+              ["value"]=>
+              array(3) {
+                [0]=>
+                int(1)
+                [1]=>
+                int(2)
+                [2]=>
+                int(3)
+              }
+            }
+            ["child2"]=>
+            object(MongoDB\BSON\PackedArray)#%d (%d) {
+              ["data"]=>
+              string(36) "%a"
+              ["value"]=>
+              array(3) {
+                [0]=>
+                int(4)
+                [1]=>
+                int(5)
+                [2]=>
+                int(6)
+              }
+            }
+          }
+        }
+        ["parent2"]=>
+        object(MongoDB\BSON\Document)#%d (%d) {
+          ["data"]=>
+          string(100) "%a"
+          ["value"]=>
+          object(stdClass)#%d (%d) {
+            ["child1"]=>
+            object(MongoDB\BSON\PackedArray)#%d (%d) {
+              ["data"]=>
+              string(36) "%a"
+              ["value"]=>
+              array(3) {
+                [0]=>
+                int(7)
+                [1]=>
+                int(8)
+                [2]=>
+                int(9)
+              }
+            }
+            ["child2"]=>
+            object(MongoDB\BSON\PackedArray)#%d (%d) {
+              ["data"]=>
+              string(36) "%a"
+              ["value"]=>
+              array(3) {
+                [0]=>
+                int(10)
+                [1]=>
+                int(11)
+                [2]=>
+                int(12)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 Arrays as BSON
@@ -53,11 +138,29 @@ object(stdClass)#%d (%d) {
       object(MongoDB\BSON\PackedArray)#%d (%d) {
         ["data"]=>
         string(36) "%a"
+        ["value"]=>
+        array(3) {
+          [0]=>
+          int(1)
+          [1]=>
+          int(2)
+          [2]=>
+          int(3)
+        }
       }
       ["child2"]=>
       object(MongoDB\BSON\PackedArray)#%d (%d) {
         ["data"]=>
         string(36) "%a"
+        ["value"]=>
+        array(3) {
+          [0]=>
+          int(4)
+          [1]=>
+          int(5)
+          [2]=>
+          int(6)
+        }
       }
     }
     ["parent2"]=>
@@ -66,11 +169,29 @@ object(stdClass)#%d (%d) {
       object(MongoDB\BSON\PackedArray)#%d (%d) {
         ["data"]=>
         string(36) "%a"
+        ["value"]=>
+        array(3) {
+          [0]=>
+          int(7)
+          [1]=>
+          int(8)
+          [2]=>
+          int(9)
+        }
       }
       ["child2"]=>
       object(MongoDB\BSON\PackedArray)#%d (%d) {
         ["data"]=>
         string(36) "%a"
+        ["value"]=>
+        array(3) {
+          [0]=>
+          int(10)
+          [1]=>
+          int(11)
+          [2]=>
+          int(12)
+        }
       }
     }
   }
@@ -84,6 +205,81 @@ object(stdClass)#%d (%d) {
   object(MongoDB\BSON\Document)#%d (%d) {
     ["data"]=>
     string(228) "%a"
+    ["value"]=>
+    object(stdClass)#%d (%d) {
+      ["parent1"]=>
+      object(MongoDB\BSON\Document)#%d (%d) {
+        ["data"]=>
+        string(100) "%a"
+        ["value"]=>
+        object(stdClass)#%d (%d) {
+          ["child1"]=>
+          object(MongoDB\BSON\PackedArray)#%d (%d) {
+            ["data"]=>
+            string(36) "%a"
+            ["value"]=>
+            array(3) {
+              [0]=>
+              int(1)
+              [1]=>
+              int(2)
+              [2]=>
+              int(3)
+            }
+          }
+          ["child2"]=>
+          object(MongoDB\BSON\PackedArray)#%d (%d) {
+            ["data"]=>
+            string(36) "%a"
+            ["value"]=>
+            array(3) {
+              [0]=>
+              int(4)
+              [1]=>
+              int(5)
+              [2]=>
+              int(6)
+            }
+          }
+        }
+      }
+      ["parent2"]=>
+      object(MongoDB\BSON\Document)#%d (%d) {
+        ["data"]=>
+        string(100) "%a"
+        ["value"]=>
+        object(stdClass)#%d (%d) {
+          ["child1"]=>
+          object(MongoDB\BSON\PackedArray)#%d (%d) {
+            ["data"]=>
+            string(36) "%a"
+            ["value"]=>
+            array(3) {
+              [0]=>
+              int(7)
+              [1]=>
+              int(8)
+              [2]=>
+              int(9)
+            }
+          }
+          ["child2"]=>
+          object(MongoDB\BSON\PackedArray)#%d (%d) {
+            ["data"]=>
+            string(36) "%a"
+            ["value"]=>
+            array(3) {
+              [0]=>
+              int(10)
+              [1]=>
+              int(11)
+              [2]=>
+              int(12)
+            }
+          }
+        }
+      }
+    }
   }
 }
 
@@ -99,6 +295,15 @@ object(stdClass)#%d (%d) {
       object(MongoDB\BSON\PackedArray)#%d (%d) {
         ["data"]=>
         string(36) "%a"
+        ["value"]=>
+        array(3) {
+          [0]=>
+          int(1)
+          [1]=>
+          int(2)
+          [2]=>
+          int(3)
+        }
       }
       ["child2"]=>
       array(3) {
@@ -114,6 +319,37 @@ object(stdClass)#%d (%d) {
     object(MongoDB\BSON\Document)#%d (%d) {
       ["data"]=>
       string(100) "%a"
+      ["value"]=>
+      object(stdClass)#%d (%d) {
+        ["child1"]=>
+        object(MongoDB\BSON\PackedArray)#%d (%d) {
+          ["data"]=>
+          string(36) "%a"
+          ["value"]=>
+          array(3) {
+            [0]=>
+            int(7)
+            [1]=>
+            int(8)
+            [2]=>
+            int(9)
+          }
+        }
+        ["child2"]=>
+        object(MongoDB\BSON\PackedArray)#%d (%d) {
+          ["data"]=>
+          string(36) "%a"
+          ["value"]=>
+          array(3) {
+            [0]=>
+            int(10)
+            [1]=>
+            int(11)
+            [2]=>
+            int(12)
+          }
+        }
+      }
     }
   }
 }

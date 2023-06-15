@@ -92,7 +92,7 @@ static bool php_phongo_query_opts_append_value(bson_t* opts, const char* opts_ke
 {
 	bson_value_t value = { 0 };
 
-	php_phongo_zval_to_bson_value(php_array_fetch(zarr, zarr_key), PHONGO_BSON_NONE, &value);
+	phongo_zval_to_bson_value(php_array_fetch(zarr, zarr_key), &value);
 
 	if (EG(exception)) {
 		/* Exception should already have been thrown */

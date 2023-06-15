@@ -21,6 +21,6 @@
 
 #include <php.h>
 
-void phongo_objectid_init(zval* return_value, const bson_oid_t* oid);
+bool phongo_objectid_new(zval* return_value, const bson_oid_t* oid);
 
 #endif /* PHONGO_BSON_OBJECTID_H */

@@ -408,3 +408,16 @@ void php_phongo_utcdatetime_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_utcdatetime.free_obj       = php_phongo_utcdatetime_free_object;
 	php_phongo_handler_utcdatetime.offset         = XtOffsetOf(php_phongo_utcdatetime_t, std);
 }
+
+bool phongo_utcdatetime_new(zval* object, int64_t msec_since_epoch)
+{
+	php_phongo_utcdatetime_t* intern;
+
+	object_init_ex(object, php_phongo_utcdatetime_ce);
+
+	intern               = Z_UTCDATETIME_OBJ_P(object);
+	intern->milliseconds = msec_since_epoch;
+	intern->initialized  = true;
+
+	return true;
+}

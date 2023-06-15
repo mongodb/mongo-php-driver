@@ -109,6 +109,24 @@ static PHP_METHOD(MongoDB_BSON_DBPointer, __toString)
 	efree(retval);
 }
 
+static PHP_METHOD(MongoDB_BSON_DBPointer, __set_state)
+{
+	php_phongo_dbpointer_t* intern;
+	HashTable*              props;
+	zval*                   array;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	object_init_ex(return_value, php_phongo_dbpointer_ce);
+
+	intern = Z_DBPOINTER_OBJ_P(return_value);
+	props  = Z_ARRVAL_P(array);
+
+	php_phongo_dbpointer_init_from_hash(intern, props);
+}
+
 static PHP_METHOD(MongoDB_BSON_DBPointer, jsonSerialize)
 {
 	php_phongo_dbpointer_t* intern;
@@ -295,4 +313,18 @@ void php_phongo_dbpointer_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_dbpointer.get_properties = php_phongo_dbpointer_get_properties;
 	php_phongo_handler_dbpointer.free_obj       = php_phongo_dbpointer_free_object;
 	php_phongo_handler_dbpointer.offset         = XtOffsetOf(php_phongo_dbpointer_t, std);
+}
+
+bool phongo_dbpointer_new(zval* object, const char* ref, size_t ref_len, const bson_oid_t* oid)
+{
+	php_phongo_dbpointer_t* intern;
+
+	object_init_ex(object, php_phongo_dbpointer_ce);
+
+	intern          = Z_DBPOINTER_OBJ_P(object);
+	intern->ref     = estrndup(ref, ref_len);
+	intern->ref_len = ref_len;
+	bson_oid_to_string(oid, intern->id);
+
+	return true;
 }

@@ -33,6 +33,7 @@
 #include "MongoDB/Session.h"
 #include "MongoDB/WriteConcern.h"
 #include "Session_arginfo.h"
+#include "BSON/Timestamp.h"
 
 zend_class_entry* php_phongo_session_ce;
 
@@ -280,7 +281,7 @@ static PHP_METHOD(MongoDB_Driver_Session, getOperationTime)
 		RETURN_NULL();
 	}
 
-	php_phongo_bson_new_timestamp_from_increment_and_timestamp(return_value, increment, timestamp);
+	phongo_timestamp_new(return_value, increment, timestamp);
 }
 
 /* Returns the server this session is pinned to */
@@ -643,7 +644,11 @@ static HashTable* php_phongo_session_get_debug_info(phongo_compat_object_handler
 		if (timestamp && increment) {
 			zval ztimestamp;
 
-			php_phongo_bson_new_timestamp_from_increment_and_timestamp(&ztimestamp, increment, timestamp);
+			if (!phongo_timestamp_new(&ztimestamp, increment, timestamp)) {
+				/* Exception should already have been thrown */
+				goto done;
+			}
+
 			ADD_ASSOC_ZVAL_EX(&retval, "operationTime", &ztimestamp);
 		} else {
 			ADD_ASSOC_NULL_EX(&retval, "operationTime");

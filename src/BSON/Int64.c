@@ -119,6 +119,24 @@ static PHP_METHOD(MongoDB_BSON_Int64, __toString)
 	ZVAL_INT64_STRING(return_value, intern->integer);
 }
 
+static PHP_METHOD(MongoDB_BSON_Int64, __set_state)
+{
+	php_phongo_int64_t* intern;
+	HashTable*          props;
+	zval*               array;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ARRAY(array)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	object_init_ex(return_value, php_phongo_int64_ce);
+
+	intern = Z_INT64_OBJ_P(return_value);
+	props  = Z_ARRVAL_P(array);
+
+	php_phongo_int64_init_from_hash(intern, props);
+}
+
 static PHP_METHOD(MongoDB_BSON_Int64, jsonSerialize)
 {
 	php_phongo_int64_t* intern;
@@ -319,7 +337,7 @@ static int64_t phongo_pow_int64(int64_t base, int64_t exp)
 	return phongo_pow_int64(base * base, exp / 2);
 }
 
-#define OPERATION_RESULT_INT64(value) ZVAL_INT64_OBJ(result, value);
+#define OPERATION_RESULT_INT64(value) phongo_int64_new(result, (value));
 
 #define PHONGO_GET_INT64(int64, zval)                                                       \
 	if (Z_TYPE_P((zval)) == IS_LONG) {                                                      \
@@ -547,4 +565,17 @@ void php_phongo_int64_init_ce(INIT_FUNC_ARGS)
 	php_phongo_handler_int64.offset         = XtOffsetOf(php_phongo_int64_t, std);
 	php_phongo_handler_int64.cast_object    = php_phongo_int64_cast_object;
 	php_phongo_handler_int64.do_operation   = php_phongo_int64_do_operation;
+}
+
+bool phongo_int64_new(zval* object, int64_t integer)
+{
+	php_phongo_int64_t* intern;
+
+	object_init_ex(object, php_phongo_int64_ce);
+
+	intern              = Z_INT64_OBJ_P(object);
+	intern->integer     = integer;
+	intern->initialized = true;
+
+	return true;
 }

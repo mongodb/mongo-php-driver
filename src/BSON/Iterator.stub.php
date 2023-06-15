@@ -11,12 +11,7 @@ final class Iterator implements \Iterator
 {
     final private function __construct() {}
 
-#if PHP_VERSION_ID >= 80000
-    final public function current(): mixed {}
-#else
-    /** @return mixed */
-    final public function current() {}
-#endif
+    final public function current(): Value {}
 
 #if PHP_VERSION_ID >= 80000
     final public function key(): string|int {}
