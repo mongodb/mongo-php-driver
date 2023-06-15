@@ -896,7 +896,7 @@ bool php_phongo_bson_data_to_zval(const unsigned char* data, int data_len, zval*
 	return retval;
 }
 
-/** Converts a BSON value to a zval, returning BSON objects and arrays as
+/* Converts a BSON value to a zval, returning BSON objects and arrays as
  * standard PHP types instead of Document or PackedArray instances.
  *
  * On success, the zval will be populated and true will be returned. On error,
