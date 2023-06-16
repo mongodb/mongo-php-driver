@@ -37,20 +37,10 @@ echo throws(function () use ($iterator) {
 <?php exit(0); ?>
 --EXPECTF--
 bool(true)
-object(MongoDB\BSON\Value)#%d (%d) {
-  ["type"]=>
-  string(14) "32-bit integer"
-  ["value"]=>
-  int(10)
-}
+int(10)
 int(0)
 bool(true)
-object(MongoDB\BSON\Value)#%d (%d) {
-  ["type"]=>
-  string(14) "32-bit integer"
-  ["value"]=>
-  int(20)
-}
+int(20)
 int(1)
 bool(false)
 OK: Got MongoDB\Driver\Exception\LogicException

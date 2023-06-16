@@ -8,7 +8,8 @@ require_once __DIR__ . '/../utils/basic.inc';
 $data = [
     'objectId' => new MongoDB\BSON\ObjectId('56315a7c6118fd1b920270b1'),
     'string' => 'foo',
-    'int' => 123,
+    'int32' => 123,
+    'int64' => new MongoDB\BSON\Int64(123),
     'float' => 3.1415926,
     'document' => MongoDB\BSON\Document::fromJSON('{ "foo": "bar" }'),
     'object' => (object) ['foo' => 'bar'],
@@ -26,205 +27,135 @@ var_dump(iterator_to_array($iterator));
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-array(8) {
+array(9) {
   ["objectId"]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(8) "ObjectId"
-    ["value"]=>
-    object(MongoDB\BSON\ObjectId)#%d (%d) {
-      ["oid"]=>
-      string(24) "56315a7c6118fd1b920270b1"
-    }
+  object(MongoDB\BSON\ObjectId)#%d (%d) {
+    ["oid"]=>
+    string(24) "56315a7c6118fd1b920270b1"
   }
   ["string"]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(6) "string"
-    ["value"]=>
-    string(3) "foo"
-  }
-  ["int"]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(14) "32-bit integer"
-    ["value"]=>
-    int(123)
+  string(3) "foo"
+  ["int32"]=>
+  int(123)
+  ["int64"]=>
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(3) "123"
   }
   ["float"]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(6) "double"
-    ["value"]=>
-    float(3.1415926)
-  }
+  float(3.1415926)
   ["document"]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(8) "document"
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
     ["value"]=>
-    object(MongoDB\BSON\Document)#%d (%d) {
-      ["data"]=>
-      string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
-      ["value"]=>
-      object(stdClass)#%d (%d) {
-        ["foo"]=>
-        string(3) "bar"
-      }
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
     }
   }
   ["object"]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(8) "document"
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
     ["value"]=>
-    object(MongoDB\BSON\Document)#%d (%d) {
-      ["data"]=>
-      string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
-      ["value"]=>
-      object(stdClass)#%d (%d) {
-        ["foo"]=>
-        string(3) "bar"
-      }
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
     }
   }
   ["bson_array"]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(5) "array"
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
+    ["data"]=>
+    string(40) "HgAAABAwAAEAAAAQMQACAAAAAjIABAAAAGZvbwAA"
     ["value"]=>
-    object(MongoDB\BSON\PackedArray)#%d (%d) {
-      ["data"]=>
-      string(40) "HgAAABAwAAEAAAAQMQACAAAAAjIABAAAAGZvbwAA"
-      ["value"]=>
-      array(3) {
-        [0]=>
-        int(1)
-        [1]=>
-        int(2)
-        [2]=>
-        string(3) "foo"
-      }
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      string(3) "foo"
     }
   }
   ["array"]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(5) "array"
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
+    ["data"]=>
+    string(40) "HgAAABAwAAAAAAAQMQABAAAAAjIABAAAAGJhcgAA"
     ["value"]=>
-    object(MongoDB\BSON\PackedArray)#%d (%d) {
-      ["data"]=>
-      string(40) "HgAAABAwAAAAAAAQMQABAAAAAjIABAAAAGJhcgAA"
-      ["value"]=>
-      array(3) {
-        [0]=>
-        int(0)
-        [1]=>
-        int(1)
-        [2]=>
-        string(3) "bar"
-      }
+    array(3) {
+      [0]=>
+      int(0)
+      [1]=>
+      int(1)
+      [2]=>
+      string(3) "bar"
     }
   }
 }
-array(8) {
+array(9) {
   [0]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(8) "ObjectId"
-    ["value"]=>
-    object(MongoDB\BSON\ObjectId)#%d (%d) {
-      ["oid"]=>
-      string(24) "56315a7c6118fd1b920270b1"
-    }
+  object(MongoDB\BSON\ObjectId)#%d (%d) {
+    ["oid"]=>
+    string(24) "56315a7c6118fd1b920270b1"
   }
   [1]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(6) "string"
-    ["value"]=>
-    string(3) "foo"
-  }
+  string(3) "foo"
   [2]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(14) "32-bit integer"
-    ["value"]=>
-    int(123)
-  }
+  int(123)
   [3]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(6) "double"
-    ["value"]=>
-    float(3.1415926)
+  object(MongoDB\BSON\Int64)#%d (%d) {
+    ["integer"]=>
+    string(3) "123"
   }
   [4]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(8) "document"
-    ["value"]=>
-    object(MongoDB\BSON\Document)#%d (%d) {
-      ["data"]=>
-      string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
-      ["value"]=>
-      object(stdClass)#%d (%d) {
-        ["foo"]=>
-        string(3) "bar"
-      }
-    }
-  }
+  float(3.1415926)
   [5]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(8) "document"
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
     ["value"]=>
-    object(MongoDB\BSON\Document)#%d (%d) {
-      ["data"]=>
-      string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
-      ["value"]=>
-      object(stdClass)#%d (%d) {
-        ["foo"]=>
-        string(3) "bar"
-      }
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
     }
   }
   [6]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(5) "array"
+  object(MongoDB\BSON\Document)#%d (%d) {
+    ["data"]=>
+    string(24) "EgAAAAJmb28ABAAAAGJhcgAA"
     ["value"]=>
-    object(MongoDB\BSON\PackedArray)#%d (%d) {
-      ["data"]=>
-      string(40) "HgAAABAwAAEAAAAQMQACAAAAAjIABAAAAGZvbwAA"
-      ["value"]=>
-      array(3) {
-        [0]=>
-        int(1)
-        [1]=>
-        int(2)
-        [2]=>
-        string(3) "foo"
-      }
+    object(stdClass)#%d (%d) {
+      ["foo"]=>
+      string(3) "bar"
     }
   }
   [7]=>
-  object(MongoDB\BSON\Value)#%d (%d) {
-    ["type"]=>
-    string(5) "array"
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
+    ["data"]=>
+    string(40) "HgAAABAwAAEAAAAQMQACAAAAAjIABAAAAGZvbwAA"
     ["value"]=>
-    object(MongoDB\BSON\PackedArray)#%d (%d) {
-      ["data"]=>
-      string(40) "HgAAABAwAAAAAAAQMQABAAAAAjIABAAAAGJhcgAA"
-      ["value"]=>
-      array(3) {
-        [0]=>
-        int(0)
-        [1]=>
-        int(1)
-        [2]=>
-        string(3) "bar"
-      }
+    array(3) {
+      [0]=>
+      int(1)
+      [1]=>
+      int(2)
+      [2]=>
+      string(3) "foo"
+    }
+  }
+  [8]=>
+  object(MongoDB\BSON\PackedArray)#%d (%d) {
+    ["data"]=>
+    string(40) "HgAAABAwAAAAAAAQMQABAAAAAjIABAAAAGJhcgAA"
+    ["value"]=>
+    array(3) {
+      [0]=>
+      int(0)
+      [1]=>
+      int(1)
+      [2]=>
+      string(3) "bar"
     }
   }
 }

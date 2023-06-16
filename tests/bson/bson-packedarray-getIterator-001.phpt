@@ -18,17 +18,7 @@ foreach ($iterator as $key => $value) {
 --EXPECTF--
 MongoDB\BSON\Iterator
 int(0)
-object(MongoDB\BSON\Value)#%d (%d) {
-  ["type"]=>
-  string(14) "32-bit integer"
-  ["value"]=>
-  int(1)
-}
 int(1)
-object(MongoDB\BSON\Value)#%d (%d) {
-  ["type"]=>
-  string(14) "32-bit integer"
-  ["value"]=>
-  int(2)
-}
+int(1)
+int(2)
 ===DONE===

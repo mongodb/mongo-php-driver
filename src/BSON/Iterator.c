@@ -29,7 +29,6 @@
 #include "phongo_error.h"
 #include "BSON/Iterator.h"
 #include "BSON/Iterator_arginfo.h"
-#include "BSON/Value.h"
 
 zend_class_entry* php_phongo_iterator_ce;
 
@@ -90,7 +89,7 @@ static void php_phongo_iterator_build_current(php_phongo_iterator_t* intern)
 {
 	php_phongo_iterator_free_current(intern);
 
-	phongo_value_new(&intern->current, bson_iter_value(&intern->iter));
+	phongo_bson_value_to_zval(bson_iter_value(&intern->iter), &intern->current);
 }
 
 static HashTable* php_phongo_iterator_get_properties_hash(phongo_compat_object_handler_type* object, bool is_temp)

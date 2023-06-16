@@ -18,17 +18,7 @@ foreach ($iterator as $key => $value) {
 --EXPECTF--
 MongoDB\BSON\Iterator
 string(3) "foo"
-object(MongoDB\BSON\Value)#%d (%d) {
-  ["type"]=>
-  string(6) "string"
-  ["value"]=>
-  string(3) "bar"
-}
 string(3) "bar"
-object(MongoDB\BSON\Value)#%d (%d) {
-  ["type"]=>
-  string(6) "string"
-  ["value"]=>
-  string(3) "baz"
-}
+string(3) "bar"
+string(3) "baz"
 ===DONE===

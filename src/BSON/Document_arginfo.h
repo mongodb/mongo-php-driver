@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: a5464ed3bb6f730295df4e7945b5d3125b7af437 */
+ * Stub hash: 5994291bf2bfdac1b9d8bad9b96d4f443c2f49aa */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Document___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -24,9 +24,17 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Document_fromP
 ZEND_END_ARG_INFO()
 #endif
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Document_get, 0, 1, MongoDB\\BSON\\Value, 0)
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Document_get, 0, 1, IS_MIXED, 0)
 	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
 ZEND_END_ARG_INFO()
+#endif
+
+#if !(PHP_VERSION_ID >= 80000)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Document_get, 0, 0, 1)
+	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+#endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Document_getIterator, 0, 0, MongoDB\\BSON\\Iterator, 0)
 ZEND_END_ARG_INFO()
@@ -81,7 +89,12 @@ static ZEND_METHOD(MongoDB_BSON_Document, fromPHP);
 #if !(PHP_VERSION_ID >= 80000)
 static ZEND_METHOD(MongoDB_BSON_Document, fromPHP);
 #endif
+#if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_BSON_Document, get);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_BSON_Document, get);
+#endif
 static ZEND_METHOD(MongoDB_BSON_Document, getIterator);
 static ZEND_METHOD(MongoDB_BSON_Document, has);
 #if PHP_VERSION_ID >= 80000
@@ -110,7 +123,12 @@ static const zend_function_entry class_MongoDB_BSON_Document_methods[] = {
 #if !(PHP_VERSION_ID >= 80000)
 	ZEND_ME(MongoDB_BSON_Document, fromPHP, arginfo_class_MongoDB_BSON_Document_fromPHP, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 #endif
+#if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_BSON_Document, get, arginfo_class_MongoDB_BSON_Document_get, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_BSON_Document, get, arginfo_class_MongoDB_BSON_Document_get, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
 	ZEND_ME(MongoDB_BSON_Document, getIterator, arginfo_class_MongoDB_BSON_Document_getIterator, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Document, has, arginfo_class_MongoDB_BSON_Document_has, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
