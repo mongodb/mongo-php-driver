@@ -207,7 +207,6 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	php_phongo_timestamp_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_utcdatetime_interface_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	php_phongo_value_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_iterator_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_packedarray_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_document_init_ce(INIT_FUNC_ARGS_PASSTHRU);
