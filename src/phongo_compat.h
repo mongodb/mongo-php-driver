@@ -121,6 +121,18 @@
 		}                \
 	}
 
+#define ADD_NEXT_INDEX_INT64_OBJ(_zv, _value) \
+	do {                                      \
+		zval zchild;                          \
+		phongo_int64_new(&zchild, (_value));  \
+		add_next_index_zval((_zv), &zchild);  \
+	} while (0);
+#define ADD_ASSOC_INT64_OBJ(_zv, _key, _value)  \
+	do {                                        \
+		zval zchild;                            \
+		phongo_int64_new(&zchild, (_value));    \
+		add_assoc_zval((_zv), (_key), &zchild); \
+	} while (0);
 #if SIZEOF_ZEND_LONG == 8
 #define ADD_INDEX_INT64(_zv, _index, _value) add_index_long((_zv), (_index), (_value))
 #define ADD_NEXT_INDEX_INT64(_zv, _value) add_next_index_long((_zv), (_value))

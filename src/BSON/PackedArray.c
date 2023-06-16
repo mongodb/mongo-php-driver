@@ -184,7 +184,8 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, toPHP)
 
 	intern = Z_PACKEDARRAY_OBJ_P(getThis());
 
-	state.is_visiting_array = true;
+	state.is_visiting_array   = true;
+	state.map.int64_as_object = true;
 
 	if (!php_phongo_bson_to_zval_ex(intern->bson, &state)) {
 		zval_ptr_dtor(&state.zchild);

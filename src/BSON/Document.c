@@ -256,6 +256,8 @@ static PHP_METHOD(MongoDB_BSON_Document, toPHP)
 
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
+	state.map.int64_as_object = true;
+
 	if (!php_phongo_bson_to_zval_ex(intern->bson, &state)) {
 		zval_ptr_dtor(&state.zchild);
 		php_phongo_bson_typemap_dtor(&state.map);
