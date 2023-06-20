@@ -62,6 +62,7 @@ typedef struct {
 	php_phongo_bson_typemap_element document;
 	php_phongo_bson_typemap_element array;
 	php_phongo_bson_typemap_element root;
+	bool                            int64_as_object;
 	struct {
 		php_phongo_field_path_map_element** map;
 		size_t                              allocated_size;

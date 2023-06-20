@@ -579,9 +579,17 @@ static bool php_phongo_bson_visit_int64(const bson_iter_t* iter ARG_UNUSED, cons
 	php_phongo_field_path_write_item_at_current_level(state->field_path, key);
 
 	if (state->is_visiting_array) {
-		ADD_NEXT_INDEX_INT64(retval, v_int64);
+		if (state->map.int64_as_object) {
+			ADD_NEXT_INDEX_INT64_OBJ(retval, v_int64);
+		} else {
+			ADD_NEXT_INDEX_INT64(retval, v_int64);
+		}
 	} else {
-		ADD_ASSOC_INT64(retval, key, v_int64);
+		if (state->map.int64_as_object) {
+			ADD_ASSOC_INT64_OBJ(retval, key, v_int64);
+		} else {
+			ADD_ASSOC_INT64(retval, key, v_int64);
+		}
 	}
 
 	return false;

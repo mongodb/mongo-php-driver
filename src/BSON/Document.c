@@ -30,7 +30,6 @@
 #include "phongo_bson_encode.h"
 #include "BSON/Document_arginfo.h"
 #include "BSON/Iterator.h"
-#include "BSON/Value.h"
 
 zend_class_entry* php_phongo_document_ce;
 
@@ -187,7 +186,7 @@ static PHP_METHOD(MongoDB_BSON_Document, get)
 		RETURN_NULL();
 	}
 
-	phongo_value_new(return_value, bson_iter_value(&iter));
+	phongo_bson_value_to_zval(bson_iter_value(&iter), return_value);
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, getIterator)
@@ -256,6 +255,8 @@ static PHP_METHOD(MongoDB_BSON_Document, toPHP)
 	}
 
 	intern = Z_DOCUMENT_OBJ_P(getThis());
+
+	state.map.int64_as_object = true;
 
 	if (!php_phongo_bson_to_zval_ex(intern->bson, &state)) {
 		zval_ptr_dtor(&state.zchild);

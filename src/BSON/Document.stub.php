@@ -22,7 +22,12 @@ final class Document implements \IteratorAggregate, \Serializable
     final static public function fromPHP($value): Document {}
 #endif
 
-    final public function get(string $key): Value {}
+#if PHP_VERSION_ID >= 80000
+    final public function get(string $key): mixed {}
+#else
+    /** @return mixed */
+    final public function get(string $key) {}
+#endif
 
     final public function getIterator(): Iterator {}
 
