@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Int64 comparisons
+MongoDB\BSON\Int64 comparisons between objects
 --FILE--
 <?php
 
