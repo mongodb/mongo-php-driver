@@ -35,6 +35,13 @@ file. Note that this requires `phpize` to be run for PHP 8.2 to make use
 of all features. After changing a stub file, run `./build/gen_stub.php`
 to regenerate the corresponding arginfo files and commit the results.
 
+## Generating function maps for static analysis tools
+
+PHPStan and Psalm use function maps to provide users with correct type analysis
+when using this extension. To generate the function map, run the
+`generate-function-map` make target. The generated map will be stored in
+`scripts/functionMap.php`.
+
 ## Testing
 
 The extension's test use the PHPT format from PHP internals. This format is
