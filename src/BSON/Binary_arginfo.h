@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 1ad141cbb9c7c2e49660ba16b36c69de97d7e45e */
+ * Stub hash: 3ecb4933da21ef2b58ca95d74e2aac8d26ca6dc6 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Binary___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
@@ -20,9 +20,17 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_Binary_serialize arginfo_class_MongoDB_BSON_Binary_getData
 
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Binary_unserialize, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+#endif
+
+#if !(PHP_VERSION_ID >= 80000)
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Binary_unserialize, 0, 1, IS_VOID, 0)
 	ZEND_ARG_INFO(0, serialized)
 ZEND_END_ARG_INFO()
+#endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Binary___unserialize, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
@@ -48,7 +56,12 @@ static ZEND_METHOD(MongoDB_BSON_Binary, getType);
 static ZEND_METHOD(MongoDB_BSON_Binary, __set_state);
 static ZEND_METHOD(MongoDB_BSON_Binary, __toString);
 static ZEND_METHOD(MongoDB_BSON_Binary, serialize);
+#if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_BSON_Binary, unserialize);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_BSON_Binary, unserialize);
+#endif
 static ZEND_METHOD(MongoDB_BSON_Binary, __unserialize);
 static ZEND_METHOD(MongoDB_BSON_Binary, __serialize);
 #if PHP_VERSION_ID >= 80000
@@ -66,7 +79,12 @@ static const zend_function_entry class_MongoDB_BSON_Binary_methods[] = {
 	ZEND_ME(MongoDB_BSON_Binary, __set_state, arginfo_class_MongoDB_BSON_Binary___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, __toString, arginfo_class_MongoDB_BSON_Binary___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, serialize, arginfo_class_MongoDB_BSON_Binary_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_BSON_Binary, unserialize, arginfo_class_MongoDB_BSON_Binary_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_BSON_Binary, unserialize, arginfo_class_MongoDB_BSON_Binary_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
 	ZEND_ME(MongoDB_BSON_Binary, __unserialize, arginfo_class_MongoDB_BSON_Binary___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Binary, __serialize, arginfo_class_MongoDB_BSON_Binary___serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000

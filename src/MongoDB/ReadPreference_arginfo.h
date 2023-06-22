@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 6b575f8790ca320a45d772c788e2d23a913885ef */
+ * Stub hash: df8b13e252c05cbb7603dec8c1659fb88845ed73 */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference___construct, 0, 0, 1)
@@ -47,9 +47,17 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_ReadPreference_serialize arginfo_class_MongoDB_Driver_ReadPreference_getModeString
 
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference_unserialize, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+#endif
+
+#if !(PHP_VERSION_ID >= 80000)
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference_unserialize, 0, 1, IS_VOID, 0)
 	ZEND_ARG_INFO(0, serialized)
 ZEND_END_ARG_INFO()
+#endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference___unserialize, 0, 1, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, data, IS_ARRAY, 0)
@@ -77,7 +85,12 @@ static ZEND_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize);
 #endif
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, serialize);
+#if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, unserialize);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_Driver_ReadPreference, unserialize);
+#endif
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __unserialize);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __serialize);
 
@@ -102,7 +115,12 @@ static const zend_function_entry class_MongoDB_Driver_ReadPreference_methods[] =
 	ZEND_ME(MongoDB_Driver_ReadPreference, bsonSerialize, arginfo_class_MongoDB_Driver_ReadPreference_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #endif
 	ZEND_ME(MongoDB_Driver_ReadPreference, serialize, arginfo_class_MongoDB_Driver_ReadPreference_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_ReadPreference, unserialize, arginfo_class_MongoDB_Driver_ReadPreference_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_Driver_ReadPreference, unserialize, arginfo_class_MongoDB_Driver_ReadPreference_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#endif
 	ZEND_ME(MongoDB_Driver_ReadPreference, __unserialize, arginfo_class_MongoDB_Driver_ReadPreference___unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, __serialize, arginfo_class_MongoDB_Driver_ReadPreference___serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
@@ -148,35 +166,35 @@ static zend_class_entry *register_class_MongoDB_Driver_ReadPreference(zend_class
 	zend_string_release(const_RP_NEAREST_name);
 
 	zval const_PRIMARY_value;
-	zend_string *const_PRIMARY_value_str = zend_string_init(PHONGO_READ_PRIMARY, sizeof(PHONGO_READ_PRIMARY) - 1, 1);
+	zend_string *const_PRIMARY_value_str = zend_string_init(PHONGO_READ_PRIMARY, strlen(PHONGO_READ_PRIMARY), 1);
 	ZVAL_STR(&const_PRIMARY_value, const_PRIMARY_value_str);
 	zend_string *const_PRIMARY_name = zend_string_init_interned("PRIMARY", sizeof("PRIMARY") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_PRIMARY_name, &const_PRIMARY_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_PRIMARY_name);
 
 	zval const_PRIMARY_PREFERRED_value;
-	zend_string *const_PRIMARY_PREFERRED_value_str = zend_string_init(PHONGO_READ_PRIMARY_PREFERRED, sizeof(PHONGO_READ_PRIMARY_PREFERRED) - 1, 1);
+	zend_string *const_PRIMARY_PREFERRED_value_str = zend_string_init(PHONGO_READ_PRIMARY_PREFERRED, strlen(PHONGO_READ_PRIMARY_PREFERRED), 1);
 	ZVAL_STR(&const_PRIMARY_PREFERRED_value, const_PRIMARY_PREFERRED_value_str);
 	zend_string *const_PRIMARY_PREFERRED_name = zend_string_init_interned("PRIMARY_PREFERRED", sizeof("PRIMARY_PREFERRED") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_PRIMARY_PREFERRED_name, &const_PRIMARY_PREFERRED_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_PRIMARY_PREFERRED_name);
 
 	zval const_SECONDARY_value;
-	zend_string *const_SECONDARY_value_str = zend_string_init(PHONGO_READ_SECONDARY, sizeof(PHONGO_READ_SECONDARY) - 1, 1);
+	zend_string *const_SECONDARY_value_str = zend_string_init(PHONGO_READ_SECONDARY, strlen(PHONGO_READ_SECONDARY), 1);
 	ZVAL_STR(&const_SECONDARY_value, const_SECONDARY_value_str);
 	zend_string *const_SECONDARY_name = zend_string_init_interned("SECONDARY", sizeof("SECONDARY") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_SECONDARY_name, &const_SECONDARY_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_SECONDARY_name);
 
 	zval const_SECONDARY_PREFERRED_value;
-	zend_string *const_SECONDARY_PREFERRED_value_str = zend_string_init(PHONGO_READ_SECONDARY_PREFERRED, sizeof(PHONGO_READ_SECONDARY_PREFERRED) - 1, 1);
+	zend_string *const_SECONDARY_PREFERRED_value_str = zend_string_init(PHONGO_READ_SECONDARY_PREFERRED, strlen(PHONGO_READ_SECONDARY_PREFERRED), 1);
 	ZVAL_STR(&const_SECONDARY_PREFERRED_value, const_SECONDARY_PREFERRED_value_str);
 	zend_string *const_SECONDARY_PREFERRED_name = zend_string_init_interned("SECONDARY_PREFERRED", sizeof("SECONDARY_PREFERRED") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_SECONDARY_PREFERRED_name, &const_SECONDARY_PREFERRED_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_SECONDARY_PREFERRED_name);
 
 	zval const_NEAREST_value;
-	zend_string *const_NEAREST_value_str = zend_string_init(PHONGO_READ_NEAREST, sizeof(PHONGO_READ_NEAREST) - 1, 1);
+	zend_string *const_NEAREST_value_str = zend_string_init(PHONGO_READ_NEAREST, strlen(PHONGO_READ_NEAREST), 1);
 	ZVAL_STR(&const_NEAREST_value, const_NEAREST_value_str);
 	zend_string *const_NEAREST_name = zend_string_init_interned("NEAREST", sizeof("NEAREST") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_NEAREST_name, &const_NEAREST_value, ZEND_ACC_PUBLIC, NULL);
