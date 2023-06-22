@@ -1,4 +1,4 @@
-.PHONY: coverage test-clean package package.xml format format-changed format-check
+.PHONY: mv-coverage lcov-coveralls lcov-local coverage coveralls format format-changed format-check test-clean package package.xml libmongoc-version-current libmongocrypt-version-current generate-function-map
 
 ifneq (,$(realpath $(EXTENSION_DIR)/json.so))
 PHP_TEST_SHARED_EXTENSIONS := "-d" "extension=$(EXTENSION_DIR)/json.so" $(PHP_TEST_SHARED_EXTENSIONS)
