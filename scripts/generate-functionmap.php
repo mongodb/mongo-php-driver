@@ -11,11 +11,13 @@ printf("Created call map in %s\n", $filename);
 
 class FunctionMapGenerator
 {
-    public function createFunctionMap(string $filename): void {
+    public function createFunctionMap(string $filename): void
+    {
         $this->writeFunctionMap($filename, $this->getFunctionMap());
     }
 
-    public function getFunctionMap(): array {
+    private function getFunctionMap(): array
+    {
         $classes = array_filter(get_declared_classes(), $this->filterItems(...));
         $interfaces = array_filter(get_declared_interfaces(), $this->filterItems(...));
         $functions = array_filter(get_defined_functions()['internal'], $this->filterItems(...));
@@ -107,7 +109,8 @@ PHP;
         return false;
     }
 
-    private function getFunctionMapEntry(ReflectionFunctionAbstract $function): array {
+    private function getFunctionMapEntry(ReflectionFunctionAbstract $function): array
+    {
         $returnType = match(true) {
             $function->hasReturnType() => (string) $function->getReturnType(),
             $function->hasTentativeReturnType() => (string) $function->getTentativeReturnType(),
@@ -128,7 +131,8 @@ PHP;
         return $functionMapEntry;
     }
 
-    private function removeDoubleBackslash(string $string): string {
+    private function removeDoubleBackslash(string $string): string
+    {
         return str_replace('\\\\', '\\', $string);
     }
 }
