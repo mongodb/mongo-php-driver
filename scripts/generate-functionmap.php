@@ -122,12 +122,7 @@ PHP;
                 $parameterKey .= '=';
             }
 
-            $parameterType = (string) $parameter->getType();
-            if ($function->getName() === 'unserialize' && $parameter->getName() === 'serialized') {
-                $parameterType = 'string';
-            }
-
-            $functionMapEntry[$parameterKey] = $parameterType;
+            $functionMapEntry[$parameterKey] = (string) $parameter->getType();
         }
 
         return $functionMapEntry;
