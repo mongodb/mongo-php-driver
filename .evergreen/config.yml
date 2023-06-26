@@ -361,7 +361,7 @@ functions:
       params:
         script: |
           ${PREPARE_SHELL}
-          MONGODB_VERSION=${MONGODB_VERSION} TOPOLOGY=${TOPOLOGY} AUTH=${AUTH} SSL=${SSL} STORAGE_ENGINE=${STORAGE_ENGINE} LOAD_BALANCER=${LOAD_BALANCER} REQUIRE_API_VERSION=${REQUIRE_API_VERSION} ORCHESTRATION_FILE=${ORCHESTRATION_FILE} sh ${DRIVERS_TOOLS}/.evergreen/run-orchestration.sh
+          SKIP_LEGACY_SHELL=${SKIP_LEGACY_SHELL} MONGODB_VERSION=${MONGODB_VERSION} TOPOLOGY=${TOPOLOGY} AUTH=${AUTH} SSL=${SSL} STORAGE_ENGINE=${STORAGE_ENGINE} LOAD_BALANCER=${LOAD_BALANCER} REQUIRE_API_VERSION=${REQUIRE_API_VERSION} ORCHESTRATION_FILE=${ORCHESTRATION_FILE} sh ${DRIVERS_TOOLS}/.evergreen/run-orchestration.sh
     # run-orchestration generates expansion file with MONGODB_URI and CRYPT_SHARED_LIB_PATH
     - command: expansions.update
       params:
@@ -1139,6 +1139,8 @@ axes:
       - id: rhel90
         display_name: "RHEL 9.0"
         run_on: rhel90-small
+        variables:
+          SKIP_LEGACY_SHELL: "true"
       # TODO: RHEL 8.x is not working yet
       # - id: rhel82-arm64
       #   display_name: "RHEL 8.2 ARM64"
@@ -1160,9 +1162,13 @@ axes:
       - id: ubuntu2204
         display_name: "Ubuntu 22.04 x64"
         run_on: ubuntu2204-small
+        variables:
+          SKIP_LEGACY_SHELL: "true"
       - id: ubuntu2204-arm64
         display_name: "Ubuntu 22.04 ARM64"
         run_on: ubuntu2204-arm64-small
+        variables:
+          SKIP_LEGACY_SHELL: "true"
       - id: ubuntu2004
         display_name: "Ubuntu 20.04 x64"
         run_on: ubuntu2004-small
