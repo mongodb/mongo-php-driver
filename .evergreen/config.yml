@@ -1154,12 +1154,6 @@ axes:
       - id: rhel76
         display_name: "RHEL 7.6"
         run_on: rhel76-small
-      - id: rhel71-power8
-        display_name: "RHEL 7.1 Power 8"
-        run_on: rhel71-power8-build
-      - id: rhel72-zseries
-        display_name: "RHEL 7.2 zSeries"
-        run_on: rhel72-zseries-build
 
       # Ubuntu LTS
       - id: ubuntu2204
@@ -1256,15 +1250,6 @@ buildvariants:
     - name: "test-standalone-auth"
     - name: "test-standalone-ssl"
     - name: "test-replicaset"
-    - name: "test-replicaset-auth"
-    - name: "test-sharded"
-
-# Test RHEL Power8 and zSeries architectures with MongoDB 4.4
-- matrix_name: "test-alt-archs"
-  matrix_spec: { "os": ["rhel71-power8", "rhel72-zseries"], "mongodb-versions": "4.4", "php-edge-versions": "oldest-supported" }
-  display_name: "${os}, ${mongodb-versions}, ${php-edge-versions}"
-  tasks:
-    - name: "test-standalone-ssl"
     - name: "test-replicaset-auth"
     - name: "test-sharded"
 
