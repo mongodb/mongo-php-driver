@@ -86,7 +86,7 @@ if (PHP_MONGODB != "no") {
   ADD_EXTENSION_DEP("mongodb", "openssl", false);
 
   var PHP_MONGODB_CFLAGS="\
-    /D BSON_COMPILATION /D MONGOC_COMPILATION \
+    /D BSON_COMPILATION /D MONGOC_COMPILATION /D UTF8PROC_STATIC \
     /I" + configure_module_dirname + " \
     /I" + configure_module_dirname + "/src \
     /I" + configure_module_dirname + "/src/BSON \
@@ -98,6 +98,7 @@ if (PHP_MONGODB != "no") {
     /I" + configure_module_dirname + "/src/libmongoc/src/libbson/src \
     /I" + configure_module_dirname + "/src/libmongoc/src/libbson/src/jsonsl \
     /I" + configure_module_dirname + "/src/libmongoc/src/libmongoc/src \
+    /I" + configure_module_dirname + "/src/libmongoc/src/utf8proc-2.8.0 \
   ";
 
   // Condense whitespace in CFLAGS
@@ -119,6 +120,9 @@ if (PHP_MONGODB != "no") {
   // Generated with: find src/libmongoc/src/libmongoc/src/mongoc -name '*.c' -print0 | cut -sz -d / -f 7- | sort -dz | tr '\000' ' '
   var PHP_MONGODB_MONGOC_SOURCES="mcd-azure.c mcd-rpc.c mongoc-aggregate.c mongoc-apm.c mongoc-array.c mongoc-async.c mongoc-async-cmd.c mongoc-buffer.c mongoc-bulk-operation.c mongoc-change-stream.c mongoc-client.c mongoc-client-pool.c mongoc-client-session.c mongoc-client-side-encryption.c mongoc-cluster-aws.c mongoc-cluster.c mongoc-cluster-cyrus.c mongoc-cluster-sasl.c mongoc-cluster-sspi.c mongoc-cmd.c mongoc-collection.c mongoc-compression.c mongoc-counters.c mongoc-crypt.c mongoc-crypto.c mongoc-crypto-cng.c mongoc-crypto-common-crypto.c mongoc-crypto-openssl.c mongoc-cursor-array.c mongoc-cursor.c mongoc-cursor-change-stream.c mongoc-cursor-cmd.c mongoc-cursor-cmd-deprecated.c mongoc-cursor-find.c mongoc-cursor-find-cmd.c mongoc-cursor-find-opquery.c mongoc-cursor-legacy.c mongoc-cyrus.c mongoc-database.c mongoc-error.c mongoc-find-and-modify.c mongoc-flags.c mongoc-generation-map.c mongoc-gridfs-bucket.c mongoc-gridfs-bucket-file.c mongoc-gridfs.c mongoc-gridfs-file.c mongoc-gridfs-file-list.c mongoc-gridfs-file-page.c mongoc-handshake.c mongoc-host-list.c mongoc-http.c mongoc-index.c mongoc-init.c mongoc-interrupt.c mongoc-libressl.c mongoc-linux-distro-scanner.c mongoc-list.c mongoc-log.c mongoc-matcher.c mongoc-matcher-op.c mongoc-memcmp.c mongoc-ocsp-cache.c mongoc-opcode.c mongoc-openssl.c mongoc-optional.c mongoc-opts.c mongoc-opts-helpers.c mongoc-queue.c mongoc-rand-cng.c mongoc-rand-common-crypto.c mongoc-rand-openssl.c mongoc-read-concern.c mongoc-read-prefs.c mongoc-rpc.c mongoc-sasl.c mongoc-scram.c mongoc-secure-channel.c mongoc-secure-transport.c mongoc-server-api.c mongoc-server-description.c mongoc-server-monitor.c mongoc-server-stream.c mongoc-set.c mongoc-shared.c mongoc-socket.c mongoc-ssl.c mongoc-sspi.c mongoc-stream-buffered.c mongoc-stream.c mongoc-stream-file.c mongoc-stream-gridfs.c mongoc-stream-gridfs-download.c mongoc-stream-gridfs-upload.c mongoc-stream-socket.c mongoc-stream-tls.c mongoc-stream-tls-libressl.c mongoc-stream-tls-openssl-bio.c mongoc-stream-tls-openssl.c mongoc-stream-tls-secure-channel.c mongoc-stream-tls-secure-transport.c mongoc-timeout.c mongoc-topology-background-monitoring.c mongoc-topology.c mongoc-topology-description-apm.c mongoc-topology-description.c mongoc-topology-scanner.c mongoc-ts-pool.c mongoc-uri.c mongoc-util.c mongoc-version-functions.c mongoc-write-command.c mongoc-write-concern.c service-gcp.c";
 
+  // Generated with: find src/libmongoc/src/utf8proc-2.8.0 -maxdepth 1 -name '*.c' ! -name 'utf8proc_data.c' -print0 | cut -sz -d / -f 5- | sort -dz | tr '\000' ' '
+  var PHP_MONGODB_UTF8PROC_SOURCES="utf8proc.c";
+
   EXTENSION("mongodb", "php_phongo.c", null, PHP_MONGODB_CFLAGS);
   MONGODB_ADD_SOURCES("/src", "phongo_apm.c phongo_bson.c phongo_bson_encode.c phongo_client.c phongo_compat.c phongo_error.c phongo_execute.c phongo_ini.c phongo_util.c");
   MONGODB_ADD_SOURCES("/src/BSON", "Binary.c BinaryInterface.c Document.c Iterator.c DBPointer.c Decimal128.c Decimal128Interface.c Int64.c Javascript.c JavascriptInterface.c MaxKey.c MaxKeyInterface.c MinKey.c MinKeyInterface.c ObjectId.c ObjectIdInterface.c PackedArray.c Persistable.c Regex.c RegexInterface.c Serializable.c Symbol.c Timestamp.c TimestampInterface.c Type.c Undefined.c Unserializable.c UTCDateTime.c UTCDateTimeInterface.c functions.c");
@@ -129,6 +133,7 @@ if (PHP_MONGODB != "no") {
   MONGODB_ADD_SOURCES("/src/libmongoc/src/libbson/src/bson", PHP_MONGODB_BSON_SOURCES);
   MONGODB_ADD_SOURCES("/src/libmongoc/src/libbson/src/jsonsl", PHP_MONGODB_JSONSL_SOURCES);
   MONGODB_ADD_SOURCES("/src/libmongoc/src/libmongoc/src/mongoc", PHP_MONGODB_MONGOC_SOURCES);
+  MONGODB_ADD_SOURCES("/src/libmongoc/src/utf8proc-2.8.0", PHP_MONGODB_UTF8PROC_SOURCES);
 
   var bson_opts = {
     BSON_BYTE_ORDER: 1234,
@@ -193,7 +198,7 @@ if (PHP_MONGODB != "no") {
     MONGOC_ENABLE_SASL_CYRUS: 0,
     MONGOC_ENABLE_SASL_GSSAPI: 0,
     MONGOC_ENABLE_SASL_SSPI: 0,
-    MONGOC_ENABLE_ICU: 0,
+    MONGOC_ENABLE_SRV: 0,
     MONGOC_ENABLE_RDTSCP: 0,
     MONGOC_ENABLE_SHM_COUNTERS: 0,
     MONGOC_HAVE_ASN1_STRING_GET0_DATA: 0,
@@ -327,23 +332,7 @@ if (PHP_MONGODB != "no") {
   if (CHECK_LIB("dnsapi.lib", "mongodb", PHP_MONGODB) &&
       CHECK_HEADER_ADD_INCLUDE("windns.h", "CFLAGS_MONGODB")) {
     mongoc_opts.MONGOC_HAVE_DNSAPI = 1;
-  }
-
-  if (CHECK_LIB("icuuc.lib", "mongodb", PHP_MONGODB) &&
-      CHECK_HEADER_ADD_INCLUDE("unicode/utf.h", "CFLAGS_MONGODB")) {
-    mongoc_opts.MONGODB_ENABLE_ICU = 1;
-
-    ADD_FLAG("LIBS_MONGODB", "icudt.lib icuin.lib icuio.lib");
-
-    /* Compat for ICU before 58.1.*/
-    if (CHECK_LIB("icule.lib", "mongodb", PHP_MONGODB)) {
-      ADD_FLAG("LIBS_MONGODB", "icule.lib");
-    }
-    if (CHECK_LIB("iculx.lib", "mongodb", PHP_MONGODB)) {
-      ADD_FLAG("LIBS_MONGODB", "iculx.lib");
-    }
-
-    ADD_FLAG("CFLAGS_MONGODB", "/EHsc /D U_USING_ICU_NAMESPACE=1");
+    mongoc_opts.MONGOC_ENABLE_SRV = 1;
   }
 
   if (typeof COMPILER_NAME === 'string') {

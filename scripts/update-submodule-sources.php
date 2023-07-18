@@ -8,6 +8,7 @@ $vars = [
     'PHP_MONGODB_BSON_SOURCES' => 'src/libmongoc/src/libbson/src/bson',
     'PHP_MONGODB_JSONSL_SOURCES' => 'src/libmongoc/src/libbson/src/jsonsl',
     'PHP_MONGODB_MONGOC_SOURCES' => 'src/libmongoc/src/libmongoc/src/mongoc',
+    'PHP_MONGODB_UTF8PROC_SOURCES' => 'src/libmongoc/src/utf8proc-2.8.0',
     'PHP_MONGODB_ZLIB_SOURCES' => 'src/libmongoc/src/zlib-1.2.13',
     'PHP_MONGODB_MONGOCRYPT_SOURCES' => 'src/libmongocrypt/src',
     'PHP_MONGODB_MONGOCRYPT_CRYPTO_SOURCES' => 'src/libmongocrypt/src/crypto',
@@ -23,6 +24,11 @@ foreach ($vars as $var => $path) {
     $cutNth = 2 + substr_count($path, '/');
 
     $files = trim(shell_exec(sprintf($cmd, $path, $cutNth)));
+
+    // Note: utf8proc_data.c is included from utf8proc.c and should not be compiled directly
+    if ($var === 'PHP_MONGODB_UTF8PROC_SOURCES') {
+        $files = trim(str_replace('utf8proc_data.c', '', $files));
+    }
 
     $patterns[] = sprintf('/(%s=")([^"]*)(";?)/', $var);
     $replacements[] = '$1' . $files . '$3';

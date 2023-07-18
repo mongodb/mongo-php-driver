@@ -1,3 +1,6 @@
+dnl Disable SRV until we find a library
+AC_SUBST(MONGOC_ENABLE_SRV, 0)
+
 dnl Disable Windows DNSAPI
 AC_SUBST(MONGOC_HAVE_DNSAPI, 0)
 
@@ -95,6 +98,10 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
       AC_MSG_RESULT([no])
       AC_SUBST(MONGOC_HAVE_RES_SEARCH, 0)
    ])
+])
+
+AS_IF([test "$found_resolv" = "yes"],[
+   AC_SUBST(MONGOC_ENABLE_SRV, 1)
 ])
 
 if test "$libc_has_resolv" = "no"; then
