@@ -294,9 +294,7 @@ static zend_result php_phongo_int64_cast_object(phongo_compat_object_handler_typ
 			return SUCCESS;
 
 		case IS_LONG:
-#if PHP_VERSION_ID >= 70300
 		case _IS_NUMBER:
-#endif
 #if SIZEOF_ZEND_LONG == 4
 			if (intern->integer > INT32_MAX || intern->integer < INT32_MIN) {
 				zend_error(E_WARNING, "Truncating 64-bit integer value %" PRId64 " to 32 bits", intern->integer);
