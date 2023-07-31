@@ -1,8 +1,5 @@
 --TEST--
 MongoDB\BSON\Javascript unserialization requires "code" string field (__serialize and __unserialize)
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 

@@ -1,9 +1,7 @@
 --TEST--
 MongoDB\BSON\Timestamp unserialization requires 64-bit integers to be positive unsigned 32-bit integers (__serialize and __unserialize)
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
-<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 
