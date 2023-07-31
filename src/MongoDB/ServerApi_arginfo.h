@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 27db2a958d63eaf3ca813416bf0756c981dd013f */
+ * Stub hash: 50ac33dea8943336b9c562a90e189036c90f1479 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ServerApi___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, version, IS_STRING, 0)
@@ -12,7 +12,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_ServerApi___
 ZEND_END_ARG_INFO()
 
 #if PHP_VERSION_ID >= 80000
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_ServerApi_bsonSerialize, 0, 0, MAY_BE_ARRAY|MAY_BE_OBJECT)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_ServerApi_bsonSerialize, 0, 0, stdClass, MAY_BE_ARRAY)
 ZEND_END_ARG_INFO()
 #endif
 

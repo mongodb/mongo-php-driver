@@ -10,7 +10,7 @@ class MyDocument implements MongoDB\BSON\Persistable {
     protected $bar = 2;
     public $baz = 3;
 
-    public function bsonSerialize(): object
+    public function bsonSerialize(): stdClass
     {
         return (object) [
             'foo' => $this->foo,

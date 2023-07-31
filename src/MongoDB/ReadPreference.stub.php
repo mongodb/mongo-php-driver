@@ -101,9 +101,9 @@ final class ReadPreference implements \MongoDB\BSON\Serializable, \Serializable
     final public static function __set_state(array $properties): ReadPreference {}
 
 #if PHP_VERSION_ID >= 80000
-    final public function bsonSerialize(): array|object {}
+    final public function bsonSerialize(): array|\stdClass {}
 #else
-    /** @return array|object */
+    /** @return array|\stdClass */
     final public function bsonSerialize() {}
 #endif
 

@@ -11,9 +11,9 @@ interface Serializable extends Type
 {
 #if PHP_VERSION_ID >= 80000
     /** @tentative-return-type */
-    public function bsonSerialize(): array|object;
+    public function bsonSerialize(): array|\stdClass;
 #else
-    /** @return array|object */
+    /** @return array|\stdClass */
     public function bsonSerialize();
 #endif
 }
