@@ -119,6 +119,7 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_serializable_ce)) {
 			zval   obj_data;
 			bson_t child;
+			bool   is_array;
 
 			zend_call_method_with_0_params(PHONGO_COMPAT_OBJ_P(object), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
 
@@ -128,20 +129,25 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 				return;
 			}
 
-			if (Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def))) {
+			if (
+				Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && (instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def) || instanceof_function(Z_OBJCE(obj_data), php_phongo_document_ce) || instanceof_function(Z_OBJCE(obj_data), php_phongo_packedarray_ce)))) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE,
-									   "Expected %s::%s() to return an array or stdClass, %s given",
+									   "Expected %s::%s() to return an array, stdClass, %s, or %s, %s given",
 									   ZSTR_VAL(Z_OBJCE_P(object)->name),
 									   BSON_SERIALIZE_FUNC_NAME,
+									   ZSTR_VAL(php_phongo_document_ce->name),
+									   ZSTR_VAL(php_phongo_packedarray_ce->name),
 									   PHONGO_ZVAL_CLASS_OR_TYPE_NAME(obj_data));
 				zval_ptr_dtor(&obj_data);
 
 				return;
 			}
 
+			is_array = php_phongo_is_array_or_document(&obj_data) == IS_ARRAY || (Z_TYPE(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE(obj_data), php_phongo_packedarray_ce));
+
 			/* Persistable objects must always be serialized as BSON documents;
 			 * otherwise, infer based on bsonSerialize()'s return value. */
-			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce) || php_phongo_is_array_or_document(&obj_data) == IS_OBJECT) {
+			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce) || !is_array) {
 				bson_append_document_begin(bson, key, key_len, &child);
 				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce)) {
 					bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(object)->name->val, Z_OBJCE_P(object)->name->len);
@@ -451,25 +457,34 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 					return;
 				}
 
-				if (Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def))) {
-					phongo_throw_exception(
-						PHONGO_ERROR_UNEXPECTED_VALUE,
-						"Expected %s::%s() to return an array or stdClass, %s given",
-						ZSTR_VAL(Z_OBJCE_P(data)->name),
-						BSON_SERIALIZE_FUNC_NAME,
-						PHONGO_ZVAL_CLASS_OR_TYPE_NAME(obj_data));
-
-					goto cleanup;
-				}
-
-				ht_data = HASH_OF(&obj_data);
-
 				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce)) {
 					bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(data)->name->val, Z_OBJCE_P(data)->name->len);
 					/* Ensure that we ignore an existing key with the same name
 					 * if one exists in the bsonSerialize() return value. */
 					skip_odm_field = true;
 				}
+
+				// If bsonSerialize() returns a BSON document or packedArray instance, recurse to copy data over directly
+				if (Z_TYPE(obj_data) == IS_OBJECT && (instanceof_function(Z_OBJCE(obj_data), php_phongo_document_ce) || instanceof_function(Z_OBJCE(obj_data), php_phongo_packedarray_ce))) {
+					php_phongo_zval_to_bson_internal(&obj_data, field_path, flags, bson, bson_out);
+
+					goto done;
+				}
+
+				if (Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def))) {
+					phongo_throw_exception(
+						PHONGO_ERROR_UNEXPECTED_VALUE,
+						"Expected %s::%s() to return an array, stdClass, %s, or %s, %s given",
+						ZSTR_VAL(Z_OBJCE_P(data)->name),
+						BSON_SERIALIZE_FUNC_NAME,
+						ZSTR_VAL(php_phongo_document_ce->name),
+						ZSTR_VAL(php_phongo_packedarray_ce->name),
+						PHONGO_ZVAL_CLASS_OR_TYPE_NAME(obj_data));
+
+					goto cleanup;
+				}
+
+				ht_data = HASH_OF(&obj_data);
 
 				break;
 			}

@@ -1,8 +1,8 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: cc59819a80929f30a89bde0ded725ee4de9d37f5 */
+ * Stub hash: 92732bafa65af8a12b291f7bcb52b069c45724a7 */
 
 #if PHP_VERSION_ID >= 80000
-ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_TYPE_MASK_EX(arginfo_class_MongoDB_BSON_Serializable_bsonSerialize, 0, 0, stdClass, MAY_BE_ARRAY)
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_TYPE_MASK_EX(arginfo_class_MongoDB_BSON_Serializable_bsonSerialize, 0, 0, stdClass|MongoDB\\BSON\\Document|MongoDB\\BSON\\PackedArray, MAY_BE_ARRAY)
 ZEND_END_ARG_INFO()
 #endif
 

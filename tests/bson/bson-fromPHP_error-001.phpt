@@ -48,16 +48,16 @@ foreach ($invalidValues as $invalidValue) {
 <?php exit(0); ?>
 --EXPECTF--
 Testing top-level objects
-Expected MyDocument::bsonSerialize() to return an array or stdClass, %r(null|NULL)%r given
-Expected MyDocument::bsonSerialize() to return an array or stdClass, int%S given
-Expected MyDocument::bsonSerialize() to return an array or stdClass, string given
-Expected MyDocument::bsonSerialize() to return an array or stdClass, bool%S given
-Expected MyDocument::bsonSerialize() to return an array or stdClass, MyDocument given
+Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, %r(null|NULL)%r given
+Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, int%S given
+Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, string given
+Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, bool%S given
+Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, MyDocument given
 
 Testing nested objects
-Expected MyDocument::bsonSerialize() to return an array or stdClass, %r(null|NULL)%r given
-Expected MyDocument::bsonSerialize() to return an array or stdClass, int%S given
-Expected MyDocument::bsonSerialize() to return an array or stdClass, string given
-Expected MyDocument::bsonSerialize() to return an array or stdClass, bool%S given
-Expected MyDocument::bsonSerialize() to return an array or stdClass, MyDocument given
+Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, %r(null|NULL)%r given
+Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, int%S given
+Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, string given
+Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, bool%S given
+Expected MyDocument::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, MyDocument given
 ===DONE===

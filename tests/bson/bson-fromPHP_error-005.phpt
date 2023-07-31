@@ -43,7 +43,7 @@ echo throws(function() {
 --EXPECT--
 Testing Serializable with direct circular reference
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
-Expected MyRecursiveSerializable::bsonSerialize() to return an array or stdClass, MyRecursiveSerializable given
+Expected MyRecursiveSerializable::bsonSerialize() to return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray, MyRecursiveSerializable given
 
 Testing Serializable with indirect circular reference
 OK: Got MongoDB\Driver\Exception\UnexpectedValueException
