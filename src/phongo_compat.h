@@ -285,15 +285,6 @@ static inline zend_bool zend_ini_parse_bool(zend_string* str)
 	Z_PARAM_ARRAY_OR_OBJECT(dest)
 #endif
 
-/* Per https://wiki.php.net/rfc/internal_method_return_types, "Non-final
- * internal method return types - when possible - are declared tentatively in
- * PHP 8.1, and they will become enforced in PHP 9.0." This can be revisited
- * when more general typing improvements are made in PHPC-1709. */
-#ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX
-#define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(name, return_reference, required_num_args, type, allow_null) \
-	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
-#endif
-
 /* ZEND_ABSTRACT_ME_WITH_FLAGS was introduced in PHP 8.0. */
 #ifndef ZEND_ABSTRACT_ME_WITH_FLAGS
 #define ZEND_ABSTRACT_ME_WITH_FLAGS(classname, name, arg_info, flags) ZEND_RAW_FENTRY(#name, NULL, arg_info, flags)
@@ -322,14 +313,20 @@ static inline zend_bool zend_ini_parse_bool(zend_string* str)
 #define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(name, return_reference, required_num_args, type, allow_null) \
 	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
 #endif
-
+#ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX
+#define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(name, return_reference, required_num_args, type, allow_null) \
+	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
+#endif
 #ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_MASK_EX
 #define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_MASK_EX(name, return_reference, required_num_args, type) \
 	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
 #endif
-
 #ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_INFO_EX
 #define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_INFO_EX(name, return_reference, required_num_args, class_name, allow_null) \
+	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
+#endif
+#ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_TYPE_MASK_EX
+#define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_OBJ_TYPE_MASK_EX(name, return_reference, required_num_args, class_name, type) \
 	ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
 #endif
 
