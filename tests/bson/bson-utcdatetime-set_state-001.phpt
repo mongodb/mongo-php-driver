@@ -21,15 +21,15 @@ foreach ($tests as $milliseconds) {
 <?php exit(0); ?>
 --EXPECTF--
 %r\\?%rMongoDB\BSON\UTCDateTime::__set_state(array(
-%w'milliseconds' => '0',
+   'milliseconds' => '0',
 ))
 
 %r\\?%rMongoDB\BSON\UTCDateTime::__set_state(array(
-%w'milliseconds' => '-1416445411987',
+   'milliseconds' => '-1416445411987',
 ))
 
 %r\\?%rMongoDB\BSON\UTCDateTime::__set_state(array(
-%w'milliseconds' => '1416445411987',
+   'milliseconds' => '1416445411987',
 ))
 
 ===DONE===

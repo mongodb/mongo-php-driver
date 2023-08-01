@@ -31,39 +31,39 @@ echo "\n\n";
 <?php exit(0); ?>
 --EXPECTF--
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
-%w'code' => 'function foo(bar) { return bar; }',
-%w'scope' => NULL,
+   'code' => 'function foo(bar) { return bar; }',
+   'scope' => NULL,
 ))
 
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
-%w'code' => 'function foo(bar) { return bar; }',
-%w'scope' => 
-  %Sarray(
-  %S),
+   'code' => 'function foo(bar) { return bar; }',
+   'scope' =>%w
+  %r\(object\)? %rarray(
+  %r\)?%r),
 ))
 
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
-%w'code' => 'function foo() { return foo; }',
-%w'scope' => 
-  %Sarray(
-  %w'foo' => 42,
-  %S),
+   'code' => 'function foo() { return foo; }',
+   'scope' =>%w
+  %r\(object\)? %rarray(
+     'foo' => 42,
+  %r\)?%r),
 ))
 
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
-%w'code' => 'function foo() { return id; }',
-%w'scope' => 
-  %Sarray(
-  %w'id' => 
+   'code' => 'function foo() { return id; }',
+   'scope' =>%w
+  %r\(object\)? %rarray(
+     'id' =>%w
     %r\\?%rMongoDB\BSON\ObjectId::__set_state(array(
-    %w'oid' => '53e2a1c40640fd72175d4603',
+       'oid' => '53e2a1c40640fd72175d4603',
     )),
-  %S),
+  %r\)?%r),
 ))
 
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
-%w'code' => 'function foo(bar) { return bar; }',
-%w'scope' => NULL,
+   'code' => 'function foo(bar) { return bar; }',
+   'scope' => NULL,
 ))
 
 ===DONE===

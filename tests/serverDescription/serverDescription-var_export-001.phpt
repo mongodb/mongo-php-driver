@@ -21,7 +21,7 @@ echo var_export($server->getServerDescription(), true), "\n";
    'host' => '%s',
    'port' => %d,
    'type' => '%r(Standalone|Mongos|RSPrimary|LoadBalancer)%r',
-   'hello_response' => 
+   'hello_response' =>%w
   array (%A
   ),
    'last_update_time' => %r('\d+'|\d+)%r,

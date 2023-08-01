@@ -15,8 +15,8 @@ var_dump(eval('return ' . $s . ';'));
 <?php exit(0); ?>
 --EXPECTF--
 %r\\?%rMongoDB\BSON\DBPointer::__set_state(array(
-%w'ref' => 'phongo.test',
-%w'id' => '5a2e78accd485d55b4050000',
+   'ref' => 'phongo.test',
+   'id' => '5a2e78accd485d55b4050000',
 ))
 object(MongoDB\BSON\DBPointer)#%d (%d) {
   ["ref"]=>

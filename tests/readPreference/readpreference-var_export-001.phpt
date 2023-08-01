@@ -45,30 +45,30 @@ foreach ($tests as $test) {
 ))
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondary',
-   'tags' => 
+   'tags' =>%w
   array (
-    0 => 
-    %Sarray(
+    0 =>%w
+    %r\(object\)? %rarray(
        'dc' => 'ny',
-    %S),
+    %r\)?%r),
   ),
 ))
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondary',
-   'tags' => 
+   'tags' =>%w
   array (
-    0 => 
-    %Sarray(
+    0 =>%w
+    %r\(object\)? %rarray(
        'dc' => 'ny',
-    %S),
-    1 => 
-    %Sarray(
+    %r\)?%r),
+    1 =>%w
+    %r\(object\)? %rarray(
        'dc' => 'sf',
        'use' => 'reporting',
-    %S),
-    2 => 
-    %Sarray(
-    %S),
+    %r\)?%r),
+    2 =>%w
+    %r\(object\)? %rarray(
+    %r\)?%r),
   ),
 ))
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(

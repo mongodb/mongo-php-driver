@@ -26,28 +26,28 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECTF--
 %r\\?%rMongoDB\BSON\Binary::__set_state(array(
-%w'data' => 'foobar',
-%w'type' => 0,
+   'data' => 'foobar',
+   'type' => 0,
 ))
 
 %r\\?%rMongoDB\BSON\Binary::__set_state(array(
-%w'data' => '',
-%w'type' => 0,
+   'data' => '',
+   'type' => 0,
 ))
 
 %r\\?%rMongoDB\BSON\Binary::__set_state(array(
-%w'data' => '' . "\0" . 'foo',
-%w'type' => 0,
+   'data' => '' . "\0" . 'foo',
+   'type' => 0,
 ))
 
 %r\\?%rMongoDB\BSON\Binary::__set_state(array(
-%w'data' => '>Egè›Ó¤VBfUD' . "\0" . '' . "\0" . '',
-%w'type' => 4,
+   'data' => '>Egè›Ó¤VBfUD' . "\0" . '' . "\0" . '',
+   'type' => 4,
 ))
 
 %r\\?%rMongoDB\BSON\Binary::__set_state(array(
-%w'data' => '8Xö"0¬<‘_0fCÆ?',
-%w'type' => 5,
+   'data' => '8Xö"0¬<‘_0fCÆ?',
+   'type' => 5,
 ))
 
 ===DONE===
