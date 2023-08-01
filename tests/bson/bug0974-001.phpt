@@ -31,25 +31,25 @@ object(stdClass)#%d (%d) {
   }
 }
 object(stdClass)#%d (%d) {
-  [%r(0|"0")%r]=>
+  ["0"]=>
   int(1)
-  [%r(1|"1")%r]=>
+  ["1"]=>
   int(2)
-  [%r(2|"2")%r]=>
+  ["2"]=>
   int(3)
-  [%r(3|"3")%r]=>
+  ["3"]=>
   object(MongoDB\BSON\UTCDateTime)#%d (%d) {
     ["milliseconds"]=>
     string(13) "1497352886906"
   }
 }
-object(stdClass)#3 (2) {
-  [%r(0|"0")%r]=>
+object(stdClass)#%d (%d) {
+  ["0"]=>
   object(MongoDB\BSON\ObjectId)#%d (%d) {
     ["oid"]=>
     string(24) "55f2b3f1f657b3fa97c9c0a2"
   }
-  [%r(1|"1")%r]=>
+  ["1"]=>
   object(MongoDB\BSON\UTCDateTime)#%d (%d) {
     ["milliseconds"]=>
     string(13) "1497352886906"
