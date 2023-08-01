@@ -123,3 +123,22 @@ AC_CACHE_CHECK([whether PTHREAD_ONCE_INIT needs braces],
 if test "$bson_cv_need_braces_on_pthread_once_init" = yes; then
     AC_SUBST(BSON_PTHREAD_ONCE_INIT_NEEDS_BRACES, 1)
 fi
+
+# Check for strerror_r()
+
+old_CPPFLAGS="$CPPFLAGS"
+dnl PHP 8.2+ defines _GNU_SOURCE by default
+if test "$PHP_MONGODB_PHP_VERSION_ID" -ge "80200"; then
+  CPPFLAGS="$CPPFLAGS -D_GNU_SOURCE"
+fi
+AC_FUNC_STRERROR_R
+CPPFLAGS="$old_CPPFLAGS"
+
+dnl AC_FUNC_STRERROR_R defines HAVE_DECL_STRERROR_R and STRERROR_R_CHAR_P but we
+dnl need to set BSON_HAVE_XSI_STRERROR_R for libbson. The macro result is cached
+dnl in $ac_cv_func_strerror_r_char_p so check that directly.
+if test "$ac_cv_func_strerror_r_char_p" = "yes"; then
+  AC_SUBST(BSON_HAVE_XSI_STRERROR_R, 0)
+else
+  AC_SUBST(BSON_HAVE_XSI_STRERROR_R, 1)
+fi
