@@ -23,19 +23,19 @@ foreach ($tests as $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "readConcern" option to be MongoDB\Driver\ReadConcern, int%S given
+Expected "readConcern" option to be MongoDB\Driver\ReadConcern, int given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "readConcern" option to be MongoDB\Driver\ReadConcern, %r(double|float)%r given
+Expected "readConcern" option to be MongoDB\Driver\ReadConcern, float given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readConcern" option to be MongoDB\Driver\ReadConcern, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "readConcern" option to be MongoDB\Driver\ReadConcern, bool%S given
+Expected "readConcern" option to be MongoDB\Driver\ReadConcern, bool given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readConcern" option to be MongoDB\Driver\ReadConcern, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readConcern" option to be MongoDB\Driver\ReadConcern, stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "readConcern" option to be MongoDB\Driver\ReadConcern, %r(null|NULL)%r given
+Expected "readConcern" option to be MongoDB\Driver\ReadConcern, null given
 ===DONE===

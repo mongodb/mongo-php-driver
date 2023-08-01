@@ -29,9 +29,9 @@ foreach ($tests as $opts) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "keyMaterial" option to be MongoDB\BSON\Binary, %r(int|integer)%r given
+Expected "keyMaterial" option to be MongoDB\BSON\Binary, int given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "keyMaterial" option to be MongoDB\BSON\Binary, stdClass given
 ===DONE===

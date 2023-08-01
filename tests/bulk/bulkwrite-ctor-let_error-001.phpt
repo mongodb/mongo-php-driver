@@ -16,11 +16,11 @@ foreach ($invalidValues as $invalidValue) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "let" option to be array or object, %r(bool|boolean)%r given
+Expected "let" option to be array or object, bool given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "let" option to be array or object, %r(int|integer)%r given
+Expected "let" option to be array or object, int given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "let" option to be array or object, string given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
