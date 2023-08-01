@@ -34,6 +34,7 @@ $tests = array(
     array('foo' => 'bar'),
     (object) array(1, 2, 3),
     (object) array('foo' => 'bar'),
+    # The PackedArray check will fail for instances of Persistable
     MongoDB\BSON\PackedArray::fromPHP([1, 2, 3]),
     MongoDB\BSON\Document::fromPHP(['foo' => 'bar']),
 );
@@ -74,7 +75,7 @@ Testing top-level objects
 { "foo" : "bar" }
 { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" }
 { "0" : 1, "1" : 2, "2" : 3 }
-{ "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "0" : 1, "1" : 2, "2" : 3 }
+Expected MyPersistableDocument::bsonSerialize() to return an array, stdClass, or MongoDB\BSON\Document, MongoDB\BSON\PackedArray given
 { "foo" : "bar" }
 { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" }
 
@@ -88,7 +89,7 @@ Testing nested objects
 { "nested" : { "foo" : "bar" } }
 { "nested" : { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" } }
 { "nested" : [ 1, 2, 3 ] }
-{ "nested" : { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "0" : 1, "1" : 2, "2" : 3 } }
+Expected MyPersistableDocument::bsonSerialize() to return an array, stdClass, or MongoDB\BSON\Document, MongoDB\BSON\PackedArray given
 { "nested" : { "foo" : "bar" } }
 { "nested" : { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" } }
 ===DONE===

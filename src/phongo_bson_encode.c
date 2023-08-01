@@ -135,7 +135,20 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 			}
 
 			// TODO PHP_VERSION_ID < 80000: obsolete once the tentative return type of bsonSerialize() is enforced
-			if (
+			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce)) {
+				if (
+					Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && (instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def) || instanceof_function(Z_OBJCE(obj_data), php_phongo_document_ce)))) {
+					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE,
+										   "Expected %s::%s() to return an array, stdClass, or %s, %s given",
+										   ZSTR_VAL(Z_OBJCE_P(object)->name),
+										   BSON_SERIALIZE_FUNC_NAME,
+										   ZSTR_VAL(php_phongo_document_ce->name),
+										   PHONGO_ZVAL_CLASS_OR_TYPE_NAME(obj_data));
+					zval_ptr_dtor(&obj_data);
+
+					return;
+				}
+			} else if (
 				Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && (instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def) || instanceof_function(Z_OBJCE(obj_data), php_phongo_document_ce) || instanceof_function(Z_OBJCE(obj_data), php_phongo_packedarray_ce)))) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE,
 									   "Expected %s::%s() to return an array, stdClass, %s, or %s, %s given",
@@ -462,6 +475,18 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 				}
 
 				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce)) {
+					if (Z_TYPE(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE(obj_data), php_phongo_packedarray_ce)) {
+						phongo_throw_exception(
+							PHONGO_ERROR_UNEXPECTED_VALUE,
+							"Expected %s::%s() to return an array, stdClass, or %s, %s given",
+							ZSTR_VAL(Z_OBJCE_P(data)->name),
+							BSON_SERIALIZE_FUNC_NAME,
+							ZSTR_VAL(php_phongo_document_ce->name),
+							PHONGO_ZVAL_CLASS_OR_TYPE_NAME(obj_data));
+
+						goto cleanup;
+					}
+
 					bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(data)->name->val, Z_OBJCE_P(data)->name->len);
 					/* Ensure that we ignore an existing key with the same name
 					 * if one exists in the bsonSerialize() return value. */
