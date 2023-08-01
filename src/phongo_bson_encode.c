@@ -104,14 +104,16 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 	}
 
 	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce)) {
-		if (Z_TYPE_P(object) == IS_OBJECT && (instanceof_function(Z_OBJCE_P(object), php_phongo_document_ce) || instanceof_function(Z_OBJCE_P(object), php_phongo_packedarray_ce))) {
-			if (instanceof_function(Z_OBJCE_P(object), php_phongo_document_ce)) {
-				php_phongo_document_t* intern = Z_DOCUMENT_OBJ_P(object);
-				bson_append_document(bson, key, key_len, intern->bson);
-			} else {
-				php_phongo_packedarray_t* intern = Z_PACKEDARRAY_OBJ_P(object);
-				bson_append_array(bson, key, key_len, intern->bson);
-			}
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_document_ce)) {
+			php_phongo_document_t* intern = Z_DOCUMENT_OBJ_P(object);
+			bson_append_document(bson, key, key_len, intern->bson);
+
+			return;
+		}
+
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_packedarray_ce)) {
+			php_phongo_packedarray_t* intern = Z_PACKEDARRAY_OBJ_P(object);
+			bson_append_array(bson, key, key_len, intern->bson);
 
 			return;
 		}
