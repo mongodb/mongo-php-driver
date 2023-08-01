@@ -131,6 +131,7 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 				return;
 			}
 
+			// TODO PHP_VERSION_ID < 80000: obsolete once the tentative return type of bsonSerialize() is enforced
 			if (
 				Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && (instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def) || instanceof_function(Z_OBJCE(obj_data), php_phongo_document_ce) || instanceof_function(Z_OBJCE(obj_data), php_phongo_packedarray_ce)))) {
 				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE,
