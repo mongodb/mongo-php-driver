@@ -58,6 +58,10 @@ static int php_phongo_is_array_or_document(zval* val)
 	int        count;
 
 	if (Z_TYPE_P(val) != IS_ARRAY) {
+		if (Z_TYPE_P(val) == IS_OBJECT && instanceof_function(Z_OBJCE_P(val), php_phongo_packedarray_ce)) {
+			return IS_ARRAY;
+		}
+
 		return IS_OBJECT;
 	}
 
@@ -121,7 +125,6 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_serializable_ce)) {
 			zval   obj_data;
 			bson_t child;
-			bool   is_array;
 
 			zend_call_method_with_0_params(PHONGO_COMPAT_OBJ_P(object), NULL, NULL, BSON_SERIALIZE_FUNC_NAME, &obj_data);
 
@@ -146,11 +149,9 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 				return;
 			}
 
-			is_array = php_phongo_is_array_or_document(&obj_data) == IS_ARRAY || (Z_TYPE(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE(obj_data), php_phongo_packedarray_ce));
-
 			/* Persistable objects must always be serialized as BSON documents;
 			 * otherwise, infer based on bsonSerialize()'s return value. */
-			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce) || !is_array) {
+			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce) || php_phongo_is_array_or_document(&obj_data) != IS_ARRAY) {
 				bson_append_document_begin(bson, key, key_len, &child);
 				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce)) {
 					bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(object)->name->val, Z_OBJCE_P(object)->name->len);
