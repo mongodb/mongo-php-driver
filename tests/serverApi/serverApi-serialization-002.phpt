@@ -32,7 +32,7 @@ object(MongoDB\Driver\ServerApi)#%d (%d) {
   NULL
 }
 O:24:"MongoDB\Driver\ServerApi":3:{s:7:"version";s:1:"1";s:6:"strict";N;s:17:"deprecationErrors";N;}
-object(MongoDB\Driver\ServerApi)#5 (3) {
+object(MongoDB\Driver\ServerApi)#%d (%d) {
   ["version"]=>
   string(1) "1"
   ["strict"]=>
@@ -50,7 +50,7 @@ object(MongoDB\Driver\ServerApi)#%d (%d) {
   NULL
 }
 O:24:"MongoDB\Driver\ServerApi":3:{s:7:"version";s:1:"1";s:6:"strict";b:1;s:17:"deprecationErrors";N;}
-object(MongoDB\Driver\ServerApi)#5 (3) {
+object(MongoDB\Driver\ServerApi)#%d (%d) {
   ["version"]=>
   string(1) "1"
   ["strict"]=>
@@ -68,7 +68,7 @@ object(MongoDB\Driver\ServerApi)#%d (%d) {
   bool(true)
 }
 O:24:"MongoDB\Driver\ServerApi":3:{s:7:"version";s:1:"1";s:6:"strict";N;s:17:"deprecationErrors";b:1;}
-object(MongoDB\Driver\ServerApi)#5 (3) {
+object(MongoDB\Driver\ServerApi)#%d (%d) {
   ["version"]=>
   string(1) "1"
   ["strict"]=>
@@ -86,7 +86,7 @@ object(MongoDB\Driver\ServerApi)#%d (%d) {
   bool(false)
 }
 O:24:"MongoDB\Driver\ServerApi":3:{s:7:"version";s:1:"1";s:6:"strict";b:0;s:17:"deprecationErrors";b:0;}
-object(MongoDB\Driver\ServerApi)#5 (3) {
+object(MongoDB\Driver\ServerApi)#%d (%d) {
   ["version"]=>
   string(1) "1"
   ["strict"]=>

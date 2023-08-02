@@ -10,7 +10,7 @@ var_dump($dbptr->dbref);
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
-object(MongoDB\BSON\DBPointer)#1 (2) {
+object(MongoDB\BSON\DBPointer)#%d (%d) {
   ["ref"]=>
   string(11) "phongo.test"
   ["id"]=>
