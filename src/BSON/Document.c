@@ -473,7 +473,7 @@ static HashTable* php_phongo_document_get_properties(phongo_compat_object_handle
 
 void php_phongo_document_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_document_ce                = register_class_MongoDB_BSON_Document(zend_ce_aggregate, zend_ce_serializable);
+	php_phongo_document_ce                = register_class_MongoDB_BSON_Document(zend_ce_aggregate, zend_ce_serializable, php_phongo_type_ce);
 	php_phongo_document_ce->create_object = php_phongo_document_create_object;
 
 #if PHP_VERSION_ID >= 80000

@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class Document implements \IteratorAggregate, \Serializable
+final class Document implements \IteratorAggregate, \Serializable, Type
 {
     private function __construct() {}
 

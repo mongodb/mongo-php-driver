@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: df8b13e252c05cbb7603dec8c1659fb88845ed73 */
+ * Stub hash: 1a1a31ef5910ddfbe66ba6c350df216ffe25b5dd */
 
 #if PHP_VERSION_ID >= 80000
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference___construct, 0, 0, 1)
@@ -35,15 +35,8 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreferen
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-#if PHP_VERSION_ID >= 80000
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_ReadPreference_bsonSerialize, 0, 0, MAY_BE_ARRAY|MAY_BE_OBJECT)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference_bsonSerialize, 0, 0, stdClass, 0)
 ZEND_END_ARG_INFO()
-#endif
-
-#if !(PHP_VERSION_ID >= 80000)
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ReadPreference_bsonSerialize, 0, 0, 0)
-ZEND_END_ARG_INFO()
-#endif
 
 #define arginfo_class_MongoDB_Driver_ReadPreference_serialize arginfo_class_MongoDB_Driver_ReadPreference_getModeString
 
@@ -78,12 +71,7 @@ static ZEND_METHOD(MongoDB_Driver_ReadPreference, getMode);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, getModeString);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, getTagSets);
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, __set_state);
-#if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize);
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-static ZEND_METHOD(MongoDB_Driver_ReadPreference, bsonSerialize);
-#endif
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, serialize);
 #if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_ReadPreference, unserialize);
@@ -108,12 +96,7 @@ static const zend_function_entry class_MongoDB_Driver_ReadPreference_methods[] =
 	ZEND_ME(MongoDB_Driver_ReadPreference, getModeString, arginfo_class_MongoDB_Driver_ReadPreference_getModeString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, getTagSets, arginfo_class_MongoDB_Driver_ReadPreference_getTagSets, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ReadPreference, __set_state, arginfo_class_MongoDB_Driver_ReadPreference___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
-#if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_ReadPreference, bsonSerialize, arginfo_class_MongoDB_Driver_ReadPreference_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-	ZEND_ME(MongoDB_Driver_ReadPreference, bsonSerialize, arginfo_class_MongoDB_Driver_ReadPreference_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
 	ZEND_ME(MongoDB_Driver_ReadPreference, serialize, arginfo_class_MongoDB_Driver_ReadPreference_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_ReadPreference, unserialize, arginfo_class_MongoDB_Driver_ReadPreference_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

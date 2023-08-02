@@ -58,6 +58,10 @@ static int php_phongo_is_array_or_document(zval* val)
 	int        count;
 
 	if (Z_TYPE_P(val) != IS_ARRAY) {
+		if (Z_TYPE_P(val) == IS_OBJECT && instanceof_function(Z_OBJCE_P(val), php_phongo_packedarray_ce)) {
+			return IS_ARRAY;
+		}
+
 		return IS_OBJECT;
 	}
 
@@ -86,6 +90,49 @@ static int php_phongo_is_array_or_document(zval* val)
 	return IS_ARRAY;
 }
 
+/* Checks the return type of a bsonSerialize() method. Returns true on
+ * success; otherwise, throws an exception and returns false.
+ *
+ * TODO: obsolete once PHP 8.0+ is required and tentative return type is enforced.
+ */
+static inline bool phongo_check_bson_serialize_return_type(zval* retval, zend_class_entry* ce)
+{
+	if (instanceof_function(ce, php_phongo_persistable_ce)) {
+		// Instances of Persistable must return an array, stdClass, or MongoDB\BSON\Document
+		if (
+			Z_TYPE_P(retval) != IS_ARRAY && !(Z_TYPE_P(retval) == IS_OBJECT && (instanceof_function(Z_OBJCE_P(retval), zend_standard_class_def) || instanceof_function(Z_OBJCE_P(retval), php_phongo_document_ce)))) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE,
+								   "Expected %s::%s() to return an array, stdClass, or %s, %s given",
+								   ZSTR_VAL(ce->name),
+								   BSON_SERIALIZE_FUNC_NAME,
+								   ZSTR_VAL(php_phongo_document_ce->name),
+								   PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*retval));
+			return false;
+		}
+
+		return true;
+	}
+
+	if (instanceof_function(ce, php_phongo_serializable_ce)) {
+		// Instances of Serializable must return an array, stdClass, MongoDB\BSON\Document, or MongoDB\BSON\PackedArray
+		if (
+			Z_TYPE_P(retval) != IS_ARRAY && !(Z_TYPE_P(retval) == IS_OBJECT && (instanceof_function(Z_OBJCE_P(retval), zend_standard_class_def) || instanceof_function(Z_OBJCE_P(retval), php_phongo_document_ce) || instanceof_function(Z_OBJCE_P(retval), php_phongo_packedarray_ce)))) {
+			phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE,
+								   "Expected %s::%s() to return an array, stdClass, %s, or %s, %s given",
+								   ZSTR_VAL(ce->name),
+								   BSON_SERIALIZE_FUNC_NAME,
+								   ZSTR_VAL(php_phongo_document_ce->name),
+								   ZSTR_VAL(php_phongo_packedarray_ce->name),
+								   PHONGO_ZVAL_CLASS_OR_TYPE_NAME(*retval));
+			return false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 /* Appends the array or object argument to the BSON document.
  *
  * For instances of MongoDB\BSON\Document, raw BSON data is appended as document.
@@ -103,19 +150,21 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		return;
 	}
 
-	if (Z_TYPE_P(object) == IS_OBJECT && (instanceof_function(Z_OBJCE_P(object), php_phongo_document_ce) || instanceof_function(Z_OBJCE_P(object), php_phongo_packedarray_ce))) {
+	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce)) {
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_document_ce)) {
 			php_phongo_document_t* intern = Z_DOCUMENT_OBJ_P(object);
 			bson_append_document(bson, key, key_len, intern->bson);
-		} else {
-			php_phongo_packedarray_t* intern = Z_PACKEDARRAY_OBJ_P(object);
-			bson_append_array(bson, key, key_len, intern->bson);
+
+			return;
 		}
 
-		return;
-	}
+		if (instanceof_function(Z_OBJCE_P(object), php_phongo_packedarray_ce)) {
+			php_phongo_packedarray_t* intern = Z_PACKEDARRAY_OBJ_P(object);
+			bson_append_array(bson, key, key_len, intern->bson);
 
-	if (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), php_phongo_type_ce)) {
+			return;
+		}
+
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_serializable_ce)) {
 			zval   obj_data;
 			bson_t child;
@@ -128,20 +177,15 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 				return;
 			}
 
-			if (Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def))) {
-				phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE,
-									   "Expected %s::%s() to return an array or stdClass, %s given",
-									   ZSTR_VAL(Z_OBJCE_P(object)->name),
-									   BSON_SERIALIZE_FUNC_NAME,
-									   PHONGO_ZVAL_CLASS_OR_TYPE_NAME(obj_data));
+			if (!phongo_check_bson_serialize_return_type(&obj_data, Z_OBJCE_P(object))) {
+				// Exception already thrown
 				zval_ptr_dtor(&obj_data);
-
 				return;
 			}
 
 			/* Persistable objects must always be serialized as BSON documents;
 			 * otherwise, infer based on bsonSerialize()'s return value. */
-			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce) || php_phongo_is_array_or_document(&obj_data) == IS_OBJECT) {
+			if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce) || php_phongo_is_array_or_document(&obj_data) != IS_ARRAY) {
 				bson_append_document_begin(bson, key, key_len, &child);
 				if (instanceof_function(Z_OBJCE_P(object), php_phongo_persistable_ce)) {
 					bson_append_binary(&child, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(object)->name->val, Z_OBJCE_P(object)->name->len);
@@ -451,18 +495,10 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 					return;
 				}
 
-				if (Z_TYPE(obj_data) != IS_ARRAY && !(Z_TYPE(obj_data) == IS_OBJECT && instanceof_function(Z_OBJCE(obj_data), zend_standard_class_def))) {
-					phongo_throw_exception(
-						PHONGO_ERROR_UNEXPECTED_VALUE,
-						"Expected %s::%s() to return an array or stdClass, %s given",
-						ZSTR_VAL(Z_OBJCE_P(data)->name),
-						BSON_SERIALIZE_FUNC_NAME,
-						PHONGO_ZVAL_CLASS_OR_TYPE_NAME(obj_data));
-
+				if (!phongo_check_bson_serialize_return_type(&obj_data, Z_OBJCE_P(data))) {
+					// Exception already thrown
 					goto cleanup;
 				}
-
-				ht_data = HASH_OF(&obj_data);
 
 				if (instanceof_function(Z_OBJCE_P(data), php_phongo_persistable_ce)) {
 					bson_append_binary(bson, PHONGO_ODM_FIELD_NAME, -1, 0x80, (const uint8_t*) Z_OBJCE_P(data)->name->val, Z_OBJCE_P(data)->name->len);
@@ -470,6 +506,15 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 					 * if one exists in the bsonSerialize() return value. */
 					skip_odm_field = true;
 				}
+
+				// If bsonSerialize() returns a BSON document or packedArray instance, recurse to copy data over directly
+				if (Z_TYPE(obj_data) == IS_OBJECT && (instanceof_function(Z_OBJCE(obj_data), php_phongo_document_ce) || instanceof_function(Z_OBJCE(obj_data), php_phongo_packedarray_ce))) {
+					php_phongo_zval_to_bson_internal(&obj_data, field_path, flags, bson, bson_out);
+
+					goto done;
+				}
+
+				ht_data = HASH_OF(&obj_data);
 
 				break;
 			}

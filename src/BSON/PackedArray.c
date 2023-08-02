@@ -403,7 +403,7 @@ static HashTable* php_phongo_packedarray_get_properties(phongo_compat_object_han
 
 void php_phongo_packedarray_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_packedarray_ce                = register_class_MongoDB_BSON_PackedArray(zend_ce_aggregate, zend_ce_serializable);
+	php_phongo_packedarray_ce                = register_class_MongoDB_BSON_PackedArray(zend_ce_aggregate, zend_ce_serializable, php_phongo_type_ce);
 	php_phongo_packedarray_ce->create_object = php_phongo_packedarray_create_object;
 
 #if PHP_VERSION_ID >= 80000

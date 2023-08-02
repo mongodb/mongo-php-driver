@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 27db2a958d63eaf3ca813416bf0756c981dd013f */
+ * Stub hash: 7678bfacdb398a3528feb4226a5ca1b8a21b9516 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ServerApi___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, version, IS_STRING, 0)
@@ -11,15 +11,8 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_ServerApi___
 	ZEND_ARG_TYPE_INFO(0, properties, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-#if PHP_VERSION_ID >= 80000
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_MASK_EX(arginfo_class_MongoDB_Driver_ServerApi_bsonSerialize, 0, 0, MAY_BE_ARRAY|MAY_BE_OBJECT)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_ServerApi_bsonSerialize, 0, 0, stdClass, 0)
 ZEND_END_ARG_INFO()
-#endif
-
-#if !(PHP_VERSION_ID >= 80000)
-ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_ServerApi_bsonSerialize, 0, 0, 0)
-ZEND_END_ARG_INFO()
-#endif
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_ServerApi_serialize, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
@@ -46,12 +39,7 @@ ZEND_END_ARG_INFO()
 
 static ZEND_METHOD(MongoDB_Driver_ServerApi, __construct);
 static ZEND_METHOD(MongoDB_Driver_ServerApi, __set_state);
-#if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_ServerApi, bsonSerialize);
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-static ZEND_METHOD(MongoDB_Driver_ServerApi, bsonSerialize);
-#endif
 static ZEND_METHOD(MongoDB_Driver_ServerApi, serialize);
 #if PHP_VERSION_ID >= 80000
 static ZEND_METHOD(MongoDB_Driver_ServerApi, unserialize);
@@ -66,12 +54,7 @@ static ZEND_METHOD(MongoDB_Driver_ServerApi, __serialize);
 static const zend_function_entry class_MongoDB_Driver_ServerApi_methods[] = {
 	ZEND_ME(MongoDB_Driver_ServerApi, __construct, arginfo_class_MongoDB_Driver_ServerApi___construct, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_ServerApi, __set_state, arginfo_class_MongoDB_Driver_ServerApi___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
-#if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_ServerApi, bsonSerialize, arginfo_class_MongoDB_Driver_ServerApi_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
-#if !(PHP_VERSION_ID >= 80000)
-	ZEND_ME(MongoDB_Driver_ServerApi, bsonSerialize, arginfo_class_MongoDB_Driver_ServerApi_bsonSerialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-#endif
 	ZEND_ME(MongoDB_Driver_ServerApi, serialize, arginfo_class_MongoDB_Driver_ServerApi_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 #if PHP_VERSION_ID >= 80000
 	ZEND_ME(MongoDB_Driver_ServerApi, unserialize, arginfo_class_MongoDB_Driver_ServerApi_unserialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)

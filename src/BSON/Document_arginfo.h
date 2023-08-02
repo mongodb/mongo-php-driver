@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: e00ccf66afed0f51040527ee5ee24513f0c1f495 */
+ * Stub hash: 703e15f17b01dd2b6f04cb89c080ba83a5a420d0 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Document___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -166,14 +166,14 @@ static const zend_function_entry class_MongoDB_BSON_Document_methods[] = {
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_BSON_Document(zend_class_entry *class_entry_IteratorAggregate, zend_class_entry *class_entry_Serializable)
+static zend_class_entry *register_class_MongoDB_BSON_Document(zend_class_entry *class_entry_IteratorAggregate, zend_class_entry *class_entry_Serializable, zend_class_entry *class_entry_MongoDB_BSON_Type)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Document", class_MongoDB_BSON_Document_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
-	zend_class_implements(class_entry, 2, class_entry_IteratorAggregate, class_entry_Serializable);
+	zend_class_implements(class_entry, 3, class_entry_IteratorAggregate, class_entry_Serializable, class_entry_MongoDB_BSON_Type);
 
 	return class_entry;
 }
