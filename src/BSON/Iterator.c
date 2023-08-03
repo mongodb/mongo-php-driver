@@ -154,7 +154,7 @@ static PHP_METHOD(MongoDB_BSON_Iterator, key)
 		return;
 	}
 
-	RETURN_STRING(bson_iter_key(&intern->iter));
+	RETURN_STRING(key);
 }
 
 static PHP_METHOD(MongoDB_BSON_Iterator, next)
