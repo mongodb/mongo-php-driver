@@ -38,27 +38,27 @@ echo "\n\n";
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
    'code' => 'function foo(bar) { return bar; }',
    'scope' =>%w
-  %r\(object\)? %rarray(
-  %r\)?%r),
+  (object) array(
+  ),
 ))
 
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
    'code' => 'function foo() { return foo; }',
    'scope' =>%w
-  %r\(object\)? %rarray(
+  (object) array(
      'foo' => 42,
-  %r\)?%r),
+  ),
 ))
 
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
    'code' => 'function foo() { return id; }',
    'scope' =>%w
-  %r\(object\)? %rarray(
+  (object) array(
      'id' =>%w
     %r\\?%rMongoDB\BSON\ObjectId::__set_state(array(
        'oid' => '53e2a1c40640fd72175d4603',
     )),
-  %r\)?%r),
+  ),
 ))
 
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(

@@ -51,9 +51,9 @@ foreach ($tests as $fields) {
    'tags' =>%w
   array (
     0 =>%w
-    %r\(object\)? %rarray(
+    (object) array(
        'dc' => 'ny',
-    %r\)?%r),
+    ),
   ),
 ))
 
@@ -62,17 +62,17 @@ foreach ($tests as $fields) {
    'tags' =>%w
   array (
     0 =>%w
-    %r\(object\)? %rarray(
+    (object) array(
        'dc' => 'ny',
-    %r\)?%r),
+    ),
     1 =>%w
-    %r\(object\)? %rarray(
+    (object) array(
        'dc' => 'sf',
        'use' => 'reporting',
-    %r\)?%r),
+    ),
     2 =>%w
-    %r\(object\)? %rarray(
-    %r\)?%r),
+    (object) array(
+    ),
   ),
 ))
 
