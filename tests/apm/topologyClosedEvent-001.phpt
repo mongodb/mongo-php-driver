@@ -33,7 +33,7 @@ class MySubscriber implements MongoDB\Driver\Monitoring\SDAMSubscriber
     public function topologyOpening(MongoDB\Driver\Monitoring\TopologyOpeningEvent $event): void {}
 }
 
-/* Note: TopologyChangedEvent can only be observed for non-persistent clients.
+/* Note: TopologyClosedEvent can only be observed for non-persistent clients.
  * Persistent clients are destroyed in GSHUTDOWN, long after any PHP objects
  * (including subscribers) are freed. */
 $m = create_test_manager(URI, [], ['disableClientPersistence' => true]);
