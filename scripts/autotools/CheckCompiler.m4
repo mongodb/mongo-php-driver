@@ -86,18 +86,6 @@ if test "$c_compiler" = "unknown"; then
     AC_MSG_ERROR([Compiler GCC >= 4.1 or Clang >= 3.3 is required for C compilation])
 fi
 
-# GLibc 2.19 complains about both _BSD_SOURCE and _GNU_SOURCE. The _GNU_SOURCE
-# contains everything anyway. So just use that.
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <features.h>
-#ifndef __GLIBC__
-#error not glibc
-#endif
-]], [])],
-LIBC_FEATURES="-D_GNU_SOURCE",
-LIBC_FEATURES="-D_BSD_SOURCE")
-AC_SUBST(LIBC_FEATURES)
-
 AC_C_CONST
 AC_C_INLINE
 AC_C_TYPEOF
