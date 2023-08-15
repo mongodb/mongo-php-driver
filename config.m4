@@ -348,6 +348,7 @@ if test "$PHP_MONGODB" != "no"; then
 
     _include([scripts/autotools/CheckCompiler.m4])
     _include([scripts/autotools/CheckHost.m4])
+    _include([scripts/autotools/PlatformFlags.m4])
 
     _include([scripts/autotools/libbson/CheckAtomics.m4])
     _include([scripts/autotools/libbson/CheckHeaders.m4])
@@ -361,7 +362,6 @@ if test "$PHP_MONGODB" != "no"; then
     _include([scripts/autotools/libmongoc/CheckSSL.m4])
     _include([scripts/autotools/libmongoc/CheckUtf8Proc.m4])
     _include([scripts/autotools/libmongoc/FindDependencies.m4])
-    _include([scripts/autotools/libmongoc/PlatformFlags.m4])
     _include([scripts/autotools/libmongoc/Versions.m4])
     _include([scripts/autotools/libmongoc/WeakSymbols.m4])
 

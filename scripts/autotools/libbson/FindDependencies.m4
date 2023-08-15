@@ -1,7 +1,3 @@
-if test "$os_win32" != "yes"; then
-    PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS -D_DEFAULT_SOURCE"
-fi
-
 # Check for strnlen()
 dnl AC_CHECK_FUNC isn't properly respecting _XOPEN_SOURCE for strnlen for unknown reason
 AC_SUBST(BSON_HAVE_STRNLEN, 0)
