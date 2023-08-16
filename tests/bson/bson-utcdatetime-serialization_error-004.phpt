@@ -1,8 +1,5 @@
 --TEST--
 MongoDB\BSON\UTCDateTime unserialization requires "milliseconds" string to parse as 64-bit integer (__serialize and __unserialize)
---SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
-<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 

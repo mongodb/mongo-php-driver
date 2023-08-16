@@ -15,7 +15,7 @@ var_dump(eval('return ' . $s . ';'));
 <?php exit(0); ?>
 --EXPECTF--
 %r\\?%rMongoDB\BSON\Symbol::__set_state(array(
-%w'symbol' => 'test',
+   'symbol' => 'test',
 ))
 object(MongoDB\BSON\Symbol)#%d (%d) {
   ["symbol"]=>

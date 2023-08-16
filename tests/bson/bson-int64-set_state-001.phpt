@@ -15,7 +15,7 @@ var_dump(eval('return ' . $s . ';'));
 <?php exit(0); ?>
 --EXPECTF--
 %r\\?%rMongoDB\BSON\Int64::__set_state(array(
-%w'integer' => '2',
+   'integer' => '2',
 ))
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>

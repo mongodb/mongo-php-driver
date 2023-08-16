@@ -14,7 +14,7 @@ echo "\n";
 <?php exit(0); ?>
 --EXPECTF--
 %r\\?%rMongoDB\BSON\Regex::__set_state(array(
-%w'pattern' => 'regexp',
-%w'flags' => 'ilmsux',
+   'pattern' => 'regexp',
+   'flags' => 'ilmsux',
 ))
 ===DONE===

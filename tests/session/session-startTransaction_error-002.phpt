@@ -54,19 +54,19 @@ echo raises(function() use ($session) {
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "maxCommitTimeMS" option to be >= 0, -1 given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "readConcern" option to be MongoDB\Driver\ReadConcern, int%S given
+Expected "readConcern" option to be MongoDB\Driver\ReadConcern, int given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readConcern" option to be MongoDB\Driver\ReadConcern, stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readConcern" option to be MongoDB\Driver\ReadConcern, MongoDB\Driver\WriteConcern given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "readPreference" option to be MongoDB\Driver\ReadPreference, int%S given
+Expected "readPreference" option to be MongoDB\Driver\ReadPreference, int given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readPreference" option to be MongoDB\Driver\ReadPreference, stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "readPreference" option to be MongoDB\Driver\ReadPreference, MongoDB\Driver\ReadConcern given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, int%S given
+Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, int given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "writeConcern" option to be MongoDB\Driver\WriteConcern, stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

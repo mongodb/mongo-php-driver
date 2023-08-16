@@ -22,15 +22,15 @@ foreach ($tests as $test) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected w to be integer or string, %r(double|float)%r given
+Expected w to be integer or string, float given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected w to be integer or string, bool%S given
+Expected w to be integer or string, bool given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected w to be integer or string, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected w to be integer or string, stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected w to be integer or string, %r(null|NULL)%r given
+Expected w to be integer or string, null given
 ===DONE===

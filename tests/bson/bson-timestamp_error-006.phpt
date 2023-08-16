@@ -22,23 +22,23 @@ foreach ($invalidValues as $invalidValue) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected increment to be an unsigned 32-bit integer or string, %r(null|NULL)%r given
+Expected increment to be an unsigned 32-bit integer or string, null given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected increment to be an unsigned 32-bit integer or string, %r(double|float)%r given
+Expected increment to be an unsigned 32-bit integer or string, float given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected increment to be an unsigned 32-bit integer or string, bool%S given
+Expected increment to be an unsigned 32-bit integer or string, bool given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected increment to be an unsigned 32-bit integer or string, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected increment to be an unsigned 32-bit integer or string, stdClass given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected timestamp to be an unsigned 32-bit integer or string, %r(null|NULL)%r given
+Expected timestamp to be an unsigned 32-bit integer or string, null given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected timestamp to be an unsigned 32-bit integer or string, %r(double|float)%r given
+Expected timestamp to be an unsigned 32-bit integer or string, float given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected timestamp to be an unsigned 32-bit integer or string, bool%S given
+Expected timestamp to be an unsigned 32-bit integer or string, bool given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected timestamp to be an unsigned 32-bit integer or string, array given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException

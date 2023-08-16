@@ -153,7 +153,7 @@ static PHP_METHOD(MongoDB_BSON_Document, fromPHP)
 	zval*                  data;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	PHONGO_PARAM_ARRAY_OR_OBJECT(data)
+	Z_PARAM_ARRAY_OR_OBJECT(data)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	object_init_ex(&zv, php_phongo_document_ce);
