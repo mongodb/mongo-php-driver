@@ -130,6 +130,10 @@ static inline bool phongo_check_bson_serialize_return_type(zval* retval, zend_cl
 		return true;
 	}
 
+	phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE,
+						   "Expected to receive instance of %s, %s given",
+						   ZSTR_VAL(php_phongo_serializable_ce->name),
+						   ZSTR_VAL(ce->name));
 	return false;
 }
 
