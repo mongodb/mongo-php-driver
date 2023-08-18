@@ -1,9 +1,7 @@
 --TEST--
 MongoDB\BSON\Timestamp serialization (__serialize and __unserialize) (64-bit)
 --SKIPIF--
-<?php require __DIR__ . "/../utils/basic-skipif.inc"; ?>
 <?php if (8 !== PHP_INT_SIZE) { die('skip Only for 64-bit platform'); } ?>
-<?php skip_if_php_version('<', '7.4.0'); ?>
 --FILE--
 <?php
 

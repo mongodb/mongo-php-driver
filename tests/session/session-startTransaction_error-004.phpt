@@ -31,7 +31,7 @@ foreach ($options as $txnOptions) {
 <?php exit(0); ?>
 --EXPECTF--
 OK: Got TypeError
-Argument 1 passed to MongoDB\Driver\Session::startTransaction() must be of the type array%r( or null)?%r, int%S given
+Argument 1 passed to MongoDB\Driver\Session::startTransaction() must be of the type array%r( or null)?%r, int given
 OK: Got TypeError
 Argument 1 passed to MongoDB\Driver\Session::startTransaction() must be of the type array%r( or null)?%r, object given
 ===DONE===

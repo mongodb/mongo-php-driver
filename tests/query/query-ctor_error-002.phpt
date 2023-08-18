@@ -28,38 +28,38 @@ foreach ($tests as $options) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "modifiers" option to be array, int%S given
+Expected "modifiers" option to be array, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "collation" option to be array or object, int%S given
+Expected "collation" option to be array or object, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "hint" option to be string, array, or object, int%S given
+Expected "hint" option to be string, array, or object, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "max" option to be array or object, int%S given
+Expected "max" option to be array or object, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "min" option to be array or object, int%S given
+Expected "min" option to be array or object, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "projection" option to be array or object, int%S given
+Expected "projection" option to be array or object, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "sort" option to be array or object, int%S given
+Expected "sort" option to be array or object, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "$hint" modifier to be string, array, or object, int%S given
+Expected "$hint" modifier to be string, array, or object, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "$max" modifier to be array or object, int%S given
+Expected "$max" modifier to be array or object, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "$min" modifier to be array or object, int%S given
+Expected "$min" modifier to be array or object, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "$orderby" modifier to be array or object, int%S given
+Expected "$orderby" modifier to be array or object, int given
 
 ===DONE===

@@ -20,7 +20,7 @@ var_dump($a == $array);
 <?php exit(0); ?>
 --EXPECTF--
 %r\\?%rMongoDB\BSON\PackedArray::__set_state(array(
-%w'data' => 'MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA',
+   'data' => 'MwAAABAwAAAAAAAQMQABAAAAAjIABAAAAGZvbwADMwASAAAAAmZvbwAEAAAAYmFyAAAA',
 ))
 object(MongoDB\BSON\PackedArray)#%d (%d) {
   ["data"]=>

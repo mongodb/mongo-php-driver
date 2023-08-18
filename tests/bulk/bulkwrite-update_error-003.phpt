@@ -34,22 +34,22 @@ echo throws(function() use ($bulk) {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Replacement document conflicts with true "multi" option
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "collation" option to be array or object, int%S given
+Expected "collation" option to be array or object, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "collation" option to be array or object, int%S given
+Expected "collation" option to be array or object, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "arrayFilters" option to be array or object, int%S given
+Expected "arrayFilters" option to be array or object, int given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 "arrayFilters" option has invalid keys for a BSON array
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected "hint" option to be string, array, or object, int%S given
+Expected "hint" option to be string, array, or object, int given
 ===DONE===

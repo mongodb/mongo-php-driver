@@ -13,6 +13,6 @@ echo "\n";
 <?php exit(0); ?>
 --EXPECTF--
 %r\\?%rMongoDB\BSON\ObjectId::__set_state(array(
-%w'oid' => '576c25db6118fd406e6e6471',
+   'oid' => '576c25db6118fd406e6e6471',
 ))
 ===DONE===

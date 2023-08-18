@@ -12,7 +12,7 @@ echo throws(function() {
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected mode to be integer or string, %r(double|float)%r given
+Expected mode to be integer or string, float given
 ===DONE===

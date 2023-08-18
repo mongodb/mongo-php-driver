@@ -48,31 +48,31 @@ foreach ($tests as $fields) {
 
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondary',
-   'tags' => 
+   'tags' =>%w
   array (
-    0 => 
-    %Sarray(
+    0 =>%w
+    (object) array(
        'dc' => 'ny',
-    %S),
+    ),
   ),
 ))
 
 %r\\?%rMongoDB\Driver\ReadPreference::__set_state(array(
    'mode' => 'secondary',
-   'tags' => 
+   'tags' =>%w
   array (
-    0 => 
-    %Sarray(
+    0 =>%w
+    (object) array(
        'dc' => 'ny',
-    %S),
-    1 => 
-    %Sarray(
+    ),
+    1 =>%w
+    (object) array(
        'dc' => 'sf',
        'use' => 'reporting',
-    %S),
-    2 => 
-    %Sarray(
-    %S),
+    ),
+    2 =>%w
+    (object) array(
+    ),
   ),
 ))
 

@@ -86,10 +86,6 @@
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif
 
-#if PHP_VERSION_ID < 70300
-#define zend_object_alloc(obj_size, ce) ecalloc(1, obj_size + zend_object_properties_size(ce))
-#endif
-
 #define ADD_ASSOC_STR(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRL(_key), (char*) ZSTR_VAL(_value));
 #define ADD_ASSOC_STRING(_zv, _key, _value) add_assoc_string_ex(_zv, ZEND_STRL(_key), (char*) (_value));
 #define ADD_ASSOC_STRINGL(_zv, _key, _value, _len) add_assoc_stringl_ex(_zv, ZEND_STRL(_key), (char*) (_value), _len);
@@ -176,37 +172,6 @@
 #error Unsupported architecture (integers are neither 32-bit nor 64-bit)
 #endif /* SIZEOF_ZEND_LONG */
 
-#if PHP_VERSION_ID < 70300
-#define ZVAL_COPY_DEREF(z, v)                     \
-	do {                                          \
-		zval* _z3 = (v);                          \
-		if (Z_OPT_REFCOUNTED_P(_z3)) {            \
-			if (UNEXPECTED(Z_OPT_ISREF_P(_z3))) { \
-				_z3 = Z_REFVAL_P(_z3);            \
-				if (Z_OPT_REFCOUNTED_P(_z3)) {    \
-					Z_ADDREF_P(_z3);              \
-				}                                 \
-			} else {                              \
-				Z_ADDREF_P(_z3);                  \
-			}                                     \
-		}                                         \
-		ZVAL_COPY_VALUE(z, _z3);                  \
-	} while (0)
-#endif /* PHP_VERSION_ID < 70300 */
-
-#if PHP_VERSION_ID < 70300
-static inline zend_bool zend_ini_parse_bool(zend_string* str)
-{
-	if (zend_string_equals_literal_ci(str, "true") ||
-		zend_string_equals_literal_ci(str, "yes") ||
-		zend_string_equals_literal_ci(str, "on")) {
-		return 1;
-	} else {
-		return atoi(ZSTR_VAL(str)) != 0;
-	}
-}
-#endif /* PHP_VERSION_ID < 70300 */
-
 /* Compatibility macros to override error handling logic */
 #define PHONGO_PARSE_PARAMETERS_START(min_num_args, max_num_args)               \
 	do {                                                                        \
@@ -273,16 +238,6 @@ static inline zend_bool zend_ini_parse_bool(zend_string* str)
 #ifndef Z_PARAM_ZVAL_OR_NULL
 #define Z_PARAM_ZVAL_OR_NULL(dest) \
 	Z_PARAM_ZVAL_EX(dest, 1, 0)
-#endif
-
-/* Z_PARAM_ARRAY_OR_OBJECT requires 3 arguments in PHP < 7.3.
- * See: https://github.com/php/php-src/commit/a595b0f75bf8bc0d3da8ca5cb03f8b1a694d26b2 */
-#if PHP_VERSION_ID < 70300
-#define PHONGO_PARAM_ARRAY_OR_OBJECT(dest) \
-	Z_PARAM_ARRAY_OR_OBJECT(dest, 0, 0)
-#else
-#define PHONGO_PARAM_ARRAY_OR_OBJECT(dest) \
-	Z_PARAM_ARRAY_OR_OBJECT(dest)
 #endif
 
 /* ZEND_ABSTRACT_ME_WITH_FLAGS was introduced in PHP 8.0. */

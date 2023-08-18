@@ -20,7 +20,7 @@ var_dump($o == $document);
 <?php exit(0); ?>
 --EXPECTF--
 %r\\?%rMongoDB\BSON\Document::__set_state(array(
-%w'data' => 'TwAAABBfaWQAAQAAAARhcnJheQAeAAAAEDAAAAAAABAxAAEAAAACMgAEAAAAZm9vAAADZG9jdW1lbnQAEgAAAAJmb28ABAAAAGJhcgAAAA==',
+   'data' => 'TwAAABBfaWQAAQAAAARhcnJheQAeAAAAEDAAAAAAABAxAAEAAAACMgAEAAAAZm9vAAADZG9jdW1lbnQAEgAAAAJmb28ABAAAAGJhcgAAAA==',
 ))
 object(MongoDB\BSON\Document)#%d (%d) {
   ["data"]=>

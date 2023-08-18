@@ -27,8 +27,8 @@ if test "$PHP_MONGODB" != "no"; then
   fi
 
   AC_MSG_RESULT($PHP_MONGODB_PHP_VERSION)
-  if test "$PHP_MONGODB_PHP_VERSION_ID" -lt "70200"; then
-    AC_MSG_ERROR([not supported. Need a PHP version >= 7.2.0 (found $PHP_MONGODB_PHP_VERSION)])
+  if test "$PHP_MONGODB_PHP_VERSION_ID" -lt "70400"; then
+    AC_MSG_ERROR([not supported. Need a PHP version >= 7.4.0 (found $PHP_MONGODB_PHP_VERSION)])
   fi
 
   PHP_ARG_ENABLE([mongodb-developer-flags],
@@ -348,6 +348,7 @@ if test "$PHP_MONGODB" != "no"; then
 
     _include([scripts/autotools/CheckCompiler.m4])
     _include([scripts/autotools/CheckHost.m4])
+    _include([scripts/autotools/PlatformFlags.m4])
 
     _include([scripts/autotools/libbson/CheckAtomics.m4])
     _include([scripts/autotools/libbson/CheckHeaders.m4])
@@ -361,7 +362,6 @@ if test "$PHP_MONGODB" != "no"; then
     _include([scripts/autotools/libmongoc/CheckSSL.m4])
     _include([scripts/autotools/libmongoc/CheckUtf8Proc.m4])
     _include([scripts/autotools/libmongoc/FindDependencies.m4])
-    _include([scripts/autotools/libmongoc/PlatformFlags.m4])
     _include([scripts/autotools/libmongoc/Versions.m4])
     _include([scripts/autotools/libmongoc/WeakSymbols.m4])
 
