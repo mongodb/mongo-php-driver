@@ -1,0 +1,157 @@
+name: "Windows Tests"
+
+on:
+  pull_request:
+    branches:
+      - "v*.*"
+      - "master"
+      - "feature/*"
+  push:
+    tags:
+      - "*"
+    branches:
+      - "v*.*"
+      - "master"
+      - "feature/*"
+
+jobs:
+  build:
+    name: "Build Windows DLLs"
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: cmd
+
+    strategy:
+      # This matrix intentionally uses fail-fast: false to ensure other builds are finished
+      fail-fast: false
+      matrix:
+        php: [ "7.4", "8.0", "8.1", "8.2" ]
+        arch: [ x64, x86 ]
+        ts: [ ts, nts ]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+          submodules: true
+
+      - name: Setup PHP SDK
+        id: setup-php
+        uses: cmb69/setup-php-sdk@v0.7
+        with:
+          version: ${{ matrix.php }}
+          arch: ${{ matrix.arch }}
+          ts: ${{ matrix.ts }}
+          deps: openssl
+
+      - name: Enable Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+          toolset: ${{ steps.setup-php.outputs.toolset }}
+
+      - name: phpize
+        run: phpize
+
+      - name: configure
+        run: configure --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes --enable-debug-pack --with-prefix=${{ steps.setup-php.outputs.prefix }}
+
+      - name: nmake
+        run: nmake /nologo
+
+      - name: Get build directory
+        id: get-build-dir
+        run: |
+          cp .github/workflows/get-build-dir.bat .
+          for /F "usebackq tokens=*" %%i in (`get-build-dir.bat`) do set BUILD_DIR=%%i
+          echo BUILD_DIR=%BUILD_DIR%
+          @chcp 65001>nul
+          echo build_dir=%BUILD_DIR%>> %GITHUB_OUTPUT%
+
+      - name: Cache build artifacts for subsequent builds
+        id: cache-build-artifacts
+        uses: actions/cache/save@v3
+        with:
+          key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          path: |
+            ${{ steps.get-build-dir.outputs.build_dir }}\php_mongodb.dll
+            ${{ steps.get-build-dir.outputs.build_dir }}\php_mongodb.pdb
+
+  test:
+    name: "Windows Tests"
+    runs-on: windows-2022
+    # Run tests only when pushing to a branch. When pushing a tag, we're only interested in building the DLLs.
+    if: ${{ github.ref_type == 'branch' }}
+    needs: build
+    defaults:
+      run:
+        shell: cmd
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [ "7.4", "8.0", "8.1", "8.2" ]
+        arch: [ x64, x86 ]
+        ts: [ ts, nts ]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+          submodules: true
+
+      - name: Setup PHP SDK
+        id: setup-php
+        uses: cmb69/setup-php-sdk@v0.7
+        with:
+          version: ${{ matrix.php }}
+          arch: ${{ matrix.arch }}
+          ts: ${{ matrix.ts }}
+          deps: openssl
+
+      - name: Enable Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+          toolset: ${{ steps.setup-php.outputs.toolset }}
+
+      - name: phpize
+        run: phpize
+
+      - name: configure
+        run: configure --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes --enable-debug-pack --with-prefix=${{ steps.setup-php.outputs.prefix }}
+
+      - name: Get build directory
+        id: get-build-dir
+        run: |
+          cp .github/workflows/get-build-dir.bat .
+          for /F "usebackq tokens=*" %%i in (`get-build-dir.bat`) do set BUILD_DIR=%%i
+          echo BUILD_DIR=%BUILD_DIR%
+          @chcp 65001>nul
+          echo build_dir=%BUILD_DIR%>> %GITHUB_OUTPUT%
+
+      - name: Restore cached build artifacts
+        id: cache-build-artifacts
+        uses: actions/cache/restore@v3
+        with:
+          fail-on-cache-miss: true
+          key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          path: |
+            ${{ steps.get-build-dir.outputs.build_dir }}\php_mongodb.dll
+            ${{ steps.get-build-dir.outputs.build_dir }}\php_mongodb.pdb
+
+      - name: Start MongoDB
+        run: |
+          sc config MongoDB start= auto
+          sc start MongoDB
+
+      - name: Wait until MongoDB is available
+        run: .github/workflows/wait-for-mongodb.bat
+
+      - name: Run Tests
+        run: nmake /nologo test
+        env:
+          NO_INTERACTION: 1
+          REPORT_EXIT_STATUS: 1
+          TESTS: --show-diff
