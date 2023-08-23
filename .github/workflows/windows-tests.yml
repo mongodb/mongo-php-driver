@@ -56,6 +56,25 @@ jobs:
             ${{ steps.prepare-build.outputs.build-dir }}\php_mongodb.dll
             ${{ steps.prepare-build.outputs.build-dir }}\php_mongodb.pdb
 
+      - name: Copy DLL and PDB files to CWD
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          cp .github/workflows/get-build-dir.bat .
+          for /F "usebackq tokens=*" %%i in (`get-build-dir.bat`) do set BUILD_DIR=%%i
+          echo BUILD_DIR=%BUILD_DIR%
+          cp %BUILD_DIR%\php_mongodb.dll .
+          cp %BUILD_DIR%\php_mongodb.pdb .
+
+      - name: Upload DLL and PDB files as build artifacts
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: php_mongodb-${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          path: |
+            php_mongodb.dll
+            php_mongodb.pdb
+          retention-days: 3
+
   test:
     name: "Windows Tests"
     runs-on: windows-2022
