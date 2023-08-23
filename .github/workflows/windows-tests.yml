@@ -36,38 +36,16 @@ jobs:
           fetch-depth: 2
           submodules: true
 
-      - name: Setup PHP SDK
-        id: setup-php
-        uses: cmb69/setup-php-sdk@v0.7
+      - name: Prepare build environment
+        id: prepare-build
+        uses: ./.github/workflows/windows/prepare-build
         with:
           version: ${{ matrix.php }}
           arch: ${{ matrix.arch }}
           ts: ${{ matrix.ts }}
-          deps: openssl
 
-      - name: Enable Developer Command Prompt
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: ${{ matrix.arch }}
-          toolset: ${{ steps.setup-php.outputs.toolset }}
-
-      - name: phpize
-        run: phpize
-
-      - name: configure
-        run: configure --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes --enable-debug-pack --with-prefix=${{ steps.setup-php.outputs.prefix }}
-
-      - name: nmake
+      - name: Build driver
         run: nmake /nologo
-
-      - name: Get build directory
-        id: get-build-dir
-        run: |
-          cp .github/workflows/get-build-dir.bat .
-          for /F "usebackq tokens=*" %%i in (`get-build-dir.bat`) do set BUILD_DIR=%%i
-          echo BUILD_DIR=%BUILD_DIR%
-          @chcp 65001>nul
-          echo build_dir=%BUILD_DIR%>> %GITHUB_OUTPUT%
 
       - name: Cache build artifacts for subsequent builds
         id: cache-build-artifacts
@@ -75,8 +53,8 @@ jobs:
         with:
           key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
           path: |
-            ${{ steps.get-build-dir.outputs.build_dir }}\php_mongodb.dll
-            ${{ steps.get-build-dir.outputs.build_dir }}\php_mongodb.pdb
+            ${{ steps.prepare-build.outputs.build-dir }}\php_mongodb.dll
+            ${{ steps.prepare-build.outputs.build-dir }}\php_mongodb.pdb
 
   test:
     name: "Windows Tests"
@@ -101,35 +79,13 @@ jobs:
           fetch-depth: 2
           submodules: true
 
-      - name: Setup PHP SDK
-        id: setup-php
-        uses: cmb69/setup-php-sdk@v0.7
+      - name: Prepare build environment
+        id: prepare-build
+        uses: ./.github/workflows/windows/prepare-build
         with:
           version: ${{ matrix.php }}
           arch: ${{ matrix.arch }}
           ts: ${{ matrix.ts }}
-          deps: openssl
-
-      - name: Enable Developer Command Prompt
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: ${{ matrix.arch }}
-          toolset: ${{ steps.setup-php.outputs.toolset }}
-
-      - name: phpize
-        run: phpize
-
-      - name: configure
-        run: configure --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes --enable-debug-pack --with-prefix=${{ steps.setup-php.outputs.prefix }}
-
-      - name: Get build directory
-        id: get-build-dir
-        run: |
-          cp .github/workflows/get-build-dir.bat .
-          for /F "usebackq tokens=*" %%i in (`get-build-dir.bat`) do set BUILD_DIR=%%i
-          echo BUILD_DIR=%BUILD_DIR%
-          @chcp 65001>nul
-          echo build_dir=%BUILD_DIR%>> %GITHUB_OUTPUT%
 
       - name: Restore cached build artifacts
         id: cache-build-artifacts
@@ -138,8 +94,8 @@ jobs:
           fail-on-cache-miss: true
           key: ${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
           path: |
-            ${{ steps.get-build-dir.outputs.build_dir }}\php_mongodb.dll
-            ${{ steps.get-build-dir.outputs.build_dir }}\php_mongodb.pdb
+            ${{ steps.prepare-build.outputs.build-dir }}\php_mongodb.dll
+            ${{ steps.prepare-build.outputs.build-dir }}\php_mongodb.pdb
 
       - name: Start MongoDB
         run: |
