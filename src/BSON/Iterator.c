@@ -358,7 +358,7 @@ static const zend_object_iterator_funcs php_phongo_iterator_it_funcs = PHONGO_IT
 	php_phongo_iterator_it_get_current_key,
 	php_phongo_iterator_it_move_forward,
 	php_phongo_iterator_it_rewind,
-	NULL,
+	NULL, /* invalidate_current */
 	php_phongo_iterator_it_get_gc);
 
 static zend_object_iterator* php_phongo_iterator_get_iterator(zend_class_entry* ce, zval* object, int by_ref)

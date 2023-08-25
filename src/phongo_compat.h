@@ -316,7 +316,7 @@ typedef ZEND_RESULT_CODE zend_result;
 			(invalidate_current),                                                                                               \
 			(get_gc),                                                                                                           \
 	}
-#else
+#else /* PHP_VERSION_ID < 80000 */
 #define PHONGO_ITERATOR_FUNCS(dtor, valid, get_current_data, get_current_key, move_forward, rewind, invalidate_current, get_gc) \
 	{                                                                                                                           \
 		(dtor),                                                                                                                 \
@@ -327,7 +327,7 @@ typedef ZEND_RESULT_CODE zend_result;
 			(rewind),                                                                                                           \
 			(invalidate_current),                                                                                               \
 	}
-#endif
+#endif /* PHP_VERSION_ID >= 80000 */
 
 /* ZVAL_OBJ_COPY was added in PHP 8.0 */
 #ifndef ZVAL_OBJ_COPY
