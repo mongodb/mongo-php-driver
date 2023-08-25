@@ -303,4 +303,42 @@ zend_bool zend_array_is_list(zend_array* array);
 typedef ZEND_RESULT_CODE zend_result;
 #endif
 
+/* get_gc iterator handler was added in PHP 8.0 */
+#if PHP_VERSION_ID >= 80000
+#define PHONGO_ITERATOR_FUNCS(dtor, valid, get_current_data, get_current_key, move_forward, rewind, invalidate_current, get_gc) \
+	{                                                                                                                           \
+		(dtor),                                                                                                                 \
+			(valid),                                                                                                            \
+			(get_current_data),                                                                                                 \
+			(get_current_key),                                                                                                  \
+			(move_forward),                                                                                                     \
+			(rewind),                                                                                                           \
+			(invalidate_current),                                                                                               \
+			(get_gc),                                                                                                           \
+	}
+#else /* PHP_VERSION_ID < 80000 */
+#define PHONGO_ITERATOR_FUNCS(dtor, valid, get_current_data, get_current_key, move_forward, rewind, invalidate_current, get_gc) \
+	{                                                                                                                           \
+		(dtor),                                                                                                                 \
+			(valid),                                                                                                            \
+			(get_current_data),                                                                                                 \
+			(get_current_key),                                                                                                  \
+			(move_forward),                                                                                                     \
+			(rewind),                                                                                                           \
+			(invalidate_current),                                                                                               \
+	}
+#endif /* PHP_VERSION_ID >= 80000 */
+
+/* ZVAL_OBJ_COPY was added in PHP 8.0 */
+#ifndef ZVAL_OBJ_COPY
+#define ZVAL_OBJ_COPY(z, o)                \
+	do {                                   \
+		zval*        __z = (z);            \
+		zend_object* __o = (o);            \
+		GC_ADDREF(__o);                    \
+		Z_OBJ_P(__z)       = __o;          \
+		Z_TYPE_INFO_P(__z) = IS_OBJECT_EX; \
+	} while (0)
+#endif
+
 #endif /* PHONGO_COMPAT_H */
