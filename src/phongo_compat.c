@@ -80,3 +80,20 @@ zend_bool zend_array_is_list(zend_array* array)
 	return 1;
 }
 #endif /* PHP_VERSION_ID < 80100 */
+
+#if PHP_VERSION_ID < 80000
+zend_string* zend_string_concat3(const char* str1, size_t str1_len, const char* str2, size_t str2_len, const char* str3, size_t str3_len)
+{
+	size_t       len = str1_len + str2_len + str3_len;
+	zend_string* res = zend_string_alloc(len, 0);
+
+	memcpy(ZSTR_VAL(res), str1, str1_len);
+	memcpy(ZSTR_VAL(res) + str1_len, str2, str2_len);
+	memcpy(ZSTR_VAL(res) + str1_len + str2_len, str3, str3_len);
+	/* clang-format off */
+	ZSTR_VAL(res)[len] = '\0';
+	/* clang-format on */
+
+	return res;
+}
+#endif /* PHP_VERSION_ID < 80000 */

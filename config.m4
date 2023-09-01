@@ -120,6 +120,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/phongo_error.c \
     src/phongo_execute.c \
     src/phongo_ini.c \
+    src/phongo_log.c \
     src/phongo_util.c \
     src/BSON/Binary.c \
     src/BSON/BinaryInterface.c \
@@ -185,6 +186,8 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/Exception/SSLConnectionException.c \
     src/MongoDB/Exception/UnexpectedValueException.c \
     src/MongoDB/Exception/WriteException.c \
+    src/MongoDB/Logging/Logger.c \
+    src/MongoDB/Logging/functions.c \
     src/MongoDB/Monitoring/CommandFailedEvent.c \
     src/MongoDB/Monitoring/CommandStartedEvent.c \
     src/MongoDB/Monitoring/CommandSubscriber.c \
@@ -541,6 +544,7 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/BSON/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/Exception/])
+  PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/Logging/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/Monitoring/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/contrib/])
 
@@ -548,6 +552,7 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/BSON/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/Exception/])
+  PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/Logging/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/Monitoring/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/contrib/])
 

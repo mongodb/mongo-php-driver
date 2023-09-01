@@ -28,6 +28,7 @@
 #include "src/phongo_client.h"
 #include "src/phongo_error.h"
 #include "src/phongo_ini.h"
+#include "src/phongo_log.h"
 #include "src/functions_arginfo.h"
 
 ZEND_DECLARE_MODULE_GLOBALS(mongodb)
@@ -87,6 +88,16 @@ PHP_RINIT_FUNCTION(mongodb) /* {{{ */
 	if (MONGODB_G(request_clients) == NULL) {
 		ALLOC_HASHTABLE(MONGODB_G(request_clients));
 		zend_hash_init(MONGODB_G(request_clients), 0, NULL, php_phongo_pclient_destroy_ptr, 0);
+	}
+
+	/* Initialize HashTable for loggers, which is initialized to NULL in GINIT
+	 * and destroyed and reset to NULL in RSHUTDOWN. Since this HashTable will
+	 * store logger object zvals, we specify ZVAL_PTR_DTOR as its element
+	 * destructor so that any still-registered loggers can be freed in
+	 * RSHUTDOWN. */
+	if (MONGODB_G(loggers) == NULL) {
+		ALLOC_HASHTABLE(MONGODB_G(loggers));
+		zend_hash_init(MONGODB_G(loggers), 0, NULL, ZVAL_PTR_DTOR, 0);
 	}
 
 	/* Initialize HashTable for APM subscribers, which is initialized to NULL in
@@ -159,6 +170,12 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	};
 
 	(void) type; /* We don't care if we are loaded via dl() or extension= */
+
+	/* Start by disabling libmongoc's default log handler, which could write to
+	 * stdout/stderr. The PHP driver's log handler may be assigned below when
+	 * parsing INI options or at a later point during a request when registering
+	 * a logger. */
+	mongoc_log_set_handler(NULL, NULL);
 
 	phongo_register_ini_entries(INIT_FUNC_ARGS_PASSTHRU);
 
@@ -265,6 +282,8 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
+	php_phongo_logger_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+
 	/* Register base APM classes first */
 	php_phongo_subscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
@@ -297,6 +316,16 @@ PHP_MSHUTDOWN_FUNCTION(mongodb) /* {{{ */
 
 PHP_RSHUTDOWN_FUNCTION(mongodb) /* {{{ */
 {
+	/* Destroy HashTable for loggers, which was initialized in RINIT. */
+	if (MONGODB_G(loggers)) {
+		zend_hash_destroy(MONGODB_G(loggers));
+		FREE_HASHTABLE(MONGODB_G(loggers));
+		MONGODB_G(loggers) = NULL;
+	}
+
+	/* TODO: consider calling phongo_log_sync_handler here since logging may no
+	 * longer be enabled. */
+
 	/* Destroy HashTable for APM subscribers, which was initialized in RINIT. */
 	if (MONGODB_G(subscribers)) {
 		zend_hash_destroy(MONGODB_G(subscribers));
@@ -334,8 +363,9 @@ PHP_GSHUTDOWN_FUNCTION(mongodb) /* {{{ */
 	 * encryption settings. */
 	zend_hash_graceful_reverse_destroy(&mongodb_globals->persistent_clients);
 
-	phongo_log_disable(mongodb_globals->debug_fd);
-	mongodb_globals->debug_fd = NULL;
+	/* TODO: Check that logging actually gets disabled. The logger HashTable
+	 * should be empty by this point. */
+	phongo_log_set_stream(NULL);
 
 	/* Decrement the thread counter. If it reaches zero, we can infer that this
 	 * is the last thread, MSHUTDOWN has been called, persistent clients from

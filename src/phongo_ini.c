@@ -14,96 +14,82 @@
  * limitations under the License.
  */
 
-#include "bson/bson.h"
-#include "mongoc/mongoc.h"
+#include <stdio.h>
 
 #include <php.h>
 #include <main/php_open_temporary_file.h>
-#include <ext/date/php_date.h>
 
 #include "php_phongo.h"
 #include "phongo_ini.h"
+#include "phongo_log.h"
 
 ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 
-static void phongo_log(mongoc_log_level_t log_level, const char* log_domain, const char* message, void* user_data)
+static FILE* phongo_ini_tmp_file(const char* tmp_dir)
 {
-	struct timeval tv;
-	time_t         t;
-	zend_long      tu;
-	zend_string*   dt;
+	time_t       t;
+	int          fd = -1;
+	char*        prefix;
+	int          len;
+	zend_string* filename = NULL;
+	FILE*        stream   = NULL;
 
-	bson_gettimeofday(&tv);
-	t  = tv.tv_sec;
-	tu = tv.tv_usec;
+	/* TODO: consider using time() retval directly instead of time_t struct */
+	time(&t);
+	len = spprintf(&prefix, 0, "PHONGO-%ld", t);
 
-	dt = php_format_date((char*) ZEND_STRL("Y-m-d\\TH:i:s"), t, 0);
+	/* TODO: Refactor this to use fdopen (see: PHPC-2181) */
+	fd = php_open_temporary_fd(tmp_dir, prefix, &filename);
 
-	fprintf(MONGODB_G(debug_fd), "[%s.%06" PHONGO_LONG_FORMAT "+00:00] %10s: %-8s> %s\n", ZSTR_VAL(dt), tu, log_domain, mongoc_log_level_str(log_level), message);
-	fflush(MONGODB_G(debug_fd));
-	efree(dt);
-}
-
-void phongo_log_disable(FILE* stream)
-{
-	mongoc_log_trace_disable();
-	mongoc_log_set_handler(NULL, NULL);
-
-	/* Close any previously opened log file (excluding stderr/stdout) */
-	if (stream && stream != stderr && stream != stdout) {
-		fclose(stream);
+	if (fd != -1) {
+		close(fd);
 	}
+
+	if (filename) {
+		stream = VCWD_FOPEN(ZSTR_VAL(filename), "a");
+		efree(filename);
+	}
+
+	efree(prefix);
+
+	return stream;
 }
 
 static PHP_INI_MH(OnUpdateDebug)
 {
-	char* tmp_dir = NULL;
+	FILE* stream = NULL;
 
-	phongo_log_disable(MONGODB_G(debug_fd));
-	MONGODB_G(debug_fd) = NULL;
+	if (!new_value ||
+		zend_string_equals_literal_ci(new_value, "") ||
+		zend_string_equals_literal_ci(new_value, "0") ||
+		zend_string_equals_literal_ci(new_value, "off") ||
+		zend_string_equals_literal_ci(new_value, "no") ||
+		zend_string_equals_literal_ci(new_value, "false")) {
 
-	if (!new_value || (new_value && !ZSTR_VAL(new_value)[0]) || strcasecmp("0", ZSTR_VAL(new_value)) == 0 || strcasecmp("off", ZSTR_VAL(new_value)) == 0 || strcasecmp("no", ZSTR_VAL(new_value)) == 0 || strcasecmp("false", ZSTR_VAL(new_value)) == 0) {
-		return OnUpdateString(entry, new_value, mh_arg1, mh_arg2, mh_arg3, stage);
+		goto done;
 	}
 
-	if (strcasecmp(ZSTR_VAL(new_value), "stderr") == 0) {
-		MONGODB_G(debug_fd) = stderr;
-	} else if (strcasecmp(ZSTR_VAL(new_value), "stdout") == 0) {
-		MONGODB_G(debug_fd) = stdout;
+	if (zend_string_equals_literal_ci(new_value, "stderr")) {
+		stream = stderr;
+	} else if (zend_string_equals_literal_ci(new_value, "stdout")) {
+		stream = stdout;
 	} else if (
-		strcasecmp("1", ZSTR_VAL(new_value)) == 0 ||
-		strcasecmp("on", ZSTR_VAL(new_value)) == 0 ||
-		strcasecmp("yes", ZSTR_VAL(new_value)) == 0 ||
-		strcasecmp("true", ZSTR_VAL(new_value)) == 0) {
+		zend_string_equals_literal_ci(new_value, "1") ||
+		zend_string_equals_literal_ci(new_value, "on") ||
+		zend_string_equals_literal_ci(new_value, "yes") ||
+		zend_string_equals_literal_ci(new_value, "true")) {
 
-		tmp_dir = NULL;
+		stream = phongo_ini_tmp_file(NULL);
 	} else {
-		tmp_dir = ZSTR_VAL(new_value);
+		stream = phongo_ini_tmp_file(ZSTR_VAL(new_value));
 	}
 
-	if (!MONGODB_G(debug_fd)) {
-		time_t       t;
-		int          fd = -1;
-		char*        prefix;
-		int          len;
-		zend_string* filename;
+	/* TODO: Consider failing if we do not have a stream by this point */
 
-		time(&t);
-		len = spprintf(&prefix, 0, "PHONGO-%ld", t);
+done:
+	phongo_log_set_stream(stream);
 
-		fd = php_open_temporary_fd(tmp_dir, prefix, &filename);
-		if (fd != -1) {
-			const char* path    = ZSTR_VAL(filename);
-			MONGODB_G(debug_fd) = VCWD_FOPEN(path, "a");
-		}
-		efree(filename);
-		efree(prefix);
-		close(fd);
-	}
-
-	mongoc_log_trace_enable();
-	mongoc_log_set_handler(phongo_log, NULL);
-
+	/* OnUpdateString should always succeed, but defer to its retval anyway */
 	return OnUpdateString(entry, new_value, mh_arg1, mh_arg2, mh_arg3, stage);
 }
 

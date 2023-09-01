@@ -341,4 +341,9 @@ typedef ZEND_RESULT_CODE zend_result;
 	} while (0)
 #endif
 
+/* zend_string_concat functions were introduced in PHP 8.0 */
+#if PHP_VERSION_ID < 80000
+zend_string* zend_string_concat3(const char* str1, size_t str1_len, const char* str2, size_t str2_len, const char* str3, size_t str3_len);
+#endif /* PHP_VERSION_ID < 80000 */
+
 #endif /* PHONGO_COMPAT_H */
