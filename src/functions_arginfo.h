@@ -46,44 +46,44 @@ ZEND_END_ARG_INFO()
 #define arginfo_MongoDB_Driver_Monitoring_removeSubscriber arginfo_MongoDB_Driver_Monitoring_addSubscriber
 
 
-ZEND_FUNCTION(fromJSON);
+ZEND_FUNCTION(MongoDB_BSON_fromJSON);
 #if PHP_VERSION_ID >= 80000
-ZEND_FUNCTION(fromPHP);
+ZEND_FUNCTION(MongoDB_BSON_fromPHP);
 #endif
 #if !(PHP_VERSION_ID >= 80000)
-ZEND_FUNCTION(fromPHP);
+ZEND_FUNCTION(MongoDB_BSON_fromPHP);
 #endif
-ZEND_FUNCTION(toCanonicalExtendedJSON);
-ZEND_FUNCTION(toJSON);
+ZEND_FUNCTION(MongoDB_BSON_toCanonicalExtendedJSON);
+ZEND_FUNCTION(MongoDB_BSON_toJSON);
 #if PHP_VERSION_ID >= 80000
-ZEND_FUNCTION(toPHP);
+ZEND_FUNCTION(MongoDB_BSON_toPHP);
 #endif
 #if !(PHP_VERSION_ID >= 80000)
-ZEND_FUNCTION(toPHP);
+ZEND_FUNCTION(MongoDB_BSON_toPHP);
 #endif
-ZEND_FUNCTION(toRelaxedExtendedJSON);
-ZEND_FUNCTION(addSubscriber);
-ZEND_FUNCTION(removeSubscriber);
+ZEND_FUNCTION(MongoDB_BSON_toRelaxedExtendedJSON);
+ZEND_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber);
+ZEND_FUNCTION(MongoDB_Driver_Monitoring_removeSubscriber);
 
 
 static const zend_function_entry ext_functions[] = {
-	ZEND_NS_FE("MongoDB\\BSON", fromJSON, arginfo_MongoDB_BSON_fromJSON)
+	ZEND_NS_FALIAS("MongoDB\\BSON", fromJSON, MongoDB_BSON_fromJSON, arginfo_MongoDB_BSON_fromJSON)
 #if PHP_VERSION_ID >= 80000
-	ZEND_NS_FE("MongoDB\\BSON", fromPHP, arginfo_MongoDB_BSON_fromPHP)
+	ZEND_NS_FALIAS("MongoDB\\BSON", fromPHP, MongoDB_BSON_fromPHP, arginfo_MongoDB_BSON_fromPHP)
 #endif
 #if !(PHP_VERSION_ID >= 80000)
-	ZEND_NS_FE("MongoDB\\BSON", fromPHP, arginfo_MongoDB_BSON_fromPHP)
+	ZEND_NS_FALIAS("MongoDB\\BSON", fromPHP, MongoDB_BSON_fromPHP, arginfo_MongoDB_BSON_fromPHP)
 #endif
-	ZEND_NS_FE("MongoDB\\BSON", toCanonicalExtendedJSON, arginfo_MongoDB_BSON_toCanonicalExtendedJSON)
-	ZEND_NS_FE("MongoDB\\BSON", toJSON, arginfo_MongoDB_BSON_toJSON)
+	ZEND_NS_FALIAS("MongoDB\\BSON", toCanonicalExtendedJSON, MongoDB_BSON_toCanonicalExtendedJSON, arginfo_MongoDB_BSON_toCanonicalExtendedJSON)
+	ZEND_NS_FALIAS("MongoDB\\BSON", toJSON, MongoDB_BSON_toJSON, arginfo_MongoDB_BSON_toJSON)
 #if PHP_VERSION_ID >= 80000
-	ZEND_NS_FE("MongoDB\\BSON", toPHP, arginfo_MongoDB_BSON_toPHP)
+	ZEND_NS_FALIAS("MongoDB\\BSON", toPHP, MongoDB_BSON_toPHP, arginfo_MongoDB_BSON_toPHP)
 #endif
 #if !(PHP_VERSION_ID >= 80000)
-	ZEND_NS_FE("MongoDB\\BSON", toPHP, arginfo_MongoDB_BSON_toPHP)
+	ZEND_NS_FALIAS("MongoDB\\BSON", toPHP, MongoDB_BSON_toPHP, arginfo_MongoDB_BSON_toPHP)
 #endif
-	ZEND_NS_FE("MongoDB\\BSON", toRelaxedExtendedJSON, arginfo_MongoDB_BSON_toRelaxedExtendedJSON)
-	ZEND_NS_FE("MongoDB\\Driver\\Monitoring", addSubscriber, arginfo_MongoDB_Driver_Monitoring_addSubscriber)
-	ZEND_NS_FE("MongoDB\\Driver\\Monitoring", removeSubscriber, arginfo_MongoDB_Driver_Monitoring_removeSubscriber)
+	ZEND_NS_FALIAS("MongoDB\\BSON", toRelaxedExtendedJSON, MongoDB_BSON_toRelaxedExtendedJSON, arginfo_MongoDB_BSON_toRelaxedExtendedJSON)
+	ZEND_NS_FALIAS("MongoDB\\Driver\\Monitoring", addSubscriber, MongoDB_Driver_Monitoring_addSubscriber, arginfo_MongoDB_Driver_Monitoring_addSubscriber)
+	ZEND_NS_FALIAS("MongoDB\\Driver\\Monitoring", removeSubscriber, MongoDB_Driver_Monitoring_removeSubscriber, arginfo_MongoDB_Driver_Monitoring_removeSubscriber)
 	ZEND_FE_END
 };
