@@ -48,42 +48,42 @@ static zend_class_entry *register_class_MongoDB_Driver_TopologyDescription(void)
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
 
 	zval const_TYPE_UNKNOWN_value;
-	zend_string *const_TYPE_UNKNOWN_value_str = zend_string_init(PHONGO_TOPOLOGY_UNKNOWN, sizeof(PHONGO_TOPOLOGY_UNKNOWN) - 1, 1);
+	zend_string *const_TYPE_UNKNOWN_value_str = zend_string_init(PHONGO_TOPOLOGY_UNKNOWN, strlen(PHONGO_TOPOLOGY_UNKNOWN), 1);
 	ZVAL_STR(&const_TYPE_UNKNOWN_value, const_TYPE_UNKNOWN_value_str);
 	zend_string *const_TYPE_UNKNOWN_name = zend_string_init_interned("TYPE_UNKNOWN", sizeof("TYPE_UNKNOWN") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TYPE_UNKNOWN_name, &const_TYPE_UNKNOWN_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_TYPE_UNKNOWN_name);
 
 	zval const_TYPE_SINGLE_value;
-	zend_string *const_TYPE_SINGLE_value_str = zend_string_init(PHONGO_TOPOLOGY_SINGLE, sizeof(PHONGO_TOPOLOGY_SINGLE) - 1, 1);
+	zend_string *const_TYPE_SINGLE_value_str = zend_string_init(PHONGO_TOPOLOGY_SINGLE, strlen(PHONGO_TOPOLOGY_SINGLE), 1);
 	ZVAL_STR(&const_TYPE_SINGLE_value, const_TYPE_SINGLE_value_str);
 	zend_string *const_TYPE_SINGLE_name = zend_string_init_interned("TYPE_SINGLE", sizeof("TYPE_SINGLE") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TYPE_SINGLE_name, &const_TYPE_SINGLE_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_TYPE_SINGLE_name);
 
 	zval const_TYPE_SHARDED_value;
-	zend_string *const_TYPE_SHARDED_value_str = zend_string_init(PHONGO_TOPOLOGY_SHARDED, sizeof(PHONGO_TOPOLOGY_SHARDED) - 1, 1);
+	zend_string *const_TYPE_SHARDED_value_str = zend_string_init(PHONGO_TOPOLOGY_SHARDED, strlen(PHONGO_TOPOLOGY_SHARDED), 1);
 	ZVAL_STR(&const_TYPE_SHARDED_value, const_TYPE_SHARDED_value_str);
 	zend_string *const_TYPE_SHARDED_name = zend_string_init_interned("TYPE_SHARDED", sizeof("TYPE_SHARDED") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TYPE_SHARDED_name, &const_TYPE_SHARDED_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_TYPE_SHARDED_name);
 
 	zval const_TYPE_REPLICA_SET_NO_PRIMARY_value;
-	zend_string *const_TYPE_REPLICA_SET_NO_PRIMARY_value_str = zend_string_init(PHONGO_TOPOLOGY_REPLICA_SET_NO_PRIMARY, sizeof(PHONGO_TOPOLOGY_REPLICA_SET_NO_PRIMARY) - 1, 1);
+	zend_string *const_TYPE_REPLICA_SET_NO_PRIMARY_value_str = zend_string_init(PHONGO_TOPOLOGY_REPLICA_SET_NO_PRIMARY, strlen(PHONGO_TOPOLOGY_REPLICA_SET_NO_PRIMARY), 1);
 	ZVAL_STR(&const_TYPE_REPLICA_SET_NO_PRIMARY_value, const_TYPE_REPLICA_SET_NO_PRIMARY_value_str);
 	zend_string *const_TYPE_REPLICA_SET_NO_PRIMARY_name = zend_string_init_interned("TYPE_REPLICA_SET_NO_PRIMARY", sizeof("TYPE_REPLICA_SET_NO_PRIMARY") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TYPE_REPLICA_SET_NO_PRIMARY_name, &const_TYPE_REPLICA_SET_NO_PRIMARY_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_TYPE_REPLICA_SET_NO_PRIMARY_name);
 
 	zval const_TYPE_REPLICA_SET_WITH_PRIMARY_value;
-	zend_string *const_TYPE_REPLICA_SET_WITH_PRIMARY_value_str = zend_string_init(PHONGO_TOPOLOGY_REPLICA_SET_WITH_PRIMARY, sizeof(PHONGO_TOPOLOGY_REPLICA_SET_WITH_PRIMARY) - 1, 1);
+	zend_string *const_TYPE_REPLICA_SET_WITH_PRIMARY_value_str = zend_string_init(PHONGO_TOPOLOGY_REPLICA_SET_WITH_PRIMARY, strlen(PHONGO_TOPOLOGY_REPLICA_SET_WITH_PRIMARY), 1);
 	ZVAL_STR(&const_TYPE_REPLICA_SET_WITH_PRIMARY_value, const_TYPE_REPLICA_SET_WITH_PRIMARY_value_str);
 	zend_string *const_TYPE_REPLICA_SET_WITH_PRIMARY_name = zend_string_init_interned("TYPE_REPLICA_SET_WITH_PRIMARY", sizeof("TYPE_REPLICA_SET_WITH_PRIMARY") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TYPE_REPLICA_SET_WITH_PRIMARY_name, &const_TYPE_REPLICA_SET_WITH_PRIMARY_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_TYPE_REPLICA_SET_WITH_PRIMARY_name);
 
 	zval const_TYPE_LOAD_BALANCED_value;
-	zend_string *const_TYPE_LOAD_BALANCED_value_str = zend_string_init(PHONGO_TOPOLOGY_LOAD_BALANCED, sizeof(PHONGO_TOPOLOGY_LOAD_BALANCED) - 1, 1);
+	zend_string *const_TYPE_LOAD_BALANCED_value_str = zend_string_init(PHONGO_TOPOLOGY_LOAD_BALANCED, strlen(PHONGO_TOPOLOGY_LOAD_BALANCED), 1);
 	ZVAL_STR(&const_TYPE_LOAD_BALANCED_value, const_TYPE_LOAD_BALANCED_value_str);
 	zend_string *const_TYPE_LOAD_BALANCED_name = zend_string_init_interned("TYPE_LOAD_BALANCED", sizeof("TYPE_LOAD_BALANCED") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TYPE_LOAD_BALANCED_name, &const_TYPE_LOAD_BALANCED_value, ZEND_ACC_PUBLIC, NULL);

@@ -114,35 +114,35 @@ static zend_class_entry *register_class_MongoDB_Driver_Session(void)
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
 
 	zval const_TRANSACTION_NONE_value;
-	zend_string *const_TRANSACTION_NONE_value_str = zend_string_init(PHONGO_TRANSACTION_NONE, sizeof(PHONGO_TRANSACTION_NONE) - 1, 1);
+	zend_string *const_TRANSACTION_NONE_value_str = zend_string_init(PHONGO_TRANSACTION_NONE, strlen(PHONGO_TRANSACTION_NONE), 1);
 	ZVAL_STR(&const_TRANSACTION_NONE_value, const_TRANSACTION_NONE_value_str);
 	zend_string *const_TRANSACTION_NONE_name = zend_string_init_interned("TRANSACTION_NONE", sizeof("TRANSACTION_NONE") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TRANSACTION_NONE_name, &const_TRANSACTION_NONE_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_TRANSACTION_NONE_name);
 
 	zval const_TRANSACTION_STARTING_value;
-	zend_string *const_TRANSACTION_STARTING_value_str = zend_string_init(PHONGO_TRANSACTION_STARTING, sizeof(PHONGO_TRANSACTION_STARTING) - 1, 1);
+	zend_string *const_TRANSACTION_STARTING_value_str = zend_string_init(PHONGO_TRANSACTION_STARTING, strlen(PHONGO_TRANSACTION_STARTING), 1);
 	ZVAL_STR(&const_TRANSACTION_STARTING_value, const_TRANSACTION_STARTING_value_str);
 	zend_string *const_TRANSACTION_STARTING_name = zend_string_init_interned("TRANSACTION_STARTING", sizeof("TRANSACTION_STARTING") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TRANSACTION_STARTING_name, &const_TRANSACTION_STARTING_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_TRANSACTION_STARTING_name);
 
 	zval const_TRANSACTION_IN_PROGRESS_value;
-	zend_string *const_TRANSACTION_IN_PROGRESS_value_str = zend_string_init(PHONGO_TRANSACTION_IN_PROGRESS, sizeof(PHONGO_TRANSACTION_IN_PROGRESS) - 1, 1);
+	zend_string *const_TRANSACTION_IN_PROGRESS_value_str = zend_string_init(PHONGO_TRANSACTION_IN_PROGRESS, strlen(PHONGO_TRANSACTION_IN_PROGRESS), 1);
 	ZVAL_STR(&const_TRANSACTION_IN_PROGRESS_value, const_TRANSACTION_IN_PROGRESS_value_str);
 	zend_string *const_TRANSACTION_IN_PROGRESS_name = zend_string_init_interned("TRANSACTION_IN_PROGRESS", sizeof("TRANSACTION_IN_PROGRESS") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TRANSACTION_IN_PROGRESS_name, &const_TRANSACTION_IN_PROGRESS_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_TRANSACTION_IN_PROGRESS_name);
 
 	zval const_TRANSACTION_COMMITTED_value;
-	zend_string *const_TRANSACTION_COMMITTED_value_str = zend_string_init(PHONGO_TRANSACTION_COMMITTED, sizeof(PHONGO_TRANSACTION_COMMITTED) - 1, 1);
+	zend_string *const_TRANSACTION_COMMITTED_value_str = zend_string_init(PHONGO_TRANSACTION_COMMITTED, strlen(PHONGO_TRANSACTION_COMMITTED), 1);
 	ZVAL_STR(&const_TRANSACTION_COMMITTED_value, const_TRANSACTION_COMMITTED_value_str);
 	zend_string *const_TRANSACTION_COMMITTED_name = zend_string_init_interned("TRANSACTION_COMMITTED", sizeof("TRANSACTION_COMMITTED") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TRANSACTION_COMMITTED_name, &const_TRANSACTION_COMMITTED_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_TRANSACTION_COMMITTED_name);
 
 	zval const_TRANSACTION_ABORTED_value;
-	zend_string *const_TRANSACTION_ABORTED_value_str = zend_string_init(PHONGO_TRANSACTION_ABORTED, sizeof(PHONGO_TRANSACTION_ABORTED) - 1, 1);
+	zend_string *const_TRANSACTION_ABORTED_value_str = zend_string_init(PHONGO_TRANSACTION_ABORTED, strlen(PHONGO_TRANSACTION_ABORTED), 1);
 	ZVAL_STR(&const_TRANSACTION_ABORTED_value, const_TRANSACTION_ABORTED_value_str);
 	zend_string *const_TRANSACTION_ABORTED_name = zend_string_init_interned("TRANSACTION_ABORTED", sizeof("TRANSACTION_ABORTED") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TRANSACTION_ABORTED_name, &const_TRANSACTION_ABORTED_value, ZEND_ACC_PUBLIC, NULL);
