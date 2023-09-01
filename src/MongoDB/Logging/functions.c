@@ -35,6 +35,39 @@ PHP_FUNCTION(MongoDB_Driver_Logging_addLogger)
 	phongo_log_add_logger(logger);
 }
 
+/* Log a message */
+PHP_FUNCTION(MongoDB_Driver_Logging_log)
+{
+	zend_long level;
+	char*     domain;
+	size_t    domain_len;
+	char*     message;
+	size_t    message_len;
+
+	PHONGO_PARSE_PARAMETERS_START(3, 3)
+	Z_PARAM_LONG(level)
+	Z_PARAM_STRING(domain, domain_len)
+	Z_PARAM_STRING(message, message_len)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	/* TODO: throw if level is invalid */
+	/* TODO: Consider throwing if domain or message contain null bytes */
+	mongoc_log(level, domain, "%s", message);
+}
+
+/* Log a message */
+PHP_FUNCTION(MongoDB_Driver_Logging_levelToString)
+{
+	zend_long level;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_LONG(level)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	/* TODO: throw if level is invalid, instead of returning "UNKNOWN" */
+	RETURN_STRING(mongoc_log_level_str(level));
+}
+
 /* Unregisters a global logger */
 PHP_FUNCTION(MongoDB_Driver_Logging_removeLogger)
 {

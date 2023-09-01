@@ -29,6 +29,10 @@ namespace MongoDB\BSON {
 namespace MongoDB\Driver\Logging {
     function addLogger(Logger $logger): void {}
 
+    function levelToString(int $level): string {}
+
+    function log(int $level, string $message): void {}
+
     function removeLogger(Logger $logger): void {}
 }
 
