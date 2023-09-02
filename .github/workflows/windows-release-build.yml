@@ -25,7 +25,7 @@ jobs:
           workflow: tests.yml
           workflow_conclusion: success
           commit: ${{ github.sha }}
-          # Note: keep this in sync with the uploaded artifact name in tests.yml
+          # Note: keep this in sync with the uploaded artifact name in windows-tests.yml
           name: php_mongodb-${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
 
       - name: Create and attach release archive

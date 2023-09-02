@@ -1,0 +1,53 @@
+name: "Setup PHP driver build environment"
+description: "Prepares the PHP build environment for the MongoDB driver"
+inputs:
+  version:
+    description: "PHP version to build for"
+    required: true
+  arch:
+    description: "The architecture to build for (x64 or x86)"
+    required: true
+  ts:
+    description: "Thread-safety (nts or ts)"
+    required: true
+outputs:
+  build-dir:
+    description: "The build directory to be used"
+    value: ${{steps.get-build-dir.outputs.build_dir}}
+runs:
+  using: composite
+  steps:
+    - name: Setup PHP SDK
+      id: setup-php
+      uses: cmb69/setup-php-sdk@v0.7
+      with:
+        version: ${{ inputs.version }}
+        arch: ${{ inputs.arch }}
+        ts: ${{ inputs.ts }}
+        deps: openssl
+
+    - name: Enable Developer Command Prompt
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{ matrix.arch }}
+        toolset: ${{ steps.setup-php.outputs.toolset }}
+
+    - name: phpize
+      run: phpize
+      shell: cmd
+
+    - name: configure
+      run: configure --enable-mongodb --with-mongodb-sasl=yes --with-mongodb-client-side-encryption=yes --enable-debug-pack --with-prefix=${{ steps.setup-php.outputs.prefix }}
+      shell: cmd
+
+    - name: Get build directory
+      id: get-build-dir
+      shell: cmd
+      # The last echo command to set the output variable intentionally omits a space between the environment variable
+      # and the output redirector to avoid a trailing space in the generated output variable. Do not add a space.
+      run: |
+        cp .github/workflows/get-build-dir.bat .
+        for /F "usebackq tokens=*" %%i in (`get-build-dir.bat`) do set BUILD_DIR=%%i
+        echo BUILD_DIR=%BUILD_DIR%
+        @chcp 65001>nul
+        echo build_dir=%BUILD_DIR%>> %GITHUB_OUTPUT%
