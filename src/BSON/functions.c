@@ -23,7 +23,7 @@
 #include "phongo_error.h"
 
 /* Returns the BSON representation of a PHP value */
-PHP_FUNCTION(fromPHP)
+PHP_FUNCTION(MongoDB_BSON_fromPHP)
 {
 	zval*   data;
 	bson_t* bson;
@@ -40,7 +40,7 @@ PHP_FUNCTION(fromPHP)
 }
 
 /* Returns the PHP representation of a BSON value, optionally converting it into a custom class */
-PHP_FUNCTION(toPHP)
+PHP_FUNCTION(MongoDB_BSON_toPHP)
 {
 	char*                 data;
 	size_t                data_len;
@@ -71,7 +71,7 @@ PHP_FUNCTION(toPHP)
 }
 
 /* Returns the BSON representation of a JSON value */
-PHP_FUNCTION(fromJSON)
+PHP_FUNCTION(MongoDB_BSON_fromJSON)
 {
 	char*        json;
 	size_t       json_len;
@@ -125,19 +125,19 @@ static void phongo_bson_to_json(INTERNAL_FUNCTION_PARAMETERS, php_phongo_json_mo
 }
 
 /* Returns the legacy extended JSON representation of a BSON value */
-PHP_FUNCTION(toJSON)
+PHP_FUNCTION(MongoDB_BSON_toJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_LEGACY);
 }
 
 /* Returns the canonical extended JSON representation of a BSON value */
-PHP_FUNCTION(toCanonicalExtendedJSON)
+PHP_FUNCTION(MongoDB_BSON_toCanonicalExtendedJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_CANONICAL);
 }
 
 /* Returns the relaxed extended JSON representation of a BSON value */
-PHP_FUNCTION(toRelaxedExtendedJSON)
+PHP_FUNCTION(MongoDB_BSON_toRelaxedExtendedJSON)
 {
 	phongo_bson_to_json(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHONGO_JSON_MODE_RELAXED);
 }
