@@ -38,7 +38,7 @@ jobs:
         run: phpize
 
       - name: "Rebuild arginfo files from stubs"
-        run: "php ./build/gen_stub.php"
+        run: "php ./build/gen_stub.php --force-regeneration"
 
       - name: "Check arginfo file diff"
         run: git add . -N && git diff --exit-code
