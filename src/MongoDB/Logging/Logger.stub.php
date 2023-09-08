@@ -51,5 +51,5 @@ interface Logger
      */
     public const LEVEL_TRACE = UNKNOWN;
 
-    public function log(int $level, string $message): void;
+    public function log(int $level, string $domain, string $message): void;
 }

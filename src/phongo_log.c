@@ -54,21 +54,34 @@ static void phongo_log_to_stream(FILE* stream, mongoc_log_level_t level, const c
  * responsible for ensuring that loggers implement the correct interface. */
 static void phongo_log_dispatch(mongoc_log_level_t level, const char* domain, const char* message)
 {
-	zval  zlevel, zmessage;
 	zval* logger;
+	zend_string *func_name;
+	zval args[3];
 
-	ZVAL_LONG(&zlevel, level);
-	ZVAL_STR(&zmessage, zend_string_concat3(domain, strlen(domain), ": ", 2, message, strlen(message)));
+	ZVAL_LONG(&args[0], level);
+	ZVAL_STRING(&args[1], domain);
+	ZVAL_STRING(&args[2], message);
+
+	func_name = ZSTR_INIT_LITERAL("log", 0);
 
 	ZEND_HASH_FOREACH_VAL_IND(MONGODB_G(loggers), logger)
 	{
+		zval retval;
+
 		if (EG(exception)) {
 			break;
 		}
 
-		zend_call_method_with_2_params(PHONGO_COMPAT_OBJ_P(logger), NULL, NULL, "log", NULL, &zlevel, &zmessage);
+		/* TODO: Consider throwing if zend_call_method_if_exists() fails */ 
+		zend_call_method_if_exists(Z_OBJ_P(logger), func_name, &retval, 3, args);
+		zval_ptr_dtor(&retval);
 	}
 	ZEND_HASH_FOREACH_END();
+
+	zend_string_release(func_name);
+	zval_ptr_dtor(&args[2]);
+	zval_ptr_dtor(&args[1]);
+	zval_ptr_dtor(&args[0]);
 }
 
 static void phongo_log_handler(mongoc_log_level_t level, const char* domain, const char* message, void* user_data)

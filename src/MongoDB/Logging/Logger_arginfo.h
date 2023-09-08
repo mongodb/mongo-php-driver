@@ -1,8 +1,9 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 87ca165941f38d07c1aa34f668db6a3a2be8fec9 */
+ * Stub hash: 60e1f5e5c02b6313e39e2890c957e9c2f69d2718 */
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Logging_Logger_log, 0, 2, IS_VOID, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Logging_Logger_log, 0, 3, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, level, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, domain, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO(0, message, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 

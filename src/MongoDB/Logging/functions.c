@@ -23,6 +23,8 @@
 #include "phongo_error.h"
 #include "phongo_log.h"
 
+#define PHONGO_LOG_DOMAIN "php"
+
 /* Registers a global logger */
 PHP_FUNCTION(MongoDB_Driver_Logging_addLogger)
 {
@@ -39,20 +41,22 @@ PHP_FUNCTION(MongoDB_Driver_Logging_addLogger)
 PHP_FUNCTION(MongoDB_Driver_Logging_log)
 {
 	zend_long level;
-	char*     domain;
-	size_t    domain_len;
 	char*     message;
 	size_t    message_len;
 
-	PHONGO_PARSE_PARAMETERS_START(3, 3)
+	PHONGO_PARSE_PARAMETERS_START(2, 2)
 	Z_PARAM_LONG(level)
-	Z_PARAM_STRING(domain, domain_len)
 	Z_PARAM_STRING(message, message_len)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	/* TODO: throw if level is invalid */
-	/* TODO: Consider throwing if domain or message contain null bytes */
-	mongoc_log(level, domain, "%s", message);
+
+	if (strlen(message) != message_len) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Log messages cannot contain null bytes. Unexpected null byte after \"%s\".", message);
+		return;
+	}
+
+	mongoc_log(level, PHONGO_LOG_DOMAIN, "%s", message);
 }
 
 /* Log a message */
