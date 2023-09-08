@@ -210,7 +210,6 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 			bson_oid_t             oid;
 			php_phongo_objectid_t* intern = Z_OBJECTID_OBJ_P(object);
 
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding ObjectId");
 			bson_oid_init_from_string(&oid, intern->oid);
 			bson_append_oid(bson, key, key_len, &oid);
 			return;
@@ -218,35 +217,30 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_utcdatetime_ce)) {
 			php_phongo_utcdatetime_t* intern = Z_UTCDATETIME_OBJ_P(object);
 
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding UTCDateTime");
 			bson_append_date_time(bson, key, key_len, intern->milliseconds);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_binary_ce)) {
 			php_phongo_binary_t* intern = Z_BINARY_OBJ_P(object);
 
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Binary");
 			bson_append_binary(bson, key, key_len, intern->type, (const uint8_t*) intern->data, (uint32_t) intern->data_len);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_decimal128_ce)) {
 			php_phongo_decimal128_t* intern = Z_DECIMAL128_OBJ_P(object);
 
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Decimal128");
 			bson_append_decimal128(bson, key, key_len, &intern->decimal);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_int64_ce)) {
 			php_phongo_int64_t* intern = Z_INT64_OBJ_P(object);
 
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Int64");
 			bson_append_int64(bson, key, key_len, intern->integer);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_regex_ce)) {
 			php_phongo_regex_t* intern = Z_REGEX_OBJ_P(object);
 
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Regex");
 			bson_append_regex(bson, key, key_len, intern->pattern, intern->flags);
 			return;
 		}
@@ -254,10 +248,8 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 			php_phongo_javascript_t* intern = Z_JAVASCRIPT_OBJ_P(object);
 
 			if (intern->scope) {
-				mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Javascript with scope");
 				bson_append_code_with_scope(bson, key, key_len, intern->code, intern->scope);
 			} else {
-				mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Javascript without scope");
 				bson_append_code(bson, key, key_len, intern->code);
 			}
 			return;
@@ -265,17 +257,14 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_timestamp_ce)) {
 			php_phongo_timestamp_t* intern = Z_TIMESTAMP_OBJ_P(object);
 
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Timestamp");
 			bson_append_timestamp(bson, key, key_len, intern->timestamp, intern->increment);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_maxkey_ce)) {
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding MaxKey");
 			bson_append_maxkey(bson, key, key_len);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_minkey_ce)) {
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding MinKey");
 			bson_append_minkey(bson, key, key_len);
 			return;
 		}
@@ -285,7 +274,6 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 			bson_oid_t              oid;
 			php_phongo_dbpointer_t* intern = Z_DBPOINTER_OBJ_P(object);
 
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding DBPointer");
 			bson_oid_init_from_string(&oid, intern->id);
 			bson_append_dbpointer(bson, key, key_len, intern->ref, &oid);
 			return;
@@ -293,12 +281,10 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_symbol_ce)) {
 			php_phongo_symbol_t* intern = Z_SYMBOL_OBJ_P(object);
 
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Symbol");
 			bson_append_symbol(bson, key, key_len, intern->symbol, intern->symbol_len);
 			return;
 		}
 		if (instanceof_function(Z_OBJCE_P(object), php_phongo_undefined_ce)) {
-			mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding Undefined");
 			bson_append_undefined(bson, key, key_len);
 			return;
 		}
@@ -324,7 +310,6 @@ static void php_phongo_bson_append_object(bson_t* bson, php_phongo_field_path* f
 	{
 		bson_t child;
 
-		mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "encoding document");
 		bson_append_document_begin(bson, key, key_len, &child);
 		php_phongo_zval_to_bson_internal(object, field_path, flags, &child, NULL);
 		bson_append_document_end(bson, &child);
@@ -602,7 +587,6 @@ done:
 
 		bson_oid_init(&oid, NULL);
 		bson_append_oid(bson, "_id", strlen("_id"), &oid);
-		mongoc_log(MONGOC_LOG_LEVEL_TRACE, MONGOC_LOG_DOMAIN, "Added new _id");
 	}
 
 	if (flags & PHONGO_BSON_RETURN_ID && bson_out) {
