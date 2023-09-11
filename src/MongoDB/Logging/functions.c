@@ -49,10 +49,13 @@ PHP_FUNCTION(MongoDB_Driver_Logging_log)
 	Z_PARAM_STRING(message, message_len)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	/* TODO: throw if level is invalid */
+	if (level < MONGOC_LOG_LEVEL_ERROR || level > MONGOC_LOG_LEVEL_TRACE) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected level to be >= %d and <= %d, %" PHONGO_LONG_FORMAT " given", MONGOC_LOG_LEVEL_ERROR, MONGOC_LOG_LEVEL_TRACE, level);
+		return;
+	}
 
 	if (strlen(message) != message_len) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Log messages cannot contain null bytes. Unexpected null byte after \"%s\".", message);
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Log messages cannot contain null bytes. Unexpected null byte after \"%s\".", message);
 		return;
 	}
 
