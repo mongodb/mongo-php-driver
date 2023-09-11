@@ -55,14 +55,13 @@ static void phongo_log_to_stream(FILE* stream, mongoc_log_level_t level, const c
 static void phongo_log_dispatch(mongoc_log_level_t level, const char* domain, const char* message)
 {
 	zval* logger;
-	zend_string *func_name;
-	zval args[3];
+	zval  func_name;
+	zval  args[3];
 
+	ZVAL_STRING(&func_name, "log");
 	ZVAL_LONG(&args[0], level);
 	ZVAL_STRING(&args[1], domain);
 	ZVAL_STRING(&args[2], message);
-
-	func_name = ZSTR_INIT_LITERAL("log", 0);
 
 	ZEND_HASH_FOREACH_VAL_IND(MONGODB_G(loggers), logger)
 	{
@@ -72,16 +71,15 @@ static void phongo_log_dispatch(mongoc_log_level_t level, const char* domain, co
 			break;
 		}
 
-		/* TODO: Consider throwing if zend_call_method_if_exists() fails */ 
-		zend_call_method_if_exists(Z_OBJ_P(logger), func_name, &retval, 3, args);
+		call_user_function(NULL, logger, &func_name, &retval, 3, args);
 		zval_ptr_dtor(&retval);
 	}
 	ZEND_HASH_FOREACH_END();
 
-	zend_string_release(func_name);
-	zval_ptr_dtor(&args[2]);
-	zval_ptr_dtor(&args[1]);
+	zval_ptr_dtor(&func_name);
 	zval_ptr_dtor(&args[0]);
+	zval_ptr_dtor(&args[1]);
+	zval_ptr_dtor(&args[2]);
 }
 
 static void phongo_log_handler(mongoc_log_level_t level, const char* domain, const char* message, void* user_data)
