@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\Driver\Logging\addLogger(): Adding one logger multiple times
+MongoDB\Driver\Logging\addLogger(): Adding the same logger multiple times is a NOP
 --FILE--
 <?php
 require_once __DIR__ . "/../utils/basic.inc";
@@ -22,6 +22,9 @@ addLogger($logger);
 log(Logger::LEVEL_ERROR, 'error');
 log(Logger::LEVEL_CRITICAL, 'critical');
 log(Logger::LEVEL_WARNING, 'warning');
+
+addLogger($logger);
+
 log(Logger::LEVEL_MESSAGE, 'message');
 log(Logger::LEVEL_INFO, 'info');
 log(Logger::LEVEL_DEBUG, 'debug');
