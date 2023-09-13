@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 1be598a54b01187349f9e8cd5174f85678d9d8e1 */
+ * Stub hash: 4c002ef176f5f68012575fc9cbe1a3919f12a353 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MongoDB_BSON_fromJSON, 0, 1, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO(0, json, IS_STRING, 0)
@@ -43,10 +43,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MongoDB_Driver_Logging_addLogger
 	ZEND_ARG_OBJ_INFO(0, logger, MongoDB\\Driver\\Logging\\Logger, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MongoDB_Driver_Logging_levelToString, 0, 1, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, level, IS_LONG, 0)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MongoDB_Driver_Logging_log, 0, 2, IS_VOID, 0)
 	ZEND_ARG_TYPE_INFO(0, level, IS_LONG, 0)
 	ZEND_ARG_TYPE_INFO(0, message, IS_STRING, 0)
@@ -78,7 +74,6 @@ ZEND_FUNCTION(MongoDB_BSON_toPHP);
 #endif
 ZEND_FUNCTION(MongoDB_BSON_toRelaxedExtendedJSON);
 ZEND_FUNCTION(MongoDB_Driver_Logging_addLogger);
-ZEND_FUNCTION(MongoDB_Driver_Logging_levelToString);
 ZEND_FUNCTION(MongoDB_Driver_Logging_log);
 ZEND_FUNCTION(MongoDB_Driver_Logging_removeLogger);
 ZEND_FUNCTION(MongoDB_Driver_Monitoring_addSubscriber);
@@ -103,7 +98,6 @@ static const zend_function_entry ext_functions[] = {
 #endif
 	ZEND_NS_FALIAS("MongoDB\\BSON", toRelaxedExtendedJSON, MongoDB_BSON_toRelaxedExtendedJSON, arginfo_MongoDB_BSON_toRelaxedExtendedJSON)
 	ZEND_NS_FALIAS("MongoDB\\Driver\\Logging", addLogger, MongoDB_Driver_Logging_addLogger, arginfo_MongoDB_Driver_Logging_addLogger)
-	ZEND_NS_FALIAS("MongoDB\\Driver\\Logging", levelToString, MongoDB_Driver_Logging_levelToString, arginfo_MongoDB_Driver_Logging_levelToString)
 	ZEND_NS_FALIAS("MongoDB\\Driver\\Logging", log, MongoDB_Driver_Logging_log, arginfo_MongoDB_Driver_Logging_log)
 	ZEND_NS_FALIAS("MongoDB\\Driver\\Logging", removeLogger, MongoDB_Driver_Logging_removeLogger, arginfo_MongoDB_Driver_Logging_removeLogger)
 	ZEND_NS_FALIAS("MongoDB\\Driver\\Monitoring", addSubscriber, MongoDB_Driver_Monitoring_addSubscriber, arginfo_MongoDB_Driver_Monitoring_addSubscriber)

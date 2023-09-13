@@ -37,7 +37,7 @@ PHP_FUNCTION(MongoDB_Driver_Logging_addLogger)
 	phongo_log_add_logger(logger);
 }
 
-/* Log a message */
+/* Log a message through libmongoc */
 PHP_FUNCTION(MongoDB_Driver_Logging_log)
 {
 	zend_long level;
@@ -67,19 +67,6 @@ PHP_FUNCTION(MongoDB_Driver_Logging_log)
 	}
 
 	mongoc_log(level, PHONGO_LOG_DOMAIN, "%s", message);
-}
-
-/* Log a message */
-PHP_FUNCTION(MongoDB_Driver_Logging_levelToString)
-{
-	zend_long level;
-
-	PHONGO_PARSE_PARAMETERS_START(1, 1)
-	Z_PARAM_LONG(level)
-	PHONGO_PARSE_PARAMETERS_END();
-
-	/* TODO: throw if level is invalid, instead of returning "UNKNOWN" */
-	RETURN_STRING(mongoc_log_level_str(level));
 }
 
 /* Unregisters a global logger */
