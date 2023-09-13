@@ -12,11 +12,13 @@ var_dump(levelToString(Logger::LEVEL_WARNING));
 var_dump(levelToString(Logger::LEVEL_MESSAGE));
 var_dump(levelToString(Logger::LEVEL_INFO));
 var_dump(levelToString(Logger::LEVEL_DEBUG));
-var_dump(levelToString(Logger::LEVEL_TRACE));
+/* Note: this is MONGOC_LOG_LEVEL_TRACE, which mongoc_log_level_str() supports
+ * despite PHPC not exposing it in its own API. */
+var_dump(levelToString(Logger::LEVEL_DEBUG + 1));
 
 // Unsupported log levels
 var_dump(levelToString(Logger::LEVEL_ERROR - 1));
-var_dump(levelToString(Logger::LEVEL_TRACE + 1));
+var_dump(levelToString(Logger::LEVEL_DEBUG + 2));
 
 ?>
 ===DONE===

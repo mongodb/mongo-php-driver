@@ -49,8 +49,15 @@ PHP_FUNCTION(MongoDB_Driver_Logging_log)
 	Z_PARAM_STRING(message, message_len)
 	PHONGO_PARSE_PARAMETERS_END();
 
-	if (level < MONGOC_LOG_LEVEL_ERROR || level > MONGOC_LOG_LEVEL_TRACE) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected level to be >= %d and <= %d, %" PHONGO_LONG_FORMAT " given", MONGOC_LOG_LEVEL_ERROR, MONGOC_LOG_LEVEL_TRACE, level);
+	/* Note: MONGOC_LOG_LEVEL_TRACE is intentionally unsupported. Trace logging
+	 * is very verbose and often includes multi-line output, which takes the
+	 * form of multiple log messages. Therefore, it is only reported via streams
+	 * (i.e. mongodb.debug INI) and not to registered Logger objects.
+	 *
+	 * Additionally, the log() function exists mainly for internal usage by
+	 * by PHPLIB, which does not need to log trace-level messages. */
+	if (level < MONGOC_LOG_LEVEL_ERROR || level > MONGOC_LOG_LEVEL_DEBUG) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected level to be >= %d and <= %d, %" PHONGO_LONG_FORMAT " given", MONGOC_LOG_LEVEL_ERROR, MONGOC_LOG_LEVEL_DEBUG, level);
 		return;
 	}
 

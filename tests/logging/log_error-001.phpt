@@ -12,7 +12,7 @@ echo throws(function() {
 }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 echo throws(function() {
-    log(Logger::LEVEL_TRACE + 1, 'LEVEL_TRACE + 1');
+    log(Logger::LEVEL_DEBUG + 1, 'LEVEL_DEBUG + 1');
 }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
 ?>
@@ -20,7 +20,7 @@ echo throws(function() {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected level to be >= 0 and <= 6, -1 given
+Expected level to be >= 0 and <= 5, -1 given
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected level to be >= 0 and <= 6, 7 given
+Expected level to be >= 0 and <= 5, 6 given
 ===DONE===

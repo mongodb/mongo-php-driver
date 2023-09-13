@@ -11,7 +11,6 @@ var_dump(Logger::LEVEL_WARNING);
 var_dump(Logger::LEVEL_MESSAGE);
 var_dump(Logger::LEVEL_INFO);
 var_dump(Logger::LEVEL_DEBUG);
-var_dump(Logger::LEVEL_TRACE);
 
 ?>
 ===DONE===
@@ -23,5 +22,4 @@ int(2)
 int(3)
 int(4)
 int(5)
-int(6)
 ===DONE===

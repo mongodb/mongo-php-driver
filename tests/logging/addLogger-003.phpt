@@ -25,7 +25,6 @@ log(Logger::LEVEL_WARNING, 'warning');
 log(Logger::LEVEL_MESSAGE, 'message');
 log(Logger::LEVEL_INFO, 'info');
 log(Logger::LEVEL_DEBUG, 'debug');
-log(Logger::LEVEL_TRACE, 'trace');
 
 ?>
 ===DONE===
@@ -37,5 +36,4 @@ log(Logger::LEVEL_TRACE, 'trace');
 3: php: message
 4: php: info
 5: php: debug
-6: php: trace
 ===DONE===

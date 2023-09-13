@@ -36,7 +36,6 @@ addLogger($logger2);
 log(Logger::LEVEL_MESSAGE, 'message');
 log(Logger::LEVEL_INFO, 'info');
 log(Logger::LEVEL_DEBUG, 'debug');
-log(Logger::LEVEL_TRACE, 'trace');
 
 ?>
 ===DONE===
@@ -51,6 +50,4 @@ ONE: 4: php: info
 TWO: 4: php: info
 ONE: 5: php: debug
 TWO: 5: php: debug
-ONE: 6: php: trace
-TWO: 6: php: trace
 ===DONE===

@@ -58,6 +58,11 @@ static void phongo_log_dispatch(mongoc_log_level_t level, const char* domain, co
 	zval  func_name;
 	zval  args[3];
 
+	// Trace logs are only reported via streams (i.e. mongodb.debug INI)
+	if (level >= MONGOC_LOG_LEVEL_TRACE) {
+		return;
+	}
+
 	ZVAL_STRING(&func_name, "log");
 	ZVAL_LONG(&args[0], level);
 	ZVAL_STRING(&args[1], domain);
@@ -88,7 +93,8 @@ static void phongo_log_handler(mongoc_log_level_t level, const char* domain, con
 		phongo_log_to_stream(MONGODB_G(debug_fd), level, domain, message);
 	}
 
-	if (MONGODB_G(loggers) && zend_hash_num_elements(MONGODB_G(loggers)) > 0) {
+	// Trace logs are only reported via streams (i.e. mongodb.debug INI)
+	if (level < MONGOC_LOG_LEVEL_TRACE && MONGODB_G(loggers) && zend_hash_num_elements(MONGODB_G(loggers)) > 0) {
 		phongo_log_dispatch(level, domain, message);
 	}
 }
@@ -99,7 +105,11 @@ static void phongo_log_handler(mongoc_log_level_t level, const char* domain, con
 static void phongo_log_sync_handler(void)
 {
 	if (MONGODB_G(debug_fd) || (MONGODB_G(loggers) && zend_hash_num_elements(MONGODB_G(loggers)) > 0)) {
-		mongoc_log_trace_enable();
+		// Trace logging is only needed if a stream is active
+		if (MONGODB_G(debug_fd)) {
+			mongoc_log_trace_enable();
+		}
+
 		mongoc_log_set_handler(phongo_log_handler, NULL);
 	} else {
 		mongoc_log_trace_disable();

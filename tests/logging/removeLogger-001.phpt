@@ -29,7 +29,6 @@ removeLogger($logger);
 log(Logger::LEVEL_MESSAGE, 'message');
 log(Logger::LEVEL_INFO, 'info');
 log(Logger::LEVEL_DEBUG, 'debug');
-log(Logger::LEVEL_TRACE, 'trace');
 
 ?>
 ===DONE===
