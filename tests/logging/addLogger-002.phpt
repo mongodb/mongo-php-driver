@@ -10,16 +10,16 @@ use function MongoDB\Driver\Logging\log;
 
 class MyLogger implements Logger
 {
-    private $instanceName;
+    private $name;
 
-    public function __construct(string $instanceName)
+    public function __construct(string $name)
     {
-        $this->instanceName = $instanceName;
+        $this->name = $name;
     }
 
     public function log(int $level, string $domain, string $message): void
     {
-        printf("%s: %d: %s: %s\n", $this->instanceName, $level, $domain, $message);
+        printf("%s: %d: %s: %s\n", $this->name, $level, $domain, $message);
     }
 }
 
