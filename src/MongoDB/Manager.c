@@ -304,6 +304,8 @@ static PHP_METHOD(MongoDB_Driver_Manager, addSubscriber)
 		zend_hash_init(intern->subscribers, 0, NULL, ZVAL_PTR_DTOR, 0);
 	}
 
+	// TODO: Consider throwing if subscriber is unsupported (see: PHPC-2289)
+
 	phongo_apm_add_subscriber(intern->subscribers, subscriber);
 }
 

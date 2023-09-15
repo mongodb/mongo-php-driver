@@ -26,16 +26,11 @@ namespace MongoDB\BSON {
     function toRelaxedExtendedJSON(string $bson): string {}
 }
 
-namespace MongoDB\Driver\Logging {
-    function addLogger(Logger $logger): void {}
-
-    function log(int $level, string $message): void {}
-
-    function removeLogger(Logger $logger): void {}
-}
-
 namespace MongoDB\Driver\Monitoring {
     function addSubscriber(Subscriber $subscriber): void {}
+
+    /** @internal */
+    function mongoc_log(int $level, string $domain, string $message): void {}
 
     function removeSubscriber(Subscriber $subscriber): void {}
 }

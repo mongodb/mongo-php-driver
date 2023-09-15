@@ -282,14 +282,13 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 
-	php_phongo_logger_init_ce(INIT_FUNC_ARGS_PASSTHRU);
-
 	/* Register base APM classes first */
 	php_phongo_subscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+	php_phongo_logsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);
 	php_phongo_serverclosedevent_init_ce(INIT_FUNC_ARGS_PASSTHRU);

@@ -369,12 +369,11 @@ extern zend_class_entry* php_phongo_regex_interface_ce;
 extern zend_class_entry* php_phongo_timestamp_interface_ce;
 extern zend_class_entry* php_phongo_utcdatetime_interface_ce;
 
-extern zend_class_entry* php_phongo_logger_ce;
-
 extern zend_class_entry* php_phongo_commandfailedevent_ce;
 extern zend_class_entry* php_phongo_commandstartedevent_ce;
 extern zend_class_entry* php_phongo_commandsubscriber_ce;
 extern zend_class_entry* php_phongo_commandsucceededevent_ce;
+extern zend_class_entry* php_phongo_logsubscriber_ce;
 extern zend_class_entry* php_phongo_sdamsubscriber_ce;
 extern zend_class_entry* php_phongo_subscriber_ce;
 extern zend_class_entry* php_phongo_serverchangedevent_ce;
@@ -455,12 +454,11 @@ extern void php_phongo_sslconnectionexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_unexpectedvalueexception_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_writeexception_init_ce(INIT_FUNC_ARGS);
 
-extern void php_phongo_logger_init_ce(INIT_FUNC_ARGS);
-
 extern void php_phongo_commandfailedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_commandstartedevent_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_commandsubscriber_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_commandsucceededevent_init_ce(INIT_FUNC_ARGS);
+extern void php_phongo_logsubscriber_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_sdamsubscriber_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_subscriber_init_ce(INIT_FUNC_ARGS);
 extern void php_phongo_serverchangedevent_init_ce(INIT_FUNC_ARGS);

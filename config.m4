@@ -186,12 +186,11 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/Exception/SSLConnectionException.c \
     src/MongoDB/Exception/UnexpectedValueException.c \
     src/MongoDB/Exception/WriteException.c \
-    src/MongoDB/Logging/Logger.c \
-    src/MongoDB/Logging/functions.c \
     src/MongoDB/Monitoring/CommandFailedEvent.c \
     src/MongoDB/Monitoring/CommandStartedEvent.c \
     src/MongoDB/Monitoring/CommandSubscriber.c \
     src/MongoDB/Monitoring/CommandSucceededEvent.c \
+    src/MongoDB/Monitoring/LogSubscriber.c \
     src/MongoDB/Monitoring/SDAMSubscriber.c \
     src/MongoDB/Monitoring/Subscriber.c \
     src/MongoDB/Monitoring/ServerChangedEvent.c \
@@ -544,7 +543,6 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/BSON/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/Exception/])
-  PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/Logging/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/MongoDB/Monitoring/])
   PHP_ADD_INCLUDE(PHP_EXT_SRCDIR(mongodb)[/src/contrib/])
 
@@ -552,7 +550,6 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/BSON/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/Exception/])
-  PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/Logging/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/MongoDB/Monitoring/])
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/src/contrib/])
 

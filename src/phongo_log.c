@@ -21,9 +21,7 @@
 
 #include <php.h>
 #include <ext/date/php_date.h>
-#include <main/php_open_temporary_file.h>
 #include <Zend/zend_exceptions.h>
-#include <Zend/zend_interfaces.h>
 #include <Zend/zend_operators.h>
 
 #include "php_phongo.h"
@@ -50,15 +48,17 @@ static void phongo_log_to_stream(FILE* stream, mongoc_log_level_t level, const c
 	efree(dt);
 }
 
-/* Dispatch a log message to all loggers in a HashTable. The caller is
- * responsible for ensuring that loggers implement the correct interface. */
+/* Dispatch a log message to all registered loggers. The caller is responsible
+ * for ensuring that loggers implement the correct interface. */
 static void phongo_log_dispatch(mongoc_log_level_t level, const char* domain, const char* message)
 {
 	zval* logger;
 	zval  func_name;
 	zval  args[3];
 
-	// Trace logs are only reported via streams (i.e. mongodb.debug INI)
+	/* Trace logging is very verbose and often includes multi-line output, which
+	 * takes the form of multiple log messages. Therefore, it is only reported
+	 * via streams (i.e. mongodb.debug INI) and not to registered loggers. */
 	if (level >= MONGOC_LOG_LEVEL_TRACE) {
 		return;
 	}
@@ -93,8 +93,12 @@ static void phongo_log_handler(mongoc_log_level_t level, const char* domain, con
 		phongo_log_to_stream(MONGODB_G(debug_fd), level, domain, message);
 	}
 
-	// Trace logs are only reported via streams (i.e. mongodb.debug INI)
-	if (level < MONGOC_LOG_LEVEL_TRACE && MONGODB_G(loggers) && zend_hash_num_elements(MONGODB_G(loggers)) > 0) {
+	// Trace logs are only reported via streams and not to registered loggers
+	if (level >= MONGOC_LOG_LEVEL_TRACE) {
+		return;
+	}
+
+	if (MONGODB_G(loggers) && zend_hash_num_elements(MONGODB_G(loggers)) > 0) {
 		phongo_log_dispatch(level, domain, message);
 	}
 }
@@ -126,8 +130,8 @@ static bool phongo_log_check_args_for_add_and_remove(HashTable* loggers, zval* l
 		return false;
 	}
 
-	if (!logger || Z_TYPE_P(logger) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(logger), php_phongo_logger_ce)) {
-		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Logger is not an instance of %s", ZSTR_VAL(php_phongo_logger_ce->name));
+	if (!logger || Z_TYPE_P(logger) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(logger), php_phongo_logsubscriber_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "Logger is not an instance of %s", ZSTR_VAL(php_phongo_logsubscriber_ce->name));
 		return false;
 	}
 

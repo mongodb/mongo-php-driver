@@ -44,7 +44,6 @@ function get_files() {
 
         "src/MongoDB/*.{c,h}",
         "src/MongoDB/Exception/*.{c,h}",
-        "src/MongoDB/Logging/*.{c,h}",
         "src/MongoDB/Monitoring/*.{c,h}",
         "src/BSON/*.{c,h}",
         "src/contrib/*.{c,h}",
