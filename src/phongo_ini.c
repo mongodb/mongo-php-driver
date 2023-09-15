@@ -15,6 +15,7 @@
  */
 
 #include <stdio.h>
+#include <time.h>
 
 #include <php.h>
 #include <main/php_open_temporary_file.h>
@@ -27,16 +28,13 @@ ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 
 static FILE* phongo_ini_tmp_file(const char* tmp_dir)
 {
-	time_t       t;
 	int          fd = -1;
 	char*        prefix;
 	int          len;
 	zend_string* filename = NULL;
 	FILE*        stream   = NULL;
 
-	/* TODO: consider using time() retval directly instead of time_t struct */
-	time(&t);
-	len = spprintf(&prefix, 0, "PHONGO-%ld", t);
+	len = spprintf(&prefix, 0, "PHONGO-%ld", time(NULL));
 
 	/* TODO: Refactor this to use fdopen (see: PHPC-2181) */
 	fd = php_open_temporary_fd(tmp_dir, prefix, &filename);
