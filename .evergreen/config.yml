@@ -401,34 +401,21 @@ functions:
             ${DRIVERS_TOOLS}/.evergreen/run-load-balancer.sh stop
           fi
 
-pre:
-  - func: "fetch source"
-  - func: "prepare resources"
-  - func: "windows fix"
-  - func: "fix absolute paths"
-  - func: "init test-results"
-  - func: "make files executable"
-  - func: "install dependencies"
+  #
+  # Tasks for local deployments
+  #
 
-post:
-  - func: "upload working dir"
-  - func: "upload mo artifacts"
-  - func: "upload test results"
-  - func: "stop load balancer"
-  - func: "stop mongo-orchestration"
-  - func: "cleanup"
-
-tasks:
-  - name: "test-standalone"
+  # MongoDB latest
+  - name: "test-mongodb-latest-standalone"
     tags: ["standalone"]
     commands:
       - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
+          MONGODB_VERSION: "latest"
       - func: "run tests"
-
-  - name: "test-standalone-auth"
+  - name: "test-mongodb-latest-standalone-auth"
     tags: ["standalone"]
     commands:
       - func: "compile driver"
@@ -436,9 +423,9 @@ tasks:
         vars:
           TOPOLOGY: "server"
           AUTH: "auth"
+          MONGODB_VERSION: "latest"
       - func: "run tests"
-
-  - name: "test-standalone-ssl"
+  - name: "test-mongodb-latest-standalone-ssl"
     tags: ["standalone"]
     commands:
       - func: "compile driver"
@@ -446,20 +433,20 @@ tasks:
         vars:
           TOPOLOGY: "server"
           SSL: "yes"
+          MONGODB_VERSION: "latest"
       - func: "run tests"
         vars:
           SSL: "yes"
-
-  - name: "test-replicaset"
+  - name: "test-mongodb-latest-replicaset"
     tags: ["replicaset"]
     commands:
       - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "latest"
       - func: "run tests"
-
-  - name: "test-replicaset-auth"
+  - name: "test-mongodb-latest-replicaset-auth"
     tags: ["replicaset"]
     commands:
       - func: "compile driver"
@@ -467,16 +454,509 @@ tasks:
         vars:
           TOPOLOGY: "replica_set"
           AUTH: "auth"
+          MONGODB_VERSION: "latest"
       - func: "run tests"
-
-  - name: "test-sharded"
+  - name: "test-mongodb-latest-sharded"
     tags: ["sharded"]
     commands:
       - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "sharded_cluster"
+          MONGODB_VERSION: "latest"
       - func: "run tests"
+
+  # MongoDB Rapid Release
+  - name: "test-mongodb-rapid-standalone"
+    tags: ["standalone"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          MONGODB_VERSION: "rapid"
+      - func: "run tests"
+  - name: "test-mongodb-rapid-standalone-auth"
+    tags: ["standalone"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          MONGODB_VERSION: "rapid"
+      - func: "run tests"
+  - name: "test-mongodb-rapid-standalone-ssl"
+    tags: ["standalone"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          SSL: "yes"
+          MONGODB_VERSION: "rapid"
+      - func: "run tests"
+        vars:
+          SSL: "yes"
+  - name: "test-mongodb-rapid-replicaset"
+    tags: ["replicaset"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "rapid"
+      - func: "run tests"
+  - name: "test-mongodb-rapid-replicaset-auth"
+    tags: ["replicaset"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          AUTH: "auth"
+          MONGODB_VERSION: "rapid"
+      - func: "run tests"
+  - name: "test-mongodb-rapid-sharded"
+    tags: ["sharded"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "sharded_cluster"
+          MONGODB_VERSION: "rapid"
+      - func: "run tests"
+
+  # MongoDB 7.0
+  - name: "test-mongodb-70-standalone"
+    tags: ["standalone", "7.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+  - name: "test-mongodb-70-standalone-auth"
+    tags: ["standalone", "7.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+  - name: "test-mongodb-70-standalone-ssl"
+    tags: ["standalone", "7.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          SSL: "yes"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+        vars:
+          SSL: "yes"
+  - name: "test-mongodb-70-replicaset"
+    tags: ["replicaset", "7.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+  - name: "test-mongodb-70-replicaset-auth"
+    tags: ["replicaset", "7.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          AUTH: "auth"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+  - name: "test-mongodb-70-sharded"
+    tags: ["sharded", "7.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "sharded_cluster"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+
+  # MongoDB 6.0
+  - name: "test-mongodb-60-standalone"
+    tags: ["standalone", "6.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          MONGODB_VERSION: "6.0"
+      - func: "run tests"
+  - name: "test-mongodb-60-standalone-auth"
+    tags: ["standalone", "6.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          MONGODB_VERSION: "6.0"
+      - func: "run tests"
+  - name: "test-mongodb-60-standalone-ssl"
+    tags: ["standalone", "6.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          SSL: "yes"
+          MONGODB_VERSION: "6.0"
+      - func: "run tests"
+        vars:
+          SSL: "yes"
+  - name: "test-mongodb-60-replicaset"
+    tags: ["replicaset", "6.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "6.0"
+      - func: "run tests"
+  - name: "test-mongodb-60-replicaset-auth"
+    tags: ["replicaset", "6.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          AUTH: "auth"
+          MONGODB_VERSION: "6.0"
+      - func: "run tests"
+  - name: "test-mongodb-60-sharded"
+    tags: ["sharded", "6.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "sharded_cluster"
+          MONGODB_VERSION: "6.0"
+      - func: "run tests"
+
+  # MongoDB 5.0
+  - name: "test-mongodb-50-standalone"
+    tags: ["standalone", "5.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          MONGODB_VERSION: "5.0"
+      - func: "run tests"
+  - name: "test-mongodb-50-standalone-auth"
+    tags: ["standalone", "5.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          MONGODB_VERSION: "5.0"
+      - func: "run tests"
+  - name: "test-mongodb-50-standalone-ssl"
+    tags: ["standalone", "5.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          SSL: "yes"
+          MONGODB_VERSION: "5.0"
+      - func: "run tests"
+        vars:
+          SSL: "yes"
+  - name: "test-mongodb-50-replicaset"
+    tags: ["replicaset", "5.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "5.0"
+      - func: "run tests"
+  - name: "test-mongodb-50-replicaset-auth"
+    tags: ["replicaset", "5.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          AUTH: "auth"
+          MONGODB_VERSION: "5.0"
+      - func: "run tests"
+  - name: "test-mongodb-50-sharded"
+    tags: ["sharded", "5.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "sharded_cluster"
+          MONGODB_VERSION: "5.0"
+      - func: "run tests"
+
+  # MongoDB 4.4
+  - name: "test-mongodb-44-standalone"
+    tags: ["standalone", "4.4"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          MONGODB_VERSION: "4.4"
+      - func: "run tests"
+  - name: "test-mongodb-44-standalone-auth"
+    tags: ["standalone", "4.4"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          MONGODB_VERSION: "4.4"
+      - func: "run tests"
+  - name: "test-mongodb-44-standalone-ssl"
+    tags: ["standalone", "4.4"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          SSL: "yes"
+          MONGODB_VERSION: "4.4"
+      - func: "run tests"
+        vars:
+          SSL: "yes"
+  - name: "test-mongodb-44-replicaset"
+    tags: ["replicaset", "4.4"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "4.4"
+      - func: "run tests"
+  - name: "test-mongodb-44-replicaset-auth"
+    tags: ["replicaset", "4.4"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          AUTH: "auth"
+          MONGODB_VERSION: "4.4"
+      - func: "run tests"
+  - name: "test-mongodb-44-sharded"
+    tags: ["sharded", "4.4"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "sharded_cluster"
+          MONGODB_VERSION: "4.4"
+      - func: "run tests"
+
+  # MongoDB 4.2
+  - name: "test-mongodb-42-standalone"
+    tags: ["standalone", "4.2"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          MONGODB_VERSION: "4.2"
+      - func: "run tests"
+  - name: "test-mongodb-42-standalone-auth"
+    tags: ["standalone", "4.2"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          MONGODB_VERSION: "4.2"
+      - func: "run tests"
+  - name: "test-mongodb-42-standalone-ssl"
+    tags: ["standalone", "4.2"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          SSL: "yes"
+          MONGODB_VERSION: "4.2"
+      - func: "run tests"
+        vars:
+          SSL: "yes"
+  - name: "test-mongodb-42-replicaset"
+    tags: ["replicaset", "4.2"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "4.2"
+      - func: "run tests"
+  - name: "test-mongodb-42-replicaset-auth"
+    tags: ["replicaset", "4.2"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          AUTH: "auth"
+          MONGODB_VERSION: "4.2"
+      - func: "run tests"
+  - name: "test-mongodb-42-sharded"
+    tags: ["sharded", "4.2"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "sharded_cluster"
+          MONGODB_VERSION: "4.2"
+      - func: "run tests"
+
+  # MongoDB 4.0
+  - name: "test-mongodb-40-standalone"
+    tags: ["standalone", "4.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          MONGODB_VERSION: "4.0"
+      - func: "run tests"
+  - name: "test-mongodb-40-standalone-auth"
+    tags: ["standalone", "4.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          MONGODB_VERSION: "4.0"
+      - func: "run tests"
+  - name: "test-mongodb-40-standalone-ssl"
+    tags: ["standalone", "4.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          SSL: "yes"
+          MONGODB_VERSION: "4.0"
+      - func: "run tests"
+        vars:
+          SSL: "yes"
+  - name: "test-mongodb-40-replicaset"
+    tags: ["replicaset", "4.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "4.0"
+      - func: "run tests"
+  - name: "test-mongodb-40-replicaset-auth"
+    tags: ["replicaset", "4.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          AUTH: "auth"
+          MONGODB_VERSION: "4.0"
+      - func: "run tests"
+  - name: "test-mongodb-40-sharded"
+    tags: ["sharded", "4.0"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "sharded_cluster"
+          MONGODB_VERSION: "4.0"
+      - func: "run tests"
+
+  # MongoDB 3.6
+  - name: "test-mongodb-36-standalone"
+    tags: ["standalone", "3.6"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          MONGODB_VERSION: "3.6"
+      - func: "run tests"
+  - name: "test-mongodb-36-standalone-auth"
+    tags: ["standalone", "3.6"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          MONGODB_VERSION: "3.6"
+      - func: "run tests"
+  - name: "test-mongodb-36-standalone-ssl"
+    tags: ["standalone", "3.6"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          SSL: "yes"
+          MONGODB_VERSION: "3.6"
+      - func: "run tests"
+        vars:
+          SSL: "yes"
+  - name: "test-mongodb-36-replicaset"
+    tags: ["replicaset", "3.6"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "3.6"
+      - func: "run tests"
+  - name: "test-mongodb-36-replicaset-auth"
+    tags: ["replicaset", "3.6"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          AUTH: "auth"
+          MONGODB_VERSION: "3.6"
+      - func: "run tests"
+  - name: "test-mongodb-36-sharded"
+    tags: ["sharded", "3.6"]
+    commands:
+      - func: "compile driver"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "sharded_cluster"
+          MONGODB_VERSION: "3.6"
+      - func: "run tests"
+
+  #
+  # Old tasks
+  #
 
   - name: "test-atlas"
     tags: ["atlas"]
@@ -916,6 +1396,31 @@ tasks:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
 
+task_groups:
+  - name: test-local-deployment
+    setup_group:
+      - func: "fetch source"
+      - func: "prepare resources"
+      - func: "windows fix"
+      - func: "fix absolute paths"
+      - func: "init test-results"
+      - func: "make files executable"
+      - func: "install dependencies"
+    teardown_group:
+      - func: "upload working dir"
+      - func: "upload mo artifacts"
+      - func: "upload test results"
+      - func: "stop load balancer"
+      - func: "stop mongo-orchestration"
+      - func: "cleanup"
+    setup_group_can_fail_task: true
+    setup_group_timeout_secs: 1800
+    tasks:
+      - ".standalone"
+      - ".replicaset"
+      - ".sharded"
+
+
 axes:
   - id: mongodb-versions
     display_name: MongoDB Version
@@ -1088,104 +1593,114 @@ axes:
 
 
 buildvariants:
-  # Test all PHP versions with latest-stable MongoDB on all operating systems
-  - matrix_name: "test-php-versions"
-    matrix_spec:
-      os:
-      - debian11
-      - debian10
-      - rhel90
-      - rhel83-zseries
-      - rhel82-arm64
-      - rhel81-power8
-      - rhel80
-      - rhel76
-      - ubuntu2204-arm64
-      - ubuntu2204
-      - ubuntu2004-arm64
-      - ubuntu2004
-      mongodb-edge-versions: latest-stable
-      php-versions: "*"
-    display_name: "${os}, ${mongodb-edge-versions}, ${php-versions}"
-    exclude_spec:
-      # Exclude "latest-stable" PHP version for Debian 11 (see: test-mongodb-versions matrix)
-      - { "os": "debian11", "mongodb-edge-versions": "*", "php-versions": "8.2" }
-      # Exclude PHP versions older than 8.1 on RHEL 9 and Ubuntu 22.04 (OpenSSL 3 is only supported on PHP 8.1+)
-      - { "os": ["rhel90", "ubuntu2204-arm64", "ubuntu2204"], "mongodb-edge-versions": "*", "php-versions": ["7.4", "8.0"] }
+  - name: debian11-php82-local
+    display_name: Debian 11, PHP 8.2, Local
+    run_on: debian11-small
+    variables:
+      PHP_VERSION: "8.2"
     tasks:
-      - name: "test-standalone-ssl"
-      - name: "test-replicaset-auth"
-      - name: "test-sharded"
+      - name: "test-local-deployment"
 
-  # Test all topologies and MongoDB versions with latest-stable PHP version on Debian
-  - matrix_name: "test-mongodb-versions"
-    matrix_spec: { "os": ["debian92", "debian11"], "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
-    display_name: "${os}, ${mongodb-versions}, ${php-edge-versions}"
-    exclude_spec:
-      # Debian 9.2 only supports up to MongoDB 5.0
-      - { "os": "debian92", "mongodb-versions": ["6.0", "7.0", "rapid", "latest"], "php-edge-versions": "latest-stable" }
-      - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4", "5.0"], "php-edge-versions": "latest-stable" }
-    tasks:
-      - name: "test-standalone"
-      - name: "test-standalone-auth"
-      - name: "test-standalone-ssl"
-      - name: "test-replicaset"
-      - name: "test-replicaset-auth"
-      - name: "test-sharded"
-
-  # Test alternative storage engines on MongoDB 4.0
-  - matrix_name: "test-storage-engines"
-    matrix_spec: { "os": "debian92", "mongodb-versions": "4.0", "php-edge-versions": "latest-stable", "storage-engine": ["inmemory", "mmapv1"] }
-    display_name: "${storage-engine}: ${os}, ${mongodb-edge-versions}, ${php-edge-versions}"
-    tasks:
-      - name: "test-standalone"
-
-  - matrix_name: "libmongoc-versions"
-    matrix_spec: { "os": "debian11", "mongodb-edge-versions": "latest-stable", "php-edge-versions": "latest-stable", "libmongoc-version": "*" }
-    display_name: "libmongoc ${libmongoc-version}: ${os}, ${mongodb-edge-versions}, ${php-edge-versions}"
-    tasks:
-      - name: "test-standalone-ssl"
-      - name: "test-replicaset-auth"
-      - name: "test-sharded"
-
-  - matrix_name: "atlas-connectivity-tests"
-    matrix_spec: { "os": "debian11", "php-edge-versions": "latest-stable" }
-    display_name: "Atlas Connectivity"
-    tasks:
-      - name: "test-atlas"
-
-  - matrix_name: "test-ocsp"
-    matrix_spec: { "os": "debian10", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
-    display_name: "OCSP tests - ${mongodb-versions}"
-    exclude_spec:
-      # OCSP is available from MongoDB 4.4+ (Debian 10 has MongoDB 4.4+)
-      - { "os": "debian10", "mongodb-versions": ["3.6", "4.0", "4.2"], "php-edge-versions": "latest-stable" }
-    tasks:
-      - name: ".ocsp"
-
-  - matrix_name: "test-requireApiVersion"
-    matrix_spec: { "os": "debian11", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
-    display_name: "Versioned API - ${mongodb-versions}"
-    exclude_spec:
-      # Stable API is available from MongoDB 5.0+
-      - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4"], "php-edge-versions": "latest-stable" }
-    tasks:
-      - name: "test-requireApiVersion"
-
-  - matrix_name: "test-loadBalanced"
-    matrix_spec: { "os": "debian11", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
-    display_name: "Load balanced - ${mongodb-versions}"
-    exclude_spec:
-      # Load balancer is available from MongoDB 5.0+
-      - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4"], "php-edge-versions": "latest-stable" }
-    tasks:
-      - name: "test-loadBalanced"
-
-  - matrix_name: "test-csfle-skip_crypt_shared"
-    matrix_spec: { "os": "debian11", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
-    display_name: "CSFLE skip_crypt_shared - ${mongodb-versions}"
-    exclude_spec:
-      # CSFLE crypt_shared is available from MongoDB 6.0+
-      - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4", "5.0"], "php-edge-versions": "latest-stable" }
-    tasks:
-      - name: "test-skip_crypt_shared"
+#
+# Old build variants preserved below
+#
+#  - matrix_name: "test-php-versions"
+#    matrix_spec:
+#      os:
+#        - debian11
+#        - debian10
+#        - rhel90
+#        - rhel83-zseries
+#        - rhel82-arm64
+#        - rhel81-power8
+#        - rhel80
+#        - rhel76
+#        - ubuntu2204-arm64
+#        - ubuntu2204
+#        - ubuntu2004-arm64
+#        - ubuntu2004
+#      mongodb-edge-versions: latest-stable
+#      php-versions: "*"
+#    display_name: "${os}, ${mongodb-edge-versions}, ${php-versions}"
+#    exclude_spec:
+#      # Exclude "latest-stable" PHP version for Debian 11 (see: test-mongodb-versions matrix)
+#      - { "os": "debian11", "mongodb-edge-versions": "*", "php-versions": "8.2" }
+#      # Exclude PHP versions older than 8.1 on RHEL 9 and Ubuntu 22.04 (OpenSSL 3 is only supported on PHP 8.1+)
+#      - { "os": ["rhel90", "ubuntu2204-arm64", "ubuntu2204"], "mongodb-edge-versions": "*", "php-versions": ["7.4", "8.0"] }
+#    tasks:
+#      - name: "test-standalone-ssl"
+#      - name: "test-replicaset-auth"
+#      - name: "test-sharded"
+#
+#  # Test all topologies and MongoDB versions with latest-stable PHP version on Debian
+#  - matrix_name: "test-mongodb-versions"
+#    matrix_spec: { "os": ["debian92", "debian11"], "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
+#    display_name: "${os}, ${mongodb-versions}, ${php-edge-versions}"
+#    exclude_spec:
+#      # Debian 9.2 only supports up to MongoDB 5.0
+#      - { "os": "debian92", "mongodb-versions": ["6.0", "7.0", "rapid", "latest"], "php-edge-versions": "latest-stable" }
+#      - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4", "5.0"], "php-edge-versions": "latest-stable" }
+#    tasks:
+#      - name: "test-standalone"
+#      - name: "test-standalone-auth"
+#      - name: "test-standalone-ssl"
+#      - name: "test-replicaset"
+#      - name: "test-replicaset-auth"
+#      - name: "test-sharded"
+#
+#  # Test alternative storage engines on MongoDB 4.0
+#  - matrix_name: "test-storage-engines"
+#    matrix_spec: { "os": "debian92", "mongodb-versions": "4.0", "php-edge-versions": "latest-stable", "storage-engine": ["inmemory", "mmapv1"] }
+#    display_name: "${storage-engine}: ${os}, ${mongodb-edge-versions}, ${php-edge-versions}"
+#    tasks:
+#      - name: "test-standalone"
+#
+#  - matrix_name: "libmongoc-versions"
+#    matrix_spec: { "os": "debian11", "mongodb-edge-versions": "latest-stable", "php-edge-versions": "latest-stable", "libmongoc-version": "*" }
+#    display_name: "libmongoc ${libmongoc-version}: ${os}, ${mongodb-edge-versions}, ${php-edge-versions}"
+#    tasks:
+#      - name: "test-standalone-ssl"
+#      - name: "test-replicaset-auth"
+#      - name: "test-sharded"
+#
+#  - matrix_name: "atlas-connectivity-tests"
+#    matrix_spec: { "os": "debian11", "php-edge-versions": "latest-stable" }
+#    display_name: "Atlas Connectivity"
+#    tasks:
+#      - name: "test-atlas"
+#
+#  - matrix_name: "test-ocsp"
+#    matrix_spec: { "os": "debian10", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
+#    display_name: "OCSP tests - ${mongodb-versions}"
+#    exclude_spec:
+#      # OCSP is available from MongoDB 4.4+ (Debian 10 has MongoDB 4.4+)
+#      - { "os": "debian10", "mongodb-versions": ["3.6", "4.0", "4.2"], "php-edge-versions": "latest-stable" }
+#    tasks:
+#      - name: ".ocsp"
+#
+#  - matrix_name: "test-requireApiVersion"
+#    matrix_spec: { "os": "debian11", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
+#    display_name: "Versioned API - ${mongodb-versions}"
+#    exclude_spec:
+#      # Stable API is available from MongoDB 5.0+
+#      - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4"], "php-edge-versions": "latest-stable" }
+#    tasks:
+#      - name: "test-requireApiVersion"
+#
+#  - matrix_name: "test-loadBalanced"
+#    matrix_spec: { "os": "debian11", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
+#    display_name: "Load balanced - ${mongodb-versions}"
+#    exclude_spec:
+#      # Load balancer is available from MongoDB 5.0+
+#      - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4"], "php-edge-versions": "latest-stable" }
+#    tasks:
+#      - name: "test-loadBalanced"
+#
+#  - matrix_name: "test-csfle-skip_crypt_shared"
+#    matrix_spec: { "os": "debian11", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
+#    display_name: "CSFLE skip_crypt_shared - ${mongodb-versions}"
+#    exclude_spec:
+#      # CSFLE crypt_shared is available from MongoDB 6.0+
+#      - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4", "5.0"], "php-edge-versions": "latest-stable" }
+#    tasks:
+#      - name: "test-skip_crypt_shared"
