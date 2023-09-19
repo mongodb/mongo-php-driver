@@ -296,6 +296,10 @@ static PHP_METHOD(MongoDB_Driver_Manager, addSubscriber)
 	Z_PARAM_OBJECT_OF_CLASS(subscriber, php_phongo_subscriber_ce)
 	PHONGO_PARSE_PARAMETERS_END();
 
+	if (instanceof_function(Z_OBJCE_P(subscriber), php_phongo_logsubscriber_ce)) {
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "LogSubscriber instances cannot be registered with a Manager");
+	}
+
 	intern = Z_MANAGER_OBJ_P(getThis());
 
 	/* Lazily initialize the subscriber HashTable */
@@ -303,8 +307,6 @@ static PHP_METHOD(MongoDB_Driver_Manager, addSubscriber)
 		ALLOC_HASHTABLE(intern->subscribers);
 		zend_hash_init(intern->subscribers, 0, NULL, ZVAL_PTR_DTOR, 0);
 	}
-
-	// TODO: Consider throwing if subscriber is unsupported (see: PHPC-2289)
 
 	phongo_apm_add_subscriber(intern->subscribers, subscriber);
 }
