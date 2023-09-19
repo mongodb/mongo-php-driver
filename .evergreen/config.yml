@@ -421,7 +421,7 @@ tasks:
   #
 
   # MongoDB latest
-  - name: "test-mongodb-latest-standalone"
+  - name: "test-mongodb-latest-standalone-noauth-nossl"
     tags: ["standalone"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -449,7 +449,7 @@ tasks:
       - func: "run tests"
         vars:
           SSL: "yes"
-  - name: "test-mongodb-latest-replicaset"
+  - name: "test-mongodb-latest-replicaset-noauth-nossl"
     tags: ["replicaset"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -466,7 +466,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "latest"
       - func: "run tests"
-  - name: "test-mongodb-latest-sharded"
+  - name: "test-mongodb-latest-sharded-noauth-nossl"
     tags: ["sharded"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -476,7 +476,7 @@ tasks:
       - func: "run tests"
 
   # MongoDB Rapid Release
-  - name: "test-mongodb-rapid-standalone"
+  - name: "test-mongodb-rapid-standalone-noauth-nossl"
     tags: ["standalone"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -504,7 +504,7 @@ tasks:
       - func: "run tests"
         vars:
           SSL: "yes"
-  - name: "test-mongodb-rapid-replicaset"
+  - name: "test-mongodb-rapid-replicaset-noauth-nossl"
     tags: ["replicaset"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -521,7 +521,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "rapid"
       - func: "run tests"
-  - name: "test-mongodb-rapid-sharded"
+  - name: "test-mongodb-rapid-sharded-noauth-nossl"
     tags: ["sharded"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -531,7 +531,7 @@ tasks:
       - func: "run tests"
 
   # MongoDB 7.0
-  - name: "test-mongodb-70-standalone"
+  - name: "test-mongodb-7.0-standalone-noauth-nossl"
     tags: ["standalone", "7.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -539,7 +539,7 @@ tasks:
           TOPOLOGY: "server"
           MONGODB_VERSION: "7.0"
       - func: "run tests"
-  - name: "test-mongodb-70-standalone-auth"
+  - name: "test-mongodb-7.0-standalone-auth"
     tags: ["standalone", "7.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -548,7 +548,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "7.0"
       - func: "run tests"
-  - name: "test-mongodb-70-standalone-ssl"
+  - name: "test-mongodb-7.0-standalone-ssl"
     tags: ["standalone", "7.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -559,7 +559,7 @@ tasks:
       - func: "run tests"
         vars:
           SSL: "yes"
-  - name: "test-mongodb-70-replicaset"
+  - name: "test-mongodb-7.0-replicaset-noauth-nossl"
     tags: ["replicaset", "7.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -567,7 +567,7 @@ tasks:
           TOPOLOGY: "replica_set"
           MONGODB_VERSION: "7.0"
       - func: "run tests"
-  - name: "test-mongodb-70-replicaset-auth"
+  - name: "test-mongodb-7.0-replicaset-auth"
     tags: ["replicaset", "7.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -576,7 +576,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "7.0"
       - func: "run tests"
-  - name: "test-mongodb-70-sharded"
+  - name: "test-mongodb-7.0-sharded-noauth-nossl"
     tags: ["sharded", "7.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -586,7 +586,7 @@ tasks:
       - func: "run tests"
 
   # MongoDB 6.0
-  - name: "test-mongodb-60-standalone"
+  - name: "test-mongodb-6.0-standalone-noauth-nossl"
     tags: ["standalone", "6.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -594,7 +594,7 @@ tasks:
           TOPOLOGY: "server"
           MONGODB_VERSION: "6.0"
       - func: "run tests"
-  - name: "test-mongodb-60-standalone-auth"
+  - name: "test-mongodb-6.0-standalone-auth"
     tags: ["standalone", "6.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -603,7 +603,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "6.0"
       - func: "run tests"
-  - name: "test-mongodb-60-standalone-ssl"
+  - name: "test-mongodb-6.0-standalone-ssl"
     tags: ["standalone", "6.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -614,7 +614,7 @@ tasks:
       - func: "run tests"
         vars:
           SSL: "yes"
-  - name: "test-mongodb-60-replicaset"
+  - name: "test-mongodb-6.0-replicaset-noauth-nossl"
     tags: ["replicaset", "6.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -622,7 +622,7 @@ tasks:
           TOPOLOGY: "replica_set"
           MONGODB_VERSION: "6.0"
       - func: "run tests"
-  - name: "test-mongodb-60-replicaset-auth"
+  - name: "test-mongodb-6.0-replicaset-auth"
     tags: ["replicaset", "6.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -631,7 +631,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "6.0"
       - func: "run tests"
-  - name: "test-mongodb-60-sharded"
+  - name: "test-mongodb-6.0-sharded-noauth-nossl"
     tags: ["sharded", "6.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -641,7 +641,7 @@ tasks:
       - func: "run tests"
 
   # MongoDB 5.0
-  - name: "test-mongodb-50-standalone"
+  - name: "test-mongodb-5.0-standalone-noauth-nossl"
     tags: ["standalone", "5.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -649,7 +649,7 @@ tasks:
           TOPOLOGY: "server"
           MONGODB_VERSION: "5.0"
       - func: "run tests"
-  - name: "test-mongodb-50-standalone-auth"
+  - name: "test-mongodb-5.0-standalone-auth"
     tags: ["standalone", "5.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -658,7 +658,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "5.0"
       - func: "run tests"
-  - name: "test-mongodb-50-standalone-ssl"
+  - name: "test-mongodb-5.0-standalone-ssl"
     tags: ["standalone", "5.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -669,7 +669,7 @@ tasks:
       - func: "run tests"
         vars:
           SSL: "yes"
-  - name: "test-mongodb-50-replicaset"
+  - name: "test-mongodb-5.0-replicaset-noauth-nossl"
     tags: ["replicaset", "5.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -677,7 +677,7 @@ tasks:
           TOPOLOGY: "replica_set"
           MONGODB_VERSION: "5.0"
       - func: "run tests"
-  - name: "test-mongodb-50-replicaset-auth"
+  - name: "test-mongodb-5.0-replicaset-auth"
     tags: ["replicaset", "5.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -686,7 +686,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "5.0"
       - func: "run tests"
-  - name: "test-mongodb-50-sharded"
+  - name: "test-mongodb-5.0-sharded-noauth-nossl"
     tags: ["sharded", "5.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -696,7 +696,7 @@ tasks:
       - func: "run tests"
 
   # MongoDB 4.4
-  - name: "test-mongodb-44-standalone"
+  - name: "test-mongodb-4.4-standalone-noauth-nossl"
     tags: ["standalone", "4.4"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -704,7 +704,7 @@ tasks:
           TOPOLOGY: "server"
           MONGODB_VERSION: "4.4"
       - func: "run tests"
-  - name: "test-mongodb-44-standalone-auth"
+  - name: "test-mongodb-4.4-standalone-auth"
     tags: ["standalone", "4.4"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -713,7 +713,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "4.4"
       - func: "run tests"
-  - name: "test-mongodb-44-standalone-ssl"
+  - name: "test-mongodb-4.4-standalone-ssl"
     tags: ["standalone", "4.4"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -724,7 +724,7 @@ tasks:
       - func: "run tests"
         vars:
           SSL: "yes"
-  - name: "test-mongodb-44-replicaset"
+  - name: "test-mongodb-4.4-replicaset-noauth-nossl"
     tags: ["replicaset", "4.4"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -732,7 +732,7 @@ tasks:
           TOPOLOGY: "replica_set"
           MONGODB_VERSION: "4.4"
       - func: "run tests"
-  - name: "test-mongodb-44-replicaset-auth"
+  - name: "test-mongodb-4.4-replicaset-auth"
     tags: ["replicaset", "4.4"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -741,7 +741,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "4.4"
       - func: "run tests"
-  - name: "test-mongodb-44-sharded"
+  - name: "test-mongodb-4.4-sharded-noauth-nossl"
     tags: ["sharded", "4.4"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -751,7 +751,7 @@ tasks:
       - func: "run tests"
 
   # MongoDB 4.2
-  - name: "test-mongodb-42-standalone"
+  - name: "test-mongodb-4.2-standalone-noauth-nossl"
     tags: ["standalone", "4.2"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -759,7 +759,7 @@ tasks:
           TOPOLOGY: "server"
           MONGODB_VERSION: "4.2"
       - func: "run tests"
-  - name: "test-mongodb-42-standalone-auth"
+  - name: "test-mongodb-4.2-standalone-auth"
     tags: ["standalone", "4.2"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -768,7 +768,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "4.2"
       - func: "run tests"
-  - name: "test-mongodb-42-standalone-ssl"
+  - name: "test-mongodb-4.2-standalone-ssl"
     tags: ["standalone", "4.2"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -779,7 +779,7 @@ tasks:
       - func: "run tests"
         vars:
           SSL: "yes"
-  - name: "test-mongodb-42-replicaset"
+  - name: "test-mongodb-4.2-replicaset-noauth-nossl"
     tags: ["replicaset", "4.2"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -787,7 +787,7 @@ tasks:
           TOPOLOGY: "replica_set"
           MONGODB_VERSION: "4.2"
       - func: "run tests"
-  - name: "test-mongodb-42-replicaset-auth"
+  - name: "test-mongodb-4.2-replicaset-auth"
     tags: ["replicaset", "4.2"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -796,7 +796,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "4.2"
       - func: "run tests"
-  - name: "test-mongodb-42-sharded"
+  - name: "test-mongodb-4.2-sharded-noauth-nossl"
     tags: ["sharded", "4.2"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -806,7 +806,7 @@ tasks:
       - func: "run tests"
 
   # MongoDB 4.0
-  - name: "test-mongodb-40-standalone"
+  - name: "test-mongodb-4.0-standalone-noauth-nossl"
     tags: ["standalone", "4.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -814,7 +814,7 @@ tasks:
           TOPOLOGY: "server"
           MONGODB_VERSION: "4.0"
       - func: "run tests"
-  - name: "test-mongodb-40-standalone-auth"
+  - name: "test-mongodb-4.0-standalone-auth"
     tags: ["standalone", "4.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -823,7 +823,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "4.0"
       - func: "run tests"
-  - name: "test-mongodb-40-standalone-ssl"
+  - name: "test-mongodb-4.0-standalone-ssl"
     tags: ["standalone", "4.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -834,7 +834,7 @@ tasks:
       - func: "run tests"
         vars:
           SSL: "yes"
-  - name: "test-mongodb-40-replicaset"
+  - name: "test-mongodb-4.0-replicaset-noauth-nossl"
     tags: ["replicaset", "4.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -842,7 +842,7 @@ tasks:
           TOPOLOGY: "replica_set"
           MONGODB_VERSION: "4.0"
       - func: "run tests"
-  - name: "test-mongodb-40-replicaset-auth"
+  - name: "test-mongodb-4.0-replicaset-auth"
     tags: ["replicaset", "4.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -851,7 +851,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "4.0"
       - func: "run tests"
-  - name: "test-mongodb-40-sharded"
+  - name: "test-mongodb-4.0-sharded-noauth-nossl"
     tags: ["sharded", "4.0"]
     commands:
       - func: "bootstrap mongo-orchestration"
@@ -861,7 +861,7 @@ tasks:
       - func: "run tests"
 
   # MongoDB 3.6
-  - name: "test-mongodb-36-standalone"
+  - name: "test-mongodb-3.6-standalone-noauth-nossl"
     tags: ["standalone", "3.6"]
     commands:
       - func: "compile driver"
@@ -870,7 +870,7 @@ tasks:
           TOPOLOGY: "server"
           MONGODB_VERSION: "3.6"
       - func: "run tests"
-  - name: "test-mongodb-36-standalone-auth"
+  - name: "test-mongodb-3.6-standalone-auth"
     tags: ["standalone", "3.6"]
     commands:
       - func: "compile driver"
@@ -880,7 +880,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "3.6"
       - func: "run tests"
-  - name: "test-mongodb-36-standalone-ssl"
+  - name: "test-mongodb-3.6-standalone-ssl"
     tags: ["standalone", "3.6"]
     commands:
       - func: "compile driver"
@@ -892,7 +892,7 @@ tasks:
       - func: "run tests"
         vars:
           SSL: "yes"
-  - name: "test-mongodb-36-replicaset"
+  - name: "test-mongodb-3.6-replicaset-noauth-nossl"
     tags: ["replicaset", "3.6"]
     commands:
       - func: "compile driver"
@@ -901,7 +901,7 @@ tasks:
           TOPOLOGY: "replica_set"
           MONGODB_VERSION: "3.6"
       - func: "run tests"
-  - name: "test-mongodb-36-replicaset-auth"
+  - name: "test-mongodb-3.6-replicaset-auth"
     tags: ["replicaset", "3.6"]
     commands:
       - func: "compile driver"
@@ -911,7 +911,7 @@ tasks:
           AUTH: "auth"
           MONGODB_VERSION: "3.6"
       - func: "run tests"
-  - name: "test-mongodb-36-sharded"
+  - name: "test-mongodb-3.6-sharded-noauth-nossl"
     tags: ["sharded", "3.6"]
     commands:
       - func: "compile driver"
