@@ -142,7 +142,7 @@ functions:
         content_type: ${content_type|application/x-gzip}
         permissions: public-read
         local_file: ${build_id}.tar.gz
-        remote_file: ${project}/${build_variant}/${revision}/${task_name}/${build_id}.tar.gz
+        remote_file: ${project}/${build_variant}/${revision}/${task_name}/${version}.tar.gz
 
   "fetch build":
     - command: subprocess.exec
@@ -157,7 +157,7 @@ functions:
         aws_key: ${aws_key}
         aws_secret: ${aws_secret}
         bucket: mciuploads
-        remote_file: ${project}/${build_variant}/${revision}/${BUILD_NAME}/${build_id}.tar.gz
+        remote_file: ${project}/${FETCH_BUILD_VARIANT}/${revision}/${FETCH_BUILD_TASK}/${version}.tar.gz
         local_file: build.tar.gz
     - command: archive.targz_extract
       params:
@@ -1372,7 +1372,7 @@ post:
   - func: "cleanup"
 
 task_groups:
-  - name: "test-local-deployment"
+  - name: "test-local-deployment-7.0"
     setup_group:
       - func: "fetch source"
       - func: "prepare resources"
@@ -1382,9 +1382,6 @@ task_groups:
       - func: "make files executable"
       - func: "install dependencies"
       - func: "fetch build"
-#        vars:
-#          FETCH_BUILD_VARIANT: "${FETCH_BUILD_VARIANT}"
-#          FETCH_BUILD_TASK: "build-php-${PHP_VERSION}"
     teardown_group:
       - func: "upload mo artifacts"
       - func: "upload test results"
@@ -1394,9 +1391,9 @@ task_groups:
     setup_group_can_fail_task: true
     setup_group_timeout_secs: 1800
     tasks:
-      - ".standalone .local"
-      - ".replicaset .local"
-      - ".sharded .local"
+      - ".standalone .local .7.0"
+      - ".replicaset .local .7.0"
+      - ".sharded .local .7.0"
 
 
 axes:
@@ -1564,14 +1561,13 @@ buildvariants:
     display_name: "Test: Debian 11, PHP 8.2"
     run_on: debian11-small
     expansions:
-      PHP_VERSION: "8.2"
       FETCH_BUILD_VARIANT: "build-debian11"
       FETCH_BUILD_TASK: "build-php-8.2"
     depends_on:
       - variant: "build-debian11"
         name: "build-php-8.2"
     tasks:
-      - name: "test-local-deployment"
+      - name: "test-local-deployment-7.0"
 
 #
 # Old build variants preserved below
