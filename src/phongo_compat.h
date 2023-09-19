@@ -70,12 +70,24 @@
 #define phongo_compat_object_handler_type zend_object
 #define PHONGO_COMPAT_GET_OBJ(val) val
 #define PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(type) php_phongo_handler_##type.compare = php_phongo_##type##_compare_objects;
+#define phongo_compat_property_accessor_name_type zend_string
+#define PHONGO_COMPAT_PROPERTY_ACCESSOR_NAME_TO_STRING(value, key, len) \
+	do {                                                                \
+		(key) = ZSTR_VAL((value));                                      \
+		(len) = ZSTR_LEN((value));                                      \
+	} while (0)
 #else /* PHP_VERSION_ID < 80000 */
 #define PHONGO_COMPAT_OBJ_P(val) val
 #define phongo_compat_object_handler_type zval
 #define PHONGO_COMPAT_GET_OBJ(val) Z_OBJ_P(val)
 #define PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(type) php_phongo_handler_##type.compare_objects = php_phongo_##type##_compare_objects;
 #define ZEND_COMPARE_OBJECTS_FALLBACK(o1, o2)
+#define phongo_compat_property_accessor_name_type zval
+#define PHONGO_COMPAT_PROPERTY_ACCESSOR_NAME_TO_STRING(value, key, len) \
+	do {                                                                \
+		(key) = Z_STRVAL_P((value));                                    \
+		(len) = Z_STRLEN_P((value));                                    \
+	} while (0)
 #endif /* PHP_VERSION_ID >= 80000 */
 
 #if SIZEOF_ZEND_LONG == 8
