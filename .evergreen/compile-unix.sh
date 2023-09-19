@@ -1,5 +1,23 @@
-#!/bin/sh
+#!/bin/bash
 set -o errexit  # Exit the script with error if any of the commands fail
+
+# Find PHP binary path for the requested version
+if [ -z "$PHP_PATH" ]; then
+  if [ -d "/opt/php/${PHP_VERSION}-64bit/bin" ]; then
+     PHP_PATH="/opt/php/${PHP_VERSION}-64bit/bin"
+  else
+     # Try to find the newest version matching our constant
+     PHP_PATH=`find /opt/php/ -maxdepth 1 -type d -name "${PHP_VERSION}*-64bit" -print | sort -V -r | head -n 1`/bin
+  fi
+fi
+
+if [ ! -x "$PHP_PATH/php" ]; then
+   echo "Could not find PHP binaries for version ${PHP_VERSION}. Listing available versions..."
+   ls -1 /opt/php
+   exit 1
+fi
+
+PATH="$PHP_PATH:$PATH"
 
 # Supported/used environment variables:
 #   MARCH             Machine Architecture. Defaults to lowercase uname -m
@@ -45,7 +63,7 @@ case "$OS" in
 esac
 
 # Report the current PHP version
-echo "PHP: `php --version | head -1`"
+echo "PHP: `php --version | head -n 1`"
 
 phpize
 ./configure --enable-mongodb-developer-flags
