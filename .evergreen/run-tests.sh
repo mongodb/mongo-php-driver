@@ -45,4 +45,4 @@ SSL_DIR="${SSL_DIR}" \
 TEST_PHP_JUNIT="${PROJECT_DIRECTORY}/test-results.xml" \
 TEST_PHP_ARGS="-q -x --show-diff -g FAIL,XFAIL,BORK,WARN,LEAK,SKIP" \
 TESTS="$TESTS" \
-make test
+make test-no-build
