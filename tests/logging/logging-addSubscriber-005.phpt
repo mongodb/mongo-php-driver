@@ -8,6 +8,7 @@ MongoDB\Driver\Monitoring\addSubscriber(): Adding a combined CommandSubscriber a
 require_once __DIR__ . "/../utils/basic.inc";
 
 use MongoDB\Driver\Command;
+use MongoDB\Driver\Monitoring\CommandStartedEvent;
 use MongoDB\Driver\Monitoring\CommandSubscriber;
 use MongoDB\Driver\Monitoring\LogSubscriber;
 use function MongoDB\Driver\Monitoring\addSubscriber;
@@ -16,14 +17,14 @@ use function MongoDB\Driver\Monitoring\removeSubscriber;
 
 class MySubscriber implements CommandSubscriber, LogSubscriber
 { 
-    public function commandStarted(MongoDB\Driver\Monitoring\CommandStartedEvent $event): void
+    public function commandStarted(CommandStartedEvent $event): void
     {
         printf("Observed commandStarted for %s\n", $event->getCommandName());
     }
  
-    public function commandSucceeded(MongoDB\Driver\Monitoring\CommandSucceededEvent $event): void {}
+    public function commandSucceeded($event): void {}
  
-    public function commandFailed(MongoDB\Driver\Monitoring\CommandFailedEvent $event): void {}
+    public function commandFailed($event): void {}
 
     public function log(int $level, string $domain, string $message): void
     {
