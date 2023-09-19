@@ -42,6 +42,11 @@ mongoc_log(LogSubscriber::LEVEL_DEBUG, 'domain', 'debug');
 
 removeSubscriber($subscriber);
 
+// Neither subscriber implementation should be notified after removal
+$manager->executeCommand(DATABASE_NAME, new Command(['ping' => 1]));
+
+mongoc_log(LogSubscriber::LEVEL_DEBUG, 'domain', 'debug');
+
 ?>
 ===DONE===
 --EXPECTF--
