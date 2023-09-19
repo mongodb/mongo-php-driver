@@ -148,39 +148,47 @@ functions:
     # Compress and upload the entire build directory
     - command: archive.targz_pack
       params:
-        # Example: mongo_c_driver_releng_9dfb7d741efbca16faa7859b9349d7a942273e43_16_11_08_19_29_52.tar.gz
         target: "${build_id}.tar.gz"
-        source_dir: ${PROJECT_DIRECTORY}/
+        source_dir: src
         include:
           - "./**"
     - command: s3.put
       params:
         aws_key: ${aws_key}
         aws_secret: ${aws_secret}
-        local_file: ${build_id}.tar.gz
-        # Example: /mciuploads/${UPLOAD_BUCKET}/gcc49/9dfb7d741efbca16faa7859b9349d7a942273e43/debug-compile-nosasl-nossl/mongo_c_driver_releng_9dfb7d741efbca16faa7859b9349d7a942273e43_16_11_08_19_29_52.tar.gz
-        remote_file: ${UPLOAD_BUCKET}/${build_variant}/${revision}/${task_name}/${build_id}.tar.gz
         bucket: mciuploads
-        permissions: public-read
         content_type: ${content_type|application/x-gzip}
+        permissions: public-read
+        local_file: ${build_id}.tar.gz
+        remote_file: ${project}/${build_variant}/${revision}/${task_name}/${build_id}.tar.gz
 
   "fetch build":
-    - command: shell.exec
+    - command: subprocess.exec
+      type: setup
       params:
-        continue_on_err: true
-        script: "rm -rf ${PROJECT_DIRECTORY}"
+        binary: bash
+        args:
+          - -c
+          - rm -rf src
     - command: s3.get
       params:
         aws_key: ${aws_key}
         aws_secret: ${aws_secret}
-        remote_file: ${UPLOAD_BUCKET}/${build_variant}/${revision}/${BUILD_NAME}/${build_id}.tar.gz
         bucket: mciuploads
+        remote_file: ${project}/${build_variant}/${revision}/${BUILD_NAME}/${build_id}.tar.gz
         local_file: build.tar.gz
-    - command: shell.exec
+    - command: archive.targz_extract
       params:
-        continue_on_err: true
-        # EVG-1105: Use s3.get extract_to: ./
-        script: "cd .. && rm -rf ${PROJECT_DIRECTORY} && mkdir ${PROJECT_DIRECTORY}/ && tar xf build.tar.gz -C ${PROJECT_DIRECTORY}/"
+        destination: src
+        path: build.tar.gz
+    # Fix path names in Makefile
+    - command: shell.exec
+      type: test
+      params:
+        working_dir: "src"
+        script: |
+          ${PREPARE_SHELL}
+          perl -p -i -e "s|/data/mci/[0-9a-z]+/src|${PROJECT_DIRECTORY}|g" Makefile
 
   "compile driver" :
     - command: shell.exec
@@ -401,6 +409,13 @@ functions:
             ${DRIVERS_TOOLS}/.evergreen/run-load-balancer.sh stop
           fi
 
+tasks:
+  - name: "build"
+    tags: ["build"]
+    commands:
+      - func: "compile driver"
+      - func: "upload build"
+
   #
   # Tasks for local deployments
   #
@@ -409,7 +424,6 @@ functions:
   - name: "test-mongodb-latest-standalone"
     tags: ["standalone"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -418,7 +432,6 @@ functions:
   - name: "test-mongodb-latest-standalone-auth"
     tags: ["standalone"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -428,7 +441,6 @@ functions:
   - name: "test-mongodb-latest-standalone-ssl"
     tags: ["standalone"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -440,7 +452,6 @@ functions:
   - name: "test-mongodb-latest-replicaset"
     tags: ["replicaset"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -449,7 +460,6 @@ functions:
   - name: "test-mongodb-latest-replicaset-auth"
     tags: ["replicaset"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -459,7 +469,6 @@ functions:
   - name: "test-mongodb-latest-sharded"
     tags: ["sharded"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "sharded_cluster"
@@ -470,7 +479,6 @@ functions:
   - name: "test-mongodb-rapid-standalone"
     tags: ["standalone"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -479,7 +487,6 @@ functions:
   - name: "test-mongodb-rapid-standalone-auth"
     tags: ["standalone"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -489,7 +496,6 @@ functions:
   - name: "test-mongodb-rapid-standalone-ssl"
     tags: ["standalone"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -501,7 +507,6 @@ functions:
   - name: "test-mongodb-rapid-replicaset"
     tags: ["replicaset"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -510,7 +515,6 @@ functions:
   - name: "test-mongodb-rapid-replicaset-auth"
     tags: ["replicaset"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -520,7 +524,6 @@ functions:
   - name: "test-mongodb-rapid-sharded"
     tags: ["sharded"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "sharded_cluster"
@@ -531,7 +534,6 @@ functions:
   - name: "test-mongodb-70-standalone"
     tags: ["standalone", "7.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -540,7 +542,6 @@ functions:
   - name: "test-mongodb-70-standalone-auth"
     tags: ["standalone", "7.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -550,7 +551,6 @@ functions:
   - name: "test-mongodb-70-standalone-ssl"
     tags: ["standalone", "7.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -562,7 +562,6 @@ functions:
   - name: "test-mongodb-70-replicaset"
     tags: ["replicaset", "7.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -571,7 +570,6 @@ functions:
   - name: "test-mongodb-70-replicaset-auth"
     tags: ["replicaset", "7.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -581,7 +579,6 @@ functions:
   - name: "test-mongodb-70-sharded"
     tags: ["sharded", "7.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "sharded_cluster"
@@ -592,7 +589,6 @@ functions:
   - name: "test-mongodb-60-standalone"
     tags: ["standalone", "6.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -601,7 +597,6 @@ functions:
   - name: "test-mongodb-60-standalone-auth"
     tags: ["standalone", "6.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -611,7 +606,6 @@ functions:
   - name: "test-mongodb-60-standalone-ssl"
     tags: ["standalone", "6.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -623,7 +617,6 @@ functions:
   - name: "test-mongodb-60-replicaset"
     tags: ["replicaset", "6.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -632,7 +625,6 @@ functions:
   - name: "test-mongodb-60-replicaset-auth"
     tags: ["replicaset", "6.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -642,7 +634,6 @@ functions:
   - name: "test-mongodb-60-sharded"
     tags: ["sharded", "6.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "sharded_cluster"
@@ -653,7 +644,6 @@ functions:
   - name: "test-mongodb-50-standalone"
     tags: ["standalone", "5.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -662,7 +652,6 @@ functions:
   - name: "test-mongodb-50-standalone-auth"
     tags: ["standalone", "5.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -672,7 +661,6 @@ functions:
   - name: "test-mongodb-50-standalone-ssl"
     tags: ["standalone", "5.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -684,7 +672,6 @@ functions:
   - name: "test-mongodb-50-replicaset"
     tags: ["replicaset", "5.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -693,7 +680,6 @@ functions:
   - name: "test-mongodb-50-replicaset-auth"
     tags: ["replicaset", "5.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -703,7 +689,6 @@ functions:
   - name: "test-mongodb-50-sharded"
     tags: ["sharded", "5.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "sharded_cluster"
@@ -714,7 +699,6 @@ functions:
   - name: "test-mongodb-44-standalone"
     tags: ["standalone", "4.4"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -723,7 +707,6 @@ functions:
   - name: "test-mongodb-44-standalone-auth"
     tags: ["standalone", "4.4"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -733,7 +716,6 @@ functions:
   - name: "test-mongodb-44-standalone-ssl"
     tags: ["standalone", "4.4"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -745,7 +727,6 @@ functions:
   - name: "test-mongodb-44-replicaset"
     tags: ["replicaset", "4.4"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -754,7 +735,6 @@ functions:
   - name: "test-mongodb-44-replicaset-auth"
     tags: ["replicaset", "4.4"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -764,7 +744,6 @@ functions:
   - name: "test-mongodb-44-sharded"
     tags: ["sharded", "4.4"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "sharded_cluster"
@@ -775,7 +754,6 @@ functions:
   - name: "test-mongodb-42-standalone"
     tags: ["standalone", "4.2"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -784,7 +762,6 @@ functions:
   - name: "test-mongodb-42-standalone-auth"
     tags: ["standalone", "4.2"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -794,7 +771,6 @@ functions:
   - name: "test-mongodb-42-standalone-ssl"
     tags: ["standalone", "4.2"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -806,7 +782,6 @@ functions:
   - name: "test-mongodb-42-replicaset"
     tags: ["replicaset", "4.2"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -815,7 +790,6 @@ functions:
   - name: "test-mongodb-42-replicaset-auth"
     tags: ["replicaset", "4.2"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -825,7 +799,6 @@ functions:
   - name: "test-mongodb-42-sharded"
     tags: ["sharded", "4.2"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "sharded_cluster"
@@ -836,7 +809,6 @@ functions:
   - name: "test-mongodb-40-standalone"
     tags: ["standalone", "4.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -845,7 +817,6 @@ functions:
   - name: "test-mongodb-40-standalone-auth"
     tags: ["standalone", "4.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -855,7 +826,6 @@ functions:
   - name: "test-mongodb-40-standalone-ssl"
     tags: ["standalone", "4.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "server"
@@ -867,7 +837,6 @@ functions:
   - name: "test-mongodb-40-replicaset"
     tags: ["replicaset", "4.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -876,7 +845,6 @@ functions:
   - name: "test-mongodb-40-replicaset-auth"
     tags: ["replicaset", "4.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "replica_set"
@@ -886,7 +854,6 @@ functions:
   - name: "test-mongodb-40-sharded"
     tags: ["sharded", "4.0"]
     commands:
-      - func: "compile driver"
       - func: "bootstrap mongo-orchestration"
         vars:
           TOPOLOGY: "sharded_cluster"
@@ -1397,7 +1364,23 @@ functions:
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
 
 task_groups:
-  - name: test-local-deployment
+  - name: "build-extension"
+    setup_group:
+      - func: "fetch source"
+      - func: "prepare resources"
+      - func: "windows fix"
+      - func: "fix absolute paths"
+      - func: "make files executable"
+      - func: "install dependencies"
+    teardown_group:
+      - func: "upload working dir"
+      - func: "cleanup"
+    setup_group_can_fail_task: true
+    setup_group_timeout_secs: 1800
+    tasks:
+      - "build"
+
+  - name: "test-local-deployment"
     setup_group:
       - func: "fetch source"
       - func: "prepare resources"
@@ -1406,11 +1389,13 @@ task_groups:
       - func: "init test-results"
       - func: "make files executable"
       - func: "install dependencies"
+      - func: "fetch build"
+        vars:
+          BUILD_NAME: "build"
     teardown_group:
       - func: "upload working dir"
       - func: "upload mo artifacts"
       - func: "upload test results"
-      - func: "stop load balancer"
       - func: "stop mongo-orchestration"
       - func: "cleanup"
     setup_group_can_fail_task: true
@@ -1599,7 +1584,10 @@ buildvariants:
     variables:
       PHP_VERSION: "8.2"
     tasks:
+      - name: "build-extension"
       - name: "test-local-deployment"
+        depends_on:
+          - name: "build"
 
 #
 # Old build variants preserved below
