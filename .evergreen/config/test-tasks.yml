@@ -493,3 +493,57 @@ tasks:
           TOPOLOGY: "sharded_cluster"
           MONGODB_VERSION: "3.6"
       - func: "run tests"
+
+  # Other tasks
+  - name: "test-atlas-connectivity"
+    tags: ["atlas", "nodb"]
+    commands:
+      - func: "decrypt atlas URI list"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/atlas.phpt"
+
+  # Tests without crypt_shared library
+  - name: "test-skip_crypt_shared-latest"
+    tags: ["replicaset", "local", "latest", "skip_crypt_shared"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "latest"
+      - func: "run tests"
+        vars:
+          SKIP_CRYPT_SHARED: "yes"
+
+  - name: "test-skip_crypt_shared-rapid"
+    tags: ["replicaset", "local", "rapid", "skip_crypt_shared"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "rapid"
+      - func: "run tests"
+        vars:
+          SKIP_CRYPT_SHARED: "yes"
+
+  - name: "test-skip_crypt_shared-7.0"
+    tags: ["replicaset", "local", "7.0", "skip_crypt_shared"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+        vars:
+          SKIP_CRYPT_SHARED: "yes"
+
+  - name: "test-skip_crypt_shared-6.0"
+    tags: ["replicaset", "local", "6.0", "skip_crypt_shared"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "6.0"
+      - func: "run tests"
+        vars:
+          SKIP_CRYPT_SHARED: "yes"

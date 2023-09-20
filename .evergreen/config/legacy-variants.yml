@@ -108,22 +108,6 @@ buildvariants:
       - name: "test-replicaset-auth"
       - name: "test-sharded"
 
-  # Test all topologies and MongoDB versions with latest-stable PHP version on Debian
-  - matrix_name: "test-mongodb-versions"
-    matrix_spec: { "os": ["debian92", "debian11"], "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
-    display_name: "${os}, ${mongodb-versions}, ${php-edge-versions}"
-    exclude_spec:
-      # Debian 9.2 only supports up to MongoDB 5.0
-      - { "os": "debian92", "mongodb-versions": ["6.0", "7.0", "rapid", "latest"], "php-edge-versions": "latest-stable" }
-      - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4", "5.0"], "php-edge-versions": "latest-stable" }
-    tasks:
-      - name: "test-standalone"
-      - name: "test-standalone-auth"
-      - name: "test-standalone-ssl"
-      - name: "test-replicaset"
-      - name: "test-replicaset-auth"
-      - name: "test-sharded"
-
   # Test alternative storage engines on MongoDB 4.0
   - matrix_name: "test-storage-engines"
     matrix_spec: { "os": "debian92", "mongodb-versions": "4.0", "php-edge-versions": "latest-stable", "storage-engine": ["inmemory", "mmapv1"] }
@@ -138,12 +122,6 @@ buildvariants:
       - name: "test-standalone-ssl"
       - name: "test-replicaset-auth"
       - name: "test-sharded"
-
-  - matrix_name: "atlas-connectivity-tests"
-    matrix_spec: { "os": "debian11", "php-edge-versions": "latest-stable" }
-    display_name: "Atlas Connectivity"
-    tasks:
-      - name: "test-atlas"
 
   - matrix_name: "test-ocsp"
     matrix_spec: { "os": "debian10", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
@@ -171,12 +149,3 @@ buildvariants:
       - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4"], "php-edge-versions": "latest-stable" }
     tasks:
       - name: "test-loadBalanced"
-
-  - matrix_name: "test-csfle-skip_crypt_shared"
-    matrix_spec: { "os": "debian11", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
-    display_name: "CSFLE skip_crypt_shared - ${mongodb-versions}"
-    exclude_spec:
-      # CSFLE crypt_shared is available from MongoDB 6.0+
-      - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4", "5.0"], "php-edge-versions": "latest-stable" }
-    tasks:
-      - name: "test-skip_crypt_shared"

@@ -1,23 +1,4 @@
 tasks:
-  - name: "test-atlas"
-    tags: ["atlas"]
-    commands:
-      - func: "compile driver"
-      - func: "decrypt atlas URI list"
-      - func: "run tests"
-        vars:
-          TESTS: "tests/atlas.phpt"
-
-  - name: "test-skip_crypt_shared"
-    commands:
-      - func: "compile driver"
-      - func: "bootstrap mongo-orchestration"
-        vars:
-          TOPOLOGY: "replica_set"
-      - func: "run tests"
-        vars:
-          SKIP_CRYPT_SHARED: "yes"
-
   - name: "test-loadBalanced"
     tags: ["loadbalanced"]
     commands:
