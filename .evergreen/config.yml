@@ -1,37 +1,23 @@
-# When a task that used to pass starts to fail
-# Go through all versions that may have been skipped to detect
-# when the task started failing
+# When a task that used to pass starts to fail, go through all versions that may have been skipped to detect when the
+# task started failing.
 stepback: true
 
-# Mark a failure as a system/bootstrap failure (purple box) rather then a task
-# failure by default.
+# Mark a failure as a system/bootstrap failure (purple box) rather than a task failure by default.
 # Actual testing tasks are marked with `type: test`
 command_type: system
 
-# Protect ourself against rogue test case, or curl gone wild, that runs forever
-# Good rule of thumb: the averageish length a task takes, times 5
-# That roughly accounts for variable system performance for various buildvariants
-exec_timeout_secs: 1800 # 6 minutes is the longest we'll ever run
-
-#
-# Pre and post are only used for variants that build; they are ignored when task groups are used
-#
-pre:
-  - func: "fetch source"
-  - func: "prepare resources"
-  - func: "windows fix"
-  - func: "fix absolute paths"
-  - func: "make files executable"
-  - func: "install dependencies"
-
-post:
-  - func: "upload working dir"
-  - func: "cleanup"
+# Protect ourselves against rogue test case that runs forever
+# Good rule of thumb: the average length a task takes, times 5, which roughly accounts for variable system performance
+# for various build variants
+exec_timeout_secs: 1800
 
 include:
   - filename: .evergreen/config/functions.yml
+
   - filename: .evergreen/config/build-tasks.yml
+  - filename: .evergreen/config/build-task-groups.yml
   - filename: .evergreen/config/build-variants.yml
+
   - filename: .evergreen/config/test-tasks.yml
   - filename: .evergreen/config/test-task-groups.yml
   - filename: .evergreen/config/test-variants.yml
