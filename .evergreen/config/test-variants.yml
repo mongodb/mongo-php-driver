@@ -1,0 +1,15 @@
+buildvariants:
+  #
+  # Test variants - only run for select platforms worth testing on
+  #
+  - name: test-debian11-php82-local
+    display_name: "Test: Debian 11, PHP 8.2"
+    run_on: debian11-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-debian11"
+      FETCH_BUILD_TASK: "build-php-8.2"
+    depends_on:
+      - variant: "build-debian11"
+        name: "build-php-8.2"
+    tasks:
+      - name: "test-local-deployment-7.0"

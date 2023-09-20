@@ -1,0 +1,23 @@
+task_groups:
+  - name: "test-local-deployment-7.0"
+    setup_group:
+      - func: "fetch source"
+      - func: "prepare resources"
+      - func: "windows fix"
+      - func: "fix absolute paths"
+      - func: "init test-results"
+      - func: "make files executable"
+      - func: "install dependencies"
+      - func: "fetch build"
+    teardown_group:
+      - func: "upload mo artifacts"
+      - func: "upload test results"
+      - func: "stop mongo-orchestration"
+      - func: "upload working dir"
+      - func: "cleanup"
+    setup_group_can_fail_task: true
+    setup_group_timeout_secs: 1800
+    tasks:
+      - ".standalone .local .7.0"
+      - ".replicaset .local .7.0"
+      - ".sharded .local .7.0"
