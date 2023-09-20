@@ -60,7 +60,6 @@ functions:
              export PROJECT="${project}"
           
              export SSL_DIR="$DRIVERS_TOOLS/.evergreen/x509gen"
-             export LIBMONGOC_VERSION="${LIBMONGOC_VERSION}"
           EOT
           # See what we've done
           cat expansion.yml
@@ -138,6 +137,7 @@ functions:
     - command: shell.exec
       params:
         working_dir: "src/src/libmongoc"
+        add_expansions_to_env: true
         script: |
           if [ -n "${LIBMONGOC_VERSION}" ]; then
              echo "Checking out libmongoc version: ${LIBMONGOC_VERSION}"

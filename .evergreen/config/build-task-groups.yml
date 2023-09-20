@@ -36,6 +36,8 @@ task_groups:
 
   # Builds PHP 8.2 with different versions of libmongoc
   - name: "build-php-8.2-libmongoc"
+    # Keep this in sync with the actual number of libmongoc builds (typically 3)
+    max_hosts: 1
     setup_task: *build_setup
     setup_task_can_fail_task: true
     setup_task_timeout_secs: 1800

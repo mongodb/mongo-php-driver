@@ -547,3 +547,23 @@ tasks:
       - func: "run tests"
         vars:
           SKIP_CRYPT_SHARED: "yes"
+
+  # Test different storage engines
+  - name: "test-mongodb-4.0-standalone-inmemory"
+    tags: ["standalone", "local", "4.0", "storage-engines"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          MONGODB_VERSION: "4.0"
+          STORAGE_ENGINE: "inmemory"
+      - func: "run tests"
+  - name: "test-mongodb-4.0-standalone-mmapv1"
+    tags: ["standalone", "local", "4.0", "storage-engines"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          MONGODB_VERSION: "4.0"
+          STORAGE_ENGINE: "mmapv1"
+      - func: "run tests"
