@@ -73,4 +73,4 @@ if [ -n "$LIBMONGOC_VERSION" ]; then
    make libmongoc-version-current
 fi
 
-make
+make test TESTS="tests/smoketest.phpt"
