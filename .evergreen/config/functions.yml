@@ -10,17 +10,6 @@ functions:
         working_dir: "src"
         script: |
           git submodule update --init
-    # Switch to a different version of libmongoc
-    - command: shell.exec
-      params:
-        working_dir: "src/src/libmongoc"
-        script: |
-          if [ -n "${LIBMONGOC_VERSION}" ]; then
-             echo "Checking out libmongoc version: ${LIBMONGOC_VERSION}"
-             git fetch
-             git checkout ${LIBMONGOC_VERSION}
-             # Note: compile-unix.sh will run `make libmongoc-version-current`
-          fi
     # Make an evergreen expansion file with dynamic values
     - command: shell.exec
       params:
@@ -146,6 +135,16 @@ functions:
           perl -p -i -e "s|/data/mci/[0-9a-z]+/src|${PROJECT_DIRECTORY}|g" Makefile
 
   "compile driver" :
+    - command: shell.exec
+      params:
+        working_dir: "src/src/libmongoc"
+        script: |
+          if [ -n "${LIBMONGOC_VERSION}" ]; then
+             echo "Checking out libmongoc version: ${LIBMONGOC_VERSION}"
+             git fetch
+             git checkout ${LIBMONGOC_VERSION}
+             # Note: compile-unix.sh will run `make libmongoc-version-current`
+          fi
     - command: subprocess.exec
       type: test
       params:

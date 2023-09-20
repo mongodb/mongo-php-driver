@@ -1,4 +1,5 @@
 tasks:
+  # Standard builds for all PHP versions
   - name: "build-php-8.2"
     tags: ["build", "php8.2"]
     commands:
@@ -6,7 +7,6 @@ tasks:
         vars:
           PHP_VERSION: "8.2"
       - func: "upload build"
-
   - name: "build-php-8.1"
     tags: ["build", "php8.1"]
     commands:
@@ -14,7 +14,6 @@ tasks:
         vars:
           PHP_VERSION: "8.1"
       - func: "upload build"
-
   - name: "build-php-8.0"
     tags: ["build", "php8.0"]
     commands:
@@ -22,11 +21,37 @@ tasks:
         vars:
           PHP_VERSION: "8.0"
       - func: "upload build"
-
   - name: "build-php-7.4"
     tags: ["build", "php7.4"]
     commands:
       - func: "compile driver"
         vars:
           PHP_VERSION: "7.4"
+      - func: "upload build"
+
+  # Special builds with different libmongoc versions
+  # TODO: Enable the following two builds once libmongoc 1.25.0 is released
+#  - name: "build-php-8.2-libmongoc-lowest-supported"
+#    tags: ["build-libmongoc", "php8.2"]
+#    commands:
+#      - func: "compile driver"
+#        vars:
+#          PHP_VERSION: "8.2"
+#          LIBMONGOC_VERSION: "1.25.0"
+#      - func: "upload build"
+#  - name: "build-php-8.2-libmongoc-next-stable"
+#    tags: ["build-libmongoc", "php8.2"]
+#    commands:
+#      - func: "compile driver"
+#        vars:
+#          PHP_VERSION: "8.2"
+#          LIBMONGOC_VERSION: "r1.25"
+#      - func: "upload build"
+  - name: "build-php-8.2-libmongoc-latest"
+    tags: ["build-libmongoc", "php8.2"]
+    commands:
+      - func: "compile driver"
+        vars:
+          PHP_VERSION: "8.2"
+          LIBMONGOC_VERSION: "master"
       - func: "upload build"
