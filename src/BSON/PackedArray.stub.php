@@ -7,7 +7,7 @@
 
 namespace MongoDB\BSON;
 
-final class PackedArray implements \IteratorAggregate, \Serializable, Type
+final class PackedArray implements \IteratorAggregate, \Serializable, \ArrayAccess, Type
 {
     private function __construct() {}
 
@@ -30,6 +30,40 @@ final class PackedArray implements \IteratorAggregate, \Serializable, Type
     /** @return array|object */
     final public function toPHP(?array $typeMap = null) {}
 #endif
+
+#if PHP_VERSION_ID >= 80000
+    public function offsetExists(mixed $key): bool {}
+# else
+    /** @param mixed $key */
+    public function offsetExists($key): bool {}
+# endif
+
+#if PHP_VERSION_ID >= 80000
+    public function offsetGet(mixed $key): mixed {}
+# else
+    /**
+     * @param mixed $key
+     * @return mixed
+     */
+    public function offsetGet($key) {}
+# endif
+
+#if PHP_VERSION_ID >= 80000
+    public function offsetSet(mixed $key, mixed $value): void {}
+# else
+    /**
+     * @param mixed $key
+     * @param mixed $value
+     */
+    public function offsetSet($key, $value): void {}
+# endif
+
+#if PHP_VERSION_ID >= 80000
+    public function offsetUnset(mixed $key): void {}
+# else
+    /** @param mixed $key */
+    public function offsetUnset($key): void {}
+# endif
 
     final public function __toString(): string {}
 

@@ -117,27 +117,40 @@ static bool seek_iter_to_index(bson_iter_t* iter, zend_long index)
 	return true;
 }
 
+static bool php_phongo_packedarray_get(php_phongo_packedarray_t* intern, zend_long index, zval* return_value)
+{
+	bson_iter_t iter;
+
+	if (!bson_iter_init(&iter, intern->bson)) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator.");
+		return false;
+	}
+
+	if (!seek_iter_to_index(&iter, index)) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index \"%d\" in BSON data", index);
+		return false;
+	}
+
+	phongo_bson_value_to_zval(bson_iter_value(&iter), return_value);
+
+	return true;
+}
+
 static PHP_METHOD(MongoDB_BSON_PackedArray, get)
 {
 	php_phongo_packedarray_t* intern;
 	zend_long                 index;
-	bson_iter_t               iter;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_LONG(index)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	intern = Z_PACKEDARRAY_OBJ_P(getThis());
-	if (!bson_iter_init(&iter, intern->bson)) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator.");
-	}
 
-	if (!seek_iter_to_index(&iter, index)) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index \"%d\" in BSON data", index);
+	if (!php_phongo_packedarray_get(intern, index, return_value)) {
+		// Exception already thrown
 		RETURN_NULL();
 	}
-
-	phongo_bson_value_to_zval(bson_iter_value(&iter), return_value);
 }
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, getIterator)
@@ -147,22 +160,30 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, getIterator)
 	phongo_iterator_init(return_value, getThis());
 }
 
+static bool php_phongo_packedarray_has(php_phongo_packedarray_t* intern, zend_long index)
+{
+	bson_iter_t iter;
+
+	if (!bson_iter_init(&iter, intern->bson)) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator.");
+		return false;
+	}
+
+	return seek_iter_to_index(&iter, index);
+}
+
 static PHP_METHOD(MongoDB_BSON_PackedArray, has)
 {
 	php_phongo_packedarray_t* intern;
 	zend_long                 index;
-	bson_iter_t               iter;
 
 	PHONGO_PARSE_PARAMETERS_START(1, 1)
 	Z_PARAM_LONG(index)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	intern = Z_PACKEDARRAY_OBJ_P(getThis());
-	if (!bson_iter_init(&iter, intern->bson)) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator.");
-	}
 
-	RETURN_BOOL(seek_iter_to_index(&iter, index));
+	RETURN_BOOL(php_phongo_packedarray_has(intern, index));
 }
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, toPHP)
@@ -196,6 +217,54 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, toPHP)
 	php_phongo_bson_typemap_dtor(&state.map);
 
 	RETURN_ZVAL(&state.zchild, 0, 1);
+}
+
+static PHP_METHOD(MongoDB_BSON_PackedArray, offsetExists)
+{
+	php_phongo_packedarray_t* intern;
+	zval*                     key;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ZVAL(key)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	intern = Z_PACKEDARRAY_OBJ_P(getThis());
+
+	if (Z_TYPE_P(key) != IS_LONG) {
+		RETURN_FALSE;
+	}
+
+	RETURN_BOOL(php_phongo_packedarray_has(intern, Z_LVAL_P(key)));
+}
+
+static PHP_METHOD(MongoDB_BSON_PackedArray, offsetGet)
+{
+	php_phongo_packedarray_t* intern;
+	zval*                     key;
+
+	PHONGO_PARSE_PARAMETERS_START(1, 1)
+	Z_PARAM_ZVAL(key)
+	PHONGO_PARSE_PARAMETERS_END();
+
+	intern = Z_PACKEDARRAY_OBJ_P(getThis());
+
+	if (Z_TYPE_P(key) != IS_LONG) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index of type \"%s\" in BSON data", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(key));
+		return;
+	}
+
+	// May throw, in which case we do nothing
+	php_phongo_packedarray_get(intern, Z_LVAL_P(key), return_value);
+}
+
+static PHP_METHOD(MongoDB_BSON_PackedArray, offsetSet)
+{
+	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot write to %s offset", ZSTR_VAL(php_phongo_packedarray_ce->name));
+}
+
+static PHP_METHOD(MongoDB_BSON_PackedArray, offsetUnset)
+{
+	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot unset %s offset", ZSTR_VAL(php_phongo_packedarray_ce->name));
 }
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, __toString)
@@ -401,9 +470,51 @@ static HashTable* php_phongo_packedarray_get_properties(phongo_compat_object_han
 	return php_phongo_packedarray_get_properties_hash(object, false, 1);
 }
 
+zval* php_phongo_packedarray_read_dimension(phongo_compat_object_handler_type* object, zval* offset, int type, zval* rv)
+{
+	php_phongo_packedarray_t* intern;
+
+	intern = Z_OBJ_PACKEDARRAY(PHONGO_COMPAT_GET_OBJ(object));
+
+	if (Z_TYPE_P(offset) != IS_LONG) {
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index of type \"%s\" in BSON data", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
+		return &EG(uninitialized_zval);
+	}
+
+	if (!php_phongo_packedarray_get(intern, Z_LVAL_P(offset), rv)) {
+		// Exception already thrown
+		return &EG(uninitialized_zval);
+	}
+
+	return rv;
+}
+
+void php_phongo_packedarray_write_dimension(phongo_compat_object_handler_type* object, zval* offset, zval* value)
+{
+	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot write to %s offset", ZSTR_VAL(php_phongo_packedarray_ce->name));
+}
+
+int php_phongo_packedarray_has_dimension(phongo_compat_object_handler_type* object, zval* member, int check_empty)
+{
+	php_phongo_packedarray_t* intern;
+
+	intern = Z_OBJ_PACKEDARRAY(PHONGO_COMPAT_GET_OBJ(object));
+
+	if (Z_TYPE_P(member) != IS_LONG) {
+		return false;
+	}
+
+	return php_phongo_packedarray_has(intern, Z_LVAL_P(member));
+}
+
+void php_phongo_packedarray_unset_dimension(phongo_compat_object_handler_type* object, zval* offset)
+{
+	phongo_throw_exception(PHONGO_ERROR_LOGIC, "Cannot unset %s offset", ZSTR_VAL(php_phongo_packedarray_ce->name));
+}
+
 void php_phongo_packedarray_init_ce(INIT_FUNC_ARGS)
 {
-	php_phongo_packedarray_ce                = register_class_MongoDB_BSON_PackedArray(zend_ce_aggregate, zend_ce_serializable, php_phongo_type_ce);
+	php_phongo_packedarray_ce                = register_class_MongoDB_BSON_PackedArray(zend_ce_aggregate, zend_ce_serializable, zend_ce_arrayaccess, php_phongo_type_ce);
 	php_phongo_packedarray_ce->create_object = php_phongo_packedarray_create_object;
 
 #if PHP_VERSION_ID >= 80000
@@ -412,11 +523,15 @@ void php_phongo_packedarray_init_ce(INIT_FUNC_ARGS)
 
 	memcpy(&php_phongo_handler_packedarray, phongo_get_std_object_handlers(), sizeof(zend_object_handlers));
 	PHONGO_COMPAT_SET_COMPARE_OBJECTS_HANDLER(packedarray);
-	php_phongo_handler_packedarray.clone_obj      = php_phongo_packedarray_clone_object;
-	php_phongo_handler_packedarray.get_debug_info = php_phongo_packedarray_get_debug_info;
-	php_phongo_handler_packedarray.get_properties = php_phongo_packedarray_get_properties;
-	php_phongo_handler_packedarray.free_obj       = php_phongo_packedarray_free_object;
-	php_phongo_handler_packedarray.offset         = XtOffsetOf(php_phongo_packedarray_t, std);
+	php_phongo_handler_packedarray.clone_obj       = php_phongo_packedarray_clone_object;
+	php_phongo_handler_packedarray.get_debug_info  = php_phongo_packedarray_get_debug_info;
+	php_phongo_handler_packedarray.get_properties  = php_phongo_packedarray_get_properties;
+	php_phongo_handler_packedarray.free_obj        = php_phongo_packedarray_free_object;
+	php_phongo_handler_packedarray.read_dimension  = php_phongo_packedarray_read_dimension;
+	php_phongo_handler_packedarray.write_dimension = php_phongo_packedarray_write_dimension;
+	php_phongo_handler_packedarray.has_dimension   = php_phongo_packedarray_has_dimension;
+	php_phongo_handler_packedarray.unset_dimension = php_phongo_packedarray_unset_dimension;
+	php_phongo_handler_packedarray.offset          = XtOffsetOf(php_phongo_packedarray_t, std);
 }
 
 bool phongo_packedarray_new(zval* object, bson_t* bson, bool copy)
