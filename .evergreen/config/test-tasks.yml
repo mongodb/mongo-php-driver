@@ -9,7 +9,7 @@ tasks:
           MONGODB_VERSION: "latest"
       - func: "run tests"
   - name: "test-mongodb-latest-standalone-auth"
-    tags: ["standalone", "local", "latest"]
+    tags: ["standalone", "local", "latest", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -18,7 +18,7 @@ tasks:
           MONGODB_VERSION: "latest"
       - func: "run tests"
   - name: "test-mongodb-latest-standalone-ssl"
-    tags: ["standalone", "local", "latest"]
+    tags: ["standalone", "local", "latest", "ssl"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -37,7 +37,7 @@ tasks:
           MONGODB_VERSION: "latest"
       - func: "run tests"
   - name: "test-mongodb-latest-replicaset-auth"
-    tags: ["replicaset", "local", "latest"]
+    tags: ["replicaset", "local", "latest", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -46,7 +46,7 @@ tasks:
           MONGODB_VERSION: "latest"
       - func: "run tests"
   - name: "test-mongodb-latest-sharded-noauth-nossl"
-    tags: ["sharded", "local", "latest"]
+    tags: ["sharded", "local", "latest", "ssl"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -64,7 +64,7 @@ tasks:
           MONGODB_VERSION: "rapid"
       - func: "run tests"
   - name: "test-mongodb-rapid-standalone-auth"
-    tags: ["standalone", "local", "rapid"]
+    tags: ["standalone", "local", "rapid", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -73,7 +73,7 @@ tasks:
           MONGODB_VERSION: "rapid"
       - func: "run tests"
   - name: "test-mongodb-rapid-standalone-ssl"
-    tags: ["standalone", "local", "rapid"]
+    tags: ["standalone", "local", "rapid", "ssl"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -92,7 +92,7 @@ tasks:
           MONGODB_VERSION: "rapid"
       - func: "run tests"
   - name: "test-mongodb-rapid-replicaset-auth"
-    tags: ["replicaset", "local", "rapid"]
+    tags: ["replicaset", "local", "rapid", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -119,7 +119,7 @@ tasks:
           MONGODB_VERSION: "7.0"
       - func: "run tests"
   - name: "test-mongodb-7.0-standalone-auth"
-    tags: ["standalone", "local", "7.0"]
+    tags: ["standalone", "local", "7.0", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -128,7 +128,7 @@ tasks:
           MONGODB_VERSION: "7.0"
       - func: "run tests"
   - name: "test-mongodb-7.0-standalone-ssl"
-    tags: ["standalone", "local", "7.0"]
+    tags: ["standalone", "local", "7.0", "ssl"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -147,7 +147,7 @@ tasks:
           MONGODB_VERSION: "7.0"
       - func: "run tests"
   - name: "test-mongodb-7.0-replicaset-auth"
-    tags: ["replicaset", "local", "7.0"]
+    tags: ["replicaset", "local", "7.0", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -174,7 +174,7 @@ tasks:
           MONGODB_VERSION: "6.0"
       - func: "run tests"
   - name: "test-mongodb-6.0-standalone-auth"
-    tags: ["standalone", "local", "6.0"]
+    tags: ["standalone", "local", "6.0", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -183,7 +183,7 @@ tasks:
           MONGODB_VERSION: "6.0"
       - func: "run tests"
   - name: "test-mongodb-6.0-standalone-ssl"
-    tags: ["standalone", "local", "6.0"]
+    tags: ["standalone", "local", "6.0", "ssl"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -202,7 +202,7 @@ tasks:
           MONGODB_VERSION: "6.0"
       - func: "run tests"
   - name: "test-mongodb-6.0-replicaset-auth"
-    tags: ["replicaset", "local", "6.0"]
+    tags: ["replicaset", "local", "6.0", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -229,7 +229,7 @@ tasks:
           MONGODB_VERSION: "5.0"
       - func: "run tests"
   - name: "test-mongodb-5.0-standalone-auth"
-    tags: ["standalone", "local", "5.0"]
+    tags: ["standalone", "local", "5.0", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -238,7 +238,7 @@ tasks:
           MONGODB_VERSION: "5.0"
       - func: "run tests"
   - name: "test-mongodb-5.0-standalone-ssl"
-    tags: ["standalone", "local", "5.0"]
+    tags: ["standalone", "local", "5.0", "ssl"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -257,7 +257,7 @@ tasks:
           MONGODB_VERSION: "5.0"
       - func: "run tests"
   - name: "test-mongodb-5.0-replicaset-auth"
-    tags: ["replicaset", "local", "5.0"]
+    tags: ["replicaset", "local", "5.0", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -284,7 +284,7 @@ tasks:
           MONGODB_VERSION: "4.4"
       - func: "run tests"
   - name: "test-mongodb-4.4-standalone-auth"
-    tags: ["standalone", "local", "4.4"]
+    tags: ["standalone", "local", "4.4", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -293,7 +293,7 @@ tasks:
           MONGODB_VERSION: "4.4"
       - func: "run tests"
   - name: "test-mongodb-4.4-standalone-ssl"
-    tags: ["standalone", "local", "4.4"]
+    tags: ["standalone", "local", "4.4", "ssl"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -312,7 +312,7 @@ tasks:
           MONGODB_VERSION: "4.4"
       - func: "run tests"
   - name: "test-mongodb-4.4-replicaset-auth"
-    tags: ["replicaset", "local", "4.4"]
+    tags: ["replicaset", "local", "4.4", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -339,7 +339,7 @@ tasks:
           MONGODB_VERSION: "4.2"
       - func: "run tests"
   - name: "test-mongodb-4.2-standalone-auth"
-    tags: ["standalone", "local", "4.2"]
+    tags: ["standalone", "local", "4.2", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -348,7 +348,7 @@ tasks:
           MONGODB_VERSION: "4.2"
       - func: "run tests"
   - name: "test-mongodb-4.2-standalone-ssl"
-    tags: ["standalone", "local", "4.2"]
+    tags: ["standalone", "local", "4.2", "ssl"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -367,7 +367,7 @@ tasks:
           MONGODB_VERSION: "4.2"
       - func: "run tests"
   - name: "test-mongodb-4.2-replicaset-auth"
-    tags: ["replicaset", "local", "4.2"]
+    tags: ["replicaset", "local", "4.2", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -394,7 +394,7 @@ tasks:
           MONGODB_VERSION: "4.0"
       - func: "run tests"
   - name: "test-mongodb-4.0-standalone-auth"
-    tags: ["standalone", "local", "4.0"]
+    tags: ["standalone", "local", "4.0", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -403,7 +403,7 @@ tasks:
           MONGODB_VERSION: "4.0"
       - func: "run tests"
   - name: "test-mongodb-4.0-standalone-ssl"
-    tags: ["standalone", "local", "4.0"]
+    tags: ["standalone", "local", "4.0", "ssl"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -422,7 +422,7 @@ tasks:
           MONGODB_VERSION: "4.0"
       - func: "run tests"
   - name: "test-mongodb-4.0-replicaset-auth"
-    tags: ["replicaset", "local", "4.0"]
+    tags: ["replicaset", "local", "4.0", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -449,7 +449,7 @@ tasks:
           MONGODB_VERSION: "3.6"
       - func: "run tests"
   - name: "test-mongodb-3.6-standalone-auth"
-    tags: ["standalone", "local", "3.6"]
+    tags: ["standalone", "local", "3.6", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -458,7 +458,7 @@ tasks:
           MONGODB_VERSION: "3.6"
       - func: "run tests"
   - name: "test-mongodb-3.6-standalone-ssl"
-    tags: ["standalone", "local", "3.6"]
+    tags: ["standalone", "local", "3.6", "ssl"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
@@ -477,7 +477,7 @@ tasks:
           MONGODB_VERSION: "3.6"
       - func: "run tests"
   - name: "test-mongodb-3.6-replicaset-auth"
-    tags: ["replicaset", "local", "3.6"]
+    tags: ["replicaset", "local", "3.6", "auth"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
