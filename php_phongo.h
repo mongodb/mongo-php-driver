@@ -50,6 +50,7 @@ ZEND_BEGIN_MODULE_GLOBALS(mongodb)
 	HashTable* request_clients;
 	HashTable* subscribers;
 	HashTable* managers;
+	HashTable* loggers;
 ZEND_END_MODULE_GLOBALS(mongodb)
 
 #define MONGODB_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(mongodb, v)

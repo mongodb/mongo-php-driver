@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-present MongoDB, Inc.
+ * Copyright 2022-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-#ifndef PHONGO_INI_H
-#define PHONGO_INI_H
+#ifndef PHONGO_LOG_H
+#define PHONGO_LOG_H
+
+#include <stdio.h>
 
 #include <php.h>
 
-void phongo_display_ini_entries(ZEND_MODULE_INFO_FUNC_ARGS);
-void phongo_register_ini_entries(INIT_FUNC_ARGS);
-void phongo_unregister_ini_entries(SHUTDOWN_FUNC_ARGS);
+bool phongo_log_add_logger(zval* logger);
+bool phongo_log_remove_logger(zval* logger);
+void phongo_log_set_stream(FILE* stream);
 
-#endif /* PHONGO_INI_H */
+#endif /* PHONGO_LOG_H */

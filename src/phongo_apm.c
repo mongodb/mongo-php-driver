@@ -30,7 +30,7 @@ ZEND_EXTERN_MODULE_GLOBALS(mongodb)
 
 /* Ensures that instances of @subscriber_ce in @from (those registered with a
  * Manager or globally) are added to the set @to. This is used to build the list
- * of subscribers notify for an event. */
+ * of subscribers to notify for an event. */
 static void phongo_apm_add_subscribers_to_notify(zend_class_entry* subscriber_ce, HashTable* from, HashTable* to)
 {
 	zval* subscriber;

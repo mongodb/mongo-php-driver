@@ -120,6 +120,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/phongo_error.c \
     src/phongo_execute.c \
     src/phongo_ini.c \
+    src/phongo_log.c \
     src/phongo_util.c \
     src/BSON/Binary.c \
     src/BSON/BinaryInterface.c \
@@ -189,6 +190,7 @@ if test "$PHP_MONGODB" != "no"; then
     src/MongoDB/Monitoring/CommandStartedEvent.c \
     src/MongoDB/Monitoring/CommandSubscriber.c \
     src/MongoDB/Monitoring/CommandSucceededEvent.c \
+    src/MongoDB/Monitoring/LogSubscriber.c \
     src/MongoDB/Monitoring/SDAMSubscriber.c \
     src/MongoDB/Monitoring/Subscriber.c \
     src/MongoDB/Monitoring/ServerChangedEvent.c \
