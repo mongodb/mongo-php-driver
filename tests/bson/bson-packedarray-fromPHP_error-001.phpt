@@ -22,9 +22,9 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected value to be a list, but given array is not.
+Expected value to be a list, but given array is not
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected value to be a list, but given array is not.
+Expected value to be a list, but given array is not
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
-Expected value to be a list, but given array is not.
+Expected value to be a list, but given array is not
 ===DONE===

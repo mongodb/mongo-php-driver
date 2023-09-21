@@ -93,7 +93,7 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, fromPHP)
 	PHONGO_PARSE_PARAMETERS_END();
 
 	if (!zend_array_is_list(Z_ARRVAL_P(data))) {
-		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected value to be a list, but given array is not.");
+		phongo_throw_exception(PHONGO_ERROR_INVALID_ARGUMENT, "Expected value to be a list, but given array is not");
 		return;
 	}
 
@@ -122,7 +122,7 @@ static bool php_phongo_packedarray_get(php_phongo_packedarray_t* intern, zend_lo
 	bson_iter_t iter;
 
 	if (!bson_iter_init(&iter, intern->bson)) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator.");
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator");
 		return false;
 	}
 
@@ -165,7 +165,7 @@ static bool php_phongo_packedarray_has(php_phongo_packedarray_t* intern, zend_lo
 	bson_iter_t iter;
 
 	if (!bson_iter_init(&iter, intern->bson)) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator.");
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator");
 		return false;
 	}
 

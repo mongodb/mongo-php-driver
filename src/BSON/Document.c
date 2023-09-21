@@ -170,7 +170,7 @@ static bool php_phongo_document_get(php_phongo_document_t* intern, char* key, si
 	bson_iter_t iter;
 
 	if (!bson_iter_init(&iter, intern->bson)) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator.");
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator");
 		return false;
 	}
 
@@ -214,7 +214,7 @@ static bool php_phongo_document_has(php_phongo_document_t* intern, char* key, si
 	bson_iter_t iter;
 
 	if (!bson_iter_init(&iter, intern->bson)) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator.");
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not initialize BSON iterator");
 		return false;
 	}
 
