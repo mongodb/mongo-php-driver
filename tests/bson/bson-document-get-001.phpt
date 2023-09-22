@@ -29,5 +29,5 @@ object(MongoDB\BSON\Int64)#%d (%d) {
   string(3) "123"
 }
 OK: Got MongoDB\Driver\Exception\RuntimeException
-Could not find key "baz" in BSON data
+Could not find key "baz" in BSON document
 ===DONE===

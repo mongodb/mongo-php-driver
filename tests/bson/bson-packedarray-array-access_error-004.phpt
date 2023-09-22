@@ -28,11 +28,11 @@ echo throws(function() use ($array) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\RuntimeException
-Could not find index of type "string" in BSON data
+Could not find index of type "string" in BSON array
 OK: Got MongoDB\Driver\Exception\RuntimeException
-Could not find index of type "string" in BSON data
+Could not find index of type "string" in BSON array
 OK: Got MongoDB\Driver\Exception\RuntimeException
-Could not find index of type "float" in BSON data
+Could not find index of type "float" in BSON array
 OK: Got MongoDB\Driver\Exception\RuntimeException
-Could not find index of type "bool" in BSON data
+Could not find index of type "bool" in BSON array
 ===DONE===

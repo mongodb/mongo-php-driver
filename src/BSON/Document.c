@@ -175,7 +175,7 @@ static bool php_phongo_document_get(php_phongo_document_t* intern, char* key, si
 	}
 
 	if (!bson_iter_find_w_len(&iter, key, key_len)) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key \"%s\" in BSON data", key);
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key \"%s\" in BSON document", key);
 		return false;
 	}
 
@@ -320,7 +320,7 @@ static PHP_METHOD(MongoDB_BSON_Document, offsetGet)
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
 	if (Z_TYPE_P(offset) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON data", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
 		return;
 	}
 
@@ -589,7 +589,7 @@ zval* php_phongo_document_read_dimension(phongo_compat_object_handler_type* obje
 	intern = Z_OBJ_DOCUMENT(PHONGO_COMPAT_GET_OBJ(object));
 
 	if (Z_TYPE_P(offset) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON data", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
 		return &EG(uninitialized_zval);
 	}
 
@@ -613,7 +613,7 @@ int php_phongo_document_has_dimension(phongo_compat_object_handler_type* object,
 	intern = Z_OBJ_DOCUMENT(PHONGO_COMPAT_GET_OBJ(object));
 
 	if (Z_TYPE_P(member) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON data", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(member));
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(member));
 		return false;
 	}
 

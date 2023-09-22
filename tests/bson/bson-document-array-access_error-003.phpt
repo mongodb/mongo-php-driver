@@ -28,9 +28,9 @@ echo throws(function() use ($document) {
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\RuntimeException
-Could not find key of type "int" in BSON data
+Could not find key of type "int" in BSON document
 OK: Got MongoDB\Driver\Exception\RuntimeException
-Could not find key of type "float" in BSON data
+Could not find key of type "float" in BSON document
 OK: Got MongoDB\Driver\Exception\RuntimeException
-Could not find key of type "bool" in BSON data
+Could not find key of type "bool" in BSON document
 ===DONE===

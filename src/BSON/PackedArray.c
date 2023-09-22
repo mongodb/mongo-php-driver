@@ -127,7 +127,7 @@ static bool php_phongo_packedarray_get(php_phongo_packedarray_t* intern, zend_lo
 	}
 
 	if (!seek_iter_to_index(&iter, index)) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index \"%d\" in BSON data", index);
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index \"%d\" in BSON array", index);
 		return false;
 	}
 
@@ -249,7 +249,7 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, offsetGet)
 	intern = Z_PACKEDARRAY_OBJ_P(getThis());
 
 	if (Z_TYPE_P(key) != IS_LONG) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index of type \"%s\" in BSON data", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(key));
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index of type \"%s\" in BSON array", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(key));
 		return;
 	}
 
@@ -477,7 +477,7 @@ zval* php_phongo_packedarray_read_dimension(phongo_compat_object_handler_type* o
 	intern = Z_OBJ_PACKEDARRAY(PHONGO_COMPAT_GET_OBJ(object));
 
 	if (Z_TYPE_P(offset) != IS_LONG) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index of type \"%s\" in BSON data", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index of type \"%s\" in BSON array", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
 		return &EG(uninitialized_zval);
 	}
 
