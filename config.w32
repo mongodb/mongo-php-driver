@@ -23,6 +23,29 @@ function mongodb_generate_header(inpath, outpath, replacements)
   outfile.Close();
 }
 
+/* TODO: Consolidate these parsing functions once the libbson and libmongoc
+ * substitutions become consistent again. */
+function mongodb_parse_libbson_version_file(inpath)
+{
+  var infile = FSO.OpenTextFile(inpath, 1);
+  var version = infile.ReadLine();
+  infile.Close();
+
+  var prefix = "libbson_";
+  var xyz_pre = version.split("-");
+  var xyz = xyz_pre[0].split(".");
+  var pre = xyz_pre.length > 1 ? xyz_pre[1] : "";
+
+  var replacements = {};
+  replacements[prefix + "VERSION_FULL"] = version;
+  replacements[prefix + "VERSION_MAJOR"] = xyz[0];
+  replacements[prefix + "VERSION_MINOR"] = xyz[1];
+  replacements[prefix + "VERSION_PATCH"] = xyz[2];
+  replacements[prefix + "VERSION_PRERELEASE"] = pre;
+
+  return replacements;
+}
+
 function mongodb_parse_version_file(inpath, prefix)
 {
   var infile = FSO.OpenTextFile(inpath, 1);
@@ -170,7 +193,7 @@ if (PHP_MONGODB != "no") {
   mongodb_generate_header(
     configure_module_dirname + "/src/libmongoc/src/libbson/src/bson/bson-version.h.in",
     configure_module_dirname + "/src/libmongoc/src/libbson/src/bson/bson-version.h",
-    mongodb_parse_version_file(configure_module_dirname + "/src/LIBMONGOC_VERSION_CURRENT", "BSON_")
+    mongodb_parse_libbson_version_file(configure_module_dirname + "/src/LIBMONGOC_VERSION_CURRENT")
   );
 
   var mongoc_opts = {
