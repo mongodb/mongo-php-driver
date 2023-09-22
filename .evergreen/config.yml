@@ -49,5 +49,4 @@ include:
   - filename: .evergreen/config/test/skip-crypt-shared.yml
 
   - filename: .evergreen/config/test-tasks.yml
-  - filename: .evergreen/config/test-task-groups.yml
   - filename: .evergreen/config/test-variants.yml
