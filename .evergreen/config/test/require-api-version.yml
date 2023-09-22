@@ -1,0 +1,65 @@
+tasks:
+  - name: "test-requireApiVersion-latest"
+    tags: [ "standalone", "local", "latest", "versioned_api" ]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          REQUIRE_API_VERSION: "yes"
+          MONGODB_VERSION: "latest"
+      - func: "run tests"
+        vars:
+          API_VERSION: "1"
+
+  - name: "test-requireApiVersion-rapid"
+    tags: [ "standalone", "local", "rapid", "versioned_api" ]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          REQUIRE_API_VERSION: "yes"
+          MONGODB_VERSION: "rapid"
+      - func: "run tests"
+        vars:
+          API_VERSION: "1"
+
+  - name: "test-requireApiVersion-7.0"
+    tags: [ "standalone", "local", "7.0", "versioned_api" ]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          REQUIRE_API_VERSION: "yes"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+        vars:
+          API_VERSION: "1"
+
+  - name: "test-requireApiVersion-6.0"
+    tags: [ "standalone", "local", "6.0", "versioned_api" ]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          REQUIRE_API_VERSION: "yes"
+          MONGODB_VERSION: "6.0"
+      - func: "run tests"
+        vars:
+          API_VERSION: "1"
+
+  - name: "test-requireApiVersion-5.0"
+    tags: [ "standalone", "local", "5.0", "versioned_api" ]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          REQUIRE_API_VERSION: "yes"
+          MONGODB_VERSION: "5.0"
+      - func: "run tests"
+        vars:
+          API_VERSION: "1"

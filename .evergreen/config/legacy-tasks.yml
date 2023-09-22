@@ -16,19 +16,6 @@ tasks:
           SSL: "yes"
       # Note: "stop load balancer" will be called from "post"
 
-  - name: "test-requireApiVersion"
-    tags: ["versioned_api"]
-    commands:
-      - func: "compile driver"
-      - func: "bootstrap mongo-orchestration"
-        vars:
-          TOPOLOGY: "server"
-          AUTH: "auth"
-          REQUIRE_API_VERSION: "yes"
-      - func: "run tests"
-        vars:
-          API_VERSION: "1"
-
   - name: "ocsp-test_1-rsa-delegate"
     tags: ["ocsp"]
     commands:

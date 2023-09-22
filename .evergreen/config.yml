@@ -47,6 +47,7 @@ include:
   - filename: .evergreen/config/test/local-4.0.yml
   - filename: .evergreen/config/test/local-3.6.yml
   - filename: .evergreen/config/test/skip-crypt-shared.yml
+  - filename: .evergreen/config/test/require-api-version.yml
 
   - filename: .evergreen/config/test-tasks.yml
   - filename: .evergreen/config/test-variants.yml

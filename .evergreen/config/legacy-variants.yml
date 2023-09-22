@@ -9,15 +9,6 @@ buildvariants:
     tasks:
       - name: ".ocsp"
 
-  - matrix_name: "test-requireApiVersion"
-    matrix_spec: { "os": "debian11", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
-    display_name: "Versioned API - ${mongodb-versions}"
-    exclude_spec:
-      # Stable API is available from MongoDB 5.0+
-      - { "os": "debian11", "mongodb-versions": ["3.6", "4.0", "4.2", "4.4"], "php-edge-versions": "latest-stable" }
-    tasks:
-      - name: "test-requireApiVersion"
-
   - matrix_name: "test-loadBalanced"
     matrix_spec: { "os": "debian11", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
     display_name: "Load balanced - ${mongodb-versions}"
