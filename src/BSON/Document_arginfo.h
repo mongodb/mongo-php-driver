@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 703e15f17b01dd2b6f04cb89c080ba83a5a420d0 */
+ * Stub hash: 10280ca319e69b9e6126002d7089ecaeb01650b1 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Document___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -60,6 +60,56 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_BSON_Document_toRelaxedExtendedJSON arginfo_class_MongoDB_BSON_Document_toCanonicalExtendedJSON
 
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Document_offsetExists, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, key, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+#endif
+
+#if !(PHP_VERSION_ID >= 80000)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Document_offsetExists, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_INFO(0, key)
+ZEND_END_ARG_INFO()
+#endif
+
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Document_offsetGet, 0, 1, IS_MIXED, 0)
+	ZEND_ARG_TYPE_INFO(0, key, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+#endif
+
+#if !(PHP_VERSION_ID >= 80000)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Document_offsetGet, 0, 0, 1)
+	ZEND_ARG_INFO(0, key)
+ZEND_END_ARG_INFO()
+#endif
+
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Document_offsetSet, 0, 2, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, key, IS_MIXED, 0)
+	ZEND_ARG_TYPE_INFO(0, value, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+#endif
+
+#if !(PHP_VERSION_ID >= 80000)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Document_offsetSet, 0, 2, IS_VOID, 0)
+	ZEND_ARG_INFO(0, key)
+	ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+#endif
+
+#if PHP_VERSION_ID >= 80000
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Document_offsetUnset, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, key, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+#endif
+
+#if !(PHP_VERSION_ID >= 80000)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Document_offsetUnset, 0, 1, IS_VOID, 0)
+	ZEND_ARG_INFO(0, key)
+ZEND_END_ARG_INFO()
+#endif
+
 #define arginfo_class_MongoDB_BSON_Document___toString arginfo_class_MongoDB_BSON_Document_toCanonicalExtendedJSON
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_BSON_Document___set_state, 0, 1, MongoDB\\BSON\\Document, 0)
@@ -113,6 +163,30 @@ static ZEND_METHOD(MongoDB_BSON_Document, toPHP);
 #endif
 static ZEND_METHOD(MongoDB_BSON_Document, toCanonicalExtendedJSON);
 static ZEND_METHOD(MongoDB_BSON_Document, toRelaxedExtendedJSON);
+#if PHP_VERSION_ID >= 80000
+static ZEND_METHOD(MongoDB_BSON_Document, offsetExists);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_BSON_Document, offsetExists);
+#endif
+#if PHP_VERSION_ID >= 80000
+static ZEND_METHOD(MongoDB_BSON_Document, offsetGet);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_BSON_Document, offsetGet);
+#endif
+#if PHP_VERSION_ID >= 80000
+static ZEND_METHOD(MongoDB_BSON_Document, offsetSet);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_BSON_Document, offsetSet);
+#endif
+#if PHP_VERSION_ID >= 80000
+static ZEND_METHOD(MongoDB_BSON_Document, offsetUnset);
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+static ZEND_METHOD(MongoDB_BSON_Document, offsetUnset);
+#endif
 static ZEND_METHOD(MongoDB_BSON_Document, __toString);
 static ZEND_METHOD(MongoDB_BSON_Document, __set_state);
 static ZEND_METHOD(MongoDB_BSON_Document, serialize);
@@ -152,6 +226,30 @@ static const zend_function_entry class_MongoDB_BSON_Document_methods[] = {
 #endif
 	ZEND_ME(MongoDB_BSON_Document, toCanonicalExtendedJSON, arginfo_class_MongoDB_BSON_Document_toCanonicalExtendedJSON, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Document, toRelaxedExtendedJSON, arginfo_class_MongoDB_BSON_Document_toRelaxedExtendedJSON, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
+#if PHP_VERSION_ID >= 80000
+	ZEND_ME(MongoDB_BSON_Document, offsetExists, arginfo_class_MongoDB_BSON_Document_offsetExists, ZEND_ACC_PUBLIC)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_BSON_Document, offsetExists, arginfo_class_MongoDB_BSON_Document_offsetExists, ZEND_ACC_PUBLIC)
+#endif
+#if PHP_VERSION_ID >= 80000
+	ZEND_ME(MongoDB_BSON_Document, offsetGet, arginfo_class_MongoDB_BSON_Document_offsetGet, ZEND_ACC_PUBLIC)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_BSON_Document, offsetGet, arginfo_class_MongoDB_BSON_Document_offsetGet, ZEND_ACC_PUBLIC)
+#endif
+#if PHP_VERSION_ID >= 80000
+	ZEND_ME(MongoDB_BSON_Document, offsetSet, arginfo_class_MongoDB_BSON_Document_offsetSet, ZEND_ACC_PUBLIC)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_BSON_Document, offsetSet, arginfo_class_MongoDB_BSON_Document_offsetSet, ZEND_ACC_PUBLIC)
+#endif
+#if PHP_VERSION_ID >= 80000
+	ZEND_ME(MongoDB_BSON_Document, offsetUnset, arginfo_class_MongoDB_BSON_Document_offsetUnset, ZEND_ACC_PUBLIC)
+#endif
+#if !(PHP_VERSION_ID >= 80000)
+	ZEND_ME(MongoDB_BSON_Document, offsetUnset, arginfo_class_MongoDB_BSON_Document_offsetUnset, ZEND_ACC_PUBLIC)
+#endif
 	ZEND_ME(MongoDB_BSON_Document, __toString, arginfo_class_MongoDB_BSON_Document___toString, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Document, __set_state, arginfo_class_MongoDB_BSON_Document___set_state, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Document, serialize, arginfo_class_MongoDB_BSON_Document_serialize, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
@@ -166,14 +264,14 @@ static const zend_function_entry class_MongoDB_BSON_Document_methods[] = {
 	ZEND_FE_END
 };
 
-static zend_class_entry *register_class_MongoDB_BSON_Document(zend_class_entry *class_entry_IteratorAggregate, zend_class_entry *class_entry_Serializable, zend_class_entry *class_entry_MongoDB_BSON_Type)
+static zend_class_entry *register_class_MongoDB_BSON_Document(zend_class_entry *class_entry_IteratorAggregate, zend_class_entry *class_entry_Serializable, zend_class_entry *class_entry_ArrayAccess, zend_class_entry *class_entry_MongoDB_BSON_Type)
 {
 	zend_class_entry ce, *class_entry;
 
 	INIT_NS_CLASS_ENTRY(ce, "MongoDB\\BSON", "Document", class_MongoDB_BSON_Document_methods);
 	class_entry = zend_register_internal_class_ex(&ce, NULL);
 	class_entry->ce_flags |= ZEND_ACC_FINAL;
-	zend_class_implements(class_entry, 3, class_entry_IteratorAggregate, class_entry_Serializable, class_entry_MongoDB_BSON_Type);
+	zend_class_implements(class_entry, 4, class_entry_IteratorAggregate, class_entry_Serializable, class_entry_ArrayAccess, class_entry_MongoDB_BSON_Type);
 
 	return class_entry;
 }

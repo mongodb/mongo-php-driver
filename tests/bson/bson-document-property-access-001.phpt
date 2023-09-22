@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Document::get() key access
+MongoDB\BSON\Document property access
 --FILE--
 <?php
 
@@ -10,20 +10,26 @@ $document = MongoDB\BSON\Document::fromPHP([
     'bar' => 'baz',
     'int64' => new MongoDB\BSON\Int64(123),
 ]);
-var_dump($document->get('foo'));
-var_dump($document->get('bar'));
-var_dump($document->get('int64'));
+
+var_dump(isset($document->foo));
+var_dump(isset($document->int64));
+var_dump(isset($document->baz));
+
+var_dump($document->foo);
+var_dump($document->int64);
 
 echo throws(function() use ($document) {
-    var_dump($document->get('baz'));
+    var_dump($document->baz);
 }, MongoDB\Driver\Exception\RuntimeException::class), "\n";
 
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECTF--
+bool(true)
+bool(true)
+bool(false)
 string(3) "bar"
-string(3) "baz"
 object(MongoDB\BSON\Int64)#%d (%d) {
   ["integer"]=>
   string(3) "123"
