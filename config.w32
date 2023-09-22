@@ -108,7 +108,7 @@ if (PHP_MONGODB != "no") {
   var PHP_MONGODB_COMMON_SOURCES="common-b64.c common-md5.c common-thread.c"
 
   // Generated with: find src/libmongoc/src/kms-message/src -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f 6- | sort -dz | tr '\000' ' '
-  var PHP_MONGODB_KMS_MESSAGE_SOURCES="hexlify.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c";
+  var PHP_MONGODB_KMS_MESSAGE_SOURCES="hexlify.c kms_azure_request.c kms_b64.c kms_caller_identity_request.c kms_crypto_apple.c kms_crypto_libcrypto.c kms_crypto_none.c kms_crypto_windows.c kms_decrypt_request.c kms_encrypt_request.c kms_gcp_request.c kms_kmip_reader_writer.c kms_kmip_request.c kms_kmip_response.c kms_kmip_response_parser.c kms_kv_list.c kms_message.c kms_port.c kms_request.c kms_request_opt.c kms_request_str.c kms_response.c kms_response_parser.c sort.c";
 
   // Generated with: find src/libmongoc/src/libbson/src/bson -name '*.c' -print0 | cut -sz -d / -f 7- | sort -dz | tr '\000' ' '
   var PHP_MONGODB_BSON_SOURCES="bcon.c bson-atomic.c bson.c bson-clock.c bson-context.c bson-decimal128.c bson-error.c bson-iso8601.c bson-iter.c bson-json.c bson-keys.c bson-md5.c bson-memory.c bson-oid.c bson-reader.c bson-string.c bson-timegm.c bson-utf8.c bson-value.c bson-version-functions.c bson-writer.c";
