@@ -50,6 +50,12 @@ include:
   - filename: .evergreen/config/test/skip-crypt-shared.yml
   - filename: .evergreen/config/test/require-api-version.yml
   - filename: .evergreen/config/test/load-balanced.yml
+  - filename: .evergreen/config/test/ocsp-latest.yml
+  - filename: .evergreen/config/test/ocsp-rapid.yml
+  - filename: .evergreen/config/test/ocsp-7.0.yml
+  - filename: .evergreen/config/test/ocsp-6.0.yml
+  - filename: .evergreen/config/test/ocsp-5.0.yml
+  - filename: .evergreen/config/test/ocsp-4.4.yml
 
   - filename: .evergreen/config/test-tasks.yml
   - filename: .evergreen/config/test-variants.yml
