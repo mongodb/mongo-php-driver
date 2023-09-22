@@ -1,21 +1,4 @@
 tasks:
-  - name: "test-loadBalanced"
-    tags: ["loadbalanced"]
-    commands:
-      - func: "compile driver"
-      - func: "bootstrap mongo-orchestration"
-        vars:
-          TOPOLOGY: "sharded_cluster"
-          LOAD_BALANCER: "true"
-          SSL: "yes"
-      - func: "start load balancer"
-      - func: "run tests"
-        vars:
-          # Note: loadBalanced=true should already be appended to SINGLE_MONGOS_LB_URI
-          MONGODB_URI: "${SINGLE_MONGOS_LB_URI}"
-          SSL: "yes"
-      # Note: "stop load balancer" will be called from "post"
-
   - name: "ocsp-test_1-rsa-delegate"
     tags: ["ocsp"]
     commands:

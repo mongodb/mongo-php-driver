@@ -26,6 +26,7 @@ post: &test_teardown
   - func: "upload mo artifacts"
   - func: "upload test results"
   - func: "stop mongo-orchestration"
+  - func: "stop load balancer"
   - func: "upload working dir"
   - func: "cleanup"
 
@@ -48,6 +49,7 @@ include:
   - filename: .evergreen/config/test/local-3.6.yml
   - filename: .evergreen/config/test/skip-crypt-shared.yml
   - filename: .evergreen/config/test/require-api-version.yml
+  - filename: .evergreen/config/test/load-balanced.yml
 
   - filename: .evergreen/config/test-tasks.yml
   - filename: .evergreen/config/test-variants.yml
