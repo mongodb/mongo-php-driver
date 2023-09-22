@@ -1,32 +1,4 @@
 buildvariants:
-  - matrix_name: "test-php-versions"
-    matrix_spec:
-      os:
-        - debian11
-        - debian10
-        - rhel90
-        - rhel83-zseries
-        - rhel82-arm64
-        - rhel81-power8
-        - rhel80
-        - rhel76
-        - ubuntu2204-arm64
-        - ubuntu2204
-        - ubuntu2004-arm64
-        - ubuntu2004
-      mongodb-edge-versions: latest-stable
-      php-versions: "*"
-    display_name: "${os}, ${mongodb-edge-versions}, ${php-versions}"
-    exclude_spec:
-      # Exclude "latest-stable" PHP version for Debian 11 (see: test-mongodb-versions matrix)
-      - { "os": "debian11", "mongodb-edge-versions": "*", "php-versions": "8.2" }
-      # Exclude PHP versions older than 8.1 on RHEL 9 and Ubuntu 22.04 (OpenSSL 3 is only supported on PHP 8.1+)
-      - { "os": ["rhel90", "ubuntu2204-arm64", "ubuntu2204"], "mongodb-edge-versions": "*", "php-versions": ["7.4", "8.0"] }
-    tasks:
-      - name: "test-standalone-ssl"
-      - name: "test-replicaset-auth"
-      - name: "test-sharded"
-
   # Test alternative storage engines on MongoDB 4.0
   - matrix_name: "test-ocsp"
     matrix_spec: { "os": "debian10", "mongodb-versions": "*", "php-edge-versions": "latest-stable" }
