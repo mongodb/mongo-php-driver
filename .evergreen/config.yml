@@ -36,6 +36,18 @@ include:
   - filename: .evergreen/config/build-task-groups.yml
   - filename: .evergreen/config/build-variants.yml
 
+  # Local deployments - these files are generated automatically
+  - filename: .evergreen/config/test/local-latest.yml
+  - filename: .evergreen/config/test/local-rapid.yml
+  - filename: .evergreen/config/test/local-7.0.yml
+  - filename: .evergreen/config/test/local-6.0.yml
+  - filename: .evergreen/config/test/local-5.0.yml
+  - filename: .evergreen/config/test/local-4.4.yml
+  - filename: .evergreen/config/test/local-4.2.yml
+  - filename: .evergreen/config/test/local-4.0.yml
+  - filename: .evergreen/config/test/local-3.6.yml
+  - filename: .evergreen/config/test/skip-crypt-shared.yml
+
   - filename: .evergreen/config/test-tasks.yml
   - filename: .evergreen/config/test-task-groups.yml
   - filename: .evergreen/config/test-variants.yml
