@@ -1,0 +1,8 @@
+tasks:
+  - name: "build-php-%phpVersion%"
+    tags: ["build", "php%phpVersion%"]
+    commands:
+      - func: "compile driver"
+        vars:
+          PHP_VERSION: "%phpVersion%"
+      - func: "upload build"

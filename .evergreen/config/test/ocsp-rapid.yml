@@ -1,3 +1,4 @@
+# This file is generated automatically - please edit the corresponding template file!
 tasks:
   - name: "ocsp-test_1-rsa-delegate-rapid"
     tags: ["ocsp", "rapid"]

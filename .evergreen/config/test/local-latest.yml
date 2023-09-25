@@ -1,3 +1,4 @@
+# This file is generated automatically - please edit the corresponding template file!
 tasks:
   - name: "test-mongodb-latest-standalone-noauth-nossl"
     tags: ["standalone", "local", "latest"]

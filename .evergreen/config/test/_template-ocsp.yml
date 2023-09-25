@@ -1,7 +1,6 @@
-# This file is generated automatically - please edit the corresponding template file!
 tasks:
-  - name: "ocsp-test_1-rsa-delegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_1-rsa-delegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -10,15 +9,15 @@ tasks:
           USE_DELEGATE: "on"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
-  - name: "ocsp-test_1-ecdsa-delegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_1-ecdsa-delegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -27,15 +26,15 @@ tasks:
           USE_DELEGATE: "on"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
-  - name: "ocsp-test_1-rsa-nodelegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_1-rsa-nodelegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -44,15 +43,15 @@ tasks:
           USE_DELEGATE: "off"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
-  - name: "ocsp-test_1-ecdsa-nodelegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_1-ecdsa-nodelegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -61,15 +60,15 @@ tasks:
           USE_DELEGATE: "off"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
-  - name: "ocsp-test_2-rsa-delegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_2-rsa-delegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -78,15 +77,15 @@ tasks:
           USE_DELEGATE: "on"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
-  - name: "ocsp-test_2-ecdsa-delegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_2-ecdsa-delegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -95,15 +94,15 @@ tasks:
           USE_DELEGATE: "on"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
-  - name: "ocsp-test_2-rsa-nodelegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_2-rsa-nodelegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -112,15 +111,15 @@ tasks:
           USE_DELEGATE: "off"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
-  - name: "ocsp-test_2-ecdsa-nodelegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_2-ecdsa-nodelegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -129,15 +128,15 @@ tasks:
           USE_DELEGATE: "off"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
-  - name: "ocsp-test_3-rsa-delegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_3-rsa-delegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -146,15 +145,15 @@ tasks:
           USE_DELEGATE: "on"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
-  - name: "ocsp-test_3-ecdsa-delegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_3-ecdsa-delegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -163,15 +162,15 @@ tasks:
           USE_DELEGATE: "on"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
-  - name: "ocsp-test_3-rsa-nodelegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_3-rsa-nodelegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -180,15 +179,15 @@ tasks:
           USE_DELEGATE: "off"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
-  - name: "ocsp-test_3-ecdsa-nodelegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_3-ecdsa-nodelegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -197,15 +196,15 @@ tasks:
           USE_DELEGATE: "off"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
-  - name: "ocsp-test_4-rsa-delegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_4-rsa-delegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -214,15 +213,15 @@ tasks:
           USE_DELEGATE: "on"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
-  - name: "ocsp-test_4-ecdsa-delegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_4-ecdsa-delegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -231,15 +230,15 @@ tasks:
           USE_DELEGATE: "on"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
-  - name: "ocsp-test_4-rsa-nodelegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_4-rsa-nodelegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -248,15 +247,15 @@ tasks:
           USE_DELEGATE: "off"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
-  - name: "ocsp-test_4-ecdsa-nodelegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-test_4-ecdsa-nodelegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -265,39 +264,39 @@ tasks:
           USE_DELEGATE: "off"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
-  - name: "ocsp-soft_fail_test-rsa-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-soft_fail_test-rsa-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
-  - name: "ocsp-soft_fail_test-ecdsa-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-soft_fail_test-ecdsa-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
-  - name: "ocsp-malicious_server_test_1-rsa-delegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-malicious_server_test_1-rsa-delegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -306,15 +305,15 @@ tasks:
           USE_DELEGATE: "on"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
-  - name: "ocsp-malicious_server_test_1-ecdsa-delegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-malicious_server_test_1-ecdsa-delegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -323,15 +322,15 @@ tasks:
           USE_DELEGATE: "on"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
-  - name: "ocsp-malicious_server_test_1-rsa-nodelegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-malicious_server_test_1-rsa-nodelegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -340,15 +339,15 @@ tasks:
           USE_DELEGATE: "off"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
-  - name: "ocsp-malicious_server_test_1-ecdsa-nodelegate-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-malicious_server_test_1-ecdsa-nodelegate-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "run OCSP responder"
         vars:
@@ -357,31 +356,31 @@ tasks:
           USE_DELEGATE: "off"
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
-  - name: "ocsp-malicious_server_test_2-rsa-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-malicious_server_test_2-rsa-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple-disableStapling.json"
       - func: "run tests"
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
-  - name: "ocsp-malicious_server_test_2-ecdsa-latest"
-    tags: ["ocsp", "latest"]
+  - name: "ocsp-malicious_server_test_2-ecdsa-%mongodbVersion%"
+    tags: ["ocsp", "%mongodbVersion%"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:
-          MONGODB_VERSION: "latest"
+          MONGODB_VERSION: "%mongodbVersion%"
           TOPOLOGY: "server"
           ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple-disableStapling.json"
       - func: "run tests"

@@ -33,11 +33,18 @@ post: &test_teardown
 include:
   - filename: .evergreen/config/functions.yml
 
-  - filename: .evergreen/config/build-tasks.yml
   - filename: .evergreen/config/build-task-groups.yml
   - filename: .evergreen/config/build-variants.yml
 
-  # Local deployments - these files are generated automatically
+  - filename: .evergreen/config/test-tasks.yml
+  - filename: .evergreen/config/test-variants.yml
+
+  # Automatically generated files
+  - filename: .evergreen/config/build/build-php-8.2.yml
+  - filename: .evergreen/config/build/build-php-8.1.yml
+  - filename: .evergreen/config/build/build-php-8.0.yml
+  - filename: .evergreen/config/build/build-php-7.4.yml
+  - filename: .evergreen/config/build/build-libmongoc-8.2.yml
   - filename: .evergreen/config/test/local-latest.yml
   - filename: .evergreen/config/test/local-rapid.yml
   - filename: .evergreen/config/test/local-7.0.yml
@@ -47,15 +54,23 @@ include:
   - filename: .evergreen/config/test/local-4.2.yml
   - filename: .evergreen/config/test/local-4.0.yml
   - filename: .evergreen/config/test/local-3.6.yml
-  - filename: .evergreen/config/test/skip-crypt-shared.yml
-  - filename: .evergreen/config/test/require-api-version.yml
-  - filename: .evergreen/config/test/load-balanced.yml
+  - filename: .evergreen/config/test/load-balanced-latest.yml
+  - filename: .evergreen/config/test/load-balanced-rapid.yml
+  - filename: .evergreen/config/test/load-balanced-7.0.yml
+  - filename: .evergreen/config/test/load-balanced-6.0.yml
+  - filename: .evergreen/config/test/load-balanced-5.0.yml
   - filename: .evergreen/config/test/ocsp-latest.yml
   - filename: .evergreen/config/test/ocsp-rapid.yml
   - filename: .evergreen/config/test/ocsp-7.0.yml
   - filename: .evergreen/config/test/ocsp-6.0.yml
   - filename: .evergreen/config/test/ocsp-5.0.yml
   - filename: .evergreen/config/test/ocsp-4.4.yml
-
-  - filename: .evergreen/config/test-tasks.yml
-  - filename: .evergreen/config/test-variants.yml
+  - filename: .evergreen/config/test/require-api-version-latest.yml
+  - filename: .evergreen/config/test/require-api-version-rapid.yml
+  - filename: .evergreen/config/test/require-api-version-7.0.yml
+  - filename: .evergreen/config/test/require-api-version-6.0.yml
+  - filename: .evergreen/config/test/require-api-version-5.0.yml
+  - filename: .evergreen/config/test/skip-crypt-shared-latest.yml
+  - filename: .evergreen/config/test/skip-crypt-shared-rapid.yml
+  - filename: .evergreen/config/test/skip-crypt-shared-7.0.yml
+  - filename: .evergreen/config/test/skip-crypt-shared-6.0.yml
