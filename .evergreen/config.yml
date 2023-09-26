@@ -30,6 +30,20 @@ post: &test_teardown
   - func: "upload working dir"
   - func: "cleanup"
 
+# Define aliases for patch builds and PR builds. These only apply if no aliases are defined in project settings
+github_pr_aliases:
+  # Run all build tasks, except on Power8 and zSeries due to low number of build hardware
+  - variant_tags:
+      - "build !power8 !zseries"
+    task_tags:
+      - "*"
+  # Run tests on debian, only testing local replicasets with authentication enabled
+  - variant_tags:
+      - "test debian !libmongoc"
+    task_tags:
+      - "replicaset auth local"
+
+# Include files that contain various tasks, task groups, and build variant definitions
 include:
   - filename: .evergreen/config/functions.yml
 
