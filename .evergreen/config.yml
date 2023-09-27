@@ -33,15 +33,11 @@ post: &test_teardown
 # Define aliases for patch builds and PR builds. These only apply if no aliases are defined in project settings
 github_pr_aliases:
   # Run all build tasks, except on Power8 and zSeries due to low number of build hardware
-  - variant_tags:
-      - "build !power8 !zseries"
-    task_tags:
-      - "*"
+  - variant: "^build-[^-]+($|-arm64)"
+    task: ".*"
   # Run tests on debian, only testing local replicasets with authentication enabled
-  - variant_tags:
-      - "test debian !libmongoc"
-    task_tags:
-      - "replicaset auth local"
+  - variant: "test-.*"
+    task: "test-mongodb-.*-replicaset-auth"
 
 # Include files that contain various tasks, task groups, and build variant definitions
 include:
