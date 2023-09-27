@@ -23,15 +23,12 @@ function mongodb_generate_header(inpath, outpath, replacements)
   outfile.Close();
 }
 
-/* TODO: Consolidate these parsing functions once the libbson and libmongoc
- * substitutions become consistent again. */
-function mongodb_parse_libbson_version_file(inpath)
+function mongodb_parse_libmongoc_version_file(prefix)
 {
-  var infile = FSO.OpenTextFile(inpath, 1);
+  var infile = FSO.OpenTextFile(configure_module_dirname + "/src/LIBMONGOC_VERSION_CURRENT", 1);
   var version = infile.ReadLine();
   infile.Close();
 
-  var prefix = "libbson_";
   var xyz_pre = version.split("-");
   var xyz = xyz_pre[0].split(".");
   var pre = xyz_pre.length > 1 ? xyz_pre[1] : "";
@@ -46,24 +43,13 @@ function mongodb_parse_libbson_version_file(inpath)
   return replacements;
 }
 
-function mongodb_parse_version_file(inpath, prefix)
+function mongodb_get_libmongocrypt_version()
 {
-  var infile = FSO.OpenTextFile(inpath, 1);
+  var infile = FSO.OpenTextFile(configure_module_dirname + "/src/LIBMONGOCRYPT_VERSION_CURRENT", 1);
   var version = infile.ReadLine();
   infile.Close();
 
-  var xyz_pre = version.split("-");
-  var xyz = xyz_pre[0].split(".");
-  var pre = xyz_pre.length > 1 ? xyz_pre[1] : "";
-
-  var replacements = {};
-  replacements[prefix + "VERSION"] = version;
-  replacements[prefix + "MAJOR_VERSION"] = xyz[0];
-  replacements[prefix + "MINOR_VERSION"] = xyz[1];
-  replacements[prefix + "MICRO_VERSION"] = xyz[2];
-  replacements[prefix + "PRERELEASE_VERSION"] = pre;
-
-  return replacements;
+  return version;
 }
 
 function create_folder_recursive(path)
@@ -193,7 +179,7 @@ if (PHP_MONGODB != "no") {
   mongodb_generate_header(
     configure_module_dirname + "/src/libmongoc/src/libbson/src/bson/bson-version.h.in",
     configure_module_dirname + "/src/libmongoc/src/libbson/src/bson/bson-version.h",
-    mongodb_parse_libbson_version_file(configure_module_dirname + "/src/LIBMONGOC_VERSION_CURRENT")
+    mongodb_parse_libmongoc_version_file("libbson_")
   );
 
   var mongoc_opts = {
@@ -332,8 +318,7 @@ if (PHP_MONGODB != "no") {
     MONGODB_ADD_SOURCES("/src/libmongocrypt/src/os_win", PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES);
     MONGODB_ADD_SOURCES("/src/libmongocrypt/kms-message/src", PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES);
 
-    var mongocrypt_version = mongodb_parse_version_file(configure_module_dirname + "/src/LIBMONGOCRYPT_VERSION_CURRENT", "")
-    mongocrypt_opts.MONGOCRYPT_BUILD_VERSION = mongocrypt_version.VERSION;
+    mongocrypt_opts.MONGOCRYPT_BUILD_VERSION = mongodb_get_libmongocrypt_version();
 
     mongodb_generate_header(
       configure_module_dirname + "/src/libmongocrypt/src/mongocrypt-config.h.in",
@@ -383,6 +368,6 @@ if (PHP_MONGODB != "no") {
   mongodb_generate_header(
     configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h.in",
     configure_module_dirname + "/src/libmongoc/src/libmongoc/src/mongoc/mongoc-version.h",
-    mongodb_parse_version_file(configure_module_dirname + "/src/LIBMONGOC_VERSION_CURRENT", "MONGOC_")
+    mongodb_parse_libmongoc_version_file("libmongoc_")
   );
 }
