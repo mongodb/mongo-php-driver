@@ -345,7 +345,6 @@ if test "$PHP_MONGODB" != "no"; then
     ])
 
     dnl Avoid using AC_CONFIG_MACRO_DIR, which might conflict with PHP
-    _include([scripts/autotools/m4/as_var_copy.m4])
     _include([scripts/autotools/m4/ax_check_compile_flag.m4])
     _include([scripts/autotools/m4/ax_prototype.m4])
     _include([scripts/autotools/m4/ax_pthread.m4])
