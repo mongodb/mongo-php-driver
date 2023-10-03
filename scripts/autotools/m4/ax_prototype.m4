@@ -218,12 +218,12 @@ dnl Activate fatal warnings if possible, gives better guess
 dnl
      ac_save_CPPFLAGS="$CPPFLAGS"
      if test "$GCC" = "yes" ; then CPPFLAGS="$CPPFLAGS -Werror" ; fi
-     AC_TRY_COMPILE($2, $1, [
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[$2]], [[$1]])],[
       CPPFLAGS="$ac_save_CPPFLAGS"
       AC_MSG_RESULT(ok)
       AX_PROTOTYPE_DEFINES(tags)
       break;
-     ], [
+     ],[
       CPPFLAGS="$ac_save_CPPFLAGS"
       AC_MSG_RESULT(not ok)
      ])
