@@ -5,8 +5,9 @@ PHP_ARG_ENABLE([mongodb],
                                [Enable MongoDB support])])
 
 if test "$PHP_MONGODB" != "no"; then
-  dnl Enable C99 (required for libmongoc 1.24+)
-  AC_PROG_CC_C99
+  dnl Enable C99 (required for libmongoc 1.24+). On Autoconf 2.70+, this will
+  dnl already have been done when AC_PROG_CC is called from configure.ac.
+  m4_version_prereq([2.70],,[AC_PROG_CC_C99])
 
   if test "$ac_cv_prog_cc_c99" = no; then
     AC_MSG_ERROR([Compiler does not support C99])
