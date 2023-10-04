@@ -16,18 +16,14 @@ exec_timeout_secs: 1800
 pre: &test_setup
   - func: "fetch source"
   - func: "prepare resources"
-  - func: "windows fix"
   - func: "fix absolute paths"
   - func: "init test-results"
-  - func: "make files executable"
   - func: "install dependencies"
   - func: "fetch build"
 post: &test_teardown
-  - func: "upload mo artifacts"
   - func: "upload test results"
   - func: "stop mongo-orchestration"
   - func: "stop load balancer"
-  - func: "upload working dir"
   - func: "cleanup"
 
 # Define aliases for patch builds and PR builds. These only apply if no aliases are defined in project settings
