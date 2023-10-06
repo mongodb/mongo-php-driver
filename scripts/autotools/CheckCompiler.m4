@@ -13,7 +13,7 @@ AC_PROG_CXX
 
 dnl AC_PROG_CC_C99 is previously called in config.m4, but AC_PROG_CC resets CC
 dnl so call it once more to ensure C99 remains enabled
-AC_PROG_CC_C99
+m4_version_prereq([2.70],,[AC_PROG_CC_C99])
 
 # Check that an appropriate C compiler is available.
 c_compiler="unknown"
@@ -61,24 +61,6 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 #error Not a supported Sun compiler
 #endif
 ])], [c_compiler="sun"], [])
-
-# The type of parameters for accept, getpeername, getsockname, getsockopt
-# all vary the same way by platform.
-AX_PROTOTYPE(accept, [
-   #include <sys/types.h>
-   #include <sys/socket.h>
-], [
-   int a = 0;
-   ARG2 *b = 0;
-   ARG3 *c = 0;
-   accept (a, b, c);],
-ARG2, [struct sockaddr, void],
-ARG3, [socklen_t, size_t, int])
-
-MONGOC_SOCKET_ARG2="$ACCEPT_ARG2"
-AC_SUBST(MONGOC_SOCKET_ARG2)
-MONGOC_SOCKET_ARG3="$ACCEPT_ARG3"
-AC_SUBST(MONGOC_SOCKET_ARG3)
 
 AC_LANG_POP([C])
 

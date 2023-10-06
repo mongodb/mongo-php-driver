@@ -5,8 +5,9 @@ PHP_ARG_ENABLE([mongodb],
                                [Enable MongoDB support])])
 
 if test "$PHP_MONGODB" != "no"; then
-  dnl Enable C99 (required for libmongoc 1.24+)
-  AC_PROG_CC_C99
+  dnl Enable C99 (required for libmongoc 1.24+). On Autoconf 2.70+, this will
+  dnl already have been done when AC_PROG_CC is called from configure.ac.
+  m4_version_prereq([2.70],,[AC_PROG_CC_C99])
 
   if test "$ac_cv_prog_cc_c99" = no; then
     AC_MSG_ERROR([Compiler does not support C99])
@@ -344,9 +345,9 @@ if test "$PHP_MONGODB" != "no"; then
     ])
 
     dnl Avoid using AC_CONFIG_MACRO_DIR, which might conflict with PHP
-    _include([scripts/autotools/m4/as_var_copy.m4])
     _include([scripts/autotools/m4/ax_check_compile_flag.m4])
     _include([scripts/autotools/m4/ax_prototype.m4])
+    _include([scripts/autotools/m4/ax_prototype_accept.m4])
     _include([scripts/autotools/m4/ax_pthread.m4])
     _include([scripts/autotools/m4/php_mongodb.m4])
     _include([scripts/autotools/m4/pkg.m4])
