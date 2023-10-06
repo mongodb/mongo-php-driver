@@ -41,5 +41,5 @@ automatically, but they won't be in the list of include files printed by the gen
 
 ## Patch Aliases
 
-Aliases are configured in the main evergreen configuration file. `github_pr_aliases` defines aliases for tasks to be run
+Aliases are configured in the main Evergreen configuration file. `github_pr_aliases` defines aliases for tasks to be run
 for every pull request.
