@@ -51,15 +51,15 @@ $skipCryptSharedServerVersions = array_filter(
 $allFiles = [];
 
 // Build tasks
-$allFiles[] = generateConfigs('build', 'phpVersion', '_template-build-php.yml', 'build-php-%s', $supportedPhpVersions);
-$allFiles[] = generateConfigs('build', 'phpVersion', '_template-build-libmongoc.yml', 'build-libmongoc-%s', $libmongocBuildPhpVersions);
+$allFiles[] = generateConfigs('build', 'phpVersion', 'build-php.yml', 'build-php-%s', $supportedPhpVersions);
+$allFiles[] = generateConfigs('build', 'phpVersion', 'build-libmongoc.yml', 'build-libmongoc-%s', $libmongocBuildPhpVersions);
 
 // Test tasks
-$allFiles[] = generateConfigs('test', 'mongodbVersion', '_template-local.yml', 'local-%s', $localServerVersions);
-$allFiles[] = generateConfigs('test', 'mongodbVersion', '_template-load-balanced.yml', 'load-balanced-%s', $loadBalancedServerVersions);
-$allFiles[] = generateConfigs('test', 'mongodbVersion', '_template-ocsp.yml', 'ocsp-%s', $ocspServerVersions);
-$allFiles[] = generateConfigs('test', 'mongodbVersion', '_template-require-api-version.yml', 'require-api-version-%s', $requireApiServerVersions);
-$allFiles[] = generateConfigs('test', 'mongodbVersion', '_template-skip-crypt-shared.yml', 'skip-crypt-shared-%s', $skipCryptSharedServerVersions);
+$allFiles[] = generateConfigs('test', 'mongodbVersion', 'local.yml', 'local-%s', $localServerVersions);
+$allFiles[] = generateConfigs('test', 'mongodbVersion', 'load-balanced.yml', 'load-balanced-%s', $loadBalancedServerVersions);
+$allFiles[] = generateConfigs('test', 'mongodbVersion', 'ocsp.yml', 'ocsp-%s', $ocspServerVersions);
+$allFiles[] = generateConfigs('test', 'mongodbVersion', 'require-api-version.yml', 'require-api-version-%s', $requireApiServerVersions);
+$allFiles[] = generateConfigs('test', 'mongodbVersion', 'skip-crypt-shared.yml', 'skip-crypt-shared-%s', $skipCryptSharedServerVersions);
 
 echo "Generated config. Use the following list to import files:\n";
 echo implode("\n", array_map('getImportConfig', array_merge(...$allFiles))) . "\n";
@@ -76,13 +76,17 @@ function generateConfigs(
     string $outputFormat,
     array $versions,
 ): array {
-    $template = file_get_contents(__DIR__ . '/' . $directory . '/' . $templateFile);
-    $header = '# This file is generated automatically - please edit the corresponding template file!';
+    $templateRelativePath = 'templates/' . $directory . '/' . $templateFile;
+    $template = file_get_contents(__DIR__ . '/' . $templateRelativePath);
+    $header = sprintf(
+        '# This file is generated automatically - please edit the "%s" template file instead.',
+        $templateRelativePath
+    );
 
     $files = [];
 
     foreach ($versions as $version) {
-        $filename = sprintf('/%s/' . $outputFormat . '.yml', $directory, $version);
+        $filename = sprintf('/generated/%s/' . $outputFormat . '.yml', $directory, $version);
         $files[] = '.evergreen/config' . $filename;
 
         $replacements = ['%' . $replacementName . '%' => $version];
