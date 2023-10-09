@@ -17,6 +17,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
   - name: "ocsp-test_1-ecdsa-delegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -34,6 +35,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
   - name: "ocsp-test_1-rsa-nodelegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -51,6 +53,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
   - name: "ocsp-test_1-ecdsa-nodelegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -68,6 +71,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
   - name: "ocsp-test_2-rsa-delegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -85,6 +89,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
   - name: "ocsp-test_2-ecdsa-delegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -102,6 +107,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
   - name: "ocsp-test_2-rsa-nodelegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -119,6 +125,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
   - name: "ocsp-test_2-ecdsa-nodelegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -136,6 +143,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
   - name: "ocsp-test_3-rsa-delegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -153,6 +161,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
   - name: "ocsp-test_3-ecdsa-delegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -170,6 +179,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
   - name: "ocsp-test_3-rsa-nodelegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -187,6 +197,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
   - name: "ocsp-test_3-ecdsa-nodelegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -204,6 +215,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
   - name: "ocsp-test_4-rsa-delegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -221,6 +233,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
   - name: "ocsp-test_4-ecdsa-delegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -238,6 +251,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
   - name: "ocsp-test_4-rsa-nodelegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -255,6 +269,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
   - name: "ocsp-test_4-ecdsa-nodelegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -272,6 +287,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
   - name: "ocsp-soft_fail_test-rsa-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -284,6 +300,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
   - name: "ocsp-soft_fail_test-ecdsa-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -296,6 +313,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-success.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
   - name: "ocsp-malicious_server_test_1-rsa-delegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -313,6 +331,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
   - name: "ocsp-malicious_server_test_1-ecdsa-delegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -330,6 +349,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
   - name: "ocsp-malicious_server_test_1-rsa-nodelegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -347,6 +367,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
   - name: "ocsp-malicious_server_test_1-ecdsa-nodelegate-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -364,6 +385,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
   - name: "ocsp-malicious_server_test_2-rsa-latest"
     tags: ["ocsp", "latest"]
     commands:
@@ -376,6 +398,7 @@ tasks:
         vars:
           TESTS: "tests/ocsp-failure.phpt"
           APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
   - name: "ocsp-malicious_server_test_2-ecdsa-latest"
     tags: ["ocsp", "latest"]
     commands:

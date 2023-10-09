@@ -14,6 +14,7 @@ tasks:
 #          PHP_VERSION: "%phpVersion%"
 #          LIBMONGOC_VERSION: "1.25.0"
 #      - func: "upload build"
+
 #  - name: "build-php-%phpVersion%-libmongoc-next-stable"
 #    tags: ["build-libmongoc", "php%phpVersion%"]
 #    commands:
@@ -22,6 +23,7 @@ tasks:
 #          PHP_VERSION: "%phpVersion%"
 #          LIBMONGOC_VERSION: "r1.25"
 #      - func: "upload build"
+
   - name: "build-php-%phpVersion%-libmongoc-latest"
     tags: ["build-libmongoc", "php%phpVersion%"]
     commands:

@@ -15,6 +15,7 @@ tasks:
 #          PHP_VERSION: "8.2"
 #          LIBMONGOC_VERSION: "1.25.0"
 #      - func: "upload build"
+
 #  - name: "build-php-8.2-libmongoc-next-stable"
 #    tags: ["build-libmongoc", "php8.2"]
 #    commands:
@@ -23,6 +24,7 @@ tasks:
 #          PHP_VERSION: "8.2"
 #          LIBMONGOC_VERSION: "r1.25"
 #      - func: "upload build"
+
   - name: "build-php-8.2-libmongoc-latest"
     tags: ["build-libmongoc", "php8.2"]
     commands:
