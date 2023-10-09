@@ -43,3 +43,22 @@ automatically, but they won't be in the list of include files printed by the gen
 
 Aliases are configured in the main Evergreen configuration file. `github_pr_aliases` defines aliases for tasks to be run
 for every pull request.
+
+## Task Tags
+
+Tasks are tagged to allow for a better selection in build variants. The following tags are used for build tasks:
+- `build`: All build tasks are tagged with `build`.
+- `build-libmongoc`: These build tasks build with different libmongoc versions.
+- `php<version>`: These tags allow selection based on PHP version, e.g. `php8.2`.
+
+Test tasks use the following tags:
+- `local`: All tasks that run a local MongoDB cluster for testing.
+- `<version>`: These tags allow selection based on MongoDB version, e.g. `6.4`.
+- `standalone`, `replicaset`, `sharded`: These tags allow selection based on the MongoDB topology.
+- `loadbalanced`: Allows for selecting tests using a load balancer
+- `ocsp`: Used for all OCSP tasks
+- `versioned_api`: Used for tests that use the stable API
+- `skip_crypt_shared`: These tasks skip installing the shared library to test with libmongocrypt
+- `nodb`: These tasks do not rely on a local database
+- `atlas`: These tasks work on a MongoDB Atlas cluster
+- `storage-engines`: Tag used for tasks that test the `inmemory` and `mmapv1` storage engines
