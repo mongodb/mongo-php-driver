@@ -32,7 +32,7 @@ task_groups:
       - ".build !.php7.4 !.php8.0"
 
   - name: "build-php-libmongoc"
-    # Keep this in sync with the actual number of libmongoc builds (typically 3)
+    # Keep this in sync with the actual number of libmongoc builds (typically 3) defined in _template-build-libmongoc.yml
     max_hosts: 1
     setup_task: *build_setup
     setup_task_can_fail_task: true
