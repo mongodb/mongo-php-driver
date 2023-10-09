@@ -2,18 +2,28 @@
 <?php
 
 // Supported PHP versions. Add new versions to the beginning of the list
-$supportedPhpVersions = ['8.2', '8.1', '8.0', '7.4'];
+$supportedPhpVersions = [
+    '8.2',
+    '8.1',
+    '8.0',
+    '7.4',
+];
 
 // Supported MongoDB versions. Add new versions after "rapid"
 $supportedMongoDBVersions = [
-    'latest', 'rapid',
-    '7.0', '6.0', '5.0',
-    '4.4', '4.2', '4.0',
+    'latest',
+    'rapid',
+    '7.0',
+    '6.0',
+    '5.0',
+    '4.4',
+    '4.2',
+    '4.0',
     '3.6',
 ];
 
 // Only test the latest PHP version for libmongoc
-$libmongocBuildPhpVersions = array_slice($supportedPhpVersions, 0, 1);
+$libmongocBuildPhpVersions = [ max($supportedPhpVersions) ];
 
 // Server versions
 $localServerVersions = $supportedMongoDBVersions;
