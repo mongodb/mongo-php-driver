@@ -13,14 +13,14 @@ exec_timeout_secs: 1800
 
 # These pre and post rules apply to all tasks not part of a task group, which should only ever be tests against local
 # MongoDB instances. All other tasks that require special preparation should be run from within a task group
-pre: &test_setup
+pre:
   - func: "fetch source"
   - func: "prepare resources"
   - func: "fix absolute paths"
   - func: "init test-results"
   - func: "install dependencies"
   - func: "fetch build"
-post: &test_teardown
+post:
   - func: "upload test results"
   - func: "stop mongo-orchestration"
   - func: "stop load balancer"
