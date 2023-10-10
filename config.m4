@@ -16,18 +16,15 @@ if test "$PHP_MONGODB" != "no"; then
   dnl Check PHP version is compatible with this extension
   AC_MSG_CHECKING([PHP version])
 
-  PHP_MONGODB_PHP_VERSION=$PHP_VERSION
-  PHP_MONGODB_PHP_VERSION_ID=$PHP_VERSION_ID
-
-  if test -z "$PHP_MONGODB_PHP_VERSION"; then
-    if test -z "$PHP_CONFIG"; then
-      AC_MSG_ERROR([php-config not found])
-    fi
-    PHP_MONGODB_PHP_VERSION=`${PHP_CONFIG} --version`
-    PHP_MONGODB_PHP_VERSION_ID=`echo "${PHP_MONGODB_PHP_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
+  if test -z "$PHP_CONFIG"; then
+    AC_MSG_ERROR([php-config not found])
   fi
 
+  PHP_MONGODB_PHP_VERSION=`${PHP_CONFIG} --version`
+  PHP_MONGODB_PHP_VERSION_ID=`${PHP_CONFIG} --vernum`
+
   AC_MSG_RESULT($PHP_MONGODB_PHP_VERSION)
+
   if test "$PHP_MONGODB_PHP_VERSION_ID" -lt "70400"; then
     AC_MSG_ERROR([not supported. Need a PHP version >= 7.4.0 (found $PHP_MONGODB_PHP_VERSION)])
   fi
