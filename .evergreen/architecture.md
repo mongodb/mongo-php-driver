@@ -53,7 +53,7 @@ Tasks are tagged to allow for a better selection in build variants. The followin
 
 Test tasks use the following tags:
 - `local`: All tasks that run a local MongoDB cluster for testing.
-- `<version>`: These tags allow selection based on MongoDB version, e.g. `6.4`.
+- `<version>`: These tags allow selection based on MongoDB version, e.g. `7.0`.
 - `standalone`, `replicaset`, `sharded`: These tags allow selection based on the MongoDB topology.
 - `loadbalanced`: Allows for selecting tests using a load balancer
 - `ocsp`: Used for all OCSP tasks
