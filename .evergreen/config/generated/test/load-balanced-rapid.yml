@@ -1,7 +1,7 @@
 # This file is generated automatically - please edit the "templates/test/load-balanced.yml" template file instead.
 tasks:
   - name: "test-mongodb-rapid-loadbalanced"
-    tags: ["sharded", "local", "rapid", "loadbalanced"]
+    tags: ["loadbalanced", "local", "rapid"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:

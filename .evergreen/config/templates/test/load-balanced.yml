@@ -1,6 +1,6 @@
 tasks:
   - name: "test-mongodb-%mongodbVersion%-loadbalanced"
-    tags: ["sharded", "local", "%mongodbVersion%", "loadbalanced"]
+    tags: ["loadbalanced", "local", "%mongodbVersion%"]
     commands:
       - func: "bootstrap mongo-orchestration"
         vars:

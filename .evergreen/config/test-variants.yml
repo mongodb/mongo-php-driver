@@ -17,6 +17,7 @@ buildvariants:
       - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
       - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
       - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
+      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
       - "test-atlas-connectivity"
       - ".ocsp !.4.4"
     display_tasks:
@@ -50,6 +51,7 @@ buildvariants:
       - ".standalone .local !.6.0 !.7.0 !.rapid !.latest"
       - ".replicaset .local !.6.0 !.7.0 !.rapid !.latest"
       - ".sharded .local !.6.0 !.7.0 !.rapid !.latest"
+      - ".loadbalanced .local !.6.0 !.7.0 !.rapid !.latest"
       - ".ocsp !.6.0 !.7.0 !.rapid !.latest"
     display_tasks:
       - name: "test-ocsp-4.4"
