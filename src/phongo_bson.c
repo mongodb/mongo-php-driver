@@ -21,6 +21,7 @@
 #include <Zend/zend_enum.h>
 #endif
 #include <Zend/zend_interfaces.h>
+#include <Zend/zend_portability.h>
 
 #include "php_array_api.h"
 
@@ -162,6 +163,13 @@ void php_phongo_field_path_write_item_at_current_level(php_phongo_field_path* fi
 	php_phongo_field_path_ensure_allocation(field_path, field_path->size);
 
 	if (field_path->owns_elements) {
+		/* Note: owns_elements is only used for field paths parsed from a type
+		 * map, so it's unlikely that an element would already have been
+		 * allocated here. This is in contrast to BSON encoding/decoding, which
+		 * frequently updates the field path and does not own elements. */
+		if (UNEXPECTED(field_path->elements[field_path->size])) {
+			efree(field_path->elements[field_path->size]);
+		}
 		field_path->elements[field_path->size] = estrdup(element);
 	} else {
 		field_path->elements[field_path->size] = (char*) element;
