@@ -466,6 +466,15 @@ static void php_phongo_zval_to_bson_internal(zval* data, php_phongo_field_path* 
 			}
 
 			if (instanceof_function(Z_OBJCE_P(data), php_phongo_packedarray_ce)) {
+				/* If we are at the root-level, PackedArray instances should be
+				 * prohibited unless PHONGO_BSON_ALLOW_ROOT_ARRAY is set. */
+				bool is_root_level = (field_path->size == 0);
+
+				if (is_root_level && !(flags & PHONGO_BSON_ALLOW_ROOT_ARRAY)) {
+					phongo_throw_exception(PHONGO_ERROR_UNEXPECTED_VALUE, "%s cannot be serialized as a root document", ZSTR_VAL(Z_OBJCE_P(data)->name));
+					return;
+				}
+
 				php_phongo_packedarray_t* intern = Z_PACKEDARRAY_OBJ_P(data);
 
 				phongo_bson_copy_to_noinit(intern->bson, bson);

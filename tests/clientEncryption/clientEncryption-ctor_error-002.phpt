@@ -31,6 +31,18 @@ foreach ($tests as $test) {
     }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n\n";
 }
 
+// PackedArray cannot be serialized as a root document
+$tests = [
+    ['kmsProviders' => MongoDB\BSON\PackedArray::fromPHP([])] + $baseOptions,
+    ['tlsOptions' => MongoDB\BSON\PackedArray::fromPHP([])] + $baseOptions,
+];
+
+foreach ($tests as $test) {
+    echo throws(function () use ($test) {
+        new MongoDB\Driver\ClientEncryption($test);
+    }, MongoDB\Driver\Exception\UnexpectedValueException::class), "\n\n";
+}
+
 ?>
 ===DONE===
 <?php exit(0); ?>
@@ -49,5 +61,11 @@ Expected "kmsProviders" option to be an array or object, string given
 
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "tlsOptions" option to be an array or object, string given
+
+OK: Got MongoDB\Driver\Exception\UnexpectedValueException
+MongoDB\BSON\PackedArray cannot be serialized as a root document
+
+OK: Got MongoDB\Driver\Exception\UnexpectedValueException
+MongoDB\BSON\PackedArray cannot be serialized as a root document
 
 ===DONE===

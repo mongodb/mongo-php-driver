@@ -19,10 +19,16 @@ echo throws(function () use ($clientEncryption) {
     $clientEncryption->createDataKey('local', ['masterKey' => 'not-array-or-object']);
 }, MongoDB\Driver\Exception\InvalidArgumentException::class), "\n";
 
+echo throws(function () use ($clientEncryption) {
+    $clientEncryption->createDataKey('local', ['masterKey' => MongoDB\BSON\PackedArray::fromPHP([])]);
+}, MongoDB\Driver\Exception\UnexpectedValueException::class), "\n";
+
 ?>
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
 OK: Got MongoDB\Driver\Exception\InvalidArgumentException
 Expected "masterKey" option to be array or object, string given
+OK: Got MongoDB\Driver\Exception\UnexpectedValueException
+MongoDB\BSON\PackedArray cannot be serialized as a root document
 ===DONE===

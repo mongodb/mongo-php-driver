@@ -34,7 +34,8 @@ $tests = array(
     array('foo' => 'bar'),
     (object) array(1, 2, 3),
     (object) array('foo' => 'bar'),
-    # The PackedArray check will fail for instances of Persistable
+    /* PackedArray cannot be serialized as a root document. Additionally, it
+     * will fail return type validation for Persistable::bsonSerialize(). */
     MongoDB\BSON\PackedArray::fromPHP([1, 2, 3]),
     MongoDB\BSON\Document::fromPHP(['foo' => 'bar']),
 );
@@ -44,9 +45,13 @@ echo "Testing top-level objects\n";
 foreach ($tests as $test) {
     try {
         echo toJson(fromPHP(new MyDocument($test))), "\n";
+    } catch (Exception $e) {
+        printf("%s: %s\n", get_class($e), $e->getMessage());
+    }
+    try {
         echo toJson(fromPHP(new MyPersistableDocument($test))), "\n";
-    } catch (MongoDB\Driver\Exception\UnexpectedValueException $e) {
-        echo $e->getMessage(), "\n";
+    } catch (Exception $e) {
+        printf("%s: %s\n", get_class($e), $e->getMessage());
     }
 }
 
@@ -54,10 +59,14 @@ echo "\nTesting nested objects\n";
 
 foreach ($tests as $test) {
     try {
-        echo toJson(fromPHP(new MyDocument(array('nested' => new MyDocument($test))))), "\n";
-        echo toJson(fromPHP(new MyDocument(array('nested' => new MyPersistableDocument($test))))), "\n";
-    } catch (MongoDB\Driver\Exception\UnexpectedValueException $e) {
-        echo $e->getMessage(), "\n";
+        echo toJson(fromPHP(new MyDocument(['nested' => new MyDocument($test)]))), "\n";
+    } catch (Exception $e) {
+        printf("%s: %s\n", get_class($e), $e->getMessage());
+    }
+    try {
+        echo toJson(fromPHP(new MyDocument(['nested' => new MyPersistableDocument($test)]))), "\n";
+    } catch (Exception $e) {
+        printf("%s: %s\n", get_class($e), $e->getMessage());
     }
 }
 
@@ -74,8 +83,8 @@ Testing top-level objects
 { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "0" : 1, "1" : 2, "2" : 3 }
 { "foo" : "bar" }
 { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" }
-{ "0" : 1, "1" : 2, "2" : 3 }
-Expected MyPersistableDocument::bsonSerialize() to return an array, stdClass, or MongoDB\BSON\Document, MongoDB\BSON\PackedArray given
+MongoDB\Driver\Exception\UnexpectedValueException: MongoDB\BSON\PackedArray cannot be serialized as a root document
+MongoDB\Driver\Exception\UnexpectedValueException: Expected MyPersistableDocument::bsonSerialize() to return an array, stdClass, or MongoDB\BSON\Document, MongoDB\BSON\PackedArray given
 { "foo" : "bar" }
 { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" }
 
@@ -89,7 +98,7 @@ Testing nested objects
 { "nested" : { "foo" : "bar" } }
 { "nested" : { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" } }
 { "nested" : [ 1, 2, 3 ] }
-Expected MyPersistableDocument::bsonSerialize() to return an array, stdClass, or MongoDB\BSON\Document, MongoDB\BSON\PackedArray given
+MongoDB\Driver\Exception\UnexpectedValueException: Expected MyPersistableDocument::bsonSerialize() to return an array, stdClass, or MongoDB\BSON\Document, MongoDB\BSON\PackedArray given
 { "nested" : { "foo" : "bar" } }
 { "nested" : { "__pclass" : { "$binary" : "TXlQZXJzaXN0YWJsZURvY3VtZW50", "$type" : "80" }, "foo" : "bar" } }
 ===DONE===
