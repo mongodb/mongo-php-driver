@@ -6,10 +6,9 @@ stepback: true
 # Actual testing tasks are marked with `type: test`
 command_type: system
 
-# Protect ourselves against rogue test case that runs forever
-# Good rule of thumb: the average length a task takes, times 5, which roughly accounts for variable system performance
-# for various build variants
-exec_timeout_secs: 1800
+# Protect ourselves against rogue test case that runs forever. Tasks are killed after 10 minutes, which shouldn't occur
+# under normal circumstances.
+exec_timeout_secs: 600
 
 # These pre and post rules apply to all tasks not part of a task group, which should only ever be tests against local
 # MongoDB instances. All other tasks that require special preparation should be run from within a task group
