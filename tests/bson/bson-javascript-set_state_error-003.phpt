@@ -6,7 +6,7 @@ MongoDB\BSON\Javascript::__set_state() does not allow code to contain null bytes
 require_once __DIR__ . '/../utils/basic.inc';
 
 echo throws(function() {
-    MongoDB\BSON\Javascript::__set_state(['code' => "function foo() { return '\0'; }"]);
+    MongoDB\BSON\Javascript::__set_state(['code' => "function() { return '\0'; }"]);
 }, 'MongoDB\Driver\Exception\InvalidArgumentException'), "\n";
 
 ?>

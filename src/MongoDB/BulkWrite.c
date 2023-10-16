@@ -157,7 +157,8 @@ static bool php_phongo_bulkwrite_opts_append_array(bson_t* opts, const char* key
 		return false;
 	}
 
-	php_phongo_zval_to_bson(value, PHONGO_BSON_NONE, &b, NULL);
+	// Explicitly allow MongoDB\BSON\PackedArray for array values
+	php_phongo_zval_to_bson(value, PHONGO_BSON_ALLOW_ROOT_ARRAY, &b, NULL);
 
 	if (EG(exception)) {
 		bson_destroy(&b);
@@ -441,7 +442,8 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, update)
 		goto cleanup;
 	}
 
-	php_phongo_zval_to_bson(zupdate, PHONGO_BSON_NONE, &bupdate, NULL);
+	// Explicitly allow MongoDB\BSON\PackedArray for update pipelines
+	php_phongo_zval_to_bson(zupdate, PHONGO_BSON_ALLOW_ROOT_ARRAY, &bupdate, NULL);
 
 	if (EG(exception)) {
 		goto cleanup;

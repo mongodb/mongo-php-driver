@@ -22,9 +22,10 @@
 #include <php.h>
 
 typedef enum {
-	PHONGO_BSON_NONE      = 0x00,
-	PHONGO_BSON_ADD_ID    = 0x01,
-	PHONGO_BSON_RETURN_ID = 0x02
+	PHONGO_BSON_NONE             = 0,
+	PHONGO_BSON_ADD_ID           = (1 << 0),
+	PHONGO_BSON_RETURN_ID        = (1 << 1),
+	PHONGO_BSON_ALLOW_ROOT_ARRAY = (1 << 2)
 } php_phongo_bson_flags_t;
 
 void php_phongo_zval_to_bson(zval* data, php_phongo_bson_flags_t flags, bson_t* bson, bson_t** bson_out);

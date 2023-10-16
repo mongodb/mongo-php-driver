@@ -4,10 +4,10 @@ MongoDB\BSON\Javascript::getCode()
 <?php
 
 $tests = [
-    ['function foo(bar) { return bar; }', null],
-    ['function foo(bar) { return bar; }', []],
-    ['function foo() { return foo; }', ['foo' => 42]],
-    ['function foo() { return id; }', ['id' => new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603')]],
+    ['function(bar) { return bar; }', null],
+    ['function(bar) { return bar; }', []],
+    ['function() { return foo; }', ['foo' => 42]],
+    ['function() { return id; }', ['id' => new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603')]],
 ];
 
 foreach ($tests as $test) {
@@ -21,8 +21,8 @@ foreach ($tests as $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
-string(33) "function foo(bar) { return bar; }"
-string(33) "function foo(bar) { return bar; }"
-string(30) "function foo() { return foo; }"
-string(29) "function foo() { return id; }"
+string(29) "function(bar) { return bar; }"
+string(29) "function(bar) { return bar; }"
+string(26) "function() { return foo; }"
+string(25) "function() { return id; }"
 ===DONE===

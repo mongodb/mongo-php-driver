@@ -4,8 +4,8 @@ MongoDB\BSON\Javascript get_properties handler (foreach)
 <?php
 
 $tests = [
-    new MongoDB\BSON\Javascript('function foo(bar) { return bar; }'),
-    new MongoDB\BSON\Javascript('function foo() { return bar; }', ['bar' => 42]),
+    new MongoDB\BSON\Javascript('function(bar) { return bar; }'),
+    new MongoDB\BSON\Javascript('function() { return bar; }', ['bar' => 42]),
 ];
 
 foreach ($tests as $test) {
@@ -20,11 +20,11 @@ foreach ($tests as $test) {
 <?php exit(0); ?>
 --EXPECTF--
 string(4) "code"
-string(33) "function foo(bar) { return bar; }"
+string(29) "function(bar) { return bar; }"
 string(5) "scope"
 NULL
 string(4) "code"
-string(30) "function foo() { return bar; }"
+string(26) "function() { return bar; }"
 string(5) "scope"
 object(stdClass)#%d (%d) {
   ["bar"]=>

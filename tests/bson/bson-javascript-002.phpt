@@ -5,15 +5,15 @@ MongoDB\BSON\Javascript debug handler
 
 $tests = array(
     array(
-        'function foo(bar) { return bar; }',
+        'function(bar) { return bar; }',
         array(),
     ),
     array(
-        'function foo() { return foo; }',
+        'function() { return foo; }',
         array('foo' => 42),
     ),
     array(
-        'function foo() { return id; }',
+        'function() { return id; }',
         array('id' => new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603')),
     ),
 );
@@ -31,14 +31,14 @@ foreach ($tests as $test) {
 --EXPECTF--
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(33) "function foo(bar) { return bar; }"
+  string(29) "function(bar) { return bar; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
   }
 }
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(30) "function foo() { return foo; }"
+  string(26) "function() { return foo; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
     ["foo"]=>
@@ -47,7 +47,7 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
 }
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(29) "function foo() { return id; }"
+  string(25) "function() { return id; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
     ["id"]=>

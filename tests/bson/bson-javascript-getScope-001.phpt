@@ -4,10 +4,10 @@ MongoDB\BSON\Javascript::getScope()
 <?php
 
 $tests = [
-    ['function foo(bar) { return bar; }', null],
-    ['function foo(bar) { return bar; }', []],
-    ['function foo() { return foo; }', ['foo' => 42]],
-    ['function foo() { return id; }', ['id' => new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603')]],
+    ['function(bar) { return bar; }', null],
+    ['function(bar) { return bar; }', []],
+    ['function() { return foo; }', ['foo' => 42]],
+    ['function() { return id; }', ['id' => new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603')]],
 ];
 
 foreach ($tests as $test) {

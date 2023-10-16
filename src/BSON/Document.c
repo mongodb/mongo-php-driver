@@ -160,7 +160,9 @@ static PHP_METHOD(MongoDB_BSON_Document, fromPHP)
 	intern = Z_DOCUMENT_OBJ_P(&zv);
 
 	intern->bson = bson_new();
-	php_phongo_zval_to_bson(data, PHONGO_BSON_NONE, intern->bson, NULL);
+
+	// Explicitly allow constructing a Document from a PackedArray
+	php_phongo_zval_to_bson(data, PHONGO_BSON_ALLOW_ROOT_ARRAY, intern->bson, NULL);
 
 	RETURN_ZVAL(&zv, 1, 1);
 }
