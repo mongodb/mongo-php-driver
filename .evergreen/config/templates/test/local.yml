@@ -1,0 +1,59 @@
+tasks:
+  - name: "test-mongodb-%mongodbVersion%-standalone-noauth-nossl"
+    tags: ["standalone", "local", "%mongodbVersion%"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          MONGODB_VERSION: "%mongodbVersion%"
+      - func: "run tests"
+
+  - name: "test-mongodb-%mongodbVersion%-standalone-auth"
+    tags: ["standalone", "local", "%mongodbVersion%", "auth"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          MONGODB_VERSION: "%mongodbVersion%"
+      - func: "run tests"
+
+  - name: "test-mongodb-%mongodbVersion%-standalone-ssl"
+    tags: ["standalone", "local", "%mongodbVersion%", "ssl"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          SSL: "yes"
+          MONGODB_VERSION: "%mongodbVersion%"
+      - func: "run tests"
+        vars:
+          SSL: "yes"
+
+  - name: "test-mongodb-%mongodbVersion%-replicaset-noauth-nossl"
+    tags: ["replicaset", "local", "%mongodbVersion%"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "%mongodbVersion%"
+      - func: "run tests"
+
+  - name: "test-mongodb-%mongodbVersion%-replicaset-auth"
+    tags: ["replicaset", "local", "%mongodbVersion%", "auth"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          AUTH: "auth"
+          MONGODB_VERSION: "%mongodbVersion%"
+      - func: "run tests"
+
+  - name: "test-mongodb-%mongodbVersion%-sharded-noauth-nossl"
+    tags: ["sharded", "local", "%mongodbVersion%"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "sharded_cluster"
+          MONGODB_VERSION: "%mongodbVersion%"
+      - func: "run tests"

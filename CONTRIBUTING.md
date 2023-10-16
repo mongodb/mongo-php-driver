@@ -253,9 +253,10 @@ AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.20.0)
 #### Update tested versions in Evergreen configuration
 
 Evergreen tests against multiple versions of libmongoc. When updating to a newer
-libmongoc version, make sure to update the `libmongoc-version` build axis in
-`.evergreen/config.yml`. In general, we test against two additional versions of
-libmongoc:
+libmongoc version, make sure to update the libmongoc build tasks in `.evergreen/config/templates/build/build-libmongoc.yml`
+and regenerate the build configuration. The template file contains additional
+information about the build tasks and where they are used. In general, we test
+against two additional versions of libmongoc:
 
 - The upcoming patch release of the current libmongoc minor version (e.g. the
   `r1.x` branch)

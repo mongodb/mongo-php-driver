@@ -1,0 +1,14 @@
+# This file is generated automatically - please edit the "templates/test/require-api-version.yml" template file instead.
+tasks:
+  - name: "test-requireApiVersion-rapid"
+    tags: [ "standalone", "local", "rapid", "versioned_api" ]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          REQUIRE_API_VERSION: "yes"
+          MONGODB_VERSION: "rapid"
+      - func: "run tests"
+        vars:
+          API_VERSION: "1"

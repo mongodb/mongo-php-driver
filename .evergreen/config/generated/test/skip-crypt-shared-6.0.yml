@@ -1,0 +1,12 @@
+# This file is generated automatically - please edit the "templates/test/skip-crypt-shared.yml" template file instead.
+tasks:
+  - name: "test-skip_crypt_shared-6.0"
+    tags: [ "replicaset", "local", "6.0", "skip_crypt_shared" ]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "6.0"
+      - func: "run tests"
+        vars:
+          SKIP_CRYPT_SHARED: "yes"
