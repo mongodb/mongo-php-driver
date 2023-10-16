@@ -33,9 +33,6 @@ buildvariants:
       - name: "test-ocsp-6.0"
         execution_tasks:
           - ".ocsp .6.0"
-      - name: "test-ocsp-5.0"
-        execution_tasks:
-          - ".ocsp .5.0"
   - name: test-debian92-php82-local
     tags: ["test", "debian", "x64"]
     display_name: "Test: Debian 9.2, PHP 8.2"
@@ -54,6 +51,9 @@ buildvariants:
       - ".loadbalanced .local !.6.0 !.7.0 !.rapid !.latest"
       - ".ocsp !.6.0 !.7.0 !.rapid !.latest"
     display_tasks:
+      - name: "test-ocsp-5.0"
+        execution_tasks:
+          - ".ocsp .5.0"
       - name: "test-ocsp-4.4"
         execution_tasks:
           - ".ocsp .4.4"
