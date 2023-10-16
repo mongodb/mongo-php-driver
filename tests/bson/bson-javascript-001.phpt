@@ -5,8 +5,8 @@ MongoDB\BSON\Javascript #001
 
 require_once __DIR__ . '/../utils/basic.inc';
 
-$js = new MongoDB\BSON\Javascript("function foo(bar) {var baz = bar; var bar = foo; return bar; }");
-$jswscope = new MongoDB\BSON\Javascript("function foo(bar) {var baz = bar; var bar = foo; return bar; }", array("foo" => 42));
+$js = new MongoDB\BSON\Javascript("function(bar) {var baz = bar; var bar = foo; return bar; }");
+$jswscope = new MongoDB\BSON\Javascript("function(bar) {var baz = bar; var bar = foo; return bar; }", array("foo" => 42));
 $tests = array(
     array("js" => $js),
     array("js" => $jswscope),

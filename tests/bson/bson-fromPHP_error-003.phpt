@@ -10,7 +10,7 @@ class UnknownType implements MongoDB\BSON\Type {}
 $tests = array(
     new UnknownType,
     new MongoDB\BSON\Binary('foobar', MongoDB\BSON\Binary::TYPE_GENERIC),
-    new MongoDB\BSON\Javascript('function foo(bar) {var baz = bar; var bar = foo; return bar; }'),
+    new MongoDB\BSON\Javascript('function(bar) {var baz = bar; var bar = foo; return bar; }'),
     new MongoDB\BSON\MinKey,
     new MongoDB\BSON\MaxKey,
     new MongoDB\BSON\ObjectId,

@@ -4,10 +4,10 @@ MongoDB\BSON\Javascript::__set_state()
 <?php
 
 $tests = [
-    ['function foo(bar) { return bar; }', null],
-    ['function foo(bar) { return bar; }', []],
-    ['function foo() { return foo; }', ['foo' => 42]],
-    ['function foo() { return id; }', ['id' => new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603')]],
+    ['function(bar) { return bar; }', null],
+    ['function(bar) { return bar; }', []],
+    ['function() { return foo; }', ['foo' => 42]],
+    ['function() { return id; }', ['id' => new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603')]],
 ];
 
 foreach ($tests as $test) {
@@ -22,7 +22,7 @@ foreach ($tests as $test) {
 
 // Test with missing scope field
 var_export(MongoDB\BSON\Javascript::__set_state([
-    'code' => 'function foo(bar) { return bar; }',
+    'code' => 'function(bar) { return bar; }',
 ]));
 echo "\n\n";
 
@@ -31,19 +31,19 @@ echo "\n\n";
 <?php exit(0); ?>
 --EXPECTF--
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
-   'code' => 'function foo(bar) { return bar; }',
+   'code' => 'function(bar) { return bar; }',
    'scope' => NULL,
 ))
 
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
-   'code' => 'function foo(bar) { return bar; }',
+   'code' => 'function(bar) { return bar; }',
    'scope' =>%w
   (object) array(
   ),
 ))
 
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
-   'code' => 'function foo() { return foo; }',
+   'code' => 'function() { return foo; }',
    'scope' =>%w
   (object) array(
      'foo' => 42,
@@ -51,7 +51,7 @@ echo "\n\n";
 ))
 
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
-   'code' => 'function foo() { return id; }',
+   'code' => 'function() { return id; }',
    'scope' =>%w
   (object) array(
      'id' =>%w
@@ -62,7 +62,7 @@ echo "\n\n";
 ))
 
 %r\\?%rMongoDB\BSON\Javascript::__set_state(array(
-   'code' => 'function foo(bar) { return bar; }',
+   'code' => 'function(bar) { return bar; }',
    'scope' => NULL,
 ))
 

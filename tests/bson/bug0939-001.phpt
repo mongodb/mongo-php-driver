@@ -6,7 +6,7 @@ PHPC-939: BSON classes should not assign public properties after var_dump()
 $tests = [
     [ new MongoDB\BSON\Binary('foo', MongoDB\BSON\Binary::TYPE_GENERIC), ['data', 'type'] ],
     [ new MongoDB\BSON\Decimal128('3.14'), ['dec'] ],
-    [ new MongoDB\BSON\Javascript('function foo() { return bar; }', ['bar' => 42]), ['code', 'scope'] ],
+    [ new MongoDB\BSON\Javascript('function() { return bar; }', ['bar' => 42]), ['code', 'scope'] ],
     [ new MongoDB\BSON\MaxKey, [] ],
     [ new MongoDB\BSON\MinKey, [] ],
     [ new MongoDB\BSON\ObjectId, ['oid'] ],
@@ -49,7 +49,7 @@ MongoDB\BSON\Decimal128::$dec exists: no
 
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(30) "function foo() { return bar; }"
+  string(26) "function() { return bar; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
     ["bar"]=>

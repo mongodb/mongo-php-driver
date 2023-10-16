@@ -6,7 +6,7 @@ PHPC-849: BSON get_properties handlers leak during gc_possible_root() checks
 $objects = [
     new MongoDB\BSON\Binary('foo', MongoDB\BSON\Binary::TYPE_GENERIC),
     new MongoDB\BSON\Decimal128('3.14'),
-    new MongoDB\BSON\Javascript('function foo() { return bar; }', ['bar' => 42]),
+    new MongoDB\BSON\Javascript('function()) { return bar; }', ['bar' => 42]),
     new MongoDB\BSON\MaxKey,
     new MongoDB\BSON\MinKey,
     new MongoDB\BSON\ObjectId,

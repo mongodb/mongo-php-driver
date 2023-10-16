@@ -3,7 +3,7 @@ MongoDB\BSON\Javascript::jsonSerialize() return value (without scope)
 --FILE--
 <?php
 
-$js = new MongoDB\BSON\Javascript('function foo(bar) { return bar; }');
+$js = new MongoDB\BSON\Javascript('function(bar) { return bar; }');
 var_dump($js->jsonSerialize());
 
 ?>
@@ -12,6 +12,6 @@ var_dump($js->jsonSerialize());
 --EXPECT--
 array(1) {
   ["$code"]=>
-  string(33) "function foo(bar) { return bar; }"
+  string(29) "function(bar) { return bar; }"
 }
 ===DONE===

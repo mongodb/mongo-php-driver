@@ -4,10 +4,10 @@ MongoDB\BSON\Javascript serialization (__serialize and __unserialize)
 <?php
 
 $tests = [
-    ['function foo(bar) { return bar; }', null],
-    ['function foo(bar) { return bar; }', []],
-    ['function foo() { return foo; }', ['foo' => 42]],
-    ['function foo() { return id; }', ['id' => new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603')]],
+    ['function(bar) { return bar; }', null],
+    ['function(bar) { return bar; }', []],
+    ['function() { return foo; }', ['foo' => 42]],
+    ['function() { return id; }', ['id' => new MongoDB\BSON\ObjectId('53e2a1c40640fd72175d4603')]],
 ];
 
 foreach ($tests as $test) {
@@ -25,29 +25,29 @@ foreach ($tests as $test) {
 --EXPECTF--
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(33) "function foo(bar) { return bar; }"
+  string(29) "function(bar) { return bar; }"
   ["scope"]=>
   NULL
 }
-string(101) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:33:"function foo(bar) { return bar; }";s:5:"scope";N;}"
+string(97) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:29:"function(bar) { return bar; }";s:5:"scope";N;}"
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(33) "function foo(bar) { return bar; }"
+  string(29) "function(bar) { return bar; }"
   ["scope"]=>
   NULL
 }
 
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(33) "function foo(bar) { return bar; }"
+  string(29) "function(bar) { return bar; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
   }
 }
-string(118) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:33:"function foo(bar) { return bar; }";s:5:"scope";O:8:"stdClass":0:{}}"
+string(114) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:29:"function(bar) { return bar; }";s:5:"scope";O:8:"stdClass":0:{}}"
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(33) "function foo(bar) { return bar; }"
+  string(29) "function(bar) { return bar; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
   }
@@ -55,17 +55,17 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
 
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(30) "function foo() { return foo; }"
+  string(26) "function() { return foo; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
     ["foo"]=>
     int(42)
   }
 }
-string(130) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:30:"function foo() { return foo; }";s:5:"scope";O:8:"stdClass":1:{s:3:"foo";i:42;}}"
+string(126) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:26:"function() { return foo; }";s:5:"scope";O:8:"stdClass":1:{s:3:"foo";i:42;}}"
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(30) "function foo() { return foo; }"
+  string(26) "function() { return foo; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
     ["foo"]=>
@@ -75,7 +75,7 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
 
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(29) "function foo() { return id; }"
+  string(25) "function() { return id; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
     ["id"]=>
@@ -85,10 +85,10 @@ object(MongoDB\BSON\Javascript)#%d (%d) {
     }
   }
 }
-string(198) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:29:"function foo() { return id; }";s:5:"scope";O:8:"stdClass":1:{s:2:"id";O:21:"MongoDB\BSON\ObjectId":1:{s:3:"oid";s:24:"53e2a1c40640fd72175d4603";}}}"
+string(194) "O:23:"MongoDB\BSON\Javascript":2:{s:4:"code";s:25:"function() { return id; }";s:5:"scope";O:8:"stdClass":1:{s:2:"id";O:21:"MongoDB\BSON\ObjectId":1:{s:3:"oid";s:24:"53e2a1c40640fd72175d4603";}}}"
 object(MongoDB\BSON\Javascript)#%d (%d) {
   ["code"]=>
-  string(29) "function foo() { return id; }"
+  string(25) "function() { return id; }"
   ["scope"]=>
   object(stdClass)#%d (%d) {
     ["id"]=>
