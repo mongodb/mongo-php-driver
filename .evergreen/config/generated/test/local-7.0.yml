@@ -1,0 +1,60 @@
+# This file is generated automatically - please edit the "templates/test/local.yml" template file instead.
+tasks:
+  - name: "test-mongodb-7.0-standalone-noauth-nossl"
+    tags: ["standalone", "local", "7.0"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+
+  - name: "test-mongodb-7.0-standalone-auth"
+    tags: ["standalone", "local", "7.0", "auth"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          AUTH: "auth"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+
+  - name: "test-mongodb-7.0-standalone-ssl"
+    tags: ["standalone", "local", "7.0", "ssl"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "server"
+          SSL: "yes"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+        vars:
+          SSL: "yes"
+
+  - name: "test-mongodb-7.0-replicaset-noauth-nossl"
+    tags: ["replicaset", "local", "7.0"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+
+  - name: "test-mongodb-7.0-replicaset-auth"
+    tags: ["replicaset", "local", "7.0", "auth"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "replica_set"
+          AUTH: "auth"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"
+
+  - name: "test-mongodb-7.0-sharded-noauth-nossl"
+    tags: ["sharded", "local", "7.0"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          TOPOLOGY: "sharded_cluster"
+          MONGODB_VERSION: "7.0"
+      - func: "run tests"

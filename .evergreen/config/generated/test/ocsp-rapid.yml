@@ -1,0 +1,413 @@
+# This file is generated automatically - please edit the "templates/test/ocsp.yml" template file instead.
+tasks:
+  - name: "ocsp-test_1-rsa-delegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_1"
+          CERT_TYPE: "rsa"
+          USE_DELEGATE: "on"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-success.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
+  - name: "ocsp-test_1-ecdsa-delegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_1"
+          CERT_TYPE: "ecdsa"
+          USE_DELEGATE: "on"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-success.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
+  - name: "ocsp-test_1-rsa-nodelegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_1"
+          CERT_TYPE: "rsa"
+          USE_DELEGATE: "off"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-success.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
+  - name: "ocsp-test_1-ecdsa-nodelegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_1"
+          CERT_TYPE: "ecdsa"
+          USE_DELEGATE: "off"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-success.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
+  - name: "ocsp-test_2-rsa-delegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_2"
+          CERT_TYPE: "rsa"
+          USE_DELEGATE: "on"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
+  - name: "ocsp-test_2-ecdsa-delegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_2"
+          CERT_TYPE: "ecdsa"
+          USE_DELEGATE: "on"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
+  - name: "ocsp-test_2-rsa-nodelegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_2"
+          CERT_TYPE: "rsa"
+          USE_DELEGATE: "off"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
+  - name: "ocsp-test_2-ecdsa-nodelegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_2"
+          CERT_TYPE: "ecdsa"
+          USE_DELEGATE: "off"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
+  - name: "ocsp-test_3-rsa-delegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_3"
+          CERT_TYPE: "rsa"
+          USE_DELEGATE: "on"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-success.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
+  - name: "ocsp-test_3-ecdsa-delegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_3"
+          CERT_TYPE: "ecdsa"
+          USE_DELEGATE: "on"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-success.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
+  - name: "ocsp-test_3-rsa-nodelegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_3"
+          CERT_TYPE: "rsa"
+          USE_DELEGATE: "off"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-success.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
+  - name: "ocsp-test_3-ecdsa-nodelegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_3"
+          CERT_TYPE: "ecdsa"
+          USE_DELEGATE: "off"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-success.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
+  - name: "ocsp-test_4-rsa-delegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_4"
+          CERT_TYPE: "rsa"
+          USE_DELEGATE: "on"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
+  - name: "ocsp-test_4-ecdsa-delegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_4"
+          CERT_TYPE: "ecdsa"
+          USE_DELEGATE: "on"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
+  - name: "ocsp-test_4-rsa-nodelegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_4"
+          CERT_TYPE: "rsa"
+          USE_DELEGATE: "off"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
+  - name: "ocsp-test_4-ecdsa-nodelegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "TEST_4"
+          CERT_TYPE: "ecdsa"
+          USE_DELEGATE: "off"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
+  - name: "ocsp-soft_fail_test-rsa-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-success.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
+  - name: "ocsp-soft_fail_test-ecdsa-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-success.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
+  - name: "ocsp-malicious_server_test_1-rsa-delegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "MALICIOUS_SERVER_TEST_1"
+          CERT_TYPE: "rsa"
+          USE_DELEGATE: "on"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
+  - name: "ocsp-malicious_server_test_1-ecdsa-delegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "MALICIOUS_SERVER_TEST_1"
+          CERT_TYPE: "ecdsa"
+          USE_DELEGATE: "on"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
+  - name: "ocsp-malicious_server_test_1-rsa-nodelegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "MALICIOUS_SERVER_TEST_1"
+          CERT_TYPE: "rsa"
+          USE_DELEGATE: "off"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
+  - name: "ocsp-malicious_server_test_1-ecdsa-nodelegate-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "run OCSP responder"
+        vars:
+          TEST_COLUMN: "MALICIOUS_SERVER_TEST_1"
+          CERT_TYPE: "ecdsa"
+          USE_DELEGATE: "off"
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"
+
+  - name: "ocsp-malicious_server_test_2-rsa-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "rsa-basic-tls-ocsp-mustStaple-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/rsa/ca.pem"
+
+  - name: "ocsp-malicious_server_test_2-ecdsa-rapid"
+    tags: ["ocsp", "rapid"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "rapid"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "ecdsa-basic-tls-ocsp-mustStaple-disableStapling.json"
+      - func: "run tests"
+        vars:
+          TESTS: "tests/ocsp-failure.phpt"
+          APPEND_URI: "/?tls=true&tlsCAFile=${DRIVERS_TOOLS}/.evergreen/ocsp/ecdsa/ca.pem"

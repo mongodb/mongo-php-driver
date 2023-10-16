@@ -1,0 +1,267 @@
+functions:
+  "fetch source":
+    # Executes git clone and applies the submitted patch, if any
+    - command: git.get_project
+      params:
+        directory: "src"
+    # Fetch the libmongoc submodule
+    - command: shell.exec
+      params:
+        working_dir: "src"
+        script: |
+          git submodule update --init
+    # Make an evergreen expansion file with dynamic values
+    - command: shell.exec
+      params:
+        working_dir: "src"
+        script: |
+          # Get the current unique version of this checkout
+          if [ "${is_patch}" = "true" ]; then
+             CURRENT_VERSION=$(git describe)-patch-${version_id}
+          else
+             CURRENT_VERSION=latest
+          fi
+          
+          export DRIVERS_TOOLS="$(pwd)/../drivers-tools"
+          export PROJECT_DIRECTORY="$(pwd)"
+          
+          # Python has cygwin path problems on Windows. Detect prospective mongo-orchestration home directory
+          if [ "Windows_NT" = "$OS" ]; then # Magic variable in cygwin
+             export DRIVERS_TOOLS=$(cygpath -m $DRIVERS_TOOLS)
+             export PROJECT_DIRECTORY=$(cygpath -m $PROJECT_DIRECTORY)
+          fi
+          
+          export MONGO_ORCHESTRATION_HOME="$DRIVERS_TOOLS/.evergreen/orchestration"
+          # Note: PHPC no longer has any custom MO configs, but they can be stored here if needed
+          export PROJECT_ORCHESTRATION_HOME="$PROJECT_DIRECTORY/.evergreen/orchestration"
+          export MONGODB_BINARIES="$DRIVERS_TOOLS/mongodb/bin"
+          export UPLOAD_BUCKET="${project}"
+          
+          cat <<EOT > expansion.yml
+          CURRENT_VERSION: "$CURRENT_VERSION"
+          DRIVERS_TOOLS: "$DRIVERS_TOOLS"
+          MONGO_ORCHESTRATION_HOME: "$MONGO_ORCHESTRATION_HOME"
+          PROJECT_ORCHESTRATION_HOME: "$PROJECT_ORCHESTRATION_HOME"
+          MONGODB_BINARIES: "$MONGODB_BINARIES"
+          UPLOAD_BUCKET: "$UPLOAD_BUCKET"
+          PROJECT_DIRECTORY: "$PROJECT_DIRECTORY"
+          
+          PREPARE_SHELL: |
+             set -o errexit
+             export DRIVERS_TOOLS="$DRIVERS_TOOLS"
+             export MONGO_ORCHESTRATION_HOME="$MONGO_ORCHESTRATION_HOME"
+             export PROJECT_ORCHESTRATION_HOME="$PROJECT_ORCHESTRATION_HOME"
+             export MONGODB_BINARIES="$MONGODB_BINARIES"
+             export UPLOAD_BUCKET="$UPLOAD_BUCKET"
+             export PROJECT_DIRECTORY="$PROJECT_DIRECTORY"
+          
+             export TMPDIR="$MONGO_ORCHESTRATION_HOME/db"
+             export PATH="$MONGODB_BINARIES:$PATH"
+             export PROJECT="${project}"
+          
+             export SSL_DIR="$DRIVERS_TOOLS/.evergreen/x509gen"
+          EOT
+          # See what we've done
+          cat expansion.yml
+
+    # Load the expansion file to make an evergreen variable with the current unique version
+    - command: expansions.update
+      params:
+        file: src/expansion.yml
+
+  "prepare resources":
+    - command: shell.exec
+      params:
+        script: |
+          ${PREPARE_SHELL}
+          rm -rf $DRIVERS_TOOLS
+          if [ "${project}" = "drivers-tools" ]; then
+            # If this was a patch build, doing a fresh clone would not actually test the patch
+            cp -R ${PROJECT_DIRECTORY}/ $DRIVERS_TOOLS
+          else
+            git clone https://github.com/mongodb-labs/drivers-evergreen-tools.git $DRIVERS_TOOLS
+          fi
+          echo "{ \"releases\": { \"default\": \"$MONGODB_BINARIES\" }}" > $MONGO_ORCHESTRATION_HOME/orchestration.config
+
+
+  # Upload build artifacts that other tasks may depend on
+  # Note this URL needs to be totally unique, while predictable for the next task
+  # so it can automatically download the artifacts
+  "upload build":
+    # Compress and upload the entire build directory
+    - command: archive.targz_pack
+      params:
+        target: "${build_id}.tar.gz"
+        source_dir: src
+        include:
+          - "./**"
+    - command: s3.put
+      params:
+        aws_key: ${aws_key}
+        aws_secret: ${aws_secret}
+        bucket: mciuploads
+        content_type: ${content_type|application/x-gzip}
+        permissions: public-read
+        local_file: ${build_id}.tar.gz
+        remote_file: ${project}/${build_variant}/${revision}/${task_name}/${version}.tar.gz
+
+  "fetch build":
+    - command: subprocess.exec
+      type: setup
+      params:
+        binary: bash
+        args:
+          - -c
+          - rm -rf src
+    - command: s3.get
+      params:
+        aws_key: ${aws_key}
+        aws_secret: ${aws_secret}
+        bucket: mciuploads
+        remote_file: ${project}/${FETCH_BUILD_VARIANT}/${revision}/${FETCH_BUILD_TASK}/${version}.tar.gz
+        local_file: build.tar.gz
+    - command: archive.targz_extract
+      params:
+        destination: src
+        path: build.tar.gz
+    # Fix path names in Makefile
+    - command: shell.exec
+      type: test
+      params:
+        working_dir: "src"
+        script: |
+          ${PREPARE_SHELL}
+          perl -p -i -e "s|/data/mci/[0-9a-z]+/src|${PROJECT_DIRECTORY}|g" Makefile
+
+  "compile driver" :
+    - command: shell.exec
+      params:
+        working_dir: "src/src/libmongoc"
+        add_expansions_to_env: true
+        script: |
+          if [ -n "${LIBMONGOC_VERSION}" ]; then
+             echo "Checking out libmongoc version: ${LIBMONGOC_VERSION}"
+             git fetch
+             git checkout ${LIBMONGOC_VERSION}
+             # Note: compile-unix.sh will run `make libmongoc-version-current`
+          fi
+    - command: subprocess.exec
+      type: test
+      params:
+        working_dir: "src"
+        add_expansions_to_env: true
+        binary: bash
+        args:
+          - ${PROJECT_DIRECTORY}/.evergreen/compile-unix.sh
+
+  "upload test results":
+    - command: attach.xunit_results
+      params:
+        # Uploading test results does not work when using ${PROJECT_DIRECTORY},
+        # so we use an absolute path to work around this
+        file: "src/test-results.xml"
+    - command: attach.results
+      params:
+        file_location: "${DRIVERS_TOOLS}/results.json"
+
+  "bootstrap mongo-orchestration":
+    - command: shell.exec
+      params:
+        script: |
+          ${PREPARE_SHELL}
+          SKIP_LEGACY_SHELL=true MONGODB_VERSION=${MONGODB_VERSION} TOPOLOGY=${TOPOLOGY} AUTH=${AUTH} SSL=${SSL} STORAGE_ENGINE=${STORAGE_ENGINE} LOAD_BALANCER=${LOAD_BALANCER} REQUIRE_API_VERSION=${REQUIRE_API_VERSION} ORCHESTRATION_FILE=${ORCHESTRATION_FILE} sh ${DRIVERS_TOOLS}/.evergreen/run-orchestration.sh
+    # run-orchestration generates expansion file with MONGODB_URI and CRYPT_SHARED_LIB_PATH
+    - command: expansions.update
+      params:
+        file: mo-expansion.yml
+
+  "stop mongo-orchestration":
+    - command: shell.exec
+      params:
+        script: |
+          ${PREPARE_SHELL}
+          sh ${DRIVERS_TOOLS}/.evergreen/stop-orchestration.sh
+
+  "run OCSP responder":
+    - command: shell.exec
+      params:
+        shell: bash
+        script: |
+          ${PREPARE_SHELL}
+          TEST_COLUMN=${TEST_COLUMN} \
+          CERT_TYPE=${CERT_TYPE} \
+          USE_DELEGATE=${USE_DELEGATE} \
+          ${PROJECT_DIRECTORY}/.evergreen/run-ocsp-responder.sh
+
+  "run tests":
+    - command: shell.exec
+      type: test
+      params:
+        working_dir: "src"
+        script: |
+          ${PREPARE_SHELL}
+          API_VERSION=${API_VERSION} \
+          CRYPT_SHARED_LIB_PATH=${CRYPT_SHARED_LIB_PATH} \
+          MONGODB_URI="${MONGODB_URI}${APPEND_URI}" \
+          SKIP_CRYPT_SHARED=${SKIP_CRYPT_SHARED} \
+          SSL=${SSL} \
+          SSL_DIR=${SSL_DIR} \
+          TESTS=${TESTS} \
+          sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
+
+  "cleanup":
+    - command: shell.exec
+      params:
+        script: |
+          ${PREPARE_SHELL}
+          rm -rf $DRIVERS_TOOLS || true
+
+  "fix absolute paths":
+    - command: shell.exec
+      params:
+        script: |
+          ${PREPARE_SHELL}
+          for filename in $(find ${DRIVERS_TOOLS} -name \*.json); do
+            perl -p -i -e "s|ABSOLUTE_PATH_REPLACEMENT_TOKEN|${DRIVERS_TOOLS}|g" $filename
+          done
+
+  "init test-results":
+    - command: shell.exec
+      params:
+        script: |
+          ${PREPARE_SHELL}
+          echo '{"results": [{ "status": "FAIL", "test_file": "Build", "log_raw": "No test-results.json found was created"  } ]}' > ${PROJECT_DIRECTORY}/test-results.json
+
+  "install dependencies":
+    - command: shell.exec
+      params:
+        working_dir: "src"
+        script: |
+          ${PREPARE_SHELL}
+          file="${DRIVERS_TOOLS}/.evergreen/install-dependencies.sh"
+          # Don't use ${file} syntax here because evergreen treats it as an empty expansion.
+          [ -f "$file" ] && sh $file || echo "$file not available, skipping"
+
+  "decrypt atlas URI list":
+    - command: shell.exec
+      params:
+        script: |
+          openssl aes-256-cbc -S "${encrypted_uris_salt}" -K "${encrypted_uris_key}" -iv "${encrypted_uris_iv}" -in ${PROJECT_DIRECTORY}/.evergreen/atlas-uris.txt.enc -out ${PROJECT_DIRECTORY}/.evergreen/atlas-uris.txt -d
+
+  "start load balancer":
+    - command: shell.exec
+      params:
+        script: |
+          MONGODB_URI="${MONGODB_URI}" ${DRIVERS_TOOLS}/.evergreen/run-load-balancer.sh start
+    - command: expansions.update
+      params:
+        file: lb-expansion.yml
+
+  "stop load balancer":
+    - command: shell.exec
+      params:
+        script: |
+          # Only run if a load balancer was started
+          if [ -n "${SINGLE_MONGOS_LB_URI}" ]; then
+            ${DRIVERS_TOOLS}/.evergreen/run-load-balancer.sh stop
+          fi
