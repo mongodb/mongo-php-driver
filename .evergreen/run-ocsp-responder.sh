@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -o errexit
 
 # Run an mock OCSP responder server if necessary. This script should be invoked
