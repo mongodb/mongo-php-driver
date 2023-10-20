@@ -19,7 +19,7 @@ runs:
   steps:
     - name: Setup PHP SDK
       id: setup-php
-      uses: cmb69/setup-php-sdk@v0.7
+      uses: alcaeus/setup-php-sdk@php-8.3
       with:
         version: ${{ inputs.version }}
         arch: ${{ inputs.arch }}
