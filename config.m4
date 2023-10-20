@@ -212,13 +212,13 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_ARG_WITH([libbson],
                [whether to use system libbson],
                [AS_HELP_STRING([--with-libbson=@<:@yes/no@:>@],
-                               [MongoDB: Use system libbson [default=no]])],
+                               [MongoDB: Use system libbson (deprecated for --with-mongodb-system-libs) [default=no]])],
                [no],
                [no])
   PHP_ARG_WITH([libmongoc],
                [whether to use system libmongoc],
                [AS_HELP_STRING([--with-libmongoc=@<:@yes/no@:>@],
-                               [MongoDB: Use system libmongoc [default=no]])],
+                               [MongoDB: Use system libmongoc (deprecated for --with-mongodb-system-libs) [default=no]])],
                [no],
                [no])
   PHP_ARG_WITH([mongodb-client-side-encryption],
