@@ -56,9 +56,8 @@ fi
 AC_MSG_CHECKING([which SASL library to use])
 AC_MSG_RESULT([$PHP_MONGODB_SASL])
 
-dnl Disable Windows SSPI and GSSAPI
+dnl Disable Windows SSPI
 AC_SUBST(MONGOC_ENABLE_SASL_SSPI, 0)
-AC_SUBST(MONGOC_ENABLE_SASL_GSSAPI, 0)
 
 if test "$PHP_MONGODB_SASL" = "cyrus"; then
   AC_SUBST(MONGOC_ENABLE_SASL, 1)
