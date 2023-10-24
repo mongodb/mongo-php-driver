@@ -1,4 +1,6 @@
-dnl config.m4 for extension mongodb
+dnl Determine the base directory used for subsequent m4_include calls
+m4_define(PHP_MONGODB_BASEDIR, esyscmd(printf %s "$(dirname "__file__")"))
+
 PHP_ARG_ENABLE([mongodb],
                [whether to enable MongoDB support],
                [AS_HELP_STRING([--enable-mongodb],
@@ -331,58 +333,43 @@ if test "$PHP_MONGODB" != "no"; then
     dnl Endian.m4 will modify this when using bundled libmongocrypt
     PHP_MONGODB_LIBMONGOCRYPT_CFLAGS=""
 
-    dnl M4 doesn't know if we're building statically or as a shared module, so
-    dnl attempt to include both paths while ignoring errors. If neither path
-    dnl exists, report an error during configure (this is later than M4 parsing
-    dnl during phpize but better than nothing).
-    m4_pushdef([_include],[
-      dnl TODO: Fix this for PECL install (PHPC-1218)
-      dnl if test ! \( -f "$1" -o -f "ext/mongodb/$1" \); then
-      dnl   AC_MSG_ERROR([m4 could not include $1: No such file or directory])
-      dnl fi
-      m4_builtin([sinclude],[$1])
-      m4_builtin([sinclude],[ext/mongodb/][$1])
-    ])
-
     dnl Avoid using AC_CONFIG_MACRO_DIR, which might conflict with PHP
-    _include([scripts/autotools/m4/ax_check_compile_flag.m4])
-    _include([scripts/autotools/m4/ax_prototype.m4])
-    _include([scripts/autotools/m4/ax_prototype_accept.m4])
-    _include([scripts/autotools/m4/ax_pthread.m4])
-    _include([scripts/autotools/m4/php_mongodb.m4])
-    _include([scripts/autotools/m4/pkg.m4])
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_check_compile_flag.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_prototype.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_prototype_accept.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_pthread.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/php_mongodb.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/pkg.m4)
 
-    _include([scripts/autotools/CheckCompiler.m4])
-    _include([scripts/autotools/CheckHost.m4])
-    _include([scripts/autotools/PlatformFlags.m4])
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/CheckCompiler.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/CheckHost.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/PlatformFlags.m4)
 
-    _include([scripts/autotools/libbson/CheckAtomics.m4])
-    _include([scripts/autotools/libbson/CheckHeaders.m4])
-    _include([scripts/autotools/libbson/Endian.m4])
-    _include([scripts/autotools/libbson/FindDependencies.m4])
-    _include([scripts/autotools/libbson/Versions.m4])
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libbson/CheckAtomics.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libbson/CheckHeaders.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libbson/Endian.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libbson/FindDependencies.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libbson/Versions.m4)
 
-    _include([scripts/autotools/libmongoc/CheckCompression.m4])
-    _include([scripts/autotools/libmongoc/CheckResolv.m4])
-    _include([scripts/autotools/libmongoc/CheckSasl.m4])
-    _include([scripts/autotools/libmongoc/CheckSSL.m4])
-    _include([scripts/autotools/libmongoc/CheckUtf8Proc.m4])
-    _include([scripts/autotools/libmongoc/Endian.m4])
-    _include([scripts/autotools/libmongoc/FindDependencies.m4])
-    _include([scripts/autotools/libmongoc/Versions.m4])
-    _include([scripts/autotools/libmongoc/WeakSymbols.m4])
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongoc/CheckCompression.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongoc/CheckResolv.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongoc/CheckSasl.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongoc/CheckSSL.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongoc/CheckUtf8Proc.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongoc/Endian.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongoc/FindDependencies.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongoc/Versions.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongoc/WeakSymbols.m4)
 
     dnl This include modifies the value of $PHP_MONGODB_CLIENT_SIDE_ENCRYPTION to "yes"
     dnl or "no" depending on whether dependencies for libmongocrypt are fulfilled
-    _include([scripts/autotools/libmongocrypt/CheckSSL.m4])
-    _include([scripts/autotools/libmongocrypt/Endian.m4])
-    _include([scripts/autotools/libmongocrypt/Version.m4])
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongocrypt/CheckSSL.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongocrypt/Endian.m4)
+    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongocrypt/Version.m4)
 
     PHP_MONGODB_BSON_VERSION_STRING="Bundled ($BSON_VERSION)"
     PHP_MONGODB_MONGOC_VERSION_STRING="Bundled ($MONGOC_VERSION)"
     PHP_MONGODB_MONGOCRYPT_VERSION_STRING="Bundled ($MONGOCRYPT_BUILD_VERSION)"
-
-    m4_popdef([_include])
 
     AC_SUBST(BSON_EXTRA_ALIGN, 0)
     AC_SUBST(BSON_OS, 1)
