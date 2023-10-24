@@ -367,8 +367,8 @@ if test "$PHP_MONGODB" != "no"; then
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongocrypt/Endian.m4)
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/libmongocrypt/Version.m4)
 
-    PHP_MONGODB_BSON_VERSION_STRING="Bundled ($BSON_VERSION)"
-    PHP_MONGODB_MONGOC_VERSION_STRING="Bundled ($MONGOC_VERSION)"
+    PHP_MONGODB_BSON_VERSION_STRING="Bundled ($libbson_VERSION_FULL)"
+    PHP_MONGODB_MONGOC_VERSION_STRING="Bundled ($libmongoc_VERSION_FULL)"
     PHP_MONGODB_MONGOCRYPT_VERSION_STRING="Bundled ($MONGOCRYPT_BUILD_VERSION)"
 
     AC_SUBST(BSON_EXTRA_ALIGN, 0)
