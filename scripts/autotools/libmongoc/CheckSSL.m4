@@ -250,6 +250,10 @@ dnl Do not validate PHP_SYSTEM_CIPHERS for static builds, since it is also used
 dnl by the OpenSSL extension, which checks for values other than "no".
 if test "$ext_shared" = "yes"; then
   PHP_MONGODB_VALIDATE_ARG([PHP_SYSTEM_CIPHERS], [yes no])
+
+  if test "$PHP_SYSTEM_CIPHERS" != "no"; then
+    AC_MSG_WARN([Using --enable-system-ciphers is deprecated and will be removed in a future version. Please use --enable-mongodb-crypto-system-profile instead])
+  fi
 fi
 
 dnl Also consider the deprecated --enable-system-ciphers option
