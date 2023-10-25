@@ -174,7 +174,7 @@ AS_IF([test "$PHP_MONGODB_SSL" = "libressl" -o "$PHP_MONGODB_SSL" = "auto"],[
 ])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "auto"],[
-  if test "x$crypto_required" = "xyes"; then
+  if test "$crypto_required" = "yes"; then
     AC_MSG_ERROR([crypto and TLS libraries not found])
   fi
   PHP_MONGODB_SSL="no"
@@ -225,7 +225,7 @@ else
   AC_SUBST(MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO, 0)
 fi
 
-if test "x$have_ASN1_STRING_get0_data" = "xyes"; then
+if test "$have_ASN1_STRING_get0_data" = "yes"; then
   AC_SUBST(MONGOC_HAVE_ASN1_STRING_GET0_DATA, 1)
 else
   AC_SUBST(MONGOC_HAVE_ASN1_STRING_GET0_DATA, 0)
