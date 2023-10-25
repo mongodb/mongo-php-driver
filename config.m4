@@ -31,12 +31,16 @@ if test "$PHP_MONGODB" != "no"; then
     AC_MSG_ERROR([not supported. Need a PHP version >= 7.4.0 (found $PHP_MONGODB_PHP_VERSION)])
   fi
 
+  dnl Included earlier than other M4 files for PHP_MONGODB_VALIDATE_ARG
+  m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/php_mongodb.m4)
+
   PHP_ARG_ENABLE([mongodb-developer-flags],
                  [whether to enable developer build flags],
                  [AS_HELP_STRING([--enable-mongodb-developer-flags],
                                  [MongoDB: Enable developer flags [default=no]])],
                  [no],
                  [no])
+  PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_DEVELOPER_FLAGS], [yes no])
 
   if test "$PHP_MONGODB_DEVELOPER_FLAGS" = "yes"; then
     dnl Warn about functions which might be candidates for format attributes
@@ -96,6 +100,7 @@ if test "$PHP_MONGODB" != "no"; then
                                  [MongoDB: Enable developer code coverage information [default=no]])],
                  [no],
                  [no])
+  PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_COVERAGE], [yes no])
 
   if test "$PHP_MONGODB_COVERAGE" = "yes"; then
     if test "$ext_shared" != "yes"; then
@@ -211,24 +216,31 @@ if test "$PHP_MONGODB" != "no"; then
                                [MongoDB: Use system libraries for libbson, libmongoc, and libmongocrypt [default=no]])],
                [no],
                [no])
+  PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_SYSTEM_LIBS], [yes no])
+
   PHP_ARG_WITH([libbson],
                [whether to use system libbson],
                [AS_HELP_STRING([--with-libbson=@<:@yes/no@:>@],
                                [MongoDB: Use system libbson (deprecated for --with-mongodb-system-libs) [default=no]])],
                [no],
                [no])
+  PHP_MONGODB_VALIDATE_ARG([PHP_LIBBSON], [yes no])
+
   PHP_ARG_WITH([libmongoc],
                [whether to use system libmongoc],
                [AS_HELP_STRING([--with-libmongoc=@<:@yes/no@:>@],
                                [MongoDB: Use system libmongoc (deprecated for --with-mongodb-system-libs) [default=no]])],
                [no],
                [no])
+  PHP_MONGODB_VALIDATE_ARG([PHP_LIBMONGOC], [yes no])
+
   PHP_ARG_WITH([mongodb-client-side-encryption],
                [whether to enable client-side encryption],
                [AS_HELP_STRING([--with-mongodb-client-side-encryption=@<:@auto/yes/no@:>@],
                                [MongoDB: Enable client-side encryption [default=auto]])],
                [auto],
                [no])
+  PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_CLIENT_SIDE_ENCRYPTION], [auto yes no])
 
   if test "$PHP_LIBBSON" != "no"; then
     AC_MSG_WARN(Using --with-libbson is deprecated and will be removed in a future version. Please use --with-system-libs instead)
@@ -338,7 +350,6 @@ if test "$PHP_MONGODB" != "no"; then
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_prototype.m4)
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_prototype_accept.m4)
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_pthread.m4)
-    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/php_mongodb.m4)
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/pkg.m4)
 
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/CheckCompiler.m4)

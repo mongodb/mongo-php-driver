@@ -1,9 +1,23 @@
 PHP_ARG_WITH([mongodb-ssl],
              [whether to enable crypto and TLS],
-             [AS_HELP_STRING([--with-mongodb-ssl=@<:@auto/no/openssl/libressl/darwin@:>@],
+             [AS_HELP_STRING([--with-mongodb-ssl=@<:@auto/openssl/libressl/darwin/no@:>@],
                              [MongoDB: Enable TLS connections and SCRAM-SHA-1 authentication [default=auto]])],
              [auto],
              [no])
+
+if test "$PHP_MONGODB_SSL" = "auto" -o "$PHP_MONGODB_SSL" = "no"; then
+  crypto_required="no"
+else
+  crypto_required="yes"
+
+  dnl PHP_ARG_WITH without a value assigns "yes". Treat it like "auto" but
+  dnl require a crypto library.
+  if test "$PHP_MONGODB_SSL" = "yes"; then
+    PHP_MONGODB_SSL="auto"
+  fi
+fi
+
+PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_SSL], [auto openssl libressl darwin no])
 
 PHP_ARG_WITH([openssl-dir],
              [deprecated option for OpenSSL library path],
@@ -11,12 +25,6 @@ PHP_ARG_WITH([openssl-dir],
                              [MongoDB: OpenSSL library path (deprecated for pkg-config) [default=auto]])],
              [auto],
              [no])
-
-dnl PHP_ARG_WITH without a value assigns "yes". Treat it like "auto" but required.
-AS_IF([test "$PHP_MONGODB_SSL" = "yes"],[
-  crypto_required="yes"
-  PHP_MONGODB_SSL="auto"
-])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
   AC_MSG_NOTICE([checking whether OpenSSL is available])
@@ -229,6 +237,7 @@ PHP_ARG_ENABLE([mongodb-crypto-system-profile],
                                [MongoDB: Use system crypto profile (OpenSSL only) [default=no]])],
                [no],
                [no])
+PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_CRYPTO_SYSTEM_PROFILE], [yes no])
 
 PHP_ARG_WITH([system-ciphers],
              [deprecated option for whether to use system crypto profile],
@@ -236,6 +245,12 @@ PHP_ARG_WITH([system-ciphers],
                             [MongoDB: whether to use system crypto profile (deprecated for --enable-mongodb-crypto-system-profile) [default=no]]),
              [no],
              [no])
+
+dnl Do not validate PHP_SYSTEM_CIPHERS for static builds, since it is also used
+dnl by the OpenSSL extension, which checks for values other than "no".
+if test "$ext_shared" = "yes"; then
+  PHP_MONGODB_VALIDATE_ARG([PHP_SYSTEM_CIPHERS], [yes no])
+fi
 
 dnl Also consider the deprecated --enable-system-ciphers option
 if test "$PHP_MONGODB_CRYPTO_SYSTEM_PROFILE" = "yes" -o "$PHP_SYSTEM_CIPHERS" = "yes"; then

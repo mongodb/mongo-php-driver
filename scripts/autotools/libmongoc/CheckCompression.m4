@@ -4,13 +4,22 @@ PHP_ARG_WITH([mongodb-snappy],
                              [MongoDB: Enable Snappy for compression [default=auto]])],
              [auto],
              [no])
+PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_SNAPPY], [auto yes no])
 
 PHP_ARG_WITH([mongodb-zlib],
              [whether to enable zlib for compression],
-             [AS_HELP_STRING([--with-mongodb-zlib=@<:@auto/yes/system/bundled/no@:>@],
+             [AS_HELP_STRING([--with-mongodb-zlib=@<:@auto/system/bundled/no@:>@],
                              [MongoDB: Enable zlib for compression [default=auto]])],
              [auto],
              [no])
+
+dnl PHP_ARG_WITH without a value assigns "yes". Treat it like "auto" since we
+dnl fall back to bundled zlib if the system library isn't found
+if test "$PHP_MONGODB_ZLIB" = "yes"; then
+  PHP_MONGODB_ZLIB="auto"
+fi
+
+PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_ZLIB], [auto system bundled no])
 
 PHP_ARG_WITH([mongodb-zstd],
              [whether to enable zstd for compression],
@@ -18,6 +27,7 @@ PHP_ARG_WITH([mongodb-zstd],
                              [MongoDB: Enable zstd for compression [default=auto]])],
              [auto],
              [no])
+PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_ZSTD], [auto yes no])
 
 found_snappy="no"
 found_zlib="no"
@@ -50,7 +60,7 @@ AS_IF([test "$PHP_MONGODB_SNAPPY" = "auto" -o "$PHP_MONGODB_SNAPPY" = "yes"],[
   fi
 ])
 
-AS_IF([test "$PHP_MONGODB_ZLIB" = "auto" -o "$PHP_MONGODB_ZLIB" = "yes" -o "$PHP_MONGODB_ZLIB" = "system"],[
+AS_IF([test "$PHP_MONGODB_ZLIB" = "auto" -o "$PHP_MONGODB_ZLIB" = "system"],[
   PKG_CHECK_MODULES([PHP_MONGODB_ZLIB],[zlib],[
     PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS $PHP_MONGODB_ZLIB_CFLAGS"
     PHP_EVAL_LIBLINE([$PHP_MONGODB_ZLIB_LIBS],[MONGODB_SHARED_LIBADD])
@@ -77,7 +87,7 @@ AS_IF([test "$PHP_MONGODB_ZLIB" = "auto" -o "$PHP_MONGODB_ZLIB" = "yes" -o "$PHP
 ])
 
 dnl Use libmongoc's bundled zlib if necessary
-AS_IF([test "$found_zlib" = "no" -a \( "$PHP_MONGODB_ZLIB" = "auto" -o "$PHP_MONGODB_ZLIB" = "yes" -o "$PHP_MONGODB_ZLIB" = "bundled" \)],[
+AS_IF([test "$found_zlib" = "no" -a \( "$PHP_MONGODB_ZLIB" = "auto" -o "$PHP_MONGODB_ZLIB" = "bundled" \)],[
   AC_CHECK_HEADER([unistd.h],[PHP_MONGODB_ZLIB_CFLAGS="$PHP_MONGODB_ZLIB_CFLAGS -DHAVE_UNISTD_H"])
   AC_CHECK_HEADER([stdarg.h],[PHP_MONGODB_ZLIB_CFLAGS="$PHP_MONGODB_ZLIB_CFLAGS -DHAVE_STDARG_H"])
   bundled_zlib="yes"
