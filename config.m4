@@ -7,6 +7,12 @@ PHP_ARG_ENABLE([mongodb],
                                [Enable MongoDB support])])
 
 if test "$PHP_MONGODB" != "no"; then
+  dnl Common includes for both bundled and system builds
+  m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/php_mongodb.m4)
+  m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/pkg.m4)
+
+  PKG_PROG_PKG_CONFIG
+
   dnl Enable C99 (required for libmongoc 1.24+). On Autoconf 2.70+, this will
   dnl already have been done when AC_PROG_CC is called from configure.ac.
   m4_version_prereq([2.70],,[AC_PROG_CC_C99])
@@ -30,9 +36,6 @@ if test "$PHP_MONGODB" != "no"; then
   if test "$PHP_MONGODB_PHP_VERSION_ID" -lt "70400"; then
     AC_MSG_ERROR([not supported. Need a PHP version >= 7.4.0 (found $PHP_MONGODB_PHP_VERSION)])
   fi
-
-  dnl Included earlier than other M4 files for PHP_MONGODB_VALIDATE_ARG
-  m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/php_mongodb.m4)
 
   PHP_ARG_ENABLE([mongodb-developer-flags],
                  [whether to enable developer build flags],
@@ -267,69 +270,39 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_MONGODB_MONGOCRYPT_VERSION_STRING="None"
 
   if test "$PHP_MONGODB_SYSTEM_LIBS" != "no"; then
-    AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
-    AC_MSG_CHECKING(for libbson)
-    if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libbson-1.0; then
-      if $PKG_CONFIG libbson-1.0 --atleast-version 1.25.0; then
-        PHP_MONGODB_BSON_CFLAGS=`$PKG_CONFIG libbson-1.0 --cflags`
-        PHP_MONGODB_BSON_LIBS=`$PKG_CONFIG libbson-1.0 --libs`
-        PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
-        PHP_MONGODB_BSON_VERSION_STRING="System ($PHP_MONGODB_BSON_VERSION)"
-        AC_MSG_RESULT(version $PHP_MONGODB_BSON_VERSION found)
-      else
-        AC_MSG_ERROR(system libbson must be upgraded to version >= 1.25.0)
-      fi
-    else
-      AC_MSG_ERROR(pkgconfig and libbson must be installed)
-    fi
-    PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_BSON_CFLAGS"
-    PHP_EVAL_LIBLINE($PHP_MONGODB_BSON_LIBS, MONGODB_SHARED_LIBADD)
-    AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
+    PKG_CHECK_MODULES([PHP_MONGODB_BSON], [libbson-1.0 >= 1.25.0], [
+      PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
+      PHP_MONGODB_BSON_VERSION_STRING="System ($PHP_MONGODB_BSON_VERSION)"
 
-    AC_MSG_CHECKING(for libmongoc)
-    if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongoc-1.0; then
-      if $PKG_CONFIG libmongoc-1.0 --atleast-version 1.25.0; then
-        PHP_MONGODB_MONGOC_CFLAGS=`$PKG_CONFIG libmongoc-1.0 --cflags`
-        PHP_MONGODB_MONGOC_LIBS=`$PKG_CONFIG libmongoc-1.0 --libs`
-        PHP_MONGODB_MONGOC_VERSION=`$PKG_CONFIG libmongoc-1.0 --modversion`
-        PHP_MONGODB_MONGOC_VERSION_STRING="System ($PHP_MONGODB_MONGOC_VERSION)"
-        AC_MSG_RESULT(version $PHP_MONGODB_MONGOC_VERSION found)
-      else
-        AC_MSG_ERROR(system libmongoc must be upgraded to version >= 1.25.0)
-      fi
-    else
-      AC_MSG_ERROR(pkgconfig and libmongoc must be installed)
-    fi
-    PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_MONGOC_CFLAGS"
-    PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOC_LIBS, MONGODB_SHARED_LIBADD)
-    AC_DEFINE(HAVE_SYSTEM_LIBMONGOC, 1, [Use system libmongoc])
+      PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_BSON_CFLAGS"
+      PHP_EVAL_LIBLINE($PHP_MONGODB_BSON_LIBS, MONGODB_SHARED_LIBADD)
+      AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
+    ],[
+      AC_MSG_ERROR([Could not find system library for libbson >= 1.25.0])
+    ])
+
+    PKG_CHECK_MODULES([PHP_MONGODB_MONGOC], [libmongoc-1.0 >= 1.25.0], [
+      PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
+      PHP_MONGODB_BSON_VERSION_STRING="System ($PHP_MONGODB_BSON_VERSION)"
+
+      PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_MONGOC_CFLAGS"
+      PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOC_LIBS, MONGODB_SHARED_LIBADD)
+      AC_DEFINE(HAVE_SYSTEM_LIBMONGOC, 1, [Use system libmongoc])
+    ],[
+      AC_MSG_ERROR(Could not find system library for libmongoc >= 1.25.0)
+    ])
 
     if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" != "no"; then
-      AC_MSG_CHECKING(for libmongocrypt)
+      PKG_CHECK_MODULES([PHP_MONGODB_MONGOCRYPT], [libmongocrypt >= 1.8.1], [
+        PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt --modversion`
+        PHP_MONGODB_MONGOCRYPT_VERSION_STRING="System ($PHP_MONGODB_MONGOCRYPT_VERSION)"
 
-      if test -x "$PKG_CONFIG" && $PKG_CONFIG --exists libmongocrypt; then
-        if $PKG_CONFIG libmongocrypt --atleast-version 1.8.1; then
-          PHP_MONGODB_MONGOCRYPT_CFLAGS=`$PKG_CONFIG libmongocrypt --cflags`
-          PHP_MONGODB_MONGOCRYPT_LIBS=`$PKG_CONFIG libmongocrypt --libs`
-          PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt --modversion`
-          PHP_MONGODB_MONGOCRYPT_VERSION_STRING="System ($PHP_MONGODB_MONGOCRYPT_VERSION)"
-          AC_MSG_RESULT(version $PHP_MONGODB_MONGOCRYPT_VERSION found)
-
-          PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_MONGOCRYPT_CFLAGS"
-          PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
-          AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
-        elif test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
-          AC_MSG_ERROR(system libmongocrypt must be upgraded to version >= 1.8.1)
-        else
-          AC_MSG_RESULT([found an older version, compiling without client-side encryption])
-        fi
-      else
-        if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" = "yes"; then
-          AC_MSG_ERROR(pkgconfig and libmongocrypt must be installed)
-        else
-          AC_MSG_RESULT([not found, compiling without client-side encryption])
-        fi
-      fi
+        PHP_MONGODB_CFLAGS="$PHP_MONGODB_CFLAGS $PHP_MONGODB_MONGOCRYPT_CFLAGS"
+        PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
+        AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
+      ],[
+        AC_MSG_ERROR(Could not find system library for libmongocrypt >= 1.8.1)
+      ])
     fi
   fi
 
@@ -350,7 +323,6 @@ if test "$PHP_MONGODB" != "no"; then
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_prototype.m4)
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_prototype_accept.m4)
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/ax_pthread.m4)
-    m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/m4/pkg.m4)
 
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/CheckCompiler.m4)
     m4_include(PHP_MONGODB_BASEDIR/scripts/autotools/CheckHost.m4)
