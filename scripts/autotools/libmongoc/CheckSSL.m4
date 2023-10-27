@@ -27,7 +27,6 @@ PHP_ARG_WITH([openssl-dir],
              [no])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
-  AC_MSG_NOTICE([checking whether OpenSSL is available])
   found_openssl="no"
 
   dnl OpenSSL 1.0.1 is required for libmongoc 1.24+ (CDRIVER-3562). This can be
@@ -78,15 +77,15 @@ AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
                       [$OPENSSL_LIBDIR_LDFLAG])
 
 
-    AC_MSG_NOTICE([checking whether OpenSSL >= 1.1.0 is available])
+    dnl Check whether OpenSSL >= 1.1.0 is available
     PHP_CHECK_LIBRARY([ssl],
                       [OPENSSL_init_ssl],
                       [have_ssl_lib="yes"],
                       [have_ssl_lib="no"],
                       [$OPENSSL_LIBDIR_LDFLAG -lcrypto])
 
+    dnl If necessary, check whether OpenSSL < 1.1.0 is available
     if test "$have_ssl_lib" = "no"; then
-        AC_MSG_NOTICE([checking whether OpenSSL < 1.1.0 is available])
         PHP_CHECK_LIBRARY([ssl],
                           [SSL_library_init],
                           [have_ssl_lib="yes"],
@@ -127,11 +126,10 @@ AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
 ])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "darwin" -o \( "$PHP_MONGODB_SSL" = "auto" -a "$os_darwin" = "yes" \)],[
-  AC_MSG_NOTICE([checking whether Darwin SSL is available])
-
   if test "$os_darwin" = "no"; then
     AC_MSG_ERROR([Darwin SSL is only supported on macOS])
   fi
+
   dnl PHP_FRAMEWORKS is only used for SAPI builds, so use MONGODB_SHARED_LIBADD for shared builds
   if test "$ext_shared" = "yes"; then
     MONGODB_SHARED_LIBADD="-framework Security -framework CoreFoundation $MONGODB_SHARED_LIBADD"
@@ -139,11 +137,11 @@ AS_IF([test "$PHP_MONGODB_SSL" = "darwin" -o \( "$PHP_MONGODB_SSL" = "auto" -a "
     PHP_ADD_FRAMEWORK([Security])
     PHP_ADD_FRAMEWORK([CoreFoundation])
   fi
+
   PHP_MONGODB_SSL="darwin"
 ])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "libressl" -o "$PHP_MONGODB_SSL" = "auto"],[
-  AC_MSG_NOTICE([checking whether LibreSSL is available])
   found_libressl="no"
 
   PKG_CHECK_MODULES([PHP_MONGODB_SSL],[libtls libcrypto],[
