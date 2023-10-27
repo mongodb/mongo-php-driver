@@ -30,7 +30,9 @@ AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
   AC_MSG_NOTICE([checking whether OpenSSL is available])
   found_openssl="no"
 
-  PKG_CHECK_MODULES([PHP_MONGODB_SSL],[openssl],[
+  dnl OpenSSL 1.0.1 is required for libmongoc 1.24+ (CDRIVER-3562). This can be
+  dnl enforced through pkg-config but not the PHP_CHECK_LIBRARY fallback.
+  PKG_CHECK_MODULES([PHP_MONGODB_SSL],[openssl >= 1.0.1],[
     PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS $PHP_MONGODB_SSL_CFLAGS"
     PHP_EVAL_LIBLINE([$PHP_MONGODB_SSL_LIBS],[MONGODB_SHARED_LIBADD])
     PHP_MONGODB_SSL="openssl"
