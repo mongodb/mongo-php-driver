@@ -49,3 +49,23 @@ dnl
 AC_DEFUN([PHP_MONGODB_ADD_BUILD_DIR],[
   PHP_ADD_BUILD_DIR(PHP_EXT_BUILDDIR(mongodb)[/][$1])
 ])
+
+dnl
+dnl PHP_MONGODB_VALIDATE_ARG(arg-name, valid-values)
+dnl
+dnl Checks that value of arg-name is in the space-delimited list of valid-values
+dnl and raises an error if not.
+dnl
+AC_DEFUN([PHP_MONGODB_VALIDATE_ARG], [
+  ac_php_mongodb_valid_arg="no"
+  for value in $2; do
+    if test "$value" = "$$1"; then
+      ac_php_mongodb_valid_arg="yes"
+      break
+    fi
+  done
+
+  if test "$ac_php_mongodb_valid_arg" = "no"; then
+    AC_MSG_ERROR([Expected $1 to be one of "$2", "$$1" given])
+  fi
+])

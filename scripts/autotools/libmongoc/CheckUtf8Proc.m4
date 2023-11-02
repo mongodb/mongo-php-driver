@@ -1,9 +1,10 @@
 PHP_ARG_WITH([mongodb-utf8proc],
-             [whether to use system or bundled utf8proc for SCRAM-SHA-256 SASLprep],
+             [whether to use bundled or system utf8proc for SCRAM-SHA-256 SASLprep],
              [AS_HELP_STRING([--with-mongodb-utf8proc=@<:@bundled/system@:>@],
-                             [MongoDB: Enable utf8proc for SCRAM-SHA-256 SASLprep [default=bundled]])],
+                             [MongoDB: Use bundled or system utf8proc for SCRAM-SHA-256 SASLprep [default=bundled]])],
              [bundled],
              [no])
+PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_UTF8PROC], [bundled system])
 
 found_utf8proc="no"
 bundled_utf8proc="no"

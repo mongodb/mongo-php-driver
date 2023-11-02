@@ -67,5 +67,17 @@ necessary to build a fully-functional MongoDB driver.
   </required>
  </dependencies>
  <providesextension>mongodb</providesextension>
- <extsrcrelease/>
+ <extsrcrelease>
+  <configureoption name="enable-mongodb-developer-flags"       prompt="Enable developer flags? (yes/no)"                                            default="no" />
+  <configureoption name="enable-mongodb-coverage"              prompt="Enable code coverage? (yes/no)"                                              default="no" />
+  <configureoption name="with-mongodb-system-libs"             prompt="Use system libraries for libbson, libmongoc, and libmongocrypt? (yes/no)"    default="no" />
+  <configureoption name="with-mongodb-client-side-encryption"  prompt="Enable client-side encryption? (auto/yes/no)"                                default="auto" />
+  <configureoption name="with-mongodb-snappy"                  prompt="Enable Snappy for compression? (auto/yes/no)"                                default="auto" />
+  <configureoption name="with-mongodb-zlib"                    prompt="Enable zlib for compression? (auto/system/bundled/no)"                       default="auto" />
+  <configureoption name="with-mongodb-zstd"                    prompt="Enable zstd for compression? (auto/yes/no)"                                  default="auto" />
+  <configureoption name="with-mongodb-sasl"                    prompt="Enable SASL for Kerberos authentication? (auto/cyrus/no)"                    default="auto" />
+  <configureoption name="with-mongodb-ssl"                     prompt="Enable crypto and TLS? (auto/openssl/libressl/darwin/no)"                    default="auto" />
+  <configureoption name="enable-mongodb-crypto-system-profile" prompt="Use system crypto profile (OpenSSL only)? (yes/no)"                          default="no" />
+  <configureoption name="with-mongodb-utf8proc"                prompt="Use bundled or system utf8proc for SCRAM-SHA-256 SASLprep? (bundled/system)" default="bundled" />
+ </extsrcrelease>
 </package>

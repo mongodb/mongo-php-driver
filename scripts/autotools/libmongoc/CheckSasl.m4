@@ -1,12 +1,18 @@
 PHP_ARG_WITH([mongodb-sasl],
              [whether to enable SASL for Kerberos authentication],
-             [AS_HELP_STRING([--with-mongodb-sasl=@<:@auto/no/cyrus@:>@],
+             [AS_HELP_STRING([--with-mongodb-sasl=@<:@auto/cyrus/no@:>@],
                              [MongoDB: Enable SASL for Kerberos authentication [default=auto]])],
              [auto],
              [no])
 
-dnl PHP_ARG_WITH without a value assigns "yes". Treat it like "auto" but required.
-AS_IF([test "$PHP_MONGODB_SASL" = "cyrus" -o "$PHP_MONGODB_SASL" = "auto" -o "$PHP_MONGODB_SASL" = "yes"],[
+dnl PHP_ARG_WITH without a value assigns "yes". Treat it like "cyrus" (required)
+if test "$PHP_MONGODB_SASL" = "yes"; then
+  PHP_MONGODB_SASL="cyrus"
+fi
+
+PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_SASL], [auto cyrus no])
+
+AS_IF([test "$PHP_MONGODB_SASL" = "auto" -o "$PHP_MONGODB_SASL" = "cyrus"],[
   found_cyrus="no"
 
   PKG_CHECK_MODULES([PHP_MONGODB_SASL],[libsasl2],[
@@ -39,31 +45,25 @@ AS_IF([test "$PHP_MONGODB_SASL" = "cyrus" -o "$PHP_MONGODB_SASL" = "auto" -o "$P
                       $MONGODB_SHARED_LIBADD)
   fi
 
-  if test \( "$PHP_MONGODB_SASL" = "cyrus" -o "$PHP_MONGODB_SASL" = "yes" \) -a "$found_cyrus" != "yes"; then
+  if test "$PHP_MONGODB_SASL" = "cyrus" -a "$found_cyrus" != "yes"; then
     AC_MSG_ERROR([Cyrus SASL libraries and development headers could not be found])
   fi
 ])
 
-AS_IF([test "$PHP_MONGODB_SASL" = "auto"],[
+if test "$PHP_MONGODB_SASL" = "auto"; then
   PHP_MONGODB_SASL="no"
-])
-
-dnl Warn for unsupported values (e.g. Cyrus SASL search path)
-if test ! \( "$PHP_MONGODB_SASL" = "cyrus" -o "$PHP_MONGODB_SASL" = "no" \); then
-  AC_MSG_WARN([unsupported --with-mongodb-sasl value: $PHP_MONGODB_SASL])
 fi
 
 AC_MSG_CHECKING([which SASL library to use])
 AC_MSG_RESULT([$PHP_MONGODB_SASL])
 
-dnl Disable Windows SSPI and GSSAPI
+dnl Disable Windows SSPI
 AC_SUBST(MONGOC_ENABLE_SASL_SSPI, 0)
-AC_SUBST(MONGOC_ENABLE_SASL_GSSAPI, 0)
 
 if test "$PHP_MONGODB_SASL" = "cyrus"; then
   AC_SUBST(MONGOC_ENABLE_SASL, 1)
   AC_SUBST(MONGOC_ENABLE_SASL_CYRUS, 1)
-  if test "x$have_sasl_client_done" = "xyes"; then
+  if test "$have_sasl_client_done" = "yes"; then
     AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 1)
   else
     AC_SUBST(MONGOC_HAVE_SASL_CLIENT_DONE, 0)

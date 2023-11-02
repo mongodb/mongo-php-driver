@@ -1,9 +1,23 @@
 PHP_ARG_WITH([mongodb-ssl],
              [whether to enable crypto and TLS],
-             [AS_HELP_STRING([--with-mongodb-ssl=@<:@auto/no/openssl/libressl/darwin@:>@],
+             [AS_HELP_STRING([--with-mongodb-ssl=@<:@auto/openssl/libressl/darwin/no@:>@],
                              [MongoDB: Enable TLS connections and SCRAM-SHA-1 authentication [default=auto]])],
              [auto],
              [no])
+
+if test "$PHP_MONGODB_SSL" = "auto" -o "$PHP_MONGODB_SSL" = "no"; then
+  crypto_required="no"
+else
+  crypto_required="yes"
+
+  dnl PHP_ARG_WITH without a value assigns "yes". Treat it like "auto" but
+  dnl require a crypto library.
+  if test "$PHP_MONGODB_SSL" = "yes"; then
+    PHP_MONGODB_SSL="auto"
+  fi
+fi
+
+PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_SSL], [auto openssl libressl darwin no])
 
 PHP_ARG_WITH([openssl-dir],
              [deprecated option for OpenSSL library path],
@@ -12,17 +26,12 @@ PHP_ARG_WITH([openssl-dir],
              [auto],
              [no])
 
-dnl PHP_ARG_WITH without a value assigns "yes". Treat it like "auto" but required.
-AS_IF([test "$PHP_MONGODB_SSL" = "yes"],[
-  crypto_required="yes"
-  PHP_MONGODB_SSL="auto"
-])
-
 AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
-  AC_MSG_NOTICE([checking whether OpenSSL is available])
   found_openssl="no"
 
-  PKG_CHECK_MODULES([PHP_MONGODB_SSL],[openssl],[
+  dnl OpenSSL 1.0.1 is required for libmongoc 1.24+ (CDRIVER-3562). This can be
+  dnl enforced through pkg-config but not the PHP_CHECK_LIBRARY fallback.
+  PKG_CHECK_MODULES([PHP_MONGODB_SSL],[openssl >= 1.0.1],[
     PHP_MONGODB_BUNDLED_CFLAGS="$PHP_MONGODB_BUNDLED_CFLAGS $PHP_MONGODB_SSL_CFLAGS"
     PHP_EVAL_LIBLINE([$PHP_MONGODB_SSL_LIBS],[MONGODB_SHARED_LIBADD])
     PHP_MONGODB_SSL="openssl"
@@ -68,15 +77,15 @@ AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
                       [$OPENSSL_LIBDIR_LDFLAG])
 
 
-    AC_MSG_NOTICE([checking whether OpenSSL >= 1.1.0 is available])
+    dnl Check whether OpenSSL >= 1.1.0 is available
     PHP_CHECK_LIBRARY([ssl],
                       [OPENSSL_init_ssl],
                       [have_ssl_lib="yes"],
                       [have_ssl_lib="no"],
                       [$OPENSSL_LIBDIR_LDFLAG -lcrypto])
 
+    dnl If necessary, check whether OpenSSL < 1.1.0 is available
     if test "$have_ssl_lib" = "no"; then
-        AC_MSG_NOTICE([checking whether OpenSSL < 1.1.0 is available])
         PHP_CHECK_LIBRARY([ssl],
                           [SSL_library_init],
                           [have_ssl_lib="yes"],
@@ -117,11 +126,10 @@ AS_IF([test "$PHP_MONGODB_SSL" = "openssl" -o "$PHP_MONGODB_SSL" = "auto"],[
 ])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "darwin" -o \( "$PHP_MONGODB_SSL" = "auto" -a "$os_darwin" = "yes" \)],[
-  AC_MSG_NOTICE([checking whether Darwin SSL is available])
-
   if test "$os_darwin" = "no"; then
     AC_MSG_ERROR([Darwin SSL is only supported on macOS])
   fi
+
   dnl PHP_FRAMEWORKS is only used for SAPI builds, so use MONGODB_SHARED_LIBADD for shared builds
   if test "$ext_shared" = "yes"; then
     MONGODB_SHARED_LIBADD="-framework Security -framework CoreFoundation $MONGODB_SHARED_LIBADD"
@@ -129,11 +137,11 @@ AS_IF([test "$PHP_MONGODB_SSL" = "darwin" -o \( "$PHP_MONGODB_SSL" = "auto" -a "
     PHP_ADD_FRAMEWORK([Security])
     PHP_ADD_FRAMEWORK([CoreFoundation])
   fi
+
   PHP_MONGODB_SSL="darwin"
 ])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "libressl" -o "$PHP_MONGODB_SSL" = "auto"],[
-  AC_MSG_NOTICE([checking whether LibreSSL is available])
   found_libressl="no"
 
   PKG_CHECK_MODULES([PHP_MONGODB_SSL],[libtls libcrypto],[
@@ -166,7 +174,7 @@ AS_IF([test "$PHP_MONGODB_SSL" = "libressl" -o "$PHP_MONGODB_SSL" = "auto"],[
 ])
 
 AS_IF([test "$PHP_MONGODB_SSL" = "auto"],[
-  if test "x$crypto_required" = "xyes"; then
+  if test "$crypto_required" = "yes"; then
     AC_MSG_ERROR([crypto and TLS libraries not found])
   fi
   PHP_MONGODB_SSL="no"
@@ -217,7 +225,7 @@ else
   AC_SUBST(MONGOC_ENABLE_CRYPTO_COMMON_CRYPTO, 0)
 fi
 
-if test "x$have_ASN1_STRING_get0_data" = "xyes"; then
+if test "$have_ASN1_STRING_get0_data" = "yes"; then
   AC_SUBST(MONGOC_HAVE_ASN1_STRING_GET0_DATA, 1)
 else
   AC_SUBST(MONGOC_HAVE_ASN1_STRING_GET0_DATA, 0)
@@ -229,6 +237,7 @@ PHP_ARG_ENABLE([mongodb-crypto-system-profile],
                                [MongoDB: Use system crypto profile (OpenSSL only) [default=no]])],
                [no],
                [no])
+PHP_MONGODB_VALIDATE_ARG([PHP_MONGODB_CRYPTO_SYSTEM_PROFILE], [yes no])
 
 PHP_ARG_WITH([system-ciphers],
              [deprecated option for whether to use system crypto profile],
@@ -236,6 +245,16 @@ PHP_ARG_WITH([system-ciphers],
                             [MongoDB: whether to use system crypto profile (deprecated for --enable-mongodb-crypto-system-profile) [default=no]]),
              [no],
              [no])
+
+dnl Do not validate PHP_SYSTEM_CIPHERS for static builds, since it is also used
+dnl by the OpenSSL extension, which checks for values other than "no".
+if test "$ext_shared" = "yes"; then
+  PHP_MONGODB_VALIDATE_ARG([PHP_SYSTEM_CIPHERS], [yes no])
+
+  if test "$PHP_SYSTEM_CIPHERS" != "no"; then
+    AC_MSG_WARN([Using --enable-system-ciphers is deprecated and will be removed in a future version. Please use --enable-mongodb-crypto-system-profile instead])
+  fi
+fi
 
 dnl Also consider the deprecated --enable-system-ciphers option
 if test "$PHP_MONGODB_CRYPTO_SYSTEM_PROFILE" = "yes" -o "$PHP_SYSTEM_CIPHERS" = "yes"; then

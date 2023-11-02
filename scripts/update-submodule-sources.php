@@ -2,6 +2,11 @@
 
 $cmd = "find %s -maxdepth 1 -name '*.c' -print0 | cut -sz -d / -f %d- | sort -dz | tr '\\000' ' '";
 
+// On macOS, use gcut from the coreutils brew package instead of cut
+if (PHP_OS_FAMILY === 'Darwin') {
+    $cmd = str_replace('cut', 'gcut', $cmd);
+}
+
 $vars = [
     'PHP_MONGODB_COMMON_SOURCES' => 'src/libmongoc/src/common',
     'PHP_MONGODB_KMS_MESSAGE_SOURCES' => 'src/libmongoc/src/kms-message/src',
@@ -15,6 +20,7 @@ $vars = [
     'PHP_MONGODB_MONGOCRYPT_OS_POSIX_SOURCES' => 'src/libmongocrypt/src/os_posix',
     'PHP_MONGODB_MONGOCRYPT_OS_WIN_SOURCES' => 'src/libmongocrypt/src/os_win',
     'PHP_MONGODB_MONGOCRYPT_KMS_MESSAGE_SOURCES' => 'src/libmongocrypt/kms-message/src',
+    // Note: src/libmongocrypt/src/mlib does not contain source files (as of libmongocrypt 1.3.2)
 ];
 
 $patterns = [];
