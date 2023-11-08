@@ -33,7 +33,7 @@ task_groups:
 
   - name: "build-php-libmongoc"
     # Keep this in sync with the actual number of libmongoc builds (typically 3) defined in _template-build-libmongoc.yml
-    max_hosts: 1
+    max_hosts: 3
     setup_task: *build_setup
     setup_task_can_fail_task: true
     setup_task_timeout_secs: 1800

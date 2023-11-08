@@ -97,31 +97,30 @@ buildvariants:
       - ".replicaset .local .7.0 .auth"
 
   # Variants with different libmongoc
-  # TODO: Enable the following two builds once libmongoc 1.25.0 is released
-#  - name: test-debian11-php82-local-libmongoc-lowest-supported
-#    display_name: "Test: Debian 11, PHP 8.2, libmongoc lowest"
-#    tags: ["test", "libmongoc", "debian", "x64"]
-#    run_on: debian11-small
-#    expansions:
-#      FETCH_BUILD_VARIANT: "build-debian11"
-#      FETCH_BUILD_TASK: "build-php-8.2-libmongoc-lowest-supported"
-#    depends_on:
-#      - variant: "build-debian11"
-#        name: "build-php-8.2-libmongoc-lowest-supported"
-#    tasks:
-#      - ".replicaset .local .7.0 .auth"
-#  - name: test-debian11-php82-local-libmongoc-next-stable
-#    display_name: "Test: Debian 11, PHP 8.2, libmongoc next stable"
-#    tags: ["test", "libmongoc", "debian", "x64"]
-#    run_on: debian11-small
-#    expansions:
-#      FETCH_BUILD_VARIANT: "build-debian11"
-#      FETCH_BUILD_TASK: "build-php-8.2-libmongoc-next-stable"
-#    depends_on:
-#      - variant: "build-debian11"
-#        name: "build-php-8.2-libmongoc-next-stable"
-#    tasks:
-#      - ".replicaset .local .7.0 .auth"
+  - name: test-debian11-php82-local-libmongoc-lowest-supported
+    display_name: "Test: Debian 11, PHP 8.2, libmongoc lowest"
+    tags: ["test", "libmongoc", "debian", "x64"]
+    run_on: debian11-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-debian11"
+      FETCH_BUILD_TASK: "build-php-8.2-libmongoc-lowest-supported"
+    depends_on:
+      - variant: "build-debian11"
+        name: "build-php-8.2-libmongoc-lowest-supported"
+    tasks:
+      - ".replicaset .local .7.0 .auth"
+  - name: test-debian11-php82-local-libmongoc-next-stable
+    display_name: "Test: Debian 11, PHP 8.2, libmongoc next stable"
+    tags: ["test", "libmongoc", "debian", "x64"]
+    run_on: debian11-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-debian11"
+      FETCH_BUILD_TASK: "build-php-8.2-libmongoc-next-stable"
+    depends_on:
+      - variant: "build-debian11"
+        name: "build-php-8.2-libmongoc-next-stable"
+    tasks:
+      - ".replicaset .local .7.0 .auth"
   - name: test-debian11-php82-local-libmongoc-latest
     tags: ["test", "libmongoc", "debian", "x64"]
     display_name: "Test: Debian 11, PHP 8.2, libmongoc latest"
