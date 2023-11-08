@@ -5,24 +5,23 @@
 # where the "max_hosts" setting must be set to the number of enabled tasks.
 # Last but not least, make sure the corresponding test variants are enabled in .evergreen/config/test-variants.yml
 tasks:
-  # TODO: Enable the following two builds once libmongoc 1.25.0 is released
-#  - name: "build-php-%phpVersion%-libmongoc-lowest-supported"
-#    tags: ["build-libmongoc", "php%phpVersion%"]
-#    commands:
-#      - func: "compile driver"
-#        vars:
-#          PHP_VERSION: "%phpVersion%"
-#          LIBMONGOC_VERSION: "1.25.0"
-#      - func: "upload build"
+  - name: "build-php-%phpVersion%-libmongoc-lowest-supported"
+    tags: ["build-libmongoc", "php%phpVersion%"]
+    commands:
+      - func: "compile driver"
+        vars:
+          PHP_VERSION: "%phpVersion%"
+          LIBMONGOC_VERSION: "1.25.1"
+      - func: "upload build"
 
-#  - name: "build-php-%phpVersion%-libmongoc-next-stable"
-#    tags: ["build-libmongoc", "php%phpVersion%"]
-#    commands:
-#      - func: "compile driver"
-#        vars:
-#          PHP_VERSION: "%phpVersion%"
-#          LIBMONGOC_VERSION: "r1.25"
-#      - func: "upload build"
+  - name: "build-php-%phpVersion%-libmongoc-next-stable"
+    tags: ["build-libmongoc", "php%phpVersion%"]
+    commands:
+      - func: "compile driver"
+        vars:
+          PHP_VERSION: "%phpVersion%"
+          LIBMONGOC_VERSION: "r1.25"
+      - func: "upload build"
 
   - name: "build-php-%phpVersion%-libmongoc-latest"
     tags: ["build-libmongoc", "php%phpVersion%"]
