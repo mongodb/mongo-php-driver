@@ -109,6 +109,7 @@ buildvariants:
         name: "build-php-8.2-libmongoc-lowest-supported"
     tasks:
       - ".replicaset .local .7.0 .auth"
+
   - name: test-debian11-php82-local-libmongoc-next-stable
     display_name: "Test: Debian 11, PHP 8.2, libmongoc next stable"
     tags: ["test", "libmongoc", "debian", "x64"]
@@ -121,6 +122,7 @@ buildvariants:
         name: "build-php-8.2-libmongoc-next-stable"
     tasks:
       - ".replicaset .local .7.0 .auth"
+
   - name: test-debian11-php82-local-libmongoc-latest
     tags: ["test", "libmongoc", "debian", "x64"]
     display_name: "Test: Debian 11, PHP 8.2, libmongoc latest"
