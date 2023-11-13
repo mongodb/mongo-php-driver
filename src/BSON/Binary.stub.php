@@ -59,6 +59,12 @@ final class Binary implements BinaryInterface, \JsonSerializable, Type, \Seriali
 
     /**
      * @var int
+     * @cvalue BSON_SUBTYPE_SENSITIVE
+     */
+    public const TYPE_SENSITIVE = UNKNOWN;
+
+    /**
+     * @var int
      * @cvalue BSON_SUBTYPE_USER
      */
     public const TYPE_USER_DEFINED = UNKNOWN;

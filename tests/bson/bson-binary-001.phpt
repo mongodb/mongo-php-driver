@@ -1,5 +1,5 @@
 --TEST--
-MongoDB\BSON\Binary #001
+MongoDB\BSON\Binary construction from various types
 --FILE--
 <?php
 
@@ -14,6 +14,7 @@ $types = array(
     MongoDB\BSON\Binary::TYPE_MD5,
     MongoDB\BSON\Binary::TYPE_ENCRYPTED,
     MongoDB\BSON\Binary::TYPE_COLUMN,
+    MongoDB\BSON\Binary::TYPE_SENSITIVE,
     MongoDB\BSON\Binary::TYPE_USER_DEFINED,
     MongoDB\BSON\Binary::TYPE_USER_DEFINED+5,
 );
@@ -22,7 +23,7 @@ foreach($types as $type) {
     // Use 16-byte data to satisfy UUID requirements
     $binary = new MongoDB\BSON\Binary('randomBinaryData', $type);
     var_dump($binary->getData() === 'randomBinaryData');
-    var_dump($binary->getType() == $type);
+    var_dump($binary->getType() === $type);
     $tests[] = array("binary" => $binary);
 }
 
@@ -38,6 +39,8 @@ foreach($tests as $n => $test) {
 ===DONE===
 <?php exit(0); ?>
 --EXPECT--
+bool(true)
+bool(true)
 bool(true)
 bool(true)
 bool(true)
@@ -90,11 +93,15 @@ Test#7 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "07" } }
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "07" } }"
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "07" } }"
 bool(true)
-Test#8 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "80" } }
+Test#8 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "08" } }
+string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "08" } }"
+string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "08" } }"
+bool(true)
+Test#9 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "80" } }
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "80" } }"
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "80" } }"
 bool(true)
-Test#9 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "85" } }
+Test#10 { "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "85" } }
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "85" } }"
 string(73) "{ "binary" : { "$binary" : "cmFuZG9tQmluYXJ5RGF0YQ==", "$type" : "85" } }"
 bool(true)
