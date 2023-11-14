@@ -1,1 +1,3 @@
 .evergreen/config/generated/** linguist-generated=true
+src/**/*_arginfo.h linguist-generated=true
+tests/bson-corpus/*.phpt linguist-generated=true
