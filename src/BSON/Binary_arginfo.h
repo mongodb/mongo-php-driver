@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3ecb4933da21ef2b58ca95d74e2aac8d26ca6dc6 */
+ * Stub hash: 5119314f018eb048882d59bd952648336a8aa5d2 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Binary___construct, 0, 0, 1)
 	ZEND_ARG_TYPE_INFO(0, data, IS_STRING, 0)
@@ -152,6 +152,12 @@ static zend_class_entry *register_class_MongoDB_BSON_Binary(zend_class_entry *cl
 	zend_string *const_TYPE_COLUMN_name = zend_string_init_interned("TYPE_COLUMN", sizeof("TYPE_COLUMN") - 1, 1);
 	zend_declare_class_constant_ex(class_entry, const_TYPE_COLUMN_name, &const_TYPE_COLUMN_value, ZEND_ACC_PUBLIC, NULL);
 	zend_string_release(const_TYPE_COLUMN_name);
+
+	zval const_TYPE_SENSITIVE_value;
+	ZVAL_LONG(&const_TYPE_SENSITIVE_value, BSON_SUBTYPE_SENSITIVE);
+	zend_string *const_TYPE_SENSITIVE_name = zend_string_init_interned("TYPE_SENSITIVE", sizeof("TYPE_SENSITIVE") - 1, 1);
+	zend_declare_class_constant_ex(class_entry, const_TYPE_SENSITIVE_name, &const_TYPE_SENSITIVE_value, ZEND_ACC_PUBLIC, NULL);
+	zend_string_release(const_TYPE_SENSITIVE_name);
 
 	zval const_TYPE_USER_DEFINED_value;
 	ZVAL_LONG(&const_TYPE_USER_DEFINED_value, BSON_SUBTYPE_USER);
