@@ -22,7 +22,7 @@ jobs:
       - name: Download DLL and PDB files
         uses: dawidd6/action-download-artifact@v2
         with:
-          workflow: tests.yml
+          workflow: windows-tests.yml
           workflow_conclusion: success
           commit: ${{ github.sha }}
           # Note: keep this in sync with the uploaded artifact name in windows-tests.yml
