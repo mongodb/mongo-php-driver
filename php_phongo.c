@@ -441,6 +441,12 @@ PHP_MINFO_FUNCTION(mongodb) /* {{{ */
 	php_info_print_table_row(2, "libmongoc SASL", "disabled");
 #endif
 
+#ifdef MONGOC_ENABLE_SRV
+	php_info_print_table_row(2, "libmongoc SRV", "enabled");
+#else
+	php_info_print_table_row(2, "libmongoc SRV", "disabled");
+#endif
+
 #ifdef MONGOC_ENABLE_COMPRESSION
 	php_info_print_table_row(2, "libmongoc compression", "enabled");
 #ifdef MONGOC_ENABLE_COMPRESSION_SNAPPY
