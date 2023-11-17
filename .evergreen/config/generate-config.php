@@ -26,6 +26,11 @@ $supportedMongoDBVersions = [
 $libmongocBuildPhpVersions = [ max($supportedPhpVersions) ];
 
 // Server versions
+$authAwsServerVersions = array_filter(
+    $supportedMongoDBVersions,
+    // MONGODB-AWS supports MongoDB 4.4+
+    fn (string $version): bool => in_array($version, ['latest', 'rapid']) || version_compare($version, '4.4', '>='),
+);
 $localServerVersions = $supportedMongoDBVersions;
 $loadBalancedServerVersions = array_filter(
     $supportedMongoDBVersions,
@@ -55,6 +60,7 @@ $allFiles[] = generateConfigs('build', 'phpVersion', 'build-php.yml', 'build-php
 $allFiles[] = generateConfigs('build', 'phpVersion', 'build-libmongoc.yml', 'build-libmongoc-%s', $libmongocBuildPhpVersions);
 
 // Test tasks
+$allFiles[] = generateConfigs('test', 'mongodbVersion', 'auth-aws.yml', 'auth-aws-%s', $authAwsServerVersions);
 $allFiles[] = generateConfigs('test', 'mongodbVersion', 'local.yml', 'local-%s', $localServerVersions);
 $allFiles[] = generateConfigs('test', 'mongodbVersion', 'load-balanced.yml', 'load-balanced-%s', $loadBalancedServerVersions);
 $allFiles[] = generateConfigs('test', 'mongodbVersion', 'ocsp.yml', 'ocsp-%s', $ocspServerVersions);

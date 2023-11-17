@@ -1,0 +1,29 @@
+# This file is generated automatically - please edit the "templates/test/auth-aws.yml" template file instead.
+tasks:
+  - name: "auth-aws-assume_role_with_web_identity-with_role_session_name-6.0"
+    tags: ["auth-aws", "6.0"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "6.0"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "auth-aws.json"
+      - func: "get aws auth secrets"
+      - func: "run aws auth test"
+        vars:
+          AWS_AUTH_TEST: "web-identity"
+          AWS_ROLE_SESSION_NAME: "test"
+
+  - name: "auth-aws-assume_role_with_web_identity-without_role_session_name-6.0"
+    tags: ["auth-aws", "6.0"]
+    commands:
+      - func: "bootstrap mongo-orchestration"
+        vars:
+          MONGODB_VERSION: "6.0"
+          TOPOLOGY: "server"
+          ORCHESTRATION_FILE: "auth-aws.json"
+      - func: "get aws auth secrets"
+      - func: "run aws auth test"
+        vars:
+          AWS_AUTH_TEST: "web-identity"
+          AWS_ROLE_SESSION_NAME: ""

@@ -50,6 +50,12 @@ include:
   - filename: .evergreen/config/generated/build/build-php-8.0.yml
   - filename: .evergreen/config/generated/build/build-php-7.4.yml
   - filename: .evergreen/config/generated/build/build-libmongoc-8.2.yml
+  - filename: .evergreen/config/generated/test/auth-aws-latest.yml
+  - filename: .evergreen/config/generated/test/auth-aws-rapid.yml
+  - filename: .evergreen/config/generated/test/auth-aws-7.0.yml
+  - filename: .evergreen/config/generated/test/auth-aws-6.0.yml
+  - filename: .evergreen/config/generated/test/auth-aws-5.0.yml
+  - filename: .evergreen/config/generated/test/auth-aws-4.4.yml
   - filename: .evergreen/config/generated/test/local-latest.yml
   - filename: .evergreen/config/generated/test/local-rapid.yml
   - filename: .evergreen/config/generated/test/local-7.0.yml

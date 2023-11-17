@@ -135,3 +135,37 @@ buildvariants:
         name: "build-php-8.2-libmongoc-latest"
     tasks:
       - ".replicaset .local .7.0 .auth"
+
+  # MONGODB-AWS tests require Ubuntu 20.04. Use the lowest PHP version
+  - name: test-ubuntu2004-php74
+    tags: ["test", "ubuntu", "x64"]
+    display_name: "Test: Ubuntu 20.04, PHP 7.4"
+    run_on: ubuntu2004-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-ubuntu2004"
+      FETCH_BUILD_TASK: "build-php-7.4"
+    depends_on:
+      - variant: "build-ubuntu2004"
+        name: "build-php-7.4"
+    tasks:
+      # Remember to add new major versions here as they are released
+      - ".auth-aws"
+    display_tasks:
+      - name: "test-auth-aws-latest"
+        execution_tasks:
+          - ".auth-aws .latest"
+      - name: "test-auth-aws-rapid"
+        execution_tasks:
+          - ".auth-aws .rapid"
+      - name: "test-auth-aws-7.0"
+        execution_tasks:
+          - ".auth-aws .7.0"
+      - name: "test-auth-aws-6.0"
+        execution_tasks:
+          - ".auth-aws .6.0"
+      - name: "test-auth-aws-5.0"
+        execution_tasks:
+          - ".auth-aws .5.0"
+      - name: "test-auth-aws-4.4"
+        execution_tasks:
+          - ".auth-aws .4.4"

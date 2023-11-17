@@ -218,6 +218,33 @@ functions:
           TESTS=${TESTS} \
           sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
 
+  "get aws auth secrets":
+    - command: ec2.assume_role
+      params:
+        role_arn: ${aws_test_secrets_role}
+    - command: shell.exec
+      type: test
+      params:
+        add_expansions_to_env: true
+        working_dir: "src"
+        script: |
+          ${PREPARE_SHELL}
+          cd ${DRIVERS_TOOLS}/.evergreen/auth_aws
+          ./setup_secrets.sh drivers/aws_auth
+
+  "run aws auth test":
+    - command: shell.exec
+      type: test
+      params:
+        working_dir: "src"
+        shell: "bash"
+        script: |
+          ${PREPARE_SHELL}
+          bash ${DRIVERS_TOOLS}/.evergreen/auth_aws/aws_setup.sh ${AWS_AUTH_TEST}
+
+          TESTS="tests/auth-success.phpt" \
+          sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
+
   "cleanup":
     - command: shell.exec
       params:
