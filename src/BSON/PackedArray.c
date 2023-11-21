@@ -17,6 +17,7 @@
 #include <php.h>
 #include <ext/standard/base64.h>
 #include <Zend/zend_interfaces.h>
+#include <Zend/zend_exceptions.h>
 #include <Zend/zend_operators.h>
 #include <ext/standard/php_var.h>
 #include <zend_smart_str.h>
@@ -477,13 +478,23 @@ zval* php_phongo_packedarray_read_dimension(phongo_compat_object_handler_type* o
 	intern = Z_OBJ_PACKEDARRAY(PHONGO_COMPAT_GET_OBJ(object));
 
 	if (Z_TYPE_P(offset) != IS_LONG) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index of type \"%s\" in BSON array", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
-		return &EG(uninitialized_zval);
+		if (type != BP_VAR_IS) {
+			phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index of type \"%s\" in BSON array", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
+			return &EG(uninitialized_zval);
+		}
+
+		ZVAL_NULL(rv);
+		return rv;
 	}
 
 	if (!php_phongo_packedarray_get(intern, Z_LVAL_P(offset), rv)) {
-		// Exception already thrown
-		return &EG(uninitialized_zval);
+		if (type != BP_VAR_IS) {
+			// Exception already thrown
+			return &EG(uninitialized_zval);
+		}
+
+		zend_clear_exception();
+		ZVAL_NULL(rv);
 	}
 
 	return rv;

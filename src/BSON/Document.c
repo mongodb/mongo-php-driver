@@ -16,6 +16,7 @@
 
 #include <php.h>
 #include <ext/standard/base64.h>
+#include <Zend/zend_exceptions.h>
 #include <Zend/zend_interfaces.h>
 #include <Zend/zend_operators.h>
 #include <ext/standard/php_var.h>
@@ -553,8 +554,14 @@ zval* php_phongo_document_read_property(phongo_compat_object_handler_type* objec
 	PHONGO_COMPAT_PROPERTY_ACCESSOR_NAME_TO_STRING(member, key, key_len);
 
 	if (!php_phongo_document_get(intern, key, key_len, rv)) {
-		// Exception already thrown
-		return &EG(uninitialized_zval);
+		if (type != BP_VAR_IS) {
+			// Exception already thrown
+			return &EG(uninitialized_zval);
+		}
+
+		// php_phongo_document_get will throw. If we're invoked with a BP_VAR_IS type, clear the exception and return a null value
+		zend_clear_exception();
+		ZVAL_NULL(rv);
 	}
 
 	return rv;
@@ -591,13 +598,25 @@ zval* php_phongo_document_read_dimension(phongo_compat_object_handler_type* obje
 	intern = Z_OBJ_DOCUMENT(PHONGO_COMPAT_GET_OBJ(object));
 
 	if (Z_TYPE_P(offset) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
-		return &EG(uninitialized_zval);
+		if (type != BP_VAR_IS) {
+			phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
+			return &EG(uninitialized_zval);
+		}
+
+		ZVAL_NULL(rv);
+
+		return rv;
 	}
 
 	if (!php_phongo_document_get(intern, Z_STRVAL_P(offset), Z_STRLEN_P(offset), rv)) {
-		// Exception already thrown
-		return &EG(uninitialized_zval);
+		if (type != BP_VAR_IS) {
+			// Exception already thrown
+			return &EG(uninitialized_zval);
+		}
+
+		// php_phongo_document_get will throw. If we're invoked with a BP_VAR_IS type, clear the exception and return a null value
+		zend_clear_exception();
+		ZVAL_NULL(rv);
 	}
 
 	return rv;
