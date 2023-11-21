@@ -33,6 +33,7 @@ buildvariants:
       - name: "test-ocsp-6.0"
         execution_tasks:
           - ".ocsp .6.0"
+
   - name: test-debian92-php82-local
     tags: ["test", "debian", "x64"]
     display_name: "Test: Debian 9.2, PHP 8.2"
@@ -71,6 +72,7 @@ buildvariants:
         name: "build-php-8.1"
     tasks:
       - ".replicaset .local .7.0 .auth"
+
   - name: test-debian11-php80-local
     tags: ["test", "debian", "x64"]
     display_name: "Test: Debian 11, PHP 8.0"
@@ -83,6 +85,7 @@ buildvariants:
         name: "build-php-8.0"
     tasks:
       - ".replicaset .local .7.0 .auth"
+
   - name: test-debian11-php74-local
     tags: ["test", "debian", "x64"]
     display_name: "Test: Debian 11, PHP 7.4"
