@@ -118,7 +118,7 @@ static bool seek_iter_to_index(bson_iter_t* iter, zend_long index)
 	return true;
 }
 
-static bool php_phongo_packedarray_get(php_phongo_packedarray_t* intern, zend_long index, zval* return_value)
+static bool php_phongo_packedarray_get(php_phongo_packedarray_t* intern, zend_long index, zval* return_value, bool null_if_missing)
 {
 	bson_iter_t iter;
 
@@ -128,6 +128,11 @@ static bool php_phongo_packedarray_get(php_phongo_packedarray_t* intern, zend_lo
 	}
 
 	if (!seek_iter_to_index(&iter, index)) {
+		if (null_if_missing) {
+			ZVAL_NULL(return_value);
+			return true;
+		}
+
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index \"%d\" in BSON array", index);
 		return false;
 	}
@@ -148,7 +153,7 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, get)
 
 	intern = Z_PACKEDARRAY_OBJ_P(getThis());
 
-	if (!php_phongo_packedarray_get(intern, index, return_value)) {
+	if (!php_phongo_packedarray_get(intern, index, return_value, false)) {
 		// Exception already thrown
 		RETURN_NULL();
 	}
@@ -255,7 +260,7 @@ static PHP_METHOD(MongoDB_BSON_PackedArray, offsetGet)
 	}
 
 	// May throw, in which case we do nothing
-	php_phongo_packedarray_get(intern, Z_LVAL_P(key), return_value);
+	php_phongo_packedarray_get(intern, Z_LVAL_P(key), return_value, false);
 }
 
 static PHP_METHOD(MongoDB_BSON_PackedArray, offsetSet)
@@ -478,23 +483,18 @@ zval* php_phongo_packedarray_read_dimension(phongo_compat_object_handler_type* o
 	intern = Z_OBJ_PACKEDARRAY(PHONGO_COMPAT_GET_OBJ(object));
 
 	if (Z_TYPE_P(offset) != IS_LONG) {
-		if (type != BP_VAR_IS) {
-			phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index of type \"%s\" in BSON array", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
-			return &EG(uninitialized_zval);
+		if (type == BP_VAR_IS) {
+			ZVAL_NULL(rv);
+			return rv;
 		}
 
-		ZVAL_NULL(rv);
-		return rv;
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find index of type \"%s\" in BSON array", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
+		return &EG(uninitialized_zval);
 	}
 
-	if (!php_phongo_packedarray_get(intern, Z_LVAL_P(offset), rv)) {
-		if (type != BP_VAR_IS) {
-			// Exception already thrown
-			return &EG(uninitialized_zval);
-		}
-
-		zend_clear_exception();
-		ZVAL_NULL(rv);
+	if (!php_phongo_packedarray_get(intern, Z_LVAL_P(offset), rv, type == BP_VAR_IS)) {
+		// Exception already thrown
+		return &EG(uninitialized_zval);
 	}
 
 	return rv;

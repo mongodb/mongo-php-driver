@@ -168,7 +168,7 @@ static PHP_METHOD(MongoDB_BSON_Document, fromPHP)
 	RETURN_ZVAL(&zv, 1, 1);
 }
 
-static bool php_phongo_document_get(php_phongo_document_t* intern, char* key, size_t key_len, zval* return_value)
+static bool php_phongo_document_get(php_phongo_document_t* intern, char* key, size_t key_len, zval* return_value, bool null_if_missing)
 {
 	bson_iter_t iter;
 
@@ -178,6 +178,11 @@ static bool php_phongo_document_get(php_phongo_document_t* intern, char* key, si
 	}
 
 	if (!bson_iter_find_w_len(&iter, key, key_len)) {
+		if (null_if_missing) {
+			ZVAL_NULL(return_value);
+			return true;
+		}
+
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key \"%s\" in BSON document", key);
 		return false;
 	}
@@ -199,7 +204,7 @@ static PHP_METHOD(MongoDB_BSON_Document, get)
 
 	intern = Z_DOCUMENT_OBJ_P(getThis());
 
-	if (!php_phongo_document_get(intern, key, key_len, return_value)) {
+	if (!php_phongo_document_get(intern, key, key_len, return_value, false)) {
 		// Exception already thrown
 		RETURN_NULL();
 	}
@@ -328,7 +333,7 @@ static PHP_METHOD(MongoDB_BSON_Document, offsetGet)
 	}
 
 	// May throw, in which case we do nothing
-	php_phongo_document_get(intern, Z_STRVAL_P(offset), Z_STRLEN_P(offset), return_value);
+	php_phongo_document_get(intern, Z_STRVAL_P(offset), Z_STRLEN_P(offset), return_value, false);
 }
 
 static PHP_METHOD(MongoDB_BSON_Document, offsetSet)
@@ -553,15 +558,9 @@ zval* php_phongo_document_read_property(phongo_compat_object_handler_type* objec
 
 	PHONGO_COMPAT_PROPERTY_ACCESSOR_NAME_TO_STRING(member, key, key_len);
 
-	if (!php_phongo_document_get(intern, key, key_len, rv)) {
-		if (type != BP_VAR_IS) {
-			// Exception already thrown
-			return &EG(uninitialized_zval);
-		}
-
-		// php_phongo_document_get will throw. If we're invoked with a BP_VAR_IS type, clear the exception and return a null value
-		zend_clear_exception();
-		ZVAL_NULL(rv);
+	if (!php_phongo_document_get(intern, key, key_len, rv, type == BP_VAR_IS)) {
+		// Exception already thrown
+		return &EG(uninitialized_zval);
 	}
 
 	return rv;
@@ -598,25 +597,18 @@ zval* php_phongo_document_read_dimension(phongo_compat_object_handler_type* obje
 	intern = Z_OBJ_DOCUMENT(PHONGO_COMPAT_GET_OBJ(object));
 
 	if (Z_TYPE_P(offset) != IS_STRING) {
-		if (type != BP_VAR_IS) {
-			phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
-			return &EG(uninitialized_zval);
+		if (type == BP_VAR_IS) {
+			ZVAL_NULL(rv);
+			return rv;
 		}
 
-		ZVAL_NULL(rv);
-
-		return rv;
+		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(offset));
+		return &EG(uninitialized_zval);
 	}
 
-	if (!php_phongo_document_get(intern, Z_STRVAL_P(offset), Z_STRLEN_P(offset), rv)) {
-		if (type != BP_VAR_IS) {
-			// Exception already thrown
-			return &EG(uninitialized_zval);
-		}
-
-		// php_phongo_document_get will throw. If we're invoked with a BP_VAR_IS type, clear the exception and return a null value
-		zend_clear_exception();
-		ZVAL_NULL(rv);
+	if (!php_phongo_document_get(intern, Z_STRVAL_P(offset), Z_STRLEN_P(offset), rv, type == BP_VAR_IS)) {
+		// Exception already thrown
+		return &EG(uninitialized_zval);
 	}
 
 	return rv;
