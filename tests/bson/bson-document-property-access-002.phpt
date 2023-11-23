@@ -13,7 +13,7 @@ var_dump($document->foo ?? 'fallback');
 ?>
 ===DONE===
 <?php exit(0); ?>
---EXPECTF--
+--EXPECT--
 bool(false)
 string(8) "fallback"
 ===DONE===
