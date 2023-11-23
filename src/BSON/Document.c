@@ -626,7 +626,6 @@ int php_phongo_document_has_dimension(phongo_compat_object_handler_type* object,
 	intern = Z_OBJ_DOCUMENT(PHONGO_COMPAT_GET_OBJ(object));
 
 	if (Z_TYPE_P(member) != IS_STRING) {
-		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Could not find key of type \"%s\" in BSON document", PHONGO_ZVAL_CLASS_OR_TYPE_NAME_P(member));
 		return false;
 	}
 
