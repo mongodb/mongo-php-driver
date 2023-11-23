@@ -45,37 +45,37 @@ final class Document implements \IteratorAggregate, \Serializable, \ArrayAccess,
     final public function toRelaxedExtendedJSON(): string {}
 
 #if PHP_VERSION_ID >= 80000
-    public function offsetExists(mixed $key): bool {}
+    public function offsetExists(mixed $offset): bool {}
 # else
-    /** @param mixed $key */
-    public function offsetExists($key): bool {}
+    /** @param mixed $offset */
+    public function offsetExists($offset): bool {}
 # endif
 
 #if PHP_VERSION_ID >= 80000
-    public function offsetGet(mixed $key): mixed {}
+    public function offsetGet(mixed $offset): mixed {}
 # else
     /**
-     * @param mixed $key
+     * @param mixed $offset
      * @return mixed
      */
-    public function offsetGet($key) {}
+    public function offsetGet($offset) {}
 # endif
 
 #if PHP_VERSION_ID >= 80000
-    public function offsetSet(mixed $key, mixed $value): void {}
+    public function offsetSet(mixed $offset, mixed $value): void {}
 # else
     /**
-     * @param mixed $key
+     * @param mixed $offset
      * @param mixed $value
      */
-    public function offsetSet($key, $value): void {}
+    public function offsetSet($offset, $value): void {}
 # endif
 
 #if PHP_VERSION_ID >= 80000
-    public function offsetUnset(mixed $key): void {}
+    public function offsetUnset(mixed $offset): void {}
 # else
-    /** @param mixed $key */
-    public function offsetUnset($key): void {}
+    /** @param mixed $offset */
+    public function offsetUnset($offset): void {}
 # endif
 
     final public function __toString(): string {}
