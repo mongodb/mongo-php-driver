@@ -453,12 +453,6 @@ function json_canonicalize($json)
 {
     $json = json_encode(json_decode($json));
 
-    /* Versions of PHP before 7.1 replace empty JSON keys with "_empty_" when
-     * decoding to a stdClass (see: https://bugs.php.net/bug.php?id=46600). Work
-     * around this by replacing "_empty_" keys before returning.
-     */
-    $json = str_replace('"_empty_":', '"":', $json);
-
     /* Canonicalize string values for $numberDouble to ensure they are converted
      * the same as number literals in legacy and relaxed output. This is needed
      * because the printf format in _bson_as_json_visit_double uses a high level
