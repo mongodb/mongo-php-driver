@@ -177,6 +177,10 @@ PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 	 * a logger. */
 	mongoc_log_set_handler(NULL, NULL);
 
+	/* Disable trace logging. This will be enabled in phongo_log_sync_handlers()
+	 * if the "mongodb.debug" INI option is set. */
+	mongoc_log_trace_disable();
+
 	phongo_register_ini_entries(INIT_FUNC_ARGS_PASSTHRU);
 
 	/* Assign our custom vtable to libbson, so all memory allocation in libbson
