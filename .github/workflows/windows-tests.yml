@@ -67,7 +67,7 @@ jobs:
 
       - name: Upload DLL and PDB files as build artifacts
         if: ${{ github.event_name == 'push' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: php_mongodb-${{ github.sha }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
           path: |
