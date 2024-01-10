@@ -23,8 +23,10 @@ $supportedMongoDBVersions = [
     '3.6',
 ];
 
+$latestPhpVersion = max($supportedPhpVersions);
+
 // Only test the latest PHP version for libmongoc
-$libmongocBuildPhpVersions = [ max($supportedPhpVersions) ];
+$libmongocBuildPhpVersions = [ $latestPhpVersion ];
 
 // Server versions
 $localServerVersions = $supportedMongoDBVersions;
@@ -61,6 +63,10 @@ $allFiles[] = generateConfigs('test', 'mongodbVersion', 'load-balanced.yml', 'lo
 $allFiles[] = generateConfigs('test', 'mongodbVersion', 'ocsp.yml', 'ocsp-%s', $ocspServerVersions);
 $allFiles[] = generateConfigs('test', 'mongodbVersion', 'require-api-version.yml', 'require-api-version-%s', $requireApiServerVersions);
 $allFiles[] = generateConfigs('test', 'mongodbVersion', 'skip-crypt-shared.yml', 'skip-crypt-shared-%s', $skipCryptSharedServerVersions);
+
+// Test variants
+$allFiles[] = generateConfigs('test-variant', 'phpVersion', 'latest.yml', 'latest-php-%s', [$latestPhpVersion]);
+$allFiles[] = generateConfigs('test-variant', 'phpVersion', 'replicaset-only.yml', 'replicaset-php-%s', array_diff($supportedPhpVersions, [$latestPhpVersion]));
 
 echo "Generated config. Use the following list to import files:\n";
 echo implode("\n", array_map('getImportConfig', array_merge(...$allFiles))) . "\n";

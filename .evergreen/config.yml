@@ -42,7 +42,6 @@ include:
   - filename: .evergreen/config/build-variants.yml
 
   - filename: .evergreen/config/test-tasks.yml
-  - filename: .evergreen/config/test-variants.yml
 
   # Automatically generated files
   - filename: .evergreen/config/generated/build/build-php-8.3.yml
@@ -80,3 +79,8 @@ include:
   - filename: .evergreen/config/generated/test/skip-crypt-shared-rapid.yml
   - filename: .evergreen/config/generated/test/skip-crypt-shared-7.0.yml
   - filename: .evergreen/config/generated/test/skip-crypt-shared-6.0.yml
+  - filename: .evergreen/config/generated/test-variant/latest-php-8.3.yml
+  - filename: .evergreen/config/generated/test-variant/replicaset-php-8.2.yml
+  - filename: .evergreen/config/generated/test-variant/replicaset-php-8.1.yml
+  - filename: .evergreen/config/generated/test-variant/replicaset-php-8.0.yml
+  - filename: .evergreen/config/generated/test-variant/replicaset-php-7.4.yml

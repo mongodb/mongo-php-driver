@@ -1,0 +1,97 @@
+# This file is generated automatically - please edit the "templates/test-variant/latest.yml" template file instead.
+buildvariants:
+  - name: test-debian11-php-8.3
+    tags: ["test", "debian", "x64"]
+    display_name: "Test: Debian 11, PHP 8.3"
+    run_on: debian11-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-debian11"
+      FETCH_BUILD_TASK: "build-php-8.3"
+    depends_on:
+      - variant: "build-debian11"
+        name: "build-php-8.3"
+    tasks:
+      - ".standalone .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
+      - ".replicaset .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
+      - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
+      - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
+      - "test-atlas-connectivity"
+      - ".ocsp !.4.4 !.5.0"
+    display_tasks:
+      - name: "test-ocsp-latest"
+        execution_tasks:
+          - ".ocsp .latest"
+      - name: "test-ocsp-rapid"
+        execution_tasks:
+          - ".ocsp .rapid"
+      - name: "test-ocsp-7.0"
+        execution_tasks:
+          - ".ocsp .7.0"
+      - name: "test-ocsp-6.0"
+        execution_tasks:
+          - ".ocsp .6.0"
+
+  - name: test-debian92-php-8.3
+    tags: ["test", "debian", "x64"]
+    display_name: "Test: Debian 9.2, PHP 8.3"
+    run_on: debian92-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-debian92"
+      FETCH_BUILD_TASK: "build-php-8.3"
+    depends_on:
+      - variant: "build-debian92"
+        name: "build-php-8.3"
+    tasks:
+      # Remember to add new major versions here as they are released
+      - ".standalone .local !.6.0 !.7.0 !.rapid !.latest"
+      - ".replicaset .local !.6.0 !.7.0 !.rapid !.latest"
+      - ".sharded .local !.6.0 !.7.0 !.rapid !.latest"
+      - ".loadbalanced .local !.6.0 !.7.0 !.rapid !.latest"
+      - ".ocsp !.6.0 !.7.0 !.rapid !.latest"
+    display_tasks:
+      - name: "test-ocsp-5.0"
+        execution_tasks:
+          - ".ocsp .5.0"
+      - name: "test-ocsp-4.4"
+        execution_tasks:
+          - ".ocsp .4.4"
+
+  # Variants with different libmongoc
+  - name: test-debian11-php-8.3-libmongoc-lowest-supported
+    display_name: "Test: Debian 11, PHP 8.3, libmongoc lowest"
+    tags: ["test", "libmongoc", "debian", "x64"]
+    run_on: debian11-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-debian11"
+      FETCH_BUILD_TASK: "build-php-8.3-libmongoc-lowest-supported"
+    depends_on:
+      - variant: "build-debian11"
+        name: "build-php-8.3-libmongoc-lowest-supported"
+    tasks:
+      - ".replicaset .local .7.0 .auth"
+
+  - name: test-debian11-php-8.3-libmongoc-next-stable
+    display_name: "Test: Debian 11, PHP 8.3, libmongoc next stable"
+    tags: ["test", "libmongoc", "debian", "x64"]
+    run_on: debian11-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-debian11"
+      FETCH_BUILD_TASK: "build-php-8.3-libmongoc-next-stable"
+    depends_on:
+      - variant: "build-debian11"
+        name: "build-php-8.3-libmongoc-next-stable"
+    tasks:
+      - ".replicaset .local .7.0 .auth"
+
+  - name: test-debian11-php-8.3-libmongoc-latest
+    tags: ["test", "libmongoc", "debian", "x64"]
+    display_name: "Test: Debian 11, PHP 8.3, libmongoc latest"
+    run_on: debian11-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-debian11"
+      FETCH_BUILD_TASK: "build-php-8.3-libmongoc-latest"
+    depends_on:
+      - variant: "build-debian11"
+        name: "build-php-8.3-libmongoc-latest"
+    tasks:
+      - ".replicaset .local .7.0 .auth"

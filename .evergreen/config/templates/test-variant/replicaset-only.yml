@@ -1,0 +1,13 @@
+buildvariants:
+  - name: test-debian11-php-%phpVersion%
+    tags: [ "test", "debian", "x64" ]
+    display_name: "Test: Debian 11, PHP %phpVersion%"
+    run_on: debian11-small
+    expansions:
+      FETCH_BUILD_VARIANT: "build-debian11"
+      FETCH_BUILD_TASK: "build-php-%phpVersion%"
+    depends_on:
+      - variant: "build-debian11"
+        name: "build-php-%phpVersion%"
+    tasks:
+      - ".replicaset .local .7.0 .auth"
