@@ -45,11 +45,12 @@ include:
   - filename: .evergreen/config/test-variants.yml
 
   # Automatically generated files
+  - filename: .evergreen/config/generated/build/build-php-8.3.yml
   - filename: .evergreen/config/generated/build/build-php-8.2.yml
   - filename: .evergreen/config/generated/build/build-php-8.1.yml
   - filename: .evergreen/config/generated/build/build-php-8.0.yml
   - filename: .evergreen/config/generated/build/build-php-7.4.yml
-  - filename: .evergreen/config/generated/build/build-libmongoc-8.2.yml
+  - filename: .evergreen/config/generated/build/build-libmongoc-8.3.yml
   - filename: .evergreen/config/generated/test/local-latest.yml
   - filename: .evergreen/config/generated/test/local-rapid.yml
   - filename: .evergreen/config/generated/test/local-7.0.yml
