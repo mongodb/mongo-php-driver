@@ -12,7 +12,7 @@ tasks:
       - func: "compile driver"
         vars:
           PHP_VERSION: "8.2"
-          LIBMONGOC_VERSION: "1.25.2"
+          LIBMONGOC_VERSION: "1eacb5d46f39c5404586e5d3d32e4bf9e6670bd2"
       - func: "upload build"
 
   - name: "build-php-8.2-libmongoc-next-stable"
@@ -21,7 +21,8 @@ tasks:
       - func: "compile driver"
         vars:
           PHP_VERSION: "8.2"
-          LIBMONGOC_VERSION: "r1.25"
+           # TODO: change to r1.26 once 1.26.0 is released
+          LIBMONGOC_VERSION: "1eacb5d46f39c5404586e5d3d32e4bf9e6670bd2"
       - func: "upload build"
 
   - name: "build-php-8.2-libmongoc-latest"
