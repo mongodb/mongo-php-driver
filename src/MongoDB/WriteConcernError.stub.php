@@ -16,6 +16,4 @@ final class WriteConcernError
     final public function getInfo(): ?object {}
 
     final public function getMessage(): string {}
-
-    final public function __wakeup(): void {}
 }

@@ -289,7 +289,6 @@ static PHP_METHOD(MongoDB_Driver_Cursor, rewind)
 }
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Cursor)
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Cursor)
 
 /* MongoDB\Driver\Cursor object handlers */
 static zend_object_handlers php_phongo_handler_cursor;

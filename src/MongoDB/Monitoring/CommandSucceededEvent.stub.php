@@ -26,6 +26,4 @@ final class CommandSucceededEvent
     final public function getServiceId(): ?\MongoDB\BSON\ObjectId {}
 
     final public function getServerConnectionId(): ?int {}
-
-    final public function __wakeup(): void {}
 }

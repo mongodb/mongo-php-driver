@@ -16,6 +16,4 @@ final class TopologyChangedEvent
     final public function getPreviousDescription(): \MongoDB\Driver\TopologyDescription {}
 
     final public function getTopologyId(): \MongoDB\BSON\ObjectId {}
-
-    final public function __wakeup(): void {}
 }

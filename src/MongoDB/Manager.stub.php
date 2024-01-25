@@ -62,6 +62,4 @@ final class Manager
     final public function selectServer(?ReadPreference $readPreference = null): Server {}
 
     final public function startSession(?array $options = null): Session {}
-
-    final public function __wakeup(): void {}
 }

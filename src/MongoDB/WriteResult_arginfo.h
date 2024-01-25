@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 279a9a00d54bf67c310f7b8802a5868bf1d507eb */
+ * Stub hash: 7d27d88c75113a6642641e8502aff99c2781aa55 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -31,9 +31,6 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult_isAcknowledged, 0, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_WriteResult___wakeup, 0, 0, IS_VOID, 0)
-ZEND_END_ARG_INFO()
-
 
 static ZEND_METHOD(MongoDB_Driver_WriteResult, __construct);
 static ZEND_METHOD(MongoDB_Driver_WriteResult, getInsertedCount);
@@ -47,7 +44,6 @@ static ZEND_METHOD(MongoDB_Driver_WriteResult, getWriteConcernError);
 static ZEND_METHOD(MongoDB_Driver_WriteResult, getWriteErrors);
 static ZEND_METHOD(MongoDB_Driver_WriteResult, getErrorReplies);
 static ZEND_METHOD(MongoDB_Driver_WriteResult, isAcknowledged);
-static ZEND_METHOD(MongoDB_Driver_WriteResult, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_WriteResult_methods[] = {
@@ -63,7 +59,6 @@ static const zend_function_entry class_MongoDB_Driver_WriteResult_methods[] = {
 	ZEND_ME(MongoDB_Driver_WriteResult, getWriteErrors, arginfo_class_MongoDB_Driver_WriteResult_getWriteErrors, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_WriteResult, getErrorReplies, arginfo_class_MongoDB_Driver_WriteResult_getErrorReplies, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_WriteResult, isAcknowledged, arginfo_class_MongoDB_Driver_WriteResult_isAcknowledged, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_WriteResult, __wakeup, arginfo_class_MongoDB_Driver_WriteResult___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

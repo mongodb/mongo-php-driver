@@ -156,7 +156,6 @@ static void php_phongo_transaction_options_to_zval(mongoc_client_session_t* cs, 
 }
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Session)
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Session)
 
 /* Advances the cluster time for this Session */
 static PHP_METHOD(MongoDB_Driver_Session, advanceClusterTime)

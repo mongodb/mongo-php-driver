@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 4b4373da62f18f2c3ab6aae78a495ed84adbe09b */
+ * Stub hash: 6a37566522da6a896a4525a5de2fe913d56a7a09 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Manager___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, uri, IS_STRING, 1, "null")
@@ -105,9 +105,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Manager_star
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Manager___wakeup, 0, 0, IS_VOID, 0)
-ZEND_END_ARG_INFO()
-
 
 static ZEND_METHOD(MongoDB_Driver_Manager, __construct);
 static ZEND_METHOD(MongoDB_Driver_Manager, addSubscriber);
@@ -146,7 +143,6 @@ static ZEND_METHOD(MongoDB_Driver_Manager, getWriteConcern);
 static ZEND_METHOD(MongoDB_Driver_Manager, removeSubscriber);
 static ZEND_METHOD(MongoDB_Driver_Manager, selectServer);
 static ZEND_METHOD(MongoDB_Driver_Manager, startSession);
-static ZEND_METHOD(MongoDB_Driver_Manager, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_Manager_methods[] = {
@@ -187,7 +183,6 @@ static const zend_function_entry class_MongoDB_Driver_Manager_methods[] = {
 	ZEND_ME(MongoDB_Driver_Manager, removeSubscriber, arginfo_class_MongoDB_Driver_Manager_removeSubscriber, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Manager, selectServer, arginfo_class_MongoDB_Driver_Manager_selectServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Manager, startSession, arginfo_class_MongoDB_Driver_Manager_startSession, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_Manager, __wakeup, arginfo_class_MongoDB_Driver_Manager___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

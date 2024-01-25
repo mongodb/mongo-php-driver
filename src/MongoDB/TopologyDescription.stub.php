@@ -54,6 +54,4 @@ final class TopologyDescription
     final public function hasReadableServer(?ReadPreference $readPreference = null): bool {}
 
     final public function hasWritableServer(): bool {}
-
-    final public function __wakeup(): void {}
 }

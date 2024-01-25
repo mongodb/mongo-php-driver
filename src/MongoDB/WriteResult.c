@@ -144,7 +144,6 @@ static bool php_phongo_writeresult_get_error_replies(php_phongo_writeresult_t* i
 }
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteResult)
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_WriteResult)
 
 /* Returns the number of documents that were inserted */
 static PHP_METHOD(MongoDB_Driver_WriteResult, getInsertedCount)

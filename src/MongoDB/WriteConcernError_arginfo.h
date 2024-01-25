@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: fe3a956a163d5a46651f7ab5cb6be71552191a9d */
+ * Stub hash: fe3937eef4e97a6d3097b81fc196c5c5d86e9df8 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_WriteConcernError___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -13,15 +13,11 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_WriteConcernError_getMessage, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_WriteConcernError___wakeup, 0, 0, IS_VOID, 0)
-ZEND_END_ARG_INFO()
-
 
 static ZEND_METHOD(MongoDB_Driver_WriteConcernError, __construct);
 static ZEND_METHOD(MongoDB_Driver_WriteConcernError, getCode);
 static ZEND_METHOD(MongoDB_Driver_WriteConcernError, getInfo);
 static ZEND_METHOD(MongoDB_Driver_WriteConcernError, getMessage);
-static ZEND_METHOD(MongoDB_Driver_WriteConcernError, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_WriteConcernError_methods[] = {
@@ -29,7 +25,6 @@ static const zend_function_entry class_MongoDB_Driver_WriteConcernError_methods[
 	ZEND_ME(MongoDB_Driver_WriteConcernError, getCode, arginfo_class_MongoDB_Driver_WriteConcernError_getCode, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_WriteConcernError, getInfo, arginfo_class_MongoDB_Driver_WriteConcernError_getInfo, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_WriteConcernError, getMessage, arginfo_class_MongoDB_Driver_WriteConcernError_getMessage, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_WriteConcernError, __wakeup, arginfo_class_MongoDB_Driver_WriteConcernError___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

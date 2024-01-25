@@ -16,6 +16,4 @@ final class ServerClosedEvent
     final public function getHost(): string {}
 
     final public function getTopologyId(): \MongoDB\BSON\ObjectId {}
-
-    final public function __wakeup(): void {}
 }

@@ -542,8 +542,6 @@ static PHP_METHOD(MongoDB_Driver_BulkWrite, count)
 	RETURN_LONG(intern->num_ops);
 }
 
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_BulkWrite)
-
 /* MongoDB\Driver\BulkWrite object handlers */
 static zend_object_handlers php_phongo_handler_bulkwrite;
 

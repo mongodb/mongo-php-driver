@@ -24,7 +24,6 @@
 zend_class_entry* php_phongo_serverheartbeatsucceededevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent)
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent)
 
 /* Returns this event's duration in microseconds */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerHeartbeatSucceededEvent, getDurationMicros)

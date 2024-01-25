@@ -169,7 +169,6 @@ static HashTable* php_phongo_iterator_get_properties_hash(phongo_compat_object_h
 }
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_BSON_Iterator)
-PHONGO_DISABLED_WAKEUP(MongoDB_BSON_Iterator)
 
 static PHP_METHOD(MongoDB_BSON_Iterator, current)
 {
