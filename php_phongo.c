@@ -515,18 +515,6 @@ PHP_MINFO_FUNCTION(mongodb) /* {{{ */
 	phongo_display_ini_entries(ZEND_MODULE_INFO_FUNC_ARGS_PASSTHRU);
 } /* }}} */
 
-/* {{{ Shared function entries for disabling constructors and unserialize() */
-PHP_FUNCTION(MongoDB_disabled___construct) /* {{{ */
-{
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "Accessing private constructor");
-} /* }}} */
-
-PHP_FUNCTION(MongoDB_disabled___wakeup) /* {{{ */
-{
-	PHONGO_PARSE_PARAMETERS_NONE();
-
-	phongo_throw_exception(PHONGO_ERROR_RUNTIME, "%s", "MongoDB\\Driver objects cannot be serialized");
-} /* }}} */
 /* }}} */
 
 /* {{{ Module dependencies and module entry */

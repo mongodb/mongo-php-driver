@@ -124,8 +124,4 @@ zend_object_handlers* phongo_get_std_object_handlers(void);
 		phongo_throw_exception(PHONGO_ERROR_RUNTIME, "MongoDB\\Driver objects cannot be serialized"); \
 	}
 
-/* Shared function entries for disabling constructors and unserialize() */
-PHP_FUNCTION(MongoDB_disabled___construct);
-PHP_FUNCTION(MongoDB_disabled___wakeup);
-
 #endif /* PHONGO_H */
