@@ -20,7 +20,7 @@ languages.
 ## Documentation
 
  - https://php.net/manual/en/set.mongodb.php
- - https://docs.mongodb.com/ecosystem/drivers/php/
+ - https://www.mongodb.com/docs/drivers/php/
 
 ## Installation
 
