@@ -56,27 +56,28 @@ zend_object_handlers* phongo_get_std_object_handlers(void)
 /* }}} */
 
 /* {{{ Memory allocation wrappers */
-static void* php_phongo_malloc(size_t num_bytes) /* {{{ */
+static void* php_phongo_malloc(size_t num_bytes)
 {
 	return pemalloc(num_bytes, 1);
-} /* }}} */
+}
 
-static void* php_phongo_calloc(size_t num_members, size_t num_bytes) /* {{{ */
+static void* php_phongo_calloc(size_t num_members, size_t num_bytes)
 {
 	return pecalloc(num_members, num_bytes, 1);
-} /* }}} */
+}
 
-static void* php_phongo_realloc(void* mem, size_t num_bytes) /* {{{ */
+static void* php_phongo_realloc(void* mem, size_t num_bytes)
 {
 	return perealloc(mem, num_bytes, 1);
-} /* }}} */
+}
 
-static void php_phongo_free(void* mem) /* {{{ */
+static void php_phongo_free(void* mem)
 {
 	if (mem) {
 		pefree(mem, 1);
 	}
-} /* }}} */
+}
+/* }}} */
 
 PHP_RINIT_FUNCTION(mongodb) /* {{{ */
 {
@@ -153,12 +154,12 @@ static zend_class_entry* php_phongo_fetch_internal_class(const char* class_name,
 	return NULL;
 }
 
-static HashTable* php_phongo_std_get_gc(phongo_compat_object_handler_type* object, zval** table, int* n) /* {{{ */
+static HashTable* php_phongo_std_get_gc(phongo_compat_object_handler_type* object, zval** table, int* n)
 {
 	*table = NULL;
 	*n     = 0;
 	return zend_std_get_properties(object);
-} /* }}} */
+}
 
 PHP_MINIT_FUNCTION(mongodb) /* {{{ */
 {
@@ -514,8 +515,6 @@ PHP_MINFO_FUNCTION(mongodb) /* {{{ */
 
 	phongo_display_ini_entries(ZEND_MODULE_INFO_FUNC_ARGS_PASSTHRU);
 } /* }}} */
-
-/* }}} */
 
 /* {{{ Module dependencies and module entry */
 static const zend_module_dep mongodb_deps[] = {
