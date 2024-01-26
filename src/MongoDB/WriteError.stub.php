@@ -18,6 +18,4 @@ final class WriteError
     final public function getInfo(): ?object {}
 
     final public function getMessage(): string {}
-
-    final public function __wakeup(): void {}
 }

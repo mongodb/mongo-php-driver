@@ -34,7 +34,6 @@
 zend_class_entry* php_phongo_server_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Server)
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Server)
 
 /* Executes a Command on this Server */
 static PHP_METHOD(MongoDB_Driver_Server, executeCommand)

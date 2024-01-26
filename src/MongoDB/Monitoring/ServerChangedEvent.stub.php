@@ -20,6 +20,4 @@ final class ServerChangedEvent
     final public function getPreviousDescription(): \MongoDB\Driver\ServerDescription {}
 
     final public function getTopologyId(): \MongoDB\BSON\ObjectId {}
-
-    final public function __wakeup(): void {}
 }

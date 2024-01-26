@@ -26,7 +26,6 @@
 zend_class_entry* php_phongo_serveropeningevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerOpeningEvent)
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_ServerOpeningEvent)
 
 /* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerOpeningEvent, getHost)

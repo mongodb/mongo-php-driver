@@ -30,7 +30,6 @@
 zend_class_entry* php_phongo_serverchangedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_ServerChangedEvent)
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_ServerChangedEvent)
 
 /* Returns this event's host */
 static PHP_METHOD(MongoDB_Driver_Monitoring_ServerChangedEvent, getHost)

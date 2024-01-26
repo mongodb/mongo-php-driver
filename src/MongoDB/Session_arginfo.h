@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c6f026b0e22bb1eb53a63956f6c3c40fe99fbd24 */
+ * Stub hash: bb079e9e8c8eb59e26ebdf981d1b0ed085c8bbe6 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Session___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -54,8 +54,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Session_sta
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_Driver_Session___wakeup arginfo_class_MongoDB_Driver_Session_abortTransaction
-
 
 static ZEND_METHOD(MongoDB_Driver_Session, __construct);
 static ZEND_METHOD(MongoDB_Driver_Session, abortTransaction);
@@ -77,7 +75,6 @@ static ZEND_METHOD(MongoDB_Driver_Session, getTransactionState);
 static ZEND_METHOD(MongoDB_Driver_Session, isDirty);
 static ZEND_METHOD(MongoDB_Driver_Session, isInTransaction);
 static ZEND_METHOD(MongoDB_Driver_Session, startTransaction);
-static ZEND_METHOD(MongoDB_Driver_Session, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_Session_methods[] = {
@@ -101,7 +98,6 @@ static const zend_function_entry class_MongoDB_Driver_Session_methods[] = {
 	ZEND_ME(MongoDB_Driver_Session, isDirty, arginfo_class_MongoDB_Driver_Session_isDirty, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Session, isInTransaction, arginfo_class_MongoDB_Driver_Session_isInTransaction, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Session, startTransaction, arginfo_class_MongoDB_Driver_Session_startTransaction, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_Session, __wakeup, arginfo_class_MongoDB_Driver_Session___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

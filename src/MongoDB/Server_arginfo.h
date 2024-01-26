@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 2b5ae022d2f31086681627e159b792dd92b4929e */
+ * Stub hash: 9b0019f2cbd014ae1e31f5803e0dc5b6c9cf701a */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Server___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -92,9 +92,6 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MongoDB_Driver_Server_isSecondary arginfo_class_MongoDB_Driver_Server_isArbiter
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Server___wakeup, 0, 0, IS_VOID, 0)
-ZEND_END_ARG_INFO()
-
 
 static ZEND_METHOD(MongoDB_Driver_Server, __construct);
 #if PHP_VERSION_ID >= 80000
@@ -130,7 +127,6 @@ static ZEND_METHOD(MongoDB_Driver_Server, isHidden);
 static ZEND_METHOD(MongoDB_Driver_Server, isPassive);
 static ZEND_METHOD(MongoDB_Driver_Server, isPrimary);
 static ZEND_METHOD(MongoDB_Driver_Server, isSecondary);
-static ZEND_METHOD(MongoDB_Driver_Server, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_Server_methods[] = {
@@ -168,7 +164,6 @@ static const zend_function_entry class_MongoDB_Driver_Server_methods[] = {
 	ZEND_ME(MongoDB_Driver_Server, isPassive, arginfo_class_MongoDB_Driver_Server_isPassive, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Server, isPrimary, arginfo_class_MongoDB_Driver_Server_isPrimary, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Server, isSecondary, arginfo_class_MongoDB_Driver_Server_isSecondary, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_Server, __wakeup, arginfo_class_MongoDB_Driver_Server___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

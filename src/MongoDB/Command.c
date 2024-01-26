@@ -115,8 +115,6 @@ static PHP_METHOD(MongoDB_Driver_Command, __construct)
 	php_phongo_command_init(intern, document, options);
 }
 
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Command)
-
 /* MongoDB\Driver\Command object handlers */
 static zend_object_handlers php_phongo_handler_command;
 

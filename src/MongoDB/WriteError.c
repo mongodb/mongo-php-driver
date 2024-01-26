@@ -28,7 +28,6 @@
 zend_class_entry* php_phongo_writeerror_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_WriteError)
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_WriteError)
 
 /* Returns the MongoDB error code */
 static PHP_METHOD(MongoDB_Driver_WriteError, getCode)

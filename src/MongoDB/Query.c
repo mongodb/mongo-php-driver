@@ -405,8 +405,6 @@ bool phongo_query_init(zval* return_value, zval* filter, zval* options)
 #undef PHONGO_QUERY_OPT_INT64_DEPRECATED
 #undef PHONGO_QUERY_OPT_STRING
 
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Query)
-
 /* Constructs a new Query */
 static PHP_METHOD(MongoDB_Driver_Query, __construct)
 {

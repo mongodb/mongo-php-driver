@@ -94,6 +94,4 @@ final class ClientEncryption
     /** @param array|object $filter */
     final public function rewrapManyDataKey($filter, ?array $options = null): object {}
 #endif
-
-    final public function __wakeup(): void {}
 }

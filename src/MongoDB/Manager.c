@@ -242,8 +242,6 @@ static bool php_phongo_manager_select_server(bool for_writes, bool inherit_read_
 	return false;
 }
 
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Manager)
-
 /* Constructs a new Manager */
 static PHP_METHOD(MongoDB_Driver_Manager, __construct)
 {

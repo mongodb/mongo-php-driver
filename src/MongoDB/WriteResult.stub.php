@@ -32,6 +32,4 @@ final class WriteResult
     final public function getErrorReplies(): array {}
 
     final public function isAcknowledged(): bool {}
-
-    final public function __wakeup(): void {}
 }

@@ -121,6 +121,4 @@ final class Server
     final public function isPrimary(): bool {}
 
     final public function isSecondary(): bool {}
-
-    final public function __wakeup(): void {}
 }

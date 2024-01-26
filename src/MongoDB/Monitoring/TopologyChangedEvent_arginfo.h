@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 446b61c79dc90b1d153ad449d4026c8c90619144 */
+ * Stub hash: 04aa095fba77e78f9a42f36aa2ea1bbad46a953b */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_TopologyChangedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -12,15 +12,11 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_TopologyChangedEvent_getTopologyId, 0, 0, MongoDB\\BSON\\ObjectId, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_TopologyChangedEvent___wakeup, 0, 0, IS_VOID, 0)
-ZEND_END_ARG_INFO()
-
 
 static ZEND_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, __construct);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getNewDescription);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getPreviousDescription);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, getTopologyId);
-static ZEND_METHOD(MongoDB_Driver_Monitoring_TopologyChangedEvent, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_Monitoring_TopologyChangedEvent_methods[] = {
@@ -28,7 +24,6 @@ static const zend_function_entry class_MongoDB_Driver_Monitoring_TopologyChanged
 	ZEND_ME(MongoDB_Driver_Monitoring_TopologyChangedEvent, getNewDescription, arginfo_class_MongoDB_Driver_Monitoring_TopologyChangedEvent_getNewDescription, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Monitoring_TopologyChangedEvent, getPreviousDescription, arginfo_class_MongoDB_Driver_Monitoring_TopologyChangedEvent_getPreviousDescription, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Monitoring_TopologyChangedEvent, getTopologyId, arginfo_class_MongoDB_Driver_Monitoring_TopologyChangedEvent_getTopologyId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_Monitoring_TopologyChangedEvent, __wakeup, arginfo_class_MongoDB_Driver_Monitoring_TopologyChangedEvent___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

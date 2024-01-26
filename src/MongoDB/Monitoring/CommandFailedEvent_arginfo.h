@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 008d718040430e0251e01cf2fa8da4e1ed4370d6 */
+ * Stub hash: 90ab50ac51a3bb8853e6dd06fc673ce7b4051d28 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -29,9 +29,6 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent_getServerConnectionId, 0, 0, IS_LONG, 1)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent___wakeup, 0, 0, IS_VOID, 0)
-ZEND_END_ARG_INFO()
-
 
 static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, __construct);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getCommandName);
@@ -43,7 +40,6 @@ static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getRequestId);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServer);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnectionId);
-static ZEND_METHOD(MongoDB_Driver_Monitoring_CommandFailedEvent, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_Monitoring_CommandFailedEvent_methods[] = {
@@ -57,7 +53,6 @@ static const zend_function_entry class_MongoDB_Driver_Monitoring_CommandFailedEv
 	ZEND_ME(MongoDB_Driver_Monitoring_CommandFailedEvent, getServer, arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent_getServer, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Monitoring_CommandFailedEvent, getServiceId, arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent_getServiceId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Monitoring_CommandFailedEvent, getServerConnectionId, arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent_getServerConnectionId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_Monitoring_CommandFailedEvent, __wakeup, arginfo_class_MongoDB_Driver_Monitoring_CommandFailedEvent___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

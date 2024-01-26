@@ -12,6 +12,4 @@ final class TopologyOpeningEvent
     final private function __construct() {}
 
     final public function getTopologyId(): \MongoDB\BSON\ObjectId {}
-
-    final public function __wakeup(): void {}
 }

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3c935268e2187085468340004c8dc67052d5c19b */
+ * Stub hash: 739694e46e6c871380ef1708b2f824e19651621b */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_BSON_Iterator___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -31,8 +31,6 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_BSON_Iterator_valid, 0, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_MongoDB_BSON_Iterator___wakeup arginfo_class_MongoDB_BSON_Iterator_next
-
 
 static ZEND_METHOD(MongoDB_BSON_Iterator, __construct);
 #if PHP_VERSION_ID >= 80000
@@ -50,7 +48,6 @@ static ZEND_METHOD(MongoDB_BSON_Iterator, key);
 static ZEND_METHOD(MongoDB_BSON_Iterator, next);
 static ZEND_METHOD(MongoDB_BSON_Iterator, rewind);
 static ZEND_METHOD(MongoDB_BSON_Iterator, valid);
-static ZEND_METHOD(MongoDB_BSON_Iterator, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_BSON_Iterator_methods[] = {
@@ -70,7 +67,6 @@ static const zend_function_entry class_MongoDB_BSON_Iterator_methods[] = {
 	ZEND_ME(MongoDB_BSON_Iterator, next, arginfo_class_MongoDB_BSON_Iterator_next, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Iterator, rewind, arginfo_class_MongoDB_BSON_Iterator_rewind, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_BSON_Iterator, valid, arginfo_class_MongoDB_BSON_Iterator_valid, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_BSON_Iterator, __wakeup, arginfo_class_MongoDB_BSON_Iterator___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

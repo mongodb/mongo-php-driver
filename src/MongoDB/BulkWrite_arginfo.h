@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 9c3fc38ad4f6c80bf3605de06889de409e74de78 */
+ * Stub hash: 04d2be4b4398666979b03842d250984b71de5403 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_BulkWrite___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, options, IS_ARRAY, 1, "null")
@@ -50,9 +50,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_BulkWrite_u
 ZEND_END_ARG_INFO()
 #endif
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_BulkWrite___wakeup, 0, 0, IS_VOID, 0)
-ZEND_END_ARG_INFO()
-
 
 static ZEND_METHOD(MongoDB_Driver_BulkWrite, __construct);
 static ZEND_METHOD(MongoDB_Driver_BulkWrite, count);
@@ -74,7 +71,6 @@ static ZEND_METHOD(MongoDB_Driver_BulkWrite, update);
 #if !(PHP_VERSION_ID >= 80000)
 static ZEND_METHOD(MongoDB_Driver_BulkWrite, update);
 #endif
-static ZEND_METHOD(MongoDB_Driver_BulkWrite, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_BulkWrite_methods[] = {
@@ -98,7 +94,6 @@ static const zend_function_entry class_MongoDB_Driver_BulkWrite_methods[] = {
 #if !(PHP_VERSION_ID >= 80000)
 	ZEND_ME(MongoDB_Driver_BulkWrite, update, arginfo_class_MongoDB_Driver_BulkWrite_update, ZEND_ACC_PUBLIC)
 #endif
-	ZEND_ME(MongoDB_Driver_BulkWrite, __wakeup, arginfo_class_MongoDB_Driver_BulkWrite___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

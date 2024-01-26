@@ -15,6 +15,4 @@ final class Query
     /** @param array|object $filter */
     final public function __construct($filter, ?array $queryOptions = null) {}
 #endif
-
-    final public function __wakeup(): void {}
 }

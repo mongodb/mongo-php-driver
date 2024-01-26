@@ -30,7 +30,6 @@
 zend_class_entry* php_phongo_commandstartedevent_ce;
 
 PHONGO_DISABLED_CONSTRUCTOR(MongoDB_Driver_Monitoring_CommandStartedEvent)
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_Monitoring_CommandStartedEvent)
 
 /* Returns the command document associated with the event */
 static PHP_METHOD(MongoDB_Driver_Monitoring_CommandStartedEvent, getCommand)

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: f4e790f6c43bb1cdbb24ad2d8755a7bb66d2c3a6 */
+ * Stub hash: ea43e62ce17ddb00625fdf165187fa4997867e4d */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerClosedEvent___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -13,15 +13,11 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerClosedEvent_getTopologyId, 0, 0, MongoDB\\BSON\\ObjectId, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MongoDB_Driver_Monitoring_ServerClosedEvent___wakeup, 0, 0, IS_VOID, 0)
-ZEND_END_ARG_INFO()
-
 
 static ZEND_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, __construct);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getPort);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getHost);
 static ZEND_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, getTopologyId);
-static ZEND_METHOD(MongoDB_Driver_Monitoring_ServerClosedEvent, __wakeup);
 
 
 static const zend_function_entry class_MongoDB_Driver_Monitoring_ServerClosedEvent_methods[] = {
@@ -29,7 +25,6 @@ static const zend_function_entry class_MongoDB_Driver_Monitoring_ServerClosedEve
 	ZEND_ME(MongoDB_Driver_Monitoring_ServerClosedEvent, getPort, arginfo_class_MongoDB_Driver_Monitoring_ServerClosedEvent_getPort, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Monitoring_ServerClosedEvent, getHost, arginfo_class_MongoDB_Driver_Monitoring_ServerClosedEvent_getHost, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_ME(MongoDB_Driver_Monitoring_ServerClosedEvent, getTopologyId, arginfo_class_MongoDB_Driver_Monitoring_ServerClosedEvent_getTopologyId, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
-	ZEND_ME(MongoDB_Driver_Monitoring_ServerClosedEvent, __wakeup, arginfo_class_MongoDB_Driver_Monitoring_ServerClosedEvent___wakeup, ZEND_ACC_PUBLIC|ZEND_ACC_FINAL)
 	ZEND_FE_END
 };
 

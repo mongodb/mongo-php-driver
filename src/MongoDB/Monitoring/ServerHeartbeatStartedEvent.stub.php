@@ -16,6 +16,4 @@ final class ServerHeartbeatStartedEvent
     final public function getHost(): string {}
 
     final public function isAwaited(): bool {}
-
-    final public function __wakeup(): void {}
 }

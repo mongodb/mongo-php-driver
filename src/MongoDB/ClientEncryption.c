@@ -473,8 +473,6 @@ cleanup:
 	mongoc_client_encryption_rewrap_many_datakey_result_destroy(result);
 }
 
-PHONGO_DISABLED_WAKEUP(MongoDB_Driver_ClientEncryption)
-
 /* MongoDB\Driver\ClientEncryption object handlers */
 static zend_object_handlers php_phongo_handler_clientencryption;
 

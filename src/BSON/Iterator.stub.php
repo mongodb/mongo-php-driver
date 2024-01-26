@@ -30,6 +30,4 @@ final class Iterator implements \Iterator
     final public function rewind(): void {}
 
     final public function valid(): bool {}
-
-    final public function __wakeup(): void {}
 }
