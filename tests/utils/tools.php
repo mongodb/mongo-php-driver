@@ -853,3 +853,25 @@ function failGetMore(Manager $manager)
 
     throw new Exception("Trying to configure a getMore fail point for a server version ($version) that doesn't support it");
 }
+
+function getAtlasConnectivityUrls(): array
+{
+    if (!file_exists('.evergreen/atlas-uris.txt')) {
+        return [];
+    }
+
+    $rawUrls = explode("\n", file_get_contents('.evergreen/atlas-uris.txt'));
+
+    $urls = [];
+    foreach ($rawUrls as $url) {
+        $url = trim($url);
+
+        if ($url == '') {
+            continue;
+        }
+
+        $urls[] = $url;
+    }
+
+    return $urls;
+}
