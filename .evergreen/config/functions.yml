@@ -210,6 +210,7 @@ functions:
       params:
         include_expansions_in_env:
           - API_VERSION
+          - ATLAS_CONNECTIVITY_URIS
           - CRYPT_SHARED_LIB_PATH
           - MONGODB_URI
           - APPEND_URI
@@ -254,12 +255,6 @@ functions:
           file="${DRIVERS_TOOLS}/.evergreen/install-dependencies.sh"
           # Don't use ${file} syntax here because evergreen treats it as an empty expansion.
           [ -f "$file" ] && sh $file || echo "$file not available, skipping"
-
-  "decrypt atlas URI list":
-    - command: shell.exec
-      params:
-        script: |
-          openssl aes-256-cbc -S "${encrypted_uris_salt}" -K "${encrypted_uris_key}" -iv "${encrypted_uris_iv}" -in ${PROJECT_DIRECTORY}/.evergreen/atlas-uris.txt.enc -out ${PROJECT_DIRECTORY}/.evergreen/atlas-uris.txt -d
 
   "start load balancer":
     - command: shell.exec

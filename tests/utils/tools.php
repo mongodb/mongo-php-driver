@@ -856,11 +856,12 @@ function failGetMore(Manager $manager)
 
 function getAtlasConnectivityUrls(): array
 {
-    if (!file_exists('.evergreen/atlas-uris.txt')) {
+    $atlasUriString = getenv('ATLAS_CONNECTIVITY_URIS') ?: '';
+    if (!$atlasUriString) {
         return [];
     }
 
-    $rawUrls = explode("\n", file_get_contents('.evergreen/atlas-uris.txt'));
+    $rawUrls = explode("\n", $atlasUriString);
 
     $urls = [];
     foreach ($rawUrls as $url) {

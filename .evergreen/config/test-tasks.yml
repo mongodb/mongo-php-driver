@@ -2,7 +2,6 @@ tasks:
   - name: "test-atlas-connectivity"
     tags: ["atlas", "nodb"]
     commands:
-      - func: "decrypt atlas URI list"
       - func: "run tests"
         vars:
           TESTS: "tests/atlas.phpt"
