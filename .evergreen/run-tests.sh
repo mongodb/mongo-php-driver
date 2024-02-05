@@ -4,7 +4,7 @@ set -o errexit  # Exit the script with error if any of the commands fail
 # Supported environment variables
 API_VERSION=${API_VERSION:-} # Optional API_VERSION environment variable for run-tests.php
 CRYPT_SHARED_LIB_PATH="${CRYPT_SHARED_LIB_PATH:-}" # Optional path to crypt_shared library
-MONGODB_URI=${MONGODB_URI:-} # Connection string (including credentials and topology info)
+MONGODB_URI=${MONGODB_URI:-}${APPEND_URI:-} # Connection string (including credentials and topology info)
 SKIP_CRYPT_SHARED="${SKIP_CRYPT_SHARED:-no}" # Specify "yes" to ignore CRYPT_SHARED_LIB_PATH. Defaults to "no"
 SSL=${SSL:-no} # Specify "yes" to enable SSL. Defaults to "no"
 SSL_DIR=${SSL_DIR-} # Optional SSL_DIR environment variable for run-tests.php
