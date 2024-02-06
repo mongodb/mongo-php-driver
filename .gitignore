@@ -52,7 +52,6 @@ php.ini
 !.github/
 !tests/utils/*.php
 !.evergreen
-.evergreen/atlas-uris.txt
 
 
 !scripts
