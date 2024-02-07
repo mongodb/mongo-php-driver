@@ -19,7 +19,7 @@ buildvariants:
       - ".sharded .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
       - ".loadbalanced .local !.3.6 !.4.0 !.4.2 !.4.4 !.5.0"
       - "test-atlas-connectivity"
-      - ".ocsp !.4.4"
+      - ".ocsp !.4.4 !.5.0"
     display_tasks:
       - name: "test-ocsp-latest"
         execution_tasks:
