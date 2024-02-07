@@ -5,6 +5,7 @@ set -o errexit  # Exit the script with error if any of the commands fail
 API_VERSION=${API_VERSION:-} # Optional API_VERSION environment variable for run-tests.php
 CRYPT_SHARED_LIB_PATH="${CRYPT_SHARED_LIB_PATH:-}" # Optional path to crypt_shared library
 MONGODB_URI=${MONGODB_URI:-} # Connection string (including credentials and topology info)
+APPEND_URI=${APPEND_URI:-} # Additional URI options to append to the URI. Used in OCSP tests
 SKIP_CRYPT_SHARED="${SKIP_CRYPT_SHARED:-no}" # Specify "yes" to ignore CRYPT_SHARED_LIB_PATH. Defaults to "no"
 SSL=${SSL:-no} # Specify "yes" to enable SSL. Defaults to "no"
 SSL_DIR=${SSL_DIR-} # Optional SSL_DIR environment variable for run-tests.php
@@ -14,6 +15,9 @@ OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 [ -z "$MARCH" ] && MARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
 
 export REPORT_EXIT_STATUS=1
+
+# Append test-specific URI options
+MONGODB_URI=${MONGODB_URI}${APPEND_URI}
 
 # Determine if MONGODB_URI already has a query string
 SUFFIX=$(echo "$MONGODB_URI" | grep -Eo "\?(.*)" | cat)

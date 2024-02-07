@@ -1,25 +1,17 @@
 --TEST--
 Atlas Connectivity Tests
 --SKIPIF--
-<?php
-if (!file_exists('.evergreen/atlas-uris.txt')) { echo "skip Atlas URIs not found\n"; }
-if (filesize('.evergreen/atlas-uris.txt') < 10) { echo "skip Atlas URI file empty\n"; }
-if (getenv('TESTS') !== 'tests/atlas.phpt') { echo "skip Atlas tests not wanted\n"; }
-?>
+<?php require __DIR__ . "/utils/basic-skipif.inc"; ?>
+<?php skip_if_no_atlas_connectivity_urls(); ?>
+<?php if (getenv('TESTS') !== 'tests/atlas.phpt') { die('skip Atlas tests not wanted'); } ?>
 --FILE--
 <?php
-$urls = explode("\n", file_get_contents('.evergreen/atlas-uris.txt'));
+require_once __DIR__ . "/utils/basic.inc";
 
 $command = new \MongoDB\Driver\Command(['ping' => 1]);
 $query = new \MongoDB\Driver\Query([]);
 
-foreach ($urls as $url) {
-	$url = trim($url);
-
-	if ($url == '') {
-		continue;
-	}
-
+foreach (getAtlasConnectivityUrls() as $url) {
 	if (strpos($url, '#') === 0) {
 		echo trim(substr($url, 1)), "\n";
 		continue;

@@ -167,9 +167,19 @@ functions:
   "bootstrap mongo-orchestration":
     - command: shell.exec
       params:
+        include_expansions_in_env:
+          - MONGODB_VERSION
+          - TOPOLOGY
+          - AUTH
+          - SSL
+          - STORAGE_ENGINE
+          - LOAD_BALANCER
+          - REQUIRE_API_VERSION
+          - ORCHESTRATION_FILE
         script: |
           ${PREPARE_SHELL}
-          SKIP_LEGACY_SHELL=true MONGODB_VERSION=${MONGODB_VERSION} TOPOLOGY=${TOPOLOGY} AUTH=${AUTH} SSL=${SSL} STORAGE_ENGINE=${STORAGE_ENGINE} LOAD_BALANCER=${LOAD_BALANCER} REQUIRE_API_VERSION=${REQUIRE_API_VERSION} ORCHESTRATION_FILE=${ORCHESTRATION_FILE} sh ${DRIVERS_TOOLS}/.evergreen/run-orchestration.sh
+          SKIP_LEGACY_SHELL=true \
+          sh ${DRIVERS_TOOLS}/.evergreen/run-orchestration.sh
     # run-orchestration generates expansion file with MONGODB_URI and CRYPT_SHARED_LIB_PATH
     - command: expansions.update
       params:
@@ -185,28 +195,32 @@ functions:
   "run OCSP responder":
     - command: shell.exec
       params:
+        include_expansions_in_env:
+          - TEST_COLUMN
+          - CERT_TYPE
+          - USE_DELEGATE
         shell: bash
         script: |
           ${PREPARE_SHELL}
-          TEST_COLUMN=${TEST_COLUMN} \
-          CERT_TYPE=${CERT_TYPE} \
-          USE_DELEGATE=${USE_DELEGATE} \
           ${PROJECT_DIRECTORY}/.evergreen/run-ocsp-responder.sh
 
   "run tests":
     - command: shell.exec
       type: test
       params:
+        include_expansions_in_env:
+          - API_VERSION
+          - ATLAS_CONNECTIVITY_URIS
+          - CRYPT_SHARED_LIB_PATH
+          - MONGODB_URI
+          - APPEND_URI
+          - SKIP_CRYPT_SHARED
+          - SSL
+          - SSL_DIR
+          - TESTS
         working_dir: "src"
         script: |
           ${PREPARE_SHELL}
-          API_VERSION=${API_VERSION} \
-          CRYPT_SHARED_LIB_PATH=${CRYPT_SHARED_LIB_PATH} \
-          MONGODB_URI="${MONGODB_URI}${APPEND_URI}" \
-          SKIP_CRYPT_SHARED=${SKIP_CRYPT_SHARED} \
-          SSL=${SSL} \
-          SSL_DIR=${SSL_DIR} \
-          TESTS=${TESTS} \
           sh ${PROJECT_DIRECTORY}/.evergreen/run-tests.sh
 
   "cleanup":
@@ -241,12 +255,6 @@ functions:
           file="${DRIVERS_TOOLS}/.evergreen/install-dependencies.sh"
           # Don't use ${file} syntax here because evergreen treats it as an empty expansion.
           [ -f "$file" ] && sh $file || echo "$file not available, skipping"
-
-  "decrypt atlas URI list":
-    - command: shell.exec
-      params:
-        script: |
-          openssl aes-256-cbc -S "${encrypted_uris_salt}" -K "${encrypted_uris_key}" -iv "${encrypted_uris_iv}" -in ${PROJECT_DIRECTORY}/.evergreen/atlas-uris.txt.enc -out ${PROJECT_DIRECTORY}/.evergreen/atlas-uris.txt -d
 
   "start load balancer":
     - command: shell.exec
