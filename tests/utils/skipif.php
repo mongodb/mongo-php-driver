@@ -498,6 +498,6 @@ function skip_if_no_crypt_shared()
 function skip_if_no_atlas_connectivity_urls()
 {
     if (getAtlasConnectivityUrls() === []) {
-        exit('skip No atlas URIs found');
+        exit('skip No Atlas URIs found');
     }
 }
