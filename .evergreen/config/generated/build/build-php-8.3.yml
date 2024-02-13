@@ -1,0 +1,9 @@
+# This file is generated automatically - please edit the "templates/build/build-php.yml" template file instead.
+tasks:
+  - name: "build-php-8.3"
+    tags: ["build", "php8.3"]
+    commands:
+      - func: "compile driver"
+        vars:
+          PHP_VERSION: "8.3"
+      - func: "upload build"
