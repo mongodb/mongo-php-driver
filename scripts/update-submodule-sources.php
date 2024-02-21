@@ -26,6 +26,9 @@ $vars = [
 $patterns = [];
 $replacements = [];
 
+// Paths are relative to the project root directory
+chdir(__DIR__ . '/..');
+
 foreach ($vars as $var => $path) {
     $cutNth = 2 + substr_count($path, '/');
 
