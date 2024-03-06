@@ -270,7 +270,7 @@ if test "$PHP_MONGODB" != "no"; then
   PHP_MONGODB_MONGOCRYPT_VERSION_STRING="None"
 
   if test "$PHP_MONGODB_SYSTEM_LIBS" != "no"; then
-    PKG_CHECK_MODULES([PHP_MONGODB_BSON], [libbson-1.0 >= 1.26.0], [
+    PKG_CHECK_MODULES([PHP_MONGODB_BSON], [libbson-1.0 >= 1.26.1], [
       PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
       PHP_MONGODB_BSON_VERSION_STRING="System ($PHP_MONGODB_BSON_VERSION)"
 
@@ -278,10 +278,10 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_EVAL_LIBLINE($PHP_MONGODB_BSON_LIBS, MONGODB_SHARED_LIBADD)
       AC_DEFINE(HAVE_SYSTEM_LIBBSON, 1, [Use system libbson])
     ],[
-      AC_MSG_ERROR([Could not find system library for libbson >= 1.26.0])
+      AC_MSG_ERROR([Could not find system library for libbson >= 1.26.1])
     ])
 
-    PKG_CHECK_MODULES([PHP_MONGODB_MONGOC], [libmongoc-1.0 >= 1.26.0], [
+    PKG_CHECK_MODULES([PHP_MONGODB_MONGOC], [libmongoc-1.0 >= 1.26.1], [
       PHP_MONGODB_BSON_VERSION=`$PKG_CONFIG libbson-1.0 --modversion`
       PHP_MONGODB_BSON_VERSION_STRING="System ($PHP_MONGODB_BSON_VERSION)"
 
@@ -289,11 +289,11 @@ if test "$PHP_MONGODB" != "no"; then
       PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOC_LIBS, MONGODB_SHARED_LIBADD)
       AC_DEFINE(HAVE_SYSTEM_LIBMONGOC, 1, [Use system libmongoc])
     ],[
-      AC_MSG_ERROR(Could not find system library for libmongoc >= 1.26.0)
+      AC_MSG_ERROR(Could not find system library for libmongoc >= 1.26.1)
     ])
 
     if test "$PHP_MONGODB_CLIENT_SIDE_ENCRYPTION" != "no"; then
-      PKG_CHECK_MODULES([PHP_MONGODB_MONGOCRYPT], [libmongocrypt >= 1.9.0], [
+      PKG_CHECK_MODULES([PHP_MONGODB_MONGOCRYPT], [libmongocrypt >= 1.9.1], [
         PHP_MONGODB_MONGOCRYPT_VERSION=`$PKG_CONFIG libmongocrypt --modversion`
         PHP_MONGODB_MONGOCRYPT_VERSION_STRING="System ($PHP_MONGODB_MONGOCRYPT_VERSION)"
 
@@ -301,7 +301,7 @@ if test "$PHP_MONGODB" != "no"; then
         PHP_EVAL_LIBLINE($PHP_MONGODB_MONGOCRYPT_LIBS, MONGODB_SHARED_LIBADD)
         AC_DEFINE(HAVE_SYSTEM_LIBMONGOCRYPT, 1, [Use system libmongocrypt])
       ],[
-        AC_MSG_ERROR(Could not find system library for libmongocrypt >= 1.9.0)
+        AC_MSG_ERROR(Could not find system library for libmongocrypt >= 1.9.1)
       ])
     fi
   fi
