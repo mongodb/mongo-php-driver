@@ -65,6 +65,11 @@ esac
 # Report the current PHP version
 echo "PHP: `php --version | head -n 1`"
 
+# If we're testing a specific version of libmongoc, update submodule sources
+if [ -n "$LIBMONGOC_VERSION" ]; then
+   php scripts/update-submodule-sources.php
+fi
+
 phpize
 ./configure --enable-mongodb-developer-flags
 
