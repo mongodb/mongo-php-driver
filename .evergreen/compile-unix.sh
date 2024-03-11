@@ -65,12 +65,19 @@ esac
 # Report the current PHP version
 echo "PHP: `php --version | head -n 1`"
 
+# If we're testing a specific version of libmongoc, update submodule sources
+if [ -n "$LIBMONGOC_VERSION" ]; then
+   php scripts/update-submodule-sources.php
+fi
+
 phpize
 ./configure --enable-mongodb-developer-flags
 
-# If we're testing a specific version of libmongoc, regenerate the version file
+# configure relies on version information in libmongoc-version-current, but the target is not available until after calling configure
+# To work around this, run the make target, then run configure again
 if [ -n "$LIBMONGOC_VERSION" ]; then
    make libmongoc-version-current
+  ./configure --enable-mongodb-developer-flags
 fi
 
 make test TESTS="tests/smoketest.phpt"
