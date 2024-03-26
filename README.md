@@ -22,6 +22,11 @@ languages.
  - https://php.net/manual/en/set.mongodb.php
  - https://www.mongodb.com/docs/drivers/php/
 
+## Integrations
+If you'd like to use PHP with Laravel framework, please see [laravel-mongodb](https://github.com/mongodb/laravel-mongodb)
+
+
+
 ## Installation
 
 To build and install the driver:
