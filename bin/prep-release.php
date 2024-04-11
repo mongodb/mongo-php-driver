@@ -190,6 +190,7 @@ $REPLACE = array(
     "%RELEASE_VERSION%" => $VERSION,
     "%RELEASE_STABILITY%" => $STABILITY,
     "%RELEASE_FILES%" => join("\n", $TREE),
+    "%RELEASE_NOTES%" => file_exists(__DIR__ . '/../changelog') ? file_get_contents(__DIR__ . '/../changelog') : '',
 );
 
 $contents = str_replace(array_keys($REPLACE), array_values($REPLACE), $contents);
