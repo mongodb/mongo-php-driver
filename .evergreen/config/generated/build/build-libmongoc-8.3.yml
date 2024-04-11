@@ -12,7 +12,7 @@ tasks:
       - func: "compile driver"
         vars:
           PHP_VERSION: "8.3"
-          LIBMONGOC_VERSION: "1.26.1"
+          LIBMONGOC_VERSION: "1.26.2"
       - func: "upload build"
 
   - name: "build-php-8.3-libmongoc-next-stable"
