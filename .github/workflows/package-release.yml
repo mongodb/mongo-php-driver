@@ -1,4 +1,4 @@
-name: "Build package files"
+name: "Package Release"
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-pecl:
-    name: "Create release package"
+    name: "Create PECL package"
     runs-on: "ubuntu-latest"
 
     steps:
@@ -57,5 +57,60 @@ jobs:
         run: gh release upload ${{ github.ref_name }} mongodb-${{ env.PACKAGE_VERSION }}.tgz
         # Until we've changed the process to always have a release draft, ignore errors during upload
         continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    name: "Create Windows package"
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: cmd
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Note: keep this in sync with the Windows matrix in windows-tests.yml
+        php: [ "7.4", "8.0", "8.1", "8.2", "8.3" ]
+        arch: [ x64, x86 ]
+        ts: [ ts, nts ]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          submodules: true
+
+      - name: "Build Driver"
+        id: build-driver
+        uses: ./.github/workflows/windows/build
+        with:
+          version: ${{ matrix.php }}
+          arch: ${{ matrix.arch }}
+          ts: ${{ matrix.ts }}
+
+      - name: "Copy DLL and PDB files to CWD"
+        run: |
+          cp %BUILD_DIR%\php_mongodb.dll .
+          cp %BUILD_DIR%\php_mongodb.pdb .
+        env:
+          BUILD_DIR: ${{ steps.build-driver.outputs.build-dir }}
+
+      - name: "Upload DLL and PDB files as build artifacts"
+        uses: actions/upload-artifact@v4
+        with:
+          name: php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}
+          path: |
+            php_mongodb.dll
+            php_mongodb.pdb
+          retention-days: 3
+
+      - name: "Create and upload release artifact"
+        if: ${{ github.ref_type == 'tag' }}
+        run: |
+          ARCHIVE=php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
+          zip $ARCHIVE php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
+          gh release upload ${{ github.ref_name }} $ARCHIVE
+          continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
