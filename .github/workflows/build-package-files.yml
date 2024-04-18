@@ -32,6 +32,9 @@ jobs:
         run: "make all"
 
       # TODO: create changelog from tag description
+      - name: "Add dummy changelog"
+        if: ${{ github.ref_type != 'tag' }}
+        run: "echo 'Development Build' > changelog"
 
       - name: "Build package.xml"
         run: "make package.xml"
