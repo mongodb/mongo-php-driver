@@ -49,9 +49,17 @@ jobs:
       # - name: "Install release archive to verify correctness"
       #  run: pecl install mongodb-${{ env.PACKAGE_VERSION }}.tgz
 
-      - name: "Upload archive"
+      - name: "Upload artifact"
         uses: actions/upload-artifact@v4
         with:
           name: mongodb-${{ env.PACKAGE_VERSION }}.tgz
           path: mongodb-${{ env.PACKAGE_VERSION }}.tgz
           retention-days: 3
+
+      - name: "Upload release artifact"
+        if: ${{ github.ref_type == 'tag' }}
+        run: gh release upload ${{ github.ref_name }} mongodb-${{ env.PACKAGE_VERSION }}.tgz
+        # Until we've changed the process to always have a release draft, ignore errors during upload
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
