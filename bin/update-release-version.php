@@ -12,9 +12,10 @@ Usage:
 {$argv[0]} <command>
 
 Commands:
-    stable: Mark the current version as stable
-    patch:  Update to the next patch development version
-    minor:  Update to the next minor development version
+    stable:  Mark the current version as stable
+    patch:   Update to the next patch development version
+    minor:   Update to the next minor development version
+    version: Print the current version number
 
 EOT;
 
@@ -31,7 +32,6 @@ function read_release_version(string $filename): array
 
     $versions = [];
 
-    // TODO: Error handling
     if (! preg_match('/^#define PHP_MONGODB_VERSION "(.*)"$/m', $contents, $matches)) {
         throw new Exception('Could not match PHP_MONGODB_VERSION');
     }
@@ -147,6 +147,10 @@ if ($argc !== 2) {
 $currentVersion = read_release_version(VERSION_FILENAME);
 
 switch ($argv[1] ?? null) {
+    case 'version':
+        echo $currentVersion['version'];
+        exit(0);
+
     case 'stable':
         $newVersion = get_stable_version($currentVersion);
         break;
