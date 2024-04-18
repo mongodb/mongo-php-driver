@@ -2,9 +2,6 @@ name: "Package Release"
 
 on:
   push:
-    # TODO: Remove this branch once we're done testing
-    branches:
-      - "release-tooling"
     tags:
       - "*"
 
@@ -27,7 +24,6 @@ jobs:
 
       # TODO: create changelog from tag description
       - name: "Add dummy changelog"
-        if: ${{ github.ref_type != 'tag' }}
         run: "echo 'Development Build' > changelog"
 
       - name: "Build package.xml"
@@ -53,7 +49,6 @@ jobs:
           retention-days: 3
 
       - name: "Upload release artifact"
-        if: ${{ github.ref_type == 'tag' }}
         run: gh release upload ${{ github.ref_name }} mongodb-${{ env.PACKAGE_VERSION }}.tgz
         # Until we've changed the process to always have a release draft, ignore errors during upload
         continue-on-error: true
@@ -106,7 +101,6 @@ jobs:
           retention-days: 3
 
       - name: "Create and upload release artifact"
-        if: ${{ github.ref_type == 'tag' }}
         run: |
           ARCHIVE=php_mongodb-${{ github.ref_name }}-${{ matrix.php }}-${{ matrix.ts }}-${{ matrix.arch }}.zip
           zip $ARCHIVE php_mongodb.dll php_mongodb.pdb CREDITS CONTRIBUTING.md LICENSE README.md THIRD_PARTY_NOTICES
